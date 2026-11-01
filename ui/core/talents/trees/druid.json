@@ -61,19 +61,19 @@
         "description": "Increases the periodic damage and healing done by your spells and abilities by {0}%.",
         "ranks": [
           [
-            1
-          ],
-          [
             2
-          ],
-          [
-            3
           ],
           [
             4
           ],
           [
-            5
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
           ]
         ],
         "icon": "spell_arcane_arcane03"
@@ -519,49 +519,59 @@
         "icon": "ability_hunter_pet_hyena"
       },
       {
-        "fieldName": "heartOfTheWild",
+        "fieldName": "furor",
         "location": {
           "rowIdx": 0,
           "colIdx": 2
         },
         "spellIds": [
-          17003,
-          17004,
-          17005,
-          17006,
-          24894
+          17056,
+          17058,
+          17059,
+          17060,
+          17061
         ],
         "maxPoints": 5,
-        "name": "Heart of the Wild",
-        "description": "Increases your Intellect by {0}%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by {1}% and while in Cat Form your Strength is increased by {2}%.",
+        "name": "Furor",
+        "description": "Gives you a {0}% chance to gain {1} Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores {2}% of the Energy you had when last in Cat Form, plus {3} Energy per second spent outside Bear Form or Dire Bear Form, up to {4} Energy.",
         "ranks": [
           [
-            2,
-            4,
-            2
-          ],
-          [
-            4,
-            8,
-            4
-          ],
-          [
-            6,
-            12,
-            6
-          ],
-          [
-            8,
-            16,
-            8
-          ],
-          [
+            20,
             10,
             20,
-            10
+            2,
+            20
+          ],
+          [
+            40,
+            10,
+            40,
+            4,
+            40
+          ],
+          [
+            60,
+            10,
+            60,
+            6,
+            60
+          ],
+          [
+            80,
+            10,
+            80,
+            8,
+            80
+          ],
+          [
+            100,
+            10,
+            100,
+            10,
+            100
           ]
         ],
-        "icon": "spell_holy_blessingofagility"
+        "icon": "spell_holy_blessingofstamina"
       },
       {
         "fieldName": "feralSwiftness",
@@ -774,59 +784,10 @@
         "icon": "inv_misc_monsterclaw_04"
       },
       {
-        "fieldName": "shiftingPower",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 0
-        },
-        "prereqLocation": {
-          "rowIdx": 2,
-          "colIdx": 0
-        },
-        "spellIds": [
-          1322605
-        ],
-        "maxPoints": 1,
-        "name": "Shifting Power",
-        "description": "Instantly convert {0}% of base Mana into {1} Energy. Shifting Power's cost is reduced by effects that reduce the cost of Shapeshifting.",
-        "ranks": [
-          [
-            55,
-            40
-          ]
-        ],
-        "icon": "spell_druid_displacement"
-      },
-      {
-        "fieldName": "primalBite",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 1
-        },
-        "prereqLocation": {
-          "rowIdx": 2,
-          "colIdx": 1
-        },
-        "spellIds": [
-          407995
-        ],
-        "maxPoints": 1,
-        "name": "Primal Bite",
-        "description": "Bite the target, dealing {0}% normal damage plus {1} and generating a high amount of threat.",
-        "ranks": [
-          [
-            100,
-            26
-          ]
-        ],
-        "icon": "ability_racial_cannibalize",
-        "notSimulated": true
-      },
-      {
         "fieldName": "predatoryStrikes",
         "location": {
           "rowIdx": 3,
-          "colIdx": 2
+          "colIdx": 0
         },
         "spellIds": [
           16972,
@@ -848,6 +809,51 @@
           ]
         ],
         "icon": "ability_hunter_pet_cat"
+      },
+      {
+        "fieldName": "lacerate",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 1
+        },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 1
+        },
+        "spellIds": [
+          1328617
+        ],
+        "maxPoints": 1,
+        "name": "Lacerate",
+        "description": "Lacerates the enemy target, making them bleed for {0} damage over {1} sec plus {2}% weapon damage per existing application of Lacerate on the target. Causes a high amount of threat. This effect stacks up to {3} times on the same target.",
+        "ranks": [
+          [
+            20,
+            15,
+            10,
+            5
+          ]
+        ],
+        "icon": "ability_druid_lacerate",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "predatoryDiscipline",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 2
+        },
+        "spellIds": [
+          1328613
+        ],
+        "maxPoints": 1,
+        "name": "Predatory Discipline",
+        "description": "Your Ferocious Bite ability no longer converts extra Energy into damage, but still deals extra damage based on your excess Energy.",
+        "ranks": [
+          []
+        ],
+        "icon": "spell_druid_savagery",
+        "notSimulated": true
       },
       {
         "fieldName": "bloodFrenzy",
@@ -879,33 +885,6 @@
           ]
         ],
         "icon": "ability_ghoulfrenzy"
-      },
-      {
-        "fieldName": "improvedShiftingPower",
-        "location": {
-          "rowIdx": 4,
-          "colIdx": 0
-        },
-        "prereqLocation": {
-          "rowIdx": 3,
-          "colIdx": 0
-        },
-        "spellIds": [
-          1322670,
-          1322670
-        ],
-        "maxPoints": 2,
-        "name": "Improved Shifting Power",
-        "description": "Reduces the cooldown of your Shifting Power spell by {0} sec.",
-        "ranks": [
-          [
-            4
-          ],
-          [
-            8
-          ]
-        ],
-        "icon": "ability_hunter_aspectmastery"
       },
       {
         "fieldName": "leaderOfThePack",
@@ -953,10 +932,49 @@
         "icon": "ability_druid_predatoryinstincts"
       },
       {
-        "fieldName": "naturalReaction",
+        "fieldName": "rendAndTear",
         "location": {
           "rowIdx": 5,
           "colIdx": 0
+        },
+        "prereqLocation": {
+          "rowIdx": 3,
+          "colIdx": 0
+        },
+        "spellIds": [
+          1223246,
+          1223246,
+          1223246,
+          1223246,
+          1223246
+        ],
+        "maxPoints": 5,
+        "name": "Rend and Tear",
+        "description": "Increases damage done by your melee abilities on Bleeding targets by {0}%.",
+        "ranks": [
+          [
+            2
+          ],
+          [
+            4
+          ],
+          [
+            6
+          ],
+          [
+            8
+          ],
+          [
+            10
+          ]
+        ],
+        "icon": "ability_druid_primalagression"
+      },
+      {
+        "fieldName": "naturalReaction",
+        "location": {
+          "rowIdx": 5,
+          "colIdx": 3
         },
         "spellIds": [
           417051,
@@ -998,46 +1016,7 @@
         "icon": "ability_bullrush"
       },
       {
-        "fieldName": "rendAndTear",
-        "location": {
-          "rowIdx": 5,
-          "colIdx": 2
-        },
-        "prereqLocation": {
-          "rowIdx": 3,
-          "colIdx": 2
-        },
-        "spellIds": [
-          1223246,
-          1223246,
-          1223246,
-          1223246,
-          1223246
-        ],
-        "maxPoints": 5,
-        "name": "Rend and Tear",
-        "description": "Increases damage done by your melee abilities on Bleeding targets by {0}%.",
-        "ranks": [
-          [
-            2
-          ],
-          [
-            4
-          ],
-          [
-            6
-          ],
-          [
-            8
-          ],
-          [
-            10
-          ]
-        ],
-        "icon": "ability_druid_primalagression"
-      },
-      {
-        "fieldName": "berserk",
+        "fieldName": "primalBite",
         "location": {
           "rowIdx": 6,
           "colIdx": 1
@@ -1047,19 +1026,42 @@
           "colIdx": 1
         },
         "spellIds": [
-          417141
+          407995
         ],
         "maxPoints": 1,
-        "name": "Berserk",
-        "description": "Requires Cat Form, Bear Form, Dire Bear Form Causes your Primal Bite ability to strike up to {0} targets, removes its cooldown, and increases the critical strike chance of your Combo Point-generating abilities by {1}%. Clears and grants immunity to Fear effects for the duration. Lasts {2} sec.",
+        "name": "Primal Bite",
+        "description": "Bite the target, dealing {0}% normal damage plus {1} and generating a high amount of threat.",
         "ranks": [
           [
-            3,
             100,
-            15
+            42
           ]
         ],
-        "icon": "ability_druid_berserk"
+        "icon": "ability_racial_cannibalize",
+        "notSimulated": true
+      },
+      {
+        "fieldName": "shiftingPower",
+        "location": {
+          "rowIdx": 6,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 3,
+          "colIdx": 2
+        },
+        "spellIds": [
+          1322605
+        ],
+        "maxPoints": 1,
+        "name": "Shifting Power",
+        "description": "Instantly convert {0}% of base Mana into ? Energy. Shifting Power's cost is reduced by effects that reduce the cost of Shapeshifting.",
+        "ranks": [
+          [
+            55
+          ]
+        ],
+        "icon": "spell_druid_displacement"
       }
     ]
   },
@@ -1082,7 +1084,7 @@
         ],
         "maxPoints": 5,
         "name": "Nature's Focus",
-        "description": "Gives you a {0}% chance to avoid interruption caused by damage while casting Arcane and Nature spells.",
+        "description": "Gives your Arcane and Nature spells a {0}% chance to not lose casting time when you take damage.",
         "ranks": [
           [
             14
@@ -1103,59 +1105,49 @@
         "icon": "spell_nature_healingwavegreater"
       },
       {
-        "fieldName": "furor",
+        "fieldName": "heartOfTheWild",
         "location": {
           "rowIdx": 0,
           "colIdx": 2
         },
         "spellIds": [
-          17056,
-          17058,
-          17059,
-          17060,
-          17061
+          17003,
+          17004,
+          17005,
+          17006,
+          24894
         ],
         "maxPoints": 5,
-        "name": "Furor",
-        "description": "Gives you a {0}% chance to gain {1} Rage when shapeshifting into Bear Form or Dire Bear Form. Shapeshifting into Cat Form restores {2}% of the Energy you had when last in Cat Form, plus {3} Energy per sec spent outside Cat Form, up to {4} Energy. Bear Form and Dire Bear Form forfeit this Energy and halt its restoration while active.",
+        "name": "Heart of the Wild",
+        "description": "Increases your Intellect by {0}%. In addition, while in Bear Form or Dire Bear Form your Stamina is increased by {1}% and while in Cat Form your Strength is increased by {2}%.",
         "ranks": [
           [
-            20,
-            10,
-            20,
             2,
-            20
-          ],
-          [
-            40,
-            10,
-            40,
             4,
-            40
+            2
           ],
           [
-            60,
-            10,
-            60,
-            6,
-            60
-          ],
-          [
-            80,
-            10,
-            80,
+            4,
             8,
-            80
+            4
           ],
           [
-            100,
+            6,
+            12,
+            6
+          ],
+          [
+            8,
+            16,
+            8
+          ],
+          [
             10,
-            100,
-            10,
-            100
+            20,
+            10
           ]
         ],
-        "icon": "spell_holy_blessingofstamina"
+        "icon": "spell_holy_blessingofagility"
       },
       {
         "fieldName": "naturalist",
@@ -1172,60 +1164,57 @@
         ],
         "maxPoints": 5,
         "name": "Naturalist",
-        "description": "Reduces the cast time of your Healing Touch spell by {0} sec and increases all damage you deal by {1}%.",
+        "description": "Reduces the cast time of your Healing Touch and Wild Growth spells by {0} sec and increases all damage you deal by {1}%.",
         "ranks": [
           [
             0.1,
-            1
-          ],
-          [
-            0.2,
             2
           ],
           [
-            0.3,
-            3
-          ],
-          [
-            0.4,
+            0.2,
             4
           ],
           [
+            0.3,
+            6
+          ],
+          [
+            0.4,
+            8
+          ],
+          [
             0.5,
-            5
+            10
           ]
         ],
         "icon": "spell_nature_healingtouch"
       },
       {
-        "fieldName": "subtlety",
+        "fieldName": "reflection",
         "location": {
           "rowIdx": 1,
           "colIdx": 1
         },
         "spellIds": [
-          17118,
-          17119,
-          17120,
-          17121,
-          17122
+          17106,
+          17107,
+          17108
         ],
         "maxPoints": 3,
-        "name": "Subtlety",
-        "description": "Reduces the threat generated by your Nature and Arcane spells by {0}%.",
+        "name": "Reflection",
+        "description": "Allows {0}% of your Mana regeneration to continue while casting.",
         "ranks": [
           [
-            10
+            17
           ],
           [
-            20
+            33
           ],
           [
-            30
+            50
           ]
         ],
-        "icon": "ability_eyeoftheowl",
-        "notSimulated": true
+        "icon": "spell_frost_windwalkon"
       },
       {
         "fieldName": "naturalShapeshifter",
@@ -1255,31 +1244,33 @@
         "icon": "spell_nature_wispsplode"
       },
       {
-        "fieldName": "reflection",
+        "fieldName": "subtlety",
         "location": {
           "rowIdx": 2,
           "colIdx": 1
         },
         "spellIds": [
-          17106,
-          17107,
-          17108
+          17118,
+          17119,
+          17120,
+          17121,
+          17122
         ],
         "maxPoints": 3,
-        "name": "Reflection",
-        "description": "Allows {0}% of your Mana regeneration to continue while casting.",
+        "name": "Subtlety",
+        "description": "Reduces the threat generated by your Nature and Arcane spells by {0}%.",
         "ranks": [
           [
-            17
+            10
           ],
           [
-            33
+            20
           ],
           [
-            50
+            30
           ]
         ],
-        "icon": "spell_frost_windwalkon"
+        "icon": "ability_eyeoftheowl"
       },
       {
         "fieldName": "giftOfNature",
@@ -1318,23 +1309,24 @@
         "notSimulated": true
       },
       {
-        "fieldName": "giftOfTheEarthmother",
+        "fieldName": "bloom",
         "location": {
           "rowIdx": 2,
           "colIdx": 3
         },
         "spellIds": [
-          414673
+          1328621
         ],
         "maxPoints": 1,
-        "name": "Gift of the Earthmother",
-        "description": "Reduces the global cooldown by {0} seconds on your Rejuvenation, Swiftmend, and Wild Growth spells.",
+        "name": "Bloom",
+        "description": "When your Rejuvenation or Regrowth spell expires due to its duration, the target is instantly healed for an amount equal to {0}% of your Spirit. If either spell expires due to being dispelled, the target is healed for {1}% of your Spirit instead.",
         "ranks": [
           [
-            0.5
+            100,
+            50
           ]
         ],
-        "icon": "spell_nature_spiritarmor",
+        "icon": "inv_misc_herb_felblossom",
         "notSimulated": true
       },
       {
@@ -1412,7 +1404,7 @@
         ],
         "maxPoints": 1,
         "name": "Swiftmend",
-        "description": "Instantly heals a target with an active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of one of those spells.",
+        "description": "Instantly heals a target with your active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of the consumed spell.",
         "ranks": [
           []
         ],

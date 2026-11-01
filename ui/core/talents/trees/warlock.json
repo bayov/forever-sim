@@ -137,8 +137,8 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0
+          437032,
+          437032
         ],
         "maxPoints": 2,
         "name": "Soul Harvest",
@@ -165,13 +165,13 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0
+          403511,
+          403511,
+          403511
         ],
         "maxPoints": 3,
         "name": "Improved Drains",
-        "description": "Increases health drained or damage done by your Drain Life, Drain Soul, and Wrack spells by {0}%.",
+        "description": "Increases Health drained, damage done, or Mana drained by your Drain Life, Drain Soul, and Drain Mana spells by {0}%.",
         "ranks": [
           [
             7
@@ -192,8 +192,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          18827,
+          18827
         ],
         "maxPoints": 2,
         "name": "Improved Bane of Agony",
@@ -265,9 +265,9 @@
           "colIdx": 3
         },
         "spellIds": [
-          0,
-          0,
-          0
+          427712,
+          427712,
+          427712
         ],
         "maxPoints": 3,
         "name": "Pandemic",
@@ -292,11 +292,11 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1310949,
+          1310949,
+          1310949,
+          1310949,
+          1310949
         ],
         "maxPoints": 5,
         "name": "Malevolence",
@@ -398,9 +398,9 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0
+          17804,
+          17804,
+          17804
         ],
         "maxPoints": 3,
         "name": "Soul Siphon",
@@ -467,11 +467,11 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          1316697
         ],
         "maxPoints": 1,
         "name": "Wrack",
-        "description": "Tears the target apart from within, dealing {0} Shadow damage every {1} sec and increasing the damage they take from your other Shadow damage over time effects by {2}%. Lasts {3} sec.",
+        "description": "Tears the target apart from within, inflicting {0} Shadow damage every {1} sec and increasing the damage they take from your other Shadow damage over time effects by {2}% for {3} sec.",
         "ranks": [
           [
             36,
@@ -623,8 +623,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          1235316,
+          1235316
         ],
         "maxPoints": 2,
         "name": "Demonic Aegis",
@@ -675,9 +675,9 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0
+          18731,
+          18731,
+          18731
         ],
         "maxPoints": 3,
         "name": "Fel Vitality",
@@ -705,8 +705,8 @@
           "colIdx": 3
         },
         "spellIds": [
-          0,
-          0
+          1225214,
+          1225214
         ],
         "maxPoints": 2,
         "name": "Demonic Energies",
@@ -764,10 +764,10 @@
         ],
         "maxPoints": 1,
         "name": "Demonic Sacrifice",
-        "description": "When activated, sacrifices your summoned Demon to enhance the opposing aspect of your power, granting you an effect that lasts {0} min. The effect is canceled if any Demon is summoned. Imp: Increases your Shadow damage by {1}%. Voidwalker: Restores {2}% of your total Mana every {3} sec. Succubus/Incubus: Increases your Fire damage by {4}%. Felhunter: Restores {5}% of your total Health every {6} sec.",
+        "description": "When activated, sacrifices your summoned Demon to enhance the opposing aspect of your power, granting you an effect that lasts {0} hours. The effect is canceled if any Demon is summoned. Imp: Increases your Shadow damage by {1}%. Voidwalker: Restores {2}% of your total Mana every {3} sec. Succubus/Incubus: Increases your Fire damage by {4}%. Felhunter: Restores {5}% of your total Health every {6} sec.",
         "ranks": [
           [
-            120,
+            2,
             15,
             2,
             4,
@@ -810,8 +810,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          440870,
+          440870
         ],
         "maxPoints": 2,
         "name": "Decimation",
@@ -865,13 +865,13 @@
           "colIdx": 3
         },
         "spellIds": [
-          0,
-          0,
-          0
+          1293695,
+          1293695,
+          1293695
         ],
         "maxPoints": 3,
         "name": "Demonic Brand",
-        "description": "Your Searing Pain generates {0}% less threat and brands the target for {1} sec. Your pet's next {2} attacks against the target generate high threat and deal {3} to {4} Fire or Shadow damage based on the pet.",
+        "description": "Your Searing Pain generates {0}% less threat and brands the target for {1} sec. Your pet's next {2} attacks against the target deal {3} to {4} Fire or Shadow damage based on the pet. If Shadow damage is dealt, it has high threat.",
         "ranks": [
           [
             17,
@@ -904,9 +904,9 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0,
-          0
+          1225217,
+          1225217,
+          1225217
         ],
         "maxPoints": 3,
         "name": "Improved Felhunter",
@@ -959,9 +959,9 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0
+          412732,
+          412732,
+          412732
         ],
         "maxPoints": 3,
         "name": "Demonic Knowledge",
@@ -1040,7 +1040,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          425464
         ],
         "maxPoints": 1,
         "name": "Demonic Pact",
@@ -1068,7 +1068,7 @@
         ],
         "maxPoints": 2,
         "name": "Destructive Reach",
-        "description": "Increases the range of your damaging spells by {0}%.",
+        "description": "Increases the range of your Destruction spells by {0}%.",
         "ranks": [
           [
             10
@@ -1167,11 +1167,11 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1225220,
+          1225220,
+          1225220,
+          1225220,
+          1225220
         ],
         "maxPoints": 5,
         "name": "Molten Skin",
@@ -1360,9 +1360,9 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0,
-          0
+          17927,
+          17927,
+          17927
         ],
         "maxPoints": 3,
         "name": "Agonizing Flames",
@@ -1444,7 +1444,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          1225228
         ],
         "maxPoints": 1,
         "name": "Bane of Havoc",
@@ -1470,9 +1470,9 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0
+          412751,
+          412751,
+          412751
         ],
         "maxPoints": 3,
         "name": "Fire and Brimstone",
@@ -1497,11 +1497,11 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          426316,
+          426316,
+          426316,
+          426316,
+          426316
         ],
         "maxPoints": 5,
         "name": "Shadow and Flame",
@@ -1561,7 +1561,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          412758
         ],
         "maxPoints": 1,
         "name": "Incinerate",
