@@ -1445,6 +1445,29 @@
      "commits": [
       "01a4531"
      ]
+    },
+    {
+     "title": "Hunter pets no longer have Pet Aggression (+8 damage a hit)",
+     "kind": "sim",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf"
+     ],
+     "note": "No pet trainer teaches it in Forever: Beast Training doesn't list it, as in Classic, where pets never learned it. Cobra Reflexes is now about even and stays.",
+     "source": "https://wago.tools/db2/SkillLineAbility?build=1.60.1.70707&filter[SkillLine]=261",
+     "commits": [
+      "560579d"
+     ]
     }
    ],
    "internal": [
