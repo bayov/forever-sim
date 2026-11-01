@@ -13,9 +13,24 @@ type FerociousBiteRankInfo struct {
 	dmgRange     float64
 	dmgPerCombo  float64
 	dmgPerEnergy float64
+	// foreverOnly is a rank only Forever has.
+	foreverOnly bool
 }
 
 var ferociousBiteRanks = []FerociousBiteRankInfo{
+	// Forever's new rank 1 at 24 (1328618), from the launch realms' 2026-10-30 hotfix (wago.tools
+	// hotfixes, region 91, build 70707): 14 base points and 24 a combo point (33 to 43 damage with 1
+	// combo point, up to 129 to 139 with 5, its tooltip), and 0.6 damage a point of extra Energy
+	// (effect 1, 60 / 100). The old ranks became ranks 2 to 6, their rows unchanged.
+	{
+		id:           1328618,
+		level:        24,
+		dmgBase:      9.0,
+		dmgRange:     10.0,
+		dmgPerCombo:  24.0,
+		dmgPerEnergy: 0.6,
+		foreverOnly:  true,
+	},
 	{
 		id:           22568,
 		level:        32,
@@ -59,11 +74,14 @@ var ferociousBiteRanks = []FerociousBiteRankInfo{
 }
 
 func (druid *Druid) registerFerociousBiteSpell() {
-	// Forever's ranks match 1.12's (1.60.1.70338, wago.tools). Rank 5 comes from an Ahn'Qiraj
-	// book, which Forever leaves out (Environment.IncludeAQRanks).
-	maxRank := core.TernaryInt(druid.Env.IncludeAQRanks(), 4, 3)
+	// Forever's ranks from level 32 match 1.12's (1.60.1.70338, wago.tools). The last comes from an
+	// Ahn'Qiraj book, which Forever leaves out (Environment.IncludeAQRanks).
+	maxRank := len(ferociousBiteRanks) - core.TernaryInt(druid.Env.IncludeAQRanks(), 1, 2)
 	rank := -1
 	for i := 0; i <= maxRank; i++ {
+		if ferociousBiteRanks[i].foreverOnly && !druid.Env.IsForever() {
+			continue
+		}
 		if druid.Level >= ferociousBiteRanks[i].level {
 			rank = i
 		}
@@ -82,6 +100,15 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 	// report in their PR #149 that "a failed Bite leaves zero energy", which the report no longer assumes.
 	// The rows carry ATTR_EX_1_DISCOUNT_POWER_ON_MISS (0x8000000, 22568 to 31018), as Rip's do, but the
 	// game gives no refund of the 35 for it on Bite.
+	//
+	// Predatory Discipline (1328613, a Feral row 4 talent since the launch realms' 2026-10-30
+	// hotfix): "Your Ferocious Bite ability no longer converts extra Energy into damage, but still
+	// deals extra damage based on your excess Energy." Its one effect is a dummy aura with base
+	// points 20 that the server reads, and the tooltip names no number. The sim takes the most
+	// literal reading, as wowsims/forever does: the Bite still deals its rank's damage a point of
+	// extra Energy, and spends only its 35. The dummy's 20 is not used (the report's
+	// druid_predatory_discipline assumption).
+	keepsExtraEnergy := druid.Talents.PredatoryDiscipline
 
 	return core.SpellConfig{
 		SpellCode:   SpellCode_DruidFerociousBite,
@@ -123,8 +150,10 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 			spell.DamageMultiplier /= rendAndTear
 
-			if result.Landed() {
+			if result.Landed() && !keepsExtraEnergy {
 				druid.SpendEnergy(sim, excessEnergy, spell.EnergyMetrics())
+			}
+			if result.Landed() {
 				druid.SpendComboPoints(sim, spell)
 			}
 		},

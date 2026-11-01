@@ -36,7 +36,7 @@ Sources, all read-only:
 | Hunter | 7 (+ shared) | `hunter_pet_scaling` (one value, resolved 2026-10-23), `hunter_pet_speed` (one value, settled 2026-10-25), `hunter_cobra_damage`, `hunter_crit_per_agi` and `hunter_raptor_31plus` (one value each, resolved 2026-10-25), `hunter_tsa_hm_rank` (one value since 2026-10-28), `hunter_trap_ap` (one value, resolved 2026-10-23) (+ `wf_totem_offhand` for Survival, `land_mine_swing`, `natural_flask_zone`) |
 | Mage | 5 | `mage_ice_lance_coef` (Low 1/7 since 2026-10-25), `mage_frostbolt10` and `mage_cone_of_cold` (one value each, resolved 2026-10-25), `mage_imbue_scrolls`, `mage_am_missile_barrage` (one value, 2026-10-27) |
 | Shaman | 4 | `sham_ftt_stack` (one value), `sham_mw_ppm`, `sham_lb_31plus` and `sham_es7_tuning` (one value each, resolved 2026-10-25) |
-| Druid | 3 | `druid_ooc_rate` (one value, kept for reference; its rule checked against wowsims/forever 2026-10-23), `druid_rip_31plus`, `druid_wrath8_tuning` (one value, resolved 2026-10-25) |
+| Druid | 4 | `druid_ooc_rate` (one value, kept for reference; its rule checked against wowsims/forever 2026-10-23), `druid_rip_31plus`, `druid_wrath8_tuning` (one value, resolved 2026-10-25), `druid_predatory_discipline` (one value, added 2026-11-01) |
 | Rogue | 0 (+ shared) | `wf_totem_offhand`, `land_mine_swing`, `natural_flask_zone`, `bleed_tick_crit` (Subtlety) |
 
 That makes 42 assumptions in `assumptions_def.py`, none pending, 33 of them one-value reference rows (`mage_am_missile_barrage` collapsed to "No proc" by the user's ruling of 2026-10-27, `hunter_tsa_hm_rank` to rank 5 at 50 by the ruling of 2026-10-28). The user's rulings of 2026-10-25 collapsed 16 rows to one value: 14 to the sim's value (`priest_sf_tick_crit`, `priest_smite8_tuning`, `lock_bod_coef`, `pal_31plus_ranks`, `warr_rend_ap`, `hunter_cobra_damage`, `hunter_raptor_31plus`, `mage_frostbolt10`, `mage_cone_of_cold`, `sham_lb_31plus`, `sham_es7_tuning`, `bleed_tick_crit`, `warr_dt_rage_k`, `druid_wrath8_tuning`) and two to a new one the sim now uses (`warr_rage_k` flat, `hunter_crit_per_agi` Classic's at 60), and changed the settings of `hunter_tsa_hm_rank` (Trueshot Aura only) and `mage_ice_lance_coef` (Low 1/7); each section says why. The rows that still vary are `pal_soc_wf`, `pal_soc_ppm`, `mage_ice_lance_coef`, `mage_imbue_scrolls`, `sham_mw_ppm`, `raid_hits`, `natural_flask_zone`, `lock_stone_with_oil` and `druid_rip_31plus`. Earlier (2026-10-23: the six that were pending got their knobs on 2026-10-16; the alignment round with wowsims/forever resolved `lock_pet_scaling`, `lock_demon_melee`, `hunter_pet_scaling`, `hunter_trap_ap`, `pal_2h_spec_holy` and `warr_dt_rage_mods` to one value each, wired `mage_cone_of_cold`, and added `hunter_cobra_damage`, `natural_flask_zone` and the one-value `land_mine_swing`; see orchestration/alignment_round_2026-10-23.md) (PR #54 removed `pal_sor_sp_double`, `pal_sor_sp_speed` and `pal_consecration_coef`, and the assumptions audit, orchestration/assumptions_audit.md, removed `flat_bonus_inside_pct`, `druid_shred_flat` and `warr_crit_rage`, all settled 2026-10-16). The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
@@ -573,6 +573,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 | `druid_ooc_rate` | Omen of Clarity proc rate | Feral, Balance, Balance Wrath | 2 PPM at the swing speed; spells 2 × cast / 60 | = Expected | 2 PPM | = Expected | one value, kept for reference |
 | `druid_rip_31plus` | Rip's level 31+ ranks | Feral | client | = Expected | client | Era; ≤30 trend ×1.13 (Higher) | +1.2% Era, +1.6% ≤30 trend (assumption sims, 180 s) |
 | `druid_wrath8_tuning` | Wrath VIII tuning | Balance Wrath, Balance | ×1.085 (one value, resolved 2026-10-25) | = Expected | ×1.085 | = Expected | none left (one value; ×1.00 / ×1.17 last measured −0.2 to −0.8% / +0.2 to +0.8%) |
+| `druid_predatory_discipline` | Predatory Discipline's Bite (added 2026-11-01) | Feral | the extra Energy's damage, none of it spent (one value) | = Expected | the tooltip, literally | = Expected | one value, kept for reference |
 
 ### `druid_ooc_rate`: Omen of Clarity's proc chance
 
@@ -619,6 +620,16 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
   - **High, ×1.17.** Held at 0.42.
 - **Sensitivity (assumption sims, 180 s, against ×1.085):** Low −0.8% Balance Wrath, −0.2% Balance, High +0.8% / +0.2%.
 - **Knob:** `core.Assume("druid_wrath8_tuning", WrathRank8DamageScale)` in `WrathBaseDamageAt` (patch 0004).
+
+### `druid_predatory_discipline`: what Predatory Discipline does to Ferocious Bite (added 2026-11-01, one value)
+
+- **Builds:** Feral (the cat takes it for Shifting Power, the row 7 talent under it). The duty build takes its base build's.
+- **Sim now:** a Bite with Predatory Discipline deals its rank's damage a point of extra Energy (2.5 at rank 5, 22829) as without the talent, and spends only its 35 Energy (`keepsExtraEnergy`, `sim/druid/ferocious_bite.go`).
+- **Source:** the launch realms' 2026-10-30 hotfix (wago.tools hotfixes, region 91, build 70707): spell 1328613, "Your Ferocious Bite ability no longer converts extra Energy into damage, but still deals extra damage based on your excess Energy." foreverchanges.pro: "Ferocious Bite no longer spends your extra Energy, but still deals extra damage for it." wowsims/forever reads it the same way (their `keepsEnergy`).
+- **Why uncertain:** the talent's one effect is a dummy aura (aura 4) with base points 20, which only the server reads, and the tooltip names no number. The 20 could be a cap on the Energy counted, a share of the damage or something else; nothing says which.
+- **Settings:**
+  - **Expected, the tooltip read literally (Sim now).** The only value: any other reading would need a number no source gives (task rule: don't invent numbers). Kept in the report as a reference row.
+- **Knob:** none.
 
 ---
 

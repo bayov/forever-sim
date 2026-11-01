@@ -34,7 +34,7 @@ var Presets = []*Preset{
 		Class: proto.Class_ClassWarrior, Talents: "35--251533120331221351", Icon: "ability_warrior_defensivestance",
 		Gives: GiftBattleShout | GiftSunderTank},
 	{ID: proto.RaidPreset_RaidPresetFeralTank, Name: "Feral tank", Role: proto.RaidRole_RaidRoleTank,
-		Class: proto.Class_ClassDruid, Talents: "-55220302020132012551-055", Icon: "ability_racial_bearform",
+		Class: proto.Class_ClassDruid, Talents: "-5522030202310212551-055", Icon: "ability_racial_bearform",
 		Gives:             GiftLotP | GiftGotW | GiftMinorArmor,
 		InnervateOptional: true},
 	{ID: proto.RaidPreset_RaidPresetProtectionPaladin, Name: "Protection paladin", Role: proto.RaidRole_RaidRoleTank,
@@ -56,7 +56,7 @@ var Presets = []*Preset{
 		Class: proto.Class_ClassPriest, Talents: "00510223123-03405103030121531", Icon: "spell_holy_guardianspirit",
 		Gives: GiftPoS | GiftFort},
 	{ID: proto.RaidPreset_RaidPresetRestorationDruid, Name: "Restoration druid", Role: proto.RaidRole_RaidRoleHealer,
-		Class: proto.Class_ClassDruid, Talents: "05302001--5052035153113051", Icon: "spell_nature_healingtouch",
+		Class: proto.Class_ClassDruid, Talents: "05302001--5053025153113051", Icon: "spell_nature_healingtouch",
 		Gives: GiftGotW | GiftMinorArmor, Innervate: true},
 }
 

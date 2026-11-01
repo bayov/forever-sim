@@ -8,9 +8,14 @@ import (
 
 // Shifting Power, the Feral talent that takes powershifting's place under Forever
 // (1.60.1.70338, wago.tools 1322605): turns 55% of base mana into 40 Energy, Cat Form
-// only, on a 16 sec cooldown and a 1 sec global cooldown. Natural Shapeshifter takes 10% a
-// point off its cost like Cat Form's, and Improved Shifting Power 4 sec a point off the
-// cooldown (1322670).
+// only, on an 8 sec cooldown and a 1 sec global cooldown. Natural Shapeshifter takes 10% a
+// point off its cost like Cat Form's.
+//
+// The launch realms' 2026-10-30 hotfix (wago.tools hotfixes, region 91, build 70707: the
+// SpellCooldowns row of 1322605) cut the cooldown from 16 to 8 sec and took Improved Shifting
+// Power (4 sec a point off it, 1322670) out of the tree. The talent moved to row 7, under
+// Predatory Discipline. Its 40 Energy is effect 1's base points (an energize of power type 3); the
+// tooltip asks for $s2, so it reads "?", and foreverchanges.pro gives 40 too.
 func (druid *Druid) registerShiftingPowerSpell() {
 	if !druid.Talents.ShiftingPower {
 		return
@@ -43,7 +48,7 @@ func (druid *Druid) registerShiftingPowerSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
-				Duration: time.Second*16 - time.Second*4*time.Duration(druid.Talents.ImprovedShiftingPower),
+				Duration: time.Second * 8,
 			},
 		},
 		// "Shifting Power can no longer be used while already at Full Energy" (development

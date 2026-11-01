@@ -852,8 +852,7 @@
         "ranks": [
           []
         ],
-        "icon": "spell_druid_savagery",
-        "notSimulated": true
+        "icon": "spell_druid_savagery"
       },
       {
         "fieldName": "bloodFrenzy",

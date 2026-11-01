@@ -1,16 +1,19 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/druid"
 )
 
 // Feral cat under Forever rules. Forever's Furor gives back only part of the Energy a cat
-// left its form with, so powershifting is gone. Shifting Power (the Feral talent) takes its
-// place: 40 Energy for 55% of base mana on a 16 sec cooldown (8 with Improved Shifting
-// Power), cast from Cat Form. Tiger's Fury is free, off the global cooldown and 15% more
-// Physical damage for 6 sec on a 30 sec cooldown, and Berserk (the 31 point talent) makes
-// every builder crit for 15 sec, which Blood Frenzy turns into extra combo points.
+// left its form with, so powershifting is gone. Shifting Power (the Feral row 7 talent since the
+// launch realms' 2026-10-30 hotfix) takes its place: 40 Energy for 55% of base mana on an 8 sec
+// cooldown, cast from Cat Form. Predatory Discipline, which it needs, makes Ferocious Bite keep its
+// extra Energy and still deal the damage for it (sim/druid/ferocious_bite.go), so a Bite at high
+// Energy costs only its 35. The same hotfix took Berserk out of the tree. Tiger's Fury is gone from
+// Forever (sim/druid/tigers_fury.go); its lines are for the Classic ruleset.
 type druidFeral struct{}
 
 func init() {
@@ -22,12 +25,12 @@ var (
 	druidRakeSpellId = []int32{0, 1822, 1823, 1824, 9904}
 	druidRipLevel    = []int32{0, 20, 28, 36, 44, 52, 60}
 	druidRipSpellId  = []int32{0, 1079, 9492, 9493, 9752, 9894, 9896}
-	// Ferocious Bite rank 5 (60, 31018) is an Ahn'Qiraj book rank, which Forever leaves out.
-	druidBiteLevel     = []int32{0, 32, 40, 48, 56}
-	druidBiteSpellId   = []int32{0, 22568, 22827, 22828, 22829}
+	// Ferocious Bite: Forever's new rank 1 at 24 (1328618, the 2026-10-30 hotfix), then 1.12's. Its
+	// rank at 60 (31018) is an Ahn'Qiraj book rank, which Forever leaves out.
+	druidBiteLevel     = []int32{0, 24, 32, 40, 48, 56}
+	druidBiteSpellId   = []int32{0, 1328618, 22568, 22827, 22828, 22829}
 	druidTigersFury    = spellID(5217)
 	druidShiftingPower = spellID(1322605)
-	druidBerserk       = spellID(417141)
 	druidShadowmeld    = spellID(20580)
 	druidRavage        = spellID(9867)
 )
@@ -42,8 +45,9 @@ func (druidFeral) Knobs() []Knob {
 		// biteRipTime seconds left (or with no Rip in the rotation), 2 always.
 		{Name: "bite", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "biteRipTime", Default: 4, Min: 0, Max: 10, Step: 2},
-		// Bite only with this much Energy, its extra Energy turns into damage.
-		{Name: "biteEnergy", Default: 35, Min: 35, Max: 75, Step: 10},
+		// Bite only with this much Energy, its extra Energy turns into damage (and with
+		// Predatory Discipline stays after the Bite).
+		{Name: "biteEnergy", Default: 35, Min: 35, Max: 95, Step: 10},
 		// With 1, Ferocious Bite at 5 combo points anyway once the Energy reaches
 		// biteCapEnergy, so a cat waiting on Rip does not sit at full Energy. 0 never.
 		{Name: "biteAtCap", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -73,11 +77,10 @@ func (druidFeral) Knobs() []Knob {
 		// Tiger's Fury: 1 on cooldown, 2 only at or below tigersFuryEnergy too, 0 never.
 		{Name: "tigersFury", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "tigersFuryEnergy", Default: 40, Min: 20, Max: 80, Step: 20},
-		// Berserk: 1 on cooldown, 2 with Tiger's Fury up, 0 never.
-		{Name: "berserk", Default: 1, Min: 0, Max: 2, Step: 1},
-		// Cooldown stacking (rotation auditor), 0/1: Berserk's later uses held for the synthetic
-		// Strength trinket when holding loses no use, and the Night Elf's Elune's Light (10% crit)
-		// kept out of Berserk, where every builder crits anyway.
+		// Cooldown stacking (rotation auditor), 0/1: the Night Elf's Elune's Light (10% crit) held
+		// for the synthetic Strength trinket when holding loses no use. Until the 2026-10-30 hotfix
+		// took Berserk out of the tree, it held Berserk for the trinket and Elune's Light out of
+		// Berserk.
 		{Name: "cdStack", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Elune's Light (the Night Elf's racial) in the cdStack line, 0/1. Other races leave it out;
 		// a Night Elf without the line still uses it through the autocast line.
@@ -113,20 +116,9 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 	case 2:
 		items = append(items, cast(druidTigersFury, le(energy(), num(k["tigersFuryEnergy"])), "Tiger's Fury once the Energy is low."))
 	}
-	switch {
-	case k["berserk"] == 1 && k["cdStack"] == 1:
-		items = append(items, cast(druidBerserk, holdFor(druidBerserk, itemID(druid.FeralSyntheticStrengthTrinket)),
-			"Berserk with the trinket, unless waiting for it would lose a use. Without the talent ignore the warning on this line."))
-	case k["berserk"] == 1:
-		items = append(items, cast(druidBerserk, nil, "Berserk on cooldown. Without the talent ignore the warning on this line."))
-	case k["berserk"] == 2:
-		items = append(items, cast(druidBerserk, auraIsActive(druidTigersFury), "Berserk with Tiger's Fury."))
-	}
 	if k["cdStack"] == 1 && k["elune"] == 1 {
-		items = append(items, cast(elunesLight, or(
-			and(not(auraIsActive(druidBerserk)), not(spellIsReady(druidBerserk))),
-			gt(spellUsesLostByDelay(elunesLight, auraRemainingTime(druidBerserk), seconds(0)), num(0))),
-			"Elune's Light outside Berserk, unless waiting would lose a use."))
+		items = append(items, cast(elunesLight, holdFor(elunesLight, itemID(druid.FeralSyntheticStrengthTrinket)),
+			"Night Elf: Elune's Light with the Strength trinket, unless waiting for it would lose a use. Other races can ignore the warning on this line."))
 	}
 	// Forever's Faerie Fire and Curse of Recklessness share the minor armor slot (standards 20), and
 	// the sim won't put ours up while the raid's Faerie Fire or a Curse of Recklessness holds it, so
@@ -174,13 +166,14 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		if k["biteAtCap"] == 1 {
 			cond = or(cond, and(eq(comboPoints(), num(5)), ge(energy(), num(k["biteCapEnergy"]))))
 		}
-		note := "Ferocious Bite at 5 combo points while Rip has time left."
+		note := "Ferocious Bite at 5 combo points while Rip has time left" + biteEnergyNote(k) + "."
 		if k["biteAtCap"] == 1 {
-			note = "Ferocious Bite at 5 combo points while Rip has time left, or at full Energy."
+			note = "Ferocious Bite at 5 combo points while Rip has time left" + biteEnergyNote(k) + ", or at full Energy."
 		}
 		items = append(items, cast(bite, cond, note))
 	case 2:
-		items = append(items, cast(bite, and(eq(comboPoints(), num(5)), ge(energy(), num(k["biteEnergy"]))), "Ferocious Bite at 5 combo points."))
+		items = append(items, cast(bite, and(eq(comboPoints(), num(5)), ge(energy(), num(k["biteEnergy"]))),
+			"Ferocious Bite at 5 combo points"+biteEnergyNote(k)+"."))
 	}
 	var meld *proto.APLListItem
 	if k["shadowmeld"] == 1 {
@@ -222,4 +215,13 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(druidTigersFury, 1))
 	}
 	return rot
+}
+
+// biteEnergyNote says why the Bite waits for Energy: the extra Energy adds damage, and with
+// Predatory Discipline the Bite keeps it for the next builders.
+func biteEnergyNote(k Knobs) string {
+	if k["biteEnergy"] <= 35 {
+		return ""
+	}
+	return fmt.Sprintf(", once the Energy reaches %.0f (the extra Energy adds damage, and Predatory Discipline keeps it)", k["biteEnergy"])
 }

@@ -8,7 +8,8 @@ import (
 )
 
 // The Forever talents (client 1.60.1.70338, wago.tools TraitDefinitionEffectPoints for the
-// value of every rank). Each spell modifier names the spells it touches by class mask, and
+// value of every rank; the trees of build 70707 with the launch realms' 2026-10-30 hotfix rows,
+// tools/forever_talents/client/druid.json). Each spell modifier names the spells it touches by class mask, and
 // those are the spells listed with it here.
 func (druid *Druid) ApplyTalents() {
 	// Balance
@@ -62,8 +63,11 @@ func (druid *Druid) ApplyTalents() {
 	// Restoration
 	druid.applyFuror()
 
-	// Naturalist: 1% a point more damage of every school.
-	druid.PseudoStats.DamageDealtMultiplier *= 1 + 0.01*float64(druid.Talents.Naturalist)
+	// Naturalist: 2% a point more damage of every school (1% before the launch realms' 2026-10-30
+	// hotfix, which doubled its TraitDefinitionEffectPoints curve 85363; its cast time cut now covers
+	// Wild Growth too, a heal the sim doesn't cast). Heart of the Wild and Furor swapped trees in the
+	// same hotfix, with their values unchanged.
+	druid.PseudoStats.DamageDealtMultiplier *= 1 + 0.02*float64(druid.Talents.Naturalist)
 	// Reflection: 17, 33 or 50% of mana regeneration goes on while casting.
 	druid.PseudoStats.SpiritRegenRateCasting += []float64{0, 0.17, 0.33, 0.5}[druid.Talents.Reflection]
 	// Living Spirit: 5% Spirit a point.
@@ -107,8 +111,10 @@ func (druid *Druid) applyImprovedWrath() {
 	})
 }
 
-// Genesis: 1% a point more periodic damage from Moonfire, Insect Swarm, Rake and Rip (and
-// healing over time, which the sim does not use).
+// Genesis: 2% a point more periodic damage from Moonfire, Insect Swarm, Rake and Rip (and
+// healing over time, which the sim does not use). 1% a point before the launch realms'
+// 2026-10-30 hotfix doubled its TraitDefinitionEffectPoints curves (85325, 97153; wago.tools
+// hotfixes, region 91, build 70707).
 func (druid *Druid) applyGenesis() {
 	points := druid.Talents.Genesis
 	if points == 0 {
@@ -117,7 +123,7 @@ func (druid *Druid) applyGenesis() {
 	druid.onInit("Genesis", func() {
 		spells := druid.balanceSpells(druid.Moonfire, druid.InsectSwarm, []*DruidSpell{druid.Rake, druid.Rip})
 		for _, spell := range spells {
-			spell.PeriodicDamageMultiplierAdditive += 0.01 * float64(points)
+			spell.PeriodicDamageMultiplierAdditive += 0.02 * float64(points)
 		}
 	})
 }
