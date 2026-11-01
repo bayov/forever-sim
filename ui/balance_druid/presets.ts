@@ -16,7 +16,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SapperExplosive,
 	SpellPowerBuff,
 	SpiritElixir,
 	Stat,
@@ -192,9 +191,8 @@ export const DefaultOptions = BalanceDruidOptions.create({
 // each one out costs, at 180 sec on the first set: Flask of Supreme Power the most (Distilled
 // Wisdom is 6 behind, the moonkin does not run dry in a raid fight), Elixir of Sages 14, Elixir
 // of Nature Power 9, Major Spellblasting Potion 9 (over a Major Mana Potion), Lobster Stew 4,
-// Goblin Sapper Charge 4.3 (6.5 / 4.3 / 3.6 at 120 / 180 / 300 sec, 3.9 to 7.1 on the other three
-// builds, so all four take it, standards 11), Cerebral Cortex Compound 3.5 and Demonic Rune 1.4. Greater
-// Mageblood Elixir and Greater Intellect are within the noise and stay for longer fights.
+// Cerebral Cortex Compound 3.5 and Demonic Rune 1.4. Greater Mageblood Elixir and Greater
+// Intellect are within the noise and stay for longer fights.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorSpellblastingPotion,
@@ -207,7 +205,8 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	naturePowerBuff: NaturePowerBuff.ElixirOfNaturePower,
-	sapperExplosive: SapperExplosive.SapperGoblinSapper,
+	// No Goblin Sapper Charge: it only reaches 10 yd (2026-11-01) and the moonkin stands at 30 yd. It was
+	// worth 4.3 at 180 sec before the sim checked its reach.
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
@@ -265,7 +264,7 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// An engineer for the Goblin Sapper Charge (+4.3 at 180 sec) and an alchemist, like the other
+// An engineer (for the Goblin Sapper Charge, until it got its 10 yd reach) and an alchemist, like the other
 // level 60 presets. The moonkin casts from range, so it does not melee between casts. The channel
 // clip delay is the DPS Report's.
 export const OtherDefaults = {

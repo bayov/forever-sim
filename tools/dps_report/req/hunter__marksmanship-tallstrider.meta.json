@@ -59,7 +59,7 @@
     "Major Mana Potion",
     "Demonic Rune",
     "Goblin Sapper",
-    "Goblin Land Mine"
+    "EZ-Thro Dark Bomb"
   ],
   "caveats": [
     "The Tallstrider costs 40.2 DPS at 180s against the same build without it (1075.4 against 1115.7, 20,000 iterations, seed 1). The search weighs that against what the pet gives the raid.",

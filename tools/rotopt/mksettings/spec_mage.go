@@ -43,7 +43,7 @@ func mageSpec(staffImbue proto.Mage_Options_StaffImbue) *specSetup {
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
 				ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 				SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
-				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
+				// No Goblin Sapper Charge: it only reaches 10 yd and the mage stands at 25 yd.
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 			}

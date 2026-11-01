@@ -71,8 +71,8 @@ func hunterSpec(distance float64, melee bool, raid func(*proto.RaidBuffs, *proto
 // one at a time, on the Beast Mastery, Lone Wolf and Survival builds at 180 sec, and again with
 // Forever's consumables after the shared consumables merge. All keep Elixir of the Mongoose (their
 // one +2% crit elixir; +27 over none), Ground Scorpok Assay (+14), Juju Might (+8) and
-// Engineering's Goblin Sapper (+4.8) and, on the ranged specs, its Goblin Land Mine (+7.6;
-// Survival drops it since 2026-10-23, its cast resets the swing), and take Forever's Elixir of
+// Engineering's Goblin Sapper (+4.8) and, on the ranged specs, the EZ-Thro Dark Bomb (see below),
+// and take Forever's Elixir of
 // Ferocity (18 Strength and Agility, no crit: +11 Beast Mastery, +13 Lone Wolf, +4.8 Survival over
 // Juju Power), Flank au Poivre (20 Agility: +4 to +6 over Grilled Squid; Mightfish Steak +0.2 to
 // +1.6) and Elixir of Greater Intellect (+4 to +5 over Elixir of Wisdom). The ranged specs need
@@ -110,9 +110,14 @@ func hunterConsumes(melee bool) *proto.Consumes {
 		consumes.DefaultConjured = proto.Conjured_ConjuredDemonicRune
 		consumes.ManaRegenElixir = proto.ManaRegenElixir_GreaterMagebloodElixir
 		consumes.Flask = proto.Flask_FlaskOfNaturalAggression
-		// Only the ranged specs take the Goblin Land Mine: on Survival its cast resets the swing
-		// and loses (standards 11, 2026-10-23, ui/hunter/presets.ts).
-		consumes.FillerExplosive = proto.Explosive_ExplosiveGoblinLandMine
+		// Only the ranged specs take a filler explosive: on Survival its cast resets the swing and
+		// loses (standards 11, 2026-10-23, ui/hunter/presets.ts). Since 2026-11-01 the Goblin Land
+		// Mine and the Goblin Sapper Charge only reach 10 yd, and the ranged specs stand at 12 yd
+		// but for their melee weaves, so they throw the EZ-Thro Dark Bomb: +2.8 Beast Mastery, +3.0
+		// Marksmanship and +3.9 Lone Wolf over none at 180 sec, 1.0 to 1.4 ahead of Dense Dynamite
+		// and the Thorium Grenade. Laying the Land Mine in a weave loses 1.0 to 1.7 (its 1 sec cast
+		// costs Auto Shots). The Sapper goes off in a weave.
+		consumes.FillerExplosive = proto.Explosive_ExplosiveEZThroDarkBomb
 	}
 	return consumes
 }

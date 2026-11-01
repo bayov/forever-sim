@@ -27,7 +27,7 @@ func init() {
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
 				ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 				NaturePowerBuff: proto.NaturePowerBuff_ElixirOfNaturePower,
-				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
+				// No Goblin Sapper Charge: it only reaches 10 yd and the moonkin stands at 30 yd.
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 				SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
 				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,

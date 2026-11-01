@@ -16,7 +16,7 @@
   "apl": "level60_arcane",
   "published": {
     "dps": 915.5,
-    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 915.5,
@@ -59,8 +59,7 @@
     "Scroll of Imbue Precision (staff imbue, on top of the oil)",
     "Cerebral Cortex Compound",
     "Major Mana Potion",
-    "Demonic Rune",
-    "Goblin Sapper"
+    "Demonic Rune"
   ],
   "caveats": [
     "Open: when Arcane Blast stacks apply, and whether new stacks reset the 15s.",

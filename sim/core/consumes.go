@@ -1308,10 +1308,23 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 	}
 }
 
+// How close to the target the explosives that aren't thrown must be used. Goblin Sapper Charge
+// (13241) hits every enemy within 10 yd of the user (effect 0, radius 10 around the caster). The
+// Goblin Land Mine (4100) puts the mine down at the user's feet, and its Detonation (4043) hits
+// every enemy within 10 yd of the mine. What sets the mine off is the server's, so the sim takes
+// the blast's reach. Thrown explosives reach any target in range.
+const explosiveBlastRadius = 10
+
 // Creates a spell object for the common explosive case.
 // TODO: create 10s delay on Goblin Landmine cast to damage
 func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, actionID ActionID, school SpellSchool, minDamage float64, maxDamage float64, cooldown Cooldown, selfMinDamage float64, selfMaxDamage float64) SpellConfig {
 	isSapper := actionID.SameAction(SapperActionID)
+	var nearOnly CanCastCondition
+	if isSapper || actionID.SameAction(GoblinLandMineActionID) {
+		nearOnly = func(_ *Simulation, _ *Unit) bool {
+			return character.DistanceFromTarget <= explosiveBlastRadius
+		}
+	}
 
 	var defaultCast Cast
 	if !isSapper {
@@ -1339,6 +1352,8 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 				character.CancelShapeshift(sim)
 			},
 		},
+
+		ExtraCastCondition: nearOnly,
 
 		// Explosives always have 1% resist chance, so just give them hit cap.
 		BonusHitRating: 100 * SpellHitRatingPerHitChance,

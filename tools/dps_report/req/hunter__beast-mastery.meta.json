@@ -38,7 +38,7 @@
   ],
   "rotation": [
     "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
-    "Bestial Wrath (at 0s and 120s), Rapid Fire, racials, Sapper and potions on cooldown",
+    "Bestial Wrath (at 0s and 120s), Rapid Fire, racials, potions and the EZ-Thro Dark Bomb on cooldown, and the Sapper in a melee weave (it reaches only 10 yd)",
     "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
     "Arcane Shot on cooldown, before Aimed Shot, at any mana",
     "Aimed Shot on the cooldown it shares with Multi-Shot",
@@ -59,7 +59,7 @@
     "Major Mana Potion",
     "Demonic Rune",
     "Goblin Sapper",
-    "Goblin Land Mine"
+    "EZ-Thro Dark Bomb"
   ],
   "caveats": [
     "Trueshot Aura's top rank gives 50 ranged attack power, from the launch realms' hotfix of 2026-10-28 (ranks 1 to 4: 15, 22, 30 and 40). Hunter's Mark gives 143 after a server hotfix (the client says 71).",

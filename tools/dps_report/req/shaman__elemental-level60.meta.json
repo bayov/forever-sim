@@ -40,7 +40,7 @@
   ],
   "rotation": [
     "Pre-pull: Lightning Shield at -5.4s, Mana Spring Totem at -3.9s, Lightning Bolt at -2.9s (lands 0.1s after the pull), Searing Totem at -0.9s",
-    "Elemental Mastery and other cooldowns (Sapper, Demonic Rune, Caustic Smog Potion) when ready",
+    "Elemental Mastery and other cooldowns (Demonic Rune, Caustic Smog Potion) when ready",
     "Mana Spring Totem when it is down, with at least 20s left",
     "Searing Totem when it is down, with at least 20s left",
     "Flame Shock when its DoT is down, with at least 9s left",
@@ -62,8 +62,7 @@
     "Lobster Stew",
     "Wizard Oil",
     "Caustic Smog Potion",
-    "Demonic Rune",
-    "Goblin Sapper Charge"
+    "Demonic Rune"
   ],
   "caveats": [
     "Lightning Bolt X's base damage is ×1.12. The beta raised the top playable rank by that much.",

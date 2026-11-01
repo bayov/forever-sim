@@ -38,7 +38,7 @@
   ],
   "rotation": [
     "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
-    "Bestial Wrath (at 0s and 120s), Rapid Fire, racials, Sapper and potions on cooldown",
+    "Bestial Wrath (at 0s and 120s), Rapid Fire, racials, potions and the EZ-Thro Dark Bomb on cooldown, and the Sapper in a melee weave (it reaches only 10 yd)",
     "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
     "Arcane Shot on cooldown, before Aimed Shot, at any mana",
     "Aimed Shot on the cooldown it shares with Multi-Shot",
@@ -59,7 +59,7 @@
     "Major Mana Potion",
     "Demonic Rune",
     "Goblin Sapper",
-    "Goblin Land Mine"
+    "EZ-Thro Dark Bomb"
   ],
   "caveats": [
     "The Tallstrider costs 71.0 DPS at 180s against the same build without it (1060.7 against 1131.8, 20,000 iterations, seed 1). The search weighs that against what the pet gives the raid.",

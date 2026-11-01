@@ -60,8 +60,7 @@
     "Scroll of Imbue Greater Frost (staff imbue, on top of the oil)",
     "Cerebral Cortex Compound",
     "Major Mana Potion",
-    "Demonic Rune",
-    "Goblin Sapper"
+    "Demonic Rune"
   ],
   "caveats": [
     "Ice Lance's spell power coefficient is 0.429, the Season of Discovery value. The client has 0.",

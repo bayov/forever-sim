@@ -17,7 +17,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SapperExplosive,
 	SpellPowerBuff,
 	SpiritElixir,
 	Stat,
@@ -315,7 +314,7 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
-	sapperExplosive: SapperExplosive.SapperGoblinSapper,
+	// No Goblin Sapper Charge: it only reaches 10 yd (2026-11-01) and the mage stands at 25 yd.
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
@@ -378,8 +377,8 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// Engineering is for the Goblin Sapper. Tailoring makes the Manaflare Regalia, the set the
-// synthetic pieces stand in for. Alchemy and Enchanting changed nothing.
+// Engineering was for the Goblin Sapper, out of reach from 25 yd since 2026-11-01. Tailoring
+// makes the Manaflare Regalia, the set the synthetic pieces stand in for. Alchemy and Enchanting changed nothing.
 export const OtherDefaults = {
 	channelClipDelay: 50,
 	distanceFromTarget: 25,

@@ -16,7 +16,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SapperExplosive,
 	SpellPowerBuff,
 	SpiritElixir,
 	Stat,
@@ -207,7 +206,8 @@ export const DefaultConsumes = Consumes.create({
 	// Mine's 1 sec cast takes a second of casting: dropping it is +1.0 / +0.7 at 180 sec on seeds 1 and
 	// 1000003 (+0.6 at 120 sec, -3.0 at 300 sec; Mana Tide +0.8 / +0.5, ahead at every length). The
 	// EZ-Thro Dark Bomb ties the Land Mine (the same 450 average) and the EZ-Thro Thorium Grenade is
-	// 0.8 behind it. The Goblin Sapper Charge, which needs no cast, stays (+4.2 at 180 sec).
+	// 0.8 behind it. No Goblin Sapper Charge: it only reaches 10 yd (2026-11-01) and the shaman stands
+	// at 20 yd for the Caustic Smog Potion (it was +4.2 at 180 sec before the sim checked its reach).
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	// The fight is in a natural flask zone (standards 11), but the best natural flask, Aggression, is 74
 	// behind the Flask of Supreme Power at 180 sec (Swiftness 78, Accuracy and Precision 95, the hit is
@@ -218,7 +218,6 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	naturePowerBuff: NaturePowerBuff.ElixirOfNaturePower,
-	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
@@ -285,9 +284,9 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// The shaman is an engineer for the Goblin Sapper Charge (+4.2 at 180 sec) and an alchemist. The
-// race is Windshaper Skyborne, the best race since client 1.60.1.70425 gave Wind Blessed 3% haste
-// (721.4 for the Orc at 180 sec before), see the races under the builds.
+// The shaman is an engineer (for the Goblin Sapper Charge, until it got its 10 yd reach) and an
+// alchemist. The race is Windshaper Skyborne, the best race since client 1.60.1.70425 gave Wind
+// Blessed 3% haste (721.4 for the Orc at 180 sec before), see the races under the builds.
 //
 // The distance and the channel clip delay are the ones the DPS Report sims with.
 export const OtherDefaults = {

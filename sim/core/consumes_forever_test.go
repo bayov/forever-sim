@@ -344,6 +344,37 @@ func TestForeverOpenExplosives(t *testing.T) {
 	}
 }
 
+// The Goblin Sapper Charge (13241) hits within 10 yd of its user and the Goblin Land Mine's
+// Detonation (4043) within 10 yd of the mine, laid at the user's feet, so neither is used from
+// further away. The thrown EZ-Thro Dark Bomb reaches the target from range.
+func TestForeverExplosiveReach(t *testing.T) {
+	cases := []struct {
+		consumes *proto.Consumes
+		actionID ActionID
+		reach    float64
+	}{
+		{&proto.Consumes{SapperExplosive: proto.SapperExplosive_SapperGoblinSapper}, SapperActionID, 10},
+		{&proto.Consumes{FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine}, GoblinLandMineActionID, 10},
+		{&proto.Consumes{FillerExplosive: proto.Explosive_ExplosiveEZThroDarkBomb}, EZThroDarkBombActionID, 30},
+	}
+	for _, c := range cases {
+		sim, character := newForeverConsumeSim(t, c.consumes, &proto.Encounter{}, 1, proto.Profession_Engineering)
+		mcd := character.GetMajorCooldown(c.actionID)
+		if mcd == nil {
+			t.Fatalf("%v: no cooldown", c.actionID)
+		}
+		target := sim.GetTargetUnit(0)
+		character.DistanceFromTarget = c.reach + 0.5
+		if c.reach < 30 && mcd.Spell.CanCast(sim, target) {
+			t.Errorf("%v: usable from %.1f yd", c.actionID, character.DistanceFromTarget)
+		}
+		character.DistanceFromTarget = c.reach
+		if !mcd.Spell.CanCast(sim, target) {
+			t.Errorf("%v: not usable from %.0f yd", c.actionID, c.reach)
+		}
+	}
+}
+
 // Dragonfire Potion (1252554) lands 1 sec after use on every enemy: 280 Fire, then 35 every 2 sec
 // for 8 sec, and never misses. It reaches 12 yd. Caustic Smog Potion's cloud (1252543) lands
 // after the missile's flight, at least 1.5 sec, and ticks 31 to 35 a second for 12 sec on every

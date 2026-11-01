@@ -78,7 +78,6 @@
               "defaultPotion": "MajorSpellblastingPotion",
               "defaultConjured": "ConjuredDemonicRune",
               "zanzaBuff": "CerebralCortexCompound",
-              "sapperExplosive": "SapperGoblinSapper",
               "intellectElixir": "ElixirOfGreaterIntellect",
               "spiritElixir": "ElixirOfSages"
             },
