@@ -137,3 +137,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-01 13:18 | consumables | pass 60 | master dd053d24c | 1 new finding | ranged hunters keep Sapper worth +0.16 DPS at 25 yd, comments say +4.8 (low)
 2026-11-01 13:18 | mechanics | pass 54 | master dd053d24c | 1 new finding | Shadow presets at 25 yd but Mind Flay range is 20 yd (low, no DPS change)
 2026-11-01 13:18 | fairness | pass 19 | master dd053d24c | 2 new findings | caster distances have no standard (medium, needs user ruling); Affliction Human 1.4 under Orc (low)
+2026-11-01 19:08 | results | pass 68 | master c23ef0440 | quiet | 66 of 77 builds match published; 11 off are stale report data (mage hotfixes, warrior Rage re-sims)
+2026-11-01 19:08 | rotations | pass 44 | master c23ef0440 | 1 new finding | Frost mage rotation caps Arcane Blast at 3 stacks, a 4th above 70% mana gains up to +2.7 DPS (low)
+2026-11-01 19:08 | gear | pass 50 | master c23ef0440 | quiet | only standards.md changed, no gear rules touched
+2026-11-01 19:08 | consumables | pass 61 | master c23ef0440 | quiet | Moonkin/Leader of the Pack crit ruling applied; Sapper finding still open
+2026-11-01 19:08 | mechanics | pass 55 | master c23ef0440 | quiet | Rage, crit auras, Kang proc and hotfix commits match sources
+2026-11-01 19:08 | fairness | pass 20 | master c23ef0440 | 1 new finding | Arcane report race Gnome now 2.8 DPS under Undead after Arcane Blast hotfix (low)

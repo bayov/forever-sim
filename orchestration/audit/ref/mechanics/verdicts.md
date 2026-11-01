@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-11-01 UTC, master dd053d24c)
+# Mechanics audit: verdicts and settled items (as of 2026-11-01 UTC, master c23ef0440)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -24,7 +24,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Ruthless and The Human Spirit (Human); Savage and Command (Orc); Endurance (Tauren) | Human 1% crit any weapon, Spirit ×1.10; Orc no crit, non-guardian hunter and warlock pets ×1.05 damage (Classic's Command code); Tauren 5% health only | Dev notes post 7 (tier 1, server side; 70630 rows still old), 500e3a1; verified pass 42. Client 70707 widens Endurance's 2% crit damage to every school (mechanics-20261030-1); user ruling 2026-10-31: post 7 stands, health only, until the game shows otherwise |
 | Troll Regeneration | 70425: 20% / 20% in combat (leveling only) | 20555 |
 | Beast Slaying, Big Game Hunter, Elemental Insight | Damage only, no crit damage | aura 168; dbe2cf45a |
-| Moonkin Aura / Leader of the Pack | 3% all crit each, raid-wide (hotfix push 113283 on 70707, aura 290, effects 701335 / 702727); the 70707 table itself still has spell / weapon crit. Stacking unknown: open (mechanics-20261031-2) | 70707 hotfix (tier 1); was 70425 24907 effect 65 aura 57; 24932 aura 52 |
+| Moonkin Aura / Leader of the Pack | 3% all crit each, raid-wide (hotfix push 113283 on 70707, aura 290, effects 701335 / 702727); the 70707 table itself still has spell / weapon crit. Settled: they don't stack (user ruling 2026-11-01), sim gives 3% melee + 3% spell once under Forever (f962f6c8f) | 70707 hotfix (tier 1); user ruling; was 70425 24907 effect 65 aura 57; 24932 aura 52 |
 | Battle Shout, Trueshot Aura, Strength of Earth, Grace of Air, Windfury and Flametongue Totems | Raid-wide (effect 65) since 70425 | 70425 |
 | Grace of Air | Stacks with Windfury Totem; Windfury and Flametongue Totems stay exclusive | 70425 Attributes_11 0x400 dropped; 16 Oct notes |
 | Flametongue Totem | 548 / 781 / 1061 / 1363 per the N / 25 per 4 sec rule, white swings only (ProcTypeMask 4), no spell power | 70450 8253 / 8248 / 10523 / 16389 |
@@ -39,7 +39,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Sunder Armor (11597) | 450 armor a stack (aura 674), 30 sec, 1.5 sec GCD; the raid ramp (standard 32) is a raid assumption, not client data | 70707; pass 53 |
 | Curse of Recklessness | Armor only; 70425 dropped the target AP part | 70425 |
 | Salvation | −30% threat, raid buff, no DPS effect | 70425 1038 aura 10 bp −30 misc 127 |
-| Normalised Rage | k 3.46 one-hand / 4.5 two-hand × swing speed, level factor s = 0 (flat, user ruling 2026-10-25; 0.5 before); off hand 0.5; a crit adds 100% of the one-hand-rate Rage before the two-hand factor; misses, dodges and parries give none | user rulings, standards 21 (crit and miss rules 2026-10-23, logs via wowsims/forever 5ac4ffbcb6, f9f9f21883; Rule of Rage row 1322574) |
+| Normalised Rage | k 3.46 one-hand / 4.5 two-hand × swing speed, level factor s = 0 (flat, user ruling 2026-10-25; 0.5 before); off hand 0.5; a crit doubles the whole swing Rage, two-hand factor included (5b2eec6de, 2026-11-01; Forever logs from 10-09 via wowsims/forever 7c28cfa731, 16.2 -> 32.4 over 13 crits); misses, dodges and parries give none | user rulings, standards 21 (miss rule 2026-10-23; crit rule reversed 2026-11-01, logs via wowsims/forever 5ac4ffbcb6, f9f9f21883; Rule of Rage row 1322574) |
 | Race base stat offsets | Class baseline + offset (Str / Agi / Sta / Int, sums to 0, Spirit 0): Dwarf +2 −2 +1 −1, Night Elf −2 +2 0 0, Gnome −3 +1 −1 +3, High Order −1 +1 −1 +1 (as Windshaper); Horde rows from our 2026-10-10 sheets; carried to every level; not ruleset-gated | user ruling 2026-10-25 (92484f3c8), beta level 1 sheets via wowsims/forever 6296e8546d and Skyborne sheets 2026-09-22 (tier 1 logs at level 1; level 60 is an assumption). wowsims/forever 6fc22306b1 reverted to Classic offsets with no sheet; open in notes.md |
 | Rage from damage taken | 2.5 × (1 − A(attacker level)) × D / c(attacker level); A 20% to 42, 30% at 44, 36% at 46, 38% at 50, 40% at 63; c = Classic's level 45+ conversion (243.6 at 63); D = the attacker's hit × crit/crush multiplier, before any of our mitigation; periodic ticks count; 9.2 Rage for a 1500 boss hit | beta logs via wowsims/forever (ee2d69b16a, 73b317c7cf, de550b7df9), user-approved 2026-10-23, standards 21 (tier 1 logs; the 2.5 is report assumption warr_dt_rage_k) |
 | Nature's Swiftness | CD starts when the buff is used (COOLDOWN_ON_EVENT 0x02000000) | c44c2502a |
@@ -80,3 +80,4 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 - Berserker Rage's extra Rage from spell hits (sim/warrior/berserker_rage.go) still uses Classic's attacker-level conversion under Forever. No Level 60 preset casts it.
 - Normal mob health above level 35 is extrapolated; since 2026-10-23 it no longer feeds damage-taken Rage (the formula uses the attacker's level only), only leveling.
 - Class-side open assumptions (owned by the class workers): Paladin 2H Weapon Specialization on seal procs, Seal of Righteousness stored base points, Maelstrom Weapon proc rate, Omen of Clarity chance, Arcane Blast's bonus on Arcane Missiles.
+- Kang the Decapitator (2291) Rend proc 17153: 100 every 3 sec for 15 sec, physical bleed, verified on 70707 (`sp.py 17153`: dur 15000, eff 6 aura 3 bp 100 per 3000); 1 PPM assumed (no rate in the client). Pass 55, tier 1.
