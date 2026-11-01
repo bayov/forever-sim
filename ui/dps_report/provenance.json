@@ -232,8 +232,8 @@
 			}
 		},
 		"hunter__marksmanship": {
-			"commit": "9eb1fad6bd82a73c7a62aeb07d1605dadeeb60a2",
-			"recordedAt": "2026-11-01T12:01:33.125Z",
+			"commit": "e9344df43f36ed26e90e672ea228c9b6dbf1d426",
+			"recordedAt": "2026-11-01T16:15:50.591Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
@@ -244,15 +244,15 @@
 				"assets/database": "2b7844c64f5ad2a474ef66be8d76dc8ddfbd4e75",
 				"tools/rotopt": "4e49ce9c0b738c6d550b3193eabc472321fa0f58",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/hunter": "3f6219f73dc192706978de713f92efdbce9f9265",
-				"ui/hunter": "fe1298b20e3dfc39023c34492c7f4e54b804fa5f",
+				"sim/hunter": "3d31ee7d540668df38e9823dbcf06d371093442a",
+				"ui/hunter": "cb4bc0a93615d67ae9296dce418a70a1af30e6d4",
 				"tools/dps_report/req/hunter__marksmanship.json": "eef5e6b45ee2a9b1b37666559ec3c3a80fbb70d6",
 				"tools/dps_report/req/races/hunter__marksmanship.Dwarf.json": "4dae21174407296516094ca25a55a703fb8b8973"
 			}
 		},
 		"hunter__beast-mastery": {
-			"commit": "9eb1fad6bd82a73c7a62aeb07d1605dadeeb60a2",
-			"recordedAt": "2026-11-01T12:01:32.840Z",
+			"commit": "e9344df43f36ed26e90e672ea228c9b6dbf1d426",
+			"recordedAt": "2026-11-01T16:15:50.344Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
@@ -263,15 +263,16 @@
 				"assets/database": "2b7844c64f5ad2a474ef66be8d76dc8ddfbd4e75",
 				"tools/rotopt": "4e49ce9c0b738c6d550b3193eabc472321fa0f58",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/hunter": "3f6219f73dc192706978de713f92efdbce9f9265",
-				"ui/hunter": "fe1298b20e3dfc39023c34492c7f4e54b804fa5f",
+				"sim/hunter": "3d31ee7d540668df38e9823dbcf06d371093442a",
+				"ui/hunter": "cb4bc0a93615d67ae9296dce418a70a1af30e6d4",
 				"tools/dps_report/req/hunter__beast-mastery.json": "74f4065e75210aea3111dbca65ad8fc8940cbb94",
 				"tools/dps_report/req/races/hunter__beast-mastery.Dwarf.json": "2f756e4ab78c398ce89bdf86d007bd997fd94b51"
 			}
 		},
 		"hunter__survival": {
-			"commit": "905787afdca9e3d0a6691e7e53215d33bcebd2b9",
-			"recordedAt": "2026-11-01T11:05:14.894Z",
+			"commit": "e9344df43f36ed26e90e672ea228c9b6dbf1d426",
+			"recordedAt": "2026-11-01T16:15:50.799Z",
+			"iterations": 20000,
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -281,8 +282,8 @@
 				"assets/database": "2b7844c64f5ad2a474ef66be8d76dc8ddfbd4e75",
 				"tools/rotopt": "4e49ce9c0b738c6d550b3193eabc472321fa0f58",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/hunter": "3f6219f73dc192706978de713f92efdbce9f9265",
-				"ui/hunter": "fe1298b20e3dfc39023c34492c7f4e54b804fa5f",
+				"sim/hunter": "3d31ee7d540668df38e9823dbcf06d371093442a",
+				"ui/hunter": "cb4bc0a93615d67ae9296dce418a70a1af30e6d4",
 				"tools/dps_report/req/hunter__survival.json": "5fef941118cb361607714cfcd524fae06825b023",
 				"tools/dps_report/req/races/hunter__survival.Dwarf.json": "60732486c96f4bb0a4b0387d272eb1cb57adcefa"
 			}
@@ -1384,8 +1385,8 @@
 			}
 		},
 		"hunter__beast-mastery-tallstrider": {
-			"commit": "9eb1fad6bd82a73c7a62aeb07d1605dadeeb60a2",
-			"recordedAt": "2026-11-01T12:01:32.913Z",
+			"commit": "e9344df43f36ed26e90e672ea228c9b6dbf1d426",
+			"recordedAt": "2026-11-01T16:15:50.444Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
@@ -1396,15 +1397,15 @@
 				"assets/database": "2b7844c64f5ad2a474ef66be8d76dc8ddfbd4e75",
 				"tools/rotopt": "4e49ce9c0b738c6d550b3193eabc472321fa0f58",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/hunter": "3f6219f73dc192706978de713f92efdbce9f9265",
-				"ui/hunter": "fe1298b20e3dfc39023c34492c7f4e54b804fa5f",
+				"sim/hunter": "3d31ee7d540668df38e9823dbcf06d371093442a",
+				"ui/hunter": "cb4bc0a93615d67ae9296dce418a70a1af30e6d4",
 				"tools/dps_report/req/hunter__beast-mastery-tallstrider.json": "29aa5bcf3d225015c3f36d817019b1be1dce08f1",
 				"tools/dps_report/req/races/hunter__beast-mastery.Dwarf.json": "2f756e4ab78c398ce89bdf86d007bd997fd94b51"
 			}
 		},
 		"hunter__beast-mastery-wolf": {
-			"commit": "9eb1fad6bd82a73c7a62aeb07d1605dadeeb60a2",
-			"recordedAt": "2026-11-01T12:01:32.985Z",
+			"commit": "e9344df43f36ed26e90e672ea228c9b6dbf1d426",
+			"recordedAt": "2026-11-01T16:15:50.524Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
@@ -1415,15 +1416,15 @@
 				"assets/database": "2b7844c64f5ad2a474ef66be8d76dc8ddfbd4e75",
 				"tools/rotopt": "4e49ce9c0b738c6d550b3193eabc472321fa0f58",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/hunter": "3f6219f73dc192706978de713f92efdbce9f9265",
-				"ui/hunter": "fe1298b20e3dfc39023c34492c7f4e54b804fa5f",
+				"sim/hunter": "3d31ee7d540668df38e9823dbcf06d371093442a",
+				"ui/hunter": "cb4bc0a93615d67ae9296dce418a70a1af30e6d4",
 				"tools/dps_report/req/hunter__beast-mastery-wolf.json": "c174d0ac5f25aa6db79af48f0044de8ed0ab517b",
 				"tools/dps_report/req/races/hunter__beast-mastery.Dwarf.json": "2f756e4ab78c398ce89bdf86d007bd997fd94b51"
 			}
 		},
 		"hunter__marksmanship-tallstrider": {
-			"commit": "9eb1fad6bd82a73c7a62aeb07d1605dadeeb60a2",
-			"recordedAt": "2026-11-01T12:01:33.209Z",
+			"commit": "e9344df43f36ed26e90e672ea228c9b6dbf1d426",
+			"recordedAt": "2026-11-01T16:15:50.658Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
@@ -1434,15 +1435,15 @@
 				"assets/database": "2b7844c64f5ad2a474ef66be8d76dc8ddfbd4e75",
 				"tools/rotopt": "4e49ce9c0b738c6d550b3193eabc472321fa0f58",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/hunter": "3f6219f73dc192706978de713f92efdbce9f9265",
-				"ui/hunter": "fe1298b20e3dfc39023c34492c7f4e54b804fa5f",
+				"sim/hunter": "3d31ee7d540668df38e9823dbcf06d371093442a",
+				"ui/hunter": "cb4bc0a93615d67ae9296dce418a70a1af30e6d4",
 				"tools/dps_report/req/hunter__marksmanship-tallstrider.json": "6f47472308ecc8844cdd4d5279026fbb76f34e65",
 				"tools/dps_report/req/races/hunter__marksmanship.Dwarf.json": "4dae21174407296516094ca25a55a703fb8b8973"
 			}
 		},
 		"hunter__marksmanship-wolf": {
-			"commit": "9eb1fad6bd82a73c7a62aeb07d1605dadeeb60a2",
-			"recordedAt": "2026-11-01T12:01:33.281Z",
+			"commit": "e9344df43f36ed26e90e672ea228c9b6dbf1d426",
+			"recordedAt": "2026-11-01T16:15:50.731Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
@@ -1453,15 +1454,16 @@
 				"assets/database": "2b7844c64f5ad2a474ef66be8d76dc8ddfbd4e75",
 				"tools/rotopt": "4e49ce9c0b738c6d550b3193eabc472321fa0f58",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/hunter": "3f6219f73dc192706978de713f92efdbce9f9265",
-				"ui/hunter": "fe1298b20e3dfc39023c34492c7f4e54b804fa5f",
+				"sim/hunter": "3d31ee7d540668df38e9823dbcf06d371093442a",
+				"ui/hunter": "cb4bc0a93615d67ae9296dce418a70a1af30e6d4",
 				"tools/dps_report/req/hunter__marksmanship-wolf.json": "146cb232005892fea39b21dcb0db2b17a96772b7",
 				"tools/dps_report/req/races/hunter__marksmanship.Dwarf.json": "4dae21174407296516094ca25a55a703fb8b8973"
 			}
 		},
 		"hunter__survival-tallstrider": {
-			"commit": "905787afdca9e3d0a6691e7e53215d33bcebd2b9",
-			"recordedAt": "2026-11-01T11:05:14.962Z",
+			"commit": "e9344df43f36ed26e90e672ea228c9b6dbf1d426",
+			"recordedAt": "2026-11-01T16:15:50.862Z",
+			"iterations": 20000,
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -1471,15 +1473,16 @@
 				"assets/database": "2b7844c64f5ad2a474ef66be8d76dc8ddfbd4e75",
 				"tools/rotopt": "4e49ce9c0b738c6d550b3193eabc472321fa0f58",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/hunter": "3f6219f73dc192706978de713f92efdbce9f9265",
-				"ui/hunter": "fe1298b20e3dfc39023c34492c7f4e54b804fa5f",
+				"sim/hunter": "3d31ee7d540668df38e9823dbcf06d371093442a",
+				"ui/hunter": "cb4bc0a93615d67ae9296dce418a70a1af30e6d4",
 				"tools/dps_report/req/hunter__survival-tallstrider.json": "c10b88a97f4bb0e710a44ace953cd164ca8fc8b2",
 				"tools/dps_report/req/races/hunter__survival.Dwarf.json": "60732486c96f4bb0a4b0387d272eb1cb57adcefa"
 			}
 		},
 		"hunter__survival-wolf": {
-			"commit": "905787afdca9e3d0a6691e7e53215d33bcebd2b9",
-			"recordedAt": "2026-11-01T11:05:15.034Z",
+			"commit": "e9344df43f36ed26e90e672ea228c9b6dbf1d426",
+			"recordedAt": "2026-11-01T16:15:50.943Z",
+			"iterations": 20000,
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -1489,8 +1492,8 @@
 				"assets/database": "2b7844c64f5ad2a474ef66be8d76dc8ddfbd4e75",
 				"tools/rotopt": "4e49ce9c0b738c6d550b3193eabc472321fa0f58",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/hunter": "3f6219f73dc192706978de713f92efdbce9f9265",
-				"ui/hunter": "fe1298b20e3dfc39023c34492c7f4e54b804fa5f",
+				"sim/hunter": "3d31ee7d540668df38e9823dbcf06d371093442a",
+				"ui/hunter": "cb4bc0a93615d67ae9296dce418a70a1af30e6d4",
 				"tools/dps_report/req/hunter__survival-wolf.json": "c4ec6e6993f001ea1d13bec06f0ca01ad6626112",
 				"tools/dps_report/req/races/hunter__survival.Dwarf.json": "60732486c96f4bb0a4b0387d272eb1cb57adcefa"
 			}
