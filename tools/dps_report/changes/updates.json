@@ -1486,7 +1486,7 @@
       "hunter__survival-tallstrider",
       "hunter__survival-wolf"
      ],
-     "note": "The game's creature damage figure already includes the pet's own attack power, and the sim was adding that attack power on top. 152 logged hits of a level 30 Cat fit the new figure. Level 60 isn't measured yet, so it is listed under Assumptions.",
+     "note": "The game's creature damage figure already includes the pet's own attack power, and the sim was adding that attack power on top. 152 logged hits of a level 30 Cat fit the new figure.",
      "commits": [
       "e9344df"
      ]
