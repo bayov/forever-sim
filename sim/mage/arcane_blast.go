@@ -19,11 +19,16 @@ var ArcaneBlastBaseDamage = [ArcaneBlastRanks + 1][]float64{{0}, {33.28, 38.72},
 var ArcaneBlastScaling = [ArcaneBlastRanks + 1]core.RankScaling{{}, {28, 0.5}, {38, 0.8}, {48, 1.0}, {58, 1.3}, {}}
 var ArcaneBlastLevel = [ArcaneBlastRanks + 1]int{0, 20, 30, 40, 50, 60}
 
-// Each Arcane Blast puts a stack of 400573 on the mage, up to 4: 15% of Intellect as spell
-// damage (all schools) and 175% more mana on Arcane Blast per stack. Since 70425 the buff lasts
-// 15 sec from its first stack, more stacks don't refresh it, and other spells no longer end it
-// (the client gives it no charges and no proc flags). The 10% damage bonus on other spells is gone.
-const ArcaneBlastIntellectPerStack = 0.15
+// Each Arcane Blast puts a stack of 400573 on the mage, up to 4: 12% of Intellect as spell
+// damage (all schools) and 100% more mana on Arcane Blast per stack, for 18 sec from its first
+// stack. More stacks don't refresh it, and other spells don't end it (the client gives it no
+// charges and no proc flags since 70425). The 10% damage bonus on other spells is gone.
+// The launch realms' hotfix to the October 30 build (foreverchanges.pro/patch-notes, first seen
+// 2026-10-30, not in Blizzard's notes) changed it from 15% of Intellect, 175% mana and 15 sec;
+// client 1.60.1.70707 still has the old values.
+const ArcaneBlastIntellectPerStack = 0.12
+const ArcaneBlastCostPercentPerStack = 100
+const ArcaneBlastDuration = time.Second * 18
 const ArcaneBlastMaxStacks = 4
 
 func (mage *Mage) registerArcaneBlastSpell() {
@@ -41,7 +46,7 @@ func (mage *Mage) registerArcaneBlastSpell() {
 	mage.ArcaneBlastAura = mage.RegisterAura(core.Aura{
 		Label:     "Arcane Blast",
 		ActionID:  core.ActionID{SpellID: 400573},
-		Duration:  time.Second * 15,
+		Duration:  ArcaneBlastDuration,
 		MaxStacks: ArcaneBlastMaxStacks,
 		// The mage's own casts give the stacks, so the rotation knows them at once.
 		NoReaction: true,
@@ -52,11 +57,11 @@ func (mage *Mage) registerArcaneBlastSpell() {
 			if newStacks > 0 {
 				mage.EnableDynamicStatDep(sim, spellPowerDeps[newStacks])
 			}
-			// One cost row of 175% a stack, which multiplies Arcane Power's under Forever.
+			// One cost row of 100% a stack, which multiplies Arcane Power's under Forever.
 			for _, spell := range mage.ArcaneBlast {
 				if spell != nil {
-					mage.changeCostPercent(spell, 175*oldStacks, false)
-					mage.changeCostPercent(spell, 175*newStacks, true)
+					mage.changeCostPercent(spell, ArcaneBlastCostPercentPerStack*oldStacks, false)
+					mage.changeCostPercent(spell, ArcaneBlastCostPercentPerStack*newStacks, true)
 				}
 			}
 		},
@@ -102,7 +107,7 @@ func (mage *Mage) newArcaneBlastSpellConfig(rank int) core.SpellConfig {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
 			spell.DealDamage(sim, spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit))
 			// The stack comes after the hit, so this cast doesn't use its own spell damage.
-			// More stacks don't move the 15 sec on from the first one.
+			// More stacks don't move the 18 sec on from the first one.
 			if !mage.ArcaneBlastAura.IsActive() {
 				mage.ArcaneBlastAura.Activate(sim)
 			}

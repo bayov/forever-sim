@@ -116,8 +116,8 @@ func TestMageHeatingUpFireBlastAndPresenceOfMind(t *testing.T) {
 	}
 }
 
-// Since 1.60.1.70425 each Arcane Blast stack is 15% of Intellect as spell damage and 175% more
-// mana on Arcane Blast. The buff lasts 15 sec from the first stack, and other spells don't end it.
+// Since the 2026-10-30 hotfix each Arcane Blast stack is 12% of Intellect as spell damage and 100%
+// more mana on Arcane Blast. The buff lasts 18 sec from the first stack, and other spells don't end it.
 func TestMageArcaneBlastStacks(t *testing.T) {
 	// Arcane to Arcane Wrath, with Missile Barrage 2.
 	sim, mage := newMageSim(t, "00000520310001")
@@ -147,17 +147,17 @@ func TestMageArcaneBlastStacks(t *testing.T) {
 	if got := mage.ArcaneBlastAura.GetStacks(); got != 3 {
 		t.Fatalf("%d Arcane Blast stacks after 3 casts, want 3", got)
 	}
-	if got, want := arcaneBlast.Cost.GetCurrentCost(), baseCost*(1+3*1.75); math.Abs(got-want) > 1e-6 {
+	if got, want := arcaneBlast.Cost.GetCurrentCost(), baseCost*(1+3*1.00); math.Abs(got-want) > 1e-6 {
 		t.Errorf("Arcane Blast costs %.1f at 3 stacks, want %.1f", got, want)
 	}
-	if got, want := mage.GetStat(stats.SpellPower)-baseSpellPower, 0.45*mage.GetStat(stats.Intellect); math.Abs(got-want) > 1e-6 {
-		t.Errorf("3 stacks give %.2f spell damage, want %.2f (45%% of Intellect)", got, want)
+	if got, want := mage.GetStat(stats.SpellPower)-baseSpellPower, 0.36*mage.GetStat(stats.Intellect); math.Abs(got-want) > 1e-6 {
+		t.Errorf("3 stacks give %.2f spell damage, want %.2f (36%% of Intellect)", got, want)
 	}
 	if got := fireball.DamageMultiplierAdditive; math.Abs(got-baseMultiplier) > 1e-9 {
 		t.Errorf("Fireball's multiplier is %.2f at 3 stacks, want %.2f", got, baseMultiplier)
 	}
 	// The first stack came 1.5 sec into the first cast, and later stacks don't refresh it.
-	if got, want := mage.ArcaneBlastAura.RemainingDuration(sim), 15*time.Second-3*time.Second; got != want {
+	if got, want := mage.ArcaneBlastAura.RemainingDuration(sim), 18*time.Second-3*time.Second; got != want {
 		t.Errorf("the stacks have %s left, want %s", got, want)
 	}
 
@@ -165,9 +165,9 @@ func TestMageArcaneBlastStacks(t *testing.T) {
 	if got := mage.ArcaneBlastAura.GetStacks(); got != 3 {
 		t.Errorf("%d Arcane Blast stacks after a Fireball, want 3", got)
 	}
-	// 15 sec after the first stack, which came at 1.5 sec.
-	sim.AddPendingAction(&core.PendingAction{NextActionAt: 16500 * time.Millisecond, OnAction: func(*core.Simulation) {}})
-	for sim.CurrentTime < 16500*time.Millisecond && !sim.Step() {
+	// 18 sec after the first stack, which came at 1.5 sec.
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: 19500 * time.Millisecond, OnAction: func(*core.Simulation) {}})
+	for sim.CurrentTime < 19500*time.Millisecond && !sim.Step() {
 	}
 	if mage.ArcaneBlastAura.IsActive() {
 		t.Errorf("the Arcane Blast stacks are still up %s in", sim.CurrentTime)
@@ -480,7 +480,7 @@ func TestMageIceBarrier(t *testing.T) {
 
 // Under Forever each percent damage and cost row is its own factor (wowsims/forever fef2bcaebd and
 // 810101380a). Arcane Power with Arcane Instability 3 is 1.3 x 1.03, four Arcane Blast stacks
-// under Arcane Power cost 8 x 1.3 times the base, a Missile Barrage Arcane Missiles is free under
+// under Arcane Power cost 5 x 1.3 times the base (1 + 4 x 100%), a Missile Barrage Arcane Missiles is free under
 // Arcane Power, and the Gnome's Eureka! multiplies Arcane Power's cost too.
 func TestMageModifiersMultiply(t *testing.T) {
 	// The Arcane preset's tree: Missile Barrage 2, Arcane Blast, Arcane Instability 3, Arcane Power.
@@ -501,8 +501,8 @@ func TestMageModifiersMultiply(t *testing.T) {
 	}
 	mage.ArcaneBlastAura.Activate(sim)
 	mage.ArcaneBlastAura.SetStacks(sim, 4)
-	if got, want := arcaneBlast.Cost.GetCurrentCost(), blastCost*8*1.3; math.Abs(got-want) > 1e-6 {
-		t.Errorf("Arcane Blast costs %.1f at 4 stacks under Arcane Power, want %.1f (10.4 times the base)", got, want)
+	if got, want := arcaneBlast.Cost.GetCurrentCost(), blastCost*5*1.3; math.Abs(got-want) > 1e-6 {
+		t.Errorf("Arcane Blast costs %.1f at 4 stacks under Arcane Power, want %.1f (6.5 times the base)", got, want)
 	}
 	mage.MissileBarrageAura.Activate(sim)
 	if got := arcaneMissiles.Cost.GetCurrentCost(); got != 0 {
