@@ -11,6 +11,33 @@ Numbers here are XP an hour (the plan's score) at 4000 sessions on seeds 1 and 1
 2000 on seed 1 for the screens, against the searched plan's rotation at the level.
 `docs/leveling_plan.md` (The audit) has what we kept.
 
+### Round 2, 2026-11-01 (the audited plan from level 1, 97.92h and 97.86h, kept as it was)
+
+Talents first, with the gear kept, after the sim changes since round 1 (casts reset the swing,
+binary Frost Shock, the new spell resists, Windfury Totem's cooldown, the training schedule).
+Numbers are minutes over the levels named, against the plan, on the same sessions.
+
+- The route search (rotations fixed, respecs at 20, 30, 40 and 50, 17,241 sims) ends on the
+  plan's own route, 97.91h each (±0.09h). No respec saves anything.
+- Worth table at 14, 20, 26, 32, 38, 44, 50, 56 and 59 (one point more or less in each talent,
+  2000 sessions). The points worth adding that the tree allows are all worth less than the
+  points they'd replace.
+- Maelstrom Weapon at 35 to 39, as early as its row opens, with the Maelstrom line copied into
+  the rotations from 32: Rage of the Farseer at 40 then Tidal Focus and Mindfulness +58 min
+  over 33 to 59, or Rage of the Farseer after Mindfulness +63. The training schedule holds
+  Lightning Bolt 2 to 7 until 44, so the bolts are rank 1. With them trained on time it's still
+  +16 min over 35 to 47 (+19 for the second order), before their gold.
+- 49 to 59 in place of Convection 5, Anticipation, Call of Flame 3, Improved Lightning Shield
+  3 and Flurry 4 (3000 sessions): Totemic Focus 5, Anticipation, Convection 5 +21; Convection
+  5, Call of Flame 3, Elemental Devastation 2, Elemental Focus +1.4; Guardian Totems 2 for
+  Improved Lightning Shield and Flurry +3.3; Anticipation 3 for both -0.5; Totemic Focus 3 for
+  Anticipation and both +2.9.
+- Rotation checks: Earth Shock in place of Frost Shock rank 1 at 22 to 24 -0.7 min on both
+  seeds (left out, under half a mob). Dropping Windfury Totem +5.5h, Mana Spring Totem +1.1h,
+  Lightning Shield +7.5h, Searing Totem +1.4h over 32 to 59. The rest line ±10% on each of its
+  four numbers at every level: resting below 100% health -1.8 min and sitting down 10% higher on
+  mana -1.3, the rest +1.5 to +62.
+
 ### Round 1, 2026-10-19 (the searched plan, 107h 5m, to 102h 8m)
 
 Kept: Stoneskin Totem for the earth totem (every pull at 10 to 19 and 44 to 59, from two

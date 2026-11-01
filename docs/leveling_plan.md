@@ -265,6 +265,26 @@ What paid, by how much over its band:
 - At 45 to 59: Searing Totem only while we stand, since one dropped as we walk to the next mob
   is left behind.
 
+We checked the plan again on 2026-11-01, from level 1 (97.92h and 97.86h on the two seeds),
+after the sim changes since the audit: casts reset the swing, Frost Shock is binary, the new
+spell resists, Windfury Totem's cooldown and the training schedule. The talents came first,
+with the gear kept. Nothing beat the plan by more than half a mob a session, so it stays as
+it was:
+
+- The route search ends on the plan's own route, and no respec saves anything.
+- A worth table at nine levels (one point more or less in each talent) has no point the tree
+  allows that's worth more than the one it would replace.
+- Maelstrom Weapon at 35 to 39, as early as its row opens, loses 16 to 19 minutes over 35 to 47
+  even with Lightning Bolt 2 to 7 trained on time. Without them it loses about an hour, because
+  the training schedule leaves the bolts at rank 1 until 44.
+- Five other tails for 49 to 59 (Totemic Focus, Elemental Focus, Guardian Totems, more
+  Anticipation) come out between 0.5 minutes faster and 21 minutes slower.
+- Each totem and Lightning Shield still pays, by 1 to 7.5 hours over 32 to 59. The rest
+  thresholds are at their best within 2 minutes. Earth Shock in place of Frost Shock at 22 to
+  24 saves 0.7 minutes.
+
+The numbers are in `orchestration/leveling_audit_log.md` (round 2).
+
 Healing Stream Totem in place of Mana Spring Totem paid at 42 to 47 with Mindfulness and the
 old totems, but not once Stoneskin was in. The template now has knobs for these rules
 (`earthTotem`, `earthMinPulled`, `chainTargetBelow`, `searingStill`, `searingFreshAbove`,
