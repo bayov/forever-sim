@@ -138,9 +138,12 @@ def talent_builds():
 
 def repo():
     """forever-sim's GitHub repo as owner/name, from its origin remote."""
-    r = subprocess.run(['jj', 'git', 'remote', 'list', '--ignore-working-copy'],
-                       capture_output=True, text=True, cwd=ROOT)
-    if r.returncode != 0:
+    try:
+        r = subprocess.run(['jj', 'git', 'remote', 'list', '--ignore-working-copy'],
+                           capture_output=True, text=True, cwd=ROOT)
+    except FileNotFoundError:  # no jj, like in a cloud session
+        r = None
+    if r is None or r.returncode != 0:
         r = subprocess.run(['git', 'remote', '-v'], capture_output=True, text=True, cwd=ROOT)
     m = re.search(r'^origin\s+\S*github\.com[:/]([^/\s]+/[^/\s]+?)(?:\.git)?(?:\s|$)', r.stdout, re.M)
     return m.group(1) if m else None
