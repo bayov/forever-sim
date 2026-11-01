@@ -1434,6 +1434,17 @@
      "commits": [
       "905787a"
      ]
+    },
+    {
+     "title": "Method: the hunters' notes now say Improved Tracking counts against the generic boss, unlike Murder and the other creature-type talents",
+     "kind": "method",
+     "classes": [
+      "Hunter"
+     ],
+     "note": "Text only: the numbers already counted it. A hunter can track every raid boss type except Mechanical, and the talent is worth 4 to 5% to the hunters who take it.",
+     "commits": [
+      "01a4531"
+     ]
     }
    ],
    "internal": [
