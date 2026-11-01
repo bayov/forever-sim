@@ -14,8 +14,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 	// List any known bugs / issues here and they'll be shown on the site.
 	knownIssues: [
 		`Forever rules: a Judgement does not consume the seal, Judgement of the Crusader lasts 40 sec and melee hits refresh it,
-		Holy Strike is baseline, Consecration is baseline and reworked, and the talent trees are the beta client's. Twist of Light's
-		Echo and Light's Vigil are simulated. Seal of Fury is not.`,
+		Holy Strike is baseline, Consecration is baseline and reworked, and the talent trees are the launch realms' October 30
+		hotfix trees. Unsealed Wrath's stored seals are simulated (white swings store and spend them). Light's Vigil heals only, and
+		the sim models no heals. Seal of Fury is not simulated.`,
 		`The Level 60 gear is synthetic: items that are not in the game, built to Phase 1 budgets, with Justice Battlegear's set bonuses.`,
 		`Be aware that not all item and weapon enchants are currently implemented in the sim, which make some notable Retribution
 		weapons like Pendulum of Doom and The Jackhammer undervalued.`,
