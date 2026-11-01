@@ -23,6 +23,10 @@ var IceBarrierMaxLevel = [IceBarrierRanks + 1]int{0, 46, 52, 58, 64}
 
 const FrigidPowerSpellId = 1326891
 
+// Frost damage from Frigid Power and from the shield while it holds.
+const FrigidPowerDamage = 0.15
+const IceBarrierShieldedDamage = 0.05
+
 // Ice Barrier since the 2026-10-20 hotfix to 70450 (wago.tools hotfix table, Spell and
 // SpellEffect rows of 11426-13033, 1326891 and 11189; wowsims/forever 983ea6fcc1):
 //
@@ -30,8 +34,11 @@ const FrigidPowerSpellId = 1326891
 // damage by $1326891s1% for $d. While shielded, your Frost damage is increased by an additional $s2%
 // and you do not lose casting time when you take damage."
 //
-// The shield's effects 2 and 3 raise Frost damage by 3% while it holds, and every cast also gives
-// Frigid Power, 3% more for the full minute however soon the shield breaks. Both take the mask
+// The shield's effects 2 and 3 raise Frost damage by 5% while it holds, and every cast also gives
+// Frigid Power, 15% more for the full minute however soon the shield breaks. Those are the
+// launch realms' newest values: hotfix push 113486 on 1.60.1.70707 (region 91), SpellEffect
+// 1364979-80 (11426) 3 -> 5 and 1365007-08 (1326891) 3 -> 15, foreverchanges.pro's October 30
+// hotfix. The 2026-10-20 hotfix (push 112753) had 3% and 3%. Both take the mask
 // Piercing Ice had, every Frost spell Frostfire Bolt included. Under Forever each is its own
 // damage factor, as every percent damage row is (wowsims/forever fef2bcaebd). The absorb takes
 // 10% of Frost spell power, and Frost Warding's effect 3 (10% a point) raises the whole of it.
@@ -50,9 +57,9 @@ func (mage *Mage) registerIceBarrierSpell() {
 	mage.onMageSpellOfSchool(core.SpellSchoolFrost, func(spell *core.Spell) {
 		frostSpells = append(frostSpells, spell)
 	})
-	frostDamage := func(gain bool) {
+	frostDamage := func(pct float64, gain bool) {
 		for _, spell := range frostSpells {
-			mage.changeDamagePercent(spell, 0.03, gain)
+			mage.changeDamagePercent(spell, pct, gain)
 		}
 	}
 
@@ -61,10 +68,10 @@ func (mage *Mage) registerIceBarrierSpell() {
 		Label:    "Frigid Power",
 		Duration: time.Minute,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			frostDamage(true)
+			frostDamage(FrigidPowerDamage, true)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			frostDamage(false)
+			frostDamage(FrigidPowerDamage, false)
 		},
 	})
 
@@ -81,10 +88,10 @@ func (mage *Mage) registerIceBarrierSpell() {
 			Label:    fmt.Sprintf("Ice Barrier (Rank %d)", rank),
 			Duration: time.Minute,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				frostDamage(true)
+				frostDamage(IceBarrierShieldedDamage, true)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				frostDamage(false)
+				frostDamage(IceBarrierShieldedDamage, false)
 				shieldStrength = 0
 				if mage.activeBarrier == aura {
 					mage.activeBarrier = nil

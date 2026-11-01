@@ -439,8 +439,8 @@ func TestMageIceBarrier(t *testing.T) {
 	if !topRank(t, "Ice Barrier", mage.IceBarrier).Cast(sim, &mage.Unit) {
 		t.Fatalf("Ice Barrier didn't cast")
 	}
-	if got := frostbolt.DamageMultiplier / frostBase; math.Abs(got-1.03*1.03) > 1e-9 {
-		t.Errorf("Frostbolt does %.4f times the damage with the shield and Frigid Power up, want 1.0609", got)
+	if got := frostbolt.DamageMultiplier / frostBase; math.Abs(got-(1+FrigidPowerDamage)*(1+IceBarrierShieldedDamage)) > 1e-9 {
+		t.Errorf("Frostbolt does %.4f times the damage with the shield and Frigid Power up, want 1.2075", got)
 	}
 	if got := fireBlast.DamageMultiplier; got != fireBase {
 		t.Errorf("Fire Blast's damage multiplier moved to %.3f, want %.3f", got, fireBase)
@@ -470,8 +470,8 @@ func TestMageIceBarrier(t *testing.T) {
 	if !mage.FrigidPowerAura.IsActive() {
 		t.Errorf("Frigid Power went with the shield")
 	}
-	if got := frostbolt.DamageMultiplier / frostBase; math.Abs(got-1.03) > 1e-9 {
-		t.Errorf("Frostbolt does %.4f times the damage with Frigid Power alone, want 1.03", got)
+	if got := frostbolt.DamageMultiplier / frostBase; math.Abs(got-(1+FrigidPowerDamage)) > 1e-9 {
+		t.Errorf("Frostbolt does %.4f times the damage with Frigid Power alone, want 1.15", got)
 	}
 	if got := hit(1000); got != 1000 {
 		t.Errorf("a 1000 hit does %.1f with the shield gone, want 1000", got)
@@ -759,8 +759,8 @@ func TestMageConeOfColdAndWintersChill(t *testing.T) {
 	if math.Abs(baseMultiplier-1.35) > 1e-9 || math.Abs(baseCoefficient-ConeOfColdSpellCoeff) > 1e-9 {
 		t.Errorf("Cone of Cold has %.4f damage and %.3f coefficient, want 1.35 (Improved Cone of Cold 3) and 0.129", baseMultiplier, baseCoefficient)
 	}
-	if multiplier, coefficient := mage.wintersChillBonus(target); math.Abs(multiplier-1.15) > 1e-9 || math.Abs(coefficient-0.21) > 1e-9 {
-		t.Errorf("3 Winter's Chill stacks give Cone of Cold %.4f times the damage and %.3f more coefficient, want 1.15 and 0.21", multiplier, coefficient)
+	if multiplier, coefficient := mage.wintersChillBonus(target); math.Abs(multiplier-1.6) > 1e-9 || math.Abs(coefficient-0.21) > 1e-9 {
+		t.Errorf("3 Winter's Chill stacks give Cone of Cold %.4f times the damage and %.3f more coefficient, want 1.6 and 0.21", multiplier, coefficient)
 	}
 	mage.fingersOfFrostChance = 0
 	castNow(cone)
