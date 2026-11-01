@@ -8,6 +8,37 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents (now settled for every talent in the 70338 tree, see Trait curves below): the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## The launch realms' October 30 hotfix (1.60.1.70707+hf, 2026-11-01)
+
+The launch realms reworked the whole paladin tree with a server hotfix to the October 30 build. Client 70707 still has the old tree; the realms send the new rows as hotfixes. We read them from wago.tools' hotfix log (https://wago.tools/hotfixes?product=wowf, region 91, build 70707; the paladin push is 113139) through `tools/sources/hotfixes.py`, as the cached pseudo-version `1.60.1.70707+hf`, and the trees in `tools/forever_talents/client/paladin.json` come from it. foreverchanges.pro's calculator (https://foreverchanges.pro/talents/paladin) has the same trees. The per-talent listing under Talents below is older than this hotfix; the client file is the current tree. Every paladin talent string reads differently.
+
+What the sim does with it (each rule has a test, `sim/paladin/retribution/hotfix_test.go` and the talent tests):
+
+- **Unsealed Wrath** (1310735) replaces Twist of Light at the bottom of Retribution, now behind Repentance: "Your melee attacks store a copy of your active Seal for 15 sec, stacking up to 3 times. Landing an attack with a different Seal consumes all stacks, giving the stored Seal its normal chance to activate once per stack." The copies are the Echo auras (Echo of Command 1311703, Echo of Righteousness 1311704, of Fury 1311701, of Justice 1311705): 15 sec, up to 3 stacks, no charges or proc flags. The talent keeps one proc row, 100% on done melee auto attacks, and its seal cost cut is 0 (Twist of Light took 20% off the seals). The sim's reading (report assumption `pal_unsealed_wrath`): landed white swings store and spend copies, Holy Strike neither; a swing under another seal spends them all, one roll of the stored seal's own chance each (Seal of Righteousness every time, Seal of Command its 7 a minute with no proc cooldown between the copies); Seal of the Crusader and Seal of Wisdom have no Echo, so they store nothing. `sim/paladin/unsealed_wrath.go`.
+- **Conviction** 3 ranks of 2% crit with all spells and attacks (20117: aura 290 instead of melee weapon crit), so Hammer of Wrath, Holy Shock and the consumables get it too.
+- **Vindication** no longer raises the paladin's attack power. The target's attack power cut isn't scored, so the sim has nothing for it.
+- **Two-Handed Weapon Specialization** "Increases the physical damage you deal by 6%, and reduces all threat you generate by 20% while a two-handed melee weapon is equipped" (2 / 4 / 6%, 7 / 14 / 20%). The damage effect is the row it was, so it keeps raising the seals, judgements and Holy Strike as wowsims/forever measured in game (`pal_2h_spec_holy`); the threat cut is new. **One-Handed Weapon Specialization** and **Instrument of Law** are gone.
+- **Improved Seals** 5 ranks of 3% (still 15%), now in Holy. **Champion of the Light** 5 ranks of 12% of Intellect as spell power (still 60%) and 0.2 sec off Hammer of Wrath's 1 sec cast a rank, so 5/5 makes it instant.
+- **Holy Power** is crit healing only (10 to 50%, aura 50): no damage crit any more. **Divine Precision** 2 ranks of 4% Holy hit (8%, was 18%), on the same spells. **Reverence** 2 ranks of 15%. **Light's Vigil** heals only and goes on an ally (its enemy damage and mana refund are gone), so the sim has nothing for it. **Oath of Light** and **Boundless Light** (Holy Shock crit on allies) are healing talents. **Holy Conduit** moved to Holy, **Divine Intellect** to Protection, **Unyielding Faith** to Retribution; **Vengeance** needs Seal of Command.
+- **Swift Judgement** (1310994) is a Judgement of its own: free, off the global cooldown, on a 1 min cooldown that Judgement's doesn't share, not consuming the seal. The sim reads Sanctified Judgement ("your Judgement ability") as not refunding it. It was a cooldown reset for Judgement.
+- **Protection:** Redoubt 6% block a rank (30%), Improved Righteous Fury 3% less damage taken a rank (9%), Shield Specialization 2 ranks (15% block value and a 50% chance of the 4% mana a rank), Iron Creed 3 ranks (10% Holy Strike threat and, under Righteous Fury, 2% less damage taken for 6 sec a rank), Sacred Duty no Stamina and 5 sec off Forbearance a rank, Holy Shield 100 mana for a new rank 1 at 30 (75 a block; the old ranks at 40 and 50, 150 and 195 mana) with no Templar's Bulwark requirement, Shieldsworn new (Holy Strike 4 sec faster, and it triggers Holy Shield's damage and Shield Specialization's mana without charges or cooldowns). Righteous Fury's 33% all threat was already in. Seal of Fury, Improved Seal of Fury (gone) and Stoicism aren't simmed.
+
+The presets re-searched on the new trees (2026-11-01; `tools/rotopt/paladin_presets.sh` has the knobs and their numbers). Talent searches at 180 sec with Pursuit of Justice pinned, knob searches over 120, 180 and 300 sec together, each choice checked at 20,000 iterations at 120 / 180 / 300 sec. Gear unchanged; Undead is still the best race on every build (Human 5 to 8 behind at 180 sec, Dwarf 9 to 14). Undead, seed 1, before → after:
+
+| Build | Talents | 120 s | 180 s | 300 s |
+|---|---|---|---|---|
+| Ret twist | `050050002-503-05233101201301351` (12/8/31) | 979.1 → 1043.4 | 974.5 → 1039.3 | 955.3 → 1028.9 |
+| Ret sub-Holy | `0512500022-3-05233101201301351` (17/3/31) | 983.5 → 1042.3 | 977.9 → 1038.1 | 970.6 → 1031.7 |
+| Ret Shock | `05125210220021--0523310120130133` (23/0/28) | 968.5 → 983.0 | 960.6 → 974.9 | 940.2 → 968.5 |
+| Ret Shock (deep Holy) | `05125210220021251-1-052330002013` (31/1/19) | 920.7 → 863.3 | 908.4 → 855.6 | 880.4 → 849.3 |
+| Ret sub-Holy vs Undead | `0502520022-2-05233101201301351` (18/2/31) | 1074.0 → 1153.9 | 1069.6 → 1151.4 | 1052.7 → 1145.1 |
+| Ret Shock (deep Holy) vs Undead | as deep Holy | 1009.6 → 979.9 | 995.1 → 973.5 | 965.6 → 952.0 |
+
+- Twisting with Unsealed Wrath: Seal of Command stays up, and once it has stored 2 copies Seal of Righteousness goes up for the swing that spends them (one Seal of Command roll each) and stores a copy of its own, then back. 1 copy a swap is 7.5 / 11.6 / 36.7 behind (a seal's mana every swing), 3 copies 4.6 / 4.3 behind 2 at 120 / 180 sec and 1.9 ahead at 300; so the twist build waits for 3 copies when the mana won't cover 30 a second of the fight left, which beats both at every length. Sub Holy has the mana for 2 at every length, the vs Undead build keeps 3 for Exorcism. No twisting is 161 behind.
+- The deep Holy Shock build loses Light's Vigil's damage and Holy Power's crit, and Champion of the Light (Retribution row 6) is out of its reach, so it is 17.7% behind twist at 180 sec (6.8% before). We kept it as the 31 point Holy build (Light's Vigil pinned in the search) for the user's call. It ends fights with mana to spare, so it takes the Dragonfire Potion now (+5 to +6).
+- Swift Judgement is worth 26 on the twist build, but its 16 Protection points cost 60, so no DPS build takes it.
+- The raid sim's Protection and Holy paladins were rebuilt too (docs/raid_sim.md): `-55302102513521531-052` and `50320215022101251-510221305`.
+
 ## Client build 1.60.1.70338 (checked 2026-10-12)
 
 Every retribution spell and talent checked against the client tables on [wago.tools](https://wago.tools/db2) (SpellEffect, SpellMisc, SpellPower, SpellCooldowns, SpellLevels, SpellAuraOptions, SpellClassOptions, ItemSet, ItemSetSpell for build 1.60.1.70338) and the talent and patch note pages on foreverchanges.pro. The seals, judgements, Exorcism, Hammer of Wrath, Holy Wrath, Holy Shock, Consecration, the blessings and Retribution Aura (Vanilla's 5 / 8 / 12 / 16 / 20 plus 6% of spell power since the 2026-10-08 build) already matched the sim. What the client showed:
@@ -265,6 +296,8 @@ Devotion Aura, Hammer of Justice, Blessing of Freedom, Concentration Aura, Seal 
 Seal of Command, Greater Blessing of Might, Frost Resistance Aura, Blessing of Sanctuary, Blessing of Sacrifice, Holy Shield, Greater Blessing of Kings, Greater Blessing of Salvation, Greater Blessing of Sanctuary, Blessing of Light, Summon Warhorse, Cleanse, Hammer of Wrath, Holy Shock, Holy Wrath, Greater Blessing of Wisdom, Greater Blessing of Light, Summon Charger
 
 ## Talents
+
+This listing is older than the October 30 hotfix tree (see the hotfix section at the top); `tools/forever_talents/client/paladin.json` has the current tree.
 
 ### Holy
 
