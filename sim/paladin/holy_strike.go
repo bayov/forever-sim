@@ -16,7 +16,8 @@ import (
 // wowhead's Forever tooltip, base at the learn level plus scale per level up to five levels
 // later). Being Holy it ignores armor, and being a yellow hit it gives no seal procs.
 // Sacred Arbiter adds 20% damage and refreshes the judgement on the target (which a melee
-// hit does anyway), Holy Power adds 3% crit per point, Iron Creed adds 5% threat per point.
+// hit does anyway). Holy Power's 3% crit a point is gone with the October 30 hotfix
+// (talents.go, holyPowerCrit). Iron Creed and Shieldsworn are below.
 //
 // The client (1.60.1.70338, wago.tools SpellEffect) builds the spell like Backstab:
 // effect 1 is normalized weapon damage (effect 121) carrying the flat Holy part with a
@@ -51,15 +52,20 @@ func (paladin *Paladin) registerHolyStrike() {
 		{level: 60, spellID: 10333, manaCost: 20, weaponPercent: 0.50, scaleLevel: 65, holy: 93, scale: 3.2},
 	}
 
+	// Shieldsworn takes 4 sec off the cooldown (spell 1328544 in 1.60.1.70707+hf: aura 107 on Holy
+	// Strike's class mask, -4000 ms).
 	cd := core.Cooldown{
 		Timer:    paladin.NewTimer(),
-		Duration: time.Second * 10,
+		Duration: time.Second*10 - core.TernaryDuration(paladin.Talents.Shieldsworn, time.Second*4, 0),
 	}
 	damageMultiplier := paladin.getWeaponSpecializationModifier()
 	if paladin.Talents.SacredArbiter {
 		damageMultiplier *= 1.2
 	}
-	threatMultiplier := 1 + 0.05*float64(paladin.Talents.IronCreed)
+	// Iron Creed: 10% more threat a rank of 3 since the October 30 hotfix (spell 1311034 in
+	// 1.60.1.70707+hf, effect 0: aura 108 misc 2 at 30 for the third rank; it was 5% a rank of 5).
+	threatMultiplier := 1 + 0.1*float64(paladin.Talents.IronCreed)
+	ironCreed := paladin.registerIronCreed()
 
 	for i, rank := range ranks {
 		rank := rank
@@ -91,7 +97,7 @@ func (paladin *Paladin) registerHolyStrike() {
 				CD:          cd,
 			},
 
-			BonusCritRating:  3 * float64(paladin.Talents.HolyPower) * core.CritRatingPerCritChance,
+			BonusCritRating:  paladin.holyPowerCrit(),
 			DamageMultiplier: damageMultiplier,
 			ThreatMultiplier: threatMultiplier,
 			// The flat part's 42.9% goes through the weapon percent too.
@@ -101,7 +107,13 @@ func (paladin *Paladin) registerHolyStrike() {
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				flat := holy * (0.875 + 0.25*sim.RandomFloat("Holy Strike"))
 				baseDamage := rank.weaponPercent * (paladin.holyStrikeWeaponDamage(sim, spell.MeleeAttackPower(target)) + flat)
-				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+				if ironCreed != nil && result.Landed() {
+					ironCreed.Activate(sim)
+				}
+				if result.Landed() && paladin.Talents.Shieldsworn {
+					paladin.shieldswornStrike(sim, target)
+				}
 			},
 		})
 	}
@@ -111,4 +123,43 @@ func (paladin *Paladin) registerHolyStrike() {
 func (paladin *Paladin) holyStrikeWeaponDamage(sim *core.Simulation, attackPower float64) float64 {
 	weapon := paladin.AutoAttacks.MH()
 	return weapon.BaseDamage(sim) + (weapon.NormalizedSwingSpeed+0.3)*attackPower/weapon.AttackPowerPerDPS
+}
+
+// registerIronCreed is Iron Creed's second half: with Righteous Fury on, a Holy Strike that lands
+// takes 2% a rank off all damage taken for 6 sec (the trigger spell 1311033, aura 87 on all schools;
+// the trait ranks 2 / 4 / 6% since the October 30 hotfix, 2% a rank of 5 before). Nil without the
+// talent or without Righteous Fury, which is on or off for the whole fight.
+func (paladin *Paladin) registerIronCreed() *core.Aura {
+	if paladin.Talents.IronCreed == 0 || !paladin.Options.RighteousFury {
+		return nil
+	}
+	damageTaken := 1 - 0.02*float64(paladin.Talents.IronCreed)
+	return paladin.RegisterAura(core.Aura{
+		Label:    "Iron Creed",
+		ActionID: core.ActionID{SpellID: 1311033},
+		Duration: time.Second * 6,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageTakenMultiplier *= damageTaken
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.DamageTakenMultiplier /= damageTaken
+		},
+	})
+}
+
+// shieldswornStrike is Shieldsworn's shield on a Holy Strike that lands (spell 1328544 in
+// 1.60.1.70707+hf): "Holy Strike now strikes with your shield, triggering your active Holy Shield
+// and Shield Specialization talents without consuming their charges or triggering their
+// cooldowns". So an active Holy Shield deals the damage a block would and keeps its charges, and
+// Shield Specialization rolls its mana with no 3 sec cooldown. Its spell block (1328551) is not
+// modelled.
+func (paladin *Paladin) shieldswornStrike(sim *core.Simulation, target *core.Unit) {
+	for i, aura := range paladin.holyShieldAura {
+		if aura != nil && aura.IsActive() {
+			paladin.holyShieldProc[i].Cast(sim, target)
+		}
+	}
+	if paladin.shieldSpecializationMana != nil {
+		paladin.shieldSpecializationMana(sim)
+	}
 }

@@ -29,6 +29,12 @@ func retSimTargets(t *testing.T, talents string, weapon int32, n int) (*core.Sim
 // retSimGear is retSim with items in their slots, against n targets of mobType.
 func retSimGear(t *testing.T, talents string, items map[proto.ItemSlot]int32, n int, mobType proto.MobType) (*core.Simulation, *RetributionPaladin) {
 	t.Helper()
+	return retSimOptions(t, talents, items, n, mobType, &proto.PaladinOptions{PrimarySeal: proto.PaladinSeal_Righteousness})
+}
+
+// retSimOptions is retSimGear with the paladin's options (Righteous Fury, say).
+func retSimOptions(t *testing.T, talents string, items map[proto.ItemSlot]int32, n int, mobType proto.MobType, options *proto.PaladinOptions) (*core.Simulation, *RetributionPaladin) {
+	t.Helper()
 	player := &proto.Player{
 		Race:          proto.Race_RaceHuman,
 		Class:         proto.Class_ClassPaladin,
@@ -37,7 +43,7 @@ func retSimGear(t *testing.T, talents string, items map[proto.ItemSlot]int32, n 
 		TalentsString: talents,
 		Rotation:      &proto.APLRotation{},
 		Spec: &proto.Player_RetributionPaladin{RetributionPaladin: &proto.RetributionPaladin{
-			Options: &proto.PaladinOptions{PrimarySeal: proto.PaladinSeal_Righteousness},
+			Options: options,
 		}},
 	}
 	for slot := range proto.ItemSlot_ItemSlotRanged + 1 {
@@ -105,82 +111,28 @@ func TestHolyStrikeDamage(t *testing.T) {
 	}
 }
 
-// TestTwistOfLightEcho checks Twist of Light's Echo: Seal of Righteousness replaced by Seal
-// of Command leaves an Echo of Righteousness, and the next landed white hit fires a Seal of
-// Righteousness proc (25713) under Seal of Command and uses the Echo up, so a minute of
-// swings under Seal of Command gives exactly one. Without the talent it gives none.
-func TestTwistOfLightEcho(t *testing.T) {
-	for _, c := range []struct {
-		name    string
-		talents string
-		procs   int
-	}{
-		{"Twist of Light", "--25225331001330301", 1},
-		{"no Twist of Light", "--25225331001330300", 0},
-	} {
-		t.Run(c.name, func(t *testing.T) {
-			sim, ret := retSim(t, c.talents, arcaniteReaper)
-			target := ret.CurrentTarget
-			procMetrics := &ret.GetSpell(core.ActionID{SpellID: 25713}).SpellMetrics[target.UnitIndex]
-			castByID(sim, ret, 20293)
-			castByID(sim, ret, 20920)
-			echo := ret.GetAura("Echo of Righteousness")
-			if (echo != nil && echo.IsActive()) != (c.procs > 0) {
-				t.Fatalf("Echo of Righteousness up: %v", echo != nil && echo.IsActive())
-			}
-			for !sim.Step() {
-			}
-			if procs := int(procMetrics.Hits + procMetrics.Crits); procs != c.procs {
-				t.Errorf("%d Seal of Righteousness procs, want %d", procs, c.procs)
-			}
-			if c.procs > 0 && echo.IsActive() {
-				t.Errorf("Echo of Righteousness still up after the fight")
-			}
-		})
-	}
-}
-
 func castByID(sim *core.Simulation, ret *RetributionPaladin, spellID int32) {
 	spell := ret.GetSpell(core.ActionID{SpellID: spellID})
 	spell.ApplyEffects(sim, ret.CurrentTarget, spell)
 }
 
-// TestLightsVigil checks Light's Vigil rank 3 on the next Holy Shock: the Holy Shock starts no
-// cooldown, the Vigil detonates once (1311598) and 75% of its 1340 mana comes back. Without the
-// Vigil Holy Shock goes on its 10 sec cooldown.
-func TestLightsVigil(t *testing.T) {
-	sim, ret := retSim(t, "55003003201131151--0522533", arcaniteReaper)
-	target := ret.CurrentTarget
-	vigil := ret.GetSpell(core.ActionID{SpellID: 1311595})
+// TestLightsVigilHealsOnly checks Light's Vigil since the October 30 hotfix (spell 1310911 in
+// 1.60.1.70707+hf: a friendly target only, heals only): with the talent there is no Vigil or
+// detonation on an enemy, and Holy Shock goes on its 10 sec cooldown.
+func TestLightsVigilHealsOnly(t *testing.T) {
+	sim, ret := retSim(t, "05025211220021051-5-05233", arcaniteReaper)
+	if !ret.Talents.LightsVigil || !ret.Talents.HolyShock {
+		t.Fatalf("no Light's Vigil or Holy Shock in the talents")
+	}
+	for _, id := range []int32{1311595, 1311598} {
+		if spell := ret.GetSpell(core.ActionID{SpellID: id}); spell != nil {
+			t.Errorf("spell %d registered, want no Light's Vigil on an enemy", id)
+		}
+	}
 	holyShock := ret.GetSpell(core.ActionID{SpellID: 20930})
-	detonate := ret.GetSpell(core.ActionID{SpellID: 1311598})
-	if vigil == nil || holyShock == nil || detonate == nil {
-		t.Fatalf("missing Light's Vigil, Holy Shock or the detonation")
-	}
-	detonations := &detonate.SpellMetrics[target.UnitIndex]
-	shocks := &holyShock.SpellMetrics[target.UnitIndex]
-	for range 20 {
-		vigil.ApplyEffects(sim, target, vigil)
-		ret.SpendMana(sim, ret.CurrentMana()-1000, ret.GetManaNotCastingMetrics())
-		before, mana := *detonations, ret.CurrentMana()
-		hitsBefore := shocks.Hits + shocks.Crits
-		holyShock.CD.Use(sim)
-		holyShock.ApplyEffects(sim, target, holyShock)
-		if !holyShock.CD.IsReady(sim) {
-			t.Fatalf("Holy Shock on cooldown after a Vigil")
-		}
-		landed := shocks.Hits+shocks.Crits > hitsBefore
-		got := detonations.Hits + detonations.Crits + detonations.Misses - before.Hits - before.Crits - before.Misses
-		if landed != (got == 1) {
-			t.Fatalf("landed %v, %d detonations", landed, got)
-		}
-		if landed && ret.CurrentMana()-mana < 0.75*1340-1 {
-			t.Fatalf("refund %.1f, want %.1f", ret.CurrentMana()-mana, 0.75*1340)
-		}
-	}
+	holyShock.ApplyEffects(sim, ret.CurrentTarget, holyShock)
 	holyShock.CD.Use(sim)
-	holyShock.ApplyEffects(sim, target, holyShock)
 	if holyShock.CD.IsReady(sim) {
-		t.Errorf("Holy Shock off cooldown without a Vigil")
+		t.Errorf("Holy Shock off cooldown")
 	}
 }

@@ -34,12 +34,12 @@ func TestRetribution(t *testing.T) {
 	}))
 }
 
-// Forever trees: Divine Strength and Improved Seals in Holy, Toughness, Precision and a
-// point of Redoubt in Protection, the Retribution tree down to Twist of Light with
-// Benediction, Conviction, Vindication, Sanctified Judgement, Seal of Command, Sacred
-// Arbiter, Two-Handed Weapon Specialization, Vengeance and Champion of the Light. The
-// points that were in Improved Holy Strike and Crusade went with the talents.
-var Phase45RetTalents = "50003-513-05205331001330301"
+// The October 30 hotfix trees (1.60.1.70707+hf): Divine Strength and Improved Seals in Holy,
+// Divine Intellect and Precision in Protection, Holy Conduit, the Retribution tree down to Unsealed Wrath with
+// Benediction, Improved Judgement, Conviction, Sanctified Judgement, Vindication, Seal of Command,
+// Pursuit of Justice, Sacred Arbiter, Two-Handed Weapon Specialization, Repentance, Vengeance and
+// Champion of the Light.
+var Phase45RetTalents = "050050002-503-05233101201301351"
 
 var Phase1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",

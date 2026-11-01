@@ -33,9 +33,11 @@ func TestProtection(t *testing.T) {
 	}))
 }
 
-// Forever trees: the Protection tree down to Holy Shield plus Benediction and Improved
-// Judgement.
-var Phase4ProtTalents = "1-5530513321301551-052"
+// The October 30 hotfix trees (1.60.1.70707+hf): the Protection tree down to Shieldsworn
+// (Divine Intellect, Redoubt, Precision, Sacred Duty, Templar's Bulwark, Shield Specialization,
+// Toughness, Swift Judgement, Improved Righteous Fury, Anticipation, Stoicism, Holy Shield,
+// Reckoning, Iron Creed) plus Benediction and Improved Judgement.
+var Phase4ProtTalents = "-55302102513521531-052"
 
 var Phase4Consumes = core.ConsumesCombo{
 	Label: "P4-Consumes",

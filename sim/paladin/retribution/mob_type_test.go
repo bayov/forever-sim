@@ -18,7 +18,7 @@ func TestUndeadOnlySpells(t *testing.T) {
 		{proto.MobType_MobTypeUnknown, false},
 		{proto.MobType_MobTypeUndead, true},
 	} {
-		sim, ret := retSim(t, "55003003201121251--05225230001", arcaniteReaper)
+		sim, ret := retSim(t, "0502521122002105-5-05233", arcaniteReaper)
 		target := ret.CurrentTarget
 		target.MobType = c.mobType
 

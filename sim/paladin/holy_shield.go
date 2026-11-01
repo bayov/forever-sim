@@ -15,12 +15,15 @@ var HolyShieldValues = []struct {
 	manaCost float64
 	damage   float64
 }{
-	// Forever: rank 1 at level 40, the block bonus is 30% (the 69876 beta client had 20%,
-	// build 70245 is back at Classic's 30%) and the damage per block 110 / 153 / 221
-	// (Classic 65 / 95 / 130).
-	{level: 40, spellID: 20925, procID: 20955, manaCost: 150, damage: 110},
-	{level: 50, spellID: 20927, procID: 20956, manaCost: 195, damage: 153},
-	{level: 60, spellID: 20928, procID: 20957, manaCost: 240, damage: 221},
+	// Forever: the block bonus is 30% (the 69876 beta client had 20%, build 70245 is back at
+	// Classic's 30%). The launch realms' October 30 hotfix (1.60.1.70707+hf) moved every rank down:
+	// a new rank 1 at level 30 for 100 mana and 75 a block (20925), and the old ranks 1 and 2 at 40
+	// and 50 (20927: 150 mana, 110; 20928: 195 mana, 153). Before it the ranks were at 40 / 50 / 60
+	// for 150 / 195 / 240 mana and 110 / 153 / 221 a block (Classic 65 / 95 / 130). The talent no
+	// longer needs Templar's Bulwark (tree data).
+	{level: 30, spellID: 20925, procID: 20955, manaCost: 100, damage: 75},
+	{level: 40, spellID: 20927, procID: 20956, manaCost: 150, damage: 110},
+	{level: 50, spellID: 20928, procID: 20957, manaCost: 195, damage: 153},
 }
 
 func (paladin *Paladin) registerHolyShield() {

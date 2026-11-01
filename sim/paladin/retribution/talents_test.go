@@ -2,18 +2,18 @@ package retribution
 
 import (
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-// TestHolyPowerOnItsSpellsOnly checks that Holy Power (client 1.60.1.70338, spell 5923) is a
-// crit modifier on the paladin's own spells and not a spell crit stat, which would also reach
-// Dragonbreath Chili, Shadow Oil and the other consumables. At 5 points Holy Shock gets 15%
-// and Judgement of Righteousness 5%.
-func TestHolyPowerOnItsSpellsOnly(t *testing.T) {
-	const withHolyPower = "55003003201121251--05225230001"
-	const withoutHolyPower = "55003003201121201--05225230001"
+// TestHolyPowerNoDamageCrit checks Holy Power since the October 30 hotfix (spell 5923 in
+// 1.60.1.70707+hf: aura 50, crit healing only): 5/5 gives the paladin's damage spells no crit
+// and no spell crit stat. Before the hotfix it gave Holy Shock 15% and the judgements 5%.
+func TestHolyPowerNoDamageCrit(t *testing.T) {
+	const withHolyPower = "0502521122002105-5-05233"
+	const withoutHolyPower = "05025211220021-5-05233"
 
 	_, with := retSim(t, withHolyPower, arcaniteReaper)
 	_, without := retSim(t, withoutHolyPower, arcaniteReaper)
@@ -21,22 +21,22 @@ func TestHolyPowerOnItsSpellsOnly(t *testing.T) {
 	if got, want := with.GetStat(stats.SpellCrit), without.GetStat(stats.SpellCrit); got != want {
 		t.Errorf("spell crit stat with Holy Power = %.2f, want %.2f (no Holy Power)", got, want)
 	}
-
-	checks := []struct {
+	for _, c := range []struct {
 		name    string
 		spellID int32
-		want    float64
 	}{
-		{"Holy Shock", 20930, 15},
-		{"Judgement of Righteousness", 20286, 5},
-	}
-	for _, c := range checks {
+		{"Holy Shock", 20930},
+		{"Judgement of Righteousness", 20286},
+		{"Consecration", 20924},
+		{"Holy Strike", 10333},
+		{"Seal of Righteousness proc", 25713},
+	} {
 		spell := with.GetSpell(core.ActionID{SpellID: c.spellID})
 		if spell == nil {
 			t.Fatalf("%s (%d) is not registered", c.name, c.spellID)
 		}
-		if spell.BonusCritRating != c.want {
-			t.Errorf("%s bonus crit = %.1f, want %.1f", c.name, spell.BonusCritRating, c.want)
+		if spell.BonusCritRating != 0 {
+			t.Errorf("%s bonus crit = %.1f, want 0", c.name, spell.BonusCritRating)
 		}
 	}
 }
@@ -47,7 +47,7 @@ func TestHolyPowerOnItsSpellsOnly(t *testing.T) {
 // alone (wowsims/forever consecration.go).
 func TestConsecrationFirstFourTargets(t *testing.T) {
 	tick := func(spellPower float64) (first, fifth float64, firstMult, fifthMult float64) {
-		sim, ret := retSimTargets(t, "55003003201121251--05225230001", arcaniteReaper, 5)
+		sim, ret := retSimTargets(t, "0502521122002105-5-05233", arcaniteReaper, 5)
 		ret.AddStatDynamic(sim, stats.SpellPower, spellPower)
 		consecration := ret.GetSpell(core.ActionID{SpellID: 20924})
 		consecration.BonusHitRating = 10000
@@ -87,29 +87,11 @@ func TestConsecrationFirstFourTargets(t *testing.T) {
 	}
 }
 
-// TestHolyPowerOnConsecration checks that Holy Power's list (client 5923) takes in Consecration
-// and leaves out the Seal of Righteousness proc.
-func TestHolyPowerOnConsecration(t *testing.T) {
-	_, ret := retSim(t, "55003003201121251--05225230001", arcaniteReaper)
-	for _, c := range []struct {
-		name    string
-		spellID int32
-		want    float64
-	}{
-		{"Consecration", 20924, 5},
-		{"Seal of Righteousness proc", 25713, 0},
-	} {
-		if got := ret.GetSpell(core.ActionID{SpellID: c.spellID}).BonusCritRating; got != c.want {
-			t.Errorf("%s bonus crit = %.1f, want %.1f", c.name, got, c.want)
-		}
-	}
-}
-
 // TestJudgementOfRighteousnessMelee checks that Forever's Judgement of Righteousness (client
 // 20286, DefenseType 2) is a melee attack: it crits for double and Two-Handed Weapon
 // Specialization (3/3: 6%) reaches it.
 func TestJudgementOfRighteousnessMelee(t *testing.T) {
-	_, with := retSim(t, "--00000000000300", arcaniteReaper)
+	_, with := retSim(t, "--000000000003", arcaniteReaper)
 	_, without := retSim(t, "", arcaniteReaper)
 	jor := with.GetSpell(core.ActionID{SpellID: 20286})
 	if jor.DefenseType != core.DefenseTypeMelee || jor.ProcMask != core.ProcMaskMeleeMHSpecial {
@@ -127,16 +109,16 @@ func TestJudgementOfRighteousnessMelee(t *testing.T) {
 // TestSanctifiedJudgementRefund checks Sanctified Judgement 3/3 under Forever against
 // wowsims/forever's measurement (04b40b17b8): the refund is 60% of the seal's base cost with the
 // percent cost cut added on top, so Seal of Righteousness rank 8 (200 mana) returns
-// 200 x 1.1 x 0.6 = 132 with Benediction 5/5, and 200 x 1.28 x 0.6 = 153.6 with Twist of Light's
-// 20% multiplied in.
+// 200 x 1.1 x 0.6 = 132 with Benediction 5/5. Unsealed Wrath has no seal cost cut (Twist of
+// Light's 20% gave 153.6), so it returns the same.
 func TestSanctifiedJudgementRefund(t *testing.T) {
 	for _, c := range []struct {
 		name    string
 		talents string
 		want    float64
 	}{
-		{"Benediction", "--0500003", 132},
-		{"Benediction and Twist of Light", "--05000030000000001", 153.6},
+		{"Benediction", "--05003", 132},
+		{"Benediction and Unsealed Wrath", "--05003000000000001", 132},
 	} {
 		t.Run(c.name, func(t *testing.T) {
 			sim, ret := retSim(t, c.talents, arcaniteReaper)
@@ -152,46 +134,82 @@ func TestSanctifiedJudgementRefund(t *testing.T) {
 }
 
 // TestHammerOfWrathHitAndCrit checks Precision and Conviction on Hammer of Wrath under Forever:
-// Precision (client 20189, aura 54) is unscoped hit, so the ranged Hammer keeps it, and
-// Conviction (20117, weapon crit) only reaches the melee weapon's attacks (wowsims/forever
-// conviction_test.go).
+// Precision (client 20189, aura 54) is unscoped hit, so the ranged Hammer keeps it, and since the
+// October 30 hotfix Conviction (20117, aura 290) is crit with all spells and attacks, so the Hammer
+// gets its 6% through the crit stat with nothing taken back off. Champion of the Light takes 0.2
+// sec a rank off its 1 sec cast.
 func TestHammerOfWrathHitAndCrit(t *testing.T) {
-	_, ret := retSim(t, "-003-00005", arcaniteReaper)
+	_, ret := retSim(t, "-003-0003", arcaniteReaper)
+	_, base := retSim(t, "-003", arcaniteReaper)
 	hammer := ret.GetSpell(core.ActionID{SpellID: 24239})
 	if hammer.BonusHitRating != 0 {
 		t.Errorf("Hammer of Wrath bonus hit = %.1f, want 0 (Precision kept)", hammer.BonusHitRating)
 	}
-	if got, want := hammer.BonusCritRating, -5.0; got != want {
-		t.Errorf("Hammer of Wrath bonus crit = %.1f, want %.1f (Conviction 5/5 taken back off)", got, want)
+	if got := hammer.BonusCritRating; got != 0 {
+		t.Errorf("Hammer of Wrath bonus crit = %.1f, want 0 (Conviction is in the crit stat)", got)
+	}
+	if got, want := ret.GetStat(stats.MeleeCrit)-base.GetStat(stats.MeleeCrit), 6*float64(core.CritRatingPerCritChance); got < want-1e-9 || got > want+1e-9 {
+		t.Errorf("Conviction 3/3 melee and ranged crit = %.2f, want %.2f", got, want)
+	}
+	if got := hammer.DefaultCast.CastTime; got != time.Second {
+		t.Errorf("Hammer of Wrath cast %v without Champion of the Light, want 1s", got)
+	}
+	for _, c := range []struct {
+		talents string
+		want    time.Duration
+	}{
+		{"--0000000000000003", 400 * time.Millisecond},
+		{"--0000000000000005", 0},
+	} {
+		_, ret := retSim(t, c.talents, arcaniteReaper)
+		if got := ret.GetSpell(core.ActionID{SpellID: 24239}).DefaultCast.CastTime; got != c.want {
+			t.Errorf("%s: Hammer of Wrath cast %v, want %v", c.talents, got, c.want)
+		}
 	}
 }
 
-// TestSwiftJudgement checks Swift Judgement (client 1310994): it finishes Judgement's cooldown
-// and makes the next Judgement free, and the Judgement after that costs mana again.
+// TestSwiftJudgement checks Swift Judgement since the October 30 hotfix (spell 1310994 in
+// 1.60.1.70707+hf): a Judgement of its own, free, off the global cooldown, on a 1 min cooldown
+// that Judgement's own doesn't share. It judges the active seal and leaves it up, and it leaves
+// Judgement's cooldown and cost alone.
 func TestSwiftJudgement(t *testing.T) {
-	sim, ret := retSim(t, "02-5032210021-05225331001330311", arcaniteReaper)
+	sim, ret := retSim(t, "-5032212001-05203", arcaniteReaper)
 	judgement := ret.GetSpell(core.ActionID{SpellID: 20271})
 	swift := ret.GetSpell(core.ActionID{SpellID: 1310994})
 	seal := ret.GetSpell(core.ActionID{SpellID: 20293})
-	if judgement == nil || swift == nil || seal == nil {
-		t.Fatalf("missing Judgement, Swift Judgement or Seal of Righteousness")
+	jor := ret.GetSpell(core.ActionID{SpellID: 20286})
+	if judgement == nil || swift == nil || seal == nil || jor == nil {
+		t.Fatalf("missing Judgement, Swift Judgement, Seal of Righteousness or its judgement")
 	}
 	target := ret.CurrentTarget
 	seal.Cast(sim, target)
+	cost := judgement.Cost.GetCurrentCost()
 	judgement.CD.Use(sim)
+	casts := jor.SpellMetrics[target.UnitIndex].Casts
+	mana := ret.CurrentMana()
+	if !swift.Cast(sim, target) {
+		t.Fatalf("Swift Judgement not cast while Judgement is on cooldown")
+	}
+	if got := jor.SpellMetrics[target.UnitIndex].Casts - casts; got != 1 {
+		t.Errorf("Swift Judgement cast Judgement of Righteousness %d times, want 1", got)
+	}
+	if got := mana - ret.CurrentMana(); got != 0 {
+		t.Errorf("Swift Judgement cost %.1f mana, want 0", got)
+	}
 	if judgement.CD.IsReady(sim) {
-		t.Fatalf("Judgement ready right after use")
+		t.Errorf("Judgement ready after Swift Judgement, want its cooldown left alone")
 	}
-	swift.Cast(sim, target)
-	if !judgement.CD.IsReady(sim) {
-		t.Errorf("Judgement still on cooldown after Swift Judgement")
+	if got := judgement.Cost.GetCurrentCost(); got != cost {
+		t.Errorf("Judgement costs %.1f after Swift Judgement, want %.1f", got, cost)
 	}
-	if cost := judgement.Cost.GetCurrentCost(); cost != 0 {
-		t.Errorf("Judgement after Swift Judgement costs %.1f, want 0", cost)
+	if got := swift.CD.Duration; got != time.Minute {
+		t.Errorf("Swift Judgement cooldown %v, want 1m", got)
 	}
-	judgement.Cast(sim, target)
-	if cost := judgement.Cost.GetCurrentCost(); cost <= 0 {
-		t.Errorf("the Judgement after the free one costs %.1f, want more than 0", cost)
+	if swift.DefaultCast.GCD != 0 {
+		t.Errorf("Swift Judgement GCD %v, want none", swift.DefaultCast.GCD)
+	}
+	if !ret.GetAuraByID(core.ActionID{SpellID: 20293}).IsActive() {
+		t.Errorf("Swift Judgement consumed the seal")
 	}
 }
 
@@ -199,7 +217,7 @@ func TestSwiftJudgement(t *testing.T) {
 // puts the rank 6 debuff on the target: 161 Holy damage taken under Forever (140 x 1.15). Every
 // rank used to share one debuff aura, so rank 1's 23 won.
 func TestJudgementOfTheCrusaderRank(t *testing.T) {
-	sim, ret := retSim(t, "52003-503-05225331001330311", arcaniteReaper)
+	sim, ret := retSim(t, "--05233001001301351", arcaniteReaper)
 	castByID(sim, ret, 20308)
 	castByID(sim, ret, 20271)
 	if got := ret.CurrentTarget.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly]; got < 160.99 || got > 161.01 {
@@ -267,7 +285,7 @@ func TestSealOfRighteousnessSpellPowerOnce(t *testing.T) {
 // charge (5/5: always, at most once every 1.5 sec) without touching the swing timer, and the next
 // main-hand swing spends it.
 func TestReckoningCharges(t *testing.T) {
-	sim, ret := retSim(t, "-00000000000005", arcaniteReaper)
+	sim, ret := retSim(t, "-000000000000005", arcaniteReaper)
 	trigger := ret.GetAura("Reckoning Trigger")
 	if trigger == nil {
 		t.Fatalf("no Reckoning trigger with Reckoning 5/5")
@@ -293,13 +311,14 @@ func TestReckoningCharges(t *testing.T) {
 	}
 }
 
-// TestShieldSpecializationMana checks Shield Specialization 3/3's mana since client 70425
-// (spell 1310925: 4%, 6% before): a block restores 4% of maximum mana.
+// TestShieldSpecializationMana checks Shield Specialization 2/2's mana: since client 70425 (spell
+// 1310925) 4% of maximum mana (6% before), and since the October 30 hotfix on every block at 2/2
+// (50% a rank of 2, it was 33% a rank of 3).
 func TestShieldSpecializationMana(t *testing.T) {
-	sim, ret := retSim(t, "-00000003", arcaniteReaper)
+	sim, ret := retSim(t, "-00000002", arcaniteReaper)
 	aura := ret.GetAura("Shield Specialization Mana")
 	if aura == nil {
-		t.Fatalf("no Shield Specialization mana aura with 3/3")
+		t.Fatalf("no Shield Specialization mana aura with 2/2")
 	}
 	ret.SpendMana(sim, 0.5*ret.MaxMana(), ret.NewManaMetrics(core.ActionID{OtherID: 1}))
 	before := ret.CurrentMana()

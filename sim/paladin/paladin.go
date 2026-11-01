@@ -9,8 +9,9 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-// The Forever trees (beta client build 1.60.1.69876).
-var TalentTreeSizes = [3]int{17, 16, 17}
+// The Forever trees of client 1.60.1.70707 with the launch realms' October 30 hotfix
+// (1.60.1.70707+hf): 17 talents in each.
+var TalentTreeSizes = [3]int{17, 17, 17}
 
 const (
 	SpellFlag_Forbearance = core.SpellFlagAgentReserved1
@@ -88,18 +89,16 @@ type Paladin struct {
 	// Consecrated Ground's bonus.
 	consecrationMarks core.AuraArray
 
-	// Light's Vigil's hook on Holy Shock, see lights_vigil.go. Nil without the talent.
-	lightsVigil func(sim *core.Simulation, target *core.Unit, holyShock *core.Spell, landed bool)
-
-	// Twist of Light's Echoes, see twist_of_light.go. Nil without the talent.
+	// Unsealed Wrath's Echoes, see unsealed_wrath.go. Nil without the talent.
 	echoOfCommand       *core.Aura
 	echoOfRighteousness *core.Aura
 	sealEchoes          map[*core.Aura]sealEcho
-	// The effect each Echo applies, the rank of the seal it replaced.
+	// The effect each Echo applies, the rank of the seal that stored the last copy.
 	echoApply map[*core.Aura]func(sim *core.Simulation, target *core.Unit)
 
-	// Swift Judgement's free next Judgement, see swift_judgement.go. Nil without the talent.
-	swiftJudgementAura *core.Aura
+	// Shield Specialization's mana on a block, for Shieldsworn's Holy Strike (talents.go). Nil
+	// without the talent.
+	shieldSpecializationMana func(sim *core.Simulation)
 
 	// Flat Holy damage taken added to Judgement of the Crusader by the PvP gloves (items.go).
 	judgementOfTheCrusaderBonus float64
@@ -132,7 +131,7 @@ func (paladin *Paladin) Initialize() {
 	// Judgement and Seals
 	paladin.registerJudgement()
 	paladin.registerSwiftJudgement()
-	paladin.registerTwistOfLight()
+	paladin.registerUnsealedWrath()
 
 	paladin.registerSealOfRighteousness()
 	paladin.registerSealOfCommand()
@@ -246,8 +245,6 @@ func (paladin *Paladin) getPrimarySealSpell(primarySeal proto.PaladinSeal) *core
 }
 
 func (paladin *Paladin) applySeal(newSeal *core.Aura, judgement *core.Spell, sealSpell *core.Spell, sim *core.Simulation) {
-	paladin.leaveEcho(sim, newSeal)
-	paladin.dropOwnEcho(sim, newSeal)
 	if paladin.currentSeal != nil {
 		paladin.currentSeal.Deactivate(sim)
 	}
