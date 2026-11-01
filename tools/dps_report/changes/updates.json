@@ -1476,6 +1476,10 @@
     {
      "commit": "9eb1fad",
      "why": "the Changes lines and the provenance of builds whose results hash the same; no request moves"
+    },
+    {
+     "commit": "4f6861c",
+     "why": "the Enhancement leveling plan's rotation only; no report request uses it"
     }
    ]
   }

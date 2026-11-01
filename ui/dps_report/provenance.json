@@ -389,8 +389,8 @@
 			}
 		},
 		"shaman__enhancement-level60": {
-			"commit": "905787afdca9e3d0a6691e7e53215d33bcebd2b9",
-			"recordedAt": "2026-11-01T11:05:17.441Z",
+			"commit": "2a36fb3bb7c5efb7362cd47c70027d03f3080c35",
+			"recordedAt": "2026-11-01T12:05:48.921Z",
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -402,15 +402,15 @@
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
 				"sim/shaman": "2092697cb90a14ea4e87f34d7c4dfbc40a313ff5",
 				"ui/elemental_shaman": "97828d3d99385157a50187a62da3f2fd4951073f",
-				"ui/enhancement_shaman": "80d529be42af4718b205987ebc5da478002e3103",
+				"ui/enhancement_shaman": "bd79caa2c0f01acaf3e2a18c94b4ff18846b7ccb",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
 				"tools/dps_report/req/shaman__enhancement-level60.json": "5c41e3c87dd1a93e7958cdbd2a1bff7a7a77e179"
 			}
 		},
 		"shaman__enhancement-imp-gw": {
-			"commit": "905787afdca9e3d0a6691e7e53215d33bcebd2b9",
-			"recordedAt": "2026-11-01T11:05:17.351Z",
+			"commit": "2a36fb3bb7c5efb7362cd47c70027d03f3080c35",
+			"recordedAt": "2026-11-01T12:05:48.857Z",
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -422,15 +422,15 @@
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
 				"sim/shaman": "2092697cb90a14ea4e87f34d7c4dfbc40a313ff5",
 				"ui/elemental_shaman": "97828d3d99385157a50187a62da3f2fd4951073f",
-				"ui/enhancement_shaman": "80d529be42af4718b205987ebc5da478002e3103",
+				"ui/enhancement_shaman": "bd79caa2c0f01acaf3e2a18c94b4ff18846b7ccb",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
 				"tools/dps_report/req/shaman__enhancement-imp-gw.json": "8dfe11f248d8ce0a45c2a55dc8fbb04e459a5165"
 			}
 		},
 		"shaman__enhancement-water-shield": {
-			"commit": "905787afdca9e3d0a6691e7e53215d33bcebd2b9",
-			"recordedAt": "2026-11-01T11:05:17.624Z",
+			"commit": "2a36fb3bb7c5efb7362cd47c70027d03f3080c35",
+			"recordedAt": "2026-11-01T12:05:49.069Z",
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -442,15 +442,15 @@
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
 				"sim/shaman": "2092697cb90a14ea4e87f34d7c4dfbc40a313ff5",
 				"ui/elemental_shaman": "97828d3d99385157a50187a62da3f2fd4951073f",
-				"ui/enhancement_shaman": "80d529be42af4718b205987ebc5da478002e3103",
+				"ui/enhancement_shaman": "bd79caa2c0f01acaf3e2a18c94b4ff18846b7ccb",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
 				"tools/dps_report/req/shaman__enhancement-water-shield.json": "dfb5b772f58591bb9112ad4f004d0e6476c58365"
 			}
 		},
 		"shaman__enhancement-mana-tide": {
-			"commit": "905787afdca9e3d0a6691e7e53215d33bcebd2b9",
-			"recordedAt": "2026-11-01T11:05:17.540Z",
+			"commit": "2a36fb3bb7c5efb7362cd47c70027d03f3080c35",
+			"recordedAt": "2026-11-01T12:05:48.996Z",
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -462,16 +462,15 @@
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
 				"sim/shaman": "2092697cb90a14ea4e87f34d7c4dfbc40a313ff5",
 				"ui/elemental_shaman": "97828d3d99385157a50187a62da3f2fd4951073f",
-				"ui/enhancement_shaman": "80d529be42af4718b205987ebc5da478002e3103",
+				"ui/enhancement_shaman": "bd79caa2c0f01acaf3e2a18c94b4ff18846b7ccb",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
 				"tools/dps_report/req/shaman__enhancement-mana-tide.json": "9b5ad0e3b0852fa423a5c6694e15bab1c4c797e8"
 			}
 		},
 		"shaman__elemental-level60": {
-			"commit": "9eb1fad6bd82a73c7a62aeb07d1605dadeeb60a2",
-			"recordedAt": "2026-11-01T12:01:33.940Z",
-			"iterations": 20000,
+			"commit": "2a36fb3bb7c5efb7362cd47c70027d03f3080c35",
+			"recordedAt": "2026-11-01T12:05:48.680Z",
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -483,7 +482,7 @@
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
 				"sim/shaman": "2092697cb90a14ea4e87f34d7c4dfbc40a313ff5",
 				"ui/elemental_shaman": "97828d3d99385157a50187a62da3f2fd4951073f",
-				"ui/enhancement_shaman": "80d529be42af4718b205987ebc5da478002e3103",
+				"ui/enhancement_shaman": "bd79caa2c0f01acaf3e2a18c94b4ff18846b7ccb",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
 				"tools/dps_report/req/shaman__elemental-level60.json": "1eb55af64acfd1e524a0cad4fc99d1b72c381fc6",
@@ -492,9 +491,8 @@
 			}
 		},
 		"shaman__elemental-level60-mana-tide": {
-			"commit": "9eb1fad6bd82a73c7a62aeb07d1605dadeeb60a2",
-			"recordedAt": "2026-11-01T12:01:34.047Z",
-			"iterations": 20000,
+			"commit": "2a36fb3bb7c5efb7362cd47c70027d03f3080c35",
+			"recordedAt": "2026-11-01T12:05:48.776Z",
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -506,7 +504,7 @@
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
 				"sim/shaman": "2092697cb90a14ea4e87f34d7c4dfbc40a313ff5",
 				"ui/elemental_shaman": "97828d3d99385157a50187a62da3f2fd4951073f",
-				"ui/enhancement_shaman": "80d529be42af4718b205987ebc5da478002e3103",
+				"ui/enhancement_shaman": "bd79caa2c0f01acaf3e2a18c94b4ff18846b7ccb",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
 				"tools/dps_report/req/shaman__elemental-level60-mana-tide.json": "cab76909fe6a06e90e572f75cd7ba9c4aab206bc",
