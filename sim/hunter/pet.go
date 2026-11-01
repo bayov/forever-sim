@@ -160,15 +160,23 @@ const ForeverPetHitScalesWithSpeed = true
 // The creature auto attack dps for level 60 in the client's ExpectedStat table (ExpansionID -2).
 const creatureAutoAttackDps60 = 60.4529
 
-// A Forever pet's swing before attack power, at 2.0 sec: the creature dps for its level over the
-// swing, 20% either side, 97 to 145 at 60. Its own attack power is 30% of the creature dps as attack
-// power (14 a point of dps), 254 at 60, with nothing from Strength. wowsims/forever fitted both to
-// beta pet sheets (643d636345): a level 11 Carrion Bird's 20-27 at 44 attack power and 2.0 sec, a
-// level 17 Cat's 28-37 at 75 attack power and 1.5 sec, and attack power of 36, 61 and 103 at levels
-// 11, 17 and 30, each the creature dps x 4.2 beside the hunter's 10%.
+// A Forever pet's own attack power is 30% of the creature dps for its level as attack power (14 a
+// point of dps), 254 at 60, with nothing from Strength: beta pet sheets read 36, 61 and 103 at
+// levels 11, 17 and 30, each the creature dps x 4.2, beside the hunter's 10% (wowsims/forever
+// 643d636345).
+//
+// Its swing before attack power, at 2.0 sec, is the rest of the creature dps: (dps - own attack
+// power / 14) x 2, 20% either side, 84.6 on average at 60 (68 to 102). The creature dps is the
+// whole of a creature's damage, its own attack power included, so counting it all as the weapon and
+// adding the attack power on top counted the pet's own attack power twice. wowsims/forever's fit to
+// 152 logged swings of a level 30 Cat (71d4f46012: 42-55 and 46-59 before armor at 119 and 146 attack
+// power, 1.2 sec, Unleashed Fury 5/5, the pet taken as Happy) puts every swing in this range, where
+// the whole creature dps as the weapon put 131 of them above it, about 32% high. The pet sheets'
+// damage range shows the whole creature dps, so they fit both. User ruling 2026-11-01; level 60 is
+// extrapolated through the creature dps (notes.md, To Verify).
 const (
-	foreverPetSwingAverage = creatureAutoAttackDps60 * 2
 	foreverPetAttackPower  = 0.3 * 14 * creatureAutoAttackDps60
+	foreverPetSwingAverage = (creatureAutoAttackDps60 - foreverPetAttackPower/14) * 2
 )
 
 // Under Forever every pet swings every 2.0 sec, and the beast's Faster Attack or Slower Attack

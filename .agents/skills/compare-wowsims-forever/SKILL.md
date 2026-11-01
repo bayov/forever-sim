@@ -150,13 +150,13 @@ rotation gives a result that looks off.
 
 ## Known differences
 
-As of 2026-11-01, ours at 0e87f3d and theirs at b70888a518, on the report's requests. The four pet rows (Pet Aggression since settled) add up to the
+As of 2026-11-01, ours at 0e87f3d and theirs at b70888a518, on the report's requests. The four pet rows (two since settled) add up to the
 BM cat's whole pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). A rerun should find these, so
 it can tell what is new. Keep the list current when one is settled.
 
 | Difference | Ours | Theirs | Status |
 |---|---|---|---|
-| Pet swing damage | Creature DPS × 2 a 2.0 s swing (their old fit, 643d636345, to level 11 and 17 sheet tooltips) | (creature DPS − the pet's own attack power / 14) × 2, 30% less (71d4f46012, fit to 152 logged swings of a level 30 cat, in the commit message only) | Open, both extrapolate to 60. −48 pet DPS on the BM cat. A level 60 pet's logged white hits, with its sheet and happiness, settle it |
+| Pet swing damage | (creature DPS − the pet's own attack power / 14) × 2 a 2.0 s swing since 2026-11-01 (user ruling) | The same (71d4f46012) | Settled on their level 30 cat log; level 60 unmeasured (notes.md To Verify). It was −48 pet DPS on the BM cat |
 | Pet Aggression | Dropped 2026-11-01 (user ruling) | Dropped (8aa26ccb4d) | Settled: no trainer teaches it (its teaching spells are on no skill line, Beast Training's has none). It was −34 pet DPS on the BM cat |
 | Improved Tracking vs the generic boss | Counts the typeless boss as tracked (standards 19) | Only the types a Track spell names (8aa26ccb4d) | A choice. `--their-mob-type MobTypeGiant` aligns it (Survival 41 DPS) |
 | Pet focus | 10 a second (client RegenCombat, beta logs) | Classic's 25 per 5 sec × Bestial Discipline | Ours on evidence. −28 pet DPS on the BM cat (half the Claws) |

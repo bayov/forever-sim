@@ -85,8 +85,8 @@ func TestForeverPetTakesNoConsumables(t *testing.T) {
 
 // Report assumption hunter_pet_speed (user ruling 2026-10-15): under Forever a pet's white hit
 // scales with its attack speed as in Classic, so a 1.0 sec pet hits half as hard as a 2.0 sec pet.
-// A 2.0 sec pet's hit is the creature dps for level 60 over 2 sec, 20% either side (wowsims/forever
-// 643d636345). The swing is 2.0 sec sped up by the beast's passive's row: Faster Attack VII 100%,
+// A 2.0 sec pet's hit is the creature dps for level 60 less the pet's own attack power's share (0.7 of
+// it) over 2 sec, 20% either side (wowsims/forever 71d4f46012). The swing is 2.0 sec sped up by the beast's passive's row: Faster Attack VII 100%,
 // III 33%, Slower Attack III -26%. Classic keeps its 18.17 to 27.66 a second and round speeds.
 func TestForeverPetHitScalesWithSpeed(t *testing.T) {
 	for _, c := range []struct {
@@ -103,7 +103,7 @@ func TestForeverPetHitScalesWithSpeed(t *testing.T) {
 			min, max float64
 			seconds  float64
 		}{
-			{proto.Ruleset_RulesetForever, 60.4529 * 0.8, 60.4529 * 1.2, c.forever},
+			{proto.Ruleset_RulesetForever, 0.7 * 60.4529 * 0.8, 0.7 * 60.4529 * 1.2, c.forever},
 			{proto.Ruleset_RulesetClassic, 18.17, 27.66, c.classic},
 		} {
 			_, hunter := newHunterPetSim(t, c.speed, r.ruleset)
@@ -138,7 +138,7 @@ func TestForeverCobraReflexesNoPetAggression(t *testing.T) {
 			t.Errorf("ruleset %v: a 1.0 sec pet with Cobra Reflexes swings every %.4f sec, want %.4f", c.ruleset, mh.SwingSpeed, c.swing)
 		}
 		if c.ruleset == proto.Ruleset_RulesetForever {
-			if want := 60.4529 * 0.8 * c.swing; math.Abs(mh.BaseDamageMin-want) > 1e-9 {
+			if want := 0.7 * 60.4529 * 0.8 * c.swing; math.Abs(mh.BaseDamageMin-want) > 1e-9 {
 				t.Errorf("ruleset %v: the pet's least hit is %.2f, want %.2f", c.ruleset, mh.BaseDamageMin, want)
 			}
 		}
