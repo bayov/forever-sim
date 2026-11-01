@@ -52,18 +52,6 @@
       "level":  61
     },
     {
-      "spellId":  8045,
-      "level":  22
-    },
-    {
-      "spellId":  8046,
-      "level":  26
-    },
-    {
-      "spellId":  8058,
-      "level":  61
-    },
-    {
       "spellId":  10391,
       "level":  44
     },
@@ -76,10 +64,6 @@
       "level":  61
     },
     {
-      "spellId":  10412,
-      "level":  41
-    },
-    {
       "spellId":  10414,
       "level":  61
     },
@@ -89,14 +73,6 @@
     },
     {
       "spellId":  10468,
-      "level":  61
-    },
-    {
-      "spellId":  10472,
-      "level":  61
-    },
-    {
-      "spellId":  10473,
       "level":  61
     },
     {
@@ -129,7 +105,7 @@
       "spellId":  324,
       "level":  8,
       "price":  90,
-      "minutes":  12.9,
+      "minutes":  13.2,
       "rank":  1,
       "spell":  "Lightning Shield"
     },
@@ -137,7 +113,7 @@
       "spellId":  325,
       "level":  16,
       "price":  1620,
-      "minutes":  7.8,
+      "minutes":  8.7,
       "rank":  2,
       "spell":  "Lightning Shield"
     },
@@ -160,7 +136,7 @@
       "spellId":  547,
       "level":  12,
       "price":  720,
-      "minutes":  -0.1,
+      "minutes":  -0,
       "rank":  3,
       "spell":  "Healing Wave"
     },
@@ -175,7 +151,7 @@
       "spellId":  905,
       "level":  24,
       "price":  3150,
-      "minutes":  15.1,
+      "minutes":  15.4,
       "rank":  3,
       "spell":  "Lightning Shield"
     },
@@ -212,7 +188,7 @@
       "spellId":  945,
       "level":  32,
       "price":  7200,
-      "minutes":  13.8,
+      "minutes":  15.1,
       "rank":  4,
       "spell":  "Lightning Shield"
     },
@@ -242,7 +218,7 @@
       "spellId":  6363,
       "level":  20,
       "price":  1980,
-      "minutes":  9.3,
+      "minutes":  9.4,
       "rank":  2,
       "spell":  "Searing Totem"
     },
@@ -250,7 +226,7 @@
       "spellId":  6364,
       "level":  30,
       "price":  6300,
-      "minutes":  4.7,
+      "minutes":  4.4,
       "rank":  3,
       "spell":  "Searing Totem"
     },
@@ -258,7 +234,7 @@
       "spellId":  6365,
       "level":  40,
       "price":  10800,
-      "minutes":  7.3,
+      "minutes":  7.2,
       "rank":  4,
       "spell":  "Searing Totem"
     },
@@ -266,7 +242,7 @@
       "spellId":  8004,
       "level":  20,
       "price":  1980,
-      "minutes":  1.1,
+      "minutes":  1.4,
       "rank":  1,
       "spell":  "Lesser Healing Wave"
     },
@@ -281,6 +257,7 @@
       "spellId":  8008,
       "level":  28,
       "price":  5400,
+      "minutes":  0.1,
       "rank":  2,
       "spell":  "Lesser Healing Wave"
     },
@@ -288,7 +265,7 @@
       "spellId":  8010,
       "level":  36,
       "price":  9000,
-      "minutes":  0.4,
+      "minutes":  0.1,
       "rank":  3,
       "spell":  "Lesser Healing Wave"
     },
@@ -296,7 +273,7 @@
       "spellId":  8018,
       "level":  8,
       "price":  90,
-      "minutes":  9.9,
+      "minutes":  10.1,
       "rank":  2,
       "spell":  "Rockbiter Weapon"
     },
@@ -304,7 +281,7 @@
       "spellId":  8019,
       "level":  16,
       "price":  1620,
-      "minutes":  10.4,
+      "minutes":  10.9,
       "rank":  3,
       "spell":  "Rockbiter Weapon"
     },
@@ -312,7 +289,7 @@
       "spellId":  8042,
       "level":  4,
       "price":  90,
-      "minutes":  23.8,
+      "minutes":  23.9,
       "rank":  1,
       "spell":  "Earth Shock"
     },
@@ -320,7 +297,7 @@
       "spellId":  8044,
       "level":  8,
       "price":  90,
-      "minutes":  5.9,
+      "minutes":  6.1,
       "rank":  2,
       "spell":  "Earth Shock"
     },
@@ -328,7 +305,7 @@
       "spellId":  8045,
       "level":  14,
       "price":  810,
-      "minutes":  -0.1,
+      "minutes":  1.1,
       "rank":  3,
       "spell":  "Earth Shock"
     },
@@ -336,7 +313,7 @@
       "spellId":  8046,
       "level":  24,
       "price":  3150,
-      "minutes":  11,
+      "minutes":  9.9,
       "rank":  4,
       "spell":  "Earth Shock"
     },
@@ -344,7 +321,7 @@
       "spellId":  8050,
       "level":  10,
       "price":  360,
-      "minutes":  5,
+      "minutes":  4.9,
       "rank":  1,
       "spell":  "Flame Shock"
     },
@@ -352,7 +329,7 @@
       "spellId":  8052,
       "level":  18,
       "price":  1800,
-      "minutes":  -2.2,
+      "minutes":  -1.3,
       "rank":  2,
       "spell":  "Flame Shock"
     },
@@ -360,30 +337,15 @@
       "spellId":  8053,
       "level":  28,
       "price":  5400,
-      "minutes":  0.3,
+      "minutes":  -0,
       "rank":  3,
       "spell":  "Flame Shock"
-    },
-    {
-      "spellId":  8056,
-      "level":  20,
-      "price":  1980,
-      "minutes":  24.2,
-      "rank":  1,
-      "spell":  "Frost Shock"
-    },
-    {
-      "spellId":  8058,
-      "level":  34,
-      "price":  8100,
-      "rank":  2,
-      "spell":  "Frost Shock"
     },
     {
       "spellId":  8134,
       "level":  40,
       "price":  10800,
-      "minutes":  28.6,
+      "minutes":  29.7,
       "rank":  5,
       "spell":  "Lightning Shield"
     },
@@ -391,7 +353,7 @@
       "spellId":  8154,
       "level":  14,
       "price":  810,
-      "minutes":  1.8,
+      "minutes":  2.9,
       "rank":  2,
       "spell":  "Stoneskin Totem"
     },
@@ -399,7 +361,7 @@
       "spellId":  8155,
       "level":  24,
       "price":  3150,
-      "minutes":  3.3,
+      "minutes":  3.2,
       "rank":  3,
       "spell":  "Stoneskin Totem"
     },
@@ -407,7 +369,7 @@
       "spellId":  8512,
       "level":  32,
       "price":  7200,
-      "minutes":  71.1,
+      "minutes":  69.6,
       "rank":  1,
       "spell":  "Windfury Totem"
     },
@@ -422,7 +384,7 @@
       "spellId":  10392,
       "level":  44,
       "price":  16200,
-      "minutes":  1.8,
+      "minutes":  2,
       "rank":  8,
       "spell":  "Lightning Bolt"
     },
@@ -444,7 +406,7 @@
       "spellId":  10399,
       "level":  24,
       "price":  3150,
-      "minutes":  27.8,
+      "minutes":  27.3,
       "rank":  4,
       "spell":  "Rockbiter Weapon"
     },
@@ -452,7 +414,7 @@
       "spellId":  10406,
       "level":  34,
       "price":  8100,
-      "minutes":  7.3,
+      "minutes":  7.2,
       "rank":  4,
       "spell":  "Stoneskin Totem"
     },
@@ -460,7 +422,7 @@
       "spellId":  10407,
       "level":  44,
       "price":  16200,
-      "minutes":  -0.5,
+      "minutes":  0.7,
       "rank":  5,
       "spell":  "Stoneskin Totem"
     },
@@ -468,7 +430,7 @@
       "spellId":  10408,
       "level":  54,
       "price":  26100,
-      "minutes":  3.3,
+      "minutes":  2.9,
       "rank":  6,
       "spell":  "Stoneskin Totem"
     },
@@ -476,7 +438,7 @@
       "spellId":  10412,
       "level":  36,
       "price":  9000,
-      "minutes":  -3,
+      "minutes":  -3.3,
       "rank":  5,
       "spell":  "Earth Shock"
     },
@@ -484,7 +446,7 @@
       "spellId":  10413,
       "level":  48,
       "price":  19800,
-      "minutes":  1,
+      "minutes":  4.1,
       "rank":  6,
       "spell":  "Earth Shock"
     },
@@ -499,7 +461,7 @@
       "spellId":  10431,
       "level":  48,
       "price":  19800,
-      "minutes":  23.8,
+      "minutes":  27.3,
       "rank":  6,
       "spell":  "Lightning Shield"
     },
@@ -507,7 +469,7 @@
       "spellId":  10432,
       "level":  56,
       "price":  27000,
-      "minutes":  16.5,
+      "minutes":  15.7,
       "rank":  7,
       "spell":  "Lightning Shield"
     },
@@ -515,7 +477,7 @@
       "spellId":  10437,
       "level":  50,
       "price":  21600,
-      "minutes":  8.9,
+      "minutes":  9,
       "rank":  5,
       "spell":  "Searing Totem"
     },
@@ -530,7 +492,7 @@
       "spellId":  10447,
       "level":  40,
       "price":  10800,
-      "minutes":  -0.8,
+      "minutes":  -0.2,
       "rank":  4,
       "spell":  "Flame Shock"
     },
@@ -538,7 +500,7 @@
       "spellId":  10448,
       "level":  52,
       "price":  24300,
-      "minutes":  10.3,
+      "minutes":  10.9,
       "rank":  5,
       "spell":  "Flame Shock"
     },
@@ -546,7 +508,7 @@
       "spellId":  10466,
       "level":  44,
       "price":  16200,
-      "minutes":  -0.4,
+      "minutes":  -0.6,
       "rank":  4,
       "spell":  "Lesser Healing Wave"
     },
@@ -554,7 +516,7 @@
       "spellId":  10467,
       "level":  52,
       "price":  24300,
-      "minutes":  0.2,
+      "minutes":  0.5,
       "rank":  5,
       "spell":  "Lesser Healing Wave"
     },
@@ -566,24 +528,10 @@
       "spell":  "Lesser Healing Wave"
     },
     {
-      "spellId":  10472,
-      "level":  46,
-      "price":  18000,
-      "rank":  3,
-      "spell":  "Frost Shock"
-    },
-    {
-      "spellId":  10473,
-      "level":  58,
-      "price":  28800,
-      "rank":  4,
-      "spell":  "Frost Shock"
-    },
-    {
       "spellId":  10495,
       "level":  36,
       "price":  9000,
-      "minutes":  9.4,
+      "minutes":  8.3,
       "rank":  2,
       "spell":  "Mana Spring Totem"
     },
@@ -591,7 +539,7 @@
       "spellId":  10496,
       "level":  46,
       "price":  18000,
-      "minutes":  9.9,
+      "minutes":  9.4,
       "rank":  3,
       "spell":  "Mana Spring Totem"
     },
@@ -607,7 +555,7 @@
       "spellId":  10613,
       "level":  42,
       "price":  14400,
-      "minutes":  -7.4,
+      "minutes":  -7.1,
       "rank":  2,
       "spell":  "Windfury Totem"
     },
@@ -615,7 +563,7 @@
       "spellId":  10614,
       "level":  52,
       "price":  24300,
-      "minutes":  -9.5,
+      "minutes":  -10,
       "rank":  3,
       "spell":  "Windfury Totem"
     },
@@ -623,7 +571,7 @@
       "spellId":  15207,
       "level":  50,
       "price":  21600,
-      "minutes":  2.9,
+      "minutes":  3,
       "rank":  9,
       "spell":  "Lightning Bolt"
     },
@@ -631,7 +579,7 @@
       "spellId":  15208,
       "level":  56,
       "price":  27000,
-      "minutes":  5.8,
+      "minutes":  5.2,
       "rank":  10,
       "spell":  "Lightning Bolt"
     },
@@ -639,7 +587,7 @@
       "spellId":  16314,
       "level":  34,
       "price":  8100,
-      "minutes":  66.6,
+      "minutes":  66.2,
       "rank":  5,
       "spell":  "Rockbiter Weapon"
     },
@@ -647,7 +595,7 @@
       "spellId":  16315,
       "level":  44,
       "price":  16200,
-      "minutes":  71.9,
+      "minutes":  71.2,
       "rank":  6,
       "spell":  "Rockbiter Weapon"
     },
@@ -655,7 +603,7 @@
       "spellId":  16316,
       "level":  54,
       "price":  26100,
-      "minutes":  28.2,
+      "minutes":  26.8,
       "rank":  7,
       "spell":  "Rockbiter Weapon"
     },
@@ -663,7 +611,7 @@
       "spellId":  408341,
       "level":  12,
       "price":  720,
-      "minutes":  2.7,
+      "minutes":  2.9,
       "rank":  1,
       "spell":  "Fire Nova"
     },
@@ -903,6 +851,20 @@
       "spell":  "Frostbrand Weapon"
     },
     {
+      "spellId":  8056,
+      "level":  20,
+      "price":  1980,
+      "rank":  1,
+      "spell":  "Frost Shock"
+    },
+    {
+      "spellId":  8058,
+      "level":  34,
+      "price":  8100,
+      "rank":  2,
+      "spell":  "Frost Shock"
+    },
+    {
       "spellId":  8075,
       "level":  10,
       "price":  360,
@@ -1048,6 +1010,20 @@
       "price":  30600,
       "rank":  5,
       "spell":  "Healing Stream Totem"
+    },
+    {
+      "spellId":  10472,
+      "level":  46,
+      "price":  18000,
+      "rank":  3,
+      "spell":  "Frost Shock"
+    },
+    {
+      "spellId":  10473,
+      "level":  58,
+      "price":  28800,
+      "rank":  4,
+      "spell":  "Frost Shock"
     },
     {
       "spellId":  10478,
