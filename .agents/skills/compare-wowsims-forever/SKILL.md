@@ -1,0 +1,184 @@
+---
+name: compare-wowsims-forever
+description: Compare our sim with wowsims/forever (github.com/wowsims/forever, the other WoW Forever sim) on one of our builds - the same character, gear, buffs, boss and rotation run in both, the character sheets matched, and every DPS gap traced to a rule the two sims model differently, then sorted into our bugs, their bugs and open questions. Use when the user asks to compare a class, spec, preset or mechanic with wowsims/forever ("compare hunters next", "what does wowsims/forever give for Combat Swords", "why do they get more"), to check a mechanic against theirs, or after wowsims/forever changed a class we sim.
+---
+
+# Compare with wowsims/forever
+
+wowsims/forever is the other WoW Forever sim, built on the game files like ours. The comparison runs one of our
+requests in both and explains the gap. It is a source of questions, never of answers: a rule only becomes ours on
+the evidence behind it (game data, a log, a post), as with any other source.
+
+**Never push to wowsims/forever, comment on it or open anything there.** Its checkout is a reference. Our tools in
+it are kept out of its git (`.git/info/exclude`). If a finding looks like their bug, tell the user; reporting it
+upstream is the user's call.
+
+The tools are in `tools/wsf_compare/`:
+
+| File | What it does |
+|---|---|
+| `setup.sh` | Clones wowsims/forever (or moves it to its latest master), adds our two tools to it, dumps their builds and APLs, and builds every binary below. It prints both commits. |
+| `convert.py` | One of our requests → `req_ours.json` (ours, aligned), `req_theirs.json` (the same for theirs) and `items.json` (our synthetic gear as their items). |
+| `run.py` | Converts, runs both, prints `ours`, `theirs` and `theirs - ours` with its 2σ error. |
+| `align.py` | Finds the bonus stats that make their sheet at the pull match ours. Prints the `ALIGN` value for `run.py`. |
+| `breakdown.py` | Per ability, side by side: DPS, casts, hits, crits, misses and dodges per iteration, for the player and each pet. |
+| `layers.py` | Both sheets built up one layer at a time (naked, + talents, + gear, + consumables, + buffs), so a stat gap shows which layer brings it. |
+| `ours_stats/` | Prints our sheet at the pull. Their counterpart, and their runner `cmpsim`, are in `theirs/`, kept as `.txt` so our build doesn't compile them. |
+
+`$WSF` is the checkout (default `~/wowsims-forever`) and `$WSF_WORK` the work folder (default `~/wsf_compare`),
+with the binaries in `$WSF_WORK/bin`.
+
+## 1. Set up
+
+```bash
+tools/wsf_compare/setup.sh
+```
+
+About 3 min the first time, under a minute after that. Rerun it whenever either sim changes, since every binary is
+built from a commit. It needs protoc (`/root/tools/protoc/bin`, as in `tools/dps_report/README.md`). Note both
+commits it prints: they go in the report. If you patched their checkout to flip a rule (step 4), take the patch out
+first (`git -C $WSF diff > $WSF_WORK/<name>.patch && git -C $WSF checkout -- .`), or the update stops.
+
+## 2. Run the builds aligned
+
+Take the builds from the DPS Report's requests (`tools/dps_report/req/<id>.json`), and every variant that differs in
+the part being compared (pets, weapons, talents). Screen at 3,000 iterations. Run the final table at 20,000
+(standards).
+
+```bash
+cd tools/wsf_compare
+A=$(./align.py hunter__survival ~/wsf_compare/out/sv)
+ALIGN=$A ./run.py hunter__survival ~/wsf_compare/out/sv --iters 3000
+```
+
+- **Align the sheets first.** `align.py` closes the stat gaps at the pull (Strength and Agility before Kings, then
+  attack power; Intellect, Spirit and spell power for casters). A gap it closes is a difference too: find out what
+  it is with `layers.py` (race bases, buff ranks, how a rating converts) and list it.
+- **The rotation is ours in both** (`--apl ours`, the default), translated where theirs lacks a value. That
+  compares mechanics, not rotations.
+- **Ranged hunters:** compare turret (`--turret` drops our `Weave:` lines). Their weave walks differently, which
+  hides everything else. Melee specs run as they are.
+- `--apl theirs:<name>` runs their own rotation (`$WSF_WORK/theirs_builds`, `<class>_<spec>_<build>` or
+  `apl_<class>_<spec>_<apl>`). On our gear their rotations came out 72 to 174 DPS behind ours, out of rotation and
+  pull misfit, so it says little about mechanics. Use it only for a question about their rotation.
+
+## 3. Read the gap
+
+1. **Player or pet.** `run.py` prints the pets apart. A gap that is all pet is a pet rule.
+2. **Which ability.** `breakdown.py <out dir>`. The two sims label some rows differently: ours shows the main
+   hand, off hand and extra attacks as `OtherActionAttack` tags 1, 2 and 3, theirs as tags 14 and 15 and the extra
+   attack's own spell (10610 for Windfury, 13960 for Sword Specialization). Look at casts first (the rotation or a resource), then hits and
+   crits per cast (the hit table), then damage per hit (scaling, coefficients, ranks).
+3. **Which stat.** `layers.py <out dir>` when the sheets disagree before alignment.
+4. **Read both codes** for that ability or rule: ours in `sim/`, theirs in `$WSF/sim/` (their spell data is
+   generated from the game files, `sim/core/spelldata`, `sim/<class>/spell_data_auto_gen.go`). Their commit
+   messages often give the evidence: `git -C $WSF log -S <name>`.
+
+## 4. Isolate each cause
+
+Flip one rule on one side and rerun. The DPS it moves is that rule's worth. Do it at 3,000 iterations, and at
+20,000 for anything under 3 DPS.
+
+- **On our side:** edit `req_ours.json` (options, consumables, buffs), or flip the rule in a build of our sim from a
+  scratch worktree, never the checkout's working tree.
+- **On their side:** edit `req_theirs.json`, or patch their checkout (uncommitted, reverted afterwards, step 1).
+- The causes should add up to the gap, within the error. When they don't, there is another cause.
+
+## 5. Sort the causes
+
+For each cause, say which sim is right, on what evidence:
+
+- **Our bug** (theirs has the game data or a log, ours a Classic or Era carryover, or a plain mistake): fix it as
+  normal work, with its test, then re-sim the report builds it moves (`regenerate-dps-report`).
+- **Their bug:** note it for the user, with the evidence. Nothing in their checkout changes.
+- **An open question** (neither side has evidence, or the evidence conflicts): name the report assumption
+  (`orchestration/spec_assumptions.md`) or the ruling ours follows, and what would settle it (a log, a sheet). Add
+  it to `notes.md`'s To Verify list if it isn't there. The user decides.
+- **A choice, not a game fact** (engine timing, the generic boss): keep ours and say so.
+
+Our side holds rulings the user made (`orchestration/`, `notes.md`, the code comments citing them). Don't propose
+reversing one without new evidence, and say which ruling it is when theirs differs.
+
+## 6. Report
+
+- A table per build: ours, theirs, `theirs - ours` with its error, at 20,000 iterations, aligned.
+- The causes with their DPS, sorted as in step 5.
+- Both commits, the iterations, and any alignment it took (`ALIGN`, `--their-mob-type`).
+- Ask before acting on a judgement call. Bugs in ours with clear evidence follow the repo's rules (`CLAUDE.md`):
+  fix, merge, re-sim, deploy.
+
+## What the converter translates
+
+Each line below cost a wrong result once. The converter does all of them. Check this list when a new class or
+rotation gives a result that looks off.
+
+- **Synthetic gear.** Our items 990000 and up don't exist in theirs. `items.json` adds them, and `cmpsim` and
+  `cmpstats` load it. `cmpsim` also registers what our synthetic gear does beyond stats, which `items.json` can't
+  say: the on-use trinkets (994202, 993016, 993117) and the hunter 2 piece. A new synthetic effect goes there
+  (`theirs/cmpsim/main.go.txt`).
+- **A set bonus theirs doesn't register** goes in as bonus stats (`SET_BONUS`): Grimstitch Armor's 1% hit as 10
+  hit rating.
+- **Enchants:** ours keys Forever's spell ids, theirs the enchant ids (`ENCH`).
+- **Consumables:** our enum names → their item ids (`C`). A potion is their `resourcePotId` (mana) or
+  `offensivePotId`. Theirs applies one explosive of a kind, so ours drops its filler by default (`--keep-filler`
+  keeps it).
+- **Stones:** theirs refuses a sharpening stone on a blunt weapon, so the converter swaps in a weightstone, the
+  same +8.
+- **Buffs:** Mana Spring Totem is a party buff in theirs. `battleShout` is an int there (1 is rank 6, 2 rank 7).
+  Their Battle Shout lands just after the pull's sheet, so `align.py` adds its 115 attack power to their sheet.
+  Our Improved Battle Shout, Blessing of Might and Gift of the Wild come out the same as their plain ones.
+- **Sunder Armor:** theirs has no ramp, so both get the full stack at the pull.
+- **Rotation values theirs lacks:** `spellUsesRemaining` and `spellUsesLostByDelay` (rewritten from
+  `remainingTime`, with the cooldowns in `CD`), `moveTime` and `inMeleeRange` (from `unitDistance` and
+  `unitMovementSpeed`). `autoTimeToNext` and `autoTimeSinceLast` take `MainHandAuto`, `OffHandAuto` and
+  `RangedAuto` (`autoSwingTime` keeps `MainHand`).
+- **A talent spell the build lacks** (`NOSPELLS=<id>,...`): ours reads a value naming it as false, theirs drops it
+  from its `and`, which turns the `and` true.
+- **Spell ids and ranks:** theirs registers only some ranks. Rogue: Backstab VIII, Eviscerate VIII, Deadly Poison IV,
+  Vanish rank 2, Mutilate's last rank, Berserking 20554. Hunter: only the top ranks, the AQ books' (Aspect of the
+  Hawk VII, Serpent Sting IX), so the hunter runs use `ours_aq_cli` with our rotation's ids moved up (`OURS_AQ=0`
+  runs ours on its own ranks: the difference is the AQ ranks' worth). Raptor Strike's queue is tag 3 in ours, tag 1
+  in theirs.
+- **Vanish** is a DPS cooldown in theirs, so `autocastOtherCooldowns` would Vanish at the pull. The converter adds a
+  never-true line naming it.
+- **Hunter options:** the quiver and pet speed enums, the Crocolisk spelling, and their Beast Mastery tree with
+  Pathfinding and Improved Revive Pet swapped (5th and 6th).
+- **Off-GCD timing:** their engine fires an off-GCD item only at the next GCD check. A rotation that uses one in
+  between (Thistle Tea at 10 energy) loses it there: compare that with care.
+
+## Known differences
+
+As of 2026-11-01, ours at 0e87f3d and theirs at b70888a518, on the report's requests. A rerun should find these, so
+it can tell what is new. Keep the list current when one is settled.
+
+| Difference | Ours | Theirs | Status |
+|---|---|---|---|
+| Pet damage | Their old pet fits (643d636345) | Counts the pet's own attack power inside the creature DPS (71d4f46012, 2026-11-01) | New, not yet examined. Their BM cat does 247 DPS, ours 334 |
+| Pet Aggression | Rank 5 (user-approved 2026-10-23, from their old pets.go) | Dropped: no Beast Training spell teaches it (8aa26ccb4d) | New. About 2% of pet damage |
+| Improved Tracking vs the generic boss | Counts the typeless boss as tracked (standards 19) | Only the types a Track spell names (8aa26ccb4d) | A choice. `--their-mob-type MobTypeGiant` aligns it (Survival 41 DPS) |
+| Pet focus | 10 a second (client RegenCombat, beta logs) | Classic's 25 per 5 sec × Bestial Discipline | Ours on evidence. Cats 14 to 30 DPS |
+| Cobra Reflexes | Hits shrink with the speed (`hunter_pet_speed`, user ruling) | ×0.85 a hit (TBC) | Ruling |
+| The hunter's buffs on the pet | Passed live | Not | Wolf and Tallstrider 0 to 10 DPS with Cobra Reflexes |
+| Raptor Strike rank 8 | +96 (`hunter_raptor_31plus`) | +70 | Ruling |
+| AQ book ranks | Off under Forever | Hunter's top ranks only | Worth 30 to 36 DPS to ranged hunters |
+| Explosive reach | 10 yd, since 2026-11-01 | 10 yd | Settled (ours was a bug) |
+| Windfury Totem ICD, extra attacks and the swing, Eviscerate's attack power | Theirs' rules since 2026-10-31 | 100 ms, no swing reset, 4% a combo point | Settled, on `notes.md`'s To Verify list |
+| Off-GCD items (Thistle Tea) | Fire when the rotation says | Only at the next GCD check | A choice (engine). Ours drinks Thistle Tea at 10 energy, which theirs never does: about 13.5 DPS on Combat Swords |
+| Undead base stats | 82 Str, 129 Agi | 79, 128 | Race offset ruling. `align.py` closes it |
+| Totem ranks | Trainer (Strength of Earth 42, Grace of Air 77) | AQ books' (53, 89) | No AQ books at launch (assumed) |
+
+## Adding a class
+
+`convert.py` maps rogues and hunters, and stops on any other class. For a new one:
+
+1. Its options block (`class_opts`): their class proto (`$WSF/proto/<class>.proto`) against ours.
+2. Its consumables in `C`: weapon oils, poisons, imbues, class-only items.
+3. Its spell ids in `remap()`: which ranks theirs registers (their `spell_data_auto_gen.go`) against what our
+   rotation names, and any tag that differs. Check every cast in `breakdown.py`: a spell with 0 casts in theirs is
+   an id that didn't map.
+4. Its cooldowns in `CD`, for `spellUsesLostByDelay`.
+5. A talent tree whose order differs (compare their talent tree file with ours, as the hunter's Beast Mastery tree).
+6. Synthetic gear effects in `cmpsim`, and the class's caster or melee stats in `align.py`.
+
+Then run one build, check the sheets match (`layers.py`), check every ability casts in both, and add what bit to the
+translations above.

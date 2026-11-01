@@ -1,0 +1,36 @@
+// Local only: prints the player's and the target's stats at the pull.
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/wowsims/forever/sim"
+	"github.com/wowsims/forever/sim/core"
+	"github.com/wowsims/forever/sim/core/proto"
+	"github.com/wowsims/forever/sim/core/simsignals"
+	"google.golang.org/protobuf/encoding/protojson"
+)
+
+func main() {
+	sim.RegisterAll()
+	db := &proto.SimDatabase{}
+	dbb, _ := os.ReadFile(os.Args[2])
+	if err := protojson.Unmarshal(dbb, db); err != nil {
+		panic(err)
+	}
+	core.AddToDatabase(db)
+	b, _ := os.ReadFile(os.Args[1])
+	req := &proto.RaidSimRequest{}
+	if err := protojson.Unmarshal(b, req); err != nil {
+		panic(err)
+	}
+	s := core.NewSim(req, simsignals.CreateSignals())
+	s.Reset()
+	s.PrePull()
+	c := s.Raid.Parties[0].Players[0].GetCharacter()
+	fmt.Println("PLAYER", c.GetStats().FlatString())
+	fmt.Printf("PSEUDO %+v\n", c.PseudoStats)
+	fmt.Println("TARGET", s.Encounter.ActiveTargets[0].Unit.GetStats().FlatString())
+	fmt.Printf("TPSEUDO %+v\n", s.Encounter.ActiveTargets[0].Unit.PseudoStats)
+}

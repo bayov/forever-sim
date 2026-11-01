@@ -1,0 +1,75 @@
+// Local only: runs a RaidSimRequest with extra items (our synthetic gear) added to the database.
+package main
+
+import (
+	"fmt"
+	"os"
+	"time"
+
+	"github.com/wowsims/forever/sim"
+	"github.com/wowsims/forever/sim/core"
+	"github.com/wowsims/forever/sim/core/proto"
+	"github.com/wowsims/forever/sim/core/stats"
+	"google.golang.org/protobuf/encoding/protojson"
+)
+
+func main() {
+	sim.RegisterAll()
+	db := &proto.SimDatabase{}
+	must(protojson.Unmarshal(read(os.Args[1]), db))
+	core.AddToDatabase(db)
+
+	// Our synthetic on-use trinkets: the rogue's +335 attack power, the ranged hunter's +415 ranged attack
+	// power and the Survival hunter's +335 of both, each 20 s on a 2 min cooldown sharing the offensive trinket's.
+	for id, st := range map[int32]stats.Stats{
+		994202: {stats.AttackPower: 335, stats.RangedAttackPower: 335},
+		993016: {stats.RangedAttackPower: 415},
+		993117: {stats.AttackPower: 335, stats.RangedAttackPower: 335},
+	} {
+		id, st := id, st
+		core.NewItemEffect(id, func(agent core.Agent) {
+			character := agent.GetCharacter()
+			core.RegisterTemporaryStatsOnUseCD(character, "Synthetic On-Use", st, 20*time.Second,
+				core.SpellConfig{
+					ActionID: core.ActionID{ItemID: id},
+					Cast: core.CastConfig{
+						CD:       core.Cooldown{Timer: character.NewTimer(), Duration: 2 * time.Minute},
+						SharedCD: core.Cooldown{Timer: character.GetOffensiveTrinketCD(), Duration: 20 * time.Second},
+					},
+				})
+		})
+	}
+
+	// Our synthetic hunter sets' 2 piece bonus (Wildstalker Armor's): 1% attack and casting speed, on the head piece,
+	// which each set's two pieces include.
+	for _, id := range []int32{993001, 993101} {
+		core.NewItemEffect(id, func(agent core.Agent) {
+			character := agent.GetCharacter()
+			core.MakePermanent(character.RegisterAura(core.Aura{
+				Label: "Synthetic 2 piece",
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					aura.Unit.MultiplyAttackSpeed(sim, 1.01)
+					aura.Unit.MultiplyCastSpeed(sim, 1.01)
+				},
+			}))
+		})
+	}
+
+	req := &proto.RaidSimRequest{}
+	must(protojson.Unmarshal(read(os.Args[2]), req))
+	res := core.RunRaidSimConcurrent(req)
+	out, _ := protojson.MarshalOptions{}.Marshal(res)
+	must(os.WriteFile(os.Args[3], out, 0o644))
+	if res.Error != nil {
+		fmt.Println("ERROR", res.Error)
+		os.Exit(1)
+	}
+	fmt.Printf("dps %.1f +- %.2f\n", res.RaidMetrics.Dps.Avg, res.RaidMetrics.Dps.Stdev)
+}
+
+func read(p string) []byte { b, err := os.ReadFile(p); must(err); return b }
+func must(err error) {
+	if err != nil {
+		panic(err)
+	}
+}
