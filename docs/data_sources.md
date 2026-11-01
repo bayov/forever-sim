@@ -89,6 +89,38 @@ report what the client says, so they rank with it when they show client data. Th
   `tools/audit/gate.py` compares `wago.py latest --probe 300` with each auditor's state.
 - **Note:** the passes say not to reach wago.tools any other way when it refuses.
 
+### wago.tools hotfixes, the realms' rows over a client build
+
+- **What:** the table rows the Forever realms send every client as server hotfixes, which
+  outrank the build's own tables for the rows they change (above). The 2026-10-30 hotfix
+  that reworked the paladin and druid trees (push 113283 and its neighbours, region 91,
+  build 70707) reached us this way, with no new client build.
+- **URLs:** `https://wago.tools/hotfixes?product=wowf&search=<text>&page=<n>`, an HTML page
+  whose `data-page` attribute holds 25 rows as JSON (push, record, status, build, table,
+  region, the row's fields).
+- **Fetcher:** `python3 tools/sources/hotfixes.py fetch <build> --set <reader>` asks once per
+  table family ("70707 trait", "70707 spell"), which finds every row wago.tools has of those
+  tables at that build. `apply <build> --set <reader>` writes the build's tables with the
+  rows of one region applied (91, the launch realms, by default; newest push wins, status 2
+  removes the record) as the pseudo-version `<version>+hf`, which `wago.py` and everything on
+  it reads like a build: `import_db2.py 1.60.1.70707+hf paladin`. `check` compares hotfixed
+  rows with the build's rows field by field, which is how the field order was verified.
+- **Cache (not committed):** `~/.cache/wow-data/wago/hotfixes/<product>/search/*.json` (one
+  file per search, every row it found) and the tables in `~/.cache/wow-data/wago/<version>+hf/`.
+- **Committed results:** the talent files in `tools/forever_talents/client/` whose `source`
+  names a `+hf` version.
+- **Readers:** `tools/forever_talents/import_db2.py` (talent trees), and any script on
+  `wago.py` given a `+hf` version.
+- **Refresh:** when foreverchanges.pro or the daily routine reports a hotfix the client build
+  lacks. `fetch --refresh` and `apply`. **Behind when:** a newer push
+  shows on wago.tools than the newest in `hotfixes.py pushes <build>`, or a new client build
+  ships, whose own tables then replace the overlay.
+- **Note:** wago.tools only has what its users' clients were sent. Its page order is unstable
+  among rows logged in the same second, so paging a big search loses rows (5,292 of 6,134 for
+  "70707 spell"). `fetch` splits a search of more than 4 pages by the record id's last digits
+  ("3 70707 spell", "13 70707 spell") and keeps a part only when it has as many distinct rows as
+  the site counts; it prints and exits 1 when a search still comes up short.
+
 ### Item facts: the Forever client's ItemSparse over Classic 1.15.3.55646's
 
 - **What:** item set IDs and factions (`gen_db`), which items need a PvP rank (rotopt), and a
