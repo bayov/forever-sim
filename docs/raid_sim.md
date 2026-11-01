@@ -174,14 +174,20 @@ the sim's per-tree digit format:
 | Preset | Talents | Gives |
 |---|---|---|
 | Protection warrior | 8/0/43, `35--251533120331221351` (`ui/tank_warrior/presets.ts`) | Sunder Armor upkeep after the pull (see [Sunder Armor](#sunder-armor)); Battle Shout |
-| Feral tank | 0/41/10, `-55220302020132012551-055` (`ui/feral_tank_druid/presets.ts`) | Leader of the Pack; Gift of the Wild; Faerie Fire as an assignment. Innervate is off by default, since it means leaving Bear Form. |
+| Feral tank | 0/41/10, `-5522030202310212551-055` (`ui/feral_tank_druid/presets.ts`) | Leader of the Pack; Gift of the Wild; Faerie Fire as an assignment. Innervate is off by default, since it means leaving Bear Form. |
 | Protection paladin | 0/44/7, `-55302102513521531-052` (`ui/protection_paladin/presets.ts`) | one Greater Blessing for each class; one aura; one judgement (Wisdom or the Crusader) |
 | Warden shaman (tank) | 17/34/0, `35050013-0502303313551102` (`ui/warden_shaman/presets.ts`) | one totem per element (earth, air, water, fire); plain Mana Spring to its party |
 | Holy paladin | 32/19/0, `50320215022101251-510221305` | the same as the Protection paladin |
 | Restoration shaman | 0/8/43, `-005102-5530500315513151` (`ui/restoration_shaman/presets.ts`) | one totem per element (earth, air, water, fire); Mana Spring with Restorative Totems (×1.25); Mana Tide to its party |
 | Discipline priest | 33/18/0, `005005231330011531-2310510303` (`ui/healing_priest/presets.ts`) | Fortitude, Prayer of Spirit, Power Infusion |
 | Holy priest | 19/32/0, `00510223123-03405103030121531` (`ui/healing_priest/presets.ts`) | Fortitude, Prayer of Spirit |
-| Restoration druid | 11/0/40, `05302001--5052035153113051` | Gift of the Wild; Innervate; Faerie Fire as an assignment |
+| Restoration druid | 11/0/40, `05302001--5053025153113051` (`ui/restoration_druid/presets.ts`) | Gift of the Wild; Innervate; Faerie Fire as an assignment |
+
+**The druid presets follow the launch realms' 2026-10-30 hotfix trees** (2026-11-01). It moved most druid
+talents, so both strings changed with the same talents: the Feral tank's Berserk point went to Lacerate (a
+talent since the hotfix), Heart of the Wild and Furor swapped trees, Primal Bite moved under Leader of the Pack,
+and the Restoration druid's Reflection and Subtlety swapped rows, with Bloom in Gift of the Earthmother's place.
+What they give is unchanged.
 
 **Within a role, only the priest has a raid-relevant talent choice.** Leader of the Pack, Restorative
 Totems and Mana Tide are talents too, but every sensible build of their role takes them. Discipline reaches

@@ -155,7 +155,13 @@ export const DefaultAPL = APLLevel60;
 // on the final set only traded Genesis, Moonglow and Reflection points within the noise. The other
 // archetypes were well behind on the first set at 180 sec: 31 / 0 / 20 (Reflection and Tranquil
 // Spirit, no Moonfury) 10% and 41 / 10 / 0 4%.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Balance', SavedTalents.create({ talentsString: '5232220115501351--5053' }), {
+//
+// The launch realms' 2026-10-30 hotfix swapped Reflection (now Restoration row 2) and Subtlety (now
+// row 3), so the same build reads 5232220115501351--505003, and doubled Genesis and Naturalist (2% a
+// point). Re-scored on the hotfix trees (2026-11-01, 20,000 iterations, seed 1, 120 / 180 / 300 sec
+// together), it stays the best: Genesis 5 for Moonglow 3 loses 39 (the mana), 3 / 2 loses 9, and
+// Heart of the Wild (now Restoration row 1, 10% Intellect) for Nature's Focus 2.7 to 4.5.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Balance', SavedTalents.create({ talentsString: '5232220115501351--505003' }), {
 	tooltip: "The talent search best on the synthetic Phase 1 set with Subtlety: 38 Balance, Nature's Focus, Naturalist and Subtlety from Restoration.",
 	group: 'Synthetic',
 });
@@ -164,8 +170,10 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Balance', SavedTale
 // (standards 26); pinned (-require subtlety), the search gives Heart of the Wild's 3 points to
 // Naturalist and Subtlety: 811.6 / 813.3 / 809.0 at 120 / 180 / 300 sec against 814.5 / 816.2 /
 // 812.0 (5502220115501351-03-505), 2.9 / 2.9 / 3.0 for the threat cut (Tauren, 20,000 iterations,
-// seed 1; the same on seed 1000003).
-export const TalentsLevel60Wrath = PresetUtils.makePresetTalents('Balance Wrath', SavedTalents.create({ talentsString: '5502220115501351--5053' }), {
+// seed 1; the same on seed 1000003). On the 2026-10-30 hotfix trees the same build reads
+// 5502220115501351--505003 (Subtlety moved to row 3), and stays the best when re-scored (2026-11-01):
+// Heart of the Wild for Nature's Focus loses 2.6 to 4.2, Moonglow for Genesis 4.2 to 12.9.
+export const TalentsLevel60Wrath = PresetUtils.makePresetTalents('Balance Wrath', SavedTalents.create({ talentsString: '5502220115501351--505003' }), {
 	tooltip: 'The Wrath rotation talent search best: Genesis in place of Moonglow, Subtlety from Restoration.',
 	group: 'Synthetic',
 });

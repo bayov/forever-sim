@@ -6,7 +6,7 @@
   "isDefault": true,
   "pr": 8,
   "race": "NightElf",
-  "talents": "05002-55200032021030212051-055",
+  "talents": "05002-53200032023012125001-05502",
   "treeNames": [
     "Balance",
     "Feral Combat",
@@ -19,31 +19,32 @@
     "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
-    "dps": 868.1,
-    "stderr": 0.2,
+    "dps": 942.5,
+    "stderr": 0.21,
     "iters": 20000,
     "ok": true,
-    "note": "class worker sim of this request, 180s, seed 1"
+    "note": "sim of the request on the 2026-10-30 hotfix trees (new talents and rotation), 180s, seed 1 (seed 1000003 942.6)"
   },
-  "summary": "Cat with Shred, Rake and Rip, plus Berserk and Shadowmeld into Ravage. In Forever, Cat Form swings every 1.0s with the weapon's DPS. Stones, potions, Thistle Tea and Windfury Totem all work in Cat Form.",
+  "summary": "Cat with Shred, Rake and Rip, plus Shifting Power and Shadowmeld into Ravage. Predatory Discipline lets Ferocious Bite keep its extra Energy. In Forever, Cat Form swings every 1.0s with the weapon's DPS. Stones, potions, Thistle Tea and Windfury Totem all work in Cat Form.",
   "keyTalents": [
-    "Shredding Attacks",
     "Shifting Power",
-    "Improved Shifting Power",
+    "Predatory Discipline",
+    "Shredding Attacks",
     "Rend and Tear",
-    "Berserk",
+    "Blood Frenzy",
     "Ferocity",
     "Savage Fury",
+    "Heart of the Wild",
     "Naturalist",
     "Feral Swiftness"
   ],
   "rotation": [
     "Opener: plain Cat Form, no Prowl. A Night Elf uses Shadowmeld in the fight for Ravage.",
-    "Racials, trinkets and potions on cooldown. Berserk with the on-use trinket. Elune's Light outside Berserk.",
-    "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 combo points and Rip has 6s or more)",
+    "Racials, trinkets and potions on cooldown. Elune's Light with the on-use trinket, unless waiting for it would lose a use.",
+    "Shifting Power at 60 Energy or less",
     "Ferocious Bite at any combo points in the last 2s",
-    "Rip at 5 combo points when it is down (not in the last 8s)",
-    "Ferocious Bite at 5 combo points and 35 Energy while Rip has 6s or more left (or in the last 8s)",
+    "Rip at 4 combo points or more when it is down (not in the last 8s)",
+    "Ferocious Bite at 5 combo points and 45 Energy while Rip has 4s or more left (or in the last 8s). Predatory Discipline keeps the extra Energy, which still adds damage",
     "Shadowmeld into Ravage from behind on Clearcasting, or in the last 10s with the Energy for it",
     "Rake below 5 combo points when it is down (not in the last 6s)",
     "Shred below 5 combo points"
@@ -62,6 +63,7 @@
     "EZ-Thro Dark Bomb"
   ],
   "caveats": [
+    "Predatory Discipline's tooltip gives no number. The sim reads it literally: Ferocious Bite keeps its extra Energy and still deals 2.5 damage a point of it.",
     "Rip's client ranks from level 31 up are 6-9% weaker than Era's. Era values would add 1.6% DPS.",
     "Idol of the Dream (Rip lasts 2s longer) is 3.0 DPS ahead of Howling Idol at 180s.",
     "Clearcasting is fished for before the pull. It's worth 4.6 DPS to the Night Elf.",
@@ -71,7 +73,7 @@
     "Tiger's Fury is gone in Forever.",
     "Cat swings vary 20% either way. The server's real range is unknown.",
     "The melee group has Windfury Totem and a second shaman's Grace of Air. No Elemental Sharpening Stone, since its recipe comes from Molten Core.",
-    "Takes Feral Swiftness 2 (movement speed) instead of Natural Shapeshifter's point. It costs 0.0 / 0.1 / 5.2 DPS at 120s / 180s / 300s, from shapeshift mana in long fights."
+    "Takes Feral Swiftness 2 (movement speed). It costs nothing: the points it needs above Shredding Attacks would otherwise go to Furor, which does nothing for a cat that stays in Cat Form."
   ],
-  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. Feral options: prepull Clearcasting on. No edits needed. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. Feral options: prepull Clearcasting on. No edits needed. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. 2026-11-01: on the launch realms' 2026-10-30 hotfix trees (tools/forever_talents/client/druid.json): talents and rotation from tools/rotopt/druid_presets.sh, the request's talentsString and rotation edited to match."
 }

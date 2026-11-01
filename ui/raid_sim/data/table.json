@@ -298,7 +298,7 @@
 			"name": "Feral tank",
 			"role": "RaidRoleTank",
 			"class": "ClassDruid",
-			"talents": "-55220302020132012551-055",
+			"talents": "-5522030202310212551-055",
 			"icon": "ability_racial_bearform",
 			"gives": [
 				"Gift of the Wild",
@@ -406,7 +406,7 @@
 			"name": "Restoration druid",
 			"role": "RaidRoleHealer",
 			"class": "ClassDruid",
-			"talents": "05302001--5052035153113051",
+			"talents": "05302001--5053025153113051",
 			"icon": "spell_nature_healingtouch",
 			"gives": [
 				"Gift of the Wild",

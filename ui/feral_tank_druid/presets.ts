@@ -59,13 +59,17 @@ export const APLPresets = {
 //                                 Talent Presets
 ///////////////////////////////////////////////////////////////////////////
 
-// Default talents. Uses the wowhead calculator format, make the talents on
-// https://wowhead.com/classic/talent-calc and copy the numbers in the url.
-
+// Default talents, in the sim's per-tree digit format, on the trees of the launch realms' 2026-10-30
+// hotfix (tools/forever_talents/client/druid.json): 0/41/10, the raid sim's Feral tank preset
+// (docs/raid_sim.md). The bear talents: Ferocity, Furor, Feral Swiftness, Feral Instinct 2, Thick
+// Hide, Savage Fury, Sharpened Claws, Predatory Strikes, Lacerate (a talent since the hotfix), Blood
+// Frenzy, Leader of the Pack, Natural Instinct, Natural Reaction, Rend and Tear and Primal Bite
+// (row 7 since the hotfix), and Heart of the Wild (Restoration since the hotfix) and Naturalist.
+// Berserk left the tree, so its point went to Lacerate.
 export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '-55220302020132012551-055',
+		talentsString: '-5522030202310212551-055',
 	}),
 };
 

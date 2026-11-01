@@ -14,7 +14,8 @@ import (
 // never dodged, parried or blocked. Prowl is never up in a fight (prowl.go), so Shadowmeld in
 // combat is the only way in.
 //
-// The client's class masks give it Clearcasting, Berserk and Natural Instinct, not Savage Fury or
+// The client's class masks give it Clearcasting and Natural Instinct (and Berserk, which left the tree
+// in the launch realms' 2026-10-30 hotfix), not Savage Fury or
 // Shredding Attacks. Rend and Tear is a dummy on the melee abilities, so it gets that too, and
 // Blood Frenzy, as a combo point builder.
 var RavageSpellId = []int32{0, 6785, 6787, 9866, 9867}

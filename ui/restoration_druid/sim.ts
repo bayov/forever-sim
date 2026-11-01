@@ -37,7 +37,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationDruid, {
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default talents.
-		talents: Presets.FurorRestoTalents.data,
+		talents: Presets.HeartOfTheWildRestoTalents.data,
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 		// Default raid/party buffs settings.
@@ -68,7 +68,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationDruid, {
 
 	presets: {
 		// Preset talents that the user can quickly select.
-		talents: [Presets.FurorRestoTalents, Presets.ThiccRestoTalents],
+		talents: [Presets.HeartOfTheWildRestoTalents, Presets.ThiccRestoTalents],
 		rotations: [],
 		// Preset gear configurations that the user can quickly select.
 		gear: [Presets.DefaultGear],
@@ -85,7 +85,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationDruid, {
 			defaultName: 'Restoration',
 			iconUrl: getSpecIcon(Class.ClassDruid, 2),
 
-			talents: Presets.FurorRestoTalents.data,
+			talents: Presets.HeartOfTheWildRestoTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {

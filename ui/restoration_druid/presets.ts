@@ -10,12 +10,16 @@ import BlankGear from './gear_sets/blank.gear.json';
 
 export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 
-// Default talents. Uses the wowhead calculator format, make the talents on
-// https://wowhead.com/classic/talent-calc and copy the numbers in the url.
-// Forever's trees (client 70630, unchanged in 70685): Celestial Focus is gone, so the second build takes
-// Furor and every Restoration talent instead of Balance.
-export const FurorRestoTalents = {
-	name: 'Furor Resto',
+// Default talents, in the sim's per-tree digit format, on the trees of the launch realms' 2026-10-30
+// hotfix (tools/forever_talents/client/druid.json). The hotfix swapped Furor (now Feral) and Heart of
+// the Wild (now Restoration row 1), and Reflection (now row 2) and Subtlety (now row 3), and put Bloom
+// in Gift of the Earthmother's place. Thicc Resto is the raid sim's Restoration druid preset
+// (docs/raid_sim.md): Genesis (10% more healing over time since the hotfix), Moonglow, Nature's Majesty
+// and Nature's Splendor in Balance, and every core Restoration talent. The second build, which took
+// Furor while it was a Restoration talent (Celestial Focus is gone from Forever), takes Heart of the
+// Wild in its place (10% Intellect).
+export const HeartOfTheWildRestoTalents = {
+	name: 'Heart of the Wild Resto',
 	data: SavedTalents.create({
 		talentsString: '05--5553035153113051',
 	}),
@@ -23,7 +27,7 @@ export const FurorRestoTalents = {
 export const ThiccRestoTalents = {
 	name: 'Thicc Resto',
 	data: SavedTalents.create({
-		talentsString: '05302001--5052035153113051',
+		talentsString: '05302001--5053025153113051',
 	}),
 };
 

@@ -10,6 +10,44 @@ Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. T
 
 Update 2026-10-12: every multi-rank talent below that is still in the tree was checked against the client's per-rank curves (TraitDefinitionEffectPoints and CurvePoint, build 1.60.1.70338) and the sim's per-rank values match them, so those are marked [ranks settled by the 70338 trait curves]. Talents marked [not in client 70338] are no longer in the tree; the current tree is in the "Beta client 1.60.1.70338" section.
 
+## Launch-realm hotfix to 1.60.1.70707 (2026-10-30)
+
+The launch realms' hotfix of 30 October reworked the druid tree on build 70707 without a new client (wago.tools hotfixes, product wowf, region 91, push 113283 and its neighbours, read through `tools/sources/hotfixes.py` into the cached `1.60.1.70707+hf` tables; [foreverchanges.pro](https://foreverchanges.pro/talents/druid) shows the same). `tools/forever_talents/client/druid.json` is that tree, and the sim follows it since 2026-11-01. It supersedes the sections below wherever they disagree; every druid talent string changed.
+
+Feral Combat (20 talents):
+
+- Berserk (417141) and Improved Shifting Power (1322670) are out of the tree.
+- Shifting Power moves to row 7, third column, under Predatory Discipline, with an 8 sec cooldown (SpellCooldowns 1322605, 16000 -> 8000 ms). Still 40 Energy for 55% of base mana: the energize is effect 1's base points; the tooltip asks for `$s2` and shows "?", and foreverchanges.pro gives 40.
+- Predatory Discipline (new, row 4, third column, 1328613): "Your Ferocious Bite ability no longer converts extra Energy into damage, but still deals extra damage based on your excess Energy." Its one effect is a dummy aura with base points 20 that the server reads; the tooltip names no number. The sim reads it literally, as wowsims/forever does: the Bite deals its rank's damage a point of extra Energy as before (2.5 at 60) and spends only its 35 Energy (`sim/druid/ferocious_bite.go`, report assumption `druid_predatory_discipline`, one value).
+- Lacerate is a row 4 talent under Savage Fury (1328617; a new rank 1, 20 damage over 15 sec, and a trainer rank 2 at 34, the old ranks becoming 3 to 5). Bear only; the sim has no bear.
+- Primal Bite moves to row 7 under Leader of the Pack, 3 ranks at 40 / 50 / 60: plus 42 / 62 / 77 (was 26 / 38 / 59 / 77 from 25). Bear only.
+- Furor moves to Feral row 1 (third column) and Heart of the Wild to Restoration row 1, with their values. Predatory Strikes moves to row 4 column 1, Rend and Tear to row 6 column 1 (still under Predatory Strikes), Natural Reaction to row 6 column 4.
+- Leader of the Pack: 3% crit of every kind for the party or raid (see the Moonkin Form line below for the stacking).
+- Ferocious Bite (a trainer spell): a new rank 1 at 24 (1328618), 33 to 43 damage with 1 combo point up to 129 to 139 with 5, and 0.6 damage a point of extra Energy. The old ranks become ranks 2 to 6 with their rows unchanged (1.0 to 2.7 a point of extra Energy), so a level 60 Bite (22829, rank 5; rank 6 is an Ahn'Qiraj book) is the same.
+
+Balance and Restoration:
+
+- Genesis: 2% a point more periodic damage and healing, 10% at 5 (was 1% a point; TraitDefinitionEffectPoints curves 85325 and 97153).
+- Naturalist: 2% a point more damage of every school, 10% at 5 (was 1%), and its cast time cut covers Wild Growth too.
+- Wild Growth has a 3 sec cast (SpellMisc CastingTimeIndex 14; Naturalist brings it down to 2.5 sec). Bloom (new, 1328621) takes Gift of the Earthmother's place: an expiring Rejuvenation or Regrowth heals for 100% of Spirit, 50% if dispelled. Reflection and Subtlety swap rows (Reflection row 2, Subtlety row 3). Swiftmend's tooltip only changed wording. None of these touch a simulated build.
+
+The presets, re-searched on these trees (2026-11-01; gear fixed, the generic boss, 180 ± 20 sec, 20,000 iterations, seed 1, seed 1000003 within 0.2; `tools/rotopt/druid_presets.sh` and the presets' comments have the searches):
+
+| Build | Talents | 120 s | 180 s | 300 s | 180 s before |
+|---|---|---|---|---|---|
+| Feral (Night Elf) | `05002-53200032023012125001-05502` | 951.2 | 942.5 | 930.9 | 885.8 |
+| Feral, Faerie Fire duty | the same | 944.3 | 937.3 | 926.4 | 881.9 |
+| Balance (Night Elf) | `5232220115501351--505003` | 893.3 | 891.1 | 882.2 | 846.6 |
+| Balance, Faerie Fire duty | the same | 857.5 | 857.7 | 851.6 | 814.7 |
+| Balance Wrath (Windshaper Skyborne) | `5502220115501351--505003` | 850.4 | 855.7 | 853.2 | 806.5 |
+| Balance Wrath, Faerie Fire duty | the same | 816.8 | 823.2 | 822.9 | 775.6 |
+
+- Feral: Shifting Power is worth 127 DPS, so the cat buys the 30 Feral points above row 7 it needs: Furor 3 (it does nothing for a cat that stays in form, but Shredding Attacks' row needs 10 points above it) and Blood Frenzy 2 come in, with Natural Shapeshifter 2 for cheaper Shifting Power. The rotation: Rip at 4 combo points, Ferocious Bite at 5 with 45 Energy or more while Rip has 4 sec left (Predatory Discipline keeps the extra Energy), Shifting Power at 60 Energy or less whether a Bite is due or not, Elune's Light held for the Strength trinket (+9.4 at 180 sec over the old knobs on the new talents).
+- Balance and Wrath keep their talents in the new layout and their rotations (both knob searches kept every knob); Genesis for Moonglow and Heart of the Wild for Nature's Focus lose.
+- What moved them, at 180 sec: Genesis and Naturalist at 2% a point, +55.3 Feral, +44.5 Balance, +49.2 Wrath; Predatory Discipline's literal reading +27.5 Feral; Berserk's removal cost the old Feral build 18.1. Subtlety 3 (a must-take) now costs Balance 12.6 against Genesis 5 and the Wrath build 3.0 against Heart of the Wild 3.
+- Races (standards 29): Night Elf stays best for Feral (Skyborne 930.5, Tauren 923.4) and Balance (Skyborne with its own rotation 889.7, Tauren 881.3), Windshaper Skyborne for the Wrath build (Night Elf 853.2, 853.7 with Elune's Light).
+- The raid sim's Feral tank (`-5522030202310212551-055`) and Restoration druid (`05302001--5053025153113051`) presets are their old talents in the new layout; the tank's Berserk point went to Lacerate (docs/raid_sim.md).
+
 ## Beta client 1.60.1.70338 (2026-10-12)
 
 The druid tree and spells from the newest beta client on [wago.tools](https://wago.tools/db2) (TraitNode, TraitNodeEntry, TraitDefinition and TraitEdge for the tree, TraitDefinitionEffectPoints and the curves behind it for every rank, SpellEffect, SpellMisc, SpellPower, SpellCooldowns and SpellLevels for the spells), checked against [foreverchanges.pro](https://foreverchanges.pro/talents/druid)'s talent calculator for the same build. `tools/forever_talents/client/druid.json` and the sim follow it, so the BlizzCon text below is superseded where it differs.

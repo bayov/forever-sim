@@ -34,16 +34,16 @@ func newCatSim(t *testing.T, talents string) (*core.Simulation, *FeralDruid) {
 	return sim, sim.Raid.Parties[0].Players[0].(*FeralDruid)
 }
 
-// The build the checks below use: Ferocity 5, Shredding Attacks 3, Savage Fury 2, Sharpened
-// Claws 2, Shifting Power, Predatory Strikes 3, Blood Frenzy 2, Improved Shifting Power 2,
-// Leader of the Pack, Natural Instinct 2, Rend and Tear 5, Berserk, and Furor 5 and Natural
-// Shapeshifter 3 in Restoration.
-const catTalents = "-50000032021032212051-05003"
+// The build the checks below use, on the trees of the launch realms' 2026-10-30 hotfix: Ferocity
+// 5, Furor 5, Shredding Attacks 3, Savage Fury 2, Sharpened Claws 2, Predatory Strikes 3, Predatory
+// Discipline, Blood Frenzy 2, Leader of the Pack, Natural Instinct 2, Rend and Tear 5 and Shifting
+// Power, and Heart of the Wild 5 and Natural Shapeshifter 3 in Restoration.
+const catTalents = "-55000032023012125001-05003"
 
 // TestCatCosts checks the Energy costs with the talents (Shred 60 less 6 a point of Shredding
 // Attacks, Claw and Rake 1 a point of Ferocity off), Shifting Power's mana (55% of base mana,
-// 30% off with Natural Shapeshifter 3) and its cooldown (16 sec, 8 off with Improved Shifting
-// Power 2), and Tiger's Fury, free with a 30 sec cooldown.
+// 30% off with Natural Shapeshifter 3) and its 8 sec cooldown (the hotfix's; it took Improved
+// Shifting Power out of the tree), and that the Forever druid has no Tiger's Fury.
 func TestCatCosts(t *testing.T) {
 	_, cat := newCatSim(t, catTalents)
 	costs := []struct {
@@ -85,21 +85,80 @@ func TestCatShiftingPower(t *testing.T) {
 	}
 }
 
-// TestCatBuffs checks Berserk (100% crit on the builders, Ravage among them, not on Rip or
-// Ferocious Bite).
-func TestCatBuffs(t *testing.T) {
-	sim, cat := newCatSim(t, catTalents)
+// TestCatPredatoryDiscipline checks Predatory Discipline (1328613) on the literal reading of its
+// tooltip (the report's druid_predatory_discipline assumption): a Bite at 100 Energy deals the same
+// damage with the talent as without it, extra Energy included, and keeps the 65 extra Energy, where
+// without it the Bite spends all 100. The two builds differ only in that point (Lacerate, a bear
+// ability the cat never uses, takes it in the other), so the fights roll the same.
+func TestCatPredatoryDiscipline(t *testing.T) {
+	const withoutPD = "-55000032000100000000" // Ferocity 5, Furor 5, Shredding Attacks 3, Savage Fury 2, Lacerate
+	const withPD = "-55000032000010000000"    // the same with Predatory Discipline for Lacerate
+	bite := func(talents string) (damage, energyLeft float64) {
+		sim, cat := newCatSim(t, talents)
+		target := noCritsNoArmor(sim, cat)
+		cat.AddStatDynamic(sim, stats.MeleeHit, 100*core.MeleeHitRatingPerHitChance)
+		cat.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand].BaseDodgeChance = 0
+		cat.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand].BaseParryChance = 0
+		cat.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand].BaseGlanceChance = 0
+		spell := cat.FerociousBite
+		cat.AddComboPoints(sim, 5, target, spell.ComboPointMetrics())
+		cat.AddEnergy(sim, cat.MaxEnergy(), spell.EnergyMetrics())
+		cat.SetGCDTimer(sim, sim.CurrentTime)
+		if !spell.Cast(sim, target) {
+			t.Fatalf("%q: Bite didn't cast", talents)
+		}
+		return spell.SpellMetrics[target.UnitIndex].TotalDamage, cat.CurrentEnergy()
+	}
+	plainDamage, plainEnergy := bite(withoutPD)
+	pdDamage, pdEnergy := bite(withPD)
+	if plainDamage <= 0 || math.Abs(pdDamage-plainDamage) > 1e-6 {
+		t.Errorf("Bite at 100 Energy deals %.2f with Predatory Discipline, %.2f without, want the same", pdDamage, plainDamage)
+	}
+	if math.Abs(plainEnergy) > 1e-6 {
+		t.Errorf("Bite at 100 Energy without Predatory Discipline leaves %.1f Energy, want 0", plainEnergy)
+	}
+	if math.Abs(pdEnergy-65) > 1e-6 {
+		t.Errorf("Bite at 100 Energy with Predatory Discipline leaves %.1f Energy, want 65", pdEnergy)
+	}
+}
 
-	shredCrit, ravageCrit, biteCrit := cat.Shred.BonusCritRating, cat.Ravage.BonusCritRating, cat.FerociousBite.BonusCritRating
-	cat.BerserkAura.Activate(sim)
-	if got := cat.Shred.BonusCritRating - shredCrit; got != 100 {
-		t.Errorf("Berserk gives Shred %.0f crit, want 100", got)
-	}
-	if got := cat.Ravage.BonusCritRating - ravageCrit; got != 100 {
-		t.Errorf("Berserk gives Ravage %.0f crit, want 100", got)
-	}
-	if got := cat.FerociousBite.BonusCritRating - biteCrit; got != 0 {
-		t.Errorf("Berserk gives Ferocious Bite %.0f crit, want 0", got)
+// TestCatBiteRanks checks the hotfix's new Ferocious Bite rank 1 (1328618) at 24, that the old
+// rank 1 (22568) still comes at 32, and that level 60 casts 22829 (31018 is an Ahn'Qiraj book
+// rank). Classic has no rank at 24.
+func TestCatBiteRanks(t *testing.T) {
+	for _, tc := range []struct {
+		ruleset proto.Ruleset
+		level   int32
+		id      int32
+	}{
+		{proto.Ruleset_RulesetForever, 23, 0},
+		{proto.Ruleset_RulesetForever, 24, 1328618},
+		{proto.Ruleset_RulesetForever, 31, 1328618},
+		{proto.Ruleset_RulesetForever, 32, 22568},
+		{proto.Ruleset_RulesetForever, 60, 22829},
+		{proto.Ruleset_RulesetClassic, 24, 0},
+		{proto.Ruleset_RulesetClassic, 32, 22568},
+	} {
+		player := &proto.Player{
+			Race: proto.Race_RaceTauren, Class: proto.Class_ClassDruid, Level: tc.level,
+			Equipment: &proto.EquipmentSpec{}, Rotation: &proto.APLRotation{},
+			Spec: &proto.Player_FeralDruid{FeralDruid: &proto.FeralDruid{Options: &proto.FeralDruid_Options{
+				InnervateTarget: &proto.UnitReference{},
+			}}},
+		}
+		sim := core.NewSim(&proto.RaidSimRequest{
+			Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+			Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+			SimOptions: &proto.SimOptions{Ruleset: tc.ruleset, RandomSeed: 1},
+		}, simsignals.CreateSignals())
+		cat := sim.Raid.Parties[0].Players[0].(*FeralDruid)
+		got := int32(0)
+		if cat.FerociousBite != nil {
+			got = cat.FerociousBite.ActionID.SpellID
+		}
+		if got != tc.id {
+			t.Errorf("%s level %d: Ferocious Bite is %d, want %d", tc.ruleset, tc.level, got, tc.id)
+		}
 	}
 }
 

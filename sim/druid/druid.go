@@ -57,7 +57,6 @@ type Druid struct {
 	ReplaceBearMHFunc core.ReplaceMHSwing
 
 	Barkskin             *DruidSpell
-	Berserk              *DruidSpell
 	DemoralizingRoar     *DruidSpell
 	Enrage               *DruidSpell
 	FaerieFire           *DruidSpell
@@ -91,7 +90,6 @@ type Druid struct {
 
 	BarkskinAura             *core.Aura
 	BearFormAura             *core.Aura
-	BerserkAura              *core.Aura
 	CatFormAura              *core.Aura
 	ClearcastingAura         *core.Aura
 	EclipseAura              *core.Aura
@@ -209,7 +207,6 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	// druid.registerSwipeBearSpell()
 	druid.registerTigersFurySpell()
 	druid.registerShiftingPowerSpell()
-	druid.registerBerserkCD()
 	// Ravage and Prowl are Forever's (ravage.go, prowl.go); the Classic sim never had them.
 	if druid.Env.IsForever() {
 		druid.registerRavageSpell()
@@ -220,7 +217,6 @@ func (druid *Druid) RegisterFeralCatSpells() {
 // TODO: Classic feral tank
 func (druid *Druid) RegisterFeralTankSpells() {
 	// druid.registerBarkskinCD()
-	// druid.registerBerserkCD()
 	// druid.registerBearFormSpell()
 	// druid.registerDemoralizingRoarSpell()
 	// druid.registerEnrageSpell()

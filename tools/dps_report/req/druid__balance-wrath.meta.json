@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 8,
   "race": "SkyborneWindshaper",
-  "talents": "5502220115501351--5053",
+  "talents": "5502220115501351--505003",
   "treeNames": [
     "Balance",
     "Feral Combat",
@@ -19,11 +19,11 @@
     "source": "Race re-pick 2026-10-27 (standards 29 and 16): Windshaper Skyborne; verify.py, 20000 iterations, seed 1 (was 800.7 as Tauren on the same sim)"
   },
   "verify": {
-    "dps": 811.1,
+    "dps": 855.7,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py of this request, 180s, seed 1"
+    "note": "sim of the request on the 2026-10-30 hotfix trees (new talents and rotation), 180s, seed 1 (seed 1000003 855.5)"
   },
   "summary": "Balance with Wrath as the only filler, for a moonkin that would rather not weave.",
   "keyTalents": [
@@ -60,7 +60,7 @@
   "caveats": [
     "Wrath VIII's base damage is ×1.085 the client's value.",
     "Natural Power gloves are 8.1 DPS ahead of Arcane Power.",
-    "Subtlety 3 (Restoration) is taken for threat. It costs 2.9 / 2.9 / 3.0 DPS at 120s / 180s / 300s."
+    "Subtlety 3 (Restoration) is taken for threat. It costs 3.1 / 3.0 / 3.0 DPS at 120s / 180s / 300s against Heart of the Wild 3 in its place."
   ],
-  "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180s, durationVariation 20. No edits needed. Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29); rotation unchanged. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180s, durationVariation 20. No edits needed. Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29); rotation unchanged. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. 2026-11-01: on the launch realms' 2026-10-30 hotfix trees (tools/forever_talents/client/druid.json): the same talents in the new layout (Subtlety moved to row 3), the rotation kept by the knob search, the request's talentsString and rotation edited to match."
 }

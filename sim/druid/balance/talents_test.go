@@ -178,7 +178,7 @@ func TestClearcastingMidCast(t *testing.T) {
 // TestNaturesFocus checks Nature's Focus 5 (spell 17063): a 70% chance for Wrath, Starfire and
 // Hurricane to keep their cast time on a hit taken, and none without the talent or for Moonfire.
 func TestNaturesFocus(t *testing.T) {
-	_, moonkin := newMoonkinSim(t, "5232220115501351--5053")
+	_, moonkin := newMoonkinSim(t, "5232220115501351--505003")
 	for name, spell := range map[string]*druid.DruidSpell{
 		"Wrath":     topRank(moonkin.Wrath),
 		"Starfire":  topRank(moonkin.Starfire),
@@ -393,5 +393,33 @@ func TestBalanceRelicsAndHaruspex(t *testing.T) {
 	}
 	if got := float64(procs) / float64(casts); math.Abs(got-0.5) > 0.08 {
 		t.Errorf("Talons of Wrath gave back 35 mana on %.0f%% of Wraths, want 50%%", 100*got)
+	}
+}
+
+// TestGenesisAndNaturalist checks the values of the launch realms' 2026-10-30 hotfix (wago.tools
+// hotfixes, region 91, build 70707; their TraitDefinitionEffectPoints curves doubled): Genesis 5
+// gives 10% more periodic damage on Moonfire and Insect Swarm, nothing on their hits or Wrath, and
+// Naturalist 5 (Restoration row 2, after Nature's Focus 5) 10% more damage of every school.
+func TestGenesisAndNaturalist(t *testing.T) {
+	// Insect Swarm is a talent, so both builds take it.
+	_, plain := newMoonkinSim(t, "000000001")
+	_, genesis := newMoonkinSim(t, "050000001")
+	for name, spells := range map[string][]*druid.DruidSpell{"Moonfire": plain.Moonfire, "Insect Swarm": plain.InsectSwarm} {
+		other := map[string][]*druid.DruidSpell{"Moonfire": genesis.Moonfire, "Insect Swarm": genesis.InsectSwarm}[name]
+		if got := topRank(other).PeriodicDamageMultiplierAdditive - topRank(spells).PeriodicDamageMultiplierAdditive; math.Abs(got-0.1) > 1e-9 {
+			t.Errorf("Genesis 5 adds %.3f to %s's periodic damage, want 0.10", got, name)
+		}
+		if got := topRank(other).ImpactDamageMultiplierAdditive - topRank(spells).ImpactDamageMultiplierAdditive; got != 0 {
+			t.Errorf("Genesis 5 adds %.3f to %s's hit, want 0", got, name)
+		}
+	}
+	if got := topRank(genesis.Wrath).PeriodicDamageMultiplierAdditive - topRank(plain.Wrath).PeriodicDamageMultiplierAdditive; got != 0 {
+		t.Errorf("Genesis 5 adds %.3f to Wrath, want 0", got)
+	}
+
+	_, focus := newMoonkinSim(t, "--5")
+	_, naturalist := newMoonkinSim(t, "--505")
+	if got := naturalist.PseudoStats.DamageDealtMultiplier / focus.PseudoStats.DamageDealtMultiplier; math.Abs(got-1.1) > 1e-9 {
+		t.Errorf("Naturalist 5 multiplies damage by %.3f, want 1.10", got)
 	}
 }
