@@ -1506,6 +1506,21 @@
      "commits": [
       "5b2eec6"
      ]
+    },
+    {
+     "title": "Moonkin Aura and Leader of the Pack: 3% crit with attacks and spells, not stacking",
+     "kind": "game",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__balance"
+     ],
+     "note": "The launch realms' hotfixes make both raid auras 3% crit with spells and attacks. They don't stack, so a raid with both still gets 3% of each. The Feral cat's own aura now adds spell crit to its explosives.",
+     "commits": [
+      "f962f6c"
+     ]
     }
    ],
    "internal": [
@@ -1560,6 +1575,10 @@
     {
      "commit": "7545aee",
      "why": "the Enhancement leveling plan's training schedule only; no report request uses it"
+    },
+    {
+     "commit": "3607e01",
+     "why": "Kang the Decapitator's Rend proc; no report build wears it (the report hashes didn't move)"
     }
    ]
   }
