@@ -42,6 +42,12 @@ Numbers are minutes over the levels named, against the plan, on the same session
   Anticipation +3.0 over 54 to 59, before Call of Flame +14.9.
 - Ancestral Knowledge in place of Anticipation 1 to 3 at 57 to 59 +4.3 and +4.1, of Flurry 4
   at 58 +1.2 and +1.1, of Improved Lightning Shield 1 to 3 +45 and +44.5 over 24 to 59.
+- The kept route with Earth Shock at 22 to 24, from level 1 at 4000 sessions: 97.80h and
+  97.75h, against 97.91h and 97.85h for the old route with it (-6.3 and -5.9 min).
+- Water Shield in place of Lightning Shield, given as a free point at every level (2000
+  sessions, seed 1): +6.1h over 30 to 59, +6 to +8 min a level at 30 to 38, up to +27 at 59.
+  Mana stays at 64 to 100% after fights, but rests start on health, and fights run longer
+  without Lightning Shield's damage.
 - Rotation checks: Earth Shock in place of Frost Shock rank 1 at 22 to 24 -0.7 min on both
   seeds, kept: under half a mob, but it leaves Frost Shock a utility spell. Dropping Windfury Totem +5.5h, Mana Spring Totem +1.1h,
   Lightning Shield +7.5h, Searing Totem +1.4h over 32 to 59. The rest line ±10% on each of its

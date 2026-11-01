@@ -280,8 +280,11 @@ route we tried by hand is a little faster:
   the training schedule leaves the bolts at rank 1 until 44.
 - Five other tails for 49 to 59 (Totemic Focus, Elemental Focus, Guardian Totems, more
   Anticipation) come out between 0.5 minutes faster and 21 minutes slower.
-- A route that stays in one tree for longer (below) is about 6 minutes faster than the
-  searched one, so we took it.
+- A route that stays in one tree for longer (below) is 6 minutes faster than the searched
+  one, so we took it: 97.80h and 97.75h from level 1, against 97.91h and 97.85h.
+- Water Shield in place of Lightning Shield, even as a free talent point, is 6.1 hours slower
+  over 30 to 59 (6 to 27 minutes a level). Mana stays high, but our rests start on health, and
+  we lose Lightning Shield's damage on every mob hit.
 - Each totem and Lightning Shield still pays, by 1 to 7.5 hours over 32 to 59. The rest
   thresholds are at their best within 2 minutes.
 - Earth Shock in place of Frost Shock at 22 to 24 saves 0.7 minutes, now that Frost Shock is
@@ -423,7 +426,7 @@ The last run stays in the browser's storage. The Leveling mode has no sim histor
 `DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`, since 2026-10-19 the audited
 plan (The audit): 102h 8m for 10 to 60 then. Since 2026-10-30 it starts at level 1 (the
 "Leveling 1-60" preset), where 1 to 9 play the first range's rotation with the spells we have
-by then and no talents, and with the route's gear and the training schedule it takes 97.87h. The route and the ranges are in
+by then and no talents, and with the route's gear and the training schedule it took 97.87h, and 97.80h with the route and Earth Shock of 2026-11-01. The route and the ranges are in
 `ui/enhancement_shaman/apls/leveling_plan_audited.json`, with a range only where the rotation
 changes. Thundering Strikes, Improved Ghost Wolf at 15 and 16 (required), Mental Dexterity,
 Shamanistic Focus, Elemental Weapons, Improved Lightning Shield, Stormstrike at 25, Improved
