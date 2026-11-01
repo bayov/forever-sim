@@ -9,8 +9,9 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-// The Forever tree from the beta client (tools/forever_talents/client/hunter.json, brought up to
-// build 1.60.1.70338). The client also parks Improved Serpent Sting and a second Lightning Reflexes
+// The Forever tree from the client (tools/forever_talents/client/hunter.json, build 1.60.1.70707
+// with the launch realms' 2026-10-30 hotfix: Pathfinding in row 3 column 1, Improved Revive Pet in
+// row 2 column 3, so they swap places in the talent string). The client also parks Improved Serpent Sting and a second Lightning Reflexes
 // far off the canvas, where no one can take them, so they are not in the tree.
 var TalentTreeSizes = [3]int{16, 16, 18}
 

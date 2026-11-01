@@ -183,7 +183,9 @@ export const DefaultAPL = APLBeastMastery;
 // Mortal Shots 5 in Marksmanship. The 2026-10-23 search (8% hit cap gear, 180 sec) moved the
 // Trueshot Aura point to Mortal Shots (+12.2): the raid's Trueshot Aura already covers the hunter.
 // The searches drop Summon Hawk: for a point of Spirit Bond it is 11.8 behind at 180 sec.
-export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5020121505021241-00520503005' }), {
+// The 2026-10-30 hotfix moved Pathfinding to row 3, so the filler point that opens row 3 is
+// Improved Aspect of the Monkey now, not Pathfinding (neither is simulated).
+export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5021201505021241-00520503005' }), {
 	tooltip: 'Level 60 Beast Mastery 31/20 from the talent search.',
 	group: 'Synthetic',
 });

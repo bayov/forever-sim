@@ -4,7 +4,7 @@
   "className": "Hunter",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-10-12T07:05:51Z",
+  "generatedAt": "2026-11-01T19:13:29Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -181,34 +181,10 @@
           "spellId": 19549
         },
         {
-          "id": "pathfinding",
-          "name": "Pathfinding",
-          "row": 1,
-          "col": 2,
-          "maxRank": 2,
-          "icon": "ability_mount_jungletiger",
-          "iconSource": "client",
-          "description": "Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by {0}%.",
-          "ranks": [
-            [
-              3
-            ],
-            [
-              6
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 19559
-        },
-        {
           "id": "improved-revive-pet",
           "name": "Improved Revive Pet",
           "row": 1,
-          "col": 3,
+          "col": 2,
           "maxRank": 2,
           "icon": "ability_hunter_beastsoothe",
           "iconSource": "client",
@@ -231,6 +207,30 @@
           ],
           "ranksSource": "client",
           "spellId": 24443
+        },
+        {
+          "id": "pathfinding",
+          "name": "Pathfinding",
+          "row": 2,
+          "col": 0,
+          "maxRank": 2,
+          "icon": "ability_mount_jungletiger",
+          "iconSource": "client",
+          "description": "Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by {0}%.",
+          "ranks": [
+            [
+              3
+            ],
+            [
+              6
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 19559
         },
         {
           "id": "bestial-swiftness",
@@ -657,9 +657,9 @@
           "row": 1,
           "col": 0,
           "maxRank": 3,
-          "icon": "hunter_pvp_spidersting",
+          "icon": "ability_hunter_quickshot",
           "iconSource": "client",
-          "description": "Increased the damage of your Serpent Sting ability by {0}%, reduces the cooldown of your Viper Sting ability by {1} sec, and increases the duration of your Scorpid Sting ability by {2} sec.",
+          "description": "Increases the damage of your Serpent Sting ability by {0}%, reduces the cooldown of your Viper Sting ability by {1} sec, and increases the duration of your Scorpid Sting ability by {2} sec.",
           "ranks": [
             [
               6,
@@ -849,12 +849,11 @@
           "maxRank": 1,
           "icon": "ability_trueshot",
           "iconSource": "client",
-          "description": "Increases the Ranged Attack Power of party members within {0} yards by {1}. Lasts {2} min.",
+          "description": "Increases the Ranged Attack Power of party or raid members within {0} yds by {1}.",
           "ranks": [
             [
               45,
-              30,
-              30
+              15
             ]
           ],
           "ranksObserved": [
@@ -914,17 +913,17 @@
           "maxRank": 2,
           "icon": "ability_hunter_rapidregeneration",
           "iconSource": "client",
-          "description": "Hitting a target with your Serpent Sting ability grants you {0}% and consuming Rapid Killing grants you {1}% of your Mana regeneration while casting for the next {2} sec.",
+          "description": "Afflicting a target with Serpent Sting allows {0}% of your Mana Regeneration to continue while casting for {1} sec, increased to {2}% when Rapid Killing is consumed.",
           "ranks": [
             [
               25,
-              50,
-              15
+              15,
+              50
             ],
             [
               50,
-              100,
-              15
+              15,
+              100
             ]
           ],
           "ranksObserved": [
@@ -1375,9 +1374,9 @@
           "row": 3,
           "col": 1,
           "maxRank": 5,
-          "icon": "ability_hunter_hatchettoss",
+          "icon": "ability_dualwield",
           "iconSource": "client",
-          "description": "Increases your melee critical strike damage by {0}% and your offhand weapon damage by {1}%.",
+          "description": "Increases your melee ability critical strike damage by {0}% and your Off Hand weapon damage by {1}%.",
           "ranks": [
             [
               6,
@@ -1447,7 +1446,7 @@
           "maxRank": 2,
           "icon": "ability_hunter_resourcefulness",
           "iconSource": "client",
-          "description": "Reduces the mana cost of your Trap abilities and melee abilities by {0}%. In addition, your critical strikes have a {1}% chance to allow {2}% of your Mana regeneration to continue while casting for {3} sec.",
+          "description": "Reduces the Mana cost of your Trap and melee abilities by {0}%, and grants your melee and ranged ability Critical Strikes a {1}% chance to allow {2}% of your Mana Regeneration to continue while casting for {3} sec.",
           "ranks": [
             [
               30,
@@ -1477,7 +1476,7 @@
           "maxRank": 2,
           "icon": "ability_hunter_swiftstrike",
           "iconSource": "client",
-          "description": "Your attacks against targets with Hunter's Mark have a {0}% chance to activate your Mongoose Bite for {1} sec.",
+          "description": "Grants your melee and ranged attacks against enemies afflicted by Hunter's Mark a {0}% chance to allow an activation of Mongoose Bite. Lasts {1} sec.",
           "ranks": [
             [
               5,
@@ -1586,11 +1585,11 @@
           "maxRank": 1,
           "icon": "ability_gouge",
           "iconSource": "client",
-          "description": "Your Mongoose Bite also causes the target to Bleed for damage over {0} sec equal to {1}% of the damage done by Mongoose Bite.",
+          "description": "Your Mongoose Bite also causes the target to Bleed for damage equal to {0}% of the damage done by Mongoose Bite over {1} sec",
           "ranks": [
             [
-              21,
-              40
+              40,
+              21
             ]
           ],
           "ranksObserved": [
@@ -1609,6 +1608,6 @@
     }
   ],
   "notes": [
-    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17; Deflection, Expose Prey, Strider Kick, Sniper Shot and Resourcefulness brought up to build 1.60.1.70338 from wago.tools on 2026-10-12"
+    "wago.tools Trait, TalentTab, SkillLine and Spell tables of the WoW Forever beta client build 1.60.1.70707+hf (TraitTree 1091), generated by tools/forever_talents/import_db2.py. That is build 1.60.1.70707 with the launch realms' server hotfix rows laid over it (wago.tools hotfixes, region 91, build 70707, through tools/sources/hotfixes.py). The trees' removed lists carried over from the hand-assembled files these replaced."
   ]
 }

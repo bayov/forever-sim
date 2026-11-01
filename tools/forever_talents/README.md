@@ -39,12 +39,22 @@ prerequisites) and TalentTab and SkillLine for the tree names, backgrounds and i
 `tools/sources/spelltext.py`, which fills the spell description templates the way the game
 does, for a level 60 character with no bonuses, and notes every value it couldn't fill.
 
-A server hotfix the client tables don't have yet is carried in `client/` by hand, with the
-hotfix named in the file's `source` and in the talents' `tooltip.notes` (`tooltip.source` is
-`hotfix`). The mage's Frost tree carried the 2026-10-20 hotfix to 70450 that way (Piercing Ice
-removed, four talents moved, Elemental Precision 3 ranks), from wago.tools' hotfix table, until
-1.60.1.70707 put it in the client tables. Running `import_db2.py <class> --write` on a build
-without a hotfix the file carries puts the old tree back, so check the diff.
+A server hotfix the client tables don't have yet goes in through `tools/sources/hotfixes.py`,
+which lays the launch realms' hotfix rows from wago.tools over a build as the pseudo-version
+`<build>+hf`:
+
+	tools/sources/hotfixes.py fetch 1.60.1.70707 --set talents --set spelltext
+	tools/sources/hotfixes.py apply 1.60.1.70707 --set talents --set spelltext
+	tools/forever_talents/import_db2.py 1.60.1.70707+hf paladin druid --write
+
+The paladin and druid reworks of the 2026-10-30 hotfix (pushes 113139 and 113283, region 91)
+came in that way, with the mage, priest and warlock changes of the same days. The file's
+`source` and each talent's `tooltip.build` then name the `+hf` version. A talent the hotfix takes
+out of a tree goes in the tree's `removed` list by hand, with the push in its `build`. Before
+this, the mage's Frost tree carried the 2026-10-20 hotfix to 70450 by hand (Piercing Ice removed,
+four talents moved, Elemental Precision 3 ranks) until 1.60.1.70707 put it in the client tables.
+Running `import_db2.py <class> --write` on a plain build that lacks a hotfix the file carries puts
+the old tree back, so check the diff.
 
 Without `--write` it prints each class's differences from the current file in three kinds:
 structure (talents added, removed, moved, renamed, or given another rank count, prerequisite
