@@ -1536,6 +1536,10 @@
     {
      "commit": "4f6861c",
      "why": "the Enhancement leveling plan's rotation only; no report request uses it"
+    },
+    {
+     "commit": "7f2001a",
+     "why": "the Enhancement leveling plan's talents and rotation only; no report request uses them"
     }
    ]
   }
