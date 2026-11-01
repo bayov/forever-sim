@@ -27,9 +27,9 @@ func init() {
 				ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 				NaturePowerBuff: proto.NaturePowerBuff_ElixirOfNaturePower,
 				// No Goblin Sapper Charge: it only reaches 10 yd and the shaman stands at 20 yd.
-				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
-				SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
-				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
+				SpellPowerBuff: proto.SpellPowerBuff_GreaterArcaneElixir,
+				SpiritElixir:   proto.SpiritElixir_ElixirOfSages,
+				ZanzaBuff:      proto.ZanzaBuff_CerebralCortexCompound,
 			}
 		},
 		withSpec: func(player *proto.Player) {

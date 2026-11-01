@@ -44,8 +44,8 @@ func mageSpec(staffImbue proto.Mage_Options_StaffImbue) *specSetup {
 				ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 				SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
 				// No Goblin Sapper Charge: it only reaches 10 yd and the mage stands at 25 yd.
-				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
-				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
+				SpellPowerBuff: proto.SpellPowerBuff_GreaterArcaneElixir,
+				ZanzaBuff:      proto.ZanzaBuff_CerebralCortexCompound,
 			}
 		},
 		professions: [2]proto.Profession{proto.Profession_Engineering, proto.Profession_Tailoring},
