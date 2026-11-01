@@ -16,7 +16,7 @@
   "apl": "sv",
   "published": {
     "dps": 1072.6,
-    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 1024.9,
@@ -69,7 +69,8 @@
     "Survival never shoots, so the ranged weapon doesn't matter.",
     "Immolation Trap adds 10% of ranged attack power over its whole duration. This is from Blizzard's notes, not checked in a log.",
     "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (1.5 here).",
-    "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. On a ranged hunter, Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
+    "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. On a ranged hunter, Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing.",
+    "Improved Tracking 5/5 counts against the generic boss, unlike Murder or other creature-type talents: a hunter can track every raid boss type except Mechanical. It is worth 41.9 DPS (3.9%) here, which this build loses against a Mechanical boss."
   ],
   "notes": "Request written by mksettings (spec hunter_sv, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6s before the pull, which the preset says costs nothing). Survival keeps a 1.0s cat out (DefaultOptions). Orc since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
 }
