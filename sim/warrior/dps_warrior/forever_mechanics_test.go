@@ -89,8 +89,8 @@ func whiteRage(sim *core.Simulation, war *warrior.Warrior, auto *core.Spell, out
 // "Rage gained is now based on the speed of the weapon that dealt the damage"), with k = 3.46 for
 // a one-hander and 4.5 for a two-hander, the off hand at half the rate (measured, see
 // core.ForeverNormalizedRageOffHand) and 100% more on a crit (the 2 October post,
-// https://us.forums.blizzard.com/en/wow/t/2369360). A two-hander's crit adds 100% of the swing's
-// one-hand-rate Rage, so (4.5 + 3.46) × speed (wowsims/forever 5ac4ffbcb6, Rule of Rage 1322574).
+// https://us.forums.blizzard.com/en/wow/t/2369360). A two-hander's crit doubles its whole Rage, so
+// 9 × speed (Forever combat logs, wowsims/forever 7c28cfa731; Rule of Rage 1322574).
 // Misses, dodges and parries give nothing (wowsims/forever f9f9f21883, level 8 and 9 logs).
 // Abilities and Deep Wounds give no Rage for their damage.
 func TestForeverWarriorNormalizedRage(t *testing.T) {
@@ -121,7 +121,7 @@ func TestForeverWarriorNormalizedRage(t *testing.T) {
 
 	sim, war = newForeverWarriorArmed(t, "", 991016, 0)
 	near("a two-hander hit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeHit, 500), l60*4.5*3.7)
-	near("a two-hander crit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeCrit, 1000), l60*(4.5+3.46)*3.7)
+	near("a two-hander crit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeCrit, 1000), 2*l60*4.5*3.7)
 
 	// Only white hits make Rage: an ability's damage and Deep Wounds' ticks make none.
 	sim, war = newForeverWarriorArmed(t, "00305003", 991014, 991015)

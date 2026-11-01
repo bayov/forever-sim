@@ -114,13 +114,14 @@ rotation gives a result that looks off.
 
 - **Synthetic gear.** Our items 990000 and up don't exist in theirs. `items.json` adds them, and `cmpsim` and
   `cmpstats` load it. `cmpsim` also registers what our synthetic gear does beyond stats, which `items.json` can't
-  say: the on-use trinkets (994202, 993016, 993117) and the hunter 2 piece. A new synthetic effect goes there
+  say: the on-use trinkets (994202, 993016, 993117, 991018) and the hunter and warrior sets' 2 piece. A new synthetic effect goes there
   (`theirs/cmpsim/main.go.txt`).
 - **A set bonus theirs doesn't register** goes in as bonus stats (`SET_BONUS`): Grimstitch Armor's 1% hit as 10
   hit rating.
 - **Enchants:** ours keys Forever's spell ids, theirs the enchant ids (`ENCH`).
-- **Consumables:** our enum names → their item ids (`C`). A potion is their `resourcePotId` (mana) or
-  `offensivePotId`. Theirs applies one explosive of a kind, so ours drops its filler by default (`--keep-filler`
+- **Consumables:** our enum names → their item ids (`C`). A potion is their `resourcePotId` (mana or rage) or
+  `offensivePotId`, and our rotation's `OtherActionPotion` is their `OtherActionResourcePotion` or
+  `OtherActionOffensivePotion` to match. Theirs applies one explosive of a kind, so ours drops its filler by default (`--keep-filler`
   keeps it).
 - **Stones:** theirs refuses a sharpening stone on a blunt weapon, so the converter swaps in a weightstone, the
   same +8.
@@ -131,7 +132,7 @@ rotation gives a result that looks off.
   ramp also reaches 5 at 6 s, so ours keeps its ramp. (Full in ours against their ramp was worth about 4 to the hunter
   and 1.5 to the pet.)
 - **Rotation values theirs lacks:** `spellUsesRemaining` and `spellUsesLostByDelay` (rewritten from
-  `remainingTime`, with the cooldowns in `CD`), `moveTime` and `inMeleeRange` (from `unitDistance` and
+  `remainingTime`, with the cooldowns in `CD`; `spellUsesRemaining <= k` too), `moveTime` and `inMeleeRange` (from `unitDistance` and
   `unitMovementSpeed`). `autoTimeToNext` and `autoTimeSinceLast` take `MainHandAuto`, `OffHandAuto` and
   `RangedAuto` (`autoSwingTime` keeps `MainHand`).
 - **A talent spell the build lacks** (`NOSPELLS=<id>,...`): ours reads a value naming it as false, theirs drops it
@@ -140,9 +141,18 @@ rotation gives a result that looks off.
   Vanish rank 2, Mutilate's last rank, Berserking 20554. Hunter: only the top ranks, the AQ books' (Aspect of the
   Hawk VII, Serpent Sting IX), so the hunter runs use `ours_aq_cli` with our rotation's ids moved up (`OURS_AQ=0`
   runs ours on its own ranks: the difference is the AQ ranks' worth). Raptor Strike's queue is tag 3 in ours, tag 1
-  in theirs.
-- **Vanish** is a DPS cooldown in theirs, so `autocastOtherCooldowns` would Vanish at the pull. The converter adds a
-  never-true line naming it.
+  in theirs. Warrior: Whirlwind is cast as its main hand's copy, tag 14 (untagged it never casts: about 100 DPS on
+  Fury), Charge has no rank, Berserking 20554.
+- **Vanish and Sweeping Strikes** are DPS cooldowns in theirs, so `autocastOtherCooldowns` would Vanish at the pull
+  and spend 30 rage on Sweeping Strikes every 30 s against one target (their own rotations cast it only on 2+
+  targets and don't autocast: 32 DPS on Arms). The converter adds a never-true line naming each.
+- **Charge:** ours is an opener for its 15 rage at any range; theirs moves the warrior in and needs 8 yd. A rotation
+  that opens with it starts theirs at 20 yd. Their Charge also holds the off-GCD items after the pull's first GCD to
+  3 s (Blood Fury, the potion and the trinket at 3.0 s, not 0.0 s); that cost nothing measurable on Fury.
+- **Raid damage taken** (our encounter's `raidDamageHitsPerMinute`): theirs has no such model. `--no-raid-damage`
+  turns ours off to compare the rest.
+- **Their sheet leaves out talent crit** they apply per attack (Cruelty, Weaponmaster's axe crit), so `layers.py`
+  shows ours 5 to 10% crit higher on warriors. Compare crits per hit in `breakdown.py` instead.
 - **Hunter options:** the quiver and pet speed enums, the Crocolisk spelling, and their Beast Mastery tree with
   Pathfinding and Improved Revive Pet swapped (5th and 6th).
 - **Off-GCD timing:** their engine fires an off-GCD item only at the next GCD check. A rotation that uses one in
@@ -150,9 +160,12 @@ rotation gives a result that looks off.
 
 ## Known differences
 
-As of 2026-11-01, ours at 0e87f3d and theirs at b70888a518, on the report's requests. The four pet rows (two since settled) add up to the
-BM cat's whole pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). A rerun should find these, so
-it can tell what is new. Keep the list current when one is settled.
+As of 2026-11-01, on the report's requests: the hunter and rogue rows with ours at 0e87f3d and theirs at b70888a518, the
+warrior rows with ours at 7587a1a and theirs at 895cd67f99. The four pet rows (two since settled) add up to the BM cat's whole
+pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). The warrior rows leave 4 DPS of Fury's and
+Fury 2H's gap and 12 of Arms' unexplained (Arms: Heroic Strike, the rage dump at 90, gets 1.4 casts more in ours, and theirs
+loses 8 more rage at the cap: when each engine re-checks the rotation). A rerun should find these, so it can tell what is
+new. Keep the list current when one is settled.
 
 | Difference | Ours | Theirs | Status |
 |---|---|---|---|
@@ -166,13 +179,19 @@ it can tell what is new. Keep the list current when one is settled.
 | AQ book ranks | Off under Forever | Hunter's top ranks only | Worth 30 to 36 DPS to ranged hunters |
 | Explosive reach | 10 yd, since 2026-11-01 | 10 yd | Settled (ours was a bug) |
 | Windfury Totem ICD, extra attacks and the swing, Eviscerate's attack power | Theirs' rules since 2026-10-31 | 100 ms, no swing reset, 4% a combo point | Settled, on `notes.md`'s To Verify list |
-| Off-GCD items (Thistle Tea) | Fire when the rotation says | Only at the next GCD check | A choice (engine). Ours drinks Thistle Tea at 10 energy, which theirs never does: about 13.5 DPS on Combat Swords |
+| Off-GCD items (Thistle Tea) | Fire when the rotation says | Only at the next GCD check | A choice (engine). Ours drinks Thistle Tea at 10 energy, which theirs never does: about 13.5 DPS on Combat Swords. Bloodrage at under 20 rage: 2.6 casts against 1.9 on Fury, worth nothing |
+| Raid damage taken | 2 hits a minute of 1,500 (standards 24) | None | A choice (the fight). The warrior's rage from it: Arms 8.5, Fury 15.7, Fury 2H 19.5 DPS. `--no-raid-damage` |
+| Flurry charges | Two white swings within 500 ms spend one charge (the Classic sims') | Every white swing spends one, and a missed Heroic Strike or Cleave (0183e67d2f, no log cited) | Open (the alignment round's open list). Fury 11.4, Fury 2H 3.4 DPS |
+| Anger Management | 1 rage every 3 s (Forever's tooltip) | 1.5 every 5 s (the aura's amount, a power regen per 5 s) | Open: a log of its rage ticks settles it. Under 2.1 DPS |
+| Unbridled Wrath on Heroic Strike | Procs (client proc flag 4, notes.md) | White swings only | Open (notes.md). Within 1 DPS |
+| Two-hand white crit rage | Twice the whole swing since 2026-11-01 | The same (7c28cfa731, Forever logs) | Settled (ours was a bug): it was −12.4 on Arms, −13 on Fury 2H |
+| Synthetic sets' 2 piece (1% attack speed) | Live | Registered by `cmpsim` (warrior head 991001, 991019) | A translation: without it theirs was 5 to 8 DPS low |
 | Undead base stats | 82 Str, 129 Agi | 79, 128 | Race offset ruling. `align.py` closes it |
 | Totem ranks | Trainer (Strength of Earth 42, Grace of Air 77) | AQ books' (53, 89) | No AQ books at launch (assumed) |
 
 ## Adding a class
 
-`convert.py` maps rogues and hunters, and stops on any other class. For a new one:
+`convert.py` maps rogues, hunters and warriors, and stops on any other class. For a new one:
 
 1. Its options block (`class_opts`): their class proto (`$WSF/proto/<class>.proto`) against ours.
 2. Its consumables in `C`: weapon oils, poisons, imbues, class-only items.
