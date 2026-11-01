@@ -84,7 +84,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "5502220115501351--5053",
+            "talentsString": "5502220115501351--505003",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
@@ -229,7 +229,7 @@
                       }
                     }
                   },
-                  "notes": "Without the talent ignore the warning on this line."
+                  "notes": "Insect Swarm whenever it is down. Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -268,7 +268,8 @@
                         ]
                       }
                     }
-                  }
+                  },
+                  "notes": "Moonfire whenever its dot is down."
                 },
                 {
                   "action": {
@@ -285,7 +286,7 @@
                       }
                     }
                   },
-                  "notes": "Wrath doesn't use Clearcasting up."
+                  "notes": "A free Starfire on Clearcasting, which Wrath does not use up."
                 },
                 {
                   "action": {
@@ -319,7 +320,8 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes": "Moonfire when a Wrath would not land before the end."
                 },
                 {
                   "action": {
@@ -328,7 +330,8 @@
                         "spellId": 9912
                       }
                     }
-                  }
+                  },
+                  "notes": "Wrath."
                 }
               ]
             },

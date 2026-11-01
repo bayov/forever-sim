@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 31,
   "race": "NightElf",
-  "talents": "05002-55200032021030212051-055",
+  "talents": "05002-53200032023012125001-05502",
   "treeNames": [
     "Balance",
     "Feral Combat",
@@ -19,32 +19,33 @@
     "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
-    "dps": 858.52,
-    "stderr": 0.16,
+    "dps": 937.3,
+    "stderr": 0.22,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180s, seed 1 (the published number is this sim)"
+    "note": "sim of the request on the 2026-10-30 hotfix trees (new talents and rotation), 180s, seed 1 (seed 1000003 937.2)"
   },
   "summary": "The cat build, keeping Faerie Fire on the boss for the raid. Forever has no Faerie Fire (Feral): the cat casts the caster Faerie Fire, free in Cat Form. Its own attacks gain from the armor cut, so it costs only a few GCDs.",
   "keyTalents": [
-    "Shredding Attacks",
     "Shifting Power",
-    "Improved Shifting Power",
+    "Predatory Discipline",
+    "Shredding Attacks",
     "Rend and Tear",
-    "Berserk",
+    "Blood Frenzy",
     "Ferocity",
     "Savage Fury",
+    "Heart of the Wild",
     "Naturalist",
     "Feral Swiftness"
   ],
   "rotation": [
     "Opener: plain Cat Form, no Prowl. A Night Elf uses Shadowmeld in the fight for Ravage.",
-    "Racials, trinkets and potions on cooldown. Berserk with the on-use trinket. Elune's Light outside Berserk.",
+    "Racials, trinkets and potions on cooldown. Elune's Light with the on-use trinket, unless waiting for it would lose a use.",
     "Faerie Fire first after the cooldowns, and again at under 7s left. In Cat Form it's free, with a 1.5s GCD and no cooldown, so a miss is retried on the next GCD",
-    "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 combo points and Rip has 6s or more)",
+    "Shifting Power at 60 Energy or less",
     "Ferocious Bite at any combo points in the last 2s",
-    "Rip at 5 combo points when it is down (not in the last 8s)",
-    "Ferocious Bite at 5 combo points and 35 Energy while Rip has 6s or more left (or in the last 8s)",
+    "Rip at 4 combo points or more when it is down (not in the last 8s)",
+    "Ferocious Bite at 5 combo points and 45 Energy while Rip has 4s or more left (or in the last 8s). Predatory Discipline keeps the extra Energy, which still adds damage",
     "Shadowmeld into Ravage from behind on Clearcasting, or in the last 10s with the Energy for it",
     "Rake below 5 combo points when it is down (not in the last 6s)",
     "Shred below 5 combo points"
@@ -62,7 +63,8 @@
     "Thistle Tea"
   ],
   "caveats": [
-    "Costs 10.2 / 8.3 / 4.3 DPS at 120s / 180s / 300s, against the same build without the duty (869.7 / 858.5 / 846.9 against 879.9 / 866.8 / 851.2). With Faerie Fire (Feral) (a 1s GCD) it was 5.5 / 4.5 / 1.7.",
+    "Costs 6.9 / 5.2 / 4.5 DPS at 120s / 180s / 300s, against the same build without the duty (944.3 / 937.3 / 926.4 against 951.2 / 942.5 / 930.9). With Faerie Fire (Feral) (a 1s GCD) it was 5.5 / 4.5 / 1.7.",
+    "Predatory Discipline's tooltip gives no number. The sim reads it literally: Ferocious Bite keeps its extra Energy and still deals 2.5 damage a point of it.",
     "Faerie Fire (Feral) is gone from Forever (16857 and 17390 to 17392 have no client rows). In Cat, Bear and Dire Bear Form a druid casts the caster Faerie Fire, which costs nothing there (development notes).",
     "Rip's client ranks from level 31 up are 6-9% weaker than Era's. Era values would add 1.6% DPS.",
     "Idol of the Dream (Rip lasts 2s longer) is 3.0 DPS ahead of Howling Idol at 180s.",
@@ -73,10 +75,10 @@
     "Tiger's Fury is gone in Forever.",
     "Cat swings vary 20% either way. The server's real range is unknown.",
     "The melee group has Windfury Totem and a second shaman's Grace of Air. No Elemental Sharpening Stone, since its recipe comes from Molten Core.",
-    "Takes Feral Swiftness 2 (movement speed) instead of Natural Shapeshifter's point. It costs 0.0 / 0.0 / 3.5 DPS at 120s / 180s / 300s, from shapeshift mana in long fights.",
+    "Takes Feral Swiftness 2 (movement speed). It costs nothing: the points it needs above Shredding Attacks would otherwise go to Furor, which does nothing for a cat that stays in Cat Form.",
     "No explosive here, because EZ-Thro Dark Bomb's GCDs go to Faerie Fire. Using it is 1.8 / 0.8 / 0.0 DPS behind at 120s / 180s / 300s."
   ],
-  "notes": "druid__feral-cat.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_ff rotation. The base request's EZ-Thro Dark Bomb is removed too (it loses on the duty build, standards 11). Everything else is the base request. 2026-10-29: the rotation casts the caster Faerie Fire (9907) instead of Faerie Fire (Feral) (17392), the level60_ff rotation regenerated by tools/rotopt/druid_presets.sh with the same knobs, and the request's rotation edited to match. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
+  "notes": "druid__feral-cat.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_ff rotation. The base request's EZ-Thro Dark Bomb is removed too (it loses on the duty build, standards 11). Everything else is the base request. 2026-10-29: the rotation casts the caster Faerie Fire (9907) instead of Faerie Fire (Feral) (17392), the level60_ff rotation regenerated by tools/rotopt/druid_presets.sh with the same knobs, and the request's rotation edited to match. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. 2026-11-01: on the launch realms' 2026-10-30 hotfix trees (tools/forever_talents/client/druid.json): talents and rotation from tools/rotopt/druid_presets.sh, the request's talentsString and rotation edited to match.",
   "duty": "Faerie Fire",
   "baseBuild": "druid__feral-cat"
 }

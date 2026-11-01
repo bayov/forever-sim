@@ -64,8 +64,9 @@ func (druidFeral) Knobs() []Knob {
 		{Name: "meldBeforeRake", Default: 1, Min: 0, Max: 1, Step: 1},
 		// The builder: 0 Shred (from behind), 1 Claw.
 		{Name: "builder", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Shifting Power at or below this much Energy, 0 never.
-		{Name: "shiftEnergy", Default: 50, Min: 0, Max: 60, Step: 10},
+		// Shifting Power at or below this much Energy, 0 never. Above 60 its 40 Energy can go past
+		// the cap.
+		{Name: "shiftEnergy", Default: 50, Min: 0, Max: 80, Step: 10},
 		// Shifting Power only above this much mana, so the pool lasts the fight.
 		{Name: "shiftMana", Default: 0, Min: 0, Max: 40, Step: 10},
 		// Hold Shifting Power while a Ferocious Bite is due (5 combo points with Rip up for

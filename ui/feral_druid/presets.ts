@@ -85,8 +85,16 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // combo points in the last 2. Keeping Rake up is now 38 to 42 ahead of no Rake at 120 / 180 / 300
 // sec on both seed sets (836.8 / 823.8 / 813.3 to 875.5 / 864.7 / 855.5, seed 1). The knob search
 // kept the rest at 120, 180 and 300 sec.
+//
+// Re-searched on the launch realms' 2026-10-30 hotfix trees (2026-11-01, 120, 180 and 300 sec
+// together): Berserk is out of the tree, Shifting Power has an 8 sec cooldown, and Predatory Discipline
+// (which Shifting Power needs) makes Ferocious Bite keep its extra Energy and still deal the damage for
+// it. Rip at 4 combo points, Bite at 5 with 45 Energy or more while Rip has 4 sec left, Shifting Power
+// at 60 Energy or less whether a Bite is due or not, and Elune's Light held for the Strength trinket:
+// +9.2 / +9.4 / +8.9 at 120 / 180 / 300 sec over the old knobs on the new talents (20,000 iterations,
+// seeds 1 and 1000003).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Feral', Level60APLJSON, {
-	tooltip: "The optimizer's best level 60 rotation: Rip at 5 combo points, Rake kept up, Shred, Shadowmeld into Ravage, Shifting Power and Berserk.",
+	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Rake kept up, Shred, Shadowmeld into Ravage, Shifting Power, and Ferocious Bite at 45 Energy.",
 	group: 'Synthetic',
 });
 
@@ -134,7 +142,20 @@ export const DefaultRotation = FeralDruidRotation.create({
 // 20,000 iterations, seed 1), the long fight losing Natural Shapeshifter's cheaper shifts. Earlier searches started from pure Feral builds (0 / 35 / 16 with Ferocity
 // and Reflection, 0 / 33 / 18 with Heart of the Wild and Thick Hide) and from the Balance split, and
 // all of them moved their spare points into Genesis and Nature's Majesty.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Feral', SavedTalents.create({ talentsString: '05002-55200032021030212051-055' }), {
+//
+// On the launch realms' 2026-10-30 hotfix trees (2026-11-01): Berserk and Improved Shifting Power are
+// gone, Shifting Power sits in row 7 under Predatory Discipline (row 4), Furor and Heart of the Wild
+// swapped trees, and Genesis and Naturalist give 2% a point. Shifting Power is worth 127 DPS at 180 sec,
+// so the build needs 30 Feral points above row 7: Ferocity 5, Furor 3 (it does nothing for a cat that
+// never leaves its form, but row 3 needs 10 points above it), Feral Swiftness 2, Shredding Attacks 3,
+// Savage Fury 2, Sharpened Claws 2, Predatory Strikes 3, Predatory Discipline, Blood Frenzy 2, Leader of
+// the Pack, Natural Instinct 2, Rend and Tear 5 and Shifting Power; Genesis 5 and Nature's Majesty 2
+// from Balance; Heart of the Wild 5, Naturalist 5 and Natural Shapeshifter 2 (cheaper Shifting Power)
+// from Restoration. A talent search from the old build's translation found no move out of the noise and
+// traded Furor's points for mana; scored at 20,000 iterations over 120, 180 and 300 sec together, the
+// two spare points tie in Natural Shapeshifter, Reflection or both (941.5) and Furor 5 or Nature's Reach
+// 2 is 0.9 behind (the long fight's mana).
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Feral', SavedTalents.create({ talentsString: '05002-53200032023012125001-05502' }), {
 	tooltip: 'The talent search best on the synthetic Phase 1 set.',
 	group: 'Synthetic',
 });
