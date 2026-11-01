@@ -1191,7 +1191,7 @@
    "title": "Melee rotations tuned for extra attacks",
    "date": "2026-10-31",
    "baselineData": "fb14858885638b09f11c61720c25f3243fd55654",
-   "endData": null,
+   "endData": "11de3318ae2086f5017a93101176d97d6f8f61e0",
    "lines": [
     {
      "title": "Retribution paladins twist seals whenever no Echo is waiting, not only in the last 1.5 sec before a swing",
@@ -1542,6 +1542,20 @@
      "why": "the Enhancement leveling plan's talents and rotation only; no report request uses them"
     }
    ]
+  },
+  {
+   "id": "2026-10-30-hotfix",
+   "type": "game",
+   "title": "Launch hotfix: paladin and druid talent reworks",
+   "date": "2026-10-30",
+   "baselineData": "11de3318ae2086f5017a93101176d97d6f8f61e0",
+   "endData": null,
+   "lines": [],
+   "internal": [],
+   "source": {
+    "label": "foreverchanges.pro: a hotfix to the October 30 build",
+    "url": "https://foreverchanges.pro/patch-notes"
+   }
   }
  ]
 }
