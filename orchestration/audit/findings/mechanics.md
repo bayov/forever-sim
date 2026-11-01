@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261101-1: Shadow presets stand at 25 yd but Mind Flay reaches 20 yd (24 with Shadow Reach 3/3); the sim casts it anyway
+- severity: low (no DPS effect measured: priest__shadow 948.73 DPS at 25, 24 and 20 yd, 20k iterations, same seed; the preset is just not playable as set)
+- affects: Shadow priest presets priest__shadow, priest__shadow-holy (mksettings spec_shadow.go:49, from 905787afd)
+- found: 2026-11-01, master dd053d24c
+- evidence: client 70707 SpellMisc RangeIndex 3 (20 yd) on every player Mind Flay rank (15407, 17311-17314, 18807); the APL channels 18807. Shadow Reach 17322 is aura 108 misc 5 (range) +20%, so at most 24 yd. The engine checks Spell.MaxRange only in leveling (sim/core/spell.go:548, apl_idle.go:424), so a 25 yd caster still channels Mind Flay. Warlock presets at 25 yd are fine (no Drain Life 689 ranks, also 20 yd, in their APLs; their spells are 30 yd). Smite / Holy Fire are 30 yd. Tier 1. Sure about the ranges; RangeIndex 3 = 20 yd is the standard SpellRange row (SpellRange.csv is not in the mechanics set).
+- proposed fix: in spec_shadow.go set `player.DistanceFromTarget = 20` for the Shadow specs (or 24 if Shadow Reach 3/3 is in the talents; Smite may keep 25). Same result for explosives (still out of the 10 yd reach), no DPS change. Optionally give Mind Flay MaxRange 20 so a wrong distance shows.
+- needs: worker fix
+
 ### mechanics-20261031-2: Moonkin Aura and Leader of the Pack are both 3% all crit on live 70707 (hotfix push 113283); the sim still gives the Era split
 - severity: high if the two stack (+2.3 to +3.3% DPS on every preset with both), none if they don't (then the sim's 3% melee + 3% spell already equals one 3% all crit for those presets)
 - affects: shared raid buffs (sim/core/buffs.go:292-303), every Level 60 preset with both buffs; the raid sim's crit-aura counting

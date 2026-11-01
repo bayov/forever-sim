@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### results-20261101-1: 74 of 77 metas' published.dps are stale after the 2026-11-01 re-sim (38fb06ea9)
+- severity: low (no published number is wrong: builds.json matches my 20k seed-1 run on all 77 within 0.1)
+- affects: tools/dps_report/req/*.meta.json (74); runreq.sh and verify.py report them as OFF published by 0.5 to 8.9 DPS
+- found: 2026-11-01, master dd053d24c
+- evidence: 38fb06ea9 re-simmed 32 builds into builds.json but the metas still carry earlier values (druid__balance meta 851.2, builds.json and run 846.6; warlock__destruction_fire 986.4 vs 977.7; hunter__lone-wolf 1094.3 vs 1087.4). Same pattern as results-20261030-1 (resolved).
+- proposed fix: set each meta's published.dps and source from builds.json, per tools/dps_report/README.md "update meta.published".
+- needs: orchestrator fix
+
 ## Resolved
 
 ### results-20261025-1: mksettings and the committed requests disagree on consumes (potion, flask, filler explosive)

@@ -1,32 +1,26 @@
-# Mechanics pass 53 (2026-10-31, master d96adcce1)
+# Mechanics pass 54 (2026-11-01, master dd053d24c)
 
-Range audited: e05fd732e..d96adcce1. One non-merge code commit on watched paths (fedb73949, mksettings `-sunder ramp|full|none`, default ramp); report_hashes.txt re-recorded (d32d6210f). TASKS.md: d96adcce1 adds the October 30 hotfix items (paladin / druid trees, Frost mage, priest / warlock). No `forever-update/*` merge in range.
+Range audited: d1935640f..dd053d24c. Three non-merge commits on watched paths. No TASKS.md / update ledger change, no `forever-update/*` merge in range.
 
 ## Get current
 
 - Client: 1.60.1.70707, unchanged (probe 300).
 - Dev notes thread 2360696: still 8 posts, edit times unchanged (post 8 10-27 16:46:55, post 7 10-27 16:47:14).
-- Blue tracker: no posts since 2026-10-31 12:54 UTC.
-- Server hotfixes: read from wago.tools/hotfixes (`?search=<spellID>`, JSON in the page's data-page attribute) for 24907, 24932, 11597.
+- Blue tracker: no posts since 2026-10-31 19:10 UTC.
 
 ## Code range
 
 | Commit | What | Verdict |
 |---|---|---|
-| fedb73949 | mksettings: raid Sunder Armor ramps from the pull at 60 (tank 1/GCD, 1 pull Sunder from a DPS warrior, none for warrior presets) | Raid assumption (standard 32). Engine `scheduleSunderRamp` (sim/core/debuffs.go:945) unchanged since pass 52; 11597 on 70707 = 450 armor/stack, 30 s, GCD 1.5 s, matching `SunderArmorAura`. No finding. |
-| d32d6210f | report hashes | Data only. |
+| bb21e3b32 | Goblin Sapper Charge and Goblin Land Mine usable only within 10 yd (`explosiveBlastRadius`, ExtraCastCondition); hunters / mages / Balance / Elemental drop or swap explosives | Verified on 70707: 13241 e0 and 4043 e0 ImplicitTarget 22/15, EffectRadiusIndex 13 (10 yd). Hunter weaves move the hunter in through movement.go, so the Sapper in a weave is consistent. No finding. |
+| e563383a3 | gofmt | No change. |
+| 905787afd | Warlock and priest presets at 25 yd (were mksettings' default 5 yd); goldens, report hashes | Warlocks: every APL spell is 30 yd, fine. Shadow: Mind Flay is 20 yd (24 with Shadow Reach), the sim casts it anyway: mechanics-20261101-1 (low, 0 DPS measured). |
 
-## October 30 hotfix (shared part)
+## Measurement
 
-| Item | Tier 1 data | Sim | Result |
-|---|---|---|---|
-| Moonkin Aura 24907 | push 113283: aura 290 (all crit) 3, effect 65 | 3% spell crit | mechanics-20261031-2 |
-| Leader of the Pack 24932 | push 113283: aura 290 (all crit) 3, effect 65 | 3% melee crit | mechanics-20261031-2 |
-
-Measured with +3% crit (seed 1, 20k iterations): Fury +3.26%, Combat Swords +2.49%, Fire +2.77%, Elemental +2.29%. That is the effect if the two stack. If they don't, presets with both buffs stay as they are.
-
-Class items in the hotfix (paladin and druid trees, Frost mage, priest, warlock) belong to the class workers and are already in TASKS.md.
+priest__shadow at 25 / 24 / 20 yd (20k iterations, same seed): 948.73 / 948.73 / 948.73 DPS. Nothing the Shadow APL casts travels, so the distance only matters for whether Mind Flay is legal.
 
 ## Open items
 
-- tools/audit/mechanics/hotfixes.py is still missing from the repo. The wago.tools page search above works in its place.
+- mechanics-20261031-2 (Moonkin Aura / LotP all crit stacking) still needs a user ruling.
+- mechanics-20261031-1, mechanics-20261027-2 still open.

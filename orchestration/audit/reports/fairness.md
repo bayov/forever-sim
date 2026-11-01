@@ -1,48 +1,50 @@
-# Fairness pass 18 (2026-10-31, master d96adcc)
+# Fairness pass 19 (2026-11-01, master dd053d2)
 
-Result: findings (1 new). Full pass: gear check, full race sweep, new baseline.
+Result: findings (2 new). Full pass: gear check, full race sweep, new baseline.
 
 ## Why it ran
 
-Since e05fd73, 8 commits, 172 watched files: standard 32 (the raid's Sunder Armor ramps from the pull, pull
-cooldowns don't wait for it), its request and preset edits (fedb73949), the re-sim 3c46da089 and report_hashes.
-No sim code changed.
+Since d193564, 11 commits, 72 watched files: Goblin Sapper Charge and Goblin Land Mine reach only 10 yd
+(bb21e3b32, sim/core/consumes.go), warlocks and priests moved from mksettings' default 5 yd to 25 yd (905787afd),
+their request / preset edits, report_hashes and the 32-build re-sim (38fb06ea9).
 
 ## What I checked
 
-- Ramp applied evenly: 67 non-warrior requests carry `sunderRamp {tank: true, pullSunders: 1}`; the 7 warrior
-  builds `{tank: true}` and their rotations cast "Sunder Armor once at the pull" (the DPS warrior's stack); the 3
-  Sunder duty builds keep only their own. Casters carry it too and are unaffected.
-- Race sweep (5k, seed 1, race overrides), against the e05fd73 baseline: every physical build drops at every race
-  (Feral -4.0, Subtlety -3.4, hunters -2.2 to -3.1, warriors -2.3 to -2.9, rogues -1.9 to -2.6, Enhancement
-  -0.7 to -1.6, Ret -0.3, warlock pets -0.1 to -0.2). Casters 0.0. Matches standard 32's measured cost; no leak.
-- Best race against report race: best everywhere; ties within 0.6 (Fire Gnome, Arcane Undead, Affliction Orc).
-- Published against current: `ui/dps_report/data/builds.json` matches the shared 20k run on all 77 (within 0.15)
-  and this sweep within 0.8 (Affliction +1.6, the known offset). The 36 physical metas' `published.dps` are
-  still pre-ramp (feral 889.7 vs 885.6): only the metas are stale, not builds.json. This corrects results'
-  report this run, which says builds.json is pre-ramp too. Results' area (same pattern as results-20261030-1).
-- Gear: `audit1b.py` 18 of 19 lines pass. The new Demonology line fails 5a: fairness-20261031-1.
+- Gear: `audit1b.py` crashed on "Warlock (every spec)" (159443615 renamed the set line; gear_targets_v3.json
+  still has two warlock targets). Fixed in `tools/audit/fairness/audit1b.py`: one line per target. 19 of 20 pass;
+  Demonology fails 5a (crit 10.4 vs 14.1), the open fairness-20261031-1.
+- Race sweep (5k, seed 1, race overrides) against the d96adcc baseline: only the 32 touched builds move
+  (hunters -3.2 to -4.2, mages -4.4 to -5.3, warlocks -5.3 to -9.6, Shadow -4.0, Smite -5.5, Balance -4.9,
+  Elemental -3.5). Survival, all melee, Enhancement and Ret are +0.0: no leak. Arms passes Destruction (11th).
+  Top over bottom 1.54x.
+- Published against current: the metas' `published.dps` are stale for 74 builds (gaps -1.9 to -8.6 here);
+  builds.json matches the shared 20k run. Already results-20261101-1; I confirm it independently (sweep gaps match
+  vs_published.txt within the 5k noise), not re-filed.
+- Best race against report race: best everywhere except Affliction. 20k: Orc 1013.5, Human 1012.1 (report).
+- Explosives fairness: melee and Survival (5 yd) keep the Sapper; ranged hunters keep it through melee weaves
+  and throw the Dark Bomb; casters take none. Not unfair: a caster walking in for one Sapper per 5 min would lose
+  more casting than it deals. Not filed.
+- Distances: Elemental 20 yd, Balance 30 yd, everyone else ranged 25 yd; no standard says which. Every main
+  caster nuke has a MissileSpeed, so distance is flight time. Paired 20k, seed 1
+  (`tools/audit/fairness/distance.py <cli> 25 <ids>`, new helper):
 
-## Finding
+| Build | Now | DPS now | At 25 yd | Delta |
+|---|---|---|---|---|
+| shaman__elemental-level60 | 20 yd | 768.5 | 762.0 | -6.5 |
+| druid__balance | 30 yd | 846.6 | 846.6 | +0.0 |
+| druid__balance-wrath | 30 yd | 806.5 | 808.8 | +2.3 |
 
-fairness-20261031-1 (medium, user ruling): Demonology wears the shared Destruction / Affliction / Fire set
-since its own was deleted (159443615), but gear_targets.md still gives it its own target. Against it the set
-fails 5a (crit 10.4 vs 14.1). As bonus stats (+2.44% crit, -15 SP, -12 Int, -8 Sta), paired 20k seed 1:
-1051.7 -> 1060.9 (+9.2); it would stay 6th, 0.1 under Fire.
+## Findings
 
-## Tool fixes (again)
+- fairness-20261101-1 (medium, user ruling): no caster distance standard; Elemental's 20 yd is +6.5 over 25.
+  Options: all ranged at 25 yd; each at the range its rotation needs; or keep and write it down.
+- fairness-20261101-2 (low, orchestrator): Affliction's report race Human is 1.4 under Orc.
 
-- `tools/audit/fairness/sweep.py`: the race-override step was missing for the sixth time; re-applied (KEEP
-  comment). The earlier five fixes never reached master: the run's commit should include `tools/audit/fairness/`.
-- `tools/audit/fairness/audit1b.py`: target "Warlock (every spec)" isn't in gear_targets_v3.json (crash; same as
-  pass 17, also lost); now "Warlock (Destruction / Affliction / Fire)" plus a Demonology line on the same set.
+## Open items carried
 
-## Ranking
+- fairness-20261031-1 (Demonology set) and the older open findings: no change on master.
+- Ice Lance Low range, Flametongue Totem stacking, boss partial resist, Rage k / pet scaling: unchanged.
 
-Order unchanged. Top BM Orc 1128.7, bottom Subtlety Undead 732.4: 1.54x. Full table in fairness_report.md §1
-and ref/fairness/table_baseline.md. Baseline is now d96adcc.
+## Baseline
 
-## Open items (unchanged)
-
-Hunter end-of-fight test, Ice Lance Low range, Flametongue Totem with the Windfury imbue, boss partial resists,
-Rage k and pet scaling (see passes/fairness.md).
+`ref/fairness/sweep_baseline.log` and `table_baseline.md` replaced with this sweep (dd053d2).

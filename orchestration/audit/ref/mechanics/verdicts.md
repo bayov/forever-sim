@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-31 UTC, master d96adcce1)
+# Mechanics audit: verdicts and settled items (as of 2026-11-01 UTC, master dd053d24c)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -48,6 +48,8 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Hit suppression | None under Forever: 8% yellow cap, 27% dual-wield white vs a level 63 boss | beta logs via wowsims/forever 3af105fe16, standards (2026-10-23) |
 | Natural flasks | 60 Stamina; in the zone Accuracy 5% melee/ranged/spell hit, Aggression 4% crit, Precision 5% expertise, Swiftness 5% melee/ranged/cast speed | 70532 1293740-1293743 (A_DUMMY bp 5/4/5/5, then auras 54+55, 290, 240, 342+65) |
 | Explosives and damage potions | EZ-Thro Dark Bomb 450 ±50%, EZ-Thro Thorium Grenade 400 ±25%, Holy Hand Grenade 400 ±25%, Dragonfire 280 + 35 / 2 sec for 8 sec, Caustic Smog 33 / sec (±5%) for 12 sec, 2 min potion CD | 70532 1269334, 1269330, 1317268, 1252554, 1252525/6/43 |
+| Explosive reach | Goblin Sapper Charge 13241 e0 and Goblin Land Mine Detonation 4043 e0: ImplicitTarget 22/15 (caster or mine location, enemies in area), EffectRadiusIndex 13 (10 yd); the sim allows them only at <= 10 yd (sim/core/consumes.go explosiveBlastRadius, bb21e3b32) | 70707 SpellEffect, pass 54 |
+| Caster spell ranges | Mind Flay (all player ranks) and Drain Life RangeIndex 3 = 20 yd; Shadow Bolt, Mind Blast, SW:P, Smite, Holy Fire, Corruption, Immolate, Curse of Agony, Siphon Life RangeIndex 4 = 30 yd; Shadow Reach 17322 / Grim Reach 18218 +20% range. The engine enforces MaxRange only when leveling | 70707 SpellMisc, SpellEffect, pass 54 (mechanics-20261101-1) |
 | Item procs (alignment round) | 22 proc rows checked (Firebolt 13442 90, Shadow Bolt 18211 231 ±30%, Fatal Wound 10373 311, Wound 18107 105, Armor Shatter 16928 165, Phantom Strike 100 armor, Brain Damage 1290950 250, Everlook bot 1295633 467, ...); Nightfall 23605 15% magic damage taken (misc 126) | 70532 SpellEffect, pass 37 |
 | Shadowmeld | Castable in combat (no not-in-combat bit), 2 min in combat per tooltip, A_MOD_STEALTH, cancels auto attack, breaks on the next cast | 70532 20580 (Attributes_0 0xA140010, aura 16 / 103), tooltip; the 2 min is the tooltip's |
 | Pet consumables | None under Forever | 70532 scroll rows carry Attributes_3 0x100 (only target players) |

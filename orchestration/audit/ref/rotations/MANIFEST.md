@@ -1,12 +1,12 @@
 # Rotation audit: reference files
 
-- `baseline_e05fd73_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  e05fd732e (pass 41). Since fb14858: Ret twist without the swing gate (+13 to +15 on the six twisting
-  paladin reqs), Hamstring from 10 Rage (arms/fury 2H +1.6 to +4.7), Frost Undead req (+2.2); Efficiency on
-  Strider Kick and the threat check moved nothing.
+- `baseline_dd053d2_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  dd053d24c (pass 43). Since e05fd73: the Sunder ramp reqs (melee -2 to -4), the 10 yd explosive reach in
+  the sim (ranged hunters -2 to -5.5, isolated with `regress.py`), and the req moves that follow it
+  (warlocks and priests to 25 yd, casters' Land Mine to EZ-Thro Dark Bomb: -4 to -8).
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at e05fd732e (`/tmp/audit-cache/cli/e05fd732e447/wowsimcli`).
+  - The CLI was the audit loop's shared build at dd053d24c (`/tmp/audit-cache/cli/dd053d24ccba/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.
