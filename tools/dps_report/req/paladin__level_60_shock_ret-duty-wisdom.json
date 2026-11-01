@@ -92,7 +92,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "550030032011012--052150312012303",
+            "talentsString": "05125210220021--0523310120130133",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Blacksmithing",
@@ -274,6 +274,43 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 20920
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 20920
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 20355
+                              },
+                              "sourceUnit": {
+                                "type": "CurrentTarget"
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 20924
                       }
                     }
@@ -312,43 +349,6 @@
                     }
                   },
                   "notes": "Judgement on cooldown."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20920
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 20920
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 20355
-                              },
-                              "sourceUnit": {
-                                "type": "CurrentTarget"
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {

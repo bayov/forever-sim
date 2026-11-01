@@ -313,7 +313,7 @@
 			"name": "Protection paladin",
 			"role": "RaidRoleTank",
 			"class": "ClassPaladin",
-			"talents": "1-5530513321301551-052",
+			"talents": "-55302102513521531-052",
 			"icon": "spell_holy_devotionaura",
 			"gives": [
 				"Blessings",
@@ -346,7 +346,7 @@
 			"name": "Holy paladin",
 			"role": "RaidRoleHealer",
 			"class": "ClassPaladin",
-			"talents": "05320103225101051-500250302003",
+			"talents": "50320215022101251-510221305",
 			"icon": "spell_holy_holybolt",
 			"gives": [
 				"Blessings",

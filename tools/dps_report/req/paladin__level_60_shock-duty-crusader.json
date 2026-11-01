@@ -79,7 +79,7 @@
               "shadowPowerBuff": "ElixirOfShadowPower",
               "firePowerBuff": "ElixirOfGreaterFirepower",
               "mainHandImbue": "ShadowOil",
-              "defaultPotion": "MajorManaPotion",
+              "defaultPotion": "DragonfirePotion",
               "defaultConjured": "ConjuredDemonicRune",
               "dragonBreathChili": true,
               "zanzaBuff": "ROIDS",
@@ -92,41 +92,13 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "55003003201121251--05225030201",
+            "talentsString": "05125210220021251-1-052330002013",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Blacksmithing",
             "rotation": {
               "type": "TypeAPL",
               "prepullActions": [
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20293
-                      }
-                    }
-                  },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-4.5s"
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1311595
-                      }
-                    }
-                  },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-3s"
-                    }
-                  }
-                },
                 {
                   "action": {
                     "castSpell": {
@@ -143,16 +115,6 @@
                 }
               ],
               "priorityList": [
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 24239
-                      }
-                    }
-                  },
-                  "notes": "Hammer of Wrath below 20% health."
-                },
                 {
                   "action": {
                     "castSpell": {
@@ -359,16 +321,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10333
-                      }
-                    }
-                  },
-                  "notes": "Holy Strike on cooldown."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 20271
                       }
                     },
@@ -402,6 +354,26 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 24239
+                      }
+                    }
+                  },
+                  "notes": "Hammer of Wrath below 20% health."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10333
+                      }
+                    }
+                  },
+                  "notes": "Holy Strike on cooldown."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 10314
                       }
                     }
@@ -412,135 +384,11 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1311595
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "and": {
-                              "vals": [
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "currentManaPercent": {}
-                                    },
-                                    "op": "OpGe",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "0.3"
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "autoTimeToNext": {
-                                        "autoType": "MainHand"
-                                      }
-                                    },
-                                    "op": "OpGt",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "2.5s"
-                                      }
-                                    }
-                                  }
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "not": {
-                              "val": {
-                                "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 1311597
-                                  },
-                                  "sourceUnit": {
-                                    "type": "CurrentTarget"
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 20930
                       }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "or": {
-                              "vals": [
-                                {
-                                  "auraIsActive": {
-                                    "auraId": {
-                                      "spellId": 1311597
-                                    },
-                                    "sourceUnit": {
-                                      "type": "CurrentTarget"
-                                    }
-                                  }
-                                },
-                                {
-                                  "not": {
-                                    "val": {
-                                      "and": {
-                                        "vals": [
-                                          {
-                                            "cmp": {
-                                              "lhs": {
-                                                "currentManaPercent": {}
-                                              },
-                                              "op": "OpGe",
-                                              "rhs": {
-                                                "const": {
-                                                  "val": "0.3"
-                                                }
-                                              }
-                                            }
-                                          },
-                                          {
-                                            "cmp": {
-                                              "lhs": {
-                                                "autoTimeToNext": {
-                                                  "autoType": "MainHand"
-                                                }
-                                              },
-                                              "op": "OpGt",
-                                              "rhs": {
-                                                "const": {
-                                                  "val": "2.5s"
-                                                }
-                                              }
-                                            }
-                                          }
-                                        ]
-                                      }
-                                    }
-                                  }
-                                }
-                              ]
-                            }
-                          }
-                        ]
-                      }
                     }
                   },
-                  "notes": "Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."
+                  "notes": "Holy Shock on cooldown. Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {

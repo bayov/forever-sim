@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/paladin"
 )
@@ -13,17 +15,21 @@ import (
 // baseline too but costs a third of the level 20 mana pool, so it is a knob with a mana
 // floor. Every line names the highest rank the player's level knows.
 //
-// With Twist of Light (the 31 point Retribution talent) replacing Seal of Command or Seal of
-// Righteousness leaves an Echo of it, which the next melee swing applies on top of the new
-// seal. Twisting puts the other damage seal up just before each swing, so every swing gets
-// both seals' effects for one seal's mana. The twist knobs say how close to the swing and
-// down to how much mana.
+// With Unsealed Wrath (the 31 point Retribution talent since the launch realms' October 30
+// hotfix, sim/paladin/unsealed_wrath.go) every landed white swing stores a copy of the active
+// seal, up to 3 for 15 sec, and the first landed swing under the other damage seal spends them
+// all, each copy getting the stored seal's own chance. Twisting keeps one seal up while its
+// copies build to twistStacks, puts the other one up for the swing that spends them (which also
+// stores a copy of the other), and goes back once the other has twistBack copies. The knobs say
+// how many copies, how close to the swing and down to how much mana.
 type paladinRet struct{}
 
 var judgement = spellID(paladin.JudgementSpellId)
 var judgementOfTheCrusader = spellID(paladin.JudgementOfTheCrusaderSpellId)
-var echoOfCommand = spellID(1311703)
-var echoOfRighteousness = spellID(1311704)
+var judgementOfWisdom = spellID(20355) // the rank 3 debuff (sim/paladin/sow.go)
+var echoOfCommand = spellID(paladin.EchoOfCommandSpellId)
+var echoOfRighteousness = spellID(paladin.EchoOfRighteousnessSpellId)
+var swiftJudgement = spellID(paladin.SwiftJudgementSpellId)
 
 const syntheticSpellPowerOnUseTrinket = paladin.SyntheticSpellPowerOnUseTrinket
 const goblinSapperCharge = 10646
@@ -34,9 +40,10 @@ func (paladinRet) Knobs() []Knob {
 	return []Knob{
 		// 1 Seal of Righteousness, 2 Seal of Command (the 11 point Retribution talent).
 		{Name: "seal", Default: 1, Min: 1, Max: 2, Step: 1},
-		// Open with Seal of the Crusader and a Judgement so Judgement of the Crusader is on
-		// the target for the fight.
-		{Name: "jotc", Default: 1, Min: 0, Max: 1, Step: 1},
+		// The raid duty (standards 23): 1 open with Seal of the Crusader and a Judgement so
+		// Judgement of the Crusader is on the target for the fight, 2 the same with Seal of Wisdom
+		// for Judgement of Wisdom. 0 none, the raid's paladins keep them up.
+		{Name: "jotc", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "holyStrike", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "consecration", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Consecration above the seal and judgement lines, for a pack of enemies where it
@@ -51,22 +58,25 @@ func (paladinRet) Knobs() []Knob {
 		{Name: "holyShock", Default: 0, Min: 0, Max: 2, Step: 1},
 		// Holy Shock only above this much mana, 0 always.
 		{Name: "holyShockMana", Default: 0, Min: 0, Max: 60, Step: 20},
-		// Light's Vigil (the 31 point Holy talent) when Holy Shock is ready within its 1.5 sec
-		// cast, above this much mana, so the Holy Shock right after it detonates it and starts
-		// no cooldown. 100 never.
-		{Name: "lightsVigilMana", Default: 100, Min: 0, Max: 100, Step: 10},
 		// Hammer of Wrath (from level 44) below 20% health, above this much mana. 100 never.
 		{Name: "hammerOfWrathMana", Default: 100, Min: 0, Max: 100, Step: 20},
 		// Where Hammer of Wrath goes: 0 after Holy Strike, 1 just above Consecration, 2 at the
 		// top of the list, 3 just above Holy Strike. In the execute phase it beats the
 		// Consecration tick or the Holy Strike it delays.
 		{Name: "hammerOfWrathFirst", Default: 0, Min: 0, Max: 3, Step: 1},
-		// Twist the seals for Twist of Light's Echo: 0 never, 1 swap Seal of Command and Seal
-		// of Righteousness within twistWindow tenths of a second of the next swing (0: whenever
-		// no Echo is waiting, at any point of the swing), above twistMana percent of mana.
+		// Twist the seals for Unsealed Wrath: 0 never, 1 put the other damage seal up once the
+		// seal's Echo holds twistStacks copies, and the seal back once the other's Echo holds
+		// twistBack, within twistWindow tenths of a second of the next swing (0: as soon as the
+		// copies are there), above twistMana percent of mana.
 		{Name: "twist", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "twistWindow", Default: 10, Min: 0, Max: 30, Step: 5},
-		{Name: "twistMana", Default: 40, Min: 0, Max: 80, Step: 20},
+		{Name: "twistStacks", Default: 3, Min: 1, Max: 3, Step: 1},
+		{Name: "twistBack", Default: 1, Min: 1, Max: 3, Step: 1},
+		{Name: "twistWindow", Default: 0, Min: 0, Max: 30, Step: 5},
+		{Name: "twistMana", Default: 0, Min: 0, Max: 80, Step: 20},
+		// Each swap costs a seal's mana, so when the mana won't last the fight the swap away waits
+		// for all 3 copies instead of twistStacks: fewer swaps, more copies spent a swap. The mana
+		// lasts while the bar covers twistThriftRate mana a second of the fight left. 0 off.
+		{Name: "twistThriftRate", Default: 0, Min: 0, Max: 30, Step: 5},
 		// Holy Strike only above this much mana, 0 always.
 		{Name: "holyStrikeMana", Default: 0, Min: 0, Max: 40, Step: 20},
 		// Holy Strike ahead of the seal and twist lines instead of after them.
@@ -75,13 +85,10 @@ func (paladinRet) Knobs() []Knob {
 		// many tenths of a second away, so most Judgements land on Seal of Command (its
 		// judgement rolls on the melee table and hits harder). 0 judges whichever seal is up.
 		{Name: "judgeRighteousnessWindow", Default: 0, Min: 0, Max: 30, Step: 5},
-		// Put the other seal up before the primary one in the prepull, so the first swing
-		// gets its Echo (twisting), or Light's Vigil on the target (Holy Shock builds).
-		{Name: "prepullTwo", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Light's Vigil whenever it is off cooldown and not on the target, above
-		// lightsVigilMana, with Holy Shock waiting for the Vigil (or the mana floor) instead of
-		// going out on cooldown. 0 ties the Vigil to Holy Shock's cooldown.
-		{Name: "vigilChain", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Swift Judgement (the 15 point Protection talent, a free Judgement of its own on a 1 min
+		// cooldown since the hotfix) on cooldown, on the same seals as Judgement. Off the global
+		// cooldown, so it costs no other cast.
+		{Name: "swiftJudgement", Default: 1, Min: 0, Max: 1, Step: 1},
 		// The synthetic spell power on-use trinket and the Goblin Sapper Charge on cooldown at
 		// the top of the list. On the autocast line at the bottom they wait for a free GCD,
 		// which a GCD line above it nearly always takes, so they go out seconds late.
@@ -100,27 +107,6 @@ func (paladinRet) Knobs() []Knob {
 		// seal that drops (after the Judgement of the Crusader opener, or after 30 sec) is
 		// recast first.
 		{Name: "sealFirst", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Light's Vigil only when the next swing is more than this many tenths of a second off,
-		// so its cast (which resets the swing when it completes) goes out right after a swing
-		// rather than just before one. 0 any time.
-		{Name: "vigilSwing", Default: 0, Min: 0, Max: 30, Step: 5},
-		// Light's Vigil and the Holy Shock it sets up are the least mana-efficient casts (1340 mana
-		// for the Vigil's damage and a Holy Shock with no cooldown), so when the mana won't last the
-		// fight they give way first. With vigilManaPerSec above 0, the Vigil goes down to
-		// lightsVigilMana only while the mana covers vigilManaPerSec a second of the fight left,
-		// counting the bar plus each Major Mana Potion (1800 on average) and Demonic Rune (1200)
-		// that still comes with 15 sec of the fight to spend it (their cooldowns, as
-		// spellUsesRemaining counts them). Otherwise it takes only the top of the bar, above
-		// vigilTopMana percent: spending that keeps the potion and rune coming on cooldown (they
-		// wait for a 2250 mana gap), and the rest goes to Exorcism, Consecration and Hammer of
-		// Wrath. It needs both consumables in the request: without them the sim drops the
-		// condition (with a warning) and the Vigil keeps lightsVigilMana alone. 0 off.
-		{Name: "vigilManaPerSec", Default: 0, Min: 0, Max: 80, Step: 5},
-		{Name: "vigilTopMana", Default: 60, Min: 30, Max: 80, Step: 10},
-		// In the execute phase, and vigilExecuteLead seconds before it, the mana must also cover
-		// Hammer of Wrath: vigilHammerManaPerSec more a second of the fight left.
-		{Name: "vigilHammerManaPerSec", Default: 0, Min: 0, Max: 60, Step: 10},
-		{Name: "vigilExecuteLead", Default: 0, Min: 0, Max: 30, Step: 5},
 	}
 }
 
@@ -133,8 +119,6 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	exorcism := rankID(paladin.ExorcismLevel[:], paladin.ExorcismSpellId[:])
 	holyShock := rankID(paladin.HolyShockLevel[:], paladin.HolyShockSpellId[:])
 	hammerOfWrath := rankID(paladin.HammerOfWrathLevel[:], paladin.HammerOfWrathSpellId[:])
-	lightsVigil := rankID(paladin.LightsVigilLevel[:], paladin.LightsVigilSpellId[:])
-	lightsVigilMark := rankID(paladin.LightsVigilLevel[:], paladin.LightsVigilDebuffId[:])
 	holyWrath := rankID(paladin.HolyWrathLevel[:], paladin.HolyWrathSpellId[:])
 
 	seal, otherSeal := sealOfRighteousness, sealOfCommand
@@ -164,11 +148,15 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 		)
 	}
 	var jotcUp value
-	if k["jotc"] == 1 {
-		jotcUp = targetAuraIsActive(judgementOfTheCrusader)
+	dutySeal, dutyName, dutyJudgement := sealOfTheCrusader, "Seal of the Crusader", judgementOfTheCrusader
+	if k["jotc"] == 2 {
+		dutySeal, dutyName, dutyJudgement = rankID(paladin.SealOfWisdomLevel[:], paladin.SealOfWisdomSpellId[:]), "Seal of Wisdom", judgementOfWisdom
+	}
+	if k["jotc"] > 0 {
+		jotcUp = targetAuraIsActive(dutyJudgement)
 		items = append(items,
-			cast(judgement, auraIsActive(sealOfTheCrusader), "Judge Seal of the Crusader first, the judgement lasts 40 sec and every melee hit refreshes it."),
-			cast(sealOfTheCrusader, and(not(jotcUp), not(auraIsActive(sealOfTheCrusader))), "Seal of the Crusader when its judgement is not on the target."),
+			cast(judgement, auraIsActive(dutySeal), "Judge "+dutyName+" first, the judgement lasts 40 sec and every melee hit refreshes it."),
+			cast(dutySeal, and(not(jotcUp), not(auraIsActive(dutySeal))), dutyName+" when its judgement is not on the target."),
 		)
 	}
 	var consecrationLine *proto.APLListItem
@@ -207,35 +195,57 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	if k["holyStrikeFirst"] == 1 {
 		holyStrikeLine()
 	}
+	swiftLine := func(when value, notes string) {
+		if k["swiftJudgement"] == 1 {
+			items = append(items, cast(swiftJudgement, when, notes+" Without the talent ignore the warning on this line."))
+		}
+	}
 	if !twist {
+		swiftLine(and(auraIsActive(seal), jotcUp), "Swift Judgement on cooldown, off the global cooldown.")
 		items = append(items, cast(judgement, and(auraIsActive(seal), jotcUp), "Judgement on cooldown."))
 		if k["sealFirst"] == 0 {
 			items = append(items, sealLine)
 		}
 	} else {
 		sealUp := or(auraIsActive(seal), auraIsActive(otherSeal))
-		// One swap per swing: none while the last swap's Echo waits for its swing. Two swaps
-		// before a swing would leave both Echoes up, and we do not know the server allows that.
-		swingSoon := and(not(auraIsActive(echoOfCommand)), not(auraIsActive(echoOfRighteousness)))
-		if k["twistWindow"] > 0 {
-			swingSoon = and(lt(mainHandTimeToNext(), seconds(k["twistWindow"]/10)),
-				not(auraIsActive(echoOfCommand)), not(auraIsActive(echoOfRighteousness)))
+		echoOf := func(s *proto.ActionID) *proto.ActionID {
+			if s == sealOfCommand {
+				return echoOfCommand
+			}
+			return echoOfRighteousness
+		}
+		// The swap away from the seal waits for its copies, the swap back for the other's.
+		ready := func(s *proto.ActionID, n float64) value {
+			stacked := ge(auraNumStacks(echoOf(s)), num(n))
+			if k["twistWindow"] > 0 {
+				return and(stacked, lt(mainHandTimeToNext(), seconds(k["twistWindow"]/10)))
+			}
+			return stacked
 		}
 		var floor value
 		if k["twistMana"] > 0 {
 			floor = ge(currentManaPercent(), num(k["twistMana"]/100))
 		}
-		judgeWhen, judgeNotes := sealUp, "Judgement on cooldown, on whichever damage seal is up."
+		judgeWhen, judgeNotes := sealUp, "on whichever damage seal is up."
 		if k["judgeRighteousnessWindow"] > 0 {
 			judgeWhen = or(auraIsActive(sealOfCommand), and(auraIsActive(sealOfRighteousness), gt(mainHandTimeToNext(), seconds(k["judgeRighteousnessWindow"]/10))))
-			judgeNotes = "Judgement on cooldown on Seal of Command, and on Seal of Righteousness only when the next swing is a while off (Judgement of Command hits harder)."
+			judgeNotes = "on Seal of Command, and on Seal of Righteousness only when the next swing is a while off (Judgement of Command hits harder)."
+		}
+		swiftLine(and(judgeWhen, jotcUp), "Swift Judgement on cooldown, off the global cooldown, "+judgeNotes)
+		stacks, back := k["twistStacks"], k["twistBack"]
+		away := ready(seal, stacks)
+		awayNotes := fmt.Sprintf("Unsealed Wrath: once the seal has stored %s, the other damage seal, so the next swing spends them all.", copies(stacks))
+		if rate := k["twistThriftRate"]; rate > 0 && stacks < unsealedWrathCopies {
+			lasts := ge(currentMana(), mul(remainingTime(), num(rate)))
+			away = or(and(lasts, away), ready(seal, unsealedWrathCopies))
+			awayNotes = fmt.Sprintf("Unsealed Wrath: once the seal has stored %s while the mana lasts the fight (%d mana a second left), and all 3 when it won't, the other damage seal, so the next swing spends them all.", copies(stacks), int(rate))
 		}
 		items = append(items,
-			cast(judgement, and(judgeWhen, jotcUp), judgeNotes),
+			cast(judgement, and(judgeWhen, jotcUp), "Judgement on cooldown, "+judgeNotes),
 			cast(seal, and(not(sealUp), jotcUp), sealNotes),
-			cast(otherSeal, and(auraIsActive(seal), swingSoon, floor),
-				"Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too."),
-			cast(seal, and(auraIsActive(otherSeal), swingSoon, floor), "And back again before the next swing."),
+			cast(otherSeal, and(auraIsActive(seal), away, floor), awayNotes),
+			cast(seal, and(auraIsActive(otherSeal), ready(otherSeal, back), floor),
+				fmt.Sprintf("And back once the other seal has stored %s, which the next swing spends.", copies(back))),
 		)
 	}
 	holyShockLine := func() {
@@ -247,31 +257,6 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 		if k["holyShockMana"] > 0 {
 			floor = ge(currentManaPercent(), num(k["holyShockMana"]/100))
 			notes = "Holy Shock on cooldown with the mana to spare. Without the talent ignore the warning on this line."
-		}
-		if k["lightsVigilMana"] < 100 {
-			var vigilFloor value
-			if k["lightsVigilMana"] > 0 {
-				vigilFloor = ge(currentManaPercent(), num(k["lightsVigilMana"]/100))
-			}
-			if k["vigilSwing"] > 0 {
-				vigilFloor = and(vigilFloor, gt(mainHandTimeToNext(), seconds(k["vigilSwing"]/10)))
-			}
-			if k["vigilManaPerSec"] > 0 {
-				vigilFloor = and(vigilFloor, or(vigilManaLasts(k), ge(currentManaPercent(), num(k["vigilTopMana"]/100))))
-			}
-			if k["vigilChain"] == 1 {
-				items = append(items, cast(lightsVigil, and(vigilFloor, not(targetAuraIsActive(lightsVigilMark))),
-					"Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line."))
-				lowMana := constant("false")
-				if vigilFloor != nil {
-					lowMana = not(vigilFloor)
-				}
-				items = append(items, cast(holyShock, and(or(targetAuraIsActive(lightsVigilMark), lowMana), floor),
-					"Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."))
-				return
-			}
-			items = append(items, cast(lightsVigil, and(le(spellTimeToReady(holyShock), seconds(1.5)), vigilFloor),
-				"Light's Vigil just before Holy Shock is ready, so the Holy Shock detonates it and starts no cooldown. Without the talent ignore the warning on this line."))
 		}
 		items = append(items, cast(holyShock, floor, notes))
 	}
@@ -322,54 +307,22 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 
 	rot := rotation(items...)
 	opener := seal
-	if k["jotc"] == 1 {
-		opener = sealOfTheCrusader
-	}
-	if k["prepullTwo"] == 1 {
-		first, second := otherSeal, seal
-		if k["holyShock"] > 0 && k["lightsVigilMana"] < 100 {
-			first, second = seal, lightsVigil
-		}
-		if k["jotc"] == 1 {
-			// The raid duty: the same two pre-pull casts 1.5 sec earlier, then Seal of the
-			// Crusader last, judged at the pull. Replacing a damage seal with it still leaves
-			// Twist of Light's Echo for the first swing.
-			rot.PrepullActions = append(rot.PrepullActions, prepull(first, 4.5), prepull(second, 3))
-		} else {
-			rot.PrepullActions = append(rot.PrepullActions, prepull(first, 3))
-			opener = second
-		}
+	if k["jotc"] > 0 {
+		opener = dutySeal
 	}
 	rot.PrepullActions = append(rot.PrepullActions, prepull(opener, 1.5))
 	return rot
 }
 
-// vigilManaLasts: the mana, with the Major Mana Potions and Demonic Runes still to come, covers
-// vigilManaPerSec a second of the fight left (vigilManaPerSec plus vigilHammerManaPerSec in the
-// execute phase and the vigilExecuteLead seconds before it). Durations are multiplied by whole
-// numbers only (APL math truncates a duration times a fraction).
-func vigilManaLasts(k Knobs) value {
-	math := func(op proto.APLValueMath_MathOperator, lhs, rhs value) value {
-		return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: op, Lhs: lhs, Rhs: rhs}}}
+// unsealedWrathCopies is the most copies Unsealed Wrath stores (sim/paladin/unsealed_wrath.go).
+const unsealedWrathCopies = 3
+
+// copies reads a copy count out for the notes.
+func copies(n float64) string {
+	if n == 1 {
+		return "a copy"
 	}
-	usesLeft := func(item int32) value { return spellUsesRemaining(itemID(item), seconds(15)) }
-	mana := math(proto.APLValueMath_OpAdd, currentMana(), math(proto.APLValueMath_OpAdd,
-		mul(usesLeft(majorManaPotion), num(1800)), mul(usesLeft(demonicRune), num(1200))))
-	rate := k["vigilManaPerSec"]
-	if k["vigilHammerManaPerSec"] == 0 {
-		return ge(mana, mul(remainingTime(), num(rate)))
-	}
-	execute := &proto.APLValue{Value: &proto.APLValue_IsExecutePhase{IsExecutePhase: &proto.APLValueIsExecutePhase{Threshold: proto.APLValueIsExecutePhase_E20}}}
-	if k["vigilExecuteLead"] > 0 {
-		// The time until the execute phase is (4 x time left - now) / 5, as in trinketLine.
-		now := &proto.APLValue{Value: &proto.APLValue_CurrentTime{CurrentTime: &proto.APLValueCurrentTime{}}}
-		untilExecute := math(proto.APLValueMath_OpDiv, sub(math(proto.APLValueMath_OpMul, remainingTime(), num(4)), now), num(5))
-		execute = or(execute, lt(untilExecute, seconds(k["vigilExecuteLead"])))
-	}
-	return or(
-		and(execute, ge(mana, mul(remainingTime(), num(rate+k["vigilHammerManaPerSec"])))),
-		and(not(execute), ge(mana, mul(remainingTime(), num(rate)))),
-	)
+	return fmt.Sprintf("%d copies", int(n))
 }
 
 // trinketLine is the spell power on-use trinket on cooldown, or with holdForExecute at the pull

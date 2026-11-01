@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 100,
   "race": "Undead",
-  "talents": "55003003201121251--05225030201",
+  "talents": "05125210220021251-1-052330002013",
   "treeNames": [
     "Holy",
     "Protection",
@@ -15,36 +15,38 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock",
   "published": {
-    "dps": 908.6,
-    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
+    "dps": 855.6,
+    "source": "forever-sim's paladin re-search on the October 30 hotfix trees, 2026-11-01 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
   },
   "verify": {
-    "dps": 883.2,
-    "stderr": 0.2,
+    "dps": 855.6,
+    "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py of this request, 180s, seed 1"
+    "note": "simreq of this request, 180s, seed 1"
   },
-  "summary": "Deep Holy with Light's Vigil, Holy Shock and Seal of Righteousness. No twisting.",
+  "summary": "Holy Shock build with 31 points in Holy. Since the October 30 hotfix Light's Vigil and Holy Power add no damage.",
   "keyTalents": [
     "Holy Shock",
-    "Light's Vigil",
-    "Holy Power",
     "Consecrated Ground",
     "Divine Precision",
-    "Divine Favor",
+    "Conviction",
     "Improved Seals",
+    "Divine Favor",
+    "Two-Handed Weapon Specialization",
     "Sacred Arbiter"
   ],
   "rotation": [
-    "Pre-pull: Seal of Righteousness at -3s, Light's Vigil at -1.5s",
-    "Judgement on cooldown on Seal of Righteousness. Recast Seal of Righteousness whenever it's down (no twisting)",
+    "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use; Goblin Sapper Charge on cooldown",
+    "Pre-pull: Seal of Righteousness at -1.5s",
+    "Consecration on cooldown at any mana",
+    "Judgement on cooldown",
+    "Seal of Righteousness whenever it's down",
+    "Hammer of Wrath under 20% boss health, before Holy Strike",
     "Holy Strike on cooldown",
-    "Hammer of Wrath under 20% boss health",
-    "Light's Vigil when it's not on the target, at 30%+ mana, and the next swing is over 2.5s away (its cast resets the swing)",
-    "Holy Shock on a target with Light's Vigil. It detonates the Vigil, refunds 75% of its mana and starts no cooldown. When the Vigil is held back (low mana, or a swing within 2.5s), Holy Shock on cooldown. Divine Favor goes on a Holy Shock",
-    "Consecration on cooldown at any mana, after everything above",
-    "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
+    "Exorcism on cooldown (only against Undead and Demons)",
+    "Holy Shock on cooldown",
+    "Racials on free GCDs"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -62,18 +64,18 @@
     "Dragonbreath Chili",
     "Shadow Oil",
     "Goblin Sapper",
-    "Major Mana Potion",
+    "Dragonfire Potion",
     "Demonic Rune"
   ],
   "caveats": [
-    "Takes Pursuit of Justice 2 (movement speed), a must-have talent. It costs 2.3 / 2.3 / 2.1 DPS at 120 / 180 / 300s.",
-    "Runs short of mana. It's 7.4% behind Ret twist at 120s, 8.2% at 180s and 9.8% at 300s.",
+    "Takes Pursuit of Justice 2 (movement speed), a must-have talent.",
+    "Light's Vigil heals only and Holy Power gives crit healing only since the October 30 hotfix, and Champion of the Light is out of reach: 17.7% behind Ret twist at 180s. It ends fights with mana to spare, so it takes the Dragonfire Potion.",
     "Divine Precision's hit doesn't cover Judgement of Righteousness.",
-    "A missed Holy Shock wastes the Vigil. Holy spells miss about 1% of the time.",
+    "Two-Handed Weapon Specialization boosts the Holy seal and judgement damage and Holy Strike too, as measured in game before the October 30 hotfix. The hotfix tooltip says physical damage, but its damage effect is unchanged.",
     "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
     "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
     "Seal of Righteousness adds 12% of spell power per hit with a two-hander, counted once, as its tooltip says (spell 70425). Counted twice, DPS would be 46-51 higher. At the proc spell's 0%, it would be 53-59 lower.",
-    "No filler explosive, because each 1s cast resets the swing. The Goblin Land Mine and EZ-Thro Dark Bomb cost 6.1 DPS at 180s, and the EZ-Thro Thorium Grenade 6.8."
+    "No filler explosive, because each 1s cast resets the swing."
   ],
-  "notes": "Preset options are primarySeal Righteousness, as mksettings writes. Rotation regenerated 2026-10-27 from the paladin_presets.sh level60_shock knobs (consecrationFirst=0, vigilSwing=25; user ruling). The 60% Vigil floor in fights over 210s went on 2026-10-28 (standards 31): it only lost, 12.6 at 220s and 11.5 at 300s. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "Preset options are primarySeal Righteousness, as mksettings writes. Rotation regenerated 2026-10-27 from the paladin_presets.sh level60_shock knobs (consecrationFirst=0, vigilSwing=25; user ruling). The 60% Vigil floor in fights over 210s went on 2026-10-28 (standards 31): it only lost, 12.6 at 220s and 11.5 at 300s. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh). The Dragonfire Potion in place of the Major Mana Potion (mksettings -spec ret_shock is the same as ret since then)."
 }
