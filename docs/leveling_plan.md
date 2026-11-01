@@ -269,8 +269,8 @@ What paid, by how much over its band:
 We checked the plan again on 2026-11-01, from level 1 (97.92h and 97.86h on the two seeds),
 after the sim changes since the audit: casts reset the swing, Frost Shock is binary, the new
 spell resists, Windfury Totem's cooldown and the training schedule. The talents came first,
-with the gear kept. Nothing beat the plan by more than half a mob a session, so the talents
-and most of the rotations stay as they were:
+with the gear kept. No search or check found more than half a mob a session, but a tidier
+route we tried by hand is a little faster:
 
 - The route search ends on the plan's own route, and no respec saves anything.
 - A worth table at nine levels (one point more or less in each talent) has no point the tree
@@ -280,12 +280,29 @@ and most of the rotations stay as they were:
   the training schedule leaves the bolts at rank 1 until 44.
 - Five other tails for 49 to 59 (Totemic Focus, Elemental Focus, Guardian Totems, more
   Anticipation) come out between 0.5 minutes faster and 21 minutes slower.
+- A route that stays in one tree for longer (below) is about 6 minutes faster than the
+  searched one, so we took it.
 - Each totem and Lightning Shield still pays, by 1 to 7.5 hours over 32 to 59. The rest
   thresholds are at their best within 2 minutes.
 - Earth Shock in place of Frost Shock at 22 to 24 saves 0.7 minutes, now that Frost Shock is
   binary. That's small, but we took it: the plan no longer casts Frost Shock, so it's a utility
   spell only and the leveling rotation has one shock fewer to learn. The plan trains none of
   its ranks. BayovCore's route trains rank 1 for utility and skips the rest.
+
+The route used to switch trees seven times, five of them at 49 to 59 (Convection 2,
+Anticipation, Convection 3, Call of Flame 2, Improved Lightning Shield, Flurry, Call of Flame).
+Now it switches four times: Enhancement to 34, Restoration at 35 to 42, Enhancement at 43 to 48,
+Elemental at 49 to 56 (Convection 5, then Call of Flame 3) and Anticipation 1 to 3 at 57 to 59.
+That tail is 0.7 minutes faster than the old one on both seeds. On the way we found that
+Improved Lightning Shield 3/3 at 27, before Flurry 1 and 2, beats Flurry 3 there by 5 to 6
+minutes over 27 to 59. Both talents add 5% a point, but the third shield point is worth more
+at every level from 27. The search missed it, because it sims only the six moves of a last
+point it guesses best. Other tidy tails cost a little: all Elemental from 49 (Elemental
+Devastation 1 to 3 or Elemental Focus at the end) 1.3 to 3 minutes, and Enhancement before
+Elemental 1.4 to 2.4. Elemental Devastation before Call of Flame costs 15 minutes, since Call of
+Flame's 5% a point goes on Flame Shock's DoT, which runs all fight from 55. Ancestral Knowledge
+loses to every point we swapped it for: 4 minutes for Anticipation at 57 to 59, 1 for Flurry 4
+and 45 for Improved Lightning Shield. Its 2% Intellect a point is only 1 or 2 Intellect.
 
 The numbers are in `orchestration/leveling_audit_log.md` (round 2).
 
@@ -409,11 +426,12 @@ plan (The audit): 102h 8m for 10 to 60 then. Since 2026-10-30 it starts at level
 by then and no talents, and with the route's gear and the training schedule it takes 97.87h. The route and the ranges are in
 `ui/enhancement_shaman/apls/leveling_plan_audited.json`, with a range only where the rotation
 changes. Thundering Strikes, Improved Ghost Wolf at 15 and 16 (required), Mental Dexterity,
-Shamanistic Focus, Elemental Weapons, Stormstrike at 25, then Flurry, Improved Stormstrike,
-Spirit Weapons and Tidal Focus, then Tidal Focus 4 and 5 and Mindfulness at 38 to 42,
-Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48, and Convection, Anticipation, Call of
-Flame, Improved Lightning Shield and Flurry 5 after. Rockbiter Weapon all the way, with
-Windfury Totem from 32 and Stoneskin Totem for the earth totem.
+Shamanistic Focus, Elemental Weapons, Improved Lightning Shield, Stormstrike at 25, Improved
+Lightning Shield 3/3 at 27, Flurry 2, Improved Stormstrike, Spirit Weapons and Mental
+Quickness, then Tidal Focus and Mindfulness at 35 to 42, Maelstrom Weapon at 43 to 47, Rage of
+the Farseer at 48, Convection and Call of Flame at 49 to 56, and Anticipation at 57 to 59
+(since 2026-11-01, The audit). Rockbiter Weapon all the way, with Windfury Totem from 32 and
+Stoneskin Totem for the earth totem.
 
 Before the audit it was the route and rotations of the 10 to 60 rotation search (Rotation
 search, the third run): 107h 5m, in `leveling_plan_searched.json` (removed, it's in the

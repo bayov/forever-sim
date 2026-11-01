@@ -988,13 +988,15 @@ export const EPPresets = [EPLevel30Leveling, ...EPLevelingGearPlan];
 // The talents and rotations come from the 2026-10-19 audit of the searched plan
 // (docs/leveling_plan.md, The audit): agents read sessions at each level band, wrote new
 // rules into the rotations and tried other talent routes, and we kept what held on two seeds.
-// It takes 102h 8m, against 107h 5m for the search's plan. The route is the search's to 37
-// (Thundering Strikes, Improved Ghost Wolf at 15 and 16, required, for walking, Mental
-// Dexterity, Shamanistic Focus, Elemental Weapons, Stormstrike at 25, Flurry, Improved
-// Stormstrike, Spirit Weapons and Tidal Focus), then Tidal Focus 4 and 5 and Mindfulness at
-// 38 to 42, Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48, and Convection and Call
-// of Flame after. The rotations are "Audited 10" and so on, one range for each level that
-// changed something, all on Rockbiter Weapon.
+// It takes 102h 8m, against 107h 5m for the search's plan. The route, as reordered on
+// 2026-11-01 to stay in one tree for longer: Thundering Strikes, Improved Ghost Wolf at 15 and
+// 16 (required, for walking), Mental Dexterity, Shamanistic Focus, Elemental Weapons, Improved
+// Lightning Shield and Stormstrike at 25 (Improved Lightning Shield 3/3 at 27), Flurry 2,
+// Improved Stormstrike, Spirit Weapons and Mental Quickness, then Restoration at 35 to 42
+// (Tidal Focus and Mindfulness), Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48,
+// Convection and Call of Flame at 49 to 56, and Anticipation at 57 to 59. The rotations are
+// "Audited 10" and so on, one range for each level that changed something, all on Rockbiter
+// Weapon.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	// From level 1, where levels 1 to 9 play the first range's rotation with the spells we have
 	// by then, and no talents.
