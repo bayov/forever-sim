@@ -8,6 +8,18 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Launch-realm hotfix to 1.60.1.70707 (2026-10-30)
+
+The launch realms' newest hotfix push for 70707 (wago.tools hotfixes, push 113486, region 91; foreverchanges.pro's "A hotfix to the October 30 build") takes back the 2026-10-20 Frost values below. Taken into the sim 2026-11-01, as server data:
+
+- Ice Lance: 300% more damage on a Frozen target (SpellEffect 1342606 bp 300), so 4 times the damage (`IceLanceFrozenMultiplier`, `sim/mage/ice_lance.go`). It was 200% since 70425.
+- Ice Barrier: 5% more Frost damage while shielded (SpellEffect 1364979-80, 3 -> 5) and Frigid Power 15% for the minute (1326891, SpellEffect 1365007-08, 3 -> 15). `IceBarrierShieldedDamage` and `FrigidPowerDamage` in `sim/mage/ice_barrier.go`.
+- Winter's Chill: 20% more Cone of Cold damage taken a stack (SpellEffect 688253, 5 -> 20); the 7% of spell power a stack is unchanged (`WintersChillDamagePerStack`, `sim/mage/cone_of_cold.go`).
+- Arcane Blast: 12% of Intellect as spell damage, +100% mana and 18 sec per stack (was 15%, +175%, 15 sec; PR #118).
+- Arctic Reach also covers Ice Lance (range only), and Arcane Resilience has 3 ranks, up to 75% of Intellect as armor (tanking only).
+
+The Frost and Frostfire presets wait for a re-search; at their old talents and rotation the change moved the TestP1Mage goldens' Frost runs by about +2.6%.
+
 ## Client build 1.60.1.70707 (2026-10-30)
 
 70707 puts the 10-27 to 10-29 hotfixes' mage rework into the client tables (foreverchanges.pro "Build 1.60.1.70707"; ledger MAGE-U-20 to 27, finding client_update-20261030-1). It supersedes the sections below wherever they disagree.
@@ -80,7 +92,7 @@ The 2026-10-15 mage rework, read from the 70425 client tables (wago.tools SpellE
 - Critical Mass: 5 ranks, 2% Fire crit each (3 before).
 - Fire Power: 3 ranks. Each rank gives 1% more Fire damage per Fire effect of the mage's on the target, up to 4 effects (3% each and at most 12% at rank 3). Effects that mix schools don't count. The sim counts Fire Vulnerability and the DoTs of Fireball, Pyroblast, Flamestrike and Ignite, and multiplies the bonus with Fire Vulnerability on the mage's attack table. Ignite takes no bonus itself, because its share of the crit already has it. Frostfire Bolt, being a Fire spell, does take the bonus. Its DoT doesn't count as an effect. Whether Frostfire Bolt's own damage qualifies is an assumption: the tooltip doesn't say.
 - Winter's Chill (12579): a Cone of Cold debuff now, up to 5 stacks, with a 20% chance per rank, and no crit. The 70425 client had 40% Cone of Cold damage taken a stack; the 2026-10-20 hotfix made it 5% and 7% of spell power a stack (above). Frostbite now freezes on 15% of chills, which a raid boss is immune to.
-- Ice Lance: 200% more damage on a Frozen target at every rank (300% before), so 3 times the damage.
+- Ice Lance: 200% more damage on a Frozen target at every rank (300% before), so 3 times the damage. Superseded by the 2026-10-30 launch-realm hotfix: 300% again (see the top).
 - Frost Channeling: the threat effect is now −10 / −20 / −30 (the mana part is unchanged).
 - Heating Up: every Fire Blast that deals damage adds a stack, two on a crit (the 400624 tooltip: "Fire Blast grants an additional stack every time it deals damage"), and a Pyroblast that Presence of Mind made instant no longer uses the stacks (development notes). Both are server side; the buff 400625 only changed its proc flags.
 - Pushback, now that the presets take 2 raid hits a minute: Burning Soul (11083 effect 0) gives Fireball, Scorch, Pyroblast, Flamestrike and Frostfire Bolt a 23 / 47 / 70% chance not to lose casting time, and Improved Channeling (11237) 20% a point on Arcane Missiles (effect 0) and 14% a point on Arcane Blast and Arcane Wrath (effect 1, whose mask gained Arcane Wrath). Frost has no pushback talent.

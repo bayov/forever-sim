@@ -1191,7 +1191,7 @@
    "title": "Melee rotations tuned for extra attacks",
    "date": "2026-10-31",
    "baselineData": "fb14858885638b09f11c61720c25f3243fd55654",
-   "endData": null,
+   "endData": "11de3318ae2086f5017a93101176d97d6f8f61e0",
    "lines": [
     {
      "title": "Retribution paladins twist seals whenever no Echo is waiting, not only in the last 1.5 sec before a swing",
@@ -1490,37 +1490,6 @@
      "commits": [
       "e9344df"
      ]
-    },
-    {
-     "title": "Two-handed warriors' critical white hits give twice the swing's Rage (was 77% more)",
-     "kind": "sim",
-     "classes": [
-      "Warrior"
-     ],
-     "builds": [
-      "warrior__arms",
-      "warrior__arms_dragonkin",
-      "warrior__fury_2h"
-     ],
-     "note": "Combat logs show a two-handed white crit at exactly twice the Rage of a normal swing. The sim added the 100% bonus at the one-handed rate. One-handed and off-hand crits were already double.",
-     "commits": [
-      "5b2eec6"
-     ]
-    },
-    {
-     "title": "Moonkin Aura and Leader of the Pack: 3% crit with attacks and spells, not stacking",
-     "kind": "game",
-     "classes": [
-      "Druid"
-     ],
-     "builds": [
-      "druid__feral-cat",
-      "druid__balance"
-     ],
-     "note": "The launch realms' hotfixes make both raid auras 3% crit with spells and attacks. They don't stack, so a raid with both still gets 3% of each. The Feral cat's own aura now adds spell crit to its explosives.",
-     "commits": [
-      "f962f6c"
-     ]
     }
    ],
    "internal": [
@@ -1571,16 +1540,48 @@
     {
      "commit": "7f2001a",
      "why": "the Enhancement leveling plan's talents and rotation only; no report request uses them"
+    }
+   ]
+  },
+  {
+   "id": "2026-10-30-hotfix",
+   "type": "game",
+   "title": "Launch hotfix: paladin and druid talent reworks",
+   "date": "2026-10-30",
+   "baselineData": "11de3318ae2086f5017a93101176d97d6f8f61e0",
+   "endData": null,
+   "lines": [
+    {
+     "title": "Two-handed warriors' critical white hits give twice the swing's Rage (was 77% more)",
+     "kind": "sim",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms_dragonkin",
+      "warrior__fury_2h"
+     ],
+     "note": "Combat logs show a two-handed white crit at exactly twice the Rage of a normal swing. The sim added the 100% bonus at the one-handed rate. One-handed and off-hand crits were already double.",
+     "commits": [
+      "5b2eec6"
+     ]
+    }
+   ],
+   "internal": [
+    {
+     "commit": "7f2001a",
+     "why": "the Enhancement leveling plan's talents and rotation only; no report request uses them"
     },
     {
      "commit": "7545aee",
      "why": "the Enhancement leveling plan's training schedule only; no report request uses it"
-    },
-    {
-     "commit": "3607e01",
-     "why": "Kang the Decapitator's Rend proc; no report build wears it (the report hashes didn't move)"
     }
-   ]
+   ],
+   "source": {
+    "label": "foreverchanges.pro: a hotfix to the October 30 build",
+    "url": "https://foreverchanges.pro/patch-notes"
+   }
   }
  ]
 }

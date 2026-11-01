@@ -22,11 +22,12 @@ var ConeOfColdLevel = [ConeOfColdRanks + 1]int{0, 26, 34, 42, 50, 58}
 const ConeOfColdSpellCoeff = 0.129
 const ConeOfColdRadius = 10
 
-// Winter's Chill since the 2026-10-20 hotfix to 70450 (wago.tools hotfix push 112694, SpellEffect
-// 688253, 1364854 and 1364855; wowsims/forever's store has the same since cf82c75efb): each stack
-// on the target is 5% more damage taken from the caster's Cone of Cold and 7% of spell power more
-// on its coefficient, up to 5 stacks.
-const WintersChillDamagePerStack = 0.05
+// Winter's Chill: each stack on the target is 20% more damage taken from the caster's Cone of Cold
+// and 7% of spell power more on its coefficient, up to 5 stacks. The 20% is the launch realms'
+// newest value, hotfix push 113486 on 1.60.1.70707 (region 91, SpellEffect 688253 bp 5 -> 20;
+// foreverchanges.pro's October 30 hotfix). The 2026-10-20 hotfix to 70450 (push 112694, SpellEffect
+// 688253, 1364854 and 1364855; wowsims/forever cf82c75efb) had 5%; the 7% (1364854) is unchanged.
+const WintersChillDamagePerStack = 0.20
 const WintersChillCoeffPerStack = 0.07
 
 // Cone of Cold under Forever: an instant cone at the targets in front, which a mage can only cast
