@@ -289,17 +289,27 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		ThornsAura(character, GetTristateValueInt32(raidBuffs.Thorns, 0, 3))
 	}
 
-	// Moonkin Aura gives 3% spell crit and Leader of the Pack 3% melee and ranged crit, both
-	// raid wide. Client 70338 had both as party auras giving all crit, which did not stack;
-	// client 70425 (24907 and 24932, effect 65 with auras 57 and 52) went back to the Era split.
-	if raidBuffs.MoonkinAura {
-		character.AddStat(stats.SpellCrit, 3*SpellCritRatingPerCritChance)
-	}
-
-	if raidBuffs.LeaderOfThePack {
-		character.AddStats(stats.Stats{
-			stats.MeleeCrit: 3 * CritRatingPerCritChance,
-		})
+	// Forever: Moonkin Aura and Leader of the Pack are each 3% crit with everything, raid wide, and
+	// the two don't stack (user ruling 2026-11-01). The launch realms' hotfix push 113283 on client
+	// 70707 (SpellEffect 701335 for 24907 and 702727 for 24932: effect 65, aura 290, 3) made both
+	// all crit; the client's own tables still have the Era split (auras 57 and 52).
+	// Era: Moonkin Aura gives 3% spell crit and Leader of the Pack 3% melee and ranged crit.
+	if character.Env.IsForever() {
+		if raidBuffs.MoonkinAura || raidBuffs.LeaderOfThePack {
+			character.AddStats(stats.Stats{
+				stats.MeleeCrit: 3 * CritRatingPerCritChance,
+				stats.SpellCrit: 3 * SpellCritRatingPerCritChance,
+			})
+		}
+	} else {
+		if raidBuffs.MoonkinAura {
+			character.AddStat(stats.SpellCrit, 3*SpellCritRatingPerCritChance)
+		}
+		if raidBuffs.LeaderOfThePack {
+			character.AddStats(stats.Stats{
+				stats.MeleeCrit: 3 * CritRatingPerCritChance,
+			})
+		}
 	}
 
 	if raidBuffs.TrueshotAura {

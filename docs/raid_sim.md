@@ -344,8 +344,8 @@ is no given form yet:
 | Windfury Totem | any shaman, air | raid, 30 yd, players, main hand only; not for a shaman with Windfury Weapon | doesn't stack (settled, dev notes) | Flametongue Totem; Grace of Air on the same shaman | 5 min; 1.5 s cooldown per receiver | `totem_weapon_buff` |
 | Flametongue Totem | any shaman, fire | raid, 30 yd, players | doesn't stack | Windfury Totem on the same receiver; Flametongue Weapon; the shaman's other fire totems (so Enhancement loses Magma and Elemental loses Searing) | 5 min; only helps Enhancement (standard 25) | `totem_weapon_buff` |
 | Trueshot Aura (50 ranged AP since the 10-28 hotfix) | Marksmanship | raid, 45 yd; only hunters gain | doesn't stack | | 30 min, before the pull | `trueshot_aura` |
-| Moonkin Aura (3% spell crit) | Balance | raid, 45 yd, players | doesn't stack | (stacks with Leader of the Pack now) | permanent in form | `moonkin_aura` |
-| Leader of the Pack (3% physical crit) | Feral | raid, 45 yd, players | doesn't stack | | permanent in form | `leader_of_the_pack` |
+| Moonkin Aura (3% crit with everything) | Balance | raid, 45 yd, players | doesn't stack | doesn't stack with Leader of the Pack (hotfix push 113283, user ruling 2026-11-01) | permanent in form | `moonkin_aura` |
+| Leader of the Pack (3% crit with everything) | Feral | raid, 45 yd, players | doesn't stack | | permanent in form | `leader_of_the_pack` |
 | Greater Blessing of Kings, Might, Wisdom | any paladin (Kings is baseline) | one class across the raid, players | one blessing per paladin for each player (settled, tooltip; the resolver enforces it, the engine doesn't) | the paladin's other blessings on that class | 60 min | `IndividualBuffs.blessing_of_*` |
 | Gift of the Wild | any druid | raid, players | doesn't stack | | 60 min | `gift_of_the_wild` |
 | Arcane Brilliance | any mage | raid | doesn't stack | | 60 min; mana | `arcane_brilliance` |

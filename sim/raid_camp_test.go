@@ -81,16 +81,17 @@ func TestRaidForeverCampBuffs(t *testing.T) {
 	}
 }
 
-// The Camp Chair is one aura, so Moonkin Aura takes its physical crit too, while Leader of the Pack
-// stacks with it.
+// The Camp Chair is one aura that Moonkin Aura replaces: under Forever Moonkin Aura is 3% crit with
+// everything (user ruling 2026-11-01), so it takes the chair's 2% and gives 3%. Leader of the Pack
+// stacks with the chair.
 func TestRaidForeverCampChair(t *testing.T) {
 	crit := func(moonkin, lotp bool) float64 {
 		rsr := raidReq(t, "rogue__subtlety")
 		rsr.Raid.Buffs = &proto.RaidBuffs{CampBuffs: &proto.CampBuffs{CampChair: true}, MoonkinAura: moonkin, LeaderOfThePack: lotp}
 		return finalStats(t, rsr)[stats.MeleeCrit] / core.CritRatingPerCritChance
 	}
-	if d := crit(false, false) - crit(true, false); math.Abs(d-2) > 1e-9 {
-		t.Errorf("Moonkin Aura should take the chair's 2%% melee crit, took %.3f", d)
+	if d := crit(true, false) - crit(false, false); math.Abs(d-1) > 1e-9 {
+		t.Errorf("Moonkin Aura's 3%% should replace the chair's 2%% melee crit, added %.3f", d)
 	}
 	if d := crit(false, true) - crit(false, false); math.Abs(d-3) > 1e-9 {
 		t.Errorf("Leader of the Pack should add its 3%% on top of the chair, added %.3f", d)
