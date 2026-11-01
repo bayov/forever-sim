@@ -25,6 +25,7 @@ const (
 	Shadowblade               = 2163
 	GutRipper                 = 2164
 	HandOfEdwardTheOdd        = 2243
+	KangTheDecapitator        = 2291
 	BladeOfHanna              = 2801
 	BowOfSearingArrows        = 2825
 	LordSakrasisScepter       = 5028
@@ -1696,6 +1697,42 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=21679/kalimdors-revenge
 	itemhelpers.CreateWeaponCoHProcDamage(KalimdorsRevenge, "Kalimdor's Revenge", 1.25, 26415, core.SpellSchoolNature, 239, 38, 0, core.DefenseTypeMagic) // TODO Update PPM/scaling from PTR
+
+	// https://www.wowhead.com/classic/item=2291/kang-the-decapitator
+	// Chance on hit: Wounds the target for 560 damage over 30 sec.
+	// 1 PPM assumed: neither client has an ItemEffect row with a rate.
+	// Forever: Rend (17153) bleeds for 100 every 3 sec for 15 sec, 500 in all (client 70658 SpellEffect
+	// 694561, DurationIndex 8; foreverchanges.pro item 2291). Classic: 56 every 3 sec for 30 sec.
+	itemhelpers.CreateWeaponProcSpell(KangTheDecapitator, "Kang the Decapitator", 1.0, func(character *core.Character) *core.Spell {
+		forever := character.Env.IsForever()
+		tickDamage := core.TernaryFloat64(forever, 100, 56)
+		numTicks := core.TernaryInt32(forever, 5, 10)
+		return character.GetOrRegisterSpell(core.SpellConfig{
+			ActionID:         core.ActionID{SpellID: 17153},
+			SpellSchool:      core.SpellSchoolPhysical,
+			DefenseType:      core.DefenseTypeMelee,
+			ProcMask:         core.ProcMaskEmpty,
+			Flags:            core.SpellFlagPureDot,
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+				if result.Landed() {
+					spell.Dot(target).Apply(sim)
+				}
+			},
+			Dot: core.DotConfig{
+				NumberOfTicks: numTicks,
+				TickLength:    time.Second * 3,
+				Aura: core.Aura{
+					Label: "Rend (Kang the Decapitator)",
+				},
+				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+					dot.Spell.CalcAndDealPeriodicDamage(sim, target, tickDamage, dot.OutcomeTick)
+				},
+			},
+		})
+	})
 
 	// https://www.wowhead.com/classic/item=12582/keris-of-zulserak
 	// Chance on hit: Inflicts numbing pain that deals 10 Nature damage every 2 sec and increases time between target's attacks by 10% for 10 sec.

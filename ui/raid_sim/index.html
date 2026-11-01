@@ -4,12 +4,12 @@
 		<title>Raid Sim - WoWSims Forever</title>
 		<meta charset="utf-8" />
 
-		<link rel="icon" href="/forever/assets/favicon_io/favicon.ico" type="image/x-icon" />
+		<link rel="icon" href="../assets/favicon_io/favicon.ico" type="image/x-icon" />
 
 		<meta name="description" content="The best raid comp for World of Warcraft® Forever, and whole raids simmed together." />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-		<link rel="preload" href="/forever/assets/database/db.json" as="fetch" crossorigin="anonymous" />
+		<link rel="preload" href="../assets/database/db.json" as="fetch" crossorigin="anonymous" />
 		<link rel="stylesheet" href="../scss/raid_sim/index.scss" />
 		<link
 			rel="stylesheet"
@@ -32,6 +32,9 @@
 			The page loader. The page draws nothing until its scripts load the sim (a few seconds on a cold
 			load), so the HTML itself shows this until the sim UI is on the page. Its styles are inline
 			because the page's stylesheets aren't loaded yet either.
+
+			Its URLs, like the ones above, are relative. Vite puts the /forever/ base in front of an
+			absolute URL here, which made /forever/forever/assets/... and loaded db.json twice.
 		-->
 		<style>
 			.boot-loader {
@@ -50,7 +53,14 @@
 				text-transform: uppercase;
 				animation: boot-loader-in 0.3s ease-out 0.1s both;
 			}
-			body:has(> .sim-ui) > .boot-loader {
+			/*
+				The page's stylesheet hides the body until index.ts marks it ready, so the page doesn't show
+				half built. The loader covers the page until then, so the body can show from the start.
+			*/
+			body:not(.ready) {
+				opacity: 1;
+			}
+			body.ready:has(> .sim-ui) > .boot-loader {
 				display: none;
 			}
 			.boot-loader-emblem {
@@ -111,7 +121,7 @@
 		<div class="boot-loader" role="status">
 			<div class="boot-loader-emblem">
 				<div class="boot-loader-ring"></div>
-				<img src="/forever/assets/img/WoW-Simulator-Icon.png" alt="" />
+				<img src="../assets/img/WoW-Simulator-Icon.png" alt="" />
 			</div>
 			Loading the sim
 		</div>
