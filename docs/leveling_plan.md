@@ -258,7 +258,8 @@ What paid, by how much over its band:
   past 20 yards (its reach) instead of 15, no Fire Nova once rank 2 is what we'd cast (22),
   Frost Shock rank 1 in place of Earth Shock at 22 to 24 (it hits harder than our Earth Shock
   rank, and Stormstrike's mark only helps Earth Shock from 25), and Stormstrike above the
-  totems. With Stoneskin, 29 min.
+  totems. With Stoneskin, 29 min. Frost Shock went back to Earth Shock on 2026-11-01, once
+  Frost Shock was binary (below).
 - At 32 to 44: Lightning Bolt at 5 Maelstrom Weapon stacks from the 4th point, not the 5th,
   and Searing Totem with one mob pulled only while our target has more than 40% of its health.
   With Stoneskin, 28 min.
@@ -268,8 +269,8 @@ What paid, by how much over its band:
 We checked the plan again on 2026-11-01, from level 1 (97.92h and 97.86h on the two seeds),
 after the sim changes since the audit: casts reset the swing, Frost Shock is binary, the new
 spell resists, Windfury Totem's cooldown and the training schedule. The talents came first,
-with the gear kept. Nothing beat the plan by more than half a mob a session, so it stays as
-it was:
+with the gear kept. Nothing beat the plan by more than half a mob a session, so the talents
+and most of the rotations stay as they were:
 
 - The route search ends on the plan's own route, and no respec saves anything.
 - A worth table at nine levels (one point more or less in each talent) has no point the tree
@@ -280,8 +281,11 @@ it was:
 - Five other tails for 49 to 59 (Totemic Focus, Elemental Focus, Guardian Totems, more
   Anticipation) come out between 0.5 minutes faster and 21 minutes slower.
 - Each totem and Lightning Shield still pays, by 1 to 7.5 hours over 32 to 59. The rest
-  thresholds are at their best within 2 minutes. Earth Shock in place of Frost Shock at 22 to
-  24 saves 0.7 minutes.
+  thresholds are at their best within 2 minutes.
+- Earth Shock in place of Frost Shock at 22 to 24 saves 0.7 minutes, now that Frost Shock is
+  binary. That's small, but we took it: the plan no longer casts Frost Shock, so it's a utility
+  spell only and the leveling rotation has one shock fewer to learn. The plan trains none of
+  its ranks. BayovCore's route trains rank 1 for utility and skips the rest.
 
 The numbers are in `orchestration/leveling_audit_log.md` (round 2).
 

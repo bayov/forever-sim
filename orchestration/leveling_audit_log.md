@@ -11,7 +11,7 @@ Numbers here are XP an hour (the plan's score) at 4000 sessions on seeds 1 and 1
 2000 on seed 1 for the screens, against the searched plan's rotation at the level.
 `docs/leveling_plan.md` (The audit) has what we kept.
 
-### Round 2, 2026-11-01 (the audited plan from level 1, 97.92h and 97.86h, kept as it was)
+### Round 2, 2026-11-01 (the audited plan from level 1, 97.92h and 97.86h, kept but for Earth Shock at 22 to 24)
 
 Talents first, with the gear kept, after the sim changes since round 1 (casts reset the swing,
 binary Frost Shock, the new spell resists, Windfury Totem's cooldown, the training schedule).
@@ -33,7 +33,7 @@ Numbers are minutes over the levels named, against the plan, on the same session
   Improved Lightning Shield and Flurry +3.3; Anticipation 3 for both -0.5; Totemic Focus 3 for
   Anticipation and both +2.9.
 - Rotation checks: Earth Shock in place of Frost Shock rank 1 at 22 to 24 -0.7 min on both
-  seeds (left out, under half a mob). Dropping Windfury Totem +5.5h, Mana Spring Totem +1.1h,
+  seeds, kept: under half a mob, but it leaves Frost Shock a utility spell. Dropping Windfury Totem +5.5h, Mana Spring Totem +1.1h,
   Lightning Shield +7.5h, Searing Totem +1.4h over 32 to 59. The rest line ±10% on each of its
   four numbers at every level: resting below 100% health -1.8 min and sitting down 10% higher on
   mana -1.3, the rest +1.5 to +62.
