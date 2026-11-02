@@ -38,9 +38,15 @@ export type HitEvent = {
 	school: number;
 	target: number;
 	source: 'player' | 'pet' | 'totem';
+	// The totem's element for a totem's hit (Searing bolt, Magma pulse, Fire Nova).
+	totem?: string;
+	// The client's spell to show when it differs from spellId (imbue procs, Fire Nova).
+	visualSpellId?: number;
+	// When a Searing Totem's next bolt hits (sim ms).
+	nextAt?: number;
 };
 
-export type CastEvent = { at: number; spellId?: number; itemId?: number };
+export type CastEvent = { at: number; spellId?: number; itemId?: number; totem?: string; visualSpellId?: number };
 
 export type UnitState = {
 	ref: UnitRef;
@@ -86,6 +92,7 @@ export type PlayerState = {
 	damageDone: number;
 	queuedSpellId?: number;
 	mainHandImbue?: string;
+	offHandImbue?: string;
 	outOfRangeMs: number;
 };
 

@@ -216,7 +216,8 @@ func (r *run) afterCast(sim *core.Simulation, spell *core.Spell) {
 		r.casts[key]++
 	}
 	if !r.quiet {
-		r.s.batch.Casts = append(r.s.batch.Casts, CastEvent{At: toMs(now), SpellID: spell.ActionID.SpellID, ItemID: spell.ActionID.ItemID})
+		totem, visual, _ := r.hitVisual(sim, spell)
+		r.s.batch.Casts = append(r.s.batch.Casts, CastEvent{At: toMs(now), SpellID: spell.ActionID.SpellID, ItemID: spell.ActionID.ItemID, Totem: totem, VisualSpellID: visual})
 	}
 
 	if r.shaman != nil {
