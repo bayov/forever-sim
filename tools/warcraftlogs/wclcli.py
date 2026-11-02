@@ -8,6 +8,7 @@ import argparse, bisect, calendar, collections, json, math, os, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import wcl
+import wclraid
 
 DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../assets/database/db.json')
 
@@ -811,12 +812,15 @@ def main():
     s.add_argument('--top', type=int, default=8, help='heal spells to list')
     s.add_argument('-o', '--out', help='also write the numbers to this JSON file')
 
+    wclraid.add_parser(analysis)
+
     a = ap.parse_args()
     wcl.SITE = a.site
     wcl.BUDGET = a.budget
     try:
         {'zones': cmd_zones, 'sample': cmd_sample, 'abilities': cmd_abilities, 'gaps': cmd_gaps,
-         'glance': cmd_glance, 'procrate': cmd_procrate, 'tank': cmd_tank}[a.cmd](a)
+         'glance': cmd_glance, 'procrate': cmd_procrate, 'tank': cmd_tank,
+         'raid': lambda a: wclraid.cmd_raid(a, load_sample, fight_ranges)}[a.cmd](a)
     except wcl.BudgetError as err:
         print(f'stopped: {err}', file=sys.stderr)
     print(wcl.summary(), file=sys.stderr)

@@ -73,6 +73,11 @@ $W --site sod sample -o mc.json --zone 2012 --reports 60 --class Priest
 $W --site sod tank mc.json --difficulty 3 --encounter 100664 --encounter 100670 -o mc_tank.json
 ```
 
+# The raid side of the same boss fights (docs/healing_sim.md): damage on the non-tanks by
+# ability, deaths, healers and healing. The same sample files, so the same fights.
+$W raid mc.json --encounter 663 --encounter 664 -o mc_raid.json
+```
+
 The analysis commands take `--limit N` to read only the first N entries of a sample. That's
 useful for a first look that costs little.
 
@@ -120,6 +125,28 @@ Where the realms are (2026-11-02):
 The source order for tank and healing numbers (the user, 2026-11-02): Season of Discovery logs
 first, then the Anniversary realms (Vanilla, then TBC), then Classic Era, then private server
 cores (vmangos).
+
+### Raid profiles
+
+`raid` (`wclraid.py`) reads, a fight past the report's own: every damage event on a friendly
+player (`DamageTaken`), the deaths, `playerDetails` (Warcraft Logs' tank, healer and dps roles) and
+the Healing table by source and by target. About 5 points a fight. The tanks are the players the
+bosses swung at (5% or more of the swings); everyone else is "the non-tanks". It skips archived
+reports and logs with under 80% of the raid in them. By encounter it prints:
+
+- the fight length, the raid and the tanks
+- the damage taken a second by the non-tanks and by the tanks
+- each ability on the non-tanks: its share, the share of the non-tanks a cast hits (hits of one
+  ability from one source 1.5 s or less apart are a cast), casts a fight and a second, first cast,
+  gap between casts, ticks and their spacing, landed and unmitigated amounts. A player's damage on
+  themselves (Seal of Martyrdom, Life Tap, logged as from the environment) is left out: an
+  Environment row whose hits are all on one class.
+- deaths a kill, tanks apart, and what killed them
+- the healers (Warcraft Logs' healer role, their share of the healing and classes), HPS each, the
+  raid's healing and overheal, and the healing on the tanks and on the rest
+
+`--difficulty`, `--encounter` and `--min-size` pick fights as `tank`'s do. `-o` writes what
+`tools/encounters/raid_from_logs.py` puts in the encounter files.
 
 ### How procs are counted
 

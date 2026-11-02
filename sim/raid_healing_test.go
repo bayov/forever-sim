@@ -323,3 +323,30 @@ func TestHealingFightBoundRanks(t *testing.T) {
 		t.Errorf("the 5th bound rank was cast %d times", casts[332])
 	}
 }
+
+// A share hits that part of the group a cast, the fraction a chance of one more: 0.375 of four
+// mages is one or two a cast, 1.5 on average, where hitting them all is 4 a cast.
+func TestHealingFightRaidDamageShare(t *testing.T) {
+	every := &proto.RaidDamageEvent{School: proto.SpellSchool_SpellSchoolArcane, MinDamage: 100, MaxDamage: 100, Who: proto.RaidDamageEvent_NotTanks, EverySeconds: 2, FirstAt: 1}
+	part := googleProto.Clone(every).(*proto.RaidDamageEvent)
+	part.Share = 0.375
+	// The event's hits on the players (it always lands).
+	hits := func(res *proto.RaidSimResult) (n float64) {
+		for _, a := range res.EncounterMetrics.Targets[0].Actions {
+			if a.Id.GetOtherId() != proto.OtherAction_OtherActionDamageTaken {
+				continue
+			}
+			for _, tgt := range a.Targets {
+				n += float64(tgt.Hits)
+			}
+		}
+		return n
+	}
+	all, some := hits(runRaid(t, healingRaid(t, 0, 0, 4, every))), hits(runRaid(t, healingRaid(t, 0, 0, 4, part)))
+	if all == 0 {
+		t.Fatal("no casts of the event")
+	}
+	if r := some / all; r < 0.35 || r > 0.40 {
+		t.Errorf("a 0.375 share hit %.3f as often as hitting everyone (%.0f of %.0f)", r, some, all)
+	}
+}

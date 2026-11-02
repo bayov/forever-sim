@@ -1182,6 +1182,11 @@ message RaidDamageEvent {
 	// ticking event. 0 or 1 is none.
 	double healing_taken_multiplier = 15;
 	double debuff_seconds = 16;
+
+	// The share of the group it hits, in place of count, so one file fits a raid of any size:
+	// share times the group's living players, the fraction a chance of one more, at least 1. It's
+	// how logs give an ability on part of the raid (Warcraft Logs, tools/warcraftlogs raid).
+	double share = 17;
 }
 
 // A grinding session (docs/leveling_sim.md). A field left at 0 takes its default.

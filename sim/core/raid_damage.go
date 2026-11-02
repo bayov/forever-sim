@@ -181,6 +181,14 @@ func (env *Environment) raidDamageTargets(sim *Simulation, event *proto.RaidDama
 	}
 
 	count := int(event.Count)
+	if event.Share > 0 {
+		n := event.Share * float64(len(group))
+		count = int(n)
+		if sim.RandomFloat("Raid Damage Share") < n-float64(count) {
+			count++
+		}
+		count = max(count, 1)
+	}
 	if count <= 0 || count >= len(group) {
 		return group
 	}
