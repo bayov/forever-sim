@@ -567,7 +567,7 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 				return
 			}
 			procced := ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon")
-			if spell.SpellCode == SpellCode_ShamanLightningBolt && shaman.lightningBoltTriggersMaelstrom {
+			if spell.SpellCode == SpellCode_ShamanLightningBolt && spell.ProcMask.Matches(core.ProcMaskSpellDamage) && shaman.lightningBoltTriggersMaelstrom {
 				// We take the main hand swing chance, so the bolt procs half as often as a white hit would.
 				procced = sim.RandomFloat("Maelstrom Weapon") < 0.5*ppmm.Chance(core.ProcMaskMeleeMHAuto)
 			}
