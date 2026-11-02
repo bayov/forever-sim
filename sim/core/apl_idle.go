@@ -102,6 +102,16 @@ func (apl *APLRotation) noteIdle(sim *Simulation) {
 // readyNotBefore is the earliest time an action of the priority list could be ready when nothing
 // happens in the sim before then, or the current time when we can't tell.
 func (apl *APLRotation) readyNotBefore(sim *Simulation) time.Duration {
+	if !apl.keepsResults {
+		return apl.readyNotBeforeNow(sim)
+	}
+	outer := sim.startAPLCheck()
+	t := apl.readyNotBeforeNow(sim)
+	sim.endAPLCheck(outer)
+	return t
+}
+
+func (apl *APLRotation) readyNotBeforeNow(sim *Simulation) time.Duration {
 	// First we work out when each action itself could be ready, which is cheap. Then we look at
 	// the conditions, starting with the action that could be ready soonest, and stop once no other
 	// action could come before what we found. That way we look at as few conditions as we can.

@@ -45,6 +45,9 @@ type Simulation struct {
 	labeledRands bool
 	testRands    map[string]*labeledRand
 	reseeds      int
+	// The rotation check going on, in which values keep their results, or 0. See aplMemo.
+	aplCheck  uint64
+	aplChecks uint64
 
 	// Current Simulation State
 	pendingActions []*PendingAction
