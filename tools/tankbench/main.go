@@ -7,9 +7,16 @@
 // Each request is a RaidSimRequest with the tank as the first player, the way the DPS Report's
 // requests are. The boss is made to attack it, and the healer replaces whatever healing model
 // the request has.
+//
+// With -encounter, the fight is a tank encounter (tools/tankbench/encounters/*.json): a boss's
+// melee and abilities and the healing a raid puts on its tank, as healers on the tank, each
+// one's healing per second and their heals' cast time. Until the healing sim's healers heal
+// (docs/healing_sim.md), that healing is the engine's stand-in stream: the healers' HPS added up,
+// a heal every cast time over the healers, each about one healer's heal.
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -37,10 +44,51 @@ func main() {
 	classicCrit := flag.Bool("classic-crit", false, "the boss crits at Classic's 5.6% (less our Defense past 300) instead of Forever's 0.6% (docs/tank_sim.md, Forever's boss crit)")
 	needed := flag.Bool("needed", false, "also find each build's healing needed: the stand-in healer's HPS at which it dies in -death of the fights, and the death floor, its chance of death when every heal tops it off (about 10 more sims a build)")
 	deathTarget := flag.Float64("death", 0.05, "the chance of death -needed aims at")
+	encounterPath := flag.String("encounter", "", "a tank encounter file (tools/tankbench/encounters/*.json) in place of the request's encounter and the healer flags' defaults")
+	healers := flag.Float64("healers", 0, "healers on the tank, in place of the encounter's (with -healer-hps and -heal-cast; -hps and -cadence win over them)")
+	healerHps := flag.Float64("healer-hps", 0, "each healer's healing per second on the tank, in place of the encounter's")
+	healCast := flag.Float64("heal-cast", 0, "seconds a healer's heal takes to cast, in place of the encounter's")
 	flag.Parse()
 	sim.RegisterAll()
 
-	fmt.Printf("Stand-in healer: %.0f HPS every %.1f ± %.1f s. TMI over %d s windows. %d iterations.\n\n",
+	set := map[string]bool{}
+	flag.Visit(func(f *flag.Flag) { set[f.Name] = true })
+	var enc *tankEncounter
+	if *encounterPath != "" {
+		enc = loadEncounter(*encounterPath)
+	}
+	// The healing: the encounter's healers, any of them changed by the healer flags, and the
+	// stream's own flags over all of that.
+	team := tankHealing{}
+	if enc != nil && enc.Healing != nil {
+		team = *enc.Healing
+	}
+	if set["healers"] {
+		team.Healers = *healers
+	}
+	if set["healer-hps"] {
+		team.HpsEach = *healerHps
+	}
+	if set["heal-cast"] {
+		team.CastSeconds = *healCast
+	}
+	if team.Healers > 0 && team.HpsEach > 0 && team.CastSeconds > 0 {
+		if !set["hps"] {
+			*hps = team.Healers * team.HpsEach
+		}
+		if !set["cadence"] {
+			*cadence = team.CastSeconds / team.Healers
+		}
+		if !set["cadence-variation"] {
+			*variation = *cadence / 2
+		}
+		fmt.Printf("Healing: %g healers on the tank at %.0f HPS each, %.1f s heals (%.0f a heal).\n",
+			team.Healers, team.HpsEach, team.CastSeconds, team.HpsEach*team.CastSeconds)
+	}
+	if enc != nil {
+		fmt.Printf("Encounter: %s. %s\n", enc.Name, enc.Notes)
+	}
+	fmt.Printf("Stand-in healer: %.0f HPS every %.2f ± %.2f s. TMI over %d s windows. %d iterations.\n\n",
 		*hps, *cadence, *variation, *window, *iterations)
 	if *classicCrit {
 		fmt.Println("The boss crits at Classic's rate.")
@@ -63,6 +111,9 @@ func main() {
 			fail(fmt.Errorf("%s: %w", path, err))
 		}
 		rsr.SimOptions.Iterations = int32(*iterations)
+		if enc != nil {
+			rsr.Encounter = googleProto.Clone(enc.encounter).(*proto.Encounter)
+		}
 		rsr.Raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
 		if *duration > 0 {
 			rsr.Encounter.Duration = *duration
@@ -197,12 +248,56 @@ func actionLines(name string, m *proto.UnitMetrics, n, seconds float64) []string
 
 type shares struct{ avoided, blocked, crit, crush float64 }
 
+// tankEncounter is a tank encounter file: the fight, and the healing a raid puts on its tank.
+type tankEncounter struct {
+	Name string `json:"name"`
+	// Where the numbers come from.
+	Source string `json:"source"`
+	Notes  string `json:"notes"`
+	// A proto Encounter in protojson: the boss's melee (Target), its abilities on the tank and
+	// the raid (raid_damage), tank swaps.
+	Encounter json.RawMessage `json:"encounter"`
+	Healing   *tankHealing    `json:"healing"`
+
+	encounter *proto.Encounter
+}
+
+// tankHealing is the healers a raid puts on its tank: how many, each one's healing per second
+// on it, and their heals' cast time, which sets how big and how far apart the heals come.
+type tankHealing struct {
+	Healers     float64 `json:"healers"`
+	HpsEach     float64 `json:"hpsEach"`
+	CastSeconds float64 `json:"castSeconds"`
+	// What the numbers stand for, e.g. "2 priests on Greater Heal rank 4 and a paladin".
+	Notes string `json:"notes"`
+}
+
+func loadEncounter(path string) *tankEncounter {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		fail(err)
+	}
+	enc := &tankEncounter{}
+	if err := json.Unmarshal(data, enc); err != nil {
+		fail(fmt.Errorf("%s: %w", path, err))
+	}
+	enc.encounter = &proto.Encounter{}
+	if err := protojson.Unmarshal(enc.Encounter, enc.encounter); err != nil {
+		fail(fmt.Errorf("%s: encounter: %w", path, err))
+	}
+	if len(enc.encounter.Targets) == 0 {
+		fail(fmt.Errorf("%s: the encounter has no boss", path))
+	}
+	return enc
+}
+
 // tookShares is how the boss's melee swings at the tank landed over the whole fight, with
 // Shield Block, Holy Shield and the like in.
 func tookShares(boss *proto.UnitMetrics, tankIndex int32) shares {
 	var n, avoided, blocked, crit, crush float64
 	for _, action := range boss.Actions {
-		if !action.IsMelee {
+		// The white swings only, not the boss's abilities.
+		if action.Id.GetOtherId() != proto.OtherAction_OtherActionAttack {
 			continue
 		}
 		for _, t := range action.Targets {

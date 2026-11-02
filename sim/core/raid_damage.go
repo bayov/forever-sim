@@ -42,11 +42,48 @@ func (env *Environment) registerRaidDamageEvent(index int, event *proto.RaidDama
 		return sim.RollWithLabel(minDamage, maxDamage, "Raid Damage")
 	}
 
+	// A melee ability rolls the player's avoidance and block, and is a melee hit for its procs
+	// (Holy Shield, Shield Block's charges).
+	procMask := ProcMaskSpellDamage
+	if event.Melee {
+		procMask = ProcMaskMeleeMHSpecial
+		defenseType = DefenseTypeMelee
+	}
+
+	// What a landed hit leaves on its target, one aura a player.
+	var debuffs map[*Unit]*Aura
+	if m := event.HealingTakenMultiplier; m > 0 && m != 1 && event.DebuffSeconds > 0 {
+		debuffs = map[*Unit]*Aura{}
+		for _, player := range env.Raid.AllPlayerUnits {
+			debuffs[player] = player.RegisterAura(Aura{
+				Label:    "Raid Damage Debuff " + strconv.Itoa(index+1),
+				ActionID: actionID,
+				Duration: DurationFromSeconds(event.DebuffSeconds),
+				OnGain: func(aura *Aura, sim *Simulation) {
+					aura.Unit.PseudoStats.HealingTakenMultiplier *= m
+				},
+				OnExpire: func(aura *Aura, sim *Simulation) {
+					aura.Unit.PseudoStats.HealingTakenMultiplier /= m
+				},
+			})
+		}
+	}
+	deal := func(sim *Simulation, target *Unit, spell *Spell) {
+		outcome := spell.OutcomeAlwaysHit
+		if event.Melee {
+			outcome = spell.OutcomeEnemyMeleeSpecial
+		}
+		result := spell.CalcAndDealDamage(sim, target, roll(sim), outcome)
+		if aura := debuffs[target]; aura != nil && result.Landed() {
+			aura.Activate(sim)
+		}
+	}
+
 	config := SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: school,
 		DefenseType: defenseType,
-		ProcMask:    ProcMaskSpellDamage,
+		ProcMask:    procMask,
 		Flags:       SpellFlagNoOnCastComplete | SpellFlagPassiveSpell,
 
 		DamageMultiplier: 1,
@@ -68,9 +105,7 @@ func (env *Environment) registerRaidDamageEvent(index int, event *proto.RaidDama
 			spell.Dot(target).Apply(sim)
 		}
 	} else {
-		config.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
-			spell.CalcAndDealDamage(sim, target, roll(sim), spell.OutcomeAlwaysHit)
-		}
+		config.ApplyEffects = deal
 	}
 	spell := boss.RegisterSpell(config)
 

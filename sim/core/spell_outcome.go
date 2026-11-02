@@ -976,6 +976,41 @@ func (result *SpellResult) applyEnemyAttackTableCrush(spell *Spell, at *AttackTa
 	return false
 }
 
+// OutcomeEnemyMeleeSpecial is a boss's melee ability on a player (Cleave, Mortal Strike): its
+// miss, dodge, parry and block on one roll, as the white swing's, then a crit on a roll of its
+// own, and no crushing blow. A blocked hit can crit, and the block takes its value off after the
+// crit doubles it. While the player casts, it can't dodge, parry or block.
+func (spell *Spell) OutcomeEnemyMeleeSpecial(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	roll := sim.RandomFloat("Enemy Special Hit Table")
+	chance := 0.0
+	if result.applyEnemyAttackTableMiss(spell, attackTable, roll, &chance, true) {
+		return
+	}
+	blocked := false
+	if !result.Target.IsCasting(sim) {
+		if result.applyEnemyAttackTableDodge(spell, attackTable, roll, &chance, true) ||
+			result.applyEnemyAttackTableParry(spell, attackTable, roll, &chance, true) {
+			return
+		}
+		if result.Target.PseudoStats.CanBlock && !result.Target.PseudoStats.Stunned {
+			chance += max(0, attackTable.BaseBlockChance+result.Target.stats[stats.Block]/BlockRatingPerBlockChance/100)
+			blocked = roll < chance
+		}
+	}
+
+	critRoll := sim.RandomFloat("Enemy Special Crit Roll")
+	critChance := 0.0
+	crit := result.applyEnemyAttackTableCrit(spell, attackTable, critRoll, &critChance, true)
+	if blocked {
+		result.Outcome |= OutcomeBlock
+		spell.SpellMetrics[result.Target.UnitIndex].Blocks++
+		result.Damage = max(0, result.Damage-result.Target.BlockValue())
+	}
+	if !crit && !blocked {
+		result.applyAttackTableHit(spell, true)
+	}
+}
+
 func (spell *Spell) OutcomeExpectedTick(_ *Simulation, _ *SpellResult, _ *AttackTable) {
 	// result.Damage *= 1
 }

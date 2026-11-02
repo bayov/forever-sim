@@ -1162,6 +1162,15 @@ message RaidDamageEvent {
 
 	// The boss it comes from, by index in Encounter.targets. A dead boss stops it.
 	int32 target_index = 13;
+
+	// A melee ability (Cleave, Mortal Strike, Hateful Strike): it rolls the player's miss, dodge,
+	// parry and block like the boss's white swing, then crits on a roll of its own, and never
+	// crushes (OutcomeEnemyMeleeSpecial). Otherwise it always lands.
+	bool melee = 14;
+	// What a landed hit leaves on the player: its healing taken times this for debuff_seconds,
+	// refreshed by the next hit (Mortal Strike's 0.5 for 5 s). 0 or 1 is none.
+	double healing_taken_multiplier = 15;
+	double debuff_seconds = 16;
 }
 
 // A grinding session (docs/leveling_sim.md). A field left at 0 takes its default.
