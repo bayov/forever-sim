@@ -139,7 +139,7 @@
   "title": "Rotation priority lists",
   "description": "Each preset's APL as simmed: pre-pull casts with their timing, then the priority list in order, each line's spell, a plain-English condition, the APL's own note, its exact condition and the spell's casts per fight.",
   "updated": {
-   "at": "2026-11-02T11:17:21.764Z",
+   "at": "2026-11-02T11:49:26.868Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -147,7 +147,7 @@
   "title": "Race rotations",
   "description": "The races that play their own rotation on a preset: each line lined up with the preset's (the same, changed, added or removed), with why it changed. No cast counts: the race sims record DPS only.",
   "updated": {
-   "at": "2026-11-02T11:17:21.764Z",
+   "at": "2026-11-02T11:49:26.868Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -275,7 +275,7 @@
   "title": "Assumptions",
   "description": "Every value Forever hasn't confirmed that the presets depend on, by class, in plain words: a question-style label, one short line for the panel, a description and its source for Method, the presets it touches, its Low / Expected / High settings (each with a label that says what it means, its numbers and a short rationale), which one the presets use, and each setting's effect on each preset at 180 s.",
   "updated": {
-   "at": "2026-11-02T11:43:35.830Z",
+   "at": "2026-11-02T11:49:26.868Z",
    "by": "Claude (forever-sim)"
   }
  },

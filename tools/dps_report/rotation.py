@@ -13,6 +13,18 @@ PLAIN_MISSING, PLAIN_USED = set(), set()
 # builds (a duty or encounter preset takes its base build's), a line's key and, where a build has more than one line
 # with that key, a part of its condition. WHY_USED is for build_data.py's warning about entries no line uses.
 WHY = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rotation_text.json'))).get('why', [])
+# A preset line's own note as the card shows it: rotation_text.json's "notes", keyed by the note ("" drops it). A note
+# stays only when it adds something its condition doesn't say. NOTES_USED is for build_data.py's warning.
+NOTES = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rotation_text.json'))).get('notes', {})
+NOTES_USED = set()
+
+
+def shown_note(t):
+    """The note the Rotation card shows for a line's (cleaned) note."""
+    if t in NOTES:
+        NOTES_USED.add(t)
+        return NOTES[t]
+    return t
 WHY_USED = set()
 
 

@@ -705,7 +705,7 @@ def _rot_finish(r):
             ab = next((a for a in abilities if a['build'] == r['build'] and a['key'] == pk), None)
             if ab and r.get('casts') is not None:
                 r['casts'] = ab['casts']
-    r['notes'] = _clean_note(r['notes'])
+    r['notes'] = rotation.shown_note(_clean_note(r['notes']))
 
 
 for r in rot_rows:
@@ -721,6 +721,8 @@ dump('race_rotation', race_rot_rows)
 _nowhy = sorted({f"{r['build']} {r['forRace']} {r['section']}:{r['key'] or r['name']}" for r in race_rot_rows if r['diff'] != 'same' and not r['otherRace'] and not r['why']})
 if _nowhy:
     print(f'WARNING race_rotation: {len(_nowhy)} changed lines with no why in race_text.json, e.g. {_nowhy[0]}')
+if set(rotation.NOTES) - rotation.NOTES_USED:
+    print(f'WARNING rotation: {len(set(rotation.NOTES) - rotation.NOTES_USED)} rotation_text.json notes entries no line uses, e.g. {min(set(rotation.NOTES) - rotation.NOTES_USED)}')
 if rotation.PLAIN_MISSING:
     print(f'WARNING rotation: {len(rotation.PLAIN_MISSING)} conditions read like code, with no wording in rotation_text.json, e.g. {min(rotation.PLAIN_MISSING)}')
 if set(rotation.PLAIN) - rotation.PLAIN_USED:
