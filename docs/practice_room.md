@@ -3,26 +3,24 @@
 A realtime room where you play your character against an encounter, driven by the same sim that makes the DPS Report.
 You press your own keybinds, and the sim decides every outcome exactly as it does in a sim run.
 
-It's a sim tool first. The point is to see how close real play gets to the sim's rotation, to try a rotation or a
-talent choice by hand before using it in game, and later to practice a raid fight with friends. It is not a game we
-ship.
+It's a sim tool first. The point is to play a fight by hand under the sim's rules, to try a rotation or a talent
+choice before using it in game, and later to practice a raid fight with friends. It is not a game we ship.
 
 **How to read this doc:**
 
 - Decisions marked "(the user, 2026-11-02)" are settled, and [Decisions](#decisions) lists them.
-- Everything else is a proposal. [Open questions](#open-questions) lists what the user still has to decide.
+- Everything else is a proposal. [Open questions](#open-questions) lists anything the user still has to decide.
 - An implementer starts at [Milestones](#milestones). [Spikes](#spikes) lists what we check before building on it.
 
 **History:** first drafted 2026-11-02. Reviewed the same day by five reviewers (the sim engine, the WoW assets, the
 keybinds and bars against the real client files, the client and networking, and scope), and rewritten from their
-findings.
+findings. Then updated with the user's answers the same day.
 
 ## What it answers
 
-- **How much of the sim's DPS you really get.** Your attempt next to the rotation's, with the gap split into causes.
-- **Whether a rotation is worth it at your reaction time and ping.** For example, whether the full enh priority beats
-  a simpler one when you react 300ms late.
-- **How a talent, gear or rotation choice feels by hand** before you respec in game.
+- **What you really do in a fight under the sim's rules,** at your ping: your DPS from one fight, and where you lost
+  time (idle GCDs, buffs that fell off, time out of range).
+- **How a talent, gear or rotation choice plays by hand** before you respec in game.
 - **Later: a raid fight**, with bots or friends in the other spots.
 
 ## Decisions
@@ -33,11 +31,17 @@ findings.
 3. **Local only, with real WoW assets** (the user, 2026-11-02). Character models, items, spell icons, sounds and
    visuals come from the WoW Forever client on this PC. They are never deployed, committed or put in `dist/`.
 4. **Keybinds and action bars come from the Forever client** (the user, 2026-11-02). Later, other players import
-   their own.
-5. **First milestone** (the user, 2026-11-02): enh shaman, target dummy, flat arena, your keybinds, a live DPS meter,
-   and an end of fight comparison with the sim's rotation. [Milestones](#milestones) proposes splitting it in two.
+   their own. Keys the client doesn't set use Blizzard's default bindings. Which spell sits in which slot, and which
+   key presses each button, can be edited in the room.
+5. **First milestone is a basic 3D room** (the user, 2026-11-02): enh shaman, target dummy, flat arena, your keybinds,
+   a live DPS meter and a fight summary. No 2D milestone first.
 6. **Don't disrupt the regular sim** (the user, 2026-11-02). The practice room is kept as separate as possible. It
    uses the game rules the sim codes, as a consumer of the sim. See [Separation](#separation-from-the-regular-sim).
+7. **One iteration, no averages** (the user, 2026-11-02). The room sims only the fight you play. It doesn't run other
+   seeds or compare with the sim's average, for now.
+8. **Ping is modeled** (the user, 2026-11-02), as a setting with your in-game latency.
+9. **You do the prepull** (the user, 2026-11-02): totems, imbues and buffs before the pull are your own casts.
+10. **Fixed fight length** (the user, 2026-11-02).
 
 ## Separation from the regular sim
 
@@ -49,11 +53,11 @@ procs, auras, resources, the APLs of every other unit) stay in the core, and the
 
 | Part | Place | Shared with the regular sim |
 | --- | --- | --- |
-| Session, input rotation, world, comparison | `sim/practice/` | imports `sim/core`, nothing imports it |
+| Session, input rotation, world, fight summary | `sim/practice/` | imports `sim/core`, nothing imports it |
 | WASM | `practice.wasm`, built from `sim/practice/wasm/` by its own make target | `lib.wasm` unchanged |
 | Server | `cmd/practice/` (keybinds, records, assets, attempts) | the regular dev server unchanged |
 | Page | `ui/practice/` with its own Vite config | imports from `ui/core`, not in the regular build |
-| Assets, attempts | `practice_assets/`, `practice_attempts/` | in `.gitignore` |
+| Assets, attempts, your bar edits | `practice_assets/`, `practice_attempts/`, `practice_settings/` | in `.gitignore` |
 
 **Rules for touching the shared code:**
 
@@ -106,9 +110,8 @@ We don't use it. The flag is global: it stops the rotation of every character, p
 (`sim/core/character.go:525`), and several places call the rotation without a nil check (`cast.go:368`,
 `attack.go:362`, `energy.go:166`, `rage.go:440`).
 
-Instead your unit gets its normal APL with the prepull list kept and the priority list emptied, so totems and buffs
-before the pull work as they do in a sim run, and after the pull the APL never acts. Every other unit keeps its own
-APL.
+Instead your unit gets an empty APL, with no prepull list and no priority list, so it never acts on its own. You do the
+prepull yourself. Every other unit keeps its own APL.
 
 Your casts come from `sim/practice`. For each input it adds a pending action at the later of the press time, the end
 of the GCD and the end of the current cast, and that action calls `Spell.Cast` like an APL action would. A press
@@ -121,8 +124,11 @@ The sim is a discrete event loop (`Simulation.Step` in `sim/core/sim.go:756`). A
 stateful session:
 
 - **Start(config)** builds the sim from the same proto config a sim run uses, with a fixed fight length and no
-  duration variation, runs the prepull, and stops at time 0. Execute phases, `GetRemainingDuration` and the end check
-  all depend on that fixed length. Auto attacks start on their own at 0, as in a sim run.
+  duration variation. Execute phases, `GetRemainingDuration` and the end check all depend on that fixed length. The
+  clock starts at minus the prepull window (a countdown you set, 10s by default), and the pull is at time 0. The sim
+  already runs prepull casts at negative times (`Simulation.PrePull`, `sim.go:684`), and `Spell.Cast` works there, so
+  your casts during the countdown need no core change. At 0 the sim starts every unit's auto attacks. The session
+  turns yours back off with `CancelAutoSwing` unless you have already started attacking.
 - **Input(input)** queues a key press as a pending action (see above) at an exact sim time in whole nanoseconds, with
   a fixed lowest priority. It goes through `Step` like any other event, so the other units' idle check skipping
   (`apl_idle.go`) sees it.
@@ -287,8 +293,9 @@ it in the output.
 `MOVEFORWARD`, `MOVEBACKWARD`, strafe, jump or tab target lines. Unbound keys show as `bind 7 NONE`. The defaults live
 in the client binary, not in FrameXML.
 
-So BayovCore exports the live binding set (`GetNumBindings` and `GetBinding`) into its character record, and that is
-the source. The WTF file plus a table of defaults is the fallback for characters with no record.
+So the room starts from a table of Blizzard's default bindings (W and S move, Q and E strafe, Space jumps, Tab
+targets, 1 to = are `ACTIONBUTTON1-12`, and so on), written by hand and checked once against a fresh character's key
+bindings menu. Then each line of `bindings-cache.wtf` replaces the default for its key, and `NONE` unbinds it.
 
 Notes from the user's files:
 
@@ -337,9 +344,16 @@ a login with BayovCore on. So:
 
 - The character picker lists records, keyed by GUID, not WTF folders. The WTF folder is named
   `<realm id>/<Name-Name>` and can only be joined to a record by name.
-- Spells the sim's rotation uses that sit on no bar go on a generated bar, which you can bind in the room. Bar spells
-  the sim doesn't have (Ghost Wolf, heals) show greyed out.
+- With no record, the room fills the bars from the rotation's spells on bar 1 and the bars after it.
+- Bar spells the sim doesn't have (Ghost Wolf, heals) show greyed out.
 - Buttons can also be clicked.
+
+### Editing bars and binds in the room
+
+You can change which spell, item or macro sits in each slot (drag from a spellbook, drag off to clear), and which key
+presses each button (hover a button and press the key, as in WoW's quick keybind mode). The edits are saved by the
+practice server in `practice_settings/`, per character, on top of what the client files and the record say. They
+never write back to the WoW folder. A "Reset" puts the client's layout back.
 
 ### Macros
 
@@ -378,31 +392,23 @@ F11, F12, and the middle mouse button.
 - Middle click and mouse buttons 4 and 5 have their browser defaults blocked.
 - Pointer Lock keeps the mouse inside while you turn. Chrome waits about a second before it can lock again after Esc.
 
-## Comparing with the sim
+## Fight summary
 
-Proc luck in one 2 to 3 minute attempt is as big as most skill gaps. So the comparison takes luck out:
+The room sims only the fight you played: one iteration, no other seeds and no averages. At the end it shows:
 
-- **Your plan over many seeds.** Your timed cast list runs as a script over many seeds. Casts that become impossible
-  (no mana, on cooldown) are skipped. Its DPS spread next to the rotation's spread is the skill gap without the luck.
-- **Your reaction time.** The room measures your delay from GCD ready, and from a proc, to your press. Then it re-sims
-  the rotation with `reaction_time_ms` (`proto/api.proto:74`) set to yours, and with your ping. That answers "is the
-  full rotation worth it for me".
-- **Where the gap came from:** idle GCD time, buff and debuff uptimes, time out of range, swings pushed back by casts,
-  and capped resource time.
-- **The headline number:** where your DPS lands in the rotation's distribution, for example "71st percentile".
+- your DPS and damage by spell
+- idle GCD time
+- buff and debuff uptimes
+- time out of range
+- swings pushed back by casts
+- time with resources capped
 
-Side by side with "the same seed" means nothing here. Normal runs share one random stream (`sim.go:267`), so once your
-casts differ from the rotation's, every later roll differs. A per-GCD "what the rotation would have cast" needs a
-re-run from the start up to each press, since the sim can't copy itself mid-fight. That comes after M1.
-
-The end of fight sims run in a second `practice.wasm` worker, not in the live one. "Your plan over many seeds" is a
-normal sim run with the practice rotation replaying your inputs. The rotation's spread and the reaction time re-sim
-are normal sim runs with normal options.
+The whole fight opens in the Replay view.
 
 ### Saving attempts
 
 Each attempt (config, seed, inputs, sim build, result) is saved by the practice server to `practice_attempts/`, which is in
-`.gitignore`. The room lists them with a trend over time. When the sim build changes, old attempts keep their result,
+`.gitignore`. The room lists them. When the sim build changes, old attempts keep their result,
 and their replay is marked as from another build.
 
 ## Where it lives
@@ -413,8 +419,8 @@ pasted BayovCore exports come in the same way, since they already load into the 
 class sim can come later, as a link only. The keybinds come from a BayovCore record you pick separately, because the
 sim character and the in-game character aren't the same thing.
 
-Fight rules for M1: a fixed length you set, with no length variation, the prepull done by the rotation's prepull list,
-a 3 second countdown, and keys for restart and leave.
+Fight rules for M1: a fixed length you set, with no length variation, a prepull countdown where you cast your own
+totems, imbues and buffs, and keys for restart and leave.
 
 ## Multiplayer (M4)
 
@@ -442,29 +448,28 @@ we never send game files anywhere. The details wait for M4.
 
 Each step says when it's done.
 
-**M1a: the sim loop, no 3D.** Delivers the sim value first.
+**M1: a basic 3D room.** Your enh shaman against a dummy on a flat arena.
 
-1. `sim/practice` session: Start, Input, Run, your unit's input rotation, the world, range and facing, plus the one
-   core hook (`NextEventTime`). Done when:
+1. `sim/practice` session: Start, Input, Run, your input rotation, your prepull, ping, the world, range and facing,
+   plus the one core hook (`NextEventTime`). Done when:
    - Go tests with scripted inputs pass
-   - a script of the rotation's own casts, fed at the rotation's exact sim times, gives the rotation's mean DPS over
-     1000 seeds within noise
+   - a test script of the rotation's own casts, fed at the rotation's exact sim times, gives the rotation's mean DPS
+     over 1000 seeds within noise (a correctness check only, the room itself never runs other seeds)
    - the existing Go tests pass and a fixed set of presets gives bit-identical results before and after
 2. Replays and saved attempts. Done when a replayed attempt gives an identical log on the same build.
-3. The comparison: your plan over many seeds, reaction time, gap causes. Done when a Go test with a scripted slow
-   player shows the expected gap.
-4. `practice.wasm` with its own make target, in a dedicated worker with its own clock. Done when spike 4's numbers
+3. `practice.wasm` with its own make target, in a dedicated worker with its own clock. Done when spike 4's numbers
    are in and `lib.wasm` is unchanged.
-5. The practice server (`cmd/practice/`): BayovCore records, bindings, CVars, macros, and the install folder
-   setting. Done when golden file tests pass for the Lua parser, the WTF parser, the slot table and the macro parser.
-6. The page: your bars with bindings, unit frames, cast bar, WeakAuras and combat text as an incremental HUD over a 2D
-   top-down view (`replay_map.ts`), the live meter, the comparison screen. Done when a headless Chrome smoke test plays
-   a scripted fight.
-7. BayovCore exports the live bindings into its record (a bayovui change).
-
-**M1b: 3D.** Spikes 1 to 3 first. Then the M2 renderer, a dressed enh shaman with attachments and sheathing,
-animations, the dummy, the arena floor, icons and sounds, the camera and targeting. Done when your character fights
-the dummy in 3D with your gear on.
+4. The practice server (`cmd/practice/`): BayovCore records, bindings with the default table, CVars, macros, saved bar
+   and bind edits, and the install folder setting. Done when golden file tests pass for the Lua parser, the WTF
+   parser, the slot table and the macro parser.
+5. Spikes 1 and 2.
+6. The 3D scene: floor, dummy, camera, movement, targeting, and your race's model with its animations. Until the M2
+   renderer works, units are plain capsules, so steps 1 to 4 can be played early. Done when you can walk up to the
+   dummy and fight it.
+7. The HUD: your bars (editable) with bindings, unit frames, cast bar, WeakAuras, combat text, the live meter and the
+   fight summary. Done when a headless Chrome smoke test plays a scripted fight.
+8. Your gear on the model: dressed character, attachments, sheathing, icons and sounds. Done when your character
+   fights the dummy with your gear on.
 
 **M2: a boss.** A boss that hits back and moves, with simple mechanics (stand still, move out, interrupt) that change
 the best rotation. Line of sight and hit box sizes. The boss's movement and mechanics live in `sim/practice` and use
@@ -481,7 +486,7 @@ sim's whole-raid engine (its milestone M1b in `docs/raid_sim.md`) as it is.
    Forever-only files (by FileDataID) come out. Open wow.export 0.2.20 on `wowf`, load an Orc shaman with gear, and
    keep its view as the reference.
 2. **A dressed character.** Port wow.export's character code onto three-m2loader for one race and one gear set.
-   Measure how long the rest takes before planning M1b.
+   Measure how long the rest takes before planning M1 step 8.
 3. **Spell visuals.** Size the particle and ribbon work from WebWowViewerCpp's emitters, and compare with three.quarks
    plus hand made effects for the few spells enh uses.
 4. **WASM in real time.** Measure the time from a key press to its event at p50 and p99, and the garbage collector
@@ -490,14 +495,4 @@ sim's whole-raid engine (its milestone M1b in `docs/raid_sim.md`) as it is.
 
 ## Open questions
 
-1. **Split M1 into M1a (sim loop, 2D) and M1b (3D)?** M1a gives the sim answers in a fraction of the time. 3D and real
-   models follow. Recommended: yes.
-2. **Which comparison is the headline?** Your plan over many seeds (no luck), your reaction time re-sim, or the
-   percentile. Recommended: your plan over many seeds, with the percentile as the one number on top.
-3. **Model your ping?** Recommended: yes, a setting with your in-game latency.
-4. **Who does the prepull?** The rotation's prepull list (simple, what M1 assumes), or you (needs the sim to take
-   actions before time 0).
-5. **Fixed length or a dummy with health?** Recommended: fixed length for M1, matching the DPS Report.
-6. **BayovCore changes:** export the live bindings (needed), and should it record bars for all characters on login?
-   Today only Bayov Oom has a record.
-7. **When to start,** given Forever launches 2026-11-04 and the raid sim milestones are in flight.
+None right now.
