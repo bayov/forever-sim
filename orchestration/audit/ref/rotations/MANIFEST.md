@@ -1,12 +1,13 @@
 # Rotation audit: reference files
 
-- `baseline_c23ef04_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  c23ef0440 (pass 44). Since dd053d2 (sim only; no req .json changed): hunter pets lose Pet Aggression and
-  get the new swing (hunters -38 to -80), two-hand white crits double the whole swing's Rage (2H warriors
-  +10 to +15), the October 30 hotfix values for Frost and Arcane mage (Frostfire +30, Frost +21, Arcane -17).
+- `baseline_5a6e9c6_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  5a6e9c6a6 (pass 45). Since c23ef04: the October 30 hotfix talent trees for paladin and druid, and the
+  re-searched paladin, druid and mage presets (talents, APLs and reqs together). Ret twist / sub-Holy +59 to
+  +83, Ret Shock +15, deep Holy Shock -54 to -62 (Shock vs Undead -22), feral +55, balance +43 to +49,
+  Arcane +45, Frost +15. Hunters, warriors and the rest unchanged.
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at c23ef0440 (`/tmp/audit-cache/cli/c23ef04408a0/wowsimcli`).
+  - The CLI was the audit loop's shared build at 5a6e9c6a6 (`/tmp/audit-cache/cli/5a6e9c6a6c2d/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

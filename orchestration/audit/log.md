@@ -143,3 +143,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-01 19:08 | consumables | pass 61 | master c23ef0440 | quiet | Moonkin/Leader of the Pack crit ruling applied; Sapper finding still open
 2026-11-01 19:08 | mechanics | pass 55 | master c23ef0440 | quiet | Rage, crit auras, Kang proc and hotfix commits match sources
 2026-11-01 19:08 | fairness | pass 20 | master c23ef0440 | 1 new finding | Arcane report race Gnome now 2.8 DPS under Undead after Arcane Blast hotfix (low)
+2026-11-02 01:11 | results | pass 69 | master 5a6e9c6a6 | quiet | Shared run matches builds.json within 0.15 on 47; 30 stale ones traced to commits; results-20261101-1 updated
+2026-11-02 01:11 | rotations | pass 45 | master 5a6e9c6a6 | quiet | 17 Level 60 APLs re-searched on Oct 30 hotfix trees; new baseline; rotations-20261101-1 closed as obsolete
+2026-11-02 01:11 | consumables | pass 62 | master 5a6e9c6a6 | quiet | Only Ret Shock potion change; Sapper finding still open
+2026-11-02 01:11 | mechanics | pass 56 | master 5a6e9c6a6 | quiet | 5 class hotfix-tree commits match sources; client 70707 still newest
+2026-11-02 01:11 | fairness | pass 21 | master 5a6e9c6a6 | quiet | All moves traced to commits; fairness-20261101-3 resolved; new race-sweep baseline

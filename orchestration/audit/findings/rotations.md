@@ -4,6 +4,8 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+## Resolved
+
 ### rotations-20261101-1: Frost mage: a fourth Arcane Blast stack above 70% mana, now that a stack costs 100% (was 175%)
 - severity: low (+1.8 DPS at 180 s, 0.2%)
 - affects: mage__frost (ui/mage/apls/level60_frost.apl.json)
@@ -25,8 +27,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: the 0.7 line above (0.6 is +0.35 more at 180 s but flat to negative at 300 s). Also update
   that line's note, which still says "15% of Intellect ... for 15 sec" (now 12%, 18 sec).
 - needs: orchestrator fix
-
-## Resolved
+- resolved: 2026-11-02, 5a6e9c6a6 (obsolete, not applied): the re-searched Frost preset `0502050030001-4-253500230111301211` drops the Arcane Blast and Missile Barrage talents for Incineration 4, so the Arcane Blast line (now line 11 of level60_frost.apl.json) is inert: 0 casts in 300 iterations. Frost 929.3 -> 944.9 at 180 s. Its note still says 15% / 15 sec, inert.
 
 ### rotations-20261028-1: BM, MM and LW caveats still say Trueshot Aura 100 and Hawk rank 5 (90), on the published report
 - severity: low (wording only; the numbers are right)

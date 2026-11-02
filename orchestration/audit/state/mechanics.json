@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "c23ef04408a06115167c59e76ed456564c361eac"
+  "master": "5a6e9c6a6c2df9f1c3eb34ee5affdbfdf3c95af2"
  },
- "last_pass_at": "2026-11-01T19:00:00Z",
- "pass": 55,
+ "last_pass_at": "2026-11-02T01:10:48Z",
+ "pass": 56,
  "result": "quiet",
- "note": "Pass 55: 8 commits (2H crit Rage x2, Moonkin/LotP all crit not stacking, Kang Rend 17153 verified, class hotfixes: Arcane Blast 12%/100% matches push 113486). No new findings. Client 70707, dev notes 8 posts unchanged, no new blue posts, foreverchanges newest hotfix = Oct 30 build.",
+ "note": "Pass 56: 5 class commits (paladin/druid/hunter Oct 30 hotfix trees, Ret consumes in mksettings spec_ret); no sim/core or shared-raid change. Spot-check: Shifting Power 1322605 RecoveryTime 8000 in push 113283 (region 91) matches. Client 70707 still newest (probe 300). Hotfix pushes on 70707 region 91 after 113486: 113496 (Legacy Reputation Reward effect), 113500 (SpellDuration 427, Resurrection Sickness 1 min), 113505 (visual), 113557 (155 SpellEffect rows, NPC/quest spells, unchanged values): nothing simulated. Dev notes 8 posts unchanged; no new Forever blue posts since 10-29 (Goes Live Nov 4 announcement only).",
  "client_build": "1.60.1.70707",
- "checked_at": "2026-11-01T19:08:28Z",
+ "checked_at": "2026-11-02T01:11:05Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
@@ -22,8 +22,8 @@
    "70630",
    "70707"
   ],
-  "newest_push": 113486,
-  "tool": "wago.tools/hotfixes?search=<id> (hotfixes.py not in repo)"
+  "newest_push": 113557,
+  "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-01T19:00:00Z"
+ "blue_tracker_seen": "2026-11-02T01:10:48Z"
 }

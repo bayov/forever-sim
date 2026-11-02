@@ -1,69 +1,67 @@
-# Rotations pass 44 (2026-11-01)
+# Rotations pass 45 (2026-11-02)
 
-- **Master:** c23ef0440 (last audited dd053d24c). Client 1.60.1.70707.
-- **Result:** findings. One new, low: rotations-20261101-1 (Frost mage, 4th Arcane Blast stack above 70% mana).
+- **Master:** 5a6e9c6a6 (last audited c23ef0440). Client 1.60.1.70707 (+ the launch realms' 2026-10-30 hotfix rows).
+- **Result:** quiet. No new finding. rotations-20261101-1 (Frost 4th Arcane Blast stack) moved to Resolved as obsolete.
 
 ## What changed
 
-- `apl_logic_diff.py dd053d24c c23ef0440`: 0 APL files touched. Only `.meta.json` req files changed.
-- Sim changes the presets reach:
-  - `sim/core/rage.go` (5b2eec6): a two-hand white crit doubles the whole swing's Rage.
-  - `sim/hunter/pet.go`, `pet_forever.go`: no Pet Aggression, pet swing = creature dps less the pet's AP.
-  - `sim/mage/*` (b79e033, 98e819d): Arcane Blast 12% Int / +100% mana a stack / 18 s; Ice Lance x4 on
-    Frozen; Frigid Power 15%, shielded 5%; Winter's Chill 20% on Cone of Cold.
-  - `sim/warlock/talents.go`: Improved Drains off Wrack. `sim/core/buffs.go`: Moonkin Aura / Leader of
-    the Pack 3% crit, not stacking. `sim/common/item_effects.go`: Kang's Rend proc. Righteous Fury threat.
+- `apl_logic_diff.py c23ef0440 origin/master`: 17 APL files, all from the re-searches on the October 30
+  hotfix trees (rotopt templates + `*_presets.sh`, by workers):
+  - Ret paladin (all 15 presets): Unsealed Wrath twisting replaces the Twist of Light Echo lines (seal swap
+    on `auraNumStacks` of 1311703 / 1311704); Shock presets drop the 1311595 lines and cast Holy Shock unconditioned.
+  - Feral (2): Tiger's Fury 417141 lines gone, Shifting Power at Energy <= 60, Rip at 4+ CP, Bite at 45 Energy.
+  - Balance Wrath (2), Arcane (Arcane Wrath 1326082 with Presence of Mind), Frost (Ice Barrier 13033 on
+    Frigid Power 1326891 < 6 s, pre-pull at -4 s; Ice Lance on the last Fingers of Frost charge).
+- Sim: `sim/paladin/*` and `sim/druid/*` hotfix talent rules, `sim/hunter/hunter.go` (tree position swap only),
+  `sim/compsearch/presets.go`. Hunter req changes are the remapped BM talent string only.
 
 ## Regression
 
-`baseline.py` on the shared CLI (3,000 it, seed 424242) against `baseline_dd053d2`. No req .json changed,
-so every move is the sim. Rows over 1 DPS:
+`baseline.py` on the shared CLI (3,000 it, seed 424242) against `baseline_c23ef04`. Talents, APLs and
+reqs moved together, so these are the re-searches plus the hotfix rules, as their commits report:
 
-| preset | old | new | diff |
+| preset | before | after | delta |
 |---|---|---|---|
-| hunter__beast-mastery | 1124.7 | 1044.5 | -80.1 |
-| hunter__beast-mastery-wolf / -tallstrider | 1068.8 / 1054.9 | 1001.6 / 987.7 | -67.3 / -67.2 |
-| hunter__survival / marksmanship | 1069.3 / 1108.3 | 1023.8 / 1063.0 | -45.5 / -45.3 |
-| other pet hunters (4) | | | -38.1 to -38.2 |
-| mage__arcane | 911.5 | 894.4 | -17.1 |
-| warrior 2H presets (7) | | | +10.2 to +14.7 |
-| mage__frost | 909.4 | 930.0 | +20.6 |
-| mage__frostfire | 1048.9 | 1079.3 | +30.3 |
+| paladin level_60 (twist), duties | 960-976 | 1026-1040 | +64 to +66 |
+| paladin sub_holy, duties / undead | 964-978 / 1069 | 1023-1038 / 1152 | +59 to +61 / +83 |
+| paladin shock_ret, duties | 949-960 | 965-975 | +15 |
+| paladin shock (deep Holy), duties | 904-913 | 846-855 | -54 to -62 |
+| paladin shock_undead | 994.6 | 972.6 | -22.0 |
+| druid feral-cat, duty-ff | 882-886 | 937-942 | +55 / +56 |
+| druid balance, wrath, duties | 776-847 | 824-892 | +43 to +49 |
+| mage arcane / frost | 894.4 / 930.0 | 939.1 / 945.4 | +44.8 / +15.4 |
 
-Warlocks, druids, paladins: under 1 DPS. New baseline `baseline_c23ef04_3000it_seed424242.tsv` (replaces dd053d2).
+Every other preset (hunters, warriors, rogues, warlocks, priests, shamans, fire / frostfire) within 0.1.
+The deep Holy Shock drop matches the commit (306f78678: 908.4 -> 855.6 at 180 s on the hotfix tree).
+New baseline: `ref/rotations/baseline_5a6e9c6_3000it_seed424242.tsv`.
 
-## A/B checks (paired, 20k it in 8 blocks; B-A at 120 / 180 / 300 s)
+## Checks
 
-| preset | variant | S0 = 1e6 | S0 = 2e8 | verdict |
-|---|---|---|---|---|
-| mage__frost | AB cap 3 -> 4 | +4.6 / +2.7 / -15.7 | | trade-off (mana) |
-| mage__frost | 4th stack if mana > 0.7 | +2.2 / +1.5 / +0.3 | +3.2 / +2.1 / +0.7 | **finding** |
-| mage__frost | 4th stack if mana > 0.6 | +2.6 / +2.0 / -0.2 | +3.5 / +2.4 / +0.6 | alternative |
-| mage__frost | stack-refresh gate 9 s -> 12 s | 0 / 0 / 0 | | inert |
-| mage__arcane | AB cap 4 -> 3 | -31.5 / -31.1 / -30.3 | | keep 4 |
-| mage__frostfire | Ice Lance on any Fingers of Frost (not ==1) | -4.5 / -23.0 / -20.6 | | keep |
-| warrior__arms | Heroic Strike 90 -> 70 / 60 | -9.5 / -10.3 / -8.5; -19.8 / -21.5 / -18.5 | | keep 90 |
-| warrior__arms | Heroic Strike 90 -> 95 | +0.9 / +0.4 / +0.3 | +0.2 / +0.6 / +0.1 | optional |
-| warrior__fury_2h | Heroic Strike 90 -> 70 | -7.8 / -10.3 / -6.8 | | keep |
-| warrior__fury_2h | Heroic Strike 90 -> 95 | +0.0 / +0.4 / -0.9 | | no |
-| warrior__fury_2h | Slam 45 -> 35 | -1.2 / -1.0 / -0.9 | | keep |
+- **Dead lines** (new helper `tools/audit/rotations/dead_lines.py`, 300 it) on every druid, paladin, mage
+  and hunter req. Nothing unexpected:
+  - Frost: Arcane Blast (1239700) and Missile Barrage lines inert, talents gone (hence the resolved finding).
+  - Arcane: the four "Never" mana gem / potion lines (by design). Paladin: Exorcism (non-Undead), Judgement
+    20271 reads 0 because its casts are booked under the seal's judgement id (it does fire).
+  - Hunter BM / MM / LW: Mongoose Bite and Strider Kick weaves (dodge / talent dependent, by design).
+- **Frost Evocation** (Frost wands about 10 shots a fight at the end, has no Evocation line): adding
+  Frostfire's Evocation line before the end-of-fight instant, S0 = 1e6, 20k it:
+  | gate | 120 s | 180 s | 300 s |
+  |---|---|---|---|
+  | mana < 10%, > 75 s left | +0.00 | +0.00 | +0.01 |
+  | mana < 20%, > 60 s left | +0.00 | +0.00 | -1.32 ±0.06 |
+  | mana < 5%, > 45 s left | +0.00 | +0.00 | -0.02 |
+  Frost runs dry only near the end; no gain.
+- **Deep Holy Shock priority** (paladin__level_60_shock, S0 = 1e6): Holy Shock above Consecration
+  -3.82 / -2.31 / +0.26; above Holy Strike -0.06 / -0.30 / +0.29. The current last-place line holds.
 
-The crit Rage fix leaves the 2H Heroic Strike thresholds at their optimum.
+## Optional
 
-## Checked: Ice Barrier for Frost now that Frigid Power is 15%
+None new. The earlier list in `passes/rotations.md` stands (the Frost Arcane Blast item is moot).
 
-None of the mage presets talent Ice Barrier (a test cast never fires). A quick 31-Frost build with Ice
-Barrier (`0502052031001-1-253500030100301251`, Frost Warding 2, Cold Snap, Winter's Chill 5, Ice Barrier;
-Arcane Mind and Instability dropped) recast on Frigid Power gave 899.1 against 930.0 (3,000 it, seed
-424242). Not a finding. A full talent search wasn't run (out of this pass's scope).
+## Not done
 
-## Optional (under the bar)
-
-- Arms Heroic Strike at 95 rage: +0.4 / +0.6 at 180 s on the two seed sets.
-- The Arcane APL's Arcane Blast note also still says "15% of Intellect ... for 15 sec" (now 12%, 18 s); wording only.
-
-## Open items carried
-
-- Hunter pet rework (-38 to -80): no APL lever found. The pet's own abilities aren't in the APLs.
-- Older open items in `passes/rotations.md` (Balance Night Elf, Elemental Mastery hold, Warlock duty
-  variants) stay open.
+- No full A/B screen of the re-searched paladin, druid and mage APLs; rotopt searched their knobs at
+  120 / 180 / 300 s with 20k iterations, and the spot checks above found nothing. A next pass could screen
+  the new Ret Unsealed Wrath twist lines and the feral Shifting Power gate by hand.
+- Stale text, not a finding: `forever-wiki/classes/mage.md:62` still says Frost keeps three Arcane Blast
+  stacks and drops Evocation; the Frost APL's Arcane Blast note still says 15% / 15 sec (both inert).

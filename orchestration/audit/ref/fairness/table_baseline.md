@@ -1,25 +1,25 @@
-| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (dd053d2) |
+| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (c23ef04) |
 |---|---|---|---|---|---|---|---|---|
 | 1 | Lone Wolf (hunter) | Night Elf | 1087.8 | Orc 1086.4 / Night Elf | Night Elf (1087.8) | 1094.3 | -6.5 | 1087.8 (+0.0%) |
-| 2 | Frostfire | Human | 1075.6 | Undead 1071.3 / Human | Human (1075.6) | 1051.0 | +24.6 | 1045.3 (+2.9%) |
-| 3 | Marksmanship | Orc | 1063.7 | Orc / Night Elf 1058.7 | Orc (1063.7) | 1115.7 | -52.0 | 1109.1 (-4.1%) |
+| 2 | Frostfire | Human | 1075.6 | Undead 1071.3 / Human | Human (1075.6) | 1051.0 | +24.6 | 1075.6 (+0.0%) |
+| 3 | Marksmanship | Orc | 1063.7 | Orc / Night Elf 1058.7 | Orc (1063.7) | 1115.7 | -52.0 | 1063.7 (+0.0%) |
 | 4 | Fire | Gnome | 1057.1 | Orc 1054.0 / Gnome | Human (1056.7) | 1061.0 | -4.3 | 1057.1 (+0.0%) |
 | 5 | Demonology | Orc | 1046.5 | Orc / Human 1044.4 | Orc (1046.5) | 1051.8 | -5.3 | 1046.5 (+0.0%) |
-| 6 | Beast Mastery | Orc | 1045.2 | Orc / Night Elf 1035.6 | Orc (1045.2) | 1131.8 | -86.6 | 1125.4 (-7.1%) |
+| 6 | Beast Mastery | Orc | 1045.2 | Orc / Night Elf 1035.6 | Orc (1045.2) | 1131.8 | -86.6 | 1045.2 (+0.0%) |
 | 7 | Fury (dual wield) | Orc | 1041.6 | Orc / High Order 1037.3 | Orc (1041.6) | 1044.3 | -2.7 | 1041.6 (+0.0%) |
-| 8 | Fury (two-hand) | Orc | 1039.6 | Orc / High Order 1035.0 | Orc (1039.6) | 1030.2 | +9.4 | 1027.2 (+1.2%) |
-| 9 | Survival | Orc | 1024.8 | Orc / Night Elf 1015.6 | Orc (1024.8) | 1072.6 | -47.8 | 1070.3 (-4.3%) |
-| 10 | Affliction | Orc | 1014.2 | Orc / Human 1012.9 | Human (1012.9) | 1018.1 | -5.2 | 1014.2 (+0.0%) |
-| 11 | Arms | Undead | 1008.7 | Undead / High Order 1002.9 | Undead (1008.7) | 999.2 | +9.5 | 997.3 (+1.1%) |
-| 12 | Destruction | Orc | 995.0 | Orc / Human 993.1 | Orc (995.0) | 1001.6 | -6.6 | 995.0 (+0.0%) |
-| 13 | Destruction Fire | Undead | 977.8 | Undead / Human 972.8 | Undead (977.8) | 986.4 | -8.6 | 977.8 (+0.0%) |
-| 14 | Retribution | Undead | 975.0 | Undead / Human 968.1 | Undead (975.0) | 974.8 | +0.2 | 975.0 (+0.0%) |
+| 8 | Fury (two-hand) | Orc | 1039.6 | Orc / High Order 1035.0 | Orc (1039.6) | 1030.2 | +9.4 | 1039.6 (+0.0%) |
+| 9 | Retribution | Undead | 1039.2 | Undead / Human 1032.7 | Undead (1039.2) | 1039.3 | -0.1 | 975.0 (+6.6%) |
+| 10 | Survival | Orc | 1024.8 | Orc / Night Elf 1015.6 | Orc (1024.8) | 1072.6 | -47.8 | 1024.8 (+0.0%) |
+| 11 | Affliction | Orc | 1014.2 | Orc / Human 1012.9 | Human (1012.9) | 1018.1 | -5.2 | 1014.2 (+0.0%) |
+| 12 | Arms | Undead | 1008.7 | Undead / High Order 1002.9 | Undead (1008.7) | 999.2 | +9.5 | 1008.7 (+0.0%) |
+| 13 | Destruction | Orc | 995.0 | Orc / Human 993.1 | Orc (995.0) | 1001.6 | -6.6 | 995.0 (+0.0%) |
+| 14 | Destruction Fire | Undead | 977.8 | Undead / Human 972.8 | Undead (977.8) | 986.4 | -8.6 | 977.8 (+0.0%) |
 | 15 | Shadow | Undead | 948.7 | Undead / Human 945.4 | Undead (948.7) | 952.8 | -4.1 | 948.7 (+0.0%) |
-| 16 | Frost | Undead | 928.8 | Undead / High Order 928.7 | Undead (928.8) | 911.6 | +17.2 | 907.8 (+2.3%) |
-| 17 | Arcane | Undead | 895.9 | Undead / Gnome 894.1 | Gnome (894.1) | 915.5 | -21.4 | 911.4 (-1.7%) |
-| 18 | Feral | Night Elf | 886.1 | Windshaper 876.0 / Night Elf | Night Elf (886.1) | 889.7 | -3.6 | 885.9 (+0.0%) |
-| 19 | Enhancement | Orc | 883.0 | Orc / Dwarf 876.7 | Orc (883.0) | 884.2 | -1.2 | 883.0 (+0.0%) |
-| 20 | Balance | Night Elf | 846.1 | Tauren 837.3 / Night Elf | Night Elf (846.1) | 851.2 | -5.1 | 846.1 (+0.0%) |
+| 16 | Frost | High Order | 944.0 | Undead 941.1 / High Order | High Order (944.0) | 911.6 | +32.4 | 928.8 (+1.6%) |
+| 17 | Feral | Night Elf | 942.4 | Windshaper 931.3 / Night Elf | Night Elf (942.4) | 889.7 | +52.7 | 886.1 (+6.4%) |
+| 18 | Arcane | Undead | 939.5 | Undead / Gnome 939.4 | Gnome (939.4) | 915.5 | +23.9 | 895.9 (+4.9%) |
+| 19 | Balance | Night Elf | 890.6 | Tauren 881.3 / Night Elf | Night Elf (890.6) | 851.2 | +39.4 | 846.1 (+5.3%) |
+| 20 | Enhancement | Orc | 883.0 | Orc / Dwarf 876.7 | Orc (883.0) | 884.2 | -1.2 | 883.0 (+0.0%) |
 | 21 | Rogue Combat Daggers | Undead | 788.4 | Undead / Gnome 786.0 | Undead (788.4) | 790.8 | -2.4 | 788.4 (+0.0%) |
 | 22 | Rogue Combat Swords | Undead | 776.5 | Undead / High Order 769.7 | Undead (776.5) | 779.0 | -2.5 | 776.5 (+0.0%) |
 | 23 | Elemental | Windshaper | 769.0 | Windshaper / Dwarf 759.0 | Windshaper (769.0) | 772.7 | -3.7 | 769.0 (+0.0%) |
@@ -31,16 +31,16 @@
 
 | Variant | Best race | DPS | Report's published (at its race) | Before |
 |---|---|---|---|---|
-| druid__balance-wrath | High Order | 806.3 | 811.1 (at Windshaper 806.3) | 806.3 |
-| hunter__beast-mastery-tallstrider | Orc | 987.6 | 1060.7 (at Orc 987.6) | 1054.8 |
-| hunter__beast-mastery-wolf | Orc | 1000.8 | 1074.3 (at Orc 1000.8) | 1068.0 |
-| hunter__marksmanship-tallstrider | Orc | 1031.5 | 1075.4 (at Orc 1031.5) | 1069.5 |
-| hunter__marksmanship-wolf | Orc | 1039.5 | 1083.1 (at Orc 1039.5) | 1077.6 |
-| hunter__survival-tallstrider | Orc | 990.1 | 1031.2 (at Orc 990.1) | 1028.3 |
-| hunter__survival-wolf | Orc | 998.9 | 1039.2 (at Orc 998.9) | 1037.0 |
-| paladin__level_60_shock | Undead | 908.2 | 908.6 (at Undead 908.2) | 908.2 |
-| paladin__level_60_shock_ret | Undead | 961.2 | 960.9 (at Undead 961.2) | 961.2 |
-| paladin__level_60_sub_holy | Undead | 977.4 | 978.2 (at Undead 977.4) | 977.4 |
+| druid__balance-wrath | High Order | 855.5 | 811.1 (at Windshaper 855.5) | 806.3 |
+| hunter__beast-mastery-tallstrider | Orc | 987.6 | 1060.7 (at Orc 987.6) | 987.6 |
+| hunter__beast-mastery-wolf | Orc | 1000.8 | 1074.3 (at Orc 1000.8) | 1000.8 |
+| hunter__marksmanship-tallstrider | Orc | 1031.5 | 1075.4 (at Orc 1031.5) | 1031.5 |
+| hunter__marksmanship-wolf | Orc | 1039.5 | 1083.1 (at Orc 1039.5) | 1039.5 |
+| hunter__survival-tallstrider | Orc | 990.1 | 1031.2 (at Orc 990.1) | 990.1 |
+| hunter__survival-wolf | Orc | 998.9 | 1039.2 (at Orc 998.9) | 998.9 |
+| paladin__level_60_shock | Undead | 855.9 | 855.6 (at Undead 855.9) | 908.2 |
+| paladin__level_60_shock_ret | Undead | 974.9 | 974.9 (at Undead 974.9) | 961.2 |
+| paladin__level_60_sub_holy | Undead | 1037.3 | 1038.1 (at Undead 1037.3) | 977.4 |
 | priest__shadow-holy | Undead | 906.8 | 910.4 (at Undead 906.8) | 906.8 |
 | shaman__elemental-level60-mana-tide | Windshaper | 753.2 | 757.1 (at Windshaper 753.2) | 753.2 |
 | shaman__enhancement-imp-gw | Orc | 878.9 | 880.1 (at Orc 878.9) | 878.9 |
