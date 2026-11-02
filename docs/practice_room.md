@@ -51,12 +51,16 @@ answers.
 7. **One iteration, no averages** (the user, 2026-11-02). The room sims only the fight you play. It doesn't run other
    seeds or compare with the sim's average, for now.
 8. **Ping is modeled** (the user, 2026-11-02), as a setting with your in-game latency.
-9. **You do the prepull** (the user, 2026-11-02): totems and buffs before the pull are your own casts. Imbues are an
-   open question, see [Open questions](#open-questions).
+9. **You do the prepull** (the user, 2026-11-02): totems and buffs before the pull are your own casts.
 10. **Fixed fight length** (the user, 2026-11-02).
 11. **It plays like WoW** (the user, 2026-11-02). Movement, casting, the camera and the small quirks match the game as
     closely as we can, so you play the way you do in game and the sim result is accurate. See
     [Playing like WoW](#playing-like-wow).
+12. **Full manual control** (the user, 2026-11-02). Your character has no rotation. As in WoW, it casts only what you
+    press. Auto attack starts off. It turns on with a melee ability, a `/startattack` macro (for example on Earth
+    Shock) or a right click on an enemy, and then your character swings whenever it's in melee range.
+13. **Imbues are a setting you can override** (the user, 2026-11-02). You enter the room with the imbue from the
+    settings already up. Casting a different imbue replaces it.
 
 ## Separation from the regular sim
 
@@ -68,7 +72,7 @@ procs, auras, resources, the APLs of every other unit) stay in the core, and the
 
 | Part | Place | Notes |
 | --- | --- | --- |
-| Session, input rotation, world, fight summary | `sim/practice/` | imports `sim` and `sim/core`, nothing imports it |
+| Session, manual control, world, fight summary | `sim/practice/` | imports `sim` and `sim/core`, nothing imports it |
 | WASM | `practice.wasm`, built from `sim/practice/wasm/` | `//go:build wasm` tag, written to `dist/practice/` |
 | Server | `cmd/practice/` | a new small Go HTTP server, nothing shared with `sim/web` |
 | Page | `ui/practice/practice.html`, own Vite config | built to `dist/practice/`, never to `dist/forever/` |
@@ -163,10 +167,11 @@ are all exported:
    because `PrePull` sets the clock when prepull actions exist (`sim.go:686`, a druid talent registers one).
 5. Set `sim.Log`, since only the sim's own run sets it (`sim.go:373`). Write your distance and facing, since `Reset`
    clears them (`unit.go:553`).
-6. Your unit gets an empty APL and `ManualControl`, and its auto attacks get `SkipPullStart`. Every other unit keeps
-   its own APL.
+6. Your unit gets an empty APL and `ManualControl`, so it never acts on its own, and its auto attacks get
+   `SkipPullStart`, so they start off. Other units (the boss, pets, later the raid bots) keep their own APL.
 
-The countdown starts when you press the Start key or button. The pull is at time 0.
+The countdown starts when you press the Start key or button. The pull is at time 0. When you turn auto attack on
+during the countdown, the first swing comes at the pull.
 
 ### Running in real time
 
@@ -211,6 +216,21 @@ when one fails:
 Only then does it call `Spell.Cast`. A failed `Cast` can use up the cooldown, because the cooldown is set before the
 GCD check (`cast.go:273`, `cast.go:289`), so `Cast` is never called without these checks passing. During a channel,
 the session cancels the channel first (`ChanneledDot.Cancel`), since `InterruptHardcast` doesn't stop channels.
+
+### Imbues
+
+In the sim, a shaman imbue isn't a spell you cast. It's an aura the class code registers and turns on at the start,
+only for the imbue the settings pick (`windfury_weapon.go:105`, `shaman.go:66`). So you enter the room with that imbue
+up, and casting a different imbue works like this, without a core change:
+
+- **During the countdown:** the session rebuilds the sim with the new imbue in the settings, the same seed, and your
+  inputs so far fed back at their applied times. Before the pull nothing rolls for damage, so the rebuilt fight is the
+  same except for the imbue. The cast costs its GCD and mana like any other.
+- **After the pull:** a mid-fight imbue swap is rare, and it needs the other imbue's aura to exist, which the class
+  code only registers when the settings pick it. Milestone 1 refuses it with a note. If it turns out to matter, it
+  becomes a normal core change with its own review.
+
+Consumables and other players' buffs come from the settings.
 
 ### Inputs, ping and the spell queue
 
@@ -621,7 +641,8 @@ login with BayovCore on. So:
 
 - The character picker lists records, keyed by GUID, not WTF folders. The WTF folder is named
   `<realm id>/<Name-Name>` and can only be joined to a record by name. A "No record" entry uses the defaults.
-- With no record, the room fills bar 1 and the bars after it with the rotation's spells.
+- With no record, the room fills bar 1 and the bars after it with the spec's main spells, taken from the class sim's
+  rotation in the settings. The rotation only picks the spells, it never casts them.
 - Bar spells the sim doesn't have (Ghost Wolf, heals) show greyed out.
 - Buttons can also be clicked.
 
@@ -727,8 +748,9 @@ Each step says when it's done. Spike 1 runs first, next to step 1, since it's th
    range and facing, plus the three core hooks. Done when:
    - Go tests pass for: the last press in the queue wins, a press outside the window fails, a cast while moving
      fails, leaving melee range stops swings and coming back resumes them, wrong facing fails, ping shifts apply
-     times, a prepull totem is up at 0, no swing before you attack, an input at the fight's end is dropped, and no
-     swing during a cast
+     times, a prepull totem is up at 0, no swing before you turn auto attack on, auto attack turned on during the
+     countdown swings first at 0, a `/startattack` macro and a right click both turn it on, an imbue cast during the
+     countdown replaces the settings' imbue, an input at the fight's end is dropped, and no swing during a cast
    - for each of 100 seeds, the APL's own casts with their sim times (prepull ones included), fed back as inputs with
      the same seed, give the same DPS, or each difference is explained (a correctness test only, the room itself never
      runs other seeds)
@@ -786,9 +808,4 @@ raid sim's whole-raid engine (its milestone M1b in `docs/raid_sim.md`) as it is.
 
 ## Open questions
 
-1. **Imbues.** In the sim, a shaman imbue is an aura turned on at the start from the class settings
-   (`windfury_weapon.go:105`). There's no imbue spell to cast. The choices:
-   - Keep the imbue from the config, on from the start, and the in-room cast only for show. No core change. Recommended.
-   - Make imbues castable, as a normal core change with its own review.
-
-   Consumables and other players' buffs come from the config either way.
+None right now.
