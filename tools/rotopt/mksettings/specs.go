@@ -51,6 +51,17 @@ func withConsumes(base *specSetup, edit func(consumes *proto.Consumes)) *specSet
 	return &variant
 }
 
+// withDistance is a copy of a spec's setup that stands at distance yards, for a build whose
+// rotation reaches farther or less far than its base's (standards 33).
+func withDistance(base *specSetup, distance float64) *specSetup {
+	variant := *base
+	variant.withSpec = func(player *proto.Player) {
+		base.withSpec(player)
+		player.DistanceFromTarget = distance
+	}
+	return &variant
+}
+
 func specNames() []string {
 	names := make([]string, 0, len(specs))
 	for name := range specs {

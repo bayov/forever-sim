@@ -36,7 +36,8 @@ gen() {
 # 0.7 ahead of using it at 0 at 120 / 180 / 300 sec; 1.0 / 0.7 / 0.4 for the Wrath build).
 # endMoonfire (rotation auditor): Moonfire once the filler would not land before the fight ends,
 # 4.4 / 2.9 / 1.4 ahead for Balance (when a Starfire would not land), 5.9 / 3.8 / 2.2 for the
-# Wrath build (when a Wrath plus 1.5 sec would not).
+# Wrath build (when a Wrath plus 1.8 sec would not, its flight from 36 yd; 1.5 from 30 yd before
+# 2026-11-02, +0.5 / +0.4 / +0.2 at 120 / 180 / 300 sec at 36 yd).
 gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=1"
 # The Faerie Fire duty (standards 23): the same rotation keeping Faerie Fire on the target, cast
 # first after the pull and again once it has under 1.5 sec left. The knob search kept the rest.
@@ -44,9 +45,9 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,f
 # The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 6.1% behind (776.5
 # against 827.0 at 180 sec), on its own talents (5502220115501351--505003) and gear (Natural Power
 # gloves).
-gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.5,elune=0"
+gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.8,elune=0"
 # The Wrath build's Faerie Fire duty, the same way.
-gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.5,faerieFire=1,elune=0"
+gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.8,faerieFire=1,elune=0"
 # Feral cat on the Level 60 talents of the launch realms' 2026-10-30 hotfix trees
 # (05002-53200032023012125001-05502, Feral Swiftness 2 a must-take), Night Elf: Rip at 4 combo points
 # whenever it is down, Ferocious Bite at 5 with 45 Energy or more while Rip has 4 sec left (Predatory

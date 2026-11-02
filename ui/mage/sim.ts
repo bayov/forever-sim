@@ -120,7 +120,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			talents: Presets.TalentsLevel60Arcane.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
-			otherDefaults: Presets.OtherDefaults,
+			otherDefaults: { ...Presets.OtherDefaults, distanceFromTarget: Presets.DistanceArcane },
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceGnome,
@@ -145,7 +145,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			talents: Presets.TalentsLevel60Fire.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
-			otherDefaults: Presets.OtherDefaults,
+			otherDefaults: { ...Presets.OtherDefaults, distanceFromTarget: Presets.DistanceFire },
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceGnome,
@@ -170,7 +170,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			talents: Presets.TalentsLevel60Frost.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
-			otherDefaults: Presets.OtherDefaults,
+			otherDefaults: { ...Presets.OtherDefaults, distanceFromTarget: Presets.DistanceFrost },
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceSkyborneHighOrder,

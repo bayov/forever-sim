@@ -14,7 +14,7 @@ func init() {
 }
 
 func (mageFire) Knobs() []Knob {
-	return append(append(append(mageCommonKnobs(), arcaneKnobs(0, 0)...), finisherKnobs(1.04)...),
+	return append(append(append(mageCommonKnobs(), arcaneKnobs(0, 0)...), finisherKnobs(1.25)...),
 		// Scorch until Fire Vulnerability has 5 stacks, and again once it has less than this
 		// many seconds left. 0 never Scorches.
 		Knob{Name: "scorchRefresh", Default: 5, Min: 0, Max: 9, Step: 3},

@@ -24,7 +24,11 @@ import "github.com/wowsims/classic/sim/core/proto"
 // Each spec also takes its staff imbue scroll, which stacks with Wizard Oil: Greater Flame for
 // Frostfire and Fire, Greater Frost for Frost, Precision for Arcane (report assumption
 // mage_imbue_scrolls, user ruling 2026-10-15: the scrolls are in the game).
-func mageSpec(staffImbue proto.Mage_Options_StaffImbue) *specSetup {
+//
+// distance is where the spec stands (standards 33): the longest range every spell of its
+// rotation reaches, from the client's SpellRange and the range talents it takes
+// (orchestration/caster_distance.md).
+func mageSpec(staffImbue proto.Mage_Options_StaffImbue, distance float64) *specSetup {
 	return &specSetup{
 		uiDir: "ui/mage",
 		raid: func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
@@ -43,7 +47,7 @@ func mageSpec(staffImbue proto.Mage_Options_StaffImbue) *specSetup {
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
 				ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 				SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
-				// No Goblin Sapper Charge: it only reaches 10 yd and the mage stands at 25 yd.
+				// No Goblin Sapper Charge: it only reaches 10 yd and the mage stands at 20 or 30 yd.
 				SpellPowerBuff: proto.SpellPowerBuff_GreaterArcaneElixir,
 				ZanzaBuff:      proto.ZanzaBuff_CerebralCortexCompound,
 			}
@@ -54,8 +58,7 @@ func mageSpec(staffImbue proto.Mage_Options_StaffImbue) *specSetup {
 			player.Spec = &proto.Player_Mage{Mage: &proto.Mage{
 				Options: &proto.Mage_Options{Armor: proto.Mage_Options_MageArmor, StaffImbue: staffImbue},
 			}}
-			// Casters stand at range, which only delays the bolts a little.
-			player.DistanceFromTarget = 25
+			player.DistanceFromTarget = distance
 		},
 	}
 }

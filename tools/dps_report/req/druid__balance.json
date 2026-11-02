@@ -412,7 +412,7 @@
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
-            "distanceFromTarget": 30,
+            "distanceFromTarget": 36,
             "balanceDruid": {
               "options": {
                 "innervateTarget": {

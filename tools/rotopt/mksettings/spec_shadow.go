@@ -42,11 +42,12 @@ func init() {
 			player.Spec = &proto.Player_ShadowPriest{ShadowPriest: &proto.ShadowPriest{
 				Options: &proto.ShadowPriest_Options{Armor: proto.ShadowPriest_Options_InnerFire},
 			}}
-			// Casters stand at range, like the mages: 25 yd (2026-11-01; it was mksettings' default
-			// 5 yd). The Goblin Sapper Charge and the Goblin Land Mine only reach 10 yd, so both are
-			// out: 4.3 to 6.2 lower at 180 sec than at 5 yd with them. The EZ-Thro Dark Bomb loses
-			// 5.6 to 6.7 on Shadow and ties on Smite (+0.4), so no explosive.
-			player.DistanceFromTarget = 25
+			// A caster stands at the longest range every spell of its rotation reaches (standards
+			// 33, orchestration/caster_distance.md): Mind Flay's 20 yd, 22 with Shadow Reach 1/2.
+			// The Goblin Sapper Charge and the Goblin Land Mine only reach 10 yd, so both are out
+			// (they were 4.3 to 6.2 at 180 sec at 5 yd). The EZ-Thro Dark Bomb lost 5.6 to 6.7 on
+			// Shadow and tied on Smite (+0.4) at 25 yd, so no explosive.
+			player.DistanceFromTarget = 22
 		},
 	}
 	// Shadow + Holy adds Greater Mageblood (ui/shadow_priest/presets.ts ConsumesHoly): the Holy
@@ -56,12 +57,12 @@ func init() {
 	})
 	// Smite's own consumes (ui/shadow_priest/presets.ts ConsumesSmite): the Major Mana Potion,
 	// Greater Mageblood and Greater Spirit for its mana, Greater Firepower for Smite and Holy
-	// Fire. No Goblin Land Mine since the priests stand at 25 yd (it was +0.4 / +2.7 at 180 / 300 sec
-	// at 5 yd).
-	specs["smite"] = withConsumes(specs["shadow"], func(consumes *proto.Consumes) {
+	// Fire. No Goblin Land Mine since the priests stand at range (it was +0.4 / +2.7 at 180 / 300
+	// sec at 5 yd). Smite has no Mind Flay, and every spell it casts reaches 30 yd.
+	specs["smite"] = withDistance(withConsumes(specs["shadow"], func(consumes *proto.Consumes) {
 		consumes.DefaultPotion = proto.Potions_MajorManaPotion
 		consumes.FirePowerBuff = proto.FirePowerBuff_ElixirOfGreaterFirepower
 		consumes.ManaRegenElixir = proto.ManaRegenElixir_GreaterMagebloodElixir
 		consumes.SpiritElixir = proto.SpiritElixir_ElixirOfGreaterSpirit
-	})
+	}), 30)
 }

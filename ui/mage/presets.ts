@@ -134,7 +134,8 @@ export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Frost', Level6
 // Heating Up stack since client 70425, two on a crit; 20% before the rotation auditor's pass 23),
 // and Fireball. Combustion and the on-use
 // trinket wait for the 5th Fire Vulnerability stack. When a Fireball would not land before the
-// end (its cast plus 1.04 sec), Fire Blast and Scorch instead.
+// end (its cast plus 1.25 sec, the Fireball's flight from Fire's 30 yd), Fire Blast and Scorch
+// instead.
 export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Fire', Level60FireAPL, {
 	tooltip: 'Fireball, Pyroblast on 3 Heating Up stacks, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Synthetic',
@@ -149,7 +150,8 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Fire', Level60F
 // rolled over (+40.5 at 180 sec, the rotation auditor's pass 23). Frostbolt is the filler: it
 // beats Arcane Missiles that aren't free. No Evocation. Arcane Power and Presence of Mind wait for
 // the on-use trinket unless it won't be back before the last 15 sec. When a Frostbolt would not
-// land before the end (its cast plus 0.75 sec), Fire Blast and Arcane Explosion instead.
+// land before the end (its cast plus 0.75 sec), Fire Blast instead. Arcane stands at Fire Blast's
+// 20 yd, out of Arcane Explosion's 10, so the finisher no longer casts it (2026-11-02).
 export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Arcane', Level60ArcaneAPL, {
 	tooltip: 'Four Arcane Blast stacks for spell damage, Arcane Wrath on cooldown, Arcane Missiles on Missile Barrage, Frostbolt.',
 	group: 'Synthetic',
@@ -337,7 +339,7 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
-	// No Goblin Sapper Charge: it only reaches 10 yd (2026-11-01) and the mage stands at 25 yd.
+	// No Goblin Sapper Charge: it only reaches 10 yd (2026-11-01) and the mage stands at 20 or 30 yd.
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
@@ -400,11 +402,18 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// Engineering was for the Goblin Sapper, out of reach from 25 yd since 2026-11-01. Tailoring
+// Engineering was for the Goblin Sapper, out of reach from range since 2026-11-01. Tailoring
 // makes the Manaflare Regalia, the set the synthetic pieces stand in for. Alchemy and Enchanting changed nothing.
+// Each build stands at the longest range every spell of its rotation reaches (standards 33,
+// orchestration/caster_distance.md): Frostfire and Arcane at Fire Blast's 20 yd, Fire and Frost at
+// 30 (Scorch, Arcane Missiles, Arcane Blast and the wand). The default is Frostfire's.
+export const DistanceFrostfire = 20;
+export const DistanceFire = 30;
+export const DistanceFrost = 30;
+export const DistanceArcane = 20;
 export const OtherDefaults = {
 	channelClipDelay: 50,
-	distanceFromTarget: 25,
+	distanceFromTarget: DistanceFrostfire,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	race: Race.RaceHuman,
@@ -499,6 +508,7 @@ const buildCommon = {
 
 export const PresetBuildLevel60Frostfire = PresetUtils.makePresetBuild('Frostfire', {
 	...buildCommon,
+	distanceFromTarget: DistanceFrostfire,
 	tooltip: 'Level 60 Human Frostfire on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	talents: TalentsLevel60Frostfire,
 	rotation: APLLevel60Frostfire,
@@ -506,6 +516,7 @@ export const PresetBuildLevel60Frostfire = PresetUtils.makePresetBuild('Frostfir
 });
 export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Frost', {
 	...buildCommon,
+	distanceFromTarget: DistanceFrost,
 	tooltip: 'Level 60 Skyborne High Order Frost on the synthetic Phase 1 gear, in a 3 minute raid fight, with a Major Spellblasting Potion.',
 	encounter: EncounterLevel60Frost,
 	talents: TalentsLevel60Frost,
@@ -515,6 +526,7 @@ export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Frost', {
 });
 export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Fire', {
 	...buildCommon,
+	distanceFromTarget: DistanceFire,
 	tooltip: 'Level 60 Human Fire on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	talents: TalentsLevel60Fire,
 	rotation: APLLevel60Fire,
@@ -522,6 +534,7 @@ export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Fire', {
 });
 export const PresetBuildLevel60Arcane = PresetUtils.makePresetBuild('Arcane', {
 	...buildCommon,
+	distanceFromTarget: DistanceArcane,
 	tooltip: 'Level 60 Gnome Arcane on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1SyntheticArcane,
 	talents: TalentsLevel60Arcane,

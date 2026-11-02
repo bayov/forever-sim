@@ -263,7 +263,7 @@
                             "op": "OpAdd",
                             "rhs": {
                               "const": {
-                                "val": "1.5s"
+                                "val": "1.8s"
                               }
                             }
                           }
@@ -287,7 +287,7 @@
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
-            "distanceFromTarget": 30,
+            "distanceFromTarget": 36,
             "balanceDruid": {
               "options": {
                 "innervateTarget": {

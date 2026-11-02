@@ -27,7 +27,7 @@ func init() {
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
 				ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
 				NaturePowerBuff: proto.NaturePowerBuff_ElixirOfNaturePower,
-				// No Goblin Sapper Charge: it only reaches 10 yd and the moonkin stands at 30 yd.
+				// No Goblin Sapper Charge: it only reaches 10 yd and the moonkin stands at 36 yd.
 				SpellPowerBuff: proto.SpellPowerBuff_GreaterArcaneElixir,
 				SpiritElixir:   proto.SpiritElixir_ElixirOfSages,
 				ZanzaBuff:      proto.ZanzaBuff_CerebralCortexCompound,
@@ -35,8 +35,11 @@ func init() {
 		},
 		withSpec: func(player *proto.Player) {
 			player.Class = proto.Class_ClassDruid
-			// A caster stands at range, so the moonkin does not melee between casts.
-			player.DistanceFromTarget = 30
+			// A caster stands at the longest range every spell of its rotation reaches (standards
+			// 33, orchestration/caster_distance.md): Wrath, Starfire, Moonfire, Insect Swarm and
+			// Faerie Fire reach 30 yd, 36 with Nature's Reach 2/2, which both builds take. At range
+			// the moonkin does not melee between casts.
+			player.DistanceFromTarget = 36
 			player.Spec = &proto.Player_BalanceDruid{BalanceDruid: &proto.BalanceDruid{
 				Options: &proto.BalanceDruid_Options{InnervateTarget: &proto.UnitReference{Type: proto.UnitReference_Self}},
 			}}

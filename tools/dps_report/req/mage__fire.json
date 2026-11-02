@@ -693,7 +693,7 @@
                             },
                             "rhs": {
                               "const": {
-                                "val": "1.04s"
+                                "val": "1.25s"
                               }
                             }
                           }
@@ -728,7 +728,7 @@
                             },
                             "rhs": {
                               "const": {
-                                "val": "1.04s"
+                                "val": "1.25s"
                               }
                             }
                           }
@@ -766,7 +766,7 @@
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
-            "distanceFromTarget": 25,
+            "distanceFromTarget": 30,
             "mage": {
               "options": {
                 "armor": "MageArmor",

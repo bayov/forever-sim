@@ -607,7 +607,7 @@
                   "op": "OpAdd",
                   "rhs": {
                     "const": {
-                      "val": "1.04s"
+                      "val": "1.25s"
                     }
                   }
                 }
@@ -642,7 +642,7 @@
                   "op": "OpAdd",
                   "rhs": {
                     "const": {
-                      "val": "1.04s"
+                      "val": "1.25s"
                     }
                   }
                 }

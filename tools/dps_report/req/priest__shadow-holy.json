@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race":  "RaceUndead",
+            "race": "RaceUndead",
             "class": "ClassPriest",
             "equipment": {
               "items": [
@@ -547,7 +547,7 @@
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
-            "distanceFromTarget": 25,
+            "distanceFromTarget": 22,
             "shadowPriest": {
               "options": {
                 "armor": "InnerFire"

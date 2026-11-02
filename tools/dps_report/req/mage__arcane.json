@@ -396,41 +396,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10202
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "lhs": {
-                          "remainingTime": {}
-                        },
-                        "op": "OpLt",
-                        "rhs": {
-                          "math": {
-                            "lhs": {
-                              "spellCastTime": {
-                                "spellId": {
-                                  "spellId": 10181
-                                }
-                              }
-                            },
-                            "op": "OpAdd",
-                            "rhs": {
-                              "const": {
-                                "val": "0.75s"
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "An instant when the filler would not land before the end of the fight."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 10212
                       }
                     },
@@ -569,7 +534,7 @@
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
-            "distanceFromTarget": 25,
+            "distanceFromTarget": 20,
             "mage": {
               "options": {
                 "armor": "MageArmor",

@@ -110,9 +110,10 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Balance', Level60AP
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana) after a Wrath 1.5 sec
 // before the pull, for a moonkin that would rather not weave: 774.7 / 776.5 / 773.7 at 120 /
 // 180 / 300 sec, 6.1% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath)
-// and gear (GearLevel60Phase1SyntheticWrath). Moonfire once a Wrath plus 1.5 sec would no longer
-// land before the end is 5.9 / 3.8 / 2.2 ahead (rotation auditor), 787.0 / 786.6 / 782.3 with Wrath
-// rank 8 at x1.085.
+// and gear (GearLevel60Phase1SyntheticWrath). Moonfire once a Wrath plus 1.8 sec (its flight from
+// 36 yd; 1.5 from 30 yd before 2026-11-02) would no longer land before the end is 5.9 / 3.8 / 2.2
+// ahead (rotation auditor), 787.0 / 786.6 / 782.3 with Wrath rank 8 at x1.085. From 36 yd a Wrath
+// flies longer than its 1.5 sec cast, which costs the build 7 to 8 DPS against 30 yd.
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Balance Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
 	group: 'Synthetic',
@@ -213,7 +214,7 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	naturePowerBuff: NaturePowerBuff.ElixirOfNaturePower,
-	// No Goblin Sapper Charge: it only reaches 10 yd (2026-11-01) and the moonkin stands at 30 yd. It was
+	// No Goblin Sapper Charge: it only reaches 10 yd (2026-11-01) and the moonkin stands at 36 yd. It was
 	// worth 4.3 at 180 sec before the sim checked its reach.
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
@@ -273,11 +274,12 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // An engineer (for the Goblin Sapper Charge, until it got its 10 yd reach) and an alchemist, like the other
-// level 60 presets. The moonkin casts from range, so it does not melee between casts. The channel
-// clip delay is the DPS Report's.
+// level 60 presets. The moonkin casts from 36 yd, the longest range every spell of its rotations
+// reaches (standards 33: 30 yd, 20% more with Nature's Reach 2/2), so it does not melee between
+// casts. The channel clip delay is the DPS Report's.
 export const OtherDefaults = {
 	channelClipDelay: 50,
-	distanceFromTarget: 30,
+	distanceFromTarget: 36,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
 	race: Race.RaceNightElf,

@@ -519,7 +519,7 @@
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
-            "distanceFromTarget": 25,
+            "distanceFromTarget": 30,
             "warlock": {
               "options": {
                 "armor": "DemonArmor",

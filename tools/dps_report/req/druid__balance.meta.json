@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 891.1,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 892.3,
+    "source": "verify.py on this request after the standards 33 distances (2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 891.1,
+    "dps": 892.3,
     "stderr": 0.23,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
   },
   "summary": "Moonkin that keeps Insect Swarm and Moonfire up. It weaves Wrath and Starfire to spend every Eclipse charge.",
   "keyTalents": [
@@ -70,5 +70,5 @@
     "Only one +2% crit elixir. A second one (Owl) would add 15.1 DPS.",
     "Subtlety 3 (Restoration) is taken for threat. It costs 12.5 / 12.6 / 12.6 DPS at 120s / 180s / 300s against Genesis 5 in its place."
   ],
-  "notes": "Request from mksettings -spec balance (caster group: Mana Spring, Kings + Wisdom, no Might, own Moonkin Form crit; 30 yd range; Innervate on self). Duration set to 180s, durationVariation 20 as in EncounterLevel60. No edits needed. Night Elf since the 2026-10-27 race re-pick, with the level60 rotation regenerated with elune=1 (tools/rotopt/druid_presets.sh), which was req/races/druid__balance.NightElf.json; the same rotation is 0.0 for a Tauren (Elune's Light is the Night Elf's). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. 2026-11-01: on the launch realms' 2026-10-30 hotfix trees (tools/forever_talents/client/druid.json): the same talents in the new layout (Subtlety moved to row 3), the rotation kept by the knob search, the request's talentsString and rotation edited to match."
+  "notes": "Request from mksettings -spec balance (caster group: Mana Spring, Kings + Wisdom, no Might, own Moonkin Form crit; 36 yd range since 2026-11-02, standards 33: 30 yd spells with Nature's Reach 2/2; Innervate on self). Duration set to 180s, durationVariation 20 as in EncounterLevel60. No edits needed. Night Elf since the 2026-10-27 race re-pick, with the level60 rotation regenerated with elune=1 (tools/rotopt/druid_presets.sh), which was req/races/druid__balance.NightElf.json; the same rotation is 0.0 for a Tauren (Elune's Light is the Night Elf's). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. 2026-11-01: on the launch realms' 2026-10-30 hotfix trees (tools/forever_talents/client/druid.json): the same talents in the new layout (Subtlety moved to row 3), the rotation kept by the knob search, the request's talentsString and rotation edited to match."
 }
