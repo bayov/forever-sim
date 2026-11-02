@@ -36,19 +36,62 @@ findings.
    their own.
 5. **First milestone** (the user, 2026-11-02): enh shaman, target dummy, flat arena, your keybinds, a live DPS meter,
    and an end of fight comparison with the sim's rotation. [Milestones](#milestones) proposes splitting it in two.
+6. **Don't disrupt the regular sim** (the user, 2026-11-02). The practice room is kept as separate as possible. It
+   uses the game rules the sim codes, as a consumer of the sim. See [Separation](#separation-from-the-regular-sim).
+
+## Separation from the regular sim
+
+The practice room is a consumer of the sim core, the way the DPS Report is a consumer of sim runs. It builds a normal
+sim from a normal config and drives it from outside through what the core already exports. The game rules (spells,
+procs, auras, resources, the APLs of every other unit) stay in the core, and the practice room doesn't change them.
+
+**Where the code lives:**
+
+| Part | Place | Shared with the regular sim |
+| --- | --- | --- |
+| Session, input rotation, world, comparison | `sim/practice/` | imports `sim/core`, nothing imports it |
+| WASM | `practice.wasm`, built from `sim/practice/wasm/` by its own make target | `lib.wasm` unchanged |
+| Server | `cmd/practice/` (keybinds, records, assets, attempts) | the regular dev server unchanged |
+| Page | `ui/practice/` with its own Vite config | imports from `ui/core`, not in the regular build |
+| Assets, attempts | `practice_assets/`, `practice_attempts/` | in `.gitignore` |
+
+**Rules for touching the shared code:**
+
+- The class sims, the DPS Report, rotopt and the leveling sim give bit-identical results after any practice change.
+  Every core touch is checked by running the Go tests and by comparing the results of a fixed set of presets and seeds
+  before and after.
+- A core change is only a small, read-only or opt-in hook that does nothing in a normal run, with no extra work in the
+  hot paths. Each one is listed in the table below with why we need it.
+- When the practice room needs a game rule the core doesn't have (for example a facing check for casts), it first
+  checks the rule on the practice side, before an input reaches the sim. A rule that would also make the regular sim
+  more correct goes into the core as a normal sim change with its own review, never as part of practice work.
+- In `ui/core` we import what's already exported. When reuse would need a refactor of a shared file (like
+  `replay.tsx`), we copy the piece into `ui/practice/` instead.
+- The regular sim UI doesn't change in M1. Settings come into the practice page through the class sim's existing
+  export (link or JSON).
+
+**Core touch points (the whole list):**
+
+| Hook | Why | Effect on a normal run |
+| --- | --- | --- |
+| `Simulation.NextEventTime()`, read-only | `Run(until)` stops before the next event without moving the clock | none, nothing calls it |
+
+Everything else uses what the core already exports: `Simulation.AddPendingAction`, `Spell.CanCast` and `Spell.Cast`,
+the GCD and `Unit.Hardcast`, `Unit.InterruptHardcast`, `AutoAttacks.CancelAutoSwing`, `EnableAutoSwing` and
+`NextAttackAt`, `Unit.DistanceFromTarget`, `PseudoStats.InFrontOfTarget`, and the sim's text log.
 
 ## Architecture
 
 ```
  Browser tab (main thread)                           Practice worker
  ┌──────────────────────────────────────┐            ┌─────────────────────────────────┐
- │ Input: keydown ──► input {id, time} ─┼── input ──►│ lib.wasm (Go)                   │
+ │ Input: keydown ──► input {id, time} ─┼── input ──►│ practice.wasm (Go)              │
  │                                      │            │  practice session               │
  │ HUD state store ◄── events ◄─────────┼── events ◄─│   sim: your unit reads inputs,  │
  │   (predicts GCD and cast bar)        │            │        every other unit its APL │
  │ Three.js scene, HTML overlay         │◄─ units ───│   world: positions, facing,     │
  └──────────────────────────────────────┘            │          range, movement        │
-   ▲ assets, keybinds, bars from the dev server      │   own clock, pushes events      │
+   ▲ assets, keybinds, bars from the practice server │   own clock, pushes events      │
                                                      └─────────────────────────────────┘
 ```
 
@@ -63,9 +106,14 @@ We don't use it. The flag is global: it stops the rotation of every character, p
 (`sim/core/character.go:525`), and several places call the rotation without a nil check (`cast.go:368`,
 `attack.go:362`, `energy.go:166`, `rage.go:440`).
 
-Instead your unit gets an APL with one custom action that reads the input queue, in the pattern of
-`APLActionCustomRotation` (`sim/core/apl_actions_misc.go:283`). The APL's prepull list stays, so totems and buffs
-before the pull work as they do in a sim run. Every other unit keeps its own APL.
+Instead your unit gets its normal APL with the prepull list kept and the priority list emptied, so totems and buffs
+before the pull work as they do in a sim run, and after the pull the APL never acts. Every other unit keeps its own
+APL.
+
+Your casts come from `sim/practice`. For each input it adds a pending action at the later of the press time, the end
+of the GCD and the end of the current cast, and that action calls `Spell.Cast` like an APL action would. A press
+within the spell queue window waits for the GCD. An off-GCD spell fires at its own time. None of this needs a change
+in the core.
 
 ### The sim in real time
 
@@ -75,16 +123,15 @@ stateful session:
 - **Start(config)** builds the sim from the same proto config a sim run uses, with a fixed fight length and no
   duration variation, runs the prepull, and stops at time 0. Execute phases, `GetRemainingDuration` and the end check
   all depend on that fixed length. Auto attacks start on their own at 0, as in a sim run.
-- **Input(input)** queues a key press as a pending action at an exact sim time in whole nanoseconds, with a fixed
-  lowest priority. It goes through `Step` like any other event, so `sim.events` counts it and the other units' idle
-  check skipping (`apl_idle.go`) sees it. A key pressed while the GCD is idle, or an off-GCD spell, fires at its own
-  time, not at the APL's next 50ms poll.
+- **Input(input)** queues a key press as a pending action (see above) at an exact sim time in whole nanoseconds, with
+  a fixed lowest priority. It goes through `Step` like any other event, so the other units' idle check skipping
+  (`apl_idle.go`) sees it.
 - **Run(until)** runs events whose time is before `until` and stops. It never moves the clock to `until` itself.
   Moving the clock to frame times would settle regen and expire auras in frame sized steps, and then results depend on
   frame rate.
 
-`Step` handles one event and has no way to peek, so `Run` reads the next event time as the smallest of the top pending
-action, `minWeaponAttackTime` and `minTaskTime`.
+`Step` handles one event and has no way to peek. So `Run` asks the core's one new read-only hook,
+`Simulation.NextEventTime()`, for the smallest of the top pending action, `minWeaponAttackTime` and `minTaskTime`.
 
 The worker keeps its own clock and pushes events as they happen, instead of waiting for one call per frame. The clock
 pauses when the tab is hidden or loses focus, and one catch-up step is capped at 0.25s, as the Replay view does
@@ -95,8 +142,9 @@ Between events the HUD shows values like energy and the cast bar by computing th
 changing sim state. The live DPS meter sums spell metrics as `getDamageDone` does (`sim/lib/library.go:282`), because
 unit metrics only add up in `Cleanup`.
 
-The worker is its own dedicated worker, not one from the sim's `WorkerPool` (`ui/core/sim.ts:123`). The WASM entry
-points are synchronous `js.FuncOf` calls like `raidSim` (`sim/wasm/main.go:133`). The live heap is about 1.3 MB, so
+The worker is its own dedicated worker running `practice.wasm`, not one from the sim's `WorkerPool`
+(`ui/core/sim.ts:123`). The WASM entry points are synchronous `js.FuncOf` calls in the style of `raidSim`
+(`sim/wasm/main.go:133`), in `sim/practice/wasm/`. The live heap is about 1.3 MB, so
 garbage collector pauses come from per-event allocations (log formatting, proto marshalling), not from the database.
 
 ### Inputs and prediction
@@ -122,24 +170,27 @@ Exact replays hold only on the same sim build and the same platform. WASM and na
 
 ### World and movement
 
-We copy the leveling world (`sim/core/leveling_world.go`), not `Unit.MoveTo`. The leveling world has 2D positions
-with velocity, keeps auto attacks going while moving, interrupts a hard cast when movement starts
-(`leveling_world.go:197`), and has a distance function for range. `MoveTo`'s movement aura cancels auto attacks
-(`movement.go:107`), which is wrong for strafing in melee.
+The world lives in `sim/practice`: 2D positions with velocity, facing, and range. It follows the leveling world's
+model (`sim/core/leveling_world.go`) but doesn't reuse its code, which is tied to leveling sessions inside the core.
+We don't use `Unit.MoveTo` either: its movement aura cancels auto attacks (`movement.go:107`), which is wrong for
+strafing in melee.
 
-Your movement goes to the sim as timestamped velocity and facing changes, not as per-frame positions. That keeps
-replays exact and lets idle check skipping work out when a unit comes into range. The client moves your model at once
-and the sim agrees, as WoW trusts the client's movement.
+Your movement goes to the session as timestamped velocity and facing changes, not as per-frame positions. The world
+turns them into pending actions at the times something changes (you reach or leave range, you turn away). That keeps
+replays exact. The client moves your model at once and the sim agrees, as WoW trusts the client's movement.
 
-What the engine has today and what we add:
+How the world talks to the sim, all through what the core exports:
 
-- **Melee range** is a flat 5 yards (`constants.go:15`). We keep that for M1 and add hit box sizes with bosses.
-- **Spell range** is only enforced in leveling (`spell.go:548`). We turn it on for practice.
-- **Auto attack range** is only checked when a swing is enabled (`attack.go:755`). The world calls the same cancel
-  and enable pair that PvP downtime uses (`pvp.go:68`) when you leave or enter range.
-- **Facing** exists as `PseudoStats.InFrontOfTarget` (`character.go:246`), read at each roll for parry and block. We
-  add the facing check for casts and melee, and the behind check.
-- Run speed 7 yd/s, backpedal 4.5 yd/s. Line of sight comes with bosses in M2.
+- **Distance:** it writes `Unit.DistanceFromTarget` for anything in the core that reads it.
+- **Melee range** is 5 yards (`constants.go:15`). When you leave or enter it, the world calls the cancel and enable
+  pair that PvP downtime uses (`pvp.go:68`), because auto attacks only check range when enabled (`attack.go:755`).
+- **Facing:** it writes `PseudoStats.InFrontOfTarget` (`character.go:246`), which the core reads at each roll for
+  parry and block.
+- **Moving:** it calls `Unit.InterruptHardcast` when movement starts during a hard cast.
+- **Checks the core doesn't make in a normal run:** spell range (the core checks it only in leveling,
+  `spell.go:548`), facing for casts and melee, the behind check, and no hard casts while moving. The session checks
+  these before an input becomes a cast, and answers with the game's error text.
+- Run speed 7 yd/s, backpedal 4.5 yd/s. Hit box sizes and line of sight come with bosses in M2.
 
 ### Events out of the sim
 
@@ -147,8 +198,9 @@ The worker streams the sim's text log lines with each batch, and the client reus
 turns them into typed records (casts, damage, auras, resources). One source of truth, and a finished attempt opens in
 the Replay view as is. Typed events come later, only if parsing turns out too slow.
 
-The log needs a few more lines for the live HUD: the next swing time and the cast end time. The Replay view gets those
-by looking ahead in the finished log, which a live stream can't do.
+The live HUD also needs the next swing time and the cast end time. The Replay view gets those by looking ahead in the
+finished log, which a live stream can't do. The session reads them from the units after each batch
+(`AutoAttacks.NextAttackAt`, `Unit.Hardcast`) and sends them with the events, so the log format stays as it is.
 
 ### HUD overlay
 
@@ -158,7 +210,8 @@ cast pushback, and the bar layout chosen from cooldowns used in the fight. The d
 lookups, so a model that only grows forward in time can feed them.
 
 So we reuse the markup, CSS and helpers (`updateIcon` and `updateCastBar` in `replay.tsx`), and write an incremental
-model fed by events. Your real action bars are new code.
+model fed by events in `ui/practice/`. Helpers that aren't exported are copied, not split out of `replay.tsx`. Your
+real action bars are new code.
 
 ### Rendering
 
@@ -182,12 +235,12 @@ model fed by events. Your real action bars are new code.
 ## Assets (local only)
 
 The Forever client's data sits in the shared CASC storage (WoW's archive format) of the WoW install. Its product code
-in `.build.info` is `wowf`, version 1.60.1.70707 today. The install folder is a setting. On this PC the dev server
+in `.build.info` is `wowf`, version 1.60.1.70707 today. The install folder is a setting. On this PC the practice server
 reads it from WSL at `/mnt/d/Gaming/World of Warcraft`.
 
 **The pipeline:**
 
-1. The dev server extracts raw files by FileDataID (the client's file number): M2 models, `.skin`, `.skel` and `.anim`
+1. The practice server extracts raw files by FileDataID (the client's file number): M2 models, `.skin`, `.skel` and `.anim`
    files, BLP textures, OGG sounds and DB2 tables. It uses a command-line CASC reader (TACTTool from TACTSharp, or
    CascLib, picked in spike 1) and caches the files in `practice_assets/`.
 2. DB2 tables come from the local client, plus its hotfix cache (`DBCache.bin`), not from wago.tools. That way each
@@ -222,9 +275,9 @@ the pipeline, and its glTF export leaves weapons unattached and drops particles.
 text, and no particles. Later the same M2 renderer gets particles, with WebWowViewerCpp's emitters as the reference
 (read only, it has no license file).
 
-**Keeping it local:** `practice_assets/` is in `.gitignore`. The dev server serves it at `/practice/assets/`. Nothing
-under `dist/` or the DPS Report build reads it, and the deploy script refuses to run if it finds a path from it in the
-output.
+**Keeping it local:** `practice_assets/` is in `.gitignore`. Only the practice server (`cmd/practice/`) serves it.
+Nothing under `dist/` or the DPS Report build reads it, and the deploy script refuses to run if it finds a path from
+it in the output.
 
 ## Keybinds and action bars
 
@@ -342,19 +395,22 @@ Side by side with "the same seed" means nothing here. Normal runs share one rand
 casts differ from the rotation's, every later roll differs. A per-GCD "what the rotation would have cast" needs a
 re-run from the start up to each press, since the sim can't copy itself mid-fight. That comes after M1.
 
-The end of fight sims run in the normal sim worker pool, not in the practice worker.
+The end of fight sims run in a second `practice.wasm` worker, not in the live one. "Your plan over many seeds" is a
+normal sim run with the practice rotation replaying your inputs. The rotation's spread and the reaction time re-sim
+are normal sim runs with normal options.
 
 ### Saving attempts
 
-Each attempt (config, seed, inputs, sim build, result) is saved by the dev server to `practice_attempts/`, which is in
+Each attempt (config, seed, inputs, sim build, result) is saved by the practice server to `practice_attempts/`, which is in
 `.gitignore`. The room lists them with a trend over time. When the sim build changes, old attempts keep their result,
 and their replay is marked as from another build.
 
 ## Where it lives
 
-Its own page, like `ui/raid_sim/`. A "Practice" button in a class sim opens it with that sim's current settings
-(character, gear, talents, buffs, rotation, fight length). Presets and pasted BayovCore exports come in the same way,
-since they already load into the class sim. The keybinds come from a BayovCore record you pick separately, because the
+Its own page in `ui/practice/`, served by the practice server. You bring a class sim's settings (character, gear,
+talents, buffs, rotation, fight length) through the class sim's existing export, as a link or JSON. Presets and
+pasted BayovCore exports come in the same way, since they already load into the class sim. A "Practice" button in the
+class sim can come later, as a link only. The keybinds come from a BayovCore record you pick separately, because the
 sim character and the in-game character aren't the same thing.
 
 Fight rules for M1: a fixed length you set, with no length variation, the prepull done by the rotation's prepull list,
@@ -388,15 +444,19 @@ Each step says when it's done.
 
 **M1a: the sim loop, no 3D.** Delivers the sim value first.
 
-1. `sim/practice` session: Start, Input, Run, your unit's input APL action, the world copied from leveling, range and
-   facing. Done when Go tests with scripted inputs pass, and a script of the rotation's own casts, fed at the
-   rotation's exact sim times, gives the rotation's mean DPS over 1000 seeds within noise.
+1. `sim/practice` session: Start, Input, Run, your unit's input rotation, the world, range and facing, plus the one
+   core hook (`NextEventTime`). Done when:
+   - Go tests with scripted inputs pass
+   - a script of the rotation's own casts, fed at the rotation's exact sim times, gives the rotation's mean DPS over
+     1000 seeds within noise
+   - the existing Go tests pass and a fixed set of presets gives bit-identical results before and after
 2. Replays and saved attempts. Done when a replayed attempt gives an identical log on the same build.
 3. The comparison: your plan over many seeds, reaction time, gap causes. Done when a Go test with a scripted slow
    player shows the expected gap.
-4. WASM entry points in a dedicated worker with its own clock. Done when spike 4's numbers are in.
-5. Dev server endpoints: BayovCore records, bindings, CVars, macros, and the install folder setting. Done when golden
-   file tests pass for the Lua parser, the WTF parser, the slot table and the macro parser.
+4. `practice.wasm` with its own make target, in a dedicated worker with its own clock. Done when spike 4's numbers
+   are in and `lib.wasm` is unchanged.
+5. The practice server (`cmd/practice/`): BayovCore records, bindings, CVars, macros, and the install folder
+   setting. Done when golden file tests pass for the Lua parser, the WTF parser, the slot table and the macro parser.
 6. The page: your bars with bindings, unit frames, cast bar, WeakAuras and combat text as an incremental HUD over a 2D
    top-down view (`replay_map.ts`), the live meter, the comparison screen. Done when a headless Chrome smoke test plays
    a scripted fight.
@@ -407,10 +467,11 @@ animations, the dummy, the arena floor, icons and sounds, the camera and targeti
 the dummy in 3D with your gear on.
 
 **M2: a boss.** A boss that hits back and moves, with simple mechanics (stand still, move out, interrupt) that change
-the best rotation. Line of sight and hit box sizes.
+the best rotation. Line of sight and hit box sizes. The boss's movement and mechanics live in `sim/practice` and use
+the core's spells and auras, like the input rotation does.
 
-**M3: raid bots.** The raid sim's members as bots around you, each on its APL, with raid frames. This needs the raid
-sim's whole-raid engine (its milestone M1b in `docs/raid_sim.md`).
+**M3: raid bots.** The raid sim's members as bots around you, each on its APL, with raid frames. This uses the raid
+sim's whole-raid engine (its milestone M1b in `docs/raid_sim.md`) as it is.
 
 **M4: friends.** See [Multiplayer](#multiplayer-m4).
 
