@@ -4,7 +4,7 @@
 // glow on your weapon, the totems' own models, and the swing and impact sounds of melee.
 
 import * as THREE from 'three';
-import { prefetch, texture } from './files';
+import { prefetch } from './files';
 import { Model } from './model';
 import { Playing, SoundRef, Sounds } from './sound';
 import type { UnitView } from './unit';
@@ -193,8 +193,9 @@ export class Effects {
 	}
 
 	// preload loads every file these spells' effects use (models, their textures and sounds) and
-	// the imbues' glows, so nothing loads mid fight.
-	async preload(spellIds: number[]) {
+	// the imbues' glows, so nothing loads mid fight. It returns the models, for the room to draw
+	// once while loading (see Room.warmUp).
+	async preload(spellIds: number[]): Promise<Model[]> {
 		const models = new Set<number>();
 		const sounds: KitSound[] = [];
 		const vs = await Promise.all(spellIds.map(id => spellVisual(id)));
@@ -214,22 +215,23 @@ export class Effects {
 			for (const km of glow.models ?? []) models.add(km.fdid);
 		}
 		await prefetch([...models, ...sounds.map(s => s.fdid)]);
-		await Promise.all([
-			...[...models].map(fdid =>
-				Model.load(fdid)
-					.then(m => {
-						// The particles' textures load when the effect first plays, so load them now.
-						const loads = m.m2.particles.map(e => {
-							const tex = m.m2.textures[e.flags & 0x10000000 ? e.texture & 0x1f : e.texture];
-							return tex && tex.type === 0 && tex.fdid > 0 ? texture(tex.fdid, false, false).catch(() => undefined) : undefined;
-						});
-						m.dispose();
-						return Promise.all(loads);
-					})
-					.catch(e => console.warn('effect model', fdid, e)),
+		const [loaded] = await Promise.all([
+			Promise.all(
+				[...models].map(fdid =>
+					Model.load(fdid)
+						.then(async m => {
+							await m.loadEffectTextures();
+							return m;
+						})
+						.catch(e => {
+							console.warn('effect model', fdid, e);
+							return undefined;
+						}),
+				),
 			),
 			this.sounds.preload(sounds),
 		]);
+		return loaded.filter((m): m is Model => m !== undefined);
 	}
 
 	// castStart shows the precast glow and returns the precast animation to hold.

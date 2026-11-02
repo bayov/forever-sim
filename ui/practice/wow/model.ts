@@ -782,6 +782,23 @@ export class Model {
 		if (this.ribbons) this.ribbons.emitting = on;
 	}
 
+	// loadEffectTextures loads the textures of the model's particles and ribbons, which otherwise
+	// load the first time the model shows them. A totem's fire is a 2048 by 2048 texture that took
+	// over 100ms to decode at the first Searing Totem.
+	loadEffectTextures(): Promise<unknown> {
+		const m2 = this.m2;
+		const loads: Promise<unknown>[] = [];
+		for (const e of m2.particles) {
+			const tex = m2.textures[e.flags & 0x10000000 ? e.texture & 0x1f : e.texture];
+			if (tex && tex.type === 0 && tex.fdid > 0) loads.push(texture(tex.fdid, false, false).catch(() => undefined));
+		}
+		for (const r of m2.ribbons) {
+			const tex = m2.textures[r.textures[0] ?? -1];
+			if (tex && tex.type === 0 && tex.fdid > 0) loads.push(texture(tex.fdid, (tex.flags & 1) !== 0, (tex.flags & 2) !== 0).catch(() => undefined));
+		}
+		return Promise.all(loads);
+	}
+
 	// enableParticles starts the model's particle emitters, with their particles in `world`.
 	enableParticles(world: THREE.Object3D) {
 		if (!this.particles && this.m2.particles.length > 0) this.particles = new Particles(this, world);

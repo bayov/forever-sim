@@ -1127,6 +1127,15 @@ rendering, not the sim.
 - A performance recorder (`ui/practice/perf.ts`) times each part of every frame, notes models built and shaders
   compiled mid fight, long tasks, Chrome's long animation frames and garbage collections, and saves a report to
   `~/forever-practice/perf/` when a fight ends.
+- First report (206s at 240 FPS, 75 frames over 20ms) and fixes:
+  - The first Searing Totem decoded a 2048 by 2048 particle texture (116ms). Totem and effect models now load
+    their particle and ribbon textures behind the loading bar.
+  - Shaders compiled and textures went to the GPU the first time each effect played (up to 80ms). The room now
+    draws every effect and totem model once while loading (`Room.warmUp`). Mid fight compiles went from about 15
+    to 1 in a test that casts every spell.
+  - Hovering the mouse tested every triangle of the skinned models (25ms per move). Only the dummy's hull and the
+    ground are tested now (0.08ms).
+- Combat text uses the font's only weight with a little letter spacing. The faked bold ran the digits together.
 - Combat text scrolls like the Replay view's (MSBT): what you do goes up from the target's frame, buffs you gain go
   down to your frame, crits pop up and stay put (`ui/practice/sct.ts`).
 - Particles: packed gravity, key times, sphere emitters, spin, colors, blend modes and model scale. Rendering:

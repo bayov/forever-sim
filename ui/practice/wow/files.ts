@@ -36,10 +36,18 @@ export async function prefetch(ids: number[]): Promise<void> {
 
 const images = new Map<number, Promise<Image>>();
 
+// onDecode hears how long each texture took to decode, for the performance recorder.
+export const decodeHooks: { onDecode?: (fdid: number, ms: number) => void } = {};
+
 export function image(fdid: number): Promise<Image> {
 	let p = images.get(fdid);
 	if (!p) {
-		p = file(fdid).then(decodeBLP);
+		p = file(fdid).then(buf => {
+			const t = performance.now();
+			const img = decodeBLP(buf);
+			decodeHooks.onDecode?.(fdid, performance.now() - t);
+			return img;
+		});
 		images.set(fdid, p);
 	}
 	return p;
@@ -59,8 +67,13 @@ export function texture(fdid: number, wrapU = true, wrapV = true): Promise<THREE
 	return p;
 }
 
+// newTextures holds the textures made while the room loads, for it to send them to the GPU before
+// the fight. Once the room is in, `keep` is off and we stop holding them.
+export const newTextures = { keep: true, list: [] as THREE.Texture[] };
+
 export function imageTexture(img: Image, wrapU = true, wrapV = true): THREE.Texture {
 	const t = new THREE.DataTexture(img.rgba, img.width, img.height, THREE.RGBAFormat);
+	if (newTextures.keep) newTextures.list.push(t);
 	t.colorSpace = THREE.SRGBColorSpace;
 	t.wrapS = wrapU ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
 	t.wrapT = wrapV ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
