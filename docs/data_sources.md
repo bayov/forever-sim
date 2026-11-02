@@ -438,6 +438,10 @@ spell text in them (tooltip templates filled in, cost lines, icons) comes from o
 - **Fetcher:** `python3 tools/warcraftlogs/wclcli.py --site <s> ...` through
   `tools/warcraftlogs/wcl.py`. Credentials in `~/.config/forever-sim/wcl.json`.
 - **Cache:** `~/.cache/forever-sim/wcl/`. 3600 API points an hour.
+- **Sites** (2026-11-02): `sod` for Season of Discovery, `vanilla` for Classic Era and the Anniversary
+  Hardcore realms (told apart by realm, `sample --server`). The Anniversary Normal and PvP realms aren't
+  reachable through the API: `fresh` serves the Classic progression realms' reports. Ranked reports from 2019
+  to 2024 are archived. `tools/warcraftlogs/README.md`, Tank profiles.
 
 ## Our own game client
 
