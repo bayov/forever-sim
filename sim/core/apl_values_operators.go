@@ -203,10 +203,14 @@ func (rot *APLRotation) coerceTo(value APLValue, newType proto.APLValueType) APL
 		newVal.valType = newType
 		return newVal
 	} else {
-		return &APLValueCoerced{
+		coerced := &APLValueCoerced{
 			valueType: newType,
 			inner:     value,
 		}
+		if config, ok := rot.valueConfigs[value]; ok {
+			rot.valueConfigs[coerced] = newType.String() + ":" + config
+		}
+		return coerced
 	}
 }
 

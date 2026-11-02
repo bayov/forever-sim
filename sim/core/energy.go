@@ -93,7 +93,7 @@ func (eb *energyBar) setupEnergyThresholds() {
 	// Energy thresholds from conditional comparisons.
 	for _, action := range eb.unit.Rotation.allAPLActions() {
 		for _, value := range action.GetAllAPLValues() {
-			if cmpValue, ok := value.(*APLValueCompare); ok {
+			if cmpValue, ok := aplUnmemo(value).(*APLValueCompare); ok {
 				_, lhsIsEnergy := cmpValue.lhs.(*APLValueCurrentEnergy)
 				_, rhsIsEnergy := cmpValue.rhs.(*APLValueCurrentEnergy)
 				if !lhsIsEnergy && !rhsIsEnergy {

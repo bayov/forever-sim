@@ -47,6 +47,11 @@ type APLRotation struct {
 	idleSkips int
 	idlePause int
 
+	// The config of each value, until shareConditions. See aplMemo.
+	valueConfigs map[APLValue]string
+	// Whether values in more than one line keep their results within a check.
+	keepsResults bool
+
 	// Validation warnings that occur during proto parsing.
 	// We return these back to the user for display in the UI.
 	curWarnings          []string
@@ -152,6 +157,7 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 	if defaults := rotation.levelingDefaultRests(config); len(defaults) > 0 {
 		rotation.priorityList = append(defaults, rotation.priorityList...)
 	}
+	rotation.shareConditions()
 
 	// Remove MCDs that are referenced by APL actions, so that the Autocast Other Cooldowns
 	// action does not include them.
@@ -280,12 +286,21 @@ func (apl *APLRotation) getNextAction(sim *Simulation) *APLAction {
 		return apl.controllingActions[len(apl.controllingActions)-1].GetNextAction(sim)
 	}
 
+	if !apl.keepsResults {
+		return apl.firstReady(sim)
+	}
+	outer := sim.startAPLCheck()
+	action := apl.firstReady(sim)
+	sim.endAPLCheck(outer)
+	return action
+}
+
+func (apl *APLRotation) firstReady(sim *Simulation) *APLAction {
 	for _, action := range apl.priorityList {
 		if action.IsReady(sim) {
 			return action
 		}
 	}
-
 	return nil
 }
 
