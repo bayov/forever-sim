@@ -18,7 +18,7 @@ mana_summary: 51 rows, 15 KB
 assumptions: 54 rows, 59 KB
 WARNING assumptions: 1 texts name the project's process, e.g. 'Forever client 70707 (SpellCooldowns 101119, spell 1312002). foreverchanges.pro, build 1.60.1.70707. User ruling 2026-10-30.'
 assumption_dps: 343 rows, 57 KB
-rotation: 760 rows, 433 KB
+rotation: 760 rows, 440 KB
 race_rotation: 419 rows, 251 KB
 rotation conditions shown in compact form: []
 tooltips: 1111 rows, 440 KB

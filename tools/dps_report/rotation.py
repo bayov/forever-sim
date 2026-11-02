@@ -9,6 +9,19 @@ AUTO = {'MainHand': 'main-hand', 'OffHand': 'off-hand', 'Ranged': 'ranged', 'Any
 # rotation_text.json, keyed by that read-out. PLAIN_MISSING and PLAIN_USED are for build_data.py's warnings.
 PLAIN = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rotation_text.json')))['when']
 PLAIN_MISSING, PLAIN_USED = set(), set()
+# Why a preset's line is the way it is, where that isn't obvious: rotation_text.json's "why" entries, each for its
+# builds (a duty or encounter preset takes its base build's), a line's key and, where a build has more than one line
+# with that key, a part of its condition. WHY_USED is for build_data.py's warning about entries no line uses.
+WHY = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rotation_text.json'))).get('why', [])
+WHY_USED = set()
+
+
+def why_of(bid, base, row):
+    for i, w in enumerate(WHY):
+        if (bid in w['builds'] or base in w['builds']) and w['key'] == row['key'] and w.get('when', '') in (row['when'] or ''):
+            WHY_USED.add(i)
+            return w['why']
+    return ''
 
 
 def code_like(when):
@@ -611,7 +624,10 @@ def build(req_dir, outs, nm, names, abilities, racial_race, talents=None):
     for o in outs:
         bid = o['id']
         H = _humaniser(nm, o['meta'].get('class'), talents)
-        rows += apl_rows(bid, _rotation(req_dir, bid), o['meta'].get('race'), nm, names, casts, racial_race, H)
+        mine = apl_rows(bid, _rotation(req_dir, bid), o['meta'].get('race'), nm, names, casts, racial_race, H)
+        for r in mine:
+            r['why'] = why_of(bid, o['meta'].get('baseBuild'), r) if r['section'] == 'priority' else ''
+        rows += mine
         fallbacks += H.fallbacks
     return rows, sorted(set(fallbacks))
 
@@ -695,7 +711,7 @@ def race_build(req_dir, outs, nm, names, racial_race, preset_rows, race_name, lo
                     if not src:
                         continue
                     r = dict(src, forRace=race, diff=d, base=num(i) if i is not None else None, casts=None,
-                             why=whys.get(f"{section}:{src['key'] or src['name']}", '') if d != 'same' else '')
+                             why=whys.get(f"{section}:{src['key'] or src['name']}", '') if d != 'same' else src.get('why', ''))
                     if d == 'removed':
                         r['order'] = None
                     r['otherRace'] = bool(r['race'] and r['race'] != race)

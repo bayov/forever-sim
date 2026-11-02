@@ -23,5 +23,79 @@
   "[[tal:Mage:1:11|Heating Up]] talent taken and Heating Up at 3+ stacks and ([[tal:Mage:2:15|Fingers of Frost]] talent not taken or Fingers of Frost is not up or Pyroblast takes 1.49s or more to cast)": "[[tal:Mage:1:11|Heating Up]] talent taken and Heating Up at 3+ stacks, except while Fingers of Frost is up and Pyroblast casts in under 1.49s",
   "[[tal:Mage:1:9|Improved Scorch]] talent taken and (Fire Vulnerability under 5 stacks or Fire Vulnerability has under 7s left) and ([[tal:Mage:2:15|Fingers of Frost]] talent not taken or Fingers of Frost is not up or Scorch takes 1.49s or more to cast or Fire Vulnerability under 5 stacks or Fire Vulnerability has under 4s left)": "[[tal:Mage:1:9|Improved Scorch]] talent taken and Fire Vulnerability under 5 stacks or with under 7s left. While Fingers of Frost is up and Scorch casts in under 1.49s, only under 5 stacks or with under 4s left",
   "[[tal:Mage:2:15|Fingers of Frost]] talent taken and Fingers of Frost at 1 stack and (Scorch takes 1.49s or more to cast or Frostfire Bolt is in flight)": "[[tal:Mage:2:15|Fingers of Frost]] talent taken and 1 Fingers of Frost charge left, while Scorch takes 1.49s or more to cast or a Frostfire Bolt is in flight"
- }
+ },
+ "why": [
+  {
+   "builds": [
+    "paladin__level_60"
+   ],
+   "key": "s20293",
+   "when": "or 3 when the mana",
+   "why": "Not 3: Windfury Totem's extra swing can land right after the third copy, before you can swap, and its copy is lost. When mana runs short, waiting for 3 saves seal casts."
+  },
+  {
+   "builds": [
+    "paladin__level_60_sub_holy"
+   ],
+   "key": "s20293",
+   "when": "at 2+ stacks",
+   "why": "Not 3: Windfury Totem's extra swing can land right after the third copy, before you can swap, and its copy is lost."
+  },
+  {
+   "builds": [
+    "paladin__level_60_sub_holy_undead"
+   ],
+   "key": "s20293",
+   "when": "at 3+ stacks",
+   "why": "3, not 2: fewer seal casts leave more mana for Exorcism."
+  },
+  {
+   "builds": [
+    "druid__feral-cat"
+   ],
+   "key": "s22829",
+   "when": "45+ Energy",
+   "why": "Predatory Discipline: the Energy over 35 still adds damage and isn't spent."
+  },
+  {
+   "builds": [
+    "druid__feral-cat"
+   ],
+   "key": "s1322605",
+   "why": "At 60 or less, its 40 Energy doesn't cap. Ahead of a due Bite too: on an 8 sec cooldown, any delay is Energy lost."
+  },
+  {
+   "builds": [
+    "mage__frost"
+   ],
+   "key": "s1240047",
+   "when": "Frostbolt is in flight",
+   "why": "Cast while a Frostbolt flies, on the last charge, so both hit while the boss counts as Frozen."
+  },
+  {
+   "builds": [
+    "mage__frost"
+   ],
+   "key": "s13033",
+   "when": "Frigid Power",
+   "why": "Recast before Frigid Power's 15% runs out, so it never drops."
+  },
+  {
+   "builds": [
+    "mage__arcane"
+   ],
+   "key": "s1326082",
+   "when": "More than an Arcane Wrath cast",
+   "why": "Four Arcane Blast stacks no longer use up the mana. Arcane Wrath spends the rest."
+  },
+  {
+   "builds": [
+    "mage__arcane"
+   ],
+   "key": "s12043",
+   "when": "Arcane Wrath is ready",
+   "why": "Arcane Wrath has the longest cast, so Presence of Mind saves the most on it."
+  }
+ ],
+ "_doc_why": "Why a preset's line is the way it is, shown under the line on the Rotation card: builds (a duty or encounter preset takes its base build's), the line's key, a part of its condition where a build has more than one line with that key, and the text. Keep it short; say only what isn't obvious."
 }

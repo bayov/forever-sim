@@ -2160,7 +2160,7 @@ export function startReport(dash, events) {
       !shown && r.extra ? ['t', r.extra] : null,
       !shown && r.notes ? ['m', r.notes] : null,
       was ? ['m', section === 'prepull' ? `The preset casts it at ${fmtT(+was.at)}.` : `The preset’s line: ${plainWhen(was.when) || 'when ready'}.`] : null,
-      r.why ? ['t', r.why] : null,
+      r.why && (!shown || r.diff === 'changed' || r.diff === 'added') ? ['t', r.why] : null,
       cond ? ['d', 'Exact condition', aplText(cond)] : null,
     ].filter(Boolean);
     return { ...base, icon: base.icon || r.icon, title: String(r.key && !/^oOther/.test(r.key) ? base.title : r.name), lines: [...lines, ...(base.lines && base.lines.length ? [['s'], ...base.lines] : [])] };
@@ -2293,7 +2293,7 @@ export function startReport(dash, events) {
           while (pl[i + 1] && fold(pl[i + 1], null) === why && !ann('priority', pl[i + 1].order).length && !added('priority', run[run.length - 1].order).length) run.push(pl[++i]);
           items.push(folded(run, why));
         } else {
-          const sub = ann('priority', r.order).map((g) => change(g, r));
+          const sub = [whyLine(r), ...ann('priority', r.order).map((g) => change(g, r))];
           items.push(card(r, { casts: true, sub }));
         }
         addCards(r.order);
@@ -2333,7 +2333,7 @@ export function startReport(dash, events) {
         const extends_ = d && d[0] !== 'Instead: ';
         items.push(card(r, { casts: isPreset, cls: ch ? ' ' + r.diff : '', tags: ch ? [diffTag(r, [view])] : [], sameRace: ch && r.race === view,
           when: extends_ ? [...richWhen(was.when, b.id), el('mark', { class: 'fv-add', title: `Added for ${view}` }, ' and ', ...richWhen(d[1], b.id))] : null,
-          sub: [d && !extends_ ? el('span', { class: 'fv-was' }, el('b', { text: 'Instead of: ' }), ...richWhen(was.when || 'when ready', b.id)) : null, ch ? whyLine(r) : null] }));
+          sub: [d && !extends_ ? el('span', { class: 'fv-was' }, el('b', { text: 'Instead of: ' }), ...richWhen(was.when || 'when ready', b.id)) : null, whyLine(r)] }));
       }
       dropTo(Infinity);
       note = [isPreset ? `The rotation as simmed for ${view}, the preset’s race.`
