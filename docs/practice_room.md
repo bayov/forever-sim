@@ -1078,7 +1078,7 @@ rendering, not the sim.
 **Real models (steps 0, 6 and 8, 2026-11-02):**
 
 - The server extracts client files with TACTTool's Linux build (`-tact`, in `~/forever-practice/tools/tact-linux`)
-  into `~/forever-practice/assets/`. TACTTool fails on links inside the WoW folder, so it reads a folder of its own
+  into `~/forever-practice/assets/<client build>/`. TACTTool fails on links inside the WoW folder, so it reads a folder of its own
   (`~/forever-practice/wow`) with the install's `.build.info` and a link to `Data`. A run takes about 2s. Files asked
   for within 40ms share a run, and a model's skin, textures and skeleton are queued as soon as it comes out.
 - Game tables come from wago.tools by the client's build (`cmd/practice/db2.go`).
@@ -1088,17 +1088,39 @@ rendering, not the sim.
 - `visuals.go` reads spell visual kits (sounds, effect models on attachment points, the cast animations, missiles),
   imbue glows, melee swing and impact sounds, unit sounds and the totem models.
 - The page (`ui/practice/wow/`) reads M2, skin, .anim and BLP files, paints the body texture, builds Three.js
-  skinned meshes, plays animations with fades and upper body swings while running, runs M2 particle emitters, and
-  plays sounds through a listener on the camera. `viewer.html?model=<fdid>` or `?char=race=2&sex=0&class=7&items=...`
+  skinned meshes, plays animations with fades and upper body swings while running, runs M2 particle emitters and
+  ribbons, and plays the sounds. `viewer.html?model=<fdid>` or `?char=race=2&sex=0&class=7&items=...`
   shows one model for checks.
 - Checked in headless Chrome: the dressed Orc stands, runs, swings, casts, sheathes, and Lightning Bolt,
   Lightning Shield, the imbue glows and the totems show their effects. The dummy is the wooden dummy (display 3019).
 
+**Audit and fixes (2026-11-02, second pass):** four audits (animation, effects, sound, rendering), then:
+
+- The room loads every model, texture, animation, effect and sound behind a loading bar before the session starts.
+- A spell with a cast time goes off at the cast's end (the sim reports casts at their start).
+- Movement turns the body like the client: 90 degrees on a strafe, 45 on a diagonal, the opposite diagonal while
+  backing up. Turning in place shuffles. The backpedal plays at the walk's pace. The landing run plays out.
+- Swings: the impact sound and the dummy's flinch wait for the swing's `$HIT` event, the whoosh for `$CSS`, and
+  footsteps follow `$FSD` (M2 events). Auto attack draws the weapon with its animation and sound. Swing variations
+  play at random, crits flinch harder, the upper body fades in and out, and a switch mid fade doesn't pop.
+- Sound: plain stereo panning (the browser's HRTF mode muffled the files), the listener at your character, your
+  own sounds flat, a limiter, the kits' pitch and volume variation, cooldowns and fades, looping precast and
+  missile sounds, Orc attack grunts on crits and specials (a guess: no table says when the client plays them),
+  weapon draw and sheathe, and the Orc's spoken errors.
+- Effects: birth, hold and decay animations instead of fixed lifetimes, impacts of spells with no damage (shields,
+  imbues, heals), the client's proc spells (Windfury, Flametongue, Frostbrand: `HitEvent.visualSpellId`), the
+  off hand imbue glow, the Searing Totem's bolts (precast, missile, impact, `HitEvent.nextAt`), Magma pulses and
+  Fire Nova's ring on the fire totem, totem birth and death, the totems' buffs on you, and the Ghost Wolf model.
+- Particles: packed gravity, key times, sphere emitters, spin, colors, blend modes and model scale. Rendering:
+  billboard bones, second textures and env maps, the client's blend modes and lighting, sRGB colors, gear glows.
+
 **Not done yet:**
 
-- Models: `.skel` skeletons (the Orc model doesn't use one), ribbons, texture animation, particle splines and
-  multi-texture particles, looping sounds (the precast hum), the character's real look (the client's files don't
-  have it, so customization is the defaults and sex is a choice, `practice.modelSex` in local storage).
+- Models: `.skel` skeletons (the Orc model doesn't use one), texture animation, particle splines, tails and
+  twinkle, Chain Lightning's arc, the character's real look (the client's files don't have it, so customization is
+  the defaults and sex is a choice, `practice.modelSex` in local storage).
+- To check in game: Lightning Shield's orb count (one orb model, maybe one per charge), when the Orc grunts,
+  whether expiring totems sink, which Flametongue proc id the client shows, and what particle flag 0x10 means.
 - The BayovCore probe and the feel pass (step 9). The feel checklist is `docs/practice_room_feel.md`.
 - Opening an attempt in the Replay view, Keyboard Lock and fullscreen, pointer raw input and the spell queue's
   cooldown case (check).
