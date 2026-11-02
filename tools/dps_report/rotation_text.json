@@ -31,7 +31,7 @@
    ],
    "key": "s20293",
    "when": "or 3 when the mana",
-   "why": "Not 3: Windfury Totem's extra swing can land right after the third copy, before you can swap, and its copy is lost. When mana runs short, waiting for 3 saves seal casts."
+   "why": "Why swap at 2 echoes instead of 3? Windfury's extra swing can waste an echo. When short on mana, waiting for 3 is worth it."
   },
   {
    "builds": [
@@ -39,7 +39,7 @@
    ],
    "key": "s20293",
    "when": "at 2+ stacks",
-   "why": "Not 3: Windfury Totem's extra swing can land right after the third copy, before you can swap, and its copy is lost."
+   "why": "Why swap at 2 echoes instead of 3? Windfury's extra swing can waste an echo."
   },
   {
    "builds": [
@@ -47,7 +47,7 @@
    ],
    "key": "s20293",
    "when": "at 3+ stacks",
-   "why": "3, not 2: fewer seal casts leave more mana for Exorcism."
+   "why": "Why wait for 3 echoes? Fewer seal casts leave more mana for Exorcism."
   },
   {
    "builds": [
@@ -55,14 +55,14 @@
    ],
    "key": "s22829",
    "when": "45+ Energy",
-   "why": "Predatory Discipline: the Energy over 35 still adds damage and isn't spent."
+   "why": "Why 45 Energy? Predatory Discipline keeps the Energy above 35, and it still adds damage."
   },
   {
    "builds": [
     "druid__feral-cat"
    ],
    "key": "s1322605",
-   "why": "At 60 or less, its 40 Energy doesn't cap. Ahead of a due Bite too: on an 8 sec cooldown, any delay is Energy lost."
+   "why": "Why at 60 Energy or less, even with a Bite due? Its 40 Energy won't cap, and with an 8 sec cooldown any delay loses Energy."
   },
   {
    "builds": [
@@ -70,7 +70,7 @@
    ],
    "key": "s1240047",
    "when": "Frostbolt is in flight",
-   "why": "Cast while a Frostbolt flies, on the last charge, so both hit while the boss counts as Frozen."
+   "why": "Why wait for a Frostbolt in flight? Both then hit while the boss counts as Frozen."
   },
   {
    "builds": [
@@ -78,7 +78,7 @@
    ],
    "key": "s13033",
    "when": "Frigid Power",
-   "why": "Recast before Frigid Power's 15% runs out, so it never drops."
+   "why": "Why recast with 6 sec left? So Frigid Power's 15% never drops."
   },
   {
    "builds": [
@@ -86,7 +86,7 @@
    ],
    "key": "s1326082",
    "when": "More than an Arcane Wrath cast",
-   "why": "Four Arcane Blast stacks no longer use up the mana. Arcane Wrath spends the rest."
+   "why": "Why Arcane Wrath? Four Arcane Blast stacks no longer use up your mana, so it spends the rest."
   },
   {
    "builds": [
@@ -94,8 +94,8 @@
    ],
    "key": "s12043",
    "when": "Arcane Wrath is ready",
-   "why": "Arcane Wrath has the longest cast, so Presence of Mind saves the most on it."
+   "why": "Why Presence of Mind on Arcane Wrath? It's the longest cast."
   }
  ],
- "_doc_why": "Why a preset's line is the way it is, shown under the line on the Rotation card: builds (a duty or encounter preset takes its base build's), the line's key, a part of its condition where a build has more than one line with that key, and the text. Keep it short; say only what isn't obvious."
+ "_doc_why": "Why a preset's line is the way it is, shown under the line on the Rotation card: builds (a duty or encounter preset takes its base build's), the line's key, a part of its condition where a build has more than one line with that key, and the text. Keep it short and say only what isn't obvious, as a question and its answer (\"Why swap at 2 echoes instead of 3? ...\"); the card then shows no \"Why:\" label."
 }

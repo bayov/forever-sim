@@ -1525,7 +1525,6 @@ ol.fv-list li::marker {
 	color: #ff8f2a;
 }
 
-
 [data-dash-source-state='refreshing'] {
 	opacity: 0.5;
 	transition: opacity var(--cds-dur-slow);
@@ -2675,11 +2674,11 @@ div.tt-embed:not(.fv-tt) {
 	box-decoration-break: clone;
 }
 
-// why a race changes a line
+// why a line is as it is, or why a race changes it
 .fv-why {
 	font-size: var(--cds-font-size-caption);
 	line-height: 1.4;
-	color: var(--color-fg-muted);
+	color: var(--fv-gold);
 }
 
 .fv-rv .fv-why {
@@ -2688,7 +2687,6 @@ div.tt-embed:not(.fv-tt) {
 
 .fv-why b {
 	font-weight: 600;
-	color: var(--color-fg);
 }
 
 .fv-pr .fv-was {
@@ -3365,7 +3363,6 @@ div.tt-embed:not(.fv-tt) {
 		column-gap: var(--spacer-4);
 		align-items: start;
 	}
-
 }
 
 .fv-asm-txt {
