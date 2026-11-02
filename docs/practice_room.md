@@ -42,6 +42,9 @@ findings. Then updated with the user's answers the same day.
 8. **Ping is modeled** (the user, 2026-11-02), as a setting with your in-game latency.
 9. **You do the prepull** (the user, 2026-11-02): totems, imbues and buffs before the pull are your own casts.
 10. **Fixed fight length** (the user, 2026-11-02).
+11. **It plays like WoW** (the user, 2026-11-02). Movement, casting, the camera and the small quirks match the game as
+    closely as we can, so you play the way you do in game and the sim result is accurate. See
+    [Playing like WoW](#playing-like-wow).
 
 ## Separation from the regular sim
 
@@ -162,8 +165,9 @@ The client predicts what WoW predicts: the button press, the GCD spin and the ca
 rolls them back with the game's error text ("Not enough mana", "Out of range"). Resources and outcomes always come
 from the sim. In M1 the worker answers within a frame, but building it this way now means M4 isn't a rewrite.
 
-A latency setting (your in-game ping) delays inputs before they reach the sim. Without it the room plays better than
-the game does.
+A latency setting (your in-game ping) splits the round trip the way the game does: an input reaches the sim half a ping
+after the press, and the sim's answer reaches the screen half a ping later. The client still shows its predictions at
+once. Without this the room plays better than the game does.
 
 ### Replays
 
@@ -196,7 +200,8 @@ How the world talks to the sim, all through what the core exports:
 - **Checks the core doesn't make in a normal run:** spell range (the core checks it only in leveling,
   `spell.go:548`), facing for casts and melee, the behind check, and no hard casts while moving. The session checks
   these before an input becomes a cast, and answers with the game's error text.
-- Run speed 7 yd/s, backpedal 4.5 yd/s. Hit box sizes and line of sight come with bosses in M2.
+- Speeds, range rules and facing arcs are in [Playing like WoW](#playing-like-wow). Line of sight comes with bosses
+  in M2.
 
 ### Events out of the sim
 
@@ -229,14 +234,102 @@ real action bars are new code.
 - **Animations by AnimationData id:** stand 0, run 5, one hand attack 17, ready 26, precast 31, cast 32, channel 76
   and 77. Attacking while running blends the upper body over the run. Some spells name their own animation through
   their visual kit.
-- **Camera from your CVars:** turn speed (`cameraYawMoveSpeed`), max zoom, smoothing. Right drag turns you, left drag
-  orbits, both buttons run forward.
-- **Targeting:** click picks a unit's cylinder, not its mesh. Tab picks the nearest enemy in front, then cycles.
-  `@mouseover` is the unit under the cursor. Nameplates are HTML placed from 3D positions.
+- **Camera and targeting:** see [Playing like WoW](#playing-like-wow). Nameplates are HTML placed from 3D positions.
 - **Frame pacing:** movement runs at a fixed step and the screen interpolates at 60 to 144Hz.
 - **Audio** starts on the "Enter fullscreen" click, since browsers block it before a user gesture. Sound files are
   decoded ahead of time.
 - **Loading:** `instantiateStreaming` so Chrome caches the compiled 39 MB wasm.
+
+## Playing like WoW
+
+The room is only as accurate as your play in it. If the camera, movement or casting feel off, you play differently
+than in game, and the result means less. So every rule here copies the game, and every number is measured against
+the Forever client, not guessed. A value marked "check" is our best knowledge until it is measured.
+
+All of it lives in `sim/practice` and `ui/practice`. None of it changes the sim core.
+
+### Movement
+
+| Rule | Value | Status |
+| --- | --- | --- |
+| Run, strafe | 7 yd/s | check |
+| Backpedal, also backpedal plus strafe | 4.5 yd/s | check |
+| Walk | 2.5 yd/s | check |
+| Forward plus strafe | 7 yd/s, not faster | check |
+| Turn with keys | 180°/s | check |
+| Turn with right drag | at once, to where the camera looks | |
+| Jump | height and air time measured in game, direction locked in the air, you can still turn | check |
+
+- Both mouse buttons held runs forward. Autorun (Num Lock by default) runs until you press a movement key.
+- Units don't collide with each other. You walk through the dummy and other players, as in game. Unit cylinders are
+  only for clicks and range.
+- Moving or jumping stops a hard cast or channel. Turning in place doesn't. Instants work while moving and in the air.
+- Starting a cast while moving fails with "You can't do that while moving".
+
+### Range and facing
+
+- **Melee range** is the larger of 5 yards and the two units' combat reach plus 4/3 yards. When both units move (not
+  walking), it grows by 8/3 yards, which is why you can keep hitting a running target. Status: check.
+- **Spell range** is the spell's range measured between the two units' edges, not their centers. Status: check.
+- **Facing:** melee and most spells need the target in your front half circle, or they fail with "You are facing the
+  wrong way!". Backstab style abilities need you outside the target's front half. Parry and block only happen from the
+  front, which the sim already handles through `InFrontOfTarget`.
+- **Out of range:** auto attack stays on and stops swinging. It resumes when you're back in range. Abilities fail with
+  "Out of range." or "You are too far away!".
+
+### Casting and attacking
+
+- **Spell queue:** a press within `SpellQueueWindow` (400ms by default) before the GCD or a cast ends fires the moment
+  it ends. Only one spell is queued, and the last press wins.
+- **Key down or key up** follows `ActionButtonUseKeyDown`. Holding a key doesn't repeat the cast. Status: check.
+- **Auto attack** starts with a melee ability, `/startattack`, or a right click on the target. Whether it moves to a
+  new target when you switch targets is a check.
+- **Modifiers** for macros are read at the moment of the press.
+- **Errors** show in red at the top center with the game's error sound, at the game's rate: "Spell is not ready yet.",
+  "Another action is in progress", "Not enough mana", and the ones above.
+
+### Targeting
+
+- Left click picks a unit by its cylinder, not its mesh. Right click targets and attacks.
+- Tab picks the nearest enemy in front of you, then cycles. Esc clears the target.
+- `@mouseover` is the unit under the cursor. `deselectOnClick` decides whether clicking the ground clears the target.
+
+### Camera
+
+- **Left drag** orbits the camera around you without turning you. **Right drag** turns you to the camera's direction,
+  and pitches the camera.
+- While you drag, the cursor hides and comes back where it was when you let go, as in game. Pointer Lock does this.
+- Mouse speed follows `cameraYawMoveSpeed`, `cameraPitchMoveSpeed` and `mouseSpeed`, with raw mouse input
+  (`unadjustedMovement`, Chrome only).
+- **Following:** when you move, the camera swings back behind you the way `cameraSmoothStyle` says. Each of its values
+  is copied.
+- **Zoom** steps by mouse wheel, up to the game's maximum times `cameraDistanceMaxZoomFactor`. The camera pulls in
+  when the ground is in the way. The field of view, the pivot height at the head and the pitch limits are measured from
+  the game. Status: check.
+
+### Feedback
+
+- **Sounds:** weapon swings and impacts, cast start and finish, proc sounds, the error sound, and your WeakAuras'
+  sounds. Many players react to sounds more than to icons.
+- **Combat text** in your MSBT style, and your EllesmereUI frames and WeakAuras as in game.
+- **Animations** match the sim: the attack animation lands on the sim's swing time, and the cast animation follows
+  the cast bar.
+
+### Input and frames
+
+- Key and mouse events carry their own timestamps, so a press counts at the moment you pressed, not at the next frame.
+- The screen runs at your monitor's rate (60 to 144Hz or more), with movement on a fixed step and drawn smoothly
+  between steps.
+
+### Checking the feel
+
+1. **Measured numbers.** Each "check" above gets measured in game and in the room, the same way:
+   - movement, turning and jumps from a short BayovCore probe that logs your position and facing every frame
+     (`UnitPosition` works outside instances) while you run a set path
+   - cast, GCD and swing timing from the combat log
+   - camera zoom, field of view and turn speed from screen recordings of the same moves
+2. **Side by side.** The same short fight on the in-game dummy and in the room, with the logs compared.
+3. **A feel checklist** you play through after each change to movement, camera or casting, one line per rule above.
 
 ## Assets (local only)
 
@@ -470,6 +563,8 @@ Each step says when it's done.
    fight summary. Done when a headless Chrome smoke test plays a scripted fight.
 8. Your gear on the model: dressed character, attachments, sheathing, icons and sounds. Done when your character
    fights the dummy with your gear on.
+9. The feel pass: every "check" in [Playing like WoW](#playing-like-wow) measured in game and matched, and the feel
+   checklist played through. Movement and camera get measured as soon as step 6 is in, not only at the end.
 
 **M2: a boss.** A boss that hits back and moves, with simple mechanics (stand still, move out, interrupt) that change
 the best rotation. Line of sight and hit box sizes. The boss's movement and mechanics live in `sim/practice` and use
