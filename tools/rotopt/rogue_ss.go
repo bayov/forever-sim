@@ -35,8 +35,7 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 	}
 	items = append(items,
 		cast(eviscerate, c.evisWhen, ""),
-		cast(sinisterStrike, builderWhen(k["ssAfterSwing"], k["ssEnergy"]),
-			"Sinister Strike right after a main hand swing so an extra attack proc restarts a swing that just happened, or when energy is about to cap."),
+		cast(sinisterStrike, builderWhen(k["ssAfterSwing"], k["ssEnergy"]), builderNotes("Sinister Strike", k["ssAfterSwing"], k["ssEnergy"])),
 	)
 	rot := rotation(items...)
 	rot.PrepullActions = c.prepull

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_subtlety",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 757.6,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 758.4,
+    "source": "verify.py on this request after the 2026-11-02 rotation re-search (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s); the report is not regenerated yet"
   },
   "verify": {
-    "dps": 757.6,
+    "dps": 758.4,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on this request (2026-11-02, after the rotation re-search), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Subtlety with Murder 2/2, for a Humanoid or Giant boss.",
   "advantage": "Murder 2/2 adds 4% damage against Humanoids and Giants. It does nothing against other bosses.",
@@ -50,7 +50,7 @@
     "Eviscerate at 5 combo points",
     "Vanish into Ambush at 3 combo points or fewer, after pooling energy. A Night Elf uses Shadowmeld the same way. Preparation resets Vanish and Premeditation",
     "Ghostly Strike on cooldown",
-    "Hemorrhage as filler"
+    "Hemorrhage as filler whenever it's affordable"
   ],
   "consumes": [
     "Flask of Natural Precision",
@@ -77,7 +77,7 @@
     "Assumed: the fight is in Hyjal or the Barrow Deeps. The flask gives its full bonus only there.",
     "No Flask of Natural Precision. Its 8% hit comes from gear (7% on the wrist, second ring and back) and the 2-piece bonus. That beats 6% hit by 1.2 to 1.9 DPS."
   ],
-  "notes": "Request from mksettings with the same arguments as rogue__subtlety except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Undead since the second 2026-10-27 race re-pick (follows its base build, rogue__subtlety) (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Night Elf. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
+  "notes": "Request from mksettings with the same arguments as rogue__subtlety except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Undead since the second 2026-10-27 race re-pick (follows its base build, rogue__subtlety) (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Night Elf. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Rotation searched again on 2026-11-02 (tools/rotopt/rogue_presets.sh): the builder goes out whenever it is affordable, since an extra attack keeps the swing timer under Forever (2026-10-30); the request's rotation is the regenerated APL.",
   "encounter": "Humanoid",
   "baseBuild": "rogue__subtlety"
 }

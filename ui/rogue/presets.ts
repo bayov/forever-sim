@@ -31,6 +31,7 @@ import { Stats } from '../core/proto_utils/stats.js';
 import Level60CombatDaggersAPL from './apls/level60_combat_daggers.apl.json';
 import Level60CombatSwordsAPL from './apls/level60_combat_swords.apl.json';
 import Level60MutilateAPL from './apls/level60_mutilate.apl.json';
+import Level60SealFateDaggersAPL from './apls/level60_seal_fate_daggers.apl.json';
 import Level60SealFateSwordsAPL from './apls/level60_seal_fate_swords.apl.json';
 import Level60SubtletyAPL from './apls/level60_subtlety.apl.json';
 import Level60SyntheticCombatDaggersGear from './gear_sets/level60_phase1_synthetic_combat_daggers.gear.json';
@@ -135,7 +136,7 @@ export const DefaultGear = GearLevel60SyntheticCombatDaggers;
 
 // The Level 60 rotations, from the tools/rotopt searches on the synthetic Phase 1 sets with the
 // talents below (knob search, talent search, knob search again, 180 sec, see rogue_presets.sh).
-// Seal Fate Daggers uses the Combat Daggers rotation, the knob search kept every knob. Seal Fate Swords
+// Seal Fate Daggers used the Combat Daggers rotation until 2026-11-02 (see below). Seal Fate Swords
 // is the Combat Swords rotation with 4 point Eviscerates (2026-10-23, on the 8% sets: Seal Fate's extra
 // points make the fifth come too late, +0.1 to +1.0 at 120 / 180 / 300 sec on both seed sets, +0.7 to
 // +2.0 with its new talents). Mutilate Vanishes into an Ambush at 3 points or fewer since the same day
@@ -145,6 +146,12 @@ export const DefaultGear = GearLevel60SyntheticCombatDaggers;
 // seldom reach: +8.9 / +5.4 at 180 sec for the Gnome (20000 iterations, seed 1), 0.0 for other races.
 // Both are Undead since the second re-pick that day; the rotation keeps Eureka! on cooldown (a no-op for
 // the Undead), so it stays the Gnome's rotation too.
+// Since the 2026-11-02 search (120, 180 and 300 sec together, each change kept only for 2 standard errors
+// at 20000 iterations on seeds 1 and 1000003) every builder goes out whenever it is affordable: an extra
+// attack keeps the swing timer under Forever since 2026-10-30, so a builder timed after a main hand swing
+// only waits. Combat Daggers also drops its Vanish into Ambush and refreshes Slice and Dice with 1 sec left
+// instead of 3, which costs Seal Fate Daggers 0.3, so Seal Fate Daggers has its own rotation again (the
+// Combat Daggers one with the Vanish and the 3 sec refresh). The numbers are above PresetBuildLevel60CombatDaggers.
 export const ROTATION_PRESET_LEVEL60_COMBAT_SWORDS = PresetUtils.makePresetAPLRotation('Combat Swords', Level60CombatSwordsAPL, {
 	tooltip: 'Sinister Strike, Slice and Dice and 5 point Eviscerates, Blade Flurry before the pull.',
 	group: 'Synthetic',
@@ -154,8 +161,11 @@ export const ROTATION_PRESET_LEVEL60_SEAL_FATE_SWORDS = PresetUtils.makePresetAP
 	group: 'Synthetic',
 });
 export const ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS = PresetUtils.makePresetAPLRotation('Combat Daggers', Level60CombatDaggersAPL, {
-	tooltip:
-		'Backstab, Slice and Dice and 4 point Eviscerates, Vanish into Ambush, Blade Flurry before the pull, Eureka! on cooldown. Also the Seal Fate Daggers rotation.',
+	tooltip: 'Backstab, Slice and Dice and 4 point Eviscerates, Blade Flurry before the pull, Eureka! on cooldown.',
+	group: 'Synthetic',
+});
+export const ROTATION_PRESET_LEVEL60_SEAL_FATE_DAGGERS = PresetUtils.makePresetAPLRotation('Seal Fate Daggers', Level60SealFateDaggersAPL, {
+	tooltip: 'Backstab, Slice and Dice and 4 point Eviscerates, Vanish into Ambush at 3 points or fewer, Eureka! on cooldown.',
 	group: 'Synthetic',
 });
 export const ROTATION_PRESET_LEVEL60_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate', Level60MutilateAPL, {
@@ -172,6 +182,7 @@ export const APLPresets = {
 		ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 		ROTATION_PRESET_LEVEL60_SEAL_FATE_SWORDS,
 		ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+		ROTATION_PRESET_LEVEL60_SEAL_FATE_DAGGERS,
 		ROTATION_PRESET_LEVEL60_MUTILATE,
 		ROTATION_PRESET_LEVEL60_SUBTLETY,
 	],
@@ -179,6 +190,7 @@ export const APLPresets = {
 		ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 		ROTATION_PRESET_LEVEL60_SEAL_FATE_SWORDS,
 		ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+		ROTATION_PRESET_LEVEL60_SEAL_FATE_DAGGERS,
 		ROTATION_PRESET_LEVEL60_MUTILATE,
 		ROTATION_PRESET_LEVEL60_SUBTLETY,
 	],
@@ -532,6 +544,18 @@ export const EncounterLevel60CombatDaggersHumanoid = level60Encounter('Combat Da
 // seed 1): Combat Daggers 773.3 against the Gnome's 770.5, Seal Fate Daggers 734.9 against the Gnome's
 // 730.6, Combat Swords 765.4 against the Windshaper's 759.1, Subtlety 717.2 against the Night Elf's 714.9.
 // Their vs Humanoid builds follow.
+// Rotation re-search (2026-11-02; an extra attack keeps the swing timer since 2026-10-30, so the builders
+// no longer wait for a main hand swing): rotopt at 120 / 180 / 300 sec, 20000 iterations, seed 1 (seed
+// 1000003 within 0.8 of the same gain), before and after:
+//   Combat Daggers      813.2 / 788.9 / 768.8  ->  815.3 / 790.8 / 770.7 (also no Vanish, 1 sec Slice and Dice refresh)
+//   Combat Swords       804.3 / 777.0 / 755.9  ->  810.5 / 782.1 / 761.2
+//   Seal Fate Daggers   764.4 / 751.4 / 742.0  ->  766.1 / 752.9 / 743.7
+//   Seal Fate Swords    755.0 / 743.2 / 732.6  ->  759.0 / 747.1 / 736.6
+//   Mutilate            754.7 / 742.7 / 734.4  ->  755.7 / 743.8 / 735.5
+//   Subtlety            747.5 / 732.1 / 722.3  ->  747.9 / 732.9 / 723.4
+// Every build stays Undead (180 sec, 20000 iterations, seed 1, each race with its own rotation): 2.7 to
+// 6.2 ahead of the next race (the Orc, the Gnome or the Night Elf); the best Alliance race is the Gnome (the Night Elf on
+// Subtlety).
 // The weapons have the type and speed each build sims best with among Era Phase 1 BiS speeds
 // (standards 22), at the Era BiS weapons' damage per second. A slow main hand and a fast off hand win:
 // Combat Swords holds a 2.9 sec axe and a 2.5 sec mace, Combat Daggers a 1.8 sec dagger and the same
@@ -588,7 +612,7 @@ export const PresetBuildLevel60SealFateDaggers = level60Build(
 	'Level 60 Undead Seal Fate Backstab on the synthetic Phase 1 daggers.',
 	GearLevel60SyntheticDaggers,
 	TalentsLevel60SealFateDaggers,
-	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+	ROTATION_PRESET_LEVEL60_SEAL_FATE_DAGGERS,
 	EncounterLevel60,
 	Race.RaceUndead,
 );
@@ -651,7 +675,7 @@ export const PresetBuildLevel60SealFateDaggersHumanoid = humanoidBuild(
 	'Seal Fate Daggers',
 	GearLevel60SyntheticDaggers,
 	TalentsLevel60SealFateDaggersHumanoid,
-	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+	ROTATION_PRESET_LEVEL60_SEAL_FATE_DAGGERS,
 	Race.RaceUndead,
 );
 export const PresetBuildLevel60CombatSwordsHumanoid = humanoidBuild(

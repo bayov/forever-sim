@@ -932,59 +932,9 @@
             "spellId": {
               "spellId": 1310707
             }
-          },
-          "condition": {
-            "and": {
-              "vals": [
-                {
-                  "or": {
-                    "vals": [
-                      {
-                        "cmp": {
-                          "lhs": {
-                            "autoTimeToNext": {
-                              "autoType": "MainHand"
-                            }
-                          },
-                          "op": "OpGt",
-                          "rhs": {
-                            "math": {
-                              "lhs": {
-                                "autoSwingTime": {
-                                  "autoType": "MainHand"
-                                }
-                              },
-                              "op": "OpSub",
-                              "rhs": {
-                                "const": {
-                                  "val": "0.75s"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "cmp": {
-                          "lhs": {
-                            "remainingTime": {}
-                          },
-                          "op": "OpLt",
-                          "rhs": {
-                            "const": {
-                              "val": "6s"
-                            }
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
           }
         },
-        "notes": "Mutilate as the builder, 2 combo points for the energy of a Backstab. Backstab takes over when the off hand is not a dagger."
+        "notes": "Mutilate as the builder (2 combo points for the energy of a Backstab), whenever it is affordable. Backstab takes over when the off hand is not a dagger."
       },
       {
         "action": {
@@ -992,69 +942,19 @@
             "spellId": {
               "spellId": 25300
             }
-          },
-          "condition": {
-            "and": {
-              "vals": [
-                {
-                  "or": {
-                    "vals": [
-                      {
-                        "cmp": {
-                          "lhs": {
-                            "autoTimeToNext": {
-                              "autoType": "MainHand"
-                            }
-                          },
-                          "op": "OpGt",
-                          "rhs": {
-                            "math": {
-                              "lhs": {
-                                "autoSwingTime": {
-                                  "autoType": "MainHand"
-                                }
-                              },
-                              "op": "OpSub",
-                              "rhs": {
-                                "const": {
-                                  "val": "0.75s"
-                                }
-                              }
-                            }
-                          }
-                        }
-                      },
-                      {
-                        "cmp": {
-                          "lhs": {
-                            "remainingTime": {}
-                          },
-                          "op": "OpLt",
-                          "rhs": {
-                            "const": {
-                              "val": "6s"
-                            }
-                          }
-                        }
-                      }
-                    ]
-                  }
-                }
-              ]
-            }
           }
         },
-        "notes": "Backstab."
+        "notes": "Backstab whenever it is affordable."
       }
     ]
   },
   "note": "Rotation tuned for Eureka!: on cooldown (eurekaCp 0) instead of held for a 5 point Eviscerate, which this 4 point Eviscerate build seldom reaches",
   "gain": {
-    "dps": 4.04,
-    "se": 0.26,
+    "dps": 3.4,
+    "se": 0.28,
     "iterations": 20000,
     "seed": 1,
     "duration": 180
   },
-  "how": "rotopt template rogue_mut, eurekaCp=0 on the preset's knobs (+4.04), then one pass at Gnome from there, which kept it (-race Gnome -durs 180 -combined -iters 2500 -confirm-iters 20000, settings tools/dps_report/req/rogue__mutilate.json); knobs arEnergy=59,arSnd=0,berserkingHoldForBf=0,bfHoldForAr=0,bfPrepull=0,bfSnd=0,bloodFuryHoldForAr=1,bloodFurySnd=0,bsAfterSwing=0.75,bsEnergy=0,bsStacks=0,cbPool=0,cbSnd=6,eluneHoldForAr=1,eurekaCp=0,eurekaSnd=8,evisCp=4,evisEnergy=79,ghostly=0,hemoFiller=0,hemoForRupture=1,meldCp=3,mutilate=1,premedCp=9,ruptureCp=0,ruptureSnd=6,sndCp=1,sndRefresh=1,sndRefreshCp=5,teaEnergy=10,trinketHoldForAr=0,trinketSnd=0,vanishCp=3,vanishPool=0,venomCp=0,venomRefresh=2. Gain from paired 20000-iteration sims, seed 1, se = sqrt(se_a^2 + se_b^2). The same rotation at the preset's SkyborneWindshaper: +0.00 \u00b1 0.26."
+  "how": "rotopt template rogue_mut, eurekaCp=0 on the preset's knobs, re-made on 2026-11-02 after the preset's builder went to whenever it is affordable (+3.4: 737.6 against the preset rotation's 734.2 at Gnome, -race Gnome -durs 180 -eval -confirm-iters 20000 -seed 1, settings tools/dps_report/req/rogue__mutilate.json); preset knobs sndRefresh=1,evisCp=4,vanishCp=3. se = sqrt(se_a^2 + se_b^2). The same rotation at the preset's Undead is the preset's, Eureka! being Gnome only."
 }
