@@ -51,8 +51,10 @@ answers.
 7. **One iteration, no averages** (the user, 2026-11-02). The room sims only the fight you play. It doesn't run other
    seeds or compare with the sim's average, for now.
 8. **Ping is modeled** (the user, 2026-11-02), as a setting with your in-game latency.
-9. **You do the prepull** (the user, 2026-11-02): totems and buffs before the pull are your own casts.
-10. **Fixed fight length** (the user, 2026-11-02).
+9. **You do the prepull, and you start the fight** (the user, 2026-11-02). Totems and buffs before the pull are your
+   own casts. There is no countdown and no timer before the pull. As with a training dummy in game, the fight starts
+   with your first attack. Nothing in the room acts for you.
+10. **Fixed fight length** (the user, 2026-11-02), counted from your first attack.
 11. **It plays like WoW** (the user, 2026-11-02). Movement, casting, the camera and the small quirks match the game as
     closely as we can, so you play the way you do in game and the sim result is accurate. See
     [Playing like WoW](#playing-like-wow).
@@ -107,7 +109,7 @@ five workspaces, so extracted game files inside the repo would end up in commits
 | --- | --- | --- |
 | `Simulation.NextEventTime()`, read-only | `Run(until)` stops before the next event without moving the clock | none, nothing calls it |
 | `Unit.ManualControl bool`, default false | `DoNextAction` returns at once for your unit, after the due hard cast block (`apl.go:209`) | one bool check per `DoNextAction` |
-| `AutoAttacks.SkipPullStart bool`, default false | the pull leaves your auto attacks off until you start attacking | one bool check per unit at the pull |
+| `AutoAttacks.SkipPullStart bool`, default false | the sim's pull at time 0 leaves your auto attacks off | one bool check per unit at the pull |
 
 `ManualControl` is needed because an empty APL isn't idle. Each time it finds nothing to do, it waits 50ms through
 `WaitUntil`, which sets the GCD (`apl.go:227`, `gcd.go:90`). It runs after every swing, cast, and energy or rage tick
@@ -163,15 +165,34 @@ are all exported:
 2. A nonzero seed picked by the session and stored with the attempt. Seed 0 would mean "pick from the clock", and the
    picked seed isn't readable from outside (`sim.go:30`).
 3. `Reset()`, then `PrePull()`.
-4. Set `CurrentTime` to the earlier of its value and minus the countdown (10s by default). This comes after `PrePull`,
-   because `PrePull` sets the clock when prepull actions exist (`sim.go:686`, a druid talent registers one).
+4. Set `CurrentTime` to the earlier of its value and minus the free time window (10 minutes). This comes after
+   `PrePull`, because `PrePull` sets the clock when prepull actions exist (`sim.go:686`, a druid talent registers one).
 5. Set `sim.Log`, since only the sim's own run sets it (`sim.go:373`). Write your distance and facing, since `Reset`
    clears them (`unit.go:553`).
 6. Your unit gets an empty APL and `ManualControl`, so it never acts on its own, and its auto attacks get
    `SkipPullStart`, so they start off. Other units (the boss, pets, later the raid bots) keep their own APL.
 
-The countdown starts when you press the Start key or button. The pull is at time 0. When you turn auto attack on
-during the countdown, the first swing comes at the pull.
+### The pull
+
+The sim's fight always starts at time 0: its encounter length, execute phases and pull are all counted from there.
+But you decide when the fight starts, by attacking, so the room can't know in advance how long your prepull is. It
+solves that by shifting time at the moment you attack:
+
+1. Before the pull, the session runs the sim live from minus 10 minutes. You walk around, drop totems, buff, and see
+   your mana and cooldowns move. Nothing harmful has happened yet.
+2. Your first harmful action is the pull: a harmful spell or ability starting, or auto attack turning on with an
+   enemy in melee range. Its apply time is `t`, still below 0.
+3. The session swaps in a fresh sim (built ahead of time in the background, with the same seed) and feeds it your
+   inputs so far, each moved by minus `t`. Your attack now lands at exactly 0, and everything before it keeps the
+   same spacing. Nothing has rolled for damage yet, so the fresh sim is in the same state the old one was in.
+4. The fight runs for its fixed length from 0. The HUD shows the fight timer from the pull.
+
+If you stay longer than 10 minutes before attacking, the session does the same swap with a new 10 minute window.
+Step 1 tests that the state at the pull is identical with and without the swap. Spike 4 measures how long the swap
+takes, since it happens on the frame you attack.
+
+Your auto attack only swings when you have turned it on and you're in melee range, before or after the pull. If turning
+it on is your first harmful action, that's the pull, and the first swing comes at once, as in game.
 
 ### Running in real time
 
@@ -206,8 +227,8 @@ marshalling), not from the database.
 For each cast input, the session first runs its own checks, in this order, and answers with the game's error text
 when one fails:
 
-1. Before time 0, harmful spells are refused. The sim doesn't count damage before 0 (`spell_result.go:542`), but it
-   would still land and proc.
+1. The first harmful spell or ability before time 0 triggers [the pull](#the-pull) first, so it lands at 0. The sim
+   doesn't count damage before 0 (`spell_result.go:542`), so nothing harmful may happen before the pull.
 2. Moving or in the air, for a spell with a cast time.
 3. Range and facing (see [Playing like WoW](#playing-like-wow)).
 4. GCD and cooldown timers, cost (`Cost.CostFailureReason`, `mana.go:443`), already casting.
@@ -223,7 +244,7 @@ In the sim, a shaman imbue isn't a spell you cast. It's an aura the class code r
 only for the imbue the settings pick (`windfury_weapon.go:105`, `shaman.go:66`). So you enter the room with that imbue
 up, and casting a different imbue works like this, without a core change:
 
-- **During the countdown:** the session rebuilds the sim with the new imbue in the settings, the same seed, and your
+- **Before the pull:** the session rebuilds the sim with the new imbue in the settings, the same seed, and your
   inputs so far fed back at their applied times. Before the pull nothing rolls for damage, so the rebuilt fight is the
   same except for the imbue. The cast costs its GCD and mana like any other.
 - **After the pull:** a mid-fight imbue swap is rare, and it needs the other imbue's aura to exist, which the class
@@ -291,13 +312,13 @@ An attempt is one JSON file in `~/forever-practice/attempts/`:
 	"request": { "...": "the RaidSimRequest as proto JSON" },
 	"seed": 123456789,
 	"pingMs": 60,
-	"countdownMs": 10000,
 	"inputs": [{ "appliedAt": -8200000000, "input": { "kind": "cast", "spellId": 8512 } }],
 	"result": { "...": "the fight summary" }
 }
 ```
 
-A replay mode feeds the inputs into a normal run at their applied times, starting at the same negative time. It turns
+A replay mode feeds the inputs into a normal run at their applied times (already shifted, so the pull is at 0),
+starting a little before the first one. It turns
 on the same log options the Replay view needs and gives a full `RaidSimResult`, so the attempt opens in the Replay
 view. A bug report is a small file.
 
@@ -695,7 +716,7 @@ For development, the practice Vite dev server runs on its own port, proxies `/ap
 ## Fight summary
 
 The room sims only the fight you played: one iteration, no other seeds and no averages. Everything counts from time 0,
-and idle GCD time leaves out the countdown. At the end it shows:
+and idle GCD time counts from the pull. At the end it shows:
 
 - your DPS and damage by spell
 - idle GCD time
@@ -713,8 +734,9 @@ rotation, fight length) through the class sim's existing export, as a link or JS
 exports come in the same way, since they already load into the class sim. The keybinds come from a BayovCore record
 you pick separately, because the sim character and the in-game character aren't the same thing.
 
-Fight rules for Milestone 1: a fixed length you set, with no length variation. A countdown you start with a key or
-button, where you cast your own totems and buffs. Keys for restart and leave. The HUD shows the countdown.
+Fight rules for Milestone 1: a fixed length you set, with no length variation, counted from your first attack. Before
+that you're free to prepare for as long as you like. Keys for restart and leave. The HUD shows the fight timer once
+the fight starts.
 
 ## Multiplayer (Milestone 4)
 
@@ -748,9 +770,10 @@ Each step says when it's done. Spike 1 runs first, next to step 1, since it's th
    range and facing, plus the three core hooks. Done when:
    - Go tests pass for: the last press in the queue wins, a press outside the window fails, a cast while moving
      fails, leaving melee range stops swings and coming back resumes them, wrong facing fails, ping shifts apply
-     times, a prepull totem is up at 0, no swing before you turn auto attack on, auto attack turned on during the
-     countdown swings first at 0, a `/startattack` macro and a right click both turn it on, an imbue cast during the
-     countdown replaces the settings' imbue, an input at the fight's end is dropped, and no swing during a cast
+     times, a totem dropped before the pull is up at the pull, the state at the pull is identical with and without the
+     time swap, the first harmful action is the pull at 0, no swing before you turn auto attack on, a `/startattack`
+     macro and a right click both turn it on, an imbue cast before the pull replaces the settings' imbue, an input at
+     the fight's end is dropped, and no swing during a cast
    - for each of 100 seeds, the APL's own casts with their sim times (prepull ones included), fed back as inputs with
      the same seed, give the same DPS, or each difference is explained (a correctness test only, the room itself never
      runs other seeds)
@@ -769,7 +792,7 @@ Each step says when it's done. Spike 1 runs first, next to step 1, since it's th
 7. The model renderer: three-m2loader plus your race's body with its animations, in place of the capsule. Done when
    your character runs, jumps, attacks and casts with the right animations.
 8. The HUD: your bars (editable) with bindings, unit frames, cast bar, swing timer, WeakAuras, combat text, the
-   countdown, the live meter and the fight summary. Done when a headless Chrome smoke test plays a scripted fight with
+   fight timer, the live meter and the fight summary. Done when a headless Chrome smoke test plays a scripted fight with
    no console errors, the meter's total matches the summary, and the summary shows. The sweep paint cost is measured
    here.
 9. Your gear on the model: dressed character, attachments, sheathing, icons and sounds. Done when your character
@@ -801,7 +824,7 @@ raid sim's whole-raid engine (its milestone M1b in `docs/raid_sim.md`) as it is.
 3. **Spell visuals** (before Milestone 2). Size the particle and ribbon work from WebWowViewerCpp's emitters, and
    compare with three.quarks plus hand made effects for the few spells enh uses.
 4. **WASM in real time.** Over a 3 minute fight, measure the time from a key press to its event, and from a press to
-   the next frame on screen (Event Timing API), plus the garbage collector pauses. Pass: key to event under one frame
+   the next frame on screen (Event Timing API), the garbage collector pauses, and the time swap at the pull. Pass: key to event under one frame
    (7ms at 144Hz) at p99. On a fail, we cut per-event allocations first, then the log lines we send.
 5. **WASM against native** (before Milestone 4). Run the same seed and inputs in the browser and in a native Go test,
    and diff the logs.
