@@ -1566,6 +1566,182 @@
      "commits": [
       "5b2eec6"
      ]
+    },
+    {
+     "title": "Paladin talents reworked: Unsealed Wrath replaces Twist of Light, Conviction is 2% crit a rank with everything, Holy Power only crits heals",
+     "kind": "game",
+     "classes": [
+      "Paladin"
+     ],
+     "note": "Unsealed Wrath stores the active seal on each landed swing (up to 3 copies) and spends them on the first swing under another seal. Seals no longer cost 20% less, and Vindication no longer raises attack power. Every paladin talent string changed.",
+     "source": {
+      "label": "wago.tools, launch realm hotfixes",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113283"
+     },
+     "commits": [
+      "1c83bc0",
+      "2b2d196"
+     ]
+    },
+    {
+     "title": "Retribution presets re-picked for the new trees, twisting seals through Unsealed Wrath",
+     "kind": "talents",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock",
+      "paladin__level_60_shock_undead",
+      "paladin__level_60_sub_holy_undead",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_shock-duty-crusader",
+      "paladin__level_60_shock-duty-wisdom"
+     ],
+     "note": "Twist up 65 (974.5 to 1039.3) and sub-Holy 60 (977.9 to 1038.1), Ret Shock up 14 (960.6 to 974.9); the deep Holy Shock build drops 53 (908.4 to 855.6) and now takes a Dragonfire Potion. Undead stays the best race.",
+     "commits": [
+      "306f786"
+     ]
+    },
+    {
+     "title": "Druid talents reworked: Berserk and Improved Shifting Power removed, Shifting Power on an 8 sec cooldown, Genesis and Naturalist 2% a point",
+     "kind": "game",
+     "classes": [
+      "Druid"
+     ],
+     "note": "Predatory Discipline lets Ferocious Bite keep its extra Energy, and Bite has a new rank 1. Every druid talent string changed.",
+     "source": {
+      "label": "wago.tools, launch realm hotfixes",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113283"
+     },
+     "commits": [
+      "175e3fd",
+      "2b2d196"
+     ]
+    },
+    {
+     "title": "Druid presets re-picked for the new trees",
+     "kind": "talents",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__balance",
+      "druid__balance-wrath",
+      "druid__feral-cat-duty-ff",
+      "druid__balance-duty-ff",
+      "druid__balance-wrath-duty-ff"
+     ],
+     "note": "Feral takes Furor and Blood Frenzy where Berserk was: up 57 (885.6 to 942.5). Balance and Wrath keep their talents in the new layout and gain from Genesis and Naturalist: up 45 (846.6 to 891.1) and 49 (806.5 to 855.7).",
+     "commits": [
+      "4176687"
+     ]
+    },
+    {
+     "title": "Moonkin Aura and Leader of the Pack give 3% crit with spells and attacks, and only one of them counts",
+     "kind": "game",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__balance",
+      "druid__balance-wrath",
+      "druid__feral-cat-duty-ff",
+      "druid__balance-duty-ff",
+      "druid__balance-wrath-duty-ff"
+     ],
+     "note": "Feral gains 0.2 from its own aura's spell crit; Balance is unchanged.",
+     "source": {
+      "label": "wago.tools, launch realm hotfixes",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113283"
+     },
+     "commits": [
+      "f962f6c"
+     ]
+    },
+    {
+     "title": "Hunter tree: Pathfinding and Improved Revive Pet moved",
+     "kind": "game",
+     "classes": [
+      "Hunter"
+     ],
+     "moves": false,
+     "note": "The Beast Mastery presets' Pathfinding point goes to Improved Aspect of the Monkey. No DPS change.",
+     "source": {
+      "label": "wago.tools, launch realm hotfixes",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=70707%20trait"
+     },
+     "commits": [
+      "d2f12b8"
+     ]
+    },
+    {
+     "title": "Frost mage values restored: Ice Lance does 4 times damage to Frozen targets (was 3), Frigid Power 15% (was 3%), Ice Barrier 5% while shielded (was 3%), Winter's Chill 20% a stack (was 5%)",
+     "kind": "game",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__frost",
+      "mage__frostfire"
+     ],
+     "note": "Frostfire gains 30 on the same talents (1046.3 to 1076.6).",
+     "source": {
+      "label": "wago.tools, launch realm hotfixes",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113486"
+     },
+     "commits": [
+      "98e819d"
+     ]
+    },
+    {
+     "title": "Arcane Blast: 12% of Intellect, +100% mana a stack, 18 sec",
+     "kind": "game",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__arcane",
+      "mage__frost"
+     ],
+     "note": "Server hotfix, not in the development notes. On its old talents and rotation Arcane lost 17.",
+     "source": {
+      "label": "foreverchanges.pro patch notes",
+      "url": "https://foreverchanges.pro/patch-notes"
+     },
+     "commits": [
+      "b79e033",
+      "c094901"
+     ]
+    },
+    {
+     "title": "Frost and Arcane mage presets re-picked; Fire and Frostfire keep theirs",
+     "kind": "talents",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__frost",
+      "mage__arcane"
+     ],
+     "races": [
+      "Undead",
+      "High Order"
+     ],
+     "note": "Frost goes 16/4/31, keeps Ice Barrier up all fight and takes Incineration over Arcane Blast, now as High Order: up 37 (907.8 to 944.9). Arcane spends the cheaper stacks' mana on Arcane Wrath on cooldown: up 28 (910.9 to 939.0).",
+     "commits": [
+      "5a6e9c6",
+      "954a4f3"
+     ]
     }
    ],
    "internal": [
@@ -1576,6 +1752,26 @@
     {
      "commit": "7545aee",
      "why": "the Enhancement leveling plan's training schedule only; no report request uses it"
+    },
+    {
+     "commit": "3607e01",
+     "why": "Kang the Decapitator's Rend proc; no preset wears it, and no report request's result moves (TestRaidForeverReportHashes)"
+    },
+    {
+     "commit": "aea7872",
+     "why": "Improved Drains off Wrack; no preset takes both, and no report request's result moves (TestRaidForeverReportHashes)"
+    },
+    {
+     "commit": "8717e62",
+     "why": "the Protection and Holy paladin presets of the sim UI and the raid sim on the new trees; no report request uses them"
+    },
+    {
+     "commit": "b31f4dd",
+     "why": "the Retribution sim page's known issues text only"
+    },
+    {
+     "commit": "04261d5",
+     "why": "a test that still expected the old crit aura split; no numbers change"
     }
    ],
    "source": {
