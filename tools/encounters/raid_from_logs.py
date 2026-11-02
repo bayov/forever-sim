@@ -113,7 +113,18 @@ def main():
             texts.append(text)
         covered = sum(r['share'] for r in rows)
         sim_dtps = sum(per_second(ev, 1) for ev in events)
-        d['encounter']['raidDamage'] = [e for e in d['encounter'].get('raidDamage', []) if e.get('who') != 'NotTanks'] + events
+        # An Everyone event of the tank side's (Vaelastrasz's Fire Nova) that the logs now give for
+        # the non-tanks keeps its numbers on the tanks only, so nobody takes it twice.
+        mined_ids = {ev['spellId'] for ev in events if ev['spellId']}
+        kept = []
+        for e in d['encounter'].get('raidDamage', []):
+            if e.get('who') == 'NotTanks':
+                continue
+            if e.get('who', 'Everyone') == 'Everyone' and e.get('spellId') in mined_ids:
+                e = dict(e, who='Tanks')
+                texts.append(f'{e["spellId"]}\'s Everyone event keeps its own numbers on the tanks only.')
+            kept.append(e)
+        d['encounter']['raidDamage'] = kept + events
 
         h = m
         d['raidHealing'] = {
