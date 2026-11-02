@@ -1854,6 +1854,48 @@
      "commits": [
       "effd5cd"
      ]
+    },
+    {
+     "title": "Rogues use their builders whenever they can afford them, without timing them after a swing",
+     "kind": "rotation",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-swords",
+      "rogue__combat-swords-humanoid",
+      "rogue__seal-fate-swords",
+      "rogue__seal-fate-swords-humanoid",
+      "rogue__combat-daggers",
+      "rogue__combat-daggers-humanoid",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-daggers-humanoid",
+      "rogue__mutilate",
+      "rogue__mutilate-humanoid",
+      "rogue__subtlety",
+      "rogue__subtlety-humanoid"
+     ],
+     "note": "Forever's extra attacks don't reset the swing timer, so a proc's free swing is the same wherever the builder lands, and waiting only delays it. At 180 s: Combat Swords 777.0 to 782.1, Seal Fate Swords 743.2 to 747.1, Combat Daggers 788.9 to 790.8, Seal Fate Daggers 751.4 to 752.9, Mutilate 742.7 to 743.8, Subtlety 732.1 to 732.9. Every build stays Undead.",
+     "commits": [
+      "da5be53",
+      "60856d4"
+     ]
+    },
+    {
+     "title": "Combat Daggers stops pooling Energy, drops Vanish into Ambush and Preparation, and refreshes Slice and Dice in its last second",
+     "kind": "rotation",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-daggers",
+      "rogue__combat-daggers-humanoid"
+     ],
+     "moves": false,
+     "note": "Part of its gain above. Seal Fate Daggers keeps the Vanish and the 3 sec refresh, now as its own rotation.",
+     "commits": [
+      "da5be53"
+     ]
     }
    ],
    "internal": [
