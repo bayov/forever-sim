@@ -409,11 +409,58 @@ message UnitMetrics {
 	// Chance (0-1) representing probability of death. Used for tank sims.
 	double chance_of_death = 12;
 
+	// Set for a player the boss attacks: its defenses against the boss's swing (core/tank_sheet.go).
+	TankSheet tank_sheet = 20;
+
 	repeated ActionMetrics actions = 5;
 	repeated AuraMetrics auras = 6;
 	repeated ResourceMetrics resources = 10;
 
 	repeated UnitMetrics pets = 7;
+}
+
+// A tank's defenses against the boss attacking it, from its stats as the first iteration's
+// prepull starts (permanent buffs on, no cooldowns or procs), and the thresholds tanks gear for. Chances
+// are 0 to 1. See docs/tank_sim.md.
+message TankSheet {
+	int32 boss_level = 1;
+
+	// The boss's white swing at us from the front, on its one roll table in this order.
+	double miss = 2;
+	double dodge = 3;
+	double parry = 4;
+	double block = 5;
+	double crit = 6;
+	double crush = 7;
+	double hit = 8;
+
+	// Defense skill, base for our level and bonus together.
+	double defense = 9;
+	// The Defense skill at which the boss can no longer crit us (under our Defense when we're past it).
+	double defense_crit_immune = 10;
+	// Miss, dodge, parry and block added up. At 1 or over, crits and crushing blows are pushed
+	// off the table (with the crit chance at 0).
+	double coverage = 11;
+	// Miss, dodge, parry or block still needed to push crushing blows off the table, 0 when they
+	// already are.
+	double crush_gap = 12;
+
+	double armor = 13;
+	// The share of the boss's physical hit armor takes off, 0 to 0.75.
+	double armor_reduction = 14;
+	double block_value = 15;
+	double health = 16;
+	// Health over the share of a physical hit that gets through armor and damage taken
+	// modifiers: how much raw boss damage we can take from full health.
+	double effective_health = 17;
+
+	// Our side, which sets threat: the chance a special attack misses the boss (white
+	// attacks add the dual wield miss on top), and the boss's dodge and parry from the front.
+	double melee_miss = 18;
+	double boss_dodge = 19;
+	double boss_parry = 20;
+	// The chance a spell misses the boss.
+	double spell_miss = 21;
 }
 
 // How often a player or pet passed the tank's threat on the boss, over the iterations.

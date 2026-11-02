@@ -108,7 +108,9 @@ func MultiSchoolShouldUseArmor(spell *Spell, target *Unit) bool {
 func (at *AttackTable) GetArmorDamageModifier() float64 {
 	armorPenRating := at.Attacker.stats[stats.ArmorPenetration]
 	defenderArmor := max(at.Defender.Armor()*(1-at.Attacker.PseudoStats.ArmorIgnorePercent)-armorPenRating, 0.0)
-	return 1 - defenderArmor/(defenderArmor+400+85*float64(at.Attacker.Level))
+	// Armor takes off at most 75% (17,265 armor against a level 63 boss), the game's cap. Only a
+	// player tank's armor gets near it.
+	return max(1-defenderArmor/(defenderArmor+400+85*float64(at.Attacker.Level)), 0.25)
 }
 
 func (at *AttackTable) GetPartialResistThresholds(spell *Spell, pureDot bool) (float64, float64, float64) {

@@ -86,6 +86,8 @@ func (rsrc *raidSimResultCombiner) newUnitMetrics(baseUnit *proto.UnitMetrics) *
 		Auras:     make([]*proto.AuraMetrics, len(baseUnit.Auras)),
 		Resources: make([]*proto.ResourceMetrics, 0, len(baseUnit.Resources)),
 		Pets:      make([]*proto.UnitMetrics, len(baseUnit.Pets)),
+		// The same in every thread: each takes it at its first iteration's pull.
+		TankSheet: baseUnit.TankSheet,
 	}
 
 	if baseUnit.Aggro != nil {

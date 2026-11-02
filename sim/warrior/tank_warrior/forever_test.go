@@ -8,6 +8,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/sim/warrior"
 )
 
@@ -137,5 +138,67 @@ func TestForeverShieldSlamIsOffHand(t *testing.T) {
 	anyMelee := specced.AutoAttacks.NewPPMManager(6, core.ProcMaskMelee)
 	if got, want := anyMelee.Chance(slam.ProcMask), specced.AutoAttacks.MH().SwingSpeed*6/60; math.Abs(got-want) > 1e-9 {
 		t.Errorf("a 6 PPM melee proc rolls on Shield Slam at %v, want the main hand's %v", got, want)
+	}
+}
+
+// TestForeverTankSheet checks the tank sheet (core/tank_sheet.go) of an Orc warrior with only a
+// sword and the Bulwark against a level 63 boss under Forever: the level gap takes 0.6% off each of miss, parry
+// and block (0.2% a level), the boss crits only by the level gap (0.6%, so 15 Defense stops it
+// instead of Classic's 140), and crushes 15%.
+func TestForeverTankSheet(t *testing.T) {
+	sim, war := newForeverTank(t, "")
+	boss := sim.Encounter.TargetUnits[0]
+	sheet := core.TankSheet(&war.Unit, boss)
+
+	near := func(name string, got, want float64) {
+		t.Helper()
+		if math.Abs(got-want) > 1e-9 {
+			t.Errorf("%s is %.5f, want %.5f", name, got, want)
+		}
+	}
+	// The Bulwark's 7 Defense: 0.28% more miss, parry and block, 0.28% less crit.
+	near("Defense", sheet.Defense, 307)
+	near("Miss", sheet.Miss, 0.044+0.0028)
+	near("Parry", sheet.Parry, 0.044+0.0028)
+	near("Block", sheet.Block, 0.044+0.0028)
+	near("Crit", sheet.Crit, 0.006-0.0028)
+	near("Crush", sheet.Crush, 0.15)
+	near("Defense to stop crits", sheet.DefenseCritImmune, 315)
+	near("Coverage", sheet.Coverage, sheet.Miss+sheet.Dodge+sheet.Parry+sheet.Block)
+	near("Crush gap", sheet.CrushGap, 1-sheet.Crit-sheet.Coverage)
+	near("Table total", sheet.Miss+sheet.Dodge+sheet.Parry+sheet.Block+sheet.Crit+sheet.Crush+sheet.Hit, 1)
+	if sheet.Dodge <= 0 || sheet.Dodge > 0.1 {
+		t.Errorf("Dodge is %.4f, want a naked warrior's few percent", sheet.Dodge)
+	}
+	// 1104 boss armor would be the target's; ours is the warrior's own armor from Agility.
+	near("Armor reduction", sheet.ArmorReduction, sheet.Armor/(sheet.Armor+400+85*63))
+	near("Effective health", sheet.EffectiveHealth, sheet.Health/(1-sheet.ArmorReduction)/war.PseudoStats.DamageTakenMultiplier)
+
+	// 20 more Defense: crits gone, and 0.8% more of each of miss, dodge, parry and block.
+	war.AddStatDynamic(sim, stats.Defense, 20)
+	more := core.TankSheet(&war.Unit, boss)
+	near("Crit at 327 Defense", more.Crit, 0)
+	near("Defense to stop crits at 327", more.DefenseCritImmune, 315)
+	near("Miss at 327 Defense", more.Miss, 0.044+0.0108)
+	near("Coverage at 320 Defense", more.Coverage-sheet.Coverage, 4*0.008)
+
+	// Our side: 8% special miss against a level 63 boss with no hit (Forever has no hit
+	// suppression), and the boss dodges and parries by its Defense over our weapon skill.
+	near("Melee miss", sheet.MeleeMiss, war.AttackTables[boss.UnitIndex][proto.CastType_CastTypeMainHand].BaseMissChance)
+	if sheet.BossParry < sheet.BossDodge {
+		t.Errorf("the boss parries %.4f, under its dodge %.4f", sheet.BossParry, sheet.BossDodge)
+	}
+}
+
+// TestArmorCap checks that armor takes off at most 75% of a boss's hit, at 17,265 armor against a
+// level 63 boss (400 + 85 * 63 = 5,755, and 17,265 / (17,265 + 5,755) = 0.75).
+func TestArmorCap(t *testing.T) {
+	sim, war := newForeverTank(t, "")
+	boss := sim.Encounter.TargetUnits[0]
+	for _, c := range []struct{ armor, want float64 }{{5755, 0.5}, {17265, 0.75}, {30000, 0.75}} {
+		war.AddStatDynamic(sim, stats.Armor, c.armor-war.Armor())
+		if got := core.TankSheet(&war.Unit, boss).ArmorReduction; math.Abs(got-c.want) > 1e-6 {
+			t.Errorf("%.0f armor takes off %.4f, want %.4f", c.armor, got, c.want)
+		}
 	}
 }

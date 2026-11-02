@@ -90,7 +90,9 @@ func warriorKnobs() []Knob {
 		{Name: "potionHoldForDw", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "potionAt", Default: 30, Min: 10, Max: 60, Step: 5},
 		// With potionHoldForDw 2: 1 also drinks at the pull (the first 3 sec), which matters in
-		// fights too short for the hold to lose a use.
+		// fights too short for the hold to lose a use. It loses there: in a fight under about 135
+		// sec the pull potion's 2 min cooldown runs past the end and costs the one with the burst
+		// (2026-11-02, no preset takes it).
 		{Name: "potionPull", Default: 0, Min: 0, Max: 1, Step: 1},
 		// racialHoldForDw 2: Blood Fury and Berserking wait for the last racialAt seconds when the
 		// wait costs no use, instead of waiting for Death Wish.
@@ -109,6 +111,10 @@ func warriorKnobs() []Knob {
 		// fights longer than about 177 sec) at about 142 sec, ahead of the execute phase, rather than
 		// at about 174 sec inside it.
 		{Name: "shoutRefresh", Default: 35, Min: 0, Max: 60, Step: 5},
+		// The Sunder Armor duty (docs/raid_sim.md, the raid sim's Sunder upkeep): 1 keeps 5 stacks up
+		// itself from the pull and refreshes them in their last 3 sec, for a raid with no warrior tank.
+		// Its request switches the raid's Sunder Armor off.
+		{Name: "sunderDuty", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -266,8 +272,9 @@ var warriorGCDSpells = []*proto.ActionID{battleShout, deathWish, recklessness, b
 	mortalStrike, whirlwind, slam, execute, overpower, rend, hamstring, spearingStrike, warriorLandMine}
 
 // warriorOpener puts the Sunder Armor sequence ahead of the first spell on the GCD and makes
-// every such spell wait for it. Prepull actions don't count: Battle Shout goes up before the pull.
-func warriorOpener(rot *proto.APLRotation) *proto.APLRotation {
+// every such spell wait for it, with the Sunder duty's upkeep (sunderDuty) right after it. Prepull
+// actions don't count: Battle Shout goes up before the pull.
+func warriorOpener(k Knobs, rot *proto.APLRotation) *proto.APLRotation {
 	gcd := func(id *proto.ActionID) bool {
 		for _, s := range warriorGCDSpells {
 			if goproto.Equal(s, id) {
@@ -298,7 +305,15 @@ func warriorOpener(rot *proto.APLRotation) *proto.APLRotation {
 		}}},
 		Notes: "Sunder Armor once at the pull. The tanks keep it up after.",
 	}
-	rot.PriorityList = append(rot.PriorityList[:first], append([]*proto.APLListItem{sunder}, rot.PriorityList[first:]...)...)
+	opener := []*proto.APLListItem{sunder}
+	if k["sunderDuty"] == 1 {
+		opener = append(opener, cast(sunderArmor, and(
+			done,
+			or(lt(targetAuraNumStacks(sunderArmor), num(5)), lt(targetAuraRemainingTime(sunderArmor), seconds(3))),
+			gt(remainingTime(), targetAuraRemainingTime(sunderArmor)),
+		), "Sunder Armor on duty for the raid: 5 stacks from the pull, then refreshed in its last 3 sec, unless it lasts the fight."))
+	}
+	rot.PriorityList = append(rot.PriorityList[:first], append(opener, rot.PriorityList[first:]...)...)
 	return rot
 }
 
