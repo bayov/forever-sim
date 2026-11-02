@@ -354,7 +354,7 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 	}, keep-len(picks), knobs)
 	if len(oneRanked) > 0 {
 		r := oneRanked[0].result
-		if gain := r.dps - base.dps; gain > s.confidence*math.Hypot(r.stderr, base.stderr) {
+		if gain := r.dps - base.dps; gain > s.confidence*gainNoise(base, r) {
 			fmt.Printf("  %s with %s beats the two hander pick by %.1f, the search never tried a one hand setup from here\n",
 				oneRanked[0].option.name, offRanked[0].option.name, gain)
 		}

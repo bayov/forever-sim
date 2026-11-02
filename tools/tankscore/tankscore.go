@@ -12,6 +12,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math"
+	"math/rand/v2"
 	"os"
 
 	"github.com/wowsims/classic/sim/core"
@@ -136,4 +137,79 @@ func (o Objective) Score(m *proto.UnitMetrics, iterations int32) Score {
 	s.Value = o.ThreatMembers*s.SafeDps - perHps*s.Needed
 	s.StdErr = math.Hypot(o.ThreatMembers*s.SafeDpsErr, perHps*s.NeededErr)
 	return s
+}
+
+// pairedResamples is how many bootstrap resamples PairedDiff draws: its standard error is good to
+// about 1 / sqrt(2 × 400), 4%.
+const pairedResamples = 400
+
+// PairedDiff is the score of b less the score of a and that difference's standard error, from two
+// runs with the same seed and iterations, so iteration k of each had the same random rolls up to
+// where the builds differ. Two candidates' scores move together from one seed to the next, and the
+// error of their difference is far below their two errors added up, which is what a search's
+// noise test needs (docs/tank_sim.md, The optimizer's objective). The error is a bootstrap: the
+// same resampled iterations for both. ok is false when the runs don't pair (other iteration
+// counts, no per-iteration SafeDPS) or either one is rejected, and the caller falls back to the
+// two errors added up.
+func (o Objective) PairedDiff(a, b *proto.TankScore) (diff, stdErr float64, ok bool) {
+	n := len(a.GetSafeDpsEach())
+	if n < 2 || len(b.GetSafeDpsEach()) != n || len(a.GetSurviveHps()) != len(b.GetSurviveHps()) ||
+		(len(a.GetSurviveHps()) != 0 && len(a.GetSurviveHps()) != n) {
+		return 0, 0, false
+	}
+	idx := make([]int, n)
+	for i := range idx {
+		idx[i] = i
+	}
+	va, okA := o.resampled(a, idx)
+	vb, okB := o.resampled(b, idx)
+	if !okA || !okB {
+		return 0, 0, false
+	}
+	diff = vb - va
+	rng := rand.New(rand.NewPCG(1, 2))
+	// A resample past the death floor has no score: it's left out, and when more than a tenth are,
+	// the pair is too close to the floor for the bootstrap.
+	var sum, sumSq, kept float64
+	for range pairedResamples {
+		for i := range idx {
+			idx[i] = rng.IntN(n)
+		}
+		ra, okA := o.resampled(a, idx)
+		rb, okB := o.resampled(b, idx)
+		if !okA || !okB {
+			continue
+		}
+		d := rb - ra
+		sum += d
+		sumSq += d * d
+		kept++
+	}
+	if kept < 0.9*pairedResamples {
+		return 0, 0, false
+	}
+	mean := sum / kept
+	return diff, math.Sqrt(max(0, sumSq/kept-mean*mean)), true
+}
+
+// resampled is the score over the iterations idx (repeats allowed), false when no healing saves the
+// tank at the death share.
+func (o Objective) resampled(ts *proto.TankScore, idx []int) (float64, bool) {
+	safe := 0.0
+	for _, i := range idx {
+		safe += ts.SafeDpsEach[i]
+	}
+	safe /= float64(len(idx))
+	needed := 0.0
+	if len(ts.SurviveHps) > 0 {
+		hps := make([]float64, len(idx))
+		for k, i := range idx {
+			hps[k] = ts.SurviveHps[i]
+		}
+		needed, _, _ = core.TankScoreSummary(&proto.TankScore{SurviveHps: hps}, o.Death)
+		if needed < 0 {
+			return 0, false
+		}
+	}
+	return o.ThreatMembers*safe - o.Weight*o.DpsSlot/o.HealerEach*needed, true
 }

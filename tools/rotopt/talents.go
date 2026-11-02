@@ -309,7 +309,7 @@ func (s *searcher) scoreBuilds(builds []build, current result, knobs Knobs) []ta
 	for i, score := range s.scoreAll(pending) {
 		c := builds[i]
 		gain := score.dps - current.dps
-		noise := math.Hypot(score.stderr, current.stderr)
+		noise := gainNoise(current, score)
 		cands = append(cands, talentCandidate{c, score, gain, noise})
 	}
 	sort.Slice(cands, func(i, j int) bool { return cands[i].gain > cands[j].gain })
@@ -336,7 +336,7 @@ func (s *searcher) pickTalentMove(cands []talentCandidate, current, peak result,
 	}
 	var tie *talentCandidate
 	for i, c := range cands {
-		dpsNoise := math.Hypot(c.score.stderr, peak.stderr)
+		dpsNoise := gainNoise(peak, c.score)
 		manaGain := c.score.mana - current.mana
 		manaNoise := math.Hypot(c.score.manaStderr, current.manaStderr)
 		if c.score.dps < peak.dps-s.confidence*dpsNoise || manaGain <= s.confidence*manaNoise {

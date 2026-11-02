@@ -172,7 +172,7 @@ export type ToWorker =
 
 export type FromWorker =
 	| { type: 'ready'; loadMs: number }
-	| { type: 'started'; toolkit: ToolkitSpell[]; startMs: number; batch: Batch; wallAtStart: number; callMs: number }
+	| { type: 'started'; toolkit: ToolkitSpell[]; shown?: number[]; startMs: number; batch: Batch; wallAtStart: number; callMs: number }
 	| { type: 'batch'; batch: Batch; simNowMs: number; clock: ClockState; callMs: number }
 	| { type: 'attempt'; attempt: unknown }
 	| { type: 'error'; message: string };

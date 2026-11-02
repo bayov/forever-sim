@@ -100,8 +100,23 @@ type result struct {
 	// A leveling session's results (leveling.go), where dps above is the score.
 	leveling *proto.LevelingMetrics
 
-	// With -tank, the tank score, whose value is dps above.
-	tank *tankscore.Score
+	// With -tank, the tank score, whose value is dps above, and the run's per-iteration numbers
+	// it came from, which pair two runs iteration by iteration (noise).
+	tank    *tankscore.Score
+	tankRaw *proto.TankScore
+}
+
+// gainNoise is the standard error of b's score less a's, which a search's gain is tested against. Two
+// runs share their seed, so for a tank score it's the paired error (tankscore.PairedDiff), far
+// below the two errors added up where one ability makes the bad fights. Otherwise, and for a tank
+// score over several fight lengths, it's the two errors added up.
+func gainNoise(a, b result) float64 {
+	if tankObjective != nil && a.tankRaw != nil && b.tankRaw != nil {
+		if _, se, ok := tankObjective.PairedDiff(a.tankRaw, b.tankRaw); ok {
+			return se
+		}
+	}
+	return math.Hypot(a.stderr, b.stderr)
 }
 
 // tankObjective scores the player as a tank (-tank), nil for DPS.
@@ -158,7 +173,7 @@ func simulate(request *proto.RaidSimRequest) (result, error) {
 	if tankObjective != nil {
 		// The tank objective takes DPS's place, so every search maximizes it.
 		score := tankObjective.Score(player, iterations)
-		return result{dps: score.Value, stderr: score.StdErr, tank: &score,
+		return result{dps: score.Value, stderr: score.StdErr, tank: &score, tankRaw: player.TankScore,
 			mana: player.ManaEnd.GetAvg(), manaStderr: player.ManaEnd.GetStdev() / n, tto: player.Tto.GetAvg()}, nil
 	}
 	return result{

@@ -280,7 +280,9 @@ func (rsrc *raidSimResultCombiner) combineUnitMetrics(base *proto.UnitMetrics, a
 	rsrc.combineDistMetrics(base.Dtps, add.Dtps, isLast, weight)
 	rsrc.combineDistMetrics(base.Tmi, add.Tmi, isLast, weight)
 	if base.TankScore != nil && add.TankScore != nil {
+		// The threads' iterations follow one another in seed order, so the lists stay in it.
 		base.TankScore.SurviveHps = append(base.TankScore.SurviveHps, add.TankScore.SurviveHps...)
+		base.TankScore.SafeDpsEach = append(base.TankScore.SafeDpsEach, add.TankScore.SafeDpsEach...)
 		rsrc.combineDistMetrics(base.TankScore.SafeDps, add.TankScore.SafeDps, isLast, weight)
 	}
 	rsrc.combineDistMetrics(base.Hps, add.Hps, isLast, weight)
