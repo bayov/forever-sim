@@ -279,12 +279,13 @@ func timedBuffNotes(name string, holdsForAr bool, snd float64) string {
 	return name + " on cooldown."
 }
 
-// builderWhen is the condition for the filler builder: right after a main hand swing,
-// or once energy is pooled. Extra attacks (Hack and Slash, Hand of Justice) move the main
-// hand swing to now and restart the timer, so a proc off a builder cast late in the swing
-// wins almost nothing, the swing was about to land anyway. Right after a swing the same
-// proc is a whole free swing. The energy fallback keeps the wait from capping energy.
-// Both knobs at 0 means on every GCD it can afford.
+// builderWhen is the condition for the filler builder: within afterSwing sec after a main
+// hand swing, or once energy reaches pooledEnergy, and always in the last 6 sec. Both knobs at
+// 0 means on every GCD it can afford. Under Forever an extra attack (Hack and Slash, Windfury
+// Totem) swings at once and leaves the swing timer alone (standards 28, since 2026-10-30), so a
+// proc gives the same free swing wherever in the swing the builder lands, and timing the builder
+// after a swing only delays it. Classic restarts the swing on an extra attack, which is what the
+// after swing timing was for.
 func builderWhen(afterSwing, pooledEnergy float64) value {
 	if afterSwing == 0 && pooledEnergy == 0 {
 		return nil
@@ -297,6 +298,19 @@ func builderWhen(afterSwing, pooledEnergy float64) value {
 		pooled = ge(energy(), num(pooledEnergy))
 	}
 	return or(swing, pooled, lt(remainingTime(), seconds(6)))
+}
+
+// builderNotes says when the builder goes out, from the same knobs as builderWhen.
+func builderNotes(name string, afterSwing, pooledEnergy float64) string {
+	switch {
+	case afterSwing > 0 && pooledEnergy > 0:
+		return fmt.Sprintf("%s within %g sec after a main hand swing, or at %g energy, and in the last 6 sec.", name, afterSwing, pooledEnergy)
+	case afterSwing > 0:
+		return fmt.Sprintf("%s within %g sec after a main hand swing, and in the last 6 sec.", name, afterSwing)
+	case pooledEnergy > 0:
+		return fmt.Sprintf("%s at %g energy, and in the last 6 sec.", name, pooledEnergy)
+	}
+	return name + " whenever it is affordable."
 }
 
 // alignedWith is true when spell can go out now without giving up an overlap with the

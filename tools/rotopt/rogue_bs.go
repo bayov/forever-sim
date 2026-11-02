@@ -77,9 +77,10 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	items = append(items, c.sliceAndDice)
 	items = append(items, c.cooldowns...)
 
-	// Rupture is the other finisher. It snapshots Hemorrhage at cast, so the debuff only
-	// has to be up then. The finisher goes out when Slice and Dice will not need the
-	// points and the fight lasts long enough for the ticks.
+	// Rupture is the other finisher. Under Forever its ticks read Hemorrhage as they land
+	// (since 2026-10-23, sim/rogue/rupture.go), so the debuff counts only while it is up, not
+	// at the cast. The finisher goes out when Slice and Dice will not need the points and the
+	// fight lasts long enough for the ticks.
 	var ruptureWhen value
 	if k["ruptureCp"] > 0 {
 		ruptureWhen = and(
@@ -98,7 +99,7 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 				ge(auraRemainingTime(sliceAndDice), seconds(k["ruptureSnd"])),
 				gt(remainingTime(), seconds(12)),
 				c.ruptureHold,
-			), "Hemorrhage right before a Rupture when the debuff is missing, Rupture snapshots it."+c.holdNotes))
+			), "Hemorrhage right before a Rupture when the debuff is missing, so the first ticks land with it (each tick reads it as it lands)."+c.holdNotes))
 		}
 		items = append(items, cast(rupture, ruptureWhen, "Rupture when it is not ticking and Slice and Dice does not need the points."+c.holdNotes))
 	}
@@ -179,12 +180,16 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	// The builder. Backstab waits for Thousand Cuts stacks when asked, with the energy
 	// pool as the fallback so the wait never caps energy.
 	when := and(builderWhen(k["bsAfterSwing"], k["bsEnergy"]), pool)
+	poolNotes := ""
+	if pool != nil {
+		poolNotes = " While Vanish is ready for an Ambush it leaves the Ambush's energy alone."
+	}
 	if k["hemoFiller"] == 1 {
-		items = append(items, cast(hemorrhage, when, "Hemorrhage as the builder."))
+		items = append(items, cast(hemorrhage, when, builderNotes("Hemorrhage as the builder,", k["bsAfterSwing"], k["bsEnergy"])+poolNotes))
 	}
 	if k["mutilate"] == 1 {
 		items = append(items, cast(mutilate, when,
-			"Mutilate as the builder, 2 combo points for the energy of a Backstab. Backstab takes over when the off hand is not a dagger."))
+			builderNotes("Mutilate as the builder (2 combo points for the energy of a Backstab),", k["bsAfterSwing"], k["bsEnergy"])+poolNotes+" Backstab takes over when the off hand is not a dagger."))
 	}
 	if k["bsStacks"] > 0 {
 		pooled := ge(energy(), num(k["bsEnergy"]))
@@ -193,7 +198,7 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 		}
 		when = and(when, or(ge(auraNumStacks(thousandCuts), num(k["bsStacks"])), pooled, lt(remainingTime(), seconds(6))))
 	}
-	items = append(items, cast(backstab, when, "Backstab."))
+	items = append(items, cast(backstab, when, builderNotes("Backstab", k["bsAfterSwing"], k["bsEnergy"])+poolNotes))
 
 	rot := rotation(items...)
 	rot.PrepullActions = c.prepull
