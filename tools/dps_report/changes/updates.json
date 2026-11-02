@@ -2223,6 +2223,10 @@
     {
      "commit": "9530cc9d1",
      "why": "practice room display only: no DPS build reads it"
+    },
+    {
+     "commit": "452b9ce0a",
+     "why": "notes and a code comment in the warlock presets only: no sim input"
     }
    ],
    "source": {

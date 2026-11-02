@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction",
   "published": {
-    "dps": 995.9,
-    "source": "verify.py on this request after the standards 33 distances (2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 997.5,
+    "source": "verify.py on this request after holding the second Bane of Doom for the 2 min cooldowns (2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 995.9,
+    "dps": 997.5,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; the DPS report's main run matches"
   },
   "summary": "Shadow Bolt Destruction with Conflagrate, plus Pandemic and Malevolence from Affliction.",
   "keyTalents": [
