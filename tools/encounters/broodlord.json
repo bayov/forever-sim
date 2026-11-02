@@ -1,15 +1,41 @@
 {
  "name": "Broodlord Lashlayer",
- "source": "[core: vmangos] vmangos gives his melee 2,746 to 3,640 a 2.0 s swing before armor (vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 25), which makes Mortal Strike (24573: 500% weapon damage and 50% less healing taken for 5 s, the Classic Era client's spell data) 6,000 to 7,900 on a 56% armor tank before any crit. Players saw far less: warcraft.wiki.gg's Broodlord page says it 'can crit for up to 8,000 on plate', so a normal one is about 4,000, and a guide quotes 3,250 to 6,500 a hit after armor. Both fit a weapon about 0.6 times vmangos's, which the file uses for his melee and every weapon damage ability: 1,648 to 2,184 a swing. Knock Away 18670 weapon damage + 30, Cleave 15284 weapon damage + 10, Blast Wave 23331 2,625 to 3,375 Fire. Timers from the vmangos script, which says they are probably wrong.",
- "reports": [],
+ "source": "[logs: Season of Discovery] Melee 3,096 to 4,652 before armor under the bench's raid debuffs, a swing every 1.74 s on the tank: Warcraft Logs, 21 kills on Season of Discovery (Normal, 2025-02-07 to 2026-09-24): the median of 89 normal hits' unmitigatedAmount (3,878), the 5th to 95th percentile of each hit over its own kill's median (84 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 2,522 weapon damage, spread 0.617, a 1.45 s swing. Length: the kills' length, median 97 s (10th to 90th percentile 63 to 159). Weapon damage abilities: Mortal Strike 24573 16,110 to 26,548 from 9 hits; Knock Away 18670 3,423 to 5,471 from 8 hits; 15284 scaled with the melee (5 hits in the logs, too few). Abilities: Mortal Strike 24573 (500% weapon damage and 50% less healing taken for 5 s), Knock Away 18670 (weapon damage + 30), Cleave 15284 (weapon damage + 10), Blast Wave 23331 2,625 to 3,375 Fire, from the Classic Era client's spell data. Timers from the vmangos script, which says they are probably wrong.",
+ "abilitiesSource": "Mortal Strike 24573 (500% weapon damage and 50% less healing taken for 5 s), Knock Away 18670 (weapon damage + 30), Cleave 15284 (weapon damage + 10), Blast Wave 23331 2,625 to 3,375 Fire, from the Classic Era client's spell data. Timers from the vmangos script, which says they are probably wrong.",
+ "reports": [
+  "LBnFjZm4Yy9cfpWT:6",
+  "vNnca78ZGzHAYrg1:9",
+  "MG4KHtkPQ9mDapLC:9",
+  "9rdM68DRtpT7ZvLg:7",
+  "PmnvzGfdYwqCD8Qk:49",
+  "T9LpHZ6nQMjrPARf:14",
+  "vrzdnL31Pp46Ba2g:95",
+  "Jxwtv3gTMZRGyC96:60",
+  "fRHbhCPLDM1vNVG7:14",
+  "rHXCDcAKa1jRbyWP:4",
+  "wZ3Yt9pvm2LQTndB:44",
+  "8zPYvLGJCmQhX13H:9",
+  "pmdh6AG8qF2gZV7t:55",
+  "zZ82gRmVFKA6YJTQ:7",
+  "P1mw8RF6cnCyqHhY:10",
+  "QvYHL1qXkNhjGBMy:7",
+  "GRjqym9rwLhF71df:11",
+  "Qzpa1Kh7HN4Ybmvt:38",
+  "mbtcaVkQNRA71H9q:9",
+  "4mkjLT9BRrFwNV7A:10",
+  "9z8RThWPGfVwDqgX:13"
+ ],
  "warcraftLogs": {
-  "encounter": 612,
-  "zone": "Blackwing Lair"
+  "site": "sod",
+  "encounter": 100612,
+  "zone": "Blackwing Lair",
+  "difficulty": "Normal",
+  "mined": "tools/encounters/logs/sod_bwl.json"
  },
- "notes": "His weapon damage is an estimate from what players saw (source), until Warcraft Logs give his white hits and Mortal Strikes. Knock Away's 50% threat cut isn't modelled. Blast Wave hits everyone near him, here the tanks only, and the healing sim adds the melee.",
+ "notes": "Knock Away's 50% threat cut isn't modelled. Blast Wave hits everyone near him, here the tanks only, and the healing sim adds the melee.",
  "encounter": {
-  "duration": 180,
-  "durationVariation": 20,
+  "duration": 97,
+  "durationVariation": 48,
   "targets": [
    {
     "name": "Broodlord Lashlayer",
@@ -62,17 +88,17 @@
      0,
      0
     ],
-    "minBaseDamage": 1243.6,
-    "damageSpread": 0.4313,
-    "swingSpeed": 2.0
+    "minBaseDamage": 2521.8,
+    "damageSpread": 0.617,
+    "swingSpeed": 1.45
    }
   ],
   "raidDamage": [
    {
     "spellId": 24573,
     "school": "SpellSchoolPhysical",
-    "minDamage": 7612,
-    "maxDamage": 10090,
+    "minDamage": 16110,
+    "maxDamage": 26548,
     "who": "BossTarget",
     "firstAt": 25,
     "everySeconds": 25,
@@ -84,8 +110,8 @@
    {
     "spellId": 18670,
     "school": "SpellSchoolPhysical",
-    "minDamage": 1550,
-    "maxDamage": 2046,
+    "minDamage": 3423,
+    "maxDamage": 5471,
     "who": "BossTarget",
     "firstAt": 22.5,
     "everySeconds": 18.5,
@@ -95,8 +121,8 @@
    {
     "spellId": 15284,
     "school": "SpellSchoolPhysical",
-    "minDamage": 1532,
-    "maxDamage": 2027,
+    "minDamage": 3304,
+    "maxDamage": 4372,
     "who": "BossTarget",
     "firstAt": 8,
     "everySeconds": 16.5,
@@ -117,8 +143,8 @@
  },
  "healing": {
   "healers": 4,
-  "hpsEach": 500,
-  "castSeconds": 2.0,
-  "notes": "A 40-player Blackwing Lair raid's main tank: 4 healers at 500 HPS each in 2 s heals, more healing power than in Molten Core (about 600). Guessed, not from logs: replace with tools/warcraftlogs tank numbers."
+  "hpsEach": 485,
+  "castSeconds": 1.53,
+  "notes": "From Season of Discovery's logs (21 kills): while the boss was on the main tank, 4 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,941 a second with overheal and absorbs (18% of the heals effective), 2.61 heals and HoT ticks a second, against 477 damage taken a second. The tank's own heals (4% of its healing) are left out. Main tanks: Warlock 7, Paladin 7, Warrior 4, Shaman 2, Druid 1."
  }
 }

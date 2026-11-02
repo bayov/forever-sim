@@ -1,15 +1,66 @@
 {
  "name": "Ragnaros",
- "source": "[core: vmangos] Melee 1,999 to 2,650 a 2.8 s swing before armor: vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 18.2. a 2006 Molten Core full clear from Blizzard's servers in WWS format (web.mit.edu/cat/project/WoW/MCDump200609/), hits after armor: 152 hits, 1,102 average after armor. Elemental Fire 20564: on every landed melee hit, 2,160 to 2,640 Fire and 600 Fire a second for 8 s (Wowhead confirms the duration), the log's hits 693 and ticks 172 average on a tank in fire resistance gear.",
- "reports": [],
+ "source": "[logs: Season of Discovery] Melee 1,918 to 2,879 before armor under the bench's raid debuffs, a swing every 2.70 s on the tank: Warcraft Logs, 46 kills on Season of Discovery (Normal, 2026-09-09 to 2026-11-02): the median of 251 normal hits' unmitigatedAmount (2,377), the 5th to 95th percentile of each hit over its own kill's median (235 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 1,573 weapon damage, spread 0.611, a 2.25 s swing. Length: the main tank's time on him a kill, median 64 s (10th to 90th percentile 30 to 98). Weapon damage abilities: Elemental Fire 20564 5.5 a minute of tanking. Abilities: Elemental Fire 20564: 2,160 to 2,640 Fire and 600 Fire a second for 8 s (the Classic Era client's spell data; Wowhead confirms the duration), a proc on his landed hits at the logs' rate.",
+ "abilitiesSource": "Elemental Fire 20564: 2,160 to 2,640 Fire and 600 Fire a second for 8 s (the Classic Era client's spell data; Wowhead confirms the duration), a proc on his landed hits at the logs' rate.",
+ "reports": [
+  "P8XK6FrhAGHDvfdb:36",
+  "9GWNXrMqAQYDRjfL:40",
+  "r6ZaYzqD7mbT1VJd:34",
+  "fkTyCBVv4x9ZcY3b:25",
+  "kGQM8txRnZjmdH79:25",
+  "7NjALkhPVWzqB2rC:38",
+  "GT2NpWgBYxvctwM8:25",
+  "6wntqT74PaBNbxC1:33",
+  "AY9Xkn2a7zFfLQrg:29",
+  "mLqCJjwhpNy2gcR3:25",
+  "dDv2GpMTZbNfzx3L:34",
+  "2fyha7JW4gNnDzXQ:30",
+  "b1JjnvQZhcmTVFza:34",
+  "B9ZNzvQP7aqV6xpm:31",
+  "9cRpNhzbWPFkZKAq:30",
+  "V62CdnWhKabRZvq9:26",
+  "7yhpQZPTrmjdWLbM:27",
+  "qQtgd1xrHMwLVNCm:33",
+  "zwYbJGANkXvLgMa4:29",
+  "anDfRtcvbzVkFJgy:36",
+  "CRnhqzv3fG6JbTBM:10",
+  "cAw2GvPXZ3WHR8ar:39",
+  "gX1RQb8cDdCH3rMk:33",
+  "NYr7kjRVbhpgcaw6:35",
+  "YMac6DtzbngwVdTP:36",
+  "2j7MHv1n3b4yrhYa:46",
+  "VZNyRFK21kjnh8w6:31",
+  "JNAqmtnZpG7rWHMy:26",
+  "QN7tnrDBpGfLYAK8:25",
+  "GkHLp68FjCKTb9W3:44",
+  "ZJKVfBCqwYc2ynHM:34",
+  "CkPRdFNXbJ7hrD6L:34",
+  "Wx9H86QbpFacDL2t:1",
+  "Y2akzMyw8J3phQWL:24",
+  "TCQRJ1H3ZXvtcjDW:25",
+  "tZcGbCzTH3JPA1qd:32",
+  "9tHKRTx2FY4aCd3G:32",
+  "Dga1PT8h7LbdznFR:35",
+  "fgVMvHxTqPCrzKjh:1",
+  "DrfhtzgBFPWTM7Ad:33",
+  "Y7xAn6L8KRCq1Xmb:38",
+  "yZmwbNKP8AQhBf6V:37",
+  "W1M8yVTg9DJHRkwm:30",
+  "8xajvfwMHmcgZdBt:56",
+  "84aH9B6fPp1JMm2C:43",
+  "GqzN1nXWKZwLdVFJ:10"
+ ],
  "warcraftLogs": {
-  "encounter": 672,
-  "zone": "Molten Core"
+  "site": "sod",
+  "encounter": 100672,
+  "zone": "Molten Core",
+  "difficulty": "Normal",
+  "mined": "tools/encounters/logs/sod_mc.json"
  },
- "notes": "Elemental Fire comes from every landed hit, blocked ones too (proc aura 20563, client data; the 2006 log has 139 Elemental Fire hits to 152 melee hits), so the sim gives it every 2.8 / 0.65 = 4.3 s on average (about 65% of swings land on a pre-raid warrior). Its DoT is 8 ticks of 600. Fire resistance from gear and buffs takes its share. Wrath of Ragnaros (every 25 to 30 s, 1,000 Fire and a knockback that wipes threat, so a second tank picks him up) and the submerge phase are left out: one tank's stint between knockbacks is what's scored.",
+ "notes": "Elemental Fire is a proc on his landed hits, blocked ones too (proc aura 20563, client data), at the logs' rate: on the Anniversary realms about 3 in 4 of his swings, in Season of Discovery's Normal far fewer. Its DoT is 8 ticks of 600, restarted by the next hit. Fire resistance from gear and buffs takes its share. Wrath of Ragnaros (every 25 to 30 s, 1,000 Fire and a knockback that wipes threat, so a second tank picks him up) and the submerge phase are left out: one tank's stint between knockbacks is what's scored.",
  "encounter": {
-  "duration": 180,
-  "durationVariation": 20,
+  "duration": 64,
+  "durationVariation": 32,
   "targets": [
    {
     "name": "Ragnaros",
@@ -62,9 +113,9 @@
      0,
      0
     ],
-    "minBaseDamage": 1508.8,
-    "damageSpread": 0.4315,
-    "swingSpeed": 2.8
+    "minBaseDamage": 1573.0,
+    "damageSpread": 0.6114,
+    "swingSpeed": 2.25
    }
   ],
   "raidDamage": [
@@ -75,7 +126,7 @@
     "maxDamage": 2640,
     "who": "BossTarget",
     "firstAt": 3,
-    "everySeconds": 4.3,
+    "everySeconds": 10.9,
     "spreadSeconds": 0,
     "randomTiming": true
    },
@@ -86,7 +137,7 @@
     "maxDamage": 600,
     "who": "BossTarget",
     "firstAt": 3,
-    "everySeconds": 4.3,
+    "everySeconds": 10.9,
     "spreadSeconds": 0,
     "randomTiming": true,
     "ticks": 8,
@@ -95,9 +146,9 @@
   ]
  },
  "healing": {
-  "healers": 4,
-  "hpsEach": 400,
-  "castSeconds": 2.0,
-  "notes": "A 40-player Molten Core raid's main tank: 4 healers at 400 HPS each on it in 2 s heals (800 a heal), a mix of paladins on Flash of Light rank 6 (about 600 at 400 healing power) and priests on Greater Heal rank 4 or downranked Heal. 1,600 HPS before overheal, 2.4 times an assumed 650 DTPS, the Classic Era Molten Core logs' ratio (wowsims/forever). Not from logs yet: replace with tools/warcraftlogs tank numbers."
+  "healers": 3,
+  "hpsEach": 383,
+  "castSeconds": 2.11,
+  "notes": "From Season of Discovery's logs (46 kills): while the boss was on the main tank, 3 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,150 a second with overheal and absorbs (29% of the heals effective), 1.42 heals and HoT ticks a second, against 439 damage taken a second. The tank's own heals (9% of its healing) are left out. Main tanks: Druid 17, Warlock 12, Paladin 9, Rogue 3, Warrior 3, Shaman 2."
  }
 }

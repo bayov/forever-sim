@@ -1,15 +1,65 @@
 {
  "name": "Golemagg the Incinerator",
- "source": "[core: vmangos] Melee 2,202 to 2,919 a 2.0 s swing before armor: vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 20.05. a 2006 Molten Core full clear from Blizzard's servers in WWS format (web.mit.edu/cat/project/WoW/MCDump200609/), hits after armor: 75 hits, 979 average after armor. Double Attack 18943: 50% of his landed hits give an extra swing (the Classic Era client's spell data), so one every 2 / (0.65 x 0.5) = 6.2 s on average with about 65% of swings landing (sim: a melee ability at the swing's range). Magma Splash 13880: a Fire DoT stacking to 50 on the tank, 50 every 3 s a stack (the log's ticks 216 average).",
- "reports": [],
+ "source": "[logs: Season of Discovery] Melee 1,441 to 2,147 before armor under the bench's raid debuffs, a swing every 1.70 s on the tank: Warcraft Logs, 45 kills on Season of Discovery (Normal, 2026-09-09 to 2026-11-02): the median of 139 normal hits' unmitigatedAmount (1,720), the 5th to 95th percentile of each hit over its own kill's median (122 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 1,189 weapon damage, spread 0.594, a 1.41 s swing. Length: the kills' length, median 27 s (10th to 90th percentile 16 to 48). Abilities: Magma Splash 13880: a Fire DoT stacking to 50 on the tank, 50 every 3 s a stack (the Classic Era client's spell data; a 2006 Molten Core log's ticks 216 average). Double Attack 18943 (50% of his landed hits give an extra swing) is in the logs' swing rate, since its swings log as white swings.",
+ "abilitiesSource": "Magma Splash 13880: a Fire DoT stacking to 50 on the tank, 50 every 3 s a stack (the Classic Era client's spell data; a 2006 Molten Core log's ticks 216 average). Double Attack 18943 (50% of his landed hits give an extra swing) is in the logs' swing rate, since its swings log as white swings.",
+ "reports": [
+  "P8XK6FrhAGHDvfdb:24",
+  "9GWNXrMqAQYDRjfL:28",
+  "r6ZaYzqD7mbT1VJd:22",
+  "fkTyCBVv4x9ZcY3b:16",
+  "kGQM8txRnZjmdH79:15",
+  "7NjALkhPVWzqB2rC:31",
+  "GT2NpWgBYxvctwM8:17",
+  "6wntqT74PaBNbxC1:20",
+  "AY9Xkn2a7zFfLQrg:22",
+  "mLqCJjwhpNy2gcR3:19",
+  "dDv2GpMTZbNfzx3L:23",
+  "2fyha7JW4gNnDzXQ:19",
+  "b1JjnvQZhcmTVFza:23",
+  "B9ZNzvQP7aqV6xpm:25",
+  "9cRpNhzbWPFkZKAq:21",
+  "V62CdnWhKabRZvq9:20",
+  "7yhpQZPTrmjdWLbM:18",
+  "qQtgd1xrHMwLVNCm:24",
+  "zwYbJGANkXvLgMa4:23",
+  "anDfRtcvbzVkFJgy:25",
+  "CRnhqzv3fG6JbTBM:8",
+  "cAw2GvPXZ3WHR8ar:26",
+  "gX1RQb8cDdCH3rMk:28",
+  "NYr7kjRVbhpgcaw6:29",
+  "YMac6DtzbngwVdTP:30",
+  "2j7MHv1n3b4yrhYa:38",
+  "VZNyRFK21kjnh8w6:25",
+  "JNAqmtnZpG7rWHMy:19",
+  "QN7tnrDBpGfLYAK8:14",
+  "GkHLp68FjCKTb9W3:38",
+  "ZJKVfBCqwYc2ynHM:27",
+  "CkPRdFNXbJ7hrD6L:28",
+  "Y2akzMyw8J3phQWL:18",
+  "TCQRJ1H3ZXvtcjDW:19",
+  "tZcGbCzTH3JPA1qd:24",
+  "8Qzj6Pq3YpHhGrBa:24",
+  "9tHKRTx2FY4aCd3G:24",
+  "Dga1PT8h7LbdznFR:29",
+  "DrfhtzgBFPWTM7Ad:28",
+  "Y7xAn6L8KRCq1Xmb:31",
+  "yZmwbNKP8AQhBf6V:30",
+  "W1M8yVTg9DJHRkwm:21",
+  "8xajvfwMHmcgZdBt:47",
+  "84aH9B6fPp1JMm2C:36",
+  "GqzN1nXWKZwLdVFJ:8"
+ ],
  "warcraftLogs": {
-  "encounter": 670,
-  "zone": "Molten Core"
+  "site": "sod",
+  "encounter": 100670,
+  "zone": "Molten Core",
+  "difficulty": "Normal",
+  "mined": "tools/encounters/logs/sod_mc.json"
  },
- "notes": "The Core Ragers are another tank's job and left out. Magma Splash is modelled as a steady 4 stacks (200 Fire every 3 s), the log's tick average, without its 93 to 107 Fire hit on each application or its armor cut (about 250 a stack, so about 1,000 at 4 stacks, client data), which the sim can't model on an event yet. Double Attack's extra swings can't crush in the sim. Earthquake below 10% health and Pyroblast on random players are left out.",
+ "notes": "The Core Ragers are another tank's job and left out. Magma Splash is modelled as a steady 4 stacks (200 Fire every 3 s), the log's tick average, without its 93 to 107 Fire hit on each application or its armor cut (about 250 a stack, so about 1,000 at 4 stacks, client data), which the sim can't model on an event yet. Earthquake below 10% health and Pyroblast on random players are left out.",
  "encounter": {
-  "duration": 180,
-  "durationVariation": 20,
+  "duration": 27,
+  "durationVariation": 13,
   "targets": [
    {
     "name": "Golemagg the Incinerator",
@@ -62,24 +112,12 @@
      0,
      0
     ],
-    "minBaseDamage": 1662.1,
-    "damageSpread": 0.4314,
-    "swingSpeed": 2.0
+    "minBaseDamage": 1189.4,
+    "damageSpread": 0.5936,
+    "swingSpeed": 1.41
    }
   ],
   "raidDamage": [
-   {
-    "spellId": 18943,
-    "school": "SpellSchoolPhysical",
-    "minDamage": 2035,
-    "maxDamage": 2697,
-    "who": "BossTarget",
-    "firstAt": 2,
-    "everySeconds": 6.2,
-    "spreadSeconds": 0,
-    "melee": true,
-    "randomTiming": true
-   },
    {
     "spellId": 13880,
     "school": "SpellSchoolFire",
@@ -93,9 +131,9 @@
   ]
  },
  "healing": {
-  "healers": 4,
-  "hpsEach": 400,
-  "castSeconds": 2.0,
-  "notes": "A 40-player Molten Core raid's main tank: 4 healers at 400 HPS each on it in 2 s heals (800 a heal), a mix of paladins on Flash of Light rank 6 (about 600 at 400 healing power) and priests on Greater Heal rank 4 or downranked Heal. 1,600 HPS before overheal, 2.4 times an assumed 650 DTPS, the Classic Era Molten Core logs' ratio (wowsims/forever). Not from logs yet: replace with tools/warcraftlogs tank numbers."
+  "healers": 3,
+  "hpsEach": 445,
+  "castSeconds": 1.53,
+  "notes": "From Season of Discovery's logs (45 kills): while the boss was on the main tank, 3 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,336 a second with overheal and absorbs (21% of the heals effective), 1.96 heals and HoT ticks a second, against 416 damage taken a second. The tank's own heals (9% of its healing) are left out. Main tanks: Druid 13, Warlock 10, Paladin 6, Shaman 5, Warrior 4, Rogue 3, Hunter 3, Mage 1."
  }
 }
