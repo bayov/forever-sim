@@ -202,6 +202,22 @@
   },
   {
    "builds": [
+    "hunter__lone-wolf",
+    "hunter__marksmanship"
+   ],
+   "key": "s20904",
+   "why": "Why Aimed Shot only above 40% mana? It hits harder than Multi-Shot but costs more, so long fights run dry."
+  },
+  {
+   "builds": [
+    "hunter__lone-wolf",
+    "hunter__marksmanship"
+   ],
+   "key": "s2643",
+   "why": "Why Multi-Shot under Aimed Shot? They share a cooldown. Below 40% mana, or when Aimed Shot's cast would cut into a weave, the instant Multi-Shot takes it."
+  },
+  {
+   "builds": [
     "hunter__survival"
    ],
    "key": null,
