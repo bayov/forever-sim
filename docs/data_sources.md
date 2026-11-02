@@ -36,7 +36,12 @@ When two sources disagree, the one higher in this list wins:
 2. Season of Discovery.
 3. Anniversary, then 2019 Classic.
 
-Never cite vmangos, and never change the sim on a tooltip alone. Wowhead and foreverchanges.pro
+**Boss encounters** (what bosses hit for, how often and whom, for the tank and healing sims) come from
+Warcraft Logs, which shows what Blizzard's servers did (the user, 2026-11-02): Season of Discovery logs
+first, then Anniversary (its Vanilla raids, then TBC), then Era. vmangos is the last resort, only where no
+log shows a value, and says so where it's used.
+
+Otherwise never cite vmangos, and never change the sim on a tooltip alone. Wowhead and foreverchanges.pro
 report what the client says, so they rank with it when they show client data. The daily routine
 (`tools/forever_update/ROUTINE.md`) and the audit passes rank sources by this list.
 
@@ -427,8 +432,8 @@ spell text in them (tooltip templates filled in, cost lines, icons) comes from o
 
 ## Warcraft Logs API
 
-- **What:** public reports, for proc and glancing statistics. Nothing from it goes into the
-  sim yet.
+- **What:** public reports, for proc and glancing statistics, and the boss encounters' damage for the
+  tank and healing sims (see [Which source wins](#which-source-wins)): SoD, then Anniversary, then Era.
 - **URLs:** `https://www.warcraftlogs.com/oauth/token`, `https://<site>.warcraftlogs.com/api/v2/client`.
 - **Fetcher:** `python3 tools/warcraftlogs/wclcli.py --site <s> ...` through
   `tools/warcraftlogs/wcl.py`. Credentials in `~/.config/forever-sim/wcl.json`.

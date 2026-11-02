@@ -24,7 +24,7 @@ func (aura *Aura) AddHold(sim *Simulation, holder *Unit, until time.Duration) ti
 }
 
 // RemoveHold ends holder's hold, and returns the latest time a remaining holder keeps the aura
-// up, 0 when none does.
+// up, or the earliest sim time when none does.
 func (aura *Aura) RemoveHold(sim *Simulation, holder *Unit) time.Duration {
 	aura.holds = slices.DeleteFunc(aura.holds, func(hold auraHold) bool {
 		return hold.holder == holder || hold.until <= sim.CurrentTime
@@ -32,8 +32,10 @@ func (aura *Aura) RemoveHold(sim *Simulation, holder *Unit) time.Duration {
 	return aura.latestHold()
 }
 
+// latestHold starts from the earliest sim time, not 0, so a hold that ended before the pull (a
+// totem replaced in the prepull) no longer keeps the buff up until 0.
 func (aura *Aura) latestHold() time.Duration {
-	latest := time.Duration(0)
+	latest := startingCDTime
 	for _, hold := range aura.holds {
 		latest = max(latest, hold.until)
 	}

@@ -71,6 +71,10 @@ func (value *APLValueCurrentHealthPercent) Type() proto.APLValueType {
 func (value *APLValueCurrentHealthPercent) GetFloat(_ *Simulation) float64 {
 	unit := value.unit.Get()
 	if unit == nil {
+		// Most Hurt or Lowest Health with nobody hurt: everyone is full.
+		if value.unit.IsHealTarget() {
+			return 1
+		}
 		return 0
 	}
 	return unit.CurrentHealthPercent()
@@ -81,13 +85,19 @@ func (value *APLValueCurrentHealthPercent) String() string {
 
 type APLValueMaxHealth struct {
 	DefaultAPLValueImpl
-	unit *Unit
+	unit UnitReference
 }
 
-func (rot *APLRotation) newValueMaxHealth(_ *proto.APLValueMaxHealth) APLValue {
-	unit := rot.unit
-	if !unit.HasHealthBar() {
-		rot.ValidationWarning("%s does not use Health", unit.Label)
+func (rot *APLRotation) newValueMaxHealth(config *proto.APLValueMaxHealth) APLValue {
+	unit := rot.GetSourceUnit(config.GetSourceUnit())
+	if unit.Get() == nil {
+		if unit.IsDynamic() {
+			return &APLValueMaxHealth{unit: unit}
+		}
+		return nil
+	}
+	if !unit.Get().HasHealthBar() {
+		rot.ValidationWarning("%s does not use Health", unit.Get().Label)
 		return nil
 	}
 	return &APLValueMaxHealth{
@@ -98,10 +108,51 @@ func (value *APLValueMaxHealth) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
 func (value *APLValueMaxHealth) GetFloat(_ *Simulation) float64 {
-	return value.unit.MaxHealth()
+	unit := value.unit.Get()
+	if unit == nil {
+		return 0
+	}
+	return unit.MaxHealth()
 }
 func (value *APLValueMaxHealth) String() string {
 	return "Max Health"
+}
+
+// APLValueHealthMissing is a unit's max health less its current health, for a heal that waits
+// until its target misses enough (docs/healing_sim.md). 0 for a heal target with nobody hurt.
+type APLValueHealthMissing struct {
+	DefaultAPLValueImpl
+	unit UnitReference
+}
+
+func (rot *APLRotation) newValueHealthMissing(config *proto.APLValueHealthMissing) APLValue {
+	unit := rot.GetSourceUnit(config.GetSourceUnit())
+	if unit.Get() == nil {
+		if unit.IsDynamic() {
+			return &APLValueHealthMissing{unit: unit}
+		}
+		return nil
+	}
+	if !unit.Get().HasHealthBar() {
+		rot.ValidationWarning("%s does not use Health", unit.Get().Label)
+		return nil
+	}
+	return &APLValueHealthMissing{
+		unit: unit,
+	}
+}
+func (value *APLValueHealthMissing) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeFloat
+}
+func (value *APLValueHealthMissing) GetFloat(_ *Simulation) float64 {
+	unit := value.unit.Get()
+	if unit == nil || unit.IsDead() {
+		return 0
+	}
+	return unit.MaxHealth() - unit.CurrentHealth()
+}
+func (value *APLValueHealthMissing) String() string {
+	return "Health Missing"
 }
 
 type APLValueCurrentMana struct {

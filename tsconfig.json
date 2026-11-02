@@ -28,6 +28,7 @@
         "binary_dist",
         ".history",
         "ui/core/index.ts",
-        "ui/core/proto/*"
+        "ui/core/proto/*",
+        "ui/practice"
     ]
 }

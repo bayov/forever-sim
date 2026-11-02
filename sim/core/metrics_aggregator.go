@@ -90,6 +90,7 @@ type UnitMetrics struct {
 	dtps   DistributionMetrics
 	tmi    DistributionMetrics
 	hps    DistributionMetrics
+	ehps   DistributionMetrics
 	tto    DistributionMetrics
 	// Mana left when the fight ends, so two builds that do the same damage can be told
 	// apart by how much mana they spare.
@@ -105,6 +106,7 @@ type UnitMetrics struct {
 
 	// Aggregate values. These are updated after each iteration.
 	numItersDead int32
+	scaresSum    int64
 	oomTimeSum   float64
 	actions      map[ActionID]*ActionMetrics
 	resources    []*ResourceMetrics
@@ -113,8 +115,13 @@ type UnitMetrics struct {
 // Metrics for the current iteration, for 1 agent. Keep this as a separate
 // struct, so it's easy to clear.
 type CharacterIterationMetrics struct {
-	Died    bool // Whether this unit died in the current iteration.
-	WentOOM bool // Whether the agent has hit OOM at least once in this iteration.
+	Died bool // Whether this unit died in the current iteration.
+
+	// Scares: dips under 20% health that we lived through (health.go). A dip counts once, until
+	// we're back over 50%; scareOpen is a dip that hasn't ended.
+	Scares    int32
+	scareOpen bool
+	WentOOM   bool // Whether the agent has hit OOM at least once in this iteration.
 
 	ManaSpent  float64
 	ManaGained float64
@@ -196,6 +203,7 @@ type SpellMetrics struct {
 	TotalCrushThreat            float64
 	TotalHealing                float64 // Healing done by all casts of this spell.
 	TotalCritHealing            float64 // Healing done by all critical casts of this spell.
+	TotalOverhealing            float64 // The part of TotalHealing that found the target at full health.
 	TotalShielding              float64 // Shielding done by all casts of this spell.
 	TotalCastTime               time.Duration
 }
@@ -241,6 +249,7 @@ type TargetedActionMetrics struct {
 	CrushThreat            float64
 	Healing                float64
 	CritHealing            float64
+	Overhealing            float64
 	Shielding              float64
 	CastTime               time.Duration
 }
@@ -288,6 +297,7 @@ func (tam *TargetedActionMetrics) ToProto(unitIndex int32) *proto.TargetedAction
 		CrushThreat:            tam.CrushThreat,
 		Healing:                tam.Healing,
 		CritHealing:            tam.CritHealing,
+		Overhealing:            tam.Overhealing,
 		Shielding:              tam.Shielding,
 		CastTimeMs:             float64(tam.CastTime.Milliseconds()),
 	}
@@ -301,6 +311,7 @@ func NewUnitMetrics() UnitMetrics {
 		dtps:    NewDistributionMetrics(),
 		tmi:     NewDistributionMetrics(),
 		hps:     NewDistributionMetrics(),
+		ehps:    NewDistributionMetrics(),
 		tto:     NewDistributionMetrics(),
 		manaEnd: NewDistributionMetrics(),
 		actions: make(map[ActionID]*ActionMetrics),
@@ -458,6 +469,7 @@ func (unitMetrics *UnitMetrics) addSpellMetrics(spell *Spell, actionID ActionID,
 		tam.CrushThreat += spellTargetMetrics.TotalCrushThreat
 		tam.Healing += spellTargetMetrics.TotalHealing
 		tam.CritHealing += spellTargetMetrics.TotalCritHealing
+		tam.Overhealing += spellTargetMetrics.TotalOverhealing
 		tam.Shielding += spellTargetMetrics.TotalShielding
 		if !spell.Flags.Matches(SpellFlagPassiveSpell) {
 			tam.CastTime += spellTargetMetrics.TotalCastTime
@@ -471,6 +483,7 @@ func (unitMetrics *UnitMetrics) addSpellMetrics(spell *Spell, actionID ActionID,
 			unitMetrics.threat.Total += spellTargetMetrics.TotalThreat
 		} else {
 			unitMetrics.hps.Total += spellTargetMetrics.TotalHealing + spellTargetMetrics.TotalShielding
+			unitMetrics.ehps.Total += spellTargetMetrics.TotalHealing - spellTargetMetrics.TotalOverhealing
 		}
 	}
 }
@@ -508,6 +521,7 @@ func (unitMetrics *UnitMetrics) reset() {
 	unitMetrics.tmi.reset()
 	unitMetrics.tmiList = nil
 	unitMetrics.hps.reset()
+	unitMetrics.ehps.reset()
 	unitMetrics.tto.reset()
 	unitMetrics.manaEnd.reset()
 	unitMetrics.CharacterIterationMetrics = CharacterIterationMetrics{}
@@ -556,6 +570,7 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 	unitMetrics.dtps.doneIteration(sim)
 	unitMetrics.tmi.doneIteration(sim)
 	unitMetrics.hps.doneIteration(sim)
+	unitMetrics.ehps.doneIteration(sim)
 	unitMetrics.tto.doneIteration(sim)
 	unitMetrics.manaEnd.doneIteration(sim)
 
@@ -567,6 +582,7 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 	if unitMetrics.Died {
 		unitMetrics.numItersDead++
 	}
+	unitMetrics.scaresSum += int64(unitMetrics.Scares)
 }
 
 func (unitMetrics *UnitMetrics) calculateTMI(unit *Unit, sim *Simulation) float64 {
@@ -650,10 +666,12 @@ func (unitMetrics *UnitMetrics) ToProto() *proto.UnitMetrics {
 		Dtps:          unitMetrics.dtps.ToProto(),
 		Tmi:           unitMetrics.tmi.ToProto(),
 		Hps:           unitMetrics.hps.ToProto(),
+		Ehps:          unitMetrics.ehps.ToProto(),
 		Tto:           unitMetrics.tto.ToProto(),
 		ManaEnd:       unitMetrics.manaEnd.ToProto(),
 		SecondsOomAvg: unitMetrics.oomTimeSum / n,
 		ChanceOfDeath: float64(unitMetrics.numItersDead) / n,
+		ScaresAvg:     float64(unitMetrics.scaresSum) / n,
 		TankSheet:     unitMetrics.tankSheet,
 	}
 

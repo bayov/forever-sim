@@ -1,7 +1,8 @@
 """Warcraft Logs v2 API client with a disk cache and a points budget.
 
 Credentials come from ~/.config/forever-sim/wcl.json ({"client_id": ..., "client_secret": ...}),
-made at https://www.warcraftlogs.com/api/clients/. Every client gets 3600 points an hour, and
+or from WCL_CLIENT_ID and WCL_CLIENT_SECRET in the environment, made at
+https://www.warcraftlogs.com/api/clients/. Every client gets 3600 points an hour, and
 the client is shared by everything we run, so we try hard not to spend them:
 
 - Every response is cached under ~/.cache/forever-sim/wcl/. Report data never changes once a
@@ -52,7 +53,12 @@ def _token():
             return t['access_token']
     except (OSError, ValueError, KeyError):
         pass
-    cred = json.load(open(CRED_PATH))
+    # The file, or WCL_CLIENT_ID and WCL_CLIENT_SECRET in the environment (a cloud session's
+    # environment variables).
+    if os.environ.get('WCL_CLIENT_ID') and os.environ.get('WCL_CLIENT_SECRET'):
+        cred = {'client_id': os.environ['WCL_CLIENT_ID'], 'client_secret': os.environ['WCL_CLIENT_SECRET']}
+    else:
+        cred = json.load(open(CRED_PATH))
     r = requests.post(TOKEN_URL, data={'grant_type': 'client_credentials'},
                       auth=(cred['client_id'], cred['client_secret']), timeout=30)
     r.raise_for_status()

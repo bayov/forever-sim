@@ -42,6 +42,12 @@ type Encounter struct {
 
 	// The fight is in a zone where Forever's natural flasks give their bonus beyond Stamina.
 	NaturalFlaskZone bool
+
+	// A healing fight: every player's health is tracked and a player can die (health.go,
+	// player_death.go). docs/healing_sim.md.
+	TrackHealth bool
+	// The boss's abilities on the raid in a healing fight (raid_damage.go).
+	RaidDamage []*proto.RaidDamageEvent
 }
 
 func NewEncounter(options *proto.Encounter) Encounter {
@@ -61,6 +67,8 @@ func NewEncounter(options *proto.Encounter) Encounter {
 		RaidDamageHitsPerMinute: max(options.RaidDamageHitsPerMinute, 0),
 		RaidDamagePerHit:        max(options.RaidDamagePerHit, 0),
 		NaturalFlaskZone:        options.NaturalFlaskZone,
+		TrackHealth:             options.TrackHealth,
+		RaidDamage:              options.RaidDamage,
 	}
 	// If UseHealth is set, we use the sum of targets health.
 	if options.UseHealth {
@@ -138,6 +146,9 @@ type Target struct {
 	Unit
 
 	AI TargetAI
+
+	// Target.tank_swap_seconds: how often it turns to the next tank (player_death.go).
+	tankSwapEvery time.Duration
 }
 
 func NewTarget(options *proto.Target, targetIndex int32) *Target {
@@ -177,6 +188,7 @@ func NewTarget(options *proto.Target, targetIndex int32) *Target {
 	target.PseudoStats.ParryHaste = options.ParryHaste
 	target.PseudoStats.InFrontOfTarget = true
 	target.PseudoStats.DamageSpread = options.DamageSpread
+	target.tankSwapEvery = DurationFromSeconds(max(options.TankSwapSeconds, 0))
 	target.PseudoStats.ClassicCrit = options.ClassicCrit
 
 	preset := GetPresetTargetWithID(options.Id)
@@ -189,6 +201,10 @@ func NewTarget(options *proto.Target, targetIndex int32) *Target {
 
 func (target *Target) Reset(sim *Simulation) {
 	target.Unit.reset(sim, nil)
+	// A tank swap or a tank's death in the last iteration moved it (player_death.go).
+	if target.defaultTarget != nil {
+		target.CurrentTarget = target.defaultTarget
+	}
 	target.SetGCDTimer(sim, 0)
 	if target.AI != nil {
 		target.AI.Reset(sim)

@@ -84,6 +84,11 @@ func (shaman *Shaman) nearFireTotem(sim *core.Simulation, mob *core.Unit, yards 
 // fireTotemMobs are the mobs fighting us within yards of our fire totem.
 func (shaman *Shaman) fireTotemMobs(sim *core.Simulation, yards float64) []*core.Unit {
 	if !sim.Encounter.IsLeveling() {
+		if shaman.FireTotemInReach != nil {
+			return core.FilterSlice(sim.Encounter.ActiveTargetUnits, func(mob *core.Unit) bool {
+				return shaman.FireTotemInReach(sim, mob, yards)
+			})
+		}
 		return sim.Encounter.ActiveTargetUnits
 	}
 	return core.FilterSlice(sim.Encounter.ActiveTargetUnits, func(mob *core.Unit) bool {
@@ -95,6 +100,9 @@ func (shaman *Shaman) fireTotemMobs(sim *core.Simulation, yards float64) []*core
 // the first mob fighting us in its range when our target isn't one. Nil when none is.
 func (shaman *Shaman) searingTotemTarget(sim *core.Simulation) *core.Unit {
 	if !sim.Encounter.IsLeveling() {
+		if shaman.FireTotemInReach != nil && shaman.CurrentTarget != nil && !shaman.FireTotemInReach(sim, shaman.CurrentTarget, searingTotemRange) {
+			return nil
+		}
 		return shaman.CurrentTarget
 	}
 	mobs := shaman.fireTotemMobs(sim, searingTotemRange)
@@ -139,4 +147,16 @@ func ownTotemAura(aura *core.Aura) *core.Aura {
 		aura.BuildPhase = core.CharacterBuildPhaseNone
 	}
 	return aura
+}
+
+// PlaceTotem puts down a totem the sim doesn't model, in its element's slot: it ends the totem
+// standing there, and Fire Nova and Totemic Recall see it. For the practice room, where the
+// player can cast any totem (Earthbind Totem in place of Strength of Earth, say).
+func (shaman *Shaman) PlaceTotem(sim *core.Simulation, slot int, spell *core.Spell, duration time.Duration) {
+	shaman.placeTotem(sim, slot, spell, duration, nil)
+}
+
+// TotemicFocusFactor is what Totemic Focus multiplies every totem's cost by.
+func (shaman *Shaman) TotemicFocusFactor() float64 {
+	return shaman.totemicFocusFactor()
 }

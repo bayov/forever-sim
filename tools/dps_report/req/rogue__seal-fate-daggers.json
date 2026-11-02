@@ -97,22 +97,6 @@
             "profession2": "Leatherworking",
             "rotation": {
               "type": "TypeAPL",
-              "prepullActions": [
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 13877
-                      }
-                    }
-                  },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-1s"
-                    }
-                  }
-                }
-              ],
               "priorityList": [
                 {
                   "action": {
@@ -365,7 +349,7 @@
                               "op": "OpLt",
                               "rhs": {
                                 "const": {
-                                  "val": "39"
+                                  "val": "59"
                                 }
                               }
                             }
@@ -1276,72 +1260,9 @@
                       "spellId": {
                         "spellId": 25300
                       }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "or": {
-                              "vals": [
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "autoTimeToNext": {
-                                        "autoType": "MainHand"
-                                      }
-                                    },
-                                    "op": "OpGt",
-                                    "rhs": {
-                                      "math": {
-                                        "lhs": {
-                                          "autoSwingTime": {
-                                            "autoType": "MainHand"
-                                          }
-                                        },
-                                        "op": "OpSub",
-                                        "rhs": {
-                                          "const": {
-                                            "val": "0.25s"
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "currentEnergy": {}
-                                    },
-                                    "op": "OpGe",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "100"
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "remainingTime": {}
-                                    },
-                                    "op": "OpLt",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "6s"
-                                      }
-                                    }
-                                  }
-                                }
-                              ]
-                            }
-                          }
-                        ]
-                      }
                     }
                   },
-                  "notes": "Backstab."
+                  "notes": "Backstab whenever it is affordable."
                 }
               ]
             },

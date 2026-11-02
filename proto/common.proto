@@ -1056,6 +1056,11 @@ message Target {
 	// -1 or invalid index indicates not being tanked.
 	int32 tank_index = 13;
 
+	// Seconds. When set, the mob turns to the next tank in Raid.tanks every this many seconds,
+	// starting with tank_index and skipping dead ones, as a boss whose debuff stacks or knockback
+	// make the tanks trade it. See docs/healing_sim.md.
+	double tank_swap_seconds = 16;
+
 	// Custom Target AI parameters
 	repeated TargetInput target_inputs = 14;
 
@@ -1110,6 +1115,62 @@ message Encounter {
 	// The fight is in Mount Hyjal, Hyjal Summit or the Barrow Deeps, where Forever's natural
 	// flasks give their bonus beyond Stamina.
 	bool natural_flask_zone = 13;
+
+	// A healing fight (docs/healing_sim.md): every player loses health to every hit it takes,
+	// tank or not, and dies when it runs out. A dead player does nothing more, the mobs leave it
+	// and heals don't reach it. The fight goes on.
+	bool track_health = 14;
+
+	// The boss's abilities on the raid, on top of its melee on its tank (sim/core/raid_damage.go).
+	repeated RaidDamageEvent raid_damage = 15;
+}
+
+// One of the boss's abilities on the raid, for a healing fight (docs/healing_sim.md).
+message RaidDamageEvent {
+	// Who it hits: every living player of the group below, or count random ones of them.
+	enum Who {
+		Everyone = 0;
+		Tanks = 1; // the players in Raid.tanks
+		NotTanks = 2;
+		BossTarget = 3; // the boss's current target (a breath, a strike on the tank)
+	}
+
+	// For the log and the metrics. 0 gives a generic one.
+	int32 spell_id = 1;
+	SpellSchool school = 2;
+	// The damage of each hit or tick, rolled evenly in between, before the player's armor (for
+	// Physical), resistances and damage taken modifiers. A max under min means min.
+	double min_damage = 3;
+	double max_damage = 4;
+
+	Who who = 5;
+	// How many random players of the group it hits. 0 hits all of them.
+	int32 count = 6;
+
+	// Seconds. The first one comes at first_at, then one every every_seconds, each wait spread
+	// evenly by spread_seconds either side. With random_timing, each wait is drawn on its own with
+	// every_seconds as its average, as raid_hits.go's hits are.
+	double first_at = 7;
+	double every_seconds = 8;
+	double spread_seconds = 9;
+	bool random_timing = 10;
+
+	// Over time: ticks of the damage above, one every tick_seconds, the first one tick_seconds
+	// after the hit lands. 0 is a single hit.
+	int32 ticks = 11;
+	double tick_seconds = 12;
+
+	// The boss it comes from, by index in Encounter.targets. A dead boss stops it.
+	int32 target_index = 13;
+
+	// A melee ability (Cleave, Mortal Strike, Hateful Strike): it rolls the player's miss, dodge,
+	// parry and block like the boss's white swing, then crits on a roll of its own, and never
+	// crushes (OutcomeEnemyMeleeSpecial). Otherwise it always lands.
+	bool melee = 14;
+	// What a landed hit leaves on the player: its healing taken times this for debuff_seconds,
+	// refreshed by the next hit (Mortal Strike's 0.5 for 5 s). 0 or 1 is none.
+	double healing_taken_multiplier = 15;
+	double debuff_seconds = 16;
 }
 
 // A grinding session (docs/leveling_sim.md). A field left at 0 takes its default.
@@ -1264,6 +1325,14 @@ message UnitReference {
 		// In a leveling session (Encounter.leveling): the mob we found and haven't pulled
 		// yet, out of combat or while fighting others. None when there isn't one.
 		PullTarget = 8;
+		// Heal targets (docs/healing_sim.md), among the living players in our heal assignment
+		// (Player.heal_assignment, the whole raid without one). None when nobody there is hurt.
+		// The player missing the most health.
+		MostHurt = 9;
+		// The player with the lowest health percent.
+		LowestHealth = 10;
+		// The raid's tank number index (Raid.tanks), living or not. Not limited to the assignment.
+		Tank = 11;
 	}
 
 	// The type of unit being referenced.

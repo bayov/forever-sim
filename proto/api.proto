@@ -111,6 +111,10 @@ message Player {
 		Warrior warrior = 37;
 		TankWarrior tank_warrior = 38;
 	}
+
+	// The players this one heals (docs/healing_sim.md): its rotation's Most Hurt and Lowest Health
+	// pick among them. Player and Tank references. Empty is the whole raid.
+	repeated UnitReference heal_assignment = 56;
 }
 
 message Party {
@@ -326,6 +330,10 @@ message TargetedActionMetrics {
 	// Total critical healing done to this target by this action.
 	double crit_healing = 16;
 
+	// The part of the healing above that found the target at full health: overhealing. Healing less
+	// this is the effective healing. A target without a health bar (a target dummy) takes it all.
+	double overhealing = 45;
+
 	// Total shielding done to this target by this action.
 	double shielding = 13;
 
@@ -396,7 +404,8 @@ message UnitMetrics {
 	DistributionMetrics threat = 8;
 	DistributionMetrics dtps = 11;
 	DistributionMetrics tmi = 17;
-	DistributionMetrics hps = 14;
+	DistributionMetrics hps = 14; // Healing and shielding, overhealing included.
+	DistributionMetrics ehps = 21; // Effective healing per second: healing less overhealing, no shielding.
 	DistributionMetrics tto = 15; // Time To OOM, in seconds.
 	DistributionMetrics mana_end = 18; // Mana left when the fight ends.
 
@@ -408,6 +417,10 @@ message UnitMetrics {
 
 	// Chance (0-1) representing probability of death. Used for tank sims.
 	double chance_of_death = 12;
+
+	// When health is tracked: how often a fight brought us under 20% health and we lived, on
+	// average per fight. A dip counts once, until we're back over 50%. docs/healing_sim.md.
+	double scares_avg = 22;
 
 	// Set for a player the boss attacks: its defenses against the boss's swing (core/tank_sheet.go).
 	TankSheet tank_sheet = 20;

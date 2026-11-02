@@ -80,6 +80,7 @@ func (rsrc *raidSimResultCombiner) newUnitMetrics(baseUnit *proto.UnitMetrics) *
 		Dtps:      rsrc.newDistMetrics(),
 		Tmi:       rsrc.newDistMetrics(),
 		Hps:       rsrc.newDistMetrics(),
+		Ehps:      rsrc.newDistMetrics(),
 		Tto:       rsrc.newDistMetrics(),
 		ManaEnd:   rsrc.newDistMetrics(),
 		Actions:   make([]*proto.ActionMetrics, 0, len(baseUnit.Actions)),
@@ -221,6 +222,7 @@ func (rsrc *raidSimResultCombiner) addActionMetrics(unit *proto.UnitMetrics, add
 		baseTgt.CrushThreat += addTgt.CrushThreat
 		baseTgt.Healing += addTgt.Healing
 		baseTgt.CritHealing += addTgt.CritHealing
+		baseTgt.Overhealing += addTgt.Overhealing
 		baseTgt.Shielding += addTgt.Shielding
 		baseTgt.CastTimeMs += addTgt.CastTimeMs
 	}
@@ -275,11 +277,13 @@ func (rsrc *raidSimResultCombiner) combineUnitMetrics(base *proto.UnitMetrics, a
 	rsrc.combineDistMetrics(base.Dtps, add.Dtps, isLast, weight)
 	rsrc.combineDistMetrics(base.Tmi, add.Tmi, isLast, weight)
 	rsrc.combineDistMetrics(base.Hps, add.Hps, isLast, weight)
+	rsrc.combineDistMetrics(base.Ehps, add.Ehps, isLast, weight)
 	rsrc.combineDistMetrics(base.Tto, add.Tto, isLast, weight)
 	rsrc.combineDistMetrics(base.ManaEnd, add.ManaEnd, isLast, weight)
 
 	base.SecondsOomAvg += add.SecondsOomAvg * weight
 	base.ChanceOfDeath += add.ChanceOfDeath * weight
+	base.ScaresAvg += add.ScaresAvg * weight
 
 	if base.Aggro != nil && add.Aggro != nil {
 		base.Aggro.Chance += add.Aggro.Chance * weight

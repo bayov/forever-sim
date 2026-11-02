@@ -20,6 +20,38 @@ the rules audit, then tank gear and rotations. Real healers come from the healin
   and the death floor, and a build that dies too often whatever the healing says so.
 - **Forever's boss crit:** audit which rule is more likely and go with it until a log confirms it. The audit
   below picks Forever's 0.6%.
+- **The stand-in healer stays** until the healing sim's healers heal, then tanks switch to them.
+- **Tanks are scored on realistic raid encounters**, not a generic boss: each one the boss's real damage on
+  its tank and the healing such a raid puts on it, both tunable, the healing most of all, since it's our own
+  group's (the user: "healing ... depends on our group which we control rather than the boss itself which
+  we dont"). See [Encounters](#encounters).
+- **Sources for boss and healing numbers, best first:** Warcraft Logs from Season of Discovery, then the
+  Anniversary realms (Vanilla, then TBC), then Classic Era, then private server cores like vmangos
+  (docs/data_sources.md).
+
+## Encounters
+
+**One set of boss encounters for the tank and healing sims** (agreed with the healing sim session,
+2026-11-02), in `tools/encounters/<boss>.json` (its README has the format). Each file is a proto Encounter
+(the boss's melee, its abilities as raid damage events, tank swaps) and the healing a raid puts on its main
+tank, with the sources and the Warcraft Logs reports behind the numbers. The tank sim writes the tank side
+(the boss's melee, its abilities on the tank, the healing on the tank), the healing sim the raid damage.
+
+**The healing on the tank** is set the way a raid sets it: healers on the tank, each one's healing per second
+on it, and their heals' cast time. Until healers heal, the bench turns that into the stand-in stream: their
+HPS added up, a heal every cast time over the healers, each one healer's heal. `-healers`, `-healer-hps` and
+`-heal-cast` change it for a run.
+
+**A boss's abilities on the tank** are raid damage events aimed at the boss's target or the tanks. A melee
+one (Mortal Strike, Cleave, Hateful Strike) rolls the tank's miss, dodge, parry and block like a white swing,
+crits on its own roll and never crushes (`melee`, `OutcomeEnemyMeleeSpecial`), and one can cut the healing
+taken for a while (`healing_taken_multiplier`, `debuff_seconds`, Mortal Strike's 50% for 5 s). Not modelled
+yet: threat drops (Knock Away and the like).
+
+**From the logs:** `tools/warcraftlogs/wclcli.py tank` reads, per encounter, the boss's swings and abilities
+on the main tank, the tank's damage taken a second, and its healing taken (effective, overheal, absorbs,
+heals a second, healers, top heal spells). It needs a Warcraft Logs API client, on the user's machine or as
+`WCL_CLIENT_ID` and `WCL_CLIENT_SECRET` in a cloud environment.
 
 ## What tanks gear for
 
@@ -188,12 +220,39 @@ the scoring setup and stays fixed across builds.
 Classic's crit costs the paladin far more than the warrior, since Shield Block pushes most crits off the
 warrior's table and the paladin's Holy Shield is down most of the fight.
 
+## The optimizer's objective (proposed)
+
+From a metrics review (2026-11-02, a subagent that read the bench and measured its noise). Not ruled on yet.
+
+**Score, in raid DPS: threat members × SafeDPS − w × DPS slot × healing needed / one healer's HPS.**
+
+- **Healing needed stays the survival number.** DTPS gives Stamina no value, effective health ignores
+  avoidance, TMI is a stand-in for what healing needed measures directly, and the chance of death at the
+  encounter's own healing is a cliff (0% or 100%) with no slope for a search to follow.
+- **Computed by replay, not bisection.** Without `track_health` the damage and the heal times don't depend
+  on the HPS, only the heal sizes do. So one sim can record each iteration's damage and heal gaps and find
+  the least HPS that iteration lives through. Healing needed is then a percentile of those, with no rounding
+  step and with a standard error for the search's noise test, at a tenth of the cost. Measured: the
+  bisection's step (1% of DTPS, 4.3 HPS for the warrior) is bigger than the sims' own noise (about 2.4 HPS
+  over 6 seeds of 1,000 iterations). It's exact only while nothing reads the tank's health (health-based
+  defensives and potions), which a scoring run turns off.
+- **SafeDPS for threat:** the steady DPS a reference DPS member can do without passing the tank at any
+  moment of the fight, the mean over iterations of each one's lowest ratio. Passes come in the first
+  seconds ([raid_sim.md](raid_sim.md), Threat), which fight TPS hides, and a threat drop shows as a dip.
+  Fight TPS stays as a column.
+- **Both in raid DPS:** a healer on the tank costs one DPS slot, and SafeDPS frees the DPS of the members
+  close to the tank's threat (2 or 3). So w = 1 means one more healer costs one DPS player, which holds
+  across bosses and gear. Presets: Max threat w = 1/3, Balanced 1, Max survival 3.
+- **One hard reject:** a death floor over 5% (no healing saves it).
+- **The sheet's thresholds report and explain, they aren't scored.** Their effect is already in the
+  outcomes. Final presets are re-checked with `-classic-crit`, where a 440 Defense build can flip.
+
+Engine work it needs: the replay data and percentiles in the metrics, the tank's threat over time against a
+reference curve, threat drops on boss abilities, and a tank objective in rotopt's search.
+
 ## Open decisions
 
-1. **The stand-in healer's cadence** for scoring: 2 ± 1 s (now), or the Molten Core logs' 0.3 s. It sets
-   the death floor and how much spikes count.
-2. **Where the presets sit on the threat and survival curve**: the weights for "Max threat", "Balanced"
-   and "Max survival". It needs the gear search first.
+1. **The objective above**, and the weights of the three presets.
 
 ## Findings so far
 
@@ -218,8 +277,7 @@ warrior's table and the paladin's Holy Shield is down most of the fight.
    foreverchanges (Protection warrior, Feral tank, Protection paladin, Warden shaman), like the class audits.
    Bring the Feral tank into the build. Ask for a dungeon boss log for Forever's boss crit.
 2. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.
-3. **The survival score** in the search tooling (rotopt's gear and talent searches), as a weight against
-   TPS.
+3. **The objective** (above) in the engine and rotopt's gear and talent searches.
 4. **Tank gear**: a tank row in `orchestration/gear_targets.md` and synthetic tank items, then gear and talent
    searches on the score.
 5. **The report**: a tank section with TPS next to damage taken, healing needed and the sheet's thresholds.

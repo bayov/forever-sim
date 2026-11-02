@@ -1,4 +1,5 @@
-"""Mine public Warcraft Logs reports for proc cooldowns, proc rates and glancing blows.
+"""Mine public Warcraft Logs reports for proc cooldowns, proc rates, glancing blows and what
+bosses do to their tanks.
 
 Usage: python3 tools/warcraftlogs/wclcli.py [--site sod] [--budget 300] <command> ...
 See README.md in this directory for the workflow.
@@ -431,6 +432,158 @@ def cmd_procrate(a):
         print(f'no weapon speed for items {sorted(missing - {None})}. Pass --speed ID=SPEED.')
 
 
+# Tank profiles: what a boss does to its main tank and what the raid heals it for.
+
+def median(xs):
+    xs = sorted(xs)
+    if not xs:
+        return 0
+    m = len(xs) // 2
+    return xs[m] if len(xs) % 2 else (xs[m - 1] + xs[m]) / 2
+
+
+def tank_fight(code, fight_id):
+    """One boss fight's tank profile, or None when it isn't a boss fight.
+
+    Three queries: everything the boss actors did, then the damage and the healing the main tank
+    took. The main tank is the player the bosses swung at most.
+    """
+    meta = wcl.report_meta(code)
+    fight = next(f for f in meta['fights'] if f['id'] == fight_id)
+    if not fight.get('encounterID'):
+        return None
+    actors = {x['id']: x for x in meta['masterData']['actors']}
+    bosses = [n['id'] for n in fight.get('enemyNPCs') or [] if actors.get(n['id'], {}).get('subType') == 'Boss']
+    if not bosses:
+        return None
+    names = ability_names(meta)
+    boss_evs = []
+    for b in bosses:
+        boss_evs += [e for e in wcl.events(code, fight_id, data_type='DamageDone', source_id=b)
+                     if e.get('sourceID') == b and e['type'] == 'damage']
+    swings = collections.Counter(e['targetID'] for e in boss_evs if e.get('abilityGameID') == WHITE)
+    if not swings:
+        return None
+    mt = swings.most_common(1)[0][0]
+    taken = [e for e in wcl.events(code, fight_id, data_type='DamageTaken', target_id=mt)
+             if e.get('targetID') == mt and e['type'] == 'damage']
+    heals = [e for e in wcl.events(code, fight_id, data_type='Healing', target_id=mt)
+             if e.get('targetID') == mt and e['type'] in ('heal', 'absorbed')]
+    return {'code': code, 'fight': fight_id, 'encounter': fight['encounterID'], 'name': fight['name'],
+            'kill': fight.get('kill'), 'size': fight.get('size'),
+            'seconds': (fight['endTime'] - fight['startTime']) / 1000,
+            'tank': actors.get(mt, {}).get('name'), 'tank_class': actors.get(mt, {}).get('subType'),
+            'on_tank': [e for e in boss_evs if e['targetID'] == mt], 'taken': taken, 'heals': heals,
+            'names': names, 'actors': actors}
+
+
+def cmd_tank(a):
+    """What each boss does to its main tank, and the healing the tank takes, by encounter."""
+    sample = load_sample(a.sample)
+    fights = []
+    seen = set()
+    for entry in sample[:a.limit]:
+        meta = wcl.report_meta(entry['code'])
+        for fid in fight_ranges(meta, entry):
+            if (entry['code'], fid) in seen:
+                continue
+            seen.add((entry['code'], fid))
+            try:
+                f = tank_fight(entry['code'], fid)
+            except wcl.BudgetError as err:
+                print(f'stopped after {len(fights)} fights: {err}', file=sys.stderr)
+                break
+            if f and (f['kill'] or a.wipes):
+                fights.append(f)
+        else:
+            continue
+        break
+    by_enc = collections.defaultdict(list)
+    for f in fights:
+        by_enc[(f['encounter'], f['name'])].append(f)
+    out = {}
+    for (enc, name), fs in sorted(by_enc.items()):
+        secs = sum(f['seconds'] for f in fs)
+        print(f'\n== {name} (encounter {enc}): {len(fs)} fights, {secs / 60:.1f} min, '
+              f'raid size {sorted({f["size"] for f in fs})}, tanks: '
+              + ', '.join(sorted({f'{f["tank"]} ({f["tank_class"]})' for f in fs})))
+        # The white swings on the main tank: rhythm, outcomes and size.
+        outcomes = collections.Counter()
+        gaps, hits, raws = [], [], []
+        for f in fs:
+            sw = [e for e in f['on_tank'] if e.get('abilityGameID') == WHITE]
+            outcomes.update(e['hitType'] for e in sw)
+            gaps += [(y['timestamp'] - x['timestamp']) / 1000 for x, y in zip(sw, sw[1:])
+                     if y['timestamp'] - x['timestamp'] < 10000 and y['sourceID'] == x['sourceID']]
+            hits += [e['amount'] + e.get('absorbed', 0) for e in sw if e['hitType'] == HIT]
+            raws += [e['unmitigatedAmount'] for e in sw if e['hitType'] == HIT and e.get('unmitigatedAmount')]
+        n = sum(outcomes.values())
+        print(f'white swings on the tank: {n}, {n / secs:.2f} a second, median gap {median(gaps):.2f} s')
+        for k, v in sorted(outcomes.items()):
+            print(f'  {HIT_NAMES.get(k, k):<12} {v:>6} {100 * v / n:6.2f}% (95%: {interval(v, n)})')
+        if hits:
+            print(f'  normal hit after armor: median {median(hits):.0f}, min {min(hits):.0f}, max {max(hits):.0f}')
+        if raws:
+            print(f'  normal hit unmitigatedAmount (check it, SoD crits read low): median {median(raws):.0f}, '
+                  f'min {min(raws):.0f}, max {max(raws):.0f}')
+        # The boss's other abilities on the tank.
+        abil = collections.defaultdict(list)
+        for f in fs:
+            for e in f['on_tank']:
+                if e.get('abilityGameID') != WHITE:
+                    abil[e['abilityGameID']].append(e)
+        if abil:
+            print('abilities on the tank (a minute, outcomes, landed amount after mitigation, unmitigated):')
+        for ab, evs in sorted(abil.items(), key=lambda x: -len(x[1])):
+            oc = collections.Counter(HIT_NAMES.get(e['hitType'], e['hitType']) for e in evs)
+            landed = [e['amount'] + e.get('absorbed', 0) for e in evs if e['hitType'] in LANDED]
+            raw = [e['unmitigatedAmount'] for e in evs if e.get('unmitigatedAmount')]
+            print(f'  {ab:>8} {fs[0]["names"].get(ab, "?"):<26} {60 * len(evs) / secs:5.2f}/min  '
+                  + ' '.join(f'{k} {v}' for k, v in oc.most_common())
+                  + (f'  landed median {median(landed):.0f} max {max(landed):.0f}' if landed else '')
+                  + (f'  unmitigated median {median(raw):.0f}' if raw else ''))
+        # What the main tank took and was healed for.
+        dmg = sum(e['amount'] + e.get('absorbed', 0) for f in fs for e in f['taken'])
+        boss_dmg = sum(e['amount'] + e.get('absorbed', 0) for f in fs for e in f['on_tank'])
+        deaths = sum(1 for f in fs for e in f['taken'] if e.get('overkill', 0) > 0)
+        heal_evs = [e for f in fs for e in f['heals'] if e['type'] == 'heal']
+        absorbs = sum(e['amount'] for f in fs for e in f['heals'] if e['type'] == 'absorbed')
+        eff = sum(e['amount'] for e in heal_evs)
+        over = sum(e.get('overheal', 0) for e in heal_evs)
+        healers = collections.Counter()
+        spells = collections.defaultdict(list)
+        for f in fs:
+            for e in f['heals']:
+                if e['type'] != 'heal':
+                    continue
+                healers[(f['code'], f['fight'], e['sourceID'])] += e['amount'] + e.get('overheal', 0)
+                spells[e.get('abilityGameID')].append(e)
+        per_fight = collections.defaultdict(list)
+        for (code, fid, src), amt in healers.items():
+            per_fight[(code, fid)].append(amt)
+        counts = [sum(1 for x in v if x >= 0.05 * sum(v)) for v in per_fight.values()]
+        print(f'main tank: {dmg / secs:.0f} damage taken a second ({boss_dmg / secs:.0f} from the boss), '
+              f'{deaths} deaths in {len(fs)} fights')
+        print(f'  healing taken {eff / secs:.0f} a second effective, {(eff + over) / secs:.0f} with overheal '
+              f'({100 * over / max(eff + over, 1):.0f}% overheal, {(eff + over) / max(dmg, 1):.2f}x the damage taken), '
+              f'absorbs {absorbs / secs:.0f} a second')
+        print(f'  {len(heal_evs) / secs:.2f} heals a second, median heal {median([e["amount"] + e.get("overheal", 0) for e in heal_evs]):.0f}, '
+              f'healers with 5%+ of it: median {median(counts):.0f} (range {min(counts, default=0)}-{max(counts, default=0)})')
+        for ab, evs in sorted(spells.items(), key=lambda x: -sum(e['amount'] + e.get('overheal', 0) for e in x[1]))[:a.top]:
+            tot = sum(e['amount'] + e.get('overheal', 0) for e in evs)
+            print(f'    {ab:>8} {fs[0]["names"].get(ab, "?"):<26} {100 * tot / max(eff + over, 1):5.1f}% of it, '
+                  f'{60 * len(evs) / secs:5.1f}/min, median {median([e["amount"] + e.get("overheal", 0) for e in evs]):.0f}')
+        out[str(enc)] = {'name': name, 'fights': len(fs), 'seconds': secs, 'swings': dict(outcomes),
+                         'swing_gap_median': median(gaps), 'hit_median': median(hits),
+                         'hit_min': min(hits, default=0), 'hit_max': max(hits, default=0),
+                         'dtps': dmg / secs, 'boss_dtps': boss_dmg / secs, 'hps_effective': eff / secs,
+                         'hps_total': (eff + over) / secs, 'absorbs_ps': absorbs / secs,
+                         'heals_ps': len(heal_evs) / secs, 'healers_median': median(counts)}
+    if a.out:
+        json.dump(out, open(a.out, 'w'), indent=1)
+        print(f'\nwrote {a.out}', file=sys.stderr)
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--site', default=wcl.SITE, help='Warcraft Logs subdomain (sod, vanilla, fresh, classic, ...)')
@@ -485,12 +638,17 @@ def main():
     s.add_argument('--main-hand-only', action='store_true', help='off hand swings never proc')
     s.add_argument('--speed', action='append', metavar='ITEM=SPEED', help='weapon speed the item database lacks')
 
+    s = analysis('tank', "each boss's damage on its main tank and the healing the tank takes")
+    s.add_argument('--wipes', action='store_true', help='count wipes too (kills only by default)')
+    s.add_argument('--top', type=int, default=8, help='heal spells to list')
+    s.add_argument('-o', '--out', help='also write the numbers to this JSON file')
+
     a = ap.parse_args()
     wcl.SITE = a.site
     wcl.BUDGET = a.budget
     try:
         {'zones': cmd_zones, 'sample': cmd_sample, 'abilities': cmd_abilities, 'gaps': cmd_gaps,
-         'glance': cmd_glance, 'procrate': cmd_procrate}[a.cmd](a)
+         'glance': cmd_glance, 'procrate': cmd_procrate, 'tank': cmd_tank}[a.cmd](a)
     except wcl.BudgetError as err:
         print(f'stopped: {err}', file=sys.stderr)
     print(wcl.summary(), file=sys.stderr)

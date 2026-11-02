@@ -209,11 +209,19 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	if sim.CurrentTime < 0 {
 		return
 	}
+	// A player that died in a healing fight (player_death.go).
+	if apl.unit.dead && apl.unit.Type != EnemyUnit {
+		return
+	}
 
 	// A cast ending now lands before we pick what comes after it. Its completion runs this
 	// check itself, or the GCD action due with it does when the cast fails at the end.
 	if hc := &apl.unit.Hardcast; hc.Expires == sim.CurrentTime && hc.OnComplete != nil {
 		apl.unit.completeDueHardcast(sim)
+		return
+	}
+
+	if apl.unit.ManualControl {
 		return
 	}
 
