@@ -80,7 +80,6 @@
               "defaultPotion":  "MajorManaPotion",
               "defaultConjured":  "ConjuredDemonicRune",
               "zanzaBuff":  "GroundScorpokAssay",
-              "sapperExplosive":  "SapperGoblinSapper",
               "intellectElixir":  "ElixirOfGreaterIntellect"
             },
             "buffs":  {

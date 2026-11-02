@@ -274,8 +274,8 @@ export const TallstriderOptions = HunterOptions.create({
 // The level 60 consumables, tried one at a time on the Beast Mastery, Lone Wolf and Survival builds
 // at 180 sec, last after the shared consumables merge (the list and the numbers are in
 // tools/rotopt/mksettings/spec_hunter.go). Every build keeps Elixir of the Mongoose as its one +2%
-// crit elixir, Ground Scorpok Assay, Juju Might and the Goblin Sapper (the ranged specs also the
-// EZ-Thro Dark Bomb, see below and SurvivalConsumes), and takes Elixir of Ferocity (+11 to +13 for the ranged specs),
+// crit elixir, Ground Scorpok Assay, Juju Might and an explosive (Survival the Goblin Sapper, the
+// ranged specs the EZ-Thro Dark Bomb, see below and SurvivalConsumes), and takes Elixir of Ferocity (+11 to +13 for the ranged specs),
 // Flank au Poivre and Elixir of Greater Intellect.
 // The ranged specs take Major Mana Potion (Major Frenzy Potion falls behind once the mana runs
 // out), Demonic Rune, Greater Mageblood Elixir (Mageblood Potion's recipe only comes from
@@ -288,9 +288,11 @@ export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	// The Goblin Land Mine and the Goblin Sapper Charge only reach 10 yd (2026-11-01), and the ranged
-	// specs stand at 12 yd but for their melee weaves. The Sapper goes off in a weave; the Land Mine's
-	// 1 sec cast doesn't fit one (1.0 to 1.7 behind), so they throw the EZ-Thro Dark Bomb: +2.8 to
-	// +3.9 at 180 sec over none, 1.0 to 1.4 ahead of Dense Dynamite and the Thorium Grenade.
+	// specs stand at 12 yd (Beast Mastery) or 25 yd (Marksmanship, Lone Wolf). The Land Mine's 1 sec
+	// cast doesn't fit a melee weave (1.0 to 1.7 behind), so they throw the EZ-Thro Dark Bomb: +2.8 to
+	// +3.9 at 180 sec over none, 1.0 to 1.4 ahead of Dense Dynamite and the Thorium Grenade. They take
+	// no Sapper (consumables-20261101-1): it goes off only when a melee weave has the hunter within its
+	// 10 yd at its cooldown, worth 0.4 Beast Mastery, 0.1 Marksmanship and 0.0 Lone Wolf at 180 sec.
 	fillerExplosive: Explosive.ExplosiveEZThroDarkBomb,
 	// The natural flask (standards 11, 2026-10-23, rechecked on the gear for the 8% hit cap):
 	// Aggression, on Beast Mastery / Lone Wolf at 180 sec 14.4 / 6.6 ahead of Swiftness, 37.1 / 39.6 of
@@ -301,7 +303,6 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodFlankAuPoivre,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
-	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
@@ -395,8 +396,8 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// The hunter is an engineer for the Goblin Sapper (the EZ-Thro Dark Bomb the ranged specs throw
-// needs no profession) and an alchemist.
+// The hunter is an engineer for the Goblin Sapper, which only Survival takes (the EZ-Thro Dark Bomb
+// the ranged specs throw needs no profession), and an alchemist.
 // The synthetic gear is fixed, so no gear needs a profession.
 // Where the hunter and its pet start (standards 33: a weaving hunter stands where weaving does
 // best). Every ranged rotation walks to 12 yd before the pull and shoots from there, just outside

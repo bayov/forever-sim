@@ -4,6 +4,8 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+## Resolved
+
 ### fairness-20261101-2: Affliction's report race Human is 1.4 under Orc
 - severity: low (0.14%, no rank change)
 - affects: warlock__affliction (and its duty variants, same race)
@@ -12,8 +14,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-11-02, master 796495d6f (pass 23): at 30 yd (standards 33) the gap shrinks. `ITERS=20000 sweep.py warlock__affliction`: Orc 1013.6, Human 1012.7 (+0.9), Undead 1010.8; 5k: Orc 1013.7, Human 1013.1. Now under the 1.0 note threshold at 20k; keep open for the race pass, close if it stays under 1.
 - proposed fix: re-pick the Affliction race on the race pass (Orc), or keep Human and say it is within 1.5.
 - needs: orchestrator fix
-
-## Resolved
+- resolved: 2026-11-02, b33ad307d. Affliction and its two curse duty builds are Orc: at 180 sec (20k, seed 1) Orc 1013.6, Human 1012.7 (still the best Alliance race), Undead 1010.8, Gnome 1009.9, Troll 1006.6; the duty builds 1003.7 -> 1005.2 and 997.4 -> 999.6.
 
 ### fairness-20261101-1: casters stand at 20, 25 or 30 yd with no standard; Elemental's 20 yd is worth +6.5 over the others' 25
 - severity: medium (0.85% on Elemental; at 25 yd it would sit 0.6 above Smite instead of 7.1)
