@@ -181,9 +181,9 @@ new. Keep the list current when one is settled.
 | Windfury Totem ICD, extra attacks and the swing, Eviscerate's attack power | Theirs' rules since 2026-10-31 | 100 ms, no swing reset, 4% a combo point | Settled, on `notes.md`'s To Verify list |
 | Off-GCD items (Thistle Tea) | Fire when the rotation says | Only at the next GCD check | A choice (engine). Ours drinks Thistle Tea at 10 energy, which theirs never does: about 13.5 DPS on Combat Swords. Bloodrage at under 20 rage: 2.6 casts against 1.9 on Fury, worth nothing |
 | Raid damage taken | 2 hits a minute of 1,500 (standards 24) | None | A choice (the fight). The warrior's rage from it: Arms 8.5, Fury 15.7, Fury 2H 19.5 DPS. `--no-raid-damage` |
-| Flurry charges | Two white swings within 500 ms spend one charge (the Classic sims') | Every white swing spends one, and a missed Heroic Strike or Cleave (0183e67d2f, no log cited) | Open (the alignment round's open list). Fury 11.4, Fury 2H 3.4 DPS |
+| Flurry charges | Two white swings within 500 ms spend one charge (the Classic sims') | Every white swing spends one, and a missed Heroic Strike or Cleave (0183e67d2f, no log cited) | Report assumption `flurry_batch` (one value, user ruling 2026-11-02). Fury 11.4, Fury 2H 3.4 DPS |
 | Anger Management | 1 rage every 3 s (Forever's tooltip) | 1.5 every 5 s (the aura's amount, a power regen per 5 s) | Open: a log of its rage ticks settles it. Under 2.1 DPS |
-| Unbridled Wrath on Heroic Strike | Procs (client proc flag 4, notes.md) | White swings only | Open (notes.md). Within 1 DPS |
+| Unbridled Wrath on Heroic Strike | Procs (client proc flag 4, notes.md) | White swings only | Report assumption `warr_uw_queued` (one value, user ruling 2026-11-02). Within 1 DPS |
 | Two-hand white crit rage | Twice the whole swing since 2026-11-01 | The same (7c28cfa731, Forever logs) | Settled (ours was a bug): it was −12.4 on Arms, −13 on Fury 2H |
 | Synthetic sets' 2 piece (1% attack speed) | Live | Registered by `cmpsim` (warrior head 991001, 991019) | A translation: without it theirs was 5 to 8 DPS low |
 | Undead base stats | 82 Str, 129 Agi | 79, 128 | Race offset ruling. `align.py` closes it |

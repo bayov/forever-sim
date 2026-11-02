@@ -275,7 +275,7 @@
   "title": "Assumptions",
   "description": "Every value Forever hasn't confirmed that the presets depend on, by class, in plain words: a question-style label, one short line for the panel, a description and its source for Method, the presets it touches, its Low / Expected / High settings (each with a label that says what it means, its numbers and a short rationale), which one the presets use, and each setting's effect on each preset at 180 s.",
   "updated": {
-   "at": "2026-11-02T05:25:16.155Z",
+   "at": "2026-11-02T10:28:16.567Z",
    "by": "Claude (forever-sim)"
   }
  },
