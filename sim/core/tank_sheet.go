@@ -46,10 +46,11 @@ func TankSheet(defender *Unit, attacker *Unit) *proto.TankSheet {
 
 	// The same chances as the applyEnemyAttackTable* functions, in their order. Each one is
 	// what's left of the roll after those before it.
-	miss := max(0, table.BaseMissChance+attacker.PseudoStats.IncreasedMissChance+bonusDefense*DefenseRatingToChanceReduction)
+	miss := table.BaseMissChance + attacker.PseudoStats.IncreasedMissChance + bonusDefense*DefenseRatingToChanceReduction
 	if attacker.AutoAttacks.IsDualWielding && !attacker.PseudoStats.DisableDWMissPenalty {
 		miss += 0.19
 	}
+	miss = max(0, miss)
 	dodge := max(0, table.BaseDodgeChance+defender.GetStat(stats.Dodge)/100)
 	parry := 0.0
 	if defender.PseudoStats.CanParry {
@@ -98,17 +99,23 @@ func TankSheet(defender *Unit, attacker *Unit) *proto.TankSheet {
 		sheet.EffectiveHealth = sheet.Health / taken
 	}
 
-	// The boss's biggest white swing, as EnemyWeaponDamage rolls it at the top of its spread, a crit
-	// if it can crit us, else a crushing blow if it can crush, through armor and damage taken. Debuffs
-	// on the boss's attack power and damage are in.
+	// The boss's biggest white swing, as EnemyWeaponDamage rolls it at the top of its spread, with
+	// its flat weapon damage (Curse of Weakness), its damage done, our armor, our flat and
+	// multiplied damage taken, then a crit if it can crit us, else a crushing blow if it can crush.
+	// Debuffs on its attack power are in. Its abilities aren't: a one-shot from one shows in the
+	// tank bench's death floor.
 	if aa := attacker.AutoAttacks; aa.mh.BaseDamageMin > 0 {
-		swing := aa.mh.BaseDamageMin * (1 + attacker.PseudoStats.DamageSpread + max(0, attacker.stats[stats.AttackPower])*EnemyAutoAttackAPCoefficient)
+		swing := aa.mh.BaseDamageMin*(1+attacker.PseudoStats.DamageSpread+max(0, attacker.stats[stats.AttackPower])*EnemyAutoAttackAPCoefficient) +
+			attacker.PseudoStats.BonusPhysicalDamage
+		swing *= attacker.PseudoStats.DamageDealtMultiplier * attacker.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]
+		swing = (swing*(1-sheet.ArmorReduction) + defender.PseudoStats.BonusDamageTakenBeforeModifiers[DefenseTypeMelee]) *
+			defender.PseudoStats.DamageTakenMultiplier * defender.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical]
 		if sheet.Crit > 0 {
 			swing *= 2
 		} else if sheet.Crush > 0 {
 			swing *= 1.5
 		}
-		sheet.BiggestHit = swing * attacker.PseudoStats.DamageDealtMultiplier * taken
+		sheet.BiggestHit = max(0, swing+defender.PseudoStats.BonusDamageTakenAfterModifiers[DefenseTypeMelee])
 	}
 
 	// Our side, from the attack tables our attacks roll on.

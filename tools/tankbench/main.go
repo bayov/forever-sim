@@ -72,7 +72,12 @@ func main() {
 	if set["heal-cast"] {
 		team.CastSeconds = *healCast
 	}
-	if team.Healers > 0 && team.HpsEach > 0 && team.CastSeconds > 0 {
+	partial := team.Healers > 0 || team.HpsEach > 0 || team.CastSeconds > 0
+	if partial && !(team.Healers > 0 && team.HpsEach > 0 && team.CastSeconds > 0) {
+		fail(fmt.Errorf("the healing needs all of -healers, -healer-hps and -heal-cast (or an encounter's healing): got %g healers at %g HPS, %g s heals",
+			team.Healers, team.HpsEach, team.CastSeconds))
+	}
+	if team.Healers > 0 && team.HpsEach > 0 && team.CastSeconds > 0 && !(set["hps"] && set["cadence"]) {
 		if !set["hps"] {
 			*hps = team.Healers * team.HpsEach
 		}
@@ -112,7 +117,16 @@ func main() {
 		}
 		rsr.SimOptions.Iterations = int32(*iterations)
 		if enc != nil {
-			rsr.Encounter = googleProto.Clone(enc.encounter).(*proto.Encounter)
+			// The fight is the file's. What it leaves unset of the request's own fight setup
+			// (the execute phases, the natural flask zone) carries over.
+			fight := googleProto.Clone(enc.encounter).(*proto.Encounter)
+			if fight.ExecuteProportion_20 == 0 && fight.ExecuteProportion_25 == 0 && fight.ExecuteProportion_35 == 0 {
+				fight.ExecuteProportion_20 = rsr.Encounter.ExecuteProportion_20
+				fight.ExecuteProportion_25 = rsr.Encounter.ExecuteProportion_25
+				fight.ExecuteProportion_35 = rsr.Encounter.ExecuteProportion_35
+			}
+			fight.NaturalFlaskZone = fight.NaturalFlaskZone || rsr.Encounter.NaturalFlaskZone
+			rsr.Encounter = fight
 		}
 		rsr.Raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
 		if *duration > 0 {
@@ -126,11 +140,13 @@ func main() {
 			if *swing > 0 {
 				target.MinBaseDamage = *swing
 			}
-			target.ClassicCrit = *classicCrit
+			if *classicCrit {
+				target.ClassicCrit = true
+			}
 		}
 		tank := rsr.Raid.Parties[0].Players[0]
 		tank.HealingModel = &proto.HealingModel{
-			Hps:              *hps,
+			Hps:              noPresim(*hps),
 			CadenceSeconds:   *cadence,
 			CadenceVariation: *variation,
 			BurstWindow:      int32(*window),
@@ -163,7 +179,9 @@ func main() {
 		if *needed {
 			hps, floor := healingNeeded(path, rsr, m.Dtps.Avg, *deathTarget)
 			need := "none works"
-			if hps > 0 {
+			if hps == 0 {
+				need = "0"
+			} else if hps > 0 {
 				need = fmt.Sprintf("%.0f (%.2fx DTPS)", hps, hps/m.Dtps.Avg)
 			}
 			row = append(row[:6], append([]string{need, pct(floor)}, row[6:]...)...)
@@ -178,6 +196,12 @@ func main() {
 	}
 }
 
+// noPresim keeps an HPS of 0 from asking the engine for its presim, which heals at 1.5 times the
+// DTPS (GetPresimOptions, sim/core/health.go).
+func noPresim(hps float64) float64 {
+	return max(hps, 1e-9)
+}
+
 func run(path string, rsr *proto.RaidSimRequest) *proto.RaidSimResult {
 	res := core.RunRaidSimConcurrent(rsr)
 	if res.Error != nil {
@@ -188,24 +212,27 @@ func run(path string, rsr *proto.RaidSimRequest) *proto.RaidSimResult {
 
 func deathAt(path string, rsr *proto.RaidSimRequest, hps float64) float64 {
 	rsr = googleProto.Clone(rsr).(*proto.RaidSimRequest)
-	rsr.Raid.Parties[0].Players[0].HealingModel.Hps = hps
+	rsr.Raid.Parties[0].Players[0].HealingModel.Hps = noPresim(hps)
 	return run(path, rsr).RaidMetrics.Parties[0].Players[0].ChanceOfDeath
 }
 
-// healingNeeded is the stand-in healer's HPS at which the tank dies in target of the fights, to
-// 1% of DTPS, and the death floor: the chance of death at 20 times its DTPS, where each heal tops
-// it off, so only damage between two heals kills it. When the floor is at the target or over, no
-// healing gets there (a one-shot or a burst faster than the heals), and the HPS is 0. Every run
-// uses the request's seed, so the chance of death only moves with the HPS.
+// healingNeeded is the stand-in healer's HPS at which the tank dies in at most target of the
+// fights, to 1% of DTPS, and the death floor: the chance of death when every heal tops the tank
+// off (1000 times its DTPS, since a heal is the HPS times the gap since the last one, and gaps go
+// down to half the cadence), so only damage between two heals kills it. When the floor is over the
+// target, no healing gets there (a one-shot or a burst faster than the heals), and the HPS is -1.
+// No damage taken needs no healing (0). Every run uses the request's seed, so the chance of death
+// only moves with the HPS, as long as nothing in the request acts on the tank's health (a health
+// potion, a defensive at a health share, an APL condition on health).
 func healingNeeded(path string, rsr *proto.RaidSimRequest, dtps, target float64) (float64, float64) {
 	if dtps <= 0 {
 		return 0, 0
 	}
-	ceiling := 20 * dtps
-	floor := deathAt(path, rsr, ceiling)
-	if floor >= target {
-		return 0, floor
+	floor := deathAt(path, rsr, 1000*dtps)
+	if floor > target {
+		return -1, floor
 	}
+	ceiling := 1000 * dtps
 	lo, hi := 0.0, dtps
 	for hi < ceiling && deathAt(path, rsr, hi) > target {
 		lo, hi = hi, min(2*hi, ceiling)

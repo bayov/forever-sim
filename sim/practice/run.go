@@ -18,6 +18,8 @@ type run struct {
 	s     *Session
 	sim   *core.Simulation
 	start time.Duration
+	// encounter is the mode the sim was built for: Encounter mode's length, or Free mode's cap.
+	encounter bool
 
 	char   *core.Character
 	shaman *shaman.Shaman

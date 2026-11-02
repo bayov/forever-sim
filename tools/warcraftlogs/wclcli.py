@@ -445,8 +445,10 @@ def median(xs):
 def tank_fight(code, fight_id):
     """One boss fight's tank profile, or None when it isn't a boss fight.
 
-    Three queries: everything the boss actors did, then the damage and the healing the main tank
-    took. The main tank is the player the bosses swung at most.
+    Two queries a fight past the report's own: the bosses' damage done (as enemies), then every
+    event on the main tank, the player the bosses swung at most, which has its damage and healing
+    taken. Not yet checked against a real report (written without API access): check that the
+    first finds the boss's swings and the second has 'heal' and 'absorbed' events.
     """
     meta = wcl.report_meta(code)
     fight = next(f for f in meta['fights'] if f['id'] == fight_id)
@@ -459,16 +461,15 @@ def tank_fight(code, fight_id):
     names = ability_names(meta)
     boss_evs = []
     for b in bosses:
-        boss_evs += [e for e in wcl.events(code, fight_id, data_type='DamageDone', source_id=b)
+        boss_evs += [e for e in wcl.events(code, fight_id, data_type='DamageDone', source_id=b, hostility='Enemies')
                      if e.get('sourceID') == b and e['type'] == 'damage']
     swings = collections.Counter(e['targetID'] for e in boss_evs if e.get('abilityGameID') == WHITE)
     if not swings:
         return None
     mt = swings.most_common(1)[0][0]
-    taken = [e for e in wcl.events(code, fight_id, data_type='DamageTaken', target_id=mt)
-             if e.get('targetID') == mt and e['type'] == 'damage']
-    heals = [e for e in wcl.events(code, fight_id, data_type='Healing', target_id=mt)
-             if e.get('targetID') == mt and e['type'] in ('heal', 'absorbed')]
+    on_mt = [e for e in wcl.events(code, fight_id, data_type='All', target_id=mt) if e.get('targetID') == mt]
+    taken = [e for e in on_mt if e['type'] == 'damage']
+    heals = [e for e in on_mt if e['type'] in ('heal', 'absorbed')]
     return {'code': code, 'fight': fight_id, 'encounter': fight['encounterID'], 'name': fight['name'],
             'kill': fight.get('kill'), 'size': fight.get('size'),
             'seconds': (fight['endTime'] - fight['startTime']) / 1000,
@@ -483,7 +484,11 @@ def cmd_tank(a):
     fights = []
     seen = set()
     for entry in sample[:a.limit]:
-        meta = wcl.report_meta(entry['code'])
+        try:
+            meta = wcl.report_meta(entry['code'])
+        except wcl.BudgetError as err:
+            print(f'stopped after {len(fights)} fights: {err}', file=sys.stderr)
+            break
         for fid in fight_ranges(meta, entry):
             if (entry['code'], fid) in seen:
                 continue
@@ -562,10 +567,11 @@ def cmd_tank(a):
         for (code, fid, src), amt in healers.items():
             per_fight[(code, fid)].append(amt)
         counts = [sum(1 for x in v if x >= 0.05 * sum(v)) for v in per_fight.values()]
+        # Rates are over the whole fight, so with tank swaps they understate the main tank's share.
         print(f'main tank: {dmg / secs:.0f} damage taken a second ({boss_dmg / secs:.0f} from the boss), '
               f'{deaths} deaths in {len(fs)} fights')
         print(f'  healing taken {eff / secs:.0f} a second effective, {(eff + over) / secs:.0f} with overheal '
-              f'({100 * over / max(eff + over, 1):.0f}% overheal, {(eff + over) / max(dmg, 1):.2f}x the damage taken), '
+              f'({100 * over / max(eff + over, 1):.0f}% overheal, {(eff + over + absorbs) / max(dmg, 1):.2f}x the damage taken with absorbs), '
               f'absorbs {absorbs / secs:.0f} a second')
         print(f'  {len(heal_evs) / secs:.2f} heals a second, median heal {median([e["amount"] + e.get("overheal", 0) for e in heal_evs]):.0f}, '
               f'healers with 5%+ of it: median {median(counts):.0f} (range {min(counts, default=0)}-{max(counts, default=0)})')

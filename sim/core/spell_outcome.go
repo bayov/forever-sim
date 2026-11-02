@@ -982,8 +982,13 @@ func (result *SpellResult) applyEnemyAttackTableCrush(spell *Spell, at *AttackTa
 // crit doubles it. While the player casts, it can't dodge, parry or block.
 func (spell *Spell) OutcomeEnemyMeleeSpecial(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
 	roll := sim.RandomFloat("Enemy Special Hit Table")
-	chance := 0.0
-	if result.applyEnemyAttackTableMiss(spell, attackTable, roll, &chance, true) {
+	// A special attack has no dual wield miss, so the miss is the white swing's without it.
+	chance := max(0, attackTable.BaseMissChance+spell.Unit.PseudoStats.IncreasedMissChance+
+		result.Target.stats[stats.Defense]*DefenseRatingToChanceReduction)
+	if roll < chance {
+		result.Outcome = OutcomeMiss
+		spell.SpellMetrics[result.Target.UnitIndex].Misses++
+		result.Damage = 0
 		return
 	}
 	blocked := false
@@ -1003,7 +1008,13 @@ func (spell *Spell) OutcomeEnemyMeleeSpecial(sim *Simulation, result *SpellResul
 	crit := result.applyEnemyAttackTableCrit(spell, attackTable, critRoll, &critChance, true)
 	if blocked {
 		result.Outcome |= OutcomeBlock
-		spell.SpellMetrics[result.Target.UnitIndex].Blocks++
+		if crit {
+			// Booked once, as a blocked crit, as applyAttackTableBlock does.
+			spell.SpellMetrics[result.Target.UnitIndex].Crits--
+			spell.SpellMetrics[result.Target.UnitIndex].BlockedCrits++
+		} else {
+			spell.SpellMetrics[result.Target.UnitIndex].Blocks++
+		}
 		result.Damage = max(0, result.Damage-result.Target.BlockValue())
 	}
 	if !crit && !blocked {

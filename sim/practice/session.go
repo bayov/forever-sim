@@ -88,6 +88,13 @@ type Session struct {
 
 	lastShift time.Duration
 
+	// spare is the next swap's sim, built ahead of time (PrepareSpare).
+	spare *run
+
+	// The HUD's last state, from just before the fight's end.
+	finalPlayer *PlayerState
+	finalTarget *TargetState
+
 	// The total shift of every swap so far. A time in the first sim's timeline plus it is the
 	// same moment in the current one.
 	totalShift time.Duration
@@ -312,6 +319,9 @@ func (s *Session) markPulled(early bool) {
 
 func (s *Session) end(at time.Duration, stoppedEarly bool) {
 	r := s.run
+	// The HUD keeps the state at the end: Cleanup takes auras off, which would leave more mana
+	// than the max.
+	s.finalPlayer, s.finalTarget = r.playerState(), r.targetState()
 	r.sim.Duration = at
 	r.sim.Cleanup()
 	s.ended = true
@@ -433,9 +443,12 @@ func (s *Session) TakeBatch() *Batch {
 	b.LogLines = s.logLines
 	s.logLines = nil
 	b.Units = r.unitStates()
-	if !s.ended || b.Ended != nil {
+	switch {
+	case !s.ended:
 		b.Player = r.playerState()
 		b.Target = r.targetState()
+	case s.finalPlayer != nil:
+		b.Player, b.Target = s.finalPlayer, s.finalTarget
 	}
 	b.Fight = s.fightInfo()
 	return &b
@@ -493,8 +506,34 @@ func init() {
 	})
 }
 
-// newRun builds a fresh sim whose clock starts at start.
+// PrepareSpare builds the next swap's sim ahead of time. Building one takes a few ms in WASM, so
+// the worker calls this in idle time, and the pull's swap only replays the inputs.
+func (s *Session) PrepareSpare() {
+	if s.ended || (s.spare != nil && s.spare.encounter == s.encounter) {
+		return
+	}
+	if r, err := s.buildRun(); err == nil {
+		s.spare = r
+	}
+}
+
+// newRun gives a fresh sim whose clock starts at start: the spare when it fits the mode.
 func (s *Session) newRun(start time.Duration) (*run, error) {
+	r := s.spare
+	s.spare = nil
+	if r == nil || r.encounter != s.encounter {
+		var err error
+		if r, err = s.buildRun(); err != nil {
+			return nil, err
+		}
+	}
+	r.start = start
+	r.setup()
+	return r, nil
+}
+
+// buildRun builds a sim for the current mode, not yet set up.
+func (s *Session) buildRun() (*run, error) {
 	request := goproto.Clone(s.request).(*proto.RaidSimRequest)
 	request.SimOptions.RandomSeed = s.seed
 	enc := request.Encounter
@@ -511,7 +550,7 @@ func (s *Session) newRun(start time.Duration) (*run, error) {
 		enc.ExecuteProportion_20, enc.ExecuteProportion_25, enc.ExecuteProportion_35 = p, p, p
 	}
 
-	r := &run{s: s, start: start, items: map[int32]*core.Spell{}, toolkit: map[int32]*core.Spell{}}
+	r := &run{s: s, encounter: s.encounter, items: map[int32]*core.Spell{}, toolkit: map[int32]*core.Spell{}}
 
 	var simulation *core.Simulation
 	err := func() (err error) {
@@ -533,7 +572,6 @@ func (s *Session) newRun(start time.Duration) (*run, error) {
 		return nil, err
 	}
 	r.sim = simulation
-	r.setup()
 	return r, nil
 }
 

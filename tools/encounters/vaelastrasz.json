@@ -6,10 +6,10 @@
   "encounter": 611,
   "zone": "Blackwing Lair"
  },
- "notes": "One tank's 45 s stint, so the fight is 45 s. Flame Breath's DoT is modelled as one stack's worth per breath (5 ticks of 1,000), not the stacking. Fire resistance takes its share of the Fire. The Burning Adrenaline on casters and the raid's Fire Nova on others are the healing sim's.",
+ "notes": "One tank's 45 s stint, so the fight is 45 s. Flame Breath's DoT stacks to 5 (client data), which a sim DoT can't, so each stack is its own 1,000 Fire every 3 s, the stacks coming one a breath (every 7.5 s from 11 s) and staying up. The stint varies by 5 s. Fire resistance takes its share of the Fire. The Burning Adrenaline on casters and the raid's Fire Nova on others are the healing sim's.",
  "encounter": {
   "duration": 45,
-  "durationVariation": 20,
+  "durationVariation": 5,
   "targets": [
    {
     "name": "Vaelastrasz the Corrupt",
@@ -84,17 +84,55 @@
     "minDamage": 1000,
     "maxDamage": 1000,
     "who": "BossTarget",
-    "firstAt": 8,
-    "everySeconds": 7.5,
-    "spreadSeconds": 2.5,
-    "ticks": 5,
-    "tickSeconds": 3
+    "firstAt": 11,
+    "everySeconds": 3,
+    "spreadSeconds": 0
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 1000,
+    "maxDamage": 1000,
+    "who": "BossTarget",
+    "firstAt": 18.5,
+    "everySeconds": 3,
+    "spreadSeconds": 0
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 1000,
+    "maxDamage": 1000,
+    "who": "BossTarget",
+    "firstAt": 26,
+    "everySeconds": 3,
+    "spreadSeconds": 0
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 1000,
+    "maxDamage": 1000,
+    "who": "BossTarget",
+    "firstAt": 33.5,
+    "everySeconds": 3,
+    "spreadSeconds": 0
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 1000,
+    "maxDamage": 1000,
+    "who": "BossTarget",
+    "firstAt": 41,
+    "everySeconds": 3,
+    "spreadSeconds": 0
    },
    {
     "spellId": 19983,
     "school": "SpellSchoolPhysical",
-    "minDamage": 3894,
-    "maxDamage": 5146,
+    "minDamage": 3598,
+    "maxDamage": 4755,
     "who": "BossTarget",
     "firstAt": 6,
     "everySeconds": 7.5,
@@ -107,7 +145,7 @@
     "minDamage": 555,
     "maxDamage": 645,
     "who": "Everyone",
-    "firstAt": 2,
+    "firstAt": 4,
     "everySeconds": 2,
     "spreadSeconds": 0
    }
