@@ -1809,6 +1809,10 @@
     {
      "commit": "3fd9b46",
      "why": "the requests' stored published and verify numbers only; no sim or page reads them"
+    },
+    {
+     "commit": "c05159b",
+     "why": "the Rotation card's Why lines: page text only, no sim input or number moves"
     }
    ],
    "source": {
