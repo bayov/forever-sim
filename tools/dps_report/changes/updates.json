@@ -1928,6 +1928,10 @@
     {
      "commit": "80fec47",
      "why": "works out a rotation condition once per check; no report result moves (report hashes unchanged)"
+    },
+    {
+     "commit": "d6f1333",
+     "why": "tank sim options; no report result moves (report hashes unchanged)"
     }
    ],
    "source": {
