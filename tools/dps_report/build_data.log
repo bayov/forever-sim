@@ -16,20 +16,21 @@ weights: 295 rows, 59 KB
 mana: 4947 rows, 383 KB
 mana_summary: 51 rows, 15 KB
 assumptions: 57 rows, 63 KB
-WARNING assumptions: 1 texts name the project's process, e.g. 'Forever client 70707 (SpellCooldowns 101119, spell 1312002). foreverchanges.pro, build 1.60.1.70707. User ruling 2026-10-30.'
+WARNING assumptions: 1 texts name the project's process, e.g. "Forever client 70707 (SpellCooldowns 101119 and SpellCategories 187717, spell 1312002: category 19, Fire Blast's). foreverchanges.pro, build 1.60.1.70"
 assumption_dps: 343 rows, 57 KB
 rotation: 753 rows, 237 KB
 race_rotation: 418 rows, 152 KB
-WARNING rotation: 3 rotation_text.json entries no line uses, e.g. [[tal:Mage:1:11|Heating Up]] talent taken and Heating Up at 3+ stacks and ([[tal:Mage:2:15|Fingers of Frost]] talent not taken or Fingers of Frost is not up or Pyroblast takes 1.49s or more to cast)
+WARNING rotation: 8 rotation_text.json entries no line uses, e.g. (Fire Vulnerability under 5 stacks or Fire Vulnerability has under 7s left) and (Fingers of Frost is not up or Scorch takes 1.49s or more to cast or Fire Vulnerability under 5 stacks or Fire Vulnerability has under 4s left)
+WARNING rotation: 1 rotation_text.json why entries no line uses, e.g. {'builds': ['mage__frostfire'], 'key': 's1240047', 'when': 'The last ', 'why': 'Why only the last charge? The first goes on a Frostfire Bolt, which the charge makes a Shatter crit.'}
 rotation conditions shown in compact form: []
-tooltips: 1123 rows, 446 KB
-tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit', "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]
+tooltips: 1124 rows, 446 KB
+tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit', 's400669 Spell 400669', "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]
 talenttrees: 465 rows, 179 KB
-wowhead coverage: {'item:forever': 71, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 243, 'spell:wiki': 9, 'spell:client': 16, 'item:db': 254, 'enchant:forever': 343, 'enchant:db': 58, 'setup:sim': 5, 'setup:forever': 35, 'setup:wiki': 1, 'setup:none': 2} {'forever': 304, 'other': 21} {'forever': 1357, 'none': 12}
+wowhead coverage: {'item:forever': 71, 'spell:none': 2, 'spell:sim': 8, 'spell:forever': 243, 'spell:wiki': 9, 'spell:client': 16, 'item:db': 254, 'enchant:forever': 343, 'enchant:db': 58, 'setup:sim': 5, 'setup:forever': 35, 'setup:wiki': 1, 'setup:none': 2} {'forever': 304, 'other': 21, 'none': 1} {'forever': 1357, 'none': 12}
 icons: 79 rows, 158 KB
 icons_more: 611 rows, 929 KB
-names: 299 rows, 29 KB
-names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark', 'Curse of Elements', 'Dark Inspiration', 'Decimation', 'Decimation - Execute', 'Demonic Knowledge', 'Dragonfire Potion', 'Echo of Command', 'Echo of Righteousness', 'Eclipse', 'Frigid Power', 'Heating Up', 'Improved Stormstrike', 'Item 260817', 'Lacerating Strikes', 'Maelstrom Weapon', 'Major Frenzy Potion', 'Major Spellblasting Potion', 'Mana gain', 'Missile Barrage', 'Movement', 'Potion', 'Quick Strikes', 'Rage gain', 'Raid damage hit', 'Resourcefulness', 'Shadow Word Death', 'Shadow and Flame (Shadow)', 'Tenets of the Silver Hand', 'Unsealed Wrath']
+names: 300 rows, 29 KB
+names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark', 'Curse of Elements', 'Dark Inspiration', 'Decimation', 'Decimation - Execute', 'Demonic Knowledge', 'Dragonfire Potion', 'Echo of Command', 'Echo of Righteousness', 'Eclipse', 'Frigid Power', 'Heating Up', 'Improved Stormstrike', 'Item 260817', 'Lacerating Strikes', 'Maelstrom Weapon', 'Major Frenzy Potion', 'Major Spellblasting Potion', 'Mana gain', 'Missile Barrage', 'Movement', 'Potion', 'Quick Strikes', 'Rage gain', 'Raid damage hit', 'Resourcefulness', 'Shadow Word Death', 'Shadow and Flame (Shadow)', 'Spell 400669', 'Tenets of the Silver Hand', 'Unsealed Wrath']
 treeart: 27 rows, 1063 KB
 missing icons: []
 timeline_warrior: 12 rows, 37 KB
