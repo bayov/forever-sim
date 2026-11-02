@@ -1062,10 +1062,10 @@ The single-player sims run at the raid's fight length:
 Raid sims confirm **distinct buff sets, not comps**:
 
 - Fill variants under one set differ mostly by their members' single-player sims, which check 1 covers.
-  Not exactly: Survival and Enhancement gain up to 4 DPS next to many physical members, and the Hunter's
-  Mark is shared, which across 13 copies is about 0.3%. The plan was to raid-sim a set's top 2 or 3 fills
-  when they're within 0.3% of each other; that isn't built yet, so each set's best fill is the one
-  confirmed.
+  Not exactly: the Hunter's Mark is shared, which across 13 copies is about 0.3%. (Survival and
+  Enhancement's gain next to many physical members was the warriors' pull Sunders, which the seat
+  gives.) The plan was to raid-sim a set's top 2 or 3 fills when they're within 0.3% of each other;
+  that isn't built yet, so each set's best fill is the one confirmed.
 - Comps that resolve to the same request are one: the two paladin presets, and party permutations.
 - Every set within 0.1% plus 2.5 standard errors of the best score is raid-simmed, on one seed, at 5,000
   iterations. The top 2 go on to 20,000 (standard 15), on a fresh seed range, since seed s at 20,000
@@ -1121,6 +1121,11 @@ The raid sim catches what the single-player sims can't:
     (`compsearch -drops-add <field>` adds a new entry without recomputing the rest).
   - The weapon totem is two entries, Windfury and Flametongue, so Enhancement (whose Windfury Weapon makes
     Windfury Totem useless to it) keeps its Flametongue.
+  - The table goes stale when a rule or a build changes what a build reads, so rerun `compsearch -drops`
+    after one. On 2026-11-02 two had: Leader of the Pack gives spell crit too since the hotfix
+    (f962f6c), so every caster reads it, and the report's races made Frostfire and the Fury Battle Shout
+    duty Undead, whose Touch of the Grave drains 5% of maximum health, so they read Fortitude and the
+    First Aid Kit.
   - A test checks the whole table again at another seed. Not bit for bit: Mana Tide does nothing for an
     Arms warrior, but with the other mana fields it moves the order of its float sums, 904.4142 to 904.4167
     at that seed, so the rule allows a hundred-thousandth.
@@ -1488,11 +1493,20 @@ If a change touches shared result views (the events view, the replay), the DPS R
      hook gave it.
    - The debuffs are the base requests' common ones (every base request carries the same ones).
    - The fight is a fixed 180 ± 20 seconds.
+   - A DPS shaman's cast Mana Spring reaches its party, so its party members' given one is left out, an
+     Elemental's as much as an Enhancement's (the resolver's `dropsTotems`). Left on, the given MP5 and the
+     cast ticks stack: Destruction and Affliction next to Elemental did +5 to +6 (2026-11-02).
    - Each member lands within 4 × √(se₁² + se₂²) of a single-player sim of the same request, on the same
      commit, at the same seed and iterations. That's 4σ, since 3σ across 37 members fails by chance about 1
      time in 10.
-   - Survival and Enhancement next to many physical members are allowed ±5 DPS until their small coupling
-     is found.
+   - The single-player sim is given what the raid's other members cast for that member, as the resolver
+     gives it: an Enhancement shaman's Strength of Earth and Windfury Totem, one more pull Sunder for each
+     other warrior (`Seat.PullSunders`), and a Shadow priest's Dark Inspiration for its party. The pull
+     Sunders were the "small coupling" Survival and Enhancement once had ±5 DPS for: the boss's armor is
+     down a few seconds sooner, about +1.5 DPS a warrior for a Beast Mastery hunter (20,000 iterations,
+     2026-11-02). Dark Inspiration, which the search doesn't give yet, is +3.7 for Demonology and +4.4 for
+     Fire. What's left is the shared Hunter's Mark: only one hunter refreshes it, worth up to +1.5 to a
+     hunter whose mark another keeps.
 
    It runs on a 10-member raid, a 20-member raid and a physical-heavy raid. It compares with the
    single-player sim, not the published numbers, which come from the report's merged tree with its own

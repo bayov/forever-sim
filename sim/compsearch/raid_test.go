@@ -9,6 +9,7 @@ import (
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/priest"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -50,24 +51,26 @@ func reportRaid(t *testing.T, ids []string, iters int32) *proto.RaidSimRequest {
 	raid.NumActiveParties = int32(len(raid.Parties))
 	// What a member casts reaches its scope in the raid, so nobody gets it given too (docs/raid_sim.md,
 	// Checking it, check 1): an Enhancement shaman's Strength of Earth and Windfury Totem for everyone,
-	// its Mana Spring for its own party.
+	// and every DPS shaman's Mana Spring for its own party, Elemental's too (the resolver's dropsTotems).
+	// The given Mana Spring is a plain MP5 and the cast one ticks of its own, so left on both they stack.
 	for pi, party := range raid.Parties {
 		for i, pl := range party.Players {
 			b := p.Builds[ids[pi*5+i]]
-			if !b.Casts.Has(GiftSoE) {
-				continue
-			}
-			for _, other := range raid.Parties {
-				for _, o := range other.Players {
-					o.RaidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectMissing
-					if o.RaidBuffs.TotemWeaponBuff == proto.TotemWeaponBuff_TotemWeaponBuffWindfury {
-						o.RaidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffNone
+			if b.Casts.Has(GiftSoE) {
+				for _, other := range raid.Parties {
+					for _, o := range other.Players {
+						o.RaidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectMissing
+						if o.RaidBuffs.TotemWeaponBuff == proto.TotemWeaponBuff_TotemWeaponBuffWindfury {
+							o.RaidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffNone
+						}
 					}
 				}
 			}
-			for _, o := range party.Players {
-				if o != pl {
-					o.RaidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectMissing
+			if dropsTotems(b) {
+				for _, o := range party.Players {
+					if o != pl {
+						o.RaidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectMissing
+					}
 				}
 			}
 		}
@@ -75,8 +78,55 @@ func reportRaid(t *testing.T, ids []string, iters int32) *proto.RaidSimRequest {
 	return &proto.RaidSimRequest{Raid: raid, Encounter: first.Encounter, SimOptions: &proto.SimOptions{Iterations: iters, RandomSeed: 7}}
 }
 
+// soloRequest is member i's own request with what the raid's other members cast for it given, as the
+// resolver gives it (docs/raid_sim.md, Checking it, check 1), at reportRaid's seed:
+//   - an Enhancement shaman's Strength of Earth and Windfury Totem (a hunter's request has neither);
+//   - one Sunder Armor at the pull from each other warrior (Seat.PullSunders), on top of the raid's given
+//     ramp: with a warrior or two in the raid the boss's armor is down sooner, worth about 1.5 DPS a
+//     warrior to a Beast Mastery hunter;
+//   - a Shadow priest's Dark Inspiration for its party (+3.7 to Demonology, +4.4 to Fire), which the
+//     search doesn't give yet but the raid's priest casts.
+func soloRequest(p *Pool, ids []string, i int, iters int32) *proto.RaidSimRequest {
+	b := p.Builds[ids[i]]
+	alone := cloneReq(b.Req)
+	alone.SimOptions = &proto.SimOptions{Iterations: iters, RandomSeed: 7}
+	if slices.ContainsFunc(ids, func(x string) bool { return p.Builds[x].Casts.Has(GiftSoE) }) && !b.Casts.Has(GiftSoE) {
+		alone.Raid.Buffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
+		alone.Raid.Buffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
+	}
+	// The raid's debuffs are the first member's (reportRaid), its given ramp included.
+	ramp := &proto.SunderRamp{}
+	if r := p.Builds[ids[0]].Req.Raid.Debuffs.SunderRamp; r != nil {
+		ramp = googleProto.Clone(r).(*proto.SunderRamp)
+	}
+	for j, x := range ids {
+		if j != i && pullSunderer(p.Builds[x]) {
+			ramp.PullSunders++
+		}
+	}
+	alone.Raid.Debuffs.SunderRamp = ramp
+	for j := i / 5 * 5; j < min(len(ids), i/5*5+5); j++ {
+		if j != i && darkInspirer(p.Builds[ids[j]]) {
+			alone.Raid.Parties[0].Buffs.DarkInspiration = true
+		}
+	}
+	return alone
+}
+
+// darkInspirer is whether a build is a priest with Dark Inspiration, which reaches its party.
+func darkInspirer(b *Build) bool {
+	pl := player0(b.Req)
+	if pl.Class != proto.Class_ClassPriest {
+		return false
+	}
+	raid := &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{googleProto.Clone(pl).(*proto.Player)}}}}
+	env, _, _ := core.NewEnvironment(raid, &proto.Encounter{}, proto.Ruleset_RulesetForever, false)
+	pa, ok := env.Raid.Parties[0].Players[0].(priest.PriestAgent)
+	return ok && pa.GetPriest().Talents.DarkInspiration > 0
+}
+
 // Check 1: each member of a raid of report builds lands within 4σ of a single-player sim of its own
-// request, at the same seed and iterations.
+// request, at the same seed and iterations, given what the raid's other members cast for it (soloRequest).
 func TestReportRaid(t *testing.T) {
 	if testing.Short() {
 		t.Skip("about a minute")
@@ -104,20 +154,10 @@ func TestReportRaid(t *testing.T) {
 			for _, pm := range party.Players {
 				id := ids[i]
 				i++
-				alone := cloneReq(p.Builds[id].Req)
-				alone.SimOptions = &proto.SimOptions{Iterations: iters, RandomSeed: 7}
-				// An Enhancement shaman's cast totems reach everyone in the raid, so the member's own sim
-				// gets them given (a hunter's request had no Strength of Earth).
-				if slices.ContainsFunc(ids, func(x string) bool { return p.Builds[x].Casts.Has(GiftSoE) }) && !p.Builds[id].Casts.Has(GiftSoE) {
-					alone.Raid.Buffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
-					alone.Raid.Buffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
-				}
+				alone := soloRequest(p, ids, i-1, iters)
 				solo := core.RunRaidSim(alone).RaidMetrics.Dps
 				se := math.Hypot(pm.Dps.Stdev, solo.Stdev) / math.Sqrt(iters)
 				allow := 4 * se
-				if id == "hunter__survival" || id == "shaman__enhancement-imp-gw" {
-					allow += 5
-				}
 				if d := pm.Dps.Avg - solo.Avg; math.Abs(d) > allow {
 					t.Errorf("%s raid: %s did %.1f, alone %.1f (%+.1f, allowed ±%.1f)", name, id, pm.Dps.Avg, solo.Avg, d, allow)
 				}
