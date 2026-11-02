@@ -43,6 +43,15 @@ async function loadWasm() {
 	await ready;
 }
 
+// callMs is how long the last call into Go took, for the timings (spike 4).
+let callMs = 0;
+function timed(fn: () => string): string {
+	const t0 = performance.now();
+	const out = fn();
+	callMs = performance.now() - t0;
+	return out;
+}
+
 // handle reads a reply from Go, sends its batch, and sets the timer to the next event.
 function handle(replyText: string) {
 	const reply = JSON.parse(replyText);
@@ -55,7 +64,7 @@ function handle(replyText: string) {
 		clock = { ...clock, shiftMs: clock.shiftMs + batch.rebase.shiftMs };
 	}
 	if (batch) {
-		post({ type: 'batch', batch, simNowMs: simNow(), clock });
+		post({ type: 'batch', batch, simNowMs: simNow(), clock, callMs });
 		if (batch.ended) {
 			running = false;
 		}
@@ -78,21 +87,21 @@ function schedule(nextEventMs: number | undefined) {
 function tick() {
 	timer = undefined;
 	if (!running || clock.pausedAt !== undefined) return;
-	handle(go.practiceAdvance(simNow()));
+	handle(timed(() => go.practiceAdvance(simNow())));
 }
 
 async function onMessage(msg: ToWorker) {
 	switch (msg.type) {
 		case 'start': {
-			const reply = JSON.parse(go.practiceStart(JSON.stringify({ request: msg.request, settings: msg.settings, seed: msg.seed })));
+			const reply = JSON.parse(timed(() => go.practiceStart(JSON.stringify({ request: msg.request, settings: msg.settings, seed: msg.seed }))));
 			if (reply.error) {
 				post({ type: 'error', message: reply.error });
 				return;
 			}
 			clock = { wallAtStart: msg.wallNow, startMs: reply.startMs, shiftMs: 0, pausedMs: 0 };
 			running = true;
-			post({ type: 'started', toolkit: reply.toolkit, startMs: reply.startMs, batch: reply.batch, wallAtStart: msg.wallNow });
-			post({ type: 'batch', batch: reply.batch, simNowMs: simNow(), clock });
+			post({ type: 'started', toolkit: reply.toolkit, startMs: reply.startMs, batch: reply.batch, wallAtStart: msg.wallNow, callMs });
+			post({ type: 'batch', batch: reply.batch, simNowMs: simNow(), clock, callMs });
 			if (heartbeat === undefined) {
 				// The HUD's state between events, a few times a second.
 				heartbeat = setInterval(() => running && clock.pausedAt === undefined && tick(), 250);
@@ -103,16 +112,16 @@ async function onMessage(msg: ToWorker) {
 		case 'input': {
 			if (!running) return;
 			const pressedAt = simNow(msg.pressedAtWall);
-			handle(go.practiceInput(JSON.stringify(msg.input), pressedAt, simNow()));
+			handle(timed(() => go.practiceInput(JSON.stringify(msg.input), pressedAt, simNow())));
 			break;
 		}
 		case 'startEncounter':
 			if (!running) return;
-			handle(go.practiceStartEncounter(simNow(msg.wallNow)));
+			handle(timed(() => go.practiceStartEncounter(simNow(msg.wallNow))));
 			break;
 		case 'stop':
 			if (!running) return;
-			handle(go.practiceStop(simNow(msg.wallNow)));
+			handle(timed(() => go.practiceStop(simNow(msg.wallNow))));
 			running = false;
 			break;
 		case 'pause':
@@ -145,10 +154,11 @@ self.onmessage = (e: MessageEvent<ToWorker>) => {
 	onMessage(e.data);
 };
 
+const loadStart = performance.now();
 loadWasm()
 	.then(() => {
 		loaded = true;
-		post({ type: 'ready' });
+		post({ type: 'ready', loadMs: performance.now() - loadStart });
 		for (const msg of queue.splice(0)) onMessage(msg);
 	})
 	.catch(err => post({ type: 'error', message: String(err) }));

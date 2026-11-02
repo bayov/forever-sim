@@ -95,6 +95,9 @@ type Session struct {
 	// keepLog keeps every log line of the current sim, for replay checks.
 	keepLog bool
 
+	// Failed is the sim's panic, when one ended the attempt.
+	Failed string
+
 	answered map[int]bool
 	batch    Batch
 	logLines []string
@@ -193,7 +196,18 @@ func (s *Session) InputApplied(in Input, at time.Duration) {
 
 // Advance runs every event before until, and stops. It never moves the clock to until itself,
 // because settling regen and auras at frame times would make results depend on the frame rate.
+//
+// A panic in the sim ends the attempt with the error, because the sim's state can't be trusted
+// after it. It comes from a spell the sim doesn't model for this spec (see run.safeCast).
 func (s *Session) Advance(until time.Duration) {
+	defer func() {
+		if p := recover(); p != nil {
+			s.Failed = fmt.Sprint(p)
+			s.ended = true
+			s.batch.Errors = append(s.batch.Errors, "The sim failed: "+s.Failed)
+			s.batch.Ended = &Ended{StoppedEarly: true}
+		}
+	}()
 	for !s.ended {
 		r := s.run
 
@@ -356,7 +370,7 @@ func (s *Session) rewindow(now time.Duration) {
 	cut := max(earliestInput, newStart) - shift // in the current timeline
 
 	var kept []recordedInput
-	var lastMove, lastTarget, lastAttack *recordedInput
+	var lastMove, lastTarget, lastAttack, lastImbue *recordedInput
 	for i := range s.inputs {
 		rec := s.inputs[i]
 		if rec.At >= cut {
@@ -370,14 +384,22 @@ func (s *Session) rewindow(now time.Duration) {
 			lastTarget = &s.inputs[i]
 		case "startAttack", "stopAttack":
 			lastAttack = &s.inputs[i]
+		case "cast", "setImbue":
+			if s.run.isImbueCast(rec.Input.SpellID) {
+				lastImbue = &s.inputs[i]
+			}
 		}
 	}
 	var lasting []recordedInput
-	for _, rec := range []*recordedInput{lastMove, lastTarget, lastAttack} {
+	for _, rec := range []*recordedInput{lastMove, lastTarget, lastAttack, lastImbue} {
 		if rec == nil {
 			continue
 		}
 		in := rec.Input
+		if rec == lastImbue {
+			// The imbue goes back on with no cost and no GCD.
+			in = Input{Kind: "setImbue", SpellID: in.SpellID}
+		}
 		if in.Kind == "move" {
 			b := body{pos: in.Pos, vel: in.Velocity, facing: in.Facing, turnRate: in.TurnRate, at: rec.At}
 			in.Pos = b.posAt(cut)

@@ -84,9 +84,14 @@ func (r *run) updateWorld(sim *core.Simulation) {
 }
 
 // keepTicking runs a world tick every 50ms while you move or turn.
+//
+// Before the pull with auto attack off, a tick can't change anything the sim sees: range and
+// facing only matter to swings and hits. So we skip them then, which keeps the pull's swap
+// quick after a long prepull of walking around (spike 4).
 func (r *run) keepTicking(sim *core.Simulation) {
 	active := r.me.moving() || r.me.turnRate != 0
-	if !active || r.ticking {
+	needed := r.attackOn || r.s.pulled || sim.CurrentTime >= 0
+	if !active || !needed || r.ticking {
 		return
 	}
 	r.ticking = true
@@ -176,7 +181,7 @@ func (r *run) playerState() *PlayerState {
 				Pos:       r.totemPos[slot],
 			})
 		}
-		p.MainHandImbue = r.shaman.ShamanImbue.String()
+		p.MainHandImbue = r.shaman.ActiveImbue().String()
 	}
 	return p
 }

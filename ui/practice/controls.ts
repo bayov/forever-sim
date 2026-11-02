@@ -39,6 +39,8 @@ export type CameraOptions = {
 export class Mover {
 	held: Held = { forward: false, back: false, strafeLeft: false, strafeRight: false, turnLeft: false, turnRight: false };
 	autorun = false;
+	// speedFactor is 1.4 in Ghost Wolf form.
+	speedFactor = 1;
 	leftDown = false;
 	rightDown = false;
 	readonly move: MoveState;
@@ -86,7 +88,7 @@ export class Mover {
 		dy += strafe;
 		if (dx === 0 && dy === 0) return [0, 0];
 		const len = Math.hypot(dx, dy);
-		const speed = back ? speeds.backpedal : speeds.run;
+		const speed = (back ? speeds.backpedal : speeds.run) * this.speedFactor;
 		const lx = (dx / len) * speed;
 		const ly = (dy / len) * speed;
 		// Local (forward, left) to world.
