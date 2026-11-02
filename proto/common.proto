@@ -1058,6 +1058,11 @@ message Target {
 
 	// Custom Target AI parameters
 	repeated TargetInput target_inputs = 14;
+
+	// Under Forever, crit players at Classic's rate (5% plus 0.2% a level above them) instead of
+	// Forever's (0.2% a level above them, from the leveling logs). For a raid boss until Forever's
+	// boss crit is measured (docs/tank_sim.md, Forever's boss crit).
+	bool classic_crit = 15;
 }
 
 message Encounter {

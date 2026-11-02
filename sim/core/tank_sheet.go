@@ -61,7 +61,10 @@ func TankSheet(defender *Unit, attacker *Unit) *proto.TankSheet {
 	}
 	critUncapped := table.BaseCritChance - bonusDefense*DefenseRatingToChanceReduction - defender.PseudoStats.ReducedCritTakenChance
 	crit := max(0, critUncapped)
-	crush := table.BaseCrushChance
+	crush := 0.0
+	if attacker.PseudoStats.CanCrush {
+		crush = table.BaseCrushChance
+	}
 
 	left := 1.0
 	take := func(chance float64) float64 {
@@ -93,6 +96,19 @@ func TankSheet(defender *Unit, attacker *Unit) *proto.TankSheet {
 		defender.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical]
 	if taken > 0 {
 		sheet.EffectiveHealth = sheet.Health / taken
+	}
+
+	// The boss's biggest white swing, as EnemyWeaponDamage rolls it at the top of its spread, a crit
+	// if it can crit us, else a crushing blow if it can crush, through armor and damage taken. Debuffs
+	// on the boss's attack power and damage are in.
+	if aa := attacker.AutoAttacks; aa.mh.BaseDamageMin > 0 {
+		swing := aa.mh.BaseDamageMin * (1 + attacker.PseudoStats.DamageSpread + max(0, attacker.stats[stats.AttackPower])*EnemyAutoAttackAPCoefficient)
+		if sheet.Crit > 0 {
+			swing *= 2
+		} else if sheet.Crush > 0 {
+			swing *= 1.5
+		}
+		sheet.BiggestHit = swing * attacker.PseudoStats.DamageDealtMultiplier * taken
 	}
 
 	// Our side, from the attack tables our attacks roll on.
