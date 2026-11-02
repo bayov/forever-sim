@@ -36,7 +36,7 @@ func (mage *Mage) registerIceLanceSpell() {
 		return
 	}
 
-	cdTimer := mage.NewTimer()
+	cdTimer := mage.quickDamageSpellTimer()
 	mage.IceLance = make([]*core.Spell, IceLanceRanks+1)
 	for rank := 1; rank <= IceLanceRanks; rank++ {
 		if IceLanceLevel[rank] <= int(mage.Level) {
@@ -48,8 +48,19 @@ func (mage *Mage) registerIceLanceSpell() {
 // 1.60.1.70707 gives Ice Lance an 8 sec cooldown (category 19), the 10-27 to 10-29 hotfixes put
 // into the client, but only on rank 1 (SpellCooldowns 101119, 1312002): ranks 2 to 6 have no
 // cooldown row. Report assumption mage_ice_lance_cd, user ruling 2026-10-30: every rank shares
-// it, as the tooltip and foreverchanges.pro have it.
+// it, as the tooltip and foreverchanges.pro have it. Category 19 ("Quick Damage - Spell") is Fire
+// Blast's, so rank 1 and Fire Blast put each other on cooldown (SpellCategories 187717 and 73250);
+// every rank takes the category with the cooldown (user ruling 2026-11-02; wowsims/forever does
+// the same), each spell starting it at its own length.
 const IceLanceCooldown = time.Second * 8
+
+// quickDamageSpellTimer is category 19's cooldown, shared by Fire Blast and Ice Lance.
+func (mage *Mage) quickDamageSpellTimer() *core.Timer {
+	if mage.quickDamageTimer == nil {
+		mage.quickDamageTimer = mage.NewTimer()
+	}
+	return mage.quickDamageTimer
+}
 
 func (mage *Mage) newIceLanceSpellConfig(rank int, cdTimer *core.Timer) core.SpellConfig {
 	baseDamageLow := IceLanceScaling[rank].At(IceLanceBaseDamage[rank][0], mage.Level)

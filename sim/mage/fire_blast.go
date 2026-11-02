@@ -21,7 +21,7 @@ var FireBlastLevel = [FireBlastRanks + 1]int{0, 6, 14, 22, 30, 38, 46, 54}
 
 func (mage *Mage) registerFireBlastSpell() {
 	mage.FireBlast = make([]*core.Spell, FireBlastRanks+1)
-	cdTimer := mage.NewTimer()
+	cdTimer := mage.quickDamageSpellTimer() // category 19, shared with Ice Lance (ice_lance.go)
 
 	for rank := 1; rank <= FireBlastRanks; rank++ {
 		config := mage.newFireBlastSpellConfig(rank, cdTimer)

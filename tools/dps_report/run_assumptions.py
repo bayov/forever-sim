@@ -45,7 +45,7 @@ STAFF_IMBUE = {'mage__frostfire': 'ImbueGreaterFlame', 'mage__fire': 'ImbueGreat
 # cat's flask before the zone (the warriors' Flask of the Titans and the rogues' and Survival's none add no DPS either, so
 # they keep the natural flask).
 NO_ZONE_FLASK = {b: 'FlaskOfDistilledWisdom' for b in ('hunter__beast-mastery', 'hunter__marksmanship', 'hunter__lone-wolf', 'druid__feral-cat')}
-ICE_LANCE = {'action': {'castSpell': {'spellId': {'spellId': 1240047}}, 'condition': {'auraIsActive': {'auraId': {'spellId': 400670}}}},
+ICE_LANCE = {'action': {'castSpell': {'spellId': {'spellId': 1240047}}, 'condition': {'auraIsActive': {'auraId': {'spellId': 400669}}}},
              'notes': 'Ice Lance on a Fingers of Frost charge (assumption scenario).'}
 
 

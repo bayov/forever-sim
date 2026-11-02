@@ -15,7 +15,7 @@ var (
 	arcaneBlastAura   = spellID(400573)
 	missileBarrage    = spellID(400589)
 	heatingUp         = spellID(400625)
-	fingersOfFrost    = spellID(400670)
+	fingersOfFrost    = spellID(400669)
 	fireVulnerability = spellID(22959)
 	wintersChill      = spellID(12579)
 	mageClearcasting  = spellID(12536)

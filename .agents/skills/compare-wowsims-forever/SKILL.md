@@ -158,8 +158,7 @@ rotation gives a result that looks off.
   in theirs. Warrior: Whirlwind is cast as its main hand's copy, tag 14 (untagged it never casts: about 100 DPS on
   Fury), Charge has no rank, Berserking 20554. Shaman: Berserking 20554; theirs registers every rank our rotations cast.
   Mage: Berserking 20554; theirs registers only Frostfire Bolt's top rank, so a downranking line (Frostfire's rank 2
-  when mana runs short, about 1 DPS) never casts there. Our Fingers of Frost aura is 400670, theirs 400669 (the
-  client's buff; 400670 is the talent's rank 1), remapped.
+  when mana runs short, about 1 DPS) never casts there.
 - **Vanish and Sweeping Strikes** are DPS cooldowns in theirs, so `autocastOtherCooldowns` would Vanish at the pull
   and spend 30 rage on Sweeping Strikes every 30 s against one target (their own rotations cast it only on 2+
   targets and don't autocast: 32 DPS on Arms). The converter adds a never-true line naming each.
@@ -245,7 +244,7 @@ these, so it can tell what is new. Keep the list current when one is settled.
 | Undead base stats | 82 Str, 129 Agi | 79, 128 | Race offset ruling. `align.py` closes it |
 | Totem ranks | Trainer (Strength of Earth 42, Grace of Air 77) | AQ books' (53, 89) | No AQ books at launch (assumed) |
 | Ice Lance's spell power | 0.429, SoD's server value (`mage_ice_lance_coef`, user ruling 2026-10-15) | 1/7, TBC's, "until measured" | Ruling: the client has none. Frost 104, Frostfire 59 DPS |
-| Ice Lance's cooldown and Fire Blast | Every rank 8 s on its own timer (`mage_ice_lance_cd`, user ruling 2026-10-30) | Category 19, shared with Fire Blast | Open: the client puts only rank 1 (1312002) in category 19 with Fire Blast (SpellCooldowns 101119, CategoryRecoveryTime 8000); ours gave every rank the 8 s but not the category. Frostfire 12.8 DPS |
+| Ice Lance's cooldown and Fire Blast | Every rank 8 s on category 19, shared with Fire Blast, since 2026-11-02 (`mage_ice_lance_cd`, user rulings 2026-10-30 and 2026-11-02) | The same | Settled by ruling: the client puts only rank 1 (1312002) in category 19 with Fire Blast (SpellCooldowns 101119). It was 12.8 DPS on Frostfire. Ours keyed Fingers of Frost by the talent's id (400670) until 2026-11-02; both now use the buff's, 400669 |
 | Frostbolt rank 10 | Base damage ×1.04 (`mage_frostbolt10`, user ruling 2026-10-15) | The client's | Ruling. Frost 10.8 DPS |
 | Raid damage taken on mages | Breaks Ice Barrier (Frigid Power's Frost damage) and pushes casts back | None | A choice (the fight). Frost 48.5, Fire 11, Arcane 9, Frostfire 6 DPS. `--no-raid-damage` |
 | A castSpell Shoot (the wand) | The rotation can cut it before its first shot, looking every 50 ms (`sim/core/wand.go`) | Always fires one shot, then stops (4fd24939d8); after Fire Blast its line goes off inside the GCD and holds the next cast for the shot | A choice (engine): the game has no such rule, any cast stops Shoot. Costs theirs Fire 21, Frostfire 14, Frost 13, Arcane 1 DPS |

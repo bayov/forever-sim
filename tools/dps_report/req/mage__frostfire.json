@@ -331,7 +331,7 @@
                           {
                             "auraIsKnown": {
                               "auraId": {
-                                "spellId": 400670
+                                "spellId": 400669
                               }
                             }
                           },
@@ -341,7 +341,7 @@
                               "lhs": {
                                 "auraNumStacks": {
                                   "auraId": {
-                                    "spellId": 400670
+                                    "spellId": 400669
                                   }
                                 }
                               },
