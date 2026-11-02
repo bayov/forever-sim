@@ -173,10 +173,38 @@ flatters Chain Heal's jumps between melee and ranged.
 - **Deaths**: the chance that a player in its assignment dies
 - **Scares**: how often a player in its assignment drops under 20% health and lives, a minute
 
-**Proposed score** (an open decision): a healer set has to keep everyone alive, so the score is the **damage
-it can carry**, the highest scale of the profile's damage at which the raid has a death in under 5% of fights,
-found by bisection. At the profile's own damage it reports effective HPS, overheal, scares and mana left. It
-mirrors the tank sim's "healing needed", and it's how the raid sim learns how many healers a comp needs.
+**The score** (worked out 2026-11-02 by two independent agents, one from how healing is judged and simmed
+elsewhere, one from experiments on `tools/healbench`; they agree). Proposed, for the user's decisions below:
+
+- **Primary: damage carried.** The highest scale of a profile's damage at which fights end with a death in
+  under 5% of them, found by bisection with interpolation between the two closest scales, paired seeds and
+  about 1,600 iterations a step (about 8 sims a score). It weighs throughput against mana on its own, and it
+  resolves a 3% gear change (+150 healing or +33 mp5 both moved the raid profile's carry from 0.666 to 0.688).
+  It's the same shape as the tank sim's "healing needed".
+- **Scored per role**, since the two rank builds differently: a **tank healer** (one healer, the tank's damage,
+  tank deaths) and a **raid healer** (raid damage, the others' deaths). In the experiments the efficient
+  rotation won the tank role (1.17 against 0.96) and the mid-rank rotation the raid role.
+- **At a set fight length**, since length flips rankings: at 90 s throughput builds win, at 300 s efficient
+  ones (raid profile: the top-rank rotation 0.80 against the efficient one's 0.71 at 90 s, 0.55 against 0.59 at
+  300 s).
+- **Next to it**: the profile's death floor (the deaths no healing stops, as the tank bench reports), mana left
+  and time to OOM at a standard load, effective healing per mana, scares at the carry, overhealing as a
+  diagnostic.
+- **Not EHPS.** At a load everyone survives, every build's EHPS is the damage taken (seven tank rotations spent
+  10.7k to 18.3k mana for the same 458 to 464 EHPS), and at an overload deaths cut the damage there is to heal.
+- **Scares** mostly echo deaths: about none at a standard load, and they show near the cliff how a build fails.
+  Reported, not scored.
+- **The comp search uses healing as a constraint**, not a DPS term: a set of healers (with its tanks)
+  qualifies when its carry at the encounter's damage is at least 1 plus a margin, for tank and raid deaths both.
+  The healer count is the smallest that qualifies, and qualifying sets rank by raid DPS as today, so Mana Tide,
+  Power Infusion and Innervate still count. Carry doesn't add up across healers (two healers on one tank carry
+  far less than twice one), so sets are simmed whole: each tank's healers and the raid's healers on their own,
+  carry tabulated per preset set, with fixed stand-in fillers.
+
+**Engine metrics the score needs** (H2): per-iteration raid outcomes (anyone died, a tank died, first death,
+dead player-seconds; "Most deaths (one player)" undercounts the chance anyone dies, 11.4% against 14.8%), a
+healer's real OOM time, each healer's deaths and scares within its assignment, effective healing per mana, a
+profile's death floor, and heals in flight so healers stop sniping each other.
 
 ## H1: what's in (2026-11-02)
 
@@ -210,18 +238,21 @@ mirrors the tank sim's "healing needed", and it's how the raid sim learns how ma
 
 ### First numbers
 
-`tools/healbench`, 2 healbench shamans (synthetic level 60 caster gear, no mana support), a Protection
-warrior and 7 Frost mages, 180 s, 500 iterations. The profiles are made up to test the engine:
+`tools/healbench`, 2 bench shamans (synthetic level 60 caster gear; a Major Mana Potion, a Demonic Rune,
+Mageblood and the raid's Wisdom, but no Mana Spring, Mana Tide or Innervate), a Protection warrior (two in
+the swap profile) and 7 Frost mages, 180 s, 500 iterations, after the audit's fixes. HPS and EHPS are the two
+healers summed, mana left is each healer's. The profiles are made up to test the engine:
 
-| Profile | Scale | HPS | EHPS | Overheal | Mana left | Raid DTPS | Most deaths | Raid scares a fight |
+| Profile | Scale | HPS | EHPS | Overheal | Mana left | Raid DTPS | Most deaths (one player) | Raid scares a fight |
 |---|---|---|---|---|---|---|---|---|
-| tank | 1 | 691 | 462 | 33.1% | 4456 | 472 | 0% | 0 |
-| raid | 0.5 | 879 | 672 | 23.6% | 5055 | 703 | 0% | 0 |
-| raid | 1 | 848 | 707 | 16.7% | 4641 | 1041 | 100% | 3.1 |
-| swap | 1 | 872 | 629 | 27.9% | 2214 | 645 | 0.4% | 0.03 |
+| tank | 1 | 809 | 461 | 43.0% | 3820 | 470 | 0% | 0 |
+| raid | 0.5 | 974 | 674 | 30.8% | 5287 | 703 | 0% | 0.01 |
+| raid | 1 | 947 | 776 | 18.0% | 622 | 1104 | 99.8% | 3.1 |
+| swap | 1 | 1032 | 633 | 38.6% | 1482 | 649 | 2.2% | 0.11 |
 
-The raid profile at full damage is a cliff: the healers run dry around 85 seconds and the raid dies after.
-That is the shape the proposed score measures (the damage a healer set can carry).
+The raid profile at full damage is a cliff: the healers run dry and the raid dies. The bench rotation now keeps
+Riptide on the tank, and with both healers doing it the overhealing on the tank profiles rose; the rotation is a
+test of the engine, not a tuned one (H2).
 
 ### The audit (2026-11-02)
 
@@ -308,8 +339,11 @@ chooses how many healers.
 
 ## Open decisions
 
-1. **The score**: the damage a healer set can carry (proposed), or a weighted mix of effective HPS, mana,
-   deaths and scares at a fixed damage.
-2. **The scare line**: 20% health, or another.
-3. **Absorbs** (Power Word: Shield): effective as long as they absorb, and the unused part as overheal
+1. **The score**: damage carried at 5% deaths (proposed above), and what counts as failure: any death, or
+   separate lines for tanks and the raid; whether a tank death is a wipe.
+2. **The fight length** each score is judged at: the encounter's own, or a short and long pair (90 and 300 s).
+3. **Separate tank healer and raid healer scores**, or one mixed profile.
+4. **The margin** above an encounter's damage that picks the healer count.
+5. **The scare line**: 20% health, or another; reported only (proposed).
+6. **Absorbs** (Power Word: Shield): effective as long as they absorb, and the unused part as overheal
    (proposed).
