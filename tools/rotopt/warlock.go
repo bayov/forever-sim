@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
@@ -62,6 +64,12 @@ func (warlockRotation) Knobs() []Knob {
 		// 0 no bane, 1 Bane of Agony, 2 Bane of Doom with Bane of Agony while Doom is on
 		// cooldown or the fight ends before Doom would land.
 		{Name: "bane", Default: 2, Min: 0, Max: 2, Step: 1},
+		// Bane of Doom deals its damage in one tick a minute after the cast, on the warlock's stats
+		// when it lands (Forever's periodic damage doesn't snapshot). The pull's 2 min cooldowns (the
+		// trinket, and Blood Fury beside it) come back as the second Doom ticks, and fire at the
+		// first GCD check after: hold that Doom this many seconds past its cooldown so the tick lands
+		// after them, inside their window (0 recasts it on cooldown).
+		{Name: "doomAlign", Default: 0, Min: 0, Max: 6, Step: 1},
 		// Amplify Curse ahead of each Bane of Agony (the Affliction talent, 3 min cooldown).
 		{Name: "amplifyCurse", Default: 0, Min: 0, Max: 1, Step: 1},
 		// The curse slot (separate from the bane under Forever): 0 none, the raid has its curses
@@ -170,7 +178,7 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(lockBaneOfAgony, and(not(dotIsActive(lockBaneOfAgony)), gt(remainingTime(), seconds(12))), "Bane of Agony when it is down."))
 	case 2:
 		items = append(items,
-			cast(lockBaneOfDoom, and(not(dotIsActive(lockBaneOfAgony)), gt(remainingTime(), seconds(60))), "Bane of Doom when it lands before the fight ends."),
+			cast(lockBaneOfDoom, doomWhen(k["doomAlign"]), doomNote(k["doomAlign"])),
 			cast(lockBaneOfAgony, and(not(dotIsActive(lockBaneOfDoom)), not(dotIsActive(lockBaneOfAgony)), gt(remainingTime(), seconds(12)),
 				or(gt(spellTimeToReady(lockBaneOfDoom), seconds(12)), le(remainingTime(), seconds(60)))),
 				"Bane of Agony while Bane of Doom is on cooldown or would not land."),
@@ -285,6 +293,26 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 	// before the opener lands so it counts too. Without the trinket the action is dropped.
 	rot.PrepullActions = append(rot.PrepullActions, prepull(lockSyntheticTalisman, 0.1))
 	return rot
+}
+
+// doomWhen is when Bane of Doom goes out: it lands before the fight ends, and with align above 0 its
+// tick doesn't land in the align seconds before the trinket's cooldown comes back (the tick waits
+// for the trinket and the cooldowns used beside it). Without the trinket the hold reads its time to
+// ready as 0 and never holds.
+func doomWhen(align float64) value {
+	if align == 0 {
+		return and(not(dotIsActive(lockBaneOfAgony)), gt(remainingTime(), seconds(60)))
+	}
+	ttr := spellTimeToReady(lockSyntheticTalisman)
+	return and(not(dotIsActive(lockBaneOfAgony)), gt(remainingTime(), seconds(60)),
+		not(and(gt(ttr, seconds(60-align)), lt(ttr, seconds(60)))))
+}
+
+func doomNote(align float64) string {
+	if align == 0 {
+		return "Bane of Doom when it lands before the fight ends."
+	}
+	return fmt.Sprintf("Bane of Doom when it lands before the fight ends, its tick at least %g sec after the trinket comes back, so the 2 min cooldowns fired beside the trinket are up for it.", align)
 }
 
 // dotDown is true when the damage over time spell is off the target, or has less than lead

@@ -101,8 +101,9 @@ export const DefaultGear = GearLevel60Phase1SyntheticDemonology;
 
 // The Level 60 rotations come from tools/rotopt's warlock template (tools/rotopt/warlock.go),
 // searched on each build at 180 sec with the Level 60 settings (see warlock_presets.sh). All
-// three keep Bane of Doom up when it lands before the fight ends and Bane of Agony otherwise,
-// then Corruption and Immolate when they are down, Shadow Bolt as the filler, and Life Tap only
+// three keep Bane of Doom up when it lands before the fight ends and Bane of Agony otherwise
+// (since 2026-11-02 the second Doom waits a second so its one tick lands after the 2 min
+// cooldowns come back, inside their window), then Corruption and Immolate when they are down, Shadow Bolt as the filler, and Life Tap only
 // under 5% mana. A knob search kept every one of those. Against them, at 180 sec on Demonology:
 // Bane of Agony alone is 41 behind, no bane 118, no Corruption 45, no Immolate 7, Soul Fire
 // during Decimation 11, Death Coil on cooldown 9, Curse of Recklessness 6, Life Tap at 20% mana

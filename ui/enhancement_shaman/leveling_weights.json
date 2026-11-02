@@ -1,0 +1,268 @@
+{
+ "levels": [
+  {
+   "level": 5,
+   "mobs": 70.38,
+   "mobsPerAP": 0.3555,
+   "deaths": 0.0,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 0.16,
+    "Stamina": 0,
+    "Intellect": 0.61,
+    "Spirit": 0.49,
+    "MeleeHit": 2.02,
+    "MeleeCrit": 1.29,
+    "SpellPower": 1.14,
+    "FirePower": 0.0,
+    "NaturePower": 1.13,
+    "MP5": 1.78,
+    "Armor": 0.0,
+    "MainHandDps": 11.65
+   }
+  },
+  {
+   "level": 10,
+   "mobs": 58.38,
+   "mobsPerAP": 0.1475,
+   "deaths": 0.18,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 0.43,
+    "Stamina": 1.18,
+    "Intellect": 1.38,
+    "Spirit": 1.5,
+    "MeleeHit": 4.95,
+    "MeleeCrit": 2.51,
+    "SpellPower": 2.59,
+    "FirePower": 0.39,
+    "NaturePower": 2.17,
+    "MP5": 3.66,
+    "Armor": 0.04,
+    "MainHandDps": 13.56
+   }
+  },
+  {
+   "level": 15,
+   "mobs": 64.64,
+   "mobsPerAP": 0.077,
+   "deaths": 0.05,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 0.65,
+    "Stamina": 0.78,
+    "Intellect": 0.52,
+    "Spirit": 0.9,
+    "MeleeHit": 8.79,
+    "MeleeCrit": 5.11,
+    "SpellPower": 3.13,
+    "FirePower": 0.55,
+    "NaturePower": 2.47,
+    "MP5": 3.51,
+    "Armor": 0.04,
+    "MainHandDps": 13.77
+   }
+  },
+  {
+   "level": 20,
+   "mobs": 60.93,
+   "mobsPerAP": 0.0485,
+   "deaths": 0.07,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 0.8,
+    "Stamina": 1.05,
+    "Intellect": 1.77,
+    "Spirit": 0.99,
+    "MeleeHit": 12.78,
+    "MeleeCrit": 7.63,
+    "SpellPower": 3.21,
+    "FirePower": 1.05,
+    "NaturePower": 2.0,
+    "MP5": 5.65,
+    "Armor": 0.04,
+    "MainHandDps": 13.81
+   }
+  },
+  {
+   "level": 25,
+   "mobs": 64.13,
+   "mobsPerAP": 0.04433,
+   "deaths": 0.01,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 0.67,
+    "Stamina": 0.31,
+    "Intellect": 1.52,
+    "Spirit": 0.7,
+    "MeleeHit": 14.52,
+    "MeleeCrit": 8.35,
+    "SpellPower": 2.24,
+    "FirePower": 0.72,
+    "NaturePower": 1.48,
+    "MP5": 4.78,
+    "Armor": 0.01,
+    "MainHandDps": 13.27
+   }
+  },
+  {
+   "level": 30,
+   "mobs": 61.52,
+   "mobsPerAP": 0.03283,
+   "deaths": 0.0,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 1.3,
+    "Stamina": 0.04,
+    "Intellect": 1.14,
+    "Spirit": 1.15,
+    "MeleeHit": 18.38,
+    "MeleeCrit": 11.88,
+    "SpellPower": 2.32,
+    "FirePower": 0.68,
+    "NaturePower": 1.61,
+    "MP5": 2.72,
+    "Armor": 0.05,
+    "MainHandDps": 14.21
+   }
+  },
+  {
+   "level": 35,
+   "mobs": 64.34,
+   "mobsPerAP": 0.0295,
+   "deaths": 0.0,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 1.37,
+    "Stamina": 0.44,
+    "Intellect": 1.9,
+    "Spirit": 1.64,
+    "MeleeHit": 24.19,
+    "MeleeCrit": 14.35,
+    "SpellPower": 1.83,
+    "FirePower": 0.23,
+    "NaturePower": 1.53,
+    "MP5": 4.23,
+    "Armor": 0.03,
+    "MainHandDps": 13.73
+   }
+  },
+  {
+   "level": 40,
+   "mobs": 57.06,
+   "mobsPerAP": 0.02117,
+   "deaths": 0.03,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 1.61,
+    "Stamina": 1.49,
+    "Intellect": 1.81,
+    "Spirit": 2.39,
+    "MeleeHit": 15.12,
+    "MeleeCrit": 16.69,
+    "SpellPower": 1.82,
+    "FirePower": 0.24,
+    "NaturePower": 1.51,
+    "MP5": 4.92,
+    "Armor": 0.07,
+    "MainHandDps": 14.18
+   }
+  },
+  {
+   "level": 45,
+   "mobs": 54.05,
+   "mobsPerAP": 0.02017,
+   "deaths": 0.0,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 1.57,
+    "Stamina": 0.81,
+    "Intellect": 1.82,
+    "Spirit": 2.16,
+    "MeleeHit": 15.54,
+    "MeleeCrit": 18.68,
+    "SpellPower": 1.98,
+    "FirePower": 0.24,
+    "NaturePower": 1.67,
+    "MP5": 3.5,
+    "Armor": 0.05,
+    "MainHandDps": 12.73
+   }
+  },
+  {
+   "level": 50,
+   "mobs": 56.34,
+   "mobsPerAP": 0.016,
+   "deaths": 0.0,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 1.73,
+    "Stamina": 0.07,
+    "Intellect": 2.4,
+    "Spirit": 2.58,
+    "MeleeHit": 9.39,
+    "MeleeCrit": 22.11,
+    "SpellPower": 2.27,
+    "FirePower": 0.25,
+    "NaturePower": 1.98,
+    "MP5": 3.92,
+    "Armor": 0.06,
+    "MainHandDps": 13.76
+   }
+  },
+  {
+   "level": 55,
+   "mobs": 51.81,
+   "mobsPerAP": 0.01333,
+   "deaths": 0.0,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 1.95,
+    "Stamina": 0,
+    "Intellect": 2.38,
+    "Spirit": 2.22,
+    "MeleeHit": 9.75,
+    "MeleeCrit": 25.51,
+    "SpellPower": 2.48,
+    "FirePower": 0.69,
+    "NaturePower": 1.76,
+    "MP5": 3.04,
+    "Armor": 0.08,
+    "MainHandDps": 13.62
+   }
+  },
+  {
+   "level": 59,
+   "mobs": 52.1,
+   "mobsPerAP": 0.01117,
+   "deaths": 0.0,
+   "weights": {
+    "AttackPower": 1.0,
+    "Strength": 2.0,
+    "Agility": 1.94,
+    "Stamina": 0.19,
+    "Intellect": 2.03,
+    "Spirit": 3.05,
+    "MeleeHit": 11.65,
+    "MeleeCrit": 28.37,
+    "SpellPower": 2.43,
+    "FirePower": 0.69,
+    "NaturePower": 1.72,
+    "MP5": 4.56,
+    "Armor": 0.07,
+    "MainHandDps": 13.88
+   }
+  }
+ ]
+}

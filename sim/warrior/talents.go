@@ -26,6 +26,7 @@ func (warrior *Warrior) ApplyTalents() {
 	warrior.applyFuriousPrecision()
 	warrior.applyEnrage()
 	warrior.applyFlurry()
+	warrior.applyBloodCraze()
 	warrior.applyShieldSpecialization()
 	warrior.applyMasterOfDefense()
 	warrior.registerDeathWishCD()
@@ -384,6 +385,69 @@ func (warrior *Warrior) makeFlurryConsumptionTrigger(flurryAura *core.Aura) *cor
 			}
 		},
 	}))
+}
+
+// Blood Craze heals 1 / 2 / 3% of max health over 6 sec, a tick every 2 sec, after a crit taken.
+// Under Forever also after Bloodthirst deals damage or a single hit takes more than 20% of max
+// health (client 70707: talent 16487, whose second effect holds the 20% and triggers 16488, a
+// periodic heal every 2000 ms; forever-wiki/classes/warrior.md). A new trigger restarts it. For
+// a tank under Forever's boss crit it's the big hits: a crushing blow on a pre-raid tank is
+// about 20% of its health.
+func (warrior *Warrior) applyBloodCraze() {
+	points := warrior.Talents.BloodCraze
+	if points == 0 {
+		return
+	}
+	forever := warrior.Env.IsForever()
+	hot := warrior.Unit.RegisterSpell(core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: []int32{0, 16488, 16490, 16491}[points]},
+		SpellSchool: core.SpellSchoolPhysical,
+		DefenseType: core.DefenseTypeMagic,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagHelpful,
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
+		Hot: core.DotConfig{
+			Aura:          core.Aura{Label: "Blood Craze"},
+			NumberOfTicks: 3,
+			TickLength:    time.Second * 2,
+			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
+				dot.SnapshotBaseDamage = 0.01 * float64(points) * warrior.MaxHealth() / 3
+				// The caster's healing modifiers, not its damage ones (Defensive Stance's 10% less
+				// damage done doesn't cut it). Healing taken modifiers come at each tick.
+				dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
+			},
+			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.CalcAndDealPeriodicSnapshotHealing(sim, target, dot.OutcomeTick)
+			},
+		},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			spell.Hot(&warrior.Unit).Apply(sim)
+		},
+	})
+
+	warrior.RegisterAura(core.Aura{
+		Label:    "Blood Craze Trigger",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if !result.Landed() {
+				return
+			}
+			if result.DidCrit() || (forever && result.Damage > 0.2*warrior.MaxHealth()) {
+				hot.Cast(sim, &warrior.Unit)
+			}
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if forever && spell.SpellCode == SpellCode_WarriorBloodthirst && result.Landed() && result.Damage > 0 {
+				hot.Cast(sim, &warrior.Unit)
+			}
+		},
+	})
 }
 
 func (warrior *Warrior) applyShieldSpecialization() {

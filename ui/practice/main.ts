@@ -33,6 +33,7 @@ import { auraColor, avoidColor, CombatText, schoolColor } from './sct';
 import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
 import { decodeHooks, fileProgress } from './wow/files';
+import { find, setStyle, setText } from './dom';
 import { Model } from './wow/model';
 import { Terrain } from './wow/terrain';
 import { SoundRef, Sounds } from './wow/sound';
@@ -247,6 +248,7 @@ class PracticeRoom {
 	// their own rows, above the buffs of the fight.
 	private settingAuras = new Set<string>();
 	private statsShownAt = 0;
+	private historyWidth = 0;
 	private dragging: { button: number; buttons: Set<number>; both?: boolean; x: number; y: number; moved: boolean; picked: 'enemy' | 'ground' | undefined } | undefined;
 
 	constructor(
@@ -1225,6 +1227,12 @@ class PracticeRoom {
 		scale.value = String(g.renderScale);
 		const shadows = el('select', {}, el('option', { value: 'off' }, 'Off'), el('option', { value: 'low' }, 'Low'), el('option', { value: 'medium' }, 'Medium'), el('option', { value: 'high' }, 'High'));
 		shadows.value = g.shadows;
+		// The screen's own height in pixels (the first choice), and the common heights under it.
+		const nativeH = Math.round(screen.height * devicePixelRatio);
+		const heights = [2160, 1440, 1080, 720].filter(v => v < nativeH);
+		const resolution = el('select', {}, el('option', { value: '0' }, `${nativeH}p`), ...heights.map(v => el('option', { value: String(v) }, `${v}p`)));
+		const resolutionValue = (h: number) => (heights.includes(h) ? String(h) : '0');
+		resolution.value = resolutionValue(g.maxHeight);
 		const setGraphics = (next: Graphics) => {
 			this.graphics = next;
 			try {
@@ -1236,11 +1244,14 @@ class PracticeRoom {
 			preset.value = next.preset;
 			scale.value = String(next.renderScale);
 			shadows.value = next.shadows;
+			resolution.value = resolutionValue(next.maxHeight);
 		};
-		preset.onchange = () => preset.value !== 'custom' && setGraphics({ ...graphicsPresets[preset.value as 'low' | 'medium' | 'high'] });
+		preset.onchange = () => preset.value !== 'custom' && setGraphics({ ...graphicsPresets[preset.value as 'low' | 'medium' | 'high'], maxHeight: this.graphics.maxHeight });
+		resolution.onchange = () => setGraphics({ ...this.graphics, maxHeight: +resolution.value });
 		scale.onchange = () => setGraphics({ ...this.graphics, preset: 'custom', renderScale: +scale.value });
 		shadows.onchange = () => setGraphics({ ...this.graphics, preset: 'custom', shadows: shadows.value as Graphics['shadows'] });
 		box.append(
+			el('label', { class: 'resolution-label' }, 'Resolution', resolution),
 			el('label', {}, 'Graphics', preset),
 			el('label', { class: 'scale-label' }, 'Render scale', scale),
 			el('label', {}, 'Shadows', shadows),
@@ -1253,6 +1264,7 @@ class PracticeRoom {
 			el('label', { class: 'execute-label' }, 'Execute range', execute),
 			apply,
 		);
+		this.tooltip.attach(box.querySelector('.resolution-label') as HTMLElement, () => ({ kind: 'lines', title: 'Resolution', lines: ['Draws at this height, stretched to fit the screen', 'Lower is faster on a 4K screen'] }));
 		this.tooltip.attach(box.querySelector('.scale-label') as HTMLElement, () => ({ kind: 'lines', title: 'Render scale', lines: ['Lower draws fewer pixels, for more FPS'] }));
 		this.tooltip.attach(box.querySelector('.execute-label') as HTMLElement, () => ({ kind: 'lines', title: 'Execute range', lines: ['The dummy is under 20% health from the start'] }));
 	}
@@ -1560,8 +1572,10 @@ class PracticeRoom {
 		perf?.begin(t);
 		// The frames' rects for the combat text, read before this frame changes the page, so the
 		// browser doesn't lay it out twice.
-		const rect = (s: string) => (this.hud.querySelector(s) as HTMLElement).getBoundingClientRect();
-		const sctRects = this.sct && { zone: rect('.combat-text'), player: rect('.player-frame'), target: this.hud.querySelector('.target-frame.hidden') ? undefined : rect('.target-frame'), history: rect('.history').bottom, buffs: rect('.buffs').bottom };
+		const rect = (s: string) => find(this.hud, s).getBoundingClientRect();
+		const sctRects = this.sct && { zone: rect('.combat-text'), player: rect('.player-frame'), target: find(this.hud, '.target-frame').classList.contains('hidden') ? undefined : rect('.target-frame'), history: rect('.history').bottom, buffs: rect('.buffs').bottom };
+		// The cast history's width, read here for the same reason.
+		this.historyWidth = find(this.hud, '.history').clientWidth;
 		this.drainInbox();
 		perf?.part('inbox');
 		this.frameTimes.push(t);
@@ -1869,22 +1883,23 @@ class PracticeRoom {
 
 	// updatePack fills the pack for this frame.
 	updatePack(p: PlayerState, now: number, cds: Map<string, { readyAt: number; length: number }>) {
-		const q = (s: string) => this.hud.querySelector(s) as HTMLElement | null;
+		const q = (s: string) => find(this.hud, s) as HTMLElement | null;
 		const pct = (a: number, b: number) => `${b > 0 ? Math.max(0, Math.min(100, (100 * a) / b)) : 0}%`;
 		const power = q('.pk-power');
 		if (power) {
-			(power.querySelector('.fill') as HTMLElement).style.width = pct(p.mana, p.maxMana);
-			(power.querySelector('em') as HTMLElement).textContent = String(Math.round(p.mana));
+			setStyle(find(power, '.fill'), 'width', pct(p.mana, p.maxMana));
+			setText(find(power, 'em'), String(Math.round(p.mana)));
 		}
 		const swing = q('.pk-swing');
 		if (swing) {
 			const next = p.nextSwingAt ?? now;
 			const frac = p.attackOn && p.swingMs > 0 ? (p.swingMs - (next - now)) / p.swingMs : 0;
-			(swing.querySelector('.fill') as HTMLElement).style.width = `${Math.max(0, Math.min(1, frac)) * 100}%`;
+			setStyle(find(swing, '.fill'), 'width', `${Math.max(0, Math.min(1, frac)) * 100}%`);
 			swing.classList.toggle('alert', p.attackOn && !p.swinging && this.fight.phase === 'fight');
 		}
 		const maelstrom = (p.auras ?? []).find(a => a.label.startsWith('Maelstrom Weapon'));
-		this.hud.querySelectorAll('.pk-pips span').forEach((pip, i) => pip.classList.toggle('on', (maelstrom?.stacks ?? 0) > i));
+		const pips = q('.pk-pips');
+		if (pips) for (let i = 0; i < pips.children.length; i++) pips.children[i].classList.toggle('on', (maelstrom?.stacks ?? 0) > i);
 
 		const inFight = this.fight.phase === 'fight';
 		const show = (name: string, id: number | undefined, expiresAt: number | undefined, opts: { stacks?: number; missingId?: number }) => {
@@ -1900,10 +1915,10 @@ class PracticeRoom {
 			}
 			const left = id && expiresAt !== undefined ? expiresAt - now : undefined;
 			c.dataset.expires = left !== undefined ? String(expiresAt) : '';
-			(c.querySelector('.time') as HTMLElement).textContent = left !== undefined ? fmtLeft(left) : '';
+			setText(find(c, '.time'), left !== undefined ? fmtLeft(left) : '');
 			c.classList.toggle('ending', left !== undefined && left < 5000);
 			c.classList.toggle('soon', left !== undefined && left >= 5000 && left < 10000);
-			(c.querySelector('.stacks') as HTMLElement).textContent = opts.stacks && opts.stacks > 1 ? String(opts.stacks) : '';
+			setText(find(c, '.stacks'), opts.stacks && opts.stacks > 1 ? String(opts.stacks) : '');
 		};
 		const shield = (p.auras ?? []).find(a => a.label.startsWith('Lightning Shield') || a.label.startsWith('Water Shield'));
 		show('shield', shield?.spellId, shield?.expiresAt, { stacks: shield?.stacks, missingId: this.toolkit.spellByName('Lightning Shield') });
@@ -1922,8 +1937,8 @@ class PracticeRoom {
 			const cd = cds.get(spell.itemId ? `i${spell.itemId}` : `s${spell.spellId}`);
 			const left = cd && cd.readyAt > now ? cd.readyAt - now : 0;
 			icon.classList.toggle('on-cd', left > 0);
-			(icon.querySelector('.swipe') as HTMLElement).style.setProperty('--elapsed', String(left > 0 && cd!.length > 0 ? 1 - left / cd!.length : 1));
-			(icon.querySelector('.time') as HTMLElement).textContent = left > 0 ? fmtLeft(left) : '';
+			setStyle(find(icon, '.swipe'), '--elapsed', String(left > 0 && cd!.length > 0 ? 1 - left / cd!.length : 1));
+			setText(find(icon, '.time'), left > 0 ? fmtLeft(left) : '');
 			icon.classList.toggle('oom', spell.cost > p.mana);
 		}
 	}
@@ -1932,22 +1947,22 @@ class PracticeRoom {
 
 	updateHud() {
 		const now = this.now();
-		const q = (s: string) => this.hud.querySelector(s) as HTMLElement;
+		const q = (s: string) => find(this.hud, s);
 		const p = this.player;
 		const pct = (a: number, b: number) => `${b > 0 ? Math.max(0, Math.min(100, (100 * a) / b)) : 0}%`;
 		const hpText = (cur: number, max: number) => `${fmtNumber(cur)} | ${max > 0 ? ((100 * cur) / max).toFixed(1) : '0.0'}%`;
 		if (p) {
-			q('.player-frame .fill').style.width = pct(p.health, p.maxHealth);
-			q('.player-frame .right').textContent = hpText(p.health, p.maxHealth);
+			setStyle(q('.player-frame .fill'), 'width', pct(p.health, p.maxHealth));
+			setText(q('.player-frame .right'), hpText(p.health, p.maxHealth));
 		}
 		const hasTarget = this.hasTarget && !!this.target;
 		q('.target-frame').classList.toggle('hidden', !hasTarget);
 		q('.tot-frame').classList.toggle('hidden', !hasTarget || !(p?.attackOn || this.fight.phase === 'fight'));
 		if (this.target) {
 			// The dummy can't die, so its frame shows the damage it took instead of its health.
-			q('.target-frame .fill').style.width = this.settings.executeFromStart ? '19%' : '100%';
-			q('.target-frame .left').textContent = fmtNumber(this.target.damageTaken);
-			q('.target-frame .name').textContent = this.target.name;
+			setStyle(q('.target-frame .fill'), 'width', this.settings.executeFromStart ? '19%' : '100%');
+			setText(q('.target-frame .left'), fmtNumber(this.target.damageTaken));
+			setText(q('.target-frame .name'), this.target.name);
 			this.renderAuras(q('.target-frame .debuffs'), this.target.debuffs ?? [], now, 'debuff');
 		}
 		if (p) {
@@ -1968,10 +1983,10 @@ class PracticeRoom {
 				castbar.dataset.spell = String(cast.spellId);
 				setIcon(q('.cb-icon'), 'spell', cast.spellId);
 			}
-			q('.cb-bar .fill').style.width = pct(now - cast.start, cast.end - cast.start);
-			q('.cb-bar .latency').style.width = pct(this.settings.pingMs, cast.end - cast.start);
-			q('.cb-name').textContent = this.toolkit?.nameOf(cast.spellId) ?? '';
-			q('.cb-time').textContent = Math.max(0, (cast.end - now) / 1000).toFixed(1);
+			setStyle(q('.cb-bar .fill'), 'width', pct(now - cast.start, cast.end - cast.start));
+			setStyle(q('.cb-bar .latency'), 'width', pct(this.settings.pingMs, cast.end - cast.start));
+			setText(q('.cb-name'), this.toolkit?.nameOf(cast.spellId) ?? '');
+			setText(q('.cb-time'), Math.max(0, (cast.end - now) / 1000).toFixed(1));
 		} else {
 			castbar.classList.add('hidden');
 			castbar.dataset.spell = '';
@@ -2006,8 +2021,8 @@ class PracticeRoom {
 					cdLeft = cd.readyAt - now;
 				}
 				if (spell && spell.gcdMs > 0 && p.gcdEnd > now && p.gcdEnd > p.gcdStart) frac = Math.max(frac, (p.gcdEnd - now) / (p.gcdEnd - p.gcdStart));
-				(b.querySelector('.sweep') as HTMLElement).style.setProperty('--sweep', `${Math.min(1, frac) * 360}deg`);
-				(b.querySelector('.cd') as HTMLElement).textContent = cdLeft > 1500 ? fmtLeft(cdLeft) : '';
+				setStyle(find(b, '.sweep'), '--sweep', `${Math.min(1, frac) * 360}deg`);
+				setText(find(b, '.cd'), cdLeft > 1500 ? fmtLeft(cdLeft) : '');
 				b.classList.toggle('oom', !!spell && spell.cost > p.mana);
 				const range = spell?.melee ? 5 : spell?.maxRange ? spell.maxRange + 3 : 0;
 				b.classList.toggle('oor', !!spell?.harmful && range > 0 && (dist > range || !this.hasTarget));
@@ -2017,39 +2032,39 @@ class PracticeRoom {
 
 		// The fight bar, the countdown and the damage meter.
 		const phase = this.fight.phase;
-		q('.phase').textContent = { prepull: 'Prepull', countdown: 'Countdown', fight: this.fight.mode === 'encounter' ? 'Encounter' : 'Free', ended: 'Ended' }[phase];
+		setText(q('.phase'), { prepull: 'Prepull', countdown: 'Countdown', fight: this.fight.mode === 'encounter' ? 'Encounter' : 'Free', ended: 'Ended' }[phase]);
 		const shown = phase === 'ended' ? (this.fight.endedAtMs ?? 0) : now;
-		q('.timer').textContent = phase === 'fight' || phase === 'ended' ? `${fmtTime(shown)}${this.fight.mode === 'encounter' ? ' / ' + fmtTime(this.fight.lengthMs) : ''}` : phase === 'countdown' ? fmtTime(now) : '';
+		setText(q('.timer'), phase === 'fight' || phase === 'ended' ? `${fmtTime(shown)}${this.fight.mode === 'encounter' ? ' / ' + fmtTime(this.fight.lengthMs) : ''}` : phase === 'countdown' ? fmtTime(now) : '');
 		q('.start-encounter').classList.toggle('hidden', phase !== 'prepull');
 		q('.stop').classList.toggle('hidden', phase !== 'fight');
 		const countdown = q('.countdown');
-		countdown.textContent = phase === 'countdown' && now < 0 ? String(Math.ceil(-now / 1000)) : '';
+		setText(countdown, phase === 'countdown' && now < 0 ? String(Math.ceil(-now / 1000)) : '');
 		const damage = p?.damageDone ?? 0;
 		const elapsed = phase === 'fight' ? Math.max(now, 1) : phase === 'ended' ? Math.max(this.fight.endedAtMs ?? 1, 1) : 0;
-		q('.dm-header').textContent = `Damage Done${elapsed ? ` (${fmtTime(elapsed)})` : ''}`;
+		setText(q('.dm-header'), `Damage Done${elapsed ? ` (${fmtTime(elapsed)})` : ''}`);
 		q('.dm-bar').classList.toggle('hidden', !elapsed);
 		if (elapsed) {
-			q('.dm-bar .l').textContent = this.playerName();
-			q('.dm-bar .r').textContent = `${fmtNumber(damage)} | ${((damage * 1000) / elapsed).toFixed(1)}`;
+			setText(q('.dm-bar .l'), this.playerName());
+			setText(q('.dm-bar .r'), `${fmtNumber(damage)} | ${((damage * 1000) / elapsed).toFixed(1)}`);
 		}
 	}
 
 	// updateNameplate keeps the dummy's EllesmereUI nameplate over its head.
 	updateNameplate(now: number) {
-		const plate = this.hud.querySelector('.nameplate') as HTMLElement;
+		const plate = find(this.hud, '.nameplate');
 		const p = this.room.screenPoint(this.dummyPos, 2.75);
 		plate.classList.toggle('hidden', !p.visible || !this.target);
 		if (!p.visible || !this.target) return;
 		const L = this.layout;
 		const w = L.nameplate.w * this.u;
-		plate.style.left = `${Math.round(p.x - w / 2)}px`;
-		plate.style.top = `${Math.round(p.y)}px`;
-		plate.style.width = `${Math.round(w)}px`;
-		(plate.querySelector('.np-hp') as HTMLElement).style.height = `${Math.round(L.nameplate.h * this.u)}px`;
-		(plate.querySelector('.np-name') as HTMLElement).textContent = this.target.name;
+		setStyle(plate, 'left', `${Math.round(p.x - w / 2)}px`);
+		setStyle(plate, 'top', `${Math.round(p.y)}px`);
+		setStyle(plate, 'width', `${Math.round(w)}px`);
+		setStyle(find(plate, '.np-hp'), 'height', `${Math.round(L.nameplate.h * this.u)}px`);
+		setText(find(plate, '.np-name'), this.target.name);
 		plate.classList.toggle('targeted', this.hasTarget);
 		plate.classList.toggle('in-combat', this.fight.phase === 'fight');
-		(plate.querySelector('.np-hp .fill') as HTMLElement).style.width = this.settings.executeFromStart ? '19%' : '100%';
+		setStyle(find(plate, '.np-hp .fill'), 'width', this.settings.executeFromStart ? '19%' : '100%');
 		this.renderAuras(plate.querySelector('.np-debuffs') as HTMLElement, this.target.debuffs ?? [], now, 'np');
 	}
 
@@ -2070,7 +2085,7 @@ class PracticeRoom {
 		const times = box.querySelectorAll('.time');
 		shown.forEach((a, i) => {
 			const t = times[i] as HTMLElement | undefined;
-			if (t) t.textContent = a.expiresAt !== undefined ? fmtLeft(a.expiresAt - now) : '';
+			if (t) setText(t, a.expiresAt !== undefined ? fmtLeft(a.expiresAt - now) : '');
 		});
 	}
 
@@ -2127,10 +2142,10 @@ class PracticeRoom {
 	}
 
 	drawHistory(now: number) {
-		const box = this.hud.querySelector('.history') as HTMLElement;
+		const box = find(this.hud, '.history');
 		const h = this.historyScale();
 		const k = h.k;
-		const width = box.clientWidth;
+		const width = this.historyWidth || box.clientWidth;
 		const nowX = width - h.nowPx * k;
 		const xAt = (at: number) => nowX - ((now - at) / 1000) * h.pxPerSec * k;
 		const oldest = now - ((nowX + h.iconW * k) / (h.pxPerSec * k)) * 1000;
@@ -2139,16 +2154,16 @@ class PracticeRoom {
 			const pop = Math.min(1, Math.max(0, (now - c.at) / 150));
 			const eased = 1 - (1 - pop) * (1 - pop);
 			const x = xAt(c.at) + c.shift * k - (h.iconW * k) / 2;
-			c.el.style.width = `${h.iconW * k}px`;
-			c.el.style.height = `${h.iconH * k}px`;
-			c.el.style.top = `${(h.rows - 1 - c.row) * h.rowH * k}px`;
-			c.el.style.transform = `translateX(${x.toFixed(1)}px) scale(${(1.12 - 0.12 * eased).toFixed(3)})`;
-			c.el.style.opacity = eased.toFixed(3);
+			setStyle(c.el, 'width', `${h.iconW * k}px`);
+			setStyle(c.el, 'height', `${h.iconH * k}px`);
+			setStyle(c.el, 'top', `${(h.rows - 1 - c.row) * h.rowH * k}px`);
+			setStyle(c.el, 'transform', `translateX(${x.toFixed(1)}px) scale(${(1.12 - 0.12 * eased).toFixed(3)})`);
+			setStyle(c.el, 'opacity', eased.toFixed(3));
 		}
 		// The axis: ticks every second slide with the time, a label every few seconds.
-		const axis = this.hud.querySelector('.hist-axis') as HTMLElement;
-		axis.style.setProperty('--offset', `${xAt(0).toFixed(1)}px`);
-		axis.style.setProperty('--sec', `${h.pxPerSec * k}px`);
+		const axis = find(this.hud, '.hist-axis');
+		setStyle(axis, '--offset', `${xAt(0).toFixed(1)}px`);
+		setStyle(axis, '--sec', `${h.pxPerSec * k}px`);
 		const every = h.labelEvery * 1000;
 		const labels = new Set<number>();
 		for (let at = Math.ceil(oldest / every) * every; at <= now; at += every) {
@@ -2159,7 +2174,7 @@ class PracticeRoom {
 				this.axisLabels.set(at, l);
 				axis.append(l);
 			}
-			l.style.transform = `translateX(${xAt(at).toFixed(1)}px) translateX(-50%)`;
+			setStyle(l, 'transform', `translateX(${xAt(at).toFixed(1)}px) translateX(-50%)`);
 		}
 		for (const [at, l] of this.axisLabels) {
 			if (!labels.has(at)) {

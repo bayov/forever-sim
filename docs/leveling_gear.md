@@ -40,10 +40,16 @@ We don't take the best item for each level. While leveling we gear up as we go:
 - **Start.** Level 1 starts in a white chest, legs and boots, with a white weapon.
 
 The stat weights come from the leveling sim, by mobs killed in a session. The enhancement shaman
-has them at levels 10, 15, 20, 25 and 30 (the "Leveling Gear Plan" presets), measured on the
-plan's own gear at that level with that level's best rotation. Between two of those levels we
-blend them by level, and above 30 we keep the level 30 ones. A spec without them takes its
-"Leveling" presets, or the Current EP.
+has them every 5 levels from 5 to 59 (the "Leveling Gear Plan" presets, from
+ui/enhancement_shaman/leveling_weights.json), measured on the Leveling 1-60 plan at that level:
+its gear, talents, rotation and trained ranks. Between two of those levels we blend them by
+level. A spec without them takes its "Leveling" presets, or the Current EP. BayovCore's Upgrades
+reads the same file for its leveling weights below 60, and blends them by level the same way.
+
+Hit is the larger of +1% and -1%. From 40 the plan's gear is at the hit cap, so +1% adds
+nothing, but an item that takes 1% away still costs 10 to 15 attack power. The 2026-11-02 run
+(three rounds, as below) found crit going from 1.3 attack power at level 5 to about 28 at 59,
+and Spirit rising after 40, since it shortens the rests.
 
 Stamina, Intellect and MP5 move with the gear, because they decide how often we die. At level
 20, +10 Stamina was worth 2.29 a point on gear with little Intellect (0.19 deaths a session)
@@ -106,6 +112,5 @@ rotation. The seed and our items are saved with the gear settings.
 - Without a route, the dungeons' quest rewards aren't in: the item database doesn't say which
   quest belongs to which dungeon.
 - How often another player in the group rolls on an item we want (half the time) is a guess.
-- Leveling stat weights above level 30, once the beta goes past it.
 - The leveling sim can take the plan's gear at its own level directly, and average over many
   seeds, for the talent route.

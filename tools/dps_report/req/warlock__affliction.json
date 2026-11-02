@@ -169,7 +169,7 @@
                   }
                 },
                 {
-                  "notes": "Bane of Doom when it lands before the fight ends.",
+                  "notes": "Bane of Doom when it lands before the fight ends, its tick at least 1 sec after the trinket comes back, so the 2 min cooldowns fired beside the trinket are up for it.",
                   "action": {
                     "condition": {
                       "and": {
@@ -187,13 +187,57 @@
                           },
                           {
                             "cmp": {
-                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
+                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "60s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "and": {
+                                  "vals": [
+                                    {
+                                      "cmp": {
+                                        "lhs": {
+                                          "spellTimeToReady": {
+                                            "spellId": {
+                                              "itemId": 997022
+                                            }
+                                          }
+                                        },
+                                        "op": "OpGt",
+                                        "rhs": {
+                                          "const": {
+                                            "val": "59s"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    {
+                                      "cmp": {
+                                        "lhs": {
+                                          "spellTimeToReady": {
+                                            "spellId": {
+                                              "itemId": 997022
+                                            }
+                                          }
+                                        },
+                                        "op": "OpLt",
+                                        "rhs": {
+                                          "const": {
+                                            "val": "60s"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  ]
                                 }
                               }
                             }
