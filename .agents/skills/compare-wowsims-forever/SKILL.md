@@ -191,17 +191,27 @@ rotation gives a result that looks off.
 - **Mage options:** our armor enum to their `defaultMageArmor`, our staff imbue scrolls to their class imbue slot
   (`mhWeaponImbueId` 277500 to 277502), the Manaflare 2 piece as 10 hit rating, the synthetic trinket 996032 in
   `cmpsim`.
+- **Warlock options:** our Spellstone and Firestone (weapon imbues under Forever) to their class imbue slot
+  (`mhWeaponImbueId` 13603 and 13701, the Major ranks), `sacrificedPet` to their `sacrificedDemon`, 32 Soul Shards
+  (ours doesn't count them), Demonheart Raiment's 2 piece as 10 hit rating, the synthetic trinket 997022 in `cmpsim`.
+  The curse duty: theirs' `curseOptions` names the warlock's own curse and turns its raid copy off. The converter sets
+  `Elements` or `Recklessness` when our rotation casts that curse with the raid's copy off (the duty variants), else
+  `NoCurse`, which leaves every raid curse on. Theirs registers every rank our warlock rotations cast.
+- **Theirs' idle pets** (the warlock's four demons) carry no average in their results: `run.py` and `breakdown.py`
+  read a missing one as 0.
 
 ## Known differences
 
 As of 2026-11-02, on the report's requests: the hunter and rogue rows with ours at 0e87f3d and theirs at b70888a518, the
 warrior rows with ours at 7587a1a and theirs at 895cd67f99, the shaman rows with ours at dfa3b4a and theirs at 1496ed4db5, the
-mage rows with ours at e8d5656 and theirs at e2842f0a78. The four pet rows (two since settled) add up to the BM cat's whole
+mage rows with ours at e8d5656 and theirs at e2842f0a78, the warlock rows with ours at 050cb07 and theirs at bd8ef24803. The four pet rows (two since settled) add up to the BM cat's whole
 pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). The warrior rows add up to Arms' whole
 gap and leave 4 DPS of Fury's and Fury 2H's unexplained. The shaman rows add up to Enhancement's whole gap (33 to 37 DPS
 on the four presets) within about 2 DPS and Elemental's (5 to 6) within about 1. The mage rows add up to Frost's gap (78.5) within
 2 DPS, Frostfire's (74.1) within about 5 and Fire's (20.4) with 10 of engine timing left (ours fits 0.6 more Fire Blasts and
-0.25 more Pyroblasts, every per-hit number equal); Arcane (+5.4) leaves about 9 DPS around Presence of Mind's opener. Engine timing (when each engine re-checks the rotation, Heroic Strike
+0.25 more Pyroblasts, every per-hit number equal); Arcane (+5.4) leaves about 9 DPS around Presence of Mind's opener. The
+warlock rows add up to the four presets' gaps (Affliction +18.2, Demonology +15.2, Destruction +15.0, Destruction Fire +15.4)
+within about 2 DPS, and the eight curse-duty variants run within the error of their presets. Engine timing (when each engine re-checks the rotation, Heroic Strike
 1.4 casts more in ours on Arms) moves casts but nets about 0 DPS once the Windfury rule below is matched. A rerun should find
 these, so it can tell what is new. Keep the list current when one is settled.
 
@@ -232,7 +242,7 @@ these, so it can tell what is new. Keep the list current when one is settled.
 | Earth Shock rank 7 | Base damage ×1.08 (`sham_es7_tuning`, user ruling 2026-10-15) | The client's | Ruling. Enhancement 4.0 DPS |
 | Stormstrike's weapon speed | The weapon type's normalized speed + 0.3 (3.6 for a two-hander), fitted to beta Stormstrikes (shaman_audit.md 4.1) | The normalized speed | Ours on evidence. 4.6 DPS on Enhancement |
 | Searing Totem's attack rate | Every 2.5 s: 72 beta gaps averaged 2.53 s (the 2.2 s bolt and a pause) | Every 2.2 s, the bolt's cast time | Ours on evidence. +3.7 DPS for theirs on Elemental |
-| Haste and the GCD | 1.5 s (`haste_gcd`) | Spell haste shortens it (their TBC code) | Report assumption. Elemental 2.6, Enhancement 0.9 DPS for theirs |
+| Haste and the GCD | 1.5 s (`haste_gcd`) | Spell haste shortens it (their TBC code) | Report assumption. Elemental 2.6, Enhancement 0.9 DPS for theirs; on Spellstone's 2% haste Destruction 8.8, Affliction 5.3, Demonology −1.3 (Bane of Doom's timing, below); Destruction Fire's Firestone has none |
 | Magma Totem's last pulse | A 40 s totem pulses 20 times | About 19, by the counts (84 pulses a fight against our 89) | Engine timing, no log either way. About 3 DPS on Enhancement |
 | Greater Blessing of Might and Wisdom | Rank 2's 133 attack power and 40 MP5, a trainer rank (standards 8a) | Rank 1's 112 and 36, rank 2 counted as a book rank (b6657d3824, no item teaches it) | Ruling. `align.py` closes it (21 attack power, 4 MP5) |
 | Blood Fury's weapon damage | +10% of the weapon's average damage beside the +10% attack power (beta sheets and logs, `racials_forever.go`) | Attack power only, as the client's three auras read | Ours on evidence (their bug, not reported). 2.9 DPS on Orc Enhancement |
@@ -247,13 +257,18 @@ these, so it can tell what is new. Keep the list current when one is settled.
 | Ice Lance's cooldown and Fire Blast | Every rank 8 s on category 19, shared with Fire Blast, since 2026-11-02 (`mage_ice_lance_cd`, user rulings 2026-10-30 and 2026-11-02) | The same | Settled by ruling: the client puts only rank 1 (1312002) in category 19 with Fire Blast (SpellCooldowns 101119). It was 12.8 DPS on Frostfire. Ours keyed Fingers of Frost by the talent's id (400670) until 2026-11-02; both now use the buff's, 400669 |
 | Frostbolt rank 10 | Base damage ×1.04 (`mage_frostbolt10`, user ruling 2026-10-15) | The client's | Ruling. Frost 10.8 DPS |
 | Raid damage taken on mages | Breaks Ice Barrier (Frigid Power's Frost damage) and pushes casts back | None | A choice (the fight). Frost 48.5, Fire 11, Arcane 9, Frostfire 6 DPS. `--no-raid-damage` |
+| Raid damage taken on warlocks | Pushes casts back (about 1.5 fewer Shadow Bolts or Incinerates a fight) | None | A choice (the fight). Demonology 17.2, Destruction Fire 16.4, Affliction 14.4, Destruction 10.8 DPS. `--no-raid-damage` |
+| Conflagrate right after Immolate | Cast at the next GCD, Immolate's 1.47 s cast ending inside it | With haste shortening the GCD to the cast time, theirs picks the next spell before Immolate lands, and Conflagrate's own check (an Immolate on the target) fails: a Shadow Bolt goes first | A choice (engine). 1.4 fewer Conflagrates on Destruction and 0.9 on Destruction Fire, worth 0.3 and 1.9 DPS (ours made to skip the same Conflagrate). A rotation translation can't reach it: the check is the spell's, not the line's |
+| Bane of Doom's one tick and the 2 min cooldowns | The second Doom ticks at about 121 s, after Blood Fury and the trinket fire (both sims fire them at the first GCD check after 120 s) | Recast at about 60.2 s, so its tick lands just before them | Engine timing. Doom per tick 5% higher in ours on Destruction (3.4 DPS), under 1% on the others. Every other warlock spell deals the same per hit and casts the same with `haste_gcd` and the Conflagrate above matched |
+| The demon's start | The Succubus starts in melee range | Walks in from the warlock (`OtherActionMove`), about 1.6 swings fewer | A choice. About 1 pet DPS on every Succubus build |
+| Demonic Rune's health cost | Not a damage row | A damage row of the player's (hits and crits, about 10 DPS worth), left out of its DPS | Display only, no DPS. `breakdown.py` lists it as the item's tag 1 |
 | A castSpell Shoot (the wand) | The rotation can cut it before its first shot, looking every 50 ms (`sim/core/wand.go`) | Always fires one shot, then stops (4fd24939d8); after Fire Blast its line goes off inside the GCD and holds the next cast for the shot | A choice (engine): the game has no such rule, any cast stops Shoot. Costs theirs Fire 21, Frostfire 14, Frost 13, Arcane 1 DPS |
 | Spell miss floor | 1% (Classic) | None (0301ba3421, "Forever has no 1% minimum miss", no source) | Open (orchestration/alignment_round_2026-10-23.md: not to change without new evidence). Arcane, at the cap, 7.8 DPS for theirs |
 | Fire Blast's range | 20 yd, Improved Fire Blast +15 a point (client SpellEffect misc 5), not checked outside leveling | Checked in raids too | Settled for the presets by standards 33 (fa2d49997: Frostfire and Arcane at 20 yd). Our raid sims still let any spell land from any distance |
 
 ## Adding a class
 
-`convert.py` maps rogues, hunters, warriors, shamans and mages, and stops on any other class. For a new one:
+`convert.py` maps rogues, hunters, warriors, shamans, mages and warlocks, and stops on any other class. For a new one:
 
 1. Its options block (`class_opts`): their class proto (`$WSF/proto/<class>.proto`) against ours.
 2. Its consumables in `C`: weapon oils, poisons, imbues, class-only items.

@@ -41,7 +41,7 @@ def dps(path):
         r = json.load(open(path))
         pl = r['raidMetrics']['parties'][0]['players'][0]
         n = r.get('iterationsDone') or 1
-        return pl['dps']['avg'], sum(x['dps']['avg'] for x in pl.get('pets', [])), r['raidMetrics']['dps']['stdev'] / n ** 0.5
+        return pl['dps']['avg'], sum(x['dps'].get('avg', 0) for x in pl.get('pets', [])), r['raidMetrics']['dps']['stdev'] / n ** 0.5
     except (OSError, KeyError, ValueError):
         return (float('nan'),) * 3
 
