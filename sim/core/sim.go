@@ -693,6 +693,12 @@ func (sim *Simulation) reset() {
 }
 
 func (sim *Simulation) PrePull() {
+	for _, party := range sim.Raid.Parties {
+		for _, player := range party.Players {
+			player.GetCharacter().takeTankSheet()
+		}
+	}
+
 	if len(sim.prepullActions) > 0 {
 		sim.CurrentTime = sim.prepullActions[0].DoAt
 

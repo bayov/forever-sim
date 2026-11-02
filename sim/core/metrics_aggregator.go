@@ -97,6 +97,8 @@ type UnitMetrics struct {
 
 	tmiList   []tmiListItem
 	isTanking bool
+	// Taken as the first iteration's prepull starts (tank_sheet.go), nil when no target attacks us.
+	tankSheet *proto.TankSheet
 	tmiBin    int32
 
 	CharacterIterationMetrics
@@ -652,6 +654,7 @@ func (unitMetrics *UnitMetrics) ToProto() *proto.UnitMetrics {
 		ManaEnd:       unitMetrics.manaEnd.ToProto(),
 		SecondsOomAvg: unitMetrics.oomTimeSum / n,
 		ChanceOfDeath: float64(unitMetrics.numItersDead) / n,
+		TankSheet:     unitMetrics.tankSheet,
 	}
 
 	protoMetrics.Actions = make([]*proto.ActionMetrics, 0, len(unitMetrics.actions))
