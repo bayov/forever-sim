@@ -37,6 +37,8 @@ type server struct {
 	spells  *spellNames
 	icons   *iconCache
 	records []*record
+	assets  *assetStore // nil without a client or TACTTool
+	db2     *db2Tables  // nil without a client
 }
 
 func main() {
@@ -46,6 +48,7 @@ func main() {
 	repo := flag.String("repo", ".", "the forever-sim repo")
 	data := flag.String("data", filepath.Join(home, "forever-practice"), "where the room keeps its files")
 	wago := flag.String("wago", filepath.Join(home, "forever-logs", "wago"), "cached wago.tools tables, by build")
+	tact := flag.String("tact", filepath.Join(home, "forever-practice", "tools", "tact-linux", "TACTTool"), "TACTTool, which extracts the client's files")
 	flag.Parse()
 
 	s := &server{home: *data, repo: *repo, dist: filepath.Join(*repo, "dist", "practice")}
@@ -59,6 +62,17 @@ func main() {
 	} else {
 		s.client = client
 		log.Printf("WoW Forever client: %s", client.forever)
+		if info, err := client.buildInfo(); err != nil {
+			log.Printf("no client build: %v (no game tables)", err)
+		} else {
+			s.db2 = newDB2Tables(s.home, info["Version"])
+			log.Printf("client build %s", info["Version"])
+		}
+		if assets, err := newAssetStore(s.home, *tact, client); err != nil {
+			log.Printf("no asset extraction: %v (units stay capsules)", err)
+		} else {
+			s.assets = assets
+		}
 	}
 	s.spells = loadSpellNames(*wago)
 	s.icons = newIconCache(filepath.Join(s.home, "icons.json"))
@@ -84,6 +98,15 @@ func (s *server) routes() http.Handler {
 	mux.HandleFunc("POST /api/attempts", s.handleSaveAttempt)
 	mux.HandleFunc("GET /api/attempts/{id}", s.handleGetAttempt)
 	mux.HandleFunc("POST /api/replay", s.handleReplay)
+	mux.HandleFunc("GET /api/assets/{fdid}", s.handleAsset)
+	mux.HandleFunc("POST /api/assets/batch", s.handleAssetBatch)
+	mux.HandleFunc("GET /api/visuals/spell/{spellId}", s.handleSpellVisual)
+	mux.HandleFunc("GET /api/visuals/enchant/{enchantId}", s.handleEnchantVisual)
+	mux.HandleFunc("GET /api/visuals/imbues", s.handleImbueEnchants)
+	mux.HandleFunc("GET /api/sounds/melee", s.handleMeleeSounds)
+	mux.HandleFunc("GET /api/sounds/unit/{displayId}", s.handleUnitSounds)
+	mux.HandleFunc("GET /api/appearance/character", s.handleAppearanceCharacter)
+	mux.HandleFunc("GET /api/appearance/creature/{displayId}", s.handleAppearanceCreature)
 	mux.Handle("GET /forever/assets/", http.StripPrefix("/forever/assets/", http.FileServer(http.Dir(filepath.Join(s.repo, "assets")))))
 	mux.Handle("GET /", http.FileServer(http.Dir(s.dist)))
 	return logged(mux)
@@ -145,6 +168,7 @@ func (s *server) handleRequest(w http.ResponseWriter, r *http.Request) {
 		"level":          player.GetLevel(),
 		"name":           player.GetName(),
 		"trinkets":       trinkets(player),
+		"look":           s.look(player),
 	}
 	writeJSON(w, reply)
 }
