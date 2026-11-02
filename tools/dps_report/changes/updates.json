@@ -1821,6 +1821,10 @@
     {
      "commit": "ba4dbac7f",
      "why": "the Rotation card's Why notes for every spec: page text only, no sim input or number moves"
+    },
+    {
+     "commit": "078a243f2",
+     "why": "the Rotation card's cursor and tooltip: page only, no sim input or number moves"
     }
    ],
    "source": {
