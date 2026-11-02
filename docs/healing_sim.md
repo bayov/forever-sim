@@ -124,8 +124,11 @@ whose numbers are on record, picked to cover the shapes healers meet:
 | Spiky random targets | Onyxia: Fireball on random members, Deep Breath, a phase of raid damage | reaction, scares |
 | A 10-player raid | Season of Discovery's Blackfathom Deeps (Aku'mai or Kelris) | the small raid, two healers |
 
-The numbers come from the bosses' scripts in the open Classic server cores (vmangos, cmangos) and Wowhead's
-Classic and SoD spell pages, with sources on each profile. Forever's raids are 10, 20 and 40 players, so each
+The numbers come from Warcraft Logs, which shows what Blizzard's servers did (the user, 2026-11-02): Season
+of Discovery logs first, then Anniversary (Vanilla, then TBC), then Era, with vmangos only as a last resort
+where no log shows a value ([data_sources.md](data_sources.md), Which source wins). Each profile names its
+reports. The logs also show how real raids healed each boss: healer counts, HPS and overhealing, which the
+sim's healers can be checked against. Forever's raids are 10, 20 and 40 players, so each
 profile scales its damage to the raid. When Forever's bosses are known, each gets its own profile.
 
 ### Who heals whom
