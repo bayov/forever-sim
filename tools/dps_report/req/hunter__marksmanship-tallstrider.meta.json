@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "mm",
   "published": {
-    "dps": 1031.1,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1033.3,
+    "source": "forever-sim's hunter rotation recheck, 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s); the DPS report data isn't regenerated yet"
   },
   "verify": {
-    "dps": 1031.1,
-    "stderr": 0.24,
+    "dps": 1033.3,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on this request, 180 ± 20 s, seed 1 (2026-11-02)"
   },
   "summary": "Marksmanship with a Tallstrider instead of Lone Wolf. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
   "keyTalents": [
@@ -40,9 +40,9 @@
     "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
     "Rapid Fire, racials, potions and Demonic Rune on cooldown",
     "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
-    "Arcane Shot on cooldown, before Multi-Shot, at any mana",
-    "Multi-Shot on the cooldown it shares with Aimed Shot. No Aimed Shot",
-    "Serpent Sting when it's down, after Multi-Shot",
+    "Arcane Shot on cooldown, before Aimed Shot, at any mana",
+    "Aimed Shot on the cooldown it shares with Multi-Shot while mana is at least 40%, Multi-Shot on it below that",
+    "Serpent Sting when it's down, after Aimed Shot or Multi-Shot",
     "Sniper Shot on cooldown while mana is at least 10 per second of fight left",
     "Melee weave between Auto Shots. Walk in for a main-hand swing with Raptor Strike queued, when the next Auto Shot is 1.2s or less away and no shot comes off cooldown. Only while mana is at least 25 per second of fight left",
     "The Tallstrider (1.0s) bites on cooldown, and keeps Dust Cloud (505 armor, 30s, 10 focus) on the boss while no Faerie Fire or Curse of Recklessness holds the minor armor slot. Auto Shot the whole fight"
@@ -71,7 +71,7 @@
     "Arcane Shot gets 10% of ranged attack power, and Serpent Sting 3% a tick. Beta logs fit 11% and 3.5%.",
     "Auto Shot keeps firing during casts. Moving cancels its 0.5s wind-up.",
     "Wildstalker Armor 4-piece and 5-piece bonuses aren't counted. They would add 13 DPS.",
-    "Holds back Sniper Shot and the melee weave to save mana. It does 1109.0 DPS at 300s.",
+    "Holds back Sniper Shot and the melee weave to save mana. It does 1006.9 DPS at 300s.",
     "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
     "Pet hits scale with attack speed, as seen on a level 17 pet. A 1.0s raptor would add about 2 DPS (Savage Rend), but none that fast is known.",
     "Uses a 2.5s bow with Rhok'delar's 44.0 weapon DPS. A 2.6s gun sims 0.3 to 1.0 DPS higher with a 15% ammo pouch, or 3.4 to 5.2 lower with Era's 14% pouch.",

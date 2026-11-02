@@ -112,10 +112,12 @@ export const DefaultGear = GearLevel60Ranged;
 // cap): all three put Arcane Shot above Aimed Shot with no mana floor on it or on Serpent Sting
 // (Beast Mastery +4.4, Serpent Sting last). Marksmanship and Lone Wolf cast Serpent Sting after
 // the shared cooldown's shot and Sniper Shot while the mana covers 10 a second of the fight left.
-// Since the hunter's crit per Agility became Classic's at 60 (2026-10-25) they put Multi-Shot on the
-// cooldown it shares with Aimed Shot: Marksmanship +2.9 / +1.8 / +1.2 at 120 / 180 / 300 sec, Lone
-// Wolf +1.7 / +1.6 / +1.2 (20000 iterations, seed 1; seed 1000003 +3.3 / +2.2 / +0.8 and +0.5 / +2.6
-// / +1.5). Beast Mastery keeps Aimed Shot; the other knobs held.
+// Marksmanship and Lone Wolf cast Aimed Shot on the shared cooldown only above 40% mana, and
+// Multi-Shot below. They cast Multi-Shot on it at any mana from 2026-10-25 (after the hunter's crit
+// per Agility became Classic's at 60); the recheck of 2026-11-02 takes Aimed Shot back: Marksmanship
+// +6.0 / +2.7 / -0.3 at 120 / 180 / 300 sec, Lone Wolf +7.6 / +2.6 / +0.2 (20000 iterations, seed 1;
+// seed 1000003 +6.5 / +3.0 / +0.1 and +7.5 / +2.9 / -0.2). Beast Mastery keeps Aimed Shot at any
+// mana; the other knobs held.
 // The ranged rotations melee weave from 12 yd: between Auto Shots the hunter walks in for a main hand
 // swing with Raptor Strike queued, when that holds the next Auto Shot back 1.2 sec or less and the
 // shot cooldowns stay down meanwhile (Beast Mastery +9.5 over standing at range). Marksmanship and
@@ -139,7 +141,7 @@ export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery'
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
 	tooltip:
-		'Arcane Shot, Multi-Shot, Serpent Sting when down, and Sniper Shot while the mana lasts the fight, Rapid Fire on cooldown.' +
+		'Arcane Shot, Aimed Shot above 40% mana (Multi-Shot below), Serpent Sting when down, and Sniper Shot while the mana lasts the fight, Rapid Fire on cooldown.' +
 		manaWeaveTooltip +
 		markTooltip,
 	group: 'Synthetic',
@@ -516,6 +518,9 @@ export const PresetBuildBeastMasteryTallstrider = PresetUtils.makePresetBuild('B
 	professions,
 	options: TallstriderOptions,
 });
+// 1081.8 / 1066.4 / 1039.1 at 120 / 180 / 300 sec on its Orc in the DPS report's request (each 20 sec
+// either way, 20000 iterations, seed 1; 2026-11-02, with Aimed Shot above 40% mana; 1075.8 / 1063.7 /
+// 1039.4 with Multi-Shot at any mana). Earlier, on a Human:
 // 1157.9 / 1139.4 / 1109.0 at 120 / 180 / 300 sec (20000 iterations, seed 1; seed 1000003 1157.6 /
 // 1139.2 / 1109.0; 2026-10-25), 2.2 behind Beast Mastery at 180 sec, on a Human with Multi-Shot on the
 // shared cooldown. At Classic's crit per Agility the Windshaper with Aimed Shot read 1151.5 / 1134.6 /
@@ -561,6 +566,9 @@ export const PresetBuildMarksmanshipTallstrider = PresetUtils.makePresetBuild('M
 	professions,
 	options: TallstriderOptions,
 });
+// 1107.6 / 1090.0 / 1055.5 at 120 / 180 / 300 sec on its Night Elf in the DPS report's request (each
+// 20 sec either way, 20000 iterations, seed 1; 2026-11-02, with Aimed Shot above 40% mana; 1100.0 /
+// 1087.4 / 1055.3 with Multi-Shot at any mana). Earlier:
 // 1142.8 / 1127.0 / 1089.9 at 120 / 180 / 300 sec (20000 iterations, seed 1; seed 1000003 1141.6 /
 // 1127.6 / 1090.1; 2026-10-25), with Multi-Shot on the shared cooldown (1141.1 / 1125.3 / 1088.7 with
 // Aimed Shot at Classic's crit per Agility, 1172.9 / 1156.8 / 1119.3 with 22% more): Lone Wolf's 20% is

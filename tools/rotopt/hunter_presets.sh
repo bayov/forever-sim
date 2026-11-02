@@ -1,8 +1,8 @@
 #!/bin/sh
 # Regenerates the hunter rotations in ui/hunter/apls from the hunter_ranged and hunter_sv
-# templates, with the knobs the searches settled on (last on 2026-10-25, at 120 / 180 / 300 sec on
+# templates, with the knobs the searches settled on (last on 2026-11-02, at 120 / 180 / 300 sec on
 # the synthetic Phase 1 sets with the 8% hit cap, the Level 60 talents and Classic's crit per
-# Agility at 60).
+# Agility at 60; Beast Mastery last on 2026-10-25).
 # Run from the repo root with a settings file the optimizer should sim against, made with
 # mksettings for the spec. The rotation itself does not depend on the settings, only the one
 # sanity sim does.
@@ -54,7 +54,21 @@ mm="$mmBase,sniperManaPerSec=10"
 # and Marksmanship and Lone Wolf now put Multi-Shot on the cooldown it shares with Aimed Shot
 # (aimed=0). Marksmanship on its Human +2.9 / +1.8 / +1.2 at 120 / 180 / 300 sec (seed 1000003 +3.3 /
 # +2.2 / +0.8), Lone Wolf +1.7 / +1.6 / +1.2 (+0.5 / +2.6 / +1.5). Beast Mastery keeps Aimed Shot.
-mmMulti="$mm,aimed=0"
+# The recheck of 2026-11-02 (knob searches at 120, 180 and 300 sec combined, 3000 iterations, the
+# report's requests: Marksmanship on its Orc, Lone Wolf on its Night Elf, seeded from those knobs
+# and from aimed=1, frozen: the reaction times, markPrepull, leylineMana, hawk, intimidation) takes
+# Aimed Shot back (aimed=1): it goes on the shared cooldown above 40% mana and Multi-Shot below.
+# From the old knobs the searches' first move was aimed=1, and from there the searches are the same.
+# They took that one move and no other (aimedMana stays 40: 0 to 30 lose 0.1 to 1.0 combined). At
+# 20000 iterations Marksmanship +6.0 / +2.7 / -0.3 at 120 / 180 / 300 sec (seed 1000003 +6.5 / +3.0
+# / +0.1), Lone Wolf +7.6 / +2.6 / +0.2 (+7.5 / +2.9 / -0.2): 1081.8 / 1066.4 / 1039.1 and 1107.6 /
+# 1090.0 / 1055.5. Aimed Shot's +166 over Multi-Shot's shot is worth its 2 sec cast (Auto Shot keeps
+# firing through it) and its 310 mana while the mana is high; a 300 sec fight runs out of mana 8 sec
+# sooner with it, which takes the gain back there. (The searches' fights are the requests' 20 sec
+# either way.) The races keep their order (180 sec, 20000 iterations, seed 1, each with its race
+# override): Marksmanship Orc 1066.4, Night Elf 1061.3, both Skyborne 1059.9, Human 1057.8, Troll
+# 1055.9, Dwarf 1053.5, Tauren 1046.4; Lone Wolf Night Elf 1090.0, both Skyborne 1089.5, Orc 1088.6,
+# Human 1085.8, Troll 1085.4, Dwarf 1081.5, Tauren 1073.5.
 # The melee weave (2026-10-23, after the weave mechanics of wowsims/forever): between Auto Shots the
 # hunter walks from 12 yd into melee for a main hand swing Raptor Strike is ready for, when that holds
 # the next Auto Shot back 1.2 sec or less and Arcane Shot and the Aimed Shot cooldown stay down until
@@ -69,8 +83,8 @@ mmMulti="$mm,aimed=0"
 weave="weave=1,weaveRaptor=1,weaveDelay=1.2,weaveShotSlack=0.75"
 mmWeave="$weave,weaveManaPerSec=25"
 gen hunter_ranged bm "$bm,$weave"
-gen hunter_ranged mm "$mmMulti,$mmWeave"
-gen hunter_ranged lw "$mmMulti,$mmWeave"
+gen hunter_ranged mm "$mm,$mmWeave"
+gen hunter_ranged lw "$mm,$mmWeave"
 # The Beast Mastery rotation at range, which the hunter Go tests run. The UI dropped the turret
 # rotations on 2026-10-31.
 gen hunter_ranged bm_turret "$bm"
@@ -85,6 +99,12 @@ gen hunter_ranged bm_turret "$bm"
 # Since the trap scales with ranged attack power (hunter_trap_ap) it goes right after Strider Kick,
 # and Wing Clip holds only for an opened Mongoose Bite, not for Strider Kick (rotation audit pass 23,
 # 2026-10-16: +2.8 / +3.0 / +3.1 at 120 / 180 / 300 sec; dropping the Mongoose Bite hold too loses 0.55).
+# The recheck of 2026-11-02 (120, 180 and 300 sec combined, 3000 iterations, the report's Orc request)
+# moves nothing. Survival ends a fight with about 3,700 of its 3,750 mana: it is out of global
+# cooldowns, not mana (Wing Clip already fills every free one, and Resourcefulness makes the melee
+# abilities cheap), so its mana floors never bind: every floor from 0 to 60% for Lacerate and the
+# trap and 0 to 80% for Wing Clip sims the same to the cent, also at 20000 iterations with all
+# three at 0 (1031.9 / 1024.6 / 1016.3 at 120 / 180 / 300 sec, seed 1).
 sv="lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=50,wingClipHold=2,trapFirst=1"
 gen hunter_sv sv "$sv"
 # No Scorpid Sting duty (standards 23, user ruling 2026-10-25): Scorpid Sting shares Insect Swarm's

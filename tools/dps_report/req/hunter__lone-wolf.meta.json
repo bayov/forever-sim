@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "lw",
   "published": {
-    "dps": 1087.4,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1090.0,
+    "source": "forever-sim's hunter rotation recheck, 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s); the DPS report data isn't regenerated yet"
   },
   "verify": {
-    "dps": 1087.4,
-    "stderr": 0.28,
+    "dps": 1090.0,
+    "stderr": 0.29,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on this request, 180 ± 20 s, seed 1 (2026-11-02)"
   },
   "summary": "Marksmanship with Lone Wolf (+20% damage with no pet out). It's behind Marksmanship with a cat, even though Forever pets get no player buffs.",
   "keyTalents": [
@@ -40,9 +40,9 @@
     "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
     "Rapid Fire, racials, potions and Demonic Rune on cooldown",
     "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
-    "Arcane Shot on cooldown, before Multi-Shot, at any mana",
-    "Multi-Shot on the cooldown it shares with Aimed Shot. No Aimed Shot",
-    "Serpent Sting when it's down, after Multi-Shot",
+    "Arcane Shot on cooldown, before Aimed Shot, at any mana",
+    "Aimed Shot on the cooldown it shares with Multi-Shot while mana is at least 40%, Multi-Shot on it below that",
+    "Serpent Sting when it's down, after Aimed Shot or Multi-Shot",
     "Sniper Shot on cooldown while mana is at least 10 per second of fight left",
     "Melee weave between Auto Shots. Walk in for a main-hand swing with Raptor Strike queued, when the next Auto Shot is 1.2s or less away and no shot comes off cooldown. Only while mana is at least 25 per second of fight left",
     "Auto Shot the whole fight. No pet"
