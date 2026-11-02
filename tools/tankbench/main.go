@@ -21,6 +21,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"google.golang.org/protobuf/encoding/protojson"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 func main() {
@@ -33,12 +34,21 @@ func main() {
 	bossLevel := flag.Int("boss-level", 0, "the boss's level, 0 keeps the request's")
 	swing := flag.Float64("boss-damage", 0, "the boss's smallest white hit before armor, 0 keeps the request's")
 	actions := flag.Bool("actions", false, "also print each build's threat and damage by ability")
+	classicCrit := flag.Bool("classic-crit", false, "the boss crits at Classic's 5.6% (less our Defense past 300) instead of Forever's 0.6% (docs/tank_sim.md, Forever's boss crit)")
+	needed := flag.Bool("needed", false, "also find each build's healing needed: the stand-in healer's HPS at which it dies in -death of the fights, and the death floor, its chance of death when every heal tops it off (about 10 more sims a build)")
+	deathTarget := flag.Float64("death", 0.05, "the chance of death -needed aims at")
 	flag.Parse()
 	sim.RegisterAll()
 
 	fmt.Printf("Stand-in healer: %.0f HPS every %.1f ± %.1f s. TMI over %d s windows. %d iterations.\n\n",
 		*hps, *cadence, *variation, *window, *iterations)
-	header := []string{"Build", "TPS", "DPS", "DTPS", "TMI", "Death", "Health", "EH", "Armor", "Def", "No crit at", "Miss", "Dodge", "Parry", "Block", "Crit", "Crush", "Crush gap", "Took: avoid", "block", "crit", "crush"}
+	if *classicCrit {
+		fmt.Println("The boss crits at Classic's rate.")
+	}
+	header := []string{"Build", "TPS", "DPS", "DTPS", "TMI", "Death", "Health", "EH", "Biggest hit", "Armor", "Def", "No crit at", "Miss", "Dodge", "Parry", "Block", "Crit", "Crush", "Crush gap", "Took: avoid", "block", "crit", "crush"}
+	if *needed {
+		header = append(header[:6], append([]string{"Healing needed", "Death floor"}, header[6:]...)...)
+	}
 	fmt.Println("| " + strings.Join(header, " | ") + " |")
 	fmt.Println("|" + strings.Repeat("---|", len(header)))
 
@@ -65,6 +75,7 @@ func main() {
 			if *swing > 0 {
 				target.MinBaseDamage = *swing
 			}
+			target.ClassicCrit = *classicCrit
 		}
 		tank := rsr.Raid.Parties[0].Players[0]
 		tank.HealingModel = &proto.HealingModel{
@@ -74,10 +85,7 @@ func main() {
 			BurstWindow:      int32(*window),
 		}
 
-		res := core.RunRaidSimConcurrent(rsr)
-		if res.Error != nil {
-			fail(fmt.Errorf("%s: %s", path, res.Error.Message))
-		}
+		res := run(path, rsr)
 		m := res.RaidMetrics.Parties[0].Players[0]
 		s := m.TankSheet
 		if s == nil {
@@ -94,11 +102,20 @@ func main() {
 			pct(m.ChanceOfDeath),
 			fmt.Sprintf("%.0f", s.Health),
 			fmt.Sprintf("%.0f", s.EffectiveHealth),
+			fmt.Sprintf("%.0f (%.1f to kill)", s.BiggestHit, s.Health/max(s.BiggestHit, 1)),
 			fmt.Sprintf("%.0f (%s)", s.Armor, pct(s.ArmorReduction)),
 			fmt.Sprintf("%.0f", s.Defense),
 			fmt.Sprintf("%.0f", s.DefenseCritImmune),
 			pct(s.Miss), pct(s.Dodge), pct(s.Parry), pct(s.Block), pct(s.Crit), pct(s.Crush), pct(s.CrushGap),
 			pct(took.avoided), pct(took.blocked), pct(took.crit), pct(took.crush),
+		}
+		if *needed {
+			hps, floor := healingNeeded(path, rsr, m.Dtps.Avg, *deathTarget)
+			need := "none works"
+			if hps > 0 {
+				need = fmt.Sprintf("%.0f (%.2fx DTPS)", hps, hps/m.Dtps.Avg)
+			}
+			row = append(row[:6], append([]string{need, pct(floor)}, row[6:]...)...)
 		}
 		fmt.Println("| " + strings.Join(row, " | ") + " |")
 		if *actions {
@@ -108,6 +125,49 @@ func main() {
 	for _, line := range breakdown {
 		fmt.Println(line)
 	}
+}
+
+func run(path string, rsr *proto.RaidSimRequest) *proto.RaidSimResult {
+	res := core.RunRaidSimConcurrent(rsr)
+	if res.Error != nil {
+		fail(fmt.Errorf("%s: %s", path, res.Error.Message))
+	}
+	return res
+}
+
+func deathAt(path string, rsr *proto.RaidSimRequest, hps float64) float64 {
+	rsr = googleProto.Clone(rsr).(*proto.RaidSimRequest)
+	rsr.Raid.Parties[0].Players[0].HealingModel.Hps = hps
+	return run(path, rsr).RaidMetrics.Parties[0].Players[0].ChanceOfDeath
+}
+
+// healingNeeded is the stand-in healer's HPS at which the tank dies in target of the fights, to
+// 1% of DTPS, and the death floor: the chance of death at 20 times its DTPS, where each heal tops
+// it off, so only damage between two heals kills it. When the floor is at the target or over, no
+// healing gets there (a one-shot or a burst faster than the heals), and the HPS is 0. Every run
+// uses the request's seed, so the chance of death only moves with the HPS.
+func healingNeeded(path string, rsr *proto.RaidSimRequest, dtps, target float64) (float64, float64) {
+	if dtps <= 0 {
+		return 0, 0
+	}
+	ceiling := 20 * dtps
+	floor := deathAt(path, rsr, ceiling)
+	if floor >= target {
+		return 0, floor
+	}
+	lo, hi := 0.0, dtps
+	for hi < ceiling && deathAt(path, rsr, hi) > target {
+		lo, hi = hi, min(2*hi, ceiling)
+	}
+	for hi-lo > 0.01*dtps {
+		mid := (lo + hi) / 2
+		if deathAt(path, rsr, mid) > target {
+			lo = mid
+		} else {
+			hi = mid
+		}
+	}
+	return hi, floor
 }
 
 // actionLines is a build's threat and damage per second by ability, most threat first.
