@@ -1775,6 +1775,24 @@
      "commits": [
       "231d549"
      ]
+    },
+    {
+     "title": "Marksmanship and Lone Wolf cast Aimed Shot again while mana is above 40%",
+     "kind": "rotation",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__marksmanship",
+      "hunter__marksmanship-wolf",
+      "hunter__marksmanship-tallstrider",
+      "hunter__lone-wolf"
+     ],
+     "note": "Below 40% mana Multi-Shot takes the shared cooldown, as before. Up 2 to 3 at 180 s (Marksmanship 1063.7 to 1066.4, Lone Wolf 1087.4 to 1090.0), 6 to 8 at 120 s, even at 300 s. Survival and Beast Mastery keep their rotations.",
+     "commits": [
+      "bb8edc2",
+      "8de8b36"
+     ]
     }
    ],
    "internal": [
@@ -1825,6 +1843,22 @@
     {
      "commit": "078a243f2",
      "why": "the Rotation card's cursor and tooltip: page only, no sim input or number moves"
+    },
+    {
+     "commit": "67084d0",
+     "why": "lazy reseed of labeled random sources; the same rolls, so results are unchanged"
+    },
+    {
+     "commit": "5423315",
+     "why": "rotation card wording and links only; no result changes"
+    },
+    {
+     "commit": "79f8e90",
+     "why": "compsearch's drop table and solo check; no report build reads it"
+    },
+    {
+     "commit": "94ae1fe",
+     "why": "rotation card notes and grouping only; no result changes"
     }
    ],
    "source": {
