@@ -110,16 +110,18 @@ export const DefaultGear = GearLevel60Phase1SyntheticFury;
 // and the on-use trinket's last use for the last 30; Bloodrage under 20 Rage, no Berserker Rage. The
 // 2026-10-25 re-search at flat Rage moved Heroic Strike, Bloodrage and the two holds: 972.5 to 986.6
 // at 180 sec (Orc, seed 1; +14.5 / +14.0 / +7.9 at 120 / 180 / 300 sec, seed 1000003 within 1.8).
-// The Mighty Rage Potion goes at the pull and the second is held for the
-// last 20 sec when that costs no use (with the trinket then on cooldown, +20.7 at 120 sec, where the
-// hold alone skipped the pull potion; the rotation auditor's pass 14). The Sapper goes on cooldown with the other
+// The Mighty Rage Potion is held for the last 20 sec when that costs no use, so it goes at the pull
+// only when a second fits. A pull potion in shorter fights too (+20.7 at 120 sec in the rotation
+// auditor's pass 14) lost 2.4 at 120 sec after the two-hand Rage crit fix, since its 2 min cooldown
+// outlasts the fight and costs the potion with Death Wish and Recklessness; dropped on 2026-11-02
+// (+2.4 / +1.3 at 120 sec on seeds 1 / 1000003, identical at 180 and 300). The Sapper goes on cooldown with the other
 // cooldowns (no Goblin Land Mine since 2026-10-24, see the consumables below). Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
 // no use. It is 1031.1 (Human) where the old Classic rotation (dps_reck.apl.json) is 981.2. Slam on its 18 sec
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Fury', Level60FuryAPLJSON, { group: 'Synthetic' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
-// Heroic Strike from 90 Rage, Hamstring from 10 (20 until 2026-10-30, +3.1 at 180 sec), Bloodrage under 20, Berserker Rage under 30 for its
-// Rage (Improved Berserker Rage 2/2), Slam from 45 Rage right after a main hand swing, ahead of
+// Heroic Strike from 90 Rage, Hamstring from 10 (20 until 2026-10-30, +3.1 at 180 sec), Bloodrage under 20, Berserker Rage under 10 for its
+// Rage (Improved Berserker Rage 2/2), Slam from 60 Rage right after a main hand swing, ahead of
 // Whirlwind (+8.4 at 180 sec from 30 Rage on the old ×1.5 Rage; Slam at any time loses), and
 // Death Wish held for the last 36 sec with Recklessness for the last 30. The second potion and the
 // trinket's last use are held for the last 20 and 34 sec, and Blood Fury and Berserking for the last
@@ -130,7 +132,11 @@ export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Fury', Level60F
 // Heroic Strike from 90 to 85: +0.7 / +2.5 / +1.9 at 120 / 180 / 300 sec (944.5 at 180). The
 // 2026-10-25 re-search at flat Rage (Berserker Rage under 30, Heroic Strike from 90, Slam from 45,
 // with Improved Berserker Rage 2 for a point of Enrage): 958.4 to 965.6 at 180 sec (Orc, seed 1;
-// +5.8 / +7.3 / +4.4 at 120 / 180 / 300 sec, seed 1000003 within 1.1).
+// +5.8 / +7.3 / +4.4 at 120 / 180 / 300 sec, seed 1000003 within 1.1). The 2026-11-02 re-search
+// after the two-hand Rage crit fix (120, 180 and 300 sec together) moved Berserker Rage from under 30
+// Rage to under 10 and Slam from 45 Rage to 60: Berserker Rage takes a GCD a Hamstring would use, and
+// the crits' Rage makes it and Slam's swing delay needed less often. 1038.9 to 1044.4 at 180 sec
+// (Orc, seed 1; +5.6 / +5.5 / +3.8 at 120 / 180 / 300 sec, seed 1000003 +5.0 / +5.2 / +5.0).
 export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Fury 2H', Level60Fury2HAPLJSON, { group: 'Synthetic' });
 // The tools/rotopt search (template warrior_arms) on the Level 60 Arms talents and the two-hand
 // set, Human, 180 sec: Battle Stance, Mortal Strike, Slam above 20 Rage (15 sec cooldown with
@@ -588,6 +594,11 @@ export const EncounterLevel60ArmsSunderDuty = PresetUtils.makePresetEncounter('A
 // 1039.8, two-hand Fury 1081.5 / 1033.7 / 1001.7, its duty 1080.3 / 1030.3 / 999.3, Arms 978.2 /
 // 957.4 / 934.3, its duty 976.3 / 956.0 / 933.0, Arms vs Dragonkin 1020.9 / 1000.1 / 975.7. Orc stays
 // 1.1 to 4.0 ahead of Human at 180 sec on both seed sets.
+// The knob re-search after the two-hand Rage crit fix (2026-11-02, 120 / 180 / 300 sec together; see
+// the rotations above), seed 1, 20,000 iterations, 120 / 180 / 300 sec: Fury 1076.0 / 1041.5 / 1017.7
+// -> 1078.4 / 1041.5 / 1017.7, two-hand Fury 1078.2 / 1038.9 / 1005.2 -> 1083.9 / 1044.4 / 1009.0
+// (its duties 1036.1 -> 1041.3 and 1007.6 -> 1009.0 at 180 sec), Arms unchanged at 1022.5 / 1008.7 /
+// 986.4. Orc stays the best race for two-hand Fury (Undead 3.6 behind at 180 sec).
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Fury', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',

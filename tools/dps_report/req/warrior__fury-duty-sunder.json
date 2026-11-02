@@ -682,68 +682,49 @@
                           {
                             "cmp": {
                               "lhs": {
-                                "currentTime": {}
+                                "remainingTime": {}
                               },
                               "op": "OpLe",
                               "rhs": {
                                 "const": {
-                                  "val": "3s"
+                                  "val": "20s"
                                 }
                               }
                             }
                           },
                           {
-                            "or": {
-                              "vals": [
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "remainingTime": {}
-                                    },
-                                    "op": "OpLe",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "20s"
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "spellUsesLostByDelay": {
-                                        "delay": {
-                                          "math": {
-                                            "lhs": {
-                                              "remainingTime": {}
-                                            },
-                                            "op": "OpSub",
-                                            "rhs": {
-                                              "const": {
-                                                "val": "20s"
-                                              }
-                                            }
-                                          }
-                                        },
-                                        "minTimeLeft": {
-                                          "const": {
-                                            "val": "15s"
-                                          }
-                                        },
-                                        "spellId": {
-                                          "otherId": "OtherActionPotion"
+                            "cmp": {
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "delay": {
+                                    "math": {
+                                      "lhs": {
+                                        "remainingTime": {}
+                                      },
+                                      "op": "OpSub",
+                                      "rhs": {
+                                        "const": {
+                                          "val": "20s"
                                         }
                                       }
-                                    },
-                                    "op": "OpGt",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "0"
-                                      }
                                     }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  },
+                                  "spellId": {
+                                    "otherId": "OtherActionPotion"
                                   }
                                 }
-                              ]
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
                             }
                           }
                         ]

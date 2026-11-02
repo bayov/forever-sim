@@ -593,67 +593,48 @@
                             "cmp":  {
                               "op":  "OpLe",
                               "lhs":  {
-                                "currentTime":  {}
+                                "remainingTime":  {}
                               },
                               "rhs":  {
                                 "const":  {
-                                  "val":  "3s"
+                                  "val":  "20s"
                                 }
                               }
                             }
                           },
                           {
-                            "or":  {
-                              "vals":  [
-                                {
-                                  "cmp":  {
-                                    "op":  "OpLe",
-                                    "lhs":  {
-                                      "remainingTime":  {}
-                                    },
-                                    "rhs":  {
-                                      "const":  {
-                                        "val":  "20s"
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp":  {
-                                    "op":  "OpGt",
-                                    "lhs":  {
-                                      "spellUsesLostByDelay":  {
-                                        "spellId":  {
-                                          "otherId":  "OtherActionPotion"
-                                        },
-                                        "delay":  {
-                                          "math":  {
-                                            "op":  "OpSub",
-                                            "lhs":  {
-                                              "remainingTime":  {}
-                                            },
-                                            "rhs":  {
-                                              "const":  {
-                                                "val":  "20s"
-                                              }
-                                            }
-                                          }
-                                        },
-                                        "minTimeLeft":  {
-                                          "const":  {
-                                            "val":  "15s"
-                                          }
+                            "cmp":  {
+                              "op":  "OpGt",
+                              "lhs":  {
+                                "spellUsesLostByDelay":  {
+                                  "spellId":  {
+                                    "otherId":  "OtherActionPotion"
+                                  },
+                                  "delay":  {
+                                    "math":  {
+                                      "op":  "OpSub",
+                                      "lhs":  {
+                                        "remainingTime":  {}
+                                      },
+                                      "rhs":  {
+                                        "const":  {
+                                          "val":  "20s"
                                         }
                                       }
-                                    },
-                                    "rhs":  {
-                                      "const":  {
-                                        "val":  "0"
-                                      }
+                                    }
+                                  },
+                                  "minTimeLeft":  {
+                                    "const":  {
+                                      "val":  "15s"
                                     }
                                   }
                                 }
-                              ]
+                              },
+                              "rhs":  {
+                                "const":  {
+                                  "val":  "0"
+                                }
+                              }
                             }
                           }
                         ]
@@ -1026,8 +1007,8 @@
       "judgementOfTheCrusader":  "TristateEffectImproved",
       "faerieFire":  true,
       "curseOfElements":  true,
-      "sunderRamp": {
-        "tank": true
+      "sunderRamp":  {
+        "tank":  true
       },
       "curseOfWeakness":  "TristateEffectImproved",
       "curseOfRecklessness":  true,
