@@ -14,13 +14,10 @@ choice before using it in game, and later to practice a raid fight with friends.
   on an answer.
 - Milestones are "Milestone 1" to "Milestone 4". "M2" alone always means WoW's model file format.
 
-**History:** first drafted 2026-11-02. Reviewed twice the same day by five reviewers each (the sim engine, the WoW
-assets, the keybinds and bars against the real client files, the client and networking, scope, the WoW feel rules,
-the doc as a spec, the browser's limits, and the build and tooling), and rewritten from their findings and the user's
-answers.
-
 **Terms:**
 
+- **Pull:** the moment the fight starts. It is time 0 in the sim. What triggers it depends on the fight mode.
+- **Prepull window:** the time before the pull, when you walk around, buff and drop totems.
 - **Bit-identical:** two runs give exactly the same numbers, down to the last digit.
 - **Golden file test:** a test that compares output with a saved file that is known to be right.
 - **Hot path:** code the sim runs millions of times per run, where even one extra check costs time.
@@ -83,7 +80,7 @@ procs, auras, resources, the APLs of every other unit) stay in the core, and the
 | WASM | `practice.wasm`, built from `sim/practice/wasm/` | `//go:build wasm` tag, written to `dist/practice/` |
 | Server | `cmd/practice/` | a new small Go HTTP server, nothing shared with `sim/web` |
 | Page | `ui/practice/practice.html`, own Vite config | built to `dist/practice/`, never to `dist/forever/` |
-| Assets, attempts, your bar edits | `~/forever-practice/assets/`, `attempts/`, `settings/` | outside the repo |
+| Assets, game tables, attempts, your edits | `~/forever-practice/assets/`, `db2/`, `attempts/`, `settings/` | outside the repo |
 
 The page's entry is `practice.html`, not `index.html`. The regular build takes every `ui/**/index.html` as an input
 (`vite.config.mts:119`) and `.gitignore` ignores `ui/*/index.html`.
@@ -102,7 +99,10 @@ five workspaces, so extracted game files inside the repo would end up in commits
   Each one is listed in the table below with why we need it.
 - When the practice room needs a game rule the core doesn't have (for example a facing check for casts), it checks
   the rule on the practice side, before an input reaches the sim. A rule that would also make the regular sim more
-  correct goes into the core as a normal sim change with its own review, never as part of practice work.
+  correct goes into the core as a normal sim change with its own review, never as part of practice work. The first
+  one: a totem buff replaced or expired before time 0 stays up until 0, because the aura hold search starts from 0
+  (`aura_holds.go:36`). It should start from the earliest sim time (`startingCDTime`). It changes results only for
+  holds that end before 0, and it still gets the `identical()` run.
 - In `ui/core` we import what's already exported. When reuse would need a refactor of a shared file (like
   `replay.tsx`), we copy the piece into `ui/practice/` instead.
 - The regular sim UI doesn't change. Settings come into the practice page through the class sim's existing export
@@ -115,7 +115,13 @@ five workspaces, so extracted game files inside the repo would end up in commits
 | `Simulation.NextEventTime()`, read-only | `Run(until)` stops before the next event without moving the clock | none, nothing calls it |
 | `Unit.ManualControl bool`, default false | `DoNextAction` returns at once for your unit, after the due hard cast block (`apl.go:209`) | one bool check per `DoNextAction` |
 | `AutoAttacks.SkipPullStart bool`, default false | the sim's pull at time 0 leaves your auto attacks off | one bool check per unit at the pull |
-| Class hooks for spells the sim keeps as a setting, opt-in, listed per class as we find them (the first: shaman imbues, see [Your toolkit](#your-toolkit)) | the class code reads "the current imbue" instead of "the imbue in the settings" | none when off |
+| Spell limit 200 to 400, timer limit 100 to 200 (`spell.go:202`, `cooldown.go:21`) | enh at 60 already has 154 spells and 49 timers, and the whole toolkit adds about 60 spells | none, they're sanity checks |
+| Shaman: `SwapMainHandImbue(sim, imbue)` | see [Your toolkit](#your-toolkit) | none, nothing calls it |
+| Shaman: exported `PlaceTotem(sim, slot, spell, duration)` | totems the sim doesn't have take their element's slot, Fire Nova and Totemic Recall see them | none |
+| Shaman: `FireTotemInReach func(totem, target) bool`, nil by default | fire totems and Fire Nova hit only targets in reach (`totems.go:80` is always true outside leveling) | one nil check per fire totem tick |
+| Shaman: Nature's Swiftness skips its "no cast speed buff up" condition under `ManualControl` (`talents.go:380`) | that condition is a rotation helper, and it would refuse a legal press | one bool check per cast |
+
+Other classes get their own class hooks when we add them (blessings, auras, aspects, poisons).
 
 Extra spells and auras come in through `core.EnvHooks` (`environment.go:180`), which already exists for tools that
 watch a sim from outside, like `tools/logcheck`. It runs before the sim is finalized, while spells and auras can still
@@ -126,24 +132,32 @@ be registered.
 (`attack.go:432`, `cast.go:368`, `energy.go:166`, `rage.go:440`). So the GCD would look busy most of the time, a key
 press at the GCD's end would lose to it, and the log would get "Pausing GCD for 50ms" 20 times a second.
 
-`SkipPullStart` is needed because the pull starts every unit's swings at time 0, and the sim runs a swing before any
-other action at the same time (`sim.go:761`, `attack.go:650`). A cancel at 0 from the session comes after your first
-swing has already landed.
+`SkipPullStart` keeps the pull from starting your swings at time 0. A session action at 0 with a priority above the
+pull's would also work (`sim.go:689`), but the hook says what it means. The core also turns auto attack on and off on
+its own in places (Ravager, Shadowmeld) and has no exported "is it on" flag, so the session keeps its own flag.
 
 ### Other shared files (one time, each its own commit)
 
 - `tsconfig.json`: exclude `ui/practice`, which gets its own `ui/practice/tsconfig.json`. Otherwise one practice type
-  error breaks `make` for every session (`makefile:46` runs `tsc --noEmit` on the whole tree).
-- `makefile`: filter `ui/practice` out of `UI_SRC`, so practice edits don't rebuild the regular UI. Add the targets
-  `practice-wasm`, `practice` (wasm, page, server) and `practice-test`.
-- `package.json`: add `three` and `@types/three` once. Changing the lock file makes every session's next `make` run
-  `npm ci` again, so it happens once, on its own.
+  error breaks `make` for every session (`makefile:53` runs `tsc --noEmit` on the whole tree).
+- `makefile`: filter `ui/practice` out of `UI_SRC`, and `sim/practice` out of `lib.wasm`'s prerequisites (it takes
+  every `.go` file under `sim/`, so each practice edit would relink it). Add the targets `practice-wasm`, `practice`
+  (wasm, page, server) and `practice-test`.
+- `package.json`: add `three` and `@types/three` once, both pinned at 0.183.x. Newer `@types/three` needs TypeScript
+  5.6, and the repo pins 5.2.2. Changing the lock file makes every session's next `make` run `npm ci` again, so it
+  happens once, on its own.
+- `go.mod` and `go.sum`, only if a practice Go dependency comes up.
 - `tools/dps_report/build_artifact.mjs`: the deploy guard. It fails when the build's module ids contain `/ui/practice/`
   or the page contains `forever-practice`. About five lines.
 
-Tests: practice Go tests carry the build tag `practice`, so `make test` doesn't run them or wait for them.
-`make practice-test` runs `go test -tags practice ./sim/practice/... ./cmd/practice/...` and the practice type-check.
-"`lib.wasm` unchanged" means `go list -deps ./sim/wasm | grep practice` prints nothing.
+Every Go file in `sim/practice` and `cmd/practice` carries the build tag `practice`, not only the tests. `make test`
+runs `go test ./sim/...`, which compiles every package under `sim/` even when its tests are skipped, so one practice
+compile error would fail it for every session. A cgo CascLib binding, if we ever need it, sits behind the same tag.
+Practice messages are plain Go and TS types, never a `.proto` in `proto/`, because `protoc ./proto/*.proto` writes into
+`sim/core/proto`.
+
+`make practice-test` runs `go test -tags with_db,practice ./sim/practice/... ./cmd/practice/...` and the practice
+type-check. "`lib.wasm` unchanged" means `go list -deps ./sim/wasm | grep practice` prints nothing.
 
 ## Architecture
 
@@ -168,20 +182,45 @@ unit's state back. That keeps one owner for positions when the boss moves (Miles
 
 The engine already has `SimOptions.Interactive` and a session API in `sim/lib/library.go`. We don't use the flag: it
 stops the rotation of every character, pets included (`character.go:525`). We follow the session API's steps, which
-are all exported:
+are all exported.
 
-1. `sim.RegisterAll()`, then `NewSim` from the same proto request a sim run uses, with no duration variation. The
-   fight length is the mode's: the set length in Encounter mode, and a 60 minute cap in Free mode. Execute phases,
-   `GetRemainingDuration` and the end check all depend on it.
+**The request.** The class sim's export leaves out the item database (`ui/core/player.ts:1609`), and `practice.wasm`
+has none. So the page sends the link or JSON to the practice server (`POST /api/request`, built with `-tags with_db`).
+It turns it into a `RaidSimRequest` the way `tools/rotopt/run.go:44` does, and fills `player.database` the way
+`getDatabase` does (`library.go:96`). Then the server makes these changes to the request:
+
+- Your unit's rotation becomes an empty APL: `&proto.APLRotation{Type: TypeAPL}`, with no priority list and no prepull
+  actions. A nil rotation panics (`cast.go:368`), and the imported prepull actions would cast for you, because the APL
+  registers them when the sim is built (`apl.go:111`).
+- `EndFightAtHealth` 0 and no duration variation, so the fight length is exactly the mode's.
+- PvP melee downtime 0, because it would move you in and out of range on its own (`pvp.go:68`). The world decides
+  range.
+- A leveling encounter is refused.
+- In Free mode, execute phases are off, or on from the start with the "Execute range" setting.
+
+What stays as in the request:
+
+- Raid hits (the enh request has 2 hits a minute on you) and a tank assignment. They feed Lightning Shield orbs and
+  Water Shield mana, so they keep the room's DPS in line with the normal sim. The HUD shows "Raid hits 2/min".
+- Party cooldowns on your unit (Power Infusion, Innervate, Mana Tide) are another player's casts. The session fires
+  them on the sim's own rule (`ShouldActivate`), as the APL's `autocastOtherCooldowns` does for them.
+
+**The steps:**
+
+1. `sim.RegisterAll()`, then `NewSim` from that request. The fight length is the set length in Encounter mode, and a
+   60 minute cap in Free mode.
 2. A nonzero seed picked by the session and stored with the attempt. Seed 0 would mean "pick from the clock", and the
    picked seed isn't readable from outside (`sim.go:30`).
-3. `Reset()`, then `PrePull()`.
-4. Set `CurrentTime` to the earlier of its value and minus the free time window (10 minutes). This comes after
-   `PrePull`, because `PrePull` sets the clock when prepull actions exist (`sim.go:686`, a druid talent registers one).
+3. `Reset()`, then `PrePull()`. Only the class code's own prepull actions are left, since the APL is empty.
+4. Set `CurrentTime` to the earlier of its value and minus 10 minutes, the start of the prepull window. This comes
+   after `PrePull`, because `PrePull` sets the clock when prepull actions exist (`sim.go:686`, a druid talent
+   registers one).
 5. Set `sim.Log`, since only the sim's own run sets it (`sim.go:373`). Write your distance and facing, since `Reset`
    clears them (`unit.go:553`).
-6. Your unit gets an empty APL and `ManualControl`, so it never acts on its own, and its auto attacks get
-   `SkipPullStart`, so they start off. Other units (the boss, pets, later the raid bots) keep their own APL.
+6. Your unit gets `ManualControl`, so it never acts on its own, and its auto attacks get `SkipPullStart`, so they start
+   off. Other units (the boss, pets, later the raid bots) keep their own APL.
+7. The imbue hook turns off every imbue but the active one, since each imbue aura turns itself on at `Reset`
+   (`windfury_weapon.go:105`).
 
 ### Fight modes and the pull
 
@@ -189,118 +228,171 @@ The sim's fight always starts at time 0: its encounter length, execute phases an
 But you decide when the fight starts, so the room can't know in advance how long your prepull is. It solves that by
 shifting time once it knows:
 
-1. Before the pull, the session runs the sim live from minus 10 minutes. You walk around, drop totems, buff, and see
-   your mana and cooldowns move. Nothing harmful has happened yet.
-2. Once the pull time `t` is known (still below 0), the session swaps in a fresh sim (built ahead of time in the
-   background, with the same seed) and feeds it your inputs so far, each moved by minus `t`. The pull is now at
-   exactly 0, and everything before it keeps the same spacing. Nothing has rolled for damage yet, so the fresh sim is
-   in the same state the old one was in.
-3. If you stay longer than 10 minutes before the pull, the session does the same swap with a new 10 minute window.
+1. Before the pull, the session runs the sim live in the prepull window. You walk around, drop totems, buff, and see
+   your mana and cooldowns move.
+2. When the pull happens at time `t` (below 0), the session swaps in a fresh sim with the same seed. It feeds it your
+   inputs so far, each moved by minus `t`, and starts its clock minus `t` earlier too. The same seed and the same
+   inputs in the same order replay exactly, so the fresh sim reaches 0 in the state the old one had at `t`. The pull
+   is now at exactly 0, and everything before it keeps the same spacing.
+3. If you stay in the prepull window for 10 minutes, the session swaps to a new 10 minute window the same way.
+   Inputs older than 40 minutes are dropped, and what they left behind (the current imbue, auto attack on) is set
+   again at the window's start. No input is replayed earlier than minus 50 minutes, because before minus 60 minutes
+   every cooldown and the GCD look busy (`startingCDTime`, `cooldown.go:7`).
 
-Step 1 tests that the state at the pull is identical with and without the swap. Spike 4 measures how long the swap
-takes, since it can happen on the frame you attack.
+The fresh sim is built (`NewSim`, `Reset`, `PrePull`) in idle time after the session starts and after each swap, and
+built again when a fight setting changes. Go WASM has one thread, so replaying your inputs into it happens on the
+frame of the pull. Spike 4 measures the worst case.
 
-**When the pull is.** Your first harmful hit landing: a spell's damage, an ability, or your first swing. So a
-Lightning Bolt cast before the pull and timed to land at it counts from the moment it lands, like the in-game meters
-count. The session knows the landing time when the cast starts (cast end plus travel time) and swaps then. If the cast
-is interrupted, the swap is undone the same way.
+The worker tells the client with a `rebase` message, so the client moves its clock, its HUD times and the inputs it
+has in flight by minus `t`, and drops the log lines of the thrown-away sim.
+
+**What triggers the pull.** Any harmful result against an enemy before time 0: a hit, a miss, a tick or a debuff,
+from your casts, your totems or your procs. A Lightning Bolt cast before the pull counts from the moment it lands,
+like the in-game meters count. A Magma Totem dropped early pulls with its first pulse. Through `core.EnvHooks`, the
+session puts a watcher aura on each enemy that reports the first such result. The session then stops, swaps, and
+runs the fresh sim up to 0, where that same hit happens again and counts (the sim counts damage from time 0 on,
+`spell_result.go:542`).
+
+Swings are the one exception. The core holds swings to time 0 or later (`attack.go:756`), so a swing never lands
+before 0. So the moment you have auto attack on, the target in melee range and in front of you, before the pull, is
+the pull, and the first swing comes at once, as in game.
+
+A cast that fails a check never pulls, because nothing harmful reached the enemy.
 
 **Free mode** (the default):
 
-- The pull is your first harmful hit.
-- The fight goes on until you click Stop (or a key bound to it). Stop ends the fight at that moment. The session stops
-  stepping and runs `Cleanup()` with the stop time as the fight length. Step 1 checks the metrics use it.
+- You're in Free mode until you click Start Encounter.
+- The pull is the first harmful result.
+- The fight goes on until you click Stop (or a key bound to it). Stop ends the fight at that moment. The session sets
+  `sim.Duration` to the stop time and then runs `Cleanup()`. `Cleanup` moves the clock to `Duration` and DPS divides
+  by it (`sim.go:716`, `metrics_aggregator.go:35`), so without that the summary would cover 60 minutes.
 - The 60 minute cap ends the fight if you never click Stop.
-- The dummy never enters execute range, as with a training dummy in game. A setting can put it in execute range from
-  the start, for classes with execute abilities.
+- The dummy never enters execute range, as with a training dummy in game. The "Execute range" setting puts it there
+  from the start, for classes with execute abilities.
 
 **Encounter mode:**
 
 - Clicking "Start Encounter" starts the countdown (5s by default). The pull is at the countdown's end, so the swap
   happens on the click.
-- If your first harmful hit lands before the countdown ends, that's an early pull, as in game. The fight starts right
-  then (one more swap), and the HUD says so.
-- The fight ends on its own at the set length, as in a sim run. Execute phases follow the encounter's settings.
+- A harmful result during the countdown is an early pull, as in game. The fight starts right then (one more swap),
+  and the HUD says so.
+- The fight ends on its own at the set length, as in a sim run. The session ends it itself once its clock reaches the
+  length, because the sim only notices the end when it steps an event past it. Execute phases follow the encounter's
+  settings.
 - Stop still works, and marks the attempt as stopped early.
+- The set length starts at the imported fight length.
 
-In both modes, auto attack only swings when you have turned it on and you're in melee range. If turning it on in
-range is your first harmful action, that's the pull, and the first swing comes at once, as in game.
+In both modes, auto attack only swings when you have turned it on and you're in melee range.
 
 ### Running in real time
 
 `sim/practice` holds a stateful session:
 
-- **Input(input)** adds a pending action for a key press at its apply time, in whole nanoseconds, with a fixed lowest
-  priority. It goes through `Step` like any other event, so the other units' idle check skipping (`apl_idle.go`) sees
-  it.
+- **Input(input)** puts the input in the session queue at its apply time, in whole nanoseconds. A queued cast runs at
+  the GCD's or the cast's end instead. The session queue holds every session action (inputs and world changes),
+  ordered by time and then by arrival. It keeps one pending action in the sim, at priority -100, below everything the
+  core uses (`ActionPriorityLow` is -1). A live run adds inputs as they arrive and a replay adds them all up front, and
+  the queue makes both run ties in the same order. It goes through `Step` like any other event, so the other units'
+  idle check skipping (`apl_idle.go`) sees it.
 - **Run(until)** runs events whose time is before `until` and stops. It reads the next event time from
   `NextEventTime()` and never moves the clock to `until` itself. Moving the clock to frame times would settle regen
   and expire auras in frame sized steps, and then results would depend on frame rate.
-- **The end** is final: Stop, or the set length in Encounter mode. `Step` drops the last pending action before the end
-  check. `Cleanup()` adds up the metrics.
+- **The end** is final: Stop, the set length in Encounter mode, or the 60 minute cap. An input at or after the end is
+  dropped. `Cleanup()` adds up the metrics.
 
-The worker keeps its own clock and pushes events as they happen, instead of waiting for one call per frame. A
-`MessageChannel` loop drives it, because nested timers are held to at least 4ms, in workers too. The clock pauses
-when the tab is hidden or loses focus, and one catch-up step is capped at 0.25s, as the Replay view does
-(`replay.tsx:963`).
+The worker keeps its own clock and pushes events as they happen, instead of waiting for one call per frame. It steps
+the sim on each input message, which runs at once. For the sim's own events (swings, ticks) it sets a timer to the
+next event's time. A timer can fire up to 4ms late, which is under one frame at 144Hz, and the screen only updates
+once a frame. A loop that never sleeps would keep a whole CPU core busy next to WoW and Discord. If spike 4 finds
+timers too late, the worker waits with `Atomics.wait` and a timeout instead, which needs COOP and COEP headers from
+the practice server and a shared buffer for inputs.
+
+The worker's clock is wall time minus the time it was paused. It pauses when the tab is hidden or loses focus, and
+one catch-up step is capped at 0.25s, as the Replay view does (`replay.tsx:963`). The worker maps each press time to
+sim time: the press's wall time, minus paused time, minus every swap's shift.
 
 Between events the HUD shows values like energy and the cast bar by computing them for the display time, without
 changing sim state. Aura expiry isn't an event in the sim (it happens at the next event), so the HUD times expiries
-itself. The live DPS meter sums spell metrics as `getDamageDone` does (`library.go:282`), because unit metrics only add
+itself. The live DPS meter sums spell metrics as `getDamageDone` does (`library.go:301`), because unit metrics only add
 up in `Cleanup`.
 
 The worker is a dedicated one running `practice.wasm`, not one from the sim's `WorkerPool` (`ui/core/sim.ts:123`). The
 WASM entry points are synchronous `js.FuncOf` calls in the style of `raidSim` (`sim/wasm/main.go:133`).
-`practice.wasm` registers every class (about 36 MB), so any class sim's export works and Milestone 3's bots work. The
-live heap is about 1.3 MB, so garbage collector pauses come from per-event allocations (log formatting, proto
-marshalling), not from the database.
+`practice.wasm` registers every class (about 39 MB, 6.4 MB gzipped), so any class sim's export works and Milestone
+3's bots work. One worker is kept for every attempt in a visit, so the module loads once. The live heap is about
+1.3 MB, so garbage collector pauses come from per-event allocations (log formatting, proto marshalling), not from the
+database.
 
 ### Casting your spells
 
-For each cast input, the session first runs its own checks, in this order, and answers with the game's error text
-when one fails:
+Each cast input names a spell id. The session looks it up in its own toolkit table, never with `Unit.GetSpell`: the
+Flametongue and Frostbrand proc spells share the imbue's spell id (`flametongue_weapon.go:51`), so `GetSpell` could
+return the proc and land a hit on the dummy. Imbue casts are registered with their own tag, so the metrics and the
+Replay view keep them apart from the procs.
 
-1. The first harmful spell or ability before time 0 triggers [the pull](#the-pull) first, so it lands at 0. The sim
-   doesn't count damage before 0 (`spell_result.go:542`), so nothing harmful may happen before the pull.
-2. Moving or in the air, for a spell with a cast time.
-3. Range and facing (see [Playing like WoW](#playing-like-wow)).
-4. GCD and cooldown timers, cost (`Cost.CostFailureReason`, `mana.go:443`), already casting.
-5. `Spell.CanCast`.
+Then the session runs its own checks, in this order, and answers with the game's error text when one fails:
+
+1. Moving or in the air, for a spell with a cast time.
+2. Range and facing (see [Playing like WoW](#playing-like-wow)).
+3. GCD and cooldown timers, cost (`Cost.CostFailureReason`, `mana.go:443`), already casting.
+4. `Spell.CanCast`.
 
 Only then does it call `Spell.Cast`. A failed `Cast` can use up the cooldown, because the cooldown is set before the
 GCD check (`cast.go:273`, `cast.go:289`), so `Cast` is never called without these checks passing. During a channel,
 the session cancels the channel first (`ChanneledDot.Cancel`), since `InterruptHardcast` doesn't stop channels.
 
+When a cast-time spell finishes, the game checks range and facing again (check). The session runs that check at the
+cast's end time, before the cast completes, and interrupts the cast with the error when it fails.
+
 ### Your toolkit
 
-You can cast anything your class knows at your level, at the ranks you know. The list comes from the client's
-spell tables for the class and level, and the room's spellbook shows all of it. Each spell falls in one of three
-kinds:
+You can cast anything your class knows at your level (the sim character's level), at the ranks you know. The room's
+spellbook shows all of it. Each spell falls in one of three kinds:
 
 1. **Spells the sim has** (most class spells: shocks, Lightning Bolt, Stormstrike, every totem the sim models,
    Healing Wave and the other heals, shields). The shaman class code registers all of them, whatever the rotation
-   uses (`shaman.go:276`). They're cast as described above.
-2. **Spells the sim keeps as a setting.** Shaman imbues are the first case: the class code registers and turns on
-   only the imbue the settings pick (`shaman.go:66`, `windfury_weapon.go:105`). So:
-   - Through `core.EnvHooks`, the session registers all four imbues with the class code's own exported functions
-     (`ApplyWindfuryImbue` and the others), and keeps only the active one on.
-   - You enter the room with the settings' imbue up. Casting an imbue, at any time, turns the old one off and the new
-     one on for that weapon, with the game's GCD, mana cost and duration.
-   - Where the class code reads the settings' imbue during the fight (for example the rule that a Windfury Weapon
-     imbue turns off the Windfury Totem buff, `shaman.go:92`), an opt-in class hook makes it read the current imbue.
-     It's listed in the core touch points.
-   - Other classes' setting-only spells (blessings, auras, aspects, poisons) get the same treatment when we add their
-     class.
+   uses (`shaman.go:276`), and no class code casts them on its own (its automatic casts are all procs). This kind is
+   every non-passive spell in your unit's spellbook, at the sim's ranks. They're cast as described above.
+   - The sim's rank rules win over the client's. It drops ranks Forever doesn't have (the Ahn'Qiraj book ranks,
+     `earth_totems.go:21`) and ranks the leveling training schedule marks untrained (`spell_ranks.go:159`). Such a
+     rank shows greyed in the spellbook with the reason.
+   - Imbues and Lava Burst exist in the sim only at the top rank (`HighestKnownRank`). Their lower ranks show greyed.
+2. **Spells the sim keeps as a setting.** Shaman imbues are the first case: the class code builds only the imbue the
+   settings pick into the character (`shaman.go:66`). The shaman hook `SwapMainHandImbue(sim, imbue)` makes any imbue
+   castable:
+   - At build time it registers the three imbues the settings didn't pick (`Register*Imbue`). Registering the picked
+     one again would panic (`aura.go:485`).
+   - After each `Reset` it turns off every imbue aura but the active one.
+   - On a swap it sets the main hand's `TempEnchant` to the new imbue's enchant, which the core reads on every hit to
+     decide whether an imbue blocks a totem's weapon buff (`totem_weapon_buffs.go:46`). It sets `ShamanImbue` and the
+     imbue's proc mask.
+   - Rockbiter's attack power is added to the weapon's stats when the character is built (`rockbiter_weapon.go:92`),
+     so it can't be turned off later. The hook moves it onto Rockbiter's aura as a dynamic stat.
+   - After a swap it makes each of your weapon totems still standing pick its buff again. Without that, swapping to
+     Windfury Weapon under your own Windfury Totem would leave the raid's Flametongue Totem buff off, and swapping
+     away would never bring the totem's buff up (`shaman.go:92`, `totem_weapon_buffs.go:204`).
+
+   You enter the room with the settings' imbue up. Casting an imbue, at any time, replaces it with the game's GCD,
+   mana cost and cast. Imbues go on the main hand, the only hand the sim models for shaman imbues (`shaman.go:78`).
+   The sim's imbues never expire, while Forever's last 60 minutes. The room doesn't model that, and the HUD shows the
+   time left since your last imbue cast.
 3. **Spells the sim doesn't have** (Ghost Wolf, Purge, Earthbind Totem, Frost Resistance Totem, Cure Poison, Water
-   Walking and the like). The session registers them through `core.EnvHooks` with `RegisterSpell`, with the cost,
-   cast time, GCD, cooldown and range from the client's spell tables. Effects that change the fight are coded in
+   Walking and the like). Only these come from the client's spell tables. The session registers them through
+   `core.EnvHooks` with `RegisterSpell`, with the cost, cast time, GCD, cooldown and range from those tables. Talents
+   that change them (Totemic Focus on every totem's cost, Improved Ghost Wolf, Guardian Totems, Earth's Grasp) are
+   applied by the session, since the client rows don't include them. Effects that change the fight are coded in
    `sim/practice`:
-   - Ghost Wolf: its run speed, and it ends when you cast.
-   - A totem the sim doesn't have still takes its element's slot, so Earthbind Totem replaces Strength of Earth, as
-     in game. When that needs the shaman's slot code, it's an opt-in class hook.
+   - Ghost Wolf: 40% faster runs (9.8 yd/s), a 3s cast (less with Improved Ghost Wolf) that moving stops. What a
+     spell press does in wolf form follows `autoUnshift` (default 1, leave the form when needed). Whether that one
+     press also casts the spell is a check.
+   - A totem the sim doesn't have takes its element's slot through the shaman hook `PlaceTotem`, so Earthbind Totem
+     replaces Strength of Earth, Fire Nova sees a Fire Resistance Totem, and Totemic Recall refunds it, as in game.
    - Effects that mean nothing against a dummy (Water Walking, Far Sight) only cost their GCD and mana.
 
-Consumables and other players' buffs come from the settings.
+**Consumables.** Flasks, elixirs, food and weapon oils come from the settings and are up from the start. Potions,
+Demonic Runes, sappers and explosives are your own presses: they sit in your bags, show in the spellbook's bag tab, go
+on bars as items, and are used with `useItem` by item id, which runs the consumable's cooldown spell. `/use <item>`
+macro lines do the same. Other players' buffs come from the settings.
 
 ### Inputs, ping and the spell queue
 
@@ -309,6 +401,7 @@ The sim's answer reaches the screen half a ping after that.
 
 - When the apply time is within `SpellQueueWindow` (400ms by default) of the GCD's end or the current cast's end, the
   cast fires exactly at that end and replaces any spell already queued. So a queued press costs no ping, as in game.
+  Whether the window also queues a spell coming off its own cooldown (Stormstrike, shocks) is a check.
 - When it's earlier than that, the cast fails with "Spell is not ready yet." (or "Ability is not ready yet.", see
   [Errors](#errors)).
 - A press after the GCD has ended applies half a ping later, which is the ping cost you get in game.
@@ -330,25 +423,40 @@ The client resolves macros, `@mouseover` and modifiers at the press, and sends p
 (`ui/practice/protocol.ts`) and Go (`sim/practice/protocol.go`):
 
 ```ts
+// A unit in the session: you, the dummy, later bosses, bots and other players.
+type UnitRef = { kind: 'player' | 'target' | 'enemy' | 'ally'; index: number };
+
 type Input =
 	| { id: number; pressedAt: number; kind: 'cast'; spellId: number; target: UnitRef }
-	| { id: number; pressedAt: number; kind: 'useItem'; slot: number; target: UnitRef }
+	| { id: number; pressedAt: number; kind: 'useItem'; itemId: number; target: UnitRef }
+	| { id: number; pressedAt: number; kind: 'useSlot'; slot: number; target: UnitRef } // /use 13
 	| { id: number; pressedAt: number; kind: 'startAttack' | 'stopAttack' | 'clearTarget' | 'cancelCast' }
 	| { id: number; pressedAt: number; kind: 'target'; target: UnitRef }
 	| { id: number; pressedAt: number; kind: 'move'; velocity: [number, number]; facing: number }
 	| { id: number; pressedAt: number; kind: 'jump' };
 
+type Control =
+	| { kind: 'start'; request: unknown; seed: number; mode: 'free' | 'encounter'; lengthMs: number;
+		countdownMs: number; pingMs: number; executeFromStart: boolean }
+	| { kind: 'startEncounter' }
+	| { kind: 'stop' }
+	| { kind: 'restart' }; // a new attempt with a new seed and the same settings
+
 type EventBatch = {
-	simTime: number; // nanoseconds
+	simTime: number;
 	logLines: string[]; // the sim's text log, parsed by logs_parser.tsx
 	answers: { inputId: number; ok: boolean; error?: string }[];
 	units: { ref: UnitRef; pos: [number, number]; facing: number; airborneUntil?: number;
 		nextSwingAt?: number; castEndsAt?: number }[];
+	rebase?: { shiftMs: number }; // the pull swap moved sim time by this much
+	pulled?: { early: boolean };
+	ended?: { summary: unknown; stoppedEarly: boolean };
 };
 ```
 
-`pressedAt` is the key event's `timeStamp` mapped to the worker's clock through `performance.timeOrigin`. Times are in
-milliseconds on the client and whole nanoseconds in the sim.
+`pressedAt` is the key event's `timeStamp` plus `performance.timeOrigin`, the wall time of the press. The worker maps
+it to sim time (see [Running in real time](#running-in-real-time)). Every other time in a message is sim time in
+milliseconds, fractional. The sim works in whole nanoseconds, and the session converts.
 
 ### Replays and saved attempts
 
@@ -358,22 +466,33 @@ An attempt is one JSON file in `~/forever-practice/attempts/`:
 {
 	"version": 1,
 	"simCommit": "<git commit of the sim build>",
-	"request": { "...": "the RaidSimRequest as proto JSON" },
+	"request": { "...": "the RaidSimRequest as proto JSON, after the session's changes" },
 	"seed": 123456789,
 	"pingMs": 60,
-	"mode": "free",
-	"lengthMs": 184300,
+	"mode": "encounter",
+	"setLengthMs": 180000,
 	"countdownMs": 5000,
+	"executeFromStart": false,
+	"startNs": -612000000000,
+	"endedAtMs": 180000,
+	"stoppedEarly": false,
 	"earlyPull": false,
-	"inputs": [{ "appliedAt": -8200000000, "input": { "kind": "cast", "spellId": 8512 } }],
+	"inputs": [
+		{
+			"appliedAtNs": -8200000000,
+			"input": { "kind": "cast", "spellId": 8512, "target": { "kind": "player", "index": 0 } }
+		}
+	],
 	"result": { "...": "the fight summary" }
 }
 ```
 
-A replay mode feeds the inputs into a normal run at their applied times (already shifted, so the pull is at 0),
-starting a little before the first one. It turns
-on the same log options the Replay view needs and gives a full `RaidSimResult`, so the attempt opens in the Replay
-view. A bug report is a small file.
+In Free mode, `setLengthMs` is the 60 minute cap and `countdownMs` is left out. `startNs` is where the final sim's
+clock started, and input times are already shifted, so the pull is at 0.
+
+A replay runs the same practice session without a clock, from `startNs`, and feeds it the stored inputs. It turns on
+the log options the Replay view needs and gives a full `RaidSimResult`, so the attempt opens in the Replay view. A bug
+report is a small file.
 
 Exact replays hold only on the same sim build and the same platform. WASM and native Go can differ in the last bits of
 `math.Exp` and `math.Log`, so a native Milestone 4 server and a browser may drift apart. Spike 5 checks how much. When
@@ -383,15 +502,15 @@ build.
 ### World and movement
 
 The world lives in `sim/practice`: ground positions with velocity, facing, an airborne flag with the jump's end time,
-and range. It follows the leveling world's model (`leveling_world.go`) but doesn't reuse its code, which is tied to
-leveling sessions inside the core. We don't use `Unit.MoveTo`: its movement aura cancels auto attacks
-(`movement.go:107`), which is wrong for strafing in melee.
+range, and where each totem stands. It follows the leveling world's model (`leveling_world.go`) but doesn't reuse its
+code, which is tied to leveling sessions inside the core. We don't use `Unit.MoveTo`: its movement aura cancels auto
+attacks (`movement.go:107`), which is wrong for strafing in melee.
 
 Your movement goes to the session as timestamped velocity and facing changes, not as per-frame positions. The world
-turns them into pending actions at the times something changes (you reach or leave range, you turn away). That keeps
+turns them into session actions at the times something changes (you reach or leave range, you turn away). That keeps
 replays exact. The client moves your model at once and the sim agrees, as WoW trusts the client's movement.
 
-How the world talks to the sim. Every write happens inside a pending action, because `EnableAutoSwing` and
+How the world talks to the sim. Every write happens inside a session action, because `EnableAutoSwing` and
 `InterruptHardcast` use the current sim time, and between steps that's the last event's time.
 
 - **Distance:** the core knows melee range as a flat 5 yards (`IsInMeleeRange`, `pvp.go:30`). The world works out the
@@ -399,13 +518,18 @@ How the world talks to the sim. Every write happens inside a pending action, bec
   distance minus how much the real range exceeds 5 yards. Then the core's 5 yard rule agrees with ours. Other readers
   (Lightning Bolt travel time, `spell.go:678`, and explosive radii) are off by at most a yard or so, which is fine.
 - **Melee range:** when you leave or enter it, the world calls the cancel and enable pair that PvP downtime uses
-  (`pvp.go:68`), because auto attacks only check range when enabled (`attack.go:755`).
+  (`pvp.go:68`), because auto attacks only check range when enabled (`attack.go:755`). Enabling keeps the old swing
+  time (`max(swingAt, now)`), so leaving and coming back neither resets the swing nor gives a free one.
 - **Facing:** it writes `PseudoStats.InFrontOfTarget` (`character.go:246`), which the core reads at each roll for
   parry and block.
 - **Moving:** it calls `Unit.InterruptHardcast` when movement or a jump starts during a hard cast. `IsMoving` stays
   false, because we don't use `MoveTo`, so the session's own checks handle casting while moving.
+- **Totems:** a totem stands about 2 yards from you, at a fixed angle for each element (check). Fire totems hit only
+  targets in their reach, through the shaman hook `FireTotemInReach`: Searing Totem 20 yards, Magma Totem 8, and Fire
+  Nova 10 yards around the totem (radii from the client spell tables). The session also checks Fire Nova's own 30
+  yard cast range to the totem.
 
-Known gaps: totem buffs don't drop when you walk away from the totem (totem reach exists only in leveling,
+Known gaps: totem buffs don't drop when you walk away from the totem (buff reach exists only in leveling,
 `shaman/totem_reach.go:17`). `DistanceFromTarget` is one number per unit, which limits fights with several enemies.
 Both matter from Milestone 2 on, and the fix is decided then.
 
@@ -417,11 +541,12 @@ slow.
 
 The live HUD also needs the next swing time and the cast end time. The Replay view gets those by looking ahead in the
 finished log, which a live stream can't do. The session reads them from the units after each batch
-(`AutoAttacks.NextAttackAt`, `Unit.Hardcast`) and sends them in `units`.
+(`AutoAttacks.NextAttackAt`, gated by its own "attack on" flag, and `Unit.Hardcast`) and sends them in `units`.
 
 ### HUD overlay
 
-The Replay view draws your EllesmereUI frames, the Bayov WeakAuras class pack and MSBT style combat text. Its model is
+The Replay view draws your EllesmereUI frames, your aura pack (ForeverAuras, the WeakAuras style addon the user runs)
+and MSBT style combat text. Its model is
 built once from a finished fight (`buildReplayModel`, `replay_model.ts:327`), and parts of it look ahead: swing timers,
 cast pushback, and the bar layout chosen from cooldowns used in the fight. The draw functions are "state at time t"
 lookups, so a model that only grows forward in time can feed them.
@@ -430,7 +555,7 @@ So we reuse the markup, CSS and helpers (`updateIcon` and `updateCastBar` in `re
 model fed by events in `ui/practice/`. Helpers that aren't exported are copied. Your real action bars are new code.
 
 The Replay view's cooldown sweep is a `conic-gradient` driven by a CSS variable set every frame
-(`_replay.scss:790`). At 144Hz that repaints every icon every frame on the main thread, next to Three.js. Step 8
+(`_replay.scss:790`). At 144Hz that repaints every icon every frame on the main thread, next to Three.js. Step 7
 measures it. If it's too slow, the sweeps move into one 2D canvas. Combat text animates only `transform` and
 `opacity`.
 
@@ -438,16 +563,19 @@ measures it. If it's too slow, the sweeps move into one 2D canvas. Combat text a
 
 - **Three.js.** It has no particle system, so particles come later from three.quarks or our own M2 particle code.
   Frame time with 40 characters is measured in spike 2, not guessed.
-- **WoW models drawn directly**, not converted to glTF (see [Assets](#assets-local-only)). Weapons and helms hang on
-  M2 attachment points: hands 1 and 2, spell palms 21 and 22, back sheaths 26 to 28, hip sheaths 32 and 33. Weapons
-  are sheathed out of combat (where, from the item's sheathe type) and drawn in combat.
-- **Animations by AnimationData id:** stand 0, run 5, one hand attack 17, ready 26, precast 31, cast 32, channel 76
-  and 77. Attacking while running blends the upper body over the run. Some spells name their own animation through
+- **WoW models drawn directly**, not converted to glTF (see [Assets](#assets-local-only)). Forever's character
+  models keep their skeleton in a separate `.skel` file and their animations in `.anim` files listed by FileDataID.
+  Weapons and helms hang on M2 attachment points: hands 1 and 2, spell palms 21 and 22, back sheaths 26 to 28, hip
+  sheaths 32 and 33. Weapons are sheathed out of combat (where, from the item's sheathe type) and drawn in combat.
+- **Animations by AnimationData id:** stand 0, run 5, one hand attack 17, two hand attack 18, ready 26, precast 31,
+  cast 32, jump start 37, jump 38, jump end 39, fall 40, channel 124 (directed) and 125 (omni). Attacking while
+  running blends the upper body over the run. Some spells name their own animation through
   their visual kit.
 - **Placeholders:** until the model renderer works, units are capsules with their race's real height and combat
   reach, so camera and range checks hold before real models arrive.
-- **Loading:** `instantiateStreaming`, so Chrome caches the compiled wasm. The worker needs `wasm_exec.js` from
-  GOROOT's `lib/wasm`, the way `vite.build-workers.ts` gets it.
+- **Loading:** `instantiateStreaming`, so Chrome caches the compiled wasm (Go's file server sends `.wasm` as
+  `application/wasm`). The worker is a Vite module worker (`new Worker(new URL(...), {type: 'module'})`) that imports
+  `wasm_exec.js` from GOROOT's `lib/wasm`, not the CommonJS worker build in `vite.build-workers.ts`.
 
 ## Playing like WoW
 
@@ -468,14 +596,18 @@ All of it lives in `sim/practice` and `ui/practice`. None of it changes the sim 
 | Run | 7 yd/s | right (warcraft.wiki.gg) |
 | Walk | 2.5 yd/s | right |
 | Backpedal | 4.5 yd/s | right |
-| Strafe | 7 yd/s | check |
+| Strafe | 7 yd/s | right (the protocol has no strafe speed) |
 | Forward plus strafe | 7 yd/s, not faster | check |
 | Backpedal plus strafe | 4.5 yd/s | check |
-| Turn with keys | 180°/s | check (no Blizzard source) |
+| Turn with keys | 180°/s | right (engine: π rad/s) |
 | Turn with right drag | at once, to where the camera looks | right |
-| Jump | about 1.64 yd high, 0.83s in the air, direction locked, you can still turn | check |
+| Turn keys while the right button is held | strafe instead of turning | right |
+| Jump | about 1.64 yd high, 0.83s in the air, direction locked, you can still turn | right (engine jump speed and gravity) |
 
-- Both mouse buttons held runs forward. Autorun (Num Lock by default) runs until you press a movement key.
+- The user turns with A and D and strafes by holding the right mouse button, so the right button rule is the one
+  their movement depends on. Left drag doesn't make the turn keys strafe.
+- Both mouse buttons held runs forward. Autorun (Num Lock by default) runs until you press forward, back or autorun
+  again. Strafing and turning don't stop it.
 - Click to move is off (`autoInteract` 0).
 - Units don't collide with each other. You walk through the dummy and other players, as in game. Unit cylinders are
   only for clicks and range.
@@ -487,12 +619,18 @@ All of it lives in `sim/practice` and `ui/practice`. None of it changes the sim 
 - **Melee range** is the larger of 5 yards and the two units' combat reach plus 4/3 yards. When both units move (not
   walking), it grows by 8/3 yards, which is why you can keep hitting a running target. Blizzard confirms this extra
   reach exists but gives no numbers. Tauren have a larger reach. Status: check.
-- **Spell range** counts the target's combat reach. Whether your own reach (about 1.5 yards) is added too is a check,
-  measured at max range on the dummy.
-- **Facing:** spells and abilities need the target in your front 180°. Auto attack may use a narrower 120°. Backstab
-  style abilities need you outside the target's front 180°. Status: check. Parry and block only happen from the front,
+- **Spell range** starts as the engine model: max range plus your combat reach plus the target's. The moving leeway
+  is added only for melee range spells. Status: check, measured at max range on the dummy.
+- **At a cast's end** the game checks range and facing again, with about 10% of max range (at most 3 yards) of extra
+  room. Turning away during Lightning Bolt fails it with "Target needs to be in front of you." Status: check.
+- **Facing:** spells and abilities need the target in your front 180°, auto attack in your front 120° (right, engine).
+  Backstab style abilities need you outside the target's front 180°. Parry and block only happen from the front,
   which the sim already handles through `InFrontOfTarget`.
-- **Out of range:** auto attack stays on and stops swinging. It resumes when you're back in range.
+- **Out of range:** auto attack stays on. When a swing is due but you're out of range or facing away, the game tries
+  again every 100ms, so the swing lands about as soon as you're back, with no timer reset. The error is sent only when
+  it changes, not on each try. The built-in swing timer dims while you're out of range.
+- **Height:** the melee check counts the height gap, so a jump at the edge of melee range can lose a swing near the
+  top of the jump. Status: check.
 
 ### Casting and attacking
 
@@ -510,7 +648,17 @@ All of it lives in `sim/practice` and `ui/practice`. None of it changes the sim 
 
 ### Errors
 
-Errors show in red at the top center with the game's error sound. The texts come from GlobalStrings:
+Errors show in red at the top center. The texts come from GlobalStrings, and the rules from Forever's UI code
+(`UIErrorsFrame.lua` with its Forever overrides):
+
+- A line stays 2s and fades over 0.5s.
+- Some errors only flash the line already on screen for 0.2s, with no new line and no sound: "Not enough mana", the
+  client's "Out of range.", "Item is not ready yet." and a few more. Other errors add a line and play the sound on
+  every press.
+- Many errors play your race and gender's voice line (`Sound_EnableErrorSpeech` 1), not only a sound.
+- Forever hides "Another action is in progress" and shows "Spell is not ready yet." and "Ability is not ready yet.",
+  which retail hides.
+- EllesmereUI might replace the error frame. That's a check.
 
 | When | Text |
 | --- | --- |
@@ -518,35 +666,43 @@ Errors show in red at the top center with the game's error sound. The texts come
 | Spell or ability, target behind you | "Target needs to be in front of you." |
 | Auto attack, target behind you | "You are facing the wrong way!" |
 | Backstab style ability from the front | "You must be behind your target." |
-| Spell or ability out of range | "Out of range" or "Out of range." (which one shows is a check) |
+| Spell or ability out of range | "Out of range." (the client's own check) |
+| Out of range when the server refuses (range changed in flight) | "Out of range" |
 | Auto attack out of range | "You are too far away!" |
 | GCD or cooldown | "Spell is not ready yet." or "Ability is not ready yet." (check which) |
-| Already casting | "Another action is in progress" |
 | Cost | "Not enough mana", "Not enough energy", "Not enough rage" |
-
-How often the same error repeats while you hold or mash a key is a check.
+| Harmful spell with no target | "You have no target." |
+| Wrong kind of target | "Invalid target" or "Target is friendly" |
+| `/startattack` with no target | "There is nothing to attack." |
+| Dead target | "Your target is dead" |
+| `/use 13` on cooldown | "Item is not ready yet." |
+| A spell in Ghost Wolf with `autoUnshift` 0 | "You are in shapeshift form" |
+| Ghost Wolf indoors | "Can only use outside" |
+| Line of sight (Milestone 2) | "Target not in line of sight" |
 
 ### Targeting
 
-- Left click picks a unit by its cylinder, not its mesh (`interactOnLeftClick` 1). Right click targets and attacks.
+- Left click picks a unit by its model's bounding hull from the M2 file, and by its cylinder until models load
+  (`interactOnLeftClick` 1). Right click targets and attacks.
 - Tab picks the nearest enemy in front of you, then cycles (`TargetNearestUseNew` 1). When your target is in combat,
   Tab cycles only enemies in combat (`TargetPriorityCombatLock` 1).
-- Esc clears the target. Clicking the ground keeps it (`deselectOnClick` 0, "Sticky Targeting").
+- Esc first closes menus, then stops your cast or channel, and only clears your target when there's nothing else to
+  do. So Esc during Lightning Bolt cancels the bolt and keeps the target. Clicking the ground keeps the target
+  (`deselectOnClick` 0, "Sticky Targeting").
 - `@mouseover` is the unit under the cursor. A right press and release with no movement is a click, and the unit is
   picked at mousedown.
 - No soft targeting: it's for gamepads only.
 - `autoSelfCast` is on by default.
 - Enemy nameplates are off by default (`nameplateShowEnemies` 0, V toggles them), and show up to 45 yards.
+- `TargetEnemyAttacker` 1 targets whatever hits you when you have no target. It matters from Milestone 2.
 
 ### Camera
 
 - **Left drag** orbits the camera around you without turning you. **Right drag** turns you to the camera's direction,
   and pitches the camera.
-- **The drag cycle:** the room locks the pointer on mousedown and unlocks it on mouseup, and the cursor comes back
-  where it started (check on Chrome for Windows). Chrome blocks a re-lock for about a second only when you leave the
-  lock with Esc yourself, and after the first "Press Esc" bubble the later locks are silent. A short Esc goes to the
-  page, so it clears your target mid-drag as in WoW. The lock starts a moment after mousedown, so the room uses plain
-  mouse moves until it's active.
+- **Dragging:** the room locks the pointer on mousedown and unlocks it on mouseup, so the cursor comes back where it
+  started. The lock starts a moment after mousedown, so plain mouse moves are used until then. How Chrome for Windows
+  handles fast repeated drags is a check.
 - **Mouse look speed** follows `cameraYawMoveSpeed` (default 180) and `cameraPitchMoveSpeed` (90).
 - **Mouse input** follows `rawMouseEnable` (default 0, Windows mouse acceleration on) and
   `rawMouseAccelerationEnable`. Raw input (`unadjustedMovement`, Chrome only) is used only when `rawMouseEnable` is 1.
@@ -563,9 +719,11 @@ How often the same error repeats while you hold or mash a key is a check.
 
 ### Feedback
 
-- **Sounds:** weapon swings and impacts, cast start and finish, proc sounds, the error sound, and your WeakAuras'
-  sounds. Many players react to sounds more than to icons.
-- **Combat text** in your MSBT style, and your EllesmereUI frames and WeakAuras as in game.
+- **Sounds:** weapon swings and impacts, cast start and finish, proc sounds, the error sound and voice lines, and
+  your ForeverAuras sounds. Those are addon files under `_forever_/Interface/AddOns` (BayovCore, FojjiCore,
+  ForeverAuras), not game files, so the practice server serves them read only, with a fallback when a file is missing.
+  Many players react to sounds more than to icons.
+- **Combat text** in your MSBT style, and your EllesmereUI frames and ForeverAuras as in game.
 - **Animations** match the sim: the attack animation lands on the sim's swing time, and the cast animation follows
   the cast bar.
 - **Audio** starts on the first click or key press, since browsers block it before one. Sound files are decoded ahead
@@ -582,7 +740,7 @@ How often the same error repeats while you hold or mash a key is a check.
 
 - **Display lag:** Chrome always waits for vsync, and its compositor adds about 1 to 2 frames (7 to 14ms at 144Hz)
   over WoW with vsync off. This changes your reaction time only, never the sim's results. We try the canvas
-  `desynchronized` hint, and spike 4 measures press to screen.
+  `desynchronized` hint, and we measure press to screen once the scene exists (step 5).
 - **Browser support:** Keyboard Lock is Chrome and Edge only, so the room needs one of them.
 - **Keys:** Keyboard Lock works only in fullscreen started by the page (a click, not F11). The room locks only your
   bound keys plus Esc. Locking every key would let Chrome's keyboard hook swallow Alt+Tab and the Win key, which traps
@@ -601,37 +759,53 @@ How often the same error repeats while you hold or mash a key is a check.
    - cast bar and GCD start timing from the same probe: it logs `UNIT_SPELLCAST_SENT`, `UNIT_SPELLCAST_START` and
      `SPELL_UPDATE_COOLDOWN` times next to `GetNetStats`, which settles whether the client predicts them
    - which error texts fire, from `UI_ERROR_MESSAGE`
+   - turning away during a cast, a spell press in Ghost Wolf, and a press while a spell comes off cooldown
    - cast, GCD and swing timing from the combat log
    - camera zoom, field of view and turn speed from screen recordings of the same moves
 2. **Side by side.** The same short fight on the in-game dummy and in the room, with the logs compared.
-3. **A feel checklist** you play through after each change to movement, camera or casting, one line per rule above.
+3. **A feel checklist** (`docs/practice_room_feel.md`) you play through after each change to movement, camera or
+   casting, one line per rule above.
+4. **Spell batching:** whether Forever's server groups spell results into time batches. One log check.
 
 ## Assets (local only)
 
 The Forever client's data sits in the shared CASC storage (WoW's archive format) of the WoW install. Its product code
-in `.build.info` is `wowf`, version 1.60.1.70707 today. The install folder is a setting. On this PC the practice
-server reads it at `/mnt/d/Gaming/World of Warcraft`.
+in `.build.info` is `wowf`, version 1.60.1.70707 today. Two folders matter:
+
+- The data root (`/mnt/d/Gaming/World of Warcraft` on this PC), with `.build.info` and `Data/`. It's the one setting.
+- The Forever folder inside it (`_forever_`), with `WTF`, `Interface/AddOns`, `Cache/ADB` and `Fonts`. The server
+  finds it by its `.flavor.info`, which names `wowf`.
 
 **The pipeline:**
 
 1. The practice server extracts raw files by FileDataID (the client's file number): M2 models, `.skin`, `.skel` and
-   `.anim` files, BLP textures, OGG sounds and DB2 tables. It runs TACTTool from TACTSharp's prebuilt release as a
-   command-line tool. The Windows build, run through WSL, reads `D:` directly instead of through the slow WSL mount of
-   the 139 GB `Data` folder. Whether it needs the .NET runtime is part of spike 1 (dotnet isn't installed). CascLib
-   with a cgo binding is the fallback. There's no usable Go CASC library. Files are cached in
-   `~/forever-practice/assets/`.
-2. DB2 tables come from the local client, plus its hotfix cache (`DBCache.bin`), not from wago.tools. That way each
-   friend matches their own client build and needs no internet.
-3. The browser runs our own Three.js model renderer. It starts from three-m2loader (MIT, reads the format, skins and
-   animations) and ports wow.export's character assembly (MIT, about 4 to 5 thousand lines of browser JavaScript).
+   `.anim` files, BLP textures and OGG sounds. It runs TACTTool from TACTSharp's prebuilt release, a self-contained
+   single file that needs no .NET runtime. The Windows build, run through WSL with Windows paths (`wslpath -w`), reads
+   `D:` directly instead of through the slow WSL mount of the 139 GB `Data` folder. CascLib with a cgo binding is the
+   fallback. There's no usable Go CASC library.
+   - TACTTool reloads the build's tables on every run, so the server extracts in batches (`-m list`). It plans each
+     character's file list from the tables, and the asset route serves only cached files and queues a batch on a
+     miss. Files are cached in `~/forever-practice/assets/`.
+   - TACTTool reads decryption keys only from `WoW.txt` in its working folder (wowdev's TACTKeys list). A missing key
+     gives a zero-filled file with exit code 0. So after each extraction the server checks the file's magic (`MD21`,
+     `SKL1`, `BLP2`, `OggS`) and that it isn't all zeros.
+2. Game tables come from wago.tools as CSV, for the exact build in `.build.info`, cached in
+   `~/forever-practice/db2/<build>/`. The repo already pulls wago tables by build. Reading them from the local client
+   needs a DB2 reader, table layouts for the build and a merge of the hotfix cache (`DBCache.bin`). That's a project of
+   its own, so it waits for Milestone 4 and spike 6.
+3. The browser runs our own Three.js model renderer. We port wow.export's file readers (M2, SKEL, ANIM and BLP) and its
+   character assembly (MIT), and build Three.js meshes from them. wow.export 0.2.x has its own WebGL renderer, not
+   Three.js, so the port is about 10 thousand lines. three-m2loader (MIT) can't read `.skel` files or `.anim` files by
+   FileDataID, so it's only a reference for building tracks and materials.
 
-wow.export added Forever support in 0.2.20 (2026-11-02). It has no command line or remote control, so it can't drive
-the pipeline, and its glTF export leaves weapons unattached and drops particles. We use its GUI to check our output.
+wow.export added Forever support in 0.2.20 (2026-11-02) through the new product code, so the file formats are Classic
+Era's. It has no command line or remote control, so it can't drive the pipeline, and its glTF export leaves weapons
+unattached and drops particles. We use its GUI to check our output.
 
-**A dressed character** is the biggest asset job in Milestone 1 (days of porting, one to two weeks from scratch):
+**A dressed character** is the biggest asset job in Milestone 1. Spike 2 sizes it.
 
-1. ChrModel gives the body model. Customization choices give skin textures and geosets (the body parts shown or
-   hidden, like hair and ears).
+1. ChrModel, then CreatureDisplayInfo and CreatureModelData, give the body model and its skeleton. Customization
+   choices give skin textures and geosets (the body parts shown or hidden, like hair and ears).
 2. Each item leads through ItemModifiedAppearance and ItemAppearance to ItemDisplayInfo. Its geoset groups switch
    body parts (gloves, boots, robe, cape, belt), and HelmetGeosetData hides hair under helms.
 3. ItemDisplayInfoMaterialRes and ComponentTextureFileData give one texture per body section (arm, hand, torso, leg,
@@ -642,8 +816,12 @@ the pipeline, and its glTF export leaves weapons unattached and drops particles.
 
 - Characters: ItemModifiedAppearance, ItemAppearance, ItemDisplayInfo, ItemDisplayInfoMaterialRes, ModelFileData,
   TextureFileData, ComponentModelFileData, ComponentTextureFileData, HelmetGeosetData, ChrModel, ChrRaceXChrModel,
-  ChrCustomization tables, CharComponentTextureLayouts and Sections, ItemSparse (sheathe type).
-- Animations, spells and sound: AnimationData, SpellXSpellVisual, SpellVisual, SpellVisualEvent, SpellVisualKit,
+  CreatureDisplayInfo, CreatureModelData, ChrModelTextureLayer, ChrModelMaterial, ChrCustomization tables (Option,
+  Choice, Element, Geoset, Material), CharComponentTextureLayouts and Sections, ItemSparse (sheathe type).
+- Spells for the spellbook and the spells the sim doesn't have: SpellName, SkillLineAbility, SpellLevels, SpellMisc
+  (icons, cast time and range ids), SpellCastTimes, SpellCooldowns, SpellPower, SpellRange, SpellDuration. The page
+  passes the rows it needs to the session at start.
+- Animations, visuals and sound: AnimationData, SpellXSpellVisual, SpellVisual, SpellVisualEvent, SpellVisualKit,
   SpellVisualKitEffect, SpellVisualKitModelAttach, SpellVisualMissile, SpellChainEffects, SoundKit, SoundKitEntry,
   WeaponSwingSounds2, WeaponImpactSounds.
 
@@ -653,7 +831,7 @@ reference (read only, it has no license file).
 
 **Keeping it local:** the assets live in `~/forever-practice/assets/`, outside the repo. Only the practice server
 serves them. The deploy guard in `tools/dps_report/build_artifact.mjs` fails a DPS Report build that touches practice
-code or paths, and `dist/forever/` never holds practice files.
+code or paths, and `dist/forever/` never holds practice files. The deploy only ships `dist/forever`.
 
 ## Keybinds and action bars
 
@@ -671,6 +849,10 @@ of `bindings-cache.wtf` replaces the default for its key, and `NONE` unbinds it.
 Notes from the user's files:
 
 - There is one file per account. A character file overrides it, but none of the user's characters has one.
+- The user has two accounts (`405385253#1` and `#3`), each with its own bindings, macros, CVars and BayovCore file.
+  The server reads records from every account, keeps the newest copy of each GUID (by `seen`), and takes the
+  bindings, macros and CVars from that record's account. A character's own `macros-cache.txt` and
+  `config-cache.wtf` win over the account's.
 - The user turns with A and D (`TURNLEFT`, `TURNRIGHT`) and strafes by holding the right mouse button. Q and E are
   action buttons.
 - WoW falls back to a key's unmodified binding when the modified key is unbound. Alt+F1 isn't bound, so it runs F1's
@@ -696,7 +878,8 @@ Bindings name a command, and each command maps to a slot. Blizzard's table, chec
 EllesmereUI keeps Blizzard's slots and binds through the same commands, so its keys are in the bindings too. Its own
 bar numbers differ from Blizzard's (its "Bar2" is `MULTIACTIONBAR1`), so the doc names commands, never "bar N".
 
-On Forever, every class's stance or form pages bar 1 to slots 73-120. Milestone 1 assumes page 1.
+On Forever, every class's stance or form pages bar 1 to slots 73-120. Ghost Wolf is a form, and whether it pages bar
+1 on Forever is a check (retail's doesn't). Until then the room keeps page 1 in Ghost Wolf.
 
 ### What's in each slot
 
@@ -717,7 +900,9 @@ login with BayovCore on. So:
   `<realm id>/<Name-Name>` and can only be joined to a record by name. A "No record" entry uses the defaults.
 - With no record, the room fills bar 1 and the bars after it with the spec's main spells, taken from the class sim's
   rotation in the settings. The rotation only picks the spells, it never casts them.
-- Bar spells the sim doesn't have (Ghost Wolf, heals) show greyed out.
+- Every class spell at your level is castable (see [Your toolkit](#your-toolkit)). Only ranks the sim drops show
+  greyed, and macros with unsupported commands get a badge.
+- A bag item slot is `{kind="item", id=<item id>}` and runs `useItem`.
 - Buttons can also be clicked.
 
 ### Editing bars and binds in the room
@@ -727,7 +912,8 @@ login with BayovCore on. So:
 - **Binds:** a quick keybind mode, as in WoW: hover a button and press the key or mouse button, with modifiers.
 - Edits are saved per character in `~/forever-practice/settings/<GUID or "default">.json`, on top of what the client
   files and the record say: `{ "version": 1, "slots": { "<slot>": { "kind": "spell", "id": 0 } }, "binds": { "<KEY>":
-  "<COMMAND>" } }`. They never write back to the WoW folder. "Reset" puts the client's layout back.
+  "<COMMAND>" }, "fight": { ... } }`. A slot's kind is `spell`, `macro` or `item`. They never write back to the WoW
+  folder. "Reset" puts the client's layout back.
 
 ### Macros
 
@@ -738,7 +924,8 @@ What the user's shaman macros use, which Milestone 1 supports:
   the empty `[]` fallback.
 - `/startattack`, `/cleartarget [dead][help]`.
 - Ranks: `Frost Shock(Rank 1)`, any case.
-- `/use 13` and `/use 14` (trinket slots), and `/use` item lines where the first usable one fires.
+- `/use 13` and `/use 14` (trinket slots, `useSlot`), and `/use <item>` lines (`useItem`), where the first usable
+  one fires.
 - `#showtooltip` sets the button icon.
 
 A macro with anything else (`/castsequence`, `/tm`, `/run`, `/click`, `/focus`, `/target`, `/bayov`) gets an
@@ -752,24 +939,31 @@ only when changed, so a missing CVar means the default from the Forever CVar lis
 
 ## The practice server
 
-`cmd/practice/` serves the built page from `dist/practice/` and these routes:
+`cmd/practice/` (built with `-tags with_db,practice`) serves the built page from `dist/practice/` and these routes:
 
 | Route | What |
 | --- | --- |
+| `POST /api/request` | a class sim link or JSON in, a `RaidSimRequest` with its item database out |
 | `GET /api/records` | BayovCore records (GUID, name, realm, class, level), plus "No record" |
 | `GET /api/character/<guid>` | bindings (defaults + WTF + saved edits), slots, macros, CVars |
-| `PUT /api/settings/<guid>` | save bar and bind edits |
-| `GET /api/assets/<fileDataId>` | one extracted file |
-| `GET /api/db2/<table>` | one DB2 table as JSON |
+| `PUT /api/settings/<guid>` | save bar, bind and fight setting edits |
+| `GET /api/assets/<fileDataId>` | one extracted file, or a queued batch on a miss |
+| `GET /api/db2/<table>` | one game table as JSON, from the cached wago CSV |
+| `GET /api/addons/<path>` | one sound file from `_forever_/Interface/AddOns`, read only |
 | `GET`, `POST /api/attempts` | list and save attempts, `GET /api/attempts/<id>` for one |
 
-For development, the practice Vite dev server runs on its own port, proxies `/api` to `cmd/practice`, and imports the
-`jsxInject` setting and the `/forever/assets` middleware from `vite.config.mts` without editing it.
+It also serves `/forever/assets/` from the repo's `assets/`, because `ui/core` code fetches files like
+`/forever/assets/database/db.json` (`ui/core/proto_utils/database.ts:23`).
+
+For development, the practice Vite dev server runs on its own port with its own config (`root: ui/practice`), and
+proxies `/api` to `cmd/practice`. It doesn't reuse `getBaseConfig` from `vite.config.mts`, which brings
+`base: '/forever/'` and `outDir: dist/forever`. It copies the one `jsxInject` line and has its own small middleware
+for `/forever/assets`.
 
 ## Fight summary
 
-The room sims only the fight you played: one iteration, no other seeds and no averages. Everything counts from the pull to the end
-(Stop, or the set length in Encounter mode). At the end it shows:
+The room sims only the fight you played: one iteration, no other seeds and no averages. Everything counts from the
+pull to the end (Stop, the set length in Encounter mode, or the 60 minute cap). At the end it shows:
 
 - your DPS and damage by spell
 - idle GCD time
@@ -777,6 +971,10 @@ The room sims only the fight you played: one iteration, no other seeds and no av
 - time out of range
 - swings pushed back by casts
 - time with resources capped
+
+The session works these out from the event stream, cut to the time from the pull to the end. The core's own metrics
+count some of the prepull: an aura that fades before 0 adds negative uptime (`aura.go:788`), and casts and mana spent
+before 0 are counted (`spell.go:616`). Damage is counted from 0 on in both.
 
 The whole fight opens in the Replay view.
 
@@ -789,7 +987,11 @@ you pick separately, because the sim character and the in-game character aren't 
 
 Fight rules for Milestone 1 are the two modes in [Fight modes and the pull](#fight-modes-and-the-pull). Before the
 pull you're free to prepare for as long as you like. The HUD has the Start Encounter button with its countdown and
-length settings, the Stop button, the countdown, and the fight timer. Keys for Stop, restart and leave.
+length settings, the Stop button, the countdown, the fight timer, and the ping and "Execute range" settings. Stop,
+Restart and Leave can be bound to keys. Restart starts a new attempt with a new seed and the same settings.
+
+The fight settings are saved per character with the bar edits, in `settings/<GUID>.json`:
+`"fight": { "mode", "lengthMs", "countdownMs", "pingMs", "executeFromStart" }`.
 
 ## Multiplayer (Milestone 4)
 
@@ -805,6 +1007,7 @@ Milestone 4 is more than a new connection. It needs:
 - each player's latency
 - filtering events per player, because a 40 player fight makes thousands of aura, resource and tick events a second
 - assets for everyone else's race and gear on each friend's PC
+- game tables read from each friend's own client, so everyone matches their build (spike 6)
 
 Lockstep (every client runs the sim and waits for everyone's inputs) doesn't fit 40 players: every input waits for the
 slowest player, and joining mid-fight is hard. So the server decides everything, as WoW does.
@@ -815,77 +1018,107 @@ we never send game files anywhere. The details wait for Milestone 4.
 
 ## Milestones
 
-Each step says when it's done. Spike 1 runs first, next to step 1, since it's the riskiest.
+Each step says when it's done. Step 0 runs next to step 1, because the dressed character is Milestone 1's biggest
+risk and doesn't depend on the sim work.
 
 **Milestone 1: a basic 3D room.** Your enh shaman against a dummy on a flat arena.
 
-1. `sim/practice` session: start, inputs, run, casting checks, ping and the spell queue, your prepull, the world,
-   range and facing, plus the three core hooks. Done when:
-   - Go tests pass for: the last press in the queue wins, a press outside the window fails, a cast while moving
-     fails, leaving melee range stops swings and coming back resumes them, wrong facing fails, ping shifts apply
-     times, a totem dropped before the pull is up at the pull, the state at the pull is identical with and without the
-     time swap, the first harmful hit is the pull at 0 in Free mode, a precast Lightning Bolt timed to land at the
-     pull counts from its landing, Stop ends the fight and the metrics use the stop time, the Encounter mode countdown
-     puts the pull at its end, an early pull starts the fight at once, the set length ends the fight, no swing before you turn auto attack on, a `/startattack`
-     macro and a right click both turn it on, an imbue cast before or during the fight replaces the active
-     imbue and the Windfury Totem rule follows the current imbue, Ghost Wolf costs its GCD and mana and ends on a
-     cast, Earthbind Totem replaces Strength of Earth, an input at the fight's end is dropped, and no swing during a
-     cast
-   - for each of 100 seeds, the APL's own casts with their sim times (prepull ones included), fed back as inputs with
-     the same seed, give the same DPS, or each difference is explained (a correctness test only, the room itself never
-     runs other seeds)
-   - `make test` passes and the `identical()` check shows no change on the DPS Report requests
-2. Replays and saved attempts. Done when a replayed attempt gives an identical log on the same build, and opens in
-   the Replay view.
+0. The asset track and the probe, in parallel with step 1:
+   - Spikes 1 and 2. Done when both pass and spike 2's time estimate is written into this doc.
+   - The BayovCore probe (a change in the bayovui repo): logs position and facing every frame, the spell cast events,
+     error messages and `GetNetStats`. Done when one run of the set path and a short dummy fight are logged.
+   - The feel checklist, `docs/practice_room_feel.md`, one line per rule in [Playing like WoW](#playing-like-wow).
+1. `sim/practice` session: the request changes, start, inputs and the session queue, run, casting checks, ping and the
+   spell queue, the pull and the swap, both fight modes, the world, range and facing, the toolkit, plus the hooks in
+   [Core touch points](#core-touch-points-the-whole-list) and the aura hold fix. Done when:
+   - Go tests pass for:
+     - the queue: the last press in the window wins, a press outside the window fails, ping shifts apply times, an
+       input at the fight's end is dropped
+     - casting: a cast while moving fails, wrong facing fails, turning away during a cast fails it at the end, no
+       swing during a cast, Esc during a cast cancels it and keeps the target
+     - auto attack: no swing before you turn it on, a `/startattack` macro and a right click both turn it on, leaving
+       melee range stops swings and coming back resumes them without a timer reset
+     - the pull: your first harmful hit is the pull at 0 in Free mode, a Lightning Bolt cast before the pull counts
+       from its landing, a Magma Totem's first pulse pulls, turning auto attack on in range pulls with a swing at 0,
+       walking into range with auto attack on pulls, a failed cast doesn't pull, the state at the pull is the same
+       with and without the swap (resources, auras with time left, cooldowns, pending events relative to the pull)
+     - the prepull window: a totem dropped before the pull is up at the pull, a totem replaced before the pull loses
+       its buff at once, waiting 70 minutes before the pull and then casting works (two window swaps), every toolkit
+       spell cast at minus 9 minutes has the right aura times
+     - Free mode: Stop ends the fight and the summary uses the stop time, the 60 minute cap ends it, the dummy is
+       never in execute range unless the setting says so
+     - Encounter mode: a hit before Start Encounter starts a Free fight, the countdown puts the pull at its end, a
+       Lightning Bolt landing exactly at the countdown's end counts from 0, one landing earlier is an early pull, the
+       set length ends the fight, Stop marks it stopped early
+     - the toolkit: an imbue cast before or during the fight replaces the active imbue, both ways of swapping under
+       your own Windfury Totem keep the right totem buff, a swap to and from Rockbiter moves its attack power, an imbue
+       press never fires its proc, Ghost Wolf costs its cast and mana and speeds you up, Earthbind Totem replaces
+       Strength of Earth, a Magma Totem out of reach does no damage, a potion and a sapper used from the bags fire
+     - building every class at 60 with its whole toolkit doesn't panic
+   - The rotation check: the enh APL's own casts with their sim times (prepull ones included, plus consumables and a
+     `startAttack` at 0) are fed back as inputs, in Encounter mode with the same length, a 0 countdown and 0 ping. An
+     APL casts inside the event that triggered it and an input runs after it, so single seeds drift apart. So this
+     test runs with labeled random streams (`UseLabeledRands`) over 100 seeds, and the mean DPS must match the APL
+     run's within the noise. It's a correctness test only, the room itself never runs other seeds.
+   - `make test` passes and the `identical()` check shows no change on the DPS Report requests (the aura hold fix
+     gets its own run).
+2. Replays and saved attempts. Done when a replayed attempt's log matches the live final sim's log byte for byte, on
+   the same build, and the attempt opens in the Replay view.
 3. `practice.wasm`, in a dedicated worker with its own clock. Done when spike 4 passes and `go list -deps ./sim/wasm`
    shows no practice package.
-4. The practice server: records, bindings with the default table, CVars, macros, saved edits, assets, attempts, and
-   the install folder setting. Done when golden file tests pass for the Lua parser, the WTF parser, the slot table and
-   the macro parser.
-5. Spikes 1 and 2. Done when we can extract any Forever file by FileDataID, and spike 2's time estimate is written
-   into this doc.
-6. The 3D scene: floor, dummy, camera, movement, jumping, targeting, with sized capsules. Done when you can walk up to
-   the dummy, fight it, and the camera and movement checklist items feel right to you.
-7. The model renderer: three-m2loader plus your race's body with its animations, in place of the capsule. Done when
-   your character runs, jumps, attacks and casts with the right animations.
-8. The HUD: your bars (editable) with bindings, unit frames, cast bar, swing timer, WeakAuras, combat text, the
-   Start Encounter and Stop buttons, the countdown, the fight timer, the live meter and the fight summary. Done when a headless Chrome smoke test plays a scripted fight with
-   no console errors, the meter's total matches the summary, and the summary shows. The sweep paint cost is measured
-   here.
-9. Your gear on the model: dressed character, attachments, sheathing, icons and sounds. Done when your character
+4. The practice server: the request route, records, bindings with the default table, CVars, macros, saved edits,
+   assets, game tables, attempts, and the data root setting. Done when golden file tests pass for the Lua parser, the
+   WTF parser, the slot table and the macro parser.
+5. The 3D scene: floor, dummy, camera, movement, jumping, targeting, with sized capsules, and keys 1 to 3 from the
+   default bindings mapped to casts. Done when you can walk up to the dummy, hit it with those keys, and the movement
+   and camera numbers match the probe. Press to screen is measured here.
+6. The model renderer: the ported readers plus your race's body with its animations, in place of the capsule. Done
+   when your character runs, jumps, attacks and casts with the right animations.
+7. The HUD: the spellbook (with its bag tab), your bars (editable) with bindings, unit frames, cast bar, swing timer,
+   your auras, combat text, the fight settings, the Start Encounter and Stop buttons, the countdown, the fight timer,
+   the live meter and the fight summary. Done when a headless Chrome smoke test plays a scripted fight with no console
+   errors, the meter's total matches the summary, and the summary shows. The sweep paint cost is measured here.
+8. Your gear on the model: dressed character, attachments, sheathing, icons and sounds. Done when your character
    fights the dummy with your gear on.
-10. The BayovCore probe (a change in the bayovui repo): logs position and facing every frame, the spell cast events,
-    error messages and `GetNetStats`. Done when one run of the set path and a short dummy fight are logged. It can
-    start as soon as step 6 is in.
-11. The feel pass: every "check" in [Playing like WoW](#playing-like-wow) measured with the probe and matched, and the
-    feel checklist played through. Movement and camera get measured after step 6, not only at the end.
+9. The feel pass: every "check" in [Playing like WoW](#playing-like-wow) measured with the probe and matched, and the
+   feel checklist played through.
 
 **Milestone 2: a boss.** A boss that hits back and moves, with simple mechanics (stand still, move out, interrupt) that
-change the best rotation. Line of sight and hit box sizes. Totem reach and several enemies (see the known gaps in
+change the best rotation. Line of sight and hit box sizes. Totem buff reach and several enemies (see the known gaps in
 [World and movement](#world-and-movement)). Spike 3 runs before it. The boss's movement and mechanics live in
 `sim/practice` and use the core's spells and auras.
 
 **Milestone 3: raid bots.** The raid sim's members as bots around you, each on its APL, with raid frames. This uses the
 raid sim's whole-raid engine (its milestone M1b in `docs/raid_sim.md`) as it is.
 
-**Milestone 4: friends.** Spike 5 runs before it. See [Multiplayer](#multiplayer-milestone-4).
+**Milestone 4: friends.** Spikes 5 and 6 run before it. See [Multiplayer](#multiplayer-milestone-4).
 
 ## Spikes
 
-1. **Reading the `wowf` storage.** Start from TACTTool's prebuilt Windows and Linux releases. Check whether they need
-   the .NET runtime, and that Forever-only files (by FileDataID) come out. Open wow.export 0.2.20 on `wowf`, load an
-   Orc shaman with gear, and keep its view as the reference. Pass: any file extracts by FileDataID from Go.
-2. **A dressed character.** Port wow.export's character code onto three-m2loader for one race and one gear set.
-   Measure how long the rest takes, and the frame time with 40 characters on screen. Pass: one dressed character draws
-   right next to wow.export's view.
+1. **Reading the `wowf` storage.** Run TACTTool's Windows release on the data root with wowdev's `WoW.txt` keys. Pull
+   a batch of files for one dressed Orc by FileDataID, check their magic, and count how many Forever-only files are
+   encrypted. Open wow.export 0.2.20 on `wowf`, load an Orc shaman with gear, and keep its view as the reference. Pass:
+   a batch extracts from Go with every file's magic right and none zero-filled.
+2. **A dressed character.** Port wow.export's readers and character code to Three.js for one race and one gear set.
+   Measure how long the rest takes, and the frame time with 40 characters on screen. Pass: the dressed Orc draws
+   right next to wow.export's view and plays Stand, Run, a one and a two hand attack and SpellCast from its `.skel` and
+   `.anim` files.
 3. **Spell visuals** (before Milestone 2). Size the particle and ribbon work from WebWowViewerCpp's emitters, and
    compare with three.quarks plus hand made effects for the few spells enh uses.
-4. **WASM in real time.** Over a 3 minute fight, measure the time from a key press to its event, and from a press to
-   the next frame on screen (Event Timing API), the garbage collector pauses, and the time swap at the pull. Pass: key to event under one frame
-   (7ms at 144Hz) at p99. On a fail, we cut per-event allocations first, then the log lines we send.
+4. **WASM in real time.** Measure:
+   - cold and warm startup (fetch, compile, Go init, `RegisterAll`, `NewSim`)
+   - over a 3 minute fight at ping 0, the time from a key press to its event, and the garbage collector pauses
+   - the worst-case swap at the pull: a full 10 minute prepull window with totems and regen ticks
+
+   Pass: key to event under one frame (7ms at 144Hz) at p99, and the swap under one frame at p99. When key to event
+   fails, we cut per-event allocations first, then the log lines we send. When the swap fails, a second worker holds
+   the spare sim, or the prepull window gets shorter.
 5. **WASM against native** (before Milestone 4). Run the same seed and inputs in the browser and in a native Go test,
    and diff the logs.
+6. **Game tables from the local client** (before Milestone 4). Read one table with a DB2 reader and the build's table
+   layouts, merge `DBCache.bin` hotfixes, and diff it with wago's CSV for the same build.
 
 ## Open questions
 
-None right now.
+1. **A "Practice" button in the class sim.** It would open the room with the current settings, but it changes the
+   regular sim UI, so it needs the user's OK. Until then, settings come in through the export.
