@@ -1,18 +1,27 @@
 # Practice room
 
-A realtime 3D room where you play your character against an encounter, driven by the same sim that makes the DPS
-Report. You press your own keybinds, and the sim decides every outcome exactly as it does in a sim run.
+A realtime room where you play your character against an encounter, driven by the same sim that makes the DPS Report.
+You press your own keybinds, and the sim decides every outcome exactly as it does in a sim run.
 
-It's a sim tool first. The point is to see how close real play gets to the sim's optimal rotation, to try a rotation
-or a talent choice by hand before using it in game, and later to practice a raid fight with friends. It is not a game
-we ship.
+It's a sim tool first. The point is to play a fight by hand under the sim's rules, to try a rotation or a talent
+choice before using it in game, and later to practice a raid fight with friends. It is not a game we ship.
 
 **How to read this doc:**
 
 - Decisions marked "(the user, 2026-11-02)" are settled, and [Decisions](#decisions) lists them.
-- Everything else is a proposal.
-- An implementer starts at [Milestones](#milestones). [Spikes](#spikes) lists what we must check before building on
-  it.
+- Everything else is a proposal. [Open questions](#open-questions) lists anything the user still has to decide.
+- An implementer starts at [Milestones](#milestones). [Spikes](#spikes) lists what we check before building on it.
+
+**History:** first drafted 2026-11-02. Reviewed the same day by five reviewers (the sim engine, the WoW assets, the
+keybinds and bars against the real client files, the client and networking, and scope), and rewritten from their
+findings. Then updated with the user's answers the same day.
+
+## What it answers
+
+- **What you really do in a fight under the sim's rules,** at your ping: your DPS from one fight, and where you lost
+  time (idle GCDs, buffs that fell off, time out of range).
+- **How a talent, gear or rotation choice plays by hand** before you respec in game.
+- **Later: a raid fight**, with bots or friends in the other spots.
 
 ## Decisions
 
@@ -22,180 +31,563 @@ we ship.
 3. **Local only, with real WoW assets** (the user, 2026-11-02). Character models, items, spell icons, sounds and
    visuals come from the WoW Forever client on this PC. They are never deployed, committed or put in `dist/`.
 4. **Keybinds and action bars come from the Forever client** (the user, 2026-11-02). Later, other players import
-   their own.
-5. **First milestone** (the user, 2026-11-02): enh shaman, target dummy, flat arena, your keybinds, a live DPS meter,
-   and an end of fight comparison with the sim's optimal rotation.
+   their own. Keys the client doesn't set use Blizzard's default bindings. Which spell sits in which slot, and which
+   key presses each button, can be edited in the room.
+5. **First milestone is a basic 3D room** (the user, 2026-11-02): enh shaman, target dummy, flat arena, your keybinds,
+   a live DPS meter and a fight summary. No 2D milestone first.
+6. **Don't disrupt the regular sim** (the user, 2026-11-02). The practice room is kept as separate as possible. It
+   uses the game rules the sim codes, as a consumer of the sim. See [Separation](#separation-from-the-regular-sim).
+7. **One iteration, no averages** (the user, 2026-11-02). The room sims only the fight you play. It doesn't run other
+   seeds or compare with the sim's average, for now.
+8. **Ping is modeled** (the user, 2026-11-02), as a setting with your in-game latency.
+9. **You do the prepull** (the user, 2026-11-02): totems, imbues and buffs before the pull are your own casts.
+10. **Fixed fight length** (the user, 2026-11-02).
+11. **It plays like WoW** (the user, 2026-11-02). Movement, casting, the camera and the small quirks match the game as
+    closely as we can, so you play the way you do in game and the sim result is accurate. See
+    [Playing like WoW](#playing-like-wow).
+
+## Separation from the regular sim
+
+The practice room is a consumer of the sim core, the way the DPS Report is a consumer of sim runs. It builds a normal
+sim from a normal config and drives it from outside through what the core already exports. The game rules (spells,
+procs, auras, resources, the APLs of every other unit) stay in the core, and the practice room doesn't change them.
+
+**Where the code lives:**
+
+| Part | Place | Shared with the regular sim |
+| --- | --- | --- |
+| Session, input rotation, world, fight summary | `sim/practice/` | imports `sim/core`, nothing imports it |
+| WASM | `practice.wasm`, built from `sim/practice/wasm/` by its own make target | `lib.wasm` unchanged |
+| Server | `cmd/practice/` (keybinds, records, assets, attempts) | the regular dev server unchanged |
+| Page | `ui/practice/` with its own Vite config | imports from `ui/core`, not in the regular build |
+| Assets, attempts, your bar edits | `practice_assets/`, `practice_attempts/`, `practice_settings/` | in `.gitignore` |
+
+**Rules for touching the shared code:**
+
+- The class sims, the DPS Report, rotopt and the leveling sim give bit-identical results after any practice change.
+  Every core touch is checked by running the Go tests and by comparing the results of a fixed set of presets and seeds
+  before and after.
+- A core change is only a small, read-only or opt-in hook that does nothing in a normal run, with no extra work in the
+  hot paths. Each one is listed in the table below with why we need it.
+- When the practice room needs a game rule the core doesn't have (for example a facing check for casts), it first
+  checks the rule on the practice side, before an input reaches the sim. A rule that would also make the regular sim
+  more correct goes into the core as a normal sim change with its own review, never as part of practice work.
+- In `ui/core` we import what's already exported. When reuse would need a refactor of a shared file (like
+  `replay.tsx`), we copy the piece into `ui/practice/` instead.
+- The regular sim UI doesn't change in M1. Settings come into the practice page through the class sim's existing
+  export (link or JSON).
+
+**Core touch points (the whole list):**
+
+| Hook | Why | Effect on a normal run |
+| --- | --- | --- |
+| `Simulation.NextEventTime()`, read-only | `Run(until)` stops before the next event without moving the clock | none, nothing calls it |
+
+Everything else uses what the core already exports: `Simulation.AddPendingAction`, `Spell.CanCast` and `Spell.Cast`,
+the GCD and `Unit.Hardcast`, `Unit.InterruptHardcast`, `AutoAttacks.CancelAutoSwing`, `EnableAutoSwing` and
+`NextAttackAt`, `Unit.DistanceFromTarget`, `PseudoStats.InFrontOfTarget`, and the sim's text log.
 
 ## Architecture
 
 ```
- Browser tab                                          Web Worker
- ┌─────────────────────────────────────┐              ┌──────────────────────────────┐
- │ Input: keys, mouse ──► commands ────┼── commands ─►│ lib.wasm (Go sim)            │
- │                                     │              │  practice session:           │
- │ World: positions, facing, movement ─┼── positions ►│   player unit (your input)   │
- │                                     │              │   other units (their APLs)   │
- │ Three.js scene ◄── events ◄─────────┼── events ◄───│   advance to wall time       │
- │ HTML overlay: bars, frames, MSBT    │              └──────────────────────────────┘
- └─────────────────────────────────────┘
-        ▲ assets, keybinds, bars from the dev server (reads the Forever client on D:)
+ Browser tab (main thread)                           Practice worker
+ ┌──────────────────────────────────────┐            ┌─────────────────────────────────┐
+ │ Input: keydown ──► input {id, time} ─┼── input ──►│ practice.wasm (Go)              │
+ │                                      │            │  practice session               │
+ │ HUD state store ◄── events ◄─────────┼── events ◄─│   sim: your unit reads inputs,  │
+ │   (predicts GCD and cast bar)        │            │        every other unit its APL │
+ │ Three.js scene, HTML overlay         │◄─ units ───│   world: positions, facing,     │
+ └──────────────────────────────────────┘            │          range, movement        │
+   ▲ assets, keybinds, bars from the practice server │   own clock, pushes events      │
+                                                     └─────────────────────────────────┘
 ```
 
-Later the worker's box moves into a Go server, and the arrows become a WebSocket. Nothing else changes.
+The sim and the world model both live in Go. The browser sends only your inputs and your own movement, and gets every
+unit's state back. That keeps one owner for positions when the boss moves (M2), bots stand around you (M3) and a
+server judges range for several players (M4).
+
+### Your unit's rotation
+
+The engine already has `SimOptions.Interactive` (`proto/api.proto:168`) and a session API in `sim/lib/library.go`.
+We don't use it. The flag is global: it stops the rotation of every character, pets included
+(`sim/core/character.go:525`), and several places call the rotation without a nil check (`cast.go:368`,
+`attack.go:362`, `energy.go:166`, `rage.go:440`).
+
+Instead your unit gets an empty APL, with no prepull list and no priority list, so it never acts on its own. You do the
+prepull yourself. Every other unit keeps its own APL.
+
+Your casts come from `sim/practice`. For each input it adds a pending action at the later of the press time, the end
+of the GCD and the end of the current cast, and that action calls `Spell.Cast` like an APL action would. A press
+within the spell queue window waits for the GCD. An off-GCD spell fires at its own time. None of this needs a change
+in the core.
 
 ### The sim in real time
 
-The sim is a discrete event loop (`Simulation.Step` in `sim/core/sim.go`). It jumps from one event to the next and
-doesn't care about wall time. To run it live, we add a stateful practice session in a new package (`sim/practice`):
+The sim is a discrete event loop (`Simulation.Step` in `sim/core/sim.go:756`). A new package `sim/practice` holds a
+stateful session:
 
-- **Start(config)** builds the sim from the same proto config a raid sim uses (player, gear, buffs, encounter), runs
-  the prepull and stops at time zero.
-- **Input(command)** takes a command from the player at the current sim time: cast a spell, use an item, start or stop
-  auto attack, target a unit.
-- **AdvanceTo(t)** runs `Step` until the next pending event is later than `t`, then returns the events that happened.
-  The client calls it every frame with the wall clock.
+- **Start(config)** builds the sim from the same proto config a sim run uses, with a fixed fight length and no
+  duration variation. Execute phases, `GetRemainingDuration` and the end check all depend on that fixed length. The
+  clock starts at minus the prepull window (a countdown you set, 10s by default), and the pull is at time 0. The sim
+  already runs prepull casts at negative times (`Simulation.PrePull`, `sim.go:684`), and `Spell.Cast` works there, so
+  your casts during the countdown need no core change. At 0 the sim starts every unit's auto attacks. The session
+  turns yours back off with `CancelAutoSwing` unless you have already started attacking.
+- **Input(input)** queues a key press as a pending action (see above) at an exact sim time in whole nanoseconds, with
+  a fixed lowest priority. It goes through `Step` like any other event, so the other units' idle check skipping
+  (`apl_idle.go`) sees it.
+- **Run(until)** runs events whose time is before `until` and stops. It never moves the clock to `until` itself.
+  Moving the clock to frame times would settle regen and expire auras in frame sized steps, and then results depend on
+  frame rate.
 
-Your character gets a player rotation in place of its APL. When the GCD or a cast ends, it casts what you queued, if
-anything. We honor the client's `SpellQueueWindow` CVar (read from `config-cache.wtf`), so a key pressed up to that
-long before the GCD ends fires the moment it ends, as it does in game. Every other unit (pets, totems, the boss, raid
-bots) keeps its APL.
+`Step` handles one event and has no way to peek. So `Run` asks the core's one new read-only hook,
+`Simulation.NextEventTime()`, for the smallest of the top pending action, `minWeaponAttackTime` and `minTaskTime`.
 
-The sim's labeled random streams are seeded, so the seed plus the timed inputs replay a whole attempt exactly. That
-gives us three things for free: the Replay view can show any attempt, a bug report is a small file, and multiplayer
-can start from the same idea.
+The worker keeps its own clock and pushes events as they happen, instead of waiting for one call per frame. The clock
+pauses when the tab is hidden or loses focus, and one catch-up step is capped at 0.25s, as the Replay view does
+(`ui/core/components/detailed_results/replay.tsx:963`). The end of the fight is final: `Step` drops the last pending
+action before the end check.
 
-The sim only knows one distance per unit (`Unit.DistanceFromTarget`). The world layer owns 3D positions and facing.
-Each frame it sends each unit's distance to its target and whether it faces it, and the sim's range checks read
-those. Facing and "behind the target" checks need adding to casts and melee.
+Between events the HUD shows values like energy and the cast bar by computing them for the display time, without
+changing sim state. The live DPS meter sums spell metrics as `getDamageDone` does (`sim/lib/library.go:282`), because
+unit metrics only add up in `Cleanup`.
 
-### Events out of the sim
+The worker is its own dedicated worker running `practice.wasm`, not one from the sim's `WorkerPool`
+(`ui/core/sim.ts:123`). The WASM entry points are synchronous `js.FuncOf` calls in the style of `raidSim`
+(`sim/wasm/main.go:133`), in `sim/practice/wasm/`. The live heap is about 1.3 MB, so
+garbage collector pauses come from per-event allocations (log formatting, proto marshalling), not from the database.
 
-The Replay and Events views read the sim's text log today. The practice room needs typed events instead: cast start,
-cast success, cast interrupted, damage and healing (with hit, crit, miss, glance), aura applied and removed, resource
-changes, swing timers and cooldown starts. We add a small event proto, and the practice session collects them per
-`AdvanceTo` call. The text log stays for the existing views.
+### Inputs and prediction
+
+Each input carries an id, the key's `event.timeStamp` mapped to the worker's clock through `performance.timeOrigin`,
+and the action. Each event carries its sim time and, when it answers an input, that input's id.
+
+The client predicts what WoW predicts: the button press, the GCD spin and the cast bar start. A cast the sim rejects
+rolls them back with the game's error text ("Not enough mana", "Out of range"). Resources and outcomes always come
+from the sim. In M1 the worker answers within a frame, but building it this way now means M4 isn't a rewrite.
+
+A latency setting (your in-game ping) splits the round trip the way the game does: an input reaches the sim half a ping
+after the press, and the sim's answer reaches the screen half a ping later. The client still shows its predictions at
+once. Without this the room plays better than the game does.
+
+### Replays
+
+An attempt is the config, the seed actually used (seed 0 means "pick from the clock", `sim.go:236`), and every input
+with the sim time it was applied, movement included. A replay mode feeds those inputs into a normal run, which also
+gives the text log the Replay view reads. That makes a bug report a small file.
+
+Exact replays hold only on the same sim build and the same platform. WASM and native Go can differ in the last bits of
+`math.Exp` and `math.Log`, so a native M4 server and a browser may drift apart. Spike 5 checks how much.
 
 ### World and movement
 
-- WoW run speed is 7 yd/s, backpedal 4.5 yd/s. Turning by keys is 180°/s.
-- Flat ground, units are cylinders for collision. No physics engine.
-- Melee range and spell range checks use the hit box rules the sim already uses.
-- Line of sight and pillars come later, with boss mechanics.
+The world lives in `sim/practice`: 2D positions with velocity, facing, and range. It follows the leveling world's
+model (`sim/core/leveling_world.go`) but doesn't reuse its code, which is tied to leveling sessions inside the core.
+We don't use `Unit.MoveTo` either: its movement aura cancels auto attacks (`movement.go:107`), which is wrong for
+strafing in melee.
+
+Your movement goes to the session as timestamped velocity and facing changes, not as per-frame positions. The world
+turns them into pending actions at the times something changes (you reach or leave range, you turn away). That keeps
+replays exact. The client moves your model at once and the sim agrees, as WoW trusts the client's movement.
+
+How the world talks to the sim, all through what the core exports:
+
+- **Distance:** it writes `Unit.DistanceFromTarget` for anything in the core that reads it.
+- **Melee range** is 5 yards (`constants.go:15`). When you leave or enter it, the world calls the cancel and enable
+  pair that PvP downtime uses (`pvp.go:68`), because auto attacks only check range when enabled (`attack.go:755`).
+- **Facing:** it writes `PseudoStats.InFrontOfTarget` (`character.go:246`), which the core reads at each roll for
+  parry and block.
+- **Moving:** it calls `Unit.InterruptHardcast` when movement starts during a hard cast.
+- **Checks the core doesn't make in a normal run:** spell range (the core checks it only in leveling,
+  `spell.go:548`), facing for casts and melee, the behind check, and no hard casts while moving. The session checks
+  these before an input becomes a cast, and answers with the game's error text.
+- Speeds, range rules and facing arcs are in [Playing like WoW](#playing-like-wow). Line of sight comes with bosses
+  in M2.
+
+### Events out of the sim
+
+The worker streams the sim's text log lines with each batch, and the client reuses `logs_parser.tsx`, which already
+turns them into typed records (casts, damage, auras, resources). One source of truth, and a finished attempt opens in
+the Replay view as is. Typed events come later, only if parsing turns out too slow.
+
+The live HUD also needs the next swing time and the cast end time. The Replay view gets those by looking ahead in the
+finished log, which a live stream can't do. The session reads them from the units after each batch
+(`AutoAttacks.NextAttackAt`, `Unit.Hardcast`) and sends them with the events, so the log format stays as it is.
+
+### HUD overlay
+
+The Replay view draws your EllesmereUI frames, the Bayov WeakAuras class pack and MSBT style combat text. Its model is
+built once from a finished fight (`buildReplayModel`, `replay_model.ts:327`), and parts of it look ahead: swing timers,
+cast pushback, and the bar layout chosen from cooldowns used in the fight. The draw functions are "state at time t"
+lookups, so a model that only grows forward in time can feed them.
+
+So we reuse the markup, CSS and helpers (`updateIcon` and `updateCastBar` in `replay.tsx`), and write an incremental
+model fed by events in `ui/practice/`. Helpers that aren't exported are copied, not split out of `replay.tsx`. Your
+real action bars are new code.
 
 ### Rendering
 
-- Three.js scene with a WoW style camera: left drag orbits, right drag turns the character, wheel zooms.
-- glTF models with their animations: stand, run, attack, cast, channel, hit, death.
-- The target dummy and the arena floor are client models too.
-- Floating combat text, cast bars and nameplates as HTML over the canvas.
+- **Three.js.** It handles 40 skinned characters (about 800 draw calls) on a desktop. It has no particle system, so
+  particles come later from three.quarks or our own M2 particle code.
+- **WoW models drawn directly**, not converted to glTF (see [Assets](#assets-local-only)). Weapons and helms hang on
+  M2 attachment points: hands 1 and 2, spell palms 21 and 22, back sheaths 26 to 28, hip sheaths 32 and 33. Weapons
+  are sheathed out of combat (where, from the item's sheathe type) and drawn in combat.
+- **Animations by AnimationData id:** stand 0, run 5, one hand attack 17, ready 26, precast 31, cast 32, channel 76
+  and 77. Attacking while running blends the upper body over the run. Some spells name their own animation through
+  their visual kit.
+- **Camera and targeting:** see [Playing like WoW](#playing-like-wow). Nameplates are HTML placed from 3D positions.
+- **Frame pacing:** movement runs at a fixed step and the screen interpolates at 60 to 144Hz.
+- **Audio** starts on the "Enter fullscreen" click, since browsers block it before a user gesture. Sound files are
+  decoded ahead of time.
+- **Loading:** `instantiateStreaming` so Chrome caches the compiled 39 MB wasm.
 
-### HTML overlay
+## Playing like WoW
 
-The Replay view already draws your EllesmereUI frames, the Bayov WeakAuras class pack and MSBT style combat text. We
-reuse those components on top of the canvas: unit frames, cast bar, action bars with cooldown sweeps, buff rows and
-the WeakAuras. Plus a live DPS meter and a fight timer.
+The room is only as accurate as your play in it. If the camera, movement or casting feel off, you play differently
+than in game, and the result means less. So every rule here copies the game, and every number is measured against
+the Forever client, not guessed. A value marked "check" is our best knowledge until it is measured.
+
+All of it lives in `sim/practice` and `ui/practice`. None of it changes the sim core.
+
+### Movement
+
+| Rule | Value | Status |
+| --- | --- | --- |
+| Run, strafe | 7 yd/s | check |
+| Backpedal, also backpedal plus strafe | 4.5 yd/s | check |
+| Walk | 2.5 yd/s | check |
+| Forward plus strafe | 7 yd/s, not faster | check |
+| Turn with keys | 180°/s | check |
+| Turn with right drag | at once, to where the camera looks | |
+| Jump | height and air time measured in game, direction locked in the air, you can still turn | check |
+
+- Both mouse buttons held runs forward. Autorun (Num Lock by default) runs until you press a movement key.
+- Units don't collide with each other. You walk through the dummy and other players, as in game. Unit cylinders are
+  only for clicks and range.
+- Moving or jumping stops a hard cast or channel. Turning in place doesn't. Instants work while moving and in the air.
+- Starting a cast while moving fails with "You can't do that while moving".
+
+### Range and facing
+
+- **Melee range** is the larger of 5 yards and the two units' combat reach plus 4/3 yards. When both units move (not
+  walking), it grows by 8/3 yards, which is why you can keep hitting a running target. Status: check.
+- **Spell range** is the spell's range measured between the two units' edges, not their centers. Status: check.
+- **Facing:** melee and most spells need the target in your front half circle, or they fail with "You are facing the
+  wrong way!". Backstab style abilities need you outside the target's front half. Parry and block only happen from the
+  front, which the sim already handles through `InFrontOfTarget`.
+- **Out of range:** auto attack stays on and stops swinging. It resumes when you're back in range. Abilities fail with
+  "Out of range." or "You are too far away!".
+
+### Casting and attacking
+
+- **Spell queue:** a press within `SpellQueueWindow` (400ms by default) before the GCD or a cast ends fires the moment
+  it ends. Only one spell is queued, and the last press wins.
+- **Key down or key up** follows `ActionButtonUseKeyDown`. Holding a key doesn't repeat the cast. Status: check.
+- **Auto attack** starts with a melee ability, `/startattack`, or a right click on the target. Whether it moves to a
+  new target when you switch targets is a check.
+- **Modifiers** for macros are read at the moment of the press.
+- **Errors** show in red at the top center with the game's error sound, at the game's rate: "Spell is not ready yet.",
+  "Another action is in progress", "Not enough mana", and the ones above.
+
+### Targeting
+
+- Left click picks a unit by its cylinder, not its mesh. Right click targets and attacks.
+- Tab picks the nearest enemy in front of you, then cycles. Esc clears the target.
+- `@mouseover` is the unit under the cursor. `deselectOnClick` decides whether clicking the ground clears the target.
+
+### Camera
+
+- **Left drag** orbits the camera around you without turning you. **Right drag** turns you to the camera's direction,
+  and pitches the camera.
+- While you drag, the cursor hides and comes back where it was when you let go, as in game. Pointer Lock does this.
+- Mouse speed follows `cameraYawMoveSpeed`, `cameraPitchMoveSpeed` and `mouseSpeed`, with raw mouse input
+  (`unadjustedMovement`, Chrome only).
+- **Following:** when you move, the camera swings back behind you the way `cameraSmoothStyle` says. Each of its values
+  is copied.
+- **Zoom** steps by mouse wheel, up to the game's maximum times `cameraDistanceMaxZoomFactor`. The camera pulls in
+  when the ground is in the way. The field of view, the pivot height at the head and the pitch limits are measured from
+  the game. Status: check.
+
+### Feedback
+
+- **Sounds:** weapon swings and impacts, cast start and finish, proc sounds, the error sound, and your WeakAuras'
+  sounds. Many players react to sounds more than to icons.
+- **Combat text** in your MSBT style, and your EllesmereUI frames and WeakAuras as in game.
+- **Animations** match the sim: the attack animation lands on the sim's swing time, and the cast animation follows
+  the cast bar.
+
+### Input and frames
+
+- Key and mouse events carry their own timestamps, so a press counts at the moment you pressed, not at the next frame.
+- The screen runs at your monitor's rate (60 to 144Hz or more), with movement on a fixed step and drawn smoothly
+  between steps.
+
+### Checking the feel
+
+1. **Measured numbers.** Each "check" above gets measured in game and in the room, the same way:
+   - movement, turning and jumps from a short BayovCore probe that logs your position and facing every frame
+     (`UnitPosition` works outside instances) while you run a set path
+   - cast, GCD and swing timing from the combat log
+   - camera zoom, field of view and turn speed from screen recordings of the same moves
+2. **Side by side.** The same short fight on the in-game dummy and in the room, with the logs compared.
+3. **A feel checklist** you play through after each change to movement, camera or casting, one line per rule above.
 
 ## Assets (local only)
 
-The Forever client's data sits in the shared install at `D:\Gaming\World of Warcraft\Data` (a CASC archive, the same
-storage every modern WoW client uses). The `_forever_` folder holds only the executable and settings.
+The Forever client's data sits in the shared CASC storage (WoW's archive format) of the WoW install. Its product code
+in `.build.info` is `wowf`, version 1.60.1.70707 today. The install folder is a setting. On this PC the practice server
+reads it from WSL at `/mnt/d/Gaming/World of Warcraft`.
 
-| What | Source | Format we use |
-| --- | --- | --- |
-| Race and sex models with your gear on | M2 models, ItemDisplayInfo (wago.tools tables we already pull) | glTF + PNG |
-| Weapons, shields | M2 models via ItemDisplayInfo | glTF + PNG |
-| Target dummy, arena floor | M2 or WMO models | glTF + PNG |
-| Spell and item icons | BLP textures | PNG |
-| Spell and swing sounds | SoundKit tables + OGG files | OGG |
-| Spell visuals | SpellVisualKit tables + M2 particle models | later (see [Spikes](#spikes)) |
+**The pipeline:**
 
-**Extraction tool:** wow.export (open source, github.com/Kruithne/wow.export). It reads a local CASC install and
-exports M2 models to glTF with animations, and BLP textures to PNG. A script in `tools/practice/assets/` drives the
-export for the list of models a session needs, from the race, sex, gear and spells in its config.
+1. The practice server extracts raw files by FileDataID (the client's file number): M2 models, `.skin`, `.skel` and `.anim`
+   files, BLP textures, OGG sounds and DB2 tables. It uses a command-line CASC reader (TACTTool from TACTSharp, or
+   CascLib, picked in spike 1) and caches the files in `practice_assets/`.
+2. DB2 tables come from the local client, plus its hotfix cache (`DBCache.bin`), not from wago.tools. That way each
+   friend matches their own client build and needs no internet. The tables we pull from wago today are only the spell
+   and talent ones, and they are two builds behind the client.
+3. The browser runs our own Three.js M2 renderer. It starts from three-m2loader (MIT, reads the format, skins and
+   animations) and ports wow.export's character assembly (MIT, about 4 to 5 thousand lines of browser JavaScript).
 
-**Where they go:** `practice_assets/` at the repo root, in `.gitignore`. The dev server serves it at `/practice/assets/`.
-Nothing under `dist/` or the DPS Report build reads it, and the deploy script refuses to run if it finds a path from it
-in the output.
+wow.export added Forever support in 0.2.20 (2026-11-02). It has no command line or remote control, so it can't drive
+the pipeline, and its glTF export leaves weapons unattached and drops particles. We use its GUI to check our output.
 
-**Friends:** since we never send assets anywhere, each friend runs the same extraction against their own WoW install.
+**A dressed character**, which is the biggest asset job in M1 (days of porting, one to two weeks from scratch):
+
+1. ChrModel gives the body model. Customization choices give skin textures and geosets (the body parts shown or
+   hidden, like hair and ears).
+2. Each item leads through ItemModifiedAppearance and ItemAppearance to ItemDisplayInfo. Its geoset groups switch
+   body parts (gloves, boots, robe, cape, belt), and HelmetGeosetData hides hair under helms.
+3. ItemDisplayInfoMaterialRes and ComponentTextureFileData give one texture per body section (arm, hand, torso, leg,
+   foot), painted onto the body texture.
+4. ComponentModelFileData gives the models that hang on attachment points.
+
+**Tables we need:**
+
+- Characters: ItemModifiedAppearance, ItemAppearance, ItemDisplayInfo, ItemDisplayInfoMaterialRes, ModelFileData,
+  TextureFileData, ComponentModelFileData, ComponentTextureFileData, HelmetGeosetData, ChrModel, ChrRaceXChrModel,
+  ChrCustomization tables, CharComponentTextureLayouts and Sections, ItemSparse (sheathe type).
+- Animations, spells and sound: AnimationData, SpellXSpellVisual, SpellVisual, SpellVisualEvent, SpellVisualKit,
+  SpellVisualKitEffect, SpellVisualKitModelAttach, SpellVisualMissile, SpellChainEffects, SoundKit, SoundKitEntry,
+  WeaponSwingSounds2, WeaponImpactSounds.
+
+**Spell visuals and imbue glows** are mostly M2 particles and ribbons. M1 has animations, icons, sounds and combat
+text, and no particles. Later the same M2 renderer gets particles, with WebWowViewerCpp's emitters as the reference
+(read only, it has no license file).
+
+**Keeping it local:** `practice_assets/` is in `.gitignore`. Only the practice server (`cmd/practice/`) serves it.
+Nothing under `dist/` or the DPS Report build reads it, and the deploy script refuses to run if it finds a path from
+it in the output.
 
 ## Keybinds and action bars
 
-The client splits this across three places:
+### Bindings
 
-1. **Key to button:** `bindings-cache.wtf`, lines like `bind SHIFT-R ACTIONBUTTON7`. There is one per account
-   (`_forever_\WTF\Account\<account>\`) and an optional one per character
-   (`...\<account>\<realm id>\<character>\`). The character's file wins when it exists.
-2. **Button to spell:** the server keeps what sits in each action slot, and no WTF file has it. BayovCore's CharSetup
-   module already records every slot of every character (spell by name and rank, macro by name and body, item by id)
-   in BayovCoreDB's SavedVariables. We read that record. Other players will need a small export, either BayovCore's
-   or a tiny standalone addon.
-3. **Macros:** `macros-cache.txt`, one per account and one per character. Milestone 1 supports `/cast`,
-   `/castsequence`, `/startattack` and the `[mod:shift]`, `[@target]` style conditions. A macro with anything else
-   shows an "unsupported" badge on its button.
+`bindings-cache.wtf` holds only the keys changed from the defaults. The user's file has 150 lines and no
+`MOVEFORWARD`, `MOVEBACKWARD`, strafe, jump or tab target lines. Unbound keys show as `bind 7 NONE`. The defaults live
+in the client binary, not in FrameXML.
 
-Button names map to slots with the client's table, which isn't in order: `ACTIONBUTTON` is slots 1-12,
-`MULTIACTIONBAR1` is 61-72, bar 2 is 49-60, bar 3 is 25-36, bar 4 is 37-48 and bars 5 to 7 are 145-180. Spike 5
-checks this against BayovCore's record. Movement bindings (`MOVEFORWARD`, `TURNLEFT`, `STRAFELEFT`, `JUMP`)
-drive the world layer. Bindings for things the room doesn't have (bags, map, `CLICK BayovFishButton`) are ignored.
+So the room starts from a table of Blizzard's default bindings (W and S move, Q and E strafe, Space jumps, Tab
+targets, 1 to = are `ACTIONBUTTON1-12`, and so on), written by hand and checked once against a fresh character's key
+bindings menu. Then each line of `bindings-cache.wtf` replaces the default for its key, and `NONE` unbinds it.
 
-The browser can't read `D:\`, so the Go dev server reads these files and serves them as one JSON. A character picker
-lists what it finds under `WTF\Account`. It never assumes a character name or a fixed game folder.
+Notes from the user's files:
 
-**Browser limits:** the browser keeps some keys for itself (Ctrl+W, Ctrl+T, Ctrl+N, F5). In fullscreen, Chrome's
-Keyboard Lock API hands us almost all of them, and Pointer Lock keeps the mouse inside the window while you turn.
-Mouse buttons 4 and 5 normally go back and forward in history, so we block that.
+- There is one file per account. A character file overrides it, but none of the user's characters has one.
+- The user turns with A and D (`TURNLEFT`, `TURNRIGHT`) and strafes by holding the right mouse button. Q and E are
+  action buttons.
+- WoW falls back to a key's unmodified binding when the modified key is unbound. Alt+F1 isn't bound, so it runs F1's
+  binding with Alt held, and the user's `[mod:alt]` macros depend on that. Key lookup does the same.
+- Click bindings and situational override bindings (BayovCore fishing, EllesmereUI party mode) are ignored.
 
-## Comparing with the sim
+### Buttons to slots
 
-At the end of a fight the room shows:
+Bindings name a command, and each command maps to a slot. Blizzard's table, checked against the user's record:
 
-- **Your DPS against the sim's distribution** for the same character, gear, buffs and fight length. You see where you
-  land (for example "71st percentile"), because procs make one exact number meaningless.
-- **Where the gap came from:** GCD time spent idle, casts the APL would have made that you didn't, buffs and debuffs
-  that fell off, time out of melee range, and resource capped (energy, mana) time.
-- **A replay** of your attempt in the Replay view, next to a sim iteration with the same seed.
+| Command | Slots |
+| --- | --- |
+| `ACTIONBUTTON1-12` | 1-12 (paged by stance or form, see below) |
+| `MULTIACTIONBAR3BUTTON1-12` | 25-36 |
+| `MULTIACTIONBAR4BUTTON1-12` | 37-48 |
+| `MULTIACTIONBAR2BUTTON1-12` | 49-60 |
+| `MULTIACTIONBAR1BUTTON1-12` | 61-72 |
+| `MULTIACTIONBAR5BUTTON1-12` to `MULTIACTIONBAR7BUTTON1-12` | 145-180 |
+| `EUI_BAR9_BUTTON1-12` (EllesmereUI) | 13-24 |
+| `EUI_BAR10_BUTTON1-12` (EllesmereUI) | 109-120 |
+| `EUI_BAR11` to `EUI_BAR13` (EllesmereUI, BayovCore patch) | 73-108 |
+
+EllesmereUI keeps Blizzard's slots and binds through the same commands, so its keys are in the bindings too. Its own
+bar numbers differ from Blizzard's (its "Bar2" is `MULTIACTIONBAR1`), so the doc names commands, never "bar N".
+
+On Forever, every class's stance or form pages bar 1 to slots 73-120. M1 assumes page 1.
+
+### What's in each slot
+
+The server keeps what sits in each slot, and no WTF file has it. BayovCore's CharSetup module records it in
+`BayovCoreDB.modules.charsetup.chars[<GUID>]` with `{name, realm, class, race, level, build, slots, macros}`:
+
+- A spell slot is `{kind="spell", id=<spell id of the rank>, name, top}`. The spell id maps straight to a sim action.
+- A macro slot has the whole body, so `macros-cache.txt` is only a fallback. Account macros are at
+  `charsetup.account.macros`.
+- A slot the game hid is `false`.
+
+The file is a plain Lua table, written at logout or `/reload`. A small hand parser reads the 850 KB file in 0.1s.
+
+**Today only one record exists:** Bayov Oom, a level 9 shaman on the beta realm. A character has a record only after
+a login with BayovCore on. So:
+
+- The character picker lists records, keyed by GUID, not WTF folders. The WTF folder is named
+  `<realm id>/<Name-Name>` and can only be joined to a record by name.
+- With no record, the room fills the bars from the rotation's spells on bar 1 and the bars after it.
+- Bar spells the sim doesn't have (Ghost Wolf, heals) show greyed out.
+- Buttons can also be clicked.
+
+### Editing bars and binds in the room
+
+You can change which spell, item or macro sits in each slot (drag from a spellbook, drag off to clear), and which key
+presses each button (hover a button and press the key, as in WoW's quick keybind mode). The edits are saved by the
+practice server in `practice_settings/`, per character, on top of what the client files and the record say. They
+never write back to the WoW folder. A "Reset" puts the client's layout back.
+
+### Macros
+
+What the user's shaman macros use, which M1 supports:
+
+- `/cast [@mouseover,harm,nodead][] Stormstrike`: every damage spell is a macro like this.
+- Conditions: `@mouseover`, `@target`, `@player`, `harm`, `help`, `dead`, `nodead`, `mod:alt` (and shift, ctrl), and
+  the empty `[]` fallback.
+- `/startattack`, `/cleartarget [dead][help]`.
+- Ranks: `Frost Shock(Rank 1)`, any case.
+- `/use 13` and `/use 14` (trinket slots), and `/use` item lines where the first usable one fires.
+- `#showtooltip` sets the button icon.
+
+A macro with anything else (`/castsequence`, `/tm`, `/run`, `/click`, `/focus`, `/target`, `/bayov`) gets an
+"unsupported" badge. `macros-cache.txt` blocks are `VER 3 <id> "<name>" "<icon>"`, the body, then `END`.
+
+### Settings (CVars)
+
+CVars live in three files: `WTF/Config.wtf`, the account's `config-cache.wtf` and the character's. They are written
+only when changed, so a missing CVar means the default. We read:
+
+- `SpellQueueWindow` (default 400ms, the user hasn't changed it) and `ActionButtonUseKeyDown` (whether a cast fires on
+  key down or key up).
+- `cameraYawMoveSpeed`, `cameraPitchMoveSpeed`, `mouseSpeed`, `cameraDistanceMaxZoomFactor`, `cameraSmoothStyle`.
+- `deselectOnClick`, `autoSelfCast`.
+
+### Browser keys
+
+The browser keeps some keys, and the user binds many of them: Ctrl+T (Fire Nova, opens a tab), F1 to F3, F5 to F7,
+F11, F12, and the middle mouse button.
+
+- Chrome or Edge in fullscreen with Keyboard Lock gets all of them. With Esc locked, leaving fullscreen takes a long
+  press of Esc, which suits WoW.
+- Firefox and Safari don't support Keyboard Lock, so this layout needs Chrome or Edge. The room says so on entry.
+- Keys match by `event.code` plus modifiers, and `event.repeat` is ignored.
+- Middle click and mouse buttons 4 and 5 have their browser defaults blocked.
+- Pointer Lock keeps the mouse inside while you turn. Chrome waits about a second before it can lock again after Esc.
+
+## Fight summary
+
+The room sims only the fight you played: one iteration, no other seeds and no averages. At the end it shows:
+
+- your DPS and damage by spell
+- idle GCD time
+- buff and debuff uptimes
+- time out of range
+- swings pushed back by casts
+- time with resources capped
+
+The whole fight opens in the Replay view.
+
+### Saving attempts
+
+Each attempt (config, seed, inputs, sim build, result) is saved by the practice server to `practice_attempts/`, which is in
+`.gitignore`. The room lists them. When the sim build changes, old attempts keep their result,
+and their replay is marked as from another build.
+
+## Where it lives
+
+Its own page in `ui/practice/`, served by the practice server. You bring a class sim's settings (character, gear,
+talents, buffs, rotation, fight length) through the class sim's existing export, as a link or JSON. Presets and
+pasted BayovCore exports come in the same way, since they already load into the class sim. A "Practice" button in the
+class sim can come later, as a link only. The keybinds come from a BayovCore record you pick separately, because the
+sim character and the in-game character aren't the same thing.
+
+Fight rules for M1: a fixed length you set, with no length variation, a prepull countdown where you cast your own
+totems, imbues and buffs, and keys for restart and leave.
+
+## Multiplayer (M4)
+
+M4 is more than a new connection. It needs:
+
+- a Go server that runs the session natively, applies each input when it arrives, and sends events right away or in
+  small batches (about 50ms)
+- a fixed tick (20 to 30 a second) only for position broadcasts, which clients interpolate
+- several units with player rotations
+- a lobby, because the raid is fixed when the sim is built, so nobody joins mid-fight
+- a rule for disconnects: an APL bot takes the unit over
+- no pausing, since one player's hidden tab can't stop the server's clock
+- each player's latency
+- filtering events per player, because a 40 player fight makes thousands of aura, resource and tick events a second
+- assets for everyone else's race and gear on each friend's PC
+
+Lockstep (every client runs the sim and waits for everyone's inputs) doesn't fit 40 players: every input waits for the
+slowest player, and joining mid-fight is hard. So the server decides everything, as WoW does.
+
+**Friends' setup.** The host serves the client over a tunnel such as Tailscale, so friends need only Chrome. Each
+friend's browser reads their own WoW install's assets through a small local helper or the File System Access API, so
+we never send game files anywhere. The details wait for M4.
 
 ## Milestones
 
-**M1: you against a dummy.**
+Each step says when it's done.
 
-1. Spikes 1 and 2 below.
-2. `sim/practice` session with Start, Input and AdvanceTo, a player rotation and the typed events. Go tests drive it
-   with scripted inputs and check that a script of the APL's own casts gives the APL's DPS.
-3. WASM entry points for the session, run in a Web Worker.
-4. Dev server endpoints: keybinds, bars and macros for a picked character, and the asset folder.
-5. Asset script for the enh shaman's race, gear, dummy, icons and sounds.
-6. Client: Three.js scene, camera, movement, models with animations, HTML overlay with your bars, frames and DPS meter.
-7. End of fight comparison.
+**M1: a basic 3D room.** Your enh shaman against a dummy on a flat arena.
+
+1. `sim/practice` session: Start, Input, Run, your input rotation, your prepull, ping, the world, range and facing,
+   plus the one core hook (`NextEventTime`). Done when:
+   - Go tests with scripted inputs pass
+   - a test script of the rotation's own casts, fed at the rotation's exact sim times, gives the rotation's mean DPS
+     over 1000 seeds within noise (a correctness check only, the room itself never runs other seeds)
+   - the existing Go tests pass and a fixed set of presets gives bit-identical results before and after
+2. Replays and saved attempts. Done when a replayed attempt gives an identical log on the same build.
+3. `practice.wasm` with its own make target, in a dedicated worker with its own clock. Done when spike 4's numbers
+   are in and `lib.wasm` is unchanged.
+4. The practice server (`cmd/practice/`): BayovCore records, bindings with the default table, CVars, macros, saved bar
+   and bind edits, and the install folder setting. Done when golden file tests pass for the Lua parser, the WTF
+   parser, the slot table and the macro parser.
+5. Spikes 1 and 2.
+6. The 3D scene: floor, dummy, camera, movement, targeting, and your race's model with its animations. Until the M2
+   renderer works, units are plain capsules, so steps 1 to 4 can be played early. Done when you can walk up to the
+   dummy and fight it.
+7. The HUD: your bars (editable) with bindings, unit frames, cast bar, WeakAuras, combat text, the live meter and the
+   fight summary. Done when a headless Chrome smoke test plays a scripted fight.
+8. Your gear on the model: dressed character, attachments, sheathing, icons and sounds. Done when your character
+   fights the dummy with your gear on.
+9. The feel pass: every "check" in [Playing like WoW](#playing-like-wow) measured in game and matched, and the feel
+   checklist played through. Movement and camera get measured as soon as step 6 is in, not only at the end.
 
 **M2: a boss.** A boss that hits back and moves, with simple mechanics (stand still, move out, interrupt) that change
-what the best rotation is. Line of sight.
+the best rotation. Line of sight and hit box sizes. The boss's movement and mechanics live in `sim/practice` and use
+the core's spells and auras, like the input rotation does.
 
-**M3: raid bots.** The raid sim's members as bots around you, each on its APL, with raid frames. Solo raid practice,
-no network.
+**M3: raid bots.** The raid sim's members as bots around you, each on its APL, with raid frames. This uses the raid
+sim's whole-raid engine (its milestone M1b in `docs/raid_sim.md`) as it is.
 
-**M4: friends.** A Go server runs the session natively and decides every outcome. Clients send their inputs and get
-events and positions back over WebSocket, at a fixed tick of about 20 to 30 per second. The server runs on this PC,
-and friends reach it through a tunnel such as Tailscale. Each friend runs the client and the asset extraction on their
-own PC.
+**M4: friends.** See [Multiplayer](#multiplayer-m4).
 
 ## Spikes
 
-Small checks to run before building on the answer:
+1. **Reading the `wowf` storage from the command line.** Try TACTTool and CascLib on the local install. Check that
+   Forever-only files (by FileDataID) come out. Open wow.export 0.2.20 on `wowf`, load an Orc shaman with gear, and
+   keep its view as the reference.
+2. **A dressed character.** Port wow.export's character code onto three-m2loader for one race and one gear set.
+   Measure how long the rest takes before planning M1 step 8.
+3. **Spell visuals.** Size the particle and ribbon work from WebWowViewerCpp's emitters, and compare with three.quarks
+   plus hand made effects for the few spells enh uses.
+4. **WASM in real time.** Measure the time from a key press to its event at p50 and p99, and the garbage collector
+   pauses, over a 3 minute fight.
+5. **WASM against native.** Run the same seed and inputs in the browser and in a native Go test, and diff the logs.
 
-1. **Does wow.export open the Forever product?** The shared install lists several products in `.build.info`. If it
-   can't, fallbacks are CascLib with our own M2 to glTF step (a big job) or Wowhead's online model viewer (no local
-   data, but needs the internet and has only what Wowhead has).
-2. **Can we get a character model with gear on?** A dressed character is a base body plus geosets (the parts shown or
-   hidden by each item) plus textures painted onto the body per armor slot. If wow.export can't export a dressed
-   character, we assemble it ourselves in the client from the parts. That could be most of M1's asset work, so we
-   size it first.
-3. **Spell visuals.** M2 particle emitters don't survive a glTF export. For M1 we show animations, icons, sounds and
-   combat text, and no particles. Later we either write a small particle player for the M2 data or hand make a few
-   simple effects.
-4. **WASM in real time.** `lib.wasm` is 39 MB with every item in it. That's fine to load from a local server, but we
-   check that one `AdvanceTo` per frame stays well under a millisecond and that Go's garbage collector doesn't cause
-   frame stutter.
-5. **Bar slot numbers.** Check the button to slot table above against BayovCore's slot record and your bindings, on
-   one character.
+## Open questions
+
+None right now.
