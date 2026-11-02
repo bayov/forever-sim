@@ -1,41 +1,42 @@
 {
  "name": "Broodlord Lashlayer",
- "source": "[logs: Season of Discovery] Melee 3,096 to 4,652 before armor under the bench's raid debuffs, a swing every 1.74 s on the tank: Warcraft Logs, 21 kills on Season of Discovery (Normal, 2025-02-07 to 2026-09-24): the median of 89 normal hits' unmitigatedAmount (3,878), the 5th to 95th percentile of each hit over its own kill's median (84 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 2,522 weapon damage, spread 0.617, a 1.45 s swing. Length: the kills' length, median 97 s (10th to 90th percentile 63 to 159). Weapon damage abilities: Mortal Strike 24573 16,110 to 26,548 from 9 hits; Knock Away 18670 3,423 to 5,471 from 8 hits; 15284 scaled with the melee (5 hits in the logs, too few). Abilities: Mortal Strike 24573 (500% weapon damage and 50% less healing taken for 5 s), Knock Away 18670 (weapon damage + 30), Cleave 15284 (weapon damage + 10), Blast Wave 23331 2,625 to 3,375 Fire, from the Classic Era client's spell data. Timers from the vmangos script, which says they are probably wrong.",
+ "source": "[logs: Anniversary] Melee 2,042 to 3,195 before armor under the bench's raid debuffs, a swing every 1.78 s on the tank: Warcraft Logs, 22 kills on the Anniversary Hardcore realms (Normal, 2025-03-31 to 2025-07-31): the median of 224 normal hits' unmitigatedAmount (2,590), the 5th to 95th percentile of each hit over its own kill's median (224 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 1,673 weapon damage, spread 0.689, a 1.48 s swing. Length: the kills' length, median 41 s (10th to 90th percentile 39 to 65). Weapon damage abilities: Mortal Strike 24573 10,500 to 16,190 from 25 hits; 18670 scaled with the melee (7 hits in the logs, too few); Cleave 15284 2,020 to 3,510 from 16 hits. Abilities: Mortal Strike 24573 (500% weapon damage and 50% less healing taken for 5 s), Knock Away 18670 (weapon damage + 30), Cleave 15284 (weapon damage + 10), Blast Wave 23331 2,625 to 3,375 Fire, from the Classic Era client's spell data. Timers from the vmangos script, which says they are probably wrong.",
  "abilitiesSource": "Mortal Strike 24573 (500% weapon damage and 50% less healing taken for 5 s), Knock Away 18670 (weapon damage + 30), Cleave 15284 (weapon damage + 10), Blast Wave 23331 2,625 to 3,375 Fire, from the Classic Era client's spell data. Timers from the vmangos script, which says they are probably wrong.",
  "reports": [
-  "LBnFjZm4Yy9cfpWT:6",
-  "vNnca78ZGzHAYrg1:9",
-  "MG4KHtkPQ9mDapLC:9",
-  "9rdM68DRtpT7ZvLg:7",
-  "PmnvzGfdYwqCD8Qk:49",
-  "T9LpHZ6nQMjrPARf:14",
-  "vrzdnL31Pp46Ba2g:95",
-  "Jxwtv3gTMZRGyC96:60",
-  "fRHbhCPLDM1vNVG7:14",
-  "rHXCDcAKa1jRbyWP:4",
-  "wZ3Yt9pvm2LQTndB:44",
-  "8zPYvLGJCmQhX13H:9",
-  "pmdh6AG8qF2gZV7t:55",
-  "zZ82gRmVFKA6YJTQ:7",
-  "P1mw8RF6cnCyqHhY:10",
-  "QvYHL1qXkNhjGBMy:7",
-  "GRjqym9rwLhF71df:11",
-  "Qzpa1Kh7HN4Ybmvt:38",
-  "mbtcaVkQNRA71H9q:9",
-  "4mkjLT9BRrFwNV7A:10",
-  "9z8RThWPGfVwDqgX:13"
+  "P1q93HcBTVKxJMpA:9",
+  "68ybJwZnkX2RPcGm:10",
+  "4z3xQCZBnhYDrHjd:9",
+  "VZ7C6BpMgPNf8xHD:10",
+  "kxcgDX7pbYm82qFP:12",
+  "wcqCRdQ43j81h9p7:11",
+  "xnLvprGfDkYzNtBR:9",
+  "ZMdDxLAPWhj9HVGN:4",
+  "GqVArWfx9yJ47aHd:8",
+  "rpvtGmDZa9FBPHAY:12",
+  "NvrjcQ7BbzAYmVF1:12",
+  "rg8Y4P9kyt2KXfvQ:12",
+  "zq7DYXr3jPcxNLRy:8",
+  "Kda38npwqr2cLTAY:9",
+  "wpyZPLgmRtkTdqW8:11",
+  "VqhvJkGHzdTQpc36:11",
+  "ADvHd2QTGrx3JbNc:11",
+  "aBMLKhCGjdP4pyzT:11",
+  "gcW4dZyCB6jpNV9R:11",
+  "Ap2RZt8gQyJzTa36:11",
+  "LFbz4MyB28vVm6Df:17",
+  "GygnHAN67w9jMqTJ:9"
  ],
  "warcraftLogs": {
-  "site": "sod",
-  "encounter": 100612,
+  "site": "vanilla",
+  "encounter": 50612,
   "zone": "Blackwing Lair",
   "difficulty": "Normal",
-  "mined": "tools/encounters/logs/sod_bwl.json"
+  "mined": "tools/encounters/logs/anniversary_bwl.json"
  },
  "notes": "Knock Away's 50% threat cut isn't modelled. Blast Wave hits everyone near him, here the tanks only, and the healing sim adds the melee.",
  "encounter": {
-  "duration": 97,
-  "durationVariation": 48,
+  "duration": 41,
+  "durationVariation": 13,
   "targets": [
    {
     "name": "Broodlord Lashlayer",
@@ -88,17 +89,17 @@
      0,
      0
     ],
-    "minBaseDamage": 2521.8,
-    "damageSpread": 0.617,
-    "swingSpeed": 1.45
+    "minBaseDamage": 1673.3,
+    "damageSpread": 0.6891,
+    "swingSpeed": 1.48
    }
   ],
   "raidDamage": [
    {
     "spellId": 24573,
     "school": "SpellSchoolPhysical",
-    "minDamage": 16110,
-    "maxDamage": 26548,
+    "minDamage": 10500,
+    "maxDamage": 16190,
     "who": "BossTarget",
     "firstAt": 25,
     "everySeconds": 25,
@@ -110,8 +111,8 @@
    {
     "spellId": 18670,
     "school": "SpellSchoolPhysical",
-    "minDamage": 3423,
-    "maxDamage": 5471,
+    "minDamage": 2324,
+    "maxDamage": 3715,
     "who": "BossTarget",
     "firstAt": 22.5,
     "everySeconds": 18.5,
@@ -121,8 +122,8 @@
    {
     "spellId": 15284,
     "school": "SpellSchoolPhysical",
-    "minDamage": 3304,
-    "maxDamage": 4372,
+    "minDamage": 2020,
+    "maxDamage": 3510,
     "who": "BossTarget",
     "firstAt": 8,
     "everySeconds": 16.5,
@@ -142,9 +143,9 @@
   ]
  },
  "healing": {
-  "healers": 4,
-  "hpsEach": 485,
-  "castSeconds": 1.53,
-  "notes": "From Season of Discovery's logs (21 kills): while the boss was on the main tank, 4 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,941 a second with overheal and absorbs (18% of the heals effective), 2.61 heals and HoT ticks a second, against 477 damage taken a second. The tank's own heals (4% of its healing) are left out. Main tanks: Warlock 7, Paladin 7, Warrior 4, Shaman 2, Druid 1."
+  "healers": 8,
+  "hpsEach": 300,
+  "castSeconds": 3.04,
+  "notes": "From the Anniversary Hardcore realms's logs (22 kills): while the boss was on the main tank, 8 healers had 5% or more of its healing (the median kill), and the healing it took from others was 2,404 a second with overheal and absorbs (24% of the heals effective), 2.64 heals and HoT ticks a second, against 637 damage taken a second. The tank's own heals (2% of its healing) are left out. Main tanks: Warrior 16, Druid 6."
  }
 }

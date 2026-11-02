@@ -1,47 +1,43 @@
 {
  "name": "Vaelastrasz the Corrupt",
- "source": "[logs: Anniversary] Melee 3,325 to 4,705 before armor under the bench's raid debuffs, a swing every 2.64 s on the tank: Warcraft Logs, 27 kills on the Anniversary Hardcore realms (Normal, 2025-03-31 to 2025-07-31): the median of 120 normal hits' unmitigatedAmount (3,936), the 5th to 95th percentile of each hit over its own kill's median (116 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 2,706 weapon damage, spread 0.510, a 2.20 s swing. Length: his longest stretch on one tank a kill, median 17 s (10th to 90th percentile 11 to 27). Weapon damage abilities: Cleave 19983 3,028 to 5,914 from 29 hits. Abilities: Burning Adrenaline 23620 on the tank every 45 s (it dies 20 s later), so tanks swap every 45 s. Flame Breath 23461 3,500 to 4,500 Fire every 5 to 10 s, frontal, and 938 to 1,062 Fire every 3 s for 15 s, stacking to 5. Cleave 19983 every 5 to 10 s. Fire Nova 23462 555 to 645 Fire to the raid every 2 s. The Classic Era client's spell data, timers from the vmangos script.",
+ "source": "[logs: Season of Discovery] Melee 4,417 to 6,681 before armor under the bench's raid debuffs, a swing every 2.56 s on the tank: Warcraft Logs, 23 kills on Season of Discovery (Normal, 2025-02-05 to 2026-09-12): the median of 48 normal hits' unmitigatedAmount (5,354), the 5th to 95th percentile of each hit over its own kill's median (36 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 3,585 weapon damage, spread 0.631, a 2.13 s swing. Length: his longest stretch on one tank a kill, median 25 s (10th to 90th percentile 16 to 52). Weapon damage abilities: Cleave 19983 4,724 to 7,794 from 14 hits. Abilities: Burning Adrenaline 23620 on the tank every 45 s (it dies 20 s later), so tanks swap every 45 s. Flame Breath 23461 3,500 to 4,500 Fire every 5 to 10 s, frontal, and 938 to 1,062 Fire every 3 s for 15 s, stacking to 5. Cleave 19983 every 5 to 10 s. Fire Nova 23462 555 to 645 Fire to the raid every 2 s. The Classic Era client's spell data, timers from the vmangos script.",
  "abilitiesSource": "Burning Adrenaline 23620 on the tank every 45 s (it dies 20 s later), so tanks swap every 45 s. Flame Breath 23461 3,500 to 4,500 Fire every 5 to 10 s, frontal, and 938 to 1,062 Fire every 3 s for 15 s, stacking to 5. Cleave 19983 every 5 to 10 s. Fire Nova 23462 555 to 645 Fire to the raid every 2 s. The Classic Era client's spell data, timers from the vmangos script.",
  "reports": [
-  "1cGRtJvhNWfDHgaK:4",
-  "ZHLq8KgNRW3F4Abr:4",
-  "HLncaXgmhrYjwtKC:4",
-  "cawR6ytBxFTdmLDp:4",
-  "P1q93HcBTVKxJMpA:4",
-  "68ybJwZnkX2RPcGm:4",
-  "4z3xQCZBnhYDrHjd:4",
-  "VZ7C6BpMgPNf8xHD:5",
-  "kxcgDX7pbYm82qFP:5",
-  "QVjyqfDMT7kcnJ6x:4",
-  "wcqCRdQ43j81h9p7:4",
-  "xnLvprGfDkYzNtBR:4",
-  "ZMdDxLAPWhj9HVGN:3",
-  "GqVArWfx9yJ47aHd:4",
-  "rpvtGmDZa9FBPHAY:4",
-  "NvrjcQ7BbzAYmVF1:4",
-  "rg8Y4P9kyt2KXfvQ:4",
-  "zq7DYXr3jPcxNLRy:4",
-  "Kda38npwqr2cLTAY:4",
-  "wpyZPLgmRtkTdqW8:5",
-  "VqhvJkGHzdTQpc36:4",
-  "ADvHd2QTGrx3JbNc:5",
-  "aBMLKhCGjdP4pyzT:4",
-  "gcW4dZyCB6jpNV9R:4",
-  "Ap2RZt8gQyJzTa36:4",
-  "LFbz4MyB28vVm6Df:9",
-  "GygnHAN67w9jMqTJ:5"
+  "vNnca78ZGzHAYrg1:4",
+  "MG4KHtkPQ9mDapLC:4",
+  "9rdM68DRtpT7ZvLg:3",
+  "wckvT2bmZVDaCGxg:6",
+  "H7WJMyA8gRjknpNT:4",
+  "Jxwtv3gTMZRGyC96:55",
+  "kDhymKjHPzWpb4nB:2",
+  "wZ3Yt9pvm2LQTndB:40",
+  "vrzdnL31Pp46Ba2g:88",
+  "8zPYvLGJCmQhX13H:3",
+  "PmnvzGfdYwqCD8Qk:45",
+  "zrR2CtJkLG1mb8ZF:1",
+  "pmdh6AG8qF2gZV7t:52",
+  "dxMqGmvFKfH2kcTj:5",
+  "P1mw8RF6cnCyqHhY:4",
+  "tT6n4M2DY7R3LrmX:2",
+  "WMPNVndg1BmjrYcL:2",
+  "rRyFH12Bbzfk6vKQ:3",
+  "Tpmzv6C4xKNtZ1M9:55",
+  "9z8RThWPGfVwDqgX:4",
+  "QvYHL1qXkNhjGBMy:2",
+  "CnRFY48fGwtrcK69:4",
+  "Zcv7JLKr1PRmnfbT:7"
  ],
  "warcraftLogs": {
-  "site": "vanilla",
-  "encounter": 50611,
+  "site": "sod",
+  "encounter": 100611,
   "zone": "Blackwing Lair",
   "difficulty": "Normal",
-  "mined": "tools/encounters/logs/anniversary_bwl.json"
+  "mined": "tools/encounters/logs/sod_bwl.json"
  },
  "notes": "One tank's stint (Burning Adrenaline comes every 45 s), so the fight is his longest stretch on one tank in the logs. Flame Breath's DoT stacks to 5 (client data), which a sim DoT can't, so each stack is its own 1,000 Fire every 3 s, the stacks coming one a breath (every 7.5 s from 11 s) and staying up. Fire resistance takes its share of the Fire. The Burning Adrenaline on casters and the raid's Fire Nova on others are the healing sim's.",
  "encounter": {
-  "duration": 17,
-  "durationVariation": 8,
+  "duration": 25,
+  "durationVariation": 12,
   "targets": [
    {
     "name": "Vaelastrasz the Corrupt",
@@ -94,9 +90,9 @@
      0,
      0
     ],
-    "minBaseDamage": 2705.7,
-    "damageSpread": 0.5099,
-    "swingSpeed": 2.2
+    "minBaseDamage": 3584.9,
+    "damageSpread": 0.6313,
+    "swingSpeed": 2.13
    }
   ],
   "raidDamage": [
@@ -163,8 +159,8 @@
    {
     "spellId": 19983,
     "school": "SpellSchoolPhysical",
-    "minDamage": 3028,
-    "maxDamage": 5914,
+    "minDamage": 4724,
+    "maxDamage": 7794,
     "who": "BossTarget",
     "firstAt": 6,
     "everySeconds": 7.5,
@@ -184,9 +180,9 @@
   ]
  },
  "healing": {
-  "healers": 6,
-  "hpsEach": 714,
-  "castSeconds": 1.78,
-  "notes": "From the Anniversary Hardcore realms's logs (27 kills): while the boss was on the main tank, 6 healers had 5% or more of its healing (the median kill), and the healing it took from others was 4,284 a second with overheal and absorbs (27% of the heals effective), 3.37 heals and HoT ticks a second, against 1,213 damage taken a second. The tank's own heals (2% of its healing) are left out. Main tanks: Warrior 27."
+  "healers": 3,
+  "hpsEach": 1098,
+  "castSeconds": 1.11,
+  "notes": "From Season of Discovery's logs (23 kills): while the boss was on the main tank, 3 healers had 5% or more of its healing (the median kill), and the healing it took from others was 3,293 a second with overheal and absorbs (51% of the heals effective), 2.70 heals and HoT ticks a second, against 1,972 damage taken a second. The tank's own heals (4% of its healing) are left out. Main tanks: Paladin 9, Warrior 4, Warlock 4, Druid 3, Shaman 2, Rogue 1."
  }
 }

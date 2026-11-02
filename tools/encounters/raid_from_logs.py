@@ -6,9 +6,8 @@ events with `who` NotTanks) with the logs' abilities, and writes what real raids
 (healers, their healing, deaths), `raidSource` and `raidReports`. The tank side (the boss's melee,
 the BossTarget and Tanks events, `healing`, `source`, `reports`) is the tank sim's and stays as it is.
 
+    python3 tools/encounters/raid_from_logs.py --site anniversary tools/encounters/logs/anniversary_*_raid.json
     python3 tools/encounters/raid_from_logs.py --site sod tools/encounters/logs/sod_*_raid.json
-    python3 tools/encounters/raid_from_logs.py --site anniversary --out tools/encounters/anniversary \\
-        tools/encounters/logs/anniversary_*_raid.json
 
 Run it after from_logs.py, which writes a site's files from tools/encounters' own (so from the
 Season of Discovery raid side until this puts each site's own back).
@@ -84,10 +83,13 @@ def per_second(ev, others):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--site', choices=SITES, required=True)
-    ap.add_argument('--out', default=HERE, help='the files to update (default tools/encounters)')
+    ap.add_argument('--out', help='where the files are (default: by site, tools/encounters for the Anniversary realms, '
+                    'whose files score tanks (the user, 2026-11-02), tools/encounters/<site> for the others)')
     ap.add_argument('--boss', action='append', help='only this boss (repeat for more)')
     ap.add_argument('mined', nargs='+', help="wclcli.py raid -o files of this site")
     a = ap.parse_args()
+    if not a.out:
+        a.out = HERE if a.site == 'anniversary' else os.path.join(HERE, a.site)
     site = SITES[a.site]
     mined = {}
     for path in a.mined:

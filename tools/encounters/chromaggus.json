@@ -1,42 +1,41 @@
 {
  "name": "Chromaggus",
- "source": "[logs: Season of Discovery] Melee 4,237 to 6,071 before armor under the bench's raid debuffs, a swing every 1.16 s on the tank: Warcraft Logs, 22 kills on Season of Discovery (Normal, 2025-02-06 to 2026-08-28): the median of 454 normal hits' unmitigatedAmount (5,076), the 5th to 95th percentile of each hit over its own kill's median (444 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 3,440 weapon damage, spread 0.533, a 0.96 s swing. Length: the kills' length, median 218 s (10th to 90th percentile 140 to 264). Abilities: Two breaths a lockout, one at 30 s and one at 60 s, each every 60 s (the vmangos script). Incinerate 23308 3,675 to 4,725 Fire, Corrosive Acid 23313 875 to 1,125 Nature every 3 s for 15 s (and 3,938 to 5,062 less armor), the Classic Era client's spell data.",
+ "source": "[logs: Anniversary] Melee 2,513 to 4,161 before armor under the bench's raid debuffs, a swing every 1.37 s on the tank: Warcraft Logs, 21 kills on the Anniversary Hardcore realms (Normal, 2025-03-31 to 2025-07-31): the median of 793 normal hits' unmitigatedAmount (3,280), the 5th to 95th percentile of each hit over its own kill's median (793 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 2,052 weapon damage, spread 0.803, a 1.14 s swing. Length: the kills' length, median 115 s (10th to 90th percentile 91 to 184). Abilities: Two breaths a lockout, one at 30 s and one at 60 s, each every 60 s (the vmangos script). Incinerate 23308 3,675 to 4,725 Fire, Corrosive Acid 23313 875 to 1,125 Nature every 3 s for 15 s (and 3,938 to 5,062 less armor), the Classic Era client's spell data.",
  "abilitiesSource": "Two breaths a lockout, one at 30 s and one at 60 s, each every 60 s (the vmangos script). Incinerate 23308 3,675 to 4,725 Fire, Corrosive Acid 23313 875 to 1,125 Nature every 3 s for 15 s (and 3,938 to 5,062 less armor), the Classic Era client's spell data.",
  "reports": [
-  "MG4KHtkPQ9mDapLC:25",
-  "H7WJMyA8gRjknpNT:31",
-  "Jxwtv3gTMZRGyC96:83",
-  "tQ179m2XnDN3BrdZ:1",
-  "qZGkdcN6VrtWTCxa:35",
-  "DryGP9cpjnAK8wLN:36",
-  "KjYJghM3HF4GnC2D:4",
-  "YTq4LFtaNdX98pVH:33",
-  "PyCDKZ64QMBFx7gf:49",
-  "hnKT1jH9NbgC2xra:75",
-  "8zPYvLGJCmQhX13H:29",
-  "wZ3Yt9pvm2LQTndB:60",
-  "rHXCDcAKa1jRbyWP:17",
-  "Qm4K3FRAzgn1P9Lv:24",
-  "P1mw8RF6cnCyqHhY:29",
-  "D8hTcZx3JmN1Cdqr:29",
-  "29CYHZFjkxQnPzBr:31",
-  "ZLc3A76QW8DzXfRg:24",
-  "2ntD1mVFLbCAzpcZ:19",
-  "pZKaJn9GcmPWqgDk:36",
-  "Qzpa1Kh7HN4Ybmvt:54",
-  "QvYHL1qXkNhjGBMy:30"
+  "bgrnTWMJpc8ZzHDa:3",
+  "P1q93HcBTVKxJMpA:30",
+  "68ybJwZnkX2RPcGm:28",
+  "VZ7C6BpMgPNf8xHD:28",
+  "wcqCRdQ43j81h9p7:31",
+  "xnLvprGfDkYzNtBR:27",
+  "ZMdDxLAPWhj9HVGN:8",
+  "GqVArWfx9yJ47aHd:22",
+  "rpvtGmDZa9FBPHAY:30",
+  "NvrjcQ7BbzAYmVF1:30",
+  "rg8Y4P9kyt2KXfvQ:30",
+  "zq7DYXr3jPcxNLRy:24",
+  "Kda38npwqr2cLTAY:25",
+  "wpyZPLgmRtkTdqW8:30",
+  "VqhvJkGHzdTQpc36:27",
+  "ADvHd2QTGrx3JbNc:26",
+  "aBMLKhCGjdP4pyzT:29",
+  "gcW4dZyCB6jpNV9R:29",
+  "Ap2RZt8gQyJzTa36:29",
+  "47hzFfVb3BgcNtXQ:10",
+  "GygnHAN67w9jMqTJ:25"
  ],
  "warcraftLogs": {
-  "site": "sod",
-  "encounter": 100616,
+  "site": "vanilla",
+  "encounter": 50616,
   "zone": "Blackwing Lair",
   "difficulty": "Normal",
-  "mined": "tools/encounters/logs/sod_bwl.json"
+  "mined": "tools/encounters/logs/anniversary_bwl.json"
  },
  "notes": "Picks Incinerate and Corrosive Acid of the five breaths. Corrosive Acid's armor cut isn't modelled. Frenzy (+150% attack speed every 15 s) is in the logs' swing rate, as much of it as the raids let through. Brood Afflictions on the raid are the healing sim's.",
  "encounter": {
-  "duration": 218,
-  "durationVariation": 62,
+  "duration": 115,
+  "durationVariation": 47,
   "targets": [
    {
     "name": "Chromaggus",
@@ -89,9 +88,9 @@
      0,
      0
     ],
-    "minBaseDamage": 3440.0,
-    "damageSpread": 0.5329,
-    "swingSpeed": 0.96
+    "minBaseDamage": 2052.0,
+    "damageSpread": 0.8032,
+    "swingSpeed": 1.14
    }
   ],
   "raidDamage": [
@@ -120,9 +119,9 @@
   ]
  },
  "healing": {
-  "healers": 4,
-  "hpsEach": 424,
-  "castSeconds": 1.73,
-  "notes": "From Season of Discovery's logs (22 kills): while the boss was on the main tank, 4 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,697 a second with overheal and absorbs (40% of the heals effective), 2.31 heals and HoT ticks a second, against 789 damage taken a second. The tank's own heals (2% of its healing) are left out. Main tanks: Paladin 10, Warrior 4, Druid 3, Shaman 2, Warlock 2, Rogue 1."
+  "healers": 8,
+  "hpsEach": 303,
+  "castSeconds": 3.07,
+  "notes": "From the Anniversary Hardcore realms's logs (21 kills): while the boss was on the main tank, 8 healers had 5% or more of its healing (the median kill), and the healing it took from others was 2,425 a second with overheal and absorbs (31% of the heals effective), 2.60 heals and HoT ticks a second, against 766 damage taken a second. The tank's own heals (1% of its healing) are left out. Main tanks: Warrior 20, Druid 1."
  }
 }
