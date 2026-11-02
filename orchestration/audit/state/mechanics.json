@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "5a6e9c6a6c2df9f1c3eb34ee5affdbfdf3c95af2"
+  "master": "fa865a3b8b7a5bfc677732ec68263be225b6a94d"
  },
- "last_pass_at": "2026-11-02T01:10:48Z",
- "pass": 56,
+ "last_pass_at": "2026-11-02T06:58:00Z",
+ "pass": 57,
  "result": "quiet",
- "note": "Pass 56: 5 class commits (paladin/druid/hunter Oct 30 hotfix trees, Ret consumes in mksettings spec_ret); no sim/core or shared-raid change. Spot-check: Shifting Power 1322605 RecoveryTime 8000 in push 113283 (region 91) matches. Client 70707 still newest (probe 300). Hotfix pushes on 70707 region 91 after 113486: 113496 (Legacy Reputation Reward effect), 113500 (SpellDuration 427, Resurrection Sickness 1 min), 113505 (visual), 113557 (155 SpellEffect rows, NPC/quest spells, unchanged values): nothing simulated. Dev notes 8 posts unchanged; no new Forever blue posts since 10-29 (Goes Live Nov 4 announcement only).",
+ "note": "Pass 57: 1 commit since 5a6e9c6 (231d5492a, Ret deep Holy Shock build dropped, mksettings ret_shock alias removed, Frostfire mage default): preset removal only, no sim/core, shared-raid or class mechanic change. Client 70707 still newest (probe 300). Newest spell hotfix push on 70707 region 91 still 113557. Dev notes 8 posts unchanged (edit times same); blue tracker: no new Forever posts since 10-29.",
  "client_build": "1.60.1.70707",
- "checked_at": "2026-11-02T01:11:05Z",
+ "checked_at": "2026-11-02T07:01:30Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
@@ -25,5 +25,5 @@
   "newest_push": 113557,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-02T01:10:48Z"
+ "blue_tracker_seen": "2026-11-02T06:58:00Z"
 }

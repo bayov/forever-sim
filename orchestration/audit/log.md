@@ -148,3 +148,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-02 01:11 | consumables | pass 62 | master 5a6e9c6a6 | quiet | Only Ret Shock potion change; Sapper finding still open
 2026-11-02 01:11 | mechanics | pass 56 | master 5a6e9c6a6 | quiet | 5 class hotfix-tree commits match sources; client 70707 still newest
 2026-11-02 01:11 | fairness | pass 21 | master 5a6e9c6a6 | quiet | All moves traced to commits; fairness-20261101-3 resolved; new race-sweep baseline
+2026-11-02 07:01 | results | pass 70 | master fa865a3b8b7a | quiet | All 73 builds within 0.15 of published; results-20261101-1 resolved
+2026-11-02 07:01 | rotations | pass 46 | master fa865a3b8b7a | quiet | Only deep Holy Shock Ret APLs deleted; no live APL logic changed
+2026-11-02 07:01 | consumables | pass 63 | master fa865a3b8b7a | quiet | ret_shock/ShockConsumes removal and Frostfire default; Sapper finding still open
+2026-11-02 07:01 | mechanics | pass 57 | master fa865a3b8b7a | quiet | Only 231d5492a (preset removals); client 70707 still newest
+2026-11-02 07:01 | fairness | pass 22 | master fa865a3b8b7a | quiet | Published within 1.0 on all builds; new sweep baseline; Orc Affliction already open

@@ -4,6 +4,10 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+_None open._
+
+## Resolved
+
 ### results-20261101-1: 62 of 77 metas' published.dps are stale after the 2026-11-01 re-sims (38fb06ea9, 11de3318a)
 - severity: low (no published number is wrong: builds.json matches my 20k seed-1 run on all 77 within 0.1)
 - affects: tools/dps_report/req/*.meta.json (74); runreq.sh and verify.py report them as OFF published by 0.5 to 8.9 DPS
@@ -12,8 +16,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update, 2026-11-02, master 5a6e9c6a6: now 62 of 77 off by more than 0.15 (the 15 paladin metas were set from the hotfix re-search, so they match my run, but builds.json still has the old paladin numbers). The 9 pet hunters' metas still carry the pre-11de3318a values (BM 1131.8 vs builds.json and run 1045.4).
 - proposed fix: set each meta's published.dps and source from builds.json, per tools/dps_report/README.md "update meta.published".
 - needs: orchestrator fix
-
-## Resolved
+- resolved: 2026-11-02, 3fd9b46d2 (metas set from the 2026-11-02 report; all 73 metas, builds.json and my 20k seed-1 run agree within 0.15)
 
 ### results-20261025-1: mksettings and the committed requests disagree on consumes (potion, flask, filler explosive)
 - severity: medium (Ret Shock -13.7 DPS = -1.6% if regenerated; others under 2.5)

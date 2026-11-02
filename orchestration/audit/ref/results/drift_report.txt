@@ -39,11 +39,6 @@
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
 ## paladin__level_60 spec=ret diffs=1 (apl/prepull 0)
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
-## paladin__level_60_shock-duty-crusader spec=ret_shock diffs=1 (apl/prepull 0)
-   .raid.debuffs.judgementOfTheCrusader: committed=<absent> regen=TristateEffectImproved
-## paladin__level_60_shock-duty-wisdom spec=ret_shock diffs=1 (apl/prepull 0)
-   .raid.debuffs.judgementOfWisdom: committed=<absent> regen=True
-## paladin__level_60_shock spec=ret_shock diffs=0 (apl/prepull 0)
 ## paladin__level_60_shock_ret-duty-crusader spec=ret diffs=2 (apl/prepull 0)
    .raid.debuffs.judgementOfTheCrusader: committed=<absent> regen=TristateEffectImproved
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
@@ -52,8 +47,6 @@
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
 ## paladin__level_60_shock_ret spec=ret diffs=1 (apl/prepull 0)
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
-## paladin__level_60_shock_undead spec=ret_shock diffs=1 (apl/prepull 0)
-   .encounter.targets[0].mobType: committed=MobTypeUndead regen=<absent>
 ## paladin__level_60_sub_holy-duty-crusader spec=ret diffs=2 (apl/prepull 0)
    .raid.debuffs.judgementOfTheCrusader: committed=<absent> regen=TristateEffectImproved
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
