@@ -1,3 +1,10 @@
+/* EllesmereUI's font, served from the WoW client by the practice server. */
+@font-face {
+	font-family: 'Avant Garde';
+	src: url('/api/font/eui') format('truetype');
+	font-display: swap;
+}
+
 :root {
 	--bg: #10131a;
 	--panel: rgba(12, 14, 20, 0.82);
@@ -7,7 +14,10 @@
 	--red: #ff2020;
 	--mana: #2f6fe0;
 	--health: #2fae3c;
-	font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+	--eui-bg: rgba(0, 0, 0, 0.55);
+	--eui-panel: rgba(10, 10, 12, 0.88);
+	--eui-accent: #0cd29d;
+	font-family: 'Avant Garde', 'Segoe UI', Roboto, Arial, sans-serif;
 	color: var(--text);
 }
 
@@ -86,122 +96,594 @@ button.primary {
 	width: 100%;
 	height: 100%;
 }
+
+/* The HUD. --u is screen pixels to a WoW UI unit, set for the window's height (layout.ts). Text
+   has EllesmereUI's drop shadow. */
 .hud {
+	--u: 1px;
 	position: fixed;
 	inset: 0;
 	pointer-events: none;
-	font-size: 13px;
+	font-size: calc(12 * var(--u));
+	text-shadow: 1px 1px 0 #000;
 }
 .hud button,
-.hud .button,
 .hud .fight-settings,
 .hud .spellbook,
 .hud .bar-tools,
-.hud .summary {
+.hud .summary,
+.hud .uf,
+.hud .pk-icon,
+.hud .pk-power,
+.hud .pk-swing,
+.hud .pk-pips,
+.hud .aura,
+.hud .dmeter,
+.hud .h-icon,
+.hud .nameplate,
+.hud .button {
 	pointer-events: auto;
 }
+.hud button {
+	background: rgba(0, 0, 0, 0.6);
+	border: 1px solid #000;
+	border-radius: 0;
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+	padding: 3px 10px;
+	text-shadow: 1px 1px 0 #000;
+}
+.hud button:hover {
+	background: rgba(40, 40, 46, 0.8);
+	box-shadow: inset 0 0 0 1px var(--eui-accent);
+}
 
-.unit-frame {
+/* Unit frames: flat bars, a 1px black border, no portrait. */
+.uf {
 	position: absolute;
-	top: 16px;
-	width: 230px;
-	background: var(--panel);
-	border: 1px solid #333;
-	border-radius: 4px;
-	padding: 4px;
+	box-sizing: border-box;
 }
-.player-frame {
-	left: 16px;
-}
-.target-frame {
-	left: 262px;
-}
-.unit-frame .name {
-	font-weight: 600;
-	margin-bottom: 3px;
-}
-.bar {
+.uf .hp {
 	position: relative;
-	height: 14px;
-	background: #222;
-	margin-top: 2px;
+	height: 100%;
+	background: var(--eui-bg);
+	border: 1px solid #000;
+	box-sizing: border-box;
+	overflow: hidden;
 }
-.bar span {
+.uf .hp .fill {
 	position: absolute;
 	inset: 0 auto 0 0;
-	display: block;
-}
-.bar em {
-	position: absolute;
-	inset: 0;
-	text-align: center;
-	font-style: normal;
-	font-size: 11px;
-	line-height: 14px;
-}
-.bar.health span {
-	background: var(--health);
 	width: 100%;
 }
-.bar.mana span {
-	background: var(--mana);
-}
-
-.buffs {
+.uf em {
 	position: absolute;
-	top: 16px;
-	right: 16px;
-	display: flex;
-	flex-wrap: wrap-reverse;
-	flex-direction: row-reverse;
-	gap: 4px;
-	max-width: 420px;
+	top: 50%;
+	transform: translateY(-50%);
+	font-style: normal;
+	white-space: nowrap;
+	color: #fff;
+	line-height: 1;
 }
-.debuffs {
+.uf em.right {
+	right: calc(5 * var(--u));
+}
+.uf em.left {
+	left: calc(5 * var(--u));
+}
+.uf em.center {
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: calc(11 * var(--u));
+}
+.target-frame em.name {
+	max-width: 55%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.uf .debuffs {
+	position: absolute;
+	left: 0;
+	top: calc(100% + 1 * var(--u));
 	display: flex;
 	flex-wrap: wrap;
-	gap: 3px;
-	margin-top: 4px;
+	gap: calc(4.4 * var(--u));
 }
+
+/* Auras: cropped icons, the time under them. */
 .aura {
 	position: relative;
-	width: 30px;
-	height: 42px;
-}
-.debuffs .aura {
-	width: 24px;
-	height: 34px;
+	width: calc(30 * var(--u));
+	height: calc(30 * var(--u));
 }
 .aura .icon {
-	width: 100%;
-	aspect-ratio: 1;
-	background-size: cover;
+	position: absolute;
+	inset: 0;
+	background-size: 112% auto;
+	background-position: center;
 	border: 1px solid #000;
 }
 .aura .time {
-	font-size: 11px;
-	text-align: center;
+	position: absolute;
+	left: 50%;
+	top: 100%;
+	transform: translateX(-50%);
+	font-size: calc(11 * var(--u));
+	white-space: nowrap;
 }
 .aura .stacks {
 	position: absolute;
 	right: 1px;
-	top: 14px;
+	bottom: 0;
 	font-weight: 700;
-	text-shadow: 0 0 2px #000;
+	font-size: calc(12 * var(--u));
+}
+.aura.debuff .icon {
+	border-color: #b00;
+}
+.buffs {
+	position: absolute;
+	top: calc(4 * var(--u));
+	right: calc(4.4 * var(--u));
+	display: flex;
+	flex-wrap: wrap;
+	flex-direction: row-reverse;
+	gap: calc(14 * var(--u)) calc(4 * var(--u));
+	max-width: calc(560 * var(--u));
 }
 
+/* The Bayov class pack. */
+.pack > * {
+	position: absolute;
+	box-sizing: border-box;
+}
+.pk-power,
+.pk-swing {
+	background: rgba(0, 0, 0, 0.7);
+	border: 1px solid #000;
+	overflow: hidden;
+}
+.pk-power .fill,
+.pk-swing .fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	display: block;
+}
+.pk-power em {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-style: normal;
+}
+.pk-swing .fill {
+	background: #e8e8e8;
+}
+.pk-swing.alert .fill,
+.pk-swing.alert {
+	background: #c41f1f;
+}
+.pk-pips {
+	display: flex;
+	gap: calc(2.2 * var(--u));
+}
+.pk-pips span {
+	flex: 1;
+	border: 1px solid #000;
+	background: rgba(0, 0, 0, 0.7);
+}
+.pk-pips span.on {
+	background: #00b8de;
+}
+.pk-icon {
+	border: 1px solid #000;
+	background: #000;
+}
+.pk-icon .img {
+	position: absolute;
+	inset: 0;
+	background-size: 112% auto;
+	background-position: center;
+}
+.pk-icon .swipe {
+	--elapsed: 1;
+	position: absolute;
+	inset: 0;
+	background: conic-gradient(transparent 0 calc(var(--elapsed) * 1turn), rgba(0, 0, 0, 0.75) 0);
+}
+.pk-icon .time {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: calc(15 / 1.8 * 1.6 * var(--u));
+	font-weight: 700;
+	color: #fff;
+	text-shadow:
+		1px 1px 0 #000,
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000;
+}
+.pk-icon .stacks {
+	position: absolute;
+	right: 2px;
+	top: 0;
+	font-weight: 700;
+	font-size: calc(10 * var(--u));
+}
+.pk-icon.on-cd .img {
+	filter: grayscale(1);
+}
+.pk-icon.oom .img {
+	filter: brightness(0.6) sepia(1) hue-rotate(190deg) saturate(2);
+}
+.pk-icon.maintain.missing .img {
+	filter: grayscale(1);
+}
+.pk-icon.maintain.missing {
+	box-shadow: 0 0 calc(5 * var(--u)) 1px #ff2020;
+}
+.pk-icon.maintain.faded {
+	opacity: 0.4;
+	box-shadow: none;
+}
+.pk-icon.maintain.soon .time {
+	color: #ff9a2e;
+}
+.pk-icon.maintain.ending .time {
+	color: #ff4a3d;
+}
+
+/* The cast bar: an icon with a divider, the spell left, the time right, the ping's share at
+   the end. */
+.castbar {
+	position: absolute;
+	display: flex;
+	border: 1px solid #000;
+	background: rgba(0, 0, 0, 0.7);
+	box-sizing: border-box;
+}
+.cb-icon {
+	height: 100%;
+	aspect-ratio: 1;
+	background-size: 112% auto;
+	background-position: center;
+	border-right: 1px solid #000;
+}
+.cb-bar {
+	position: relative;
+	flex: 1;
+	overflow: hidden;
+}
+.cb-bar .fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+}
+.cb-bar .latency {
+	position: absolute;
+	inset: 0 0 0 auto;
+}
+.cb-name,
+.cb-time {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	white-space: nowrap;
+}
+.cb-name {
+	left: calc(4 * var(--u));
+}
+.cb-time {
+	right: calc(4 * var(--u));
+}
+
+/* The action bars: blocks of cropped buttons on black slots, the key top right, the macro name
+   at the bottom. */
+.bar-block {
+	position: absolute;
+}
+.button {
+	position: absolute;
+	background: #000;
+	box-sizing: border-box;
+	border: 1px solid #000;
+	cursor: pointer;
+	overflow: hidden;
+}
+.button .icon {
+	position: absolute;
+	inset: 0;
+	background-size: 116% auto;
+	background-position: center;
+}
+.button .sweep {
+	--sweep: 0deg;
+	position: absolute;
+	inset: 0;
+	background: conic-gradient(rgba(0, 0, 0, 0.7) var(--sweep), transparent var(--sweep));
+}
+.button .cd {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-weight: 700;
+	font-size: calc(12 * var(--u));
+}
+.button .key {
+	position: absolute;
+	right: 2px;
+	top: calc(1 * var(--u));
+	color: #fff;
+	line-height: 1;
+	text-shadow:
+		1px 1px 0 #000,
+		-1px -1px 0 #000;
+}
+.button .name {
+	position: absolute;
+	left: 1px;
+	right: 1px;
+	bottom: calc(1 * var(--u));
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: clip;
+	line-height: 1;
+}
+.button:hover {
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+.button.oom .icon {
+	filter: brightness(0.55) sepia(1) hue-rotate(190deg) saturate(2.5);
+}
+.button.oor .icon {
+	filter: brightness(0.7) sepia(1) hue-rotate(-50deg) saturate(4);
+}
+.button.pressed {
+	box-shadow: inset 0 0 0 2px var(--gold);
+}
+.button.queued {
+	box-shadow: inset 0 0 0 2px #fff;
+}
+.button.unsupported::after {
+	content: '!';
+	position: absolute;
+	left: 2px;
+	top: 0;
+	color: #ff8080;
+	font-weight: 700;
+}
+.action-bars.editing .button,
+.action-bars.binding .button {
+	outline: 1px dashed #777;
+	outline-offset: -1px;
+}
+.action-bars.binding .button:hover {
+	box-shadow: inset 0 0 0 2px #4af;
+}
+
+/* The nameplate over the dummy: the name in reaction color, a thin bar, curved arrows on the
+   target. */
+.nameplate {
+	position: absolute;
+	transform: translateY(-100%);
+}
+.np-name {
+	text-align: center;
+	color: #ffd200;
+	font-size: calc(11 * var(--u));
+	white-space: nowrap;
+	margin-bottom: 1px;
+}
+.nameplate.in-combat .np-name {
+	color: #cc2323;
+}
+.np-hp {
+	position: relative;
+	background: rgba(0, 0, 0, 0.75);
+	border: 1px solid #000;
+	box-sizing: border-box;
+}
+.np-hp .fill {
+	position: absolute;
+	inset: 0 auto 0 0;
+	background: #ffd200;
+}
+.nameplate.in-combat .np-hp .fill {
+	background: #cc2323;
+}
+.np-debuffs {
+	display: flex;
+	justify-content: center;
+	gap: 2px;
+	margin-bottom: 2px;
+}
+.np-debuffs .aura {
+	width: calc(20 * var(--u));
+	height: calc(20 * var(--u));
+}
+.np-debuffs .aura .time {
+	top: 50%;
+	transform: translate(-50%, -50%);
+	font-size: calc(10 * var(--u));
+}
+.np-arrow {
+	position: absolute;
+	bottom: 0;
+	width: calc(14 * var(--u));
+	height: calc(20 * var(--u));
+	display: none;
+	border: calc(3 * var(--u)) solid #fff;
+	border-color: transparent #fff transparent transparent;
+	border-radius: 50%;
+	filter: drop-shadow(0 0 2px #000);
+}
+.np-arrow.left {
+	left: calc(-20 * var(--u));
+	transform: rotate(180deg) translateY(-20%);
+}
+.np-arrow.right {
+	right: calc(-20 * var(--u));
+	transform: translateY(20%);
+}
+.nameplate.targeted .np-arrow {
+	display: block;
+}
+
+/* The damage meter window: a header, then one class-colored bar. */
+.dmeter {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	gap: 0;
+}
+.dm-header {
+	font-size: calc(12 * var(--u));
+	color: #ddd;
+	padding: 0 0 calc(4 * var(--u)) calc(2 * var(--u));
+}
+.dm-bar {
+	position: relative;
+	background: rgba(0, 0, 0, 0.35);
+	font-size: calc(11 * var(--u));
+}
+.dm-bar .fill {
+	position: absolute;
+	inset: 0;
+	opacity: 0.85;
+}
+.dm-bar em {
+	position: absolute;
+	top: 50%;
+	transform: translateY(-50%);
+	font-style: normal;
+	white-space: nowrap;
+}
+.dm-bar .l {
+	left: calc(4 * var(--u));
+}
+.dm-bar .r {
+	right: calc(4 * var(--u));
+}
+
+/* The spell history: our last casts, sliding in from the right and fading. */
+.history {
+	position: absolute;
+	display: flex;
+	justify-content: flex-end;
+	align-items: center;
+	gap: calc(2.2 * var(--u));
+}
+.h-icon {
+	flex: none;
+	background-size: 112% auto;
+	background-position: center;
+	border: 1px solid #000;
+	animation: slide-in 0.15s ease-out;
+	transition: opacity 0.5s;
+}
+.h-icon.fade {
+	opacity: 0;
+}
+@keyframes slide-in {
+	from {
+		transform: translateX(40%);
+		opacity: 0;
+	}
+}
+
+/* The game tooltip, at the user's fixed spot. Wowhead's classes give the game's colors. */
+.tooltip {
+	position: fixed;
+	z-index: 10;
+	max-width: calc(330 * var(--u));
+	min-width: calc(160 * var(--u));
+	padding: calc(7 * var(--u)) calc(9 * var(--u));
+	background: rgba(8, 8, 10, 0.92);
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	font-size: calc(12 * var(--u));
+	line-height: 1.3;
+	color: #fff;
+	pointer-events: none;
+	text-shadow: 1px 1px 0 #000;
+}
+.tooltip table {
+	border-collapse: collapse;
+	width: 100%;
+}
+.tooltip td,
+.tooltip th {
+	padding: 0;
+	vertical-align: top;
+	text-align: left;
+	font-weight: normal;
+}
+.tooltip th {
+	text-align: right;
+	padding-left: calc(12 * var(--u));
+}
+.tooltip .whtt-name,
+.tooltip .tt-title,
+.tooltip b {
+	font-size: calc(14 * var(--u));
+	font-weight: normal;
+	color: #fff;
+}
+.tooltip .tt-title.hostile {
+	color: #ff2020;
+}
+.tooltip .q {
+	color: #ffd100;
+}
+.tooltip .q0 {
+	color: #9d9d9d;
+}
+.tooltip .q1 {
+	color: #fff;
+}
+.tooltip .q2 {
+	color: #1eff00;
+}
+.tooltip .q3 {
+	color: #0070dd;
+}
+.tooltip .q4 {
+	color: #a335ee;
+}
+.tooltip .q10 {
+	color: #ff2020;
+}
+.tooltip .whtt-sellprice,
+.tooltip .whtt-extra,
+.tooltip .wowhead-tooltip-requirements {
+	display: none;
+}
+.tooltip .tt-line {
+	color: #ffd100;
+}
+.tooltip .tt-extra {
+	color: #9aa7ff;
+	margin-top: 2px;
+}
+.tooltip .tt-remaining {
+	color: #ffd100;
+}
+
+/* Game messages: red errors and yellow messages at the top, like UIErrorsFrame. */
 .errors {
 	position: absolute;
-	top: 18%;
+	top: 14%;
 	left: 50%;
 	transform: translateX(-50%);
 	text-align: center;
 }
 .error-line {
 	color: var(--red);
-	font-size: 18px;
-	font-weight: 600;
-	text-shadow: 0 0 3px #000;
+	font-size: calc(18 * var(--u));
+	text-shadow: 1px 1px 0 #000;
 	transition: opacity 0.5s;
 }
 .error-line.fade {
@@ -217,41 +699,41 @@ button.primary {
 }
 .messages {
 	position: absolute;
-	top: 26%;
+	top: 20%;
 	left: 50%;
 	transform: translateX(-50%);
 	color: var(--gold);
-	font-size: 20px;
-	text-shadow: 0 0 3px #000;
+	font-size: calc(20 * var(--u));
 	text-align: center;
 }
 .countdown {
 	position: absolute;
-	top: 32%;
+	top: 28%;
 	left: 50%;
 	transform: translateX(-50%);
-	font-size: 72px;
+	font-size: calc(80 * var(--u));
 	font-weight: 700;
 	color: var(--gold);
-	text-shadow: 0 0 6px #000;
+	text-shadow: 2px 2px 0 #000;
 }
 
+/* The room's own controls, in EllesmereUI's flat dark style. */
 .fight-bar {
 	position: absolute;
-	top: 16px;
+	top: calc(6 * var(--u));
 	left: 50%;
 	transform: translateX(-50%);
 	display: flex;
-	gap: 6px;
+	gap: 4px;
 	align-items: center;
-	background: var(--panel);
-	padding: 4px 8px;
-	border-radius: 4px;
+	background: var(--eui-panel);
+	border: 1px solid #000;
+	padding: 3px 6px;
 	pointer-events: auto;
 }
 .fight-bar .phase {
-	color: var(--gold);
-	font-weight: 600;
+	color: var(--eui-accent);
+	min-width: 70px;
 }
 .fight-bar .timer {
 	min-width: 80px;
@@ -259,12 +741,12 @@ button.primary {
 }
 .fight-settings {
 	position: absolute;
-	top: 56px;
+	top: calc(6 * var(--u) + 36px);
 	left: 50%;
 	transform: translateX(-50%);
-	background: var(--panel);
+	background: var(--eui-panel);
+	border: 1px solid #000;
 	padding: 10px;
-	border-radius: 4px;
 	display: grid;
 	grid-template-columns: auto auto;
 	gap: 6px 12px;
@@ -279,172 +761,26 @@ button.primary {
 	color: var(--text);
 	border: 1px solid #333a48;
 }
-
-.meter {
-	position: absolute;
-	right: 16px;
-	bottom: 200px;
-	z-index: 1;
-	background: var(--panel);
-	padding: 6px 10px;
-	border-radius: 4px;
-	text-align: right;
-	min-width: 140px;
-}
-.meter .dps {
-	font-size: 18px;
-	font-weight: 600;
-	color: var(--gold);
-}
-
-.castbar,
-.swingbar {
-	position: absolute;
-	left: 50%;
-	transform: translateX(-50%);
-	width: 260px;
-	background: #111;
-	border: 1px solid #000;
-}
-.castbar {
-	bottom: 230px;
-	height: 18px;
-}
-.castbar .fill {
-	height: 100%;
-	background: #e0a020;
-}
-.castbar .label {
-	position: absolute;
-	inset: 0;
-	text-align: center;
-	line-height: 18px;
-	text-shadow: 0 0 2px #000;
-}
-.swingbar {
-	bottom: 214px;
-	height: 6px;
-}
-.swingbar .fill {
-	height: 100%;
-	background: #c0c0c0;
-}
-.swingbar.dim {
-	opacity: 0.35;
-}
-
-.bars {
-	position: absolute;
-	bottom: 16px;
-	left: 50%;
-	transform: translateX(-50%);
-	display: flex;
-	flex-direction: column-reverse;
-	gap: 3px;
-}
-.bar-row {
-	display: flex;
-	gap: 3px;
-}
-.side-bars {
-	position: absolute;
-	right: 16px;
-	bottom: 260px;
-	display: flex;
-	flex-direction: row-reverse;
-	gap: 3px;
-}
-.side-bars .bar-row {
-	flex-direction: column;
-}
-.side-bars .button {
-	width: 34px;
-	height: 34px;
-}
-.button {
-	position: relative;
-	width: 40px;
-	height: 40px;
-	background: rgba(0, 0, 0, 0.55);
-	border: 1px solid #000;
-	cursor: pointer;
-}
-.button .icon {
-	position: absolute;
-	inset: 0;
-	background-size: cover;
-}
-.button .sweep {
-	--sweep: 0deg;
-	position: absolute;
-	inset: 0;
-	background: conic-gradient(rgba(0, 0, 0, 0.65) var(--sweep), transparent var(--sweep));
-}
-.button .key {
-	position: absolute;
-	right: 2px;
-	top: 1px;
-	font-size: 11px;
-	text-shadow: 0 0 2px #000, 0 0 2px #000;
-}
-.button .name {
-	position: absolute;
-	left: 1px;
-	bottom: 0;
-	font-size: 9px;
-	white-space: nowrap;
-	overflow: hidden;
-	max-width: 38px;
-	text-shadow: 0 0 2px #000;
-}
-.button.oom .icon {
-	filter: saturate(0.3) brightness(0.6) sepia(1) hue-rotate(190deg);
-}
-.button.oor .icon {
-	filter: brightness(0.7) sepia(1) hue-rotate(-50deg) saturate(3);
-}
-.button.pressed {
-	outline: 2px solid var(--gold);
-}
-.button.queued {
-	outline: 2px solid #fff;
-}
-.button.unsupported::after {
-	content: '!';
-	position: absolute;
-	left: 2px;
-	top: 0;
-	color: #ff8080;
-	font-weight: 700;
-}
-.bars.editing .button,
-.bars.binding .button {
-	outline: 1px dashed #777;
-}
-.bars.binding .button:hover {
-	outline: 2px solid #4af;
-}
 .bar-tools {
 	position: absolute;
-	left: 16px;
-	bottom: 16px;
+	left: calc(6 * var(--u));
+	bottom: calc(6 * var(--u));
 	display: flex;
 	gap: 4px;
 }
 .spellbook {
 	position: absolute;
-	left: 16px;
-	bottom: 56px;
+	left: calc(6 * var(--u));
+	bottom: calc(6 * var(--u) + 34px);
 	width: 420px;
 	max-height: 60vh;
 	overflow: auto;
-	background: var(--panel);
-	border: 1px solid #333;
-	border-radius: 4px;
+	background: var(--eui-panel);
+	border: 1px solid #000;
 	padding: 8px;
 }
 .book-title {
-	color: var(--gold);
+	color: var(--eui-accent);
 	margin-bottom: 6px;
 }
 .book-grid {
@@ -453,6 +789,7 @@ button.primary {
 	gap: 4px;
 }
 .book-entry {
+	position: relative;
 	display: flex;
 	gap: 6px;
 	align-items: center;
@@ -461,9 +798,10 @@ button.primary {
 .book-entry .icon {
 	width: 28px;
 	height: 28px;
-	background-size: cover;
+	background-size: 112% auto;
+	background-position: center;
+	border: 1px solid #000;
 	flex: none;
-	position: relative;
 }
 .book-entry:hover {
 	background: rgba(255, 255, 255, 0.08);
@@ -480,13 +818,13 @@ button.primary {
 	position: absolute;
 	transform: translateX(-50%);
 	font-weight: 700;
-	font-size: 20px;
+	font-size: calc(22 * var(--u));
 	color: #fff;
-	text-shadow: 0 0 3px #000;
+	text-shadow: 1px 1px 0 #000;
 	animation: rise 1.5s ease-out forwards;
 }
 .combat-text .ct.crit {
-	font-size: 30px;
+	font-size: calc(32 * var(--u));
 	color: #ffe060;
 }
 .combat-text .ct.periodic {
@@ -510,20 +848,22 @@ button.primary {
 
 .summary {
 	position: absolute;
-	top: 50%;
+	top: 45%;
 	left: 50%;
 	transform: translate(-50%, -50%);
-	background: #151922f2;
-	border: 1px solid #3a4150;
-	border-radius: 8px;
+	background: var(--eui-panel);
+	border: 1px solid #000;
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
 	padding: 16px 20px;
 	min-width: 480px;
-	max-height: 80vh;
+	max-height: 70vh;
 	overflow: auto;
+	font-size: 13px;
 }
 .summary h2 {
 	margin: 0 0 4px;
-	color: var(--gold);
+	color: var(--eui-accent);
+	font-weight: normal;
 }
 .summary-line {
 	color: var(--muted);
@@ -539,6 +879,10 @@ button.primary {
 	text-align: right;
 	padding: 2px 6px;
 	font-variant-numeric: tabular-nums;
+	font-weight: normal;
+}
+.summary th {
+	color: var(--muted);
 }
 .summary th:first-child,
 .summary td:first-child {
@@ -548,7 +892,8 @@ button.primary {
 	display: inline-block;
 	width: 16px;
 	height: 16px;
-	background-size: cover;
+	background-size: 112% auto;
+	background-position: center;
 	vertical-align: middle;
 	margin-right: 4px;
 }

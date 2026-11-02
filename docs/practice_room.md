@@ -1042,6 +1042,12 @@ it at http://127.0.0.1:3434/. Real WoW models are not in yet (step 0 and steps 6
   there's none), macros, bar and key editing, unit frames, cast bar, swing timer, auras, errors, combat text, the
   meter, the fight settings and the summary. `tools/practice/smoke.py` plays a scripted fight in headless Chrome:
   no console errors, the meter matches the summary, an imbue swap, and an Encounter mode fight that ends on its own.
+- The HUD copies the user's game UI (2026-11-02). The server reads the account's EllesmereUI profile
+  (`cmd/practice/ui.go`): the bar blocks, unit frames, cast bar, damage meter, spell history and tooltip spot sit
+  where the profile has them, scaled by its UI scale, in its font. The Bayov class pack (maintain cells, resource
+  bars, main and utility cooldown bars) follows `bayovui/auras/common/anchors/group.py`. Tooltips are Wowhead's
+  Forever ones, cached in `~/forever-practice/icons.json`. Toolkit spells the bars don't hold go on the key that
+  `notes/<class>-keybinds-forever.md` in the WoW folder plans for them, when that key's slot is empty.
 - The core hooks and the aura hold fix give identical results on all 73 DPS Report builds.
 
 **Spike 4 (WASM in real time):**

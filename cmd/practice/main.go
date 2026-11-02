@@ -78,6 +78,8 @@ func (s *server) routes() http.Handler {
 	mux.HandleFunc("PUT /api/settings/{guid}", s.handleSaveSettings)
 	mux.HandleFunc("GET /api/spells", s.handleSpells)
 	mux.HandleFunc("GET /api/icon/{kind}/{id}", s.handleIcon)
+	mux.HandleFunc("GET /api/tooltip/{kind}/{id}", s.handleTooltip)
+	mux.HandleFunc("GET /api/font/eui", s.handleFont)
 	mux.HandleFunc("GET /api/attempts", s.handleListAttempts)
 	mux.HandleFunc("POST /api/attempts", s.handleSaveAttempt)
 	mux.HandleFunc("GET /api/attempts/{id}", s.handleGetAttempt)
@@ -142,8 +144,22 @@ func (s *server) handleRequest(w http.ResponseWriter, r *http.Request) {
 		"race":           player.GetRace().String(),
 		"level":          player.GetLevel(),
 		"name":           player.GetName(),
+		"trinkets":       trinkets(player),
 	}
 	writeJSON(w, reply)
+}
+
+// trinkets are the two trinket slots' item ids, for the "Trinket 1" and "Trinket 2" of the
+// keybind notes.
+func trinkets(player *proto.Player) []int32 {
+	out := []int32{0, 0}
+	items := player.GetEquipment().GetItems()
+	for i, slot := range []proto.ItemSlot{proto.ItemSlot_ItemSlotTrinket1, proto.ItemSlot_ItemSlotTrinket2} {
+		if int(slot) < len(items) && items[slot] != nil {
+			out[i] = items[slot].Id
+		}
+	}
+	return out
 }
 
 // rotationSpells are the spells the imported rotation casts, in its order, for the bars of a
@@ -261,6 +277,9 @@ type characterReply struct {
 	Record   *record           `json:"record,omitempty"`
 	Bindings map[string]string `json:"bindings"`
 	CVars    map[string]string `json:"cvars"`
+	// UI is the account's EllesmereUI profile, NoteBinds the class keybind notes (ui.go).
+	UI        map[string]any    `json:"ui,omitempty"`
+	NoteBinds map[string]string `json:"noteBinds,omitempty"`
 	// Saved are the room's own edits (bars, binds, fight settings) on top of the client's.
 	Saved json.RawMessage `json:"saved,omitempty"`
 }
@@ -297,6 +316,10 @@ func (s *server) handleCharacter(w http.ResponseWriter, r *http.Request) {
 	if s.client != nil {
 		reply.Bindings = s.client.bindings(account, name)
 		reply.CVars = s.client.cvars(account, name)
+		reply.UI = s.client.ellesmereUI(account)
+		if reply.Record != nil {
+			reply.NoteBinds = s.client.noteBinds(reply.Record.Class)
+		}
 	} else {
 		reply.Bindings = map[string]string{}
 		parseBindings(defaultBindings, reply.Bindings)
