@@ -102,7 +102,8 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // lines out. The Level 60 preset is Night Elf again since the race-tuning round (2026-10-27, standards
 // 29 and 16), and its rotation has them back (elune=1): +1.1 at 180 sec on seed 1 (+1.0 on seed
 // 1000003) over leaving Elune's Light to the autocast line, 0.0 for a Tauren. The Wrath build is
-// Windshaper Skyborne and leaves them out.
+// Windshaper Skyborne and left them out until 2026-11-02; it is Night Elf since and holds them too
+// (+0.9 / +0.6 / +1.1 at 120 / 180 / 300 sec at 36 yd).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Balance', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Synthetic',
@@ -110,9 +111,10 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Balance', Level60AP
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana) after a Wrath 1.5 sec
 // before the pull, for a moonkin that would rather not weave: 774.7 / 776.5 / 773.7 at 120 /
 // 180 / 300 sec, 6.1% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath)
-// and gear (GearLevel60Phase1SyntheticWrath). Moonfire once a Wrath plus 1.5 sec would no longer
-// land before the end is 5.9 / 3.8 / 2.2 ahead (rotation auditor), 787.0 / 786.6 / 782.3 with Wrath
-// rank 8 at x1.085.
+// and gear (GearLevel60Phase1SyntheticWrath). Moonfire once a Wrath plus 1.8 sec (its flight from
+// 36 yd; 1.5 from 30 yd before 2026-11-02) would no longer land before the end is 5.9 / 3.8 / 2.2
+// ahead (rotation auditor), 787.0 / 786.6 / 782.3 with Wrath rank 8 at x1.085. From 36 yd a Wrath
+// flies longer than its 1.5 sec cast, which costs the build 7 to 8 DPS against 30 yd.
 export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Balance Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
 	group: 'Synthetic',
@@ -213,7 +215,7 @@ export const DefaultConsumes = Consumes.create({
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	naturePowerBuff: NaturePowerBuff.ElixirOfNaturePower,
-	// No Goblin Sapper Charge: it only reaches 10 yd (2026-11-01) and the moonkin stands at 30 yd. It was
+	// No Goblin Sapper Charge: it only reaches 10 yd (2026-11-01) and the moonkin stands at 36 yd. It was
 	// worth 4.3 at 180 sec before the sim checked its reach.
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
@@ -273,11 +275,12 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // An engineer (for the Goblin Sapper Charge, until it got its 10 yd reach) and an alchemist, like the other
-// level 60 presets. The moonkin casts from range, so it does not melee between casts. The channel
-// clip delay is the DPS Report's.
+// level 60 presets. The moonkin casts from 36 yd, the longest range every spell of its rotations
+// reaches (standards 33: 30 yd, 20% more with Nature's Reach 2/2), so it does not melee between
+// casts. The channel clip delay is the DPS Report's.
 export const OtherDefaults = {
 	channelClipDelay: 50,
-	distanceFromTarget: 30,
+	distanceFromTarget: 36,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
 	race: Race.RaceNightElf,
@@ -352,6 +355,12 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('F
 // within noise keeps the race): the Level 60 build is Night Elf with Elune's Light held for the
 // trinket, 851.2 at 180 sec against the Tauren's 841.5 (20,000 iterations, seed 1); the Wrath build
 // is Windshaper Skyborne, 811.1 against the Tauren's 800.7. The Faerie Fire duty builds follow them.
+// Wrath race re-pick at 36 yd (2026-11-02, standards 33 and 29): a Wrath now flies longer than it
+// casts, and the hasted Skyborne lose more. Night Elf 852.4, High Order 848.3, Windshaper 848.3 (the
+// best Horde race), Tauren 844.2 at 180 sec (20,000 iterations, seed 1; +6.3 / +4.1 / +3.4 at 120 /
+// 180 / 300 sec over Windshaper, the same on seed 1000003), so the Wrath builds are Night Elf, with
+// Elune's Light held for the trinket: 853.0. Knob searches at Night Elf and Windshaper (Wrath kept as
+// the filler) found nothing more.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Balance', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Balance rotation, in a 3 minute raid fight.',
@@ -386,7 +395,7 @@ export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Balance Wrat
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60Wrath,
 	encounter: EncounterLevel60,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -400,7 +409,7 @@ export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Ba
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60WrathFaerieFire,
 	encounter: EncounterLevel60FaerieFireDuty,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

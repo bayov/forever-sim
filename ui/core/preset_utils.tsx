@@ -114,6 +114,9 @@ export interface PresetBuild {
 	// The two professions, because some of the gear and consumes need them (Engineering
 	// goggles, Goblin Sapper Charge). Left out means the build does not touch them.
 	professions?: [Profession, Profession];
+	// Yards from the target, for a build whose rotation reaches less or farther than the spec's
+	// default distance (standards 33). Left out means the build does not touch it.
+	distanceFromTarget?: number;
 	options?: Partial<SpecOptions<any>>;
 	// The Leveling mode's plan: its levels, talent builds and rotations. The gear plan stays as
 	// it is, like with the Leveling Plan tab's Spec's plan button.
@@ -277,9 +280,40 @@ export const makePresetEncounter = (name: string, encounter?: PresetEncounter['e
 
 export const makePresetBuild = (
 	name: string,
-	{ group, tooltip, gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, professions, options, levelingPlan }: PresetBuildOptions,
+	{
+		group,
+		tooltip,
+		gear,
+		talents,
+		rotation,
+		epWeights,
+		encounter,
+		race,
+		level,
+		bonusTalentPoints,
+		professions,
+		distanceFromTarget,
+		options,
+		levelingPlan,
+	}: PresetBuildOptions,
 ): PresetBuild => {
-	return { name, group, tooltip, gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, professions, options, levelingPlan };
+	return {
+		name,
+		group,
+		tooltip,
+		gear,
+		talents,
+		rotation,
+		epWeights,
+		encounter,
+		race,
+		level,
+		bonusTalentPoints,
+		professions,
+		distanceFromTarget,
+		options,
+		levelingPlan,
+	};
 };
 
 export type SpecCheckWarning = {

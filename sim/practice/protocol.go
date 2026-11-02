@@ -111,8 +111,18 @@ type HitEvent struct {
 	Periodic bool    `json:"periodic,omitempty"`
 	School   int     `json:"school"`
 	Target   int     `json:"target"`
-	// Source is "player", "pet" or "totem".
+	// Source is "player", "pet" or "totem". The meter counts a totem's damage as yours.
 	Source string `json:"source"`
+	// Totem is the totem's element ("fire") for a totem's hit: a Searing Totem bolt, a Magma
+	// Totem pulse or a Fire Nova.
+	Totem string `json:"totem,omitempty"`
+	// VisualSpellID is the client's spell to show for this hit when it differs from SpellID: a
+	// weapon imbue's proc (Windfury Weapon's 439440, Flametongue Attack, Frostbrand Attack) or
+	// Fire Nova's damage spell.
+	VisualSpellID int32 `json:"visualSpellId,omitempty"`
+	// NextAt is when a Searing Totem's next bolt hits (sim ms), for its cast glow. 0 when the
+	// totem has no bolt left.
+	NextAt float64 `json:"nextAt,omitempty"`
 }
 
 // CastEvent is one cast that went off, for the cast sounds and animations.
@@ -120,6 +130,10 @@ type CastEvent struct {
 	At      float64 `json:"at"`
 	SpellID int32   `json:"spellId,omitempty"`
 	ItemID  int32   `json:"itemId,omitempty"`
+	// Totem and VisualSpellID as in HitEvent: Fire Nova's cast goes off at the fire totem and
+	// shows its damage spell's visual.
+	Totem         string `json:"totem,omitempty"`
+	VisualSpellID int32  `json:"visualSpellId,omitempty"`
 }
 
 type UnitState struct {
@@ -157,6 +171,7 @@ type PlayerState struct {
 	QueuedSpellID  int32         `json:"queuedSpellId,omitempty"`
 	Resources      []ResourceBar `json:"resources,omitempty"`
 	MainHandImbue  string        `json:"mainHandImbue,omitempty"`
+	OffHandImbue   string        `json:"offHandImbue,omitempty"`
 	ImbueCastAtMs  float64       `json:"imbueCastAtMs,omitempty"`
 	OutOfRangeTime float64       `json:"outOfRangeMs"`
 }

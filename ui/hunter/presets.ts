@@ -156,7 +156,7 @@ export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWo
 // held only for an opened Mongoose Bite (rotation audit pass 23: +3.5 to +3.8 over the old order
 // with a Strider Kick hold too). The Wing Clip filler was the knob search's one change (+31 at 180
 // sec): Survival runs out of global cooldowns long before it runs out of mana. It walks in 6 sec before the
-// pull, since the fight starts at 25 yards.
+// pull, since the fight starts at range.
 export const APLSurvival = PresetUtils.makePresetAPLRotation('Survival', SurvivalAPL, {
 	tooltip: 'Melee: Mongoose Bite, Strider Kick, Immolation Trap, Raptor Strike, Lacerate, Wing Clip filler.' + markTooltip,
 	group: 'Synthetic',
@@ -398,8 +398,17 @@ export const DefaultDebuffs = Debuffs.create({
 // The hunter is an engineer for the Goblin Sapper (the EZ-Thro Dark Bomb the ranged specs throw
 // needs no profession) and an alchemist.
 // The synthetic gear is fixed, so no gear needs a profession.
+// Where the hunter and its pet start (standards 33: a weaving hunter stands where weaving does
+// best). Every ranged rotation walks to 12 yd before the pull and shoots from there, just outside
+// Forever's 11.67 yd deadzone, so this only moves the pet's run in: Beast Mastery's pet starts at
+// the hunter's side at 12 yd (+3 to +4 at 120 + 180 + 300 sec against 25 yd, both seeds),
+// Marksmanship's gains are inside 2 standard errors (+0.3 to +1.7), so it starts at 25, and Lone
+// Wolf is the same from anywhere (2026-11-02, orchestration/caster_distance.md). The default is
+// Beast Mastery's.
+export const DistanceBeastMastery = 12;
+export const DistanceMarksmanship = 25;
 export const OtherDefaults = {
-	distanceFromTarget: 25,
+	distanceFromTarget: DistanceBeastMastery,
 	channelClipDelay: 50,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
@@ -490,6 +499,7 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Beast Master
 	level: 60,
 	bonusTalentPoints: 0,
 	professions,
+	distanceFromTarget: DistanceBeastMastery,
 	options: DefaultOptions,
 });
 export const PresetBuildBeastMasteryWolf = PresetUtils.makePresetBuild('Beast Mastery · Wolf', {
@@ -503,6 +513,7 @@ export const PresetBuildBeastMasteryWolf = PresetUtils.makePresetBuild('Beast Ma
 	level: 60,
 	bonusTalentPoints: 0,
 	professions,
+	distanceFromTarget: DistanceBeastMastery,
 	options: WolfOptions,
 });
 export const PresetBuildBeastMasteryTallstrider = PresetUtils.makePresetBuild('Beast Mastery · Tallstrider', {
@@ -516,6 +527,7 @@ export const PresetBuildBeastMasteryTallstrider = PresetUtils.makePresetBuild('B
 	level: 60,
 	bonusTalentPoints: 0,
 	professions,
+	distanceFromTarget: DistanceBeastMastery,
 	options: TallstriderOptions,
 });
 // 1081.8 / 1066.4 / 1039.1 at 120 / 180 / 300 sec on its Orc in the DPS report's request (each 20 sec
@@ -538,6 +550,7 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Marksmanship
 	level: 60,
 	bonusTalentPoints: 0,
 	professions,
+	distanceFromTarget: DistanceMarksmanship,
 	options: DefaultOptions,
 });
 export const PresetBuildMarksmanshipWolf = PresetUtils.makePresetBuild('Marksmanship · Wolf', {
@@ -551,6 +564,7 @@ export const PresetBuildMarksmanshipWolf = PresetUtils.makePresetBuild('Marksman
 	level: 60,
 	bonusTalentPoints: 0,
 	professions,
+	distanceFromTarget: DistanceMarksmanship,
 	options: WolfOptions,
 });
 export const PresetBuildMarksmanshipTallstrider = PresetUtils.makePresetBuild('Marksmanship · Tallstrider', {
@@ -564,6 +578,7 @@ export const PresetBuildMarksmanshipTallstrider = PresetUtils.makePresetBuild('M
 	level: 60,
 	bonusTalentPoints: 0,
 	professions,
+	distanceFromTarget: DistanceMarksmanship,
 	options: TallstriderOptions,
 });
 // 1107.6 / 1090.0 / 1055.5 at 120 / 180 / 300 sec on its Night Elf in the DPS report's request (each
@@ -586,12 +601,13 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Lone Wolf', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions,
+	distanceFromTarget: DistanceMarksmanship,
 	options: LoneWolfOptions,
 });
 // 1033.1 / 1025.2 / 1018.6 at 120 / 180 / 300 sec in the mksettings raid (Human, 20000 iterations,
 // seed 1; seed 1000003 1032.8 / 1025.2 / 1018.3; 2026-10-25, Classic's crit per Agility at 60; 1063.0 /
 // 1055.0 / 1047.8 with 22% more); its own Hunter's Mark cost 1.2 / 1.5 / 1.6 against the raid's. The
-// rotation walks in before the pull, so starting at 25 yards in the UI costs nothing.
+// rotation walks in before the pull, so starting at range in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Survival', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 melee Survival on the synthetic Phase 1 Survival gear, in a 3 minute raid fight with a melee group.',

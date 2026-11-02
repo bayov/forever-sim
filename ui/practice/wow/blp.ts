@@ -107,14 +107,15 @@ function decodeDXT(data: Uint8Array, width: number, height: number, kind: number
 				[0, 0, 0, 255],
 				[0, 0, 0, 255],
 			];
-			if (c0 > c1 || kind !== 1) {
+			// DXT1 has a three color mode (c0 <= c1) with or without alpha. DXT3 and 5 never do.
+			if (c0 > c1 || kind === 3 || kind === 5) {
 				for (let k = 0; k < 3; k++) {
 					palette[2][k] = (2 * p0[k] + p1[k]) / 3;
 					palette[3][k] = (p0[k] + 2 * p1[k]) / 3;
 				}
 			} else {
 				for (let k = 0; k < 3; k++) palette[2][k] = (p0[k] + p1[k]) / 2;
-				palette[3] = [0, 0, 0, 0];
+				palette[3] = [0, 0, 0, kind === 0 ? 255 : 0];
 			}
 			const idx = data[co + 4] | (data[co + 5] << 8) | (data[co + 6] << 16) | (data[co + 7] << 24);
 			for (let i = 0; i < 16; i++) colors[i] = (idx >>> (2 * i)) & 3;

@@ -305,8 +305,8 @@ export const DefaultOptions = Options.create({
 // - Goblin Sapper Charge +3.7 at 5 yd. A filler explosive takes a GCD and costs 4. Rechecked
 //   2026-10-23 (standards 11, 5000 iterations at 180 sec): the sapper was +4.6 on Shadow and +4.1
 //   on Shadow + Holy, and every filler explosive cost them 5 to 8. Since 2026-11-01 the priest
-//   stands at 25 yd (OtherDefaults), out of the Sapper's 10 yd reach, so it takes no explosive (the
-//   EZ-Thro Dark Bomb loses 5.6 to 6.7).
+//   stands at range (22 yd for Shadow since 2026-11-02, OtherDefaults), out of the Sapper's 10 yd
+//   reach, so it takes no explosive (the EZ-Thro Dark Bomb lost 5.6 to 6.7 at 25 yd).
 // - Elixir of the Owl (25 Intellect, 2% crit) +16.4 over the Elixir of Wisdom, the Elixir of
 //   Greater Intellect only +2.8 (Arcane Brilliance is on). A character takes one of the five 2%
 //   crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale); the Elixir of Sages on top of the Owl
@@ -386,10 +386,14 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // Engineering was for the Goblin Sapper Charge. Tailoring is the priest's crafting, nothing in the
-// presets needs it. The priest casts from 25 yd like the mages (2026-11-01, 5 yd before).
+// presets needs it. Each build casts from the longest range every spell of its rotation reaches
+// (standards 33; 25 yd from 2026-11-01, 5 yd before): Shadow and Shadow + Holy from Mind Flay's 20
+// yd, 22 with Shadow Reach 1/2, Smite from 30.
+export const DistanceShadow = 22;
+export const DistanceSmite = 30;
 export const OtherDefaults = {
 	channelClipDelay: 50,
-	distanceFromTarget: 25,
+	distanceFromTarget: DistanceShadow,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	race: Race.RaceUndead,
@@ -465,6 +469,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Shadow', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	distanceFromTarget: DistanceShadow,
 	options: DefaultOptions,
 });
 // Without Twin Disciplines and Mental Strength the Holy build runs low on a long fight, so it
@@ -506,6 +511,7 @@ export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Shadow + Holy
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	distanceFromTarget: DistanceShadow,
 	options: DefaultOptions,
 });
 
@@ -516,7 +522,7 @@ export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Shadow + Holy
 // Elixir of Sages would add 6.4 but is a second crit elixir. Kreeg's Stout Beatdown is a Dire
 // Maul item, which the presets leave out like the full Arcanums; it would add -0.2 / +0.2 /
 // +0.9 at 120 / 180 / 300 sec. The Flask of Distilled Wisdom is 71 behind the Flask of Supreme
-// Power even here. From 25 yd (2026-11-01) the Goblin Sapper Charge and the Goblin Land Mine are
+// Power even here. From range (25 yd from 2026-11-01, 30 since 2026-11-02) the Goblin Sapper Charge and the Goblin Land Mine are
 // out of their 10 yd reach, and the EZ-Thro Dark Bomb ties no explosive (+0.4 at 180 sec, 3000
 // iterations), so Smite takes none (standards 11).
 export const ConsumesSmite = Consumes.create({
@@ -556,5 +562,6 @@ export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Smite', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	distanceFromTarget: DistanceSmite,
 	options: DefaultOptions,
 });

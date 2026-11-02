@@ -306,41 +306,6 @@
     "action": {
      "castSpell": {
       "spellId": {
-       "spellId": 10202
-      }
-     },
-     "condition": {
-      "cmp": {
-       "lhs": {
-        "remainingTime": {}
-       },
-       "op": "OpLt",
-       "rhs": {
-        "math": {
-         "lhs": {
-          "spellCastTime": {
-           "spellId": {
-            "spellId": 10181
-           }
-          }
-         },
-         "op": "OpAdd",
-         "rhs": {
-          "const": {
-           "val": "0.75s"
-          }
-         }
-        }
-       }
-      }
-     }
-    },
-    "notes": "An instant when the filler would not land before the end of the fight."
-   },
-   {
-    "action": {
-     "castSpell": {
-      "spellId": {
        "spellId": 10212
       }
      },
@@ -479,11 +444,11 @@
  },
  "note": "Rotation tuned for 2% haste: the opening Arcane Blast starts 1.47 sec before the pull, so it lands at the pull and not 30 ms before it",
  "gain": {
-  "dps": 5.0,
+  "dps": 4.9,
   "se": 0.4,
   "iterations": 20000,
   "seed": 1,
   "duration": 180
  },
- "how": "Regenerated 2026-11-01 when the preset took Arcane Wrath and Presence of Mind on Arcane Wrath (arcaneWrath=1, pomWrath=1). rotopt -template mage_arcane -race SkyborneHighOrder -durs 180 -eval, the preset's knobs (blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=1,conserveMana=0,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=1,finisher=1,finishPad=0.75,wand=1) plus prepullAt=1.47 (tools/rotopt/mage_arcane.go). The preset starts the opener at -1.5 sec; Arcane Blast hits as its cast ends and has no flight time, so at 1.4706 sec it hit at -0.03 sec, before the pull, where its damage doesn't count. A knob search at High Order (3000 iterations) kept every other knob before. 938.5 against 933.5 with the preset's rotation at High Order (20000 iterations, seed 1, 180 sec)."
+ "how": "Regenerated 2026-11-01 when the preset took Arcane Wrath and Presence of Mind on Arcane Wrath (arcaneWrath=1, pomWrath=1). rotopt -template mage_arcane -race SkyborneHighOrder -durs 180 -eval, the preset's knobs (blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=1,conserveMana=0,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=1,finisher=1,finishPad=0.75,wand=1) plus prepullAt=1.47 (tools/rotopt/mage_arcane.go). The preset starts the opener at -1.5 sec; Arcane Blast hits as its cast ends and has no flight time, so at 1.4706 sec it hit at -0.03 sec, before the pull, where its damage doesn't count. A knob search at High Order (3000 iterations) kept every other knob before. 938.5 against 933.5 with the preset's rotation at High Order (20000 iterations, seed 1, 180 sec). Re-measured 2026-11-02 after the standards 33 distance (20 yd) and the finisher without Arcane Explosion (both rotations): 937.2 against 932.3 with the preset's rotation at High Order (20000 iterations, seed 1, 180 sec); the same rotation at the preset race (Gnome) 937.2 against 937.5."
 }

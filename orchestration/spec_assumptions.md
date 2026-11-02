@@ -473,7 +473,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 | `mage_ice_lance_coef` | Ice Lance spell power coefficient | Frostfire, Frost | 0.429, cast on every Fingers of Frost charge | 0.143 (TBC's 1/7, wowsims/forever; the better of the Ice Lance and no-Ice-Lance rotations) | 0.429 | = Expected | Low to measure (the dropped 0 was −5.8 to −5.9%, 2026-10-25 presets) |
 | `mage_frostbolt10` | Frostbolt X gets 70291's raise | Frost | ×1.04 (one value, resolved 2026-10-25) | = Expected | ×1.04 | = Expected | none left (one value; ×1.00 / ×1.08 last measured −0.5% / +0.5%) |
 | `mage_imbue_scrolls` | Mage staff imbue scrolls | all four mages | used | not available | used | = Expected | −0.8 to −1.5% at Low (assumption sims, 180 s) |
-| `mage_cone_of_cold` | Frost at melee range with Cone of Cold | Frost | 25 yards, no Cone of Cold (one value, resolved 2026-10-25) | = Expected | 25 yards | = Expected | none left (one value; 10 yards with the cone last measured +0.1%) |
+| `mage_cone_of_cold` | Frost at melee range with Cone of Cold | Frost | 30 yards (25 before 2026-11-02), no Cone of Cold (one value, resolved 2026-10-25) | = Expected | 30 yards | = Expected | none left (one value; 10 yards with the cone last measured +0.1%) |
 
 ### `mage_ice_lance_coef`: Ice Lance's spell power coefficient (settings changed 2026-10-25)
 

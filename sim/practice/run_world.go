@@ -182,6 +182,7 @@ func (r *run) playerState() *PlayerState {
 			})
 		}
 		p.MainHandImbue = r.shaman.ActiveImbue().String()
+		p.OffHandImbue = offHandImbue(r.char)
 	}
 	return p
 }

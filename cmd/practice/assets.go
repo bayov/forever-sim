@@ -31,7 +31,8 @@ import (
 // comes out zero-filled with no error, so we check every file before we keep it.
 
 type assetStore struct {
-	dir     string // ~/forever-practice/assets
+	dir     string // ~/forever-practice/assets/<client build>
+	build   string
 	tool    string // the TACTTool binary
 	base    string // a folder with the install's .build.info and a link to its Data
 	product string
@@ -40,9 +41,18 @@ type assetStore struct {
 	mu      sync.Mutex
 	waiting map[int][]chan error
 	queued  []int
-	failed  map[int]error
+	failed  map[int]assetFailure
 	timer   *time.Timer
 }
+
+// assetFailure is a file we couldn't extract. We try it again after failRetry, in case TACTTool
+// only crashed that once.
+type assetFailure struct {
+	err error
+	at  time.Time
+}
+
+const failRetry = time.Minute
 
 // batchDelay is how long we wait for more files before a run. The page asks for a model's files
 // one after another as it reads them, so a short wait gathers them into one run.
@@ -53,14 +63,16 @@ func newAssetStore(home, tool string, c *wowClient) (*assetStore, error) {
 	if err != nil {
 		return nil, err
 	}
+	// The files go in a folder per client build, so a patch never mixes old models with new tables.
 	a := &assetStore{
-		dir:     filepath.Join(home, "assets"),
+		dir:     filepath.Join(home, "assets", info["Version"]),
+		build:   info["Version"],
 		tool:    tool,
 		base:    filepath.Join(home, "wow"),
 		product: info["Product"],
 		region:  info["Branch"],
 		waiting: map[int][]chan error{},
-		failed:  map[int]error{},
+		failed:  map[int]assetFailure{},
 	}
 	if _, err := os.Stat(tool); err != nil {
 		return nil, fmt.Errorf("no TACTTool at %s", tool)
@@ -70,6 +82,7 @@ func newAssetStore(home, tool string, c *wowClient) (*assetStore, error) {
 			return nil, err
 		}
 	}
+	a.adoptOldFiles(filepath.Join(home, "assets"))
 	// TACTTool looks through every folder under the install it's given, and the WoW folder holds
 	// links it can't open. So we give it a folder of its own with the install's .build.info and a
 	// link to the Data folder.
@@ -86,6 +99,22 @@ func newAssetStore(home, tool string, c *wowClient) (*assetStore, error) {
 		return nil, err
 	}
 	return a, nil
+}
+
+// adoptOldFiles moves files extracted before we kept a folder per build (straight in assets/)
+// into this build's folder. They came from the build that was installed then, which is this one
+// unless the client patched since, and a patch is rare enough that we take the chance.
+func (a *assetStore) adoptOldFiles(old string) {
+	entries, err := os.ReadDir(old)
+	if err != nil {
+		return
+	}
+	for _, e := range entries {
+		if _, err := strconv.Atoi(e.Name()); err != nil || !e.Type().IsRegular() {
+			continue
+		}
+		os.Rename(filepath.Join(old, e.Name()), filepath.Join(a.dir, e.Name()))
+	}
 }
 
 func (a *assetStore) path(fdid int) string {
@@ -110,9 +139,12 @@ func (a *assetStore) queue(fdid int) chan error {
 	done := make(chan error, 1)
 	a.mu.Lock()
 	defer a.mu.Unlock()
-	if err, ok := a.failed[fdid]; ok {
-		done <- err
-		return done
+	if f, ok := a.failed[fdid]; ok {
+		if time.Since(f.at) < failRetry {
+			done <- f.err
+			return done
+		}
+		delete(a.failed, fdid)
 	}
 	if a.has(fdid) {
 		done <- nil
@@ -143,7 +175,7 @@ func (a *assetStore) run() {
 	for _, id := range ids {
 		err := results[id]
 		if err != nil {
-			a.failed[id] = err
+			a.failed[id] = assetFailure{err, time.Now()}
 		} else {
 			follow = append(follow, a.namedFiles(id)...)
 		}
@@ -294,7 +326,10 @@ func (s *server) handleAsset(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Header().Set("Content-Type", "application/octet-stream")
-	w.Header().Set("Cache-Control", "max-age=604800, immutable")
+	// The browser keeps the file but asks again each page load: after a client patch the same id
+	// can be a different file, and the build in the ETag tells them apart.
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("ETag", fmt.Sprintf(`"%s-%d"`, s.assets.build, fdid))
 	http.ServeFile(w, r, s.assets.path(fdid))
 }
 

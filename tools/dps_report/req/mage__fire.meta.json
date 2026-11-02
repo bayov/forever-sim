@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_fire",
   "published": {
-    "dps": 1056.4,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1057.1,
+    "source": "verify.py on this request after the standards 33 distances (2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1056.4,
+    "dps": 1057.1,
     "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
   },
   "summary": "Deep Fire to Combustion, plus Arcane Concentration and Missile Barrage from Arcane.",
   "keyTalents": [
@@ -47,7 +47,7 @@
     "Pyroblast at 3 Heating Up stacks (1.5s cast)",
     "Arcane Missiles on a Missile Barrage proc",
     "Fire Blast on cooldown at 10% mana or more. Each one adds a Heating Up stack.",
-    "Fire Blast, then Scorch, when a Fireball would not land before the end (its cast plus 1.04s)",
+    "Fire Blast, then Scorch, when a Fireball would not land before the end (its cast plus 1.25s, the flight from 30 yd)",
     "Fireball as filler",
     "Wand when nothing else can be cast (out of mana)"
   ],
@@ -74,5 +74,5 @@
     "Open: when Missile Barrage procs, and how it works with Arcane Power's extra mana cost.",
     "No Ahn'Qiraj book ranks, so Fireball stops at rank XI, Frostbolt at X and Arcane Missiles at VII. The books would add 50 DPS to Frost, 30 to Arcane, 17 to Fire and 0 to Frostfire."
   ],
-  "notes": "Request written by mksettings -spec mage_fire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "Request written by mksettings -spec mage_fire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Distance 30 yd since 2026-11-02 (standards 33, orchestration/caster_distance.md: Scorch, Arcane Missiles, the wand), 25 before; the finisher pad is the Fireball's flight from there (1.25 sec, 1.04 before)."
 }

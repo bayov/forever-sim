@@ -34,7 +34,9 @@ func init() {
 		},
 		withSpec: func(player *proto.Player) {
 			player.Class = proto.Class_ClassShaman
-			// A caster stands at range, so it never swings.
+			// A caster stands at the longest range every spell of its rotation reaches (standards
+			// 33, orchestration/caster_distance.md): Earth Shock's and Flame Shock's 20 yd (no build
+			// takes Elemental Reach, which no longer reaches the shocks). At range it never swings.
 			player.DistanceFromTarget = 20
 			player.Spec = &proto.Player_ElementalShaman{ElementalShaman: &proto.ElementalShaman{
 				Options: &proto.ElementalShaman_Options{},

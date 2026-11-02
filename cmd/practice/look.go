@@ -64,6 +64,8 @@ func (s *server) look(player *proto.Player) map[string]any {
 	if mh, ok := items["16"]; ok && s.db2 != nil {
 		if row := s.db2.MustTable("Item").Get(int(mh)); row.Ok() {
 			out["weaponSubclass"] = row.Int("SubclassID")
+			// The material picks the draw and sheathe sounds: 1 metal, 2 wood.
+			out["weaponMaterial"] = row.Int("Material")
 		}
 	}
 	return out

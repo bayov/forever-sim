@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/wowsims/classic/sim/core/proto"
-	"github.com/wowsims/classic/sim/mage"
 )
 
 // Arcane under Forever rules (client 1.60.1.70425). Arcane Blast's stacks are spell damage now:
@@ -61,8 +60,10 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 	case 3:
 		filler = s.fireball
 	}
-	arcaneExplosion := rankID(mage.ArcaneExplosionLevel[:], mage.ArcaneExplosionSpellId[:])
-	items = append(items, finisherLines(k, filler, s.fireBlast, arcaneExplosion)...)
+	// Fire Blast only: Arcane Explosion reaches 10 yd around the mage, and the mage stands at
+	// Fire Blast's 20 (standards 33). The sim doesn't hold it to its radius, so it would land
+	// from any distance.
+	items = append(items, finisherLines(k, filler, s.fireBlast)...)
 	barrage := []*proto.APLListItem{}
 	if k["missileBarrage"] == 1 {
 		barrage = append(barrage, cast(s.arcaneMissiles, known(missileBarrage, auraIsActive(missileBarrage)), "Arcane Missiles on a Missile Barrage proc, free and twice as fast."))

@@ -12,6 +12,8 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: re-pick the Affliction race on the race pass (Orc), or keep Human and say it is within 1.5.
 - needs: orchestrator fix
 
+## Resolved
+
 ### fairness-20261101-1: casters stand at 20, 25 or 30 yd with no standard; Elemental's 20 yd is worth +6.5 over the others' 25
 - severity: medium (0.85% on Elemental; at 25 yd it would sit 0.6 above Smite instead of 7.1)
 - affects: shaman__elemental-level60 (and -mana-tide) at 20 yd, druid__balance* at 30 yd; mages, warlocks, priests and the ranged hunters at 25 yd
@@ -19,8 +21,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: requests' `distanceFromTarget` (mksettings spec_ele.go:38 = 20, spec_balance.go:39 = 30, the mage / warlock / priest / hunter specs 25 since 905787afd, which says only "like the mages"). Lightning Bolt, Wrath, Shadow Bolt, Frostbolt and Fireball all carry a MissileSpeed (sim/shaman/lightning_bolt.go:79 = 20), so distance is flight time. Paired, seed 1, 20k iterations, 180 +- 20 s (`python3 tools/audit/fairness/distance.py <cli> 25 <ids>`): Elemental 768.5 at 20 yd -> 762.0 at 25 (-6.5); Balance (Starfire) 846.6 -> 846.6 (0.0); Balance Wrath 806.5 -> 808.8 (+2.3). standards.md has no line on caster distance. Sure of the numbers; whether 20 yd is Elemental's real need (shock range) is not checked against the client.
 - proposed fix: (a) one standard, every ranged spec at 25 yd: Elemental -6.5, Wrath +2.3, no rank change; (b) each ranged spec at the longest range its rotation needs (Elemental 20 for its shocks if the client says 20; others at 30 or their spells' range, re-measured); (c) keep, and write the per-spec distances and why into standards.md.
 - needs: user ruling
-
-## Resolved
+- resolved: 2026-11-02, fa2d49997 (user ruling, standards 33: "Range the rotation needs"). Each caster stands at the longest range all its spells reach (orchestration/caster_distance.md); Elemental keeps 20 yd for its shocks.
 
 ### fairness-20261031-1: Demonology wears the Destruction / Affliction set and fails its own 5a target (crit 10.4 vs 14.1); its own mix sims +9.2
 - severity: medium (0.9%; Demonology 1051.7 -> 1060.9 would sit 0.1 under Fire, so it stays 6th)

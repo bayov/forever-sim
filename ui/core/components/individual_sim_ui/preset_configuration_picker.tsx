@@ -31,6 +31,7 @@ const BUILD_PARTS: Array<{ name: string; has: (build: PresetBuild) => boolean }>
 	{ name: 'Race', has: build => build.race !== undefined },
 	{ name: 'Level and extra talent points', has: build => build.level !== undefined || build.bonusTalentPoints !== undefined },
 	{ name: 'Professions', has: build => !!build.professions },
+	{ name: 'Distance from the target', has: build => build.distanceFromTarget !== undefined },
 	{ name: 'Class options', has: build => !!build.options },
 	{ name: 'Leveling plan', has: build => !!build.levelingPlan },
 ];
@@ -110,7 +111,21 @@ export class PresetConfigurationPicker extends Component {
 
 	private applyBuild(
 		eventID: EventID,
-		{ gear, rotation, rotationType, talents, epWeights, encounter, race, level, bonusTalentPoints, professions, options, levelingPlan }: PresetBuild,
+		{
+			gear,
+			rotation,
+			rotationType,
+			talents,
+			epWeights,
+			encounter,
+			race,
+			level,
+			bonusTalentPoints,
+			professions,
+			distanceFromTarget,
+			options,
+			levelingPlan,
+		}: PresetBuild,
 	) {
 		TypedEvent.freezeAllAndDo(() => {
 			if (gear) this.simUI.player.setGear(eventID, this.simUI.sim.db.lookupEquipmentSpec(gear.gear));
@@ -118,6 +133,7 @@ export class PresetConfigurationPicker extends Component {
 			if (level !== undefined) this.simUI.player.setLevel(eventID, level);
 			if (bonusTalentPoints !== undefined) this.simUI.player.setBonusTalentPoints(eventID, bonusTalentPoints);
 			if (professions) this.simUI.player.setProfessions(eventID, professions);
+			if (distanceFromTarget !== undefined) this.simUI.player.setDistanceFromTarget(eventID, distanceFromTarget);
 			if (talents) this.simUI.player.setTalentsString(eventID, talents.data.talentsString);
 			if (rotationType) {
 				this.simUI.player.aplRotation.type = rotationType;
@@ -183,6 +199,7 @@ export class PresetConfigurationPicker extends Component {
 		level,
 		bonusTalentPoints,
 		professions,
+		distanceFromTarget,
 		options,
 		levelingPlan,
 	}: PresetBuild): string[] {
@@ -192,6 +209,7 @@ export class PresetConfigurationPicker extends Component {
 		const hasLevel = level !== undefined ? level === player.getLevel() : true;
 		const hasBonusTalentPoints = bonusTalentPoints !== undefined ? bonusTalentPoints === player.getBonusTalentPoints() : true;
 		const hasProfessions = professions ? professions[0] === player.getProfession1() && professions[1] === player.getProfession2() : true;
+		const hasDistance = distanceFromTarget !== undefined ? distanceFromTarget === player.getDistanceFromTarget() : true;
 		const hasTalents = talents
 			? SavedTalents.equals(
 					talents.data,
@@ -244,6 +262,7 @@ export class PresetConfigurationPicker extends Component {
 			[hasRace, 'race'],
 			[hasLevel && hasBonusTalentPoints, 'level'],
 			[hasProfessions, 'professions'],
+			[hasDistance, 'distance from the target'],
 			[hasOptions, 'class options'],
 			[hasLevelingPlan, 'leveling plan'],
 		];

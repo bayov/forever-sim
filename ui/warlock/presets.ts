@@ -331,7 +331,7 @@ const PresetBuildOptionsSuccubus = {
 // lost. Explosives are taken only when they gain (standards 11): on every preset (2026-10-24, 120 / 180
 // / 300 sec, both seed sets) the Goblin Sapper alone was ahead of none by 2.7 to 7.6 at 5 yd, and adding
 // any other explosive (Dense Dynamite, Thorium Grenade, EZ-Thro Dark Bomb, Goblin Land Mine, their 1 sec
-// cast in place of a Shadow Bolt) cost 1.2 to 6.7. Since 2026-11-01 the warlock stands at range (25 yd,
+// cast in place of a Shadow Bolt) cost 1.2 to 6.7. Since 2026-11-01 the warlock stands at range (30 yd since 2026-11-02,
 // see OtherDefaults), out of the Sapper's and the Land Mine's 10 yd reach, so it takes no explosive: the
 // EZ-Thro Dark Bomb loses 5 to 7 at 180 sec.
 export const DefaultConsumes = Consumes.create({
@@ -408,10 +408,10 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // Engineering (it was for the Goblin Sapper), Tailoring for the cloth. The distance and channel clip
-// delay are the DPS Report's (tools/rotopt/mksettings): the warlock casts from 25 yd like the mages
-// (2026-11-01, 5 yd before).
+// delay are the DPS Report's (tools/rotopt/mksettings): the warlock casts from 30 yd, the longest
+// range every spell of its rotations reaches (standards 33; 25 yd from 2026-11-01, 5 yd before).
 export const OtherDefaults = {
-	distanceFromTarget: 25,
+	distanceFromTarget: 30,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	channelClipDelay: 50,

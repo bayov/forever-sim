@@ -16,14 +16,14 @@
   "apl": "level60_smite",
   "published": {
     "dps": 761.4,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "source": "verify.py on this request after the standards 33 distances (2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
     "dps": 761.4,
     "stderr": 0.17,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
   },
   "summary": "Holy priest casting Smite, on its own gear with no hit. It keeps Shadow Word: Pain up for Power in Light. Smite's high mana cost holds it back.",
   "keyTalents": [
@@ -72,5 +72,5 @@
     "No Holy Fire, because its mana does more on Smite. Keeping it up would be -21.8 / -10.6 / +9.5 DPS at 120s / 180s / 300s.",
     "Race spells: the Undead's Dark Sacrifice adds 28.9 DPS, the most of any racial here, because Smite is short on mana. Night Elf Starshards would cost 17 DPS: its 6s channel deals about 480 DPS against Smite's 700, and the mana it saves doesn't make that up. Dwarf Chastise works only on Humanoids, and there it costs 8.5 DPS: a Smite does more with the global cooldown. Troll Shadowguard can only be cast in Shadowform."
   ],
-  "notes": "mksettings -spec smite request, which carries ConsumesSmite from presets.ts: defaultPotion MajorManaPotion, firePowerBuff ElixirOfGreaterFirepower, manaRegenElixir GreaterMagebloodElixir, spiritElixir ElixirOfGreaterSpirit. The Goblin Land Mine (added 2026-10-23) and the Sapper went out on 2026-11-01, when the priests moved to 25 yd, out of their 10 yd reach. Gear level60_phase1_smite, apl level60_smite. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "mksettings -spec smite request, which carries ConsumesSmite from presets.ts: defaultPotion MajorManaPotion, firePowerBuff ElixirOfGreaterFirepower, manaRegenElixir GreaterMagebloodElixir, spiritElixir ElixirOfGreaterSpirit. The Goblin Land Mine (added 2026-10-23) and the Sapper went out on 2026-11-01, when the priests moved to 25 yd (30 for Smite since 2026-11-02), out of their 10 yd reach. Gear level60_phase1_smite, apl level60_smite. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Distance 30 yd since 2026-11-02 (standards 33, orchestration/caster_distance.md: every spell it casts reaches 30), 25 before."
 }

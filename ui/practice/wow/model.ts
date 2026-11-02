@@ -6,8 +6,9 @@
 
 import * as THREE from 'three';
 import { file, texture } from './files';
-import { animData, Batch, Keys, M2, sample, Skin, Track } from './m2';
+import { animData, Batch, Keys, M2, M2Event, sample, Skin, Track } from './m2';
 import { Particles } from './particles';
+import { Ribbons } from './ribbons';
 
 // AnimationData ids we play.
 export const Anim = {
@@ -32,6 +33,7 @@ export const Anim = {
 	Ready1H: 26,
 	Ready2H: 27,
 	Ready2HL: 28,
+	CombatCritical: 10,
 	Dodge: 30,
 	SpellPrecast: 31,
 	SpellCast: 32,
@@ -82,12 +84,12 @@ const fallbacks: Record<number, number> = {
 	[Anim.Ready2H]: Anim.Ready1H,
 	[Anim.Ready2HL]: Anim.Ready2H,
 	[Anim.ReadyUnarmed]: Anim.Stand,
-	[Anim.ReadySpellDirected]: Anim.SpellPrecast,
+	[Anim.ReadySpellDirected]: Anim.ReadySpellOmni,
 	[Anim.ReadySpellOmni]: Anim.SpellPrecast,
-	[Anim.SpellCastDirected]: Anim.SpellCast,
+	[Anim.SpellCastDirected]: Anim.SpellCastOmni,
 	[Anim.SpellCastOmni]: Anim.SpellCast,
 	[Anim.SpellCastArea]: Anim.SpellCast,
-	[Anim.ChannelCastDirected]: Anim.SpellCastDirected,
+	[Anim.ChannelCastDirected]: Anim.ReadySpellOmni,
 	[Anim.ChannelCastOmni]: Anim.SpellCastOmni,
 	[Anim.SpellPrecast]: Anim.Stand,
 	[Anim.SpellCast]: Anim.Stand,
@@ -98,6 +100,7 @@ const fallbacks: Record<number, number> = {
 	[Anim.Fall]: Anim.Jump,
 	[Anim.Jump]: Anim.Stand,
 	[Anim.CombatWound]: Anim.Stand,
+	[Anim.CombatCritical]: Anim.CombatWound,
 	[Anim.Dodge]: Anim.Stand,
 	[Anim.Parry1H]: Anim.ParryUnarmed,
 	[Anim.ParryUnarmed]: Anim.Stand,
@@ -109,6 +112,8 @@ export type PlayOptions = { loop?: boolean; speed?: number; fade?: number; resta
 
 type Playing = {
 	anim: number;
+	// When it started, in the model's own clock (ms), for the upper body's fade in.
+	started: number;
 	seq: number;
 	time: number;
 	speed: number;
@@ -138,17 +143,34 @@ export class Model {
 	private readonly anims = new Map<number, Promise<DataView | undefined>>();
 	private readonly ready = new Map<number, DataView>();
 	private base: Playing;
-	private fadeFrom?: Playing;
+	// A switch of animation fades from the pose the bones had (the snapshot), so a second switch
+	// in the middle of a fade doesn't pop.
+	private pose0: Float32Array;
+	private posed = false;
+	private fadePose: Float32Array;
 	private fadeLeft = 0;
 	private fadeTotal = 0;
 	private overlay?: Playing;
-	private overlayFade = 0;
 	private upper: boolean[];
+	// The finger bones, with every joint below them, for holding a weapon.
+	private fingers: { right: boolean[]; left: boolean[] };
+	private points = new Map<number, THREE.Object3D>();
+	// Bones that always face the camera (bone flag 0x8): a totem's rune, the glow cards of effects.
+	private billboards: number[] = [];
+	// The camera that billboards face.
+	static camera?: THREE.Camera;
+	private events = new Map<number, { id: string; data: number; time: number }[] | null>();
+	// onEvent hears the animations' events as they pass ($HIT, $CSS, $FSD footsteps, $SHL...).
+	// upper says it came from the upper body's animation (a swing while running).
+	onEvent?: (id: string, data: number, upper: boolean) => void;
 	private globalTime = 0;
 	private closed = { right: false, left: false };
 	private scratch = { t: [0, 0, 0], r: [0, 0, 0, 1], s: [1, 1, 1], t2: [0, 0, 0], r2: [0, 0, 0, 1], s2: [1, 1, 1] };
 	geosets?: Set<number>;
 	particles?: Particles;
+	ribbons?: Ribbons;
+	// The model's own textures, which load() waits for so a model never shows untextured.
+	private readonly loading: Promise<unknown>[] = [];
 
 	private constructor(
 		readonly m2: M2,
@@ -204,6 +226,22 @@ export class Model {
 				}
 			}
 		}
+		const below = (keys: number[]) => {
+			const out = m2.bones.map(() => false);
+			for (let i = 0; i < m2.bones.length; i++) {
+				for (let p = i; p >= 0; p = m2.bones[p].parent) {
+					if (keys.includes(m2.bones[p].keyBoneId)) {
+						out[i] = true;
+						break;
+					}
+				}
+			}
+			return out;
+		};
+		this.fingers = { right: below(rightFingers), left: below(leftFingers) };
+		this.billboards = m2.bones.map((b, i) => (b.flags & 0x8 ? i : -1)).filter(i => i >= 0);
+		this.pose0 = new Float32Array(m2.bones.length * 10);
+		this.fadePose = new Float32Array(m2.bones.length * 10);
 		this.base = this.playing(Anim.Stand, { loop: true });
 	}
 
@@ -212,7 +250,7 @@ export class Model {
 		if (m2.skins.length === 0) throw new Error(`model ${fdid} has no skin`);
 		const skin = new Skin(await file(m2.skins[0]));
 		const model = new Model(m2, skin);
-		await model.loadAnim(model.base.seq);
+		await Promise.all([model.loadAnim(model.base.seq), ...model.loading]);
 		model.base.source = model.ready.get(model.base.seq);
 		model.update(0);
 		return model;
@@ -227,7 +265,16 @@ export class Model {
 		const params: THREE.MeshLambertMaterialParameters = {
 			side: mat.flags & 0x4 ? THREE.DoubleSide : THREE.FrontSide,
 			depthWrite: (mat.flags & 0x10) === 0 && mat.blend <= 1,
-			fog: (mat.flags & 0x2) === 0,
+			depthTest: (mat.flags & 0x8) === 0,
+			// Glows that add light get no fog: the client fogs them to black, which adds nothing.
+			fog: (mat.flags & 0x2) === 0 && mat.blend !== 3 && mat.blend !== 4,
+		};
+		// The client's blend modes as GL blend factors (wowdev.wiki M2 materials).
+		const custom = (src: THREE.BlendingSrcFactor, dst: THREE.BlendingDstFactor) => {
+			params.transparent = true;
+			params.blending = THREE.CustomBlending;
+			params.blendSrc = src;
+			params.blendDst = dst;
 		};
 		switch (mat.blend) {
 			case 1: // alpha key
@@ -237,19 +284,60 @@ export class Model {
 				params.transparent = true;
 				break;
 			case 3: // add with no alpha
+				custom(THREE.OneFactor, THREE.OneFactor);
+				break;
 			case 4: // add
-			case 7: // blend add
-				params.transparent = true;
-				params.blending = THREE.AdditiveBlending;
+				custom(THREE.SrcAlphaFactor, THREE.OneFactor);
 				break;
 			case 5: // modulate
+				custom(THREE.DstColorFactor, THREE.ZeroFactor);
+				break;
 			case 6: // modulate 2x
-				params.transparent = true;
-				params.blending = THREE.MultiplyBlending;
+				custom(THREE.DstColorFactor, THREE.SrcColorFactor);
+				break;
+			case 7: // blend add: the color counts by its alpha, and the alpha hides what's behind
+				custom(THREE.OneFactor, THREE.OneMinusSrcAlphaFactor);
 				params.premultipliedAlpha = true;
 				break;
 		}
 		const material = unlit ? new THREE.MeshBasicMaterial(params) : new THREE.MeshLambertMaterial(params);
+		const comb = combiner(batch.shader, batch.textureCount);
+		const tex2 = batch.textureCount > 1 ? m2.textures[m2.textureCombos[batch.textureCombo + 1]] : undefined;
+		if (comb.env0 || (comb.mode > 0 && tex2 && tex2.type === 0 && tex2.fdid > 0)) {
+			const uniforms = {
+				map2: { value: null as THREE.Texture | null },
+				wowMode: { value: tex2 && tex2.type === 0 && tex2.fdid > 0 ? comb.mode : 0 },
+				wowEnv0: { value: comb.env0 },
+				wowEnv1: { value: comb.env1 },
+				wowUv2: { value: comb.uv2 },
+			};
+			if (uniforms.wowMode.value > 0) {
+				this.loading.push(
+					texture(tex2!.fdid, (tex2!.flags & 1) !== 0, (tex2!.flags & 2) !== 0)
+						.then(t => (uniforms.map2.value = t))
+						.catch(e => console.warn(`texture for ${m2.name}`, e)),
+				);
+			}
+			material.onBeforeCompile = shader => {
+				Object.assign(shader.uniforms, uniforms);
+				shader.vertexShader = shader.vertexShader
+					.replace(
+						'#include <common>',
+						'#include <common>\nattribute vec2 uv1;\nvarying vec2 vWowUv2;\nvarying vec3 vWowNormal;\nvarying vec3 vWowView;',
+					)
+					.replace(
+						'#include <project_vertex>',
+						'#include <project_vertex>\nvWowUv2 = uv1;\nvWowView = mvPosition.xyz;\nvWowNormal = normalize(normalMatrix * objectNormal);',
+					);
+				shader.fragmentShader = shader.fragmentShader
+					.replace(
+						'#include <common>',
+						'#include <common>\nuniform sampler2D map2;\nuniform int wowMode;\nuniform bool wowEnv0;\nuniform bool wowEnv1;\nuniform bool wowUv2;\nvarying vec2 vWowUv2;\nvarying vec3 vWowNormal;\nvarying vec3 vWowView;',
+					)
+					.replace('#include <map_fragment>', combinerFragment);
+			};
+			material.customProgramCacheKey = () => 'wow-combiner';
+		}
 		const bm: BatchMaterial = {
 			material,
 			batch,
@@ -258,12 +346,14 @@ export class Model {
 			baseOpacity: 1,
 		};
 		if (tex && tex.type === 0 && tex.fdid > 0) {
-			texture(tex.fdid, (tex.flags & 1) !== 0, (tex.flags & 2) !== 0)
-				.then(t => {
-					(material as THREE.MeshLambertMaterial).map = t;
-					material.needsUpdate = true;
-				})
-				.catch(e => console.warn(`texture for ${m2.name}`, e));
+			this.loading.push(
+				texture(tex.fdid, (tex.flags & 1) !== 0, (tex.flags & 2) !== 0)
+					.then(t => {
+						(material as THREE.MeshLambertMaterial).map = t;
+						material.needsUpdate = true;
+					})
+					.catch(e => console.warn(`texture for ${m2.name}`, e)),
+			);
 		}
 		void index;
 		return bm;
@@ -272,6 +362,19 @@ export class Model {
 	// setTexture sets a replaceable texture: 1 the skin, 2 an item's own, 6 the hair, 11 to 13 a
 	// creature's skins.
 	setTexture(type: number, t: THREE.Texture) {
+		// The model's slot says whether the texture repeats (hair does) or clamps (a cape). A
+		// texture shared with a slot that wraps the other way gets its own copy.
+		const slot = this.m2.textures.find(x => x.type === type);
+		if (slot) {
+			const wrapS = slot.flags & 1 ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
+			const wrapT = slot.flags & 2 ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
+			if (t.wrapS !== wrapS || t.wrapT !== wrapT) {
+				t = t.clone();
+				t.wrapS = wrapS;
+				t.wrapT = wrapT;
+				t.needsUpdate = true;
+			}
+		}
 		this.replaceable.set(type, t);
 		for (const bm of this.mats) {
 			if (bm.textureType === type) {
@@ -298,6 +401,8 @@ export class Model {
 	// 11 the helm, 18 the chest, ...), for weapons and effects. It's undefined when the model
 	// doesn't have the point.
 	attachPoint(id: number): THREE.Object3D | undefined {
+		const cached = this.points.get(id);
+		if (cached) return cached;
 		const a = this.m2.attachment(id);
 		if (!a) return undefined;
 		const bone = this.bones[a.bone] ?? this.bones[0];
@@ -305,37 +410,87 @@ export class Model {
 		const point = new THREE.Object3D();
 		point.position.set(a.position[0] - pivot[0], a.position[1] - pivot[1], a.position[2] - pivot[2]);
 		bone.add(point);
+		this.points.set(id, point);
 		return point;
+	}
+
+	// preloadAnims loads the keys of these animations (or the ones the model plays in their
+	// place), so the first time one plays it doesn't hold a frozen pose while its file loads.
+	async preloadAnims(anims: number[]) {
+		const seqs = new Set<number>();
+		for (const a of anims) {
+			const p = this.playing(a, {});
+			for (const v of this.variations(this.m2.sequenceFor(p.anim) >= 0 ? this.m2.sequenceFor(p.anim) : p.seq)) seqs.add(this.m2.resolve(v));
+			seqs.add(p.seq);
+		}
+		if (this.closed.right || this.closed.left || anims.includes(Anim.HandsClosed)) {
+			const hands = this.m2.sequenceFor(Anim.HandsClosed);
+			if (hands >= 0) seqs.add(this.m2.resolve(hands));
+		}
+		await Promise.all([...seqs].map(seq => this.loadAnim(seq)));
 	}
 
 	has(anim: number): boolean {
 		return this.m2.sequenceFor(anim) >= 0;
 	}
 
-	// play switches the whole body to an animation, fading from the one before.
-	play(anim: number, opts: PlayOptions = {}) {
+	// play switches the whole body to an animation, fading from the pose before. It gives the
+	// sequence it picked (a one-shot picks one of its variations at random).
+	play(anim: number, opts: PlayOptions = {}): number {
 		if (!opts.restart && this.base.anim === anim && !this.base.done) {
 			this.base.speed = opts.speed ?? 1;
-			return;
+			return this.base.seq;
 		}
 		const next = this.playing(anim, opts);
-		if (next.seq === this.base.seq && !opts.restart && !this.base.done) {
+		if (
+			this.m2.sequences[next.seq]?.variation === this.m2.sequences[this.base.seq]?.variation &&
+			next.seq === this.base.seq &&
+			!opts.restart &&
+			!this.base.done
+		) {
 			this.base.anim = anim;
 			this.base.speed = next.speed;
-			return;
+			return this.base.seq;
 		}
-		this.fadeFrom = this.base;
-		this.fadeTotal = this.fadeLeft = opts.fade ?? this.m2.sequences[next.seq]?.blendIn ?? 150;
+		if (this.posed) {
+			this.fadePose.set(this.pose0);
+			this.fadeTotal = this.fadeLeft = opts.fade ?? this.m2.sequences[next.seq]?.blendIn ?? 150;
+		}
 		this.base = next;
 		this.ensure(next);
+		return next.seq;
 	}
 
 	// playUpper plays a one-shot animation on the upper body only (an attack while running).
-	// Without a split skeleton it plays on the whole body.
-	playUpper(anim: number, opts: PlayOptions = {}) {
+	playUpper(anim: number, opts: PlayOptions = {}): number {
 		this.overlay = this.playing(anim, { ...opts, loop: false });
-		this.overlayFade = 0;
 		this.ensure(this.overlay);
+		return this.overlay.seq;
+	}
+
+	// baseToUpper moves a one-shot playing on the whole body (a swing) to the upper body, where it
+	// plays on while the legs start to run.
+	baseToUpper() {
+		if (this.base.loop || this.base.done) return;
+		this.overlay = { ...this.base, started: this.globalTime - 1000 };
+	}
+
+	// eventTimes gives the times (ms) of an event ($HIT...) in a sequence.
+	eventTimes(id: string, seq: number): number[] {
+		return (this.eventsOf(seq) ?? []).filter(e => e.id === id).map(e => e.time);
+	}
+
+	private eventsOf(seq: number): { id: string; data: number; time: number }[] | null {
+		let list = this.events.get(seq);
+		if (list !== undefined) return list;
+		const source = this.m2.inline(seq) ? this.m2.data : this.ready.get(seq);
+		if (!source) return null;
+		list = [];
+		for (const ev of this.m2.events as M2Event[]) {
+			for (const time of this.m2.eventTimes(ev, seq, source)) list.push({ id: ev.id, data: ev.data, time });
+		}
+		this.events.set(seq, list);
+		return list;
 	}
 
 	get baseAnim() {
@@ -365,8 +520,31 @@ export class Model {
 			seq = this.m2.sequenceFor(a);
 		}
 		if (seq < 0) seq = 0;
+		if (opts.loop === false) seq = this.variation(seq);
 		seq = this.m2.resolve(seq);
-		return { anim, seq, time: 0, speed: opts.speed ?? 1, loop: opts.loop ?? true, source: this.ready.get(seq), done: false };
+		return { anim, started: this.globalTime, seq, time: 0, speed: opts.speed ?? 1, loop: opts.loop ?? true, source: this.ready.get(seq), done: false };
+	}
+
+	// variations lists a sequence and its other variations (two different swings, say).
+	private variations(seq: number): number[] {
+		const out: number[] = [];
+		for (let s = seq; s >= 0 && s < this.m2.sequences.length && out.length < 16; s = this.m2.sequences[s].variationNext) out.push(s);
+		return out;
+	}
+
+	// variation picks one of a sequence's variations at random, by their frequencies.
+	private variation(seq: number): number {
+		const list = this.variations(seq);
+		if (list.length < 2) return seq;
+		const weights = list.map(s => Math.max(0, this.m2.sequences[s].frequency));
+		const total = weights.reduce((a, b) => a + b, 0);
+		if (total <= 0) return list[Math.floor(Math.random() * list.length)];
+		let roll = Math.random() * total;
+		for (let i = 0; i < list.length; i++) {
+			roll -= weights[i];
+			if (roll < 0) return list[i];
+		}
+		return seq;
 	}
 
 	private ensure(p: Playing) {
@@ -400,20 +578,34 @@ export class Model {
 		return p;
 	}
 
-	private advance(p: Playing, dt: number) {
+	private advance(p: Playing, dt: number, events: false | 'base' | 'upper') {
 		// Until its keys arrive, an animation holds at its start.
 		if (!p.source || p.done) return;
 		const duration = this.m2.sequences[p.seq]?.duration ?? 0;
+		const before = p.time;
 		p.time += dt * 1000 * p.speed;
+		let wrapped = false;
 		if (duration <= 0) {
 			p.time = 0;
 			if (!p.loop) p.done = true;
 		} else if (p.time >= duration) {
-			if (p.loop) p.time %= duration;
-			else {
+			if (p.loop) {
+				p.time %= duration;
+				wrapped = true;
+			} else {
 				p.time = duration - 1;
 				p.done = true;
 			}
+		}
+		if (!events || !this.onEvent) return;
+		const list = this.eventsOf(p.seq);
+		if (!list?.length) return;
+		// The events between the last frame and this one. An event at 0 fires when the animation
+		// starts.
+		const from = before === 0 && dt > 0 ? -1 : before;
+		for (const e of list) {
+			const passed = wrapped ? e.time > from || e.time <= p.time : e.time > from && e.time <= p.time;
+			if (passed) this.onEvent(e.id, e.data, events === 'upper');
 		}
 	}
 
@@ -421,68 +613,115 @@ export class Model {
 	update(dt: number) {
 		const dtMs = dt * 1000;
 		this.globalTime += dtMs;
-		this.advance(this.base, dt);
-		if (this.fadeFrom) {
-			this.advance(this.fadeFrom, dt);
-			this.fadeLeft -= dtMs;
-			if (this.fadeLeft <= 0 || !this.base.source) {
-				if (this.base.source) this.fadeFrom = undefined;
+		this.advance(this.base, dt, 'base');
+		this.fadeLeft = Math.max(0, this.fadeLeft - dtMs);
+		const overlay = this.overlay;
+		let ow = 0;
+		if (overlay) {
+			this.advance(overlay, dt, 'upper');
+			if (overlay.done) this.overlay = undefined;
+			else if (overlay.source) {
+				// The upper body fades into the attack and back out of it.
+				const duration = this.m2.sequences[overlay.seq]?.duration ?? 0;
+				ow = Math.min(1, (this.globalTime - overlay.started) / 120, (duration - overlay.time) / 150);
+				ow = Math.max(0, ow);
 			}
-		}
-		if (this.overlay) {
-			this.advance(this.overlay, dt);
-			this.overlayFade = Math.min(1, this.overlayFade + dtMs / 120);
-			if (this.overlay.done) this.overlay = undefined;
 		}
 		const handsSeq = this.closed.right || this.closed.left ? this.m2.resolve(this.m2.sequenceFor(Anim.HandsClosed)) : -1;
+		const handsSource = handsSeq >= 0 ? this.ready.get(handsSeq) : undefined;
 		const s = this.scratch;
 		const m2 = this.m2;
+		const base = this.base;
+		// Until the new animation's keys arrive, the bones keep the pose they had.
+		const fadeW = !base.source && this.posed ? 1 : this.fadeTotal > 0 && this.posed ? this.fadeLeft / this.fadeTotal : 0;
 		for (let i = 0; i < m2.bones.length; i++) {
 			const b = m2.bones[i];
-			let p: Playing = this.base;
-			let time = p.time;
-			let seq = p.seq;
-			let source = p.source;
-			if (handsSeq >= 0 && ((this.closed.right && rightFingers.includes(b.keyBoneId)) || (this.closed.left && leftFingers.includes(b.keyBoneId)))) {
-				seq = handsSeq;
-				time = 0;
-				source = this.ready.get(handsSeq);
-			} else if (this.overlay && this.overlay.source && this.upper[i]) {
-				p = this.overlay;
-				time = p.time;
-				seq = p.seq;
-				source = p.source;
+			const finger = handsSource && ((this.closed.right && this.fingers.right[i]) || (this.closed.left && this.fingers.left[i]));
+			if (finger) {
+				this.pose(b.translation, b.rotation, b.scale, handsSeq, 0, handsSource, s.t, s.r, s.s);
+			} else {
+				this.pose(b.translation, b.rotation, b.scale, base.seq, base.time, base.source, s.t, s.r, s.s);
+				if (fadeW > 0) {
+					const o = i * 10;
+					const f = this.fadePose;
+					s.t2[0] = f[o];
+					s.t2[1] = f[o + 1];
+					s.t2[2] = f[o + 2];
+					s.r2[0] = f[o + 3];
+					s.r2[1] = f[o + 4];
+					s.r2[2] = f[o + 5];
+					s.r2[3] = f[o + 6];
+					s.s2[0] = f[o + 7];
+					s.s2[1] = f[o + 8];
+					s.s2[2] = f[o + 9];
+					blend(s, fadeW);
+				}
+				if (ow > 0 && overlay && this.upper[i]) {
+					this.pose(b.translation, b.rotation, b.scale, overlay.seq, overlay.time, overlay.source, s.t2, s.r2, s.s2);
+					blend(s, ow);
+				}
 			}
-			if (!source && this.fadeFrom?.source) {
-				// The new animation's keys are still loading: keep the old pose.
-				p = this.fadeFrom;
-				time = p.time;
-				seq = p.seq;
-				source = p.source;
-			}
-			this.pose(b.translation, b.rotation, b.scale, seq, time, source, s.t, s.r, s.s);
-			if (this.fadeFrom?.source && this.base.source && this.fadeTotal > 0 && p === this.base) {
-				const f = this.fadeFrom;
-				this.pose(b.translation, b.rotation, b.scale, f.seq, f.time, f.source, s.t2, s.r2, s.s2);
-				const w = Math.max(0, Math.min(1, this.fadeLeft / this.fadeTotal));
-				blend(s, w);
-			}
+			const o = i * 10;
+			const p0 = this.pose0;
+			p0[o] = s.t[0];
+			p0[o + 1] = s.t[1];
+			p0[o + 2] = s.t[2];
+			p0[o + 3] = s.r[0];
+			p0[o + 4] = s.r[1];
+			p0[o + 5] = s.r[2];
+			p0[o + 6] = s.r[3];
+			p0[o + 7] = s.s[0];
+			p0[o + 8] = s.s[1];
+			p0[o + 9] = s.s[2];
 			const parent = b.parent >= 0 ? m2.bones[b.parent].pivot : undefined;
 			const bone = this.bones[i];
 			bone.position.set(b.pivot[0] - (parent?.[0] ?? 0) + s.t[0], b.pivot[1] - (parent?.[1] ?? 0) + s.t[1], b.pivot[2] - (parent?.[2] ?? 0) + s.t[2]);
 			bone.quaternion.set(s.r[0], s.r[1], s.r[2], s.r[3]);
 			bone.scale.set(s.s[0], s.s[1], s.s[2]);
 		}
+		if (base.source) this.posed = true;
+		this.faceCamera();
 		this.updateColors();
 		this.particles?.update(dt);
+		this.ribbons?.update(dt);
 	}
 
-	private trackKeys(track: Track, seq: number, source: DataView | undefined): { keys: Keys | null; time?: number } {
+	// faceCamera turns the billboard bones to the camera. Their +x (the model's front) points at
+	// the camera, with their up staying the camera's up.
+	private faceCamera() {
+		const camera = Model.camera;
+		if (this.billboards.length === 0 || !camera) return;
+		this.root.updateWorldMatrix(true, true);
+		const camQ = camera.getWorldQuaternion(billboardTmp.q1);
+		for (const i of this.billboards) {
+			const bone = this.bones[i];
+			const parent = bone.parent;
+			if (!parent) continue;
+			parent.matrixWorld.decompose(billboardTmp.v, billboardTmp.q2, billboardTmp.s);
+			bone.quaternion.copy(billboardTmp.q2.invert()).multiply(camQ).multiply(faceFront);
+			bone.updateMatrixWorld(true);
+		}
+	}
+
+	// trackKeys gives a track's keys for a sequence. A track on a global sequence runs on its own
+	// clock: then keyTime is the time to sample at, else it's -1 (sample at the animation's time).
+	private keyTime = -1;
+	private trackKeys(track: Track, seq: number, source: DataView | undefined): Keys | null {
 		if (track.globalSeq !== 0xffff) {
 			const loop = this.m2.globalLoops[track.globalSeq] || 1;
-			return { keys: track.get(0, this.m2.data), time: this.globalTime % loop };
+			this.keyTime = this.globalTime % loop;
+			return track.get(0, this.m2.data);
 		}
-		return { keys: track.get(seq, source) };
+		this.keyTime = -1;
+		// A one-slot track keeps its keys in the model file.
+		return track.get(seq, track.times.length === 1 ? this.m2.data : source);
+	}
+
+	private sampleTrack(track: Track, seq: number, time: number, source: DataView | undefined, out: number[]): boolean {
+		const keys = this.trackKeys(track, seq, source);
+		if (!keys) return false;
+		sample(keys, track.width, this.keyTime >= 0 ? this.keyTime : time, out, track.interpolation);
+		return true;
 	}
 
 	private pose(tr: Track, rot: Track, sc: Track, seq: number, time: number, source: DataView | undefined, t: number[], r: number[], s: number[]) {
@@ -490,56 +729,48 @@ export class Model {
 		r[0] = r[1] = r[2] = 0;
 		r[3] = 1;
 		s[0] = s[1] = s[2] = 1;
-		const a = this.trackKeys(tr, seq, source);
-		if (a.keys) sample(a.keys, 3, a.time ?? time, t, tr.interpolation);
-		const b = this.trackKeys(rot, seq, source);
-		if (b.keys) sample(b.keys, 4, b.time ?? time, r, rot.interpolation);
-		const c = this.trackKeys(sc, seq, source);
-		if (c.keys) sample(c.keys, 3, c.time ?? time, s, sc.interpolation);
+		this.sampleTrack(tr, seq, time, source, t);
+		this.sampleTrack(rot, seq, time, source, r);
+		this.sampleTrack(sc, seq, time, source, s);
 	}
 
 	// trackValue samples a track (an emitter's rate, say) at the current animation's time. It's
 	// false when the track has no keys there.
 	trackValue(track: Track, out: number[]): boolean {
-		const k = this.trackKeys(track, this.base.seq, this.base.source);
-		if (!k.keys) return false;
-		sample(k.keys, track.width, k.time ?? this.base.time, out, track.interpolation);
-		return true;
+		return this.sampleTrack(track, this.base.seq, this.base.time, this.base.source, out);
+	}
+
+	// emit turns the particles and ribbons on or off (an effect that fades out stops emitting).
+	set emitting(on: boolean) {
+		if (this.particles) this.particles.emitting = on;
+		if (this.ribbons) this.ribbons.emitting = on;
 	}
 
 	// enableParticles starts the model's particle emitters, with their particles in `world`.
 	enableParticles(world: THREE.Object3D) {
 		if (!this.particles && this.m2.particles.length > 0) this.particles = new Particles(this, world);
+		if (!this.ribbons && this.m2.ribbons.length > 0) this.ribbons = new Ribbons(this, world);
 	}
 
 	// updateColors applies animated colors and transparency to the batches that have them.
+	private readonly colorOut = [0, 0, 0];
 	private updateColors() {
-		const out = [0, 0, 0];
+		const out = this.colorOut;
 		const m2 = this.m2;
+		const base = this.base;
 		for (const bm of this.mats) {
 			const { batch } = bm;
 			let alpha = 1;
 			if (batch.color >= 0 && m2.colors[batch.color]) {
 				const c = m2.colors[batch.color];
-				const k = this.trackKeys(c.alpha, this.base.seq, this.base.source);
-				if (k.keys) {
-					sample(k.keys, 1, k.time ?? this.base.time, out, c.alpha.interpolation);
-					alpha *= out[0] / 32767;
-				}
-				const kc = this.trackKeys(c.color, this.base.seq, this.base.source);
-				if (kc.keys && bm.material.color) {
-					sample(kc.keys, 3, kc.time ?? this.base.time, out, c.color.interpolation);
-					bm.material.color.setRGB(out[0], out[1], out[2]);
-				}
+				if (this.sampleTrack(c.alpha, base.seq, base.time, base.source, out)) alpha *= out[0] / 32767;
+				// M2 colors are gamma values, like the textures.
+				if (bm.material.color && this.sampleTrack(c.color, base.seq, base.time, base.source, out))
+					bm.material.color.setRGB(out[0], out[1], out[2], THREE.SRGBColorSpace);
 			}
 			const wi = m2.transparencyLookup[batch.weightCombo];
 			if (wi !== undefined && m2.textureWeights[wi]) {
-				const w = m2.textureWeights[wi];
-				const k = this.trackKeys(w, this.base.seq, this.base.source);
-				if (k.keys) {
-					sample(k.keys, 1, k.time ?? this.base.time, out, w.interpolation);
-					alpha *= out[0] / 32767;
-				}
+				if (this.sampleTrack(m2.textureWeights[wi], base.seq, base.time, base.source, out)) alpha *= out[0] / 32767;
 			}
 			if (alpha < 0.999 || bm.material.transparent) {
 				bm.material.opacity = Math.max(0, Math.min(1, alpha));
@@ -550,11 +781,59 @@ export class Model {
 
 	dispose() {
 		this.particles?.dispose();
+		this.ribbons?.dispose();
 		this.root.removeFromParent();
 		this.mesh.geometry.dispose();
 		for (const bm of this.mats) bm.material.dispose();
 	}
 }
+
+// combiner works out how a batch mixes its textures, from its shader id and texture count
+// (wowdev.wiki M2, "Shaders"): mode 0 one texture, 1 modulate, 2 modulate 2x, 3 add by the
+// second's alpha, 4 modulate 2x by the first's alpha, 5 add by both alphas. env0 and env1 map a
+// texture by the view (a sphere map, the shine on armor), and uv2 puts the second on the second
+// UV set.
+function combiner(shader: number, count: number): { mode: number; env0: boolean; env1: boolean; uv2: boolean } {
+	if (shader & 0x8000) {
+		// The client's shader table. The ones items use put the second texture on an env map.
+		switch (shader & 0x7fff) {
+			case 0:
+				return { mode: 4, env0: false, env1: true, uv2: false };
+			case 1:
+				return { mode: 3, env0: false, env1: true, uv2: false };
+			case 2:
+				return { mode: 5, env0: false, env1: true, uv2: false };
+		}
+		return { mode: 0, env0: false, env1: false, uv2: false };
+	}
+	const env0 = (shader & 0x80) !== 0;
+	if (count < 2) return { mode: 0, env0, env1: false, uv2: false };
+	const modes: Record<number, number> = { 0: 0, 1: 1, 2: 1, 3: 3, 4: 2, 5: 1, 6: 2, 7: 3 };
+	return { mode: modes[shader & 7] ?? 1, env0, env1: (shader & 0x8) !== 0, uv2: (shader & 0x4000) !== 0 };
+}
+
+const combinerFragment = /* glsl */ `
+#ifdef USE_MAP
+	vec3 wowR = reflect(normalize(vWowView), normalize(vWowNormal));
+	float wowM = 2.0 * sqrt(wowR.x * wowR.x + wowR.y * wowR.y + (wowR.z + 1.0) * (wowR.z + 1.0));
+	vec2 wowEnvUv = vec2(wowR.x / wowM + 0.5, 0.5 - wowR.y / wowM);
+	vec4 wowT0 = texture2D(map, wowEnv0 ? wowEnvUv : vMapUv);
+	vec4 wowC = wowT0;
+	if (wowMode > 0) {
+		vec4 wowT1 = texture2D(map2, wowEnv1 ? wowEnvUv : (wowUv2 ? vWowUv2 : vMapUv));
+		if (wowMode == 1) wowC.rgb = wowT0.rgb * wowT1.rgb;
+		else if (wowMode == 2) wowC.rgb = wowT0.rgb * wowT1.rgb * 2.0;
+		else if (wowMode == 3) wowC.rgb = wowT0.rgb + wowT1.rgb * wowT1.a;
+		else if (wowMode == 4) wowC.rgb = mix(wowT0.rgb, wowT0.rgb * wowT1.rgb * 2.0, wowT0.a);
+		else if (wowMode == 5) wowC.rgb = wowT0.rgb + wowT1.rgb * wowT1.a * wowT0.a;
+	}
+	diffuseColor *= wowC;
+#endif
+`;
+
+const billboardTmp = { q1: new THREE.Quaternion(), q2: new THREE.Quaternion(), v: new THREE.Vector3(), s: new THREE.Vector3() };
+// faceFront turns the model's front (+x) to the camera's back (+z), which faces the viewer.
+const faceFront = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
 
 function blend(s: { t: number[]; r: number[]; s: number[]; t2: number[]; r2: number[]; s2: number[] }, w: number) {
 	// w is the old pose's share.

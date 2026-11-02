@@ -59,11 +59,12 @@ func init() {
 						WeaponImbue:   imbue,
 					},
 				}}
-				// Casters stand at range, like the mages: 25 yd (2026-11-01; it was mksettings'
-				// default 5 yd). The Goblin Sapper Charge only reaches 10 yd, so it is out, and
-				// the bolts take their flight time. 5.5 to 9.3 lower at 180 sec than at 5 yd with the
-				// Sapper; the EZ-Thro Dark Bomb loses 5 to 7.
-				player.DistanceFromTarget = 25
+				// A caster stands at the longest range every spell of its rotation reaches
+				// (standards 33, orchestration/caster_distance.md): every warlock spell the presets
+				// cast reaches 30 yd, and none takes Grim Reach or Destructive Reach. The Goblin
+				// Sapper Charge only reaches 10 yd, so it is out (5.5 to 9.3 at 180 sec at 5 yd), and
+				// the bolts take their flight time. The EZ-Thro Dark Bomb lost 5 to 7 at 25 yd.
+				player.DistanceFromTarget = 30
 			},
 		}
 	}

@@ -42,7 +42,7 @@ def main():
         page.click('#enter')
 
         # The worker loads 38 MB of WASM.
-        page.wait_for_function('window.practice && window.practice.running && window.practice.toolkit', timeout=60000)
+        page.wait_for_function('window.practice && window.practice.running && window.practice.toolkit && !window.practice.loadingModels', timeout=180000)
         state = lambda: page.evaluate(
             '() => ({phase: practice.fight.phase, damage: practice.player?.damageDone ?? 0, pos: practice.mover.move.pos, '
             'mana: practice.player?.mana, now: practice.now()})'

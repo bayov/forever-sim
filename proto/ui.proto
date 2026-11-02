@@ -381,8 +381,8 @@ message LevelingTrainingSettings {
 	// Every rank of the spells the plan doesn't cast, with its level and price (no minutes).
 	repeated LevelingRankWorth others = 7;
 	// Ranks we choose not to train before a level, whatever the sim says, like Healing Wave 2 and
-	// Earthbind at 6 while we save for the Walking Stick. The training search keeps them and
-	// writes them into buys too.
+	// Earthbind at 6 while we save for the Walking Stick, or past 60 for ranks we don't need
+	// (Ancestral Spirit 2 to 5). The training search keeps them and writes them into buys too.
 	repeated LevelingTrainingBuy holds = 8;
 }
 
