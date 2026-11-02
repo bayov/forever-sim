@@ -1149,6 +1149,15 @@ rendering, not the sim.
   frame drawing up to 380 meshes. The ground is now one mesh (a texture array for the ground textures and one atlas
   for the alpha maps), and each doodad model is a plain mesh in its first pose drawn for all its copies at once
   (no bones to update every frame). Draw calls went from 134 to 54 in the same view.
+- Third report: 240 FPS at the median, but a quarter of the fight frames at 8ms. The page drew at 3840x2160 (a 4K
+  screen at 150%), and script took about 3ms a frame. Fixes:
+  - A Resolution setting caps the drawn height (1440p by default) and stretches it to the screen.
+  - The HUD forced the browser to lay the page out twice a frame (the cast history's width and the canvas's size
+    read after the HUD's changes). Both are read once now, before any change.
+  - The HUD remembers its elements and writes a text or style only when it changes (`ui/practice/dom.ts`).
+  - Empty particle emitters and ribbons aren't drawn, and only live particles go to the GPU.
+  - Bones skip Three's Euler angles, and billboards update only the bones above them.
+  - In a loop benchmark the HUD went from 0.66 to about 0.1ms a frame and the character's posing from 0.25 to 0.12ms.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
   (the Flametongue Totem proc's fire impact) load before the fight too.
 - Combat text scrolls like the Replay view's (MSBT): what you do goes up from the target's frame, buffs you gain go

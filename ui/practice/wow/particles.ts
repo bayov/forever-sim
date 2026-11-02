@@ -15,6 +15,10 @@ import type { Model } from './model';
 
 const maxParticles = 600;
 
+// While the loading screen warms the shaders up, the emitters draw even with no particles, so the
+// renderer compiles their shader. In the fight an empty emitter isn't drawn at all.
+export const particleOptions = { drawEmpty: false };
+
 type Particle = {
 	pos: THREE.Vector3;
 	vel: THREE.Vector3;
@@ -118,6 +122,8 @@ class Emitter {
 	private readonly cellKeys: number[][];
 	private readonly worldScale = new THREE.Vector3();
 	private readonly origin = new THREE.Vector3();
+	// Whether the emitter's texture loaded. Until then it draws nothing.
+	private ready = false;
 
 	constructor(
 		readonly model: Model,
@@ -197,7 +203,7 @@ class Emitter {
 				.then(t => {
 					material.uniforms.map.value = t;
 					material.uniforms.uSoft.value = e.blend !== 0 && e.blend !== 3 && opaque(t) ? 1 : 0;
-					this.mesh.visible = true;
+					this.ready = true;
 				})
 				.catch(err => console.warn('particle texture', err));
 		} else {
@@ -212,7 +218,7 @@ class Emitter {
 
 	update(dt: number, emitting: boolean) {
 		const e = this.e;
-		if (!this.mesh.visible) return;
+		if (!this.ready) return;
 		this.anchor.updateWorldMatrix(true, false);
 		const world = this.anchor.matrixWorld;
 		this.origin.setFromMatrixPosition(world);
@@ -330,7 +336,15 @@ class Emitter {
 			this.rot.setX(i, p.angle + p.spin * p.age);
 		}
 		this.geometry.instanceCount = n;
-		for (const a of [this.pos, this.size, this.color, this.uvs, this.rot]) a.needsUpdate = true;
+		this.mesh.visible = n > 0 || particleOptions.drawEmpty;
+		// We send the GPU only the live particles, not the whole buffer of 600.
+		if (n > 0) {
+			for (const a of [this.pos, this.size, this.color, this.uvs, this.rot]) {
+				a.clearUpdateRanges();
+				a.addUpdateRange(0, n * a.itemSize);
+				a.needsUpdate = true;
+			}
+		}
 	}
 
 	dispose() {
