@@ -569,30 +569,69 @@ button.primary {
 	right: calc(4 * var(--u));
 }
 
-/* The spell history: our last casts, sliding in from the right and fading. */
+/* The cast history timeline at the top left, under the room's menu, like the Replay view's: a
+   time axis with our casts over it, the current time near its right end. */
 .history {
 	position: absolute;
-	display: flex;
-	justify-content: flex-end;
-	align-items: center;
-	gap: calc(2.2 * var(--u));
+	top: calc(6 * var(--u) + 40px);
+	left: calc(6 * var(--u));
+	width: 42%;
+	height: calc(118 * var(--u) / 1.8);
+}
+.hist-casts {
+	position: absolute;
+	inset: 0 0 calc(32 * var(--u) / 1.8);
+	mask-image: linear-gradient(to right, transparent, #000 48px);
 }
 .h-icon {
-	flex: none;
+	position: absolute;
+	left: 0;
 	background-size: 112% auto;
 	background-position: center;
 	border: 1px solid #000;
-	animation: slide-in 0.15s ease-out;
-	transition: opacity 0.5s;
+	box-sizing: border-box;
+	pointer-events: auto;
 }
-.h-icon.fade {
-	opacity: 0;
+.hist-now {
+	position: absolute;
+	top: 0;
+	right: calc(37 * var(--u) / 1.8);
+	width: 2px;
+	height: calc(86 * var(--u) / 1.8);
+	margin-right: -1px;
+	background: linear-gradient(to bottom, transparent, var(--gold));
+	opacity: 0.8;
 }
-@keyframes slide-in {
-	from {
-		transform: translateX(40%);
-		opacity: 0;
-	}
+.hist-axis {
+	--offset: 0px;
+	--sec: 40px;
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: calc(32 * var(--u) / 1.8);
+	mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 20px), transparent);
+}
+/* The axis line, with a short tick every second and a long one every 5 seconds. */
+.hist-axis::before {
+	content: '';
+	position: absolute;
+	inset: 0 0 auto;
+	height: 8px;
+	background:
+		linear-gradient(rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.7)) top / 100% 2px no-repeat,
+		repeating-linear-gradient(to right, rgba(255, 255, 255, 0.7) 0 1px, transparent 1px calc(5 * var(--sec))) var(--offset) 0 / calc(5 * var(--sec)) 8px repeat-x,
+		repeating-linear-gradient(to right, rgba(255, 255, 255, 0.45) 0 1px, transparent 1px var(--sec)) var(--offset) 0 / var(--sec) 5px repeat-x;
+	filter: drop-shadow(0 1px 0 #000);
+}
+.hist-label {
+	position: absolute;
+	top: 9px;
+	left: 0;
+	font-size: calc(13 * var(--u));
+	color: rgba(255, 255, 255, 0.8);
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
 }
 
 /* The game tooltip, at the user's fixed spot. Wowhead's classes give the game's colors. */
@@ -721,8 +760,7 @@ button.primary {
 .fight-bar {
 	position: absolute;
 	top: calc(6 * var(--u));
-	left: 50%;
-	transform: translateX(-50%);
+	left: calc(6 * var(--u));
 	display: flex;
 	gap: 4px;
 	align-items: center;
@@ -741,9 +779,9 @@ button.primary {
 }
 .fight-settings {
 	position: absolute;
+	z-index: 2;
 	top: calc(6 * var(--u) + 36px);
-	left: 50%;
-	transform: translateX(-50%);
+	left: calc(6 * var(--u));
 	background: var(--eui-panel);
 	border: 1px solid #000;
 	padding: 10px;

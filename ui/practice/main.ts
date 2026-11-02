@@ -173,6 +173,9 @@ class PracticeRoom {
 	itemNames = new Map<number, string>();
 	private packIcons: { el: HTMLElement; spell: ToolkitSpell }[] = [];
 	private maintainCells = new Map<string, HTMLElement>();
+	// The cast history timeline: our casts with when we made them, and where each sits.
+	private castLog: { at: number; spellId?: number; itemId?: number; el: HTMLElement; row: number; shift: number }[] = [];
+	private axisLabels = new Map<number, HTMLElement>();
 	// Timings for spike 4: the WASM load, each call into Go, the swaps, and the time from a key
 	// press to its answer on the page.
 	readonly timings = { loadMs: 0, startCallMs: 0, calls: [] as number[], swaps: [] as number[], pressToAnswer: [] as number[] };
@@ -248,6 +251,7 @@ class PracticeRoom {
 		this.summary = undefined;
 		this.pulledAt = undefined;
 		this.hud.querySelector('.summary')?.remove();
+		this.clearHistory();
 		this.mover.move.pos = [0, -15];
 		this.mover.move.facing = Math.PI / 2;
 		this.mover.cam.yaw = Math.PI / 2;
@@ -396,12 +400,18 @@ class PracticeRoom {
 	}
 
 	async onBatch(b: Batch) {
+		if (b.rebase) {
+			// The session moved its clock (the pull is 0): the history's casts move with it.
+			for (const c of this.castLog) c.at += b.rebase.shiftMs;
+			for (const l of this.axisLabels.values()) l.remove();
+			this.axisLabels.clear();
+		}
 		if (b.player) this.player = b.player;
 		if (b.target) this.target = b.target;
 		this.fight = b.fight;
 		for (const e of b.errors ?? []) this.showError(e);
 		for (const h of b.hits ?? []) this.combatText(h.damage, h.outcome, h.periodic);
-		for (const c of b.casts ?? []) this.addHistory(c.spellId, c.itemId);
+		for (const c of b.casts ?? []) this.addHistory(c.at, c.spellId, c.itemId);
 		if (b.pulled) {
 			this.pulledAt = 0;
 			if (b.pulled.early) this.showMessage('Early pull!');
@@ -731,7 +741,7 @@ class PracticeRoom {
 			<div class="buffs"></div>
 			<div class="nameplate hidden"><div class="np-debuffs"></div><div class="np-name"></div><div class="np-hp"><span class="fill"></span></div><div class="np-arrow left"></div><div class="np-arrow right"></div></div>
 			<div class="dmeter"><div class="dm-header"></div><div class="dm-bar hidden"><span class="fill"></span><em class="l"></em><em class="r"></em></div></div>
-			<div class="history"></div>
+			<div class="history"><div class="hist-now"></div><div class="hist-casts"></div><div class="hist-axis"></div></div>
 			<div class="action-bars"></div>
 			<div class="errors"></div>
 			<div class="messages"></div>
@@ -835,8 +845,6 @@ class PracticeRoom {
 		q('.cb-name').style.fontSize = `${L.castTextSize * u}px`;
 		q('.cb-time').style.fontSize = `${L.castTimerSize * u}px`;
 		q('.dm-bar').style.height = `${L.meterBarHeight * u}px`;
-		const hist = L.history;
-		place(q('.history'), { x: hist.x, y: hist.y, w: hist.count * (hist.size + 2.2), h: hist.size, point: 'RIGHT' }, u, W, H);
 		this.renderBars();
 		this.renderPack();
 	}
@@ -1312,6 +1320,7 @@ class PracticeRoom {
 		}
 		if (p) this.renderAuras(q('.buffs'), (p.auras ?? []).filter(a => a.expiresAt !== undefined || (a.spellId ?? 0) > 0), now, 'buff');
 		this.updateNameplate(now);
+		this.drawHistory(now);
 
 		// The cast bar, with the ping's share at its end like EllesmereUI's latency.
 		const cast = p?.cast;
@@ -1428,20 +1437,99 @@ class PracticeRoom {
 		});
 	}
 
-	// addHistory puts a cast on the spell history row, newest on the right, fading after a few
-	// seconds like the meter's.
-	addHistory(spellId: number | undefined, itemId: number | undefined) {
+	// The cast history timeline, like the Replay view's: our casts where we made them, the newest
+	// at the current time on the right, sliding left as time goes on. Casts too close together
+	// for their icons to fit side by side go up a row. Sizes are in 4K pixels like the Bayov
+	// pack, scaled with the UI.
+	historyScale() {
+		return {
+			k: this.u / 1.8,
+			iconW: 51,
+			iconH: 36,
+			rows: 2,
+			rowH: 40,
+			pxPerSec: 57,
+			nowPx: 37,
+			labelEvery: 5,
+		};
+	}
+
+	addHistory(at: number, spellId: number | undefined, itemId: number | undefined) {
 		if (!spellId && !itemId) return;
-		const box = this.hud.querySelector('.history') as HTMLElement;
-		const L = this.layout.history;
 		const icon = el('div', { class: 'h-icon' });
-		icon.style.width = icon.style.height = `${Math.round(L.size * this.u)}px`;
 		setIcon(icon, spellId ? 'spell' : 'item', (spellId || itemId)!);
-		this.tooltip.attach(icon, () => (spellId ? { kind: 'spell', id: spellId } : { kind: 'item', id: itemId! }));
-		box.append(icon);
-		while (box.children.length > L.count) box.firstElementChild?.remove();
-		setTimeout(() => icon.classList.add('fade'), L.fadeMs);
-		setTimeout(() => icon.remove(), L.fadeMs + 600);
+		this.tooltip.attach(icon, () => (spellId ? { kind: 'spell', id: spellId, extra: [`Cast at ${fmtClock(at)}`] } : { kind: 'item', id: itemId!, extra: [`Used at ${fmtClock(at)}`] }));
+		(this.hud.querySelector('.hist-casts') as HTMLElement).append(icon);
+		this.castLog.push({ at, spellId, itemId, el: icon, row: 0, shift: 0 });
+		// We place the casts from the newest back. A cast goes in the lowest row where it doesn't
+		// cover the icon after it. When no row has room (a burst of cooldowns at the pull), it
+		// moves left to the first free place in a row, so each icon still shows.
+		const h = this.historyScale();
+		const step = h.iconW + 3;
+		const rowStarts = new Array<number>(h.rows).fill(Infinity);
+		for (let i = this.castLog.length - 1; i >= 0; i--) {
+			const c = this.castLog[i];
+			const x = (c.at / 1000) * h.pxPerSec;
+			let row = rowStarts.findIndex(start => x + step <= start);
+			let placed = x;
+			if (row < 0) {
+				row = rowStarts.indexOf(Math.max(...rowStarts));
+				placed = rowStarts[row] - step;
+			}
+			rowStarts[row] = placed;
+			c.row = row;
+			c.shift = placed - x;
+		}
+	}
+
+	clearHistory() {
+		for (const c of this.castLog) c.el.remove();
+		this.castLog = [];
+		for (const l of this.axisLabels.values()) l.remove();
+		this.axisLabels.clear();
+	}
+
+	drawHistory(now: number) {
+		const box = this.hud.querySelector('.history') as HTMLElement;
+		const h = this.historyScale();
+		const k = h.k;
+		const width = box.clientWidth;
+		const nowX = width - h.nowPx * k;
+		const xAt = (at: number) => nowX - ((now - at) / 1000) * h.pxPerSec * k;
+		const oldest = now - ((nowX + h.iconW * k) / (h.pxPerSec * k)) * 1000;
+		while (this.castLog.length && this.castLog[0].at + 0 < oldest - 2000) this.castLog.shift()!.el.remove();
+		for (const c of this.castLog) {
+			const pop = Math.min(1, Math.max(0, (now - c.at) / 150));
+			const eased = 1 - (1 - pop) * (1 - pop);
+			const x = xAt(c.at) + c.shift * k - (h.iconW * k) / 2;
+			c.el.style.width = `${h.iconW * k}px`;
+			c.el.style.height = `${h.iconH * k}px`;
+			c.el.style.top = `${(h.rows - 1 - c.row) * h.rowH * k}px`;
+			c.el.style.transform = `translateX(${x.toFixed(1)}px) scale(${(1.12 - 0.12 * eased).toFixed(3)})`;
+			c.el.style.opacity = eased.toFixed(3);
+		}
+		// The axis: ticks every second slide with the time, a label every few seconds.
+		const axis = this.hud.querySelector('.hist-axis') as HTMLElement;
+		axis.style.setProperty('--offset', `${xAt(0).toFixed(1)}px`);
+		axis.style.setProperty('--sec', `${h.pxPerSec * k}px`);
+		const every = h.labelEvery * 1000;
+		const labels = new Set<number>();
+		for (let at = Math.ceil(oldest / every) * every; at <= now; at += every) {
+			labels.add(at);
+			let l = this.axisLabels.get(at);
+			if (!l) {
+				l = el('span', { class: 'hist-label' }, fmtTime(at));
+				this.axisLabels.set(at, l);
+				axis.append(l);
+			}
+			l.style.transform = `translateX(${xAt(at).toFixed(1)}px) translateX(-50%)`;
+		}
+		for (const [at, l] of this.axisLabels) {
+			if (!labels.has(at)) {
+				l.remove();
+				this.axisLabels.delete(at);
+			}
+		}
 	}
 }
 
@@ -1467,6 +1555,14 @@ function fmtNumber(n: number): string {
 	if (Math.abs(v) >= 1e6) return `${(v / 1e6).toFixed(1)}M`;
 	if (Math.abs(v) >= 1e4) return `${(v / 1e3).toFixed(1)}K`;
 	return String(v);
+}
+
+// fmtClock is a moment of the fight like the Replay view's clock: "1:05.3", "-0:02.0".
+function fmtClock(ms: number): string {
+	const neg = ms < 0;
+	const t = Math.round(Math.abs(ms) / 100) / 10;
+	const m = Math.floor(t / 60);
+	return `${neg ? '-' : ''}${m}:${(t - m * 60).toFixed(1).padStart(4, '0')}`;
 }
 
 // fmtRemaining is an aura tooltip's last line, like the game's.

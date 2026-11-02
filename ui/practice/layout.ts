@@ -45,7 +45,6 @@ export type HudLayout = {
 	manaColor: Color;
 	meter: Rect;
 	meterBarHeight: number;
-	history: { x: number; y: number; size: number; count: number; fadeMs: number };
 	tooltip: { x: number; y: number };
 	nameplate: { w: number; h: number };
 	bars: BarLayout[];
@@ -112,7 +111,6 @@ export function readLayout(ui: Any | undefined): HudLayout {
 	const cast: Any = rb.castBar ?? {};
 	const dm: Any = ui?.damageMeter ?? {};
 	const win: Any = dm.window ?? {};
-	const hist: Any = dm.spellHistory ?? {};
 	const np: Any = ui?.nameplates ?? {};
 	const tip: Any = ui?.tooltipFixedPos ?? {};
 	const ab: Any = ui?.actionBars ?? defaultBars();
@@ -151,7 +149,6 @@ export function readLayout(ui: Any | undefined): HudLayout {
 	const totPos: Any = pos.targettarget ?? { x: 485, y: -232.8 };
 	const castPos: Any = cast.unlockPos ?? { x: 0, y: -314.4 };
 	const winPos: Any = win.position ?? { x: 707.8, y: -490 };
-	const histPos: Any = hist.iconPos ?? { x: 703.9, y: 122.2 };
 	const scale = num(ui?.uiScale, 0.64);
 	return {
 		uiHeight: 768 / (scale > 0.3 ? scale : 0.64),
@@ -171,7 +168,6 @@ export function readLayout(ui: Any | undefined): HudLayout {
 		manaColor: color(ui?.customColors?.power?.MANA, { r: 0.296, g: 0.499, b: 0.759 }),
 		meter: { x: num(winPos.x, 707.8), y: num(winPos.y, -490), w: num(win.width, 220), h: num(win.height, 220), point: 'CENTER' },
 		meterBarHeight: num(dm.barHeight, 16),
-		history: { x: num(histPos.x, 703.9), y: num(histPos.y, 122.2), size: num(hist.iconSize, 30), count: num(hist.iconCount, 7), fadeMs: num(hist.iconFadeTime, 5) * 1000 },
 		tooltip: { x: num(tip.centerX, 921.1), y: num(tip.centerY, -291.9) },
 		nameplate: { w: 120 + num(np.healthBarWidth, 0), h: num(np.healthBarHeight, 13) },
 		bars,
