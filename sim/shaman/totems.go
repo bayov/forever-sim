@@ -148,3 +148,15 @@ func ownTotemAura(aura *core.Aura) *core.Aura {
 	}
 	return aura
 }
+
+// PlaceTotem puts down a totem the sim doesn't model, in its element's slot: it ends the totem
+// standing there, and Fire Nova and Totemic Recall see it. For the practice room, where the
+// player can cast any totem (Earthbind Totem in place of Strength of Earth, say).
+func (shaman *Shaman) PlaceTotem(sim *core.Simulation, slot int, spell *core.Spell, duration time.Duration) {
+	shaman.placeTotem(sim, slot, spell, duration, nil)
+}
+
+// TotemicFocusFactor is what Totemic Focus multiplies every totem's cost by.
+func (shaman *Shaman) TotemicFocusFactor() float64 {
+	return shaman.totemicFocusFactor()
+}

@@ -90,6 +90,7 @@ func (shaman *Shaman) getImbueProcMask(imbue proto.WeaponImbue) core.ProcMask {
 // take the slot either. That is the raid setup where we keep Windfury Totem down for the
 // group and Flametongue Totem down for ourselves, next to our own Windfury Weapon.
 func (shaman *Shaman) setTotemWeaponBuff(sim *core.Simulation, aura *core.Aura, sameKindImbue proto.WeaponImbue) {
+	shaman.noteWeaponTotem(aura, sameKindImbue, true)
 	if shaman.getImbueProcMask(sameKindImbue) != core.ProcMaskUnknown {
 		return
 	}
@@ -103,6 +104,7 @@ func (shaman *Shaman) setTotemWeaponBuff(sim *core.Simulation, aura *core.Aura, 
 // and a Searing Totem takes Flametongue's place. Windfury Totem's buff comes back for the
 // rest of its 5 min. Without one, another shaman's totem buff from the raid buffs comes back.
 func (shaman *Shaman) clearTotemWeaponBuff(sim *core.Simulation, aura *core.Aura) {
+	shaman.noteWeaponTotem(aura, proto.WeaponImbue_WeaponImbueUnknown, false)
 	shaman.ReleaseTotemWeaponBuff(sim, aura, &shaman.Unit)
 }
 
@@ -260,6 +262,9 @@ type Shaman struct {
 	// something outside the sim moves us (the practice room). Nil in every normal sim, where
 	// every mob is in reach outside a leveling session.
 	FireTotemInReach func(sim *core.Simulation, mob *core.Unit, yards float64) bool
+
+	// Imbue swaps for the practice room, nil in every normal sim (imbue_swap.go).
+	imbueSwaps *imbueSwaps
 }
 
 // Implemented by each Shaman spec.

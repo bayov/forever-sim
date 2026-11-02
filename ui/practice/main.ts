@@ -139,6 +139,10 @@ class PracticeRoom {
 	pulledAt?: number;
 	dummyPos: [number, number] = [0, 0];
 	private buttons = new Map<number, HTMLElement>();
+	// Timings for spike 4: the WASM load, each call into Go, the swaps, and the time from a key
+	// press to its answer on the page.
+	readonly timings = { loadMs: 0, startCallMs: 0, calls: [] as number[], swaps: [] as number[], pressToAnswer: [] as number[] };
+	private pressedAt = new Map<number, number>();
 	private lastFrame = 0;
 	private dragging: { button: number; x: number; y: number; moved: boolean; picked: 'enemy' | 'ground' | undefined } | undefined;
 
@@ -216,7 +220,11 @@ class PracticeRoom {
 
 	onWorker(msg: FromWorker) {
 		switch (msg.type) {
+			case 'ready':
+				this.timings.loadMs = msg.loadMs;
+				break;
 			case 'started': {
+				this.timings.startCallMs = msg.callMs;
 				const first = !this.toolkit;
 				this.running = true;
 				if (first) this.setupToolkit(msg.toolkit);
@@ -224,6 +232,15 @@ class PracticeRoom {
 			}
 			case 'batch':
 				this.clock = msg.clock;
+				this.timings.calls.push(msg.callMs);
+				if (msg.batch.rebase) this.timings.swaps.push(msg.callMs);
+				for (const a of msg.batch.answers ?? []) {
+					const at = this.pressedAt.get(a.inputId);
+					if (at !== undefined) {
+						this.timings.pressToAnswer.push(wallNow() - at);
+						this.pressedAt.delete(a.inputId);
+					}
+				}
 				this.onBatch(msg.batch).catch(e => console.error(e));
 				break;
 			case 'attempt':
@@ -327,7 +344,10 @@ class PracticeRoom {
 
 	sendInput(input: Omit<Input, 'id'>, pressedAtWall = wallNow()): number {
 		const id = this.nextInputId++;
-		if (this.running) this.post({ type: 'input', input: { ...input, id } as Input, pressedAtWall });
+		if (this.running) {
+			if (input.kind !== 'move') this.pressedAt.set(id, pressedAtWall);
+			this.post({ type: 'input', input: { ...input, id } as Input, pressedAtWall });
+		}
 		return id;
 	}
 
@@ -913,6 +933,8 @@ class PracticeRoom {
 		const dt = this.lastFrame ? Math.min(0.1, (t - this.lastFrame) / 1000) : 0;
 		this.lastFrame = t;
 		const wall = wallNow();
+		// Ghost Wolf runs 40% faster.
+		this.mover.speedFactor = this.player?.auras?.some(a => a.spellId === 2645) ? 1.4 : 1;
 		if (this.running) this.mover.step(dt, wall);
 		const m = this.mover.move;
 		const h = this.mover.height(wall);

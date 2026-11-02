@@ -132,7 +132,7 @@ func (s *Session) Toolkit() []Spell {
 		if spell.Cost != nil {
 			entry.Cost = spell.Cost.GetCurrentCost()
 		}
-		if spell.Flags.Matches(shaman.SpellFlagTotem) {
+		if spell.Flags.Matches(shaman.SpellFlagTotem) || r.isUtilityTotem(spell.ActionID.SpellID) {
 			entry.Kind = "totem"
 		}
 		out = append(out, entry)
