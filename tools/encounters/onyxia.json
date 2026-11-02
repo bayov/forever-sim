@@ -74,15 +74,15 @@
     "minDamage": 3063,
     "maxDamage": 3937,
     "who": "BossTarget",
-    "firstAt": 10,
+    "firstAt": 15,
     "everySeconds": 15,
     "spreadSeconds": 5
    },
    {
     "spellId": 19983,
     "school": "SpellSchoolPhysical",
-    "minDamage": 1703,
-    "maxDamage": 2241,
+    "minDamage": 1574,
+    "maxDamage": 2071,
     "who": "BossTarget",
     "firstAt": 3,
     "everySeconds": 3.5,
@@ -92,8 +92,8 @@
    {
     "spellId": 19633,
     "school": "SpellSchoolPhysical",
-    "minDamage": 1683,
-    "maxDamage": 2221,
+    "minDamage": 1555,
+    "maxDamage": 2052,
     "who": "BossTarget",
     "firstAt": 15,
     "everySeconds": 22.5,
@@ -106,7 +106,7 @@
     "minDamage": 563,
     "maxDamage": 937,
     "who": "BossTarget",
-    "firstAt": 20,
+    "firstAt": 15,
     "everySeconds": 22.5,
     "spreadSeconds": 7.5
    }
@@ -116,6 +116,6 @@
   "healers": 4,
   "hpsEach": 400,
   "castSeconds": 2.0,
-  "notes": "A 40-player Molten Core raid's main tank: 4 healers at 400 HPS each on it in 2 s heals (800 a heal), a mix of paladins on Flash of Light rank 6 (about 600 at 400 healing power) and priests on Greater Heal rank 4 or downranked Heal. 1,600 HPS before overheal, about 2.4 times a pre-raid warrior's 650 DTPS here, the Classic Era Molten Core logs' ratio (wowsims/forever). Not from logs yet: replace with tools/warcraftlogs tank numbers."
+  "notes": "A 40-player Onyxia raid's main tank, as in Molten Core: 4 healers at 400 HPS each on it in 2 s heals (800 a heal), paladins on Flash of Light rank 6 and priests on Greater Heal rank 4 or downranked Heal. 1,600 HPS before overheal, 2.4 times an assumed 650 DTPS, the Classic Era Molten Core logs' ratio (wowsims/forever). Not from logs yet: replace with tools/warcraftlogs tank numbers."
  }
 }

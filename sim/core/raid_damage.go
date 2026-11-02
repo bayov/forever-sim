@@ -44,8 +44,9 @@ func (env *Environment) registerRaidDamageEvent(index int, event *proto.RaidDama
 
 	// A melee ability rolls the player's avoidance and block, and is a melee hit for its procs
 	// (Holy Shield, Shield Block's charges).
+	// A ticking event is never a melee hit: it lands and ticks, and its debuff comes with it.
 	procMask := ProcMaskSpellDamage
-	if event.Melee {
+	if event.Melee && event.Ticks == 0 {
 		procMask = ProcMaskMeleeMHSpecial
 		defenseType = DefenseTypeMelee
 	}
@@ -103,6 +104,9 @@ func (env *Environment) registerRaidDamageEvent(index int, event *proto.RaidDama
 		}
 		config.ApplyEffects = func(sim *Simulation, target *Unit, spell *Spell) {
 			spell.Dot(target).Apply(sim)
+			if aura := debuffs[target]; aura != nil {
+				aura.Activate(sim)
+			}
 		}
 	} else {
 		config.ApplyEffects = deal

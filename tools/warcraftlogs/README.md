@@ -78,14 +78,17 @@ useful for a first look that costs little.
 
 ### Tank profiles
 
-`tank` reads three things a fight (about 4 points): everything the boss actors did, and the
-damage and the healing taken by the main tank, the player the bosses swung at most. By
+`tank` reads two things a fight past the report's own (about 3 points): the bosses' damage done
+(asked for as enemies), and every event on the main tank, the player the bosses swung at most,
+for its damage and healing taken. By
 encounter it prints the boss's white swings on that tank (a second, the median gap, outcomes,
 hit size after armor and `unmitigatedAmount`), each boss ability on it, the tank's damage taken
 a second, and its healing taken: effective, with overheal, absorbs, heals a second, the healers
 with 5% or more of it, and the top heal spells. Kills only, unless `--wipes`. Written
 2026-11-02 without API access, so checked only on made-up events: the first real run should
-check the `Healing` data type gives `heal` and `absorbed` events with `overheal`.
+check that the bosses' damage comes back (`hostilityType: Enemies`) and that the events on the
+main tank include `heal` and `absorbed` events with `overheal`. With tank swaps the rates are over
+the whole fight, so they understate the main tank's share.
 
 The source order for tank and healing numbers (the user, 2026-11-02): Season of Discovery logs
 first, then the Anniversary realms (Vanilla, then TBC), then Classic Era, then private server
