@@ -117,15 +117,16 @@ export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Frostfire'
 	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Ice Lance on the last Fingers of Frost charge, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Synthetic',
 });
-// Frostbolt, with Ice Lance on every Fingers of Frost charge (3 times the damage on a Frozen
-// target and Shatter's crit), and two Arcane Blasts every 15 sec for 30% of Intellect as spell
-// damage (with Arcane Mind on the 2026-10-23 build; one stack is 16 behind). A charge granted
-// during a Frostbolt's cast is spent a spell batch after that Frostbolt completes, so it and the
-// Ice Lance cast right after both read Frozen; holding Ice Lance for a Frostbolt every time lost
-// 11 to 23 at 180 sec. Frost rarely runs low on mana, so Evocation almost never goes. When a
-// Frostbolt would not land before the end (its cast plus 1 sec), Ice Lance instead.
+// Frostbolt, with Ice Barrier before the pull and again when Frigid Power has under 6 sec left, so
+// its 15% Frost damage never drops (the launch realms' 2026-10-30 hotfix; 5% more while the shield
+// holds). Ice Lance (4 times the damage on a Frozen target since that hotfix, and Shatter's crit)
+// goes on the last Fingers of Frost charge as a Frostbolt completes: the charge is spent a spell
+// batch after the cast, so the Frostbolt and the Ice Lance both read Frozen. That is +5 at 120 /
+// 180 / 300 sec together over Ice Lance on every charge (the 2026-11-01 knob search; it lost 11 to
+// 23 at 180 sec when Ice Lance did 3 times the damage). No Evocation. When a Frostbolt would not
+// land before the end (its cast plus 1 sec), Ice Lance instead.
 export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Frost', Level60FrostAPL, {
-	tooltip: 'Frostbolt, with Ice Lance on Fingers of Frost and two Arcane Blasts for spell damage.',
+	tooltip: 'Frostbolt, with Ice Barrier for Frigid Power and Ice Lance on the last Fingers of Frost charge as a Frostbolt lands.',
 	group: 'Synthetic',
 });
 // Scorch to 5 Fire Vulnerability stacks and before they run out, Pyroblast at 3 Heating Up
@@ -138,9 +139,11 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Fire', Level60F
 	tooltip: 'Fireball, Pyroblast on 3 Heating Up stacks, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Synthetic',
 });
-// Client 70425 made Arcane Blast's stacks spell damage: 15% of Intellect each, up to 4, for 15
-// sec from the first, and nothing ends them early. So Arcane builds four stacks at the start of
-// every 15 sec (the fourth costs 6.25 times the first); below 20% mana only one until 70707. Arcane
+// Client 70425 made Arcane Blast's stacks spell damage: 12% of Intellect each since the 2026-10-31
+// update (15% before), up to 4, for 18 sec from the first (15 before), and nothing ends them early.
+// So Arcane builds four stacks at the start of every buff (the fourth costs 4 times the first, 6.25
+// times before the update); below 20% mana only one until 70707. Since the cheaper stacks Arcane
+// Wrath goes on cooldown and Presence of Mind on an Arcane Wrath (the 2026-11-01 search). Arcane
 // Missiles on a Missile Barrage proc goes first, ahead of the Arcane Blasts: each Arcane Blast has
 // 40% to proc it, so a proc during the ramp is used while the stacks boost it instead of being
 // rolled over (+40.5 at 180 sec, the rotation auditor's pass 23). Frostbolt is the filler: it
@@ -148,7 +151,7 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Fire', Level60F
 // the on-use trinket unless it won't be back before the last 15 sec. When a Frostbolt would not
 // land before the end (its cast plus 0.75 sec), Fire Blast and Arcane Explosion instead.
 export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Arcane', Level60ArcaneAPL, {
-	tooltip: 'Four Arcane Blast stacks every 15 sec for spell damage, Arcane Missiles on Missile Barrage, Frostbolt.',
+	tooltip: 'Four Arcane Blast stacks for spell damage, Arcane Wrath on cooldown, Arcane Missiles on Missile Barrage, Frostbolt.',
 	group: 'Synthetic',
 });
 
@@ -222,8 +225,19 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 // one with Wand Specialization, Arcane Resilience and Magic Absorption for Arcane Concentration 2
 // ties). With the cooldown the rotation keeps three Arcane Blast stacks and skips Evocation. It is
 // 911.2 / 908.3 / 886.6 (946.6 at 180 sec before).
-export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Frost', SavedTalents.create({ talentsString: '05020520310011053-1-0535000301003002' }), {
-	tooltip: 'Frost to Fingers of Frost with 28 Arcane: Frostbolt, Shatter, Ice Lance, Arcane Mind and Arcane Blast for spell damage.',
+// The launch realms' 2026-10-30 hotfix (Frigid Power 15%, Ice Barrier 5% while shielded, Ice Lance 4
+// times on Frozen) made Ice Barrier worth its 31 Frost points (16/4/31): Frost to Ice Barrier with
+// Fingers of Frost, Shatter, Ice Lance, Frost Channeling, Ice Shards, Improved Frostbolt and Precision
+// (the row fillers are Frost Warding 2, Permafrost 2, Arctic Reach, Ice Block, Cold Snap and one
+// Winter's Chill point), Arcane to Arcane Meditation (Improved Channeling 5, Arcane Subtlety 2, Arcane
+// Concentration 5, Arcane Impact 3), and Incineration 4. Talent searches over 120, 180 and 300 sec
+// together (3000 iterations, refined at 20,000), seeded from this build and from a 20 Arcane / 31
+// Frost split: the old build stayed (927.3 with its knobs), the Ice Barrier seed dropped Arcane Blast
+// and Missile Barrage for Incineration and ended 936.5 after the knob search (Arcane Blast back at 1
+// to 4 stacks is 25 to 170 behind). It is 945.3 / 944.9 / 937.6 as a Skyborne High Order, against
+// 927.0 / 929.3 / 925.6 for the old build on the hotfix (Undead, 20,000 iterations, seed 1).
+export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Frost', SavedTalents.create({ talentsString: '0502050030001-4-253500230111301211' }), {
+	tooltip: 'Frost to Ice Barrier: Frigid Power, Fingers of Frost, Shatter and Ice Lance, with Arcane Concentration.',
 	group: 'Synthetic',
 });
 // Fire (14/34/3): every Fire damage talent to Combustion with Critical Mass 3, Burning Soul 2
@@ -256,8 +270,15 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Fire', SavedTal
 // Precision covers Arcane, so Arcane Focus's five points are Incineration 5 and Frost Channeling 2
 // (Arcane Blast's mana): 926.1 / 915.5 / 895.4 as a Gnome (901.6 at 180 sec before), with the
 // rotation keeping four stacks at any mana.
-export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Arcane', SavedTalents.create({ talentsString: '050205203100301531-5-05350002' }), {
-	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Missile Barrage, Frostbolt.',
+// The 2026-10-31 update made the stacks 12% of Intellect for 18 sec at +100% mana a stack, so four
+// cost 10 times one Arcane Blast where they cost 14.5, and the old build ended the fight with 6500
+// mana (899.5 / 893.6 / 887.9). That mana goes into Arcane Wrath now: its point from Arcane
+// Meditation, and the talent search over 120, 180 and 300 sec together moved Incineration 5 and
+// Frost Channeling 2 to Accelerant 5 (0.5 sec off Arcane Wrath's cast) and Incineration 2 (31/7/13).
+// With Presence of Mind on Arcane Wrath it is 947.3 / 939.0 / 931.1 as a Gnome (20,000 iterations,
+// seed 1; seed 1000003 within 0.4), +48 / +45 / +43.
+export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Arcane', SavedTalents.create({ talentsString: '050205203100211531-25-0535' }), {
+	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Arcane Wrath with Accelerant, Missile Barrage, Frostbolt.',
 	group: 'Synthetic',
 });
 
@@ -449,6 +470,21 @@ export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Frost', le
 // Frost moves to Undead (2026-10-30, the fairness audit after the 70707 talent re-pick): Undead 911.6,
 // Gnome 909.9, Orc 909.3, High Order 908.3, Human 907.4, Troll 904.4 at 180 sec (20000 iterations,
 // seed 1, the report request with only the race changed).
+// Race check (2026-11-01, standards 29, after the October 30 hotfix and the Arcane Blast update; 20000
+// iterations, seed 1, 120 / 180 / 300 sec, each race's own rotation where it has one). Frost moves to
+// High Order: its 2% haste is 6 ahead at 180 sec, and a knob and talent search at High Order kept the
+// preset's (Read Leyline stays out).
+//   Frost:     High Order 945.3 / 944.9 / 937.6, Undead 938.7 / 938.8 / 931.9, Troll 941.9 / 938.7 / 931.4,
+//              Gnome 937.9 / 937.3 / 930.2, Orc 936.9 / 937.1 / 929.8, Human 935.6 / 934.7 / 928.2.
+//   Arcane:    Gnome 947.3 / 939.0 / 931.1, Undead 946.6 / 939.2 / 931.0, High Order (opener at -1.47 sec)
+//              946.8 / 938.5 / 929.0, Orc 944.3 / 937.0 / 928.3, Human 942.0 / 934.6 / 928.2, Troll 943.8 / 934.1 / 923.8.
+//              Gnome and Undead tie, so Arcane stays Gnome.
+//   Fire:      Human 1065.6 / 1056.4 / 1039.9, Gnome 1063.9 / 1056.9 / 1037.1 (a tie), Undead 1067.6 / 1053.7 / 1039.4,
+//              Orc 1065.4 / 1053.3 / 1037.1, Troll 1061.1 / 1045.9 / 1030.8, High Order 1044.2 / 1034.0 / 1017.3
+//              (+14 with its own rotation).
+//   Frostfire: Human 1078.6 / 1076.6 / 1055.7, Gnome 1076.7 / 1075.1 / 1050.9, Undead 1075.5 / 1070.8 / 1050.2,
+//              Orc 1073.0 / 1070.5 / 1048.5, Troll 1069.1 / 1063.7 / 1043.4, High Order 1063.9 / 1055.5 / 1036.0
+//              (+14 with its own rotation).
 const buildCommon = {
 	group: 'Synthetic',
 	gear: GearLevel60Phase1Synthetic,
@@ -468,11 +504,11 @@ export const PresetBuildLevel60Frostfire = PresetUtils.makePresetBuild('Frostfir
 });
 export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Frost', {
 	...buildCommon,
-	tooltip: 'Level 60 Undead Frost on the synthetic Phase 1 gear, in a 3 minute raid fight, with a Major Spellblasting Potion.',
+	tooltip: 'Level 60 Skyborne High Order Frost on the synthetic Phase 1 gear, in a 3 minute raid fight, with a Major Spellblasting Potion.',
 	encounter: EncounterLevel60Frost,
 	talents: TalentsLevel60Frost,
 	rotation: APLLevel60Frost,
-	race: Race.RaceUndead,
+	race: Race.RaceSkyborneHighOrder,
 	options: FrostOptions,
 });
 export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Fire', {

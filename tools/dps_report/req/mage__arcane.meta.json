@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 98,
   "race": "Gnome",
-  "talents": "050205203100301531-5-05350002",
+  "talents": "050205203100211531-25-0535",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -19,29 +19,32 @@
     "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
-    "dps": 915.5,
-    "stderr": 0.28,
+    "dps": 939.0,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the request after client 1.60.1.70707's talent rework (new talents, no low-mana single stack), 180s, seed 1 (seed 1000003 915.2)"
+    "note": "sim of the request after the 2026-10-31 Arcane Blast change (12% of Intellect, +100% mana, 18 sec) and the 2026-11-01 talent and rotation re-search, 180s, seed 1 (seed 1000003 939.1)"
   },
-  "summary": "Arcane Power build that keeps 4 Arcane Blast stacks up, for 60% of Intellect as spell damage. Frostbolt is the filler. It wears the Arcane gear with Gloves - Arcane Power.",
+  "summary": "Arcane Power build that keeps 4 Arcane Blast stacks up, for 48% of Intellect as spell damage, and casts Arcane Wrath on cooldown with Accelerant. Frostbolt is the filler. It wears the Arcane gear with Gloves - Arcane Power.",
   "keyTalents": [
     "Arcane Blast",
+    "Arcane Wrath",
     "Missile Barrage",
-    "Improved Channeling",
-    "Arcane Impact",
     "Arcane Mind",
     "Arcane Instability",
     "Arcane Power",
-    "Presence of Mind"
+    "Presence of Mind",
+    "Accelerant",
+    "Incineration"
   ],
   "rotation": [
     "Pre-pull: Arcane Blast at -1.5s so it lands at the pull",
+    "Presence of Mind for an instant Arcane Wrath whenever both are ready",
     "Arcane Power and Presence of Mind with the on-use trinket, unless the trinket won't be back in time. Other cooldowns on a free GCD. No mana gems.",
     "Fire Blast, then Arcane Explosion, when a Frostbolt would not land before the end (its cast plus 0.75s)",
     "Arcane Missiles on a Missile Barrage proc, ahead of the Arcane Blasts",
-    "Arcane Blast to 4 stacks. Each stack gives 15% of Intellect as spell damage, for 15s from the first.",
+    "Arcane Blast to 4 stacks. Each stack gives 12% of Intellect as spell damage, for 18s from the first.",
+    "Arcane Wrath on cooldown (3s cast with Accelerant)",
     "Frostbolt as filler",
     "No Evocation",
     "Wand when nothing else can be cast (out of mana)"
@@ -62,7 +65,7 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Open: when Arcane Blast stacks apply, and whether new stacks reset the 15s.",
+    "Open: when Arcane Blast stacks apply, and whether new stacks reset the 18s.",
     "Assumed: Arcane Missiles ticks can proc Arcane Concentration, at most once a second.",
     "Assumed: how Arcane Mind adds crit.",
     "No Ahn'Qiraj book ranks, so Fireball stops at rank XI, Frostbolt at X and Arcane Missiles at VII. The books would add 50 DPS to Frost, 30 to Arcane, 17 to Fire and 0 to Frostfire."

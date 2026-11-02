@@ -5,8 +5,8 @@
   "build": "Frost",
   "isDefault": false,
   "pr": 89,
-  "race": "Undead",
-  "talents": "05020520310011053-1-0535000301003002",
+  "race": "SkyborneHighOrder",
+  "talents": "0502050030001-4-253500230111301211",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -19,33 +19,33 @@
     "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
-    "dps": 908.3,
-    "stderr": 0.32,
+    "dps": 944.9,
+    "stderr": 0.5,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the request after client 1.60.1.70707's talent rework (new talents, new rotation knobs), 180s, seed 1 (seed 1000003 908.0)"
+    "note": "sim of the request after the launch realms' 2026-10-30 hotfix (Ice Lance x4, Frigid Power 15%, Ice Barrier 5%) and the 2026-11-01 talent, rotation and race re-search, 180s, seed 1 (seed 1000003 944.9)"
   },
-  "summary": "Frostbolt build with Fingers of Frost and Shatter. Its 28 Arcane points take Arcane Mind, Arcane Instability and Arcane Blast for spell damage.",
+  "summary": "Frostbolt build to Ice Barrier: Frigid Power's 15% Frost damage stays up all fight, with Fingers of Frost, Shatter and Ice Lance on Frozen. Its 16 Arcane points take Arcane Concentration and Arcane Meditation, and Incineration 4 adds Ice Lance crit.",
   "keyTalents": [
-    "Arcane Mind",
-    "Arcane Instability",
-    "Arcane Blast",
-    "Missile Barrage",
-    "Arcane Concentration",
-    "Improved Frostbolt",
-    "Ice Shards",
+    "Ice Barrier",
+    "Cold Snap",
+    "Fingers of Frost",
     "Shatter",
-    "Fingers of Frost"
+    "Ice Lance",
+    "Ice Shards",
+    "Improved Frostbolt",
+    "Precision",
+    "Arcane Concentration",
+    "Incineration"
   ],
   "rotation": [
-    "Pre-pull: Frostbolt at -2.5s",
-    "Cooldowns (Demonic Rune, racial) on a free GCD",
-    "Ice Lance on a Fingers of Frost charge when its 8s cooldown is up. The boss counts as Frozen, so it does 3 times the damage and gets Shatter's crit.",
-    "Arcane Blast to 3 stacks every 15s for 45% of Intellect as spell damage",
-    "Arcane Missiles on a Missile Barrage proc",
+    "Pre-pull: Ice Barrier at -4s, Frostbolt at -2.5s",
+    "Cooldowns (Demonic Rune, racial, Cold Snap) on a free GCD",
+    "Ice Barrier when Frigid Power has under 6s left (15% Frost damage for a minute, 5% more while the shield holds), not in the last 10s",
+    "Ice Lance on the last Fingers of Frost charge as a Frostbolt completes: the charge is spent a moment after the cast, so both read the boss as Frozen (Ice Lance does 4 times the damage and gets Shatter's crit)",
     "Ice Lance instead when a Frostbolt would not land before the end (its cast plus 1s)",
     "Frostbolt as filler (2.5s cast)",
-    "Wand when nothing else can be cast (out of mana)"
+    "Wand when nothing else can be cast"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -65,9 +65,9 @@
   "caveats": [
     "Ice Lance's spell power coefficient is 0.429, the Season of Discovery value. The client has 0.",
     "Frostbolt X's base damage is ×1.04 the client's value.",
-    "Winter's Chill only comes from Cone of Cold, so the build skips it.",
     "Assumed: raid bosses can't be frozen. When Fingers of Frost charges apply is unknown.",
-    "No Ahn'Qiraj book ranks, so Fireball stops at rank XI, Frostbolt at X and Arcane Missiles at VII. The books would add 50 DPS to Frost, 30 to Arcane, 17 to Fire and 0 to Frostfire."
+    "No Ahn'Qiraj book ranks, so Fireball stops at rank XI, Frostbolt at X and Arcane Missiles at VII. The books would add 50 DPS to Frost, 30 to Arcane, 17 to Fire and 0 to Frostfire.",
+    "Winter's Chill only helps Cone of Cold, which can't reach the boss from 25 yd, so its point is filler."
   ],
-  "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Frost) as a mage option, as the preset does. Its rotation casts Ice Lance on a Fingers of Frost charge whenever the cooldown allows. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Frost) as a mage option, as the preset does. Its rotation keeps Ice Barrier's Frigid Power up and casts Ice Lance on the last Fingers of Frost charge as a Frostbolt completes. Skyborne High Order since the 2026-11-01 race check (2% haste), was Undead. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
 }

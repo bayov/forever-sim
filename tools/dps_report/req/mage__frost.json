@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceSkyborneHighOrder",
             "class": "ClassMage",
             "equipment": {
               "items": [
@@ -85,13 +85,27 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "05020520310011053-1-0535000301003002",
+            "talentsString": "0502050030001-4-253500230111301211",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
             "rotation": {
               "type": "TypeAPL",
               "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 13033
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-4s"
+                    }
+                  }
+                },
                 {
                   "action": {
                     "castSpell": {
@@ -132,9 +146,78 @@
                             }
                           },
                           {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 400670
+                            "and": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "lhs": {
+                                      "auraNumStacks": {
+                                        "auraId": {
+                                          "spellId": 400670
+                                        }
+                                      }
+                                    },
+                                    "op": "OpEq",
+                                    "rhs": {
+                                      "const": {
+                                        "val": "1"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "spellInFlight": {
+                                    "spellId": {
+                                      "spellId": 10181
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Ice Lance as the bolt completes: the Fingers of Frost charge is spent a spell batch late, so both read the target as Frozen."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 13033
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "auraRemainingTime": {
+                                  "auraId": {
+                                    "spellId": 1326891
+                                  }
+                                }
+                              },
+                              "op": "OpLt",
+                              "rhs": {
+                                "const": {
+                                  "val": "6s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "const": {
+                                  "val": "10s"
+                                }
                               }
                             }
                           }
@@ -142,7 +225,7 @@
                       }
                     }
                   },
-                  "notes": "Ice Lance while Fingers of Frost makes the boss count as Frozen (3 times the damage, Shatter's crit)."
+                  "notes": "Ice Barrier when Frigid Power is about to run out: its 15% for another minute, and 5% more while the shield holds. Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -229,7 +312,7 @@
                       }
                     }
                   },
-                  "notes": "Arcane Blast up to the stack target: each stack is 15% of Intellect as spell damage for 15 sec from the first."
+                  "notes": "Arcane Blast up to the stack target: each stack is 12% of Intellect as spell damage for 18 sec from the first."
                 },
                 {
                   "action": {
