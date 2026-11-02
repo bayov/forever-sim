@@ -37,7 +37,8 @@ The user's rulings for tanks ([tank_sim.md](tank_sim.md), 2026-11-02) that apply
 - **No death chance floor** as a hard rule. A score is found by bisection at 5% deaths instead, as the tank
   sim's "healing needed" is. The proposed healer score below is built the same way.
 - **Some deaths no healing stops**: a hit that kills from full, or a burst between two heals. A healer set
-  isn't blamed for those, so the bench reports them apart, as the tank bench's biggest hit and death floor do.
+  isn't blamed for those, so the bench is to report them apart, as the tank bench's biggest hit and death floor
+  do (not in `tools/healbench` yet).
 - **Forever's boss crit** (0.6% at level 63, `classic_crit` for Classic's 5.6%) holds for the boss's melee in a
   healing fight, since it's the same engine.
 - **The stand-in healer** (the healing model) is what the tank sim scores with until real healers are
@@ -48,11 +49,12 @@ The user's rulings for tanks ([tank_sim.md](tank_sim.md), 2026-11-02) that apply
 with its melee, tank swaps and raid damage events. The tank session sources the bosses' melee and tank
 abilities, and the healing side adds their raid damage to the same files.
 
-## What the sim has today
+## What the sim had before H1
 
-Checked 2026-11-02.
+Checked 2026-11-02, before H1. H1 ([below](#h1-whats-in-2026-11-02)) has since added the engine pieces this
+section lists as missing; the class table still holds, except for the shaman's heals on others.
 
-**The engine can already aim a spell at another player.** An APL cast takes a target, and
+**The engine could already aim a spell at another player.** An APL cast takes a target, and
 `UnitReference{type: Player, index: N}` resolves to raid member N (`sim/core/environment.go`, `GetUnit`).
 Attack tables are built for friendly pairs too, and a raid run puts every member in one sim. What's missing:
 
@@ -72,9 +74,9 @@ Attack tables are built for friendly pairs too, and a raid run puts every member
 
 | | Heals in the sim | Healing talents | Agent |
 |---|---|---|---|
-| Shaman | Healing Wave 1–10, Lesser Healing Wave 1–6, Chain Heal 1–3, Riptide, Healing Stream Totem, all with Forever rank data (`sim/shaman/healing.go`, `water_totems.go`). Each heals the shaman (`&shaman.Unit`), and Chain Heal never jumps: they were built for the leveling sim. Healing Stream heals the party. | all of them, tested against the client's curves | `sim/shaman/_restoration` is parked and doesn't compile |
-| Priest | none: Flash Heal, Greater Heal, Renew, Prayer of Healing and Power Word: Shield are commented out and hold WotLK data. Lesser Heal, Heal, Holy Nova, Prayer of Mending and Penance's heal are missing. | Inner Focus and Holy Specialization only | `sim/priest/healing` compiles but isn't registered |
-| Druid | none: Healing Touch, Regrowth, Rejuvenation, Swiftmend, Tranquility, Wild Growth and Bloom are missing | none of the healing ones | `sim/druid/_restoration` is parked and doesn't compile |
+| Shaman | Healing Wave 1–10, Lesser Healing Wave 1–6, Chain Heal 1–3, Riptide, Healing Stream Totem, all with Forever rank data (`sim/shaman/healing.go`, `water_totems.go`). Each healed the shaman (`&shaman.Unit`), and Chain Heal never jumped: they were built for the leveling sim. Healing Stream heals the party. | all of them, tested against the client's curves, but written for self heals: Ancestral Healing buffed only the shaman, and Healing Stream's heal was left out of the metrics (both fixed after H1's audit) | `sim/shaman/_restoration` is parked and doesn't compile |
+| Priest | none: Flash Heal, Greater Heal, Renew, Prayer of Healing and Power Word: Shield are commented out and hold WotLK data. Lesser Heal, Heal, Holy Nova, Prayer of Mending and Penance's heal are missing. | Inner Focus, and the mana talents (Meditation, Mental Strength, Silent Resolve). Holy Specialization reaches only Smite, Holy Fire and Penance, and Spiritual Guidance gives spell damage only. | `sim/priest/healing` compiles but isn't registered |
+| Druid | none: Healing Touch, Regrowth, Rejuvenation, Swiftmend, Tranquility, Wild Growth and Bloom are missing | the mana ones (Reflection, Furor), none of the healing ones | `sim/druid/_restoration` is parked and doesn't compile |
 | Paladin | Lay on Hands on itself. Holy Shock deals damage only, and Light's Vigil is an empty stub. Holy Light and Flash of Light are missing. | Divine Favor on Holy Shock damage only | none (`register_all.go` points at a missing `paladin/holy`) |
 
 None of the four healer specs is registered (`sim/register_all.go`), and their UIs hold talent presets with
@@ -82,7 +84,10 @@ blank gear and no working rotation. The priest's APLs use WotLK spell IDs. The p
 the raid sim's placeholders, which give their buffs ([raid_sim.md](raid_sim.md), Tank and healer presets).
 
 **Mana is simmed well**, for the DPS casters: regen, Spirit, the five second rule, consumables, time to OOM.
-Innervate, Power Infusion and Mana Tide are in the raid sim. All of it carries over to healers.
+Healers get all of it. The raid sim's mana support isn't healer-aware yet: Innervate and Power Infusion go to
+the first casters, Innervate waits for a mage's Evocation, and Mana Tide fires at a fixed time to its own party
+([raid_sim.md](raid_sim.md), Assignments). Forever's Spirit regen tables are unverified
+(`orchestration/forever_class_changes.md`), and the healer scores lean on them more than any DPS number does.
 
 ## The design
 
@@ -95,8 +100,8 @@ numbers don't move.
 **A dead player stops.** It casts nothing, the boss leaves it, and heals don't reach it. The fight goes on.
 Death counts against the healers' score, and the raid sim also loses the dead member's damage from then on.
 
-**The stand-in heal stream stays** for a tank sim with no healers, and is off for a player a simmed healer
-heals.
+**The stand-in heal stream stays** for a tank sim with no healers. The engine applies it whenever a player has
+one (`Player.healing_model`), so a healing fight leaves it off: `tools/healbench` clears it.
 
 ### What deals the damage
 
@@ -121,7 +126,7 @@ whose numbers are on record, picked to cover the shapes healers meet:
 | One tank, steady | Patchwerk: heavy melee, Hateful Strike on the healthiest melee in reach | tank healing, the off-tanks' spikes |
 | Two tanks, swapping | Broodlord Lashlayer or Ragnaros: a knockback that hands the boss to the second tank | healing two tanks, switching targets |
 | Raid damage | Vaelastrasz or Sapphiron: steady damage on everyone | raid heals, mana over a long fight |
-| Spiky random targets | Onyxia: Fireball on random members, Deep Breath, a phase of raid damage | reaction, scares |
+| Spiky random targets | Onyxia: Fireball on random members, Deep Breath, a phase of raid damage. Onyxia's Lair is one of Forever's launch raids, so Forever's own numbers replace Classic's when they're known. | reaction, scares |
 | A 10-player raid | Season of Discovery's Blackfathom Deeps (Aku'mai or Kelris) | the small raid, two healers |
 
 The numbers come from Warcraft Logs, which shows what Blizzard's servers did (the user, 2026-11-02): Season
@@ -151,8 +156,10 @@ two healers can both start a big heal on the same tank, and one heal lands as ov
 overhealing. A first version doesn't model healers watching each other's casts, and the overheal it causes is
 part of the score.
 
-**Chain Heal and the group heals** jump to the most hurt players in reach. Everyone is in reach of everyone
-for now (the raid sim's ruling for buffs).
+**Chain Heal** jumps to the most hurt players, within the target's party when it's in ours (the tooltip).
+**The group heals** (Prayer of Healing, Tranquility, Holy Nova, Healing Stream, Light's Vigil's party heal)
+reach a party and don't jump. Everyone is in reach of everyone for now (the raid sim's ruling for buffs), which
+flatters Chain Heal's jumps between melee and ranged.
 
 ### What a healer scores
 
@@ -216,15 +223,53 @@ warrior and 7 Frost mages, 180 s, 500 iterations. The profiles are made up to te
 The raid profile at full damage is a cliff: the healers run dry around 85 seconds and the raid dies after.
 That is the shape the proposed score measures (the damage a healer set can carry).
 
-### Found on the way
+### The audit (2026-11-02)
 
-- **Time to OOM reads wrong for a healer.** With no heal it can pay for, its rotation finds nothing to cast
-  rather than waiting for mana, so the engine never marks it OOM. The estimate from the mana left at the end
-  is then off, more so once the raid dies. The bench shows mana left instead. To fix in H2.
-- **Two healers start the same big heal on the same tank**, and one lands as overhealing (the bench's Healing
-  Wave on the tank). It's real, and part of the score, but it's also what makes the tank profile's
-  overhealing 33%. A healer's rotation can wait for a bigger deficit.
-- **An idle healer checks its rotation every 50 ms**, which costs some speed in a long fight.
+Three auditors read H1 cold (the engine, the shaman and the APL editor and the bench, and this doc against the
+code). Fixed:
+
+- **A dead player kept regenerating mana**, which put 4,600 mana back into dead healers and into the first
+  numbers' raid ×1 row. A dead player's mana now stops (`mana.go`).
+- **A wiped health fight never ended**: with nobody left to kill the boss, the fight ran on. It ends now.
+- **A dead player's channel kept ticking** on the boss (a channel isn't a hardcast), and some auras turned
+  its swings back on as they ended. Both stop now, and a dead player's totems go (its death effects run).
+- **A heal at a player who died mid-cast** landed, cost its mana and still jumped. The cast stops unpaid now,
+  as the game's fails.
+- **Change Target to Most Hurt with nobody hurt crashed**, and Channel Spell at it fell back to the boss. Both
+  wait now.
+- **A tank swap leaked between iterations** for a boss with no tank of its own. Swaps need a starting tank.
+- **Ancestral Healing buffed only the shaman.** Ancestral Fortitude goes on the healed target now (one buff
+  per player, shared by every shaman's talent).
+- **Healing Stream Totem's heal was left out of the metrics.** It counts now. No DPS Report number moved.
+- **Health and Max Health of Most Hurt or Lowest Health read 0 when nobody was hurt**, while Health % read
+  100%. All three read a full player's now, so "Lowest Health's Health < 1500" is false at full health.
+- **The APL editor's health values lost the pets and Target N** when the heal targets came in. They're back.
+- **The tests could pass with Chain Heal's jumps broken.** `TestHealingFightChainHealJumps` counts the jumps and
+  their falloff, and new tests cover the dead player's regen, the wiped health fight and an empty heal target.
+- Smaller: scares count for players only, and a periodic tick that kills skips the auras it just ended.
+
+**Not fixed yet** (H2 and later), ranked by how much they would bend healer rankings:
+
+1. **Healers see health perfectly, but not each other's heals.** No reaction delay, no heals in flight, no
+   cancelling a heal that would overheal, and identical healers act in lockstep. The game had HealComm (heals in
+   flight shown to other healers) and stop-casting. This penalises slow big heals (Greater Heal, Healing Touch,
+   Holy Light, Healing Wave) and favours instants, HoTs and shields. Needed: an incoming heals value or a Most
+   Hurt net of incoming heals, a stop-cast rule with a reaction delay, and per-healer jitter.
+2. **The mana model decides the score**: healer-aware Innervate and Mana Tide, Mana Spring by group, Water
+   Shield in the bench's rotation, Forever's Spirit regen, and the fight length each profile is judged at.
+3. **Rank choice.** Classic healers' efficiency is mostly downranking. The APL can name a rank but not "the
+   smallest rank that covers the deficit".
+4. **Absorbs and armor from crit heals**: Power Word: Shield, Divine Aegis and Renewed Hope have no absorb
+   pipeline, and Inspiration is missing.
+5. **Range and groups**: "everyone in reach" flatters Chain Heal. Group heals and totems reach a party, and
+   Prayer of Mending needs a damage taken hook.
+6. **The damage model**: "the healthiest melee in reach" (Hateful Strike), players saving themselves
+   (healthstones, potions, tank cooldowns), and Judgement of Light, which does nothing yet.
+7. **Aura values on Most Hurt or Lowest Health** ("Riptide not on Lowest Health"): the rotation drops them when
+   it's built, since nobody is hurt then. On a fixed tank they work.
+8. **Time to OOM reads wrong for a healer**: with no heal it can pay for, its rotation finds nothing to cast
+   rather than waiting for mana, so the engine never marks it OOM. The bench shows mana left.
+9. **An idle healer checks its rotation every 50 ms**, which costs some speed in a long fight.
 
 ## Milestones
 
@@ -245,7 +290,9 @@ and talents are already in.
 ranks, costs, coefficients, healing talents), like the DPS class audits:
 
 - **Priest**: Lesser Heal, Heal, Greater Heal, Flash Heal, Renew, Prayer of Healing, Power Word: Shield with
-  absorbs (a new absorb pipeline), Holy Nova, Prayer of Mending, Penance; the Holy and Discipline talents
+  absorbs (a new absorb pipeline), Holy Nova, Prayer of Mending, Penance's heal, Binding Heal (trained at 25
+  since the October 30 hotfix); the Holy and Discipline talents, with Holy Binding, Divine Aegis, Renewed Hope,
+  Litany of Light, Power in Light and Inspiration
 - **Druid**: Healing Touch, Regrowth, Rejuvenation, Swiftmend, Tranquility, Wild Growth, Bloom; the
   Restoration talents
 - **Paladin**: Holy Light, Flash of Light, Holy Shock's heal, Light's Vigil; Illumination, Healing Light, Holy
