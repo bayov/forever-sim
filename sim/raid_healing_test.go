@@ -6,6 +6,7 @@ package sim
 
 import (
 	"os"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -289,5 +290,36 @@ func TestHealingFightHealComm(t *testing.T) {
 	late, cancelling := healerOverheal(runRaid(t, request(300, 0)), 1, 2), healerOverheal(runRaid(t, request(300, 0.5)), 1, 2)
 	if cancelling >= late {
 		t.Errorf("cancelling heals overheals %.0f%%, not cancelling %.0f%%", 100*cancelling, 100*late)
+	}
+}
+
+// bindRank is a line casting one rank of a heal at the tank once it misses what the rank heals.
+func bindRank(spellID int32) string {
+	id := strconv.Itoa(int(spellID))
+	return `{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"healthMissing":{"sourceUnit":{"type":"Tank"}}},"rhs":{"spellExpectedHealing":{"spellId":{"spellId":` + id + `},"targetUnit":{"type":"Tank"}}}}},"castSpell":{"spellId":{"spellId":` + id + `},"target":{"type":"Tank"}}}}`
+}
+
+// A healer casts the biggest of its bound ranks that what's missing covers, and binds no more than
+// 4 ranks of a heal: a 5th rank's line is off.
+func TestHealingFightBoundRanks(t *testing.T) {
+	ranks := []int32{25357, 10395, 959, 913, 332} // Healing Wave 10, 8, 6, 4 and 2
+	rsr := healingRaid(t, 1, 1, 0)
+	rsr.SimOptions.Iterations = 20
+	var lines []string
+	for _, id := range ranks {
+		lines = append(lines, bindRank(id))
+	}
+	healerRotation(rsr, 1, lines...)
+	casts := map[int32]int32{}
+	for _, a := range playerMetrics(runRaid(t, rsr), 1).Actions {
+		for _, tgt := range a.Targets {
+			casts[a.Id.GetSpellId()] += tgt.Casts
+		}
+	}
+	if casts[25357] == 0 || casts[10395]+casts[959]+casts[913] == 0 {
+		t.Errorf("casts by rank %v: want the top rank and lower ones", casts)
+	}
+	if casts[332] != 0 {
+		t.Errorf("the 5th bound rank was cast %d times", casts[332])
 	}
 }

@@ -65,6 +65,7 @@ import {
 	APLValueSequenceTimeToReady,
 	APLValueSpellCanCast,
 	APLValueSpellCastTime,
+	APLValueSpellExpectedHealing,
 	APLValueSpellChanneledTicks,
 	APLValueSpellCPM,
 	APLValueSpellCurrentCost,
@@ -947,6 +948,16 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		shortDescription: 'Amount of time to cast the spell including any haste and spell cast time adjustments.',
 		newValue: APLValueSpellCastTime.create,
 		fields: [AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', '')],
+	}),
+	spellExpectedHealing: inputBuilder({
+		label: 'Expected Healing',
+		submenu: ['Spell'],
+		shortDescription: "What the heal heals on average at the target, before crits: its tooltip with healing power, healing bonuses and the target's healing taken.",
+		fullDescription: `
+			<p>A healer binds 2 to 4 ranks of a heal and casts the one that fits what's missing, like <b>Health Missing</b> (Tank) >= <b>Expected Healing</b> (Healing Wave rank 8, Tank). A rotation casts at most 4 ranks of a heal.</p>
+		`,
+		newValue: APLValueSpellExpectedHealing.create,
+		fields: [AplHelpers.actionIdFieldConfig('spellId', 'castable_spells', ''), AplHelpers.unitFieldConfig('targetUnit', 'heal_targets')],
 	}),
 	spellTravelTime: inputBuilder({
 		label: 'Travel Time',

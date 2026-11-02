@@ -393,3 +393,38 @@ func (value *APLValueSpellUsesLostByDelay) GetInt(sim *Simulation) int32 {
 func (value *APLValueSpellUsesLostByDelay) String() string {
 	return fmt.Sprintf("Uses Lost By Delay(%s, %s)", value.spell.ActionID, value.delay)
 }
+
+// APLValueSpellExpectedHealing is what a heal heals on average at a unit, before crits
+// (SpellConfig.ExpectedHealing): what its tooltip says, with the target's healing taken. A healer
+// binds a few ranks of a heal and picks the one that fits what's missing (docs/healing_sim.md).
+type APLValueSpellExpectedHealing struct {
+	DefaultAPLValueImpl
+	spell  *Spell
+	target UnitReference
+}
+
+func (rot *APLRotation) newValueSpellExpectedHealing(config *proto.APLValueSpellExpectedHealing) APLValue {
+	spell := rot.GetAPLSpell(config.SpellId)
+	if spell == nil {
+		return nil
+	}
+	if spell.expectedHealing == nil {
+		rot.ValidationWarning("%s has no expected healing", spell.ActionID)
+		return nil
+	}
+	return &APLValueSpellExpectedHealing{spell: spell, target: rot.GetTargetUnit(config.TargetUnit)}
+}
+func (value *APLValueSpellExpectedHealing) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeFloat
+}
+func (value *APLValueSpellExpectedHealing) GetFloat(_ *Simulation) float64 {
+	// With no player to heal (the default target is the boss, or nobody is hurt), at the caster.
+	target := value.target.Get()
+	if target == nil || target.Type == EnemyUnit {
+		target = value.spell.Unit
+	}
+	return value.spell.expectedHealing(target)
+}
+func (value *APLValueSpellExpectedHealing) String() string {
+	return fmt.Sprintf("Expected Healing(%s)", value.spell.ActionID)
+}
