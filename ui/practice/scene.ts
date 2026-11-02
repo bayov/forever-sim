@@ -1,0 +1,184 @@
+// The 3D room: a flat arena, the dummy and you. Units are capsules with their race's height and
+// combat reach until the model renderer draws real models (docs/practice_room.md, "Rendering").
+//
+// The sim's world has x east and y north, in yards. Three.js has y up, so a sim point (x, y) is
+// (x, 0, -y) here, and a facing angle turns the same way.
+
+import * as THREE from 'three';
+
+export type CameraState = { yaw: number; pitch: number; distance: number };
+
+export const toThree = (x: number, y: number, z = 0) => new THREE.Vector3(x, z, -y);
+
+function capsule(radius: number, height: number, color: number): THREE.Group {
+	const group = new THREE.Group();
+	const body = new THREE.Mesh(
+		new THREE.CapsuleGeometry(radius, Math.max(0.01, height - 2 * radius), 6, 16),
+		new THREE.MeshStandardMaterial({ color, roughness: 0.7 }),
+	);
+	body.position.y = height / 2;
+	body.castShadow = true;
+	group.add(body);
+	// A nose that shows which way the unit faces.
+	const nose = new THREE.Mesh(new THREE.ConeGeometry(radius * 0.35, radius * 0.9, 12), new THREE.MeshStandardMaterial({ color: 0xffe08a }));
+	nose.rotation.z = -Math.PI / 2;
+	nose.position.set(radius * 1.05, height * 0.78, 0);
+	group.add(nose);
+	return group;
+}
+
+const totemColors: Record<string, number> = { earth: 0x8b5a2b, fire: 0xd8442a, water: 0x2a7bd8, air: 0xc8d8f0 };
+
+export class Room {
+	readonly renderer: THREE.WebGLRenderer;
+	readonly scene = new THREE.Scene();
+	readonly camera: THREE.PerspectiveCamera;
+	readonly player: THREE.Group;
+	readonly dummy: THREE.Group;
+	readonly dummyHit: THREE.Mesh;
+	private ring: THREE.Mesh;
+	private meleeRing: THREE.Mesh;
+	private totems = new Map<string, THREE.Group>();
+	private readonly raycaster = new THREE.Raycaster();
+	private playerHeight: number;
+
+	constructor(
+		readonly canvas: HTMLCanvasElement,
+		playerReach: number,
+		playerHeight: number,
+		dummyReach: number,
+		dummyHeight: number,
+	) {
+		this.playerHeight = playerHeight;
+		this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', desynchronized: true } as THREE.WebGLRendererParameters);
+		this.renderer.setPixelRatio(window.devicePixelRatio);
+		this.renderer.shadowMap.enabled = true;
+		this.scene.background = new THREE.Color(0x87a7c4);
+		this.scene.fog = new THREE.Fog(0x87a7c4, 60, 160);
+		this.camera = new THREE.PerspectiveCamera(70, 1, 0.1, 500);
+
+		this.scene.add(new THREE.HemisphereLight(0xdde8ff, 0x445533, 1.4));
+		const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+		sun.position.set(30, 60, 20);
+		sun.castShadow = true;
+		sun.shadow.camera.left = sun.shadow.camera.bottom = -40;
+		sun.shadow.camera.right = sun.shadow.camera.top = 40;
+		this.scene.add(sun);
+
+		const ground = new THREE.Mesh(new THREE.CircleGeometry(120, 64), new THREE.MeshStandardMaterial({ color: 0x5f7d3f, roughness: 1 }));
+		ground.rotation.x = -Math.PI / 2;
+		ground.receiveShadow = true;
+		ground.name = 'ground';
+		this.scene.add(ground);
+		const grid = new THREE.GridHelper(120, 60, 0x3d5228, 0x4a6431);
+		grid.position.y = 0.01;
+		this.scene.add(grid);
+
+		this.dummy = capsule(dummyReach * 0.5, dummyHeight, 0x9c7a4f);
+		this.scene.add(this.dummy);
+		// The click hull: a cylinder of the dummy's combat reach.
+		this.dummyHit = new THREE.Mesh(new THREE.CylinderGeometry(dummyReach * 0.6, dummyReach * 0.6, dummyHeight, 12), new THREE.MeshBasicMaterial({ visible: false }));
+		this.dummyHit.position.y = dummyHeight / 2;
+		this.dummyHit.name = 'dummy';
+		this.dummy.add(this.dummyHit);
+
+		this.ring = new THREE.Mesh(new THREE.RingGeometry(dummyReach * 0.6, dummyReach * 0.75, 40), new THREE.MeshBasicMaterial({ color: 0xff3030, transparent: true, opacity: 0.8 }));
+		this.ring.rotation.x = -Math.PI / 2;
+		this.ring.position.y = 0.03;
+		this.dummy.add(this.ring);
+		// The melee range edge around the dummy, faint.
+		this.meleeRing = new THREE.Mesh(new THREE.RingGeometry(4.95, 5.05, 64), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.25 }));
+		this.meleeRing.rotation.x = -Math.PI / 2;
+		this.meleeRing.position.y = 0.02;
+		this.dummy.add(this.meleeRing);
+
+		this.player = capsule(playerReach * 0.35, playerHeight, 0x6b4f9c);
+		this.scene.add(this.player);
+	}
+
+	resize() {
+		const w = this.canvas.clientWidth;
+		const h = this.canvas.clientHeight;
+		this.renderer.setSize(w, h, false);
+		this.camera.aspect = w / Math.max(1, h);
+		this.camera.updateProjectionMatrix();
+	}
+
+	setFov(horizontalDeg: number) {
+		// WoW's cameraFov is horizontal (check). Three.js takes the vertical one.
+		const h = (horizontalDeg * Math.PI) / 180;
+		const v = 2 * Math.atan(Math.tan(h / 2) / Math.max(0.1, this.camera.aspect));
+		this.camera.fov = (v * 180) / Math.PI;
+		this.camera.updateProjectionMatrix();
+	}
+
+	setUnit(group: THREE.Group, pos: [number, number], facing: number, height = 0) {
+		group.position.copy(toThree(pos[0], pos[1], height));
+		group.rotation.y = facing;
+	}
+
+	setTargeted(on: boolean) {
+		this.ring.visible = on;
+	}
+
+	setTotems(totems: { element: string; pos: [number, number] }[]) {
+		const seen = new Set<string>();
+		for (const t of totems) {
+			seen.add(t.element);
+			let g = this.totems.get(t.element);
+			if (!g) {
+				g = new THREE.Group();
+				const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.18, 1.1, 8), new THREE.MeshStandardMaterial({ color: totemColors[t.element] ?? 0xffffff }));
+				pole.position.y = 0.55;
+				pole.castShadow = true;
+				g.add(pole);
+				this.scene.add(g);
+				this.totems.set(t.element, g);
+			}
+			g.position.copy(toThree(t.pos[0], t.pos[1]));
+		}
+		for (const [element, g] of this.totems) {
+			if (!seen.has(element)) {
+				this.scene.remove(g);
+				this.totems.delete(element);
+			}
+		}
+	}
+
+	// placeCamera puts the camera behind and above you, pulled in when the ground is in the way.
+	placeCamera(pos: [number, number], height: number, cam: CameraState) {
+		const head = toThree(pos[0], pos[1], height + this.playerHeight * 0.9);
+		// The way the camera looks: along its yaw, and down by its pitch.
+		const look = new THREE.Vector3(Math.cos(cam.yaw) * Math.cos(cam.pitch), -Math.sin(cam.pitch), -Math.sin(cam.yaw) * Math.cos(cam.pitch));
+		let distance = cam.distance;
+		// A camera looking up sits low: it pulls in so it stays above the ground.
+		if (look.y > 0) distance = Math.min(distance, (head.y - 0.2) / look.y);
+		this.camera.position.copy(head).addScaledVector(look, -distance);
+		this.camera.lookAt(head);
+	}
+
+	// pick finds the unit under a screen point: 'enemy' for the dummy, 'ground' or undefined.
+	pick(ndcX: number, ndcY: number): 'enemy' | 'ground' | undefined {
+		this.raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), this.camera);
+		const hits = this.raycaster.intersectObjects(this.scene.children, true);
+		for (const h of hits) {
+			if (h.object.name === 'dummy') return 'enemy';
+			if (h.object.name === 'ground') return 'ground';
+		}
+		return undefined;
+	}
+
+	// screenPoint is where a world point shows on screen, in CSS pixels, for combat text.
+	screenPoint(pos: [number, number], height: number): { x: number; y: number; visible: boolean } {
+		const v = toThree(pos[0], pos[1], height).project(this.camera);
+		return {
+			x: ((v.x + 1) / 2) * this.canvas.clientWidth,
+			y: ((1 - v.y) / 2) * this.canvas.clientHeight,
+			visible: v.z < 1,
+		};
+	}
+
+	render() {
+		this.renderer.render(this.scene, this.camera);
+	}
+}
