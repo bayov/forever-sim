@@ -322,8 +322,9 @@ export class Effects {
 		for (const ev of v.events.filter(e => e.event !== 'precast' && e.event !== 'cast')) this.event(ev, on?.model, false);
 	}
 
-	// spellImpact plays where a spell lands.
-	async spellImpact(spellId: number, target: UnitView | undefined, caster: UnitView | undefined) {
+	// spellImpact plays where a spell lands. An impact on the spell's area plays at its middle
+	// (`area`): the caster, or the totem for a totem's pulse.
+	async spellImpact(spellId: number, target: UnitView | undefined, caster: UnitView | undefined, area: Model | undefined = caster?.model) {
 		// Two hits of one spell at once (a pulse that hits twice) show one impact.
 		const now = performance.now();
 		const key = `${spellId}`;
@@ -331,7 +332,14 @@ export class Effects {
 		this.lastImpact.set(key, now);
 		const v = await spellVisual(spellId);
 		if (!v) return;
+		// Fire Nova's ring is both its cast and its area impact. The cast already showed it, around
+		// the totem, so the impact would be a second ring.
+		const castOnArea = v.events.some(e => e.event === 'cast' && e.target === 'area');
 		for (const ev of v.events.filter(e => e.event === 'impact' && !e.selfOnly)) {
+			if (ev.target === 'area') {
+				if (!castOnArea) this.event(ev, area, false);
+				continue;
+			}
 			const on = ev.target === 'caster' || v.self ? caster : target;
 			this.event(ev, on?.model, false);
 		}

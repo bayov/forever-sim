@@ -7,6 +7,7 @@ import {
 	commandFor,
 	commandForSlot,
 	keysForSlot,
+	lockableCodes,
 	MacroAction,
 	matchNoteLabel,
 	MacroContext,
@@ -22,10 +23,11 @@ import {
 	Toolkit,
 } from './actions';
 import { CameraOptions, Mover } from './controls';
-import { iconName, iconUrl, setIcon } from './icons';
+import { iconName, iconUrl, meleeIcon, setIcon } from './icons';
 import { css, HudLayout, pack, place, readLayout, Rect } from './layout';
 import { AuraState, Batch, ClockState, FromWorker, HitEvent, Input, PlayerState, Settings, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
 import { Room } from './scene';
+import { auraColor, avoidColor, CombatText, schoolColor } from './sct';
 import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
 import { fileProgress } from './wow/files';
@@ -89,7 +91,7 @@ const classColors: Record<string, string> = {
 	ClassDruid: '#ff7c0a',
 };
 
-const defaultSettings: Settings = { mode: 'free', lengthMs: 180000, countdownMs: 5000, pingMs: 0, executeFromStart: false, spellQueueWindowMs: 400 };
+const defaultSettings: Settings = { mode: 'free', lengthMs: 180000, countdownMs: 5000, pingMs: 60, executeFromStart: false, spellQueueWindowMs: 400 };
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Record<string, string> = {}, ...children: (Node | string)[]): HTMLElementTagNameMap[K] {
 	const e = document.createElement(tag);
@@ -226,6 +228,15 @@ class PracticeRoom {
 	// sessions counts the sessions started, for tests waiting on a restart.
 	sessions = 0;
 	private lastFrame = 0;
+	// The session's updates wait here for half a ping, the time the server's reply takes to reach
+	// the game (docs/practice_room.md, "Ping").
+	private inbox: { at: number; msg: Extract<FromWorker, { type: 'batch' }> }[] = [];
+	// Frame times of the last second, for the FPS readout.
+	private frameTimes: number[] = [];
+	private sct?: CombatText;
+	// Your auras in the last update, so the combat text shows the ones you gain.
+	private aurasSeen?: Set<string>;
+	private statsShownAt = 0;
 	private dragging: { button: number; x: number; y: number; moved: boolean; picked: 'enemy' | 'ground' | undefined } | undefined;
 
 	constructor(
@@ -251,8 +262,10 @@ class PracticeRoom {
 		this.worker.postMessage(msg);
 	}
 
+	// now is the sim time the page shows. It's half a ping behind the session, like the game shows
+	// the server's state when its reply arrives.
 	now(): number {
-		return simTimeAt(this.clock, wallNow());
+		return simTimeAt(this.clock, wallNow() - this.settings.pingMs / 2);
 	}
 
 	async mount() {
@@ -429,6 +442,8 @@ class PracticeRoom {
 		this.pulledAt = undefined;
 		this.hud.querySelector('.summary')?.remove();
 		this.clearHistory();
+		this.sct?.clear();
+		this.aurasSeen = undefined;
 		this.mover.move.pos = [0, -15];
 		this.mover.move.facing = Math.PI / 2;
 		this.mover.cam.yaw = Math.PI / 2;
@@ -443,6 +458,8 @@ class PracticeRoom {
 				this.timings.loadMs = msg.loadMs;
 				break;
 			case 'started': {
+				// The last session's updates still on their way show first, as they did before.
+				this.drainInbox(Infinity);
 				this.timings.startCallMs = msg.callMs;
 				this.sessions++;
 				const first = !this.toolkit;
@@ -451,17 +468,8 @@ class PracticeRoom {
 				break;
 			}
 			case 'batch':
-				this.clock = msg.clock;
-				this.timings.calls.push(msg.callMs);
-				if (msg.batch.rebase) this.timings.swaps.push(msg.callMs);
-				for (const a of msg.batch.answers ?? []) {
-					const at = this.pressedAt.get(a.inputId);
-					if (at !== undefined) {
-						this.timings.pressToAnswer.push(wallNow() - at);
-						this.pressedAt.delete(a.inputId);
-					}
-				}
-				this.onBatch(msg.batch).catch(e => console.error(e));
+				this.inbox.push({ at: wallNow() + this.settings.pingMs / 2, msg });
+				this.drainInbox();
 				break;
 			case 'attempt':
 				if (msg.attempt) {
@@ -474,6 +482,24 @@ class PracticeRoom {
 				this.showError(msg.message.split('\n')[0]);
 				console.error(msg.message);
 				break;
+		}
+	}
+
+	// drainInbox shows the session's updates whose half ping has passed, in order.
+	drainInbox(wall = wallNow()) {
+		while (this.inbox.length && this.inbox[0].at <= wall) {
+			const msg = this.inbox.shift()!.msg;
+			this.clock = msg.clock;
+			this.timings.calls.push(msg.callMs);
+			if (msg.batch.rebase) this.timings.swaps.push(msg.callMs);
+			for (const a of msg.batch.answers ?? []) {
+				const at = this.pressedAt.get(a.inputId);
+				if (at !== undefined) {
+					this.timings.pressToAnswer.push(wallNow() - at);
+					this.pressedAt.delete(a.inputId);
+				}
+			}
+			this.onBatch(msg.batch).catch(e => console.error(e));
 		}
 	}
 
@@ -584,19 +610,20 @@ class PracticeRoom {
 			for (const l of this.axisLabels.values()) l.remove();
 			this.axisLabels.clear();
 		}
-		if (b.player) this.player = b.player;
+		if (b.player) {
+			this.showGains(b.player.auras ?? []);
+			this.player = b.player;
+		}
 		if (b.target) this.target = b.target;
 		this.fight = b.fight;
 		for (const e of b.errors ?? []) this.showError(e);
-		for (const h of b.hits ?? []) {
-			this.combatText(h.damage, h.outcome, h.periodic);
-			this.animateHit(h);
-		}
+		this.combatText(b.hits ?? []);
+		for (const h of b.hits ?? []) this.animateHit(h);
 		for (const c of b.casts ?? []) {
 			this.addHistory(c.at, c.spellId, c.itemId);
 			this.animateCast(c.spellId);
-			// Fire Nova goes off around the fire totem.
-			if (c.totem && c.visualSpellId) {
+			// Fire Nova goes off around the fire totem. Its hits in this update already showed it.
+			if (c.totem && c.visualSpellId && this.now() - (this.totemCastAt.get(c.visualSpellId) ?? -1e9) > 400) {
 				this.totemCastAt.set(c.visualSpellId, this.now());
 				this.effects?.totemCast(c.visualSpellId, this.room.totemModels.get(c.totem), undefined, () => undefined);
 			}
@@ -609,9 +636,10 @@ class PracticeRoom {
 			const enemy = b.units.find(u => u.ref.kind === 'enemy');
 			if (enemy) this.dummyPos = enemy.pos;
 		}
-		if (this.player?.totems !== undefined) {
-			this.room.setTotems(this.player.totems ?? []);
-			this.showTotemBuffs(this.player.totems ?? []);
+		// The session leaves the totems out when there are none (Totemic Recall, or they ran out).
+		if (b.player) {
+			this.room.setTotems(b.player.totems ?? []);
+			this.showTotemBuffs(b.player.totems ?? []);
 		}
 		this.showAuras();
 		if (b.ended) {
@@ -680,13 +708,18 @@ class PracticeRoom {
 				if (command) this.runCommand(command, false, e, wallOf(e));
 			}
 		});
-		window.addEventListener('blur', () => {
+		// The session keeps running in the background, like the game does. You stop moving, because
+		// the keys you held won't tell us when they come up.
+		const letGo = () => {
 			this.mover.held = { forward: false, back: false, strafeLeft: false, strafeRight: false, turnLeft: false, turnRight: false };
 			this.mover.leftDown = this.mover.rightDown = false;
-			this.post({ type: 'pause', wallNow: wallNow() });
-		});
-		window.addEventListener('focus', () => this.post({ type: 'resume', wallNow: wallNow() }));
-		document.addEventListener('visibilitychange', () => this.post({ type: document.hidden ? 'pause' : 'resume', wallNow: wallNow() }));
+			if (this.running && !this.loadingModels) this.mover.step(0, wallNow());
+		};
+		window.addEventListener('blur', letGo);
+		document.addEventListener('visibilitychange', () => document.hidden && letGo());
+		// A hidden tab gets no frames, and its timers run at most once a second, so the session's
+		// updates still get shown (Searing Totem's bolts, the fight's end).
+		setInterval(() => this.drainInbox(), 100);
 
 		this.canvas.addEventListener('contextmenu', e => e.preventDefault());
 		this.canvas.addEventListener('mousedown', e => {
@@ -939,11 +972,12 @@ class PracticeRoom {
 			<div class="errors"></div>
 			<div class="messages"></div>
 			<div class="fight-bar">
-				<span class="phase"></span><span class="timer"></span>
+				<span class="phase"></span><span class="timer"></span><span class="net"></span>
 				<button class="start-encounter">Start Encounter</button>
 				<button class="stop">Stop</button>
 				<button class="restart">Restart</button>
 				<button class="settings-toggle">Settings</button>
+				<button class="fullscreen">Full screen</button>
 				<button class="leave">Leave</button>
 			</div>
 			<div class="fight-settings hidden"></div>
@@ -971,6 +1005,8 @@ class PracticeRoom {
 		tip('.start-encounter', () => ({ kind: 'lines', title: 'Start Encounter', lines: [`${fmtTime(this.settings.lengthMs)} fight after a ${this.settings.countdownMs / 1000}s countdown`] }));
 		tip('.stop', () => ({ kind: 'lines', title: 'Stop', lines: ['End the fight and show the summary'] }));
 		tip('.restart', () => ({ kind: 'lines', title: 'Restart', lines: ['A new fight from the start spot'] }));
+		tip('.net', () => ({ kind: 'lines', title: 'Latency · FPS', lines: ['Simulated ping, set in Settings'] }));
+		tip('.fullscreen', () => ({ kind: 'lines', title: 'Full screen', lines: ['Ctrl+T, Ctrl+W and Esc reach your binds'] }));
 		tip('.leave', () => ({ kind: 'lines', title: 'Leave', lines: ['Back to the build and character pick'] }));
 		tip('.settings-toggle', () => ({ kind: 'lines', title: 'Fight settings', lines: ['Mode, length, countdown and ping'] }));
 		tip('.edit-bars', () => ({ kind: 'lines', title: 'Edit bars', lines: ['Pick up a spell, then click a slot'] }));
@@ -988,6 +1024,11 @@ class PracticeRoom {
 			showSetup();
 		};
 		q('.settings-toggle').onclick = () => q('.fight-settings').classList.toggle('hidden');
+		q('.fullscreen').onclick = () => this.toggleFullscreen();
+		document.addEventListener('fullscreenchange', () => {
+			q('.fullscreen').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen';
+		});
+		this.sct = new CombatText(q('.combat-text'));
 		q('.edit-bars').onclick = () => {
 			this.editing = !this.editing;
 			this.binding = false;
@@ -1007,6 +1048,33 @@ class PracticeRoom {
 			c.style.left = `${e.clientX + 8}px`;
 			c.style.top = `${e.clientY + 8}px`;
 		});
+	}
+
+	// toggleFullscreen goes full screen and locks your bound keys and Esc. Only then does Chrome
+	// hand the page its own shortcuts, like Ctrl+T (new tab) and Ctrl+W (close tab). Hold Esc to
+	// leave full screen.
+	//
+	// We don't lock every key, because then Chrome would also catch Alt+Tab and the Win key, and
+	// you couldn't get back to WoW or Discord (docs/practice_room.md, "Keys").
+	async toggleFullscreen() {
+		const kb = (navigator as Navigator & { keyboard?: { lock(codes?: string[]): Promise<void>; unlock(): void } }).keyboard;
+		if (document.fullscreenElement) {
+			kb?.unlock();
+			await document.exitFullscreen();
+			return;
+		}
+		await document.documentElement.requestFullscreen();
+		const bound = new Set(Object.keys(this.bindings).map(k => k.replace(/^(ALT-|CTRL-|SHIFT-)+/, '')));
+		const codes = lockableCodes().filter(code => code === 'Escape' || bound.has(baseKeyName(code) ?? ''));
+		await kb?.lock(codes).catch(e => console.warn('keyboard lock', e));
+	}
+
+	// drawStats shows the simulated latency and the frame rate, a few times a second.
+	drawStats(t: number) {
+		if (t - this.statsShownAt < 250) return;
+		this.statsShownAt = t;
+		const fps = this.frameTimes.length;
+		(this.hud.querySelector('.net') as HTMLElement).textContent = `${this.settings.pingMs}ms · ${fps} FPS`;
 	}
 
 	playerName(): string {
@@ -1262,16 +1330,70 @@ class PracticeRoom {
 		setTimeout(() => line.remove(), 3000);
 	}
 
-	combatText(damage: number, outcome: string, periodic?: boolean) {
-		const box = this.hud.querySelector('.combat-text') as HTMLElement;
-		const p = this.room.screenPoint(this.dummyPos, 2.6);
-		if (!p.visible) return;
-		const text = outcome === 'hit' || outcome === 'crit' || outcome === 'glance' || outcome === 'block' || outcome === 'resist' ? String(Math.round(damage)) : outcome[0].toUpperCase() + outcome.slice(1);
-		const t = el('div', { class: `ct ${outcome}${periodic ? ' periodic' : ''}` }, text + (outcome === 'crit' ? '!' : ''));
-		t.style.left = `${p.x + (Math.random() - 0.5) * 60}px`;
-		t.style.top = `${p.y}px`;
-		box.append(t);
-		setTimeout(() => t.remove(), 1500);
+	// combatText shows what we did on the scrolling combat text. Hits of one spell at the same
+	// moment (a Fire Nova on several enemies) show as one line, like MSBT merges them.
+	combatText(hits: HitEvent[]) {
+		const groups = new Map<string, HitEvent[]>();
+		for (const h of hits) {
+			if (h.source !== 'player' && h.source !== 'totem') continue;
+			const key = `${h.at} ${h.spellId ?? ''} ${h.itemId ?? ''} ${h.otherId ?? ''} ${h.tag ?? ''}`;
+			const g = groups.get(key);
+			if (g) g.push(h);
+			else groups.set(key, [h]);
+		}
+		for (const g of groups.values()) {
+			const h = g[0];
+			const icon = (el: HTMLElement) => {
+				if (h.spellId) setIcon(el, 'spell', h.visualSpellId ?? h.spellId);
+				else if (h.itemId) setIcon(el, 'item', h.itemId);
+				else el.style.backgroundImage = `url(${iconUrl(meleeIcon)})`;
+			};
+			const landed = g.filter(x => x.outcome !== 'miss' && x.outcome !== 'dodge' && x.outcome !== 'parry');
+			const count = g.length > 1 ? `×${g.length}` : '';
+			if (!landed.length) {
+				const word = h.outcome[0].toUpperCase() + h.outcome.slice(1);
+				this.sct?.add({ side: 'out', kind: 'avoid', text: word, note: count, color: avoidColor, icon });
+				continue;
+			}
+			const amount = Math.round(landed.reduce((a, x) => a + x.damage, 0));
+			const crit = landed.some(x => x.outcome === 'crit');
+			const notes = [count];
+			if (landed.some(x => x.outcome === 'glance')) notes.push('glancing');
+			if (landed.some(x => x.outcome === 'block')) notes.push('blocked');
+			if (landed.some(x => x.outcome === 'resist')) notes.push('resisted');
+			this.sct?.add({
+				side: 'out',
+				kind: crit ? 'crit' : h.periodic ? 'tick' : 'damage',
+				text: crit ? `${amount}!` : String(amount),
+				note: notes.filter(Boolean).join(', '),
+				color: schoolColor(h.school),
+				icon,
+			});
+		}
+	}
+
+	// showGains shows the buffs you gain on the combat text ("+Flurry"). The first update of a
+	// session only learns what you have.
+	showGains(auras: AuraState[]) {
+		const key = (a: AuraState) => `${a.spellId ?? ''}:${a.itemId ?? ''}:${a.label}`;
+		const now = new Set(auras.map(key));
+		const seen = this.aurasSeen;
+		this.aurasSeen = now;
+		if (!seen) return;
+		for (const a of auras) {
+			// The same auras the buff frame shows.
+			if (seen.has(key(a)) || !a.label || (a.expiresAt === undefined && !((a.spellId ?? 0) > 0))) continue;
+			this.sct?.add({
+				side: 'in',
+				kind: 'aura',
+				text: `+${a.label}`,
+				color: auraColor,
+				icon: el => {
+					if (a.spellId) setIcon(el, 'spell', a.spellId);
+					else if (a.itemId) setIcon(el, 'item', a.itemId);
+				},
+			});
+		}
 	}
 
 	showSummary(sum: Summary, stoppedEarly: boolean) {
@@ -1325,6 +1447,9 @@ class PracticeRoom {
 
 	frame(t: number) {
 		requestAnimationFrame(tt => this.frame(tt));
+		this.drainInbox();
+		this.frameTimes.push(t);
+		while (this.frameTimes[0] < t - 1000) this.frameTimes.shift();
 		const dt = this.lastFrame ? Math.min(0.1, (t - this.lastFrame) / 1000) : 0;
 		this.lastFrame = t;
 		const wall = wallNow();
@@ -1345,6 +1470,12 @@ class PracticeRoom {
 		this.animateUnits(dt, wall);
 		this.room.render();
 		this.updateHud();
+		this.drawStats(t);
+		if (this.sct) {
+			const r = (s: string) => (this.hud.querySelector(s) as HTMLElement).getBoundingClientRect();
+			const target = this.hud.querySelector('.target-frame.hidden') ? undefined : r('.target-frame');
+			this.sct.draw(this.u, r('.player-frame'), target, r('.history').bottom, r('.buffs').bottom);
+		}
 	}
 
 	// ---- the models' animations ----
@@ -1433,7 +1564,7 @@ class PracticeRoom {
 		const landed = h.outcome !== 'miss' && h.outcome !== 'dodge' && h.outcome !== 'parry' && h.outcome !== 'resist';
 		const land = () => {
 			if (!landed) return;
-			this.effects?.spellImpact(spellId, this.dummyView, undefined);
+			this.effects?.spellImpact(spellId, this.dummyView, undefined, totem);
 			if (!h.periodic) this.dummyView?.wound(h.outcome === 'crit');
 		};
 		// One cast on the totem per pulse, however many targets it hits.

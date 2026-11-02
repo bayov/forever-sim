@@ -41,6 +41,15 @@ const codeNames: Record<string, string> = {
 	NumpadEnter: 'ENTER',
 };
 
+// lockableCodes are the key codes the room knows, for Keyboard Lock.
+export function lockableCodes(): string[] {
+	const codes = Object.keys(codeNames);
+	for (let c = 65; c <= 90; c++) codes.push('Key' + String.fromCharCode(c));
+	for (let d = 0; d <= 9; d++) codes.push('Digit' + d, 'Numpad' + d);
+	for (let f = 1; f <= 24; f++) codes.push('F' + f);
+	return codes;
+}
+
 export function baseKeyName(code: string): string | undefined {
 	if (code.startsWith('Key')) return code.slice(3);
 	if (code.startsWith('Digit')) return code.slice(5);
