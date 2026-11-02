@@ -52,6 +52,14 @@ func (impl DefaultAPLValueImpl) GetString(_ *Simulation) string {
 }
 
 func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
+	value := rot.buildAPLValue(config)
+	if value != nil {
+		rot.noteValueConfig(value, config)
+	}
+	return value
+}
+
+func (rot *APLRotation) buildAPLValue(config *proto.APLValue) APLValue {
 	if config == nil {
 		return nil
 	}

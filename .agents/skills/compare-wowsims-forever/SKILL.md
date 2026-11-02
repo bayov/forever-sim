@@ -114,18 +114,28 @@ rotation gives a result that looks off.
 
 - **Synthetic gear.** Our items 990000 and up don't exist in theirs. `items.json` adds them, and `cmpsim` and
   `cmpstats` load it. `cmpsim` also registers what our synthetic gear does beyond stats, which `items.json` can't
-  say: the on-use trinkets (994202, 993016, 993117, 991018) and the hunter and warrior sets' 2 piece. A new synthetic effect goes there
+  say: the on-use trinkets (994202, 993016, 993117, 991018, and the shamans' 990015 and 990115) and the hunter, warrior
+  and Enhancement sets' 2 piece. A new synthetic effect goes there
   (`theirs/cmpsim/main.go.txt`).
 - **A set bonus theirs doesn't register** goes in as bonus stats (`SET_BONUS`): Grimstitch Armor's 1% hit as 10
-  hit rating.
-- **Enchants:** ours keys Forever's spell ids, theirs the enchant ids (`ENCH`).
+  hit rating, and the Elemental set's The Spiritcaller's Storm the same.
+- **Enchants:** ours keys Forever's spell ids, theirs the enchant ids. The converter matches them by effect id, else
+  by name and stats; `ENCH` holds the ones picked by hand. Unmapped, theirs drops the enchant without a word (it cost
+  Elemental 105 spell power).
+- **Stats:** theirs names the spell damage stats `...Damage` where ours has `...Power`, and its `SpellDamage` is our
+  `SpellPower` and our `SpellDamage` (damage only) added up. `layers.py` and `align.py` compare them that way.
+- **Races:** theirs spells the Skyborne the other way round (`RaceWindshaperSkyborne`).
 - **Consumables:** our enum names → their item ids (`C`). A potion is their `resourcePotId` (mana or rage) or
   `offensivePotId`, and our rotation's `OtherActionPotion` is their `OtherActionResourcePotion` or
   `OtherActionOffensivePotion` to match. Theirs applies one explosive of a kind, so ours drops its filler by default (`--keep-filler`
   keeps it).
 - **Stones:** theirs refuses a sharpening stone on a blunt weapon, so the converter swaps in a weightstone, the
   same +8.
-- **Buffs:** Mana Spring Totem is a party buff in theirs. `battleShout` is an int there (1 is rank 6, 2 rank 7).
+- **Buffs:** since their 04899cee95 the group buffs are plain on/off under the single-target names (`arcaneIntellect`,
+  `markOfTheWild`, `powerWordFortitude`, `shadowProtection`), and since b6657d3824 a ranked buff is an int, 1 for the
+  trainer's rank and 2 for the book's (`strengthOfEarthTotem`, `graceOfAirTotem`, `greaterBlessingOfMight`,
+  `greaterBlessingOfWisdom`). Our raid Flametongue Totem is their `flametongueTotem`. Mana Spring Totem is a party
+  buff in theirs. `battleShout` is an int there (1 is rank 6, 2 rank 7).
   Their Battle Shout lands just after the pull's sheet, so `align.py` adds its 115 attack power to their sheet.
   Our Improved Battle Shout, Blessing of Might and Gift of the Wild come out the same as their plain ones.
 - **Sunder Armor:** theirs ramps the raid's copy itself, a stack every GCD from the pull (5 at 6 s), and our report
@@ -142,7 +152,7 @@ rotation gives a result that looks off.
   Hawk VII, Serpent Sting IX), so the hunter runs use `ours_aq_cli` with our rotation's ids moved up (`OURS_AQ=0`
   runs ours on its own ranks: the difference is the AQ ranks' worth). Raptor Strike's queue is tag 3 in ours, tag 1
   in theirs. Warrior: Whirlwind is cast as its main hand's copy, tag 14 (untagged it never casts: about 100 DPS on
-  Fury), Charge has no rank, Berserking 20554.
+  Fury), Charge has no rank, Berserking 20554. Shaman: Berserking 20554; theirs registers every rank our rotations cast.
 - **Vanish and Sweeping Strikes** are DPS cooldowns in theirs, so `autocastOtherCooldowns` would Vanish at the pull
   and spend 30 rage on Sweeping Strikes every 30 s against one target (their own rotations cast it only on 2+
   targets and don't autocast: 32 DPS on Arms). The converter adds a never-true line naming each.
@@ -150,7 +160,11 @@ rotation gives a result that looks off.
   that opens with it starts theirs at 20 yd. Their Charge also holds the off-GCD items after the pull's first GCD to
   3 s (Blood Fury, the potion and the trinket at 3.0 s, not 0.0 s); that cost nothing measurable on Fury.
 - **Raid damage taken** (our encounter's `raidDamageHitsPerMinute`): theirs has no such model. `--no-raid-damage`
-  turns ours off to compare the rest.
+  turns ours off to compare the rest. For shamans the converter sets their `shieldProcrate` to the same hits a
+  minute, which spend Lightning Shield's and Water Shield's charges as ours does.
+- **Totems:** our rotations ask whether a totem stands by its buff on the shaman (`auraIsActive`) or as a DoT for a
+  fire totem (`dotIsActive`). Theirs keys neither by the totem's spell, so the converter asks its element's slot
+  (`totemRemainingTime`). Untranslated, theirs recast Strength of Earth 50 times a fight and ran out of mana.
 - **Their sheet leaves out talent crit** they apply per attack (Cruelty, Weaponmaster's axe crit), so `layers.py`
   shows ours 5 to 10% crit higher on warriors. Compare crits per hit in `breakdown.py` instead.
 - **Hunter options:** the quiver and pet speed enums, the Crocolisk spelling, and their Beast Mastery tree with
@@ -160,10 +174,11 @@ rotation gives a result that looks off.
 
 ## Known differences
 
-As of 2026-11-01, on the report's requests: the hunter and rogue rows with ours at 0e87f3d and theirs at b70888a518, the
-warrior rows with ours at 7587a1a and theirs at 895cd67f99. The four pet rows (two since settled) add up to the BM cat's whole
+As of 2026-11-02, on the report's requests: the hunter and rogue rows with ours at 0e87f3d and theirs at b70888a518, the
+warrior rows with ours at 7587a1a and theirs at 895cd67f99, the shaman rows with ours at dfa3b4a and theirs at 1496ed4db5. The four pet rows (two since settled) add up to the BM cat's whole
 pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). The warrior rows add up to Arms' whole
-gap and leave 4 DPS of Fury's and Fury 2H's unexplained. Engine timing (when each engine re-checks the rotation, Heroic Strike
+gap and leave 4 DPS of Fury's and Fury 2H's unexplained. The shaman rows add up to Enhancement's whole gap (33 to 37 DPS
+on the four presets) and Elemental's (5 to 6) within 3 DPS. Engine timing (when each engine re-checks the rotation, Heroic Strike
 1.4 casts more in ours on Arms) moves casts but nets about 0 DPS once the Windfury rule below is matched. A rerun should find
 these, so it can tell what is new. Keep the list current when one is settled.
 
@@ -189,13 +204,22 @@ these, so it can tell what is new. Keep the list current when one is settled.
 | Rotation re-checks and Heroic Strike during a cast | Re-checks at once on a Rage gain; a queued Heroic Strike goes off on a swing that lands during Slam's cast | Re-checks 200 ms after a Rage gain or a swing; drops the queued Heroic Strike during a cast (`hardcastRuns`); holds major cooldowns while a sequence step runs | Choices (engine). They move Arms' Heroic Strike (+0.8 casts in ours) and Bloodrage, but net 0 DPS: theirs spends the Rage on Execute |
 | Explosives' hit | 1% miss at most (an Era comment, `sim/core/consumes.go`) | The normal spell hit table | Open: the client row 13241 would say. Sapper +0.3 DPS |
 | Touch of the Grave's roll | On any ability cast (a guess, `racials_forever.go`) | On a landed hit that deals damage | Open. +0.4 DPS on Undead Arms |
-| Synthetic sets' 2 piece (1% attack speed) | Live | Registered by `cmpsim` (warrior head 991001, 991019) | A translation: without it theirs was 5 to 8 DPS low |
+| Flametongue Totem beside Windfury Weapon (Enhancement) | Works (report assumption `sham_ftt_stack`, user ruling 2026-10-16) | Does nothing while any Windfury Totem stands, the shaman's own included, though its Windfury Weapon turns that totem off for it | Open, on notes.md's To Verify list. 16.2 DPS on Enhancement |
+| Lightning Bolt rank 10 | Base damage ×1.12 (`sham_lb_31plus`, user ruling 2026-10-15) | The client's | Ruling. Elemental 14.9, Enhancement 2.1 DPS |
+| Earth Shock rank 7 | Base damage ×1.08 (`sham_es7_tuning`, user ruling 2026-10-15) | The client's | Ruling. Enhancement 4.0 DPS |
+| Stormstrike's weapon speed | The weapon type's normalized speed + 0.3 (3.6 for a two-hander), fitted to beta Stormstrikes (shaman_audit.md 4.1) | The normalized speed | Ours on evidence. 4.6 DPS on Enhancement |
+| Searing Totem's attack rate | Every 2.5 s: 72 beta gaps averaged 2.53 s (the 2.2 s bolt and a pause) | Every 2.2 s, the bolt's cast time | Ours on evidence. +3.7 DPS for theirs on Elemental |
+| Haste and the GCD | 1.5 s (`haste_gcd`) | Spell haste shortens it (their TBC code) | Report assumption. Elemental 2.6, Enhancement 0.9 DPS for theirs |
+| Magma Totem's last pulse | A 40 s totem pulses 20 times | About 19, by the counts (84 pulses a fight against our 89) | Engine timing, no log either way. About 3 DPS on Enhancement |
+| Greater Blessing of Might and Wisdom | Rank 2's 133 attack power and 40 MP5, a trainer rank (standards 8a) | Rank 1's 112 and 36, rank 2 counted as a book rank (b6657d3824, no item teaches it) | Ruling. `align.py` closes it (21 attack power, 4 MP5) |
+| Orc shaman base stats | 96 Stamina, 89 Intellect, 100 Spirit | 97, 87, 103 | Race offset ruling. `align.py` closes it |
+| Synthetic sets' 2 piece (1% attack speed) | Live | Registered by `cmpsim` (warrior head 991001, 991019, Enhancement hands 990007) | A translation: without it theirs was 5 to 8 DPS low |
 | Undead base stats | 82 Str, 129 Agi | 79, 128 | Race offset ruling. `align.py` closes it |
 | Totem ranks | Trainer (Strength of Earth 42, Grace of Air 77) | AQ books' (53, 89) | No AQ books at launch (assumed) |
 
 ## Adding a class
 
-`convert.py` maps rogues, hunters and warriors, and stops on any other class. For a new one:
+`convert.py` maps rogues, hunters, warriors and shamans, and stops on any other class. For a new one:
 
 1. Its options block (`class_opts`): their class proto (`$WSF/proto/<class>.proto`) against ours.
 2. Its consumables in `C`: weapon oils, poisons, imbues, class-only items.
