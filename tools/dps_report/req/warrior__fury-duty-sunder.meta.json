@@ -41,7 +41,7 @@
     "Start with 0 Rage. Before the pull, Battle Stance, Charge (15 Rage) and back to Berserker Stance. Battle Shout comes from the raid",
     "Sunder Armor on duty for the raid: 5 stacks from the pull (7.5s of GCDs), before anything but the opening cooldowns, then refreshed in its last 3s, unless it lasts the fight. The raid's Sunder Armor is off",
     "Save Death Wish for the last 33s when that doesn't lose a use. Recklessness goes with the last Death Wish, and the trinket 1 GCD later. In fights with 2 Death Wishes, the first goes at the pull without Recklessness",
-    "Blood Fury and Berserking with Death Wish. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Trinket on cooldown, with its last use saved for the last 30s. Mighty Rage Potion at the pull, the second in the last 20s",
+    "Blood Fury and Berserking with Death Wish. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Trinket on cooldown, with its last use saved for the last 30s. Mighty Rage Potion in the last 20s, and at the pull too when a second one fits",
     "Bloodrage under 20 Rage",
     "Whirlwind at 25+ Rage, then Bloodthirst",
     "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
@@ -61,7 +61,7 @@
     "Dense Sharpening Stone"
   ],
   "caveats": [
-    "The duty costs 34.1 DPS at 180s against the same build without it (948.1 against 982.2, 20,000 iterations, seed 1). Part of it is the ramp: the warrior's own hits meet fewer stacks for the first 7.5s, where the raid's Sunder was full at once.",
+    "The duty costs 29.0 DPS at 180s against the same build without it (1012.5 against 1041.5, 20,000 iterations, seed 1). Part of it is the ramp: the warrior's own hits meet fewer stacks for the first 7.5s, where the raid's Sunder was full at once.",
     "Assumed: white hits give Rage by weapon speed, at the level 30 rate even at level 60.",
     "No Ahn'Qiraj book ranks, so Heroic Strike stops at rank VIII, and the raid's Battle Shout at VI, Strength of Earth at IV and Grace of Air at II.",
     "Deep Wounds ticks can't crit.",
