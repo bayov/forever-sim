@@ -1,9 +1,9 @@
-// Builds the DPS Report as one self-contained HTML file, for publishing as a Claude artifact that opens on a phone with
-// no dev server. The sim UI serves the same report at /forever/dps_report/ from the same source (ui/dps_report).
+// Builds the DPS Report as one self-contained HTML file, which `make dps-report-deploy` publishes to Cloudflare Pages
+// (https://forever-dps.pages.dev) and which opens on a phone with no dev server. The sim UI serves the same report at /forever/dps_report/ from the same source (ui/dps_report).
 //
 // It runs vite with vite.dps_report.config.mts, then puts the script, the stylesheet and every image and font they use
-// into the page. An artifact may only load scripts from a few CDNs (d3 comes from cdnjs) and stylesheets from Google
-// Fonts, so everything else has to be inside the file, which must stay under 16 MB. That includes Font Awesome, which
+// into the page (d3 comes from cdnjs, the fonts from Google Fonts), so it is one file. Cloudflare Pages takes a file of
+// up to 25 MiB, so the build fails above that. That includes Font Awesome, which
 // the sim UI's events view on the Specs page draws its buttons with. We download it once into dist/fontawesome/.
 //
 // Usage: node tools/dps_report/build_artifact.mjs [out.html]   (default: dist/dps_report.html; also `make dps-report-artifact`)
@@ -16,7 +16,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const out = path.resolve(process.argv[2] || path.join(root, 'dist/dps_report.html'));
 const configFile = path.join(root, 'vite.dps_report.config.mts');
 const buildDir = path.join(root, 'dist/dps_report_artifact');
-const MAX_BYTES = 16 * 1024 * 1024;
+const MAX_BYTES = 25 * 1024 * 1024; // Cloudflare Pages' limit for one file
 
 await build({ configFile, logLevel: 'error' });
 
@@ -99,6 +99,6 @@ fs.writeFileSync(out, page);
 const bytes = Buffer.byteLength(page);
 console.log(`Wrote ${path.relative(process.cwd(), out)} (${(bytes / 1024 / 1024).toFixed(1)} MB)`);
 if (bytes > MAX_BYTES) {
-	console.error('Too big for an artifact (16 MB at most).');
+	console.error('Too big for Cloudflare Pages (25 MiB a file at most).');
 	process.exit(1);
 }

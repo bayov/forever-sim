@@ -101,7 +101,7 @@ Template for a delegated job: `prompts/dashboard/HANDOFF_dash_refresh.md`. Its p
 - **Data access:** the page reads data only through `dash.data(id)` inside `dash.onData`. A new dataset needs an entry in `datasets.json` and a file in `data/`.
 - **Two outputs from one source:**
   - The sim UI page at `/forever/dps_report/` (`npx vite serve`).
-  - The single-file `make dps-report-artifact` → `dist/dps_report.html`, which must stay under 16 MB.
+  - The single-file `make dps-report-artifact` → `dist/dps_report.html`, which Cloudflare Pages takes up to 25 MiB (the build fails above that).
 - **Checks:** Playwright with `/opt/pw-browsers/chromium` on the wrapped dist file, with the session's proxy for d3. Check every tab at phone and desktop width, in both themes, with no console errors. Also run `npx tsc --noEmit` (generate `ui/core/proto` first) and prettier on the files you touch.
 - **Publish:** deploy every new report to https://forever-dps.pages.dev with `make dps-report-deploy` (regenerate-dps-report step 5 has the details), and reply with that link. Don't publish it as a Claude artifact; the old one (RUzPysb5dSk2RAXzXij4oR) is retired (user ruling, 2026-10-25).
 - **Landing it:** push report changes straight to `master`, with no PR (user ruling, 2026-10-14: "push straight next time"). Work on a local branch from origin/master, merge master in last (the user and other sessions commit report UI changes often), and run every check above. Then push it to `master` as a fast-forward, or merge master again first if it moved. Deploy the site from that master build.

@@ -15,7 +15,7 @@ The single file is built by `tools/dps_report/build_artifact.mjs` with `vite.dps
 sim UI build only in where the datasets come from (`data_source.inline.ts` bundles them instead of fetching them) and in
 being one file: the `/forever/assets/...` images and fonts become data URIs. An artifact may load scripts only from a few
 CDNs and stylesheets only from Google Fonts, so d3 comes from cdnjs and nothing else is loaded from outside. Font
-Awesome, which the events view uses, is inlined too. The file must stay under 16 MB; the build fails above that.
+Awesome, which the events view uses, is inlined too. Cloudflare Pages takes a file of up to 25 MiB; the build fails above that.
 
 Files:
 
@@ -34,7 +34,7 @@ Files:
 - `data/<id>.json`: the datasets. Rows of per-build datasets carry `build` (`<class>__<preset>`; `builds.json` calls it `id`).
 - `data/events/<build>.json.gz`: each preset's typical, unlucky and lucky fight with its whole debug log, made by
   `tools/dps_report/events.py`. The single file leaves out the lines only the log uses (the rotation waiting and the
-  `[DEBUG]` damage formulas) to stay under 16 MB. See `vite.dps_report.config.mts`.
+  `[DEBUG]` damage formulas) to keep the file small. See `vite.dps_report.config.mts`.
 - `data/mana.json`, `data/mana_summary.json`: mana % of max every 5 s over a 480 s fight per mana-using preset, and when
   it first drops below 15%. Made by `tools/dps_report/mana_curves.py`.
 - `data/changes.json`, `data/changes_snap.json`: the Changes tab, the updates with their public change lines and the

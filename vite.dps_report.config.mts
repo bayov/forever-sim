@@ -12,7 +12,7 @@ import zlib from 'zlib';
 // The sample fights of the Specs page (data/events/*.json.gz) go into the script as base64 strings, which
 // data_source.inline.ts imports with ?base64.
 //
-// They are most of the file, and the file must stay under 16 MB. So we leave out two kinds of lines that only the log
+// They are most of the file, so to keep it small we leave out two kinds of lines that only the log
 // shows, which the timeline, the chart and the replay don't use. The sim UI page still has them.
 //   - The rotation waiting: "No available actions!" and "Pausing GCD for 50ms due to rotation / CDs.". In a rogue
 //     fight that's half the lines.

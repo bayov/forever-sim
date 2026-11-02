@@ -95,7 +95,7 @@ full pass was deployed. Commit what it writes (`tools/dps_report/changes/`, the 
 ## 3. Check both outputs
 
 - Build the artifact file: `make dps-report-artifact` (or
-  `node tools/dps_report/build_artifact.mjs`). It fails if the file is over 16 MB.
+  `node tools/dps_report/build_artifact.mjs`). It fails if the file is over 25 MiB, Cloudflare Pages' limit for one file.
 - Open `dist/dps_report.html` in the pre-installed Chromium (Playwright with
   `executablePath: '/opt/pw-browsers/chromium'`; wrap the file in
   `<!doctype html><html><head><meta charset="utf-8"></head><body>...</body></html>`
