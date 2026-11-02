@@ -1,0 +1,101 @@
+{
+ "name": "Golemagg the Incinerator",
+ "source": "[core: vmangos] Melee 2,202 to 2,919 a 2.0 s swing before armor: vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 20.05. a 2006 Molten Core full clear from Blizzard's servers in WWS format (web.mit.edu/cat/project/WoW/MCDump200609/), hits after armor: 75 hits, 979 average after armor. Double Attack 18943: half his landed hits give an extra swing (sim: a melee event at the swing's average, every 4 s on average). Magma Splash 13880: a Fire DoT stacking to 50 on the tank, 50 every 3 s a stack (the log's ticks 216 average).",
+ "reports": [],
+ "warcraftLogs": {
+  "encounter": 670,
+  "zone": "Molten Core"
+ },
+ "notes": "The Core Ragers are another tank's job and left out. Magma Splash is modelled as a steady 4 stacks (200 Fire every 3 s), the log's tick average. Earthquake below 10% health and Pyroblast on random players are left out.",
+ "encounter": {
+  "duration": 180,
+  "durationVariation": 20,
+  "targets": [
+   {
+    "name": "Golemagg the Incinerator",
+    "level": 63,
+    "mobType": "MobTypeUnknown",
+    "parryHaste": true,
+    "stats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     805.0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3625,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "minBaseDamage": 1662.1,
+    "damageSpread": 0.4314,
+    "swingSpeed": 2.0
+   }
+  ],
+  "raidDamage": [
+   {
+    "spellId": 18943,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 2202,
+    "maxDamage": 2919,
+    "who": "BossTarget",
+    "firstAt": 2,
+    "everySeconds": 4.0,
+    "spreadSeconds": 0,
+    "melee": true,
+    "randomTiming": true
+   },
+   {
+    "spellId": 13880,
+    "school": "SpellSchoolFire",
+    "minDamage": 200,
+    "maxDamage": 200,
+    "who": "BossTarget",
+    "firstAt": 10,
+    "everySeconds": 3.0,
+    "spreadSeconds": 0
+   }
+  ]
+ },
+ "healing": {
+  "healers": 4,
+  "hpsEach": 400,
+  "castSeconds": 2.0,
+  "notes": "A 40-player Molten Core raid's main tank: 4 healers at 400 HPS each on it in 2 s heals (800 a heal), a mix of paladins on Flash of Light rank 6 (about 600 at 400 healing power) and priests on Greater Heal rank 4 or downranked Heal. 1,600 HPS before overheal, about 2.4 times a pre-raid warrior's 650 DTPS here, the Classic Era Molten Core logs' ratio (wowsims/forever). Not from logs yet: replace with tools/warcraftlogs tank numbers."
+ }
+}

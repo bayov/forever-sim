@@ -48,6 +48,39 @@ crits on its own roll and never crushes (`melee`, `OutcomeEnemyMeleeSpecial`), a
 taken for a while (`healing_taken_multiplier`, `debuff_seconds`, Mortal Strike's 50% for 5 s). Not modelled
 yet: threat drops (Knock Away and the like).
 
+**The first seven** (2026-11-02): Magmadar, Golemagg, Ragnaros, Onyxia, Broodlord Lashlayer, Vaelastrasz and
+Chromaggus, their tank side only. No Warcraft Logs numbers were found on the web, so they're from the vmangos
+core, the last source in the order, with each file's `source` saying which numbers and `notes` what's left out.
+A 2006 Molten Core full clear from Blizzard's servers (WWS, hits after armor) backs vmangos's boss melee: the
+cmangos core's is about a third of it and doesn't fit the log. Patchwerk is waiting: neither core's melee is
+confirmed and the two differ, and Hateful Strike is an off-tank's problem. Each file has the boss's Warcraft
+Logs encounter ID for when logs replace the numbers.
+
+The raid's healing on the tank in them is a guess until the logs: 4 healers at 400 HPS in 2 s heals in Molten
+Core and Onyxia (about 2.4 times a pre-raid warrior's damage taken, the Classic Era logs' ratio), 4 at 500 in
+Blackwing Lair.
+
+**First numbers** (1,000 iterations, the two Valor-geared builds, healing needed at 5% deaths, the death
+chance at the file's healing):
+
+| Encounter | Warrior TPS | DTPS | Healing needed | Death | Paladin TPS | DTPS | Healing needed | Death |
+|---|---|---|---|---|---|---|---|---|
+| Magmadar | 1051 | 253 | 255 | 0% | 504 | 290 | 299 | 0% |
+| Golemagg | 1185 | 448 | 571 | 0% | 588 | 492 | 615 | 0% |
+| Ragnaros | 1159 | 916 | 1976 | 16% | 461 | 961 | 2336 | 22% |
+| Onyxia | 1209 | 527 | 597 | 0% | 611 | 563 | 633 | 0% |
+| Broodlord | 1190 | 625 | none works (floor 43%) | 81% | 555 | 682 | none works (floor 46%) | 85% |
+| Vaelastrasz (45 s) | 1251 | 1389 | 1802 | 2% | 566 | 1463 | 2251 | 7% |
+| Chromaggus | 1147 | 480 | 588 | 0% | 506 | 539 | 678 | 0% |
+
+- **Broodlord is the one-shot case.** Mortal Strike's 13,730 to 18,200 before armor comes to about 6,000 to
+  7,900 on these tanks' 56% armor, against 7,000 health (the Valor set has no neck, back, rings or trinkets),
+  and halves the healing for 5 s. No healing saves them, so the build isn't viable there. A real Blackwing
+  Lair tank has more health and armor, which is exactly what the score should push the search toward.
+- **Ragnaros** needs about 2.2 times the warrior's damage taken: Elemental Fire's 600 a second for 8 s on
+  most hits, with only the raid's fire resistance buffs against it. A fire resistance set is the next test.
+- **Vaelastrasz** is one tank's 45 s stint.
+
 **From the logs:** `tools/warcraftlogs/wclcli.py tank` reads, per encounter, the boss's swings and abilities
 on the main tank, the tank's damage taken a second, and its healing taken (effective, overheal, absorbs,
 heals a second, healers, top heal spells). It needs a Warcraft Logs API client, on the user's machine or as

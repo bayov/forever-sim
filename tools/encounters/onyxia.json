@@ -1,0 +1,121 @@
+{
+ "name": "Onyxia",
+ "source": "[core: vmangos] Melee 1,653 to 2,191 a 2.0 s swing before armor: vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 15.05. Flame Breath 18435 3,063 to 3,937 Fire every 10 to 20 s, frontal on the tank. Cleave 19983 weapon damage + 50 every 2 to 5 s. Knock Away 19633 weapon damage + 30 every 15 to 30 s. Wing Buffet 18500 563 to 937 every 15 to 30 s. From the vmangos script and spell_template.",
+ "reports": [],
+ "warcraftLogs": {
+  "encounter": 1084,
+  "zone": "Onyxia's Lair"
+ },
+ "notes": "Phase 1 and 3 on the ground only (the air phase at 65% to 40% is left out). Knock Away's 25% threat cut and Bellowing Roar's fear aren't modelled.",
+ "encounter": {
+  "duration": 180,
+  "durationVariation": 20,
+  "targets": [
+   {
+    "name": "Onyxia",
+    "level": 63,
+    "mobType": "MobTypeUnknown",
+    "parryHaste": true,
+    "stats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     805.0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3625,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "minBaseDamage": 1247.7,
+    "damageSpread": 0.4312,
+    "swingSpeed": 2.0
+   }
+  ],
+  "raidDamage": [
+   {
+    "spellId": 18435,
+    "school": "SpellSchoolFire",
+    "minDamage": 3063,
+    "maxDamage": 3937,
+    "who": "BossTarget",
+    "firstAt": 10,
+    "everySeconds": 15,
+    "spreadSeconds": 5
+   },
+   {
+    "spellId": 19983,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 1703,
+    "maxDamage": 2241,
+    "who": "BossTarget",
+    "firstAt": 3,
+    "everySeconds": 3.5,
+    "spreadSeconds": 1.5,
+    "melee": true
+   },
+   {
+    "spellId": 19633,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 1683,
+    "maxDamage": 2221,
+    "who": "BossTarget",
+    "firstAt": 15,
+    "everySeconds": 22.5,
+    "spreadSeconds": 7.5,
+    "melee": true
+   },
+   {
+    "spellId": 18500,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 563,
+    "maxDamage": 937,
+    "who": "BossTarget",
+    "firstAt": 20,
+    "everySeconds": 22.5,
+    "spreadSeconds": 7.5
+   }
+  ]
+ },
+ "healing": {
+  "healers": 4,
+  "hpsEach": 400,
+  "castSeconds": 2.0,
+  "notes": "A 40-player Molten Core raid's main tank: 4 healers at 400 HPS each on it in 2 s heals (800 a heal), a mix of paladins on Flash of Light rank 6 (about 600 at 400 healing power) and priests on Greater Heal rank 4 or downranked Heal. 1,600 HPS before overheal, about 2.4 times a pre-raid warrior's 650 DTPS here, the Classic Era Molten Core logs' ratio (wowsims/forever). Not from logs yet: replace with tools/warcraftlogs tank numbers."
+ }
+}
