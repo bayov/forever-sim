@@ -98,7 +98,7 @@ func (warriorFury) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(hamstring, and(ge(currentRage(), num(k["hamstringRage"])), not(executePhase()), gap), "For the procs."))
 	}
 	items = append(items, cast(berserkerStance, not(auraIsActive(berserkerStance)), ""))
-	rot := warriorOpener(rotation(items...))
+	rot := warriorOpener(k, rotation(items...))
 	rot.PrepullActions = append(rot.PrepullActions, warriorShoutPrepull(k)...)
 	rot.PrepullActions = append(rot.PrepullActions, warriorChargePrepull(berserkerStance)...)
 	return rot

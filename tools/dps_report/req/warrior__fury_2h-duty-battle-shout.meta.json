@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h_battle_shout",
   "published": {
-    "dps": 1036.1,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed for the two-hand Rage crit fix)"
+    "dps": 1041.3,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed for the knob re-search after the two-hand Rage crit fix)"
   },
   "verify": {
-    "dps": 1036.1,
+    "dps": 1041.3,
     "stderr": 0.49,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 \u00b1 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on this request after the 2026-11-02 knob re-search, 180 \u00b1 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Keeps Battle Shout up for its party. The raid's Battle Shout is off.",
   "keyTalents": [
@@ -40,9 +40,9 @@
     "Sunder Armor as the first GCD. Every warrior does this, and the tanks keep it up after",
     "Recast Battle Shout with 35s left on it (about 142s in, before execute), unless its 3 min lasts the fight",
     "Death Wish in the last 36s, Recklessness in the last 30s",
-    "Blood Fury and Berserking in the last 30s. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Mighty Rage Potion at the pull, the second in the last 20s",
-    "Bloodrage under 20 Rage. Berserker Rage under 30 (Improved Berserker Rage)",
-    "Bloodthirst, then Slam at 45+ Rage right after a main-hand swing, then Whirlwind at 25+ Rage",
+    "Blood Fury and Berserking in the last 30s. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Mighty Rage Potion in the last 20s, and at the pull too when a second one fits",
+    "Bloodrage under 20 Rage. Berserker Rage under 10 (Improved Berserker Rage)",
+    "Bloodthirst, then Slam at 60+ Rage right after a main-hand swing, then Whirlwind at 25+ Rage",
     "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
     "Heroic Strike at 90+ Rage, outside execute",
     "Hamstring as filler at 10+ Rage"
