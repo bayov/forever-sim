@@ -41,9 +41,10 @@ type Simulation struct {
 	// stat weights ask for it, and leveling sessions always have it, because two runs that
 	// differ in one spell then still share every other label's rolls. With the session's
 	// reseeds (reseedWithin) that takes about three quarters of the noise out of comparing two
-	// rotations over the same seeds, for about 7% more time per session.
+	// rotations over the same seeds, for a little more time per session.
 	labeledRands bool
-	testRands    map[string]Rand
+	testRands    map[string]*labeledRand
+	reseeds      int
 
 	// Current Simulation State
 	pendingActions []*PendingAction
@@ -248,7 +249,7 @@ func newSimWithEnv(env *Environment, simOptions *proto.SimOptions, signals simsi
 
 		isTest:       simOptions.IsTest || simOptions.UseLabeledRands,
 		labeledRands: simOptions.IsTest || simOptions.UseLabeledRands || env.Encounter.leveling != nil,
-		testRands:    make(map[string]Rand),
+		testRands:    make(map[string]*labeledRand),
 
 		Signals: signals,
 	}
@@ -269,13 +270,26 @@ func (sim *Simulation) labelRand(label string) Rand {
 		return sim.rand
 	}
 
+	// Add the seed to the label, so we still have run-run variance for stat weights.
 	labelRng, ok := sim.testRands[label]
 	if !ok {
-		// Add rseed to the label, so we still have run-run variance for stat weights.
-		labelRng = NewSplitMix(uint64(makeTestRandSeed(sim.rand.GetSeed(), label)))
+		labelRng = &labeledRand{rng: NewSplitMix(uint64(makeTestRandSeed(sim.rand.GetSeed(), label)))}
 		sim.testRands[label] = labelRng
+	} else if labelRng.reseeds != sim.reseeds {
+		labelRng.rng.Seed(makeTestRandSeed(sim.rand.GetSeed(), label))
 	}
-	return labelRng
+	labelRng.reseeds = sim.reseeds
+	return labelRng.rng
+}
+
+// labeledRand is the random source of one RandomFloat label.
+//
+// We seed it again only when it next rolls after a reseed (reseeds tells which reseed it has
+// its seed from). A leveling session reseeds at every mob it finds, and most labels don't roll
+// before the next one, so seeding all of them each time was a big share of a session's time.
+type labeledRand struct {
+	rng     *SplitMix64
+	reseeds int
 }
 
 // seedRands seeds every random source with this seed. Iteration i of a run uses the seed
@@ -300,11 +314,8 @@ func (sim *Simulation) reseed(seed int64) {
 	sim.rand.Seed(seed)
 	sim.roundRand.Seed(makeTestRandSeed(seed, damageRoundingLabel))
 
-	if sim.labeledRands {
-		for label, rng := range sim.testRands {
-			rng.Seed(makeTestRandSeed(seed, label))
-		}
-	}
+	// Each label's source takes its seed from this one when it next rolls (labelRand).
+	sim.reseeds++
 }
 
 const damageRoundingLabel = "Damage Rounding"
