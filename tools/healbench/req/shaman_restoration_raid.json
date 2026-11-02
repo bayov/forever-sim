@@ -1,0 +1,625 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceSkyborneWindshaper",
+            "class": "ClassShaman",
+            "equipment": {
+              "items": [
+                {
+                  "id": 990101,
+                  "enchant": 1509
+                },
+                {
+                  "id": 990102,
+                  "enchant": 1249057
+                },
+                {
+                  "id": 990103
+                },
+                {
+                  "id": 990104,
+                  "enchant": 1888
+                },
+                {
+                  "id": 990105,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990106,
+                  "enchant": 1220624
+                },
+                {
+                  "id": 990107,
+                  "enchant": 1248645
+                },
+                {
+                  "id": 990108
+                },
+                {
+                  "id": 990109,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990110,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990111
+                },
+                {
+                  "id": 990112
+                },
+                {
+                  "id": 990114
+                },
+                {
+                  "id": 990115
+                },
+                {
+                  "id": 990113,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 272433
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "mainHandImbue": "BrilliantManaOil",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "CerebralCortexCompound",
+              "intellectElixir": "ElixirOfGreaterIntellect",
+              "spiritElixir": "ElixirOfSages"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved"
+            },
+            "talentsString": "-005102-5530500315513151",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Alchemy",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 408510
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10497
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  },
+                  "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10468
+                      },
+                      "target": {
+                        "type": "LowestHealth"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "currentHealthPercent": {
+                            "sourceUnit": {
+                              "type": "LowestHealth"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.35"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Someone in my assignment is under 35% health: the fast heal."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1325256
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLe",
+                        "lhs": {
+                          "currentManaPercent": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.35"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Mana Tide Totem at 35% mana: 4 ticks of 290 mana to the party."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 408510
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 408510
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.6"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Water Shield back up once its 3 globes are spent (no mana, a global cooldown), below 60% mana."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10497
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10497
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 1325256
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Mana Spring Totem for the party, again after Mana Tide took its place."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 408521
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 408521
+                                  },
+                                  "targetUnit": {
+                                    "type": "MostHurt"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "healthMissing": {
+                                  "sourceUnit": {
+                                    "type": "MostHurt"
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "spellExpectedHealing": {
+                                  "spellId": {
+                                    "spellId": 408521
+                                  },
+                                  "targetUnit": {
+                                    "type": "MostHurt"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Riptide at the most hurt when it fits."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10623
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10623
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Chain Heal rank 3 at the most hurt, the biggest that what they miss covers; it jumps to two more."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10622
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10622
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Chain Heal rank 2 at the most hurt."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1064
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 1064
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Chain Heal rank 1 at the most hurt."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 25357
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25357
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Healing Wave rank 10 for one big hole."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10395
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10395
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Healing Wave rank 8 for one big hole."
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 20,
+            "restorationShaman": {
+              "options": {}
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "sunderRamp": {
+        "tank": true,
+        "pullSunders": 1
+      },
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

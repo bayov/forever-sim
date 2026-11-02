@@ -90,16 +90,44 @@
             "profession2": "Alchemy",
             "rotation": {
               "type": "TypeAPL",
-              "prepullActions": [],
-              "priorityList": [
+              "prepullActions": [
                 {
-                  "notes": "Racials, trinkets and Nature's Swiftness.",
                   "action": {
-                    "autocastOtherCooldowns": {}
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 408510
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3s"
+                    }
                   }
                 },
                 {
-                  "notes": "Someone is about to die: the fast heal.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10497
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  },
+                  "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness."
+                },
+                {
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -126,11 +154,114 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes": "Someone in my assignment is under 35% health: the fast heal."
                 },
                 {
-                  "notes": "Riptide on the tank whenever it's off: an instant heal and a HoT, and Chain Heal at the tank heals 25% more.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1325256
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLe",
+                        "lhs": {
+                          "currentManaPercent": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.35"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Mana Tide Totem at 35% mana: 4 ticks of 290 mana to the party."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 408510
+                      }
+                    },
+                    "condition": {
+                      "not": {
+                        "val": {
+                          "auraIsActive": {
+                            "auraId": {
+                              "spellId": 408510
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Water Shield back up once its 3 globes are spent (no mana, a global cooldown)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10497
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10497
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 1325256
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Mana Spring Totem for the party, again after Mana Tide took its place."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 408521
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    },
                     "condition": {
                       "not": {
                         "val": {
@@ -144,19 +275,11 @@
                           }
                         }
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 408521
-                      },
-                      "target": {
-                        "type": "Tank"
-                      }
                     }
-                  }
+                  },
+                  "notes": "Riptide on the tank whenever it's off: an instant heal and a HoT."
                 },
                 {
-                  "notes": "The tank's steady damage, from 3 bound ranks of Healing Wave: the biggest that what the tank misses covers. Rank 10 first.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -191,10 +314,10 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes": "Healing Wave rank 10 at the tank, the biggest that what it misses covers."
                 },
                 {
-                  "notes": "Healing Wave rank 8 for a smaller hole.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -229,10 +352,10 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes": "Healing Wave rank 8 at the tank."
                 },
                 {
-                  "notes": "Healing Wave rank 6 for the smallest.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -267,10 +390,10 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes": "Healing Wave rank 6 at the tank."
                 },
                 {
-                  "notes": "Raid damage: Chain Heal at the most hurt, from 3 bound ranks, the biggest that what's missing covers. Rank 3 first.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -302,10 +425,10 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes": "Chain Heal rank 3 at the most hurt when the tank is topped."
                 },
                 {
-                  "notes": "Chain Heal rank 2.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -337,10 +460,10 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes": "Chain Heal rank 2 at the most hurt."
                 },
                 {
-                  "notes": "Chain Heal rank 1.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -372,14 +495,15 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes": "Chain Heal rank 1 at the most hurt."
                 }
               ]
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
             "distanceFromTarget": 20,
-            "elementalShaman": {
+            "restorationShaman": {
               "options": {}
             }
           }

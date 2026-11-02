@@ -1,12 +1,11 @@
-import * as OtherInputs from '../core/components/other_inputs.js';
-import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
-import { Player } from '../core/player.js';
-import { APLRotation } from '../core/proto/apl.js';
-import { Class, Debuffs, Faction, IndividualBuffs, PartyBuffs, Race, RaidBuffs, Spec, Stat, TristateEffect } from '../core/proto/common.js';
-import { Stats } from '../core/proto_utils/stats.js';
-import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
-// import * as ShamanInputs from './inputs.js';
-import * as Presets from './presets.js';
+import { makeShamanImbueInput, migrateShamanImbue } from '../core/components/inputs/shaman_imbues';
+import * as OtherInputs from '../core/components/other_inputs';
+import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui';
+import { Player } from '../core/player';
+import { Class, Faction, PartyBuffs, Race, Spec, Stat } from '../core/proto/common';
+import { Stats } from '../core/proto_utils/stats';
+import { getSpecIcon, specNames } from '../core/proto_utils/utils';
+import * as Presets from './presets';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 	cssClass: 'restoration-shaman-sim-ui',
@@ -16,8 +15,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 	warnings: [],
 
 	// All stats for which EP should be calculated.
-	epStats: [Stat.StatIntellect, Stat.StatSpirit, Stat.StatSpellPower, Stat.StatSpellCrit, Stat.StatSpellHaste, Stat.StatMP5],
-	// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
+	epStats: [Stat.StatIntellect, Stat.StatSpirit, Stat.StatSpellPower, Stat.StatHealingPower, Stat.StatSpellCrit, Stat.StatSpellHaste, Stat.StatMP5],
+	// Reference stat against which to calculate EP.
 	epReferenceStat: Stat.StatSpellPower,
 	// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 	displayStats: [
@@ -26,6 +25,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 		Stat.StatIntellect,
 		Stat.StatSpirit,
 		Stat.StatSpellPower,
+		Stat.StatHealingPower,
 		Stat.StatSpellCrit,
 		Stat.StatSpellHaste,
 		Stat.StatMP5,
@@ -33,39 +33,32 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 	displayPseudoStats: [],
 
 	defaults: {
+		race: Presets.OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
-		// Default EP weights for sorting gear in the gear picker.
+		// Default EP weights for sorting gear in the gear picker. Not measured: a healer's EP needs a
+		// healing score, which the individual sim doesn't have yet (docs/healing_sim.md).
 		epWeights: Stats.fromMap({
-			[Stat.StatIntellect]: 0.22,
-			[Stat.StatSpirit]: 0.05,
+			[Stat.StatIntellect]: 0.3,
+			[Stat.StatSpirit]: 0.1,
 			[Stat.StatSpellPower]: 1,
-			[Stat.StatSpellCrit]: 0.67,
-			[Stat.StatSpellHaste]: 1.29,
-			[Stat.StatMP5]: 0.08,
+			[Stat.StatHealingPower]: 1,
+			[Stat.StatSpellCrit]: 0.5,
+			[Stat.StatSpellHaste]: 0.5,
+			[Stat.StatMP5]: 1,
 		}),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default talents.
-		talents: Presets.RaidHealingTalents.data,
+		talents: Presets.DefaultTalents.data,
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
+		other: Presets.OtherDefaults,
 		// Default raid/party buffs settings.
-		raidBuffs: RaidBuffs.create({
-			arcaneBrilliance: true,
-			divineSpirit: true,
-			giftOfTheWild: TristateEffect.TristateEffectImproved,
-			moonkinAura: true,
-		}),
+		raidBuffs: Presets.DefaultRaidBuffs,
 		partyBuffs: PartyBuffs.create({}),
-		individualBuffs: IndividualBuffs.create({
-			blessingOfKings: true,
-			blessingOfWisdom: 2,
-		}),
-		debuffs: Debuffs.create({
-			faerieFire: true,
-			judgementOfWisdom: true,
-		}),
+		individualBuffs: Presets.DefaultIndividualBuffs,
+		debuffs: Presets.DefaultDebuffs,
 	},
 	// IconInputs to include in the 'Player' section on the settings tab.
 	playerIconInputs: [],
@@ -74,8 +67,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 	excludeBuffDebuffInputs: [],
 	// Inputs to include in the 'Other' section on the settings tab.
 	otherInputs: {
-		inputs: [OtherInputs.TankAssignment],
+		inputs: [makeShamanImbueInput<Spec.SpecRestorationShaman>(), OtherInputs.DistanceFromTarget],
 	},
+	migrateSettings: migrateShamanImbue,
 	customSections: [],
 	encounterPicker: {
 		// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
@@ -83,15 +77,17 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 	},
 
 	presets: {
+		builds: [Presets.PresetBuildTankHealer, Presets.PresetBuildRaidHealer],
 		// Preset talents that the user can quickly select.
-		talents: [Presets.RaidHealingTalents, Presets.TankHealingTalents],
-		rotations: [],
+		talents: Presets.TalentPresets,
+		// Preset rotations that the user can quickly select.
+		rotations: Presets.APLPresets,
 		// Preset gear configurations that the user can quickly select.
-		gear: [Presets.DefaultGear],
+		gear: Presets.GearPresets,
 	},
 
-	autoRotation: (_player: Player<Spec.SpecRestorationShaman>): APLRotation => {
-		return APLRotation.create();
+	autoRotation: () => {
+		return Presets.DefaultAPL.rotation.rotation!;
 	},
 
 	raidSimPresets: [
@@ -101,21 +97,23 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 			defaultName: 'Restoration',
 			iconUrl: getSpecIcon(Class.ClassShaman, 2),
 
-			talents: Presets.RaidHealingTalents.data,
+			talents: Presets.DefaultTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceUnknown,
-				[Faction.Horde]: Race.RaceOrc,
+				[Faction.Alliance]: Race.RaceDwarf,
+				[Faction.Horde]: Race.RaceSkyborneWindshaper,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
 				[Faction.Alliance]: {
 					1: Presets.DefaultGear.gear,
+					2: Presets.DefaultGear.gear,
 				},
 				[Faction.Horde]: {
 					1: Presets.DefaultGear.gear,
+					2: Presets.DefaultGear.gear,
 				},
 			},
 		},

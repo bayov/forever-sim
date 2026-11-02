@@ -7,6 +7,7 @@ import (
 	dpsrogue "github.com/wowsims/classic/sim/rogue/dps_rogue"
 	"github.com/wowsims/classic/sim/shaman/elemental"
 	"github.com/wowsims/classic/sim/shaman/enhancement"
+	"github.com/wowsims/classic/sim/shaman/restoration"
 	"github.com/wowsims/classic/sim/shaman/warden"
 
 	"github.com/wowsims/classic/sim/druid/feral"
@@ -22,7 +23,6 @@ import (
 	// healingPriest "github.com/wowsims/classic/sim/priest/healing"
 	"github.com/wowsims/classic/sim/priest/shadow"
 
-	// restoShaman "github.com/wowsims/classic/sim/shaman/restoration"
 	dpsWarlock "github.com/wowsims/classic/sim/warlock/dps"
 	dpsWarrior "github.com/wowsims/classic/sim/warrior/dps_warrior"
 	tankWarrior "github.com/wowsims/classic/sim/warrior/tank_warrior"
@@ -41,9 +41,9 @@ func RegisterAll() {
 	// feralTank.RegisterFeralTankDruid()
 	// restoDruid.RegisterRestorationDruid()
 	elemental.RegisterElementalShaman()
+	restoration.RegisterRestorationShaman()
 	enhancement.RegisterEnhancementShaman()
 	warden.RegisterWardenShaman()
-	// restoShaman.RegisterRestorationShaman()
 	hunter.RegisterHunter()
 	mage.RegisterMage()
 	// healingPriest.RegisterHealingPriest()

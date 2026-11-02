@@ -1,0 +1,412 @@
+{
+  "type": "TypeAPL",
+  "prepullActions": [
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 408510
+          }
+        }
+      },
+      "doAtValue": {
+        "const": {
+          "val": "-3s"
+        }
+      }
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10497
+          }
+        }
+      },
+      "doAtValue": {
+        "const": {
+          "val": "-1.5s"
+        }
+      }
+    }
+  ],
+  "priorityList": [
+    {
+      "action": {
+        "autocastOtherCooldowns": {}
+      },
+      "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10468
+          },
+          "target": {
+            "type": "LowestHealth"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpLt",
+            "lhs": {
+              "currentHealthPercent": {
+                "sourceUnit": {
+                  "type": "LowestHealth"
+                }
+              }
+            },
+            "rhs": {
+              "const": {
+                "val": "0.35"
+              }
+            }
+          }
+        }
+      },
+      "notes": "Someone in my assignment is under 35% health: the fast heal."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 1325256
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpLe",
+            "lhs": {
+              "currentManaPercent": {}
+            },
+            "rhs": {
+              "const": {
+                "val": "0.35"
+              }
+            }
+          }
+        }
+      },
+      "notes": "Mana Tide Totem at 35% mana: 4 ticks of 290 mana to the party."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 408510
+          }
+        },
+        "condition": {
+          "not": {
+            "val": {
+              "auraIsActive": {
+                "auraId": {
+                  "spellId": 408510
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Water Shield back up once its 3 globes are spent (no mana, a global cooldown)."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10497
+          }
+        },
+        "condition": {
+          "and": {
+            "vals": [
+              {
+                "not": {
+                  "val": {
+                    "auraIsActive": {
+                      "auraId": {
+                        "spellId": 10497
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "not": {
+                  "val": {
+                    "auraIsActive": {
+                      "auraId": {
+                        "spellId": 1325256
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "cmp": {
+                  "op": "OpGe",
+                  "lhs": {
+                    "remainingTime": {}
+                  },
+                  "rhs": {
+                    "const": {
+                      "val": "20s"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "notes": "Mana Spring Totem for the party, again after Mana Tide took its place."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 408521
+          },
+          "target": {
+            "type": "Tank"
+          }
+        },
+        "condition": {
+          "not": {
+            "val": {
+              "dotIsActive": {
+                "spellId": {
+                  "spellId": 408521
+                },
+                "targetUnit": {
+                  "type": "Tank"
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Riptide on the tank whenever it's off: an instant heal and a HoT."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 25357
+          },
+          "target": {
+            "type": "Tank",
+            "index": 0
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "Tank",
+                  "index": 0
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 25357
+                },
+                "targetUnit": {
+                  "type": "Tank",
+                  "index": 0
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Healing Wave rank 10 at the tank, the biggest that what it misses covers."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10395
+          },
+          "target": {
+            "type": "Tank",
+            "index": 0
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "Tank",
+                  "index": 0
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 10395
+                },
+                "targetUnit": {
+                  "type": "Tank",
+                  "index": 0
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Healing Wave rank 8 at the tank."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 959
+          },
+          "target": {
+            "type": "Tank",
+            "index": 0
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "Tank",
+                  "index": 0
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 959
+                },
+                "targetUnit": {
+                  "type": "Tank",
+                  "index": 0
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Healing Wave rank 6 at the tank."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10623
+          },
+          "target": {
+            "type": "MostHurt"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 10623
+                },
+                "targetUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Chain Heal rank 3 at the most hurt when the tank is topped."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10622
+          },
+          "target": {
+            "type": "MostHurt"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 10622
+                },
+                "targetUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Chain Heal rank 2 at the most hurt."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 1064
+          },
+          "target": {
+            "type": "MostHurt"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 1064
+                },
+                "targetUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Chain Heal rank 1 at the most hurt."
+    }
+  ]
+}

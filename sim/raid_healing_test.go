@@ -350,3 +350,37 @@ func TestHealingFightRaidDamageShare(t *testing.T) {
 		t.Errorf("a 0.375 share hit %.3f as often as hitting everyone (%.0f of %.0f)", r, some, all)
 	}
 }
+
+// The Restoration shaman's tank healer preset (tools/healbench's request) in a 5 minute fight: it
+// keeps Water Shield and Mana Spring Totem up and puts Mana Tide down when its mana runs low, and
+// the totems' mana reaches the mages in its party.
+func TestHealingFightRestorationManaTools(t *testing.T) {
+	pulse := &proto.RaidDamageEvent{School: proto.SpellSchool_SpellSchoolFire, MinDamage: 600, MaxDamage: 700, Who: proto.RaidDamageEvent_NotTanks, EverySeconds: 6, FirstAt: 3}
+	rsr := healingRaid(t, 1, 1, 3, pulse)
+	rsr.Encounter.Duration = 300
+	res := runRaid(t, rsr)
+	healer := playerMetrics(res, 1)
+	casts := map[int32]int32{}
+	for _, a := range healer.Actions {
+		for _, tgt := range a.Targets {
+			casts[a.Id.GetSpellId()] += tgt.Casts
+		}
+	}
+	for id, name := range map[int32]string{408510: "Water Shield", 10497: "Mana Spring Totem", 1325256: "Mana Tide Totem"} {
+		if casts[id] == 0 {
+			t.Errorf("no %s cast", name)
+		}
+	}
+	for i := 2; i < 5; i++ {
+		gained := map[int32]float64{}
+		for _, r := range playerMetrics(res, i).Resources {
+			gained[r.Id.GetSpellId()] += r.Gain
+		}
+		if gained[10497] <= 0 || gained[1325256] <= 0 {
+			t.Errorf("mage %d got %.0f mana from Mana Spring and %.0f from Mana Tide", i, gained[10497], gained[1325256])
+		}
+	}
+	if healer.Ehps.Avg <= 0 {
+		t.Errorf("EHPS %.1f", healer.Ehps.Avg)
+	}
+}

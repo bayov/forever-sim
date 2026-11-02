@@ -189,10 +189,12 @@ message RestorationShaman {
 	message Rotation {
 	}
 
-	// NextIndex: 8
+	// NextIndex: 9
 	message Options {
 		int32 earth_shield_p_p_m = 5;
 		ShamanTotems totems = 6 [deprecated=true];
+		// The shaman's own weapon imbue on the main hand, like EnhancementShaman's.
+		WeaponImbue shaman_imbue = 8;
 	}
 	Options options = 3;
 }

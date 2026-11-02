@@ -1,7 +1,7 @@
 import { shamanImbueTooltip } from '../../forever/shaman_imbues';
 import { Player } from '../../player';
 import { Spec, WeaponImbue } from '../../proto/common.js';
-import { ElementalShaman_Options, EnhancementShaman_Options, WardenShaman_Options } from '../../proto/shaman.js';
+import { ElementalShaman_Options, EnhancementShaman_Options, RestorationShaman_Options, WardenShaman_Options } from '../../proto/shaman.js';
 import { IndividualSimSettings } from '../../proto/ui.js';
 import { SpecOptions } from '../../proto_utils/utils.js';
 import * as InputHelpers from '../input_helpers.js';
@@ -12,7 +12,7 @@ import * as InputHelpers from '../input_helpers.js';
 // temporary enchant, so it stacks with an oil or a stone in the consumables and with another
 // shaman's Windfury or Flametongue Totem.
 
-type ImbueSpec = Spec.SpecElementalShaman | Spec.SpecEnhancementShaman | Spec.SpecWardenShaman;
+type ImbueSpec = Spec.SpecElementalShaman | Spec.SpecEnhancementShaman | Spec.SpecRestorationShaman | Spec.SpecWardenShaman;
 
 const SHAMAN_IMBUES = [WeaponImbue.RockbiterWeapon, WeaponImbue.FlametongueWeapon, WeaponImbue.FrostbrandWeapon, WeaponImbue.WindfuryWeapon];
 
@@ -65,6 +65,9 @@ export function migrateShamanImbue(settings: IndividualSimSettings) {
 			break;
 		case 'enhancementShaman':
 			options = spec.enhancementShaman.options ??= EnhancementShaman_Options.create();
+			break;
+		case 'restorationShaman':
+			options = spec.restorationShaman.options ??= RestorationShaman_Options.create();
 			break;
 		case 'wardenShaman':
 			options = spec.wardenShaman.options ??= WardenShaman_Options.create();
