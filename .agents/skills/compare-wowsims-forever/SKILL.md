@@ -162,10 +162,10 @@ rotation gives a result that looks off.
 
 As of 2026-11-01, on the report's requests: the hunter and rogue rows with ours at 0e87f3d and theirs at b70888a518, the
 warrior rows with ours at 7587a1a and theirs at 895cd67f99. The four pet rows (two since settled) add up to the BM cat's whole
-pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). The warrior rows leave 4 DPS of Fury's and
-Fury 2H's gap and 12 of Arms' unexplained (Arms: Heroic Strike, the rage dump at 90, gets 1.4 casts more in ours, and theirs
-loses 8 more rage at the cap: when each engine re-checks the rotation). A rerun should find these, so it can tell what is
-new. Keep the list current when one is settled.
+pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). The warrior rows add up to Arms' whole
+gap and leave 4 DPS of Fury's and Fury 2H's unexplained. Engine timing (when each engine re-checks the rotation, Heroic Strike
+1.4 casts more in ours on Arms) moves casts but nets about 0 DPS once the Windfury rule below is matched. A rerun should find
+these, so it can tell what is new. Keep the list current when one is settled.
 
 | Difference | Ours | Theirs | Status |
 |---|---|---|---|
@@ -178,13 +178,16 @@ new. Keep the list current when one is settled.
 | Raptor Strike rank 8 | +96 (`hunter_raptor_31plus`) | +70 | Ruling |
 | AQ book ranks | Off under Forever | Hunter's top ranks only | Worth 30 to 36 DPS to ranged hunters |
 | Explosive reach | 10 yd, since 2026-11-01 | 10 yd | Settled (ours was a bug) |
+| Windfury Totem on a landed hit that deals no damage (Rend's application, Sunder Armor, Rupture's and Garrote's) | Rolls it (any landed main-hand hit, `sim/core/buffs.go` `CreateExtraAttackAuraCommon`) | Doesn't (`RequireDamageDealt`, the decoder's default, with a TODO to check in game; their own weapon-proc rule says the opposite) | Open, on `notes.md`'s To Verify list. Arms 11.9 DPS (all of its gap: about 6 Rend applications a fight), Subtlety 2.5 |
 | Windfury Totem ICD, extra attacks and the swing, Eviscerate's attack power | Theirs' rules since 2026-10-31 | 100 ms, no swing reset, 4% a combo point | Settled, on `notes.md`'s To Verify list |
-| Off-GCD items (Thistle Tea) | Fire when the rotation says | Only at the next GCD check | A choice (engine). Ours drinks Thistle Tea at 10 energy, which theirs never does: about 13.5 DPS on Combat Swords. Bloodrage at under 20 rage: 2.6 casts against 1.9 on Fury, worth nothing |
+| Off-GCD items (Thistle Tea) | Fire when the rotation says | Only at the next GCD check | A choice (engine). With Charge in the opener theirs walks in and starts its GCDs at 0.21 s, which shifts the trinket windows (Arms Slam +0.7, white hits −0.9 in ours: they cancel). Ours drinks Thistle Tea at 10 energy, which theirs never does: about 13.5 DPS on Combat Swords. Bloodrage at under 20 rage: 2.6 casts against 1.9 on Fury, worth nothing |
 | Raid damage taken | 2 hits a minute of 1,500 (standards 24) | None | A choice (the fight). The warrior's rage from it: Arms 8.5, Fury 15.7, Fury 2H 19.5 DPS. `--no-raid-damage` |
 | Flurry charges | Two white swings within 500 ms spend one charge (the Classic sims') | Every white swing spends one, and a missed Heroic Strike or Cleave (0183e67d2f, no log cited) | Report assumption `flurry_batch` (one value, user ruling 2026-11-02). Fury 11.4, Fury 2H 3.4 DPS |
 | Anger Management | 1 rage every 3 s (Forever's tooltip) | 1.5 every 5 s (the aura's amount, a power regen per 5 s) | Open: a log of its rage ticks settles it. Under 2.1 DPS |
 | Unbridled Wrath on Heroic Strike | Procs (client proc flag 4, notes.md) | White swings only | Report assumption `warr_uw_queued` (one value, user ruling 2026-11-02). Within 1 DPS |
 | Two-hand white crit rage | Twice the whole swing since 2026-11-01 | The same (7c28cfa731, Forever logs) | Settled (ours was a bug): it was −12.4 on Arms, −13 on Fury 2H |
+| Explosives' hit | 1% miss at most (an Era comment, `sim/core/consumes.go`) | The normal spell hit table | Open: the client row 13241 would say. Sapper +0.3 DPS |
+| Touch of the Grave's roll | On any ability cast (a guess, `racials_forever.go`) | On a landed hit that deals damage | Open. +0.4 DPS on Undead Arms |
 | Synthetic sets' 2 piece (1% attack speed) | Live | Registered by `cmpsim` (warrior head 991001, 991019) | A translation: without it theirs was 5 to 8 DPS low |
 | Undead base stats | 82 Str, 129 Agi | 79, 128 | Race offset ruling. `align.py` closes it |
 | Totem ranks | Trainer (Strength of Earth 42, Grace of Air 77) | AQ books' (53, 89) | No AQ books at launch (assumed) |
