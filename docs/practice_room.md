@@ -951,6 +951,10 @@ only when changed, so a missing CVar means the default from the Forever CVar lis
 | `GET /api/db2/<table>` | one game table as JSON, from the cached wago CSV |
 | `GET /api/addons/<path>` | one sound file from `_forever_/Interface/AddOns`, read only |
 | `GET`, `POST /api/attempts` | list and save attempts, `GET /api/attempts/<id>` for one |
+| `POST /api/replay` | run an attempt again natively, its summary and log |
+| `GET /api/presets`, `/api/presets/<name>` | the DPS Report's builds, a quick way in |
+| `GET /api/spells?ids=` | spell names and ranks, from the cached wago tables |
+| `GET /api/icon/<spell or item>/<id>` | an icon name from Wowhead, cached |
 
 It also serves `/forever/assets/` from the repo's `assets/`, because `ui/core` code fetches files like
 `/forever/assets/database/db.json` (`ui/core/proto_utils/database.ts:23`).
@@ -1015,6 +1019,63 @@ slowest player, and joining mid-fight is hard. So the server decides everything,
 **Friends' setup.** The host serves the client over a tunnel such as Tailscale, so friends need only Chrome. Each
 friend's browser reads their own WoW install's assets through a small local helper or the File System Access API, so
 we never send game files anywhere. The details wait for Milestone 4.
+
+## Status (2026-11-02)
+
+The room plays: the enh shaman against the dummy, with capsules for units. `make practice-run` builds it and serves
+it at http://127.0.0.1:3434/. Real WoW models are not in yet (step 0 and steps 6 and 8, see below).
+
+**Done and tested:**
+
+- Step 1, the session (`sim/practice`). Go tests cover the doc's whole list: the queue, casting, auto attack, every
+  pull trigger, the swap keeping state, the prepull window (a 70 minute prepull too), both modes, imbue swaps under
+  Windfury Totem, Rockbiter's attack power, Ghost Wolf, Earthbind Totem, potions and sappers.
+- The rotation check: the enh APL's own casts as inputs give 934.8 DPS against the APL's 933.6, over 100 seeds.
+- Every DPS Report build casts its whole toolkit. The enh builds never fail. Other specs' toolkits hold spells the
+  sim models only for another spec (a balance druid's Cat Form), and those end the attempt with an error instead of
+  crashing the worker.
+- Step 2, replays: a saved attempt replays to the live fight's log byte for byte, in both modes and after prepull
+  window swaps. Opening it in the Replay view is not wired yet.
+- Step 3, `practice.wasm` in its own worker. `go list -deps ./sim/wasm` shows no practice package.
+- Step 4, the server, with golden file tests for the Lua reader, the WTF bindings and CVars, and the records.
+- Steps 5 and 7: the scene, WoW movement and camera, targeting, bars from the record (or from the rotation when
+  there's none), macros, bar and key editing, unit frames, cast bar, swing timer, auras, errors, combat text, the
+  meter, the fight settings and the summary. `tools/practice/smoke.py` plays a scripted fight in headless Chrome:
+  no console errors, the meter matches the summary, an imbue swap, and an Encounter mode fight that ends on its own.
+- The core hooks and the aura hold fix give identical results on all 73 DPS Report builds.
+
+**Spike 4 (WASM in real time):**
+
+| What | Native | WASM (Node) | Chrome |
+| --- | --- | --- | --- |
+| Session start (`NewSim`, `Reset`, `PrePull`) | 2ms | 37ms | 11ms |
+| Worst-case pull swap: 9 minutes of nonstop strafing and turning, 5454 inputs | 3ms | 10ms | |
+| A normal pull swap | | | 3ms |
+| One step of a fight, p99 | 0.04ms | 0.5ms | |
+| WASM load | | | 0.2s, 38.6 MB |
+
+Two changes got the swap there. The next swap's sim is built in idle time (`PrepareSpare`). Before the pull, with
+auto attack off, the world skips its 50ms ticks, since range and facing then change nothing the sim sees. The worst
+case still takes about 1.5 frames at 144Hz. Headless Chrome's press to answer time (19ms median) is its software
+rendering, not the sim.
+
+**Changed from the plan above:**
+
+- The HUD reads typed state and hit events from each batch (`PlayerState`, `HitEvent`), not parsed log lines. The log
+  lines still come with each batch.
+- Icons and item names come from Wowhead's tooltip service through the server (`/api/icon`), cached in
+  `~/forever-practice/icons.json`, until the asset pipeline gives the client's own.
+- The spells the sim doesn't have (kind 3) are a small table of top rank values in `sim/practice/utility.go`, not
+  rows from the client's tables yet.
+- Spell names and ranks for macros come from the wago tables already cached in `~/forever-logs/wago`.
+
+**Not done yet:**
+
+- Step 0 and steps 6 and 8, the real models. Running TACTTool (a downloaded binary) needs the user's OK. Then the
+  wow.export reader port and the dressed character.
+- The BayovCore probe and the feel pass (step 9). The feel checklist is `docs/practice_room_feel.md`.
+- Opening an attempt in the Replay view, Keyboard Lock and fullscreen, pointer raw input, sounds and the spell
+  queue's cooldown case (check).
 
 ## Milestones
 
