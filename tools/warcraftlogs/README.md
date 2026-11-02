@@ -16,6 +16,9 @@ Make an API client at https://www.warcraftlogs.com/api/clients/ (any name, redir
 {"client_id": "...", "client_secret": "..."}
 ```
 
+Or set `WCL_CLIENT_ID` and `WCL_CLIENT_SECRET` in the environment, as a cloud session's
+environment variables.
+
 ## Going easy on the API
 
 Every client gets 3600 points an hour. A report's fights, actors and abilities cost about 2
