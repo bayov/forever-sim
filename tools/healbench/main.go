@@ -11,7 +11,8 @@
 // healing model.
 //
 // The damage is a made-up -profile or a boss from tools/encounters (-encounter), judged at the
-// boss's own fight length (the user's ruling). -role picks what the healers face and what fails:
+// boss's own fight length (the user's ruling): for -role raid and both the logs' median kill
+// (raidHealing.fightSeconds), for tank the file's duration, the main tank's time on the boss. -role picks what the healers face and what fails:
 //
 //   - tank: the boss's melee and its abilities on the tanks, nothing on the raid; the healers are
 //     assigned the tanks; a fight fails when a tank dies. The line is 2% of fights.
@@ -26,6 +27,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"math"
@@ -68,7 +70,7 @@ func main() {
 	healers := flag.Int("healers", 0, "copies of the healer (default 1 for -role tank, 2 otherwise)")
 	fillers := flag.Int("fillers", 7, "copies of the filler")
 	iterations := flag.Int("iters", 1000, "iterations a sim")
-	duration := flag.Float64("dur", 0, "fight length in seconds (default the encounter's, 180 for a profile)")
+	duration := flag.Float64("dur", 0, "fight length in seconds (default the encounter's: the logs' median kill for -role raid or both, the main tank's time for tank; 180 for a profile)")
 	carry := flag.Bool("carry", false, "also find the damage carried, and the death floor there")
 	floorOnly := flag.Bool("floor", false, "print the death floor at -scale instead")
 	logOne := flag.Bool("log", false, "print one iteration's log of the first build instead")
@@ -95,6 +97,7 @@ func main() {
 			fail(err)
 		}
 		fight = encounterFight(enc)
+		fight.killSeconds = killSeconds(*encounterPath)
 	} else {
 		p, ok := profiles[*profileName]
 		if !ok {
@@ -104,6 +107,11 @@ func main() {
 	}
 	if o.duration == 0 {
 		o.duration = fight.encounter.Duration
+		// The raid's damage is the whole kill's (the logs' median kill), where the file's own length is
+		// the main tank's time on the boss (Onyxia's first phase, one tank's stint on Vaelastrasz).
+		if o.role != "tank" && fight.killSeconds > 0 {
+			o.duration = fight.killSeconds
+		}
 	}
 	tank := firstPlayer(read(*tankPath))
 	filler := firstPlayer(read(*fillerPath))
@@ -152,6 +160,26 @@ type fight struct {
 	name, description string
 	tanks             int
 	encounter         *proto.Encounter
+	// The median kill in the logs (the file's raidHealing.fightSeconds), 0 when it has none.
+	killSeconds float64
+}
+
+// killSeconds is an encounter file's median kill length from the logs (raidHealing.fightSeconds,
+// the 10th, 50th and 90th percentile), or 0.
+func killSeconds(path string) float64 {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return 0
+	}
+	var f struct {
+		RaidHealing struct {
+			FightSeconds []float64 `json:"fightSeconds"`
+		} `json:"raidHealing"`
+	}
+	if json.Unmarshal(data, &f) != nil || len(f.RaidHealing.FightSeconds) < 2 {
+		return 0
+	}
+	return f.RaidHealing.FightSeconds[1]
 }
 
 func encounterFight(enc *tankscore.Encounter) fight {

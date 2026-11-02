@@ -110,6 +110,66 @@
     "firstAt": 10,
     "everySeconds": 3.0,
     "spreadSeconds": 0
+   },
+   {
+    "spellId": 13880,
+    "school": "SpellSchoolFire",
+    "minDamage": 39,
+    "maxDamage": 261,
+    "who": "NotTanks",
+    "share": 0.027,
+    "firstAt": 6.6,
+    "ticks": 11,
+    "tickSeconds": 3.0,
+    "everySeconds": 5.08,
+    "randomTiming": true
+   },
+   {
+    "spellId": 13880,
+    "school": "SpellSchoolFire",
+    "minDamage": 92,
+    "maxDamage": 108,
+    "who": "NotTanks",
+    "share": 0.057,
+    "firstAt": 3.6,
+    "everySeconds": 2.96,
+    "randomTiming": true
+   },
+   {
+    "spellId": 19798,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 1383,
+    "maxDamage": 1602,
+    "who": "NotTanks",
+    "share": 0.306,
+    "firstAt": 71.3,
+    "everySeconds": 65.06,
+    "randomTiming": true
+   },
+   {
+    "spellId": 19820,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 272,
+    "maxDamage": 828,
+    "who": "NotTanks",
+    "share": 0.027,
+    "firstAt": 16.5,
+    "ticks": 10,
+    "tickSeconds": 2.0,
+    "everySeconds": 72.88,
+    "randomTiming": true
+   },
+   {
+    "spellId": 0,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 1777,
+    "maxDamage": 2928,
+    "who": "NotTanks",
+    "share": 0.027,
+    "firstAt": 4.3,
+    "melee": true,
+    "everySeconds": 126.02,
+    "randomTiming": true
    }
   ]
  },
@@ -118,5 +178,70 @@
   "hpsEach": 258,
   "castSeconds": 3.23,
   "notes": "From the Anniversary Hardcore realms's logs (28 kills): while the boss was on the main tank, 7 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,809 a second with overheal and absorbs (37% of the heals effective), 2.17 heals and HoT ticks a second, against 711 damage taken a second. The tank's own heals (1% of its healing) are left out. Main tanks: Warrior 27, Druid 1."
- }
+ },
+ "raidHealing": {
+  "raidSize": 40,
+  "tanks": 3,
+  "addTanks": 2,
+  "dtpsAddTanks": 862,
+  "healers": 11,
+  "healersRange": [
+   9,
+   13
+  ],
+  "healerClasses": {
+   "Priest": 5.43,
+   "Shaman": 2.68,
+   "Paladin": 1.96,
+   "Druid": 1.11
+  },
+  "hpsEachHealer": 401,
+  "raidHps": 2069,
+  "raidHpsWithOverheal": 4828,
+  "hpsOnTanks": 1539,
+  "hpsOnOthers": 496,
+  "hpsOnOthersWithOverheal": 984,
+  "dtpsEachOther": 11.9,
+  "dtpsTanks": 1567,
+  "deathsOthersPerKill": 0,
+  "deathsTanksPerKill": 0,
+  "killsWithoutDeath": "28/28",
+  "fightSeconds": [
+   43,
+   56,
+   70
+  ],
+  "notes": "What the Anniversary Hardcore realms raids had on Golemagg the Incinerator (28 kills, Warcraft Logs): the median kill's raid of 40 with 3 tanks (2 of them on adds, who took 862 a second together, not in the events), 11 healers by Warcraft Logs' healer role (93% of the healing), each 401 HPS with overheal. The raid healed 2,069 a second (1,539 on the tanks, 496 on the rest, 50% overheal on the rest). Each non-tank took 11.9 a second after mitigation. Fight length is the 10th percentile, median and 90th percentile kill. For the healing sim to check its healer counts against."
+ },
+ "raidSource": "[logs: the Anniversary Hardcore realms] The raidDamage events with who NotTanks: Warcraft Logs, 28 kills (tools/warcraftlogs/wclcli.py raid, tools/encounters/logs/anniversary_mc_raid.json): the abilities that dealt 2% or more of the non-tanks' damage taken in 10% or more of the kills, 98% of it together, their rates scaled by 1.02 for the rest. Each is a share of the non-tanks, so the file fits any raid size. Magma Splash 13880 ticks from Golemagg the Incinerator (64% of the non-tanks' damage, in 28 of 28 kills): 39 to 261 unmitigated, the 5th to 95th percentile stretched to an even roll; 3% of the non-tanks a cast (10th to 90th percentile 3 to 5), 7.6 landed a second on each (100% of it landing), so a cast every 5.08 s at random (the logs count 9.5 casts a minute), the first at 7 s (median) of a 56 s kill, 11 ticks 3.0 s apart. Magma Splash 13880 from Golemagg the Incinerator (15% of the non-tanks' damage, in 28 of 28 kills): 92 to 108 unmitigated, the 5th to 95th percentile stretched to an even roll; 6% of the non-tanks a cast (10th to 90th percentile 3 to 16), 1.8 landed a second on each (100% of it landing), so a cast every 2.96 s at random (the logs count 10.1 casts a minute), the first at 4 s (median) of a 56 s kill. Earthquake 19798 from Golemagg the Incinerator (12% of the non-tanks' damage, in 5 of 28 kills): 1,383 to 1,602 unmitigated, the 5th to 95th percentile stretched to an even roll; 31% of the non-tanks a cast (10th to 90th percentile 25 to 38), 1.4 landed a second on each (100% of it landing), so a cast every 65.06 s at random (the logs count 0.2 casts a minute), the first at 71 s (median) of a 56 s kill. Mangle 19820 ticks from Core Rager (5% of the non-tanks' damage, in 7 of 28 kills): 272 to 828 unmitigated, the 5th to 95th percentile stretched to an even roll; 3% of the non-tanks a cast (10th to 90th percentile 3 to 3), 0.6 landed a second on each (46% of it landing), so a cast every 72.88 s at random (the logs count 0.3 casts a minute), the first at 17 s (median) of a 56 s kill, 10 ticks 2.0 s apart. Melee 1 from Core Rager (3% of the non-tanks' damage, in 10 of 28 kills): 1,777 to 2,928 unmitigated, the 5th to 95th percentile stretched to an even roll; 3% of the non-tanks a cast (10th to 90th percentile 3 to 3), 0.3 landed a second on each (69% of it landing), so a cast every 126.02 s at random (the logs count 0.4 casts a minute), the first at 4 s (median) of a 56 s kill. Together they land 11.9 a second on each non-tank over a median kill, at the logs' mitigation, against 11.9 in the logs.",
+ "raidReports": [
+  "4HvCT1GAhQPL6daW:50",
+  "6Prnja1FC34YMfL2:36",
+  "9VdCNpKWRBj6Fvw1:55",
+  "9aBNHQ1nd6TVhGtY:64",
+  "AQCNgPt89YwjHcyd:62",
+  "Az7vdr3TyHwgf6hX:20",
+  "BRWb2v6YTwgt17Q8:69",
+  "Cxy2hA4avwZTQVtX:56",
+  "FjyRJBHQ6dkT4aCc:77",
+  "GCYjWTmkzpwZMnat:56",
+  "HwDKZnyvgVRNmh1f:60",
+  "L7QbaC4pv2wVkcXm:82",
+  "LrqxF49hHNpmcVXb:61",
+  "Lw9BQhyzpgNKX4JR:77",
+  "Mchtrgfdym21LpjY:24",
+  "R2vmfVpGPYjBCXNk:42",
+  "TC9PNZgQ64zMGKHD:44",
+  "azPW9m7pnGXFC2qD:6",
+  "d1qnzQcYJxvyrHLR:52",
+  "f3Wat7vb8pndYG9M:42",
+  "fr9V1NQWg3YpyXkM:77",
+  "hCLZBMbHnxtVFAWr:26",
+  "nLwG1VHdRr8tc26X:66",
+  "pAdJkyMjwTxbmg8z:95",
+  "tzv8DYCg7d2BmhZq:52",
+  "vXD9KYTCgc3dQq7W:63",
+  "wbxV6q4ZrCMyT82L:68",
+  "znCmGRZMr7b2k8Pw:76"
+ ]
 }

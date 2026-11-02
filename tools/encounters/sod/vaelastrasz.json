@@ -172,10 +172,68 @@
     "school": "SpellSchoolFire",
     "minDamage": 555,
     "maxDamage": 645,
-    "who": "Everyone",
+    "who": "Tanks",
     "firstAt": 4,
     "everySeconds": 2,
     "spreadSeconds": 0
+   },
+   {
+    "spellId": 23462,
+    "school": "SpellSchoolFire",
+    "minDamage": 554,
+    "maxDamage": 646,
+    "who": "NotTanks",
+    "firstAt": 3.2,
+    "everySeconds": 3.73,
+    "randomTiming": true
+   },
+   {
+    "spellId": 367987,
+    "school": "SpellSchoolFire",
+    "minDamage": 39,
+    "maxDamage": 1878,
+    "who": "NotTanks",
+    "share": 0.061,
+    "firstAt": 24.6,
+    "ticks": 14,
+    "tickSeconds": 2.0,
+    "everySeconds": 8.71,
+    "randomTiming": true
+   },
+   {
+    "spellId": 19983,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 4819,
+    "maxDamage": 7331,
+    "who": "NotTanks",
+    "share": 0.229,
+    "firstAt": 10.7,
+    "everySeconds": 35.74,
+    "randomTiming": true
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 4000,
+    "maxDamage": 4000,
+    "who": "NotTanks",
+    "share": 0.059,
+    "firstAt": 21.4,
+    "everySeconds": 15.81,
+    "randomTiming": true
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 778,
+    "maxDamage": 5222,
+    "who": "NotTanks",
+    "share": 0.059,
+    "firstAt": 18.0,
+    "ticks": 5,
+    "tickSeconds": 3.0,
+    "everySeconds": 80.37,
+    "randomTiming": true
    }
   ]
  },
@@ -184,5 +242,65 @@
   "hpsEach": 1098,
   "castSeconds": 1.11,
   "notes": "From Season of Discovery's logs (23 kills): while the boss was on the main tank, 3 healers had 5% or more of its healing (the median kill), and the healing it took from others was 3,293 a second with overheal and absorbs (51% of the heals effective), 2.70 heals and HoT ticks a second, against 1,972 damage taken a second. The tank's own heals (4% of its healing) are left out. Main tanks: Paladin 9, Warrior 4, Warlock 4, Druid 3, Shaman 2, Rogue 1."
- }
+ },
+ "raidHealing": {
+  "raidSize": 18,
+  "tanks": 2,
+  "addTanks": 0,
+  "dtpsAddTanks": 0,
+  "healers": 4,
+  "healersRange": [
+   2,
+   5
+  ],
+  "healerClasses": {
+   "Priest": 1.23,
+   "Paladin": 0.82,
+   "Druid": 0.64,
+   "Mage": 0.36,
+   "Shaman": 0.32
+  },
+  "hpsEachHealer": 2948,
+  "raidHps": 5649,
+  "raidHpsWithOverheal": 14772,
+  "hpsOnTanks": 2081,
+  "hpsOnOthers": 3521,
+  "hpsOnOthersWithOverheal": 9707,
+  "dtpsEachOther": 237.3,
+  "dtpsTanks": 2219,
+  "deathsOthersPerKill": 2.41,
+  "deathsTanksPerKill": 0.73,
+  "killsWithoutDeath": "4/22",
+  "fightSeconds": [
+   57,
+   71,
+   93
+  ],
+  "notes": "What Season of Discovery raids had on Vaelastrasz the Corrupt (22 kills, Warcraft Logs): the median kill's raid of 18 with 2 tanks (0 of them on adds, who took 0 a second together, not in the events), 4 healers by Warcraft Logs' healer role (78% of the healing), each 2,948 HPS with overheal. The raid healed 5,649 a second (2,081 on the tanks, 3,521 on the rest, 64% overheal on the rest). Each non-tank took 237.3 a second after mitigation. Fight length is the 10th percentile, median and 90th percentile kill. For the healing sim to check its healer counts against."
+ },
+ "raidSource": "[logs: Season of Discovery] The raidDamage events with who NotTanks: Warcraft Logs, 22 kills (tools/warcraftlogs/wclcli.py raid, tools/encounters/logs/sod_bwl_raid.json): the abilities that dealt 2% or more of the non-tanks' damage taken in 10% or more of the kills, 95% of it together, their rates scaled by 1.05 for the rest. Each is a share of the non-tanks, so the file fits any raid size. Fire Nova 23462 from Vaelastrasz the Corrupt (57% of the non-tanks' damage, in 22 of 22 kills): 554 to 646 unmitigated, the 5th to 95th percentile stretched to an even roll; 100% of the non-tanks a cast (10th to 90th percentile 80 to 100), 135.2 landed a second on each (93% of it landing), so a cast every 3.73 s at random (the logs count 16.9 casts a minute), the first at 3 s (median) of a 71 s kill. Burning Adrenaline 367987 ticks from Environment (24% of the non-tanks' damage, in 22 of 22 kills): 39 to 1,878 unmitigated, the 5th to 95th percentile stretched to an even roll; 6% of the non-tanks a cast (10th to 90th percentile 6 to 7), 55.9 landed a second on each (96% of it landing), so a cast every 8.71 s at random (the logs count 5.5 casts a minute), the first at 25 s (median) of a 71 s kill, 14 ticks 2.0 s apart. Cleave 19983 from Vaelastrasz the Corrupt (7% of the non-tanks' damage, in 13 of 22 kills): 4,819 to 7,331 unmitigated, the 5th to 95th percentile stretched to an even roll; 23% of the non-tanks a cast (10th to 90th percentile 6 to 56), 16.6 landed a second on each (53% of it landing), so a cast every 35.74 s at random (the logs count 1.6 casts a minute), the first at 11 s (median) of a 71 s kill. Flame Breath 23461 from Vaelastrasz the Corrupt (4% of the non-tanks' damage, in 13 of 22 kills): 4,000 to 4,000 unmitigated, the 5th to 95th percentile stretched to an even roll; 6% of the non-tanks a cast (10th to 90th percentile 6 to 29), 9.8 landed a second on each (99% of it landing), so a cast every 15.81 s at random (the logs count 1.3 casts a minute), the first at 21 s (median) of a 71 s kill. Flame Breath 23461 ticks from Vaelastrasz the Corrupt (3% of the non-tanks' damage, in 11 of 22 kills): 778 to 5,222 unmitigated, the 5th to 95th percentile stretched to an even roll; 6% of the non-tanks a cast (10th to 90th percentile 6 to 23), 7.8 landed a second on each (100% of it landing), so a cast every 80.37 s at random (the logs count 0.5 casts a minute), the first at 18 s (median) of a 71 s kill, 5 ticks 3.0 s apart. 23462's Everyone event keeps its own numbers on the tanks only. Together they land 237.1 a second on each non-tank over a median kill, at the logs' mitigation, against 237.3 in the logs.",
+ "raidReports": [
+  "8zPYvLGJCmQhX13H:3",
+  "9rdM68DRtpT7ZvLg:3",
+  "9z8RThWPGfVwDqgX:4",
+  "CnRFY48fGwtrcK69:4",
+  "H7WJMyA8gRjknpNT:4",
+  "Jxwtv3gTMZRGyC96:55",
+  "MG4KHtkPQ9mDapLC:4",
+  "P1mw8RF6cnCyqHhY:4",
+  "PmnvzGfdYwqCD8Qk:45",
+  "QvYHL1qXkNhjGBMy:2",
+  "Tpmzv6C4xKNtZ1M9:55",
+  "WMPNVndg1BmjrYcL:2",
+  "Zcv7JLKr1PRmnfbT:7",
+  "dxMqGmvFKfH2kcTj:5",
+  "kDhymKjHPzWpb4nB:2",
+  "pmdh6AG8qF2gZV7t:52",
+  "rRyFH12Bbzfk6vKQ:3",
+  "tT6n4M2DY7R3LrmX:2",
+  "vrzdnL31Pp46Ba2g:88",
+  "wZ3Yt9pvm2LQTndB:40",
+  "wckvT2bmZVDaCGxg:6",
+  "zrR2CtJkLG1mb8ZF:1"
+ ]
 }

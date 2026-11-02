@@ -142,6 +142,61 @@
     "randomTiming": true,
     "ticks": 8,
     "tickSeconds": 1
+   },
+   {
+    "spellId": 21158,
+    "school": "SpellSchoolFire",
+    "minDamage": 1389,
+    "maxDamage": 1614,
+    "who": "NotTanks",
+    "share": 0.333,
+    "firstAt": 14.6,
+    "everySeconds": 7.26,
+    "randomTiming": true
+   },
+   {
+    "spellId": 21155,
+    "school": "SpellSchoolFire",
+    "minDamage": 1599,
+    "maxDamage": 1600,
+    "who": "NotTanks",
+    "share": 0.133,
+    "firstAt": 11.8,
+    "everySeconds": 9.76,
+    "randomTiming": true
+   },
+   {
+    "spellId": 0,
+    "school": "SpellSchoolFire",
+    "minDamage": 1271,
+    "maxDamage": 2077,
+    "who": "NotTanks",
+    "share": 0.056,
+    "firstAt": 34.4,
+    "everySeconds": 3.47,
+    "randomTiming": true
+   },
+   {
+    "spellId": 0,
+    "school": "SpellSchoolFire",
+    "minDamage": 285,
+    "maxDamage": 688,
+    "who": "NotTanks",
+    "share": 0.053,
+    "firstAt": 13.8,
+    "everySeconds": 2.9,
+    "randomTiming": true
+   },
+   {
+    "spellId": 21858,
+    "school": "SpellSchoolFire",
+    "minDamage": 59,
+    "maxDamage": 60,
+    "who": "NotTanks",
+    "share": 0.115,
+    "firstAt": 34.5,
+    "everySeconds": 1.65,
+    "randomTiming": true
    }
   ]
  },
@@ -150,5 +205,75 @@
   "hpsEach": 383,
   "castSeconds": 2.11,
   "notes": "From Season of Discovery's logs (46 kills): while the boss was on the main tank, 3 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,150 a second with overheal and absorbs (29% of the heals effective), 1.42 heals and HoT ticks a second, against 439 damage taken a second. The tank's own heals (9% of its healing) are left out. Main tanks: Druid 17, Warlock 12, Paladin 9, Rogue 3, Warrior 3, Shaman 2."
- }
+ },
+ "raidHealing": {
+  "raidSize": 24,
+  "tanks": 2,
+  "addTanks": 0,
+  "dtpsAddTanks": 0,
+  "healers": 5,
+  "healersRange": [
+   2,
+   9
+  ],
+  "healerClasses": {
+   "Paladin": 1.31,
+   "Priest": 1.31,
+   "Druid": 1.06,
+   "Mage": 0.81,
+   "Shaman": 0.44
+  },
+  "hpsEachHealer": 1431,
+  "raidHps": 2860,
+  "raidHpsWithOverheal": 9338,
+  "hpsOnTanks": 658,
+  "hpsOnOthers": 2132,
+  "hpsOnOthersWithOverheal": 6712,
+  "dtpsEachOther": 100.2,
+  "dtpsTanks": 677,
+  "deathsOthersPerKill": 1.91,
+  "deathsTanksPerKill": 0.34,
+  "killsWithoutDeath": "7/32",
+  "fightSeconds": [
+   55,
+   94,
+   151
+  ],
+  "notes": "What Season of Discovery raids had on Ragnaros (32 kills, Warcraft Logs): the median kill's raid of 24 with 2 tanks (0 of them on adds, who took 0 a second together, not in the events), 5 healers by Warcraft Logs' healer role (83% of the healing), each 1,431 HPS with overheal. The raid healed 2,860 a second (658 on the tanks, 2,132 on the rest, 68% overheal on the rest). Each non-tank took 100.2 a second after mitigation. Fight length is the 10th percentile, median and 90th percentile kill. For the healing sim to check its healer counts against."
+ },
+ "raidSource": "[logs: Season of Discovery] The raidDamage events with who NotTanks: Warcraft Logs, 32 kills (tools/warcraftlogs/wclcli.py raid, tools/encounters/logs/sod_mc_raid.json): the abilities that dealt 2% or more of the non-tanks' damage taken in 10% or more of the kills, 89% of it together, their rates scaled by 1.12 for the rest. Each is a share of the non-tanks, so the file fits any raid size. Lava Burst 21158 from Lionfish (49% of the non-tanks' damage, in 32 of 32 kills): 1,389 to 1,614 unmitigated, the 5th to 95th percentile stretched to an even roll; 33% of the non-tanks a cast (10th to 90th percentile 6 to 57), 49.4 landed a second on each (95% of it landing), so a cast every 7.26 s at random (the logs count 6.9 casts a minute), the first at 15 s (median) of a 94 s kill. Intense Heat 21155 from Flame of Ragnaros (17% of the non-tanks' damage, in 32 of 32 kills): 1,599 to 1,600 unmitigated, the 5th to 95th percentile stretched to an even roll; 13% of the non-tanks a cast (10th to 90th percentile 5 to 35), 16.9 landed a second on each (100% of it landing), so a cast every 9.76 s at random (the logs count 3.7 casts a minute), the first at 12 s (median) of a 94 s kill. Melee -4 from Son of Flame (14% of the non-tanks' damage, in 32 of 32 kills): 1,271 to 2,077 unmitigated, the 5th to 95th percentile stretched to an even roll; 6% of the non-tanks a cast (10th to 90th percentile 4 to 15), 13.9 landed a second on each (91% of it landing), so a cast every 3.47 s at random (the logs count 5.3 casts a minute), the first at 34 s (median) of a 94 s kill. Lava 6 from Environment (7% of the non-tanks' damage, in 32 of 32 kills): 285 to 688 unmitigated, the 5th to 95th percentile stretched to an even roll; 5% of the non-tanks a cast (10th to 90th percentile 3 to 12), 6.7 landed a second on each (100% of it landing), so a cast every 2.9 s at random (the logs count 9.5 casts a minute), the first at 14 s (median) of a 94 s kill. Lava Shield 21858 from Son of Flame (2% of the non-tanks' damage, in 32 of 32 kills): 59 to 60 unmitigated, the 5th to 95th percentile stretched to an even roll; 12% of the non-tanks a cast (10th to 90th percentile 4 to 38), 2.1 landed a second on each (92% of it landing), so a cast every 1.65 s at random (the logs count 6.8 casts a minute), the first at 35 s (median) of a 94 s kill. Together they land 100.2 a second on each non-tank over a median kill, at the logs' mitigation, against 100.2 in the logs.",
+ "raidReports": [
+  "2j7MHv1n3b4yrhYa:46",
+  "6wntqT74PaBNbxC1:33",
+  "7NjALkhPVWzqB2rC:38",
+  "84aH9B6fPp1JMm2C:43",
+  "8xajvfwMHmcgZdBt:56",
+  "9GWNXrMqAQYDRjfL:40",
+  "9tHKRTx2FY4aCd3G:32",
+  "B9ZNzvQP7aqV6xpm:31",
+  "CRnhqzv3fG6JbTBM:10",
+  "Dga1PT8h7LbdznFR:35",
+  "DrfhtzgBFPWTM7Ad:33",
+  "GT2NpWgBYxvctwM8:25",
+  "GqzN1nXWKZwLdVFJ:10",
+  "JNAqmtnZpG7rWHMy:26",
+  "NYr7kjRVbhpgcaw6:35",
+  "QN7tnrDBpGfLYAK8:25",
+  "TCQRJ1H3ZXvtcjDW:25",
+  "V62CdnWhKabRZvq9:26",
+  "W1M8yVTg9DJHRkwm:30",
+  "Wx9H86QbpFacDL2t:1",
+  "Y2akzMyw8J3phQWL:24",
+  "YMac6DtzbngwVdTP:36",
+  "ZJKVfBCqwYc2ynHM:34",
+  "anDfRtcvbzVkFJgy:36",
+  "cAw2GvPXZ3WHR8ar:39",
+  "fgVMvHxTqPCrzKjh:1",
+  "gX1RQb8cDdCH3rMk:33",
+  "mLqCJjwhpNy2gcR3:25",
+  "r6ZaYzqD7mbT1VJd:34",
+  "tZcGbCzTH3JPA1qd:32",
+  "yZmwbNKP8AQhBf6V:37",
+  "zwYbJGANkXvLgMa4:29"
+ ]
 }

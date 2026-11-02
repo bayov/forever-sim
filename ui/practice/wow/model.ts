@@ -359,7 +359,8 @@ export class Model {
 					)
 					.replace(
 						'#include <project_vertex>',
-						'#include <project_vertex>\nvWowUv2 = uv1;\nvWowView = mvPosition.xyz;\nvWowNormal = normalize(normalMatrix * objectNormal);',
+						// An unlit material without bones has no objectNormal (static doodads, terrain.ts).
+						'#include <project_vertex>\nvWowUv2 = uv1;\nvWowView = mvPosition.xyz;\n#if defined(LAMBERT) || defined(USE_SKINNING) || defined(USE_ENVMAP)\nvWowNormal = normalize(normalMatrix * objectNormal);\n#else\nvWowNormal = normalize(normalMatrix * normal);\n#endif',
 					);
 				shader.fragmentShader = shader.fragmentShader
 					.replace(

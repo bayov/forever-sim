@@ -112,6 +112,27 @@ func formatLog(at time.Duration, message string, vals ...interface{}) string {
 	return fmt.Sprintf("[%0.2f] "+message, append([]interface{}{at.Seconds()}, vals...)...)
 }
 
+// ShownSpells lists every spell you and your pets have, castable or not (procs, imbue hits, totem
+// attacks), so the page can load their effects before the fight instead of at their first hit.
+func (s *Session) ShownSpells() []int32 {
+	seen := map[int32]bool{}
+	var out []int32
+	add := func(u *core.Unit) {
+		for _, spell := range u.Spellbook {
+			if id := spell.ActionID.SpellID; id > 0 && !seen[id] {
+				seen[id] = true
+				out = append(out, id)
+			}
+		}
+	}
+	add(&s.run.char.Unit)
+	for _, pet := range s.run.char.Pets {
+		add(&pet.Unit)
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i] < out[j] })
+	return out
+}
+
 // Toolkit lists your castable spells and usable items, for the spellbook and the bars.
 func (s *Session) Toolkit() []Spell {
 	r := s.run

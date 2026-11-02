@@ -20,9 +20,9 @@ sys.path.insert(0, HERE)
 from from_logs import BOSSES, SITES, fmt, stretch  # noqa: E402
 
 # An ability goes in when it's at least this share of the non-tanks' damage taken and shows up in
-# this share of the fights.
+# this share of the fights (Chromaggus has two of his five breaths a kill, so each is in a few).
 MIN_SHARE = 0.02
-MIN_FIGHTS = 0.3
+MIN_FIGHTS = 0.1
 # Hitting at least this share of the non-tanks a cast is hitting them all.
 ALL = 0.9
 
@@ -32,6 +32,7 @@ SCHOOLS = {1: 'SpellSchoolPhysical', 2: 'SpellSchoolHoly', 4: 'SpellSchoolFire',
 
 def school(mask):
     """A school mask's proto school: the lowest bit of a multi-school ability (Shadowflame is Shadow and Fire)."""
+    mask = int(mask or 0)
     for bit, name in sorted(SCHOOLS.items(), reverse=True):
         if mask == bit:
             return name
@@ -41,43 +42,53 @@ def school(mask):
     return 'SpellSchoolPhysical'
 
 
-def event_of(row, fights):
-    """A raidDamage event (protojson) for one mined ability, and a sentence on where it's from."""
+def event_of(row, fights, fill, kill):
+    """A raidDamage event (protojson) for one mined ability, and a sentence on where it's from.
+
+    Its hits and share come from the logs' casts, and its rate from the damage it dealt: the casts
+    a second that land the logs' damage a second on each non-tank, after the mitigation the logs
+    show (landed over unmitigated), times fill, which spreads the abilities under the line over
+    the ones above it. It deals that damage after its first cast, so its rate is over the rest of
+    the kill (an air phase's Fireballs, a last phase's Eruptions). Casts are a rough count for a
+    ground effect that ticks on whoever stands in it, the damage isn't.
+
+    Also returns what the event lands a second on each non-tank over the whole kill, to check.
+    """
     raw = row['raw_p05'] > 0 and row['raw_p95'] > 0
     if raw:
         lo, hi = stretch(row['raw_p05'], row['raw_p95'])
     else:
         lo, hi = 0.9 * row['landed_median'], 1.1 * row['landed_median']
     lo, hi = max(1, round(lo)), max(1, round(hi))
-    ev = {'spellId': 0 if row['ability'] == 1 else row['ability'], 'school': school(row['school']),
+    # Melee (1) and the environment's Lava, Fire and Falling (under 100) aren't spells.
+    ev = {'spellId': 0 if row['ability'] < 100 else row['ability'], 'school': school(row['school']),
           'minDamage': lo, 'maxDamage': hi, 'who': 'NotTanks'}
     share = row['hit_fraction']
     if share < ALL:
         ev['share'] = round(share, 3)
     ev['firstAt'] = round(row['first'], 1)
-    ev['everySeconds'] = round(1 / row['casts_per_second'], 2)
-    ev['randomTiming'] = True
     if row['tick']:
         ticks = max(1, round(row['hits_per_target']))
         ev['ticks'] = ticks
         ev['tickSeconds'] = round(row['tick_seconds'] or 1, 2)
     elif row['ability'] == 1:
         ev['melee'] = True
+    mitigation = min(1, row['landed_median'] / row['raw_median']) if raw and row['raw_median'] > 0 else 1
+    landed_hit = (lo + hi) / 2 * mitigation * (ev.get('share') or 1) * (ev.get('ticks') or 1)
+    active = kill / max(kill - row['first'], 0.2 * kill)
+    ev['everySeconds'] = round(landed_hit / (row['dtps_each'] * fill * active), 2)
+    ev['randomTiming'] = True
     what = 'unmitigated' if raw else 'landed (no unmitigated amount in the logs)'
     text = (f'{row["name"]} {row["ability"]}{" ticks" if row["tick"] else ""} from {row["source"]} '
             f'({100 * row["share"]:.0f}% of the non-tanks\' damage, in {row["fights"]} of {fights} kills): '
             f'{fmt(lo)} to {fmt(hi)} {what}, the 5th to 95th percentile stretched to an even roll; '
             f'{100 * share:.0f}% of the non-tanks a cast (10th to 90th percentile {100 * row["hit_fraction_p10"]:.0f} to '
-            f'{100 * row["hit_fraction_p90"]:.0f}), {row["casts_per_second"] * 60:.1f} casts a minute at random, '
-            f'the first at {row["first"]:.0f} s (median)'
+            f'{100 * row["hit_fraction_p90"]:.0f}), {row["dtps_each"]:.1f} landed a second on each '
+            f'({100 * mitigation:.0f}% of it landing), so a cast every {ev["everySeconds"]} s at random '
+            f'(the logs count {row["casts_per_second"] * 60:.1f} casts a minute), '
+            f'the first at {row["first"]:.0f} s (median) of a {kill:.0f} s kill'
             + (f', {ev["ticks"]} ticks {ev["tickSeconds"]} s apart' if row['tick'] else '') + '.')
-    return ev, text
-
-
-def per_second(ev, others):
-    """What an event deals a second to each non-tank on average, before mitigation."""
-    hits = (ev.get('share') or 1) * (ev.get('ticks') or 1)
-    return (ev['minDamage'] + ev['maxDamage']) / 2 * hits / ev['everySeconds']
+    return ev, text, landed_hit / ev['everySeconds'] / active
 
 
 def main():
@@ -109,12 +120,13 @@ def main():
         rows = [r for r in m['abilities'] if r['share'] >= MIN_SHARE and r['fights'] >= MIN_FIGHTS * m['fights']
                 and r['source'] not in ('friendly', '?') and r['casts_per_second'] > 0]
         events, texts = [], []
+        covered = sum(r['share'] for r in rows)
+        sim_dtps = 0
         for r in rows:
-            ev, text = event_of(r, m['fights'])
+            ev, text, landed = event_of(r, m['fights'], 1 / covered, m['seconds_median'])
             events.append(ev)
             texts.append(text)
-        covered = sum(r['share'] for r in rows)
-        sim_dtps = sum(per_second(ev, 1) for ev in events)
+            sim_dtps += landed
         # An Everyone event of the tank side's (Vaelastrasz's Fire Nova) that the logs now give for
         # the non-tanks keeps its numbers on the tanks only, so nobody takes it twice.
         mined_ids = {ev['spellId'] for ev in events if ev['spellId']}
@@ -131,6 +143,7 @@ def main():
         h = m
         d['raidHealing'] = {
             'raidSize': round(h['players_median']), 'tanks': round(h['tanks_median']),
+            'addTanks': round(h['add_tanks_median']), 'dtpsAddTanks': round(h['dtps_add_tanks_total']),
             'healers': round(h['healers_median']), 'healersRange': [h['healers_min'], h['healers_max']],
             'healerClasses': {k: round(v, 2) for k, v in sorted(h['healer_classes'].items(), key=lambda x: -x[1])},
             'hpsEachHealer': round(h['hps_each_median']),
@@ -142,7 +155,8 @@ def main():
             'killsWithoutDeath': f'{h["deathless_fights"]}/{h["fights"]}',
             'fightSeconds': [round(h['seconds_p10']), round(h['seconds_median']), round(h['seconds_p90'])],
             'notes': (f'What {site["label"]} raids had on {m["name"]} ({m["fights"]} kills, Warcraft Logs): the median kill\'s '
-                      f'raid of {h["players_median"]:.0f} with {h["tanks_median"]:.0f} tanks the boss swung at, '
+                      f'raid of {h["players_median"]:.0f} with {h["tanks_median"]:.0f} tanks ({h["add_tanks_median"]:.0f} of them on adds, '
+                      f'who took {fmt(h["dtps_add_tanks_total"])} a second together, not in the events), '
                       f'{h["healers_median"]:.0f} healers by Warcraft Logs\' healer role ({100 * h["healers_share"]:.0f}% of the healing), '
                       f'each {fmt(h["hps_each_median"])} HPS with overheal. The raid healed {fmt(h["hps_effective"])} a second '
                       f'({fmt(h["hps_tanks_effective"])} on the tanks, {fmt(h["hps_others_effective"])} on the rest, '
@@ -153,16 +167,17 @@ def main():
         d['raidSource'] = (f'[logs: {site["label"]}] The raidDamage events with who NotTanks: Warcraft Logs, {m["fights"]} kills '
                            f'(tools/warcraftlogs/wclcli.py raid, {mined_path}): the abilities that dealt {MIN_SHARE * 100:.0f}% or more '
                            f'of the non-tanks\' damage taken in {MIN_FIGHTS * 100:.0f}% or more of the kills, '
-                           f'{100 * covered:.0f}% of it together. Each is a share of the non-tanks, so the file fits any raid size. '
+                           f'{100 * covered:.0f}% of it together, their rates scaled by {1 / covered:.2f} for the rest. '
+                           f'Each is a share of the non-tanks, so the file fits any raid size. '
                            + ' '.join(texts)
-                           + f' Together {sim_dtps:.0f} a second on each non-tank before mitigation, against '
-                             f'{h["dtps_others_each"]:.1f} landed in the logs.')
+                           + f' Together they land {sim_dtps:.1f} a second on each non-tank over a median kill, '
+                             f'at the logs\' mitigation, against {h["dtps_others_each"]:.1f} in the logs.')
         d['raidReports'] = m['reports']
         with open(path, 'w') as f:
             json.dump(d, f, indent=1, ensure_ascii=False)
             f.write('\n')
         print(f'{boss}: {len(events)} raid events, {100 * covered:.0f}% of the non-tanks\' damage, '
-              f'{sim_dtps:.0f} a second each before mitigation (logs {h["dtps_others_each"]:.0f} landed); '
+              f'{sim_dtps:.1f} landed a second each (logs {h["dtps_others_each"]:.1f}); '
               f'{h["healers_median"]:.0f} healers of {h["players_median"]:.0f} -> {os.path.relpath(path, ROOT)}')
 
 

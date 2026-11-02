@@ -104,7 +104,7 @@ def _check_budget():
     """Read the hour's points before the first request, then check our spend before each one."""
     if _state['start_spent'] is None:
         d = _post('{ ' + RATE_QUERY + ' }', {})['rateLimitData']
-        _state['start_spent'] = d['pointsSpentThisHour']
+        _state['start_spent'] = _state['hour_seen'] = d['pointsSpentThisHour']
         _state['limit'] = d['limitPerHour']
         if d['pointsSpentThisHour'] >= HOUR_STOP * d['limitPerHour']:
             raise BudgetError(f'The hour has spent {d["pointsSpentThisHour"]:.0f} of {d["limitPerHour"]} points. '
@@ -135,6 +135,10 @@ def query(q, variables=None, ttl=None):
     assert body.endswith('}'), q
     data = _post(body[:-1] + ' ' + RATE_QUERY + ' }', variables)
     rate = data.pop('rateLimitData')
+    if rate['pointsSpentThisHour'] < _state.get('hour_seen', 0):
+        # The hour reset since the last answer: what we'd spent counts on from a new start.
+        _state['start_spent'] -= _state['hour_seen']
+    _state['hour_seen'] = rate['pointsSpentThisHour']
     _state['spent'] = rate['pointsSpentThisHour'] - _state['start_spent']
     if rate['pointsSpentThisHour'] >= HOUR_STOP * rate['limitPerHour']:
         # We still save this answer, but the next uncached query will stop.
