@@ -23,7 +23,8 @@ what that session knew and the doc doesn't, and the order of the work left.
 The user approved this plan's first steps one at a time ("go"). Bound ranks were done to the user's own
 ruling. Report each step's results before starting the next unless the user says to keep going.
 
-1. **Raid damage from Warcraft Logs** for the 7 shared boss files (`tools/encounters/*.json`: Onyxia,
+1. **Done 2026-11-02** (session_01TXnjyPVS2mPceSNTempQD9, `docs/healing_sim.md`, Raid damage from the logs).
+   **Raid damage from Warcraft Logs** for the 7 shared boss files (`tools/encounters/*.json`: Onyxia,
    Broodlord, Chromaggus, Golemagg, Magmadar, Ragnaros, Vaelastrasz). They have the tank side only, from
    vmangos (the lowest source tier). Ours to add: the boss's damage on the rest of the raid as `raid_damage`
    events (`who` NotTanks or Everyone, `count`, `every_seconds`, `spread_seconds`, ticks), the real fight
@@ -54,7 +55,7 @@ Forever's Spirit regen unverified, per-healer deaths within its assignment.
 
 ## Coordination with the tank session
 
-The tank sim is session_01TXnjyPCpeSGJhYroNvpQiF (`docs/tank_sim.md`), reached with the remote session tools'
+The tank sim is session_01TXnjyP5nUQs8zySrhUvYoi since 17:54 (session_01TXnjyPCpeSGJhYroNvpQiF before it, archived; `docs/tank_sim.md`), reached with the remote session tools'
 `send_message`. Agreed with it:
 
 - The boss files in `tools/encounters/` are shared: the tank side is theirs, the raid damage ours.

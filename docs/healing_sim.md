@@ -12,8 +12,9 @@ and damage groundwork, which this doc's first milestone builds.
 **Where it stands (2026-11-02):** H1, the engine groundwork, is in. Heals are aimed at the hurt and their
 overhealing is booked, a healing fight tracks every player's health and kills, the boss has raid damage
 events and tank swaps, and the shaman heals others. `tools/healbench` sims a healer in a raid against made-up
-profiles. No healer spec is registered yet: the bench's shaman is the Elemental agent with the Restoration
-preset's talents and a heal rotation. Next is H2, the Restoration shaman.
+profiles and the seven boss files, whose raid damage now comes from Warcraft Logs ([Raid damage from the
+logs](#raid-damage-from-the-logs-2026-11-02)). No healer spec is registered yet: the bench's shaman is the
+Elemental agent with the Restoration preset's talents and a heal rotation. Next is H2, the Restoration shaman.
 
 ## The user's rulings (2026-11-02)
 
@@ -407,6 +408,68 @@ A rank cast at 80% of its size overheals more and runs out of mana sooner on the
 
 Still open from the audit's list: absorbs, healer-aware mana support, range and groups, the damage model's
 gaps.
+
+## Raid damage from the logs (2026-11-02)
+
+The seven boss files (`tools/encounters`, shared with the tank sim) have their raid side from Warcraft Logs: the
+boss's damage on the players who aren't tanks as `raidDamage` events with `who` NotTanks, and what real raids
+had in `raidHealing`. The tank sim scores on the Anniversary realms' set (`tools/encounters/*.json`, the user's
+ruling to the tank session), so that's the one benched here; Season of Discovery's is in `tools/encounters/sod/`.
+How they're mined and written: `tools/warcraftlogs/wclcli.py raid` (`wclraid.py`) and
+`tools/encounters/raid_from_logs.py`, README in both folders.
+
+- **The tanks** in a log are the players the bosses swung at (5% or more of the swings) and the players who
+  tanked an add (30% or more of its swings: Golemagg's two Core Rager tanks, Broodlord's whelps). The rest are
+  the non-tanks, and their damage taken is the raid side. The players' own damage (runes, sapper charges,
+  Hellfire, Seal of Martyrdom) is left out.
+- **An event** is an ability with 2% or more of the non-tanks' damage in 10% or more of the kills: its
+  unmitigated hit, the share of the non-tanks a cast hits (the new `RaidDamageEvent.share`, so the file fits a
+  10, 20 or 40 player raid), a DoT's ticks, and the rate that lands the logs' damage a second on each non-tank
+  after its first cast. Every file's events land what the logs did, within 0.1 a second.
+- **`healbench -role raid` and `both`** run the logs' median kill (Onyxia 137 s, Chromaggus 115 s), since the
+  file's `duration` is the main tank's time on the boss.
+
+What the raids had (Anniversary, 21 to 30 kills a boss; effective healing a second, the healers' HPS with
+overheal; Warcraft Logs' healer role):
+
+| Boss | Raid | Tanks | Healers | HPS each | Raid HPS | On tanks | On the rest | Each non-tank's DTPS | Deaths a kill (others / tanks) | Kill |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Magmadar | 40 | 1 | 11 | 328 | 1,760 | 599 | 1,058 | 23.6 | 0 / 0 | 54 s |
+| Golemagg | 40 | 3 | 11 | 401 | 2,069 | 1,539 | 496 | 11.9 | 0 / 0 | 56 s |
+| Ragnaros | 40 | 2 | 11 | 322 | 2,737 | 821 | 1,823 | 47.5 | 0.07 / 0.04 | 97 s |
+| Onyxia | 40 | 3 | 11 | 182 | 1,335 | 399 | 895 | 22.6 | 0.05 / 0 | 137 s |
+| Broodlord | 40 | 4 | 11 | 439 | 2,071 | 869 | 1,109 | 29.0 | 0 / 0 | 44 s |
+| Vaelastrasz | 40 | 1 | 11 | 790 | 4,900 | 1,187 | 3,608 | 106.9 | 0 / 0 | 31 s |
+| Chromaggus | 40 | 1 | 11 | 267 | 1,171 | 724 | 417 | 8.6 | 0.05 / 0 | 115 s |
+
+Season of Discovery's Normal raids are 17 to 24 players with 4 or 5 healers, each non-tank taking 43 to 237 a
+second (two to four times the Anniversary realms'), and up to 2.5 deaths a kill.
+
+**The bench against them** (the bench's shaman, 1,000 iterations; `raid` is 2 healers and 7 Frost mages,
+`both` adds the tank, and 3 healers is the logs' 11 to 40):
+
+| Boss | raid: carry, deaths at ×1 | both: carry, deaths (tank / other) | both, 3 healers |
+|---|---|---|---|
+| Magmadar | 1.54, 0% | 1.20, 0% / 0.2% | 1.46 |
+| Golemagg | 1.92, 0% | 1.35, 0% / 0% | 1.69 |
+| Ragnaros | 1.20, 1.1% | 0.52, 98% / 97% | 0.56 |
+| Onyxia | **0.67, 56%** | 0.63, 10% / 82% | 0.71 |
+| Broodlord | **0.80, 20%** | 0.68, 48% / 61% | 0.74 |
+| Vaelastrasz | 1.07, 3% | 0.57, 99% / 98% | 0.62 |
+| Chromaggus | 0.93, 8% | 0.82, 17% / 30% | 0.91 |
+
+- **`both` doesn't compare with the logs as it stands.** The tank's damage doesn't shrink with the raid: a
+  10-player bench raid puts 2 or 3 healers on a tank that 40-player raids gave 6 to 8 (the tank session's
+  `healing.healers`). Ragnaros and Vaelastrasz kill the tank whatever the raid healers do. The check against the
+  logs is per role: `tank` at the file's tank healers, `raid` at the logs' raid healers a non-tank.
+- **`raid` carries 1 or more on four bosses**, as the logs' deathless kills say it should. Onyxia, Broodlord and
+  Chromaggus fall short with mana to spare (6,458, 7,145 and 7,441 left), so it's spikes, not throughput:
+  Broodlord's Blast Wave (2,678 to 3,336 Fire on half the raid at once), Onyxia's Flame Breath and Fireballs on
+  a Frost mage's health. A 40-player raid answers a spike with any of its 11 healers; the bench's 2 at the same
+  ratio react slower. The death floor is under 2% on all three, so a heal could have saved them.
+- Not yet in the files: the logs' cast timing and phases (each event is at random times after its first cast),
+  players' fire resistance gear and self-saves (the logs' damage is after them; the sim's mages take it
+  unmitigated by gear), and who stands where (each cast hits random non-tanks).
 
 ## Milestones
 
