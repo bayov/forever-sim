@@ -6,11 +6,12 @@ import (
 )
 
 // Arcane under Forever rules (client 1.60.1.70425). Arcane Blast's stacks are spell damage now:
-// 15% of Intellect each, up to 4, for 15 sec from the first stack, and each stack makes the next
-// Arcane Blast cost 175% more. Nothing ends them early. So the rotation buys a few stacks at the
-// start of each 15 sec, then casts Arcane Wrath on cooldown (3.5 sec, 6 sec cooldown, 5% of
-// maximum mana as extra spell damage), Arcane Missiles on Missile Barrage, and the filler. The
-// knobs are how many stacks, the filler and when the mana says to stop stacking.
+// 12% of Intellect each, up to 4, for 18 sec from the first stack, and each stack makes the next
+// Arcane Blast cost 100% more (15%, 15 sec and 175% before the 2026-10-31 update). Nothing ends
+// them early. So the rotation buys a few stacks at the start of each 18 sec, then casts Arcane
+// Wrath on cooldown (3.5 sec, 6 sec cooldown, 5% of maximum mana as extra spell damage), Arcane
+// Missiles on Missile Barrage, and the filler. The knobs are how many stacks, the filler and when
+// the mana says to stop stacking.
 type mageArcane struct{}
 
 func init() {
