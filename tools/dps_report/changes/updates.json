@@ -2044,6 +2044,23 @@
      "commits": [
       "b33ad30"
      ]
+    },
+    {
+     "title": "Warlocks time their second Bane of Doom for the 2 minute cooldowns",
+     "kind": "rotation",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__affliction",
+      "warlock__demonology",
+      "warlock__destruction",
+      "warlock__destruction_fire"
+     ],
+     "note": "Bane of Doom deals its damage in one tick a minute later, on the stats the warlock has when it lands. Holding the second Doom one second past its cooldown makes that tick land after the trinket and Blood Fury come back. Up 0.6 to 2.2 at 180 s. The curse duty presets already cast it late enough.",
+     "commits": [
+      "58a1c35"
+     ]
     }
    ],
    "internal": [
@@ -2198,6 +2215,14 @@
     {
      "commit": "e41f082eb",
      "why": "healing sim heal ranks: no DPS build reads it"
+    },
+    {
+     "commit": "374c437aa",
+     "why": "tank score searches only: no DPS build reads it"
+    },
+    {
+     "commit": "9530cc9d1",
+     "why": "practice room display only: no DPS build reads it"
     }
    ],
    "source": {
