@@ -639,9 +639,8 @@
 			}
 		},
 		"warlock__demonology": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:49.124Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.586Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -651,16 +650,15 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__demonology.json": "58994341f3728e81bfb427609e8fd2b12f675360",
 				"tools/dps_report/req/races/warlock__demonology.Gnome.json": "82a53aacc95e83e003a88dcf5b067309c7007da6"
 			}
 		},
 		"warlock__destruction": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:49.260Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.736Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -670,16 +668,15 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__destruction.json": "ed5bd4c7e9b6078a1d5fca695a4661f3e66034e8",
 				"tools/dps_report/req/races/warlock__destruction.Gnome.json": "5488aab1e251f644d682940ee3e676a332191b1a"
 			}
 		},
 		"warlock__affliction": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:48.986Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.434Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -689,16 +686,15 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__affliction.json": "6fff97f1a830d65fb3fa5fc3326f6296ac6388c7",
 				"tools/dps_report/req/races/warlock__affliction.Gnome.json": "a1c9c7c874f59978cb9b8ef7c3494f21ba7f62ed"
 			}
 		},
 		"warlock__destruction_fire": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:49.394Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.886Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -708,7 +704,7 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__destruction_fire.json": "bc8db54d9b162bd7631718d834b62627258d3165",
 				"tools/dps_report/req/races/warlock__destruction_fire.Gnome.json": "f11f6f0077e51603e93815d9298e8d91898fe97a"
@@ -1005,9 +1001,8 @@
 			}
 		},
 		"warlock__demonology-duty-curse": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:49.030Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.485Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -1017,7 +1012,7 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__demonology-duty-curse.json": "7865ee909c49db10ca0e094b49088018e563875a",
 				"tools/dps_report/req/races/warlock__demonology-duty-curse.Gnome.json": "245105ee81405ee9b9f7cc619f28d115eeacc0c8",
@@ -1025,9 +1020,8 @@
 			}
 		},
 		"warlock__destruction-duty-curse": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:49.165Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.633Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -1037,7 +1031,7 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__destruction-duty-curse.json": "62894b1a12b6ed4fa8743f0464a2070d6b337108",
 				"tools/dps_report/req/races/warlock__destruction-duty-curse.Gnome.json": "e34370d5efa63f293e84f14baae40a4b6cc73332",
@@ -1045,9 +1039,8 @@
 			}
 		},
 		"warlock__affliction-duty-curse": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:48.867Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.317Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -1057,7 +1050,7 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__affliction-duty-curse.json": "bad655ed3d0084713d72822b92c7d8da82565d2f",
 				"tools/dps_report/req/races/warlock__affliction-duty-curse.Gnome.json": "606cf1fb9ac1e838ac6b83a034c067e5acf6dacb",
@@ -1065,9 +1058,8 @@
 			}
 		},
 		"warlock__destruction_fire-duty-curse": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:49.302Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.783Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -1077,7 +1069,7 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__destruction_fire-duty-curse.json": "8b6c240bbf17599881c126f50e8dc2ededd58ac2",
 				"tools/dps_report/req/races/warlock__destruction_fire-duty-curse.Gnome.json": "cd941fcba77e3de6154e86f9b66164a0063c3133",
@@ -1270,9 +1262,8 @@
 			}
 		},
 		"warlock__affliction-duty-recklessness": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:48.941Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.384Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -1282,16 +1273,15 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__affliction-duty-recklessness.json": "7e5d6a68865ecf5c45ef41cd1e4182a03a6591fa",
 				"tools/dps_report/req/races/warlock__affliction.Gnome.json": "a1c9c7c874f59978cb9b8ef7c3494f21ba7f62ed"
 			}
 		},
 		"warlock__demonology-duty-recklessness": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:49.082Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.540Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -1301,16 +1291,15 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__demonology-duty-recklessness.json": "26284a80684c39afd66f42f9529843760e1d55c3",
 				"tools/dps_report/req/races/warlock__demonology.Gnome.json": "82a53aacc95e83e003a88dcf5b067309c7007da6"
 			}
 		},
 		"warlock__destruction-duty-recklessness": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:49.217Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.687Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -1320,16 +1309,15 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__destruction-duty-recklessness.json": "3922e8808afb634ac42a88cd8e18307cc4a8d3ac",
 				"tools/dps_report/req/races/warlock__destruction.Gnome.json": "5488aab1e251f644d682940ee3e676a332191b1a"
 			}
 		},
 		"warlock__destruction_fire-duty-recklessness": {
-			"commit": "452b9ce0ad66194c30eadf27801398d7296eaa30",
-			"recordedAt": "2026-11-02T20:34:49.350Z",
-			"iterations": 20000,
+			"commit": "3fce3491c067589c61da3a21fa53d27192f13e55",
+			"recordedAt": "2026-11-02T20:41:19.836Z",
 			"inputs": {
 				"sim/core": "60019be32119a8dbf7688af12badc46e0954abfe",
 				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
@@ -1339,7 +1327,7 @@
 				"assets/database": "763934e7adf3ed93b73337d4b1d621c2b0414a08",
 				"tools/rotopt": "6f8132ff053a96b937b843150430de8350913aa2",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warlock": "6c5bd7ffe225d7c98b680f880ae45f92810992f4",
+				"sim/warlock": "e9416df090a3eb18f33b31a1ad1aa54cc13da38f",
 				"ui/warlock": "760e6672bf20fe2872206a0633ace0ab6e6142a4",
 				"tools/dps_report/req/warlock__destruction_fire-duty-recklessness.json": "da13f4e815b9520c5a8fb12bd0543bdbefe48e37",
 				"tools/dps_report/req/races/warlock__destruction_fire.Gnome.json": "f11f6f0077e51603e93815d9298e8d91898fe97a"
