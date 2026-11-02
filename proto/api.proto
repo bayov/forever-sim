@@ -507,6 +507,9 @@ message TankScore {
 	// The steady DPS a reference DPS member could do without passing the tank's threat on the boss
 	// at any moment of the iteration (Player.tank_scoring).
 	DistributionMetrics safe_dps = 2;
+	// Each iteration's SafeDPS, in seed order as survive_hps is: two runs with the same seed and
+	// iterations pair up iteration by iteration (tools/tankscore, PairedDiff).
+	repeated double safe_dps_each = 3;
 }
 
 // How often a player or pet passed the tank's threat on the boss, over the iterations.

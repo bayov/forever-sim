@@ -39,8 +39,9 @@ type tankScore struct {
 	safeMin float64
 
 	// Over the iterations.
-	survive []float64
-	safe    DistributionMetrics
+	survive  []float64
+	safe     DistributionMetrics
+	safeEach []float64
 }
 
 // tankReplayEvent is damage taken, a heal of a fixed size, or a stand-in heal of units times the
@@ -130,6 +131,7 @@ func (ts *tankScore) doneIteration(sim *Simulation) {
 	// DistributionMetrics divides by the fight length.
 	ts.safe.Total = ts.safeMin * sim.Duration.Seconds()
 	ts.safe.doneIteration(sim)
+	ts.safeEach = append(ts.safeEach, ts.safeMin)
 	if ts.replay {
 		ts.survive = append(ts.survive, ts.leastHps())
 	}
@@ -180,8 +182,9 @@ func (ts *tankScore) leastHps() float64 {
 
 func (ts *tankScore) toProto() *proto.TankScore {
 	return &proto.TankScore{
-		SurviveHps: append([]float64(nil), ts.survive...),
-		SafeDps:    ts.safe.ToProto(),
+		SurviveHps:  append([]float64(nil), ts.survive...),
+		SafeDps:     ts.safe.ToProto(),
+		SafeDpsEach: append([]float64(nil), ts.safeEach...),
 	}
 }
 
