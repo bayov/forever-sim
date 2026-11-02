@@ -1996,7 +1996,7 @@
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
-            "distanceFromTarget": 25,
+            "distanceFromTarget": 12,
             "hunter": {
               "options": {
                 "ammo": "SwiftfeatherArrow",

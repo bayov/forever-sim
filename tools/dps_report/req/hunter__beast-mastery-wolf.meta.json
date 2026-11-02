@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm",
   "published": {
-    "dps": 1001.0,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1002.1,
+    "source": "verify.py on this request at 12 yd (standards 33, 2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1001.0,
+    "dps": 1002.1,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
   },
   "summary": "Beast Mastery with a wolf, using Bestial Wrath, Frenzy and Unleashed Fury. Melee weaves between Auto Shots. The wolf's Furious Howl stands in for Battle Shout when no warrior shouts.",
   "keyTalents": [
@@ -79,7 +79,7 @@
     "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (0.5 here).",
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
   ],
-  "notes": "Request: hunter__beast-mastery with hunter.options.petType Wolf instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
+  "notes": "Request: hunter__beast-mastery with hunter.options.petType Wolf instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Starts at 12 yd since 2026-11-02 (standards 33: a weaving hunter stands where weaving does best; the rotation walks to 12 yd before the pull either way, so this is where the pet starts; +3 to +4 at 120 + 180 + 300 sec against 25 yd on both seeds, orchestration/caster_distance.md), 25 before.",
   "pet": "Wolf",
   "baseBuild": "hunter__beast-mastery"
 }

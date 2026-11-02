@@ -2,11 +2,19 @@ package main
 
 import "github.com/wowsims/classic/sim/core/proto"
 
-// The three hunter specs share ui/hunter. Beast Mastery and Marksmanship shoot from range (25
-// yards), Survival is the melee spec under Forever (Strider Kick, Mongoose Bite through Expose
-// Prey, Lacerating Strikes, Predator's Edge) and stands at the boss.
+// The three hunter specs share ui/hunter. Beast Mastery and Marksmanship shoot from range,
+// Survival is the melee spec under Forever (Strider Kick, Mongoose Bite through Expose Prey,
+// Lacerating Strikes, Predator's Edge) and stands at the boss.
+//
+// A weaving hunter stands where weaving does best (standards 33, user ruling 2026-11-02). Every
+// ranged rotation walks to 12 yd 6 sec before the pull and shoots from there, just outside
+// Forever's 11.67 yd deadzone, so the distance here is only where the hunter and its pet start.
+// Searched 2026-11-02 from 12 to 35 yd (orchestration/caster_distance.md): Lone Wolf is
+// bit-identical everywhere; Beast Mastery's pet, which starts at the hunter's side, is +3.0 to
+// +4.3 at 120 + 180 + 300 sec from 12 yd against 25 on both seeds (12 to 18 tie); Marksmanship's
+// +0.3 to +1.7 is inside 2 standard errors, so it stays at 25.
 func init() {
-	specs["hunter_bm"] = hunterSpec(25, false, hunterRangedRaid)
+	specs["hunter_bm"] = hunterSpec(12, false, hunterRangedRaid)
 	specs["hunter_mm"] = hunterSpec(25, false, hunterRangedRaid)
 	// Lone Wolf is Marksmanship with the pet dismissed (Lone Wolf's 20% needs no pet out).
 	lw := hunterSpec(25, false, hunterRangedRaid)

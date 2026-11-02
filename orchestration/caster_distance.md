@@ -53,8 +53,22 @@ Notes:
   (10% a rank) and the Shadow builds take 1, so 22 yd.
 - The wand (Shoot, 5019) is 30 yd; a Fire or Frost build without it would still stand at 30 for Scorch or
   Arcane Missiles.
-- Hunters are left out (the melee weave walks in from the distance). Their ranged shots reach 35 yd (Auto
-  Shot, Arcane Shot, Aimed Shot, Multi-Shot, Serpent Sting; Sniper Shot 45), Raptor Strike 5.
+- Weaving hunters (user ruling 2026-11-02, standards 33): they stand where weaving does best, so their
+  distance is searched. Their shots reach 35 yd (Auto Shot 8 to 35 in SpellRange, Arcane Shot, Aimed Shot,
+  Multi-Shot, Serpent Sting; Sniper Shot 45), Raptor Strike 5. The sim holds Auto Shot and the shots to
+  Forever's deadzone, 11.67 yd (Auto Shot's 8 past both combat reaches, `core.ForeverMinRangedAttackDistance`),
+  and every ranged rotation walks to 12 yd 6 sec before the pull and weaves between 12 and melee, so the
+  request's distance is only where the hunter and its pet start. Swept 12, 13, 15, 18, 21, 25, 30, 35 yd at
+  120 / 180 / 300 sec (seed 1, 20,000 iterations), then 12 against 25 on seed 1000003 and on the pet
+  variants. Sum of the three lengths, 12 yd against 25:
+  - Beast Mastery +4.3 / +3.7 (seeds 1 / 1000003), Wolf +3.0 / +3.4, Tallstrider +3.7 / +4.0; 12 to 18 tie,
+    21 is +2.5, 30 -0.9, 35 -3.6. The pet runs in from the hunter's side. Beast Mastery and its variants
+    start at 12: 1045.4 -> 1046.9, 1001.0 -> 1002.1, 987.6 -> 988.9 at 180 sec (120 s 1048.3 -> 1050.4,
+    300 s 1032.9 -> 1033.7 for the base).
+  - Marksmanship +1.1 / +1.6, Wolf +1.3 / +1.2, Tallstrider +1.7 / +0.3: inside 2 standard errors, so they
+    stay at 25.
+  - Lone Wolf (no pet): bit-identical from 12 to 35, stays at 25.
+  - Survival is melee and stays at 5.
 
 - Balance Wrath: from 36 yd a Wrath flies 1.8 sec, longer than its 1.5 sec cast, and the build loses 7 to 8
   DPS (29 yd 855.8, 31 yd 848.9, 36 yd 848.0 at 180 sec: the drop is at 30 yd, where the flight passes the
