@@ -8,7 +8,9 @@ bench (`tools/healbench`), one file a boss, shared so the two sims score against
 {
   "name": "Broodlord Lashlayer",
   "source": "where each number comes from, with its source tier",
+  "abilitiesSource": "where the abilities' numbers come from (from_logs.py keeps it and writes the rest of source)",
   "reports": ["Warcraft Logs report code:fight, for the numbers taken from logs"],
+  "warcraftLogs": {"site": "sod", "encounter": 100612, "zone": "...", "difficulty": "Normal", "mined": "logs/sod_bwl.json"},
   "notes": "what the file leaves out",
   "encounter": { "a proto Encounter in protojson": "the boss's melee (targets), tank_swap_seconds, raid_damage" },
   "healing": {
@@ -28,3 +30,28 @@ bench (`tools/healbench`), one file a boss, shared so the two sims score against
   tank and the tank's healing from logs.
 - The tank side (the boss's melee, its abilities on the tank, the healing on the tank) comes
   from the tank sim, the raid damage from the healing sim.
+
+## From the logs
+
+The top-level files are Season of Discovery's Normal raids, the first source in the order;
+`anniversary/` has the same bosses from the Anniversary Hardcore realms' logs, to compare. In both, the
+boss's melee, his weapon damage abilities, the fight's length and the healing on the main tank are
+Warcraft Logs numbers. The other abilities keep the client's spell data and the scripts' timers.
+
+```sh
+W="python3 tools/warcraftlogs/wclcli.py"
+# Fights: the newest public reports of a zone (rankings favour the fastest kills, and old
+# ranked reports are archived).
+$W --site sod sample -o tools/encounters/logs/sod_mc_sample.json --zone 2012 --reports 60 --class Priest
+# What the bosses did to their main tanks, Normal difficulty only.
+$W --site sod tank tools/encounters/logs/sod_mc_sample.json --difficulty 3 \
+    --encounter 100664 --encounter 100670 --encounter 100672 -o tools/encounters/logs/sod_mc.json
+# Into the files (it runs tankbench -boss-stats for the debuffs).
+python3 tools/encounters/from_logs.py --site sod tools/encounters/logs/sod_*.json
+python3 tools/encounters/from_logs.py --site anniversary --out tools/encounters/anniversary \
+    tools/encounters/logs/anniversary_*.json
+```
+
+`logs/` keeps each sample (the fights read) and what `tank` mined from it, so the files can be
+written again without the API. How each number is picked is in `from_logs.py` and
+docs/tank_sim.md, Encounters.

@@ -23,10 +23,13 @@ import (
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/wowsims/classic/sim"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/simsignals"
+	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/tools/tankscore"
 	"google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
@@ -54,6 +57,7 @@ func main() {
 	healers := flag.Float64("healers", 0, "healers on the tank, in place of the encounter's (with -healer-hps and -heal-cast; -hps and -cadence win over them)")
 	healerHps := flag.Float64("healer-hps", 0, "each healer's healing per second on the tank, in place of the encounter's")
 	healCast := flag.Float64("heal-cast", 0, "seconds a healer's heal takes to cast, in place of the encounter's")
+	bossStats := flag.Bool("boss-stats", false, "print, as JSON, the boss's attack power, flat weapon damage and attack speed under each request's debuffs, and sim nothing (tools/encounters/from_logs.py reads it to turn a log's swings into the file's)")
 	flag.Parse()
 	sim.RegisterAll()
 
@@ -168,6 +172,10 @@ func main() {
 			BurstWindow:      int32(*window),
 		}
 
+		if *bossStats {
+			printBossStats(path, rsr)
+			continue
+		}
 		res := run(path, rsr)
 		m := res.RaidMetrics.Parties[0].Players[0]
 		pct := func(x float64) string { return fmt.Sprintf("%.1f%%", 100*x) }
@@ -330,6 +338,31 @@ type tankHealing struct {
 	CastSeconds float64 `json:"castSeconds"`
 	// What the numbers stand for, e.g. "2 priests on Greater Heal rank 4 and a paladin".
 	Notes string `json:"notes"`
+}
+
+// printBossStats prints the first boss's attack power, flat weapon damage, damage done and attack
+// speed 30 s into the first iteration, with the raid's debuffs on it (Demoralizing Shout, Curse of
+// Weakness, Thunder Clap). A log's boss swings had a raid's debuffs on them, so turning them into
+// an encounter file's weapon damage and swing speed takes these out.
+func printBossStats(path string, rsr *proto.RaidSimRequest) {
+	rsr = googleProto.Clone(rsr).(*proto.RaidSimRequest)
+	rsr.SimOptions.Iterations = 1
+	s := core.NewSim(rsr, simsignals.CreateSignals())
+	s.Reset()
+	s.PrePull()
+	for s.CurrentTime < 30*time.Second && s.Step() {
+	}
+	t := s.Encounter.TargetUnits[0]
+	out, _ := json.Marshal(map[string]any{
+		"request":         path,
+		"baseAttackPower": rsr.Encounter.Targets[0].Stats[stats.AttackPower],
+		"attackPower":     t.GetStat(stats.AttackPower),
+		"apCoefficient":   core.EnemyAutoAttackAPCoefficient,
+		"flatDamage":      t.PseudoStats.BonusPhysicalDamage,
+		"damageDone":      t.PseudoStats.DamageDealtMultiplier * t.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical],
+		"attackSpeed":     t.PseudoStats.MeleeSpeedMultiplier,
+	})
+	fmt.Println(string(out))
 }
 
 func loadEncounter(path string) *tankEncounter {

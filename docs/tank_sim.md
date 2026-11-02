@@ -7,7 +7,9 @@ replace its 700 TPS stand-in.
 
 **Where it stands (2026-11-02):** the engine reports a tank sheet with the thresholds tanks gear for, and
 `tools/tankbench` sims tank builds against seven Classic raid bosses (`tools/encounters`) with the healing a
-raid puts on its tank, and finds each build's healing needed and death floor. Two builds run (Protection
+raid puts on its tank, and finds each build's healing needed and death floor. The bosses' melee, the fight lengths
+and the healing are Warcraft Logs numbers, Season of Discovery's and the Anniversary realms' ([Encounters](#encounters)),
+and which set scores tanks is the user's call. Two builds run (Protection
 warrior and paladin, both on Classic pre-raid plate). Four audits checked the work and their findings are
 fixed ([Audits](#audits)). The optimizer's objective is ruled and built: the bench prints it, and rotopt's
 searches maximize it with `-tank`. Next comes the rules audit, then tank gear and rotations. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
@@ -57,46 +59,108 @@ drops (Knock Away and the like), armor cuts (Corrosive Acid, Magma Splash), stac
 its own event), and abilities that scale with the boss's attack power (the files take Demoralizing Shout's
 cut off the weapon damage ones).
 
-**The first seven** (2026-11-02): Magmadar, Golemagg, Ragnaros, Onyxia, Broodlord Lashlayer, Vaelastrasz and
-Chromaggus, their tank side only. No Warcraft Logs numbers were found on the web, so the boss melee is from
-the vmangos core, the last source in the order, and the spell values from the Classic Era client's spell
-tables, with each file's `source` saying which numbers and `notes` what's left out. A 2006 Molten Core full
-clear from Blizzard's servers (WWS, hits after armor) backs vmangos's boss melee: the cmangos core's is about
-a third of it and doesn't fit the log. Broodlord is the exception: vmangos's melee makes his Mortal Strike 6,000
-to 7,900 on a pre-raid tank, where warcraft.wiki.gg and a guide put a normal one near 4,000, so his weapon
-damage is 0.6 of vmangos's until logs say otherwise. Patchwerk is waiting: neither core's melee is confirmed
-and the two differ, and Hateful Strike is an off-tank's problem. Each file has the boss's Warcraft Logs
-encounter ID for when logs replace the numbers.
+**The seven** (2026-11-02): Magmadar, Golemagg, Ragnaros, Onyxia, Broodlord Lashlayer, Vaelastrasz and
+Chromaggus, their tank side only. Forever's own raids (Barrow Deeps, Hyjal Summit, Onyxia) have no logs yet, so
+these are stand-ins.
 
-The raid's healing on the tank in them is a guess until the logs: 4 healers at 400 HPS in 2 s heals in Molten
-Core and Onyxia (2.4 times an assumed 650 DTPS, the Classic Era logs' ratio), 4 at 500 in Blackwing Lair.
+**Their numbers are Warcraft Logs'** (2026-11-02), in the user's source order. `tools/encounters/` is Season of
+Discovery's Normal raids, the first source. `tools/encounters/anniversary/` is the same bosses from the
+Anniversary realms, to compare. From the logs: the boss's melee, his weapon damage abilities (Cleave,
+Mortal Strike, Knock Away), the fight's length, Elemental Fire's rate and the healing on the main tank. The other abilities
+keep the Classic Era client's spell data and the vmangos scripts' timers. `tools/encounters/from_logs.py`
+writes them from what `wclcli.py tank` mined (`tools/encounters/logs/`, with each sample of fights), and
+each file's `source`, `reports` and `warcraftLogs` say which kills.
 
-**First numbers** (after the audits' fixes, 1,000 iterations, the two Valor-geared builds, healing needed at
-5% deaths, the death chance at the file's healing):
+- **What was checked first:** `wclcli.py tank` on real reports. The boss's damage comes back only with
+  `hostilityType: Enemies` (133 events against none without, SoD Onyxia), and the main tank's events have
+  `heal` events with `overheal` (130 of 136) and `absorbed` events.
+- **The fights** are the newest public reports of each zone, not rankings: ranked fights are the fastest
+  kills, and ranked reports from 2019 to 2024 are archived (their events need a paid account). Season of
+  Discovery: 20 to 47 Normal kills a boss (2025 to 2026; Heroic and Mythic, the heat levels, hit up to 40%
+  harder and are left out). Anniversary: 21 to 30 kills a boss from the realms' first months (Molten Core
+  and Onyxia December 2024 to February 2025, Blackwing Lair March to July 2025), all 40 players.
+- **The Anniversary logs are its Hardcore realms'** (Doomhowl, Soulseeker, the same raids). Its Normal
+  and PvP realms weren't found through the API: `fresh` serves the Classic progression realms' reports
+  (`tools/warcraftlogs/README.md`). Era wasn't needed, both sources having all seven, and TBC has none of them.
+- **Everything is measured while the boss is on the main tank**: his swings on it no more than 6 s apart.
+  Tank swaps, Onyxia's air phase and Ragnaros's knockbacks fall outside.
+- **The melee** is the median normal hit's `unmitigatedAmount` (before armor and before the crit or
+  crushing multiplier), with the spread of each hit over its own kill's median (about 0.8 to 1.2 of it, close
+  to Classic's ±14%: across kills the raids' debuffs on the boss differ). The swing gap is the mean while he's on
+  the tank, parry haste and Frenzy in. Both are taken back through the debuffs the bench puts on him
+  (`tankbench -boss-stats`: attack power 805 to 601, −37 a swing, attack speed 0.833), so under them he
+  swings as in the logs. That assumes the logged raids had about the bench's debuffs.
+- **The length** is the kills' median, except Onyxia and Ragnaros (the main tank's time on him a kill) and
+  Vaelastrasz (his longest stretch on one tank, one tank's stint).
+- **The healing** is the healers with 5% or more of the main tank's healing in the median kill, the
+  healing it took from them with overheal and absorbs, and their heals and HoT ticks a second. The tank's own
+  heals are left out (Season of Discovery's main tanks were mostly druids, warlocks and paladins, the
+  Anniversary's warriors).
+- **Golemagg's Double Attack** goes: its swings log as white swings, so they're in the swing rate.
+  **Elemental Fire** comes at the logs' rate: 18.9 a minute on the Anniversary realms (3 of 4 swings, the
+  client's proc on landed hits), 5.5 in Season of Discovery's Normal.
+
+| Encounter | Melee before armor | Swing | Length | Healers × HPS, heal | SoD | Anniversary |
+|---|---|---|---|---|---|---|
+| Magmadar | 1,902 to 2,699 / 1,541 to 2,441 | 1.37 / 1.38 s | 29 / 53 s | 3 × 374, 1.8 s / 8 × 258, 3.1 s | 20 players | 40 |
+| Golemagg | 1,441 to 2,147 / 1,744 to 2,914 | 1.70 / 1.45 s | 27 / 56 s | 3 × 445, 1.5 s / 7 × 258, 3.2 s | | |
+| Ragnaros | 1,918 to 2,879 / 1,626 to 2,671 | 2.70 / 2.40 s | 64 / 71 s | 3 × 383, 2.1 s / 6 × 285, 2.9 s | | |
+| Onyxia | 3,029 to 4,428 / 1,309 to 2,166 | 2.22 / 1.92 s | 124 / 35 s | 3 × 307, 2.3 s / 8 × 174, 4.5 s | 40 | 40 |
+| Broodlord | 3,096 to 4,652 / 2,042 to 3,195 | 1.74 / 1.78 s | 97 / 41 s | 4 × 485, 1.5 s / 8 × 300, 3.0 s | 20 and 40 | 40 |
+| Vaelastrasz | 4,417 to 6,681 / 3,325 to 4,705 | 2.56 / 2.64 s | 25 / 17 s | 3 × 1,098, 1.1 s / 6 × 714, 1.8 s | 20 | 40 |
+| Chromaggus | 4,237 to 6,071 / 2,513 to 4,161 | 1.16 / 1.37 s | 218 / 115 s | 4 × 424, 1.7 s / 8 × 303, 3.1 s | 20 and 40 | 40 |
+
+(Season of Discovery / Anniversary.) Broodlord's Mortal Strike is 16,110 to 26,548 before armor in Season
+of Discovery and 10,784 to 15,905 on the Anniversary realms. Raids heal their main tank at 2 to 4 times its
+damage taken, with 60 to 80% overheal (Season of Discovery up to 90%).
+
+**What it shows:**
+
+- **Season of Discovery's Molten Core is near Classic's; its Onyxia and Blackwing Lair aren't.** Its Normal Molten
+  Core hits like the Anniversary's (and vmangos's). Its Onyxia hits twice as hard, and its Blackwing Lair 1.4 to 1.6
+  times, tuned for its own players: at Onyxia, Broodlord and Chromaggus its main tanks took 460 to 800 damage a second
+  where ours take 920 to 1,380.
+- **vmangos's melee was about right**, Broodlord's too: the 0.6 of vmangos the file took from players' reports
+  was low (the Anniversary's 2,042 to 3,195 against vmangos's 2,746 to 3,640 before debuffs).
+- **Classic raids' healing is many healers on slow heals**: 6 to 8 healers with 5% or more, a heal every 0.3 to 0.6 s
+  in all. Season of Discovery's is 3 or 4 healers on fast heals.
+
+**The bench on them** (1,000 iterations, the two Valor-geared builds, healing needed at 5% deaths, the death
+chance at the file's healing):
 
 | Encounter | Warrior TPS | DTPS | Healing needed | Death | Paladin TPS | DTPS | Healing needed | Death |
 |---|---|---|---|---|---|---|---|---|
-| Magmadar | 1051 | 253 | 255 | 0% | 504 | 290 | 299 | 0% |
-| Golemagg | 1146 | 384 | 447 | 0% | 562 | 428 | 501 | 0% |
-| Ragnaros | 1170 | 988 | 2440 | 30% | 462 | 1034 | 2545 | 37% |
-| Onyxia | 1201 | 511 | 579 | 0% | 613 | 544 | 612 | 0% |
-| Broodlord | 1127 | 386 | 673 | 0.4% | 555 | 425 | 810 | 0.2% |
-| Vaelastrasz (45 s) | 1246 | 1786 | 3558 | 85% | 561 | 1864 | none works (floor 9%) | 95% |
-| Chromaggus | 1147 | 480 | 588 | 0% | 506 | 539 | 678 | 0% |
+| Magmadar (SoD) | 1199 | 470 | 385 | 0% | 627 | 520 | 448 | 0% |
+| Golemagg (SoD) | 1111 | 294 | 155 | 0% | 583 | 335 | 203 | 0% |
+| Ragnaros (SoD) | 1142 | 695 | 1013 | 1.9% | 498 | 744 | 1150 | 5.1% |
+| Onyxia (SoD) | 1271 | 917 | 1471 | 88% | 620 | 984 | 1605 | 98% |
+| Broodlord (SoD) | 1255 | 932 | none works (floor 87%) | 92% | 605 | 1022 | none works (floor 92%) | 96% |
+| Vaelastrasz (SoD) | 1237 | 1584 | 2747 | 3.2% | 568 | 1683 | 4324 | 7.1% |
+| Chromaggus (SoD) | 1283 | 1271 | 2124 | 47% | 639 | 1381 | 2387 | 73% |
+| Magmadar (Anniversary) | 1176 | 402 | 372 | 0% | 614 | 450 | 421 | 0% |
+| Golemagg (Anniversary) | 1190 | 441 | 427 | 0% | 601 | 494 | 484 | 0% |
+| Ragnaros (Anniversary) | 1223 | 1219 | 2761 | 31% | 520 | 1265 | 2961 | 40% |
+| Onyxia (Anniversary) | 1209 | 538 | 556 | 0% | 663 | 569 | 587 | 0% |
+| Broodlord (Anniversary) | 1196 | 606 | 3519 (floor 4.5%) | 6.5% | 595 | 666 | 2541 (floor 3.8%) | 5.5% |
+| Vaelastrasz (Anniversary) | 1219 | 1171 | 1528 | 0% | 563 | 1244 | 1635 | 0% |
+| Chromaggus (Anniversary) | 1261 | 718 | 905 | 0% | 611 | 791 | 1006 | 0% |
 
-- **Vaelastrasz is the case no healing saves**, for the paladin: Flame Breath's burn stacks to 5 at 1,000 Fire
-  every 3 s a stack, on top of 3,500 to 4,500 breaths and a 3,844 to 5,096 melee, against 7,000 health. Real
-  Vaelastrasz tanks wore fire resistance, which is what the score should push the search toward.
-- **Ragnaros** needs about 2.5 times the damage taken: Elemental Fire's 2,160 to 2,640 and 600 a second for
-  8 s on every landed hit. Fire resistance helps the hit but little of the burn: under Forever a DoT's tick
-  meets a tenth of the resistance (`foreverAverageResist`).
-- **Broodlord's Mortal Strike** halves the healing for 5 s, which shows as healing needed at 1.7 to 1.9 times
-  the damage taken against about 1.15 at the other bosses.
+- **Season of Discovery's Broodlord is a one-shot** for a pre-raid tank (7,000 health): his Mortal Strike lands for
+  7,000 to 11,500 through 56% armor. Its Onyxia and Chromaggus kill at the healing their raids gave their own,
+  sturdier tanks. Scoring Forever's pre-raid tanks on them mostly measures that gap, so **the user picks which set
+  scores tanks** (the top-level files until then).
+- **Healing needed under the damage taken** (Golemagg, Magmadar) is the short fights: a 27 s kill takes about a
+  quarter of a tank's health from its own pool.
+- **Ragnaros on the Anniversary realms** needs 2.3 times the damage taken, and its tanks took 725 a second where
+  ours take 1,219: theirs wore fire resistance, which resists most of Elemental Fire (its ticks landed for 135 of 600).
+- **Broodlord's Mortal Strike** puts the death floor near 5% on the Anniversary realms (11,000 to 16,000 before
+  armor), so healing needed there is unstable (its error is unbounded): a 7,000 health tank is near the line.
 
 **From the logs:** `tools/warcraftlogs/wclcli.py tank` reads, per encounter, the boss's swings and abilities
 on the main tank, the tank's damage taken a second, and its healing taken (effective, overheal, absorbs,
 heals a second, healers, top heal spells). It needs a Warcraft Logs API client, on the user's machine or as
-`WCL_CLIENT_ID` and `WCL_CLIENT_SECRET` in a cloud environment.
+`WCL_CLIENT_ID` and `WCL_CLIENT_SECRET` in a cloud environment. `tools/warcraftlogs/README.md` has where each
+realm's logs are.
 
 ## What tanks gear for
 
@@ -360,9 +424,10 @@ presets landing on the same build means a weight moves).
 1. **Rules audit** of each tank's defensive talents, stats and abilities against Forever's client data and
    foreverchanges (Protection warrior, Feral tank, Protection paladin, Warden shaman), like the class audits.
    Bring the Feral tank into the build. Ask for a dungeon boss log for Forever's boss crit.
-2. **Log numbers in the encounters**: run `wclcli.py tank` on Season of Discovery, Anniversary and Era logs
-   (needs an API client), replace the vmangos melee and the guessed healing, check the command against a real
-   report first. Then Patchwerk, threat drops, armor cuts and stacking DoTs in the engine.
+2. **Which encounter set scores tanks** (the user's call): Season of Discovery's Normal raids (the source order,
+   but its Onyxia and Blackwing Lair are tuned far above a pre-raid tank) or the Anniversary realms'. Then
+   Patchwerk, threat drops, armor cuts and stacking DoTs in the engine, and Season of Discovery's own abilities
+   (Magma Spit, Golemagg's Pyroblast, its Elemental Fire and Lava Breath values) if its set is kept.
 3. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.
 4. **A paired noise test** for rotopt's tank searches (above), then the three presets' searches.
 5. **Tank gear**: a tank row in `orchestration/gear_targets.md` and synthetic tank items, then gear and talent
