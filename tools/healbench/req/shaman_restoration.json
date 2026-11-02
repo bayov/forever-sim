@@ -129,6 +129,33 @@
                   }
                 },
                 {
+                  "notes": "Riptide on the tank whenever it's off: an instant heal and a HoT, and Chain Heal at the tank heals 25% more.",
+                  "action": {
+                    "condition": {
+                      "not": {
+                        "val": {
+                          "dotIsActive": {
+                            "spellId": {
+                              "spellId": 408521
+                            },
+                            "targetUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 408521
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "The tank's steady damage: a big Healing Wave once it misses enough for it.",
                   "action": {
                     "castSpell": {

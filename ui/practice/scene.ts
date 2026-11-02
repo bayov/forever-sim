@@ -44,7 +44,7 @@ export class Room {
 
 	constructor(
 		readonly canvas: HTMLCanvasElement,
-		playerReach: number,
+		_playerReach: number,
 		playerHeight: number,
 		dummyReach: number,
 		dummyHeight: number,
@@ -92,7 +92,8 @@ export class Room {
 		this.meleeRing.position.y = 0.02;
 		this.dummy.add(this.meleeRing);
 
-		this.player = capsule(playerReach * 0.35, playerHeight, 0x6b4f9c);
+		// A body about as wide as a character, not the combat reach, which is longer.
+		this.player = capsule(0.32, playerHeight, 0x6b4f9c);
 		this.scene.add(this.player);
 	}
 
@@ -147,7 +148,8 @@ export class Room {
 
 	// placeCamera puts the camera behind and above you, pulled in when the ground is in the way.
 	placeCamera(pos: [number, number], height: number, cam: CameraState) {
-		const head = toThree(pos[0], pos[1], height + this.playerHeight * 0.9);
+		// The camera pivots a little above your head, so you show in the lower middle.
+		const head = toThree(pos[0], pos[1], height + this.playerHeight + 0.35);
 		// The way the camera looks: along its yaw, and down by its pitch.
 		const look = new THREE.Vector3(Math.cos(cam.yaw) * Math.cos(cam.pitch), -Math.sin(cam.pitch), -Math.sin(cam.yaw) * Math.cos(cam.pitch));
 		let distance = cam.distance;

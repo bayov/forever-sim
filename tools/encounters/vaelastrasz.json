@@ -1,0 +1,160 @@
+{
+ "name": "Vaelastrasz the Corrupt",
+ "source": "[core: vmangos] Melee 3,844 to 5,096 a 2.0 s swing before armor: vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 35. Burning Adrenaline 23620 on the tank every 45 s (it dies 20 s later), so tanks swap every 45 s. Flame Breath 23461 3,500 to 4,500 Fire every 5 to 10 s, frontal, and 938 to 1,062 Fire every 3 s for 15 s, stacking to 5. Cleave 19983 every 5 to 10 s. Fire Nova 23462 555 to 645 Fire to the raid every 2 s.",
+ "reports": [],
+ "warcraftLogs": {
+  "encounter": 611,
+  "zone": "Blackwing Lair"
+ },
+ "notes": "One tank's 45 s stint, so the fight is 45 s. Flame Breath's DoT stacks to 5 (client data), which a sim DoT can't, so each stack is its own 1,000 Fire every 3 s, the stacks coming one a breath (every 7.5 s from 11 s) and staying up. The stint varies by 5 s. Fire resistance takes its share of the Fire. The Burning Adrenaline on casters and the raid's Fire Nova on others are the healing sim's.",
+ "encounter": {
+  "duration": 45,
+  "durationVariation": 5,
+  "targets": [
+   {
+    "name": "Vaelastrasz the Corrupt",
+    "level": 63,
+    "mobType": "MobTypeUnknown",
+    "parryHaste": true,
+    "stats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     805.0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3625,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "minBaseDamage": 2901.4,
+    "damageSpread": 0.4315,
+    "swingSpeed": 2.0
+   }
+  ],
+  "raidDamage": [
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 3500,
+    "maxDamage": 4500,
+    "who": "BossTarget",
+    "firstAt": 8,
+    "everySeconds": 7.5,
+    "spreadSeconds": 2.5
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 1000,
+    "maxDamage": 1000,
+    "who": "BossTarget",
+    "firstAt": 11,
+    "everySeconds": 3,
+    "spreadSeconds": 0
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 1000,
+    "maxDamage": 1000,
+    "who": "BossTarget",
+    "firstAt": 18.5,
+    "everySeconds": 3,
+    "spreadSeconds": 0
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 1000,
+    "maxDamage": 1000,
+    "who": "BossTarget",
+    "firstAt": 26,
+    "everySeconds": 3,
+    "spreadSeconds": 0
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 1000,
+    "maxDamage": 1000,
+    "who": "BossTarget",
+    "firstAt": 33.5,
+    "everySeconds": 3,
+    "spreadSeconds": 0
+   },
+   {
+    "spellId": 23461,
+    "school": "SpellSchoolFire",
+    "minDamage": 1000,
+    "maxDamage": 1000,
+    "who": "BossTarget",
+    "firstAt": 41,
+    "everySeconds": 3,
+    "spreadSeconds": 0
+   },
+   {
+    "spellId": 19983,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 3598,
+    "maxDamage": 4755,
+    "who": "BossTarget",
+    "firstAt": 6,
+    "everySeconds": 7.5,
+    "spreadSeconds": 2.5,
+    "melee": true
+   },
+   {
+    "spellId": 23462,
+    "school": "SpellSchoolFire",
+    "minDamage": 555,
+    "maxDamage": 645,
+    "who": "Everyone",
+    "firstAt": 4,
+    "everySeconds": 2,
+    "spreadSeconds": 0
+   }
+  ]
+ },
+ "healing": {
+  "healers": 4,
+  "hpsEach": 500,
+  "castSeconds": 2.0,
+  "notes": "A 40-player Blackwing Lair raid's main tank: 4 healers at 500 HPS each in 2 s heals, more healing power than in Molten Core (about 600). Guessed, not from logs: replace with tools/warcraftlogs tank numbers."
+ }
+}

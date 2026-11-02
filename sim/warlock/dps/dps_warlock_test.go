@@ -36,7 +36,7 @@ func warlockSuite(t *testing.T, talents string, gear string, apl string, label s
 }
 
 func TestWarlockDemonology(t *testing.T) {
-	warlockSuite(t, TalentsDemonology, "level60_phase1_synthetic", "level60_demonology", "Demonology Warlock", DemonologyWarlock)
+	warlockSuite(t, TalentsDemonology, "level60_phase1_synthetic_demonology", "level60_demonology", "Demonology Warlock", DemonologyWarlock)
 }
 
 func TestWarlockDestruction(t *testing.T) {

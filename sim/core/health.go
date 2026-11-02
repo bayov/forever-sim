@@ -114,7 +114,7 @@ func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 
 	hb.currentHealth = newHealth
 
-	if m := &hb.unit.Metrics.CharacterIterationMetrics; !m.scareOpen && newHealth > 0 && newHealth < scarePercent*hb.MaxHealth() {
+	if m := &hb.unit.Metrics.CharacterIterationMetrics; hb.unit.Type == PlayerUnit && !m.scareOpen && newHealth > 0 && newHealth < scarePercent*hb.MaxHealth() {
 		m.scareOpen = true
 		m.Scares++
 	}

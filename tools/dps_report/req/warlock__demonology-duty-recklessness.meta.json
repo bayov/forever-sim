@@ -12,18 +12,18 @@
     "Demonology",
     "Destruction"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase1_synthetic_demonology",
   "apl": "level60_demonology_duty_recklessness",
   "published": {
-    "dps": 1029.7,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1037.0,
+    "source": "verify.py on this request after Demonology got its own gear set (standards 34, 2026-11-02; wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s); the report is not regenerated yet"
   },
   "verify": {
-    "dps": 1029.7,
-    "stderr": 0.34,
+    "dps": 1037.0,
+    "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on this request (2026-11-02, Demonology's own gear set), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Keeps Curse of Recklessness (505 armor) on the boss for the raid instead of a druid's Faerie Fire. In Forever, curses and banes use separate slots, so it keeps its bane.",
   "keyTalents": [
@@ -66,7 +66,7 @@
   ],
   "caveats": [
     "The duty costs 15.0 DPS at 180s against the same build without it (1036.8 against 1051.8, 20,000 iterations, seed 1). The curse only takes armor, which helps only a demon's melee, so the warlock pays its GCDs and mana for the raid.",
-    "Takes Suppression 5/5 for threat, on the shared gear at the 16% hit cap. That's 68.1 DPS behind a 1-point build on hit gear at 180s.",
+    "Takes Suppression 5/5 for threat, on its own gear at the 16% hit cap. On 2026-10-24 that was 68.1 DPS behind a 1-point build on hit gear at 180s.",
     "Decimation's 3% comes from its tooltip and isn't tested.",
     "How much of the warlock's stats a demon gets, and Succubus melee, come from pet sheets at levels 20 and 30, not 60.",
     "Bane of Doom's coefficient is 4.0 (Era has 1.0). At 2.0, Shadow Bolt builds would lose about 4%. At 1.0, about 6%.",
@@ -75,7 +75,7 @@
     "Soul shards and Life Tap's health cost aren't tracked.",
     "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
   ],
-  "notes": "Request from mksettings with the same arguments as warlock__demonology except -apl level60_demonology_duty_recklessness, then raid.debuffs.curseOfRecklessness and faerieFire removed (they share the minor armor slot, standards 20). Made as a hand edit of the base request, which is the same. Demon Armor; Summon Succubus, sacrificed Imp, imbue Spellstone. mksettings sets distanceFromTarget 25 (5 before 2026-11-01) and channelClipDelayMs 50, as the UI preset does. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
+  "notes": "Request from mksettings with the same arguments as warlock__demonology except -apl level60_demonology_duty_recklessness, then raid.debuffs.curseOfRecklessness and faerieFire removed (they share the minor armor slot, standards 20). Made as a hand edit of the base request, which is the same. Demon Armor; Summon Succubus, sacrificed Imp, imbue Spellstone. mksettings sets distanceFromTarget 25 (5 before 2026-11-01) and channelClipDelayMs 50, as the UI preset does. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Wears Demonology's own synthetic set since 2026-11-02 (standards 34, fairness-20261031-1): the shared set's slots in Demonology's gear_targets.md mix, 130 crit rating where the shared set has 96; +6.4 / +7.3 / +7.4 at 120 / 180 / 300 s (seed 1, 20,000 iterations).",
   "duty": "Curse of Recklessness",
   "baseBuild": "warlock__demonology"
 }

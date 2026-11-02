@@ -8,6 +8,10 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled: 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Level 60 presets: Demonology's own gear set (2026-11-02)
+
+- Demonology wears a synthetic set of its own (standards 34, user ruling on fairness-20261031-1), like the Arcane mage: the shared set's slots, budget, enchants, wand and trinkets in Demonology's own Season of Discovery mix (`orchestration/gear_targets.md`), with more crit and less spell power and Intellect (130 crit rating against 96, 396 spell power against 412, 136 Intellect against 148, the same 100 hit rating). Orc at 120 / 180 / 300 sec: +6.9 / +7.2 / +7.6 (1052.7 at 180), the duty builds +6.4 to +8.0. The rotation knobs and the Orc stay. [sim-status.md](../sim-status.md) has the numbers.
+
 ## Level 60 presets: Suppression on Demonology and the explosives (2026-10-24)
 
 - Demonology takes Suppression 5/5 (standards 26: a threat talent every warlock build must take, the other builds already did). The talent search with it pinned (`tools/rotopt -require suppression`) on the shared set, which it caps at 16% spell hit, gives `051-0305003131221001351-0550004` for Demonology and its curse duty build: Agonizing Flames' three points and one of Ruin went to Suppression, and one to Improved Corruption. Keeping Agonizing Flames by dropping Demonic Pact is 90 behind, and the old Demonology hit set would put it 4% over the cap (13 behind). Suppression costs 67.1 / 68.1 / 66.2 at 120 / 180 / 300 sec (Demonology 1081.4 / 1065.1 / 1035.4, curse duty 1063.8 / 1053.7 / 1026.5); Demonology is still the best warlock build.

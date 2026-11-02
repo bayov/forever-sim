@@ -1,7 +1,7 @@
 # Boss encounters
 
-Boss fights for the tank bench (`tools/tankbench -encounter`) and the heal bench
-(`tools/healbench`), one file a boss, shared so the two sims score against the same fights
+Boss fights for the tank bench (`tools/tankbench -encounter`) and, once it reads them, the heal
+bench (`tools/healbench`), one file a boss, shared so the two sims score against the same fights
 (docs/tank_sim.md, docs/healing_sim.md).
 
 ```json
@@ -20,8 +20,9 @@ Boss fights for the tank bench (`tools/tankbench -encounter`) and the heal bench
 
 - A boss's abilities on the tank are `raid_damage` events with `who` BossTarget or Tanks. A
   melee one (Mortal Strike, Cleave, Hateful Strike) sets `melee`, so it rolls the tank's
-  avoidance and block. A healing cut sets `healing_taken_multiplier` and `debuff_seconds`.
-- **Sources, best first** (the user, 2026-11-02; docs/data_sources.md): Warcraft Logs from Season
+  avoidance and block. A healing cut sets `healing_taken_multiplier` and `debuff_seconds`. A DoT
+  that stacks is one event a stack, since a sim DoT restarts instead of stacking.
+- **Sources, best first** (the user, 2026-11-02, docs/data_sources.md): Warcraft Logs from Season
   of Discovery, then the Anniversary realms (Vanilla, then TBC), then Classic Era, then the
   private server cores. `tools/warcraftlogs/wclcli.py tank` reads a boss's damage on its main
   tank and the tank's healing from logs.

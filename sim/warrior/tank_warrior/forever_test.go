@@ -229,7 +229,9 @@ func TestArmorCap(t *testing.T) {
 
 // TestForeverBossMeleeAbility checks a boss's melee ability (RaidDamageEvent.melee, the core's
 // OutcomeEnemyMeleeSpecial) on a tanked warrior: it misses, is dodged, parried and blocked like a
-// white swing, never crushes, and a landed hit leaves its healing taken debuff.
+// white swing, never crushes, and a landed hit leaves its healing taken debuff. The boss crits at
+// Classic's rate and dual wields, so blocked crits come up and must be booked once, and the special
+// attack takes no dual wield miss.
 func TestForeverBossMeleeAbility(t *testing.T) {
 	player := &proto.Player{
 		Race:          proto.Race_RaceOrc,
@@ -244,6 +246,8 @@ func TestForeverBossMeleeAbility(t *testing.T) {
 	raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
 	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
 	target.SwingSpeed = 100 // nearly no white swings, so the ability's outcomes stand alone
+	target.ClassicCrit = true
+	target.DualWield = true
 	res := core.RunRaidSim(&proto.RaidSimRequest{
 		Raid: raid,
 		Encounter: &proto.Encounter{Duration: 300, Targets: []*proto.Target{target}, RaidDamage: []*proto.RaidDamageEvent{{
@@ -268,7 +272,20 @@ func TestForeverBossMeleeAbility(t *testing.T) {
 			got.Blocks += tm.Blocks
 			got.Hits += tm.Hits
 			got.Crushes += tm.Crushes
+			got.Crits += tm.Crits
+			got.BlockedCrits += tm.BlockedCrits
 		}
+	}
+	// One a second from 0 to 300 s in each of the 20 iterations (passive spells book no casts).
+	uses := int32(20 * 301)
+	if sum := got.Misses + got.Dodges + got.Parries + got.Blocks + got.Hits + got.Crits + got.BlockedCrits; sum != uses {
+		t.Errorf("the ability's outcomes add up to %d, want its %d uses, each booked once", sum, uses)
+	}
+	if got.BlockedCrits == 0 {
+		t.Error("no blocked crits, want some with Classic's crit")
+	}
+	if miss := float64(got.Misses) / float64(uses); miss > 0.15 {
+		t.Errorf("the ability misses %.1f%%, want the white swing's miss without the dual wield 19%%", 100*miss)
 	}
 	if got.Misses == 0 || got.Dodges == 0 || got.Parries == 0 || got.Blocks == 0 || got.Hits == 0 {
 		t.Errorf("the ability's outcomes miss %d, dodge %d, parry %d, block %d, hit %d: want each above 0", got.Misses, got.Dodges, got.Parries, got.Blocks, got.Hits)
