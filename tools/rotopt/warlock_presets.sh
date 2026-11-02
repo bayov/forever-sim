@@ -4,7 +4,7 @@
 # 2026-10-12 and 2026-10-23 (see ui/warlock/presets.ts). Run from the repo root. The rotation does not depend
 # on the settings, only the one sanity sim does, so any level 60 warlock settings will do:
 #
-#   go run --tags=with_db ./tools/rotopt/mksettings -spec demonology -gear level60_phase1_synthetic \
+#   go run --tags=with_db ./tools/rotopt/mksettings -spec demonology -gear level60_phase1_synthetic_demonology \
 #       -apl level60_demonology -talents 051-0305003131221001351-0550004 -race Human -duration 180 -out lock60.json
 #   tools/rotopt/warlock_presets.sh lock60.json
 #

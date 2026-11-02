@@ -1896,6 +1896,22 @@
      "commits": [
       "da5be53"
      ]
+    },
+    {
+     "title": "Demonology wears a gear set of its own, built for its own stat target",
+     "kind": "gear",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__demonology",
+      "warlock__demonology-duty-curse",
+      "warlock__demonology-duty-recklessness"
+     ],
+     "note": "It wore the Destruction and Affliction set, which is short of the crit a Demonology warlock gears for. Up 7.2 at 180 s (1045.5 to 1052.7). Orc stays its best race.",
+     "commits": [
+      "be5126c"
+     ]
     }
    ],
    "internal": [
@@ -1974,6 +1990,50 @@
     {
      "commit": "d6f1333",
      "why": "tank sim options; no report result moves (report hashes unchanged)"
+    },
+    {
+     "commit": "16df0b71c",
+     "why": "tank sim only: no DPS build reads it"
+    },
+    {
+     "commit": "6ca43223b",
+     "why": "healing sim only: no DPS build reads it"
+    },
+    {
+     "commit": "437c6fda9",
+     "why": "practice room only: no DPS build reads it"
+    },
+    {
+     "commit": "035c27633",
+     "why": "practice room only: no DPS build reads it"
+    },
+    {
+     "commit": "5a3a75309",
+     "why": "practice room hooks, off in every report sim"
+    },
+    {
+     "commit": "a517e7e01",
+     "why": "tank encounters only: no DPS build reads them"
+    },
+    {
+     "commit": "5075b45e0",
+     "why": "practice room only: no DPS build reads it"
+    },
+    {
+     "commit": "9a8051fdc",
+     "why": "practice room hooks, off in every report sim"
+    },
+    {
+     "commit": "e32660fe2",
+     "why": "a totem buff hold that ended before the pull: no golden moved"
+    },
+    {
+     "commit": "0396c4025",
+     "why": "report hashes re-recorded for the new healing result fields; no DPS number in them moved"
+    },
+    {
+     "commit": "9c038d2f3",
+     "why": "healing sim result fields: no DPS number moves"
     }
    ],
    "source": {
