@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_sunder",
   "published": {
-    "dps": 968.0,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed for the two-hand Rage crit fix)"
+    "dps": 970.4,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed for the knob re-search after the two-hand Rage crit fix)"
   },
   "verify": {
-    "dps": 968.0,
-    "stderr": 0.48,
+    "dps": 970.4,
+    "stderr": 0.47,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on this request after the 2026-11-02 knob re-search, 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Keeps 5 Sunder Armor stacks on the boss for a raid with no warrior tank. The raid's Sunder Armor is off.",
   "keyTalents": [
@@ -42,8 +42,8 @@
     "With 25s left, if Recklessness is ready and Rage is under 25, swap to Berserker Stance. Swap back after Recklessness",
     "Recklessness in the last 25s. Racials on cooldown, but Elune's Light never during Recklessness or the 15s before it",
     "Mighty Rage Potion at the pull, the second in the last 15s. Bloodrage under 20 Rage",
+    "Slam at 20+ Rage outside execute (15s cooldown with Improved Slam), ahead of Mortal Strike",
     "Mortal Strike on cooldown",
-    "Slam at 20+ Rage outside execute (15s cooldown with Improved Slam)",
     "Overpower at 5+ Rage after a dodge or Bloodthrill",
     "Keep Rend up outside execute. Then Execute",
     "Heroic Strike at 90+ Rage and Hamstring filler at 10+, both outside execute"
@@ -61,7 +61,7 @@
     "Dense Sharpening Stone (main hand)"
   ],
   "caveats": [
-    "The duty costs 42.9 DPS at 180s against the same build without it (862.7 against 905.6, 20,000 iterations, seed 1). Part of it is the ramp: the warrior's own hits meet fewer stacks for the first 7.5s, where the raid's Sunder was full at once.",
+    "The duty costs 38.3 DPS at 180s against the same build without it (970.4 against 1008.7, 20,000 iterations, seed 1). Part of it is the ramp: the warrior's own hits meet fewer stacks for the first 7.5s, where the raid's Sunder was full at once.",
     "Assumed: white hits give Rage by weapon speed, at the level 30 rate even at level 60.",
     "No Ahn'Qiraj book ranks, so Heroic Strike stops at rank VIII, and the raid's Battle Shout at VI, Strength of Earth at IV and Grace of Air at II.",
     "Deep Wounds ticks can't crit.",
