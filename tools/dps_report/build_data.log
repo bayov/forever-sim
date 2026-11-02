@@ -18,8 +18,8 @@ mana_summary: 51 rows, 15 KB
 assumptions: 57 rows, 63 KB
 WARNING assumptions: 1 texts name the project's process, e.g. 'Forever client 70707 (SpellCooldowns 101119, spell 1312002). foreverchanges.pro, build 1.60.1.70707. User ruling 2026-10-30.'
 assumption_dps: 343 rows, 57 KB
-rotation: 760 rows, 240 KB
-race_rotation: 419 rows, 153 KB
+rotation: 760 rows, 237 KB
+race_rotation: 419 rows, 152 KB
 WARNING rotation: 3 rotation_text.json entries no line uses, e.g. [[tal:Mage:1:11|Heating Up]] talent taken and Heating Up at 3+ stacks and ([[tal:Mage:2:15|Fingers of Frost]] talent not taken or Fingers of Frost is not up or Pyroblast takes 1.49s or more to cast)
 WARNING rotation: 9 rotation_text.json why entries no line uses, e.g. {'builds': ['paladin__level_60_sub_holy'], 'key': 's20293', 'when': 'at 2+ stacks', 'why': "Why swap at 2 echoes instead of 3? Windfury's extra swing can waste an echo."}
 rotation conditions shown in compact form: []
