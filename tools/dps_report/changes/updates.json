@@ -1912,6 +1912,80 @@
      "commits": [
       "be5126c"
      ]
+    },
+    {
+     "title": "Casters stand at the longest range all of their spells reach",
+     "kind": "method",
+     "classes": [
+      "Mage",
+      "Warlock",
+      "Priest",
+      "Druid"
+     ],
+     "builds": [
+      "mage__frostfire",
+      "mage__arcane",
+      "mage__fire",
+      "mage__frost",
+      "priest__shadow",
+      "priest__shadow-holy",
+      "priest__smite",
+      "druid__balance",
+      "druid__balance-duty-ff",
+      "druid__balance-wrath",
+      "druid__balance-wrath-duty-ff",
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__demonology",
+      "warlock__demonology-duty-curse",
+      "warlock__demonology-duty-recklessness",
+      "warlock__destruction",
+      "warlock__destruction-duty-curse",
+      "warlock__destruction-duty-recklessness",
+      "warlock__destruction_fire",
+      "warlock__destruction_fire-duty-curse",
+      "warlock__destruction_fire-duty-recklessness"
+     ],
+     "note": "Distance sets how long every bolt flies. Frostfire and Arcane stand at 20 yd for Fire Blast, Shadow at 22 for Mind Flay, Fire, Frost, Smite and the warlocks at 30, Balance at 36 with Nature's Reach; Elemental stays at 20. Most builds move by under 2 DPS at 180 s. Balance Wrath loses about 7, since a Wrath now flies longer than it casts, and Arcane no longer ends on Arcane Explosion.",
+     "commits": [
+      "fa2d499"
+     ]
+    },
+    {
+     "title": "Balance Wrath is a Night Elf",
+     "kind": "race",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__balance-wrath",
+      "druid__balance-wrath-duty-ff"
+     ],
+     "races": [
+      "Night Elf",
+      "Windshaper"
+     ],
+     "note": "At 36 yd haste shortens the cast but not the flight, so the Skyborne races fall behind: Night Elf 853.0 against Windshaper's 848.3 at 180 s. It holds Elune's Light for the trinket, as Balance does. Windshaper stays the best Horde race.",
+     "commits": [
+      "32c825c"
+     ]
+    },
+    {
+     "title": "Beast Mastery hunters start the fight at 12 yd",
+     "kind": "method",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-wolf",
+      "hunter__beast-mastery-tallstrider"
+     ],
+     "note": "Just outside Auto Shot's dead zone, where the weave starts anyway. Up 1.5 at 180 s (1045.4 to 1046.9). Marksmanship and Lone Wolf gain nothing from it and stay at 25 yd.",
+     "commits": [
+      "6c35781"
+     ]
     }
    ],
    "internal": [
