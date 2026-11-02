@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_seal_fate_swords",
   "apl": "level60_seal_fate_swords",
   "published": {
-    "dps": 771.1,
-    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
+    "dps": 768.9,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 751.4,
-    "stderr": 0.2,
+    "dps": 768.9,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py of this request, 180s, seed 1"
+    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Seal Fate Swords with Murder 2/2, for a Humanoid or Giant boss.",
   "advantage": "Murder 2/2 adds 4% damage against Humanoids and Giants. It does nothing against other bosses.",

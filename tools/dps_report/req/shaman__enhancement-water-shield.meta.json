@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "magma",
   "published": {
-    "dps": 836.3,
-    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
+    "dps": 834.8,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 839.94,
-    "stderr": 0.37,
+    "dps": 834.8,
+    "stderr": 0.36,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 839.7"
+    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Enhancement with Restoration points for Water Shield. Without Improved Fire Nova, it uses Magma Totem. Lightning Shield still beats Water Shield, however often the shaman is hit.",
   "keyTalents": [

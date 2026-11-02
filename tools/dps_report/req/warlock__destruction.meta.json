@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction",
   "published": {
-    "dps": 1001.6,
-    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
+    "dps": 995.3,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 1001.5,
-    "stderr": 0.4,
+    "dps": 995.3,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py of this request, 180s, seed 1"
+    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Shadow Bolt Destruction with Conflagrate, plus Pandemic and Malevolence from Affliction.",
   "keyTalents": [

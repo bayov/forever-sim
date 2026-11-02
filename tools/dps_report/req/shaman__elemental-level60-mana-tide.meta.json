@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_mana_tide",
   "published": {
-    "dps": 757.1,
-    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
+    "dps": 753.2,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 762.14,
+    "dps": 753.2,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 761.7"
+    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "The default Elemental build with Mana Tide Totem for the group, cast at 10% mana.",
   "keyTalents": [

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv",
   "published": {
-    "dps": 1031.2,
-    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
+    "dps": 990.7,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 987.81,
-    "stderr": 0.26,
+    "dps": 990.7,
+    "stderr": 0.29,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, in the DPS report since 2026-10-30"
+    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Melee Survival with a Tallstrider, built around Expose Prey into Mongoose Bite. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
   "keyTalents": [

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_seal_fate_swords",
   "apl": "level60_seal_fate_swords",
   "published": {
-    "dps": 745.3,
-    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
+    "dps": 743.2,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 726.1,
-    "stderr": 0.2,
+    "dps": 743.2,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py of this request, 180s, seed 1"
+    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Sinister Strike with Seal Fate from Assassination and Blade Flurry from Combat.",
   "keyTalents": [

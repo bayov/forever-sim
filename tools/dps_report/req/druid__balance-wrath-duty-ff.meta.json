@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath_ff",
   "published": {
-    "dps": 780.3,
-    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Windshaper Skyborne; verify.py, 20000 iterations, seed 1 (was 770.5 as Tauren on the same sim)"
+    "dps": 823.2,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
     "dps": 823.2,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the request on the 2026-10-30 hotfix trees (new talents and rotation), 180s, seed 1 (seed 1000003 823.4)"
+    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "The Wrath-only build, keeping Faerie Fire on the boss for the raid. The armor cut doesn't help its spells, so it only costs GCDs.",
   "keyTalents": [

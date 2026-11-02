@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath",
   "published": {
-    "dps": 811.1,
-    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Windshaper Skyborne; verify.py, 20000 iterations, seed 1 (was 800.7 as Tauren on the same sim)"
+    "dps": 855.7,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
     "dps": 855.7,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the request on the 2026-10-30 hotfix trees (new talents and rotation), 180s, seed 1 (seed 1000003 855.5)"
+    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Balance with Wrath as the only filler, for a moonkin that would rather not weave.",
   "keyTalents": [
