@@ -4,7 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-_None open._
+### results-20261102-1: shaman__elemental-level60-mana-tide meta published.dps is 0.4 off (753.2 vs 752.8)
+- severity: low (builds.json 752.8 matches my 20k seed-1 run 752.83; only the meta lags)
+- affects: tools/dps_report/req/shaman__elemental-level60-mana-tide.meta.json; runreq.sh and verify.py flag it OFF
+- found: 2026-11-02, master 796495d6f
+- evidence: shared run /tmp/audit-work/runs/master/summary.tsv: 752.83 vs meta 753.2; the other 72 metas are within 0.15. Likely the meta was set before the last mana-tide re-search; sure of the numbers, not of the cause.
+- proposed fix: set the meta's published.dps to 752.8 and its source from builds.json.
+- needs: orchestrator fix
+
 
 ## Resolved
 

@@ -1,13 +1,13 @@
 # Rotation audit: reference files
 
-- `baseline_5a6e9c6_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  5a6e9c6a6 (pass 45). Since c23ef04: the October 30 hotfix talent trees for paladin and druid, and the
-  re-searched paladin, druid and mage presets (talents, APLs and reqs together). Ret twist / sub-Holy +59 to
-  +83, Ret Shock +15, deep Holy Shock -54 to -62 (Shock vs Undead -22), feral +55, balance +43 to +49,
-  Arcane +45, Frost +15. Hunters, warriors and the rest unchanged.
+- `baseline_796495d_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  796495d6f (pass 47). Since 5a6e9c6: the 2026-11-02 rotation re-searches (rogue builders whenever affordable, warrior
+  knobs after the two-hand Rage crit fix, hunter Aimed Shot above 40% mana, mage/balance end-of-fight gates), caster
+  distances (standards 33), Balance Wrath as Night Elf, the Demonology synthetic set (+7.5 to +9.8), and the deep Holy
+  Shock presets removed. Sim-only moves (regress.py, old vs new CLI on the same reqs) were all under 1 DPS.
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at 5a6e9c6a6 (`/tmp/audit-cache/cli/5a6e9c6a6c2d/wowsimcli`).
+  - The CLI was the audit loop's shared build at 796495d6f (`/tmp/audit-cache/cli/796495d6fdae/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

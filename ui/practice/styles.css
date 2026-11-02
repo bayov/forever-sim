@@ -882,14 +882,15 @@ button.primary {
 	gap: calc(5 * var(--u));
 	white-space: nowrap;
 	font-size: calc(22 * var(--u));
-	font-weight: 600;
+	/* The font has one weight. A bolder weight makes the browser smear it, and its digits already
+	   sit close, so they ran into each other. */
+	font-weight: 400;
+	font-synthesis: none;
+	letter-spacing: 0.06em;
 	line-height: 1;
 	text-shadow:
 		1px 1px 0 #000,
-		-1px -1px 0 #000,
-		1px -1px 0 #000,
-		-1px 1px 0 #000,
-		0 0 4px rgba(0, 0, 0, 0.85);
+		0 0 3px rgba(0, 0, 0, 0.9);
 	will-change: transform, top, opacity;
 }
 .sct.crit {
@@ -930,7 +931,6 @@ button.primary {
 }
 .sct-note {
 	font-size: 0.7em;
-	font-weight: 700;
 	opacity: 0.85;
 }
 

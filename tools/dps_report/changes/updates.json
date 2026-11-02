@@ -2146,6 +2146,10 @@
     {
      "commit": "7c13620",
      "why": "practice room only: no DPS build reads it; no report result moves (report hashes)"
+    },
+    {
+     "commit": "5445fc9",
+     "why": "the report data and Frostfire's stored published and verify numbers; the change itself is the Ice Lance line"
     }
    ],
    "source": {

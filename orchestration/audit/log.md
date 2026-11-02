@@ -155,3 +155,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-02 07:01 | fairness | pass 22 | master fa865a3b8b7a | quiet | Published within 1.0 on all builds; new sweep baseline; Orc Affliction already open
 2026-11-02 12:58 | consumables | pass 64 | master 67084d0ec2 | quiet | Only assumptions_def.py moved; no consumable assumption changed; Sapper finding still open
 2026-11-02 12:58 | mechanics | pass 58 | master 67084d0ec2 | quiet | sim.go reseed speedup (same rolls), drops.json test data; client 70707 still newest
+2026-11-02 19:05 | results | pass 71 | master 796495d6fd | 1 new finding | Shared run matches builds.json on all 73; Elemental Mana Tide meta says 753.2 vs 752.8 (low)
+2026-11-02 19:05 | rotations | pass 47 | master 796495d6fd | quiet | 19 changed APLs fine; new rotations win paired checks; new baseline 796495d
+2026-11-02 19:05 | gear | pass 51 | master 796495d6fd | quiet | New Demonology set hits its gear_targets row
+2026-11-02 19:05 | consumables | pass 65 | master 796495d6fd | quiet | No buff/consume changes; Sapper finding still open
+2026-11-02 19:05 | mechanics | pass 59 | master 796495d6fd | quiet | Client 70707 still newest; Lightning Overload proc change matches client
+2026-11-02 19:05 | fairness | pass 23 | master 796495d6fd | quiet | 0/73 off published; Orc Affliction evidence added to open fairness-20261101-2

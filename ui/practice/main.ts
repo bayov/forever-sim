@@ -32,7 +32,7 @@ import { loadCursors } from './cursors';
 import { auraColor, avoidColor, CombatText, schoolColor } from './sct';
 import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
-import { fileProgress } from './wow/files';
+import { decodeHooks, fileProgress } from './wow/files';
 import { Model } from './wow/model';
 import { SoundRef, Sounds } from './wow/sound';
 import { Appearance, UnitView } from './wow/unit';
@@ -283,6 +283,7 @@ class PracticeRoom {
 		this.perf = new Perf(this.room.renderer);
 		// A model built mid fight (a spell's effect) can cost a frame.
 		Model.onLoad = (fdid, ms) => !this.loadingModels && this.perf?.note('model', performance.now(), ms, String(fdid));
+		decodeHooks.onDecode = (fdid, ms) => !this.loadingModels && this.perf?.note('texture', performance.now(), ms, String(fdid));
 		const cvars = this.character.cvars;
 		const options: CameraOptions = {
 			yawSpeed: parseFloat(cvars.cameraYawMoveSpeed ?? '180'),
@@ -343,6 +344,8 @@ class PracticeRoom {
 		const effects = new Effects(this.room.scene, this.sounds);
 		this.effects = effects;
 		const jobs: Promise<unknown>[] = [loadCursors(this.root)];
+		// Models we draw once while loading, so their shaders and textures are ready for the fight.
+		const warm: Model[] = [];
 
 		// Totems show their element's model (CreatureDisplayInfo 4587 to 4590).
 		const totemDisplays: Record<string, number> = { fire: 4589, earth: 4588, water: 4587, air: 4590 };
@@ -350,7 +353,17 @@ class PracticeRoom {
 		for (const [element, display] of Object.entries(totemDisplays)) {
 			const look = getJSON<Appearance>(`/api/appearance/creature/${display}`).catch(() => undefined);
 			totemLooks.set(element, look);
-			jobs.push(look.then(a => (a ? new UnitView(new THREE.Group(), []).load(a).catch(() => undefined) : undefined)));
+			jobs.push(
+				look.then(async a => {
+					if (!a) return;
+					const view = new UnitView(new THREE.Group(), []);
+					await view.load(a).catch(() => undefined);
+					const m = view.model as Model | undefined;
+					if (!m) return;
+					await m.loadEffectTextures();
+					warm.push(m);
+				}),
+			);
 		}
 		this.room.totemModel = async element => {
 			const a = await totemLooks.get(element);
@@ -434,10 +447,14 @@ class PracticeRoom {
 		);
 		jobs.push(
 			this.toolkitReady.then(() =>
-				effects.preload([...this.toolkit.spells.filter(s => s.kind !== 'item').map(s => s.spellId ?? 0).filter(id => id > 0), ...shownSpells]).catch(e => console.warn('effects', e)),
+				effects
+					.preload([...this.toolkit.spells.filter(s => s.kind !== 'item').map(s => s.spellId ?? 0).filter(id => id > 0), ...shownSpells])
+					.then(models => warm.push(...models))
+					.catch(e => console.warn('effects', e)),
 			),
 		);
 		await Promise.all(jobs);
+		await this.room.warmUp(warm).catch(e => console.warn('warm up', e));
 		screen.remove();
 		this.loadingModels = false;
 	}

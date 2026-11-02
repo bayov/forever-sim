@@ -5,6 +5,7 @@
 // (x, 0, -y) here, and a facing angle turns the same way.
 
 import * as THREE from 'three';
+import { newTextures } from './wow/files';
 import type { Model } from './wow/model';
 
 export type CameraState = { yaw: number; pitch: number; distance: number };
@@ -56,6 +57,7 @@ export class Room {
 	// totemModel loads a totem's real model by its element, when the client's files are there.
 	totemModel?: (element: string) => Promise<Model | undefined>;
 	private readonly raycaster = new THREE.Raycaster();
+	private readonly pickable: THREE.Object3D[] = [];
 	private playerHeight: number;
 
 	constructor(
@@ -105,6 +107,7 @@ export class Room {
 		this.dummyHit.position.y = dummyHeight / 2;
 		this.dummyHit.name = 'dummy';
 		this.dummy.add(this.dummyHit);
+		this.pickable.push(this.dummyHit, ground);
 
 		this.ring = new THREE.Mesh(new THREE.RingGeometry(dummyReach * 0.6, dummyReach * 0.75, 40), new THREE.MeshBasicMaterial({ color: 0xff3030, transparent: true, opacity: 0.8 }));
 		this.ring.rotation.x = -Math.PI / 2;
@@ -213,10 +216,41 @@ export class Room {
 		this.camera.lookAt(head);
 	}
 
+	// warmUp gets the fight's shaders and textures ready while the loading screen is up.
+	//
+	// The first time the renderer draws a kind of material it compiles a shader for it, and the
+	// first time it draws a texture it sends it to the GPU. Both happened mid fight and froze a
+	// frame for up to 80ms, the first time a spell's effect played. So we put every effect and totem
+	// model in the scene once (with their particles), compile what they need, and send every texture
+	// we decoded. We keep the models (out of the scene), because disposing them would let the
+	// renderer throw away the shaders we just made.
+	async warmUp(models: Model[]) {
+		const group = new THREE.Group();
+		group.position.copy(this.camera.position);
+		for (const m of models) {
+			group.add(m.root);
+			m.enableParticles(group);
+			m.update(0);
+		}
+		this.scene.add(group);
+		try {
+			await this.renderer.compileAsync(this.scene, this.camera);
+			for (const t of newTextures.list) this.renderer.initTexture(t);
+		} finally {
+			this.scene.remove(group);
+			newTextures.keep = false;
+			newTextures.list = [];
+			this.warmModels.push(...models);
+		}
+	}
+	private readonly warmModels: Model[] = [];
+
 	// pick finds the unit under a screen point: 'enemy' for the dummy, 'ground' or undefined.
 	pick(ndcX: number, ndcY: number): 'enemy' | 'ground' | undefined {
 		this.raycaster.setFromCamera(new THREE.Vector2(ndcX, ndcY), this.camera);
-		const hits = this.raycaster.intersectObjects(this.scene.children, true);
+		// Only the dummy's hull and the ground can be picked. Testing the whole scene would test
+		// every triangle of the skinned character models, which took 25ms per mouse move.
+		const hits = this.raycaster.intersectObjects(this.pickable, false);
 		for (const h of hits) {
 			if (h.object.name === 'dummy') return 'enemy';
 			if (h.object.name === 'ground') return 'ground';
@@ -265,7 +299,8 @@ export class Room {
 		this.resize();
 		const shadows = g.shadows !== 'off';
 		const size = g.shadows === 'high' ? 4096 : g.shadows === 'medium' ? 2048 : 1024;
-		const type = g.shadows === 'low' ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
+		// Three's PCF shadows are soft already (PCFSoftShadowMap is deprecated and falls back to it).
+		const type = THREE.PCFShadowMap;
 		if (shadows !== this.renderer.shadowMap.enabled || type !== this.renderer.shadowMap.type) {
 			this.renderer.shadowMap.enabled = shadows;
 			this.renderer.shadowMap.type = type;
