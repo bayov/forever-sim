@@ -78,8 +78,8 @@ func hunterSpec(distance float64, melee bool, raid func(*proto.RaidBuffs, *proto
 // The level 60 consumes. On 2026-10-12 we tried every consumable the sim applies in each slot,
 // one at a time, on the Beast Mastery, Lone Wolf and Survival builds at 180 sec, and again with
 // Forever's consumables after the shared consumables merge. All keep Elixir of the Mongoose (their
-// one +2% crit elixir; +27 over none), Ground Scorpok Assay (+14), Juju Might (+8) and
-// Engineering's Goblin Sapper (+4.8) and, on the ranged specs, the EZ-Thro Dark Bomb (see below),
+// one +2% crit elixir; +27 over none), Ground Scorpok Assay (+14), Juju Might (+8) and an
+// explosive (Survival the Goblin Sapper, +4.7; the ranged specs the EZ-Thro Dark Bomb, see below),
 // and take Forever's Elixir of
 // Ferocity (18 Strength and Agility, no crit: +11 Beast Mastery, +13 Lone Wolf, +4.8 Survival over
 // Juju Power), Flank au Poivre (20 Agility: +4 to +6 over Grilled Squid; Mightfish Steak +0.2 to
@@ -101,7 +101,6 @@ func hunterConsumes(melee bool) *proto.Consumes {
 		AttackPowerBuff: proto.AttackPowerBuff_JujuMight,
 		Food:            proto.Food_FoodFlankAuPoivre,
 		IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
-		SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 		StrengthBuff:    proto.StrengthBuff_ElixirOfFerocity,
 		ZanzaBuff:       proto.ZanzaBuff_GroundScorpokAssay,
 	}
@@ -111,6 +110,7 @@ func hunterConsumes(melee bool) *proto.Consumes {
 		consumes.Flask = proto.Flask_FlaskOfNaturalPrecision
 		consumes.DefaultPotion = proto.Potions_MajorFrenzyPotion
 		consumes.DragonBreathChili = true
+		consumes.SapperExplosive = proto.SapperExplosive_SapperGoblinSapper
 		consumes.MainHandImbue = proto.WeaponImbue_DenseSharpeningStone
 		consumes.OffHandImbue = proto.WeaponImbue_DenseSharpeningStone
 	} else {
@@ -121,10 +121,13 @@ func hunterConsumes(melee bool) *proto.Consumes {
 		// Only the ranged specs take a filler explosive: on Survival its cast resets the swing and
 		// loses (standards 11, 2026-10-23, ui/hunter/presets.ts). Since 2026-11-01 the Goblin Land
 		// Mine and the Goblin Sapper Charge only reach 10 yd, and the ranged specs stand at 12 yd
-		// but for their melee weaves, so they throw the EZ-Thro Dark Bomb: +2.8 Beast Mastery, +3.0
-		// Marksmanship and +3.9 Lone Wolf over none at 180 sec, 1.0 to 1.4 ahead of Dense Dynamite
-		// and the Thorium Grenade. Laying the Land Mine in a weave loses 1.0 to 1.7 (its 1 sec cast
-		// costs Auto Shots). The Sapper goes off in a weave.
+		// (Beast Mastery) or 25 yd (Marksmanship, Lone Wolf), so they throw the EZ-Thro Dark Bomb:
+		// +2.8 Beast Mastery, +3.0 Marksmanship and +3.9 Lone Wolf over none at 180 sec, 1.0 to 1.4
+		// ahead of Dense Dynamite and the Thorium Grenade. Laying the Land Mine in a weave loses 1.0
+		// to 1.7 (its 1 sec cast costs Auto Shots). They take no Sapper (consumables-20261101-1): it
+		// goes off only when a melee weave has the hunter within its 10 yd at its cooldown (in about
+		// a third of Beast Mastery's fights), worth 0.4 Beast Mastery, 0.1 Marksmanship and 0.0 Lone
+		// Wolf at 180 sec (0.7 to 0.9 at 120 sec, 20000 iterations, seed 1).
 		consumes.FillerExplosive = proto.Explosive_ExplosiveEZThroDarkBomb
 	}
 	return consumes

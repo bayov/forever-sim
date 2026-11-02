@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "mm",
   "published": {
-    "dps": 1033.3,
-    "source": "forever-sim's hunter rotation recheck, 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s); the DPS report data isn't regenerated yet"
+    "dps": 1033.2,
+    "source": "verify.py on this request without the Goblin Sapper (consumables-20261101-1, 2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1033.3,
+    "dps": 1033.2,
     "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py on this request, 180 ± 20 s, seed 1 (2026-11-02)"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
   },
   "summary": "Marksmanship with a Tallstrider instead of Lone Wolf. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
   "keyTalents": [
@@ -58,7 +58,6 @@
     "Flank au Poivre",
     "Major Mana Potion",
     "Demonic Rune",
-    "Goblin Sapper",
     "EZ-Thro Dark Bomb"
   ],
   "caveats": [
@@ -79,7 +78,7 @@
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing.",
     "Improved Tracking 5/5 counts against the generic boss, unlike Murder or other creature-type talents: a hunter can track every raid boss type except Mechanical. It is worth 43.8 DPS (4.1%) here, which this build loses against a Mechanical boss."
   ],
-  "notes": "Request: hunter__marksmanship with hunter.options.petType Tallstrider instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
+  "notes": "Request: hunter__marksmanship with hunter.options.petType Tallstrider instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the EZ-Thro Dark Bomb stays.",
   "pet": "Tallstrider",
   "baseBuild": "hunter__marksmanship"
 }

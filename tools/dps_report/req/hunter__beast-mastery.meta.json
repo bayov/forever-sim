@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm",
   "published": {
-    "dps": 1046.9,
-    "source": "verify.py on this request at 12 yd (standards 33, 2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1046.5,
+    "source": "verify.py on this request without the Goblin Sapper (consumables-20261101-1, 2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1046.9,
+    "dps": 1046.5,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
@@ -38,7 +38,7 @@
   ],
   "rotation": [
     "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
-    "Bestial Wrath (at 0s and 120s), Rapid Fire, racials, potions and the EZ-Thro Dark Bomb on cooldown, and the Sapper in a melee weave (it reaches only 10 yd)",
+    "Bestial Wrath (at 0s and 120s), Rapid Fire, racials, potions and the EZ-Thro Dark Bomb on cooldown",
     "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
     "Arcane Shot on cooldown, before Aimed Shot, at any mana",
     "Aimed Shot on the cooldown it shares with Multi-Shot",
@@ -58,7 +58,6 @@
     "Flank au Poivre",
     "Major Mana Potion",
     "Demonic Rune",
-    "Goblin Sapper",
     "EZ-Thro Dark Bomb"
   ],
   "caveats": [
@@ -76,5 +75,5 @@
     "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (0.5 here).",
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
   ],
-  "notes": "Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Orc since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Starts at 12 yd since 2026-11-02 (standards 33: a weaving hunter stands where weaving does best; the rotation walks to 12 yd before the pull either way, so this is where the pet starts; +3 to +4 at 120 + 180 + 300 sec against 25 yd on both seeds, orchestration/caster_distance.md), 25 before."
+  "notes": "Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Orc since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Starts at 12 yd since 2026-11-02 (standards 33: a weaving hunter stands where weaving does best; the rotation walks to 12 yd before the pull either way, so this is where the pet starts; +3 to +4 at 120 + 180 + 300 sec against 25 yd on both seeds, orchestration/caster_distance.md), 25 before. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the EZ-Thro Dark Bomb stays."
 }
