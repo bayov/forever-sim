@@ -540,6 +540,15 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 		return false
 	}
 
+	// In a healing fight a dead player does nothing, and a heal or buff can't reach one
+	// (player_death.go).
+	if spell.Unit.dead && spell.Unit.Type != EnemyUnit {
+		return false
+	}
+	if target != nil && target.dead && target.Type != EnemyUnit {
+		return false
+	}
+
 	// Sitting, bandaging or dead in a leveling session, we do nothing else (leveling_rest.go).
 	if leveling := spell.Unit.Env.Encounter.leveling; leveling != nil && spell.Unit == leveling.player && leveling.sitting() {
 		return false
@@ -602,6 +611,10 @@ func (spell *Spell) CanCast(sim *Simulation, target *Unit) bool {
 func (spell *Spell) Cast(sim *Simulation, target *Unit) bool {
 	if target == nil {
 		target = spell.Unit.CurrentTarget
+	}
+	// A player that died in a healing fight casts nothing more (player_death.go).
+	if spell.Unit.dead && spell.Unit.Type != EnemyUnit {
+		return false
 	}
 	return spell.castFn(sim, target)
 }

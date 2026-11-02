@@ -11,6 +11,9 @@ type UnitReference struct {
 	curTargetSource *Unit
 	// The leveling session's Pull Target, which comes and goes.
 	pullTargetOf *Encounter
+	// A heal target (heal_targets.go): Most Hurt or Lowest Health among healer's assignment.
+	healPick proto.UnitReference_Type
+	healer   *Unit
 }
 
 func (ur UnitReference) Get() *Unit {
@@ -20,6 +23,8 @@ func (ur UnitReference) Get() *Unit {
 		return ur.curTargetSource.CurrentTarget
 	} else if ur.pullTargetOf != nil {
 		return ur.pullTargetOf.LevelingPullTarget()
+	} else if ur.healer != nil {
+		return ur.healer.pickHealTarget(ur.healPick)
 	} else {
 		return nil
 	}
@@ -28,7 +33,13 @@ func (ur UnitReference) Get() *Unit {
 // IsDynamic is whether the reference can be empty for a while, so an action on it waits
 // rather than being dropped from the rotation.
 func (ur UnitReference) IsDynamic() bool {
-	return ur.pullTargetOf != nil
+	return ur.pullTargetOf != nil || ur.healer != nil
+}
+
+// IsHealTarget is whether the reference is Most Hurt or Lowest Health, which is empty when
+// nobody is hurt.
+func (ur UnitReference) IsHealTarget() bool {
+	return ur.healer != nil
 }
 
 func (ur *UnitReference) String() string {
@@ -48,6 +59,11 @@ func NewUnitReference(ref *proto.UnitReference, contextUnit *Unit) UnitReference
 	} else if ref.Type == proto.UnitReference_PullTarget {
 		return UnitReference{
 			pullTargetOf: &contextUnit.Env.Encounter,
+		}
+	} else if ref.Type == proto.UnitReference_MostHurt || ref.Type == proto.UnitReference_LowestHealth {
+		return UnitReference{
+			healPick: ref.Type,
+			healer:   contextUnit,
 		}
 	} else {
 		return UnitReference{

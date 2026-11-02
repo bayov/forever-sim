@@ -6,10 +6,15 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-// The shaman's heals, for the leveling sim (docs/leveling_sim.md): we heal ourselves
-// between and during pulls. Each one lands on the shaman, whatever target the rotation
-// casts it at, because a shaman soloing mobs has no one else to heal. Chain Heal finds no
-// one to jump to.
+// The shaman's heals. A heal cast at a player lands on that player (a healer's rotation aims
+// them with Most Hurt, Lowest Health or a tank, docs/healing_sim.md). One cast at a mob, the
+// rotation's default target, lands on the shaman, as the leveling sim's self heals between and
+// during pulls do (docs/leveling_sim.md).
+//
+// Chain Heal heals 3 targets in all, each jump 50% as much as the one before (the tooltip,
+// Wowhead's Classic and Forever pages agree), and jumps to the most hurt player each time. Cast
+// at a party member, it jumps only within that party. Everyone is in reach for now. A
+// shaman soloing mobs has no one to jump to.
 //
 // Every value is the Forever client's (1.60.1.70338, SpellEffect, SpellLevels, SpellMisc and
 // SpellPower on wago.tools). A rank heals its base at the level it's learned, plus its growth
@@ -130,12 +135,59 @@ func (shaman *Shaman) newHealSpellConfig(r healRank, rank int, spellCode int32) 
 		// Healing Focus: a chance for a hit not to push the heal back.
 		PushbackReduction: shaman.healingFocusChance(),
 
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			spell.DamageMultiplier *= shaman.riptideChainHealMultiplier(spell)
-			spell.CalcAndDealHealing(sim, &shaman.Unit, sim.Roll(low, high), spell.OutcomeHealingCrit)
-			spell.DamageMultiplier /= shaman.riptideChainHealMultiplier(spell)
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			target = shaman.healTarget(target)
+			bonus := shaman.riptideChainHealMultiplier(spell, target)
+			spell.DamageMultiplier *= bonus
+			spell.CalcAndDealHealing(sim, target, sim.Roll(low, high), spell.OutcomeHealingCrit)
+			if spellCode == SpellCode_ShamanChainHeal {
+				healed := []*core.Unit{target}
+				candidates := shaman.chainHealCandidates(target)
+				jump := 1.0
+				for len(healed) < ChainHealTargets {
+					next := core.MostHurtAmong(candidates, healed...)
+					if next == nil {
+						break
+					}
+					jump *= ChainHealJumpMultiplier
+					spell.DamageMultiplier *= ChainHealJumpMultiplier
+					spell.CalcAndDealHealing(sim, next, sim.Roll(low, high), spell.OutcomeHealingCrit)
+					healed = append(healed, next)
+				}
+				spell.DamageMultiplier /= jump
+			}
+			spell.DamageMultiplier /= bonus
 		},
 	}
+}
+
+const (
+	ChainHealTargets        = 3
+	ChainHealJumpMultiplier = 0.5
+)
+
+// healTarget is where a heal cast at target lands: the player it was cast at, or ourselves for
+// a cast at a mob or at nothing.
+func (shaman *Shaman) healTarget(target *core.Unit) *core.Unit {
+	if target == nil || target.Type == core.EnemyUnit {
+		return &shaman.Unit
+	}
+	return target
+}
+
+// chainHealCandidates are who a Chain Heal at target can jump to: the target's party when it's
+// in ours, the raid otherwise.
+func (shaman *Shaman) chainHealCandidates(target *core.Unit) []*core.Unit {
+	for _, agent := range shaman.Party.Players {
+		if &agent.GetCharacter().Unit == target {
+			units := make([]*core.Unit, 0, len(shaman.Party.Players))
+			for _, a := range shaman.Party.Players {
+				units = append(units, &a.GetCharacter().Unit)
+			}
+			return units
+		}
+	}
+	return shaman.Env.Raid.AllPlayerUnits
 }
 
 func (shaman *Shaman) registerRiptideSpell() {
@@ -173,7 +225,6 @@ func (shaman *Shaman) registerRiptideSpell() {
 		BonusCoefficient: r.coefficient,
 
 		Hot: core.DotConfig{
-			SelfOnly: true,
 			Aura: core.Aura{
 				Label: "Riptide",
 			},
@@ -188,17 +239,21 @@ func (shaman *Shaman) registerRiptideSpell() {
 			},
 		},
 
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealHealing(sim, &shaman.Unit, sim.Roll(low, high), spell.OutcomeHealingCrit)
-			spell.SelfHot().Apply(sim)
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			target = shaman.healTarget(target)
+			spell.CalcAndDealHealing(sim, target, sim.Roll(low, high), spell.OutcomeHealingCrit)
+			spell.Hot(target).Apply(sim)
 		},
 	})
 }
 
-// riptideChainHealMultiplier is Riptide's 25% more on a Chain Heal at a target that has it,
-// which for us is ourselves.
-func (shaman *Shaman) riptideChainHealMultiplier(spell *core.Spell) float64 {
-	if spell.SpellCode != SpellCode_ShamanChainHeal || shaman.Riptide == nil || !shaman.Riptide.SelfHot().IsActive() {
+// riptideChainHealMultiplier is Riptide's 25% more on a Chain Heal at a target that has our
+// Riptide, on the whole chain.
+func (shaman *Shaman) riptideChainHealMultiplier(spell *core.Spell, target *core.Unit) float64 {
+	if spell.SpellCode != SpellCode_ShamanChainHeal || shaman.Riptide == nil {
+		return 1
+	}
+	if hot := shaman.Riptide.Hot(target); hot == nil || !hot.IsActive() {
 		return 1
 	}
 	return 1 + RiptideChainHealBonus

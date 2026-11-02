@@ -72,7 +72,7 @@ func TestOrcShamanHealTalentPoints(t *testing.T) {
 				t.Errorf("Purification %d: %s heals x%.3f, want x%.3f", points, spell.ActionID, got, want)
 			}
 		}
-		if got := enh.Riptide.SelfHot().DamageMultiplier; !near(got, 1) {
+		if got := enh.Riptide.Hot(&enh.Unit).DamageMultiplier; !near(got, 1) {
 			t.Errorf("Purification %d: Riptide's ticks take x%.3f on top of the spell's, want x1", points, got)
 		}
 		stream := topRank(t, "Healing Stream Totem", enh.HealingStreamTotem)

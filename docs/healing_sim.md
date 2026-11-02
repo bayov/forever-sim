@@ -9,7 +9,11 @@ chance of death to mean anything, which today is the engine's stand-in heal stre
 heal, which is the boss hitting the tanks plus the encounter's damage on the raid. Both use the same health
 and damage groundwork, which this doc's first milestone builds.
 
-**Where it stands (2026-11-02):** the design and the user's first rulings. Nothing simmed yet.
+**Where it stands (2026-11-02):** H1, the engine groundwork, is in. Heals are aimed at the hurt and their
+overhealing is booked, a healing fight tracks every player's health and kills, the boss has raid damage
+events and tank swaps, and the shaman heals others. `tools/healbench` sims a healer in a raid against made-up
+profiles. No healer spec is registered yet: the bench's shaman is the Elemental agent with the Restoration
+preset's talents and a heal rotation. Next is H2, the Restoration shaman.
 
 ## The user's rulings (2026-11-02)
 
@@ -146,9 +150,64 @@ it can carry**, the highest scale of the profile's damage at which the raid has 
 found by bisection. At the profile's own damage it reports effective HPS, overheal, scares and mana left. It
 mirrors the tank sim's "healing needed", and it's how the raid sim learns how many healers a comp needs.
 
+## H1: what's in (2026-11-02)
+
+- **Overhealing.** Every heal books the part that found its target at full health
+  (`TargetedActionMetrics.overhealing`, `sim/core/spell_result.go`), and each unit has an effective HPS
+  (`UnitMetrics.ehps`: healing less overhealing, no shielding) next to HPS. A target dummy has no health
+  bar, so a heal on it is all effective. The healing table has an Overheal column.
+- **The healing fight** (`Encounter.track_health`). Every player loses health to every hit it takes and
+  dies when it runs out (`sim/core/player_death.go`): its cast stops, its rotation, swings and auras end,
+  the mobs on it turn to the next living tank (or any living player once no tank is left), heals don't
+  reach it and nothing it would cast goes. Its pets and dots carry on. A fight without the switch is
+  unchanged, so the DPS Report's numbers didn't move.
+- **Scares** (`UnitMetrics.scares_avg`): a dip under 20% health that we live through, counted once until
+  we're back over 50%, per fight. A dip that ends in death is a death, not a scare.
+- **Raid damage events** (`Encounter.raid_damage`, `sim/core/raid_damage.go`): school, damage range, who
+  (everyone, the tanks, the others, or the boss's target, all of them or N random), timing (every N ± a
+  spread, or random with an average) and an optional DoT. Physical goes through armor, the rest through
+  resistances.
+- **Tank swaps** (`Target.tank_swap_seconds`): the boss turns to the next living tank on a timer. Each
+  iteration starts on the first tank again.
+- **Heal targets in the rotation**: Most Hurt, Lowest Health and Tank N (`UnitReference`), the Health
+  Missing value, and Max Health on any unit. Health % of Most Hurt or Lowest Health reads 100% when nobody
+  is hurt, and a heal at them waits. The APL editor offers them, and every player, as cast targets.
+- **Assignments** (`Player.heal_assignment`): the players and tanks a healer's Most Hurt and Lowest Health
+  pick from. Proto only for now; the raid sim fills it in H6.
+- **The shaman's heals** land on the player they're cast at, and on the shaman for a cast at a mob, so the
+  leveling sim is unchanged. Chain Heal jumps to the 2 most hurt (within the target's party when it's in
+  ours), each jump 50% of the one before. Riptide can go on anyone.
+- **Tests**: `sim/raid_healing_test.go` (heals on others and overhealing, death stopping a player, tank
+  swaps).
+
+### First numbers
+
+`tools/healbench`, 2 healbench shamans (synthetic level 60 caster gear, no mana support), a Protection
+warrior and 7 Frost mages, 180 s, 500 iterations. The profiles are made up to test the engine:
+
+| Profile | Scale | HPS | EHPS | Overheal | Mana left | Raid DTPS | Most deaths | Raid scares a fight |
+|---|---|---|---|---|---|---|---|---|
+| tank | 1 | 691 | 462 | 33.1% | 4456 | 472 | 0% | 0 |
+| raid | 0.5 | 879 | 672 | 23.6% | 5055 | 703 | 0% | 0 |
+| raid | 1 | 848 | 707 | 16.7% | 4641 | 1041 | 100% | 3.1 |
+| swap | 1 | 872 | 629 | 27.9% | 2214 | 645 | 0.4% | 0.03 |
+
+The raid profile at full damage is a cliff: the healers run dry around 85 seconds and the raid dies after.
+That is the shape the proposed score measures (the damage a healer set can carry).
+
+### Found on the way
+
+- **Time to OOM reads wrong for a healer.** With no heal it can pay for, its rotation finds nothing to cast
+  rather than waiting for mana, so the engine never marks it OOM. The estimate from the mana left at the end
+  is then off, more so once the raid dies. The bench shows mana left instead. To fix in H2.
+- **Two healers start the same big heal on the same tank**, and one lands as overhealing (the bench's Healing
+  Wave on the tank). It's real, and part of the score, but it's also what makes the tank profile's
+  overhealing 33%. A healer's rotation can wait for a bigger deficit.
+- **An idle healer checks its rotation every 50 ms**, which costs some speed in a long fight.
+
 ## Milestones
 
-**H1: the groundwork** (engine, no healer spec)
+**H1: the groundwork** (engine, no healer spec). Done 2026-11-02, see above.
 
 1. Overheal: effective and overheal booked on every heal, in the metrics and the results UI.
 2. `track_health`: every player loses health to every hit, death stops the player, heals skip the dead.

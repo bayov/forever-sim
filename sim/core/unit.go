@@ -40,9 +40,14 @@ type Unit struct {
 	//  For Pets, this is the same as the owner's index.
 	Index int32
 
-	// A target that died in a health fight (target_death.go). It takes no more damage and
-	// isn't anyone's target. Reset every iteration.
+	// A target that died in a health fight (target_death.go), or a player that died in a
+	// healing fight (player_death.go). It takes no more damage and isn't anyone's target.
+	// Reset every iteration.
 	dead bool
+
+	// The players this one heals (Player.heal_assignment), which its rotation's Most Hurt and
+	// Lowest Health pick from (heal_targets.go). Empty is the whole raid.
+	healAssignment []*Unit
 
 	// Unique index of this unit among all units in the environment.
 	// This is used as the index for attack tables.

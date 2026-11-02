@@ -45,9 +45,26 @@ func (hb *healthBar) CurrentHealthPercent() float64 {
 	return hb.currentHealth / hb.unit.stats[stats.Health]
 }
 
+// effectiveHealing is the part of a heal of amount that the unit is missing, the rest being
+// overhealing. A unit without a health bar (a target dummy) takes all of it.
+func (unit *Unit) effectiveHealing(amount float64) float64 {
+	if !unit.HasHealthBar() {
+		return amount
+	}
+	if unit.dead {
+		return 0
+	}
+	return max(0, min(amount, unit.MaxHealth()-unit.CurrentHealth()))
+}
+
 func (hb *healthBar) GainHealth(sim *Simulation, amount float64, metrics *ResourceMetrics) {
 	if amount < 0 {
 		panic("Trying to gain negative health!")
+	}
+	// A player that died in a healing fight stays dead (player_death.go).
+	if hb.unit.dead {
+		metrics.AddEvent(amount, 0)
+		return
 	}
 
 	oldHealth := hb.currentHealth
@@ -59,7 +76,18 @@ func (hb *healthBar) GainHealth(sim *Simulation, amount float64, metrics *Resour
 	}
 
 	hb.currentHealth = newHealth
+
+	if m := &hb.unit.Metrics.CharacterIterationMetrics; m.scareOpen && newHealth >= scareEndPercent*hb.MaxHealth() {
+		m.scareOpen = false
+	}
 }
+
+// A scare is a dip under scarePercent of our health that we live through, which ends when we're
+// back over scareEndPercent (docs/healing_sim.md).
+const (
+	scarePercent    = 0.2
+	scareEndPercent = 0.5
+)
 
 func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 	if amount < 0 {
@@ -85,6 +113,11 @@ func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 	}
 
 	hb.currentHealth = newHealth
+
+	if m := &hb.unit.Metrics.CharacterIterationMetrics; !m.scareOpen && newHealth > 0 && newHealth < scarePercent*hb.MaxHealth() {
+		m.scareOpen = true
+		m.Scares++
+	}
 }
 
 var ChanceOfDeathAuraLabel = "Chance of Death"
@@ -96,7 +129,17 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 			character.Unit.Metrics.isTanking = true
 		}
 	}
-	if !character.Unit.Metrics.isTanking {
+	// In a healing fight every player's health is tracked, and a tank is tanking even when a
+	// swap gives it the boss later.
+	trackHealth := character.Env.Encounter.TrackHealth && character.Env.Encounter.leveling == nil
+	if trackHealth {
+		for _, tank := range character.Env.RaidTanks {
+			if tank == &character.Unit {
+				character.Unit.Metrics.isTanking = true
+			}
+		}
+	}
+	if !character.Unit.Metrics.isTanking && !trackHealth {
 		return
 	}
 
@@ -104,7 +147,7 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 	// takes our health and can kill us, as when we solo mobs while leveling. A timed fight
 	// without one keeps us at full health, as the DPS presets that let a boss hit us (for
 	// Lightning Shield, rage and the like) have always had it.
-	if healingModel == nil && character.Env.Encounter.EndFightAtHealth == 0 && character.Env.Encounter.leveling == nil {
+	if healingModel == nil && character.Env.Encounter.EndFightAtHealth == 0 && character.Env.Encounter.leveling == nil && !trackHealth {
 		return
 	}
 	if healingModel != nil {
@@ -157,8 +200,15 @@ func (character *Character) died(sim *Simulation) {
 			character.Log(sim, "Dead")
 		}
 	}
+	if m := &character.Metrics.CharacterIterationMetrics; m.scareOpen {
+		// The dip we were in ended in death, not a scare.
+		m.scareOpen = false
+		m.Scares--
+	}
 	if session := character.Env.Encounter.leveling; session != nil {
 		session.onPlayerDeath(sim)
+	} else if character.Env.Encounter.TrackHealth {
+		character.Env.killPlayer(sim, &character.Unit)
 	}
 }
 

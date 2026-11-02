@@ -55,6 +55,9 @@ type Environment struct {
 	postFinalizeEffects []PostFinalizeEffect
 
 	prepullActions []PrepullAction
+
+	// The raid's tanks (Raid.tanks), in order. A missing player leaves a nil.
+	RaidTanks []*Unit
 }
 
 func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter, ruleset proto.Ruleset, runFakePrepull bool) (*Environment, *proto.RaidStats, *proto.EncounterStats) {
@@ -117,6 +120,10 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 		}
 	}
 
+	for _, ref := range raidProto.Tanks {
+		env.RaidTanks = append(env.RaidTanks, env.GetUnit(ref, nil))
+	}
+
 	// Assign target or target using Tanks field.
 	for _, target := range env.Encounter.Targets {
 		if target.Index < int32(len(encounterProto.Targets)) {
@@ -166,6 +173,8 @@ func (env *Environment) initialize(raidProto *proto.Raid, encounterProto *proto.
 	}
 
 	env.registerRaidDamageHits()
+	env.registerRaidDamage()
+	env.registerTankSwaps()
 
 	env.State = Initialized
 	return raidStats
@@ -423,6 +432,11 @@ func (env *Environment) GetUnit(ref *proto.UnitReference, contextUnit *Unit) *Un
 		}
 	case proto.UnitReference_Self:
 		return contextUnit
+	case proto.UnitReference_Tank:
+		if ref.Index >= 0 && int(ref.Index) < len(env.RaidTanks) {
+			return env.RaidTanks[ref.Index]
+		}
+		return nil
 	case proto.UnitReference_CurrentTarget:
 		if contextUnit == nil {
 			return nil

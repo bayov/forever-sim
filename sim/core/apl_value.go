@@ -121,6 +121,8 @@ func (rot *APLRotation) buildAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueCurrentHealthPercent(config.GetCurrentHealthPercent())
 	case *proto.APLValue_MaxHealth:
 		return rot.newValueMaxHealth(config.GetMaxHealth())
+	case *proto.APLValue_HealthMissing:
+		return rot.newValueHealthMissing(config.GetHealthMissing())
 	case *proto.APLValue_CurrentMana:
 		return rot.newValueCurrentMana(config.GetCurrentMana())
 	case *proto.APLValue_CurrentManaPercent:

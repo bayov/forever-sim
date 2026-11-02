@@ -142,10 +142,7 @@ func (spell *Spell) healingThreat(result *SpellResult) float64 {
 	if !result.Landed() {
 		return 0
 	}
-	effective := result.Damage
-	if result.Target.HasHealthBar() {
-		effective = min(effective, result.Target.MaxHealth()-result.Target.CurrentHealth())
-	}
+	effective := result.Target.effectiveHealing(result.Damage)
 	return (effective*ThreatPerHealingDone*spell.ThreatMultiplier + spell.FlatThreatBonus) * spell.Unit.PseudoStats.ThreatMultiplier
 }
 
@@ -702,6 +699,7 @@ func (spell *Spell) dealHealingInternal(sim *Simulation, isPeriodic bool, result
 		spell.SpellMetrics[result.Target.UnitIndex].TotalCritHealing += result.Damage
 	}
 	spell.SpellMetrics[result.Target.UnitIndex].TotalHealing += result.Damage
+	spell.SpellMetrics[result.Target.UnitIndex].TotalOverhealing += result.Damage - result.Target.effectiveHealing(result.Damage)
 	// Overhealing makes no threat, so we take the heal's threat before the health goes up.
 	result.Threat = spell.healingThreat(result)
 	spell.BookSplitThreat(sim, result.Threat)

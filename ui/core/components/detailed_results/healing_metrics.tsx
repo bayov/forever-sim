@@ -72,6 +72,12 @@ export class HealingMetricsTable extends MetricsTable<ActionMetrics> {
 				},
 			},
 			{
+				name: 'Overheal',
+				tooltip: 'The share of the healing that found its target at full health.',
+				getValue: (metric: ActionMetrics) => metric.overhealPercent,
+				getDisplayString: (metric: ActionMetrics) => formatToPercent(metric.overhealPercent, { fallbackString: '-' }),
+			},
+			{
 				name: 'Casts',
 				getValue: (metric: ActionMetrics) => metric.casts,
 				getDisplayString: (metric: ActionMetrics) => formatToNumber(metric.casts, { fallbackString: '-' }),

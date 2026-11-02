@@ -365,7 +365,7 @@ export class APLRunePicker extends DropdownPicker<Player<any>, ActionID, null> {
 				actionId.fillAndSet(iconElem, true, true);
 				button.appendChild(iconElem);
 
-				const textElem = document.createTextNode("");
+				const textElem = document.createTextNode('');
 				button.appendChild(textElem);
 			},
 			values: [],
@@ -379,7 +379,20 @@ export class APLRunePicker extends DropdownPicker<Player<any>, ActionID, null> {
 	}
 }
 
-export type UNIT_SET = 'aura_sources' | 'aura_sources_targets_first' | 'targets';
+export type UNIT_SET = 'aura_sources' | 'aura_sources_targets_first' | 'targets' | 'heal_targets';
+
+// Heal targets (docs/healing_sim.md): Most Hurt and Lowest Health in our heal assignment, the
+// raid's tanks, and every player.
+const healTargetUnits = (player: Player<any>): Array<UnitReference> =>
+	[
+		UnitReference.create({ type: UnitType.MostHurt }),
+		UnitReference.create({ type: UnitType.LowestHealth }),
+		[0, 1, 2].map(i => UnitReference.create({ type: UnitType.Tank, index: i })),
+		player.sim.raid
+			.getPlayers()
+			.filter(p => !!p)
+			.map(p => UnitReference.create({ type: UnitType.Player, index: p!.getRaidIndex() })),
+	].flat();
 
 const unitSets: Record<
 	UNIT_SET,
@@ -423,7 +436,13 @@ const unitSets: Record<
 				undefined,
 				player.sim.encounter.targetsMetadata.asList().map((_targetMetadata, i) => UnitReference.create({ type: UnitType.Target, index: i })),
 				UnitReference.create({ type: UnitType.PullTarget }),
+				healTargetUnits(player),
 			].flat();
+		},
+	},
+	heal_targets: {
+		getUnits: player => {
+			return [undefined, healTargetUnits(player), UnitReference.create({ type: UnitType.CurrentTarget })].flat();
 		},
 	},
 };
@@ -478,6 +497,24 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 				value: ref,
 				iconUrl: 'fa-bullseye',
 				text: 'Pull Target (Leveling)',
+			};
+		} else if (ref.type == UnitType.MostHurt) {
+			return {
+				value: ref,
+				iconUrl: 'fa-heart-pulse',
+				text: 'Most Hurt',
+			};
+		} else if (ref.type == UnitType.LowestHealth) {
+			return {
+				value: ref,
+				iconUrl: 'fa-heart-crack',
+				text: 'Lowest Health',
+			};
+		} else if (ref.type == UnitType.Tank) {
+			return {
+				value: ref,
+				iconUrl: 'fa-shield-halved',
+				text: `Tank ${ref.index + 1}`,
 			};
 		} else if (ref.type == UnitType.Player) {
 			const player = thisPlayer.sim.raid.getPlayer(ref.index);

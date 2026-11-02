@@ -981,6 +981,15 @@ export class ActionMetrics {
 		return this.combinedMetrics.critHealing / this.iterations;
 	}
 
+	get overhealing() {
+		return this.combinedMetrics.overhealing;
+	}
+
+	// The share of the healing that found its target at full health.
+	get overhealPercent() {
+		return this.combinedMetrics.overhealPercent;
+	}
+
 	get hps() {
 		return this.combinedMetrics.hps;
 	}
@@ -1569,6 +1578,14 @@ export class TargetedActionMetrics {
 		return this.data.critHealing / this.iterations;
 	}
 
+	get overhealing() {
+		return this.data.overhealing;
+	}
+
+	get overhealPercent() {
+		return this.data.healing ? (this.data.overhealing / this.data.healing) * 100 : 0;
+	}
+
 	get shielding() {
 		return this.data.shielding;
 	}
@@ -1838,6 +1855,7 @@ export class TargetedActionMetrics {
 				crushThreat: sum(actions.map(a => a.data.crushThreat)),
 				healing: sum(actions.map(a => a.data.healing)),
 				critHealing: sum(actions.map(a => a.data.critHealing)),
+				overhealing: sum(actions.map(a => a.data.overhealing)),
 				shielding: sum(actions.map(a => a.data.shielding)),
 				castTimeMs: sum(actions.map(a => a.data.castTimeMs)),
 			}),
