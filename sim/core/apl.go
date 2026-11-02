@@ -221,6 +221,10 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 		return
 	}
 
+	if apl.unit.ManualControl {
+		return
+	}
+
 	if apl.inLoop {
 		return
 	}

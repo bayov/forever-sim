@@ -818,6 +818,13 @@ func (sim *Simulation) Step() bool {
 // NothingHappened takes back the event that a pending action counted, for one that turned out
 // to change nothing the rotations see, like a check that finds nothing to do. Then the rotations
 // can go on skipping their checks (see APLRotation.canSkipCheck).
+// NextEventTime is the time of the next thing the sim will do: a pending action, a weapon swing or
+// a task. A sim driven in real time (the practice room) steps only up to it.
+func (sim *Simulation) NextEventTime() time.Duration {
+	next := sim.pendingActions[len(sim.pendingActions)-1].NextActionAt
+	return min(next, sim.minWeaponAttackTime, sim.minTaskTime)
+}
+
 func (sim *Simulation) NothingHappened() {
 	sim.events--
 }

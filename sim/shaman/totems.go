@@ -84,6 +84,11 @@ func (shaman *Shaman) nearFireTotem(sim *core.Simulation, mob *core.Unit, yards 
 // fireTotemMobs are the mobs fighting us within yards of our fire totem.
 func (shaman *Shaman) fireTotemMobs(sim *core.Simulation, yards float64) []*core.Unit {
 	if !sim.Encounter.IsLeveling() {
+		if shaman.FireTotemInReach != nil {
+			return core.FilterSlice(sim.Encounter.ActiveTargetUnits, func(mob *core.Unit) bool {
+				return shaman.FireTotemInReach(sim, mob, yards)
+			})
+		}
 		return sim.Encounter.ActiveTargetUnits
 	}
 	return core.FilterSlice(sim.Encounter.ActiveTargetUnits, func(mob *core.Unit) bool {
@@ -95,6 +100,9 @@ func (shaman *Shaman) fireTotemMobs(sim *core.Simulation, yards float64) []*core
 // the first mob fighting us in its range when our target isn't one. Nil when none is.
 func (shaman *Shaman) searingTotemTarget(sim *core.Simulation) *core.Unit {
 	if !sim.Encounter.IsLeveling() {
+		if shaman.FireTotemInReach != nil && shaman.CurrentTarget != nil && !shaman.FireTotemInReach(sim, shaman.CurrentTarget, searingTotemRange) {
+			return nil
+		}
 		return shaman.CurrentTarget
 	}
 	mobs := shaman.fireTotemMobs(sim, searingTotemRange)

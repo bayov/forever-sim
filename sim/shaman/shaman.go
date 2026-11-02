@@ -255,6 +255,11 @@ type Shaman struct {
 	ShamanImbue proto.WeaponImbue
 
 	ChainLightningBounceCoefficient float64
+
+	// FireTotemInReach is whether a mob is within yards of our fire totem, for a fight where
+	// something outside the sim moves us (the practice room). Nil in every normal sim, where
+	// every mob is in reach outside a leveling session.
+	FireTotemInReach func(sim *core.Simulation, mob *core.Unit, yards float64) bool
 }
 
 // Implemented by each Shaman spec.

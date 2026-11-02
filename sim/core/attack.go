@@ -462,6 +462,10 @@ type AutoAttacks struct {
 
 	enabled bool
 
+	// SkipPullStart leaves the auto attacks off at the pull, for a unit whose player turns them
+	// on by hand (the practice room). Nothing in a normal sim sets it.
+	SkipPullStart bool
+
 	// Under Forever starting a ranged auto turns the melee attack off, so the next walk into melee
 	// starts it again (see EnableAutoSwing).
 	meleeAttackOff bool
@@ -684,6 +688,10 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 func (aa *AutoAttacks) startPull(sim *Simulation) {
 
 	if !aa.AutoSwingMelee && !aa.AutoSwingRanged {
+		return
+	}
+
+	if aa.SkipPullStart {
 		return
 	}
 
