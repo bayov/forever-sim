@@ -2227,6 +2227,22 @@
     {
      "commit": "452b9ce0a",
      "why": "notes and a code comment in the warlock presets only: no sim input"
+    },
+    {
+     "commit": "3fce3491c",
+     "why": "the report data of the Bane of Doom hold, whose line covers it, and the hunters' packs re-simmed to unchanged numbers"
+    },
+    {
+     "commit": "407f959a5",
+     "why": "Blood Craze heals the warrior only; no report hash moved"
+    },
+    {
+     "commit": "fb9ae4b79",
+     "why": "the healing sim's raid side from logs; no report hash moved"
+    },
+    {
+     "commit": "d4b624303",
+     "why": "leveling stat weights only; no report hash moved"
     }
    ],
    "source": {
