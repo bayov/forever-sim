@@ -39,15 +39,14 @@ bench (`tools/healbench`), one file a boss, shared so the two sims score against
 The healing sim's part of each file: the damage on the players who aren't tanks, as `raidDamage`
 events with `who` NotTanks, and what real raids had for healing it. `raid_from_logs.py` writes them
 from what `wclcli.py raid` mined, after `from_logs.py` (which leaves NotTanks events in place but
-copies the top-level files' into `anniversary/`):
+copies the top-level files' into `sod/`). Each script picks a site's folder itself:
 
 ```sh
 W="python3 tools/warcraftlogs/wclcli.py"
 $W raid tools/encounters/logs/sod_mc_sample.json --difficulty 3 \
     --encounter 100664 --encounter 100670 --encounter 100672 -o tools/encounters/logs/sod_mc_raid.json
+python3 tools/encounters/raid_from_logs.py --site anniversary tools/encounters/logs/anniversary_*_raid.json
 python3 tools/encounters/raid_from_logs.py --site sod tools/encounters/logs/sod_*_raid.json
-python3 tools/encounters/raid_from_logs.py --site anniversary --out tools/encounters/anniversary \
-    tools/encounters/logs/anniversary_*_raid.json
 ```
 
 - Each ability that dealt 2% or more of the non-tanks' damage in 30% or more of the kills is an
@@ -62,8 +61,9 @@ python3 tools/encounters/raid_from_logs.py --site anniversary --out tools/encoun
 
 ## From the logs
 
-The top-level files are Season of Discovery's Normal raids, the first source in the order;
-`anniversary/` has the same bosses from the Anniversary Hardcore realms' logs, to compare. In both, the
+The top-level files are the Anniversary Hardcore realms' logs, and they score tanks (the user,
+2026-11-02). `sod/` has the same bosses from Season of Discovery's Normal raids, the first source in
+the order, but tuned far above a pre-raid tank, to compare. In both, the
 boss's melee, his weapon damage abilities, the fight's length and the healing on the main tank are
 Warcraft Logs numbers. The other abilities keep the client's spell data and the scripts' timers.
 
@@ -76,9 +76,8 @@ $W --site sod sample -o tools/encounters/logs/sod_mc_sample.json --zone 2012 --r
 $W --site sod tank tools/encounters/logs/sod_mc_sample.json --difficulty 3 \
     --encounter 100664 --encounter 100670 --encounter 100672 -o tools/encounters/logs/sod_mc.json
 # Into the files (it runs tankbench -boss-stats for the debuffs).
+python3 tools/encounters/from_logs.py --site anniversary tools/encounters/logs/anniversary_*.json
 python3 tools/encounters/from_logs.py --site sod tools/encounters/logs/sod_*.json
-python3 tools/encounters/from_logs.py --site anniversary --out tools/encounters/anniversary \
-    tools/encounters/logs/anniversary_*.json
 ```
 
 `logs/` keeps each sample (the fights read) and what `tank` mined from it, so the files can be

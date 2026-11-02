@@ -5,9 +5,8 @@ length and the healing a raid puts on its main tank, from what `wclcli.py tank -
 (tools/encounters/logs/*.json). The other abilities keep their client spell data and script
 timers. docs/tank_sim.md, Encounters, says how the numbers were picked.
 
+    python3 tools/encounters/from_logs.py --site anniversary tools/encounters/logs/anniversary_*.json
     python3 tools/encounters/from_logs.py --site sod tools/encounters/logs/sod_*.json
-    python3 tools/encounters/from_logs.py --site anniversary --out tools/encounters/anniversary \\
-        tools/encounters/logs/anniversary_*.json
 
 The template (the bosses, their abilities and abilitiesSource) is the top-level files, whatever
 logs they took last: a weapon damage ability with too few logged hits scales with the melee.
@@ -104,11 +103,14 @@ def melee_from(m, st):
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--site', choices=SITES, required=True)
-    ap.add_argument('--out', default=HERE, help='where to write the files (default tools/encounters)')
+    ap.add_argument('--out', help='where the files are (default: by site, tools/encounters for the Anniversary realms, '
+                    'whose files score tanks (the user, 2026-11-02), tools/encounters/<site> for the others)')
     ap.add_argument('--template', default=HERE, help='the files whose bosses and abilities are kept (default tools/encounters)')
     ap.add_argument('--boss', action='append', help='only this boss (repeat for more)')
     ap.add_argument('mined', nargs='+', help="wclcli.py tank -o files of this site")
     a = ap.parse_args()
+    if not a.out:
+        a.out = HERE if a.site == 'anniversary' else os.path.join(HERE, a.site)
     site = SITES[a.site]
     mined = {}
     for path in a.mined:

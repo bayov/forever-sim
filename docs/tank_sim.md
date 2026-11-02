@@ -8,8 +8,8 @@ replace its 700 TPS stand-in.
 **Where it stands (2026-11-02):** the engine reports a tank sheet with the thresholds tanks gear for, and
 `tools/tankbench` sims tank builds against seven Classic raid bosses (`tools/encounters`) with the healing a
 raid puts on its tank, and finds each build's healing needed and death floor. The bosses' melee, the fight lengths
-and the healing are Warcraft Logs numbers, Season of Discovery's and the Anniversary realms' ([Encounters](#encounters)),
-and which set scores tanks is the user's call. Two builds run (Protection
+and the healing are Warcraft Logs numbers from the Anniversary realms, which score tanks, with Season of Discovery's
+kept to compare ([Encounters](#encounters)). Two builds run (Protection
 warrior and paladin, both on Classic pre-raid plate). Four audits checked the work and their findings are
 fixed ([Audits](#audits)). The optimizer's objective is ruled and built: the bench prints it, and rotopt's
 searches maximize it with `-tank`. Next comes the rules audit, then tank gear and rotations. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
@@ -63,9 +63,9 @@ cut off the weapon damage ones).
 Chromaggus, their tank side only. Forever's own raids (Barrow Deeps, Hyjal Summit, Onyxia) have no logs yet, so
 these are stand-ins.
 
-**Their numbers are Warcraft Logs'** (2026-11-02), in the user's source order. `tools/encounters/` is Season of
-Discovery's Normal raids, the first source. `tools/encounters/anniversary/` is the same bosses from the
-Anniversary realms, to compare. From the logs: the boss's melee, his weapon damage abilities (Cleave,
+**Their numbers are Warcraft Logs'** (2026-11-02). **Tanks are scored on the Anniversary realms' set**,
+`tools/encounters/` (the user, 2026-11-02). `tools/encounters/sod/` is the same bosses from Season of
+Discovery's Normal raids, first in the source order but tuned far above a pre-raid tank, kept to compare. From the logs: the boss's melee, his weapon damage abilities (Cleave,
 Mortal Strike, Knock Away), the fight's length, Elemental Fire's rate and the healing on the main tank. The other abilities
 keep the Classic Era client's spell data and the vmangos scripts' timers. `tools/encounters/from_logs.py`
 writes them from what `wclcli.py tank` mined (`tools/encounters/logs/`, with each sample of fights), and
@@ -147,8 +147,8 @@ chance at the file's healing):
 
 - **Season of Discovery's Broodlord is a one-shot** for a pre-raid tank (7,000 health): his Mortal Strike lands for
   7,000 to 11,500 through 56% armor. Its Onyxia and Chromaggus kill at the healing their raids gave their own,
-  sturdier tanks. Scoring Forever's pre-raid tanks on them mostly measures that gap, so **the user picks which set
-  scores tanks** (the top-level files until then).
+  sturdier tanks. Scoring Forever's pre-raid tanks on them mostly measures that gap, so **tanks are scored on the
+  Anniversary realms' set** (the user, 2026-11-02).
 - **Healing needed under the damage taken** (Golemagg, Magmadar) is the short fights: a 27 s kill takes about a
   quarter of a tank's health from its own pool.
 - **Ragnaros on the Anniversary realms** needs 2.3 times the damage taken, and its tanks took 725 a second where
@@ -424,10 +424,7 @@ presets landing on the same build means a weight moves).
 1. **Rules audit** of each tank's defensive talents, stats and abilities against Forever's client data and
    foreverchanges (Protection warrior, Feral tank, Protection paladin, Warden shaman), like the class audits.
    Bring the Feral tank into the build. Ask for a dungeon boss log for Forever's boss crit.
-2. **Which encounter set scores tanks** (the user's call): Season of Discovery's Normal raids (the source order,
-   but its Onyxia and Blackwing Lair are tuned far above a pre-raid tank) or the Anniversary realms'. Then
-   Patchwerk, threat drops, armor cuts and stacking DoTs in the engine, and Season of Discovery's own abilities
-   (Magma Spit, Golemagg's Pyroblast, its Elemental Fire and Lava Breath values) if its set is kept.
+2. **Encounters**: Patchwerk, threat drops, armor cuts and stacking DoTs in the engine.
 3. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.
 4. **A paired noise test** for rotopt's tank searches (above), then the three presets' searches.
 5. **Tank gear**: a tank row in `orchestration/gear_targets.md` and synthetic tank items, then gear and talent
