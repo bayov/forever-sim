@@ -115,6 +115,10 @@ message Player {
 	// The players this one heals (docs/healing_sim.md): its rotation's Most Hurt and Lowest Health
 	// pick among them. Player and Tank references. Empty is the whole raid.
 	repeated UnitReference heal_assignment = 56;
+
+	// Score this player as a tank (docs/tank_sim.md, The optimizer's objective): with a healing
+	// model, each iteration's least stand-in HPS it lives through, and its SafeDPS.
+	TankScoring tank_scoring = 57;
 }
 
 message Party {
@@ -425,6 +429,9 @@ message UnitMetrics {
 	// Set for a player the boss attacks: its defenses against the boss's swing (core/tank_sheet.go).
 	TankSheet tank_sheet = 20;
 
+	// Set for a tank with Player.tank_scoring (core/tank_score.go).
+	TankScore tank_score = 23;
+
 	repeated ActionMetrics actions = 5;
 	repeated AuraMetrics auras = 6;
 	repeated ResourceMetrics resources = 10;
@@ -479,6 +486,19 @@ message TankSheet {
 	// else a crushing blow, through armor and damage taken. At health or over, one swing kills us
 	// from full and no healing helps.
 	double biggest_hit = 22;
+}
+
+// A tank's scores over the iterations (core/tank_score.go, docs/tank_sim.md, The optimizer's
+// objective). TankScoreSummary turns them into healing needed, its error and the death floor.
+message TankScore {
+	// Each iteration's least stand-in healing per second it lives through, from a replay of its
+	// damage taken and heals. +Inf when no healing saves it (a one-shot, or a burst between two
+	// heals), 0 when it needs none. Only without Encounter.track_health, and only while nothing
+	// the tank does depends on its health.
+	repeated double survive_hps = 1;
+	// The steady DPS a reference DPS member could do without passing the tank's threat on the boss
+	// at any moment of the iteration (Player.tank_scoring).
+	DistributionMetrics safe_dps = 2;
 }
 
 // How often a player or pet passed the tank's threat on the boss, over the iterations.

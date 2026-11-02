@@ -90,6 +90,9 @@ func (rsrc *raidSimResultCombiner) newUnitMetrics(baseUnit *proto.UnitMetrics) *
 		// The same in every thread: each takes it at its first iteration's pull.
 		TankSheet: baseUnit.TankSheet,
 	}
+	if baseUnit.TankScore != nil {
+		newUm.TankScore = &proto.TankScore{SafeDps: rsrc.newDistMetrics()}
+	}
 
 	if baseUnit.Aggro != nil {
 		newUm.Aggro = &proto.AggroMetrics{PullRatio: baseUnit.Aggro.PullRatio, Peak: rsrc.newDistMetrics()}
@@ -276,6 +279,10 @@ func (rsrc *raidSimResultCombiner) combineUnitMetrics(base *proto.UnitMetrics, a
 	rsrc.combineDistMetrics(base.Threat, add.Threat, isLast, weight)
 	rsrc.combineDistMetrics(base.Dtps, add.Dtps, isLast, weight)
 	rsrc.combineDistMetrics(base.Tmi, add.Tmi, isLast, weight)
+	if base.TankScore != nil && add.TankScore != nil {
+		base.TankScore.SurviveHps = append(base.TankScore.SurviveHps, add.TankScore.SurviveHps...)
+		rsrc.combineDistMetrics(base.TankScore.SafeDps, add.TankScore.SafeDps, isLast, weight)
+	}
 	rsrc.combineDistMetrics(base.Hps, add.Hps, isLast, weight)
 	rsrc.combineDistMetrics(base.Ehps, add.Ehps, isLast, weight)
 	rsrc.combineDistMetrics(base.Tto, add.Tto, isLast, weight)

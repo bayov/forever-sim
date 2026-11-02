@@ -74,6 +74,8 @@ type Unit struct {
 
 	// Set in a raid with a threat check (threat_check.go).
 	aggro *aggroWatch
+	// The tank score, for a tank with Player.tank_scoring (tank_score.go).
+	tankScore *tankScore
 
 	MovementHandler *MovementHandler
 
@@ -554,6 +556,9 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	unit.ChanneledDot = nil
 	unit.channelHoldsFSR = false
 	unit.Metrics.reset()
+	if unit.tankScore != nil {
+		unit.tankScore.reset()
+	}
 	if unit.aggro != nil {
 		unit.aggro.reset()
 	}

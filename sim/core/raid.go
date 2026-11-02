@@ -303,6 +303,7 @@ func (raid *Raid) applyCharacterEffects(raidConfig *proto.Raid) *proto.RaidStats
 
 			char.EnableHealthBar()
 			char.trackChanceOfDeath(playerConfig.HealingModel)
+			char.setupTankScore(playerConfig.TankScoring, playerConfig.HealingModel)
 			char.setHealAssignment(playerConfig.HealAssignment)
 			partyStats.Players[char.PartyIndex] = char.applyAllEffects(player, playerRaidBuffs, partyBuffs, individualBuffs)
 

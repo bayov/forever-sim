@@ -27,6 +27,7 @@ import (
 	"github.com/wowsims/classic/sim/common"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/tools/tankscore"
 )
 
 func main() {
@@ -87,6 +88,12 @@ func main() {
 	sessionRaw := flag.Bool("session-raw", false, "leveling settings: with -session, print the session's whole log as the UI gets it instead of the summary")
 	sessionSeed := flag.Int64("session-seed", 1, "leveling settings: the random seed of the -session, for another sample session")
 	seed := flag.Int64("seed", 1, "random seed of the scoring runs, to check a gain holds on other fights or sessions")
+	tankPreset := flag.String("tank", "", "score the player as a tank instead of by DPS: max-threat, balanced or max-survival, or a survival weight (docs/tank_sim.md, The optimizer's objective)")
+	tankEncounter := flag.String("tank-encounter", "", "tank: a boss encounter file (tools/encounters/*.json) for the fight and the healing on the tank; its fight length replaces -durs unless -durs is given")
+	tankHps := flag.Float64("tank-hps", 600, "tank, without -tank-encounter: the stand-in healer's HPS, a heal every 2 s")
+	tankThreatMembers := flag.Float64("tank-threat-members", 2, "tank: raid members close to the tank's threat, whose DPS a point of SafeDPS frees")
+	tankDpsSlot := flag.Float64("tank-dps-slot", 900, "tank: a raid DPS member's DPS, what a healer slot costs")
+	tankDeath := flag.Float64("tank-death", 0.05, "tank: the chance of death healing needed aims at (the user's ruling: 5%)")
 	freeze := flag.String("freeze", "", "knobs the search keeps at their starting values, comma separated (a player's reaction times, say)")
 	flag.Parse()
 	simSeed = *seed
@@ -190,6 +197,39 @@ func main() {
 			}
 			start[name], _ = strconv.ParseFloat(val, 64)
 		}
+	}
+
+	if *tankPreset != "" {
+		w, ok := tankscore.Presets[*tankPreset]
+		if !ok {
+			var err error
+			if w, err = strconv.ParseFloat(*tankPreset, 64); err != nil {
+				fmt.Fprintf(os.Stderr, "-tank wants max-threat, balanced, max-survival or a weight, got %q\n", *tankPreset)
+				os.Exit(2)
+			}
+		}
+		healing := tankscore.Healing{Healers: 1, HpsEach: *tankHps, CastSeconds: 2}
+		if *tankEncounter != "" {
+			enc, err := tankscore.LoadEncounter(*tankEncounter)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "loading the tank encounter: %v\n", err)
+				os.Exit(2)
+			}
+			tankscore.UseEncounter(setup.request, enc)
+			if enc.Healing != nil {
+				healing = *enc.Healing
+			}
+			dursSet := false
+			flag.Visit(func(f *flag.Flag) { dursSet = dursSet || f.Name == "durs" })
+			if !dursSet {
+				*durs = strconv.FormatFloat(enc.Encounter.Duration, 'f', -1, 64)
+			}
+		}
+		tankscore.MakeTank(setup.request, healing.Model(), &proto.TankScoring{})
+		tankObjective = &tankscore.Objective{Weight: w, ThreatMembers: *tankThreatMembers, DpsSlot: *tankDpsSlot,
+			HealerEach: healing.HpsEach, Death: *tankDeath}
+		fmt.Printf("tank objective: %g x SafeDPS - %g x %g x healing needed at %g%% deaths / %g, in raid DPS\n",
+			*tankThreatMembers, w, *tankDpsSlot, 100**tankDeath, healing.HpsEach)
 	}
 
 	var durations []float64

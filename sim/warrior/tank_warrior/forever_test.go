@@ -2,6 +2,7 @@ package tankwarrior
 
 import (
 	"math"
+	"os"
 	"testing"
 	"time"
 
@@ -10,6 +11,7 @@ import (
 	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/sim/warrior"
+	"google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -301,5 +303,58 @@ func TestForeverBossMeleeAbility(t *testing.T) {
 	}
 	if debuffUptime < 200 {
 		t.Errorf("the healing taken debuff was up %.0f s of 300, want most of the fight", debuffUptime)
+	}
+}
+
+// TestForeverTankScore checks the tank score (core/tank_score.go) on the tank bench's warrior with
+// the stand-in healer: the replay's least HPS of each iteration must agree with the run itself (the
+// iterations it died in are the ones whose least HPS is over the healer's), and SafeDPS can't be
+// over what the tank's whole-fight threat allows at the end.
+func TestForeverTankScore(t *testing.T) {
+	// The tank bench's request: the Valor set with raid buffs and consumes, about 7,000 health.
+	data, err := os.ReadFile("../../../tools/tankbench/req/warrior_protection.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rsr := &proto.RaidSimRequest{}
+	if err := protojson.Unmarshal(data, rsr); err != nil {
+		t.Fatal(err)
+	}
+	const iterations, seconds, hps = 400, 120, 500
+	rsr.Raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+	rsr.Encounter.Duration, rsr.Encounter.DurationVariation = seconds, 0
+	rsr.SimOptions.Iterations = iterations
+	player := rsr.Raid.Parties[0].Players[0]
+	player.HealingModel = &proto.HealingModel{Hps: hps, CadenceSeconds: 2, CadenceVariation: 1}
+	player.TankScoring = &proto.TankScoring{}
+	res := core.RunRaidSimConcurrent(rsr)
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	m := res.RaidMetrics.Parties[0].Players[0]
+	score := m.TankScore
+	if got := len(score.GetSurviveHps()); got != iterations {
+		t.Fatalf("the replay has %d iterations, want %d", got, iterations)
+	}
+	over := 0
+	for _, h := range score.SurviveHps {
+		if h > hps {
+			over++
+		}
+	}
+	if got, want := m.ChanceOfDeath, float64(over)/iterations; math.Abs(got-want) > 1e-9 {
+		t.Errorf("the run died in %.4f of the iterations, the replay says %.4f", got, want)
+	}
+	if over == 0 || over == iterations {
+		t.Errorf("%d of %d iterations need more than %d HPS: pick a healer the test can tell apart", over, iterations, hps)
+	}
+	needed, stdErr, floor := core.TankScoreSummary(score, 0.05)
+	if needed <= 0 || stdErr <= 0 || floor != 0 {
+		t.Errorf("healing needed %.1f ± %.1f with a death floor of %.3f, want a positive need and error and no floor", needed, stdErr, floor)
+	}
+	// At the end the reference member may do pull ratio × the tank's threat / (0.7 × (t − 2)).
+	ceiling := core.MeleePullRatio * m.Threat.Avg * seconds / (0.7 * (seconds - 2))
+	if safe := score.SafeDps.Avg; safe <= 0 || safe > ceiling*1.05 {
+		t.Errorf("SafeDPS %.0f, want above 0 and at most about %.0f", safe, ceiling)
 	}
 }

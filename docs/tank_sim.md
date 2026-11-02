@@ -9,8 +9,8 @@ replace its 700 TPS stand-in.
 `tools/tankbench` sims tank builds against seven Classic raid bosses (`tools/encounters`) with the healing a
 raid puts on its tank, and finds each build's healing needed and death floor. Two builds run (Protection
 warrior and paladin, both on Classic pre-raid plate). Four audits checked the work and their findings are
-fixed ([Audits](#audits)). Open: the optimizer's objective. Next comes the rules audit, then tank gear and
-rotations. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
+fixed ([Audits](#audits)). The optimizer's objective is ruled and built: the bench prints it, and rotopt's
+searches maximize it with `-tank`. Next comes the rules audit, then tank gear and rotations. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
 
 ## The user's rulings (2026-11-02)
 
@@ -29,6 +29,10 @@ rotations. Real healers come from the healing sim ([healing_sim.md](healing_sim.
 - **Sources for boss and healing numbers, best first:** Warcraft Logs from Season of Discovery, then the
   Anniversary realms (Vanilla, then TBC), then Classic Era, then private server cores like vmangos
   (docs/data_sources.md).
+- **The optimizer's objective** as proposed (see [The optimizer's objective](#the-optimizers-objective)):
+  SafeDPS against healing needed in raid DPS, healing needed by replay, presets at w = 1/3, 1 and 3.
+- **Tanks keep 5% deaths** for healing needed. The healing sim judges healers at under 2% tank deaths, a
+  separate line for a separate score.
 
 ## Encounters
 
@@ -192,9 +196,12 @@ go run -tags=with_db ./tools/tankbench -iters 3000 tools/tankbench/req/*.json
 - **The stand-in healer** is the engine's healing model (below), at `-hps` (default 600) every `-cadence`
   seconds (2 ± `-cadence-variation` 1), or the encounter's healers (`-healers`, `-healer-hps`, `-heal-cast`),
   whose variation is half their cadence. It's the same trick as the raid sim's 700 TPS tank.
-- **It prints** TPS, DPS, DTPS, TMI (`-tmi-window` 6 s), the chance of death, the sheet, and how the boss's
-  swings landed over the fight. `-actions` adds threat by ability, `-needed` the healing needed at `-death`
-  (5%) and the death floor (about 10 more sims a build), `-classic-crit` gives the boss Classic's crit.
+- **It prints** the objective at the three presets, SafeDPS, healing needed at `-death` (5%) and the death
+  floor, all from the one sim, then TPS, DPS, DTPS, TMI (`-tmi-window` 6 s), the chance of death, the sheet,
+  and how the boss's swings landed over the fight. `-actions` adds threat by ability, `-bisect` checks the
+  replay's healing needed by bisection over whole sims (about 10 more a build), `-classic-crit` gives the
+  boss Classic's crit, and `-dps-start`, `-dps-threat`, `-threat-members`, `-dps-slot` and `-healer-each` set
+  the objective.
 
 ### The stand-in healer
 
@@ -237,19 +244,20 @@ says where the cliff falls, and a small change in DTPS swings the result.
 
 ## Scoring survival
 
-**Healing needed** (the user's ruling): the stand-in healer's HPS at which the tank dies in 5% of fights,
-found by bisection to 1% of DTPS (`healingNeeded`, `tools/tankbench`). It's one number per build that
-doesn't depend on picking a healer, and it counts both damage taken and spikes (a spiky build needs more
-healing to stay at 5%). TMI and DTPS stay next to it. Every run uses the request's seed, so the chance of
-death moves only with the HPS.
+**Healing needed** (the user's ruling): the stand-in healer's HPS at which the tank dies in 5% of fights.
+It's one number per build that doesn't depend on picking a healer, and it counts both damage taken and
+spikes (a spiky build needs more healing to stay at 5%). TMI and DTPS stay next to it. It comes from a
+replay of each iteration (see [The optimizer's objective](#the-optimizers-objective)), checked against the
+first version's bisection over whole sims: 611 against 611 for the paladin and 578 against 581 for the
+warrior at Onyxia, within the bisection's step.
 
 **Sometimes no healing is enough.** A tank one swing can kill from full, or one a burst kills between two
 heals, dies whatever the healing. So the bench also reports:
 
 - **The biggest hit** (the sheet's) and how many of them the tank's health takes. Under 1 is a one-shot.
-- **The death floor**: the chance of death at 1,000 times the DTPS, where every heal tops the tank off, so
-  only damage between two heals kills it. Over 5%, healing needed is "none works", and the build isn't
-  viable against that boss with that healer cadence. With no damage taken it's 0.
+- **The death floor**: the share of iterations the tank dies in even when every heal tops it off, so only
+  damage between two heals kills it. Over 5%, healing needed is "none works", and the build isn't viable
+  against that boss with that healer cadence.
 
 The floor depends on the cadence. With 0.3 s heals it's lower than with 2 s heals, so the cadence is part of
 the scoring setup and stays fixed across builds.
@@ -266,9 +274,10 @@ the scoring setup and stays fixed across builds.
 Classic's crit costs the paladin far more than the warrior, since Shield Block pushes most crits off the
 warrior's table and the paladin's Holy Shield is down most of the fight.
 
-## The optimizer's objective (proposed)
+## The optimizer's objective
 
-From a metrics review (2026-11-02, a subagent that read the bench and measured its noise). Not ruled on yet.
+From a metrics review (2026-11-02, a subagent that read the bench and measured its noise), adopted by the
+user as proposed the same day, and built.
 
 **Score, in raid DPS: threat members × SafeDPS − w × DPS slot × healing needed / one healer's HPS.**
 
@@ -293,12 +302,40 @@ From a metrics review (2026-11-02, a subagent that read the bench and measured i
 - **The sheet's thresholds report and explain, they aren't scored.** Their effect is already in the
   outcomes. Final presets are re-checked with `-classic-crit`, where a 440 Defense build can flip.
 
-Engine work it needs: the replay data and percentiles in the metrics, the tank's threat over time against a
-reference curve, threat drops on boss abilities, and a tank objective in rotopt's search.
+**How it's built:**
+
+- **The engine** (`sim/core/tank_score.go`): a player with `tank_scoring` (`proto/common.proto`) and the
+  stand-in healer records each iteration's damage taken and heals, and at its end replays them to find the
+  least stand-in HPS the iteration lives through (+Inf when none does). It also follows the tank's threat on
+  the boss for SafeDPS: the reference member starts 2 s after the pull, makes 0.7 threat a point of damage
+  (Salvation) and pulls at 110%, all settable. Both land in `UnitMetrics.tank_score`, and
+  `core.TankScoreSummary` turns the list into healing needed at a death share, its standard error (from the
+  order statistics) and the death floor. A test checks that the replay agrees with the run itself: the
+  iterations the run died in are exactly those whose least HPS is over the healer's.
+- **The objective** (`tools/tankscore`): the encounter files, setting a request up as a tank, and the score
+  with its standard error, shared by the bench and rotopt. A build no healing saves at 5% scores far below
+  any other (−1,000,000, lower the more often it dies), so a search still climbs out of it.
+- **rotopt** `-tank max-threat|balanced|max-survival` (or a weight) scores the player as a tank in place of
+  DPS, so every search (rotation knobs, gear, talents) maximizes it, against `-tank-encounter` (whose fight
+  length is the default `-durs`) or a 600 HPS healer (`-tank-hps`). `-tank-threat-members`,
+  `-tank-dps-slot` and `-tank-death` set the rest.
+
+**First search** (2026-11-02): rotopt's talent search on the warrior at Broodlord, Balanced, 600 iterations a
+candidate and 3,000 to confirm (248 sims). It kept the build. Its best swap, Improved Thunder Clap's 3 points
+into Cruelty for more threat (SafeDPS 1,487 to 1,517), gained 73 ± 43, short of the search's two standard
+errors. **Healing needed is noisy where one ability makes the bad fights**: ±15 HPS at 3,000 iterations at
+Broodlord (Mortal Strike's healing cut), against ±3 at Onyxia. Two candidates share the random seed, so their
+difference is far less noisy than the two errors added up, which is what the search's test assumes. A paired
+test (the error of the difference, iteration by iteration) is the next fix for the searches.
+
+Not modelled yet, which the score would reward once it is: threat drops from boss abilities (Knock Away),
+and a tank's own health-based effects, which the replay can't follow (health potions, defensives at a health
+share, APL conditions on health). A scoring run leaves those out.
 
 ## Open decisions
 
-1. **The objective above**, and the weights of the three presets.
+None for the objective. The weights of the presets get checked once the gear search runs on them (two
+presets landing on the same build means a weight moves).
 
 ## Findings so far
 
@@ -327,7 +364,7 @@ reference curve, threat drops on boss abilities, and a tank objective in rotopt'
    (needs an API client), replace the vmangos melee and the guessed healing, check the command against a real
    report first. Then Patchwerk, threat drops, armor cuts and stacking DoTs in the engine.
 3. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.
-4. **The objective** (above) in the engine and rotopt's gear and talent searches.
+4. **A paired noise test** for rotopt's tank searches (above), then the three presets' searches.
 5. **Tank gear**: a tank row in `orchestration/gear_targets.md` and synthetic tank items, then gear and talent
    searches on the score.
 6. **The report**: a tank section with TPS next to damage taken, healing needed and the sheet's thresholds.

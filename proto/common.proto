@@ -1125,6 +1125,16 @@ message Encounter {
 	repeated RaidDamageEvent raid_damage = 15;
 }
 
+// How a tank is scored (Player.tank_scoring, docs/tank_sim.md). SafeDPS is the steady DPS a
+// reference DPS member could do without passing the tank on the boss at any moment: it starts
+// dps_start seconds after the pull, makes threat_per_damage threat a point of damage, and pulls
+// aggro at pull_ratio times the tank's threat. 0 takes the default.
+message TankScoring {
+	double dps_start = 1;         // default 2
+	double threat_per_damage = 2; // default 0.7, under Salvation
+	double pull_ratio = 3;        // default 1.1, in melee range
+}
+
 // One of the boss's abilities on the raid, for a healing fight (docs/healing_sim.md).
 message RaidDamageEvent {
 	// Who it hits: every living player of the group below, or count random ones of them.

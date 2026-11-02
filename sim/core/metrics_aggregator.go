@@ -557,6 +557,10 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 		unitMetrics.manaEnd.Total = unit.CurrentMana() * encounterDurationSeconds
 	}
 
+	if unit.tankScore != nil {
+		unit.tankScore.doneIteration(sim)
+	}
+
 	if unitMetrics.isTanking {
 		unitMetrics.tmi.Total = unitMetrics.calculateTMI(unit, sim)
 

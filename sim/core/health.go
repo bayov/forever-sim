@@ -67,6 +67,10 @@ func (hb *healthBar) GainHealth(sim *Simulation, amount float64, metrics *Resour
 		return
 	}
 
+	if ts := hb.unit.tankScore; ts != nil {
+		ts.healTaken(hb.unit, amount, metrics)
+	}
+
 	oldHealth := hb.currentHealth
 	newHealth := min(oldHealth+amount, hb.unit.MaxHealth())
 	metrics.AddEvent(amount, newHealth-oldHealth)
@@ -98,6 +102,10 @@ func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 	newHealth := max(oldHealth-amount, 0)
 	metrics := hb.DamageTakenHealthMetrics
 	metrics.AddEvent(-amount, newHealth-oldHealth)
+
+	if ts := hb.unit.tankScore; ts != nil {
+		ts.damageTaken(amount)
+	}
 
 	// TMI calculations need timestamps and Max HP information for each damage taken event
 	if hb.unit.Metrics.isTanking {
@@ -224,6 +232,7 @@ func (character *Character) applyHealingModel(healingModel *proto.HealingModel) 
 	cadenceVariationLow := medianCadence - minCadence
 
 	healthMetrics := character.NewHealthMetrics(ActionID{OtherID: proto.OtherAction_OtherActionHealingModel})
+	character.healingModelMetrics = healthMetrics
 
 	// Dummy spell for healing callback
 	healingModelSpell := character.RegisterSpell(SpellConfig{

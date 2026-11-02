@@ -167,6 +167,7 @@ func (s *searcher) combine(p *pendingScore) result {
 	}
 	if len(s.durations) == 1 {
 		r.leveling = p.results[0].leveling
+		r.tank = p.results[0].tank
 	}
 	return r
 }
