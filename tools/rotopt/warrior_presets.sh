@@ -42,7 +42,7 @@
 # potion's 2 min cooldown runs past the end and costs the potion with Death Wish and Recklessness,
 # and the hold already drinks at the pull whenever waiting would cost a use. +2.4 / +1.3 at 120 sec
 # (seeds 1 / 1000003, 3.5 and 1.9 paired standard errors, 3.8 over both), identical at 180 and 300.
-# Arms and every other knob kept.
+# Arms and every other knob kept, but for the Arms Sunder duty (below).
 #
 # The searches: tools/rotopt -talent-search and the knob search, one after the other until
 # neither moved, from these talents and knobs.
@@ -80,8 +80,11 @@ gen warrior_arms level60_arms 20305213032515201-55050000001 \
 	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=1,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25
 # level60_arms on Sunder Armor duty (docs/raid_sim.md, Sunder upkeep): 5 stacks from the pull,
 # refreshed in their last 3 sec, for a raid with no warrior tank (its request has no raid Sunder Armor).
+# Its own search (2026-11-02) puts Slam ahead of Mortal Strike (msFirst=0): with the duty's Sunders
+# taking GCDs, Slam's 15 sec cooldown loses more to a wait than Mortal Strike's 6 sec. +2.1 / +2.3 / +1.6
+# at 120 / 180 / 300 sec (seed 1000003 +3.0 / +2.7 / +1.5); on the base build it is not 2 standard errors.
 gen warrior_arms level60_arms_sunder 20305213032515201-55050000001 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=1,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25,sunderDuty=1
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25,sunderDuty=1
 # level60_arms on Battle Shout duty (standards 23): shouts before the pull and refreshes it.
 gen warrior_arms level60_arms_battle_shout 20305213032515201-55050000001 \
 	battleShout=1,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=1,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25

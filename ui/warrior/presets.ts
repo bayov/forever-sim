@@ -174,7 +174,9 @@ export const APLLevel60ArmsShout = PresetUtils.makePresetAPLRotation('Arms · Ba
 
 // The Sunder Armor duty: the base rotation, with 5 Sunder Armor stacks from the pull ahead of
 // everything but the opening cooldowns, refreshed in their last 3 sec unless they last the fight.
-// It is for a raid with no warrior tank, so the raid has no other Sunder Armor.
+// It is for a raid with no warrior tank, so the raid has no other Sunder Armor. Arms on the duty puts
+// Slam ahead of Mortal Strike (2026-11-02: +2.3 at 180 sec, +1.5 to +3.0 at 120 / 180 / 300 sec on
+// two seed sets), since the Sunders' GCDs cost Slam's 15 sec cooldown more than Mortal Strike's 6.
 export const APLLevel60FurySunder = PresetUtils.makePresetAPLRotation('Fury · Sunder Armor duty', Level60FurySunderAPLJSON, {
 	tooltip: 'Fury keeping 5 Sunder Armor stacks on the boss.',
 	group: 'Synthetic',
