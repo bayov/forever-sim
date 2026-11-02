@@ -116,6 +116,7 @@ message APLValue {
         APLValueCurrentHealthPercent current_health_percent = 27;
         APLValueMaxHealth max_health = 76;
         APLValueHealthMissing health_missing = 90;
+        APLValueSpellExpectedHealing spell_expected_healing = 91;
         APLValueCurrentMana current_mana = 11;
         APLValueCurrentManaPercent current_mana_percent = 12;
         APLValueMaxMana max_mana = 75;
@@ -516,6 +517,13 @@ message APLValueSpellTimeToReady {
 }
 message APLValueSpellCastTime {
     ActionID spell_id = 1;
+}
+// What a heal heals on average, before crits, at the target unit (the caster without one): its
+// base and healing power, the caster's healing multipliers and the target's healing taken. For a
+// rotation that binds a few ranks of a heal and casts the one that fits what's missing.
+message APLValueSpellExpectedHealing {
+    ActionID spell_id = 1;
+    UnitReference target_unit = 2;
 }
 message APLValueChannelClipDelay {
 }

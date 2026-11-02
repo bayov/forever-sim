@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"slices"
 	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -142,6 +143,8 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 		})
 	}
 
+	rotation.priorityList, configIdxs = rotation.limitHealRanks(rotation.priorityList, configIdxs)
+
 	// Finalize
 	for i, action := range rotation.prepullActions {
 		rotation.doAndRecordWarnings(&rotation.prepullWarnings[i], true, func() {
@@ -149,7 +152,7 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 		})
 	}
 	for i, action := range rotation.priorityList {
-		rotation.doAndRecordWarnings(&rotation.priorityListWarnings[i], false, func() {
+		rotation.doAndRecordWarnings(&rotation.priorityListWarnings[configIdxs[i]], false, func() {
 			action.Finalize(rotation)
 		})
 	}
@@ -181,6 +184,58 @@ func (rot *APLRotation) getStats() *proto.APLStats {
 }
 
 // Returns all action objects as an unstructured list. Used for easily finding specific actions.
+// MaxBoundHealRanks is how many ranks of one heal a rotation may cast. A healer keeps 2 to 4 ranks
+// of a heal on their bars and picks one by what's missing (Spell Expected Healing), never the
+// exact rank out of all of them (docs/healing_sim.md).
+const MaxBoundHealRanks = 4
+
+// limitHealRanks drops each priority list line that would cast a rank of a heal past the first
+// MaxBoundHealRanks ranks of it the list names, with a warning on the line.
+func (rot *APLRotation) limitHealRanks(list []*APLAction, configIdxs []int) ([]*APLAction, []int) {
+	bound := map[int32]map[int32]bool{} // a heal's top rank: the ranks the list casts
+	var keptList []*APLAction
+	var keptIdxs []int
+	for i, action := range list {
+		var extra []*Spell
+		ranks := map[int32][]int32{}
+		for _, inner := range action.GetAllActions() {
+			cast, ok := inner.impl.(*APLActionCastSpell)
+			if !ok || !cast.spell.ProcMask.Matches(ProcMaskSpellHealing) {
+				continue
+			}
+			id := cast.spell.ActionID.SpellID
+			top := TopRankID(id)
+			if top == 0 || bound[top][id] {
+				continue
+			}
+			if len(bound[top])+len(ranks[top]) >= MaxBoundHealRanks && !slices.Contains(ranks[top], id) {
+				extra = append(extra, cast.spell)
+				continue
+			}
+			if !slices.Contains(ranks[top], id) {
+				ranks[top] = append(ranks[top], id)
+			}
+		}
+		if len(extra) > 0 {
+			rot.doAndRecordWarnings(&rot.priorityListWarnings[configIdxs[i]], false, func() {
+				rot.ValidationWarning("%s would be a %dth rank of its heal: a healer binds at most %d, so this line is off", extra[0].ActionID, MaxBoundHealRanks+1, MaxBoundHealRanks)
+			})
+			continue
+		}
+		for top, ids := range ranks {
+			if bound[top] == nil {
+				bound[top] = map[int32]bool{}
+			}
+			for _, id := range ids {
+				bound[top][id] = true
+			}
+		}
+		keptList = append(keptList, action)
+		keptIdxs = append(keptIdxs, configIdxs[i])
+	}
+	return keptList, keptIdxs
+}
+
 func (rot *APLRotation) allAPLActions() []*APLAction {
 	return Flatten(MapSlice(rot.priorityList, func(action *APLAction) []*APLAction { return action.GetAllActions() }))
 }

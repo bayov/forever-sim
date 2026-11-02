@@ -156,11 +156,11 @@
                   }
                 },
                 {
-                  "notes": "The tank's steady damage: a big Healing Wave once it misses enough for it.",
+                  "notes": "The tank's steady damage, from 3 bound ranks of Healing Wave: the biggest that what the tank misses covers. Rank 10 first.",
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10396
+                        "spellId": 25357
                       },
                       "target": {
                         "type": "Tank",
@@ -169,7 +169,7 @@
                     },
                     "condition": {
                       "cmp": {
-                        "op": "OpGt",
+                        "op": "OpGe",
                         "lhs": {
                           "healthMissing": {
                             "sourceUnit": {
@@ -179,8 +179,14 @@
                           }
                         },
                         "rhs": {
-                          "const": {
-                            "val": "1800"
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25357
+                            },
+                            "targetUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
                           }
                         }
                       }
@@ -188,7 +194,83 @@
                   }
                 },
                 {
-                  "notes": "Raid damage: Chain Heal at the most hurt.",
+                  "notes": "Healing Wave rank 8 for a smaller hole.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10395
+                      },
+                      "target": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10395
+                            },
+                            "targetUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Healing Wave rank 6 for the smallest.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 959
+                      },
+                      "target": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 959
+                            },
+                            "targetUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Raid damage: Chain Heal at the most hurt, from 3 bound ranks, the biggest that what's missing covers. Rank 3 first.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -200,7 +282,7 @@
                     },
                     "condition": {
                       "cmp": {
-                        "op": "OpGt",
+                        "op": "OpGe",
                         "lhs": {
                           "healthMissing": {
                             "sourceUnit": {
@@ -209,8 +291,83 @@
                           }
                         },
                         "rhs": {
-                          "const": {
-                            "val": "1200"
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10623
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Chain Heal rank 2.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10622
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10622
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Chain Heal rank 1.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1064
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 1064
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
                           }
                         }
                       }

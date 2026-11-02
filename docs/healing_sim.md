@@ -33,6 +33,9 @@ preset's talents and a heal rotation. Next is H2, the Restoration shaman.
   scores** per build, and presets per role. In the raid sim healing is a requirement with a **20% margin**
   (healers carry 1.2 times the encounter's damage), **checked against Warcraft Logs**: the healer counts,
   healing and deaths real raids had on each boss.
+- **Downranking** (2026-11-02): no action that picks the exact rank out of all of a heal's ranks. Players
+  bind 2 to 4 ranks of a heal and choose one of those by the situation, so a rotation does the same: it casts
+  at most 4 ranks of a heal, each on its own condition.
 - **Order:** the shared groundwork now. Nobody else is building it (the tank session stopped after its tank
   sheet and bench, waiting on its own open decisions).
 
@@ -294,8 +297,9 @@ code). Fixed:
    Hurt net of incoming heals, a stop-cast rule with a reaction delay, and per-healer jitter.
 2. **The mana model decides the score**: healer-aware Innervate and Mana Tide, Mana Spring by group, Water
    Shield in the bench's rotation, Forever's Spirit regen, and the fight length each profile is judged at.
-3. **Rank choice.** Classic healers' efficiency is mostly downranking. The APL can name a rank but not "the
-   smallest rank that covers the deficit".
+3. **Done 2026-11-02** (Bound ranks, below): ~~**Rank choice.** Classic healers' efficiency is mostly
+   downranking. The APL can name a rank but not "the smallest rank that covers the deficit".~~ Not that
+   action, by the user's ruling: a rotation binds up to 4 ranks and picks among them.
 4. **Absorbs and armor from crit heals**: Power Word: Shield, Divine Aegis and Renewed Hope have no absorb
    pipeline, and Inspiration is missing.
 5. **Range and groups**: "everyone in reach" flatters Chain Heal. Group heals and totems reach a party, and
@@ -372,8 +376,37 @@ A late healer double-heals again (it sees the tank hurt after the other heal lan
 of that back. `TestHealingFightHealComm` checks it: without the heals in flight, 42 of 47 Healing Waves in a
 fight started in lockstep with the other healer's.
 
-Still open from the audit's list: rank choice (downranking), absorbs, healer-aware mana support, range and
-groups, the damage model's gaps.
+## Bound ranks (2026-11-02)
+
+Downranking the way players do it (the user's ruling): a healer binds 2 to 4 ranks of a heal and picks one by
+what's missing, never the exact rank out of all ten.
+
+- **Expected Healing** (`APLValueSpellExpectedHealing`, `sim/core/apl_values_spell.go`): what a heal (one
+  rank) heals on average at a unit before crits, as its tooltip says with healing power, healing bonuses and
+  the target's healing taken (a Mortal Strike shows). So a line reads "Healing Wave rank 8 at the tank when
+  Health Missing (Tank) >= Expected Healing (Healing Wave rank 8, Tank)", with no magic numbers to retune for
+  gear. With no player to heal, it's the heal on the caster.
+- **At most 4 ranks of a heal** a rotation (`MaxBoundHealRanks`, `sim/core/apl.go`): a priority list line
+  that would cast a 5th rank of a heal is off, with a warning on it in the editor.
+  `TestHealingFightBoundRanks` checks both.
+
+The bench's Restoration shaman binds 3 ranks of each heal now: Healing Wave 10, 8 and 6 at the tank, and
+Chain Heal 3, 2 and 1 at the most hurt, each the biggest that what's missing covers. Against the old rotation
+(Healing Wave 9 past 1,800 missing, Chain Heal 3 past 1,200) and other bind sets, carry with one tank
+healer (2,000 iterations), and the raid profile's raid healer (500):
+
+| Bind set | Onyxia | Broodlord | Magmadar | Raid profile |
+|---|---|---|---|---|
+| old: HW 9, CH 3 on fixed lines | 0.895 | 0.795 | 1.661 | 0.833 |
+| HW 10, 7; CH 3, 1 | 0.917 | 0.817 | 1.737 | 0.856 |
+| **HW 10, 8, 6; CH 3, 2, 1** (the preset) | **0.930** | 0.820 | **1.766** | **0.876** |
+| HW 10, 8; CH 3, 1, cast at 80% of their size | 0.871 | 0.835 | 1.574 | 0.868 |
+
+A rank cast at 80% of its size overheals more and runs out of mana sooner on the long fights. One rank
+(HW 10, CH 3 alone) carries less than the old rotation on Onyxia (0.863).
+
+Still open from the audit's list: absorbs, healer-aware mana support, range and groups, the damage model's
+gaps.
 
 ## Milestones
 

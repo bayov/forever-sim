@@ -167,6 +167,8 @@ func (rot *APLRotation) buildAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueSpellTimeToReady(config.GetSpellTimeToReady())
 	case *proto.APLValue_SpellCastTime:
 		return rot.newValueSpellCastTime(config.GetSpellCastTime())
+	case *proto.APLValue_SpellExpectedHealing:
+		return rot.newValueSpellExpectedHealing(config.GetSpellExpectedHealing())
 	case *proto.APLValue_SpellTravelTime:
 		return rot.newValueSpellTravelTime(config.GetSpellTravelTime())
 	case *proto.APLValue_SpellCpm:
