@@ -64,7 +64,12 @@
   "Mana Spring Totem is not up and Mana Tide Totem is not up and over 20s of the fight left": "No Mana Spring or Mana Tide Totem out, with over 20s of the fight left",
   "Not in Battle Stance and (over 25s of the fight left or Recklessness is not ready)": "Back to Battle Stance, except in the last 25s while Recklessness is ready",
   "Fingers of Frost at 1 stack and Frostbolt is in flight": "The last Fingers of Frost charge, while a Frostbolt is in flight",
-  "Fingers of Frost at 1 stack": "The last Fingers of Frost charge"
+  "Fingers of Frost at 1 stack": "The last Fingers of Frost charge",
+  "Stops channeling once (no Shadow Word: Pain on the boss or (no Devouring Plague on the boss and Devouring Plague is ready)) and at least 2 ticks channeled": "Stops after 2 ticks once Shadow Word: Pain drops, or Devouring Plague is ready and not on the boss",
+  "Stops channeling once at least 20% mana": "Stops once back at 20% mana",
+  "Seal of Command is up and Echo of Command at 2+ stacks": "Seal of Command is up with 2 Echo of Command copies stored",
+  "Seal of Command is up and Echo of Command at 3+ stacks": "Seal of Command is up with 3 Echo of Command copies stored",
+  "Seal of Righteousness is up and Echo of Righteousness at 1+ stacks": "Seal of Righteousness is up with an Echo of Righteousness copy stored"
  },
  "why": [
   {
@@ -533,8 +538,8 @@
   "Judgement on cooldown.": "",
   "Lacerate when it is down.": "",
   "Life Tap when the mana runs low or the filler costs more than is left.": "",
-  "Lower rank once the mana won't last the rest of the fight at 30 mana a second. Not while Clearcasting makes the top rank free.": "A lower rank, to make the mana last. Not on Clearcasting, which makes the top rank free.",
-  "Lower rank once the mana, with Mana Tide's 1160 while it is ready, won't last the rest of the fight at 20 mana a second. Not while Clearcasting makes the top rank free.": "A lower rank, to make the mana last. Not on Clearcasting, which makes the top rank free.",
+  "Lower rank once the mana won't last the rest of the fight at 30 mana a second. Not while Clearcasting makes the top rank free.": "To make the mana last. Not on Clearcasting, which makes the top rank free.",
+  "Lower rank once the mana, with Mana Tide's 1160 while it is ready, won't last the rest of the fight at 20 mana a second. Not while Clearcasting makes the top rank free.": "To make the mana last. Not on Clearcasting, which makes the top rank free.",
   "Magma Totem whenever it is down, unless the fight is about to end.": "",
   "Mind Blast on cooldown.": "",
   "Mongoose Bite whenever Expose Prey or a dodge opens it.": "Once Expose Prey or a dodge opens it.",
@@ -556,7 +561,7 @@
   "Racials and trinkets on a free GCD.": "",
   "Racials and trinkets on cooldown.": "",
   "Rake whenever it is down, but not at the very end of the fight.": "",
-  "Rank 2 Frostfire Bolt when the mana will not last the fight.": "Rank 2, to make the mana last.",
+  "Rank 2 Frostfire Bolt when the mana will not last the fight.": "To make the mana last.",
   "Rapid Fire with the on-use trinket, unless waiting would cost a use.": "",
   "Recklessness with the fight's last Death Wish.": "",
   "Right before a 5 point Eviscerate.": "",
@@ -600,6 +605,7 @@
   "Weave: a moment after the swing.": "Weave.",
   "Wing Clip as a filler with the mana to spare, held when an opened Mongoose Bite is about ready.": "A filler. It waits when an opened Mongoose Bite is about ready.",
   "Wrath once Eclipse is down to its last charge and no Wrath is on its way.": "",
-  "Wrath.": ""
+  "Wrath.": "",
+  "Rank 7 Smite once it would not: most of the damage for far less mana.": "Once the top rank's mana won't last: most of the damage for far less mana."
  }
 }

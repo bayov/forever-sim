@@ -692,6 +692,9 @@ _talents = rotation.load_talents(TREE)
 rot_rows, rot_fallback = rotation.build(os.path.join(D, 'req'), _outs_r, nm, names, abilities, RACIAL_RACE, _talents)
 
 
+_bcls = {b['id']: b['class'] for b in builds}
+
+
 def _rot_finish(r):
     if r['key'] and not r['icon']:
         r['icon'] = names.get(r['key'], {}).get('icon')
@@ -705,7 +708,7 @@ def _rot_finish(r):
             ab = next((a for a in abilities if a['build'] == r['build'] and a['key'] == pk), None)
             if ab and r.get('casts') is not None:
                 r['casts'] = ab['casts']
-    r['notes'] = rotation.shown_note(_clean_note(r['notes']))
+    r['notes'] = rotation.link_talents(rotation.shown_note(_clean_note(r['notes'])), _bcls.get(r['build']), _talents, r['name'])
 
 
 for r in rot_rows:

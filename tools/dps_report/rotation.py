@@ -92,6 +92,50 @@ def secs(s):
 
 # An aura a talent gives under another name, for "<talent> talent taken".
 AURA_TALENT = {'Fire Vulnerability': 'Improved Scorch'}
+# Names in a line's text that link to the talent behind them (the first mention, drawn with the talent's icon and
+# tooltip): every talent of the class by its own name, and these buffs by their talent's. LINK_SKIP: talent names that
+# also start other names ("Bane" in "Bane of Doom").
+LINK_ALIAS = {'Mage': {'Fire Vulnerability': 'Improved Scorch', 'Frigid Power': 'Ice Barrier'},
+              'Paladin': {'Echo of Command': 'Unsealed Wrath', 'Echo of Righteousness': 'Unsealed Wrath'},
+              'Shaman': {'Clearcasting': 'Elemental Focus'}}
+LINK_SKIP = {'Bane'}
+TOKEN = re.compile(r'(\[\[[^\]]+\]\])')
+
+
+def link_talents(text, cls, talents, skip=None):
+    """text with the first mention of each talent-given name as [[tal:<class>:<tree>:<index>|<name as written>]]."""
+    if not text or not cls:
+        return text
+    own = (talents or {}).get(cls, {})
+    names = {n: n for n in own if n not in LINK_SKIP and n != skip}  # skip: the line's own spell, shown above
+    names.update({a: t for a, t in LINK_ALIAS.get(cls, {}).items() if t in own})
+    done = set()
+    parts = TOKEN.split(text)
+    for name in sorted(names, key=len, reverse=True):
+        pat = re.compile(r'(?<![\w\'])' + re.escape(name) + r'(?![\w\'])')
+        for i, part in enumerate(parts):
+            if name in done or TOKEN.fullmatch(part) or not part:
+                continue
+            m = pat.search(part)
+            if m:
+                at = own[names[name]]
+                tok = f'[[tal:{cls}:{at[0]}:{at[1]}|{m.group(0)}]]'
+                parts[i:i + 1] = [part[:m.start()], tok, part[m.end():]]
+                done.add(name)
+                break
+    return ''.join(parts)
+
+
+def polish(text):
+    """Patterns the humaniser writes clause by clause, in plainer words."""
+    if not text:
+        return text
+    t = re.sub(r"\b[Ll]ess than (an?) (.+?) cast(?: plus [\d.]+s)? left in the fight", r'too little of the fight left for \1 \2', text)
+    t = re.sub(r"\b[Mm]ore than (an?) (.+?) cast(?: plus [\d.]+s)? left in the fight", r'enough of the fight left for \1 \2', t)
+    t = re.sub(r'\b[Aa]t least (\d+) mana per second of fight left', r'the mana lasts the fight at \1 a second', t)
+    t = re.sub(r'\b[Uu]nder (\d+) mana per second of fight left', r"the mana won't last the fight at \1 a second", t)
+    t = t.replace('Windfury Totem Passive', 'Windfury Totem')
+    return t[:1].upper() + t[1:]
 
 
 def load_talents(tree_root):
@@ -166,6 +210,8 @@ class Humaniser:
         # "talent taken" check then has a fixed value for the build, and its line reads as the build plays it.
         self.known = known or (lambda aura: None)
         self.lacks = set()  # the talents this line's checks found missing (apl_rows resets it a line)
+        self.link = lambda t: t  # links talent-given names to their talents (_humaniser sets it)
+        self.cur_name = None  # the line's own spell name, which its text doesn't link
         self.cur = None  # the key of the line's own spell: "holding it would mean one fewer use" needs no name for it
         self.items = set()  # the item names conditions use (tidy)
         self.fallbacks = []
@@ -583,10 +629,10 @@ def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
         elif kind == 'channelSpell':
             ref = body.get('spellId')
             if body.get('interruptIf'):
-                extra = 'Stops channeling once ' + H.pred(body['interruptIf'])
+                extra = H.link(polish(plain('Stops channeling once ' + H.pred(body['interruptIf']))))
         elif kind == 'move':
             r = body.get('rangeFromTarget', {}).get('const', {}).get('val', '0')
-            extra = 'Into melee range' if str(r) in ('0', '0s') else f'To {r} yd from the boss'
+            extra = 'Into melee range' if str(r) in ('0', '0s') else 'Just inside melee range' if 4 < (secs(r) or 0) < 5 else f'To {r} yd from the boss'
         # A sequence (an opener like Sunder Armor, or Shadowmeld into Ambush) is named by its spells, and its first
         # spell gives the icon, the tooltip and the racial it belongs to.
         steps = [key_of(a['castSpell'].get('spellId')) for a in (body.get('actions') or []) if 'castSpell' in a] if kind in ('sequence', 'strictSequence') else []
@@ -594,6 +640,7 @@ def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
             ref = (body['actions'][0].get('castSpell') or {}).get('spellId')
         key = key_of(ref) if ref else None
         H.cur = key
+        H.cur_name = nm(key) if key else None
         name = ', then '.join(nm(k) for k in steps) if steps else nm(key) if key else {'move': 'Move', 'autocastOtherCooldowns': 'Other cooldowns', 'wait': 'Wait'}.get(kind, kind)
         H.lacks = set()
         when = H.tidy(H.pred(cond, top=True)) if cond else ''
@@ -611,7 +658,7 @@ def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
             'build': bid, 'section': section, 'order': order,
             'kind': {'castSpell': 'cast', 'channelSpell': 'channel', 'move': 'move', 'autocastOtherCooldowns': 'auto', 'strictSequence': 'sequence'}.get(kind, kind),
             'key': key, 'name': name, 'icon': names[key]['icon'] if key and key in names else None,
-            'at': at, 'when': plain(when[:1].upper() + when[1:]) if when else '', 'extra': extra, 'notes': clean_note(notes),
+            'at': at, 'when': H.link(polish(plain(when[:1].upper() + when[1:]))) if when else '', 'extra': extra, 'notes': clean_note(notes),
             'race': rr, 'otherRace': bool(rr and race and rr != race and not (isinstance(rr, list))),
             # A tagged press (a queued Heroic Strike or Raptor Strike) counts on its spell's row, where
             # build_data folds it.
@@ -625,6 +672,16 @@ def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
         if p.get('hide'):
             continue
         row('priority', i + 1, p['action'], notes=p.get('notes', ''))
+    # A spell the APL casts at two ranks: the lower one says so in its name, "Downranked Frostfire Bolt (Rank 2)".
+    ranks = {}
+    for r in rows:
+        rk = (names.get(r['key']) or {}).get('rank') if r['key'] else None
+        if rk:
+            ranks.setdefault(r['name'], set()).add(rk)
+    for r in rows:
+        rk = (names.get(r['key']) or {}).get('rank') if r['key'] else None
+        if rk and rk < max(ranks.get(r['name'], {rk})):
+            r['name'] = f"Downranked {r['name']} (Rank {rk})"
     return rows
 
 
@@ -647,8 +704,10 @@ def talent_known(cls, talents, talent_string):
 
 
 def _humaniser(nm, cls=None, talents=None, talent_string=None):
-    return Humaniser(lambda k: 'the potion' if k == 'oOtherActionPotion' else nm(k), lambda aura: talent_token(cls, talents, aura),
-                     talent_known(cls, talents, talent_string))
+    H = Humaniser(lambda k: 'the potion' if k == 'oOtherActionPotion' else nm(k), lambda aura: talent_token(cls, talents, aura),
+                  talent_known(cls, talents, talent_string))
+    H.link = lambda t: link_talents(t, cls, talents, H.cur_name)
+    return H
 
 
 def _talent_string(req_dir, bid):
