@@ -1742,6 +1742,39 @@
       "5a6e9c6",
       "954a4f3"
      ]
+    },
+    {
+     "title": "The deep Holy Shock paladin build is no longer in the report, with its Judgement duty and vs Undead versions",
+     "kind": "method",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60_shock",
+      "paladin__level_60_shock-duty-crusader",
+      "paladin__level_60_shock-duty-wisdom",
+      "paladin__level_60_shock_undead"
+     ],
+     "note": "Ret Shock (deep Holy), 31 points in Holy to Light's Vigil, fell 17.7% behind Ret twist with the talent rework (855.6 at 180 s). Ret Shock, Holy Shock with most points in Retribution, stays.",
+     "commits": [
+      "231d549"
+     ]
+    },
+    {
+     "title": "Frostfire is the mage's default build, in place of Fire",
+     "kind": "method",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__frostfire",
+      "mage__fire"
+     ],
+     "moves": false,
+     "note": "Frostfire does 1076.6 at 180 s against Fire's 1056.4. Fire stays a preset.",
+     "commits": [
+      "231d549"
+     ]
     }
    ],
    "internal": [
