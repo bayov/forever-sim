@@ -734,8 +734,7 @@
             20
           ]
         ],
-        "icon": "spell_shadow_summonimp",
-        "notSimulated": true
+        "icon": "spell_shadow_summonimp"
       },
       {
         "fieldName": "dualWieldSpecialization",

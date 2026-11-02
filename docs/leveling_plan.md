@@ -21,7 +21,8 @@ part has the session's options). The mode comes from the encounter like the othe
 
 - **Levels.** We sim each level from From level up to, but not including, To level (10 to 60
   by default). We grind up to 59, and 60 is where we stop. The gear plan, the XP table and the
-  mob table go to 60, but the stat weights and the rotations stop at 30 for now (Open).
+  mob table go to 60. The stat weights are measured every 5 levels from 5 to 59
+  (docs/leveling_gear.md).
 - **Gear.** The leveling gear plan (docs/leveling_gear.md), as before. The Gear part shows the selected level's gear in the Gear tab's gear pane. A click
   on a slot opens the Gear tab's item list with the items that level can wear, sorted by the
   stat weights of that level, and the item we pick becomes one of ours from that level on.
@@ -462,5 +463,4 @@ build, and the "Level N Leveling Plan" rotations (the leveling optimizer's best 
 - The rotation search should tune `maelstromStacks` again at the 4th Maelstrom Weapon point.
 - Ghost Wolf's run speed between pulls isn't simmed, so Improved Ghost Wolf is worth nothing
   in the sim.
-- Leveling stat weights above 30, for the gear plan.
 - Forever's XP table.

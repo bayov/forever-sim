@@ -335,6 +335,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
   - Cost: 10 Rage, Instant
   - Causes all nearby enemies to be Dazed, reducing movement speed by 50% for 6 sec.
 - **Blood Craze** (3 ranks, column 3) [CHANGED] [ranks set by the client 70338 trait curves, see above]
+  - In the sim since 2026-11-02 (`applyBloodCraze`): client 70707's talent 16487 holds the 20% and triggers 16488, a heal every 2 sec, so 1 / 2 / 3% of max health in 3 ticks over 6 sec, restarted by the next trigger: a crit taken, a hit over 20% of max health (after mitigation), or Bloodthirst dealing damage. Healing taken modifiers apply (Mortal Strike's cut). Gore Drinker stays out: it needs Enrage 5/5 (row 6 of Fury), out of a tank's reach, and no DPS preset takes it.
   - Rank 1: Regenerates 1% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum Health from a single attack.
   - Rank 2: Regenerates 2% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum Health from a single attack.
   - Rank 3: Regenerates 3% of your total Health over 6 sec after being the victim of a critical strike, dealing damage with Bloodthirst, or suffering more than 20% of your maximum Health from a single attack.

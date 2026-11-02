@@ -6,6 +6,7 @@
 
 import * as THREE from 'three';
 import { newTextures } from './wow/files';
+import { particleOptions } from './wow/particles';
 import type { Model } from './wow/model';
 
 export type CameraState = { yaw: number; pitch: number; distance: number };
@@ -31,13 +32,15 @@ function capsule(radius: number, height: number, color: number): THREE.Group {
 
 const totemColors: Record<string, number> = { earth: 0x8b5a2b, fire: 0xd8442a, water: 0x2a7bd8, air: 0xc8d8f0 };
 
-// The graphics settings, with presets like the game's.
-export type Graphics = { preset: 'low' | 'medium' | 'high' | 'custom'; renderScale: number; shadows: 'off' | 'low' | 'medium' | 'high' };
+// The graphics settings, with presets like the game's. maxHeight caps the drawn resolution by its
+// height in pixels (0 is the screen's own). It stays apart from the presets, like the game's
+// resolution.
+export type Graphics = { preset: 'low' | 'medium' | 'high' | 'custom'; renderScale: number; shadows: 'off' | 'low' | 'medium' | 'high'; maxHeight: number };
 
 export const graphicsPresets: Record<'low' | 'medium' | 'high', Graphics> = {
-	low: { preset: 'low', renderScale: 0.75, shadows: 'off' },
-	medium: { preset: 'medium', renderScale: 1, shadows: 'low' },
-	high: { preset: 'high', renderScale: 1, shadows: 'high' },
+	low: { preset: 'low', renderScale: 0.75, shadows: 'off', maxHeight: 1440 },
+	medium: { preset: 'medium', renderScale: 1, shadows: 'low', maxHeight: 1440 },
+	high: { preset: 'high', renderScale: 1, shadows: 'high', maxHeight: 1440 },
 };
 
 export class Room {
@@ -61,6 +64,10 @@ export class Room {
 	private readonly ground: THREE.Mesh;
 	private readonly grid: THREE.GridHelper;
 	private playerHeight: number;
+	// The canvas's size in CSS pixels, from the last resize. Reading it from the page each frame
+	// would make the browser lay the page out again after the HUD's changes.
+	private cssSize: [number, number] = [1, 1];
+	private graphics?: Graphics;
 
 	constructor(
 		readonly canvas: HTMLCanvasElement,
@@ -137,6 +144,14 @@ export class Room {
 	resize() {
 		const w = this.canvas.clientWidth;
 		const h = this.canvas.clientHeight;
+		this.cssSize = [w, h];
+		// A 4K screen at 150% has a pixel ratio of 1.5: drawing every pixel is 2.25 times the work
+		// of 1440p. With a cap we draw fewer pixels and the browser stretches them to the screen.
+		const g = this.graphics;
+		let ratio = window.devicePixelRatio;
+		if (g && g.maxHeight > 0 && h > 0) ratio = Math.min(ratio, g.maxHeight / h);
+		ratio *= g?.renderScale ?? 1;
+		if (this.renderer.getPixelRatio() !== ratio) this.renderer.setPixelRatio(ratio);
 		this.renderer.setSize(w, h, false);
 		this.camera.aspect = w / Math.max(1, h);
 		this.camera.updateProjectionMatrix();
@@ -241,6 +256,7 @@ export class Room {
 	async warmUp(models: Model[]) {
 		const group = new THREE.Group();
 		group.position.copy(this.camera.position);
+		particleOptions.drawEmpty = true;
 		for (const m of models) {
 			group.add(m.root);
 			m.enableParticles(group);
@@ -251,6 +267,7 @@ export class Room {
 			await this.renderer.compileAsync(this.scene, this.camera);
 			for (const t of newTextures.list) this.renderer.initTexture(t);
 		} finally {
+			particleOptions.drawEmpty = false;
 			this.scene.remove(group);
 			newTextures.keep = false;
 			newTextures.list = [];
@@ -276,8 +293,8 @@ export class Room {
 	screenPoint(pos: [number, number], height: number): { x: number; y: number; visible: boolean } {
 		const v = toThree(pos[0], pos[1], height).project(this.camera);
 		return {
-			x: ((v.x + 1) / 2) * this.canvas.clientWidth,
-			y: ((1 - v.y) / 2) * this.canvas.clientHeight,
+			x: ((v.x + 1) / 2) * this.cssSize[0],
+			y: ((1 - v.y) / 2) * this.cssSize[1],
 			visible: v.z < 1,
 		};
 	}
@@ -309,7 +326,7 @@ export class Room {
 
 	// setGraphics applies the graphics settings: the render scale and the shadows.
 	setGraphics(g: Graphics) {
-		this.renderer.setPixelRatio(window.devicePixelRatio * g.renderScale);
+		this.graphics = g;
 		this.resize();
 		const shadows = g.shadows !== 'off';
 		const size = g.shadows === 'high' ? 4096 : g.shadows === 'medium' ? 2048 : 1024;

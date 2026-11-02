@@ -215,7 +215,14 @@ export class Model {
 			depthMaterial.depthWrite = true;
 		};
 
-		this.bones = m2.bones.map(() => new THREE.Bone());
+		// We pose the bones by their quaternions every frame. Three keeps each object's Euler angles
+		// in step with its quaternion, which took a seventh of the posing time, and we never read
+		// them. So the bones' quaternions don't update their angles.
+		this.bones = m2.bones.map(() => {
+			const bone = new THREE.Bone();
+			bone.quaternion._onChange(() => {});
+			return bone;
+		});
 		m2.bones.forEach((b, i) => {
 			const bone = this.bones[i];
 			const parent = b.parent >= 0 ? m2.bones[b.parent] : undefined;
@@ -733,15 +740,16 @@ export class Model {
 	private faceCamera() {
 		const camera = Model.camera;
 		if (this.billboards.length === 0 || !camera) return;
-		this.root.updateWorldMatrix(true, true);
 		const camQ = camera.getWorldQuaternion(billboardTmp.q1);
 		for (const i of this.billboards) {
 			const bone = this.bones[i];
 			const parent = bone.parent;
 			if (!parent) continue;
+			// Only the bones above this one need their place in the world now. The renderer places
+			// the rest (all of a character's 220 bones) once, when it draws.
+			parent.updateWorldMatrix(true, false);
 			parent.matrixWorld.decompose(billboardTmp.v, billboardTmp.q2, billboardTmp.s);
 			bone.quaternion.copy(billboardTmp.q2.invert()).multiply(camQ).multiply(faceFront);
-			bone.updateMatrixWorld(true);
 		}
 	}
 

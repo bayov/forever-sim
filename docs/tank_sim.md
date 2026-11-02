@@ -448,10 +448,37 @@ presets landing on the same build means a weight moves).
 - **Armor had no cap.** Armor now takes off at most 75% (`GetArmorDamageModifier`). Nothing simmed before
   got near it.
 
+## Rules audit
+
+**Protection warrior** (2026-11-02), every talent a tank build can reach against Forever's client data (build
+70707 with the realms' hotfixes) and forever-wiki/classes/warrior.md:
+
+- **Right in the sim:** Shield Specialization (1% block and a 20% chance of 5 Rage on a block, a point), Anticipation
+  (4 Defense a point), Improved Bloodrage, Master of Defense, Improved Revenge (20% a point), Defiance (5% a point,
+  with a shield), Improved Sunder Armor, Improved Shield Wall (5.5 min a point), Focused Rage, Bastion (2% Physical a
+  point, with a shield), Deflection, Cruelty, Booming Voice.
+- **Fixed: Blood Craze** (Fury row 3) wasn't simmed. It heals 1 / 2 / 3% of max health over 6 s after a crit taken, a
+  hit over 20% of max health or Bloodthirst (client 70707: 16487 triggers 16488, 3 ticks 2 s apart). Under Forever's
+  0.6% boss crit, it's the big hits: a crushing blow on a pre-raid tank is about 20% of its health. At Chromaggus it
+  procs 17 times a fight and heals about 2,400, but moves healing needed by nothing measurable (905 to 910 ± 7), since
+  the bad fights are bursts it's too slow for. The picker no longer marks it as not simulated.
+- **Not simmed, and rightly worth nothing in a boss fight:** Iron Will, Improved Disarm, Improved Shield Bash,
+  Concussion Blow (worth only as Shield Slam's prerequisite), Lingering Rage, Piercing Howl. Gore Drinker needs
+  Enrage 5/5, out of a tank's reach.
+- **Worth something in game, nothing in the score yet:**
+  - **Improved Thunder Clap and Demoralizing Shout's value**: the tank's rotation casts neither, and the bench's
+    requests give the boss both as raid debuffs whoever casts them. So Improved Thunder Clap and Booming Voice are
+    worth nothing, and the first talent search dropped Improved Thunder Clap for Cruelty. **Needs the user's call:**
+    whether the scored tank keeps Thunder Clap and Demoralizing Shout up itself (Rage, GCDs and threat, the raid's
+    debuffs dropped) or leaves them to the raid.
+  - **Last Stand, Shield Wall and Improved Shield Wall**: real tanks save them for a bad moment, which a scoring run
+    can't follow (the replay needs nothing to read the tank's health). Shield Wall on a timer would undervalue it.
+  - **Vanguard**: Charge in Defensive Stance, a Rage opener at the pull. The tank's rotation doesn't charge; it's
+    the rotations' work (Next steps, 3).
+
 ## Next steps
 
-1. **Rules audit** of each tank's defensive talents, stats and abilities against Forever's client data and
-   foreverchanges (Protection warrior, Feral tank, Protection paladin, Warden shaman), like the class audits.
+1. **Rules audit** of the other tanks (Feral tank, Protection paladin, Warden shaman) like the warrior's above.
    Bring the Feral tank into the build. Ask for a dungeon boss log for Forever's boss crit.
 2. **Encounters**: Patchwerk, threat drops, armor cuts and stacking DoTs in the engine.
 3. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.

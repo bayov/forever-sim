@@ -15,6 +15,7 @@ import * as THREE from 'three';
 import { texture } from './files';
 import type { RibbonEmitter } from './m2';
 import type { Model } from './model';
+import { particleOptions } from './particles';
 
 // The most edges one ribbon keeps, whatever its rate and lifetime say.
 const maxEdges = 256;
@@ -56,6 +57,8 @@ class Ribbon {
 	private readonly tint = new THREE.Color();
 	private readonly top = new THREE.Vector3();
 	private readonly bottom = new THREE.Vector3();
+	// A ribbon with a replaceable texture, which we don't have, never shows.
+	private hidden = false;
 
 	constructor(
 		readonly model: Model,
@@ -138,6 +141,7 @@ class Ribbon {
 				.catch(err => console.warn('ribbon texture', err));
 		} else {
 			// A replaceable ribbon texture, which we don't have: hide the ribbon.
+			this.hidden = true;
 			this.mesh.visible = false;
 		}
 	}
@@ -148,7 +152,7 @@ class Ribbon {
 
 	update(dt: number, emitting: boolean) {
 		const e = this.e;
-		if (!this.mesh.visible) return;
+		if (this.hidden) return;
 		this.anchor.updateWorldMatrix(true, false);
 		const world = this.anchor.matrixWorld;
 		const life = Math.max(0.01, e.edgeLifetime);
@@ -222,7 +226,15 @@ class Ribbon {
 		}
 		// n points make n - 1 quads of two triangles.
 		this.geometry.setDrawRange(0, Math.max(0, n - 1) * 6);
-		for (const a of [this.pos, this.uv, this.color]) a.needsUpdate = true;
+		// An empty ribbon isn't drawn, and we send the GPU only the points in use.
+		this.mesh.visible = n > 1 || particleOptions.drawEmpty;
+		if (n > 0) {
+			for (const a of [this.pos, this.uv, this.color]) {
+				a.clearUpdateRanges();
+				a.addUpdateRange(0, n * 2 * a.itemSize);
+				a.needsUpdate = true;
+			}
+		}
 	}
 
 	dispose() {

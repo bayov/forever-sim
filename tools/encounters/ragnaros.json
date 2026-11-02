@@ -123,6 +123,39 @@
     "randomTiming": true,
     "ticks": 8,
     "tickSeconds": 1
+   },
+   {
+    "spellId": 21158,
+    "school": "SpellSchoolFire",
+    "minDamage": 924,
+    "maxDamage": 1077,
+    "who": "NotTanks",
+    "share": 0.234,
+    "firstAt": 14.3,
+    "everySeconds": 5.5,
+    "randomTiming": true
+   },
+   {
+    "spellId": 21155,
+    "school": "SpellSchoolFire",
+    "minDamage": 2000,
+    "maxDamage": 2000,
+    "who": "NotTanks",
+    "share": 0.105,
+    "firstAt": 11.9,
+    "everySeconds": 12.54,
+    "randomTiming": true
+   },
+   {
+    "spellId": 0,
+    "school": "SpellSchoolFire",
+    "minDamage": 117,
+    "maxDamage": 636,
+    "who": "NotTanks",
+    "share": 0.027,
+    "firstAt": 17.0,
+    "everySeconds": 3.67,
+    "randomTiming": true
    }
   ]
  },
@@ -131,5 +164,69 @@
   "hpsEach": 285,
   "castSeconds": 2.87,
   "notes": "From the Anniversary Hardcore realms's logs (27 kills): while the boss was on the main tank, 6 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,710 a second with overheal and absorbs (40% of the heals effective), 2.09 heals and HoT ticks a second, against 725 damage taken a second. The tank's own heals (1% of its healing) are left out. Main tanks: Warrior 23, Druid 4."
- }
+ },
+ "raidHealing": {
+  "raidSize": 40,
+  "tanks": 2,
+  "addTanks": 0,
+  "dtpsAddTanks": 0,
+  "healers": 11,
+  "healersRange": [
+   9,
+   13
+  ],
+  "healerClasses": {
+   "Priest": 5.59,
+   "Shaman": 2.78,
+   "Paladin": 1.81,
+   "Druid": 1.15
+  },
+  "hpsEachHealer": 322,
+  "raidHps": 2737,
+  "raidHpsWithOverheal": 4627,
+  "hpsOnTanks": 821,
+  "hpsOnOthers": 1823,
+  "hpsOnOthersWithOverheal": 2452,
+  "dtpsEachOther": 47.5,
+  "dtpsTanks": 826,
+  "deathsOthersPerKill": 0.07,
+  "deathsTanksPerKill": 0.04,
+  "killsWithoutDeath": "24/27",
+  "fightSeconds": [
+   72,
+   97,
+   130
+  ],
+  "notes": "What the Anniversary Hardcore realms raids had on Ragnaros (27 kills, Warcraft Logs): the median kill's raid of 40 with 2 tanks (0 of them on adds, who took 0 a second together, not in the events), 11 healers by Warcraft Logs' healer role (79% of the healing), each 322 HPS with overheal. The raid healed 2,737 a second (821 on the tanks, 1,823 on the rest, 26% overheal on the rest). Each non-tank took 47.5 a second after mitigation. Fight length is the 10th percentile, median and 90th percentile kill. For the healing sim to check its healer counts against."
+ },
+ "raidSource": "[logs: the Anniversary Hardcore realms] The raidDamage events with who NotTanks: Warcraft Logs, 27 kills (tools/warcraftlogs/wclcli.py raid, tools/encounters/logs/anniversary_mc_raid.json): the abilities that dealt 2% or more of the non-tanks' damage taken in 10% or more of the kills, 97% of it together, their rates scaled by 1.03 for the rest. Each is a share of the non-tanks, so the file fits any raid size. Lava Burst 21158 from Lionfish (62% of the non-tanks' damage, in 27 of 27 kills): 924 to 1,077 unmitigated, the 5th to 95th percentile stretched to an even roll; 23% of the non-tanks a cast (10th to 90th percentile 3 to 59), 29.5 landed a second on each (84% of it landing), so a cast every 5.5 s at random (the logs count 7.6 casts a minute), the first at 14 s (median) of a 97 s kill. Intense Heat 21155 from Flame of Ragnaros (30% of the non-tanks' damage, in 27 of 27 kills): 2,000 to 2,000 unmitigated, the 5th to 95th percentile stretched to an even roll; 11% of the non-tanks a cast (10th to 90th percentile 3 to 16), 14.2 landed a second on each (100% of it landing), so a cast every 12.54 s at random (the logs count 4.9 casts a minute), the first at 12 s (median) of a 97 s kill. Lava 6 from Environment (5% of the non-tanks' damage, in 27 of 27 kills): 117 to 636 unmitigated, the 5th to 95th percentile stretched to an even roll; 3% of the non-tanks a cast (10th to 90th percentile 3 to 6), 2.2 landed a second on each (100% of it landing), so a cast every 3.67 s at random (the logs count 6.3 casts a minute), the first at 17 s (median) of a 97 s kill. Together they land 47.5 a second on each non-tank over a median kill, at the logs' mitigation, against 47.5 in the logs.",
+ "raidReports": [
+  "4HvCT1GAhQPL6daW:57",
+  "6Prnja1FC34YMfL2:44",
+  "9VdCNpKWRBj6Fvw1:62",
+  "9aBNHQ1nd6TVhGtY:70",
+  "AQCNgPt89YwjHcyd:69",
+  "Az7vdr3TyHwgf6hX:25",
+  "BRWb2v6YTwgt17Q8:76",
+  "Cxy2hA4avwZTQVtX:63",
+  "FjyRJBHQ6dkT4aCc:104",
+  "GCYjWTmkzpwZMnat:63",
+  "HwDKZnyvgVRNmh1f:67",
+  "L7QbaC4pv2wVkcXm:89",
+  "LrqxF49hHNpmcVXb:66",
+  "Lw9BQhyzpgNKX4JR:84",
+  "Mchtrgfdym21LpjY:30",
+  "R2vmfVpGPYjBCXNk:49",
+  "TC9PNZgQ64zMGKHD:50",
+  "Wz8pCkf3bn6PHKGL:4",
+  "azPW9m7pnGXFC2qD:8",
+  "f3Wat7vb8pndYG9M:48",
+  "fr9V1NQWg3YpyXkM:84",
+  "hCLZBMbHnxtVFAWr:33",
+  "nLwG1VHdRr8tc26X:74",
+  "tzv8DYCg7d2BmhZq:59",
+  "vXD9KYTCgc3dQq7W:70",
+  "wbxV6q4ZrCMyT82L:75",
+  "znCmGRZMr7b2k8Pw:83"
+ ]
 }

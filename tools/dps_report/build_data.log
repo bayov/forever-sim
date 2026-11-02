@@ -3,7 +3,7 @@ races: 296 rows, 62 KB
 lengths: 365 rows, 30 KB
 abilities: 833 rows, 234 KB
 auras: 1415 rows, 206 KB
-hist: 2870 rows, 153 KB
+hist: 2873 rows, 153 KB
 stats: 743 rows, 62 KB
 gear: 718 rows, 136 KB
 setup: 2143 rows, 536 KB
@@ -18,10 +18,8 @@ mana_summary: 51 rows, 15 KB
 assumptions: 57 rows, 63 KB
 WARNING assumptions: 1 texts name the project's process, e.g. "Forever client 70707 (SpellCooldowns 101119 and SpellCategories 187717, spell 1312002: category 19, Fire Blast's). foreverchanges.pro, build 1.60.1.70"
 assumption_dps: 343 rows, 57 KB
-rotation: 753 rows, 238 KB
-race_rotation: 418 rows, 153 KB
-WARNING rotation: 1 rotation_text.json notes entries no line uses, e.g. Bane of Doom when it lands before the fight ends.
-WARNING rotation: 1 conditions read like code, with no wording in rotation_text.json, e.g. No Bane of Agony on the boss and over 60s of the fight left and (Warlock Synthetic Talisman (Phase 1) is ready within 59s or over 60s until the trinket is ready)
+rotation: 753 rows, 237 KB
+race_rotation: 418 rows, 152 KB
 WARNING rotation: 3 rotation_text.json entries no line uses, e.g. [[tal:Mage:1:11|Heating Up]] talent taken and Heating Up at 3+ stacks and ([[tal:Mage:2:15|Fingers of Frost]] talent not taken or Fingers of Frost is not up or Pyroblast takes 1.49s or more to cast)
 rotation conditions shown in compact form: []
 tooltips: 1123 rows, 446 KB
