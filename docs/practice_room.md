@@ -62,7 +62,9 @@ answers.
     press. Auto attack starts off. It turns on with a melee ability, a `/startattack` macro (for example on Earth
     Shock) or a right click on an enemy, and then your character swings whenever it's in melee range.
 13. **Imbues are a setting you can override** (the user, 2026-11-02). You enter the room with the imbue from the
-    settings already up. Casting a different imbue replaces it.
+    settings already up. Casting a different imbue replaces it, at any time, before or during the fight.
+14. **Your whole class toolkit is castable** (the user, 2026-11-02). You can cast anything your class knows at your
+    level, as in game, not only what the sim's rotation uses. See [Your toolkit](#your-toolkit).
 
 ## Separation from the regular sim
 
@@ -110,6 +112,11 @@ five workspaces, so extracted game files inside the repo would end up in commits
 | `Simulation.NextEventTime()`, read-only | `Run(until)` stops before the next event without moving the clock | none, nothing calls it |
 | `Unit.ManualControl bool`, default false | `DoNextAction` returns at once for your unit, after the due hard cast block (`apl.go:209`) | one bool check per `DoNextAction` |
 | `AutoAttacks.SkipPullStart bool`, default false | the sim's pull at time 0 leaves your auto attacks off | one bool check per unit at the pull |
+| Class hooks for spells the sim keeps as a setting, opt-in, listed per class as we find them (the first: shaman imbues, see [Your toolkit](#your-toolkit)) | the class code reads "the current imbue" instead of "the imbue in the settings" | none when off |
+
+Extra spells and auras come in through `core.EnvHooks` (`environment.go:180`), which already exists for tools that
+watch a sim from outside, like `tools/logcheck`. It runs before the sim is finalized, while spells and auras can still
+be registered.
 
 `ManualControl` is needed because an empty APL isn't idle. Each time it finds nothing to do, it waits 50ms through
 `WaitUntil`, which sets the GCD (`apl.go:227`, `gcd.go:90`). It runs after every swing, cast, and energy or rage tick
@@ -238,18 +245,34 @@ Only then does it call `Spell.Cast`. A failed `Cast` can use up the cooldown, be
 GCD check (`cast.go:273`, `cast.go:289`), so `Cast` is never called without these checks passing. During a channel,
 the session cancels the channel first (`ChanneledDot.Cancel`), since `InterruptHardcast` doesn't stop channels.
 
-### Imbues
+### Your toolkit
 
-In the sim, a shaman imbue isn't a spell you cast. It's an aura the class code registers and turns on at the start,
-only for the imbue the settings pick (`windfury_weapon.go:105`, `shaman.go:66`). So you enter the room with that imbue
-up, and casting a different imbue works like this, without a core change:
+You can cast anything your class knows at your level, at the ranks you know. The list comes from the client's
+spell tables for the class and level, and the room's spellbook shows all of it. Each spell falls in one of three
+kinds:
 
-- **Before the pull:** the session rebuilds the sim with the new imbue in the settings, the same seed, and your
-  inputs so far fed back at their applied times. Before the pull nothing rolls for damage, so the rebuilt fight is the
-  same except for the imbue. The cast costs its GCD and mana like any other.
-- **After the pull:** a mid-fight imbue swap is rare, and it needs the other imbue's aura to exist, which the class
-  code only registers when the settings pick it. Milestone 1 refuses it with a note. If it turns out to matter, it
-  becomes a normal core change with its own review.
+1. **Spells the sim has** (most class spells: shocks, Lightning Bolt, Stormstrike, every totem the sim models,
+   Healing Wave and the other heals, shields). The shaman class code registers all of them, whatever the rotation
+   uses (`shaman.go:276`). They're cast as described above.
+2. **Spells the sim keeps as a setting.** Shaman imbues are the first case: the class code registers and turns on
+   only the imbue the settings pick (`shaman.go:66`, `windfury_weapon.go:105`). So:
+   - Through `core.EnvHooks`, the session registers all four imbues with the class code's own exported functions
+     (`ApplyWindfuryImbue` and the others), and keeps only the active one on.
+   - You enter the room with the settings' imbue up. Casting an imbue, at any time, turns the old one off and the new
+     one on for that weapon, with the game's GCD, mana cost and duration.
+   - Where the class code reads the settings' imbue during the fight (for example the rule that a Windfury Weapon
+     imbue turns off the Windfury Totem buff, `shaman.go:92`), an opt-in class hook makes it read the current imbue.
+     It's listed in the core touch points.
+   - Other classes' setting-only spells (blessings, auras, aspects, poisons) get the same treatment when we add their
+     class.
+3. **Spells the sim doesn't have** (Ghost Wolf, Purge, Earthbind Totem, Frost Resistance Totem, Cure Poison, Water
+   Walking and the like). The session registers them through `core.EnvHooks` with `RegisterSpell`, with the cost,
+   cast time, GCD, cooldown and range from the client's spell tables. Effects that change the fight are coded in
+   `sim/practice`:
+   - Ghost Wolf: its run speed, and it ends when you cast.
+   - A totem the sim doesn't have still takes its element's slot, so Earthbind Totem replaces Strength of Earth, as
+     in game. When that needs the shaman's slot code, it's an opt-in class hook.
+   - Effects that mean nothing against a dummy (Water Walking, Far Sight) only cost their GCD and mana.
 
 Consumables and other players' buffs come from the settings.
 
@@ -772,8 +795,10 @@ Each step says when it's done. Spike 1 runs first, next to step 1, since it's th
      fails, leaving melee range stops swings and coming back resumes them, wrong facing fails, ping shifts apply
      times, a totem dropped before the pull is up at the pull, the state at the pull is identical with and without the
      time swap, the first harmful action is the pull at 0, no swing before you turn auto attack on, a `/startattack`
-     macro and a right click both turn it on, an imbue cast before the pull replaces the settings' imbue, an input at
-     the fight's end is dropped, and no swing during a cast
+     macro and a right click both turn it on, an imbue cast before or during the fight replaces the active
+     imbue and the Windfury Totem rule follows the current imbue, Ghost Wolf costs its GCD and mana and ends on a
+     cast, Earthbind Totem replaces Strength of Earth, an input at the fight's end is dropped, and no swing during a
+     cast
    - for each of 100 seeds, the APL's own casts with their sim times (prepull ones included), fed back as inputs with
      the same seed, give the same DPS, or each difference is explained (a correctness test only, the room itself never
      runs other seeds)
