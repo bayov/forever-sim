@@ -31,12 +31,15 @@ def sheet(cmd):
 
 # ours name | theirs name, where they differ
 KEYS = ['Strength', 'Agility', 'Stamina', 'Intellect', 'Spirit', 'AttackPower', 'RangedAttackPower',
-        'MeleeHit|PhysicalHitPercent', 'MeleeCrit|PhysicalCritPercent', 'SpellPower', 'Armor', 'Health', 'Mana']
+        'MeleeHit|PhysicalHitPercent', 'MeleeCrit|PhysicalCritPercent', 'SpellPower|SpellDamage', 'NaturePower|NatureDamage',
+        'FirePower|FireDamage', 'FrostPower|FrostDamage', 'ShadowPower|ShadowDamage', 'ArcanePower|ArcaneDamage',
+        'SpellHit|SpellHitPercent', 'SpellCrit|SpellCritPercent', 'MP5', 'Armor', 'Health', 'Mana']
 ours_bin = 'ours_aq_stats' if klass == 'ClassHunter' and os.environ.get('OURS_AQ', '1') == '1' else 'ours_stats'
 tmp_o, tmp_t = f'{out}/layer_ours.json', f'{out}/layer_theirs.json'
 for level, name in enumerate(['naked, no talents', '+ talents', '+ gear', '+ consumables', '+ buffs']):
     json.dump(strip(O, True, level), open(tmp_o, 'w')); json.dump(strip(T, False, level), open(tmp_t, 'w'))
     a = sheet([os.path.join(BIN, ours_bin), tmp_o])
+    a['SpellPower'] = a.get('SpellPower', 0) + a.get('SpellDamage', 0)  # theirs' SpellDamage is both of ours
     b = sheet([os.path.join(BIN, 'theirs_stats'), tmp_t, f'{out}/items.json'])
     cells = []
     for k in KEYS:
