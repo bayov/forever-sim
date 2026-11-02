@@ -1,0 +1,31 @@
+[
+  {
+    "guid": "Player-1-0001",
+    "name": "Bayov Test",
+    "realm": "Test",
+    "class": "SHAMAN",
+    "race": "Orc",
+    "level": 60,
+    "seen": 200,
+    "account": "1#2",
+    "slots": {
+      "109": {
+        "id": 6948,
+        "kind": "item",
+        "name": "Hearthstone"
+      },
+      "27": {
+        "body": "#showtooltip\n/cleartarget [dead][help]\n/startattack\n/cast [@mouseover,harm,nodead][] Lightning Bolt\n",
+        "char": true,
+        "icon": 136048,
+        "kind": "macro",
+        "name": "Lightning Bolt"
+      },
+      "38": {
+        "id": 20572,
+        "kind": "spell",
+        "name": "Blood Fury"
+      }
+    }
+  }
+]
