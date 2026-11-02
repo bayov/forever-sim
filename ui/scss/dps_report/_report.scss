@@ -1557,6 +1557,12 @@ ol.fv-list li::marker {
 	cursor: pointer;
 }
 
+// The Rotation card's lines and pre-pull casts only show a tooltip, so no hand cursor for them.
+#sp-rotation [data-tt-tap]:not(a),
+#sp-prepull [data-tt-tap]:not(a) {
+	cursor: default;
+}
+
 .fv [data-tt]:not([data-tt-tap]) {
 	-webkit-touch-callout: none;
 }
@@ -2358,7 +2364,6 @@ div.tt-embed:not(.fv-tt) {
 	align-items: start;
 	padding: 0.55rem 0.15rem;
 	border-top: 1px solid color-mix(in srgb, var(--color-border-line) 75%, transparent);
-	cursor: pointer;
 	border-radius: 8px;
 }
 
@@ -2941,21 +2946,6 @@ div.tt-embed:not(.fv-tt) {
 }
 
 // The exact APL condition, folded under the rotation line's tooltip.
-.fv-tt .tt-more {
-	margin-top: 0.2rem;
-	font-size: 0.75rem;
-
-	summary {
-		color: var(--color-fg-muted);
-		cursor: pointer;
-	}
-
-	> div {
-		padding-top: 0.15rem;
-		overflow-wrap: anywhere;
-	}
-}
-
 .fv-pick .nmx {
 	font-size: 0.66rem;
 	line-height: 1.2;

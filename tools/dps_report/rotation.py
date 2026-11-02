@@ -591,7 +591,6 @@ def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
             # A tagged press (a queued Heroic Strike or Raptor Strike) counts on its spell's row, where
             # build_data folds it.
             'casts': round(casts.get((bid, key), casts.get((bid, re.sub(r't\d+$', '', key)), 0)), 1) if key else None,
-            'cond': json.dumps(cond, separators=(',', ':')) if cond else None,
         })
 
     for i, p in enumerate(prepull_sorted(rot)):

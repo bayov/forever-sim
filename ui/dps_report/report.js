@@ -503,7 +503,6 @@ export function startReport(dash, events) {
     const [k, a, b] = l;
     if (k === 's') return el('div', { class: 'tt-sp' });
     // a detail kept out of the way: it opens on a tap without closing the tooltip
-    if (k === 'd') return el('details', { class: 'tt-more' }, el('summary', { text: String(a ?? '') }), el('div', { class: 'c-m', text: String(b ?? '') }));
     if (k === '2' || k === 'h' || k === 'n') {
       return el('div', { class: 'tt-row' + (k === 'h' ? ' tt-h' : '') }, el('span', { class: k === 'n' ? 'c-m' : null, text: String(a ?? '') }),
         el('span', { class: 'c-t', text: String(b ?? '') }));
@@ -607,8 +606,6 @@ export function startReport(dash, events) {
       if (ttEl && ttEl.contains(e.target)) {
         // the wowhead link opens in a new tab; any other tap on the tooltip closes it
         if (e.target.closest('.tt-link a')) { e.stopPropagation(); setTimeout(hideTT, 0); return; }
-        // a folded detail opens and closes in place, and the tooltip stays
-        if (e.target.closest('.tt-more')) { e.stopPropagation(); ttPinned = true; return; }
         hideTT(); e.preventDefault(); e.stopPropagation(); return;
       }
       const n = e.target.closest ? e.target.closest('[data-tt]') : null;
@@ -2114,20 +2111,6 @@ export function startReport(dash, events) {
   };
 
   // ---------- rotation ----------
-  // the exact APL condition, compactly: what a reader of the sim UI's rotation tab would recognise
-  const aplText = (v) => {
-    if (!v || typeof v !== 'object') return String(v ?? '');
-    const [t, a] = Object.entries(v)[0] || [];
-    const nm = (r) => { if (!r) return '?'; const k = r.spellId ? 's' + r.spellId + (r.tag ? 't' + r.tag : '') : r.itemId ? 'i' + r.itemId : r.otherId ? 'o' + r.otherId : null; return (k && byKey('names')?.get(k)?.name) || k || '?'; };
-    const OP = { OpLt: '<', OpLe: '≤', OpGt: '>', OpGe: '≥', OpEq: '=', OpNe: '≠', OpAdd: '+', OpSub: '−', OpMul: '×', OpDiv: '÷' };
-    if (t === 'const') return String(a.val);
-    if (t === 'and' || t === 'or') return (a.vals || []).map((x) => { const s = aplText(x); return /\b(and|or)\b/.test(Object.keys(x)[0]) ? `(${s})` : s; }).join(t === 'and' ? ' AND ' : ' OR ');
-    if (t === 'not') return `NOT ${aplText(a.val)}`;
-    if (t === 'cmp' || t === 'math') return `${aplText(a.lhs)} ${OP[a.op] || a.op} ${aplText(a.rhs)}`;
-    const ref = a && (a.spellId || a.auraId);
-    const args = [ref ? nm(ref) : null, a && a.delay ? 'delay ' + aplText(a.delay) : null, a && a.autoType ? a.autoType : null, a && a.threshold ? a.threshold : null].filter(Boolean);
-    return `${t}(${args.join(', ')})`;
-  };
   // A condition names a talent as [[tal:<class>:<tree>:<index>|<name>]] (rotation.py): drawn as the talent's icon and
   // name with its tooltip, or as the name alone in plain text.
   const TAL_TOKEN = /(\[\[tal:[^|\]]+\|[^\]]+\]\])/;
@@ -2147,7 +2130,6 @@ export function startReport(dash, events) {
     const r = (race ? raceRotRows(b, race) : rotRows(b)).find((x) => x.section === section && String(x.order) === String(order));
     if (!r) return null;
     const base = r.key ? spellSpec(r.key, b, false) : { title: r.name, color: GOLD, lines: [], nums: [] };
-    const cond = r.cond ? tlParse(r.cond, null) : null;
     // A priority line's card already shows its condition and note, so the tooltip doesn't repeat them; pre-pull casts
     // and folded lines (other races' racials, lines switched off) show them here. The exact APL condition is folded.
     const shown = section === 'priority' && !r.otherRace && !/^Never/.test(r.when || '');
@@ -2161,7 +2143,6 @@ export function startReport(dash, events) {
       !shown && r.notes ? ['m', r.notes] : null,
       was ? ['m', section === 'prepull' ? `The preset casts it at ${fmtT(+was.at)}.` : `The preset’s line: ${plainWhen(was.when) || 'when ready'}.`] : null,
       r.why && (!shown || r.diff === 'changed' || r.diff === 'added') ? ['t', r.why] : null,
-      cond ? ['d', 'Exact condition', aplText(cond)] : null,
     ].filter(Boolean);
     return { ...base, icon: base.icon || r.icon, title: String(r.key && !/^oOther/.test(r.key) ? base.title : r.name), lines: [...lines, ...(base.lines && base.lines.length ? [['s'], ...base.lines] : [])] };
   };
