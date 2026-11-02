@@ -2211,8 +2211,12 @@ export function startReport(dash, events) {
       el('span', { class: 'no', text: run.length > 1 ? `${run[0].order}–${run[run.length - 1].order}` : String(run[0].order) }),
       el('div', { class: 'tx' }, el('div', { class: 'ics' }, ...run.map((q) => tt(ico(q, 'fv-ico'), ttKey(q), true, b.id)), el('b', { text: run.map((q) => q.name).join(', ') })),
         el('span', { class: 'wh', text: why === 'race' ? raceFold(run) : `Off in this preset${run[0].notes ? ': ' + run[0].notes.replace(/^Never:\s*/i, '') : '.'}` })));
-    // a why that asks its own question ("Why swap at 2…?") needs no label
-    const whyLine = (r) => (r.why ? el('span', { class: 'fv-why' }, /^Why\b/.test(r.why) ? null : el('b', { text: 'Why: ' }), r.why) : null);
+    // a why that asks its own question ("Why swap at 2…? Because…") shows the question in bold, in place of a label
+    const whyLine = (r) => {
+      if (!r.why) return null;
+      const q = /^(Why\b[^?]*\?)\s*(.*)$/s.exec(r.why);
+      return el('span', { class: 'fv-why' }, ...(q ? [el('b', { text: q[1] }), ' ' + q[2]] : [el('b', { text: 'Why: ' }), r.why]));
+    };
     // one priority line as a card: number, icon, name and tags, condition, note, casts, and any lines under it.
     // sameRace: a tag already names the line's race (a racial a race adds for itself), so it needs no "only" tag.
     // when: the condition's nodes, in place of r.when's (a race's line with its added clause highlighted).
