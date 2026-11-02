@@ -82,6 +82,10 @@ Flip one rule on one side and rerun. The DPS it moves is that rule's worth. Do i
 - **On our side:** edit `req_ours.json` (options, consumables, buffs), or flip the rule in a build of our sim from a
   scratch worktree, never the checkout's working tree.
 - **On their side:** edit `req_theirs.json`, or patch their checkout (uncommitted, reverted afterwards, step 1).
+- `run.py` takes another binary for either side: `OURS=<path>` (a scratch build, or
+  `tools/dps_report/bin/wowsimcli_assume` with `DASH_ASSUME=<key>=<value>` for a report assumption) and
+  `THEIRS=<name in $WSF_WORK/bin>` (a patched build of theirs, e.g. `go build -tags=with_db -o $WSF_WORK/bin/theirs_cmpsim_x
+  ./cmd/cmpsim` in their checkout). Measure an assumption against `wowsimcli_assume` with no knob, not against `ours_cli`.
 - The causes should add up to the gap, within the error. When they don't, there is another cause.
 
 ## 5. Sort the causes
@@ -153,6 +157,9 @@ rotation gives a result that looks off.
   runs ours on its own ranks: the difference is the AQ ranks' worth). Raptor Strike's queue is tag 3 in ours, tag 1
   in theirs. Warrior: Whirlwind is cast as its main hand's copy, tag 14 (untagged it never casts: about 100 DPS on
   Fury), Charge has no rank, Berserking 20554. Shaman: Berserking 20554; theirs registers every rank our rotations cast.
+  Mage: Berserking 20554; theirs registers only Frostfire Bolt's top rank, so a downranking line (Frostfire's rank 2
+  when mana runs short, about 1 DPS) never casts there. Our Fingers of Frost aura is 400670, theirs 400669 (the
+  client's buff; 400670 is the talent's rank 1), remapped.
 - **Vanish and Sweeping Strikes** are DPS cooldowns in theirs, so `autocastOtherCooldowns` would Vanish at the pull
   and spend 30 rage on Sweeping Strikes every 30 s against one target (their own rotations cast it only on 2+
   targets and don't autocast: 32 DPS on Arms). The converter adds a never-true line naming each.
@@ -171,14 +178,31 @@ rotation gives a result that looks off.
   Pathfinding and Improved Revive Pet swapped (5th and 6th).
 - **Off-GCD timing:** their engine fires an off-GCD item only at the next GCD check. A rotation that uses one in
   between (Thistle Tea at 10 energy) loses it there: compare that with care.
+- **The next spell is picked before the cast completes** in theirs (at a hardcast's end, before its own effects run).
+  A line whose condition the ending cast changes reads the old state: Pyroblast at 3 Heating Up stacks queued a second,
+  6 s Pyroblast after every one (about 180 DPS on Fire), Scorch took one cast too many to 5 Fire Vulnerability stacks
+  and two for every refresh, Arcane Blast one too many to its stack target. The converter adds `not spellIsCasting(X)`
+  to such a line (`SELF_SPENT`), or counts the ending cast's stack (`STACKS`: one stack fewer needed, no refresh while
+  it casts). For the same reason ours' `spellInFlight` (true from the cast's completion) is theirs' `spellInFlight or
+  spellIsCasting` (Frost's Ice Lance as the bolt lands; untranslated it never cast). A new class with a stacking or
+  consumed buff in a condition needs the same.
+- **A channel and the wand:** theirs' pass goes on after a channel starts, so a wand line below it (Shoot has no
+  GCD) went off in the same pass and cancelled Arcane Missiles (Arcane 300 DPS). The converter makes theirs' wand
+  line wait while Arcane Missiles or Evocation channels.
+- **Mage options:** our armor enum to their `defaultMageArmor`, our staff imbue scrolls to their class imbue slot
+  (`mhWeaponImbueId` 277500 to 277502), the Manaflare 2 piece as 10 hit rating, the synthetic trinket 996032 in
+  `cmpsim`.
 
 ## Known differences
 
 As of 2026-11-02, on the report's requests: the hunter and rogue rows with ours at 0e87f3d and theirs at b70888a518, the
-warrior rows with ours at 7587a1a and theirs at 895cd67f99, the shaman rows with ours at dfa3b4a and theirs at 1496ed4db5. The four pet rows (two since settled) add up to the BM cat's whole
+warrior rows with ours at 7587a1a and theirs at 895cd67f99, the shaman rows with ours at dfa3b4a and theirs at 1496ed4db5, the
+mage rows with ours at e8d5656 and theirs at e2842f0a78. The four pet rows (two since settled) add up to the BM cat's whole
 pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). The warrior rows add up to Arms' whole
 gap and leave 4 DPS of Fury's and Fury 2H's unexplained. The shaman rows add up to Enhancement's whole gap (33 to 37 DPS
-on the four presets) within about 2 DPS and Elemental's (5 to 6) within about 1. Engine timing (when each engine re-checks the rotation, Heroic Strike
+on the four presets) within about 2 DPS and Elemental's (5 to 6) within about 1. The mage rows add up to Frost's gap (78.5) within
+2 DPS, Frostfire's (74.1) within about 5 and Fire's (20.4) with 10 of engine timing left (ours fits 0.6 more Fire Blasts and
+0.25 more Pyroblasts, every per-hit number equal); Arcane (+5.4) leaves about 9 DPS around Presence of Mind's opener. Engine timing (when each engine re-checks the rotation, Heroic Strike
 1.4 casts more in ours on Arms) moves casts but nets about 0 DPS once the Windfury rule below is matched. A rerun should find
 these, so it can tell what is new. Keep the list current when one is settled.
 
@@ -220,10 +244,17 @@ these, so it can tell what is new. Keep the list current when one is settled.
 | Synthetic sets' 2 piece (1% attack speed) | Live | Registered by `cmpsim` (warrior head 991001, 991019, Enhancement hands 990007) | A translation: without it theirs was 5 to 8 DPS low |
 | Undead base stats | 82 Str, 129 Agi | 79, 128 | Race offset ruling. `align.py` closes it |
 | Totem ranks | Trainer (Strength of Earth 42, Grace of Air 77) | AQ books' (53, 89) | No AQ books at launch (assumed) |
+| Ice Lance's spell power | 0.429, SoD's server value (`mage_ice_lance_coef`, user ruling 2026-10-15) | 1/7, TBC's, "until measured" | Ruling: the client has none. Frost 104, Frostfire 59 DPS |
+| Ice Lance's cooldown and Fire Blast | Every rank 8 s on its own timer (`mage_ice_lance_cd`, user ruling 2026-10-30) | Category 19, shared with Fire Blast | Open: the client puts only rank 1 (1312002) in category 19 with Fire Blast (SpellCooldowns 101119, CategoryRecoveryTime 8000); ours gave every rank the 8 s but not the category. Frostfire 12.8 DPS |
+| Frostbolt rank 10 | Base damage ×1.04 (`mage_frostbolt10`, user ruling 2026-10-15) | The client's | Ruling. Frost 10.8 DPS |
+| Raid damage taken on mages | Breaks Ice Barrier (Frigid Power's Frost damage) and pushes casts back | None | A choice (the fight). Frost 48.5, Fire 11, Arcane 9, Frostfire 6 DPS. `--no-raid-damage` |
+| A castSpell Shoot (the wand) | The rotation can cut it before its first shot, looking every 50 ms (`sim/core/wand.go`) | Always fires one shot, then stops (4fd24939d8); after Fire Blast its line goes off inside the GCD and holds the next cast for the shot | A choice (engine): the game has no such rule, any cast stops Shoot. Costs theirs Fire 21, Frostfire 14, Frost 13, Arcane 1 DPS |
+| Spell miss floor | 1% (Classic) | None (0301ba3421, "Forever has no 1% minimum miss", no source) | Open (orchestration/alignment_round_2026-10-23.md: not to change without new evidence). Arcane, at the cap, 7.8 DPS for theirs |
+| Fire Blast's range | 20 yd, Improved Fire Blast +15 a point (client SpellEffect misc 5), not checked outside leveling | Checked in raids too | Settled for the presets by standards 33 (fa2d49997: Frostfire and Arcane at 20 yd). Our raid sims still let any spell land from any distance |
 
 ## Adding a class
 
-`convert.py` maps rogues, hunters, warriors and shamans, and stops on any other class. For a new one:
+`convert.py` maps rogues, hunters, warriors, shamans and mages, and stops on any other class. For a new one:
 
 1. Its options block (`class_opts`): their class proto (`$WSF/proto/<class>.proto`) against ours.
 2. Its consumables in `C`: weapon oils, poisons, imbues, class-only items.
