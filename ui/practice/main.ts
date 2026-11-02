@@ -1,6 +1,7 @@
 // The practice room page (docs/practice_room.md): pick the settings and the character, then play
 // the fight in 3D.
 
+import * as THREE from 'three';
 import {
 	baseKeyName,
 	commandFor,
@@ -23,13 +24,27 @@ import {
 import { CameraOptions, Mover } from './controls';
 import { iconName, iconUrl, setIcon } from './icons';
 import { css, HudLayout, pack, place, readLayout, Rect } from './layout';
-import { AuraState, Batch, ClockState, FromWorker, Input, PlayerState, Settings, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
+import { AuraState, Batch, ClockState, FromWorker, HitEvent, Input, PlayerState, Settings, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
 import { Room } from './scene';
 import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
+import { Effects, MeleeSounds } from './wow/effects';
+import { Model } from './wow/model';
+import { Sounds } from './wow/sound';
+import { Appearance, UnitView } from './wow/unit';
 
 const app = document.getElementById('app')!;
 
-type Loaded = { request: unknown; rotationSpells: number[] | null; class: string; race: string; level: number; name: string; trinkets?: number[] };
+type Loaded = {
+	request: unknown;
+	rotationSpells: number[] | null;
+	class: string;
+	race: string;
+	level: number;
+	name: string;
+	trinkets?: number[];
+	// The client's race and class ids and the gear by inventory slot, for the model.
+	look?: { race: number; class: number; items: Record<string, number>; weaponSubclass?: number };
+};
 type RecordSummary = { guid: string; name: string; realm: string; class: string; race: string; level: number };
 type SavedSettings = {
 	version: 1;
@@ -163,6 +178,13 @@ class PracticeRoom {
 	summary?: Summary;
 	pulledAt?: number;
 	dummyPos: [number, number] = [0, 0];
+	// The real models, once they load. Until then the units are capsules.
+	playerView?: UnitView;
+	dummyView?: UnitView;
+	private castShown?: number;
+	sounds?: Sounds;
+	effects?: Effects;
+	private aurasShown = '';
 	private buttons = new Map<number, HTMLElement>();
 	layout: HudLayout;
 	tooltip!: Tooltip;
@@ -238,7 +260,53 @@ class PracticeRoom {
 		this.room.setFov(parseFloat(cvars.cameraFov ?? '90'));
 		this.bindEvents();
 		this.start();
+		this.loadModels();
 		requestAnimationFrame(t => this.frame(t));
+	}
+
+	// loadModels swaps the capsules for the real models, when the server can extract the client's
+	// files. A model that fails to load leaves its capsule.
+	loadModels() {
+		this.sounds = new Sounds(this.room.camera);
+		this.effects = new Effects(this.room.scene, this.sounds);
+		// Totems show their element's model (CreatureDisplayInfo 4587 to 4590).
+		const totemDisplays: Record<string, number> = { fire: 4589, earth: 4588, water: 4587, air: 4590 };
+		this.room.totemModel = async element => {
+			const display = totemDisplays[element];
+			if (!display) return undefined;
+			const a = await getJSON<Appearance>(`/api/appearance/creature/${display}`).catch(() => undefined);
+			if (!a) return undefined;
+			const view = new UnitView(new THREE.Group(), []);
+			await view.load(a).catch(() => undefined);
+			return view.model as Model | undefined;
+		};
+		const look = this.loaded.look;
+		getJSON<MeleeSounds>(`/api/sounds/melee?weaponSubclass=${look?.weaponSubclass ?? -1}`)
+			.then(m => {
+				if (this.effects) this.effects.melee = m;
+			})
+			.catch(() => undefined);
+		if (look?.race) {
+			const items = Object.entries(look.items)
+				.map(([slot, id]) => `${slot}:${id}`)
+				.join(',');
+			// The client's files don't say a character's sex, so it's a choice in the room (0 male).
+			const sex = Number(localStorage.getItem('practice.modelSex') ?? 0);
+			getJSON<Appearance>(`/api/appearance/character?race=${look.race}&sex=${sex}&class=${look.class}&items=${items}`)
+				.then(async a => {
+					const view = new UnitView(this.room.player, this.room.placeholders(this.room.player));
+					await view.load(a);
+					this.playerView = view;
+				})
+				.catch(e => console.warn('player model', e));
+		}
+		getJSON<Appearance>('/api/appearance/creature/dummy')
+			.then(async a => {
+				const view = new UnitView(this.room.dummy, this.room.placeholders(this.room.dummy));
+				await view.load(a);
+				this.dummyView = view;
+			})
+			.catch(e => console.warn('dummy model', e));
 	}
 
 	resize() {
@@ -410,8 +478,14 @@ class PracticeRoom {
 		if (b.target) this.target = b.target;
 		this.fight = b.fight;
 		for (const e of b.errors ?? []) this.showError(e);
-		for (const h of b.hits ?? []) this.combatText(h.damage, h.outcome, h.periodic);
-		for (const c of b.casts ?? []) this.addHistory(c.at, c.spellId, c.itemId);
+		for (const h of b.hits ?? []) {
+			this.combatText(h.damage, h.outcome, h.periodic);
+			this.animateHit(h);
+		}
+		for (const c of b.casts ?? []) {
+			this.addHistory(c.at, c.spellId, c.itemId);
+			this.animateCast(c.spellId);
+		}
 		if (b.pulled) {
 			this.pulledAt = 0;
 			if (b.pulled.early) this.showMessage('Early pull!');
@@ -421,6 +495,7 @@ class PracticeRoom {
 			if (enemy) this.dummyPos = enemy.pos;
 		}
 		if (this.player?.totems !== undefined) this.room.setTotems(this.player.totems ?? []);
+		this.showAuras();
 		if (b.ended) {
 			this.running = false;
 			if (b.ended.summary) {
@@ -1138,8 +1213,78 @@ class PracticeRoom {
 		this.room.setUnit(this.room.dummy, this.dummyPos, (3 * Math.PI) / 2);
 		this.room.setTargeted(this.hasTarget);
 		this.room.placeCamera(m.pos, h, this.mover.cam);
+		this.animateUnits(dt, wall);
 		this.room.render();
 		this.updateHud();
+	}
+
+	// ---- the models' animations ----
+
+	animateUnits(dt: number, wall: number) {
+		const m = this.mover.move;
+		// Velocity relative to where you face: forward and to the left.
+		const cos = Math.cos(m.facing);
+		const sin = Math.sin(m.facing);
+		const forward = m.velocity[0] * cos + m.velocity[1] * sin;
+		const left = -m.velocity[0] * sin + m.velocity[1] * cos;
+		const cast = this.player?.cast;
+		if (cast && cast.spellId !== this.castShown && cast.end > this.now()) {
+			this.castShown = cast.spellId;
+			const view = this.playerView;
+			view?.castStart();
+			this.effects?.castStart(cast.spellId, view).then(anim => {
+				if (anim && this.castShown === cast.spellId) view?.castStart(anim);
+			});
+		} else if (!cast && this.castShown !== undefined) {
+			this.castShown = undefined;
+			this.playerView?.castStop();
+			this.effects?.castStop();
+		}
+		this.effects?.update(dt);
+		this.room.animate(dt);
+		this.playerView?.update(dt, { forward, left, airborne: this.mover.airborne(wall), walking: false }, !!this.player?.attackOn);
+		this.dummyView?.update(dt, { forward: 0, left: 0, airborne: false, walking: false }, false);
+	}
+
+	animateHit(h: HitEvent) {
+		if (h.source !== 'player') return;
+		const moving = Math.hypot(...this.mover.move.velocity) > 0.1;
+		const landed = h.outcome !== 'miss' && h.outcome !== 'dodge' && h.outcome !== 'parry';
+		// White swings are "other action 7", tag 1 for the main hand and 2 for the off hand.
+		if (h.otherId === 7) {
+			this.playerView?.swing(h.tag === 2, moving);
+			this.effects?.swing(this.dummyView?.model?.root, h.outcome === 'crit', landed);
+		} else if (h.spellId && !h.periodic && landed) {
+			this.effects?.impact(h.spellId, this.dummyView, this.playerView);
+		}
+		if (landed && !h.periodic) this.dummyView?.wound();
+	}
+
+	// showAuras keeps your auras' effects and your imbue's glow in step with the session.
+	showAuras() {
+		const p = this.player;
+		if (!p || !this.effects) return;
+		const ids = (p.auras ?? []).map(a => a.spellId ?? 0).filter(id => id > 0);
+		const key = ids.join(',');
+		if (key !== this.aurasShown) {
+			this.aurasShown = key;
+			this.effects.setAuras(ids, this.playerView);
+		}
+		this.effects.setImbue(p.mainHandImbue, this.playerView?.mainHand());
+	}
+
+	animateCast(spellId?: number) {
+		const view = this.playerView;
+		if (!spellId || !view) return;
+		const spell = this.toolkit?.spells.find(s => s.spellId === spellId);
+		if (!spell || spell.kind === 'item') return;
+		const moving = Math.hypot(...this.mover.move.velocity) > 0.1;
+		this.castShown = undefined;
+		this.effects?.cast(spellId, view, this.dummyView).then(v => {
+			const anim = v?.anims.cast ?? undefined;
+			if (spell.melee) view.swing(false, moving, true, anim);
+			else view.castEnd(anim, moving);
+		});
 	}
 
 	// ---- the class pack ----
