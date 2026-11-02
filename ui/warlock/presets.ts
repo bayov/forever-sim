@@ -489,9 +489,12 @@ export const EncounterLevel60RecklessnessDuty = level60Encounter(
 // Berserking 15 sec, Undead Touch of the Grave 15 sec): Demonology and Destruction move to the Orc,
 // Destruction fire to the Undead. At 180 sec (verify.py, 20000 iterations, seed 1): Demonology 1051.8
 // against the Human's 1050.2, Destruction 1001.5 against 1000.1, Destruction fire 986.4 against 981.9.
-// Affliction stays Human (the Orc's 0.4 lead in the race sweep is a tie). The curse duty builds follow
-// their base. The UI's default race is the Orc, the race of the default build (Demonology) and of
-// Destruction.
+// Affliction stayed Human (the Orc's 0.4 lead in the race sweep was a tie). The curse duty builds follow
+// their base. The UI's default race is the Orc, the race of the default build (Demonology), of
+// Destruction and of Affliction.
+// Affliction moved to the Orc on 2026-11-02 (fairness-20261101-2): at 30 yd the Orc leads the Human by
+// 1.0 at 180 sec (20000 iterations, seed 1: Orc 1013.6, Human 1012.7, Undead 1010.8, Gnome 1009.9 with
+// its own gear, Troll 1006.6), and was ahead at 25 yd too. The Human stays the best Alliance race.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Demonology', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Orc Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
@@ -520,12 +523,12 @@ export const PresetBuildLevel60Destruction = PresetUtils.makePresetBuild('Destru
 });
 export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Affliction', {
 	group: 'Synthetic',
-	tooltip: 'Level 60 Human Affliction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Orc Affliction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Affliction,
 	rotation: RotationLevel60Affliction,
 	encounter: EncounterLevel60,
-	race: Race.RaceHuman,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

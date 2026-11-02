@@ -1,15 +1,41 @@
 {
  "name": "Onyxia",
- "source": "[core: vmangos] Melee 1,653 to 2,191 a 2.0 s swing before armor: vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 15.05. Flame Breath 18435 3,063 to 3,937 Fire every 10 to 20 s, frontal on the tank. Cleave 19983 weapon damage + 50 every 2 to 5 s. Knock Away 19633 weapon damage + 30 every 15 to 30 s. Wing Buffet 18500 563 to 937 every 15 to 30 s. From the vmangos script and spell_template.",
- "reports": [],
+ "source": "[logs: Anniversary] Melee 1,309 to 2,166 before armor under the bench's raid debuffs, a swing every 1.92 s on the tank: Warcraft Logs, 21 kills on the Anniversary Hardcore realms (Normal, 2024-12-12 to 2025-03-02): the median of 237 normal hits' unmitigatedAmount (1,676), the 5th to 95th percentile of each hit over its own kill's median (237 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 1,083 weapon damage, spread 0.791, a 1.60 s swing. Length: the main tank's time on him a kill, median 35 s (10th to 90th percentile 26 to 49). Weapon damage abilities: Cleave 19983 1,603 to 2,548 from 58 hits; Knock Away 19633 1,284 to 2,427 from 22 hits. Abilities: Flame Breath 18435 3,063 to 3,937 Fire every 10 to 20 s, frontal on the tank. Cleave 19983 weapon damage + 50 every 2 to 5 s. Knock Away 19633 weapon damage + 30 every 15 to 30 s. Wing Buffet 18500 563 to 937 every 15 to 30 s. Values from the Classic Era client's spell data, timers from the vmangos script.",
+ "abilitiesSource": "Flame Breath 18435 3,063 to 3,937 Fire every 10 to 20 s, frontal on the tank. Cleave 19983 weapon damage + 50 every 2 to 5 s. Knock Away 19633 weapon damage + 30 every 15 to 30 s. Wing Buffet 18500 563 to 937 every 15 to 30 s. Values from the Classic Era client's spell data, timers from the vmangos script.",
+ "reports": [
+  "LKqp7a8RgQzH3XDP:3",
+  "vwBZHLaMkJKdPygr:5",
+  "Vnq7zFgkPf4TcxtC:1",
+  "mV3RB2PzwFCXb9cg:4",
+  "Ljc97HnMtBTv8PQ1:4",
+  "3amNDp2YPtVRAKFh:4",
+  "CvXx7jPKaMJdTnA1:4",
+  "1jQmfW2ZncPprdNk:5",
+  "kxPQag7wVzMXRZjn:4",
+  "dGkBmxpPfRW4T3MJ:5",
+  "tTc4p71GZXQ3AgJn:5",
+  "yXkYHzZ32vp1TPrA:4",
+  "qMk94gJ7XCHradhR:7",
+  "Pkwz76ha2X9WNMQH:1",
+  "8mJ32Gt9yhK1Rbjz:3",
+  "8ycGxf4g7pKHtRZL:4",
+  "jLQfcGFDTVCdwMBZ:5",
+  "2mrJFPX3hcTCkHz7:4",
+  "MFcQGwVhkYdnP6HL:5",
+  "MFcQGwVhkYdnP6HL:89",
+  "JtFC9bDNBAx684Wk:4"
+ ],
  "warcraftLogs": {
-  "encounter": 1084,
-  "zone": "Onyxia's Lair"
+  "site": "vanilla",
+  "encounter": 51084,
+  "zone": "Onyxia's Lair",
+  "difficulty": "Normal",
+  "mined": "tools/encounters/logs/anniversary_onyxia.json"
  },
  "notes": "Phase 1 and 3 on the ground only (the air phase at 65% to 40% is left out). Knock Away's 25% threat cut and Bellowing Roar's fear aren't modelled.",
  "encounter": {
-  "duration": 180,
-  "durationVariation": 20,
+  "duration": 35,
+  "durationVariation": 12,
   "targets": [
    {
     "name": "Onyxia",
@@ -62,9 +88,9 @@
      0,
      0
     ],
-    "minBaseDamage": 1247.7,
-    "damageSpread": 0.4312,
-    "swingSpeed": 2.0
+    "minBaseDamage": 1083.2,
+    "damageSpread": 0.791,
+    "swingSpeed": 1.6
    }
   ],
   "raidDamage": [
@@ -81,8 +107,8 @@
    {
     "spellId": 19983,
     "school": "SpellSchoolPhysical",
-    "minDamage": 1574,
-    "maxDamage": 2071,
+    "minDamage": 1603,
+    "maxDamage": 2548,
     "who": "BossTarget",
     "firstAt": 3,
     "everySeconds": 3.5,
@@ -92,8 +118,8 @@
    {
     "spellId": 19633,
     "school": "SpellSchoolPhysical",
-    "minDamage": 1555,
-    "maxDamage": 2052,
+    "minDamage": 1284,
+    "maxDamage": 2427,
     "who": "BossTarget",
     "firstAt": 15,
     "everySeconds": 22.5,
@@ -113,9 +139,9 @@
   ]
  },
  "healing": {
-  "healers": 4,
-  "hpsEach": 400,
-  "castSeconds": 2.0,
-  "notes": "A 40-player Onyxia raid's main tank, as in Molten Core: 4 healers at 400 HPS each on it in 2 s heals (800 a heal), paladins on Flash of Light rank 6 and priests on Greater Heal rank 4 or downranked Heal. 1,600 HPS before overheal, 2.4 times an assumed 650 DTPS, the Classic Era Molten Core logs' ratio (wowsims/forever). Not from logs yet: replace with tools/warcraftlogs tank numbers."
+  "healers": 8,
+  "hpsEach": 174,
+  "castSeconds": 4.48,
+  "notes": "From the Anniversary Hardcore realms's logs (21 kills): while the boss was on the main tank, 8 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,391 a second with overheal and absorbs (31% of the heals effective), 1.79 heals and HoT ticks a second, against 469 damage taken a second. The tank's own heals (1% of its healing) are left out. Main tanks: Warrior 16, Druid 5."
  }
 }

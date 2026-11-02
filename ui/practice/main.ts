@@ -34,6 +34,7 @@ import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
 import { decodeHooks, fileProgress } from './wow/files';
 import { Model } from './wow/model';
+import { Terrain } from './wow/terrain';
 import { SoundRef, Sounds } from './wow/sound';
 import { Appearance, UnitView } from './wow/unit';
 
@@ -346,6 +347,26 @@ class PracticeRoom {
 		const jobs: Promise<unknown>[] = [loadCursors(this.root)];
 		// Models we draw once while loading, so their shaders and textures are ready for the fight.
 		const warm: Model[] = [];
+
+		// The ground is a flat spot in the northern Barrens (Kalimdor's WDT), with trees around it and
+		// no buildings near.
+		jobs.push(
+			Terrain.load({ wdt: 782779, x: 750, y: -2650, radius: 240, flat: 45, blend: 110, clear: 25 })
+				.then(async t => {
+					this.room.setTerrain(t.group);
+					await t.loadDoodads();
+				})
+				.catch(e => console.warn('terrain', e)),
+		);
+		// The Barrens' daytime ambience and wind, which play from the start (SoundAmbience 3049).
+		jobs.push(
+			Promise.all([292584, 292700].map(id => getJSON<SoundRef[]>(`/api/sounds/kit/${id}`)))
+				.then(async kits => {
+					await Promise.all(kits.map(k => this.sounds!.preload(k)));
+					this.sounds!.ambience(kits);
+				})
+				.catch(e => console.warn('ambience', e)),
+		);
 
 		// Totems show their element's model (CreatureDisplayInfo 4587 to 4590).
 		const totemDisplays: Record<string, number> = { fire: 4589, earth: 4588, water: 4587, air: 4590 };

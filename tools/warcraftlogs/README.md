@@ -69,8 +69,13 @@ $W procrate sod_enh.json --ability 408505 --triggers 1,17364,408507
 
 # What each boss does to its main tank, and the healing the tank takes (docs/tank_sim.md).
 # Sample boss fights first, from any spec's rankings: only the fights matter, not the player.
-$W --site vanilla sample -o mc.json --class Priest --spec Holy --encounter 663 --encounter 664 --per-encounter 10
-$W tank mc.json -o mc_tank.json
+$W --site sod sample -o mc.json --zone 2012 --reports 60 --class Priest
+$W --site sod tank mc.json --difficulty 3 --encounter 100664 --encounter 100670 -o mc_tank.json
+```
+
+# The raid side of the same boss fights (docs/healing_sim.md): damage on the non-tanks by
+# ability, deaths, healers and healing. The same sample files, so the same fights.
+$W raid mc.json --encounter 663 --encounter 664 -o mc_raid.json
 ```
 
 The analysis commands take `--limit N` to read only the first N entries of a sample. That's
@@ -80,19 +85,68 @@ useful for a first look that costs little.
 
 `tank` reads two things a fight past the report's own (about 3 points): the bosses' damage done
 (asked for as enemies), and every event on the main tank, the player the bosses swung at most,
-for its damage and healing taken. By
-encounter it prints the boss's white swings on that tank (a second, the median gap, outcomes,
-hit size after armor and `unmitigatedAmount`), each boss ability on it, the tank's damage taken
-a second, and its healing taken: effective, with overheal, absorbs, heals a second, the healers
-with 5% or more of it, and the top heal spells. Kills only, unless `--wipes`. Written
-2026-11-02 without API access, so checked only on made-up events: the first real run should
-check that the bosses' damage comes back (`hostilityType: Enemies`) and that the events on the
-main tank include `heal` and `absorbed` events with `overheal`. With tank swaps the rates are over
-the whole fight, so they understate the main tank's share.
+for its damage and healing taken. Checked on real reports 2026-11-02: the bosses' damage only
+comes back with `hostilityType: Enemies` (none without), and the main tank's events have `heal`
+events with `overheal` and `absorbed` events.
+
+Everything is measured while the boss is on the main tank: stretches of his swings on it no more
+than 6 s apart. Tank swaps, air phases and knockbacks fall outside them, so the rates are the main
+tank's own. By encounter it prints:
+
+- the fight length (kills' median and spread), the main tanks' classes, and their time on the boss
+- the white swings on the main tank: a second, gaps, outcomes, the normal hit after mitigation and
+  before it (`unmitigatedAmount`, which is before the crit or crushing multiplier), and each hit
+  over its own kill's median, the boss's roll without the spread between raids' debuffs
+- each boss ability on the tank, its ticks apart from its hits: a minute, outcomes, size, and its
+  first use and gap between uses
+- the tank's damage taken a second and its healing taken (effective, overheal, absorbs, heals a
+  second, the tank's own share, the healers with 5% or more of it, the top heal spells), and the
+  healing as an encounter file's healers, HPS each and cast time
+
+`--encounter` and `--difficulty` (3 Normal, 4 Heroic, 5 Mythic: Season of Discovery's heat
+levels) pick the fights before any query, and `--min-size` (default 10) drops bosses soloed by
+characters of a later expansion. Kills only, unless `--wipes`. `-o` writes the numbers that
+`tools/encounters/from_logs.py` turns into the encounter files.
+
+Where the realms are (2026-11-02):
+
+- **Season of Discovery:** `--site sod`. Encounter IDs are Classic's with 100 in front (100664
+  Magmadar), Onyxia 151084. Molten Core and Blackwing Lair have Normal, Heroic and Mythic.
+- **Classic Era and the Anniversary Hardcore realms** (Doomhowl, Soulseeker): `--site vanilla`,
+  encounter IDs with 50 in front (50664 Magmadar, 51084 Onyxia). `sample --zone` with `--server`
+  or `--exclude-server` tells them apart by the reporting guild's realm.
+- **The Anniversary Normal and PvP realms** (Dreamscythe, Nightslayer, Thunderstrike,
+  Spineshatter) weren't found: `fresh` serves the same reports as `classic` (the 2019 progression
+  realms, now on later expansions, whose characters solo the old raids), and no realm listing or
+  ranking shows them.
+- Ranked reports from 2019 to 2024 are archived: their events need a paid account, and `tank` skips
+  them. Newest reports by zone (`sample --zone`, with `--since` and `--until` for a phase) work.
 
 The source order for tank and healing numbers (the user, 2026-11-02): Season of Discovery logs
 first, then the Anniversary realms (Vanilla, then TBC), then Classic Era, then private server
 cores (vmangos).
+
+### Raid profiles
+
+`raid` (`wclraid.py`) reads, a fight past the report's own: every damage event on a friendly
+player (`DamageTaken`), the deaths, `playerDetails` (Warcraft Logs' tank, healer and dps roles) and
+the Healing table by source and by target. About 5 points a fight. The tanks are the players the
+bosses swung at (5% or more of the swings); everyone else is "the non-tanks". It skips archived
+reports and logs with under 80% of the raid in them. By encounter it prints:
+
+- the fight length, the raid and the tanks
+- the damage taken a second by the non-tanks and by the tanks
+- each ability on the non-tanks: its share, the share of the non-tanks a cast hits (hits of one
+  ability from one source 1.5 s or less apart are a cast), casts a fight and a second, first cast,
+  gap between casts, ticks and their spacing, landed and unmitigated amounts. A player's damage on
+  themselves (Seal of Martyrdom, Life Tap, logged as from the environment) is left out: an
+  Environment row whose hits are all on one class.
+- deaths a kill, tanks apart, and what killed them
+- the healers (Warcraft Logs' healer role, their share of the healing and classes), HPS each, the
+  raid's healing and overheal, and the healing on the tanks and on the rest
+
+`--difficulty`, `--encounter` and `--min-size` pick fights as `tank`'s do. `-o` writes what
+`tools/encounters/raid_from_logs.py` puts in the encounter files.
 
 ### How procs are counted
 

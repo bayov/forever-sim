@@ -28,7 +28,8 @@ BUDGET = 300
 HOUR_STOP = 0.9
 
 # The site decides which game's data we see: "sod" for Season of Discovery, "vanilla" for
-# Anniversary and Era, "fresh" for Fresh, "classic" for the progression servers. WoW Forever
+# Classic Era and the Anniversary Hardcore realms, "classic" for the progression servers ("fresh"
+# serves the same reports as "classic" through the API, 2026-11-02). WoW Forever
 # may get its own subdomain at release, and SITE is just the subdomain.
 SITE = 'sod'
 

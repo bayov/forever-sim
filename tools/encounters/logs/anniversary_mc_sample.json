@@ -1,0 +1,1766 @@
+[
+ {
+  "site": "vanilla",
+  "code": "FjyRJBHQ6dkT4aCc",
+  "fight": null,
+  "player": 8,
+  "name": "Grandmarshal",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "FjyRJBHQ6dkT4aCc",
+  "fight": null,
+  "player": 10,
+  "name": "Babsn",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "FjyRJBHQ6dkT4aCc",
+  "fight": null,
+  "player": 14,
+  "name": "Alviria",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "FjyRJBHQ6dkT4aCc",
+  "fight": null,
+  "player": 21,
+  "name": "Dyfa",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "FjyRJBHQ6dkT4aCc",
+  "fight": null,
+  "player": 23,
+  "name": "Murkyman",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "FjyRJBHQ6dkT4aCc",
+  "fight": null,
+  "player": 26,
+  "name": "Kirie",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "FjyRJBHQ6dkT4aCc",
+  "fight": null,
+  "player": 35,
+  "name": "Jastha",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "FjyRJBHQ6dkT4aCc",
+  "fight": null,
+  "player": 37,
+  "name": "N\u00f3na",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "FjyRJBHQ6dkT4aCc",
+  "fight": null,
+  "player": 41,
+  "name": "Brightside",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "vXD9KYTCgc3dQq7W",
+  "fight": null,
+  "player": 7,
+  "name": "Gegoagane",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "vXD9KYTCgc3dQq7W",
+  "fight": null,
+  "player": 8,
+  "name": "Quartzpriest",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "vXD9KYTCgc3dQq7W",
+  "fight": null,
+  "player": 11,
+  "name": "Miiz",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "vXD9KYTCgc3dQq7W",
+  "fight": null,
+  "player": 12,
+  "name": "Ziffu",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "vXD9KYTCgc3dQq7W",
+  "fight": null,
+  "player": 15,
+  "name": "Prh\u00e4st",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "vXD9KYTCgc3dQq7W",
+  "fight": null,
+  "player": 20,
+  "name": "Safrime",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "vXD9KYTCgc3dQq7W",
+  "fight": null,
+  "player": 21,
+  "name": "Synphex",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "vXD9KYTCgc3dQq7W",
+  "fight": null,
+  "player": 154,
+  "name": "Salipriest",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Cxy2hA4avwZTQVtX",
+  "fight": null,
+  "player": 1,
+  "name": "Hollexa",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Cxy2hA4avwZTQVtX",
+  "fight": null,
+  "player": 19,
+  "name": "Dustti",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Cxy2hA4avwZTQVtX",
+  "fight": null,
+  "player": 23,
+  "name": "Ghasts",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Cxy2hA4avwZTQVtX",
+  "fight": null,
+  "player": 37,
+  "name": "Segakpriest",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Cxy2hA4avwZTQVtX",
+  "fight": null,
+  "player": 44,
+  "name": "Mecrod",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Cxy2hA4avwZTQVtX",
+  "fight": null,
+  "player": 45,
+  "name": "Wurstsaft",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "AQCNgPt89YwjHcyd",
+  "fight": null,
+  "player": 1,
+  "name": "Delux",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "AQCNgPt89YwjHcyd",
+  "fight": null,
+  "player": 5,
+  "name": "Pasco",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "AQCNgPt89YwjHcyd",
+  "fight": null,
+  "player": 16,
+  "name": "Naril",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "AQCNgPt89YwjHcyd",
+  "fight": null,
+  "player": 27,
+  "name": "Railed",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "AQCNgPt89YwjHcyd",
+  "fight": null,
+  "player": 30,
+  "name": "Germaine",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "AQCNgPt89YwjHcyd",
+  "fight": null,
+  "player": 35,
+  "name": "Bec",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "9aBNHQ1nd6TVhGtY",
+  "fight": null,
+  "player": 3,
+  "name": "Cholder",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "9aBNHQ1nd6TVhGtY",
+  "fight": null,
+  "player": 5,
+  "name": "Crux",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "9aBNHQ1nd6TVhGtY",
+  "fight": null,
+  "player": 7,
+  "name": "Sleepydan",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "9aBNHQ1nd6TVhGtY",
+  "fight": null,
+  "player": 12,
+  "name": "L\u00e4rps",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "9aBNHQ1nd6TVhGtY",
+  "fight": null,
+  "player": 25,
+  "name": "Renii",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "J9cKkW6vC84VLQa7",
+  "fight": null,
+  "player": 19,
+  "name": "Gauss",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "J9cKkW6vC84VLQa7",
+  "fight": null,
+  "player": 25,
+  "name": "Skjeggkre",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "J9cKkW6vC84VLQa7",
+  "fight": null,
+  "player": 30,
+  "name": "Casiopea",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "J9cKkW6vC84VLQa7",
+  "fight": null,
+  "player": 32,
+  "name": "Bagosh",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "J9cKkW6vC84VLQa7",
+  "fight": null,
+  "player": 40,
+  "name": "Kubzak",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "R2vmfVpGPYjBCXNk",
+  "fight": null,
+  "player": 3,
+  "name": "Garfo",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "R2vmfVpGPYjBCXNk",
+  "fight": null,
+  "player": 6,
+  "name": "Kal",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "R2vmfVpGPYjBCXNk",
+  "fight": null,
+  "player": 7,
+  "name": "Bunz",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "R2vmfVpGPYjBCXNk",
+  "fight": null,
+  "player": 24,
+  "name": "Sodah",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "R2vmfVpGPYjBCXNk",
+  "fight": null,
+  "player": 31,
+  "name": "Questner",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "R2vmfVpGPYjBCXNk",
+  "fight": null,
+  "player": 43,
+  "name": "Jubert",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "azPW9m7pnGXFC2qD",
+  "fight": null,
+  "player": 8,
+  "name": "William",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "azPW9m7pnGXFC2qD",
+  "fight": null,
+  "player": 9,
+  "name": "Zilnae",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "azPW9m7pnGXFC2qD",
+  "fight": null,
+  "player": 16,
+  "name": "Apostitute",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "azPW9m7pnGXFC2qD",
+  "fight": null,
+  "player": 22,
+  "name": "Dirtyoldsock",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "azPW9m7pnGXFC2qD",
+  "fight": null,
+  "player": 23,
+  "name": "Kelv",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "azPW9m7pnGXFC2qD",
+  "fight": null,
+  "player": 27,
+  "name": "Creamy",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "tzv8DYCg7d2BmhZq",
+  "fight": null,
+  "player": 6,
+  "name": "Fewashi",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "tzv8DYCg7d2BmhZq",
+  "fight": null,
+  "player": 9,
+  "name": "Zagomeza",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "tzv8DYCg7d2BmhZq",
+  "fight": null,
+  "player": 18,
+  "name": "Abiboka",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "tzv8DYCg7d2BmhZq",
+  "fight": null,
+  "player": 28,
+  "name": "Shaykan",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Wz8pCkf3bn6PHKGL",
+  "fight": null,
+  "player": 9,
+  "name": "San\u00e7tify",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Wz8pCkf3bn6PHKGL",
+  "fight": null,
+  "player": 11,
+  "name": "Creamy",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Wz8pCkf3bn6PHKGL",
+  "fight": null,
+  "player": 12,
+  "name": "Flay",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Wz8pCkf3bn6PHKGL",
+  "fight": null,
+  "player": 18,
+  "name": "William",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Wz8pCkf3bn6PHKGL",
+  "fight": null,
+  "player": 30,
+  "name": "Apostitute",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Wz8pCkf3bn6PHKGL",
+  "fight": null,
+  "player": 56,
+  "name": "Kelv",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "6Prnja1FC34YMfL2",
+  "fight": null,
+  "player": 4,
+  "name": "Healtim",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "6Prnja1FC34YMfL2",
+  "fight": null,
+  "player": 9,
+  "name": "Aslargs",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "6Prnja1FC34YMfL2",
+  "fight": null,
+  "player": 13,
+  "name": "Bunz",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "6Prnja1FC34YMfL2",
+  "fight": null,
+  "player": 23,
+  "name": "Tommypriest",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "wbxV6q4ZrCMyT82L",
+  "fight": null,
+  "player": 23,
+  "name": "Embo",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "wbxV6q4ZrCMyT82L",
+  "fight": null,
+  "player": 25,
+  "name": "Lastshadow",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "wbxV6q4ZrCMyT82L",
+  "fight": null,
+  "player": 28,
+  "name": "Nerfme",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "wbxV6q4ZrCMyT82L",
+  "fight": null,
+  "player": 29,
+  "name": "Savu",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "wbxV6q4ZrCMyT82L",
+  "fight": null,
+  "player": 34,
+  "name": "Dacty",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "wbxV6q4ZrCMyT82L",
+  "fight": null,
+  "player": 35,
+  "name": "Yar",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Mchtrgfdym21LpjY",
+  "fight": null,
+  "player": 36,
+  "name": "Yanagi",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Mchtrgfdym21LpjY",
+  "fight": null,
+  "player": 38,
+  "name": "Schmoopsie",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Mchtrgfdym21LpjY",
+  "fight": null,
+  "player": 39,
+  "name": "Uthild",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Mchtrgfdym21LpjY",
+  "fight": null,
+  "player": 42,
+  "name": "Chaperone",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Mchtrgfdym21LpjY",
+  "fight": null,
+  "player": 47,
+  "name": "Undered",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Mchtrgfdym21LpjY",
+  "fight": null,
+  "player": 48,
+  "name": "Boiledmilk",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "f3Wat7vb8pndYG9M",
+  "fight": null,
+  "player": 10,
+  "name": "Padm\u00e9",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "f3Wat7vb8pndYG9M",
+  "fight": null,
+  "player": 11,
+  "name": "Cholder",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "f3Wat7vb8pndYG9M",
+  "fight": null,
+  "player": 12,
+  "name": "Renii",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "f3Wat7vb8pndYG9M",
+  "fight": null,
+  "player": 13,
+  "name": "Neilock",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "f3Wat7vb8pndYG9M",
+  "fight": null,
+  "player": 41,
+  "name": "Crux",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "nLwG1VHdRr8tc26X",
+  "fight": null,
+  "player": 8,
+  "name": "Kelv",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "nLwG1VHdRr8tc26X",
+  "fight": null,
+  "player": 10,
+  "name": "Apostitute",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "nLwG1VHdRr8tc26X",
+  "fight": null,
+  "player": 12,
+  "name": "Bromeister",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "nLwG1VHdRr8tc26X",
+  "fight": null,
+  "player": 27,
+  "name": "Elfo",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "nLwG1VHdRr8tc26X",
+  "fight": null,
+  "player": 30,
+  "name": "Priesticles",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "nLwG1VHdRr8tc26X",
+  "fight": null,
+  "player": 124,
+  "name": "Rydaguy",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "HwDKZnyvgVRNmh1f",
+  "fight": null,
+  "player": 6,
+  "name": "Creamy",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "HwDKZnyvgVRNmh1f",
+  "fight": null,
+  "player": 8,
+  "name": "Thedead",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "HwDKZnyvgVRNmh1f",
+  "fight": null,
+  "player": 9,
+  "name": "Hugsxo",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "HwDKZnyvgVRNmh1f",
+  "fight": null,
+  "player": 36,
+  "name": "Vizzie",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "HwDKZnyvgVRNmh1f",
+  "fight": null,
+  "player": 38,
+  "name": "Flay",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "d1qnzQcYJxvyrHLR",
+  "fight": null,
+  "player": 4,
+  "name": "Dustti",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "d1qnzQcYJxvyrHLR",
+  "fight": null,
+  "player": 17,
+  "name": "Safrime",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "d1qnzQcYJxvyrHLR",
+  "fight": null,
+  "player": 25,
+  "name": "Segakpriest",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "VR1pTQC3J7H4cWt9",
+  "fight": null,
+  "player": 3,
+  "name": "Docbones",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "VR1pTQC3J7H4cWt9",
+  "fight": null,
+  "player": 28,
+  "name": "Jeffspicoli",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "VR1pTQC3J7H4cWt9",
+  "fight": null,
+  "player": 32,
+  "name": "Chansey",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "VR1pTQC3J7H4cWt9",
+  "fight": null,
+  "player": 36,
+  "name": "Parrotkill",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "VR1pTQC3J7H4cWt9",
+  "fight": null,
+  "player": 38,
+  "name": "Voodooboy",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "znCmGRZMr7b2k8Pw",
+  "fight": null,
+  "player": 3,
+  "name": "Zakimdone",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "znCmGRZMr7b2k8Pw",
+  "fight": null,
+  "player": 10,
+  "name": "Onlyplants",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "znCmGRZMr7b2k8Pw",
+  "fight": null,
+  "player": 14,
+  "name": "Reshi",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "znCmGRZMr7b2k8Pw",
+  "fight": null,
+  "player": 15,
+  "name": "Bej",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "znCmGRZMr7b2k8Pw",
+  "fight": null,
+  "player": 20,
+  "name": "Lafea",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "znCmGRZMr7b2k8Pw",
+  "fight": null,
+  "player": 53,
+  "name": "Koopas",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "4HvCT1GAhQPL6daW",
+  "fight": null,
+  "player": 2,
+  "name": "Deadliah",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "4HvCT1GAhQPL6daW",
+  "fight": null,
+  "player": 4,
+  "name": "Uthild",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "4HvCT1GAhQPL6daW",
+  "fight": null,
+  "player": 17,
+  "name": "Neppser",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "4HvCT1GAhQPL6daW",
+  "fight": null,
+  "player": 18,
+  "name": "Chaperone",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "4HvCT1GAhQPL6daW",
+  "fight": null,
+  "player": 25,
+  "name": "Peonfive",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "4HvCT1GAhQPL6daW",
+  "fight": null,
+  "player": 36,
+  "name": "Shauner",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "L7QbaC4pv2wVkcXm",
+  "fight": null,
+  "player": 2,
+  "name": "Bej",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "L7QbaC4pv2wVkcXm",
+  "fight": null,
+  "player": 13,
+  "name": "Reshi",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "L7QbaC4pv2wVkcXm",
+  "fight": null,
+  "player": 23,
+  "name": "Arkmea",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "L7QbaC4pv2wVkcXm",
+  "fight": null,
+  "player": 34,
+  "name": "Koopas",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "L7QbaC4pv2wVkcXm",
+  "fight": null,
+  "player": 38,
+  "name": "Onlyplants",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "L7QbaC4pv2wVkcXm",
+  "fight": null,
+  "player": 214,
+  "name": "Apriarix",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "hCLZBMbHnxtVFAWr",
+  "fight": null,
+  "player": 16,
+  "name": "Batdeim",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "hCLZBMbHnxtVFAWr",
+  "fight": null,
+  "player": 24,
+  "name": "Degwello",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "hCLZBMbHnxtVFAWr",
+  "fight": null,
+  "player": 26,
+  "name": "Lenaheal",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "hCLZBMbHnxtVFAWr",
+  "fight": null,
+  "player": 30,
+  "name": "Atiiesh",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "hCLZBMbHnxtVFAWr",
+  "fight": null,
+  "player": 31,
+  "name": "Xenjk",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "hCLZBMbHnxtVFAWr",
+  "fight": null,
+  "player": 43,
+  "name": "Svv",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "BRWb2v6YTwgt17Q8",
+  "fight": null,
+  "player": 11,
+  "name": "Deadliah",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "BRWb2v6YTwgt17Q8",
+  "fight": null,
+  "player": 14,
+  "name": "Lapri",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "BRWb2v6YTwgt17Q8",
+  "fight": null,
+  "player": 34,
+  "name": "Neppser",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "BRWb2v6YTwgt17Q8",
+  "fight": null,
+  "player": 35,
+  "name": "Undered",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "BRWb2v6YTwgt17Q8",
+  "fight": null,
+  "player": 36,
+  "name": "Listenlinda",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "BRWb2v6YTwgt17Q8",
+  "fight": null,
+  "player": 40,
+  "name": "Vexy",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Az7vdr3TyHwgf6hX",
+  "fight": null,
+  "player": 7,
+  "name": "Glaivestorm",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Az7vdr3TyHwgf6hX",
+  "fight": null,
+  "player": 18,
+  "name": "Bunz",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Az7vdr3TyHwgf6hX",
+  "fight": null,
+  "player": 19,
+  "name": "Garffo",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Az7vdr3TyHwgf6hX",
+  "fight": null,
+  "player": 31,
+  "name": "Tommypriest",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Az7vdr3TyHwgf6hX",
+  "fight": null,
+  "player": 42,
+  "name": "Brionna",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 12,
+  "name": "Jimmybigbean",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 23,
+  "name": "Yeoj",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 28,
+  "name": "Abjure",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 33,
+  "name": "Kwampy",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 34,
+  "name": "Athlete",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 45,
+  "name": "Imthatguybro",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 114,
+  "name": "Cornelius",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 282,
+  "name": "Hazlan",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 353,
+  "name": "Jaeberwok",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 433,
+  "name": "Dawinnamon",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 458,
+  "name": "Toxichheals",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 485,
+  "name": "Playwengfmad",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 542,
+  "name": "Syrupwork",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 564,
+  "name": "Rydaguy",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 631,
+  "name": "Priestdalord",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 715,
+  "name": "Logibro",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 824,
+  "name": "Ryvoyant",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "TC9PNZgQ64zMGKHD",
+  "fight": null,
+  "player": 976,
+  "name": "Rioteousmoke",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "qBjG6T8V79Fmz4kw",
+  "fight": null,
+  "player": 5,
+  "name": "Scrbx",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "qBjG6T8V79Fmz4kw",
+  "fight": null,
+  "player": 28,
+  "name": "Onezor",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "qBjG6T8V79Fmz4kw",
+  "fight": null,
+  "player": 32,
+  "name": "Burningninja",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "qBjG6T8V79Fmz4kw",
+  "fight": null,
+  "player": 33,
+  "name": "Levette",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "qBjG6T8V79Fmz4kw",
+  "fight": null,
+  "player": 34,
+  "name": "Blinkysmite",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "qBjG6T8V79Fmz4kw",
+  "fight": null,
+  "player": 35,
+  "name": "Jebacevic",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "pAdJkyMjwTxbmg8z",
+  "fight": null,
+  "player": 3,
+  "name": "Scrbx",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "pAdJkyMjwTxbmg8z",
+  "fight": null,
+  "player": 24,
+  "name": "Gounar",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "pAdJkyMjwTxbmg8z",
+  "fight": null,
+  "player": 28,
+  "name": "Jebacevic",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "pAdJkyMjwTxbmg8z",
+  "fight": null,
+  "player": 36,
+  "name": "Haircutt",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "7RaJKVfzGdXmrBwn",
+  "fight": null,
+  "player": 12,
+  "name": "Goretail",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "7RaJKVfzGdXmrBwn",
+  "fight": null,
+  "player": 16,
+  "name": "Opozzum",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "7RaJKVfzGdXmrBwn",
+  "fight": null,
+  "player": 28,
+  "name": "Bennyglizzy",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "7RaJKVfzGdXmrBwn",
+  "fight": null,
+  "player": 39,
+  "name": "Scrbx",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "9VdCNpKWRBj6Fvw1",
+  "fight": null,
+  "player": 8,
+  "name": "Glenn",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "9VdCNpKWRBj6Fvw1",
+  "fight": null,
+  "player": 17,
+  "name": "Ekichuchu",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "9VdCNpKWRBj6Fvw1",
+  "fight": null,
+  "player": 19,
+  "name": "Troq",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "9VdCNpKWRBj6Fvw1",
+  "fight": null,
+  "player": 34,
+  "name": "Grimheals",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "9VdCNpKWRBj6Fvw1",
+  "fight": null,
+  "player": 43,
+  "name": "Nargren",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "LrqxF49hHNpmcVXb",
+  "fight": null,
+  "player": 13,
+  "name": "Glenn",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "LrqxF49hHNpmcVXb",
+  "fight": null,
+  "player": 22,
+  "name": "Nargren",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "LrqxF49hHNpmcVXb",
+  "fight": null,
+  "player": 23,
+  "name": "Ekichuchu",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "LrqxF49hHNpmcVXb",
+  "fight": null,
+  "player": 32,
+  "name": "Robinx",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "LrqxF49hHNpmcVXb",
+  "fight": null,
+  "player": 38,
+  "name": "Weixel",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Lw9BQhyzpgNKX4JR",
+  "fight": null,
+  "player": 32,
+  "name": "Onda",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Lw9BQhyzpgNKX4JR",
+  "fight": null,
+  "player": 39,
+  "name": "Onlyplants",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Lw9BQhyzpgNKX4JR",
+  "fight": null,
+  "player": 194,
+  "name": "Reshi",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Lw9BQhyzpgNKX4JR",
+  "fight": null,
+  "player": 331,
+  "name": "Claypriest",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "Lw9BQhyzpgNKX4JR",
+  "fight": null,
+  "player": 366,
+  "name": "Bej",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "fr9V1NQWg3YpyXkM",
+  "fight": null,
+  "player": 32,
+  "name": "Onda",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "fr9V1NQWg3YpyXkM",
+  "fight": null,
+  "player": 39,
+  "name": "Onlyplants",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "fr9V1NQWg3YpyXkM",
+  "fight": null,
+  "player": 194,
+  "name": "Reshi",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "fr9V1NQWg3YpyXkM",
+  "fight": null,
+  "player": 331,
+  "name": "Claypriest",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "fr9V1NQWg3YpyXkM",
+  "fight": null,
+  "player": 366,
+  "name": "Bej",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "GCYjWTmkzpwZMnat",
+  "fight": null,
+  "player": 4,
+  "name": "Michihealz",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "GCYjWTmkzpwZMnat",
+  "fight": null,
+  "player": 25,
+  "name": "Caspri",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "GCYjWTmkzpwZMnat",
+  "fight": null,
+  "player": 32,
+  "name": "Acolyte",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "GCYjWTmkzpwZMnat",
+  "fight": null,
+  "player": 33,
+  "name": "Narcology",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "GCYjWTmkzpwZMnat",
+  "fight": null,
+  "player": 37,
+  "name": "Fatmag\u00fcl",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "GCYjWTmkzpwZMnat",
+  "fight": null,
+  "player": 39,
+  "name": "Mcnabb",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "GCYjWTmkzpwZMnat",
+  "fight": null,
+  "player": 44,
+  "name": "Lectasy",
+  "class": "Priest",
+  "spec": null
+ },
+ {
+  "site": "vanilla",
+  "code": "GCYjWTmkzpwZMnat",
+  "fight": null,
+  "player": 52,
+  "name": "Norello",
+  "class": "Priest",
+  "spec": null
+ }
+]

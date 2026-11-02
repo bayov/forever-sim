@@ -5,7 +5,7 @@
   "build": "Affliction (Recklessness duty)",
   "isDefault": false,
   "pr": 104,
-  "race": "Human",
+  "race": "Orc",
   "talents": "2550102003520005--0550305003",
   "treeNames": [
     "Affliction",
@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction_duty_recklessness",
   "published": {
-    "dps": 997.4,
-    "source": "verify.py on this request after the standards 33 distances (2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 999.6,
+    "source": "verify.py on this request on the Orc (fairness-20261101-2, 2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 997.4,
+    "dps": 999.6,
     "stderr": 0.38,
     "iters": 20000,
     "ok": true,
@@ -73,7 +73,7 @@
     "Soul shards and Life Tap's health cost aren't tracked.",
     "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
   ],
-  "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_recklessness, then raid.debuffs.curseOfRecklessness and faerieFire removed (they share the minor armor slot, standards 20). Made as a hand edit of the base request, which is the same. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 30 (standards 33 since 2026-11-02, the longest range its spells reach; 25 from 2026-11-01, 5 before) and channelClipDelayMs 50, as the UI preset does. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
+  "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_recklessness, then raid.debuffs.curseOfRecklessness and faerieFire removed (they share the minor armor slot, standards 20). Made as a hand edit of the base request, which is the same. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 30 (standards 33 since 2026-11-02, the longest range its spells reach; 25 from 2026-11-01, 5 before) and channelClipDelayMs 50, as the UI preset does. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Orc since 2026-11-02 (fairness-20261101-2), was Human, following its base: at 30 yd the Orc leads the base build by 1.0 at 180 sec (20,000 iterations, seed 1, Orc 1013.6 against 1012.7); the Human stays the best Alliance race.",
   "duty": "Curse of Recklessness",
   "baseBuild": "warlock__affliction"
 }

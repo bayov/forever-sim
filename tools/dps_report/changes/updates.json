@@ -2004,6 +2004,46 @@
      "commits": [
       "d754170"
      ]
+    },
+    {
+     "title": "Ranged hunters no longer carry the Goblin Sapper Charge",
+     "kind": "consumes",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-wolf",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__marksmanship",
+      "hunter__marksmanship-wolf",
+      "hunter__marksmanship-tallstrider",
+      "hunter__lone-wolf"
+     ],
+     "note": "It only goes off within 10 yd, which a ranged hunter reaches only mid-weave. Down 0.1 to 0.4 at 180 s. Survival keeps it.",
+     "commits": [
+      "b33ad30"
+     ]
+    },
+    {
+     "title": "Affliction is an Orc",
+     "kind": "race",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness"
+     ],
+     "races": [
+      "Orc",
+      "Human"
+     ],
+     "note": "Orc 1013.6 against Human's 1012.7 at 180 s. Human stays the best Alliance race.",
+     "commits": [
+      "b33ad30"
+     ]
     }
    ],
    "internal": [
@@ -2150,6 +2190,14 @@
     {
      "commit": "5445fc9",
      "why": "the report data and Frostfire's stored published and verify numbers; the change itself is the Ice Lance line"
+    },
+    {
+     "commit": "42f982678",
+     "why": "healing sim only: no DPS build reads it"
+    },
+    {
+     "commit": "e41f082eb",
+     "why": "healing sim heal ranks: no DPS build reads it"
     }
    ],
    "source": {

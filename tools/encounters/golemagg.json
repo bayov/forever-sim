@@ -1,15 +1,48 @@
 {
  "name": "Golemagg the Incinerator",
- "source": "[core: vmangos] Melee 2,202 to 2,919 a 2.0 s swing before armor: vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 20.05. a 2006 Molten Core full clear from Blizzard's servers in WWS format (web.mit.edu/cat/project/WoW/MCDump200609/), hits after armor: 75 hits, 979 average after armor. Double Attack 18943: 50% of his landed hits give an extra swing (the Classic Era client's spell data), so one every 2 / (0.65 x 0.5) = 6.2 s on average with about 65% of swings landing (sim: a melee ability at the swing's range). Magma Splash 13880: a Fire DoT stacking to 50 on the tank, 50 every 3 s a stack (the log's ticks 216 average).",
- "reports": [],
+ "source": "[logs: Anniversary] Melee 1,744 to 2,914 before armor under the bench's raid debuffs, a swing every 1.45 s on the tank: Warcraft Logs, 28 kills on the Anniversary Hardcore realms (Normal, 2024-12-13 to 2025-02-27): the median of 608 normal hits' unmitigatedAmount (2,274), the 5th to 95th percentile of each hit over its own kill's median (608 hits) stretched to an even roll, and the swings a second while he was on the main tank. Taken back through the debuffs the bench puts on him (attack power 805 to 601, -37 a swing, attack speed 0.833): 1,433 weapon damage, spread 0.816, a 1.21 s swing. Length: the kills' length, median 56 s (10th to 90th percentile 43 to 69). Abilities: Magma Splash 13880: a Fire DoT stacking to 50 on the tank, 50 every 3 s a stack (the Classic Era client's spell data; a 2006 Molten Core log's ticks 216 average). Double Attack 18943 (50% of his landed hits give an extra swing) is in the logs' swing rate, since its swings log as white swings.",
+ "abilitiesSource": "Magma Splash 13880: a Fire DoT stacking to 50 on the tank, 50 every 3 s a stack (the Classic Era client's spell data; a 2006 Molten Core log's ticks 216 average). Double Attack 18943 (50% of his landed hits give an extra swing) is in the logs' swing rate, since its swings log as white swings.",
+ "reports": [
+  "FjyRJBHQ6dkT4aCc:77",
+  "vXD9KYTCgc3dQq7W:63",
+  "Cxy2hA4avwZTQVtX:56",
+  "AQCNgPt89YwjHcyd:62",
+  "9aBNHQ1nd6TVhGtY:64",
+  "R2vmfVpGPYjBCXNk:42",
+  "azPW9m7pnGXFC2qD:6",
+  "tzv8DYCg7d2BmhZq:52",
+  "6Prnja1FC34YMfL2:36",
+  "wbxV6q4ZrCMyT82L:68",
+  "Mchtrgfdym21LpjY:24",
+  "f3Wat7vb8pndYG9M:42",
+  "nLwG1VHdRr8tc26X:66",
+  "HwDKZnyvgVRNmh1f:60",
+  "d1qnzQcYJxvyrHLR:52",
+  "znCmGRZMr7b2k8Pw:76",
+  "4HvCT1GAhQPL6daW:50",
+  "L7QbaC4pv2wVkcXm:82",
+  "hCLZBMbHnxtVFAWr:26",
+  "BRWb2v6YTwgt17Q8:69",
+  "Az7vdr3TyHwgf6hX:20",
+  "TC9PNZgQ64zMGKHD:44",
+  "pAdJkyMjwTxbmg8z:95",
+  "9VdCNpKWRBj6Fvw1:55",
+  "LrqxF49hHNpmcVXb:61",
+  "Lw9BQhyzpgNKX4JR:77",
+  "fr9V1NQWg3YpyXkM:77",
+  "GCYjWTmkzpwZMnat:56"
+ ],
  "warcraftLogs": {
-  "encounter": 670,
-  "zone": "Molten Core"
+  "site": "vanilla",
+  "encounter": 50670,
+  "zone": "Molten Core",
+  "difficulty": "Normal",
+  "mined": "tools/encounters/logs/anniversary_mc.json"
  },
- "notes": "The Core Ragers are another tank's job and left out. Magma Splash is modelled as a steady 4 stacks (200 Fire every 3 s), the log's tick average, without its 93 to 107 Fire hit on each application or its armor cut (about 250 a stack, so about 1,000 at 4 stacks, client data), which the sim can't model on an event yet. Double Attack's extra swings can't crush in the sim. Earthquake below 10% health and Pyroblast on random players are left out.",
+ "notes": "The Core Ragers are another tank's job and left out. Magma Splash is modelled as a steady 4 stacks (200 Fire every 3 s), the log's tick average, without its 93 to 107 Fire hit on each application or its armor cut (about 250 a stack, so about 1,000 at 4 stacks, client data), which the sim can't model on an event yet. Earthquake below 10% health and Pyroblast on random players are left out.",
  "encounter": {
-  "duration": 180,
-  "durationVariation": 20,
+  "duration": 56,
+  "durationVariation": 13,
   "targets": [
    {
     "name": "Golemagg the Incinerator",
@@ -62,24 +95,12 @@
      0,
      0
     ],
-    "minBaseDamage": 1662.1,
-    "damageSpread": 0.4314,
-    "swingSpeed": 2.0
+    "minBaseDamage": 1433.3,
+    "damageSpread": 0.8162,
+    "swingSpeed": 1.21
    }
   ],
   "raidDamage": [
-   {
-    "spellId": 18943,
-    "school": "SpellSchoolPhysical",
-    "minDamage": 2035,
-    "maxDamage": 2697,
-    "who": "BossTarget",
-    "firstAt": 2,
-    "everySeconds": 6.2,
-    "spreadSeconds": 0,
-    "melee": true,
-    "randomTiming": true
-   },
    {
     "spellId": 13880,
     "school": "SpellSchoolFire",
@@ -93,9 +114,9 @@
   ]
  },
  "healing": {
-  "healers": 4,
-  "hpsEach": 400,
-  "castSeconds": 2.0,
-  "notes": "A 40-player Molten Core raid's main tank: 4 healers at 400 HPS each on it in 2 s heals (800 a heal), a mix of paladins on Flash of Light rank 6 (about 600 at 400 healing power) and priests on Greater Heal rank 4 or downranked Heal. 1,600 HPS before overheal, 2.4 times an assumed 650 DTPS, the Classic Era Molten Core logs' ratio (wowsims/forever). Not from logs yet: replace with tools/warcraftlogs tank numbers."
+  "healers": 7,
+  "hpsEach": 258,
+  "castSeconds": 3.23,
+  "notes": "From the Anniversary Hardcore realms's logs (28 kills): while the boss was on the main tank, 7 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,809 a second with overheal and absorbs (37% of the heals effective), 2.17 heals and HoT ticks a second, against 711 damage taken a second. The tank's own heals (1% of its healing) are left out. Main tanks: Warrior 27, Druid 1."
  }
 }
