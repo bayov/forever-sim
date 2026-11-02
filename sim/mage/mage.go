@@ -78,6 +78,7 @@ type Mage struct {
 	FrostfireBolt           []*core.Spell
 	IceBarrier              []*core.Spell
 	IceLance                []*core.Spell
+	quickDamageTimer        *core.Timer // category 19: Fire Blast and Ice Lance
 	Ignite                  *core.Spell
 	ManaGem                 []*core.Spell
 	PresenceOfMind          *core.Spell

@@ -315,7 +315,6 @@ elif klass == 'ClassMage':
     def remap(n):
         if n.get('spellId') == 26297:  # Berserking: ours keys the mage's 26297 (tagged), theirs Forever's 20554
             n = {k: v for k, v in n.items() if k != 'tag'}; n['spellId'] = 20554
-        if n.get('spellId') == 400670: n = {**n, 'spellId': 400669}  # Fingers of Frost: ours keys the talent's rank 1
         if 'spellInFlight' in n and len(n) == 1:
             # Ours counts a bolt in flight from the moment its cast completes. Theirs picks the next spell 400 ms
             # before that (its spell queue), while the bolt is still casting, and counts it in flight only after.

@@ -800,7 +800,7 @@ func (mage *Mage) applyFingersOfFrost() {
 
 	mage.FingersOfFrostAura = mage.RegisterAura(core.Aura{
 		Label:     "Fingers of Frost",
-		ActionID:  core.ActionID{SpellID: 400670},
+		ActionID:  core.ActionID{SpellID: 400669}, // the buff (client 70707: aura 262); 400670 is the talent's rank 1
 		Duration:  time.Second * 15,
 		MaxStacks: mage.Talents.FingersOfFrost,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {

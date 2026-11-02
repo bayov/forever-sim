@@ -922,3 +922,40 @@ func TestMageIgniteTakesNoDamagePercent(t *testing.T) {
 		t.Errorf("Ignite ticks for %.4f times their share with Arcane Power and Arcane Instability 3, want 1", got)
 	}
 }
+
+// Ice Lance and Fire Blast share category 19's cooldown (ice_lance.go), each at its own length.
+func TestMageIceLanceSharesFireBlastCooldown(t *testing.T) {
+	sim, mage := newMageSim(t, "0002052011003--053500030100331251")
+	target := mage.CurrentTarget
+	iceLance := topRank(t, "Ice Lance", mage.IceLance)
+	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
+	for _, spell := range []*core.Spell{fireBlast, iceLance} {
+		spell.Cost.Multiplier = 0
+	}
+	castNow := func(spell *core.Spell) {
+		t.Helper()
+		mage.SetGCDTimer(sim, sim.CurrentTime)
+		if !spell.Cast(sim, target) {
+			t.Fatalf("%s didn't cast", spell.ActionID)
+		}
+	}
+	advance := func(by time.Duration) {
+		until := sim.CurrentTime + by
+		sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
+		for sim.CurrentTime < until && !sim.Step() {
+		}
+	}
+
+	castNow(iceLance)
+	if fireBlast.CD.IsReady(sim) {
+		t.Errorf("Fire Blast is ready right after Ice Lance, want both on category 19's cooldown")
+	}
+	advance(IceLanceCooldown)
+	if !fireBlast.CD.IsReady(sim) {
+		t.Fatalf("Fire Blast isn't ready 8 sec after Ice Lance")
+	}
+	castNow(fireBlast)
+	if iceLance.CD.IsReady(sim) {
+		t.Errorf("Ice Lance is ready right after Fire Blast, want both on category 19's cooldown")
+	}
+}
