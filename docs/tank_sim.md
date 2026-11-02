@@ -389,8 +389,37 @@ candidate and 3,000 to confirm (248 sims). It kept the build. Its best swap, Imp
 into Cruelty for more threat (SafeDPS 1,487 to 1,517), gained 73 ± 43, short of the search's two standard
 errors. **Healing needed is noisy where one ability makes the bad fights**: ±15 HPS at 3,000 iterations at
 Broodlord (Mortal Strike's healing cut), against ±3 at Onyxia. Two candidates share the random seed, so their
-difference is far less noisy than the two errors added up, which is what the search's test assumes. A paired
-test (the error of the difference, iteration by iteration) is the next fix for the searches.
+difference is far less noisy than the two errors added up, which is what the search's test assumed.
+
+**The paired test** (2026-11-02): every rotopt search (knobs, talents, gear, enchants) now tests a tank
+candidate's gain against the error of its difference from the best, iteration by iteration
+(`tankscore.PairedDiff`). Two runs share their seed and iterations, and the engine keeps each iteration's
+SafeDPS and least HPS in seed order (`TankScore.safe_dps_each`, `survive_hps`), so iteration k of two runs had
+the same rolls up to where the builds differ. The error is a bootstrap: 400 resamples of the iterations, the same
+ones for both runs. It falls back to the two errors added up when the runs don't pair, over several fight
+lengths, or near the death floor (more than a tenth of the resamples with no healing that saves the tank).
+Checked against the real spread of the difference over 10 seeds (1,000 iterations, the warrior, the Anniversary
+files):
+
+| Encounter | Builds | Spread over seeds | Paired error | Errors added up |
+|---|---|---|---|---|
+| Onyxia | without Strength of Earth Totem | 0.7 | 1.2 | 57.8 |
+| Chromaggus | without Strength of Earth Totem | 0.5 | 0.8 | 34.9 |
+| Onyxia | without Power Word: Fortitude | 12.9 | 20.4 | 57.1 |
+| Chromaggus | without Power Word: Fortitude | 22.5 | 19.4 | 39.9 |
+
+So the search's noise drops 2 to 50 times, least where survival moves. At Broodlord the pre-raid warrior sits on
+the death floor (4.5%), where healing needed has no finite error and nothing pairs: a search there needs a
+sturdier tank or more healing.
+
+**First search with it** (2026-11-02): the warrior's talent search at Chromaggus (Anniversary), Balanced, 600
+iterations a candidate and 3,000 to confirm (789 sims, 73 s). It took Improved Thunder Clap's 3 points into Cruelty
+(+66, noise 8: the swap the Broodlord search couldn't tell from noise), then Improved Shield Wall's 2 (+22, noise
+7.7), to `35-05-251530120331201351`. **Both moves are the sim's gaps, not findings yet**: the bench's requests give
+the boss Improved Thunder Clap as a raid debuff whatever the tank takes, and a scoring run has no health-based
+defensives, so Shield Wall and Last Stand can't pay. Many talents score exactly the same (Iron Will, Lingering
+Rage, Booming Voice), the sim not reading them. So the rules audit (Next steps, 1) comes before the presets'
+searches: the debuffs a tank brings itself have to come from its own talents.
 
 Not modelled yet, which the score would reward once it is: threat drops from boss abilities (Knock Away),
 and a tank's own health-based effects, which the replay can't follow (health potions, defensives at a health
@@ -426,7 +455,7 @@ presets landing on the same build means a weight moves).
    Bring the Feral tank into the build. Ask for a dungeon boss log for Forever's boss crit.
 2. **Encounters**: Patchwerk, threat drops, armor cuts and stacking DoTs in the engine.
 3. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.
-4. **A paired noise test** for rotopt's tank searches (above), then the three presets' searches.
+4. **The three presets' searches** (the paired test is in, above).
 5. **Tank gear**: a tank row in `orchestration/gear_targets.md` and synthetic tank items, then gear and talent
    searches on the score.
 6. **The report**: a tank section with TPS next to damage taken, healing needed and the sheet's thresholds.

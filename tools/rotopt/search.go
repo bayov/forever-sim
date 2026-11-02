@@ -162,12 +162,13 @@ func (s *searcher) combine(p *pendingScore) result {
 	r := result{
 		dps: sum / n, stderr: math.Sqrt(variance) / n,
 		mana: mana / n, manaStderr: math.Sqrt(manaVariance) / n,
-		tto: tto / n,
+		tto:    tto / n,
 		health: p.health, armor: p.armor,
 	}
 	if len(s.durations) == 1 {
 		r.leveling = p.results[0].leveling
 		r.tank = p.results[0].tank
+		r.tankRaw = p.results[0].tankRaw
 	}
 	return r
 }
@@ -216,7 +217,7 @@ func (s *searcher) search(start Knobs) (Knobs, result) {
 			for i, score := range s.scoreAll(pending) {
 				v := values[i]
 				gain := score.dps - bestScore.dps
-				noise := math.Sqrt(score.stderr*score.stderr + bestScore.stderr*bestScore.stderr)
+				noise := gainNoise(bestScore, score)
 				fmt.Printf("  %s=%g: %s (%+.1f, noise %.1f)\n", knob.Name, v, score, gain, noise)
 				if gain > s.confidence*noise && gain > bestGain {
 					bestGain, bestValue = gain, v
