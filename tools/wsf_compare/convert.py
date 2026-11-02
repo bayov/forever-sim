@@ -23,7 +23,7 @@
 Env ALIGN="<their stat index>=<value>,..." adds bonus stats to theirs (align.py finds them).
 Env NOSPELLS="<id>,..." names talent spells the build doesn't have, see nospell() below.
 
-Rogues, hunters and warriors are mapped. Adding one means its options, its consumables and its spell ids
+Rogues, hunters, warriors and shamans are mapped. Adding one means its options, its consumables and its spell ids
 (SKILL.md, "Adding a class").
 """
 import copy, json, os, re, sys
@@ -47,7 +47,11 @@ def enum_names(path, name):
     return {int(v): k for k, v in re.findall(r'(\w+)\s*=\s*(\d+);', body)}
 OP = os.path.join(ROOT, 'proto/common.proto'); TP = os.path.join(WSF, 'proto/common.proto')
 OS = enum_names(OP, 'Stat'); TS = {v: k for k, v in enum_names(TP, 'Stat').items()}
-SMAP = {i: TS[n] for i, n in OS.items() if n in TS}  # our stat index -> theirs, by name
+# Our stat index -> theirs, by name. Theirs names the spell damage stats ...Damage where ours has ...Power.
+SALIAS = {'StatSpellPower': 'StatSpellDamage', 'StatArcanePower': 'StatArcaneDamage', 'StatFirePower': 'StatFireDamage',
+          'StatFrostPower': 'StatFrostDamage', 'StatHolyPower': 'StatHolyDamage', 'StatNaturePower': 'StatNatureDamage',
+          'StatShadowPower': 'StatShadowDamage', 'StatSpellPenetration': 'StatSpellPiercing'}
+SMAP = {i: TS[SALIAS.get(n, n)] for i, n in OS.items() if SALIAS.get(n, n) in TS}
 def stats_map(arr, hit=0, crit=0):
     m = {}
     for i, v in enumerate(arr or []):
@@ -98,8 +102,21 @@ for it in p['equipment']['items']:
 json.dump({'items': sim_items}, open(os.path.join(out, 'items.json'), 'w'), indent=1)
 
 # Enchants: ours keys Forever's spell ids, theirs the enchant (effect) ids.
+# ENCH holds the ones picked by hand; any other is matched by its effect id, else by name and the same stats.
 ENCH = {1249059: 904, 1248497: 904, 1219587: 7667, 1248640: 2563}
-equip = [{k: (ENCH.get(v, v) if k == 'enchant' else v) for k, v in it.items()} for it in p['equipment']['items']]
+OE = json.load(open(os.path.join(ROOT, 'assets/database/db.json')))['enchants']
+TE = json.load(open(os.path.join(WSF, 'assets/database/db.json')))['enchants']
+def ench(v):
+    if v in ENCH: return ENCH[v]
+    o = next((e for e in OE if e['effectId'] == v), None) or next((e for e in OE if e.get('spellId') == v), None)
+    if o is None: raise SystemExit(f'enchant {v} is not in our database')
+    if o['effectId'] == v and any(e['effectId'] == v for e in TE): return v
+    st = {SMAP.get(i): x for i, x in enumerate(o.get('stats', [])) if x}
+    for e in TE:
+        if e['name'] == o['name'] and all(e['stats'][k] == x for k, x in st.items() if k is not None):
+            return e['effectId']
+    raise SystemExit(f'enchant {v} ({o["name"]}): no match in theirs, add it to ENCH')
+equip = [{k: (ench(v) if k == 'enchant' else v) for k, v in it.items()} for it in p['equipment']['items']]
 
 # Consumables: our enum name -> their item id. A new one is looked up in theirs' database by name.
 C = {'FlaskOfNaturalAggression': 274274, 'FlaskOfNaturalPrecision': 274275, 'FlaskOfNaturalAccuracy': 274273,
@@ -110,7 +127,11 @@ C = {'FlaskOfNaturalAggression': 274274, 'FlaskOfNaturalPrecision': 274275, 'Fla
      'ExplosiveEZThroThoriumGrenade': 260816, 'ExplosiveDenseDynamite': 18641, 'ExplosiveThoriumGrenade': 15993,
      'DenseSharpeningStone': 12404, 'DenseWeightstone': 12643,
      'DeadlyPoison': 8985, 'InstantPoison': 8928,
-     'FoodSmokedDesertDumpling': 20452, 'MightyRagePotion': 13442, 'ROIDS': 8410}  # Deadly Poison IV (theirs has no AQ book rank), Instant VI
+     'FoodSmokedDesertDumpling': 20452, 'MightyRagePotion': 13442, 'ROIDS': 8410,
+     'FlaskOfSupremePower': 13512, 'FoodGrilledSquid': 13928, 'FoodLobsterStew': 13933, 'ElixirOfCunning': 250328,
+     'GreaterArcaneElixir': 13454, 'ElixirOfShadowPower': 9264, 'ElixirOfFirepower': 6373, 'ElixirOfSages': 250338,
+     'ElixirOfNaturePower': 250343, 'ShadowOil': 3824, 'WizardOil': 20750, 'CausticSmogPotion': 250951,
+     'CerebralCortexCompound': 8423}  # Deadly Poison IV (theirs has no AQ book rank), Instant VI
 def c(k):
     v = cs.get(k)
     if not v: return 0
@@ -128,7 +149,8 @@ def stone(k, slot):  # theirs drops a sharpening stone on a blunt weapon (ours a
 pot = c('defaultPotion')
 consumables = {
     'flaskId': c('flask'), 'foodId': c('food'),
-    'elixirIds': [x for x in (c('agilityElixir'), c('strengthBuff'), c('manaRegenElixir'), c('intellectElixir')) if x],
+    'elixirIds': [x for x in (c('agilityElixir'), c('strengthBuff'), c('manaRegenElixir'), c('intellectElixir'), c('spellPowerBuff'),
+                              c('shadowPowerBuff'), c('firePowerBuff'), c('naturePowerBuff'), c('spiritElixir')) if x],
     'extraIds': [x for x in (c('attackPowerBuff'), c('zanzaBuff'), c('fillerExplosive')) if x] + ([12217] if cs.get('dragonBreathChili') else []),
     'mhImbueId': stone('mainHandImbue', 14), 'ohImbueId': stone('offHandImbue', 15),
     'potions': [pot] if pot else [], 'conjuredId': c('defaultConjured'), 'conjuredItems': [c('defaultConjured')] if c('defaultConjured') else [],
@@ -139,13 +161,15 @@ elif pot: consumables['offensivePotId'] = pot
 
 # Raid and party buffs, blessings, debuffs.
 b = ours['raid']['buffs']; ib = p['buffs']
-raid_buffs = {
-    'arcaneBrilliance': b.get('arcaneBrilliance', False), 'prayerOfSpirit': b.get('divineSpirit', False),
-    'giftOfTheWild': bool(b.get('giftOfTheWild')), 'prayerOfFortitude': bool(b.get('powerWordFortitude')),
-    'prayerOfShadowProtection': b.get('shadowProtection', False), 'fireResistanceAura': b.get('fireResistanceAura', False),
+raid_buffs = {  # (theirs since 04899cee95: the group buffs are plain on/off; b6657d3824: a ranked buff is 1 for the
+    # trainer's rank, 2 for the book's)
+    'arcaneIntellect': b.get('arcaneBrilliance', False), 'prayerOfSpirit': b.get('divineSpirit', False),
+    'markOfTheWild': bool(b.get('giftOfTheWild')), 'powerWordFortitude': bool(b.get('powerWordFortitude')),
+    'shadowProtection': b.get('shadowProtection', False), 'fireResistanceAura': b.get('fireResistanceAura', False),
     'frostResistanceAura': b.get('frostResistanceAura', False),
-    'strengthOfEarthTotem': bool(b.get('strengthOfEarthTotem')), 'graceOfAirTotem': bool(b.get('graceOfAirTotem')),
+    'strengthOfEarthTotem': 1 if b.get('strengthOfEarthTotem') else 0, 'graceOfAirTotem': 1 if b.get('graceOfAirTotem') else 0,
     'windfuryTotem': b.get('totemWeaponBuff') == 'TotemWeaponBuffWindfury',
+    'flametongueTotem': b.get('totemWeaponBuff') == 'TotemWeaponBuffFlametongue',
     'battleShout': 1 if b.get('battleShout') else 0,  # 1 is rank 6 (2 rank 7); theirs has no Improved Battle Shout state
     'trueshotAura': b.get('trueshotAura', False), 'leaderOfThePack': b.get('leaderOfThePack', False),
     'moonkinAura': b.get('moonkinAura', False),
@@ -153,8 +177,8 @@ raid_buffs = {
 party_buffs = {'manaSpringTotem': b.get('manaSpringTotem', 'TristateEffectMissing'),  # a party buff in theirs
                'bloodPact': bool(b.get('bloodPact')), 'devotionAura': bool(b.get('devotionAura')),
                'retributionAura': bool(b.get('retributionAura'))}
-ind_buffs = {'greaterBlessingOfKings': ib.get('blessingOfKings', False), 'greaterBlessingOfMight': bool(ib.get('blessingOfMight')),
-             'greaterBlessingOfWisdom': bool(ib.get('blessingOfWisdom')), 'greaterBlessingOfSalvation': b.get('salvation', False),
+ind_buffs = {'greaterBlessingOfKings': ib.get('blessingOfKings', False), 'greaterBlessingOfMight': 1 if ib.get('blessingOfMight') else 0,
+             'greaterBlessingOfWisdom': 1 if ib.get('blessingOfWisdom') else 0, 'greaterBlessingOfSalvation': b.get('salvation', False),
              'thorns': bool(b.get('thorns'))}
 debuffs = {k: bool(d.get(k)) or (k == 'sunderArmor' and 'sunderRamp' in d) for k in ['judgementOfWisdom', 'judgementOfLight', 'judgementOfTheCrusader', 'faerieFire',
            'curseOfElements', 'sunderArmor', 'curseOfWeakness', 'curseOfRecklessness', 'demoralizingRoar', 'demoralizingShout',
@@ -245,6 +269,35 @@ elif klass == 'ClassWarrior':
         if n.get('spellId') == 1680 and 'tag' not in n:  # Whirlwind: theirs casts the main hand's copy, tag 14
             n = {**n, 'tag': 14}
         return n
+elif klass == 'ClassShaman':
+    spec = 'enhancementShaman' if 'enhancementShaman' in p else 'elementalShaman'
+    so = p[spec].get('options', {})
+    IMBUE = {'WindfuryWeapon': 'WindfuryWeapon', 'FlametongueWeapon': 'FlametongueWeapon',
+             'FrostbrandWeapon': 'FrostbrandWeapon', 'RockbiterWeapon': 'RockbiterWeapon'}
+    # Theirs has no raid damage taken: its shield proc rate stands for the hits the shaman takes, which spend a
+    # Lightning Shield or Water Shield charge. Ours' raid damage does the same, at its hits per minute.
+    copt = {'shieldProcrate': ours['encounter'].get('raidDamageHitsPerMinute', 0)}
+    if so.get('shamanImbue') in IMBUE: copt['imbueMh'] = IMBUE[so['shamanImbue']]
+    class_opts = {spec: {'options': {'classOptions': copt}}}
+    if spec == 'elementalShaman':  # The Spiritcaller's Storm's 2 piece on our synthetic set: 1% hit (theirs: 10 rating)
+        SET_BONUS[TS['StatHitRating']] = 10
+    CD.update({20572: "120s", 20554: "180s", 26297: "180s", 425336: "180s", ('item', 990015): '120s', ('item', 990115): '120s'})
+    # Our rotations ask whether a totem stands by its buff on the shaman (auraIsActive) or, for a fire totem, as a
+    # DoT (dotIsActive). Theirs keys neither by the totem's spell: it asks its element's slot (totemRemainingTime).
+    TOTEM = {10442: 'Earth', 25361: 'Earth', 10497: 'Water', 10612: 'Air', 10614: 'Air', 10627: 'Air', 25359: 'Air',
+             10587: 'Fire', 10438: 'Fire'}
+    def totem(n):
+        if len(n) != 1: return None
+        k, v = next(iter(n.items()))
+        sid = (v.get('auraId') or v.get('spellId') or {}).get('spellId') if k in ('auraIsActive', 'dotIsActive') else None
+        if sid in TOTEM:
+            return {'cmp': {'op': 'OpGt', 'lhs': {'totemRemainingTime': {'totemType': TOTEM[sid]}}, 'rhs': {'const': {'val': '0s'}}}}
+    def remap(n):
+        t_ = totem(n)
+        if t_: return t_
+        if n.get('spellId') == 26297:  # Berserking: ours keys the shaman's 26297, theirs Forever's 20554
+            n = {k: v for k, v in n.items() if k != 'tag'}; n['spellId'] = 20554
+        return n
 else:
     raise SystemExit(f'{klass} is not mapped yet (SKILL.md, "Adding a class")')
 
@@ -333,7 +386,7 @@ bonus = dict(SET_BONUS)
 for k, v in ALIGN.items(): bonus[k] = bonus.get(k, 0) + v
 e = ours['encounter']; t = e['targets'][0]
 player = {
-    'name': 'ours', 'race': p['race'], 'class': klass, 'equipment': {'items': equip},
+    'name': 'ours', 'race': {'RaceSkyborneWindshaper': 'RaceWindshaperSkyborne', 'RaceSkyborneHighOrder': 'RaceHighOrderSkyborne'}.get(p['race'], p['race']), 'class': klass, 'equipment': {'items': equip},
     'consumables': {k: v for k, v in consumables.items() if v}, 'buffs': ind_buffs, **class_opts,
     'talentsString': talents, 'profession1': p.get('profession1'), 'profession2': p.get('profession2'),
     'prof1Rank': 300, 'prof2Rank': 300, 'cooldowns': p.get('cooldowns', {}), 'rotation': apl,

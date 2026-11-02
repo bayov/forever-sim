@@ -6,7 +6,7 @@ mechanics and not the stats. Prints the ALIGN value for run.py (and the residual
     ALIGN=$(align.py hunter__survival out/sv) run.py hunter__survival out/sv
 
 It matches Strength and Agility first (theirs gets them before Blessing of Kings, so it divides by 1.1), then
-attack power and ranged attack power, and for casters Intellect, spell power and spell crit (STATS). The gaps it
+attack power and ranged attack power, and for casters Intellect, Spirit, spell power and MP5 (STATS; shamans take both). The gaps it
 closes are differences too: say what they were (race bases, buff ranks, how a rating converts) when reporting.
 """
 import json, os, re, subprocess, sys
@@ -30,13 +30,18 @@ def sheet(cmd):
     r = subprocess.run(cmd, capture_output=True, text=True)
     m = re.search(r'^PLAYER (\{.*\})', r.stdout, re.M)
     if not m: sys.exit('no sheet from %s: %s' % (cmd[0], (r.stdout + r.stderr)[-400:]))
-    return json.loads(m.group(1).replace(',}', '}'))
+    s = json.loads(m.group(1).replace(',}', '}'))
+    if 'SpellPower' in s: s['SpellPower'] += s.get('SpellDamage', 0)  # ours: add its spell damage only stat
+    return s
 
 # Our sheet names a stat as FlatString does; theirs the same, mostly. (ours name, theirs name, first pass?)
 PHYSICAL = [('Strength', 'Strength', True), ('Agility', 'Agility', True), ('AttackPower', 'AttackPower', False),
             ('RangedAttackPower', 'RangedAttackPower', False)]
-CASTER = [('Intellect', 'Intellect', True), ('Spirit', 'Spirit', True), ('SpellPower', 'SpellPower', False)]
+# Theirs' SpellDamage is both our SpellPower and our SpellDamage (spell damage only), which sheet() adds up.
+CASTER = [('Intellect', 'Intellect', True), ('Spirit', 'Spirit', True), ('SpellPower', 'SpellDamage', False), ('MP5', 'MP5', False)]
 STATS = CASTER if klass in ('ClassMage', 'ClassWarlock', 'ClassPriest') else PHYSICAL if klass == 'ClassHunter' else PHYSICAL[:3]
+if klass == 'ClassShaman':  # both: Elemental by its spell power, Enhancement by its attack power too
+    STATS = PHYSICAL[:3] + CASTER
 
 subprocess.run(CONV, check=True, capture_output=True)
 ours_bin = 'ours_aq_stats' if klass == 'ClassHunter' and os.environ.get('OURS_AQ', '1') == '1' else 'ours_stats'
