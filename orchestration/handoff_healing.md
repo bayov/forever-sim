@@ -35,7 +35,8 @@ ruling. Report each step's results before starting the next unless the user says
    deaths), keep within its point budget (3600 an hour, the cache in `~/.cache/forever-sim/wcl/` dies with the
    container). Record every number's source and report codes in the file's `source` and `reports`. Then the
    healbench numbers again on `-encounter` with `-role raid` and `both`.
-2. **H2, the Restoration shaman as a real spec:** register the agent (today it's only the bench's request
+2. **Done 2026-11-02** (`docs/healing_sim.md`, H2; the healer gear's stat mix is the user's open decision).
+   **H2, the Restoration shaman as a real spec:** register the agent (today it's only the bench's request
    `tools/healbench/req/shaman_restoration.json` on the elemental agent), gear, rotations and presets per role
    (tank healer, raid healer), Water Shield, Mana Spring by group, Mana Tide. Its spells and talents are in.
 3. **H3, the other healers:** Holy paladin, then Restoration druid, then priest (needs an absorb pipeline).
@@ -47,7 +48,7 @@ ruling. Report each step's results before starting the next unless the user says
 6. **H6, the raid sim:** simmed tanks and healers, the comp search counting healing, then choosing how many
    healers (the 20% margin).
 
-Open user decisions, with the defaults proposed and not yet answered: the scare line (20% of max health,
+Open user decisions, with the defaults proposed and not yet answered: a healer stat mix for healer gear (wowsims/sod has no healer BiS lists; Wowhead's Era Phase 1 lists proposed), the scare line (20% of max health,
 reported only, not scored) and Power Word: Shield absorbs (effective while absorbing, the unused part
 counted as overheal). Open audit gaps (`docs/healing_sim.md`, The audit): aura values on Most Hurt and Lowest
 Health, range and groups, Hateful Strike's targeting, players' self-saves, Judgement of Light a no-op,

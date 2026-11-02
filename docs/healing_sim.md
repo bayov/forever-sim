@@ -13,8 +13,9 @@ and damage groundwork, which this doc's first milestone builds.
 overhealing is booked, a healing fight tracks every player's health and kills, the boss has raid damage
 events and tank swaps, and the shaman heals others. `tools/healbench` sims a healer in a raid against made-up
 profiles and the seven boss files, whose raid damage now comes from Warcraft Logs ([Raid damage from the
-logs](#raid-damage-from-the-logs-2026-11-02)). No healer spec is registered yet: the bench's shaman is the
-Elemental agent with the Restoration preset's talents and a heal rotation. Next is H2, the Restoration shaman.
+logs](#raid-damage-from-the-logs-2026-11-02)). H2, the Restoration shaman, is registered with a tank healer
+and a raid healer rotation ([H2](#h2-the-restoration-shaman-2026-11-02)), on stand-in gear. Next is H3, the
+other healers.
 
 ## The user's rulings (2026-11-02)
 
@@ -470,6 +471,56 @@ second (two to four times the Anniversary realms'), and up to 2.5 deaths a kill.
 - Not yet in the files: the logs' cast timing and phases (each event is at random times after its first cast),
   players' fire resistance gear and self-saves (the logs' damage is after them; the sim's mages take it
   unmitigated by gear), and who stands where (each cast hits random non-tanks).
+
+## H2: the Restoration shaman (2026-11-02)
+
+**The spec is registered** (`sim/shaman/restoration`): a shaman agent with no auto attacks and the shaman
+imbue option of the other specs, in place of the old wowsims package (`_restoration`, never built). Its
+heals, Water Shield, Mana Spring Totem (its party, `totem_receivers.go`) and Mana Tide Totem (its party, the
+5 min cooldown) were already the shaman's. `tools/healbench`'s requests are the spec now: the bench ran the
+same numbers on it as on the Elemental agent it used before. `TestHealingFightRestorationManaTools` checks
+the mana tools are cast and reach the party.
+
+**Two rotations, one per role** (`ui/restoration_shaman/apls`, the bench's `shaman_restoration.json` and
+`shaman_restoration_raid.json`). Both put Water Shield up at -3 s and Mana Spring Totem at -1.5 s, cast
+Lesser Healing Wave at whoever in the assignment is under 35% health, Mana Tide Totem at 35% mana and Mana
+Spring again after it, and bind at most 4 ranks of a heal.
+
+- **Tank healer:** Riptide on the tank whenever it's off, Healing Wave 10, 8 and 6 at the tank, Chain Heal 3,
+  2 and 1 at the most hurt. Water Shield goes back up as soon as its globes are spent (a tank healer is seldom
+  hit; its globes go on its heals' crits).
+- **Raid healer:** Riptide at the most hurt when it fits, Chain Heal 3, 2 and 1 at the most hurt, Healing Wave
+  10 and 8 for one big hole. Raid damage spends Water Shield's globes every few hits, and a recast is a global
+  cooldown, so it goes back up only below 60% mana (0.899 against 0.874 recasting at once on the raid profile,
+  1.140 against 1.056 on Vaelastrasz, 0.865 against 0.843 at 300 s).
+- Mana Tide at 20, 35, 50 and 70% mana carried the same within the bench's ±0.01 at 120, 180 and 300 s on
+  Onyxia's tank side; 90% was 0.01 to 0.02 behind.
+
+Against the bench's earlier rotation (the same heals, no mana tools; 1,000 iterations; the tank role at each
+file's tank time, the raid role at the logs' median kill, 2 healers and 7 Frost mages):
+
+| Boss | tank: old → tank healer | raid: old → raid healer |
+|---|---|---|
+| Magmadar | 1.548 → 1.518 | 1.539 → 1.583 |
+| Golemagg | 1.462 → 1.402 | 1.913 → 1.990 |
+| Ragnaros | 0.458 → 0.459 | 1.197 → 1.230 |
+| Onyxia | 1.031 → 1.031 | 0.672 → 0.695 |
+| Broodlord | 0.656 → 0.643 | 0.796 → 0.844 |
+| Vaelastrasz | 0.661 → 0.659 | 1.066 → 1.140 |
+| Chromaggus | 0.778 → 0.764 | 0.928 → 0.990 |
+| Onyxia's tank side at 180 s / 300 s | 0.836 → 0.959 / 0.677 → 0.830 | |
+
+- **The raid healer carries more on every boss.** Its overheal is 21 to 56% against the old rotation's 10 to
+  25%: Riptide's HoT and Chain Heal's jumps land on players who are full again.
+- **The tank healer is a long-fight rotation.** At the files' tank times (17 to 71 s, the main tank's stint)
+  mana never runs short, and Water Shield, Mana Spring and Mana Tide only cost globals: up to 0.06 behind
+  (Golemagg). From 180 s it carries a good deal more, since the old rotation runs dry at 178 s on Onyxia.
+- **Gear is a stand-in**, the Elemental synthetic set, which carries spell hit a healer doesn't use. A healer
+  set needs a healer stat mix in `orchestration/gear_targets.md`, and that table's source (wowsims/sod's level
+  60 BiS lists) has none for any healer (the user's decision, open).
+- The talents are the bench's (31 Restoration to Riptide, Ancestral Knowledge, Mental Dexterity and
+  Shamanistic Focus), not searched: `tools/rotopt` scores DPS.
+- The UI presets (builds, rotations, talents, consumes, a raid sim preset) are in; the spec stays unlaunched.
 
 ## Milestones
 
