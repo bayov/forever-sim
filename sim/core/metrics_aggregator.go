@@ -107,6 +107,7 @@ type UnitMetrics struct {
 	// Aggregate values. These are updated after each iteration.
 	numItersDead int32
 	scaresSum    int64
+	manaSpentSum float64
 	oomTimeSum   float64
 	actions      map[ActionID]*ActionMetrics
 	resources    []*ResourceMetrics
@@ -121,6 +122,8 @@ type CharacterIterationMetrics struct {
 	// we're back over 50%; scareOpen is a dip that hasn't ended.
 	Scares    int32
 	scareOpen bool
+	// When we died, if we did.
+	DeathTime time.Duration
 	WentOOM   bool // Whether the agent has hit OOM at least once in this iteration.
 
 	ManaSpent  float64
@@ -587,6 +590,7 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 		unitMetrics.numItersDead++
 	}
 	unitMetrics.scaresSum += int64(unitMetrics.Scares)
+	unitMetrics.manaSpentSum += unitMetrics.ManaSpent
 }
 
 func (unitMetrics *UnitMetrics) calculateTMI(unit *Unit, sim *Simulation) float64 {
@@ -676,6 +680,7 @@ func (unitMetrics *UnitMetrics) ToProto() *proto.UnitMetrics {
 		SecondsOomAvg: unitMetrics.oomTimeSum / n,
 		ChanceOfDeath: float64(unitMetrics.numItersDead) / n,
 		ScaresAvg:     float64(unitMetrics.scaresSum) / n,
+		ManaSpentAvg:  unitMetrics.manaSpentSum / n,
 		TankSheet:     unitMetrics.tankSheet,
 	}
 

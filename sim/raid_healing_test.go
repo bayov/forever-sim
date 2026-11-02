@@ -111,6 +111,12 @@ func TestHealingFightDeath(t *testing.T) {
 	// No tank, so the boss hits nobody.
 	dead := runRaid(t, healingRaid(t, 0, 0, 2, deadly))
 	alive := runRaid(t, healingRaid(t, 0, 0, 2))
+	if hf := dead.RaidMetrics.HealingFight; hf == nil || hf.FightsAnyDeath != hf.Fights || hf.FightsOtherDeath != hf.Fights || hf.FightsTankDeath != 0 || hf.FirstDeathSecondsSum/float64(hf.Fights) < 20 {
+		t.Errorf("the raid's deaths: %v", hf)
+	}
+	if hf := alive.RaidMetrics.HealingFight; hf == nil || hf.Fights != 20 || hf.FightsAnyDeath != 0 {
+		t.Errorf("the raid's deaths with no raid damage: %v", hf)
+	}
 	for i := 0; i < 2; i++ {
 		d, a := playerMetrics(dead, i), playerMetrics(alive, i)
 		if d.ChanceOfDeath != 1 {

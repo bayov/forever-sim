@@ -416,6 +416,9 @@ message UnitMetrics {
 	// average seconds spent oom per iteration
 	double seconds_oom_avg = 3; 
 
+	// Mana spent per fight, on average.
+	double mana_spent_avg = 24;
+
 	// Set when the raid has a threat check (Raid.threat_check).
 	AggroMetrics aggro = 19;
 
@@ -527,6 +530,23 @@ message RaidMetrics {
 	DistributionMetrics hps = 3;
 
 	repeated PartyMetrics parties = 2;
+
+	// Set in a healing fight (Encounter.track_health, docs/healing_sim.md).
+	HealingFightMetrics healing_fight = 4;
+}
+
+// How a healing fight's raid fared, over the iterations. Counts and sums, so results combine by
+// adding them up.
+message HealingFightMetrics {
+	int32 fights = 1;
+	// Fights in which someone died, a tank (Raid.tanks) died, and someone else died.
+	int32 fights_any_death = 2;
+	int32 fights_tank_death = 3;
+	int32 fights_other_death = 4;
+	// The first death's time, added up over the fights with a death.
+	double first_death_seconds_sum = 5;
+	// Seconds each player spent dead, added up over the players and fights.
+	double dead_player_seconds_sum = 6;
 }
 
 message EncounterMetrics {

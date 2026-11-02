@@ -204,6 +204,7 @@ func (character *Character) RegisterLevelingDeathEffect(effect func(sim *Simulat
 func (character *Character) died(sim *Simulation) {
 	if !character.Metrics.Died {
 		character.Metrics.Died = true
+		character.Metrics.DeathTime = sim.CurrentTime
 		if sim.Log != nil {
 			character.Log(sim, "Dead")
 		}

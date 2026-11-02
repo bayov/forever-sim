@@ -308,6 +308,41 @@ code). Fixed:
    rather than waiting for mana, so the engine never marks it OOM. The bench shows mana left.
 9. **An idle healer checks its rotation every 50 ms**, which costs some speed in a long fight.
 
+## The score in the bench (2026-11-02)
+
+**The engine books how a healing fight went** (`RaidMetrics.healing_fight`): fights, fights with any death, a
+tank's death and another's, the first death's time and the seconds players spent dead, as counts and sums so
+results combine. Each unit has its mana spent a fight (`UnitMetrics.mana_spent_avg`), for effective healing per
+mana. A healer that wants a heal it can't pay for is marked out of mana by the engine as any caster is; the
+"time to OOM wrong" finding was the dead healers' regen, fixed with the audit.
+
+**`tools/healbench`** scores by role (`-role tank|raid|both`), against a made-up `-profile` or a boss from
+`tools/encounters` (`-encounter`, at the boss's own fight length):
+
+- **tank**: the boss's melee and its abilities on the tanks, one healer by default, assigned the tanks; fails
+  when a tank dies in 2% of fights.
+- **raid**: the damage on the raid only, no tanks; fails when anyone dies in 5%.
+- **both**: everything; either line fails.
+
+`-carry` finds the damage carried (the scale of all damage at the line: bracketed, bisected five times on the
+same seed, interpolated) and the death floor there (every player topped off every 1.5 ± 0.5 s, so only a
+one-shot or a burst between heals kills; `-floor` prints it at `-scale`). About 10 sims, 2.5 s for a tank role
+score at 800 iterations.
+
+First carries, the bench shaman (a test rotation, not a tuned one), 1,600 iterations:
+
+| Fight | Role | Healers | Carry | Death floor there | At ×1: deaths (tank / other), mana left |
+|---|---|---|---|---|---|
+| tank profile | tank | 1 | 0.956 | 0% | 5.6% / 4.7%, 1611 |
+| raid profile | raid | 2 | 0.824 | 0% | - / 36.6%, 2062 |
+| raid profile | both | 2 | 0.683 | 0% | 99.7% / 99.9%, 623 |
+| swap profile | tank | 1 | 0.676 | 0% | 100% / 94%, 900 |
+| Onyxia (tank side) | tank | 1 | 0.907 | 0% | 37.4% / 29.9%, 1381 |
+| Broodlord (tank side) | tank | 1 | 0.818 | 0% | 38.6% / 36.5%, 3990 |
+
+In the tank role "other" deaths are the healer's: once the tank dies the boss turns to it. Broodlord kills the
+tank with 3,990 mana left in the healer: his Mortal Strike's healing cut and spikes, not mana, are the limit.
+
 ## Milestones
 
 **H1: the groundwork** (engine, no healer spec). Done 2026-11-02, see above.

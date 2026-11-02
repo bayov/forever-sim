@@ -2,6 +2,7 @@ package core
 
 import (
 	"slices"
+	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
@@ -118,6 +119,8 @@ type Raid struct {
 
 	dpsMetrics DistributionMetrics
 	hpsMetrics DistributionMetrics
+	// Set in a healing fight (Encounter.track_health).
+	healingFight *proto.HealingFightMetrics
 
 	AllPlayerUnits []*Unit // Cached list of all Players in the raid.
 	AllUnits       []*Unit // Cached list of all Units (players and pets) in the raid.
@@ -388,12 +391,53 @@ func (raid *Raid) doneIteration(sim *Simulation) {
 
 	raid.dpsMetrics.doneIteration(sim)
 	raid.hpsMetrics.doneIteration(sim)
+
+	if sim.Encounter.TrackHealth {
+		raid.doneHealingFight(sim)
+	}
+}
+
+// doneHealingFight books how the raid fared in a healing fight: who died, and when.
+func (raid *Raid) doneHealingFight(sim *Simulation) {
+	if raid.healingFight == nil {
+		raid.healingFight = &proto.HealingFightMetrics{}
+	}
+	m := raid.healingFight
+	m.Fights++
+	var tankDied, otherDied bool
+	first := time.Duration(-1)
+	for _, player := range raid.AllPlayerUnits {
+		if !player.Metrics.Died {
+			continue
+		}
+		at := player.Metrics.DeathTime
+		if first < 0 || at < first {
+			first = at
+		}
+		m.DeadPlayerSecondsSum += (sim.CurrentTime - at).Seconds()
+		if slices.Contains(sim.Environment.RaidTanks, player) {
+			tankDied = true
+		} else {
+			otherDied = true
+		}
+	}
+	if first >= 0 {
+		m.FightsAnyDeath++
+		m.FirstDeathSecondsSum += first.Seconds()
+	}
+	if tankDied {
+		m.FightsTankDeath++
+	}
+	if otherDied {
+		m.FightsOtherDeath++
+	}
 }
 
 func (raid *Raid) GetMetrics() *proto.RaidMetrics {
 	metrics := &proto.RaidMetrics{
-		Dps: raid.dpsMetrics.ToProto(),
-		Hps: raid.hpsMetrics.ToProto(),
+		Dps:          raid.dpsMetrics.ToProto(),
+		Hps:          raid.hpsMetrics.ToProto(),
+		HealingFight: raid.healingFight,
 	}
 	metrics.Parties = make([]*proto.PartyMetrics, raid.numParties)
 	for i := range metrics.Parties {
