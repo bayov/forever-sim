@@ -5,6 +5,7 @@
 // (x, 0, -y) here, and a facing angle turns the same way.
 
 import * as THREE from 'three';
+import type { Model } from './wow/model';
 
 export type CameraState = { yaw: number; pitch: number; distance: number };
 
@@ -39,6 +40,9 @@ export class Room {
 	private ring: THREE.Mesh;
 	private meleeRing: THREE.Mesh;
 	private totems = new Map<string, THREE.Group>();
+	private totemModels = new Map<string, Model>();
+	// totemModel loads a totem's real model by its element, when the client's files are there.
+	totemModel?: (element: string) => Promise<Model | undefined>;
 	private readonly raycaster = new THREE.Raycaster();
 	private playerHeight: number;
 
@@ -97,6 +101,12 @@ export class Room {
 		this.scene.add(this.player);
 	}
 
+	// placeholders are a unit's capsule parts, which hide when its model loads. The dummy's click
+	// hull and rings stay.
+	placeholders(group: THREE.Group): THREE.Object3D[] {
+		return group.children.slice(0, 2);
+	}
+
 	resize() {
 		const w = this.canvas.clientWidth;
 		const h = this.canvas.clientHeight;
@@ -135,6 +145,18 @@ export class Room {
 				g.add(pole);
 				this.scene.add(g);
 				this.totems.set(t.element, g);
+				const group = g;
+				this.totemModel?.(t.element).then(m => {
+					if (!m) return;
+					if (this.totems.get(t.element) !== group) {
+						m.dispose();
+						return;
+					}
+					pole.visible = false;
+					group.add(m.root);
+					m.enableParticles(this.scene);
+					this.totemModels.set(t.element, m);
+				});
 			}
 			g.position.copy(toThree(t.pos[0], t.pos[1]));
 		}
@@ -142,6 +164,8 @@ export class Room {
 			if (!seen.has(element)) {
 				this.scene.remove(g);
 				this.totems.delete(element);
+				this.totemModels.get(element)?.dispose();
+				this.totemModels.delete(element);
 			}
 		}
 	}
@@ -178,6 +202,11 @@ export class Room {
 			y: ((1 - v.y) / 2) * this.canvas.clientHeight,
 			visible: v.z < 1,
 		};
+	}
+
+	// animate moves the totems' own animations and particles on.
+	animate(dt: number) {
+		for (const m of this.totemModels.values()) m.update(dt);
 	}
 
 	render() {
