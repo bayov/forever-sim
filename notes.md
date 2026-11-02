@@ -43,6 +43,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 
 ## All classes
 
+* The 1% spell miss floor (sim: a spell always keeps a 1% chance to miss, Classic's rule; on the open list of orchestration/alignment_round_2026-10-23.md). wowsims/forever dropped it (0301ba3421, "Forever has no 1% minimum miss", no source), so spell hit there can remove the whole miss. Only a caster at or over the hit cap feels it: 7.8 DPS on Arcane. A log settles it: a few hundred spells from a caster at or over the cap against a level 63 boss (16% spell hit with talents counted) and no binary spells. About 1% misses keeps the floor; none drops it.
 * Threat values with no Forever source (threat audit, 2026-10-30). The sim keeps the Classic and wowsims values, and a threat capture on the beta or live settles each one:
   * Healing makes half a threat a point of effective healing (overhealing none), split between the enemies in combat, and mana gains half a threat a mana, split the same way, both times the healer's threat multiplier (Salvation, Silent Resolve and the rest). Classic's rule, in the sim since 2026-10-30. Before that the sim booked healing threat on the healed player, so it never counted, and gave each enemy the whole mana threat at the end of the fight.
   * Battle Shout makes its flat threat once a receiver, split between the enemies in combat. Forever made the shout raid-wide, so in a 40-player raid that is 40 receivers' threat. Classic's shout reached a party of 5.
