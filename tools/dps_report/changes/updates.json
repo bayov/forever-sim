@@ -1793,6 +1793,67 @@
       "bb8edc2",
       "8de8b36"
      ]
+    },
+    {
+     "title": "Lightning Overload's extra bolts no longer trigger Judgement of Wisdom or Elemental Devastation",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide"
+     ],
+     "note": "The extra bolt counts as a proc in the game data, and those effects don't fire from procs, as with Fire Nova. Elemental loses a little mana from Judgement of Wisdom: 768.5 to 768.4 at 180 s, 753.2 to 752.8 with Mana Tide.",
+     "commits": [
+      "6265a9a"
+     ]
+    },
+    {
+     "title": "Two-hand Fury uses Berserker Rage only under 10 Rage and Slams from 60 Rage",
+     "kind": "rotation",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "Was under 30 and from 45. Berserker Rage's global cooldown goes to a Hamstring instead, and with the bigger crit Rage Slam's swing delay is needed less often. About +5 at every length (1078.2 to 1083.9 at 120 s on the base build).",
+     "commits": [
+      "f62b4a5"
+     ]
+    },
+    {
+     "title": "Dual-wield Fury drinks its pull Mighty Rage Potion only when a second one fits",
+     "kind": "rotation",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder"
+     ],
+     "note": "In a fight under about 135 s the pull potion's 2 min cooldown cost the one with Death Wish and Recklessness. Up 1 to 2 at 120 s, the same at 180 and 300 s.",
+     "commits": [
+      "f62b4a5"
+     ]
+    },
+    {
+     "title": "Arms on Sunder duty Slams ahead of Mortal Strike",
+     "kind": "rotation",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms-duty-sunder"
+     ],
+     "note": "The duty's Sunders take global cooldowns, and a wait costs Slam's 15 s cooldown more than Mortal Strike's 6 s. Up about 2 at every length (968.0 to 970.4 at 180 s).",
+     "commits": [
+      "effd5cd"
+     ]
     }
    ],
    "internal": [
@@ -1859,6 +1920,14 @@
     {
      "commit": "94ae1fe",
      "why": "rotation card notes and grouping only; no result changes"
+    },
+    {
+     "commit": "76ee911",
+     "why": "tank sim groundwork; no report result moves (report hashes unchanged)"
+    },
+    {
+     "commit": "80fec47",
+     "why": "works out a rotation condition once per check; no report result moves (report hashes unchanged)"
     }
    ],
    "source": {
