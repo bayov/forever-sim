@@ -284,6 +284,7 @@ button.primary {
 	position: absolute;
 	right: 16px;
 	bottom: 200px;
+	z-index: 1;
 	background: var(--panel);
 	padding: 6px 10px;
 	border-radius: 4px;
@@ -344,6 +345,21 @@ button.primary {
 .bar-row {
 	display: flex;
 	gap: 3px;
+}
+.side-bars {
+	position: absolute;
+	right: 16px;
+	bottom: 260px;
+	display: flex;
+	flex-direction: row-reverse;
+	gap: 3px;
+}
+.side-bars .bar-row {
+	flex-direction: column;
+}
+.side-bars .button {
+	width: 34px;
+	height: 34px;
 }
 .button {
 	position: relative;

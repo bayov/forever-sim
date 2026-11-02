@@ -289,7 +289,7 @@ PRACTICE_OUT := dist/practice
 practice-wasm:
 	mkdir -p $(PRACTICE_OUT)
 	GOOS=js GOARCH=wasm go build -tags practice -o $(PRACTICE_OUT)/practice.wasm ./sim/practice/wasm/
-	cp "$(GOROOT)/lib/wasm/wasm_exec.js" $(PRACTICE_OUT)/wasm_exec.js
+	install -m 644 "$(GOROOT)/lib/wasm/wasm_exec.js" $(PRACTICE_OUT)/wasm_exec.js
 
 .PHONY: practice-page
 practice-page: node_modules
