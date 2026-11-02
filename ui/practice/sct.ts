@@ -113,8 +113,8 @@ export class CombatText {
 	// draw places the lines for this frame. What we do scrolls from over the target's frame up to
 	// `outTopAt` (under your buffs). What happens to us scrolls from `inTopAt` (under the cast
 	// history) down to over our frame. Both are pixels from the top of the window.
-	draw(u: number, player: DOMRect, target: DOMRect | undefined, inTopAt: number, outTopAt: number, now = performance.now() / 1000) {
-		const zone = this.box.getBoundingClientRect();
+	// The rects come from before the frame changed the page, so reading them costs no layout.
+	draw(u: number, zone: DOMRect, player: DOMRect, target: DOMRect | undefined, inTopAt: number, outTopAt: number, now = performance.now() / 1000) {
 		const W = zone.width;
 		// Without a target, the lines scroll where its frame would be, across from ours.
 		const targetLeft = target && target.width > 0 ? target.left - zone.left : W - (player.right - zone.left);

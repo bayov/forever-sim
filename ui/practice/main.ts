@@ -26,7 +26,9 @@ import { CameraOptions, Mover } from './controls';
 import { iconName, iconUrl, meleeIcon, setIcon } from './icons';
 import { css, HudLayout, pack, place, readLayout, Rect } from './layout';
 import { AuraState, Batch, ClockState, FromWorker, HitEvent, Input, PlayerState, Settings, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
-import { Room } from './scene';
+import { Perf } from './perf';
+import { Graphics, graphicsPresets, Room } from './scene';
+import { loadCursors } from './cursors';
 import { auraColor, avoidColor, CombatText, schoolColor } from './sct';
 import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
@@ -234,10 +236,15 @@ class PracticeRoom {
 	// Frame times of the last second, for the FPS readout.
 	private frameTimes: number[] = [];
 	private sct?: CombatText;
+	perf?: Perf;
+	graphics: Graphics = readGraphics();
 	// Your auras in the last update, so the combat text shows the ones you gain.
 	private aurasSeen?: Set<string>;
+	// The buffs you start with that never run out (the sim's raid buffs and consumables). They get
+	// their own rows, above the buffs of the fight.
+	private settingAuras = new Set<string>();
 	private statsShownAt = 0;
-	private dragging: { button: number; x: number; y: number; moved: boolean; picked: 'enemy' | 'ground' | undefined } | undefined;
+	private dragging: { button: number; buttons: Set<number>; both?: boolean; x: number; y: number; moved: boolean; picked: 'enemy' | 'ground' | undefined } | undefined;
 
 	constructor(
 		readonly loaded: Loaded,
@@ -272,6 +279,10 @@ class PracticeRoom {
 		app.replaceChildren(this.root);
 		this.root.append(this.canvas, this.hud);
 		this.room = new Room(this.canvas, 1.5, 2.0, 1.5, 2.3);
+		this.room.setGraphics(this.graphics);
+		this.perf = new Perf(this.room.renderer);
+		// A model built mid fight (a spell's effect) can cost a frame.
+		Model.onLoad = (fdid, ms) => !this.loadingModels && this.perf?.note('model', performance.now(), ms, String(fdid));
 		const cvars = this.character.cvars;
 		const options: CameraOptions = {
 			yawSpeed: parseFloat(cvars.cameraYawMoveSpeed ?? '180'),
@@ -331,7 +342,7 @@ class PracticeRoom {
 		this.sounds.self = this.room.player;
 		const effects = new Effects(this.room.scene, this.sounds);
 		this.effects = effects;
-		const jobs: Promise<unknown>[] = [];
+		const jobs: Promise<unknown>[] = [loadCursors(this.root)];
 
 		// Totems show their element's model (CreatureDisplayInfo 4587 to 4590).
 		const totemDisplays: Record<string, number> = { fire: 4589, earth: 4588, water: 4587, air: 4590 };
@@ -443,7 +454,9 @@ class PracticeRoom {
 		this.hud.querySelector('.summary')?.remove();
 		this.clearHistory();
 		this.sct?.clear();
+		this.perf?.reset();
 		this.aurasSeen = undefined;
+		this.settingAuras.clear();
 		this.mover.move.pos = [0, -15];
 		this.mover.move.facing = Math.PI / 2;
 		this.mover.cam.yaw = Math.PI / 2;
@@ -491,6 +504,7 @@ class PracticeRoom {
 			const msg = this.inbox.shift()!.msg;
 			this.clock = msg.clock;
 			this.timings.calls.push(msg.callMs);
+			if (msg.callMs > 3) this.perf?.note('sim', performance.now(), msg.callMs, `${msg.batch.hits?.length ?? 0} hits`);
 			if (msg.batch.rebase) this.timings.swaps.push(msg.callMs);
 			for (const a of msg.batch.answers ?? []) {
 				const at = this.pressedAt.get(a.inputId);
@@ -650,6 +664,7 @@ class PracticeRoom {
 				const missing = (b.ended.summary.spells ?? []).map(s => s.spellId).filter(id => id && !this.toolkit.names[id]);
 				if (missing.length) Object.assign(this.toolkit.names, await getJSON<SpellNames>(`/api/spells?ids=${missing.join(',')}`).catch(() => ({})));
 				this.showSummary(b.ended.summary, b.ended.stoppedEarly);
+				this.savePerf(b.ended.summary);
 				this.post({ type: 'attempt' });
 			} else {
 				this.start();
@@ -730,8 +745,13 @@ class PracticeRoom {
 				if (command) this.runCommand(command, true, e, wallOf(e));
 				return;
 			}
-			const picked = this.pickAt(e.clientX, e.clientY);
-			this.dragging = { button: e.button, x: e.clientX, y: e.clientY, moved: false, picked };
+			// Both buttons held are one drag: the second button joins the first one's drag, so the
+			// mouse keeps steering while both run you forward.
+			if (this.dragging) {
+				this.dragging.buttons.add(e.button);
+				this.dragging.both = true;
+			}
+			else this.dragging = { button: e.button, buttons: new Set([e.button]), x: e.clientX, y: e.clientY, moved: false, picked: this.pickAt(e.clientX, e.clientY) };
 			if (e.button === 0) this.mover.leftDown = true;
 			if (e.button === 2) {
 				this.mover.rightDown = true;
@@ -748,7 +768,7 @@ class PracticeRoom {
 				if (d.moved) this.mover.look(e.movementX, e.movementY);
 			} else if (e.target === this.canvas) {
 				this.mouseover = this.pickAt(e.clientX, e.clientY) === 'enemy' ? 'enemy' : 'none';
-				this.canvas.style.cursor = this.mouseover === 'enemy' ? 'crosshair' : 'default';
+				this.canvas.classList.toggle('attack', this.mouseover === 'enemy');
 			}
 		});
 		window.addEventListener('mouseup', e => {
@@ -762,10 +782,11 @@ class PracticeRoom {
 			if (e.button === 0) this.mover.leftDown = false;
 			if (e.button === 2) this.mover.rightDown = false;
 			const d = this.dragging;
-			if (d && d.button === e.button) {
+			if (d && d.buttons.delete(e.button) && d.buttons.size === 0) {
 				this.dragging = undefined;
 				if (document.pointerLockElement) document.exitPointerLock();
-				if (!d.moved) this.click(d.button, d.picked, wallOf(e));
+				// A click is a press and release of one button that didn't move.
+				if (!d.moved && e.button === d.button && !d.both) this.click(d.button, d.picked, wallOf(e));
 			}
 		});
 		this.canvas.addEventListener(
@@ -964,7 +985,7 @@ class PracticeRoom {
 			<div class="uf tot-frame"><div class="hp"><span class="fill"></span><em class="center"></em></div></div>
 			<div class="pack"></div>
 			<div class="castbar hidden"><div class="cb-icon"></div><div class="cb-bar"><div class="fill"></div><div class="latency"></div><span class="cb-name"></span><span class="cb-time"></span></div></div>
-			<div class="buffs"></div>
+			<div class="buffs"><div class="buff-row fixed"></div><div class="buff-row timed"></div></div>
 			<div class="nameplate hidden"><div class="np-debuffs"></div><div class="np-name"></div><div class="np-hp"><span class="fill"></span></div><div class="np-arrow left"></div><div class="np-arrow right"></div></div>
 			<div class="dmeter"><div class="dm-header"></div><div class="dm-bar hidden"><span class="fill"></span><em class="l"></em><em class="r"></em></div></div>
 			<div class="history"><div class="hist-now"></div><div class="hist-casts"></div><div class="hist-axis"></div></div>
@@ -1008,7 +1029,7 @@ class PracticeRoom {
 		tip('.net', () => ({ kind: 'lines', title: 'Latency · FPS', lines: ['Simulated ping, set in Settings'] }));
 		tip('.fullscreen', () => ({ kind: 'lines', title: 'Full screen', lines: ['Ctrl+T, Ctrl+W and Esc reach your binds'] }));
 		tip('.leave', () => ({ kind: 'lines', title: 'Leave', lines: ['Back to the build and character pick'] }));
-		tip('.settings-toggle', () => ({ kind: 'lines', title: 'Fight settings', lines: ['Mode, length, countdown and ping'] }));
+		tip('.settings-toggle', () => ({ kind: 'lines', title: 'Settings', lines: ['Graphics, fight mode, length and ping'] }));
 		tip('.edit-bars', () => ({ kind: 'lines', title: 'Edit bars', lines: ['Pick up a spell, then click a slot'] }));
 		tip('.bind-keys', () => ({ kind: 'lines', title: 'Bind keys', lines: ['Hover a button and press a key'] }));
 		tip('.book', () => ({ kind: 'lines', title: 'Spellbook', lines: ['Every spell and item you can use'] }));
@@ -1067,6 +1088,19 @@ class PracticeRoom {
 		const bound = new Set(Object.keys(this.bindings).map(k => k.replace(/^(ALT-|CTRL-|SHIFT-)+/, '')));
 		const codes = lockableCodes().filter(code => code === 'Escape' || bound.has(baseKeyName(code) ?? ''));
 		await kb?.lock(codes).catch(e => console.warn('keyboard lock', e));
+	}
+
+	// savePerf sends the fight's performance report to the practice server
+	// (~/forever-practice/perf/), and starts a new one.
+	savePerf(summary: Summary) {
+		const perf = this.perf;
+		if (!perf) return;
+		const report = perf.report({ fight: { durationMs: summary.durationMs, dps: summary.dps }, settings: this.settings, timings: { swaps: this.timings.swaps } });
+		perf.reset();
+		fetch('/api/perf', { method: 'POST', body: JSON.stringify(report) })
+			.then(r => r.json())
+			.then(r => r.id && this.showMessage(`Saved performance ${r.id}`))
+			.catch(e => console.warn('perf', e));
 	}
 
 	// drawStats shows the simulated latency and the frame rate, a few times a second.
@@ -1140,7 +1174,35 @@ class PracticeRoom {
 			this.running = false;
 			setTimeout(() => this.start(), 50);
 		};
+		// Graphics apply at once. A preset sets the others, and changing one makes it Custom.
+		const g = this.graphics;
+		const preset = el('select', {}, el('option', { value: 'low' }, 'Low'), el('option', { value: 'medium' }, 'Medium'), el('option', { value: 'high' }, 'High'), el('option', { value: 'custom' }, 'Custom'));
+		preset.value = g.preset;
+		const scale = el('select', {}, ...[0.5, 0.75, 1].map(v => el('option', { value: String(v) }, `${v * 100}%`)));
+		scale.value = String(g.renderScale);
+		const shadows = el('select', {}, el('option', { value: 'off' }, 'Off'), el('option', { value: 'low' }, 'Low'), el('option', { value: 'medium' }, 'Medium'), el('option', { value: 'high' }, 'High'));
+		shadows.value = g.shadows;
+		const setGraphics = (next: Graphics) => {
+			this.graphics = next;
+			try {
+				localStorage.setItem(graphicsKey, JSON.stringify(next));
+			} catch {
+				// Only this visit keeps it.
+			}
+			this.room.setGraphics(next);
+			preset.value = next.preset;
+			scale.value = String(next.renderScale);
+			shadows.value = next.shadows;
+		};
+		preset.onchange = () => preset.value !== 'custom' && setGraphics({ ...graphicsPresets[preset.value as 'low' | 'medium' | 'high'] });
+		scale.onchange = () => setGraphics({ ...this.graphics, preset: 'custom', renderScale: +scale.value });
+		shadows.onchange = () => setGraphics({ ...this.graphics, preset: 'custom', shadows: shadows.value as Graphics['shadows'] });
 		box.append(
+			el('label', {}, 'Graphics', preset),
+			el('label', { class: 'scale-label' }, 'Render scale', scale),
+			el('label', {}, 'Shadows', shadows),
+			el('div', { class: 'settings-gap' }),
+			el('div', { class: 'settings-gap' }),
 			el('label', {}, 'Mode', mode),
 			el('label', {}, 'Length (s)', length),
 			el('label', {}, 'Countdown (s)', countdown),
@@ -1148,6 +1210,7 @@ class PracticeRoom {
 			el('label', { class: 'execute-label' }, 'Execute range', execute),
 			apply,
 		);
+		this.tooltip.attach(box.querySelector('.scale-label') as HTMLElement, () => ({ kind: 'lines', title: 'Render scale', lines: ['Lower draws fewer pixels, for more FPS'] }));
 		this.tooltip.attach(box.querySelector('.execute-label') as HTMLElement, () => ({ kind: 'lines', title: 'Execute range', lines: ['The dummy is under 20% health from the start'] }));
 	}
 
@@ -1375,11 +1438,14 @@ class PracticeRoom {
 	// showGains shows the buffs you gain on the combat text ("+Flurry"). The first update of a
 	// session only learns what you have.
 	showGains(auras: AuraState[]) {
-		const key = (a: AuraState) => `${a.spellId ?? ''}:${a.itemId ?? ''}:${a.label}`;
+		const key = auraKey;
 		const now = new Set(auras.map(key));
 		const seen = this.aurasSeen;
 		this.aurasSeen = now;
-		if (!seen) return;
+		if (!seen) {
+			for (const a of auras) if (a.expiresAt === undefined) this.settingAuras.add(key(a));
+			return;
+		}
 		for (const a of auras) {
 			// The same auras the buff frame shows.
 			if (seen.has(key(a)) || !a.label || (a.expiresAt === undefined && !((a.spellId ?? 0) > 0))) continue;
@@ -1447,7 +1513,14 @@ class PracticeRoom {
 
 	frame(t: number) {
 		requestAnimationFrame(tt => this.frame(tt));
+		const perf = this.loadingModels ? undefined : this.perf;
+		perf?.begin(t);
+		// The frames' rects for the combat text, read before this frame changes the page, so the
+		// browser doesn't lay it out twice.
+		const rect = (s: string) => (this.hud.querySelector(s) as HTMLElement).getBoundingClientRect();
+		const sctRects = this.sct && { zone: rect('.combat-text'), player: rect('.player-frame'), target: this.hud.querySelector('.target-frame.hidden') ? undefined : rect('.target-frame'), history: rect('.history').bottom, buffs: rect('.buffs').bottom };
 		this.drainInbox();
+		perf?.part('inbox');
 		this.frameTimes.push(t);
 		while (this.frameTimes[0] < t - 1000) this.frameTimes.shift();
 		const dt = this.lastFrame ? Math.min(0.1, (t - this.lastFrame) / 1000) : 0;
@@ -1467,15 +1540,17 @@ class PracticeRoom {
 			this.listenerPos.y += 2;
 			this.sounds.place(this.listenerPos, this.room.camera);
 		}
+		perf?.part('move');
 		this.animateUnits(dt, wall);
+		perf?.part('units');
 		this.room.render();
+		perf?.part('render');
 		this.updateHud();
 		this.drawStats(t);
-		if (this.sct) {
-			const r = (s: string) => (this.hud.querySelector(s) as HTMLElement).getBoundingClientRect();
-			const target = this.hud.querySelector('.target-frame.hidden') ? undefined : r('.target-frame');
-			this.sct.draw(this.u, r('.player-frame'), target, r('.history').bottom, r('.buffs').bottom);
-		}
+		perf?.part('hud');
+		if (this.sct && sctRects) this.sct.draw(this.u, sctRects.zone, sctRects.player, sctRects.target, sctRects.history, sctRects.buffs);
+		perf?.part('sct');
+		perf?.end();
 	}
 
 	// ---- the models' animations ----
@@ -1832,7 +1907,12 @@ class PracticeRoom {
 			q('.target-frame .name').textContent = this.target.name;
 			this.renderAuras(q('.target-frame .debuffs'), this.target.debuffs ?? [], now, 'debuff');
 		}
-		if (p) this.renderAuras(q('.buffs'), (p.auras ?? []).filter(a => a.expiresAt !== undefined || (a.spellId ?? 0) > 0), now, 'buff');
+		if (p) {
+			const buffs = (p.auras ?? []).filter(a => a.expiresAt !== undefined || (a.spellId ?? 0) > 0);
+			const fixed = (a: AuraState) => a.expiresAt === undefined && this.settingAuras.has(auraKey(a));
+			this.renderAuras(q('.buffs .fixed'), buffs.filter(fixed), now, 'buff');
+			this.renderAuras(q('.buffs .timed'), buffs.filter(a => !fixed(a)), now, 'buff');
+		}
 		this.updateNameplate(now);
 		this.drawHistory(now);
 
@@ -2045,6 +2125,23 @@ class PracticeRoom {
 			}
 		}
 	}
+}
+
+const graphicsKey = 'practice.graphics';
+
+// readGraphics gives the graphics settings saved in this browser, or High.
+function readGraphics(): Graphics {
+	try {
+		const saved = JSON.parse(localStorage.getItem(graphicsKey) ?? 'null');
+		if (saved && typeof saved.renderScale === 'number') return { ...graphicsPresets.high, ...saved };
+	} catch {
+		// Nothing saved.
+	}
+	return { ...graphicsPresets.high };
+}
+
+function auraKey(a: AuraState): string {
+	return `${a.spellId ?? ''}:${a.itemId ?? ''}:${a.label}`;
 }
 
 function withModsName(base: string, mods: Modifiers): string {

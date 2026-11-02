@@ -30,8 +30,18 @@ function capsule(radius: number, height: number, color: number): THREE.Group {
 
 const totemColors: Record<string, number> = { earth: 0x8b5a2b, fire: 0xd8442a, water: 0x2a7bd8, air: 0xc8d8f0 };
 
+// The graphics settings, with presets like the game's.
+export type Graphics = { preset: 'low' | 'medium' | 'high' | 'custom'; renderScale: number; shadows: 'off' | 'low' | 'medium' | 'high' };
+
+export const graphicsPresets: Record<'low' | 'medium' | 'high', Graphics> = {
+	low: { preset: 'low', renderScale: 0.75, shadows: 'off' },
+	medium: { preset: 'medium', renderScale: 1, shadows: 'low' },
+	high: { preset: 'high', renderScale: 1, shadows: 'high' },
+};
+
 export class Room {
 	readonly renderer: THREE.WebGLRenderer;
+	private readonly sun: THREE.DirectionalLight;
 	readonly scene = new THREE.Scene();
 	readonly camera: THREE.PerspectiveCamera;
 	readonly player: THREE.Group;
@@ -67,11 +77,17 @@ export class Room {
 		// Lambert divides by pi, so the intensities carry a pi.
 		this.scene.add(new THREE.AmbientLight(0xffffff, 0.45 * Math.PI));
 		const sun = new THREE.DirectionalLight(0xfff2e0, 0.75 * Math.PI);
-		sun.position.set(30, 60, 20);
+		this.sun = sun;
 		sun.castShadow = true;
-		sun.shadow.camera.left = sun.shadow.camera.bottom = -40;
-		sun.shadow.camera.right = sun.shadow.camera.top = 40;
-		this.scene.add(sun);
+		// The shadows cover 50 yards around you and follow you, so their pixels stay small. The
+		// biases keep a surface from shadowing itself in stripes.
+		sun.shadow.camera.left = sun.shadow.camera.bottom = -25;
+		sun.shadow.camera.right = sun.shadow.camera.top = 25;
+		sun.shadow.camera.near = 1;
+		sun.shadow.camera.far = 160;
+		sun.shadow.bias = -0.0005;
+		sun.shadow.normalBias = 0.04;
+		this.scene.add(sun, sun.target);
 
 		const ground = new THREE.Mesh(new THREE.CircleGeometry(120, 64), new THREE.MeshStandardMaterial({ color: 0x5f7d3f, roughness: 1 }));
 		ground.rotation.x = -Math.PI / 2;
@@ -237,6 +253,32 @@ export class Room {
 	}
 
 	render() {
+		const p = this.player.position;
+		this.sun.target.position.copy(p);
+		this.sun.position.set(p.x + 30, p.y + 60, p.z + 20);
 		this.renderer.render(this.scene, this.camera);
+	}
+
+	// setGraphics applies the graphics settings: the render scale and the shadows.
+	setGraphics(g: Graphics) {
+		this.renderer.setPixelRatio(window.devicePixelRatio * g.renderScale);
+		this.resize();
+		const shadows = g.shadows !== 'off';
+		const size = g.shadows === 'high' ? 4096 : g.shadows === 'medium' ? 2048 : 1024;
+		const type = g.shadows === 'low' ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
+		if (shadows !== this.renderer.shadowMap.enabled || type !== this.renderer.shadowMap.type) {
+			this.renderer.shadowMap.enabled = shadows;
+			this.renderer.shadowMap.type = type;
+			// The materials compile again with or without shadows.
+			this.scene.traverse(o => {
+				const m = (o as THREE.Mesh).material;
+				for (const x of Array.isArray(m) ? m : m ? [m] : []) x.needsUpdate = true;
+			});
+		}
+		if (this.sun.shadow.mapSize.width !== size) {
+			this.sun.shadow.mapSize.set(size, size);
+			this.sun.shadow.map?.dispose();
+			this.sun.shadow.map = null;
+		}
 	}
 }

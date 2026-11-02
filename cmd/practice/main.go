@@ -52,7 +52,7 @@ func main() {
 	flag.Parse()
 
 	s := &server{home: *data, repo: *repo, dist: filepath.Join(*repo, "dist", "practice")}
-	for _, dir := range []string{"attempts", "settings"} {
+	for _, dir := range []string{"attempts", "settings", "perf"} {
 		if err := os.MkdirAll(filepath.Join(s.home, dir), 0o755); err != nil {
 			log.Fatal(err)
 		}
@@ -98,6 +98,7 @@ func (s *server) routes() http.Handler {
 	mux.HandleFunc("POST /api/attempts", s.handleSaveAttempt)
 	mux.HandleFunc("GET /api/attempts/{id}", s.handleGetAttempt)
 	mux.HandleFunc("POST /api/replay", s.handleReplay)
+	mux.HandleFunc("POST /api/perf", s.handleSavePerf)
 	mux.HandleFunc("GET /api/assets/{fdid}", s.handleAsset)
 	mux.HandleFunc("POST /api/assets/batch", s.handleAssetBatch)
 	mux.HandleFunc("GET /api/visuals/spell/{spellId}", s.handleSpellVisual)
@@ -440,6 +441,31 @@ func (s *server) handleSaveAttempt(w http.ResponseWriter, r *http.Request) {
 	rand.Read(suffix)
 	id := time.Now().Format("20060102-150405") + "-" + hex.EncodeToString(suffix)
 	if err := os.WriteFile(filepath.Join(s.home, "attempts", id+".json"), body, 0o644); err != nil {
+		writeError(w, http.StatusInternalServerError, err)
+		return
+	}
+	writeJSON(w, map[string]string{"id": id})
+}
+
+// handleSavePerf keeps the page's performance report of a fight (ui/practice/perf.ts) in
+// perf/, so we can look for what makes the room stutter.
+func (s *server) handleSavePerf(w http.ResponseWriter, r *http.Request) {
+	body, err := io.ReadAll(io.LimitReader(r.Body, 64<<20))
+	if err != nil {
+		writeError(w, http.StatusBadRequest, err)
+		return
+	}
+	var report struct {
+		Version int `json:"version"`
+	}
+	if err := json.Unmarshal(body, &report); err != nil || report.Version != 1 {
+		writeError(w, http.StatusBadRequest, errors.New("not a performance report"))
+		return
+	}
+	suffix := make([]byte, 3)
+	rand.Read(suffix)
+	id := time.Now().Format("20060102-150405") + "-" + hex.EncodeToString(suffix)
+	if err := os.WriteFile(filepath.Join(s.home, "perf", id+".json"), body, 0o644); err != nil {
 		writeError(w, http.StatusInternalServerError, err)
 		return
 	}

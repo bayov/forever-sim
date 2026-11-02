@@ -97,6 +97,7 @@ export class UnitView {
 	private mainHandEmpty = true;
 	// The body turns toward where you move (strafing runs sideways), relative to the facing.
 	private bodyYaw = 0;
+	private twists = false;
 	private timers: { at: number; fn: () => void }[] = [];
 	// What happens when the swing in progress connects (its $HIT): the impact sound and the
 	// target's flinch. A hit whose swing never gets there goes off at its deadline.
@@ -115,6 +116,8 @@ export class UnitView {
 	// load loads the model with everything on it (textures, gear, weapons) and swaps out the
 	// capsule only once it's all there.
 	async load(a: Appearance) {
+		// A character in gear twists its chest on a strafe. A creature (the Ghost Wolf) turns whole.
+		this.twists = !!a.attachments?.length;
 		await prefetch([a.model, ...(a.attachments ?? []).map(x => x.model), ...(a.collections ?? []).map(x => x.model)]);
 		const model = await Model.load(a.model);
 		const waits: Promise<unknown>[] = [];
@@ -341,13 +344,15 @@ export class UnitView {
 		// Auto attack on draws the weapons, the way the client does when you start attacking.
 		if (combat && !this.drawn && this.drawing === undefined) this.setDrawn(true, true);
 
-		// The client turns the body toward where you move and runs: 45 degrees on a diagonal, 90 on
-		// a strafe. Backing up diagonally, the body faces away from where it goes.
+		// The model has no sideways run, so the client turns the legs toward where you move and
+		// twists the upper body back to where you face: 45 degrees on a diagonal, 90 on a strafe.
+		// Backing up diagonally, the legs face away from where they go.
 		if (!motion.airborne) {
 			const target = !moving ? 0 : back ? Math.atan2(-motion.left, -motion.forward) : Math.atan2(motion.left, motion.forward);
 			this.bodyYaw += angleTo(this.bodyYaw, target) * Math.min(1, dt * 12);
 		}
 		m.root.rotation.y = this.bodyYaw;
+		m.twist = this.twists ? -this.bodyYaw : 0;
 
 		if (motion.airborne) {
 			if (!this.wasAirborne) {

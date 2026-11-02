@@ -134,6 +134,11 @@ type BatchMaterial = {
 const rightFingers = [8, 9, 10, 11, 12];
 const leftFingers = [13, 14, 15, 16, 17];
 
+const upAxis = new THREE.Vector3(0, 1, 0);
+const twistQ = new THREE.Quaternion();
+const parentQ = new THREE.Quaternion();
+const twistAxis = new THREE.Vector3();
+
 export class Model {
 	readonly root = new THREE.Group();
 	readonly mesh: THREE.SkinnedMesh;
@@ -159,6 +164,10 @@ export class Model {
 	private billboards: number[] = [];
 	// The camera that billboards face.
 	static camera?: THREE.Camera;
+	// twist turns the upper body (the lower spine and up) around the model's up axis, in radians.
+	// A strafe turns the legs where you run and twists the chest back to where you face.
+	twist = 0;
+	private spineBone = -1;
 	private events = new Map<number, { id: string; data: number; time: number }[] | null>();
 	// onEvent hears the animations' events as they pass ($HIT, $CSS, $FSD footsteps, $SHL...).
 	// upper says it came from the upper body's animation (a swing while running).
@@ -192,6 +201,15 @@ export class Model {
 		this.mesh = new THREE.SkinnedMesh(geometry, materials);
 		this.mesh.frustumCulled = false;
 		this.mesh.castShadow = true;
+		// Only the solid parts cast shadows. A glow or a see-through layer (a totem's aura, an
+		// effect's flash) would darken the ground in a big square.
+		const solid = skin.batches.map(batch => (m2.materials[batch.material]?.blend ?? 0) <= 1);
+		this.mesh.onBeforeShadow = (_r, _o, _c, _sc, _g, depthMaterial, group) => {
+			depthMaterial.depthWrite = solid[(group as unknown as { materialIndex?: number } | null)?.materialIndex ?? 0] ?? true;
+		};
+		this.mesh.onAfterShadow = (_r, _o, _c, _sc, _g, depthMaterial) => {
+			depthMaterial.depthWrite = true;
+		};
 
 		this.bones = m2.bones.map(() => new THREE.Bone());
 		m2.bones.forEach((b, i) => {
@@ -216,6 +234,7 @@ export class Model {
 		// moves while the legs keep running.
 		this.upper = m2.bones.map(() => false);
 		const spine = m2.keyBoneLookup[4];
+		this.spineBone = spine ?? -1;
 		if (spine !== undefined && spine >= 0) {
 			for (let i = 0; i < m2.bones.length; i++) {
 				for (let p = i; p >= 0; p = m2.bones[p].parent) {
@@ -245,11 +264,20 @@ export class Model {
 		this.base = this.playing(Anim.Stand, { loop: true });
 	}
 
+	// onLoad hears how long each model took to build (parse and set up, not the file fetch), for
+	// the performance recorder.
+	static onLoad?: (fdid: number, ms: number) => void;
+
 	static async load(fdid: number): Promise<Model> {
-		const m2 = new M2(await file(fdid));
+		const data = await file(fdid);
+		const t0 = performance.now();
+		const m2 = new M2(data);
 		if (m2.skins.length === 0) throw new Error(`model ${fdid} has no skin`);
-		const skin = new Skin(await file(m2.skins[0]));
+		const skinData = await file(m2.skins[0]);
+		const t1 = performance.now();
+		const skin = new Skin(skinData);
 		const model = new Model(m2, skin);
+		Model.onLoad?.(fdid, performance.now() - t1 + (t1 - t0));
 		await Promise.all([model.loadAnim(model.base.seq), ...model.loading]);
 		model.base.source = model.ready.get(model.base.seq);
 		model.update(0);
@@ -677,6 +705,14 @@ export class Model {
 			const bone = this.bones[i];
 			bone.position.set(b.pivot[0] - (parent?.[0] ?? 0) + s.t[0], b.pivot[1] - (parent?.[1] ?? 0) + s.t[1], b.pivot[2] - (parent?.[2] ?? 0) + s.t[2]);
 			bone.quaternion.set(s.r[0], s.r[1], s.r[2], s.r[3]);
+			if (i === this.spineBone && this.twist !== 0) {
+				// The twist is around the model's up (y, since the bones are in Three's frame). The
+				// parent bones lean in the run, so we turn that axis into the parent's frame.
+				parentQ.identity();
+				for (let p = b.parent; p >= 0; p = m2.bones[p].parent) parentQ.premultiply(this.bones[p].quaternion);
+				twistAxis.copy(upAxis).applyQuaternion(parentQ.invert());
+				bone.quaternion.premultiply(twistQ.setFromAxisAngle(twistAxis, this.twist));
+			}
 			bone.scale.set(s.s[0], s.s[1], s.s[2]);
 		}
 		if (base.source) this.posed = true;

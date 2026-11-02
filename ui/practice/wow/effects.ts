@@ -4,7 +4,7 @@
 // glow on your weapon, the totems' own models, and the swing and impact sounds of melee.
 
 import * as THREE from 'three';
-import { prefetch } from './files';
+import { prefetch, texture } from './files';
 import { Model } from './model';
 import { Playing, SoundRef, Sounds } from './sound';
 import type { UnitView } from './unit';
@@ -217,7 +217,15 @@ export class Effects {
 		await Promise.all([
 			...[...models].map(fdid =>
 				Model.load(fdid)
-					.then(m => m.dispose())
+					.then(m => {
+						// The particles' textures load when the effect first plays, so load them now.
+						const loads = m.m2.particles.map(e => {
+							const tex = m.m2.textures[e.flags & 0x10000000 ? e.texture & 0x1f : e.texture];
+							return tex && tex.type === 0 && tex.fdid > 0 ? texture(tex.fdid, false, false).catch(() => undefined) : undefined;
+						});
+						m.dispose();
+						return Promise.all(loads);
+					})
 					.catch(e => console.warn('effect model', fdid, e)),
 			),
 			this.sounds.preload(sounds),

@@ -1117,6 +1117,16 @@ rendering, not the sim.
   off hand imbue glow, the Searing Totem's bolts (precast, missile, impact, `HitEvent.nextAt`), Magma pulses and
   Fire Nova's ring on the fire totem, totem birth and death, the totems' buffs on you, and the Ghost Wolf model.
   An impact on a spell's area plays at the totem, not the dummy, and Totemic Recall takes the models away.
+- Strafing turns the legs where you run and twists the upper body back to where you face (the lower spine
+  turns, `Model.twist`). Holding both mouse buttons runs forward and still steers.
+- Buffs from the fight settings that never run out sit on their own rows, the fight's buffs under them.
+- Graphics settings with Low, Medium and High presets: render scale and shadows (off, or 1024 to 4096 pixel maps
+  that follow you). Glows and see-through layers cast no shadow. Particles on a texture with no see-through part
+  fade to a round edge instead of drawing squares, and wait for their texture.
+- The game's cursors from the client (`Interface\Cursor\Point.blp` and `Attack.blp`).
+- A performance recorder (`ui/practice/perf.ts`) times each part of every frame, notes models built and shaders
+  compiled mid fight, long tasks, Chrome's long animation frames and garbage collections, and saves a report to
+  `~/forever-practice/perf/` when a fight ends.
 - Combat text scrolls like the Replay view's (MSBT): what you do goes up from the target's frame, buffs you gain go
   down to your frame, crits pop up and stay put (`ui/practice/sct.ts`).
 - Particles: packed gravity, key times, sphere emitters, spin, colors, blend modes and model scale. Rendering:
