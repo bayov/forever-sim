@@ -58,6 +58,8 @@ export class Room {
 	totemModel?: (element: string) => Promise<Model | undefined>;
 	private readonly raycaster = new THREE.Raycaster();
 	private readonly pickable: THREE.Object3D[] = [];
+	private readonly ground: THREE.Mesh;
+	private readonly grid: THREE.GridHelper;
 	private playerHeight: number;
 
 	constructor(
@@ -96,9 +98,11 @@ export class Room {
 		ground.receiveShadow = true;
 		ground.name = 'ground';
 		this.scene.add(ground);
+		this.ground = ground;
 		const grid = new THREE.GridHelper(120, 60, 0x3d5228, 0x4a6431);
 		grid.position.y = 0.01;
 		this.scene.add(grid);
+		this.grid = grid;
 
 		this.dummy = capsule(dummyReach * 0.5, dummyHeight, 0x9c7a4f);
 		this.scene.add(this.dummy);
@@ -214,6 +218,16 @@ export class Room {
 		if (look.y > 0) distance = Math.min(distance, (head.y - 0.2) / look.y);
 		this.camera.position.copy(head).addScaledVector(look, -distance);
 		this.camera.lookAt(head);
+	}
+
+	// setTerrain puts the client's ground in place of the plain one. The plain disc stays, unseen,
+	// as the flat ground a click lands on. With hills in the distance we see further.
+	setTerrain(terrain: THREE.Object3D) {
+		this.scene.add(terrain);
+		(this.ground.material as THREE.Material).visible = false;
+		this.grid.visible = false;
+		this.scene.fog = new THREE.Fog(0x9fb4c8, 90, 240);
+		this.scene.background = new THREE.Color(0x9fb4c8);
 	}
 
 	// warmUp gets the fight's shaders and textures ready while the loading screen is up.
