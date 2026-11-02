@@ -26,7 +26,7 @@ def spec_for(m):
         base={'beast-mastery':'hunter_bm','lone-wolf':'hunter_lw','marksmanship':'hunter_mm','survival':'hunter_sv'}[rest.split('-duty')[0]]
         return base
     if c=='mage': return 'mage_'+rest
-    if c=='paladin': return 'ret_shock' if 'shock' in rest and 'shock_ret' not in rest else 'ret'
+    if c=='paladin': return 'ret'
     if c=='priest': return {'smite':'smite','shadow-holy':'shadow_holy'}.get(rest,'shadow')
     if c=='rogue':
         if rest.startswith('mutilate'): return 'rogue_assassination'

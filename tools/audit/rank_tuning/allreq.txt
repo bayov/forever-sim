@@ -13,9 +13,6 @@ mage__fire
 mage__frost
 mage__frostfire
 paladin__level_60
-paladin__level_60_shock-duty-crusader
-paladin__level_60_shock
-paladin__level_60_shock_undead
 paladin__level_60_sub_holy-duty-crusader
 paladin__level_60_sub_holy
 paladin__level_60_sub_holy_undead

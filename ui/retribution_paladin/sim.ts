@@ -144,10 +144,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			Presets.PresetBuildLevel60,
 			Presets.PresetBuildLevel60CrusaderDuty,
 			Presets.PresetBuildLevel60WisdomDuty,
-			Presets.PresetBuildLevel60Shock,
-			Presets.PresetBuildLevel60ShockUndead,
-			Presets.PresetBuildLevel60ShockCrusaderDuty,
-			Presets.PresetBuildLevel60ShockWisdomDuty,
 		],
 		rotations: Presets.APLPresets,
 		// Preset talents that the user can quickly select.

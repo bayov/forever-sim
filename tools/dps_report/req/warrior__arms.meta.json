@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms",
   "published": {
-    "dps": 999.2,
-    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
+    "dps": 1008.7,
+    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed for the two-hand Rage crit fix)"
   },
   "verify": {
-    "dps": 900.9,
-    "stderr": 0.4,
+    "dps": 1008.7,
+    "stderr": 0.46,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py of this request, 180s, seed 1"
+    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 \u00b1 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Two-hand Arms with Mortal Strike, Slam and Rend, plus Overpower after dodges and Bloodthrill procs.",
   "keyTalents": [

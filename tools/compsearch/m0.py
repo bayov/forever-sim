@@ -57,12 +57,9 @@ FREE_GIVERS = {
                           'shaman__enhancement-water-shield', 'shaman__enhancement-mana-tide'],
     'Weapon totem': ['shaman__enhancement-level60', 'shaman__enhancement-imp-gw',
                      'shaman__enhancement-water-shield', 'shaman__enhancement-mana-tide'],
-    'Kings': ['paladin__level_60', 'paladin__level_60_shock', 'paladin__level_60_shock_ret',
-              'paladin__level_60_sub_holy'],
-    'Might': ['paladin__level_60', 'paladin__level_60_shock', 'paladin__level_60_shock_ret',
-              'paladin__level_60_sub_holy'],
-    'Wisdom': ['paladin__level_60', 'paladin__level_60_shock', 'paladin__level_60_shock_ret',
-               'paladin__level_60_sub_holy'],
+    'Kings': ['paladin__level_60', 'paladin__level_60_shock_ret', 'paladin__level_60_sub_holy'],
+    'Might': ['paladin__level_60', 'paladin__level_60_shock_ret', 'paladin__level_60_sub_holy'],
+    'Wisdom': ['paladin__level_60', 'paladin__level_60_shock_ret', 'paladin__level_60_sub_holy'],
 }
 NO_PROVIDER_IN_M1 = {'Grace of Air', 'Judgement of Wisdom', 'Sunder Armor'}  # placeholders only (or M1b builds)
 

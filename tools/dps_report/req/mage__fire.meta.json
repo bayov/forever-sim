@@ -3,7 +3,7 @@
   "class": "Mage",
   "spec": "Fire",
   "build": "Fire",
-  "isDefault": true,
+  "isDefault": false,
   "pr": 98,
   "race": "Human",
   "talents": "0502052-55500201230133031-003",

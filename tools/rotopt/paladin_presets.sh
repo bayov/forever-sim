@@ -57,12 +57,5 @@ gen level60_undead "seal=2,jotc=0,consecration=1,consecrationFirst=0,consecratio
 gen level60_shock_ret "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
 gen level60_shock_ret_crusader_duty "seal=2,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
 gen level60_shock_ret_wisdom_duty "seal=2,jotc=2,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
-# Ret Shock (deep Holy) (level60_shock): Light's Vigil heals only since the hotfix, so the build is Holy
-# Shock on cooldown with Seal of Righteousness, now with Consecration first (+20.4 over after the seal
-# lines) and Hammer of Wrath above Holy Strike (+3.1). It ends long fights with mana to spare. Its
-# duties as Ret Shock's.
-gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
-gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
-gen level60_shock_wisdom_duty "seal=1,jotc=2,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
-# Ret Shock (deep Holy) vs Undead (level60_shock_undead): the same with Exorcism; the knob search kept it.
-gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,exorcism=1,holyWrathMana=100,swiftJudgement=0" -level 60
+# Ret Shock (deep Holy), the 31 point Holy Shock build (level60_shock, its duties and level60_shock_undead),
+# was dropped by the user's ruling (2026-11-02, "drop deep holy shock"); its rotations went with it.

@@ -422,26 +422,6 @@
 		"judgement_of_wisdom",
 		"trueshot_aura"
 	],
-	"paladin__level_60_shock": [
-		"trueshot_aura"
-	],
-	"paladin__level_60_shock+camps": [
-		"trueshot_aura"
-	],
-	"paladin__level_60_shock-duty-crusader": [
-		"trueshot_aura"
-	],
-	"paladin__level_60_shock-duty-crusader+camps": [
-		"trueshot_aura"
-	],
-	"paladin__level_60_shock-duty-wisdom": [
-		"judgement_of_wisdom",
-		"trueshot_aura"
-	],
-	"paladin__level_60_shock-duty-wisdom+camps": [
-		"judgement_of_wisdom",
-		"trueshot_aura"
-	],
 	"paladin__level_60_shock_ret": [
 		"trueshot_aura"
 	],
@@ -460,12 +440,6 @@
 	],
 	"paladin__level_60_shock_ret-duty-wisdom+camps": [
 		"judgement_of_wisdom",
-		"trueshot_aura"
-	],
-	"paladin__level_60_shock_undead": [
-		"trueshot_aura"
-	],
-	"paladin__level_60_shock_undead+camps": [
 		"trueshot_aura"
 	],
 	"paladin__level_60_sub_holy": [

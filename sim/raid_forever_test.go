@@ -359,15 +359,15 @@ func TestRaidForeverHealthFightVariation(t *testing.T) {
 // and the first one's bonus applied whoever judged. Two paladins on Crusader duty, one
 // without Libram of Fervor (161 instead of 194): the bonus on the boss is the last judge's.
 func TestRaidForeverJudgementOfTheCrusader(t *testing.T) {
-	strong := raidPlayer(t, "paladin__level_60_shock-duty-crusader")
-	weak := raidPlayer(t, "paladin__level_60_shock-duty-crusader")
+	strong := raidPlayer(t, "paladin__level_60_shock_ret-duty-crusader")
+	weak := raidPlayer(t, "paladin__level_60_shock_ret-duty-crusader")
 	weak.Equipment.Items[proto.ItemSlot_ItemSlotRanged] = &proto.ItemSpec{}
 	for _, order := range [][2]float64{{194, 161}, {161, 194}} {
 		players := []*proto.Player{googleProto.Clone(strong).(*proto.Player), googleProto.Clone(weak).(*proto.Player)}
 		if order[0] == 161 {
 			players[0], players[1] = players[1], players[0]
 		}
-		rsr := raidOf(t, "paladin__level_60_shock-duty-crusader", players, 3)
+		rsr := raidOf(t, "paladin__level_60_shock_ret-duty-crusader", players, 3)
 		rsr.Raid.Debuffs.JudgementOfTheCrusader = proto.TristateEffect_TristateEffectMissing
 		judged, bad := map[string]int{}, 0
 		core.EnvHooks = []func(env *core.Environment){func(env *core.Environment) {

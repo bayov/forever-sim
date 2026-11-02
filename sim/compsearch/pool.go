@@ -119,7 +119,6 @@ var leftOut = map[string]string{
 	"druid__balance-wrath":             "Balance is the Balance build",
 	"hunter__lone-wolf":                "Marksmanship is the Marksmanship build, and it gives Trueshot Aura",
 	"paladin__level_60":                "sub Holy is the Retribution build",
-	"paladin__level_60_shock":          "sub Holy is the Retribution build",
 	"paladin__level_60_shock_ret":      "sub Holy is the Retribution build",
 	"priest__shadow-holy":              "Level 60 is the Shadow build",
 	"rogue__combat-swords":             "Combat Daggers is the Combat build",

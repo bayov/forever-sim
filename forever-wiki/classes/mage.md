@@ -26,14 +26,15 @@ The four presets were re-searched on 2026-11-01 with these values, the druid cri
 |---|---|---|---|---|---|
 | Frost | `0502050030001-4-253500230111301211` | High Order (was Undead) | 927.0 → 945.3 | 929.3 → 944.9 | 925.6 → 937.6 |
 | Arcane | `050205203100211531-25-0535` | Gnome | 899.5 → 947.3 | 893.6 → 939.0 | 887.9 → 931.1 |
-| Fire (default) | `0502052-55500201230133031-003` (kept) | Human | 1065.6 | 1056.4 | 1039.9 |
-| Frostfire | `-2550030103013303-0235000311203002` (kept) | Human | 1078.6 | 1076.6 | 1055.7 |
+| Fire | `0502052-55500201230133031-003` (kept) | Human | 1065.6 | 1056.4 | 1039.9 |
+| Frostfire (default) | `-2550030103013303-0235000311203002` (kept) | Human | 1078.6 | 1076.6 | 1055.7 |
 
 - Frost goes to Ice Barrier (16/4/31): Frigid Power's 15% is up the whole fight (Ice Barrier before the pull and when Frigid Power has under 6 sec left), Arcane Blast and Missile Barrage give way to Incineration 4, and Ice Lance waits for the last Fingers of Frost charge as a Frostbolt completes (both read Frozen; +5 now that Ice Lance does 4 times). The old 28 Arcane build stayed where it was (927.3 at the three lengths together); Arcane Blast back in the Ice Barrier build at 1 to 4 stacks is 25 to 170 behind. High Order's 2% haste is 6 ahead of Undead at 180 sec, and its own knob and talent search kept the preset's.
 - Arcane: four stacks now cost 10 times one Arcane Blast (14.5 before), and the old build ended the fight with 6500 mana. Arcane Wrath on cooldown takes it, with Accelerant 5 and Incineration 2 for Incineration 5 and Frost Channeling 2, and Presence of Mind on Arcane Wrath (+10).
 - Fire: the talent search's Burning Soul 3 for Arcane Concentration 4 was +3.9 at 120 sec but -2.4 at 180, so the build stays. Frostfire and Fire kept every knob, Frostfire every talent; Frostfire with Ice Barrier (20 Fire / 31 Frost) runs dry at 998.
 - Races at 180 sec (best overall / Horde / Alliance): Frost High Order / Undead 938.8 / High Order; Arcane Gnome 939.0 (Undead 939.2 ties, the race stays) / Undead / Gnome; Fire Human 1056.4 (Gnome 1056.9 ties) / Undead 1053.7 / Human; Frostfire Human 1076.6 / Undead 1070.8 / Human. `ui/mage/presets.ts` has the full tables.
-- Frostfire is now 20 ahead of Fire at 180 sec (1076.6 against 1056.4), where Fire had been the default as the better build. The default stays Fire until that's decided.
+- Frostfire is now 20 ahead of Fire at 180 sec (1076.6 against 1056.4), where Fire had been the default as the better build.
+- **Frostfire is the mage default by the user's ruling (2026-11-02, "frostfire should be mage default")**, in place of Fire: the sim UI's default talents and rotation (`ui/mage/presets.ts`, the first build in the list) and the DPS Report's default mage build (`isDefault` in `tools/dps_report/req/mage__frostfire.meta.json`). Fire stays a preset.
 
 ## Client build 1.60.1.70707 (2026-10-30)
 

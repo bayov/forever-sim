@@ -8,13 +8,11 @@ import (
 
 func init() {
 	specs["ret"] = retSpec()
-	specs["ret_shock"] = retSpec() // the deep Holy Shock requests name it; the same setup since the October 30 hotfix
 }
 
-// retSpec is the Retribution setup. The deep Holy Shock builds (ret_shock) took the Major Mana
-// Potion until the October 30 hotfix; with Light's Vigil gone they end fights with mana to spare
-// and take the Dragonfire Potion like the rest (+5.3 to +6.0 at 120 / 180 / 300 sec on Shock and its
-// duties, +5.6 / +5.8 / -5.6 on Shock vs Undead), so both specs are the same now.
+// retSpec is the Retribution setup. The deep Holy Shock builds had a spec of their own (ret_shock)
+// for the Major Mana Potion until the October 30 hotfix made it the same as this one; they were
+// dropped by the user's ruling (2026-11-02), and the spec with them.
 func retSpec() *specSetup {
 	return &specSetup{
 		uiDir: "ui/retribution_paladin",

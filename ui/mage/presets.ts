@@ -159,7 +159,9 @@ export const APLPresets = {
 	[Phase.Phase1]: [APLLevel60Frostfire, APLLevel60Frost, APLLevel60Fire, APLLevel60Arcane],
 };
 
-export const DefaultAPL = APLLevel60Fire;
+// Frostfire is the mage default by the user's ruling (2026-11-02, "frostfire should be mage default"):
+// 1076.6 against Fire's 1056.4 at 180 sec (the DPS Report, 20000 iterations, seed 1). Fire stays a preset.
+export const DefaultAPL = APLLevel60Frostfire;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -247,8 +249,8 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Frost', SavedT
 // more than Improved Flamestrike and Blast Wave (1067.2) or Improved Channeling 2 (1067.1). It is
 // 1106.4 / 1101.0 / 1088.3 (Human, with the Greater Flame scroll; 1067.6 at 180 before the
 // hotfix, 1094.3 before the main set's hit went to the cap). Every Fire Blast adds a Heating Up
-// stack since 70425. Fire is the mage's default build since 2026-10-23: 3.4 to 4.6 ahead of
-// Frostfire at 180 sec on both seed sets. The talent search on the new gear kept every point.
+// stack since 70425. Fire was the mage's default build from 2026-10-23 (3.4 to 4.6 ahead of
+// Frostfire at 180 sec on both seed sets) to 2026-11-02, when Frostfire took it (DefaultAPL). The talent search on the new gear kept every point.
 // 70707 took Arcane Focus (4) and two Critical Mass points. The two are Incineration 5, and Arcane
 // row 1 still needs five points for Arcane Concentration: Improved Channeling 5 (pushback on
 // Missile Barrage's Arcane Missiles), with Burning Soul's third point (Wand Specialization and
@@ -286,7 +288,7 @@ export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60Frostfire, TalentsLevel60Frost, TalentsLevel60Fire, TalentsLevel60Arcane],
 };
 
-export const DefaultTalents = TalentsLevel60Fire;
+export const DefaultTalents = TalentsLevel60Frostfire;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
