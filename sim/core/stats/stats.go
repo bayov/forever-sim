@@ -479,6 +479,8 @@ type PseudoStats struct {
 	CanBlock bool
 	CanParry bool
 	CanCrush bool
+	// Under Forever, crit players at Classic's rate (Target.classic_crit).
+	ClassicCrit bool
 	Stunned  bool // prevents blocks, dodges, and parries
 
 	ParryHaste bool

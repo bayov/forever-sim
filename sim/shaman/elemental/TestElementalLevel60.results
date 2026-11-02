@@ -53,7 +53,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.30334
+  weights: 0.29789
   weights: 0
   weights: 0.79291
   weights: 0
@@ -64,7 +64,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 5.97043
+  weights: 5.96834
   weights: 0
   weights: 0
   weights: 0
@@ -99,136 +99,136 @@ stat_weights_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 729.39083
-  tps: 689.63962
+  dps: 729.27817
+  tps: 689.23616
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Champion'sStormcaller"
  value: {
-  dps: 777.86
-  tps: 735.19457
+  dps: 777.71783
+  tps: 734.65918
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Champion'sThunderfist"
  value: {
-  dps: 788.638
-  tps: 745.55926
+  dps: 788.692
+  tps: 745.30113
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Champion'sWartide"
  value: {
-  dps: 754.78167
-  tps: 713.45561
+  dps: 754.69917
+  tps: 712.94546
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 924.65467
-  tps: 873.84426
+  dps: 924.29633
+  tps: 872.93032
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 909.73183
-  tps: 859.507
+  dps: 909.49917
+  tps: 858.80449
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 916.38717
-  tps: 865.97174
+  dps: 916.02933
+  tps: 865.0578
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 940.31717
-  tps: 888.81947
+  dps: 939.95933
+  tps: 887.90553
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 749.97667
-  tps: 708.70766
+  dps: 750.04133
+  tps: 708.44098
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 819.232
-  tps: 774.55358
+  dps: 819.04333
+  tps: 773.8484
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 778.3835
-  tps: 735.59486
+  dps: 778.19117
+  tps: 735.0026
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 863.222
-  tps: 817.41971
+  dps: 863.11417
+  tps: 816.71754
   dtps: 1.91017
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 729.39083
-  tps: 689.63962
+  dps: 729.27817
+  tps: 689.23616
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 788.638
-  tps: 745.55926
+  dps: 788.692
+  tps: 745.30113
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 754.78167
-  tps: 713.45561
+  dps: 754.69917
+  tps: 712.94546
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 904.9765
-  tps: 855.27253
+  dps: 904.787
+  tps: 854.65215
   dtps: 1.916
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-TheEarthfury"
  value: {
-  dps: 697.51883
-  tps: 656.39117
+  dps: 697.4815
+  tps: 656.22301
   dtps: 1.806
  }
 }
@@ -236,15 +236,15 @@ dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-TheEarthshatterer"
  value: {
   dps: 659.69
-  tps: 620.49613
+  tps: 620.28722
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-TheFiveThunders"
  value: {
-  dps: 763.94333
-  tps: 720.01385
+  dps: 763.6815
+  tps: 720.10932
   dtps: 1.853
  }
 }
@@ -252,61 +252,61 @@ dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-TheTenStorms"
  value: {
   dps: 762.09117
-  tps: 718.0643
+  tps: 717.85988
   dtps: 1.78167
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 749.97667
-  tps: 708.70766
+  dps: 750.04133
+  tps: 708.44098
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 819.232
-  tps: 774.55358
+  dps: 819.04333
+  tps: 773.8484
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Warlord'sWartide"
  value: {
-  dps: 778.3835
-  tps: 735.59486
+  dps: 778.19117
+  tps: 735.0026
   dtps: 1.89983
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Average-Default"
  value: {
-  dps: 945.11096
-  tps: 892.12626
+  dps: 944.90622
+  tps: 891.56601
   dtps: 2.789
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 935.7395
-  tps: 883.26778
+  dps: 935.3785
+  tps: 882.47894
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 935.7395
-  tps: 883.26778
+  dps: 935.3785
+  tps: 882.47894
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-ShortSingleTarget"
  value: {
   dps: 1028.34583
-  tps: 990.81256
+  tps: 990.19493
  }
 }
 dps_results: {
@@ -333,22 +333,22 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 926.29533
-  tps: 874.34612
+  dps: 926.00233
+  tps: 873.5962
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 926.29533
-  tps: 874.34612
+  dps: 926.00233
+  tps: 873.5962
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-ShortSingleTarget"
  value: {
   dps: 1011.09333
-  tps: 974.53488
+  tps: 973.91724
  }
 }
 dps_results: {
@@ -375,8 +375,8 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 940.31717
-  tps: 888.81947
+  dps: 939.95933
+  tps: 887.90553
   dtps: 1.89983
  }
 }

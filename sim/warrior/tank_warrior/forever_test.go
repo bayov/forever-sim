@@ -15,6 +15,11 @@ import (
 // newForeverTank builds a level 60 Orc warrior in Defensive Stance with a sword and a shield and
 // no rotation.
 func newForeverTank(t *testing.T, talents string) (*core.Simulation, *warrior.Warrior) {
+	return newForeverTankOf(t, talents, false)
+}
+
+// newForeverTankOf is newForeverTank, with the boss attacking the warrior when tanked.
+func newForeverTankOf(t *testing.T, talents string, tanked bool) (*core.Simulation, *warrior.Warrior) {
 	items := make([]*proto.ItemSpec, 17)
 	for i := range items {
 		items[i] = &proto.ItemSpec{}
@@ -30,8 +35,12 @@ func newForeverTank(t *testing.T, talents string) (*core.Simulation, *warrior.Wa
 		Rotation:      &proto.APLRotation{},
 		Spec:          PlayerOptionsBasic,
 	}
+	raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{})
+	if tanked {
+		raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+	}
 	sim := core.NewSim(&proto.RaidSimRequest{
-		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Raid:       raid,
 		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
 		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
 	}, simsignals.CreateSignals())
@@ -146,7 +155,7 @@ func TestForeverShieldSlamIsOffHand(t *testing.T) {
 // and block (0.2% a level), the boss crits only by the level gap (0.6%, so 15 Defense stops it
 // instead of Classic's 140), and crushes 15%.
 func TestForeverTankSheet(t *testing.T) {
-	sim, war := newForeverTank(t, "")
+	sim, war := newForeverTankOf(t, "", true)
 	boss := sim.Encounter.TargetUnits[0]
 	sheet := core.TankSheet(&war.Unit, boss)
 
@@ -181,6 +190,20 @@ func TestForeverTankSheet(t *testing.T) {
 	near("Defense to stop crits at 327", more.DefenseCritImmune, 315)
 	near("Miss at 327 Defense", more.Miss, 0.044+0.0108)
 	near("Coverage at 320 Defense", more.Coverage-sheet.Coverage, 4*0.008)
+
+	// The test boss swings 4192.05 to 5589.3 before its 320 attack power (4192.05 * 320 / 2478 on
+	// top), and at 327 Defense it can no longer crit, so its biggest swing is a crushing blow.
+	top := 4192.05 * (1.3333 + 320.0/(14*177))
+	near("Biggest hit", more.BiggestHit, top*1.5*(1-more.ArmorReduction)*war.PseudoStats.DamageTakenMultiplier)
+	near("Biggest hit while it can crit", sheet.BiggestHit, top*2*(1-sheet.ArmorReduction)*war.PseudoStats.DamageTakenMultiplier)
+
+	// With Classic's crit (Target.classic_crit) the boss crits 5.6% less our Defense past 300, and
+	// 440 Defense stops it.
+	boss.PseudoStats.ClassicCrit = true
+	classic := core.TankSheet(&war.Unit, boss)
+	near("Classic crit at 327 Defense", classic.Crit, 0.056-27*0.0004)
+	near("Classic Defense to stop crits", classic.DefenseCritImmune, 440)
+	boss.PseudoStats.ClassicCrit = false
 
 	// Our side: 8% special miss against a level 63 boss with no hit (Forever has no hit
 	// suppression), and the boss dodges and parries by its Defense over our weapon skill.

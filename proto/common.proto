@@ -1059,10 +1059,15 @@ message Target {
 	// Seconds. When set, the mob turns to the next tank in Raid.tanks every this many seconds,
 	// starting with tank_index and skipping dead ones, as a boss whose debuff stacks or knockback
 	// make the tanks trade it. See docs/healing_sim.md.
-	double tank_swap_seconds = 15;
+	double tank_swap_seconds = 16;
 
 	// Custom Target AI parameters
 	repeated TargetInput target_inputs = 14;
+
+	// Under Forever, crit players at Classic's rate (5% plus 0.2% a level above them) instead of
+	// Forever's (0.2% a level above them, from the leveling logs). For a raid boss until Forever's
+	// boss crit is measured (docs/tank_sim.md, Forever's boss crit).
+	bool classic_crit = 15;
 }
 
 message Encounter {

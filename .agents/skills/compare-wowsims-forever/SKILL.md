@@ -178,7 +178,7 @@ As of 2026-11-02, on the report's requests: the hunter and rogue rows with ours 
 warrior rows with ours at 7587a1a and theirs at 895cd67f99, the shaman rows with ours at dfa3b4a and theirs at 1496ed4db5. The four pet rows (two since settled) add up to the BM cat's whole
 pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). The warrior rows add up to Arms' whole
 gap and leave 4 DPS of Fury's and Fury 2H's unexplained. The shaman rows add up to Enhancement's whole gap (33 to 37 DPS
-on the four presets) and Elemental's (5 to 6) within 3 DPS. Engine timing (when each engine re-checks the rotation, Heroic Strike
+on the four presets) within about 2 DPS and Elemental's (5 to 6) within 2, Lava Burst's extra casts in theirs left over. Engine timing (when each engine re-checks the rotation, Heroic Strike
 1.4 casts more in ours on Arms) moves casts but nets about 0 DPS once the Windfury rule below is matched. A rerun should find
 these, so it can tell what is new. Keep the list current when one is settled.
 
@@ -212,6 +212,10 @@ these, so it can tell what is new. Keep the list current when one is settled.
 | Haste and the GCD | 1.5 s (`haste_gcd`) | Spell haste shortens it (their TBC code) | Report assumption. Elemental 2.6, Enhancement 0.9 DPS for theirs |
 | Magma Totem's last pulse | A 40 s totem pulses 20 times | About 19, by the counts (84 pulses a fight against our 89) | Engine timing, no log either way. About 3 DPS on Enhancement |
 | Greater Blessing of Might and Wisdom | Rank 2's 133 attack power and 40 MP5, a trainer rank (standards 8a) | Rank 1's 112 and 36, rank 2 counted as a book rank (b6657d3824, no item teaches it) | Ruling. `align.py` closes it (21 attack power, 4 MP5) |
+| Blood Fury's weapon damage | +10% of the weapon's average damage beside the +10% attack power (beta sheets and logs, `racials_forever.go`) | Attack power only, as the client's three auras read | Ours on evidence (their bug, not reported). 2.9 DPS on Orc Enhancement |
+| Crusader beside Windfury Weapon's strikes | Holy Strength lands at once, so the triggering hit's proc reaches both strikes | 10 ms later (no `TriggerImmediately`), after the strikes | Open, notes.md's "Server batch window". 0.6 DPS on Enhancement |
+| Lightning Overload's copies | Procs since 2026-11-02 (Judgement of Wisdom, Elemental Devastation and Water Shield don't hear them) | The same | Settled (ours was a bug, the client's proc attributes). About 0.1 DPS on Elemental |
+| Lava Burst casts on Elemental | 13.7 a fight | 14.5, not from the hasted GCD | Unexplained, about 200 mana and a few DPS |
 | Orc shaman base stats | 96 Stamina, 89 Intellect, 100 Spirit | 97, 87, 103 | Race offset ruling. `align.py` closes it |
 | Synthetic sets' 2 piece (1% attack speed) | Live | Registered by `cmpsim` (warrior head 991001, 991019, Enhancement hands 990007) | A translation: without it theirs was 5 to 8 DPS low |
 | Undead base stats | 82 Str, 129 Agi | 79, 128 | Race offset ruling. `align.py` closes it |

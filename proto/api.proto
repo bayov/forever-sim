@@ -474,6 +474,11 @@ message TankSheet {
 	double boss_parry = 20;
 	// The chance a spell misses the boss.
 	double spell_miss = 21;
+
+	// The boss's biggest white swing on us: the top of its damage range, a crit if it can crit us,
+	// else a crushing blow, through armor and damage taken. At health or over, one swing kills us
+	// from full and no healing helps.
+	double biggest_hit = 22;
 }
 
 // How often a player or pet passed the tank's threat on the boss, over the iterations.

@@ -6,10 +6,20 @@ to dying. This comes before the raid sim's simmed tanks ([raid_sim.md](raid_sim.
 replace its 700 TPS stand-in.
 
 **Where it stands (2026-11-02):** the engine reports a tank sheet with the thresholds tanks gear for, and
-`tools/tankbench` sims tank builds against the report's boss with a stand-in healer. Two builds run
-(Protection warrior and paladin, both on Classic pre-raid plate). Next comes the rules audit, then tank
-gear and rotations. The open decision is how a build trades threat for survival (see [Open
-decisions](#open-decisions)).
+`tools/tankbench` sims tank builds against the report's boss with a stand-in healer and finds each build's
+healing needed. Two builds run (Protection warrior and paladin, both on Classic pre-raid plate). Next comes
+the rules audit, then tank gear and rotations. Real healers come from the healing sim
+([healing_sim.md](healing_sim.md)).
+
+## The user's rulings (2026-11-02)
+
+- **Threat against survival:** weights, with 2 or 3 presets along the curve ("Max threat", "Balanced", "Max
+  survival"), like the PvP High HP preset. No death chance floor.
+- **The survival score:** healing needed (see [Scoring survival](#scoring-survival)). The user: "sometimes no
+  amount of healing will work, if tank can be one-shotted". So the bench also reports the boss's biggest hit
+  and the death floor, and a build that dies too often whatever the healing says so.
+- **Forever's boss crit:** audit which rule is more likely and go with it until a log confirms it. The audit
+  below picks Forever's 0.6%.
 
 ## What tanks gear for
 
@@ -18,7 +28,7 @@ what our engine does under Forever. Chances are against a level 63 boss.
 
 | Threshold | Classic | What it means | Forever in our sim |
 |---|---|---|---|
-| Crit immune | 440 Defense (5.6% crit, 0.04% a point) | crits do double damage, the main spike | **315 Defense** (the boss crits 0.6%, see below) |
+| Crit immune | 440 Defense (5.6% crit, 0.04% a point) | crits do double damage, the main spike | **315 Defense** (the boss crits 0.6%, see below), 440 with `classic_crit` |
 | Uncrushable | miss + dodge + parry + block ≥ 102.4% on the sheet | a crushing blow does 150%, 15% of swings | the same: the sheet's coverage at 100% (our chances already take off the 0.6% a stat for the level gap) |
 | Crush chance | 15% from a boss 3 levels up, none from 60 to 62 | | 15% at +3, none below |
 | Armor cap | 75% at 17,265 armor | A / (A + 400 + 85 × 63) | the same, capped since 2026-11-02 |
@@ -42,14 +52,36 @@ be uncrushable and leans on armor and health. TBC's own caps (490 Defense, exper
 
 ### Forever's boss crit
 
-**Our sim gives a level 63 boss 0.6% crit against a player, not Classic's 5.6%** (`sim/core/target.go`,
-`newWeaponAttackTable`). The rule comes from the user's leveling logs. In them, about 2,900 swings from mobs
-at or under our level never crit, and mobs 1 to 5 levels above crit 4 times in 745 swings. Raid bosses
-aren't in Forever yet (no boss data before 2026-12-09).
+**We go with Forever's rule: a level 63 boss crits a player 0.6% of the time, not Classic's 5.6%**
+(`sim/core/target.go`, `newWeaponAttackTable`). So crit immunity costs 15 Defense instead of 140, which
+takes most of Defense's value away and changes every tank gear set. Audited 2026-11-02, more likely than
+Classic's rule but not confirmed:
 
-So crit immunity costs 15 Defense instead of 140, which takes most of Defense's value away and changes
-every tank gear set. **Need to Verify**: an elite or a boss's crit rate in the logs before tank gear is
-tuned on it. Until then the bench can be run both ways.
+**For Forever's rule:**
+
+- **Forever's server doesn't use Classic's rule for the mobs we've seen**, below or above us. In the
+  user's level 30 beta logs, about 2,900 swings from mobs at or under our level never crit, where Classic
+  gives about 85. Mobs 1 to 5 levels above crit 4 times in 745 swings, where Classic gives about 40 and
+  Forever's rule 4.6. A level 1 to 3 character took 136 swings with none (Classic about 7). The chance of
+  so few crits under Classic's rule is effectively nil (notes.md, how often mobs crit us).
+- **The rule that fits keeps Classic's level term and drops its 5% base.** Applied by level, a level 63
+  boss is 0.6%. Nothing in the client data or the dev notes says bosses use another formula.
+
+**For Classic's rule:**
+
+- **No elite or boss has been seen.** The logs are beta leveling zones (Durotar to level 30). A boss could
+  carry its own crit, or the server could give elites and bosses another rate.
+- **The guides say 440**, Warcraft Tavern's Forever stats guide among them, but that's Classic's text, not
+  a measurement.
+- **wowsims/forever uses 5.6%**: the TBC code they started from, with no Forever measurement in their
+  history.
+
+**Settles it:** a few hundred boss or elite swings on a tank 2 or 3 levels below it, in a dungeon on the
+release realms (a level 58 to 60 tank in Blackrock Spire or Stratholme), counting the crits. At Classic's
+5.4% for +2, 300 swings give about 16 crits, Forever's rule about 1.
+
+**Both can be run.** A target's `classic_crit` (`proto/common.proto`, Target) gives it Classic's rate, and
+the bench's `-classic-crit` sets it.
 
 ## The tank sheet
 
@@ -62,6 +94,8 @@ same attack table the boss's swings roll on.
 - **Coverage**: miss, dodge, parry and block added up, and the **crush gap** still needed to push crushing
   blows off the table
 - **Armor** and its reduction, **block value**, **health**, **effective health**
+- **The biggest hit**: the boss's biggest white swing on us (the top of its damage range, a crit if it can
+  crit us, else a crushing blow, through armor and damage taken)
 - **Our side**, which sets threat: our special attacks' miss, the boss's dodge and parry from the front,
   our spells' miss
 
@@ -79,12 +113,35 @@ go run -tags=with_db ./tools/tankbench -iters 3000 tools/tankbench/req/*.json
 
 - **The boss** is the request's, the report's Level 60 boss by default (level 63, 2.0 s swing, 3,000 to
   4,000 before armor, 805 attack power). `-boss-level` and `-boss-damage` change it.
-- **The stand-in healer** heals a steady `-hps` (default 600) every `-cadence` seconds (2 ± 1). It's the
-  engine's healing model (`sim/core/health.go`), the same trick as the raid sim's 700 TPS tank.
+- **The stand-in healer** is the engine's healing model (below), at `-hps` (default 600) every `-cadence`
+  seconds (2 ± 1). It's the same trick as the raid sim's 700 TPS tank.
 - **It prints** TPS, DPS, DTPS, TMI (6 s windows), the chance of death, the sheet, and how the boss's swings
-  landed over the fight. `-actions` adds threat by ability.
+  landed over the fight. `-actions` adds threat by ability, `-needed` the healing needed and the death floor
+  (about 10 more sims a build), `-classic-crit` gives the boss Classic's crit.
 
-**First numbers** (2026-11-02, 2,000 iterations, 180 s, 600 HPS). Both builds wear the Classic Valor set,
+### The stand-in healer
+
+**One stream of heals, not healers** (`applyHealingModel`, `sim/core/health.go`, from wowsims):
+
+- A heal lands every cadence seconds on average. With a variation, each gap is drawn from two even spreads
+  either side of the cadence (2 ± 1 s: anywhere from 1 to 3 s).
+- **Each heal is the HPS times the time since the last one.** A long gap gets a big heal, so the healing per
+  second is exact and only its timing is lumpy.
+- Healing over the tank's max health is lost. Healing taken modifiers apply.
+- **Not modelled:** separate healers, cast times and heal sizes, crits, shields, reacting to the tank's
+  health (a healer who sees a big hit casts a fast heal), healers going out of mana. The heal comes whatever
+  the tank's health, and stops for nothing.
+
+**What real raids look like:** wowsims/forever's Classic Era Molten Core logs put the main tank's incoming
+healing at 2.4 times its damage taken, overhealing included, in heals about 0.3 s apart, 1.5% of it absorbs
+(their Protection warrior's `OtherDefaults`). So a real main tank is healed by several healers at once, far
+above its DTPS, and dies to a burst between heals rather than to running short on healing.
+
+**The real healers come from the healing sim** ([healing_sim.md](healing_sim.md)): each healer's own spells,
+cast times, mana, shields and targets. Until then the stream is what scores tanks, and healing needed reads
+as "how much a steady healer would need", not as a healer comp.
+
+**First numbers** (2026-11-02, 2,000 iterations, 180 s, 600 HPS, Forever's boss crit). Both builds wear the Classic Valor set,
 Mirah's Song and Draconian Deflector (`ui/tank_warrior/gear_sets/p0.bis_sword_board`, no neck, back, rings
 or trinkets), so these test the sim, not the classes:
 
@@ -102,18 +159,41 @@ says where the cliff falls, and a small change in DTPS swings the result.
 
 ## Scoring survival
 
-**Proposed: "healing needed"**, the stand-in healer's HPS at which the tank dies in 5% of fights, found by
-bisection. It's one number per build that doesn't depend on picking a healer, and it counts both damage
-taken and spikes (a spiky build needs more healing to stay at 5%). TMI and DTPS stay in the report next to
-it. It costs about 6 sims a build instead of 1.
+**Healing needed** (the user's ruling): the stand-in healer's HPS at which the tank dies in 5% of fights,
+found by bisection to 1% of DTPS (`healingNeeded`, `tools/tankbench`). It's one number per build that
+doesn't depend on picking a healer, and it counts both damage taken and spikes (a spiky build needs more
+healing to stay at 5%). TMI and DTPS stay next to it. Every run uses the request's seed, so the chance of
+death moves only with the HPS.
+
+**Sometimes no healing is enough.** A tank one swing can kill from full, or one a burst kills between two
+heals, dies whatever the healing. So the bench also reports:
+
+- **The biggest hit** (the sheet's) and how many of them the tank's health takes. Under 1 is a one-shot.
+- **The death floor**: the chance of death at 20 times the DTPS, where every heal tops the tank off, so
+  only damage between two heals kills it. At 5% or over, healing needed is "none works", and the build
+  isn't viable against that boss with that healer cadence.
+
+The floor depends on the cadence. With 0.3 s heals it's lower than with 2 s heals, so the cadence is part of
+the scoring setup and stays fixed across builds.
+
+**The first numbers** (1,000 iterations, the builds above):
+
+| Build | Boss crit | DTPS | Healing needed | Death floor | Biggest hit | Hits to kill |
+|---|---|---|---|---|---|---|
+| Protection warrior | Forever's | 431 | 515 (1.20× DTPS) | 0% | 2,777 (a crushing blow) | 2.5 |
+| Protection paladin | Forever's | 497 | 617 (1.24×) | 0% | 2,697 | 2.6 |
+| Protection warrior | Classic's | 433 | 527 (1.22×) | 0% | 3,703 (a crit) | 1.9 |
+| Protection paladin | Classic's | 518 | 696 (1.34×) | 0% | 3,596 | 1.9 |
+
+Classic's crit costs the paladin far more than the warrior, since Shield Block pushes most crits off the
+warrior's table and the paladin's Holy Shield is down most of the fight.
 
 ## Open decisions
 
-1. **How a build trades threat for survival.** (a) Weights, with 2 or 3 presets along the curve ("Max
-   threat", "Balanced", "Max survival"), like the PvP High HP preset's `-health-weight`. (b) A death chance
-   floor. (c) Survival only. Recommended: (a). The user ruled against floors for PvP.
-2. **The survival score**: healing needed (recommended), or the chance of death at a fixed healer.
-3. **Forever's boss crit**: keep 0.6% until a log shows otherwise, or tune tank gear on Classic's 5.6%.
+1. **The stand-in healer's cadence** for scoring: 2 ± 1 s (now), or the Molten Core logs' 0.3 s. It sets
+   the death floor and how much spikes count.
+2. **Where the presets sit on the threat and survival curve**: the weights for "Max threat", "Balanced"
+   and "Max survival". It needs the gear search first.
 
 ## Findings so far
 
@@ -136,9 +216,10 @@ it. It costs about 6 sims a build instead of 1.
 
 1. **Rules audit** of each tank's defensive talents, stats and abilities against Forever's client data and
    foreverchanges (Protection warrior, Feral tank, Protection paladin, Warden shaman), like the class audits.
-   Bring the Feral tank into the build. Check Forever's boss crit.
+   Bring the Feral tank into the build. Ask for a dungeon boss log for Forever's boss crit.
 2. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.
-3. **The survival score** in the bench and the search tooling.
+3. **The survival score** in the search tooling (rotopt's gear and talent searches), as a weight against
+   TPS.
 4. **Tank gear**: a tank row in `orchestration/gear_targets.md` and synthetic tank items, then gear and talent
    searches on the score.
 5. **The report**: a tank section with TPS next to damage taken, healing needed and the sheet's thresholds.

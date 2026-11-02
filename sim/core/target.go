@@ -189,6 +189,7 @@ func NewTarget(options *proto.Target, targetIndex int32) *Target {
 	target.PseudoStats.InFrontOfTarget = true
 	target.PseudoStats.DamageSpread = options.DamageSpread
 	target.tankSwapEvery = DurationFromSeconds(max(options.TankSwapSeconds, 0))
+	target.PseudoStats.ClassicCrit = options.ClassicCrit
 
 	preset := GetPresetTargetWithID(options.Id)
 	if preset != nil && preset.AI != nil {
@@ -465,8 +466,9 @@ func newWeaponAttackTable(attacker *Unit, defender *Unit, weapon *Item, skillGap
 		// In the beta logs the level 30 shaman took about 2,900 swings from mobs at or under
 		// its level and none of them crit. Classic rules would have given about 85 crits.
 		// Mobs 1 to 5 levels above crit 4 times in 745 swings, where this rule expects 4.6.
-		// The crit roll takes no less than 0, so mobs under our level never crit.
-		if attacker.Env != nil && attacker.Env.IsForever() {
+		// The crit roll takes no less than 0, so mobs under our level never crit. No elite or boss
+		// has been seen yet, so a target can keep Classic's rate (classic_crit, docs/tank_sim.md).
+		if attacker.Env != nil && attacker.Env.IsForever() && !attacker.PseudoStats.ClassicCrit {
 			table.BaseCritChance = -levelDelta
 		}
 	}
