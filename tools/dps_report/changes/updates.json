@@ -1813,6 +1813,10 @@
     {
      "commit": "c05159b",
      "why": "the Rotation card's Why lines: page text only, no sim input or number moves"
+    },
+    {
+     "commit": "42a493bdd",
+     "why": "the Rotation card's Why notes reworded and in gold: page text only, no sim input or number moves"
     }
    ],
    "source": {
