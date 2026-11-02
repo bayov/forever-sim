@@ -2134,6 +2134,18 @@
     {
      "commit": "12404d280",
      "why": "leveling training budget: no level 60 build reads it"
+    },
+    {
+     "commit": "27350b3",
+     "why": "healing sim only: no DPS build reads it; no report result moves (report hashes)"
+    },
+    {
+     "commit": "8dd2b84",
+     "why": "healing sim bench only: no DPS build reads it; no report result moves (report hashes)"
+    },
+    {
+     "commit": "7c13620",
+     "why": "practice room only: no DPS build reads it; no report result moves (report hashes)"
     }
    ],
    "source": {
