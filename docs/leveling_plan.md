@@ -382,7 +382,9 @@ every rank within about half a minute. 1000 sessions take 5 min for 10 to 60 on 
   search keeps them and doesn't move them. They copy BayovCore Training's route profile by hand
   (`ROUTES` in Modules/Training.lua): our route reaches Sen'jin Village at 6 with just enough
   for the Walking Stick, so Healing Wave 2 and Earthbind wait for the trainer at 8. Change
-  both together.
+  both together. A hold past 60 is a rank we never need, which BayovCore shows as Optional:
+  Ancestral Spirit 2 to 5 (the user, 2026-10-31), since a higher rank only brings the player
+  back with more health and mana.
 
 The ranks the plan casts cost only about 21g by 40, so 115g never runs short, even with riding
 at 40. The budget only matters with less gold. With 100g and riding at 40 it trains 8 ranks of

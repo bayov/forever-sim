@@ -11,15 +11,23 @@ import { ContentBlock } from '../content_block';
 // A buy level past the plan's last level is a rank we never train (tools/levelingplan/training.go).
 const NEVER_LEVEL = 61;
 // The budget as training.go has it: the gold earned by a level grows with the level to this power,
-// and we keep Training's flight money (BayovCore's RESERVE) after training.
+// and we keep Training's pocket money (BayovCore's RESERVE, training.go's pocketMoney) after
+// training.
 const GOLD_GROWTH = 3.5;
-const FLIGHT_RESERVE: Array<[number, number]> = [
-	[50, 20000],
-	[40, 10000],
-	[30, 5000],
-	[20, 2500],
-	[11, 1000],
-	[1, 100],
+const POCKET_MONEY: Array<[number, number]> = [
+	[55, 15000],
+	[50, 12500],
+	[45, 10000],
+	[40, 7500],
+	[36, 5000],
+	[32, 3500],
+	[28, 2500],
+	[24, 1800],
+	[20, 1200],
+	[16, 800],
+	[14, 500],
+	[11, 300],
+	[1, 0],
 ];
 
 // The Training part of the Leveling Plan tab: when we train each spell rank the plan casts, what
@@ -206,14 +214,14 @@ export class LevelingTrainingSection {
 
 // The first level where the gold runs short under the schedule, and by how much in copper, or
 // null when it never does. Like training.go's short: the ranks bought by a level, the spells we
-// always train, riding and the flight money, against the gold earned.
+// always train, riding and the pocket money, against the gold earned.
 function shortest(training: LevelingTrainingSettings): { level: number; copper: number } | null {
 	const buys = new Map(training.buys.map(buy => [buy.spellId, buy.level]));
 	const always = new Set(training.alwaysSpells);
 	for (let level = 10; level <= 60; level++) {
-		let spent = FLIGHT_RESERVE.find(([from]) => level >= from)?.[1] ?? 0;
+		let spent = POCKET_MONEY.find(([from]) => level >= from)?.[1] ?? 0;
 		for (const w of training.worth) if ((buys.get(w.spellId) ?? w.level) <= level) spent += w.price;
-		for (const w of training.others) if (always.has(w.spell) && w.level <= level) spent += w.price;
+		for (const w of training.others) if (always.has(w.spell) && (buys.get(w.spellId) ?? w.level) <= level) spent += w.price;
 		if (training.ridingLevel && level >= training.ridingLevel) spent += training.ridingGold * 10000;
 		const short = spent - training.goldAt40 * 10000 * Math.pow(level / 40, GOLD_GROWTH);
 		if (short > 0) return { level, copper: Math.round(short) };
