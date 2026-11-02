@@ -8,7 +8,7 @@
 // requests are. The boss is made to attack it, and the healer replaces whatever healing model
 // the request has.
 //
-// With -encounter, the fight is a tank encounter (tools/tankbench/encounters/*.json): a boss's
+// With -encounter, the fight is a tank encounter (tools/encounters/*.json, shared with the healing sim): a boss's
 // melee and abilities and the healing a raid puts on its tank, as healers on the tank, each
 // one's healing per second and their heals' cast time. Until the healing sim's healers heal
 // (docs/healing_sim.md), that healing is the engine's stand-in stream: the healers' HPS added up,
@@ -44,7 +44,7 @@ func main() {
 	classicCrit := flag.Bool("classic-crit", false, "the boss crits at Classic's 5.6% (less our Defense past 300) instead of Forever's 0.6% (docs/tank_sim.md, Forever's boss crit)")
 	needed := flag.Bool("needed", false, "also find each build's healing needed: the stand-in healer's HPS at which it dies in -death of the fights, and the death floor, its chance of death when every heal tops it off (about 10 more sims a build)")
 	deathTarget := flag.Float64("death", 0.05, "the chance of death -needed aims at")
-	encounterPath := flag.String("encounter", "", "a tank encounter file (tools/tankbench/encounters/*.json) in place of the request's encounter and the healer flags' defaults")
+	encounterPath := flag.String("encounter", "", "a tank encounter file (tools/encounters/*.json, shared with the healing sim) in place of the request's encounter and the healer flags' defaults")
 	healers := flag.Float64("healers", 0, "healers on the tank, in place of the encounter's (with -healer-hps and -heal-cast; -hps and -cadence win over them)")
 	healerHps := flag.Float64("healer-hps", 0, "each healer's healing per second on the tank, in place of the encounter's")
 	healCast := flag.Float64("heal-cast", 0, "seconds a healer's heal takes to cast, in place of the encounter's")
