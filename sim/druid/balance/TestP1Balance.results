@@ -288,43 +288,43 @@ dps_results: {
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1005.875
-  tps: 716.30103
+  dps: 1005.03683
+  tps: 715.86161
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 1005.875
-  tps: 716.30103
+  dps: 1005.03683
+  tps: 715.86161
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 1014.43083
-  tps: 720.28295
+  dps: 1015.93917
+  tps: 721.33932
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 660.5905
-  tps: 471.16853
+  dps: 663.36917
+  tps: 473.11322
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 660.5905
-  tps: 471.16853
+  dps: 663.36917
+  tps: 473.11322
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 711.405
-  tps: 510.74339
+  dps: 714.11667
+  tps: 512.64245
  }
 }
 dps_results: {

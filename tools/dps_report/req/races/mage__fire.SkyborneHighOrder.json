@@ -743,11 +743,11 @@
   },
   "note": "Rotation tuned for 2% haste: waits up to 0.1 s for Fire Blast instead of starting a Fireball (2.94 s Fireballs miss the 6 s Fire Blast cycle by 60 ms)",
   "gain": {
-    "dps": 13.96,
-    "se": 0.6,
+    "dps": 13.7,
+    "se": 0.58,
     "iterations": 20000,
     "seed": 1,
     "duration": 180
   },
-  "how": "rotopt -template mage_fire -race SkyborneHighOrder -durs 180, the preset's knobs (scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,racialAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04,wand=1) plus fireBlastWait=0.1 (new knob, tools/rotopt/mage_common.go); Read Leyline (leylineMana 20-100) lost 2 to 16. Regenerated 2026-10-28 when the preset took racialAfterScorch=1 (no effect at High Order, which has neither Berserking nor Blood Fury). Same rotation at the preset race (Human): -0.0 +- 0.6."
+  "how": "rotopt -template mage_fire -race SkyborneHighOrder -durs 180, the preset's knobs (scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,racialAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04,wand=1) plus fireBlastWait=0.1 (new knob, tools/rotopt/mage_common.go); Read Leyline (leylineMana 20-100) lost 2 to 16. Regenerated 2026-10-28 when the preset took racialAfterScorch=1 (no effect at High Order, which has neither Berserking nor Blood Fury). Same rotation at the preset race (Human): -0.0 +- 0.6. Re-measured 2026-11-02 after the standards 33 distance (30 yd) and the finisher pad 1.25 sec (both rotations): 1047.2 against 1033.5 with the preset's rotation at High Order (20000 iterations, seed 1, 180 sec); the same rotation at the preset race (Human) 1057.1 against 1057.1."
 }

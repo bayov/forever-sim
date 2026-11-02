@@ -7,8 +7,9 @@
 #   tools/rotopt/druid_presets.sh balance.json feral.json
 # Balance is Night Elf since the race-tuning round (2026-10-27, standards 29 and 16), with Elune's
 # Light held for the spell power trinket (elune=1): 1.1 ahead at 180 sec of leaving it to the autocast
-# line (+1.0 on seed 1000003), 0.0 for a Tauren. The Wrath build is Windshaper Skyborne and leaves
-# it out (elune=0). The Feral presets are Night Elf and keep it in.
+# line (+1.0 on seed 1000003), 0.0 for a Tauren. The Wrath build is Night Elf too since 2026-11-02 (its race
+# re-pick at 36 yd) and holds it the same way (+0.9 / +0.6 / +1.1 at 120 / 180 / 300 sec; the same for
+# the other races, which have no Elune's Light). The Feral presets are Night Elf and keep it in.
 set -e
 balance=$1
 feral=$2
@@ -45,9 +46,9 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,f
 # The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 6.1% behind (776.5
 # against 827.0 at 180 sec), on its own talents (5502220115501351--505003) and gear (Natural Power
 # gloves).
-gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.8,elune=0"
+gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.8,elune=1"
 # The Wrath build's Faerie Fire duty, the same way.
-gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.8,faerieFire=1,elune=0"
+gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.8,faerieFire=1,elune=1"
 # Feral cat on the Level 60 talents of the launch realms' 2026-10-30 hotfix trees
 # (05002-53200032023012125001-05502, Feral Swiftness 2 a must-take), Night Elf: Rip at 4 combo points
 # whenever it is down, Ferocious Bite at 5 with 45 Energy or more while Rip has 4 sec left (Predatory

@@ -77,8 +77,20 @@ Notes:
 - Race check (standards 29; only the Wrath builds moved more than 2 at 180 sec; the duty variant follows its
   base): `druid__balance-wrath` at 180 ± 20 sec, 20,000 iterations, seed 1, each race's own rotation where it
   has one. Before (30 yd): High Order 855.7, Windshaper 855.7 (the preset), Night Elf 853.2, Tauren 844.5.
-  After (36 yd): Night Elf 852.4, High Order 848.3, Windshaper 848.3, Tauren 844.2. Night Elf is now 4.1 ahead
-  of the preset race; not changed here (needs the race re-pick).
+  After (36 yd): Night Elf 852.4, High Order 848.3, Windshaper 848.3, Tauren 844.2. The hasted Skyborne lose
+  most, since haste shortens the cast but not the flight.
+- Race re-pick (standards 29 and 16): Night Elf over Windshaper is +6.3 / +4.1 / +3.4 at 120 / 180 / 300 sec,
+  the same on seed 1000003, so both Wrath builds are Night Elf now. Windshaper stays the best Horde race
+  (Tauren 4.1 behind it). Knob searches at Night Elf and at Windshaper (180 sec, Wrath kept as the filler; with
+  the filler free the search weaves Starfire, +33, which is the Balance build) kept every knob, so no race
+  rotation. As Night Elf the rotation holds Elune's Light for the trinket like the Balance build
+  (`elune=1`, +0.9 / +0.6 / +1.1, and nothing changes for races without it). At 180 sec: Balance Wrath
+  853.0 (848.4 as Windshaper), its Faerie Fire duty 820.8 (816.4), at 120 / 300 sec 849.8 / 850.8 and
+  815.7 / 821.1.
+- The High Order race rotations, re-measured at 180 sec after their edits: Arcane +4.9 (937.2 against 932.3
+  with the preset's rotation; was +5.0), Fire +13.7 (1047.2 against 1033.5; was +14.0). Both still beat the
+  preset's rotation at High Order by far more than 2 SE, so they stay; the same rotations at the preset races
+  are -0.3 (Gnome) and 0.0 (Human).
 
 DPS, seed 1, 20,000 iterations, 180 ± 20 sec fights at each length (old -> new):
 

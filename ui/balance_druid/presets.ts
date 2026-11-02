@@ -102,7 +102,8 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // lines out. The Level 60 preset is Night Elf again since the race-tuning round (2026-10-27, standards
 // 29 and 16), and its rotation has them back (elune=1): +1.1 at 180 sec on seed 1 (+1.0 on seed
 // 1000003) over leaving Elune's Light to the autocast line, 0.0 for a Tauren. The Wrath build is
-// Windshaper Skyborne and leaves them out.
+// Windshaper Skyborne and left them out until 2026-11-02; it is Night Elf since and holds them too
+// (+0.9 / +0.6 / +1.1 at 120 / 180 / 300 sec at 36 yd).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Balance', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Synthetic',
@@ -354,6 +355,12 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('F
 // within noise keeps the race): the Level 60 build is Night Elf with Elune's Light held for the
 // trinket, 851.2 at 180 sec against the Tauren's 841.5 (20,000 iterations, seed 1); the Wrath build
 // is Windshaper Skyborne, 811.1 against the Tauren's 800.7. The Faerie Fire duty builds follow them.
+// Wrath race re-pick at 36 yd (2026-11-02, standards 33 and 29): a Wrath now flies longer than it
+// casts, and the hasted Skyborne lose more. Night Elf 852.4, High Order 848.3, Windshaper 848.3 (the
+// best Horde race), Tauren 844.2 at 180 sec (20,000 iterations, seed 1; +6.3 / +4.1 / +3.4 at 120 /
+// 180 / 300 sec over Windshaper, the same on seed 1000003), so the Wrath builds are Night Elf, with
+// Elune's Light held for the trinket: 853.0. Knob searches at Night Elf and Windshaper (Wrath kept as
+// the filler) found nothing more.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Balance', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Balance rotation, in a 3 minute raid fight.',
@@ -388,7 +395,7 @@ export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Balance Wrat
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60Wrath,
 	encounter: EncounterLevel60,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -402,7 +409,7 @@ export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Ba
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60WrathFaerieFire,
 	encounter: EncounterLevel60FaerieFireDuty,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
