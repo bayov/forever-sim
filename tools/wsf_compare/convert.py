@@ -23,7 +23,7 @@
 Env ALIGN="<their stat index>=<value>,..." adds bonus stats to theirs (align.py finds them).
 Env NOSPELLS="<id>,..." names talent spells the build doesn't have, see nospell() below.
 
-Rogues, hunters, warriors and shamans are mapped. Adding one means its options, its consumables and its spell ids
+Rogues, hunters, warriors, shamans and mages are mapped. Adding one means its options, its consumables and its spell ids
 (SKILL.md, "Adding a class").
 """
 import copy, json, os, re, sys
@@ -131,7 +131,7 @@ C = {'FlaskOfNaturalAggression': 274274, 'FlaskOfNaturalPrecision': 274275, 'Fla
      'FlaskOfSupremePower': 13512, 'FoodGrilledSquid': 13928, 'FoodLobsterStew': 13933, 'ElixirOfCunning': 250328,
      'GreaterArcaneElixir': 13454, 'ElixirOfShadowPower': 9264, 'ElixirOfFirepower': 6373, 'ElixirOfSages': 250338,
      'ElixirOfNaturePower': 250343, 'ShadowOil': 3824, 'WizardOil': 20750, 'CausticSmogPotion': 250951,
-     'CerebralCortexCompound': 8423}  # Deadly Poison IV (theirs has no AQ book rank), Instant VI
+     'CerebralCortexCompound': 8423, 'ElixirOfFrostPower': 17708, 'MajorSpellblastingPotion': 250937}  # Deadly Poison IV (theirs has no AQ book rank), Instant VI
 def c(k):
     v = cs.get(k)
     if not v: return 0
@@ -150,7 +150,7 @@ pot = c('defaultPotion')
 consumables = {
     'flaskId': c('flask'), 'foodId': c('food'),
     'elixirIds': [x for x in (c('agilityElixir'), c('strengthBuff'), c('manaRegenElixir'), c('intellectElixir'), c('spellPowerBuff'),
-                              c('shadowPowerBuff'), c('firePowerBuff'), c('naturePowerBuff'), c('spiritElixir')) if x],
+                              c('shadowPowerBuff'), c('firePowerBuff'), c('frostPowerBuff'), c('naturePowerBuff'), c('spiritElixir')) if x],
     'extraIds': [x for x in (c('attackPowerBuff'), c('zanzaBuff'), c('fillerExplosive')) if x] + ([12217] if cs.get('dragonBreathChili') else []),
     'mhImbueId': stone('mainHandImbue', 14), 'ohImbueId': stone('offHandImbue', 15),
     'potions': [pot] if pot else [], 'conjuredId': c('defaultConjured'), 'conjuredItems': [c('defaultConjured')] if c('defaultConjured') else [],
@@ -187,6 +187,8 @@ debuffs = {k: bool(d.get(k)) or (k == 'sunderArmor' and 'sunderRamp' in d) for k
 # Cooldowns of the spells spellUsesLostByDelay names, which theirs lacks (it is rewritten from remainingTime).
 CD = {20572: '120s', 1259799: '180s', ('item', 993016): '120s', ('item', 993117): '120s', ('item', 991018): '120s',
       ('other', 'OtherActionPotion'): '120s'}
+SELF_SPENT = set()  # spells whose own cast spends what their rotation line asks for
+STACKS = {}  # spell -> the aura its own cast adds a stack of
 REMAP = {}  # (spellId, frozenset of the other keys) handled per class in remap()
 SET_BONUS = {}  # theirs' stat index -> value for a synthetic set bonus theirs doesn't register
 
@@ -298,6 +300,27 @@ elif klass == 'ClassShaman':
         if n.get('spellId') == 26297:  # Berserking: ours keys the shaman's 26297, theirs Forever's 20554
             n = {k: v for k, v in n.items() if k != 'tag'}; n['spellId'] = 20554
         return n
+elif klass == 'ClassMage':
+    mo = p['mage'].get('options', {})
+    ARMOR = {'MageArmor': 'MageArmorMageArmor', 'IceArmor': 'MageArmorFrostArmor', 'FrostArmor': 'MageArmorFrostArmor'}
+    class_opts = {'mage': {'options': {'classOptions': {'defaultMageArmor': ARMOR.get(mo.get('armor'), 'MageArmorNone')}}}}
+    # Forever's staff imbue scrolls go in their class imbue slot (277500 to 277502), beside the weapon oil.
+    STAFF = {'ImbueGreaterFlame': 277500, 'ImbueGreaterFrost': 277501, 'ImbuePrecision': 277502}
+    if mo.get('staffImbue') in STAFF: consumables['mhWeaponImbueId'] = STAFF[mo['staffImbue']]
+    SET_BONUS[TS['StatHitRating']] = 10  # the Manaflare Regalia's 2 piece on our synthetic set: 1% hit
+    SELF_SPENT.update({18809})  # Pyroblast spends Heating Up
+    STACKS.update({10207: 22959, 1239700: 400573})  # Scorch: Fire Vulnerability; Arcane Blast: its own buff
+    CD.update({20572: '120s', 20554: '180s', 26297: '180s', 11129: '180s', 12042: '180s', 12043: '180s', 12051: '480s',
+               ('item', 996032): '120s'})
+    def remap(n):
+        if n.get('spellId') == 26297:  # Berserking: ours keys the mage's 26297 (tagged), theirs Forever's 20554
+            n = {k: v for k, v in n.items() if k != 'tag'}; n['spellId'] = 20554
+        if n.get('spellId') == 400670: n = {**n, 'spellId': 400669}  # Fingers of Frost: ours keys the talent's rank 1
+        if 'spellInFlight' in n and len(n) == 1:
+            # Ours counts a bolt in flight from the moment its cast completes. Theirs picks the next spell 400 ms
+            # before that (its spell queue), while the bolt is still casting, and counts it in flight only after.
+            return {'or': {'vals': [{'_done': n}, {'spellIsCasting': n['spellInFlight']}]}}
+        return n
 else:
     raise SystemExit(f'{klass} is not mapped yet (SKILL.md, "Adding a class")')
 
@@ -316,6 +339,7 @@ def nospell(n):
         return k
 def walk(n):
     if isinstance(n, dict):
+        if '_done' in n: return n['_done']  # a node remap() already rewrote
         k = nospell(n)
         if k in ('spellIsReady', 'spellCanCast', 'auraIsActive'): return {'const': {'val': 'false'}}
         if k == 'spellTimeToReady': return {'const': {'val': '1000s'}}
@@ -378,6 +402,39 @@ else:
     apl = walk(copy.deepcopy(p['rotation']))
 if not APL.startswith('theirs:'):
     apl['priorityList'] = extra_lines + apl['priorityList']
+    # Theirs' pass goes on after a channel starts, so a castable action with no GCD further down (the wand) goes off
+    # at once and cancels the channel. Ours waits for the channel. Theirs' wand line waits for it too.
+    # Theirs picks the spell after a hardcast at the cast's end, before the cast's own completion has run, so a
+    # line whose condition the cast itself spends still reads true (Pyroblast at 3 Heating Up stacks queued a second,
+    # 6 s Pyroblast after every one). Theirs' line skips the spell that is ending.
+    for a in apl['priorityList']:
+        sid = a.get('action', {}).get('castSpell', {}).get('spellId')
+        if sid and sid.get('spellId') in SELF_SPENT and 'condition' in a['action']:
+            a['action']['condition'] = {'and': {'vals': [{'not': {'val': {'spellIsCasting': {'spellId': sid}}}}, a['action']['condition']]}}
+    # The same early pick reads a stack the ending cast is about to add as missing (one Scorch too many to 5 Fire
+    # Vulnerability stacks, two Scorches for every refresh). Theirs' line counts the ending cast's stack: while it
+    # casts, it needs one stack fewer and no refresh.
+    def counted(n, sid, aura):
+        if isinstance(n, list): return [counted(x, sid, aura) for x in n]
+        if not isinstance(n, dict): return n
+        c_ = n.get('cmp')
+        casting = {'spellIsCasting': {'spellId': {'spellId': sid}}}
+        if c_ and c_['op'] == 'OpLt' and (c_['lhs'].get('auraNumStacks') or {}).get('auraId', {}).get('spellId') == aura:
+            fewer = {'cmp': {**c_, 'rhs': {'const': {'val': str(int(c_['rhs']['const']['val']) - 1)}}}}
+            return {'or': {'vals': [{'and': {'vals': [{'not': {'val': casting}}, n]}}, {'and': {'vals': [casting, fewer]}}]}}
+        if c_ and c_['op'] == 'OpLt' and (c_['lhs'].get('auraRemainingTime') or {}).get('auraId', {}).get('spellId') == aura:
+            return {'and': {'vals': [{'not': {'val': casting}}, n]}}
+        return {k: counted(v, sid, aura) for k, v in n.items()}
+    for a in apl['priorityList']:
+        sid = (a.get('action', {}).get('castSpell', {}).get('spellId') or {}).get('spellId')
+        if sid in STACKS and 'condition' in a['action']:
+            a['action']['condition'] = counted(a['action']['condition'], sid, STACKS[sid])
+    CHANNELS = [10212, 25345, 12051]
+    for a in apl['priorityList']:
+        if a.get('action', {}).get('castSpell', {}).get('spellId', {}).get('spellId') == 5019:
+            ch = [{'not': {'val': {'spellIsChanneling': {'spellId': {'spellId': x}}}}} for x in CHANNELS]
+            if 'condition' in a['action']: ch.append(a['action']['condition'])
+            a['action']['condition'] = {'and': {'vals': ch}}
     for k in ('spellUsesRemaining', 'spellUsesLostByDelay', 'moveTime', 'inMeleeRange'):
         assert k not in json.dumps(apl), f'{k} left in theirs\' rotation'
 

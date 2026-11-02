@@ -4,7 +4,7 @@
     run.py <report id | req.json> <out dir> [convert.py args...]
 
 The binaries come from $WSF_WORK/bin (setup.sh): ours_cli (ours_aq_cli for a hunter, unless OURS_AQ=0) and
-theirs_cmpsim. Env ALIGN and NOSPELLS go through to convert.py. Results: <out>/res_ours.json and res_theirs.json.
+theirs_cmpsim. Env ALIGN and NOSPELLS go through to convert.py. OURS and THEIRS name other binaries (a flipped rule). Results: <out>/res_ours.json and res_theirs.json.
 """
 import json, os, subprocess, sys
 
@@ -23,9 +23,9 @@ def main():
         sys.exit(conv.stdout + conv.stderr)
     klass = json.load(open(src))['raid']['parties'][0]['players'][0]['class']
     ours_bin = 'ours_aq_cli' if klass == 'ClassHunter' and os.environ.get('OURS_AQ', '1') == '1' else 'ours_cli'
-    ours = subprocess.run([os.path.join(BIN, ours_bin), 'sim', '--infile', f'{out}/req_ours.json', '--outfile', f'{out}/res_ours.json'],
+    ours = subprocess.run([os.environ.get('OURS') or os.path.join(BIN, ours_bin), 'sim', '--infile', f'{out}/req_ours.json', '--outfile', f'{out}/res_ours.json'],
                           capture_output=True, text=True)
-    theirs = subprocess.run([os.path.join(BIN, 'theirs_cmpsim'), f'{out}/items.json', f'{out}/req_theirs.json', f'{out}/res_theirs.json'],
+    theirs = subprocess.run([os.path.join(BIN, os.environ.get('THEIRS', 'theirs_cmpsim')), f'{out}/items.json', f'{out}/req_theirs.json', f'{out}/res_theirs.json'],
                             capture_output=True, text=True)
     for who, r in (('ours', ours), ('theirs', theirs)):
         if r.returncode:
