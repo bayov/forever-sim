@@ -351,7 +351,7 @@ func (r *appearanceResolver) dress(chrModel, race, sex, class int, choices map[i
 	if !cm.Ok() {
 		return nil, fmt.Errorf("no ChrModel %d", chrModel)
 	}
-	a := &appearance{ChrModelID: chrModel, Textures: map[int]*composedTexture{}, Replaceable: map[int]int{}}
+	a := &appearance{ChrModelID: chrModel, CreatureDisplayID: cm.Int("DisplayID"), Textures: map[int]*composedTexture{}, Replaceable: map[int]int{}}
 	model, scale := r.displayModel(cm.Int("DisplayID"))
 	if model == 0 {
 		return nil, fmt.Errorf("ChrModel %d: no model for display %d", chrModel, cm.Int("DisplayID"))

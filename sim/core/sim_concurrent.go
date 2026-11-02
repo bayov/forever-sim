@@ -291,6 +291,7 @@ func (rsrc *raidSimResultCombiner) combineUnitMetrics(base *proto.UnitMetrics, a
 	base.SecondsOomAvg += add.SecondsOomAvg * weight
 	base.ChanceOfDeath += add.ChanceOfDeath * weight
 	base.ScaresAvg += add.ScaresAvg * weight
+	base.ManaSpentAvg += add.ManaSpentAvg * weight
 
 	if base.Aggro != nil && add.Aggro != nil {
 		base.Aggro.Chance += add.Aggro.Chance * weight
@@ -323,6 +324,19 @@ func (rsrc *raidSimResultCombiner) combineUnitMetrics(base *proto.UnitMetrics, a
 func (rsrc *raidSimResultCombiner) AddResult(result *proto.RaidSimResult, isLast bool, weight float64) {
 	rsrc.combineDistMetrics(rsrc.Combined.RaidMetrics.Dps, result.RaidMetrics.Dps, isLast, weight)
 	rsrc.combineDistMetrics(rsrc.Combined.RaidMetrics.Hps, result.RaidMetrics.Hps, isLast, weight)
+	if add := result.RaidMetrics.HealingFight; add != nil {
+		base := rsrc.Combined.RaidMetrics.HealingFight
+		if base == nil {
+			base = &proto.HealingFightMetrics{}
+			rsrc.Combined.RaidMetrics.HealingFight = base
+		}
+		base.Fights += add.Fights
+		base.FightsAnyDeath += add.FightsAnyDeath
+		base.FightsTankDeath += add.FightsTankDeath
+		base.FightsOtherDeath += add.FightsOtherDeath
+		base.FirstDeathSecondsSum += add.FirstDeathSecondsSum
+		base.DeadPlayerSecondsSum += add.DeadPlayerSecondsSum
+	}
 
 	for partyIdx, party := range result.RaidMetrics.Parties {
 		baseParty := rsrc.Combined.RaidMetrics.Parties[partyIdx]

@@ -30,6 +30,7 @@ func main() {
 		990015: {stats.AttackPower: 335, stats.RangedAttackPower: 335},
 		990115: {stats.SpellDamage: 140},
 		990016: {stats.SpellDamage: 140},
+		996032: {stats.SpellDamage: 140},
 	} {
 		id, st := id, st
 		core.NewItemEffect(id, func(agent core.Agent) {

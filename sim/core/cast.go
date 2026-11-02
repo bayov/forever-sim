@@ -22,6 +22,8 @@ type Hardcast struct {
 	CastTime time.Duration
 	// When the cast started.
 	Start time.Duration
+	// The spell being cast, for the heals in flight (heal_comm.go).
+	spell *Spell
 	// Under Forever the melee swing waits out the cast, then starts a full swing when it
 	// completes.
 	ResetsSwing bool
@@ -370,10 +372,14 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 				},
 				Target:      target,
 				ResetsSwing: resetsSwing,
+				spell:       spell,
 			}
 
 			if spell.Unit.Hardcast.Expires != spell.Unit.NextGCDAt() {
 				spell.Unit.newHardcastAction(sim)
+			}
+			if spell.expectedHealing != nil {
+				spell.Unit.onHealCastStart(sim, spell, target)
 			}
 
 			return true

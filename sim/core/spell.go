@@ -72,6 +72,10 @@ type SpellConfig struct {
 	ExpectedInitialDamage ExpectedDamageCalculator
 	ExpectedTickDamage    ExpectedDamageCalculator
 
+	// Optional, for a heal with a cast time: its average healing on the target, before
+	// overhealing. Other healers see it as a heal in flight (heal_comm.go).
+	ExpectedHealing func(target *Unit) float64
+
 	Dot    DotConfig
 	Hot    DotConfig
 	Shield ShieldConfig
@@ -188,6 +192,9 @@ type Spell struct {
 	// Reference to a spell to be considered as the CD
 	// Defaults to this spell (Used for Next Melee spells)
 	CdSpell *Spell
+
+	// SpellConfig.ExpectedHealing (heal_comm.go).
+	expectedHealing func(target *Unit) float64
 }
 
 func (unit *Unit) OnSpellRegistered(handler SpellRegisteredHandler) {
@@ -266,6 +273,7 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		CD:                 config.Cast.CD,
 		SharedCD:           config.Cast.SharedCD,
 		ExtraCastCondition: config.ExtraCastCondition,
+		expectedHealing:    config.ExpectedHealing,
 
 		extraCastConditionNeedsEvent: config.ExtraCastConditionNeedsEvent,
 

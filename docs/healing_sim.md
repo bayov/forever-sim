@@ -287,7 +287,7 @@ code). Fixed:
 
 **Not fixed yet** (H2 and later), ranked by how much they would bend healer rankings:
 
-1. **Healers see health perfectly, but not each other's heals.** No reaction delay, no heals in flight, no
+1. **Done 2026-11-02** (What healers see, below the audit): ~~Healers see health perfectly, but not each other's heals.~~ No reaction delay, no heals in flight, no
    cancelling a heal that would overheal, and identical healers act in lockstep. The game had HealComm (heals in
    flight shown to other healers) and stop-casting. This penalises slow big heals (Greater Heal, Healing Touch,
    Holy Light, Healing Wave) and favours instants, HoTs and shields. Needed: an incoming heals value or a Most
@@ -307,6 +307,73 @@ code). Fixed:
 8. **Time to OOM reads wrong for a healer**: with no heal it can pay for, its rotation finds nothing to cast
    rather than waiting for mana, so the engine never marks it OOM. The bench shows mana left.
 9. **An idle healer checks its rotation every 50 ms**, which costs some speed in a long fight.
+
+## The score in the bench (2026-11-02)
+
+**The engine books how a healing fight went** (`RaidMetrics.healing_fight`): fights, fights with any death, a
+tank's death and another's, the first death's time and the seconds players spent dead, as counts and sums so
+results combine. Each unit has its mana spent a fight (`UnitMetrics.mana_spent_avg`), for effective healing per
+mana. A healer that wants a heal it can't pay for is marked out of mana by the engine as any caster is; the
+"time to OOM wrong" finding was the dead healers' regen, fixed with the audit.
+
+**`tools/healbench`** scores by role (`-role tank|raid|both`), against a made-up `-profile` or a boss from
+`tools/encounters` (`-encounter`, at the boss's own fight length):
+
+- **tank**: the boss's melee and its abilities on the tanks, one healer by default, assigned the tanks; fails
+  when a tank dies in 2% of fights.
+- **raid**: the damage on the raid only, no tanks; fails when anyone dies in 5%.
+- **both**: everything; either line fails.
+
+`-carry` finds the damage carried (the scale of all damage at the line: bracketed, bisected five times on the
+same seed, interpolated) and the death floor there (every player topped off every 1.5 ± 0.5 s, so only a
+one-shot or a burst between heals kills; `-floor` prints it at `-scale`). About 10 sims, 2.5 s for a tank role
+score at 800 iterations.
+
+First carries, the bench shaman (a test rotation, not a tuned one), 1,600 iterations:
+
+| Fight | Role | Healers | Carry | Death floor there | At ×1: deaths (tank / other), mana left |
+|---|---|---|---|---|---|
+| tank profile | tank | 1 | 0.956 | 0% | 5.6% / 4.7%, 1611 |
+| raid profile | raid | 2 | 0.824 | 0% | - / 36.6%, 2062 |
+| raid profile | both | 2 | 0.683 | 0% | 99.7% / 99.9%, 623 |
+| swap profile | tank | 1 | 0.676 | 0% | 100% / 94%, 900 |
+| Onyxia (tank side) | tank | 1 | 0.907 | 0% | 37.4% / 29.9%, 1381 |
+| Broodlord (tank side) | tank | 1 | 0.818 | 0% | 38.6% / 36.5%, 3990 |
+
+In the tank role "other" deaths are the healer's: once the tank dies the boss turns to it. Broodlord kills the
+tank with 3,990 mana left in the healer: his Mortal Strike's healing cut and spikes, not mana, are the limit.
+
+## What healers see (2026-11-02)
+
+The audit's top gap, now in (`sim/core/heal_comm.go`), for healing fights only:
+
+- **Heals in flight**, as Classic's HealComm addon showed them. A heal with a cast time declares its average
+  size (`SpellConfig.ExpectedHealing`, the shaman's three heals so far; Chain Heal counts its target only, as
+  HealComm did). Most Hurt, Lowest Health and Health Missing take the other healers' heals in flight off
+  what's missing, so a second healer doesn't start the same big heal on the same hit.
+- **A reaction time**: a healer (`Player.reaction_time_ms`) reads other players' health that long ago, from
+  each player's last 32 health changes.
+- **Cancelling** (`Player.stop_cast_overheal`): a reaction time before its heal lands, a healer whose heal
+  would overheal by more than this share stops it, unpaid, and casts again at once. With no reaction time
+  it never gets the chance.
+
+`tools/healbench` gives its healers 0.3 s ± 25% (spread between them so identical healers don't act in
+lockstep) and cancels over 50% overheal; `-reaction` and `-stopcast` change them. What each piece does, 800
+iterations:
+
+| Healers see | Tank profile, 2 healers: overheal, mana left, carry | Raid profile, both roles: carry |
+|---|---|---|
+| everything at once, no heals in flight (before) | 43%, 3,820, - | 0.683 |
+| heals in flight, no reaction time | 26.2%, 6,685, 1.607 | 0.741 |
+| heals in flight, 0.3 s late | 44.2%, 4,480, 1.564 | 0.686 |
+| heals in flight, 0.3 s late, cancelling over 50% (the bench's default) | 22.6%, 6,323, 1.538 | 0.722 |
+
+A late healer double-heals again (it sees the tank hurt after the other heal landed), and cancelling takes most
+of that back. `TestHealingFightHealComm` checks it: without the heals in flight, 42 of 47 Healing Waves in a
+fight started in lockstep with the other healer's.
+
+Still open from the audit's list: rank choice (downranking), absorbs, healer-aware mana support, range and
+groups, the damage model's gaps.
 
 ## Milestones
 

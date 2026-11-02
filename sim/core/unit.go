@@ -48,6 +48,8 @@ type Unit struct {
 	// The players this one heals (Player.heal_assignment), which its rotation's Most Hurt and
 	// Lowest Health pick from (heal_targets.go). Empty is the whole raid.
 	healAssignment []*Unit
+	// Player.stop_cast_overheal (heal_comm.go).
+	stopCastOverheal float64
 
 	// Unique index of this unit among all units in the environment.
 	// This is used as the index for attack tables.

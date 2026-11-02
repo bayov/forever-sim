@@ -165,6 +165,10 @@ func (r *run) onHarmful(sim *core.Simulation, spell *core.Spell, result *core.Sp
 	if spell.Flags.Matches(core.SpellFlagCastFromTotem) {
 		source = "totem"
 	}
+	totem, visual, nextAt := r.hitVisual(sim, spell)
+	if totem != "" {
+		source = "totem"
+	}
 	r.s.batch.Hits = append(r.s.batch.Hits, HitEvent{
 		At:       toMs(sim.CurrentTime),
 		SpellID:  spell.ActionID.SpellID,
@@ -177,6 +181,10 @@ func (r *run) onHarmful(sim *core.Simulation, spell *core.Spell, result *core.Sp
 		School:   int(spell.SpellSchool),
 		Target:   int(result.Target.Index),
 		Source:   source,
+
+		Totem:         totem,
+		VisualSpellID: visual,
+		NextAt:        nextAt,
 	})
 }
 

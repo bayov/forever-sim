@@ -155,7 +155,15 @@ export function readLayout(ui: Any | undefined): HudLayout {
 		player: { x: num(playerPos.x, -313.9), y: num(playerPos.y, -228.3), w: num(player.frameWidth, 237.8), h: num(player.healthHeight, 30), point: 'CENTER' },
 		playerColor: color(player.customFillColor, green),
 		playerTextSize: num(player.rightTextSize, 16),
-		target: { x: num(targetPos.x, 313.9), y: num(targetPos.y, -228.1), w: num(target.frameWidth, 237.8), h: num(target.healthHeight, 23.9), point: 'CENTER' },
+		// EllesmereUI's target frame is its health bar and the power bar under it (6 high unless
+		// changed). A target with no power, like the dummy, fills the whole frame with health.
+		target: {
+			x: num(targetPos.x, 313.9),
+			y: num(targetPos.y, -228.1),
+			w: num(target.frameWidth, 237.8),
+			h: num(target.healthHeight, 23.9) + (['below', 'above', undefined].includes(target.powerPosition) ? num(target.powerHeight, 6) : 0),
+			point: 'CENTER',
+		},
 		targetColor: color(target.customFillColor, green),
 		targetTextSize: num(target.leftTextSize, 16),
 		targetDebuffSize: num(target.debuffSize, 30),

@@ -108,7 +108,8 @@ func (shaman *Shaman) newHealSpellConfig(r healRank, rank int, spellCode int32) 
 		multiplier *= shaman.healingWayMultiplier()
 	}
 
-	return core.SpellConfig{
+	var spell *core.Spell // this rank, once registered, for ExpectedHealing
+	config := core.SpellConfig{
 		SpellCode:   spellCode,
 		ActionID:    core.ActionID{SpellID: r.spellID},
 		SpellSchool: core.SpellSchoolNature,
@@ -162,7 +163,17 @@ func (shaman *Shaman) newHealSpellConfig(r healRank, rank int, spellCode int32) 
 			}
 			spell.DamageMultiplier /= bonus
 		},
+		// Other healers see the heal in flight at its average (heal_comm.go). Chain Heal's jumps
+		// aren't counted, as HealComm counted the target only.
+		ExpectedHealing: func(target *core.Unit) float64 {
+			if spell == nil {
+				spell = shaman.GetSpell(core.ActionID{SpellID: r.spellID})
+			}
+			target = shaman.healTarget(target)
+			return spell.ExpectedHealing(target, (low+high)/2) * shaman.riptideChainHealMultiplier(spell, target)
+		},
 	}
+	return config
 }
 
 const (

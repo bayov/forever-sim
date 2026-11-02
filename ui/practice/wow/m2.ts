@@ -76,11 +76,17 @@ export class Reader {
 	}
 }
 
-// Track values come in these shapes.
-export type TrackKind = 'vec3' | 'rgb' | 'quat' | 'scale' | 'i16' | 'u8' | 'f32';
+// An event in the model's animations: $HIT (a swing connects), $CSS (the swing's whoosh), $SHL and
+// $SHR (a weapon moves to or from its sheath), footsteps and such, at times in each sequence.
+export type M2Event = { id: string; data: number; bone: number; times: { n: number; ofs: number }[] };
 
-const kindSize: Record<TrackKind, number> = { vec3: 12, rgb: 12, quat: 8, scale: 12, i16: 2, u8: 1, f32: 4 };
-const kindWidth: Record<TrackKind, number> = { vec3: 3, rgb: 3, quat: 4, scale: 3, i16: 1, u8: 1, f32: 1 };
+// Track values come in these shapes.
+// 'gravity' is a particle emitter's packed gravity (emitter flag 0x800000): a direction in two
+// int8s and a strength in an int16, which we unpack to an acceleration vector.
+export type TrackKind = 'vec3' | 'rgb' | 'quat' | 'scale' | 'i16' | 'u8' | 'f32' | 'gravity';
+
+const kindSize: Record<TrackKind, number> = { vec3: 12, rgb: 12, quat: 8, scale: 12, i16: 2, u8: 1, f32: 4, gravity: 4 };
+const kindWidth: Record<TrackKind, number> = { vec3: 3, rgb: 3, quat: 4, scale: 3, i16: 1, u8: 1, f32: 1, gravity: 3 };
 
 // A decoded track for one sequence: key times in ms and the values, `width` floats per key.
 export type Keys = { times: Uint32Array; values: Float32Array };
@@ -120,8 +126,9 @@ export class Track {
 	// get gives a sequence's keys, read from `source` (the model or the sequence's .anim data) the
 	// first time. It gives null when the track has no keys there.
 	get(seq: number, source: DataView | undefined): Keys | null {
-		// A track on a global sequence loops on its own clock, with its keys in slot 0.
-		const slot = this.globalSeq !== 0xffff ? 0 : seq;
+		// A track on a global sequence loops on its own clock, with its keys in slot 0. A track with
+		// one slot (a ghost wolf's tint) holds for every sequence.
+		const slot = this.globalSeq !== 0xffff || this.times.length === 1 ? 0 : seq;
 		const cached = this.keys.get(slot);
 		if (cached !== undefined) return cached;
 		const t = this.times[slot];
@@ -193,6 +200,22 @@ export class Track {
 				case 'f32':
 					values[w] = source.getFloat32(o, true);
 					break;
+				case 'gravity': {
+					// wowdev.wiki M2, "Compressed particle gravity".
+					const dx = source.getInt8(o) / 128;
+					const dy = source.getInt8(o + 1) / 128;
+					let dz = Math.sqrt(Math.max(0, 1 - dx * dx - dy * dy));
+					let mag = source.getInt16(o + 2, true) * 0.04238648;
+					if (mag < 0) {
+						dz = -dz;
+						mag = -mag;
+					}
+					// WoW's (x, y, z) is (x, z, -y) here.
+					values[w] = dx * mag;
+					values[w + 1] = dz * mag;
+					values[w + 2] = -dy * mag;
+					break;
+				}
 			}
 		}
 		const keys = { times: times.subarray(0, count), values };
@@ -299,10 +322,16 @@ export type ParticleEmitter = {
 	areaLength: Track;
 	areaWidth: Track;
 	enabled: Track;
-	// Over each particle's life: three keys at 0, the middle point and 1.
+	// Over each particle's life: keys at their times (0 to 1 of the life).
 	colors: [number, number, number][];
 	alphas: number[];
 	scales: [number, number][];
+	colorTimes: number[];
+	alphaTimes: number[];
+	scaleTimes: number[];
+	cellTimes: number[];
+	baseSpinVary: number;
+	spinVary: number;
 	midPoint: number;
 	headCells: number[];
 	lifespanVary: number;
@@ -370,6 +399,7 @@ export class M2 {
 	attachmentLookup: number[] = [];
 	particles: ParticleEmitter[] = [];
 	ribbons: RibbonEmitter[] = [];
+	events: M2Event[] = [];
 	skins: number[] = [];
 	animFiles: AnimFile[] = [];
 	skeleton = 0;
@@ -482,7 +512,18 @@ export class M2 {
 		);
 		const attLookup = r.array();
 		this.attachmentLookup = r.at(attLookup.ofs, () => Array.from({ length: attLookup.n }, () => r.i16()));
-		r.array(); // events
+		const events = r.array();
+		this.events = r.at(events.ofs, () =>
+			Array.from({ length: events.n }, () => {
+				const id = r.fourcc();
+				const data = r.u32();
+				const bone = r.u32();
+				r.pos += 12 + 4; // position, interpolation and global sequence
+				const t = r.array();
+				const times = r.at(t.ofs, () => Array.from({ length: t.n }, () => r.array()));
+				return { id, data, bone, times };
+			}),
+		);
 		r.array(); // lights
 		r.array(); // cameras
 		r.array(); // camera lookup
@@ -566,6 +607,14 @@ export class M2 {
 		return this.animFiles.find(a => a.anim === s.id && a.variation === s.variation)?.fdid ?? 0;
 	}
 
+	// eventTimes gives the times (ms) in a sequence when an event fires, read from `source` (the
+	// model or the sequence's .anim data).
+	eventTimes(ev: M2Event, seq: number, source: DataView | undefined): number[] {
+		const t = ev.times[seq];
+		if (!source || !t || t.n === 0 || t.ofs + t.n * 4 > source.byteLength) return [];
+		return Array.from({ length: t.n }, (_, i) => source.getUint32(t.ofs + i * 4, true));
+	}
+
 	attachment(id: number): Attachment | undefined {
 		const i = this.attachmentLookup[id];
 		return i !== undefined && i >= 0 ? this.attachments[i] : undefined;
@@ -605,6 +654,14 @@ function readBone(r: Reader): Bone {
 
 // FBlocks are the particle settings that change over each particle's life: keys at fixed times
 // from 0 to 1, with no interpolation flag or global sequence.
+// fblockTimes reads an FBlock's key times (fixed16, 0 to 1 of the life) without moving on.
+function fblockTimes(r: Reader): number[] {
+	const back = r.pos;
+	const t = r.array();
+	r.pos = back;
+	return r.at(t.ofs, () => Array.from({ length: t.n }, () => r.i16() / 32767));
+}
+
 function readFBlock(r: Reader, width: number): number[][] {
 	const t = r.array();
 	const v = r.array();
@@ -673,7 +730,7 @@ function readParticle(r: Reader, modelFlags: number): ParticleEmitter {
 	const speedVariation = Track.read(r, 'f32');
 	const verticalRange = Track.read(r, 'f32');
 	const horizontalRange = Track.read(r, 'f32');
-	const gravity = Track.read(r, 'f32');
+	const gravity = Track.read(r, flags & 0x800000 ? 'gravity' : 'f32');
 	const lifespan = Track.read(r, 'f32');
 	const lifespanVary = r.f32();
 	const emissionRate = Track.read(r, 'f32');
@@ -681,11 +738,15 @@ function readParticle(r: Reader, modelFlags: number): ParticleEmitter {
 	const areaLength = Track.read(r, 'f32');
 	const areaWidth = Track.read(r, 'f32');
 	Track.read(r, 'f32'); // z source
+	const colorTimes = fblockTimes(r);
 	const colors = readFBlock(r, 3) as [number, number, number][];
+	const alphaTimes = fblockTimes(r);
 	const alphas = readFBlock(r, 1).map(a => a[0]);
+	const scaleTimes = fblockTimes(r);
 	const scales = readFBlockScales(r);
 	const scaleVary: [number, number] = [r.f32(), r.f32()];
 	void scaleVary;
+	const cellTimes = fblockTimes(r);
 	const headCells = readFBlockU16(r);
 	readFBlockU16(r); // tail cells
 	const tailLength = r.f32();
@@ -695,9 +756,9 @@ function readParticle(r: Reader, modelFlags: number): ParticleEmitter {
 	r.f32(); // burst multiplier
 	const drag = r.f32();
 	const baseSpin = r.f32();
-	r.f32(); // base spin vary
+	const baseSpinVary = r.f32();
 	const spin = r.f32();
-	r.f32(); // spin vary
+	const spinVary = r.f32();
 	r.pos += 24; // tumble
 	const wind: [number, number, number] = r.vec3();
 	const windTime = r.f32();
@@ -733,6 +794,12 @@ function readParticle(r: Reader, modelFlags: number): ParticleEmitter {
 		colors,
 		alphas,
 		scales,
+		colorTimes,
+		alphaTimes,
+		scaleTimes,
+		cellTimes,
+		baseSpinVary,
+		spinVary,
 		midPoint: 0.5,
 		headCells,
 		lifespanVary,

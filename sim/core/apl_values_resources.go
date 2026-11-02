@@ -118,14 +118,15 @@ func (value *APLValueMaxHealth) String() string {
 // until its target misses enough (docs/healing_sim.md). 0 for a heal target with nobody hurt.
 type APLValueHealthMissing struct {
 	DefaultAPLValueImpl
-	unit UnitReference
+	unit   UnitReference
+	viewer *Unit
 }
 
 func (rot *APLRotation) newValueHealthMissing(config *proto.APLValueHealthMissing) APLValue {
 	unit := rot.GetSourceUnit(config.GetSourceUnit())
 	if unit.Get() == nil {
 		if unit.IsDynamic() {
-			return &APLValueHealthMissing{unit: unit}
+			return &APLValueHealthMissing{unit: unit, viewer: rot.unit}
 		}
 		return nil
 	}
@@ -134,7 +135,8 @@ func (rot *APLRotation) newValueHealthMissing(config *proto.APLValueHealthMissin
 		return nil
 	}
 	return &APLValueHealthMissing{
-		unit: unit,
+		unit:   unit,
+		viewer: rot.unit,
 	}
 }
 func (value *APLValueHealthMissing) Type() proto.APLValueType {
@@ -145,7 +147,9 @@ func (value *APLValueHealthMissing) GetFloat(_ *Simulation) float64 {
 	if unit == nil || unit.IsDead() {
 		return 0
 	}
-	return unit.MaxHealth() - unit.CurrentHealth()
+	// As the rotation's player sees it: a reaction time late, less the other healers' heals in
+	// flight (heal_comm.go). Outside a healing fight, what's missing.
+	return value.viewer.seenMissing(unit)
 }
 func (value *APLValueHealthMissing) String() string {
 	return "Health Missing"

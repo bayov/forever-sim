@@ -105,6 +105,8 @@ func (s *server) routes() http.Handler {
 	mux.HandleFunc("GET /api/visuals/imbues", s.handleImbueEnchants)
 	mux.HandleFunc("GET /api/sounds/melee", s.handleMeleeSounds)
 	mux.HandleFunc("GET /api/sounds/unit/{displayId}", s.handleUnitSounds)
+	mux.HandleFunc("GET /api/sounds/kit/{kitId}", s.handleSoundKit)
+	mux.HandleFunc("GET /api/sounds/vocal", s.handleVocalSounds)
 	mux.HandleFunc("GET /api/appearance/character", s.handleAppearanceCharacter)
 	mux.HandleFunc("GET /api/appearance/creature/{displayId}", s.handleAppearanceCreature)
 	mux.Handle("GET /forever/assets/", http.StripPrefix("/forever/assets/", http.FileServer(http.Dir(filepath.Join(s.repo, "assets")))))
