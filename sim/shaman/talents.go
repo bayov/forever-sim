@@ -379,8 +379,9 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 			// Don't use NS unless we're casting a full-length lightning bolt, which is
-			// the only spell shamans have with a cast longer than GCD.
-			return !shaman.HasTemporarySpellCastSpeedIncrease()
+			// the only spell shamans have with a cast longer than GCD. It's a rotation
+			// helper, so a player pressing it by hand (the practice room) skips it.
+			return shaman.ManualControl || !shaman.HasTemporarySpellCastSpeedIncrease()
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			nsAura.Activate(sim)
