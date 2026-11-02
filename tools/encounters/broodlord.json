@@ -139,6 +139,40 @@
     "firstAt": 20,
     "everySeconds": 27.5,
     "spreadSeconds": 7.5
+   },
+   {
+    "spellId": 23331,
+    "school": "SpellSchoolFire",
+    "minDamage": 2641,
+    "maxDamage": 3373,
+    "who": "NotTanks",
+    "share": 0.48,
+    "firstAt": 21.1,
+    "everySeconds": 30.26,
+    "randomTiming": true
+   },
+   {
+    "spellId": 0,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 240,
+    "maxDamage": 415,
+    "who": "NotTanks",
+    "share": 0.028,
+    "firstAt": 3.0,
+    "melee": true,
+    "everySeconds": 1.93,
+    "randomTiming": true
+   },
+   {
+    "spellId": 15754,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 2283,
+    "maxDamage": 3658,
+    "who": "NotTanks",
+    "share": 0.028,
+    "firstAt": 17.2,
+    "everySeconds": 19.42,
+    "randomTiming": true
    }
   ]
  },
@@ -147,5 +181,64 @@
   "hpsEach": 300,
   "castSeconds": 3.04,
   "notes": "From the Anniversary Hardcore realms's logs (22 kills): while the boss was on the main tank, 8 healers had 5% or more of its healing (the median kill), and the healing it took from others was 2,404 a second with overheal and absorbs (24% of the heals effective), 2.64 heals and HoT ticks a second, against 637 damage taken a second. The tank's own heals (2% of its healing) are left out. Main tanks: Warrior 16, Druid 6."
- }
+ },
+ "raidHealing": {
+  "raidSize": 40,
+  "tanks": 4,
+  "addTanks": 2,
+  "dtpsAddTanks": 100,
+  "healers": 11,
+  "healersRange": [
+   9,
+   12
+  ],
+  "healerClasses": {
+   "Priest": 4.95,
+   "Shaman": 3.45,
+   "Paladin": 1.32,
+   "Druid": 1.27
+  },
+  "hpsEachHealer": 439,
+  "raidHps": 2071,
+  "raidHpsWithOverheal": 5442,
+  "hpsOnTanks": 869,
+  "hpsOnOthers": 1109,
+  "hpsOnOthersWithOverheal": 2153,
+  "dtpsEachOther": 29.0,
+  "dtpsTanks": 879,
+  "deathsOthersPerKill": 0,
+  "deathsTanksPerKill": 0,
+  "killsWithoutDeath": "22/22",
+  "fightSeconds": [
+   39,
+   44,
+   64
+  ],
+  "notes": "What the Anniversary Hardcore realms raids had on Broodlord Lashlayer (22 kills, Warcraft Logs): the median kill's raid of 40 with 4 tanks (2 of them on adds, who took 100 a second together, not in the events), 11 healers by Warcraft Logs' healer role (93% of the healing), each 439 HPS with overheal. The raid healed 2,071 a second (869 on the tanks, 1,109 on the rest, 49% overheal on the rest). Each non-tank took 29.0 a second after mitigation. Fight length is the 10th percentile, median and 90th percentile kill. For the healing sim to check its healer counts against."
+ },
+ "raidSource": "[logs: the Anniversary Hardcore realms] The raidDamage events with who NotTanks: Warcraft Logs, 22 kills (tools/warcraftlogs/wclcli.py raid, tools/encounters/logs/anniversary_bwl_raid.json): the abilities that dealt 2% or more of the non-tanks' damage taken in 10% or more of the kills, 100% of it together, their rates scaled by 1.00 for the rest. Each is a share of the non-tanks, so the file fits any raid size. Blast Wave 23331 from Broodlord Lashlayer (85% of the non-tanks' damage, in 19 of 22 kills): 2,641 to 3,373 unmitigated, the 5th to 95th percentile stretched to an even roll; 48% of the non-tanks a cast (10th to 90th percentile 38 to 56), 24.7 landed a second on each (100% of it landing), so a cast every 30.26 s at random (the logs count 1.5 casts a minute), the first at 21 s (median) of a 44 s kill. Melee 1 from Corrupted Bronze Whelp (11% of the non-tanks' damage, in 22 of 22 kills): 240 to 415 unmitigated, the 5th to 95th percentile stretched to an even roll; 3% of the non-tanks a cast (10th to 90th percentile 3 to 5), 3.0 landed a second on each (69% of it landing), so a cast every 1.93 s at random (the logs count 22.1 casts a minute), the first at 3 s (median) of a 44 s kill. Cleave 15754 from Broodlord Lashlayer (4% of the non-tanks' damage, in 18 of 22 kills): 2,283 to 3,658 unmitigated, the 5th to 95th percentile stretched to an even roll; 3% of the non-tanks a cast (10th to 90th percentile 3 to 5), 1.2 landed a second on each (47% of it landing), so a cast every 19.42 s at random (the logs count 1.9 casts a minute), the first at 17 s (median) of a 44 s kill. Together they land 29.0 a second on each non-tank over a median kill, at the logs' mitigation, against 29.0 in the logs.",
+ "raidReports": [
+  "4z3xQCZBnhYDrHjd:9",
+  "68ybJwZnkX2RPcGm:10",
+  "ADvHd2QTGrx3JbNc:11",
+  "Ap2RZt8gQyJzTa36:11",
+  "GqVArWfx9yJ47aHd:8",
+  "GygnHAN67w9jMqTJ:9",
+  "Kda38npwqr2cLTAY:9",
+  "LFbz4MyB28vVm6Df:17",
+  "NvrjcQ7BbzAYmVF1:12",
+  "P1q93HcBTVKxJMpA:9",
+  "VZ7C6BpMgPNf8xHD:10",
+  "VqhvJkGHzdTQpc36:11",
+  "ZMdDxLAPWhj9HVGN:4",
+  "aBMLKhCGjdP4pyzT:11",
+  "gcW4dZyCB6jpNV9R:11",
+  "kxcgDX7pbYm82qFP:12",
+  "rg8Y4P9kyt2KXfvQ:12",
+  "rpvtGmDZa9FBPHAY:12",
+  "wcqCRdQ43j81h9p7:11",
+  "wpyZPLgmRtkTdqW8:11",
+  "xnLvprGfDkYzNtBR:9",
+  "zq7DYXr3jPcxNLRy:8"
+ ]
 }

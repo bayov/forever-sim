@@ -135,6 +135,73 @@
     "firstAt": 15,
     "everySeconds": 22.5,
     "spreadSeconds": 7.5
+   },
+   {
+    "spellId": 18392,
+    "school": "SpellSchoolFire",
+    "minDamage": 1703,
+    "maxDamage": 2297,
+    "who": "NotTanks",
+    "share": 0.079,
+    "firstAt": 78.6,
+    "everySeconds": 8.18,
+    "randomTiming": true
+   },
+   {
+    "spellId": 17731,
+    "school": "SpellSchoolFire",
+    "minDamage": 1325,
+    "maxDamage": 1685,
+    "who": "NotTanks",
+    "share": 0.03,
+    "firstAt": 101.6,
+    "everySeconds": 1.59,
+    "randomTiming": true
+   },
+   {
+    "spellId": 18435,
+    "school": "SpellSchoolFire",
+    "minDamage": 3037,
+    "maxDamage": 3951,
+    "who": "NotTanks",
+    "share": 0.06,
+    "firstAt": 107.2,
+    "everySeconds": 13.1,
+    "randomTiming": true
+   },
+   {
+    "spellId": 0,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 305,
+    "maxDamage": 482,
+    "who": "NotTanks",
+    "share": 0.03,
+    "firstAt": 57.4,
+    "melee": true,
+    "everySeconds": 1.8,
+    "randomTiming": true
+   },
+   {
+    "spellId": 19983,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 1608,
+    "maxDamage": 2555,
+    "who": "NotTanks",
+    "share": 0.072,
+    "firstAt": 111.6,
+    "everySeconds": 19.67,
+    "randomTiming": true
+   },
+   {
+    "spellId": 15847,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 591,
+    "maxDamage": 1000,
+    "who": "NotTanks",
+    "share": 0.081,
+    "firstAt": 38.0,
+    "everySeconds": 39.99,
+    "randomTiming": true
    }
   ]
  },
@@ -143,5 +210,63 @@
   "hpsEach": 174,
   "castSeconds": 4.48,
   "notes": "From the Anniversary Hardcore realms's logs (21 kills): while the boss was on the main tank, 8 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,391 a second with overheal and absorbs (31% of the heals effective), 1.79 heals and HoT ticks a second, against 469 damage taken a second. The tank's own heals (1% of its healing) are left out. Main tanks: Warrior 16, Druid 5."
- }
+ },
+ "raidHealing": {
+  "raidSize": 40,
+  "tanks": 3,
+  "addTanks": 0,
+  "dtpsAddTanks": 22,
+  "healers": 11,
+  "healersRange": [
+   8,
+   13
+  ],
+  "healerClasses": {
+   "Priest": 4.81,
+   "Shaman": 3.48,
+   "Paladin": 1.19,
+   "Druid": 1.14
+  },
+  "hpsEachHealer": 182,
+  "raidHps": 1335,
+  "raidHpsWithOverheal": 2533,
+  "hpsOnTanks": 399,
+  "hpsOnOthers": 895,
+  "hpsOnOthersWithOverheal": 1401,
+  "dtpsEachOther": 22.6,
+  "dtpsTanks": 392,
+  "deathsOthersPerKill": 0.05,
+  "deathsTanksPerKill": 0,
+  "killsWithoutDeath": "20/21",
+  "fightSeconds": [
+   114,
+   137,
+   172
+  ],
+  "notes": "What the Anniversary Hardcore realms raids had on Onyxia (21 kills, Warcraft Logs): the median kill's raid of 40 with 3 tanks (0 of them on adds, who took 22 a second together, not in the events), 11 healers by Warcraft Logs' healer role (80% of the healing), each 182 HPS with overheal. The raid healed 1,335 a second (399 on the tanks, 895 on the rest, 36% overheal on the rest). Each non-tank took 22.6 a second after mitigation. Fight length is the 10th percentile, median and 90th percentile kill. For the healing sim to check its healer counts against."
+ },
+ "raidSource": "[logs: the Anniversary Hardcore realms] The raidDamage events with who NotTanks: Warcraft Logs, 21 kills (tools/warcraftlogs/wclcli.py raid, tools/encounters/logs/anniversary_onyxia_raid.json): the abilities that dealt 2% or more of the non-tanks' damage taken in 10% or more of the kills, 96% of it together, their rates scaled by 1.04 for the rest. Each is a share of the non-tanks, so the file fits any raid size. Fireball 18392 from Onyxia (32% of the non-tanks' damage, in 21 of 21 kills): 1,703 to 2,297 unmitigated, the 5th to 95th percentile stretched to an even roll; 8% of the non-tanks a cast (10th to 90th percentile 3 to 17), 7.3 landed a second on each (92% of it landing), so a cast every 8.18 s at random (the logs count 2.7 casts a minute), the first at 79 s (median) of a 137 s kill. Eruption 17731 from Lava Fissure (31% of the non-tanks' damage, in 21 of 21 kills): 1,325 to 1,685 unmitigated, the 5th to 95th percentile stretched to an even roll; 3% of the non-tanks a cast (10th to 90th percentile 3 to 10), 7.0 landed a second on each (100% of it landing), so a cast every 1.59 s at random (the logs count 6.6 casts a minute), the first at 102 s (median) of a 137 s kill. Flame Breath 18435 from Onyxia (14% of the non-tanks' damage, in 13 of 21 kills): 3,037 to 3,951 unmitigated, the 5th to 95th percentile stretched to an even roll; 6% of the non-tanks a cast (10th to 90th percentile 3 to 48), 3.3 landed a second on each (100% of it landing), so a cast every 13.1 s at random (the logs count 0.4 casts a minute), the first at 107 s (median) of a 137 s kill. Melee 1 from Onyxian Whelp (10% of the non-tanks' damage, in 21 of 21 kills): 305 to 482 unmitigated, the 5th to 95th percentile stretched to an even roll; 3% of the non-tanks a cast (10th to 90th percentile 3 to 14), 2.3 landed a second on each (63% of it landing), so a cast every 1.8 s at random (the logs count 3.7 casts a minute), the first at 57 s (median) of a 137 s kill. Cleave 19983 from Onyxia (4% of the non-tanks' damage, in 14 of 21 kills): 1,608 to 2,555 unmitigated, the 5th to 95th percentile stretched to an even roll; 7% of the non-tanks a cast (10th to 90th percentile 3 to 26), 1.0 landed a second on each (66% of it landing), so a cast every 19.67 s at random (the logs count 0.4 casts a minute), the first at 112 s (median) of a 137 s kill. Tail Sweep 15847 from Onyxia (4% of the non-tanks' damage, in 18 of 21 kills): 591 to 1,000 unmitigated, the 5th to 95th percentile stretched to an even roll; 8% of the non-tanks a cast (10th to 90th percentile 3 to 27), 0.9 landed a second on each (83% of it landing), so a cast every 39.99 s at random (the logs count 0.8 casts a minute), the first at 38 s (median) of a 137 s kill. Together they land 22.6 a second on each non-tank over a median kill, at the logs' mitigation, against 22.6 in the logs.",
+ "raidReports": [
+  "1jQmfW2ZncPprdNk:5",
+  "2mrJFPX3hcTCkHz7:4",
+  "3amNDp2YPtVRAKFh:4",
+  "8mJ32Gt9yhK1Rbjz:3",
+  "8ycGxf4g7pKHtRZL:4",
+  "CvXx7jPKaMJdTnA1:4",
+  "JtFC9bDNBAx684Wk:4",
+  "LKqp7a8RgQzH3XDP:3",
+  "Ljc97HnMtBTv8PQ1:4",
+  "MFcQGwVhkYdnP6HL:5",
+  "MFcQGwVhkYdnP6HL:89",
+  "Pkwz76ha2X9WNMQH:1",
+  "Vnq7zFgkPf4TcxtC:1",
+  "dGkBmxpPfRW4T3MJ:5",
+  "jLQfcGFDTVCdwMBZ:5",
+  "kxPQag7wVzMXRZjn:4",
+  "mV3RB2PzwFCXb9cg:4",
+  "qMk94gJ7XCHradhR:7",
+  "tTc4p71GZXQ3AgJn:5",
+  "vwBZHLaMkJKdPygr:5",
+  "yXkYHzZ32vp1TPrA:4"
+ ]
 }

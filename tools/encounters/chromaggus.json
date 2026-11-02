@@ -115,6 +115,92 @@
     "spreadSeconds": 0,
     "ticks": 5,
     "tickSeconds": 3
+   },
+   {
+    "spellId": 23169,
+    "school": "SpellSchoolNature",
+    "minDamage": 250,
+    "maxDamage": 250,
+    "who": "NotTanks",
+    "share": 0.132,
+    "firstAt": 36.0,
+    "ticks": 2,
+    "tickSeconds": 5.0,
+    "everySeconds": 21.66,
+    "randomTiming": true
+   },
+   {
+    "spellId": 23189,
+    "school": "SpellSchoolFrost",
+    "minDamage": 1744,
+    "maxDamage": 2244,
+    "who": "NotTanks",
+    "share": 0.103,
+    "firstAt": 38.2,
+    "everySeconds": 82.8,
+    "randomTiming": true
+   },
+   {
+    "spellId": 23316,
+    "school": "SpellSchoolFire",
+    "minDamage": 678,
+    "maxDamage": 813,
+    "who": "NotTanks",
+    "share": 0.051,
+    "firstAt": 41.6,
+    "ticks": 4,
+    "tickSeconds": 3.0,
+    "everySeconds": 59.98,
+    "randomTiming": true
+   },
+   {
+    "spellId": 23308,
+    "school": "SpellSchoolFire",
+    "minDamage": 3688,
+    "maxDamage": 4660,
+    "who": "NotTanks",
+    "share": 0.052,
+    "firstAt": 69.4,
+    "everySeconds": 62.87,
+    "randomTiming": true
+   },
+   {
+    "spellId": 23155,
+    "school": "SpellSchoolFire",
+    "minDamage": 47,
+    "maxDamage": 103,
+    "who": "NotTanks",
+    "share": 0.216,
+    "firstAt": 55.2,
+    "ticks": 3,
+    "tickSeconds": 3.0,
+    "everySeconds": 24.38,
+    "randomTiming": true
+   },
+   {
+    "spellId": 23313,
+    "school": "SpellSchoolNature",
+    "minDamage": 869,
+    "maxDamage": 1133,
+    "who": "NotTanks",
+    "share": 0.051,
+    "firstAt": 72.8,
+    "ticks": 5,
+    "tickSeconds": 3.0,
+    "everySeconds": 136.78,
+    "randomTiming": true
+   },
+   {
+    "spellId": 0,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 3120,
+    "maxDamage": 4554,
+    "who": "NotTanks",
+    "share": 0.026,
+    "firstAt": 21.3,
+    "melee": true,
+    "everySeconds": 78.03,
+    "randomTiming": true
    }
   ]
  },
@@ -123,5 +209,63 @@
   "hpsEach": 303,
   "castSeconds": 3.07,
   "notes": "From the Anniversary Hardcore realms's logs (21 kills): while the boss was on the main tank, 8 healers had 5% or more of its healing (the median kill), and the healing it took from others was 2,425 a second with overheal and absorbs (31% of the heals effective), 2.60 heals and HoT ticks a second, against 766 damage taken a second. The tank's own heals (1% of its healing) are left out. Main tanks: Warrior 20, Druid 1."
- }
+ },
+ "raidHealing": {
+  "raidSize": 40,
+  "tanks": 1,
+  "addTanks": 0,
+  "dtpsAddTanks": 0,
+  "healers": 11,
+  "healersRange": [
+   9,
+   12
+  ],
+  "healerClasses": {
+   "Priest": 5.05,
+   "Shaman": 3.0,
+   "Paladin": 1.62,
+   "Druid": 1.33
+  },
+  "hpsEachHealer": 267,
+  "raidHps": 1171,
+  "raidHpsWithOverheal": 3196,
+  "hpsOnTanks": 724,
+  "hpsOnOthers": 417,
+  "hpsOnOthersWithOverheal": 818,
+  "dtpsEachOther": 8.6,
+  "dtpsTanks": 718,
+  "deathsOthersPerKill": 0.05,
+  "deathsTanksPerKill": 0,
+  "killsWithoutDeath": "20/21",
+  "fightSeconds": [
+   91,
+   115,
+   184
+  ],
+  "notes": "What the Anniversary Hardcore realms raids had on Chromaggus (21 kills, Warcraft Logs): the median kill's raid of 40 with 1 tanks (0 of them on adds, who took 0 a second together, not in the events), 11 healers by Warcraft Logs' healer role (94% of the healing), each 267 HPS with overheal. The raid healed 1,171 a second (724 on the tanks, 417 on the rest, 49% overheal on the rest). Each non-tank took 8.6 a second after mitigation. Fight length is the 10th percentile, median and 90th percentile kill. For the healing sim to check its healer counts against."
+ },
+ "raidSource": "[logs: the Anniversary Hardcore realms] The raidDamage events with who NotTanks: Warcraft Logs, 21 kills (tools/warcraftlogs/wclcli.py raid, tools/encounters/logs/anniversary_bwl_raid.json): the abilities that dealt 2% or more of the non-tanks' damage taken in 10% or more of the kills, 81% of it together, their rates scaled by 1.23 for the rest. Each is a share of the non-tanks, so the file fits any raid size. Brood Affliction: Green 23169 ticks from Chromaggus (20% of the non-tanks' damage, in 21 of 21 kills): 250 to 250 unmitigated, the 5th to 95th percentile stretched to an even roll; 13% of the non-tanks a cast (10th to 90th percentile 8 to 23), 1.7 landed a second on each (100% of it landing), so a cast every 21.66 s at random (the logs count 1.2 casts a minute), the first at 36 s (median) of a 115 s kill, 2 ticks 5.0 s apart. Frost Burn 23189 from Chromaggus (16% of the non-tanks' damage, in 5 of 21 kills): 1,744 to 2,244 unmitigated, the 5th to 95th percentile stretched to an even roll; 10% of the non-tanks a cast (10th to 90th percentile 5 to 27), 1.3 landed a second on each (100% of it landing), so a cast every 82.8 s at random (the logs count 0.2 casts a minute), the first at 38 s (median) of a 115 s kill. ? 23316 ticks from Chromaggus (15% of the non-tanks' damage, in 5 of 21 kills): 678 to 813 unmitigated, the 5th to 95th percentile stretched to an even roll; 5% of the non-tanks a cast (10th to 90th percentile 3 to 13), 1.3 landed a second on each (100% of it landing), so a cast every 59.98 s at random (the logs count 0.2 casts a minute), the first at 42 s (median) of a 115 s kill, 4 ticks 3.0 s apart. ? 23308 from Chromaggus (11% of the non-tanks' damage, in 7 of 21 kills): 3,688 to 4,660 unmitigated, the 5th to 95th percentile stretched to an even roll; 5% of the non-tanks a cast (10th to 90th percentile 3 to 10), 0.9 landed a second on each (82% of it landing), so a cast every 62.87 s at random (the logs count 0.2 casts a minute), the first at 69 s (median) of a 115 s kill. Brood Affliction: Red 23155 ticks from Chromaggus (7% of the non-tanks' damage, in 20 of 21 kills): 47 to 103 unmitigated, the 5th to 95th percentile stretched to an even roll; 22% of the non-tanks a cast (10th to 90th percentile 16 to 28), 0.6 landed a second on each (76% of it landing), so a cast every 24.38 s at random (the logs count 1.1 casts a minute), the first at 55 s (median) of a 115 s kill, 3 ticks 3.0 s apart. ? 23313 ticks from Chromaggus (6% of the non-tanks' damage, in 3 of 21 kills): 869 to 1,133 unmitigated, the 5th to 95th percentile stretched to an even roll; 5% of the non-tanks a cast (10th to 90th percentile 3 to 13), 0.6 landed a second on each (100% of it landing), so a cast every 136.78 s at random (the logs count 0.1 casts a minute), the first at 73 s (median) of a 115 s kill, 5 ticks 3.0 s apart. Melee 1 from Chromaggus (6% of the non-tanks' damage, in 7 of 21 kills): 3,120 to 4,554 unmitigated, the 5th to 95th percentile stretched to an even roll; 3% of the non-tanks a cast (10th to 90th percentile 3 to 3), 0.5 landed a second on each (60% of it landing), so a cast every 78.03 s at random (the logs count 0.3 casts a minute), the first at 21 s (median) of a 115 s kill. Together they land 8.6 a second on each non-tank over a median kill, at the logs' mitigation, against 8.6 in the logs.",
+ "raidReports": [
+  "47hzFfVb3BgcNtXQ:10",
+  "68ybJwZnkX2RPcGm:28",
+  "ADvHd2QTGrx3JbNc:26",
+  "Ap2RZt8gQyJzTa36:29",
+  "GqVArWfx9yJ47aHd:22",
+  "GygnHAN67w9jMqTJ:25",
+  "Kda38npwqr2cLTAY:25",
+  "NvrjcQ7BbzAYmVF1:30",
+  "P1q93HcBTVKxJMpA:30",
+  "VZ7C6BpMgPNf8xHD:28",
+  "VqhvJkGHzdTQpc36:27",
+  "ZMdDxLAPWhj9HVGN:8",
+  "aBMLKhCGjdP4pyzT:29",
+  "bgrnTWMJpc8ZzHDa:3",
+  "gcW4dZyCB6jpNV9R:29",
+  "rg8Y4P9kyt2KXfvQ:30",
+  "rpvtGmDZa9FBPHAY:30",
+  "wcqCRdQ43j81h9p7:31",
+  "wpyZPLgmRtkTdqW8:30",
+  "xnLvprGfDkYzNtBR:27",
+  "zq7DYXr3jPcxNLRy:24"
+ ]
 }

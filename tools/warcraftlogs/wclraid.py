@@ -121,6 +121,33 @@ def casts(evs):
     return out
 
 
+TICK_CHAIN_MS = 6500  # A target's ticks of one ability this close are one application (Brood Affliction: Green ticks every 5 s).
+
+
+def tick_casts(evs):
+    """Split a DoT's ticks into casts: [(time, [ticks])]. A target's ticks no more than
+    TICK_CHAIN_MS apart are one application, and applications that start within CAST_GAP_MS of
+    each other are one cast (a breath that puts the DoT on several players at once)."""
+    on = collections.defaultdict(list)
+    for e in sorted(evs, key=lambda e: e['timestamp']):
+        on[e['targetID']].append(e)
+    apps = []
+    for ts in on.values():
+        for e in ts:
+            if apps and apps[-1][-1]['targetID'] == e['targetID'] and e['timestamp'] - apps[-1][-1]['timestamp'] <= TICK_CHAIN_MS:
+                apps[-1].append(e)
+            else:
+                apps.append([e])
+    apps.sort(key=lambda a: a[0]['timestamp'])
+    out = []
+    for a in apps:
+        if out and a[0]['timestamp'] - out[-1][0] <= CAST_GAP_MS:
+            out[-1][1].extend(a)
+        else:
+            out.append((a[0]['timestamp'], list(a)))
+    return out
+
+
 def heal_total(entry):
     return entry.get('total', 0) + entry.get('overheal', 0)
 
@@ -151,7 +178,10 @@ def summarize(name, enc, fs, top):
     print(f'damage taken: {dmg_others / tot_secs:.0f} a second on the non-tanks together, '
           f'{dmg_others / max(others_secs, 1):.1f} a second each; {dmg_tanks / tot_secs:.0f} a second on the tanks together '
           f'({add_dmg / tot_secs:.0f} of it on add tanks, median {med(nadd):.0f}); the players\' own {dmg_friendly / tot_secs:.0f} a second left out')
-    abil = collections.defaultdict(list)  # (ability, source name, tick) -> [(fight, event)]
+    # (ability, the players' own, tick) -> [(fight, event)]. Not by source: the logs give one ability
+    # (Onyxia's Eruption) under several sources' names.
+    abil = collections.defaultdict(list)
+    src_names = collections.defaultdict(collections.Counter)
     for f in fs:
         for e in f['taken']:
             if e['targetID'] in f['tanks']:
@@ -160,11 +190,14 @@ def summarize(name, enc, fs, top):
             sname = src.get('name') or ('Environment' if e.get('sourceID', -1) == -1 else '?')
             if friendly(f, e):
                 sname = 'friendly'
-            abil[(e.get('abilityGameID'), sname, bool(e.get('tick')))].append((f, e))
+            key = (e.get('abilityGameID'), sname == 'friendly', bool(e.get('tick')))
+            abil[key].append((f, e))
+            src_names[key][sname] += 1
     # A player's own damage on themselves (Seal of Martyrdom, Life Tap) shows up as from the
     # environment: an Environment or friendly row whose hits are all on one class is left out.
     rows, dropped = [], []
-    for (ab, src, tick), fe in abil.items():
+    for (ab, own, tick), fe in abil.items():
+        src = src_names[(ab, own, tick)].most_common(1)[0][0]
         amt = sum(landed(e) for _, e in fe)
         cls = collections.Counter(f['actors'].get(e['targetID'], {}).get('subType') for f, e in fe)
         if src == 'friendly':
@@ -192,7 +225,10 @@ def summarize(name, enc, fs, top):
             by_src = collections.defaultdict(list)
             for e in evs:
                 by_src[e.get('sourceID')].append(e)
-            cs = sorted((c for v in by_src.values() for c in casts(v)), key=lambda c: c[0])
+            if tick:
+                cs = tick_casts(evs)
+            else:
+                cs = sorted((c for v in by_src.values() for c in casts(v)), key=lambda c: c[0])
             per_fight_casts.append(len(cs))
             ncasts += len(cs)
             firsts.append((cs[0][0] - f['start']) / 1000)

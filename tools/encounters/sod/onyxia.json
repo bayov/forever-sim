@@ -134,6 +134,97 @@
     "firstAt": 15,
     "everySeconds": 22.5,
     "spreadSeconds": 7.5
+   },
+   {
+    "spellId": 18392,
+    "school": "SpellSchoolFire",
+    "minDamage": 1718,
+    "maxDamage": 2306,
+    "who": "NotTanks",
+    "share": 0.091,
+    "firstAt": 126.9,
+    "everySeconds": 8.11,
+    "randomTiming": true
+   },
+   {
+    "spellId": 20019,
+    "school": "SpellSchoolFire",
+    "minDamage": 250,
+    "maxDamage": 250,
+    "who": "NotTanks",
+    "share": 0.071,
+    "firstAt": 129.4,
+    "ticks": 6,
+    "tickSeconds": 1.0,
+    "everySeconds": 8.05,
+    "randomTiming": true
+   },
+   {
+    "spellId": 18435,
+    "school": "SpellSchoolFire",
+    "minDamage": 3092,
+    "maxDamage": 3969,
+    "who": "NotTanks",
+    "share": 0.129,
+    "firstAt": 21.4,
+    "everySeconds": 72.64,
+    "randomTiming": true
+   },
+   {
+    "spellId": 0,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 233,
+    "maxDamage": 3370,
+    "who": "NotTanks",
+    "share": 0.071,
+    "firstAt": 29.9,
+    "melee": true,
+    "everySeconds": 13.68,
+    "randomTiming": true
+   },
+   {
+    "spellId": 17731,
+    "school": "SpellSchoolFire",
+    "minDamage": 1500,
+    "maxDamage": 1500,
+    "who": "NotTanks",
+    "share": 0.091,
+    "firstAt": 186.1,
+    "everySeconds": 9.65,
+    "randomTiming": true
+   },
+   {
+    "spellId": 15754,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 2334,
+    "maxDamage": 3186,
+    "who": "NotTanks",
+    "share": 0.125,
+    "firstAt": 103.0,
+    "everySeconds": 34.24,
+    "randomTiming": true
+   },
+   {
+    "spellId": 19983,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 2970,
+    "maxDamage": 4477,
+    "who": "NotTanks",
+    "share": 0.115,
+    "firstAt": 201.8,
+    "everySeconds": 30.17,
+    "randomTiming": true
+   },
+   {
+    "spellId": 15847,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 611,
+    "maxDamage": 970,
+    "who": "NotTanks",
+    "share": 0.182,
+    "firstAt": 20.2,
+    "everySeconds": 74.68,
+    "randomTiming": true
    }
   ]
  },
@@ -142,5 +233,57 @@
   "hpsEach": 307,
   "castSeconds": 2.33,
   "notes": "From Season of Discovery's logs (20 kills): while the boss was on the main tank, 3 healers had 5% or more of its healing (the median kill), and the healing it took from others was 920 a second with overheal and absorbs (42% of the heals effective), 1.29 heals and HoT ticks a second, against 461 damage taken a second. The tank's own heals (8% of its healing) are left out. Main tanks: Warrior 6, Shaman 5, Paladin 3, Warlock 3, Druid 2, Rogue 1."
- }
+ },
+ "raidHealing": {
+  "raidSize": 18,
+  "tanks": 3,
+  "addTanks": 2,
+  "dtpsAddTanks": 174,
+  "healers": 4,
+  "healersRange": [
+   2,
+   5
+  ],
+  "healerClasses": {
+   "Priest": 1.36,
+   "Mage": 1.21,
+   "Druid": 0.5,
+   "Paladin": 0.29,
+   "Shaman": 0.07
+  },
+  "hpsEachHealer": 1009,
+  "raidHps": 1278,
+  "raidHpsWithOverheal": 4650,
+  "hpsOnTanks": 548,
+  "hpsOnOthers": 690,
+  "hpsOnOthersWithOverheal": 2806,
+  "dtpsEachOther": 42.6,
+  "dtpsTanks": 552,
+  "deathsOthersPerKill": 1.5,
+  "deathsTanksPerKill": 0.79,
+  "killsWithoutDeath": "2/14",
+  "fightSeconds": [
+   181,
+   293,
+   355
+  ],
+  "notes": "What Season of Discovery raids had on Onyxia (14 kills, Warcraft Logs): the median kill's raid of 18 with 3 tanks (2 of them on adds, who took 174 a second together, not in the events), 4 healers by Warcraft Logs' healer role (78% of the healing), each 1,009 HPS with overheal. The raid healed 1,278 a second (548 on the tanks, 690 on the rest, 75% overheal on the rest). Each non-tank took 42.6 a second after mitigation. Fight length is the 10th percentile, median and 90th percentile kill. For the healing sim to check its healer counts against."
+ },
+ "raidSource": "[logs: Season of Discovery] The raidDamage events with who NotTanks: Warcraft Logs, 14 kills (tools/warcraftlogs/wclcli.py raid, tools/encounters/logs/sod_onyxia_raid.json): the abilities that dealt 2% or more of the non-tanks' damage taken in 10% or more of the kills, 93% of it together, their rates scaled by 1.08 for the rest. Each is a share of the non-tanks, so the file fits any raid size. Fireball 18392 from Onyxia (22% of the non-tanks' damage, in 14 of 14 kills): 1,718 to 2,306 unmitigated, the 5th to 95th percentile stretched to an even roll; 9% of the non-tanks a cast (10th to 90th percentile 5 to 25), 9.4 landed a second on each (79% of it landing), so a cast every 8.11 s at random (the logs count 3.1 casts a minute), the first at 127 s (median) of a 293 s kill. Engulfing Flames 20019 ticks from Onyxia (16% of the non-tanks' damage, in 14 of 14 kills): 250 to 250 unmitigated, the 5th to 95th percentile stretched to an even roll; 7% of the non-tanks a cast (10th to 90th percentile 5 to 18), 6.9 landed a second on each (100% of it landing), so a cast every 8.05 s at random (the logs count 2.6 casts a minute), the first at 129 s (median) of a 293 s kill, 6 ticks 1.0 s apart. Flame Breath 18435 from Onyxia (13% of the non-tanks' damage, in 14 of 14 kills): 3,092 to 3,969 unmitigated, the 5th to 95th percentile stretched to an even roll; 13% of the non-tanks a cast (10th to 90th percentile 6 to 36), 5.4 landed a second on each (100% of it landing), so a cast every 72.64 s at random (the logs count 0.7 casts a minute), the first at 21 s (median) of a 293 s kill. Melee 1 from Onyxian Whelp (13% of the non-tanks' damage, in 14 of 14 kills): 233 to 3,370 unmitigated, the 5th to 95th percentile stretched to an even roll; 7% of the non-tanks a cast (10th to 90th percentile 5 to 12), 5.3 landed a second on each (69% of it landing), so a cast every 13.68 s at random (the logs count 4.5 casts a minute), the first at 30 s (median) of a 293 s kill. Eruption 17731 from Lava Fissure (11% of the non-tanks' damage, in 14 of 14 kills): 1,500 to 1,500 unmitigated, the 5th to 95th percentile stretched to an even roll; 9% of the non-tanks a cast (10th to 90th percentile 6 to 19), 4.8 landed a second on each (100% of it landing), so a cast every 9.65 s at random (the logs count 2.7 casts a minute), the first at 186 s (median) of a 293 s kill. Cleave 15754 from Onyxian Warder (9% of the non-tanks' damage, in 14 of 14 kills): 2,334 to 3,186 unmitigated, the 5th to 95th percentile stretched to an even roll; 12% of the non-tanks a cast (10th to 90th percentile 6 to 20), 3.8 landed a second on each (62% of it landing), so a cast every 34.24 s at random (the logs count 1.4 casts a minute), the first at 103 s (median) of a 293 s kill. Cleave 19983 from Onyxia (6% of the non-tanks' damage, in 9 of 14 kills): 2,970 to 4,477 unmitigated, the 5th to 95th percentile stretched to an even roll; 12% of the non-tanks a cast (10th to 90th percentile 6 to 50), 2.7 landed a second on each (65% of it landing), so a cast every 30.17 s at random (the logs count 0.3 casts a minute), the first at 202 s (median) of a 293 s kill. Tail Sweep 15847 from Onyxia (3% of the non-tanks' damage, in 14 of 14 kills): 611 to 970 unmitigated, the 5th to 95th percentile stretched to an even roll; 18% of the non-tanks a cast (10th to 90th percentile 6 to 39), 1.3 landed a second on each (76% of it landing), so a cast every 74.68 s at random (the logs count 0.8 casts a minute), the first at 20 s (median) of a 293 s kill. Together they land 42.6 a second on each non-tank over a median kill, at the logs' mitigation, against 42.6 in the logs.",
+ "raidReports": [
+  "ALwvk8Fzd2YfThcC:4",
+  "BmQHzhRfqaFwp6Gb:3",
+  "CNv1qV78MayWfXdn:2",
+  "CwnpQk2Pc6ZVY1NT:2",
+  "FwQ4cfhX2NJ1B6zK:4",
+  "HJ241zKZw7PacNRb:18",
+  "Lb7kWPwR9HqQf2Bt:1",
+  "LhJPKyQNcfdX8HnM:4",
+  "RBDtLxq94QT1jKMf:2",
+  "anXMHmY6GJfx4c9b:18",
+  "jgBA2MnztZJfd6KW:2",
+  "ngJyYdkzh61Mwt2K:1",
+  "qFXTBknNtypcwW6M:4",
+  "vLDrnYpfwKd76gRH:1"
+ ]
 }

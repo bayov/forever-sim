@@ -138,6 +138,50 @@
     "firstAt": 20,
     "everySeconds": 27.5,
     "spreadSeconds": 7.5
+   },
+   {
+    "spellId": 23331,
+    "school": "SpellSchoolFire",
+    "minDamage": 3000,
+    "maxDamage": 3000,
+    "who": "NotTanks",
+    "firstAt": 33.3,
+    "everySeconds": 31.02,
+    "randomTiming": true
+   },
+   {
+    "spellId": 0,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 204,
+    "maxDamage": 4449,
+    "who": "NotTanks",
+    "share": 0.067,
+    "firstAt": 2.9,
+    "melee": true,
+    "everySeconds": 15.68,
+    "randomTiming": true
+   },
+   {
+    "spellId": 15754,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 3174,
+    "maxDamage": 5108,
+    "who": "NotTanks",
+    "share": 0.071,
+    "firstAt": 31.3,
+    "everySeconds": 37.29,
+    "randomTiming": true
+   },
+   {
+    "spellId": 367418,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 2315,
+    "maxDamage": 2665,
+    "who": "NotTanks",
+    "share": 0.065,
+    "firstAt": 43.2,
+    "everySeconds": 29.4,
+    "randomTiming": true
    }
   ]
  },
@@ -146,5 +190,64 @@
   "hpsEach": 485,
   "castSeconds": 1.53,
   "notes": "From Season of Discovery's logs (21 kills): while the boss was on the main tank, 4 healers had 5% or more of its healing (the median kill), and the healing it took from others was 1,941 a second with overheal and absorbs (18% of the heals effective), 2.61 heals and HoT ticks a second, against 477 damage taken a second. The tank's own heals (4% of its healing) are left out. Main tanks: Warlock 7, Paladin 7, Warrior 4, Shaman 2, Druid 1."
- }
+ },
+ "raidHealing": {
+  "raidSize": 17,
+  "tanks": 2,
+  "addTanks": 0,
+  "dtpsAddTanks": 59,
+  "healers": 4,
+  "healersRange": [
+   2,
+   6
+  ],
+  "healerClasses": {
+   "Priest": 1.33,
+   "Paladin": 0.86,
+   "Druid": 0.57,
+   "Mage": 0.48,
+   "Shaman": 0.38
+  },
+  "hpsEachHealer": 1570,
+  "raidHps": 1721,
+  "raidHpsWithOverheal": 10437,
+  "hpsOnTanks": 617,
+  "hpsOnOthers": 1084,
+  "hpsOnOthersWithOverheal": 6729,
+  "dtpsEachOther": 73.1,
+  "dtpsTanks": 631,
+  "deathsOthersPerKill": 0.52,
+  "deathsTanksPerKill": 0.14,
+  "killsWithoutDeath": "13/21",
+  "fightSeconds": [
+   63,
+   97,
+   159
+  ],
+  "notes": "What Season of Discovery raids had on Broodlord Lashlayer (21 kills, Warcraft Logs): the median kill's raid of 17 with 2 tanks (0 of them on adds, who took 59 a second together, not in the events), 4 healers by Warcraft Logs' healer role (77% of the healing), each 1,570 HPS with overheal. The raid healed 1,721 a second (617 on the tanks, 1,084 on the rest, 84% overheal on the rest). Each non-tank took 73.1 a second after mitigation. Fight length is the 10th percentile, median and 90th percentile kill. For the healing sim to check its healer counts against."
+ },
+ "raidSource": "[logs: Season of Discovery] The raidDamage events with who NotTanks: Warcraft Logs, 21 kills (tools/warcraftlogs/wclcli.py raid, tools/encounters/logs/sod_bwl_raid.json): the abilities that dealt 2% or more of the non-tanks' damage taken in 10% or more of the kills, 89% of it together, their rates scaled by 1.13 for the rest. Each is a share of the non-tanks, so the file fits any raid size. Blast Wave 23331 from Broodlord Lashlayer (77% of the non-tanks' damage, in 21 of 21 kills): 3,000 to 3,000 unmitigated, the 5th to 95th percentile stretched to an even roll; 94% of the non-tanks a cast (10th to 90th percentile 72 to 100), 56.2 landed a second on each (100% of it landing), so a cast every 31.02 s at random (the logs count 1.4 casts a minute), the first at 33 s (median) of a 97 s kill. Melee 1 from Corrupted Red Whelp (6% of the non-tanks' damage, in 21 of 21 kills): 204 to 4,449 unmitigated, the 5th to 95th percentile stretched to an even roll; 7% of the non-tanks a cast (10th to 90th percentile 6 to 8), 4.3 landed a second on each (51% of it landing), so a cast every 15.68 s at random (the logs count 6.7 casts a minute), the first at 3 s (median) of a 97 s kill. Cleave 15754 from Broodlord Lashlayer (3% of the non-tanks' damage, in 18 of 21 kills): 3,174 to 5,108 unmitigated, the 5th to 95th percentile stretched to an even roll; 7% of the non-tanks a cast (10th to 90th percentile 6 to 14), 2.5 landed a second on each (53% of it landing), so a cast every 37.29 s at random (the logs count 1.3 casts a minute), the first at 31 s (median) of a 97 s kill. Tactical Charge 367418 from Broodlord Lashlayer (2% of the non-tanks' damage, in 17 of 21 kills): 2,315 to 2,665 unmitigated, the 5th to 95th percentile stretched to an even roll; 6% of the non-tanks a cast (10th to 90th percentile 6 to 8), 1.7 landed a second on each (63% of it landing), so a cast every 29.4 s at random (the logs count 0.9 casts a minute), the first at 43 s (median) of a 97 s kill. Together they land 73.1 a second on each non-tank over a median kill, at the logs' mitigation, against 73.1 in the logs.",
+ "raidReports": [
+  "4mkjLT9BRrFwNV7A:10",
+  "8zPYvLGJCmQhX13H:9",
+  "9rdM68DRtpT7ZvLg:7",
+  "9z8RThWPGfVwDqgX:13",
+  "GRjqym9rwLhF71df:11",
+  "Jxwtv3gTMZRGyC96:60",
+  "LBnFjZm4Yy9cfpWT:6",
+  "MG4KHtkPQ9mDapLC:9",
+  "P1mw8RF6cnCyqHhY:10",
+  "PmnvzGfdYwqCD8Qk:49",
+  "QvYHL1qXkNhjGBMy:7",
+  "Qzpa1Kh7HN4Ybmvt:38",
+  "T9LpHZ6nQMjrPARf:14",
+  "fRHbhCPLDM1vNVG7:14",
+  "mbtcaVkQNRA71H9q:9",
+  "pmdh6AG8qF2gZV7t:55",
+  "rHXCDcAKa1jRbyWP:4",
+  "vNnca78ZGzHAYrg1:9",
+  "vrzdnL31Pp46Ba2g:95",
+  "wZ3Yt9pvm2LQTndB:44",
+  "zZ82gRmVFKA6YJTQ:7"
+ ]
 }

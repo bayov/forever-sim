@@ -23,6 +23,11 @@ func (env *Environment) registerRaidDamage() {
 		if event.TargetIndex < 0 || int(event.TargetIndex) >= len(env.Encounter.TargetUnits) {
 			continue
 		}
+		// An event on the non-tanks in a raid of tanks only (the tank bench's) hits nobody, and its
+		// timer's rolls would only move the other rolls.
+		if event.Who == proto.RaidDamageEvent_NotTanks && len(env.Raid.AllPlayerUnits) <= len(env.RaidTanks) {
+			continue
+		}
 		env.registerRaidDamageEvent(i, event, env.Encounter.TargetUnits[event.TargetIndex])
 	}
 }

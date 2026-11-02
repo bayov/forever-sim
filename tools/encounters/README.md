@@ -49,10 +49,15 @@ python3 tools/encounters/raid_from_logs.py --site anniversary tools/encounters/l
 python3 tools/encounters/raid_from_logs.py --site sod tools/encounters/logs/sod_*_raid.json
 ```
 
-- Each ability that dealt 2% or more of the non-tanks' damage in 30% or more of the kills is an
-  event: its unmitigated 5th to 95th percentile stretched to an even roll, its casts a minute at
-  random times, its first cast, and the `share` of the non-tanks a cast hits (so a file fits a raid
-  of any size). A DoT is its ticks, from the logs' ticks an application and their spacing.
+- Each ability that dealt 2% or more of the non-tanks' damage in 10% or more of the kills is an
+  event: its unmitigated 5th to 95th percentile stretched to an even roll, the `share` of the
+  non-tanks a cast hits (so a file fits a raid of any size), and a DoT's ticks an application and
+  their spacing. Its rate, at random times from its median first cast, is the one that lands the
+  logs' damage a second on each non-tank, at the logs' mitigation, over the rest of the kill; the
+  abilities under the line are spread over the rest. The logs' cast counts are rough for a ground
+  effect, their damage isn't.
+- `healbench -role raid` and `both` run the logs' median kill (`raidHealing.fightSeconds`), since
+  the file's `duration` is the main tank's time on the boss.
 - `raidHealing` is what the raids had, to check the healing sim's healer counts against (the
   user's 20% margin): raid size, tanks, healers by Warcraft Logs' healer role and their classes,
   HPS each, the raid's healing on the tanks and the rest, the non-tanks' damage taken, deaths a

@@ -176,10 +176,20 @@
     "school": "SpellSchoolFire",
     "minDamage": 555,
     "maxDamage": 645,
-    "who": "Everyone",
+    "who": "Tanks",
     "firstAt": 4,
     "everySeconds": 2,
     "spreadSeconds": 0
+   },
+   {
+    "spellId": 23462,
+    "school": "SpellSchoolFire",
+    "minDamage": 554,
+    "maxDamage": 646,
+    "who": "NotTanks",
+    "firstAt": 3.2,
+    "everySeconds": 3.55,
+    "randomTiming": true
    }
   ]
  },
@@ -188,5 +198,69 @@
   "hpsEach": 714,
   "castSeconds": 1.78,
   "notes": "From the Anniversary Hardcore realms's logs (27 kills): while the boss was on the main tank, 6 healers had 5% or more of its healing (the median kill), and the healing it took from others was 4,284 a second with overheal and absorbs (27% of the heals effective), 3.37 heals and HoT ticks a second, against 1,213 damage taken a second. The tank's own heals (2% of its healing) are left out. Main tanks: Warrior 27."
- }
+ },
+ "raidHealing": {
+  "raidSize": 40,
+  "tanks": 1,
+  "addTanks": 0,
+  "dtpsAddTanks": 0,
+  "healers": 11,
+  "healersRange": [
+   9,
+   12
+  ],
+  "healerClasses": {
+   "Priest": 4.63,
+   "Shaman": 3.0,
+   "Paladin": 1.96,
+   "Druid": 1.33
+  },
+  "hpsEachHealer": 790,
+  "raidHps": 4900,
+  "raidHpsWithOverheal": 10037,
+  "hpsOnTanks": 1187,
+  "hpsOnOthers": 3608,
+  "hpsOnOthersWithOverheal": 5376,
+  "dtpsEachOther": 106.9,
+  "dtpsTanks": 1230,
+  "deathsOthersPerKill": 0,
+  "deathsTanksPerKill": 0,
+  "killsWithoutDeath": "27/27",
+  "fightSeconds": [
+   23,
+   31,
+   35
+  ],
+  "notes": "What the Anniversary Hardcore realms raids had on Vaelastrasz the Corrupt (27 kills, Warcraft Logs): the median kill's raid of 40 with 1 tanks (0 of them on adds, who took 0 a second together, not in the events), 11 healers by Warcraft Logs' healer role (85% of the healing), each 790 HPS with overheal. The raid healed 4,900 a second (1,187 on the tanks, 3,608 on the rest, 33% overheal on the rest). Each non-tank took 106.9 a second after mitigation. Fight length is the 10th percentile, median and 90th percentile kill. For the healing sim to check its healer counts against."
+ },
+ "raidSource": "[logs: the Anniversary Hardcore realms] The raidDamage events with who NotTanks: Warcraft Logs, 27 kills (tools/warcraftlogs/wclcli.py raid, tools/encounters/logs/anniversary_bwl_raid.json): the abilities that dealt 2% or more of the non-tanks' damage taken in 10% or more of the kills, 98% of it together, their rates scaled by 1.02 for the rest. Each is a share of the non-tanks, so the file fits any raid size. Fire Nova 23462 from Vaelastrasz the Corrupt (98% of the non-tanks' damage, in 27 of 27 kills): 554 to 646 unmitigated, the 5th to 95th percentile stretched to an even roll; 100% of the non-tanks a cast (10th to 90th percentile 97 to 100), 104.8 landed a second on each (71% of it landing), so a cast every 3.55 s at random (the logs count 15.9 casts a minute), the first at 3 s (median) of a 31 s kill. 23462's Everyone event keeps its own numbers on the tanks only. Together they land 106.8 a second on each non-tank over a median kill, at the logs' mitigation, against 106.9 in the logs.",
+ "raidReports": [
+  "1cGRtJvhNWfDHgaK:4",
+  "4z3xQCZBnhYDrHjd:4",
+  "68ybJwZnkX2RPcGm:4",
+  "ADvHd2QTGrx3JbNc:5",
+  "Ap2RZt8gQyJzTa36:4",
+  "GqVArWfx9yJ47aHd:4",
+  "GygnHAN67w9jMqTJ:5",
+  "HLncaXgmhrYjwtKC:4",
+  "Kda38npwqr2cLTAY:4",
+  "LFbz4MyB28vVm6Df:9",
+  "NvrjcQ7BbzAYmVF1:4",
+  "P1q93HcBTVKxJMpA:4",
+  "QVjyqfDMT7kcnJ6x:4",
+  "VZ7C6BpMgPNf8xHD:5",
+  "VqhvJkGHzdTQpc36:4",
+  "ZHLq8KgNRW3F4Abr:4",
+  "ZMdDxLAPWhj9HVGN:3",
+  "aBMLKhCGjdP4pyzT:4",
+  "cawR6ytBxFTdmLDp:4",
+  "gcW4dZyCB6jpNV9R:4",
+  "kxcgDX7pbYm82qFP:5",
+  "rg8Y4P9kyt2KXfvQ:4",
+  "rpvtGmDZa9FBPHAY:4",
+  "wcqCRdQ43j81h9p7:4",
+  "wpyZPLgmRtkTdqW8:5",
+  "xnLvprGfDkYzNtBR:4",
+  "zq7DYXr3jPcxNLRy:4"
+ ]
 }
