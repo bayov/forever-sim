@@ -117,23 +117,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 11269
-                      }
-                    },
-                    "condition": {
-                      "auraIsActive": {
-                        "auraId": {
-                          "spellId": 1787
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Ambush out of a Vanish before anything else."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "rank": 2,
                         "spellId": 6774
                       }
@@ -214,7 +197,7 @@
                                     "op": "OpLt",
                                     "rhs": {
                                       "const": {
-                                        "val": "3s"
+                                        "val": "1s"
                                       }
                                     }
                                   }
@@ -1005,82 +988,6 @@
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1856
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 1787
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "currentComboPoints": {}
-                              },
-                              "op": "OpLe",
-                              "rhs": {
-                                "const": {
-                                  "val": "3"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "currentEnergy": {}
-                              },
-                              "op": "OpGe",
-                              "rhs": {
-                                "spellCurrentCost": {
-                                  "spellId": {
-                                    "spellId": 11269
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "rank": 2,
-                                "spellId": 6774
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "remainingTime": {}
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "const": {
-                                  "val": "10s"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "Vanish for an Ambush at low combo points."
-                },
-                {
-                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -1173,174 +1080,11 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 11269
-                      }
-                    },
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 1787
-                              }
-                            }
-                          },
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 462707
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 14185
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 1787
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "currentComboPoints": {}
-                              },
-                              "op": "OpLe",
-                              "rhs": {
-                                "const": {
-                                  "val": "3"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellTimeToReady": {
-                                  "spellId": {
-                                    "spellId": 1856
-                                  }
-                                }
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "const": {
-                                  "val": "60s"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "remainingTime": {}
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "const": {
-                                  "val": "10s"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "Preparation resets Vanish (and Cold Blood) for a second Ambush once the first is spent."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 25300
                       }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "or": {
-                              "vals": [
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "autoTimeToNext": {
-                                        "autoType": "MainHand"
-                                      }
-                                    },
-                                    "op": "OpGt",
-                                    "rhs": {
-                                      "math": {
-                                        "lhs": {
-                                          "autoSwingTime": {
-                                            "autoType": "MainHand"
-                                          }
-                                        },
-                                        "op": "OpSub",
-                                        "rhs": {
-                                          "const": {
-                                            "val": "0.25s"
-                                          }
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "currentEnergy": {}
-                                    },
-                                    "op": "OpGe",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "100"
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "remainingTime": {}
-                                    },
-                                    "op": "OpLt",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "6s"
-                                      }
-                                    }
-                                  }
-                                }
-                              ]
-                            }
-                          }
-                        ]
-                      }
                     }
                   },
-                  "notes": "Backstab."
+                  "notes": "Backstab whenever it is affordable."
                 }
               ]
             },

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_swords",
   "apl": "level60_combat_swords",
   "published": {
-    "dps": 777.0,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 782.1,
+    "source": "verify.py on this request after the 2026-11-02 rotation re-search (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s); the report is not regenerated yet"
   },
   "verify": {
-    "dps": 777.0,
+    "dps": 782.1,
     "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on this request (2026-11-02, after the rotation re-search), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Combat Sinister Strike with a slow main-hand axe and a slow off-hand mace.",
   "keyTalents": [
@@ -43,7 +43,7 @@
     "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less. Sapper and potion while Slice and Dice is up",
     "Eviscerate at 5 combo points when Slice and Dice is up, at 79+ energy, or with under 6s left. Spend leftover points in the last 3s",
-    "Sinister Strike within 0.5s after a main-hand swing, or at 79+ energy"
+    "Sinister Strike whenever it's affordable"
   ],
   "consumes": [
     "Flask of Natural Precision",
@@ -67,5 +67,5 @@
     "10% hit (10 hit rating each on the wrist and second ring). Hit past the 8% cap still helps white hits, so 10% beats 8% by 0.4 to 1.9 DPS.",
     "No Goblin Land Mine. Its 1s cast resets the swing, so it loses DPS. The Sapper stays."
   ],
-  "notes": "Class default preset (default gear, talents, rotation, race and consumes); default for the Combat raid-sim preset. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "Class default preset (default gear, talents, rotation, race and consumes); default for the Combat raid-sim preset. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Rotation searched again on 2026-11-02 (tools/rotopt/rogue_presets.sh): the builder goes out whenever it is affordable, since an extra attack keeps the swing timer under Forever (2026-10-30); the request's rotation is the regenerated APL."
 }
