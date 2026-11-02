@@ -28,11 +28,13 @@
 		"@popperjs/core": "^2.11.6",
 		"@types/golang-wasm-exec": "^1.15.2",
 		"@types/pako": "^2.0.0",
+		"@types/three": "0.183.1",
 		"apexcharts": "^4.5.0",
 		"bootstrap": "^5.3.0",
 		"chart.js": "^4.4.8",
 		"clsx": "^2.1.1",
 		"pako": "^2.0.4",
+		"three": "0.183.2",
 		"tippy.js": "^6.3.7",
 		"tsx-vanilla": "^1.0.0",
 		"uuid": "^9.0.1"
