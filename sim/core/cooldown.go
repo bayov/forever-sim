@@ -18,8 +18,8 @@ type Cooldown struct {
 }
 
 func (unit *Unit) NewTimer() *Timer {
-	if len(unit.cdTimers) > 100 {
-		panic("Over 100 timers! There is probably one being registered every iteration.")
+	if len(unit.cdTimers) > 200 {
+		panic("Over 200 timers! There is probably one being registered every iteration.")
 	}
 
 	newTimer := new(Timer)

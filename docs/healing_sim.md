@@ -30,6 +30,24 @@ preset's talents and a heal rotation. Next is H2, the Restoration shaman.
 - **Order:** the shared groundwork now. Nobody else is building it (the tank session stopped after its tank
   sheet and bench, waiting on its own open decisions).
 
+## Shared with the tank sim
+
+The user's rulings for tanks ([tank_sim.md](tank_sim.md), 2026-11-02) that apply here too:
+
+- **No death chance floor** as a hard rule. A score is found by bisection at 5% deaths instead, as the tank
+  sim's "healing needed" is. The proposed healer score below is built the same way.
+- **Some deaths no healing stops**: a hit that kills from full, or a burst between two heals. A healer set
+  isn't blamed for those, so the bench reports them apart, as the tank bench's biggest hit and death floor do.
+- **Forever's boss crit** (0.6% at level 63, `classic_crit` for Classic's 5.6%) holds for the boss's melee in a
+  healing fight, since it's the same engine.
+- **The stand-in healer** (the healing model) is what the tank sim scores with until real healers are
+  simmed. The healing sim replaces it, and its cadence question (2 ± 1 s or the Molten Core logs' 0.3 s)
+  goes away once real heals land.
+
+**Boss encounters are one set for both** (agreed 2026-11-02 with the tank session): a boss is an encounter
+with its melee, tank swaps and raid damage events. The tank session sources the bosses' melee and tank
+abilities, and the healing side adds their raid damage to the same files.
+
 ## What the sim has today
 
 Checked 2026-11-02.
@@ -106,8 +124,11 @@ whose numbers are on record, picked to cover the shapes healers meet:
 | Spiky random targets | Onyxia: Fireball on random members, Deep Breath, a phase of raid damage | reaction, scares |
 | A 10-player raid | Season of Discovery's Blackfathom Deeps (Aku'mai or Kelris) | the small raid, two healers |
 
-The numbers come from the bosses' scripts in the open Classic server cores (vmangos, cmangos) and Wowhead's
-Classic and SoD spell pages, with sources on each profile. Forever's raids are 10, 20 and 40 players, so each
+The numbers come from Warcraft Logs, which shows what Blizzard's servers did (the user, 2026-11-02): Season
+of Discovery logs first, then Anniversary (Vanilla, then TBC), then Era, with vmangos only as a last resort
+where no log shows a value ([data_sources.md](data_sources.md), Which source wins). Each profile names its
+reports. The logs also show how real raids healed each boss: healer counts, HPS and overhealing, which the
+sim's healers can be checked against. Forever's raids are 10, 20 and 40 players, so each
 profile scales its damage to the raid. When Forever's bosses are known, each gets its own profile.
 
 ### Who heals whom

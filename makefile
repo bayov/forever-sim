@@ -6,7 +6,7 @@ ASSETS := $(patsubst assets/%,$(OUT_DIR)/assets/%,$(ASSETS_INPUT))
 # Recursive wildcard function. Needs to be '=' instead of ':=' because of recursion.
 rwildcard = $(foreach d,$(wildcard $(1:=/*)),$(call rwildcard,$d,$2) $(filter $(subst *,%,$2),$d))
 GOROOT := $(shell go env GOROOT)
-UI_SRC := $(shell find ui -name '*.ts' -o -name '*.tsx' -o -name '*.scss' -o -name '*.html')
+UI_SRC := $(shell find ui -path ui/practice -prune -o \( -name '*.ts' -o -name '*.tsx' -o -name '*.scss' -o -name '*.html' \) -print)
 # The DPS Report also has plain JavaScript and its datasets as JSON.
 DPS_REPORT_SRC := $(shell find ui/dps_report -type f)
 # The raid sim page has its members as a JSON data file (tools/raid_sim_data).
@@ -124,7 +124,7 @@ $(OUT_DIR)/%/index.html: ui/index_template.html $(OUT_DIR)/assets
 wasm: $(OUT_DIR)/lib.wasm
 
 # Builds the generic .wasm, with all items included.
-$(OUT_DIR)/lib.wasm: sim/wasm/* sim/core/proto/api.pb.go $(filter-out sim/core/items/all_items.go, $(call rwildcard,sim,*.go))
+$(OUT_DIR)/lib.wasm: sim/wasm/* sim/core/proto/api.pb.go $(filter-out sim/core/items/all_items.go sim/practice/%, $(call rwildcard,sim,*.go))
 	@echo "Starting webassembly compile now..."
 	@if GOOS=js GOARCH=wasm go build -o ./$(OUT_DIR)/lib.wasm ./sim/wasm/; then \
 		printf "\033[1;32mWASM compile successful.\033[0m\n"; \
@@ -280,3 +280,32 @@ endif
 
 webworkers:
 	npx tsx vite.build-workers.ts --watch=$(if $(WATCH),true,false)
+
+# The practice room (docs/practice_room.md): practice.wasm, the page and the server. It's built
+# only on demand, and nothing in the regular build depends on it.
+PRACTICE_OUT := dist/practice
+
+.PHONY: practice-wasm
+practice-wasm:
+	mkdir -p $(PRACTICE_OUT)
+	GOOS=js GOARCH=wasm go build -tags practice -o $(PRACTICE_OUT)/practice.wasm ./sim/practice/wasm/
+	cp "$(GOROOT)/lib/wasm/wasm_exec.js" $(PRACTICE_OUT)/wasm_exec.js
+
+.PHONY: practice-page
+practice-page: node_modules
+	npx tsc --noEmit -p ui/practice/tsconfig.json
+	npx vite build --config ui/practice/vite.config.mts
+
+.PHONY: practice
+practice: practice-wasm practice-page
+	go build -tags with_db,practice -o $(PRACTICE_OUT)/practice-server ./cmd/practice/
+
+# Builds the room and serves it at http://127.0.0.1:3434/.
+.PHONY: practice-run
+practice-run: practice
+	./$(PRACTICE_OUT)/practice-server -repo .
+
+.PHONY: practice-test
+practice-test: node_modules
+	go test -tags with_db,practice ./sim/practice/... ./cmd/practice/...
+	npx tsc --noEmit -p ui/practice/tsconfig.json

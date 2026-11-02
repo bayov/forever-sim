@@ -139,6 +139,11 @@ type Unit struct {
 
 	Rotation *APLRotation
 
+	// ManualControl stops the rotation from ever acting for this unit, because a player presses
+	// every cast by hand (the practice room). A cast that ends still lands. Nothing in a normal
+	// sim sets it.
+	ManualControl bool
+
 	// Statistics describing the results of the sim.
 	Metrics UnitMetrics
 
