@@ -13,7 +13,7 @@ export default defineConfig({
 		outDir: path.resolve(root, '../../dist/practice'),
 		// practice.wasm and wasm_exec.js live there too, from make practice-wasm.
 		emptyOutDir: false,
-		rollupOptions: { input: { practice: path.resolve(root, 'practice.html') } },
+		rollupOptions: { input: { practice: path.resolve(root, 'practice.html'), viewer: path.resolve(root, 'viewer.html') } },
 		target: 'es2022',
 	},
 	worker: { format: 'es' },

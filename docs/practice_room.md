@@ -1075,13 +1075,33 @@ rendering, not the sim.
   rows from the client's tables yet.
 - Spell names and ranks for macros come from the wago tables already cached in `~/forever-logs/wago`.
 
+**Real models (steps 0, 6 and 8, 2026-11-02):**
+
+- The server extracts client files with TACTTool's Linux build (`-tact`, in `~/forever-practice/tools/tact-linux`)
+  into `~/forever-practice/assets/`. TACTTool fails on links inside the WoW folder, so it reads a folder of its own
+  (`~/forever-practice/wow`) with the install's `.build.info` and a link to `Data`. A run takes about 2s. Files asked
+  for within 40ms share a run, and a model's skin, textures and skeleton are queued as soon as it comes out.
+- Game tables come from wago.tools by the client's build (`cmd/practice/db2.go`).
+- `appearance.go` turns race, sex, class, gear and customization choices into a list of files: body model, geosets,
+  the body texture's layers, attached models (helm, shoulders, weapons with their sheath points) and cape texture.
+  It follows wow.export's character code. The preset's made up Synthetic items show as real look-alikes (`look.go`).
+- `visuals.go` reads spell visual kits (sounds, effect models on attachment points, the cast animations, missiles),
+  imbue glows, melee swing and impact sounds, unit sounds and the totem models.
+- The page (`ui/practice/wow/`) reads M2, skin, .anim and BLP files, paints the body texture, builds Three.js
+  skinned meshes, plays animations with fades and upper body swings while running, runs M2 particle emitters, and
+  plays sounds through a listener on the camera. `viewer.html?model=<fdid>` or `?char=race=2&sex=0&class=7&items=...`
+  shows one model for checks.
+- Checked in headless Chrome: the dressed Orc stands, runs, swings, casts, sheathes, and Lightning Bolt,
+  Lightning Shield, the imbue glows and the totems show their effects. The dummy is the wooden dummy (display 3019).
+
 **Not done yet:**
 
-- Step 0 and steps 6 and 8, the real models. Running TACTTool (a downloaded binary) needs the user's OK. Then the
-  wow.export reader port and the dressed character.
+- Models: `.skel` skeletons (the Orc model doesn't use one), ribbons, texture animation, particle splines and
+  multi-texture particles, looping sounds (the precast hum), the character's real look (the client's files don't
+  have it, so customization is the defaults and sex is a choice, `practice.modelSex` in local storage).
 - The BayovCore probe and the feel pass (step 9). The feel checklist is `docs/practice_room_feel.md`.
-- Opening an attempt in the Replay view, Keyboard Lock and fullscreen, pointer raw input, sounds and the spell
-  queue's cooldown case (check).
+- Opening an attempt in the Replay view, Keyboard Lock and fullscreen, pointer raw input and the spell queue's
+  cooldown case (check).
 
 ## Milestones
 

@@ -8,9 +8,10 @@
   "(any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 3s left and over 9s of the fight left)": "Slice and Dice is down at any combo points, with 6s or more of the fight left. At 5 combo points, also when it has under 3s left with over 9s of the fight left",
   "(any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 3s left and over 9s of the fight left) or (5+ combo points and ((Adrenaline Rush is ready and Adrenaline Rush can still be used this fight and Slice and Dice's time left and Adrenaline Rush's cooldown add up to under 1s) or (Blade Flurry is ready and Blade Flurry can still be used this fight and Slice and Dice's time left and Blade Flurry's cooldown add up to under 1s)))": "Slice and Dice is down at any combo points, with 6s or more of the fight left. At 5 combo points, also when it has under 3s left with over 9s of the fight left, or when Adrenaline Rush or Blade Flurry is ready and waiting for it",
   "(any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 3s left and over 9s of the fight left) or (5+ combo points and Adrenaline Rush is ready and Adrenaline Rush can still be used this fight and Slice and Dice's time left and Adrenaline Rush's cooldown add up to under 1s)": "Slice and Dice is down at any combo points, with 6s or more of the fight left. At 5 combo points, also when it has under 3s left with over 9s of the fight left, or when Adrenaline Rush is ready and waiting for it",
+  "(any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 1s left and over 9s of the fight left) or (5+ combo points and Adrenaline Rush is ready and Adrenaline Rush can still be used this fight and Slice and Dice's time left and Adrenaline Rush's cooldown add up to under 1s)": "Slice and Dice is down at any combo points, with 6s or more of the fight left. At 5 combo points, also when it has under 1s left with over 9s of the fight left, or when Adrenaline Rush is ready and waiting for it",
+  "Vanish is not ready or in the last 10s of the fight or 4+ combo points or Slice and Dice is not up": "While Vanish is ready, only at 4+ combo points, with Slice and Dice down, or in the last 10s",
   "(the next melee swing or Raptor Strike isn't ready by the time you reach melee or under 25 mana per second of fight left) and a melee weave fits before the next Auto Shot, Arcane Shot and Multi-Shot": "A melee weave fits before the next Auto Shot, Arcane Shot and Multi-Shot, but the swing or Raptor Strike won't be ready on arrival, or mana is under 25 per second of fight left",
   "(the next melee swing or Raptor Strike isn't ready by the time you reach melee) and a melee weave fits before the next Auto Shot, Arcane Shot and Multi-Shot": "A melee weave fits before the next Auto Shot, Arcane Shot and Multi-Shot, but the swing or Raptor Strike won't be ready on arrival",
-  "(within 0.25s after a main-hand swing or in the last 6s of the fight) and (Vanish is not ready or in the last 10s of the fight or 4+ combo points or Slice and Dice is not up)": "Within 0.25s after a main-hand swing, or in the last 6s of the fight. While Vanish is ready, only at 4+ combo points, with Slice and Dice down, or in the last 10s",
   "5+ combo points and enough Energy for Eviscerate and Slice and Dice has over 6s left and (fewer than 5 combo points or ((Adrenaline Rush is not ready or no more Adrenaline Rush this fight or Slice and Dice's time left and Adrenaline Rush's cooldown add up to at least 1s) and (Blade Flurry is not ready or no more Blade Flurry this fight or Slice and Dice's time left and Blade Flurry's cooldown add up to at least 1s)))": "5 combo points, the Energy for Eviscerate and over 6s of Slice and Dice, unless the points are going to a Slice and Dice for Adrenaline Rush or Blade Flurry",
   "5+ combo points and enough Energy for Eviscerate and Slice and Dice has over 6s left and (fewer than 5 combo points or Adrenaline Rush is not ready or no more Adrenaline Rush this fight or Slice and Dice's time left and Adrenaline Rush's cooldown add up to at least 1s)": "5 combo points, the Energy for Eviscerate and over 6s of Slice and Dice, unless the points are going to a Slice and Dice for Adrenaline Rush",
   "5+ combo points and enough Energy for Eviscerate and Slice and Dice has over 8s left and (fewer than 5 combo points or ((Adrenaline Rush is not ready or no more Adrenaline Rush this fight or Slice and Dice's time left and Adrenaline Rush's cooldown add up to at least 1s) and (Blade Flurry is not ready or no more Blade Flurry this fight or Slice and Dice's time left and Blade Flurry's cooldown add up to at least 1s)))": "5 combo points, the Energy for Eviscerate and over 8s of Slice and Dice, unless the points are going to a Slice and Dice for Adrenaline Rush or Blade Flurry",
@@ -85,7 +86,7 @@
     "paladin__level_60_sub_holy"
    ],
    "key": "s20293",
-   "when": "at 2+ stacks",
+   "when": "with 2 ",
    "why": "Why swap at 2 echoes instead of 3? Windfury's extra swing can waste an echo."
   },
   {
@@ -93,7 +94,7 @@
     "paladin__level_60_sub_holy_undead"
    ],
    "key": "s20293",
-   "when": "at 3+ stacks",
+   "when": "with 3 ",
    "why": "Why wait for 3 echoes? Fewer seal casts leave more mana for Exorcism."
   },
   {
@@ -132,7 +133,7 @@
     "mage__arcane"
    ],
    "key": "s1326082",
-   "when": "More than an Arcane Wrath cast",
+   "when": "Enough of the fight left for an Arcane Wrath",
    "why": "Why Arcane Wrath? Four Arcane Blast stacks no longer use up your mana, so it spends the rest."
   },
   {
@@ -140,7 +141,7 @@
     "mage__arcane"
    ],
    "key": "s12043",
-   "when": "Arcane Wrath is ready",
+   "when": "Arcane Wrath]] is ready",
    "why": "Why Presence of Mind on Arcane Wrath? It's the longest cast."
   },
   {
@@ -150,7 +151,7 @@
     "hunter__beast-mastery"
    ],
    "key": null,
-   "when": "under 0.2s since the last ranged swing",
+   "when": "Just after an Auto Shot",
    "why": "Why wait after the Auto Shot? Moving cancels its windup. The 0.2 sec is a player's reaction: less is worth a few DPS, but faster than anyone plays."
   },
   {
@@ -159,7 +160,7 @@
     "hunter__marksmanship"
    ],
    "key": null,
-   "when": "ready by the time you reach melee",
+   "when": "mana a second of fight left",
    "why": "Why the mana check? Raptor Strike costs mana: weaving wins short fights but runs long ones dry."
   },
   {
@@ -167,7 +168,7 @@
     "hunter__beast-mastery"
    ],
    "key": null,
-   "when": "ready by the time you reach melee",
+   "when": "fits before the next Auto Shot, Arcane Shot and Multi-Shot",
    "why": "Why wait for Arcane Shot and Multi-Shot to be on cooldown? No shot goes out from melee, so walking in then would hold one back."
   },
   {
@@ -271,7 +272,7 @@
     "shaman__enhancement-imp-gw"
    ],
    "key": "s408345",
-   "when": "12 mana per second",
+   "when": "at 12 a second",
    "why": "Why keep 12 mana per second left? So the mana runs out just as the fight ends, whatever its length."
   },
   {
@@ -386,7 +387,7 @@
     "mage__frostfire"
    ],
    "key": "s1240047",
-   "when": "Fingers of Frost at 1 stack",
+   "when": "The last ",
    "why": "Why only the last charge? The first goes on a Frostfire Bolt, which the charge makes a Shatter crit."
   },
   {
@@ -506,6 +507,14 @@
    "key": "s16511",
    "when": "While Vanish is ready",
    "why": "Why hold it while Vanish is ready? To keep 60 Energy for the Ambush."
+  },
+  {
+   "builds": [
+    "rogue__subtlety"
+   ],
+   "key": "s25300",
+   "when": "While Vanish is ready",
+   "why": "Why hold it while Vanish is ready? To keep 60 Energy for the Ambush."
   }
  ],
  "_doc_why": "Why a preset's line is the way it is, shown under the line on the Rotation card: builds (a duty or encounter preset takes its base build's), the line's key, a part of its condition where a build has more than one line with that key, and the text. Keep it short and say only what isn't obvious, as a question and its answer (\"Why swap at 2 echoes instead of 3? ...\"); the card then shows no \"Why:\" label.",
@@ -526,7 +535,6 @@
   "Arcane Wrath while Presence of Mind is up.": "",
   "Aspect of the Beast if it ever drops.": "",
   "Aspect of the Hawk if it ever drops.": "",
-  "Backstab.": "",
   "Cast low on Energy so no extra regen is wasted.": "Low Energy wastes none of the extra regen.",
   "Combustion once Fire Vulnerability has 5 stacks.": "",
   "Conflagrate on cooldown.": "",
