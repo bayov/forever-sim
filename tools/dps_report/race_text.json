@@ -2,144 +2,144 @@
  "druid__balance.SkyborneHighOrder": {
   "note": "Casts the pre-pull Starfire 2.5s out, not 3s. With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count.",
   "why": {
-   "prepull:s9876": "With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count."
+   "prepull:s9876": "Why 2.5 sec out, not 3? With 2% haste, a Starfire cast 3 sec out lands before the pull, where damage doesn't count."
   }
  },
  "druid__balance.SkyborneWindshaper": {
   "note": "Casts the pre-pull Starfire 2.5s out, not 3s. With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count.",
   "why": {
-   "prepull:s9876": "With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count."
+   "prepull:s9876": "Why 2.5 sec out, not 3? With 2% haste, a Starfire cast 3 sec out lands before the pull, where damage doesn't count."
   }
  },
  "druid__balance-duty-ff.SkyborneHighOrder": {
   "note": "Casts the pre-pull Starfire 2.5s out, not 3s. With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count.",
   "why": {
-   "prepull:s9876": "With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count."
+   "prepull:s9876": "Why 2.5 sec out, not 3? With 2% haste, a Starfire cast 3 sec out lands before the pull, where damage doesn't count."
   }
  },
  "druid__balance-duty-ff.SkyborneWindshaper": {
   "note": "Casts the pre-pull Starfire 2.5s out, not 3s. With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count.",
   "why": {
-   "prepull:s9876": "With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count."
+   "prepull:s9876": "Why 2.5 sec out, not 3? With 2% haste, a Starfire cast 3 sec out lands before the pull, where damage doesn't count."
   }
  },
  "mage__arcane.SkyborneHighOrder": {
   "note": "Starts the first Arcane Blast 1.47s before the pull, not 1.5s. With 2% haste, from 1.5s it lands just before the pull, where damage doesn't count.",
   "why": {
-   "prepull:s1239700": "With 2% haste, an Arcane Blast cast 1.5s out lands just before the pull, where damage doesn't count."
+   "prepull:s1239700": "Why 1.47 sec out, not 1.5? With 2% haste, an Arcane Blast cast 1.5 sec out lands just before the pull, where damage doesn't count."
   }
  },
  "mage__fire.SkyborneHighOrder": {
   "note": "Waits up to 0.1s for Fire Blast instead of starting another Fireball. With 2% haste, two Fireballs end just before Fire Blast is ready.",
   "why": {
-   "priority:Wait": "With 2% haste, two Fireballs end 0.06s before Fire Blast is ready. A short wait beats starting another Fireball."
+   "priority:Wait": "Why wait? With 2% haste, two Fireballs end 0.06 sec before Fire Blast is ready, and a short wait beats starting another Fireball."
   }
  },
  "mage__frostfire.Troll": {
   "note": "Berserking waits for 5 Fire Vulnerability stacks, since haste can't speed up the Scorch casts before them. Fire Blast only with mana the fight won't need, not whenever mana is above 80%.",
   "why": {
-   "priority:s26297t2": "Waits for 5 Fire Vulnerability stacks. The Scorch casts before them already take only the global cooldown, so haste can't speed them up.",
-   "priority:s10199": "Leaves the mana for Frostfire Bolt. Fire Blast still uses mana the fight won't need (the next Fire Blast line)."
+   "priority:s26297t2": "Why wait for 5 Fire Vulnerability stacks? The Scorches before them already cast in one global cooldown, so haste can't speed them up.",
+   "priority:s10199": "Why not above 80% mana? That mana goes to Frostfire Bolt. Fire Blast still spends what the fight won't need (the next Fire Blast line)."
   }
  },
  "mage__frostfire.SkyborneHighOrder": {
   "note": "Scorch and Pyroblast wait while Fingers of Frost is up, so Ice Lance gets the last charge. With 2% haste they would use it first. Fire Blast only with mana the fight won't need, not whenever mana is above 80%.",
   "why": {
-   "priority:s1240047": "Goes with the Scorch and Pyroblast change, so Ice Lance gets the last Fingers of Frost charge.",
-   "priority:s10207": "With 2% haste, Scorch ends before the global cooldown and uses the last Fingers of Frost charge before Ice Lance can.",
-   "priority:s18809": "With 2% haste, Pyroblast ends before the global cooldown and uses the last Fingers of Frost charge before Ice Lance can.",
-   "priority:s10199": "Leaves the mana for Frostfire Bolt. Fire Blast still uses mana the fight won't need (the next Fire Blast line)."
+   "priority:s1240047": "Why changed? It goes with the Scorch and Pyroblast change, so Ice Lance gets the last Fingers of Frost charge.",
+   "priority:s10207": "Why changed? With 2% haste, Scorch ends before the global cooldown and would use the last Fingers of Frost charge before Ice Lance can.",
+   "priority:s18809": "Why changed? With 2% haste, Pyroblast ends before the global cooldown and would use the last Fingers of Frost charge before Ice Lance can.",
+   "priority:s10199": "Why not above 80% mana? That mana goes to Frostfire Bolt. Fire Blast still spends what the fight won't need (the next Fire Blast line)."
   }
  },
  "priest__smite.Dwarf": {
   "note": "Adds Holy Fire on cooldown. Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
   "why": {
-   "priority:s15261": "Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana."
+   "priority:s15261": "Why Holy Fire? It does more damage per mana than Smite, and without Undead's Dark Sacrifice, Smite alone runs out of mana."
   }
  },
  "priest__smite.Troll": {
   "note": "Adds Holy Fire on cooldown. Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
   "why": {
-   "priority:s15261": "Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana."
+   "priority:s15261": "Why Holy Fire? It does more damage per mana than Smite, and without Undead's Dark Sacrifice, Smite alone runs out of mana."
   }
  },
  "priest__smite.Human": {
   "note": "Adds Holy Fire above 30% mana. Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
   "why": {
-   "priority:s15261": "Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana."
+   "priority:s15261": "Why Holy Fire? It does more damage per mana than Smite, and without Undead's Dark Sacrifice, Smite alone runs out of mana."
   }
  },
  "priest__smite.Gnome": {
   "note": "Adds Holy Fire above 30% mana. Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
   "why": {
-   "priority:s15261": "Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana."
+   "priority:s15261": "Why Holy Fire? It does more damage per mana than Smite, and without Undead's Dark Sacrifice, Smite alone runs out of mana."
   }
  },
  "priest__smite.NightElf": {
   "note": "Adds Holy Fire on cooldown and drops the wand break at low mana. Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
   "why": {
-   "priority:s15261": "Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
-   "priority:s5019": "Night Elf does better in the sim without this wand break."
+   "priority:s15261": "Why Holy Fire? It does more damage per mana than Smite, and without Undead's Dark Sacrifice, Smite alone runs out of mana.",
+   "priority:s5019": "Why no wand break? Night Elf does better in the sim without it."
   }
  },
  "rogue__combat-swords.Gnome": {
   "note": "Uses Eureka! on cooldown, not saved for a 5-point Eviscerate. Saving it costs more uses than the bigger Eviscerate is worth.",
   "why": {
-   "priority:s1259812": "Used on cooldown. Saving it for a 5-point Eviscerate costs more uses than the bigger Eviscerate is worth."
+   "priority:s1259812": "Why on cooldown? Saving it for a 5-point Eviscerate costs more uses than the bigger Eviscerate is worth."
   }
  },
  "rogue__subtlety.Gnome": {
   "note": "Uses Eureka! on cooldown, not saved for a 5-point Eviscerate. Saving it costs more uses than the bigger Eviscerate is worth.",
   "why": {
-   "priority:s1259812": "Used on cooldown. Saving it for a 5-point Eviscerate costs more uses than the bigger Eviscerate is worth."
+   "priority:s1259812": "Why on cooldown? Saving it for a 5-point Eviscerate costs more uses than the bigger Eviscerate is worth."
   }
  },
  "rogue__mutilate.Gnome": {
   "note": "Uses Eureka! on cooldown, not saved for a 5-point Eviscerate, which this build rarely reaches.",
   "why": {
-   "priority:s1259812": "Used on cooldown. This build rarely reaches a 5-point Eviscerate, so saving Eureka! for one wastes it."
+   "priority:s1259812": "Why on cooldown? This build rarely reaches a 5-point Eviscerate, so saving Eureka! for one wastes it."
   }
  },
  "rogue__seal-fate-swords.Gnome": {
   "note": "Uses Eureka! on cooldown, not saved for a 5-point Eviscerate, which this build rarely reaches.",
   "why": {
-   "priority:s1259812": "Used on cooldown. This build rarely reaches a 5-point Eviscerate, so saving Eureka! for one wastes it."
+   "priority:s1259812": "Why on cooldown? This build rarely reaches a 5-point Eviscerate, so saving Eureka! for one wastes it."
   }
  },
  "shaman__elemental-level60.Troll": {
   "note": "Berserking waits until Elemental Mastery ends. During Mastery, Lightning Bolt already casts as fast as the global cooldown allows.",
   "why": {
-   "priority:s26297t2": "Waits until Elemental Mastery ends. During Mastery, Lightning Bolt already casts as fast as the global cooldown allows, so the haste is wasted."
+   "priority:s26297t2": "Why wait for Elemental Mastery to end? During it, Lightning Bolt already casts in one global cooldown, so the haste would be wasted."
   }
  },
  "shaman__elemental-level60-mana-tide.Troll": {
   "note": "Berserking waits until Elemental Mastery ends. During Mastery, Lightning Bolt already casts as fast as the global cooldown allows.",
   "why": {
-   "priority:s26297t2": "Waits until Elemental Mastery ends. During Mastery, Lightning Bolt already casts as fast as the global cooldown allows, so the haste is wasted."
+   "priority:s26297t2": "Why wait for Elemental Mastery to end? During it, Lightning Bolt already casts in one global cooldown, so the haste would be wasted."
   }
  },
  "warlock__affliction.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
+   "priority:s1259812": "Why save it for Shadow Bolt? It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__demonology.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
+   "priority:s1259812": "Why save it for Shadow Bolt? It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__destruction.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
+   "priority:s1259812": "Why save it for Shadow Bolt? It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__destruction_fire.Gnome": {
   "note": "Saves Eureka! for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs.",
   "why": {
-   "priority:s1259812": "Saved for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs."
+   "priority:s1259812": "Why save it for Immolate? It doesn't help Incinerate or the DoTs, and Conflagrate follows the Immolate."
   }
  },
  "hunter__beast-mastery.Dwarf": {
@@ -184,25 +184,25 @@
  "warlock__affliction-duty-curse.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
+   "priority:s1259812": "Why save it for Shadow Bolt? It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__demonology-duty-curse.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
+   "priority:s1259812": "Why save it for Shadow Bolt? It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__destruction-duty-curse.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
+   "priority:s1259812": "Why save it for Shadow Bolt? It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__destruction_fire-duty-curse.Gnome": {
   "note": "Saves Eureka! for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs.",
   "why": {
-   "priority:s1259812": "Saved for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs."
+   "priority:s1259812": "Why save it for Immolate? It doesn't help Incinerate or the DoTs, and Conflagrate follows the Immolate."
   }
  }
 }

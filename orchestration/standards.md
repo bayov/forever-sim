@@ -159,7 +159,7 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 26. Must-take talents (user ruling 2026-10-23: "Some talents are must have even if dps loss. Make sure other specs don't skip must take talents either (e.g. paladin movement speed)"). Every Level 60 preset of the spec takes these at full rank whatever the sim says; talent searches pin them (`tools/rotopt -require <field>`, which needs the seed build to carry them already):
    - Retribution paladin: Pursuit of Justice 2 (movement speed).
    - Feral druid: Feral Swiftness 2 (movement speed).
-   - Balance druid: Subtlety 3 (Forever's version cuts Nature and Arcane threat).
+   - Balance druid: Subtlety 3 (Forever's version cuts Nature and Arcane threat). It costs about 12.6 DPS against Genesis 3, and stays (user ruling 2026-11-02: "Yes", keep it).
    - Shadow priest (the pure Shadow build): Silent Resolve 3 (Forever's version cuts Holy and Shadow threat by 30%, client 70425's school mask; Forever removed Shadow Affinity). Not required on Shadow + Holy, which has no Discipline points. Dropped on 2026-10-24 on the wrong premise that it cut only Holy threat (the sim's bug, fixed 2026-10-25), and reinstated by the user on 2026-10-25.
    - Enhancement shaman: Spirit Weapons (threat), kept pinned.
    - Warlock Demonology: Suppression 5 (the other warlock builds already take it).
