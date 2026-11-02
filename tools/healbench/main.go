@@ -54,7 +54,7 @@ func main() {
 
 	fmt.Printf("Profile %s ×%.2f: %s\n%d tank(s), %d healers, %d fillers, %.0f s, %d iterations.\n\n",
 		*profile, *scale, p.description, p.tanks, *healers, *fillers, *duration, *iterations)
-	header := []string{"Healer", "HPS", "EHPS", "Overheal", "Mana left", "Tank DTPS", "Raid DTPS", "Tank deaths", "Most deaths", "Tank scares", "Raid scares"}
+	header := []string{"Healer", "HPS", "EHPS", "Overheal", "Mana left", "Tank DTPS", "Raid DTPS", "Tank deaths", "Most deaths (one player)", "Tank scares", "Raid scares"}
 	fmt.Println("| " + strings.Join(header, " | ") + " |")
 	fmt.Println("|" + strings.Repeat("---|", len(header)))
 
@@ -62,33 +62,43 @@ func main() {
 		rsr := read(path)
 		healer := firstPlayer(rsr)
 
-		var players []*proto.Player
+		// The tanks go in the first party, the healers one to a party in turn, and the fillers in the
+		// slots left, so Chain Heal and the party heals see a raid's spread.
+		total := p.tanks + *healers + *fillers
+		if total > 40 {
+			fail(fmt.Errorf("%d players, 40 at most", total))
+		}
+		numParties := (total + 4) / 5
+		slots := make([][]role, numParties)
+		place := func(r role, party int) {
+			for len(slots[party]) == 5 {
+				party = (party + 1) % numParties
+			}
+			slots[party] = append(slots[party], r)
+		}
 		for i := 0; i < p.tanks; i++ {
-			players = append(players, clone(tank))
+			place(roleTank, 0)
 		}
 		for i := 0; i < *healers; i++ {
-			players = append(players, clone(healer))
+			place(roleHealer, i%numParties)
 		}
 		for i := 0; i < *fillers; i++ {
-			players = append(players, clone(filler))
-		}
-		if len(players) > 25 {
-			fail(fmt.Errorf("%d players, 25 at most", len(players)))
+			place(roleFiller, 0)
 		}
 		raid := &proto.Raid{Buffs: rsr.Raid.Buffs, Debuffs: rsr.Raid.Debuffs}
-		for i, player := range players {
-			player.HealingModel = nil
-			player.Name = fmt.Sprintf("Player %d", i+1)
-			if i%5 == 0 {
-				raid.Parties = append(raid.Parties, &proto.Party{})
+		for pi, party := range slots {
+			raid.Parties = append(raid.Parties, &proto.Party{})
+			for si, r := range party {
+				player := clone(map[role]*proto.Player{roleTank: tank, roleHealer: healer, roleFiller: filler}[r])
+				player.HealingModel = nil
+				player.Name = fmt.Sprintf("Player %d", pi*5+si+1)
+				raid.Parties[pi].Players = append(raid.Parties[pi].Players, player)
+				if r == roleTank {
+					raid.Tanks = append(raid.Tanks, &proto.UnitReference{Type: proto.UnitReference_Player, Index: int32(pi*5 + si)})
+				}
 			}
-			party := raid.Parties[len(raid.Parties)-1]
-			party.Players = append(party.Players, player)
 		}
 		raid.NumActiveParties = int32(len(raid.Parties))
-		for i := 0; i < p.tanks; i++ {
-			raid.Tanks = append(raid.Tanks, &proto.UnitReference{Type: proto.UnitReference_Player, Index: int32(i)})
-		}
 
 		encounter := googleProto.Clone(rsr.Encounter).(*proto.Encounter)
 		encounter.Duration = *duration
@@ -129,28 +139,27 @@ func main() {
 			fail(fmt.Errorf("%s: %s", path, res.Error.Message))
 		}
 
-		var all []*proto.UnitMetrics
-		for _, party := range res.RaidMetrics.Parties {
-			all = append(all, party.Players...)
-		}
 		var hps, ehps, overheal, healing, manaEnd, tankDtps, raidDtps, tankDeaths, mostDeaths, tankScares, raidScares float64
-		for i, m := range all {
-			raidDtps += m.Dtps.Avg
-			raidScares += m.ScaresAvg
-			mostDeaths = max(mostDeaths, m.ChanceOfDeath)
-			if i < p.tanks {
-				tankDtps += m.Dtps.Avg
-				tankDeaths = max(tankDeaths, m.ChanceOfDeath)
-				tankScares += m.ScaresAvg
-			}
-			if i >= p.tanks && i < p.tanks+*healers {
-				hps += m.Hps.Avg
-				ehps += m.Ehps.Avg
-				manaEnd += m.ManaEnd.Avg / float64(*healers)
-				for _, a := range m.Actions {
-					for _, t := range a.Targets {
-						healing += t.Healing
-						overheal += t.Overhealing
+		for pi, party := range res.RaidMetrics.Parties {
+			for si, m := range party.Players {
+				r := slots[pi][si]
+				raidDtps += m.Dtps.Avg
+				raidScares += m.ScaresAvg
+				mostDeaths = max(mostDeaths, m.ChanceOfDeath)
+				if r == roleTank {
+					tankDtps += m.Dtps.Avg
+					tankDeaths = max(tankDeaths, m.ChanceOfDeath)
+					tankScares += m.ScaresAvg
+				}
+				if r == roleHealer {
+					hps += m.Hps.Avg
+					ehps += m.Ehps.Avg
+					manaEnd += m.ManaEnd.Avg / float64(*healers)
+					for _, a := range m.Actions {
+						for _, t := range a.Targets {
+							healing += t.Healing
+							overheal += t.Overhealing
+						}
 					}
 				}
 			}
@@ -177,6 +186,14 @@ func main() {
 	}
 }
 
+type role int
+
+const (
+	roleTank role = iota
+	roleHealer
+	roleFiller
+)
+
 type profile struct {
 	description string
 	tanks       int
@@ -201,7 +218,7 @@ var profiles = map[string]profile{
 		},
 	},
 	"swap": {
-		description: "two tanks trading the boss every 20 s; a stacking Physical strike on the boss's target ticking 400 every 2 s for 10 s, every 10 s",
+		description: "two tanks trading the boss every 20 s; a Physical bleed on the boss's target ticking 400 every 2 s for 10 s, every 10 s (refreshed, not stacked)",
 		tanks:       2,
 		bossSwing:   3000,
 		tankSwap:    20,

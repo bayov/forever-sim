@@ -33,7 +33,7 @@ func (value *APLValueCurrentHealth) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
 func (value *APLValueCurrentHealth) GetFloat(_ *Simulation) float64 {
-	unit := value.unit.Get()
+	unit := value.unit.HealthUnit()
 	if unit == nil {
 		return 0
 	}
@@ -69,12 +69,8 @@ func (value *APLValueCurrentHealthPercent) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
 func (value *APLValueCurrentHealthPercent) GetFloat(_ *Simulation) float64 {
-	unit := value.unit.Get()
+	unit := value.unit.HealthUnit()
 	if unit == nil {
-		// Most Hurt or Lowest Health with nobody hurt: everyone is full.
-		if value.unit.IsHealTarget() {
-			return 1
-		}
 		return 0
 	}
 	return unit.CurrentHealthPercent()
@@ -108,7 +104,7 @@ func (value *APLValueMaxHealth) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
 func (value *APLValueMaxHealth) GetFloat(_ *Simulation) float64 {
-	unit := value.unit.Get()
+	unit := value.unit.HealthUnit()
 	if unit == nil {
 		return 0
 	}

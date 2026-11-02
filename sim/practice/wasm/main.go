@@ -29,6 +29,7 @@ func main() {
 	js.Global().Set("practiceStartEncounter", js.FuncOf(guard(startEncounter)))
 	js.Global().Set("practiceStop", js.FuncOf(guard(stop)))
 	js.Global().Set("practiceAttempt", js.FuncOf(guard(attempt)))
+	js.Global().Set("practicePrepare", js.FuncOf(guard(prepare)))
 	js.Global().Call("wasmready")
 	select {}
 }
@@ -140,6 +141,14 @@ func stop(args []js.Value) (any, error) {
 	}
 	session.Stop(fromMs(args[0].Float()))
 	return advanceReply{Batch: session.TakeBatch(), NextEventMs: -1}, nil
+}
+
+// prepare builds the next swap's sim, in the worker's idle time.
+func prepare(args []js.Value) (any, error) {
+	if session != nil {
+		session.PrepareSpare()
+	}
+	return map[string]bool{"ok": true}, nil
 }
 
 func attempt(args []js.Value) (any, error) {

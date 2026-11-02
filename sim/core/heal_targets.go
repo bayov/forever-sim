@@ -55,6 +55,27 @@ func (unit *Unit) pickHealTarget(pick proto.UnitReference_Type) *Unit {
 	return best
 }
 
+// fullHealTarget stands in for Most Hurt or Lowest Health when nobody is hurt, so health values
+// read a full player's (current health = max health, nothing missing): the first living one
+// among our candidates.
+func (unit *Unit) fullHealTarget() *Unit {
+	for _, player := range unit.HealCandidates() {
+		if !player.dead && player.HasHealthBar() {
+			return player
+		}
+	}
+	return nil
+}
+
+// HealthUnit is the unit a health value reads: the reference's, or for Most Hurt or Lowest Health
+// with nobody hurt, a full player (fullHealTarget).
+func (ur UnitReference) HealthUnit() *Unit {
+	if unit := ur.Get(); unit != nil || ur.healer == nil {
+		return unit
+	}
+	return ur.healer.fullHealTarget()
+}
+
 // MostHurtAmong is the living player in units missing the most health, leaving out skip, for a
 // heal that jumps (Chain Heal). Nil when nobody else is hurt.
 func MostHurtAmong(units []*Unit, skip ...*Unit) *Unit {

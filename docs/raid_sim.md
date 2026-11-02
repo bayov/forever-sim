@@ -137,6 +137,10 @@ and the usual range:
 
 **DPS members are report builds** (see [The build pool](#the-build-pool)).
 
+**Simmed tanks and healers are coming** ([tank_sim.md](tank_sim.md), [healing_sim.md](healing_sim.md), H6):
+then they become units in the engine, heal the simmed tanks and raid, and the search counts healing. Until
+then, what follows holds.
+
 **Tanks and healers are placeholders.** Simming them is out of scope for now: no damage, no threat, no
 healing (the user, 2026-10-29). Their damage is left out with no stand-in. So comps are only compared at
 the same slot counts: fewer tanks or healers means more DPS slots, which would always win. The slot counts

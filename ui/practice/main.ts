@@ -2,12 +2,12 @@
 // the fight in 3D.
 
 import {
-	barRows,
 	baseKeyName,
 	commandFor,
 	commandForSlot,
 	keysForSlot,
 	MacroAction,
+	matchNoteLabel,
 	MacroContext,
 	macroIconSpell,
 	Modifiers,
@@ -22,12 +22,14 @@ import {
 } from './actions';
 import { CameraOptions, Mover } from './controls';
 import { iconName, iconUrl, setIcon } from './icons';
-import { Batch, ClockState, FromWorker, Input, PlayerState, Settings, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
+import { css, HudLayout, pack, place, readLayout, Rect } from './layout';
+import { AuraState, Batch, ClockState, FromWorker, Input, PlayerState, Settings, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
 import { Room } from './scene';
+import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 
 const app = document.getElementById('app')!;
 
-type Loaded = { request: unknown; rotationSpells: number[] | null; class: string; race: string; level: number; name: string };
+type Loaded = { request: unknown; rotationSpells: number[] | null; class: string; race: string; level: number; name: string; trinkets?: number[] };
 type RecordSummary = { guid: string; name: string; realm: string; class: string; race: string; level: number };
 type SavedSettings = {
 	version: 1;
@@ -40,6 +42,29 @@ type CharacterData = {
 	bindings: Record<string, string>;
 	cvars: Record<string, string>;
 	saved?: SavedSettings;
+	// The EllesmereUI profile and the class keybind notes (cmd/practice/ui.go).
+	ui?: Record<string, unknown>;
+	noteBinds?: Record<string, string>;
+};
+
+// The Bayov class pack's bars (bayovui/auras/forever/shaman/group.py): the main bar's
+// cooldowns, the utility bar's, and what the maintain cells hold.
+const packMain = ['Stormstrike', 'Earth Shock', 'Fire Nova', 'Chain Lightning', 'Lava Burst', 'Rage of the Farseer', "Nature's Swiftness", 'Blood Fury', 'Berserking'];
+const packMainItems = ['Sapper', 'Grenade', 'Dynamite', 'Mana Potion', 'Rune'];
+const packUtility = ['Grounding Totem', 'Earthbind Totem', 'Stoneclaw Totem', 'Mana Tide Totem', 'Totemic Projection', 'Purge'];
+const packUtilityItems = ['Healthstone', 'Healing Potion', 'Bandage'];
+const totemElements = ['earth', 'fire', 'water', 'air'];
+// Class colors for the unit frames and the meter.
+const classColors: Record<string, string> = {
+	ClassShaman: '#0070dd',
+	ClassWarrior: '#c69b6d',
+	ClassRogue: '#fff468',
+	ClassPaladin: '#f48cba',
+	ClassHunter: '#aad372',
+	ClassMage: '#3fc7eb',
+	ClassWarlock: '#8788ee',
+	ClassPriest: '#ffffff',
+	ClassDruid: '#ff7c0a',
 };
 
 const defaultSettings: Settings = { mode: 'free', lengthMs: 180000, countdownMs: 5000, pingMs: 0, executeFromStart: false, spellQueueWindowMs: 400 };
@@ -139,6 +164,24 @@ class PracticeRoom {
 	pulledAt?: number;
 	dummyPos: [number, number] = [0, 0];
 	private buttons = new Map<number, HTMLElement>();
+	layout: HudLayout;
+	tooltip!: Tooltip;
+	// u is screen pixels to a UI unit.
+	u = 1;
+	// Slots filled from the keybind notes, not the character's bars.
+	noteSlots = new Set<number>();
+	itemNames = new Map<number, string>();
+	private packIcons: { el: HTMLElement; spell: ToolkitSpell }[] = [];
+	private maintainCells = new Map<string, HTMLElement>();
+	// The cast history timeline: our casts with when we made them, and where each sits.
+	private castLog: { at: number; spellId?: number; itemId?: number; el: HTMLElement; row: number; shift: number }[] = [];
+	private axisLabels = new Map<number, HTMLElement>();
+	// Timings for spike 4: the WASM load, each call into Go, the swaps, and the time from a key
+	// press to its answer on the page.
+	readonly timings = { loadMs: 0, startCallMs: 0, calls: [] as number[], swaps: [] as number[], pressToAnswer: [] as number[] };
+	private pressedAt = new Map<number, number>();
+	// sessions counts the sessions started, for tests waiting on a restart.
+	sessions = 0;
 	private lastFrame = 0;
 	private dragging: { button: number; x: number; y: number; moved: boolean; picked: 'enemy' | 'ground' | undefined } | undefined;
 
@@ -147,6 +190,7 @@ class PracticeRoom {
 		readonly guid: string,
 		readonly character: CharacterData,
 	) {
+		this.layout = readLayout(character.ui as Record<string, unknown> | undefined);
 		this.bindings = { ...character.bindings };
 		for (const [key, command] of Object.entries(character.saved?.binds ?? {})) {
 			if (command) this.bindings[key] = command;
@@ -200,12 +244,14 @@ class PracticeRoom {
 	resize() {
 		this.room.resize();
 		this.room.setFov(parseFloat(this.character.cvars.cameraFov ?? '90'));
+		this.layoutHud();
 	}
 
 	start() {
 		this.summary = undefined;
 		this.pulledAt = undefined;
 		this.hud.querySelector('.summary')?.remove();
+		this.clearHistory();
 		this.mover.move.pos = [0, -15];
 		this.mover.move.facing = Math.PI / 2;
 		this.mover.cam.yaw = Math.PI / 2;
@@ -216,7 +262,12 @@ class PracticeRoom {
 
 	onWorker(msg: FromWorker) {
 		switch (msg.type) {
+			case 'ready':
+				this.timings.loadMs = msg.loadMs;
+				break;
 			case 'started': {
+				this.timings.startCallMs = msg.callMs;
+				this.sessions++;
 				const first = !this.toolkit;
 				this.running = true;
 				if (first) this.setupToolkit(msg.toolkit);
@@ -224,6 +275,15 @@ class PracticeRoom {
 			}
 			case 'batch':
 				this.clock = msg.clock;
+				this.timings.calls.push(msg.callMs);
+				if (msg.batch.rebase) this.timings.swaps.push(msg.callMs);
+				for (const a of msg.batch.answers ?? []) {
+					const at = this.pressedAt.get(a.inputId);
+					if (at !== undefined) {
+						this.timings.pressToAnswer.push(wallNow() - at);
+						this.pressedAt.delete(a.inputId);
+					}
+				}
 				this.onBatch(msg.batch).catch(e => console.error(e));
 				break;
 			case 'attempt':
@@ -250,18 +310,28 @@ class PracticeRoom {
 		extra.push(...(this.loaded.rotationSpells ?? []));
 		const names = await getJSON<SpellNames>(`/api/spells?ids=${[...ids, ...extra].join(',')}`).catch(() => ({}) as SpellNames);
 		this.toolkit = new Toolkit(spells, names);
-		for (const s of spells) {
-			if (s.itemId) {
-				iconName('item', s.itemId); // warm the cache
-			}
-		}
+		// Item names, for macros' /use lines, the keybind notes and the spellbook.
+		await Promise.all(
+			spells
+				.filter(s => s.itemId)
+				.map(async s => {
+					iconName('item', s.itemId!); // warm the cache
+					const info = await tooltipInfo('item', s.itemId!);
+					if (info.name) {
+						this.itemNames.set(s.itemId!, info.name);
+						this.itemsByName.set(info.name.toLowerCase(), s.itemId!);
+					}
+				}),
+		);
 		this.loadSlots();
 		this.renderBars();
 		this.renderSpellbook();
+		this.renderPack();
 	}
 
 	loadSlots() {
 		this.slots.clear();
+		this.noteSlots.clear();
 		const record = this.character.record;
 		if (record?.slots) {
 			for (const [slot, v] of Object.entries(record.slots)) {
@@ -291,14 +361,57 @@ class PracticeRoom {
 			if (v) this.slots.set(+slot, v);
 			else this.slots.delete(+slot);
 		}
+		this.placeNoteBinds();
+	}
+
+	// placeNoteBinds puts toolkit spells the bars don't have on the slot of the key the class
+	// keybind notes plan for them, when that slot is empty.
+	placeNoteBinds() {
+		const notes = this.character.noteBinds;
+		if (!notes) return;
+		const onBars = new Set<string>();
+		for (const content of this.slots.values()) {
+			const key = this.contentKey(content);
+			if (key) onBars.add(key);
+		}
+		for (const [key, label] of Object.entries(notes)) {
+			const content = matchNoteLabel(label, this.toolkit, this.itemNames, this.loaded.trinkets ?? []);
+			if (!content) continue;
+			const ck = this.contentKey(content);
+			if (!ck || onBars.has(ck)) continue;
+			const command = this.bindings[key];
+			const slot = command ? slotForCommand(command) : undefined;
+			if (slot === undefined || this.slots.has(slot)) continue;
+			this.slots.set(slot, content);
+			this.noteSlots.add(slot);
+			onBars.add(ck);
+		}
+	}
+
+	// contentKey names what a slot casts, to tell whether a spell is on the bars already.
+	contentKey(content: SlotContent): string | undefined {
+		if (content.kind === 'spell') {
+			const id = this.toolkit.resolveSpell(content.id);
+			return id !== undefined ? `s${id}` : undefined;
+		}
+		if (content.kind === 'item') return `i${content.id}`;
+		const shown = macroIconSpell(parseMacro(content.body), this.toolkit, this.macroContext({ alt: false, ctrl: false, shift: false }));
+		return shown !== undefined ? `s${shown}` : undefined;
 	}
 
 	async onBatch(b: Batch) {
+		if (b.rebase) {
+			// The session moved its clock (the pull is 0): the history's casts move with it.
+			for (const c of this.castLog) c.at += b.rebase.shiftMs;
+			for (const l of this.axisLabels.values()) l.remove();
+			this.axisLabels.clear();
+		}
 		if (b.player) this.player = b.player;
 		if (b.target) this.target = b.target;
 		this.fight = b.fight;
 		for (const e of b.errors ?? []) this.showError(e);
 		for (const h of b.hits ?? []) this.combatText(h.damage, h.outcome, h.periodic);
+		for (const c of b.casts ?? []) this.addHistory(c.at, c.spellId, c.itemId);
 		if (b.pulled) {
 			this.pulledAt = 0;
 			if (b.pulled.early) this.showMessage('Early pull!');
@@ -327,7 +440,10 @@ class PracticeRoom {
 
 	sendInput(input: Omit<Input, 'id'>, pressedAtWall = wallNow()): number {
 		const id = this.nextInputId++;
-		if (this.running) this.post({ type: 'input', input: { ...input, id } as Input, pressedAtWall });
+		if (this.running) {
+			if (input.kind !== 'move') this.pressedAt.set(id, pressedAtWall);
+			this.post({ type: 'input', input: { ...input, id } as Input, pressedAtWall });
+		}
 		return id;
 	}
 
@@ -617,9 +733,16 @@ class PracticeRoom {
 
 	buildHud() {
 		this.hud.innerHTML = `
-			<div class="unit-frame player-frame"><div class="name"></div><div class="bar health"><span></span></div><div class="bar mana"><span></span><em></em></div></div>
-			<div class="unit-frame target-frame"><div class="name"></div><div class="bar health"><span></span></div><div class="debuffs"></div></div>
+			<div class="uf player-frame"><div class="hp"><span class="fill"></span><em class="right"></em></div></div>
+			<div class="uf target-frame"><div class="hp"><span class="fill"></span><em class="left"></em><em class="right name"></em></div><div class="debuffs"></div></div>
+			<div class="uf tot-frame"><div class="hp"><span class="fill"></span><em class="center"></em></div></div>
+			<div class="pack"></div>
+			<div class="castbar hidden"><div class="cb-icon"></div><div class="cb-bar"><div class="fill"></div><div class="latency"></div><span class="cb-name"></span><span class="cb-time"></span></div></div>
 			<div class="buffs"></div>
+			<div class="nameplate hidden"><div class="np-debuffs"></div><div class="np-name"></div><div class="np-hp"><span class="fill"></span></div><div class="np-arrow left"></div><div class="np-arrow right"></div></div>
+			<div class="dmeter"><div class="dm-header"></div><div class="dm-bar hidden"><span class="fill"></span><em class="l"></em><em class="r"></em></div></div>
+			<div class="history"><div class="hist-now"></div><div class="hist-casts"></div><div class="hist-axis"></div></div>
+			<div class="action-bars"></div>
 			<div class="errors"></div>
 			<div class="messages"></div>
 			<div class="fight-bar">
@@ -627,21 +750,39 @@ class PracticeRoom {
 				<button class="start-encounter">Start Encounter</button>
 				<button class="stop">Stop</button>
 				<button class="restart">Restart</button>
-				<button class="leave">Leave</button>
 				<button class="settings-toggle">Settings</button>
+				<button class="leave">Leave</button>
 			</div>
 			<div class="fight-settings hidden"></div>
-			<div class="meter"><div class="dps"></div><div class="total"></div></div>
 			<div class="countdown"></div>
-			<div class="castbar hidden"><div class="fill"></div><div class="label"></div></div>
-			<div class="swingbar hidden"><div class="fill"></div></div>
-			<div class="bars"></div>
 			<div class="bar-tools"><button class="edit-bars">Edit bars</button><button class="bind-keys">Bind keys</button><button class="book">Spellbook</button></div>
 			<div class="spellbook hidden"></div>
 			<div class="cursor-icon hidden"></div>
 			<div class="combat-text"></div>`;
 		const q = (s: string) => this.hud.querySelector(s) as HTMLElement;
-		q('.player-frame .name').textContent = `${this.loaded.name || 'You'} · ${this.loaded.level}`;
+		const L = this.layout;
+		this.tooltip = new Tooltip(this.hud, () => ({ left: innerWidth / 2 + L.tooltip.x * this.u, top: innerHeight / 2 - L.tooltip.y * this.u }));
+		const tip = (sel: string, content: () => TooltipContent | undefined) => this.tooltip.attach(q(sel), content);
+		q('.player-frame .hp .fill').style.background = css(L.playerColor);
+		q('.target-frame .hp .fill').style.background = css(L.targetColor);
+		q('.tot-frame .hp .fill').style.background = classColors[this.loaded.class] ?? '#0070dd';
+		q('.cb-bar .fill').style.background = css(L.castColor);
+		q('.cb-bar .latency').style.background = css(L.castLatency, L.castLatency.a);
+		q('.dm-bar .fill').style.background = classColors[this.loaded.class] ?? '#0070dd';
+		q('.tot-frame .center').textContent = this.playerName();
+		tip('.player-frame', () => ({ kind: 'lines', title: this.playerName(), lines: [`Level ${this.loaded.level} ${this.loaded.race.replace(/^Race/, '')} ${this.loaded.class.replace(/^Class/, '')}`] }));
+		tip('.target-frame', () => this.targetTooltip());
+		tip('.nameplate', () => this.targetTooltip());
+		tip('.tot-frame', () => ({ kind: 'lines', title: this.playerName(), lines: ["Your target's target"] }));
+		tip('.dmeter', () => ({ kind: 'lines', title: 'Damage Done', lines: ['Damage | DPS since the pull'] }));
+		tip('.start-encounter', () => ({ kind: 'lines', title: 'Start Encounter', lines: [`${fmtTime(this.settings.lengthMs)} fight after a ${this.settings.countdownMs / 1000}s countdown`] }));
+		tip('.stop', () => ({ kind: 'lines', title: 'Stop', lines: ['End the fight and show the summary'] }));
+		tip('.restart', () => ({ kind: 'lines', title: 'Restart', lines: ['A new fight from the start spot'] }));
+		tip('.leave', () => ({ kind: 'lines', title: 'Leave', lines: ['Back to the build and character pick'] }));
+		tip('.settings-toggle', () => ({ kind: 'lines', title: 'Fight settings', lines: ['Mode, length, countdown and ping'] }));
+		tip('.edit-bars', () => ({ kind: 'lines', title: 'Edit bars', lines: ['Pick up a spell, then click a slot'] }));
+		tip('.bind-keys', () => ({ kind: 'lines', title: 'Bind keys', lines: ['Hover a button and press a key'] }));
+		tip('.book', () => ({ kind: 'lines', title: 'Spellbook', lines: ['Every spell and item you can use'] }));
 		q('.start-encounter').onclick = () => this.post({ type: 'startEncounter', wallNow: wallNow() });
 		q('.stop').onclick = () => this.post({ type: 'stop', wallNow: wallNow() });
 		q('.restart').onclick = () => {
@@ -673,6 +814,39 @@ class PracticeRoom {
 			c.style.left = `${e.clientX + 8}px`;
 			c.style.top = `${e.clientY + 8}px`;
 		});
+	}
+
+	playerName(): string {
+		return this.loaded.name || this.character.record?.name || 'You';
+	}
+
+	targetTooltip(): TooltipContent | undefined {
+		if (!this.target) return undefined;
+		return { kind: 'lines', title: this.target.name, titleClass: 'hostile', lines: [`Level ${this.target.level}`, `${Math.round(this.target.damageTaken)} damage taken`] };
+	}
+
+	// layoutHud places the frames for the window's size, like the game scales its UI.
+	layoutHud() {
+		const W = innerWidth;
+		const H = innerHeight;
+		const L = this.layout;
+		this.u = H / L.uiHeight;
+		const u = this.u;
+		this.hud.style.setProperty('--u', `${u}px`);
+		const q = (s: string) => this.hud.querySelector(s) as HTMLElement;
+		place(q('.player-frame'), L.player, u, W, H);
+		place(q('.target-frame'), L.target, u, W, H);
+		place(q('.tot-frame'), L.targetOfTarget, u, W, H);
+		place(q('.dmeter'), L.meter, u, W, H);
+		const cb = L.castbar;
+		place(q('.castbar'), cb, u, W, H);
+		q('.player-frame em').style.fontSize = `${L.playerTextSize * u}px`;
+		for (const e of this.hud.querySelectorAll<HTMLElement>('.target-frame em')) e.style.fontSize = `${L.targetTextSize * u}px`;
+		q('.cb-name').style.fontSize = `${L.castTextSize * u}px`;
+		q('.cb-time').style.fontSize = `${L.castTimerSize * u}px`;
+		q('.dm-bar').style.height = `${L.meterBarHeight * u}px`;
+		this.renderBars();
+		this.renderPack();
 	}
 
 	renderFightSettings() {
@@ -710,31 +884,55 @@ class PracticeRoom {
 			el('label', {}, 'Length (s)', length),
 			el('label', {}, 'Countdown (s)', countdown),
 			el('label', {}, 'Ping (ms)', ping),
-			el('label', { title: 'The dummy is in execute range from the start' }, 'Execute range', execute),
+			el('label', { class: 'execute-label' }, 'Execute range', execute),
 			apply,
 		);
+		this.tooltip.attach(box.querySelector('.execute-label') as HTMLElement, () => ({ kind: 'lines', title: 'Execute range', lines: ['The dummy is under 20% health from the start'] }));
 	}
 
+	// renderBars draws the action bars where EllesmereUI has them, each a block of buttons.
 	renderBars() {
-		const bars = this.hud.querySelector('.bars') as HTMLElement;
-		bars.replaceChildren();
+		const box = this.hud.querySelector('.action-bars') as HTMLElement;
+		box.replaceChildren();
 		this.buttons.clear();
-		bars.classList.toggle('editing', this.editing);
-		bars.classList.toggle('binding', this.binding);
-		const rows = barRows.filter((row, i) => i < 5 || [...Array(12).keys()].some(k => this.slots.has(row.first + k)));
-		for (const row of rows) {
-			const used = [...Array(12).keys()].some(k => this.slots.has(row.first + k));
-			if (!used && !this.editing && !this.binding) continue;
-			const rowEl = el('div', { class: 'bar-row' });
-			for (let k = 0; k < 12; k++) {
-				const slot = row.first + k;
+		box.classList.toggle('editing', this.editing);
+		box.classList.toggle('binding', this.binding);
+		const u = this.u;
+		for (const bar of this.layout.bars) {
+			const count = bar.cols * bar.rows;
+			const used = [...Array(count).keys()].some(k => this.slots.has(bar.first + k));
+			const showAll = bar.showEmpty || this.editing || this.binding;
+			if (!used && !showAll) continue;
+			const block = el('div', { class: 'bar-block', 'data-bar': bar.key });
+			place(block, bar.rect, u, innerWidth, innerHeight);
+			for (let k = 0; k < count; k++) {
+				const slot = bar.first + k;
+				if (!showAll && !this.slots.has(slot)) continue;
 				const b = el('div', { class: 'button', 'data-slot': String(slot) });
-				b.append(el('div', { class: 'icon' }), el('div', { class: 'sweep' }), el('div', { class: 'key' }), el('div', { class: 'name' }));
+				b.append(el('div', { class: 'icon' }), el('div', { class: 'sweep' }), el('div', { class: 'cd' }), el('div', { class: 'key' }), el('div', { class: 'name' }));
+				const col = k % bar.cols;
+				const row = Math.floor(k / bar.cols);
+				b.style.left = `${Math.round(col * (bar.size + bar.padding) * u)}px`;
+				b.style.top = `${Math.round(row * (bar.size + bar.padding) * u)}px`;
+				b.style.width = b.style.height = `${Math.round(bar.size * u)}px`;
+				const key = b.querySelector('.key') as HTMLElement;
 				const keys = keysForSlot(this.bindings, slot);
-				(b.querySelector('.key') as HTMLElement).textContent = keys.length ? shortKey(keys[0]) : '';
+				key.textContent = keys.length ? shortKey(keys[0]) : '';
+				key.style.fontSize = `${bar.keyFont * u}px`;
+				const name = b.querySelector('.name') as HTMLElement;
+				name.style.fontSize = `${bar.macroFont * u}px`;
+				name.style.color = css(bar.macroColor);
 				this.fillButton(b, this.slots.get(slot));
-				b.onmouseenter = () => (this.hoverSlot = slot);
-				b.onmouseleave = () => (this.hoverSlot = undefined);
+				b.classList.toggle('from-notes', this.noteSlots.has(slot));
+				b.onmouseenter = () => {
+					this.hoverSlot = slot;
+					const c = this.slotTooltip(slot);
+					if (c) this.tooltip.show(c);
+				};
+				b.onmouseleave = () => {
+					this.hoverSlot = undefined;
+					this.tooltip.hide();
+				};
 				b.onmousedown = e => {
 					e.stopPropagation();
 					if (this.editing) {
@@ -747,11 +945,32 @@ class PracticeRoom {
 					}
 					if (!this.binding) this.pressSlot(slot, this.mods(e), performance.timeOrigin + e.timeStamp);
 				};
-				rowEl.append(b);
+				block.append(b);
 				this.buttons.set(slot, b);
 			}
-			bars.append(rowEl);
+			box.append(block);
 		}
+	}
+
+	// slotTooltip is the game tooltip of what a slot holds, with its key under it.
+	slotTooltip(slot: number): TooltipContent | undefined {
+		const content = this.slots.get(slot);
+		const keys = keysForSlot(this.bindings, slot);
+		const extra: string[] = [];
+		if (this.binding) extra.push(keys.length ? `Key: ${keys.join(', ')} · press a key to bind` : 'Press a key to bind');
+		if (this.noteSlots.has(slot)) extra.push('From your keybind notes');
+		if (!content) return this.binding ? { kind: 'lines', title: 'Empty slot', lines: extra } : undefined;
+		if (content.kind === 'spell') {
+			const id = this.toolkit?.resolveSpell(content.id);
+			if (id === undefined) extra.push('Not in this build');
+			return { kind: 'spell', id: id ?? content.id, extra };
+		}
+		if (content.kind === 'item') return { kind: 'item', id: content.id, extra };
+		const shown = this.toolkit ? macroIconSpell(parseMacro(content.body), this.toolkit, this.macroContext({ alt: false, ctrl: false, shift: false })) : undefined;
+		const macro = parseMacro(content.body);
+		if (macro.unsupported.length) extra.push(`Not supported here: ${macro.unsupported.join(' ')}`);
+		if (shown) return { kind: 'spell', id: shown, extra: [`Macro: ${content.name}`, ...extra] };
+		return { kind: 'lines', title: content.name || 'Macro', lines: [...content.body.split('\n'), ...extra] };
 	}
 
 	renderCursor() {
@@ -765,23 +984,19 @@ class PracticeRoom {
 		const name = b.querySelector('.name') as HTMLElement | null;
 		icon.style.backgroundImage = '';
 		if (name) name.textContent = '';
-		b.title = '';
 		if (!content) return;
 		if (content.kind === 'spell') {
 			const id = this.toolkit?.resolveSpell(content.id);
 			setIcon(icon, 'spell', content.id);
-			b.title = this.toolkit?.nameOf(id ?? content.id) ?? '';
 			b.classList.toggle('unknown', id === undefined);
 		} else if (content.kind === 'item') {
 			setIcon(icon, 'item', content.id);
-			b.title = content.name ?? `Item ${content.id}`;
 		} else {
 			const macro = parseMacro(content.body);
 			const shown = this.toolkit ? macroIconSpell(macro, this.toolkit, this.macroContext({ alt: false, ctrl: false, shift: false })) : undefined;
 			if (shown) setIcon(icon, 'spell', shown);
 			else icon.style.backgroundImage = `url(${iconUrl('inv_misc_questionmark')})`;
 			if (name) name.textContent = content.name;
-			b.title = `${content.name}\n${content.body}`;
 			b.classList.toggle('unsupported', macro.unsupported.length > 0);
 			b.dataset.spell = shown ? String(shown) : '';
 		}
@@ -796,6 +1011,7 @@ class PracticeRoom {
 			const content: SlotContent = s.itemId ? { kind: 'item', id: s.itemId } : { kind: 'spell', id: s.spellId! };
 			const item = el('div', { class: 'book-entry' }, el('div', { class: 'icon' }), el('span', {}, this.labelOf(s)));
 			this.fillButton(item, content);
+			this.tooltip.attach(item, () => (s.itemId ? { kind: 'item', id: s.itemId } : { kind: 'spell', id: s.spellId! }));
 			item.onmousedown = e => {
 				e.stopPropagation();
 				this.cursor = content;
@@ -809,7 +1025,7 @@ class PracticeRoom {
 	}
 
 	labelOf(s: ToolkitSpell): string {
-		if (s.itemId) return `Item ${s.itemId}`;
+		if (s.itemId) return this.itemNames.get(s.itemId) ?? `Item ${s.itemId}`;
 		const n = this.toolkit.names[s.spellId!];
 		return n ? (n.rank ? `${n.name} (${n.rank})` : n.name) : `Spell ${s.spellId}`;
 	}
@@ -913,6 +1129,8 @@ class PracticeRoom {
 		const dt = this.lastFrame ? Math.min(0.1, (t - this.lastFrame) / 1000) : 0;
 		this.lastFrame = t;
 		const wall = wallNow();
+		// Ghost Wolf runs 40% faster.
+		this.mover.speedFactor = this.player?.auras?.some(a => a.spellId === 2645) ? 1.4 : 1;
 		if (this.running) this.mover.step(dt, wall);
 		const m = this.mover.move;
 		const h = this.mover.height(wall);
@@ -924,48 +1142,209 @@ class PracticeRoom {
 		this.updateHud();
 	}
 
+	// ---- the class pack ----
+
+	// renderPack draws the Bayov class pack around the resource bars: maintain cells over them,
+	// the main and utility cooldown bars under them.
+	renderPack() {
+		const box = this.hud.querySelector('.pack') as HTMLElement;
+		box.replaceChildren();
+		this.packIcons = [];
+		this.maintainCells.clear();
+		const u = this.u;
+		const W = innerWidth;
+		const H = innerHeight;
+		const L = this.layout;
+		const width = pack.width;
+		const put = (e: HTMLElement, r: Rect) => {
+			place(e, r, u, W, H);
+			box.append(e);
+			return e;
+		};
+		const bottom = L.player.y - L.player.h / 2;
+		const power = put(el('div', { class: 'pk-power' }, el('span', { class: 'fill' }), el('em')), { x: 0, y: bottom, w: width, h: pack.powerH, point: 'BOTTOM' });
+		(power.querySelector('.fill') as HTMLElement).style.background = css(L.manaColor);
+		(power.querySelector('em') as HTMLElement).style.fontSize = `${11 * u}px`;
+		this.tooltip.attach(power, () => ({ kind: 'lines', title: 'Mana', lines: this.player ? [`${Math.round(this.player.mana)} / ${Math.round(this.player.maxMana)}`] : [] }));
+		let top = bottom + pack.powerH + pack.gap;
+		const swing = put(el('div', { class: 'pk-swing' }, el('span', { class: 'fill' })), { x: 0, y: top, w: width, h: pack.swingH, point: 'BOTTOM' });
+		this.tooltip.attach(swing, () => ({ kind: 'lines', title: 'Swing timer', lines: ['Red while auto attack is on but not swinging'] }));
+		top += pack.swingH;
+		if (this.loaded.class === 'ClassShaman') {
+			top += pack.gap;
+			const pips = put(el('div', { class: 'pk-pips' }), { x: 0, y: top, w: width, h: pack.pipH, point: 'BOTTOM' });
+			for (let i = 0; i < 5; i++) pips.append(el('span'));
+			this.tooltip.attach(pips, () => ({ kind: 'lines', title: 'Maelstrom Weapon', lines: ['At 5, your next Lightning Bolt is instant'] }));
+			top += pack.pipH;
+		}
+		if (!this.toolkit) return;
+
+		// The maintain cells: the shield in cell 1, the four totems on cells 3 to 6 shifted half a
+		// cell right, and Flame Shock in cell 9.
+		const step = pack.iconW + pack.gap;
+		const left = -width / 2 + pack.iconW / 2;
+		const cellY = top + pack.gap + pack.iconH / 2;
+		const cell = (name: string, x: number) => {
+			const c = put(this.packIcon('maintain'), { x, y: cellY, w: pack.iconW, h: pack.iconH, point: 'CENTER' });
+			c.classList.add('hidden');
+			this.maintainCells.set(name, c);
+			this.tooltip.attach(c, () => {
+				const id = c.dataset.spell ? +c.dataset.spell : undefined;
+				const expiresAt = c.dataset.expires ? +c.dataset.expires : undefined;
+				return id ? { kind: 'aura', spellId: id, label: name, remaining: () => (expiresAt !== undefined ? fmtRemaining(expiresAt - this.now()) : '') } : undefined;
+			});
+		};
+		cell('shield', left);
+		totemElements.forEach((e, i) => cell(e, left + (2 + i + 0.5) * step));
+		cell('dot', left + 8 * step);
+
+		// The main bar and the utility bar, nine to a row, centred.
+		const pick = (spellNames: string[], itemNames: string[]) => {
+			const out: ToolkitSpell[] = [];
+			for (const name of spellNames) {
+				const id = this.toolkit.spellByName(name);
+				const spell = id !== undefined ? this.toolkit.bySpell.get(id) : undefined;
+				if (spell && spell.cdMs > 0) out.push(spell);
+			}
+			for (const part of itemNames) {
+				for (const [id, name] of this.itemNames) {
+					const spell = this.toolkit.byItem.get(id);
+					if (spell && name.includes(part) && !out.includes(spell)) out.push(spell);
+				}
+			}
+			return out;
+		};
+		const row = (spells: ToolkitSpell[], centreY: number) => {
+			spells.forEach((spell, i) => {
+				const inRow = Math.min(pack.perRow, spells.length - Math.floor(i / pack.perRow) * pack.perRow);
+				const x = (-(inRow - 1) / 2 + (i % pack.perRow)) * step;
+				const y = centreY - Math.floor(i / pack.perRow) * (pack.iconH + pack.gap);
+				const icon = put(this.packIcon('cooldown'), { x, y, w: pack.iconW, h: pack.iconH, point: 'CENTER' });
+				setIcon(icon.querySelector('.img') as HTMLElement, spell.itemId ? 'item' : 'spell', (spell.itemId ?? spell.spellId)!);
+				this.tooltip.attach(icon, () => (spell.itemId ? { kind: 'item', id: spell.itemId } : { kind: 'spell', id: spell.spellId! }));
+				this.packIcons.push({ el: icon, spell });
+			});
+			return Math.ceil(spells.length / pack.perRow);
+		};
+		const mainY = bottom - pack.gap - pack.iconH / 2;
+		const mainRows = row(pick(packMain, packMainItems), mainY);
+		row(pick(packUtility, packUtilityItems), mainY - Math.max(1, mainRows) * (pack.iconH + pack.gap));
+	}
+
+	packIcon(kind: string): HTMLElement {
+		return el('div', { class: `pk-icon ${kind}` }, el('div', { class: 'img' }), el('div', { class: 'swipe' }), el('div', { class: 'time' }), el('div', { class: 'stacks' }));
+	}
+
+	// updatePack fills the pack for this frame.
+	updatePack(p: PlayerState, now: number, cds: Map<string, { readyAt: number; length: number }>) {
+		const q = (s: string) => this.hud.querySelector(s) as HTMLElement | null;
+		const pct = (a: number, b: number) => `${b > 0 ? Math.max(0, Math.min(100, (100 * a) / b)) : 0}%`;
+		const power = q('.pk-power');
+		if (power) {
+			(power.querySelector('.fill') as HTMLElement).style.width = pct(p.mana, p.maxMana);
+			(power.querySelector('em') as HTMLElement).textContent = String(Math.round(p.mana));
+		}
+		const swing = q('.pk-swing');
+		if (swing) {
+			const next = p.nextSwingAt ?? now;
+			const frac = p.attackOn && p.swingMs > 0 ? (p.swingMs - (next - now)) / p.swingMs : 0;
+			(swing.querySelector('.fill') as HTMLElement).style.width = `${Math.max(0, Math.min(1, frac)) * 100}%`;
+			swing.classList.toggle('alert', p.attackOn && !p.swinging && this.fight.phase === 'fight');
+		}
+		const maelstrom = (p.auras ?? []).find(a => a.label.startsWith('Maelstrom Weapon'));
+		this.hud.querySelectorAll('.pk-pips span').forEach((pip, i) => pip.classList.toggle('on', (maelstrom?.stacks ?? 0) > i));
+
+		const inFight = this.fight.phase === 'fight';
+		const show = (name: string, id: number | undefined, expiresAt: number | undefined, opts: { stacks?: number; missingId?: number }) => {
+			const c = this.maintainCells.get(name);
+			if (!c) return;
+			const shownId = id ?? (inFight ? opts.missingId : undefined);
+			c.classList.toggle('hidden', !shownId);
+			c.classList.toggle('missing', !id && !!shownId);
+			if (!shownId) return;
+			if (c.dataset.spell !== String(shownId)) {
+				c.dataset.spell = String(shownId);
+				setIcon(c.querySelector('.img') as HTMLElement, 'spell', shownId);
+			}
+			const left = id && expiresAt !== undefined ? expiresAt - now : undefined;
+			c.dataset.expires = left !== undefined ? String(expiresAt) : '';
+			(c.querySelector('.time') as HTMLElement).textContent = left !== undefined ? fmtLeft(left) : '';
+			c.classList.toggle('ending', left !== undefined && left < 5000);
+			c.classList.toggle('soon', left !== undefined && left >= 5000 && left < 10000);
+			(c.querySelector('.stacks') as HTMLElement).textContent = opts.stacks && opts.stacks > 1 ? String(opts.stacks) : '';
+		};
+		const shield = (p.auras ?? []).find(a => a.label.startsWith('Lightning Shield') || a.label.startsWith('Water Shield'));
+		show('shield', shield?.spellId, shield?.expiresAt, { stacks: shield?.stacks, missingId: this.toolkit.spellByName('Lightning Shield') });
+		for (const element of totemElements) {
+			const t = (p.totems ?? []).find(t => t.element === element);
+			const c = this.maintainCells.get(element);
+			if (t && c) c.dataset.last = String(t.spellId);
+			show(element, t?.spellId, t?.expiresAt, { missingId: c?.dataset.last ? +c.dataset.last : undefined });
+		}
+		const flameShock = this.toolkit.spellByName('Flame Shock');
+		const dot = (this.target?.debuffs ?? []).find(d => (d.spellId && this.toolkit.names[d.spellId]?.name === 'Flame Shock') || /^Flame ?Shock/.test(d.label));
+		show('dot', dot?.spellId, dot?.expiresAt, { missingId: flameShock });
+		this.maintainCells.get('dot')?.classList.toggle('faded', !dot);
+
+		for (const { el: icon, spell } of this.packIcons) {
+			const cd = cds.get(spell.itemId ? `i${spell.itemId}` : `s${spell.spellId}`);
+			const left = cd && cd.readyAt > now ? cd.readyAt - now : 0;
+			icon.classList.toggle('on-cd', left > 0);
+			(icon.querySelector('.swipe') as HTMLElement).style.setProperty('--elapsed', String(left > 0 && cd!.length > 0 ? 1 - left / cd!.length : 1));
+			(icon.querySelector('.time') as HTMLElement).textContent = left > 0 ? fmtLeft(left) : '';
+			icon.classList.toggle('oom', spell.cost > p.mana);
+		}
+	}
+
+	// ---- per frame ----
+
 	updateHud() {
 		const now = this.now();
 		const q = (s: string) => this.hud.querySelector(s) as HTMLElement;
 		const p = this.player;
 		const pct = (a: number, b: number) => `${b > 0 ? Math.max(0, Math.min(100, (100 * a) / b)) : 0}%`;
+		const hpText = (cur: number, max: number) => `${fmtNumber(cur)} | ${max > 0 ? ((100 * cur) / max).toFixed(1) : '0.0'}%`;
 		if (p) {
-			(q('.player-frame .health span') as HTMLElement).style.width = pct(p.health, p.maxHealth);
-			(q('.player-frame .mana span') as HTMLElement).style.width = pct(p.mana, p.maxMana);
-			q('.player-frame .mana em').textContent = `${Math.round(p.mana)} / ${Math.round(p.maxMana)}`;
+			q('.player-frame .fill').style.width = pct(p.health, p.maxHealth);
+			q('.player-frame .right').textContent = hpText(p.health, p.maxHealth);
 		}
-		const tf = q('.target-frame');
-		tf.classList.toggle('hidden', !this.hasTarget);
+		const hasTarget = this.hasTarget && !!this.target;
+		q('.target-frame').classList.toggle('hidden', !hasTarget);
+		q('.tot-frame').classList.toggle('hidden', !hasTarget || !(p?.attackOn || this.fight.phase === 'fight'));
 		if (this.target) {
-			q('.target-frame .name').textContent = `${this.target.name} · ${this.target.level}`;
-			this.renderAuras(q('.target-frame .debuffs'), this.target.debuffs ?? [], now);
+			// The dummy can't die, so its frame shows the damage it took instead of its health.
+			q('.target-frame .fill').style.width = this.settings.executeFromStart ? '19%' : '100%';
+			q('.target-frame .left').textContent = fmtNumber(this.target.damageTaken);
+			q('.target-frame .name').textContent = this.target.name;
+			this.renderAuras(q('.target-frame .debuffs'), this.target.debuffs ?? [], now, 'debuff');
 		}
-		if (p) this.renderAuras(q('.buffs'), (p.auras ?? []).filter(a => a.expiresAt !== undefined || (a.spellId ?? 0) > 0), now);
+		if (p) this.renderAuras(q('.buffs'), (p.auras ?? []).filter(a => a.expiresAt !== undefined || (a.spellId ?? 0) > 0), now, 'buff');
+		this.updateNameplate(now);
+		this.drawHistory(now);
 
-		// The cast bar and the swing timer.
+		// The cast bar, with the ping's share at its end like EllesmereUI's latency.
 		const cast = p?.cast;
 		const castbar = q('.castbar');
 		if (cast && cast.end > now) {
 			castbar.classList.remove('hidden');
-			(q('.castbar .fill') as HTMLElement).style.width = pct(now - cast.start, cast.end - cast.start);
-			q('.castbar .label').textContent = `${this.toolkit?.nameOf(cast.spellId) ?? ''} ${Math.max(0, (cast.end - now) / 1000).toFixed(1)}`;
+			if (castbar.dataset.spell !== String(cast.spellId)) {
+				castbar.dataset.spell = String(cast.spellId);
+				setIcon(q('.cb-icon'), 'spell', cast.spellId);
+			}
+			q('.cb-bar .fill').style.width = pct(now - cast.start, cast.end - cast.start);
+			q('.cb-bar .latency').style.width = pct(this.settings.pingMs, cast.end - cast.start);
+			q('.cb-name').textContent = this.toolkit?.nameOf(cast.spellId) ?? '';
+			q('.cb-time').textContent = Math.max(0, (cast.end - now) / 1000).toFixed(1);
 		} else {
 			castbar.classList.add('hidden');
-		}
-		const swing = q('.swingbar');
-		if (p?.attackOn && p.swingMs > 0) {
-			swing.classList.remove('hidden');
-			swing.classList.toggle('dim', !p.swinging);
-			const next = p.nextSwingAt ?? now;
-			(q('.swingbar .fill') as HTMLElement).style.width = pct(p.swingMs - (next - now), p.swingMs);
-		} else {
-			swing.classList.add('hidden');
+			castbar.dataset.spell = '';
 		}
 
 		// Buttons: GCD and cooldown sweeps, out of mana, out of range.
+		const cds = new Map<string, { readyAt: number; length: number }>();
+		for (const c of p?.cooldowns ?? []) cds.set(c.spellId ? `s${c.spellId}` : `i${c.itemId}`, c);
 		if (p && this.toolkit) {
-			const cds = new Map<string, { readyAt: number; length: number }>();
-			for (const c of p.cooldowns ?? []) cds.set(c.spellId ? `s${c.spellId}` : `i${c.itemId}`, c);
+			this.updatePack(p, now, cds);
 			const dist = Math.hypot(this.mover.move.pos[0] - this.dummyPos[0], this.mover.move.pos[1] - this.dummyPos[1]);
 			for (const [slot, b] of this.buttons) {
 				const content = this.slots.get(slot);
@@ -983,10 +1362,15 @@ class PracticeRoom {
 					key = `s${b.dataset.spell}`;
 				}
 				let frac = 0;
+				let cdLeft = 0;
 				const cd = cds.get(key);
-				if (cd && cd.readyAt > now && cd.length > 0) frac = Math.max(frac, (cd.readyAt - now) / cd.length);
+				if (cd && cd.readyAt > now && cd.length > 0) {
+					frac = Math.max(frac, (cd.readyAt - now) / cd.length);
+					cdLeft = cd.readyAt - now;
+				}
 				if (spell && spell.gcdMs > 0 && p.gcdEnd > now && p.gcdEnd > p.gcdStart) frac = Math.max(frac, (p.gcdEnd - now) / (p.gcdEnd - p.gcdStart));
 				(b.querySelector('.sweep') as HTMLElement).style.setProperty('--sweep', `${Math.min(1, frac) * 360}deg`);
+				(b.querySelector('.cd') as HTMLElement).textContent = cdLeft > 1500 ? fmtLeft(cdLeft) : '';
 				b.classList.toggle('oom', !!spell && spell.cost > p.mana);
 				const range = spell?.melee ? 5 : spell?.maxRange ? spell.maxRange + 3 : 0;
 				b.classList.toggle('oor', !!spell?.harmful && range > 0 && (dist > range || !this.hasTarget));
@@ -994,7 +1378,7 @@ class PracticeRoom {
 			}
 		}
 
-		// The fight bar, the countdown and the meter.
+		// The fight bar, the countdown and the damage meter.
 		const phase = this.fight.phase;
 		q('.phase').textContent = { prepull: 'Prepull', countdown: 'Countdown', fight: this.fight.mode === 'encounter' ? 'Encounter' : 'Free', ended: 'Ended' }[phase];
 		const shown = phase === 'ended' ? (this.fight.endedAtMs ?? 0) : now;
@@ -1005,28 +1389,146 @@ class PracticeRoom {
 		countdown.textContent = phase === 'countdown' && now < 0 ? String(Math.ceil(-now / 1000)) : '';
 		const damage = p?.damageDone ?? 0;
 		const elapsed = phase === 'fight' ? Math.max(now, 1) : phase === 'ended' ? Math.max(this.fight.endedAtMs ?? 1, 1) : 0;
-		q('.meter .dps').textContent = elapsed ? `${((damage * 1000) / elapsed).toFixed(1)} DPS` : '';
-		q('.meter .total').textContent = elapsed ? `${Math.round(damage)} damage` : '';
+		q('.dm-header').textContent = `Damage Done${elapsed ? ` (${fmtTime(elapsed)})` : ''}`;
+		q('.dm-bar').classList.toggle('hidden', !elapsed);
+		if (elapsed) {
+			q('.dm-bar .l').textContent = this.playerName();
+			q('.dm-bar .r').textContent = `${fmtNumber(damage)} | ${((damage * 1000) / elapsed).toFixed(1)}`;
+		}
 	}
 
-	renderAuras(box: HTMLElement, auras: { spellId?: number; itemId?: number; label: string; stacks?: number; expiresAt?: number }[], now: number) {
-		const key = auras.map(a => `${a.spellId}:${a.itemId}:${a.stacks}`).join('|');
+	// updateNameplate keeps the dummy's EllesmereUI nameplate over its head.
+	updateNameplate(now: number) {
+		const plate = this.hud.querySelector('.nameplate') as HTMLElement;
+		const p = this.room.screenPoint(this.dummyPos, 2.75);
+		plate.classList.toggle('hidden', !p.visible || !this.target);
+		if (!p.visible || !this.target) return;
+		const L = this.layout;
+		const w = L.nameplate.w * this.u;
+		plate.style.left = `${Math.round(p.x - w / 2)}px`;
+		plate.style.top = `${Math.round(p.y)}px`;
+		plate.style.width = `${Math.round(w)}px`;
+		(plate.querySelector('.np-hp') as HTMLElement).style.height = `${Math.round(L.nameplate.h * this.u)}px`;
+		(plate.querySelector('.np-name') as HTMLElement).textContent = this.target.name;
+		plate.classList.toggle('targeted', this.hasTarget);
+		plate.classList.toggle('in-combat', this.fight.phase === 'fight');
+		(plate.querySelector('.np-hp .fill') as HTMLElement).style.width = this.settings.executeFromStart ? '19%' : '100%';
+		this.renderAuras(plate.querySelector('.np-debuffs') as HTMLElement, this.target.debuffs ?? [], now, 'np');
+	}
+
+	renderAuras(box: HTMLElement, auras: AuraState[], now: number, kind: 'buff' | 'debuff' | 'np') {
+		const shown = auras.filter(a => a.spellId || a.itemId);
+		const key = shown.map(a => `${a.spellId}:${a.itemId}:${a.stacks}`).join('|');
 		if (box.dataset.key !== key) {
 			box.dataset.key = key;
 			box.replaceChildren();
-			for (const a of auras) {
-				if (!a.spellId && !a.itemId) continue;
-				const icon = el('div', { class: 'aura', title: a.label }, el('div', { class: 'icon' }), el('div', { class: 'time' }), el('div', { class: 'stacks' }, a.stacks && a.stacks > 1 ? String(a.stacks) : ''));
+			for (const a of shown) {
+				const icon = el('div', { class: `aura ${kind}` }, el('div', { class: 'icon' }), el('div', { class: 'time' }), el('div', { class: 'stacks' }, a.stacks && a.stacks > 1 ? String(a.stacks) : ''));
 				setIcon(icon.querySelector('.icon') as HTMLElement, a.spellId ? 'spell' : 'item', (a.spellId || a.itemId)!);
+				const expiresAt = a.expiresAt;
+				this.tooltip.attach(icon, () => ({ kind: 'aura', spellId: a.spellId, itemId: a.itemId, label: a.label, remaining: () => (expiresAt !== undefined ? fmtRemaining(expiresAt - this.now()) : '') }));
 				box.append(icon);
 			}
 		}
 		const times = box.querySelectorAll('.time');
-		let i = 0;
-		for (const a of auras) {
-			if (!a.spellId && !a.itemId) continue;
-			const t = times[i++] as HTMLElement | undefined;
+		shown.forEach((a, i) => {
+			const t = times[i] as HTMLElement | undefined;
 			if (t) t.textContent = a.expiresAt !== undefined ? fmtLeft(a.expiresAt - now) : '';
+		});
+	}
+
+	// The cast history timeline, like the Replay view's: our casts where we made them, the newest
+	// at the current time on the right, sliding left as time goes on. Casts too close together
+	// for their icons to fit side by side go up a row. Sizes are in 4K pixels like the Bayov
+	// pack, scaled with the UI.
+	historyScale() {
+		return {
+			k: this.u / 1.8,
+			iconW: 51,
+			iconH: 36,
+			rows: 2,
+			rowH: 40,
+			pxPerSec: 57,
+			nowPx: 37,
+			labelEvery: 5,
+		};
+	}
+
+	addHistory(at: number, spellId: number | undefined, itemId: number | undefined) {
+		if (!spellId && !itemId) return;
+		const icon = el('div', { class: 'h-icon' });
+		setIcon(icon, spellId ? 'spell' : 'item', (spellId || itemId)!);
+		this.tooltip.attach(icon, () => (spellId ? { kind: 'spell', id: spellId, extra: [`Cast at ${fmtClock(at)}`] } : { kind: 'item', id: itemId!, extra: [`Used at ${fmtClock(at)}`] }));
+		(this.hud.querySelector('.hist-casts') as HTMLElement).append(icon);
+		this.castLog.push({ at, spellId, itemId, el: icon, row: 0, shift: 0 });
+		// We place the casts from the newest back. A cast goes in the lowest row where it doesn't
+		// cover the icon after it. When no row has room (a burst of cooldowns at the pull), it
+		// moves left to the first free place in a row, so each icon still shows.
+		const h = this.historyScale();
+		const step = h.iconW + 3;
+		const rowStarts = new Array<number>(h.rows).fill(Infinity);
+		for (let i = this.castLog.length - 1; i >= 0; i--) {
+			const c = this.castLog[i];
+			const x = (c.at / 1000) * h.pxPerSec;
+			let row = rowStarts.findIndex(start => x + step <= start);
+			let placed = x;
+			if (row < 0) {
+				row = rowStarts.indexOf(Math.max(...rowStarts));
+				placed = rowStarts[row] - step;
+			}
+			rowStarts[row] = placed;
+			c.row = row;
+			c.shift = placed - x;
+		}
+	}
+
+	clearHistory() {
+		for (const c of this.castLog) c.el.remove();
+		this.castLog = [];
+		for (const l of this.axisLabels.values()) l.remove();
+		this.axisLabels.clear();
+	}
+
+	drawHistory(now: number) {
+		const box = this.hud.querySelector('.history') as HTMLElement;
+		const h = this.historyScale();
+		const k = h.k;
+		const width = box.clientWidth;
+		const nowX = width - h.nowPx * k;
+		const xAt = (at: number) => nowX - ((now - at) / 1000) * h.pxPerSec * k;
+		const oldest = now - ((nowX + h.iconW * k) / (h.pxPerSec * k)) * 1000;
+		while (this.castLog.length && this.castLog[0].at + 0 < oldest - 2000) this.castLog.shift()!.el.remove();
+		for (const c of this.castLog) {
+			const pop = Math.min(1, Math.max(0, (now - c.at) / 150));
+			const eased = 1 - (1 - pop) * (1 - pop);
+			const x = xAt(c.at) + c.shift * k - (h.iconW * k) / 2;
+			c.el.style.width = `${h.iconW * k}px`;
+			c.el.style.height = `${h.iconH * k}px`;
+			c.el.style.top = `${(h.rows - 1 - c.row) * h.rowH * k}px`;
+			c.el.style.transform = `translateX(${x.toFixed(1)}px) scale(${(1.12 - 0.12 * eased).toFixed(3)})`;
+			c.el.style.opacity = eased.toFixed(3);
+		}
+		// The axis: ticks every second slide with the time, a label every few seconds.
+		const axis = this.hud.querySelector('.hist-axis') as HTMLElement;
+		axis.style.setProperty('--offset', `${xAt(0).toFixed(1)}px`);
+		axis.style.setProperty('--sec', `${h.pxPerSec * k}px`);
+		const every = h.labelEvery * 1000;
+		const labels = new Set<number>();
+		for (let at = Math.ceil(oldest / every) * every; at <= now; at += every) {
+			labels.add(at);
+			let l = this.axisLabels.get(at);
+			if (!l) {
+				l = el('span', { class: 'hist-label' }, fmtTime(at));
+				this.axisLabels.set(at, l);
+				axis.append(l);
+			}
+			l.style.transform = `translateX(${xAt(at).toFixed(1)}px) translateX(-50%)`;
+		}
+		for (const [at, l] of this.axisLabels) {
+			if (!labels.has(at)) {
+				l.remove();
+				this.axisLabels.delete(at);
+			}
 		}
 	}
 }
@@ -1045,6 +1547,31 @@ function fmtTime(ms: number): string {
 	const m = Math.floor(s / 60);
 	const r = Math.floor(s % 60);
 	return `${neg ? '-' : ''}${m}:${String(r).padStart(2, '0')}`;
+}
+
+// fmtNumber writes big numbers short, like the game's unit frames: 12.3K, 1.2M.
+function fmtNumber(n: number): string {
+	const v = Math.round(n);
+	if (Math.abs(v) >= 1e6) return `${(v / 1e6).toFixed(1)}M`;
+	if (Math.abs(v) >= 1e4) return `${(v / 1e3).toFixed(1)}K`;
+	return String(v);
+}
+
+// fmtClock is a moment of the fight like the Replay view's clock: "1:05.3", "-0:02.0".
+function fmtClock(ms: number): string {
+	const neg = ms < 0;
+	const t = Math.round(Math.abs(ms) / 100) / 10;
+	const m = Math.floor(t / 60);
+	return `${neg ? '-' : ''}${m}:${(t - m * 60).toFixed(1).padStart(4, '0')}`;
+}
+
+// fmtRemaining is an aura tooltip's last line, like the game's.
+function fmtRemaining(ms: number): string {
+	if (ms <= 0) return '';
+	const s = ms / 1000;
+	if (s >= 3600) return `${Math.ceil(s / 3600)} hours remaining`;
+	if (s >= 60) return `${Math.ceil(s / 60)} minutes remaining`;
+	return `${Math.ceil(s)} seconds remaining`;
 }
 
 function fmtLeft(ms: number): string {

@@ -10,6 +10,7 @@ import (
 	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/sim/warrior"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 // newForeverTank builds a level 60 Orc warrior in Defensive Stance with a sword and a shield and
@@ -223,5 +224,82 @@ func TestArmorCap(t *testing.T) {
 		if got := core.TankSheet(&war.Unit, boss).ArmorReduction; math.Abs(got-c.want) > 1e-6 {
 			t.Errorf("%.0f armor takes off %.4f, want %.4f", c.armor, got, c.want)
 		}
+	}
+}
+
+// TestForeverBossMeleeAbility checks a boss's melee ability (RaidDamageEvent.melee, the core's
+// OutcomeEnemyMeleeSpecial) on a tanked warrior: it misses, is dodged, parried and blocked like a
+// white swing, never crushes, and a landed hit leaves its healing taken debuff. The boss crits at
+// Classic's rate and dual wields, so blocked crits come up and must be booked once, and the special
+// attack takes no dual wield miss.
+func TestForeverBossMeleeAbility(t *testing.T) {
+	player := &proto.Player{
+		Race:          proto.Race_RaceOrc,
+		Class:         proto.Class_ClassWarrior,
+		Level:         60,
+		Equipment:     core.GetGearSet("../../../ui/tank_warrior/gear_sets", "p0.bis_sword_board").GearSet,
+		TalentsString: P1Talents,
+		Rotation:      &proto.APLRotation{},
+		Spec:          PlayerOptionsBasic,
+	}
+	raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{})
+	raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+	target.SwingSpeed = 100 // nearly no white swings, so the ability's outcomes stand alone
+	target.ClassicCrit = true
+	target.DualWield = true
+	res := core.RunRaidSim(&proto.RaidSimRequest{
+		Raid: raid,
+		Encounter: &proto.Encounter{Duration: 300, Targets: []*proto.Target{target}, RaidDamage: []*proto.RaidDamageEvent{{
+			SpellId: 24573, School: proto.SpellSchool_SpellSchoolPhysical, MinDamage: 2000, MaxDamage: 2000,
+			Who: proto.RaidDamageEvent_BossTarget, EverySeconds: 1, Melee: true,
+			HealingTakenMultiplier: 0.5, DebuffSeconds: 5,
+		}}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, Iterations: 20},
+	})
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	got := &proto.TargetedActionMetrics{}
+	for _, a := range res.EncounterMetrics.Targets[0].Actions {
+		if a.Id.GetSpellId() != 24573 {
+			continue
+		}
+		for _, tm := range a.Targets {
+			got.Misses += tm.Misses
+			got.Dodges += tm.Dodges
+			got.Parries += tm.Parries
+			got.Blocks += tm.Blocks
+			got.Hits += tm.Hits
+			got.Crushes += tm.Crushes
+			got.Crits += tm.Crits
+			got.BlockedCrits += tm.BlockedCrits
+		}
+	}
+	// One a second from 0 to 300 s in each of the 20 iterations (passive spells book no casts).
+	uses := int32(20 * 301)
+	if sum := got.Misses + got.Dodges + got.Parries + got.Blocks + got.Hits + got.Crits + got.BlockedCrits; sum != uses {
+		t.Errorf("the ability's outcomes add up to %d, want its %d uses, each booked once", sum, uses)
+	}
+	if got.BlockedCrits == 0 {
+		t.Error("no blocked crits, want some with Classic's crit")
+	}
+	if miss := float64(got.Misses) / float64(uses); miss > 0.15 {
+		t.Errorf("the ability misses %.1f%%, want the white swing's miss without the dual wield 19%%", 100*miss)
+	}
+	if got.Misses == 0 || got.Dodges == 0 || got.Parries == 0 || got.Blocks == 0 || got.Hits == 0 {
+		t.Errorf("the ability's outcomes miss %d, dodge %d, parry %d, block %d, hit %d: want each above 0", got.Misses, got.Dodges, got.Parries, got.Blocks, got.Hits)
+	}
+	if got.Crushes != 0 {
+		t.Errorf("the ability crushed %d times, want none", got.Crushes)
+	}
+	var debuffUptime float64
+	for _, aura := range res.RaidMetrics.Parties[0].Players[0].Auras {
+		if aura.Id.GetSpellId() == 24573 {
+			debuffUptime = aura.UptimeSecondsAvg
+		}
+	}
+	if debuffUptime < 200 {
+		t.Errorf("the healing taken debuff was up %.0f s of 300, want most of the fight", debuffUptime)
 	}
 }

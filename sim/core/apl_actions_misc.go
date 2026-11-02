@@ -19,7 +19,7 @@ func (rot *APLRotation) newActionChangeTarget(config *proto.APLActionChangeTarge
 		return nil
 	}
 	newTarget := rot.GetSourceUnit(config.NewTarget)
-	if newTarget.Get() == nil {
+	if newTarget.Get() == nil && !newTarget.IsDynamic() {
 		return nil
 	}
 	return &APLActionChangeTarget{
@@ -28,7 +28,9 @@ func (rot *APLRotation) newActionChangeTarget(config *proto.APLActionChangeTarge
 	}
 }
 func (action *APLActionChangeTarget) IsReady(sim *Simulation) bool {
-	return action.unit.CurrentTarget != action.newTarget.Get()
+	// Most Hurt or Lowest Health with nobody hurt is no target.
+	newTarget := action.newTarget.Get()
+	return newTarget != nil && action.unit.CurrentTarget != newTarget
 }
 func (action *APLActionChangeTarget) Execute(sim *Simulation) {
 	if sim.Log != nil {
@@ -37,7 +39,7 @@ func (action *APLActionChangeTarget) Execute(sim *Simulation) {
 	action.unit.CurrentTarget = action.newTarget.Get()
 }
 func (action *APLActionChangeTarget) String() string {
-	return fmt.Sprintf("Change Target(%s)", action.newTarget.Get().Label)
+	return fmt.Sprintf("Change Target(%s)", action.newTarget.String())
 }
 
 type APLActionCancelAura struct {

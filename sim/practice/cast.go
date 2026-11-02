@@ -98,6 +98,15 @@ const SpellFlagTotemSpell = shaman.SpellFlagTotem
 
 // tryCast runs the checks and casts.
 func (r *run) tryCast(sim *core.Simulation, in Input, spell *core.Spell) {
+	// In Ghost Wolf, its own press leaves the form, and any other spell leaves it first
+	// (autoUnshift 1). Whether that press also casts the spell is a check: we cast it.
+	if r.inGhostWolf() {
+		r.ghostWolf.Deactivate(sim)
+		if spell.ActionID.SpellID == ghostWolfID {
+			r.s.answer(in.ID, true, "")
+			return
+		}
+	}
 	if errText := r.checkCast(sim, spell); errText != "" {
 		r.s.answer(in.ID, false, errText)
 		return
@@ -106,7 +115,7 @@ func (r *run) tryCast(sim *core.Simulation, in Input, spell *core.Spell) {
 	if harmful(spell) {
 		target = r.dummy
 	}
-	if !spell.Cast(sim, target) {
+	if !r.safeCast(sim, spell, target) {
 		r.s.answer(in.ID, false, errCantDoThat)
 		return
 	}
@@ -210,7 +219,7 @@ func (r *run) afterCast(sim *core.Simulation, spell *core.Spell) {
 		r.s.batch.Casts = append(r.s.batch.Casts, CastEvent{At: toMs(now), SpellID: spell.ActionID.SpellID, ItemID: spell.ActionID.ItemID})
 	}
 
-	if spell.Flags.Matches(shaman.SpellFlagTotem) && r.shaman != nil {
+	if r.shaman != nil {
 		r.placeTotem(sim, spell)
 	}
 
@@ -301,4 +310,19 @@ func (r *run) castEndError(sim *core.Simulation, spell *core.Spell) string {
 		return errFacing
 	}
 	return ""
+}
+
+// safeCast casts, and turns a panic into a failed cast. The whole class toolkit is castable, but
+// the sim only models some spells for the specs that use them: a balance druid's Cat Form spends
+// energy from a bar the sim never gave it. That one press fails, and the session goes on.
+func (r *run) safeCast(sim *core.Simulation, spell *core.Spell, target *core.Unit) (ok bool) {
+	defer func() {
+		if p := recover(); p != nil {
+			ok = false
+			if !r.quiet {
+				r.s.logLines = append(r.s.logLines, formatLog(sim.CurrentTime, "practice: %s failed in the sim: %v", spell.ActionID, p))
+			}
+		}
+	}()
+	return spell.Cast(sim, target)
 }

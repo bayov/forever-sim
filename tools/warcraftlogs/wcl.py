@@ -1,7 +1,8 @@
 """Warcraft Logs v2 API client with a disk cache and a points budget.
 
 Credentials come from ~/.config/forever-sim/wcl.json ({"client_id": ..., "client_secret": ...}),
-made at https://www.warcraftlogs.com/api/clients/. Every client gets 3600 points an hour, and
+or from WCL_CLIENT_ID and WCL_CLIENT_SECRET in the environment, made at
+https://www.warcraftlogs.com/api/clients/. Every client gets 3600 points an hour, and
 the client is shared by everything we run, so we try hard not to spend them:
 
 - Every response is cached under ~/.cache/forever-sim/wcl/. Report data never changes once a
@@ -52,7 +53,12 @@ def _token():
             return t['access_token']
     except (OSError, ValueError, KeyError):
         pass
-    cred = json.load(open(CRED_PATH))
+    # The file, or WCL_CLIENT_ID and WCL_CLIENT_SECRET in the environment (a cloud session's
+    # environment variables).
+    if os.environ.get('WCL_CLIENT_ID') and os.environ.get('WCL_CLIENT_SECRET'):
+        cred = {'client_id': os.environ['WCL_CLIENT_ID'], 'client_secret': os.environ['WCL_CLIENT_SECRET']}
+    else:
+        cred = json.load(open(CRED_PATH))
     r = requests.post(TOKEN_URL, data={'grant_type': 'client_credentials'},
                       auth=(cred['client_id'], cred['client_secret']), timeout=30)
     r.raise_for_status()
@@ -159,11 +165,13 @@ def report_meta(code):
     } } }''', {'code': code})['reportData']['report']
 
 
-def events(code, fight=None, data_type='All', source_id=None, target_id=None, ability_id=None):
+def events(code, fight=None, data_type='All', source_id=None, target_id=None, ability_id=None,
+           hostility=None):
     """Every event of one fight (or of the whole report when fight is None), page by page.
 
     Each page is one cached query. With source_id we also get the events of that player's
-    pets, so callers check sourceID themselves.
+    pets, so callers check sourceID themselves. hostility is the API's hostilityType: None for its
+    default (Friendlies), 'Enemies' for what enemies do, such as a boss's damage done.
     """
     meta = report_meta(code)
     if fight is None:
@@ -174,13 +182,18 @@ def events(code, fight=None, data_type='All', source_id=None, target_id=None, ab
     out = []
     args = {'code': code, 'fights': fights, 'end': end, 'dt': data_type, 'src': source_id,
             'dst': target_id, 'ab': ability_id}
+    if hostility:
+        args['host'] = hostility
     while start is not None:
         args['start'] = start
+        # The hostility argument is only in the query when asked for, so the cached answers of
+        # the queries without it stay valid.
+        host_arg, host_use = (', $host: HostilityType', ', hostilityType: $host') if hostility else ('', '')
         d = query('''query($code: String!, $fights: [Int], $start: Float, $end: Float,
-                           $dt: EventDataType, $src: Int, $dst: Int, $ab: Float) {
+                           $dt: EventDataType, $src: Int, $dst: Int, $ab: Float''' + host_arg + ''') {
             reportData { report(code: $code) {
                 events(fightIDs: $fights, startTime: $start, endTime: $end, dataType: $dt,
-                       sourceID: $src, targetID: $dst, abilityID: $ab, limit: 10000) {
+                       sourceID: $src, targetID: $dst, abilityID: $ab, limit: 10000''' + host_use + ''') {
                     data nextPageTimestamp }
             } } }''', args)['reportData']['report']['events']
         out += d['data']
