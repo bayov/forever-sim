@@ -27,6 +27,12 @@ preset's talents and a heal rotation. Next is H2, the Restoration shaman.
   various other raid members taking damage (depending on encounter)").
 - **The damage until Forever's bosses exist** (no boss data before 2026-12-09): configurable damage profiles,
   with some representative Classic and Season of Discovery bosses as stand-ins.
+- **The score** (2026-11-02, after the scoring agents' report): **damage carried**, the highest scale of a
+  profile's damage the healers hold, with **separate lines**: tank deaths in under 2% of fights, the others'
+  deaths in under 5%. Judged at **the encounter's own fight length**. **Separate tank healer and raid healer
+  scores** per build, and presets per role. In the raid sim healing is a requirement with a **20% margin**
+  (healers carry 1.2 times the encounter's damage), **checked against Warcraft Logs**: the healer counts,
+  healing and deaths real raids had on each boss.
 - **Order:** the shared groundwork now. Nobody else is building it (the tank session stopped after its tank
   sheet and bench, waiting on its own open decisions).
 
@@ -339,11 +345,6 @@ chooses how many healers.
 
 ## Open decisions
 
-1. **The score**: damage carried at 5% deaths (proposed above), and what counts as failure: any death, or
-   separate lines for tanks and the raid; whether a tank death is a wipe.
-2. **The fight length** each score is judged at: the encounter's own, or a short and long pair (90 and 300 s).
-3. **Separate tank healer and raid healer scores**, or one mixed profile.
-4. **The margin** above an encounter's damage that picks the healer count.
-5. **The scare line**: 20% health, or another; reported only (proposed).
-6. **Absorbs** (Power Word: Shield): effective as long as they absorb, and the unused part as overheal
+1. **The scare line**: 20% health, or another; reported only (proposed).
+2. **Absorbs** (Power Word: Shield): effective as long as they absorb, and the unused part as overheal
    (proposed).
