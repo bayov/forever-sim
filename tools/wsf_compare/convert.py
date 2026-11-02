@@ -320,6 +320,27 @@ elif klass == 'ClassMage':
             # before that (its spell queue), while the bolt is still casting, and counts it in flight only after.
             return {'or': {'vals': [{'_done': n}, {'spellIsCasting': n['spellInFlight']}]}}
         return n
+elif klass == 'ClassWarlock':
+    wo = p['warlock'].get('options', {})
+    d_ = ours['raid']['debuffs']
+    # Theirs' curse duty: the assigned curse is the warlock's, and its raid copy is turned off. Our duty variants
+    # turn the raid's copy off and cast it in the rotation; the others leave every raid curse on (NoCurse).
+    rot = json.dumps(p['rotation'])
+    curse = ('Elements' if '"spellId": 1311680' in rot and not d_.get('curseOfElements') else
+             'Recklessness' if '"spellId": 11717' in rot and not d_.get('curseOfRecklessness') else 'NoCurse')
+    copt = {'summon': wo.get('summon', 'NoSummon'), 'armor': wo.get('armor', 'NoArmor'), 'curseOptions': curse,
+            'sacrificedDemon': wo.get('sacrificedPet', 'NoSummon'),
+            'soulShards': 32}  # ours doesn't count Soul Shards (a raiding warlock brings a bag of them)
+    class_opts = {'warlock': {'options': {'classOptions': copt}}}
+    # Forever's Spellstone and Firestone are weapon imbues (Effect 360), beside the oil: theirs' class imbue slot.
+    STONE = {'Spellstone': 13603, 'Firestone': 13701}  # Major, the level 60 ranks
+    if wo.get('weaponImbue') in STONE: consumables['mhWeaponImbueId'] = STONE[wo['weaponImbue']]
+    SET_BONUS[TS['StatHitRating']] = 10  # Demonheart Raiment's 2 piece on our synthetic set: 1% hit
+    CD.update({20572: '120s', 20554: '180s', 26297: '180s', ('item', 997022): '120s'})
+    def remap(n):
+        if n.get('spellId') == 26297:  # Berserking: ours keys 26297 (tagged), theirs Forever's 20554
+            n = {k: v for k, v in n.items() if k != 'tag'}; n['spellId'] = 20554
+        return n
 else:
     raise SystemExit(f'{klass} is not mapped yet (SKILL.md, "Adding a class")')
 

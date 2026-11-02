@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"slices"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -223,7 +222,7 @@ func (s *searcher) searchEnchants(best []*proto.ItemSpec, bestScore *result, kno
 		for i, score := range s.scoreAll(pending) {
 			e := enchants[i]
 			gain := s.objective(score) - s.objective(*bestScore)
-			noise := math.Sqrt(score.stderr*score.stderr + bestScore.stderr*bestScore.stderr)
+			noise := gainNoise(*bestScore, score)
 			if gain > s.confidence*noise && gain > bestGain {
 				bestEnchant, bestGain, bestEnchantScore = e, gain, score
 			}

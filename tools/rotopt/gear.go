@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"math"
 	"os"
 	"regexp"
 	"slices"
@@ -572,7 +571,7 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 			for i, score := range s.scoreAll(pending) {
 				o := scoredOptions[i]
 				gain := s.objective(score) - s.objective(bestScore)
-				noise := math.Sqrt(score.stderr*score.stderr + bestScore.stderr*bestScore.stderr)
+				noise := gainNoise(bestScore, score)
 				if gain > s.confidence*noise && gain > bestGain {
 					bestGain, bestOption = gain, &o
 				}

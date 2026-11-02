@@ -164,10 +164,14 @@ export class Model {
 	private billboards: number[] = [];
 	// The camera that billboards face.
 	static camera?: THREE.Camera;
-	// twist turns the upper body (the lower spine and up) around the model's up axis, in radians.
-	// A strafe turns the legs where you run and twists the chest back to where you face.
+	// twist turns the upper body around the model's up axis, in radians. A strafe turns the legs
+	// where you run and twists the upper body back to where you face.
+	//
+	// The twist is spread up the spine: the lower spine takes most of it, the chest a bit more and
+	// the head the rest. So the head faces where you face but the chest stays
+	// turned a little toward where you run.
 	twist = 0;
-	private spineBone = -1;
+	private twistShares: [bone: number, share: number][] = [];
 	private events = new Map<number, { id: string; data: number; time: number }[] | null>();
 	// onEvent hears the animations' events as they pass ($HIT, $CSS, $FSD footsteps, $SHL...).
 	// upper says it came from the upper body's animation (a swing while running).
@@ -234,7 +238,7 @@ export class Model {
 		// moves while the legs keep running.
 		this.upper = m2.bones.map(() => false);
 		const spine = m2.keyBoneLookup[4];
-		this.spineBone = spine ?? -1;
+		this.twistShares = twistShares(m2, spine ?? -1, m2.keyBoneLookup[6] ?? -1);
 		if (spine !== undefined && spine >= 0) {
 			for (let i = 0; i < m2.bones.length; i++) {
 				for (let p = i; p >= 0; p = m2.bones[p].parent) {
@@ -355,7 +359,8 @@ export class Model {
 					)
 					.replace(
 						'#include <project_vertex>',
-						'#include <project_vertex>\nvWowUv2 = uv1;\nvWowView = mvPosition.xyz;\nvWowNormal = normalize(normalMatrix * objectNormal);',
+						// An unlit material without bones has no objectNormal (static doodads, terrain.ts).
+						'#include <project_vertex>\nvWowUv2 = uv1;\nvWowView = mvPosition.xyz;\n#if defined(LAMBERT) || defined(USE_SKINNING) || defined(USE_ENVMAP)\nvWowNormal = normalize(normalMatrix * objectNormal);\n#else\nvWowNormal = normalize(normalMatrix * normal);\n#endif',
 					);
 				shader.fragmentShader = shader.fragmentShader
 					.replace(
@@ -705,13 +710,14 @@ export class Model {
 			const bone = this.bones[i];
 			bone.position.set(b.pivot[0] - (parent?.[0] ?? 0) + s.t[0], b.pivot[1] - (parent?.[1] ?? 0) + s.t[1], b.pivot[2] - (parent?.[2] ?? 0) + s.t[2]);
 			bone.quaternion.set(s.r[0], s.r[1], s.r[2], s.r[3]);
-			if (i === this.spineBone && this.twist !== 0) {
+			const share = this.twist !== 0 ? this.twistShares.find(t => t[0] === i)?.[1] : undefined;
+			if (share !== undefined) {
 				// The twist is around the model's up (y, since the bones are in Three's frame). The
 				// parent bones lean in the run, so we turn that axis into the parent's frame.
 				parentQ.identity();
 				for (let p = b.parent; p >= 0; p = m2.bones[p].parent) parentQ.premultiply(this.bones[p].quaternion);
 				twistAxis.copy(upAxis).applyQuaternion(parentQ.invert());
-				bone.quaternion.premultiply(twistQ.setFromAxisAngle(twistAxis, this.twist));
+				bone.quaternion.premultiply(twistQ.setFromAxisAngle(twistAxis, this.twist * share));
 			}
 			bone.scale.set(s.s[0], s.s[1], s.s[2]);
 		}
@@ -839,6 +845,28 @@ export class Model {
 		this.mesh.geometry.dispose();
 		for (const bm of this.mats) bm.material.dispose();
 	}
+}
+
+// twistShares spreads a strafe's twist over the bones from the lower spine up to the head. The
+// lower spine takes 55%, the bones between it and the head (chest and neck) 25% together, and the
+// head the last 20%. On a strafe that leaves the chest about 30 degrees toward where you run. A model without a head on its spine twists the lower spine alone.
+function twistShares(m2: M2, spine: number, head: number): [number, number][] {
+	if (spine < 0) return [];
+	const between: number[] = [];
+	let found = false;
+	for (let p = head >= 0 ? m2.bones[head].parent : -1; p >= 0; p = m2.bones[p].parent) {
+		if (p === spine) {
+			found = true;
+			break;
+		}
+		between.push(p);
+	}
+	if (!found) return [[spine, 1]];
+	if (between.length === 0) return [
+		[spine, 0.6],
+		[head, 0.4],
+	];
+	return [[spine, 0.55], ...between.reverse().map(b => [b, 0.25 / between.length] as [number, number]), [head, 0.2]];
 }
 
 // combiner works out how a batch mixes its textures, from its shader id and texture count

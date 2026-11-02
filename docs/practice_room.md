@@ -1136,6 +1136,21 @@ rendering, not the sim.
   - Hovering the mouse tested every triangle of the skinned models (25ms per move). Only the dummy's hull and the
     ground are tested now (0.08ms).
 - Combat text uses the font's only weight with a little letter spacing. The faked bold ran the digits together.
+- Strafing spreads the upper body's twist up the spine (lower spine 55%, chest and neck 25%, head 20%). The head
+  faces forward and the chest stays about 30 degrees toward the run. The Orc model has no sideways run of its own
+  (no RunLeft or RunRight), so this is procedural, as in the client.
+- The room stands on the northern Barrens (Kalimdor tile 36_30, world point 750, -2650), read from the client's
+  map files (`ui/practice/wow/adt.ts`, `terrain.ts`): heights, the four blended ground textures of each chunk, vertex
+  colors, and the trees, rocks and props around it within 240 yards. The ground is flat out to 45 yards from the
+  dummy and blends into the real hills by 110. No doodad stands within 25 yards. Buildings (WMOs) aren't drawn, and
+  the spot has none near.
+- The Barrens' daytime ambience and wind loop from the start (SoundAmbience 3049: sound kits 292584 and 292700).
+- Second report (with the terrain): few hitches, but 120 FPS instead of 240 in the fight, from 4 to 6ms of script a
+  frame drawing up to 380 meshes. The ground is now one mesh (a texture array for the ground textures and one atlas
+  for the alpha maps), and each doodad model is a plain mesh in its first pose drawn for all its copies at once
+  (no bones to update every frame). Draw calls went from 134 to 54 in the same view.
+- The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
+  (the Flametongue Totem proc's fire impact) load before the fight too.
 - Combat text scrolls like the Replay view's (MSBT): what you do goes up from the target's frame, buffs you gain go
   down to your frame, crits pop up and stay put (`ui/practice/sct.ts`).
 - Particles: packed gravity, key times, sphere emitters, spin, colors, blend modes and model scale. Rendering:

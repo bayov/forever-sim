@@ -357,4 +357,15 @@ func TestForeverTankScore(t *testing.T) {
 	if safe := score.SafeDps.Avg; safe <= 0 || safe > ceiling*1.05 {
 		t.Errorf("SafeDPS %.0f, want above 0 and at most about %.0f", safe, ceiling)
 	}
+	// Each iteration's SafeDPS, which the paired test reads, averages to the distribution's.
+	if got := len(score.SafeDpsEach); got != iterations {
+		t.Fatalf("%d iterations of SafeDPS, want %d", got, iterations)
+	}
+	sum := 0.0
+	for _, x := range score.SafeDpsEach {
+		sum += x
+	}
+	if got, want := sum/iterations, score.SafeDps.Avg; math.Abs(got-want) > 1e-6*want {
+		t.Errorf("each iteration's SafeDPS averages %.3f, the distribution says %.3f", got, want)
+	}
 }

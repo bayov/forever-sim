@@ -34,6 +34,7 @@ import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
 import { decodeHooks, fileProgress } from './wow/files';
 import { Model } from './wow/model';
+import { Terrain } from './wow/terrain';
 import { SoundRef, Sounds } from './wow/sound';
 import { Appearance, UnitView } from './wow/unit';
 
@@ -195,6 +196,8 @@ class PracticeRoom {
 	// The cast whose precast shows, by its start: it goes off when it runs its full time.
 	private castShown?: { spellId: number; start: number; end: number };
 	private toolkitReady!: Promise<void>;
+	// Every spell of yours the sim may show a hit of (procs and the like), beside the toolkit.
+	private shownBySim: number[] = [];
 	private toolkitResolve!: () => void;
 	private loadingModels = false;
 	private lastFacing?: number;
@@ -347,6 +350,26 @@ class PracticeRoom {
 		// Models we draw once while loading, so their shaders and textures are ready for the fight.
 		const warm: Model[] = [];
 
+		// The ground is a flat spot in the northern Barrens (Kalimdor's WDT), with trees around it and
+		// no buildings near.
+		jobs.push(
+			Terrain.load({ wdt: 782779, x: 750, y: -2650, radius: 240, flat: 45, blend: 110, clear: 25 })
+				.then(async t => {
+					this.room.setTerrain(t.group);
+					await t.loadDoodads();
+				})
+				.catch(e => console.warn('terrain', e)),
+		);
+		// The Barrens' daytime ambience and wind, which play from the start (SoundAmbience 3049).
+		jobs.push(
+			Promise.all([292584, 292700].map(id => getJSON<SoundRef[]>(`/api/sounds/kit/${id}`)))
+				.then(async kits => {
+					await Promise.all(kits.map(k => this.sounds!.preload(k)));
+					this.sounds!.ambience(kits);
+				})
+				.catch(e => console.warn('ambience', e)),
+		);
+
 		// Totems show their element's model (CreatureDisplayInfo 4587 to 4590).
 		const totemDisplays: Record<string, number> = { fire: 4589, earth: 4588, water: 4587, air: 4590 };
 		const totemLooks = new Map<string, Promise<Appearance | undefined>>();
@@ -448,7 +471,7 @@ class PracticeRoom {
 		jobs.push(
 			this.toolkitReady.then(() =>
 				effects
-					.preload([...this.toolkit.spells.filter(s => s.kind !== 'item').map(s => s.spellId ?? 0).filter(id => id > 0), ...shownSpells])
+					.preload([...this.toolkit.spells.filter(s => s.kind !== 'item').map(s => s.spellId ?? 0).filter(id => id > 0), ...shownSpells, ...this.shownBySim])
 					.then(models => warm.push(...models))
 					.catch(e => console.warn('effects', e)),
 			),
@@ -494,7 +517,10 @@ class PracticeRoom {
 				this.sessions++;
 				const first = !this.toolkit;
 				this.running = true;
-				if (first) this.setupToolkit(msg.toolkit);
+				if (first) {
+					this.shownBySim = msg.shown ?? [];
+					this.setupToolkit(msg.toolkit);
+				}
 				break;
 			}
 			case 'batch':

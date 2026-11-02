@@ -28,7 +28,7 @@ def load(path):
     add(pl, 'player')
     for pet in pl.get('pets', []):
         add(pet, 'pet:' + pet.get('name', '?'))
-    pets = sum(x['dps']['avg'] for x in pl.get('pets', []))
+    pets = sum(x['dps'].get('avg', 0) for x in pl.get('pets', []))
     return {'dps': pl['dps']['avg'], 'pets': pets, 'rows': rows, 'n': n, 'dur': dur}
 
 paths = sys.argv[1:]
