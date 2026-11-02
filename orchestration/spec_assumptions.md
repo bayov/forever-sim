@@ -13,6 +13,7 @@ Sources, all read-only:
 ## Conventions
 
 - **Page wording:** the report shows each assumption in plain words (a question-style label, one line on what's unknown, setting labels that say what each choice means). That wording lives in `tools/dps_report/assumptions_def.py` (rewritten 2026-10-14); the labels in this file are the inventory's working names, matched by key.
+- **Groups:** each assumption names a topic (`group` in `assumptions_def.py`, like `windfury` or `rage_dealt`), and the definitions are ordered by topic. The page keeps a group together within its class: groups by their biggest row's DPS effect, then in file order (user request 2026-11-02). A new assumption takes its topic's group and goes next to it in the file.
 - **Sim now** marks the setting the shipped presets use. Use it as the dashboard's default, so the default ranking matches the presets. "Expected" is our best guess for release; where it differs from Sim now, the entry says why.
 - **Sensitivity:**
   - **PR**: measured by the class session and quoted from its PR, wiki or notes. The gear set is named when it isn't the final 1b set.

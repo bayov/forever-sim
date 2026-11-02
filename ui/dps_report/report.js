@@ -2765,7 +2765,14 @@ export function startReport(dash, events) {
   // how much an assumption can move a preset at 180s, for the order within a class and the size badge
   const asmImpact = (a) => (a.status === 'live' ? d3.max(arr(a.sens), (x) => Math.abs(+x.pct)) || 0 : -1);
   const asmSize = (v) => (v >= 4 ? ['big', 'Big'] : v >= 1.5 ? ['med', 'Medium'] : v >= 0.05 ? ['small', 'Small'] : ['none', 'No effect']);
-  const asmSort = (as) => [...as].sort((p, q) => asmImpact(q) - asmImpact(p) || p.order - q.order);
+  // Related assumptions (a.group) stay together: groups by their biggest row's impact, then where the group starts
+  // in assumptions_def.py, and the rows of a group in their order there.
+  const asmSort = (as) => {
+    const gi = d3.rollup(as, (g) => d3.max(g, asmImpact), (a) => a.group || a.key);
+    const go = d3.rollup(as, (g) => d3.min(g, (a) => a.order), (a) => a.group || a.key);
+    const g = (a) => a.group || a.key;
+    return [...as].sort((p, q) => gi.get(g(q)) - gi.get(g(p)) || go.get(g(p)) - go.get(g(q)) || p.order - q.order);
+  };
   // The presets an assumption touches, by spec. A spec covers all its presets, the vs Undead / Humanoid / Dragonkin
   // copies included, so the page names the spec only.
   const asmSpecs = (a) => {

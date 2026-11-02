@@ -59,7 +59,7 @@ def build(dump, builds=None):
                                 'dps': round(by_secs[180][0] - base[0], 1)})
     arows = []
     for i, a in enumerate(A):
-        arows.append({'order': i, 'class': a['cls'], 'key': a['key'], 'label': a['label'], 'short': a.get('short') or a['desc'], 'description': a['desc'], 'source': a.get('src', ''), 'builds': [b for b in a['builds'] if b in names] if names else a['builds'],  # a removed preset's id stays out
+        arows.append({'order': i, 'class': a['cls'], 'group': a.get('group') or a['key'], 'key': a['key'], 'label': a['label'], 'short': a.get('short') or a['desc'], 'description': a['desc'], 'source': a.get('src', ''), 'builds': [b for b in a['builds'] if b in names] if names else a['builds'],  # a removed preset's id stays out
                       'settings': [{k: s[k] for k in ('id', 'label', 'value', 'rationale')} for s in a['settings']],
                       'defaultSetting': a['default'], 'expectedSetting': a['expected'], 'status': a.get('status', 'live'),
                       **({'warn': {b: w for b, w in a['warn'].items() if b in names or not names}} if a.get('warn') else {}),
