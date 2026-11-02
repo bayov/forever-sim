@@ -52,9 +52,12 @@ answers.
    seeds or compare with the sim's average, for now.
 8. **Ping is modeled** (the user, 2026-11-02), as a setting with your in-game latency.
 9. **You do the prepull, and you start the fight** (the user, 2026-11-02). Totems and buffs before the pull are your
-   own casts. There is no countdown and no timer before the pull. As with a training dummy in game, the fight starts
-   with your first attack. Nothing in the room acts for you.
-10. **Fixed fight length** (the user, 2026-11-02), counted from your first attack.
+   own casts. Nothing in the room acts for you.
+10. **Two fight modes** (the user, 2026-11-02). See [Fight modes and the pull](#fight-modes-and-the-pull).
+    - **Free (the default):** like a training dummy in game. The fight starts with your first attack and goes on until
+      you click Stop.
+    - **Encounter:** a "Start Encounter" button starts a countdown (5s by default, you set it), and the fight lasts a
+      set length you choose.
 11. **It plays like WoW** (the user, 2026-11-02). Movement, casting, the camera and the small quirks match the game as
     closely as we can, so you play the way you do in game and the sim result is accurate. See
     [Playing like WoW](#playing-like-wow).
@@ -167,8 +170,9 @@ The engine already has `SimOptions.Interactive` and a session API in `sim/lib/li
 stops the rotation of every character, pets included (`character.go:525`). We follow the session API's steps, which
 are all exported:
 
-1. `sim.RegisterAll()`, then `NewSim` from the same proto request a sim run uses, with a fixed fight length and no
-   duration variation. Execute phases, `GetRemainingDuration` and the end check all depend on that fixed length.
+1. `sim.RegisterAll()`, then `NewSim` from the same proto request a sim run uses, with no duration variation. The
+   fight length is the mode's: the set length in Encounter mode, and a 60 minute cap in Free mode. Execute phases,
+   `GetRemainingDuration` and the end check all depend on it.
 2. A nonzero seed picked by the session and stored with the attempt. Seed 0 would mean "pick from the clock", and the
    picked seed isn't readable from outside (`sim.go:30`).
 3. `Reset()`, then `PrePull()`.
@@ -179,27 +183,48 @@ are all exported:
 6. Your unit gets an empty APL and `ManualControl`, so it never acts on its own, and its auto attacks get
    `SkipPullStart`, so they start off. Other units (the boss, pets, later the raid bots) keep their own APL.
 
-### The pull
+### Fight modes and the pull
 
 The sim's fight always starts at time 0: its encounter length, execute phases and pull are all counted from there.
-But you decide when the fight starts, by attacking, so the room can't know in advance how long your prepull is. It
-solves that by shifting time at the moment you attack:
+But you decide when the fight starts, so the room can't know in advance how long your prepull is. It solves that by
+shifting time once it knows:
 
 1. Before the pull, the session runs the sim live from minus 10 minutes. You walk around, drop totems, buff, and see
    your mana and cooldowns move. Nothing harmful has happened yet.
-2. Your first harmful action is the pull: a harmful spell or ability starting, or auto attack turning on with an
-   enemy in melee range. Its apply time is `t`, still below 0.
-3. The session swaps in a fresh sim (built ahead of time in the background, with the same seed) and feeds it your
-   inputs so far, each moved by minus `t`. Your attack now lands at exactly 0, and everything before it keeps the
-   same spacing. Nothing has rolled for damage yet, so the fresh sim is in the same state the old one was in.
-4. The fight runs for its fixed length from 0. The HUD shows the fight timer from the pull.
+2. Once the pull time `t` is known (still below 0), the session swaps in a fresh sim (built ahead of time in the
+   background, with the same seed) and feeds it your inputs so far, each moved by minus `t`. The pull is now at
+   exactly 0, and everything before it keeps the same spacing. Nothing has rolled for damage yet, so the fresh sim is
+   in the same state the old one was in.
+3. If you stay longer than 10 minutes before the pull, the session does the same swap with a new 10 minute window.
 
-If you stay longer than 10 minutes before attacking, the session does the same swap with a new 10 minute window.
 Step 1 tests that the state at the pull is identical with and without the swap. Spike 4 measures how long the swap
-takes, since it happens on the frame you attack.
+takes, since it can happen on the frame you attack.
 
-Your auto attack only swings when you have turned it on and you're in melee range, before or after the pull. If turning
-it on is your first harmful action, that's the pull, and the first swing comes at once, as in game.
+**When the pull is.** Your first harmful hit landing: a spell's damage, an ability, or your first swing. So a
+Lightning Bolt cast before the pull and timed to land at it counts from the moment it lands, like the in-game meters
+count. The session knows the landing time when the cast starts (cast end plus travel time) and swaps then. If the cast
+is interrupted, the swap is undone the same way.
+
+**Free mode** (the default):
+
+- The pull is your first harmful hit.
+- The fight goes on until you click Stop (or a key bound to it). Stop ends the fight at that moment. The session stops
+  stepping and runs `Cleanup()` with the stop time as the fight length. Step 1 checks the metrics use it.
+- The 60 minute cap ends the fight if you never click Stop.
+- The dummy never enters execute range, as with a training dummy in game. A setting can put it in execute range from
+  the start, for classes with execute abilities.
+
+**Encounter mode:**
+
+- Clicking "Start Encounter" starts the countdown (5s by default). The pull is at the countdown's end, so the swap
+  happens on the click.
+- If your first harmful hit lands before the countdown ends, that's an early pull, as in game. The fight starts right
+  then (one more swap), and the HUD says so.
+- The fight ends on its own at the set length, as in a sim run. Execute phases follow the encounter's settings.
+- Stop still works, and marks the attempt as stopped early.
+
+In both modes, auto attack only swings when you have turned it on and you're in melee range. If turning it on in
+range is your first harmful action, that's the pull, and the first swing comes at once, as in game.
 
 ### Running in real time
 
@@ -211,7 +236,8 @@ it on is your first harmful action, that's the pull, and the first swing comes a
 - **Run(until)** runs events whose time is before `until` and stops. It reads the next event time from
   `NextEventTime()` and never moves the clock to `until` itself. Moving the clock to frame times would settle regen
   and expire auras in frame sized steps, and then results would depend on frame rate.
-- **The end** is final. `Step` drops the last pending action before the end check. `Cleanup()` adds up the metrics.
+- **The end** is final: Stop, or the set length in Encounter mode. `Step` drops the last pending action before the end
+  check. `Cleanup()` adds up the metrics.
 
 The worker keeps its own clock and pushes events as they happen, instead of waiting for one call per frame. A
 `MessageChannel` loop drives it, because nested timers are held to at least 4ms, in workers too. The clock pauses
@@ -335,6 +361,10 @@ An attempt is one JSON file in `~/forever-practice/attempts/`:
 	"request": { "...": "the RaidSimRequest as proto JSON" },
 	"seed": 123456789,
 	"pingMs": 60,
+	"mode": "free",
+	"lengthMs": 184300,
+	"countdownMs": 5000,
+	"earlyPull": false,
 	"inputs": [{ "appliedAt": -8200000000, "input": { "kind": "cast", "spellId": 8512 } }],
 	"result": { "...": "the fight summary" }
 }
@@ -738,8 +768,8 @@ For development, the practice Vite dev server runs on its own port, proxies `/ap
 
 ## Fight summary
 
-The room sims only the fight you played: one iteration, no other seeds and no averages. Everything counts from time 0,
-and idle GCD time counts from the pull. At the end it shows:
+The room sims only the fight you played: one iteration, no other seeds and no averages. Everything counts from the pull to the end
+(Stop, or the set length in Encounter mode). At the end it shows:
 
 - your DPS and damage by spell
 - idle GCD time
@@ -757,9 +787,9 @@ rotation, fight length) through the class sim's existing export, as a link or JS
 exports come in the same way, since they already load into the class sim. The keybinds come from a BayovCore record
 you pick separately, because the sim character and the in-game character aren't the same thing.
 
-Fight rules for Milestone 1: a fixed length you set, with no length variation, counted from your first attack. Before
-that you're free to prepare for as long as you like. Keys for restart and leave. The HUD shows the fight timer once
-the fight starts.
+Fight rules for Milestone 1 are the two modes in [Fight modes and the pull](#fight-modes-and-the-pull). Before the
+pull you're free to prepare for as long as you like. The HUD has the Start Encounter button with its countdown and
+length settings, the Stop button, the countdown, and the fight timer. Keys for Stop, restart and leave.
 
 ## Multiplayer (Milestone 4)
 
@@ -794,7 +824,9 @@ Each step says when it's done. Spike 1 runs first, next to step 1, since it's th
    - Go tests pass for: the last press in the queue wins, a press outside the window fails, a cast while moving
      fails, leaving melee range stops swings and coming back resumes them, wrong facing fails, ping shifts apply
      times, a totem dropped before the pull is up at the pull, the state at the pull is identical with and without the
-     time swap, the first harmful action is the pull at 0, no swing before you turn auto attack on, a `/startattack`
+     time swap, the first harmful hit is the pull at 0 in Free mode, a precast Lightning Bolt timed to land at the
+     pull counts from its landing, Stop ends the fight and the metrics use the stop time, the Encounter mode countdown
+     puts the pull at its end, an early pull starts the fight at once, the set length ends the fight, no swing before you turn auto attack on, a `/startattack`
      macro and a right click both turn it on, an imbue cast before or during the fight replaces the active
      imbue and the Windfury Totem rule follows the current imbue, Ghost Wolf costs its GCD and mana and ends on a
      cast, Earthbind Totem replaces Strength of Earth, an input at the fight's end is dropped, and no swing during a
@@ -817,7 +849,7 @@ Each step says when it's done. Spike 1 runs first, next to step 1, since it's th
 7. The model renderer: three-m2loader plus your race's body with its animations, in place of the capsule. Done when
    your character runs, jumps, attacks and casts with the right animations.
 8. The HUD: your bars (editable) with bindings, unit frames, cast bar, swing timer, WeakAuras, combat text, the
-   fight timer, the live meter and the fight summary. Done when a headless Chrome smoke test plays a scripted fight with
+   Start Encounter and Stop buttons, the countdown, the fight timer, the live meter and the fight summary. Done when a headless Chrome smoke test plays a scripted fight with
    no console errors, the meter's total matches the summary, and the summary shows. The sweep paint cost is measured
    here.
 9. Your gear on the model: dressed character, attachments, sheathing, icons and sounds. Done when your character
