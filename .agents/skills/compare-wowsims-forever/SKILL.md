@@ -186,6 +186,7 @@ these, so it can tell what is new. Keep the list current when one is settled.
 | Anger Management | 1 rage every 3 s (Forever's tooltip) | 1.5 every 5 s (the aura's amount, a power regen per 5 s) | Open: a log of its rage ticks settles it. Under 2.1 DPS |
 | Unbridled Wrath on Heroic Strike | Procs (client proc flag 4, notes.md) | White swings only | Report assumption `warr_uw_queued` (one value, user ruling 2026-11-02). Within 1 DPS |
 | Two-hand white crit rage | Twice the whole swing since 2026-11-01 | The same (7c28cfa731, Forever logs) | Settled (ours was a bug): it was −12.4 on Arms, −13 on Fury 2H |
+| Rotation re-checks and Heroic Strike during a cast | Re-checks at once on a Rage gain; a queued Heroic Strike goes off on a swing that lands during Slam's cast | Re-checks 200 ms after a Rage gain or a swing; drops the queued Heroic Strike during a cast (`hardcastRuns`); holds major cooldowns while a sequence step runs | Choices (engine). They move Arms' Heroic Strike (+0.8 casts in ours) and Bloodrage, but net 0 DPS: theirs spends the Rage on Execute |
 | Explosives' hit | 1% miss at most (an Era comment, `sim/core/consumes.go`) | The normal spell hit table | Open: the client row 13241 would say. Sapper +0.3 DPS |
 | Touch of the Grave's roll | On any ability cast (a guess, `racials_forever.go`) | On a landed hit that deals damage | Open. +0.4 DPS on Undead Arms |
 | Synthetic sets' 2 piece (1% attack speed) | Live | Registered by `cmpsim` (warrior head 991001, 991019) | A translation: without it theirs was 5 to 8 DPS low |
