@@ -1805,6 +1805,10 @@
     {
      "commit": "04261d5",
      "why": "a test that still expected the old crit aura split; no numbers change"
+    },
+    {
+     "commit": "3fd9b46",
+     "why": "the requests' stored published and verify numbers only; no sim or page reads them"
     }
    ],
    "source": {
