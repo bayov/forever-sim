@@ -2112,6 +2112,10 @@
     {
      "commit": "b102e9497",
      "why": "tank optimizer objective: no DPS build reads it"
+    },
+    {
+     "commit": "12404d280",
+     "why": "leveling training budget: no level 60 build reads it"
     }
    ],
    "source": {
