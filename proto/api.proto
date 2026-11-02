@@ -119,6 +119,11 @@ message Player {
 	// Score this player as a tank (docs/tank_sim.md, The optimizer's objective): with a healing
 	// model, each iteration's least stand-in HPS it lives through, and its SafeDPS.
 	TankScoring tank_scoring = 57;
+
+	// A healer's cast cancelling (docs/healing_sim.md, heal_comm.go): a heal with a cast time is
+	// cancelled, unpaid, a reaction time before it lands when more than this share of it would
+	// overheal. 0 never cancels.
+	double stop_cast_overheal = 58;
 }
 
 message Party {

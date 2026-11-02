@@ -48,6 +48,8 @@ const (
 )
 
 type options struct {
+	stopCast   float64
+	reaction   float64
 	role       string
 	scale      float64
 	healers    int
@@ -70,10 +72,12 @@ func main() {
 	carry := flag.Bool("carry", false, "also find the damage carried, and the death floor there")
 	floorOnly := flag.Bool("floor", false, "print the death floor at -scale instead")
 	logOne := flag.Bool("log", false, "print one iteration's log of the first build instead")
+	stopCast := flag.Float64("stopcast", 0.5, "healers cancel a heal that would overheal by more than this share (0 never)")
+	reaction := flag.Float64("reaction", 0.3, "the healers' average reaction time in seconds, spread ±25% between them (0 sees at once)")
 	flag.Parse()
 	sim.RegisterAll()
 
-	o := options{role: *roleName, scale: *scale, healers: *healers, fillers: *fillers, iterations: *iterations, duration: *duration}
+	o := options{stopCast: *stopCast, reaction: *reaction, role: *roleName, scale: *scale, healers: *healers, fillers: *fillers, iterations: *iterations, duration: *duration}
 	if o.role != "tank" && o.role != "raid" && o.role != "both" {
 		fail(fmt.Errorf("-role is tank, raid or both"))
 	}
@@ -104,7 +108,8 @@ func main() {
 	tank := firstPlayer(read(*tankPath))
 	filler := firstPlayer(read(*fillerPath))
 
-	fmt.Printf("%s, role %s ×%.2f, %.0f s, %d iterations a sim.\n%s\n\n", fight.name, o.role, o.scale, o.duration, o.iterations, fight.description)
+	fmt.Printf("%s, role %s ×%.2f, %.0f s, %d iterations a sim. Healers react in %.2f s ± 25%% and cancel heals over %.0f%% overheal.\n%s\n\n",
+		fight.name, o.role, o.scale, o.duration, o.iterations, o.reaction, 100*o.stopCast, fight.description)
 	header := []string{"Healer", "HPS", "EHPS", "Overheal", "EH per mana", "Mana left", "OOM at", "Tank DTPS", "Raid DTPS", "Tank died", "Other died", "First death", "Tank scares", "Raid scares"}
 	if *carry {
 		header = append(header, "Carry", "Death floor")
@@ -230,9 +235,20 @@ func (b *bench) request(scale float64, floor bool) *proto.RaidSimRequest {
 			}
 		}
 	}
+	healerNumber := 0
 	for pi, party := range b.slots {
 		for si, r := range party {
 			player := clone(map[role]*proto.Player{roleTank: b.tank, roleHealer: b.healer, roleFiller: b.filler}[r])
+			if r == roleHealer {
+				// Each healer reacts a little differently, so identical healers don't act in lockstep.
+				spread := 0.0
+				if b.o.healers > 1 {
+					spread = -0.25 + 0.5*float64(healerNumber)/float64(b.o.healers-1)
+				}
+				player.ReactionTimeMs = int32(1000 * b.o.reaction * (1 + spread))
+				player.StopCastOverheal = b.o.stopCast
+				healerNumber++
+			}
 			player.HealingModel = nil
 			player.Name = fmt.Sprintf("Player %d", pi*5+si+1)
 			if r == roleHealer && b.o.role == "tank" {

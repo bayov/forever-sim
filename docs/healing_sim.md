@@ -287,7 +287,7 @@ code). Fixed:
 
 **Not fixed yet** (H2 and later), ranked by how much they would bend healer rankings:
 
-1. **Healers see health perfectly, but not each other's heals.** No reaction delay, no heals in flight, no
+1. **Done 2026-11-02** (What healers see, below the audit): ~~Healers see health perfectly, but not each other's heals.~~ No reaction delay, no heals in flight, no
    cancelling a heal that would overheal, and identical healers act in lockstep. The game had HealComm (heals in
    flight shown to other healers) and stop-casting. This penalises slow big heals (Greater Heal, Healing Touch,
    Holy Light, Healing Wave) and favours instants, HoTs and shields. Needed: an incoming heals value or a Most
@@ -342,6 +342,38 @@ First carries, the bench shaman (a test rotation, not a tuned one), 1,600 iterat
 
 In the tank role "other" deaths are the healer's: once the tank dies the boss turns to it. Broodlord kills the
 tank with 3,990 mana left in the healer: his Mortal Strike's healing cut and spikes, not mana, are the limit.
+
+## What healers see (2026-11-02)
+
+The audit's top gap, now in (`sim/core/heal_comm.go`), for healing fights only:
+
+- **Heals in flight**, as Classic's HealComm addon showed them. A heal with a cast time declares its average
+  size (`SpellConfig.ExpectedHealing`, the shaman's three heals so far; Chain Heal counts its target only, as
+  HealComm did). Most Hurt, Lowest Health and Health Missing take the other healers' heals in flight off
+  what's missing, so a second healer doesn't start the same big heal on the same hit.
+- **A reaction time**: a healer (`Player.reaction_time_ms`) reads other players' health that long ago, from
+  each player's last 32 health changes.
+- **Cancelling** (`Player.stop_cast_overheal`): a reaction time before its heal lands, a healer whose heal
+  would overheal by more than this share stops it, unpaid, and casts again at once. With no reaction time
+  it never gets the chance.
+
+`tools/healbench` gives its healers 0.3 s ± 25% (spread between them so identical healers don't act in
+lockstep) and cancels over 50% overheal; `-reaction` and `-stopcast` change them. What each piece does, 800
+iterations:
+
+| Healers see | Tank profile, 2 healers: overheal, mana left, carry | Raid profile, both roles: carry |
+|---|---|---|
+| everything at once, no heals in flight (before) | 43%, 3,820, - | 0.683 |
+| heals in flight, no reaction time | 26.2%, 6,685, 1.607 | 0.741 |
+| heals in flight, 0.3 s late | 44.2%, 4,480, 1.564 | 0.686 |
+| heals in flight, 0.3 s late, cancelling over 50% (the bench's default) | 22.6%, 6,323, 1.538 | 0.722 |
+
+A late healer double-heals again (it sees the tank hurt after the other heal landed), and cancelling takes most
+of that back. `TestHealingFightHealComm` checks it: without the heals in flight, 42 of 47 Healing Waves in a
+fight started in lockstep with the other healer's.
+
+Still open from the audit's list: rank choice (downranking), absorbs, healer-aware mana support, range and
+groups, the damage model's gaps.
 
 ## Milestones
 

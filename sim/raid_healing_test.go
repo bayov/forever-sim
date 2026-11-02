@@ -228,3 +228,66 @@ func TestHealingFightEmptyHealTarget(t *testing.T) {
 	rsr.SimOptions.Debug = true
 	runRaid(t, rsr)
 }
+
+// healerOverheal is the healers' overhealing share over all their healing.
+func healerOverheal(res *proto.RaidSimResult, healers ...int) float64 {
+	var healing, overheal float64
+	for _, i := range healers {
+		for _, a := range playerMetrics(res, i).Actions {
+			for _, tgt := range a.Targets {
+				healing += tgt.Healing
+				overheal += tgt.Overhealing
+			}
+		}
+	}
+	return overheal / healing
+}
+
+// Two healers on one tank see each other's heals in flight, so they don't both start a big heal on
+// the same hit; and cancelling a heal that would mostly overheal cuts the overhealing a reaction
+// time brings.
+func TestHealingFightHealComm(t *testing.T) {
+	bigHeal := `{"action":{"condition":{"cmp":{"op":"OpGt","lhs":{"healthMissing":{"sourceUnit":{"type":"MostHurt"}}},"rhs":{"const":{"val":"1500"}}}},"castSpell":{"spellId":{"spellId":10396},"target":{"type":"MostHurt"}}}}`
+	request := func(reactionMs int32, stopCast float64) *proto.RaidSimRequest {
+		rsr := healingRaid(t, 1, 2, 0)
+		rsr.SimOptions.Iterations = 50
+		for _, i := range []int{1, 2} {
+			healerRotation(rsr, i, bigHeal)
+			p := rsr.Raid.Parties[0].Players[i]
+			p.ReactionTimeMs = reactionMs
+			if reactionMs > 0 {
+				p.ReactionTimeMs += 50 * int32(i)
+			}
+			p.StopCastOverheal = stopCast
+		}
+		return rsr
+	}
+
+	// With no reaction time, a healer starting Healing Wave at the tank in the same instant as the
+	// other one only does when the tank misses enough for both.
+	rsr := request(0, 0)
+	rsr.SimOptions.Iterations = 1
+	rsr.SimOptions.Debug = true
+	starts := map[string]int{}
+	casts := 0
+	for _, line := range strings.Split(runRaid(t, rsr).Logs, "\n") {
+		if strings.Contains(line, "Casting {SpellID: 10396}") {
+			starts[line[:strings.Index(line, "]")]]++
+			casts++
+		}
+	}
+	same := 0
+	for _, n := range starts {
+		if n > 1 {
+			same += n
+		}
+	}
+	if casts < 20 || same > casts/10 {
+		t.Errorf("%d of %d Healing Waves started in the same instant as the other healer's", same, casts)
+	}
+
+	late, cancelling := healerOverheal(runRaid(t, request(300, 0)), 1, 2), healerOverheal(runRaid(t, request(300, 0.5)), 1, 2)
+	if cancelling >= late {
+		t.Errorf("cancelling heals overheals %.0f%%, not cancelling %.0f%%", 100*cancelling, 100*late)
+	}
+}

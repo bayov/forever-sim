@@ -13,6 +13,19 @@ type healthBar struct {
 	currentHealth float64
 
 	DamageTakenHealthMetrics *ResourceMetrics
+
+	// In a healing fight, the health before each recent change, for healers who see it a reaction
+	// time late (heal_comm.go). A ring: history[next] is the oldest.
+	history [healthHistorySize]healthChange
+	next    int
+}
+
+const healthHistorySize = 32
+
+type healthChange struct {
+	at     time.Duration
+	before float64
+	set    bool
 }
 
 func (unit *Unit) EnableHealthBar() {
@@ -31,6 +44,31 @@ func (hb *healthBar) reset(_ *Simulation) {
 		return
 	}
 	hb.currentHealth = hb.MaxHealth()
+	hb.history = [healthHistorySize]healthChange{}
+	hb.next = 0
+}
+
+// record keeps the health before a change, in a healing fight.
+func (hb *healthBar) record(sim *Simulation, before float64) {
+	if !sim.Encounter.TrackHealth {
+		return
+	}
+	hb.history[hb.next] = healthChange{at: sim.CurrentTime, before: before, set: true}
+	hb.next = (hb.next + 1) % healthHistorySize
+}
+
+// healthAt is the health at t, from the recent changes: the health before the first change after
+// t. Changes older than the ring read as the oldest one kept.
+func (hb *healthBar) healthAt(t time.Duration) float64 {
+	health := hb.currentHealth
+	for k := 1; k <= healthHistorySize; k++ {
+		c := hb.history[(hb.next-k+healthHistorySize)%healthHistorySize]
+		if !c.set || c.at <= t {
+			break
+		}
+		health = c.before
+	}
+	return health
 }
 
 func (hb *healthBar) MaxHealth() float64 {
@@ -74,6 +112,9 @@ func (hb *healthBar) GainHealth(sim *Simulation, amount float64, metrics *Resour
 	oldHealth := hb.currentHealth
 	newHealth := min(oldHealth+amount, hb.unit.MaxHealth())
 	metrics.AddEvent(amount, newHealth-oldHealth)
+	if newHealth != oldHealth {
+		hb.record(sim, oldHealth)
+	}
 
 	if sim.Log != nil {
 		hb.unit.Log(sim, "Gained %0.3f health from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, oldHealth, newHealth)
@@ -100,6 +141,9 @@ func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 
 	oldHealth := hb.currentHealth
 	newHealth := max(oldHealth-amount, 0)
+	if newHealth != oldHealth {
+		hb.record(sim, oldHealth)
+	}
 	metrics := hb.DamageTakenHealthMetrics
 	metrics.AddEvent(-amount, newHealth-oldHealth)
 

@@ -40,13 +40,14 @@ func (unit *Unit) pickHealTarget(pick proto.UnitReference_Type) *Unit {
 		if player.dead || !player.HasHealthBar() {
 			continue
 		}
-		missing := player.MaxHealth() - player.CurrentHealth()
+		// As we see it: a reaction time late, less the other healers' heals in flight (heal_comm.go).
+		missing := unit.seenMissing(player)
 		if missing <= 0 {
 			continue
 		}
 		score := missing
 		if pick == proto.UnitReference_LowestHealth {
-			score = 1 - player.CurrentHealthPercent()
+			score = missing / player.MaxHealth()
 		}
 		if best == nil || score > bestScore {
 			best, bestScore = player, score

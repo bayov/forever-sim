@@ -58,6 +58,10 @@ type Environment struct {
 
 	// The raid's tanks (Raid.tanks), in order. A missing player leaves a nil.
 	RaidTanks []*Unit
+
+	// The simulation running in this environment, for what reads the time without being handed it
+	// (heal_comm.go). Set as each iteration starts.
+	sim *Simulation
 }
 
 func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter, ruleset proto.Ruleset, runFakePrepull bool) (*Environment, *proto.RaidStats, *proto.EncounterStats) {
@@ -335,6 +339,7 @@ func (env *Environment) IsFinalized() bool {
 }
 
 func (env *Environment) reset(sim *Simulation) {
+	env.sim = sim
 	// Reset primary targets damage taken for tracking health fights.
 	env.Encounter.DamageTaken = 0
 	env.Encounter.ActiveTargetUnits = append([]*Unit(nil), env.Encounter.TargetUnits...)

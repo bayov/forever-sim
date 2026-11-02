@@ -308,6 +308,7 @@ func (raid *Raid) applyCharacterEffects(raidConfig *proto.Raid) *proto.RaidStats
 			char.trackChanceOfDeath(playerConfig.HealingModel)
 			char.setupTankScore(playerConfig.TankScoring, playerConfig.HealingModel)
 			char.setHealAssignment(playerConfig.HealAssignment)
+			char.stopCastOverheal = max(0, min(1, playerConfig.StopCastOverheal))
 			partyStats.Players[char.PartyIndex] = char.applyAllEffects(player, playerRaidBuffs, partyBuffs, individualBuffs)
 
 			for _, pet := range char.Pets {
