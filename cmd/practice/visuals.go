@@ -42,6 +42,22 @@ type visualSound struct {
 	Weight float64 `json:"weight,omitempty"`
 	// Loop is the kit's looping flag (0x200), set on the precast and missile sounds.
 	Loop bool `json:"loop,omitempty"`
+	// MinDistance is how far (yards) the sound stays at full volume, and Cutoff where it ends.
+	MinDistance float64 `json:"minDistance,omitempty"`
+	Cutoff      float64 `json:"cutoff,omitempty"`
+	// PitchPlus and PitchMinus vary the pitch at random each play (0.12 is about 2 semitones),
+	// and VolumeMinus the volume.
+	PitchPlus   float64 `json:"pitchPlus,omitempty"`
+	PitchMinus  float64 `json:"pitchMinus,omitempty"`
+	VolumeMinus float64 `json:"volumeMinus,omitempty"`
+	// Inner2D is the distance (yards) within which the sound plays flat, with no 3D position:
+	// your own swings and casts.
+	Inner2D float64 `json:"inner2D,omitempty"`
+	// CooldownMs keeps the kit from playing again too soon (an Orc doesn't grunt every swing).
+	CooldownMs [2]float64 `json:"cooldownMs,omitzero"`
+	// FadeInMs and FadeOutMs fade a loop in and out.
+	FadeInMs  float64 `json:"fadeInMs,omitempty"`
+	FadeOutMs float64 `json:"fadeOutMs,omitempty"`
 }
 
 type visualModel struct {
@@ -184,9 +200,23 @@ func (v *visuals) soundKit(id int) []visualSound {
 	kit := v.db.MustTable("SoundKit").Get(id)
 	volume := 1.0
 	loop := false
+	var base visualSound
 	if kit.Ok() {
 		volume = kit.Float("VolumeFloat")
 		loop = kit.Int("Flags")&0x200 != 0
+		base.MinDistance = kit.Float("MinDistance")
+		base.Cutoff = kit.Float("DistanceCutoff")
+		base.PitchPlus = round3(kit.Float("PitchVariationPlus"))
+		base.PitchMinus = round3(kit.Float("PitchVariationMinus"))
+		base.VolumeMinus = round3(kit.Float("VolumeVariationMinus"))
+	}
+	if t, err := v.db.Table("SoundKitAdvanced"); err == nil {
+		if adv := t.First("SoundKitID", id); adv.Ok() {
+			base.Inner2D = adv.Float("InnerRadius2D")
+			base.CooldownMs = [2]float64{adv.Float("TimeCooldownMin"), adv.Float("TimeCooldownMax")}
+			base.FadeInMs = max(0, adv.Float("VolumeFadeInTimeMin"))
+			base.FadeOutMs = max(0, adv.Float("VolumeFadeOutTimeMin"))
+		}
 	}
 	var out []visualSound
 	for _, e := range v.db.MustTable("SoundKitEntry").Where("SoundKitID", id) {
@@ -197,7 +227,9 @@ func (v *visuals) soundKit(id int) []visualSound {
 		if vol == 0 {
 			vol = 1
 		}
-		out = append(out, visualSound{FDID: e.Int("FileDataID"), Volume: round3(volume * vol), Kit: id, Weight: e.Float("Frequency"), Loop: loop})
+		s := base
+		s.FDID, s.Volume, s.Kit, s.Weight, s.Loop = e.Int("FileDataID"), round3(volume*vol), id, e.Float("Frequency"), loop
+		out = append(out, s)
 	}
 	return out
 }
@@ -805,6 +837,10 @@ func (s *server) handleMeleeSounds(w http.ResponseWriter, r *http.Request) {
 		}
 		subclass = n
 	}
+	// No weapon in the main hand (or one we have no model for) hits like fists.
+	if subclass < 0 {
+		subclass = 13
+	}
 	material, ok := impactMaterials[q.Get("material")]
 	if q.Get("material") != "" && !ok {
 		writeError(w, http.StatusBadRequest, errors.New("material is flesh, chain, plate, wood, stone or ethereal"))
@@ -831,6 +867,59 @@ func (s *server) handleUnitSounds(w http.ResponseWriter, r *http.Request) {
 	}
 	if us.Footsteps != nil {
 		out["footsteps"] = us.Footsteps
+	}
+	writeJSON(w, out)
+}
+
+// handleSoundKit gives one sound kit's files: the weapon draw and sheathe kits, say.
+func (s *server) handleSoundKit(w http.ResponseWriter, r *http.Request) {
+	v := s.visualsOrError(w)
+	id, ok := pathInt(w, r, "kitId")
+	if v == nil || !ok {
+		return
+	}
+	writeJSON(w, v.soundKit(id))
+}
+
+// vocalErrors names the client's spoken error lines we use (VocalUISounds.VocalUIEnum) by the
+// room's error messages.
+var vocalErrors = map[string]int{
+	"Out of range.":               10,
+	"Invalid target":              11,
+	"Spell is not ready yet.":     12,
+	"Not enough mana":             15,
+	"You have no target.":         38,
+	"There is nothing to attack.": 38,
+	"Ability is not ready yet.":   50,
+}
+
+// handleVocalSounds gives a race's spoken error lines ("Not enough mana!"), by the room's
+// error message. sex is 0 for male, 1 for female.
+func (s *server) handleVocalSounds(w http.ResponseWriter, r *http.Request) {
+	v := s.visualsOrError(w)
+	if v == nil {
+		return
+	}
+	race, err1 := strconv.Atoi(r.URL.Query().Get("race"))
+	sex, err2 := strconv.Atoi(r.URL.Query().Get("sex"))
+	if err1 != nil || err2 != nil || sex < 0 || sex > 1 {
+		writeError(w, http.StatusBadRequest, errors.New("race and sex (0 or 1) are needed"))
+		return
+	}
+	t, err := v.db.Table("VocalUISounds")
+	if err != nil {
+		writeError(w, http.StatusInternalServerError, err)
+		return
+	}
+	byEnum := map[int]int{}
+	for _, row := range t.Where("RaceID", race) {
+		byEnum[row.Int("VocalUIEnum")] = row.Int(fmt.Sprintf("NormalSoundID_%d", sex))
+	}
+	out := map[string][]visualSound{}
+	for msg, e := range vocalErrors {
+		if kit := byEnum[e]; kit > 0 {
+			out[msg] = v.soundKit(kit)
+		}
 	}
 	writeJSON(w, out)
 }
