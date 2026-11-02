@@ -6,7 +6,7 @@ import { Dropdown, Modal, Tab } from 'bootstrap';
 import { Chart, registerables } from 'chart.js';
 import tippy from 'tippy.js';
 
-import { interactiveWhenClickable } from './core/interactive_tooltips';
+import { interactiveWhenNeeded } from './core/interactive_tooltips';
 
 declare global {
 	interface Window {
@@ -18,7 +18,7 @@ declare global {
 Chart.register(...registerables);
 Chart.defaults.color = 'white';
 
-tippy.setDefaultProps({ arrow: false, allowHTML: true, plugins: [interactiveWhenClickable] });
+tippy.setDefaultProps({ arrow: false, allowHTML: true, plugins: [interactiveWhenNeeded] });
 window.Popper = Popper;
 window.bootstrap = { Dropdown, Modal, Tab };
 
