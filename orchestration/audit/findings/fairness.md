@@ -9,6 +9,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - affects: warlock__affliction (and its duty variants, same race)
 - found: 2026-11-01, master dd053d24c
 - evidence: `ITERS=20000 python3 tools/audit/fairness/sweep.py warlock__affliction` (seed 1, race overrides): Orc 1013.5, Human 1012.1 (the report race), Undead 1011.5. At 5k: Orc 1014.2, Human 1012.9. At d96adcc the two tied (1019.7 / 1019.6); the 25 yd move (905787afd) cost Human 0.4 more than Orc. Fairly sure it is real (same at 5k and 20k), but small.
+- update 2026-11-02, master 796495d6f (pass 23): at 30 yd (standards 33) the gap shrinks. `ITERS=20000 sweep.py warlock__affliction`: Orc 1013.6, Human 1012.7 (+0.9), Undead 1010.8; 5k: Orc 1013.7, Human 1013.1. Now under the 1.0 note threshold at 20k; keep open for the race pass, close if it stays under 1.
 - proposed fix: re-pick the Affliction race on the race pass (Orc), or keep Human and say it is within 1.5.
 - needs: orchestrator fix
 

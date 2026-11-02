@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-11-01 UTC, master c23ef0440)
+# Mechanics audit: verdicts and settled items (as of 2026-11-02 UTC, master 796495d6f)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -36,6 +36,8 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Faerie Fire under Forever | Feral version gone (16857, 17390-17392 have no rows); 9907 castable in Cat, Bear, Dire Bear and Moonkin (ShapeshiftMask 0x40000091), 505 armor 40 sec, 115 mana, 1.5 sec GCD, free in Cat / Bear (dev notes), no swing reset, no Omen of Clarity from it | 70685; dev notes (tier 1); pass 48 |
 | Seal of Wisdom / Judgement of Wisdom | Ranks 38 / 48 / 58, 135 / 170 / 200 mana, 30 sec; proc mana 50 / 71 / 90 (20168 / 20350 / 20351); JoW 40 sec, 33 / 46 / 59 (20268 / 20352 / 20353). Seal proc chance 50% is an assumption (client ProcChance 100, server-side) | 70685 20166 / 20356 / 20357, 20186 / 20354 / 20355; pass 48 |
 | Debuff ranks (Curse of Weakness, Demoralizing Shout / Roar, Thunder Clap −20%, Scorpid Sting −2% hit, Curse of the Elements 30–75 / 4–10% on all magic schools) | Client values | 70338; shaman audit 10.4 |
+| Armor cap | Armor takes off at most 75% (`GetArmorDamageModifier` floors at 0.25; 17,265 armor against a level 63 attacker). Only a player tank reaches it; boss armor is far below, so no DPS preset moves | Classic armor formula cap (tier 3); 76ee911a7; pass 59 |
+| Lightning Overload copies | Copies carry a proc mask (no spell damage mask), so listeners without Can Proc From Procs (Judgement of Wisdom, Elemental Devastation, Water Shield, Maelstrom) skip them | 70707 408477 SpellMisc Attributes_3 = 0 (no Not a Proc bit; triggered spell), tier 1; 6265a9ab7; pass 59 |
 | Sunder Armor (11597) | 450 armor a stack (aura 674), 30 sec, 1.5 sec GCD; the raid ramp (standard 32) is a raid assumption, not client data | 70707; pass 53 |
 | Curse of Recklessness | Armor only; 70425 dropped the target AP part | 70425 |
 | Salvation | −30% threat, raid buff, no DPS effect | 70425 1038 aura 10 bp −30 misc 127 |

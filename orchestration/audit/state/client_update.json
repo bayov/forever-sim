@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "b647a21ff0c1bee58f1981df8922ac27102828b2"
+  "master": "8153736d17aba93cc6237641d68b3208dcc1acc0"
  },
  "last_pass_at": "2026-10-30T07:00:55Z",
  "client_build": "1.60.1.70707",
  "result": "findings",
  "note": "70707: the 10-27..29 server hotfixes are now in the client. It confirms the parked mage talent rework (Critical Mass 3, Incineration 5, Arcane Focus gone, Precision all spells, Accelerant on Arcane Wrath, Ice Lance 8 s on rank 1, tree moves). Hawk/TSA/Blood Fury already landed. Dev notes rate-limited.",
  "pass": 6,
- "checked_at": "2026-11-02T12:58:33Z"
+ "checked_at": "2026-11-02T19:05:44Z"
 }
