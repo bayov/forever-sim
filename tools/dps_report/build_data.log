@@ -18,8 +18,10 @@ mana_summary: 51 rows, 15 KB
 assumptions: 57 rows, 63 KB
 WARNING assumptions: 1 texts name the project's process, e.g. 'Forever client 70707 (SpellCooldowns 101119, spell 1312002). foreverchanges.pro, build 1.60.1.70707. User ruling 2026-10-30.'
 assumption_dps: 343 rows, 57 KB
-rotation: 760 rows, 243 KB
-race_rotation: 419 rows, 155 KB
+rotation: 760 rows, 237 KB
+race_rotation: 419 rows, 152 KB
+WARNING rotation: 3 rotation_text.json entries no line uses, e.g. [[tal:Mage:1:11|Heating Up]] talent taken and Heating Up at 3+ stacks and ([[tal:Mage:2:15|Fingers of Frost]] talent not taken or Fingers of Frost is not up or Pyroblast takes 1.49s or more to cast)
+WARNING rotation: 4 rotation_text.json why entries no line uses, e.g. {'builds': ['hunter__lone-wolf', 'hunter__marksmanship', 'hunter__beast-mastery'], 'key': None, 'when': 'under 0.2s since the last ranged swing', 'why': "Why wait after the Auto Shot? Moving cancels its windup. The 0.2 sec is a player's reaction: less is worth a few DPS, but faster than anyone plays."}
 rotation conditions shown in compact form: []
 tooltips: 1111 rows, 440 KB
 tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit', "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]

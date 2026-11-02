@@ -159,9 +159,13 @@ def art(word):
 
 
 class Humaniser:
-    def __init__(self, name, talent=None):
+    def __init__(self, name, talent=None, known=None):
         self.name = name  # key -> display name
         self.talent = talent or (lambda aura: aura)  # an aura's name -> its talent, as talent_token writes it
+        # an aura's name -> whether the build has the talent that gives it (True / False), None when unknown. A
+        # "talent taken" check then has a fixed value for the build, and its line reads as the build plays it.
+        self.known = known or (lambda aura: None)
+        self.lacks = set()  # the talents this line's checks found missing (apl_rows resets it a line)
         self.cur = None  # the key of the line's own spell: "holding it would mean one fewer use" needs no name for it
         self.items = set()  # the item names conditions use (tidy)
         self.fallbacks = []
@@ -318,6 +322,12 @@ class Humaniser:
         # first in the list. So we count it as true and leave it out. "Not done" still shows.
         if t == 'sequenceIsComplete':
             return True
+        if t == 'auraIsKnown':
+            aura = self.sp(a.get('auraId'))
+            k = self.known(aura)
+            if k is False:
+                self.lacks.add(self.talent(aura))  # a line it switches off says which talent the build lacks
+            return k
         if t == 'not':
             if 'sequenceIsComplete' in a.get('val', {}):
                 return None
@@ -585,7 +595,10 @@ def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
         key = key_of(ref) if ref else None
         H.cur = key
         name = ', then '.join(nm(k) for k in steps) if steps else nm(key) if key else {'move': 'Move', 'autocastOtherCooldowns': 'Other cooldowns', 'wait': 'Wait'}.get(kind, kind)
+        H.lacks = set()
         when = H.tidy(H.pred(cond, top=True)) if cond else ''
+        if when.startswith('never') and H.lacks:  # off because the build lacks a talent, not switched off by hand
+            when = 'never: this preset lacks the ' + ' and '.join(sorted(H.lacks)) + ' talent'
         if not cond or when == 'always':  # no condition, or only one we leave out (see Humaniser.const_of)
             when = '' if section == 'prepull' else 'when ready' if kind in ('castSpell', 'channelSpell') else ''
         if kind == 'autocastOtherCooldowns':
@@ -619,8 +632,28 @@ def prepull_sorted(rot):
     return sorted(rot.get('prepullActions') or [], key=lambda p: secs(p.get('doAtValue', {}).get('const', {}).get('val', '0')) or 0)
 
 
-def _humaniser(nm, cls=None, talents=None):
-    return Humaniser(lambda k: 'the potion' if k == 'oOtherActionPotion' else nm(k), lambda aura: talent_token(cls, talents, aura))
+def talent_known(cls, talents, talent_string):
+    """An aura's name -> whether a build with this talent string has the talent that gives it (None when the aura is
+    no talent of the class): a condition's "talent taken" check then reads as the build plays it."""
+    trees = (talent_string or '').split('-')
+
+    def known(aura):
+        at = (talents or {}).get(cls, {}).get(AURA_TALENT.get(aura, aura))
+        if not at or talent_string is None:
+            return None
+        tree = trees[at[0]] if at[0] < len(trees) else ''
+        return at[1] < len(tree) and tree[at[1]] not in ('0', '')
+    return known
+
+
+def _humaniser(nm, cls=None, talents=None, talent_string=None):
+    return Humaniser(lambda k: 'the potion' if k == 'oOtherActionPotion' else nm(k), lambda aura: talent_token(cls, talents, aura),
+                     talent_known(cls, talents, talent_string))
+
+
+def _talent_string(req_dir, bid):
+    rq = json.load(open(os.path.join(req_dir, bid + '.json')))
+    return rq['raid']['parties'][0]['players'][0].get('talentsString')
 
 
 def _rotation(req_dir, bid):
@@ -634,7 +667,7 @@ def build(req_dir, outs, nm, names, abilities, racial_race, talents=None):
     casts = {(a['build'], a['key']): a['casts'] for a in abilities}
     for o in outs:
         bid = o['id']
-        H = _humaniser(nm, o['meta'].get('class'), talents)
+        H = _humaniser(nm, o['meta'].get('class'), talents, _talent_string(req_dir, bid))
         mine = apl_rows(bid, _rotation(req_dir, bid), o['meta'].get('race'), nm, names, casts, racial_race, H)
         for r in mine:
             r['why'] = why_of(bid, o['meta'].get('baseBuild'), r) if r['section'] == 'priority' else ''
@@ -704,7 +737,7 @@ def race_build(req_dir, outs, nm, names, racial_race, preset_rows, race_name, lo
             race = race_name(rc['race'])
             mine = ov['rotation']
             whys = text(ov).get('why', {})
-            H = _humaniser(nm, o['meta'].get('class'), talents)
+            H = _humaniser(nm, o['meta'].get('class'), talents, ov.get('talentsString') or _talent_string(req_dir, bid))
             new = {(r['section'], r['order']): r for r in apl_rows(bid, mine, race, nm, names, {}, racial_race, H)}
             fallbacks += H.fallbacks
             old = {(r['section'], r['order']): r for r in pre.get(bid, [])}

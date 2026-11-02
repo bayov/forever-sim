@@ -2111,13 +2111,18 @@ export function startReport(dash, events) {
   };
 
   // ---------- rotation ----------
-  // A condition names a talent as [[tal:<class>:<tree>:<index>|<name>]] (rotation.py): drawn as the talent's icon and
-  // name with its tooltip, or as the name alone in plain text.
-  const TAL_TOKEN = /(\[\[tal:[^|\]]+\|[^\]]+\]\])/;
-  const plainWhen = (s) => String(s || '').replace(/\[\[tal:[^|\]]+\|([^\]]+)\]\]/g, '$1');
+  // A condition or a note names a talent as [[tal:<class>:<tree>:<index>|<name>]] (rotation.py), and a spell or an item
+  // as [[k:<key>|<name>]] (rotation_text.json's notes): drawn as its icon and name with its tooltip, or as the name alone
+  // in plain text.
+  const TAL_TOKEN = /(\[\[(?:tal|k):[^|\]]+\|[^\]]+\]\])/;
+  const plainWhen = (s) => String(s || '').replace(/\[\[(?:tal|k):[^|\]]+\|([^\]]+)\]\]/g, '$1');
   const richWhen = (s, b) => String(s || '').split(TAL_TOKEN).filter(Boolean).map((part) => {
-    const m = /^\[\[(tal:[^|\]]+)\|([^\]]+)\]\]$/.exec(part);
+    const m = /^\[\[((?:tal|k):[^|\]]+)\|([^\]]+)\]\]$/.exec(part);
     if (!m) return part;
+    if (m[1].startsWith('k:')) {
+      const n = byKey('names')?.get(m[1].slice(2));
+      return tt(el('span', { class: 'fv-tal' }, n?.icon ? iconImg(n.icon, 'fv-ico') : null, m[2]), m[1], true, b);
+    }
     const [, cls, tree, idx] = m[1].split(':');
     const t = (rowsOf('talenttrees') || []).find((x) => x.class === cls && +x.tree === +tree && +x.idx === +idx);
     return tt(el('span', { class: 'fv-tal' }, t ? iconImg(t.icon, 'fv-ico') : null, m[2]), m[1], true, b);
@@ -2140,7 +2145,7 @@ export function startReport(dash, events) {
       ['h', section === 'prepull' ? `Pre-pull · ${fmtT(+r.at)}` : `Priority ${r.order}`, tag],
       !shown && r.when ? ['t', plainWhen(r.when)] : null,
       !shown && r.extra ? ['t', r.extra] : null,
-      !shown && r.notes ? ['m', r.notes] : null,
+      !shown && r.notes ? ['m', plainWhen(r.notes)] : null,
       was ? ['m', section === 'prepull' ? `The preset casts it at ${fmtT(+was.at)}.` : `The preset’s line: ${plainWhen(was.when) || 'when ready'}.`] : null,
       r.why && (!shown || r.diff === 'changed' || r.diff === 'added') ? ['t', r.why] : null,
     ].filter(Boolean);
@@ -2188,10 +2193,17 @@ export function startReport(dash, events) {
       const rs = [...new Set(run.map((q) => q.race))], s = run.length > 1 ? 's' : '';
       return rs.every((x) => !icoOf.has(x)) ? `${rs.join(', ')} racial${s}. No ${b.class.toLowerCase()} can be ${rs.join(' or ')}.` : `${rs.join(', ')} racial${s}. Not used by ${view === 'All' ? b.race : view}.`;
     };
+    // why a line is off: the talent the preset lacks (its condition, "Never: this preset lacks …"), else its note
+    const offWhy = (q, bid) => {
+      const lack = /^Never:\s*(.+)$/i.exec(q.when || '');
+      const t = lack ? lack[1].replace(/^this preset lacks/i, 'it lacks') : (q.notes || '').replace(/^Never:\s*/i, '');
+      return t ? [': ', ...richWhen(t, bid), /[.!?]$/.test(plainWhen(t)) ? '' : '.'] : ['.'];
+    };
     const folded = (run, why) => el('li', { class: 'fv-pr other', value: String(run[0].order) },
       el('span', { class: 'no', text: run.length > 1 ? `${run[0].order}–${run[run.length - 1].order}` : String(run[0].order) }),
       el('div', { class: 'tx' }, el('div', { class: 'ics' }, ...run.map((q) => tt(ico(q, 'fv-ico'), ttKey(q), true, b.id)), el('b', { text: run.map((q) => q.name).join(', ') })),
-        el('span', { class: 'wh', text: why === 'race' ? raceFold(run) : `Off in this preset${run[0].notes ? ': ' + run[0].notes.replace(/^Never:\s*/i, '') : '.'}` })));
+        why === 'race' ? el('span', { class: 'wh', text: raceFold(run) })
+          : el('span', { class: 'wh' }, 'Off in this preset', ...offWhy(run[0], b.id))));
     // a why that asks its own question ("Why swap at 2…? Because…") shows the question in bold, in place of a label
     const whyLine = (r) => {
       if (!r.why) return null;
@@ -2209,7 +2221,7 @@ export function startReport(dash, events) {
           r.race && !sameRace ? raceTag([r.race], '', `${r.race} only`) : null, ...tags),
         when || r.when ? mark(el('span', { class: 'wh' }, ...(when || richWhen(r.when, b.id))), SRC(r), 'when', W(r)) : null,
         r.extra ? el('span', { class: 'wh', text: r.extra }) : null,
-        r.notes ? el('span', { class: 'nt', text: r.notes }) : null,
+        r.notes ? el('span', { class: 'nt' }, ...richWhen(r.notes, b.id)) : null,
         ...sub),
       casts && r.casts > 0 ? el('span', { class: 'ct' }, mark(el('b', { text: f1(r.casts) }), SRC(r), 'casts', W(r)), el('small', { text: 'casts' })) : null), ttKey(r), true, b.id);
     // a preset line a race leaves out
