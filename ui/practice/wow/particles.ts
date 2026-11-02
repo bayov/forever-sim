@@ -21,6 +21,8 @@ type Particle = {
 	age: number;
 	life: number;
 	tile: number;
+	// The angle at birth and the turn rate (radians a second).
+	angle: number;
 	spin: number;
 };
 
@@ -61,32 +63,31 @@ void main() {
 	#include <colorspace_fragment>
 }`;
 
-// three keys over a life, with the middle key at its middle.
-function overLife<T extends number[]>(keys: T[], t: number, out: number[]): number[] {
+// overLife blends keys over a particle's life by their times (0 to 1 of the life). Without times,
+// the keys spread evenly (the usual three: birth, middle and death).
+function overLife(keys: number[][], times: number[], t: number, out: number[]): number[] {
 	const n = keys.length;
 	if (n === 0) return out;
-	if (n === 1) {
-		for (let k = 0; k < keys[0].length; k++) out[k] = keys[0][k];
+	const at = (i: number) => (times.length === n ? times[i] : n === 1 ? 0 : i / (n - 1));
+	let i = 0;
+	while (i < n - 1 && t > at(i + 1)) i++;
+	if (i >= n - 1 || t <= at(i)) {
+		const k = t <= at(0) ? keys[0] : keys[n - 1];
+		for (let c = 0; c < k.length; c++) out[c] = k[c];
 		return out;
 	}
-	let a: T;
-	let b: T;
-	let f: number;
-	if (n === 2) {
-		a = keys[0];
-		b = keys[1];
-		f = t;
-	} else if (t < 0.5) {
-		a = keys[0];
-		b = keys[1];
-		f = t / 0.5;
-	} else {
-		a = keys[1];
-		b = keys[2];
-		f = (t - 0.5) / 0.5;
-	}
-	for (let k = 0; k < a.length; k++) out[k] = a[k] * (1 - f) + b[k] * f;
+	const span = at(i + 1) - at(i);
+	const f = span > 0 ? (t - at(i)) / span : 0;
+	const a = keys[i];
+	const b = keys[i + 1];
+	for (let c = 0; c < a.length; c++) out[c] = a[c] * (1 - f) + b[c] * f;
 	return out;
+}
+
+// srgbToLinear turns a 0-255 gamma color key into a linear 0-1 value, as the shader expects.
+function srgbToLinear(c: number): number {
+	const v = c / 255;
+	return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
 }
 
 class Emitter {
@@ -102,7 +103,11 @@ class Emitter {
 	private readonly geometry: THREE.InstancedBufferGeometry;
 	// Particles that keep to the emitter (flag 0x10) live in its space, the others in the world's.
 	private readonly local: boolean;
-	private readonly v = { a: [0], b: [0, 0, 0], c: [0, 0] };
+	private readonly v = { a: [0], g: [0, 0, 0] };
+	private readonly alphaKeys: number[][];
+	private readonly cellKeys: number[][];
+	private readonly worldScale = new THREE.Vector3();
+	private readonly origin = new THREE.Vector3();
 
 	constructor(
 		readonly model: Model,
@@ -113,7 +118,10 @@ class Emitter {
 		const pivot = model.m2.bones[e.bone]?.pivot ?? [0, 0, 0];
 		this.anchor.position.set(e.position[0] - pivot[0], e.position[1] - pivot[1], e.position[2] - pivot[2]);
 		bone.add(this.anchor);
+		// Flag 0x10 keeps the particles with the emitter. Without it they stay where they were born.
 		this.local = (e.flags & 0x10) !== 0;
+		this.alphaKeys = e.alphas.map(a => [a]);
+		this.cellKeys = e.headCells.map(c => [c]);
 
 		const quad = new THREE.PlaneGeometry(1, 1);
 		const g = new THREE.InstancedBufferGeometry();
@@ -142,18 +150,23 @@ class Emitter {
 			depthWrite: false,
 			side: THREE.DoubleSide,
 		});
-		// Particle blend modes: 0 opaque, 1 alpha key, 2 alpha, 4 additive, and the rest close
-		// enough to additive.
+		// Particle blend modes (wowdev.wiki M2): 0 opaque, 1 add by color, 2 alpha, 3 alpha key,
+		// 4 add by alpha.
 		switch (e.blend) {
 			case 0:
 				material.transparent = false;
 				material.depthWrite = true;
 				break;
 			case 1:
-				material.uniforms.alphaTest.value = 0.7;
-				material.depthWrite = true;
+				material.blending = THREE.CustomBlending;
+				material.blendSrc = THREE.SrcColorFactor;
+				material.blendDst = THREE.OneFactor;
 				break;
 			case 2:
+				break;
+			case 3:
+				material.uniforms.alphaTest.value = 0.7;
+				material.depthWrite = true;
 				break;
 			default:
 				material.blending = THREE.AdditiveBlending;
@@ -188,8 +201,20 @@ class Emitter {
 		if (!this.mesh.visible) return;
 		this.anchor.updateWorldMatrix(true, false);
 		const world = this.anchor.matrixWorld;
+		this.origin.setFromMatrixPosition(world);
 		const enabled = this.model.trackValue(e.enabled, this.v.a) ? this.v.a[0] !== 0 : true;
-		const gravity = this.value(e.gravity);
+		// Sizes, speeds and gravity grow with the model's scale (a kit's scale, a creature's), but
+		// not with its bones' animated scale: a Fire Nova ring grows by moving its emitter out.
+		this.worldScale.setFromMatrixScale(this.model.root.matrixWorld);
+		const scale = this.worldScale.x || 1;
+		// Gravity is an acceleration: down by a number, or a packed direction (flag 0x800000).
+		const g = this.v.g;
+		if (e.gravity.kind === 'gravity') {
+			if (!this.model.trackValue(e.gravity, g)) g[0] = g[1] = g[2] = 0;
+		} else {
+			g[0] = g[2] = 0;
+			g[1] = -this.value(e.gravity);
+		}
 		const drag = e.drag;
 
 		// Age and move the particles.
@@ -200,7 +225,9 @@ class Emitter {
 				this.particles.splice(i, 1);
 				continue;
 			}
-			p.vel.y -= gravity * dt;
+			p.vel.x += g[0] * scale * dt;
+			p.vel.y += g[1] * scale * dt;
+			p.vel.z += g[2] * scale * dt;
 			if (drag > 0) p.vel.multiplyScalar(Math.max(0, 1 - drag * dt));
 			p.pos.addScaledVector(p.vel, dt);
 		}
@@ -220,22 +247,30 @@ class Emitter {
 				this.carry -= 1;
 				const polar = vRange * (Math.random() * 2 - 1);
 				const azimuth = hRange > 0 ? hRange * (Math.random() * 2 - 1) : Math.random() * Math.PI * 2;
-				// The emitter's up is WoW's z, which is y here.
-				const dir = new THREE.Vector3(Math.sin(polar) * Math.cos(azimuth), Math.cos(polar), Math.sin(polar) * Math.sin(azimuth));
+				// The emitter's up is WoW's z, which is y here. A plane sends its particles up in a cone
+				// (the vertical range is the angle from up). A sphere sends them out around it (the
+				// vertical range is the angle above and below level): a Fire Nova ring with none
+				// spreads flat.
+				const dir =
+					e.emitterType === 2
+						? new THREE.Vector3(Math.cos(polar) * Math.cos(azimuth), Math.sin(polar), Math.cos(polar) * Math.sin(azimuth))
+						: new THREE.Vector3(Math.sin(polar) * Math.cos(azimuth), Math.cos(polar), Math.sin(polar) * Math.sin(azimuth));
 				let pos: THREE.Vector3;
 				if (e.emitterType === 2) {
-					// A sphere: start on a shell between the two radii and fly outward.
-					const r = width + Math.random() * Math.max(0, length - width);
+					// A sphere: start between the two radii (length the inner, width the outer) and
+					// fly outward.
+					const r = length + Math.random() * Math.max(0, width - length);
 					pos = dir.clone().multiplyScalar(r);
 				} else {
 					pos = new THREE.Vector3((Math.random() * 2 - 1) * length * 0.5, 0, (Math.random() * 2 - 1) * width * 0.5);
 				}
 				const v = dir.clone();
-				if (!this.local) {
-					pos.applyMatrix4(world);
-					v.transformDirection(world);
-				}
-				v.multiplyScalar(speed * (1 + speedVar * (Math.random() * 2 - 1)));
+				pos.applyMatrix4(world);
+				v.transformDirection(world);
+				// A particle that keeps to its emitter holds its offset from it: it moves with your
+				// hand, but the emitter's turning and animated scale don't fling it about.
+				if (this.local) pos.sub(this.origin);
+				v.multiplyScalar(speed * (1 + speedVar * (Math.random() * 2 - 1)) * scale);
 				const cells = e.tileRows * e.tileCols;
 				this.particles.push({
 					pos,
@@ -243,7 +278,9 @@ class Emitter {
 					age: 0,
 					life: Math.max(0.05, lifespan * (1 + e.lifespanVary * (Math.random() * 2 - 1))),
 					tile: e.flags & 0x10000 ? Math.floor(Math.random() * cells) : -1,
-					spin: e.baseSpin + e.spin * (Math.random() * 2 - 1),
+					angle: e.baseSpin + Math.random() * e.baseSpinVary,
+					// Flag 0x200 spins half the particles the other way.
+					spin: (e.spin + Math.random() * e.spinVary) * (e.flags & 0x200 && Math.random() < 0.5 ? -1 : 1),
 				});
 			}
 			if (this.carry > 1) this.carry = 1;
@@ -253,30 +290,30 @@ class Emitter {
 		const n = this.particles.length;
 		const color = [255, 255, 255];
 		const alpha = [1];
-		const scale = [1, 1];
+		const size = [1, 1];
+		const cellOut = [0];
 		const tmp = new THREE.Vector3();
 		for (let i = 0; i < n; i++) {
 			const p = this.particles[i];
 			const t = p.age / p.life;
-			overLife(this.e.colors, t, color);
-			overLife(this.e.alphas.map(a => [a]), t, alpha);
-			overLife(this.e.scales, t, scale);
+			overLife(this.e.colors, this.e.colorTimes, t, color);
+			overLife(this.alphaKeys, this.e.alphaTimes, t, alpha);
+			overLife(this.e.scales, this.e.scaleTimes, t, size);
 			tmp.copy(p.pos);
-			if (this.local) tmp.applyMatrix4(world);
+			if (this.local) tmp.add(this.origin);
 			this.pos.setXYZ(i, tmp.x, tmp.y, tmp.z);
-			this.size.setXY(i, scale[0] * 2, scale[1] * 2);
-			this.color.setXYZW(i, color[0] / 255, color[1] / 255, color[2] / 255, Math.max(0, Math.min(1, alpha[0])));
+			this.size.setXY(i, size[0] * 2 * scale, size[1] * 2 * scale);
+			this.color.setXYZW(i, srgbToLinear(color[0]), srgbToLinear(color[1]), srgbToLinear(color[2]), Math.max(0, Math.min(1, alpha[0])));
 			let cell = p.tile;
 			if (cell < 0) {
-				const cells = this.e.headCells;
-				cell = cells.length ? Math.round(overLife(cells.map(c => [c]), t, [0])[0]) : 0;
+				cell = this.cellKeys.length ? Math.round(overLife(this.cellKeys, this.e.cellTimes, t, cellOut)[0]) : 0;
 			}
 			const cols = this.e.tileCols;
 			const rows = this.e.tileRows;
 			const col = cell % cols;
 			const row = Math.floor(cell / cols) % rows;
 			this.uvs.setXYZW(i, col / cols, row / rows, (col + 1) / cols, (row + 1) / rows);
-			this.rot.setX(i, p.spin * p.age);
+			this.rot.setX(i, p.angle + p.spin * p.age);
 		}
 		this.geometry.instanceCount = n;
 		for (const a of [this.pos, this.size, this.color, this.uvs, this.rot]) a.needsUpdate = true;

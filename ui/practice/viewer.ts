@@ -22,6 +22,7 @@ scene.add(new THREE.GridHelper(10, 10, 0x666666, 0x444444));
 const camera = new THREE.PerspectiveCamera(45, 1, 0.05, 100);
 camera.position.set(...((q.get('cam') ?? '3,2,3').split(',').map(Number) as [number, number, number]));
 const controls = new OrbitControls(camera, canvas);
+Model.camera = camera;
 controls.target.set(...((q.get('look') ?? '0,1,0').split(',').map(Number) as [number, number, number]));
 
 function resize() {

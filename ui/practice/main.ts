@@ -28,8 +28,9 @@ import { AuraState, Batch, ClockState, FromWorker, HitEvent, Input, PlayerState,
 import { Room } from './scene';
 import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
+import { fileProgress } from './wow/files';
 import { Model } from './wow/model';
-import { Sounds } from './wow/sound';
+import { SoundRef, Sounds } from './wow/sound';
 import { Appearance, UnitView } from './wow/unit';
 
 const app = document.getElementById('app')!;
@@ -43,7 +44,7 @@ type Loaded = {
 	name: string;
 	trinkets?: number[];
 	// The client's race and class ids and the gear by inventory slot, for the model.
-	look?: { race: number; class: number; items: Record<string, number>; weaponSubclass?: number };
+	look?: { race: number; class: number; items: Record<string, number>; weaponSubclass?: number; weaponMaterial?: number };
 };
 type RecordSummary = { guid: string; name: string; realm: string; class: string; race: string; level: number };
 type SavedSettings = {
@@ -69,6 +70,12 @@ const packMainItems = ['Sapper', 'Grenade', 'Dynamite', 'Mana Potion', 'Rune'];
 const packUtility = ['Grounding Totem', 'Earthbind Totem', 'Stoneclaw Totem', 'Mana Tide Totem', 'Totemic Projection', 'Purge'];
 const packUtilityItems = ['Healthstone', 'Healing Potion', 'Bandage'];
 const totemElements = ['earth', 'fire', 'water', 'air'];
+// shownSpells are the spells the room shows that aren't in your toolkit: imbue procs, the totems'
+// attacks (Searing bolts, Magma pulses, Fire Nova) and the totems' buffs.
+const shownSpells = [
+	439440, 29469, 8034, 8037, 10458, 16352, 16353, 408423, 408424, 408426, 408427, 408428, 3606, 6350, 6351, 6352, 10435, 10436, 8187, 10579, 10580, 10581,
+	25362, 25360, 10494, 10610,
+];
 // Class colors for the unit frames and the meter.
 const classColors: Record<string, string> = {
 	ClassShaman: '#0070dd',
@@ -181,7 +188,21 @@ class PracticeRoom {
 	// The real models, once they load. Until then the units are capsules.
 	playerView?: UnitView;
 	dummyView?: UnitView;
-	private castShown?: number;
+	// The cast whose precast shows, by its start: it goes off when it runs its full time.
+	private castShown?: { spellId: number; start: number; end: number };
+	private toolkitReady!: Promise<void>;
+	private toolkitResolve!: () => void;
+	private loadingModels = false;
+	private lastFacing?: number;
+	private listenerPos = new THREE.Vector3();
+	private vocal: Record<string, SoundRef[]> = {};
+	private lastVocal = 0;
+	private totemCastAt = new Map<number, number>();
+	private totemPrecastAt?: { spellId: number; at: number; element: string };
+	private totemsShown = new Map<string, number>();
+	// While Ghost Wolf is up, playerView is the wolf and orcView your character.
+	private wolfView?: UnitView;
+	private orcView?: UnitView;
 	sounds?: Sounds;
 	effects?: Effects;
 	private aurasShown = '';
@@ -259,54 +280,142 @@ class PracticeRoom {
 		this.resize();
 		this.room.setFov(parseFloat(cvars.cameraFov ?? '90'));
 		this.bindEvents();
+		this.toolkitReady = new Promise(r => (this.toolkitResolve = r));
 		this.start();
-		this.loadModels();
 		requestAnimationFrame(t => this.frame(t));
+		await this.loadModels();
+		// What you did behind the loading screen doesn't count: the session starts over.
+		this.start();
 	}
 
-	// loadModels swaps the capsules for the real models, when the server can extract the client's
-	// files. A model that fails to load leaves its capsule.
-	loadModels() {
-		this.sounds = new Sounds(this.room.camera);
-		this.effects = new Effects(this.room.scene, this.sounds);
+	// loadModels loads every model, texture, animation and sound the room uses behind a loading
+	// screen, so nothing pops in mid fight. A model that fails to load leaves its capsule.
+	async loadModels() {
+		this.loadingModels = true;
+		const screen = document.createElement('div');
+		screen.className = 'loading';
+		screen.innerHTML = '<div class="loading-box"><div class="loading-text">Loading</div><div class="loading-bar"><div></div></div></div>';
+		this.root.append(screen);
+		const text = screen.querySelector('.loading-text') as HTMLElement;
+		const fill = screen.querySelector('.loading-bar > div') as HTMLElement;
+		const startAsked = fileProgress.asked;
+		const startDone = fileProgress.done;
+		let shown = 0;
+		const tick = () => {
+			if (!screen.isConnected) return;
+			const asked = fileProgress.asked - startAsked;
+			const done = fileProgress.done - startDone;
+			// The total grows as models name their textures, so the bar never runs backwards.
+			shown = Math.max(shown, asked > 0 ? done / asked : 0);
+			fill.style.width = `${(shown * 100).toFixed(1)}%`;
+			text.textContent = `Loading · ${done}/${asked} files`;
+			requestAnimationFrame(tick);
+		};
+		tick();
+
+		Model.camera = this.room.camera;
+		this.sounds = new Sounds(this.room.scene);
+		this.sounds.self = this.room.player;
+		const effects = new Effects(this.room.scene, this.sounds);
+		this.effects = effects;
+		const jobs: Promise<unknown>[] = [];
+
 		// Totems show their element's model (CreatureDisplayInfo 4587 to 4590).
 		const totemDisplays: Record<string, number> = { fire: 4589, earth: 4588, water: 4587, air: 4590 };
+		const totemLooks = new Map<string, Promise<Appearance | undefined>>();
+		for (const [element, display] of Object.entries(totemDisplays)) {
+			const look = getJSON<Appearance>(`/api/appearance/creature/${display}`).catch(() => undefined);
+			totemLooks.set(element, look);
+			jobs.push(look.then(a => (a ? new UnitView(new THREE.Group(), []).load(a).catch(() => undefined) : undefined)));
+		}
 		this.room.totemModel = async element => {
-			const display = totemDisplays[element];
-			if (!display) return undefined;
-			const a = await getJSON<Appearance>(`/api/appearance/creature/${display}`).catch(() => undefined);
+			const a = await totemLooks.get(element);
 			if (!a) return undefined;
 			const view = new UnitView(new THREE.Group(), []);
 			await view.load(a).catch(() => undefined);
 			return view.model as Model | undefined;
 		};
+
 		const look = this.loaded.look;
-		getJSON<MeleeSounds>(`/api/sounds/melee?weaponSubclass=${look?.weaponSubclass ?? -1}`)
-			.then(m => {
-				if (this.effects) this.effects.melee = m;
-			})
-			.catch(() => undefined);
+		jobs.push(
+			getJSON<MeleeSounds>(`/api/sounds/melee?weaponSubclass=${look?.weaponSubclass ?? -1}`)
+				.then(async m => {
+					effects.melee = m;
+					await Promise.all([m.swing, m.swingCrit, m.impact, m.impactCrit].map(k => this.sounds!.preload(k)));
+				})
+				.catch(() => undefined),
+		);
 		if (look?.race) {
 			const items = Object.entries(look.items)
 				.map(([slot, id]) => `${slot}:${id}`)
 				.join(',');
 			// The client's files don't say a character's sex, so it's a choice in the room (0 male).
 			const sex = Number(localStorage.getItem('practice.modelSex') ?? 0);
-			getJSON<Appearance>(`/api/appearance/character?race=${look.race}&sex=${sex}&class=${look.class}&items=${items}`)
-				.then(async a => {
-					const view = new UnitView(this.room.player, this.room.placeholders(this.room.player));
-					await view.load(a);
-					this.playerView = view;
-				})
-				.catch(e => console.warn('player model', e));
+			jobs.push(
+				getJSON<Record<string, SoundRef[]>>(`/api/sounds/vocal?race=${look.race}&sex=${sex}`)
+					.then(async v => {
+						this.vocal = v;
+						await Promise.all(Object.values(v).map(k => this.sounds!.preload(k)));
+					})
+					.catch(() => undefined),
+			);
+			// Drawing and sheathing the weapon: metal (1) or wood (2).
+			const wood = look.weaponMaterial === 2;
+			jobs.push(
+				Promise.all([wood ? 699 : 700, wood ? 697 : 698].map(id => getJSON<SoundRef[]>(`/api/sounds/kit/${id}`)))
+					.then(async ([draw, sheathe]) => {
+						effects.draw = draw;
+						effects.sheathe = sheathe;
+						await Promise.all([this.sounds!.preload(draw), this.sounds!.preload(sheathe)]);
+					})
+					.catch(() => undefined),
+			);
+			jobs.push(
+				getJSON<Appearance>(`/api/appearance/character?race=${look.race}&sex=${sex}&class=${look.class}&items=${items}`)
+					.then(async a => {
+						const view = new UnitView(this.room.player, this.room.placeholders(this.room.player), this.room.scene);
+						await view.load(a);
+						view.onSound = (kind, at) => effects.unitSound(kind, at);
+						this.playerView = view;
+						// Footsteps on plain ground, by the body's creature sounds.
+						const us = a.creatureDisplayId
+							? await getJSON<{ footsteps?: Record<string, SoundRef[]>; attack?: SoundRef[] }>(`/api/sounds/unit/${a.creatureDisplayId}`).catch(() => undefined)
+							: undefined;
+						effects.steps = us?.footsteps?.Grass ?? us?.footsteps?.Dirt ?? us?.footsteps?.Default;
+						effects.grunts = us?.attack;
+						await Promise.all([this.sounds!.preload(effects.steps), this.sounds!.preload(effects.grunts)]);
+					})
+					.catch(e => console.warn('player model', e)),
+			);
 		}
-		getJSON<Appearance>('/api/appearance/creature/dummy')
-			.then(async a => {
-				const view = new UnitView(this.room.dummy, this.room.placeholders(this.room.dummy));
-				await view.load(a);
-				this.dummyView = view;
-			})
-			.catch(e => console.warn('dummy model', e));
+		// Ghost Wolf's wolf (SpellShapeshiftForm 16, creature display 4613).
+		jobs.push(
+			getJSON<Appearance>('/api/appearance/creature/4613')
+				.then(async a => {
+					const wolf = new UnitView(new THREE.Group(), [], this.room.scene);
+					await wolf.load(a);
+					wolf.onSound = (kind, at) => effects.unitSound(kind, at);
+					this.wolfView = wolf;
+				})
+				.catch(e => console.warn('ghost wolf model', e)),
+		);
+		jobs.push(
+			getJSON<Appearance>('/api/appearance/creature/dummy')
+				.then(async a => {
+					const view = new UnitView(this.room.dummy, this.room.placeholders(this.room.dummy), this.room.scene);
+					await view.load(a);
+					this.dummyView = view;
+				})
+				.catch(e => console.warn('dummy model', e)),
+		);
+		jobs.push(
+			this.toolkitReady.then(() =>
+				effects.preload([...this.toolkit.spells.filter(s => s.kind !== 'item').map(s => s.spellId ?? 0).filter(id => id > 0), ...shownSpells]).catch(e => console.warn('effects', e)),
+			),
+		);
+		await Promise.all(jobs);
+		screen.remove();
+		this.loadingModels = false;
 	}
 
 	resize() {
@@ -378,6 +487,7 @@ class PracticeRoom {
 		extra.push(...(this.loaded.rotationSpells ?? []));
 		const names = await getJSON<SpellNames>(`/api/spells?ids=${[...ids, ...extra].join(',')}`).catch(() => ({}) as SpellNames);
 		this.toolkit = new Toolkit(spells, names);
+		this.toolkitResolve();
 		// Item names, for macros' /use lines, the keybind notes and the spellbook.
 		await Promise.all(
 			spells
@@ -485,6 +595,11 @@ class PracticeRoom {
 		for (const c of b.casts ?? []) {
 			this.addHistory(c.at, c.spellId, c.itemId);
 			this.animateCast(c.spellId);
+			// Fire Nova goes off around the fire totem.
+			if (c.totem && c.visualSpellId) {
+				this.totemCastAt.set(c.visualSpellId, this.now());
+				this.effects?.totemCast(c.visualSpellId, this.room.totemModels.get(c.totem), undefined, () => undefined);
+			}
 		}
 		if (b.pulled) {
 			this.pulledAt = 0;
@@ -494,7 +609,10 @@ class PracticeRoom {
 			const enemy = b.units.find(u => u.ref.kind === 'enemy');
 			if (enemy) this.dummyPos = enemy.pos;
 		}
-		if (this.player?.totems !== undefined) this.room.setTotems(this.player.totems ?? []);
+		if (this.player?.totems !== undefined) {
+			this.room.setTotems(this.player.totems ?? []);
+			this.showTotemBuffs(this.player.totems ?? []);
+		}
 		this.showAuras();
 		if (b.ended) {
 			this.running = false;
@@ -1115,6 +1233,12 @@ class PracticeRoom {
 	// ---- feedback ----
 
 	showError(text: string) {
+		// Your character says it too ("Not enough mana!"), at most once a second.
+		const voice = this.vocal[text];
+		if (voice && this.sounds && performance.now() - this.lastVocal > 1000) {
+			this.lastVocal = performance.now();
+			this.sounds.play(voice, undefined, 'vocal');
+		}
 		const box = this.hud.querySelector('.errors') as HTMLElement;
 		// Errors already on screen only flash (Forever's UIErrorsFrame rules).
 		const existing = [...box.children].find(c => c.textContent === text) as HTMLElement | undefined;
@@ -1206,13 +1330,18 @@ class PracticeRoom {
 		const wall = wallNow();
 		// Ghost Wolf runs 40% faster.
 		this.mover.speedFactor = this.player?.auras?.some(a => a.spellId === 2645) ? 1.4 : 1;
-		if (this.running) this.mover.step(dt, wall);
+		if (this.running && !this.loadingModels) this.mover.step(dt, wall);
 		const m = this.mover.move;
 		const h = this.mover.height(wall);
 		this.room.setUnit(this.room.player, m.pos, m.facing, h);
 		this.room.setUnit(this.room.dummy, this.dummyPos, (3 * Math.PI) / 2);
 		this.room.setTargeted(this.hasTarget);
 		this.room.placeCamera(m.pos, h, this.mover.cam);
+		if (this.sounds) {
+			this.room.player.getWorldPosition(this.listenerPos);
+			this.listenerPos.y += 2;
+			this.sounds.place(this.listenerPos, this.room.camera);
+		}
 		this.animateUnits(dt, wall);
 		this.room.render();
 		this.updateHud();
@@ -1228,36 +1357,115 @@ class PracticeRoom {
 		const forward = m.velocity[0] * cos + m.velocity[1] * sin;
 		const left = -m.velocity[0] * sin + m.velocity[1] * cos;
 		const cast = this.player?.cast;
-		if (cast && cast.spellId !== this.castShown && cast.end > this.now()) {
-			this.castShown = cast.spellId;
+		const now = this.now();
+		const shown = this.castShown;
+		if (shown && (!cast || cast.spellId !== shown.spellId || cast.start !== shown.start)) {
+			this.castShown = undefined;
+			// A cast that ran its full time goes off. One that stopped early was cancelled.
+			if (now >= shown.end - 150) this.releaseCast(shown.spellId);
+			else {
+				this.playerView?.castStop();
+				this.effects?.castStop();
+			}
+		}
+		if (cast && !this.castShown && cast.end > now) {
+			this.castShown = { spellId: cast.spellId, start: cast.start, end: cast.end };
 			const view = this.playerView;
 			view?.castStart();
 			this.effects?.castStart(cast.spellId, view).then(anim => {
-				if (anim && this.castShown === cast.spellId) view?.castStart(anim);
+				if (anim && this.castShown?.start === cast.start) view?.castStart(anim);
 			});
-		} else if (!cast && this.castShown !== undefined) {
-			this.castShown = undefined;
-			this.playerView?.castStop();
-			this.effects?.castStop();
+		} else if (cast && this.castShown) {
+			// Pushback moves the end.
+			this.castShown.end = cast.end;
+		}
+		const tp = this.totemPrecastAt;
+		if (tp && now >= tp.at) {
+			this.totemPrecastAt = undefined;
+			this.effects?.totemPrecast(tp.spellId, this.room.totemModels.get(tp.element));
 		}
 		this.effects?.update(dt);
 		this.room.animate(dt);
-		this.playerView?.update(dt, { forward, left, airborne: this.mover.airborne(wall), walking: false }, !!this.player?.attackOn);
+		// The facing's turn rate, for the shuffle when turning in place.
+		const turn = this.lastFacing === undefined || dt <= 0 ? 0 : Math.atan2(Math.sin(m.facing - this.lastFacing), Math.cos(m.facing - this.lastFacing)) / dt;
+		this.lastFacing = m.facing;
+		this.playerView?.update(dt, { forward, left, turn, airborne: this.mover.airborne(wall), walking: false }, !!this.player?.attackOn);
 		this.dummyView?.update(dt, { forward: 0, left: 0, airborne: false, walking: false }, false);
 	}
 
 	animateHit(h: HitEvent) {
+		if (h.source === 'totem') {
+			this.animateTotemHit(h);
+			return;
+		}
 		if (h.source !== 'player') return;
 		const moving = Math.hypot(...this.mover.move.velocity) > 0.1;
 		const landed = h.outcome !== 'miss' && h.outcome !== 'dodge' && h.outcome !== 'parry';
+		const crit = h.outcome === 'crit';
+		const white = h.otherId === 7;
+		const spell = h.spellId ? this.toolkit?.spells.find(s => s.spellId === h.spellId) : undefined;
+		// What happens when the blow lands: the impact sound and effect and the dummy's flinch.
+		const connect = () => {
+			// A melee ability hits with the weapon too (Stormstrike's two blows).
+			if (white || spell?.melee) this.effects?.impact(this.dummyView?.model?.root, crit, landed);
+			if (white) {
+				// Nothing more: the white swing has no spell effect.
+			} else if (h.spellId && !h.periodic && landed) this.effects?.spellImpact(h.visualSpellId ?? h.spellId, this.dummyView, this.playerView);
+			if (landed && !h.periodic) this.dummyView?.wound(crit);
+		};
+		const view = this.playerView;
+		if (view && landed && (crit || spell?.melee) && !h.periodic) this.effects?.grunt(view.model?.root);
+		// A melee blow lands when the swing gets there (the animation's $HIT), not when it starts.
 		// White swings are "other action 7", tag 1 for the main hand and 2 for the off hand.
-		if (h.otherId === 7) {
-			this.playerView?.swing(h.tag === 2, moving);
-			this.effects?.swing(this.dummyView?.model?.root, h.outcome === 'crit', landed);
-		} else if (h.spellId && !h.periodic && landed) {
-			this.effects?.impact(h.spellId, this.dummyView, this.playerView);
+		if (white && view) {
+			view.swing(h.tag === 2, moving);
+			view.onHit(connect);
+		} else if (spell?.melee && !h.periodic && view) view.onHit(connect);
+		else connect();
+	}
+
+	// animateTotemHit shows a totem's attack: the Searing Totem's bolt flying from the totem, the
+	// Magma Totem's pulse and Fire Nova's ring around the totem, and the hit on the dummy.
+	animateTotemHit(h: HitEvent) {
+		const spellId = h.visualSpellId ?? h.spellId;
+		if (!spellId || !this.effects) return;
+		const totem = this.room.totemModels.get(h.totem ?? 'fire');
+		const landed = h.outcome !== 'miss' && h.outcome !== 'dodge' && h.outcome !== 'parry' && h.outcome !== 'resist';
+		const land = () => {
+			if (!landed) return;
+			this.effects?.spellImpact(spellId, this.dummyView, undefined);
+			if (!h.periodic) this.dummyView?.wound(h.outcome === 'crit');
+		};
+		// One cast on the totem per pulse, however many targets it hits.
+		const now = this.now();
+		if (now - (this.totemCastAt.get(spellId) ?? -1e9) > 400) {
+			this.totemCastAt.set(spellId, now);
+			this.effects.totemCast(spellId, totem, this.dummyView?.model, land);
+		} else land();
+		// The Searing Totem casts its next bolt for 2.2s before it lands.
+		if (h.nextAt) this.totemPrecastAt = { spellId, at: h.nextAt - 2200, element: h.totem ?? 'fire' };
+	}
+
+	// showTotemBuffs plays a new totem's buff on you (the glow at your feet), by the buff spell's
+	// visual. The sim's totem auras carry the summon spell, so we pick the buff by the totem's name.
+	showTotemBuffs(totems: { element: string; spellId: number }[]) {
+		const buffs: Record<string, number> = {
+			'Strength of Earth Totem': 25362,
+			'Stoneskin Totem': 25362,
+			'Grace of Air Totem': 25360,
+			'Healing Stream Totem': 25362,
+			'Mana Spring Totem': 10494,
+			'Windfury Totem': 10610,
+		};
+		const seen = new Set<string>();
+		for (const t of totems) {
+			seen.add(t.element);
+			if (this.totemsShown.get(t.element) === t.spellId) continue;
+			this.totemsShown.set(t.element, t.spellId);
+			const buff = buffs[this.toolkit?.names[t.spellId]?.name ?? ''];
+			if (buff) this.effects?.buffBurst(buff, this.playerView);
 		}
-		if (landed && !h.periodic) this.dummyView?.wound();
+		for (const e of [...this.totemsShown.keys()]) if (!seen.has(e)) this.totemsShown.delete(e);
 	}
 
 	// showAuras keeps your auras' effects and your imbue's glow in step with the session.
@@ -1265,22 +1473,52 @@ class PracticeRoom {
 		const p = this.player;
 		if (!p || !this.effects) return;
 		const ids = (p.auras ?? []).map(a => a.spellId ?? 0).filter(id => id > 0);
+		this.setGhostWolf(ids.includes(2645));
 		const key = ids.join(',');
 		if (key !== this.aurasShown) {
 			this.aurasShown = key;
 			this.effects.setAuras(ids, this.playerView);
 		}
-		this.effects.setImbue(p.mainHandImbue, this.playerView?.mainHand());
+		this.effects.setImbue('main', p.mainHandImbue, this.playerView?.mainHand());
+		this.effects.setImbue('off', p.offHandImbue, this.playerView?.offHand());
+	}
+
+	// animateCast plays a spell going off. A spell with a cast time reports at its start, so it
+	// goes off later, when its cast runs out (animateUnits).
+	// setGhostWolf swaps your character for the wolf while Ghost Wolf is up.
+	setGhostWolf(on: boolean) {
+		const wolf = this.wolfView;
+		if (!wolf || on === !!this.orcView) return;
+		if (on) {
+			this.orcView = this.playerView;
+			if (this.orcView?.model) this.orcView.model.root.visible = false;
+			this.room.player.add(wolf.group);
+			this.playerView = wolf;
+		} else {
+			wolf.group.removeFromParent();
+			this.playerView = this.orcView;
+			if (this.playerView?.model) this.playerView.model.root.visible = true;
+			this.orcView = undefined;
+		}
 	}
 
 	animateCast(spellId?: number) {
+		if (!spellId) return;
+		const cast = this.player?.cast;
+		if (cast && cast.spellId === spellId && cast.end > this.now()) return;
+		this.releaseCast(spellId);
+	}
+
+	releaseCast(spellId: number) {
 		const view = this.playerView;
-		if (!spellId || !view) return;
+		if (!view) return;
 		const spell = this.toolkit?.spells.find(s => s.spellId === spellId);
 		if (!spell || spell.kind === 'item') return;
 		const moving = Math.hypot(...this.mover.move.velocity) > 0.1;
-		this.castShown = undefined;
 		this.effects?.cast(spellId, view, this.dummyView).then(v => {
+			// A spell that does no damage (a shield, an imbue, a heal) has no hit to play its
+			// impact on, so it plays on you as it goes off.
+			if (v && !spell.harmful) this.effects?.spellImpact(spellId, view, view);
 			const anim = v?.anims.cast ?? undefined;
 			if (spell.melee) view.swing(false, moving, true, anim);
 			else view.castEnd(anim, moving);

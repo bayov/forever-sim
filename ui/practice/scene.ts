@@ -40,7 +40,9 @@ export class Room {
 	private ring: THREE.Mesh;
 	private meleeRing: THREE.Mesh;
 	private totems = new Map<string, THREE.Group>();
-	private totemModels = new Map<string, Model>();
+	readonly totemModels = new Map<string, Model>();
+	private dying: { model: Model; group: THREE.Group; until: number }[] = [];
+	private clock = 0;
 	// totemModel loads a totem's real model by its element, when the client's files are there.
 	totemModel?: (element: string) => Promise<Model | undefined>;
 	private readonly raycaster = new THREE.Raycaster();
@@ -61,8 +63,10 @@ export class Room {
 		this.scene.fog = new THREE.Fog(0x87a7c4, 60, 160);
 		this.camera = new THREE.PerspectiveCamera(70, 1, 0.1, 500);
 
-		this.scene.add(new THREE.HemisphereLight(0xdde8ff, 0x445533, 1.4));
-		const sun = new THREE.DirectionalLight(0xffffff, 1.6);
+		// The client lights models with one ambient color plus the sun (about 0.45 and 0.75 outdoors).
+		// Lambert divides by pi, so the intensities carry a pi.
+		this.scene.add(new THREE.AmbientLight(0xffffff, 0.45 * Math.PI));
+		const sun = new THREE.DirectionalLight(0xfff2e0, 0.75 * Math.PI);
 		sun.position.set(30, 60, 20);
 		sun.castShadow = true;
 		sun.shadow.camera.left = sun.shadow.camera.bottom = -40;
@@ -155,6 +159,8 @@ export class Room {
 					pole.visible = false;
 					group.add(m.root);
 					m.enableParticles(this.scene);
+					// It rises out of the ground (Birth), then stands.
+					if (m.has(127)) m.play(127, { loop: false, fade: 0, restart: true });
 					this.totemModels.set(t.element, m);
 				});
 			}
@@ -162,10 +168,18 @@ export class Room {
 		}
 		for (const [element, g] of this.totems) {
 			if (!seen.has(element)) {
-				this.scene.remove(g);
 				this.totems.delete(element);
-				this.totemModels.get(element)?.dispose();
+				const m = this.totemModels.get(element);
 				this.totemModels.delete(element);
+				// It plays its death (it sinks away) before it goes.
+				if (m && m.has(1)) {
+					const seq = m.play(1, { loop: false, fade: 100, restart: true });
+					m.emitting = false;
+					this.dying.push({ model: m, group: g, until: this.clock + (m.m2.sequences[seq]?.duration ?? 0) / 1000 });
+				} else {
+					this.scene.remove(g);
+					m?.dispose();
+				}
 			}
 		}
 	}
@@ -206,7 +220,20 @@ export class Room {
 
 	// animate moves the totems' own animations and particles on.
 	animate(dt: number) {
-		for (const m of this.totemModels.values()) m.update(dt);
+		this.clock += dt;
+		for (const m of this.totemModels.values()) {
+			if (m.baseAnim === 127 && m.baseDone) m.play(0, { loop: true, fade: 150 });
+			m.update(dt);
+		}
+		this.dying = this.dying.filter(d => {
+			if (this.clock < d.until) {
+				d.model.update(dt);
+				return true;
+			}
+			this.scene.remove(d.group);
+			d.model.dispose();
+			return false;
+		});
 	}
 
 	render() {
