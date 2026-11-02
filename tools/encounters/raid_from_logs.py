@@ -131,6 +131,7 @@ def main():
         h = m
         d['raidHealing'] = {
             'raidSize': round(h['players_median']), 'tanks': round(h['tanks_median']),
+            'addTanks': round(h['add_tanks_median']), 'dtpsAddTanks': round(h['dtps_add_tanks_total']),
             'healers': round(h['healers_median']), 'healersRange': [h['healers_min'], h['healers_max']],
             'healerClasses': {k: round(v, 2) for k, v in sorted(h['healer_classes'].items(), key=lambda x: -x[1])},
             'hpsEachHealer': round(h['hps_each_median']),
@@ -142,7 +143,8 @@ def main():
             'killsWithoutDeath': f'{h["deathless_fights"]}/{h["fights"]}',
             'fightSeconds': [round(h['seconds_p10']), round(h['seconds_median']), round(h['seconds_p90'])],
             'notes': (f'What {site["label"]} raids had on {m["name"]} ({m["fights"]} kills, Warcraft Logs): the median kill\'s '
-                      f'raid of {h["players_median"]:.0f} with {h["tanks_median"]:.0f} tanks the boss swung at, '
+                      f'raid of {h["players_median"]:.0f} with {h["tanks_median"]:.0f} tanks ({h["add_tanks_median"]:.0f} of them on adds, '
+                      f'who took {fmt(h["dtps_add_tanks_total"])} a second together, not in the events), '
                       f'{h["healers_median"]:.0f} healers by Warcraft Logs\' healer role ({100 * h["healers_share"]:.0f}% of the healing), '
                       f'each {fmt(h["hps_each_median"])} HPS with overheal. The raid healed {fmt(h["hps_effective"])} a second '
                       f'({fmt(h["hps_tanks_effective"])} on the tanks, {fmt(h["hps_others_effective"])} on the rest, '

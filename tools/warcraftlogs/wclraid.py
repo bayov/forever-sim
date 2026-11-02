@@ -71,8 +71,6 @@ def raid_fight(code, fight_id):
         return None
     actors = {x['id']: x for x in meta['masterData']['actors']}
     players = {i for i in fight.get('friendlyPlayers') or [] if actors.get(i, {}).get('type') == 'Player'}
-    if len(players) < 0.8 * (fight.get('size') or 0):
-        return None  # a log of part of the raid: its damage and healing would be part of the fight's
     bosses = {n['id'] for n in fight.get('enemyNPCs') or [] if actors.get(n['id'], {}).get('subType') == 'Boss'}
     taken = [e for e in wcl.events(code, fight_id, data_type='DamageTaken')
              if e['type'] == 'damage' and e.get('targetID') in players]
@@ -82,6 +80,17 @@ def raid_fight(code, fight_id):
         return None
     total = sum(swings.values())
     tanks = {t for t, n in swings.items() if n >= 0.05 * total}
+    # Who tanked an add (Golemagg's Core Ragers, a Son of Flame): 30% or more of the white swings of an
+    # enemy that swung 10 times or more. They're tanks too, so the rest is what raid healers face.
+    add_swings = collections.defaultdict(collections.Counter)
+    for e in taken:
+        src = actors.get(e.get('sourceID'), {})
+        if e.get('abilityGameID') == WHITE and e.get('sourceID') not in bosses and src.get('type') == 'NPC' \
+                and not src.get('petOwner'):
+            add_swings[e['sourceID']][e['targetID']] += 1
+    add_tanks = {t for c in add_swings.values() if sum(c.values()) >= 10
+                 for t, n in c.items() if n >= 0.3 * sum(c.values())} - tanks
+    tanks |= add_tanks
     deaths = [e for e in wcl.events(code, fight_id, data_type='Deaths')
               if e['type'] == 'death' and e.get('targetID') in players]
     roles = player_details(code, fight_id)
@@ -90,7 +99,7 @@ def raid_fight(code, fight_id):
     return {'code': code, 'fight': fight_id, 'encounter': fight['encounterID'], 'name': fight['name'],
             'kill': fight.get('kill'), 'size': fight.get('size'), 'start': fight['startTime'],
             'seconds': (fight['endTime'] - fight['startTime']) / 1000,
-            'players': players, 'tanks': tanks, 'bosses': bosses, 'taken': taken, 'deaths': deaths,
+            'players': players, 'tanks': tanks, 'add_tanks': add_tanks, 'bosses': bosses, 'taken': taken, 'deaths': deaths,
             'roles': roles, 'heal_sources': by_source.get('entries', []),
             'heal_targets': by_target.get('entries', []),
             'names': {x['gameID']: x['name'] for x in meta['masterData']['abilities']},
@@ -124,15 +133,24 @@ def summarize(name, enc, fs, top):
     print(f'fight length: median {med(secs):.0f} s (10th to 90th percentile {pct(secs, .1):.0f} to {pct(secs, .9):.0f})')
     ntank = [len(f['tanks']) for f in fs]
     nplay = [len(f['players']) for f in fs]
-    print(f'players: median {med(nplay):.0f}; tanks the bosses swung at (5%+ of swings): median {med(ntank):.0f} '
+    print(f'players: median {med(nplay):.0f}; tanks (5%+ of the bosses\' swings, or 30%+ of an add\'s): median {med(ntank):.0f} '
           f'(range {min(ntank)}-{max(ntank)})')
 
     # Damage on the players who aren't tanks, by ability.
+    def friendly(f, e):
+        src = f['actors'].get(e.get('sourceID'), {})
+        return src.get('type') == 'Player' or bool(src.get('petOwner')) or e.get('sourceID') == e['targetID']
+
     others_secs = sum(f['seconds'] * len(f['players'] - f['tanks']) for f in fs)
-    dmg_others = sum(landed(e) for f in fs for e in f['taken'] if e['targetID'] not in f['tanks'])
-    dmg_tanks = sum(landed(e) for f in fs for e in f['taken'] if e['targetID'] in f['tanks'])
+    # The players' own damage (runes, sapper charges, friendly fire) isn't the boss's to heal.
+    dmg_others = sum(landed(e) for f in fs for e in f['taken'] if e['targetID'] not in f['tanks'] and not friendly(f, e))
+    dmg_tanks = sum(landed(e) for f in fs for e in f['taken'] if e['targetID'] in f['tanks'] and not friendly(f, e))
+    dmg_friendly = sum(landed(e) for f in fs for e in f['taken'] if friendly(f, e))
+    nadd = [len(f['add_tanks']) for f in fs]
+    add_dmg = sum(landed(e) for f in fs for e in f['taken'] if e['targetID'] in f['add_tanks'] and not friendly(f, e))
     print(f'damage taken: {dmg_others / tot_secs:.0f} a second on the non-tanks together, '
-          f'{dmg_others / max(others_secs, 1):.1f} a second each; {dmg_tanks / tot_secs:.0f} a second on the tanks together')
+          f'{dmg_others / max(others_secs, 1):.1f} a second each; {dmg_tanks / tot_secs:.0f} a second on the tanks together '
+          f'({add_dmg / tot_secs:.0f} of it on add tanks, median {med(nadd):.0f}); the players\' own {dmg_friendly / tot_secs:.0f} a second left out')
     abil = collections.defaultdict(list)  # (ability, source name, tick) -> [(fight, event)]
     for f in fs:
         for e in f['taken']:
@@ -140,7 +158,7 @@ def summarize(name, enc, fs, top):
                 continue
             src = f['actors'].get(e.get('sourceID'), {})
             sname = src.get('name') or ('Environment' if e.get('sourceID', -1) == -1 else '?')
-            if src.get('type') == 'Player' or src.get('petOwner') or e.get('sourceID') == e['targetID']:
+            if friendly(f, e):
                 sname = 'friendly'
             abil[(e.get('abilityGameID'), sname, bool(e.get('tick')))].append((f, e))
     # A player's own damage on themselves (Seal of Martyrdom, Life Tap) shows up as from the
@@ -149,7 +167,10 @@ def summarize(name, enc, fs, top):
     for (ab, src, tick), fe in abil.items():
         amt = sum(landed(e) for _, e in fe)
         cls = collections.Counter(f['actors'].get(e['targetID'], {}).get('subType') for f, e in fe)
-        if src in ('Environment', 'friendly', '?') and cls.most_common(1)[0][1] >= 0.95 * len(fe):
+        if src == 'friendly':
+            dropped.append(f'{fs[0]["names"].get(ab, ab)} ({100 * amt / max(dmg_others, 1):.1f}%)')
+            continue
+        if src in ('Environment', '?') and cls.most_common(1)[0][1] >= 0.95 * len(fe):
             dropped.append(f'{fs[0]["names"].get(ab, ab)} ({cls.most_common(1)[0][0]}, {100 * amt / max(dmg_others, 1):.1f}%)')
             continue
         rows.append((amt, ab, src, tick, fe))
@@ -259,7 +280,8 @@ def summarize(name, enc, fs, top):
             'seconds_median': med(secs), 'seconds_p10': pct(secs, .1), 'seconds_p90': pct(secs, .9),
             'players_median': med(nplay), 'tanks_median': med(ntank),
             'dtps_others_total': dmg_others / tot_secs, 'dtps_others_each': dmg_others / max(others_secs, 1),
-            'dtps_tanks_total': dmg_tanks / tot_secs, 'abilities': out_abil,
+            'dtps_tanks_total': dmg_tanks / tot_secs, 'dtps_add_tanks_total': add_dmg / tot_secs,
+            'add_tanks_median': med(nadd), 'dtps_friendly_total': dmg_friendly / tot_secs, 'abilities': out_abil,
             'deaths_others_mean': statistics.mean(d_other), 'deaths_tanks_mean': statistics.mean(d_tank),
             'deathless_fights': sum(1 for a, b in zip(d_tank, d_other) if a + b == 0),
             'killers': dict(killers.most_common(10)),
@@ -307,6 +329,14 @@ def cmd_raid(a, load_sample, fight_ranges):
         by_enc[(f['encounter'], f['name'])].append(f)
     out = {}
     for (enc, name), fs in sorted(by_enc.items()):
+        # A log of part of the raid (a logger who saw only the players near them) has part of the
+        # fight's damage and healing. The size Warcraft Logs gives is the instance's (40 for Season of
+        # Discovery's Onyxia, done by 20), so the line is the encounter's median kill instead.
+        line = 0.8 * med([len(f['players']) for f in fs])
+        partial = [f for f in fs if len(f['players']) < line]
+        fs = [f for f in fs if len(f['players']) >= line]
+        if partial:
+            print(f'{name}: left out {len(partial)} logs with under {line:.0f} players (part of the raid)', file=sys.stderr)
         out[str(enc)] = summarize(name, enc, fs, a.top)
     out['_site'] = wcl.SITE
     if stopped:
