@@ -16,6 +16,9 @@ Make an API client at https://www.warcraftlogs.com/api/clients/ (any name, redir
 {"client_id": "...", "client_secret": "..."}
 ```
 
+Or set `WCL_CLIENT_ID` and `WCL_CLIENT_SECRET` in the environment, as a cloud session's
+environment variables.
+
 ## Going easy on the API
 
 Every client gets 3600 points an hour. A report's fights, actors and abilities cost about 2
@@ -63,10 +66,33 @@ $W glance sod_enh.json
 
 # Procs per landed hit, per minute and as PPM.
 $W procrate sod_enh.json --ability 408505 --triggers 1,17364,408507
+
+# What each boss does to its main tank, and the healing the tank takes (docs/tank_sim.md).
+# Sample boss fights first, from any spec's rankings: only the fights matter, not the player.
+$W --site vanilla sample -o mc.json --class Priest --spec Holy --encounter 663 --encounter 664 --per-encounter 10
+$W tank mc.json -o mc_tank.json
 ```
 
 The analysis commands take `--limit N` to read only the first N entries of a sample. That's
 useful for a first look that costs little.
+
+### Tank profiles
+
+`tank` reads two things a fight past the report's own (about 3 points): the bosses' damage done
+(asked for as enemies), and every event on the main tank, the player the bosses swung at most,
+for its damage and healing taken. By
+encounter it prints the boss's white swings on that tank (a second, the median gap, outcomes,
+hit size after armor and `unmitigatedAmount`), each boss ability on it, the tank's damage taken
+a second, and its healing taken: effective, with overheal, absorbs, heals a second, the healers
+with 5% or more of it, and the top heal spells. Kills only, unless `--wipes`. Written
+2026-11-02 without API access, so checked only on made-up events: the first real run should
+check that the bosses' damage comes back (`hostilityType: Enemies`) and that the events on the
+main tank include `heal` and `absorbed` events with `overheal`. With tank swaps the rates are over
+the whole fight, so they understate the main tank's share.
+
+The source order for tank and healing numbers (the user, 2026-11-02): Season of Discovery logs
+first, then the Anniversary realms (Vanilla, then TBC), then Classic Era, then private server
+cores (vmangos).
 
 ### How procs are counted
 

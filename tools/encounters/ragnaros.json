@@ -1,0 +1,103 @@
+{
+ "name": "Ragnaros",
+ "source": "[core: vmangos] Melee 1,999 to 2,650 a 2.8 s swing before armor: vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 18.2. a 2006 Molten Core full clear from Blizzard's servers in WWS format (web.mit.edu/cat/project/WoW/MCDump200609/), hits after armor: 152 hits, 1,102 average after armor. Elemental Fire 20564: on every landed melee hit, 2,160 to 2,640 Fire and 600 Fire a second for 8 s (Wowhead confirms the duration), the log's hits 693 and ticks 172 average on a tank in fire resistance gear.",
+ "reports": [],
+ "warcraftLogs": {
+  "encounter": 672,
+  "zone": "Molten Core"
+ },
+ "notes": "Elemental Fire comes from every landed hit, blocked ones too (proc aura 20563, client data; the 2006 log has 139 Elemental Fire hits to 152 melee hits), so the sim gives it every 2.8 / 0.65 = 4.3 s on average (about 65% of swings land on a pre-raid warrior). Its DoT is 8 ticks of 600. Fire resistance from gear and buffs takes its share. Wrath of Ragnaros (every 25 to 30 s, 1,000 Fire and a knockback that wipes threat, so a second tank picks him up) and the submerge phase are left out: one tank's stint between knockbacks is what's scored.",
+ "encounter": {
+  "duration": 180,
+  "durationVariation": 20,
+  "targets": [
+   {
+    "name": "Ragnaros",
+    "level": 63,
+    "mobType": "MobTypeUnknown",
+    "parryHaste": true,
+    "stats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     805.0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3625,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "minBaseDamage": 1508.8,
+    "damageSpread": 0.4315,
+    "swingSpeed": 2.8
+   }
+  ],
+  "raidDamage": [
+   {
+    "spellId": 20564,
+    "school": "SpellSchoolFire",
+    "minDamage": 2160,
+    "maxDamage": 2640,
+    "who": "BossTarget",
+    "firstAt": 3,
+    "everySeconds": 4.3,
+    "spreadSeconds": 0,
+    "randomTiming": true
+   },
+   {
+    "spellId": 20564,
+    "school": "SpellSchoolFire",
+    "minDamage": 600,
+    "maxDamage": 600,
+    "who": "BossTarget",
+    "firstAt": 3,
+    "everySeconds": 4.3,
+    "spreadSeconds": 0,
+    "randomTiming": true,
+    "ticks": 8,
+    "tickSeconds": 1
+   }
+  ]
+ },
+ "healing": {
+  "healers": 4,
+  "hpsEach": 400,
+  "castSeconds": 2.0,
+  "notes": "A 40-player Molten Core raid's main tank: 4 healers at 400 HPS each on it in 2 s heals (800 a heal), a mix of paladins on Flash of Light rank 6 (about 600 at 400 healing power) and priests on Greater Heal rank 4 or downranked Heal. 1,600 HPS before overheal, 2.4 times an assumed 650 DTPS, the Classic Era Molten Core logs' ratio (wowsims/forever). Not from logs yet: replace with tools/warcraftlogs tank numbers."
+ }
+}

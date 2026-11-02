@@ -7,7 +7,7 @@ hist: 2886 rows, 154 KB
 stats: 743 rows, 62 KB
 gear: 718 rows, 136 KB
 setup: 2146 rows, 535 KB
-notes: 1673 rows, 200 KB
+notes: 1675 rows, 200 KB
 race_variants: 934 rows, 283 KB
 race_breakdown: 1156 rows, 174 KB
 race_summary: 328 rows, 100 KB
@@ -18,10 +18,12 @@ mana_summary: 51 rows, 15 KB
 assumptions: 57 rows, 63 KB
 WARNING assumptions: 1 texts name the project's process, e.g. 'Forever client 70707 (SpellCooldowns 101119, spell 1312002). foreverchanges.pro, build 1.60.1.70707. User ruling 2026-10-30.'
 assumption_dps: 343 rows, 57 KB
-rotation: 762 rows, 239 KB
+rotation: 752 rows, 235 KB
 race_rotation: 419 rows, 152 KB
-WARNING rotation: 3 rotation_text.json entries no line uses, e.g. [[tal:Mage:1:11|Heating Up]] talent taken and Heating Up at 3+ stacks and ([[tal:Mage:2:15|Fingers of Frost]] talent not taken or Fingers of Frost is not up or Pyroblast takes 1.49s or more to cast)
-WARNING rotation: 9 rotation_text.json why entries no line uses, e.g. {'builds': ['paladin__level_60_sub_holy'], 'key': 's20293', 'when': 'at 2+ stacks', 'why': "Why swap at 2 echoes instead of 3? Windfury's extra swing can waste an echo."}
+WARNING rotation: 1 rotation_text.json notes entries no line uses, e.g. Backstab.
+WARNING rotation: 1 conditions read like code, with no wording in rotation_text.json, e.g. (any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 1s left and over 9s of the fight left) or (5+ combo points and Adrenaline Rush is ready and Adrenaline Rush can still be used this fight and Slice and Dice's time left and Adrenaline Rush's cooldown add up to under 1s)
+WARNING rotation: 4 rotation_text.json entries no line uses, e.g. (within 0.25s after a main-hand swing or in the last 6s of the fight) and (Vanish is not ready or in the last 10s of the fight or 4+ combo points or Slice and Dice is not up)
+WARNING rotation: 10 rotation_text.json why entries no line uses, e.g. {'builds': ['paladin__level_60_sub_holy'], 'key': 's20293', 'when': 'at 2+ stacks', 'why': "Why swap at 2 echoes instead of 3? Windfury's extra swing can waste an echo."}
 rotation conditions shown in compact form: []
 tooltips: 1111 rows, 440 KB
 tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit', "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]

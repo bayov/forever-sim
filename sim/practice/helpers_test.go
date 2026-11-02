@@ -75,6 +75,9 @@ func (d *driver) wait(dt time.Duration) []*Batch {
 	for {
 		d.s.Advance(target + 1)
 		b := d.s.TakeBatch()
+		// The worker builds the next swap's sim in idle time. Replays build theirs on the spot,
+		// so the replay tests also check that a spare sim plays the same.
+		d.s.PrepareSpare()
 		batches = append(batches, b)
 		if b.Rebase != nil {
 			target += fromMs(b.Rebase.ShiftMs)

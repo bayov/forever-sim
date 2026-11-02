@@ -93,3 +93,25 @@ func TestRealClientFiles(t *testing.T) {
 		}
 	}
 }
+
+// The class keybind notes give each key's planned spell, by WoW's key names.
+func TestNoteBinds(t *testing.T) {
+	golden(t, "note_binds", testClient(t).noteBinds("SHAMAN"))
+}
+
+// The real notes and EllesmereUI profile read, when this PC has them.
+func TestRealUIFiles(t *testing.T) {
+	c, err := findClient("/mnt/d/Gaming/World of Warcraft")
+	if err != nil {
+		t.Skip("no WoW client here")
+	}
+	binds := c.noteBinds("SHAMAN")
+	t.Logf("%d shaman note binds, SHIFT-Q is %q", len(binds), binds["SHIFT-Q"])
+	for _, account := range c.accounts() {
+		if ui := c.ellesmereUI(account); ui != nil {
+			if ui["actionBars"] == nil || ui["unitFrames"] == nil {
+				t.Errorf("%s: EllesmereUI profile %v has no bars or unit frames", account, ui["profile"])
+			}
+		}
+	}
+}

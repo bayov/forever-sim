@@ -301,6 +301,8 @@ func (env *Environment) setupAttackTables() {
 				}
 			} else {
 				attacker.AttackTables[idx][proto.CastType_CastTypeMainHand] = NewAttackTable(attacker, defender, nil)
+				// A dual wielding boss's off hand swings roll the same table.
+				attacker.AttackTables[idx][proto.CastType_CastTypeOffHand] = attacker.AttackTables[idx][proto.CastType_CastTypeMainHand]
 			}
 
 			// An enemy player is not a mob, so white hits on it never glance.

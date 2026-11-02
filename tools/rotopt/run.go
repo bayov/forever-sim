@@ -10,6 +10,7 @@ import (
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/tools/tankscore"
 	"google.golang.org/protobuf/encoding/protojson"
 	goproto "google.golang.org/protobuf/proto"
 )
@@ -98,13 +99,26 @@ type result struct {
 
 	// A leveling session's results (leveling.go), where dps above is the score.
 	leveling *proto.LevelingMetrics
+
+	// With -tank, the tank score, whose value is dps above.
+	tank *tankscore.Score
 }
+
+// tankObjective scores the player as a tank (-tank), nil for DPS.
+var tankObjective *tankscore.Objective
 
 func (r result) String() string {
 	if r.leveling != nil {
 		return levelingString(r)
 	}
 	out := fmt.Sprintf("%.1f(%.1f)", r.dps, r.stderr)
+	if t := r.tank; t != nil {
+		needed := "none works"
+		if t.Needed >= 0 {
+			needed = fmt.Sprintf("%.0f(%.0f)", t.Needed, t.NeededErr)
+		}
+		out += fmt.Sprintf(" SafeDPS %.0f(%.0f) healing needed %s death floor %.1f%%", t.SafeDps, t.SafeDpsErr, needed, 100*t.DeathFloor)
+	}
 	if r.mana != 0 {
 		out += fmt.Sprintf(" mana %.0f(%.0f) tto %.0fs", r.mana, r.manaStderr, r.tto)
 	}
@@ -141,6 +155,12 @@ func simulate(request *proto.RaidSimRequest) (result, error) {
 	}
 	player := res.RaidMetrics.Parties[0].Players[0]
 	n := math.Sqrt(float64(iterations))
+	if tankObjective != nil {
+		// The tank objective takes DPS's place, so every search maximizes it.
+		score := tankObjective.Score(player, iterations)
+		return result{dps: score.Value, stderr: score.StdErr, tank: &score,
+			mana: player.ManaEnd.GetAvg(), manaStderr: player.ManaEnd.GetStdev() / n, tto: player.Tto.GetAvg()}, nil
+	}
 	return result{
 		dps: player.Dps.Avg, stderr: player.Dps.Stdev / n,
 		mana: player.ManaEnd.GetAvg(), manaStderr: player.ManaEnd.GetStdev() / n,

@@ -753,6 +753,10 @@ func (aa *AutoAttacks) EnableAutoSwing(sim *Simulation) {
 	if !aa.AutoSwingMelee && !aa.AutoSwingRanged {
 		return
 	}
+	// A player that died in a healing fight (player_death.go).
+	if aa.mh.unit != nil && aa.mh.unit.dead && aa.mh.unit.Type != EnemyUnit {
+		return
+	}
 
 	if aa.enabled {
 		return

@@ -7,9 +7,16 @@
 // Each request is a RaidSimRequest with the tank as the first player, the way the DPS Report's
 // requests are. The boss is made to attack it, and the healer replaces whatever healing model
 // the request has.
+//
+// With -encounter, the fight is a tank encounter (tools/encounters/*.json, shared with the healing sim): a boss's
+// melee and abilities and the healing a raid puts on its tank, as healers on the tank, each
+// one's healing per second and their heals' cast time. Until the healing sim's healers heal
+// (docs/healing_sim.md), that healing is the engine's stand-in stream: the healers' HPS added up,
+// a heal every cast time over the healers, each about one healer's heal.
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -20,6 +27,7 @@ import (
 	"github.com/wowsims/classic/sim"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/tools/tankscore"
 	"google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
 )
@@ -35,19 +43,79 @@ func main() {
 	swing := flag.Float64("boss-damage", 0, "the boss's smallest white hit before armor, 0 keeps the request's")
 	actions := flag.Bool("actions", false, "also print each build's threat and damage by ability")
 	classicCrit := flag.Bool("classic-crit", false, "the boss crits at Classic's 5.6% (less our Defense past 300) instead of Forever's 0.6% (docs/tank_sim.md, Forever's boss crit)")
-	needed := flag.Bool("needed", false, "also find each build's healing needed: the stand-in healer's HPS at which it dies in -death of the fights, and the death floor, its chance of death when every heal tops it off (about 10 more sims a build)")
-	deathTarget := flag.Float64("death", 0.05, "the chance of death -needed aims at")
+	bisect := flag.Bool("bisect", false, "also find healing needed and the death floor by bisection over whole sims (about 10 more sims a build), to check the replay's")
+	deathTarget := flag.Float64("death", 0.05, "the chance of death healing needed aims at (the user's ruling for tanks: 5%)")
+	dpsStart := flag.Float64("dps-start", 2, "SafeDPS: seconds after the pull the reference DPS member starts")
+	dpsThreat := flag.Float64("dps-threat", 0.7, "SafeDPS: the reference DPS member's threat a point of damage (0.7 under Salvation)")
+	threatMembers := flag.Float64("threat-members", 2, "the objective: raid members close to the tank's threat, whose DPS a point of SafeDPS frees")
+	dpsSlot := flag.Float64("dps-slot", 900, "the objective: a raid DPS member's DPS, what a healer slot costs")
+	healerEach := flag.Float64("healer-each", 0, "the objective: one healer's HPS on the tank, 0 for the encounter's (or 400 without one)")
+	encounterPath := flag.String("encounter", "", "a tank encounter file (tools/encounters/*.json, shared with the healing sim) in place of the request's encounter and the healer flags' defaults")
+	healers := flag.Float64("healers", 0, "healers on the tank, in place of the encounter's (with -healer-hps and -heal-cast; -hps and -cadence win over them)")
+	healerHps := flag.Float64("healer-hps", 0, "each healer's healing per second on the tank, in place of the encounter's")
+	healCast := flag.Float64("heal-cast", 0, "seconds a healer's heal takes to cast, in place of the encounter's")
 	flag.Parse()
 	sim.RegisterAll()
 
-	fmt.Printf("Stand-in healer: %.0f HPS every %.1f ± %.1f s. TMI over %d s windows. %d iterations.\n\n",
+	set := map[string]bool{}
+	flag.Visit(func(f *flag.Flag) { set[f.Name] = true })
+	var enc *tankEncounter
+	if *encounterPath != "" {
+		enc = loadEncounter(*encounterPath)
+	}
+	// The healing: the encounter's healers, any of them changed by the healer flags, and the
+	// stream's own flags over all of that.
+	team := tankHealing{}
+	if enc != nil && enc.Healing != nil {
+		team = *enc.Healing
+	}
+	if set["healers"] {
+		team.Healers = *healers
+	}
+	if set["healer-hps"] {
+		team.HpsEach = *healerHps
+	}
+	if set["heal-cast"] {
+		team.CastSeconds = *healCast
+	}
+	partial := team.Healers > 0 || team.HpsEach > 0 || team.CastSeconds > 0
+	if partial && !(team.Healers > 0 && team.HpsEach > 0 && team.CastSeconds > 0) {
+		fail(fmt.Errorf("the healing needs all of -healers, -healer-hps and -heal-cast (or an encounter's healing): got %g healers at %g HPS, %g s heals",
+			team.Healers, team.HpsEach, team.CastSeconds))
+	}
+	if team.Healers > 0 && team.HpsEach > 0 && team.CastSeconds > 0 && !(set["hps"] && set["cadence"]) {
+		if !set["hps"] {
+			*hps = team.Healers * team.HpsEach
+		}
+		if !set["cadence"] {
+			*cadence = team.CastSeconds / team.Healers
+		}
+		if !set["cadence-variation"] {
+			*variation = *cadence / 2
+		}
+		fmt.Printf("Healing: %g healers on the tank at %.0f HPS each, %.1f s heals (%.0f a heal).\n",
+			team.Healers, team.HpsEach, team.CastSeconds, team.HpsEach*team.CastSeconds)
+	}
+	if enc != nil {
+		fmt.Printf("Encounter: %s. %s\n", enc.Name, enc.Notes)
+	}
+	fmt.Printf("Stand-in healer: %.0f HPS every %.2f ± %.2f s. TMI over %d s windows. %d iterations.\n\n",
 		*hps, *cadence, *variation, *window, *iterations)
 	if *classicCrit {
 		fmt.Println("The boss crits at Classic's rate.")
 	}
-	header := []string{"Build", "TPS", "DPS", "DTPS", "TMI", "Death", "Health", "EH", "Biggest hit", "Armor", "Def", "No crit at", "Miss", "Dodge", "Parry", "Block", "Crit", "Crush", "Crush gap", "Took: avoid", "block", "crit", "crush"}
-	if *needed {
-		header = append(header[:6], append([]string{"Healing needed", "Death floor"}, header[6:]...)...)
+	each := *healerEach
+	if each == 0 {
+		each = 400
+		if team.HpsEach > 0 {
+			each = team.HpsEach
+		}
+	}
+	fmt.Printf("Objective: %g x SafeDPS - w x %g x healing needed at %g%% deaths / %g, in raid DPS (Max threat w = 1/3, Balanced 1, Max survival 3).\n\n",
+		*threatMembers, *dpsSlot, 100**deathTarget, each)
+	header := []string{"Build", "Max threat", "Balanced", "Max survival", "SafeDPS", "Healing needed", "Death floor", "TPS", "DPS", "DTPS", "TMI", "Death", "Health", "EH", "Biggest hit", "Armor", "Def", "No crit at", "Miss", "Dodge", "Parry", "Block", "Crit", "Crush", "Crush gap", "Took: avoid", "block", "crit", "crush"}
+	if *bisect {
+		header = append(header, "Bisection: needed", "floor")
 	}
 	fmt.Println("| " + strings.Join(header, " | ") + " |")
 	fmt.Println("|" + strings.Repeat("---|", len(header)))
@@ -63,6 +131,18 @@ func main() {
 			fail(fmt.Errorf("%s: %w", path, err))
 		}
 		rsr.SimOptions.Iterations = int32(*iterations)
+		if enc != nil {
+			// The fight is the file's. What it leaves unset of the request's own fight setup
+			// (the execute phases, the natural flask zone) carries over.
+			fight := googleProto.Clone(enc.encounter).(*proto.Encounter)
+			if fight.ExecuteProportion_20 == 0 && fight.ExecuteProportion_25 == 0 && fight.ExecuteProportion_35 == 0 {
+				fight.ExecuteProportion_20 = rsr.Encounter.ExecuteProportion_20
+				fight.ExecuteProportion_25 = rsr.Encounter.ExecuteProportion_25
+				fight.ExecuteProportion_35 = rsr.Encounter.ExecuteProportion_35
+			}
+			fight.NaturalFlaskZone = fight.NaturalFlaskZone || rsr.Encounter.NaturalFlaskZone
+			rsr.Encounter = fight
+		}
 		rsr.Raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
 		if *duration > 0 {
 			rsr.Encounter.Duration = *duration
@@ -75,11 +155,14 @@ func main() {
 			if *swing > 0 {
 				target.MinBaseDamage = *swing
 			}
-			target.ClassicCrit = *classicCrit
+			if *classicCrit {
+				target.ClassicCrit = true
+			}
 		}
 		tank := rsr.Raid.Parties[0].Players[0]
+		tank.TankScoring = &proto.TankScoring{DpsStart: *dpsStart, ThreatPerDamage: *dpsThreat}
 		tank.HealingModel = &proto.HealingModel{
-			Hps:              *hps,
+			Hps:              noPresim(*hps),
 			CadenceSeconds:   *cadence,
 			CadenceVariation: *variation,
 			BurstWindow:      int32(*window),
@@ -87,14 +170,31 @@ func main() {
 
 		res := run(path, rsr)
 		m := res.RaidMetrics.Parties[0].Players[0]
+		pct := func(x float64) string { return fmt.Sprintf("%.1f%%", 100*x) }
 		s := m.TankSheet
 		if s == nil {
 			fail(fmt.Errorf("%s: the boss didn't attack the tank", path))
 		}
 		took := tookShares(res.EncounterMetrics.Targets[0], m.UnitIndex)
-		pct := func(x float64) string { return fmt.Sprintf("%.1f%%", 100*x) }
+		objective := tankscore.Objective{ThreatMembers: *threatMembers, DpsSlot: *dpsSlot, HealerEach: each, Death: *deathTarget}
+		score := func(preset string) string {
+			objective.Weight = tankscore.Presets[preset]
+			sc := objective.Score(m, int32(*iterations))
+			if sc.Needed < 0 {
+				return "none"
+			}
+			return fmt.Sprintf("%.0f ± %.0f", sc.Value, sc.StdErr)
+		}
+		sc := objective.Score(m, int32(*iterations))
+		need := "none works"
+		if sc.Needed >= 0 {
+			need = fmt.Sprintf("%.0f ± %.0f (%.2fx DTPS)", sc.Needed, sc.NeededErr, sc.Needed/max(m.Dtps.Avg, 1))
+		}
 		row := []string{
 			strings.TrimSuffix(filepath.Base(path), ".json"),
+			score("max-threat"), score("balanced"), score("max-survival"),
+			fmt.Sprintf("%.0f ± %.0f", sc.SafeDps, sc.SafeDpsErr),
+			need, pct(sc.DeathFloor),
 			fmt.Sprintf("%.0f", m.Threat.Avg),
 			fmt.Sprintf("%.0f", m.Dps.Avg),
 			fmt.Sprintf("%.0f", m.Dtps.Avg),
@@ -109,13 +209,15 @@ func main() {
 			pct(s.Miss), pct(s.Dodge), pct(s.Parry), pct(s.Block), pct(s.Crit), pct(s.Crush), pct(s.CrushGap),
 			pct(took.avoided), pct(took.blocked), pct(took.crit), pct(took.crush),
 		}
-		if *needed {
+		if *bisect {
 			hps, floor := healingNeeded(path, rsr, m.Dtps.Avg, *deathTarget)
 			need := "none works"
-			if hps > 0 {
-				need = fmt.Sprintf("%.0f (%.2fx DTPS)", hps, hps/m.Dtps.Avg)
+			if hps == 0 {
+				need = "0"
+			} else if hps > 0 {
+				need = fmt.Sprintf("%.0f", hps)
 			}
-			row = append(row[:6], append([]string{need, pct(floor)}, row[6:]...)...)
+			row = append(row, need, pct(floor))
 		}
 		fmt.Println("| " + strings.Join(row, " | ") + " |")
 		if *actions {
@@ -125,6 +227,12 @@ func main() {
 	for _, line := range breakdown {
 		fmt.Println(line)
 	}
+}
+
+// noPresim keeps an HPS of 0 from asking the engine for its presim, which heals at 1.5 times the
+// DTPS (GetPresimOptions, sim/core/health.go).
+func noPresim(hps float64) float64 {
+	return max(hps, 1e-9)
 }
 
 func run(path string, rsr *proto.RaidSimRequest) *proto.RaidSimResult {
@@ -137,24 +245,27 @@ func run(path string, rsr *proto.RaidSimRequest) *proto.RaidSimResult {
 
 func deathAt(path string, rsr *proto.RaidSimRequest, hps float64) float64 {
 	rsr = googleProto.Clone(rsr).(*proto.RaidSimRequest)
-	rsr.Raid.Parties[0].Players[0].HealingModel.Hps = hps
+	rsr.Raid.Parties[0].Players[0].HealingModel.Hps = noPresim(hps)
 	return run(path, rsr).RaidMetrics.Parties[0].Players[0].ChanceOfDeath
 }
 
-// healingNeeded is the stand-in healer's HPS at which the tank dies in target of the fights, to
-// 1% of DTPS, and the death floor: the chance of death at 20 times its DTPS, where each heal tops
-// it off, so only damage between two heals kills it. When the floor is at the target or over, no
-// healing gets there (a one-shot or a burst faster than the heals), and the HPS is 0. Every run
-// uses the request's seed, so the chance of death only moves with the HPS.
+// healingNeeded is the stand-in healer's HPS at which the tank dies in at most target of the
+// fights, to 1% of DTPS, and the death floor: the chance of death when every heal tops the tank
+// off (1000 times its DTPS, since a heal is the HPS times the gap since the last one, and gaps go
+// down to half the cadence), so only damage between two heals kills it. When the floor is over the
+// target, no healing gets there (a one-shot or a burst faster than the heals), and the HPS is -1.
+// No damage taken needs no healing (0). Every run uses the request's seed, so the chance of death
+// only moves with the HPS, as long as nothing in the request acts on the tank's health (a health
+// potion, a defensive at a health share, an APL condition on health).
 func healingNeeded(path string, rsr *proto.RaidSimRequest, dtps, target float64) (float64, float64) {
 	if dtps <= 0 {
 		return 0, 0
 	}
-	ceiling := 20 * dtps
-	floor := deathAt(path, rsr, ceiling)
-	if floor >= target {
-		return 0, floor
+	floor := deathAt(path, rsr, 1000*dtps)
+	if floor > target {
+		return -1, floor
 	}
+	ceiling := 1000 * dtps
 	lo, hi := 0.0, dtps
 	for hi < ceiling && deathAt(path, rsr, hi) > target {
 		lo, hi = hi, min(2*hi, ceiling)
@@ -197,12 +308,56 @@ func actionLines(name string, m *proto.UnitMetrics, n, seconds float64) []string
 
 type shares struct{ avoided, blocked, crit, crush float64 }
 
+// tankEncounter is a tank encounter file: the fight, and the healing a raid puts on its tank.
+type tankEncounter struct {
+	Name string `json:"name"`
+	// Where the numbers come from.
+	Source string `json:"source"`
+	Notes  string `json:"notes"`
+	// A proto Encounter in protojson: the boss's melee (Target), its abilities on the tank and
+	// the raid (raid_damage), tank swaps.
+	Encounter json.RawMessage `json:"encounter"`
+	Healing   *tankHealing    `json:"healing"`
+
+	encounter *proto.Encounter
+}
+
+// tankHealing is the healers a raid puts on its tank: how many, each one's healing per second
+// on it, and their heals' cast time, which sets how big and how far apart the heals come.
+type tankHealing struct {
+	Healers     float64 `json:"healers"`
+	HpsEach     float64 `json:"hpsEach"`
+	CastSeconds float64 `json:"castSeconds"`
+	// What the numbers stand for, e.g. "2 priests on Greater Heal rank 4 and a paladin".
+	Notes string `json:"notes"`
+}
+
+func loadEncounter(path string) *tankEncounter {
+	data, err := os.ReadFile(path)
+	if err != nil {
+		fail(err)
+	}
+	enc := &tankEncounter{}
+	if err := json.Unmarshal(data, enc); err != nil {
+		fail(fmt.Errorf("%s: %w", path, err))
+	}
+	enc.encounter = &proto.Encounter{}
+	if err := protojson.Unmarshal(enc.Encounter, enc.encounter); err != nil {
+		fail(fmt.Errorf("%s: encounter: %w", path, err))
+	}
+	if len(enc.encounter.Targets) == 0 {
+		fail(fmt.Errorf("%s: the encounter has no boss", path))
+	}
+	return enc
+}
+
 // tookShares is how the boss's melee swings at the tank landed over the whole fight, with
 // Shield Block, Holy Shield and the like in.
 func tookShares(boss *proto.UnitMetrics, tankIndex int32) shares {
 	var n, avoided, blocked, crit, crush float64
 	for _, action := range boss.Actions {
-		if !action.IsMelee {
+		// The white swings only, not the boss's abilities.
+		if action.Id.GetOtherId() != proto.OtherAction_OtherActionAttack {
 			continue
 		}
 		for _, t := range action.Targets {

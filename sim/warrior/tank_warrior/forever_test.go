@@ -2,6 +2,7 @@ package tankwarrior
 
 import (
 	"math"
+	"os"
 	"testing"
 	"time"
 
@@ -10,6 +11,8 @@ import (
 	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/sim/warrior"
+	"google.golang.org/protobuf/encoding/protojson"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 // newForeverTank builds a level 60 Orc warrior in Defensive Stance with a sword and a shield and
@@ -223,5 +226,135 @@ func TestArmorCap(t *testing.T) {
 		if got := core.TankSheet(&war.Unit, boss).ArmorReduction; math.Abs(got-c.want) > 1e-6 {
 			t.Errorf("%.0f armor takes off %.4f, want %.4f", c.armor, got, c.want)
 		}
+	}
+}
+
+// TestForeverBossMeleeAbility checks a boss's melee ability (RaidDamageEvent.melee, the core's
+// OutcomeEnemyMeleeSpecial) on a tanked warrior: it misses, is dodged, parried and blocked like a
+// white swing, never crushes, and a landed hit leaves its healing taken debuff. The boss crits at
+// Classic's rate and dual wields, so blocked crits come up and must be booked once, and the special
+// attack takes no dual wield miss.
+func TestForeverBossMeleeAbility(t *testing.T) {
+	player := &proto.Player{
+		Race:          proto.Race_RaceOrc,
+		Class:         proto.Class_ClassWarrior,
+		Level:         60,
+		Equipment:     core.GetGearSet("../../../ui/tank_warrior/gear_sets", "p0.bis_sword_board").GearSet,
+		TalentsString: P1Talents,
+		Rotation:      &proto.APLRotation{},
+		Spec:          PlayerOptionsBasic,
+	}
+	raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{})
+	raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+	target.SwingSpeed = 100 // nearly no white swings, so the ability's outcomes stand alone
+	target.ClassicCrit = true
+	target.DualWield = true
+	res := core.RunRaidSim(&proto.RaidSimRequest{
+		Raid: raid,
+		Encounter: &proto.Encounter{Duration: 300, Targets: []*proto.Target{target}, RaidDamage: []*proto.RaidDamageEvent{{
+			SpellId: 24573, School: proto.SpellSchool_SpellSchoolPhysical, MinDamage: 2000, MaxDamage: 2000,
+			Who: proto.RaidDamageEvent_BossTarget, EverySeconds: 1, Melee: true,
+			HealingTakenMultiplier: 0.5, DebuffSeconds: 5,
+		}}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, Iterations: 20},
+	})
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	got := &proto.TargetedActionMetrics{}
+	for _, a := range res.EncounterMetrics.Targets[0].Actions {
+		if a.Id.GetSpellId() != 24573 {
+			continue
+		}
+		for _, tm := range a.Targets {
+			got.Misses += tm.Misses
+			got.Dodges += tm.Dodges
+			got.Parries += tm.Parries
+			got.Blocks += tm.Blocks
+			got.Hits += tm.Hits
+			got.Crushes += tm.Crushes
+			got.Crits += tm.Crits
+			got.BlockedCrits += tm.BlockedCrits
+		}
+	}
+	// One a second from 0 to 300 s in each of the 20 iterations (passive spells book no casts).
+	uses := int32(20 * 301)
+	if sum := got.Misses + got.Dodges + got.Parries + got.Blocks + got.Hits + got.Crits + got.BlockedCrits; sum != uses {
+		t.Errorf("the ability's outcomes add up to %d, want its %d uses, each booked once", sum, uses)
+	}
+	if got.BlockedCrits == 0 {
+		t.Error("no blocked crits, want some with Classic's crit")
+	}
+	if miss := float64(got.Misses) / float64(uses); miss > 0.15 {
+		t.Errorf("the ability misses %.1f%%, want the white swing's miss without the dual wield 19%%", 100*miss)
+	}
+	if got.Misses == 0 || got.Dodges == 0 || got.Parries == 0 || got.Blocks == 0 || got.Hits == 0 {
+		t.Errorf("the ability's outcomes miss %d, dodge %d, parry %d, block %d, hit %d: want each above 0", got.Misses, got.Dodges, got.Parries, got.Blocks, got.Hits)
+	}
+	if got.Crushes != 0 {
+		t.Errorf("the ability crushed %d times, want none", got.Crushes)
+	}
+	var debuffUptime float64
+	for _, aura := range res.RaidMetrics.Parties[0].Players[0].Auras {
+		if aura.Id.GetSpellId() == 24573 {
+			debuffUptime = aura.UptimeSecondsAvg
+		}
+	}
+	if debuffUptime < 200 {
+		t.Errorf("the healing taken debuff was up %.0f s of 300, want most of the fight", debuffUptime)
+	}
+}
+
+// TestForeverTankScore checks the tank score (core/tank_score.go) on the tank bench's warrior with
+// the stand-in healer: the replay's least HPS of each iteration must agree with the run itself (the
+// iterations it died in are the ones whose least HPS is over the healer's), and SafeDPS can't be
+// over what the tank's whole-fight threat allows at the end.
+func TestForeverTankScore(t *testing.T) {
+	// The tank bench's request: the Valor set with raid buffs and consumes, about 7,000 health.
+	data, err := os.ReadFile("../../../tools/tankbench/req/warrior_protection.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rsr := &proto.RaidSimRequest{}
+	if err := protojson.Unmarshal(data, rsr); err != nil {
+		t.Fatal(err)
+	}
+	const iterations, seconds, hps = 400, 120, 500
+	rsr.Raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+	rsr.Encounter.Duration, rsr.Encounter.DurationVariation = seconds, 0
+	rsr.SimOptions.Iterations = iterations
+	player := rsr.Raid.Parties[0].Players[0]
+	player.HealingModel = &proto.HealingModel{Hps: hps, CadenceSeconds: 2, CadenceVariation: 1}
+	player.TankScoring = &proto.TankScoring{}
+	res := core.RunRaidSimConcurrent(rsr)
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	m := res.RaidMetrics.Parties[0].Players[0]
+	score := m.TankScore
+	if got := len(score.GetSurviveHps()); got != iterations {
+		t.Fatalf("the replay has %d iterations, want %d", got, iterations)
+	}
+	over := 0
+	for _, h := range score.SurviveHps {
+		if h > hps {
+			over++
+		}
+	}
+	if got, want := m.ChanceOfDeath, float64(over)/iterations; math.Abs(got-want) > 1e-9 {
+		t.Errorf("the run died in %.4f of the iterations, the replay says %.4f", got, want)
+	}
+	if over == 0 || over == iterations {
+		t.Errorf("%d of %d iterations need more than %d HPS: pick a healer the test can tell apart", over, iterations, hps)
+	}
+	needed, stdErr, floor := core.TankScoreSummary(score, 0.05)
+	if needed <= 0 || stdErr <= 0 || floor != 0 {
+		t.Errorf("healing needed %.1f ± %.1f with a death floor of %.3f, want a positive need and error and no floor", needed, stdErr, floor)
+	}
+	// At the end the reference member may do pull ratio × the tank's threat / (0.7 × (t − 2)).
+	ceiling := core.MeleePullRatio * m.Threat.Avg * seconds / (0.7 * (seconds - 2))
+	if safe := score.SafeDps.Avg; safe <= 0 || safe > ceiling*1.05 {
+		t.Errorf("SafeDPS %.0f, want above 0 and at most about %.0f", safe, ceiling)
 	}
 }

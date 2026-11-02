@@ -9,6 +9,9 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/stats"
+	"github.com/wowsims/classic/sim/shaman"
 )
 
 // activeAura finds your active aura whose label contains the text.
@@ -600,5 +603,157 @@ func TestInputAtEndDropped(t *testing.T) {
 	b := d.wait(ms(10))
 	if a := answerOf(b, id); a == nil || a.OK {
 		t.Fatalf("a press at the end: %+v", a)
+	}
+}
+
+// The toolkit: an imbue cast replaces the active imbue before or during the fight, never fires
+// its proc, moves Rockbiter's attack power, and keeps the right totem weapon buff.
+func TestImbueSwaps(t *testing.T) {
+	s := newEnhSession(t, Settings{})
+	d := newDriver(t, s)
+	r := s.run
+	sh := r.shaman
+	imbueSpell := func(imbue proto.WeaponImbue) int32 { return sh.ImbueCastSpellID(imbue) }
+	for _, imbue := range shamanImbues {
+		if imbueSpell(imbue) == 0 {
+			t.Fatalf("no cast for %s", imbue)
+		}
+	}
+	if got := sh.ActiveImbue(); got != proto.WeaponImbue_WindfuryWeapon {
+		t.Fatalf("the settings' imbue is %s", got)
+	}
+	if activeAura(r, "Flametongue Imbue") != nil || activeAura(r, "Frostbrand Imbue") != nil || activeAura(r, "Windfury Imbue") == nil {
+		t.Fatal("after Reset only Windfury Imbue should be up")
+	}
+
+	// Before the pull: Flametongue Weapon replaces Windfury, with no hit on the dummy.
+	d.standAt(0, -3)
+	d.mustCast(imbueSpell(proto.WeaponImbue_FlametongueWeapon))
+	if sh.ActiveImbue() != proto.WeaponImbue_FlametongueWeapon || activeAura(r, "Windfury Imbue") != nil || activeAura(r, "Flametongue Imbue") == nil {
+		t.Fatal("Flametongue Weapon didn't replace Windfury Weapon")
+	}
+	if s.pulled {
+		t.Fatal("an imbue cast pulled")
+	}
+
+	// Rockbiter's attack power comes and goes with it.
+	ap := r.char.GetStat(stats.AttackPower)
+	d.wait(2 * time.Second)
+	d.mustCast(imbueSpell(proto.WeaponImbue_RockbiterWeapon))
+	withRockbiter := r.char.GetStat(stats.AttackPower)
+	if withRockbiter <= ap+100 {
+		t.Fatalf("attack power %.0f with Rockbiter, %.0f before", withRockbiter, ap)
+	}
+	d.wait(2 * time.Second)
+	d.mustCast(imbueSpell(proto.WeaponImbue_WindfuryWeapon))
+	if got := r.char.GetStat(stats.AttackPower); got != ap {
+		t.Fatalf("attack power %.0f after swapping away from Rockbiter, %.0f before", got, ap)
+	}
+
+	// Our own Windfury Totem under Windfury Weapon: its buff stays off, and the raid's
+	// Flametongue Totem buff stays on. Swapping to Flametongue Weapon turns it around.
+	d.wait(2 * time.Second)
+	d.mustCast(windfuryTotem)
+	if activeAura(r, "Flametongue Totem Raid") == nil {
+		t.Fatal("the raid's Flametongue Totem buff went with Windfury Weapon on")
+	}
+	d.wait(2 * time.Second)
+	d.mustCast(imbueSpell(proto.WeaponImbue_FlametongueWeapon))
+	wfTotem := activeAura(r, "Windfury Totem")
+	if wfTotem == nil || strings.Contains(wfTotem.Label, "Raid") {
+		t.Fatal("our Windfury Totem's buff didn't come up after swapping to Flametongue Weapon")
+	}
+	if activeAura(r, "Flametongue Totem Raid") != nil {
+		t.Fatal("the raid's Flametongue Totem buff stayed next to our Windfury Totem's")
+	}
+	d.wait(2 * time.Second)
+	d.mustCast(imbueSpell(proto.WeaponImbue_WindfuryWeapon))
+	if activeAura(r, "Flametongue Totem Raid") == nil {
+		t.Fatal("the raid's Flametongue Totem buff didn't come back with Windfury Weapon")
+	}
+
+	// During the fight too.
+	d.wait(2 * time.Second)
+	d.mustCast(earthShock)
+	d.wait(2 * time.Second)
+	d.mustCast(imbueSpell(proto.WeaponImbue_FrostbrandWeapon))
+	if s.run.shaman.ActiveImbue() != proto.WeaponImbue_FrostbrandWeapon {
+		t.Fatal("Frostbrand Weapon didn't go on during the fight")
+	}
+}
+
+// Potions, runes and sappers are presses from the bags.
+func TestConsumablesFromBags(t *testing.T) {
+	s := newEnhSession(t, Settings{})
+	d := newDriver(t, s)
+	d.standAt(0, -3)
+	d.mustCast(earthShock)
+	d.wait(2 * time.Second)
+	items := map[int32]bool{}
+	for _, spell := range s.Toolkit() {
+		if spell.ItemID != 0 {
+			items[spell.ItemID] = true
+		}
+	}
+	for _, id := range []int32{13444, 10646} { // Major Mana Potion, Goblin Sapper Charge
+		if !items[id] {
+			t.Fatalf("item %d isn't in the bags: %v", id, items)
+		}
+	}
+	mana := s.run.char.CurrentMana()
+	before := s.run.damage
+	id := d.press(Input{Kind: "useItem", ItemID: 10646})
+	if a := answerOf(d.wait(ms(500)), id); a == nil || !a.OK {
+		t.Fatalf("the sapper: %+v", a)
+	}
+	if s.run.damage <= before {
+		t.Fatal("the sapper did no damage")
+	}
+	d.wait(2 * time.Second)
+	_ = mana
+	id = d.press(Input{Kind: "useItem", ItemID: 13444})
+	if a := answerOf(d.wait(ms(50)), id); a == nil || !a.OK {
+		t.Fatalf("the potion: %+v", a)
+	}
+	id = d.press(Input{Kind: "useItem", ItemID: 13444})
+	if a := answerOf(d.wait(ms(50)), id); a == nil || a.OK || a.Error != errItemNotReady {
+		t.Fatalf("a second potion: %+v, want %q", a, errItemNotReady)
+	}
+}
+
+// Spells the sim doesn't have: Ghost Wolf costs its cast and mana, and Earthbind Totem takes
+// Strength of Earth's slot.
+func TestUtilitySpells(t *testing.T) {
+	s := newEnhSession(t, Settings{})
+	d := newDriver(t, s)
+	r := s.run
+	mana := r.char.CurrentMana()
+	d.mustCast(ghostWolfID)
+	if !r.char.IsCasting(r.sim) {
+		t.Fatal("Ghost Wolf has no cast")
+	}
+	d.wait(3 * time.Second)
+	if !r.inGhostWolf() {
+		t.Fatal("not in Ghost Wolf after the cast")
+	}
+	if r.char.CurrentMana() >= mana {
+		t.Fatal("Ghost Wolf cost no mana")
+	}
+	// A totem press leaves the form, and the totem goes down.
+	d.wait(time.Second)
+	d.mustCast(strengthOfEarth)
+	if r.inGhostWolf() {
+		t.Fatal("still in Ghost Wolf after a totem")
+	}
+	if activeAura(r, "Strength of Earth") == nil {
+		t.Fatal("no Strength of Earth")
+	}
+	d.wait(2 * time.Second)
+	d.mustCast(2484) // Earthbind Totem
+	if activeAura(r, "Strength of Earth") != nil {
+		t.Fatal("Earthbind Totem didn't replace Strength of Earth")
+	}
+	if got := r.shaman.ActiveTotems[shaman.EarthTotem]; got == nil || got.ActionID.SpellID != 2484 {
+		t.Fatalf("the earth slot holds %v", got)
 	}
 }

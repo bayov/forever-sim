@@ -64,6 +64,8 @@ type Character struct {
 
 	// What happens when we die in a leveling session (RegisterLevelingDeathEffect).
 	levelingDeathEffects []func(sim *Simulation)
+	// The stand-in healer's heals (applyHealingModel), nil without one.
+	healingModelMetrics *ResourceMetrics
 
 	// Consumables this Character will be using.
 	Consumes *proto.Consumes
@@ -742,6 +744,9 @@ func (character *Character) GetMetricsProto() *proto.UnitMetrics {
 	metrics.Auras = character.auraTracker.GetMetricsProto()
 	if character.aggro != nil {
 		metrics.Aggro = character.aggro.toProto()
+	}
+	if character.tankScore != nil {
+		metrics.TankScore = character.tankScore.toProto()
 	}
 
 	metrics.Pets = make([]*proto.UnitMetrics, len(character.Pets))

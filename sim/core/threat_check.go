@@ -71,6 +71,9 @@ func (raid *Raid) setupThreatCheck(check *proto.ThreatCheck) {
 
 // watchThreat is called whenever threat is booked for the unit on an enemy.
 func (unit *Unit) watchThreat(sim *Simulation, target *Unit, threat float64) {
+	if ts := unit.tankScore; ts != nil && target.Type == EnemyUnit && target.UnitIndex == 0 && sim.CurrentTime >= 0 {
+		ts.threatBooked(sim, threat)
+	}
 	watch := unit.aggro
 	// The boss is the first target. Before the pull nobody is in combat.
 	if watch == nil || target.Type != EnemyUnit || target.UnitIndex != 0 || sim.CurrentTime < 0 {

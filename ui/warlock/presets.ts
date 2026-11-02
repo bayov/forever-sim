@@ -47,6 +47,7 @@ import Level60AfflictionDutyRecklessnessAPL from './apls/level60_affliction_duty
 import Level60DestructionFireDutyRecklessnessAPL from './apls/level60_destruction_fire_duty_recklessness.apl.json';
 // gear
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticDemonologyGearJSON from './gear_sets/level60_phase1_synthetic_demonology.gear.json';
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
@@ -74,13 +75,25 @@ import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic
 // (Arcanum of Focus is a Zandalar one), Enchant Necklace - Spell Power, the Mystic Rugged Armor Kit
 // (+6 spell power) on the chest, hands, legs and feet, Bracer - Greater Spellpower and Spellblasting on
 // the staff. No Phase 1 enchant adds damage on the shoulders or back.
-export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Demonology', Level60Phase1SyntheticGearJSON, {
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Destruction / Affliction', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game. Hit capped with Suppression 5/5.',
 	group: 'Synthetic',
 });
-export const GearPresets = [GearLevel60Phase1Synthetic];
+// Demonology wears a set of its own (standards 34, 2026-11-02), as the Arcane mage does: the same
+// slots, budget, enchants, wand and trinkets, in Demonology's own stat mix (gear_targets.md): 396
+// spell power, 136 Intellect, 125 Stamina, 92 Spirit, 130 crit rating (9.3%) and the same 100 hit
+// rating, linear shares Stamina 13.5, Intellect 14.7, Spirit 10.0, spell power 36.9, hit 10.8, crit
+// 14.1, on its hit-adjusted targets (the shared set's crit is 10.4 against Demonology's 14.1,
+// fairness-20261031-1). At 120 / 180 / 300 sec (Orc, seed 1, 20000 iterations) Demonology goes from
+// 1052.5 / 1045.5 / 1019.9 on the shared set to 1059.4 / 1052.7 / 1027.5, its curse duty builds by
+// +6.4 to +8.0. The knob search on it kept the rotation; the Orc stays its best race.
+export const GearLevel60Phase1SyntheticDemonology = PresetUtils.makePresetGear('Demonology', Level60Phase1SyntheticDemonologyGearJSON, {
+	tooltip: 'The Level 60 synthetic Demonology set (more crit, less spell power and Intellect). Hit capped with Suppression 5/5.',
+	group: 'Synthetic',
+});
+export const GearPresets = [GearLevel60Phase1SyntheticDemonology, GearLevel60Phase1Synthetic];
 
-export const DefaultGear = GearLevel60Phase1Synthetic;
+export const DefaultGear = GearLevel60Phase1SyntheticDemonology;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -482,7 +495,7 @@ export const EncounterLevel60RecklessnessDuty = level60Encounter(
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Demonology', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Orc Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticDemonology,
 	talents: TalentsLevel60Demonology,
 	rotation: RotationLevel60Demonology,
 	encounter: EncounterLevel60,

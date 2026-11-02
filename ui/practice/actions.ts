@@ -109,8 +109,13 @@ export function keysForSlot(bindings: Record<string, string>, slot: number): str
 	return keys;
 }
 
+// shortKey writes a key like the user's bars do: SQ for SHIFT-Q, CF1, M3 for the middle mouse
+// button, N- for the numpad's minus.
+const numpadShort: Record<string, string> = { NUMPADMINUS: 'N-', NUMPADPLUS: 'N+', NUMPADDECIMAL: 'N.', NUMPADMULTIPLY: 'N*', NUMPADDIVIDE: 'N/' };
+
 export function shortKey(key: string): string {
 	return key
+		.replace(/NUMPAD(MINUS|PLUS|DECIMAL|MULTIPLY|DIVIDE)/, m => numpadShort[m])
 		.replace('SHIFT-', 'S')
 		.replace('CTRL-', 'C')
 		.replace('ALT-', 'A')
@@ -386,4 +391,40 @@ export function commandForSlot(slot: number): string | undefined {
 		if (slot > base && slot <= base + 12) return name + (slot - base);
 	}
 	return undefined;
+}
+
+// Racials by the keybind notes' "Racial 1" and "Racial 2" (the Bayov class pack's lists).
+const racials1 = ['Blood Fury', 'Berserking', 'Will of the Forsaken', 'Stoneform', 'Escape Artist', 'Shadowmeld', 'War Stomp', 'Perception', 'Cannibalize'];
+const racials2 = ['Shatter Curse'];
+
+// matchNoteLabel finds what a keybind notes label like "Earth Shock (r1)", "Mana Potion" or
+// "Dark/Demonic Rune" casts: a toolkit spell by name and rank, or a toolkit item whose name ends
+// with the label ("Mana Potion" is the Major Mana Potion we carry).
+export function matchNoteLabel(label: string, toolkit: Toolkit, itemNames: Map<number, string>, trinkets: number[]): SlotContent | undefined {
+	const trinket = /^trinket ([12])$/i.exec(label.trim());
+	if (trinket) {
+		const id = trinkets[+trinket[1] - 1];
+		return id && toolkit.byItem.has(id) ? { kind: 'item', id } : undefined;
+	}
+	const racial = /^racial ([12])$/i.exec(label.trim());
+	const candidates = racial ? (racial[1] === '1' ? racials1 : racials2) : splitAlternatives(label);
+	for (const text of candidates) {
+		const m = /^(.*?)\s*\((?:r|rank\s*)(\d+)\)\s*$/i.exec(text);
+		const spell = m ? toolkit.spellByName(`${m[1]}(Rank ${m[2]})`) : toolkit.spellByName(text);
+		if (spell !== undefined) return { kind: 'spell', id: spell };
+		const wanted = text.trim().toLowerCase();
+		for (const [id, name] of itemNames) {
+			const n = name.toLowerCase();
+			if (toolkit.byItem.has(id) && (n === wanted || n.endsWith(' ' + wanted))) return { kind: 'item', id };
+		}
+	}
+	return undefined;
+}
+
+// "Dark/Demonic Rune" means Dark Rune or Demonic Rune.
+function splitAlternatives(label: string): string[] {
+	const parts = label.split('/').map(p => p.trim());
+	if (parts.length < 2) return parts;
+	const last = parts[parts.length - 1].split(/\s+/);
+	return parts.map((p, i) => (i < parts.length - 1 && !p.includes(' ') ? [p, ...last.slice(1)].join(' ') : p));
 }

@@ -256,7 +256,8 @@ func (unit *Unit) UpdateManaRegenRates() {
 func (mb *manaBar) settle(sim *Simulation) {
 	from, to := mb.lastRegenAt, sim.CurrentTime
 	mb.lastRegenAt = to
-	if to <= from || !mb.unit.IsEnabled() {
+	// A player that died in a healing fight gains nothing more (player_death.go).
+	if to <= from || !mb.unit.IsEnabled() || mb.unit.dead {
 		return
 	}
 	fsr := mb.unit.PseudoStats.FiveSecondRuleRefreshTime
@@ -274,6 +275,9 @@ func (unit *Unit) GetManaNotCastingMetrics() *ResourceMetrics {
 
 // Applies 1 'tick' of mana regen, which worth 2s of regeneration based on mp5/int/spirit/etc.
 func (unit *Unit) ManaTick(sim *Simulation) {
+	if unit.dead {
+		return
+	}
 	if sim.CurrentTime < unit.PseudoStats.FiveSecondRuleRefreshTime {
 		regen := unit.manaTickWhileCasting
 		unit.AddMana(sim, max(0, regen), unit.manaCastingMetrics)

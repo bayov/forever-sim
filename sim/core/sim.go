@@ -698,7 +698,11 @@ func (sim *Simulation) reset() {
 func (sim *Simulation) PrePull() {
 	for _, party := range sim.Raid.Parties {
 		for _, player := range party.Players {
-			player.GetCharacter().takeTankSheet()
+			character := player.GetCharacter()
+			character.takeTankSheet()
+			if ts := character.tankScore; ts != nil {
+				ts.startPull(&character.Unit)
+			}
 		}
 	}
 

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/shaman"
 )
 
@@ -17,6 +18,8 @@ type run struct {
 	s     *Session
 	sim   *core.Simulation
 	start time.Duration
+	// encounter is the mode the sim was built for: Encounter mode's length, or Free mode's cap.
+	encounter bool
 
 	char   *core.Character
 	shaman *shaman.Shaman
@@ -51,6 +54,8 @@ type run struct {
 	queuedSpell *core.Spell
 	// castCheck is the range and facing check at the current cast's end.
 	castCheck *core.PendingAction
+	// ghostWolf is the Ghost Wolf form aura, for a shaman who knows it.
+	ghostWolf *core.Aura
 
 	// pullAt is set when a harmful result against an enemy came before 0.
 	pullAt *time.Duration
@@ -104,6 +109,8 @@ func (r *run) onEnvironment(env *core.Environment) {
 
 	player := env.Raid.Parties[0].Players[0]
 	if sh, ok := player.(shaman.ShamanAgent); ok {
+		sh.GetShaman().EnableImbueSwaps()
+		r.registerUtility(sh.GetShaman())
 		sh.GetShaman().FireTotemInReach = func(sim *core.Simulation, mob *core.Unit, yards float64) bool {
 			if !r.totemPosSet[shaman.FireTotem] {
 				return true
@@ -242,6 +249,10 @@ func (r *run) setup() {
 		}
 	}
 	sim.Reset()
+	if r.shaman != nil {
+		// Each imbue aura turns itself on at Reset: only the settings' imbue stays.
+		r.shaman.ResetImbueSwaps(sim)
+	}
 	for _, mcd := range r.char.GetMajorCooldowns() {
 		if mcd != nil && mcd.Spell != nil && mcd.Spell.ActionID.Tag == -1 {
 			r.externals = append(r.externals, mcd)
@@ -275,6 +286,7 @@ func (r *run) log(message string, vals ...interface{}) {
 
 func (r *run) onPulled() {
 	r.startExternals()
+	r.keepTicking(r.sim)
 }
 
 // runUntil runs every event before until, with no fight logic: a swap replaying inputs.
@@ -421,6 +433,15 @@ func (r *run) doInput(sim *core.Simulation, in Input) {
 	case "move":
 		r.move(sim, in)
 		r.s.answer(in.ID, true, "")
+	case "setImbue":
+		// The imbue an input older than the prepull window left behind (Session.rewindow).
+		if r.shaman != nil {
+			for _, imbue := range shamanImbues {
+				if r.shaman.ImbueCastSpellID(imbue) == in.SpellID {
+					r.shaman.SwapMainHandImbue(sim, imbue)
+				}
+			}
+		}
 	case "jump":
 		r.updateWorld(sim)
 		if !r.me.airborne(sim.CurrentTime) {
@@ -431,6 +452,21 @@ func (r *run) doInput(sim *core.Simulation, in Input) {
 	default:
 		r.s.answer(in.ID, false, "Unknown input")
 	}
+}
+
+var shamanImbues = []proto.WeaponImbue{proto.WeaponImbue_RockbiterWeapon, proto.WeaponImbue_FlametongueWeapon, proto.WeaponImbue_FrostbrandWeapon, proto.WeaponImbue_WindfuryWeapon}
+
+// isImbueCast is whether a spell id is one of the shaman's imbue casts.
+func (r *run) isImbueCast(spellID int32) bool {
+	if r.shaman == nil {
+		return false
+	}
+	for _, imbue := range shamanImbues {
+		if r.shaman.ImbueCastSpellID(imbue) == spellID {
+			return true
+		}
+	}
+	return false
 }
 
 // cancelQueued drops the queued cast. It never happens, with no error, as in game.

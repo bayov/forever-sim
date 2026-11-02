@@ -90,6 +90,9 @@ func (action *APLActionChannelSpell) GetAPLValues() []APLValue {
 	return []APLValue{action.interruptIf}
 }
 func (action *APLActionChannelSpell) IsReady(sim *Simulation) bool {
+	if action.target.IsDynamic() && action.target.Get() == nil {
+		return false
+	}
 	return action.spell.CanCast(sim, action.target.Get())
 }
 func (action *APLActionChannelSpell) Execute(sim *Simulation) {

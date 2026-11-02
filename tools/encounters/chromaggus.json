@@ -1,0 +1,101 @@
+{
+ "name": "Chromaggus",
+ "source": "[core: vmangos] Melee 3,295 to 4,368 a 2.0 s swing before armor: vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 30. Two breaths a lockout, one at 30 s and one at 60 s, each every 60 s. Incinerate 23308 3,675 to 4,725 Fire, Corrosive Acid 23313 875 to 1,125 Nature every 3 s for 15 s (and 3,938 to 5,062 less armor).",
+ "reports": [],
+ "warcraftLogs": {
+  "encounter": 616,
+  "zone": "Blackwing Lair"
+ },
+ "notes": "Picks Incinerate and Corrosive Acid of the five breaths. Corrosive Acid's armor cut and Frenzy (+150% attack speed every 15 s, removed by Tranquilizing Shot) aren't modelled. Brood Afflictions on the raid are the healing sim's.",
+ "encounter": {
+  "duration": 180,
+  "durationVariation": 20,
+  "targets": [
+   {
+    "name": "Chromaggus",
+    "level": 63,
+    "mobType": "MobTypeUnknown",
+    "parryHaste": true,
+    "stats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     805.0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3625,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "minBaseDamage": 2487.1,
+    "damageSpread": 0.4314,
+    "swingSpeed": 2.0
+   }
+  ],
+  "raidDamage": [
+   {
+    "spellId": 23308,
+    "school": "SpellSchoolFire",
+    "minDamage": 3675,
+    "maxDamage": 4725,
+    "who": "BossTarget",
+    "firstAt": 30,
+    "everySeconds": 60,
+    "spreadSeconds": 0
+   },
+   {
+    "spellId": 23313,
+    "school": "SpellSchoolNature",
+    "minDamage": 1000,
+    "maxDamage": 1000,
+    "who": "BossTarget",
+    "firstAt": 60,
+    "everySeconds": 60,
+    "spreadSeconds": 0,
+    "ticks": 5,
+    "tickSeconds": 3
+   }
+  ]
+ },
+ "healing": {
+  "healers": 4,
+  "hpsEach": 500,
+  "castSeconds": 2.0,
+  "notes": "A 40-player Blackwing Lair raid's main tank: 4 healers at 500 HPS each in 2 s heals, more healing power than in Molten Core (about 600). Guessed, not from logs: replace with tools/warcraftlogs tank numbers."
+ }
+}

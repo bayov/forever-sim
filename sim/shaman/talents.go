@@ -379,8 +379,9 @@ func (shaman *Shaman) registerNaturesSwiftnessCD() {
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 			// Don't use NS unless we're casting a full-length lightning bolt, which is
-			// the only spell shamans have with a cast longer than GCD.
-			return !shaman.HasTemporarySpellCastSpeedIncrease()
+			// the only spell shamans have with a cast longer than GCD. It's a rotation
+			// helper, so a player pressing it by hand (the practice room) skips it.
+			return shaman.ManualControl || !shaman.HasTemporarySpellCastSpeedIncrease()
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			nsAura.Activate(sim)
@@ -730,32 +731,37 @@ func (shaman *Shaman) healingFocusChance() float64 {
 	return []float64{0, .23, .47, .70}[shaman.Talents.HealingFocus]
 }
 
-// applyAncestralHealing: after a crit from one of our heals, its target (us) has 8, 17 or 25%
-// more armor for 15 sec (70338 curve for 16176).
+// applyAncestralHealing: after a crit from one of our heals, its target has 8, 17 or 25% more
+// armor for 15 sec (70338 curve for 16176, "Increases your target's armor"). The buff is one
+// spell, so another shaman's on the same player is the same buff, refreshed.
 func (shaman *Shaman) applyAncestralHealing() {
 	if shaman.Talents.AncestralHealing == 0 {
 		return
 	}
 	armorMultiplier := 1 + []float64{0, .08, .17, .25}[shaman.Talents.AncestralHealing]
 
-	buff := shaman.RegisterAura(core.Aura{
-		Label: "Ancestral Fortitude",
-		// One buff spell for every rank in Forever (16177, 8% that the talent's curve scales).
-		ActionID: core.ActionID{SpellID: 16177},
-		Duration: time.Second * 15,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ArmorMultiplier *= armorMultiplier
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Unit.PseudoStats.ArmorMultiplier /= armorMultiplier
-		},
+	buffs := shaman.NewRaidAuraArray(func(target *core.Unit) *core.Aura {
+		return target.GetOrRegisterAura(core.Aura{
+			Label: "Ancestral Fortitude",
+			// One buff spell for every rank in Forever (16177, 8% that the talent's curve scales).
+			ActionID: core.ActionID{SpellID: 16177},
+			Duration: time.Second * 15,
+			OnGain: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Unit.PseudoStats.ArmorMultiplier *= armorMultiplier
+			},
+			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+				aura.Unit.PseudoStats.ArmorMultiplier /= armorMultiplier
+			},
+		})
 	})
 
 	core.MakePermanent(shaman.RegisterAura(core.Aura{
 		Label: "Ancestral Healing",
 		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if result.DidCrit() && spell.ProcMask.Matches(core.ProcMaskSpellHealing) && result.Target == &shaman.Unit {
-				buff.Activate(sim)
+			if result.DidCrit() && spell.ProcMask.Matches(core.ProcMaskSpellHealing) {
+				if buff := buffs.Get(result.Target); buff != nil && !result.Target.IsDead() {
+					buff.Activate(sim)
+				}
 			}
 		},
 	}))

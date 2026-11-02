@@ -1,0 +1,124 @@
+{
+ "name": "Broodlord Lashlayer",
+ "source": "[core: vmangos] vmangos gives his melee 2,746 to 3,640 a 2.0 s swing before armor (vmangos core (github.com/vmangos/core, db_latest db-4641790): creature_template, spell_template, the boss script, damage_multiplier 25), which makes Mortal Strike (24573: 500% weapon damage and 50% less healing taken for 5 s, the Classic Era client's spell data) 6,000 to 7,900 on a 56% armor tank before any crit. Players saw far less: warcraft.wiki.gg's Broodlord page says it 'can crit for up to 8,000 on plate', so a normal one is about 4,000, and a guide quotes 3,250 to 6,500 a hit after armor. Both fit a weapon about 0.6 times vmangos's, which the file uses for his melee and every weapon damage ability: 1,648 to 2,184 a swing. Knock Away 18670 weapon damage + 30, Cleave 15284 weapon damage + 10, Blast Wave 23331 2,625 to 3,375 Fire. Timers from the vmangos script, which says they are probably wrong.",
+ "reports": [],
+ "warcraftLogs": {
+  "encounter": 612,
+  "zone": "Blackwing Lair"
+ },
+ "notes": "His weapon damage is an estimate from what players saw (source), until Warcraft Logs give his white hits and Mortal Strikes. Knock Away's 50% threat cut isn't modelled. Blast Wave hits everyone near him, here the tanks only, and the healing sim adds the melee.",
+ "encounter": {
+  "duration": 180,
+  "durationVariation": 20,
+  "targets": [
+   {
+    "name": "Broodlord Lashlayer",
+    "level": 63,
+    "mobType": "MobTypeUnknown",
+    "parryHaste": true,
+    "stats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     805.0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3625,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "minBaseDamage": 1243.6,
+    "damageSpread": 0.4313,
+    "swingSpeed": 2.0
+   }
+  ],
+  "raidDamage": [
+   {
+    "spellId": 24573,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 7612,
+    "maxDamage": 10090,
+    "who": "BossTarget",
+    "firstAt": 25,
+    "everySeconds": 25,
+    "spreadSeconds": 5,
+    "melee": true,
+    "healingTakenMultiplier": 0.5,
+    "debuffSeconds": 5
+   },
+   {
+    "spellId": 18670,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 1550,
+    "maxDamage": 2046,
+    "who": "BossTarget",
+    "firstAt": 22.5,
+    "everySeconds": 18.5,
+    "spreadSeconds": 6.5,
+    "melee": true
+   },
+   {
+    "spellId": 15284,
+    "school": "SpellSchoolPhysical",
+    "minDamage": 1532,
+    "maxDamage": 2027,
+    "who": "BossTarget",
+    "firstAt": 8,
+    "everySeconds": 16.5,
+    "spreadSeconds": 3.5,
+    "melee": true
+   },
+   {
+    "spellId": 23331,
+    "school": "SpellSchoolFire",
+    "minDamage": 2625,
+    "maxDamage": 3375,
+    "who": "Tanks",
+    "firstAt": 20,
+    "everySeconds": 27.5,
+    "spreadSeconds": 7.5
+   }
+  ]
+ },
+ "healing": {
+  "healers": 4,
+  "hpsEach": 500,
+  "castSeconds": 2.0,
+  "notes": "A 40-player Blackwing Lair raid's main tank: 4 healers at 500 HPS each in 2 s heals, more healing power than in Molten Core (about 600). Guessed, not from logs: replace with tools/warcraftlogs tank numbers."
+ }
+}
