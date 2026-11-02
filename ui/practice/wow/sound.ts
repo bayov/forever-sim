@@ -98,6 +98,20 @@ export class Sounds {
 		return p;
 	}
 
+	// ambience plays the zone's background loops, flat, from the moment the browser lets us play
+	// sound (after the first key press or click), and keeps them going.
+	ambience(kits: SoundRef[][]) {
+		const c = this.listener.context;
+		let started = false;
+		const start = () => {
+			if (started || c.state !== 'running') return;
+			started = true;
+			for (const kit of kits) this.play(kit.map(s => ({ ...s, loop: true, fadeInMs: s.fadeInMs || 2000 })));
+		};
+		c.addEventListener('statechange', start);
+		start();
+	}
+
 	// preload decodes a kit's files ahead of their first play.
 	async preload(kit: SoundRef[] | undefined) {
 		await Promise.all((kit ?? []).map(s => this.buffer(s.fdid)));
