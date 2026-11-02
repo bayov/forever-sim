@@ -426,6 +426,20 @@
   },
   {
    "builds": [
+    "warrior__fury_2h"
+   ],
+   "key": "s18499",
+   "why": "Why Berserker Rage only under 10 Rage? Its global cooldown would otherwise go to a Hamstring, and two-hand crits bring in enough Rage."
+  },
+  {
+   "builds": [
+    "warrior__fury_2h"
+   ],
+   "key": "s11605",
+   "why": "Why Slam only at 60+ Rage? Slam pushes back your next swing. Below that, the white swings and Hamstrings are worth more."
+  },
+  {
+   "builds": [
     "warrior__fury",
     "warrior__fury_2h"
    ],
