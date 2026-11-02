@@ -220,15 +220,25 @@ button.primary {
 .aura.debuff .icon {
 	border-color: #b00;
 }
+/* The buffs from the fight settings that never run out on top, the fight's own buffs under them. */
 .buffs {
 	position: absolute;
 	top: calc(4 * var(--u));
 	right: calc(4.4 * var(--u));
 	display: flex;
+	flex-direction: column;
+	align-items: flex-end;
+	gap: calc(14 * var(--u));
+	max-width: calc(560 * var(--u));
+}
+.buff-row {
+	display: flex;
 	flex-wrap: wrap;
 	flex-direction: row-reverse;
 	gap: calc(14 * var(--u)) calc(4 * var(--u));
-	max-width: calc(560 * var(--u));
+}
+.buff-row:empty {
+	display: none;
 }
 
 /* The Bayov class pack. */
@@ -872,7 +882,7 @@ button.primary {
 	gap: calc(5 * var(--u));
 	white-space: nowrap;
 	font-size: calc(22 * var(--u));
-	font-weight: 800;
+	font-weight: 600;
 	line-height: 1;
 	text-shadow:
 		1px 1px 0 #000,
@@ -1016,4 +1026,16 @@ button.primary {
 	height: 100%;
 	background: linear-gradient(#e2b347, #9a6a12);
 	transition: width 0.15s;
+}
+.settings-gap {
+	height: calc(4 * var(--u));
+}
+
+/* The game's cursors (cursors.ts): the gauntlet everywhere, the sword over an enemy. */
+.room,
+.room * {
+	cursor: var(--wow-point, default) !important;
+}
+.room canvas.attack {
+	cursor: var(--wow-attack, crosshair) !important;
 }

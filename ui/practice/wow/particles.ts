@@ -34,6 +34,7 @@ attribute vec4 iUv;
 attribute float iRot;
 uniform float uFlat;
 varying vec2 vUv;
+varying vec2 vQuad;
 varying vec4 vColor;
 void main() {
 	float c = cos(iRot);
@@ -48,17 +49,26 @@ void main() {
 	}
 	gl_Position = projectionMatrix * mv;
 	vUv = vec2(mix(iUv.x, iUv.z, uv.x), mix(iUv.w, iUv.y, uv.y));
+	vQuad = uv;
 	vColor = iColor;
 }`;
 
 const fragmentShader = /* glsl */ `
 uniform sampler2D map;
 uniform float alphaTest;
+uniform float uByColor;
+uniform float uSoft;
 varying vec2 vUv;
+varying vec2 vQuad;
 varying vec4 vColor;
 void main() {
 	vec4 c = texture2D(map, vUv) * vColor;
+	// A texture with no see-through part (a cloud tile) would draw a square. It fades out toward
+	// the quad's edge instead, into a round puff.
+	if (uSoft > 0.5) c.a *= 1.0 - smoothstep(0.35, 1.0, length(vQuad * 2.0 - 1.0));
 	if (c.a < alphaTest) discard;
+	// Adding by color still keeps to the texture's shape: its see-through part adds nothing.
+	if (uByColor > 0.5) c.rgb *= c.a;
 	gl_FragColor = c;
 	#include <colorspace_fragment>
 }`;
@@ -145,7 +155,7 @@ class Emitter {
 		const material = new THREE.ShaderMaterial({
 			vertexShader,
 			fragmentShader,
-			uniforms: { map: { value: null }, alphaTest: { value: 0.01 }, uFlat: { value: e.flags & 0x1000 ? 1 : 0 } },
+			uniforms: { map: { value: null }, alphaTest: { value: 0.01 }, uFlat: { value: e.flags & 0x1000 ? 1 : 0 }, uByColor: { value: e.blend === 1 ? 1 : 0 }, uSoft: { value: 0 } },
 			transparent: true,
 			depthWrite: false,
 			side: THREE.DoubleSide,
@@ -180,10 +190,14 @@ class Emitter {
 		// the client blends. We draw the first.
 		const texIndex = e.flags & 0x10000000 ? e.texture & 0x1f : e.texture;
 		const tex = model.m2.textures[texIndex];
+		// Until its texture loads the emitter stays hidden: an empty texture reads as solid black.
+		this.mesh.visible = false;
 		if (tex && tex.type === 0 && tex.fdid > 0) {
 			texture(tex.fdid, false, false)
 				.then(t => {
 					material.uniforms.map.value = t;
+					material.uniforms.uSoft.value = e.blend !== 0 && e.blend !== 3 && opaque(t) ? 1 : 0;
+					this.mesh.visible = true;
 				})
 				.catch(err => console.warn('particle texture', err));
 		} else {
@@ -344,4 +358,24 @@ export class Particles {
 	dispose() {
 		for (const e of this.emitters) e.dispose();
 	}
+}
+
+// opaque is whether a texture has no see-through pixel at all.
+const opaqueCache = new WeakMap<THREE.Texture, boolean>();
+function opaque(t: THREE.Texture): boolean {
+	let v = opaqueCache.get(t);
+	if (v === undefined) {
+		const data = (t.image as { data?: ArrayLike<number> } | undefined)?.data;
+		v = !!data && data.length > 0;
+		if (data) {
+			for (let i = 3; i < data.length; i += 4) {
+				if (data[i] < 250) {
+					v = false;
+					break;
+				}
+			}
+		}
+		opaqueCache.set(t, v);
+	}
+	return v;
 }
