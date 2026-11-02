@@ -13,6 +13,7 @@ type GoGlobal = {
 	practiceStartEncounter(nowMs: number): string;
 	practiceStop(nowMs: number): string;
 	practiceAttempt(): string;
+	practicePrepare(): string;
 };
 const go = self as unknown as GoGlobal;
 
@@ -20,6 +21,7 @@ let clock: ClockState = { wallAtStart: 0, startMs: 0, shiftMs: 0, pausedMs: 0 };
 let timer: ReturnType<typeof setTimeout> | undefined;
 let heartbeat: ReturnType<typeof setInterval> | undefined;
 let running = false;
+let needSpare = false;
 
 function post(msg: FromWorker) {
 	self.postMessage(msg);
@@ -65,6 +67,11 @@ function handle(replyText: string) {
 	}
 	if (batch) {
 		post({ type: 'batch', batch, simNowMs: simNow(), clock, callMs });
+		// After a start or a swap, the next swap's sim gets built in idle time.
+		if (batch.rebase || needSpare) {
+			needSpare = false;
+			setTimeout(() => running && go.practicePrepare(), 0);
+		}
 		if (batch.ended) {
 			running = false;
 		}
@@ -100,6 +107,7 @@ async function onMessage(msg: ToWorker) {
 			}
 			clock = { wallAtStart: msg.wallNow, startMs: reply.startMs, shiftMs: 0, pausedMs: 0 };
 			running = true;
+			needSpare = true;
 			post({ type: 'started', toolkit: reply.toolkit, startMs: reply.startMs, batch: reply.batch, wallAtStart: msg.wallNow, callMs });
 			post({ type: 'batch', batch: reply.batch, simNowMs: simNow(), clock, callMs });
 			if (heartbeat === undefined) {

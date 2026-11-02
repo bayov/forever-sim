@@ -143,6 +143,8 @@ class PracticeRoom {
 	// press to its answer on the page.
 	readonly timings = { loadMs: 0, startCallMs: 0, calls: [] as number[], swaps: [] as number[], pressToAnswer: [] as number[] };
 	private pressedAt = new Map<number, number>();
+	// sessions counts the sessions started, for tests waiting on a restart.
+	sessions = 0;
 	private lastFrame = 0;
 	private dragging: { button: number; x: number; y: number; moved: boolean; picked: 'enemy' | 'ground' | undefined } | undefined;
 
@@ -225,6 +227,7 @@ class PracticeRoom {
 				break;
 			case 'started': {
 				this.timings.startCallMs = msg.callMs;
+				this.sessions++;
 				const first = !this.toolkit;
 				this.running = true;
 				if (first) this.setupToolkit(msg.toolkit);
@@ -656,6 +659,7 @@ class PracticeRoom {
 			<div class="castbar hidden"><div class="fill"></div><div class="label"></div></div>
 			<div class="swingbar hidden"><div class="fill"></div></div>
 			<div class="bars"></div>
+			<div class="side-bars"></div>
 			<div class="bar-tools"><button class="edit-bars">Edit bars</button><button class="bind-keys">Bind keys</button><button class="book">Spellbook</button></div>
 			<div class="spellbook hidden"></div>
 			<div class="cursor-icon hidden"></div>
@@ -737,7 +741,10 @@ class PracticeRoom {
 
 	renderBars() {
 		const bars = this.hud.querySelector('.bars') as HTMLElement;
+		const side = this.hud.querySelector('.side-bars') as HTMLElement;
 		bars.replaceChildren();
+		side.replaceChildren();
+		let shown = 0;
 		this.buttons.clear();
 		bars.classList.toggle('editing', this.editing);
 		bars.classList.toggle('binding', this.binding);
@@ -770,7 +777,9 @@ class PracticeRoom {
 				rowEl.append(b);
 				this.buttons.set(slot, b);
 			}
-			bars.append(rowEl);
+			// Three bars along the bottom, the rest as vertical bars on the right.
+			if (shown++ < 3) bars.append(rowEl);
+			else side.append(rowEl);
 		}
 	}
 

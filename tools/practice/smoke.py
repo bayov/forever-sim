@@ -111,6 +111,57 @@ def main():
         time.sleep(0.5)
         if args.shot:
             page.screenshot(path=args.shot)
+
+        # Encounter mode: an imbue swap in the prepull, a 3 second countdown and a 10 second
+        # fight that ends on its own.
+        page.click('.summary button')
+        page.wait_for_function('practice.running && practice.fight.phase === "prepull"', timeout=10000)
+        sessions = page.evaluate('() => practice.sessions')
+        page.evaluate('''() => {
+            const s = practice.settings;
+            practice.settings = {...s, mode: 'encounter', lengthMs: 10000, countdownMs: 3000};
+            practice.post({type: 'stop', wallNow: performance.timeOrigin + performance.now()});
+            practice.running = false;
+            setTimeout(() => practice.start(), 50);
+        }''')
+        page.wait_for_function(f'practice.sessions > {sessions} && practice.running && practice.fight.phase === "prepull"', timeout=10000)
+        time.sleep(0.3)
+        flametongue = page.evaluate('() => practice.toolkit.spells.find(s => s.spellId === 16342 && s.tag === 99) ? 16342 : 0')
+        if not flametongue:
+            errors.append('no Flametongue Weapon cast in the toolkit')
+        else:
+            page.evaluate('() => practice.sendInput({kind: "cast", spellId: 16342, target: {kind: "player", index: 0}})')
+            time.sleep(0.3)
+            imbue = page.evaluate('() => practice.player.mainHandImbue')
+            print('imbue after the cast:', imbue)
+            if imbue != 'FlametongueWeapon':
+                errors.append(f'Flametongue Weapon didn\'t go on: {imbue}')
+        page.keyboard.down('KeyW')
+        deadline = time.time() + 5
+        while time.time() < deadline and page.evaluate('() => practice.mover.move.pos[1]') < -4:
+            time.sleep(0.02)
+        page.keyboard.up('KeyW')
+        page.click('.fight-bar .start-encounter')
+        time.sleep(0.5)
+        phase = page.evaluate('() => practice.fight.phase')
+        if phase != 'countdown':
+            errors.append(f'Start Encounter gave phase {phase}')
+        page.wait_for_function('practice.fight.phase === "fight"', timeout=6000)
+        page.keyboard.press('Digit8')
+        page.evaluate('() => practice.sendInput({kind: "startAttack"})')
+        page.wait_for_selector('.summary', timeout=20000)
+        enc = page.evaluate('() => practice.summary')
+        print('encounter summary:', json.dumps({k: enc[k] for k in ('dps', 'damage', 'durationMs')}))
+        if abs(enc['durationMs'] - 10000) > 1:
+            errors.append(f"the encounter lasted {enc['durationMs']}ms, want 10000")
+
+        t = page.evaluate('() => practice.timings')
+        lat = sorted(t['pressToAnswer'])
+        calls = sorted(t['calls'])
+        pct = lambda xs, q: xs[min(len(xs) - 1, int(len(xs) * q))] if xs else 0
+        print(f"timings: wasm load {t['loadMs']:.0f}ms, session start {t['startCallMs']:.1f}ms, "
+              f"press to answer p50 {pct(lat, .5):.1f}ms p99 {pct(lat, .99):.1f}ms ({len(lat)} presses), "
+              f"Go call p50 {pct(calls, .5):.2f}ms p99 {pct(calls, .99):.2f}ms, swaps {[round(x, 1) for x in t['swaps']]}")
         browser.close()
 
     if errors:
