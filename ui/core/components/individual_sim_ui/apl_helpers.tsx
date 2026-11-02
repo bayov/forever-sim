@@ -440,9 +440,19 @@ const unitSets: Record<
 			].flat();
 		},
 	},
+	// The aura sources (self, pets, targets) and the heal targets, for the health values.
 	heal_targets: {
 		getUnits: player => {
-			return [undefined, healTargetUnits(player), UnitReference.create({ type: UnitType.CurrentTarget })].flat();
+			return [
+				undefined,
+				player
+					.getPetMetadatas()
+					.asList()
+					.map((_petMetadata, i) => UnitReference.create({ type: UnitType.Pet, index: i, owner: UnitReference.create({ type: UnitType.Self }) })),
+				healTargetUnits(player),
+				UnitReference.create({ type: UnitType.CurrentTarget }),
+				player.sim.encounter.targetsMetadata.asList().map((_targetMetadata, i) => UnitReference.create({ type: UnitType.Target, index: i })),
+			].flat();
 		},
 	},
 };

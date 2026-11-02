@@ -707,7 +707,7 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 	currentHealthPercent: inputBuilder({
 		label: 'Health (%)',
 		submenu: ['Resources'],
-		shortDescription: 'Amount of currently available Health, as a percentage. 100% for Most Hurt or Lowest Health when nobody is hurt.',
+		shortDescription: "Amount of currently available Health, as a percentage. For Most Hurt or Lowest Health when nobody is hurt, a full player's: 100%.",
 		newValue: APLValueCurrentHealthPercent.create,
 		fields: [AplHelpers.unitFieldConfig('sourceUnit', 'heal_targets')],
 	}),

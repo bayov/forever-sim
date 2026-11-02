@@ -952,6 +952,10 @@ func (at *auraTracker) OnPeriodicDamageDealt(sim *Simulation, spell *Spell, resu
 }
 func (at *auraTracker) OnPeriodicDamageTaken(sim *Simulation, spell *Spell, result *SpellResult) {
 	for _, aura := range at.onPeriodicDamageTakenAuras {
+		// An aura can end during the loop, as when the tick kills a player (player_death.go).
+		if !aura.active {
+			continue
+		}
 		aura.OnPeriodicDamageTaken(aura, sim, spell, result)
 	}
 }

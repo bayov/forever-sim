@@ -137,6 +137,10 @@ func (shaman *Shaman) newHealSpellConfig(r healRank, rank int, spellCode int32) 
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			target = shaman.healTarget(target)
+			// A heal at a player who died as it landed does nothing, and jumps nowhere.
+			if target.IsDead() {
+				return
+			}
 			bonus := shaman.riptideChainHealMultiplier(spell, target)
 			spell.DamageMultiplier *= bonus
 			spell.CalcAndDealHealing(sim, target, sim.Roll(low, high), spell.OutcomeHealingCrit)
@@ -241,8 +245,13 @@ func (shaman *Shaman) registerRiptideSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			target = shaman.healTarget(target)
+			if target.IsDead() {
+				return
+			}
 			spell.CalcAndDealHealing(sim, target, sim.Roll(low, high), spell.OutcomeHealingCrit)
-			spell.Hot(target).Apply(sim)
+			if hot := spell.Hot(target); hot != nil {
+				hot.Apply(sim)
+			}
 		},
 	})
 }
