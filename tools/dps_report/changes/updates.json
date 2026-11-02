@@ -1986,6 +1986,24 @@
      "commits": [
       "6c35781"
      ]
+    },
+    {
+     "title": "Ice Lance and Fire Blast share a cooldown",
+     "kind": "sim",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__frostfire"
+     ],
+     "note": "The game files put Ice Lance's 8 sec cooldown in the same category as Fire Blast's, so casting either puts both on cooldown. Frostfire, the one preset that casts both, drops 11.7 at 180 s (1076.0 to 1064.3).",
+     "source": {
+      "label": "Ice Lance's cooldown category (client 70707)",
+      "url": "https://wago.tools/db2/SpellCategories?build=1.60.1.70707&filter%5BSpellID%5D=exact%3A1312002"
+     },
+     "commits": [
+      "d754170"
+     ]
     }
    ],
    "internal": [
