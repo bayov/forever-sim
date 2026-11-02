@@ -1145,6 +1145,12 @@ rendering, not the sim.
   dummy and blends into the real hills by 110. No doodad stands within 25 yards. Buildings (WMOs) aren't drawn, and
   the spot has none near.
 - The Barrens' daytime ambience and wind loop from the start (SoundAmbience 3049: sound kits 292584 and 292700).
+- Second report (with the terrain): few hitches, but 120 FPS instead of 240 in the fight, from 4 to 6ms of script a
+  frame drawing up to 380 meshes. The ground is now one mesh (a texture array for the ground textures and one atlas
+  for the alpha maps), and each doodad model is a plain mesh in its first pose drawn for all its copies at once
+  (no bones to update every frame). Draw calls went from 134 to 54 in the same view.
+- The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
+  (the Flametongue Totem proc's fire impact) load before the fight too.
 - Combat text scrolls like the Replay view's (MSBT): what you do goes up from the target's frame, buffs you gain go
   down to your frame, crits pop up and stay put (`ui/practice/sct.ts`).
 - Particles: packed gravity, key times, sphere emitters, spin, colors, blend modes and model scale. Rendering:

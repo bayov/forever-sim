@@ -67,6 +67,7 @@ type startArgs struct {
 
 type startReply struct {
 	Toolkit []practice.Spell `json:"toolkit"`
+	Shown   []int32          `json:"shown"`
 	StartMs float64          `json:"startMs"`
 	Batch   *practice.Batch  `json:"batch"`
 }
@@ -85,7 +86,7 @@ func start(args []js.Value) (any, error) {
 		return nil, err
 	}
 	session = s
-	return startReply{Toolkit: s.Toolkit(), StartMs: ms(s.Now()), Batch: s.TakeBatch()}, nil
+	return startReply{Toolkit: s.Toolkit(), Shown: s.ShownSpells(), StartMs: ms(s.Now()), Batch: s.TakeBatch()}, nil
 }
 
 // input takes an input and the sim time of its press in ms, runs the sim to nowMs, and returns

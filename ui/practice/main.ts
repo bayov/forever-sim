@@ -196,6 +196,8 @@ class PracticeRoom {
 	// The cast whose precast shows, by its start: it goes off when it runs its full time.
 	private castShown?: { spellId: number; start: number; end: number };
 	private toolkitReady!: Promise<void>;
+	// Every spell of yours the sim may show a hit of (procs and the like), beside the toolkit.
+	private shownBySim: number[] = [];
 	private toolkitResolve!: () => void;
 	private loadingModels = false;
 	private lastFacing?: number;
@@ -469,7 +471,7 @@ class PracticeRoom {
 		jobs.push(
 			this.toolkitReady.then(() =>
 				effects
-					.preload([...this.toolkit.spells.filter(s => s.kind !== 'item').map(s => s.spellId ?? 0).filter(id => id > 0), ...shownSpells])
+					.preload([...this.toolkit.spells.filter(s => s.kind !== 'item').map(s => s.spellId ?? 0).filter(id => id > 0), ...shownSpells, ...this.shownBySim])
 					.then(models => warm.push(...models))
 					.catch(e => console.warn('effects', e)),
 			),
@@ -515,7 +517,10 @@ class PracticeRoom {
 				this.sessions++;
 				const first = !this.toolkit;
 				this.running = true;
-				if (first) this.setupToolkit(msg.toolkit);
+				if (first) {
+					this.shownBySim = msg.shown ?? [];
+					this.setupToolkit(msg.toolkit);
+				}
 				break;
 			}
 			case 'batch':

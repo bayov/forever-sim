@@ -108,7 +108,7 @@ async function onMessage(msg: ToWorker) {
 			clock = { wallAtStart: msg.wallNow, startMs: reply.startMs, shiftMs: 0, pausedMs: 0 };
 			running = true;
 			needSpare = true;
-			post({ type: 'started', toolkit: reply.toolkit, startMs: reply.startMs, batch: reply.batch, wallAtStart: msg.wallNow, callMs });
+			post({ type: 'started', toolkit: reply.toolkit, shown: reply.shown, startMs: reply.startMs, batch: reply.batch, wallAtStart: msg.wallNow, callMs });
 			post({ type: 'batch', batch: reply.batch, simNowMs: simNow(), clock, callMs });
 			if (heartbeat === undefined) {
 				// The HUD's state between events, a few times a second.
