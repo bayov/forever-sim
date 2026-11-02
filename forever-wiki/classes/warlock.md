@@ -19,7 +19,7 @@ Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. T
 ## Level 60 presets: Suppression on Demonology and the explosives (2026-10-24)
 
 - Demonology takes Suppression 5/5 (standards 26: a threat talent every warlock build must take, the other builds already did). The talent search with it pinned (`tools/rotopt -require suppression`) on the shared set, which it caps at 16% spell hit, gives `051-0305003131221001351-0550004` for Demonology and its curse duty build: Agonizing Flames' three points and one of Ruin went to Suppression, and one to Improved Corruption. Keeping Agonizing Flames by dropping Demonic Pact is 90 behind, and the old Demonology hit set would put it 4% over the cap (13 behind). Suppression costs 67.1 / 68.1 / 66.2 at 120 / 180 / 300 sec (Demonology 1081.4 / 1065.1 / 1035.4, curse duty 1063.8 / 1053.7 / 1026.5); Demonology is still the best warlock build.
-- Explosives only when they gain (standards 11): the Goblin Sapper alone stays on every build (2.7 to 7.6 ahead of none at 120 / 180 / 300 sec on both seed sets); every other explosive costs 1.2 to 6.7 on top of it, its 1 sec cast taking a Shadow Bolt's place.
+- Explosives only when they gain (standards 11): the Goblin Sapper alone stays on every build (2.7 to 7.6 ahead of none at 120 / 180 / 300 sec on both seed sets); every other explosive costs 1.2 to 6.7 on top of it, its 1 sec cast taking a Shadow Bolt's place. Since the 10 yd explosive reach (2026-11-01) the warlocks stand outside it, so they carry no explosives.
 
 ## Level 60 presets after the wowsims/forever alignment (2026-10-23)
 
