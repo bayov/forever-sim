@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "fa865a3b8b7a5bfc677732ec68263be225b6a94d"
+  "master": "b647a21ff0c1bee58f1981df8922ac27102828b2"
  },
- "last_pass_at": "2026-11-02T06:58:00Z",
- "pass": 57,
+ "last_pass_at": "2026-11-02T12:58:14Z",
+ "pass": 58,
  "result": "quiet",
- "note": "Pass 57: 1 commit since 5a6e9c6 (231d5492a, Ret deep Holy Shock build dropped, mksettings ret_shock alias removed, Frostfire mage default): preset removal only, no sim/core, shared-raid or class mechanic change. Client 70707 still newest (probe 300). Newest spell hotfix push on 70707 region 91 still 113557. Dev notes 8 posts unchanged (edit times same); blue tracker: no new Forever posts since 10-29.",
+ "note": "Pass 58: 2 watched commits since fa865a3. 67084d0ec (sim/core/sim.go): labeled RNG sources now reseed lazily on next roll (reseeds counter) instead of eagerly in reseed(); same seeds (SplitMix GetSeed returns start set by reseed), callers labelRand/RandomFloat/ExpFloat never cache the source, so rolls are unchanged: no mechanic change. 79f8e909e: compsearch drops.json refresh and TestReportRaid solo parity, test data only. Client 70707 still newest (probe 300). Dev notes 8 posts unchanged (edit times same); blue tracker: no new Forever posts since 10-29.",
  "client_build": "1.60.1.70707",
- "checked_at": "2026-11-02T07:01:30Z",
+ "checked_at": "2026-11-02T12:58:33Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
@@ -25,5 +25,5 @@
   "newest_push": 113557,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-02T06:58:00Z"
+ "blue_tracker_seen": "2026-11-02T12:58:14Z"
 }

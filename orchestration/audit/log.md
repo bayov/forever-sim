@@ -153,3 +153,5 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-02 07:01 | consumables | pass 63 | master fa865a3b8b7a | quiet | ret_shock/ShockConsumes removal and Frostfire default; Sapper finding still open
 2026-11-02 07:01 | mechanics | pass 57 | master fa865a3b8b7a | quiet | Only 231d5492a (preset removals); client 70707 still newest
 2026-11-02 07:01 | fairness | pass 22 | master fa865a3b8b7a | quiet | Published within 1.0 on all builds; new sweep baseline; Orc Affliction already open
+2026-11-02 12:58 | consumables | pass 64 | master 67084d0ec2 | quiet | Only assumptions_def.py moved; no consumable assumption changed; Sapper finding still open
+2026-11-02 12:58 | mechanics | pass 58 | master 67084d0ec2 | quiet | sim.go reseed speedup (same rolls), drops.json test data; client 70707 still newest
