@@ -1,3 +1,5 @@
+// Package tank is the Feral tank: a druid in Bear Form, or Dire Bear Form from level 40, under
+// Forever (sim/druid/bear.go, bear_attacks.go; docs/tank_sim.md, Rules audit: Feral tank).
 package tank
 
 import (
@@ -25,38 +27,32 @@ func RegisterFeralTankDruid() {
 
 func NewFeralTankDruid(character *core.Character, options *proto.Player) *FeralTankDruid {
 	tankOptions := options.GetFeralTankDruid()
-	selfBuffs := druid.SelfBuffs{}
-
 	bear := &FeralTankDruid{
-		Druid:   druid.New(character, druid.Bear, selfBuffs, options.TalentsString),
-		Options: tankOptions.Options,
+		Druid:   druid.New(character, druid.Bear, druid.SelfBuffs{}, options.TalentsString),
+		Options: tankOptions.GetOptions(),
 	}
-
+	if bear.Options == nil {
+		bear.Options = &proto.FeralTankDruid_Options{}
+	}
 	bear.SelfBuffs.InnervateTarget = &proto.UnitReference{}
-	if tankOptions.Options.InnervateTarget != nil {
-		bear.SelfBuffs.InnervateTarget = tankOptions.Options.InnervateTarget
+	if bear.Options.InnervateTarget != nil {
+		bear.SelfBuffs.InnervateTarget = bear.Options.InnervateTarget
 	}
 
 	bear.EnableRageBar(core.RageBarOptions{
-		StartingRage:   bear.Options.StartingRage,
-		RageMultiplier: 1,
+		StartingRage:          bear.Options.StartingRage,
+		DamageDealtMultiplier: 1,
+		DamageTakenMultiplier: 1,
 	})
-
+	// The cat's placeholder paw, so the flat damage of weapon enchants and stones can be taken off
+	// it in Initialize (druid.KeepFlatWeaponDamage), when the Env is there for the bear's weapon.
 	bear.EnableAutoAttacks(bear, core.AutoAttackOptions{
-		// Base paw weapon.
-		MainHand:       bear.GetBearWeapon(),
+		MainHand:       bear.GetCatWeapon(),
 		AutoSwingMelee: true,
 		ReplaceMHSwing: bear.TryMaul,
 	})
 	bear.ReplaceBearMHFunc = bear.TryMaul
-
-	healingModel := options.HealingModel
-	if healingModel != nil {
-		if healingModel.InspirationUptime > 0.0 {
-			core.ApplyInspiration(bear.GetCharacter(), healingModel.InspirationUptime)
-		}
-	}
-
+	bear.PseudoStats.FeralCombatEnabled = true
 	return bear
 }
 
@@ -72,12 +68,13 @@ func (bear *FeralTankDruid) GetDruid() *druid.Druid {
 
 func (bear *FeralTankDruid) Initialize() {
 	bear.Druid.Initialize()
+	bear.KeepFlatWeaponDamage()
+	bear.AutoAttacks.SetMH(bear.GetBearWeapon())
 	bear.RegisterFeralTankSpells()
 }
 
 func (bear *FeralTankDruid) Reset(sim *core.Simulation) {
 	bear.Druid.Reset(sim)
-	bear.Druid.ClearForm(sim)
+	bear.Druid.CancelShapeshift(sim)
 	bear.BearFormAura.Activate(sim)
-	bear.Druid.PseudoStats.Stunned = false
 }

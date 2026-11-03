@@ -55,8 +55,9 @@ func (druid *Druid) ApplyTalents() {
 	// Natural Reaction: 1% dodge a point. Its Rage on a dodge is a bear's.
 	druid.AddStat(stats.Dodge, float64(druid.Talents.NaturalReaction)*core.DodgeRatingPerDodgeChance)
 	// Thick Hide: 1 base armor a level a point in the forms. The defense skill part is a
-	// tank's, and the form armor multipliers are left out.
-	if druid.Talents.ThickHide > 0 && druid.StartingForm.Matches(Cat|Bear|Moonkin) {
+	// tank's, and the form armor multipliers are left out. The bear's, scaled by its form, is
+	// in bear.go.
+	if druid.Talents.ThickHide > 0 && druid.StartingForm.Matches(Cat|Moonkin) {
 		druid.AddStat(stats.Armor, float64(druid.Talents.ThickHide)*float64(druid.Level))
 	}
 
@@ -316,7 +317,7 @@ func (druid *Druid) applySavageFury() {
 		return
 	}
 	druid.onInit("Savage Fury", func() {
-		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred} {
+		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.Maul, druid.SwipeBear} {
 			if spell != nil {
 				spell.ImpactDamageMultiplierAdditive += 0.05 * points
 			}
@@ -357,7 +358,8 @@ func (druid *Druid) RendAndTearMultiplier(target *core.Unit) float64 {
 	}
 	bleeding := druid.AssumeBleedActive ||
 		(druid.Rake != nil && druid.Rake.Dot(target).IsActive()) ||
-		(druid.Rip != nil && druid.Rip.Dot(target).IsActive())
+		(druid.Rip != nil && druid.Rip.Dot(target).IsActive()) ||
+		(druid.Lacerate != nil && druid.Lacerate.Dot(target).IsActive())
 	return core.TernaryFloat64(bleeding, 1+0.02*float64(druid.Talents.RendAndTear), 1)
 }
 
