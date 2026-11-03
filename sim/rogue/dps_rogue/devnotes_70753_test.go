@@ -86,7 +86,7 @@ func TestForeverShank(t *testing.T) {
 
 // Venom is a passive now: a Shank gives 30% more poison damage and 20% more poison procs for 6 sec.
 func TestForeverVenomFromShank(t *testing.T) {
-	sim, rogue := newForeverRogueSim(t, "00000000000000001", 18805, 18816, 1) // Venom only; Core Hound Tooth, Perdition's Blade
+	sim, rogue := newForeverRogueSim(t, "00000000000001", 18805, 18816, 1) // Venom only; Core Hound Tooth, Perdition's Blade
 	if rogue.VenomAura == nil {
 		t.Fatal("the talents give no Venom")
 	}
@@ -176,7 +176,7 @@ func TestForeverMutilateNinetyPercent(t *testing.T) {
 // Flawless Execution takes 15 off Eviscerate; Aggression 3/3 raises Sinister Strike and Eviscerate
 // by 15% and no longer Backstab.
 func TestForeverFlawlessExecutionAndAggression(t *testing.T) {
-	sim, rogue := newForeverRogueSim(t, "-0000000000100003", 18805, 18805, 1)
+	sim, rogue := newForeverRogueSim(t, "-0000000000013", 18805, 18805, 1)
 	if !rogue.Talents.FlawlessExecution || rogue.Talents.Aggression != 3 {
 		t.Fatal("the talents give no Flawless Execution or no Aggression 3")
 	}
@@ -189,5 +189,101 @@ func TestForeverFlawlessExecutionAndAggression(t *testing.T) {
 	}
 	if got := rogue.Backstab.DamageMultiplier; math.Abs(got-1.5) > 1e-9 {
 		t.Errorf("Backstab's multiplier is %.3f, want 1.5", got)
+	}
+}
+
+// Death Mark (client 1325758 at 60): 12% of the rogue's damage to the target a combo point is
+// stored for 6 sec, Rupture and Garrote twice, then dealt up to 156 + 245 a point + 4% attack power
+// a point. Coup de Grace 3/3 raises the rate and the damage by 20%.
+func TestForeverDeathMark(t *testing.T) {
+	// Death Mark and Coup de Grace 3/3, nothing else.
+	sim, rogue := newForeverRogueSim(t, "-3-000000000000000001", 18805, 18805, 1)
+	if rogue.DeathMark == nil {
+		t.Fatal("the talents give no Death Mark")
+	}
+	target := rogue.CurrentTarget
+	for sim.CurrentTime <= 0 {
+		sim.Step()
+	}
+	rogue.AutoAttacks.CancelAutoSwing(sim) // only the Garrote below is stored
+	rogue.AddStatDynamic(sim, stats.MeleeHit, 20*core.MeleeHitRatingPerHitChance)
+	detonation := rogue.GetSpell(core.ActionID{SpellID: 1325758, Tag: 1})
+	detonation.BonusCritRating -= 1000 * core.CritRatingPerCritChance
+	for _, points := range []int32{1, 5} {
+		for !rogue.DeathMarkAuras.Get(target).IsActive() {
+			rogue.AddComboPoints(sim, points-rogue.ComboPoints(), target, rogue.DeathMark.ComboPointMetrics())
+			rogue.AddEnergy(sim, 100, rogue.EnergyRefundMetrics)
+			rogue.SetGCDTimer(sim, sim.CurrentTime)
+			rogue.DeathMark.CD.Reset()
+			rogue.DeathMark.Cast(sim, target)
+		}
+		ap := rogue.DeathMark.MeleeAttackPower(target)
+		damageCap := 156 + 245*float64(points) + 0.04*float64(points)*ap
+		// 1000 damage of Garrote is 2 x 12% x points x 1.2 stored.
+		rogue.Garrote.CalcAndDealPeriodicDamage(sim, target, 1000, rogue.Garrote.OutcomeAlwaysHitNoHitCounter)
+		dealt := rogue.Garrote.SpellMetrics[target.UnitIndex].TotalDamage
+		rogue.Garrote.SpellMetrics[target.UnitIndex].TotalDamage = 0
+		before := detonation.SpellMetrics[target.UnitIndex].TotalDamage
+		for rogue.DeathMarkAuras.Get(target).IsActive() {
+			sim.Step()
+		}
+		got := detonation.SpellMetrics[target.UnitIndex].TotalDamage - before
+		want := min(dealt*2*0.12*float64(points)*1.2, damageCap) * 1.2
+		if math.Abs(got-want) > 1 { // damage is whole numbers
+			t.Errorf("a %d point Death Mark dealt %.2f, want %.2f (stored from %.1f, cap %.1f)", points, got, want, dealt, damageCap)
+		}
+	}
+}
+
+// Boot Knife 5/5 makes every Shank add 2 combo points; Flash of Steel 5/5 adds 15 Energy and takes
+// 2 sec off the cooldown; Composure 2/2 makes Poised take 20 off.
+func TestForeverShankTalentsAndComposure(t *testing.T) {
+	sim, rogue := newForeverRogueSim(t, "-000000000200000005-00000000000000005", 18805, 18805, 1)
+	target := rogue.CurrentTarget
+	if got := rogue.SinisterStrike.Cost.GetCurrentCost(); got != 25 {
+		t.Errorf("Sinister Strike under Poised with Composure 2/2 costs %.0f, want 25", got)
+	}
+	rogue.PoisedAura.Deactivate(sim)
+	if got := rogue.Shank.CD.Duration; got != 8*time.Second {
+		t.Errorf("Shank's cooldown is %s, want 8s", got)
+	}
+	for rogue.ComboPoints() == 0 {
+		rogue.SpendEnergy(sim, rogue.CurrentEnergy(), rogue.EnergyRefundMetrics)
+		rogue.AddEnergy(sim, 50, rogue.EnergyRefundMetrics)
+		rogue.SetGCDTimer(sim, sim.CurrentTime)
+		rogue.Shank.CD.Reset()
+		rogue.Shank.Cast(sim, target)
+	}
+	if rogue.ComboPoints() != 2 || rogue.CurrentEnergy() != 85 {
+		t.Errorf("a landed Shank left %d combo points and %.0f Energy, want 2 and 85", rogue.ComboPoints(), rogue.CurrentEnergy())
+	}
+}
+
+// Blood Splatter: a 5 point Rupture has 3 more ticks (16 + 6 sec), Garrote 3 more (18 + 9 sec).
+func TestForeverBloodSplatter(t *testing.T) {
+	sim, rogue := newForeverRogueSim(t, "00000001", 18805, 18805, 1)
+	if got := rogue.RuptureTicks(5); got != 11 {
+		t.Errorf("a 5 point Rupture has %d ticks, want 11", got)
+	}
+	dot := rogue.Garrote.Dot(rogue.CurrentTarget)
+	dot.Apply(sim)
+	if got := dot.RemainingDuration(sim); got != 27*time.Second {
+		t.Errorf("Garrote lasts %s, want 27s", got)
+	}
+}
+
+// The re-ranked talents: Lethality 10% a rank, Dual Wield Specialization 25%, Opportunity 4%,
+// Relentless Strikes 4% a combo point a rank.
+func TestForeverReRankedTalents(t *testing.T) {
+	// Malice 5, Lethality 2; Precision 3, Dual Wield Specialization 2; Opportunity 5.
+	_, rogue := newForeverRogueSim(t, "00500000200000000-00000300000000200-005", 18805, 18805, 1)
+	if got := rogue.SinisterStrike.CritDamageBonus; math.Abs(got-1.2) > 1e-9 {
+		t.Errorf("Lethality 2/2 gives a crit damage bonus of x%.2f, want x1.20", got)
+	}
+	if got := rogue.AutoAttacks.OHConfig().DamageMultiplier; math.Abs(got-1.5) > 1e-9 {
+		t.Errorf("Dual Wield Specialization 2/2 makes the off hand x%.2f, want x1.5", got)
+	}
+	if got := rogue.Backstab.DamageMultiplier; math.Abs(got-1.5*1.2) > 1e-9 {
+		t.Errorf("Backstab with Opportunity 5/5 is x%.3f, want x1.8", got)
 	}
 }

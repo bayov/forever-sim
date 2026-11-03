@@ -59,9 +59,9 @@ func (rogue *Rogue) registerEviscerate() {
 			return rogue.ComboPoints() > 0
 		},
 
-		// Improved Eviscerate and Aggression are both percent modifiers on the damage (aura 108),
-		// and the beta showed two of those multiply (Call of Flame and Improved Fire Nova).
-		DamageMultiplier: []float64{1, 1.07, 1.13, 1.20}[rogue.Talents.ImprovedEviscerate] *
+		// Coup de Grace (Improved Eviscerate) and Aggression are both percent modifiers on the damage
+		// (aura 108), and the beta showed two of those multiply (Call of Flame and Improved Fire Nova).
+		DamageMultiplier: rogue.coupDeGraceMultiplier() *
 			rogue.aggressionMultiplier(),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,

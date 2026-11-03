@@ -69,7 +69,7 @@ func (rogue *Rogue) registerPoised() {
 	})
 }
 
-// Poised's 10, plus Composure's 5 a rank once the tree has it.
+// Poised's 10, plus Composure's 5 a rank (November 2 development notes).
 func (rogue *Rogue) poisedReduction() int32 {
-	return 10
+	return 10 + 5*rogue.Talents.Composure
 }

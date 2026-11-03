@@ -39,8 +39,9 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		// Cold Blood only names Sinister Strike, Backstab, Ambush, Eviscerate and Mutilate.
 		Flags: rogue.builderFlags() &^ SpellFlagColdBlooded,
 
+		// Efficient Strikes covers Hemorrhage too (November 2 development notes).
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   35.0,
+			Cost:   35 - rogue.efficientStrikes(),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -59,7 +60,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
 			// Normalized weapon damage, the client's Hemorrhage (16511) uses effect 121 like Sinister Strike.
-			baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target)) * rogue.quietusMultiplier(sim)
+			baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target))
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 

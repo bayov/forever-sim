@@ -100,14 +100,15 @@ var ruptureTotalDamage = map[int32][6]float64{
 }
 
 func (rogue *Rogue) RuptureDamage(target *core.Unit, comboPoints int32) float64 {
-	baseTickDamage := rankAt(rogue.Level, ruptureTotalDamage)[comboPoints] / float64(rogue.RuptureTicks(comboPoints))
+	baseTickDamage := rankAt(rogue.Level, ruptureTotalDamage)[comboPoints] / float64(3+comboPoints)
 
 	return baseTickDamage +
 		[]float64{0, 0.04 / 4, 0.10 / 5, 0.18 / 6, 0.21 / 7, 0.24 / 8}[comboPoints]*rogue.Rupture.MeleeAttackPower(target)
 }
 
+// Blood Splatter adds 6 sec, 3 more ticks at the same damage (November 2 development notes).
 func (rogue *Rogue) RuptureTicks(comboPoints int32) int32 {
-	return 3 + comboPoints
+	return 3 + comboPoints + core.TernaryInt32(rogue.Talents.BloodSplatter, 3, 0)
 }
 
 func (rogue *Rogue) RuptureDuration(comboPoints int32) time.Duration {

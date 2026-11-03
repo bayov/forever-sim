@@ -27,7 +27,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 
 		CritDamageBonus: rogue.lethality(),
 
-		DamageMultiplier: rogue.AutoAttacks.OHConfig().DamageMultiplier * []float64{1, 1.05, 1.1}[rogue.Talents.Opportunity],
+		DamageMultiplier: rogue.AutoAttacks.OHConfig().DamageMultiplier * rogue.opportunityMultiplier(),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 
@@ -67,7 +67,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 
 		CritDamageBonus: rogue.lethality(),
 
-		DamageMultiplier: []float64{1, 1.05, 1.1}[rogue.Talents.Opportunity],
+		DamageMultiplier: rogue.opportunityMultiplier(),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 

@@ -4,21 +4,18 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
 func (rogue *Rogue) ApplyTalents() {
 	rogue.applyRuthlessness()
-	rogue.applyMurder()
 	rogue.applyRelentlessStrikes()
 	rogue.applySealFate()
 	rogue.applyHackAndSlash()
 	rogue.applyWeaponExpertise()
 	rogue.applyInitiative()
 	rogue.applySerratedBlades()
-	rogue.applyCutthroat()
-	rogue.applyThousandCuts()
+	rogue.registerDeathMark()
 
 	rogue.AddStat(stats.Dodge, 1*float64(rogue.Talents.LightningReflexes))
 	rogue.AddStat(stats.Parry, 2*float64(rogue.Talents.Deflection))
@@ -38,9 +35,17 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.applyRiposte()
 }
 
-// dwsMultiplier returns the offhand damage multiplier
+// dwsMultiplier returns the offhand damage multiplier: 25/50% under the November 2 development
+// notes (was 5 ranks at 5%; client 13715 unchanged in 1.60.1.70753).
 func (rogue *Rogue) dwsMultiplier() float64 {
-	return 1 + 0.05*float64(rogue.Talents.DualWieldSpecialization)
+	return 1 + 0.25*float64(rogue.Talents.DualWieldSpecialization)
+}
+
+// opportunityMultiplier is Backstab, Garrote, Ambush and Mutilate's: 4% a rank, 5 ranks under the
+// November 2 development notes (was 2 ranks at 5%; client 14057 unchanged in 1.60.1.70753). One
+// percent modifier, so it multiplies the spell's others.
+func (rogue *Rogue) opportunityMultiplier() float64 {
+	return 1 + 0.04*float64(rogue.Talents.Opportunity)
 }
 
 func (rogue *Rogue) applyRuthlessness() {
@@ -57,37 +62,17 @@ func (rogue *Rogue) applyRuthlessness() {
 	})
 }
 
-// Murder talent
-func (rogue *Rogue) applyMurder() {
-	if rogue.Talents.Murder == 0 {
-		return
-	}
-
-	// post finalize, since attack tables need to be setup
-	rogue.Env.RegisterPostFinalizeEffect(func() {
-		for _, t := range rogue.Env.Encounter.Targets {
-			switch t.MobType {
-			case proto.MobType_MobTypeHumanoid, proto.MobType_MobTypeGiant:
-				// The client's Murder (14158) is a lone damage done versus creature type aura
-				// (168), so a crit is twice the raised damage. Humanoid Slaying adds a second aura
-				// for the crit damage, Murder has none, so the crit multiplier stays as it is.
-				multiplier := []float64{1, 1.02, 1.04}[rogue.Talents.Murder]
-				for _, at := range rogue.AttackTables[t.UnitIndex] {
-					at.DamageDealtMultiplier *= multiplier
-				}
-			}
-		}
-	})
-}
-
+// Relentless Strikes is 5 ranks of 4% a combo point under the November 2 development notes (was one
+// rank of 20%; client 14179 unchanged in 1.60.1.70753).
 func (rogue *Rogue) applyRelentlessStrikes() {
-	if !rogue.Talents.RelentlessStrikes {
+	if rogue.Talents.RelentlessStrikes == 0 {
 		return
 	}
+	chancePerPoint := 0.04 * float64(rogue.Talents.RelentlessStrikes)
 
 	cpMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 14179})
 	rogue.OnComboPointsSpent(func(sim *core.Simulation, spell *core.Spell, comboPoints int32) {
-		if sim.Proc(0.2*float64(comboPoints), "RelentlessStrikes") {
+		if sim.Proc(chancePerPoint*float64(comboPoints), "RelentlessStrikes") {
 			rogue.AddEnergy(sim, 25, cpMetrics)
 		}
 	})
@@ -174,7 +159,9 @@ func (rogue *Rogue) applySealFate() {
 		return
 	}
 
-	procChance := 0.2 * float64(rogue.Talents.SealFate)
+	// 33/66/100% under the November 2 development notes (was 5 ranks at 20%; client 14186
+	// unchanged in 1.60.1.70753).
+	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.SealFate]
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14195})
 
 	icd := core.Cooldown{
@@ -264,98 +251,6 @@ func (rogue *Rogue) applySerratedBlades() {
 	}
 
 	rogue.PseudoStats.ArmorIgnorePercent += 0.03 * float64(rogue.Talents.SerratedBlades)
-}
-
-// Cutthroat lets Ambush be used outside of Stealth for a short while after a Backstab.
-func (rogue *Rogue) applyCutthroat() {
-	if rogue.Talents.Cutthroat == 0 {
-		return
-	}
-
-	// TODO: Only rank 1 was seen, the proc chance is assumed to scale linearly. Beta will confirm.
-	procChance := 0.03 * float64(rogue.Talents.Cutthroat)
-
-	// The client's proc buff (462707, triggered by the talent 462708).
-	rogue.CutthroatAura = rogue.RegisterAura(core.Aura{
-		Label:    "Cutthroat",
-		ActionID: core.ActionID{SpellID: 462707},
-		Duration: time.Second * 10,
-	})
-
-	rogue.RegisterAura(core.Aura{
-		Label:    "Cutthroat Trigger",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell.SpellCode != SpellCode_RogueBackstab || !result.Landed() {
-				return
-			}
-
-			if sim.Proc(procChance, "Cutthroat") {
-				rogue.CutthroatAura.Activate(sim)
-			}
-		},
-	})
-}
-
-// Thousand Cuts discounts the next Hemorrhage or Backstab as Rupture ticks.
-func (rogue *Rogue) applyThousandCuts() {
-	if !rogue.Talents.ThousandCuts {
-		return
-	}
-
-	var affectedSpells []*core.Spell
-	rogue.ThousandCutsAura = rogue.RegisterAura(core.Aura{
-		Label:     "Thousand Cuts",
-		ActionID:  core.ActionID{SpellID: 1310723}, // The client's stacking buff, triggered by the talent 1310721.
-		Duration:  time.Second * 10,
-		MaxStacks: 5,
-		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			affectedSpells = core.FilterSlice([]*core.Spell{rogue.Backstab, rogue.Hemorrhage}, func(spell *core.Spell) bool {
-				return spell != nil
-			})
-		},
-		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			for _, spell := range affectedSpells {
-				spell.Cost.FlatModifier -= 3 * (newStacks - oldStacks)
-			}
-		},
-		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell.SpellCode == SpellCode_RogueBackstab || spell.SpellCode == SpellCode_RogueHemorrhage {
-				aura.Deactivate(sim)
-			}
-		},
-	})
-
-	rogue.RegisterAura(core.Aura{
-		Label:    "Thousand Cuts Trigger",
-		Duration: core.NeverExpires,
-		OnReset: func(aura *core.Aura, sim *core.Simulation) {
-			aura.Activate(sim)
-		},
-		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell.SpellCode != SpellCode_RogueRupture {
-				return
-			}
-
-			rogue.ThousandCutsAura.Activate(sim)
-			rogue.ThousandCutsAura.AddStack(sim)
-		},
-	})
-}
-
-// Quietus is an execute range bonus, so it's rolled in as the strike is cast.
-func (rogue *Rogue) quietusMultiplier(sim *core.Simulation) float64 {
-	if rogue.Talents.Quietus == 0 || !sim.IsExecutePhase35() {
-		return 1
-	}
-
-	// TODO: Only rank 1 was seen and the damage bonus is assumed to scale linearly. The
-	// tooltip data extrapolates the health threshold along with it, which it cannot be, so
-	// rank 1's 35% is used for every rank. Beta will confirm.
-	return 1 + 0.02*float64(rogue.Talents.Quietus)
 }
 
 func (rogue *Rogue) registerBladeFlurryCD() {
@@ -510,13 +405,26 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 	})
 }
 
-// Lethality is 4% per rank under Forever, down from Classic's 6%.
+// Lethality is 2 ranks of 10% under the November 2 development notes (was 5 ranks of 4%; client
+// 14128 unchanged in 1.60.1.70753).
 func (rogue *Rogue) lethality() float64 {
-	return 0.04 * float64(rogue.Talents.Lethality)
+	return 0.10 * float64(rogue.Talents.Lethality)
 }
 
 // Aggression raises Sinister Strike and Eviscerate by 5/10/15% under Forever (November 2
 // development notes; was 2/4/6% and Backstab too, as client 18427 in 1.60.1.70753 still has it).
 func (rogue *Rogue) aggressionMultiplier() float64 {
 	return []float64{1, 1.05, 1.10, 1.15}[rogue.Talents.Aggression]
+}
+
+// Coup de Grace (Improved Eviscerate) raises Eviscerate, and Death Mark's damage and storage rate,
+// by 7/13/20% (November 2 development notes).
+func (rogue *Rogue) coupDeGraceMultiplier() float64 {
+	return []float64{1, 1.07, 1.13, 1.20}[rogue.Talents.CoupDeGrace]
+}
+
+// Efficient Strikes (Improved Sinister Strike) takes 3/5 Energy off Sinister Strike and, under the
+// November 2 development notes, Hemorrhage.
+func (rogue *Rogue) efficientStrikes() float64 {
+	return []float64{0, 3, 5}[rogue.Talents.EfficientStrikes]
 }

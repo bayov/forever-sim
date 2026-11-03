@@ -36,9 +36,10 @@ const (
 	SpellCode_RogueVanish
 	SpellCode_RogueVenom
 	SpellCode_RogueShank
+	SpellCode_RogueDeathMark
 )
 
-var TalentTreeSizes = [3]int{17, 17, 19}
+var TalentTreeSizes = [3]int{17, 19, 18}
 
 type Rogue struct {
 	core.Character
@@ -70,6 +71,7 @@ type Rogue struct {
 	Eviscerate   *core.Spell
 	ExposeArmor  *core.Spell
 	Rupture      *core.Spell
+	DeathMark    *core.Spell
 	SliceAndDice *core.Spell
 	Finishers    []*core.Spell
 
@@ -84,13 +86,12 @@ type Rogue struct {
 
 	AdrenalineRushAura      *core.Aura
 	BladeFlurryAura         *core.Aura
-	CutthroatAura           *core.Aura
 	ExposeArmorAuras        core.AuraArray
 	EvasionAura             *core.Aura
 	HemorrhageAuras         core.AuraArray
+	DeathMarkAuras          core.AuraArray
 	SliceAndDiceAura        *core.Aura
 	StealthAura             *core.Aura
-	ThousandCutsAura        *core.Aura
 	VanishAura              *core.Aura
 	VenomAura               *core.Aura
 	PoisedAura              *core.Aura

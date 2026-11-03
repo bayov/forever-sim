@@ -44,15 +44,15 @@ func (rogue *Rogue) registerGarrote() {
 			return rogue.Talents.DirtyDeeds > 0 || !rogue.PseudoStats.InFrontOfTarget
 		},
 
-		DamageMultiplier: 1 +
-			0.05*float64(rogue.Talents.Opportunity),
+		DamageMultiplier: rogue.opportunityMultiplier(),
 		ThreatMultiplier: 1,
 
 		Dot: core.DotConfig{
 			Aura: core.Aura{
 				Label: "Garrote",
 			},
-			NumberOfTicks: 6,
+			// Blood Splatter adds 9 sec, 3 more ticks (November 2 development notes).
+			NumberOfTicks: core.TernaryInt32(rogue.Talents.BloodSplatter, 9, 6),
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				damage := (baseDamage + dot.Spell.MeleeAttackPower(target)*0.03) * rogue.hemorrhageMultiplier(target)

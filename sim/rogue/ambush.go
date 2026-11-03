@@ -18,7 +18,7 @@ func (rogue *Rogue) registerAmbushSpell() {
 		18: 8676, 26: 8724, 34: 8725, 42: 11267, 50: 11268, 58: 11269,
 	})
 
-	damageMultiplier := 2.5 * []float64{1, 1.05, 1.1}[rogue.Talents.Opportunity]
+	damageMultiplier := 2.5 * rogue.opportunityMultiplier()
 
 	rogue.Ambush = rogue.RegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_RogueAmbush,
@@ -42,15 +42,12 @@ func (rogue *Rogue) registerAmbushSpell() {
 			if !rogue.HasDagger(core.MainHand) {
 				return false
 			}
-			// Under Forever Ambush needs the rogue behind the target, from Stealth or through
-			// Cutthroat (wowsims/forever ambush.go).
+			// Under Forever Ambush needs the rogue behind the target (wowsims/forever ambush.go).
 			if rogue.Env.IsForever() && rogue.PseudoStats.InFrontOfTarget {
 				return false
 			}
-			// Cutthroat lets the Stealth requirement slide for a short while after a Backstab, and
-			// Ghostly Strike for 7 sec.
-			return rogue.IsStealthed() || rogue.canOpenWithoutStealth() ||
-				(rogue.CutthroatAura != nil && rogue.CutthroatAura.IsActive())
+			// Ghostly Strike lets the Stealth requirement slide for 7 sec.
+			return rogue.IsStealthed() || rogue.canOpenWithoutStealth()
 		},
 
 		BonusCritRating:  15 * core.CritRatingPerCritChance * float64(rogue.Talents.ImprovedAmbush),
@@ -60,9 +57,6 @@ func (rogue *Rogue) registerAmbushSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
-			if rogue.CutthroatAura != nil {
-				rogue.CutthroatAura.Deactivate(sim)
-			}
 			baseDamage := (flatDamageBonus + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target)))
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)

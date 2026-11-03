@@ -20,8 +20,13 @@ func (rogue *Rogue) registerShank() {
 		return
 	}
 
-	energyGain := rankAt(rogue.Level, map[int32]float64{24: 15, 44: 25})
+	// Flash of Steel: 3 more Energy and 0.4 sec off the cooldown a rank. Boot Knife: a 20% chance a
+	// rank to add 2 combo points (both November 2 development notes, no client spell).
+	energyGain := rankAt(rogue.Level, map[int32]float64{24: 15, 44: 25}) + 3*float64(rogue.Talents.FlashOfSteel)
+	cooldown := time.Second*10 - 400*time.Millisecond*time.Duration(rogue.Talents.FlashOfSteel)
+	bootKnifeChance := 0.2 * float64(rogue.Talents.BootKnife)
 	energyMetrics := rogue.NewEnergyMetrics(ShankActionID)
+	cpMetrics := rogue.NewComboPointMetrics(ShankActionID.WithTag(1))
 
 	rogue.Shank = rogue.RegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_RogueShank,
@@ -42,7 +47,7 @@ func (rogue *Rogue) registerShank() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    rogue.NewTimer(),
-				Duration: time.Second * 10,
+				Duration: cooldown,
 			},
 		},
 
@@ -60,6 +65,9 @@ func (rogue *Rogue) registerShank() {
 
 			if result.Landed() {
 				rogue.AddEnergy(sim, energyGain, energyMetrics)
+				if bootKnifeChance > 0 && sim.Proc(bootKnifeChance, "Boot Knife") {
+					rogue.AddComboPoints(sim, 2, target, cpMetrics)
+				}
 				if rogue.VenomAura != nil {
 					rogue.VenomAura.Activate(sim)
 				}

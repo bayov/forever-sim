@@ -24,7 +24,7 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 		Flags:       rogue.builderFlags(),
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   []float64{45, 42, 40}[rogue.Talents.ImprovedSinisterStrike],
+			Cost:   45 - rogue.efficientStrikes(),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -43,7 +43,7 @@ func (rogue *Rogue) registerSinisterStrikeSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
 
-			baseDamage := (flatDamageBonus + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target))) * rogue.quietusMultiplier(sim)
+			baseDamage := (flatDamageBonus + spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target)))
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
 			if result.Landed() {
