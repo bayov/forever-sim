@@ -75,7 +75,7 @@ DAMAGE_AURAS = {'3', '8', '15', '53', '69'}
 
 # The stat placeholders of the expression language. We describe a character
 # with no bonuses, so each one counts as zero and the tooltip says so.
-STATS = {'sp', 'sps', 'spfi', 'spfr', 'spn', 'sph', 'spa', 'spfrost', 'ap', 'rap', 'bh', 'healpower',
+STATS = {'sp', 'sps', 'spfi', 'spfr', 'spn', 'sph', 'spa', 'spfrost', 'ap', 'apm', 'rap', 'bh', 'healpower',
          'damagepower', 'mws', 'mwb', 'mw', 'rwb', 'rws', 'rw'}
 
 
@@ -373,8 +373,12 @@ class _Context:
 		"""A $<spell><letter><index> reference as a signed number, for expressions."""
 		spell = spell or self.spell
 		i = (index or 1) - 1
-		if letter in ('s', 'm', 'S', 'w'):
+		if letter in ('s', 'S', 'w'):
 			return self.value(spell, i)
+		if letter == 'm':
+			# With a variance, $m is the low end of the roll and $M the high end
+			# (Revenge's "${$m1+...} to ${$M1+...}").
+			return self.spread(spell, i)[0]
 		if letter == 'M':
 			return self.spread(spell, i)[1]
 		if letter == 'o':

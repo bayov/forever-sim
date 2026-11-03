@@ -7,9 +7,9 @@ import RacialsJson from './racials.json';
 // and racials.meta.json says which build. A racial with class variants, like Eureka! or
 // Touch of the Grave, lists one entry per variant with the classes it applies to.
 // Berserking's duration is not in the client data, the 10 sec is Classic's. A server change
-// the client doesn't have yet (the 2026-10-26 racial pass) comes from
-// tools/sources/racials_hotfix.json: its variants have source 'hotfix' and a note, and a
-// racial with no client spell yet (Artisan's Precision) has spellId 0.
+// the client doesn't have yet comes from tools/sources/racials_hotfix.json: its variants
+// have source 'hotfix' and a note, and a racial with no client spell yet has spellId 0
+// (none since 1.60.1.70753, which has the 2026-10-26 racial pass).
 
 export interface RacialVariant {
 	spellId: number;
