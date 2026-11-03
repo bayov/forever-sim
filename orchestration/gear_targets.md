@@ -43,3 +43,28 @@ Targets, % (L):
 | Warlock Demonology | 2 | 13.5 | - | - | 15.5 | 10.0 | - | 38.8 | 7.4 | 14.8 | - | SP 45% |
 | Shadow priest | 4 | 16.6 | - | - | 17.8 | 10.0 | - | 43.4 | 0.2 | 12.0 | - | SP 52% |
 | Smite priest | 4 | 16.6 | - | - | 17.8 | 10.0 | - | 43.5 | - | 12.1 | - | SP 52% |
+
+## Healers (2026-11-03)
+
+The user's ruling, 2026-11-03: "yes, healer synthetic gear", from Wowhead's lists, since wowsims/sod has no
+level 60 BiS sets for any healer. The healing sim's healers (docs/healing_sim.md) wear sets built on this row.
+
+- **Source:** two Wowhead lists, averaged as the SoD lists are: the WoW Forever Restoration shaman Phase 1 BiS
+  guide (www.wowhead.com/forever/guide/classes/shaman/restoration/bis-gear, "a rough estimate based on the
+  stat priority of Spell Healing, Critical Strike, Haste, Spirit and Mp5", with Forever's own items and Era
+  ones) and the Classic Restoration shaman pre-raid BiS guide
+  (www.wowhead.com/classic/guide/shaman-healing-pre-raid-best-in-slot-bis-gear-wow-classic). Each slot's
+  first BiS pick, the two-hander path, two rings, no trinkets or relic. Where the Forever guide's pick has no
+  such item in our database (its BiS chest, Masterwork Breastplate "of Healing", has no Healing roll), the
+  slot's next pick. "Of Healing" world drops at their Healing roll.
+- **Pricing:** the standards 1b weights, with healing on top of spell power at 0.45 (a separate column here).
+  The Forever list prices at Sta 10.8, Str 1.9, Int 14.3, Spi 7.3, SP 37.9, healing 9.3, hit 3.2, crit 11.1,
+  MP5 4.2; the Classic one at Sta 10.8, Int 20.1, Spi 10.4, SP 5.7, healing 43.8, crit 2.7, MP5 6.4. Forever's
+  items carry their healing as spell power, Era's as healing alone.
+- **Target:** Stamina the lists' own share, Spirit 10% (standards 5), no hit (heals don't miss), no Strength
+  (one Tier 0.5 chest's), the rest in the lists' average proportions. Tolerances as for the other rows.
+  Scripts: the session scratchpad's heal_mix.py and synth_heal.py; the numbers are their output.
+
+| Set | Lists | Sta | Int | Spi | SP | Healing | Crit | MP5 | top stat / non-Sta |
+|---|---|---|---|---|---|---|---|---|---|
+| Restoration shaman | 2 | 10.8 | 17.5 | 10.0 | 22.2 | 27.1 | 7.0 | 5.4 | Healing 30% |
