@@ -4,7 +4,7 @@ Worker: the Hunter class session of the round 70753 full pass. Branch `round-707
 
 ## Final summary (2026-11-03)
 
-Landed on master (see the commit named in the orchestrator message). Phase A and B done.
+Landed on master at 7711ade16 (2026-11-03). Phase A and B done. Full suite (`-timeout 40m`) green on the merged tree before the push.
 
 ### What changed
 
