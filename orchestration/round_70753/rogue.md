@@ -39,7 +39,7 @@ iterations; seed 1, seed 1000003 within 0.6). Old is master 5eb381750, after A2:
 | Subtlety (now Death Mark + Boot Knife) | 746.8 / 731.8 / 722.3 | 896.5 / 881.7 / 868.3 | Night Elf (was Undead) | `00530301-320003-115001331320121151` |
 | Mutilate | 754.6 / 742.7 / 734.4 | 881.0 / 866.1 / 855.3 | Undead | `00530320251451031-320303-005` |
 
-The "(vs Humanoid)" builds take the same talents and give exactly the same DPS as their base builds (Murder is gone).
+The six "(vs Humanoid)" builds gave exactly their base builds' DPS once Murder was gone, and are dropped (user ruling 2026-11-03).
 
 **Searches.** The rotopt talent search moves one point at a time and stalled on the new row gates (it never left
 the seed). So I used a stochastic climb of 1 to 5 point moves: 150 valid neighbours a round at 3000 iterations, the
@@ -86,8 +86,9 @@ until neither moved. Seeds were hand-built valid archetypes per build. Notable c
   merge (the rogue results moved on purpose).
 
 **Open questions for the user.**
-1. **Drop the six "(vs Humanoid)" rogue builds?** They only differed by Murder, which the notes removed. They now
-   duplicate their base builds exactly. Recommendation: remove them. I kept them until there's a ruling.
+1. **The six "(vs Humanoid)" rogue builds are dropped** (user ruling 2026-11-03): they only differed by Murder, which
+   the notes removed. Their requests, presets and report hashes are gone; the report data still lists them until
+   the orchestrator regenerates it.
 2. **Builds to keep.**
    - Subtlety is now a Death Mark / Boot Knife build, so a new "Death Mark Subtlety" build isn't needed; the
      Subtlety build is it.

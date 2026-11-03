@@ -262,30 +262,6 @@ export const TalentsLevel60Subtlety = PresetUtils.makePresetTalents('Subtlety', 
 	group: 'Synthetic',
 });
 
-// The same builds for a Humanoid boss. They kept Murder 2/2 until the November 2 development notes removed
-// Murder; since round 70753 they carry their base build's talents, and nothing in the rogue's kit tells the
-// two bosses apart (whether to keep these builds is an open question for the user,
-// orchestration/round_70753/rogue.md).
-const humanoidTalents = (name: string, talentsString: string, tooltip: string) =>
-	PresetUtils.makePresetTalents(`${name} · vs Humanoid`, SavedTalents.create({ talentsString }), {
-		tooltip: `${tooltip} The same talents as the generic boss build since Murder was removed (November 2 notes).`,
-		group: 'Synthetic',
-	});
-export const TalentsLevel60CombatSwordsHumanoid = humanoidTalents('Combat Swords', '00530320201-3200330112013221551', 'Deep Combat for Sinister Strike.');
-export const TalentsLevel60SealFateSwordsHumanoid = humanoidTalents(
-	'Seal Fate Swords',
-	'0053032024105103-320033011201312',
-	'Seal Fate with Blade Flurry for Sinister Strike.',
-);
-export const TalentsLevel60CombatDaggersHumanoid = humanoidTalents('Combat Daggers', '005203002-3203230002012221551-005', 'Deep Combat for Backstab.');
-export const TalentsLevel60SealFateDaggersHumanoid = humanoidTalents(
-	'Seal Fate Daggers',
-	'0053032024105103-321303010201312',
-	'Seal Fate with Puncturing Wounds for Backstab.',
-);
-export const TalentsLevel60MutilateHumanoid = humanoidTalents('Mutilate', '00530320251451031-320303-005', 'Assassination for Mutilate.');
-export const TalentsLevel60SubtletyHumanoid = humanoidTalents('Subtlety', '00530301-320003-115001331320121151', 'Subtlety for Hemorrhage.');
-
 export const TalentPresets = {
 	[Phase.Phase1]: [
 		TalentsLevel60CombatSwords,
@@ -294,12 +270,6 @@ export const TalentPresets = {
 		TalentsLevel60SealFateDaggers,
 		TalentsLevel60Mutilate,
 		TalentsLevel60Subtlety,
-		TalentsLevel60CombatDaggersHumanoid,
-		TalentsLevel60SealFateDaggersHumanoid,
-		TalentsLevel60CombatSwordsHumanoid,
-		TalentsLevel60SealFateSwordsHumanoid,
-		TalentsLevel60MutilateHumanoid,
-		TalentsLevel60SubtletyHumanoid,
 	],
 	[Phase.Phase2]: [
 		TalentsLevel60CombatSwords,
@@ -308,12 +278,6 @@ export const TalentPresets = {
 		TalentsLevel60SealFateDaggers,
 		TalentsLevel60Mutilate,
 		TalentsLevel60Subtlety,
-		TalentsLevel60CombatDaggersHumanoid,
-		TalentsLevel60SealFateDaggersHumanoid,
-		TalentsLevel60CombatSwordsHumanoid,
-		TalentsLevel60SealFateSwordsHumanoid,
-		TalentsLevel60MutilateHumanoid,
-		TalentsLevel60SubtletyHumanoid,
 	],
 };
 
@@ -512,13 +476,9 @@ const level60Encounter = (name: string, mobType: MobType, consumes = P1Consumes)
 		},
 	);
 export const EncounterLevel60 = level60Encounter('Generic boss', MobType.MobTypeUnknown);
-export const EncounterLevel60Humanoid = level60Encounter('Humanoid boss', MobType.MobTypeHumanoid);
 export const EncounterLevel60SapperOnly = level60Encounter('Mutilate', MobType.MobTypeUnknown, P1SapperOnlyConsumes);
-export const EncounterLevel60SapperOnlyHumanoid = level60Encounter('Mutilate · vs Humanoid', MobType.MobTypeHumanoid, P1SapperOnlyConsumes);
 export const EncounterLevel60CombatSwords = level60Encounter('Combat Swords', MobType.MobTypeUnknown, P1CombatSwordsConsumes);
-export const EncounterLevel60CombatSwordsHumanoid = level60Encounter('Combat Swords · vs Humanoid', MobType.MobTypeHumanoid, P1CombatSwordsConsumes);
 export const EncounterLevel60CombatDaggers = level60Encounter('Combat Daggers', MobType.MobTypeUnknown, P1CombatDaggersConsumes);
-export const EncounterLevel60CombatDaggersHumanoid = level60Encounter('Combat Daggers · vs Humanoid', MobType.MobTypeHumanoid, P1CombatDaggersConsumes);
 
 // Round 70753 (November 2 development notes; the rework isn't in client 70753, so the notes' values,
 // standards 37): Shank, Poised, the reworked tree and Death Mark, talents and rotation searched again,
@@ -534,8 +494,8 @@ export const EncounterLevel60CombatDaggersHumanoid = level60Encounter('Combat Da
 // ties the Orc and stays), the Night Elf Subtlety (+1.4 and +1.9 over the Undead on both seed sets, its
 // Shadowmeld into Ambush). Best Horde race: the Undead everywhere. Best Alliance race: the Gnome (Eureka! on
 // cooldown for Seal Fate Swords and Mutilate, tools/dps_report/req/races/) and the Night Elf on Subtlety.
-// The "(vs Humanoid)" builds carry the same talents and sim the same as their base builds since Murder was
-// removed. orchestration/round_70753/rogue.md has the ledger, the searches and the audit.
+// The six "(vs Humanoid)" builds (Murder 2/2 against a Humanoid boss) were dropped in round 70753 (user
+// ruling 2026-11-03): with Murder removed they had their base builds' talents and simmed the same. orchestration/round_70753/rogue.md has the ledger, the searches and the audit.
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
 // encounter and the best race at 180 sec. A build changes race only when the new one leads by more
 // than 0.5 DPS on two seed sets (standards 16). On 2026-10-24 (the hit each set sims best with, 8% to
@@ -680,62 +640,5 @@ export const PresetBuildLevel60Subtlety = level60Build(
 	TalentsLevel60Subtlety,
 	ROTATION_PRESET_LEVEL60_SUBTLETY,
 	EncounterLevel60,
-	Race.RaceNightElf,
-);
-
-// The vs Humanoid builds: the same specs against a Humanoid boss (Giants too), with Murder 2/2.
-// Extra presets, the generic boss builds above are the defaults.
-const humanoidBuild = (
-	name: string,
-	gear: PresetUtils.PresetGear,
-	talents: PresetUtils.PresetTalents,
-	rotation: PresetUtils.PresetRotation,
-	race = Race.RaceUndead,
-	encounter = EncounterLevel60Humanoid,
-) => level60Build(`${name} · vs Humanoid`, `${name} against a Humanoid or Giant boss, with Murder 2/2.`, gear, talents, rotation, encounter, race);
-export const PresetBuildLevel60CombatDaggersHumanoid = humanoidBuild(
-	'Combat Daggers',
-	GearLevel60SyntheticCombatDaggers,
-	TalentsLevel60CombatDaggersHumanoid,
-	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
-	Race.RaceUndead,
-	EncounterLevel60CombatDaggersHumanoid,
-);
-export const PresetBuildLevel60SealFateDaggersHumanoid = humanoidBuild(
-	'Seal Fate Daggers',
-	GearLevel60SyntheticDaggers,
-	TalentsLevel60SealFateDaggersHumanoid,
-	ROTATION_PRESET_LEVEL60_SEAL_FATE_DAGGERS,
-	Race.RaceUndead,
-);
-export const PresetBuildLevel60CombatSwordsHumanoid = humanoidBuild(
-	'Combat Swords',
-	GearLevel60SyntheticSwords,
-	TalentsLevel60CombatSwordsHumanoid,
-	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
-	Race.RaceUndead,
-	EncounterLevel60CombatSwordsHumanoid,
-);
-export const PresetBuildLevel60SealFateSwordsHumanoid = humanoidBuild(
-	'Seal Fate Swords',
-	GearLevel60SyntheticSealFateSwords,
-	TalentsLevel60SealFateSwordsHumanoid,
-	ROTATION_PRESET_LEVEL60_SEAL_FATE_SWORDS,
-	Race.RaceUndead,
-	EncounterLevel60SapperOnlyHumanoid,
-);
-export const PresetBuildLevel60MutilateHumanoid = humanoidBuild(
-	'Mutilate',
-	GearLevel60SyntheticMutilate,
-	TalentsLevel60MutilateHumanoid,
-	ROTATION_PRESET_LEVEL60_MUTILATE,
-	Race.RaceUndead,
-	EncounterLevel60SapperOnlyHumanoid,
-);
-export const PresetBuildLevel60SubtletyHumanoid = humanoidBuild(
-	'Subtlety',
-	GearLevel60SyntheticSubtlety,
-	TalentsLevel60SubtletyHumanoid,
-	ROTATION_PRESET_LEVEL60_SUBTLETY,
 	Race.RaceNightElf,
 );
