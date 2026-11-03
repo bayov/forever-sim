@@ -43,9 +43,37 @@ The tiers agree with each other here. The client's 70753 tables carry the 10-28 
 
 The Arcane Shot and Serpent Sting attack power shares are the only notes values no client or hotfix row shows (they are server side, as they were at 10% / 3%). They stay report assumption `hunter_shot_ap_shares`, now at the notes' 15% / 5%.
 
+## Notes-only values (standards 37)
+
+Values neither client 70753 nor a hotfix row carries; the sim takes the notes' value. Check them against the next hotfix or launch logs.
+
+| Value | Notes | Before | Where |
+|---|---|---|---|
+| Arcane Shot's attack power share | 0.15 ("raised from 0.1") | 0.10 (report assumption `hunter_shot_ap_shares`) | `arcaneShotRAPCoefficient`, `sim/hunter/arcane_shot.go` |
+| Serpent Sting's attack power share a tick | 5% ("increased to 5% from 3%") | 3% (same assumption) | `serpentStingRAPPerTick`, `sim/hunter/serpent_sting.go` |
+
+Both shares were server side before too (the hotfix rows' BonusCoefficientFromAP is 0). The Hunter shot files hold Forever's values with no Classic branch (Aimed Shot's 166 was already ungated), so these are Forever-only like the rest of the file.
+
 ## Phase A DPS effect
 
-(filled in below once measured)
+The report's 10 Hunter requests as they are on master (old talents, rotations and race), 180 ± 20 s, 5,000 iterations, seed 1, master 1839885 against this branch:
+
+| Build | Before | After | Change |
+|---|---|---|---|
+| beast-mastery | 1045.9 | 1191.8 | +13.9% |
+| beast-mastery-wolf | 1002.0 | 1147.8 | +14.5% |
+| beast-mastery-tallstrider | 988.1 | 1133.9 | +14.7% |
+| marksmanship | 1065.8 | 1244.9 | +16.8% |
+| marksmanship-wolf | 1041.5 | 1220.8 | +17.2% |
+| marksmanship-tallstrider | 1033.7 | 1212.9 | +17.3% |
+| lone-wolf | 1090.4 | 1300.9 | +19.3% |
+| survival | 1024.8 | 1041.9 | +1.7% |
+| survival-wolf | 998.9 | 1015.9 | +1.7% |
+| survival-tallstrider | 990.1 | 1007.3 | +1.7% |
+
+Survival gains only Lightning Reflexes and Serpent Sting: its melee abilities, the bulk of its damage, have no line in the notes. Phase B re-optimizes the talents and rotations against the new numbers (Aimed Shot is now worth far more than its cast, Barrage and Lightning Reflexes more points).
+
+Goldens: the five Hunter goldens move (these changes). The Balance and Feral CharacterStats goldens and the other classes' lines in `sim/testdata/report_hashes.txt` move only by the raid's Trueshot Aura on the stat sheet (ranged attack power +50); their DPS is the same to the last digit (rogue combat-swords, warrior fury, mage fire, paladin level_60, druid feral-cat checked at the same seed).
 
 ## Open questions and shared changes
 
