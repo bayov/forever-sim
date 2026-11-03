@@ -14,10 +14,15 @@ const (
 	ElementalSyntheticOnUseTrinket        = 990115
 	EnhancementSyntheticOnUseTrinket      = 990015
 	EnhancementSyntheticSpellOnUseTrinket = 990016
+	// The Warden's defensive on-use trinket: 1,665 bonus armor for 20 sec every 2 min, the same 37 weighted
+	// points over 180 sec at standards 36's 0.1 a point of bonus armor (1665 * 0.1 * 40 / 180 = 37.0). It's a
+	// defensive cooldown (the shared defensive trinket timer), so the rotation uses it on a timer.
+	WardenSyntheticOnUseTrinket = 999016
 )
 
 func init() {
 	core.NewSimpleStatOffensiveTrinketEffect(ElementalSyntheticOnUseTrinket, stats.Stats{stats.SpellPower: 140}, time.Second*20, time.Minute*2)
 	core.NewSimpleStatOffensiveTrinketEffect(EnhancementSyntheticOnUseTrinket, stats.Stats{stats.AttackPower: 335}, time.Second*20, time.Minute*2)
 	core.NewSimpleStatOffensiveTrinketEffect(EnhancementSyntheticSpellOnUseTrinket, stats.Stats{stats.SpellPower: 140}, time.Second*20, time.Minute*2)
+	core.NewSimpleStatDefensiveTrinketEffect(WardenSyntheticOnUseTrinket, stats.Stats{stats.BonusArmor: 1665}, time.Second*20, time.Minute*2)
 }

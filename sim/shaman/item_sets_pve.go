@@ -277,6 +277,14 @@ var ItemSetEnhancementSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Bonuses: spiritcallersRageBonuses,
 })
 
+// ItemSetWardenSyntheticPhase1 is the set of the synthetic Phase 1 Warden (shaman tank) items
+// (tools/database/forever_synthetic_items_shaman_tank.go), with The Spiritcaller's Rage bonuses like the
+// Enhancement set: Forever's melee shaman set, and the only one it has at level 60.
+var ItemSetWardenSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Warden Synthetic (Phase 1)",
+	Bonuses: spiritcallersRageBonuses,
+})
+
 // spiritcallersStormBonuses are the set bonuses of The Spiritcaller's Storm, Forever's elemental Tier 1
 // set (item set 2111 in the 1.60.1.70338 client, wago.tools ItemSetSpell and SpellEffect). The client
 // links the crafted Spiritcaller Kilt, Gloves, Mantle and Boots (276538 to 276541) to it as well.
