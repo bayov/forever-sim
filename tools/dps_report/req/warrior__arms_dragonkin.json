@@ -507,68 +507,26 @@
                       "and": {
                         "vals": [
                           {
-                            "sequenceIsComplete": {
-                              "sequenceName": "sunder"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 21553,
-                        "rank": 4
-                      }
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
                             "and": {
                               "vals": [
-                                {
-                                  "and": {
-                                    "vals": [
-                                      {
-                                        "cmp": {
-                                          "op": "OpGe",
-                                          "lhs": {
-                                            "currentRage": {}
-                                          },
-                                          "rhs": {
-                                            "const": {
-                                              "val": "20"
-                                            }
-                                          }
-                                        }
-                                      },
-                                      {
-                                        "not": {
-                                          "val": {
-                                            "isExecutePhase": {
-                                              "threshold": "E20"
-                                            }
-                                          }
-                                        }
-                                      }
-                                    ]
-                                  }
-                                },
                                 {
                                   "cmp": {
                                     "op": "OpGe",
                                     "lhs": {
-                                      "autoTimeToNext": {
-                                        "autoType": "MainHand"
-                                      }
+                                      "currentRage": {}
                                     },
                                     "rhs": {
                                       "const": {
-                                        "val": "1.5s"
+                                        "val": "20"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "isExecutePhase": {
+                                        "threshold": "E20"
                                       }
                                     }
                                   }
@@ -588,6 +546,27 @@
                       "spellId": {
                         "spellId": 11605,
                         "rank": 5
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 21553,
+                        "rank": 4
                       }
                     }
                   }

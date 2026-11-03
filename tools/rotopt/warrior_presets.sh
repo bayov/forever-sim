@@ -57,6 +57,11 @@
 # +2.0 to +7.1 elsewhere. Two-hand Fury on Sunder duty keeps Heroic Strike and Hamstring for when
 # Bloodthirst and Whirlwind are 1 sec away or more (fillerGap=1): +2.6 / +3.4 at 180 sec, +0.7 to +4.0
 # elsewhere. The other builds kept their knobs.
+# Then Arms and Dragonkin take the Battle Shout duty's rotation (msFirst=0, slamAfterSwing=0: Slam
+# ahead of Mortal Strike, any time), a two-knob move the search's one-knob steps missed: Arms +3.8 /
+# +3.2 at 180 sec (seeds 1 / 1000003), +1.6 to +4.4 elsewhere; Dragonkin +3.6 / +3.5, +1.9 to +5.4.
+# Arms on Sunder duty keeps Mortal Strike first with Slam after a swing (the move loses 2.0 at 120
+# sec on seed 1000003).
 #
 # The searches: tools/rotopt -talent-search and the knob search, one after the other until
 # neither moved, from these talents and knobs.
@@ -91,7 +96,7 @@ gen warrior_fury level60_fury_2h_sunder 30313113032-2503300501122100321 \
 gen warrior_fury level60_fury_2h_battle_shout 30313113032-2503300501122100321 \
 	battleShout=1,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=100,recklessness=2,slamAfterSwing=1,slamRage=60,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
 gen warrior_arms level60_arms 30303213032215201-050500050012-2 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=1,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rend=1,slamAfterSwing=1,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25
 # level60_arms on Sunder Armor duty (docs/raid_sim.md, Sunder upkeep): 5 stacks from the pull,
 # refreshed in their last 3 sec, for a raid with no warrior tank (its request has no raid Sunder Armor).
 # Its own search (2026-11-02) puts Slam ahead of Mortal Strike (msFirst=0): with the duty's Sunders
@@ -106,4 +111,4 @@ gen warrior_arms level60_arms_battle_shout 30303213032215201-050500050012-2 \
 # the talent and knob searches on a Dragonkin boss take Spearing Strike and Improved Bloodrage for two
 # points of Booming Voice and one of Improved Execute.
 gen warrior_arms level60_arms_dragonkin 30303213132215201-050500050012-1 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=1,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rend=1,slamAfterSwing=1,slamRage=20,spearingRage=15,stance=1,trinketAt=0,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=15,stance=1,trinketAt=0,wwRage=25

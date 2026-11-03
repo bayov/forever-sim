@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury_battle_shout",
   "published": {
-    "dps": 1039.5,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1150.5,
+    "source": "round 70753 (the November 2 development notes), the Warrior worker's finals 2026-11-03: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1039.5,
-    "stderr": 0.43,
+    "dps": 1150.5,
+    "stderr": 0.44,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "the Warrior worker's final run of this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-03)"
   },
   "summary": "Keeps Battle Shout up for its party. The raid's Battle Shout is off.",
   "keyTalents": [
@@ -35,7 +35,9 @@
     "Cruelty",
     "Impale",
     "Unbridled Wrath",
-    "Enrage"
+    "Enrage",
+    "Reckless Swings",
+    "Improved Whirlwind"
   ],
   "rotation": [
     "Start with 0 Rage. Bloodrage and Battle Shout at -3s, then Battle Stance, Charge (15 Rage) and back to Berserker Stance",
@@ -44,6 +46,7 @@
     "Save Death Wish for the last 33s when that doesn't lose a use. Recklessness goes with the last Death Wish, and the trinket 1 GCD later. In fights with 2 Death Wishes, the first goes at the pull without Recklessness",
     "Blood Fury and Berserking with Death Wish. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Trinket on cooldown, with its last use saved for the last 30s. Mighty Rage Potion in the last 20s, and at the pull too when a second one fits",
     "Bloodrage under 20 Rage",
+    "Reckless Swings on cooldown. It is off the GCD, and the next 4 swings give 5 more Rage each",
     "Whirlwind at 25+ Rage, then Bloodthirst",
     "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
     "Heroic Strike at 80+ Rage, during execute too",
