@@ -424,7 +424,9 @@ class PracticeRoom {
 			const sex = Number(localStorage.getItem('practice.modelSex') ?? 0);
 			// The raid test (?raid=40): others in your gear around a boss, to measure the drawing.
 			if (raidSize > 1) {
-				const raid = new RaidTest(this.room.scene, this.room.camera, effects);
+				const crowd = new URLSearchParams(location.search).has('nocrowd') ? undefined : this.room.crowd;
+				effects.crowd = crowd;
+				const raid = new RaidTest(this.room.scene, this.room.camera, effects, crowd);
 				jobs.push(
 					raid
 						.load(raidSize, items, url => getJSON(url))
@@ -498,7 +500,7 @@ class PracticeRoom {
 			),
 		);
 		await Promise.all(jobs);
-		await this.room.warmUp(warm).catch(e => console.warn('warm up', e));
+		await this.room.warmUp(warm, !!effects.crowd).catch(e => console.warn('warm up', e));
 		screen.remove();
 		this.loadingModels = false;
 	}

@@ -180,6 +180,8 @@ export class Model {
 	private closed = { right: false, left: false };
 	private scratch = { t: new Float64Array(3), r: Float64Array.of(0, 0, 0, 1), s: Float64Array.of(1, 1, 1), t2: new Float64Array(3), r2: Float64Array.of(0, 0, 0, 1), s2: Float64Array.of(1, 1, 1) };
 	geosets?: Set<number>;
+	// The crowd the model draws in (crowd.ts), if any.
+	crowd?: { remove(m: Model): void };
 	particles?: Particles;
 	ribbons?: Ribbons;
 	// The model's own textures, which load() waits for so a model never shows untextured.
@@ -213,10 +215,11 @@ export class Model {
 		});
 		this.mesh = new THREE.SkinnedMesh(geometry, materials);
 		this.mesh.frustumCulled = false;
-		this.mesh.castShadow = true;
 		// Only the solid parts cast shadows. A glow or a see-through layer (a totem's aura, an
-		// effect's flash) would darken the ground in a big square.
+		// effect's flash) would darken the ground in a big square. A model with no solid parts (most
+		// spell effects) isn't drawn into the shadows at all.
 		const solid = skin.batches.map(batch => (m2.materials[batch.material]?.blend ?? 0) <= 1);
+		this.mesh.castShadow = solid.some(x => x);
 		this.mesh.onBeforeShadow = (_r, _o, _c, _sc, _g, depthMaterial, group) => {
 			depthMaterial.depthWrite = solid[(group as unknown as { materialIndex?: number } | null)?.materialIndex ?? 0] ?? true;
 		};
@@ -296,7 +299,7 @@ export class Model {
 				const m2 = new M2(data);
 				if (m2.skins.length === 0) throw new Error(`model ${fdid} has no skin`);
 				const skin = new Skin(await file(m2.skins[0]));
-				return { m2, skin, geometry: buildGeometry(m2, skin), users: 0 };
+				return { m2, skin, geometry: buildGeometry(m2, skin), users: 0, indices: new Map() };
 			})();
 			parsed.set(fdid, p);
 			p.catch(() => parsed.delete(fdid));
@@ -433,10 +436,19 @@ export class Model {
 			const wrapS = slot.flags & 1 ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
 			const wrapT = slot.flags & 2 ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
 			if (t.wrapS !== wrapS || t.wrapT !== wrapT) {
-				t = t.clone();
-				t.wrapS = wrapS;
-				t.wrapT = wrapT;
-				t.needsUpdate = true;
+				// Every model that wraps it the same way shares the copy.
+				const copies = rewrapped.get(t) ?? new Map<number, THREE.Texture>();
+				rewrapped.set(t, copies);
+				const key = wrapS * 65536 + wrapT;
+				let copy = copies.get(key);
+				if (!copy) {
+					copy = t.clone();
+					copy.wrapS = wrapS;
+					copy.wrapT = wrapT;
+					copy.needsUpdate = true;
+					copies.set(key, copy);
+				}
+				t = copy;
 			}
 		}
 		this.replaceable.set(type, t);
@@ -496,18 +508,31 @@ export class Model {
 		const src = index.array as Uint16Array | Uint32Array;
 		let total = 0;
 		for (const m of merged) for (const r of m.ranges) total += r[1];
-		const out = src instanceof Uint32Array ? new Uint32Array(total) : new Uint16Array(total);
 		g.clearGroups();
 		let at = 0;
 		for (const m of merged) {
 			const start = at;
-			for (const [s, c] of m.ranges) {
-				out.set(src.subarray(s, s + c), at);
-				at += c;
-			}
+			for (const [, c] of m.ranges) at += c;
 			g.addGroup(start, at - start, m.materialIndex);
 		}
-		g.setIndex(new THREE.BufferAttribute(out, 1));
+		// Copies of the model with the same parts showing share the new index, so the crowd
+		// (crowd.ts) can draw them together.
+		const parts = merged.map(m => `${m.materialIndex}:${m.ranges.map(r => r.join('+')).join(',')}`).join('|');
+		const indices = this.shared.indices;
+		let shared = indices.get(parts);
+		if (!shared) {
+			const out = src instanceof Uint32Array ? new Uint32Array(total) : new Uint16Array(total);
+			at = 0;
+			for (const m of merged) {
+				for (const [s, c] of m.ranges) {
+					out.set(src.subarray(s, s + c), at);
+					at += c;
+				}
+			}
+			shared = new THREE.BufferAttribute(out, 1);
+			indices.set(parts, shared);
+		}
+		g.setIndex(shared);
 	}
 
 	// cull lets the renderer skip the model when it's off screen, and skip its shadow when it's
@@ -938,6 +963,7 @@ export class Model {
 	}
 
 	dispose() {
+		this.crowd?.remove(this);
 		this.particles?.dispose();
 		this.ribbons?.dispose();
 		this.root.removeFromParent();
@@ -946,7 +972,7 @@ export class Model {
 		// the renderer keeps the shared ones on the GPU.
 		if (--this.shared.users > 0) {
 			for (const name of Object.keys(g.attributes)) g.deleteAttribute(name);
-			if (g.index === this.shared.geometry.index) g.setIndex(null);
+			if (g.index === this.shared.geometry.index || [...this.shared.indices.values()].includes(g.index!)) g.setIndex(null);
 		}
 		g.dispose();
 		for (const bm of this.mats) bm.material.dispose();
@@ -955,8 +981,12 @@ export class Model {
 
 // A model file read once: its parsed data and vertices, shared by every copy of the model (a
 // raid of the same race, every Searing bolt), with how many copies are alive.
-type Parsed = { m2: M2; skin: Skin; geometry: THREE.BufferGeometry; users: number };
+// indices holds the index of each set of parts that compact made, by the parts.
+type Parsed = { m2: M2; skin: Skin; geometry: THREE.BufferGeometry; users: number; indices: Map<string, THREE.BufferAttribute> };
 const parsed = new Map<number, Promise<Parsed>>();
+
+// rewrapped holds the copies of textures that a model wraps another way than the texture does.
+const rewrapped = new WeakMap<THREE.Texture, Map<number, THREE.Texture>>();
 
 // twistShares spreads a strafe's twist over the bones from the lower spine up to the head. The
 // lower spine takes 55%, the bones between it and the head (chest and neck) 25% together, and the
