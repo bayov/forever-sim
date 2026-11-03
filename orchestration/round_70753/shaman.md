@@ -1,7 +1,57 @@
 # Shaman: round 70753 (the November 2 development notes)
 
-Branch `round-70753-shaman`. Phase A (mechanics that don't need the new talent tree) is done. Phase B waits for A1's
-talent remap and A2's shared changes.
+Branch `round-70753-shaman`, landed on master. Phase A (mechanics) and Phase B (tree, re-optimization, races, audit)
+are done.
+
+## Summary
+
+**What changed** (all from Blizzard's notes, post 9: client 1.60.1.70753 has none of the shaman lines and no server
+hotfix has them, so standards 37 applies; the per-line ledger, the DPS of each change and the notes-only list are
+below):
+
+- Lightning Bolt ranks 4–10 at 0.78 of Era's base (rank 10 +76%; the ×1.12 assumption is now 1.0): Elemental +79,
+  Enhancement +11 at 180 s.
+- Every shock at Era's base (the ×1.08 on Earth Shock 7 is now 1.0): Elemental +28, Enhancement +45 to +58.
+- Lightning Overload 10/20/30%: Elemental +48.
+- Stormstrike 150% and 6 s: Enhancement +105 to +117. Maelstrom Weapon ×2 (4 PPM a point): +30 to +36. Mental
+  Dexterity 150%: +26. Flurry 30%: +12 to +14.
+- Chain Lightning 2.5 s, 1.45 × the comparable bolt, 2.25 × its mana: 0 (still out of the rotations).
+- Lava Burst removed and Call of Thunder (+5% crit) in its square; Elemental Mastery → Lightning Mastery; Improved
+  Ghost Wolf to row 4 (`tools/forever_talents/notes/shaman.json`, every Enhancement string remapped); Totemic
+  Projection → Totemic Call (30 s, totems to our spot).
+- Re-optimized talents and rotations (below), races unchanged.
+
+**Per build** (20,000 iterations, seed 1, master's request on master's binary → this branch, both with A2's base
+stats; race unchanged):
+
+| Build | Talents | Race | 120 s | 180 s | 300 s |
+|---|---|---|---|---|---|
+| Elemental Level 60 | `5501331003001351-05500101-053` (Call of Thunder in Lava Burst's square) | Windshaper Skyborne | 775.3 → 979.7 | 767.6 → 970.1 | 738.8 → 924.6 |
+| Elemental Mana Tide | `5501331003001351-04-053150001001` | Windshaper Skyborne | 760.2 → 962.7 | 752.8 → 952.7 | 737.0 → 935.1 |
+| Enhancement Level 60 | `053503102-055030110051012251` → `353003102-055030110051012251-02` | Orc | 892.8 → 1169.0 | 883.0 → 1159.2 | 866.7 → 1140.5 |
+| Enhancement Imp GW | `053503102-054030010051212251` → `353003102-055030110051212151-01` | Orc | 889.0 → 1162.2 | 878.8 → 1149.7 | 862.1 → 1128.1 |
+| Enhancement Water Shield | `051003-054030210051012151-053020001` → `052002-054030210051012151-053020001` | Orc | 842.9 → 1118.9 | 834.2 → 1111.3 | 830.4 → 1108.1 |
+| Enhancement Mana Tide | `03-055030310051012051-053051001001` | Orc | 803.4 → 1065.1 | 795.4 → 1055.1 | 789.4 → 1046.7 |
+
+(The "old" strings are in the new tree's order; master's had Improved Ghost Wolf earlier.)
+
+Rotation changes (each positive or even at 120 / 180 / 300 s on seeds 1 and 1000003, paired at 20,000):
+Enhancement Optimized `earthShockBeforeBolt=0` (Level 60 +0.9 to +3.1, Imp GW +0.8 to +4.2); Magma (Water Shield)
+`flameShockFirst=0, prepullFireLead=1.5` (0 to +1.3); Elemental Level 60 `lightningBoltDownrank=1` (0 / 0 / +5.0 to
++5.3); the Lava Burst lines and knob are gone. Mana Tide builds keep their rotations. Talents judged at 180 s: the
+Level 60 search's `443003102-055030110051012151-03` ties the shipped build (+2.5 at 120, −2 to −3 at 300, equal mean).
+
+**Best race** (180 s, 20,000 iterations, two seed sets, each race's own rotation and gear): Elemental — overall and
+Horde Windshaper Skyborne (970.1; Orc 965.0, Troll 962.4, Tauren 955.5), Alliance Dwarf (961.4). Enhancement —
+overall and Horde Orc (1159.2; Windshaper Skyborne 1154.7, Troll 1150.8, Tauren 1144.0), Alliance Dwarf (1150.1).
+The other builds rank the same. The Elemental Troll overrides were remade (their rotation still had Lava Burst):
+Berserking after Lightning Mastery is +6.3 / +6.2.
+
+**Audit** (my pass over the DPS auditors' checks, details under "Audit" below): rotations clean (casts, cooldowns,
+shock and Stormstrike usage checked on breakdowns); one open mechanics question (Chain Lightning's coefficient);
+gear and consumables unchanged and still fitting; client_update covered by the ledger.
+
+**Open questions and shared changes:** under "Questions for the orchestrator" and "Shared files touched".
 
 ## Sources
 
@@ -20,7 +70,7 @@ talent remap and A2's shared changes.
 ## Ledger
 
 DPS: paired 10,000 iterations, 180 s ± 20, seed 1. Every change was added alone to master b648ac704 (the Phase A base),
-on the current presets: Lava Burst and the old talent strings are still in, and so is the 1.12 / 1.08 rank tuning
+on the Phase A presets: Lava Burst and the old talent strings are still in, and so is the 1.12 / 1.08 rank tuning
 for "before". Columns: Elemental Level 60 / Elemental Mana Tide / Enhancement Level 60 / Imp GW / Mana Tide /
 Water Shield.
 
@@ -30,13 +80,13 @@ Water Shield.
 | Windfury Totem animates an extra swing | notes; cosmetic | n/a | none | 0 |
 | Totemic Projection → Totemic Call: teleports totems to the shaman's own location, 30 s cooldown | notes; 437009 unchanged in 70753 | wrong (1 min; each totem kept its offset) | `totem_reach.go`: 30 s, every totem to our spot. Spell id 437009 kept; `tools/rotopt/spell_names.go` names it Totemic Call. Test `TestTotemicCall` | 0 (leveling only) |
 | Lightning Bolt: every rank up, max rank +80%, each rank about 78% of Classic Era's base | notes + Era client (15208: 419–467 at 56, 2.4 a level) | wrong (190–212 at 60, ×1.12 by the `sham_lb_31plus` ruling) | `lightning_bolt.go`: ranks 4–10 at 0.78 × Era (base points, die and growth per level). Rank 10 is 334–372 at 60 (+76% over the client, the notes' "80%"). Ranks 1–3 already deal 1.07 / 0.96 / 0.92 of Era, more than 0.78, and the notes give no number, so they keep the client's. `LightningBoltRank10DamageScale` 1.12 → 1.0 | +79 / +78 / +11 / +11 / +11 / +12 (net of dropping the ×1.12) |
-| Chain Lightning: 2.5 s cast, first target about 145% of comparable-rank Lightning Bolt, mana about 225% | notes | wrong (2 s, 119–133, 315 mana) | `chain_lightning.go`: "comparable rank" taken as the newest Lightning Bolt at Chain Lightning's learn level (ranks 6, 7, 8, 10 at 32 / 40 / 48 / 56). 1.45 × its range and growth: rank 4 485–539 at 60. Mana 2.25 ×: 248 / 304 / 360 / 495. Cast 2.5 s, cooldown still 6 s. Tests `TestOrcShamanRankTuning`, `TestOrcShamanChainLightningJumps` | 0 (no preset casts it on one target; to re-check in Phase B) |
+| Chain Lightning: 2.5 s cast, first target about 145% of comparable-rank Lightning Bolt, mana about 225% | notes | wrong (2 s, 119–133, 315 mana) | `chain_lightning.go`: "comparable rank" taken as the newest Lightning Bolt at Chain Lightning's learn level (ranks 6, 7, 8, 10 at 32 / 40 / 48 / 56). 1.45 × its range and growth: rank 4 485–539 at 60. Mana 2.25 ×: 248 / 304 / 360 / 495. Cast 2.5 s, cooldown still 6 s. Tests `TestOrcShamanRankTuning`, `TestOrcShamanChainLightningJumps` | 0 (no preset casts it on one target; re-checked in Phase B: still −25 to −80 with any mana floor) |
 | Shocks: base damage reverted to Classic Era | notes + Era client (10414 517–545, 29228 292 + 4 × 80, 10473 492–520 at 60) | wrong (Forever's 0.55–0.57 of Era; Earth Shock 7 ×1.08 by `sham_es7_tuning`) | `earth_shock.go`, `flame_shock.go`, `frost_shock.go`: Era base points, die and growth per level for every rank, Flame Shock's DoT too. Coefficients, costs and cooldowns stay Forever's. `EarthShockRank7DamageScale` 1.08 → 1.0. Tests `TestOrcShamanRankTuning`, `TestOrcShamanSpellPowerBeta`, `TestOrcShamanFlameShockTicks` | +28 / +28 / +58 / +58 / +45 / +53 |
 | Lightning Overload 10 / 20 / 30% (was 3 / 7 / 10%) | notes (408438 still 10% in 70753) | wrong | `lightning_overload.go`. Test `TestOrcShamanLightningOverload` | +48 / +48 / 0 / 0 / 0 / 0 |
-| Lava Burst removed, Call of Thunder (+5% crit Lightning Bolt and Chain Lightning) in its place | notes; 16120 in the client already says 5% | missing | **Phase B** (needs A1's tree: the `lava_burst` talent field and the presets' strings) | – |
-| Elemental Mastery renamed Lightning Mastery | notes | landed (effect unchanged: Lightning Bolt 0.5 s faster, Chain Lightning no cooldown) | Phase B: the label and the Lava Burst half of it go with Lava Burst | 0 |
+| Lava Burst removed, Call of Thunder (+5% crit Lightning Bolt and Chain Lightning) in its place | notes; 16120 in the client already says 5% | missing | landed (Phase B): `notes/shaman.json`, `talents.go` `applyCallOfThunder`, Lava Burst removed from the sim and the rotations; test `TestOrcShamanCallOfThunder` | Elemental +39 at 180 s on the old talents (969.8 against 931.1 with Lava Burst) |
+| Elemental Mastery renamed Lightning Mastery | notes | landed (effect unchanged: Lightning Bolt 0.5 s faster, Chain Lightning no cooldown) | landed (Phase B): renamed, needs Call of Thunder, Lava Burst out of it; test `TestOrcShamanLightningMastery` | 0 |
 | Elemental Reach no longer reduces Totemic Projection's cooldown | notes | landed (the sim never modelled the cut) | none | 0 |
-| Improved Ghost Wolf moved from row 2 to row 4 | notes | tree | **Phase B** (A1's tree; the Imp GW preset's string) | – |
+| Improved Ghost Wolf moved from row 2 to row 4 | notes | tree | landed (Phase B): row 4, column 4 assumed; every Enhancement string remapped, Imp GW re-searched, the leveling route's points to 25–26 | Imp GW now 9.5 behind Level 60 at 180 s (4.2 before) |
 | Maelstrom Weapon: chance to trigger doubled | notes; 408498 ProcChance 100, no PPM row, so the rate is server side | wrong (2 PPM a point, report assumption `sham_mw_ppm` 10 at 5/5) | `talents.go`: 4 PPM a point, 20 at 5/5. Totem of the Storm's bolt chance doubles with it. Test `TestOrcShamanRelics` | 0 / 0 / +36 / +36 / +30 / +36 |
 | Stormstrike 150% normalized weapon damage, 6 s cooldown | notes | wrong (100%, 8 s) | `stormstrike.go`: 1.5 × (weapon roll + normalized AP part); a flat "+N damage" stays 1 ×. Tests `TestOrcShamanWeaponDamage`, `TestOrcShamanStormstrikeOutcomes` | 0 / 0 / +105 / +105 / +117 / +117 |
 | Mental Dexterity 50 / 100 / 150% of Intellect as AP | notes (415140 still 33/67/100 curve) | wrong | `talents.go`. Test `TestOrcShamanMentalDexterity` | 0 / 0 / +27 / +26 / +26 / +26 |
@@ -78,10 +128,49 @@ them); Stormstrike's cooldown and 150% sit inside its `IsForever()` branch.
 - `tools/dps_report/patches/0004-...patch`: its `sham_mw_ppm` hunk's removed and default lines now read
   `4*float64(...)`, so the patch still applies to `sim/shaman/talents.go` (`git apply --check --include='sim/shaman/*'`
   passes). The `sham_lb_31plus` and `sham_es7_tuning` hunks apply unchanged; their constants are now 1.0.
-- `sim/testdata/report_hashes.txt`: the six shaman lines only. `TestRaidForeverReportHashesStable` already fails on
-  master b648ac704 for 4 druid, 10 paladin and 1 shaman request (not from this branch); those lines are left alone.
+- `sim/testdata/report_hashes.txt`: rewritten after the last merge of master (only the six shaman lines moved).
+- `tools/rotopt/talents_test.go`, `tools/rotopt/bis_lists.sh`, `tools/rotopt/leveling/level30_enh_solo.json`: the
+  new tree's strings, no Lava Burst knob.
+- `ui/warden_shaman/presets.ts`, `ui/restoration_shaman/presets.ts`, `sim/shaman/warden/warden_test.go`: talent
+  strings remapped to the new tree (question 5).
+- `notes.md`: the shaman Need to Verify rows the notes settle or open.
 - `sim/shaman/warden/TestWardenShaman.results` (the tank session's golden): moved by the shared Stormstrike, Flurry,
   shock and Mental Dexterity changes, regenerated.
+
+## Phase B notes
+
+- Talent tree: `tools/forever_talents/notes/shaman.json` (remove Lava Burst, add Call of Thunder on its square, rename
+  Elemental Mastery and point its prerequisite at Call of Thunder, move Improved Ghost Wolf to row 4 column 4, and the
+  new tooltips), then `import_db2.py`, `import_client.py`, `import_talents.py`; the proto message keeps the sim's
+  `improved_fire_nova` name. Every Enhancement string was remapped mechanically (Improved Ghost Wolf from position 6 to
+  13): tests, presets (the Warden's and the Restoration healer's too), the report requests, the Level 30 leveling
+  settings and BiS list.
+- Sim: Lava Burst removed (spell, Call of Flame, Lightning Mastery, the Spiritcaller's Storm 5 piece now a no-op),
+  Call of Thunder and Lightning Mastery added, with tests (`TestOrcShamanCallOfThunder`, `TestOrcShamanLightningMastery`).
+- Leveling (the user's route, `tools/rotopt/aplkit/shaman_enh_leveling.go`): the template builds and runs; its Lava
+  Burst knob is gone. What changed for a later re-optimization: Improved Ghost Wolf can't come before 15 Enhancement
+  points, so the route's two points moved from levels 15–16 to 25–26 (`leveling_plan_audited.json`, the plan's
+  required-by level 16 → 26); Stormstrike every 6 s at 150%, Maelstrom Weapon twice as often, Flurry and Mental
+  Dexterity up, the shocks much stronger at every rank, Chain Lightning slower and dearer, Totemic Call every 30 s to
+  our spot. `tools/rotopt/talents_test.go` uses a legal 26-point build now (the Level 30 + 5 string has 13 points
+  above row 4 under the new tree).
+
+## Audit
+
+- **Rotations** (paired 20,000 on two seed sets, 120/180/300 s). Elemental: Flame Shock up, overloads on about 30%
+  of bolts, Lightning Mastery 1.5 times a 180 s fight, Lightning Shield 85% uptime, the end-of-fight Earth Shock, no
+  idle time; Chain Lightning with every mana floor (40/60/80%, and only under Lightning Mastery) loses 25 to 80 at
+  every length, because its hit is only 1.09 × a bolt's at the client coefficient (question 4). Enhancement:
+  Stormstrike 29.6 casts in 180 s (30 possible), the shared shock cooldown 28.4 of 30, Maelstrom Weapon up 89% with a
+  bolt at 5 stacks, Flurry 78%, Rage of the Farseer with the trinket. No findings past the shipped knob changes.
+- **Mechanics / client_update**: every note line has a ledger row; 70753 and its (empty) hotfix rows checked.
+  Finding: Chain Lightning's coefficient is unannounced (question 4).
+- **Gear**: the synthetic sets didn't change; the Elemental Dwarf hit override still applies (Artisan's Precision 1%
+  over the 16% cap), Enhancement's hit isn't over its cap for any race.
+- **Consumables**: unchanged; Elemental Level 60 still ends a 180 s fight with mana to spare (2192), so the damage
+  potion stays.
+- **Results**: the six requests' 180 s numbers match the finals above (the same requests and binary); `meta.published`
+  is left for the report run.
 
 ## Questions for the orchestrator
 
@@ -91,6 +180,15 @@ them); Stormstrike's cooldown and 150% sit inside its `IsForever()` branch.
    0004 patch, and move `sham_mw_ppm`'s settings to 10 / 20 / 30 (Low / Expected / High) or make it one value at 20.
 2. **Lightning Bolt ranks 1–3** keep the client's values (already above 0.78 of Era) though the notes say "all ranks
    increased". Leveling only. Recommendation: keep until a client or hotfix has numbers; a notes.md "Need to Verify"
-   row goes in with Phase B.
+   row is in `notes.md`.
 3. **Chain Lightning's "comparable rank"** is our reading (the newest Lightning Bolt at Chain Lightning's learn level).
    Only rank 4 matters at 60, and there it's unambiguous (both learned at 56).
+4. **Chain Lightning's spell power coefficient** (open, `notes.md`). The notes raise the cast to 2.5 s but name no
+   coefficient, so the sim keeps the client's 0.571 (2 / 3.5). If Blizzard moved it with the cast to 0.714 (2.5 / 3.5,
+   as Lightning Bolt), Chain Lightning would hit for about 1.27 × a bolt and might enter Elemental's rotation.
+   Recommendation: keep the client's value (standards 37) and check the first launch log.
+5. **Other sessions' files** I had to touch because the tree moved: the Warden and Restoration presets' strings, the
+   Warden golden, and the Restoration healer preset, which now has Improved Ghost Wolf 2 on row 4 with only 8
+   Enhancement points (illegal in game). The healing session should pick new points.
+6. **Report assumptions** (question 1): `sham_lb_31plus` and `sham_es7_tuning` are 1.0 in the sim now; the meta
+   caveats that described them are replaced.
