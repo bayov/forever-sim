@@ -2,7 +2,11 @@
 """Combine <data_dir>/cloud/*.json and <data_dir>/pages/*.jsonl into per-session usage.
 Writes <data_dir>/report.json and prints a summary by session type.
 
-usage: aggregate.py <data_dir>
+usage: aggregate.py <data_dir> [--since <ISO time>] [--until <ISO time>]
+
+With a window, local sessions count only the messages inside it, and a cloud session that
+started before it has its baseline (<data_dir>/cloud/<id>.base.json, the newest result before
+the window, written by add_cloud.py --base) subtracted.
 
 Cloud sessions: exact token counts and the harness's own list-price cost (all models, subagents
 included). Local CLI (bridge) sessions: exact input, cache write and cache read for the main
@@ -12,7 +16,12 @@ from collections import defaultdict
 from datetime import datetime
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-data = sys.argv[1]
+args = sys.argv[1:]
+win = {}
+for flag in ('--since', '--until'):
+    if flag in args:
+        i = args.index(flag); win[flag[2:]] = args[i + 1]; del args[i:i + 2]
+data = args[0]
 sessions = json.load(open(f'{data}/sessions.json'))
 P = json.load(open(f'{HERE}/prices.json'))
 C = json.load(open(f'{HERE}/categories.json'))
@@ -44,19 +53,29 @@ def cloud(s, path):
     d = json.load(open(path))
     if 'results' in d:  # older shape: a list of results, newest last
         d = [r for r in d['results'] if r.get('modelUsage')][-1]
-    by_model = {}
-    for m, u in d['modelUsage'].items():
-        by_model[m] = {'in': u.get('inputTokens', 0), 'cw': u.get('cacheCreationInputTokens', 0),
-                       'cr': u.get('cacheReadInputTokens', 0), 'out': u.get('outputTokens', 0),
-                       'usd': u.get('costUSD', 0)}
-    span = (ts(d['ts']) - ts(s['created'])).total_seconds() / 3600
-    return by_model, d.get('cost'), True, None, span, s['created'], d['ts']
+    def usage(d):
+        return {m: {'in': u.get('inputTokens', 0), 'cw': u.get('cacheCreationInputTokens', 0),
+                    'cr': u.get('cacheReadInputTokens', 0), 'out': u.get('outputTokens', 0),
+                    'usd': u.get('costUSD', 0)} for m, u in d['modelUsage'].items()}
+    by_model, cost, first = usage(d), d.get('cost'), s['created']
+    bp = path.replace('.json', '.base.json')
+    if os.path.exists(bp):  # started before the window: count only what came after
+        b = json.load(open(bp))
+        for m, u in usage(b).items():
+            for k in u:
+                by_model.setdefault(m, {k2: 0 for k2 in u})[k] -= u[k]
+        cost = (cost or 0) - (b.get('cost') or 0)
+        first = b['ts']
+    span = (ts(d['ts']) - ts(first)).total_seconds() / 3600
+    return by_model, cost, True, None, span, first, d['ts']
 
 
 def local(s, path):
     rows = {}
     for line in open(path):
         r = json.loads(line)
+        if r.get('ts') and (r['ts'] < win.get('since', '') or r['ts'] >= win.get('until', '9')):
+            continue
         k = r['id'] or line
         if k in rows:  # another content block of the same message
             for c in ('text', 'tool'):
@@ -81,10 +100,14 @@ def local(s, path):
 out = []
 for s in sessions:
     cf, pf = f"{data}/cloud/{s['id']}.json", f"{data}/pages/{s['id']}.jsonl"
+    if s['updated'] < win.get('since', '') or s['created'] >= win.get('until', '9'):
+        continue
     if s['kind'] == 'anthropic_cloud' and os.path.exists(cf):
         by_model, usd, exact, calls, span, first, last = cloud(s, cf)
     elif os.path.exists(pf):
         by_model, usd, exact, calls, span, first, last = local(s, pf)
+        if not calls:
+            continue
     else:
         print('no data:', s['id'], s['title'], file=sys.stderr)
         continue
