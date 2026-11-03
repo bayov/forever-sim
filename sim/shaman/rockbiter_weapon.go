@@ -51,11 +51,22 @@ func (shaman *Shaman) RegisterRockbiterImbue(procMask core.ProcMask) {
 		shaman.AutoAttacks.OHConfig().FlatThreatBonus += bonusThreat * shaman.AutoAttacks.OH().SwingSpeed
 	}
 
-	// The auto attacks have their bonus by weapon speed above. Every other attack with the weapon
-	// gets the flat bonus.
+	// Every other attack with the weapon (Stormstrike) gets the same bonus as a white hit, by the
+	// weapon's speed.
+	//
+	// The passive (16313 for rank 7) casts Rockbiter Weapon Proc (20871, 72 points of threat for
+	// rank 7) off every landed melee attack, white or special (ProcTypeMask 20: done melee auto
+	// and done melee special), and the proc's script effect adds its points for every second of the
+	// weapon's swing (wowsims/forever's reading of it, weapon_imbues.go). Before 2026-11-03 we
+	// gave a special the flat 72, without the speed (docs/tank_shaman.md).
 	shaman.OnSpellRegistered(func(spell *core.Spell) {
-		if spell.ProcMask.Matches(procMask) && !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
-			spell.FlatThreatBonus += bonusThreat
+		if !spell.ProcMask.Matches(procMask) || spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+			return
+		}
+		if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+			spell.FlatThreatBonus += bonusThreat * shaman.AutoAttacks.MH().SwingSpeed
+		} else {
+			spell.FlatThreatBonus += bonusThreat * shaman.AutoAttacks.OH().SwingSpeed
 		}
 	})
 
