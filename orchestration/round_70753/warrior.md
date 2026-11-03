@@ -49,6 +49,21 @@ Worker: the Warrior class worker, branch `round-70753-warrior`. Brief: `briefs/w
 | Bug fix: Throw's 0.5 sec windup | notes | A2 | A2 (no warrior rotation throws) |
 | Bug fix: roots from procs get diminishing returns (Improved Hamstring) | notes | n/a (bosses) | none |
 
+### Notes-only values
+
+Per the orchestrator's provisional source rule (round README, a32a20024): modelled from the notes under Forever,
+citing the notes and "client 70753 unchanged". For the warrior, client 70753 carries none of the class's lines, talent
+reworks included (no Trait rows for tree 1117, no Reckless Swings spell), and the 2026-11-03 hotfix has hunter lines only.
+
+- Slam cooldown 15 sec (client 18000).
+- Improved Slam 2.5 / 5 sec off Slam's cooldown (client -3000 flat).
+- Two-Handed Weapon Specialization 2/4/6% (client 1/2/3%).
+- Improved Tactical Mastery 3 points, 5/10/15 Rage (client 5 points of 3).
+- Bloodthrill 2 points, 10/20% (client 5 points of 4%).
+- Flurry 3 points, 10/20/30%, no Death Wish prerequisite (client 5 points of 5%).
+- Phase B: Reckless Swings, Improved Whirlwind, and the tree moves (Enrage row 3, Gore Drinker row 5 under Blood Craze,
+  Bloodthirst under Death Wish).
+
 ### DPS effect of Phase A (goldens)
 
 `TestP1DPSWarrior` (Forever, talents `30305013-25053005152110501`: 5 points of Flurry, now read as 3 at 30%, and
