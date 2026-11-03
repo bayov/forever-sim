@@ -35,14 +35,18 @@ gen() {
 # the tree, Berserk held for the trinket and Elune's Light out of Berserk, 2.5 / 0.9 / 2.7).
 # Both Balance rotations use the synthetic spell power trinket 0.1 sec before the pull (1.8 / 1.1 /
 # 0.7 ahead of using it at 0 at 120 / 180 / 300 sec; 1.0 / 0.7 / 0.4 for the Wrath build).
+# wrathFallback (2026-11-03 exploration): Wrath after the Starfire lines, so the druid casts Wrath
+# when Starfire's mana is not there instead of waiting for it; the Clearcasting Starfire line goes
+# (the Starfire line below takes the free cast anyway). +0.9 / +0.7 / +2.0 at 120 / 180 / 300 sec
+# (seed 1000003 +0.9 / +0.5 / +1.7, 20,000 iterations).
 # endMoonfire (rotation auditor): Moonfire once the filler would not land before the fight ends,
 # 4.4 / 2.9 / 1.4 ahead for Balance (when a Starfire would not land), 5.9 / 3.8 / 2.2 for the
 # Wrath build (when a Wrath plus 1.8 sec would not, its flight from 36 yd; 1.5 from 30 yd before
 # 2026-11-02, +0.5 / +0.4 / +0.2 at 120 / 180 / 300 sec at 36 yd).
-gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=1"
+gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=1,wrathFallback=1,clearcastStarfire=0"
 # The Faerie Fire duty (standards 23): the same rotation keeping Faerie Fire on the target, cast
 # first after the pull and again once it has under 1.5 sec left. The knob search kept the rest.
-gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,faerieFire=1,elune=1"
+gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,faerieFire=1,elune=1,wrathFallback=1,clearcastStarfire=0"
 # The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 6.1% behind (776.5
 # against 827.0 at 180 sec), on its own talents (5502220115501351--505003) and gear (Natural Power
 # gloves).
@@ -61,10 +65,15 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMa
 # biteRipTime 6 -> 4, biteEnergy 35 -> 45, shiftEnergy 50 -> 60 and shiftHoldForBite 1 -> 0: +9.2 /
 # +9.4 / +8.9 at 120 / 180 / 300 sec (20,000 iterations, seeds 1 and 1000003 within 0.4). Berserk is
 # out of the tree, so cdStack holds Elune's Light for the trinket instead of out of Berserk.
-gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=4,shiftEnergy=60,shiftHoldForBite=0,endBite=2,ripMinTime=8,biteRipTime=4,biteEnergy=45,cdStack=1,tigersFury=0,elune=1"
+# The 2026-11-03 exploration added bomb=1 (the filler explosive on its own line, at 60 Energy or less
+# right after a main hand swing, instead of the autocast line throwing it on cooldown), rakeAt5=1
+# (Rake at 5 combo points too) and meldAt5=1 (Shadowmeld Ravage on Clearcasting at 5 combo points
+# too): +8.2 / +8.0 / +7.6 at 120 / 180 / 300 sec (seed 1000003 +7.6 / +7.7 / +7.5, 20,000
+# iterations), almost all from the bomb line.
+gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=4,shiftEnergy=60,shiftHoldForBite=0,endBite=2,ripMinTime=8,biteRipTime=4,biteEnergy=45,cdStack=1,tigersFury=0,elune=1,bomb=1,bombEnergy=60,rakeAt5=1,meldAt5=1"
 # The cat's Faerie Fire duty: the caster Faerie Fire from Cat Form (Forever has no Faerie Fire
 # (Feral); it's free in Cat Form, 1.5 sec global cooldown, no cooldown), first after the cooldowns and
 # again once it has under 7 sec left. That was the old 6 sec cooldown's second try; with no cooldown
 # 2, 3, 5 and 7 sec all keep it up 99.9% of the fight and are within 1 DPS (2026-10-29, 20000
 # iterations, 180 sec), so 7 stayed. After Rip, or at 3 sec, was within the noise.
-gen druid_feral "$feral" ui/feral_druid/apls level60_ff "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=4,shiftEnergy=60,shiftHoldForBite=0,endBite=2,ripMinTime=8,biteRipTime=4,biteEnergy=45,cdStack=1,tigersFury=0,faerieFire=1,ffRefresh=7,elune=1"
+gen druid_feral "$feral" ui/feral_druid/apls level60_ff "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=4,shiftEnergy=60,shiftHoldForBite=0,endBite=2,ripMinTime=8,biteRipTime=4,biteEnergy=45,cdStack=1,tigersFury=0,faerieFire=1,ffRefresh=7,elune=1,bomb=1,bombEnergy=60,rakeAt5=1,meldAt5=1"
