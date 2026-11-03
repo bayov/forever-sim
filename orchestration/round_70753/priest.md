@@ -45,3 +45,11 @@ Worker ledger for the Priest DPS specs (Shadow, Shadow + Holy, Smite) against th
 ## Phase A commits
 
 - Shadow Word: Death self-damage (this branch, `round-70753-priest`).
+
+## Notes-only values
+
+None. The Priest section of the notes has no damage line, and the one value it gives (Shadow Word: Death's 30%
+self-damage) is in client 70753. The 2026-11-03 hotfix
+(`orchestration/audit/ref/client_update/sources/foreverchanges_2026-11-03_hotfix_and_70753.txt`) has no Priest line;
+its note that 70753 "writes the October 30 hotfix into the client files" for priests matches the 70707 -> 70753 diff
+above (Shadow Word: Death, Holy Binding, Cure / Abolish Disease).
