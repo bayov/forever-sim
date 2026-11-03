@@ -823,6 +823,34 @@ var battlegearOfGloryBonuses = map[int32]core.ApplyEffect{
 	},
 }
 
+// ItemSetWarriorTankSyntheticPhase1 is the synthetic Phase 1 Protection set
+// (tools/database/forever_synthetic_items_warrior_tank.go), with the bonuses of Battleplate of Glory,
+// Forever's Tier 1 Protection set (set 2103, items 280905 to 280910, client 70753). Two pieces carry it,
+// so only the 2-piece is live (standards 6); the rest are for the record.
+var ItemSetWarriorTankSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name: "Protection Warrior Synthetic (Phase 1)",
+	Bonuses: map[int32]core.ApplyEffect{
+		// Increased Defense +7 (1300970).
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Defense, 7)
+		},
+		// Reduces the cooldown of your Intervene ability by 10 sec (1301071): not simmed.
+		3: func(agent core.Agent) {},
+		// Reduces the chance for your melee attacks to be Dodged or Parried by 1.2% (1301096): not
+		// simmed (the core has no parry reduction; the presets wear two pieces).
+		4: func(agent core.Agent) {},
+		// Reduces the cooldown of your Shield Wall ability by 30 sec (1301722).
+		5: func(agent core.Agent) {
+			warrior := agent.(WarriorAgent).GetWarrior()
+			warrior.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.ActionID.SpellID == 871 {
+					spell.CD.Duration -= time.Second * 30
+				}
+			})
+		},
+	},
+})
+
 // ItemSetWarriorSyntheticPhase1 is the set of the synthetic Phase 1 warrior items
 // (tools/database/forever_synthetic_items_warrior.go), with the Battlegear of Glory bonuses.
 var ItemSetWarriorSyntheticPhase1 = core.NewItemSet(core.ItemSet{
