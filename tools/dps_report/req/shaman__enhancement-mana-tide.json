@@ -770,8 +770,7 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffFlametongue",
-      "salvation": true
+      "totemWeaponBuff": "TotemWeaponBuffFlametongue"
     },
     "debuffs": {
       "judgementOfWisdom": true,
