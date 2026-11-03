@@ -18,6 +18,7 @@ var ShadowWordDeathSpellId = [ShadowWordDeathRanks + 1]int32{0, 1309595, 1309633
 var ShadowWordDeathBaseDamage = [ShadowWordDeathRanks + 1][]float64{{0}, {293.35, 311.65}, {368.02, 390.98}, {401.48, 426.52}, {444.15, 471.85}}
 var ShadowWordDeathScaling = [ShadowWordDeathRanks + 1]core.RankScaling{{}, {37, 1.5}, {45, 1.9}, {53, 2.2}, {60, 2.5}}
 var ShadowWordDeathManaCost = [ShadowWordDeathRanks + 1]float64{0, 175, 205, 250, 340}
+
 // ShadowWordDeathSelfDamage is the part of their maximum health the priest takes.
 const ShadowWordDeathSelfDamage = 0.30
 
