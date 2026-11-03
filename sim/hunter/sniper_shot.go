@@ -8,10 +8,14 @@ import (
 )
 
 // Sniper Shot, the 31 point Marksmanship talent (beta client 1310687, 1310785 and 1310786, build
-// 1.60.1.70338): normalized ranged weapon damage plus 160/225/295 by rank, a 4 sec cast, a 15 sec
-// cooldown of its own and 365 mana at every rank. Its range bonus to the next 3 shots does nothing
+// 1.60.1.70338): normalized ranged weapon damage plus a bonus by rank, a 4 sec cast, a 15 sec
+// cooldown of its own and 365 mana at every rank. The bonus is 320/450/590 since the launch realms'
+// server hotfix of 2026-11-03 (foreverchanges.pro; Blizzard's 11-02 notes: "increased by 100%");
+// client 1.60.1.70753 still has 160/225/295. Its range bonus to the next 3 shots does nothing
 // here. Barrage leaves it out of its class mask; Mortal Shots and Efficiency take it in since
 // client 1.60.1.70425 (their masks gained its bit, word 3 0x800000).
+var SniperShotBonus = [4]float64{0, 320, 450, 590}
+
 func (hunter *Hunter) registerSniperShotSpell() {
 	if !hunter.Talents.SniperShot {
 		return
@@ -24,7 +28,7 @@ func (hunter *Hunter) registerSniperShotSpell() {
 		rank = 2
 	}
 	spellID := [4]int32{0, 1310687, 1310785, 1310786}[rank]
-	flatBonus := [4]float64{0, 160, 225, 295}[rank]
+	flatBonus := SniperShotBonus[rank]
 
 	hunter.SniperShot = hunter.RegisterSpell(core.SpellConfig{
 		SpellCode:     SpellCode_HunterSniperShot,
