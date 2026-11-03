@@ -15,13 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction_duty_curse",
   "published": {
-    "dps": null,
-    "source": "pending"
+    "dps": 1025.1,
+    "source": "verify.py on this request after round 70753 (the 2026-11-02 development notes: Wrack, Shadow and Flame, demon health; A2's race base stats; Affliction's Wrack build with the Imp sacrificed), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": null,
-    "ok": false,
-    "note": "pending"
+    "dps": 1025.1,
+    "stderr": 0.26,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, round 70753"
   },
   "summary": "Keeps Curse of the Elements on the boss for the raid. In Forever, curses and banes use separate slots, so it keeps its bane.",
   "keyTalents": [

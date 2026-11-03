@@ -268,9 +268,9 @@ export const TalentsLevel60Destruction = PresetUtils.makePresetTalents('Destruct
 // to 86 a second at 60): deep Affliction with Siphon Life, Soul Siphon, Shadow Mastery and Wrack, Wrack
 // the main spell, and Demonic Sacrifice with the Imp sacrificed before the pull (15% Shadow damage, no
 // demon out). Found by a talent search from 05500003035001351-0050003201-045 with Wrack and Demonic
-// Sacrifice kept; knob searches at 120, 180 and 300 sec moved nothing. 1021.2 / 1032.8 / 1029.6 at 120 /
-// 180 / 300 sec (Orc, 20,000 iterations), against 1015.6 / 1015.9 / 998.3 for Shadow Bolt Affliction
-// and 988.1 / 999.9 / 993.4 for the same Wrack build with the Succubus out (10,000 iterations), which
+// Sacrifice kept; knob searches at 120, 180 and 300 sec moved nothing. Round 70753 finals (Undead,
+// 20,000 iterations): 1004.9 / 1034.1 / 1032.2 at 120 / 180 / 300 sec, against 997.4 / 1015.6 / 996.8
+// for Shadow Bolt Affliction; the same Wrack build with the Succubus out was 33 behind at 180 sec, which
 // it replaced. Amplify Curse in place of Fel Concentration is even (1000.4 against 999.9 on the
 // Succubus build); with the Imp sacrificed, Shadow Bolt Affliction drops to 934.0.
 export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(

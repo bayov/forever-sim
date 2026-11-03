@@ -16,7 +16,7 @@
   "apl": "level60_affliction_shadow_bolt",
   "published": {
     "dps": 1015.6,
-    "source": "verify.py on this request after round 70753 (the 2026-11-02 development notes: Wrack, Shadow and Flame, demon health; A2's race base stats), 20,000 iterations, seed 1, 180 ± 20 s"
+    "source": "verify.py on this request after round 70753 (the 2026-11-02 development notes: Wrack, Shadow and Flame, demon health; A2's race base stats; Affliction's Wrack build with the Imp sacrificed), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
     "dps": 1015.6,
