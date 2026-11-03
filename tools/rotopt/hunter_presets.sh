@@ -88,12 +88,12 @@ mmWeave="$weave,weaveManaPerSec=25"
 # frozen: the reaction times, markPrepull, leylineMana, hawk, intimidation. Confirmed at 20000
 # iterations on seeds 1 and 1000003 (120 / 180 / 300 sec):
 # - Marksmanship casts Aimed Shot at any mana (aimedMana=0: its +350 is worth its 310 mana now) and
-#   Serpent Sting before Aimed Shot again (serpentLate=0, its 675 and 5% a tick): 1268.9 / 1254.3 /
+#   Serpent Sting first again (serpentLate=0, its 675 and 5% a tick): 1268.9 / 1254.3 /
 #   1217.6, +1.3 / +10.0 / +12.8 (seed 1000003 +0.9 / +9.0 / +11.9).
 # - Lone Wolf casts Aimed Shot at any mana (aimedMana=0) and keeps Serpent Sting after it:
 #   1332.4 / 1313.7 / 1264.7, +1.8 / +10.0 / +9.8 (+2.1 / +10.2 / +10.7).
-# - Beast Mastery walks into melee whenever the swing fits before the next Auto Shot
-#   (weaveShotSlack=0: Arcane Shot and Aimed Shot no longer hold the weave back), on its new talents:
+# - Beast Mastery walks into melee only when Arcane Shot and the Aimed Shot cooldown stay down until
+#   it is back at range (weaveShotSlack=0, was 0.75 sec of slack: the bigger shots aren't delayed), on its new talents:
 #   1197.3 / 1195.6 / 1176.3, the knob +1.3 / +1.6 / +2.0 over the talents alone (+0.7 / +1.5 / +2.2).
 mm70753="$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=0,serpentMana=0,aimedMana=0,holdRapid=1,holdElune=1,sniperManaPerSec=10"
 lw70753="$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,aimedMana=0,holdRapid=1,holdElune=1,sniperManaPerSec=10"
