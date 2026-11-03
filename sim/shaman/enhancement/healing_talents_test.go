@@ -95,13 +95,13 @@ func TestOrcShamanHealTalentPoints(t *testing.T) {
 		}
 	}
 
-	// Tidal Focus (16179): 1% off every heal's cost a point.
+	// Tidal Focus (16179): 1% off every heal's cost a point, Riptide's too (word 2's 0x10).
 	for points := 1; points <= 5; points++ {
-		_, enh := healSim(t, 60, resto(restoIdxTidalFocus, points, ""), 0, 0)
+		_, enh := healSim(t, 60, resto(restoIdxTidalFocus, points, "00000000000001"), 0, 0)
 		for _, c := range []struct {
 			spell *core.Spell
 			cost  float64
-		}{{enh.HealingWave[10], 620}, {enh.LesserHealingWave[6], 380}, {enh.ChainHeal[3], 405}} {
+		}{{enh.HealingWave[10], 620}, {enh.LesserHealingWave[6], 380}, {enh.ChainHeal[3], 405}, {enh.RiptideRanks[3], 385}, {enh.RiptideRanks[1], 245}} {
 			want := c.cost * (1 - .01*float64(points))
 			if got := c.spell.Cost.GetCurrentCost(); math.Abs(got-want) > 0.01 {
 				t.Errorf("Tidal Focus %d: %s costs %.2f, want %.2f", points, c.spell.ActionID, got, want)
@@ -126,18 +126,19 @@ func TestOrcShamanHealTalentPoints(t *testing.T) {
 		}
 	}
 
-	// Ancestral Healing (16176): 8, 17 or 25% more armor for 15 sec after a heal crit.
+	// Ancestral Healing (16176): 8, 17 or 25% more armor from items for 15 sec after a heal
+	// crit (2000 of our armor is from items).
 	for points, bonus := range []float64{0, .08, .17, .25} {
 		if points == 0 {
 			continue
 		}
-		sim, enh := healSim(t, 60, resto(restoIdxAncestralHealing, points, ""), 0, 200)
+		sim, enh := healSimWithArmor(t, 60, resto(restoIdxAncestralHealing, points, ""), 200)
 		var armor float64
 		at(sim, 0.5, func(sim *core.Simulation) { armor = enh.Armor() })
 		healOnce(t, sim, enh, enh.LesserHealingWave[6], 1, 1.5)
 		at(sim, 3, func(sim *core.Simulation) {
-			if got := enh.Armor(); math.Abs(got-armor*(1+bonus)) > 0.01 {
-				t.Errorf("Ancestral Healing %d: armor %.1f after a crit heal, want %.1f", points, got, armor*(1+bonus))
+			if got, want := enh.Armor(), armor+bonus*2000; math.Abs(got-want) > 0.01 {
+				t.Errorf("Ancestral Healing %d: armor %.1f after a crit heal, want %.1f", points, got, want)
 			}
 		})
 		runSim(sim)

@@ -166,7 +166,7 @@
       "action": {
         "castSpell": {
           "spellId": {
-            "spellId": 408521
+            "spellId": 1239243
           },
           "target": {
             "type": "Tank"
@@ -177,7 +177,7 @@
             "val": {
               "dotIsActive": {
                 "spellId": {
-                  "spellId": 408521
+                  "spellId": 1239243
                 },
                 "targetUnit": {
                   "type": "Tank"

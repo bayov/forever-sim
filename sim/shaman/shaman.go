@@ -44,6 +44,7 @@ func init() {
 	core.RegisterSpellRanks(healRankIDs(HealingWaveRanks)...)
 	core.RegisterSpellRanks(healRankIDs(LesserHealingWaveRanks)...)
 	core.RegisterSpellRanks(healRankIDs(ChainHealRanks)...)
+	core.RegisterSpellRanks(riptideRankIDs()...)
 }
 
 func NewShaman(character *core.Character, talents string) *Shaman {
@@ -206,7 +207,8 @@ type Shaman struct {
 	LightningShield        []*core.Spell
 	LightningShieldProcs   []*core.Spell // The damage component of lightning shield is a separate spell
 	MagmaTotem             []*core.Spell
-	Riptide                *core.Spell
+	Riptide                *core.Spell   // the highest rank we know
+	RiptideRanks           []*core.Spell // every rank we know, by rank
 	ManaSpringTotem        []*core.Spell
 	ManaTideTotem          []*core.Spell
 	SearingTotem           []*core.Spell
