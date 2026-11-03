@@ -300,7 +300,7 @@ or trinkets), so these test the sim, not the classes:
 | Protection paladin | 501 | 497 | 61 | 8.6% | 18,389 | 36.7% | 63.3% | 23% | 12.3% |
 
 Shield Block keeps the warrior nearly uncrushable (2 blocks over 7 s on a 5 s cooldown). The paladin's
-Holy Shield is down most of the fight because its rotation is stale (below).
+Holy Shield was down most of the fight because its rotation was stale (fixed 2026-11-03, [Rules audit](#rules-audit)); these numbers are from before.
 
 **The chance of death is a cliff at the tank's DTPS.** The warrior dies in 98% of fights at 350 HPS, 65% at
 425, 12% at 500 and none at 600. The paladin goes from 100% at 350 to 9% at 600. So one healer number mostly
@@ -437,10 +437,8 @@ presets landing on the same build means a weight moves).
 - **The raid sim's 700 TPS stand-in** came from the warrior's tank suite. On the report's boss with no
   Salvation the same build does 1137. Check which buffs the 700 had before the raid sim's simmed tanks
   replace it.
-- **The Protection paladin's rotation is stale.** `basic_prot` casts Holy Shield only while aura 20134 is
-  up, Redoubt (a talent proc on 10% of melee hits taken under Forever, `sim/paladin/talents.go`), so Holy
-  Shield is up about a third of the time. Its options need Righteous Fury on (`righteousFury`), which the
-  UI preset and the test suite have and the bench's first request missed.
+- **The Protection paladin's rotation was stale** (Holy Shield only while Redoubt was up, no Holy Strike). The
+  bench's is fixed ([Rules audit](#rules-audit)); its options still need Righteous Fury on (`righteousFury`).
 - **The Feral tank isn't simmed at all.** `sim/druid/_tank` and `_maul.go`, `_frenzied_regeneration.go` are
   left out of the build, and `register_all.go` has it commented out.
 - **The paladin and the Warden shaman have no gear** (`blank` sets only), and no tank has Forever synthetic
@@ -466,19 +464,43 @@ presets landing on the same build means a weight moves).
   Concussion Blow (worth only as Shield Slam's prerequisite), Lingering Rage, Piercing Howl. Gore Drinker needs
   Enrage 5/5, out of a tank's reach.
 - **Worth something in game, nothing in the score yet:**
-  - **Improved Thunder Clap and Demoralizing Shout's value**: the tank's rotation casts neither, and the bench's
-    requests give the boss both as raid debuffs whoever casts them. So Improved Thunder Clap and Booming Voice are
-    worth nothing, and the first talent search dropped Improved Thunder Clap for Cruelty. **Needs the user's call:**
-    whether the scored tank keeps Thunder Clap and Demoralizing Shout up itself (Rage, GCDs and threat, the raid's
-    debuffs dropped) or leaves them to the raid.
+  - **Thunder Clap and Demoralizing Shout** were the raid's: the bench's requests gave the boss both whoever cast
+    them, and the tank's rotation cast neither, so Improved Thunder Clap and Booming Voice were worth nothing and the
+    first talent search dropped Improved Thunder Clap for Cruelty. **The user's ruling (2026-11-02): the tank applies
+    them.** So a warrior tank's bench and rotopt runs drop Thunder Clap, Demoralizing Shout and Demoralizing Roar (it
+    doesn't stack with the Shout) from the raid's debuffs (`tankscore.OwnDebuffs`), and the bench's warrior refreshes
+    Demoralizing Shout under 3 s left and Thunder Clap under 2 s, right after Shield Block. They're up 101% and 96%
+    of the fight at Chromaggus, and the boss has the same attack power and swing speed at 30 s as with the raid's
+    (`tankbench -boss-stats`: 601 and 0.833), so the encounter files' calibration holds. The cost: 30 to 80 TPS on
+    the seven bosses, SafeDPS at Chromaggus 1,811 to 1,494 (the opening GCDs go to the debuffs), and 0 to 30 more
+    damage taken a second (the seconds before they're up). The Chromaggus talent search now keeps the build: its
+    best swap, Improved Heroic Strike into Cruelty, gains 28 ± 14.4, short of two errors.
   - **Last Stand, Shield Wall and Improved Shield Wall**: real tanks save them for a bad moment, which a scoring run
     can't follow (the replay needs nothing to read the tank's health). Shield Wall on a timer would undervalue it.
   - **Vanguard**: Charge in Defensive Stance, a Rage opener at the pull. The tank's rotation doesn't charge; it's
     the rotations' work (Next steps, 3).
 
+**Protection paladin** (2026-11-03), the bench's build `-55302102513521531-052` against forever-wiki/classes/paladin.md
+(the client rows of 70707 with its hotfixes):
+
+- **Right in the sim:** Redoubt, Improved Righteous Fury, Shield Specialization, Iron Creed, Sacred Duty, Holy Shield,
+  Reckoning, Anticipation, Toughness, Precision, Divine Intellect, Swift Judgement, and Shieldsworn (simmed in
+  `holy_strike.go`; the picker marked it not simulated, now fixed).
+- **Not simmed, and worth nothing on a boss:** Stoicism (shorter stuns and charms), Improved Hammer of Justice,
+  Guardian's Favor (Blessing of Protection and Freedom).
+- **Worth something in game, nothing in the score:** Templar's Bulwark (an absorb of the paladin's whole health for 8
+  s, 5 min cooldown, Forbearance), an emergency button like Shield Wall that a scoring run can't follow; Eye for an
+  Eye, which needs the boss's crits (0.6% under Forever).
+- **Fixed: the bench's rotation.** It cast Holy Shield only while Redoubt was up, and never Holy Strike, which Iron
+  Creed and Shieldsworn are about. It now keeps Holy Shield up and casts Holy Strike on cooldown (6 s with
+  Shieldsworn), then the seal, Judgement and Consecration as before. On the seven Anniversary bosses its TPS goes up
+  about half (611 to 929 at Chromaggus), its damage taken down 4 to 7%, and its healing needed down 6 to 47%
+  (Broodlord 2,541 to 1,344, Ragnaros 2,961 to 2,273). Holy Shield's 4 charges go in 4 blocks, so it still takes
+  12% crushing blows. The UI preset's rotation is the rotations step's.
+
 ## Next steps
 
-1. **Rules audit** of the other tanks (Feral tank, Protection paladin, Warden shaman) like the warrior's above.
+1. **Rules audit** of the other tanks (Feral tank, Warden shaman) like the warrior's and paladin's above.
    Bring the Feral tank into the build. Ask for a dungeon boss log for Forever's boss crit.
 2. **Encounters**: Patchwerk, threat drops, armor cuts and stacking DoTs in the engine.
 3. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.

@@ -95,6 +95,39 @@
         {
          "action": {
           "condition": {
+           "not": {
+            "val": {
+             "auraIsActive": {
+              "auraId": {
+               "spellId": 20928
+              }
+             }
+            }
+           }
+          },
+          "castSpell": {
+           "spellId": {
+            "spellId": 20928,
+            "rank": 3
+           }
+          }
+         },
+         "notes": "Holy Shield kept up (10 sec, 4 charges, on a 10 sec cooldown)."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10333,
+            "rank": 8
+           }
+          }
+         },
+         "notes": "Holy Strike on cooldown (6 sec with Shieldsworn): Iron Creed's threat and damage cut, and Shieldsworn's Holy Shield hit."
+        },
+        {
+         "action": {
+          "condition": {
            "cmp": {
             "op": "OpLt",
             "lhs": {
@@ -138,23 +171,6 @@
            "spellId": {
             "spellId": 20924,
             "rank": 5
-           }
-          }
-         }
-        },
-        {
-         "action": {
-          "condition": {
-           "auraIsActive": {
-            "auraId": {
-             "spellId": 20134
-            }
-           }
-          },
-          "castSpell": {
-           "spellId": {
-            "spellId": 20928,
-            "rank": 3
            }
           }
          }

@@ -187,6 +187,13 @@ class Emitter {
 			default:
 				material.blending = THREE.AdditiveBlending;
 		}
+		// Flat particles (flag 0x1000) lie on the ground, like Fire Nova's ring. The ground is at the
+		// same height, so we draw them a little in front of it, or the ground hides them.
+		if (e.flags & 0x1000) {
+			material.polygonOffset = true;
+			material.polygonOffsetFactor = -4;
+			material.polygonOffsetUnits = -16;
+		}
 		this.mesh = new THREE.Mesh(g, material);
 		this.mesh.frustumCulled = false;
 		this.mesh.renderOrder = 10;

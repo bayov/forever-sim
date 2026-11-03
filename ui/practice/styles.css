@@ -39,7 +39,8 @@ button {
 	cursor: pointer;
 	font: inherit;
 }
-button:hover {
+button:hover,
+button.v-hover {
 	background: #363d4b;
 }
 button.primary {
@@ -132,7 +133,8 @@ button.primary {
 	padding: 3px 10px;
 	text-shadow: 1px 1px 0 #000;
 }
-.hud button:hover {
+.hud button:hover,
+.hud button.v-hover {
 	background: rgba(40, 40, 46, 0.8);
 	box-shadow: inset 0 0 0 1px var(--eui-accent);
 }
@@ -443,7 +445,8 @@ button.primary {
 	text-overflow: clip;
 	line-height: 1;
 }
-.button:hover {
+.button:hover,
+.button.v-hover {
 	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
 }
 .button.oom .icon {
@@ -471,7 +474,8 @@ button.primary {
 	outline: 1px dashed #777;
 	outline-offset: -1px;
 }
-.action-bars.binding .button:hover {
+.action-bars.binding .button:hover,
+.action-bars.binding .button.v-hover {
 	box-shadow: inset 0 0 0 2px #4af;
 }
 
@@ -857,7 +861,8 @@ button.primary {
 	border: 1px solid #000;
 	flex: none;
 }
-.book-entry:hover {
+.book-entry:hover,
+.book-entry.v-hover {
 	background: rgba(255, 255, 255, 0.08);
 }
 .cursor-icon {
@@ -1038,4 +1043,37 @@ button.primary {
 }
 .room canvas.attack {
 	cursor: var(--wow-attack, crosshair) !important;
+}
+
+/* The room's own cursor while the mouse is locked (pointer.ts), and its dropdown lists. */
+.v-cursor {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 32px;
+	height: 32px;
+	background-size: contain;
+	background-repeat: no-repeat;
+	pointer-events: none;
+	z-index: 10000;
+}
+.v-cursor.hidden {
+	display: none;
+}
+.v-select {
+	position: fixed;
+	z-index: 9999;
+	background: #11141a;
+	border: 1px solid #4a5060;
+	color: #ddd;
+}
+.v-option {
+	padding: 2px 8px;
+	white-space: nowrap;
+}
+.v-option.selected {
+	background: #2a3140;
+}
+.v-option.v-hover {
+	background: #363d4b;
 }

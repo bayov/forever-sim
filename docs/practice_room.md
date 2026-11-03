@@ -1158,6 +1158,20 @@ rendering, not the sim.
   - Empty particle emitters and ribbons aren't drawn, and only live particles go to the GPU.
   - Bones skip Three's Euler angles, and billboards update only the bones above them.
   - In a loop benchmark the HUD went from 0.66 to about 0.1ms a frame and the character's posing from 0.25 to 0.12ms.
+- Fourth report (240s): 240 FPS for 99% of frames, none over 17ms, about 1.3ms of script a frame.
+- The mouse locks once, at your first click in the room, and the room draws the WoW cursor itself
+  (`ui/practice/pointer.ts`). It sends the page the moves, hovers, presses, clicks and wheel a real cursor would, and
+  shows dropdowns as its own lists. Chrome's "press Esc to show your cursor" notice then shows once per lock instead of
+  on every camera turn. The full screen notice can't be hidden by a page.
+- The wheel zooms over the HUD too, and the camera glides to the new distance.
+- Leaving the room stops its frames, timers, sounds and session.
+- Raid test: `practice.html?raid=40` puts 39 others in your gear (two tanks, ten melee, casters, healers and hunters
+  of the four Horde races) around Ragnaros (`ui/practice/raid.ts`). They swing, cast with hand glows and bolts, heal
+  the tanks and move. First numbers in headless Chrome on WSL (software GPU, so only the script and the counts
+  carry over): draw calls 55 to 1006, triangles 71k to 424k, script a frame about 0.3 to 6ms (animating 2ms, the
+  others' effects 0.6ms, placing the scene's objects 1.1ms), JS heap 0.5 to 1.9GB, and 42s to load.
+- Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
+  Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
   (the Flametongue Totem proc's fire impact) load before the fight too.
 - Combat text scrolls like the Replay view's (MSBT): what you do goes up from the target's frame, buffs you gain go

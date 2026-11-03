@@ -163,6 +163,7 @@ func main() {
 				target.ClassicCrit = true
 			}
 		}
+		tankscore.OwnDebuffs(rsr)
 		tank := rsr.Raid.Parties[0].Players[0]
 		tank.TankScoring = &proto.TankScoring{DpsStart: *dpsStart, ThreatPerDamage: *dpsThreat}
 		tank.HealingModel = &proto.HealingModel{
@@ -350,7 +351,8 @@ func printBossStats(path string, rsr *proto.RaidSimRequest) {
 	s := core.NewSim(rsr, simsignals.CreateSignals())
 	s.Reset()
 	s.PrePull()
-	for s.CurrentTime < 30*time.Second && s.Step() {
+	// Step returns true when the fight is over.
+	for s.CurrentTime < 30*time.Second && !s.Step() {
 	}
 	t := s.Encounter.TargetUnits[0]
 	out, _ := json.Marshal(map[string]any{

@@ -339,6 +339,14 @@ export class Model {
 				params.premultipliedAlpha = true;
 				break;
 		}
+		// See-through layers that don't write depth (glows, spell rings) often lie right on the ground,
+		// like Fire Nova's ring. We draw them a little in front of what's at their depth, or the
+		// ground hides them.
+		if (params.depthWrite === false) {
+			params.polygonOffset = true;
+			params.polygonOffsetFactor = -4;
+			params.polygonOffsetUnits = -16;
+		}
 		const material = unlit ? new THREE.MeshBasicMaterial(params) : new THREE.MeshLambertMaterial(params);
 		const comb = combiner(batch.shader, batch.textureCount);
 		const tex2 = batch.textureCount > 1 ? m2.textures[m2.textureCombos[batch.textureCombo + 1]] : undefined;

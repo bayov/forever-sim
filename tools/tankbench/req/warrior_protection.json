@@ -113,6 +113,66 @@
         },
         {
          "action": {
+          "condition": {
+           "cmp": {
+            "op": "OpLt",
+            "lhs": {
+             "auraRemainingTime": {
+              "sourceUnit": {
+               "type": "CurrentTarget"
+              },
+              "auraId": {
+               "spellId": 11556
+              }
+             }
+            },
+            "rhs": {
+             "const": {
+              "val": "3s"
+             }
+            }
+           }
+          },
+          "castSpell": {
+           "spellId": {
+            "spellId": 11556
+           }
+          }
+         },
+         "notes": "Demoralizing Shout kept up: the tank applies its own (the bench drops the raid's)."
+        },
+        {
+         "action": {
+          "condition": {
+           "cmp": {
+            "op": "OpLt",
+            "lhs": {
+             "auraRemainingTime": {
+              "sourceUnit": {
+               "type": "CurrentTarget"
+              },
+              "auraId": {
+               "spellId": 11581
+              }
+             }
+            },
+            "rhs": {
+             "const": {
+              "val": "2s"
+             }
+            }
+           }
+          },
+          "castSpell": {
+           "spellId": {
+            "spellId": 11581
+           }
+          }
+         },
+         "notes": "Thunder Clap kept up: the tank applies its own slow."
+        },
+        {
+         "action": {
           "castSpell": {
            "spellId": {
             "spellId": 23925
