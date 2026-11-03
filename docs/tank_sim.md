@@ -466,11 +466,17 @@ presets landing on the same build means a weight moves).
   Concussion Blow (worth only as Shield Slam's prerequisite), Lingering Rage, Piercing Howl. Gore Drinker needs
   Enrage 5/5, out of a tank's reach.
 - **Worth something in game, nothing in the score yet:**
-  - **Improved Thunder Clap and Demoralizing Shout's value**: the tank's rotation casts neither, and the bench's
-    requests give the boss both as raid debuffs whoever casts them. So Improved Thunder Clap and Booming Voice are
-    worth nothing, and the first talent search dropped Improved Thunder Clap for Cruelty. **Needs the user's call:**
-    whether the scored tank keeps Thunder Clap and Demoralizing Shout up itself (Rage, GCDs and threat, the raid's
-    debuffs dropped) or leaves them to the raid.
+  - **Thunder Clap and Demoralizing Shout** were the raid's: the bench's requests gave the boss both whoever cast
+    them, and the tank's rotation cast neither, so Improved Thunder Clap and Booming Voice were worth nothing and the
+    first talent search dropped Improved Thunder Clap for Cruelty. **The user's ruling (2026-11-02): the tank applies
+    them.** So a warrior tank's bench and rotopt runs drop Thunder Clap, Demoralizing Shout and Demoralizing Roar (it
+    doesn't stack with the Shout) from the raid's debuffs (`tankscore.OwnDebuffs`), and the bench's warrior refreshes
+    Demoralizing Shout under 3 s left and Thunder Clap under 2 s, right after Shield Block. They're up 101% and 96%
+    of the fight at Chromaggus, and the boss has the same attack power and swing speed at 30 s as with the raid's
+    (`tankbench -boss-stats`: 601 and 0.833), so the encounter files' calibration holds. The cost: 30 to 80 TPS on
+    the seven bosses, SafeDPS at Chromaggus 1,811 to 1,494 (the opening GCDs go to the debuffs), and 0 to 30 more
+    damage taken a second (the seconds before they're up). The Chromaggus talent search now keeps the build: its
+    best swap, Improved Heroic Strike into Cruelty, gains 28 ± 14.4, short of two errors.
   - **Last Stand, Shield Wall and Improved Shield Wall**: real tanks save them for a bad moment, which a scoring run
     can't follow (the replay needs nothing to read the tank's health). Shield Wall on a timer would undervalue it.
   - **Vanguard**: Charge in Defensive Stance, a Rage opener at the pull. The tank's rotation doesn't charge; it's

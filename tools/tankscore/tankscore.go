@@ -97,6 +97,25 @@ func MakeTank(request *proto.RaidSimRequest, healing *proto.HealingModel, scorin
 	// An HPS of 0 asks the engine for its presim healer.
 	tank.HealingModel.Hps = max(tank.HealingModel.Hps, 1e-9)
 	tank.TankScoring = scoring
+	OwnDebuffs(request)
+}
+
+// OwnDebuffs takes off the raid's debuffs the tank keeps up itself (the user's ruling, 2026-11-02:
+// a main tank applies its own), so its rotation pays their Rage and GCDs, makes their threat and gets
+// its talents' worth for them (Improved Thunder Clap, Booming Voice). A warrior tank keeps Thunder
+// Clap and Demoralizing Shout up, and Demoralizing Roar goes with the Shout since the two don't
+// stack: the boss has the tank's attack power cut. Other tanks leave the raid's debuffs as they are.
+func OwnDebuffs(request *proto.RaidSimRequest) {
+	tank := request.Raid.Parties[0].Players[0]
+	debuffs := request.Raid.Debuffs
+	if debuffs == nil {
+		return
+	}
+	if _, ok := tank.Spec.(*proto.Player_TankWarrior); ok {
+		debuffs.ThunderClap = proto.TristateEffect_TristateEffectMissing
+		debuffs.DemoralizingShout = proto.TristateEffect_TristateEffectMissing
+		debuffs.DemoralizingRoar = proto.TristateEffect_TristateEffectMissing
+	}
 }
 
 // Objective is how the score is weighed.
