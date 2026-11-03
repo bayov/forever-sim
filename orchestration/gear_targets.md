@@ -68,3 +68,54 @@ level 60 BiS sets for any healer. The healing sim's healers (docs/healing_sim.md
 | Set | Lists | Sta | Int | Spi | SP | Healing | Crit | MP5 | top stat / non-Sta |
 |---|---|---|---|---|---|---|---|---|---|
 | Restoration shaman | 2 | 10.8 | 17.5 | 10.0 | 22.2 | 27.1 | 7.0 | 5.4 | Healing 30% |
+
+## Tanks (2026-11-03)
+
+The tank workers' brief (orchestration/brief_tanks.md, the user: "implement all tank specs"): every tank wears a
+synthetic set by standards 36. Scripts: orchestration/tools/tank_prices.py (the tank stat prices) and
+gear_targets_tanks.py (these rows and the alternatives' effect; `python3 gear_targets_tanks.py <wowsims/sod>/ui`).
+
+- **Source:** wowsims/sod's level 60 tank gear sets (commit 0e3f6eff5f, 2026-07-24), averaged as the DPS rows:
+  - Protection warrior: `tank_warrior` phase_4_tanky and phase_4_damage;
+  - Protection paladin: `protection_paladin` p4prot and p5prot;
+  - Feral tank: `feral_tank_druid` phase_6, phase_7_prebis and phase_7 (it has no phase 4-5 bear set; the
+    catweave set left out);
+  - Warden shaman: `warden_shaman` phase_4_enh_tank. Our Warden is a melee shield tank (Stormstrike), so SoD's
+    Elemental tank list (a spell power tank) is left out; its row is at the end of the script's output (SP 27.0,
+    Int 16.6, Def 5.1).
+  Wowhead wasn't needed: wowsims/sod has a list for every tank.
+- **Pricing:** standards 1b with standards 36's tank prices (Defense 1.5, dodge 12, parry 20 and block 5 a 1%,
+  block value 0.4, resistance 1.0). Trinkets left out, AP and RAP once, SoD's weapon feral AP left out, as the DPS
+  rows. SoD's expertise and haste (bear phase 6-7 gear) aren't priced in 1b and drop out. Armor is free; SoD's
+  db doesn't tell bonus armor from base armor, so none is counted.
+- **Target:** Stamina the spec's own SoD share (tanks carry 24-33%, against 14-21% for DPS sets); Spirit 10% for
+  the paladin and the shaman (standards 5); no resistances (standards 36: SoD's warrior, paladin and shaman lists
+  put 11% of their budget into them, mostly fire for Molten Core); the rest in SoD's proportions.
+- **Rules for the sets:** standards 36 (budget by the class's archetype, the 0.72 x L(71) shield, the tank
+  trinket), 5a's tolerances (+/- 3 points a stat, Stamina +/- 1.5, the 55% guardrail) and 4 for hit, read as
+  the tank objective rather than DPS.
+- **SoD's tank lists carry no dodge or parry** (their Defense took that room), so the rows have none. Era's tank
+  epics put 6.6% of their budget into dodge and 3.2% into parry; a spec whose objective wants them can move
+  points there inside the tolerance.
+- **The paladin's lists carry no Intellect** (and almost no spell power): Lawbringer and Judgement are Strength,
+  Stamina and Defense. A spec that runs short of mana can say so in its report.
+
+Targets, % (L):
+
+| Set | SoD lists | Sta | Str | Agi | Int | Spi | AP | SP | Hit (SoD) | Crit | Def | Block | Block value | top stat / non-Sta |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Protection warrior | 2 | 31.4 | 15.5 | 6.0 | - | - | 3.4 | - | 9.4 | 7.7 | 20.9 | - | 5.8 | Def 30% |
+| Protection paladin | 2 | 32.4 | 16.7 | 3.5 | - | 10.0 | - | 1.1 | 3.2 | 3.1 | 19.5 | 3.2 | 7.2 | Def 29% |
+| Feral tank | 3 | 33.4 | 16.0 | 19.1 | 2.3 | - | 0.5 | 0.3 | 5.9 | 1.7 | 20.8 | - | - | Def 31% |
+| Warden shaman | 1 | 23.9 | 14.3 | - | 15.5 | 10.0 | 6.4 | 7.2 | 6.6 | 9.3 | 4.6 | - | 2.4 | Int 20% |
+
+What a whole set comes to (standards 36's budgets, trinkets left out), at the table's shares:
+
+| Set | Budget | Armor | Weapons | Defense | Block | Block value | Stamina |
+|---|---|---|---|---|---|---|---|
+| Protection warrior | 761.0 | physical 650.5 | one-hander 31.9, shield 58.9, ranged 19.7 | 106 | - | 110 | 239 |
+| Protection paladin | 844.1 | hybrid 748.3 | one-hander 36.8, shield 58.9, libram | 110 | 5.4% | 153 | 274 |
+| Feral tank | 729.3 | physical 650.5 | two-hander 78.8, idol | 101 | - | - | 244 |
+| Warden shaman | 844.1 | hybrid 748.3 | one-hander 36.8, shield 58.9, totem | 26 | - | 50 | 201 |
+
+Block value on the paladin and the warrior includes the shield's own (SoD's shields carry 40-75).
