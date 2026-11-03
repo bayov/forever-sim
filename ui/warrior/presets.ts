@@ -219,7 +219,7 @@ export const DefaultAPLs = [APLLevel60Fury];
 // search at flat Rage (+1.6 at 180 sec, 20,000 iterations). Weaponmaster
 // hybrids (25 Arms for the swords' extra attacks, no Bloodthirst) were 823.5 on the earlier gear,
 // 17% behind.
-export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30305013002-25053005142010501' }), {
+export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30303013002-2505300451020100301' }), {
 	tooltip: 'Level 60 dual wield Fury talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -227,7 +227,7 @@ export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTal
 // of Dual Wield Specialization and Furious Precision. 899.4 at 180 sec (Human), 13% behind dual wield
 // Fury but its own way to play, so it gets its own preset. At flat Rage (2026-10-25) a point of
 // Enrage moves to Improved Berserker Rage (2/2, 10 Rage a Berserker Rage): +0.8 at 180 sec.
-export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30305013032-25053000142210501' }), {
+export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30303013032-2505300401022100301' }), {
 	tooltip: 'Level 60 two-hand Fury talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -239,7 +239,7 @@ export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', Sav
 // own preset as the Mortal Strike spec. The 2026-10-25 search at flat Rage kept it: Improved Bloodrage
 // 2/2 for Booming Voice and Improved Execute (which needs the Booming Voice points to open its row)
 // loses 1.5 at 180 sec.
-export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTalents.create({ talentsString: '20305213032515201-55050000001' }), {
+export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTalents.create({ talentsString: '20303213032215201-550500000001' }), {
 	tooltip: 'Level 60 Arms talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -247,7 +247,7 @@ export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTal
 // for two points of Booming Voice and one of Improved Execute.
 export const TalentsLevel60ArmsDragonkin = PresetUtils.makePresetTalents(
 	'Arms · vs Dragonkin',
-	SavedTalents.create({ talentsString: '20305213132515201-3505-2' }),
+	SavedTalents.create({ talentsString: '20303213132215201-3505-2' }),
 	{
 		tooltip: 'Level 60 Arms talents against a Giant or Dragonkin boss, with Spearing Strike.',
 		group: 'Synthetic',

@@ -1,0 +1,136 @@
+{
+ "class": "warrior",
+ "entries": [
+  {
+   "tree": "Arms",
+   "op": "set",
+   "name": "Improved Tactical Mastery",
+   "fields": {
+    "max": 3,
+    "desc": {
+     "1": "Tactical Mastery lets you retain up to an additional 5 Rage when you change stances.",
+     "2": "Tactical Mastery lets you retain up to an additional 10 Rage when you change stances.",
+     "3": "Tactical Mastery lets you retain up to an additional 15 Rage when you change stances."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Improved Tactical Mastery changed to a 3-point talent, 5/10/15 Rage (was 5 points of 3)"
+  },
+  {
+   "tree": "Arms",
+   "op": "set",
+   "name": "Two-Handed Weapon Specialization",
+   "fields": {
+    "desc": {
+     "1": "Increases the damage you deal with two-handed melee weapons by 2%.",
+     "2": "Increases the damage you deal with two-handed melee weapons by 4%.",
+     "3": "Increases the damage you deal with two-handed melee weapons by 6%."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Two-Handed Weapon Specialization 2/4/6% (was 1/2/3%)"
+  },
+  {
+   "tree": "Arms",
+   "op": "set",
+   "name": "Bloodthrill",
+   "fields": {
+    "max": 2,
+    "desc": {
+     "1": "Grants your Main Hand melee attacks against enemies afflicted by your Rend a 10% chance to allow an activation of Overpower.",
+     "2": "Grants your Main Hand melee attacks against enemies afflicted by your Rend a 20% chance to allow an activation of Overpower."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Bloodthrill changed to a 2-point talent, 10/20% (was 5 points of 4%)"
+  },
+  {
+   "tree": "Arms",
+   "op": "set",
+   "name": "Improved Slam",
+   "fields": {
+    "desc": {
+     "1": "Reduces the global cooldown and cast time of your Slam ability by 0.25 sec. In addition, Slam no longer interrupts or delays your melee swing and Slam's cooldown is reduced by 2.5 sec.",
+     "2": "Reduces the global cooldown and cast time of your Slam ability by 0.50 sec. In addition, Slam no longer interrupts or delays your melee swing and Slam's cooldown is reduced by 5.0 sec."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Improved Slam's reduction to Slam's cooldown changed to 2.5/5 seconds (was 3.0/3.0)"
+  },
+  {
+   "tree": "Fury",
+   "op": "set",
+   "name": "Enrage",
+   "fields": {
+    "row": 3,
+    "col": 4
+   },
+   "source": "development notes 2026-11-02 (post 9): Enrage moved to Row 3 (was Row 4). Column guessed: 4, the free square in row 3"
+  },
+  {
+   "tree": "Fury",
+   "op": "add",
+   "talent": {
+    "name": "Reckless Swings",
+    "max": 1,
+    "row": 4,
+    "col": 3,
+    "passive": false,
+    "icon": "inv_misc_questionmark",
+    "cost": "25% of base health; Instant; 15 sec cooldown",
+    "desc": {
+     "1": "Your next 4 melee attacks generate 5 additional Rage. Lasts 8 sec."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): New Talent: Reckless Swings. Row 4. 1 Point. 15 second cooldown. Costs 25% of base health. Column guessed: 3, Enrage's old square; icon a placeholder"
+  },
+  {
+   "tree": "Fury",
+   "op": "set",
+   "name": "Gore Drinker",
+   "fields": {
+    "row": 5,
+    "col": 3,
+    "req": "Blood Craze"
+   },
+   "source": "development notes 2026-11-02 (post 9): Gore Drinker moved to Row 5 (was Row 6) and is connected to Blood Craze now instead of Enrage. Column guessed: 3, under Blood Craze"
+  },
+  {
+   "tree": "Fury",
+   "op": "set",
+   "name": "Flurry",
+   "fields": {
+    "max": 3,
+    "req": null,
+    "desc": {
+     "1": "Increases your melee attack speed by 10% for your next 3 swings after dealing a melee critical strike.",
+     "2": "Increases your melee attack speed by 20% for your next 3 swings after dealing a melee critical strike.",
+     "3": "Increases your melee attack speed by 30% for your next 3 swings after dealing a melee critical strike."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Death Wish is no longer required for Flurry. Flurry changed to a 3-point talent, 10/20/30% (was 5 points of 5%)"
+  },
+  {
+   "tree": "Fury",
+   "op": "add",
+   "talent": {
+    "name": "Improved Whirlwind",
+    "max": 2,
+    "row": 6,
+    "col": 3,
+    "passive": true,
+    "icon": "ability_whirlwind",
+    "desc": {
+     "1": "Reduces the cooldown of your Whirlwind ability by 1 sec and increases the damage it deals to the closest enemy by 15%.",
+     "2": "Reduces the cooldown of your Whirlwind ability by 2 sec and increases the damage it deals to the closest enemy by 30%."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): New Talent: Improved Whirlwind. Row 6. 2 Point. Passive. Column guessed: 3, Gore Drinker's old square"
+  },
+  {
+   "tree": "Fury",
+   "op": "set",
+   "name": "Bloodthirst",
+   "fields": {
+    "req": "Death Wish"
+   },
+   "source": "development notes 2026-11-02 (post 9): Bloodthirst now has Death Wish as a required talent"
+  }
+ ]
+}
