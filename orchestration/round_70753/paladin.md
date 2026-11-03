@@ -64,8 +64,8 @@ Unsealed Wrath, the Echo auras and Two-Handed Weapon Specialization's tooltip an
 20117 and 1311084 in 70753 for this file).
 
 Every line the client or a hotfix carries was already in the sim from the 10-30 hotfix. The two lines that move DPS are
-notes-only; the orchestrator's provisional rule of 2026-11-03 (`README.md`: model a notes value that neither the client
-nor a hotfix carries, gated under Forever) puts them in.
+notes-only; the user's ruling of 2026-11-03 (standards 37: an announced value that neither the client nor a hotfix
+carries takes the notes' number, gated under Forever) puts them in.
 
 ## Notes-only values
 
@@ -105,10 +105,9 @@ Strike, so they still get it once.
 
 ## Questions for the orchestrator
 
-1. **Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy (notes vs client).** Answered by the orchestrator's
-   provisional rule (2026-11-03): modelled from the notes, see "Notes-only values". If the user rules the client in,
-   revert both (one commit) and re-run Phase B's searches.
+1. **Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy (notes vs client).** Settled by the user's ruling
+   (standards 37, 2026-11-03): modelled from the notes, see "Notes-only values". The only other notes-only paladin line,
+   Templar's Bulwark as a Magic effect, is tank-only (tank session).
 2. **Salvation in the shared raid.** Salvation is gone from the game, but mksettings `main.go:74` and every Level 60
    request still set `raid.buffs.salvation: true` (sim/core/buffs.go:374 gives it under Forever). Threat only, 0 DPS.
-   Recommendation: drop it in mksettings and the requests in one cross-class change (the orchestrator's), and leave
-   `SalvationAura` for old requests or gate it off. I'll leave my requests' flag as mksettings writes it.
+   The orchestrator drops it from mksettings and every request in one shared change in phase 3; left alone here.
