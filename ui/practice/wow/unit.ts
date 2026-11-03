@@ -178,6 +178,10 @@ export class UnitView {
 		// Every animation the unit can play, so none waits on its file mid fight.
 		waits.push(model.preloadAnims(Object.values(Anim)));
 		await Promise.all(waits);
+		for (const m of [model, ...this.items]) {
+			m.compact();
+			m.cull();
+		}
 		this.model = model;
 		model.onEvent = (id, data, upper) => this.event(id, data, upper);
 		this.placeWeapons();

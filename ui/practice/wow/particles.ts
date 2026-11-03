@@ -10,10 +10,13 @@
 
 import * as THREE from 'three';
 import { texture } from './files';
-import type { ParticleEmitter } from './m2';
+import type { ParticleEmitter, Vec } from './m2';
 import type { Model } from './model';
 
 const maxParticles = 600;
+
+// The emitters' scratch values while filling the GPU's data, shared so a frame makes no garbage.
+const fill = { color: new Float64Array(3), alpha: new Float64Array(1), size: new Float64Array(2), cellOut: new Float64Array(1), tmp: new THREE.Vector3() };
 
 // While the loading screen warms the shaders up, the emitters draw even with no particles, so the
 // renderer compiles their shader. In the fight an empty emitter isn't drawn at all.
@@ -29,6 +32,9 @@ type Particle = {
 	angle: number;
 	spin: number;
 };
+
+// Particles that died, kept to be born again, so a burst of sparks makes no garbage.
+const freeParticles: Particle[] = [];
 
 const vertexShader = /* glsl */ `
 attribute vec3 iPos;
@@ -79,19 +85,22 @@ void main() {
 
 // overLife blends keys over a particle's life by their times (0 to 1 of the life). Without times,
 // the keys spread evenly (the usual three: birth, middle and death).
-function overLife(keys: number[][], times: number[], t: number, out: number[]): number[] {
+function lifeAt(times: number[], n: number, i: number): number {
+	return times.length === n ? times[i] : n === 1 ? 0 : i / (n - 1);
+}
+
+function overLife(keys: number[][], times: number[], t: number, out: Vec): Vec {
 	const n = keys.length;
 	if (n === 0) return out;
-	const at = (i: number) => (times.length === n ? times[i] : n === 1 ? 0 : i / (n - 1));
 	let i = 0;
-	while (i < n - 1 && t > at(i + 1)) i++;
-	if (i >= n - 1 || t <= at(i)) {
-		const k = t <= at(0) ? keys[0] : keys[n - 1];
+	while (i < n - 1 && t > lifeAt(times, n, i + 1)) i++;
+	if (i >= n - 1 || t <= lifeAt(times, n, i)) {
+		const k = t <= lifeAt(times, n, 0) ? keys[0] : keys[n - 1];
 		for (let c = 0; c < k.length; c++) out[c] = k[c];
 		return out;
 	}
-	const span = at(i + 1) - at(i);
-	const f = span > 0 ? (t - at(i)) / span : 0;
+	const span = lifeAt(times, n, i + 1) - lifeAt(times, n, i);
+	const f = span > 0 ? (t - lifeAt(times, n, i)) / span : 0;
 	const a = keys[i];
 	const b = keys[i + 1];
 	for (let c = 0; c < a.length; c++) out[c] = a[c] * (1 - f) + b[c] * f;
@@ -117,7 +126,7 @@ class Emitter {
 	private readonly geometry: THREE.InstancedBufferGeometry;
 	// Particles that keep to the emitter (flag 0x10) live in its space, the others in the world's.
 	private readonly local: boolean;
-	private readonly v = { a: [0], g: [0, 0, 0] };
+	private readonly v = { a: new Float64Array(1), g: new Float64Array(3) };
 	private readonly alphaKeys: number[][];
 	private readonly cellKeys: number[][];
 	private readonly worldScale = new THREE.Vector3();
@@ -249,7 +258,12 @@ class Emitter {
 			const p = this.particles[i];
 			p.age += dt;
 			if (p.age >= p.life) {
-				this.particles.splice(i, 1);
+				// The last one takes its place (the order doesn't matter), and the dead one waits to be
+				// born again.
+				const list = this.particles;
+				list[i] = list[list.length - 1];
+				list.pop();
+				freeParticles.push(p);
 				continue;
 			}
 			p.vel.x += g[0] * scale * dt;
@@ -278,20 +292,20 @@ class Emitter {
 				// (the vertical range is the angle from up). A sphere sends them out around it (the
 				// vertical range is the angle above and below level): a Fire Nova ring with none
 				// spreads flat.
-				const dir =
-					e.emitterType === 2
-						? new THREE.Vector3(Math.cos(polar) * Math.cos(azimuth), Math.sin(polar), Math.cos(polar) * Math.sin(azimuth))
-						: new THREE.Vector3(Math.sin(polar) * Math.cos(azimuth), Math.cos(polar), Math.sin(polar) * Math.sin(azimuth));
-				let pos: THREE.Vector3;
+				const p = freeParticles.pop() ?? { pos: new THREE.Vector3(), vel: new THREE.Vector3(), age: 0, life: 1, tile: -1, angle: 0, spin: 0 };
+				const dir = p.vel;
+				if (e.emitterType === 2) dir.set(Math.cos(polar) * Math.cos(azimuth), Math.sin(polar), Math.cos(polar) * Math.sin(azimuth));
+				else dir.set(Math.sin(polar) * Math.cos(azimuth), Math.cos(polar), Math.sin(polar) * Math.sin(azimuth));
+				const pos = p.pos;
 				if (e.emitterType === 2) {
 					// A sphere: start between the two radii (length the inner, width the outer) and
 					// fly outward.
 					const r = length + Math.random() * Math.max(0, width - length);
-					pos = dir.clone().multiplyScalar(r);
+					pos.copy(dir).multiplyScalar(r);
 				} else {
-					pos = new THREE.Vector3((Math.random() * 2 - 1) * length * 0.5, 0, (Math.random() * 2 - 1) * width * 0.5);
+					pos.set((Math.random() * 2 - 1) * length * 0.5, 0, (Math.random() * 2 - 1) * width * 0.5);
 				}
-				const v = dir.clone();
+				const v = dir;
 				pos.applyMatrix4(world);
 				v.transformDirection(world);
 				// A particle that keeps to its emitter holds its offset from it: it moves with your
@@ -299,27 +313,24 @@ class Emitter {
 				if (this.local) pos.sub(this.origin);
 				v.multiplyScalar(speed * (1 + speedVar * (Math.random() * 2 - 1)) * scale);
 				const cells = e.tileRows * e.tileCols;
-				this.particles.push({
-					pos,
-					vel: v,
-					age: 0,
-					life: Math.max(0.05, lifespan * (1 + e.lifespanVary * (Math.random() * 2 - 1))),
-					tile: e.flags & 0x10000 ? Math.floor(Math.random() * cells) : -1,
-					angle: e.baseSpin + Math.random() * e.baseSpinVary,
-					// Flag 0x200 spins half the particles the other way.
-					spin: (e.spin + Math.random() * e.spinVary) * (e.flags & 0x200 && Math.random() < 0.5 ? -1 : 1),
-				});
+				p.age = 0;
+				p.life = Math.max(0.05, lifespan * (1 + e.lifespanVary * (Math.random() * 2 - 1)));
+				p.tile = e.flags & 0x10000 ? Math.floor(Math.random() * cells) : -1;
+				p.angle = e.baseSpin + Math.random() * e.baseSpinVary;
+				// Flag 0x200 spins half the particles the other way.
+				p.spin = (e.spin + Math.random() * e.spinVary) * (e.flags & 0x200 && Math.random() < 0.5 ? -1 : 1);
+				this.particles.push(p);
 			}
 			if (this.carry > 1) this.carry = 1;
 		} else this.carry = 0;
 
 		// Fill the instance data.
 		const n = this.particles.length;
-		const color = [255, 255, 255];
-		const alpha = [1];
-		const size = [1, 1];
-		const cellOut = [0];
-		const tmp = new THREE.Vector3();
+		const { color, alpha, size, cellOut, tmp } = fill;
+		color.fill(255);
+		alpha[0] = 1;
+		size[0] = size[1] = 1;
+		cellOut[0] = 0;
 		for (let i = 0; i < n; i++) {
 			const p = this.particles[i];
 			const t = p.age / p.life;
@@ -355,6 +366,8 @@ class Emitter {
 	}
 
 	dispose() {
+		for (const p of this.particles) freeParticles.push(p);
+		this.particles.length = 0;
 		this.mesh.removeFromParent();
 		this.geometry.dispose();
 		(this.mesh.material as THREE.Material).dispose();

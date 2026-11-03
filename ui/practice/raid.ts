@@ -28,7 +28,23 @@ type Raider = {
 	to?: [number, number];
 	next: number;
 	moveAt: number;
+	// Time the animation hasn't caught up on yet (see animEvery).
+	behind: number;
 };
+
+// animEvery is how often a raider's animation updates. Like the game, we animate the ones off
+// screen and far away less often: off screen 10 times a second, past 40 yards 30, past 20 yards 60,
+// and near you every frame.
+function animEvery(onScreen: boolean, distance: number): number {
+	if (!onScreen) return 0.1;
+	if (distance > 40) return 1 / 30;
+	if (distance > 20) return 1 / 60;
+	return 0;
+}
+
+const frustum = new THREE.Frustum();
+const viewProjection = new THREE.Matrix4();
+const sphere = new THREE.Sphere(new THREE.Vector3(), 2.5);
 
 // The races (2 orc, 5 undead, 6 tauren, 8 troll) and the classes each can be, by role.
 const looks: Record<Role, [number, number][]> = {
@@ -57,6 +73,7 @@ export class RaidTest {
 
 	constructor(
 		readonly scene: THREE.Scene,
+		readonly camera: THREE.Camera,
 		readonly effects: Effects,
 	) {}
 
@@ -119,7 +136,7 @@ export class RaidTest {
 				this.scene.add(view.group);
 				const home = homes[job.i];
 				const role = job.role === 'caster' && !classSpells[cls] ? 'hunter' : job.role;
-				this.raiders.push({ view, role, spells: classSpells[cls] ?? [], home, pos: [...home], next: Math.random() * 3, moveAt: 5 + Math.random() * 15 });
+				this.raiders.push({ view, role, spells: classSpells[cls] ?? [], home, pos: [...home], next: Math.random() * 3, moveAt: 5 + Math.random() * 15, behind: 0 });
 			}
 		};
 		await Promise.all([bossLook.catch(e => console.warn('raid boss', e)), ...Array.from({ length: 8 }, work)]);
@@ -140,6 +157,9 @@ export class RaidTest {
 			}
 			this.boss.update(dt, { forward: 0, left: 0, airborne: false, walking: false }, true);
 		}
+		const cam = this.camera;
+		cam.updateMatrixWorld();
+		frustum.setFromProjectionMatrix(viewProjection.multiplyMatrices(cam.projectionMatrix, cam.matrixWorldInverse));
 		for (const r of this.raiders) {
 			let forward = 0;
 			if (r.to) {
@@ -164,7 +184,12 @@ export class RaidTest {
 			r.view.group.position.copy(toThree(r.pos[0], r.pos[1]));
 			r.view.group.rotation.y = facing;
 			if (!r.to && this.clock >= r.next) this.act(r, tank);
-			r.view.update(dt, { forward, left: 0, airborne: false, walking: false }, true);
+			sphere.center.copy(r.view.group.position).y += 1;
+			r.behind += dt;
+			if (r.behind >= animEvery(frustum.intersectsSphere(sphere), sphere.center.distanceTo(cam.position))) {
+				r.view.update(r.behind, { forward, left: 0, airborne: false, walking: false }, true);
+				r.behind = 0;
+			}
 		}
 	}
 
