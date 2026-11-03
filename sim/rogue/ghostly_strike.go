@@ -25,6 +25,21 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 		},
 	})
 
+	// Blizzard's November 2 development notes: Ghostly Strike "now also causes your next Ambush or
+	// Garrote cast within 7 seconds to not require Stealth". No client spell for it yet (1.60.1.70753),
+	// so the aura borrows Ghostly Strike's ID with a tag, and is taken to start on the cast like the
+	// dodge buff.
+	rogue.GhostlyStrikeOpenerAura = rogue.RegisterAura(core.Aura{
+		Label:    "Ghostly Strike Opener",
+		ActionID: core.ActionID{SpellID: 14278, Tag: 1},
+		Duration: time.Second * 7,
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if spell == rogue.Ambush || spell == rogue.Garrote {
+				aura.Deactivate(sim)
+			}
+		},
+	})
+
 	rogue.GhostlyStrike = rogue.RegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_RogueGhostlyStrike,
 		ActionID:    ghostlyStrikeAura.ActionID,
@@ -57,11 +72,12 @@ func (rogue *Rogue) registerGhostlyStrikeSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
-			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target)) * rogue.quietusMultiplier(sim)
+			baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target))
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
 			ghostlyStrikeAura.Activate(sim)
+			rogue.GhostlyStrikeOpenerAura.Activate(sim)
 
 			if result.Landed() {
 				rogue.AddComboPoints(sim, 1, target, spell.ComboPointMetrics())

@@ -32,6 +32,8 @@ var (
 	synthTrinket = itemID(994202)
 	sapper       = itemID(10646)
 	landMine     = itemID(4395)
+	// Shank has no client spell yet; the sim's ID (sim/rogue/shank.go).
+	shank = spellID(1399248)
 )
 
 // The 15 second buffs are only worth a cast when the fight lasts that long after it.
@@ -74,6 +76,10 @@ func rogueCooldownKnobs() []Knob {
 		// that waiting for a fifth wastes points.
 		{Name: "evisCp", Default: 5, Min: 3, Max: 5, Step: 1},
 		{Name: "bfPrepull", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Shank (November 2 development notes: 5 Energy, gives back 25 at 60, 10 sec cooldown, and
+		// Venom's 6 sec buff with the talent) at this much energy or less, so the Energy it gives back
+		// isn't capped. 0 for never.
+		{Name: "shankEnergy", Default: 75, Min: 0, Max: 100, Step: 5},
 	}
 }
 
@@ -98,6 +104,8 @@ type rogueCooldowns struct {
 	holdNotes string
 	// prepull holds the Blade Flurry prepull when the knob asks for one.
 	prepull []*proto.APLPrepullAction
+	// shank is the Shank line a template puts before its builder, nil when the knob turns it off.
+	shank *proto.APLListItem
 }
 
 func buildRogueCooldowns(k Knobs) rogueCooldowns {
@@ -258,6 +266,11 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		),
 		and(ge(comboPoints(), num(1)), lt(remainingTime(), seconds(3))),
 	)
+
+	if k["shankEnergy"] > 0 {
+		c.shank = cast(shank, le(energy(), num(k["shankEnergy"])), fmt.Sprintf(
+			"Shank on cooldown at %g energy or less, so the Energy it gives back fits; with Venom it also keeps the poisons' buff up.", k["shankEnergy"]))
+	}
 
 	if k["bfPrepull"] == 1 {
 		c.prepull = []*proto.APLPrepullAction{prepull(bladeFlurry, 1)}
