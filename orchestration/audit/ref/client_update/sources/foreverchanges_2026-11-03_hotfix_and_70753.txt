@@ -1,0 +1,86 @@
+Source: https://foreverchanges.pro/patch-notes, fetched 2026-11-03 13:20Z: the November 3 hotfix to the November 2 build (read from the launch realms' cache) and the build 1.60.1.70753 entry.
+
+November 3, 2026
+Hotfix
+Try these changes in the talent tree: 
+Hunter
+.
+A hotfix to the November 2 build, first seen on November 3 in the cache the launch realms send, which Blizzard has posted no notes for. It raises the hunter’s damage: Aspect of the Hawk gets back the ranged attack power the October 28 hotfix took away, Trueshot Aura gives up to twice as much, Barrage and Lightning Reflexes are back to Classic’s values, and Aimed Shot, Arcane Shot, Serpent Sting and Sniper Shot deal more damage.
+Hunter
+Beast Mastery
+Buffs
+Aspect of the Hawk
+: 
+Gives 20, 35, 50, 70, 90 and 110 ranged attack power by rank instead of 15, 22, 30, 38, 47 and 55, as in Classic. Rank 7 still gives 120.
+Marksmanship
+Buffs
+Trueshot Aura
+: 
+Gives party and raid members 20, 35, 50, 75 and 100 ranged attack power by rank instead of 15, 22, 30, 40 and 50.
+Buffs
+Barrage
+: 
+Increases the damage of Multi-Shot, Aimed Shot and Volley by 5, 10 and 15% by rank instead of 3, 7 and 10%, as in Classic.
+Buffs
+Sniper Shot
+: 
+Deals ranged damage plus 320, 450 and 590 by rank instead of 160, 225 and 295.
+Buffs
+Aimed Shot
+: 
+Increases ranged damage by 40, 70, 115, 185, 260 and 350 by rank instead of 20, 34, 55, 89, 125 and 166.
+Buffs
+Arcane Shot
+: 
+Deals 25, 35, 50, 85, 120, 175, 220 and 280 Arcane damage by rank instead of 20, 26, 39, 65, 94, 134, 170 and 217.
+Buffs
+Serpent Sting
+: 
+Deals 15, 35, 70, 130, 200, 290, 375, 500 and 675 Nature damage over 15 sec by rank instead of 10, 30, 60, 110, 170, 240, 320, 415 and 555.
+Survival
+Buffs
+Lightning Reflexes
+: 
+Increases your Agility by 3, 6, 9, 12 and 15% by rank instead of 2, 4, 6, 8 and 10%, as in Classic.
+November 2, 2026
+Build 1.60.1.70753
+Current build
+The November 2 build writes the October 30 hotfix into the client files: the druid and paladin trees’ rework, the racial pass and the mage, priest, warlock and hunter changes now read from the client in every language. New in it: Poised, a passive for rogues at level 18 and druids at level 32 that takes 10 Energy off your first ability when you open a fight at full Energy; the Skyborne’s Attuned and Charged last 1 hr instead of 15 min, as Blizzard announced; the last rank of Holy Shield gets its level, cost and cooldown; and the Pouch of Violet Dust, an item for the launch celebration. None of this is confirmed: the build came while the realms are closed before launch, Blizzard has posted no notes for it, and nothing can be checked in game yet.
+Paladin
+Changes
+Holy Shield
+: 
+Its rank 4, 221 damage per block, is now trained at level 60 for 240 Mana with a 10 sec cooldown. The hotfix gave it no level, cost or cooldown.
+Rogue
+Subtlety
+Buffs
+Poised
+: 
+New passive, trained at level 18: while you are at maximum Energy and out of combat, your next ability costs 10 less Energy. Not yet translated in the game.
+Druid
+Feral Combat
+Buffs
+Poised
+: 
+New passive, trained at level 32: while you are at maximum Energy and out of combat, your next ability costs 10 less Energy. Not yet translated in the game.
+Orc
+Changes
+Command
+: 
+Now a passive with its own icon in the client. The hotfix listed it as an instant cast with no icon.
+Skyborne
+Buffs
+Read Leyline
+: 
+Attuned now lasts 1 hr instead of 15 min, as announced for launch.
+Buffs
+Skysight
+: 
+Charged now lasts 1 hr instead of 15 min, as announced for launch.
+Items and Blizzard’s other words
+Items
+1 new items
+One new item: the Pouch of Violet Dust, a junk item for the WoW: Forever launch celebration that you throw into a campfire to transform its flames, with a 30 min cooldown. The other items the build adds were already on the site from the server’s hotfix cache of October 31, but the client now says which recipes their plans, patterns and formulas teach and at what skill, 5 to 20 points earlier than the leveling guides had them: the chain shirts at 80 Blacksmithing, the chain leggings at 95 and the chain helms at 125, Shining Mithril Helm at 215 and Prefect’s Waistguard at 250; the leather armor at 75 Leatherworking, the leather pants at 100 and the leather helms at 125; and the three Heart of the Mountain formulas at 265 Enchanting. Enchant Bracer - Superior Deflection gives 9 Defense instead of 6. A new enchant, Enchant Boots - Speed, gives boots 8% movement speed: its formula is learned at 280 Enchanting, and the enchant takes 2 Large Radiant Shards, 8 Dream Dust, 2 Greater Nether Essences and a Blue Sapphire.
+New items
+Pouch of Violet Dust
+Junk

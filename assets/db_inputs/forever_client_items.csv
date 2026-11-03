@@ -4823,6 +4823,7 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 7170,Twain Random Sword FOO,20,24580,0,0,0
 7171,TWAIN TEST ITEM VISUAL SWORD,1,24580,0,0,0
 7189,Goblin Rocket Boots,45,24580,0,0,0
+7190,Scorched Rocket Boots,26,24580,0,0,0
 7191,Fused Wiring,26,-2147459068,0,0,0
 7192,Schematic: Goblin Rocket Boots,26,24580,0,0,0
 7206,Mirror Lake Water Sample,1,24580,0,0,0
@@ -16639,6 +16640,9 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 249514,Formula: Enchant Bracer - Greater Agility,48,24580,0,0,0
 249515,Formula: Lesser Eternal Wand,49,24580,0,0,0
 249516,Formula: Enchant Gloves - Advanced Skinning,50,24580,0,0,0
+249519,Formula: Frozen Heart of the Mountain,53,24580,0,0,0
+249520,Formula: Molten Heart of the Mountain,53,24580,0,0,0
+249521,Formula: Dormant Heart of the Mountain,53,24580,0,0,0
 249522,Formula: Greater Eternal Wand,55,24580,0,0,0
 249523,Formula: Enchant 2H Weapon - Strength,58,24580,0,0,0
 249524,Formula: Enchant Bracer - Superior Agility,59,24580,0,0,0
@@ -16988,7 +16992,21 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 251337,Plans: Sterling Silver Gauntlet,26,24576,0,0,0
 251338,Plans: Sterling Silver Shoulders,27,24576,0,0,0
 251339,Plans: Sterling Silver Breastplate,30,24576,0,0,0
+251340,Plans: Veteran's Chain Shirt,20,24576,0,0,0
 251341,Plans: Guard's Chain Shirt,20,24576,0,0,0
+251342,Plans: Protector's Chain Shirt,20,24576,0,0,0
+251343,Plans: Acolyte's Chain Shirt,20,24576,0,0,0
+251344,Plans: Crusader's Chain Shirt,20,24576,0,0,0
+251345,Plans: Veteran's Chain Leggings,25,24576,0,0,0
+251346,Plans: Guard's Chain Leggings,25,24576,0,0,0
+251347,Plans: Protector's Chain Leggings,25,24576,0,0,0
+251348,Plans: Acolyte's Chain Leggings,25,24576,0,0,0
+251349,Plans: Crusader's Chain Leggings,25,24576,0,0,0
+251350,Plans: Veteran's Chain Helm,30,24576,0,0,0
+251351,Plans: Guard's Chain Helm,30,24576,0,0,0
+251352,Plans: Protector's Chain Helm,30,24576,0,0,0
+251353,Plans: Acolyte's Chain Helm,30,24576,0,0,0
+251354,Plans: Crusader's Chain Helm,30,24576,0,0,0
 251355,Plans: Veteran's Boots,22,24576,0,0,0
 251356,Plans: Guard's Boots,22,24576,0,0,0
 251357,Plans: Protector's Boots,22,24576,0,0,0
@@ -17029,6 +17047,7 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 251392,Plans: Shining Mithril Breastplate,45,24576,0,0,0
 251393,Plans: Shining Mithril Pauldrons,45,24576,0,0,0
 251394,Plans: Shining Mithril Boots,45,24576,0,0,0
+251395,Plans: Shining Mithril Helm,48,24576,0,0,0
 251396,Plans: Shining Mithril Pants,49,24576,0,0,0
 251397,Plans: Shining Mithril Gauntlet,49,24576,0,0,0
 251398,Plans: Officer's Boots,45,24576,0,0,0
@@ -17366,6 +17385,12 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252768,Pattern: Totemic Leather Belt,17,24576,0,0,0
 252769,Pattern: Stormrider's Leather Belt,17,24576,0,0,0
 252770,Pattern: Wisdom's Leather Belt,17,24576,0,0,0
+252771,Pattern: Brawler's Leather Armor,20,24580,0,0,0
+252772,Pattern: Trapper's Leather Armor,20,24580,0,0,0
+252773,Pattern: Defender's Leather Armor,20,24580,0,0,0
+252774,Pattern: Totemic Leather Armor,20,24580,0,0,0
+252775,Pattern: Stormrider's Leather Armor,20,24580,0,0,0
+252776,Pattern: Wisdom's Leather Armor,20,24580,0,0,0
 252777,Pattern: Brawler's Leather Gloves,20,24576,0,0,0
 252778,Pattern: Trapper's Leather Gloves,20,24576,0,0,0
 252779,Pattern: Defender's Leather Gloves,20,24576,0,0,0
@@ -17380,6 +17405,12 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252789,Pattern: Totemic Leather Boots,22,24576,0,0,0
 252790,Pattern: Stormrider's Leather Boots,22,24576,0,0,0
 252791,Pattern: Wisdom's Leather Boots,22,24576,0,0,0
+252792,Pattern: Brawler's Leather Pants,25,24580,0,0,0
+252793,Pattern: Trapper's Leather Pants,25,24580,0,0,0
+252794,Pattern: Defender's Leather Pants,25,24580,0,0,0
+252795,Pattern: Totemic Leather Pants,25,24580,0,0,0
+252796,Pattern: Stormrider's Leather Pants,25,24580,0,0,0
+252797,Pattern: Wisdom's Leather Pants,25,24580,0,0,0
 252798,Pattern: Brawler's Leather Hood,25,24576,0,0,0
 252799,Pattern: Trapper's Leather Hood,25,24576,0,0,0
 252800,Pattern: Defender's Leather Hood,25,24576,0,0,0
@@ -17395,6 +17426,12 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252810,Pattern: Wisdom's Leather Tunic,27,24576,0,0,0
 252811,Pattern: Mystic Heavy Armor Kit,30,24580,0,0,0
 252812,Pattern: Forceful Heavy Armor Kit,30,24580,0,0,0
+252814,Pattern: Brawler's Leather Helm,30,24580,0,0,0
+252815,Pattern: Trapper's Leather Helm,30,24580,0,0,0
+252816,Pattern: Defender's Leather Helm,30,24580,0,0,0
+252817,Pattern: Totemic Leather Helm,30,24580,0,0,0
+252818,Pattern: Stormrider's Leather Helm,30,24580,0,0,0
+252819,Pattern: Wisdom's Leather Helm,30,24580,0,0,0
 252820,Pattern: Brawler's Leather Legguards,30,24576,0,0,0
 252821,Pattern: Trapper's Leather Legguards,30,24576,0,0,0
 252822,Pattern: Defender's Leather Kilt,30,24576,0,0,0
@@ -20185,22 +20222,22 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 275940,Solidified Mana Shard,1,24580,0,0,0
 275957,Tuft of Fox Fur,60,24580,0,0,0
 275958,Abandoned Supplies,1,24580,0,0,0
-275968,Ferocious Watcher's Signet,63,24576,0,0,0
-275969,Brilliant Watcher's Signet,63,24576,0,0,0
-275970,Vigilant Watcher's Signet,63,24576,0,0,0
-275971,Stalwart Watcher's Signet,63,24576,0,0,0
-275972,Ferocious Watcher's Signet,68,24576,0,0,0
-275973,Brilliant Watcher's Signet,68,24576,0,0,0
-275974,Vigilant Watcher's Signet,68,24576,0,0,0
-275975,Stalwart Watcher's Signet,68,24576,0,0,0
-275976,Ferocious Watcher's Signet,60,24576,0,0,0
-275977,Brilliant Watcher's Signet,60,24576,0,0,0
-275979,Vigilant Watcher's Signet,60,24576,0,0,0
-275980,Stalwart Watcher's Signet,60,24576,0,0,0
-275981,Ferocious Watcher's Signet,65,24576,0,0,0
-275982,Brilliant Watcher's Signet,65,24576,0,0,0
-275983,Vigilant Watcher's Signet,65,24576,0,0,0
-275984,Stalwart Watcher's Signet,65,24576,0,0,0
+275968,Initiate's Signet of Ferocity,63,24576,0,0,0
+275969,Initiate's Signet of Brilliance,63,24576,0,0,0
+275970,Initiate's Signet of Resolve,63,24576,0,0,0
+275971,Initiate's Signet of Vigilance,63,24576,0,0,0
+275972,Tracker's Signet of Ferocity,68,24576,0,0,0
+275973,Tracker's Signet of Brilliance,68,24576,0,0,0
+275974,Tracker's Signet of Resolve,68,24576,0,0,0
+275975,Tracker's Signet of Vigilance,68,24576,0,0,0
+275976,Watcher's Signet of Ferocity,60,24576,0,0,0
+275977,Watcher's Signet of Brilliance,60,24576,0,0,0
+275979,Watcher's Signet of Resolve,60,24576,0,0,0
+275980,Watcher's Signet of Vigilance,60,24576,0,0,0
+275981,Warden's Signet of Ferocity,65,24576,0,0,0
+275982,Warden's Signet of Brilliance,65,24576,0,0,0
+275983,Warden's Signet of Resolve,65,24576,0,0,0
+275984,Warden's Signet of Vigilance,65,24576,0,0,0
 275985,Unsullied Owl Statuette,60,24576,0,0,0
 275989,Tome of Dalaran,1,24580,0,0,0
 275991,Galvinquam's Drinking Gourd,60,24580,0,0,0
@@ -21478,22 +21515,22 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 287648,Gilded Blademaster's Greatsword,1,8192,0,0,0
 287958,Titan Relic,1,24580,0,0,0
 287959,Titan Relic,1,24580,0,0,0
-287963,Roasted Quail,55,28672,0,0,0
-287964,Morning Glory Dew,55,28672,0,0,0
-287966,Minor Healing Potion,5,28672,0,0,0
-287967,Lesser Healing Potion,13,28672,0,0,0
-287968,Minor Mana Potion,15,28676,0,0,0
-287969,Lesser Mana Potion,24,28676,0,0,0
-287971,Woolen Bag,15,28676,0,0,0
-287972,Rumsey Rum Dark,1,28676,0,0,0
-287973,Tender Wolf Steak,45,28676,0,0,0
-287974,Grilled Squid,45,28676,0,0,0
-287975,Swiftness Potion,15,28676,0,0,0
-287976,Free Action Potion,30,28672,0,0,0
-287977,Greater Healing Potion,31,28672,0,0,0
-287978,Rough Sharpening Stone,5,28676,0,0,0
-287979,Lesser Wizard Oil,40,28676,0,0,0
-287980,Elemental Sharpening Stone,60,28676,0,0,0
+287963,Roasted Quail,55,159744,0,0,0
+287964,Morning Glory Dew,55,159744,0,0,0
+287966,Minor Healing Potion,5,159744,0,0,0
+287967,Lesser Healing Potion,13,159744,0,0,0
+287968,Minor Mana Potion,15,159748,0,0,0
+287969,Lesser Mana Potion,24,159748,0,0,0
+287971,Woolen Bag,15,159748,0,0,0
+287972,Rumsey Rum Dark,1,159748,0,0,0
+287973,Tender Wolf Steak,45,159748,0,0,0
+287974,Grilled Squid,45,159748,0,0,0
+287975,Swiftness Potion,15,159748,0,0,0
+287976,Free Action Potion,30,159744,0,0,0
+287977,Greater Healing Potion,31,159744,0,0,0
+287978,Rough Sharpening Stone,5,159748,0,0,0
+287979,Lesser Wizard Oil,40,159748,0,0,0
+287980,Elemental Sharpening Stone,60,159748,0,0,0
 287992,Old Key,1,24580,0,0,0
 288185,Adventurer's Tent,1,28676,0,0,0
 288336,Blue Firework,20,24580,0,0,0
@@ -21501,3 +21538,88 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 288338,Red Firework,20,24580,0,0,0
 288339,Red Streaks Firework,20,24580,0,0,0
 288340,Yellow Rose Firework,20,24580,0,0,0
+288823,,,,,2138,
+288824,,,,,2138,
+288825,,,,,2138,
+288826,,,,,2138,
+288827,,,,,2138,
+288828,,,,,2138,
+288829,,,,,2138,
+288830,,,,,2138,
+288831,,,,,2139,
+288832,,,,,2139,
+288833,,,,,2139,
+288834,,,,,2139,
+288835,,,,,2139,
+288836,,,,,2139,
+288837,,,,,2139,
+288838,,,,,2139,
+288839,,,,,2140,
+288840,,,,,2140,
+288841,,,,,2140,
+288842,,,,,2140,
+288843,,,,,2140,
+288844,,,,,2140,
+288845,,,,,2140,
+288846,,,,,2140,
+288847,,,,,2141,
+288848,,,,,2141,
+288849,,,,,2141,
+288850,,,,,2141,
+288851,,,,,2141,
+288852,,,,,2141,
+288853,,,,,2141,
+288854,,,,,2141,
+288855,,,,,2142,
+288856,,,,,2142,
+288857,,,,,2142,
+288858,,,,,2142,
+288859,,,,,2142,
+288860,,,,,2142,
+288861,,,,,2142,
+288862,,,,,2142,
+288863,,,,,2143,
+288864,,,,,2143,
+288865,,,,,2143,
+288866,,,,,2143,
+288867,,,,,2143,
+288868,,,,,2143,
+288869,,,,,2143,
+288870,,,,,2143,
+288871,,,,,2144,
+288872,,,,,2144,
+288873,,,,,2144,
+288874,,,,,2144,
+288875,,,,,2144,
+288876,,,,,2144,
+288877,,,,,2144,
+288878,,,,,2144,
+288879,,,,,2145,
+288880,,,,,2145,
+288881,,,,,2145,
+288882,,,,,2145,
+288883,,,,,2145,
+288884,,,,,2145,
+288885,,,,,2145,
+288886,,,,,2145,
+288887,,,,,2146,
+288888,,,,,2146,
+288889,,,,,2146,
+288890,,,,,2146,
+288891,,,,,2146,
+288892,,,,,2146,
+288893,,,,,2146,
+288894,,,,,2146,
+288896,Superior Healing Potion,10,24580,0,0,0
+288897,Superior Mana Potion,10,24580,0,0,0
+288898,Swiftness Potion,10,24580,0,0,0
+288900,Earthshaker,10,24580,0,0,0
+288926,Choker of the Fire Lord,10,24580,0,0,0
+288927,Quick Strike Ring,10,24580,0,0,0
+288928,Heavy Dark Iron Ring,10,24580,0,0,0
+288929,Band of Sulfuras,10,24580,0,0,0
+288930,Cauterizing Band,10,24580,0,0,0
+288931,Ring of Spell Power,10,24580,0,0,0
+289439,Pouch of Violet Dust,1,24580,0,0,0
+289559,Enchant Boots - Speed,1,8192,0,0,0
+289560,Formula: Enchant Boots - Speed,50,24576,0,0,0
