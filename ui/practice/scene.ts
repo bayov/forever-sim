@@ -6,7 +6,8 @@
 
 import * as THREE from 'three';
 import { newTextures } from './wow/files';
-import { particleOptions } from './wow/particles';
+import { fillBatches, particleOptions } from './wow/particles';
+import { Crowd } from './wow/crowd';
 import type { Model } from './wow/model';
 
 export type CameraState = { yaw: number; pitch: number; distance: number };
@@ -68,6 +69,8 @@ export class Room {
 	// would make the browser lay the page out again after the HUD's changes.
 	private cssSize: [number, number] = [1, 1];
 	private graphics?: Graphics;
+	// The units drawn together (the raid test's raiders).
+	readonly crowd: Crowd;
 
 	constructor(
 		readonly canvas: HTMLCanvasElement,
@@ -99,6 +102,13 @@ export class Room {
 		sun.shadow.bias = -0.0005;
 		sun.shadow.normalBias = 0.04;
 		this.scene.add(sun, sun.target);
+		this.crowd = new Crowd(this.scene, sun, () => this.renderer.shadowMap.enabled);
+		// The renderer has placed the scene's objects for the frame by now, and hasn't drawn the
+		// shadows yet.
+		this.scene.onBeforeRender = (_r, _s, camera) => {
+			this.crowd.prepare(camera);
+			fillBatches();
+		};
 
 		const ground = new THREE.Mesh(new THREE.CircleGeometry(120, 64), new THREE.MeshStandardMaterial({ color: 0x5f7d3f, roughness: 1 }));
 		ground.rotation.x = -Math.PI / 2;
@@ -253,7 +263,9 @@ export class Room {
 	// model in the scene once (with their particles), compile what they need, and send every texture
 	// we decoded. We keep the models (out of the scene), because disposing them would let the
 	// renderer throw away the shaders we just made.
-	async warmUp(models: Model[]) {
+	//
+	// With `crowd` the effects also get ready to draw in the crowd (the raid test's casters).
+	async warmUp(models: Model[], crowd = false) {
 		const group = new THREE.Group();
 		group.position.copy(this.camera.position);
 		particleOptions.drawEmpty = true;
@@ -263,11 +275,16 @@ export class Room {
 			m.update(0);
 		}
 		this.scene.add(group);
+		const unwarm = crowd ? this.crowd.warm(models) : undefined;
 		try {
+			// The emitters join their batches once their textures are in (particles.ts), a moment
+			// after they're made.
+			await new Promise(r => setTimeout(r, 0));
 			await this.renderer.compileAsync(this.scene, this.camera);
 			for (const t of newTextures.list) this.renderer.initTexture(t);
 		} finally {
 			particleOptions.drawEmpty = false;
+			unwarm?.();
 			this.scene.remove(group);
 			newTextures.keep = false;
 			newTextures.list = [];

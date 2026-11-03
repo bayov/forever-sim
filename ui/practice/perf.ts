@@ -4,7 +4,8 @@
 // animating, drawing the scene, the HUD and the combat text) and note what the renderer drew.
 // Things that often cause a hitch get noted with their time: a model or shader that loads mid
 // fight, a long task, Chrome's long animation frames with the scripts that ran in them, and drops
-// in the JS heap (a garbage collection). When the fight ends, the report goes to the practice
+// in the JS heap (a garbage collection). We also time the GPU's work on drawing the scene, when
+// the browser lets us (EXT_disjoint_timer_query_webgl2). When the fight ends, the report goes to the practice
 // server, which keeps it in ~/forever-practice/perf/.
 
 import type * as THREE from 'three';
@@ -22,6 +23,9 @@ type Frame = {
 	parts: number[];
 	calls: number;
 	tris: number;
+	// The GPU's time for drawing the scene. It comes in a few frames later, so it stays -1 when
+	// the result never came (or the browser can't time the GPU).
+	gpu: number;
 	programs: number;
 	geometries: number;
 	textures: number;
@@ -44,6 +48,11 @@ export class Perf {
 	private lastPrograms = 0;
 	private startedAt = performance.now();
 	private observers: PerformanceObserver[] = [];
+	private gl?: WebGL2RenderingContext;
+	private timer?: { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number } | null;
+	private queries: { query: WebGLQuery; frame: Frame }[] = [];
+	private freeQueries: WebGLQuery[] = [];
+	private open?: WebGLQuery;
 
 	constructor(readonly renderer: THREE.WebGLRenderer) {
 		this.observe('longtask', e =>
@@ -87,6 +96,45 @@ export class Perf {
 		}
 	}
 
+	// gpuBegin and gpuEnd go around drawing the scene, to time the GPU's work on it.
+	gpuBegin() {
+		if (this.timer === undefined) {
+			const gl = this.renderer.getContext();
+			this.gl = gl instanceof WebGL2RenderingContext ? gl : undefined;
+			this.timer = this.gl?.getExtension('EXT_disjoint_timer_query_webgl2') ?? null;
+		}
+		if (!this.timer || !this.gl || !this.current) return;
+		const query = this.freeQueries.pop() ?? this.gl.createQuery();
+		if (!query) return;
+		this.gl.beginQuery(this.timer.TIME_ELAPSED_EXT, query);
+		this.open = query;
+	}
+
+	gpuEnd() {
+		if (!this.open || !this.gl || !this.timer) return;
+		this.gl.endQuery(this.timer.TIME_ELAPSED_EXT);
+		this.pendingQuery = this.open;
+		this.open = undefined;
+	}
+
+	private pendingQuery?: WebGLQuery;
+
+	// readGpu picks up the GPU times that came in. A disjoint (the GPU did something else in
+	// between, like another tab) makes them all meaningless, so we drop them.
+	private readGpu() {
+		const gl = this.gl;
+		const timer = this.timer;
+		if (!gl || !timer || !this.queries.length) return;
+		const disjoint = gl.getParameter(timer.GPU_DISJOINT_EXT);
+		while (this.queries.length) {
+			const q = this.queries[0];
+			if (!disjoint && !gl.getQueryParameter(q.query, gl.QUERY_RESULT_AVAILABLE)) break;
+			if (!disjoint) q.frame.gpu = round(gl.getQueryParameter(q.query, gl.QUERY_RESULT) / 1e6);
+			this.queries.shift();
+			this.freeQueries.push(q.query);
+		}
+	}
+
 	// note records something that happened, at a performance.now() time.
 	note(kind: string, t = performance.now(), ms?: number, detail?: string) {
 		if (this.notes.length < 20000) this.notes.push({ t: round(t), kind, ms: ms === undefined ? undefined : round(ms), detail });
@@ -120,12 +168,18 @@ export class Perf {
 			parts: c.parts.map(round),
 			calls: info.render.calls,
 			tris: info.render.triangles,
+			gpu: -1,
 			programs: info.programs?.length ?? 0,
 			geometries: info.memory.geometries,
 			textures: info.memory.textures,
 			heapMb: heap === undefined ? undefined : round(heap / 1048576),
 		};
 		this.lastT = c.t;
+		if (this.pendingQuery) {
+			this.queries.push({ query: this.pendingQuery, frame });
+			this.pendingQuery = undefined;
+		}
+		this.readGpu();
 		// A heap that shrank by more than 2MB was a garbage collection.
 		if (heap !== undefined) {
 			if (this.lastHeap - heap > 2 * 1048576) this.note('gc', c.t, undefined, `${round((this.lastHeap - heap) / 1048576)}MB freed`);
@@ -145,6 +199,8 @@ export class Perf {
 		const pct = (q: number) => (sorted.length ? sorted[Math.min(sorted.length - 1, Math.floor(q * sorted.length))] : 0);
 		const median = pct(0.5);
 		const partSums = parts.map((_, i) => frames.reduce((a, f) => a + f.parts[i], 0) / Math.max(1, frames.length));
+		const timed = frames.filter(f => f.gpu >= 0);
+		const gpu = timed.length ? round(timed.reduce((a, f) => a + f.gpu, 0) / timed.length) : undefined;
 		// A stutter is a frame that came more than twice the usual frame time after the one before.
 		const slow = frames
 			.filter(f => f.gap > Math.max(2 * median, median + 8))
@@ -169,12 +225,12 @@ export class Perf {
 				'50ms': gaps.filter(g => g > 50).length,
 				'100ms': gaps.filter(g => g > 100).length,
 			},
-			partsAvgMs: Object.fromEntries(parts.map((p, i) => [p, round(partSums[i])])),
+			partsAvgMs: { ...Object.fromEntries(parts.map((p, i) => [p, round(partSums[i])])), gpu },
 			slowest: slow,
 			notes: this.notes,
-			// Every frame, as [time, gap, cpu, ...parts, calls, triangles, heap MB].
-			frames: frames.map(f => [f.t, f.gap, f.cpu, ...f.parts, f.calls, f.tris, f.heapMb ?? 0]),
-			frameColumns: ['t', 'gap', 'cpu', ...parts, 'calls', 'tris', 'heapMb'],
+			// Every frame, as [time, gap, cpu, ...parts, calls, triangles, heap MB, GPU ms].
+			frames: frames.map(f => [f.t, f.gap, f.cpu, ...f.parts, f.calls, f.tris, f.heapMb ?? 0, f.gpu]),
+			frameColumns: ['t', 'gap', 'cpu', ...parts, 'calls', 'tris', 'heapMb', 'gpu'],
 			...extra,
 		};
 	}
