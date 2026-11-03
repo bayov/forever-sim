@@ -110,6 +110,10 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 	// druid_predatory_discipline assumption).
 	keepsExtraEnergy := druid.Talents.PredatoryDiscipline
 
+	// The November 2 development notes raise the base points and the attack power part by about
+	// 25% (tuning_70753.go); the damage a point of extra Energy stays.
+	scale := core.TernaryFloat64(druid.Env.IsForever(), nov2BleedScale, 1)
+
 	return core.SpellConfig{
 		SpellCode:   SpellCode_DruidFerociousBite,
 		ActionID:    core.ActionID{SpellID: rank.id},
@@ -140,9 +144,9 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 			attackPower := spell.MeleeAttackPower(target)
 			excessEnergy := druid.CurrentEnergy()
 
-			baseDamage := rank.dmgBase + rank.dmgRange*sim.RandomFloat("Ferocious Bite") +
-				rank.dmgPerCombo*comboPoints +
-				attackPower*0.03*comboPoints +
+			baseDamage := scale*(rank.dmgBase+rank.dmgRange*sim.RandomFloat("Ferocious Bite")+
+				rank.dmgPerCombo*comboPoints+
+				attackPower*0.03*comboPoints) +
 				rank.dmgPerEnergy*excessEnergy
 
 			rendAndTear := druid.RendAndTearMultiplier(target)

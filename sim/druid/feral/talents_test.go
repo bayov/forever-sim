@@ -162,22 +162,23 @@ func TestCatBiteRanks(t *testing.T) {
 	}
 }
 
-// TestCatRavageDamage checks Ravage against the client's effects (9867): (weapon damage + 98) *
-// 350%, with no talents, armor or crits in the way.
+// TestCatRavageDamage checks Ravage against the client's effects (9867) at the November 2
+// development notes' 435%: (weapon damage + 98) * 435%, with no talents, armor or crits in the way.
 func TestCatRavageDamage(t *testing.T) {
 	sim, cat := newCatSim(t, "")
 	target := cat.CurrentTarget
 	target.AddStatDynamic(sim, stats.Armor, -target.GetStat(stats.Armor))
 	ap := cat.Ravage.MeleeAttackPower(target)
 	weapon := cat.AutoAttacks.MH()
-	want := (98 + (weapon.BaseDamageMin+weapon.BaseDamageMax)/2 + ap/14) * 3.5
+	want := (98 + (weapon.BaseDamageMin+weapon.BaseDamageMax)/2 + ap/14) * 4.35
 	result := cat.Ravage.CalcDamage(sim, target, 98+weapon.CalculateAverageWeaponDamage(ap), cat.Ravage.OutcomeAlwaysHit)
 	if math.Abs(result.Damage-want) > 1e-6 {
 		t.Errorf("Ravage hits for %.2f, want %.2f", result.Damage, want)
 	}
 }
 
-// TestCatShredDamage checks Shred against the client's effects: (weapon damage + 80) * 155%,
+// TestCatShredDamage checks Shred against the client's effects at the November 2 development
+// notes' 200%: (weapon damage + 80) * 200%,
 // with no talents, armor or crits in the way.
 func TestCatShredDamage(t *testing.T) {
 	sim, cat := newCatSim(t, "")
@@ -185,14 +186,14 @@ func TestCatShredDamage(t *testing.T) {
 	target.AddStatDynamic(sim, stats.Armor, -target.GetStat(stats.Armor))
 	ap := cat.Shred.MeleeAttackPower(target)
 	weapon := cat.AutoAttacks.MH()
-	want := (80 + (weapon.BaseDamageMin+weapon.BaseDamageMax)/2 + ap/14) * 1.55
+	want := (80 + (weapon.BaseDamageMin+weapon.BaseDamageMax)/2 + ap/14) * 2.0
 	result := cat.Shred.CalcDamage(sim, target, 80+weapon.CalculateAverageWeaponDamage(ap), cat.Shred.OutcomeAlwaysHit)
 	if math.Abs(result.Damage-want) > 1e-6 {
 		t.Errorf("Shred hits for %.2f, want %.2f", result.Damage, want)
 	}
 }
 
-// TestCatRendAndTear checks Rend and Tear: 2% a point more Shred damage while our Rake is on
+// TestCatRendAndTear checks Rend and Tear: 3% a point (the November 2 development notes) more Shred damage while our Rake is on
 // the target, and nothing without a bleed.
 func TestCatRendAndTear(t *testing.T) {
 	sim, cat := newCatSim(t, catTalents)
@@ -201,8 +202,8 @@ func TestCatRendAndTear(t *testing.T) {
 		t.Errorf("Rend and Tear with no bleed %.2f, want 1", got)
 	}
 	cat.Rake.Dot(target).Apply(sim)
-	if got := cat.RendAndTearMultiplier(target); math.Abs(got-1.1) > 1e-9 {
-		t.Errorf("Rend and Tear 5/5 on a bleeding target %.2f, want 1.1", got)
+	if got := cat.RendAndTearMultiplier(target); math.Abs(got-1.15) > 1e-9 {
+		t.Errorf("Rend and Tear 5/5 on a bleeding target %.2f, want 1.15", got)
 	}
 }
 
@@ -225,34 +226,35 @@ func tickDamage(sim *core.Simulation, spell *druid.DruidSpell, target *core.Unit
 }
 
 // TestCatRakeTickAttackPower checks Rake's tick under Forever: 34 + 0.055 attack power, the
-// attack power read when the tick lands (wowsims/forever's fit to PR #149's tests).
+// attack power read when the tick lands (wowsims/forever's fit to PR #149's tests), both 25% up
+// with the November 2 development notes.
 func TestCatRakeTickAttackPower(t *testing.T) {
 	sim, cat := newCatSim(t, "")
 	target := noCritsNoArmor(sim, cat)
 	dot := cat.Rake.Dot(target)
 	dot.Apply(sim)
 	ap := cat.Rake.MeleeAttackPower(target)
-	if got, want := tickDamage(sim, cat.Rake, target), (34+0.055*ap)*dot.SnapshotAttackerMultiplier; !nearDamage(got, want) {
+	if got, want := tickDamage(sim, cat.Rake, target), 1.25*(34+0.055*ap)*dot.SnapshotAttackerMultiplier; !nearDamage(got, want) {
 		t.Errorf("Rake ticks for %.3f at %.0f attack power, want %.3f", got, ap, want)
 	}
 	cat.AddStatDynamic(sim, stats.AttackPower, 1000)
-	if got, want := tickDamage(sim, cat.Rake, target), (34+0.055*(ap+1000))*dot.SnapshotAttackerMultiplier; !nearDamage(got, want) {
+	if got, want := tickDamage(sim, cat.Rake, target), 1.25*(34+0.055*(ap+1000))*dot.SnapshotAttackerMultiplier; !nearDamage(got, want) {
 		t.Errorf("Rake ticks for %.3f after 1000 attack power more, want %.3f", got, want)
 	}
 }
 
-// TestCatRendAndTearBleeds checks that Rend and Tear 5/5 raises the Rake and Rip ticks by 10%
-// (a tester's table on wowsims/forever PR #149).
+// TestCatRendAndTearBleeds checks that Rend and Tear 5/5 raises the Rake and Rip ticks by 15%
+// (a tester's table on wowsims/forever PR #149, at the November 2 development notes' 3% a point).
 func TestCatRendAndTearBleeds(t *testing.T) {
 	for _, talents := range []string{"", catTalents} {
 		sim, cat := newCatSim(t, talents)
 		target := noCritsNoArmor(sim, cat)
-		rendAndTear := core.TernaryFloat64(talents == "", 1, 1.1)
+		rendAndTear := core.TernaryFloat64(talents == "", 1, 1.15)
 
 		rake := cat.Rake.Dot(target)
 		rake.Apply(sim)
 		ap := cat.Rake.MeleeAttackPower(target)
-		want := (34 + 0.055*ap) * cat.Rake.BaseDamageMultiplierAdditive * rake.SnapshotAttackerMultiplier * rendAndTear
+		want := 1.25 * (34 + 0.055*ap) * cat.Rake.BaseDamageMultiplierAdditive * rake.SnapshotAttackerMultiplier * rendAndTear
 		if got := tickDamage(sim, cat.Rake, target); !nearDamage(got, want) {
 			t.Errorf("talents %q: Rake ticks for %.3f, want %.3f", talents, got, want)
 		}
@@ -339,7 +341,8 @@ func TestCatNaturalInstinctRip(t *testing.T) {
 
 // TestCatRipTicksLive checks that a Forever Rip tick reads attack power and the damage
 // multipliers when it lands, with the combo points kept from the cast: 15 + 25.5 a point and
-// 1% of attack power a point, the fifth counted as the fourth.
+// 1% of attack power a point, the fifth counted as the fourth, all 25% up with the November 2
+// development notes.
 func TestCatRipTicksLive(t *testing.T) {
 	sim, cat := newCatSim(t, "")
 	target := noCritsNoArmor(sim, cat)
@@ -349,12 +352,12 @@ func TestCatRipTicksLive(t *testing.T) {
 	cat.SpendComboPoints(sim, cat.Rip.Spell)
 	ap := cat.Rip.MeleeAttackPower(target)
 	multiplier := dot.SnapshotAttackerMultiplier
-	if got, want := tickDamage(sim, cat.Rip, target), (15+25.5*5+0.04*ap)*multiplier; !nearDamage(got, want) {
+	if got, want := tickDamage(sim, cat.Rip, target), 1.25*(15+25.5*5+0.04*ap)*multiplier; !nearDamage(got, want) {
 		t.Errorf("Rip ticks for %.3f at %.0f attack power, want %.3f", got, ap, want)
 	}
 	cat.AddStatDynamic(sim, stats.AttackPower, 1000)
 	cat.PseudoStats.DamageDealtMultiplier *= 1.1
-	if got, want := tickDamage(sim, cat.Rip, target), (15+25.5*5+0.04*(ap+1000))*multiplier*1.1; !nearDamage(got, want) {
+	if got, want := tickDamage(sim, cat.Rip, target), 1.25*(15+25.5*5+0.04*(ap+1000))*multiplier*1.1; !nearDamage(got, want) {
 		t.Errorf("Rip ticks for %.3f after 1000 attack power and 10%% damage more, want %.3f", got, want)
 	}
 }
@@ -409,5 +412,49 @@ func TestCatExcessEnergy(t *testing.T) {
 	cat.SpendEnergy(sim, cat.CurrentEnergy()-50, cat.Rip.EnergyMetrics())
 	if got := cat.ExcessEnergy(sim); !near(got, 40) {
 		t.Errorf("excess Energy is %.2f, want 40", got)
+	}
+}
+
+// TestCatFerociousBiteNov2 checks Ferocious Bite rank 5 (22829) with the November 2 development
+// notes' 25% more base points and attack power part: 1.25 * (45 to 95 + 128 a combo point + 3% of
+// attack power a combo point), with no extra Energy, crits or armor in the way.
+func TestCatFerociousBiteNov2(t *testing.T) {
+	for i := 0; i < 20; i++ {
+		sim, cat := newCatSim(t, "")
+		target := noCritsNoArmor(sim, cat)
+		cat.AddComboPoints(sim, 5, target, cat.FerociousBite.ComboPointMetrics())
+		cat.SpendEnergy(sim, cat.CurrentEnergy()-35, cat.FerociousBite.EnergyMetrics())
+		ap := cat.FerociousBite.MeleeAttackPower(target)
+		multiplier := cat.FerociousBite.CalcDamage(sim, target, 1000, cat.FerociousBite.OutcomeAlwaysHit).Damage / 1000
+		metrics := &cat.FerociousBite.SpellMetrics[target.UnitIndex]
+		cat.SetGCDTimer(sim, sim.CurrentTime)
+		if !cat.FerociousBite.Cast(sim, target) {
+			t.Fatal("Ferocious Bite not cast")
+		}
+		if metrics.Hits == 0 {
+			continue
+		}
+		base := metrics.TotalDamage / multiplier
+		low, high := 1.25*(45+128*5+0.15*ap), 1.25*(95+128*5+0.15*ap)
+		if base < low-1e-6 || base > high+1e-6 {
+			t.Errorf("Ferocious Bite's base damage is %.2f, want %.2f to %.2f", base, low, high)
+		}
+		return
+	}
+	t.Fatal("no Ferocious Bite landed")
+}
+
+// TestCatClawDamage checks Claw (9850) at the November 2 development notes' 140%: (weapon damage +
+// 115) * 140%, with no talents, armor or crits in the way.
+func TestCatClawDamage(t *testing.T) {
+	sim, cat := newCatSim(t, "")
+	target := cat.CurrentTarget
+	target.AddStatDynamic(sim, stats.Armor, -target.GetStat(stats.Armor))
+	ap := cat.Claw.MeleeAttackPower(target)
+	weapon := cat.AutoAttacks.MH()
+	want := (115 + (weapon.BaseDamageMin+weapon.BaseDamageMax)/2 + ap/14) * 1.4
+	result := cat.Claw.CalcDamage(sim, target, 115+weapon.CalculateAverageWeaponDamage(ap), cat.Claw.OutcomeAlwaysHit)
+	if math.Abs(result.Damage-want) > 1e-6 {
+		t.Errorf("Claw hits for %.2f, want %.2f", result.Damage, want)
 	}
 }
