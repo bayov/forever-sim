@@ -21,6 +21,7 @@ import { particleOptions } from './particles';
 const maxEdges = 256;
 
 type Edge = { top: THREE.Vector3; bottom: THREE.Vector3; fall: number; age: number; r: number; g: number; b: number; a: number };
+const freeEdges: Edge[] = [];
 
 const vertexShader = /* glsl */ `
 attribute vec4 color;
@@ -53,7 +54,7 @@ class Ribbon {
 	private readonly pos: THREE.BufferAttribute;
 	private readonly uv: THREE.BufferAttribute;
 	private readonly color: THREE.BufferAttribute;
-	private readonly v = [0, 0, 0];
+	private readonly v = new Float64Array(3);
 	private readonly tint = new THREE.Color();
 	private readonly top = new THREE.Vector3();
 	private readonly bottom = new THREE.Vector3();
@@ -158,19 +159,18 @@ class Ribbon {
 		const life = Math.max(0.01, e.edgeLifetime);
 
 		// Age the edges and let them fall.
-		for (let i = this.edges.length - 1; i >= 0; i--) {
-			const edge = this.edges[i];
+		for (const edge of this.edges) {
 			edge.age += dt;
-			if (edge.age >= life) {
-				this.edges.splice(i, 1);
-				continue;
-			}
 			if (e.gravity !== 0) {
 				edge.fall += e.gravity * dt;
 				edge.top.y -= edge.fall * dt;
 				edge.bottom.y -= edge.fall * dt;
 			}
 		}
+		// The newest edges come first, so the ones whose time is up are at the end. They wait to
+		// be used again, so a ribbon makes no garbage.
+		const edges = this.edges;
+		while (edges.length > 0 && edges[edges.length - 1].age >= life) freeEdges.push(edges.pop()!);
 
 		// Where the ribbon is now, and how it looks.
 		const shown = emitting && this.value(e.visibility, 1) !== 0;
@@ -186,16 +186,16 @@ class Ribbon {
 			this.carry += e.edgesPerSecond * dt;
 			if (this.carry >= 1) {
 				this.carry -= Math.floor(this.carry);
-				this.edges.unshift({
-					top: this.top.clone(),
-					bottom: this.bottom.clone(),
-					fall: 0,
-					age: 0,
-					r: this.tint.r,
-					g: this.tint.g,
-					b: this.tint.b,
-					a: alpha,
-				});
+				const edge = freeEdges.pop() ?? { top: new THREE.Vector3(), bottom: new THREE.Vector3(), fall: 0, age: 0, r: 1, g: 1, b: 1, a: 1 };
+				edge.top.copy(this.top);
+				edge.bottom.copy(this.bottom);
+				edge.fall = 0;
+				edge.age = 0;
+				edge.r = this.tint.r;
+				edge.g = this.tint.g;
+				edge.b = this.tint.b;
+				edge.a = alpha;
+				this.edges.unshift(edge);
 				if (this.edges.length > maxEdges) this.edges.length = maxEdges;
 			}
 		} else this.carry = 0;
