@@ -423,6 +423,12 @@ export const DefaultDebuffs = Debuffs.create({
 // Race re-pick (2026-10-27, standards 29 and 16, on the 10-26 racial pass with each race's own rotation
 // and gear): Arms, its Battle Shout duty and Arms (vs Dragonkin) are Undead, 900.9 at 180 sec against the
 // Orc's 898.7 on Arms (verify.py, 20000 iterations, seed 1); the Fury builds stay Orc.
+// Race re-pick (2026-11-03, the November 2 notes: Orc's Savage gone, Blood Fury 2 min, every race's
+// Classic base stats; on the re-searched talents and rotations, verify.py at 180 +- 20 sec, 20,000
+// iterations, seeds 1 / 1000003): Orc is the best race on every build again, Arms included (1094.0 /
+// 1094.1 against Undead's 1090.2 / 1091.0), and Night Elf the best Alliance race (Fury 1146.8 / 1146.0
+// against Orc's 1152.6 / 1151.9, two-hand Fury 1162.8 / 1162.9 against 1169.9 / 1170.8, Arms 1088.5 /
+// 1089.2). Tauren, whose Endurance lost its hit and crit damage, is last everywhere.
 export const OtherDefaults = {
 	distanceFromTarget: 5,
 	channelClipDelay: 50,
@@ -700,7 +706,7 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Arms', {
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60Arms,
 	encounter: EncounterLevel60Arms,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -713,7 +719,7 @@ export const PresetBuildLevel60ArmsShout = PresetUtils.makePresetBuild('Arms · 
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60ArmsShout,
 	encounter: EncounterLevel60ArmsBattleShoutDuty,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -726,7 +732,7 @@ export const PresetBuildLevel60ArmsSunder = PresetUtils.makePresetBuild('Arms ·
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60ArmsSunder,
 	encounter: EncounterLevel60ArmsSunderDuty,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -744,7 +750,7 @@ export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Arms
 	talents: TalentsLevel60ArmsDragonkin,
 	rotation: APLLevel60ArmsDragonkin,
 	encounter: EncounterLevel60Dragonkin,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
