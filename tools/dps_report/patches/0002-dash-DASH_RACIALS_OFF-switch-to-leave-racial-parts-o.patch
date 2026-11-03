@@ -1,4 +1,4 @@
-From 86b94d3b29ecc2a115ab60c363be564f0724c958 Mon Sep 17 00:00:00 2001
+From c5561c4b6de043eceb14dc79b58574850aa462ee Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Wed, 28 Oct 2026 17:35:41 +0000
 Subject: [PATCH] dash: DASH_RACIALS_OFF switch to leave racial parts out
@@ -17,7 +17,7 @@ included.
  5 files changed, 87 insertions(+), 32 deletions(-)
 
 diff --git a/sim/core/racials_forever.go b/sim/core/racials_forever.go
-index 6d9578d..f217d36 100644
+index 6a2112a..08118d4 100644
 --- a/sim/core/racials_forever.go
 +++ b/sim/core/racials_forever.go
 @@ -1,6 +1,8 @@
@@ -29,9 +29,9 @@ index 6d9578d..f217d36 100644
  	"time"
  
  	"github.com/wowsims/classic/sim/core/proto"
-@@ -22,8 +24,29 @@ import (
- // Elune's Light and the Human, Dwarf and Orc utilities 3 min. Blood Fury is 3 min in the client
- // since 70425, and 2 min again per the development notes of 2026-10-27 (post 8).
+@@ -25,8 +27,29 @@ import (
+ // Cooldowns per the client: Eureka!, Blood Fury and the Undead and Gnome utilities 2 min,
+ // Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
  
 +// DASH_RACIALS_OFF (dashboard builds only) lists racial parts to leave out, comma separated,
 +// or "all": spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command,
@@ -59,10 +59,10 @@ index 6d9578d..f217d36 100644
  
  	switch character.Race {
  	case proto.Race_RaceHuman:
-@@ -32,77 +55,109 @@ func applyForeverRaceEffects(agent Agent) {
+@@ -35,77 +58,109 @@ func applyForeverRaceEffects(agent Agent) {
  		// (SpellEquippedItems subclass mask 384); 70425 renamed it and dropped the weapon rule.
  		// Development notes 2026-10-26: "Ruthless now increases critical chance by 1% (was 2%)",
- 		// "Human Spirit now increases Spirit by 10% (was 5%)".
+ 		// "Human Spirit now increases Spirit by 10% (was 5%)"; client 70753 has both.
 -		character.MultiplyStat(stats.Spirit, 1.10)
 -		character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
 -		character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
