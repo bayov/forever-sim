@@ -20,7 +20,7 @@ You regenerate the DPS report from it and deploy it. Read `orchestration/round_7
      builds. Known: the user dropped the six rogue "(vs Humanoid)" builds (their requests, presets and report_hashes
      lines are gone; remove them from ui/dps_report/data, provenance.json and ui/raid_sim/data/builds.json too); rogue's
      class default is now Combat Swords and warrior's is two-hand Fury (check the report's defaults follow).
-   -  still has the old warrior strings: bring every class's rows there up to the round.
+   - `forever-wiki/sim-status.md` still has the old warrior strings: bring every class's rows there up to the round.
 2. **Full regeneration.** Race base stats (sim/core) changed, so every build is stale: `pipeline.sh run` then
    `pipeline.sh publish` with no hydrate (about 95 min on 4 cores; run it in the background and poll its log with short
    checks, not sleeps). Check each build's 180 s number against its class round file (within the sim's noise; a bigger
