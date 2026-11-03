@@ -14,13 +14,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction_wrack",
   "published": {
-    "dps": null,
-    "source": "pending: round 70753 finals after A2's racials"
+    "dps": 999.9,
+    "source": "verify.py on this request after round 70753 (the 2026-11-02 development notes: Wrack, Shadow and Flame, demon health; A2's race base stats), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": null,
-    "ok": false,
-    "note": "pending: round 70753 finals"
+    "dps": 999.9,
+    "stderr": 0.23,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, round 70753"
   },
   "summary": "Deep Affliction with Siphon Life, Soul Siphon, Shadow Mastery and Wrack, Wrack channelled as the main spell (the 2026-11-02 notes doubled it).",
   "keyTalents": [
