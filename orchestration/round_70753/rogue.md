@@ -24,6 +24,19 @@ lines, which a launch-realm hotfix confirmed on November 3). The ledger takes th
 hasn't caught up, and says so per row. Where a value is missing from the notes too, the row says what was assumed.
 When a client build or hotfix brings these spells, every "notes only" row needs checking against it.
 
+**The rogue talent tree is not reworked in 70753 either**: TraitTree 1111 still has its 53 nodes, with Murder,
+Quietus, Cutthroat, Thousand Cuts and Improved Distract and none of the new talents. So A1's client port can't give
+the rogue its new tree; it has to be built from the notes (rows and rank counts as the notes give them).
+
+## Notes-only values (standards 37)
+
+All gated under Forever, citing the notes and "client 1.60.1.70753 unchanged". Replace each when a client build or
+hotfix brings it: Shank (whole spell, ID 1399248 is the sim's), Venom as a Shank passive (30% / 20% / 6 s), Deadly
+Poison 0.009 and Instant Poison 0.01 AP, Mutilate 90%, Flawless Execution 15, Aggression 5/10/15% (no Backstab),
+Ghostly Strike's 7 s opening, Hemorrhage on Garrote. Phase B adds Lethality, Blood Splatter, Relentless Strikes, Seal
+Fate, Coup de Grace on Death Mark, Efficient Strikes, Composure, Dual Wield Specialization, Flash of Steel, Opportunity,
+Boot Knife and the removals.
+
 ## Ledger
 
 Status: landed / missing / wrong / partial / n/a. "Phase B" rows need A1's new tree (new proto fields or rank
