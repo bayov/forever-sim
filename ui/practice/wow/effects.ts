@@ -264,6 +264,33 @@ export class Effects {
 		return v;
 	}
 
+	// otherCast plays another player's cast (the raid test): the glow on their hands while they
+	// cast, then the release, the bolt and its impact. It leaves your own cast's glow alone.
+	async otherCast(spellId: number, caster: UnitView, target: UnitView | undefined, castMs: number) {
+		const v = await spellVisual(spellId);
+		if (!v) return;
+		const held: Live[] = [];
+		const loops: Promise<Playing | undefined>[] = [];
+		let done = false;
+		for (const ev of v.events.filter(e => e.event === 'precast')) {
+			this.event(ev, caster.model, true, loops).then(l => {
+				held.push(...l);
+				if (done) for (const x of l) x.stopped = true;
+			});
+		}
+		await new Promise(r => setTimeout(r, castMs));
+		done = true;
+		for (const l of held) l.stopped = true;
+		for (const p of loops) p.then(h => h?.stop());
+		for (const ev of v.events.filter(e => e.event === 'cast')) this.event(ev, caster.model, false);
+		const land = () => {
+			for (const ev of v.events.filter(e => e.event === 'impact')) this.event(ev, target?.model, false);
+		};
+		const m = v.missile;
+		if (m?.model && m.speed > 0 && caster.model && target?.model) this.launch(m, caster.model, target.model, land);
+		else land();
+	}
+
 	// totemPrecast shows a totem's glow while it casts (the Searing Totem's bolt), until its
 	// next totemCast.
 	async totemPrecast(spellId: number, totem: Model | undefined) {
