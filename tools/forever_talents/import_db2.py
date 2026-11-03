@@ -34,6 +34,11 @@ Two things the tables can't know are carried over from the current file: each tr
 `removed` list (talents that were in the tree in earlier builds), and the hand notes in
 `tooltip.notes` of talents that still exist, minus the provenance notes this replaces. The
 top-level "source" says so.
+
+Talent changes Blizzard announced that neither the client tables nor the realms' hotfix rows
+carry yet go in notes/<class>.json, and every run lays them over the generated tree, so a
+later client import doesn't wipe them (see apply_notes and notes/README.md). An entry the
+client has caught up with is reported as one that can go.
 """
 
 import collections
@@ -48,6 +53,7 @@ import spelltext  # noqa: E402
 import wago  # noqa: E402
 
 CLIENT_DIR = os.path.join(HERE, 'client')
+NOTES_DIR = os.path.join(HERE, 'notes')
 CLASSES = ['druid', 'hunter', 'mage', 'paladin', 'priest', 'rogue', 'shaman', 'warlock', 'warrior']
 
 # The notes spelltext writes itself, and the one hyjal.cc wrote for a "?". A note in the
@@ -343,6 +349,89 @@ def talent_json(t, node_id, place, names, reqs, before):
 	return talent, carried, unfilled
 
 
+# Notes-only changes, laid over the generated tree.
+
+NOTE_KEYS = {'name', 'max', 'row', 'col', 'passive', 'icon', 'desc', 'req', 'reqText', 'cost'}
+
+
+def apply_notes(tree_json, cls, build):
+	"""Lays notes/<cls>.json over a generated client tree, in place. Answers what it did.
+
+	Each entry has a "tree" (its name, like "Assassination"), an "op" and a "source" (where
+	the change was announced). The ops:
+
+	- "add": "talent" is a whole talent in this file's shape (name, max, row, col, passive,
+	  icon, desc per rank, and req, reqText or cost when it has them). It gets no node id and
+	  a tooltip with source "notes". When the client tree already has a talent of that name,
+	  the client's wins and the entry is reported as one that can go.
+	- "remove": "name" leaves the tree and joins its removed list, with "text" (one rank's
+	  tooltip) and the row it had.
+	- "set": "name" gets the fields in "fields" (any of the talent keys above). When the
+	  client already has every one of those values, the entry is reported as one that can go.
+
+	Two talents on one square is an error. The tree's talents are put back in (row, col)
+	order, which is the order the talent strings read them in.
+	"""
+	path = os.path.join(NOTES_DIR, cls + '.json')
+	if not os.path.exists(path):
+		return []
+	with open(path, encoding='utf-8') as f:
+		entries = json.load(f).get('entries', [])
+	report = []
+	applied = 0
+	for e in entries:
+		tree = next((tr for tr in tree_json['trees'] if tr['name'] == e['tree']), None)
+		if tree is None:
+			raise SystemExit('%s: notes entry for tree %r, which %s has no tree of' % (path, e['tree'], cls))
+		by_name = {x['name']: x for x in tree['talents']}
+		op = e['op']
+		if op == 'add':
+			t = dict(e['talent'])
+			unknown = set(t) - NOTE_KEYS
+			if unknown:
+				raise SystemExit('%s: %s has keys %s a talent doesn\'t take' % (path, t.get('name'), sorted(unknown)))
+			if t['name'] in by_name:
+				report.append('notes: %s: %s is in the client tree now, the "add" entry can go' % (e['tree'], t['name']))
+				continue
+			t['tooltip'] = {'source': 'notes', 'build': build, 'notes': [e['source']]}
+			tree['talents'].append(t)
+		elif op == 'remove':
+			t = by_name.get(e['name'])
+			if t is None:
+				report.append('notes: %s: %s is out of the client tree now, the "remove" entry can go' % (e['tree'], e['name']))
+				continue
+			tree['talents'].remove(t)
+			tree.setdefault('removed', []).append(
+				{'name': t['name'], 'max': t['max'], 'text': t['desc'][str(t['max'])], 'row': t['row'], 'build': 'notes: ' + e['source']})
+		elif op == 'set':
+			t = by_name.get(e['name'])
+			if t is None:
+				raise SystemExit('%s: "set" entry for %s, which the %s tree doesn\'t have' % (path, e['name'], e['tree']))
+			fields = e['fields']
+			unknown = set(fields) - NOTE_KEYS
+			if unknown:
+				raise SystemExit('%s: "set" for %s has keys %s a talent doesn\'t take' % (path, e['name'], sorted(unknown)))
+			if all(t.get(k) == v for k, v in fields.items()):
+				report.append('notes: %s: %s already reads so in the client, the "set" entry can go' % (e['tree'], e['name']))
+				continue
+			t.update(fields)
+			t.setdefault('tooltip', {}).setdefault('notes', []).append(e['source'])
+			t['tooltip']['source'] = 'notes'
+		else:
+			raise SystemExit('%s: unknown op %r' % (path, op))
+		applied += 1
+	for tree in tree_json['trees']:
+		squares = collections.Counter((x['row'], x['col']) for x in tree['talents'])
+		taken = [sq for sq, n in squares.items() if n > 1]
+		if taken:
+			raise SystemExit('%s: two talents on row/col %s of %s' % (path, taken, tree['name']))
+		tree['talents'].sort(key=lambda x: (x['row'], x['col']))
+	if applied:
+		tree_json['source'] += (' %d notes-only change%s from tools/forever_talents/notes/%s.json laid over it.'
+		                        % (applied, '' if applied == 1 else 's', cls))
+	return report
+
+
 # Comparing a generated class with the current file.
 
 def numbers(text):
@@ -436,6 +525,8 @@ def main():
 			with open(path, encoding='utf-8') as f:
 				old = json.load(f)
 		new, left = generate(t, cls, trees[cls], old)
+		for line in apply_notes(new, cls, t.build):
+			print('  ' + line)
 		if old:
 			structure, nums, wording = compare(old, new)
 			print('== %s: %d structure, %d numbers, %d wording' % (cls, len(structure), len(nums), len(wording)))
