@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 98,
   "race": "Gnome",
-  "talents": "050205203100211531-25-0535",
+  "talents": "050205203100311531-55-0531",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_arcane",
   "apl": "level60_arcane",
   "published": {
-    "dps": 937.5,
-    "source": "verify.py on this request after the standards 33 distances (2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 953.9,
+    "source": "verify on this request in round 70753 (2026-11-03, after A2), 20,000 iterations, seed 1, 180 \u00b1 20 s"
   },
   "verify": {
-    "dps": 937.5,
-    "stderr": 0.28,
+    "dps": 953.9,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 \u00b1 20 s, 20,000 iterations, seed 1, 2026-11-03 (round 70753); not yet the DPS report's main run"
   },
-  "summary": "Arcane Power build that keeps 4 Arcane Blast stacks up, for 48% of Intellect as spell damage, and casts Arcane Wrath on cooldown with Accelerant. Frostbolt is the filler. It wears the Arcane gear with Gloves - Arcane Power.",
+  "summary": "Arcane Power build that keeps 4 Arcane Blast stacks up, for 48% of Intellect as spell damage, and casts Arcane Wrath on cooldown with Accelerant. Frostbolt is the filler, with extra Arcane Blasts while there is mana to spare. It wears the Arcane gear with Gloves - Arcane Power.",
   "keyTalents": [
     "Arcane Blast",
     "Arcane Wrath",
@@ -35,7 +35,8 @@
     "Arcane Power",
     "Presence of Mind",
     "Accelerant",
-    "Incineration"
+    "Incineration",
+    "Arcane Meditation"
   ],
   "rotation": [
     "Pre-pull: Arcane Blast at -1.5s so it lands at the pull",
@@ -45,6 +46,7 @@
     "Arcane Missiles on a Missile Barrage proc, ahead of the Arcane Blasts",
     "Arcane Blast to 4 stacks. Each stack gives 12% of Intellect as spell damage, for 18s from the first.",
     "Arcane Wrath on cooldown (3s cast with Accelerant)",
+    "Arcane Blast ahead of the filler while the mana is more than 75 a second of the fight left: mana the fight couldn't otherwise spend",
     "Frostbolt as filler",
     "No Evocation",
     "Wand when nothing else can be cast (out of mana)"
