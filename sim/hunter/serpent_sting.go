@@ -8,19 +8,25 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
-// Forever's Serpent Sting (beta client, build 1.60.1.70338) keeps rank 9's 555 over 15 sec and
-// lowers the ranks below it (rank 8: 415, Classic 490). It has no spell power coefficient (Classic
-// 100% over the duration). The client gives it no attack power share either, but the beta's combat
-// logs put each tick at the base plus a share of ranged attack power, read live on every tick:
-// about 0.035 in ElliotWood/Forever's fit (sim/hunter/serpent_sting.go), 3% a tick on the
-// forever-hunter wiki. Report assumption hunter_shot_ap_shares, user ruling 2026-10-15: the wiki's
-// 3%, as for Arcane Shot. The ticks crit with the hunter's ranged crit under Forever, and Mortal
-// Shots is in its class mask.
-const serpentStingRAPPerTick = 0.03
+// Forever's Serpent Sting (beta client, build 1.60.1.70338) kept rank 9's 555 over 15 sec and
+// lowered the ranks below it (rank 8: 415, Classic 490). The launch realms' server hotfix of
+// 2026-11-03 (foreverchanges.pro, read from the realms' hotfix cache) raises every rank, to
+// 15 / 35 / 70 / 130 / 200 / 290 / 375 / 500 / 675 over 15 sec (Blizzard's 11-02 notes: "~20%");
+// client 1.60.1.70753 still has the old ones. It has no spell power coefficient (Classic 100% over
+// the duration). The client gives it no attack power share either, but the beta's combat logs put
+// each tick at the base plus a share of ranged attack power, read live on every tick (about 0.035
+// in ElliotWood/Forever's fit, the forever-hunter wiki's 3% by report assumption
+// hunter_shot_ap_shares, user ruling 2026-10-15). Blizzard's 11-02 notes raise it to 5% a tick
+// "from 3%". The ticks crit with the hunter's ranged crit under Forever, and Mortal Shots is in its
+// class mask.
+const serpentStingRAPPerTick = 0.05
+
+// SerpentStingDamage is each rank's damage over the 15 sec, before attack power.
+var SerpentStingDamage = [10]float64{0, 15, 35, 70, 130, 200, 290, 375, 500, 675}
 
 func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 	spellId := [10]int32{0, 1978, 13549, 13550, 13551, 13552, 13553, 13554, 13555, 25295}[rank]
-	baseDamage := [10]float64{0, 10, 30, 60, 110, 170, 240, 320, 415, 555}[rank] / 5
+	baseDamage := SerpentStingDamage[rank] / 5
 	manaCost := [10]float64{0, 15, 30, 50, 80, 115, 150, 190, 230, 250}[rank]
 	level := [10]int{0, 4, 10, 18, 26, 34, 42, 50, 58, 60}[rank]
 
@@ -95,7 +101,7 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 	}
 }
 
-// Rank 9 comes from an Ahn'Qiraj book, out under Forever (rank 8's 415 instead of 555).
+// Rank 9 comes from an Ahn'Qiraj book, out under Forever (rank 8's 500 instead of 675).
 func (hunter *Hunter) registerSerpentStingSpell() {
 	maxRank := 9
 	if !hunter.Env.IncludeAQRanks() {

@@ -212,9 +212,10 @@ func TestWarlockDemonCrit(t *testing.T) {
 
 // TestWarlockDemonStatInheritance checks Warlock Pet Scaling's shares (wowsims/forever's): 0.17
 // attack power and 0.10 spell damage a point of the warlock's spell damage, its spell hit whole and
-// 8/17 of it as melee hit, 7.5 health a point of its Stamina, 35% of its armor and MP5 from its
-// Intellect (0.30 for the Imp, 0.10 for the others), also after the warlock gains stats. The Imp's
-// mana is 576 + 5 a point of its Intellect, and no demon gets regen from its Spirit.
+// 8/17 of it as melee hit, 2 health a point of its Stamina (the 2026-11-02 notes, was 7.5), 35% of
+// its armor and MP5 from its Intellect (0.30 for the Imp, 0.10 for the others), also after the
+// warlock gains stats. The Imp's mana is 576 + 5 a point of its Intellect, and no demon gets regen
+// from its Spirit.
 func TestWarlockDemonStatInheritance(t *testing.T) {
 	near := func(a, b float64) bool { return a-b < 1e-6 && b-a < 1e-6 }
 	for _, c := range []struct {
@@ -267,7 +268,7 @@ func TestWarlockDemonStatInheritance(t *testing.T) {
 				}
 			}
 			// The warlock's Stamina is worth 10 health to it, the demon's share 7.5 a point.
-			if got, want := after[stats.Health]-before[stats.Health], 7.5*(lock.GetStat(stats.Stamina)-owner[stats.Stamina]); !near(got, want) {
+			if got, want := after[stats.Health]-before[stats.Health], 2*(lock.GetStat(stats.Stamina)-owner[stats.Stamina]); !near(got, want) {
 				t.Errorf("%s: +10 Stamina: health +%.2f, want +%.2f", c.summon, got, want)
 			}
 		})

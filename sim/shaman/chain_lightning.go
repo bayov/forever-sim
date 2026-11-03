@@ -16,13 +16,21 @@ var ChainLightningSpellId = [ChainLightningRanks + 1]int32{0, 421, 930, 2860, 10
 // (downrank calculator). Forever cut most rank damage well below 1.12, and it gave the
 // low ranks close to full coefficients instead of the 1.12 penalty for spells learned
 // below level 20.
-var ChainLightningBaseDamage = [ChainLightningRanks + 1][]float64{{0}, {85.2, 96.8}, {97.05, 108.95}, {108.88, 122.12}, {119.19, 133.21}}
-var ChainLightningScaling = [ChainLightningRanks + 1]core.RankScaling{{}, {37, 0.6}, {45, 0.6}, {53, 0.7}, {60, 0.8}}
+//
+// The November 2 development notes (post 9, for launch; not in client 1.60.1.70753) set the
+// first target's damage to "approximately 145% of comparable rank Lightning Bolt base damage",
+// the mana cost to about 225% of its mana and the cast to 2.5 sec. We take the comparable rank
+// to be the newest Lightning Bolt at Chain Lightning's learn level (ranks 6, 7, 8 and 10 at 32,
+// 40, 48 and 56), at the new Lightning Bolt damage: 1.45 times its range at that level and
+// 1.45 times its growth per level. Rank 4 hits for 485 to 539 at 60 (was 119 to 133).
+var ChainLightningBaseDamage = [ChainLightningRanks + 1][]float64{{0}, {203.01, 227.90}, {270.21, 301.88}, {338.27, 376.72}, {484.75, 539.04}}
+var ChainLightningScaling = [ChainLightningRanks + 1]core.RankScaling{{}, {37, 1.70}, {45, 1.93}, {53, 2.15}, {60, 2.71}}
 var ChainLightningSpellCoef = [ChainLightningRanks + 1]float64{0, 0.571, 0.571, 0.517, 0.571}
 
-// Forever's costs, about 20% under Classic. The cast is 2 sec, down from 2.5.
-// Client 1.60.1.70425 cut every rank by about 35% (225 / 305 / 390 / 485 before).
-var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 145, 200, 250, 315}
+// Client 1.60.1.70425 cut every rank by about 35% (225 / 305 / 390 / 485 before, 145 / 200 / 250 /
+// 315 after). The November 2 notes make it about 225% of the comparable Lightning Bolt's mana
+// (110, 135, 160 and 220).
+var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 248, 304, 360, 495}
 var ChainLightningLevel = [ChainLightningRanks + 1]int{0, 32, 40, 48, 56}
 
 func (shaman *Shaman) registerChainLightningSpell() {
@@ -52,7 +60,8 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	level := ChainLightningLevel[rank]
 
 	cooldown := time.Second * 6
-	castTime := time.Millisecond * 2000
+	// 2.5 sec since the November 2 notes (2 sec before, Classic's 2.5).
+	castTime := time.Millisecond * 2500
 
 	shaman.ChainLightningBounceCoefficient = .70 // 30% reduction per bounce
 	targetCount := ChainLightningTargetCount

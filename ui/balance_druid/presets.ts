@@ -361,7 +361,20 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('F
 // 180 / 300 sec over Windshaper, the same on seed 1000003), so the Wrath builds are Night Elf, with
 // Elune's Light held for the trinket: 853.0. Knob searches at Night Elf and Windshaper (Wrath kept as
 // the filler) found nothing more.
-export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Balance', {
+// Round 70753 (2026-11-03, the November 2 development notes on client 1.60.1.70753: Starfire base
+// damage x1.40, with the round's race base stats): 954.1 / 951.5 / 942.1 at 120 / 180 / 300 sec
+// (seed 1, 20,000 iterations; 954.1 / 951.5 / 941.9 on seed 1000003), the duty build 914.8 / 914.8 /
+// 908.2; the Wrath build 858.3 / 861.5 / 859.3 (858.4 / 861.7 / 859.7), its duty build 823.9 /
+// 829.0 / 829.4. The talent search moved two Moonglow points into Genesis (5412220115501351--505003,
+// +4.0 at 180 sec) but runs out of mana at 300 sec (844.0 against 941.9), and its best rotation
+// (filler 2, eclipseStacks 1) scores 936.0 over 120, 180 and 300 sec against the current 948.9, so
+// the talents stay. Starfire on Clearcasting off (clearcastStarfire 0) is +1.0 / +0.9 / +0.5 on seed
+// 1 but -0.1 at 300 sec on seed 1000003, so it stays on. The Wrath build's searches kept everything.
+// Races at 180 sec, 10,000 iterations, seeds 1 / 1000003: Night Elf 951.0 / 951.5 (best overall and
+// Alliance), Windshaper Skyborne 949.3 / 950.3 (best Horde), High Order Skyborne the same, Tauren
+// 940.1 / 941.0; the Wrath build Night Elf 861.6 / 861.7, the Skyborne 857.1 / 856.8, Tauren 852.0 /
+// 852.5.
+export const PresetBuildLevel60 =PresetUtils.makePresetBuild('Balance', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Balance rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,

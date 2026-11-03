@@ -27,7 +27,7 @@ func TestOrcShamanStatMultipliers(t *testing.T) {
 		stats.Stamina:   55,
 		stats.Intellect: 91,
 		stats.Spirit:    30,
-	}
+	}.Add(betaOrcShift) // the beta's Orc of 2026-10-08 (base_stats_test.go)
 	newPlayer := func(kings bool) *proto.Player {
 		return &proto.Player{
 			Race:          proto.Race_RaceOrc,

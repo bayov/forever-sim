@@ -290,3 +290,37 @@ func TestHolyShieldAndShieldsworn(t *testing.T) {
 		t.Errorf("Holy Shield charges after the Holy Strike = %d, want 4", got)
 	}
 }
+
+// TestNotesOnlyValues70753 checks the November 2 development notes' values the client 1.60.1.70753
+// doesn't carry yet (orchestration/round_70753/paladin.md, "Notes-only values"): Vengeance stacks
+// up to 5 times, and Two-Handed Weapon Specialization raises all Holy damage by 2% a rank with a
+// two-hander, counted once on the seals and Holy Strike (the Holy school carries it, not their
+// own multipliers).
+func TestNotesOnlyValues70753(t *testing.T) {
+	_, veng := retSim(t, "--000000000000003", arcaniteReaper)
+	if got := veng.GetAura("Vengeance Proc").MaxStacks; got != 5 {
+		t.Errorf("Vengeance max stacks = %d, want 5", got)
+	}
+
+	_, base := retSim(t, "--00000001", arcaniteReaper)
+	_, twoHand := retSim(t, "--000000010003", arcaniteReaper)
+	_, oneHand := retSim(t, "--000000010003", thunderfury)
+	holy := func(ret *RetributionPaladin) float64 {
+		return ret.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly]
+	}
+	if got := holy(twoHand) / holy(base); got < 1.0599 || got > 1.0601 {
+		t.Errorf("Holy damage with 3/3 and a two-hander = %.4f, want 1.06", got)
+	}
+	if got := holy(oneHand) / holy(base); got != 1 {
+		t.Errorf("Holy damage with 3/3 and a one-hander = %.4f, want 1", got)
+	}
+	for _, id := range []int32{20424, 25742} { // Seal of Command's proc, Seal of Righteousness rank 9's
+		b, s := base.GetSpell(core.ActionID{SpellID: id}), twoHand.GetSpell(core.ActionID{SpellID: id})
+		if b == nil || s == nil {
+			continue
+		}
+		if s.DamageMultiplier != b.DamageMultiplier {
+			t.Errorf("spell %d's own multiplier %.4f with 3/3, want %.4f (the school carries it)", id, s.DamageMultiplier, b.DamageMultiplier)
+		}
+	}
+}

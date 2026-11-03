@@ -45,8 +45,8 @@ func costMultiplier(t *testing.T, hunter *Hunter, code int32) int32 {
 }
 
 // TestEfficiencyClassMask checks that Efficiency (19416) cuts the costs its class mask names
-// (Raptor Strike and Mongoose Bite share bit 2, Wing Clip 64) and not Lacerate's (mask word 1
-// bit 4096, outside Efficiency's 0x80080000).
+// (Raptor Strike and Mongoose Bite share bit 2, Wing Clip 64, Lacerate word 1 bit 4096, inside
+// Efficiency's 0x80081000; finding mechanics-20261031-1).
 func TestEfficiencyClassMask(t *testing.T) {
 	// Lethal Attacks 5 and Efficiency 5.
 	_, hunter := newHunterSim(t, "-00505", &proto.Debuffs{})
@@ -61,7 +61,7 @@ func TestEfficiencyClassMask(t *testing.T) {
 		{"Raptor Strike", SpellCode_HunterRaptorStrike, 85},
 		{"Mongoose Bite", SpellCode_HunterMongooseBite, 85},
 		{"Wing Clip", SpellCode_HunterWingClip, 85},
-		{"Lacerate", SpellCode_HunterLacerate, 100},
+		{"Lacerate", SpellCode_HunterLacerate, 85},
 	} {
 		if got := costMultiplier(t, hunter, c.code); got != c.want {
 			t.Errorf("%s cost multiplier %d, want %d", c.name, got, c.want)

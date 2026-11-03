@@ -100,6 +100,7 @@ type Druid struct {
 	FaerieFireAuras          core.AuraArray
 	FrenziedRegenerationAura *core.Aura
 	FurorAura                *core.Aura
+	PoisedAura               *core.Aura
 	InsectSwarmAuras         core.AuraArray
 	MaulQueueAura            *core.Aura
 	MoonkinFormAura          *core.Aura
@@ -210,6 +211,7 @@ func (druid *Druid) RegisterFeralCatSpells() {
 		druid.registerRavageSpell()
 		druid.registerProwlSpell()
 	}
+	druid.registerPoised()
 }
 
 // RegisterFeralTankSpells is the Forever bear's (bear.go, bear_attacks.go).

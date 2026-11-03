@@ -92,7 +92,7 @@ export const DefaultAPL = APLTankHealer;
 // 31 Restoration points to Riptide, with Water Shield, Mana Tide Totem, Healing Way and Nature's
 // Swiftness, and Ancestral Knowledge, Mental Dexterity and Shamanistic Focus in Enhancement. Not
 // searched yet: tools/rotopt's talent search scores DPS.
-export const TalentsRestoration = PresetUtils.makePresetTalents('Restoration', SavedTalents.create({ talentsString: '-005102-5530500315513151' }), {
+export const TalentsRestoration = PresetUtils.makePresetTalents('Restoration', SavedTalents.create({ talentsString: '-0051000000002-5530500315513151' }), {
 	tooltip: 'Riptide, Water Shield, Mana Tide Totem, Healing Way and Nature\'s Swiftness.',
 	group: 'Healing sim',
 });

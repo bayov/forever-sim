@@ -18,7 +18,8 @@ import (
 //
 // It ticks every 3 sec from when it goes up, 4 times. A recast drops the old DoT, so the time
 // since the last tick is lost and the next tick comes 3 sec after the recast. The beta log
-// showed both (shaman_audit.md 5.7). Rank 3 ticks for 14 with no spell power, and a crit tick
+// showed both (shaman_audit.md 5.7). Rank 3 ticks for 24 with no spell power (Era's, since the
+// November 2 notes; 14 on the beta), and a crit tick
 // deals 1.5 times that. The roll uses our spell crit at the time of the tick, so we give 100%
 // crit for the first DoT and take it all away before the recast.
 func TestOrcShamanFlameShockTicks(t *testing.T) {
@@ -59,12 +60,12 @@ func TestOrcShamanFlameShockTicks(t *testing.T) {
 
 	// The first DoT's ticks at 10 and 13 sec never come.
 	want := []tick{
-		{4 * time.Second, 21, true},
-		{7 * time.Second, 21, true},
-		{11500 * time.Millisecond, 14, false},
-		{14500 * time.Millisecond, 14, false},
-		{17500 * time.Millisecond, 14, false},
-		{20500 * time.Millisecond, 14, false},
+		{4 * time.Second, 36, true},
+		{7 * time.Second, 36, true},
+		{11500 * time.Millisecond, 24, false},
+		{14500 * time.Millisecond, 24, false},
+		{17500 * time.Millisecond, 24, false},
+		{20500 * time.Millisecond, 24, false},
 	}
 	if len(ticks) != len(want) {
 		t.Fatalf("got %d ticks %v, want %d", len(ticks), ticks, len(want))
