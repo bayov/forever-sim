@@ -45,6 +45,8 @@ export class Mover {
 	rightDown = false;
 	readonly move: MoveState;
 	readonly cam: CameraState;
+	// Where the wheel is taking the camera, while it glides there.
+	private zoomTarget?: number;
 	// The last movement the session heard about, to send only changes.
 	private sent = { vx: 0, vy: 0, turn: 0, facing: 0 };
 	private lastFacingSent = 0;
@@ -165,8 +167,24 @@ export class Mover {
 		if (this.rightDown) this.move.facing = this.cam.yaw;
 	}
 
+	// zoom moves the camera in or out by wheel steps. The camera glides there (updateZoom), like
+	// the game's.
 	zoom(steps: number) {
-		this.cam.distance = Math.max(0.5, Math.min(this.options.maxDistance, this.cam.distance + steps * this.options.zoomStep));
+		const from = this.zoomTarget ?? this.cam.distance;
+		this.zoomTarget = Math.max(0.5, Math.min(this.options.maxDistance, from + steps * this.options.zoomStep));
+	}
+
+	// updateZoom moves the camera a frame's share of the way to where the wheel sent it. It covers
+	// most of the way in about a tenth of a second.
+	updateZoom(dt: number) {
+		const target = this.zoomTarget;
+		if (target === undefined) return;
+		const d = this.cam.distance;
+		const next = d + (target - d) * Math.min(1, dt * 15);
+		if (Math.abs(target - next) < 0.005) {
+			this.cam.distance = target;
+			this.zoomTarget = undefined;
+		} else this.cam.distance = next;
 	}
 }
 

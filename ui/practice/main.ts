@@ -29,6 +29,7 @@ import { AuraState, Batch, ClockState, FromWorker, HitEvent, Input, PlayerState,
 import { Perf } from './perf';
 import { Graphics, graphicsPresets, Room } from './scene';
 import { loadCursors } from './cursors';
+import { Pointer } from './pointer';
 import { auraColor, avoidColor, CombatText, schoolColor } from './sct';
 import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
@@ -249,6 +250,10 @@ class PracticeRoom {
 	private settingAuras = new Set<string>();
 	private statsShownAt = 0;
 	private historyWidth = 0;
+	private pointer?: Pointer;
+	private drainTimer?: ReturnType<typeof setInterval>;
+	// Set when you leave the room, so nothing of it keeps running.
+	private left = false;
 	private dragging: { button: number; buttons: Set<number>; both?: boolean; x: number; y: number; moved: boolean; picked: 'enemy' | 'ground' | undefined } | undefined;
 
 	constructor(
@@ -286,6 +291,7 @@ class PracticeRoom {
 		this.room = new Room(this.canvas, 1.5, 2.0, 1.5, 2.3);
 		this.room.setGraphics(this.graphics);
 		this.perf = new Perf(this.room.renderer);
+		this.pointer = new Pointer(this.root);
 		// A model built mid fight (a spell's effect) can cost a frame.
 		Model.onLoad = (fdid, ms) => !this.loadingModels && this.perf?.note('model', performance.now(), ms, String(fdid));
 		decodeHooks.onDecode = (fdid, ms) => !this.loadingModels && this.perf?.note('texture', performance.now(), ms, String(fdid));
@@ -779,7 +785,7 @@ class PracticeRoom {
 		document.addEventListener('visibilitychange', () => document.hidden && letGo());
 		// A hidden tab gets no frames, and its timers run at most once a second, so the session's
 		// updates still get shown (Searing Totem's bolts, the fight's end).
-		setInterval(() => this.drainInbox(), 100);
+		this.drainTimer = setInterval(() => this.drainInbox(), 100);
 
 		this.canvas.addEventListener('contextmenu', e => e.preventDefault());
 		this.canvas.addEventListener('mousedown', e => {
@@ -808,7 +814,8 @@ class PracticeRoom {
 			if (d) {
 				if (!d.moved && Math.hypot(e.clientX - d.x, e.clientY - d.y) > 3) {
 					d.moved = true;
-					this.canvas.requestPointerLock?.();
+					if (this.pointer?.active) this.pointer.freeze();
+					else this.canvas.requestPointerLock?.();
 				}
 				if (d.moved) this.mover.look(e.movementX, e.movementY);
 			} else if (e.target === this.canvas) {
@@ -829,14 +836,18 @@ class PracticeRoom {
 			const d = this.dragging;
 			if (d && d.buttons.delete(e.button) && d.buttons.size === 0) {
 				this.dragging = undefined;
-				if (document.pointerLockElement) document.exitPointerLock();
+				if (this.pointer?.active) {
+					if (d.moved) this.pointer.thaw(d.x, d.y);
+				} else if (document.pointerLockElement) document.exitPointerLock();
 				// A click is a press and release of one button that didn't move.
 				if (!d.moved && e.button === d.button && !d.both) this.click(d.button, d.picked, wallOf(e));
 			}
 		});
-		this.canvas.addEventListener(
+		// The wheel zooms over the HUD too, like the game's, but not over a panel you read or scroll.
+		this.root.addEventListener(
 			'wheel',
 			e => {
+				if ((e.target as Element).closest?.('.spellbook, .fight-settings, .summary, .v-select')) return;
 				e.preventDefault();
 				const base = e.deltaY < 0 ? 'MOUSEWHEELUP' : 'MOUSEWHEELDOWN';
 				const command = commandFor(this.bindings, base, this.mods(e));
@@ -1086,7 +1097,7 @@ class PracticeRoom {
 			setTimeout(() => this.start(), 50);
 		};
 		q('.leave').onclick = () => {
-			this.worker.terminate();
+			this.leave();
 			showSetup();
 		};
 		q('.settings-toggle').onclick = () => q('.fight-settings').classList.toggle('hidden');
@@ -1133,6 +1144,18 @@ class PracticeRoom {
 		const bound = new Set(Object.keys(this.bindings).map(k => k.replace(/^(ALT-|CTRL-|SHIFT-)+/, '')));
 		const codes = lockableCodes().filter(code => code === 'Escape' || bound.has(baseKeyName(code) ?? ''));
 		await kb?.lock(codes).catch(e => console.warn('keyboard lock', e));
+	}
+
+	// leave closes the room. Its frames, timers, sounds, session and GPU memory all stop with it.
+	leave() {
+		this.left = true;
+		this.running = false;
+		clearInterval(this.drainTimer);
+		this.worker.terminate();
+		this.pointer?.dispose();
+		if (document.pointerLockElement) document.exitPointerLock();
+		void this.sounds?.listener.context.close().catch(() => {});
+		this.room.renderer.dispose();
 	}
 
 	// savePerf sends the fight's performance report to the practice server
@@ -1567,6 +1590,7 @@ class PracticeRoom {
 	// ---- per frame ----
 
 	frame(t: number) {
+		if (this.left) return;
 		requestAnimationFrame(tt => this.frame(tt));
 		const perf = this.loadingModels ? undefined : this.perf;
 		perf?.begin(t);
@@ -1591,6 +1615,7 @@ class PracticeRoom {
 		this.room.setUnit(this.room.player, m.pos, m.facing, h);
 		this.room.setUnit(this.room.dummy, this.dummyPos, (3 * Math.PI) / 2);
 		this.room.setTargeted(this.hasTarget);
+		this.mover.updateZoom(dt);
 		this.room.placeCamera(m.pos, h, this.mover.cam);
 		if (this.sounds) {
 			this.room.player.getWorldPosition(this.listenerPos);
