@@ -950,19 +950,19 @@
         "description": "Increases damage done by your melee abilities on Bleeding targets by {0}%.",
         "ranks": [
           [
-            2
-          ],
-          [
-            4
+            3
           ],
           [
             6
           ],
           [
-            8
+            9
           ],
           [
-            10
+            12
+          ],
+          [
+            15
           ]
         ],
         "icon": "ability_druid_primalagression"

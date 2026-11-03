@@ -113,8 +113,7 @@
             6
           ]
         ],
-        "icon": "ability_warrior_charge",
-        "notSimulated": true
+        "icon": "ability_warrior_charge"
       },
       {
         "fieldName": "improvedTacticalMastery",
@@ -123,27 +122,19 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          12295,
+          12295,
+          12295
         ],
-        "maxPoints": 5,
+        "maxPoints": 3,
         "name": "Improved Tactical Mastery",
         "description": "Tactical Mastery lets you retain up to an additional {0} Rage when you change stances.",
         "ranks": [
           [
-            3
+            5
           ],
           [
-            6
-          ],
-          [
-            9
-          ],
-          [
-            12
+            10
           ],
           [
             15
@@ -240,7 +231,7 @@
           "colIdx": 0
         },
         "spellIds": [
-          0
+          1310222
         ],
         "maxPoints": 1,
         "name": "Spearing Strike",
@@ -271,13 +262,13 @@
         "description": "Increases the damage you deal with two-handed melee weapons by {0}%.",
         "ranks": [
           [
-            1
-          ],
-          [
             2
           ],
           [
-            3
+            4
+          ],
+          [
+            6
           ]
         ],
         "icon": "inv_axe_09"
@@ -316,35 +307,18 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1289682,
+          1289682
         ],
-        "maxPoints": 5,
+        "maxPoints": 2,
         "name": "Bloodthrill",
-        "description": "Your Main Hand melee attacks against enemies afflicted by your Rend have a {0}% chance to allow the use of your Overpower ability on the target. Lasts {1} sec.",
+        "description": "Grants your Main Hand melee attacks against enemies afflicted by your Rend a {0}% chance to allow an activation of Overpower.",
         "ranks": [
           [
-            4,
-            6
+            10
           ],
           [
-            8,
-            6
-          ],
-          [
-            12,
-            6
-          ],
-          [
-            16,
-            6
-          ],
-          [
-            20,
-            6
+            20
           ]
         ],
         "icon": "inv_sword_01"
@@ -375,11 +349,11 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1290261,
+          1290261,
+          1290261,
+          1290261,
+          1290261
         ],
         "maxPoints": 5,
         "name": "Weaponmaster",
@@ -432,11 +406,11 @@
         "ranks": [
           [
             0.25,
-            3
+            2.5
           ],
           [
             0.5,
-            3
+            5
           ]
         ],
         "icon": "ability_warrior_decisivestrike"
@@ -585,11 +559,11 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1323964,
+          1323964,
+          1323964,
+          1323964,
+          1323964
         ],
         "maxPoints": 5,
         "name": "Lingering Rage",
@@ -661,9 +635,9 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0,
-          0
+          1323963,
+          1323963,
+          1323963
         ],
         "maxPoints": 3,
         "name": "Furious Precision",
@@ -692,10 +666,9 @@
         ],
         "maxPoints": 1,
         "name": "Piercing Howl",
-        "description": "Causes all enemies within {0} yds to be Dazed, reducing movement speed by {1}% for {2} sec.",
+        "description": "Causes all enemies within ? yds to be Dazed, reducing movement speed by {0}% for {1} sec.",
         "ranks": [
           [
-            10,
             50,
             6
           ]
@@ -710,9 +683,9 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0
+          16487,
+          16487,
+          16487
         ],
         "maxPoints": 3,
         "name": "Blood Craze",
@@ -735,6 +708,51 @@
           ]
         ],
         "icon": "spell_shadow_summonimp"
+      },
+      {
+        "fieldName": "enrage",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 3
+        },
+        "spellIds": [
+          12317,
+          13045,
+          13046,
+          13047,
+          13048
+        ],
+        "maxPoints": 5,
+        "name": "Enrage",
+        "description": "Gives you a {0}% chance to deal {1}% increased Physical damage for {2} sec after being the victim of any damaging attack.",
+        "ranks": [
+          [
+            30,
+            2,
+            12
+          ],
+          [
+            30,
+            4,
+            12
+          ],
+          [
+            30,
+            6,
+            12
+          ],
+          [
+            30,
+            8,
+            12
+          ],
+          [
+            30,
+            10,
+            12
+          ]
+        ],
+        "icon": "spell_shadow_unholyfrenzy"
       },
       {
         "fieldName": "dualWieldSpecialization",
@@ -783,7 +801,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          1310315
         ],
         "maxPoints": 1,
         "name": "Raging Blows",
@@ -796,49 +814,26 @@
         "icon": "ability_whirlwind"
       },
       {
-        "fieldName": "enrage",
+        "fieldName": "recklessSwings",
         "location": {
           "rowIdx": 3,
           "colIdx": 2
         },
         "spellIds": [
-          12317,
-          13045,
-          13046,
-          13047,
-          13048
+          0
         ],
-        "maxPoints": 5,
-        "name": "Enrage",
-        "description": "Gives you a {0}% chance to deal {1}% increased Physical damage for {2} sec after being the victim of any damaging attack.",
+        "maxPoints": 1,
+        "name": "Reckless Swings",
+        "description": "Your next {0} melee attacks generate {1} additional Rage. Lasts {2} sec.",
         "ranks": [
           [
-            30,
-            2,
-            12
-          ],
-          [
-            30,
             4,
-            12
-          ],
-          [
-            30,
-            6,
-            12
-          ],
-          [
-            30,
-            8,
-            12
-          ],
-          [
-            30,
-            10,
-            12
+            5,
+            8
           ]
         ],
-        "icon": "spell_shadow_unholyfrenzy"
+        "icon": "inv_misc_questionmark",
+        "notSimulated": true
       },
       {
         "fieldName": "improvedExecute",
@@ -910,6 +905,36 @@
         "icon": "spell_shadow_deathpact"
       },
       {
+        "fieldName": "goreDrinker",
+        "location": {
+          "rowIdx": 4,
+          "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 2
+        },
+        "spellIds": [
+          1323967,
+          1323967
+        ],
+        "maxPoints": 2,
+        "name": "Gore Drinker",
+        "description": "Your Enrage, Berserker Rage, Bloodrage, Death Wish, and Bloodthirst abilities cause your next {0} melee attacks to restore {1}% of your maximum Health.",
+        "ranks": [
+          [
+            3,
+            0.5
+          ],
+          [
+            3,
+            1
+          ]
+        ],
+        "icon": "racial_troll_berserk",
+        "notSimulated": true
+      },
+      {
         "fieldName": "improvedIntercept",
         "location": {
           "rowIdx": 4,
@@ -939,10 +964,6 @@
           "rowIdx": 5,
           "colIdx": 1
         },
-        "prereqLocation": {
-          "rowIdx": 4,
-          "colIdx": 1
-        },
         "spellIds": [
           12319,
           12971,
@@ -950,20 +971,12 @@
           12973,
           12974
         ],
-        "maxPoints": 5,
+        "maxPoints": 3,
         "name": "Flurry",
         "description": "Increases your melee attack speed by {0}% for your next {1} swings after dealing a melee critical strike.",
         "ranks": [
           [
-            5,
-            3
-          ],
-          [
             10,
-            3
-          ],
-          [
-            15,
             3
           ],
           [
@@ -971,20 +984,16 @@
             3
           ],
           [
-            25,
+            30,
             3
           ]
         ],
         "icon": "ability_ghoulfrenzy"
       },
       {
-        "fieldName": "goreDrinker",
+        "fieldName": "improvedWhirlwind",
         "location": {
           "rowIdx": 5,
-          "colIdx": 2
-        },
-        "prereqLocation": {
-          "rowIdx": 3,
           "colIdx": 2
         },
         "spellIds": [
@@ -992,25 +1001,29 @@
           0
         ],
         "maxPoints": 2,
-        "name": "Gore Drinker",
-        "description": "Your Enrage, Berserker Rage, Bloodrage, Death Wish, and Bloodthirst abilities cause your next {0} melee attacks to restore {1}% of your maximum Health.",
+        "name": "Improved Whirlwind",
+        "description": "Reduces the cooldown of your Whirlwind ability by {0} sec and increases the damage it deals to the closest enemy by {1}%.",
         "ranks": [
           [
-            3,
-            0.5
+            1,
+            15
           ],
           [
-            3,
-            1
+            2,
+            30
           ]
         ],
-        "icon": "racial_troll_berserk",
+        "icon": "ability_whirlwind",
         "notSimulated": true
       },
       {
         "fieldName": "bloodthirst",
         "location": {
           "rowIdx": 6,
+          "colIdx": 1
+        },
+        "prereqLocation": {
+          "rowIdx": 4,
           "colIdx": 1
         },
         "spellIds": [
@@ -1259,8 +1272,8 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0
+          1310316,
+          1310316
         ],
         "maxPoints": 2,
         "name": "Master of Defense",
@@ -1368,7 +1381,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          1310317
         ],
         "maxPoints": 1,
         "name": "Vanguard",
@@ -1376,8 +1389,7 @@
         "ranks": [
           []
         ],
-        "icon": "ability_warrior_shieldcharge",
-        "notSimulated": true
+        "icon": "ability_warrior_shieldcharge"
       },
       {
         "fieldName": "improvedShieldBash",
@@ -1454,9 +1466,9 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0
+          29787,
+          29787,
+          29787
         ],
         "maxPoints": 3,
         "name": "Focused Rage",
@@ -1481,11 +1493,11 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          16538,
+          16538,
+          16538,
+          16538,
+          16538
         ],
         "maxPoints": 5,
         "name": "Bastion",

@@ -36,6 +36,11 @@ func (druid *Druid) newStarfireSpellConfig(rank int) core.SpellConfig {
 	spellId := StarfireSpellId[rank]
 	baseDamageLow := StarfireScaling[rank].At(StarfireBaseDamage[rank][0], druid.Level)
 	baseDamageHigh := StarfireScaling[rank].At(StarfireBaseDamage[rank][1], druid.Level)
+	// The November 2 development notes raise the base damage by about 40% (tuning_70753.go).
+	if druid.Env.IsForever() {
+		baseDamageLow *= nov2StarfireScale
+		baseDamageHigh *= nov2StarfireScale
+	}
 	manaCost := StarfireManaCost[rank]
 	level := StarfireLevel[rank]
 

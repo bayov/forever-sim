@@ -12,6 +12,12 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 
 	// Forever's Whirlwind strikes with both weapons (the 1 October build made it baseline, it was
 	// Raging Blows' before), and Raging Blows takes 3 Rage off it.
+	// Improved Whirlwind takes 1 sec a point off the cooldown and adds 15% a point to the hits on
+	// the closest enemy, the first target here (development notes post 9, 2026-11-02, a new Fury
+	// talent; client 70753 unchanged, its 24431 is the old Burning Crusade row).
+	improvedPoints := warrior.Talents.ImprovedWhirlwind
+	closestMultiplier := 1 + 0.15*float64(improvedPoints)
+
 	var whirlwindOh *core.Spell
 	if warrior.Env.IsForever() && warrior.AutoAttacks.IsDualWielding {
 		whirlwindOh = warrior.registerWhirlwindOffHandSpell()
@@ -35,7 +41,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
-				Duration: time.Second * 10,
+				Duration: time.Second*10 - time.Second*time.Duration(improvedPoints),
 			},
 		},
 		CritDamageBonus: warrior.impale(),
@@ -61,6 +67,13 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 					baseDamage := whirlwindOh.Unit.OHNormalizedWeaponDamage(sim, whirlwindOh.MeleeAttackPower(target))
 					ohResults[idx] = whirlwindOh.CalcDamage(sim, target, baseDamage, whirlwindOh.OutcomeMeleeWeaponSpecialHitAndCrit)
 					target = sim.Environment.NextTargetUnit(target)
+				}
+			}
+
+			if improvedPoints > 0 {
+				hits[0].Damage *= closestMultiplier
+				if whirlwindOh != nil {
+					ohHits[0].Damage *= closestMultiplier
 				}
 			}
 
