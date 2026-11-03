@@ -14,22 +14,24 @@ Six at launch: Gnome Priest, Human Hunter, Dwarf Shaman, Orc Mage, Troll Warlock
 
 ## Base attributes
 
-Forever redesigned the races' attributes (user ruling 2026-10-25). At level 1 every race is the class baseline plus a race offset that adds up to 0 over Strength, Agility, Stamina and Intellect and leaves Spirit alone. The sim (sim/core/base_stats.go RaceOffsets at 60, tools/gen_level_base_stats.py below 60) takes, relative to the Human:
+Every race has Classic's base attributes since client 1.60.1.70753: "All Races now have the correct amount of base stats. For example, Tauren Warriors now start with the correct +5 strength relative to Human Warriors (was incorrectly +2). This fix was also applied to High Order and Windshaper Skyborne base stats" (development notes 2026-11-02, post 9). The client has no base stat table, so this is tier 4 (the notes). The sim (sim/core/base_stats.go RaceOffsets at 60, the 1.12 rows themselves in tools/gen_level_base_stats.py below 60) takes, relative to the Human:
 
-| Race | Str | Agi | Sta | Int | Spi | Classic 1.12 (Str, Agi, Sta, Int, Spi) |
+| Race | Str | Agi | Sta | Int | Spi | Before 70753 (Str, Agi, Sta, Int, Spi) |
 | --- | --- | --- | --- | --- | --- | --- |
 | Human | 0 | 0 | 0 | 0 | 0 | 0, 0, 0, 0, 0 |
-| Dwarf | +2 | -2 | +1 | -1 | 0 | +2, -4, +3, -1, -1 |
-| Night Elf | -2 | +2 | 0 | 0 | 0 | -3, +5, -1, 0, 0 |
-| Gnome | -3 | +1 | -1 | +3 | 0 | -5, +3, -1, +3, 0 |
-| High Order Skyborne | -1 | +1 | -1 | +1 | 0 | (new race) |
-| Orc | +3 | -3 | +1 | -1 | 0 | +3, -3, +2, -3, +3 |
-| Undead | +2 | -1 | +1 | -2 | 0 | -1, -2, +1, -2, +5 |
-| Tauren | +2 | -2 | +2 | -2 | 0 | +5, -5, +2, -5, +2 |
-| Troll | +1 | +2 | 0 | -3 | 0 | +1, +2, +1, -4, +1 |
-| Windshaper Skyborne | -1 | +1 | -1 | +1 | 0 | (new race) |
+| Dwarf | +2 | -4 | +3 | -1 | -1 | +2, -2, +1, -1, 0 |
+| Night Elf | -3 | +5 | -1 | 0 | 0 | -2, +2, 0, 0, 0 |
+| Gnome | -5 | +3 | -1 | +3 | 0 | -3, +1, -1, +3, 0 |
+| High Order Skyborne | -1 | +1 | -1 | +1 | 0 | -1, +1, -1, +1, 0 (kept, see below) |
+| Orc | +3 | -3 | +2 | -3 | +3 | +3, -3, +1, -1, 0 |
+| Undead | -1 | -2 | +1 | -2 | +5 | +2, -1, +1, -2, 0 |
+| Tauren | +5 | -5 | +2 | -5 | +2 | +2, -2, +2, -2, 0 |
+| Troll | +1 | +2 | +1 | -4 | +1 | +1, +2, 0, -3, 0 |
+| Windshaper Skyborne | -1 | +1 | -1 | +1 | 0 | -1, +1, -1, +1, 0 (kept, see below) |
 
-Sources: our naked level 1 beta sheets (2026-10-10, Horde, several classes each, the same shift on every class), wowsims/forever 6296e8546d (#597, 2026-10-20: naked level 1 warrior sheets of every race against a Human, this exact table with Spirit 0 everywhere), and their Skyborne sheets (2026-09-22: four Human/High Order class pairs and a Windshaper warrior, the same delta). The Human keeps its Spirit racial (10% since 2026-10-26) on top. We assume the offsets hold at every level, 60 included. Open: wowsims/forever 6fc22306b1 (#619, 2026-10-21) put the seven original races back on Classic's offsets, saying Forever restored them, with no sheet or source; a naked level 1 sheet taken after 2026-10-21 settles it (notes.md).
+The Classic offsets are 1.12's level 1 race attributes against the Human's (player_levelstats); its level 60 rows have the same gaps, but for the Human's Spirit and the Gnome's Intellect, which bake in The Human Spirit and Expansive Mind (the sim applies the Human's 10% Spirit itself, and Forever's Expansive Mind raises the mana pool instead). wowsims/forever has had the same table since 6fc22306b1 (#619, 2026-10-21). The "before" column came from our naked level 1 beta sheets (2026-10-10, Horde) and wowsims/forever 6296e8546d (#597, 2026-10-20, every race's level 1 warrior).
+
+Open: the Skyborne's corrected numbers. Nothing gives them yet (no client table, no sheet since the fix), so both keep the offset of wowsims/forever's Skyborne sheets (2026-09-22: four Human/High Order class pairs and a Windshaper warrior), which the fix may have changed. A naked level 1 Skyborne sheet beside a Human of the same class settles it.
 
 ## Alliance
 
