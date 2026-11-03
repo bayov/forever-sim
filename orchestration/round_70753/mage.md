@@ -1,6 +1,56 @@
 # Mage: round 70753
 
-Status: Phase A done (branch `round-70753-mage`). Phase B waits for "sources landed" (A1's tree remap and DB, A2's racials).
+Status: landed on master (Phase A and B), 2026-11-03.
+
+## Final report
+
+### What changed (source, DPS effect)
+
+| Change | Source | Effect at 180 s |
+|---|---|---|
+| Clearcasting stays up on an Arcane Missiles cast on Missile Barrage (`sim/mage/talents.go`) | notes 2026-11-02, server side (client 70753 unchanged) | within noise on every preset |
+| Ignite takes Flamestrike's burn crits (`sim/mage/ignite.go`) | notes 2026-11-02; client: the burn is direct damage spells 1279983 to 1279990 | none (no preset casts Flamestrike) |
+| Arcane: Arcane Blast ahead of the Frostbolt filler while the mana is more than 75 a second of the fight left (new `blastFiller` knob, `tools/rotopt/mage_arcane.go`), and the talent search then took Arcane Meditation 3 and Incineration 5 for Ice Shards | our audit: Arcane ended every fight with about 5000 mana | +16.6 (+36.4 at 120, +6.3 at 300), two seed sets |
+| Fire: Scorch refreshes Fire Vulnerability with under 9 s left (was 5) | rotation knob search | +0.6 (+1.4 at 120, +1.5 at 300), two seed sets |
+| A2's race base stats and the Nov 2 racials (shared) | notes, client 70753 | no Mage preset moves beyond 0.5 |
+
+Everything else in the notes' Mage section was in the sim already, from the 10-27 to 10-31 hotfixes and client 70707; the ledger below gives each line.
+
+### Per build (20,000 iterations, seed 1, the report requests at 120 / 180 / 300 s with ±20 s)
+
+| Build | Race | Talents | Old | New |
+|---|---|---|---|---|
+| Arcane | Gnome | `050205203100311531-55-0531` (was `050205203100211531-25-0535`) | 944.9 / 937.5 / 930.6 | 981.3 / 953.9 / 936.8 |
+| Fire | Human | `0502052-55500201230133031-003` (unchanged) | 1065.4 / 1057.1 / 1040.4 | 1066.8 / 1057.9 / 1042.0 |
+| Frost | High Order | `0502050030001-4-253500230111301211` (unchanged) | 944.5 / 944.7 / 937.7 | unchanged |
+| Frostfire (default) | Human | `-2550030103013303-0235000311203002` (unchanged) | 1052.4 / 1064.3 / 1041.8 | unchanged |
+
+Old Arcane and Fire at 120 and 300 s are rotopt evaluations of the old knobs at those lengths (20k, seed 1); the 180 s figures are the published ones. Frost's talent search found Incineration 5 for Arcane Meditation (+2.6 at 120 and 180 s, -6.4 at 300 s); it stays out. Frost's knob search found no mana gems: +11 at 300 s, but nothing at 120 and 180 s on the old talents, so it stays out too. Frostfire kept every talent and knob.
+
+### Races at 180 s (each race's own rotation and gear where it has them)
+
+| Build | Best overall | Best Horde | Best Alliance |
+|---|---|---|---|
+| Arcane | Gnome 953.9 | Undead 952.2 | Gnome 953.9 |
+| Fire | Gnome 1058.4 (Human 1057.9, 0.4 behind: stays Human) | Undead 1057.0 | Gnome 1058.4 |
+| Frost | High Order 944.7 | Troll 938.4 | High Order 944.7 |
+| Frostfire | Human 1064.3 | Troll 1059.4 | Human 1064.3 |
+
+Full tables in `ui/mage/presets.ts` (race check 2026-11-03) and the wiki. No race switch: Fire's Gnome lead is under the 0.5 a switch needs. The Arcane High Order override was regenerated with the new knobs (+5.2 over the preset's rotation at High Order on both seeds); Fire's High Order override already matched. The Dwarf can't be a mage, so there is no hit-adjusted mage gear.
+
+### Audit (passes results, rotations, gear, consumables, mechanics, client_update)
+
+- client_update and mechanics: the Phase A ledger below (every notes line, client 70707 against 70753, the hotfixes). Open: finding client_update-20261030-2 (Missile Barrage's tick effect still a dummy in 70753), which needs an Arcane combat log.
+- rotations: Arcane's 5000 unspent mana was the finding, fixed above. The new line states its intent ("mana the fight can't otherwise spend"), and the change holds at 120, 180 and 300 s and at 180 ± 20 s (the request). Arcane's casts, hand-checked: 43.5 Arcane Blasts and 12.2 Frostbolts a fight, stacks up 86% of the time, 2.5 wand casts at the end. Optional, not taken: Arcane `finishPad` 0 (+1.5 over the three lengths) against the Frostbolt's 0.75 s flight from 20 yd (standards 31).
+- results: Arcane's request reproduces 953.9 and Fire's 1057.9 (20k, seed 1); Frost and Frostfire reproduce their published 944.7 and 1064.3 exactly.
+- gear: no Mage gear change in this round. `tools/audit/gear/lin2.py` fails on the current `orchestration/gear_targets.md` (a "Sta" header where it expects a number); that's a shared tool, so I left it.
+- consumables: no consumable or enchant the Mage presets use changed in 70753.
+
+### Open questions and shared changes
+
+- Shared changes: none. Everything is in sim/mage, tools/rotopt/mage_*, ui/mage, tools/dps_report/req/mage__* and races/mage__*, the wiki and notes.md (the Ice Lance item).
+- `mage_ice_lance_cd`: client 70753 gives every Ice Lance rank the cooldown and category 19, so the assumption's alternative no longer has a source. Recommendation: one value.
+- The orchestrator's re-sim will move `mage__arcane` and `mage__fire` (report_hashes.txt rewritten).
 
 ## Phase A: what the sim had, what changed
 
