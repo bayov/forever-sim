@@ -1549,7 +1549,7 @@
    "title": "Launch hotfix: paladin and druid talent reworks",
    "date": "2026-10-30",
    "baselineData": "11de3318ae2086f5017a93101176d97d6f8f61e0",
-   "endData": null,
+   "endData": "2fd3f2cb28bcb4188a0da137145b0fa35cb66582",
    "lines": [
     {
      "title": "Two-handed warriors' critical white hits give twice the swing's Rage (was 77% more)",
@@ -2061,47 +2061,6 @@
      "commits": [
       "58a1c35"
      ]
-    },
-    {
-     "title": "Dragonfire Potion and Caustic Smog Potion can't crit",
-     "kind": "sim",
-     "classes": [
-      "Paladin",
-      "Shaman"
-     ],
-     "builds": [
-      "paladin__level_60",
-      "paladin__level_60-duty-crusader",
-      "paladin__level_60-duty-wisdom",
-      "paladin__level_60_shock_ret",
-      "paladin__level_60_shock_ret-duty-crusader",
-      "paladin__level_60_shock_ret-duty-wisdom",
-      "paladin__level_60_sub_holy",
-      "paladin__level_60_sub_holy-duty-crusader",
-      "paladin__level_60_sub_holy-duty-wisdom",
-      "paladin__level_60_sub_holy_undead",
-      "shaman__elemental-level60"
-     ],
-     "note": "Both spells are flagged Can't Crit, so neither the hit nor the damage over time crits. Down 0.1 to 1.6 at 180 s.",
-     "source": "https://wago.tools/db2/SpellMisc?build=1.60.1.70707&filter[SpellID]=1252554",
-     "commits": [
-      "6d9b4d7"
-     ]
-    },
-    {
-     "title": "Faerie Fire in Cat Form has a 1 sec global cooldown and a 6 sec cooldown",
-     "kind": "sim",
-     "classes": [
-      "Druid"
-     ],
-     "builds": [
-      "druid__feral-cat-duty-ff"
-     ],
-     "note": "Cat Form's passive shortens it, as it makes it free. In Bear Form it keeps the 1.5 sec global cooldown, also with the 6 sec cooldown. Up 2.0 at 180 s for the cat that keeps Faerie Fire up.",
-     "source": "https://wago.tools/db2/SpellEffect?build=1.60.1.70707&filter[SpellID]=3025",
-     "commits": [
-      "6d9b4d7"
-     ]
     }
    ],
    "internal": [
@@ -2284,7 +2243,64 @@
     {
      "commit": "d4b624303",
      "why": "leveling stat weights only; no report hash moved"
+    }
+   ],
+   "source": {
+    "label": "foreverchanges.pro: a hotfix to the October 30 build",
+    "url": "https://foreverchanges.pro/patch-notes"
+   }
+  },
+  {
+   "id": "2026-11-02-build-70753",
+   "type": "game",
+   "title": "Build 1.60.1.70753 and the November 2 development notes: class damage raised across the game",
+   "date": "2026-11-02",
+   "baselineData": "2fd3f2cb28bcb4188a0da137145b0fa35cb66582",
+   "endData": null,
+   "lines": [
+    {
+     "title": "Dragonfire Potion and Caustic Smog Potion can't crit",
+     "kind": "sim",
+     "classes": [
+      "Paladin",
+      "Shaman"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead",
+      "shaman__elemental-level60"
+     ],
+     "note": "Both spells are flagged Can't Crit, so neither the hit nor the damage over time crits. Down 0.1 to 1.6 at 180 s.",
+     "source": "https://wago.tools/db2/SpellMisc?build=1.60.1.70707&filter[SpellID]=1252554",
+     "commits": [
+      "6d9b4d7"
+     ]
     },
+    {
+     "title": "Faerie Fire in Cat Form has a 1 sec global cooldown and a 6 sec cooldown",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "Cat Form's passive shortens it, as it makes it free. In Bear Form it keeps the 1.5 sec global cooldown, also with the 6 sec cooldown. Up 2.0 at 180 s for the cat that keeps Faerie Fire up.",
+     "source": "https://wago.tools/db2/SpellEffect?build=1.60.1.70707&filter[SpellID]=3025",
+     "commits": [
+      "6d9b4d7"
+     ]
+    }
+   ],
+   "internal": [
     {
      "commit": "82b2b31",
      "why": "the Restoration shaman healing spec; healer and tank work; every report request's main sim reproduces its published DPS on this commit"
@@ -2307,8 +2323,8 @@
     }
    ],
    "source": {
-    "label": "foreverchanges.pro: a hotfix to the October 30 build",
-    "url": "https://foreverchanges.pro/patch-notes"
+    "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+    "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
    }
   }
  ]
