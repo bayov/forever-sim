@@ -50,6 +50,28 @@ All changes together (the same runs): Elemental Level 60 767.5 → 931.1 (+163.6
 (+162.4), Enhancement Level 60 883.4 → 1144.3 (+260.9), Imp GW 879.2 → 1139.0 (+259.8), Mana Tide 795.3 → 1056.4
 (+261.1), Water Shield 835.1 → 1109.7 (+274.6). These are before the tree changes and before any re-optimization.
 
+## Notes-only values (standards 37)
+
+Every value below comes from the notes alone; client 1.60.1.70753 unchanged (its rows are 70707's), no server hotfix.
+The next hotfix check and the launch logs compare against this list first.
+
+| Value | Sim | Client 1.60.1.70753 |
+|---|---|---|
+| Lightning Bolt ranks 4–10 base | 0.78 × Era: rank 10 334.31–371.75 at 60, +1.87 a level | 15208 196 (± 5.4%) + 1.2 a level at 56 |
+| Chain Lightning ranks 1–4 first target | 1.45 × the comparable Lightning Bolt: rank 4 484.75–539.04 at 60 | 10605 unchanged (119–133) |
+| Chain Lightning mana | 248 / 304 / 360 / 495 (2.25 ×, rounded to whole mana) | 145 / 200 / 250 / 315 |
+| Chain Lightning cast | 2.5 s | 2 s |
+| Earth / Flame / Frost Shock base | Era's: 517–545, 292 + 4 × 80, 492–520 at 60 (every rank) | 301 / 166 + 4 × 44 / 283 centres |
+| Lightning Overload | 10 / 20 / 30% | 408438 3 / 7 / 10% |
+| Maelstrom Weapon | 4 PPM a point (doubled from the sim's 2; the rate is server side either way) | 408498 ProcChance 100, no PPM row |
+| Stormstrike | 150% normalized weapon damage, 6 s | 17364 100%, 8 s |
+| Mental Dexterity | 50 / 100 / 150% | 415140 33 / 67 / 100% |
+| Flurry | 6 / 12 / 18 / 24 / 30% | 5 to 25% |
+| Totemic Call | 30 s, totems to the shaman's spot | 437009 Totemic Projection, 1 min |
+
+Gating: the shaman's spell tables and these talents were already Forever-only values (the fork keeps no Classic copy of
+them); Stormstrike's cooldown and 150% sit inside its `IsForever()` branch.
+
 ## Shared files touched
 
 - `tools/rotopt/spell_names.go`: 437009's display name.
