@@ -21,7 +21,7 @@ func newFiveSecondRuleSim(level int32, talents string) (*core.Simulation, *Enhan
 
 	player := newOrcShaman(level, talents, &proto.EnhancementShaman_Options{})
 	player.Equipment = &proto.EquipmentSpec{Items: items}
-	player.BonusStats = &proto.UnitStats{Stats: stats.Stats{stats.Spirit: 30}.ToFloatArray()}
+	player.BonusStats = &proto.UnitStats{Stats: stats.Stats{stats.Spirit: 30}.Add(betaOrcShift).ToFloatArray()}
 	return newShamanSim(player, &proto.Debuffs{}, 60)
 }
 
