@@ -12,14 +12,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: either gate the two shares (and say so in hunter.md) or record in hunter.md that sim/hunter is Forever-only by design and drop the Classic branches.
 - needs: worker fix
 
-### results-20261103-1: rogue__subtlety meta has race "Night Elf" (every other meta uses the enum name, "NightElf")
-- severity: low (request and published number are right; the DPS report race table and regen.py are affected)
-- affects: tools/dps_report/req/rogue__subtlety.meta.json:8 (rogue Subtlety)
-- found: 2026-11-03, master f5c99ad018
-- evidence: `python3 tools/audit/results/regen.py` prints `rogue__subtlety MKSETTINGS FAIL: unknown race "Night Elf"` (mksettings takes the proto name). With `-race NightElf` and the meta's other arguments the regenerated request equals the committed one (0 diffs), so no drift. tools/dps_report/build_data.py:402,412 compare `r['race'] == m['race']` (race-sweep rows use "NightElf"), so the Subtlety race table's `isPreset` flag is likely never set for Night Elf; faction falls to Alliance, which is right. Introduced in 25fc79c83.
-- proposed fix: set the meta's `race` to `NightElf`.
-- needs: orchestrator fix
-
 ### results-20261102-1: shaman__elemental-level60-mana-tide meta published.dps is 0.4 off (753.2 vs 752.8)
 - severity: low (builds.json 752.8 matches my 20k seed-1 run 752.83; only the meta lags)
 - affects: tools/dps_report/req/shaman__elemental-level60-mana-tide.meta.json; runreq.sh and verify.py flag it OFF
@@ -70,4 +62,13 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-10-28, master 224b8a4e0: still 34 of 58 after the racial-audit deploy.
 - needs: orchestrator fix
 - resolved: 2026-10-28, every req/*.meta.json published.dps set from the 2026-10-28 full re-sim's builds.json.
+
+### results-20261103-1: rogue__subtlety meta has race "Night Elf" (every other meta uses the enum name, "NightElf")
+- severity: low (request and published number are right; the DPS report race table and regen.py are affected)
+- affects: tools/dps_report/req/rogue__subtlety.meta.json:8 (rogue Subtlety)
+- found: 2026-11-03, master f5c99ad018
+- evidence: `python3 tools/audit/results/regen.py` prints `rogue__subtlety MKSETTINGS FAIL: unknown race "Night Elf"` (mksettings takes the proto name). With `-race NightElf` and the meta's other arguments the regenerated request equals the committed one (0 diffs), so no drift. tools/dps_report/build_data.py:402,412 compare `r['race'] == m['race']` (race-sweep rows use "NightElf"), so the Subtlety race table's `isPreset` flag is likely never set for Night Elf; faction falls to Alliance, which is right. Introduced in 25fc79c83.
+- proposed fix: set the meta's `race` to `NightElf`.
+- needs: orchestrator fix
+- resolved: 2026-11-03, 5b766ca2b (meta race NightElf; regen.py now reports 0 diffs for rogue__subtlety)
 

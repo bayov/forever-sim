@@ -175,3 +175,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-03 18:29 | mechanics | pass 61 | master f5c99ad018 | 1 new finding | round 70753 phase 3 (forced): notes' tank threat values (Bear 115%, Def Stance 80%, Defiance) not in the sim (low, 0 DPS)
 2026-11-03 18:29 | fairness | pass 25 | master f5c99ad018 | quiet | round 70753 phase 3 (forced): every move matches its round file; top/bottom 1.73x; race picks hold
 2026-11-03 18:29 | client_update | pass 8 | master f5c99ad018 | 1 new finding | round 70753 phase 3 (forced): no build after 70753; several notes-only values ungated under Forever (low, needs ruling)
+2026-11-03 19:03 | consumables | pass 68 | master f23ea25d2 | quiet | Warlock Affliction/Imp-sacrifice diff touches no consumes; client 70755 has no consumable changes
+2026-11-03 19:03 | mechanics | pass 62 | master f23ea25d2 | quiet | Imp sacrifice (Burning Shadow 15%) matches client; 70755 tables identical to 70753
+2026-11-03 19:03 | client_update | pass 9 | master f23ea25d2 | 1 new finding | build 70755 technical only; server hotfix push 113483 changes rogue talent tree (high), rest of push unverified
+2026-11-03 19:03 | results | pass 74 | master f23ea25d2 | quiet | all 68 requests within 0.15 of published except known stale shaman metas; results-20261103-1 resolved
+2026-11-03 19:03 | rotations | pass 50 | master f23ea25d2 | quiet | Wrack Affliction and Earth Shock wait hold; 5 warlock variants all lose 2-22 DPS
+2026-11-03 19:03 | fairness | pass 26 | master f23ea25d2 | quiet | every report race still best; Subtlety Night Elf fix confirmed

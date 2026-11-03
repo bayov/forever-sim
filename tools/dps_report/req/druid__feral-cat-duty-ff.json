@@ -74,6 +74,7 @@
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
+              "fillerExplosive": "ExplosiveEZThroDarkBomb",
               "mainHandImbue": "DenseWeightstone",
               "defaultPotion": "MightyRagePotion",
               "defaultConjured": "ConjuredRogueThistleTea",
@@ -92,6 +93,60 @@
             "rotation": {
               "type": "TypeAPL",
               "priorityList": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 260817
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "currentEnergy": {}
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "const": {
+                                  "val": "60"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "autoTimeToNext": {
+                                  "autoType": "MainHand"
+                                }
+                              },
+                              "op": "OpGe",
+                              "rhs": {
+                                "math": {
+                                  "lhs": {
+                                    "autoSwingTime": {
+                                      "autoType": "MainHand"
+                                    }
+                                  },
+                                  "op": "OpSub",
+                                  "rhs": {
+                                    "const": {
+                                      "val": "0.4s"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "The filler explosive right after a main hand swing (its 1 sec cast restarts the swing timer), and not near the Energy cap, where the cast would waste Energy."
+                },
                 {
                   "action": {
                     "autocastOtherCooldowns": {}
@@ -447,16 +502,29 @@
                             }
                           },
                           {
-                            "cmp": {
-                              "lhs": {
-                                "currentComboPoints": {}
-                              },
-                              "op": "OpLt",
-                              "rhs": {
-                                "const": {
-                                  "val": "5"
+                            "or": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "lhs": {
+                                      "currentComboPoints": {}
+                                    },
+                                    "op": "OpLt",
+                                    "rhs": {
+                                      "const": {
+                                        "val": "5"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "auraIsActive": {
+                                    "auraId": {
+                                      "spellId": 16870
+                                    }
+                                  }
                                 }
-                              }
+                              ]
                             }
                           },
                           {
@@ -541,33 +609,14 @@
                       "and": {
                         "vals": [
                           {
-                            "and": {
-                              "vals": [
-                                {
-                                  "not": {
-                                    "val": {
-                                      "dotIsActive": {
-                                        "spellId": {
-                                          "spellId": 9904
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "currentComboPoints": {}
-                                    },
-                                    "op": "OpLt",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "5"
-                                      }
-                                    }
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 9904
                                   }
                                 }
-                              ]
+                              }
                             }
                           },
                           {
