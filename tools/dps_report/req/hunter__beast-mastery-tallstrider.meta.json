@@ -71,11 +71,11 @@
     "Auto Shot keeps firing during casts. Moving cancels its 0.5s wind-up.",
     "Pet consumables are off (Forever pets get no player buffs). They would add 17 DPS.",
     "Intimidation is talented but not cast.",
-    "Major Frenzy Potion is 25.7 DPS behind Major Mana Potion at 180s.",
+    "Major Frenzy Potion is 17.1 DPS behind Major Mana Potion at 180s.",
     "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
     "Uses a 2.5s bow with Rhok'delar's 44.0 weapon DPS. A 2.6s gun sims 0.3 to 1.0 DPS higher with a 15% ammo pouch, or 3.4 to 5.2 lower with Era's 14% pouch.",
     "Pet hits scale with attack speed, as seen on a level 17 pet. A 1.0s raptor would add about 2.5 DPS (Savage Rend), but none that fast is known.",
-    "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (0.5 here).",
+    "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0 to 2.9 DPS at 180s (0.0 here).",
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
   ],
   "notes": "Request: hunter__beast-mastery with hunter.options.petType Tallstrider instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Starts at 12 yd since 2026-11-02 (standards 33: a weaving hunter stands where weaving does best; the rotation walks to 12 yd before the pull either way, so this is where the pet starts; +3 to +4 at 120 + 180 + 300 sec against 25 yd on both seeds, orchestration/caster_distance.md), 25 before. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the EZ-Thro Dark Bomb stays.",

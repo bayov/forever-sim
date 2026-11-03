@@ -25,6 +25,8 @@ no setting now that Hunter's Mark is settled at 143.
 2026-10-26: haste_gcd is new (1: cast speed shortens a spell's GCD, down to 1s, as in wowsims/forever's
 hastedGCD; physical abilities keep theirs, as there).
 2026-11-03: druid_rip_scale is dropped (the November 2 development notes raise Rip by 25%, standards 37).
+2026-11-03: sham_lb_31plus and sham_es7_tuning are dropped (the notes retune Lightning Bolt and Earth Shock;
+the sim's scales are 1.0 and the report rows are gone).
 
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
@@ -468,38 +470,6 @@ index 773381ee0c..b33a611eca 100644
  				}
  				if costSpell(spell) {
  					spell.Cost.Factor /= 0.5
-diff --git a/sim/shaman/earth_shock.go b/sim/shaman/earth_shock.go
-index 3eb71a8411..3854aa1f28 100644
---- a/sim/shaman/earth_shock.go
-+++ b/sim/shaman/earth_shock.go
-@@ -42,8 +42,9 @@ func EarthShockBaseDamageAt(rank int, level int32) (float64, float64) {
- 	low := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][0], level)
- 	high := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][1], level)
- 	if rank == 7 {
--		low *= EarthShockRank7DamageScale
--		high *= EarthShockRank7DamageScale
-+		scale := core.Assume("sham_es7_tuning", EarthShockRank7DamageScale) // dashboard assumption
-+		low *= scale
-+		high *= scale
- 	}
- 	return low, high
- }
-diff --git a/sim/shaman/lightning_bolt.go b/sim/shaman/lightning_bolt.go
-index 86ba717790..ff2f1caafd 100644
---- a/sim/shaman/lightning_bolt.go
-+++ b/sim/shaman/lightning_bolt.go
-@@ -56,8 +56,9 @@ func LightningBoltBaseDamageAt(rank int, level int32) (float64, float64) {
- 	low := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][0], level)
- 	high := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][1], level)
- 	if rank == 10 {
--		low *= LightningBoltRank10DamageScale
--		high *= LightningBoltRank10DamageScale
-+		scale := core.Assume("sham_lb_31plus", LightningBoltRank10DamageScale) // dashboard assumption
-+		low *= scale
-+		high *= scale
- 	}
- 	return low, high
- }
 diff --git a/sim/shaman/talents.go b/sim/shaman/talents.go
 index 6b7d7a5670..eb020325ab 100644
 --- a/sim/shaman/talents.go
