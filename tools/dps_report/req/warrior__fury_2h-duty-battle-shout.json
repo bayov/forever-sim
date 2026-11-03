@@ -703,6 +703,16 @@
                   }
                 },
                 {
+                  "notes": "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1399001
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Berserker Rage for its Rage (Improved Berserker Rage). It needs Berserker Stance.",
                   "action": {
                     "condition": {
