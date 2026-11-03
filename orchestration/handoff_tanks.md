@@ -34,3 +34,18 @@ The tank auditors (`orchestration/audit/passes/tank_*.md`) are on master, off un
    merge, run the tank auditors once, fix their findings, and give the user every call at the end (docs' "Calls for
    the user" sections; the orchestrator's: Ragnaros out of the scoring set, the scoring set itself, standards 36's
    five calls, the bear's threat assumptions).
+
+## What the update changes for tanks (the wow-update orchestrator, 2026-11-03 13:09 UTC)
+
+Blizzard's November 2 development notes (client 1.60.1.70753), on master at
+`orchestration/audit/ref/client_update/sources/devnotes_post9_2026-11-02.txt`. Read them in full; the tank points:
+
+- Threat: Bear and Dire Bear Form 115% (the bear here uses 1.5, from 21178's 50), Defensive Stance 80%, Defiance
+  7 / 13 / 20%, Righteous Fury 33% on all threat plus 90% on Holy, Salvation removed (the tank score's
+  SafeDPS reference member assumes Salvation's 0.7 threat a point of damage, `TankScoring.threat_per_damage`).
+- Protection paladin: Holy Shield in row 5, Shieldsworn, Iron Creed at 3 points, Swift Judgement unleashes the Seal,
+  Sacred Duty, Shield Specialization, Stoicism; Improved Righteous Fury 3 / 6 / 9%. Retribution's Two-Handed
+  Weapon Specialization cuts threat 7 / 14 / 20%.
+- Feral: Lacerate a talent, Primal Bite and Shifting Power in row 7.
+- The talent trees and the presets' talent strings are being regenerated for 70753 on master (agent A1): every tank
+  talent string here (bench requests, UI presets, the raid sim's tank presets) needs remapping after that lands.
