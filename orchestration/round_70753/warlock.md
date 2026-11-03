@@ -45,6 +45,21 @@ Worker for the Warlock DPS specs (Affliction, Demonology, Destruction Shadow Bol
 | Throw windup, proc-root DR, training costs, Grimoire costs | Notes | n/a for warlock DPS | none |
 | Threat and healing rows | | n/a | tank/healer sessions |
 
+## Notes-only values
+
+The orchestrator's source rule for this round (`README.md`, a32a20024): a note line that neither the client nor a hotfix
+carries is modelled at the notes' value under Forever, citing the notes and "client 70753 unchanged". The only hotfix
+since 70753 (foreverchanges.pro, 2026-11-03) has no Warlock lines.
+
+- Wrack: 86 a second at 60 (36 + 2.5 a level above 40) and 0.286 spell damage a tick. Client 70753 unchanged (36, 0.143).
+- Shadow and Flame: 4% a point. Client 70753 unchanged (trait curves 2 to 10).
+- Demons' health: 2 a point of the warlock's Stamina. The client has no value (416189's points are 0); was 7.5 from beta
+  pet sheets.
+- Amplify Curse on Bane of Agony: +50% of the base. The client's mask leaves Agony out, but Agony's dummy effect carries
+  it; the sim already did this.
+
+Wrack and Shadow and Flame apply under Forever only in effect: both are Forever's talents and exist in no other ruleset.
+
 ## DPS effect of Phase A (current presets, 180 s, 3,000 iterations, master vs branch)
 
 | Build | Before | After | Change |
