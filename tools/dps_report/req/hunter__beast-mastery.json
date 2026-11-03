@@ -87,7 +87,7 @@
               "blessingOfWisdom":  "TristateEffectImproved",
               "blessingOfMight":  "TristateEffectImproved"
             },
-            "talentsString":  "5021201505021241-00520503005",
+            "talentsString":  "5021201505021241-00510504005",
             "level":  60,
             "profession1":  "Engineering",
             "profession2":  "Alchemy",
@@ -155,7 +155,6 @@
               ],
               "priorityList":  [
                 {
-                  "notes":  "Weave: Raptor Strike queued on the swing.",
                   "action":  {
                     "castSpell":  {
                       "spellId":  {
@@ -163,30 +162,30 @@
                         "tag":  3
                       }
                     }
-                  }
+                  },
+                  "notes":  "Weave: Raptor Strike queued on the swing."
                 },
                 {
-                  "notes":  "Weave: Mongoose Bite when a dodge opens it.",
                   "action":  {
                     "castSpell":  {
                       "spellId":  {
                         "spellId":  14271
                       }
                     }
-                  }
+                  },
+                  "notes":  "Weave: Mongoose Bite when a dodge opens it."
                 },
                 {
-                  "notes":  "Weave: Strider Kick, with the talent, for its run speed out.",
                   "action":  {
                     "castSpell":  {
                       "spellId":  {
                         "spellId":  1317257
                       }
                     }
-                  }
+                  },
+                  "notes":  "Weave: Strider Kick, with the talent, for its run speed out."
                 },
                 {
-                  "notes":  "Weave: in melee, wait for the swing.",
                   "action":  {
                     "condition":  {
                       "and":  {
@@ -196,15 +195,14 @@
                           },
                           {
                             "cmp":  {
-                              "op":  "OpGt",
                               "lhs":  {
                                 "math":  {
-                                  "op":  "OpSub",
                                   "lhs":  {
                                     "autoSwingTime":  {
                                       "autoType":  "MainHand"
                                     }
                                   },
+                                  "op":  "OpSub",
                                   "rhs":  {
                                     "autoTimeToNext":  {
                                       "autoType":  "MainHand"
@@ -212,6 +210,7 @@
                                   }
                                 }
                               },
+                              "op":  "OpGt",
                               "rhs":  {
                                 "const":  {
                                   "val":  "0.5s"
@@ -225,12 +224,12 @@
                     "wait":  {
                       "duration":  {
                         "math":  {
-                          "op":  "OpAdd",
                           "lhs":  {
                             "autoTimeToNext":  {
                               "autoType":  "MainHand"
                             }
                           },
+                          "op":  "OpAdd",
                           "rhs":  {
                             "const":  {
                               "val":  "0.001s"
@@ -239,10 +238,10 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes":  "Weave: in melee, wait for the swing."
                 },
                 {
-                  "notes":  "Weave: a moment after the swing.",
                   "action":  {
                     "condition":  {
                       "and":  {
@@ -252,15 +251,14 @@
                           },
                           {
                             "cmp":  {
-                              "op":  "OpLt",
                               "lhs":  {
                                 "math":  {
-                                  "op":  "OpSub",
                                   "lhs":  {
                                     "autoSwingTime":  {
                                       "autoType":  "MainHand"
                                     }
                                   },
+                                  "op":  "OpSub",
                                   "rhs":  {
                                     "autoTimeToNext":  {
                                       "autoType":  "MainHand"
@@ -268,6 +266,7 @@
                                   }
                                 }
                               },
+                              "op":  "OpLt",
                               "rhs":  {
                                 "const":  {
                                   "val":  "0.2s"
@@ -281,20 +280,20 @@
                     "wait":  {
                       "duration":  {
                         "math":  {
-                          "op":  "OpSub",
                           "lhs":  {
                             "const":  {
                               "val":  "0.2s"
                             }
                           },
+                          "op":  "OpSub",
                           "rhs":  {
                             "math":  {
-                              "op":  "OpSub",
                               "lhs":  {
                                 "autoSwingTime":  {
                                   "autoType":  "MainHand"
                                 }
                               },
+                              "op":  "OpSub",
                               "rhs":  {
                                 "autoTimeToNext":  {
                                   "autoType":  "MainHand"
@@ -305,10 +304,10 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes":  "Weave: a moment after the swing."
                 },
                 {
-                  "notes":  "Weave: back out past the deadzone.",
                   "action":  {
                     "condition":  {
                       "inMeleeRange":  {}
@@ -320,11 +319,16 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes":  "Weave: back out past the deadzone."
                 },
                 {
-                  "notes":  "Aspect of the Hawk if it ever drops.",
                   "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  14322
+                      }
+                    },
                     "condition":  {
                       "not":  {
                         "val":  {
@@ -335,17 +339,17 @@
                           }
                         }
                       }
-                    },
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  14322
-                      }
                     }
-                  }
+                  },
+                  "notes":  "Aspect of the Hawk if it ever drops."
                 },
                 {
-                  "notes":  "Elune's Light with the on-use trinket, unless waiting would cost a use.",
                   "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  1259799
+                      }
+                    },
                     "condition":  {
                       "or":  {
                         "vals":  [
@@ -358,19 +362,19 @@
                           },
                           {
                             "cmp":  {
-                              "op":  "OpEq",
                               "lhs":  {
                                 "spellUsesRemaining":  {
-                                  "spellId":  {
-                                    "itemId":  993016
-                                  },
                                   "minTimeLeft":  {
                                     "const":  {
                                       "val":  "15s"
                                     }
+                                  },
+                                  "spellId":  {
+                                    "itemId":  993016
                                   }
                                 }
                               },
+                              "op":  "OpEq",
                               "rhs":  {
                                 "const":  {
                                   "val":  "0"
@@ -380,12 +384,8 @@
                           },
                           {
                             "cmp":  {
-                              "op":  "OpGt",
                               "lhs":  {
                                 "spellUsesLostByDelay":  {
-                                  "spellId":  {
-                                    "spellId":  1259799
-                                  },
                                   "delay":  {
                                     "spellTimeToReady":  {
                                       "spellId":  {
@@ -397,9 +397,13 @@
                                     "const":  {
                                       "val":  "15s"
                                     }
+                                  },
+                                  "spellId":  {
+                                    "spellId":  1259799
                                   }
                                 }
                               },
+                              "op":  "OpGt",
                               "rhs":  {
                                 "const":  {
                                   "val":  "0"
@@ -409,53 +413,53 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  1259799
-                      }
                     }
-                  }
+                  },
+                  "notes":  "Elune's Light with the on-use trinket, unless waiting would cost a use."
                 },
                 {
-                  "notes":  "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown.",
                   "action":  {
                     "autocastOtherCooldowns":  {}
-                  }
+                  },
+                  "notes":  "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."
                 },
                 {
-                  "notes":  "Hunter's Mark at the pull and again before it drops (every hunter keeps up its own; the raid's is off).",
                   "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  14325
+                      }
+                    },
                     "condition":  {
                       "cmp":  {
-                        "op":  "OpLt",
                         "lhs":  {
                           "auraRemainingTime":  {
-                            "sourceUnit":  {
-                              "type":  "CurrentTarget"
-                            },
                             "auraId":  {
                               "spellId":  14325
+                            },
+                            "sourceUnit":  {
+                              "type":  "CurrentTarget"
                             }
                           }
                         },
+                        "op":  "OpLt",
                         "rhs":  {
                           "const":  {
                             "val":  "3s"
                           }
                         }
                       }
-                    },
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  14325
-                      }
                     }
-                  }
+                  },
+                  "notes":  "Hunter's Mark at the pull and again before it drops (every hunter keeps up its own; the raid's is off)."
                 },
                 {
-                  "notes":  "Summon Hawk while fewer than 2 hawks are out, with the talent.",
                   "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  1293527
+                      }
+                    },
                     "condition":  {
                       "and":  {
                         "vals":  [
@@ -487,27 +491,27 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  1293527
-                      }
                     }
-                  }
+                  },
+                  "notes":  "Summon Hawk while fewer than 2 hawks are out, with the talent."
                 },
                 {
-                  "notes":  "Arcane Shot on its cooldown.",
                   "action":  {
                     "castSpell":  {
                       "spellId":  {
                         "spellId":  14287
                       }
                     }
-                  }
+                  },
+                  "notes":  "Arcane Shot on its cooldown."
                 },
                 {
-                  "notes":  "Aimed Shot on the cooldown it shares with Multi-Shot.",
                   "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  20904
+                      }
+                    },
                     "condition":  {
                       "and":  {
                         "vals":  [
@@ -521,15 +525,14 @@
                                         "vals":  [
                                           {
                                             "cmp":  {
-                                              "op":  "OpGe",
                                               "lhs":  {
                                                 "math":  {
-                                                  "op":  "OpAdd",
                                                   "lhs":  {
                                                     "autoTimeToNext":  {
                                                       "autoType":  "Ranged"
                                                     }
                                                   },
+                                                  "op":  "OpAdd",
                                                   "rhs":  {
                                                     "const":  {
                                                       "val":  "1.2s"
@@ -537,15 +540,13 @@
                                                   }
                                                 }
                                               },
+                                              "op":  "OpGe",
                                               "rhs":  {
                                                 "math":  {
-                                                  "op":  "OpAdd",
                                                   "lhs":  {
                                                     "math":  {
-                                                      "op":  "OpAdd",
                                                       "lhs":  {
                                                         "math":  {
-                                                          "op":  "OpAdd",
                                                           "lhs":  {
                                                             "max":  {
                                                               "vals":  [
@@ -566,6 +567,7 @@
                                                               ]
                                                             }
                                                           },
+                                                          "op":  "OpAdd",
                                                           "rhs":  {
                                                             "const":  {
                                                               "val":  "0.2s"
@@ -573,6 +575,7 @@
                                                           }
                                                         }
                                                       },
+                                                      "op":  "OpAdd",
                                                       "rhs":  {
                                                         "moveTime":  {
                                                           "rangeFromTarget":  {
@@ -584,6 +587,7 @@
                                                       }
                                                     }
                                                   },
+                                                  "op":  "OpAdd",
                                                   "rhs":  {
                                                     "const":  {
                                                       "val":  "0.7s"
@@ -595,7 +599,6 @@
                                           },
                                           {
                                             "cmp":  {
-                                              "op":  "OpGe",
                                               "lhs":  {
                                                 "spellTimeToReady":  {
                                                   "spellId":  {
@@ -603,15 +606,13 @@
                                                   }
                                                 }
                                               },
+                                              "op":  "OpGe",
                                               "rhs":  {
                                                 "math":  {
-                                                  "op":  "OpSub",
                                                   "lhs":  {
                                                     "math":  {
-                                                      "op":  "OpAdd",
                                                       "lhs":  {
                                                         "math":  {
-                                                          "op":  "OpAdd",
                                                           "lhs":  {
                                                             "max":  {
                                                               "vals":  [
@@ -632,6 +633,7 @@
                                                               ]
                                                             }
                                                           },
+                                                          "op":  "OpAdd",
                                                           "rhs":  {
                                                             "const":  {
                                                               "val":  "0.2s"
@@ -639,6 +641,7 @@
                                                           }
                                                         }
                                                       },
+                                                      "op":  "OpAdd",
                                                       "rhs":  {
                                                         "moveTime":  {
                                                           "rangeFromTarget":  {
@@ -650,9 +653,10 @@
                                                       }
                                                     }
                                                   },
+                                                  "op":  "OpSub",
                                                   "rhs":  {
                                                     "const":  {
-                                                      "val":  "0.75s"
+                                                      "val":  "0s"
                                                     }
                                                   }
                                                 }
@@ -661,7 +665,6 @@
                                           },
                                           {
                                             "cmp":  {
-                                              "op":  "OpGe",
                                               "lhs":  {
                                                 "spellTimeToReady":  {
                                                   "spellId":  {
@@ -669,15 +672,13 @@
                                                   }
                                                 }
                                               },
+                                              "op":  "OpGe",
                                               "rhs":  {
                                                 "math":  {
-                                                  "op":  "OpSub",
                                                   "lhs":  {
                                                     "math":  {
-                                                      "op":  "OpAdd",
                                                       "lhs":  {
                                                         "math":  {
-                                                          "op":  "OpAdd",
                                                           "lhs":  {
                                                             "max":  {
                                                               "vals":  [
@@ -698,6 +699,7 @@
                                                               ]
                                                             }
                                                           },
+                                                          "op":  "OpAdd",
                                                           "rhs":  {
                                                             "const":  {
                                                               "val":  "0.2s"
@@ -705,6 +707,7 @@
                                                           }
                                                         }
                                                       },
+                                                      "op":  "OpAdd",
                                                       "rhs":  {
                                                         "moveTime":  {
                                                           "rangeFromTarget":  {
@@ -716,9 +719,10 @@
                                                       }
                                                     }
                                                   },
+                                                  "op":  "OpSub",
                                                   "rhs":  {
                                                     "const":  {
-                                                      "val":  "0.75s"
+                                                      "val":  "0s"
                                                     }
                                                   }
                                                 }
@@ -732,10 +736,8 @@
                                 },
                                 {
                                   "cmp":  {
-                                    "op":  "OpLe",
                                     "lhs":  {
                                       "math":  {
-                                        "op":  "OpAdd",
                                         "lhs":  {
                                           "spellCastTime":  {
                                             "spellId":  {
@@ -743,6 +745,7 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpAdd",
                                         "rhs":  {
                                           "moveTime":  {
                                             "rangeFromTarget":  {
@@ -754,6 +757,7 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpLe",
                                     "rhs":  {
                                       "autoTimeToNext":  {
                                         "autoType":  "MainHand"
@@ -766,27 +770,27 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  20904
-                      }
                     }
-                  }
+                  },
+                  "notes":  "Aimed Shot on the cooldown it shares with Multi-Shot."
                 },
                 {
-                  "notes":  "Multi-Shot when Aimed Shot is not taken.",
                   "action":  {
                     "castSpell":  {
                       "spellId":  {
                         "spellId":  2643
                       }
                     }
-                  }
+                  },
+                  "notes":  "Multi-Shot when Aimed Shot is not taken."
                 },
                 {
-                  "notes":  "Sniper Shot on cooldown, with the talent, while the mana lasts the fight.",
                   "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  1310786
+                      }
+                    },
                     "condition":  {
                       "and":  {
                         "vals":  [
@@ -800,15 +804,14 @@
                                         "vals":  [
                                           {
                                             "cmp":  {
-                                              "op":  "OpGe",
                                               "lhs":  {
                                                 "math":  {
-                                                  "op":  "OpAdd",
                                                   "lhs":  {
                                                     "autoTimeToNext":  {
                                                       "autoType":  "Ranged"
                                                     }
                                                   },
+                                                  "op":  "OpAdd",
                                                   "rhs":  {
                                                     "const":  {
                                                       "val":  "1.2s"
@@ -816,15 +819,13 @@
                                                   }
                                                 }
                                               },
+                                              "op":  "OpGe",
                                               "rhs":  {
                                                 "math":  {
-                                                  "op":  "OpAdd",
                                                   "lhs":  {
                                                     "math":  {
-                                                      "op":  "OpAdd",
                                                       "lhs":  {
                                                         "math":  {
-                                                          "op":  "OpAdd",
                                                           "lhs":  {
                                                             "max":  {
                                                               "vals":  [
@@ -845,6 +846,7 @@
                                                               ]
                                                             }
                                                           },
+                                                          "op":  "OpAdd",
                                                           "rhs":  {
                                                             "const":  {
                                                               "val":  "0.2s"
@@ -852,6 +854,7 @@
                                                           }
                                                         }
                                                       },
+                                                      "op":  "OpAdd",
                                                       "rhs":  {
                                                         "moveTime":  {
                                                           "rangeFromTarget":  {
@@ -863,6 +866,7 @@
                                                       }
                                                     }
                                                   },
+                                                  "op":  "OpAdd",
                                                   "rhs":  {
                                                     "const":  {
                                                       "val":  "0.7s"
@@ -874,7 +878,6 @@
                                           },
                                           {
                                             "cmp":  {
-                                              "op":  "OpGe",
                                               "lhs":  {
                                                 "spellTimeToReady":  {
                                                   "spellId":  {
@@ -882,15 +885,13 @@
                                                   }
                                                 }
                                               },
+                                              "op":  "OpGe",
                                               "rhs":  {
                                                 "math":  {
-                                                  "op":  "OpSub",
                                                   "lhs":  {
                                                     "math":  {
-                                                      "op":  "OpAdd",
                                                       "lhs":  {
                                                         "math":  {
-                                                          "op":  "OpAdd",
                                                           "lhs":  {
                                                             "max":  {
                                                               "vals":  [
@@ -911,6 +912,7 @@
                                                               ]
                                                             }
                                                           },
+                                                          "op":  "OpAdd",
                                                           "rhs":  {
                                                             "const":  {
                                                               "val":  "0.2s"
@@ -918,6 +920,7 @@
                                                           }
                                                         }
                                                       },
+                                                      "op":  "OpAdd",
                                                       "rhs":  {
                                                         "moveTime":  {
                                                           "rangeFromTarget":  {
@@ -929,9 +932,10 @@
                                                       }
                                                     }
                                                   },
+                                                  "op":  "OpSub",
                                                   "rhs":  {
                                                     "const":  {
-                                                      "val":  "0.75s"
+                                                      "val":  "0s"
                                                     }
                                                   }
                                                 }
@@ -940,7 +944,6 @@
                                           },
                                           {
                                             "cmp":  {
-                                              "op":  "OpGe",
                                               "lhs":  {
                                                 "spellTimeToReady":  {
                                                   "spellId":  {
@@ -948,15 +951,13 @@
                                                   }
                                                 }
                                               },
+                                              "op":  "OpGe",
                                               "rhs":  {
                                                 "math":  {
-                                                  "op":  "OpSub",
                                                   "lhs":  {
                                                     "math":  {
-                                                      "op":  "OpAdd",
                                                       "lhs":  {
                                                         "math":  {
-                                                          "op":  "OpAdd",
                                                           "lhs":  {
                                                             "max":  {
                                                               "vals":  [
@@ -977,6 +978,7 @@
                                                               ]
                                                             }
                                                           },
+                                                          "op":  "OpAdd",
                                                           "rhs":  {
                                                             "const":  {
                                                               "val":  "0.2s"
@@ -984,6 +986,7 @@
                                                           }
                                                         }
                                                       },
+                                                      "op":  "OpAdd",
                                                       "rhs":  {
                                                         "moveTime":  {
                                                           "rangeFromTarget":  {
@@ -995,9 +998,10 @@
                                                       }
                                                     }
                                                   },
+                                                  "op":  "OpSub",
                                                   "rhs":  {
                                                     "const":  {
-                                                      "val":  "0.75s"
+                                                      "val":  "0s"
                                                     }
                                                   }
                                                 }
@@ -1011,10 +1015,8 @@
                                 },
                                 {
                                   "cmp":  {
-                                    "op":  "OpLe",
                                     "lhs":  {
                                       "math":  {
-                                        "op":  "OpAdd",
                                         "lhs":  {
                                           "spellCastTime":  {
                                             "spellId":  {
@@ -1022,6 +1024,7 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpAdd",
                                         "rhs":  {
                                           "moveTime":  {
                                             "rangeFromTarget":  {
@@ -1033,6 +1036,7 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpLe",
                                     "rhs":  {
                                       "autoTimeToNext":  {
                                         "autoType":  "MainHand"
@@ -1045,17 +1049,17 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  1310786
-                      }
                     }
-                  }
+                  },
+                  "notes":  "Sniper Shot on cooldown, with the talent, while the mana lasts the fight."
                 },
                 {
-                  "notes":  "Serpent Sting when it is down.",
                   "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  13555
+                      }
+                    },
                     "condition":  {
                       "and":  {
                         "vals":  [
@@ -1072,16 +1076,11 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  13555
-                      }
                     }
-                  }
+                  },
+                  "notes":  "Serpent Sting when it is down."
                 },
                 {
-                  "notes":  "Weave: a reaction after the Auto Shot.",
                   "action":  {
                     "condition":  {
                       "and":  {
@@ -1091,12 +1090,12 @@
                               "vals":  [
                                 {
                                   "cmp":  {
-                                    "op":  "OpLe",
                                     "lhs":  {
                                       "autoTimeToNext":  {
                                         "autoType":  "MainHand"
                                       }
                                     },
+                                    "op":  "OpLe",
                                     "rhs":  {
                                       "moveTime":  {
                                         "rangeFromTarget":  {
@@ -1110,7 +1109,6 @@
                                 },
                                 {
                                   "cmp":  {
-                                    "op":  "OpLe",
                                     "lhs":  {
                                       "spellTimeToReady":  {
                                         "spellId":  {
@@ -1118,6 +1116,7 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpLe",
                                     "rhs":  {
                                       "moveTime":  {
                                         "rangeFromTarget":  {
@@ -1137,15 +1136,14 @@
                               "vals":  [
                                 {
                                   "cmp":  {
-                                    "op":  "OpGe",
                                     "lhs":  {
                                       "math":  {
-                                        "op":  "OpAdd",
                                         "lhs":  {
                                           "autoTimeToNext":  {
                                             "autoType":  "Ranged"
                                           }
                                         },
+                                        "op":  "OpAdd",
                                         "rhs":  {
                                           "const":  {
                                             "val":  "1.2s"
@@ -1153,15 +1151,13 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpGe",
                                     "rhs":  {
                                       "math":  {
-                                        "op":  "OpAdd",
                                         "lhs":  {
                                           "math":  {
-                                            "op":  "OpAdd",
                                             "lhs":  {
                                               "math":  {
-                                                "op":  "OpAdd",
                                                 "lhs":  {
                                                   "max":  {
                                                     "vals":  [
@@ -1182,6 +1178,7 @@
                                                     ]
                                                   }
                                                 },
+                                                "op":  "OpAdd",
                                                 "rhs":  {
                                                   "const":  {
                                                     "val":  "0.2s"
@@ -1189,6 +1186,7 @@
                                                 }
                                               }
                                             },
+                                            "op":  "OpAdd",
                                             "rhs":  {
                                               "moveTime":  {
                                                 "rangeFromTarget":  {
@@ -1200,6 +1198,7 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpAdd",
                                         "rhs":  {
                                           "const":  {
                                             "val":  "0.7s"
@@ -1211,7 +1210,6 @@
                                 },
                                 {
                                   "cmp":  {
-                                    "op":  "OpGe",
                                     "lhs":  {
                                       "spellTimeToReady":  {
                                         "spellId":  {
@@ -1219,15 +1217,13 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpGe",
                                     "rhs":  {
                                       "math":  {
-                                        "op":  "OpSub",
                                         "lhs":  {
                                           "math":  {
-                                            "op":  "OpAdd",
                                             "lhs":  {
                                               "math":  {
-                                                "op":  "OpAdd",
                                                 "lhs":  {
                                                   "max":  {
                                                     "vals":  [
@@ -1248,6 +1244,7 @@
                                                     ]
                                                   }
                                                 },
+                                                "op":  "OpAdd",
                                                 "rhs":  {
                                                   "const":  {
                                                     "val":  "0.2s"
@@ -1255,6 +1252,7 @@
                                                 }
                                               }
                                             },
+                                            "op":  "OpAdd",
                                             "rhs":  {
                                               "moveTime":  {
                                                 "rangeFromTarget":  {
@@ -1266,9 +1264,10 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpSub",
                                         "rhs":  {
                                           "const":  {
-                                            "val":  "0.75s"
+                                            "val":  "0s"
                                           }
                                         }
                                       }
@@ -1277,7 +1276,6 @@
                                 },
                                 {
                                   "cmp":  {
-                                    "op":  "OpGe",
                                     "lhs":  {
                                       "spellTimeToReady":  {
                                         "spellId":  {
@@ -1285,15 +1283,13 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpGe",
                                     "rhs":  {
                                       "math":  {
-                                        "op":  "OpSub",
                                         "lhs":  {
                                           "math":  {
-                                            "op":  "OpAdd",
                                             "lhs":  {
                                               "math":  {
-                                                "op":  "OpAdd",
                                                 "lhs":  {
                                                   "max":  {
                                                     "vals":  [
@@ -1314,6 +1310,7 @@
                                                     ]
                                                   }
                                                 },
+                                                "op":  "OpAdd",
                                                 "rhs":  {
                                                   "const":  {
                                                     "val":  "0.2s"
@@ -1321,6 +1318,7 @@
                                                 }
                                               }
                                             },
+                                            "op":  "OpAdd",
                                             "rhs":  {
                                               "moveTime":  {
                                                 "rangeFromTarget":  {
@@ -1332,9 +1330,10 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpSub",
                                         "rhs":  {
                                           "const":  {
-                                            "val":  "0.75s"
+                                            "val":  "0s"
                                           }
                                         }
                                       }
@@ -1346,15 +1345,14 @@
                           },
                           {
                             "cmp":  {
-                              "op":  "OpLt",
                               "lhs":  {
                                 "math":  {
-                                  "op":  "OpSub",
                                   "lhs":  {
                                     "autoSwingTime":  {
                                       "autoType":  "Ranged"
                                     }
                                   },
+                                  "op":  "OpSub",
                                   "rhs":  {
                                     "autoTimeToNext":  {
                                       "autoType":  "Ranged"
@@ -1362,6 +1360,7 @@
                                   }
                                 }
                               },
+                              "op":  "OpLt",
                               "rhs":  {
                                 "const":  {
                                   "val":  "0.2s"
@@ -1375,20 +1374,20 @@
                     "wait":  {
                       "duration":  {
                         "math":  {
-                          "op":  "OpSub",
                           "lhs":  {
                             "const":  {
                               "val":  "0.2s"
                             }
                           },
+                          "op":  "OpSub",
                           "rhs":  {
                             "math":  {
-                              "op":  "OpSub",
                               "lhs":  {
                                 "autoSwingTime":  {
                                   "autoType":  "Ranged"
                                 }
                               },
+                              "op":  "OpSub",
                               "rhs":  {
                                 "autoTimeToNext":  {
                                   "autoType":  "Ranged"
@@ -1399,10 +1398,10 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes":  "Weave: a reaction after the Auto Shot."
                 },
                 {
-                  "notes":  "Weave: walk in for the swing.",
                   "action":  {
                     "condition":  {
                       "and":  {
@@ -1412,12 +1411,12 @@
                               "vals":  [
                                 {
                                   "cmp":  {
-                                    "op":  "OpLe",
                                     "lhs":  {
                                       "autoTimeToNext":  {
                                         "autoType":  "MainHand"
                                       }
                                     },
+                                    "op":  "OpLe",
                                     "rhs":  {
                                       "moveTime":  {
                                         "rangeFromTarget":  {
@@ -1431,7 +1430,6 @@
                                 },
                                 {
                                   "cmp":  {
-                                    "op":  "OpLe",
                                     "lhs":  {
                                       "spellTimeToReady":  {
                                         "spellId":  {
@@ -1439,6 +1437,7 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpLe",
                                     "rhs":  {
                                       "moveTime":  {
                                         "rangeFromTarget":  {
@@ -1458,15 +1457,14 @@
                               "vals":  [
                                 {
                                   "cmp":  {
-                                    "op":  "OpGe",
                                     "lhs":  {
                                       "math":  {
-                                        "op":  "OpAdd",
                                         "lhs":  {
                                           "autoTimeToNext":  {
                                             "autoType":  "Ranged"
                                           }
                                         },
+                                        "op":  "OpAdd",
                                         "rhs":  {
                                           "const":  {
                                             "val":  "1.2s"
@@ -1474,15 +1472,13 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpGe",
                                     "rhs":  {
                                       "math":  {
-                                        "op":  "OpAdd",
                                         "lhs":  {
                                           "math":  {
-                                            "op":  "OpAdd",
                                             "lhs":  {
                                               "math":  {
-                                                "op":  "OpAdd",
                                                 "lhs":  {
                                                   "max":  {
                                                     "vals":  [
@@ -1503,6 +1499,7 @@
                                                     ]
                                                   }
                                                 },
+                                                "op":  "OpAdd",
                                                 "rhs":  {
                                                   "const":  {
                                                     "val":  "0.2s"
@@ -1510,6 +1507,7 @@
                                                 }
                                               }
                                             },
+                                            "op":  "OpAdd",
                                             "rhs":  {
                                               "moveTime":  {
                                                 "rangeFromTarget":  {
@@ -1521,6 +1519,7 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpAdd",
                                         "rhs":  {
                                           "const":  {
                                             "val":  "0.7s"
@@ -1532,7 +1531,6 @@
                                 },
                                 {
                                   "cmp":  {
-                                    "op":  "OpGe",
                                     "lhs":  {
                                       "spellTimeToReady":  {
                                         "spellId":  {
@@ -1540,15 +1538,13 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpGe",
                                     "rhs":  {
                                       "math":  {
-                                        "op":  "OpSub",
                                         "lhs":  {
                                           "math":  {
-                                            "op":  "OpAdd",
                                             "lhs":  {
                                               "math":  {
-                                                "op":  "OpAdd",
                                                 "lhs":  {
                                                   "max":  {
                                                     "vals":  [
@@ -1569,6 +1565,7 @@
                                                     ]
                                                   }
                                                 },
+                                                "op":  "OpAdd",
                                                 "rhs":  {
                                                   "const":  {
                                                     "val":  "0.2s"
@@ -1576,6 +1573,7 @@
                                                 }
                                               }
                                             },
+                                            "op":  "OpAdd",
                                             "rhs":  {
                                               "moveTime":  {
                                                 "rangeFromTarget":  {
@@ -1587,9 +1585,10 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpSub",
                                         "rhs":  {
                                           "const":  {
-                                            "val":  "0.75s"
+                                            "val":  "0s"
                                           }
                                         }
                                       }
@@ -1598,7 +1597,6 @@
                                 },
                                 {
                                   "cmp":  {
-                                    "op":  "OpGe",
                                     "lhs":  {
                                       "spellTimeToReady":  {
                                         "spellId":  {
@@ -1606,15 +1604,13 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpGe",
                                     "rhs":  {
                                       "math":  {
-                                        "op":  "OpSub",
                                         "lhs":  {
                                           "math":  {
-                                            "op":  "OpAdd",
                                             "lhs":  {
                                               "math":  {
-                                                "op":  "OpAdd",
                                                 "lhs":  {
                                                   "max":  {
                                                     "vals":  [
@@ -1635,6 +1631,7 @@
                                                     ]
                                                   }
                                                 },
+                                                "op":  "OpAdd",
                                                 "rhs":  {
                                                   "const":  {
                                                     "val":  "0.2s"
@@ -1642,6 +1639,7 @@
                                                 }
                                               }
                                             },
+                                            "op":  "OpAdd",
                                             "rhs":  {
                                               "moveTime":  {
                                                 "rangeFromTarget":  {
@@ -1653,9 +1651,10 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpSub",
                                         "rhs":  {
                                           "const":  {
-                                            "val":  "0.75s"
+                                            "val":  "0s"
                                           }
                                         }
                                       }
@@ -1675,10 +1674,10 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes":  "Weave: walk in for the swing."
                 },
                 {
-                  "notes":  "Weave: wait for the walk in.",
                   "action":  {
                     "condition":  {
                       "and":  {
@@ -1690,12 +1689,12 @@
                                   "vals":  [
                                     {
                                       "cmp":  {
-                                        "op":  "OpLe",
                                         "lhs":  {
                                           "autoTimeToNext":  {
                                             "autoType":  "MainHand"
                                           }
                                         },
+                                        "op":  "OpLe",
                                         "rhs":  {
                                           "moveTime":  {
                                             "rangeFromTarget":  {
@@ -1709,7 +1708,6 @@
                                     },
                                     {
                                       "cmp":  {
-                                        "op":  "OpLe",
                                         "lhs":  {
                                           "spellTimeToReady":  {
                                             "spellId":  {
@@ -1717,6 +1715,7 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpLe",
                                         "rhs":  {
                                           "moveTime":  {
                                             "rangeFromTarget":  {
@@ -1738,15 +1737,14 @@
                               "vals":  [
                                 {
                                   "cmp":  {
-                                    "op":  "OpGe",
                                     "lhs":  {
                                       "math":  {
-                                        "op":  "OpAdd",
                                         "lhs":  {
                                           "autoTimeToNext":  {
                                             "autoType":  "Ranged"
                                           }
                                         },
+                                        "op":  "OpAdd",
                                         "rhs":  {
                                           "const":  {
                                             "val":  "1.2s"
@@ -1754,15 +1752,13 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpGe",
                                     "rhs":  {
                                       "math":  {
-                                        "op":  "OpAdd",
                                         "lhs":  {
                                           "math":  {
-                                            "op":  "OpAdd",
                                             "lhs":  {
                                               "math":  {
-                                                "op":  "OpAdd",
                                                 "lhs":  {
                                                   "max":  {
                                                     "vals":  [
@@ -1783,6 +1779,7 @@
                                                     ]
                                                   }
                                                 },
+                                                "op":  "OpAdd",
                                                 "rhs":  {
                                                   "const":  {
                                                     "val":  "0.2s"
@@ -1790,6 +1787,7 @@
                                                 }
                                               }
                                             },
+                                            "op":  "OpAdd",
                                             "rhs":  {
                                               "moveTime":  {
                                                 "rangeFromTarget":  {
@@ -1801,6 +1799,7 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpAdd",
                                         "rhs":  {
                                           "const":  {
                                             "val":  "0.7s"
@@ -1812,7 +1811,6 @@
                                 },
                                 {
                                   "cmp":  {
-                                    "op":  "OpGe",
                                     "lhs":  {
                                       "spellTimeToReady":  {
                                         "spellId":  {
@@ -1820,15 +1818,13 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpGe",
                                     "rhs":  {
                                       "math":  {
-                                        "op":  "OpSub",
                                         "lhs":  {
                                           "math":  {
-                                            "op":  "OpAdd",
                                             "lhs":  {
                                               "math":  {
-                                                "op":  "OpAdd",
                                                 "lhs":  {
                                                   "max":  {
                                                     "vals":  [
@@ -1849,6 +1845,7 @@
                                                     ]
                                                   }
                                                 },
+                                                "op":  "OpAdd",
                                                 "rhs":  {
                                                   "const":  {
                                                     "val":  "0.2s"
@@ -1856,6 +1853,7 @@
                                                 }
                                               }
                                             },
+                                            "op":  "OpAdd",
                                             "rhs":  {
                                               "moveTime":  {
                                                 "rangeFromTarget":  {
@@ -1867,9 +1865,10 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpSub",
                                         "rhs":  {
                                           "const":  {
-                                            "val":  "0.75s"
+                                            "val":  "0s"
                                           }
                                         }
                                       }
@@ -1878,7 +1877,6 @@
                                 },
                                 {
                                   "cmp":  {
-                                    "op":  "OpGe",
                                     "lhs":  {
                                       "spellTimeToReady":  {
                                         "spellId":  {
@@ -1886,15 +1884,13 @@
                                         }
                                       }
                                     },
+                                    "op":  "OpGe",
                                     "rhs":  {
                                       "math":  {
-                                        "op":  "OpSub",
                                         "lhs":  {
                                           "math":  {
-                                            "op":  "OpAdd",
                                             "lhs":  {
                                               "math":  {
-                                                "op":  "OpAdd",
                                                 "lhs":  {
                                                   "max":  {
                                                     "vals":  [
@@ -1915,6 +1911,7 @@
                                                     ]
                                                   }
                                                 },
+                                                "op":  "OpAdd",
                                                 "rhs":  {
                                                   "const":  {
                                                     "val":  "0.2s"
@@ -1922,6 +1919,7 @@
                                                 }
                                               }
                                             },
+                                            "op":  "OpAdd",
                                             "rhs":  {
                                               "moveTime":  {
                                                 "rangeFromTarget":  {
@@ -1933,9 +1931,10 @@
                                             }
                                           }
                                         },
+                                        "op":  "OpSub",
                                         "rhs":  {
                                           "const":  {
-                                            "val":  "0.75s"
+                                            "val":  "0s"
                                           }
                                         }
                                       }
@@ -1954,12 +1953,12 @@
                           "vals":  [
                             {
                               "math":  {
-                                "op":  "OpSub",
                                 "lhs":  {
                                   "autoTimeToNext":  {
                                     "autoType":  "MainHand"
                                   }
                                 },
+                                "op":  "OpSub",
                                 "rhs":  {
                                   "moveTime":  {
                                     "rangeFromTarget":  {
@@ -1989,7 +1988,8 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes":  "Weave: wait for the walk in."
                 }
               ]
             },

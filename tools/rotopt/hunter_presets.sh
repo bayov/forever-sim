@@ -1,6 +1,6 @@
 #!/bin/sh
 # Regenerates the hunter rotations in ui/hunter/apls from the hunter_ranged and hunter_sv
-# templates, with the knobs the searches settled on (last on 2026-11-02, at 120 / 180 / 300 sec on
+# templates, with the knobs the searches settled on (last on 2026-11-03, round 70753; before that 2026-11-02, at 120 / 180 / 300 sec on
 # the synthetic Phase 1 sets with the 8% hit cap, the Level 60 talents and Classic's crit per
 # Agility at 60; Beast Mastery last on 2026-10-25).
 # Run from the repo root with a settings file the optimizer should sim against, made with
@@ -8,7 +8,7 @@
 # sanity sim does.
 #
 #   go run --tags=with_db ./tools/rotopt/mksettings -spec hunter_bm -gear level60_phase1_synthetic_ranged \
-#       -apl bm -talents 5021201505021241-00520503005 -race SkyborneWindshaper -duration 180 -out bm.json
+#       -apl bm -talents 5021201505021241-00510504005 -race Orc -duration 180 -out bm.json
 #   tools/rotopt/hunter_presets.sh bm.json
 set -e
 settings=$1
@@ -82,9 +82,24 @@ mm="$mmBase,sniperManaPerSec=10"
 # doesn't (-4 at 120 sec).
 weave="weave=1,weaveRaptor=1,weaveDelay=1.2,weaveShotSlack=0.75"
 mmWeave="$weave,weaveManaPerSec=25"
-gen hunter_ranged bm "$bm,$weave"
-gen hunter_ranged mm "$mm,$mmWeave"
-gen hunter_ranged lw "$mm,$mmWeave"
+# Round 70753 (2026-11-03, after the 2026-11-03 server hotfix: Aimed Shot +350, Arcane Shot 280 and 15%
+# of attack power, Serpent Sting 675 and 5% a tick, Sniper Shot +590, Barrage 15%, Hawk 110, Trueshot
+# Aura 100). Knob searches at 120, 180 and 300 sec combined, 3000 iterations, the report's requests,
+# frozen: the reaction times, markPrepull, leylineMana, hawk, intimidation. Confirmed at 20000
+# iterations on seeds 1 and 1000003 (120 / 180 / 300 sec):
+# - Marksmanship casts Aimed Shot at any mana (aimedMana=0: its +350 is worth its 310 mana now) and
+#   Serpent Sting before Aimed Shot again (serpentLate=0, its 675 and 5% a tick): 1268.9 / 1254.3 /
+#   1217.6, +1.3 / +10.0 / +12.8 (seed 1000003 +0.9 / +9.0 / +11.9).
+# - Lone Wolf casts Aimed Shot at any mana (aimedMana=0) and keeps Serpent Sting after it:
+#   1332.4 / 1313.7 / 1264.7, +1.8 / +10.0 / +9.8 (+2.1 / +10.2 / +10.7).
+# - Beast Mastery walks into melee whenever the swing fits before the next Auto Shot
+#   (weaveShotSlack=0: Arcane Shot and Aimed Shot no longer hold the weave back), on its new talents:
+#   1197.3 / 1195.6 / 1176.3, the knob +1.3 / +1.6 / +2.0 over the talents alone (+0.7 / +1.5 / +2.2).
+mm70753="$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=0,serpentMana=0,aimedMana=0,holdRapid=1,holdElune=1,sniperManaPerSec=10"
+lw70753="$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,aimedMana=0,holdRapid=1,holdElune=1,sniperManaPerSec=10"
+gen hunter_ranged bm "$bm,$weave,weaveShotSlack=0"
+gen hunter_ranged mm "$mm70753,$mmWeave"
+gen hunter_ranged lw "$lw70753,$mmWeave"
 # The Beast Mastery rotation at range, which the hunter Go tests run. The UI dropped the turret
 # rotations on 2026-10-31.
 gen hunter_ranged bm_turret "$bm"

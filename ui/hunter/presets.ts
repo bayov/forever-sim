@@ -118,6 +118,11 @@ export const DefaultGear = GearLevel60Ranged;
 // +6.0 / +2.7 / -0.3 at 120 / 180 / 300 sec, Lone Wolf +7.6 / +2.6 / +0.2 (20000 iterations, seed 1;
 // seed 1000003 +6.5 / +3.0 / +0.1 and +7.5 / +2.9 / -0.2). Beast Mastery keeps Aimed Shot at any
 // mana; the other knobs held.
+// Round 70753 (2026-11-03, the 2026-11-03 server hotfix: Aimed Shot +350, Serpent Sting 675 and 5% a
+// tick, Sniper Shot +590): Marksmanship and Lone Wolf cast Aimed Shot at any mana again, and
+// Marksmanship puts Serpent Sting back above it (+1.3 / +10.0 / +12.8 and Lone Wolf +1.8 / +10.0 /
+// +9.8 at 120 / 180 / 300 sec, 20000 iterations, seed 1). Beast Mastery weaves whenever the swing
+// fits before the next Auto Shot, no longer holding it for the shot cooldowns (+1.3 / +1.6 / +2.0).
 // The ranged rotations melee weave from 12 yd: between Auto Shots the hunter walks in for a main hand
 // swing with Raptor Strike queued, when that holds the next Auto Shot back 1.2 sec or less and the
 // shot cooldowns stay down meanwhile (Beast Mastery +9.5 over standing at range). Marksmanship and
@@ -182,12 +187,17 @@ export const DefaultAPL = APLBeastMastery;
 //
 // Beast Mastery 31/20: Bestial Wrath, Frenzy 4, Ferocity, Unleashed Fury, Focused Fire and
 // Deadly Aspects, and Careful Aim, Lethal Attacks, Improved Arcane Shot 3, Improved Stings 2 and
-// Mortal Shots 5 in Marksmanship. The 2026-10-23 search (8% hit cap gear, 180 sec) moved the
+// Mortal Shots 5 in Marksmanship (Improved Arcane Shot 4 and Improved Stings 1 since round 70753). The 2026-10-23 search (8% hit cap gear, 180 sec) moved the
 // Trueshot Aura point to Mortal Shots (+12.2): the raid's Trueshot Aura already covers the hunter.
 // The searches drop Summon Hawk: for a point of Spirit Bond it is 11.8 behind at 180 sec.
 // The 2026-10-30 hotfix moved Pathfinding to row 3, so the filler point that opens row 3 is
 // Improved Aspect of the Monkey now, not Pathfinding (neither is simulated).
-export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5021201505021241-00520503005' }), {
+// Round 70753 (2026-11-03, after the 2026-11-03 server hotfix's Arcane Shot 280 and 15% of attack
+// power): the search moves an Improved Stings point to Improved Arcane Shot 4, +2.2 at 180 sec
+// (seed 1000003 +1.9, 20000 iterations), +0.8 at 120 and -2.3 at 300. Marksmanship, Lone Wolf and
+// Survival hold, and a Marksmanship / Survival hybrid for Lightning Reflexes' 15% (0/21/30) ends
+// 81 behind deep Marksmanship.
+export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5021201505021241-00510504005' }), {
 	tooltip: 'Level 60 Beast Mastery 31/20 from the talent search.',
 	group: 'Synthetic',
 });

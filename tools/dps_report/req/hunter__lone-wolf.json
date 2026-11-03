@@ -590,19 +590,6 @@
                       "and":  {
                         "vals":  [
                           {
-                            "cmp":  {
-                              "lhs":  {
-                                "currentManaPercent":  {}
-                              },
-                              "op":  "OpGe",
-                              "rhs":  {
-                                "const":  {
-                                  "val":  "0.4"
-                                }
-                              }
-                            }
-                          },
-                          {
                             "or":  {
                               "vals":  [
                                 {
