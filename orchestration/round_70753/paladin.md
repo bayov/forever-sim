@@ -1,7 +1,84 @@
 # Paladin: round 70753 (the November 2 development notes)
 
-Worker: Paladin (Retribution DPS specs). Brief: `briefs/paladin.md`. Status: **Phase A done** (with the notes-only values), waiting for "sources landed"
-(A1's talent remap and the 70753 trees, A2's shared changes) for Phase B.
+Worker: Paladin (Retribution DPS specs). Brief: `briefs/paladin.md`. Status: **landed** (Phase A and B).
+
+## Final summary
+
+**What changed** (each gated under Forever, with a test):
+
+- **Vengeance stacks up to 5 times** (was 3). Notes-only value (standards 37); client 70753 still has 3 (20050).
+  About +45 at 180 sec on every build (+4.4%).
+- **Two-Handed Weapon Specialization raises all Holy damage**, not just Physical: Consecration, Exorcism, Hammer of
+  Wrath, Holy Wrath and Holy Shock join the seals, judgements and Holy Strike (counted once). Notes-only value; client
+  20111 is still Physical. +8 at 180 sec on twist and sub-Holy, +15 on Ret Shock.
+- **A2's race base stats** (shared): Undead -2.1.
+- **Ret sub-Holy vs Undead rotation**: Consecration first and Hammer of Wrath at the top of the execute phase
+  (`consecrationFirst` 0 -> 1, `hammerOfWrathFirst` 3 -> 1): +8.4 / +7.0 / +4.0 at 120 / 180 / 300 sec (seed 1;
+  +8.5 / +7.2 / +5.0 on seed 1000003).
+- Everything else in the paladin notes was already in the sim from the 10-30 hotfix (Phase A ledger below). The paladin
+  trees are unchanged in 70753, so no talent string moved.
+
+**Per build** (Undead, 20,000 iterations, seed 1, 120 / 180 / 300 sec; before = the 2026-11-01 numbers):
+
+| Build | Talents | Before | After |
+|---|---|---|---|
+| Ret twist (`paladin__level_60`) | `050050002-503-05233101201301351` (kept) | 1043.4 / 1039.3 / 1028.9 | 1094.3 / 1090.9 / 1079.9 |
+| Ret sub-Holy (class default) | `0512500022-3-05233101201301351` (kept) | 1042.3 / 1038.1 / 1031.7 | 1092.3 / 1089.8 / 1084.3 |
+| Ret Shock | `05125210220021--0523310120130133` (kept) | 983.0 / 974.9 / 968.5 | 1037.5 / 1030.2 / 1025.5 |
+| Ret sub-Holy vs Undead | `0502520022-2-05233101201301351` (kept) | 1153.9 / 1151.4 / 1145.1 | 1222.9 / 1221.4 / 1214.0 |
+| Ret twist, Crusader duty | twist | – / 1033.3 / – | 1078.0 / 1082.9 / 1075.9 |
+| Ret twist, Wisdom duty | twist | – / 1024.6 / – | 1069.5 / 1075.3 / 1069.1 |
+| Ret sub-Holy, Crusader duty | sub-Holy | – / 1032.1 / – | 1076.9 / 1082.8 / 1083.3 |
+| Ret sub-Holy, Wisdom duty | sub-Holy | – / 1023.7 / – | 1069.2 / 1075.0 / 1075.6 |
+| Ret Shock, Crusader duty | Shock | – / 974.4 / – | 1024.5 / 1029.2 / 1027.9 |
+| Ret Shock, Wisdom duty | Shock | – / 965.2 / – | 1015.5 / 1020.0 / 1018.7 |
+
+The default stays Ret sub-Holy: it ties twist at 180 sec (1089.8 against 1090.9; seed 1000003 1089.3 against 1090.1).
+
+**Races** (each race's own rotation and gear, standards 29; 180 sec, seed 1 / seed 1000003):
+
+| Build | Undead | Human | Dwarf |
+|---|---|---|---|
+| Ret twist | 1090.9 / 1090.1 | 1087.0 / 1086.6 | 1082.3 / 1081.9 |
+| Ret sub-Holy | 1089.8 / 1089.3 | 1087.0 / 1087.0 | 1082.4 / 1081.7 |
+| Ret Shock | 1030.2 / 1031.3 | 1026.5 / 1026.2 | 1022.4 / 1022.2 |
+| Ret sub-Holy vs Undead | 1221.4 / 1221.5 | 1218.7 / 1218.5 | 1209.4 / 1209.3 |
+
+Best overall and best Horde: **Undead** on every build (2.3 to 5.1 ahead of Human on both seed sets, so no re-pick).
+Best Alliance: **Human** (Dwarf 4.0 to 9.3 behind it). Paladins can be Human, Dwarf or Undead only.
+The 120 and 300 sec rows are in the scratch results and give the same order.
+
+**Search.** Talent searches at 180 sec (3,000 iterations, refined at 10,000; Pursuit of Justice pinned, Holy Shock too
+on Ret Shock) from each build's own string: no move on any build. Knob searches over 120, 180 and 300 sec together on all
+eight rotations: only vs Undead moved (above); the rest kept every knob.
+
+**Audit** (the DPS passes applied to the paladin builds):
+
+- results: every meta's published and verify number is this round's 20,000 iteration seed 1 run on this request; the
+  mksettings drift (`tools/audit/results/regen.py`) equals the reference (only the expected duty debuffs and
+  `primarySeal` Command); no unread fields added.
+- rotations (standards 31): every rotation was knob-searched over 120 / 180 / 300 sec with the requests' 180 ± 20 sec
+  variation; the one change holds at all three lengths on two seed sets. The vs Undead meta's rotation lines now follow
+  its new priority. Vengeance is up 179 of 180 sec on twist and Shock (a 1,000 iteration look), and every rotation's
+  spells cast.
+- gear: no gear change this round (nothing to re-audit).
+- consumables: the potion slot re-checked under the new Holy multiplier: the Dragonfire Potion still beats the Major Mana
+  Potion on twist (+4.8 / +5.3 / +2.5) and Ret Shock (+4.8 / +5.2 / +4.7). Nothing else moved.
+- mechanics and client_update: Phase A below; both notes-only values have `TestNotesOnlyValues70753`, and
+  `TestJudgementOfRighteousnessMelee` reads the specialization through the Holy school. wago.tools' hotfix log was
+  re-checked before the finals: no row for 20050 or 20111 (the 70753 rows logged since are region 95 copies of push
+  113139 and push 113557's creature spells).
+
+**Open questions and shared changes:**
+
+- No shared code changed (only `sim/paladin/` and the paladin files). `sim/testdata/report_hashes.txt` is rewritten for the
+  10 paladin lines.
+- `pal_2h_spec_holy` in the report's assumptions (`tools/dps_report/assumptions_def.py`, `orchestration/spec_assumptions.md`)
+  describes the old reach (seals, judgements and Holy Strike only); under the notes' value it now covers all Holy damage.
+  The orchestrator owns that row; I'd reword it in phase 3.
+- Salvation in the shared raid: the orchestrator's phase 3 change (question 2 below).
+- If a hotfix or client build later sets Vengeance or Two-Handed Weapon Specialization to the client's values, revert the
+  two gated lines in `sim/paladin/talents.go` and re-run the vs Undead knob search (its change came with the Holy reach).
 
 ## Phase A: the notes against the sim
 
