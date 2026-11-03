@@ -3,7 +3,7 @@
 The Druid worker's ledger and report for the November 2 development notes (client 1.60.1.70753).
 Branch `round-70753-druid`.
 
-**Status: landed (Phase A and Phase B). The master commit is named in the orchestrator message.**
+**Status: landed (Phase A and Phase B) at master e697d9045 (2026-11-03).**
 
 ## Final summary (2026-11-03)
 
