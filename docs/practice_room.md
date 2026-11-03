@@ -1183,6 +1183,10 @@ rendering, not the sim.
     a decimal in a plain array (and in three's vectors) as its own object, so these made about 30KB of garbage per
     character a frame. Some is left (three's vectors, the track cache lookup, about 1.5MB a frame in the raid).
   - In headless Chrome: draw calls 1006 to 657, animating the raid 2.0 to 0.55ms, heap 1.9 to 1.3GB, load 42 to 29s.
+  - The two stalls were Alt+Tab.
+- Second raid report (your PC, 37s, after the fixes): 68 FPS on average (was 49), 12.6ms frames at the median, 12.2ms
+  of script a frame (drawing 7.8ms for 943 draw calls, animating 4.0ms), 1.4GB heap, and no stall. One frame over
+  50ms, at the start.
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
