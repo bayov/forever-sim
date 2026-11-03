@@ -168,7 +168,8 @@ Modelled from the notes, gated under Forever; client 1.60.1.70753 unchanged and 
 hotfix log for 20050 and 20111 before the Phase B finals; if a row lands, it wins).
 
 1. **Vengeance stacks up to 5 times** (was 3). Notes: "Vengeance changed to stacking up to 5 times (Was stacking up to 3
-   times)". Client 20050 SpellAuraOptions CumulativeAura 3. `sim/paladin/talents.go` `applyVengeance` (MaxStacks 5).
+   times)". Client 20050 SpellAuraOptions CumulativeAura 3. `sim/paladin/talents.go` `applyVengeance` (MaxStacks 5),
+   Forever only; outside Forever `applyClassicVengeance` gives Classic's 3% a point for 8 sec, no stacks.
 2. **Two-Handed Weapon Specialization raises Holy and Physical damage by 2 / 4 / 6%.** Notes: "changed to increase both
    Holy and Physical damage by 2/4/6% (Was just Physical damage)". Client 20111 effect 0 aura 79 misc 1 (Physical).
    Under Forever the Holy school takes the multiplier (Consecration, Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock

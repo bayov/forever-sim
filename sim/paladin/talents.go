@@ -320,6 +320,10 @@ func (paladin *Paladin) applyVengeance() {
 	if paladin.Talents.Vengeance == 0 {
 		return
 	}
+	if !paladin.Env.IsForever() {
+		paladin.applyClassicVengeance()
+		return
+	}
 
 	perStack := 0.01 * float64(paladin.Talents.Vengeance)
 	multiplier := func(stacks int32) float64 {
@@ -347,6 +351,39 @@ func (paladin *Paladin) applyVengeance() {
 			if result.DidCrit() {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
+			}
+		},
+	})
+}
+
+// Classic's Vengeance: 3% Physical and Holy damage a point for 8 sec after a crit, no stacks. The
+// Forever model above (and its notes-only 5 stacks) is gated under Forever (standards 37).
+func (paladin *Paladin) applyClassicVengeance() {
+	vengeanceMultiplier := 1 + 0.03*float64(paladin.Talents.Vengeance)
+
+	procAura := paladin.RegisterAura(core.Aura{
+		Label:    "Vengeance Proc",
+		ActionID: core.ActionID{SpellID: 20059},
+		Duration: time.Second * 8,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= vengeanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= vengeanceMultiplier
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] /= vengeanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= vengeanceMultiplier
+		},
+	})
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Vengeance",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() {
+				procAura.Activate(sim)
 			}
 		},
 	})

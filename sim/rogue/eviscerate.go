@@ -40,10 +40,11 @@ func (rogue *Rogue) registerEviscerate() {
 		Flags:        rogue.finisherFlags() | SpellFlagColdBlooded,
 		MetricSplits: 6,
 
-		// Flawless Execution takes 15 off the cost (November 2 development notes, was 10; client
-		// 1310711 in 1.60.1.70753 still says 10).
+		// Flawless Execution takes 15 off the cost under Forever (November 2 development notes, was
+		// 10; client 1310711 in 1.60.1.70753 still says 10). Classic has no Flawless Execution;
+		// outside Forever it keeps the client's 10.
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   35 - core.TernaryFloat64(rogue.Talents.FlawlessExecution, 15, 0),
+			Cost:   35 - core.TernaryFloat64(rogue.Talents.FlawlessExecution, core.TernaryFloat64(rogue.Env.IsForever(), 15, 10), 0),
 			Refund: rogue.finisherMissRefund(),
 		},
 		Cast: core.CastConfig{

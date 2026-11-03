@@ -119,8 +119,11 @@ The next hotfix check and the launch logs compare against this list first.
 | Flurry | 6 / 12 / 18 / 24 / 30% | 5 to 25% |
 | Totemic Call | 30 s, totems to the shaman's spot | 437009 Totemic Projection, 1 min |
 
-Gating: the shaman's spell tables and these talents were already Forever-only values (the fork keeps no Classic copy of
-them); Stormstrike's cooldown and 150% sit inside its `IsForever()` branch.
+Gating (finding client_update-20261103-2): every value above is under `Env.IsForever()`. Outside Forever, Lightning Bolt
+ranks 4–10 take Era's (Classic's) full damage, Chain Lightning Classic's damage and mana, Flurry Classic's 10–30%; the
+shocks' Era bases are Classic's already. Lightning Overload, Maelstrom Weapon, Mental Dexterity and Totemic Call don't exist
+in Classic, so outside Forever they keep the client's (or the sim's pre-notes) value. Stormstrike's cooldown and 150% sit
+inside its `IsForever()` branch.
 
 ## Shared files touched
 

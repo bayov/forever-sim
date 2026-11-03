@@ -151,7 +151,12 @@ the rogue its new tree; it has to be built from the notes (rows and rank counts 
 
 ## Notes-only values (standards 37)
 
-All gated under Forever, citing the notes and "client 1.60.1.70753 unchanged". Replace each when a client build or
+All gated under Forever (finding client_update-20261103-2), citing the notes and "client 1.60.1.70753 unchanged".
+Outside Forever: Classic's Lethality 6%, Relentless Strikes 20% a combo point, Seal Fate 20% a point, Dual Wield
+Specialization 10%, Aggression 2/4/6%, Improved Eviscerate 5/10/15%, Improved Sinister Strike on Sinister Strike alone; no
+Shank, no Ghostly Strike opener, no Hemorrhage on Garrote. Mutilate and Flawless Execution aren't in Classic, so they keep
+the client's 75% and 10. Venom, Blood Splatter, Composure, Flash of Steel, Boot Knife and Death Mark are Forever-only
+talents with no Classic value. Replace each when a client build or
 hotfix brings it: Shank (whole spell, ID 1399248 is the sim's), Venom as a Shank passive (30% / 20% / 6 s), Deadly
 Poison 0.009 and Instant Poison 0.01 AP, Mutilate 90%, Flawless Execution 15, Aggression 5/10/15% (no Backstab),
 Ghostly Strike's 7 s opening, Hemorrhage on Garrote. Phase B adds Lethality, Blood Splatter, Relentless Strikes, Seal

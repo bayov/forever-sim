@@ -16,9 +16,16 @@ import (
 // both).
 var AimedShotBonus = [7]float64{0, 40, 70, 115, 185, 260, 350}
 
+// Outside Forever the Classic values below apply (standards 37: notes-only and hotfix-only values are
+// gated under Forever).
+var classicAimedShotBonus = [7]float64{0, 70, 125, 200, 330, 460, 600}
+
 func (hunter *Hunter) getAimedShotConfig(rank int, timer *core.Timer) core.SpellConfig {
 	spellId := [7]int32{0, 19434, 20900, 20901, 20902, 20903, 20904}[rank]
 	baseDamage := AimedShotBonus[rank]
+	if !hunter.Env.IsForever() {
+		baseDamage = classicAimedShotBonus[rank]
+	}
 	manaCost := [7]float64{0, 75, 115, 160, 210, 260, 310}[rank]
 	level := [7]int{0, 20, 28, 36, 44, 52, 60}[rank]
 

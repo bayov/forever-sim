@@ -173,7 +173,7 @@ since 70753 (foreverchanges.pro, 2026-11-03) has no Warlock lines.
 - Wrack: 86 a second at 60 (36 + 2.5 a level above 40) and 0.286 spell damage a tick. Client 70753 unchanged (36, 0.143).
 - Shadow and Flame: 4% a point. Client 70753 unchanged (trait curves 2 to 10).
 - Demons' health: 2 a point of the warlock's Stamina. The client has no value (416189's points are 0); was 7.5 from beta
-  pet sheets.
+  pet sheets, which it stays outside Forever (`pet.go`, gated under `Env.IsForever()`).
 - Amplify Curse on Bane of Agony: +50% of the base. The client's mask leaves Agony out, but Agony's dummy effect carries
   it; the sim already did this.
 

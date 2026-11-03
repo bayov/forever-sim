@@ -474,12 +474,12 @@ diff --git a/sim/shaman/talents.go b/sim/shaman/talents.go
 index 6b7d7a5670..eb020325ab 100644
 --- a/sim/shaman/talents.go
 +++ b/sim/shaman/talents.go
-@@ -532,7 +532,11 @@ func (shaman *Shaman) applyMaelstromWeapon() {
- 
- 	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
- 	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
--	ppmm := shaman.AutoAttacks.NewPPMManager(4*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
-+	mwPPM := 4 * float64(shaman.Talents.MaelstromWeapon)
+@@ -554,7 +554,11 @@ func (shaman *Shaman) applyMaelstromWeapon() {
+ 	// Classic has no Maelstrom Weapon; outside Forever it keeps the sim's 2 PPM a point from before
+ 	// the notes (standards 37).
+ 	ppmPerPoint := core.TernaryFloat64(shaman.Env.IsForever(), 4, 2)
+-	ppmm := shaman.AutoAttacks.NewPPMManager(ppmPerPoint*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
++	mwPPM := ppmPerPoint * float64(shaman.Talents.MaelstromWeapon)
 +	if v, ok := core.AssumeOk("sham_mw_ppm"); ok {
 +		mwPPM = v / 5 * float64(shaman.Talents.MaelstromWeapon) // dashboard assumption: the rate at 5/5
 +	}

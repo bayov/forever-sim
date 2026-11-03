@@ -33,6 +33,11 @@ var ChainLightningSpellCoef = [ChainLightningRanks + 1]float64{0, 0.571, 0.571, 
 var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 248, 304, 360, 495}
 var ChainLightningLevel = [ChainLightningRanks + 1]int{0, 32, 40, 48, 56}
 
+// Outside Forever, Classic's damage at each rank's cap and its mana (standards 37: the notes'
+// values are gated under Forever). The cast is 2.5 sec in both.
+var classicChainLightningBaseDamage = [ChainLightningRanks + 1][]float64{{0}, {200, 227}, {288, 323}, {383, 430}, {505, 564}}
+var classicChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 280, 380, 490, 605}
+
 func (shaman *Shaman) registerChainLightningSpell() {
 	shaman.ChainLightning = make([]*core.Spell, ChainLightningRanks+1)
 	shaman.ChainLightningOverload = make([]*core.Spell, ChainLightningRanks+1)
@@ -58,6 +63,11 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	spellCoeff := shaman.downrankCoefficient(ChainLightningSpellCoef[rank], ChainLightningLevel[rank])
 	manaCost := ChainLightningManaCost[rank]
 	level := ChainLightningLevel[rank]
+	if !shaman.Env.IsForever() {
+		baseDamageLow = classicChainLightningBaseDamage[rank][0]
+		baseDamageHigh = classicChainLightningBaseDamage[rank][1]
+		manaCost = classicChainLightningManaCost[rank]
+	}
 
 	cooldown := time.Second * 6
 	// 2.5 sec since the November 2 notes (2 sec before, Classic's 2.5).

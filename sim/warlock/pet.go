@@ -281,8 +281,15 @@ func (warlock *Warlock) makeStatInheritance(mp5PerOwnerIntellect float64) core.P
 		ownerCritChance := ownerStats[stats.SpellCrit] / core.SpellCritRatingPerCritChance
 		spellDamage := ownerStats[stats.SpellPower] + ownerStats[stats.SpellDamage] + max(ownerStats[stats.FirePower], ownerStats[stats.ShadowPower])
 
+		// The notes' 2 a point is gated under Forever (standards 37); outside Forever the beta sheets'
+		// 7.5 stays (Classic's pets don't scale from the warlock this way at all).
+		healthPerStamina := 2.0
+		if warlock.Env != nil && !warlock.Env.IsForever() {
+			healthPerStamina = 7.5
+		}
+
 		return stats.Stats{
-			stats.Health:      ownerStats[stats.Stamina] * 2,
+			stats.Health:      ownerStats[stats.Stamina] * healthPerStamina,
 			stats.Armor:       ownerStats[stats.Armor] * 0.35,
 			stats.MP5:         ownerStats[stats.Intellect] * mp5PerOwnerIntellect,
 			stats.AttackPower: spellDamage * 0.17,

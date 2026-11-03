@@ -33,8 +33,13 @@ func (shaman *Shaman) ApplyTalents() {
 
 	if shaman.Talents.MentalDexterity > 0 {
 		// 50 / 100 / 150% of Intellect since the November 2 development notes (33 / 67 / 100% in
-		// the beta client, 1.60.1.70753 included).
-		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, []float64{0, .5, 1, 1.5}[shaman.Talents.MentalDexterity])
+		// the beta client, 1.60.1.70753 included). Classic has no Mental Dexterity; outside Forever
+		// it keeps the client's values (standards 37).
+		ratio := []float64{0, .5, 1, 1.5}[shaman.Talents.MentalDexterity]
+		if !shaman.Env.IsForever() {
+			ratio = []float64{0, 1.0 / 3, 2.0 / 3, 1}[shaman.Talents.MentalDexterity]
+		}
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, ratio)
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {
@@ -436,8 +441,12 @@ func (shaman *Shaman) makeFlurryAura(points int32) *core.Aura {
 	}
 
 	// 6 / 12 / 18 / 24 / 30% since the November 2 development notes (5 to 25% in the beta
-	// client, 1.60.1.70753 included).
+	// client, 1.60.1.70753 included). Classic's are 10 / 15 / 20 / 25 / 30% (standards 37:
+	// notes-only values are gated under Forever).
 	attackSpeed := []float64{1.06, 1.12, 1.18, 1.24, 1.30}[points-1]
+	if !shaman.Env.IsForever() {
+		attackSpeed = []float64{1.10, 1.15, 1.20, 1.25, 1.30}[points-1]
+	}
 
 	// The buff lasts 15 sec when we don't use up its 3 charges.
 	//
@@ -542,7 +551,10 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 
 	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
 	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
-	ppmm := shaman.AutoAttacks.NewPPMManager(4*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
+	// Classic has no Maelstrom Weapon; outside Forever it keeps the sim's 2 PPM a point from before
+	// the notes (standards 37).
+	ppmPerPoint := core.TernaryFloat64(shaman.Env.IsForever(), 4, 2)
+	ppmm := shaman.AutoAttacks.NewPPMManager(ppmPerPoint*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
 
 	castTimeReductionPerStack := .04 * float64(shaman.Talents.MaelstromWeapon)
 	costReductionPerStack := 4 * shaman.Talents.MaelstromWeapon
