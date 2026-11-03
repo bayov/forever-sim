@@ -68,7 +68,7 @@ couldn't close that).
 3. Shared, not changed: `sim/core/spell_result.go`'s comment on `liveTick` still names Bane of Agony as a dot that doesn't
    tick live; it does (TestWarlockBaneOfAgonyLive). Comment only.
 
-No shared code changed.
+Shared: one line in `sim/compsearch/pool.go`, `warlock__affliction_wrack` added to `leftOut` (the comp search keeps one build per spec; Affliction is the Affliction build). No shared sim code changed.
 
 Worker for the Warlock DPS specs (Affliction, Demonology, Destruction Shadow Bolt, Destruction fire), branch
 `round-70753-warlock`. Brief: `briefs/warlock.md`.
