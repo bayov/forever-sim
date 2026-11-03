@@ -49,3 +49,7 @@ Blizzard's November 2 development notes (client 1.60.1.70753), on master at
 - Feral: Lacerate a talent, Primal Bite and Shifting Power in row 7.
 - The talent trees and the presets' talent strings are being regenerated for 70753 on master (agent A1): every tank
   talent string here (bench requests, UI presets, the raid sim's tank presets) needs remapping after that lands.
+- Shaman (on master, f0bb9d4, 2026-11-03 15:48 UTC): the tree rework (Lava Burst to Call of Thunder, Lightning
+  Mastery, Improved Ghost Wolf to row 4, `tools/forever_talents/notes/shaman.json`, notes in
+  `orchestration/round_70753/shaman.md`). The DPS shaman worker remapped the Warden preset's talent string and
+  moved the TestWardenShaman golden: the Warden worker's build, tests and bench request here predate it.
