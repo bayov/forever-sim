@@ -137,6 +137,7 @@ carries are modelled at the notes' value, gated under Forever, citing the notes 
 | Ferocious Bite base and AP part | 22829 rows | x1.25 (Energy part unchanged) | `nov2BleedScale`, ferocious_bite.go |
 | Starfire base damage | 25298 / 9876 rows | x1.40 | `nov2StarfireScale`, starfire.go |
 | Rend and Tear | 2% a point | 3% a point | `RendAndTearMultiplier` |
+| Bear / Dire Bear Form threat | 50% (21178 bp 50; 70755 too) | 115% (x2.15, the whole form bonus) | `bearFormThreatMultiplierNov2`, bear.go; `TestForeverBearFormThreat` |
 | Pounce | | n/a (not simulated) | |
 
 ## Ledger
@@ -145,7 +146,7 @@ carries are modelled at the notes' value, gated under Forever, citing the notes 
 |---|---|---|---|
 | Lacerate is now a Feral talent, not learned by all | client 70753: TraitDefinition 134410 -> 1328617, new ranks 1328616/1328617 | n/a for the DPS specs (bear) | tank session |
 | Ferocious Bite new rank 1 at 24, ranks relabeled | client 70753 (1328618, "Rank N" subtexts), hotfix 113283 | landed (10-30 hotfix: `ferocious_bite.go`) | none |
-| Bear / Dire Bear Form threat 50% -> 115% | notes | n/a | tank session |
+| Bear / Dire Bear Form threat 50% -> 115% | notes only (client 70753 21178 bp 50, 70755 unchanged) | wrong (x1.5) | **fixed** (mechanics-20261103-2): x2.15 under Forever, `sim/druid/bear.go`; `TestForeverBearFormThreat`. 0 DPS; no golden moved (no bear golden records threat) |
 | Poised (new passive, level 32) | client 70753: 1328829 passive, buff 1328827 aura 107 misc 14 bp -10, 1 charge, DurationIndex 21, class mask Claw/Shred/Rake/Rip/FB/Ravage/Pounce/Cower; not in the notes' text beyond the line | missing (finding client_update-20261103-1) | **fixed**: `sim/druid/poised.go`, one charge at the pull at full Energy, -10 on the next of those abilities; test `TestCatPoised`. DPS +0.0 on both feral builds: the opener is a Clearcast Ravage, which is free already and uses up the charge |
 | Shred 155% -> 200% | notes only (client 70753 bp 155, Wowhead 155%, no hotfix) | wrong (155%) | **fixed**: `ShredWeaponMultiplier` 2.0; `TestCatShredDamage` |
 | Claw 110% -> 140% | notes only (client bp 110) | wrong | **fixed**: 1.4; `TestCatClawDamage` |
