@@ -209,8 +209,9 @@ func TestForeverWarriorDamageTakenRage(t *testing.T) {
 func TestForeverWarriorSpellValues(t *testing.T) {
 	// Improved Slam 2/2 and Improved Execute 2/2, Booming Voice 5/5 and Raging Blows.
 	_, war := newForeverWarrior(t, "00000000000000200-50000000102")
-	if got := war.Slam.CD.Duration; got != 15*time.Second {
-		t.Errorf("Slam with Improved Slam has a %s cooldown, want 15s", got)
+	// 15 sec less 2.5 sec a point of Improved Slam (development notes post 9, 2026-11-02).
+	if got := war.Slam.CD.Duration; got != 10*time.Second {
+		t.Errorf("Slam with Improved Slam 2/2 has a %s cooldown, want 10s", got)
 	}
 	costs := []struct {
 		name  string
@@ -229,8 +230,12 @@ func TestForeverWarriorSpellValues(t *testing.T) {
 	}
 
 	_, war = newForeverWarrior(t, "")
-	if got := war.Slam.CD.Duration; got != 18*time.Second {
-		t.Errorf("Slam has a %s cooldown, want 18s", got)
+	if got := war.Slam.CD.Duration; got != 15*time.Second {
+		t.Errorf("Slam has a %s cooldown, want 15s", got)
+	}
+	_, war = newForeverWarrior(t, "00000000000000100")
+	if got := war.Slam.CD.Duration; got != 12500*time.Millisecond {
+		t.Errorf("Slam with Improved Slam 1/2 has a %s cooldown, want 12.5s", got)
 	}
 }
 
@@ -258,9 +263,11 @@ func TestForeverWarriorDeepWoundsAndFlurry(t *testing.T) {
 	if !war.DeepWounds.Flags.Matches(core.SpellFlagNoPeriodicCrit) {
 		t.Error("Deep Wounds ticks should not be able to crit under Forever")
 	}
-	flurry := war.GetAura("Flurry Proc (12974)")
+	// Forever's Flurry has 3 points (development notes post 9, 2026-11-02), so an old 5 point
+	// string gets the 3 point buff.
+	flurry := war.GetAura("Flurry Proc (12972)")
 	if flurry == nil {
-		t.Fatal("the talents should give 5 points of Flurry")
+		t.Fatal("the talents should give 3 points of Flurry")
 	}
 	if flurry.Duration != 15*time.Second {
 		t.Errorf("Flurry lasts %v, want 15s", flurry.Duration)
@@ -519,9 +526,10 @@ func TestForeverWarriorProtectionValues(t *testing.T) {
 // Specialization raises all Physical damage with a two-hander, Rend included, and nothing else
 // (client 70425, spell 12163).
 func TestForeverWarriorTwoHandedSpecialization(t *testing.T) {
+	// 2/4/6% (development notes post 9, 2026-11-02; was 1/2/3%).
 	_, war := newForeverWarriorArmed(t, "0000000003", 991016, 0)
-	if got := war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]; math.Abs(got-1.03) > 1e-9 {
-		t.Errorf("3 points with a two-hander raise Physical damage by %.3f, want 1.03", got)
+	if got := war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]; math.Abs(got-1.06) > 1e-9 {
+		t.Errorf("3 points with a two-hander raise Physical damage by %.3f, want 1.06", got)
 	}
 	if got := war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire]; got != 1 {
 		t.Errorf("3 points raise Fire damage by %.3f, want nothing", got)
