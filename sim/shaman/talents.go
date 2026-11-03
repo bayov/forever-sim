@@ -18,7 +18,8 @@ func (shaman *Shaman) ApplyTalents() {
 	shaman.applyElementalDevastation()
 	shaman.applyElementalFocus()
 	shaman.applyElementalFury()
-	shaman.registerElementalMasteryCD()
+	shaman.applyCallOfThunder()
+	shaman.registerLightningMasteryCD()
 
 	// Enhancement Talents
 	shaman.applyFlurry()
@@ -31,7 +32,9 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.MentalDexterity > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, []float64{0, .33, .67, 1}[shaman.Talents.MentalDexterity])
+		// 50 / 100 / 150% of Intellect since the November 2 development notes (33 / 67 / 100% in
+		// the beta client, 1.60.1.70753 included).
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, []float64{0, .5, 1, 1.5}[shaman.Talents.MentalDexterity])
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {
@@ -143,7 +146,7 @@ func (shaman *Shaman) applyCallOfFlame() {
 		return
 	}
 
-	affectedSpellCodes := []int32{SpellCode_ShamanFlameShock, SpellCode_ShamanLavaBurst}
+	affectedSpellCodes := []int32{SpellCode_ShamanFlameShock}
 	multiplier := shaman.callOfFlameMultiplier()
 
 	shaman.OnSpellRegistered(func(spell *core.Spell) {
@@ -185,8 +188,8 @@ func (shaman *Shaman) elementalAlacrityReduction() time.Duration {
 	return []time.Duration{0, 170, 330, 500}[shaman.Talents.ElementalAlacrity] * time.Millisecond
 }
 
-// eyeOfTheStormChance is the chance for a hit not to push back our Lightning Bolt, Chain
-// Lightning or Lava Burst cast.
+// eyeOfTheStormChance is the chance for a hit not to push back our Lightning Bolt or Chain
+// Lightning cast.
 //
 // The beta client gives 23, 47 and 70% for 1, 2 and 3 points. No preset takes it today, and
 // only the Level 30 encounters hit us while we cast, but an encounter that hits a caster often
@@ -432,7 +435,9 @@ func (shaman *Shaman) makeFlurryAura(points int32) *core.Aura {
 		return nil
 	}
 
-	attackSpeed := []float64{1.05, 1.1, 1.15, 1.2, 1.25}[points-1]
+	// 6 / 12 / 18 / 24 / 30% since the November 2 development notes (5 to 25% in the beta
+	// client, 1.60.1.70753 included).
+	attackSpeed := []float64{1.06, 1.12, 1.18, 1.24, 1.30}[points-1]
 
 	// The buff lasts 15 sec when we don't use up its 3 charges.
 	//
@@ -531,9 +536,13 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		return
 	}
 
+	// The November 2 development notes double the chance to trigger, from the 2 PPM per point
+	// below (report assumption sham_mw_ppm, 10 PPM at 5/5) to 4, 20 PPM at 5/5. The client leaves
+	// the rate to the server (408498 has a 100% ProcChance and no PPM row in 1.60.1.70753).
+
 	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
 	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
-	ppmm := shaman.AutoAttacks.NewPPMManager(2*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
+	ppmm := shaman.AutoAttacks.NewPPMManager(4*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
 
 	castTimeReductionPerStack := .04 * float64(shaman.Talents.MaelstromWeapon)
 	costReductionPerStack := 4 * shaman.Talents.MaelstromWeapon
@@ -624,12 +633,27 @@ func (shaman *Shaman) registerRageOfTheFarseerCD() {
 	})
 }
 
-// Elemental Mastery (16166) is the Elemental tree's 30-point talent since client 1.60.1.70425
-// (it needs Lava Burst): for 15 sec Lightning Bolt and Lava Burst cast 0.5 sec faster and Chain
-// Lightning has no cooldown. 3 min cooldown, off the global cooldown. The cast time comes off
-// before haste, like the client's flat cast time modifier.
-func (shaman *Shaman) registerElementalMasteryCD() {
-	if !shaman.Talents.ElementalMastery {
+// Call of Thunder (16120) takes Lava Burst's place in the Elemental tree under the November 2
+// development notes (post 9; client 1.60.1.70753 unchanged, its tree still has Lava Burst):
+// 5% more critical strike chance for Lightning Bolt and Chain Lightning, their overloads too.
+func (shaman *Shaman) applyCallOfThunder() {
+	if !shaman.Talents.CallOfThunder {
+		return
+	}
+	shaman.OnSpellRegistered(func(spell *core.Spell) {
+		if spell.SpellCode == SpellCode_ShamanLightningBolt || spell.SpellCode == SpellCode_ShamanChainLightning {
+			spell.BonusCritRating += 5 * core.SpellCritRatingPerCritChance
+		}
+	})
+}
+
+// Lightning Mastery (16166, Elemental Mastery until the November 2 development notes renamed it
+// and took Lava Burst out of it) is the Elemental tree's 30-point talent, needing Call of Thunder:
+// for 15 sec Lightning Bolt casts 0.5 sec faster and Chain Lightning has no cooldown. 3 min
+// cooldown, off the global cooldown. The cast time comes off before haste, like the client's flat
+// cast time modifier. The spell keeps its id and its "Elemental Mastery" name in client 1.60.1.70753.
+func (shaman *Shaman) registerLightningMasteryCD() {
+	if !shaman.Talents.LightningMastery {
 		return
 	}
 
@@ -642,7 +666,7 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 			return
 		}
 		switch spell.SpellCode {
-		case SpellCode_ShamanLightningBolt, SpellCode_ShamanLavaBurst:
+		case SpellCode_ShamanLightningBolt:
 			fasterSpells = append(fasterSpells, spell)
 		case SpellCode_ShamanChainLightning:
 			chainLightnings = append(chainLightnings, spell)
@@ -651,7 +675,7 @@ func (shaman *Shaman) registerElementalMasteryCD() {
 
 	var chainLightningCooldown time.Duration
 	buffAura := shaman.RegisterAura(core.Aura{
-		Label:    "Elemental Mastery",
+		Label:    "Lightning Mastery",
 		ActionID: actionID,
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {

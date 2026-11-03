@@ -458,6 +458,12 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // Berserking 15 sec, Undead Touch of the Grave 15 sec): Level 60 and Level 60 + Holy move to the Undead.
 // At 180 sec (verify.py, 20000 iterations, seed 1): Level 60 952.8 against the Human's 949.2, Level 60 +
 // Holy 910.5 against 906.8.
+// Round 70753 (2026-11-03, client 1.60.1.70753 and the 2026-11-02 notes, Classic race base stats): the
+// talent and knob searches keep every build and rotation, and the Undead stays best. At 180 sec (20000
+// iterations, seed 1; seed 1000003 within 0.3), each race on its own rotation and gear (req/races):
+//   Level 60:        Undead 948.7, Troll 945.5, Human 944.8, Night Elf 944.5, Dwarf 941.9, Gnome 941.5
+//   Level 60 + Holy: Undead 906.6, Troll 903.2, Human 902.4, Night Elf 902.1, Dwarf 899.7, Gnome 899.4
+// Level 60 at 120 / 180 / 300 sec: 944.7 / 948.7 / 946.0; Level 60 + Holy 902.3 / 906.6 / 873.9.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Shadow', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Shadow rotation, in a 3 minute raid fight.',
@@ -551,6 +557,9 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Smite', En
 //   Troll     773.0 / 730.4 / 654.5
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
+// Round 70753 (2026-11-03, Classic race base stats): Undead 762.0, Gnome 741.0, Human 737.7, Night Elf
+// 734.7, Troll 732.9, Dwarf 730.1 at 180 sec (seed 1; seed 1000003 within 0.4); the Undead at 120 / 180 /
+// 300 sec: 777.8 / 762.0 / 687.9. The talent and knob searches keep the build and the rotation.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Smite', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Undead Holy damage priest (Smite, Power Infusion) on the synthetic Phase 1 gear, 22% behind Shadow.',

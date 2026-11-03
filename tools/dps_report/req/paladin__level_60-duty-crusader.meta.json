@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_crusader_duty",
   "apl": "level60_crusader_duty",
   "published": {
-    "dps": 1033.3,
-    "source": "forever-sim's paladin re-search on the October 30 hotfix trees, 2026-11-01 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
+    "dps": 1082.9,
+    "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
   },
   "verify": {
-    "dps": 1033.3,
-    "stderr": 0.41,
+    "dps": 1082.9,
+    "stderr": 0.43,
     "iters": 20000,
     "ok": true,
     "note": "simreq of this request, 180s, seed 1"
@@ -71,7 +71,7 @@
   "caveats": [
     "Takes Pursuit of Justice 2 (movement speed), a must-have talent.",
     "Unsealed Wrath is new with the October 30 hotfix and unverified: the sim lets landed white swings store and spend the copies, and rolls each stored Seal of Command at its own 7 a minute.",
-    "Two-Handed Weapon Specialization boosts the Holy seal and judgement damage and Holy Strike too, as measured in game before the October 30 hotfix. The hotfix tooltip says physical damage, but its damage effect is unchanged.",
+    "Two-Handed Weapon Specialization raises all Holy damage as well as physical, and Vengeance stacks up to 5 times, as the November 2 development notes announce. Client 1.60.1.70753 still has Physical only and 3 stacks; the sim takes the notes' values until a hotfix or client build says otherwise (standards 37).",
     "The duty costs 6.0 DPS at 180s against the same build without it (1033.3 against 1039.3, 20,000 iterations, seed 1).",
     "Uses Libram of Fervor (+33 to Judgement of the Crusader). At 180s it beats Libram of Law by 5.9 DPS on twist duty and 7.7 on Shock duty.",
     "Only one 2% crit elixir. A second (Mongoose) would add 14.9 DPS.",

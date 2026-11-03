@@ -12,17 +12,18 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: add `SpellCode_HunterLacerate` to Efficiency's case list in sim/hunter/talents.go:63-67, fix the comment, and change the test's Lacerate row to 85 with the mask 0x80081000 (patch: $AUDIT_WORK/mechanics/efficiency_lacerate.patch, key hunk: `SpellCode_HunterSniperShot, SpellCode_HunterStriderKick, SpellCode_HunterLacerate:`).
 - needs: worker fix
 
+## Resolved
+
 ### mechanics-20261027-2: Amplify Curse no longer boosts Bane of Agony on client 70630
 - severity: low (no preset takes Amplify Curse; rotopt's `amplifyCurse` knob defaults to 0)
 - affects: warlock (only builds that take Amplify Curse)
 - found: 2026-10-27, master d3df9247f
 - evidence: tier 1, client 1.60.1.70630: 18288 e0 (aura 108 misc 8, +50%) mask 33792 -> 32768, which covers Curse of Weakness only (`AUDIT_DB=<70630> python3 tools/audit/mechanics/mask.py 18288`; on 70532 it listed Bane of Agony too). A new e1 (aura 107 misc 8, -20) covers Curse of Exhaustion again. sim/warlock/curses.go:74-77 still multiplies Bane of Agony's base damage by 1.5 and spends the aura.
 - proposed fix: under Forever, Amplify Curse leaves Bane of Agony alone (drop the x1.5 and the deactivate in the Bane of Agony snapshot, or don't register the knob's cast), and update the forever-wiki talent text.
-- needs: worker fix
+- needs: none
 - 2026-10-27: the 70630 mask reading holds, but 18288's 70630 description and Wowhead's Forever tooltip still name Bane of Agony, and every Agony rank gains a base-0 aura 271 effect (w2) that its new debuff text multiplies by, so the +50% looks moved onto Agony as a server-filled value, not removed. The sim keeps +50% (no preset casts Amplify Curse). needs: user ruling.
 - 2026-10-27 (user): park it until a build takes Amplify Curse, then test in game (TASKS.md item of 2026-10-27). The sim keeps +50% of base meanwhile. needs: in-game test
-
-## Resolved
+- resolved: 2026-11-03, round 70753 (warlock): Blizzard's development notes of 2026-11-02, "Amplify Curse now correctly affects Curse of Exhaustion and Bane of Agony" (foreverchanges.pro: "Now really works on Curse of Exhaustion and Bane of Agony, as its tooltip says"). The sim keeps +50% of Bane of Agony's base damage (sim/warlock/curses.go; TestWarlockAmplifyCurseAgony), and the round's talent search tries Amplify Curse.
 
 ### mechanics-20261103-1: Read Leyline is a 0.5 sec cast on client 70753; the sim casts it in 2 sec
 - severity: low (no report request or preset casts it: `grep -c 1259705 tools/dps_report/req/*.json` is 0 everywhere, and the race tables show Read Leyline at 0.0 DPS; it would matter for a High Order build whose APL casts it, about 1.5 sec of casting saved every 2 min)

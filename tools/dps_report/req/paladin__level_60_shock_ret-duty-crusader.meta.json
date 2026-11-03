@@ -14,8 +14,8 @@
   "gearSet": "level60_phase1_synthetic_crusader_duty",
   "apl": "level60_shock_ret_crusader_duty",
   "published": {
-    "dps": 974.4,
-    "source": "forever-sim's paladin re-search on the October 30 hotfix trees, 2026-11-01 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
+    "dps": 1029.2,
+    "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
   },
   "summary": "Keeps Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
@@ -63,7 +63,7 @@
   ],
   "caveats": [
     "Takes Pursuit of Justice 2 (movement speed), a must-have talent.",
-    "Two-Handed Weapon Specialization boosts the Holy seal and judgement damage and Holy Strike too, as measured in game before the October 30 hotfix. The hotfix tooltip says physical damage, but its damage effect is unchanged.",
+    "Two-Handed Weapon Specialization raises all Holy damage as well as physical, and Vengeance stacks up to 5 times, as the November 2 development notes announce. Client 1.60.1.70753 still has Physical only and 3 stacks; the sim takes the notes' values until a hotfix or client build says otherwise (standards 37).",
     "The duty costs 0.5 DPS at 180s against the same build without it (974.4 against 974.9, 20,000 iterations, seed 1).",
     "Uses Libram of Fervor (+33 to Judgement of the Crusader). At 180s it beats Libram of Law by 5.9 DPS on twist duty and 7.7 on Shock duty.",
     "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
@@ -72,8 +72,8 @@
   ],
   "notes": "Request: paladin__level_60_shock_ret with raid debuff judgementOfTheCrusader removed and the level60_shock_ret_crusader_duty rotation, and Libram of Fervor (23203) in the relic slot, as level60_phase1_synthetic_crusader_duty. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_ret_crusader_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh).",
   "verify": {
-    "dps": 974.4,
-    "stderr": 0.33,
+    "dps": 1029.2,
+    "stderr": 0.35,
     "iters": 20000,
     "ok": true,
     "note": "simreq of this request, 180s, seed 1"
