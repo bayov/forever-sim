@@ -78,6 +78,8 @@ them); Stormstrike's cooldown and 150% sit inside its `IsForever()` branch.
 - `tools/dps_report/patches/0004-...patch`: its `sham_mw_ppm` hunk's removed and default lines now read
   `4*float64(...)`, so the patch still applies to `sim/shaman/talents.go` (`git apply --check --include='sim/shaman/*'`
   passes). The `sham_lb_31plus` and `sham_es7_tuning` hunks apply unchanged; their constants are now 1.0.
+- `sim/testdata/report_hashes.txt`: the six shaman lines only. `TestRaidForeverReportHashesStable` already fails on
+  master b648ac704 for 4 druid, 10 paladin and 1 shaman request (not from this branch); those lines are left alone.
 - `sim/shaman/warden/TestWardenShaman.results` (the tank session's golden): moved by the shared Stormstrike, Flurry,
   shock and Mental Dexterity changes, regenerated.
 
