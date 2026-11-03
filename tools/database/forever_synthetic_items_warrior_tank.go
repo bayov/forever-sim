@@ -121,8 +121,8 @@ var foreverSyntheticWarriorTankItems = []*proto.UIItem{
 		Id: 990615, Name: "Protection Synthetic Shield (Phase 1)", Icon: "inv_shield_10",
 		Type:       proto.ItemType_ItemTypeWeapon,
 		WeaponType: proto.WeaponType_WeaponTypeShield, HandType: proto.HandType_HandTypeOffHand,
-		Stats:      stats.Stats{stats.Stamina: 21, stats.Defense: 13, stats.BlockValue: 46, stats.Armor: 2680}.ToFloatArray(),
-		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Stats: stats.Stats{stats.Stamina: 21, stats.Defense: 13, stats.BlockValue: 46, stats.Armor: 2680}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
 	{
