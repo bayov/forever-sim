@@ -2,6 +2,7 @@ package warden
 
 import (
 	"math"
+	"os"
 	"strings"
 	"testing"
 	"time"
@@ -10,6 +11,7 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/core/stats"
+	"google.golang.org/protobuf/encoding/protojson"
 )
 
 // The Warden's tank tests (docs/tank_shaman.md): every ability and talent a shaman tank uses,
@@ -351,5 +353,79 @@ func TestForeverWardenImprovedStormstrikeReset(t *testing.T) {
 		if got := w.Stormstrike.CD.IsReady(sim); got != c.resets {
 			t.Errorf("after a %s Stormstrike's ready is %v, want %v", c.outcome, got, c.resets)
 		}
+	}
+}
+
+// TestForeverWardenTank runs the tank bench's Balanced Warden (tools/tankbench/req/shaman_warden_balanced.json)
+// against its boss with a stand-in healer and checks that it tanks: the boss attacks it, it blocks with its
+// shield and parries with Spirit Weapons, its rotation's abilities go out, Lightning Shield and Stoneskin stay
+// up, Rockbiter's threat is on its swings, and the tank score replays every iteration.
+func TestForeverWardenTank(t *testing.T) {
+	data, err := os.ReadFile("../../../tools/tankbench/req/shaman_warden_balanced.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rsr := &proto.RaidSimRequest{}
+	if err := protojson.Unmarshal(data, rsr); err != nil {
+		t.Fatal(err)
+	}
+	const iterations, seconds = 200, 120
+	rsr.Raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+	rsr.Encounter.Duration, rsr.Encounter.DurationVariation = seconds, 0
+	rsr.SimOptions.Iterations = iterations
+	rsr.SimOptions.RandomSeed = 7
+	player := rsr.Raid.Parties[0].Players[0]
+	player.HealingModel = &proto.HealingModel{Hps: 900, CadenceSeconds: 2, CadenceVariation: 1}
+	player.TankScoring = &proto.TankScoring{}
+	res := core.RunRaidSimConcurrent(rsr)
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	m := res.RaidMetrics.Parties[0].Players[0]
+
+	sheet := m.TankSheet
+	if sheet == nil {
+		t.Fatal("no tank sheet: the boss didn't attack the Warden")
+	}
+	if sheet.Block < 0.05 || sheet.Parry < 0.05 || sheet.BlockValue < 50 {
+		t.Errorf("block %.3f, parry %.3f and block value %.0f, want a shield's block and Spirit Weapons' parry", sheet.Block, sheet.Parry, sheet.BlockValue)
+	}
+
+	casts := map[int32]float64{}
+	threat := map[int32]float64{}
+	damage := map[int32]float64{}
+	for _, a := range m.Actions {
+		for _, tgt := range a.Targets {
+			casts[a.Id.GetSpellId()] += float64(tgt.Casts) / iterations
+			if a.Id.GetOtherId() == proto.OtherAction_OtherActionAttack && a.Id.GetTag() == 1 {
+				threat[0] += tgt.Threat
+				damage[0] += tgt.Damage
+			}
+		}
+	}
+	for id, name := range map[int32]string{17364: "Stormstrike", 10414: "Earth Shock"} {
+		if casts[id] < 5 {
+			t.Errorf("%s cast %.1f times a fight, want it in the rotation", name, casts[id])
+		}
+	}
+	// Each landed white hit makes its damage and 72 x 2.9 threat, times 1.302.
+	if damage[0] == 0 || threat[0] < damage[0]*1.302*1.1 {
+		t.Errorf("the white swings made %.0f threat from %.0f damage, want Rockbiter's threat on top of 1.302 x the damage", threat[0], damage[0])
+	}
+
+	uptime := map[int32]float64{}
+	for _, a := range m.Auras {
+		uptime[a.Id.GetSpellId()] = a.UptimeSecondsAvg / seconds
+	}
+	for id, name := range map[int32]string{10405: "Stoneskin", 10432: "Lightning Shield"} {
+		if uptime[id] < 0.8 {
+			t.Errorf("%s up %.0f%% of the fight, want it kept up", name, 100*uptime[id])
+		}
+	}
+	if m.Threat.Avg <= 0 || math.IsNaN(m.Dtps.Avg) || m.Dtps.Avg <= 0 {
+		t.Errorf("TPS %.0f and DTPS %.0f, want both above 0", m.Threat.Avg, m.Dtps.Avg)
+	}
+	if got := len(m.TankScore.GetSurviveHps()); got != iterations {
+		t.Errorf("the tank score replayed %d iterations, want %d", got, iterations)
 	}
 }
