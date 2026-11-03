@@ -44,7 +44,11 @@ func TestWarlockDestruction(t *testing.T) {
 }
 
 func TestWarlockAffliction(t *testing.T) {
-	warlockSuite(t, TalentsAffliction, "level60_phase1_synthetic", "level60_affliction", "Affliction Warlock", SuccubusWarlock)
+	warlockSuite(t, TalentsAffliction, "level60_phase1_synthetic", "level60_affliction", "Affliction Warlock", ImpSacrificeWarlock)
+}
+
+func TestWarlockAfflictionShadowBolt(t *testing.T) {
+	warlockSuite(t, TalentsAfflictionShadowBolt, "level60_phase1_synthetic", "level60_affliction_shadow_bolt", "Affliction Shadow Bolt Warlock", SuccubusWarlock)
 }
 
 func TestWarlockDestructionFire(t *testing.T) {
@@ -54,7 +58,8 @@ func TestWarlockDestructionFire(t *testing.T) {
 // Forever tree (tools/forever_talents/client/warlock.json).
 var TalentsDemonology = "051-0305003131221001351-0550004"
 var TalentsDestruction = "255000000351--055030500310035"
-var TalentsAffliction = "2550102003520005--0550305003"
+var TalentsAffliction = "05500021035001351-0050003201-005004"
+var TalentsAfflictionShadowBolt = "2550102003520005--0550305003"
 var TalentsDestructionFire = "252-0050003201-0050345003101351"
 
 // Sacrifices the Succubus before the pull (15% Fire damage) with no demon out, and Firestone.
@@ -65,6 +70,18 @@ var FireWarlock = &proto.Player_Warlock{
 			Summon:        proto.WarlockOptions_NoSummon,
 			SacrificedPet: proto.WarlockOptions_Succubus,
 			WeaponImbue:   proto.WarlockOptions_Firestone,
+		},
+	},
+}
+
+// Sacrifices the Imp before the pull (15% Shadow damage) with no demon out, the Affliction build.
+var ImpSacrificeWarlock = &proto.Player_Warlock{
+	Warlock: &proto.Warlock{
+		Options: &proto.WarlockOptions{
+			Armor:         proto.WarlockOptions_DemonArmor,
+			Summon:        proto.WarlockOptions_NoSummon,
+			SacrificedPet: proto.WarlockOptions_Imp,
+			WeaponImbue:   proto.WarlockOptions_Spellstone,
 		},
 	},
 }
