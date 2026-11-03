@@ -38,6 +38,7 @@ type bearOpts struct {
 	talents string
 	level   int32
 	idol    int32
+	trinket int32
 	targets int
 	armor   float64 // the target's armor; -1 keeps the default boss's
 	bonus   stats.Stats
@@ -63,6 +64,9 @@ func newBear(t *testing.T, o bearOpts) (*core.Simulation, *druid.Druid) {
 	items[proto.ItemSlot_ItemSlotChest] = &proto.ItemSpec{Id: 998105}
 	if o.idol != 0 {
 		items[proto.ItemSlot_ItemSlotRanged] = &proto.ItemSpec{Id: o.idol}
+	}
+	if o.trinket != 0 {
+		items[proto.ItemSlot_ItemSlotTrinket2] = &proto.ItemSpec{Id: o.trinket}
 	}
 	player := &proto.Player{
 		Race:          proto.Race_RaceTauren,
@@ -875,5 +879,26 @@ func TestUrsineTwins(t *testing.T) {
 	}
 	if got := float64(resets) / float64(landed); !near(got, 0.1, 0.02) {
 		t.Errorf("Idol of the Ursine Twins reset Primal Bite after %.1f%% of the landed Lacerates, want 10%%", 100*got)
+	}
+}
+
+// TestArmorTrinket: the synthetic armor trinket (990815) gives 1,665 armor for 20 sec on a 2 min
+// cooldown.
+func TestArmorTrinket(t *testing.T) {
+	sim, bear := newBear(t, bearOpts{trinket: druid.FeralTankSyntheticArmorTrinket})
+	spell := bear.GetSpell(core.ActionID{ItemID: druid.FeralTankSyntheticArmorTrinket})
+	armor := bear.GetStat(stats.Armor)
+	if !spell.Cast(sim, bear.CurrentTarget) {
+		t.Fatal("the armor trinket didn't cast")
+	}
+	if got := bear.GetStat(stats.Armor) - armor; got != 1665 {
+		t.Errorf("the armor trinket gives %.0f armor, want 1,665", got)
+	}
+	if spell.CD.Duration != 2*time.Minute {
+		t.Errorf("the armor trinket's cooldown is %s, want 2m", spell.CD.Duration)
+	}
+	advance(sim, 20*time.Second+time.Millisecond)
+	if got := bear.GetStat(stats.Armor); got != armor {
+		t.Errorf("the armor trinket's armor outlasted its 20 sec (%.0f against %.0f)", got, armor)
 	}
 }
