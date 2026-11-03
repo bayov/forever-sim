@@ -1549,7 +1549,7 @@
    "title": "Launch hotfix: paladin and druid talent reworks",
    "date": "2026-10-30",
    "baselineData": "11de3318ae2086f5017a93101176d97d6f8f61e0",
-   "endData": null,
+   "endData": "2fd3f2cb28bcb4188a0da137145b0fa35cb66582",
    "lines": [
     {
      "title": "Two-handed warriors' critical white hits give twice the swing's Rage (was 77% more)",
@@ -2248,6 +2248,20 @@
    "source": {
     "label": "foreverchanges.pro: a hotfix to the October 30 build",
     "url": "https://foreverchanges.pro/patch-notes"
+   }
+  },
+  {
+   "id": "2026-11-02-build-70753",
+   "type": "game",
+   "title": "Build 1.60.1.70753 and the November 2 development notes: class damage raised across the game",
+   "date": "2026-11-02",
+   "baselineData": "2fd3f2cb28bcb4188a0da137145b0fa35cb66582",
+   "endData": null,
+   "lines": [],
+   "internal": [],
+   "source": {
+    "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+    "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
    }
   }
  ]
