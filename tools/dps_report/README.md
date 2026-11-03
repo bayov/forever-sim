@@ -323,7 +323,14 @@ pipeline.sh run <what moved> <audit>    # ends by probing them, for the packs
 pipeline.sh publish <the same ids>      # checks the audit, records the cleared builds --by probe, packs the re-simmed
 ```
 
-On 4 cores a probe of all 74 builds takes about PROBE_MINUTES min. The probe needs the same binaries a run uses (`$DASH_BIN`).
+On 4 cores a probe of all 74 builds takes about 16 min (about 5,700 sims, most of them short, so process start-up is
+much of it), against about 100 for a full run; `pipeline.sh run` spends the same share probing what it simmed. The probe
+needs the same binaries a run uses (`$DASH_BIN`).
+
+Checked on master's history (2026-11-03): from 251f112e1 to the hunter round's merge, `sim/testdata/report_hashes.txt`
+moved 61 builds and left the 13 warlock builds alone. The probe cleared exactly those 13, and full re-sims of two of them
+(and the variants `run` adds) on both binaries gave identical raw packs. On the moved builds it also names the steps:
+the mage, Fury, Balance and Shadow builds moved in two `run_build` sims and the mana step only.
 
 ## Changes tab
 
