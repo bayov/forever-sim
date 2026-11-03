@@ -8,6 +8,29 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide. Since 2026-10-12 every such tag is replaced: the client 70338 trait curves (listed in the next section) settle all ranks.
 
+## November 2 development notes (2026-11-03, client 1.60.1.70753)
+
+Blizzard's development notes post 9 (2026-11-02) rework the warrior for launch. Client 70753 and its hotfixes (none for
+70753 on 2026-11-03) carry none of it: Slam is still 18 sec, the trees keep the old ranks, there is no Reckless Swings
+spell. The sim takes the notes' values (standards 37), gated under Forever, and the tree comes from
+`tools/forever_talents/notes/warrior.json`, laid over the client tree on every import. The sections below this one predate it.
+
+- Slam: 15 sec cooldown (18). Improved Slam takes 2.5 / 5 sec off it (3 at either rank).
+- Arms: Improved Tactical Mastery is 3 points, 5 / 10 / 15 Rage (5 points of 3). Two-Handed Weapon Specialization is
+  2 / 4 / 6% (1 / 2 / 3%). Bloodthrill is 2 points, 10 / 20% (5 points of 4%).
+- Fury: Flurry is 3 points, 10 / 20 / 30% for 3 swings (5 points of 5%), and no longer needs Death Wish; Bloodthirst
+  needs Death Wish again. Enrage moves to row 3 (column 4 guessed), Gore Drinker to row 5 under Blood Craze (column 3
+  guessed; Blood Craze and Gore Drinker no longer make threat), and Booming Voice also cuts Piercing Howl's cost 5-25%.
+- New: Reckless Swings (Fury row 4, 1 point, column 3 guessed): 15 sec cooldown, costs 25% of base health, the next 4
+  melee attacks within 8 sec generate 5 more Rage. The sim's assumptions: off the GCD (like Bloodrage), the 4 attacks are
+  landed swings (Heroic Strike and Cleave included, the melee auto attack proc type), 5 flat Rage a crit doesn't double,
+  and no health cost (none matters to a DPS). It has a placeholder spell id (1399001) until the client has one.
+- New: Improved Whirlwind (Fury row 6, 2 points, column 3 guessed): 1 / 2 sec off Whirlwind's cooldown and 15 / 30% more
+  damage to the closest enemy (the sim's first target; both weapons' hits).
+- Defensive Stance's threat 80% (30%) and Defiance 7 / 13 / 20% are the tank's.
+- The Level 60 presets took Reckless Swings on every build (on cooldown; worth about 29 DPS to Fury), Improved Whirlwind
+  2 on both Fury builds, and Enrage 5 everywhere. Numbers: `orchestration/round_70753/warrior.md`.
+
 ## Beta client 1.60.1.70338 (2026-10-12)
 
 The beta client's warrior tree and spells, read from wago.tools (the Trait tables for the tree, SpellEffect, SpellMisc, SpellCooldowns, SpellPower and TraitDefinitionEffectPoints for the numbers), against the BlizzCon data below. `tools/forever_talents/client/warrior.json` and `data/warrior.json` in the sim repo are regenerated from it, so the per-talent text below is superseded where it differs. Blizzard's 1 October development notes ("Warrior Updates in Today's Beta Build") and ForeverChanges' patch notes explain most of the changes. The sim follows the client.

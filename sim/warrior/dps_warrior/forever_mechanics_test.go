@@ -116,7 +116,7 @@ func TestForeverWarriorNormalizedRage(t *testing.T) {
 	near("an off hand crit", whiteRage(sim, war, oh, core.OutcomeCrit, 300), 2*0.5*l60*3.46*2.9)
 
 	// Dual Wield Specialization's off hand Rage (10% a point) stays on top.
-	sim, war = newForeverWarriorArmed(t, "-00000005", 991014, 991015)
+	sim, war = newForeverWarriorArmed(t, "-000000005", 991014, 991015)
 	near("an off hand hit with Dual Wield Specialization 5/5", whiteRage(sim, war, war.AutoAttacks.OHAuto(), core.OutcomeHit, 150), 1.5*0.5*l60*3.46*2.9)
 
 	sim, war = newForeverWarriorArmed(t, "", 991016, 0)
@@ -208,9 +208,10 @@ func TestForeverWarriorDamageTakenRage(t *testing.T) {
 // wrong: Slam's cooldown and the talent Rage discounts.
 func TestForeverWarriorSpellValues(t *testing.T) {
 	// Improved Slam 2/2 and Improved Execute 2/2, Booming Voice 5/5 and Raging Blows.
-	_, war := newForeverWarrior(t, "00000000000000200-50000000102")
-	if got := war.Slam.CD.Duration; got != 15*time.Second {
-		t.Errorf("Slam with Improved Slam has a %s cooldown, want 15s", got)
+	_, war := newForeverWarrior(t, "000000000000002-500000000102")
+	// 15 sec less 2.5 sec a point of Improved Slam (development notes post 9, 2026-11-02).
+	if got := war.Slam.CD.Duration; got != 10*time.Second {
+		t.Errorf("Slam with Improved Slam 2/2 has a %s cooldown, want 10s", got)
 	}
 	costs := []struct {
 		name  string
@@ -229,8 +230,12 @@ func TestForeverWarriorSpellValues(t *testing.T) {
 	}
 
 	_, war = newForeverWarrior(t, "")
-	if got := war.Slam.CD.Duration; got != 18*time.Second {
-		t.Errorf("Slam has a %s cooldown, want 18s", got)
+	if got := war.Slam.CD.Duration; got != 15*time.Second {
+		t.Errorf("Slam has a %s cooldown, want 15s", got)
+	}
+	_, war = newForeverWarrior(t, "00000000000000100")
+	if got := war.Slam.CD.Duration; got != 12500*time.Millisecond {
+		t.Errorf("Slam with Improved Slam 1/2 has a %s cooldown, want 12.5s", got)
 	}
 }
 
@@ -238,7 +243,7 @@ func TestForeverWarriorSpellValues(t *testing.T) {
 // after Improved Execute's discount, not 80% of the base cost (wowsims/forever's RageCost
 // refunds Refund * CurCast.Cost).
 func TestForeverWarriorRefundsPaidRage(t *testing.T) {
-	sim, war := newForeverWarrior(t, "00000000000000200-50000000102")
+	sim, war := newForeverWarrior(t, "000000000000002-500000000102")
 	execute := war.Execute.Spell
 	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
 	execute.CurCast.Cost = execute.Cost.GetCurrentCost()
@@ -251,16 +256,17 @@ func TestForeverWarriorRefundsPaidRage(t *testing.T) {
 // TestForeverWarriorDeepWoundsAndFlurry checks two client 70338 values: Deep Wounds' damage spell
 // (412613) cannot crit, so its ticks never do, and the Flurry buff (12966) lasts 15 sec.
 func TestForeverWarriorDeepWoundsAndFlurry(t *testing.T) {
-	_, war := newForeverWarrior(t, "30305013002-25053005112110501-2")
+	_, war := newForeverWarrior(t, "30303013002-2505300151021100301-2")
 	if war.DeepWounds == nil {
 		t.Fatal("the talents should give Deep Wounds")
 	}
 	if !war.DeepWounds.Flags.Matches(core.SpellFlagNoPeriodicCrit) {
 		t.Error("Deep Wounds ticks should not be able to crit under Forever")
 	}
-	flurry := war.GetAura("Flurry Proc (12974)")
+	// Forever's Flurry has 3 points (development notes post 9, 2026-11-02).
+	flurry := war.GetAura("Flurry Proc (12972)")
 	if flurry == nil {
-		t.Fatal("the talents should give 5 points of Flurry")
+		t.Fatal("the talents should give 3 points of Flurry")
 	}
 	if flurry.Duration != 15*time.Second {
 		t.Errorf("Flurry lasts %v, want 15s", flurry.Duration)
@@ -520,9 +526,10 @@ func TestForeverWarriorProtectionValues(t *testing.T) {
 // Specialization raises all Physical damage with a two-hander, Rend included, and nothing else
 // (client 70425, spell 12163).
 func TestForeverWarriorTwoHandedSpecialization(t *testing.T) {
+	// 2/4/6% (development notes post 9, 2026-11-02; was 1/2/3%).
 	_, war := newForeverWarriorArmed(t, "0000000003", 991016, 0)
-	if got := war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]; math.Abs(got-1.03) > 1e-9 {
-		t.Errorf("3 points with a two-hander raise Physical damage by %.3f, want 1.03", got)
+	if got := war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]; math.Abs(got-1.06) > 1e-9 {
+		t.Errorf("3 points with a two-hander raise Physical damage by %.3f, want 1.06", got)
 	}
 	if got := war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire]; got != 1 {
 		t.Errorf("3 points raise Fire damage by %.3f, want nothing", got)

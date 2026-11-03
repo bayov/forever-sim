@@ -6,7 +6,7 @@
 
 import * as THREE from 'three';
 import { file, texture } from './files';
-import { animData, Batch, Keys, M2, M2Event, sample, Skin, Track } from './m2';
+import { animData, Batch, Keys, M2, M2Event, sample, Skin, Track, Vec } from './m2';
 import { Particles } from './particles';
 import { Ribbons } from './ribbons';
 
@@ -178,18 +178,27 @@ export class Model {
 	onEvent?: (id: string, data: number, upper: boolean) => void;
 	private globalTime = 0;
 	private closed = { right: false, left: false };
-	private scratch = { t: [0, 0, 0], r: [0, 0, 0, 1], s: [1, 1, 1], t2: [0, 0, 0], r2: [0, 0, 0, 1], s2: [1, 1, 1] };
+	private scratch = { t: new Float64Array(3), r: Float64Array.of(0, 0, 0, 1), s: Float64Array.of(1, 1, 1), t2: new Float64Array(3), r2: Float64Array.of(0, 0, 0, 1), s2: Float64Array.of(1, 1, 1) };
 	geosets?: Set<number>;
 	particles?: Particles;
 	ribbons?: Ribbons;
 	// The model's own textures, which load() waits for so a model never shows untextured.
 	private readonly loading: Promise<unknown>[] = [];
 
-	private constructor(
-		readonly m2: M2,
-		readonly skin: Skin,
-	) {
-		const geometry = buildGeometry(m2, skin);
+	readonly m2: M2;
+	readonly skin: Skin;
+
+	private constructor(private readonly shared: Parsed) {
+		const { m2, skin } = shared;
+		this.m2 = m2;
+		this.skin = skin;
+		shared.users++;
+		// The vertices are the same for every copy of the model, so the copies share them (and
+		// their memory on the GPU). Each copy gets its own list of parts, which compact changes.
+		const geometry = new THREE.BufferGeometry();
+		for (const [name, a] of Object.entries(shared.geometry.attributes)) geometry.setAttribute(name, a);
+		geometry.setIndex(shared.geometry.index);
+		for (const g of shared.geometry.groups) geometry.addGroup(g.start, g.count, g.materialIndex);
 		const materials: THREE.Material[] = [];
 		skin.batches.forEach((batch, i) => {
 			const bm = this.makeMaterial(batch, i);
@@ -280,15 +289,22 @@ export class Model {
 	static onLoad?: (fdid: number, ms: number) => void;
 
 	static async load(fdid: number): Promise<Model> {
-		const data = await file(fdid);
+		let p = parsed.get(fdid);
+		if (!p) {
+			p = (async () => {
+				const data = await file(fdid);
+				const m2 = new M2(data);
+				if (m2.skins.length === 0) throw new Error(`model ${fdid} has no skin`);
+				const skin = new Skin(await file(m2.skins[0]));
+				return { m2, skin, geometry: buildGeometry(m2, skin), users: 0 };
+			})();
+			parsed.set(fdid, p);
+			p.catch(() => parsed.delete(fdid));
+		}
+		const shared = await p;
 		const t0 = performance.now();
-		const m2 = new M2(data);
-		if (m2.skins.length === 0) throw new Error(`model ${fdid} has no skin`);
-		const skinData = await file(m2.skins[0]);
-		const t1 = performance.now();
-		const skin = new Skin(skinData);
-		const model = new Model(m2, skin);
-		Model.onLoad?.(fdid, performance.now() - t1 + (t1 - t0));
+		const model = new Model(shared);
+		Model.onLoad?.(fdid, performance.now() - t0);
 		await Promise.all([model.loadAnim(model.base.seq), ...model.loading]);
 		model.base.source = model.ready.get(model.base.seq);
 		model.update(0);
@@ -439,6 +455,73 @@ export class Model {
 			const sub = this.skin.submeshes[bm.submesh];
 			bm.material.visible = !this.geosets || this.geosets.has(sub.id);
 		}
+	}
+
+	// compact draws the parts that look alike in one draw call, once the model's look is set.
+	//
+	// A character's body comes in about 16 parts (skin, hair, face, each piece of armor's geoset),
+	// and the renderer draws each part on its own. In a raid of 40 that was most of the frame. Parts
+	// with the same material, textures and animated colors look the same, so we put their triangles
+	// side by side and draw them as one. The hidden geosets drop out, so setGeosets can't show them
+	// again afterwards.
+	compact() {
+		const g = this.mesh.geometry;
+		const index = g.index;
+		const mats = this.mesh.material as THREE.Material[];
+		if (!index || !Array.isArray(mats)) return;
+		const key = (i: number) => {
+			const b = this.skin.batches[i];
+			return [b.material, b.textureCombo, b.textureCount, b.shader, b.color, b.weightCombo, b.transformCombo, b.coordCombo, b.priority, b.materialLayer].join();
+		};
+		type Merged = { materialIndex: number; ranges: [number, number][] };
+		const merged: Merged[] = [];
+		const opaque = new Map<string, Merged>();
+		let last: { key: string; m: Merged } | undefined;
+		for (const group of g.groups) {
+			const i = group.materialIndex ?? 0;
+			if (!mats[i]?.visible) continue;
+			const k = key(i);
+			// The renderer sorts the solid parts itself, so any two alike can merge. See-through parts
+			// draw in their order, so only neighbors merge.
+			const solid = !mats[i].transparent;
+			let m = solid ? opaque.get(k) : last?.key === k ? last.m : undefined;
+			if (!m) {
+				m = { materialIndex: i, ranges: [] };
+				merged.push(m);
+				if (solid) opaque.set(k, m);
+			}
+			m.ranges.push([group.start, group.count]);
+			last = { key: k, m };
+		}
+		const src = index.array as Uint16Array | Uint32Array;
+		let total = 0;
+		for (const m of merged) for (const r of m.ranges) total += r[1];
+		const out = src instanceof Uint32Array ? new Uint32Array(total) : new Uint16Array(total);
+		g.clearGroups();
+		let at = 0;
+		for (const m of merged) {
+			const start = at;
+			for (const [s, c] of m.ranges) {
+				out.set(src.subarray(s, s + c), at);
+				at += c;
+			}
+			g.addGroup(start, at - start, m.materialIndex);
+		}
+		g.setIndex(new THREE.BufferAttribute(out, 1));
+	}
+
+	// cull lets the renderer skip the model when it's off screen, and skip its shadow when it's
+	// outside the shadow's area. The bounds come from the model's resting pose, with room to spare
+	// for its animations. Spell effects stay always drawn, since their bones fly far from the rest
+	// pose.
+	cull(margin = 1.5) {
+		const g = this.mesh.geometry;
+		g.computeBoundingSphere();
+		const sphere = g.boundingSphere?.clone();
+		if (!sphere) return;
+		sphere.radius = sphere.radius * margin + 0.5;
+		this.mesh.boundingSphere = sphere;
+		this.mesh.frustumCulled = true;
 	}
 
 	submeshIds(): number[] {
@@ -775,14 +858,14 @@ export class Model {
 		return track.get(seq, track.times.length === 1 ? this.m2.data : source);
 	}
 
-	private sampleTrack(track: Track, seq: number, time: number, source: DataView | undefined, out: number[]): boolean {
+	private sampleTrack(track: Track, seq: number, time: number, source: DataView | undefined, out: Vec): boolean {
 		const keys = this.trackKeys(track, seq, source);
 		if (!keys) return false;
 		sample(keys, track.width, this.keyTime >= 0 ? this.keyTime : time, out, track.interpolation);
 		return true;
 	}
 
-	private pose(tr: Track, rot: Track, sc: Track, seq: number, time: number, source: DataView | undefined, t: number[], r: number[], s: number[]) {
+	private pose(tr: Track, rot: Track, sc: Track, seq: number, time: number, source: DataView | undefined, t: Vec, r: Vec, s: Vec) {
 		t[0] = t[1] = t[2] = 0;
 		r[0] = r[1] = r[2] = 0;
 		r[3] = 1;
@@ -794,7 +877,7 @@ export class Model {
 
 	// trackValue samples a track (an emitter's rate, say) at the current animation's time. It's
 	// false when the track has no keys there.
-	trackValue(track: Track, out: number[]): boolean {
+	trackValue(track: Track, out: Vec): boolean {
 		return this.sampleTrack(track, this.base.seq, this.base.time, this.base.source, out);
 	}
 
@@ -828,7 +911,7 @@ export class Model {
 	}
 
 	// updateColors applies animated colors and transparency to the batches that have them.
-	private readonly colorOut = [0, 0, 0];
+	private readonly colorOut = new Float64Array(3);
 	private updateColors() {
 		const out = this.colorOut;
 		const m2 = this.m2;
@@ -858,10 +941,22 @@ export class Model {
 		this.particles?.dispose();
 		this.ribbons?.dispose();
 		this.root.removeFromParent();
-		this.mesh.geometry.dispose();
+		const g = this.mesh.geometry;
+		// While other copies still draw the shared vertices, we free only this copy's own parts, so
+		// the renderer keeps the shared ones on the GPU.
+		if (--this.shared.users > 0) {
+			for (const name of Object.keys(g.attributes)) g.deleteAttribute(name);
+			if (g.index === this.shared.geometry.index) g.setIndex(null);
+		}
+		g.dispose();
 		for (const bm of this.mats) bm.material.dispose();
 	}
 }
+
+// A model file read once: its parsed data and vertices, shared by every copy of the model (a
+// raid of the same race, every Searing bolt), with how many copies are alive.
+type Parsed = { m2: M2; skin: Skin; geometry: THREE.BufferGeometry; users: number };
+const parsed = new Map<number, Promise<Parsed>>();
 
 // twistShares spreads a strafe's twist over the bones from the lower spine up to the head. The
 // lower spine takes 55%, the bones between it and the head (chest and neck) 25% together, and the
@@ -932,7 +1027,7 @@ const billboardTmp = { q1: new THREE.Quaternion(), q2: new THREE.Quaternion(), v
 // faceFront turns the model's front (+x) to the camera's back (+z), which faces the viewer.
 const faceFront = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
 
-function blend(s: { t: number[]; r: number[]; s: number[]; t2: number[]; r2: number[]; s2: number[] }, w: number) {
+function blend(s: { t: Vec; r: Vec; s: Vec; t2: Vec; r2: Vec; s2: Vec }, w: number) {
 	// w is the old pose's share.
 	for (let k = 0; k < 3; k++) {
 		s.t[k] = s.t[k] * (1 - w) + s.t2[k] * w;

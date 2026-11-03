@@ -97,7 +97,8 @@ export type Keys = { times: Uint32Array; values: Float32Array };
 // sequence first plays.
 export class Track {
 	readonly width: number;
-	private keys = new Map<number, Keys | null>();
+	// The keys by slot, read the first time they're asked for (null when the slot has none).
+	private keys: (Keys | null | undefined)[] = [];
 
 	constructor(
 		readonly kind: TrackKind,
@@ -129,17 +130,17 @@ export class Track {
 		// A track on a global sequence loops on its own clock, with its keys in slot 0. A track with
 		// one slot (a ghost wolf's tint) holds for every sequence.
 		const slot = this.globalSeq !== 0xffff || this.times.length === 1 ? 0 : seq;
-		const cached = this.keys.get(slot);
+		const cached = this.keys[slot];
 		if (cached !== undefined) return cached;
 		const t = this.times[slot];
 		const v = this.values[slot];
 		if (!source || !t || !v || t.n === 0 || v.n === 0) {
 			// Without the source the keys may come later (an .anim still loading), so we don't cache.
-			if (source) this.keys.set(slot, null);
+			if (source) this.keys[slot] = null;
 			return null;
 		}
 		if (t.ofs + t.n * 4 > source.byteLength) {
-			this.keys.set(slot, null);
+			this.keys[slot] = null;
 			return null;
 		}
 		const times = new Uint32Array(t.n);
@@ -148,7 +149,7 @@ export class Track {
 		const stride = kindSize[this.kind] * (this.interpolation >= 2 ? 3 : 1);
 		const count = Math.min(v.n, t.n);
 		if (v.ofs + count * stride > source.byteLength) {
-			this.keys.set(slot, null);
+			this.keys[slot] = null;
 			return null;
 		}
 		const values = new Float32Array(count * this.width);
@@ -219,14 +220,19 @@ export class Track {
 			}
 		}
 		const keys = { times: times.subarray(0, count), values };
-		this.keys.set(slot, keys);
+		this.keys[slot] = keys;
 		return keys;
 	}
 }
 
 // sample finds the value at a time (ms) into `out`, interpolating between keys. Rotations use a
 // normalized lerp, which is what the client does.
-export function sample(keys: Keys, width: number, time: number, out: number[], interpolation: number) {
+// Vec is somewhere to write a sampled value. The per-frame ones are Float64Arrays: Chrome stores a
+// decimal number in a plain array as its own little object, so a plain array made garbage on every
+// write (about 30KB per character a frame).
+export type Vec = { [i: number]: number; readonly length: number };
+
+export function sample(keys: Keys, width: number, time: number, out: Vec, interpolation: number) {
 	const { times, values } = keys;
 	const n = times.length;
 	if (n === 1 || time <= times[0]) {

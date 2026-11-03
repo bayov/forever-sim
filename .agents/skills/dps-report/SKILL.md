@@ -166,8 +166,10 @@ and the pipeline in `tools/dps_report/` (README). In short:
 5. Commit `ui/dps_report/data`, `datasets.json`, `provenance.json` and
    `tools/dps_report/raw` together, push, then deploy from the pushed commit.
 
-**Never re-sim every build for a change that touches only some**, and don't re-sim to fix
-provenance (re-record instead). The design and its audits are in
+**Never re-sim every build for a change that touches only some.** A shared sim input
+change goes through `pipeline.sh probe` first, which re-sims only the builds that moved
+(`regenerate-dps-report` step 1, README "Probes"); a full run is only for packs without
+probes or a failed probe audit. Don't re-sim to fix provenance. The design and its audits are in
 `orchestration/dash_raw_store.md`. The template for a delegated job is
 `prompts/dashboard/HANDOFF_dash_refresh.md`. Its publishing steps are for the deleted
 legacy dashboard, so use steps 4 and 5 here instead.

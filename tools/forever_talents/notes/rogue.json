@@ -1,0 +1,473 @@
+{
+ "class": "rogue",
+ "entries": [
+  {
+   "tree": "Assassination",
+   "op": "remove",
+   "name": "Murder",
+   "source": "development notes 2026-11-02 (post 9): Murder has been removed"
+  },
+  {
+   "tree": "Assassination",
+   "op": "set",
+   "name": "Improved Expose Armor",
+   "fields": {
+    "row": 2,
+    "col": 2
+   },
+   "source": "development notes 2026-11-02 (post 9): moved to row 2; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Assassination",
+   "op": "set",
+   "name": "Vigor",
+   "fields": {
+    "row": 3,
+    "col": 1
+   },
+   "source": "development notes 2026-11-02 (post 9): moved to row 3; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Assassination",
+   "op": "add",
+   "talent": {
+    "name": "Blood Splatter",
+    "max": 1,
+    "row": 3,
+    "col": 2,
+    "passive": true,
+    "icon": "ability_rogue_bloodsplatter",
+    "desc": {
+     "1": "Increases the duration of your Rupture ability by 6 sec and your Garrote ability by 9 sec."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): new 1-point talent in row 3; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Assassination",
+   "op": "set",
+   "name": "Lethality",
+   "fields": {
+    "max": 2,
+    "desc": {
+     "1": "Increases the critical strike damage bonus of your Sinister Strike, Gouge, Backstab, Mutilate, Ghostly Strike, and Hemorrhage abilities by 10%.",
+     "2": "Increases the critical strike damage bonus of your Sinister Strike, Gouge, Backstab, Mutilate, Ghostly Strike, and Hemorrhage abilities by 20%."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): 2 points, 10/20% (was 5 points)"
+  },
+  {
+   "tree": "Assassination",
+   "op": "set",
+   "name": "Relentless Strikes",
+   "fields": {
+    "row": 5,
+    "col": 1,
+    "max": 5,
+    "desc": {
+     "1": "Your finishing moves have a 4% chance per combo point to restore 25 Energy.",
+     "2": "Your finishing moves have a 8% chance per combo point to restore 25 Energy.",
+     "3": "Your finishing moves have a 12% chance per combo point to restore 25 Energy.",
+     "4": "Your finishing moves have a 16% chance per combo point to restore 25 Energy.",
+     "5": "Your finishing moves have a 20% chance per combo point to restore 25 Energy."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): row 5, 5 points 4-20% per combo point (was 1 point, 20%); column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Assassination",
+   "op": "set",
+   "name": "Venom",
+   "fields": {
+    "row": 5,
+    "col": 2,
+    "req": null,
+    "reqText": null,
+    "passive": true,
+    "desc": {
+     "1": "Your Shank ability increases the damage of your Poisons by 30% and your chance to apply Poisons by 20% for 6 sec."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): row 5, now a passive on Shank (was a row 7 finisher after Mutilate); column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Assassination",
+   "op": "set",
+   "name": "Seal Fate",
+   "fields": {
+    "max": 3,
+    "desc": {
+     "1": "Your critical strikes from abilities that add combo points have a 33% chance to add an additional combo point.",
+     "2": "Your critical strikes from abilities that add combo points have a 66% chance to add an additional combo point.",
+     "3": "Your critical strikes from abilities that add combo points have a 100% chance to add an additional combo point."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): 3 points, 33/66/100% (was 5 points)"
+  },
+  {
+   "tree": "Assassination",
+   "op": "set",
+   "name": "Mutilate",
+   "fields": {
+    "row": 7,
+    "col": 2,
+    "desc": {
+     "1": "Instantly attacks with both weapons for 90% weapon damage plus an additional amount with each weapon. Damage is increased by 20% against Poisoned targets. Awards 2 combo points."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): row 7 (was row 5), 90% weapon damage (was 75%); column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Combat",
+   "op": "set",
+   "name": "Improved Eviscerate",
+   "fields": {
+    "name": "Coup de Grace",
+    "desc": {
+     "1": "Increases the damage done by your Eviscerate ability by 7%, and the damage and storage rate of your Death Mark ability by 7%.",
+     "2": "Increases the damage done by your Eviscerate ability by 13%, and the damage and storage rate of your Death Mark ability by 13%.",
+     "3": "Increases the damage done by your Eviscerate ability by 20%, and the damage and storage rate of your Death Mark ability by 20%."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Improved Eviscerate renamed Coup de Grace, also Death Mark"
+  },
+  {
+   "tree": "Combat",
+   "op": "set",
+   "name": "Improved Sinister Strike",
+   "fields": {
+    "name": "Efficient Strikes",
+    "desc": {
+     "1": "Reduces the Energy cost of your Sinister Strike and Hemorrhage abilities by 3.",
+     "2": "Reduces the Energy cost of your Sinister Strike and Hemorrhage abilities by 5."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Improved Sinister Strike renamed Efficient Strikes, also Hemorrhage"
+  },
+  {
+   "tree": "Combat",
+   "op": "set",
+   "name": "Improved Sprint",
+   "fields": {
+    "row": 2,
+    "col": 4
+   },
+   "source": "development notes 2026-11-02 (post 9): moved to row 2; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Combat",
+   "op": "add",
+   "talent": {
+    "name": "Composure",
+    "max": 2,
+    "row": 3,
+    "col": 3,
+    "passive": true,
+    "icon": "ability_rogue_quickrecovery",
+    "desc": {
+     "1": "Increases the Energy cost reduction of your Poised ability by 5.",
+     "2": "Increases the Energy cost reduction of your Poised ability by 10."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): new 2-point talent in row 3; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Combat",
+   "op": "set",
+   "name": "Flawless Execution",
+   "fields": {
+    "desc": {
+     "1": "Reduces the Energy cost of your Eviscerate ability by 15."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): 15 (was 10)"
+  },
+  {
+   "tree": "Combat",
+   "op": "set",
+   "name": "Aggression",
+   "fields": {
+    "row": 4,
+    "col": 3,
+    "desc": {
+     "1": "Increases the damage of your Sinister Strike and Eviscerate abilities by 5%.",
+     "2": "Increases the damage of your Sinister Strike and Eviscerate abilities by 10%.",
+     "3": "Increases the damage of your Sinister Strike and Eviscerate abilities by 15%."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): row 4, 5/10/15% Sinister Strike and Eviscerate (was 2/4/6% with Backstab); column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Combat",
+   "op": "set",
+   "name": "Weapon Expertise",
+   "fields": {
+    "row": 4,
+    "col": 4,
+    "req": null
+   },
+   "source": "development notes 2026-11-02 (post 9): moved to row 4; column from foreverchanges.pro's talent calculator (2026-11-03), which draws no arrow from Blade Flurry"
+  },
+  {
+   "tree": "Combat",
+   "op": "set",
+   "name": "Dual Wield Specialization",
+   "fields": {
+    "row": 5,
+    "col": 1,
+    "max": 2,
+    "desc": {
+     "1": "Increases the damage done by your off-hand weapon by 25%.",
+     "2": "Increases the damage done by your off-hand weapon by 50%."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): row 5, 2 points 25/50% (was 5 points); column from foreverchanges.pro's talent calculator (2026-11-03) (the arrow from Precision stays)"
+  },
+  {
+   "tree": "Combat",
+   "op": "add",
+   "talent": {
+    "name": "Flash of Steel",
+    "max": 5,
+    "row": 6,
+    "col": 2,
+    "passive": true,
+    "icon": "ability_rogue_focusedattacks",
+    "desc": {
+     "1": "Increases the Energy generated by your Shank ability by 3 and reduces its cooldown by 0.4 sec.",
+     "2": "Increases the Energy generated by your Shank ability by 6 and reduces its cooldown by 0.8 sec.",
+     "3": "Increases the Energy generated by your Shank ability by 9 and reduces its cooldown by 1.2 sec.",
+     "4": "Increases the Energy generated by your Shank ability by 12 and reduces its cooldown by 1.6 sec.",
+     "5": "Increases the Energy generated by your Shank ability by 15 and reduces its cooldown by 2 sec."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): new 5-point talent in row 6; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Setup",
+   "fields": {
+    "row": 1,
+    "col": 1,
+    "desc": {
+     "1": "Gives you a 15% chance to add a combo point to your target after dodging their attack or fully resisting one of their spells.",
+     "2": "Gives you a 30% chance to add a combo point to your target after dodging their attack or fully resisting one of their spells.",
+     "3": "Gives you a 45% chance to add a combo point to your target after dodging their attack or fully resisting one of their spells."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): row 1, 15/30/45% (was 33/66/100%); column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Opportunity",
+   "fields": {
+    "max": 5,
+    "desc": {
+     "1": "Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by 4%.",
+     "2": "Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by 8%.",
+     "3": "Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by 12%.",
+     "4": "Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by 16%.",
+     "5": "Increases the damage dealt by your Backstab, Garrote, Ambush, and Mutilate abilities by 20%."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): 5 points 4-20% (was 2 points 5/10%)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Camouflage",
+   "fields": {
+    "row": 2,
+    "col": 1,
+    "max": 3,
+    "desc": {
+     "1": "Increases your speed while stealthed by 5% and reduces the cooldown of your Stealth ability by 2 sec.",
+     "2": "Increases your speed while stealthed by 10% and reduces the cooldown of your Stealth ability by 4 sec.",
+     "3": "Increases your speed while stealthed by 15% and reduces the cooldown of your Stealth ability by 6 sec."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): row 2, 3 points (was 5); column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Elusiveness",
+   "fields": {
+    "row": 4,
+    "col": 1
+   },
+   "source": "development notes 2026-11-02 (post 9): moved to row 4; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Dirty Deeds",
+   "fields": {
+    "row": 2,
+    "col": 2,
+    "req": null
+   },
+   "source": "development notes 2026-11-02 (post 9): moved to row 2; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "remove",
+   "name": "Improved Distract",
+   "source": "development notes 2026-11-02 (post 9): Improved Distract removed"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Ghostly Strike",
+   "fields": {
+    "row": 4,
+    "col": 2
+   },
+   "source": "development notes 2026-11-02 (post 9): row 4, and the next Ambush or Garrote within 7 sec needs no Stealth; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Heightened Senses",
+   "fields": {
+    "row": 5,
+    "col": 1
+   },
+   "source": "development notes 2026-11-02 (post 9): moved to row 5; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Premeditation",
+   "fields": {
+    "row": 3,
+    "col": 2
+   },
+   "source": "development notes 2026-11-02 (post 9): moved to row 3; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Serrated Blades",
+   "fields": {
+    "row": 3,
+    "col": 3
+   },
+   "source": "development notes 2026-11-02 (post 9): moved to row 3; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Improved Ambush",
+   "fields": {
+    "row": 2,
+    "col": 4
+   },
+   "source": "column from foreverchanges.pro's talent calculator (2026-11-03) (not in the notes)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Initiative",
+   "fields": {
+    "row": 3,
+    "col": 1
+   },
+   "source": "column from foreverchanges.pro's talent calculator (2026-11-03) (not in the notes)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Dirty Tricks",
+   "fields": {
+    "row": 2,
+    "col": 3
+   },
+   "source": "column from foreverchanges.pro's talent calculator (2026-11-03) (not in the notes)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "add",
+   "talent": {
+    "name": "Quick Getaway",
+    "max": 2,
+    "row": 4,
+    "col": 4,
+    "passive": true,
+    "icon": "ability_rogue_fleetfooted",
+    "desc": {
+     "1": "Increases the maximum number of targets you may have Sapped by 1, and increases your movement speed by 15% for 3 sec after sapping a target.",
+     "2": "Increases the maximum number of targets you may have Sapped by 1, and increases your movement speed by 30% for 3 sec after sapping a target."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): new 2-point talent in row 4; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "set",
+   "name": "Hemorrhage",
+   "fields": {
+    "desc": {
+     "1": "An instant strike that deals 100% weapon damage (145% if a Dagger is equipped) and causes the target to take 15% increased Rupture and Garrote damage from the Rogue. Lasts 15 sec. Awards 1 combo point."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): also Garrote"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "remove",
+   "name": "Quietus",
+   "source": "development notes 2026-11-02 (post 9): Quietus has been removed"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "remove",
+   "name": "Cutthroat",
+   "source": "development notes 2026-11-02 (post 9): Cutthroat has been removed"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "add",
+   "talent": {
+    "name": "Boot Knife",
+    "max": 5,
+    "row": 6,
+    "col": 2,
+    "passive": true,
+    "icon": "inv_throwingknife_02",
+    "desc": {
+     "1": "Gives your Shank ability a 20% chance to add 2 combo points to the target.",
+     "2": "Gives your Shank ability a 40% chance to add 2 combo points to the target.",
+     "3": "Gives your Shank ability a 60% chance to add 2 combo points to the target.",
+     "4": "Gives your Shank ability a 80% chance to add 2 combo points to the target.",
+     "5": "Gives your Shank ability a 100% chance to add 2 combo points to the target."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): new 5-point talent in row 6; column from foreverchanges.pro's talent calculator (2026-11-03)"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "remove",
+   "name": "Thousand Cuts",
+   "source": "development notes 2026-11-02 (post 9): Thousand Cuts has been removed"
+  },
+  {
+   "tree": "Subtlety",
+   "op": "add",
+   "talent": {
+    "name": "Death Mark",
+    "max": 1,
+    "row": 7,
+    "col": 2,
+    "passive": false,
+    "icon": "ability_rogue_slaughterfromtheshadows",
+    "desc": {
+     "1": "Finishing move that marks the target, storing a portion of the damage dealt by your attacks per combo point. Garrote and Rupture damage is stored at twice the rate. After 6 sec, the stored damage is dealt, up to a maximum increased by Attack Power and critical strike chance. 25 Energy, 20 yd range, 10 sec cooldown. Curse."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): new 1-point active talent in row 7 (client spells 1316709 and 1325756-8, 12% stored per combo point, SpellDescriptionVariables 1021); column from foreverchanges.pro's talent calculator (2026-11-03)"
+  }
+ ]
+}
