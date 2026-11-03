@@ -219,7 +219,11 @@ export const DefaultAPLs = [APLLevel60Fury];
 // search at flat Rage (+1.6 at 180 sec, 20,000 iterations). Weaponmaster
 // hybrids (25 Arms for the swords' extra attacks, no Bloodthirst) were 823.5 on the earlier gear,
 // 17% behind.
-export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30303013002-2505300451020100301' }), {
+// 2026-11-03, the November 2 notes' tree (Flurry 3 points without Death Wish, Improved Tactical
+// Mastery 3, Reckless Swings, Improved Whirlwind): the search from the remapped build drops Booming
+// Voice and a point of Improved Berserker Rage for Reckless Swings, Improved Whirlwind 2/2 and Enrage
+// 5/5, and fills Arms' rows with Improved Charge and Improved Overpower: 1069.6 to 1153.4 at 180 sec.
+export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30313113002-0505300551120100321' }), {
 	tooltip: 'Level 60 dual wield Fury talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -227,7 +231,11 @@ export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTal
 // of Dual Wield Specialization and Furious Precision. 899.4 at 180 sec (Human), 13% behind dual wield
 // Fury but its own way to play, so it gets its own preset. At flat Rage (2026-10-25) a point of
 // Enrage moves to Improved Berserker Rage (2/2, 10 Rage a Berserker Rage): +0.8 at 180 sec.
-export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30303013032-2505300401022100301' }), {
+// 2026-11-03, the November 2 notes' tree: Flurry's 3 points left Bloodthirst short of its row, so the
+// start takes Reckless Swings and Improved Whirlwind 2/2; the search then moves 2 points of Unbridled
+// Wrath to Enrage 5/5: 1163.9 to 1170.1 at 180 sec. Furious Precision does nothing with a two-hander,
+// but no move of its points scored better.
+export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30313113032-2503300501122100321' }), {
 	tooltip: 'Level 60 two-hand Fury talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -239,15 +247,21 @@ export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', Sav
 // own preset as the Mortal Strike spec. The 2026-10-25 search at flat Rage kept it: Improved Bloodrage
 // 2/2 for Booming Voice and Improved Execute (which needs the Booming Voice points to open its row)
 // loses 1.5 at 180 sec.
-export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTalents.create({ talentsString: '20303213032215201-550500000001' }), {
+// 2026-11-03, the November 2 notes' tree (Improved Tactical Mastery 3, Bloodthrill 2 points for 20%,
+// Two-Handed Weapon Specialization 6%, Reckless Swings): the 4 freed points and a third point of
+// Improved Heroic Strike (to open Two-Handed Weapon Specialization's row again) go to Reckless
+// Swings, Enrage 5/5 and Improved Bloodrage 2/2, for Booming Voice: 1050.6 to 1086.6 at 180 sec.
+export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTalents.create({ talentsString: '30303213032215201-050500050012-2' }), {
 	tooltip: 'Level 60 Arms talents from the talent search.',
 	group: 'Synthetic',
 });
 // The talent and rotation searches on a Dragonkin boss take Spearing Strike and Improved Bloodrage
-// for two points of Booming Voice and one of Improved Execute.
+// for two points of Booming Voice and one of Improved Execute. On the November 2 notes' tree
+// (2026-11-03) it is the Arms build with Spearing Strike for a point of Improved Bloodrage: 1129.7
+// at 180 sec on the Dragonkin boss.
 export const TalentsLevel60ArmsDragonkin = PresetUtils.makePresetTalents(
 	'Arms · vs Dragonkin',
-	SavedTalents.create({ talentsString: '20303213132215201-3505-2' }),
+	SavedTalents.create({ talentsString: '30303213132215201-050500050012-1' }),
 	{
 		tooltip: 'Level 60 Arms talents against a Giant or Dragonkin boss, with Spearing Strike.',
 		group: 'Synthetic',
