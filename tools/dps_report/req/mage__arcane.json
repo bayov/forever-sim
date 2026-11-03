@@ -85,7 +85,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "050205203100211531-25-0535",
+            "talentsString": "050205203100311531-55-0531",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -509,6 +509,50 @@
                     }
                   },
                   "notes": "Arcane Wrath on cooldown. Without the talent ignore the warning on this line."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1239700
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400573
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "currentMana": {}
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "math": {
+                                  "lhs": {
+                                    "remainingTime": {}
+                                  },
+                                  "op": "OpMul",
+                                  "rhs": {
+                                    "const": {
+                                      "val": "75"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Arcane Blast ahead of the filler with mana the fight can't otherwise spend."
                 },
                 {
                   "action": {
