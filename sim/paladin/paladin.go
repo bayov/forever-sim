@@ -32,6 +32,8 @@ const (
 	SpellCode_PaladinHammerOfWrath
 	SpellCode_PaladinHolyStrike
 	SpellCode_PaladinSealOfRighteousnessProc
+	SpellCode_PaladinSealOfFuryProc
+	SpellCode_PaladinJudgementOfFury
 )
 
 type SealJudgeCode uint8
@@ -59,6 +61,7 @@ type Paladin struct {
 	aurasSoC     []*core.Aura
 	aurasSotC    []*core.Aura
 	aurasSoW     []*core.Aura
+	aurasSoF     []*core.Aura
 
 	currentJudgement *core.Spell
 	// The seal spell whose aura is up, for Sanctified Judgement's refund of its cost.
@@ -68,6 +71,7 @@ type Paladin struct {
 	spellsJoC        []*core.Spell
 	spellsJotC       []*core.Spell
 	spellsJoW        []*core.Spell
+	spellsJoF        []*core.Spell
 
 	// Seal of Wisdom is registered only for a rotation that names it (sow.go).
 	usesSealOfWisdom       bool
@@ -76,14 +80,19 @@ type Paladin struct {
 	// Active abilities and shared cooldowns that are externally manipulated.
 	exorcism       []*core.Spell
 	judgement      *core.Spell
-	holyShieldAura [3]*core.Aura
-	holyShieldProc [3]*core.Spell
+	holyShieldAura [4]*core.Aura
+	holyShieldProc [4]*core.Spell
 	redoubtAura    *core.Aura
 	holyWrath      []*core.Spell
 
 	// highest rank seal spell if available
 	sealOfRighteousness *core.Spell
 	sealOfCommand       *core.Spell
+	sealOfFury          *core.Spell
+
+	// Seal of Fury's absorb (seal_of_fury.go) and Templar's Bulwark's (templars_bulwark.go).
+	sealOfFuryShield      *absorbShield
+	templarsBulwarkShield *absorbShield
 
 	// Consecration's mark on the first four enemies in it, which takes its extra damage and
 	// Consecrated Ground's bonus.
@@ -137,16 +146,21 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerSealOfCommand()
 	paladin.registerSealOfTheCrusader()
 	paladin.registerSealOfWisdom()
+	if paladin.Env.IsForever() {
+		paladin.registerSealOfFury()
+	}
 
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoR)
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoC)
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJotC)
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoW)
+	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoF)
 
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoR)
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoC)
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSotC)
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoW)
+	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoF)
 
 	// Active abilities
 	paladin.registerForbearance()
@@ -158,6 +172,8 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerHammerOfWrath()
 	paladin.registerHolyWrath()
 	paladin.registerHolyShield()
+	paladin.registerTemplarsBulwark()
+	paladin.registerDivineShieldAndProtection()
 	paladin.registerBlessingOfSanctuary()
 	paladin.registerLayOnHands()
 	paladin.registerHolyStrike()
@@ -238,6 +254,11 @@ func (paladin *Paladin) getPrimarySealSpell(primarySeal proto.PaladinSeal) *core
 	case proto.PaladinSeal_Command:
 		return paladin.sealOfCommand
 	case proto.PaladinSeal_Righteousness:
+		return paladin.sealOfRighteousness
+	case proto.PaladinSeal_Fury:
+		if paladin.sealOfFury != nil {
+			return paladin.sealOfFury
+		}
 		return paladin.sealOfRighteousness
 	default:
 		return paladin.sealOfRighteousness

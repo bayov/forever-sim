@@ -108,7 +108,9 @@ func (paladin *Paladin) registerHolyStrike() {
 				flat := holy * (0.875 + 0.25*sim.RandomFloat("Holy Strike"))
 				baseDamage := rank.weaponPercent * (paladin.holyStrikeWeaponDamage(sim, spell.MeleeAttackPower(target)) + flat)
 				result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
-				if ironCreed != nil && result.Landed() {
+				// Any Holy Strike gives Iron Creed's cut, landed or not: wowsims/forever checked in game
+				// that one that misses or is avoided still does (talents_protection.go, applyIronCreed).
+				if ironCreed != nil {
 					ironCreed.Activate(sim)
 				}
 				if result.Landed() && paladin.Talents.Shieldsworn {
@@ -125,8 +127,7 @@ func (paladin *Paladin) holyStrikeWeaponDamage(sim *core.Simulation, attackPower
 	return weapon.BaseDamage(sim) + (weapon.NormalizedSwingSpeed+0.3)*attackPower/weapon.AttackPowerPerDPS
 }
 
-// registerIronCreed is Iron Creed's second half: with Righteous Fury on, a Holy Strike that lands
-// takes 2% a rank off all damage taken for 6 sec (the trigger spell 1311033, aura 87 on all schools;
+// registerIronCreed is Iron Creed's second half: with Righteous Fury on, a Holy Strike takes 2% a rank off all damage taken for 6 sec (the trigger spell 1311033, aura 87 on all schools;
 // the trait ranks 2 / 4 / 6% since the October 30 hotfix, 2% a rank of 5 before). Nil without the
 // talent or without Righteous Fury, which is on or off for the whole fight.
 func (paladin *Paladin) registerIronCreed() *core.Aura {

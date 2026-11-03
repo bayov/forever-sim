@@ -21,6 +21,13 @@ const (
 	LibramOfLaw      = 272435
 	LibramOfInfusion = 279248
 
+	// The tank librams (client 1.60.1.70753). Steadfast Libram (crafted, spell 1306433) raises the
+	// shield's block value by 30% while Holy Shield is up (aura 1306749, aura 272, as Shield
+	// Specialization's; holy_shield.go). Sentinel's Libram (spell 1291083) takes 10 sec off Swift
+	// Judgement's cooldown (swift_judgement.go).
+	SteadfastLibram = 279247
+	SentinelsLibram = 272434
+
 	// Tenets of the Silver Hand (spell 1302545) is 1% more damage against Undead, and Libram of
 	// Invocation 5% off the seals' mana cost (sealCostFactor).
 	TenetsOfTheSilverHand = 249397

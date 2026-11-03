@@ -26,6 +26,7 @@ var templates = map[string]Template{
 	// Leveling sessions (settings with leveling options).
 	"shaman_enh_leveling": shamanEnhLeveling{},
 	"paladin_ret":         paladinRet{},
+	"paladin_tank":        paladinTank{},
 }
 
 func defaultKnobs(t Template) Knobs {

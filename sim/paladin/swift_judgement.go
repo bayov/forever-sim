@@ -35,7 +35,7 @@ func (paladin *Paladin) registerSwiftJudgement() {
 			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
-				Duration: time.Minute,
+				Duration: time.Minute - core.TernaryDuration(paladin.Ranged().ID == SentinelsLibram, time.Second*10, 0),
 			},
 		},
 		ExtraCastCondition: func(_ *core.Simulation, _ *core.Unit) bool {

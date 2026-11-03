@@ -6,7 +6,9 @@ import (
 )
 
 func (paladin *Paladin) registerBlessingOfSanctuary() {
-	if paladin.Options.PersonalBlessing != proto.Blessings_BlessingOfSanctuary {
+	// Forever has no Blessing of Sanctuary: the Protection tree lost it and no client row from
+	// 70338 to 70753 names it (spells 20911 to 20914 and 25899 are gone).
+	if paladin.Options.PersonalBlessing != proto.Blessings_BlessingOfSanctuary || paladin.Env.IsForever() {
 		return
 	}
 

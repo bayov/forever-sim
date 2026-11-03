@@ -223,6 +223,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-Phase5-AllItems-ProtectionPaladinSynthetic(Phase1)"
+ value: {
+  dps: 365.21333
+  tps: 398.04321
+ }
+}
+dps_results: {
+ key: "TestRetribution-Phase5-AllItems-ProtectionPaladinSyntheticStrengthOn-UseTrinket(Phase1)-990716"
+ value: {
+  dps: 354.5735
+  tps: 387.40655
+ }
+}
+dps_results: {
  key: "TestRetribution-Phase5-AllItems-RedemptionArmor"
  value: {
   dps: 442.75183
