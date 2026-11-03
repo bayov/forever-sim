@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -132,5 +133,32 @@ func TestWarlockAmplifyCurseAgony(t *testing.T) {
 	}
 	if got := bases[true] / bases[false]; math.Abs(got-1.5) > 1e-9 {
 		t.Errorf("Amplify Curse makes Bane of Agony's base x%.4f, want x1.5", got)
+	}
+}
+
+// TestWarlockOrcCommand checks the Orc's Command (the 2026-11-02 notes: "re-added, increasing
+// Warlock and Hunter pet damage by 5%") on the warlock's demons.
+func TestWarlockOrcCommand(t *testing.T) {
+	multipliers := map[proto.Race]float64{}
+	for _, race := range []proto.Race{proto.Race_RaceOrc, proto.Race_RaceHuman} {
+		player := &proto.Player{
+			Race:      race,
+			Class:     proto.Class_ClassWarlock,
+			Level:     60,
+			Equipment: &proto.EquipmentSpec{},
+			Rotation:  &proto.APLRotation{},
+			Spec:      &proto.Player_Warlock{Warlock: &proto.Warlock{Options: &proto.WarlockOptions{Summon: proto.WarlockOptions_Succubus}}},
+		}
+		sim := core.NewSim(&proto.RaidSimRequest{
+			Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+			Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		}, simsignals.CreateSignals())
+		sim.Reset()
+		lock := sim.Raid.Parties[0].Players[0].(*DpsWarlock)
+		multipliers[race] = lock.Succubus.PseudoStats.DamageDealtMultiplier
+	}
+	if got := multipliers[proto.Race_RaceOrc] / multipliers[proto.Race_RaceHuman]; math.Abs(got-1.05) > 1e-9 {
+		t.Errorf("Orc Succubus damage x%.4f of the Human's, want x1.05", got)
 	}
 }
