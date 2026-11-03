@@ -20,3 +20,8 @@ keep only its result in your own context:
 - Do it yourself only when it's small: a file or two you're about to edit, a command whose
   output is a few lines. When you run something with long output yourself, send it to a
   file (`> out.txt 2>&1`) and read only what you need with `tail`, `grep` or `sed -n`.
+- A subagent may start subagents of its own when its work really splits: independent parts
+  that can run at once, or a big read it doesn't need to keep. Otherwise it does the work
+  itself. Never pass a whole task down to one agent, since that adds a level that only
+  waits, and never go more than two levels below the main session. Each agent's brief
+  says what it must hand back.

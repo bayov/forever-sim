@@ -15,15 +15,16 @@ func (warrior *Warrior) registerSlamSpell() {
 	// and stops Slam from resetting the swing timer entirely.
 	castReduction := time.Millisecond * 250 * time.Duration(warrior.Talents.ImprovedSlam)
 
-	// Forever gives Slam an 18 sec cooldown, and Improved Slam takes 3 sec off it (client
-	// 70338: category cooldown 18000 on every rank, and effect 3 of spell 12862 is -3000 with no
-	// rank curve, so 3 sec at either rank. ForeverChanges reads it as 3 sec a point, but the trait
-	// curves override only the effects they name).
+	// Forever gives Slam a 15 sec cooldown, and Improved Slam takes 2.5 sec a point off it
+	// (development notes post 9, 2026-11-02: "reduced to 15 seconds (was 18 seconds)", and
+	// Improved Slam's reduction "changed to 2.5/5 seconds (was 3.0/3.0)"). Client 70753 still has
+	// the old values (category cooldown 18000 on every rank, effect 3 of spell 12862 -3000 with no
+	// rank curve); the notes announce the change for launch, after that build.
 	var cooldown core.Cooldown
 	if warrior.Env.IsForever() {
 		cooldown = core.Cooldown{
 			Timer:    warrior.NewTimer(),
-			Duration: time.Second*18 - core.TernaryDuration(warrior.Talents.ImprovedSlam > 0, time.Second*3, 0),
+			Duration: time.Second*15 - time.Millisecond*2500*time.Duration(min(warrior.Talents.ImprovedSlam, 2)),
 		}
 	}
 

@@ -31,36 +31,39 @@ message WarriorTalents {
 	int32 furious_precision = 22;
 	bool piercing_howl = 23;
 	int32 blood_craze = 24;
-	int32 dual_wield_specialization = 25;
-	bool raging_blows = 26;
-	int32 enrage = 27;
-	int32 improved_execute = 28;
-	int32 improved_berserker_rage = 29;
-	bool death_wish = 30;
-	int32 improved_intercept = 31;
-	int32 flurry = 32;
-	int32 gore_drinker = 33;
-	bool bloodthirst = 34;
+	int32 enrage = 25;
+	int32 dual_wield_specialization = 26;
+	bool raging_blows = 27;
+	bool reckless_swings = 28;
+	int32 improved_execute = 29;
+	int32 improved_berserker_rage = 30;
+	bool death_wish = 31;
+	int32 gore_drinker = 32;
+	int32 improved_intercept = 33;
+	int32 flurry = 34;
+	int32 improved_whirlwind = 35;
+	bool bloodthirst = 36;
 
 	// Protection
-	int32 improved_bloodrage = 35;
-	int32 shield_specialization = 36;
-	int32 iron_will = 37;
-	int32 anticipation = 38;
-	int32 improved_revenge = 39;
-	int32 improved_thunder_clap = 40;
-	bool last_stand = 41;
-	int32 master_of_defense = 42;
-	int32 improved_disarm = 43;
-	int32 defiance = 44;
-	int32 improved_sunder_armor = 45;
-	bool vanguard = 46;
-	int32 improved_shield_bash = 47;
-	int32 improved_shield_wall = 48;
-	bool concussion_blow = 49;
-	int32 focused_rage = 50;
-	int32 bastion = 51;
-	bool shield_slam = 52;
+	int32 improved_bloodrage = 37;
+	int32 shield_specialization = 38;
+	int32 iron_will = 39;
+	int32 anticipation = 40;
+	int32 improved_revenge = 41;
+	int32 improved_thunder_clap = 42;
+	bool last_stand = 43;
+	int32 master_of_defense = 44;
+	int32 improved_disarm = 45;
+	int32 defiance = 46;
+	int32 improved_sunder_armor = 47;
+	bool vanguard = 48;
+	int32 improved_shield_bash = 49;
+	int32 improved_shield_wall = 50;
+	bool concussion_blow = 51;
+	int32 focused_rage = 52;
+	int32 bastion = 53;
+	bool shield_slam = 54;
+
 }
 
 enum WarriorShout {
