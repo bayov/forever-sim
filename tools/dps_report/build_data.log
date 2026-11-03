@@ -3,13 +3,13 @@ races: 247 rows, 51 KB
 lengths: 340 rows, 28 KB
 abilities: 696 rows, 194 KB
 auras: 1215 rows, 175 KB
-hist: 2794 rows, 149 KB
+hist: 2787 rows, 148 KB
 stats: 671 rows, 55 KB
 gear: 632 rows, 119 KB
 setup: 1839 rows, 458 KB
-notes: 1526 rows, 184 KB
+notes: 1527 rows, 184 KB
 WARNING notes: 2 texts name the project's process, e.g. "Round 70753: the November 2 notes' rogue rework isn't in client 70753, so Shank, the new talents and the re-ranked ones take the notes' values. Shank'"
-race_variants: 954 rows, 288 KB
+race_variants: 954 rows, 289 KB
 race_breakdown: 1180 rows, 177 KB
 race_summary: 328 rows, 100 KB
 race_notes: 47 rows, 11 KB
@@ -19,12 +19,12 @@ mana_summary: 52 rows, 16 KB
 assumptions: 54 rows, 60 KB
 WARNING assumptions: 1 texts name the project's process, e.g. 'Forever client 70753 (every Ice Lance rank: 8 sec cooldown, category 19). Client 70707 (spell 1312002). foreverchanges.pro. User rulings 2026-10-30 an'
 assumption_dps: 339 rows, 56 KB
-rotation: 655 rows, 209 KB
+rotation: 656 rows, 210 KB
 race_rotation: 293 rows, 108 KB
 WARNING race_rotation: 5 changed lines with no why in race_text.json, e.g. priest__smite Gnome priority:s10934
 WARNING rotation: 8 rotation_text.json notes entries no line uses, e.g. Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab.
-WARNING rotation: 1 conditions read like code, with no wording in rotation_text.json, e.g. No Bane of Agony on the boss and over 60s of the fight left and (Warlock Synthetic Talisman (Phase 1) is ready within 59s or over 60s until the trinket is ready)
-WARNING rotation: 8 rotation_text.json entries no line uses, e.g. (any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 3s left and over 9s of the fight left)
+WARNING rotation: 2 conditions read like code, with no wording in rotation_text.json, e.g. No Bane of Agony on the boss and over 60s of the fight left and (Warlock Synthetic Talisman (Phase 1) is ready within 59s or over 60s until the trinket is ready)
+WARNING rotation: 9 rotation_text.json entries no line uses, e.g. (any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 3s left and over 9s of the fight left)
 WARNING rotation: 4 rotation_text.json why entries no line uses, e.g. {'builds': ['mage__arcane'], 'key': 's10181', 'why': 'Why Frostbolt in an Arcane build? Without a Missile Barrage proc it beats Arcane Missiles.'}
 rotation conditions shown in compact form: []
 tooltips: 1080 rows, 437 KB
@@ -40,7 +40,7 @@ missing icons: []
 timeline_warrior: 12 rows, 43 KB
 timeline_rogue: 18 rows, 49 KB
 timeline_hunter: 12 rows, 39 KB
-timeline_paladin: 12 rows, 48 KB
+timeline_paladin: 12 rows, 50 KB
 timeline_shaman: 18 rows, 54 KB
 timeline_druid: 9 rows, 25 KB
 timeline_mage: 12 rows, 39 KB

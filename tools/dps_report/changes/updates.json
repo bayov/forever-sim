@@ -2931,6 +2931,52 @@
      "commits": [
       "90e0bb0"
      ]
+    },
+    {
+     "title": "Feral cat throws an EZ-Thro Dark Bomb at 60 Energy or less right after a main hand swing, and uses Rake and Shadowmeld Ravage at 5 combo points too",
+     "kind": "rotation",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "+8.0 at 180 s; the Faerie Fire duty build takes the bomb too (+6.2).",
+     "commits": [
+      "4f8edc2",
+      "6b70728",
+      "d560d30",
+      "4b76182"
+     ]
+    },
+    {
+     "title": "Balance druid casts Wrath when the mana for Starfire isn't there, and no longer has a separate Clearcasting Starfire line",
+     "kind": "rotation",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__balance",
+      "druid__balance-duty-ff"
+     ],
+     "note": "+0.7 at 180 s, the Skyborne races' rotations too.",
+     "commits": []
+    },
+    {
+     "title": "Twist and sub-Holy paladins use Holy Strike ahead of Judgement and the seals",
+     "kind": "rotation",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60_sub_holy"
+     ],
+     "note": "+1.2 and +1.4 at 180 s. The duty builds and the vs Undead build keep their rotation.",
+     "commits": [
+      "e799dcc"
+     ]
     }
    ],
    "internal": [
@@ -3053,6 +3099,14 @@
     {
      "commit": "d57aa24",
      "why": "client 70755 tables identical to 70753: inputs restamped, spell name rows and client talent trees rewritten; spot re-sims of a rogue, a warlock and a hunter build came out identical, no build moves"
+    },
+    {
+     "commit": "0dcb0d8",
+     "why": "tank threat modifiers (Bear Form, Defensive Stance, Defiance); no report build tanks, and the re-sim of the warrior and druid builds came out unchanged"
+    },
+    {
+     "commit": "b00dccd",
+     "why": "a warrior rotation search knob, off by default; no preset's rotation changes"
     }
    ],
    "source": {

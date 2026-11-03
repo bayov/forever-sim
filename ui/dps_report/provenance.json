@@ -338,11 +338,11 @@
 			}
 		},
 		"paladin__level_60_sub_holy_undead": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.546Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.875Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -367,17 +367,17 @@
 				"sim/paladin": "3b8373fead22730018e49bd6a41a7b6c992a2ef8f5279006accb555a9b92e1f2",
 				"tools/dps_report/req/paladin__level_60_sub_holy_undead.json": "dd38d8a30bbe6094bd76c1fc9772c1fe82973417b9a4da9adc7f65523c0654d9",
 				"tools/dps_report/req/paladin__level_60_sub_holy_undead.meta.json (sim fields)": "e38db9c986130ba04915b6369bbd14f46304185d9b95dbb78dbcae910d3da27a",
-				"tools/dps_report/req/paladin__level_60_sub_holy.json": "2ce128ca72a78b6251a6821dd16de711b8e881dfe8bd2069fb3030444f496ee0",
+				"tools/dps_report/req/paladin__level_60_sub_holy.json": "ffd3d6f6e88e375142a262cfb79fbd432af2e94891da292b413d38d51253eade",
 				"tools/dps_report/req/races/paladin__level_60_sub_holy.Dwarf.json": "dabe3c3f9138e1663979b6642b9f5bfbcb611fe9",
 				"assets/database (the entries it wears)": "64d5f3338ca29d43c5b11cde2277579530d1bd0e7f524cbffc3278de307489e0"
 			}
 		},
 		"paladin__level_60": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.482Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.810Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -400,18 +400,18 @@
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
 				"sim/paladin": "3b8373fead22730018e49bd6a41a7b6c992a2ef8f5279006accb555a9b92e1f2",
-				"tools/dps_report/req/paladin__level_60.json": "1c583e65f3e7e457ccd5843f09d7a66b7428c2a1193e0b81b3e65e18a530668f",
+				"tools/dps_report/req/paladin__level_60.json": "ce59faad30b0826ba20357e13ecc0337846c201ef164ddac81d5e7c763fa8d75",
 				"tools/dps_report/req/paladin__level_60.meta.json (sim fields)": "5a1980de550f69b88062013aa2c357abf5bf566b81a4080f88d1a1edf6b9363e",
 				"tools/dps_report/req/races/paladin__level_60.Dwarf.json": "165a6d8aef51da5d94ae3434bbea9b3d0c8d0811",
 				"assets/database (the entries it wears)": "cc4b4b4235edd191b82623a436c34d9f20a5b1d7cab494fca2f8fc30a1702766"
 			}
 		},
 		"paladin__level_60_sub_holy": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.540Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.844Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -434,7 +434,7 @@
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
 				"sim/paladin": "3b8373fead22730018e49bd6a41a7b6c992a2ef8f5279006accb555a9b92e1f2",
-				"tools/dps_report/req/paladin__level_60_sub_holy.json": "2ce128ca72a78b6251a6821dd16de711b8e881dfe8bd2069fb3030444f496ee0",
+				"tools/dps_report/req/paladin__level_60_sub_holy.json": "ffd3d6f6e88e375142a262cfb79fbd432af2e94891da292b413d38d51253eade",
 				"tools/dps_report/req/paladin__level_60_sub_holy.meta.json (sim fields)": "5a1980de550f69b88062013aa2c357abf5bf566b81a4080f88d1a1edf6b9363e",
 				"tools/dps_report/req/races/paladin__level_60_sub_holy.Dwarf.json": "dabe3c3f9138e1663979b6642b9f5bfbcb611fe9",
 				"assets/database (the entries it wears)": "cc4b4b4235edd191b82623a436c34d9f20a5b1d7cab494fca2f8fc30a1702766"
@@ -643,11 +643,11 @@
 			}
 		},
 		"druid__balance": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.306Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.529Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -669,20 +669,20 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/druid": "290312fc6cb2291196ece27958ada7e99993103b6ed8e90c1f4d55c253993dee",
-				"tools/dps_report/req/druid__balance.json": "1599e5b71a4b2a6b0c020de6240e545dd0fb4bac8fbeb59b18ee6c3f45fb1e69",
+				"sim/druid": "5e8ccdbc38f4a979ebc68bf5cd3aa6fbcdcb02c2bba24a8ba01b1558e9b9956b",
+				"tools/dps_report/req/druid__balance.json": "6756532885a1db906d908e9398b82f4557ff55cecc718a2332ce114adf7fa919",
 				"tools/dps_report/req/druid__balance.meta.json (sim fields)": "4b01dcfc8305d18b3bc2748e2d36b80b62fa6c51d16efd93d9131ef92ccf5d4d",
-				"tools/dps_report/req/races/druid__balance.SkyborneHighOrder.json": "fd82464d1b72759ca6330f1c7ee84330c8efa23c",
-				"tools/dps_report/req/races/druid__balance.SkyborneWindshaper.json": "3e1f8e452d2cc84020b47f1dee229c34d8b1c3d9",
+				"tools/dps_report/req/races/druid__balance.SkyborneHighOrder.json": "7e087157e4ff7df21c3be71c8184b31ea0eb7ecc",
+				"tools/dps_report/req/races/druid__balance.SkyborneWindshaper.json": "28a8940b9363add492c05485af9f6094f76400ca",
 				"assets/database (the entries it wears)": "4b57aa7ae62d6322160d0256b7cfbc19fcb1c3a786064c9a4fd7d10c4a432886"
 			}
 		},
 		"druid__balance-wrath": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.300Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.676Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -704,18 +704,18 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/druid": "290312fc6cb2291196ece27958ada7e99993103b6ed8e90c1f4d55c253993dee",
+				"sim/druid": "5e8ccdbc38f4a979ebc68bf5cd3aa6fbcdcb02c2bba24a8ba01b1558e9b9956b",
 				"tools/dps_report/req/druid__balance-wrath.json": "a9883a308e281e45a567731cc6b27d40a10784e63786b19ef422b33725ed5c6f",
 				"tools/dps_report/req/druid__balance-wrath.meta.json (sim fields)": "4b01dcfc8305d18b3bc2748e2d36b80b62fa6c51d16efd93d9131ef92ccf5d4d",
 				"assets/database (the entries it wears)": "be4db884f19ce0eedef0779131444c79577f2e678f1da822c0c74b6450489930"
 			}
 		},
 		"druid__feral-cat": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.322Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.697Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -737,8 +737,8 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/druid": "290312fc6cb2291196ece27958ada7e99993103b6ed8e90c1f4d55c253993dee",
-				"tools/dps_report/req/druid__feral-cat.json": "7e2f28156bbeb97ef97318e584bfbc6ec817b6f407cdf498b536b7c921472be2",
+				"sim/druid": "5e8ccdbc38f4a979ebc68bf5cd3aa6fbcdcb02c2bba24a8ba01b1558e9b9956b",
+				"tools/dps_report/req/druid__feral-cat.json": "ce72f32c1c4375c599d7cbfa1d700fc3ff12a09e9c1be0c98c4d65ea2a4ad5cf",
 				"tools/dps_report/req/druid__feral-cat.meta.json (sim fields)": "c2af797dc7da78a0d9db5a5645209f6e2c63300dad180dca61ecd3e29563ab94",
 				"assets/database (the entries it wears)": "2536c5505dcd8b726d1fba4f1199f98a8f917a6d566f59ab32e97c162dc97166"
 			}
@@ -1124,11 +1124,11 @@
 			}
 		},
 		"warrior__fury": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.873Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.755Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1150,18 +1150,18 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/warrior": "e272abde0db2cda625fe54efd9e3b69c7a2eca0739e5a0ead43fa16fdc015b6d",
+				"sim/warrior": "cde4f2b0bba457c8137fd25c43c5e8f6e5991a98e9c8b3e77583ef4607a6e8c2",
 				"tools/dps_report/req/warrior__fury.json": "3ce67028c1c1f22766f88aeb8e16b59cf143f4d4fe1500359b9e2b80f89c7ac9",
 				"tools/dps_report/req/warrior__fury.meta.json (sim fields)": "4aefb83dc18b0505bfe6400a8e1431e69dff0048b7b1b8a363dbe0412c533f51",
 				"assets/database (the entries it wears)": "50f5ccd1a73e5d831b20a39755746f2e287e8f554267383ce4d54cd51736e9cc"
 			}
 		},
 		"warrior__fury_2h": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.900Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.783Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1183,7 +1183,7 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/warrior": "e272abde0db2cda625fe54efd9e3b69c7a2eca0739e5a0ead43fa16fdc015b6d",
+				"sim/warrior": "cde4f2b0bba457c8137fd25c43c5e8f6e5991a98e9c8b3e77583ef4607a6e8c2",
 				"tools/dps_report/req/warrior__fury_2h.json": "b1d90d8d06d7b19ebe34aff010bc142a0db8c3edf18c937299023226aef7c3c4",
 				"tools/dps_report/req/warrior__fury_2h.meta.json (sim fields)": "4aefb83dc18b0505bfe6400a8e1431e69dff0048b7b1b8a363dbe0412c533f51",
 				"tools/dps_report/req/races/warrior__fury_2h.Dwarf.json": "bcf56b816c5e1ea9dc7ff87538323cc8e073b617",
@@ -1191,11 +1191,11 @@
 			}
 		},
 		"warrior__arms": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.836Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.715Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1217,7 +1217,7 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/warrior": "e272abde0db2cda625fe54efd9e3b69c7a2eca0739e5a0ead43fa16fdc015b6d",
+				"sim/warrior": "cde4f2b0bba457c8137fd25c43c5e8f6e5991a98e9c8b3e77583ef4607a6e8c2",
 				"tools/dps_report/req/warrior__arms.json": "5dc22e074082edef2ce1880b02d1be8137d41b80c3272a56cbd0bacce705d9ec",
 				"tools/dps_report/req/warrior__arms.meta.json (sim fields)": "540aec70d2bcaab866925e96f9846b8b7cc3a5eb8f7f3fa361c6c59b86abdf70",
 				"tools/dps_report/req/races/warrior__arms.Dwarf.json": "0ce20cdc32e3c2117c064f9e7043e1ac2a3da5f8",
@@ -1225,11 +1225,11 @@
 			}
 		},
 		"warrior__arms_dragonkin": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.842Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.746Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1251,7 +1251,7 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/warrior": "e272abde0db2cda625fe54efd9e3b69c7a2eca0739e5a0ead43fa16fdc015b6d",
+				"sim/warrior": "cde4f2b0bba457c8137fd25c43c5e8f6e5991a98e9c8b3e77583ef4607a6e8c2",
 				"tools/dps_report/req/warrior__arms_dragonkin.json": "125ceab57f4112dba9d14c5dd8609d34363c6bfaf2f31869170317bae969b693",
 				"tools/dps_report/req/warrior__arms_dragonkin.meta.json (sim fields)": "95e2163334276e8b1d8743eb99e3af11cc6ce10f97b26078a55b1c9013d8312d",
 				"tools/dps_report/req/warrior__arms.json": "5dc22e074082edef2ce1880b02d1be8137d41b80c3272a56cbd0bacce705d9ec",
@@ -1260,11 +1260,11 @@
 			}
 		},
 		"warrior__fury-duty-battle-shout": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.852Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.764Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1286,7 +1286,7 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/warrior": "e272abde0db2cda625fe54efd9e3b69c7a2eca0739e5a0ead43fa16fdc015b6d",
+				"sim/warrior": "cde4f2b0bba457c8137fd25c43c5e8f6e5991a98e9c8b3e77583ef4607a6e8c2",
 				"tools/dps_report/req/warrior__fury-duty-battle-shout.json": "64397f3cb5eb2e1a4228d58b4f5c8098eefb7ba786a40915b37203a62b2338c6",
 				"tools/dps_report/req/warrior__fury-duty-battle-shout.meta.json (sim fields)": "5380f48c996582933d5c7c56ffc2bc6178d029eefae3efcc979b9a435f07d72d",
 				"tools/dps_report/req/warrior__fury.json": "3ce67028c1c1f22766f88aeb8e16b59cf143f4d4fe1500359b9e2b80f89c7ac9",
@@ -1294,11 +1294,11 @@
 			}
 		},
 		"warrior__arms-duty-battle-shout": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.813Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.727Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1320,7 +1320,7 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/warrior": "e272abde0db2cda625fe54efd9e3b69c7a2eca0739e5a0ead43fa16fdc015b6d",
+				"sim/warrior": "cde4f2b0bba457c8137fd25c43c5e8f6e5991a98e9c8b3e77583ef4607a6e8c2",
 				"tools/dps_report/req/warrior__arms-duty-battle-shout.json": "6a80083261fa23cdbf7ee6f159d8063d4c0fd83b17e4e4b7ed9dc52a2a4d0e9d",
 				"tools/dps_report/req/warrior__arms-duty-battle-shout.meta.json (sim fields)": "a4a504686ec294d35f415040808b004e927a69d3a317bbabc2e4a49ff0851434",
 				"tools/dps_report/req/warrior__arms.json": "5dc22e074082edef2ce1880b02d1be8137d41b80c3272a56cbd0bacce705d9ec",
@@ -1329,11 +1329,11 @@
 			}
 		},
 		"warrior__fury_2h-duty-battle-shout": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.879Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.792Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1355,7 +1355,7 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/warrior": "e272abde0db2cda625fe54efd9e3b69c7a2eca0739e5a0ead43fa16fdc015b6d",
+				"sim/warrior": "cde4f2b0bba457c8137fd25c43c5e8f6e5991a98e9c8b3e77583ef4607a6e8c2",
 				"tools/dps_report/req/warrior__fury_2h-duty-battle-shout.json": "3150d724f89eb243bdd6907d061a57f2d511f41580c5d8bd8d4a0fe4195aac88",
 				"tools/dps_report/req/warrior__fury_2h-duty-battle-shout.meta.json (sim fields)": "3772a1dffa9dfaa212cf595022ff8b4c3f04a2fd1d47d1701353af5063afad04",
 				"tools/dps_report/req/warrior__fury_2h.json": "b1d90d8d06d7b19ebe34aff010bc142a0db8c3edf18c937299023226aef7c3c4",
@@ -1364,11 +1364,11 @@
 			}
 		},
 		"paladin__level_60_sub_holy-duty-crusader": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.516Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.854Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1393,17 +1393,17 @@
 				"sim/paladin": "3b8373fead22730018e49bd6a41a7b6c992a2ef8f5279006accb555a9b92e1f2",
 				"tools/dps_report/req/paladin__level_60_sub_holy-duty-crusader.json": "7762d65a051828f0eb3d5dc9d993f7ef9456bd7685c97a38f37fd252c2f230b6",
 				"tools/dps_report/req/paladin__level_60_sub_holy-duty-crusader.meta.json (sim fields)": "438da733241259d3e97917bab1266226444dd56116b946cefdf87344f8385f07",
-				"tools/dps_report/req/paladin__level_60_sub_holy.json": "2ce128ca72a78b6251a6821dd16de711b8e881dfe8bd2069fb3030444f496ee0",
+				"tools/dps_report/req/paladin__level_60_sub_holy.json": "ffd3d6f6e88e375142a262cfb79fbd432af2e94891da292b413d38d51253eade",
 				"tools/dps_report/req/races/paladin__level_60_sub_holy.Dwarf.json": "dabe3c3f9138e1663979b6642b9f5bfbcb611fe9",
 				"assets/database (the entries it wears)": "bc61368767f6c6f1841ce528ee320c617804ef73a6979c6585288a7d167dc8e3"
 			}
 		},
 		"druid__balance-duty-ff": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.152Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.661Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1425,23 +1425,23 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/druid": "290312fc6cb2291196ece27958ada7e99993103b6ed8e90c1f4d55c253993dee",
-				"tools/dps_report/req/druid__balance-duty-ff.json": "f39d9a7a44499727ef340ee47edc7433616feb118533f4b4adadc79e217cf124",
+				"sim/druid": "5e8ccdbc38f4a979ebc68bf5cd3aa6fbcdcb02c2bba24a8ba01b1558e9b9956b",
+				"tools/dps_report/req/druid__balance-duty-ff.json": "16cfd27204f6cb7d10d79a34efa5ffba628ed3474f67fd99c8849678e50bf46e",
 				"tools/dps_report/req/druid__balance-duty-ff.meta.json (sim fields)": "f3aeca68b483021e4c1dd6378ea6b056001b1f69e7edd251d61239f76d9f796b",
-				"tools/dps_report/req/druid__balance.json": "1599e5b71a4b2a6b0c020de6240e545dd0fb4bac8fbeb59b18ee6c3f45fb1e69",
-				"tools/dps_report/req/races/druid__balance-duty-ff.SkyborneHighOrder.json": "855177cd623c589ab8c271cbcc2d5c61a9a2911b",
-				"tools/dps_report/req/races/druid__balance-duty-ff.SkyborneWindshaper.json": "3aa9ffa10c21ff01411f10cc4a464b845855a008",
-				"tools/dps_report/req/races/druid__balance.SkyborneHighOrder.json": "fd82464d1b72759ca6330f1c7ee84330c8efa23c",
-				"tools/dps_report/req/races/druid__balance.SkyborneWindshaper.json": "3e1f8e452d2cc84020b47f1dee229c34d8b1c3d9",
+				"tools/dps_report/req/druid__balance.json": "6756532885a1db906d908e9398b82f4557ff55cecc718a2332ce114adf7fa919",
+				"tools/dps_report/req/races/druid__balance-duty-ff.SkyborneHighOrder.json": "e4eaa646905136b6a6cfdd22b971db07704ba449",
+				"tools/dps_report/req/races/druid__balance-duty-ff.SkyborneWindshaper.json": "69fac5002746f0b1ca83d3666b9826251cb43bb7",
+				"tools/dps_report/req/races/druid__balance.SkyborneHighOrder.json": "7e087157e4ff7df21c3be71c8184b31ea0eb7ecc",
+				"tools/dps_report/req/races/druid__balance.SkyborneWindshaper.json": "28a8940b9363add492c05485af9f6094f76400ca",
 				"assets/database (the entries it wears)": "4b57aa7ae62d6322160d0256b7cfbc19fcb1c3a786064c9a4fd7d10c4a432886"
 			}
 		},
 		"druid__balance-wrath-duty-ff": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.282Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.688Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1463,7 +1463,7 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/druid": "290312fc6cb2291196ece27958ada7e99993103b6ed8e90c1f4d55c253993dee",
+				"sim/druid": "5e8ccdbc38f4a979ebc68bf5cd3aa6fbcdcb02c2bba24a8ba01b1558e9b9956b",
 				"tools/dps_report/req/druid__balance-wrath-duty-ff.json": "7b5ecffb2c6b4814aab0710fdedbb62795c7038df41c1fbf8ed4824054f8cbf1",
 				"tools/dps_report/req/druid__balance-wrath-duty-ff.meta.json (sim fields)": "ba50175380719e1c609f904c3af9e1b573118885467e2ad8243869354cb21035",
 				"tools/dps_report/req/druid__balance-wrath.json": "a9883a308e281e45a567731cc6b27d40a10784e63786b19ef422b33725ed5c6f",
@@ -1471,11 +1471,11 @@
 			}
 		},
 		"druid__feral-cat-duty-ff": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.311Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.706Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1497,10 +1497,10 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/druid": "290312fc6cb2291196ece27958ada7e99993103b6ed8e90c1f4d55c253993dee",
-				"tools/dps_report/req/druid__feral-cat-duty-ff.json": "f3ba10f98a4b43031f78290ce99d9f668d07a851c9e261692cc701f3fa9bda88",
+				"sim/druid": "5e8ccdbc38f4a979ebc68bf5cd3aa6fbcdcb02c2bba24a8ba01b1558e9b9956b",
+				"tools/dps_report/req/druid__feral-cat-duty-ff.json": "5d794fb7651a0ab2b18b5ba7fcfe2f54f8a04bfd5dabefa990ea66698d884054",
 				"tools/dps_report/req/druid__feral-cat-duty-ff.meta.json (sim fields)": "79da420ed6de97ec350cc5bb92bb8b5e057b3910db48e2c3ba0fb44009017543",
-				"tools/dps_report/req/druid__feral-cat.json": "7e2f28156bbeb97ef97318e584bfbc6ec817b6f407cdf498b536b7c921472be2",
+				"tools/dps_report/req/druid__feral-cat.json": "ce72f32c1c4375c599d7cbfa1d700fc3ff12a09e9c1be0c98c4d65ea2a4ad5cf",
 				"assets/database (the entries it wears)": "2536c5505dcd8b726d1fba4f1199f98a8f917a6d566f59ab32e97c162dc97166"
 			}
 		},
@@ -1681,11 +1681,11 @@
 			}
 		},
 		"paladin__level_60-duty-crusader": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.457Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.823Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1710,7 +1710,7 @@
 				"sim/paladin": "3b8373fead22730018e49bd6a41a7b6c992a2ef8f5279006accb555a9b92e1f2",
 				"tools/dps_report/req/paladin__level_60-duty-crusader.json": "ef37f4572b163cd2ad9480d074eab7b993e6fee4f5e72ffc323931f530f9f9a2",
 				"tools/dps_report/req/paladin__level_60-duty-crusader.meta.json (sim fields)": "3a4871930146a5fea9e5093c10858ee28ee7644def7350fa739ad5f3827f87ae",
-				"tools/dps_report/req/paladin__level_60.json": "1c583e65f3e7e457ccd5843f09d7a66b7428c2a1193e0b81b3e65e18a530668f",
+				"tools/dps_report/req/paladin__level_60.json": "ce59faad30b0826ba20357e13ecc0337846c201ef164ddac81d5e7c763fa8d75",
 				"tools/dps_report/req/races/paladin__level_60.Dwarf.json": "165a6d8aef51da5d94ae3434bbea9b3d0c8d0811",
 				"assets/database (the entries it wears)": "bc61368767f6c6f1841ce528ee320c617804ef73a6979c6585288a7d167dc8e3"
 			}
@@ -1751,11 +1751,11 @@
 			}
 		},
 		"paladin__level_60-duty-wisdom": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.473Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.833Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1780,17 +1780,17 @@
 				"sim/paladin": "3b8373fead22730018e49bd6a41a7b6c992a2ef8f5279006accb555a9b92e1f2",
 				"tools/dps_report/req/paladin__level_60-duty-wisdom.json": "02fd0287f790a0799ab0e2f5bdb80aa57be3f5db77bce3d258f5746e7f92135b",
 				"tools/dps_report/req/paladin__level_60-duty-wisdom.meta.json (sim fields)": "c359bd385b4a6d9829a9babe2cc78d99dd4913d2097e0e07c5e13335205fd5ef",
-				"tools/dps_report/req/paladin__level_60.json": "1c583e65f3e7e457ccd5843f09d7a66b7428c2a1193e0b81b3e65e18a530668f",
+				"tools/dps_report/req/paladin__level_60.json": "ce59faad30b0826ba20357e13ecc0337846c201ef164ddac81d5e7c763fa8d75",
 				"tools/dps_report/req/races/paladin__level_60.Dwarf.json": "165a6d8aef51da5d94ae3434bbea9b3d0c8d0811",
 				"assets/database (the entries it wears)": "cc4b4b4235edd191b82623a436c34d9f20a5b1d7cab494fca2f8fc30a1702766"
 			}
 		},
 		"paladin__level_60_sub_holy-duty-wisdom": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.531Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.864Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1815,7 +1815,7 @@
 				"sim/paladin": "3b8373fead22730018e49bd6a41a7b6c992a2ef8f5279006accb555a9b92e1f2",
 				"tools/dps_report/req/paladin__level_60_sub_holy-duty-wisdom.json": "7708d09c3b972110bcb78b681fe139af3336956dd43949247968c1c3d83981a4",
 				"tools/dps_report/req/paladin__level_60_sub_holy-duty-wisdom.meta.json (sim fields)": "ca198062b745f4c543e940af66b04676b4ae3a2bae990533c1034e286979c3da",
-				"tools/dps_report/req/paladin__level_60_sub_holy.json": "2ce128ca72a78b6251a6821dd16de711b8e881dfe8bd2069fb3030444f496ee0",
+				"tools/dps_report/req/paladin__level_60_sub_holy.json": "ffd3d6f6e88e375142a262cfb79fbd432af2e94891da292b413d38d51253eade",
 				"tools/dps_report/req/races/paladin__level_60_sub_holy.Dwarf.json": "dabe3c3f9138e1663979b6642b9f5bfbcb611fe9",
 				"assets/database (the entries it wears)": "cc4b4b4235edd191b82623a436c34d9f20a5b1d7cab494fca2f8fc30a1702766"
 			}
@@ -1856,11 +1856,11 @@
 			}
 		},
 		"warrior__arms-duty-sunder": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.827Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.737Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1882,7 +1882,7 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/warrior": "e272abde0db2cda625fe54efd9e3b69c7a2eca0739e5a0ead43fa16fdc015b6d",
+				"sim/warrior": "cde4f2b0bba457c8137fd25c43c5e8f6e5991a98e9c8b3e77583ef4607a6e8c2",
 				"tools/dps_report/req/warrior__arms-duty-sunder.json": "9a9dc0b666770237fc66d94cc3e0020a32c49f823633f6ae63496726dad1654d",
 				"tools/dps_report/req/warrior__arms-duty-sunder.meta.json (sim fields)": "ffac99b0bbda3a3db9e1e1e6d8e61e1842db0a4cb9bdafa1b27ba0bb2fd117b7",
 				"tools/dps_report/req/warrior__arms.json": "5dc22e074082edef2ce1880b02d1be8137d41b80c3272a56cbd0bacce705d9ec",
@@ -1891,11 +1891,11 @@
 			}
 		},
 		"warrior__fury-duty-sunder": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.864Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.773Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1917,7 +1917,7 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/warrior": "e272abde0db2cda625fe54efd9e3b69c7a2eca0739e5a0ead43fa16fdc015b6d",
+				"sim/warrior": "cde4f2b0bba457c8137fd25c43c5e8f6e5991a98e9c8b3e77583ef4607a6e8c2",
 				"tools/dps_report/req/warrior__fury-duty-sunder.json": "480384b221dca64c186b76f85d614e71a2bae9ae42d9f460055d5737a51e85f5",
 				"tools/dps_report/req/warrior__fury-duty-sunder.meta.json (sim fields)": "cbe48137d3e0a2690b27ee7dbbbb8d4183e11d04485e5c8c16eb3783be54ea3b",
 				"tools/dps_report/req/warrior__fury.json": "3ce67028c1c1f22766f88aeb8e16b59cf143f4d4fe1500359b9e2b80f89c7ac9",
@@ -1925,11 +1925,11 @@
 			}
 		},
 		"warrior__fury_2h-duty-sunder": {
-			"commit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
-			"recordedAt": "2026-11-03T19:14:28.891Z",
+			"commit": "a5506a7d46ed05a4b86926e333702506521be3ce",
+			"recordedAt": "2026-11-03T19:44:48.801Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "28ecf7eff8aee467a6b8e9c916e43919b2b04847",
+			"simCommit": "a5506a7d46ed05a4b86926e333702506521be3ce",
 			"format": 2,
 			"inputs": {
 				"sim/core": "9810475760e2fc7b5f0b92306079500337681cfdfb47293fd7f4e37481adf77d",
@@ -1951,7 +1951,7 @@
 				"tools/dps_report/assumptions_def.py": "f616aeec25bf727408129d0d36750af3f917d55b94123945151617fba35f13e7",
 				"tools/dps_report/race_override.py": "0ae9e4cc1c83fb649f7b94e8b73d652761fdc2a8b1b637ca2b212cf679843b0e",
 				"tools/dps_report/dashpaths.py": "49dbc74e264f48cfe484d5281d9fa58630143dfce97cc1e3531958c891c4599a",
-				"sim/warrior": "e272abde0db2cda625fe54efd9e3b69c7a2eca0739e5a0ead43fa16fdc015b6d",
+				"sim/warrior": "cde4f2b0bba457c8137fd25c43c5e8f6e5991a98e9c8b3e77583ef4607a6e8c2",
 				"tools/dps_report/req/warrior__fury_2h-duty-sunder.json": "72c84229dd9c03888df8c0a26806e76f148998dd498ab07296b4ec49df390621",
 				"tools/dps_report/req/warrior__fury_2h-duty-sunder.meta.json (sim fields)": "2720ac69d2647a3bc7e91b75b4d6d555889f0691e853fb25f96bceeca87518a2",
 				"tools/dps_report/req/warrior__fury_2h.json": "b1d90d8d06d7b19ebe34aff010bc142a0db8c3edf18c937299023226aef7c3c4",
