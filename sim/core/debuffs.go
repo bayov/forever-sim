@@ -1349,6 +1349,13 @@ func ForeverDemoralizingShoutAura(target *Unit, level int32) *Aura {
 	return foreverDemoralizingAura(target, "DemoralizingShout-Forever", foreverDemoralizingShout.spellID[rank], foreverDemoralizingShoutDuration, reduction)
 }
 
+// ForeverDemoralizingRoarAura is a bear's own Demoralizing Roar on the target under Forever, the
+// highest rank at the druid's level, for 30 sec.
+func ForeverDemoralizingRoarAura(target *Unit, level int32) *Aura {
+	rank, reduction := foreverDemoralizingRoar.at(level)
+	return foreverDemoralizingAura(target, "DemoralizingRoar-Forever", foreverDemoralizingRoar.spellID[rank], time.Second*30, reduction)
+}
+
 // Rank 5 of Demoralizing Roar takes 204 attack power at 60 and rank 2 88 at 30. Feral
 // Aggression is gone.
 var foreverDemoralizingRoar = foreverDemoralizingRanks{
