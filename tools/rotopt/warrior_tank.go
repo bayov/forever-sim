@@ -58,7 +58,30 @@ func (warriorTank) Knobs() []Knob {
 		// Shield Wall on a timer: 0 never, 1 at the pull, 2 in the last wallAt seconds.
 		{Name: "shieldWall", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "wallAt", Default: 12, Min: 12, Max: 60, Step: 12},
+		// The on-use trinket (the synthetic set's armor one or the DPS set's attack power one): 0 on
+		// cooldown, else held for the last trinketAt seconds when the wait costs no use.
+		{Name: "trinketAt", Default: 0, Min: 0, Max: 40, Step: 10},
 	}
+}
+
+var (
+	tankBulwarkTrinket = itemID(990617)
+)
+
+// tankTrinketLines use whichever on-use trinket is worn.
+func tankTrinketLines(k Knobs) []*proto.APLListItem {
+	var items []*proto.APLListItem
+	for _, trinket := range []*proto.ActionID{tankBulwarkTrinket, battleTrinket} {
+		var when value
+		if k["trinketAt"] > 0 {
+			when = or(
+				le(remainingTime(), seconds(k["trinketAt"])),
+				gt(spellUsesLostByDelay(trinket, sub(remainingTime(), seconds(k["trinketAt"])), seconds(20)), num(0)),
+			)
+		}
+		items = append(items, cast(trinket, when, "The on-use trinket. Ignore the warning on the trinket that isn't worn."))
+	}
+	return items
 }
 
 func (warriorTank) Build(k Knobs) *proto.APLRotation {
@@ -72,6 +95,7 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 	case 2:
 		items = append(items, cast(potion, lt(currentRage(), num(k["potionRage"])), "Mighty Rage Potion when short of Rage."))
 	}
+	items = append(items, tankTrinketLines(k)...)
 	switch k["shieldWall"] {
 	case 1:
 		items = append(items, cast(shieldWall, nil, "Shield Wall at the pull (on a timer: the score can't follow health)."))
