@@ -1206,6 +1206,30 @@ rendering, not the sim.
     1.1ms. Solo is 400 FPS here.
   - Tried and dropped, since they didn't measure: near raiders animating at 120 Hz, a table for the particles' sRGB
     colors, and packed track key slots.
+- Third raid report (your PC, 44s): about 155 FPS in the fight (207 in the first 5s). Frames were 4.2ms or 8.4ms, so
+  half missed the 240 Hz refresh. 4.2ms of script (animating 2.3ms, drawing 1.7ms), GPU 4.6ms, 168 draw calls at the
+  start and 260 in the fight, a garbage collection every 90ms (about 110MB/s) and 2043 effect models made.
+  - The reports now time the GPU by pass: the shadows (with the frame's uploads before them), the solid things, and
+    the see-through things with the effects. They also name the GPU and say the canvas size and MSAA. A timer started
+    inside the shadow pass lost the whole WebGL context in headless Chrome, so the shadows and uploads stay one
+    number. In headless runs the GPU time follows the script's drawing time, so only your PC's numbers say where the
+    GPU's time goes.
+  - Spell effects are reused: a done effect waits for the next one of the same model, instead of a new model with new
+    materials each cast. 500 effect models made in 10s of the fight became 15.
+  - Less garbage: the animation's times and the bones' moves no longer go through function arguments (Chrome boxed
+    each decimal), Track.get is small enough to inline, the crowd uploads its copies whole, and the effect batches copy
+    with plain loops. A garbage collection every 90ms became one every 450ms.
+  - The fight's extra draw calls are your totems and effects. In the raid test they draw in the crowd too.
+- The raiders wear their class's raid gear: the dungeon set, tier 1 or tier 2, with weapons for their role (tanks a
+  sword and shield, rogues two daggers or swords, hunters a bow or gun and a polearm, casters a staff or a main hand and
+  off hand, healers a mace and an off hand) and a cloak. Raiders of one class go through the sets, so two mages rarely
+  match. Your character keeps your gear.
+  - Each raider's skin is painted for its armor, so in a raid of 40 no two match. The skins go into texture arrays
+    (by size, those over 1024 wide at half size), and each copy reads its layer. A body of one race and sex draws every
+    part any of its raiders shows, and each copy hides the parts its raider doesn't (a mask of its submeshes).
+  - Headless, fight, 1920x1080, varied gear: without the arrays and masks 80 FPS, 9.8ms of script, 575 draw calls.
+    With them 103 FPS, 8.7ms (animating 3.0ms, drawing 5.4ms), 470 draw calls, 505k triangles, 1.7GB heap. This is the
+    new baseline. Most of the rest is gear: each item model (helms are by race) draws on its own, with its shadow.
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
