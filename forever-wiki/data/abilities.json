@@ -1107,7 +1107,7 @@
    "tab": "protection",
    "name": "Revenge",
    "icon": "ability_warrior_revenge",
-   "status": "unchanged",
+   "status": "changed",
    "fromTalent": false,
    "desc": "Instantly counterattack an enemy for 138 to 168 damage and a high amount of threat. Revenge must follow a block, dodge or parry.",
    "meta": [
@@ -2405,7 +2405,7 @@
    "icon": "ability_rogue_eviscerate",
    "status": "changed",
    "fromTalent": false,
-   "desc": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 278-332 damage\n2 points: 448-502 damage\n3 points: 618-672 damage\n4 points: 788-842 damage\n5 points: 958-1012 damage",
+   "desc": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 224-332 damage\n2 points: 394-502 damage\n3 points: 564-672 damage\n4 points: 734-842 damage\n5 points: 904-1012 damage",
    "meta": [
     "Level 1",
     "35 Energy",
@@ -2417,7 +2417,7 @@
     {
      "t": "Rank 1",
      "l": 1,
-     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 8-10 damage\n2 points: 13-15 damage\n3 points: 18-20 damage\n4 points: 23-25 damage\n5 points: 28-30 damage",
+     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 6-10 damage\n2 points: 11-15 damage\n3 points: 16-20 damage\n4 points: 21-25 damage\n5 points: 26-30 damage",
      "m": [
       "35 Energy",
       "1–5 Combo Points",
@@ -2428,7 +2428,7 @@
     {
      "t": "Rank 2",
      "l": 8,
-     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 18-22 damage\n2 points: 29-33 damage\n3 points: 40-44 damage\n4 points: 51-55 damage\n5 points: 62-66 damage",
+     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 14-22 damage\n2 points: 25-33 damage\n3 points: 36-44 damage\n4 points: 47-55 damage\n5 points: 58-66 damage",
      "m": [
       "35 Energy",
       "1–5 Combo Points",
@@ -2439,7 +2439,7 @@
     {
      "t": "Rank 3",
      "l": 16,
-     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 32-39 damage\n2 points: 51-58 damage\n3 points: 70-77 damage\n4 points: 89-96 damage\n5 points: 108-115 damage",
+     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 25-39 damage\n2 points: 44-58 damage\n3 points: 63-77 damage\n4 points: 82-96 damage\n5 points: 101-115 damage",
      "m": [
       "35 Energy",
       "1–5 Combo Points",
@@ -2450,7 +2450,7 @@
     {
      "t": "Rank 4",
      "l": 24,
-     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 51-61 damage\n2 points: 82-92 damage\n3 points: 113-123 damage\n4 points: 144-154 damage\n5 points: 175-185 damage",
+     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 41-61 damage\n2 points: 72-92 damage\n3 points: 103-123 damage\n4 points: 134-154 damage\n5 points: 165-185 damage",
      "m": [
       "35 Energy",
       "1–5 Combo Points",
@@ -2461,7 +2461,7 @@
     {
      "t": "Rank 5",
      "l": 32,
-     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 75-90 damage\n2 points: 120-135 damage\n3 points: 165-180 damage\n4 points: 210-225 damage\n5 points: 255-270 damage",
+     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 60-90 damage\n2 points: 105-135 damage\n3 points: 150-180 damage\n4 points: 195-225 damage\n5 points: 240-270 damage",
      "m": [
       "35 Energy",
       "1–5 Combo Points",
@@ -2472,7 +2472,7 @@
     {
      "t": "Rank 6",
      "l": 40,
-     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 115-137 damage\n2 points: 186-208 damage\n3 points: 257-279 damage\n4 points: 328-350 damage\n5 points: 399-421 damage",
+     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 93-137 damage\n2 points: 164-208 damage\n3 points: 235-279 damage\n4 points: 306-350 damage\n5 points: 377-421 damage",
      "m": [
       "35 Energy",
       "1–5 Combo Points",
@@ -2483,7 +2483,7 @@
     {
      "t": "Rank 7",
      "l": 48,
-     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 178-212 damage\n2 points: 288-322 damage\n3 points: 398-432 damage\n4 points: 508-542 damage\n5 points: 618-652 damage",
+     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 144-212 damage\n2 points: 254-322 damage\n3 points: 364-432 damage\n4 points: 474-542 damage\n5 points: 584-652 damage",
      "m": [
       "35 Energy",
       "1–5 Combo Points",
@@ -2494,7 +2494,7 @@
     {
      "t": "Rank 8",
      "l": 56,
-     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 247-295 damage\n2 points: 398-446 damage\n3 points: 549-597 damage\n4 points: 700-748 damage\n5 points: 851-899 damage",
+     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 199-295 damage\n2 points: 350-446 damage\n3 points: 501-597 damage\n4 points: 652-748 damage\n5 points: 803-899 damage",
      "m": [
       "35 Energy",
       "1–5 Combo Points",
@@ -2505,7 +2505,7 @@
     {
      "t": "Rank 9",
      "l": 60,
-     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 278-332 damage\n2 points: 448-502 damage\n3 points: 618-672 damage\n4 points: 788-842 damage\n5 points: 958-1012 damage",
+     "d": "Finishing move that causes damage per combo point, increased by Attack Power:\n1 point : 224-332 damage\n2 points: 394-502 damage\n3 points: 564-672 damage\n4 points: 734-842 damage\n5 points: 904-1012 damage",
      "m": [
       "35 Energy",
       "1–5 Combo Points",
@@ -4429,6 +4429,28 @@
      "d": "Coats a weapon with poison that lasts for 30 minutes.\nEach strike has a 30% chance of poisoning the enemy for 136 Nature damage over 12 sec and causing the enemy to take 4% increased Arcane, Fire, Frost, Nature, and Shadow damage. Stacks up to 5 times on a single target.\n\nOccult Poison counts as Deadly Poison and benefits from all talents and effects that trigger from or modify Deadly Poison.",
      "m": [
       "3 sec cast"
+     ]
+    }
+   ]
+  },
+  {
+   "key": "subtlety__poised",
+   "tab": "subtlety",
+   "name": "Poised",
+   "icon": "ability_rogue_fleetfooted",
+   "status": "new",
+   "fromTalent": false,
+   "desc": "While at maximum Energy, and out of combat, reduce the Energy cost of your next ability by 10.",
+   "meta": [
+    "Passive"
+   ],
+   "ranks": [
+    {
+     "t": "Passive",
+     "l": 0,
+     "d": "While at maximum Energy, and out of combat, reduce the Energy cost of your next ability by 10.",
+     "m": [
+      "Passive"
      ]
     }
    ]
@@ -8042,33 +8064,6 @@
    ]
   },
   {
-   "key": "protection__salvation",
-   "tab": "protection",
-   "name": "Salvation",
-   "icon": "spell_holy_sealofsalvation",
-   "status": "changed",
-   "fromTalent": false,
-   "desc": "Reduces all threat generated by target party member by 30% for 1 hour.",
-   "meta": [
-    "Level 26",
-    "8% base Mana",
-    "30 yd range",
-    "Instant"
-   ],
-   "ranks": [
-    {
-     "t": "",
-     "l": 26,
-     "d": "Reduces all threat generated by target party member by 30% for 1 hour.",
-     "m": [
-      "8% base Mana",
-      "30 yd range",
-      "Instant"
-     ]
-    }
-   ]
-  },
-  {
    "key": "protection__blessing-of-sacrifice",
    "tab": "protection",
    "name": "Blessing of Sacrifice",
@@ -8583,53 +8578,6 @@
    ]
   },
   {
-   "key": "holy__blessing-of-light",
-   "tab": "holy",
-   "name": "Blessing of Light",
-   "icon": "spell_holy_prayerofhealing02",
-   "status": "unchanged",
-   "fromTalent": false,
-   "desc": "Places a Blessing on the friendly target, increasing the effects of Holy Light spells used on the target by up to 400 and the effect Flash of Light spells used on the target by up to 115. Lasts 1 hour. Players may only have one Blessing on them per Paladin at any one time.",
-   "meta": [
-    "Level 40",
-    "135 Mana",
-    "30 yd range",
-    "Instant"
-   ],
-   "ranks": [
-    {
-     "t": "Rank 1",
-     "l": 40,
-     "d": "Places a Blessing on the friendly target, increasing the effects of Holy Light spells used on the target by up to 210 and the effect Flash of Light spells used on the target by up to 60. Lasts 1 hour. Players may only have one Blessing on them per Paladin at any one time.",
-     "m": [
-      "85 Mana",
-      "30 yd range",
-      "Instant"
-     ]
-    },
-    {
-     "t": "Rank 2",
-     "l": 50,
-     "d": "Places a Blessing on the friendly target, increasing the effects of Holy Light spells used on the target by up to 300 and the effect Flash of Light spells used on the target by up to 85. Lasts 1 hour. Players may only have one Blessing on them per Paladin at any one time.",
-     "m": [
-      "110 Mana",
-      "30 yd range",
-      "Instant"
-     ]
-    },
-    {
-     "t": "Rank 3",
-     "l": 60,
-     "d": "Places a Blessing on the friendly target, increasing the effects of Holy Light spells used on the target by up to 400 and the effect Flash of Light spells used on the target by up to 115. Lasts 1 hour. Players may only have one Blessing on them per Paladin at any one time.",
-     "m": [
-      "135 Mana",
-      "30 yd range",
-      "Instant"
-     ]
-    }
-   ]
-  },
-  {
    "key": "protection__concentration-aura",
    "tab": "protection",
    "name": "Concentration Aura",
@@ -8685,7 +8633,7 @@
    "icon": "ability_thunderbolt",
    "status": "changed",
    "fromTalent": false,
-   "desc": "Fills the Paladin with holy spirit for 30 sec, granting each melee attack an additional 22 to 75 Holy damage. Slower weapons cause more Holy damage per swing. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy will cause 170 to 186 Holy damage to an enemy.\n\n0",
+   "desc": "Fills the Paladin with holy spirit for 30 sec, granting each melee attack an additional 22 to 75 Holy damage. Slower weapons cause more Holy damage per swing. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy will cause 170 to 186 Holy damage to an enemy.",
    "meta": [
     "Level 1",
     "200 Mana",
@@ -8767,7 +8715,7 @@
     {
      "t": "Rank 8",
      "l": 58,
-     "d": "Fills the Paladin with holy spirit for 30 sec, granting each melee attack an additional 22 to 75 Holy damage. Slower weapons cause more Holy damage per swing. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy will cause 170 to 186 Holy damage to an enemy.\n\n0",
+     "d": "Fills the Paladin with holy spirit for 30 sec, granting each melee attack an additional 22 to 75 Holy damage. Slower weapons cause more Holy damage per swing. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy will cause 170 to 186 Holy damage to an enemy.",
      "m": [
       "200 Mana",
       "Instant"
@@ -9445,9 +9393,9 @@
    "icon": "spell_holy_blessingofprotection",
    "status": "changed",
    "fromTalent": true,
-   "desc": "Increases chance to block by 30% for 10 sec, and deals 221 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat.",
+   "desc": "Increases chance to block by 30% for 10 sec, and deals 221 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat. Each block expends a charge. 4 charges.",
    "meta": [
-    "Level 40",
+    "Level 30",
     "240 Mana",
     "Instant",
     "10 sec cooldown"
@@ -9455,8 +9403,18 @@
    "ranks": [
     {
      "t": "Rank 1",
+     "l": 30,
+     "d": "Increases chance to block by 30% for 10 sec, and deals 75 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat. Each block expends a charge. 4 charges.",
+     "m": [
+      "100 Mana",
+      "Instant",
+      "10 sec cooldown"
+     ]
+    },
+    {
+     "t": "Rank 2",
      "l": 40,
-     "d": "Increases chance to block by 30% for 10 sec, and deals 110 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat. Each block expends a charge. 4 charges.",
+     "d": "Increases chance to block by 30% for 10 sec, and deals 110 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat.",
      "m": [
       "150 Mana",
       "Instant",
@@ -9464,7 +9422,7 @@
      ]
     },
     {
-     "t": "Rank 2",
+     "t": "Rank 3",
      "l": 50,
      "d": "Increases chance to block by 30% for 10 sec, and deals 153 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat.",
      "m": [
@@ -9474,9 +9432,9 @@
      ]
     },
     {
-     "t": "Rank 3",
+     "t": "Rank 4",
      "l": 60,
-     "d": "Increases chance to block by 30% for 10 sec, and deals 221 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat.",
+     "d": "Increases chance to block by 30% for 10 sec, and deals 221 Holy damage for each attack blocked while active. Damage caused by Holy Shield causes 20% additional threat. Each block expends a charge. 4 charges.",
      "m": [
       "240 Mana",
       "Instant",
@@ -9674,48 +9632,21 @@
    "tab": "protection",
    "name": "Righteous Fury",
    "icon": "spell_holy_sealoffury",
-   "status": "unchanged",
+   "status": "changed",
    "fromTalent": false,
-   "desc": "Increases the threat generated by your Holy attacks by 90%. Lasts 30 min.",
+   "desc": "Increases all threat generated by 33%, and all threat generated by your Holy attacks by an additional 90%. Lasts 30 min.",
    "meta": [
-    "Level 16",
+    "Level 10",
     "30% base Mana",
     "Instant"
    ],
    "ranks": [
     {
      "t": "",
-     "l": 16,
-     "d": "Increases the threat generated by your Holy attacks by 90%. Lasts 30 min.",
+     "l": 10,
+     "d": "Increases all threat generated by 33%, and all threat generated by your Holy attacks by an additional 90%. Lasts 30 min.",
      "m": [
       "30% base Mana",
-      "Instant"
-     ]
-    }
-   ]
-  },
-  {
-   "key": "holy__greater-blessing-of-light",
-   "tab": "holy",
-   "name": "Greater Blessing of Light",
-   "icon": "spell_holy_greaterblessingoflight",
-   "status": "unchanged",
-   "fromTalent": false,
-   "desc": "Gives all members of the raid or group that share the same class with the target the Greater Blessing of Light, increasing the effects of Holy Light spells used on the target by up to 400 and the effect Flash of Light spells used on the target by up to 115. Lasts 1 hour. Players may only have one Blessing on them per Paladin at any one time.",
-   "meta": [
-    "Level 60",
-    "260 Mana",
-    "40 yd range",
-    "Instant"
-   ],
-   "ranks": [
-    {
-     "t": "",
-     "l": 60,
-     "d": "Gives all members of the raid or group that share the same class with the target the Greater Blessing of Light, increasing the effects of Holy Light spells used on the target by up to 400 and the effect Flash of Light spells used on the target by up to 115. Lasts 1 hour. Players may only have one Blessing on them per Paladin at any one time.",
-     "m": [
-      "260 Mana",
-      "40 yd range",
       "Instant"
      ]
     }
@@ -9752,33 +9683,6 @@
      "d": "Gives all members of the raid or group that share the same class with the target the Greater Blessing of Wisdom, restoring 40 mana every 5 seconds for 1 hour. Players may only have one Blessing on them per Paladin at any one time.",
      "m": [
       "250 Mana",
-      "40 yd range",
-      "Instant"
-     ]
-    }
-   ]
-  },
-  {
-   "key": "protection__mass-salvation",
-   "tab": "protection",
-   "name": "Mass Salvation",
-   "icon": "spell_holy_greaterblessingofsalvation",
-   "status": "changed",
-   "fromTalent": false,
-   "desc": "Gives all members of the raid or group that share the same class with the target a reduction to all threat generated by 30% for 1 hour.",
-   "meta": [
-    "Level 60",
-    "16% base Mana",
-    "40 yd range",
-    "Instant"
-   ],
-   "ranks": [
-    {
-     "t": "",
-     "l": 60,
-     "d": "Gives all members of the raid or group that share the same class with the target a reduction to all threat generated by 30% for 1 hour.",
-     "m": [
-      "16% base Mana",
       "40 yd range",
       "Instant"
      ]
@@ -10090,11 +9994,11 @@
    "icon": "ability_paladin_judgementofthepure",
    "status": "new",
    "fromTalent": true,
-   "desc": "Applies Light's Vigil to the target for 30 sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer 380 to 410 Holy damage and refund 75% of Light's Vigil's Mana cost, or allied targets to heal their party for 684 to 724. You may only have one Light's Vigil active per party.",
+   "desc": "Applies Light's Vigil to a friendly target for 30 sec. The caster's next Holy Shock on the target incurs no cooldown and heals the target and their party for 684 to 724. Only one Vigil per Paladin may be active in each party.",
    "meta": [
     "Level 40",
     "1340 Mana",
-    "20 yd hostile / 40 yd friendly",
+    "40 yd range",
     "1.5 sec cast",
     "6 sec cooldown"
    ],
@@ -10102,10 +10006,10 @@
     {
      "t": "Rank 1",
      "l": 40,
-     "d": "Applies Light's Vigil to the target for 30 sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer 175 to 189 Holy damage and refund 75% of Light's Vigil's Mana cost, or allied targets to heal their party for 326 to 344. You may only have one Light's Vigil active per party.",
+     "d": "Applies Light's Vigil to a friendly target for 30 sec. The caster's next Holy Shock on the target incurs no cooldown and heals the target and their party for 326 to 344. Only one Vigil per Paladin may be active in each party.",
      "m": [
       "730 Mana",
-      "20 yd hostile / 40 yd friendly",
+      "40 yd range",
       "1.5 sec cast",
       "6 sec cooldown"
      ]
@@ -10113,10 +10017,10 @@
     {
      "t": "Rank 2",
      "l": 50,
-     "d": "Applies Light's Vigil to the target for 30 sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer 268 to 288 Holy damage and refund 75% of Light's Vigil's Mana cost, or allied targets to heal their party for 487 to 514. You may only have one Light's Vigil active per party.",
+     "d": "Applies Light's Vigil to a friendly target for 30 sec. The caster's next Holy Shock on the target incurs no cooldown and heals the target and their party for 487 to 514. Only one Vigil per Paladin may be active in each party.",
      "m": [
       "1000 Mana",
-      "20 yd hostile / 40 yd friendly",
+      "40 yd range",
       "1.5 sec cast",
       "6 sec cooldown"
      ]
@@ -10124,10 +10028,10 @@
     {
      "t": "Rank 3",
      "l": 60,
-     "d": "Applies Light's Vigil to the target for 30 sec. Your next Holy Shock cast on them triggers no cooldown and causes enemy targets to suffer 380 to 410 Holy damage and refund 75% of Light's Vigil's Mana cost, or allied targets to heal their party for 684 to 724. You may only have one Light's Vigil active per party.",
+     "d": "Applies Light's Vigil to a friendly target for 30 sec. The caster's next Holy Shock on the target incurs no cooldown and heals the target and their party for 684 to 724. Only one Vigil per Paladin may be active in each party.",
      "m": [
       "1340 Mana",
-      "20 yd hostile / 40 yd friendly",
+      "40 yd range",
       "1.5 sec cast",
       "6 sec cooldown"
      ]
@@ -10213,7 +10117,7 @@
    "name": "Voice of Truth",
    "icon": "inv_misc_horn_03",
    "status": "new",
-   "fromTalent": true,
+   "fromTalent": false,
    "desc": "Grants you immunity to Silence and Interrupt effects for 6 sec.",
    "meta": [
     "Level 20",
@@ -10300,7 +10204,7 @@
    "icon": "spell_holy_retributionaura",
    "status": "new",
    "fromTalent": false,
-   "desc": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 35 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 154 to 167 Holy damage to an enemy and taunts the target to attack you for 4 sec.",
+   "desc": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 35 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 154 to 167 Holy damage to an enemy and taunts the target to attack you for 3 sec.",
    "meta": [
     "Level 10",
     "200 Mana",
@@ -10310,7 +10214,7 @@
     {
      "t": "Rank 1",
      "l": 10,
-     "d": "Fills you with divine fury for 30 sec, causing melee attacks to deal an additional 6 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 32 to 34 Holy damage to an enemy and taunts the target to attack you for 4 sec.",
+     "d": "Fills you with divine fury for 30 sec, causing melee attacks to deal an additional 6 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 32 to 34 Holy damage to an enemy and taunts the target to attack you for 3 sec.",
      "m": [
       "40 Mana",
       "Instant"
@@ -10319,7 +10223,7 @@
     {
      "t": "Rank 2",
      "l": 18,
-     "d": "Fills you with divine fury for 30 sec, causing melee attacks to inflict an additional 9 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 48 to 52 Holy damage to an enemy and taunts the target to attack you for 4 sec.",
+     "d": "Fills you with divine fury for 30 sec, causing melee attacks to inflict an additional 9 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 48 to 52 Holy damage to an enemy and taunts the target to attack you for 3 sec.",
      "m": [
       "60 Mana",
       "Instant"
@@ -10328,7 +10232,7 @@
     {
      "t": "Rank 3",
      "l": 26,
-     "d": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 14 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 66 to 72 Holy damage to an enemy and taunts the target to attack you for 4 sec.",
+     "d": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 14 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 66 to 72 Holy damage to an enemy and taunts the target to attack you for 3 sec.",
      "m": [
       "90 Mana",
       "Instant"
@@ -10337,7 +10241,7 @@
     {
      "t": "Rank 4",
      "l": 34,
-     "d": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 19 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 87 to 94 Holy damage to an enemy and taunts the target to attack you for 4 sec.",
+     "d": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 19 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 87 to 94 Holy damage to an enemy and taunts the target to attack you for 3 sec.",
      "m": [
       "120 Mana",
       "Instant"
@@ -10346,7 +10250,7 @@
     {
      "t": "Rank 5",
      "l": 42,
-     "d": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 25 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 112 to 121 Holy damage to an enemy and taunts the target to attack you for 4 sec.",
+     "d": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 25 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 112 to 121 Holy damage to an enemy and taunts the target to attack you for 3 sec.",
      "m": [
       "140 Mana",
       "Instant"
@@ -10355,7 +10259,7 @@
     {
      "t": "Rank 6",
      "l": 50,
-     "d": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 32 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 140 to 151 Holy damage to an enemy and taunts the target to attack you for 4 sec.",
+     "d": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 32 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 140 to 151 Holy damage to an enemy and taunts the target to attack you for 3 sec.",
      "m": [
       "170 Mana",
       "Instant"
@@ -10364,7 +10268,7 @@
     {
      "t": "Rank 7",
      "l": 58,
-     "d": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 35 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 154 to 167 Holy damage to an enemy and taunts the target to attack you for 4 sec.",
+     "d": "Fills the Paladin with divine fury for 30 sec, causing melee attacks to deal an additional 35 Holy damage. While a shield is equipped, each attack also grants an absorb shield equal to 50% of the Holy damage dealt. Only one Seal can be active on the Paladin at any one time.\n\nUnleashing this Seal's energy inflicts 154 to 167 Holy damage to an enemy and taunts the target to attack you for 3 sec.",
      "m": [
       "200 Mana",
       "Instant"
@@ -10379,9 +10283,10 @@
    "icon": "ability_paladin_judgementred",
    "status": "new",
    "fromTalent": true,
-   "desc": "Finishes the remaining cooldown on your Judgement ability and reduces the Mana cost of your next Judgement by 100%.",
+   "desc": "Unleash the energy of a Seal spell upon an enemy. Does not consume the Seal. Refer to individual Seals for Judgement effect. Does not share a cooldown with your Judgement ability.",
    "meta": [
     "Level 1",
+    "10 yd range",
     "Instant",
     "1 min cooldown"
    ],
@@ -10389,8 +10294,9 @@
     {
      "t": "",
      "l": 1,
-     "d": "Finishes the remaining cooldown on your Judgement ability and reduces the Mana cost of your next Judgement by 100%.",
+     "d": "Unleash the energy of a Seal spell upon an enemy. Does not consume the Seal. Refer to individual Seals for Judgement effect. Does not share a cooldown with your Judgement ability.",
      "m": [
+      "10 yd range",
       "Instant",
       "1 min cooldown"
      ]
@@ -10406,7 +10312,6 @@
    "fromTalent": true,
    "desc": "When activated, this ability grants you an absorb shield equal to 100% of your maximum health for 8 sec. Applies Forbearance for 1 min. Cannot be cast while Forbearance is active.",
    "meta": [
-    "Level 30",
     "110 Mana",
     "Instant",
     "5 min cooldown"
@@ -10414,7 +10319,7 @@
    "ranks": [
     {
      "t": "",
-     "l": 30,
+     "l": 0,
      "d": "When activated, this ability grants you an absorb shield equal to 100% of your maximum health for 8 sec. Applies Forbearance for 1 min. Cannot be cast while Forbearance is active.",
      "m": [
       "110 Mana",
@@ -10531,24 +10436,25 @@
    ]
   },
   {
-   "key": "protection__revoke",
-   "tab": "protection",
-   "name": "Revoke",
-   "icon": "spell_holy_prayerofmendingtga",
+   "key": "holy__oath-of-light",
+   "tab": "holy",
+   "name": "Oath of Light",
+   "icon": "spell_holy_greaterblessingoflight",
    "status": "new",
-   "fromTalent": false,
-   "desc": "Remove target party or raid member's Salvation or Mass Salvation.",
+   "fromTalent": true,
+   "desc": "Swear an Oath to protect target ally for 5 min, increasing the healing of your Holy Light on them by up to 400, your Flash of Light by up to 115, and your Holy Shock by up to 230. Only one Oath of Light may be sworn by the Paladin at any one time.",
    "meta": [
-    "Level 26",
+    "8% base Mana",
     "40 yd range",
     "Instant"
    ],
    "ranks": [
     {
      "t": "",
-     "l": 26,
-     "d": "Remove target party or raid member's Salvation or Mass Salvation.",
+     "l": 0,
+     "d": "Swear an Oath to protect target ally for 5 min, increasing the healing of your Holy Light on them by up to 400, your Flash of Light by up to 115, and your Holy Shock by up to 230. Only one Oath of Light may be sworn by the Paladin at any one time.",
      "m": [
+      "8% base Mana",
       "40 yd range",
       "Instant"
      ]
@@ -10904,7 +10810,7 @@
     {
      "t": "Rank 1",
      "l": 10,
-     "d": "The hunter takes on the aspects of a hawk, increasing Ranged Attack Power by 20. Only one Aspect can be active at a time.",
+     "d": "The hunter takes on the aspects of a hawk, increasing Ranged Attack Power by 15. Only one Aspect can be active at a time.",
      "m": [
       "20 Mana",
       "Instant"
@@ -10913,7 +10819,7 @@
     {
      "t": "Rank 2",
      "l": 18,
-     "d": "The hunter takes on the aspects of a hawk, increasing Ranged Attack Power by 35. Only one Aspect can be active at a time.",
+     "d": "The hunter takes on the aspects of a hawk, increasing Ranged Attack Power by 22. Only one Aspect can be active at a time.",
      "m": [
       "35 Mana",
       "Instant"
@@ -10922,7 +10828,7 @@
     {
      "t": "Rank 3",
      "l": 28,
-     "d": "The hunter takes on the aspects of a hawk, increasing Ranged Attack Power by 50. Only one Aspect can be active at a time.",
+     "d": "The hunter takes on the aspects of a hawk, increasing Ranged Attack Power by 30. Only one Aspect can be active at a time.",
      "m": [
       "50 Mana",
       "Instant"
@@ -10931,7 +10837,7 @@
     {
      "t": "Rank 4",
      "l": 38,
-     "d": "The hunter takes on the aspects of a hawk, increasing Ranged Attack Power by 70. Only one Aspect can be active at a time.",
+     "d": "The hunter takes on the aspects of a hawk, increasing Ranged Attack Power by 38. Only one Aspect can be active at a time.",
      "m": [
       "70 Mana",
       "Instant"
@@ -10940,7 +10846,7 @@
     {
      "t": "Rank 5",
      "l": 48,
-     "d": "The hunter takes on the aspects of a hawk, increasing Ranged Attack Power by 90. Only one Aspect can be active at a time.",
+     "d": "The hunter takes on the aspects of a hawk, increasing Ranged Attack Power by 47. Only one Aspect can be active at a time.",
      "m": [
       "90 Mana",
       "Instant"
@@ -12158,6 +12064,14 @@
     {
      "t": "Rank 1",
      "l": 34,
+     "d": "",
+     "m": [
+      "Instant"
+     ]
+    },
+    {
+     "t": "Rank 1",
+     "l": 34,
      "d": "Place a Fire trap that explodes when an enemy approaches, causing 105 to 135 Fire damage and 150 additional Fire damage over 20 sec to all within 10 yards. Trap will exist for 1 min. Only one Fire trap can be active at a time.",
      "m": [
       "275 Mana",
@@ -12168,11 +12082,27 @@
     {
      "t": "Rank 2",
      "l": 44,
+     "d": "",
+     "m": [
+      "Instant"
+     ]
+    },
+    {
+     "t": "Rank 2",
+     "l": 44,
      "d": "Place a Fire trap that explodes when an enemy approaches, causing 145 to 193 Fire damage and 240 additional Fire damage over 20 sec to all within 10 yards. Trap will exist for 1 min. Only one Fire trap can be active at a time.",
      "m": [
       "395 Mana",
       "Instant",
       "30 sec cooldown"
+     ]
+    },
+    {
+     "t": "Rank 3",
+     "l": 54,
+     "d": "",
+     "m": [
+      "Instant"
      ]
     },
     {
@@ -12474,7 +12404,7 @@
     {
      "t": "Rank 1",
      "l": 25,
-     "d": "Increases the Ranged Attack Power of party or raid members within 45 yds by 30.",
+     "d": "Increases the Ranged Attack Power of party or raid members within 45 yds by 15.",
      "m": [
       "180 Mana",
       "Instant"
@@ -12483,7 +12413,7 @@
     {
      "t": "Rank 2",
      "l": 32,
-     "d": "Increases the Ranged Attack Power of party or raid members within 45 yds by 40.",
+     "d": "Increases the Ranged Attack Power of party or raid members within 45 yds by 22.",
      "m": [
       "245 Mana",
       "Instant"
@@ -12492,7 +12422,7 @@
     {
      "t": "Rank 3",
      "l": 40,
-     "d": "Increases the Ranged Attack Power of party or raid members within 45 yards by 50. Lasts 30 min.",
+     "d": "Increases the Ranged Attack Power of party or raid members within 45 yards by 30. Lasts 30 min.",
      "m": [
       "325 Mana",
       "Instant"
@@ -12501,7 +12431,7 @@
     {
      "t": "Rank 4",
      "l": 50,
-     "d": "Increases the Ranged Attack Power of party or raid members within 45 yards by 75. Lasts 30 min.",
+     "d": "Increases the Ranged Attack Power of party or raid members within 45 yards by 40. Lasts 30 min.",
      "m": [
       "425 Mana",
       "Instant"
@@ -12818,45 +12748,6 @@
      "d": "The hunter and all party and raid members within 30 yards take on the aspect of the wild, increasing Nature resistance by 60. Only one Aspect can be active at a time.",
      "m": [
       "115 Mana",
-      "Instant"
-     ]
-    }
-   ]
-  },
-  {
-   "key": "survival__explosive-trap-effect",
-   "tab": "survival",
-   "name": "Explosive Trap Effect",
-   "icon": "spell_fire_selfdestruct",
-   "status": "unchanged",
-   "fromTalent": false,
-   "desc": "",
-   "meta": [
-    "Level 34",
-    "Instant"
-   ],
-   "ranks": [
-    {
-     "t": "Rank 1",
-     "l": 34,
-     "d": "",
-     "m": [
-      "Instant"
-     ]
-    },
-    {
-     "t": "Rank 2",
-     "l": 44,
-     "d": "",
-     "m": [
-      "Instant"
-     ]
-    },
-    {
-     "t": "Rank 3",
-     "l": 54,
-     "d": "",
-     "m": [
       "Instant"
      ]
     }
@@ -16526,7 +16417,7 @@
    "name": "Binding Heal",
    "icon": "spell_holy_blindingheal",
    "status": "changed",
-   "fromTalent": true,
+   "fromTalent": false,
    "desc": "Heal yourself and a friendly target for 774 to 910. This causes low threat.",
    "meta": [
     "Level 25",
@@ -16919,7 +16810,7 @@
    "icon": "spell_shadow_demonicfortitude",
    "status": "new",
    "fromTalent": false,
-   "desc": "A word of dark binding that inflicts 444 to 472 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 10% of your maximum health.",
+   "desc": "A word of dark binding that inflicts 444 to 472 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 30% of your maximum health.",
    "meta": [
     "Level 32",
     "340 Mana",
@@ -16931,7 +16822,7 @@
     {
      "t": "Rank 1",
      "l": 32,
-     "d": "A word of dark binding that inflicts 294 to 311 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 10% of your maximum health.",
+     "d": "A word of dark binding that inflicts 294 to 311 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 30% of your maximum health.",
      "m": [
       "175 Mana",
       "30 yd range",
@@ -16942,7 +16833,7 @@
     {
      "t": "Rank 2",
      "l": 40,
-     "d": "A word of dark binding that inflicts 368 to 391 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 10% of your maximum health.",
+     "d": "A word of dark binding that inflicts 368 to 391 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 30% of your maximum health.",
      "m": [
       "205 Mana",
       "30 yd range",
@@ -16953,7 +16844,7 @@
     {
      "t": "Rank 3",
      "l": 48,
-     "d": "A word of dark binding that inflicts 402 to 426 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 10% of your maximum health.",
+     "d": "A word of dark binding that inflicts 402 to 426 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 30% of your maximum health.",
      "m": [
       "250 Mana",
       "30 yd range",
@@ -16964,7 +16855,7 @@
     {
      "t": "Rank 4",
      "l": 56,
-     "d": "A word of dark binding that inflicts 444 to 472 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 10% of your maximum health.",
+     "d": "A word of dark binding that inflicts 444 to 472 Shadow damage to the target. If your target is not killed by Shadow Word: Death, you take backlash damage equal to 30% of your maximum health.",
      "m": [
       "340 Mana",
       "30 yd range",
@@ -17298,7 +17189,7 @@
    "icon": "spell_frost_frostnova",
    "status": "unchanged",
    "fromTalent": false,
-   "desc": "Blasts enemies near the caster for 76 to 79 Frost damage and freezes them in place for up to 8 sec. Damage caused may interrupt the effect.",
+   "desc": "Blasts enemies near the caster for 72 to 79 Frost damage and freezes them in place for up to 8 sec. Damage caused may interrupt the effect.",
    "meta": [
     "Level 10",
     "145 Mana",
@@ -17309,7 +17200,7 @@
     {
      "t": "Rank 1",
      "l": 10,
-     "d": "Blasts enemies near the caster for 23 to 24 Frost damage and freezes them in place for up to 8 sec. Damage caused may interrupt the effect.",
+     "d": "Blasts enemies near the caster for 21 to 24 Frost damage and freezes them in place for up to 8 sec. Damage caused may interrupt the effect.",
      "m": [
       "55 Mana",
       "Instant",
@@ -17319,7 +17210,7 @@
     {
      "t": "Rank 2",
      "l": 26,
-     "d": "Blasts enemies near the caster for 37 to 38 Frost damage and freezes them in place for up to 8 sec. Damage caused may interrupt the effect.",
+     "d": "Blasts enemies near the caster for 35 to 38 Frost damage and freezes them in place for up to 8 sec. Damage caused may interrupt the effect.",
      "m": [
       "85 Mana",
       "Instant",
@@ -17329,7 +17220,7 @@
     {
      "t": "Rank 3",
      "l": 40,
-     "d": "Blasts enemies near the caster for 56 to 58 Frost damage and freezes them in place for up to 8 sec. Damage caused may interrupt the effect.",
+     "d": "Blasts enemies near the caster for 53 to 58 Frost damage and freezes them in place for up to 8 sec. Damage caused may interrupt the effect.",
      "m": [
       "115 Mana",
       "Instant",
@@ -17339,7 +17230,7 @@
     {
      "t": "Rank 4",
      "l": 54,
-     "d": "Blasts enemies near the caster for 76 to 79 Frost damage and freezes them in place for up to 8 sec. Damage caused may interrupt the effect.",
+     "d": "Blasts enemies near the caster for 72 to 79 Frost damage and freezes them in place for up to 8 sec. Damage caused may interrupt the effect.",
      "m": [
       "145 Mana",
       "Instant",
@@ -18554,7 +18445,7 @@
    "icon": "spell_frost_glacier",
    "status": "changed",
    "fromTalent": false,
-   "desc": "Targets in a cone in front of the caster take 343 to 358 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
+   "desc": "Targets in a cone in front of the caster take 328 to 358 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
    "meta": [
     "Level 26",
     "555 Mana",
@@ -18565,7 +18456,7 @@
     {
      "t": "Rank 1",
      "l": 26,
-     "d": "Targets in a cone in front of the caster take 101 to 106 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
+     "d": "Targets in a cone in front of the caster take 96 to 106 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
      "m": [
       "210 Mana",
       "Instant",
@@ -18575,7 +18466,7 @@
     {
      "t": "Rank 2",
      "l": 34,
-     "d": "Targets in a cone in front of the caster take 149 to 156 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
+     "d": "Targets in a cone in front of the caster take 142 to 156 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
      "m": [
       "290 Mana",
       "Instant",
@@ -18585,7 +18476,7 @@
     {
      "t": "Rank 3",
      "l": 42,
-     "d": "Targets in a cone in front of the caster take 210 to 220 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
+     "d": "Targets in a cone in front of the caster take 200 to 220 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
      "m": [
       "380 Mana",
       "Instant",
@@ -18595,7 +18486,7 @@
     {
      "t": "Rank 4",
      "l": 50,
-     "d": "Targets in a cone in front of the caster take 273 to 286 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
+     "d": "Targets in a cone in front of the caster take 261 to 286 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
      "m": [
       "465 Mana",
       "Instant",
@@ -18605,7 +18496,7 @@
     {
      "t": "Rank 5",
      "l": 58,
-     "d": "Targets in a cone in front of the caster take 343 to 358 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
+     "d": "Targets in a cone in front of the caster take 328 to 358 Frost damage and are slowed by 40% for 6 sec. The first 4 targets hit by this cone are slowed by an additional 10% for an additional 3 sec.",
      "m": [
       "555 Mana",
       "Instant",
@@ -18984,7 +18875,7 @@
    "icon": "spell_ice_lament",
    "status": "changed",
    "fromTalent": true,
-   "desc": "Shield yourself, absorbing 819 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage.",
+   "desc": "Shield yourself, absorbing 819 damage and increasing your Frost damage by 15% for 1 min. While shielded, your Frost damage is increased by an additional 5% and you do not lose casting time when you take damage.",
    "meta": [
     "Level 40",
     "480 Mana",
@@ -18995,7 +18886,7 @@
     {
      "t": "Rank 1",
      "l": 40,
-     "d": "Shield yourself, absorbing 448 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage.",
+     "d": "Shield yourself, absorbing 448 damage and increasing your Frost damage by 15% for 1 min. While shielded, your Frost damage is increased by an additional 5% and you do not lose casting time when you take damage.",
      "m": [
       "305 Mana",
       "Instant",
@@ -19005,7 +18896,7 @@
     {
      "t": "Rank 2",
      "l": 46,
-     "d": "Shield yourself, absorbing 561 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage.",
+     "d": "Shield yourself, absorbing 561 damage and increasing your Frost damage by 15% for 1 min. While shielded, your Frost damage is increased by an additional 5% and you do not lose casting time when you take damage.",
      "m": [
       "360 Mana",
       "Instant",
@@ -19015,7 +18906,7 @@
     {
      "t": "Rank 3",
      "l": 52,
-     "d": "Shield yourself, absorbing 693 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage.",
+     "d": "Shield yourself, absorbing 693 damage and increasing your Frost damage by 15% for 1 min. While shielded, your Frost damage is increased by an additional 5% and you do not lose casting time when you take damage.",
      "m": [
       "420 Mana",
       "Instant",
@@ -19025,7 +18916,7 @@
     {
      "t": "Rank 4",
      "l": 58,
-     "d": "Shield yourself, absorbing 819 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage.",
+     "d": "Shield yourself, absorbing 819 damage and increasing your Frost damage by 15% for 1 min. While shielded, your Frost damage is increased by an additional 5% and you do not lose casting time when you take damage.",
      "m": [
       "480 Mana",
       "Instant",
@@ -19857,7 +19748,7 @@
    "icon": "spell_arcane_blast",
    "status": "changed",
    "fromTalent": true,
-   "desc": "Blasts the target with energy, dealing 218 to 254 Arcane damage. Each time you cast Arcane Blast, you gain 15% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 175%. Effect stacks up to 4 times and lasts 15 sec from time of initial application.",
+   "desc": "Blasts the target with energy, dealing 218 to 254 Arcane damage. Each time you cast Arcane Blast, you gain 12% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 100%. Effect stacks up to 4 times and lasts 18 sec from time of initial application.",
    "meta": [
     "Level 20",
     "15% base Mana",
@@ -19868,7 +19759,7 @@
     {
      "t": "Rank 1",
      "l": 20,
-     "d": "Blasts the target with energy, dealing 34 to 38 Arcane damage. Each time you cast Arcane Blast, you gain 15% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 175%. Effect stacks up to 4 times and lasts 15 sec from time of initial application.",
+     "d": "Blasts the target with energy, dealing 34 to 38 Arcane damage. Each time you cast Arcane Blast, you gain 12% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 100%. Effect stacks up to 4 times and lasts 18 sec from time of initial application.",
      "m": [
       "15% base Mana",
       "30 yd range",
@@ -19878,7 +19769,7 @@
     {
      "t": "Rank 2",
      "l": 30,
-     "d": "Blasts the target with energy, dealing 79 to 90 Arcane damage. Each time you cast Arcane Blast, you gain 15% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 175%. Effect stacks up to 4 times and lasts 15 sec from time of initial application.",
+     "d": "Blasts the target with energy, dealing 79 to 90 Arcane damage. Each time you cast Arcane Blast, you gain 12% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 100%. Effect stacks up to 4 times and lasts 18 sec from time of initial application.",
      "m": [
       "15% base Mana",
       "30 yd range",
@@ -19888,7 +19779,7 @@
     {
      "t": "Rank 3",
      "l": 40,
-     "d": "Blasts the target with energy, dealing 101 to 117 Arcane damage. Each time you cast Arcane Blast, you gain 15% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 175%. Effect stacks up to 4 times and lasts 15 sec from time of initial application.",
+     "d": "Blasts the target with energy, dealing 101 to 117 Arcane damage. Each time you cast Arcane Blast, you gain 12% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 100%. Effect stacks up to 4 times and lasts 18 sec from time of initial application.",
      "m": [
       "15% base Mana",
       "30 yd range",
@@ -19898,7 +19789,7 @@
     {
      "t": "Rank 4",
      "l": 50,
-     "d": "Blasts the target with energy, dealing 166 to 191 Arcane damage. Each time you cast Arcane Blast, you gain 15% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 175%. Effect stacks up to 4 times and lasts 15 sec from time of initial application.",
+     "d": "Blasts the target with energy, dealing 166 to 191 Arcane damage. Each time you cast Arcane Blast, you gain 12% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 100%. Effect stacks up to 4 times and lasts 18 sec from time of initial application.",
      "m": [
       "15% base Mana",
       "30 yd range",
@@ -19908,7 +19799,7 @@
     {
      "t": "Rank 5",
      "l": 60,
-     "d": "Blasts the target with energy, dealing 218 to 254 Arcane damage. Each time you cast Arcane Blast, you gain 15% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 175%. Effect stacks up to 4 times and lasts 15 sec from time of initial application.",
+     "d": "Blasts the target with energy, dealing 218 to 254 Arcane damage. Each time you cast Arcane Blast, you gain 12% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 100%. Effect stacks up to 4 times and lasts 18 sec from time of initial application.",
      "m": [
       "15% base Mana",
       "30 yd range",
@@ -19971,72 +19862,79 @@
    "icon": "spell_frost_frostblast",
    "status": "changed",
    "fromTalent": true,
-   "desc": "Deals 137 to 161 Frost damage to an enemy target. Deals 200% increased damage to Frozen targets.",
+   "desc": "Deals 137 to 161 Frost damage to an enemy target. Deals 300% increased damage to Frozen targets.",
    "meta": [
     "Level 20",
     "160 Mana",
     "30 yd range",
-    "Instant"
+    "Instant",
+    "8 sec cooldown"
    ],
    "ranks": [
     {
      "t": "Rank 1",
      "l": 20,
-     "d": "Deals 28 to 32 Frost damage to an enemy target. Deals 200% increased damage to Frozen targets.",
+     "d": "Deals 28 to 32 Frost damage to an enemy target. Deals 300% increased damage to Frozen targets.",
      "m": [
       "45 Mana",
       "30 yd range",
-      "Instant"
+      "Instant",
+      "8 sec cooldown"
      ]
     },
     {
      "t": "Rank 2",
      "l": 28,
-     "d": "Deals 35 to 41 Frost damage to an enemy target. Deals 200% increased damage to Frozen targets.",
+     "d": "Deals 35 to 41 Frost damage to an enemy target. Deals 300% increased damage to Frozen targets.",
      "m": [
       "55 Mana",
       "30 yd range",
-      "Instant"
+      "Instant",
+      "8 sec cooldown"
      ]
     },
     {
      "t": "Rank 3",
      "l": 34,
-     "d": "Deals 44 to 52 Frost damage to an enemy target. Deals 200% increased damage to Frozen targets.",
+     "d": "Deals 44 to 52 Frost damage to an enemy target. Deals 300% increased damage to Frozen targets.",
      "m": [
       "70 Mana",
       "30 yd range",
-      "Instant"
+      "Instant",
+      "8 sec cooldown"
      ]
     },
     {
      "t": "Rank 4",
      "l": 42,
-     "d": "Deals 77 to 90 Frost damage to an enemy target. Deals 200% increased damage to Frozen targets.",
+     "d": "Deals 77 to 90 Frost damage to an enemy target. Deals 300% increased damage to Frozen targets.",
      "m": [
       "105 Mana",
       "30 yd range",
-      "Instant"
+      "Instant",
+      "8 sec cooldown"
      ]
     },
     {
      "t": "Rank 5",
      "l": 48,
-     "d": "Deals 95 to 112 Frost damage to an enemy target. Deals 200% increased damage to Frozen targets.",
+     "d": "Deals 95 to 112 Frost damage to an enemy target. Deals 300% increased damage to Frozen targets.",
      "m": [
       "120 Mana",
       "30 yd range",
-      "Instant"
+      "Instant",
+      "8 sec cooldown"
      ]
     },
     {
      "t": "Rank 6",
      "l": 56,
-     "d": "Deals 137 to 161 Frost damage to an enemy target. Deals 200% increased damage to Frozen targets.",
+     "d": "Deals 137 to 161 Frost damage to an enemy target. Deals 300% increased damage to Frozen targets.",
      "m": [
       "160 Mana",
       "30 yd range",
-      "Instant"
+      "Instant",
+      "8 sec cooldown"
      ]
     }
    ]
@@ -20084,53 +19982,6 @@
      "m": [
       "120 Mana",
       "10 sec cast"
-     ]
-    }
-   ]
-  },
-  {
-   "key": "frost__frost-blast",
-   "tab": "frost",
-   "name": "Frost Blast",
-   "icon": "spell_ice_magicdamage",
-   "status": "new",
-   "fromTalent": false,
-   "desc": "Quickly launch a weak blast of frost at the enemy, causing 80 to 88 Frost damage and slowing movement speed by 40% for 9 sec.",
-   "meta": [
-    "Level 24",
-    "90 Mana",
-    "30 yd range",
-    "1.5 sec cast"
-   ],
-   "ranks": [
-    {
-     "t": "Rank 1",
-     "l": 24,
-     "d": "Quickly launch a weak blast of frost at the enemy, causing 28 to 31 Frost damage and slowing movement speed by 40% for 9 sec.",
-     "m": [
-      "40 Mana",
-      "30 yd range",
-      "1.5 sec cast"
-     ]
-    },
-    {
-     "t": "Rank 2",
-     "l": 36,
-     "d": "Quickly launch a weak blast of frost at the enemy, causing 48 to 53 Frost damage and slowing movement speed by 40% for 9 sec.",
-     "m": [
-      "65 Mana",
-      "30 yd range",
-      "1.5 sec cast"
-     ]
-    },
-    {
-     "t": "Rank 3",
-     "l": 48,
-     "d": "Quickly launch a weak blast of frost at the enemy, causing 80 to 88 Frost damage and slowing movement speed by 40% for 9 sec.",
-     "m": [
-      "90 Mana",
-      "30 yd range",
-      "1.5 sec cast"
      ]
     }
    ]
@@ -25437,7 +25288,7 @@
    "icon": "inv_relics_idolofrejuvenation",
    "status": "changed",
    "fromTalent": true,
-   "desc": "Instantly heals a target with an active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of one of those spells.",
+   "desc": "Instantly heals a target with your active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of the consumed spell.",
    "meta": [
     "Level 1",
     "20% base Mana",
@@ -25449,7 +25300,7 @@
     {
      "t": "",
      "l": 1,
-     "d": "Instantly heals a target with an active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of one of those spells.",
+     "d": "Instantly heals a target with your active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of the consumed spell.",
      "m": [
       "20% base Mana",
       "40 yd range",
@@ -25672,7 +25523,7 @@
    "fromTalent": false,
    "desc": "Finishing move that causes damage per combo point and converts each extra point of energy into 2.7 additional damage. Damage is increased by your Attack Power.\n1 point : 199-259 damage\n2 points: 346-406 damage\n3 points: 493-553 damage\n4 points: 640-700 damage\n5 points: 787-847 damage",
    "meta": [
-    "Level 32",
+    "Level 24",
     "35 Energy",
     "1–5 Combo Points",
     "Melee Range",
@@ -25681,6 +25532,17 @@
    "ranks": [
     {
      "t": "Rank 1",
+     "l": 24,
+     "d": "Finishing move that causes damage per combo point and converts each extra point of energy into 0.6 additional damage. Damage is increased by your Attack Power.\n1 point : 33-43 damage\n2 points: 57-67 damage\n3 points: 81-91 damage\n4 points: 105-115 damage\n5 points: 129-139 damage",
+     "m": [
+      "35 Energy",
+      "1–5 Combo Points",
+      "Melee Range",
+      "Instant"
+     ]
+    },
+    {
+     "t": "Rank 2",
      "l": 32,
      "d": "Finishing move that causes damage per combo point and converts each extra point of energy into 1.0 additional damage. Damage is increased by your Attack Power.\n1 point : 50-66 damage\n2 points: 86-102 damage\n3 points: 122-138 damage\n4 points: 158-174 damage\n5 points: 194-210 damage",
      "m": [
@@ -25691,7 +25553,7 @@
      ]
     },
     {
-     "t": "Rank 2",
+     "t": "Rank 3",
      "l": 40,
      "d": "Finishing move that causes damage per combo point and converts each extra point of energy into 1.5 additional damage. Damage is increased by your Attack Power.\n1 point : 79-103 damage\n2 points: 138-162 damage\n3 points: 197-221 damage\n4 points: 256-280 damage\n5 points: 315-339 damage",
      "m": [
@@ -25702,7 +25564,7 @@
      ]
     },
     {
-     "t": "Rank 3",
+     "t": "Rank 4",
      "l": 48,
      "d": "Finishing move that causes damage per combo point and converts each extra point of energy into 2.0 additional damage. Damage is increased by your Attack Power.\n1 point : 122-162 damage\n2 points: 214-254 damage\n3 points: 306-346 damage\n4 points: 398-438 damage\n5 points: 490-530 damage",
      "m": [
@@ -25713,7 +25575,7 @@
      ]
     },
     {
-     "t": "Rank 4",
+     "t": "Rank 5",
      "l": 56,
      "d": "Finishing move that causes damage per combo point and converts each extra point of energy into 2.5 additional damage. Damage is increased by your Attack Power.\n1 point : 173-223 damage\n2 points: 301-351 damage\n3 points: 429-479 damage\n4 points: 557-607 damage\n5 points: 685-735 damage",
      "m": [
@@ -25724,7 +25586,7 @@
      ]
     },
     {
-     "t": "Rank 5",
+     "t": "Rank 6",
      "l": 60,
      "d": "Finishing move that causes damage per combo point and converts each extra point of energy into 2.7 additional damage. Damage is increased by your Attack Power.\n1 point : 199-259 damage\n2 points: 346-406 damage\n3 points: 493-553 damage\n4 points: 640-700 damage\n5 points: 787-847 damage",
      "m": [
@@ -25800,7 +25662,7 @@
    "icon": "spell_nature_forceofnature",
    "status": "changed",
    "fromTalent": true,
-   "desc": "Shapeshift into Moonkin Form, increasing Omen of Clarity's chance to trigger by 100%, Armor contribution from items by 360%, and all party or raid members within 45 yards have their spell Critical Strike chance increased by 3%. Also protects the caster from Polymorph effects and prevents the use of healing spells.\n\nThe act of shapeshifting frees the caster of Polymorph and Movement Impairing effects.",
+   "desc": "Shapeshift into Moonkin Form, increasing Omen of Clarity's chance to trigger by 100%, Armor contribution from items by 360%, and all party or raid members within 45 yards have their Critical Strike chance increased by 3%. Also protects the caster from Polymorph effects and prevents the use of healing spells.\n\nThe act of shapeshifting frees the caster of Polymorph and Movement Impairing effects.",
    "meta": [
     "Level 40",
     "35% base Mana",
@@ -25810,7 +25672,7 @@
     {
      "t": "Shapeshift",
      "l": 40,
-     "d": "Shapeshift into Moonkin Form, increasing Omen of Clarity's chance to trigger by 100%, Armor contribution from items by 360%, and all party or raid members within 45 yards have their spell Critical Strike chance increased by 3%. Also protects the caster from Polymorph effects and prevents the use of healing spells.\n\nThe act of shapeshifting frees the caster of Polymorph and Movement Impairing effects.",
+     "d": "Shapeshift into Moonkin Form, increasing Omen of Clarity's chance to trigger by 100%, Armor contribution from items by 360%, and all party or raid members within 45 yards have their Critical Strike chance increased by 3%. Also protects the caster from Polymorph effects and prevents the use of healing spells.\n\nThe act of shapeshifting frees the caster of Polymorph and Movement Impairing effects.",
      "m": [
       "35% base Mana",
       "Instant"
@@ -25848,7 +25710,7 @@
    "icon": "spell_nature_moonglow",
    "status": "changed",
    "fromTalent": false,
-   "desc": "Increases spell Critical Strike chance by 3%.",
+   "desc": "Increases Critical Strike chance by 3%.",
    "meta": [
     "Level 40",
     "Instant"
@@ -25857,7 +25719,7 @@
     {
      "t": "",
      "l": 40,
-     "d": "Increases spell Critical Strike chance by 3%.",
+     "d": "Increases Critical Strike chance by 3%.",
      "m": [
       "Instant"
      ]
@@ -25923,10 +25785,10 @@
    "name": "Lacerate",
    "icon": "ability_druid_lacerate",
    "status": "changed",
-   "fromTalent": false,
+   "fromTalent": true,
    "desc": "Lacerates the enemy target, making them bleed for 75 damage over 15 sec plus 10% weapon damage per existing application of Lacerate on the target. Causes a high amount of threat. This effect stacks up to 5 times on the same target.",
    "meta": [
-    "Level 42",
+    "Level 25",
     "15 Rage",
     "Melee Range",
     "Instant"
@@ -25934,6 +25796,26 @@
    "ranks": [
     {
      "t": "Rank 1",
+     "l": 25,
+     "d": "Lacerates the enemy target, making them bleed for 20 damage over 15 sec plus 10% weapon damage per existing application of Lacerate on the target. Causes a high amount of threat. This effect stacks up to 5 times on the same target.",
+     "m": [
+      "15 Rage",
+      "Melee Range",
+      "Instant"
+     ]
+    },
+    {
+     "t": "Rank 2",
+     "l": 34,
+     "d": "Lacerates the enemy target, making them bleed for 30 damage over 15 sec plus 10% weapon damage per existing application of Lacerate on the target. Causes a high amount of threat. This effect stacks up to 5 times on the same target.",
+     "m": [
+      "15 Rage",
+      "Melee Range",
+      "Instant"
+     ]
+    },
+    {
+     "t": "Rank 3",
      "l": 42,
      "d": "Lacerates the enemy target, making them bleed for 50 damage over 15 sec plus 10% weapon damage per existing application of Lacerate on the target. Causes a high amount of threat. This effect stacks up to 5 times on the same target.",
      "m": [
@@ -25943,7 +25825,7 @@
      ]
     },
     {
-     "t": "Rank 2",
+     "t": "Rank 4",
      "l": 50,
      "d": "Lacerates the enemy target, making them bleed for 60 damage over 15 sec plus 10% weapon damage per existing application of Lacerate on the target. Causes a high amount of threat. This effect stacks up to 5 times on the same target.",
      "m": [
@@ -25953,7 +25835,7 @@
      ]
     },
     {
-     "t": "Rank 3",
+     "t": "Rank 5",
      "l": 58,
      "d": "Lacerates the enemy target, making them bleed for 75 damage over 15 sec plus 10% weapon damage per existing application of Lacerate on the target. Causes a high amount of threat. This effect stacks up to 5 times on the same target.",
      "m": [
@@ -25976,7 +25858,7 @@
     "Level 40",
     "1050 Mana",
     "40 yd range",
-    "Instant",
+    "3 sec cast",
     "6 sec cooldown"
    ],
    "ranks": [
@@ -25987,7 +25869,7 @@
      "m": [
       "550 Mana",
       "40 yd range",
-      "Instant",
+      "3 sec cast",
       "6 sec cooldown"
      ]
     },
@@ -25998,7 +25880,7 @@
      "m": [
       "755 Mana",
       "40 yd range",
-      "Instant",
+      "3 sec cast",
       "6 sec cooldown"
      ]
     },
@@ -26009,7 +25891,7 @@
      "m": [
       "1050 Mana",
       "40 yd range",
-      "Instant",
+      "3 sec cast",
       "6 sec cooldown"
      ]
     }
@@ -26113,7 +25995,7 @@
    "fromTalent": true,
    "desc": "Bite the target, dealing 100% normal damage plus 77 and generating a high amount of threat.",
    "meta": [
-    "Level 25",
+    "Level 40",
     "20 Rage",
     "Melee Range",
     "Instant",
@@ -26122,8 +26004,8 @@
    "ranks": [
     {
      "t": "Rank 1",
-     "l": 25,
-     "d": "Bite the target, dealing 100% normal damage plus 26 and generating a high amount of threat.",
+     "l": 40,
+     "d": "Bite the target, dealing 100% normal damage plus 42 and generating a high amount of threat.",
      "m": [
       "20 Rage",
       "Melee Range",
@@ -26133,8 +26015,8 @@
     },
     {
      "t": "Rank 2",
-     "l": 36,
-     "d": "Bite the target, dealing 100% normal damage plus 38 and generating a high amount of threat.",
+     "l": 50,
+     "d": "Bite the target, dealing 100% normal damage plus 62 and generating a high amount of threat.",
      "m": [
       "20 Rage",
       "Melee Range",
@@ -26144,17 +26026,6 @@
     },
     {
      "t": "Rank 3",
-     "l": 48,
-     "d": "Bite the target, dealing 100% normal damage plus 59 and generating a high amount of threat.",
-     "m": [
-      "20 Rage",
-      "Melee Range",
-      "Instant",
-      "6 sec cooldown"
-     ]
-    },
-    {
-     "t": "Rank 4",
      "l": 60,
      "d": "Bite the target, dealing 100% normal damage plus 77 and generating a high amount of threat.",
      "m": [
@@ -26274,7 +26145,7 @@
     "Level 1",
     "55% base Mana",
     "Instant",
-    "16 sec cooldown"
+    "8 sec cooldown"
    ],
    "ranks": [
     {
@@ -26284,7 +26155,29 @@
      "m": [
       "55% base Mana",
       "Instant",
-      "16 sec cooldown"
+      "8 sec cooldown"
+     ]
+    }
+   ]
+  },
+  {
+   "key": "feral-combat__poised",
+   "tab": "feral-combat",
+   "name": "Poised",
+   "icon": "ability_racial_darkflight",
+   "status": "new",
+   "fromTalent": false,
+   "desc": "While at maximum Energy, and out of combat, reduce the Energy cost of your next ability by 10.",
+   "meta": [
+    "Passive"
+   ],
+   "ranks": [
+    {
+     "t": "Passive",
+     "l": 0,
+     "d": "While at maximum Energy, and out of combat, reduce the Energy cost of your next ability by 10.",
+     "m": [
+      "Passive"
      ]
     }
    ]
