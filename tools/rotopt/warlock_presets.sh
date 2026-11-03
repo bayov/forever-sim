@@ -45,11 +45,13 @@ gen level60_demonology "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,pre
 # Destruction (Shadow Bolt): Conflagrate on cooldown while Immolate is up.
 # Destruction and Affliction recast Immolate once it has less left than its cast time.
 gen level60_destruction "$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
-gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
-# Affliction Wrack (since the 2026-11-02 notes doubled Wrack): deep Affliction with Siphon Life and
-# Wrack channelled while Corruption and the bane are up, Shadow Bolt between. Knob search from the
-# Affliction knobs plus wrack=1 and siphonLife=1 moved nothing (3000 iterations, 180 sec).
-gen level60_affliction_wrack "$base,filler=1,conflagrate=0,siphonLife=1,wrack=1,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
+# Affliction (since round 70753, the 2026-11-02 notes doubled Wrack): deep Affliction with Siphon Life
+# and Wrack, the Imp sacrificed for 15% Shadow damage; Wrack channelled while Corruption and the bane
+# are up, Shadow Bolt between. Knob searches at 120, 180 and 300 sec from these moved nothing (300
+# sec alone wanted doomAlign=6, +1).
+gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=1,wrack=1,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
+# Shadow Bolt Affliction (the Affliction preset before round 70753), the Succubus out.
+gen level60_affliction_shadow_bolt "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
 # Destruction fire: Incinerate while Immolate is up, Conflagrate on cooldown, Immolate and
 # Corruption recast 1.5 sec early.
 gen level60_destruction_fire "$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=1.5,prepullAt=1.5,corruptionMinTime=15,immolateMinTime=4"
@@ -59,7 +61,7 @@ gen level60_destruction_fire "$base,filler=2,conflagrate=1,siphonLife=0,soulLink
 # preset per build. Under Forever the curse has its own slot, so the bane stays.
 K_demonology="$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5,corruptionMinTime=15,immolateMinTime=15"
 K_destruction="$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
-K_affliction="$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
+K_affliction="$base,filler=1,conflagrate=0,siphonLife=1,wrack=1,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
 K_destruction_fire="$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=1.5,prepullAt=1.5,corruptionMinTime=15,immolateMinTime=4"
 for spec in demonology destruction affliction destruction_fire; do
 	eval dutyKnobs=\$K_$spec
