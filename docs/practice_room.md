@@ -1165,6 +1165,11 @@ rendering, not the sim.
   on every camera turn. The full screen notice can't be hidden by a page.
 - The wheel zooms over the HUD too, and the camera glides to the new distance.
 - Leaving the room stops its frames, timers, sounds and session.
+- Raid test: `practice.html?raid=40` puts 39 others in your gear (two tanks, ten melee, casters, healers and hunters
+  of the four Horde races) around Ragnaros (`ui/practice/raid.ts`). They swing, cast with hand glows and bolts, heal
+  the tanks and move. First numbers in headless Chrome on WSL (software GPU, so only the script and the counts
+  carry over): draw calls 55 to 1006, triangles 71k to 424k, script a frame about 0.3 to 6ms (animating 2ms, the
+  others' effects 0.6ms, placing the scene's objects 1.1ms), JS heap 0.5 to 1.9GB, and 42s to load.
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
