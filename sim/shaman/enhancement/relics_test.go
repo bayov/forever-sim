@@ -149,7 +149,8 @@ func TestOrcShamanRelics(t *testing.T) {
 			runSim(sim)
 			want := 0.0
 			if c.half {
-				want = .5 * 10 * enh.AutoAttacks.MH().SwingSpeed / 60
+				// 20 PPM at 5/5 since the November 2 notes (10 before).
+				want = .5 * 20 * enh.AutoAttacks.MH().SwingSpeed / 60
 			}
 			rate := float64(stacks) / bolts
 			if se := math.Sqrt(want * (1 - want) / bolts); math.Abs(rate-want) > 4*se+1e-9 {

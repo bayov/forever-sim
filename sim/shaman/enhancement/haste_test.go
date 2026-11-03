@@ -48,11 +48,11 @@ func TestOrcShamanHaste(t *testing.T) {
 
 			flurry.Activate(sim)
 			flurry.SetStacks(sim, 3)
-			check("Flurry", 1.25)
+			check("Flurry", 1.30)
 			if !farseerSpell.Cast(sim, enh.CurrentTarget) {
 				t.Fatalf("Rage of the Farseer didn't cast")
 			}
-			check("Flurry and Rage of the Farseer", 1.25*1.3)
+			check("Flurry and Rage of the Farseer", 1.30*1.3)
 			flurry.Deactivate(sim)
 			check("Rage of the Farseer after Flurry drops", 1.3)
 			farseer.Deactivate(sim)

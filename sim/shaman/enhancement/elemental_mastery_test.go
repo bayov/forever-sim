@@ -61,8 +61,9 @@ func TestOrcShamanElementalMastery(t *testing.T) {
 		checkCasts(sim, "under Elemental Mastery", 2000*time.Millisecond, 2000*time.Millisecond)
 		castNow(t, sim, enh, chain)
 	})
-	// The Chain Lightning above ends at 3 sec, so the next one goes right away.
-	at(sim, 3.5, func(sim *core.Simulation) {
+	// The Chain Lightning above ends at 3.5 sec (a 2.5 sec cast since the November 2 notes), so
+	// the next one goes right away.
+	at(sim, 4, func(sim *core.Simulation) {
 		if !chain.CD.IsReady(sim) {
 			t.Errorf("Chain Lightning is on cooldown under Elemental Mastery, ready at %s", chain.CD.ReadyAt())
 		}
@@ -75,8 +76,8 @@ func TestOrcShamanElementalMastery(t *testing.T) {
 		checkCasts(sim, "after Elemental Mastery", 2500*time.Millisecond, 2500*time.Millisecond)
 		castNow(t, sim, enh, chain)
 	})
-	// That cast ends at 19 sec and starts the cooldown again.
-	at(sim, 19.5, func(sim *core.Simulation) {
+	// That cast ends at 19.5 sec and starts the cooldown again.
+	at(sim, 20, func(sim *core.Simulation) {
 		if chain.CD.IsReady(sim) {
 			t.Errorf("Chain Lightning has no cooldown after Elemental Mastery, want its %s back", chainCooldown)
 		}

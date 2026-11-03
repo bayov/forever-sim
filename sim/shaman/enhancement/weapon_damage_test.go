@@ -15,7 +15,8 @@ import (
 // speed. Stormstrike uses a fixed speed for the weapon type there (3.6 for a two-hander, 2.7
 // for a one-hander and 1.8 for a dagger), not the weapon's own. Superior Impact adds 9 to the
 // two-hander's damage, and a flat "+N damage" effect like Zandalarian Hero Medallion adds to
-// every hit. Windfury adds its 333 AP at level 60.
+// every hit. Windfury adds its 333 AP at level 60. Stormstrike deals 150% of that weapon damage
+// since the November 2 development notes (the flat bonus stays 1x).
 //
 // The target has no armor, so a normal hit (not a crit or a glancing blow) deals just that.
 // We check that every normal hit is in its range, and that the rolls reach both ends of it.
@@ -72,12 +73,13 @@ func testWeaponDamage(t *testing.T, item *proto.ItemSpec, weaponMin, weaponMax, 
 		spell    *core.Spell
 		speed    float64
 		extraAP  float64
+		mult     float64 // the share of weapon damage
 		min, max float64 // the lowest and highest roll we saw, from 0 to 1
 		hits     int
 	}{
-		{name: "white hit", spell: enh.AutoAttacks.MHAuto(), speed: speed},
-		{name: "Windfury", spell: enh.WindfuryWeaponMH, speed: speed, extraAP: windfuryAP},
-		{name: "Stormstrike", spell: enh.Stormstrike, speed: stormstrikeSpeed},
+		{name: "white hit", spell: enh.AutoAttacks.MHAuto(), speed: speed, mult: 1},
+		{name: "Windfury", spell: enh.WindfuryWeaponMH, speed: speed, extraAP: windfuryAP, mult: 1},
+		{name: "Stormstrike", spell: enh.Stormstrike, speed: stormstrikeSpeed, mult: 1.5},
 	}
 	for i := range attacks {
 		attacks[i].min, attacks[i].max = 1, 0
@@ -97,10 +99,11 @@ func testWeaponDamage(t *testing.T, item *proto.ItemSpec, weaponMin, weaponMax, 
 			if spell.ActionID != a.spell.ActionID || result.Outcome != core.OutcomeHit {
 				continue
 			}
-			bonus := impact + flatBonus + a.speed*(enh.GetStat(stats.AttackPower)+a.extraAP)/core.DefaultAttackPowerPerDPS
-			roll := (result.Damage - weaponMin - bonus) / (weaponMax - weaponMin)
+			low := a.mult*(weaponMin+impact+a.speed*(enh.GetStat(stats.AttackPower)+a.extraAP)/core.DefaultAttackPowerPerDPS) + flatBonus
+			width := a.mult * (weaponMax - weaponMin)
+			roll := (result.Damage - low) / width
 			if roll < -1e-9 || roll > 1+1e-9 {
-				t.Errorf("at %s: a %s for %.2f, want %.2f to %.2f", sim.CurrentTime, a.name, result.Damage, weaponMin+bonus, weaponMax+bonus)
+				t.Errorf("at %s: a %s for %.2f, want %.2f to %.2f", sim.CurrentTime, a.name, result.Damage, low, low+width)
 			}
 			a.min, a.max = min(a.min, roll), max(a.max, roll)
 			a.hits++

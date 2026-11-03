@@ -31,7 +31,9 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.MentalDexterity > 0 {
-		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, []float64{0, .33, .67, 1}[shaman.Talents.MentalDexterity])
+		// 50 / 100 / 150% of Intellect since the November 2 development notes (33 / 67 / 100% in
+		// the beta client, 1.60.1.70753 included).
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, []float64{0, .5, 1, 1.5}[shaman.Talents.MentalDexterity])
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {
@@ -432,7 +434,9 @@ func (shaman *Shaman) makeFlurryAura(points int32) *core.Aura {
 		return nil
 	}
 
-	attackSpeed := []float64{1.05, 1.1, 1.15, 1.2, 1.25}[points-1]
+	// 6 / 12 / 18 / 24 / 30% since the November 2 development notes (5 to 25% in the beta
+	// client, 1.60.1.70753 included).
+	attackSpeed := []float64{1.06, 1.12, 1.18, 1.24, 1.30}[points-1]
 
 	// The buff lasts 15 sec when we don't use up its 3 charges.
 	//
@@ -531,9 +535,13 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		return
 	}
 
+	// The November 2 development notes double the chance to trigger, from the 2 PPM per point
+	// below (report assumption sham_mw_ppm, 10 PPM at 5/5) to 4, 20 PPM at 5/5. The client leaves
+	// the rate to the server (408498 has a 100% ProcChance and no PPM row in 1.60.1.70753).
+
 	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
 	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
-	ppmm := shaman.AutoAttacks.NewPPMManager(2*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
+	ppmm := shaman.AutoAttacks.NewPPMManager(4*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
 
 	castTimeReductionPerStack := .04 * float64(shaman.Talents.MaelstromWeapon)
 	costReductionPerStack := 4 * shaman.Talents.MaelstromWeapon
