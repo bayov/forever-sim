@@ -48,6 +48,8 @@ type DruidHealing struct {
 	NaturesSwiftnessAura *core.Aura
 
 	wildGrowthCD *core.Timer
+	// What items take off Swiftmend's cooldown (items_restoration.go).
+	swiftmendCooldownCut time.Duration
 }
 
 type healRank struct {
@@ -681,7 +683,7 @@ func (druid *Druid) registerSwiftmendSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    druid.NewTimer(),
-				Duration: SwiftmendCooldown,
+				Duration: SwiftmendCooldown - druid.swiftmendCooldownCut,
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {

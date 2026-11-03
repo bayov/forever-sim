@@ -50,6 +50,8 @@ func druidRaid(t *testing.T, talents map[string]int, mages int, items ...string)
 	rsr := healingRaid(t, 1, 0, mages)
 	healer := benchPlayer(t, "../tools/healbench/req/druid_restoration.json")
 	healer.TalentsString = druidTalents(talents)
+	// A race without haste, so cast times read as the spells'.
+	healer.Race = proto.Race_RaceNightElf
 	rsr.Raid.Parties[0].Players = append([]*proto.Player{rsr.Raid.Parties[0].Players[0], healer}, rsr.Raid.Parties[0].Players[1:]...)
 	for i, p := range rsr.Raid.Parties[0].Players {
 		p.Name = strconv.Itoa(i)
@@ -315,8 +317,14 @@ func TestDruidSwiftmend(t *testing.T) {
 			t.Errorf("a Swiftmend of %.1f, want 5 Rejuvenation ticks at %.0f healing power", h.base, h.healingPower)
 		}
 	}
-	if cd := l.cooldowns[smID][0]; cd != 15 {
-		t.Errorf("Swiftmend cooldown %.1f", cd)
+	// The bench gear's Idol of Swiftness takes 3 sec off; without it, 15.
+	if cd := l.cooldowns[smID][0]; cd != 12 {
+		t.Errorf("Swiftmend cooldown %.1f with Idol of Swiftness", cd)
+	}
+	noIdol := druidRaid(t, talents, 0, castAt(smID, "Tank", ""), castAt(rjTop, "Tank", hotOff(rjTop, "Tank")))
+	noIdol.Raid.Parties[0].Players[1].Equipment.Items[16] = &proto.ItemSpec{}
+	if cd := runDruidLog(t, noIdol).cooldowns[smID][0]; cd != 15 {
+		t.Errorf("Swiftmend cooldown %.1f without the idol", cd)
 	}
 	if c := l.casts[smID][0]; c.cost < 200 || c.cost > 300 {
 		t.Errorf("Swiftmend cost %.1f, want 20%% of base mana", c.cost)
