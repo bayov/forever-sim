@@ -6,7 +6,7 @@
   "isDefault": true,
   "pr": 7,
   "race": "SkyborneWindshaper",
-  "talents": "5501331003001351-055000101-053",
+  "talents": "5501331003001351-05500101-053",
   "treeNames": [
     "Elemental",
     "Enhancement",
@@ -25,10 +25,10 @@
     "ok": true,
     "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
   },
-  "summary": "Deep Elemental with a staff, built on Lava Burst and Elemental Mastery.",
+  "summary": "Deep Elemental with a staff, built on Lightning Bolt, Call of Thunder and Lightning Mastery.",
   "keyTalents": [
-    "Elemental Mastery",
-    "Lava Burst",
+    "Lightning Mastery",
+    "Call of Thunder",
     "Elemental Alacrity",
     "Elemental Fury",
     "Call of Flame",
@@ -40,14 +40,13 @@
   ],
   "rotation": [
     "Pre-pull: Lightning Shield at -5.4s, Mana Spring Totem at -3.9s, Lightning Bolt at -2.9s (lands 0.1s after the pull), Searing Totem at -0.9s",
-    "Elemental Mastery and other cooldowns (Demonic Rune, Caustic Smog Potion) when ready",
+    "Lightning Mastery and other cooldowns (Demonic Rune, Caustic Smog Potion) when ready",
     "Mana Spring Totem when it is down, with at least 20s left",
     "Searing Totem when it is down, with at least 20s left",
     "Flame Shock when its DoT is down, with at least 9s left",
-    "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
     "Earth Shock when a Lightning Bolt would not land before the end",
     "Lightning Shield when it is down, above 50% mana with at least 60s left. Its orbs fire at the boss when the shaman takes a hit, about 2 a minute.",
-    "Lightning Bolt rank 8 once mana won't last the fight at 30 mana a second. Under Clearcasting, the top rank, since it's free.",
+    "Lightning Bolt rank 9 once mana won't last the fight at 30 mana a second. Under Clearcasting, the top rank, since it's free.",
     "Lightning Bolt rank 10 as filler. No Chain Lightning on one target."
   ],
   "consumes": [
@@ -65,8 +64,8 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Lightning Bolt X's base damage is ×1.12. The beta raised the top playable rank by that much.",
-    "Only the Tier 1 2-piece is active. The 5-piece (Lava Burst -1s cooldown) would add more.",
+    "Lightning Bolt (0.78 of Era's base), Lightning Overload (30%), Call of Thunder and the shocks take the November 2 notes' values. Client 1.60.1.70753 doesn't carry them yet.",
+    "Only the Tier 1 2-piece is active. The 5-piece (Lava Burst -1s cooldown) does nothing now that Lava Burst is gone.",
     "Only one 2% crit elixir. Owl on top of Sages would add about 10 DPS.",
     "Elemental Focus procs less often on low ranks since 7 Oct. By how much is unknown.",
     "The sim doesn't check that Searing Totem reaches the boss from range.",

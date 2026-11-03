@@ -53,8 +53,8 @@ import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic
 // (15% Stamina, 18% Intellect, 10% Spirit, 35% spell power, 11% crit) and hit to the spell cap
 // against a level 63 boss with Tidal Focus 5 and the 2 piece bonus. The armor is 709.3 and the staff
 // 193.3 weighted points. The hands and legs carry The Spiritcaller's Storm, Forever's elemental Tier 1
-// set, so only its 2 piece bonus (+1% hit) is live. The 5 piece bonus (Lava Burst 1 sec sooner) would
-// add more. The file has the budget math, the shares and the shape check per piece.
+// set, so only its 2 piece bonus (+1% hit) is live. The 5 piece bonus (Lava Burst 1 sec sooner) does
+// nothing since the November 2 notes removed Lava Burst. The file has the budget math, the shares and the shape check per piece.
 //
 // The enchants are the best a Phase 1 shaman can get outside the raids: Enchant 2H Weapon -
 // Spellblasting (Forever, +65 spell power), Gloves - Natural Power, Bracer - Greater Spellpower,
@@ -99,6 +99,13 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // once a Lightning Bolt would no longer land in time, is +5.8 / +3.4 / +1.7 (the rotation auditor,
 // 2026-10-15; +5.7 / +3.4 / +1.8 on Mana Tide). A caster stands at range, so the rotation has no
 // Magma Totem or Fire Nova. tools/rotopt/shaman_presets.sh writes it.
+//
+// Round 70753 (the November 2 notes): the Lava Burst line is gone with the spell. Chain Lightning, now
+// a 2.5 sec cast for 1.45 times a Lightning Bolt's damage and 2.25 times its mana, still loses on one
+// target: -80.6 on cooldown and -35.6 only under Lightning Mastery (the mean of 120 / 180 / 300 sec).
+// The lower rank once the mana runs short is rank 9, one below the top (lightningBoltDownrank=1, the
+// ranks at 0.78 of Era's now): 0 / 0 / +5.0 to +5.3 at 120 / 180 / 300 sec, paired at 20000
+// iterations on two seed sets. Mana Tide keeps rank 8.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Elemental', Level60APLJson, {
 	tooltip: 'The tools/rotopt search result for the Elemental talents.',
 	group: 'Synthetic',
@@ -132,8 +139,14 @@ export const DefaultAPL = APLLevel60;
 // (+8: it keeps 70% of the casts from being pushed back), and the Restoration points into
 // Ancestral Knowledge, Shamanistic Focus and one Improved Lightning Shield. 731.3 / 721.4 /
 // 712.6 at 120 / 180 / 300 sec.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Elemental', SavedTalents.create({ talentsString: '5501331003001351-055000101-053' }), {
-	tooltip: 'Level 60 talents from the talent search: Elemental Mastery, Lava Burst, Eye of the Storm, Thundering Strikes and Tidal Focus.',
+//
+// Round 70753 (the November 2 development notes): Lava Burst is gone and Call of Thunder (5% crit for
+// Lightning Bolt and Chain Lightning) takes its square, so the same string now takes Call of Thunder,
+// and Elemental Mastery is Lightning Mastery. The talent search found nothing better. With Lightning
+// Bolt at 0.78 of Era's damage, Lightning Overload 30% and the shocks at Era's, 979.7 / 970.1 / 924.6
+// at 120 / 180 / 300 sec (775.3 / 767.6 / 738.8 before, on the same race base stats).
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Elemental', SavedTalents.create({ talentsString: '5501331003001351-05500101-053' }), {
+	tooltip: 'Level 60 talents from the talent search: Lightning Mastery, Call of Thunder, Eye of the Storm, Thundering Strikes and Tidal Focus.',
 	group: 'Synthetic',
 });
 // Mana Tide Totem for the group's mana: Totemic Focus 5, Mindfulness 3, Tidal Focus 5 and the
@@ -144,6 +157,10 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Elemental', SavedTa
 // Thunder and Eye of the Storm for 3 Reverberation points, as Level 60 does (the talent search
 // with Mana Tide Totem pinned). 721.3 / 711.2 / 697.4 at 120 / 180 / 300 sec, 1.4% behind
 // Level 60 at 180.
+//
+// Round 70753: the search with Mana Tide Totem pinned kept the build (Call of Thunder in Lava Burst's
+// square): 962.7 / 952.7 / 935.1 at 120 / 180 / 300 sec (760.2 / 752.8 / 737.0 before), 1.8% behind
+// Level 60 at 180. Unpinned it drops Mana Tide Totem for the Level 60 build's points.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Elemental Mana Tide',
 	SavedTalents.create({ talentsString: '5501331003001351-04-053150001001' }),

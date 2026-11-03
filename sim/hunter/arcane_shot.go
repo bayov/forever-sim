@@ -8,18 +8,21 @@ import (
 )
 
 // Forever's Arcane Shot (beta client, build 1.60.1.70338) hits harder at most ranks (rank 8: 217,
-// Classic 183) and has no spell power coefficient (Classic 42.9%). The client gives it no attack
-// power share either, but the beta's combat logs show one: a combat-log fit on level 20 to 30
-// hunters, checked with Aspect of the Hawk and Hunter's Mark swaps, gives about 0.11 of ranged
-// attack power (ElliotWood/Forever, sim/hunter/arcane_shot.go), and the forever-hunter wiki 10%.
-// Report assumption hunter_shot_ap_shares, user ruling 2026-10-15: the wiki's 10%, since the fit
-// at low attack power is only good to about 10% either way. The 6 sec cooldown is shared with
-// Summon Hawk (client category 1173).
-const arcaneShotRAPCoefficient = 0.10
+// Classic 183) and has no spell power coefficient (Classic 42.9%). The launch realms' server
+// hotfix of 2026-11-03 (foreverchanges.pro, read from the realms' hotfix cache) raises the ranks to
+// 25 / 35 / 50 / 85 / 120 / 175 / 220 / 280, Blizzard's 11-02 notes' "~30%"; client 1.60.1.70753
+// still has 20 to 217. The client gives it no attack power share, but the beta's combat logs show
+// one (about 0.11 in ElliotWood/Forever's fit, 10% on the forever-hunter wiki, the sim's 10% by
+// report assumption hunter_shot_ap_shares, user ruling 2026-10-15). Blizzard's 11-02 notes and
+// foreverchanges.pro's reading of them give it as "raised from 0.1 to 0.15", so it is 15% now.
+// The 6 sec cooldown is shared with Summon Hawk (client category 1173).
+const arcaneShotRAPCoefficient = 0.15
+
+var ArcaneShotBaseDamage = [9]float64{0, 25, 35, 50, 85, 120, 175, 220, 280}
 
 func (hunter *Hunter) getArcaneShotConfig(rank int, timer *core.Timer) core.SpellConfig {
 	spellId := [9]int32{0, 3044, 14281, 14282, 14283, 14284, 14285, 14286, 14287}[rank]
-	baseDamage := [9]float64{0, 20, 26, 39, 65, 94, 134, 170, 217}[rank]
+	baseDamage := ArcaneShotBaseDamage[rank]
 	manaCost := [9]float64{0, 25, 35, 50, 80, 105, 135, 160, 190}[rank]
 	level := [9]int{0, 6, 12, 20, 28, 36, 44, 52, 60}[rank]
 

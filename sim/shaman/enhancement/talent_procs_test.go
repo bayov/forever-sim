@@ -15,7 +15,7 @@ import (
 
 // Elemental Devastation 3/3, Elemental Focus and Lava Burst, then Flurry 5/5, Stormstrike
 // and Maelstrom Weapon 5/5.
-const talentProcTalents = "0030001000001-00000000000510005"
+const talentProcTalents = "0030001000001-00000000005100005"
 
 const (
 	flurry               = "Flurry"
@@ -86,7 +86,6 @@ func testTalentProcTriggers(t *testing.T) {
 		{"Frost Shock", enh.FrostShock},
 		{"Lightning Bolt", enh.LightningBolt},
 		{"Chain Lightning", enh.ChainLightning},
-		{"Lava Burst", []*core.Spell{enh.LavaBurst}},
 	} {
 		top := topRank(t, spell.name, spell.ranks)
 		attacks = append(attacks,
@@ -132,7 +131,6 @@ func testClearcastingSpells(t *testing.T) {
 		{"Frost Shock", enh.FrostShock, true},
 		{"Lightning Bolt", enh.LightningBolt, true},
 		{"Chain Lightning", enh.ChainLightning, true},
-		{"Lava Burst", []*core.Spell{enh.LavaBurst}, true},
 		{"Fire Nova", enh.FireNova, true},
 		{"Lightning Shield", enh.LightningShield, false},
 		{"Searing Totem", enh.SearingTotem, false},

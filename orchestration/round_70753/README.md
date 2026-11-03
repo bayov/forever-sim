@@ -41,3 +41,15 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - Drop Blessing of Salvation from the raid buffs: tools/rotopt/mksettings/main.go:74 and every Level 60 request's
   raid.buffs.salvation (threat only, 0 DPS; removed in game since the 10-30 hotfix). Do it with the phase 3 re-sim so
   the request hashes move once.
+
+## Open questions for the user (from phase 1)
+
+- Skyborne base stats: the notes say both Skyborne races got the base stat fix but give no numbers. The sim keeps the
+  old offset (-1 Str, +1 Agi, -1 Sta, +1 Int, 0 Spi). A naked Skyborne character sheet next to a Human of the same
+  class at launch settles it.
+- Gnome Intellect offset +3 (level 1 offset; the 1.12 level 60 rows' +5 to +9 read as Expansive Mind baked in).
+- Human Spirit below 60: the 1.12 rows may already include the old 5%, and the sim applies the new 10% on top
+  (leveling only, older than this round).
+- Assumptions (B9): shaman: drop `sham_lb_31plus` and `sham_es7_tuning` (now 1.0), move `sham_mw_ppm` to 20, Chain Lightning coefficient unannounced (kept 0.571); reword `pal_2h_spec_holy` (Two-Handed Weapon Specialization now covers all Holy damage; paladin worker); collapse `mage_ice_lance_cd` to one value (client 70753 gives every Ice Lance rank the cooldown;
+  mage worker); `hunter_tsa_hm_rank` says Trueshot Aura 50, now 100 by hotfix 113534 (hunter worker).
+- `tools/audit/gear/lin2.py` failed on the healer and tank tables of gear_targets.md: fixed (it skips rows that are not stat targets).

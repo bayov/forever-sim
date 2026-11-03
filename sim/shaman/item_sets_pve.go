@@ -318,15 +318,9 @@ var spiritcallersStormBonuses = map[int32]core.ApplyEffect{
 			},
 		}))
 	},
-	// Reduces the cooldown of your Lava Burst spell by 1 sec.
-	5: func(agent core.Agent) {
-		shaman := agent.(ShamanAgent).GetShaman()
-		shaman.OnSpellRegistered(func(spell *core.Spell) {
-			if spell.SpellCode == SpellCode_ShamanLavaBurst {
-				spell.CD.Duration -= time.Second
-			}
-		})
-	},
+	// Reduces the cooldown of your Lava Burst spell by 1 sec. The November 2 development notes
+	// removed Lava Burst, so it does nothing until the client gives the set a new 5 piece bonus.
+	5: func(agent core.Agent) {},
 }
 
 // ItemSetElementalSyntheticPhase1 is the set of the synthetic Phase 1 elemental items

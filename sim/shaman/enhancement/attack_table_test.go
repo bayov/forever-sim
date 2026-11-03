@@ -73,7 +73,7 @@ func testAttackTable(t *testing.T, front bool, addedCrit float64) {
 		block  = 0.05
 		glance = 0.4
 	)
-	player := newOrcShaman(60, "-0000000000001", &proto.EnhancementShaman_Options{ShamanImbue: proto.WeaponImbue_WindfuryWeapon})
+	player := newOrcShaman(60, "-000000000001", &proto.EnhancementShaman_Options{ShamanImbue: proto.WeaponImbue_WindfuryWeapon})
 	player.InFrontOfTarget = front
 	player.Equipment = &proto.EquipmentSpec{}
 	for range proto.ItemSlot_ItemSlotMainHand {

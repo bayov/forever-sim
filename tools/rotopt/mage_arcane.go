@@ -40,6 +40,9 @@ func (mageArcane) Knobs() []Knob {
 		Knob{Name: "powerWithTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Presence of Mind on Arcane Wrath, the longest cast.
 		Knob{Name: "pomWrath", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Arcane Blast ahead of the filler while the mana is more than this much a second of the
+		// fight left (mana the fight can't otherwise spend), 0 never.
+		Knob{Name: "blastFiller", Default: 0, Min: 0, Max: 150, Step: 25},
 	)
 }
 
@@ -86,6 +89,10 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 	} else {
 		items = append(items, arcaneWrathLines(k, s)...)
 		items = append(items, barrage...)
+	}
+	if k["blastFiller"] > 0 {
+		items = append(items, cast(s.arcaneBlast, and(auraIsKnown(arcaneBlastAura), gt(currentMana(), mul(remainingTime(), num(k["blastFiller"])))),
+			"Arcane Blast ahead of the filler with mana the fight can't otherwise spend."))
 	}
 	items = append(items, cast(filler, nil, "The filler."))
 	items = append(items, wandLines(k)...)

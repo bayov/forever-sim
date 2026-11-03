@@ -647,3 +647,34 @@ func shotTablesFor(t *testing.T) float64 {
 	}
 	return table.BaseMissChance
 }
+
+// TestShadowWordDeathSelfDamage checks client 1.60.1.70753's Shadow Word: Death: the priest
+// takes 30% of their maximum health when the target lives, and nothing on a miss.
+func TestShadowWordDeathSelfDamage(t *testing.T) {
+	sim, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
+	target := sim.GetTargetUnit(0)
+	swd := topRank(t, "Shadow Word: Death", sp.ShadowWordDeath)
+	swd.BonusHitRating -= 20 * core.SpellHitRatingPerHitChance
+	healthMetrics := sp.NewHealthMetrics(core.ActionID{OtherID: proto.OtherAction_OtherActionHealingModel})
+
+	metrics := &swd.SpellMetrics[target.UnitIndex]
+	missed, landed := false, false
+	for i := 0; i < 200 && !(missed && landed); i++ {
+		sp.GainHealth(sim, sp.MaxHealth(), healthMetrics)
+		before := sp.CurrentHealth()
+		misses := metrics.Misses
+		swd.ApplyEffects(sim, target, swd)
+		miss := metrics.Misses > misses
+		want := 0.0
+		if !miss {
+			want = 0.3 * sp.MaxHealth()
+		}
+		if got := before - sp.CurrentHealth(); math.Abs(got-want) > 1e-6 {
+			t.Fatalf("Shadow Word: Death that missed %v cost %.1f health, want %.1f", miss, got, want)
+		}
+		missed, landed = missed || miss, landed || !miss
+	}
+	if !missed || !landed {
+		t.Fatalf("no miss and hit in 200 casts (missed %v, landed %v)", missed, landed)
+	}
+}

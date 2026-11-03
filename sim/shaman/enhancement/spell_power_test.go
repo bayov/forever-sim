@@ -86,6 +86,11 @@ func TestOrcShamanSpellPower(t *testing.T) {
 //
 // Frost Shock rank 1 (38.6%) hit raw 88 to 91 later in the 15:07 log, when our cast lines showed
 // 49 spell power. So we check it last, at 49 (shaman_audit.md 7.10).
+//
+// The November 2 development notes put the shocks' base damage back at Era's, so the beta log
+// no longer covers Earth Shock rank 4, Frost Shock and Flame Shock rank 3. Their rows check the
+// new base with the same coefficients and no beta range. Rank 1 of Earth Shock and Flame Shock
+// barely moved (Era's 19.5 to 21.5 and 25 at their caps against the beta's 19.4 to 21.6 and 24).
 func TestOrcShamanSpellPowerBeta(t *testing.T) {
 	sim, enh := newTargetLevelSim(30, 30, whirlwind, 0, "")
 	sim.PrePull()
@@ -102,16 +107,16 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 	}
 	cases := []rollCase{
 		{"Lightning Shield rank 3", topRank(t, "Lightning Shield orb", enh.LightningShieldProcs), 64.30, 64.30, 64, 64, 0, 0},
-		{"Earth Shock rank 4", topRank(t, "Earth Shock", enh.EarthShock), 118.82, 124.44, 118, 123, 0, 0},
-		{"Earth Shock rank 1", enh.EarthShock[1], 54.49, 56.77, 0, 0, 0, 0},
-		{"Flame Shock rank 1", flameShock[0], 43.47, 43.47, 43, 43, 16, 16.1},
-		{"Flame Shock rank 3", flameShock[1], 64.87, 64.87, 64, 64, 23, 23.1},
+		{"Earth Shock rank 4", topRank(t, "Earth Shock", enh.EarthShock), 161.13, 169.12, 0, 0, 0, 0},
+		{"Earth Shock rank 1", enh.EarthShock[1], 54.63, 56.63, 0, 0, 0, 0},
+		{"Flame Shock rank 1", flameShock[0], 44.47, 44.47, 0, 0, 16, 16.1},
+		{"Flame Shock rank 3", flameShock[1], 108.87, 108.87, 0, 0, 0, 33.1},
 		{"Searing Totem rank 3", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0), 20.55, 26.55, 20, 26, 0, 0},
 		// Client 1.60.1.70425 cut Fire Nova (the beta's 70338 log showed 124 to 135 raw for rank 2,
 		// which the sim's 122.41 to 136.53 covered), and no log of the new values exists yet.
 		{"Fire Nova rank 2", topRank(t, "Fire Nova", enh.FireNovaHits), 67.29, 74.73, 0, 0, 0, 0},
 	}
-	frostShock := rollCase{"Frost Shock rank 1", topRank(t, "Frost Shock", enh.FrostShock), 87.11, 91.71, 88, 91, 0, 0}
+	frostShock := rollCase{"Frost Shock rank 1", topRank(t, "Frost Shock", enh.FrostShock), 113.92, 119.91, 0, 0, 0, 0}
 	if shield.Rank != 3 || flameShock[1].Rank != 3 || cases[1].spell.Rank != 4 || topRank(t, "Fire Nova", enh.FireNova).Rank != 2 || cases[6].spell != enh.FireNovaHits[2] || frostShock.spell.Rank != 1 {
 		t.Fatalf("the level 30 ranks changed")
 	}
@@ -160,7 +165,7 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 		}
 		// Ticks can crit under Forever, and Ticks counts only the normal ones.
 		tick := (metrics.TotalTickDamage - metrics.TotalCritTickDamage) / float64(metrics.Ticks)
-		if math.Abs(tick-c.wantTick) > 1e-9 || math.Floor(tick) != c.betaTick {
+		if math.Abs(tick-c.wantTick) > 1e-9 || (c.betaTick > 0 && math.Floor(tick) != c.betaTick) {
 			t.Errorf("%s ticked for %.2f, want %.2f (raw %.0f on the beta)", c.name, tick, c.wantTick, c.betaTick)
 		}
 	}

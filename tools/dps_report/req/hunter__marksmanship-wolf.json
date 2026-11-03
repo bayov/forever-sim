@@ -531,6 +531,33 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 13555
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 13555
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Serpent Sting when it is down."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 1293527
                       }
                     },
@@ -589,19 +616,6 @@
                     "condition": {
                       "and": {
                         "vals": [
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "currentManaPercent": {}
-                              },
-                              "op": "OpGe",
-                              "rhs": {
-                                "const": {
-                                  "val": "0.4"
-                                }
-                              }
-                            }
-                          },
                           {
                             "or": {
                               "vals": [
@@ -870,33 +884,6 @@
                     }
                   },
                   "notes": "Multi-Shot when Aimed Shot is not taken."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 13555
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 13555
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "Serpent Sting when it is down."
                 },
                 {
                   "action": {

@@ -17,7 +17,7 @@ import (
 func TestOrcShamanGCD(t *testing.T) {
 	// Stormstrike, Maelstrom Weapon 5/5, Rage of the Farseer, Water Shield and Nature's
 	// Swiftness.
-	sim, enh := newShamanSim(newOrcShaman(60, "-000000000000100051-00000000100001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 120)
+	sim, enh := newShamanSim(newOrcShaman(60, "-000000000001000051-00000000100001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 120)
 	metrics := enh.GetManaNotCastingMetrics()
 	lb := topRank(t, "Lightning Bolt", enh.LightningBolt)
 

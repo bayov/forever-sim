@@ -47,9 +47,13 @@ gen level60_sub_holy "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrat
 gen level60_crusader_duty "seal=2,jotc=1,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistBack=1,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0" -level 60
 gen level60_wisdom_duty "seal=2,jotc=2,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistBack=1,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0" -level 60
 # Sub Holy vs Undead (level60_undead, standards 19): Exorcism lands, so the copies wait for all 3 (it
-# needs the mana: -0.2 / -0.8 / +2.2 at 120 / 180 / 300 against the mana rule), Consecration last,
-# Hammer of Wrath above Holy Strike, no Holy Wrath (its 2 sec cast resets the swing).
-gen level60_undead "seal=2,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=20,twist=1,twistStacks=3,twistBack=1,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,exorcism=1,holyWrathMana=100,swiftJudgement=0" -level 60
+# needs the mana: -0.2 / -0.8 / +2.2 at 120 / 180 / 300 against the mana rule), no Holy Wrath (its 2
+# sec cast resets the swing). Round 70753 (Two-Handed Weapon Specialization on all Holy damage, Vengeance
+# 5 stacks; knobs searched over 120, 180 and 300 sec, every other rotation kept its knobs): Consecration
+# first and Hammer of Wrath in the execute phase at the top (consecrationFirst 0 -> 1, hammerOfWrathFirst
+# 3 -> 1), +8.4 / +7.0 / +4.0 at 120 / 180 / 300 sec (seed 1, 20000 iterations; +8.5 / +7.2 / +5.0 on
+# seed 1000003).
+gen level60_undead "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=3,twistBack=1,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,exorcism=1,holyWrathMana=100,swiftJudgement=0" -level 60
 # Ret Shock (level60_shock_ret, 20 Holy for Holy Shock, so no Unsealed Wrath): the knob search kept
 # its knobs. Seal of Command up, Consecration first at any mana, Judgement, Holy Strike and Holy Shock
 # on cooldown, Hammer of Wrath above Holy Strike. Its duties put the seal back up ahead of
