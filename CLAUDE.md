@@ -9,17 +9,14 @@
 
 Every call reads the whole conversation again, and those reads were most of our spend in
 the token audit of 2026-11-03. A session at 250k costs about five times as much per call
-as one at 50k. So:
+as one at 50k. So by default, hand work that brings in a lot of text to a subagent, and
+keep only its result in your own context:
 
-- Send long output to a file, not into the conversation: sim runs, test runs, logs, builds
-  and scrapes. Redirect it (`> out.txt 2>&1`), then read only what you need with `tail`,
-  `grep` or `sed -n`. The same goes for big JSON from a tool.
-- Hand bulk reading to a Sonnet subagent (the `Agent` tool with `model: sonnet`, or the
-  `Explore` agent): reading across many files, combing a long log, comparing two codebases.
-  Ask it for the conclusion and the paths and lines that back it, not the file contents.
-  Keep Opus for design, hard debugging and the final edit.
-- Around 150k tokens, or when the task turns into a different one, stop and write a
-  handoff: what's done and pushed, what's left, the decisions made and why, and the files
-  and commands that matter. Put it in your reply so the user can paste it into a new
-  session, and suggest they do. Don't let one session run on for many hours through
-  several tasks.
+- Anything that reads or produces a lot goes to a subagent (the `Agent` tool): reading
+  across many files, combing a log, comparing two codebases, sim runs, test runs, builds,
+  scrapes, big JSON from a tool. Ask it for the conclusion and the paths and lines that
+  back it, not the raw output. Use `model: sonnet` (or the `Explore` agent) for reading and
+  running, and Opus for the design, the hard debugging and the final edit.
+- Do it yourself only when it's small: a file or two you're about to edit, a command whose
+  output is a few lines. When you run something with long output yourself, send it to a
+  file (`> out.txt 2>&1`) and read only what you need with `tail`, `grep` or `sed -n`.
