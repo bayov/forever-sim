@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### client_update-20261103-3: Server hotfix push 113483 (2026-11-03 18:29Z, rogue tree and rogue spells) isn't in the ledger and is only partly read
+- severity: high (TASKS.md measures its Mutilate line alone at +1.8% DPS on the Mutilate preset, 883.07 -> 898.69; its poison lines are likely larger)
+- affects: rogue (every request; poisons, Mutilate, Shank, talent tree 1111)
+- found: 2026-11-03, master f23ea25d2
+- evidence: wago.tools/hotfixes (product wowf), search "enus 113483 ": 1418 rows, all region 91 (launch realms), build 70707, logged 2026-11-03 18:29Z. That is after pass 8's 17:52Z check. Rows read so far: TraitNodeXTraitNodeEntry 136304 deleted (node 110868 in tree 1111 -> entry 137866 -> definition 142620, Improved Distract 14084), new 139981 (node 113633 -> entry 141295) and 139983 (node 113635 -> entry 141297): two new rogue nodes, which are new in this push and absent from the 70755 tables; 20 TraitNodeGroupXTraitNode rows and 1 TraitNodeXTraitCond row deleted. TASKS.md:241 (the daily update) lists the push's SpellEffect lines: Instant Poison VI 175 -> 250, Deadly Poison V 180 -> 240, Deadly Poison IV 160 -> 240, Wound Poison 160 -> 240, Mind-numbing III 150 -> 225, Mutilate's flat bonus 33/48/67 -> 44/63/88, and Shank 1329283/1329549 with Flash of Steel 1329284 (-2500 ms, +15). The daily update said region 93; this pass sees the rows in region 91. Not read yet: the remaining SpellEffect/Trait rows. `hotfixes.py fetch 1.60.1.70707 SpellEffect TraitNodeEntry ... --refresh` was still running when the pass was stopped. Client 70755 is identical to 70753, so none of this is in the client tables.
+- proposed fix: finish `python3 tools/sources/hotfixes.py fetch 1.60.1.70707 SpellEffect TraitNodeEntry TraitNodeXTraitNodeEntry TraitDefinition TraitDefinitionEffectPoints SpellMisc SpellCooldowns SpellPower SpellAuraOptions SpellName --refresh`, then `hotfixes.py apply` and `import_db2.py 1.60.1.70707+hf rogue`. Give each changed spell a ledger row, then land the values under Forever: the poisons (find what the effect rows drive), Mutilate (in the forever-update PR), Shank's real spell IDs and Flash of Steel, and the two new tree nodes. Re-sim the rogue requests.
+- needs: worker fix
+
 ### client_update-20261103-2: Several round 70753 notes-only values are not gated under Forever (rogue, shaman, hunter, paladin), though standards 37 and rogue.md say they are
 - severity: low (0 DPS under Forever; changes only what a Classic-ruleset sim of these classes computes)
 - affects: rogue (most notes-only values), shaman (Enhancement and Elemental talents, the spell tables), hunter (Arcane Shot and Serpent Sting AP shares), paladin (Vengeance stacks)

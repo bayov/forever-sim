@@ -24,7 +24,7 @@ Method: each class's shipped Level 60 build (gear, talents, APL), built with mks
 | 12 | Fire | Human | 1058.2 | Undead 1057.2 / Human | Human (1058.2) | 1057.9 | +0.3 | 1057.9 (+0.0%) |
 | 13 | Demonology | Orc | 1055.3 | Orc / Human 1051.7 | Orc (1055.3) | 1053.9 | +1.4 | 1055.6 (-0.0%) |
 | 14 | Survival | Orc | 1041.1 | Orc / Night Elf 1034.1 | Orc (1041.1) | 1041.2 | -0.1 | 1024.8 (+1.6%) |
-| 15 | Affliction | Orc | 1015.8 | Orc / Human 1013.9 | Orc (1015.8) | 1015.6 | +0.2 | 1015.8 (+0.0%) |
+| 15 | Affliction (Wrack, Imp sacrificed; f23ea25, 20k) | Undead | 1034.1 | Undead / Human 1030.7 | Undead (1034.1) | 1034.1 | +0.0 | 1015.8 (+1.8%, new preset) |
 | 16 | Destruction Fire | Undead | 997.1 | Undead / Human 992.1 | Undead (997.1) | 996.7 | +0.4 | 977.4 (+2.0%) |
 | 17 | Elemental | Windshaper | 970.4 | Windshaper / Dwarf 956.2 | Windshaper (970.4) | 768.5 | +201.9 | 769.0 (+26.2%) |
 | 18 | Rogue Combat Swords | Orc | 963.8 | Orc / Gnome 959.8 | Undead (963.3) | 963.5 | -0.2 | 782.1 (+23.2%) |
@@ -35,7 +35,7 @@ Method: each class's shipped Level 60 build (gear, talents, APL), built with mks
 | 23 | Rogue Combat Daggers | Undead | 947.3 | Undead / Gnome 946.3 | Undead (947.3) | 946.6 | +0.7 | 791.6 (+19.7%) |
 | 24 | Frost | High Order | 943.6 | Undead 939.1 / High Order | High Order (943.6) | 944.7 | -1.1 | 943.6 (+0.0%) |
 | 25 | Rogue Seal Fate Daggers | Undead | 921.3 | Undead / Gnome 919.5 | Undead (921.3) | 920.7 | +0.6 | 752.9 (+22.4%) |
-| 26 | Rogue Subtlety | Night Elf | 881.2 | Undead 879.9 / Night Elf | Night Elf (881.2) | 881.7 | -0.5 | 733.3 (+20.2%) |
+| 26 | Rogue Subtlety (f23ea25, 20k) | Night Elf | 881.7 | Undead 880.2 / Night Elf | Night Elf (881.7) | 881.7 | +0.0 | 733.3 (+20.2%) |
 | 27 | Rogue Mutilate | Undead | 866.4 | Undead / Gnome 862.0 | Undead (866.4) | 866.1 | +0.3 | 743.6 (+16.5%) |
 | 28 | Smite | Undead | 761.9 | Undead / Gnome 735.5 | Undead (761.9) | 762.0 | -0.1 | 761.2 (+0.1%) |
 
@@ -55,12 +55,13 @@ Method: each class's shipped Level 60 build (gear, talents, APL), built with mks
 | shaman__enhancement-imp-gw | Orc | 1151.9 | 879.3 (at Orc 1151.9) | 878.9 |
 | shaman__enhancement-mana-tide | Orc | 1056.0 | 795.8 (at Orc 1056.0) | 795.2 |
 | shaman__enhancement-water-shield | Orc | 1113.4 | 834.8 (at Orc 1113.4) | 834.0 |
-| warlock__affliction_wrack | Orc | 999.5 | 999.9 (at Orc 999.5) | nan |
+| warlock__affliction_shadow_bolt (was the base Affliction; f23ea25, 20k) | Orc | 1015.6 | 1015.6 (at Orc 1015.6) | 1015.8 |
 
 Top over bottom: 1.73x
 
 What moved / findings:
 
+- Pass 26 (f23ea25, 2026-11-03, targeted 20k sweep of the changed builds, not a full re-sweep): Affliction's preset is now the Wrack build with the Imp sacrificed (dc0a0fcfa, 734fe0e93), Undead 1034.1, best race (Orc 1032.8, Human 1030.7); the old Shadow Bolt build is the variant warlock__affliction_shadow_bolt, Orc 1015.6, best race. Affliction stays 15th. Subtlety meta race fixed to NightElf (5b766ca2b), still best. Enhancement Earth Shock hold (203b686f6): +0.2, Orc still best on level60 and imp-gw. audit1b 19 of 19 pass. No new finding.
 - Every move traces to its own class's round 70753 port (`orchestration/round_70753/<class>.md`, whose final numbers match this sweep): the hunter hotfix and notes shares (Lone Wolf +224, MM +189, BM +150, Survival +16), the druid notes (Feral +189, Balance +59), the rogue rework (+123 to +210), the warrior rework (Fury 2H +125, Fury +112, Arms +89), Ret's Vengeance and Holy Two-Handed Specialization (+52), the warlocks' Shadow and Flame and Wrack (Destruction +66, Destruction Fire +20, the new Affliction Wrack variant), the shaman notes (Enhancement +277, Elemental +201), Arcane +23 (its talent re-search on 70753). Mage (but Arcane), Shadow, Smite, Affliction and Demonology are within 0.7: no leak from the shared changes.
 - Shared changes: Classic's race base attributes (7598b8015) moved only non-Human, non-Skyborne melee and hunters measurably; the casters' Int / Spi offsets barely changed. The report race is still the best race everywhere within noise (Combat Swords Undead 0.5 under Orc; MM tallstrider / wolf Orc 0.8 / 0.5 under Night Elf).
 - Shared raid assumptions: the 45 base requests' raid buffs, debuffs and blessings differ only by role (casters without the melee totems, each class's own buffs left out). Feral alone lacks Mana Spring among mana users: 0.0 DPS at 20k (1131.1 both ways), not a finding. Salvation still in every request (phase 3 to-do).
