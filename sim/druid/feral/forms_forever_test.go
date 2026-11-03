@@ -162,9 +162,9 @@ func TestForeverTigersFuryRemoved(t *testing.T) {
 }
 
 // Faerie Fire (Feral) is gone from Forever (16857, 17390 to 17392 have no client rows): the cat casts
-// the caster Faerie Fire (9907), free in Cat Form, on a 1.5 sec global cooldown with no cooldown. It
-// takes 505 armor for 40 sec and is the same debuff as the settings' and any other druid's. In
-// caster form it costs its 115 mana.
+// the caster Faerie Fire (9907). Cat Form's passive (3025) makes it free, gives it a 6 sec cooldown and
+// a 1 sec global cooldown. It takes 505 armor for 40 sec and is the same debuff as the settings' and
+// any other druid's. In caster form it costs its 115 mana, on a 1.5 sec global cooldown and no cooldown.
 func TestForeverCatFaerieFire(t *testing.T) {
 	sim, cat := newFormSim(t, proto.Ruleset_RulesetForever, &proto.Consumes{})
 	if cat.FaerieFire == nil || cat.FaerieFire.SpellID != 9907 {
@@ -189,11 +189,17 @@ func TestForeverCatFaerieFire(t *testing.T) {
 		}
 		cat.FaerieFire.Cast(sim, target)
 		casts++
-		// No cooldown: the next try waits only for the global cooldown.
-		if got := cat.GCD.ReadyAt() - sim.CurrentTime; got != 1500*time.Millisecond {
-			t.Errorf("Faerie Fire's global cooldown in Cat Form %s, want 1.5s", got)
+		if got := cat.GCD.ReadyAt() - sim.CurrentTime; got != time.Second {
+			t.Errorf("Faerie Fire's global cooldown in Cat Form %s, want 1s", got)
+		}
+		if got := cat.FaerieFire.CD.ReadyAt() - sim.CurrentTime; got != 6*time.Second {
+			t.Errorf("Faerie Fire's cooldown in Cat Form %s, want 6s", got)
 		}
 		cat.SetGCDTimer(sim, sim.CurrentTime)
+		if cat.FaerieFire.CanCast(sim, target) {
+			t.Error("Faerie Fire can be cast again inside its 6 sec cooldown in Cat Form")
+		}
+		cat.FaerieFire.CD.Reset()
 	}
 	if !aura.IsActive() {
 		t.Fatal("Faerie Fire never landed")
@@ -210,11 +216,8 @@ func TestForeverCatFaerieFire(t *testing.T) {
 	if got := cat.CurrentMana(); !near(got, mana) {
 		t.Errorf("%d Faerie Fires in Cat Form cost %.0f mana, want 0", casts, mana-got)
 	}
-	if cat.FaerieFire.CD.Timer != nil || cat.FaerieFire.CD.Duration != 0 {
-		t.Errorf("Faerie Fire has a %s cooldown, want none", cat.FaerieFire.CD.Duration)
-	}
 	if !cat.FaerieFire.CanCast(sim, target) {
-		t.Error("Faerie Fire can't be cast again right after its global cooldown")
+		t.Error("Faerie Fire can't be cast again once its cooldowns are up")
 	}
 
 	// Out of Cat Form it costs its mana again.
@@ -222,10 +225,17 @@ func TestForeverCatFaerieFire(t *testing.T) {
 	if cat.InForm(druid.Cat) {
 		t.Fatal("still in Cat Form")
 	}
+	cat.SetGCDTimer(sim, sim.CurrentTime)
 	mana = cat.CurrentMana()
 	cat.FaerieFire.Cast(sim, target)
 	if got := mana - cat.CurrentMana(); !near(got, 115) {
 		t.Errorf("Faerie Fire in caster form cost %.1f mana, want 115", got)
+	}
+	if got := cat.GCD.ReadyAt() - sim.CurrentTime; got != 1500*time.Millisecond {
+		t.Errorf("Faerie Fire's global cooldown in caster form %s, want 1.5s", got)
+	}
+	if got := cat.FaerieFire.CD.ReadyAt(); got > sim.CurrentTime {
+		t.Errorf("Faerie Fire has a cooldown in caster form, ready in %s", got-sim.CurrentTime)
 	}
 }
 
