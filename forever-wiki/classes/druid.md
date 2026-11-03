@@ -33,6 +33,7 @@ The presets, re-searched on 70753 with the round's race base stats (gear fixed, 
 - Feral gains 20% from the notes' cat values. Balance gains 6.6% from Starfire. The Wrath builds gain 1% (Starfire only on Clearcasting).
 - Balance's talent search moved two Moonglow points into Genesis: +4.0 at 180 sec, but out of mana at 300 sec (844.0 against 941.9). Its best rotation then scores 936.0 over the three lengths against the current 948.9, so Moonglow stays.
 - Races (180 sec, seeds 1 and 1000003): Night Elf is best for every build and is the best Alliance race (Feral 1131.1, Balance 951.0, Wrath 861.6). The best Horde race is Windshaper Skyborne (Feral 1113.2, Balance 949.3, Wrath 857.1), ahead of the Tauren (1105.4, 940.1, 852.0). High Order Skyborne equals Windshaper.
+- A wider rotation exploration the same day added three Feral lines: EZ-Thro Dark Bomb only right after a main hand swing at 60 Energy or less (its 1 sec cast restarts the swing timer), Rake at 5 combo points too, and Shadowmeld Ravage on Clearcasting at 5 combo points too. That is +8.2 / +8.0 / +7.6 at 120 / 180 / 300 sec (1139.0 at 180 sec), and the Faerie Fire duty build now takes the bomb as well (1134.1). For Balance it added Wrath when Starfire's mana is not there, rather than waiting for the mana, and dropped the Clearcasting Starfire line: +0.9 / +0.7 / +2.0 (952.2 at 180 sec; duty 915.5). No talent variant gained.
 
 ## Launch-realm hotfix to 1.60.1.70707 (2026-10-30)
 

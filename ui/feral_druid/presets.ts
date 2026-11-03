@@ -196,7 +196,7 @@ export const DefaultOptions = FeralDruidOptions.create({
 // Potion's 60 Strength 6.3 ahead of the Major Mana Potion (Major Frenzy Potion 5.0), also at 300
 // sec. The Engineering explosives can't be used in form, but EZ-Thro Dark Bomb can: 4.1 / 3.2 / 1.9
 // ahead of none at 120 / 180 / 300 sec (standards 11 takes an explosive only when it gains; the Faerie
-// Fire duty build goes without, below). The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal
+// Fire duty build takes it too since 2026-11-03, below). The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal
 // Summit or the Barrow Deeps) is Aggression, +23.6 over the Flask of Distilled Wisdom (Precision
 // +22.2, Swiftness +13.8, Accuracy +0.2 with the hit capped). Rechecked on the 2026-10-23 rotation:
 // Precision 2.9 and Swiftness 10.7 behind Aggression at 180 sec.
@@ -214,9 +214,11 @@ export const DefaultConsumes = Consumes.create({
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
 
-// The Faerie Fire duty build throws no bomb: its GCDs lose to the Faerie Fire casts, none is 1.6 /
-// 0.6 / 0.0 ahead at 120 / 180 / 300 sec (seed 1; 1.9 / 1.2 / 0.4 on seed 1000003).
-export const DefaultConsumesFaerieFireDuty = Consumes.create({ ...DefaultConsumes, fillerExplosive: Explosive.ExplosiveUnknown });
+// The Faerie Fire duty build throws the bomb too since 2026-11-03: on the rotation's own bomb line
+// (right after a swing, at 60 Energy or less) it is 4.2 / 3.7 / 3.2 ahead of none at 120 / 180 / 300
+// sec (seed 1; 4.9 / 4.3 / 3.5 on seed 1000003). Thrown on cooldown its GCDs lost to the Faerie Fire
+// casts (none was 1.6 / 0.6 / 0.0 ahead).
+export const DefaultConsumesFaerieFireDuty = DefaultConsumes;
 
 // The raid the Level 60 numbers were measured under (tools/rotopt/mksettings -spec feral): the
 // shared level 60 raid with the cat in a melee group, so a shaman's Strength of Earth and

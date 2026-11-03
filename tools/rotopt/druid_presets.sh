@@ -69,7 +69,8 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMa
 # right after a main hand swing, instead of the autocast line throwing it on cooldown), rakeAt5=1
 # (Rake at 5 combo points too) and meldAt5=1 (Shadowmeld Ravage on Clearcasting at 5 combo points
 # too): +8.2 / +8.0 / +7.6 at 120 / 180 / 300 sec (seed 1000003 +7.6 / +7.7 / +7.5, 20,000
-# iterations), almost all from the bomb line.
+# iterations), almost all from the bomb line. With that line the Faerie Fire duty build takes the
+# bomb too (+4.2 / +3.7 / +3.2, seed 1000003 +4.9 / +4.3 / +3.5).
 gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=4,shiftEnergy=60,shiftHoldForBite=0,endBite=2,ripMinTime=8,biteRipTime=4,biteEnergy=45,cdStack=1,tigersFury=0,elune=1,bomb=1,bombEnergy=60,rakeAt5=1,meldAt5=1"
 # The cat's Faerie Fire duty: the caster Faerie Fire from Cat Form (Forever has no Faerie Fire
 # (Feral); it's free in Cat Form, 1.5 sec global cooldown, no cooldown), first after the cooldowns and

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_ff",
   "published": {
-    "dps": 1127.8,
-    "source": "verify.py on this request after round 70753 (the November 2 notes, race base stats; 937.3 before), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1134.1,
+    "source": "verify.py on this request after round 70753 (the November 2 notes, race base stats; 937.3 before) and the 2026-11-03 rotation exploration with EZ-Thro Dark Bomb (1127.8 before it), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1127.8,
+    "dps": 1134.1,
     "stderr": 0.26,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-03), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, after the rotation finds of the 2026-11-03 exploration; not yet the DPS report's main run"
   },
   "summary": "The cat build, keeping Faerie Fire on the boss for the raid. Forever has no Faerie Fire (Feral): the cat casts the caster Faerie Fire, free in Cat Form. Its own attacks gain from the armor cut, so it costs only a few GCDs.",
   "keyTalents": [
@@ -40,14 +40,15 @@
   ],
   "rotation": [
     "Opener: plain Cat Form, no Prowl. A Night Elf uses Shadowmeld in the fight for Ravage.",
+    "EZ-Thro Dark Bomb right after a main hand swing (its 1s cast restarts the swing timer) at 60 Energy or less, so the cast wastes no Energy at the cap",
     "Racials, trinkets and potions on cooldown. Elune's Light with the on-use trinket, unless waiting for it would lose a use.",
     "Faerie Fire first after the cooldowns, and again at under 7s left. In Cat Form it's free, with a 1.5s GCD and no cooldown, so a miss is retried on the next GCD",
     "Shifting Power at 60 Energy or less",
     "Ferocious Bite at any combo points in the last 2s",
     "Rip at 4 combo points or more when it is down (not in the last 8s)",
     "Ferocious Bite at 5 combo points and 45 Energy while Rip has 4s or more left (or in the last 8s). Predatory Discipline keeps the extra Energy, which still adds damage",
-    "Shadowmeld into Ravage from behind on Clearcasting, or in the last 10s with the Energy for it",
-    "Rake below 5 combo points when it is down (not in the last 6s)",
+    "Shadowmeld into Ravage from behind on Clearcasting (even at 5 combo points: a free Ravage beats the wasted point), or below 5 combo points in the last 10s with the Energy for it",
+    "Rake when it is down, at 5 combo points too (not in the last 6s)",
     "Shred below 5 combo points"
   ],
   "consumes": [
@@ -60,10 +61,11 @@
     "Ground Scorpok Assay",
     "Dense Weightstone",
     "Mighty Rage Potion",
-    "Thistle Tea"
+    "Thistle Tea",
+    "EZ-Thro Dark Bomb"
   ],
   "caveats": [
-    "Costs 6.9 / 5.2 / 4.5 DPS at 120s / 180s / 300s, against the same build without the duty (944.3 / 937.3 / 926.4 against 951.2 / 942.5 / 930.9). With Faerie Fire (Feral) (a 1s GCD) it was 5.5 / 4.5 / 1.7.",
+    "Costs 7.2 / 4.9 / 4.0 DPS at 120s / 180s / 300s, against the same build without the duty (1143.3 / 1134.1 / 1120.4 against 1150.6 / 1139.0 / 1124.4).",
     "Predatory Discipline's tooltip gives no number. The sim reads it literally: Ferocious Bite keeps its extra Energy and still deals 2.5 damage a point of it.",
     "Faerie Fire (Feral) is gone from Forever (16857 and 17390 to 17392 have no client rows). In Cat, Bear and Dire Bear Form a druid casts the caster Faerie Fire, which costs nothing there (development notes).",
     "Shred 200%, Claw 140%, Ravage 435%, and Rip, Rake and Ferocious Bite base and attack power ×1.25 are the November 2 development notes' values. Client 70753 still has the old ones (155%, 110%, 350%, ×1).",
@@ -77,7 +79,7 @@
     "Cat swings vary 20% either way. The server's real range is unknown.",
     "The melee group has Windfury Totem and a second shaman's Grace of Air. No Elemental Sharpening Stone, since its recipe comes from Molten Core.",
     "Takes Feral Swiftness 2 (movement speed). It costs nothing: the points it needs above Shredding Attacks would otherwise go to Furor, which does nothing for a cat that stays in Cat Form.",
-    "No explosive here, because EZ-Thro Dark Bomb's GCDs go to Faerie Fire. Using it is 1.8 / 0.8 / 0.0 DPS behind at 120s / 180s / 300s."
+    "EZ-Thro Dark Bomb since 2026-11-03: thrown only right after a swing at 60 Energy or less, it is 4.2 / 3.7 / 3.2 DPS ahead of none at 120s / 180s / 300s. Thrown on cooldown it was 1.8 / 0.8 / 0.0 behind, its GCDs going to Faerie Fire."
   ],
   "notes": "druid__feral-cat.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_ff rotation. The base request's EZ-Thro Dark Bomb is removed too (it loses on the duty build, standards 11). Everything else is the base request. 2026-10-29: the rotation casts the caster Faerie Fire (9907) instead of Faerie Fire (Feral) (17392), the level60_ff rotation regenerated by tools/rotopt/druid_presets.sh with the same knobs, and the request's rotation edited to match. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. 2026-11-01: on the launch realms' 2026-10-30 hotfix trees (tools/forever_talents/client/druid.json): talents and rotation from tools/rotopt/druid_presets.sh, the request's talentsString and rotation edited to match.",
   "duty": "Faerie Fire",
