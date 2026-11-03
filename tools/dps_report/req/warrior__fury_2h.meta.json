@@ -3,7 +3,7 @@
   "class": "Warrior",
   "spec": "Fury",
   "build": "Fury Two-Hand",
-  "isDefault": false,
+  "isDefault": true,
   "pr": 4,
   "race": "Orc",
   "talents": "30313113032-2503300501122100321",

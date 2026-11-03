@@ -3,7 +3,7 @@
   "class": "Warrior",
   "spec": "Fury",
   "build": "Fury Dual Wield",
-  "isDefault": true,
+  "isDefault": false,
   "pr": 4,
   "race": "Orc",
   "talents": "30313113002-0505300551120100321",
