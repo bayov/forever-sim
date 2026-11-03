@@ -13,7 +13,9 @@ func (rogue *Rogue) registerMutilateSpell() {
 	if !rogue.Talents.Mutilate {
 		return
 	}
-	flatDamage := rankAt(rogue.Level, map[int32]float64{1: 23, 40: 33, 50: 48, 60: 67})
+	// The server hotfix (wago.tools push 113483, build 70707) raises the trainer ranks' flat bonus
+	// to 44, 63 and 88 (was 33, 48, 67); it has no row for the talent's rank 1 (1310706).
+	flatDamage := rankAt(rogue.Level, map[int32]float64{1: 23, 40: 44, 50: 63, 60: 88})
 
 	rogue.mutilateOH = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    MutilateActionID.WithTag(2),
@@ -89,12 +91,13 @@ func (rogue *Rogue) registerMutilateSpell() {
 }
 
 // Each half strikes for 90% weapon damage plus a flat bonus, and hits harder while one of the
-// rogue's lingering poisons is on the target. The client adds 23, 33, 48 and 67 to the weapon
-// damage before the weapon percent (1310706, 399960, 1241585, 1241586), the talent's rank and the
+// rogue's lingering poisons is on the target. The client adds the flat bonus to the weapon damage
+// before the weapon percent (1310706, 399960, 1241585, 1241586), the talent's rank and the
 // trainer's at 40, 50 and 60. Blizzard's November 2 development notes raise Mutilate to "90% of
 // weapon damage plus an additional amount that was also increased (was 75% weapon damage and a
-// lower amount)": the percent goes from 75 to 90 and takes the flat bonus up with it (67 x 0.9 =
-// 60.3 at 60, was 50.25). Client 1.60.1.70753 still has 75.
+// lower amount)". Client 1.60.1.70753 still has 75% and 23, 33, 48 and 67. The server hotfix
+// rows (wago.tools push 113483) carry both: 75 -> 90 on every half, and the flat bonus 33 -> 44,
+// 48 -> 63 and 67 -> 88 (88 x 0.9 = 79.2 at 60, was 67 x 0.75 = 50.25).
 func (rogue *Rogue) mutilateDamage(target *core.Unit, flatDamage float64, weaponDamage float64) float64 {
 	baseDamage := 0.9 * (flatDamage + weaponDamage)
 	if rogue.isPoisoned(target) {

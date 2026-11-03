@@ -149,7 +149,7 @@ func TestForeverHemorrhageGarrote(t *testing.T) {
 	}
 }
 
-// Mutilate's halves strike for 90% of (weapon damage + 67) at level 60, was 75%: against a
+// Mutilate's halves strike for 90% of (weapon damage + 88) at level 60, was 75% of +67: against a
 // target with no armor, the same seed and no crits, the damage is 0.9 times the weapon part.
 func TestForeverMutilateNinetyPercent(t *testing.T) {
 	sim, rogue := newMutilateRogueSim(t, 600)
@@ -168,8 +168,8 @@ func TestForeverMutilateNinetyPercent(t *testing.T) {
 	rogue.Mutilate.Cast(sim, target)
 	got := rogue.Mutilate.SpellMetrics[target.UnitIndex].TotalDamage / rogue.Mutilate.DamageMultiplier /
 		rogue.Mutilate.AttackerDamageMultiplier(rogue.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], false)
-	if got < 0.9*(67+low)-1e-6 || got > 0.9*(67+high)+1e-6 {
-		t.Errorf("a Mutilate main hand half hit for %.2f, want between %.2f and %.2f", got, 0.9*(67+low), 0.9*(67+high))
+	if got < 0.9*(88+low)-1e-6 || got > 0.9*(88+high)+1e-6 {
+		t.Errorf("a Mutilate main hand half hit for %.2f, want between %.2f and %.2f", got, 0.9*(88+low), 0.9*(88+high))
 	}
 }
 
