@@ -22,8 +22,11 @@ var RavageSpellId = []int32{0, 6785, 6787, 9866, 9867}
 var RavageFlatDamage = []float64{0, 42, 62, 78, 98}
 var RavageLevel = []int32{0, 32, 42, 50, 58}
 
-// The November 2 development notes raise it to 435% (tuning_70753.go).
-const RavageWeaponMultiplier = 4.35
+const RavageWeaponMultiplier = 3.5
+
+// RavageWeaponMultiplierNov2 is the November 2 development notes' 435%, under Forever only
+// (tuning_70753.go).
+const RavageWeaponMultiplierNov2 = 4.35
 
 func (druid *Druid) registerRavageSpell() {
 	rank := core.HighestRankAt(druid.Level, RavageLevel)
@@ -57,7 +60,7 @@ func (druid *Druid) registerRavageSpell() {
 			return druid.Stealthed() && !druid.PseudoStats.InFrontOfTarget
 		},
 
-		DamageMultiplier: RavageWeaponMultiplier,
+		DamageMultiplier: core.TernaryFloat64(druid.Env.IsForever(), RavageWeaponMultiplierNov2, RavageWeaponMultiplier),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 

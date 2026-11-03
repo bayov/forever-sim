@@ -23,6 +23,24 @@ client isn't contradicting the notes with another value, as the Trueshot Aura ho
 server's tuning yet. The sim takes the notes for these lines (`sim/druid/tuning_70753.go`), "about 25%" and "about 40%"
 read as 1.25 and 1.40. Sent to the orchestrator as a cross-class question with that recommendation.
 
+## Notes-only values
+
+Per the orchestrator's provisional rule (round README, a32a20024): note lines that neither client 70753 nor a hotfix
+carries are modelled at the notes' value, gated under Forever, citing the notes and "client 70753 unchanged". The
+2026-11-03 server hotfix has no druid lines.
+
+| Line | Client 70753 (unchanged) | Sim under Forever | Where |
+|---|---|---|---|
+| Shred weapon damage | 155% | 200% | `ShredWeaponMultiplierNov2` |
+| Claw weapon damage | 110% | 140% | `ClawWeaponMultiplierNov2` |
+| Ravage weapon damage | 350% | 435% | `RavageWeaponMultiplierNov2` |
+| Rip base and AP part | 15 + 25.5/pt, 1% AP/pt a tick | x1.25 | `nov2BleedScale`, rip.go |
+| Rake base and AP part | 61 + 34/tick, 0.055 AP | x1.25 | `nov2BleedScale`, rake.go |
+| Ferocious Bite base and AP part | 22829 rows | x1.25 (Energy part unchanged) | `nov2BleedScale`, ferocious_bite.go |
+| Starfire base damage | 25298 / 9876 rows | x1.40 | `nov2StarfireScale`, starfire.go |
+| Rend and Tear | 2% a point | 3% a point | `RendAndTearMultiplier` |
+| Pounce | | n/a (not simulated) | |
+
 ## Ledger
 
 | Note line | Tier and evidence | Sim status (before) | Fix |
@@ -75,7 +93,6 @@ Goldens (`TestP1Feral`, `TestP1Balance`) regenerated for these changes; Phase B 
 
 ## Open questions
 
-1. (Orchestrator, cross-class) The notes' damage lines aren't in client 70753 or any hotfix. Recommendation: model the
-   notes, as here, and revisit when a hotfix or launch logs show the values.
+1. Answered (orchestrator, provisional pending the user): model the notes-only values, gated under Forever. Done.
 2. Poised and Clearcasting: the opener's Clearcast Ravage spends Poised for nothing. Phase B's rotation search can try an
    opener without pre-pull Clearcasting fishing, or with Poised on a costed ability.
