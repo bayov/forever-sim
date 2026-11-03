@@ -146,7 +146,7 @@ func (paladin *Paladin) applyRedoubt() {
 
 	paladin.redoubtAura = paladin.RegisterAura(core.Aura{
 		Label:     "Redoubt",
-		ActionID:  core.ActionID{SpellID: 20134},
+		ActionID:  core.ActionID{SpellID: 20128}, // the block aura, 10 sec or 5 blocks (20134 is no client spell)
 		Duration:  time.Second * 10,
 		MaxStacks: 5,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -189,6 +189,9 @@ func (paladin *Paladin) applyReckoning() {
 	procID := core.ActionID{SpellID: 20178} // Reckoning Proc ID
 	critChance := 0.2 * float64(paladin.Talents.Reckoning)
 	blockChance := 0.08 * float64(paladin.Talents.Reckoning)
+	// "Cannot occur from Blocks more than once every 1.5 sec" (20177, ProcCategoryRecovery 1500):
+	// the cooldown is the blocks'. A crit taken gives its charge whenever it comes, as
+	// wowsims/forever's talents_protection.go has it.
 	icd := core.Cooldown{
 		Timer:    paladin.NewTimer(),
 		Duration: time.Millisecond * 1500,
@@ -209,11 +212,12 @@ func (paladin *Paladin) applyReckoning() {
 			aura.Activate(sim)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) || !icd.IsReady(sim) {
+			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
 				return
 			}
-			if result.DidCrit() && sim.Proc(critChance, "Reckoning") ||
-				result.DidBlock() && sim.Proc(blockChance, "Reckoning") {
+			if result.DidCrit() && sim.Proc(critChance, "Reckoning") {
+				paladin.AutoAttacks.StoreExtraMHAttack(sim, 1, procID, spell.ActionID)
+			} else if result.DidBlock() && icd.IsReady(sim) && sim.Proc(blockChance, "Reckoning") {
 				icd.Use(sim)
 				paladin.AutoAttacks.StoreExtraMHAttack(sim, 1, procID, spell.ActionID)
 			}
@@ -231,6 +235,9 @@ func (paladin *Paladin) applyShieldSpecializationMana() {
 
 	actionID := core.ActionID{SpellID: 20150}
 	manaMetrics := paladin.NewManaMetrics(actionID)
+	// The mana spell (1310925) has Attributes_1 0x400, no threat, so its mana makes none (Forever's
+	// mana gains make half a threat a mana otherwise, core/mana.go).
+	manaMetrics.NoThreat = true
 	procChance := 0.5 * float64(paladin.Talents.ShieldSpecialization)
 	icd := core.Cooldown{
 		Timer:    paladin.NewTimer(),

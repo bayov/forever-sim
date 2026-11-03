@@ -40,4 +40,6 @@ func init() {
 	core.RegisterSpellRanks(HammerOfWrathSpellId[1:]...)
 	core.RegisterSpellRanks(HolyStrikeSpellId[1:]...)
 	core.RegisterSpellRanks(LightsVigilSpellId[1:]...)
+	core.RegisterSpellRanks(HolyShieldSpellId[1:]...)
+	core.RegisterSpellRanks(SealOfFuryRankSpellId[1:]...)
 }

@@ -20,11 +20,18 @@ var HolyShieldValues = []struct {
 	// a new rank 1 at level 30 for 100 mana and 75 a block (20925), and the old ranks 1 and 2 at 40
 	// and 50 (20927: 150 mana, 110; 20928: 195 mana, 153). Before it the ranks were at 40 / 50 / 60
 	// for 150 / 195 / 240 mana and 110 / 153 / 221 a block (Classic 65 / 95 / 130). The talent no
-	// longer needs Templar's Bulwark (tree data).
+	// longer needs Templar's Bulwark (tree data). The hotfix also added a rank 4 at 60
+	// (1239570: 240 mana, 221 a block, 8% of spell power, 30% block, 4 charges, 10 sec on the
+	// same 10 sec category cooldown; client 70753 has the row). Its block damage has no spell of
+	// its own (effect 1 is aura 43, the aura deals it), so the sim tags the aura's ID for it.
 	{level: 30, spellID: 20925, procID: 20955, manaCost: 100, damage: 75},
 	{level: 40, spellID: 20927, procID: 20956, manaCost: 150, damage: 110},
 	{level: 50, spellID: 20928, procID: 20957, manaCost: 195, damage: 153},
+	{level: 60, spellID: 1239570, procID: 0, manaCost: 240, damage: 221},
 }
+
+var HolyShieldLevel = [...]int{0, 30, 40, 50, 60}
+var HolyShieldSpellId = [...]int32{0, 20925, 20927, 20928, 1239570}
 
 func (paladin *Paladin) registerHolyShield() {
 	if !paladin.Talents.HolyShield {
@@ -33,6 +40,8 @@ func (paladin *Paladin) registerHolyShield() {
 
 	numCharges := int32(4)
 	blockBonus := 30.0 * core.BlockRatingPerBlockChance
+	// The ranks share one category cooldown (931).
+	cdTimer := paladin.NewTimer()
 
 	for i, values := range HolyShieldValues {
 		rank := i + 1
@@ -46,8 +55,12 @@ func (paladin *Paladin) registerHolyShield() {
 			break
 		}
 
+		procActionID := core.ActionID{SpellID: procID}
+		if procID == 0 {
+			procActionID = core.ActionID{SpellID: spellID, Tag: 1}
+		}
 		paladin.holyShieldProc[i] = paladin.RegisterSpell(core.SpellConfig{
-			ActionID:    core.ActionID{SpellID: procID},
+			ActionID:    procActionID,
 			SpellCode:   SpellCode_PaladinHolyShieldProc,
 			SpellSchool: core.SpellSchoolHoly,
 			DefenseType: core.DefenseTypeMagic,
@@ -103,11 +116,17 @@ func (paladin *Paladin) registerHolyShield() {
 					GCD: core.GCDDefault,
 				},
 				CD: core.Cooldown{
-					Timer:    paladin.NewTimer(),
+					Timer:    cdTimer,
 					Duration: time.Second * 10,
 				},
 			},
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				// One Holy Shield at a time: a rank replaces another's.
+				for j, other := range paladin.holyShieldAura {
+					if j != i && other != nil {
+						other.Deactivate(sim)
+					}
+				}
 				paladin.holyShieldAura[i].Activate(sim)
 			},
 		})
