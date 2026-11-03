@@ -7,7 +7,7 @@ import "github.com/wowsims/classic/sim/core/proto"
 // nothing for the other races.
 
 // readLeyline is the Skyborne High Order's Read Leyline (1259705, sim/core/racials_forever.go):
-// a 2 sec cast on a 2 min cooldown, 50% more Spirit-based mana regeneration for 15 sec.
+// a 0.5 sec cast on a 2 min cooldown, 50% more Spirit-based mana regeneration for 15 sec.
 var readLeyline = spellID(1259705)
 
 // readLeylineKnob: Read Leyline below this much mana in percent, 0 never (the default, which adds

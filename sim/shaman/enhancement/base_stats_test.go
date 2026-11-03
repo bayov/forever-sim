@@ -9,13 +9,15 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-// TestOrcShamanBaseStats pins a naked Orc shaman with no talents to the Forever beta.
+// TestOrcShamanBaseStats pins a naked Orc shaman with no talents.
 //
-// The level 1 and 30 numbers come from the beta's Lua API (UnitStat, UnitHealthMax,
+// The level 1 and 30 numbers came from the beta's Lua API (UnitStat, UnitHealthMax,
 // UnitPowerMax, UnitAttackPower, UnitArmor, GetSpellCritChance, GetDodgeChance) on
-// 2026-10-07. The beta stops at level 30, so level 60 pins the 1.12 values with Forever's
-// Orc shift (1 less Stamina, 2 more Intellect, 3 less Spirit, seen on a level 1 Orc shaman
-// and warlock on 2026-10-10) until we can check them on release.
+// 2026-10-07, when the Forever Orc had 1 less Stamina, 2 more Intellect and 3 less Spirit than
+// Classic's (betaOrcShift). Client 1.60.1.70753 gave every race Classic's attributes
+// (development notes 2026-11-02), so the rows below are the sheets with that shift taken off:
+// 10 more health, 30 less mana and the spell crit of 2 less Intellect. Level 60 is the 1.12
+// row until we can check it on release.
 //
 // The crit readings come from client 70338, when the Orc's crit racial needed an axe. Client
 // 70425's Savage gives 1% more melee and spell crit with any weapon, so the sim's crit is 1%
@@ -32,9 +34,9 @@ func TestOrcShamanBaseStats(t *testing.T) {
 		meleeCrit, spellCrit, dodge float64
 	}
 	cases := []expected{
-		{1, 24, 17, 22, 20, 22, 67, 75, 30, 34, 4.504, 4.875, 4.504},
-		{30, 51, 30, 51, 46, 53, 665, 1075, 142, 60, 4.304, 3.933, 4.304},
-		{60, 88, 52, 96, 89, 100, 2060, 2575, 276, 104, 4.342, 3.804, 4.342},
+		{1, 24, 17, 23, 18, 25, 77, 45, 30, 34, 4.504, 4.617, 4.504},
+		{30, 51, 30, 52, 44, 56, 675, 1045, 142, 60, 4.304, 3.864, 4.304},
+		{60, 88, 52, 97, 87, 103, 2070, 2545, 276, 104, 4.342, 3.770, 4.342},
 	}
 
 	for _, want := range cases {
@@ -78,10 +80,16 @@ func TestOrcShamanBaseStats(t *testing.T) {
 // weapon; the development notes of 2026-10-26 remove Savage, so it is 0 again.
 const savageCrit = 0.0
 
+// betaOrcShift is the beta's Orc of 2026-10-07 and 2026-10-08 against Classic's: 1 less Stamina,
+// 2 more Intellect and 3 less Spirit (our level 1 Orc shaman and warlock sheets of 2026-10-10).
+// Client 1.60.1.70753 put the races on Classic's attributes, so a test that checks a mechanic
+// against a beta sheet adds it to the character's bonus stats to stand on the sheet's numbers.
+var betaOrcShift = stats.Stats{stats.Stamina: -1, stats.Intellect: 2, stats.Spirit: -3}
+
 // TestOrcShamanAttributeRates checks what each attribute gives well above the naked values,
 // against a geared level 30 Orc shaman on the Forever beta (2026-10-08). We give a naked
 // Orc the same attribute bonuses as that gear (+55 Strength, +13 Agility, +55 Stamina, +91
-// Intellect, +30 Spirit) and nothing else.
+// Intellect, +30 Spirit) and the beta's Orc attributes (betaOrcShift), and nothing else.
 //
 // The beta showed 212 AP from Strength, 86 armor from Agility, 880 health from Stamina, 1775
 // mana from Intellect, 5.43% dodge, 5.39% melee crit with a 149 of 150 weapon skill (each
@@ -99,7 +107,7 @@ func TestOrcShamanAttributeRates(t *testing.T) {
 		stats.Stamina:   55,
 		stats.Intellect: 91,
 		stats.Spirit:    30,
-	}
+	}.Add(betaOrcShift)
 	player := &proto.Player{
 		Race:       proto.Race_RaceOrc,
 		Class:      proto.Class_ClassShaman,
@@ -139,8 +147,8 @@ func TestOrcShamanAttributeRates(t *testing.T) {
 // TestOrcShamanHealthTalents checks Toughness and Improved Reincarnation on a naked level 30
 // Orc shaman.
 //
-// Toughness gives 2% more Stamina a point and drops the fraction, so 5/5 turns 51 Stamina
-// into 56. Improved Reincarnation gives 2% more max health a point, Stamina's part included.
+// Toughness gives 2% more Stamina a point and drops the fraction, so 5/5 turns 52 Stamina
+// into 57. Improved Reincarnation gives 2% more max health a point, Stamina's part included.
 // Both are the Forever client's values (shaman_audit.md 6.6). Base health is 335, the first
 // 20 Stamina give 1 health each and the rest 10.
 func TestOrcShamanHealthTalents(t *testing.T) {
@@ -150,10 +158,10 @@ func TestOrcShamanHealthTalents(t *testing.T) {
 		stamina float64
 		health  float64
 	}{
-		{"no talents", "", 51, 665},
-		{"Toughness 5/5", "-00000000005", 56, 715},
-		{"Improved Reincarnation 2/2", "--000002", 51, 665 * 1.04},
-		{"both", "-00000000005-000002", 56, 715 * 1.04},
+		{"no talents", "", 52, 675},
+		{"Toughness 5/5", "-00000000005", 57, 725},
+		{"Improved Reincarnation 2/2", "--000002", 52, 675 * 1.04},
+		{"both", "-00000000005-000002", 57, 725 * 1.04},
 	}
 	for _, c := range cases {
 		_, enh := newShamanSim(newOrcShaman(30, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
