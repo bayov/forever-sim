@@ -56,6 +56,15 @@ four talents moved, Elemental Precision 3 ranks) until 1.60.1.70707 put it in th
 Running `import_db2.py <class> --write` on a plain build that lacks a hotfix the file carries puts
 the old tree back, so check the diff.
 
+Client 1.60.1.70753 (2026-11-02) has those hotfixes in its own tables, so every `client/` file
+now names that plain build and the trees didn't change: `import_db2.py 1.60.1.70753` found no
+structure, number or wording difference in any class. It does not have the rogue, warrior and
+shaman talent reworks of the November 2 development notes (Death Mark, Boot Knife, Composure,
+Reckless Swings, Improved Whirlwind, Lava Burst out and so on): their spells aren't in its
+tables and wago.tools had no hotfix rows for them on 2026-11-03. When they reach the realms,
+`hotfixes.py fetch 1.60.1.70753 --set talents --set spelltext` and
+`import_db2.py 1.60.1.70753+hf rogue warrior shaman` bring them in.
+
 Without `--write` it prints each class's differences from the current file in three kinds:
 structure (talents added, removed, moved, renamed, or given another rank count, prerequisite
 or node ID), numbers (a rank's numbers differ), and wording (the same numbers in other words).
