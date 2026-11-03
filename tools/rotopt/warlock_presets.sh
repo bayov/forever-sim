@@ -46,6 +46,10 @@ gen level60_demonology "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,pre
 # Destruction and Affliction recast Immolate once it has less left than its cast time.
 gen level60_destruction "$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
 gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
+# Affliction Wrack (since the 2026-11-02 notes doubled Wrack): deep Affliction with Siphon Life and
+# Wrack channelled while Corruption and the bane are up, Shadow Bolt between. Knob search from the
+# Affliction knobs plus wrack=1 and siphonLife=1 moved nothing (3000 iterations, 180 sec).
+gen level60_affliction_wrack "$base,filler=1,conflagrate=0,siphonLife=1,wrack=1,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=15"
 # Destruction fire: Incinerate while Immolate is up, Conflagrate on cooldown, Immolate and
 # Corruption recast 1.5 sec early.
 gen level60_destruction_fire "$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=1.5,prepullAt=1.5,corruptionMinTime=15,immolateMinTime=4"
