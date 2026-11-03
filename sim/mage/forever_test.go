@@ -863,8 +863,10 @@ func TestForeverEverlookDeliveryBot(t *testing.T) {
 	}
 }
 
-// The High Order's Read Leyline is a 2 sec cast on a 2 min cooldown, and its Energized raises
-// the Spirit part of the mana regen by 50% for 15 sec (development notes 2026-10-26).
+// The High Order's Read Leyline is a 0.5 sec cast on a 2 min cooldown (client 1.60.1.70753), and
+// its Energized raises the Spirit part of the mana regen by 50% for 15 sec (development notes
+// 2026-10-26). It can't be cast under an Innervate, and an Innervate ends it (development notes
+// 2026-11-02).
 func TestForeverReadLeyline(t *testing.T) {
 	sim, mage := newMageWithRace(proto.Race_RaceSkyborneHighOrder)
 
@@ -872,8 +874,8 @@ func TestForeverReadLeyline(t *testing.T) {
 	if readLeyline == nil {
 		t.Fatal("a High Order mage has no Read Leyline")
 	}
-	if readLeyline.DefaultCast.CastTime != 2*time.Second || readLeyline.CD.Duration != 2*time.Minute {
-		t.Errorf("Read Leyline casts in %v on a %v cooldown, want 2s and 2m", readLeyline.DefaultCast.CastTime, readLeyline.CD.Duration)
+	if readLeyline.DefaultCast.CastTime != 500*time.Millisecond || readLeyline.CD.Duration != 2*time.Minute {
+		t.Errorf("Read Leyline casts in %v on a %v cooldown, want 500ms and 2m", readLeyline.DefaultCast.CastTime, readLeyline.CD.Duration)
 	}
 	energized := mage.GetAura("Energized")
 	if energized.Duration != 15*time.Second {
@@ -889,13 +891,37 @@ func TestForeverReadLeyline(t *testing.T) {
 	if _, gnome := newMageWithRace(proto.Race_RaceGnome); gnome.GetSpell(core.ActionID{SpellID: 1259705}) != nil {
 		t.Error("a Gnome mage has Read Leyline")
 	}
+
+	sim, mage = newMageWithRace(proto.Race_RaceSkyborneHighOrder, &proto.IndividualBuffs{Innervates: 1})
+	readLeyline = mage.GetSpell(core.ActionID{SpellID: 1259705})
+	energized = mage.GetAura("Energized")
+	innervate := mage.GetActiveAuraWithTag(core.InnervateAuraTag)
+	if innervate != nil {
+		t.Fatal("an Innervate is up at the pull")
+	}
+	innervate = mage.GetAurasWithTag(core.InnervateAuraTag)[0]
+	energized.Activate(sim)
+	innervate.Activate(sim)
+	if energized.IsActive() {
+		t.Error("Energized stayed up under an Innervate")
+	}
+	if readLeyline.CanCast(sim, mage.CurrentTarget) {
+		t.Error("Read Leyline can be cast under an Innervate")
+	}
+	innervate.Deactivate(sim)
+	if !readLeyline.CanCast(sim, mage.CurrentTarget) {
+		t.Error("Read Leyline can't be cast once the Innervate is gone")
+	}
 }
 
-func newMageWithRace(race proto.Race) (*core.Simulation, *Mage) {
+func newMageWithRace(race proto.Race, buffs ...*proto.IndividualBuffs) (*core.Simulation, *Mage) {
 	player := &proto.Player{
 		Race: race, Class: proto.Class_ClassMage, Level: 60, Equipment: &proto.EquipmentSpec{},
 		Spec:     &proto.Player_Mage{Mage: &proto.Mage{Options: &proto.Mage_Options{}}},
 		Rotation: &proto.APLRotation{},
+	}
+	if len(buffs) > 0 {
+		player.Buffs = buffs[0]
 	}
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
