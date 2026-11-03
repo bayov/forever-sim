@@ -1,6 +1,6 @@
 # Paladin: round 70753 (the November 2 development notes)
 
-Worker: Paladin (Retribution DPS specs). Brief: `briefs/paladin.md`. Status: **landed** (Phase A and B).
+Worker: Paladin (Retribution DPS specs). Brief: `briefs/paladin.md`. Status: **landed** (Phase A and B) on master at 6d678dc.
 
 ## Final summary
 
