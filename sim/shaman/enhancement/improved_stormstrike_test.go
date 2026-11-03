@@ -22,7 +22,7 @@ func TestOrcShamanImprovedStormstrike(t *testing.T) {
 	for _, points := range []int{1, 2} {
 		want := .5 * float64(points)
 		// Stormstrike and Improved Stormstrike points.
-		sim, enh := newTankSim(newOrcShaman(30, fmt.Sprintf("-000000000000100%d", points), &proto.EnhancementShaman_Options{}), 30)
+		sim, enh := newTankSim(newOrcShaman(30, fmt.Sprintf("-000000000001000%d", points), &proto.EnhancementShaman_Options{}), 30)
 		if enh.Talents.ImprovedStormstrike != int32(points) {
 			t.Fatalf("got Improved Stormstrike %d, want %d", enh.Talents.ImprovedStormstrike, points)
 		}

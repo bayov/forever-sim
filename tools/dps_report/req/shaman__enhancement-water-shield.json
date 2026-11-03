@@ -93,7 +93,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "051003-054030021005112151-053020001",
+            "talentsString": "052002-054030210051012151-053020001",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -110,7 +110,7 @@
                   },
                   "doAtValue": {
                     "const": {
-                      "val": "-5.5s"
+                      "val": "-6s"
                     }
                   }
                 },
@@ -124,7 +124,7 @@
                   },
                   "doAtValue": {
                     "const": {
-                      "val": "-4.5s"
+                      "val": "-5s"
                     }
                   }
                 },
@@ -138,7 +138,7 @@
                   },
                   "doAtValue": {
                     "const": {
-                      "val": "-3.5s"
+                      "val": "-4s"
                     }
                   }
                 },
@@ -152,7 +152,7 @@
                   },
                   "doAtValue": {
                     "const": {
-                      "val": "-2.5s"
+                      "val": "-3s"
                     }
                   }
                 },
@@ -166,13 +166,14 @@
                   },
                   "doAtValue": {
                     "const": {
-                      "val": "-1s"
+                      "val": "-1.5s"
                     }
                   }
                 }
               ],
               "priorityList": [
                 {
+                  "notes": "Strength of Earth Totem whenever it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -212,7 +213,7 @@
                   }
                 },
                 {
-                  "notes": "Windfury Weapon turns its buff off for the shaman.",
+                  "notes": "Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman.",
                   "action": {
                     "condition": {
                       "and": {
@@ -252,6 +253,7 @@
                   }
                 },
                 {
+                  "notes": "Mana Spring Totem whenever it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -291,6 +293,7 @@
                   }
                 },
                 {
+                  "notes": "Magma Totem whenever it is down, unless the fight is about to end.",
                   "action": {
                     "condition": {
                       "and": {
@@ -330,7 +333,7 @@
                   }
                 },
                 {
-                  "notes": "Without the talent ignore the warning on this line.",
+                  "notes": "Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -404,7 +407,7 @@
                   }
                 },
                 {
-                  "notes": "Other races can ignore the warning on this line.",
+                  "notes": "Orc. Blood Fury waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -478,7 +481,7 @@
                   }
                 },
                 {
-                  "notes": "Other races can ignore the warning on this line.",
+                  "notes": "Troll. Berserking waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -554,12 +557,23 @@
                   }
                 },
                 {
-                  "notes": "Sapper, trinkets and potions.",
+                  "notes": "Anything not listed above (Sapper, trinkets, potions).",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
+                  "notes": "Stormstrike on cooldown. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 17364
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Flame Shock when its DoT is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -586,16 +600,7 @@
                   }
                 },
                 {
-                  "notes": "Without the talent ignore the warning on this line.",
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 17364
-                      }
-                    }
-                  }
-                },
-                {
+                  "notes": "Earth Shock otherwise, unless Flame Shock is about to run out.",
                   "action": {
                     "condition": {
                       "and": {
@@ -628,7 +633,7 @@
                   }
                 },
                 {
-                  "notes": "Without the talent ignore the warning on this line.",
+                  "notes": "Lightning Bolt once Maelstrom Weapon has stacked enough to make it quick. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -655,7 +660,7 @@
                   }
                 },
                 {
-                  "notes": "Goes off around the fire totem, so it needs one down.",
+                  "notes": "Fire Nova on cooldown. It goes off around the fire totem, so it needs one in place.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -678,7 +683,7 @@
                   }
                 },
                 {
-                  "notes": "Raid damage on the shaman fires its orbs at the boss (3 per cast, at most one per 3.5s).",
+                  "notes": "Lightning Shield whenever it is down.",
                   "action": {
                     "condition": {
                       "not": {
@@ -741,8 +746,8 @@
       "faerieFire": true,
       "curseOfElements": true,
       "sunderRamp": {
-        "tank": true,
-        "pullSunders": 1
+        "pullSunders": 1,
+        "tank": true
       },
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,

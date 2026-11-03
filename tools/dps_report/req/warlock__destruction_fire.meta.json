@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction_fire",
   "published": {
-    "dps": 977.1,
-    "source": "verify.py on this request after holding the second Bane of Doom for the 2 min cooldowns (2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 996.7,
+    "source": "verify.py on this request after round 70753 (the 2026-11-02 development notes: Wrack, Shadow and Flame, demon health; A2's race base stats), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 977.1,
-    "stderr": 0.23,
+    "dps": 996.7,
+    "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; the DPS report's main run matches"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, round 70753"
   },
   "summary": "Fire Destruction with Incinerate as filler and a Firestone. It sacrifices the Succubus before the pull for 15% Fire damage, and no demon stays out.",
   "keyTalents": [

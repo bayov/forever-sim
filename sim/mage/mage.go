@@ -107,6 +107,9 @@ type Mage struct {
 	frostfireFingersOfFrostBonus float64
 	frostfireCombustionCrit      float64
 
+	// Whether the last Arcane Missiles cast used up Missile Barrage, so Clearcasting can stay.
+	arcaneMissilesOnBarrage bool
+
 	// When Presence of Mind was last used up, so Heating Up can tell it made that Pyroblast instant.
 	presenceOfMindSpentAt time.Duration
 

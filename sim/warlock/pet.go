@@ -263,7 +263,8 @@ func (wp *WarlockPet) ExecuteCustomRotation(sim *core.Simulation) {
 //     Damage at the warlock's 30 and 9 at ~96; measured on the Sayaad only).
 //   - Hit: the warlock's spell hit whole for the demon's spells and 8/17 of it as melee hit (9ce48b6aba,
 //     forever-bugs #394; not yet read on a pet sheet).
-//   - Health: 7.5 a point of the warlock's Stamina (19922b122e, the 2026-10-13 Sayaad sheets). Armor: 35%
+//   - Health: 2 a point of the warlock's Stamina (Blizzard's development notes of 2026-11-02, "was 7.5",
+//     which the 2026-10-13 Sayaad sheets had shown, 19922b122e). Armor: 35%
 //     of the warlock's, Demon Armor included (7097a63bc9, a level 30 Imp's sheet).
 //   - MP5: a share of the warlock's Intellect, 0.30 for the Imp and 0.10 for the others (f5b2f7ef33, level
 //     30 pet panes; the Felhunter's not read).
@@ -281,7 +282,7 @@ func (warlock *Warlock) makeStatInheritance(mp5PerOwnerIntellect float64) core.P
 		spellDamage := ownerStats[stats.SpellPower] + ownerStats[stats.SpellDamage] + max(ownerStats[stats.FirePower], ownerStats[stats.ShadowPower])
 
 		return stats.Stats{
-			stats.Health:      ownerStats[stats.Stamina] * 7.5,
+			stats.Health:      ownerStats[stats.Stamina] * 2,
 			stats.Armor:       ownerStats[stats.Armor] * 0.35,
 			stats.MP5:         ownerStats[stats.Intellect] * mp5PerOwnerIntellect,
 			stats.AttackPower: spellDamage * 0.17,

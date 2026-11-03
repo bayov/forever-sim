@@ -56,7 +56,7 @@ func TestOrcShamanElementalWeapons(t *testing.T) {
 			want    float64
 		}{
 			{6, "", 49.5}, {14, "", 79}, {20, "", 108}, {22, "", 118}, {32, "", 193.8}, {42, "", 355}, {52, "", 521.8}, {60, "", 653},
-			{30, "", 177.6}, {30, "-00000001", 177.6 * 1.07}, {30, "-00000002", 177.6 * 1.13}, {30, "-00000003", 177.6 * 1.2},
+			{30, "", 177.6}, {30, "-0000001", 177.6 * 1.07}, {30, "-0000002", 177.6 * 1.13}, {30, "-0000003", 177.6 * 1.2},
 		} {
 			attackPower := func(imbue proto.WeaponImbue) float64 {
 				_, enh := weaponSim{level: c.level, talents: c.talents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: imbue, seconds: 10}.start()
@@ -71,7 +71,7 @@ func TestOrcShamanElementalWeapons(t *testing.T) {
 	for _, c := range []struct {
 		talents string
 		extraAP float64
-	}{{"", 46}, {"-00000003", 46 * 1.4}} {
+	}{{"", 46}, {"-0000003", 46 * 1.4}} {
 		t.Run("Windfury "+c.talents, func(t *testing.T) {
 			sim, enh := newSim(c.talents, proto.WeaponImbue_WindfuryWeapon)
 			enh.CurrentTarget.PseudoStats.ArmorMultiplier = 0
@@ -103,7 +103,7 @@ func TestOrcShamanElementalWeapons(t *testing.T) {
 	for _, c := range []struct {
 		talents    string
 		multiplier float64
-	}{{"", 1}, {"-00000003", 1.15}} {
+	}{{"", 1}, {"-0000003", 1.15}} {
 		t.Run("Flametongue "+c.talents, func(t *testing.T) {
 			sim, enh := newSim(c.talents, proto.WeaponImbue_FlametongueWeapon)
 			if sp := enh.GetStat(stats.SpellPower) + enh.GetStat(stats.FirePower); sp != 0 {

@@ -508,8 +508,8 @@ index 6b7d7a5670..eb020325ab 100644
  
  	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
  	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
--	ppmm := shaman.AutoAttacks.NewPPMManager(2*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
-+	mwPPM := 2 * float64(shaman.Talents.MaelstromWeapon)
+-	ppmm := shaman.AutoAttacks.NewPPMManager(4*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
++	mwPPM := 4 * float64(shaman.Talents.MaelstromWeapon)
 +	if v, ok := core.AssumeOk("sham_mw_ppm"); ok {
 +		mwPPM = v / 5 * float64(shaman.Talents.MaelstromWeapon) // dashboard assumption: the rate at 5/5
 +	}

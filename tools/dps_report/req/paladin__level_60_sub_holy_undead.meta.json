@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_undead",
   "apl": "level60_undead",
   "published": {
-    "dps": 1151.4,
-    "source": "forever-sim's paladin re-search on the October 30 hotfix trees, 2026-11-01 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
+    "dps": 1221.4,
+    "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
   },
   "verify": {
-    "dps": 1151.4,
-    "stderr": 0.41,
+    "dps": 1221.4,
+    "stderr": 0.43,
     "iters": 20000,
     "ok": true,
     "note": "simreq of this request, 180s, seed 1"
@@ -45,13 +45,13 @@
   "rotation": [
     "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use; Goblin Sapper Charge on cooldown",
     "Pre-pull: Seal of Command at -1.5s",
-    "Hammer of Wrath under 20% boss health, before Holy Strike",
+    "Hammer of Wrath under 20% boss health, before Consecration",
+    "Consecration on cooldown at 20%+ mana",
     "Judgement on cooldown on whichever damage seal is up",
     "Seal of Command whenever no damage seal is up",
     "Unsealed Wrath: with Seal of Command up, once it has stored all 3 copies, Seal of Righteousness, so the next swing spends them all (one Seal of Command roll each) and stores a Righteousness copy. Back to Seal of Command once that copy is stored, keeping the mana for Exorcism",
     "Holy Strike on cooldown",
     "Exorcism on cooldown (only against Undead and Demons)",
-    "Consecration on cooldown at 20%+ mana, last",
     "Racials on free GCDs"
   ],
   "consumes": [
@@ -76,7 +76,7 @@
   "caveats": [
     "Takes Pursuit of Justice 2 (movement speed), a must-have talent.",
     "Unsealed Wrath is new with the October 30 hotfix and unverified: the sim lets landed white swings store and spend the copies, and rolls each stored Seal of Command at its own 7 a minute.",
-    "Two-Handed Weapon Specialization boosts the Holy seal and judgement damage and Holy Strike too, as measured in game before the October 30 hotfix. The hotfix tooltip says physical damage, but its damage effect is unchanged.",
+    "Two-Handed Weapon Specialization raises all Holy damage as well as physical, and Vengeance stacks up to 5 times, as the November 2 development notes announce. Client 1.60.1.70753 still has Physical only and 3 stacks; the sim takes the notes' values until a hotfix or client build says otherwise (standards 37).",
     "No Holy Wrath. Its 2s cast resets the swing.",
     "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
     "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",

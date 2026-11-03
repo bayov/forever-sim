@@ -161,8 +161,10 @@ export const APLLevel60SubHoly = PresetUtils.makePresetAPLRotation('Ret sub-Holy
 	group: 'Synthetic',
 });
 // Ret sub-Holy vs Undead (standards 19): Exorcism lands, so the swap waits for all 3 copies to keep
-// the mana for it, Consecration last, Hammer of Wrath above Holy Strike, no Holy Wrath (its 2 sec
-// cast resets the swing).
+// the mana for it, no Holy Wrath (its 2 sec cast resets the swing). Since round 70753 (Two-Handed
+// Weapon Specialization on all Holy damage) Consecration goes first and Hammer of Wrath above it in
+// the execute phase: +8.4 / +7.0 / +4.0 at 120 / 180 / 300 sec (was Consecration last, Hammer of
+// Wrath above Holy Strike).
 export const APLLevel60Undead = PresetUtils.makePresetAPLRotation('Ret sub-Holy · vs Undead', Level60UndeadAPLJSON, {
 	tooltip: 'Level 60 rotation against an Undead or Demon boss: the twist rotation on 3 copies, with Exorcism.',
 	group: 'Synthetic',
@@ -210,7 +212,8 @@ export const APLPresets = [
 
 // The class default is Level 60 (sub Holy), the build highest at 180 sec since the regear round
 // (2026-10-23). On the hotfix trees it ties Ret twist (1038.1 against 1039.3 at 180 sec, within the
-// noise), so it stays.
+// noise), so it stays; in round 70753 too (1089.8 against 1090.9, seed 1000003 1089.3 against
+// 1090.1).
 export const DefaultAPL = APLLevel60SubHoly;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -237,6 +240,18 @@ export const DefaultAPL = APLLevel60SubHoly;
 // stored Seal of Command copies, Champion of the Light's free Hammer of Wrath cast, and Holy Power and
 // Light's Vigil leaving damage (the deep Holy build lost both). Swift Judgement, now a free Judgement
 // of its own, is worth 26 on the twist build, but its 16 Protection points cost 60.
+//
+// Round 70753 (2026-11-03): the November 2 development notes' Vengeance 5 stacks (was 3) and
+// Two-Handed Weapon Specialization on all Holy damage (notes-only values, standards 37), and the
+// race base stats fix. The talent searches at 180 sec (Pursuit of Justice pinned, Holy Shock too on
+// Ret Shock) kept every build's talents, and the knob searches every rotation but vs Undead's.
+// Undead, 20000 iterations, seed 1, 120 / 180 / 300 sec, before -> after:
+// - Ret twist: 1043.4 / 1039.3 / 1028.9 -> 1094.3 / 1090.9 / 1079.9.
+// - Ret sub-Holy: 1042.3 / 1038.1 / 1031.7 -> 1092.3 / 1089.8 / 1084.3.
+// - Ret Shock: 983.0 / 974.9 / 968.5 -> 1037.5 / 1030.2 / 1025.5.
+// - Ret sub-Holy vs Undead: 1153.9 / 1151.4 / 1145.1 -> 1222.9 / 1221.4 / 1214.0.
+// Undead stays the best race on each (Human 2.3 to 5.1 behind at 180 sec on both seed sets, Dwarf
+// 8.4 to 12.2).
 //
 // Ret twist: Retribution to Unsealed Wrath (Benediction, Improved Judgement, Conviction, Sanctified
 // Judgement, Seal of Command, Pursuit of Justice, Sacred Arbiter, Two-Handed Weapon Specialization,
