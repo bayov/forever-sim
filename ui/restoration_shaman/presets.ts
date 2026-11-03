@@ -21,7 +21,7 @@ import {
 } from '../core/proto/common.js';
 import { RestorationShaman_Options as RestorationShamanOptions } from '../core/proto/shaman.js';
 import { SavedTalents } from '../core/proto/ui.js';
-import Level60Phase1SyntheticGearJSON from '../elemental_shaman/gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import RaidHealerAPLJson from './apls/raid_healer.apl.json';
 import TankHealerAPLJson from './apls/tank_healer.apl.json';
 
@@ -33,12 +33,16 @@ import TankHealerAPLJson from './apls/tank_healer.apl.json';
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
 
-// A stand-in: the Elemental synthetic Phase 1 set (ui/elemental_shaman/presets.ts). Its spell power
-// heals as well as it damages, but it carries spell hit to the cap, which a healer doesn't use. A
-// healer set of its own needs a healer stat mix in orchestration/gear_targets.md, and the source the
-// other rows come from (wowsims/sod's level 60 BiS sets) has none for healers.
-export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Elemental (stand-in)', Level60Phase1SyntheticGearJSON, {
-	tooltip: "The Elemental synthetic Phase 1 set, until healers get a set of their own. Synthetic items that are not in the game.",
+// The Restoration synthetic Phase 1 set (tools/database/forever_synthetic_items_shaman_restoration.go, ids
+// 990201 to 990213), on the healer row of orchestration/gear_targets.md (standards 35): spell power and
+// healing on top of it, Intellect, Spirit, crit and MP5, no hit. The Elemental set's trinkets, Enchant Bracer
+// and Necklace - Healing Power, Spellblasting on the staff, and the Polished Driftwood Icon (8% of mana regen
+// while casting). Against the Elemental set it heals 13 to 18% more per mana. Its carry is ahead or level on
+// 8 of the 14 boss and role rows (Golemagg's raid side 2.083 against 1.990, Vaelastrasz's 1.199 against
+// 1.140) and up to 0.025 behind on the short spiky tank fights (Broodlord 0.618 against 0.643), with 63 crit
+// rating against 100; Onyxia's tank side at 300 sec is 0.954 against 0.830.
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Restoration', Level60Phase1SyntheticGearJSON, {
+	tooltip: 'A guess at Phase 1 BiS for a healer under Forever, made of synthetic items that are not in the game.',
 	group: 'Synthetic',
 });
 
@@ -173,7 +177,7 @@ export const OtherDefaults = {
 
 export const PresetBuildTankHealer = PresetUtils.makePresetBuild('Tank healer', {
 	group: 'Healing sim',
-	tooltip: 'Level 60 Windshaper Skyborne on the stand-in gear with the tank healer rotation.',
+	tooltip: 'Level 60 Windshaper Skyborne on the Restoration synthetic set with the tank healer rotation.',
 	race: Race.RaceSkyborneWindshaper,
 	level: 60,
 	gear: DefaultGear,
@@ -183,7 +187,7 @@ export const PresetBuildTankHealer = PresetUtils.makePresetBuild('Tank healer', 
 
 export const PresetBuildRaidHealer = PresetUtils.makePresetBuild('Raid healer', {
 	group: 'Healing sim',
-	tooltip: 'Level 60 Windshaper Skyborne on the stand-in gear with the raid healer rotation.',
+	tooltip: 'Level 60 Windshaper Skyborne on the Restoration synthetic set with the raid healer rotation.',
 	race: Race.RaceSkyborneWindshaper,
 	level: 60,
 	gear: DefaultGear,
