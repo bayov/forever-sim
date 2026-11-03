@@ -353,6 +353,13 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('F
 // search (120, 180 and 300 sec together) kept the talents and every knob. Races at 180 sec, 10,000
 // iterations, seeds 1 / 1000003: Night Elf 1131.1 / 1131.1 (best overall and Alliance), Windshaper
 // Skyborne 1113.2 / 1113.8 (best Horde), High Order Skyborne the same, Tauren 1105.4 / 1106.3.
+// A wider rotation exploration the same day found three lines (druid_presets.sh): EZ-Thro Dark
+// Bomb on its own line, at 60 Energy or less right after a main hand swing (its 1 sec cast restarts
+// the swing timer) instead of the autocast line throwing it on cooldown, Rake at 5 combo points too,
+// and Shadowmeld Ravage on Clearcasting at 5 combo points too: +8.2 / +8.0 / +7.6 at 120 / 180 /
+// 300 sec (seed 1, 20,000 iterations; +7.6 / +7.7 / +7.5 on seed 1000003), almost all from the
+// bomb line, 1139.0 at 180 sec. Rip clipping, Shred at the Energy cap at 5 combo points, Bite at 4,
+// the builder at 5 on Clearcasting and the Poised opener lost or tied.
 export const PresetBuildLevel60 =PresetUtils.makePresetBuild('Feral', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Feral rotation, in a 3 minute raid fight.',
