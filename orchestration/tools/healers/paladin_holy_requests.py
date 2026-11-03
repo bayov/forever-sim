@@ -45,7 +45,7 @@ DEFAULTS = {
     'hl_target': 'tank',   # where Holy Light goes: the tank, or the most hurt
     'shock_fill': 0,       # Holy Shock at the most hurt when it misses what Holy Shock heals
     'fit': 1.0,            # a rank goes out once what's missing is this share of what it heals
-    'mana_hl': 0,          # Holy Light only above this mana share (Flash of Light below it)
+    'mana_hl': 0.0,        # Holy Light only above this mana share (Flash of Light below it)
     'aura': 'NoPaladinAura',  # our own aura (ConcentrationAura: the party resists 35% of the pushback)
 }
 

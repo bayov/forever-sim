@@ -567,3 +567,30 @@ func TestLayOnHands(t *testing.T) {
 		t.Errorf("Lay on Hands cooldown %s", loh.CD.Duration)
 	}
 }
+
+// TestExpectedHealing: other healers see a Holy Light or Flash of Light in flight at its average before
+// crits (heal_comm.go), with healing power, Healing Light and our Oath of Light on the target.
+func TestExpectedHealing(t *testing.T) {
+	sim, pal, units := holySim(t, holyTalents(map[int]int{3: 3, 12: 1}), 0, 2)
+	castAt(t, sim, pal, spell(t, pal, 1328548), units[1])
+	hp := pal.GetStat(stats.HealingPower) + pal.GetStat(stats.SpellPower)
+	for _, c := range []struct {
+		id   int32
+		want float64
+	}{
+		{25292, (1580 + 400 + 0.714*hp) * 1.12},
+		{19943, (308.2 + 115 + 0.429*hp) * 1.12},
+	} {
+		pal.SetGCDTimer(sim, sim.CurrentTime)
+		s := spell(t, pal, c.id)
+		if !s.Cast(sim, units[1]) {
+			t.Fatalf("%d didn't cast", c.id)
+		}
+		if got := units[1].IncomingHealing(nil); math.Abs(got-c.want) > 0.01 {
+			t.Errorf("%d in flight at %.2f, want %.2f", c.id, got, c.want)
+		}
+		for pal.IsCasting(sim) {
+			sim.Step()
+		}
+	}
+}
