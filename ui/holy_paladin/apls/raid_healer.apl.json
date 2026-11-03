@@ -1,0 +1,274 @@
+{
+  "type": "TypeAPL",
+  "prepullActions": [],
+  "priorityList": [
+    {
+      "action": {
+        "autocastOtherCooldowns": {}
+      },
+      "notes": "Trinkets, potions and Demonic Rune."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10310
+          },
+          "target": {
+            "type": "LowestHealth"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpLt",
+            "lhs": {
+              "currentHealthPercent": {
+                "sourceUnit": {
+                  "type": "LowestHealth"
+                }
+              }
+            },
+            "rhs": {
+              "const": {
+                "val": "0.1"
+              }
+            }
+          }
+        }
+      },
+      "notes": "Lay on Hands at whoever in my assignment is under 10% health: all my mana for a full heal."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 20930
+          },
+          "target": {
+            "type": "LowestHealth"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpLt",
+            "lhs": {
+              "currentHealthPercent": {
+                "sourceUnit": {
+                  "type": "LowestHealth"
+                }
+              }
+            },
+            "rhs": {
+              "const": {
+                "val": "0.5"
+              }
+            }
+          }
+        }
+      },
+      "notes": "Holy Shock at whoever is under 50% health: an instant heal."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 19943
+          },
+          "target": {
+            "type": "LowestHealth"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpLt",
+            "lhs": {
+              "currentHealthPercent": {
+                "sourceUnit": {
+                  "type": "LowestHealth"
+                }
+              }
+            },
+            "rhs": {
+              "const": {
+                "val": "0.35"
+              }
+            }
+          }
+        }
+      },
+      "notes": "Flash of Light at whoever is under 35% health: the fast heal."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 20216
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 25292
+                },
+                "targetUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Divine Favor for the Holy Light rank 9 that comes next."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 25292
+          },
+          "target": {
+            "type": "MostHurt"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 25292
+                },
+                "targetUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Holy Light rank 9, the biggest that what is missing covers."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10329
+          },
+          "target": {
+            "type": "MostHurt"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 10329
+                },
+                "targetUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Holy Light rank 8, the biggest that what is missing covers."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10328
+          },
+          "target": {
+            "type": "MostHurt"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 10328
+                },
+                "targetUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Holy Light rank 7, the biggest that what is missing covers."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 19943
+          },
+          "target": {
+            "type": "MostHurt"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            },
+            "rhs": {
+              "spellExpectedHealing": {
+                "spellId": {
+                  "spellId": 19943
+                },
+                "targetUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Flash of Light rank 6 at the most hurt."
+    }
+  ]
+}

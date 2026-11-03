@@ -10,11 +10,11 @@ import (
 
 // The Forever trees of client 1.60.1.70707 with the launch realms' October 30 hotfix (wago.tools
 // hotfixes, region 91, build 70707: the cached pseudo-version 1.60.1.70707+hf, see
-// tools/sources/hotfixes.py). Talents the sim does not read: Spiritual Focus, Unyielding Faith,
-// Infusion of Light, Illumination, Light's Vigil (heals only since the hotfix), Oath of Light,
-// Boundless Light, Holy Power (crit healing only since the hotfix), Guardian's Favor, Improved
-// Hammer of Justice, Templar's Bulwark, Stoicism, Pursuit of Justice, Eye for an Eye, Turn Evil
-// and Repentance. Healing Light only touches heals.
+// tools/sources/hotfixes.py). The healing talents (Spiritual Focus, Healing Light, Divine Favor,
+// Illumination, Infusion of Light, Oath of Light, Boundless Light, Holy Power and Light's Vigil) are
+// in healing.go, holy_talents.go, divine_favor.go and lights_vigil.go. Talents the sim does not
+// read: Unyielding Faith, Guardian's Favor, Improved Hammer of Justice, Templar's Bulwark, Stoicism,
+// Pursuit of Justice, Eye for an Eye, Turn Evil and Repentance.
 func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeHit, float64(paladin.Talents.Precision)*core.MeleeHitRatingPerHitChance)
 	// Forever's Precision gives spell hit too (client 1.60.1.70338, spell 20189: auras 54
@@ -75,7 +75,7 @@ func (paladin *Paladin) improvedSeals() float64 {
 
 // Holy Power gives no damage crit since the October 30 hotfix: spell 5923 in 1.60.1.70707+hf is
 // aura 50 (critical healing amount) with the Holy school, "Increases the critical strike healing
-// bonus of your Holy spells by 10 to 50%". The sim does not model the paladin's heals. Before the
+// bonus of your Holy spells by 10 to 50%" (holyPowerCritBonus, healing.go). Before the
 // hotfix it was a crit modifier on a list of the paladin's spells (3% a point for Holy Shock and
 // Holy Strike, 1% for the rest); holyPowerCrit stays as the hook those spells read, at 0.
 func (paladin *Paladin) holyPowerCrit() float64 {

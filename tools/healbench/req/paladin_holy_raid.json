@@ -1,0 +1,485 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceHuman",
+            "class": "ClassPaladin",
+            "equipment": {
+              "items": [
+                {
+                  "id": 990301,
+                  "enchant": 1509
+                },
+                {
+                  "id": 990302,
+                  "enchant": 1249058
+                },
+                {
+                  "id": 990303
+                },
+                {
+                  "id": 990304,
+                  "enchant": 1888
+                },
+                {
+                  "id": 990305,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990306,
+                  "enchant": 2566
+                },
+                {
+                  "id": 990307
+                },
+                {
+                  "id": 990308
+                },
+                {
+                  "id": 990309,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990310,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990311
+                },
+                {
+                  "id": 990312
+                },
+                {
+                  "id": 992014
+                },
+                {
+                  "id": 992015
+                },
+                {
+                  "id": 990313,
+                  "enchant": 2568
+                },
+                {
+                  "id": 990314,
+                  "enchant": 1219579
+                },
+                {
+                  "id": 272436
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "mainHandImbue": "BrilliantManaOil",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "CerebralCortexCompound",
+              "intellectElixir": "ElixirOfGreaterIntellect",
+              "spiritElixir": "ElixirOfSages"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved"
+            },
+            "talentsString": "53320015002101251-5-052330002",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Alchemy",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [],
+              "priorityList": [
+                {
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  },
+                  "notes": "Trinkets, potions and Demonic Rune."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10310
+                      },
+                      "target": {
+                        "type": "LowestHealth"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "currentHealthPercent": {
+                            "sourceUnit": {
+                              "type": "LowestHealth"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.1"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Lay on Hands at whoever in my assignment is under 10% health: all my mana for a full heal."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20930
+                      },
+                      "target": {
+                        "type": "LowestHealth"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "currentHealthPercent": {
+                            "sourceUnit": {
+                              "type": "LowestHealth"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.5"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Holy Shock at whoever is under 50% health: an instant heal."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 19943
+                      },
+                      "target": {
+                        "type": "LowestHealth"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "currentHealthPercent": {
+                            "sourceUnit": {
+                              "type": "LowestHealth"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.35"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Flash of Light at whoever is under 35% health: the fast heal."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20216
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25292
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Divine Favor for the Holy Light rank 9 that comes next."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 25292
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25292
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Holy Light rank 9, the biggest that what is missing covers."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10329
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10329
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Holy Light rank 8, the biggest that what is missing covers."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10328
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10328
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Holy Light rank 7, the biggest that what is missing covers."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 19943
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 19943
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Flash of Light rank 6 at the most hurt."
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "distanceFromTarget": 20,
+            "holyPaladin": {
+              "options": {}
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "sunderRamp": {
+        "tank": true,
+        "pullSunders": 1
+      },
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}
