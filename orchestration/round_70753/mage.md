@@ -48,6 +48,12 @@ Tiers: H server hotfix, C client data (70753), W Wowhead, N Blizzard's notes, F 
 Other:
 - Finding client_update-20261030-2 (Missile Barrage's 0.5 sec tick effect a dummy): 70753 leaves 400589 effect 1 as the dummy, so nothing new. Still needs an Arcane combat log. The notes' "consumed at the start of the channel (was at the end)" reads like a server script that runs the halved channel, which supports the sim's five missiles in half the time.
 
+## Notes-only values
+
+Per the round's source rule (README, a32a20024): a note line that neither client 70753 nor a hotfix carries is modelled from the notes, gated under Forever.
+- Every numeric mage line is in the client (70707 or 70753) or the 10-30 hotfix, so no mage value rests on the notes alone.
+- Two mechanics are server side, with no client field, and are modelled from the notes (client 70753 unchanged): Clearcasting kept on a Missile Barrage Arcane Missiles (`talents.go`), and Ignite on Flamestrike's burn crits (`ignite.go`). Both are gated on `Env.IsForever()`.
+
 ## Phase A questions for the orchestrator
 
 1. `mage_ice_lance_cd` ("Does every Ice Lance rank have the cooldown?"): client 70753 gives every rank the cooldown and category 19, so the alternative no longer has a source. Recommendation: collapse it to one value, the sim's (it is in `tools/dps_report/assumptions_def.py`, which I haven't touched).
