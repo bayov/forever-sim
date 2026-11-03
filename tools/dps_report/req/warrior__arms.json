@@ -4,7 +4,7 @@
       {
         "players":  [
           {
-            "race":  "RaceUndead",
+            "race":  "RaceOrc",
             "class":  "ClassWarrior",
             "equipment":  {
               "items":  [
@@ -84,7 +84,7 @@
               "blessingOfKings":  true,
               "blessingOfMight":  "TristateEffectImproved"
             },
-            "talentsString":  "20305213032515201-55050000001",
+            "talentsString":  "30303213032215201-050500050012-2",
             "level":  60,
             "profession1":  "Engineering",
             "profession2":  "Alchemy",
@@ -486,30 +486,19 @@
                   }
                 },
                 {
-                  "notes":  "Sapper and trinkets.",
+                  "notes":  "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
                   "action":  {
-                    "autocastOtherCooldowns":  {}
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  1399001
+                      }
+                    }
                   }
                 },
                 {
+                  "notes":  "Sapper and trinkets.",
                   "action":  {
-                    "condition":  {
-                      "and":  {
-                        "vals":  [
-                          {
-                            "sequenceIsComplete":  {
-                              "sequenceName":  "sunder"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  21553,
-                        "rank":  4
-                      }
-                    }
+                    "autocastOtherCooldowns":  {}
                   }
                 },
                 {
@@ -557,6 +546,27 @@
                       "spellId":  {
                         "spellId":  11605,
                         "rank":  5
+                      }
+                    }
+                  }
+                },
+                {
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
+                          {
+                            "sequenceIsComplete":  {
+                              "sequenceName":  "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  21553,
+                        "rank":  4
                       }
                     }
                   }
@@ -855,8 +865,8 @@
       "judgementOfTheCrusader":  "TristateEffectImproved",
       "faerieFire":  true,
       "curseOfElements":  true,
-      "sunderRamp": {
-        "tank": true
+      "sunderRamp":  {
+        "tank":  true
       },
       "curseOfWeakness":  "TristateEffectImproved",
       "curseOfRecklessness":  true,

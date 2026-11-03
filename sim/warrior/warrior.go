@@ -31,7 +31,7 @@ const (
 	SpellCode_WarriorWhirlwind
 )
 
-var TalentTreeSizes = [3]int{17, 17, 18}
+var TalentTreeSizes = [3]int{17, 19, 18}
 
 type WarriorInputs struct {
 	QueueDelay     int32
@@ -60,9 +60,10 @@ type Warrior struct {
 	BloodthrillAura *core.Aura
 
 	// Enrage Auras
-	BerserkerRageAura *core.Aura
-	BloodrageAura     *core.Aura
-	EnrageAura        *core.Aura
+	BerserkerRageAura  *core.Aura
+	BloodrageAura      *core.Aura
+	RecklessSwingsAura *core.Aura
+	EnrageAura         *core.Aura
 
 	// Reaction time values
 	reactionTime time.Duration
@@ -80,6 +81,7 @@ type Warrior struct {
 	BerserkerStance *WarriorSpell
 
 	Bloodrage         *WarriorSpell
+	RecklessSwings    *WarriorSpell
 	BerserkerRage     *WarriorSpell
 	Charge            *WarriorSpell
 	Bloodthirst       *WarriorSpell
@@ -212,6 +214,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerCleaveSpell(queuedRealismICD)
 
 	warrior.registerBloodrageCD()
+	warrior.registerRecklessSwingsCD()
 	warrior.registerChargeSpell()
 	warrior.RegisterRecklessnessCD()
 }

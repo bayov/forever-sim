@@ -5,7 +5,7 @@ import "github.com/wowsims/classic/sim/core/proto"
 // Fury under Forever rules, dual wield or two-hand in Berserker Stance. Bloodthirst and Whirlwind
 // are the two strikes (Whirlwind hits with both weapons now and Raging Blows takes 3 Rage off it),
 // Execute takes over in the last 20% of the boss's health, and Heroic Strike spends the Rage above a
-// threshold. Slam has an 18 sec cooldown under Forever and stops the swing for its cast without
+// threshold. Slam has a 15 sec cooldown under Forever (10 with Improved Slam) and stops the swing for its cast without
 // Improved Slam, so it is a knob. The burst cooldowns are in warrior_common.go.
 type warriorFury struct{}
 
