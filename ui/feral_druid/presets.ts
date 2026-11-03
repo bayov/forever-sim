@@ -345,7 +345,15 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('F
 // The Night Elf's Shadowmeld into Ravage (on Clearcasting, which the pre-pull fishing and Rake's
 // extra Omen rolls make more of) and Elune's Light put it 5.2 ahead of the Tauren at 180 sec on both
 // seed sets. No racial goes by weapon type.
-export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Feral', {
+// Round 70753 (2026-11-03, the November 2 development notes on client 1.60.1.70753: Shred 200%,
+// Claw 140%, Ravage 435%, Rip, Rake and Ferocious Bite base and attack power x1.25, Rend and Tear
+// 3% a point, Poised; with the round's race base stats): 1142.4 / 1131.1 / 1116.8 at 120 / 180 /
+// 300 sec (seed 1, 20,000 iterations; 1142.7 / 1131.3 / 1116.9 on seed 1000003), the duty build
+// 1137.5 / 1127.8 / 1114.2 (1137.4 / 1127.9 / 1114.2). The talent search (180 sec) and the knob
+// search (120, 180 and 300 sec together) kept the talents and every knob. Races at 180 sec, 10,000
+// iterations, seeds 1 / 1000003: Night Elf 1131.1 / 1131.1 (best overall and Alliance), Windshaper
+// Skyborne 1113.2 / 1113.8 (best Horde), High Order Skyborne the same, Tauren 1105.4 / 1106.3.
+export const PresetBuildLevel60 =PresetUtils.makePresetBuild('Feral', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Feral rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,

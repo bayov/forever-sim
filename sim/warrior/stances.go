@@ -36,11 +36,16 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 		BerserkerStance: SpellCode_WarriorStanceBerserker,
 	}[stance]
 	actionID := aura.ActionID
-	// Forever trains Tactical Mastery at 14, keeping 10 Rage, and Improved Tactical Mastery adds 3
-	// a point (client 70338, spells 1310185 and 12295).
+	// Forever trains Tactical Mastery at 14, keeping 10 Rage (client 70338, spell 1310185), and
+	// Improved Tactical Mastery adds 5 a point over 3 points (development notes post 9,
+	// 2026-11-02: "5/10/15 additional Rage (was a 5-point talent granting 3/6/9/12/15)"; client
+	// 70753 still has 3 a point on spell 12295).
 	maxRetainedRage := 3 * float64(warrior.Talents.ImprovedTacticalMastery)
-	if warrior.Env.IsForever() && warrior.Level >= 14 {
-		maxRetainedRage += 10
+	if warrior.Env.IsForever() {
+		maxRetainedRage = 5 * float64(min(warrior.Talents.ImprovedTacticalMastery, 3))
+		if warrior.Level >= 14 {
+			maxRetainedRage += 10
+		}
 	}
 	rageMetrics := warrior.NewRageMetrics(actionID)
 

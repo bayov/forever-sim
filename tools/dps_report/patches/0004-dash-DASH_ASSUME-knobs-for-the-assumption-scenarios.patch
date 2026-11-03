@@ -24,6 +24,7 @@ bleed_tick_crit, warr_dt_rage_k) so a setting can come back without a rebase, an
 no setting now that Hunter's Mark is settled at 143.
 2026-10-26: haste_gcd is new (1: cast speed shortens a spell's GCD, down to 1s, as in wowsims/forever's
 hastedGCD; physical abilities keep theirs, as there).
+2026-11-03: druid_rip_scale is dropped (the November 2 development notes raise Rip by 25%, standards 37).
 
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
@@ -245,27 +246,6 @@ index 3ec786998f..ba41b8eb2a 100644
  
  	result.Damage *= averageMultiplier
  }
-diff --git a/sim/druid/rip.go b/sim/druid/rip.go
-index c6ce1c0fdf..bcf1772060 100644
---- a/sim/druid/rip.go
-+++ b/sim/druid/rip.go
-@@ -46,11 +46,15 @@ func (druid *Druid) newRipSpellConfig(ripRank RipRankInfo) core.SpellConfig {
- 
- 	// The combo points the Rip went up with, per target.
- 	comboPoints := map[int32]float64{}
-+	perCombo := ripRank.dmgTickPerCombo
-+	if v, ok := core.AssumeOk("druid_rip_scale"); ok && ripRank.level >= 36 {
-+		perCombo *= v // dashboard assumption: the 31+ ranks retuned
-+	}
- 	// AP scaling is 6% per combo point from 1 to 4, and 24% again for 5
- 	tickDamage := func(target *core.Unit, spell *core.Spell) float64 {
- 		cp := comboPoints[target.UnitIndex]
- 		cpScaling := core.TernaryFloat64(cp == 5, 4, cp)
--		return ripRank.dmgTickBase + ripRank.dmgTickPerCombo*cp + 0.01*cpScaling*spell.MeleeAttackPower(target)
-+		return ripRank.dmgTickBase + perCombo*cp + 0.01*cpScaling*spell.MeleeAttackPower(target)
- 	}
- 
- 	return core.SpellConfig{
 diff --git a/sim/druid/wrath.go b/sim/druid/wrath.go
 index ff053ca26b..b96bb9e9eb 100644
 --- a/sim/druid/wrath.go

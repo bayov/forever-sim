@@ -41,6 +41,9 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - Drop Blessing of Salvation from the raid buffs: tools/rotopt/mksettings/main.go:74 and every Level 60 request's
   raid.buffs.salvation (threat only, 0 DPS; removed in game since the 10-30 hotfix). Do it with the phase 3 re-sim so
   the request hashes move once.
+- forever-wiki/sim-status.md still has the old warrior strings (warrior worker); check every class's rows there.
+- Two-hand Fury is now the highest warrior build at 180 s, so the warrior worker moved the class default (isDefault and
+  the ui defaults) to it. Listed as a question for the user in round_70753/warrior.md.
 
 ## Open questions for the user (from phase 1)
 

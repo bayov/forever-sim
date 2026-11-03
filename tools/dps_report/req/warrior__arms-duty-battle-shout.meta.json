@@ -5,8 +5,8 @@
   "build": "Arms (Battle Shout duty)",
   "isDefault": false,
   "pr": 4,
-  "race": "Undead",
-  "talents": "20305213032515201-55050000001",
+  "race": "Orc",
+  "talents": "30303213032215201-050500050012-2",
   "treeNames": [
     "Arms",
     "Fury",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 1004.9,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed for the two-hand Rage crit fix)"
+    "dps": 1094.0,
+    "source": "round 70753 (the November 2 development notes), the Warrior worker's finals 2026-11-03: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1004.9,
-    "stderr": 0.47,
+    "dps": 1094.0,
+    "stderr": 0.49,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 \u00b1 20 s, 20,000 iterations, seed 1"
+    "note": "the Warrior worker's final run of this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-03)"
   },
   "summary": "Keeps Battle Shout up for its party. The raid's Battle Shout is off.",
   "keyTalents": [
@@ -34,7 +34,8 @@
     "Improved Slam",
     "Two-Handed Weapon Specialization",
     "Impale",
-    "Cruelty"
+    "Cruelty",
+    "Reckless Swings"
   ],
   "rotation": [
     "Pre-pull: Bloodrage and Battle Shout at -3s, then Battle Stance and Charge (15 Rage)",
@@ -43,8 +44,9 @@
     "With 25s left, if Recklessness is ready and Rage is under 25, swap to Berserker Stance. Swap back after Recklessness",
     "Recklessness in the last 25s. Racials on cooldown, but Elune's Light never during Recklessness or the 15s before it",
     "Mighty Rage Potion at the pull, the second in the last 15s. Bloodrage under 20 Rage",
+    "Reckless Swings on cooldown. It is off the GCD, and the next 4 swings give 5 more Rage each",
+    "Slam at 20+ Rage outside execute, ahead of Mortal Strike (10s cooldown with Improved Slam)",
     "Mortal Strike on cooldown",
-    "Slam at 20+ Rage outside execute (15s cooldown with Improved Slam)",
     "Overpower at 5+ Rage after a dodge or Bloodthrill",
     "Keep Rend up outside execute. Then Execute",
     "Heroic Strike at 90+ Rage and Hamstring filler at 10+, both outside execute"
@@ -72,7 +74,7 @@
     "Arms in Berserker Stance with Whirlwind is 10% behind.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms_battle_shout -talents 20305213032515201-55050000001 -race Undead -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29) (follows its base build, warrior__arms), was Orc. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.",
+  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms_battle_shout -talents 30303213032215201-050500050012-2 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is two-hand Fury (Fury Dual Wield until 2026-11-03); this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Orc since the 2026-11-03 race re-pick (the November 2 notes; Undead from 2026-10-27) (follows its base build, warrior__arms). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.",
   "duty": "Battle Shout",
   "baseBuild": "warrior__arms"
 }
