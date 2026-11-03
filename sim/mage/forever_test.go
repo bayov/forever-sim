@@ -985,3 +985,68 @@ func TestMageIceLanceSharesFireBlastCooldown(t *testing.T) {
 		t.Errorf("Ice Lance is ready right after Fire Blast, want both on category 19's cooldown")
 	}
 }
+
+// An Arcane Missiles on Missile Barrage leaves Clearcasting up under Forever; any other Arcane
+// Missiles uses it up (development notes 2026-11-02).
+func TestMageClearcastingStaysOnMissileBarrage(t *testing.T) {
+	// Arcane Concentration 5 and Missile Barrage 2.
+	sim, mage := newMageSim(t, "050205203100301531-005")
+	target := mage.CurrentTarget
+	missiles := topRank(t, "Arcane Missiles", mage.ArcaneMissiles)
+	advance := func(by time.Duration) {
+		until := sim.CurrentTime + by
+		sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
+		for sim.CurrentTime < until && !sim.Step() {
+		}
+	}
+
+	for _, barrage := range []bool{true, false} {
+		mage.ClearcastingAura.Activate(sim)
+		if barrage {
+			mage.MissileBarrageAura.Activate(sim)
+		}
+		advance(100 * time.Millisecond)
+		mage.SetGCDTimer(sim, sim.CurrentTime)
+		if !missiles.Cast(sim, target) {
+			t.Fatalf("Arcane Missiles didn't cast")
+		}
+		if mage.MissileBarrageAura.IsActive() {
+			t.Errorf("Missile Barrage is still up after the channel started, want it used up at the start")
+		}
+		if got := mage.ClearcastingAura.IsActive(); got != barrage {
+			t.Errorf("Missile Barrage %v: Clearcasting up after Arcane Missiles is %v, want %v", barrage, got, barrage)
+		}
+		advance(6 * time.Second)
+	}
+}
+
+// Flamestrike's burn crits ignite under Forever, not only its first hit (development notes
+// 2026-11-02).
+func TestMageIgniteOnFlamestrikeBurn(t *testing.T) {
+	// Ignite 5.
+	sim, mage := newMageSim(t, "-005")
+	target := mage.CurrentTarget
+	flamestrike := topRank(t, "Flamestrike", mage.Flamestrike)
+	flamestrike.Cost.Multiplier = 0
+	mage.AddStatDynamic(sim, stats.SpellCrit, 100*core.SpellCritRatingPerCritChance)
+	advance := func(by time.Duration) {
+		until := sim.CurrentTime + by
+		sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
+		for sim.CurrentTime < until && !sim.Step() {
+		}
+	}
+
+	mage.SetGCDTimer(sim, sim.CurrentTime)
+	if !flamestrike.Cast(sim, target) {
+		t.Fatalf("Flamestrike didn't cast")
+	}
+	// The 3 sec cast, then the four 2 sec ticks.
+	advance(3*time.Second + 100*time.Millisecond)
+	if got := mage.Ignite.SpellMetrics[target.UnitIndex].Casts; got != 1 {
+		t.Fatalf("%d ignites after Flamestrike's first hit, want 1", got)
+	}
+	advance(8 * time.Second)
+	if got := mage.Ignite.SpellMetrics[target.UnitIndex].Casts; got != 5 {
+		t.Errorf("%d ignites after Flamestrike's hit and its four burn crits, want 5", got)
+	}
+}

@@ -50,3 +50,6 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - Gnome Intellect offset +3 (level 1 offset; the 1.12 level 60 rows' +5 to +9 read as Expansive Mind baked in).
 - Human Spirit below 60: the 1.12 rows may already include the old 5%, and the sim applies the new 10% on top
   (leveling only, older than this round).
+- Assumptions (B9): reword `pal_2h_spec_holy` (Two-Handed Weapon Specialization now covers all Holy damage; paladin worker); collapse `mage_ice_lance_cd` to one value (client 70753 gives every Ice Lance rank the cooldown;
+  mage worker); `hunter_tsa_hm_rank` says Trueshot Aura 50, now 100 by hotfix 113534 (hunter worker).
+- `tools/audit/gear/lin2.py` failed on the healer and tank tables of gear_targets.md: fixed (it skips rows that are not stat targets).

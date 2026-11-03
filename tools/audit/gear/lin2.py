@@ -41,7 +41,10 @@ else: _tl=open(_tp).read().splitlines()
 for l in _tl:
     if l.startswith('|') and not l.startswith('|---') and 'SoD lists' not in l:
         c=[x.strip() for x in l.strip().strip('|').split('|')]
-        T[c[0]]={k:(0 if v in('-','') else float(v)) for k,v in zip(cols,c[2:12])}
+        # Only stat-target rows: the healer and tank tables' header rows and the tank budget table don't parse.
+        try: row={k:(0 if v in('-','') else float(v)) for k,v in zip(cols,c[2:12])}
+        except ValueError: continue
+        T.setdefault(c[0],row)
 def target_for(name):
     n=name.lower()
     for key,pat in [('Warrior Fury','fury'),('Warrior Arms / Fury 2H','arms'),('Rogue daggers','dagger'),('Rogue daggers','mutilate'),('Rogue swords','sword'),('Smite priest','smite'),('Shadow priest','shadow_priest'),('Mage Arcane','arcane'),('Mage (Frostfire / Frost / Fire)','mage'),('Warlock Demonology','demonol'),('Warlock (Destruction / Affliction / Fire)','warlock'),('Balance druid (and Wrath)','balance'),('Feral druid','feral'),('Elemental shaman','elemental'),('Enhancement shaman','enhancement'),('Ret paladin','paladin'),('Hunter Survival','survival'),('Hunter ranged (BM / MM)','ranged')]:

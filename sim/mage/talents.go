@@ -266,6 +266,11 @@ func (mage *Mage) applyArcaneConcentration() {
 			if spell.Cost == nil || spell.Cost.BaseCost == 0 {
 				return
 			}
+			// Under Forever an Arcane Missiles on Missile Barrage leaves Clearcasting up
+			// (development notes 2026-11-02).
+			if spell.SpellCode == SpellCode_MageArcaneMissiles && mage.arcaneMissilesOnBarrage && mage.Env.IsForever() {
+				return
+			}
 			aura.Deactivate(sim)
 		},
 	})

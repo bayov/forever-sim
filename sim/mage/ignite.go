@@ -63,21 +63,34 @@ func (mage *Mage) applyIgnite() {
 		},
 	})
 
+	ignite := func(sim *core.Simulation, result *core.SpellResult) {
+		dot := mage.Ignite.Dot(result.Target)
+		newDamage := result.Damage * igniteMultiplier
+		outstanding := 0.0
+		if dot.IsActive() {
+			outstanding = dot.SnapshotBaseDamage * float64(dot.NumberOfTicks-dot.TickCount)
+		}
+		dot.Snapshot(result.Target, (outstanding+newDamage)/IgniteTicks, false)
+		mage.Ignite.Cast(sim, result.Target)
+	}
+
 	core.MakePermanent(mage.RegisterAura(core.Aura{
 		Label: "Ignite Talent",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) || !spell.SpellSchool.Matches(core.SpellSchoolFire) || !result.DidCrit() {
 				return
 			}
-
-			dot := mage.Ignite.Dot(result.Target)
-			newDamage := result.Damage * igniteMultiplier
-			outstanding := 0.0
-			if dot.IsActive() {
-				outstanding = dot.SnapshotBaseDamage * float64(dot.NumberOfTicks-dot.TickCount)
+			ignite(sim, result)
+		},
+		// Flamestrike's burn is the area trigger's own direct damage spells under Forever
+		// (1279983 to 1279990, effect 2), and their crits ignite too (development notes
+		// 2026-11-02: "Ignite was not applying to Flamestrike damage past the initial instance").
+		// Other periodic crits don't.
+		OnPeriodicDamageDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell.SpellCode != SpellCode_MageFlamestrike || !result.DidCrit() || !mage.Env.IsForever() {
+				return
 			}
-			dot.Snapshot(result.Target, (outstanding+newDamage)/IgniteTicks, false)
-			mage.Ignite.Cast(sim, result.Target)
+			ignite(sim, result)
 		},
 	}))
 }
