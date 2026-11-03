@@ -2564,6 +2564,21 @@
      ]
     },
     {
+     "title": "Smite priest takes Spiritual Guidance and Shadow Focus in place of Power Infusion and Twin Disciplines",
+     "kind": "talents",
+     "classes": [
+      "Priest"
+     ],
+     "builds": [
+      "priest__smite"
+     ],
+     "note": "Smite at 180 s: 762.0 to 781.0.",
+     "commits": [
+      "da726bb",
+      "2e3508d"
+     ]
+    },
+    {
      "title": "Rogue talents reworked: Murder, Quietus, Cutthroat and Thousand Cuts removed; Aggression 5 / 10 / 15%, Flawless Execution 15, Ghostly Strike opens Ambush and Garrote outside Stealth, Hemorrhage raises Garrote, Coup de Grace raises Death Mark",
      "kind": "game",
      "classes": [
@@ -2634,7 +2649,8 @@
       "rogue__subtlety"
      ],
      "commits": [
-      "25fc79c"
+      "25fc79c",
+      "5b766ca"
      ]
     },
     {
@@ -2753,6 +2769,21 @@
      ]
     },
     {
+     "title": "Enhancement holds Earth Shock up to 1 sec for the Stormstrike mark",
+     "kind": "rotation",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw"
+     ],
+     "note": "About even on the Enhancement preset and a small gain with Improved Ghost Wolf.",
+     "commits": [
+      "203b686"
+     ]
+    },
+    {
      "title": "Wrack deals twice the spell damage a tick and more base damage; Shadow and Flame 4% a point (was 2%)",
      "kind": "game",
      "classes": [
@@ -2765,7 +2796,9 @@
       "warlock__destruction_fire",
       "warlock__destruction_fire-duty-curse",
       "warlock__destruction_fire-duty-recklessness",
-      "warlock__affliction_wrack"
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness"
      ],
      "source": {
       "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
@@ -2777,17 +2810,23 @@
      ]
     },
     {
-     "title": "New Affliction Wrack preset: deep Affliction with Wrack as the main spell",
+     "title": "Affliction warlock reworked: deep Affliction with Wrack as the main spell, the Imp sacrificed and no demon out",
      "kind": "method",
      "classes": [
       "Warlock"
      ],
      "builds": [
-      "warlock__affliction_wrack"
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__affliction_shadow_bolt"
      ],
-     "note": "999.9 at 180 s as an Orc.",
+     "note": "Affliction at 180 s: 1034.1 as an Undead. The Shadow Bolt Affliction build with Nightfall, Improved Shadow Bolt and Ruin, the Affliction preset until now, stays as Affliction Shadow Bolt (1015.6 as an Orc).",
      "commits": [
-      "c8ac35b"
+      "c8ac35b",
+      "734fe0e",
+      "dc0a0fc",
+      "b17875a"
      ]
     },
     {
@@ -2997,6 +3036,18 @@
     {
      "commit": "9a72baa",
      "why": "hidden gear items no preset wears; the item database is unchanged"
+    },
+    {
+     "commit": "1fe1b7e",
+     "why": "a rotation search knob, off by default; no preset's rotation changes"
+    },
+    {
+     "commit": "a152536",
+     "why": "a comment on that knob and the shaman round file; no preset changes"
+    },
+    {
+     "commit": "91edc9f",
+     "why": "a rotation search knob, off by default; no preset's rotation changes"
     }
    ],
    "source": {

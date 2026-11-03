@@ -21,7 +21,7 @@ R = lambda xs: [f'rogue__{x}' for x in xs]
 PAL_ALL = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_shock_ret', 'paladin__level_60_sub_holy_undead']
 PAL_TWIST = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead']
 PAL_SOC = PAL_TWIST + ['paladin__level_60_shock_ret']  # every preset that keeps Seal of Command up or twists to it
-LOCK = ['warlock__demonology', 'warlock__destruction', 'warlock__affliction', 'warlock__affliction_wrack', 'warlock__destruction_fire']
+LOCK = ['warlock__demonology', 'warlock__destruction', 'warlock__affliction', 'warlock__affliction_shadow_bolt', 'warlock__destruction_fire']
 ENH = ['shaman__enhancement-level60', 'shaman__enhancement-imp-gw', 'shaman__enhancement-water-shield', 'shaman__enhancement-mana-tide']
 ELE = ['shaman__elemental-level60', 'shaman__elemental-level60-mana-tide']
 WARR = ['warrior__fury', 'warrior__fury_2h', 'warrior__arms', 'warrior__arms_dragonkin']
@@ -89,7 +89,7 @@ A = [
       short="Classic keeps the GCD at 1.5s. Later expansions let spell haste shorten it.",
       desc="The presets keep Classic's 1.5s GCD. wowsims/forever lets haste shorten a spell's GCD to 1s, from its Burning Crusade code, not a Forever test. Forever's Nature's Grace has its own 10% GCD cut, which hints that haste alone doesn't.",
       src="wowsims/forever (from its Burning Crusade code). Forever client (Nature's Grace, spell 16886).",
-      builds=['druid__balance', 'druid__balance-wrath', 'mage__frost', 'paladin__level_60', 'paladin__level_60_shock_ret', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead', 'shaman__elemental-level60', 'shaman__elemental-level60-mana-tide', 'shaman__enhancement-imp-gw', 'shaman__enhancement-level60', 'shaman__enhancement-mana-tide', 'shaman__enhancement-water-shield', 'warlock__affliction', 'warlock__affliction_wrack', 'warlock__demonology', 'warlock__destruction'],
+      builds=['druid__balance', 'druid__balance-wrath', 'mage__frost', 'paladin__level_60', 'paladin__level_60_shock_ret', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead', 'shaman__elemental-level60', 'shaman__elemental-level60-mana-tide', 'shaman__enhancement-imp-gw', 'shaman__enhancement-level60', 'shaman__enhancement-mana-tide', 'shaman__enhancement-water-shield', 'warlock__affliction', 'warlock__affliction_shadow_bolt', 'warlock__demonology', 'warlock__destruction'],
       settings=[S('expected', 'No (Classic)', 'the GCD stays 1.5s', "Classic's rule. Forever gives Nature's Grace its own GCD cut."),
                 S('high', 'Yes, for spells', "haste shortens a spell's GCD, down to 1s", "wowsims/forever's rule, from its Burning Crusade code.", {'haste_gcd': 1})],
       warn={b: GCD_ROT_WARN for b in PAL_ALL + ENH},
@@ -178,7 +178,7 @@ A = [
       short="4× spell power in Forever's game data, against 1× in Era.",
       desc="That follows Blizzard's DoT rule of duration ÷ 15s. No one has cast it yet, since it is learned at 60.",
       src='Forever client spell 603 (every beta build to 70532).',
-      builds=['warlock__demonology', 'warlock__destruction', 'warlock__affliction', 'warlock__affliction_wrack'],
+      builds=['warlock__demonology', 'warlock__destruction', 'warlock__affliction', 'warlock__affliction_shadow_bolt'],
       settings=[S('expected', 'Client (4× spell power)', 'coefficient 4.0', "Forever's game data.")],
       default='expected', expected='expected'),
  dict(key='lock_incinerate_bonus', cls='Warlock', group='spell_tuning', label="What does Incinerate's Immolate bonus cover?",
