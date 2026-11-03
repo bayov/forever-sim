@@ -474,7 +474,7 @@
         "description": "Tears the target apart from within, inflicting {0} Shadow damage every {1} sec and increasing the damage they take from your other Shadow damage over time effects by {2}% for {3} sec.",
         "ranks": [
           [
-            36,
+            86,
             1,
             10,
             6
@@ -1508,41 +1508,41 @@
         "description": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by {0}% for {1} sec. and hitting an enemy with Shadowburn increases all Fire damage you deal by {2}% for {3} sec. In addition, Conflagrate has a {4}% chance not to consume Immolate, and Shadowburn has a {5}% chance to instantly refund a Soul Shard.",
         "ranks": [
           [
-            2,
+            4,
             20,
-            2,
+            4,
             20,
             20,
             20
           ],
           [
-            4,
+            8,
             20,
-            4,
+            8,
             20,
             40,
             40
           ],
           [
-            6,
+            12,
             20,
-            6,
+            12,
             20,
             60,
             60
           ],
           [
-            8,
+            16,
             20,
-            8,
+            16,
             20,
             80,
             80
           ],
           [
-            10,
             20,
-            10,
+            20,
+            20,
             20,
             100,
             100
