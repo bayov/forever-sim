@@ -117,6 +117,11 @@ func OwnDebuffs(request *proto.RaidSimRequest) {
 		debuffs.ThunderClap = proto.TristateEffect_TristateEffectMissing
 		debuffs.DemoralizingShout = proto.TristateEffect_TristateEffectMissing
 		debuffs.DemoralizingRoar = proto.TristateEffect_TristateEffectMissing
+		// The warrior tank's Sunder Armor ramp is this warrior's own Sunders: its rotation builds
+		// and keeps the stacks, paying their Rage and GCDs. Other warriors' pull Sunders stay.
+		if ramp := debuffs.SunderRamp; ramp != nil {
+			ramp.Tank = false
+		}
 	case *proto.Player_FeralTankDruid:
 		// A bear keeps Demoralizing Roar up, and the raid's Shout goes with it (they don't stack).
 		debuffs.DemoralizingShout = proto.TristateEffect_TristateEffectMissing
