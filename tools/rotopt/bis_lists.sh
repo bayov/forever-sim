@@ -71,4 +71,4 @@ go run --tags=with_db ./tools/rotopt/mksettings -spec ele -gear phase_1 -apl def
 jq '.raid.parties[0].players[0].equipment = {items: ([range(14) | {}] + [{id: 271804}, {id: 7749}])}' \
 	"$tmp/ele60gear.json" >"$tmp/ele.json"
 bis ele shaman_ele "$tmp/ele.json" ui/elemental_shaman/bis/level30.bis.json \
-	"chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,earthShockFinish=1,waterTotemMinTime=20,flameShockMinTime=9"
+	"chainLightning=0,lightningBoltDownrank=2,prepullBolt=1,earthShockFinish=1,waterTotemMinTime=20,flameShockMinTime=9"

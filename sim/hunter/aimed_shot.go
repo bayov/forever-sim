@@ -9,11 +9,16 @@ import (
 
 // Forever trains Aimed Shot at level 20 instead of making it a talent. The beta client (build
 // 1.60.1.70338) gives every rank a 2 sec cast (Classic 3) and a much smaller bonus (rank 6: 166,
-// Classic 600). The mana costs and the 6 sec cooldown are Classic's, and the cooldown is shared
-// with Multi-Shot (client category 2 on both).
+// Classic 600). The launch realms' server hotfix of 2026-11-03 (foreverchanges.pro, read from the
+// realms' hotfix cache; Blizzard's 11-02 notes: "increased by ~110%") raises the bonus to
+// 40 / 70 / 115 / 185 / 260 / 350; client 1.60.1.70753 still has 20 to 166. The mana costs and the
+// 6 sec cooldown are Classic's, and the cooldown is shared with Multi-Shot (client category 2 on
+// both).
+var AimedShotBonus = [7]float64{0, 40, 70, 115, 185, 260, 350}
+
 func (hunter *Hunter) getAimedShotConfig(rank int, timer *core.Timer) core.SpellConfig {
 	spellId := [7]int32{0, 19434, 20900, 20901, 20902, 20903, 20904}[rank]
-	baseDamage := [7]float64{0, 20, 34, 55, 89, 125, 166}[rank]
+	baseDamage := AimedShotBonus[rank]
 	manaCost := [7]float64{0, 75, 115, 160, 210, 260, 310}[rank]
 	level := [7]int{0, 20, 28, 36, 44, 52, 60}[rank]
 

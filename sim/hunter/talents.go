@@ -56,15 +56,16 @@ func (hunter *Hunter) applyMarksmanshipTalents() {
 	}
 
 	// Efficiency: 3% off a rank (Classic 2%) on the shots, stings and melee abilities in its
-	// class mask (19416). Lacerate is not in it. Sniper Shot is since client 1.60.1.70425 (mask
-	// word 3 bit 0x800000), and Strider Kick since 1.60.1.70707 (word 2 bit 0x200000).
+	// class mask (19416). Sniper Shot is in it since client 1.60.1.70425 (mask word 3 bit 0x800000),
+	// Strider Kick since 1.60.1.70707 (word 2 bit 0x200000), and Lacerate (word 1 bit 0x1000; mask
+	// word 1 0x80081000 on clients 70425 to 70753; finding mechanics-20261031-1).
 	if hunter.Talents.Efficiency > 0 {
 		hunter.OnSpellRegistered(func(spell *core.Spell) {
 			switch spell.SpellCode {
 			case SpellCode_HunterAimedShot, SpellCode_HunterArcaneShot, SpellCode_HunterMultiShot,
 				SpellCode_HunterSerpentSting, SpellCode_HunterScorpidSting, SpellCode_HunterVolley, SpellCode_HunterSummonHawk,
 				SpellCode_HunterRaptorStrike, SpellCode_HunterMongooseBite, SpellCode_HunterWingClip,
-				SpellCode_HunterSniperShot, SpellCode_HunterStriderKick:
+				SpellCode_HunterSniperShot, SpellCode_HunterStriderKick, SpellCode_HunterLacerate:
 				if spell.Cost != nil {
 					spell.Cost.Multiplier -= 3 * hunter.Talents.Efficiency
 				}
@@ -171,10 +172,12 @@ func (hunter *Hunter) applySurvivalTalents() {
 		}
 	})
 
-	// Lightning Reflexes: 2% Agility a rank (Classic 3%). The client parks a second Lightning
-	// Reflexes at 3% a rank off the canvas, where no one can take it.
+	// Lightning Reflexes: 3% Agility a rank, as in Classic, since the launch realms' server hotfix of
+	// 2026-11-03 (foreverchanges.pro; Blizzard's 11-02 notes: 3/6/9/12/15% from 2/4/6/8/10%). Client
+	// 1.60.1.70753's talent (19168, curve 109548) still gives 2% a rank, and it parks a second
+	// Lightning Reflexes at 3% a rank off the canvas.
 	if hunter.Talents.LightningReflexes > 0 {
-		hunter.MultiplyStat(stats.Agility, 1.0+0.02*float64(hunter.Talents.LightningReflexes))
+		hunter.MultiplyStat(stats.Agility, 1.0+0.03*float64(hunter.Talents.LightningReflexes))
 	}
 
 	hunter.applyResourcefulness()
@@ -332,9 +335,11 @@ func (hunter *Hunter) mortalShots() float64 {
 	return 0.06 * float64(hunter.Talents.MortalShots)
 }
 
-// Barrage: 3/7/10% on Aimed Shot, Multi-Shot and Volley (Classic 5/10/15% on Multi-Shot and Volley).
+// Barrage: 5/10/15% on Aimed Shot, Multi-Shot and Volley (Classic's values, on Multi-Shot and Volley
+// alone there) since the launch realms' server hotfix of 2026-11-03 (foreverchanges.pro; Blizzard's
+// 11-02 notes). Client 1.60.1.70753 still gives 3/7/10% (19461, curve 82803).
 func (hunter *Hunter) barrageMultiplier() float64 {
-	return []float64{1, 1.03, 1.07, 1.10}[hunter.Talents.Barrage]
+	return []float64{1, 1.05, 1.10, 1.15}[hunter.Talents.Barrage]
 }
 
 // Rapid Recuperation: a landed Serpent Sting gives 25% of mana regen while casting a rank for 15

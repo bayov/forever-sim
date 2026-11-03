@@ -34,6 +34,7 @@ import {
 import { Stats } from '../core/proto_utils/stats.js';
 // apls
 import Level60AfflictionAPL from './apls/level60_affliction.apl.json';
+import Level60AfflictionWrackAPL from './apls/level60_affliction_wrack.apl.json';
 import Level60DemonologyAPL from './apls/level60_demonology.apl.json';
 import Level60DestructionAPL from './apls/level60_destruction.apl.json';
 import Level60DestructionFireAPL from './apls/level60_destruction_fire.apl.json';
@@ -93,7 +94,9 @@ export const GearLevel60Phase1SyntheticDemonology = PresetUtils.makePresetGear('
 });
 export const GearPresets = [GearLevel60Phase1SyntheticDemonology, GearLevel60Phase1Synthetic];
 
-export const DefaultGear = GearLevel60Phase1SyntheticDemonology;
+// Destruction is the class default since round 70753 (the highest at 180 sec: 1063.4 against
+// Demonology's 1053.9, after Shadow and Flame doubled).
+export const DefaultGear = GearLevel60Phase1Synthetic;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -132,6 +135,12 @@ export const RotationLevel60Destruction = PresetUtils.makePresetAPLRotation('Des
 export const RotationLevel60Affliction = PresetUtils.makePresetAPLRotation('Affliction', Level60AfflictionAPL, {
 	group: 'Synthetic',
 	tooltip: 'The Level 60 rotation for the Affliction talents.',
+});
+// Affliction Wrack: Corruption, the bane and Siphon Life kept up, Wrack channelled while Corruption
+// and the bane are up (its 10% counts on those two), Shadow Bolt between.
+export const RotationLevel60AfflictionWrack = PresetUtils.makePresetAPLRotation('Affliction Wrack', Level60AfflictionWrackAPL, {
+	group: 'Synthetic',
+	tooltip: 'The Level 60 rotation for the Affliction Wrack talents: Wrack channelled while Corruption and the bane are up.',
 });
 // Destruction fire: Incinerate while Immolate is up (25% more), Conflagrate on cooldown, Immolate
 // opens the fight (started 1.5 sec before the pull, so it lands as the fight starts) and is
@@ -207,6 +216,7 @@ export const APLPresets = [
 	RotationLevel60Affliction,
 	RotationLevel60AfflictionDutyCurse,
 	RotationLevel60AfflictionDutyRecklessness,
+	RotationLevel60AfflictionWrack,
 	RotationLevel60Destruction,
 	RotationLevel60DestructionDutyCurse,
 	RotationLevel60DestructionDutyRecklessness,
@@ -215,7 +225,7 @@ export const APLPresets = [
 	RotationLevel60DestructionFireDutyRecklessness,
 ];
 
-export const DefaultAPL = RotationLevel60Demonology;
+export const DefaultAPL = RotationLevel60Destruction;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -238,6 +248,8 @@ export const DefaultAPL = RotationLevel60Demonology;
 // in Improved Corruption; the same for the curse duty build. Dropping Demonic Pact to keep Agonizing
 // Flames is 90 behind. Against the old one point build on its hit set (011-0305003131221001351-0550005003)
 // Suppression costs 67.1 / 68.1 / 66.2 at 120 / 180 / 300 sec (66.8 on curse duty at 180 sec).
+// Searched again after the 2026-11-02 notes (talents, then knobs, 180 sec): nothing moved.
+// Round 70753 finals (20,000 iterations): 1036.8 / 1053.9 / 1028.2 at 120 / 180 / 300 sec.
 export const TalentsLevel60Demonology = PresetUtils.makePresetTalents('Demonology', SavedTalents.create({ talentsString: '051-0305003131221001351-0550004' }), {
 	group: 'Synthetic',
 	tooltip: 'Demonic Pact with Suppression 5/5, Improved Shadow Bolt and Ruin.',
@@ -246,6 +258,8 @@ export const TalentsLevel60Demonology = PresetUtils.makePresetTalents('Demonolog
 // Flame, with Pandemic and Malevolence from Affliction. Incinerate and Bane of Havoc lost to two
 // points of Malevolence and Shadowburn to more Pandemic. Under client 1.60.1.70425 Malediction's
 // point went to Nightfall (searched again 2026-10-16).
+// The 2026-11-02 notes doubled Shadow and Flame (4% a point): 976.6 / 997.5 / 978.5 before, 1040.4 /
+// 1063.4 / 1043.5 at 120 / 180 / 300 sec after (20,000 iterations); talents and knobs searched again, nothing moved.
 export const TalentsLevel60Destruction = PresetUtils.makePresetTalents('Destruction', SavedTalents.create({ talentsString: '255000000351--055030500310035' }), {
 	group: 'Synthetic',
 	tooltip: 'Conflagrate and Shadow and Flame, with Pandemic and Malevolence.',
@@ -256,8 +270,10 @@ export const TalentsLevel60Destruction = PresetUtils.makePresetTalents('Destruct
 // Soul Harvest point that only fills the 25 point gate (searched again 2026-10-16). Wrack and Soul Siphon lost
 // their points to Ruin, the drains being no match for Shadow Bolt. A damage over time variant with
 // Siphon Life, Soul Siphon and Wrack (25530000035001351--0550005003, the best build with both, on
-// the same Shadow Bolt rotation) is 55 behind, and casting its Wrack costs 34; its drain filler
-// versions lose 124 to 349. It played the same as this build, so it is not shipped as a spec.
+// the same Shadow Bolt rotation) was 55 behind, and casting its Wrack cost 34; its drain filler
+// versions lost 124 to 349. Since the 2026-11-02 notes doubled Wrack it is its own preset below.
+// Searched again on 2026-11-03 (talents, then knobs, 180 sec): nothing moved. Round 70753 finals
+// (20,000 iterations): 997.4 / 1015.6 / 996.8 at 120 / 180 / 300 sec.
 export const TalentsLevel60Affliction = PresetUtils.makePresetTalents('Affliction', SavedTalents.create({ talentsString: '2550102003520005--0550305003' }), {
 	group: 'Synthetic',
 	tooltip: 'Shadow Mastery, Pandemic and Nightfall, with Improved Shadow Bolt and Ruin.',
@@ -271,15 +287,34 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents('Afflictio
 // (25201020034--0050355003101351, the old preset's search) at 180 sec; with the Succubus out on this
 // build 950.3, the Imp sacrificed 917.5, the Felhunter 885.4, and Spellstone 9.7 behind Firestone. A
 // talent search from it moved nothing. Bane of Havoc's point does nothing in the sim.
+// Shadow and Flame doubled (the 2026-11-02 notes): 965.4 / 977.1 / 954.2 before, 983.6 / 996.7 / 974.0
+// at 120 / 180 / 300 sec after; talents and knobs searched again, nothing moved.
+// Affliction Wrack (the 2026-11-02 notes doubled Wrack's coefficient and raised its base to 86 a
+// second at 60): deep Affliction with Siphon Life, Soul Siphon, Shadow Mastery and Wrack, and
+// Wrack the main spell (about half the damage). Talent search from 25500020135201351--0550303 with
+// Wrack kept, then a knob search (nothing moved): 966.0 / 999.9 / 992.7 at 120 / 180 / 300 sec,
+// against 997.4 / 1015.6 / 996.8 for the Shadow Bolt Affliction build (20,000 iterations). Orc is its best race.
+export const TalentsLevel60AfflictionWrack = PresetUtils.makePresetTalents(
+	'Affliction Wrack',
+	SavedTalents.create({ talentsString: '05500003035001351-0002-0050055003' }),
+	{ group: 'Synthetic', tooltip: 'Deep Affliction: Siphon Life, Soul Siphon, Shadow Mastery and Wrack.' },
+);
+
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Destruction Fire',
 	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
 	{ group: 'Synthetic', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with the Succubus sacrificed for 15% Fire damage.' },
 );
 
-export const TalentPresets = [TalentsLevel60Demonology, TalentsLevel60Destruction, TalentsLevel60Affliction, TalentsLevel60DestructionFire];
+export const TalentPresets = [
+	TalentsLevel60Demonology,
+	TalentsLevel60Destruction,
+	TalentsLevel60Affliction,
+	TalentsLevel60AfflictionWrack,
+	TalentsLevel60DestructionFire,
+];
 
-export const DefaultTalents = TalentsLevel60Demonology;
+export const DefaultTalents = TalentsLevel60Destruction;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -536,6 +571,20 @@ export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Afflict
 	options: PresetBuildOptionsSuccubus,
 });
 
+export const PresetBuildLevel60AfflictionWrack = PresetUtils.makePresetBuild('Affliction Wrack', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Orc Affliction Wrack warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60AfflictionWrack,
+	rotation: RotationLevel60AfflictionWrack,
+	encounter: EncounterLevel60,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsSuccubus,
+});
+
 export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Destruction Fire', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Undead Destruction fire warlock on the synthetic Phase 1 gear, the Succubus sacrificed, in a 3 minute raid fight.',
@@ -588,6 +637,7 @@ export const PresetBuilds = [
 	PresetBuildLevel60Affliction,
 	PresetBuildLevel60AfflictionDutyCurse,
 	PresetBuildLevel60AfflictionDutyRecklessness,
+	PresetBuildLevel60AfflictionWrack,
 	PresetBuildLevel60Destruction,
 	PresetBuildLevel60DestructionDutyCurse,
 	PresetBuildLevel60DestructionDutyRecklessness,

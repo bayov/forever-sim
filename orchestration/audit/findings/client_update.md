@@ -29,18 +29,19 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: none until confirmed in game; if it is dead, drop it under Forever.
 - needs: verify (in game)
 
+## Resolved
+
 ### client_update-20261027-3: Amplify Curse no longer amplifies Bane of Agony in 70630
 - severity: low (no preset or APL casts Amplify Curse)
 - affects: warlock (Amplify Curse users only)
 - found: 2026-10-27, master d3df924
 - evidence: 70630 SpellEffect 695823 (18288 effect 0, aura 108 +50% all effects) EffectSpellClassMask_0 33792 → 32768: Bane of Agony (mask 1024) dropped, Curse of Weakness (32768) kept; new effect 1365363 −20 on Curse of Exhaustion (the 10-16 FC hotfix, WL-U-HF1). Bane of Agony 980-11713 gain an effect 1 aura 271 with base 0 and its own mask, nothing fills it in the client. Sim: `sim/warlock/curses.go:74` still multiplies Bane of Agony's base damage by 1.5 under Amplify Curse. Ledger WL-U-17.
 - proposed fix: under Forever, don't let Amplify Curse touch Bane of Agony (or drop the option from the warlock APL actions).
-- needs: orchestrator fix
+- needs: none
 - 2026-10-27: the 70630 mask reading holds, but 18288's 70630 description and Wowhead's Forever tooltip still name Bane of Agony, and every Agony rank gains a base-0 aura 271 effect (w2) that its new debuff text multiplies by, so the +50% looks moved onto Agony as a server-filled value, not removed. The sim keeps +50% (no preset casts Amplify Curse). needs: user ruling.
 - 2026-10-27 (user): park it until a build takes Amplify Curse, then test in game (TASKS.md item of 2026-10-27). The sim keeps +50% of base meanwhile. needs: in-game test
 - 2026-10-30 (70707): every Bane of Agony rank gains a third effect (index 2, dummy aura 4), and the tooltip's amplify term moves from $w2 to $w3, so the client still expects Amplify Curse to touch Agony through a scripted effect. 18288's mask is unchanged. Ledger WL-U-18. Still parked.
-
-## Resolved
+- resolved: 2026-11-03, round 70753 (warlock): Blizzard's development notes of 2026-11-02, "Amplify Curse now correctly affects Curse of Exhaustion and Bane of Agony" (foreverchanges.pro: "Now really works on Curse of Exhaustion and Bane of Agony, as its tooltip says"). The sim keeps +50% of Bane of Agony's base damage (sim/warlock/curses.go; TestWarlockAmplifyCurseAgony), and the round's talent search tries Amplify Curse.
 
 ### client_update-20261030-3: Efficiency now discounts Strider Kick
 - severity: low (mana only; Survival builds with Efficiency)

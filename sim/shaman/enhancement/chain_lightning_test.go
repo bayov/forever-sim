@@ -17,11 +17,12 @@ import (
 // It hits our target and jumps to the next 2, each jump dealing 70% of the one before. So with
 // 4 targets the first three take 100%, 70% and 49% of a roll and the fourth nothing. Each hit
 // rolls its own damage and hit. A Stormstrike mark on the second target goes to the jump that
-// hits it, which then deals 84%. Rank 4 deals 119.19 to 133.21 at level 60 with no spell power,
+// hits it, which then deals 84%. Rank 4 deals 484.75 to 539.04 at level 60 with no spell power (the November 2 notes),
 // so the four ranges don't overlap. The targets are at our level, and we take all our spell
 // crit away.
 //
-// The 2 sec cast lands all three hits at its end, and the 6 sec cooldown starts there.
+// The 2.5 sec cast (November 2 notes; 2 sec before) lands all three hits at its end, and the
+// 6 sec cooldown starts there.
 func TestOrcShamanChainLightningJumps(t *testing.T) {
 	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
 	target.Level = 60
@@ -90,8 +91,8 @@ func TestOrcShamanChainLightningJumps(t *testing.T) {
 					t.Fatalf("Chain Lightning didn't roll on target %d", j+1)
 				case h.damage == 0:
 					misses++
-				case h.damage < 119.19*share-1e-6 || h.damage > 133.21*share+1e-6:
-					t.Fatalf("target %d took %.2f, want %.0f%% of 119.19 to 133.21", j+1, h.damage, 100*share)
+				case h.damage < 484.75*share-1e-6 || h.damage > 539.04*share+1e-6:
+					t.Fatalf("target %d took %.2f, want %.0f%% of 484.75 to 539.04", j+1, h.damage, 100*share)
 				}
 			}
 		}
@@ -101,18 +102,18 @@ func TestOrcShamanChainLightningJumps(t *testing.T) {
 
 		enh.AddMana(sim, enh.MaxMana()-enh.CurrentMana(), enh.GetManaNotCastingMetrics())
 		castNow(t, sim, enh, cl)
-		if readyAt, want := cl.CD.ReadyAt(), sim.CurrentTime+8*time.Second; readyAt != want {
+		if readyAt, want := cl.CD.ReadyAt(), sim.CurrentTime+8500*time.Millisecond; readyAt != want {
 			t.Errorf("Chain Lightning cast at %s is ready at %s, want %s", sim.CurrentTime, readyAt, want)
 		}
 	})
-	at(sim, 2.99, func(sim *core.Simulation) {
+	at(sim, 3.49, func(sim *core.Simulation) {
 		for j, h := range hits() {
 			if h.rolled {
-				t.Errorf("target %d was hit at 2.99 sec, before the cast ended", j+1)
+				t.Errorf("target %d was hit at 3.49 sec, before the cast ended", j+1)
 			}
 		}
 	})
-	at(sim, 3.01, func(sim *core.Simulation) {
+	at(sim, 3.51, func(sim *core.Simulation) {
 		for j, h := range hits() {
 			if h.rolled != (j < 3) {
 				t.Errorf("at the end of the cast, target %d hit: %v, want %v", j+1, h.rolled, j < 3)

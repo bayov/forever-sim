@@ -8,6 +8,46 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Round 70753: the November 2 development notes (2026-11-03)
+
+Client 1.60.1.70753 carries none of the shaman lines (its shaman spells and tree are 70707's), and no server hotfix
+has them, so the sim takes the notes' values (standards 37, `orchestration/round_70753/shaman.md` has the ledger and
+the notes-only list). Where the notes give a rule, the numbers come from the Era client (1.15.9).
+
+- Lightning Bolt ranks 4 to 10 at 0.78 of Era's base (rank 10 334 to 372 at 60, was 190 to 212; the x1.12 report
+  assumption is gone). Ranks 1 to 3 already deal more than that and keep the client's values.
+- Chain Lightning: 2.5 sec cast, the first target 1.45 times the comparable Lightning Bolt (rank 4 485 to 539), 2.25
+  times its mana (495). Its coefficient stays the client's 0.571 (the 2 sec cast's), so a hit is only about 1.09
+  times a bolt's and the rotations still leave it out (-27 to -80 at every length, every mana floor tried).
+- Every shock at Era's base: Earth Shock 7 517 to 545, Flame Shock 6 292 plus 320 over 12 sec, Frost Shock 4 492 to
+  520 (the x1.08 on Earth Shock 7 is gone).
+- Lightning Overload 10 / 20 / 30%. Lava Burst is removed; Call of Thunder (5% crit for Lightning Bolt and Chain
+  Lightning) takes its square. Elemental Mastery is Lightning Mastery (Lightning Bolt 0.5 sec faster, Chain Lightning
+  without a cooldown) and needs Call of Thunder. Elemental Reach no longer touches Totemic Projection.
+- Stormstrike 150% normalized weapon damage, 6 sec cooldown. Maelstrom Weapon triggers twice as often (4 PPM a point
+  in the sim; the rate is server side). Mental Dexterity 50 / 100 / 150% of Intellect. Flurry 6 to 30%.
+- Improved Ghost Wolf moved from row 2 to row 4 (column 4 assumed): every Enhancement talent string changes, and the
+  Imp GW build needs 15 Enhancement points before it. The leveling route's two points move from 15 and 16 to 25 and 26.
+- Totemic Projection is Totemic Call: every totem to the shaman's spot, 30 sec cooldown.
+- The tree changes live in `tools/forever_talents/notes/shaman.json` until a client build has them.
+
+The presets after the round, 20000 iterations, 120 / 180 / 300 sec (master's requests on the same race base stats,
+then these):
+
+| Preset | Talents | 120 s | 180 s | 300 s |
+|---|---|---|---|---|
+| Elemental Level 60 (Windshaper Skyborne) | `5501331003001351-05500101-053` | 775.3 → 979.7 | 767.6 → 970.1 | 738.8 → 924.6 |
+| Elemental Mana Tide (Windshaper Skyborne) | `5501331003001351-04-053150001001` | 760.2 → 962.7 | 752.8 → 952.7 | 737.0 → 935.1 |
+| Enhancement Level 60 (Orc) | `353003102-055030110051012251-02` | 892.8 → 1169.0 | 883.0 → 1159.2 | 866.7 → 1140.5 |
+| Enhancement Imp GW (Orc) | `353003102-055030110051212151-01` | 889.0 → 1162.2 | 878.8 → 1149.7 | 862.1 → 1128.1 |
+| Enhancement Water Shield (Orc) | `052002-054030210051012151-053020001` | 842.9 → 1118.9 | 834.2 → 1111.3 | 830.4 → 1108.1 |
+| Enhancement Mana Tide (Orc) | `03-055030310051012051-053051001001` | 803.4 → 1065.1 | 795.4 → 1055.1 | 789.4 → 1046.7 |
+
+Races at 180 sec (each race's own rotation and gear): Elemental Windshaper Skyborne 970.1, Orc 965.0, Troll 962.4,
+Dwarf 961.4, Tauren 955.5; Enhancement Orc 1159.2, Windshaper Skyborne 1154.7, Troll 1150.8, Dwarf 1150.1, Tauren
+1144.0 (the other builds rank the same). Best overall and Horde: Windshaper Skyborne for Elemental, Orc for
+Enhancement; Alliance: Dwarf.
+
 ## Regear and rotation round (2026-10-23)
 
 The alignment round's sim (no melee hit suppression, Fire Nova's hits a proc that item procs, Judgement of Wisdom and Water Shield's crit trigger don't hear, Frost Shock binary under Forever, the natural flask zone in every Level 60 fight) and the presets redone on it:

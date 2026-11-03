@@ -14,9 +14,14 @@ var FlameShockSpellId = [FlameShockRanks + 1]int32{0, 8050, 8052, 8053, 10447, 1
 // Direct damage at each rank's cap, its growth per level up to there, and the spell power
 // coefficients, from the Forever client data that https://foreverchanges.pro reads
 // (downrank calculator). The DoT does not grow with level.
-var FlameShockBaseDamage = [FlameShockRanks + 1]float64{0, 24, 38, 49, 89, 136.5, 166}
-var FlameShockScaling = [FlameShockRanks + 1]core.RankScaling{{}, {15, 0.8}, {23, 1}, {33, 1.2}, {45, 1.4}, {57, 1.7}, {60, 2.1}}
-var FlameShockBaseDotDamage = [FlameShockRanks + 1]float64{0, 28, 32, 56, 84, 136, 176}
+//
+// The November 2 development notes (post 9, for launch; not in client 1.60.1.70753) revert every
+// shock's base damage to Classic Era's: the 1.15.9 client's base points, die and growth per
+// level below. The spell power coefficients, costs and cooldowns stay Forever's.
+// Rank 6 deals 292 and 320 over 12 sec (was 166 and 176).
+var FlameShockBaseDamage = [FlameShockRanks + 1]float64{0, 25, 51, 94.5, 163.5, 244.5, 292}
+var FlameShockScaling = [FlameShockRanks + 1]core.RankScaling{{}, {15, 0.8}, {23, 1.2}, {33, 1.7}, {45, 2.3}, {57, 2.9}, {60, 3.5}}
+var FlameShockBaseDotDamage = [FlameShockRanks + 1]float64{0, 28, 48, 96, 168, 256, 320}
 var FlameShockBaseSpellCoef = [FlameShockRanks + 1]float64{0, 0.214, 0.214, 0.214, 0.214, 0.214, 0.214}
 var FlameShockDotSpellCoef = [FlameShockRanks + 1]float64{0, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1}
 var FlameShockManaCost = [FlameShockRanks + 1]float64{0, 55, 95, 160, 250, 345, 410}

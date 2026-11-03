@@ -41,10 +41,13 @@ func (druid *Druid) registerRakeSpell() {
 }
 
 func (druid *Druid) newRakeSpellConfig(rakeRank RakeRankInfo) core.SpellConfig {
-	baseDamageInitial := rakeRank.initialDamage
-	baseDamageTick := rakeRank.dotTickDamage
+	// The November 2 development notes raise the base points and the attack power part by about
+	// 25% (tuning_70753.go).
+	scale := core.TernaryFloat64(druid.Env.IsForever(), nov2BleedScale, 1)
+	baseDamageInitial := scale * rakeRank.initialDamage
+	baseDamageTick := scale * rakeRank.dotTickDamage
 	energyCost := 40 - float64(druid.Talents.Ferocity)
-	tickAPCoefficient := core.TernaryFloat64(druid.Env.IsForever(), rakeTickAPCoefficient, 0)
+	tickAPCoefficient := core.TernaryFloat64(druid.Env.IsForever(), scale*rakeTickAPCoefficient, 0)
 	tickBase := func(target *core.Unit, spell *core.Spell) float64 {
 		return (baseDamageTick + tickAPCoefficient*spell.MeleeAttackPower(target)) * druid.RendAndTearMultiplier(target)
 	}
