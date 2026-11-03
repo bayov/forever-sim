@@ -35,6 +35,7 @@ const (
 	SpellCode_RogueSliceandDice
 	SpellCode_RogueVanish
 	SpellCode_RogueVenom
+	SpellCode_RogueShank
 )
 
 var TalentTreeSizes = [3]int{17, 17, 19}
@@ -51,6 +52,7 @@ type Rogue struct {
 	Backstab       *core.Spell
 	BladeFlurry    *core.Spell
 	Feint          *core.Spell
+	Riposte        *core.Spell
 	Garrote        *core.Spell
 	Ambush         *core.Spell
 	Hemorrhage     *core.Spell
@@ -58,6 +60,7 @@ type Rogue struct {
 	Mutilate       *core.Spell
 	mutilateOH     *core.Spell
 	SinisterStrike *core.Spell
+	Shank          *core.Spell
 	Shadowstep     *core.Spell
 	Preparation    *core.Spell
 	Premeditation  *core.Spell
@@ -68,7 +71,6 @@ type Rogue struct {
 	ExposeArmor  *core.Spell
 	Rupture      *core.Spell
 	SliceAndDice *core.Spell
-	Venom        *core.Spell
 	Finishers    []*core.Spell
 
 	Evasion *core.Spell
@@ -80,17 +82,19 @@ type Rogue struct {
 
 	additivePoisonBonusChance float64
 
-	AdrenalineRushAura *core.Aura
-	BladeFlurryAura    *core.Aura
-	CutthroatAura      *core.Aura
-	ExposeArmorAuras   core.AuraArray
-	EvasionAura        *core.Aura
-	HemorrhageAuras    core.AuraArray
-	SliceAndDiceAura   *core.Aura
-	StealthAura        *core.Aura
-	ThousandCutsAura   *core.Aura
-	VanishAura         *core.Aura
-	VenomAura          *core.Aura
+	AdrenalineRushAura      *core.Aura
+	BladeFlurryAura         *core.Aura
+	CutthroatAura           *core.Aura
+	ExposeArmorAuras        core.AuraArray
+	EvasionAura             *core.Aura
+	HemorrhageAuras         core.AuraArray
+	SliceAndDiceAura        *core.Aura
+	StealthAura             *core.Aura
+	ThousandCutsAura        *core.Aura
+	VanishAura              *core.Aura
+	VenomAura               *core.Aura
+	PoisedAura              *core.Aura
+	GhostlyStrikeOpenerAura *core.Aura
 
 	woundPoisonDebuffAuras core.AuraArray
 }
@@ -142,6 +146,8 @@ func (rogue *Rogue) Initialize() {
 	}
 	rogue.registerAmbushSpell()
 	rogue.registerVenom()
+	rogue.registerShank()
+	rogue.registerPoised()
 
 	// Poisons
 	rogue.registerInstantPoisonSpell()
@@ -220,6 +226,11 @@ func (rogue *Rogue) HasDagger(hand core.Hand) bool {
 // Forever a Night Elf's Shadowmeld counts, so Ambush and Garrote can follow it in combat.
 func (rogue *Rogue) IsStealthed() bool {
 	return rogue.StealthAura.IsActive() || rogue.IsShadowmelded()
+}
+
+// Ambush and Garrote can be used without Stealth for 7 sec after a Ghostly Strike (ghostly_strike.go).
+func (rogue *Rogue) canOpenWithoutStealth() bool {
+	return rogue.GhostlyStrikeOpenerAura != nil && rogue.GhostlyStrikeOpenerAura.IsActive()
 }
 
 // Agent is a generic way to access underlying rogue on any of the agents.

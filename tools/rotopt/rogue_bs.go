@@ -25,7 +25,7 @@ var (
 	cutthroat     = spellID(462707)
 	thousandCuts  = spellID(1310723)
 	mutilate      = spellID(1310707)
-	venom         = spellID(1310703)
+	ghostlyOpener = spellIDTag(14278, 1)
 	shadowmeld    = spellID(20580)
 )
 
@@ -42,10 +42,9 @@ func (rogueBS) Knobs() []Knob {
 		// Mutilate as the builder instead of Backstab (a 20 point Assassination talent under
 		// Forever, daggers in both hands).
 		Knob{Name: "mutilate", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Venom at this many combo points or more when it has under venomRefresh sec left, 0 for
-		// never. A 31 point Assassination talent.
-		Knob{Name: "venomCp", Default: 0, Min: 0, Max: 5, Step: 1},
-		Knob{Name: "venomRefresh", Default: 2, Min: 0, Max: 8, Step: 2},
+		// Ambush (or Garrote, garroteOpener) in the 7 sec Ghostly Strike leaves for one without
+		// Stealth (November 2 development notes).
+		Knob{Name: "ghostlyAmbush", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Premeditation (no longer needs Stealth under Forever) at this many combo points or
 		// fewer, so the 2 points it adds are not lost over 5. 9 leaves it to the cooldown rule
 		// in the sim, which uses it at 3 or fewer.
@@ -104,14 +103,6 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(rupture, ruptureWhen, "Rupture when it is not ticking and Slice and Dice does not need the points."+c.holdNotes))
 	}
 
-	if k["venomCp"] > 0 {
-		items = append(items, cast(venom, and(
-			ge(comboPoints(), num(k["venomCp"])),
-			lt(auraRemainingTime(venom), seconds(k["venomRefresh"])),
-			gt(remainingTime(), seconds(6)),
-			c.ruptureHold,
-		), "Venom, 30% more poison damage and 10% more poison procs, refreshed when it is about to drop."+c.holdNotes))
-	}
 	if k["premedCp"] < 9 {
 		items = append(items, cast(premeditation, le(comboPoints(), num(k["premedCp"])),
 			"Premeditation needs no Stealth under Forever, so it goes out whenever the 2 points fit."))
@@ -174,7 +165,14 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 
 	if k["ghostly"] == 1 {
 		items = append(items, cast(ghostlyStrike, and(lt(comboPoints(), num(5)), pool),
-			"Ghostly Strike is 180% weapon damage for 40 energy with a dagger, more per energy than Backstab, so on cooldown."))
+			"Ghostly Strike on cooldown: a builder, and it opens a 7 sec window for an Ambush without Stealth."))
+	}
+	if k["ghostlyAmbush"] == 1 {
+		items = append(items, cast(ambush, and(auraIsActive(ghostlyOpener), lt(comboPoints(), num(5))),
+			"Ambush in the window Ghostly Strike opens, the hardest hitting builder. Without Ghostly Strike ignore the warning on this line."))
+	}
+	if s := c.shank; s != nil {
+		items = append(items, s)
 	}
 
 	// The builder. Backstab waits for Thousand Cuts stacks when asked, with the energy

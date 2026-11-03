@@ -8,7 +8,8 @@ import (
 )
 
 // Hemorrhage no longer weakens the target for the whole raid, it makes the rogue's own
-// Rupture hit harder.
+// Rupture and Garrote hit harder. Garrote came with Blizzard's November 2 development notes;
+// client 16511 in 1.60.1.70753 still masks Rupture only (1048576).
 const HemorrhageRuptureMultiplier = 1.15
 
 func (rogue *Rogue) registerHemorrhageSpell() {
@@ -75,4 +76,9 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 // Hemorrhage is optional, so the debuff has to be looked up defensively.
 func (rogue *Rogue) isHemorrhaging(target *core.Unit) bool {
 	return rogue.HemorrhageAuras != nil && rogue.HemorrhageAuras.Get(target).IsActive()
+}
+
+// The Rupture and Garrote damage multiplier from the rogue's Hemorrhage on the target.
+func (rogue *Rogue) hemorrhageMultiplier(target *core.Unit) float64 {
+	return core.TernaryFloat64(rogue.isHemorrhaging(target), HemorrhageRuptureMultiplier, 1)
 }

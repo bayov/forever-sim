@@ -13,7 +13,7 @@ func (rogue *Rogue) applyRiposte() {
 
 	var riposteReady *core.Aura
 
-	riposte := rogue.GetOrRegisterSpell(core.SpellConfig{
+	rogue.Riposte = rogue.GetOrRegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 14251},
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
@@ -47,7 +47,7 @@ func (rogue *Rogue) applyRiposte() {
 
 	riposteReady = rogue.RegisterAura(core.Aura{
 		Label:    "Riposte Ready Aura",
-		ActionID: riposte.ActionID,
+		ActionID: rogue.Riposte.ActionID,
 		Duration: time.Second * 5,
 	})
 

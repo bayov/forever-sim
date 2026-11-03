@@ -514,3 +514,9 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 func (rogue *Rogue) lethality() float64 {
 	return 0.04 * float64(rogue.Talents.Lethality)
 }
+
+// Aggression raises Sinister Strike and Eviscerate by 5/10/15% under Forever (November 2
+// development notes; was 2/4/6% and Backstab too, as client 18427 in 1.60.1.70753 still has it).
+func (rogue *Rogue) aggressionMultiplier() float64 {
+	return []float64{1, 1.05, 1.10, 1.15}[rogue.Talents.Aggression]
+}

@@ -115,8 +115,9 @@ func TestForeverFinisherMissRefund(t *testing.T) {
 	}
 }
 
-// Forever's Instant Poison adds 0.5% of attack power a hit (wowsims/forever, "Confirmed by Zirene").
-// The same seed gives the same rolls, so 2000 more attack power adds 10 to every hit before the
+// Forever's Instant Poison adds 1% of attack power a hit (November 2 development notes, doubled from
+// wowsims/forever's 0.5%, "Confirmed by Zirene").
+// The same seed gives the same rolls, so 2000 more attack power adds 20 to every hit before the
 // multipliers, and half as much again on a crit.
 func TestForeverInstantPoisonAttackPower(t *testing.T) {
 	const casts = 500
@@ -131,7 +132,7 @@ func TestForeverInstantPoisonAttackPower(t *testing.T) {
 	base, _ := damage(0)
 	more, poison := damage(2000)
 	metrics := poison.SpellMetrics[poison.Unit.CurrentTarget.UnitIndex]
-	want := 0.005 * 2000 * poison.DamageMultiplier * (float64(metrics.Hits) + 1.5*float64(metrics.Crits))
+	want := 0.01 * 2000 * poison.DamageMultiplier * (float64(metrics.Hits) + 1.5*float64(metrics.Crits))
 	if got := more - base; math.Abs(got-want) > 0.01*want {
 		t.Errorf("2000 attack power added %.1f Instant Poison damage over %d casts, want %.1f", got, casts, want)
 	}

@@ -21,9 +21,9 @@ func (rogue *Rogue) registerBackstabSpell() {
 	})
 	core.RegisterSpellRanks(11281, 25300)
 
+	// Aggression no longer covers Backstab (November 2 development notes).
 	damageMultiplier := 1.5 *
-		[]float64{1, 1.05, 1.1}[rogue.Talents.Opportunity] *
-		[]float64{1, 1.02, 1.04, 1.06}[rogue.Talents.Aggression]
+		[]float64{1, 1.05, 1.1}[rogue.Talents.Opportunity]
 
 	// TODO: Only rank 1 of Puncturing Wounds was seen, the extra combo point chance is
 	// assumed to scale linearly. Beta will confirm.

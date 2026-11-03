@@ -327,6 +327,14 @@ Open questions from the game-update audit (orchestration/update_ledger.md, secti
 - Not moved by any build since 69893. Dual Wield Specialization is worth about 3% to the Combat and Seal Fate Swords presets if the tooltip were wrong.
 - Settles it: the rogue's off-hand white hit range on the character sheet (or log) at Dual Wield Specialization 0 and 5. ×1.25 means the tooltip is right; ×1.5 means it is Classic's.
 
+**NTV-6. The November 2 rogue rework is in Blizzard's notes only (round 70753).**
+- Client 1.60.1.70753 and Wowhead Forever still carry the beta's rogue values, and have no Shank, Blood Splatter, Composure, Flash of Steel or Boot Knife. The sim takes the notes (orchestration/round_70753/rogue.md).
+- Assumed for Shank (no client spell; the sim's ID 1399248): 50% of the off hand's normalized weapon damage after the off-hand halving and Dual Wield Specialization; dodge, parry and crit possible, only the miss gone; its Energy only when it lands; no combo point; covered by Poised.
+- Assumed for Mutilate: the 90% also takes up the flat bonus (67 × 0.9 at 60), as the client adds the flat to the weapon damage before the percent.
+- Assumed for Ghostly Strike's opening: it starts on the cast and is spent by the next Ambush or Garrote.
+- Hemorrhage and Ghostly Strike's dagger fix has no numbers; the sim keeps the tooltip's dagger values (145% and 180%), taken to be what was intended.
+- Settles it: the first client build or hotfix with Shank, or a launch combat log (Shank hit sizes against white off-hand hits; a Mutilate half against the weapon range).
+
 ### Priest
 
 * **NtV-1 Shadow Word: Death's old cooldown.** The 15 October notes say "increased to 18 seconds (was

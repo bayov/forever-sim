@@ -47,8 +47,10 @@ func (rogue *Rogue) registerAmbushSpell() {
 			if rogue.Env.IsForever() && rogue.PseudoStats.InFrontOfTarget {
 				return false
 			}
-			// Cutthroat lets the Stealth requirement slide for a short while after a Backstab.
-			return rogue.IsStealthed() || (rogue.CutthroatAura != nil && rogue.CutthroatAura.IsActive())
+			// Cutthroat lets the Stealth requirement slide for a short while after a Backstab, and
+			// Ghostly Strike for 7 sec.
+			return rogue.IsStealthed() || rogue.canOpenWithoutStealth() ||
+				(rogue.CutthroatAura != nil && rogue.CutthroatAura.IsActive())
 		},
 
 		BonusCritRating:  15 * core.CritRatingPerCritChance * float64(rogue.Talents.ImprovedAmbush),
