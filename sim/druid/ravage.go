@@ -22,7 +22,8 @@ var RavageSpellId = []int32{0, 6785, 6787, 9866, 9867}
 var RavageFlatDamage = []float64{0, 42, 62, 78, 98}
 var RavageLevel = []int32{0, 32, 42, 50, 58}
 
-const RavageWeaponMultiplier = 3.5
+// The November 2 development notes raise it to 435% (tuning_70753.go).
+const RavageWeaponMultiplier = 4.35
 
 func (druid *Druid) registerRavageSpell() {
 	rank := core.HighestRankAt(druid.Level, RavageLevel)

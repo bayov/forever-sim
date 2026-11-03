@@ -15,7 +15,8 @@ var ShredSpellId = []int32{0, 5221, 6800, 8992, 9829, 9830}
 var ShredFlatDamage = []float64{0, 22, 32, 44, 64, 80}
 var ShredLevel = []int32{0, 20, 30, 38, 46, 54}
 
-const ShredWeaponMultiplier = 1.55
+// The November 2 development notes raise it to 200% (tuning_70753.go).
+const ShredWeaponMultiplier = 2.0
 
 func (druid *Druid) registerShredSpell() {
 	rank := core.HighestRankAt(druid.Level, ShredLevel)

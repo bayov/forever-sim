@@ -12,7 +12,8 @@ var ClawSpellId = []int32{0, 1082, 3029, 5201, 9849, 9850}
 var ClawFlatDamage = []float64{0, 27, 39, 57, 88, 115}
 var ClawLevel = []int32{0, 20, 28, 38, 48, 58}
 
-const ClawWeaponMultiplier = 1.1
+// The November 2 development notes raise it to 140% (tuning_70753.go).
+const ClawWeaponMultiplier = 1.4
 
 func (druid *Druid) registerClawSpell() {
 	rank := core.HighestRankAt(druid.Level, ClawLevel)
