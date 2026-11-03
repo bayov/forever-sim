@@ -115,7 +115,11 @@ class Batch {
 			if (r.count < 2) continue;
 			for (let k = 0; k < layout.length; k++) {
 				const size = layout[k][1];
-				(this.attrs[k].array as Float32Array).set(r.data[k].subarray(0, points * size), at * size);
+				// A plain loop: a subarray is a new object each time.
+				const from = r.data[k];
+				const to = this.attrs[k].array;
+				const o = at * size;
+				for (let j = 0; j < points * size; j++) to[o + j] = from[j];
 			}
 			for (let i = 0; i < r.count - 1; i++) {
 				const a = at + i * 2;
@@ -329,6 +333,16 @@ class Ribbon {
 		return n + 1;
 	}
 
+	// reset lets the strip go and starts over, for a model used again (model.ts recycle).
+	reset() {
+		for (const edge of this.edges) freeEdges.push(edge);
+		this.edges.length = 0;
+		this.carry = 0;
+		const was = this.count;
+		this.count = 0;
+		this.batch?.changed(was < 2 ? 0 : was * 2, 0);
+	}
+
 	dispose() {
 		this.disposed = true;
 		this.batch?.leave(this);
@@ -349,6 +363,11 @@ export class Ribbons {
 
 	update(dt: number) {
 		for (const r of this.ribbons) r.update(dt, this.emitting);
+	}
+
+	reset() {
+		this.emitting = true;
+		for (const r of this.ribbons) r.reset();
 	}
 
 	dispose() {

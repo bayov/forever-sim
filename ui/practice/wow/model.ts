@@ -11,7 +11,7 @@
 
 import * as THREE from 'three';
 import { file, texture } from './files';
-import { animData, Batch, Keys, M2, M2Event, sample, Skin, Track, Vec } from './m2';
+import { animData, Batch, Keys, M2, M2Event, sample, sampleTime, Skin, Track, Vec } from './m2';
 import { Particles } from './particles';
 import { Ribbons } from './ribbons';
 
@@ -133,6 +133,8 @@ type BatchMaterial = {
 	submesh: number;
 	textureType: number;
 	baseOpacity: number;
+	// Whether the material starts see-through, for a model used again (recycle).
+	baseTransparent: boolean;
 };
 
 // Bones that move the fingers: right hand 8 to 12, left hand 13 to 17 (key bone ids).
@@ -318,6 +320,14 @@ export class Model {
 	static onLoad?: (fdid: number, ms: number) => void;
 
 	static async load(fdid: number): Promise<Model> {
+		// A spell's effect plays for a second or two, and the raid's casters play one each cast. So a
+		// copy that's done (recycle) waits to be used again, instead of a new one with its own
+		// materials each time.
+		const pooled = pool.get(fdid)?.pop();
+		if (pooled) {
+			pooled.reset();
+			return pooled;
+		}
 		let p = parsed.get(fdid);
 		if (!p) {
 			p = (async () => {
@@ -333,6 +343,7 @@ export class Model {
 		const shared = await p;
 		const t0 = performance.now();
 		const model = new Model(shared);
+		model.fdid = fdid;
 		Model.onLoad?.(fdid, performance.now() - t0);
 		await Promise.all([model.loadAnim(model.base.seq), ...model.loading]);
 		model.base.source = model.ready.get(model.base.seq);
@@ -437,6 +448,7 @@ export class Model {
 			submesh: batch.submesh,
 			textureType: tex?.type ?? -1,
 			baseOpacity: 1,
+			baseTransparent: material.transparent,
 		};
 		if (tex && tex.type === 0 && tex.fdid > 0) {
 			this.loading.push(
@@ -573,6 +585,11 @@ export class Model {
 		sphere.radius = sphere.radius * margin + 0.5;
 		this.mesh.boundingSphere = sphere;
 		this.mesh.frustumCulled = true;
+	}
+
+	// fullGeometry is the model's vertices and every part (all its geosets), shared by its copies.
+	get fullGeometry(): THREE.BufferGeometry {
+		return this.shared.geometry;
 	}
 
 	submeshIds(): number[] {
@@ -867,9 +884,11 @@ export class Model {
 			const b = m2.bones[i];
 			const finger = handsSource && ((this.closed.right && this.fingers.right[i]) || (this.closed.left && this.fingers.left[i]));
 			if (finger) {
-				this.pose(b.translation, b.rotation, b.scale, handsSeq, 0, handsSource, s.t, s.r, s.s);
+				this.at[0] = 0;
+				this.pose(b.translation, b.rotation, b.scale, handsSeq, handsSource, s.t, s.r, s.s);
 			} else {
-				this.pose(b.translation, b.rotation, b.scale, base.seq, base.time, base.source, s.t, s.r, s.s);
+				this.at[0] = base.time;
+				this.pose(b.translation, b.rotation, b.scale, base.seq, base.source, s.t, s.r, s.s);
 				if (fadeW > 0) {
 					const o = i * 10;
 					const f = this.fadePose;
@@ -883,11 +902,14 @@ export class Model {
 					s.s2[0] = f[o + 7];
 					s.s2[1] = f[o + 8];
 					s.s2[2] = f[o + 9];
-					blend(s, fadeW);
+					blendWeight[0] = fadeW;
+					blend(s);
 				}
 				if (ow > 0 && overlay && this.upper[i]) {
-					this.pose(b.translation, b.rotation, b.scale, overlay.seq, overlay.time, overlay.source, s.t2, s.r2, s.s2);
-					blend(s, ow);
+					this.at[0] = overlay.time;
+					this.pose(b.translation, b.rotation, b.scale, overlay.seq, overlay.source, s.t2, s.r2, s.s2);
+					blendWeight[0] = ow;
+					blend(s);
 				}
 			}
 			const o = i * 10;
@@ -903,8 +925,16 @@ export class Model {
 			p0[o + 8] = s.s[1];
 			p0[o + 9] = s.s[2];
 			const parent = b.parent >= 0 ? m2.bones[b.parent].pivot : undefined;
-			boneQ.set(s.r[0], s.r[1], s.r[2], s.r[3]);
+			// The rotation goes straight into quats. Through a Three quaternion's set, each of its four
+			// numbers was boxed, every bone. Only the twist and the billboards need one.
+			const q = i * 4;
+			quats[q] = s.r[0];
+			quats[q + 1] = s.r[1];
+			quats[q + 2] = s.r[2];
+			quats[q + 3] = s.r[3];
 			const share = this.twist !== 0 ? this.twistShare[i] : 0;
+			const turned = share !== 0 || (camera && this.billboard[i]);
+			if (turned) boneQ.fromArray(quats, q);
 			if (share !== 0) {
 				// The twist is around the model's up (y, since the bones are in Three's frame). The
 				// parent bones lean in the run, so we turn that axis into the parent's frame.
@@ -921,19 +951,19 @@ export class Model {
 				parentWorld.decompose(billboardTmp.v, billboardTmp.q2, billboardTmp.s);
 				boneQ.copy(billboardTmp.q2.invert()).multiply(billboardTmp.q1).multiply(faceFront);
 			}
-			boneQ.toArray(quats, i * 4);
-			place(
-				places,
-				i * 16,
-				b.parent >= 0 ? b.parent * 16 : -1,
-				b.pivot[0] - (parent?.[0] ?? 0) + s.t[0],
-				b.pivot[1] - (parent?.[1] ?? 0) + s.t[1],
-				b.pivot[2] - (parent?.[2] ?? 0) + s.t[2],
-				boneQ,
-				s.s[0],
-				s.s[1],
-				s.s[2],
-			);
+			if (turned) boneQ.toArray(quats, q);
+			const at = placeAt;
+			at[0] = b.pivot[0] - (parent?.[0] ?? 0) + s.t[0];
+			at[1] = b.pivot[1] - (parent?.[1] ?? 0) + s.t[1];
+			at[2] = b.pivot[2] - (parent?.[2] ?? 0) + s.t[2];
+			at[3] = quats[q];
+			at[4] = quats[q + 1];
+			at[5] = quats[q + 2];
+			at[6] = quats[q + 3];
+			at[7] = s.s[0];
+			at[8] = s.s[1];
+			at[9] = s.s[2];
+			place(places, i * 16, b.parent >= 0 ? b.parent * 16 : -1);
 			// The skinning matrix is the place times T(-pivot).
 			const m = i * 16;
 			for (let j = 0; j < 12; j++) skin[m + j] = places[m + j];
@@ -963,27 +993,32 @@ export class Model {
 		return track.get(seq, track.times.length === 1 ? this.m2.data : source);
 	}
 
-	private sampleTrack(track: Track, seq: number, time: number, source: DataView | undefined, out: Vec): boolean {
+	// sampleTrack samples a track at the time in `at` (a Float64Array, so the time isn't boxed on
+	// each call).
+	private readonly at = new Float64Array(1);
+	private sampleTrack(track: Track, seq: number, source: DataView | undefined, out: Vec): boolean {
 		const keys = this.trackKeys(track, seq, source);
 		if (!keys) return false;
-		sample(keys, track.width, this.keyTime >= 0 ? this.keyTime : time, out, track.interpolation);
+		sampleTime[0] = this.keyTime >= 0 ? this.keyTime : this.at[0];
+		sample(keys, track.width, out, track.interpolation);
 		return true;
 	}
 
-	private pose(tr: Track, rot: Track, sc: Track, seq: number, time: number, source: DataView | undefined, t: Vec, r: Vec, s: Vec) {
+	private pose(tr: Track, rot: Track, sc: Track, seq: number, source: DataView | undefined, t: Vec, r: Vec, s: Vec) {
 		t[0] = t[1] = t[2] = 0;
 		r[0] = r[1] = r[2] = 0;
 		r[3] = 1;
 		s[0] = s[1] = s[2] = 1;
-		this.sampleTrack(tr, seq, time, source, t);
-		this.sampleTrack(rot, seq, time, source, r);
-		this.sampleTrack(sc, seq, time, source, s);
+		this.sampleTrack(tr, seq, source, t);
+		this.sampleTrack(rot, seq, source, r);
+		this.sampleTrack(sc, seq, source, s);
 	}
 
 	// trackValue samples a track (an emitter's rate, say) at the current animation's time. It's
 	// false when the track has no keys there.
 	trackValue(track: Track, out: Vec): boolean {
-		return this.sampleTrack(track, this.base.seq, this.base.time, this.base.source, out);
+		this.at[0] = this.base.time;
+		return this.sampleTrack(track, this.base.seq, this.base.source, out);
 	}
 
 	// emit turns the particles and ribbons on or off (an effect that fades out stops emitting).
@@ -1026,20 +1061,67 @@ export class Model {
 			let alpha = 1;
 			if (batch.color >= 0 && m2.colors[batch.color]) {
 				const c = m2.colors[batch.color];
-				if (this.sampleTrack(c.alpha, base.seq, base.time, base.source, out)) alpha *= out[0] / 32767;
+				this.at[0] = base.time;
+				if (this.sampleTrack(c.alpha, base.seq, base.source, out)) alpha *= out[0] / 32767;
 				// M2 colors are gamma values, like the textures.
-				if (bm.material.color && this.sampleTrack(c.color, base.seq, base.time, base.source, out))
+				if (bm.material.color && this.sampleTrack(c.color, base.seq, base.source, out))
 					bm.material.color.setRGB(out[0], out[1], out[2], THREE.SRGBColorSpace);
 			}
 			const wi = m2.transparencyLookup[batch.weightCombo];
 			if (wi !== undefined && m2.textureWeights[wi]) {
-				if (this.sampleTrack(m2.textureWeights[wi], base.seq, base.time, base.source, out)) alpha *= out[0] / 32767;
+				this.at[0] = base.time;
+				if (this.sampleTrack(m2.textureWeights[wi], base.seq, base.source, out)) alpha *= out[0] / 32767;
 			}
 			if (alpha < 0.999 || bm.material.transparent) {
 				bm.material.opacity = Math.max(0, Math.min(1, alpha));
 				if (alpha < 0.999) bm.material.transparent = true;
 			}
 		}
+	}
+
+	// The model's file, for the pool of copies to use again.
+	private fdid = 0;
+
+	// recycle takes a spell effect's model out of the scene and keeps it to be used again by the
+	// next Model.load of the same file. Nothing may hold on to it after.
+	recycle() {
+		const list = pool.get(this.fdid) ?? [];
+		pool.set(this.fdid, list);
+		if (list.length >= 48) {
+			this.dispose();
+			return;
+		}
+		this.crowd?.remove(this);
+		this.root.removeFromParent();
+		this.particles?.reset();
+		this.ribbons?.reset();
+		list.push(this);
+	}
+
+	// reset puts a model used again back the way Model.load gives a new one.
+	private reset() {
+		const r = this.root;
+		r.position.set(0, 0, 0);
+		r.quaternion.identity();
+		r.scale.set(1, 1, 1);
+		r.visible = true;
+		this.mesh.visible = true;
+		for (const bm of this.mats) {
+			bm.material.opacity = 1;
+			bm.material.transparent = bm.baseTransparent;
+			bm.material.color?.setRGB(1, 1, 1);
+		}
+		this.onEvent = undefined;
+		this.globalTime = 0;
+		this.twist = 0;
+		this.closed = { right: false, left: false };
+		this.overlay = undefined;
+		this.fadeLeft = this.fadeTotal = 0;
+		this.posed = false;
+		this.base = this.playing(Anim.Stand, { loop: true });
+		this.particles?.reset();
+		this.ribbons?.reset();
+		this.update(0);
 	}
 
 	dispose() {
@@ -1064,6 +1146,9 @@ export class Model {
 // indices holds the index of each set of parts that compact made, by the parts.
 type Parsed = { m2: M2; skin: Skin; geometry: THREE.BufferGeometry; users: number; indices: Map<string, THREE.BufferAttribute> };
 const parsed = new Map<number, Promise<Parsed>>();
+
+// pool holds the effect models done playing, by file, to be used again (recycle).
+const pool = new Map<number, Model[]>();
 
 // rewrapped holds the copies of textures that a model wraps another way than the texture does.
 const rewrapped = new WeakMap<THREE.Texture, Map<number, THREE.Texture>>();
@@ -1135,10 +1220,24 @@ const combinerFragment = /* glsl */ `
 
 const billboardTmp = { q1: new THREE.Quaternion(), q2: new THREE.Quaternion(), v: new THREE.Vector3(), s: new THREE.Vector3(), m: new THREE.Matrix4() };
 
+// placeAt holds the bone's move, rotation and scale for place. Passed as numbers, Chrome boxed
+// each one, which was 70 bytes of garbage a bone.
+const placeAt = new Float64Array(10);
+
 // place sets a bone's place (at o) to its parent's (at parent, or the model when -1) times
-// T(x, y, z) R(q) S(sx, sy, sz), the way Three's Matrix4.compose builds a matrix.
-function place(m: Float64Array, o: number, parent: number, x: number, y: number, z: number, q: THREE.Quaternion, sx: number, sy: number, sz: number) {
-	const { x: qx, y: qy, z: qz, w: qw } = q;
+// T(x, y, z) R(q) S(sx, sy, sz) from placeAt, the way Three's Matrix4.compose builds a matrix.
+function place(m: Float64Array, o: number, parent: number) {
+	const a = placeAt;
+	const x = a[0];
+	const y = a[1];
+	const z = a[2];
+	const qx = a[3];
+	const qy = a[4];
+	const qz = a[5];
+	const qw = a[6];
+	const sx = a[7];
+	const sy = a[8];
+	const sz = a[9];
 	const x2 = qx + qx;
 	const y2 = qy + qy;
 	const z2 = qz + qz;
@@ -1206,8 +1305,12 @@ function boneOrder(m2: M2): Int32Array {
 // faceFront turns the model's front (+x) to the camera's back (+z), which faces the viewer.
 const faceFront = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
 
-function blend(s: { t: Vec; r: Vec; s: Vec; t2: Vec; r2: Vec; s2: Vec }, w: number) {
+// blendWeight is blend's weight, in a Float64Array so it isn't boxed on each call.
+const blendWeight = new Float64Array(1);
+
+function blend(s: { t: Vec; r: Vec; s: Vec; t2: Vec; r2: Vec; s2: Vec }) {
 	// w is the old pose's share.
+	const w = blendWeight[0];
 	for (let k = 0; k < 3; k++) {
 		s.t[k] = s.t[k] * (1 - w) + s.t2[k] * w;
 		s.s[k] = s.s[k] * (1 - w) + s.s2[k] * w;
