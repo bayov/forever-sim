@@ -32,6 +32,7 @@ func main() {
 		990016: {stats.SpellDamage: 140},
 		996032: {stats.SpellDamage: 140},
 		997022: {stats.SpellDamage: 140},
+		995034: {stats.SpellDamage: 140},
 	} {
 		id, st := id, st
 		core.NewItemEffect(id, func(agent core.Agent) {

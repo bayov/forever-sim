@@ -131,7 +131,8 @@ C = {'FlaskOfNaturalAggression': 274274, 'FlaskOfNaturalPrecision': 274275, 'Fla
      'FlaskOfSupremePower': 13512, 'FoodGrilledSquid': 13928, 'FoodLobsterStew': 13933, 'ElixirOfCunning': 250328,
      'GreaterArcaneElixir': 13454, 'ElixirOfShadowPower': 9264, 'ElixirOfFirepower': 6373, 'ElixirOfSages': 250338,
      'ElixirOfNaturePower': 250343, 'ShadowOil': 3824, 'WizardOil': 20750, 'CausticSmogPotion': 250951,
-     'CerebralCortexCompound': 8423, 'ElixirOfFrostPower': 17708, 'MajorSpellblastingPotion': 250937}  # Deadly Poison IV (theirs has no AQ book rank), Instant VI
+     'CerebralCortexCompound': 8423, 'ElixirOfFrostPower': 17708, 'MajorSpellblastingPotion': 250937,
+     'ElixirOfTheOwl': 250337, 'ElixirOfGreaterFirepower': 21546, 'ElixirOfGreaterSpirit': 250347}  # Greater Firepower is Forever's Elixir of Holy Power  # Deadly Poison IV (theirs has no AQ book rank), Instant VI
 def c(k):
     v = cs.get(k)
     if not v: return 0
@@ -341,6 +342,19 @@ elif klass == 'ClassWarlock':
         if n.get('spellId') == 26297:  # Berserking: ours keys 26297 (tagged), theirs Forever's 20554
             n = {k: v for k, v in n.items() if k != 'tag'}; n['spellId'] = 20554
         return n
+elif klass == 'ClassPriest':
+    po = p['shadowPriest'].get('options', {})
+    class_opts = {'dpsPriest': {'options': {'classOptions': {'armor': po.get('armor', 'NoArmor')}}}}
+    # Our synthetic sets carry a set name on two pieces, so only their 2 piece is live: Raiments of Conviction's 1% hit
+    # on the Shadow set, Vestments of Conviction's 10 Spirit on the Smite set (sim/priest/item_sets_pve.go).
+    head = p['equipment']['items'][0].get('id', 0)
+    if 995001 <= head <= 995015: SET_BONUS[TS['StatHitRating']] = 10
+    elif 995016 <= head <= 995032: SET_BONUS[TS['StatSpirit']] = 10
+    CD.update({20572: '120s', 20554: '180s', 26297: '180s', 10060: '180s', 14751: '180s', ('item', 995034): '120s'})
+    def remap(n):
+        if n.get('spellId') == 26297:  # Berserking: ours keys 26297 (tagged), theirs Forever's 20554
+            n = {k: v for k, v in n.items() if k != 'tag'}; n['spellId'] = 20554
+        return n
 else:
     raise SystemExit(f'{klass} is not mapped yet (SKILL.md, "Adding a class")')
 
@@ -449,7 +463,8 @@ if not APL.startswith('theirs:'):
         sid = (a.get('action', {}).get('castSpell', {}).get('spellId') or {}).get('spellId')
         if sid in STACKS and 'condition' in a['action']:
             a['action']['condition'] = counted(a['action']['condition'], sid, STACKS[sid])
-    CHANNELS = [10212, 25345, 12051]
+    # Arcane Missiles and Evocation, and every channel the rotation names (Mind Flay: 0 damage in theirs untranslated).
+    CHANNELS = sorted({10212, 25345, 12051} | {int(x) for x in re.findall(r'"channelSpell": \{"spellId": \{"spellId": (\d+)', json.dumps(apl))} - {5019})
     for a in apl['priorityList']:
         if a.get('action', {}).get('castSpell', {}).get('spellId', {}).get('spellId') == 5019:
             ch = [{'not': {'val': {'spellIsChanneling': {'spellId': {'spellId': x}}}}} for x in CHANNELS]
