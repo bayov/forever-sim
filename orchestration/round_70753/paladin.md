@@ -1,6 +1,6 @@
 # Paladin: round 70753 (the November 2 development notes)
 
-Worker: Paladin (Retribution DPS specs). Brief: `briefs/paladin.md`. Status: **Phase A done**, waiting for "sources landed"
+Worker: Paladin (Retribution DPS specs). Brief: `briefs/paladin.md`. Status: **Phase A done** (with the notes-only values), waiting for "sources landed"
 (A1's talent remap and the 70753 trees, A2's shared changes) for Phase B.
 
 ## Phase A: the notes against the sim
@@ -46,11 +46,11 @@ Tiers: H = server hotfix, C = client 70753, N = dev notes, FC = foreverchanges.p
 | Retribution: Conviction 2 / 4 / 6% crit, all spells and attacks | N, C (20117 aura 290, 3 ranks) | landed (`talents.go:28-29`) | none |
 | Retribution: Vindication no attack power | N, C | landed | none |
 | Retribution: Two-Handed Weapon Specialization row 4 | N, C | landed (row: A1's tree) | A1's tree |
-| Retribution: **Two-Handed Weapon Specialization raises Holy and Physical damage by 2 / 4 / 6%** | **N and FC only. C disagrees**: 20111 effect 0 is still aura 79 misc 1 (Physical), the tooltip "Increases the physical damage you deal by $s1%"; no hotfix row since push 113139 | **as the client**: Physical, plus the Holy damage that rolls as melee (seals, Judgements of Righteousness and Command, Holy Strike: `pal_2h_spec_holy`). Consecration, Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock don't get it | kept (client > notes); **question 1** |
+| Retribution: **Two-Handed Weapon Specialization raises Holy and Physical damage by 2 / 4 / 6%** | **N and FC only. C disagrees**: 20111 effect 0 is still aura 79 misc 1 (Physical), the tooltip "Increases the physical damage you deal by $s1%"; no hotfix row since push 113139 | was as the client (Physical plus the melee-rolled Holy spells, `pal_2h_spec_holy`) | **fixed: notes-only value** (see below), `talents.go` `applyWeaponSpecialization`, `TestNotesOnlyValues70753` |
 | Retribution: Two-Handed Weapon Specialization 7 / 14 / 20% less threat | N, C | landed (`talents.go:284-286`) | none |
 | Retribution: Instrument of Law removed | N, C | landed | none |
 | Retribution: Champion of the Light 12–60% of Intellect, 0.2–1.0 sec off Hammer of Wrath | N, C (1311084: aura 174 100 (curve), effect 1 aura 107 -1000 ms on Hammer of Wrath's mask) | landed (`talents.go:57-58`, `hammer_of_wrath.go:64`) | none |
-| Retribution: **Vengeance stacks up to 5 times (was 3)** | **N and FC only. C disagrees**: 20050 SpellAuraOptions CumulativeAura 3, duration index 9 (30 sec); tooltip "$20050u times" reads it; no hotfix row | **as the client**: 3 stacks (`talents.go:309`) | kept (client > notes); **question 1** |
+| Retribution: **Vengeance stacks up to 5 times (was 3)** | **N and FC only. C disagrees**: 20050 SpellAuraOptions CumulativeAura 3, duration index 9 (30 sec); tooltip "$20050u times" reads it; no hotfix row | was as the client, 3 stacks | **fixed: notes-only value** (see below), `talents.go` `applyVengeance`, `TestNotesOnlyValues70753` |
 | Retribution: Vengeance needs Seal of Command | N, C | n/a (tree prerequisite) | A1's tree |
 | Retribution: Turn Evil new | N, C | n/a (Turn Undead) | A1's tree |
 | Retribution: Twist of Light removed; Unsealed Wrath the 31-point talent, needs Repentance | N, C | landed (`unsealed_wrath.go`, `pal_unsealed_wrath`) | A1's tree (Repentance prerequisite) |
@@ -63,10 +63,34 @@ paragraph, checked the trees' MaxRanks, Conviction, Holy Power, Divine Precision
 Unsealed Wrath, the Echo auras and Two-Handed Weapon Specialization's tooltip and threat; I re-read 20049, 20050, 20111,
 20117 and 1311084 in 70753 for this file).
 
-Phase A mechanics: no sim change. Every line the client or a hotfix carries was already in the sim from the 10-30 hotfix;
-the two lines that would move DPS are notes-only, and the tier rule keeps the client's values (question 1).
+Every line the client or a hotfix carries was already in the sim from the 10-30 hotfix. The two lines that move DPS are
+notes-only; the orchestrator's provisional rule of 2026-11-03 (`README.md`: model a notes value that neither the client
+nor a hotfix carries, gated under Forever) puts them in.
 
-### What the notes-only values would be worth
+## Notes-only values
+
+Modelled from the notes, gated under Forever; client 1.60.1.70753 unchanged and no hotfix row (re-check wago.tools'
+hotfix log for 20050 and 20111 before the Phase B finals; if a row lands, it wins).
+
+1. **Vengeance stacks up to 5 times** (was 3). Notes: "Vengeance changed to stacking up to 5 times (Was stacking up to 3
+   times)". Client 20050 SpellAuraOptions CumulativeAura 3. `sim/paladin/talents.go` `applyVengeance` (MaxStacks 5).
+2. **Two-Handed Weapon Specialization raises Holy and Physical damage by 2 / 4 / 6%.** Notes: "changed to increase both
+   Holy and Physical damage by 2/4/6% (Was just Physical damage)". Client 20111 effect 0 aura 79 misc 1 (Physical).
+   Under Forever the Holy school takes the multiplier (Consecration, Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock
+   join the seals, judgements and Holy Strike), and the melee-rolled Holy spells drop their own factor so it counts
+   once. `sim/paladin/talents.go` `applyWeaponSpecialization`; `TestJudgementOfRighteousnessMelee` now reads it through
+   the school.
+
+Both: `TestNotesOnlyValues70753` (`sim/paladin/retribution/hotfix_test.go`); the TestRetribution golden moved (its
+builds take both talents). On the current requests (old talents and rotations, 5,000 iterations, seed 1):
+
+| Build | Before (120 / 180 / 300 s) | After | 180 s |
+|---|---|---|---|
+| Ret twist | 1044.3 / 1038.8 / 1027.2 | 1096.9 / 1092.9 / 1082.0 | +54.1 (+5.2%) |
+| Ret sub-Holy | 1042.6 / 1037.8 / 1031.1 | 1095.4 / 1092.3 / 1086.7 | +54.5 (+5.3%) |
+| Ret Shock | 982.6 / 973.8 / 967.7 | 1039.5 / 1032.4 / 1027.5 | +58.6 (+6.0%) |
+
+### Each value alone (throwaway builds, before the change)
 
 Throwaway builds (not committed), current requests, 5,000 iterations, seed 1, 120 / 180 / 300 sec:
 
@@ -81,13 +105,9 @@ Strike, so they still get it once.
 
 ## Questions for the orchestrator
 
-1. **Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy (notes vs client).** The notes say both; client
-   70753 and every hotfix row so far say 3 stacks and Physical. By the tier rule the sim keeps the client. But the notes
-   describe the launch realms (November 4), the hunter's notes values reached the realms by the 11-03 hotfix
-   (foreverchanges.pro) without a client build, and these two are the only paladin notes lines the client lacks (with
-   Templar's Bulwark). Recommendation: keep the client values for now, re-check wago.tools' hotfix log for 20050 and
-   20111 right before the Phase B finals, and take the notes' values if a row lands (or if the user rules the notes in).
-   Together they're about +5% (Shock +6%) and would move the talent search (Vengeance's worth rises).
+1. **Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy (notes vs client).** Answered by the orchestrator's
+   provisional rule (2026-11-03): modelled from the notes, see "Notes-only values". If the user rules the client in,
+   revert both (one commit) and re-run Phase B's searches.
 2. **Salvation in the shared raid.** Salvation is gone from the game, but mksettings `main.go:74` and every Level 60
    request still set `raid.buffs.salvation: true` (sim/core/buffs.go:374 gives it under Forever). Threat only, 0 DPS.
    Recommendation: drop it in mksettings and the requests in one cross-class change (the orchestrator's), and leave
