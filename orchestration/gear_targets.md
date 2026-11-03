@@ -68,3 +68,17 @@ level 60 BiS sets for any healer. The healing sim's healers (docs/healing_sim.md
 | Set | Lists | Sta | Int | Spi | SP | Healing | Crit | MP5 | top stat / non-Sta |
 |---|---|---|---|---|---|---|---|---|---|
 | Restoration shaman | 2 | 10.8 | 17.5 | 10.0 | 22.2 | 27.1 | 7.0 | 5.4 | Healing 30% |
+| Holy paladin | 1 | 14.7 | 18.7 | 10.0 | 21.9 | 26.8 | 2.8 | 5.1 | Healing 31% |
+
+- **Holy paladin** (2026-11-03, docs/healing_paladin.md): the WoW Forever Holy paladin guide
+  (www.wowhead.com/forever/guide/classes/paladin/holy/bis-gear) lists no item yet (every slot "will be filled
+  in once more items are discovered at max level"; its gear planner link holds obfuscated beta item IDs no
+  item in our database has), so the row is the Classic pre-raid Holy paladin list's alone
+  (www.wowhead.com/classic/guide/paladin-healing-pre-raid-best-in-slot-bis-gear-wow-classic: each slot's first
+  Best, the main hand and held off-hand, two rings, no trinkets or libram). It prices at Sta 14.7, Int 18.2,
+  Spi 12.1, SP 2.3, healing 45.0, crit 2.7, MP5 5.0: Era's items carry healing alone, where Forever's carry
+  spell power. So its healing power (47.3 of the 100) is split between spell power and healing as the
+  Restoration shaman row splits its (45 to 55), Spirit is 10% (standards 5), Stamina the list's own, and the
+  rest in its proportions. The Forever guide's advice ("heavy healing power and intellect items ... a good
+  amount of spirit") agrees. Scripts: orchestration/tools/healers/paladin_holy_mix.py and paladin_holy_synth.py;
+  the set is tools/database/forever_synthetic_items_paladin_holy.go.

@@ -4,7 +4,8 @@
     python3 -I orchestration/tools/healers/paladin_holy_requests.py --out DIR --role tank --set key=value ...
 
 The presets: tools/healbench/req/paladin_holy.json (tank healer) and paladin_holy_raid.json (raid
-healer), and ui/holy_paladin/apls/tank_healer.apl.json and raid_healer.apl.json. Each request is the
+healer), ui/holy_paladin/apls/tank_healer.apl.json and raid_healer.apl.json, and the gear set
+ui/holy_paladin/gear_sets/level60_phase1_synthetic.gear.json. Each request is the
 Restoration shaman's (tools/healbench/req/shaman_restoration*.json: the same raid buffs, debuffs,
 consumables and encounter) with the paladin, its synthetic set and its rotation. --out writes one request
 with the knobs below changed, for tuning on tools/healbench.
@@ -42,6 +43,10 @@ DEFAULTS = {
     'loh': 0.1,            # Lay on Hands at the lowest health under this (0 never)
     'fol_fill': 1,         # Flash of Light at the most hurt when it misses what it heals
     'hl_target': 'tank',   # where Holy Light goes: the tank, or the most hurt
+    'shock_fill': 0,       # Holy Shock at the most hurt when it misses what Holy Shock heals
+    'fit': 1.0,            # a rank goes out once what's missing is this share of what it heals
+    'mana_hl': 0,          # Holy Light only above this mana share (Flash of Light below it)
+    'aura': 'NoPaladinAura',  # our own aura (ConcentrationAura: the party resists 35% of the pushback)
 }
 
 
@@ -92,14 +97,21 @@ def AND(*vs):
     return {'and': {'vals': list(vs)}}
 
 
+FIT = [1.0]
+
+
 def fits(spell, t):
-    return cmp('OpGe', missing(t), expected(spell, t))
+    e = expected(spell, t)
+    if FIT[0] != 1:
+        e = {'math': {'op': 'OpMul', 'lhs': e, 'rhs': const(FIT[0])}}
+    return cmp('OpGe', missing(t), e)
 
 
 def rotation(k, role):
     hl = [int(x) for x in str(k['hl']).split(',') if x]
     fol = [int(x) for x in str(k['fol']).split(',') if x]
     hl_target = TANK if role == 'tank' and k['hl_target'] == 'tank' else MOST
+    FIT[0] = k['fit']
     prepull = []
     items = [{'action': {'autocastOtherCooldowns': {}}, 'notes': 'Trinkets, potions and Demonic Rune.'}]
     if k['loh']:
@@ -123,8 +135,13 @@ def rotation(k, role):
                           f'Divine Favor for the Holy Light rank {hl[0]} that comes next.'))
     if k['shock_tank'] and role == 'tank':
         items.append(cast(HOLY_SHOCK, TANK, fits(HOLY_SHOCK, TANK), 'Holy Shock at the tank when it misses its heal.'))
+    if k['shock_fill']:
+        items.append(cast(HOLY_SHOCK, MOST, fits(HOLY_SHOCK, MOST), 'Holy Shock at the most hurt when it misses what Holy Shock heals.'))
     for r in hl:
-        items.append(cast(HL[r], hl_target, fits(HL[r], hl_target), f'Holy Light rank {r}, the biggest that what is missing covers.'))
+        c = fits(HL[r], hl_target)
+        if k['mana_hl']:
+            c = AND(c, cmp('OpGt', {'currentManaPercent': {}}, const(k['mana_hl'])))
+        items.append(cast(HL[r], hl_target, c, f'Holy Light rank {r}, the biggest that what is missing covers.'))
     if k['fol_fill']:
         for r in fol:
             items.append(cast(FOL[r], MOST, fits(FOL[r], MOST), f'Flash of Light rank {r} at the most hurt.'))
@@ -157,7 +174,7 @@ def request(k, role):
         'rotation': rotation(k, role),
         'reactionTimeMs': sham.get('reactionTimeMs', 200),
         'distanceFromTarget': 20,
-        'holyPaladin': {'options': {}},
+        'holyPaladin': {'options': {'aura': k['aura']} if k['aura'] != 'NoPaladinAura' else {}},
     }
     req['raid']['parties'][0]['players'][0] = p
     return req
@@ -182,6 +199,8 @@ def main():
         os.makedirs('ui/holy_paladin/apls', exist_ok=True)
         apl = {'tank': 'tank_healer', 'raid': 'raid_healer'}[role]
         json.dump(rotation(k, role), open(f'ui/holy_paladin/apls/{apl}.apl.json', 'w'), indent=2)
+    gear = request(k, 'tank')['raid']['parties'][0]['players'][0]['equipment']
+    json.dump(gear, open('ui/holy_paladin/gear_sets/level60_phase1_synthetic.gear.json', 'w'))
 
 
 if __name__ == '__main__':
