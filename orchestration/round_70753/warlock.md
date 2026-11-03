@@ -2,7 +2,7 @@
 
 ## Final report (2026-11-03)
 
-Landed on master (merge of `round-70753-warlock`). Ledger, sources and method below.
+Landed on master at 65c6660 (merge of `round-70753-warlock`; full sim test suite green with -timeout 40m, tsc clean). Ledger, sources and method below.
 
 **What changed** (sources: Blizzard's development notes of 2026-11-02; the 70753 client and the 2026-11-03 hotfix carry
 none of the warlock damage lines, so these are notes-only values, standards 37):
