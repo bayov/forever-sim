@@ -135,3 +135,55 @@ Guardian's Favor, Stoicism, Divine Precision (Holy hit), Consecrated Ground, Hol
   are gone, since the Vigil itself is a heal.
 - The Ret Shock report hashes moved: Divine Favor's 4% of base mana (-0.01 DPS at 180 s) and Holy Shock's one
   shared cooldown timer, which renumbers the timers in the first iteration's log.
+
+## The rotations (tuned on tools/healbench)
+
+`orchestration/tools/healers/paladin_holy_requests.py` writes both presets from one set of knobs, and a
+variant with `--out FILE --set key=value`; each variant was benched against the default, 500 iterations, the
+`-carry` score (the damage carried at the death line), the bench's healer reaction time and cancelling. A
+carry moves about ±0.01 to 0.02 between seeds at 500 iterations; a difference under that is noise.
+
+### Tank healer (one healer on the tanks, the files' own tank time, and Onyxia at 180 and 300 sec)
+
+The first rotation: Oath of Light on the tank, Divine Favor before a Holy Light 9 the tank misses, Holy Light
+9, 8 and 7 at the tank, Flash of Light 6 at the most hurt, Holy Shock under 50% health, Flash of Light under
+35%, Lay on Hands under 10%. Carry, against it (each variant changes one knob):
+
+| Variant | Onyxia | Broodlord | Magmadar | Ragnaros | Onyxia 180 s | Onyxia 300 s |
+|---|---|---|---|---|---|---|
+| the first rotation | 1.096 | 0.723 | 1.635 | 0.523 | 1.011 | 0.898 |
+| Holy Light 9 and 8 | 1.090 | 0.734 | 1.641 | 0.510 | **1.031** | **0.922** |
+| Holy Light 9, 8 and 6 | 1.066 | 0.669 | 1.600 | 0.503 | 0.971 | 0.860 |
+| Holy Light 9 and 7 | 1.094 | 0.721 | 1.632 | 0.522 | | |
+| no Holy Shock under 50% | 1.079 | 0.725 | 1.646 | 0.511 | | |
+| Holy Shock under 35% | 1.094 | 0.725 | 1.692 | 0.508 | 1.019 | |
+| Flash of Light under 25% | 1.094 | 0.719 | 1.635 | 0.521 | | |
+| Flash of Light under 50% | 1.094 | 0.722 | 1.690 | 0.516 | 1.020 | |
+| no Divine Favor | 1.083 | 0.730 | 1.641 | 0.513 | 1.025 | 0.892 |
+| no Oath of Light | 1.070 | 0.742 | 1.669 | 0.484 | 0.944 | 0.779 |
+| no Lay on Hands | 1.094 | 0.717 | 1.635 | 0.523 | 1.007 | 0.889 |
+| Libram of Infusion (Holy Shock crit) | 1.096 | 0.723 | 1.625 | 0.512 | 1.010 | 0.875 |
+| Dwarf | 1.094 | 0.723 | 1.635 | 0.505 | 1.009 | 0.873 |
+| Undead | 1.085 | 0.719 | 1.650 | 0.490 | 1.000 | 0.880 |
+| no Flash of Light at the most hurt | 0.840 | 0.660 | 1.348 | 0.430 | | |
+| Holy Shock at the tank on cooldown | 1.073 | 0.684 | 1.641 | 0.509 | | |
+| Concentration Aura | | | | | 1.011 | 0.898 |
+
+On Holy Light 9 and 8 (the files' tank times never run the healer short of mana, so the long fight decides):
+
+| Variant | Onyxia | Broodlord | Magmadar | Ragnaros | Onyxia 300 s |
+|---|---|---|---|---|---|
+| Holy Light 9 and 8 | 1.090 | 0.734 | 1.641 | 0.510 | 0.922 |
+| Holy Light only above 30% mana, Flash of Light below | 1.090 | 0.734 | 1.641 | 0.510 | 0.960 |
+| Holy Light only above 50% mana | 1.090 | 0.734 | 1.641 | 0.510 | **1.006** |
+| Flash of Light 6 and 5 | 1.085 | 0.719 | 1.641 | 0.513 | 0.922 |
+| Flash of Light under 50% | 1.087 | 0.724 | 1.630 | 0.507 | 0.906 |
+| Holy Shock under 35% | 1.082 | 0.753 | 1.644 | 0.516 | 0.914 |
+| ranks cast at 90% of their size | 1.090 | 0.752 | 1.629 | 0.507 | 0.908 |
+
+- **Flash of Light at the most hurt between Holy Lights is most of the rotation**: without it the tank healer
+  carries 0.04 to 0.29 less. Flash of Light 6 with the Oath's 115 is a cheap heal for the tank's small holes.
+- **Oath of Light** is worth 0.03 to 0.04 on Onyxia and Ragnaros at their lengths and 0.07 to 0.12 at 180 and
+  300 sec; on the short Broodlord and Magmadar stints its global cooldown at the pull costs a little.
+- Concentration Aura changes nothing in the tank role: the boss never hits the healer.
+- Human is the race: 0.02 to 0.05 ahead of Dwarf and Undead at 300 sec (The Human Spirit's 10% Spirit).
