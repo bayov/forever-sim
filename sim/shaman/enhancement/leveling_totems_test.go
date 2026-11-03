@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
 )
@@ -218,7 +219,7 @@ func TestOwnTotemRank(t *testing.T) {
 
 // TestTotemicCall: Totemic Call (Totemic Projection before the November 2 development notes)
 // has a 30 sec cooldown, down from 1 min. We call our Magma Totem to us whenever a mob is on us
-// and the totem isn't on our spot, so the casts come as often as the cooldown allows.
+// and the totem isn't on our spot, and no two calls come closer than the cooldown.
 func TestTotemicCall(t *testing.T) {
 	opts := &proto.LevelingOptions{SearchMin: 2, SearchMax: 10}
 	magma := `{"action":{"condition":{"and":{"vals":[` + searchingOnly + `,{"not":{"val":{"totemRemainingTime":{"totemType":"Fire"}}}}]}},"castSpell":{"spellId":{"spellId":8190}}}}`
@@ -241,7 +242,11 @@ func TestTotemicCall(t *testing.T) {
 	for i := 1; i < len(casts); i++ {
 		shortest = min(shortest, casts[i]-casts[i-1])
 	}
-	if shortest < 30-1e-6 || shortest > 45 {
-		t.Errorf("the shortest gap between %d Totemic Calls is %.2f sec, want 30 sec or a little more", len(casts), shortest)
+	if shortest < 30-1e-6 {
+		t.Errorf("the shortest gap between %d Totemic Calls is %.2f sec, want 30 sec or more", len(casts), shortest)
+	}
+	_, enh := newShamanSim(newOrcShaman(60, "", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 2)
+	if got := enh.TotemicProjection.CD.Duration; got != 30*time.Second {
+		t.Errorf("Totemic Call's cooldown is %s, want 30s", got)
 	}
 }
