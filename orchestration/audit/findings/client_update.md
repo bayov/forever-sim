@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### client_update-20261103-1: Poised (rogue and druid, new in 70753) is missing: 10 Energy off the first ability at the pull
+- severity: low (estimated +0.1 to +0.3% DPS: 10 Energy once a fight, about a quarter of a builder in a 180 s fight; not measured, the sim has no Poised to toggle)
+- affects: every rogue request (Combat Swords/Daggers, Mutilate, Seal Fate, and the humanoid variants), druid Feral cat requests
+- found: 2026-11-03, master a0b306984d
+- evidence: client 1.60.1.70753 adds Poised for rogues (passive 1328825, level 18, class set 8) and druids (passive 1328829, level 32, class set 7): "While at maximum Energy, and out of combat, reduce the Energy cost of your next ability by 10." The buff (1328826 rogue, 1328827 druid): aura 107 misc 14 (flat power cost) bp −10, ProcCharges 1, DurationIndex 21 (until used). foreverchanges.pro "Build 1.60.1.70753" lists it as new. No `Poised` anywhere in `sim/`. Ledger rows ROG-U-01, DRU-U-15. Not in Blizzard's notes, and nothing is checkable in game until launch.
+- proposed fix: under Forever, give rogues (level 18+) and druids (level 32+) a one-charge Poised aura at the start of combat that takes 10 off the Energy cost of the next ability its class mask covers (EffectSpellClassMask: rogue 1328826 255727518 / 2099456 / 67108864, druid 1328827 8622080 / 536870912), gated on starting at max Energy; measure with `dps_beforeafter.sh` on the rogue and feral requests.
+- needs: worker fix
+
 ### client_update-20261030-2: Missile Barrage's "missiles fire every 0.5 sec" effect becomes a dummy in 70707
 - severity: low until verified (the sim's model matches the unchanged tooltip; if the server now fires the base 1 s ticks in a halved channel, arcane loses about half its Missile Barrage missiles)
 - affects: mage Arcane (and any build that casts Arcane Missiles on Missile Barrage)

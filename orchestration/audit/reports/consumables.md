@@ -1,14 +1,16 @@
-# Consumables pass 65 (master 796495d6f)
+# Consumables pass 66 (master a0b306984)
 
-Trigger: 21 watched files moved since b647a21ff (standards.md, assumptions_def.py, mksettings spec_*.go and specs.go, seven presets.ts, the new Demonology warlock gear set).
+Trigger: 7 watched files moved since 796495d6f (standards.md, assumptions_def.py, spec_hunter.go, presets.ts of hunter, Enhancement shaman, Restoration shaman and warlock) and client 1.60.1.70707 -> 1.60.1.70753.
 
 ## Verified
-- Diffs of every presets.ts and spec_*.go: only DistanceFromTarget changes (standards 33 caster distances), rotation and race notes, a Seal Fate Daggers rotation preset and comments. No Consumes, RaidBuffs, Debuffs or IndividualBuffs object changed; presets.ts still matches mksettings.
-- level60_phase1_synthetic_demonology.gear.json: same enchants as the shared set (1509, 1249057, 1254966, 1220624, 1219580), trinkets synthetic 997xxx.
-- assumptions_def.py: no buff, oil or imbue entry changed.
+- Hunter presets.ts and spec_hunter.go: the ranged hunters (BM, MM, Lone Wolf) lose the Goblin Sapper and keep the EZ-Thro Dark Bomb; Survival keeps the Sapper (presets.ts:333, mksettings line 113 conditional). This is the fix for consumables-20261101-1; both files agree. The finding was already resolved.
+- Warlock presets.ts: Affliction race Human -> Orc and comments only. No Consumes change.
+- Enhancement shaman presets.ts: leveling weights moved to leveling_weights.json. No consumes, buff or imbue change.
+- Restoration shaman presets.ts: new healing spec (out of scope). It carries a Brilliant Mana Oil mainhand imbue, Flask of Supreme Power and other consumes; not a Level 60 DPS preset, so not audited.
+- standards.md: one ruling note (Balance Subtlety 3). assumptions_def.py: Ice Lance text only.
 - scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty. Counts as before (minor-armor count 3, known: Dust Cloud; ref expects 2).
-- wago latest 1.60 build: 1.60.1.70707, unchanged.
-- Note for the open Sapper finding: BM hunter now starts at 12 yd (still outside the Sapper's 10 yd); casters at 20 to 36 yd. No new Sapper or Land Mine use.
+- Class branches: scan lists them as "ahead" only through stale copies (gotcha 1); no own commits audited.
+- Client 70707 -> 70753 (builddiff.py): forever_enchants.go 53 enchants checked, 0 changed. Consumable spell changes: Minor Speed 13889 8 -> 4, Improved Drains 403511 gains a second effect, new Speed 1328947 and Enchant Boots - Speed (item 289559, spell 1328948, enchant 8737). None used by a preset, mksettings or the sim (git grep).
 
 ## Open
-- consumables-20261101-1 (Sapper on ranged hunters, low) remains open.
+- None.

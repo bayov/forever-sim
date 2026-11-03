@@ -1,31 +1,45 @@
-# Mechanics pass 59 (2026-11-02, master 796495d6f)
+# Mechanics pass 60 (2026-11-03, master a0b306984)
 
-Range audited: b647a21ff..796495d6f. About 20 non-merge commits on watched paths, mostly the healing sim, the tank sim and the practice room. TASKS.md commits are healing / tank sim design and rulings. No `forever-update/*` merge in range.
+Range audited: 796495d6f..a0b306984 (9 non-merge commits on watched paths). Client 1.60.1.70707 -> 1.60.1.70753.
+Shared sims: `compare_runs`: 0 of 73 builds moved more than 0.5 DPS against the published report.
 
 ## Get current
 
-- Client: 1.60.1.70707, unchanged (probe 300).
+- Client: 1.60.1.70753 is new. Fetched (mechanics set) and diffed against 70707 (`wago.py diff --by-spell`).
 - Dev notes thread 2360696: still 8 posts, edit times unchanged (post 8 edited 2026-10-27T16:46:55Z).
-- Blue tracker: newest post 2026-10-31 02:17 (Midnight hotfixes); nothing new for Forever since 10-29 (live Nov 4 announcement).
+- Blue tracker: newest post 2026-10-31 02:17 (Midnight hotfixes); nothing new for Forever since 10-29.
+- No `forever-update/*` merge and no daily-update TASKS.md item in range.
+
+## Client 70753
+
+| What | Rows | Verdict |
+|---|---|---|
+| SpellMisc Attributes_14 0x40 | 1401 spells, nothing else changed on them | No mechanic. |
+| Moonkin Aura / Leader of the Pack / Camp Chair / Conviction | aura 52 or 57 -> 290 | Hotfix bake; the sim already gives all crit. Matches. |
+| Winter's Chill 12579 | 5 -> 20 | Matches the sim (20% a stack). |
+| Berserking, Human Spirit, Ruthless, Endurance, Wind Blessed, Energized, Touch of the Grave | 10 -> 15 sec; 5 -> 10%; 2 -> 1%; crit damage effect removed; 3 -> 2%; 100 -> 50%, 30 -> 15 sec; ICD 25 -> 15 sec | Dev notes post 7 / 8 values the sim already takes. Matches. |
+| Read Leyline 1259705 | cast 2000 -> 500 ms | New. Sim casts in 2 sec: mechanics-20261103-1 (low, no preset casts it). |
+| Minor Speed, Cultivation, 2H Weapon Spec 20111 threat, stance attributes, Execute Attr0 0x100 | | Movement, profession, threat or flags. No DPS. |
+| SpellItemEnchantment | 8214 Defense only | Tank only. |
+| CurvePoint / TraitDefinitionEffectPoints | talent-tree rows | Talents auditor. |
+| Class rows | Ice Lance (300%, category 19 cd on every rank), Arcane Blast, Frigid Power, Shifting Power, Primal Bite, paladin and druid talents, masks | Class / rank tuning auditors. Mage rows match the sim. |
+
+Open item: a full "70707 + hotfixes vs 70753" diff (to split new rows from baked hotfixes for class rows) was not finished; the hotfix fetch for 70707 spell tables takes over 15 minutes and was cut short.
 
 ## Code range
 
 | Commit | What | Verdict |
 |---|---|---|
-| 76ee911a7 | 75% armor cap in `GetArmorDamageModifier` | Classic cap (tier 3); 3 x (400 + 85 x 63) = 17,265 checks out. Boss armor is far below the cap, so no DPS preset moves. Verdict row added. |
-| d6f1333b7, 16df0b71c | Boss crit: `classic_crit` target option keeps Classic's rate | Off by default; Forever's no-crit-under-level rule unchanged for every preset. |
-| a517e7e01 | `OutcomeEnemyMeleeSpecial` (boss abilities on players: one roll for miss / dodge / parry / block, own crit roll, no crush) | Enemy-side only, tank sim. Boss off-hand shares the main-hand table. No DPS effect. |
-| 9c038d2f3, 6ca43223b, 27350b33a, 8dd2b8409 | Healing sim: health tracking, deaths, overhealing, raid damage | Gated on `Encounter.TrackHealth`; dead-player guards in spell / mana / auto attack only trigger when a player dies. `OnPeriodicDamageTaken` now skips auras ended mid-loop (safe). Healing threat uses the same effective-heal cap as before. |
-| 6265a9ab7 | Lightning Overload copies are procs | 408477 Attributes_3 = 0 on 70707 (no Not a Proc), tier 1. Matches. Verdict row added. |
-| e32660fe2 | Totem buff hold that ended before the pull drops at once | Correct: `latestHold` now starts at the earliest sim time, not 0. |
-| 5a3a75309, 9a8051fdc, 5075b45e0, 035c27633, 437c6fda9, 7c13620ee | Practice room hooks (manual control, `SkipPullStart`, `FireTotemInReach`, `PlaceTotem`) | Nil / false in normal sims; no mechanic change. Healing Stream Totem now has metrics (bookkeeping only). |
-| fa2d49997, 6c357819c | Caster and BM hunter distances (standards 33) | Positioning ruling, not a client value. |
-| 80fec473d | APL condition memoisation | Engine plumbing; energy thresholds unwrap the memo. No mechanic. |
+| d7541708d | Ice Lance shares Fire Blast's category 19 cooldown; Fingers of Frost buff 400669 | 70753 puts category 19 / 8000 ms on every Ice Lance rank (tier 1), confirming the 2026-11-02 ruling. 400669 is aura 262, 15 sec. Matches. |
+| 407f959a5 | Warrior Blood Craze (Forever triggers: Bloodthirst, hit > 20% max health) | 16487 e1 bp 20 triggers 16488 (6 sec, 2 sec period) on 70753. Healing only, no DPS. |
+| b33ad307d | Ranged hunters drop the Goblin Sapper; Affliction is an Orc | Preset choice (consumables-20261101-1), not a mechanic. |
+| 82b2b31b5, 42f982678, e41f082eb, fb9ae4b79, 374c437aa | Healing sim, raid damage shares, tank scores | `Share` path and tank-only skip apply only to healing / tank sims. No DPS preset moves (0 of 73). |
+| 9530cc9d1 | Practice room preloads | No mechanic. |
 
 ## Open findings
 
-mechanics-20261031-1 (Efficiency / Lacerate) and mechanics-20261027-2 (Amplify Curse / Bane of Agony) remain open; no druid, hunter or warlock code touched them in range.
+New: mechanics-20261103-1. Still open: mechanics-20261031-1 (Efficiency / Lacerate; 19416 unchanged on 70753), mechanics-20261027-2 (Amplify Curse; 18288 unchanged).
 
 ## Result
 
-No new findings.
+findings (1 new, low).

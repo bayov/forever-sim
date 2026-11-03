@@ -161,3 +161,10 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-02 19:05 | consumables | pass 65 | master 796495d6fd | quiet | No buff/consume changes; Sapper finding still open
 2026-11-02 19:05 | mechanics | pass 59 | master 796495d6fd | quiet | Client 70707 still newest; Lightning Overload proc change matches client
 2026-11-02 19:05 | fairness | pass 23 | master 796495d6fd | quiet | 0/73 off published; Orc Affliction evidence added to open fairness-20261101-2
+2026-11-03 01:10 | results | pass 72 | master a0b306984d | quiet | 72/73 within 0.15 of published; mana-tide meta finding still open
+2026-11-03 01:10 | rotations | pass 48 | master a0b306984d | quiet | Frostfire -10.9 from Ice Lance/Fire Blast shared CD, rotation order still wins; warlock Doom hold confirmed
+2026-11-03 01:10 | gear | pass 52 | master a0b306984d | quiet | Only an empty resto gear set deleted; full audit skipped
+2026-11-03 01:10 | consumables | pass 66 | master a0b306984d | quiet | 0 of 53 enchants changed on client 70753
+2026-11-03 01:10 | mechanics | pass 60 | master a0b306984d | 1 new finding | Read Leyline cast is 0.5s on 70753, sim has 2s (low)
+2026-11-03 01:10 | fairness | pass 24 | master a0b306984d | quiet | 73 builds within 0.5 DPS; top/bottom 1.49x
+2026-11-03 01:10 | client_update | pass 7 | master a0b306984d | 1 new finding | Poised (rogue/druid energy) missing from sim (low)

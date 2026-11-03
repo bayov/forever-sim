@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261103-1: Read Leyline is a 0.5 sec cast on client 70753; the sim casts it in 2 sec
+- severity: low (no report request or preset casts it: `grep -c 1259705 tools/dps_report/req/*.json` is 0 everywhere, and the race tables show Read Leyline at 0.0 DPS; it would matter for a High Order build whose APL casts it, about 1.5 sec of casting saved every 2 min)
+- affects: Skyborne High Order (shared racial; rotopt `leylineMana` knob, tools/rotopt/racials.go and hunter_ranged.go comments)
+- found: 2026-11-03, master a0b306984
+- evidence: tier 1, client 1.60.1.70753: SpellMisc of 1259705 CastingTimeIndex 5 -> 3 (SpellCastTimes 5 = 2000 ms, 3 = 500 ms); 70707 had 5. Dev notes post 7 only says "Read Leyline: Now castable while moving". sim/core/racials_forever.go:141 `CastTime: time.Second * 2`. Not checked whether this rode in on a 70707 hotfix (the hotfix fetch was cut short this pass); either way the newest tier 1 value is 0.5 sec. Sure: high on the client value.
+- proposed fix: sim/core/racials_forever.go:141 `CastTime: time.Millisecond * 500`, update the comments at :111, tools/rotopt/racials.go:10 and tools/rotopt/hunter_ranged.go:33 ("a 0.5 sec cast"). No published number moves.
+- needs: orchestrator fix
+
 ### mechanics-20261031-1: Efficiency should discount Lacerate (its class bit is in the mask)
 - severity: low (mana only; no report build both takes Efficiency and casts Lacerate: Marksmanship / Lone Wolf have Efficiency 5 but no Lacerate in their APLs, Survival casts Lacerate 1299332 but has Efficiency 0). Not simmed: no published number moves.
 - affects: hunter (any build with Efficiency and Lacerate)

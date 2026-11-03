@@ -4,7 +4,69 @@ From the fairness auditor. The question this answers: is every DPS spec simmed u
 
 Method: each class's shipped Level 60 build (gear, talents, APL), built with mksettings and run with wowsimcli. I read code and logs and did not use rotopt. Measurements change one input at a time against the same seed. Two switches existed only in my local worktrees and were never pushed: one turns weapon racials off, one skips set-bonus tiers.
 
-## 1. Cross-spec table (master 796495d: standards 33 caster distances (fa2d49997) and BM at 12 yd (6c357819c), Demonology's own set (be5126ccd, standards 34), the warrior, rogue and MM / Lone Wolf re-searches; full re-sweep 2026-11-02)
+## 1. Cross-spec table (master a0b3069: Ice Lance shares Fire Blast's cooldown (d7541708d), the warlocks' Bane of Doom hold (58a1c3593), the ranged hunters without the Sapper and Affliction as an Orc (b33ad307d); full re-sweep 2026-11-03)
+
+5000 iterations, seed 1, race overrides, on the a0b3069 requests and binary. "Before" is the 796495d table. The loop's 20k master run matches every meta within 0.5 (0 of 73 moved). `audit1b.py`: 20 of 20 pass.
+
+| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (796495d) |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Lone Wolf (hunter) | Night Elf | 1090.4 | Windshaper 1090.0 / Night Elf | Night Elf (1090.4) | 1089.9 | +0.5 | 1090.5 (-0.0%) |
+| 2 | Marksmanship | Orc | 1065.8 | Orc / Night Elf 1060.6 | Orc (1065.8) | 1066.3 | -0.5 | 1065.9 (-0.0%) |
+| 3 | Frostfire | Human | 1065.7 | Orc 1058.8 / Human | Human (1065.7) | 1064.3 | +1.4 | 1076.2 (-1.0%) |
+| 4 | Fire | Gnome | 1057.9 | Undead 1054.0 / Gnome | Human (1056.4) | 1057.1 | -0.7 | 1057.9 (+0.0%) |
+| 5 | Demonology | Orc | 1055.6 | Orc / Human 1051.7 | Orc (1055.6) | 1054.5 | +1.1 | 1053.9 (+0.2%) |
+| 6 | Beast Mastery | Orc | 1045.9 | Orc / Night Elf 1037.1 | Orc (1045.9) | 1046.5 | -0.6 | 1046.2 (-0.0%) |
+| 7 | Fury (two-hand) | Orc | 1045.7 | Orc / High Order 1039.8 | Orc (1045.7) | 1044.4 | +1.3 | 1045.7 (+0.0%) |
+| 8 | Fury (dual wield) | Orc | 1041.6 | Orc / High Order 1037.3 | Orc (1041.6) | 1041.5 | +0.1 | 1041.6 (+0.0%) |
+| 9 | Retribution | Undead | 1039.2 | Undead / Human 1032.7 | Undead (1039.2) | 1039.3 | -0.1 | 1039.2 (+0.0%) |
+| 10 | Survival | Orc | 1024.8 | Orc / Night Elf 1015.6 | Orc (1024.8) | 1024.6 | +0.2 | 1024.8 (+0.0%) |
+| 11 | Affliction | Orc | 1015.8 | Orc / Human 1013.9 | Orc (1015.8) | 1015.8 | +0.0 | 1013.7 (+0.2%) |
+| 12 | Arms | Undead | 1008.7 | Undead / High Order 1002.9 | Undead (1008.7) | 1008.7 | +0.0 | 1008.7 (+0.0%) |
+| 13 | Destruction | Orc | 997.3 | Orc / Human 994.5 | Orc (997.3) | 997.5 | -0.2 | 994.9 (+0.2%) |
+| 14 | Destruction Fire | Undead | 977.4 | Undead / Human 972.8 | Undead (977.4) | 977.1 | +0.3 | 976.7 (+0.1%) |
+| 15 | Shadow | Undead | 948.7 | Undead / Human 945.4 | Undead (948.7) | 948.7 | +0.0 | 948.7 (+0.0%) |
+| 16 | Frost | High Order | 943.6 | Undead 939.3 / High Order | High Order (943.6) | 944.7 | -1.1 | 943.6 (+0.0%) |
+| 17 | Feral | Night Elf | 942.4 | Windshaper 931.3 / Night Elf | Night Elf (942.4) | 942.5 | -0.1 | 942.4 (+0.0%) |
+| 18 | Arcane | Gnome | 939.2 | Undead 938.0 / Gnome | Gnome (939.2) | 937.5 | +1.7 | 939.2 (+0.0%) |
+| 19 | Balance | Night Elf | 891.9 | Tauren 882.5 / Night Elf | Night Elf (891.9) | 892.3 | -0.4 | 891.9 (+0.0%) |
+| 20 | Enhancement | Orc | 883.0 | Orc / Dwarf 876.7 | Orc (883.0) | 883.5 | -0.5 | 883.0 (+0.0%) |
+| 21 | Rogue Combat Daggers | Undead | 791.6 | Undead / Gnome 787.5 | Undead (791.6) | 790.8 | +0.8 | 791.6 (+0.0%) |
+| 22 | Rogue Combat Swords | Undead | 782.1 | Undead / High Order 775.6 | Undead (782.1) | 782.1 | +0.0 | 782.1 (+0.0%) |
+| 23 | Elemental | Windshaper | 769.0 | Windshaper / Dwarf 758.9 | Windshaper (769.0) | 768.5 | +0.5 | 769.0 (+0.0%) |
+| 24 | Smite | Undead | 761.2 | Undead / Gnome 735.5 | Undead (761.2) | 761.4 | -0.2 | 761.2 (+0.0%) |
+| 25 | Rogue Seal Fate Daggers | Undead | 752.9 | Undead / Gnome 748.8 | Undead (752.9) | 752.9 | +0.0 | 752.9 (+0.0%) |
+| 26 | Rogue Seal Fate Swords | Undead | 747.3 | Undead / High Order 739.8 | Undead (747.3) | 747.1 | +0.2 | 747.3 (+0.0%) |
+| 27 | Rogue Mutilate | Undead | 743.6 | Undead / High Order 736.1 | Undead (743.6) | 743.8 | -0.2 | 743.6 (+0.0%) |
+| 28 | Rogue Subtlety | Undead | 733.3 | Undead / Night Elf 730.1 | Undead (733.3) | 732.9 | +0.4 | 733.3 (+0.0%) |
+
+| Variant | Best race | DPS | Report's published (at its race) | Before |
+|---|---|---|---|---|
+| druid__balance-wrath | Night Elf | 853.7 | 853.0 (at Night Elf 853.7) | 853.7 |
+| hunter__beast-mastery-tallstrider | Orc | 988.1 | 988.5 (at Orc 988.1) | 988.9 |
+| hunter__beast-mastery-wolf | Orc | 1002.0 | 1001.8 (at Orc 1002.0) | 1002.3 |
+| hunter__marksmanship-tallstrider | Orc | 1033.7 | 1033.2 (at Orc 1033.7) | 1033.8 |
+| hunter__marksmanship-wolf | Orc | 1041.5 | 1040.9 (at Orc 1041.5) | 1041.6 |
+| hunter__survival-tallstrider | Orc | 990.1 | 990.7 (at Orc 990.1) | 990.1 |
+| hunter__survival-wolf | Orc | 998.9 | 998.6 (at Orc 998.9) | 998.9 |
+| paladin__level_60_shock_ret | Undead | 974.9 | 974.9 (at Undead 974.9) | 974.9 |
+| paladin__level_60_sub_holy | Undead | 1037.3 | 1038.1 (at Undead 1037.3) | 1037.3 |
+| priest__shadow-holy | Undead | 906.8 | 906.6 (at Undead 906.8) | 906.8 |
+| shaman__elemental-level60-mana-tide | Windshaper | 752.7 | 753.2 (at Windshaper 752.7) | 752.7 |
+| shaman__enhancement-imp-gw | Orc | 878.9 | 879.3 (at Orc 878.9) | 878.9 |
+| shaman__enhancement-mana-tide | Orc | 795.2 | 795.8 (at Orc 795.2) | 795.2 |
+| shaman__enhancement-water-shield | Orc | 834.0 | 834.8 (at Orc 834.0) | 834.0 |
+
+Top over bottom: 1.49x
+
+What moved / findings:
+
+- Every move over 0.5 traces to a commit that changed that build's request or class: Frostfire -10.5 (Ice Lance on Fire Blast's category 19 cooldown, d7541708d, user ruling 2026-11-02); Destruction +2.4, Affliction +2.1 (Orc, b33ad307d, and the Doom hold), Demonology +1.7, Destruction Fire +0.7 (Bane of Doom held into the 2 min cooldowns, 58a1c3593); the ranged hunters -0.1 to -0.8 (no Sapper, b33ad307d). Fire, Frost and Arcane did not move. No other class moved; the shared `sim/core` changes (heal-rank cap, Expected Healing value, raid damage shares, tank score) and Blood Craze touch no DPS build.
+- Published against current: every base build and variant within 1.7 at 5k (Arcane +1.7, Frostfire +1.4, Fury 2H +1.3); the 20k run has all 73 within 0.5, so these are 5k noise.
+- Best race: the report race is the best race everywhere but Fire (Gnome +1.5 at 5k, +0.7 at 20k last pass: noise). Affliction is now an Orc (fairness-20261101-2 resolved). Frostfire's best Horde race is now Orc (1058.8; Undead before). Top over bottom 1.49x.
+
+<details><summary>Previous §1 (796495d, 2026-11-02)</summary>
+
+### 1 (superseded 2026-11-03, a0b3069) Cross-spec table (master 796495d: standards 33 caster distances (fa2d49997) and BM at 12 yd (6c357819c), Demonology's own set (be5126ccd, standards 34), the warrior, rogue and MM / Lone Wolf re-searches; full re-sweep 2026-11-02)
 
 5000 iterations, seed 1, race overrides, on the 796495d requests and binary. "Before" is the fa865a3 table (the 5a6e9c6 sweep). The loop's 20k master run matches every meta within 0.5 (0 of 73 moved). `audit1b.py`: 20 of 20 pass (Demonology's 5a now passes on its own set).
 
@@ -64,6 +126,8 @@ What moved / findings:
 - Published against current: every base build and variant within 1.7 at 5k (Arcane +1.7, Fury 2H +1.3); the 20k master run has all 73 within 0.5, so these are 5k noise.
 - Best race: Fire's 5k shows Gnome +1.5 over Human, but 20k gives Gnome 1057.8 / Human 1057.1 (+0.7, no note). Affliction Orc over Human shrinks to +0.9 at 20k (fairness-20261101-2, still open). Top over bottom 1.49x.
 - fairness-20261101-1 (caster range) and fairness-20261031-1 (Demonology set) were resolved on master by standards 33 and 34; the new distances apply the rule evenly (Frostfire / Arcane / Elemental 20, Shadow 22, Fire / Frost / Smite / warlocks 30, Balance 36, MM / Lone Wolf 25, BM 12).
+
+</details>
 
 <details><summary>Previous §1 (fa865a3, 2026-11-02)</summary>
 

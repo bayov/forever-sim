@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "8153736d17aba93cc6237641d68b3208dcc1acc0"
+  "master": "a0b306984df7ec70b83298b08ecf9d0b365486ee"
  },
- "last_pass_at": "2026-10-30T07:00:55Z",
- "client_build": "1.60.1.70707",
+ "last_pass_at": "2026-11-03T00:56:37Z",
+ "client_build": "1.60.1.70753",
  "result": "findings",
- "note": "70707: the 10-27..29 server hotfixes are now in the client. It confirms the parked mage talent rework (Critical Mass 3, Incineration 5, Arcane Focus gone, Precision all spells, Accelerant on Arcane Wrath, Ice Lance 8 s on rank 1, tree moves). Hawk/TSA/Blood Fury already landed. Dev notes rate-limited.",
- "pass": 6,
- "checked_at": "2026-11-02T19:05:44Z"
+ "note": "70753: the launch realms' October 30 hotfix (druid and paladin trees, racial pass, mage changes, LotP and Moonkin Aura all crit) is now in the client; the sim had landed all of it. New: Poised (rogue, druid) missing. Dev notes: no new post since /8.",
+ "pass": 7,
+ "checked_at": "2026-11-03T01:16:35Z"
 }

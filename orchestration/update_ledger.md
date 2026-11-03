@@ -44,14 +44,14 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 | Warrior | 83 | 52 | 0 | 2 | 0 | 2 | 0 | 4 | 23 | 0 |
 | Paladin | 66 | 37 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
 | Hunter | 85 | 44 | 2 | 8 | 1 | 1 | 3 | 3 | 22 | 1 info |
-| Rogue | 68 | 38 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
+| Rogue | 69 | 38 | 0 | 1 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
 | Shaman | 103 | 58 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
 | Mage | 66 | 17 | 9 | 9 | 0 | 1 | 5 | 7 | 18 | 0 |
 | Warlock | 90 | 47 | 4 | 0 | 0 | 3 | 3 | 1 | 31 | 1 covered by another row |
-| Druid | 69 | 31 | 0 | 2 | 2 | 2 | 2 | 0 | 30 | 0 |
+| Druid | 70 | 31 | 0 | 3 | 2 | 2 | 2 | 0 | 30 | 0 |
 | Shared (races, mechanics, items) | 70 | 26 | 1 | 2 | 3 | 2 | 3 | 9 | 24 | 0 |
-| **Total** | **755** | **370** | **47** | **31** | **8** | **19** | **21** | **33** | **222** | **4** |
+| **Total** | **757** | **370** | **47** | **33** | **8** | **19** | **21** | **33** | **222** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -222,6 +222,17 @@ Dev notes: **new post /7** (2026-10-26 20:35, edited 21:09), the pre-launch raci
 | SHR-U-17 | client only | "Increased Hit Chance" item spells (15464-15468, 18066) gain a spell-hit effect (aura 55) equal to their melee hit | yes | new SpellEffect rows 1366107-1366113 | landed (gear hit is universal under Forever) | `sim/core/ruleset.go:52` |
 | SHR-U-18 | client only | Tauren Endurance's 2% crit-damage effect gets school mask 127; Earth Fury (Dwarf) loses its weapon requirement | n/a (the sim follows the 10-26 notes, which remove both; settled 2026-10-27) | 20550 effect 1 misc 0 → 127; SpellEquippedItems 255482 removed | not simulated on purpose | `sim/core/racials_forever.go:41,85` |
 | WL-U-18 | client only | Bane of Agony ranks gain a third effect (dummy, index 2) and the tooltip's amplify term moves from $w2 to $w3 | n/a (no build casts Amplify Curse) | SpellEffect 1366630, 1366638-42 added | n/a | evidence for finding client_update-20261027-3 |
+
+## Build 1.60.1.70753 (first seen 2026-11-03)
+
+70753 (foreverchanges.pro "The November 2 build") writes the launch realms' **October 30 hotfix** into the client tables: the druid and paladin tree rework, the 10-26 racial pass, and the mage, priest, warlock and hunter changes. Every one of those was already landed from the hotfix cache (the sim's comments cite "1.60.1.70707+hf"), and the client values now agree with the sim. `table_summary.py 70707 70753`: 1587 spells changed, 1374 of them only `SpellMisc.Attributes_14` 0 → 64 (no DPS reading); Trait* changes in the paladin (1100), druid (1089) and mage (1112) trees; ItemSparse 40 added (recipes, Pouch of Violet Dust, Enchant Boots - Speed), 4 changed; SpellItemEnchantment +1 (Speed 8%, boots); ChrRaces FactionID only. Diff: `$AUDIT_WORK/diffs/70707-70753.md` (`db2diff.py`). Dev notes: no new post (the latest is still /8, 2026-10-27); Blizzard has posted no notes for this build.
+
+Checked against the sim and matching (no rows, all already landed from the hotfix): Leader of the Pack (24932) and Moonkin Aura (24907) become aura 290, all crit (`sim/core/buffs.go:292`); Conviction aura 290 and 3 ranks, Holy Power loses its crit, Divine Precision 2 ranks, Champion of the Light 5 ranks with the Hammer of Wrath cast cut, Swift Judgement a Judgement of its own, Unsealed Wrath's seal-cost cut 0, the Echo auras 3 stacks for 15 sec, Two-Handed Weapon Specialization's tooltip and threat effect (`sim/paladin/`); the paladin trees' MaxRanks (Improved Seals 5, Spiritual Focus 5, Stoicism 2, Reverence 2, Shield Specialization 2, Iron Creed 3, new Turn Evil 2, Divine Strength 5, Boundless Light 2) all match `ui/core/talents/trees/paladin.json`; Shifting Power 8 sec and 1 rank, Predatory Discipline, Heart of the Wild / Furor swap (`sim/druid/`); Arcane Blast 12% of Intellect and 100% mana, Ice Lance 300% on frozen on every rank with the 8 sec cooldown, Winter's Chill 20%, Frigid Power 15%, Arcane Resilience 3 ranks (`sim/mage/`); Ruthless 1%, Artisan's Precision 1% hit, Endurance without crit damage, The Human Spirit 10%, Command (Orc pets 5%), Berserking 15 sec, Touch of the Grave 15 sec, Wind Blessed 2% (`sim/core/racials_forever.go`, `racials.go:184`). n/a: Primal Bite (bear) 42/62/77 at levels 40/50/60, Lacerate and Ferocious Bite gain a new rank 1 (rank 6 at 60 unchanged), Bloom, Naturalist on Wild Growth, Wild Growth's cast time, Holy Shield ranks and new rank 4, Righteous Fury's 33% threat, Sacred Duty, Oath of Light, Shieldsworn, the blessings of Light and Salvation removed, Judgement of Fury debuff 4 → 3 sec, Shadow Word: Death backlash 10% → 30% of max health (`sim/priest/shadow_word_death.go:15`'s comment still says 10%; the sim leaves the backlash out), Holy Binding, Improved Drains now also Drain Mana (Wrack dropped from its mask), Arctic Reach on Ice Lance, hunter traps share one category (Fire Traps → Hunter Traps), Lone Wolf death-persistent, Throw's cast time, Minor Speed 8 → 4%, Skyborne Attuned and Charged 1 hr, the Emerald Dream boss spells (Royal Defiance, Convoke the Spirits, Cosmic Wrath, Savage Slam, Dire Laceration), launch-celebration Violet Flames. Camp Chair (1229519) becomes one 2% all-crit aura 290, the same aura as Moonkin Aura and Leader of the Pack; the sim already gives it melee and spell crit and drops it under Moonkin Aura only (no report request uses the chair; notes.md already asks the stacking question).
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| ROG-U-01 | FC 2026-11-02 (70753), client | Poised (rogue, level 18, passive 1328825): while at max Energy and out of combat, the next ability costs 10 Energy less (aura 1328826, 1 charge) | **yes** (every rogue request opens at full Energy) | new spells 1328825 / 1328826: aura 107 misc 14 (flat cost) bp −10, ProcCharges 1, DurationIndex 21 | missing | no `Poised` in `sim/`; finding client_update-20261103-1 |
+| DRU-U-15 | FC 2026-11-02 (70753), client | Poised (druid, level 32, passive 1328829, aura 1328827): the same 10 Energy off the first ability | **yes** (feral cat requests) | new spells 1328827 / 1328829, same rows (class set 7) | missing | finding client_update-20261103-1 |
 
 ## Per-class ledgers
 

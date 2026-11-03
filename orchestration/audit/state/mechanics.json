@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "796495d6fdae92a540daec9976a468ef6a45a4f6"
+  "master": "a0b306984df7ec70b83298b08ecf9d0b365486ee"
  },
- "last_pass_at": "2026-11-02T18:52:07Z",
- "pass": 59,
- "result": "quiet",
- "note": "Pass 59: b647a21ff..796495d6f. Healing sim, tank sim (75% armor cap, classic_crit option, boss special outcome), practice room hooks, LO copies as procs (408477 Attr3=0 on 70707, matches), totem hold prepull fix. No DPS-preset mechanic moved; no findings. Client 70707 still newest (probe 300). Dev notes 8 posts unchanged; blue tracker nothing new for Forever since 10-29.",
- "client_build": "1.60.1.70707",
- "checked_at": "2026-11-02T18:52:07Z",
+ "last_pass_at": "2026-11-03T01:16:15Z",
+ "pass": 60,
+ "result": "findings",
+ "note": "Pass 60: 796495d6f..a0b306984. Client 70753 is a hotfix bake: shared rows (LotP/Moonkin 290, Winter's Chill 20, racials per post 7/8) all match the sim. New: Read Leyline 0.5 sec cast (mechanics-20261103-1, low). Ice Lance category 19 on all ranks confirmed. Dev notes 8 posts unchanged. 70707 hotfix-vs-70753 diff not finished (fetch too slow).",
+ "client_build": "1.60.1.70753",
+ "checked_at": "2026-11-03T01:16:35Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
@@ -25,5 +25,5 @@
   "newest_push": 113557,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-02T18:52:07Z"
+ "blue_tracker_seen": "2026-11-03T01:16:15Z"
 }
