@@ -67,6 +67,8 @@ type Druid struct {
 	Hurricane            []*DruidSpell
 	Innervate            *DruidSpell
 	InsectSwarm          []*DruidSpell
+	Lacerate             *DruidSpell
+	PrimalBite           *DruidSpell
 	Languish             *DruidSpell
 	Maul                 *DruidSpell
 	MaulQueueSpell       *DruidSpell
@@ -141,10 +143,6 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	}
 }
 
-// func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-// 	return druid.MaulReplaceMH(sim, mhSwingSpell)
-// }
-
 func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *DruidSpell {
 	prev := config.ExtraCastCondition
 	prevModify := config.Cast.ModifyCast
@@ -214,18 +212,17 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	}
 }
 
-// TODO: Classic feral tank
+// RegisterFeralTankSpells is the Forever bear's (bear.go, bear_attacks.go).
 func (druid *Druid) RegisterFeralTankSpells() {
-	// druid.registerBarkskinCD()
-	// druid.registerBearFormSpell()
-	// druid.registerDemoralizingRoarSpell()
-	// druid.registerEnrageSpell()
-	// druid.registerFrenziedRegenerationCD()
-	// druid.registerMangleBearSpell()
-	// druid.registerMaulSpell()
-	// druid.registerRakeSpell()
-	// druid.registerRipSpell()
-	// druid.registerSwipeBearSpell()
+	druid.registerBearFormSpell()
+	druid.registerMaulSpell()
+	druid.registerSwipeBearSpell()
+	druid.registerDemoralizingRoarSpell()
+	druid.registerEnrageSpell()
+	druid.registerFrenziedRegenerationSpell()
+	druid.registerLacerateSpell()
+	druid.registerPrimalBiteSpell()
+	druid.applyBearTalentProcs()
 }
 
 func (druid *Druid) Reset(_ *core.Simulation) {

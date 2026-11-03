@@ -22,6 +22,9 @@ type Weapon struct {
 	SwingSpeed           float64
 	NormalizedSwingSpeed float64
 	SpellSchool          SpellSchool
+	// Under Forever, Rage from its white hits at the two-hander's rate whatever its speed: a bear's
+	// swing (sim/druid/bear.go).
+	RageAsTwoHand bool
 }
 
 func (weapon *Weapon) DPS() float64 {

@@ -88,7 +88,12 @@ func (druid *Druid) registerFaerieFireSpell() {
 // caster Faerie Fire can be cast in Cat, Bear and Dire Bear Form too, where it "costs no resources"
 // (the development notes, orchestration/audit/ref/client_update/sources/devnotes.txt). It is the
 // same spell in every form: 505 armor for 40 sec (the same debuff as any other druid's, one per
-// target), a 1.5 sec global cooldown and no cooldown, 115 mana in caster and Moonkin Form.
+// target), 115 mana, a 1.5 sec global cooldown and no cooldown in caster and Moonkin Form. The
+// forms' passives change it on its class mask (Family 7, 1024): Cat Form's (3025) makes it free
+// (effect 2, SPELLMOD_COST -100%), gives it a 6 sec cooldown (effect 3, SPELLMOD_COOLDOWN +6000)
+// and takes 0.5 sec off its global cooldown (effect 4, SPELLMOD_GLOBAL_COOLDOWN -500), and Bear
+// and Dire Bear Form's (1178, 9635) make it free with the 6 sec cooldown and leave the 1.5 sec
+// global cooldown (wowsims/forever reads the same modifiers).
 //
 // Forever's Faerie Fire no longer resets the swing timer (development notes, 2026-10-01, build
 // 1.60.1.70170): the client dropped InterruptFlags 8, the auto attack reset, from every caster
@@ -98,8 +103,8 @@ func (druid *Druid) registerForeverFaerieFireSpell() {
 		return core.ForeverFaerieFireAura(target, druid.Level)
 	})
 
-	// The form the cost was last set for: free in Cat and Bear Form. A cast and the rotation's
-	// can-cast check both run ExtraCastCondition before they look at the cost.
+	// The form the cost was last set for. A cast and the rotation's can-cast check both run
+	// ExtraCastCondition before they look at the cost and the cooldown.
 	free := false
 
 	druid.FaerieFire = druid.RegisterSpell(Humanoid|Moonkin|Cat|Bear, core.SpellConfig{
@@ -116,12 +121,23 @@ func (druid *Druid) registerForeverFaerieFireSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			CD: core.Cooldown{
+				Timer:    druid.NewTimer(),
+				Duration: time.Second * 6, // in Cat, Bear and Dire Bear Form only, see ExtraCastCondition
+			},
+			// The cast takes its global cooldown before ExtraCastCondition runs.
+			ModifyCast: func(_ *core.Simulation, _ *core.Spell, cast *core.Cast) {
+				if druid.InForm(Cat) {
+					cast.GCD = time.Second
+				}
+			},
 		},
 		ExtraCastCondition: func(_ *core.Simulation, _ *core.Unit) bool {
 			if inForm := druid.InForm(Cat | Bear); inForm != free {
 				free = inForm
 				druid.FaerieFire.Cost.FlatModifier += core.TernaryInt32(free, -faerieFireManaCost, faerieFireManaCost)
 			}
+			druid.FaerieFire.CD.Duration = core.TernaryDuration(free, time.Second*6, 0)
 			return true
 		},
 

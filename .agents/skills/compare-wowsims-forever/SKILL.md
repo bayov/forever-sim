@@ -118,9 +118,11 @@ rotation gives a result that looks off.
 
 - **Synthetic gear.** Our items 990000 and up don't exist in theirs. `items.json` adds them, and `cmpsim` and
   `cmpstats` load it. `cmpsim` also registers what our synthetic gear does beyond stats, which `items.json` can't
-  say: the on-use trinkets (994202, 993016, 993117, 991018, the shamans' 990015 and 990115, and the casters' 996032, 997022 and 995034) and the hunter, warrior
-  and Enhancement sets' 2 piece. A new synthetic effect goes there
+  say: the on-use trinkets (994202, 993016, 993117, 991018, the shamans' 990015 and 990115, the casters' 996032, 997022 and 995034, the druids' 998015 and 998115 and the
+  paladins' 992015) and the hunter, warrior, Enhancement, Feral and Retribution sets' 2 piece. A new synthetic effect goes there
   (`theirs/cmpsim/main.go.txt`).
+- **Weapon DPS:** theirs' Cat and Bear Form paw takes the weapon's DPS from the item's `unroundedDps`, which
+  `items.json` sets for our synthetic weapons. Without it the paw hit for 1 plus attack power (Feral 164 DPS low).
 - **A set bonus theirs doesn't register** goes in as bonus stats (`SET_BONUS`): Grimstitch Armor's 1% hit as 10
   hit rating, and the Elemental set's The Spiritcaller's Storm the same.
 - **Enchants:** ours keys Forever's spell ids, theirs the enchant ids. The converter matches them by effect id, else
@@ -182,9 +184,11 @@ rotation gives a result that looks off.
   6 s Pyroblast after every one (about 180 DPS on Fire), Scorch took one cast too many to 5 Fire Vulnerability stacks
   and two for every refresh, Arcane Blast one too many to its stack target. The converter adds `not spellIsCasting(X)`
   to such a line (`SELF_SPENT`), or counts the ending cast's stack (`STACKS`: one stack fewer needed, no refresh while
-  it casts). For the same reason ours' `spellInFlight` (true from the cast's completion) is theirs' `spellInFlight or
-  spellIsCasting` (Frost's Ice Lance as the bolt lands; untranslated it never cast). A new class with a stacking or
-  consumed buff in a condition needs the same.
+  it casts). A Starfire on Clearcasting queued a second Starfire on the same proc (Balance Wrath: 12.3 Starfires on 9.5
+  procs, 9 DPS), so Starfire is in `SELF_SPENT` too. For the same reason ours' `spellInFlight` (true from the cast's
+  completion) is theirs' `spellInFlight or spellIsCasting`, for every class (Frost's Ice Lance as the bolt lands,
+  untranslated it never cast; Balance's Wrath until its Eclipse charges land, untranslated 6 Wraths too many). A new
+  class with a stacking or consumed buff in a condition needs the same.
 - **A channel and the wand:** theirs' pass goes on after a channel starts, so a wand line below it (Shoot has no
   GCD) went off in the same pass and cancelled Arcane Missiles (Arcane 300 DPS), and every Mind Flay (0 damage, the
   Shadow priest 330 DPS). The converter makes theirs' wand line wait while Arcane Missiles, Evocation or any channel
@@ -204,15 +208,26 @@ rotation gives a result that looks off.
   Forever's Elixir of Holy Power (21546). Theirs registers every rank our priest rotations cast. Ours rolls a DoT's
   hit but doesn't count it in the hit columns (`OutcomeMagicHitNoHitCounter`), so `breakdown.py` shows misses on
   Shadow Word: Pain and Devouring Plague only in theirs: compare their ticks per cast instead.
+- **Druid options:** our `balanceDruid` and `feralDruid` options to their `balanceDruid` and `feralCatDruid` (Innervate's
+  target, the cat's `prepullClearcasting`). Grovekeeper's Eclipse's 2 piece on the Balance set as 10 hit rating; the
+  Feral set's (1% attack and casting speed, head 998101) and the trinkets 998015 and 998115 in `cmpsim`. Theirs registers
+  every rank our druid rotations cast. Theirs autocasts Innervate never (only a rotation line casts it), ours at low mana.
+- **Paladin options:** theirs' paladin plays its rotation only (the seal and aura come from it, as in ours), so
+  `retributionPaladin` carries empty class options. Justice Battlegear's 2 piece (1% attack and casting speed, head
+  992001) and the trinket 992015 in `cmpsim`. Holy Shock is keyed by the damage row it casts in theirs: rank 4, 20930, is
+  25902. The rows' labels differ: ours' Seal of Command hit is 20947 and its Judgement 20966, theirs 20424 and 20968;
+  theirs splits Seal of Righteousness and Seal of Command into the swing's copy and the stored copy (tags 1311704 and
+  1311703); Shadow Oil is 1382 in ours, 350026 in theirs; Touch of the Grave 1260189 against 1260198.
 - **Theirs' idle pets** (the warlock's four demons) carry no average in their results: `run.py` and `breakdown.py`
-  read a missing one as 0.
+  read a missing one as 0. A cast on the caster itself (a potion) is filed under the caster's own target in theirs, so
+  `breakdown.py` counts casts on every target.
 
 ## Known differences
 
 As of 2026-11-02, on the report's requests: the hunter and rogue rows with ours at 0e87f3d and theirs at b70888a518, the
 warrior rows with ours at 7587a1a and theirs at 895cd67f99, the shaman rows with ours at dfa3b4a and theirs at 1496ed4db5, the
 mage rows with ours at e8d5656 and theirs at e2842f0a78, the warlock rows with ours at b17ce54 and theirs at bd8ef24803, the priest rows (2026-11-03) with ours at 3e52f94 and
-theirs at fbcd9a3d0f. The four pet rows (two since settled) add up to the BM cat's whole
+theirs at fbcd9a3d0f, the druid and paladin rows (2026-11-03) with ours at 6d9b4d7 and theirs at c7eafc85cd. The four pet rows (two since settled) add up to the BM cat's whole
 pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). The warrior rows add up to Arms' whole
 gap and leave 4 DPS of Fury's and Fury 2H's unexplained. The shaman rows add up to Enhancement's whole gap (33 to 37 DPS
 on the four presets) within about 2 DPS and Elemental's (5 to 6) within about 1. The mage rows add up to Frost's gap (78.5) within
@@ -221,7 +236,10 @@ on the four presets) within about 2 DPS and Elemental's (5 to 6) within about 1.
 warlock rows add up to the four presets' gaps (Affliction +18.9, Demonology +15.2, Destruction +15.0, Destruction Fire +15.4)
 within about 2 DPS, and the eight curse-duty variants run within the error of their presets. The priest rows add up to the
 three presets' gaps (Shadow −20.8, Shadow/Holy −18.4, Smite −1.7) within 0.1 DPS: matched, Shadow comes out 952.7 in both,
-every spell equal per hit and per cast. Engine timing (when each engine re-checks the rotation, Heroic Strike
+every spell equal per hit and per cast. The druid rows add up to Balance's gap (+4.1) and Balance Wrath's (+2.2) within
+about 0.6 DPS and Feral's (−29.8) within about 1; the Faerie Fire duty variants run within about 2 DPS of their presets.
+The paladin rows add up to the four presets' gaps (−0.5 to +6.2) within about 2 DPS, with large rows on both sides that
+cancel. Engine timing (when each engine re-checks the rotation, Heroic Strike
 1.4 casts more in ours on Arms) moves casts but nets about 0 DPS once the Windfury rule below is matched. A rerun should find
 these, so it can tell what is new. Keep the list current when one is settled.
 
@@ -236,9 +254,9 @@ these, so it can tell what is new. Keep the list current when one is settled.
 | Raptor Strike rank 8 | +96 (`hunter_raptor_31plus`) | +70 | Ruling |
 | AQ book ranks | Off under Forever | Hunter's top ranks only | Worth 30 to 36 DPS to ranged hunters |
 | Explosive reach | 10 yd, since 2026-11-01 | 10 yd | Settled (ours was a bug) |
-| Windfury Totem on a landed hit that deals no damage (Rend's application, Sunder Armor, Rupture's and Garrote's) | Rolls it (any landed main-hand hit, `sim/core/buffs.go` `CreateExtraAttackAuraCommon`) | Doesn't (`RequireDamageDealt`, the decoder's default, with a TODO to check in game; their own weapon-proc rule says the opposite) | Report assumption `wf_totem_nodamage` (one value, ours: Sunder Armor procs it in Classic; user ruling 2026-11-02). Arms 11.9 DPS (all of its gap: about 6 Rend applications a fight), Subtlety 2.5 |
+| Windfury Totem on a landed hit that deals no damage (Rend's application, Sunder Armor, Rupture's and Garrote's) | Rolls it (any landed main-hand hit, `sim/core/buffs.go` `CreateExtraAttackAuraCommon`) | Doesn't (`RequireDamageDealt`, the decoder's default, with a TODO to check in game; their own weapon-proc rule says the opposite) | Report assumption `wf_totem_nodamage` (one value, ours: Sunder Armor procs it in Classic; user ruling 2026-11-02). Arms 11.9 DPS (all of its gap: about 6 Rend applications a fight), Subtlety 2.5, Feral 3.4 (Rip's application, 2.1 procs a fight) |
 | Windfury Totem ICD, extra attacks and the swing, Eviscerate's attack power | Theirs' rules since 2026-10-31 | 100 ms, no swing reset, 4% a combo point | Settled, on `notes.md`'s To Verify list |
-| Off-GCD items (Thistle Tea) | Fire when the rotation says | Only at the next GCD check | A choice (engine). With Charge in the opener theirs walks in and starts its GCDs at 0.21 s, which shifts the trinket windows (Arms Slam +0.7, white hits −0.9 in ours: they cancel). Ours drinks Thistle Tea at 10 energy, which theirs never does: about 13.5 DPS on Combat Swords. Bloodrage at under 20 rage: 2.6 casts against 1.9 on Fury, worth nothing |
+| Off-GCD items (Thistle Tea) | Fire when the rotation says | Only at the next GCD check | A choice (engine). With Charge in the opener theirs walks in and starts its GCDs at 0.21 s, which shifts the trinket windows (Arms Slam +0.7, white hits −0.9 in ours: they cancel). Ours drinks Thistle Tea at 10 energy, which theirs never does: about 13.5 DPS on Combat Swords, 16.2 on Feral. Bloodrage at under 20 rage: 2.6 casts against 1.9 on Fury, worth nothing |
 | Raid damage taken | 2 hits a minute of 1,500 (standards 24) | None | A choice (the fight). The warrior's rage from it: Arms 8.5, Fury 15.7, Fury 2H 19.5 DPS. `--no-raid-damage` |
 | Flurry charges | Two white swings within 500 ms spend one charge (the Classic sims') | Every white swing spends one, and a missed Heroic Strike or Cleave (0183e67d2f, no log cited) | Report assumption `flurry_batch` (one value, user ruling 2026-11-02). Fury 11.4, Fury 2H 3.4 DPS |
 | Anger Management | 1 rage every 3 s (Forever's tooltip) | 1.5 every 5 s (the aura's amount, a power regen per 5 s) | Open: a log of its rage ticks settles it. Under 2.1 DPS |
@@ -246,22 +264,22 @@ these, so it can tell what is new. Keep the list current when one is settled.
 | Two-hand white crit rage | Twice the whole swing since 2026-11-01 | The same (7c28cfa731, Forever logs) | Settled (ours was a bug): it was −12.4 on Arms, −13 on Fury 2H |
 | Rotation re-checks and Heroic Strike during a cast | Re-checks at once on a Rage gain; a queued Heroic Strike goes off on a swing that lands during Slam's cast | Re-checks 200 ms after a Rage gain or a swing; drops the queued Heroic Strike during a cast (`hardcastRuns`); holds major cooldowns while a sequence step runs | Choices (engine). They move Arms' Heroic Strike (+0.8 casts in ours) and Bloodrage, but net 0 DPS: theirs spends the Rage on Execute |
 | Explosives' hit | 1% miss at most (an Era comment, `sim/core/consumes.go`) | The normal spell hit table | Open: the client row 13241 would say. Sapper +0.3 DPS |
-| Touch of the Grave's roll | On any ability cast (a guess, `racials_forever.go`) | On a landed hit that deals damage | Open. +0.4 DPS on Undead Arms |
+| Touch of the Grave's roll | On any ability cast (a guess, `racials_forever.go`) | On a landed hit that deals damage | Open. +0.4 DPS on Undead Arms, 1.1 on Undead Retribution |
 | Flametongue Totem beside Windfury Weapon (Enhancement) | Works (report assumption `sham_ftt_stack`, user ruling 2026-10-16) | Does nothing while any Windfury Totem stands, the shaman's own included, though its Windfury Weapon turns that totem off for it | Open, on notes.md's To Verify list. 16.2 DPS on Enhancement |
 | Lightning Bolt rank 10 | Base damage ×1.12 (`sham_lb_31plus`, user ruling 2026-10-15) | The client's | Ruling. Elemental 14.9, Enhancement 2.1 DPS |
 | Earth Shock rank 7 | Base damage ×1.08 (`sham_es7_tuning`, user ruling 2026-10-15) | The client's | Ruling. Enhancement 4.0 DPS |
-| Stormstrike's weapon speed | The weapon type's normalized speed + 0.3 (3.6 for a two-hander), fitted to beta Stormstrikes (shaman_audit.md 4.1) | The normalized speed | Ours on evidence. 4.6 DPS on Enhancement |
+| Stormstrike's weapon speed | The weapon type's normalized speed + 0.3 (3.6 for a two-hander), fitted to beta Stormstrikes (shaman_audit.md 4.1) | The normalized speed | Ours on evidence. 4.6 DPS on Enhancement. Holy Strike is the same effect: about 2.7 DPS on Retribution |
 | Searing Totem's attack rate | Every 2.5 s: 72 beta gaps averaged 2.53 s (the 2.2 s bolt and a pause) | Every 2.2 s, the bolt's cast time | Ours on evidence. +3.7 DPS for theirs on Elemental |
-| Haste and the GCD | 1.5 s (`haste_gcd`) | Spell haste shortens it (their TBC code) | Report assumption. Elemental 2.6, Enhancement 0.9 DPS for theirs; on Spellstone's 2% haste Destruction 8.8, Affliction 7.5, Demonology −1.3 (Bane of Doom's timing, below); Destruction Fire's Firestone has none |
+| Haste and the GCD | 1.5 s (`haste_gcd`) | Spell haste shortens it (their TBC code) | Report assumption. Elemental 2.6, Enhancement 0.9 DPS for theirs; on Spellstone's 2% haste Destruction 8.8, Affliction 7.5, Demonology −1.3 (Bane of Doom's timing, below); Destruction Fire's Firestone has none; Balance 4.0, Balance Wrath 4.4 (Moonfire and Insect Swarm); nothing on Retribution (−1.0 and −2.7, within the error) |
 | Magma Totem's last pulse | A 40 s totem pulses 20 times | About 19, by the counts (84 pulses a fight against our 89) | Engine timing, no log either way. About 3 DPS on Enhancement |
 | Greater Blessing of Might and Wisdom | Rank 2's 133 attack power and 40 MP5, a trainer rank (standards 8a) | Rank 1's 112 and 36, rank 2 counted as a book rank (b6657d3824, no item teaches it) | Ruling. `align.py` closes it (21 attack power, 4 MP5) |
 | Blood Fury's weapon damage | +10% of the weapon's average damage beside the +10% attack power (beta sheets and logs, `racials_forever.go`) | Attack power only, as the client's three auras read | Ours on evidence (their bug, not reported). 2.9 DPS on Orc Enhancement |
 | Crusader beside Windfury Weapon's strikes | Holy Strength lands at once, so the triggering hit's proc reaches both strikes | 10 ms later (no `TriggerImmediately`), after the strikes | Open, notes.md's "Server batch window". 0.6 DPS on Enhancement |
 | Lightning Overload's copies | Procs since 2026-11-02 (Judgement of Wisdom, Elemental Devastation and Water Shield don't hear them) | The same | Settled (ours was a bug, the client's proc attributes). About 0.1 DPS on Elemental |
-| Spell queue window on cooldowns | No spell queue: the rotation casts what is ready now | A spell within 400 ms of its own cooldown counts as ready and is queued, the rotation idling till then (`spell_queueing.go` `CanQueue`, wowsims' generic core, no Forever evidence) | A choice (engine). The game's queue hides latency, which a sim doesn't have, so a faithful queue changes nothing; theirs uses it to wait for a spell instead of casting another. Elemental casts 14.5 Lava Bursts against 13.7, and the idle costs theirs 0.8 DPS. It likely moves other cooldown spells in theirs too, unmeasured |
+| Spell queue window on cooldowns | No spell queue: the rotation casts what is ready now | A spell within 400 ms of its own cooldown counts as ready and is queued, the rotation idling till then (`spell_queueing.go` `CanQueue`, wowsims' generic core, no Forever evidence) | A choice (engine). The game's queue hides latency, which a sim doesn't have, so a faithful queue changes nothing; theirs uses it to wait for a spell instead of casting another. Elemental casts 14.5 Lava Bursts against 13.7, and the idle costs theirs 0.8 DPS. It likely moves other cooldown spells in theirs too, unmeasured. On Retribution theirs fits 0.3 more Judgements (off the GCD, 8 s), 0.4 more Exorcisms and 0.1 more Hammers of Wrath: about 5 DPS for theirs on Level 60, 4 on Holy Shock Ret |
 | Orc shaman base stats | 96 Stamina, 89 Intellect, 100 Spirit | 97, 87, 103 | Race offset ruling. `align.py` closes it |
 | Synthetic sets' 2 piece (1% attack speed) | Live | Registered by `cmpsim` (warrior head 991001, 991019, Enhancement hands 990007) | A translation: without it theirs was 5 to 8 DPS low |
-| Undead base stats | 82 Str, 129 Agi; a priest's Spirit 125 (Spirit offset 0) | 79, 128; 130 (Classic's +5) | Race offset ruling (notes.md To Verify). `align.py` closes it. The priest's 5 Spirit are worth 0.3 DPS on Smite |
+| Undead base stats | 82 Str, 129 Agi; a priest's Spirit 125 (Spirit offset 0) | 79, 128; 130 (Classic's +5) | Race offset ruling (notes.md To Verify). `align.py` closes it (on paladins too). The priest's 5 Spirit are worth 0.3 DPS on Smite |
 | Totem ranks | Trainer (Strength of Earth 42, Grace of Air 77) | AQ books' (53, 89) | No AQ books at launch (assumed) |
 | Ice Lance's spell power | 0.429, SoD's server value (`mage_ice_lance_coef`, user ruling 2026-10-15) | 1/7, TBC's, "until measured" | Ruling: the client has none. Frost 104, Frostfire 59 DPS |
 | Ice Lance's cooldown and Fire Blast | Every rank 8 s on category 19, shared with Fire Blast, since 2026-11-02 (`mage_ice_lance_cd`, user rulings 2026-10-30 and 2026-11-02) | The same | Settled by ruling: the client puts only rank 1 (1312002) in category 19 with Fire Blast (SpellCooldowns 101119). It was 12.8 DPS on Frostfire. Ours keyed Fingers of Frost by the talent's id (400670) until 2026-11-02; both now use the buff's, 400669 |
@@ -273,6 +291,15 @@ these, so it can tell what is new. Keep the list current when one is settled.
 | Bane of Doom's one tick and the 2 min cooldowns | The second Doom ticks at about 121 s, after Blood Fury and the trinket fire (both sims fire them at the first GCD check after 120 s) | Recast at about 60.2 s, so its tick lands just before them | Engine timing. Doom per tick 5% higher in ours on Destruction (3.4 DPS), under 1% on the others. Every other warlock spell deals the same per hit and casts the same with `haste_gcd` and the Conflagrate above matched |
 | The demon's start | The Succubus starts in melee range | Walks in from the warlock (`OtherActionMove`), about 1.6 swings fewer | A choice. About 1 pet DPS on every Succubus build |
 | Demonic Rune's health cost | Not a damage row | A damage row of the player's (hits and crits, about 10 DPS worth), left out of its DPS | Display only, no DPS. `breakdown.py` lists it as the item's tag 1 |
+| Raid damage taken on druids and paladins | Pushes back Balance's Starfire and Wrath | None | A choice (the fight). Balance 4.5, Balance Wrath 4.1 DPS; Feral and Retribution 0. `--no-raid-damage` |
+| Shadowmeld into Ravage | A Night Elf's Shadowmeld in combat opens Ravage (since 2026-10-23, from theirs' 30434eb7d9) | Ravage and Pounce need Prowl (baaefd61fd, 2026-10-25, no source) | Open, notes.md To Verify (Druid, with the rogue's Ambush). 9.3 DPS on Feral |
+| Wrath rank 8 | Base damage ×1.085 (`druid_wrath8_tuning`, user ruling 2026-10-15) | The client's | Ruling. Balance Wrath 6.9, Balance 1.8 DPS |
+| Innervate | Autocast at low mana (0.4 a fight on Balance) | Never autocast: only a rotation line casts it | A choice (engine). Balance 3.2 DPS for ours, Balance Wrath 0 |
+| Judgement of the Crusader on weapon strikes | The 161 Holy taken through the spell's coefficient: on Holy Strike through the weapon percent (0.429 × 50%), on the Seal of Righteousness proc inside its base | At the full coefficient after the done multipliers (ca0caa6155, unit tests only) | Open, notes.md To Verify (Paladin). About 7 DPS for theirs on Level 60 Retribution (Holy Strike 4.2, Seal of Righteousness 2.4, Consecration 0.7), worth 45.4 in ours and 53.3 in theirs |
+| Dragonbreath Chili from Seal of Righteousness hits | Any landed melee hit rolls it | The seal's hits are procs, which an aura without Can Proc From Procs (15852 has none) doesn't hear; Seal of Command's and Judgement of Command's carry Not a Proc in both | Open, notes.md To Verify (Paladin). 7.3 DPS for ours on Level 60 Retribution (6.2 procs a fight against 5.0) |
+| Faerie Fire in Cat Form | A 1.0 s GCD and a 6 s cooldown since 2026-11-03 (Bear Form: the 6 s cooldown) | The same (the form passives' spell modifiers, 3025, 1178, 9635) | Settled (ours was a bug: a 1.5 s GCD). 2.0 DPS on the Feral Faerie Fire duty |
+| Dragonfire and Caustic Smog Potions' crits | Neither the hit nor the ticks crit since 2026-11-03 | The same (the rows' Can't Crit, Attributes[2] 0x20000000) | Settled (ours was a bug: the hit and the ticks crit). 0.7 DPS on Retribution |
+| Hammer of Wrath's 0.4 s cast (Champion of the Light 3/5) | A swing due during the cast waits for its end | The cast resets the swing | Engine. On Holy Shock Ret ours casts 0.4 more Hammers (4.0 DPS) and theirs swings 0.5 more (2.1 with Windfury): about 2 DPS for ours |
 | A castSpell Shoot (the wand) | The rotation can cut it before its first shot, looking every 50 ms (`sim/core/wand.go`) | Always fires one shot, then stops (4fd24939d8); after Fire Blast its line goes off inside the GCD and holds the next cast for the shot | A choice (engine): the game has no such rule, any cast stops Shoot. Costs theirs Fire 21, Frostfire 14, Frost 13, Arcane 1 DPS; the priests' last line (Shoot when nothing else can be cast) Shadow 24.8, Shadow/Holy 21.9, Smite 6.7 (ours casts it 15 times on Smite and never shoots) |
 | Spell miss floor | 1% (Classic) | None (0301ba3421, "Forever has no 1% minimum miss", no source) | Open (orchestration/alignment_round_2026-10-23.md: not to change without new evidence). Arcane, at the cap, 7.8 DPS for theirs; Smite (18% Holy hit from Holy Precision against 17%) 5.5; Shadow, at the cap, 0 |
 | Inner Focus after a DoT (Smite) | The off-GCD Inner Focus goes off inside Shadow Word: Pain's GCD at the pull, so the Devouring Plague after it is free (0.8 a fight, 868 mana) | Fires it at the next GCD check, where Shadow Word: Pain takes it (1.2 a fight, 424 mana) | A choice (engine). The mana keeps ours on rank 8 Smite 5.6 casts longer: about 4 DPS for ours (5.9 with ours' Inner Focus kept for a Smite, less theirs' 1.9). Casting Inner Focus before Devouring Plague on purpose gains nothing (Smite 0, Shadow −1.7) |
@@ -280,7 +307,8 @@ these, so it can tell what is new. Keep the list current when one is settled.
 
 ## Adding a class
 
-`convert.py` maps rogues, hunters, warriors, shamans, mages, warlocks and priests, and stops on any other class. For a new one:
+`convert.py` maps every class the DPS Report has (rogues, hunters, warriors, shamans, mages, warlocks, priests, druids
+and paladins), and stops on any other. For a new one:
 
 1. Its options block (`class_opts`): their class proto (`$WSF/proto/<class>.proto`) against ours.
 2. Its consumables in `C`: weapon oils, poisons, imbues, class-only items.

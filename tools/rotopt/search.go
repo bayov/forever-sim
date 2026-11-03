@@ -127,7 +127,7 @@ func (s *searcher) scoreAll(pending []*pendingScore) []result {
 		slots <- struct{}{}
 		go func() {
 			defer wg.Done()
-			r.p.results[r.i], r.err = simulate(r.p.requests[r.i])
+			r.p.results[r.i], r.err = simulate(r.p.requests[r.i], objectiveFor(s.durations[r.i]))
 			<-slots
 		}()
 	}
@@ -151,7 +151,9 @@ func (s *searcher) scoreAll(pending []*pendingScore) []result {
 // combine is the mean over the fight lengths of a score whose runs are done.
 func (s *searcher) combine(p *pendingScore) result {
 	var sum, variance, mana, manaVariance, tto float64
+	var parts []tankPart
 	for _, r := range p.results {
+		parts = append(parts, r.tankParts...)
 		sum += r.dps
 		variance += r.stderr * r.stderr
 		mana += r.mana
@@ -164,11 +166,11 @@ func (s *searcher) combine(p *pendingScore) result {
 		mana: mana / n, manaStderr: math.Sqrt(manaVariance) / n,
 		tto:    tto / n,
 		health: p.health, armor: p.armor,
+		tankParts: parts,
 	}
 	if len(s.durations) == 1 {
 		r.leveling = p.results[0].leveling
 		r.tank = p.results[0].tank
-		r.tankRaw = p.results[0].tankRaw
 	}
 	return r
 }
