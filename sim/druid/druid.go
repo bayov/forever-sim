@@ -57,6 +57,7 @@ type Druid struct {
 	ReplaceBearMHFunc core.ReplaceMHSwing
 
 	Barkskin             *DruidSpell
+	Bash                 *DruidSpell
 	DemoralizingRoar     *DruidSpell
 	Enrage               *DruidSpell
 	FaerieFire           *DruidSpell
@@ -118,6 +119,10 @@ type Druid struct {
 
 	// Omen of Clarity's 10 sec cooldown.
 	omenICD core.Cooldown
+
+	// The bear's idols (items.go): Enraged Idol's extra Rage an Enrage tick, Idol of the Ursine Twins.
+	enrageTickBonus float64
+	ursineTwins     bool
 
 	// Furor gives back part of the Energy we left Cat Form with.
 	lastCatEnergy float64
@@ -222,6 +227,8 @@ func (druid *Druid) RegisterFeralTankSpells() {
 	druid.registerFrenziedRegenerationSpell()
 	druid.registerLacerateSpell()
 	druid.registerPrimalBiteSpell()
+	druid.registerBarkskinSpell()
+	druid.registerBashSpell()
 	druid.applyBearTalentProcs()
 }
 

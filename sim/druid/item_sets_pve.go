@@ -284,3 +284,10 @@ var ItemSetFeralSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Name:    "Feral Synthetic (Phase 1)",
 	Bonuses: grovekeeperFerocityBonuses,
 })
+
+// The Feral tank's synthetic set (tools/database/forever_synthetic_items_druid_tank.go), the cat's
+// bonuses.
+var ItemSetFeralTankSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Feral Tank Synthetic (Phase 1)",
+	Bonuses: grovekeeperFerocityBonuses,
+})

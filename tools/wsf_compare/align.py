@@ -40,8 +40,10 @@ PHYSICAL = [('Strength', 'Strength', True), ('Agility', 'Agility', True), ('Atta
 # Theirs' SpellDamage is both our SpellPower and our SpellDamage (spell damage only), which sheet() adds up.
 CASTER = [('Intellect', 'Intellect', True), ('Spirit', 'Spirit', True), ('SpellPower', 'SpellDamage', False), ('MP5', 'MP5', False)]
 STATS = CASTER if klass in ('ClassMage', 'ClassWarlock', 'ClassPriest') else PHYSICAL if klass == 'ClassHunter' else PHYSICAL[:3]
-if klass == 'ClassShaman':  # both: Elemental by its spell power, Enhancement by its attack power too
-    STATS = PHYSICAL[:3] + CASTER
+if klass in ('ClassShaman', 'ClassPaladin'):  # both: Elemental by its spell power, Enhancement and Retribution by
+    STATS = PHYSICAL[:3] + CASTER  # their attack power too (Retribution's Consecration and Exorcism by spell power)
+if klass == 'ClassDruid' and '"balanceDruid"' in open(src).read():
+    STATS = CASTER
 
 subprocess.run(CONV, check=True, capture_output=True)
 ours_bin = 'ours_aq_stats' if klass == 'ClassHunter' and os.environ.get('OURS_AQ', '1') == '1' else 'ours_stats'

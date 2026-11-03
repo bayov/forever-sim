@@ -376,9 +376,9 @@ func TestForeverExplosiveReach(t *testing.T) {
 }
 
 // Dragonfire Potion (1252554) lands 1 sec after use on every enemy: 280 Fire, then 35 every 2 sec
-// for 8 sec, and never misses. It reaches 12 yd. Caustic Smog Potion's cloud (1252543) lands
+// for 8 sec, and never misses or crits (the row's Can't Crit). It reaches 12 yd. Caustic Smog Potion's cloud (1252543) lands
 // after the missile's flight, at least 1.5 sec, and ticks 31 to 35 a second for 12 sec on every
-// enemy. Both share the potion cooldown.
+// enemy. Neither row can crit (Can't Crit), hit or tick. Both share the potion cooldown.
 func TestForeverOffensivePotions(t *testing.T) {
 	cases := []struct {
 		potion       proto.Potions
@@ -400,7 +400,8 @@ func TestForeverOffensivePotions(t *testing.T) {
 		}
 		spell := mcd.Spell
 		spell.Flags |= SpellFlagIgnoreResists
-		character.AddStatsDynamic(sim, stats.Stats{stats.SpellHit: -100 * SpellHitRatingPerHitChance, stats.SpellCrit: -100 * SpellCritRatingPerCritChance})
+		// No hit and every crit: neither potion misses or crits.
+		character.AddStatsDynamic(sim, stats.Stats{stats.SpellHit: -100 * SpellHitRatingPerHitChance, stats.SpellCrit: 100 * SpellCritRatingPerCritChance})
 
 		character.DistanceFromTarget = c.reach + 1
 		if spell.CanCast(sim, sim.GetTargetUnit(0)) {

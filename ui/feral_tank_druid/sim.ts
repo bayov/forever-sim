@@ -1,9 +1,9 @@
 import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import { Phase } from '../core/constants/other.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { Player } from '../core/player.js';
-import { Class, Debuffs, Faction, IndividualBuffs, PartyBuffs, PseudoStat, Race, RaidBuffs, Spec, Stat, TristateEffect } from '../core/proto/common.js';
+import { APLRotation_Type as APLRotationType } from '../core/proto/apl.js';
+import { Class, Faction, PartyBuffs, PseudoStat, Race, Spec, Stat } from '../core/proto/common.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import * as DruidInputs from './inputs.js';
@@ -21,88 +21,74 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 		Stat.StatStrength,
 		Stat.StatAgility,
 		Stat.StatAttackPower,
+		Stat.StatFeralAttackPower,
 		Stat.StatMeleeHit,
 		Stat.StatMeleeCrit,
-		Stat.StatExpertise,
 		Stat.StatArmor,
 		Stat.StatBonusArmor,
 		Stat.StatDefense,
 		Stat.StatDodge,
-		Stat.StatNatureResistance,
-		Stat.StatShadowResistance,
-		Stat.StatFrostResistance,
+		Stat.StatHealth,
 	],
-	epPseudoStats: [PseudoStat.PseudoStatMainHandDps, PseudoStat.PseudoStatMeleeSpeedMultiplier],
+	epPseudoStats: [PseudoStat.PseudoStatMeleeSpeedMultiplier],
 	// Reference stat against which to calculate EP. I think all classes use either spell power or attack power.
 	epReferenceStat: Stat.StatAttackPower,
 	// Which stats to display in the Character Stats section, at the bottom of the left-hand sidebar.
 	displayStats: [
+		Stat.StatHealth,
 		Stat.StatArmor,
 		Stat.StatBonusArmor,
+		Stat.StatStamina,
 		Stat.StatStrength,
 		Stat.StatAgility,
 		Stat.StatAttackPower,
+		Stat.StatFeralAttackPower,
 		Stat.StatMeleeHit,
 		Stat.StatMeleeCrit,
-		Stat.StatExpertise,
 		Stat.StatDefense,
 		Stat.StatDodge,
-		Stat.StatSpellHit,
-		Stat.StatSpellCrit,
-		Stat.StatShadowResistance,
 	],
 	displayPseudoStats: [PseudoStat.PseudoStatMeleeSpeedMultiplier],
 
 	defaults: {
+		race: Presets.OtherDefaults.race,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
-		// Default EP weights for sorting gear in the gear picker.
+		// Default EP weights for sorting gear in the gear picker: the tank stat prices of standards 36
+		// (1b's weights with Defense 1.5 a point, dodge 12 a 1%, bonus armor 0.1), in attack power.
 		epWeights: Stats.fromMap(
 			{
-				[Stat.StatArmor]: 3.5665,
-				[Stat.StatBonusArmor]: 0.5187,
-				[Stat.StatStamina]: 7.3021,
-				[Stat.StatStrength]: 2.3786,
-				[Stat.StatAgility]: 4.4974,
+				[Stat.StatStamina]: 2,
+				[Stat.StatStrength]: 2,
+				[Stat.StatAgility]: 2,
 				[Stat.StatAttackPower]: 1,
-				[Stat.StatMeleeHit]: 2.9282,
-				[Stat.StatMeleeCrit]: 1.5143,
-				[Stat.StatDefense]: 1.8171,
-				[Stat.StatDodge]: 2.0196,
-				[Stat.StatHealth]: 0.4465,
+				[Stat.StatFeralAttackPower]: 1,
+				[Stat.StatMeleeHit]: 20,
+				[Stat.StatMeleeCrit]: 28,
+				[Stat.StatBonusArmor]: 0.2,
+				[Stat.StatDefense]: 3,
+				[Stat.StatDodge]: 24,
 			},
 			{
-				[PseudoStat.PseudoStatMainHandDps]: 0.0,
-				[PseudoStat.PseudoStatMeleeSpeedMultiplier]: 0.0,
+				[PseudoStat.PseudoStatMeleeSpeedMultiplier]: 0,
 			},
 		),
 		// Default consumes settings.
 		consumes: Presets.DefaultConsumes,
 		// Default rotation settings.
+		rotationType: APLRotationType.TypeAPL,
 		simpleRotation: Presets.DefaultRotation,
 		// Default talents.
 		talents: Presets.DefaultTalents.data,
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
+		other: Presets.OtherDefaults,
+		encounter: Presets.EncounterLevel60Tank.encounter,
 		// Default raid/party buffs settings.
-		raidBuffs: RaidBuffs.create({
-			powerWordFortitude: TristateEffect.TristateEffectImproved,
-			shadowProtection: true,
-			giftOfTheWild: TristateEffect.TristateEffectImproved,
-			thorns: TristateEffect.TristateEffectImproved,
-			strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
-			battleShout: TristateEffect.TristateEffectImproved,
-			moonkinAura: true,
-		}),
+		raidBuffs: Presets.DefaultRaidBuffs,
 		partyBuffs: PartyBuffs.create({}),
-		individualBuffs: IndividualBuffs.create({
-			blessingOfKings: true,
-			blessingOfMight: TristateEffect.TristateEffectImproved,
-		}),
-		debuffs: Debuffs.create({
-			faerieFire: true,
-			exposeArmor: TristateEffect.TristateEffectImproved,
-		}),
+		individualBuffs: Presets.DefaultIndividualBuffs,
+		debuffs: Presets.DefaultDebuffs,
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.
@@ -132,12 +118,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 	},
 
 	presets: {
+		builds: [Presets.PresetBuildMaxThreat, Presets.PresetBuildBalanced, Presets.PresetBuildMaxSurvival],
 		// Preset talents that the user can quickly select.
-		talents: [...Presets.TalentPresets[Phase.Phase2], ...Presets.TalentPresets[Phase.Phase1]],
+		talents: Presets.TalentPresets,
 		// Preset rotations that the user can quickly select.
-		rotations: [...Presets.APLPresets[Phase.Phase2], ...Presets.APLPresets[Phase.Phase1]],
+		rotations: Presets.APLPresets,
 		// Preset gear configurations that the user can quickly select.
-		gear: [...Presets.GearPresets[Phase.Phase2], ...Presets.GearPresets[Phase.Phase1]],
+		gear: Presets.GearPresets,
 	},
 
 	autoRotation: player => {
@@ -151,7 +138,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 			defaultName: 'Bear',
 			iconUrl: getSpecIcon(Class.ClassDruid, 1),
 
-			talents: Presets.StandardTalents.data,
+			talents: Presets.DefaultTalents.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {

@@ -146,6 +146,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Feral-Phase1-AllItems-FeralTankSynthetic(Phase1)"
+ value: {
+  dps: 1259.45
+  tps: 909.02157
+ }
+}
+dps_results: {
+ key: "TestP1Feral-Phase1-AllItems-FeralTankSyntheticArmorTrinket(Phase1)-990815"
+ value: {
+  dps: 1271.859
+  tps: 917.77857
+ }
+}
+dps_results: {
  key: "TestP1Feral-Phase1-AllItems-FeralheartRaiment"
  value: {
   dps: 1096.15933

@@ -178,6 +178,14 @@ func (druid *Druid) registerBearFormSpell() {
 		},
 	})
 
+	// The shift: a bear's Rage starts at 0 in its form, and Furor gives 10 on top 20% of the time a
+	// point (17056 effect 0, 17057's 10 Rage). It can be cast from Bear Form too, which leaves the form
+	// and takes it again (Enrage and a queued Maul go with the old one), so a bear can shift before the
+	// pull for Furor's Rage. The form the tank starts the fight in isn't a shift and keeps its starting
+	// Rage (as wowsims/forever, 5e8c7f4efc).
+	furorChance := 0.2 * float64(druid.Talents.Furor)
+	furorMetrics := druid.NewRageMetrics(core.ActionID{SpellID: 17057})
+	shiftMetrics := druid.NewRageMetrics(actionID)
 	druid.BearForm = druid.RegisterSpell(Any, core.SpellConfig{
 		ActionID: actionID,
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
@@ -189,13 +197,33 @@ func (druid *Druid) registerBearFormSpell() {
 			DefaultCast: core.Cast{GCD: core.GCDDefault},
 			IgnoreHaste: true,
 		},
-		ExtraCastCondition: func(_ *core.Simulation, _ *core.Unit) bool {
-			return !druid.BearFormAura.IsActive()
-		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			druid.BearFormAura.Activate(sim)
+			if druid.BearFormAura.IsActive() {
+				if druid.EnrageAura != nil {
+					druid.EnrageAura.Deactivate(sim)
+				}
+				if druid.MaulQueueAura != nil {
+					druid.MaulQueueAura.Deactivate(sim)
+				}
+			} else {
+				druid.BearFormAura.Activate(sim)
+			}
+			if rage := druid.CurrentRage(); rage > 0 {
+				druid.SpendRage(sim, rage, shiftMetrics)
+			}
+			if furorChance > 0 && sim.Proc(furorChance, "Furor") {
+				druid.AddRage(sim, 10, furorMetrics)
+			}
 		},
 	})
+}
+
+// brutalityRage is Idol of Brutality's 2 Rage off Maul and Swipe (items.go).
+func (druid *Druid) brutalityRage() float64 {
+	if ranged := druid.Ranged(); ranged != nil && ranged.ID == IdolOfBrutality {
+		return 2
+	}
+	return 0
 }
 
 // applyBearTalentProcs is Natural Reaction's and Blood Frenzy's Rage in the bear forms: 5 Rage on
@@ -227,6 +255,7 @@ func (druid *Druid) applyBearTalentProcs() {
 
 // The bear's Demoralizing Roar rank 5 (9898): Forever's attack power cut (core, 204 at 60) for 30
 // sec on every enemy, 10 Rage, and 42 + 0.8 a level from 52 flat threat a target (its effect 1).
+// Clearcasting makes it free (16870's class mask takes in its 0x8).
 func (druid *Druid) registerDemoralizingRoarSpell() {
 	druid.DemoralizingRoarAuras = druid.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 		return core.ForeverDemoralizingRoarAura(target, druid.Level)
@@ -238,7 +267,7 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagAPL,
+		Flags:       core.SpellFlagAPL | SpellFlagOmen,
 		RageCost:    core.RageCostOptions{Cost: 10},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{GCD: core.GCDDefault},
@@ -259,7 +288,7 @@ func (druid *Druid) registerDemoralizingRoarSpell() {
 }
 
 // Enrage (5229): 10 Rage at once and 2 a second for 10 sec (effect 0, 20 tenths a 1 sec
-// tick), off the GCD on a 1 min cooldown, and armor from items down 16% in Dire Bear Form (27% in
+// tick; Enraged Idol 3), off the GCD on a 1 min cooldown, and armor from items down 16% in Dire Bear Form (27% in
 // Bear Form) while it lasts, the tooltip's (the client's 25503 states 26, on no form).
 func (druid *Druid) registerEnrageSpell() {
 	actionID := core.ActionID{SpellID: 5229}
@@ -277,16 +306,17 @@ func (druid *Druid) registerEnrageSpell() {
 				Period:   time.Second,
 				NumTicks: 10,
 				OnAction: func(sim *core.Simulation) {
-					druid.AddRage(sim, 2, rageMetrics)
+					druid.AddRage(sim, 2+druid.enrageTickBonus, rageMetrics)
 				},
 			})
 		},
-		OnExpire: func(_ *core.Aura, sim *core.Simulation) {
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			druid.RemoveDynamicEquipScaling(sim, stats.Armor, armorScale)
-			if tick != nil {
+			// The tenth tick lands as the aura runs out, so it's only cut short by an early end.
+			if tick != nil && sim.CurrentTime < aura.StartedAt()+aura.Duration {
 				tick.Cancel(sim)
-				tick = nil
 			}
+			tick = nil
 		},
 	})
 
@@ -331,11 +361,12 @@ func (druid *Druid) registerFrenziedRegenerationSpell() {
 				},
 			})
 		},
-		OnExpire: func(_ *core.Aura, sim *core.Simulation) {
-			if tick != nil {
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			// As Enrage's: the tenth tick lands as it runs out.
+			if tick != nil && sim.CurrentTime < aura.StartedAt()+aura.Duration {
 				tick.Cancel(sim)
-				tick = nil
 			}
+			tick = nil
 		},
 	})
 
@@ -350,5 +381,64 @@ func (druid *Druid) registerFrenziedRegenerationSpell() {
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			druid.FrenziedRegenerationAura.Activate(sim)
 		},
+	})
+}
+
+// Bash (5211 at 14, 6798 at 30, 8983 at 46: a 2, 3 or 4 sec stun): 10 Rage, 1 min cooldown, the
+// global cooldown, a melee attack that can miss, be dodged or parried, with 80% of its Rage back
+// when it fails (Attributes_1 0x8000000). Brutal Impact: 0.5 sec more stun and 15 sec less cooldown
+// a point (16940's curves: 500 and -15000 ms). It deals no damage and has no threat in the client,
+// and raid bosses can't be stunned, so it does nothing to a tank score; it's here for the APL and
+// the leveling sim. Clearcasting makes it free (16870's mask takes in its 0x2000).
+func (druid *Druid) registerBashSpell() {
+	ranks := []struct {
+		level   int32
+		spellID int32
+		stun    time.Duration
+	}{{14, 5211, 2 * time.Second}, {30, 6798, 3 * time.Second}, {46, 8983, 4 * time.Second}}
+	if druid.Level < ranks[0].level {
+		return
+	}
+	rank := ranks[0]
+	for _, r := range ranks {
+		if druid.Level >= r.level {
+			rank = r
+		}
+	}
+	actionID := core.ActionID{SpellID: rank.spellID}
+	impact := time.Duration(druid.Talents.BrutalImpact)
+	stuns := druid.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		return target.RegisterAura(core.Aura{
+			Label:    "Bash",
+			ActionID: actionID,
+			Duration: rank.stun + impact*500*time.Millisecond,
+		})
+	})
+
+	druid.Bash = druid.RegisterSpell(Bear, core.SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: core.SpellSchoolPhysical,
+		DefenseType: core.DefenseTypeMelee,
+		ProcMask:    core.ProcMaskMeleeMHSpecial,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagOmen,
+		RageCost: core.RageCostOptions{
+			Cost:   10,
+			Refund: 0.8,
+		},
+		Cast: core.CastConfig{
+			DefaultCast: core.Cast{GCD: core.GCDDefault},
+			IgnoreHaste: true,
+			CD:          core.Cooldown{Timer: druid.NewTimer(), Duration: time.Minute - impact*15*time.Second},
+		},
+		ThreatMultiplier: 1,
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMeleeSpecialHit)
+			if result.Landed() {
+				stuns.Get(target).Activate(sim)
+			} else {
+				spell.IssueRefund(sim)
+			}
+		},
+		RelatedAuras: []core.AuraArray{stuns},
 	})
 }

@@ -331,14 +331,16 @@ func (druid *Druid) applySavageFury() {
 // Natural Instinct: 10% a point more crit damage bonus on the melee abilities (its healing
 // part does nothing here). The modifier's class mask (1223242, word 0 0x839800) takes in Ravage
 // (0x10000), and Rip through the bit it shares with Ferocious Bite (0x800000), so Rip's ticks,
-// which crit under Forever, get it too.
+// which crit under Forever, get it too. The bear's attacks too: Maul and Swipe (0x800), and in word
+// 1 (0x540) Primal Bite (0x40) and Lacerate (0x100).
 func (druid *Druid) applyNaturalInstinct() {
 	points := float64(druid.Talents.NaturalInstinct)
 	if points == 0 {
 		return
 	}
 	druid.onInit("Natural Instinct", func() {
-		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.Ravage, druid.FerociousBite, druid.Rip} {
+		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.Ravage, druid.FerociousBite, druid.Rip,
+			druid.Maul, druid.SwipeBear, druid.PrimalBite, druid.Lacerate} {
 			if spell != nil {
 				spell.CritDamageBonus += 0.1 * points
 			}
