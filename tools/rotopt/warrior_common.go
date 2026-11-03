@@ -81,6 +81,9 @@ func warriorKnobs() []Knob {
 		// Reckless Swings (15 sec, off the GCD: the next 4 swings give 5 more Rage each) below this
 		// much Rage, 0 never. 100 is on cooldown.
 		{Name: "recklessSwingsRage", Default: 100, Min: 0, Max: 100, Step: 10},
+		// Heroic Strike above this much Rage while Reckless Swings is up (its swing gives 5 Rage
+		// back too), when that is below hsRage. 0 the same as hsRage.
+		{Name: "rsHsRage", Default: 0, Min: 0, Max: 90, Step: 10},
 		// Berserker Rage below this much Rage (it only gives Rage with the talent), 0 never.
 		{Name: "berserkerRageRage", Default: 70, Min: 0, Max: 100, Step: 10},
 		// Heroic Strike on the next swing above this much Rage, and 0/1 to keep queueing it in the
@@ -369,6 +372,9 @@ func potionLine(k Knobs, hold func(*proto.ActionID, bool) value) *proto.APLListI
 // heroicStrikeLine queues Heroic Strike with Rage to spare.
 func heroicStrikeLine(k Knobs) *proto.APLListItem {
 	when := ge(currentRage(), num(k["hsRage"]))
+	if k["rsHsRage"] > 0 && k["rsHsRage"] < k["hsRage"] {
+		when = or(when, and(auraIsActive(recklessSwings), ge(currentRage(), num(k["rsHsRage"]))))
+	}
 	if k["hsExecute"] == 0 {
 		when = and(when, not(executePhase()))
 	}

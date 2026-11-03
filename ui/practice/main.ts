@@ -293,6 +293,7 @@ class PracticeRoom {
 		this.room = new Room(this.canvas, 1.5, 2.0, 1.5, 2.3);
 		this.room.setGraphics(this.graphics);
 		this.perf = new Perf(this.room.renderer);
+		this.room.onPass = pass => this.perf?.gpuPass(pass);
 		this.pointer = new Pointer(this.root);
 		// A model built mid fight (a spell's effect) can cost a frame.
 		Model.onLoad = (fdid, ms) => !this.loadingModels && this.perf?.note('model', performance.now(), ms, String(fdid));
@@ -426,10 +427,11 @@ class PracticeRoom {
 			if (raidSize > 1) {
 				const crowd = new URLSearchParams(location.search).has('nocrowd') ? undefined : this.room.crowd;
 				effects.crowd = crowd;
+				this.room.crowdTotems = !!crowd;
 				const raid = new RaidTest(this.room.scene, this.room.camera, effects, crowd);
 				jobs.push(
 					raid
-						.load(raidSize, items, url => getJSON(url))
+						.load(raidSize, url => getJSON(url))
 						.then(() => (this.raid = raid))
 						.catch(e => console.warn('raid', e)),
 				);
@@ -1640,9 +1642,8 @@ class PracticeRoom {
 		perf?.part('move');
 		this.animateUnits(dt, wall);
 		perf?.part('units');
-		perf?.gpuBegin();
 		this.room.render();
-		perf?.gpuEnd();
+		perf?.gpuPass(undefined);
 		perf?.part('render');
 		this.updateHud();
 		this.drawStats(t);

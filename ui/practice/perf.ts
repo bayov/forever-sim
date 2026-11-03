@@ -4,8 +4,9 @@
 // animating, drawing the scene, the HUD and the combat text) and note what the renderer drew.
 // Things that often cause a hitch get noted with their time: a model or shader that loads mid
 // fight, a long task, Chrome's long animation frames with the scripts that ran in them, and drops
-// in the JS heap (a garbage collection). We also time the GPU's work on drawing the scene, when
-// the browser lets us (EXT_disjoint_timer_query_webgl2). When the fight ends, the report goes to the practice
+// in the JS heap (a garbage collection). We also time the GPU's work on drawing the scene by pass
+// (the shadows, the solid things, and the see-through things with the effects), when the browser
+// lets us (EXT_disjoint_timer_query_webgl2). When the fight ends, the report goes to the practice
 // server, which keeps it in ~/forever-practice/perf/.
 
 import type * as THREE from 'three';
@@ -13,6 +14,13 @@ import type * as THREE from 'three';
 // The parts of a frame we time, in the order they run.
 export const parts = ['inbox', 'move', 'units', 'render', 'hud', 'sct'] as const;
 export type Part = (typeof parts)[number];
+
+// The passes of drawing the scene that we time on the GPU, in the order they run.
+//
+// 'shadow' also holds what comes before the shadows: the renderer sends the frame's changed
+// vertices to the GPU and clears the picture.
+export const passes = ['shadow', 'opaque', 'transparent'] as const;
+export type Pass = (typeof passes)[number];
 
 // One frame: when it started, the time since the frame before, the time of each part, and the
 // renderer's numbers.
@@ -23,9 +31,12 @@ type Frame = {
 	parts: number[];
 	calls: number;
 	tris: number;
-	// The GPU's time for drawing the scene. It comes in a few frames later, so it stays -1 when
-	// the result never came (or the browser can't time the GPU).
+	// The GPU's time for drawing the scene, in all and by pass. It comes in a few frames later, so
+	// it stays -1 when a result never came (or the browser can't time the GPU).
 	gpu: number;
+	gpuPasses: number[];
+	// How many of the frame's passes are still out.
+	gpuOut: number;
 	programs: number;
 	geometries: number;
 	textures: number;
@@ -50,11 +61,30 @@ export class Perf {
 	private observers: PerformanceObserver[] = [];
 	private gl?: WebGL2RenderingContext;
 	private timer?: { TIME_ELAPSED_EXT: number; GPU_DISJOINT_EXT: number } | null;
-	private queries: { query: WebGLQuery; frame: Frame }[] = [];
+	private queries: { query: WebGLQuery; frame: Frame; pass: number; at: number }[] = [];
+	private frameNo = 0;
 	private freeQueries: WebGLQuery[] = [];
-	private open?: WebGLQuery;
+	private open?: { query: WebGLQuery; pass: number };
+	// The passes timed in the frame so far, which go out with the frame at its end.
+	private framePasses: { query: WebGLQuery; pass: number }[] = [];
 
 	constructor(readonly renderer: THREE.WebGLRenderer) {
+		// When the GPU drops the page's drawing (a lost context), the queries out are gone, and the
+		// timer is found again once it's back.
+		const canvas = renderer.domElement;
+		canvas.addEventListener('webglcontextlost', () => {
+			this.note('contextlost');
+			for (const q of this.queries) q.frame.gpuOut = -1;
+			this.queries = [];
+			this.freeQueries = [];
+			this.framePasses = [];
+			this.open = undefined;
+			this.timer = null;
+		});
+		canvas.addEventListener('webglcontextrestored', () => {
+			this.note('contextrestored');
+			this.timer = undefined;
+		});
 		this.observe('longtask', e =>
 			this.note(
 				'longtask',
@@ -96,28 +126,27 @@ export class Perf {
 		}
 	}
 
-	// gpuBegin and gpuEnd go around drawing the scene, to time the GPU's work on it.
-	gpuBegin() {
+	// gpuPass starts timing a pass of drawing the scene on the GPU, and ends the one before. With no
+	// pass it ends the last one, once the scene is drawn.
+	gpuPass(pass: Pass | undefined) {
 		if (this.timer === undefined) {
 			const gl = this.renderer.getContext();
 			this.gl = gl instanceof WebGL2RenderingContext ? gl : undefined;
 			this.timer = this.gl?.getExtension('EXT_disjoint_timer_query_webgl2') ?? null;
 		}
-		if (!this.timer || !this.gl || !this.current) return;
-		const query = this.freeQueries.pop() ?? this.gl.createQuery();
+		const gl = this.gl;
+		if (!this.timer || !gl) return;
+		if (this.open) {
+			gl.endQuery(this.timer.TIME_ELAPSED_EXT);
+			this.framePasses.push(this.open);
+			this.open = undefined;
+		}
+		if (!pass || !this.current) return;
+		const query = this.freeQueries.pop() ?? gl.createQuery();
 		if (!query) return;
-		this.gl.beginQuery(this.timer.TIME_ELAPSED_EXT, query);
-		this.open = query;
+		gl.beginQuery(this.timer.TIME_ELAPSED_EXT, query);
+		this.open = { query, pass: passes.indexOf(pass) };
 	}
-
-	gpuEnd() {
-		if (!this.open || !this.gl || !this.timer) return;
-		this.gl.endQuery(this.timer.TIME_ELAPSED_EXT);
-		this.pendingQuery = this.open;
-		this.open = undefined;
-	}
-
-	private pendingQuery?: WebGLQuery;
 
 	// readGpu picks up the GPU times that came in. A disjoint (the GPU did something else in
 	// between, like another tab) makes them all meaningless, so we drop them.
@@ -128,8 +157,24 @@ export class Perf {
 		const disjoint = gl.getParameter(timer.GPU_DISJOINT_EXT);
 		while (this.queries.length) {
 			const q = this.queries[0];
-			if (!disjoint && !gl.getQueryParameter(q.query, gl.QUERY_RESULT_AVAILABLE)) break;
-			if (!disjoint) q.frame.gpu = round(gl.getQueryParameter(q.query, gl.QUERY_RESULT) / 1e6);
+			if (!disjoint && !gl.getQueryParameter(q.query, gl.QUERY_RESULT_AVAILABLE)) {
+				// A result comes a few frames later. One that never comes (it happened in a headless
+				// run) would hold up all the others, so after a second we give up on it.
+				if (this.frameNo - q.at < 240) break;
+				q.frame.gpuOut = -1;
+				this.queries.shift();
+				gl.deleteQuery(q.query);
+				continue;
+			}
+			const f = q.frame;
+			if (disjoint) f.gpuOut = -1;
+			else if (f.gpuOut > 0) {
+				f.gpuPasses[q.pass] += gl.getQueryParameter(q.query, gl.QUERY_RESULT) / 1e6;
+				if (--f.gpuOut === 0) {
+					f.gpuPasses = f.gpuPasses.map(round);
+					f.gpu = round(f.gpuPasses.reduce((a, b) => a + b, 0));
+				}
+			}
 			this.queries.shift();
 			this.freeQueries.push(q.query);
 		}
@@ -169,16 +214,18 @@ export class Perf {
 			calls: info.render.calls,
 			tris: info.render.triangles,
 			gpu: -1,
+			gpuPasses: passes.map(() => 0),
+			gpuOut: 0,
 			programs: info.programs?.length ?? 0,
 			geometries: info.memory.geometries,
 			textures: info.memory.textures,
 			heapMb: heap === undefined ? undefined : round(heap / 1048576),
 		};
 		this.lastT = c.t;
-		if (this.pendingQuery) {
-			this.queries.push({ query: this.pendingQuery, frame });
-			this.pendingQuery = undefined;
-		}
+		frame.gpuOut = this.framePasses.length;
+		this.frameNo++;
+		for (const p of this.framePasses) this.queries.push({ ...p, frame, at: this.frameNo });
+		this.framePasses = [];
 		this.readGpu();
 		// A heap that shrank by more than 2MB was a garbage collection.
 		if (heap !== undefined) {
@@ -201,6 +248,9 @@ export class Perf {
 		const partSums = parts.map((_, i) => frames.reduce((a, f) => a + f.parts[i], 0) / Math.max(1, frames.length));
 		const timed = frames.filter(f => f.gpu >= 0);
 		const gpu = timed.length ? round(timed.reduce((a, f) => a + f.gpu, 0) / timed.length) : undefined;
+		const gpuPasses = timed.length ? Object.fromEntries(passes.map((p, i) => [p, round(timed.reduce((a, f) => a + f.gpuPasses[i], 0) / timed.length)])) : undefined;
+		const gl = this.renderer.getContext();
+		const info = gl.getExtension('WEBGL_debug_renderer_info');
 		// A stutter is a frame that came more than twice the usual frame time after the one before.
 		const slow = frames
 			.filter(f => f.gap > Math.max(2 * median, median + 8))
@@ -226,11 +276,20 @@ export class Perf {
 				'100ms': gaps.filter(g => g > 100).length,
 			},
 			partsAvgMs: { ...Object.fromEntries(parts.map((p, i) => [p, round(partSums[i])])), gpu },
+			// The GPU's time by pass, on average.
+			gpuPassesAvgMs: gpuPasses,
+			gpuInfo: {
+				renderer: info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
+				vendor: info ? gl.getParameter(info.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR),
+				canvas: [gl.drawingBufferWidth, gl.drawingBufferHeight],
+				antialias: gl.getContextAttributes()?.antialias,
+				samples: gl.getParameter(gl.SAMPLES),
+			},
 			slowest: slow,
 			notes: this.notes,
 			// Every frame, as [time, gap, cpu, ...parts, calls, triangles, heap MB, GPU ms].
-			frames: frames.map(f => [f.t, f.gap, f.cpu, ...f.parts, f.calls, f.tris, f.heapMb ?? 0, f.gpu]),
-			frameColumns: ['t', 'gap', 'cpu', ...parts, 'calls', 'tris', 'heapMb', 'gpu'],
+			frames: frames.map(f => [f.t, f.gap, f.cpu, ...f.parts, f.calls, f.tris, f.heapMb ?? 0, f.gpu, ...(f.gpu >= 0 ? f.gpuPasses : passes.map(() => -1))]),
+			frameColumns: ['t', 'gap', 'cpu', ...parts, 'calls', 'tris', 'heapMb', 'gpu', ...passes.map(p => `gpu_${p}`)],
 			...extra,
 		};
 	}

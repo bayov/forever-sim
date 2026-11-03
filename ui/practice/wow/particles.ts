@@ -204,7 +204,11 @@ class Batch {
 			if (n === 0) continue;
 			for (let k = 0; k < layout.length; k++) {
 				const size = layout[k][1];
-				(this.attrs[k].array as Float32Array).set(m.data[k].subarray(0, n * size), at * size);
+				// A plain loop: a subarray is a new object each time.
+				const from = m.data[k];
+				const to = this.attrs[k].array;
+				const o = at * size;
+				for (let j = 0; j < n * size; j++) to[o + j] = from[j];
 			}
 			at += n;
 		}
@@ -458,6 +462,16 @@ class Emitter {
 		this.batch?.changed(was, n);
 	}
 
+	// reset lets the particles go and starts over, for a model used again (model.ts recycle).
+	reset() {
+		for (const p of this.particles) freeParticles.push(p);
+		this.particles.length = 0;
+		this.carry = 0;
+		const was = this.count;
+		this.count = 0;
+		this.batch?.changed(was, 0);
+	}
+
 	dispose() {
 		this.disposed = true;
 		for (const p of this.particles) freeParticles.push(p);
@@ -480,6 +494,11 @@ export class Particles {
 
 	update(dt: number) {
 		for (const e of this.emitters) e.update(dt, this.emitting);
+	}
+
+	reset() {
+		this.emitting = true;
+		for (const e of this.emitters) e.reset();
 	}
 
 	dispose() {

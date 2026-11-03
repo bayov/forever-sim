@@ -9,10 +9,16 @@
 // Each unit still animates its own skeleton. We put every bone's skinning matrix (in its model's
 // space) into one big texture, and each copy of a part reads its unit's bones from there by an
 // offset, with its model's place in the world on top. A copy also carries its colors and
-// transparency, for the parts that animate them. Copies off screen are left out, unless they
+// transparency, for the parts that animate them.
+//
+// A character's skin is a picture we paint for its armor (compose.ts), so raiders in different
+// gear have different skins. The skins of one size go into one texture array, and each copy of a
+// body part reads its layer. So the bodies of one race and sex still draw in one call, whatever
+// they wear. Copies off screen are left out, unless they
 // cast a shadow onto what's on screen.
 
 import * as THREE from 'three';
+import { forget } from './compose';
 import { skins, type Model } from './model';
 
 // The bone texture is this many texels wide: four texels to a bone, so 256 bones a row.
@@ -30,6 +36,53 @@ type Skeleton = {
 	frame: number;
 };
 
+// The painted skins of one size, as layers of one texture array.
+// uploaded says the GPU has the array, so a new layer goes up on its own.
+type SkinArray = { width: number; height: number; layers: number; capacity: number; data: Uint8Array; texture: THREE.DataArrayTexture; uniform: { value: THREE.DataArrayTexture }; uploaded: boolean };
+
+// The masks have room for this many submeshes (a character model has up to about 150), 24 to a
+// float.
+const MASK_BITS = 192;
+
+function bitSet(mask: Float32Array, bit: number): boolean {
+	return Math.floor(mask[Math.floor(bit / 24)] / 2 ** (bit % 24)) % 2 === 1;
+}
+
+// copyLayer copies a painted skin into its layer, at half size when the array's layers are.
+function copyLayer(t: THREE.Texture, a: SkinArray, layer: number) {
+	const image = t.image as { width: number; height: number; data: Uint8ClampedArray };
+	const out = a.data;
+	const o = layer * a.width * a.height * 4;
+	if (image.width === a.width) {
+		out.set(image.data, o);
+		return;
+	}
+	// Each pixel is the average of the 2 by 2 it stands for.
+	const src = image.data;
+	const w = image.width;
+	for (let y = 0; y < a.height; y++) {
+		for (let x = 0; x < a.width; x++) {
+			const s = (y * 2 * w + x * 2) * 4;
+			const d = o + (y * a.width + x) * 4;
+			for (let c = 0; c < 4; c++) out[d + c] = (src[s + c] + src[s + 4 + c] + src[s + w * 4 + c] + src[s + w * 4 + 4 + c] + 2) >> 2;
+		}
+	}
+}
+
+// A body is a race and sex's character model, shared by the raiders of that race and sex in any
+// gear. Its batches hold every part any of them shows (shown), merged by how they look, and each
+// raider's mask hides the parts it doesn't show. So the bodies of one race and sex draw in a few
+// calls, however their gear differs.
+type Body = {
+	full: THREE.BufferGeometry;
+	// Each vertex's submesh.
+	sub: THREE.BufferAttribute;
+	shown: Set<number>;
+	// The skin batches in each batch, by its key.
+	parts: Map<string, Set<number>>;
+	batches: Map<string, Batch>;
+};
+
 // One kind of part, drawn for every copy.
 type Batch = {
 	mesh: THREE.Mesh;
@@ -38,6 +91,9 @@ type Batch = {
 	bones: THREE.InstancedBufferAttribute;
 	colors: THREE.InstancedBufferAttribute;
 	places: THREE.InstancedBufferAttribute;
+	layers: THREE.InstancedBufferAttribute;
+	// The copies' masks, for a body's batches (see Body).
+	masks?: THREE.InstancedBufferAttribute[];
 	count: number;
 	// How many of the crowd's meshes have a part in it.
 	users: number;
@@ -49,7 +105,10 @@ type Entry = {
 	model: Model;
 	mesh: THREE.SkinnedMesh;
 	skeleton: Skeleton;
-	parts: { batch: Batch; source: THREE.Material & { color?: THREE.Color; opacity: number } }[];
+	// layer is the part's skin in its batch's texture array, or 0.
+	parts: { batch: Batch; source: THREE.Material & { color?: THREE.Color; opacity: number }; layer: number }[];
+	// The submeshes a body shows (see Body), as 24 bits a float.
+	mask?: Float32Array;
 };
 
 const ids = new WeakMap<object, number>();
@@ -68,6 +127,12 @@ export class Crowd {
 	readonly group = new THREE.Group();
 	private entries: Entry[] = [];
 	private byModel = new Map<Model, Entry>();
+	// The texture arrays of painted skins, by size, and each skin's layer.
+	private skinArrays = new Map<string, SkinArray>();
+	private skinLayers = new Map<THREE.Texture, number>();
+	private skinUsers = new Map<THREE.Texture, Set<Model>>();
+	// The bodies shared by race and sex, by their vertices.
+	private bodies = new Map<number, Body>();
 	// The free places in the bone texture, as [first bone, count], in order.
 	private free: [number, number][] = [];
 	private skeletons = new Map<THREE.Skeleton, Skeleton>();
@@ -77,6 +142,10 @@ export class Crowd {
 	private texture = this.makeTexture(8);
 	private readonly uniform = { value: this.texture as THREE.Texture };
 	private frame = 0;
+
+	// useSkinArrays puts painted skins in texture arrays. Off, each skin draws on its own (to
+	// measure what the arrays save, with ?skinarrays=0).
+	useSkinArrays = new URLSearchParams(location.search).get('skinarrays') !== '0';
 
 	constructor(
 		readonly scene: THREE.Scene,
@@ -100,31 +169,152 @@ export class Crowd {
 			if (!geometry.index || !position || this.byModel.has(model)) continue;
 			const skeleton = this.skeletonOf(mesh.skeleton);
 			const mats = (Array.isArray(mesh.material) ? mesh.material : [mesh.material]) as Entry['parts'][number]['source'][];
-			const parts: Entry['parts'] = [];
-			for (const g of geometry.groups) {
+			const body = this.bodyParts(model, mats);
+			const parts: Entry['parts'] = body?.parts ?? [];
+			for (const g of body ? [] : geometry.groups) {
 				const mi = g.materialIndex ?? 0;
 				const source = mats[mi];
 				if (!source?.visible) continue;
 				const map = (source as THREE.MeshLambertMaterial).map;
-				const key = [idOf(position), idOf(geometry.index), g.start, g.count, mi, map ? idOf(map) : 0].join();
+				const skins = map ? this.skinArray(map) : undefined;
+				const key = [idOf(position), idOf(geometry.index), g.start, g.count, mi, skins ? `skins${skins.width}x${skins.height}` : map ? idOf(map) : 0].join();
 				let batch = this.batches.get(key);
 				if (!batch) {
 					const b = model.skin.batches[mi];
 					const solid = (model.m2.materials[b?.material ?? -1]?.blend ?? 0) <= 1;
-					batch = this.makeBatch(geometry, g.start, g.count, source, solid);
+					batch = this.makeBatch(geometry, g.start, g.count, source, solid, skins);
 					this.batches.set(key, batch);
 				}
-				parts.push({ batch, source });
+				parts.push({ batch, source, layer: skins ? this.layerOf(skins, map!, model) : 0 });
 			}
-				// The model's own mesh draws no more, but what hangs off its bones (its sockets) still
+			// The model's own mesh draws no more, but what hangs off its bones (its sockets) still
 			// follows them. A hidden mesh would hide those too, so it goes on a layer no camera
 			// looks at.
 			mesh.layers.set(31);
-			const entry = { model, mesh, skeleton, parts };
+			const entry: Entry = { model, mesh, skeleton, parts, mask: body?.mask };
 			this.entries.push(entry);
 			this.byModel.set(model, entry);
 			model.crowd = this;
 			for (const p of parts) this.grow(p.batch);
+		}
+	}
+
+	// bodyParts puts a character's body in its race and sex's shared batches (see Body), with the
+	// mask of its parts that show. It's undefined for a model that isn't a painted body.
+	private bodyParts(model: Model, mats: Entry['parts'][number]['source'][]): { parts: Entry['parts']; mask: Float32Array } | undefined {
+		if (!this.useSkinArrays) return undefined;
+		const subs = model.skin.submeshes;
+		if (subs.length > MASK_BITS || !mats.some(m => (m as THREE.MeshLambertMaterial).map?.userData.composed)) return undefined;
+		const full = model.fullGeometry;
+		const key = idOf(full.getAttribute('position'));
+		let body = this.bodies.get(key);
+		if (!body) {
+			// Each vertex's submesh, for the mask.
+			const n = full.getAttribute('position').count;
+			const sub = new Float32Array(n);
+			subs.forEach((m, i) => sub.fill(i, m.vertexStart, Math.min(n, m.vertexStart + m.vertexCount)));
+			body = { full, sub: new THREE.BufferAttribute(sub, 1), shown: new Set(), parts: new Map(), batches: new Map() };
+			this.bodies.set(key, body);
+		}
+		// The skin batches that show, each with the texture it draws with.
+		const shown: number[] = [];
+		const skinsOf = new Map<number, SkinArray>();
+		for (let i = 0; i < mats.length; i++) {
+			const m = mats[i];
+			if (!m?.visible || !model.skin.batches[i]) continue;
+			const map = (m as THREE.MeshLambertMaterial).map ?? null;
+			const skins = map ? this.skinArray(map) : undefined;
+			if (map?.userData.composed && !skins) return undefined;
+			if (skins) skinsOf.set(i, skins);
+			shown.push(i);
+		}
+		let grew = false;
+		for (const i of shown) {
+			if (body.shown.has(i)) continue;
+			body.shown.add(i);
+			grew = true;
+		}
+		// Each part's batch key: solid parts that look alike share one, and each see-through part has
+		// its own (they draw in their order). A part with another texture than the same part on
+		// another raider (a hair color) draws in a batch of its own.
+		const keyOf = (i: number) => {
+			const b = model.skin.batches[i];
+			const skins = skinsOf.get(i);
+			const map = (mats[i] as THREE.MeshLambertMaterial).map;
+			const look = skins ? `skins${skins.width}x${skins.height}` : map ? idOf(map) : 0;
+			if (mats[i].transparent) return `t${i}:${look}`;
+			return [b.material, b.textureCombo, b.textureCount, b.shader, b.color, b.weightCombo, b.transformCombo, b.coordCombo, b.priority, b.materialLayer, look].join();
+		};
+		const keys = new Map<number, string>();
+		for (const i of shown) {
+			const k = keyOf(i);
+			keys.set(i, k);
+			const list = body.parts.get(k) ?? new Set<number>();
+			body.parts.set(k, list);
+			if (!list.has(i)) {
+				list.add(i);
+				grew = true;
+			}
+			if (!body.batches.has(k)) {
+				const b = model.skin.batches[i];
+				const solid = (model.m2.materials[b.material]?.blend ?? 0) <= 1;
+				const batch = this.makeBatch(full, 0, 0, mats[i], solid, skinsOf.get(i), body.sub);
+				body.batches.set(k, batch);
+				this.batches.set(`body${idOf(full)}:${k}`, batch);
+				grew = true;
+			}
+		}
+		if (grew) this.rebuildBody(body, model);
+		const mask = new Float32Array(MASK_BITS / 24);
+		const parts: Entry['parts'] = [];
+		const done = new Set<string>();
+		for (const i of shown) {
+			const sub = model.skin.batches[i].submesh;
+			mask[Math.floor(sub / 24)] += (2 ** (sub % 24)) * (bitSet(mask, sub) ? 0 : 1);
+			const k = keys.get(i)!;
+			if (done.has(k)) continue;
+			done.add(k);
+			const map = (mats[i] as THREE.MeshLambertMaterial).map;
+			const skins = skinsOf.get(i);
+			parts.push({ batch: body.batches.get(k)!, source: mats[i], layer: skins && map ? this.layerOf(skins, map, model) : 0 });
+		}
+		return { parts, mask };
+	}
+
+	// rebuildBody makes the index of every part a body's raiders show, with each batch's range in
+	// it, in the order the parts draw (model.ts sorts them by layer).
+	private rebuildBody(body: Body, model: Model) {
+		const full = body.full;
+		const src = full.index!.array as Uint16Array | Uint32Array;
+		const byKey = new Map<string, [number, number][]>();
+		const order = [...full.groups].sort((a, b) => {
+			const ba = model.skin.batches[a.materialIndex!];
+			const bb = model.skin.batches[b.materialIndex!];
+			return ba.priority - bb.priority || ba.materialLayer - bb.materialLayer;
+		});
+		for (const g of order) {
+			const i = g.materialIndex ?? 0;
+			for (const [k, members] of body.parts) {
+				if (!members.has(i)) continue;
+				const list = byKey.get(k) ?? [];
+				byKey.set(k, list);
+				list.push([g.start, g.count]);
+			}
+		}
+		let total = 0;
+		for (const list of byKey.values()) for (const [, c] of list) total += c;
+		const out = src instanceof Uint32Array ? new Uint32Array(total) : new Uint16Array(total);
+		let at = 0;
+		const index = new THREE.BufferAttribute(out, 1);
+		for (const [k, list] of byKey) {
+			const start = at;
+			for (const [s, c] of list) {
+				out.set(src.subarray(s, s + c), at);
+				at += c;
+			}
+			const batch = body.batches.get(k)!;
+			batch.geometry.setIndex(index);
+			batch.geometry.setDrawRange(start, at - start);
 		}
 	}
 
@@ -215,6 +405,74 @@ export class Crowd {
 		return k;
 	}
 
+	// skinArray gives the texture array for a painted skin's size, or undefined for a texture that
+	// isn't a painted skin (or whose picture already went to the GPU, so we can't copy it).
+	private skinArray(t: THREE.Texture): SkinArray | undefined {
+		if (!t.userData.composed || !this.useSkinArrays) return undefined;
+		const image = t.image as { width: number; height: number; data: Uint8ClampedArray | null };
+		if (!image.data && !this.skinLayers.has(t)) return undefined;
+		// Skins over 1024 wide go in at half size, so a raid's take a quarter of the memory. A
+		// raider is at most a few hundred pixels tall on screen.
+		const half = image.width > 1024 ? 2 : 1;
+		const key = `${image.width / half}x${image.height / half}`;
+		let a = this.skinArrays.get(key);
+		if (!a) {
+			a = { width: image.width / half, height: image.height / half, layers: 0, capacity: 0, data: new Uint8Array(0), texture: undefined!, uniform: { value: null! }, uploaded: false };
+			this.growSkins(a, 8);
+			this.skinArrays.set(key, a);
+		}
+		return a;
+	}
+
+	// layerOf gives a painted skin its layer in the array, copying its picture in the first time.
+	// Once every unit given the skin is in the crowd, we let go of its own picture (the GPU never
+	// gets it), since a raid's skins were over 300MB.
+	private layerOf(a: SkinArray, t: THREE.Texture, model?: Model): number {
+		if (model) {
+			const users = this.skinUsers.get(t) ?? new Set<Model>();
+			this.skinUsers.set(t, users);
+			users.add(model);
+			if (users.size >= (t.userData.refs ?? 1) && (t.image as { data: unknown }).data) {
+				queueMicrotask(() => {
+					if ((this.skinUsers.get(t)?.size ?? 0) < (t.userData.refs ?? 1)) return;
+					(t.image as { data: unknown }).data = null;
+					forget(t);
+				});
+			}
+		}
+		const known = this.skinLayers.get(t);
+		if (known !== undefined) return known;
+		if (a.layers === a.capacity) this.growSkins(a, a.capacity * 2);
+		const layer = a.layers++;
+		copyLayer(t, a, layer);
+		this.skinLayers.set(t, layer);
+		// Before the array's first trip to the GPU, all of it goes. After, only the new layer.
+		if (a.uploaded) a.texture.addLayerUpdate(layer);
+		a.texture.needsUpdate = true;
+		return layer;
+	}
+
+	// growSkins makes room for more layers. The new array goes to the GPU whole.
+	private growSkins(a: SkinArray, capacity: number) {
+		const data = new Uint8Array(a.width * a.height * 4 * capacity);
+		data.set(a.data);
+		a.data = data;
+		a.capacity = capacity;
+		a.texture?.dispose();
+		const t = new THREE.DataArrayTexture(data, a.width, a.height, capacity);
+		t.colorSpace = THREE.SRGBColorSpace;
+		t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+		t.magFilter = THREE.LinearFilter;
+		t.minFilter = THREE.LinearMipmapLinearFilter;
+		t.generateMipmaps = true;
+		t.anisotropy = 4;
+		t.needsUpdate = true;
+		a.uploaded = false;
+		t.onUpdate = () => (a.uploaded = true);
+		a.texture = t;
+		a.uniform.value = t;
+	}
+
 	private makeTexture(height: number): THREE.DataTexture {
 		const t = new THREE.DataTexture(this.data, WIDTH, height, THREE.RGBAFormat, THREE.FloatType);
 		t.minFilter = t.magFilter = THREE.NearestFilter;
@@ -223,7 +481,7 @@ export class Crowd {
 		return t;
 	}
 
-	private makeBatch(source: THREE.BufferGeometry, start: number, count: number, sourceMaterial: Batch['material'], solid: boolean): Batch {
+	private makeBatch(source: THREE.BufferGeometry, start: number, count: number, sourceMaterial: Batch['material'], solid: boolean, skins?: SkinArray, sub?: THREE.BufferAttribute): Batch {
 		const geometry = new THREE.InstancedBufferGeometry();
 		for (const [name, a] of Object.entries(source.attributes)) geometry.setAttribute(name, a);
 		geometry.setIndex(source.index);
@@ -231,10 +489,18 @@ export class Crowd {
 		const bones = new THREE.InstancedBufferAttribute(new Float32Array(16), 1);
 		const colors = new THREE.InstancedBufferAttribute(new Float32Array(16 * 4), 4);
 		const places = new THREE.InstancedBufferAttribute(new Float32Array(16 * 16), 16);
-		for (const a of [bones, colors, places]) a.setUsage(THREE.DynamicDrawUsage);
+		const layers = new THREE.InstancedBufferAttribute(new Float32Array(16), 1);
+		for (const a of [bones, colors, places, layers]) a.setUsage(THREE.DynamicDrawUsage);
 		geometry.setAttribute('crowdBone', bones);
 		geometry.setAttribute('crowdColor', colors);
 		geometry.setAttribute('crowdPlace', places);
+		geometry.setAttribute('crowdLayer', layers);
+		const masks = [new THREE.InstancedBufferAttribute(new Float32Array(16 * 4), 4), new THREE.InstancedBufferAttribute(new Float32Array(16 * 4), 4)];
+		if (sub) {
+			geometry.setAttribute('crowdSub', sub);
+			geometry.setAttribute('crowdMaskA', masks[0].setUsage(THREE.DynamicDrawUsage));
+			geometry.setAttribute('crowdMaskB', masks[1].setUsage(THREE.DynamicDrawUsage));
+		}
 		geometry.instanceCount = 0;
 
 		const material = sourceMaterial.clone() as Batch['material'];
@@ -245,19 +511,27 @@ export class Crowd {
 		material.onBeforeCompile = (shader, renderer) => {
 			before.call(sourceMaterial, shader, renderer);
 			shader.uniforms.crowdBones = this.uniform;
-			shader.vertexShader = crowdVertex(shader.vertexShader);
+			shader.vertexShader = crowdVertex(shader.vertexShader, !!sub);
 			shader.fragmentShader = shader.fragmentShader
-				.replace('#include <common>', '#include <common>\nvarying vec4 vCrowdColor;')
+				.replace('#include <common>', '#include <common>\nvarying vec4 vCrowdColor;\nvarying float vCrowdLayer;')
 				.replace('#include <color_fragment>', '#include <color_fragment>\ndiffuseColor *= vCrowdColor;');
+			if (skins) {
+				// The skin comes from the copy's layer of the array, in place of the material's map.
+				shader.uniforms.crowdSkins = skins.uniform;
+				shader.fragmentShader = shader.fragmentShader
+					.replace('#include <common>', '#include <common>\nuniform highp sampler2DArray crowdSkins;')
+					.replace('#include <map_fragment>', '#ifdef USE_MAP\ndiffuseColor *= texture(crowdSkins, vec3(vMapUv, vCrowdLayer));\n#endif')
+					.replace('texture2D(map, wowEnv0 ? wowEnvUv : vMapUv)', 'texture(crowdSkins, vec3(wowEnv0 ? wowEnvUv : vMapUv, vCrowdLayer))');
+			}
 		};
-		material.customProgramCacheKey = () => `crowd-${key}`;
+		material.customProgramCacheKey = () => `crowd-${key}${skins ? '-skins' : ''}${sub ? '-mask' : ''}`;
 
 		const depth = new THREE.MeshDepthMaterial();
 		depth.onBeforeCompile = shader => {
 			shader.uniforms.crowdBones = this.uniform;
-			shader.vertexShader = crowdVertex(shader.vertexShader);
+			shader.vertexShader = crowdVertex(shader.vertexShader, !!sub);
 		};
-		depth.customProgramCacheKey = () => 'crowd-depth';
+		depth.customProgramCacheKey = () => `crowd-depth${sub ? '-mask' : ''}`;
 
 		const mesh = new THREE.Mesh(geometry, material);
 		mesh.frustumCulled = false;
@@ -266,7 +540,7 @@ export class Crowd {
 		mesh.customDepthMaterial = depth;
 		mesh.visible = false;
 		this.group.add(mesh);
-		return { mesh, geometry, material, bones, colors, places, count: 0, users: 0, castShadow: solid };
+		return { mesh, geometry, material, bones, colors, places, layers, masks: sub ? masks : undefined, count: 0, users: 0, castShadow: solid };
 	}
 
 	// grow makes room in a batch for one more copy.
@@ -278,6 +552,13 @@ export class Crowd {
 		b.bones = new THREE.InstancedBufferAttribute(new Float32Array(n), 1).setUsage(THREE.DynamicDrawUsage);
 		b.colors = new THREE.InstancedBufferAttribute(new Float32Array(n * 4), 4).setUsage(THREE.DynamicDrawUsage);
 		b.places = new THREE.InstancedBufferAttribute(new Float32Array(n * 16), 16).setUsage(THREE.DynamicDrawUsage);
+		b.layers = new THREE.InstancedBufferAttribute(new Float32Array(n), 1).setUsage(THREE.DynamicDrawUsage);
+		b.geometry.setAttribute('crowdLayer', b.layers);
+		if (b.masks) {
+			b.masks = b.masks.map(() => new THREE.InstancedBufferAttribute(new Float32Array(n * 4), 4).setUsage(THREE.DynamicDrawUsage));
+			b.geometry.setAttribute('crowdMaskA', b.masks[0]);
+			b.geometry.setAttribute('crowdMaskB', b.masks[1]);
+		}
 		b.geometry.setAttribute('crowdBone', b.bones);
 		b.geometry.setAttribute('crowdColor', b.colors);
 		b.geometry.setAttribute('crowdPlace', b.places);
@@ -315,10 +596,19 @@ export class Crowd {
 				k.frame = this.frame;
 				this.writeBones(k);
 			}
-			for (const { batch: b, source } of e.parts) {
+			for (const { batch: b, source, layer } of e.parts) {
 				if (!inView && !b.castShadow) continue;
 				const i = b.count++;
 				b.bones.array[i] = k.offset;
+				b.layers.array[i] = layer;
+				if (b.masks && e.mask) {
+					const ma = b.masks[0].array;
+					const mb = b.masks[1].array;
+					for (let j = 0; j < 4; j++) {
+						ma[i * 4 + j] = e.mask[j];
+						mb[i * 4 + j] = e.mask[4 + j];
+					}
+				}
 				(b.places.array as Float32Array).set(e.mesh.matrixWorld.elements, i * 16);
 				const c = b.colors.array;
 				const color = source.color;
@@ -337,15 +627,13 @@ export class Crowd {
 			b.geometry.instanceCount = b.count;
 			b.mesh.visible = b.count > 0;
 			if (b.count === 0) continue;
-			b.bones.clearUpdateRanges();
-			b.bones.addUpdateRange(0, b.count);
+			// The copies' data goes up whole: it's a few kilobytes a batch, and asking for only the
+			// part in use made five little objects a batch, every frame.
 			b.bones.needsUpdate = true;
-			b.colors.clearUpdateRanges();
-			b.colors.addUpdateRange(0, b.count * 4);
 			b.colors.needsUpdate = true;
-			b.places.clearUpdateRanges();
-			b.places.addUpdateRange(0, b.count * 16);
 			b.places.needsUpdate = true;
+			b.layers.needsUpdate = true;
+			if (b.masks) b.masks[0].needsUpdate = b.masks[1].needsUpdate = true;
 		}
 		this.texture.needsUpdate = true;
 	}
@@ -379,7 +667,24 @@ function shown(o: THREE.Object3D): boolean {
 
 // crowdVertex skins a copy by its unit's bones in the bone texture, in place of Three's skinning
 // (the crowd's meshes aren't SkinnedMeshes, so Three's skinning code is left out of their shader).
-function crowdVertex(src: string): string {
+//
+// A body's copies (masked) also hide the submeshes their raider doesn't show: those vertices go
+// in front of the camera's near plane, so their triangles are cut away, and skip the skinning.
+function crowdVertex(src: string, masked = false): string {
+	const mask = masked
+		? /* glsl */ `
+attribute float crowdSub;
+attribute vec4 crowdMaskA;
+attribute vec4 crowdMaskB;
+bool crowdShows() {
+	float word = floor(crowdSub / 24.0);
+	float bit = crowdSub - word * 24.0;
+	vec4 m = word < 4.0 ? crowdMaskA : crowdMaskB;
+	float w = mod(word, 4.0);
+	float bits = w < 1.0 ? m.x : w < 2.0 ? m.y : w < 3.0 ? m.z : m.w;
+	return mod(floor(bits / exp2(bit)), 2.0) > 0.5;
+}`
+		: '';
 	return src
 		.replace(
 			'#include <skinning_pars_vertex>',
@@ -388,7 +693,9 @@ attribute vec4 skinWeight;
 attribute float crowdBone;
 attribute vec4 crowdColor;
 attribute mat4 crowdPlace;
-uniform highp sampler2D crowdBones;
+attribute float crowdLayer;
+varying float vCrowdLayer;
+uniform highp sampler2D crowdBones;${mask}
 varying vec4 vCrowdColor;
 mat4 crowdBoneMatrix(float i) {
 	int j = int(i) * 4;
@@ -399,8 +706,9 @@ mat4 crowdBoneMatrix(float i) {
 		)
 		.replace(
 			'void main() {',
-			/* glsl */ `void main() {
+			/* glsl */ `void main() {${masked ? '\n\tif (!crowdShows()) {\n\t\tgl_Position = vec4(0.0, 0.0, -2.0, 1.0);\n\t\treturn;\n\t}' : ''}
 	vCrowdColor = crowdColor;
+	vCrowdLayer = crowdLayer;
 	mat4 crowdSkin = crowdPlace * (skinWeight.x * crowdBoneMatrix(crowdBone + skinIndex.x) + skinWeight.y * crowdBoneMatrix(crowdBone + skinIndex.y)
 		+ skinWeight.z * crowdBoneMatrix(crowdBone + skinIndex.z) + skinWeight.w * crowdBoneMatrix(crowdBone + skinIndex.w));
 	vec3 crowdNormal = (crowdSkin * vec4(normal, 0.0)).xyz;`,

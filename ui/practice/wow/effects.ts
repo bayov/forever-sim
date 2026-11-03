@@ -122,6 +122,9 @@ function kits(sounds: KitSound[] | undefined): KitSound[][] {
 // hold until it's stopped, then its decay.
 type Live = { model: Model; km: KitModel; hold: boolean; until: number; stopped: boolean; ending?: boolean; fadeUntil?: number };
 
+const missileStep = new THREE.Vector3();
+const noseFirst = new THREE.Vector3(1, 0, 0);
+
 export class Effects {
 	private live: Live[] = [];
 	private lastImpact = new Map<string, number>();
@@ -134,7 +137,7 @@ export class Effects {
 	private imbues = new Map<string, { name: string; models: { model: Model; km: KitModel }[] }>();
 	private clock = 0;
 	melee: MeleeSounds = {};
-	// Where the raid test's casters' effects draw together.
+	// Where the raid test's effects draw together.
 	crowd?: Crowd;
 	steps?: SoundRef[];
 	grunts?: SoundRef[];
@@ -148,7 +151,7 @@ export class Effects {
 
 	// attach loads an effect model onto a unit's attachment point (or its feet). It holds until
 	// stopped, or plays once.
-	private async attach(unit: Model | undefined, km: KitModel, hold: boolean, crowd = false): Promise<Live | undefined> {
+	private async attach(unit: Model | undefined, km: KitModel, hold: boolean): Promise<Live | undefined> {
 		if (!unit) return undefined;
 		const model = await Model.load(km.fdid).catch(e => {
 			console.warn('effect model', km.fdid, e);
@@ -161,7 +164,8 @@ export class Effects {
 		if (km.yaw) model.root.rotation.y = km.yaw;
 		point.add(model.root);
 		model.enableParticles(this.world);
-		if (crowd) this.crowd?.add([model]);
+		// In the raid test the effects draw in the crowd, yours with the casters' same ones.
+		this.crowd?.add([model]);
 		const first = playEffect(model, km, hold);
 		// A one-shot with no animation of its own shows for a second.
 		const seconds = hold ? Infinity : first > 0 ? first : 1;
@@ -182,9 +186,7 @@ export class Effects {
 
 	// event plays one visual event on a unit's model: its sounds and effect models. A held event
 	// keeps its models and loop sounds (in `loops`) until stopped.
-	//
-	// With `crowd` the models draw in the crowd (crowd.ts), for the raid test's casters.
-	async event(ev: VisualEvent, unit: Model | undefined, hold: boolean, loops?: Promise<Playing | undefined>[], crowd = false): Promise<Live[]> {
+	async event(ev: VisualEvent, unit: Model | undefined, hold: boolean, loops?: Promise<Playing | undefined>[]): Promise<Live[]> {
 		const delay = ev.delayMs ?? 0;
 		if (delay > 0) await new Promise(r => setTimeout(r, delay));
 		const playing = this.playSounds(ev.sounds, unit?.root);
@@ -192,7 +194,7 @@ export class Effects {
 		else for (const p of playing) p.then(h => h?.stop());
 		const out: Live[] = [];
 		for (const km of ev.models ?? []) {
-			const l = await this.attach(unit, km, hold, crowd);
+			const l = await this.attach(unit, km, hold);
 			if (l) out.push(l);
 		}
 		return out;
@@ -279,7 +281,7 @@ export class Effects {
 		const loops: Promise<Playing | undefined>[] = [];
 		let done = false;
 		for (const ev of v.events.filter(e => e.event === 'precast')) {
-			this.event(ev, caster.model, true, loops, true).then(l => {
+			this.event(ev, caster.model, true, loops).then(l => {
 				held.push(...l);
 				if (done) for (const x of l) x.stopped = true;
 			});
@@ -288,12 +290,12 @@ export class Effects {
 		done = true;
 		for (const l of held) l.stopped = true;
 		for (const p of loops) p.then(h => h?.stop());
-		for (const ev of v.events.filter(e => e.event === 'cast')) this.event(ev, caster.model, false, undefined, true);
+		for (const ev of v.events.filter(e => e.event === 'cast')) this.event(ev, caster.model, false);
 		const land = () => {
-			for (const ev of v.events.filter(e => e.event === 'impact')) this.event(ev, target?.model, false, undefined, true);
+			for (const ev of v.events.filter(e => e.event === 'impact')) this.event(ev, target?.model, false);
 		};
 		const m = v.missile;
-		if (m?.model && m.speed > 0 && caster.model && target?.model) this.launch(m, caster.model, target.model, land, true);
+		if (m?.model && m.speed > 0 && caster.model && target?.model) this.launch(m, caster.model, target.model, land);
 		else land();
 	}
 
@@ -340,7 +342,7 @@ export class Effects {
 
 	// launch sends a spell's bolt from one model to another. A totem has no bolt attachment
 	// (38), so it shoots from its spell hand (22).
-	private async launch(m: NonNullable<SpellVisual['missile']>, from: Model, to: Model, onLand?: () => void, crowd = false) {
+	private async launch(m: NonNullable<SpellVisual['missile']>, from: Model, to: Model, onLand?: () => void) {
 		const model = await Model.load(m.model!.fdid).catch(() => undefined);
 		if (!model) {
 			onLand?.();
@@ -349,11 +351,12 @@ export class Effects {
 		const start = new THREE.Vector3();
 		(from.attachPoint(m.attachment ?? 38) ?? from.attachPoint(22) ?? from.root).getWorldPosition(start);
 		const dest = to.attachPoint(m.destinationAttachment ?? 34) ?? to.root;
-		const target = () => dest.getWorldPosition(new THREE.Vector3());
+		const at = new THREE.Vector3();
+		const target = () => dest.getWorldPosition(at);
 		model.root.position.copy(start);
 		this.world.add(model.root);
 		model.enableParticles(this.world);
-		if (crowd) this.crowd?.add([model]);
+		this.crowd?.add([model]);
 		playEffect(model, m.model!, true);
 		const sounds = kits(m.sound).map(kit => this.sounds.play(kit, model.root));
 		this.missiles.push({ model, km: m.model!, from: start, to: target, speed: m.speed, pos: start.clone(), sounds, onLand });
@@ -423,7 +426,7 @@ export class Effects {
 		const key = `${name ?? ''}@${weapon ? weapon.m2.name : ''}`;
 		const was = this.imbues.get(hand);
 		if (was?.name === key) return;
-		for (const m of was?.models ?? []) m.model.dispose();
+		for (const m of was?.models ?? []) m.model.recycle();
 		const now = { name: key, models: [] as { model: Model; km: KitModel }[] };
 		this.imbues.set(hand, now);
 		if (!name || !weapon) return;
@@ -508,7 +511,7 @@ export class Effects {
 				m.mesh.visible = false;
 			}
 			if (l.fadeUntil !== undefined && this.clock >= l.fadeUntil) {
-				m.dispose();
+				m.recycle();
 				this.live.splice(i, 1);
 				continue;
 			}
@@ -518,10 +521,10 @@ export class Effects {
 			const m = this.missiles[i];
 			const to = m.to();
 			const step = m.speed * dt;
-			const d = to.clone().sub(m.pos);
+			const d = missileStep.subVectors(to, m.pos);
 			if (d.length() <= step) {
 				for (const p of m.sounds) p.then(h => h?.stop(100));
-				m.model.dispose();
+				m.model.recycle();
 				m.onLand?.();
 				this.missiles.splice(i, 1);
 				continue;
@@ -530,7 +533,7 @@ export class Effects {
 			m.pos.addScaledVector(d, step);
 			m.model.root.position.copy(m.pos);
 			// The missile flies nose first (+x).
-			m.model.root.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), d);
+			m.model.root.quaternion.setFromUnitVectors(noseFirst, d);
 			if (m.model.baseDone) {
 				const loop = holdAnim(m.model, m.km);
 				if (loop !== undefined) m.model.play(loop, { loop: true, fade: 0 });
