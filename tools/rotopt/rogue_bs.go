@@ -6,8 +6,8 @@ import (
 
 // Backstab under Forever rules. The cooldown rules are the shared ones in rogue_common.go.
 // This template carries a line for every dagger talent a build might take (Ghostly
-// Strike, Hemorrhage, Rupture with Serrated Blades and Thousand Cuts, Cutthroat Ambush,
-// Vanish into Premeditation and Ambush), so one template serves the talent search as well
+// Strike and the Ambush or Garrote it opens, Hemorrhage, Rupture with Serrated Blades,
+// Death Mark, Vanish into Premeditation and Ambush), so one template serves the talent search as well
 // as the rotation search. A line for a talent the build does not have is dropped by the
 // sim with a warning and costs nothing.
 type rogueBS struct{}
@@ -22,8 +22,8 @@ var (
 	premeditation = spellID(14183)
 	preparation   = spellID(14185)
 	stealth       = spellID(1787)
-	cutthroat     = spellID(462707)
-	thousandCuts  = spellID(1310723)
+	garrote       = spellIDRank(11290, 6)
+	deathMark     = spellID(1325758)
 	mutilate      = spellID(1310707)
 	ghostlyOpener = spellIDTag(14278, 1)
 	shadowmeld    = spellID(20580)
@@ -42,9 +42,12 @@ func (rogueBS) Knobs() []Knob {
 		// Mutilate as the builder instead of Backstab (a 20 point Assassination talent under
 		// Forever, daggers in both hands).
 		Knob{Name: "mutilate", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Ambush (or Garrote, garroteOpener) in the 7 sec Ghostly Strike leaves for one without
-		// Stealth (November 2 development notes).
+		// Ambush in the 7 sec Ghostly Strike leaves for one without Stealth (November 2 development
+		// notes), or a Garrote there when it is not ticking (ghostlyGarrote).
 		Knob{Name: "ghostlyAmbush", Default: 1, Min: 0, Max: 1, Step: 1},
+		Knob{Name: "ghostlyGarrote", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Death Mark (the 31 point Subtlety talent) at this many combo points or more, 0 for never.
+		Knob{Name: "deathMarkCp", Default: 5, Min: 0, Max: 5, Step: 1},
 		// Premeditation (no longer needs Stealth under Forever) at this many combo points or
 		// fewer, so the 2 points it adds are not lost over 5. 9 leaves it to the cooldown rule
 		// in the sim, which uses it at 3 or fewer.
@@ -59,8 +62,6 @@ func (rogueBS) Knobs() []Knob {
 		// Night Elf: Shadowmeld into Ambush at this many combo points or fewer, 9 for never.
 		// The line does nothing for the other races.
 		Knob{Name: "meldCp", Default: 3, Min: 0, Max: 9, Step: 3},
-		// Backstab only at this many Thousand Cuts stacks, or when energy is pooled. 0 ignores stacks.
-		Knob{Name: "bsStacks", Default: 0, Min: 0, Max: 5, Step: 1},
 		Knob{Name: "bsAfterSwing", Default: 0, Min: 0, Max: 1, Step: 0.25},
 		Knob{Name: "bsEnergy", Default: 0, Min: 0, Max: 100, Step: 10},
 	)
@@ -108,6 +109,10 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 			"Premeditation needs no Stealth under Forever, so it goes out whenever the 2 points fit."))
 	}
 
+	if k["deathMarkCp"] > 0 {
+		items = append(items, cast(deathMark, and(ge(comboPoints(), num(k["deathMarkCp"])), gt(remainingTime(), seconds(6))),
+			"Death Mark on cooldown at enough combo points while its 6 sec store can still go off in the fight. Without the talent ignore the warning on this line."))
+	}
 	items = append(items, cast(eviscerate, c.evisWhen, ""))
 
 	// Vanish is only an Ambush at a low combo count, so the points are not wasted over 5.
@@ -146,8 +151,7 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["vanishCp"] < 9 {
 		items = append(items,
-			cast(ambush, or(auraIsActive(stealth), auraIsActive(cutthroat)),
-				"Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab."),
+			cast(ambush, auraIsActive(stealth), "Ambush from stealth after Vanish."),
 			cast(preparation, and(
 				not(auraIsActive(stealth)),
 				le(comboPoints(), num(k["vanishCp"])),
@@ -166,6 +170,10 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	if k["ghostly"] == 1 {
 		items = append(items, cast(ghostlyStrike, and(lt(comboPoints(), num(5)), pool),
 			"Ghostly Strike on cooldown: a builder, and it opens a 7 sec window for an Ambush without Stealth."))
+	}
+	if k["ghostlyGarrote"] == 1 {
+		items = append(items, cast(garrote, and(auraIsActive(ghostlyOpener), not(dotIsActive(garrote)), gt(remainingTime(), seconds(9))),
+			"Garrote in the window Ghostly Strike opens, when it is not ticking and the fight lasts for its ticks. Without Ghostly Strike ignore the warning on this line."))
 	}
 	if k["ghostlyAmbush"] == 1 {
 		items = append(items, cast(ambush, and(auraIsActive(ghostlyOpener), lt(comboPoints(), num(5))),
@@ -188,13 +196,6 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	if k["mutilate"] == 1 {
 		items = append(items, cast(mutilate, when,
 			builderNotes("Mutilate as the builder (2 combo points for the energy of a Backstab),", k["bsAfterSwing"], k["bsEnergy"])+poolNotes+" Backstab takes over when the off hand is not a dagger."))
-	}
-	if k["bsStacks"] > 0 {
-		pooled := ge(energy(), num(k["bsEnergy"]))
-		if k["bsEnergy"] == 0 {
-			pooled = ge(energy(), num(90))
-		}
-		when = and(when, or(ge(auraNumStacks(thousandCuts), num(k["bsStacks"])), pooled, lt(remainingTime(), seconds(6))))
 	}
 	items = append(items, cast(backstab, when, builderNotes("Backstab", k["bsAfterSwing"], k["bsEnergy"])+poolNotes))
 
