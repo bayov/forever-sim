@@ -6,7 +6,25 @@ Worker for the Warlock DPS specs (Affliction, Demonology, Destruction Shadow Bol
 ## Status
 
 - Phase A (research and mechanics): done, pushed on `round-70753-warlock`.
-- Phase B (re-optimize, races, audit, land): waits for A1's talent trees and A2's racials.
+- Phase B: talents and rotations done on A1's sources (daeb8d230). The race sweep, the finals and the landing wait for
+  A2's racials.
+
+## Phase B so far (2026-11-03)
+
+- Client trees: A1 found no change in the warlock tree, so no preset string moved. `tools/forever_talents/notes/warlock.json`
+  puts the notes' Shadow and Flame and Wrack values in the talent tooltips.
+- Talent searches (180 s, 2000 iterations a candidate, 10000 to confirm), each from the preset, then a knob search: nothing
+  moved for Affliction (1015.9), Destruction (1063.6), Destruction fire (996.4) or Demonology (1055.4). Seeds that tried
+  Conflagrate and Shadow and Flame on Affliction can't reach Shadow and Flame and lose (934.8).
+- New preset, Affliction Wrack: a talent search from deep Affliction with Wrack kept (25500020135201351--0550303, 976.6)
+  ends at 05500003035001351-0002-0050055003, 999.9 at 180 s; the knob search moved nothing. 988.1 / 999.9 / 993.4 at
+  120 / 180 / 300 s against 1015.6 / 1015.9 / 998.3 for Affliction (10000 iterations). Wrack is 520 of its 1000 DPS (22.6
+  casts), so it plays differently from the Shadow Bolt build: shipped as its own talents, rotation, preset build and
+  report request (`warlock__affliction_wrack`, no duty variants: the four existing builds cover curse duty).
+- Rotation check (timeline, one fight): Wrack chains back to back while Corruption and the bane are up, Siphon Life,
+  Corruption and Immolate are refreshed when they drop, the Bane of Doom / Agony swap works, a Wrack that misses is recast
+  after the GCD. It ends with about 2000 mana unspent (it never needs a Life Tap past the opening), which no knob turned
+  into damage.
 
 ## Sources checked (Phase A, 2026-11-03)
 
