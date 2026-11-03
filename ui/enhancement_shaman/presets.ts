@@ -1003,9 +1003,11 @@ export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	rotationLibrary: LevelingPlanAuditedJSON.rotationLibrary.map(preset => LevelingRotationPreset.fromJson(preset as any)),
 	rotations: LevelingPlanAuditedJSON.rotations.map(range => LevelingRotation.fromJson(range)),
 	rotationsNameTopRanks: true,
-	// Improved Ghost Wolf as early as its row opens (15 and 16), for walking to quests and grind
-	// spots, which the grinding sessions don't sim.
-	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 5, points: 2, level: 16 })],
+	// Improved Ghost Wolf as early as its row opens, for walking to quests and grind spots, which
+	// the grinding sessions don't sim. The November 2 development notes moved it from row 2 to row
+	// 4 (it was 15 and 16), so its two points now come at 25 and 26, after the 15th Enhancement
+	// point; the route keeps its other picks in their order.
+	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 12, points: 2, level: 26 })],
 	// When we train each rank, from tools/levelingplan -training: 115g earned by 40 and riding
 	// (90g after the Honored discount) at 43.
 	training: LevelingTrainingSettings.fromJson(LevelingTrainingJSON as any),
