@@ -2,7 +2,7 @@
 
 Worker: the Warrior class worker, branch `round-70753-warrior`. Brief: `briefs/warrior.md`.
 
-## Final summary (Phase B landed, 2026-11-03)
+## Final summary (Phase B landed on master at 30d86d2, 2026-11-03)
 
 ### What changed
 
