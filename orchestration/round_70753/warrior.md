@@ -2,6 +2,104 @@
 
 Worker: the Warrior class worker, branch `round-70753-warrior`. Brief: `briefs/warrior.md`.
 
+## Final summary (Phase B landed, 2026-11-03)
+
+### What changed
+
+None of the warrior lines are in client 70753 or a hotfix, so every value below is a notes-only value (standards 37,
+listed under "Notes-only values"), gated under Forever.
+
+| Change | Source | DPS effect |
+|---|---|---|
+| Slam 15 sec (18); Improved Slam 2.5 / 5 sec off it (3 / 3) | notes | Arms and two-hand Fury Slam more often |
+| Two-Handed Weapon Specialization 2 / 4 / 6% (1 / 2 / 3%) | notes | +3% on every two-hand build |
+| Improved Tactical Mastery 3 points, 5 / 10 / 15 Rage | notes | frees 2 points (Arms Recklessness swap keeps 25 Rage) |
+| Bloodthrill 2 points, 10 / 20% | notes | frees 3 Arms points for the same 20% |
+| Flurry 3 points, 10 / 20 / 30%, no Death Wish prerequisite | notes | +5% attack speed on Fury, 2 points freed |
+| Reckless Swings (new, Fury row 4) | notes; assumptions: off the GCD, landed swings incl. Heroic Strike, flat 5 Rage, no health cost | every build takes it; never casting it costs Fury 29 DPS at 180 sec |
+| Improved Whirlwind (new, Fury row 6) | notes | both Fury builds take 2/2 |
+| Enrage row 3, Gore Drinker row 5 under Blood Craze, Bloodthirst needs Death Wish | notes | tree only |
+| Race base stats (A2), the 10-26 racial pass already in | notes | Arms re-picks Orc |
+
+Tree: `tools/forever_talents/notes/warrior.json` (the columns of Enrage, Reckless Swings, Gore Drinker and Improved
+Whirlwind are guessed; the notes give rows). Fury's tree is 19 talents (proto fields renumbered, `TalentTreeSizes`
+17/19/18). Every warrior talent string in the repo is remapped, the tank ones too (their Fury points only move position).
+
+### Per build (Orc, 20,000 iterations, seed 1; 180 is 180 +- 20 sec)
+
+| Build | Old 120 / 180 / 300 | New 120 / 180 / 300 | Talents | Race |
+|---|---|---|---|---|
+| Fury (dual wield) | 1079.5 / 1041.5 / 1017.9 | 1194.2 / 1152.6 / 1124.8 | `30313113002-0505300551120100321` | Orc (Orc) |
+| Fury Sunder duty | 1044.6 / 1012.5 / 991.4 | 1156.5 / 1117.7 / 1095.4 | same | Orc |
+| Fury Battle Shout duty | 1076.0 / 1039.5 / 1015.7 | 1193.2 / 1150.5 / 1123.2 | same | Orc |
+| **Fury 2H (new class default)** | 1085.2 / 1044.4 / 1009.4 | 1211.7 / 1169.9 / 1133.4 | `30313113032-2503300501122100321` | Orc (Orc) |
+| Fury 2H Sunder duty | 1044.9 / 1009.0 / 980.5 | 1173.5 / 1132.6 / 1101.9 | same | Orc |
+| Fury 2H Battle Shout duty | 1083.0 / 1041.3 / 1007.7 | 1210.5 / 1165.4 / 1131.5 | same | Orc |
+| Arms | 1022.9 / 1008.7 / 987.0 | 1111.7 / 1097.7 / 1070.6 | `30303213032215201-050500050012-2` | Orc (was Undead) |
+| Arms Sunder duty | 978.5 / 970.4 / 955.2 | 1055.0 / 1047.1 / 1027.5 | same | Orc (was Undead) |
+| Arms Battle Shout duty | 1022.2 / 1004.9 / 984.1 | 1111.0 / 1094.0 / 1068.3 | same | Orc (was Undead) |
+| Arms vs Dragonkin | 1066.0 / 1050.3 / 1028.8 | 1157.5 / 1142.2 / 1114.2 | `30303213132215201-050500050012-1` | Orc (was Undead) |
+
+Old numbers: the deployed report (`ui/dps_report/data/builds.json`, 2026-11-02; its 120 / 300 at 5,000 iterations).
+The request metas carry the new 180 as `published` and `verify`.
+
+Talents (180 sec talent search on the synthetic sets, then the knob search, alternated until neither moved):
+- Fury: Booming Voice and a point of Improved Berserker Rage out; Reckless Swings, Improved Whirlwind 2/2, Enrage 5/5 in.
+- Fury 2H: Flurry's 3 points left Bloodthirst short of its row, so the start takes Reckless Swings and Improved
+  Whirlwind; the search moves 2 points of Unbridled Wrath to Enrage 5/5. Furious Precision 3 is dead with a
+  two-hander, but no move of its points scored better.
+- Arms: the 5 freed points and a third point of Improved Heroic Strike (to reopen Two-Handed Weapon Specialization's row)
+  go to Reckless Swings, Enrage 5/5 and Improved Bloodrage 2/2, for Booming Voice. Dragonkin: Spearing Strike for a
+  point of Improved Bloodrage.
+
+Rotations (`tools/rotopt/warrior_presets.sh`, dated block 2026-11-03): Reckless Swings on cooldown everywhere; Arms and
+Dragonkin Slam ahead of Mortal Strike, any time (+3.2 to +3.8 at 180); Arms Sunder duty Slam right after a swing;
+Arms Battle Shout duty Slam first; Fury Sunder duty Heroic Strike from 70 and Bloodthirst first (+6.5 / +7.3); Fury 2H
+Sunder duty fillerGap=1 (+2.6 / +3.4). Each kept only where it won at 120, 160, 180, 200 and 300 sec on seeds 1 and
+1000003 at 20,000 iterations (standards 31 and the handoff rule).
+
+### Races (180 +- 20 sec, 20,000 iterations, seeds 1 / 1000003; before the last Arms rotation change)
+
+| Build | Best overall | Best Horde | Best Alliance | Last |
+|---|---|---|---|---|
+| Fury | Orc 1152.6 / 1151.9 | Orc | Night Elf 1146.8 / 1146.0 | Tauren 1132.6 |
+| Fury 2H | Orc 1169.9 / 1170.8 | Orc | Night Elf 1162.8 / 1162.9 | Tauren 1148.1 |
+| Arms | Orc 1094.0 / 1094.1 | Orc | Night Elf 1088.5 / 1089.2 | Tauren 1076.6 |
+
+Full table (all 10 races) in the commit "Warrior: Arms re-picks Orc"; Undead is second on Fury and Arms (3.1 to 4.9
+behind), the two Skyborne races tie. Arms switches to Orc (+3.8 / +3.1 over Undead, past the 0.5 bar on both seed sets).
+
+### Audit (the DPS passes applied to the warrior builds)
+
+- results: each request's 180 sec number is its own final run (20,000 iterations, seed 1); `report_hashes.txt` rewritten
+  after the last merge, only the 10 warrior rows moved.
+- rotations: breakdowns of Fury and Arms at 180 sec. Reckless Swings 12.5 casts a fight (the 15 sec cooldown allows 12
+  plus the pull), each spent within about 2 sec on Fury (24.8% uptime) and 49% uptime on Arms' slower swings;
+  Bloodthirst 27.2 of 30 possible casts, Whirlwind 19.6 with its 8 sec cooldown, Flurry 92% uptime; Arms Mortal Strike
+  25.8, Overpower 17.2 (12 Bloodthrill windows), Rend 7.1, Slam 11.2. Every line states its intent (the Reckless Swings
+  line: "for the Rage of the next 4 swings"). Found and fixed: the knob search's one-knob steps missed Slam-first on
+  Arms and Dragonkin (a two-knob move), found from the Battle Shout duty's search.
+- gear: sets unchanged; Orc has no hit racial, so no set goes over the cap. The Dwarf race overrides
+  (`req/races/warrior__arms.Dwarf.json`, `warrior__fury_2h.Dwarf.json`) keep their gear swap; their `gain` fields are
+  from before this round (the pipeline's race sweep re-measures them).
+- consumables: unchanged. Two-hand Fury still carries the class DefaultConsumes' off-hand stone, which does nothing.
+- mechanics / client_update: the ledger and the notes-only list below; every notes value has a test.
+- Nothing open for the warrior in `orchestration/audit/findings/`.
+
+### Open questions and shared changes
+
+- Shared files touched: `proto/warrior.proto` (Fury's message regenerated: two new fields, field numbers from 25 on
+  renumbered), `ui/core/talents/trees/warrior.json`, the tank warrior's talent strings (`ui/tank_warrior/presets.ts`,
+  `tools/tankbench/req/warrior_protection.json`, `sim/warrior/tank_warrior/forever_test.go`: position only, values
+  unchanged, tank goldens unmoved), `tools/audit/results/runclass.sh` (an example string), `sim/testdata/report_hashes.txt`.
+- Not touched (others own them): `forever-wiki/sim-status.md` still quotes the old warrior talent strings and numbers;
+  `ui/dps_report/data`, `ui/raid_sim/data/builds.json`.
+- Question: the class default moves to two-hand Fury (the handoff rule: highest at 180 sec). It is the first time
+  two-hand beats dual wield; the report's default badge follows `isDefault`. Recommendation: keep the rule.
+- Question: Reckless Swings' GCD and which attacks count are not in the notes. Off the GCD and landed swings
+  (Heroic Strike included) are my reading; with a GCD it would still be cast on cooldown. A client row settles it.
+- Commit trailers use this session's own Claude-Session line, not the brief's (which names the orchestrator's session).
+
 ## Phase A: research and mechanics
 
 ### Sources checked (2026-11-03)
@@ -61,18 +159,18 @@ reworks included (no Trait rows for tree 1117, no Reckless Swings spell), and th
 - Improved Tactical Mastery 3 points, 5/10/15 Rage (client 5 points of 3).
 - Bloodthrill 2 points, 10/20% (client 5 points of 4%).
 - Flurry 3 points, 10/20/30%, no Death Wish prerequisite (client 5 points of 5%).
-- Phase B: Reckless Swings, Improved Whirlwind, and the tree moves (Enrage row 3, Gore Drinker row 5 under Blood Craze,
-  Bloodthirst under Death Wish).
+- Reckless Swings (15 sec, next 4 swings +5 Rage, 8 sec; no client spell, placeholder id 1399001) and Improved
+  Whirlwind (1 / 2 sec, +15 / 30% on the closest enemy). Tests `TestForeverWarriorRecklessSwings`,
+  `TestForeverWarriorImprovedWhirlwind`.
+- The tree moves: Enrage row 3, Gore Drinker row 5 under Blood Craze, Bloodthirst under Death Wish
+  (`tools/forever_talents/notes/warrior.json`).
 
 ### DPS effect of Phase A (goldens)
 
 `TestP1DPSWarrior` (Forever, talents `30305013-25053005152110501`: 5 points of Flurry, now read as 3 at 30%, and
 Improved Tactical Mastery 5, now 15 Rage): Average-Default 1518.5 → 1562.9 (+2.9%). Tank goldens didn't move.
 
-### Open for Phase B / questions
+### Phase A notes
 
-- If A1 builds the warrior tree from client 70753, it won't have these changes (no Trait rows). The warrior tree then
-  needs a manual edit from the notes (Improved Tactical Mastery 3, Bloodthrill 2, Flurry 3 without the Death Wish
-  prerequisite, Enrage row 3, Reckless Swings row 4, Gore Drinker row 5 under Blood Craze, Improved Whirlwind row 6,
-  Bloodthirst under Death Wish). Question for the orchestrator: does A1 do that, or do I?
-- The rank caps in the code (`min(points, N)`) keep old strings sane until the presets are remapped; they can stay.
+- The warrior tree was built from the notes in Phase B (see the summary). The rank caps in the code (`min(points, N)`)
+  stay as a guard for old strings.
