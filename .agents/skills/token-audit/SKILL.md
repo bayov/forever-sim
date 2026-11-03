@@ -44,7 +44,10 @@ its newest result (`add_cloud.py --inline` takes them), and it is a much smaller
 
 Scheduled-task runs that start a fresh session aren't in `list_sessions`: find them from
 `list_triggers` (`last_run.session_id`, with `cse_` read as `session_`), the
-`Claude-Session` trailers of their commits, and the session links in the PRs they open.
+`Claude-Session` trailers of their commits, and the session links in the PRs they open. Their
+origin is `scheduled_trigger`, which `categories.json` buckets as "Scheduled routines". Runs
+you can't find get an estimate from the ones you can (the audit loop: cost per pass, with
+`orchestration/audit/log.md` counting the passes).
 
 ## 1. List the sessions
 
