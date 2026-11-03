@@ -1,6 +1,6 @@
 # Shaman: round 70753 (the November 2 development notes)
 
-Branch `round-70753-shaman`, landed on master. Phase A (mechanics) and Phase B (tree, re-optimization, races, audit)
+Branch `round-70753-shaman`, landed on master at 1e51d24. Phase A (mechanics) and Phase B (tree, re-optimization, races, audit)
 are done.
 
 ## Summary
