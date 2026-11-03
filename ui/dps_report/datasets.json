@@ -51,7 +51,7 @@
   "title": "More icons",
   "description": "36 px spell, item and aura icons and the sim UI's empty gear-slot icons, as data URLs. They load after the Ranking tab is up.",
   "updated": {
-   "at": "2026-11-03T19:14:28.091Z",
+   "at": "2026-11-03T19:21:04.293Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -251,7 +251,7 @@
   "title": "Game tooltip text",
   "description": "Tooltip text for the spells, items, enchants, consumes, races and stat weights on the page: wowhead's WoW Forever database first (with a link to its page), the Forever client's talent text and the Forever wiki where it has nothing, Classic's text only as a marked last resort, the sim's own numbers where they differ, the item database for the synthetic gear, and the Forever racials.",
   "updated": {
-   "at": "2026-11-03T19:14:28.091Z",
+   "at": "2026-11-03T19:21:04.293Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -299,7 +299,7 @@
   "title": "Event view icons",
   "description": "36 px icons, as data URLs, that the sample fights show and icons and icons_more lack. Made by tools/dps_report/events.py.",
   "updated": {
-   "at": "2026-11-03T19:14:28.091Z",
+   "at": "2026-11-03T19:21:04.293Z",
    "by": "Claude (forever-sim)"
   }
  },

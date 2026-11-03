@@ -3049,6 +3049,10 @@
     {
      "commit": "91edc9f",
      "why": "a rotation search knob, off by default; no preset's rotation changes"
+    },
+    {
+     "commit": "d57aa24",
+     "why": "client 70755 tables identical to 70753: inputs restamped, spell name rows and client talent trees rewritten; spot re-sims of a rogue, a warlock and a hunter build came out identical, no build moves"
     }
    ],
    "source": {
