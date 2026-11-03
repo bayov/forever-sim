@@ -11,7 +11,7 @@ The full pass for client build 1.60.1.70753 and Blizzard's development notes pos
 - Phase 3: the whole audit suite on master (dps-report B5), the fixes, the report's regeneration (B7, B9), deploy and
   state (B11); then bayovui's generated data (update-data: weights, leveling weights, BiS lists).
 
-## Source rule for this round (provisional, 2026-11-03, pending the user's ruling)
+## Source rule for this round (standards 37, user ruling 2026-11-03)
 
 - Server data (top tier): the 2026-11-03 hotfix to the 70753 build carries the hunter damage lines of the notes
   (`orchestration/audit/ref/client_update/sources/foreverchanges_2026-11-03_hotfix_and_70753.txt`).
