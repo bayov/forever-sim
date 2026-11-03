@@ -208,6 +208,9 @@ export class Model {
 	private closed = { right: false, left: false };
 	private scratch = { t: new Float64Array(3), r: Float64Array.of(0, 0, 0, 1), s: Float64Array.of(1, 1, 1), t2: new Float64Array(3), r2: Float64Array.of(0, 0, 0, 1), s2: Float64Array.of(1, 1, 1) };
 	geosets?: Set<number>;
+	// The gear slot the model is worn in (1 the head, 3 the shoulders, 15 the back...), for a
+	// unit's gear.
+	slot?: number;
 	// The crowd the model draws in (crowd.ts), if any.
 	crowd?: { remove(m: Model): void };
 	particles?: Particles;
