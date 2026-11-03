@@ -66,7 +66,8 @@ These were working rules. They are not user rulings, but every merged class PR f
 - **The class default preset** is the one highest at 180 s.
 - **A race switch** needs a lead of more than 0.5 DPS on both seed sets.
 - **Report-only changes** (`ui/dps_report`, `tools/dps_report`, docs) go straight to master. Sim, preset and class changes
-  go through PRs that the orchestrator merges after verifying them. User ruling, 2026-10-14.
+  come from class branches that the orchestrator merges into master after verifying them, with no PR (the dps-report
+  skill's B12). User ruling, 2026-11-03, replacing the PRs of 2026-10-14.
 
 ## How a PR was verified before merging
 

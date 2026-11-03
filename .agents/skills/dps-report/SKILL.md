@@ -14,9 +14,8 @@ combinations.
 
 ## 1. Read first (in this order)
 
-All paths are on `master`. New coordination work goes on the coordination branch
-`claude/wow-forever-dps-presets-m9u15h`, fast-forwarded to master first, and reaches master
-by PR (B12). Run `git fetch` and read the newer of the two.
+All paths are on `master`, and new coordination work goes straight to master. Run
+`git fetch` first.
 
 1. `orchestration/standards.md`: every cross-class ruling, numbered. It **overrides**
    everything older, including the briefs. Often cited: 1b gear budget, 5a/5b stat mix,
@@ -53,7 +52,7 @@ whose watched files changed (`orchestration/audit/README.md`). For a pass now, u
 
 | Role | Template | Writes | Trigger |
 |---|---|---|---|
-| Class worker (per task) | `prompts/class_worker.md` + `orchestration/brief_<class>.md` | a branch and PR, presets, its class's sim code | class change, research, new rule; archive when its PR merges |
+| Class worker (per task) | `prompts/class_worker.md` + `orchestration/brief_<class>.md` | a branch, presets, its class's sim code | class change, research, new rule; archive when its branch merges |
 | Forever class changes auditor (subagent, one-off) | `prompts/auditor_class_changes.md` | `orchestration/forever_class_changes.md` | new Forever build, "check what Forever changed" |
 | Auditors (results, rotations, gear, consumables, mechanics, fairness, client update) | `orchestration/audit/passes/<id>.md` | `orchestration/audit/findings/<id>.md` | the audit loop; B5 for now |
 | Report jobs (subagents) | `prompts/dashboard/HANDOFF_*.md` | `ui/dps_report/` and its data | refresh, feature, fix |
@@ -155,13 +154,13 @@ self-contained handoff that delivers an `orchestration/*.md` with tables. Bring 
 - Changes tab: every change this pass made needs a public line; follow regenerate-dps-report
   "The Changes tab" (`changes.py check`, and when to start a `new sim` update).
 - Update state.json (heads, client build, the report's deploy, date).
-- Update PR bodies (class workers do their own).
 - Tell the user what changed, with the ranking.
 
 **B12. Merge into master.** Report-only changes (`ui/dps_report`, its data,
-`tools/dps_report`) go straight to master (B8). Sim, preset and class changes go through
-PRs, which you open or merge only when the user asks. Before merging, read `reference.md`
-in this folder for the order, merge method, reach check and post-merge fixes.
+`tools/dps_report`) go straight to master (B8). Sim, preset and class changes come from the
+class workers' branches: when a worker reports its task done, merge its branch into master
+and push, with no PR and without asking. Before merging, read `reference.md` in this folder
+for the order, merge method, reach check and post-merge fixes.
 
 **B13. Audit findings** ("handle the audit findings"). Auditors only write findings files;
 the routine's notification tells the user.
@@ -185,8 +184,7 @@ the routine's notification tells the user.
 - **One class** ("re-check druids"): B1 for it, B3, B5 (results, fairness), B7 for it, B11.
 - **Rule change** ("assume X"): B2, B3 for affected classes, B5, B7, B11.
 - **Report feature**: B8 (plus B7 for new data), B11.
-- **Land the work** ("merge the PRs"): B12, one PR at a time, with the user's go-ahead per
-  batch.
+- **Land the work** ("merge the class branches"): B12, one branch at a time.
 
 Otherwise map the request to blocks. If it's unclear whether the user wants preset changes
 or report-only changes, ask.

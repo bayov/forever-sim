@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "9da90fcde1f85856feb331bd2298be1f7d720efa"
+  "master": "f5c99ad018aa44b195c5530f40c44cccb92d52cf"
  },
- "last_pass_at": "2026-11-03T00:56:37Z",
+ "last_pass_at": "2026-11-03T17:59:09Z",
  "client_build": "1.60.1.70753",
  "result": "findings",
- "note": "70753: the launch realms' October 30 hotfix (druid and paladin trees, racial pass, mage changes, LotP and Moonkin Aura all crit) is now in the client; the sim had landed all of it. New: Poised (rogue, druid) missing. Dev notes: no new post since /8.",
- "pass": 7,
- "checked_at": "2026-11-03T06:44:50Z"
+ "note": "Round 70753 phase 3: no build after 70753, no dev-notes post after /9, no hotfix after 11-03. 11-03 hunter hotfix all landed; every notes-only value matches post 9; trees from notes JSON match. New: 20261103-2 (ungated notes-only values). Poised resolved.",
+ "pass": 8,
+ "checked_at": "2026-11-03T17:52:00Z"
 }

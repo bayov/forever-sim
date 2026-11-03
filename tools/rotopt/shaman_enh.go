@@ -102,6 +102,12 @@ func (shamanEnh) Knobs() []Knob {
 		{Name: "maelstromHold", Default: 0, Min: 0, Max: 4, Step: 1},
 		// Hold Earth Shock for the Stormstrike mark the same way, 0 never.
 		{Name: "earthShockHold", Default: 0, Min: 0, Max: 4, Step: 1},
+		// Keep the Stormstrike mark for the Maelstrom Weapon Lightning Bolt: no Earth Shock while the
+		// mark is up and Maelstrom Weapon has at least earthShockSaveStacks stacks. 1 only when the
+		// mark has 1 charge left, 2 whenever it is up, 0 never. Forever's mark is used up by the next
+		// spell, so 1 and 2 write the same rotation there. Round 70753: -12 to -34 at every setting.
+		{Name: "earthShockSaveMark", Default: 0, Min: 0, Max: 2, Step: 1},
+		{Name: "earthShockSaveStacks", Default: 4, Min: 2, Max: 5, Step: 1},
 		// With shock 4, Flame Shock goes ahead of the Maelstrom Weapon Lightning Bolt.
 		{Name: "flameShockFirst", Default: 0, Min: 0, Max: 2, Step: 1},
 		// With shock 4, 1 puts Flame Shock and Earth Shock ahead of the Maelstrom Weapon Lightning
@@ -285,6 +291,13 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 		when := manaFloor(k["shockMana"])
 		if wait := markOrNoWait(k["earthShockHold"]); wait != nil {
 			when = and(when, wait)
+		}
+		if save := k["earthShockSaveMark"]; save > 0 && k["maelstromStacks"] > 0 {
+			mark := targetAuraIsActive(stormstrike)
+			if save == 1 {
+				mark = and(mark, le(targetAuraNumStacks(stormstrike), num(1)))
+			}
+			when = and(when, not(and(mark, ge(auraNumStacks(maelstromWeapon), num(k["earthShockSaveStacks"])))))
 		}
 		return when
 	}
