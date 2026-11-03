@@ -5,6 +5,8 @@ Worker ledger for the Priest DPS specs (Shadow, Shadow + Holy, Smite) against th
 
 ## Summary
 
+Landed on master at 69b9c38 (2026-11-03).
+
 **What changed.** One Priest mechanic: Shadow Word: Death now costs the priest 30% of max health when the target lives
 (10% before) and nothing on a miss (client 70753 SpellEffect bp 10 -> 30 on all ranks; notes). The sim used to leave the
 self-damage out; it now removes the health. DPS effect 0 (nothing in the DPS presets reads the priest's health); the
