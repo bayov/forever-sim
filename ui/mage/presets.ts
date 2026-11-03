@@ -157,8 +157,11 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Fire', Level60F
 // Round 70753 (2026-11-03): the build ended its fights with about 5000 mana it couldn't spend, so
 // Arcane Blast goes ahead of the Frostbolt filler while the mana is more than 75 a second of the
 // fight left (blastFiller, tools/rotopt/mage_arcane.go).
+// Since the exploratory search of 2026-11-03 Arcane Blast also goes on Clearcasting (the free cast goes
+// where four stacks make the cost five times the base), and Fireball is the filler in place of
+// Frostbolt, with the finisher's pad Fireball's flight from 20 yd (0.85 sec).
 export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Arcane', Level60ArcaneAPL, {
-	tooltip: 'Four Arcane Blast stacks for spell damage, Arcane Wrath on cooldown, Arcane Missiles on Missile Barrage, Frostbolt.',
+	tooltip: 'Four Arcane Blast stacks for spell damage, Arcane Wrath on cooldown, Arcane Missiles on Missile Barrage, Fireball.',
 	group: 'Synthetic',
 });
 
@@ -290,8 +293,14 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Fire', SavedTal
 // at 180 sec moved Ice Shards 4 to Arcane Meditation 3 and Incineration 5 (31/10/10). With the
 // rotation it is 981.3 / 953.9 / 936.8 as a Gnome (20,000 iterations, seed 1, the report request),
 // +36.4 / +16.6 / +6.3 over the old build and rotation on two seed sets.
-export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Arcane', SavedTalents.create({ talentsString: '050205203100311531-55-0531' }), {
-	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Arcane Wrath with Accelerant, Missile Barrage, Frostbolt.',
+// Exploratory search (2026-11-03, talent searches seeded from Arcane + Fire, Arcane + Frost and deep
+// Arcane): with Fireball as the filler the Frost points go to Ignite 5 and Flame Throwing 1, keeping
+// Precision 3 (31/16/3+, 050205203100311531-5551-003). 986.1 / 962.3 / 944.5 as a Gnome (20,000
+// iterations, seed 1, the report request), +4.5 / +8.3 / +7.5 on two seed sets. The Frostbolt build
+// with Arcane Blast on Clearcasting is 983.5 / 956.9 / 940.8. Gnome stays best (962.4 at 180 sec),
+// then Undead 960.2, Human 957.7, Orc 957.6, High Order 951.8 (own opener), Troll 950.1.
+export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Arcane', SavedTalents.create({ talentsString: '050205203100311531-5551-003' }), {
+	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Arcane Wrath with Accelerant, Missile Barrage, Fireball with Ignite.',
 	group: 'Synthetic',
 });
 

@@ -23,6 +23,7 @@ Blizzard's November 2 notes (post 9) list the mage changes the 10-27 to 10-30 ho
 Presets after the round (2026-11-03; 20,000 iterations, seed 1, the report requests, 120 / 180 / 300 sec):
 
 - Arcane (Gnome): 981.3 / 953.9 / 936.8, from 944.9 / 937.5 / 930.6. The build ended its fights with about 5000 mana, so Arcane Blast now goes ahead of the Frostbolt filler while the mana is more than 75 a second of the fight left, and the talent search moved Ice Shards to Arcane Meditation 3 and Incineration 5 (`050205203100311531-55-0531`).
+- Arcane, exploratory search (2026-11-03): Arcane Blast also goes on Clearcasting, and Fireball replaces Frostbolt as the filler, with the Frost points in Ignite 5 and Flame Throwing 1 (`050205203100311531-5551-003`): 986.1 / 962.3 / 944.5 as a Gnome, +4.5 / +8.3 / +7.5. Seeds from Arcane + Frost and deep Arcane came back to the Frostbolt build; Frost with Arcane Blast, deep Frost (-45 at 300 sec, out of mana), deep Fire, Fire with Arcane Blast and Frostfire with an Arcane splash found nothing better than their presets.
 - Fire (Human): 1066.8 / 1057.9 / 1042.0. Scorch refreshes Fire Vulnerability with under 9 sec left (5 before), +1.4 / +0.6 / +1.5.
 - Frost (High Order): 944.5 / 944.7 / 937.7, unchanged. Incineration 5 for Arcane Meditation gains 2.6 at 120 and 180 sec but loses 6.4 at 300, so it stays out.
 - Frostfire (Human): 1052.4 / 1064.3 / 1041.8, unchanged; the talent and knob searches kept everything.
