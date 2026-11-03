@@ -5,8 +5,8 @@
   "build": "Affliction (Curse duty)",
   "isDefault": false,
   "pr": 104,
-  "race": "Orc",
-  "talents": "2550102003520005--0550305003",
+  "race": "Undead",
+  "talents": "05500021035001351-0050003201-005004",
   "treeNames": [
     "Affliction",
     "Demonology",
@@ -15,25 +15,24 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction_duty_curse",
   "published": {
-    "dps": 1004.9,
-    "source": "verify.py on this request after round 70753 (the 2026-11-02 development notes: Wrack, Shadow and Flame, demon health; A2's race base stats), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": null,
+    "source": "pending"
   },
   "verify": {
-    "dps": 1004.9,
-    "stderr": 0.38,
-    "iters": 20000,
-    "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, round 70753"
+    "dps": null,
+    "ok": false,
+    "note": "pending"
   },
   "summary": "Keeps Curse of the Elements on the boss for the raid. In Forever, curses and banes use separate slots, so it keeps its bane.",
   "keyTalents": [
+    "Wrack",
+    "Siphon Life",
+    "Soul Siphon",
     "Shadow Mastery",
-    "Pandemic",
     "Malevolence",
-    "Nightfall",
-    "Improved Shadow Bolt",
-    "Ruin",
-    "Agonizing Flames"
+    "Pandemic",
+    "Demonic Sacrifice",
+    "Ruin"
   ],
   "rotation": [
     "Pre-pull: Shadow Bolt at -2.5s (lands just after the pull)",
@@ -46,6 +45,8 @@
     "Immolate when it is down or ends within its cast time, with more than 15s left",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
     "Troll Berserking right before a Shadow Bolt, so the haste goes on cast spells, not instants",
+    "Siphon Life when it is down",
+    "Wrack while Corruption and the bane are both up",
     "Shadow Bolt as the filler (instant on Nightfall procs)"
   ],
   "consumes": [
@@ -64,16 +65,14 @@
     "Major Spellstone (weapon imbue)"
   ],
   "caveats": [
+    "Wrack's 86 a second and 0.286 coefficient are the development notes' values; client 1.60.1.70753 still has 36 and 0.143 (notes-only, standards 37).",
     "The duty curse costs only GCDs and mana, because banes and curses use separate slots.",
-    "The Affliction Wrack build (its own preset, warlock__affliction_wrack) is 16 DPS behind at 180 s. Drain fillers were 124 to 349 behind.",
-    "How much of the warlock's stats a demon gets, and Succubus melee, come from pet sheets at levels 20 and 30, not 60.",
     "Bane of Doom's coefficient is 4.0 (Era has 1.0). At 2.0, Shadow Bolt builds would lose about 4%. At 1.0, about 6%.",
     "No Ahn'Qiraj book ranks, so Shadow Bolt stops at rank IX, Immolate at VII and Corruption at VI. The books would add 7 to 13 DPS.",
     "Only the Demonheart Raiment 2-piece is active. The 5-piece added about 8 to 13 DPS on an older gear set.",
-    "Soul shards and Life Tap's health cost aren't tracked.",
-    "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
+    "Soul shards and Life Tap's health cost aren't tracked."
   ],
-  "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_curse, then raid.debuffs.curseOfElements set to false. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 30 (standards 33 since 2026-11-02, the longest range its spells reach; 25 from 2026-11-01, 5 before) and channelClipDelayMs 50, as the UI preset does. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Orc since 2026-11-02 (fairness-20261101-2), was Human, following its base: at 30 yd the Orc leads the base build by 1.0 at 180 sec (20,000 iterations, seed 1, Orc 1013.6 against 1012.7); the Human stays the best Alliance race.",
+  "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_curse, then raid.debuffs.curseOfElements set to false. Demon Armor; no demon out, the Imp sacrificed, imbue Spellstone (the Wrack build since round 70753). mksettings sets distanceFromTarget 30 (standards 33 since 2026-11-02, the longest range its spells reach; 25 from 2026-11-01, 5 before) and channelClipDelayMs 50, as the UI preset does. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Undead since round 70753, following its base (the Wrack build with the Imp sacrificed, where the Orc's Command does nothing).",
   "duty": "Curse of the Elements",
   "baseBuild": "warlock__affliction"
 }

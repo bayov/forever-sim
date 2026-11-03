@@ -1,38 +1,39 @@
 {
-  "id": "warlock__affliction_wrack",
+  "id": "warlock__affliction_shadow_bolt",
   "class": "Warlock",
   "spec": "Affliction",
-  "build": "Affliction Wrack",
+  "build": "Affliction Shadow Bolt",
   "isDefault": false,
+  "pr": 104,
   "race": "Orc",
-  "talents": "05500003035001351-0002-0050055003",
+  "talents": "2550102003520005--0550305003",
   "treeNames": [
     "Affliction",
     "Demonology",
     "Destruction"
   ],
   "gearSet": "level60_phase1_synthetic",
-  "apl": "level60_affliction_wrack",
+  "apl": "level60_affliction_shadow_bolt",
   "published": {
-    "dps": 999.9,
+    "dps": 1015.6,
     "source": "verify.py on this request after round 70753 (the 2026-11-02 development notes: Wrack, Shadow and Flame, demon health; A2's race base stats), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 999.9,
-    "stderr": 0.23,
+    "dps": 1015.6,
+    "stderr": 0.39,
     "iters": 20000,
     "ok": true,
     "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, round 70753"
   },
-  "summary": "Deep Affliction with Siphon Life, Soul Siphon, Shadow Mastery and Wrack, Wrack channelled as the main spell (the 2026-11-02 notes doubled it).",
+  "summary": "Shadow Bolt Affliction with Nightfall, plus Improved Shadow Bolt and Ruin from Destruction (the Affliction preset until round 70753).",
   "keyTalents": [
-    "Wrack",
-    "Siphon Life",
-    "Soul Siphon",
     "Shadow Mastery",
-    "Malevolence",
     "Pandemic",
-    "Improved Shadow Bolt"
+    "Malevolence",
+    "Nightfall",
+    "Improved Shadow Bolt",
+    "Ruin",
+    "Agonizing Flames"
   ],
   "rotation": [
     "Pre-pull: Shadow Bolt at -2.5s (lands just after the pull)",
@@ -44,8 +45,6 @@
     "Immolate when it is down or ends within its cast time, with more than 15s left",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
     "Troll Berserking right before a Shadow Bolt, so the haste goes on cast spells, not instants",
-    "Siphon Life when it is down",
-    "Wrack while Corruption and the bane are both up",
     "Shadow Bolt as the filler (instant on Nightfall procs)"
   ],
   "consumes": [
@@ -64,7 +63,7 @@
     "Major Spellstone (weapon imbue)"
   ],
   "caveats": [
-    "Wrack's 86 a second and 0.286 coefficient are the development notes' values; client 1.60.1.70753 still has 36 and 0.143 (notes-only, standards 37).",
+    "The Wrack build with the Imp sacrificed (warlock__affliction, the Affliction preset since round 70753) is 17 DPS ahead at 180 s. Drain fillers were 124 to 349 behind.",
     "How much of the warlock's stats a demon gets, and Succubus melee, come from pet sheets at levels 20 and 30, not 60.",
     "Bane of Doom's coefficient is 4.0 (Era has 1.0). At 2.0, Shadow Bolt builds would lose about 4%. At 1.0, about 6%.",
     "No Ahn'Qiraj book ranks, so Shadow Bolt stops at rank IX, Immolate at VII and Corruption at VI. The books would add 7 to 13 DPS.",
@@ -72,5 +71,5 @@
     "Soul shards and Life Tap's health cost aren't tracked.",
     "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
   ],
-  "notes": "The Affliction request (warlock__affliction.json) with the Affliction Wrack talents and rotation (ui/warlock/apls/level60_affliction_wrack.apl.json); everything else as there. Request straight from mksettings -spec affliction -gear level60_phase1_synthetic -apl level60_affliction -race Orc -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 30 (standards 33 since 2026-11-02, the longest range its spells reach; 25 from 2026-11-01, 5 before) and channelClipDelayMs 50, as the UI preset does. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Orc since 2026-11-02 (fairness-20261101-2), was Human: at 30 yd the Orc leads by 1.0 at 180 sec (20,000 iterations, seed 1, Orc 1013.6 against 1012.7); the Human stays the best Alliance race."
+  "notes": "The Affliction request until round 70753 (was warlock__affliction), renamed when the Wrack build took the Affliction preset; made with mksettings -spec affliction_shadow_bolt -gear level60_phase1_synthetic -apl level60_affliction_shadow_bolt -talents 2550102003520005--0550305003 -race Orc -duration 180 (the old -spec affliction setup). Request straight from mksettings -spec affliction -gear level60_phase1_synthetic -apl level60_affliction -race Orc -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 30 (standards 33 since 2026-11-02, the longest range its spells reach; 25 from 2026-11-01, 5 before) and channelClipDelayMs 50, as the UI preset does. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Orc since 2026-11-02 (fairness-20261101-2), was Human: at 30 yd the Orc leads by 1.0 at 180 sec (20,000 iterations, seed 1, Orc 1013.6 against 1012.7); the Human stays the best Alliance race."
 }
