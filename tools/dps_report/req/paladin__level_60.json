@@ -249,6 +249,16 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 10333
+                      }
+                    }
+                  },
+                  "notes": "Holy Strike on cooldown."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 20271
                       }
                     },
@@ -450,16 +460,6 @@
                     }
                   },
                   "notes": "And back once the other seal has stored a copy, which the next swing spends."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10333
-                      }
-                    }
-                  },
-                  "notes": "Holy Strike on cooldown."
                 },
                 {
                   "action": {
