@@ -10,6 +10,15 @@ Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. T
 
 Update 2026-10-12: every multi-rank talent below that is still in the tree was checked against the client's per-rank curves (TraitDefinitionEffectPoints and CurvePoint, build 1.60.1.70338) and the sim's per-rank values match them, so those are marked [ranks settled by the 70338 trait curves]. Talents marked [not in client 70338] are no longer in the tree; the current tree is in the "Beta client 1.60.1.70338" section.
 
+## Client 1.60.1.70753 and the November 2 development notes (2026-11-03)
+
+Client 70753 bakes the 2026-10-30 hotfix's tree into its own tables (the druid tree below is unchanged) and adds Poised. Blizzard's notes of 2 November (post 9) also raise the cat's and Balance's damage, but none of those values is in the client, Wowhead or a hotfix yet; under standards 37 the sim takes the notes' numbers (gated under Forever, `sim/druid/tuning_70753.go`). The ledger is `orchestration/round_70753/druid.md`.
+
+- **Poised** (passive 1328829, level 32; buff 1328827): at full Energy out of combat, the next Claw, Shred, Rake, Rip, Ferocious Bite, Ravage, Pounce or Cower costs 10 less (aura 107 misc 14 bp -10, one charge, no end). The sim gives one charge at the pull at full Energy (`sim/druid/poised.go`). The Level 60 opener is a Clearcast Ravage, which is free already and uses the charge up.
+- **Notes-only values:** Shred 200% weapon damage (client 155%), Claw 140% (110%), Ravage 435% (350%); Rip, Rake, Ferocious Bite and Pounce base points and attack power part ×1.25 (Bite's damage a point of extra Energy unchanged); Starfire base damage ×1.40; Rend and Tear 3% a point (2%; `tools/forever_talents/notes/druid.json` carries the tooltip).
+- Already in the sim from the hotfix: Ferocious Bite's new rank 1 at 24, Genesis and Naturalist 2% a point, Leader of the Pack and Moonkin Aura all crit and exclusive, Predatory Discipline, Shifting Power at 8 sec, Berserk gone, Heart of the Wild and Furor swapped, Reflection and Subtlety swapped.
+- Bear and healer lines (Lacerate as a talent, Primal Bite, Bear Form threat 115%, Bloom, Swiftmend, Wild Growth) are the tank and healer sims'.
+
 ## Launch-realm hotfix to 1.60.1.70707 (2026-10-30)
 
 The launch realms' hotfix of 30 October reworked the druid tree on build 70707 without a new client (wago.tools hotfixes, product wowf, region 91, push 113283 and its neighbours, read through `tools/sources/hotfixes.py` into the cached `1.60.1.70707+hf` tables; [foreverchanges.pro](https://foreverchanges.pro/talents/druid) shows the same). `tools/forever_talents/client/druid.json` is that tree, and the sim follows it since 2026-11-01. It supersedes the sections below wherever they disagree; every druid talent string changed.
