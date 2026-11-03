@@ -22,7 +22,8 @@ orchestration/dash_raw_store.md has the design; pipeline.sh wires these commands
 A pack holds one build's out/<id>.json, names/<id>.tsv, weights/<id>.json and mana/<id>.json where it has them, its
 lines of rv/results.jsonl and asm/results.jsonl (rv.jsonl, asm.jsonl: sorted by key, each key once, the last line
 winning as in build_races.py and asm_data.py), its abl/ablate.json entry with that file's iters and seed (abl.json),
-and fingerprint.json: the sha256 of its request, its races' override files (req/races/, race_override.py) and its
+its probe (probe.json, probe.py: the fingerprints of its sims at a tenth of their iterations, which the next probe
+check compares with), and fingerprint.json: the sha256 of its request, its races' override files (req/races/, race_override.py) and its
 assumption rotations, the sim split count and the commit simmed at.
 Packs are deterministic (sorted members, zero mtimes and owners, gzip without a name or time), so an unchanged
 build's pack is byte-identical and git stores it once.
@@ -119,69 +120,99 @@ def inputs(bid):
     return fp
 
 
-def pack(ids, commit):
-    rv, asm = lines_by_build(RV, RV_KEY), lines_by_build(ASM, ASM_KEY)
+def members(bid, commit, rv, asm, abl, problems):
+    """A build's pack members (name: bytes), and what it lacks appended to problems."""
+    want, rv_want, asm_want = expected(bid)
+    members = {}
+    for d, ext in FILES:
+        p = os.path.join(D, d, bid + ext)
+        if os.path.exists(p):
+            data = open(p, 'rb').read()
+            if d == 'names':  # patch 0001 appends one copy per sim split, in the order the splits finish
+                data = ''.join(sorted(set(data.decode().splitlines(keepends=True)))).encode()
+            elif d == 'out':
+                data = json.dumps(canon(json.loads(data)), separators=(',', ':')).encode()
+            members[f'{d}/{bid}{ext}'] = data
+        elif want[d]:
+            problems.append(f'{bid}: no {d}/{bid}{ext}')
+    got_rv = rv.get(bid, {})
+    missing = rv_want - set(got_rv)
+    if missing:
+        problems.append(f'{bid}: {len(missing)} race scenario sims missing, e.g. {sorted(missing, key=repr)[0]}')
+    if got_rv:
+        members['rv.jsonl'] = ''.join(got_rv[k] + '\n' for k in sorted(got_rv, key=repr) if k in rv_want).encode()
+    got_asm = asm.get(bid, {})
+    missing = asm_want - set(got_asm)
+    if missing:
+        problems.append(f'{bid}: {len(missing)} assumption sims missing, e.g. {sorted(missing, key=repr)[0]}')
+    if got_asm:  # combos no longer in assumptions_def.py are left behind
+        members['asm.jsonl'] = ''.join(got_asm[k] + '\n' for k in sorted(got_asm, key=repr) if k in asm_want).encode()
+    entry = abl['builds'].get(bid)
+    if entry is not None:
+        if any('error' in x for x in entry.get('drop', []) + entry.get('pairs', [])):
+            problems.append(f'{bid}: a setup ablation sim failed')
+        members['abl.json'] = json.dumps({'iters': abl['iters'], 'seed': abl['seed'], 'entry': entry}, sort_keys=True).encode()
+    elif want['abl']:
+        problems.append(f'{bid}: no setup ablation entry')
+    # the probe of these sims (probe.py run, the last step of pipeline.sh run): what the next probe check compares with
+    p = os.path.join(D, 'probe', bid + '.json')
+    if os.path.exists(p):
+        members['probe.json'] = json.dumps(json.load(open(p)), indent=0, sort_keys=True).encode()
+    members['fingerprint.json'] = json.dumps(inputs(bid) | {'splits': SPLITS, 'commit': commit}, indent=1, sort_keys=True).encode()
+    return members
+
+
+def tgz(members):
+    """Deterministic: sorted members, zero mtimes and owners, gzip without a name or time."""
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode='w', format=tarfile.PAX_FORMAT) as tar:
+        for name in sorted(members):
+            ti = tarfile.TarInfo(name)
+            ti.size, ti.mtime, ti.mode, ti.uid, ti.gid, ti.uname, ti.gname = len(members[name]), 0, 0o644, 0, 0, '', ''
+            tar.addfile(ti, io.BytesIO(members[name]))
+    out = io.BytesIO()
+    with gzip.GzipFile(filename='', mode='wb', fileobj=out, mtime=0, compresslevel=9) as gz:
+        gz.write(buf.getvalue())
+    return out.getvalue()
+
+
+def load_rows():
     abl = json.load(open(ABL)) if os.path.exists(ABL) else {'builds': {}}
+    return lines_by_build(RV, RV_KEY), lines_by_build(ASM, ASM_KEY), abl
+
+
+def pack_bytes(bid, commit):
+    """The pack $DASH_DIR's outputs would make for a build, without writing it (probe.py audit)."""
+    return tgz(members(bid, commit, *load_rows(), []))
+
+
+def pack(ids, commit):
+    rv, asm, abl = load_rows()
     os.makedirs(RAW, exist_ok=True)
-    problems = []
+    problems, unprobed = [], []
     for bid in ids:
         if meta(bid) is None:
             problems.append(f'{bid}: no request')
             continue
-        want, rv_want, asm_want = expected(bid)
-        members = {}
-        for d, ext in FILES:
-            p = os.path.join(D, d, bid + ext)
-            if os.path.exists(p):
-                data = open(p, 'rb').read()
-                if d == 'names':  # patch 0001 appends one copy per sim split, in the order the splits finish
-                    data = ''.join(sorted(set(data.decode().splitlines(keepends=True)))).encode()
-                elif d == 'out':
-                    data = json.dumps(canon(json.loads(data)), separators=(',', ':')).encode()
-                members[f'{d}/{bid}{ext}'] = data
-            elif want[d]:
-                problems.append(f'{bid}: no {d}/{bid}{ext}')
-        got_rv = rv.get(bid, {})
-        missing = rv_want - set(got_rv)
-        if missing:
-            problems.append(f'{bid}: {len(missing)} race scenario sims missing, e.g. {sorted(missing, key=repr)[0]}')
-        if got_rv:
-            members['rv.jsonl'] = ''.join(got_rv[k] + '\n' for k in sorted(got_rv, key=repr) if k in rv_want).encode()
-        got_asm = asm.get(bid, {})
-        missing = asm_want - set(got_asm)
-        if missing:
-            problems.append(f'{bid}: {len(missing)} assumption sims missing, e.g. {sorted(missing, key=repr)[0]}')
-        if got_asm:  # combos no longer in assumptions_def.py are left behind
-            members['asm.jsonl'] = ''.join(got_asm[k] + '\n' for k in sorted(got_asm, key=repr) if k in asm_want).encode()
-        entry = abl['builds'].get(bid)
-        if entry is not None:
-            if any('error' in x for x in entry.get('drop', []) + entry.get('pairs', [])):
-                problems.append(f'{bid}: a setup ablation sim failed')
-            members['abl.json'] = json.dumps({'iters': abl['iters'], 'seed': abl['seed'], 'entry': entry}, sort_keys=True).encode()
-        elif want['abl']:
-            problems.append(f'{bid}: no setup ablation entry')
-        members['fingerprint.json'] = json.dumps(inputs(bid) | {'splits': SPLITS, 'commit': commit}, indent=1, sort_keys=True).encode()
-        buf = io.BytesIO()
-        with tarfile.open(fileobj=buf, mode='w', format=tarfile.PAX_FORMAT) as tar:
-            for name in sorted(members):
-                ti = tarfile.TarInfo(name)
-                ti.size, ti.mtime, ti.mode, ti.uid, ti.gid, ti.uname, ti.gname = len(members[name]), 0, 0o644, 0, 0, '', ''
-                tar.addfile(ti, io.BytesIO(members[name]))
-        out = io.BytesIO()
-        with gzip.GzipFile(filename='', mode='wb', fileobj=out, mtime=0, compresslevel=9) as gz:
-            gz.write(buf.getvalue())
+        m = members(bid, commit, rv, asm, abl, problems)
+        if 'probe.json' not in m:
+            unprobed.append(bid)
+        data = tgz(m)
         path = os.path.join(RAW, bid + '.tgz')
         old = open(path, 'rb').read() if os.path.exists(path) else None
-        if old != out.getvalue():
-            open(path, 'wb').write(out.getvalue())
-            print(f'packed {bid} ({len(out.getvalue()) // 1024} KB)')
+        if old != data:
+            open(path, 'wb').write(data)
+            print(f'packed {bid} ({len(data) // 1024} KB)')
+    if unprobed:
+        print(f'no probe for {len(unprobed)} builds (probe.py run {" ".join(unprobed)}), so the next probe check re-sims them',
+              file=sys.stderr)
     if problems:
         print('\n'.join(['Not complete:'] + problems), file=sys.stderr)
         sys.exit(1)
 
 
 def unpack():
-    for d in ('out', 'names', 'weights', 'mana', 'rv', 'asm', 'abl', 'data'):
+    for d in ('out', 'names', 'weights', 'mana', 'rv', 'asm', 'abl', 'probe', 'data'):
         if glob.glob(os.path.join(D, d, '*')):
             sys.exit(f'unpack: {D}/{d} is not empty; hydrate starts from an empty $DASH_DIR')
     rv, asm, abl = {}, {}, {'builds': {}}
@@ -202,6 +233,9 @@ def unpack():
                     now = inputs(bid)
                     if any(fp.get(k, {}) != now.get(k, {}) for k in ('request', 'asmApls', 'raceOverrides')):
                         older.append(bid)
+                elif ti.name == 'probe.json':
+                    os.makedirs(os.path.join(D, 'probe'), exist_ok=True)
+                    open(os.path.join(D, 'probe', bid + '.json'), 'wb').write(data)
                 elif ti.name == 'rv.jsonl':
                     rv[bid] = data.decode()
                 elif ti.name == 'asm.jsonl':
@@ -230,7 +264,7 @@ def unpack():
 
 def clean(ids):
     ids = set(ids)
-    for d, ext in FILES:
+    for d, ext in FILES + (('probe', '.json'),):
         for bid in ids:
             p = os.path.join(D, d, bid + ext)
             if os.path.exists(p):

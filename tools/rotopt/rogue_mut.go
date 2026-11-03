@@ -5,7 +5,7 @@ import (
 )
 
 // Assassination Mutilate under Forever rules. It is the Backstab template with Mutilate
-// as the builder and Venom as a finisher, so the cooldown, Rupture and Eviscerate rules
+// as the builder (Venom is a passive on Shank since the November 2 notes), so the cooldown, Rupture and Eviscerate rules
 // stay the same as the dagger builds'. Backstab stays in as the fallback builder for
 // when the main hand is not a dagger, it never fires with one.
 type rogueMut struct{}
@@ -18,7 +18,6 @@ func (rogueMut) Knobs() []Knob {
 	knobs := withDefaults(rogueBS{}.Knobs(), map[string]float64{
 		"mutilate": 1,
 		"ghostly":  0,
-		"venomCp":  0,
 		// No Adrenaline Rush or Blade Flurry in the build, so nothing waits for them. A
 		// Slice and Dice rule that waits for a spell the build lacks comes out as a bare
 		// "5 combo points" and takes every finisher.

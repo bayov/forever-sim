@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 9,
   "race": "Undead",
-  "talents": "0053031052150005-322303200013-002",
+  "talents": "0053032024105103-321303010201312",
   "treeNames": [
     "Assassination",
     "Combat",
@@ -15,25 +15,25 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_seal_fate_daggers",
   "published": {
-    "dps": 752.9,
-    "source": "verify.py on this request after the 2026-11-02 rotation re-search (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s); the report is not regenerated yet"
+    "dps": 920.7,
+    "source": "verify.py on this request after round 70753 (the November 2 notes' rework: new tree, Shank, Poised, Death Mark; talents and rotation searched again), wowsimcli 20,000 iterations, seed 1, 180 ± 20 s; the report is not regenerated yet"
   },
   "verify": {
-    "dps": 752.9,
-    "stderr": 0.22,
+    "dps": 920.7,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py on this request (2026-11-02, after the rotation re-search), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "verify.py on this request (2026-11-03, round 70753), 180 ± 20 s, 20,000 iterations, seed 1"
   },
-  "summary": "Backstab on daggers with Seal Fate from Assassination.",
+  "summary": "Seal Fate, Relentless Strikes and Venom in Assassination with Puncturing Wounds, for Backstab.",
   "keyTalents": [
-    "Seal Fate 5/5",
-    "Lethality 5/5",
-    "Puncturing Wounds",
+    "Seal Fate 3/3",
+    "Relentless Strikes 5/5",
+    "Venom",
     "Cold Blood",
-    "Improved Poisons 5/5",
-    "Improved Eviscerate",
-    "Opportunity"
+    "Puncturing Wounds 3/3",
+    "Dual Wield Specialization 2/2",
+    "Composure 2/2"
   ],
   "rotation": [
     "The Combat Daggers rotation with a Vanish and the 3s Slice and Dice refresh, minus Adrenaline Rush and Blade Flurry (not talented)",
@@ -43,6 +43,7 @@
     "Thistle Tea at 10 energy or less. Sapper, Land Mine and potion while Slice and Dice is up",
     "Eviscerate at 4+ combo points when Slice and Dice is up, at 79+ energy, or with under 6s left. Spend leftover points in the last 3s",
     "Vanish into Ambush at 3 combo points or fewer. A Night Elf uses Shadowmeld the same way",
+    "Shank on cooldown at 75 energy or less (25 Energy back; with Venom it keeps the poisons' buff up)",
     "Backstab whenever it's affordable"
   ],
   "consumes": [
@@ -60,12 +61,12 @@
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
+    "Round 70753: the November 2 notes' rogue rework isn't in client 70753, so Shank, the new talents and the re-ranked ones take the notes' values (standards 37). Shank's damage details are assumed (notes.md, Rogue).",
     "Improved Sinister Strike 2 adds no DPS.",
-    "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
     "No Ahn'Qiraj book ranks, so Backstab and Eviscerate stop at rank VIII and Deadly Poison at IV. The books would add 13 to 18 DPS.",
     "Grimstitch 4-piece and 5-piece bonuses aren't counted. They would add about 8 and 6 DPS.",
     "Assumed: the fight is in Hyjal or the Barrow Deeps. The flask gives its full bonus only there.",
     "10% hit (10 hit rating each on the wrist and second ring). Hit past the 8% cap still helps white hits, so 10% beats 8% by 0.4 to 1.9 DPS."
   ],
-  "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Daggers and it uses the rogue_combat mksettings setup; it used the Combat Daggers APL until 2026-11-02 and has its own since (level60_seal_fate_daggers: the Combat Daggers rotation with the Vanish and the 3 sec Slice and Dice refresh that Combat Daggers dropped). Gnome since the 2026-10-27 race re-pick, with the level60_combat_daggers rotation regenerated with eurekaCp=0 (tools/rotopt/rogue_presets.sh), which was the Gnome race override; the same rotation is 0.0 for any other race (725.3 as Orc, unchanged). Was Orc. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Gnome. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Rotation searched again on 2026-11-02 (tools/rotopt/rogue_presets.sh): the builder goes out whenever it is affordable, since an extra attack keeps the swing timer under Forever (2026-10-30); the request's rotation is the regenerated APL."
+  "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Daggers and it uses the rogue_combat mksettings setup; it used the Combat Daggers APL until 2026-11-02 and has its own since (level60_seal_fate_daggers: the Combat Daggers rotation with the Vanish and the 3 sec Slice and Dice refresh that Combat Daggers dropped). Gnome since the 2026-10-27 race re-pick, with the level60_combat_daggers rotation regenerated with eurekaCp=0 (tools/rotopt/rogue_presets.sh), which was the Gnome race override; the same rotation is 0.0 for any other race (725.3 as Orc, unchanged). Was Orc. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Gnome. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Rotation searched again on 2026-11-02 (tools/rotopt/rogue_presets.sh): the builder goes out whenever it is affordable, since an extra attack keeps the swing timer under Forever (2026-10-30); the request's rotation is the regenerated APL. Round 70753 (2026-11-03): request regenerated from mksettings with the same arguments and the new talents (0053032024105103-321303010201312) and rotation (the rotopt search on the reworked tree, tools/rotopt/rogue_presets.sh), race Undead (it still leads the race sweep)."
 }

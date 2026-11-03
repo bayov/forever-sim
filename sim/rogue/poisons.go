@@ -20,9 +20,11 @@ import (
 // Forever's poisons also scale with attack power: Instant Poison adds 0.5% of it a hit, and each
 // Deadly Poison stack 0.45% of it over the whole 12 sec, read when each tick lands (wowsims/forever
 // 16d879ae28 and a8f1e0b5d2, "Confirmed by Zirene"). The client has no coefficient for either.
+// Blizzard's November 2 development notes double both: Deadly Poison 0.009 (was 0.0045) and
+// Instant Poison 0.01 (was 0.005).
 const (
-	instantPoisonAPCoefficient = 0.005
-	deadlyPoisonAPCoefficient  = 0.0045
+	instantPoisonAPCoefficient = 0.01
+	deadlyPoisonAPCoefficient  = 0.009
 )
 
 // TODO: Add charges to poisons
