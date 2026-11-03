@@ -20,6 +20,14 @@ Blizzard's November 2 notes (post 9) list the mage changes the 10-27 to 10-30 ho
 - Talents lose their lower proc chance on low ranks, except Blizzard (Arcane Concentration, Frostbite, Fingers of Frost from a rank learned more than 12 levels below). The sim never modelled the penalty, so nothing moves. The only lower rank a preset casts, Frostfire's rank 2 Frostfire Bolt, is learned at 50, inside the 12 levels anyway.
 - Frost Blast is gone and Imbue Iceknife's visual changed: nothing to simulate.
 
+Presets after the round (2026-11-03; 20,000 iterations, seed 1, the report requests, 120 / 180 / 300 sec):
+
+- Arcane (Gnome): 981.3 / 953.9 / 936.8, from 944.9 / 937.5 / 930.6. The build ended its fights with about 5000 mana, so Arcane Blast now goes ahead of the Frostbolt filler while the mana is more than 75 a second of the fight left, and the talent search moved Ice Shards to Arcane Meditation 3 and Incineration 5 (`050205203100311531-55-0531`).
+- Fire (Human): 1066.8 / 1057.9 / 1042.0. Scorch refreshes Fire Vulnerability with under 9 sec left (5 before), +1.4 / +0.6 / +1.5.
+- Frost (High Order): 944.5 / 944.7 / 937.7, unchanged. Incineration 5 for Arcane Meditation gains 2.6 at 120 and 180 sec but loses 6.4 at 300, so it stays out.
+- Frostfire (Human): 1052.4 / 1064.3 / 1041.8, unchanged; the talent and knob searches kept everything.
+- Races at 180 sec: every preset keeps its race. Best Horde race: Undead for Arcane (952.2) and Fire (1057.0), Troll for Frost (938.4) and Frostfire (1059.4). Fire's Gnome is 0.4 ahead of the Human, under the 0.5 a switch needs.
+
 ## Launch-realm hotfix to 1.60.1.70707 (2026-10-30)
 
 The launch realms' newest hotfix push for 70707 (wago.tools hotfixes, push 113486, region 91; foreverchanges.pro's "A hotfix to the October 30 build") takes back the 2026-10-20 Frost values below. Taken into the sim 2026-11-01, as server data:

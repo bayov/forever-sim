@@ -32,7 +32,11 @@ gen() {
 # sec), Fire Blast instead. Arcane stands at Fire Blast's 20 yd (standards 33), where Arcane
 # Explosion (10 yd around the mage) would not reach, so the finisher no longer casts it (it was
 # +2.3 at 180 sec in a sim that doesn't hold it to its radius).
-gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=1,conserveMana=0,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=1,finisher=1,finishPad=0.75,wand=1"
+# Round 70753 (2026-11-03): the build ended its fights with about 5000 mana, so Arcane Blast goes
+# ahead of the Frostbolt filler while the mana is more than 75 a second of the fight left (mana the
+# fight can't otherwise spend), and the talent search then took Arcane Meditation 3 and Incineration
+# 5 for Ice Shards: +36.4 / +16.6 / +6.3 at 120 / 180 / 300 sec on two seed sets.
+gen mage_arcane level60_arcane "blastFiller=75,blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=1,conserveMana=0,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=1,finisher=1,finishPad=0.75,wand=1"
 # Scorch to 5 Fire Vulnerability stacks and again with under 9 sec left on them (5 sec until the
 # 2026-11-03 knob search, round 70753: +1.4 / +0.6 / +1.5 at 120 / 180 / 300 sec on two seed sets),
 # Pyroblast at 3 Heating Up
