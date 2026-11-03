@@ -81,13 +81,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		),
 
 		// Default consumes settings, the default build's (Combat Daggers drinks the Flask of Natural Accuracy).
-		consumes: Presets.P1CombatDaggersConsumes,
+		consumes: Presets.P1CombatSwordsConsumes,
 		// Default talents.
 		talents: Presets.DefaultTalents.data,
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 		other: Presets.OtherDefaults[Phase.Phase1],
-		encounter: Presets.EncounterLevel60CombatDaggers.encounter,
+		encounter: Presets.EncounterLevel60CombatSwords.encounter,
 		// Default raid/party buffs settings.
 		raidBuffs: Presets.DefaultRaidBuffs[Phase.Phase1],
 		partyBuffs: PartyBuffs.create({}),
@@ -182,7 +182,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 
 			talents: Presets.DefaultTalentsCombat.data,
 			specOptions: Presets.DefaultOptions,
-			consumes: Presets.P1CombatDaggersConsumes,
+			consumes: Presets.P1CombatSwordsConsumes,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceSkyborneHighOrder,

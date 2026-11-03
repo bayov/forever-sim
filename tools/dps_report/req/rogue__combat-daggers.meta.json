@@ -3,7 +3,7 @@
   "class": "Rogue",
   "spec": "Combat",
   "build": "Combat Daggers",
-  "isDefault": true,
+  "isDefault": false,
   "pr": 9,
   "race": "Undead",
   "talents": "005203002-3203230002012221551-005",

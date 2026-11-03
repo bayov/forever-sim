@@ -126,9 +126,10 @@ export const GearPresets = {
 	],
 };
 
-// Combat Daggers is the class default: since the 8% hit cap and its Accuracy flask (2026-10-23) it leads
-// Combat Swords at every length.
-export const DefaultGear = GearLevel60SyntheticCombatDaggers;
+// Combat Swords is the class default since round 70753 (November 2 notes): with Aggression off Backstab and
+// Flash of Steel on Shank it leads Combat Daggers by 16.8 at 180 sec (963.5 against 946.7). Combat Daggers
+// was the default from 2026-10-23.
+export const DefaultGear = GearLevel60SyntheticSwords;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets[]
@@ -198,8 +199,8 @@ export const APLPresets = {
 
 //Need to add main hand equip logic or talent/rotation logic to map to Auto APL
 export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
-	[0]: ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
-	[1]: ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
+	[0]: ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
+	[1]: ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -234,7 +235,10 @@ export const TalentsLevel60CombatSwords = PresetUtils.makePresetTalents(
 export const TalentsLevel60SealFateSwords = PresetUtils.makePresetTalents(
 	'Seal Fate Swords',
 	SavedTalents.create({ talentsString: '0053032024105103-320033011201312' }),
-	{ tooltip: 'Seal Fate, Relentless Strikes, Venom and Cold Blood in Assassination, with Aggression and Dual Wield Specialization, for Sinister Strike.', group: 'Synthetic' },
+	{
+		tooltip: 'Seal Fate, Relentless Strikes, Venom and Cold Blood in Assassination, with Aggression and Dual Wield Specialization, for Sinister Strike.',
+		group: 'Synthetic',
+	},
 );
 export const TalentsLevel60CombatDaggers = PresetUtils.makePresetTalents(
 	'Combat Daggers',
@@ -244,7 +248,10 @@ export const TalentsLevel60CombatDaggers = PresetUtils.makePresetTalents(
 export const TalentsLevel60SealFateDaggers = PresetUtils.makePresetTalents(
 	'Seal Fate Daggers',
 	SavedTalents.create({ talentsString: '0053032024105103-321303010201312' }),
-	{ tooltip: 'Seal Fate, Relentless Strikes, Venom and Cold Blood in Assassination, with Puncturing Wounds and Dual Wield Specialization, for Backstab.', group: 'Synthetic' },
+	{
+		tooltip: 'Seal Fate, Relentless Strikes, Venom and Cold Blood in Assassination, with Puncturing Wounds and Dual Wield Specialization, for Backstab.',
+		group: 'Synthetic',
+	},
 );
 export const TalentsLevel60Mutilate = PresetUtils.makePresetTalents('Mutilate', SavedTalents.create({ talentsString: '00530320251451031-320303-005' }), {
 	tooltip: 'Assassination for Mutilate: Seal Fate, Relentless Strikes, Venom, Cold Blood, Vile Poisons, with Puncturing Wounds and Opportunity.',
@@ -311,10 +318,10 @@ export const TalentPresets = {
 };
 
 export const DefaultTalentsAssassin = TalentsLevel60Mutilate;
-export const DefaultTalentsCombat = TalentsLevel60CombatDaggers;
+export const DefaultTalentsCombat = TalentsLevel60CombatSwords;
 export const DefaultTalentsSubtlety = TalentsLevel60Subtlety;
 
-export const DefaultTalents = TalentsLevel60CombatDaggers;
+export const DefaultTalents = TalentsLevel60CombatSwords;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -513,6 +520,22 @@ export const EncounterLevel60CombatSwordsHumanoid = level60Encounter('Combat Swo
 export const EncounterLevel60CombatDaggers = level60Encounter('Combat Daggers', MobType.MobTypeUnknown, P1CombatDaggersConsumes);
 export const EncounterLevel60CombatDaggersHumanoid = level60Encounter('Combat Daggers · vs Humanoid', MobType.MobTypeHumanoid, P1CombatDaggersConsumes);
 
+// Round 70753 (November 2 development notes; the rework isn't in client 70753, so the notes' values,
+// standards 37): Shank, Poised, the reworked tree and Death Mark, talents and rotation searched again,
+// races swept with each race's own rotation (A2's base stats in). 20000 iterations, seed 1 (seed 1000003
+// within 0.6), 120 / 180 / 300 sec, before (master 5eb381750) and after:
+//   Combat Swords       808.7 / 780.4 / 759.5  ->  995.0 / 963.5 / 937.0 Undead (the default)
+//   Seal Fate Swords    757.4 / 745.5 / 735.0  ->  975.9 / 957.0 / 941.0 Undead
+//   Combat Daggers      814.1 / 789.6 / 769.6  ->  972.8 / 946.7 / 923.3 Undead
+//   Seal Fate Daggers   765.1 / 751.9 / 742.6  ->  936.9 / 920.7 / 906.4 Undead
+//   Subtlety            746.8 / 731.8 / 722.3  ->  896.5 / 881.7 / 868.3 Night Elf (Undead 893.4 / 880.2 / 869.0)
+//   Mutilate            754.6 / 742.7 / 734.4  ->  881.0 / 866.1 / 855.3 Undead
+// Races at 180 sec: the Undead leads five builds (0.0 to 4.2 ahead of the Orc or the Gnome; Combat Swords
+// ties the Orc and stays), the Night Elf Subtlety (+1.4 and +1.9 over the Undead on both seed sets, its
+// Shadowmeld into Ambush). Best Horde race: the Undead everywhere. Best Alliance race: the Gnome (Eureka! on
+// cooldown for Seal Fate Swords and Mutilate, tools/dps_report/req/races/) and the Night Elf on Subtlety.
+// The "(vs Humanoid)" builds carry the same talents and sim the same as their base builds since Murder was
+// removed. orchestration/round_70753/rogue.md has the ledger, the searches and the audit.
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
 // encounter and the best race at 180 sec. A build changes race only when the new one leads by more
 // than 0.5 DPS on two seed sets (standards 16). On 2026-10-24 (the hit each set sims best with, 8% to
@@ -652,12 +675,12 @@ export const PresetBuildLevel60Mutilate = level60Build(
 );
 export const PresetBuildLevel60Subtlety = level60Build(
 	'Subtlety',
-	'Level 60 Undead Subtlety (Hemorrhage, Ghostly Strike, Premeditation, Vanish into Ambush) on the synthetic Phase 1 daggers.',
+	'Level 60 Night Elf Subtlety (Death Mark, Boot Knife, Hemorrhage, Premeditation, Vanish and Shadowmeld into Ambush) on the synthetic Phase 1 daggers.',
 	GearLevel60SyntheticSubtlety,
 	TalentsLevel60Subtlety,
 	ROTATION_PRESET_LEVEL60_SUBTLETY,
 	EncounterLevel60,
-	Race.RaceUndead,
+	Race.RaceNightElf,
 );
 
 // The vs Humanoid builds: the same specs against a Humanoid boss (Giants too), with Murder 2/2.
@@ -714,5 +737,5 @@ export const PresetBuildLevel60SubtletyHumanoid = humanoidBuild(
 	GearLevel60SyntheticSubtlety,
 	TalentsLevel60SubtletyHumanoid,
 	ROTATION_PRESET_LEVEL60_SUBTLETY,
-	Race.RaceUndead,
+	Race.RaceNightElf,
 );
