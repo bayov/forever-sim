@@ -1638,7 +1638,9 @@ class PracticeRoom {
 		perf?.part('move');
 		this.animateUnits(dt, wall);
 		perf?.part('units');
+		perf?.gpuBegin();
 		this.room.render();
+		perf?.gpuEnd();
 		perf?.part('render');
 		this.updateHud();
 		this.drawStats(t);
