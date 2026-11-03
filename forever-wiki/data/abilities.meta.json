@@ -1,8 +1,8 @@
 {
   "meta": {
-    "build": "1.60.1.70753",
-    "fetched": "2026-11-03T13:15Z",
-    "source": "client beta 1.60.1.70753 (wago.tools)",
+    "build": "1.60.1.70755",
+    "fetched": "2026-11-03T18:42Z",
+    "source": "client beta 1.60.1.70755 (wago.tools)",
     "tool": "tools/sources/abilities.py"
   }
 }
