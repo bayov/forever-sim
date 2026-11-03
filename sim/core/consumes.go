@@ -1718,8 +1718,9 @@ func makeStatBuffPotionMCD(itemId int32, label string, buff stats.Stats, charact
 // makeDragonfirePotionMCD is Forever's Dragonfire Potion 250953 (1252554, category 4 with the
 // other potions, 2 min): 280 Fire to every enemy in a 12 yd cone, and 35 Fire every 2 sec for 8
 // sec on each. The row states Fixed Travel Time at Speed 1, so the fire lands 1 sec after use
-// from any distance, and Always Hit, so it rolls no miss; the hit can crit (wowsims/forever
-// 5b8a1fbc24). It has no spell power coefficient. It reaches only as far as the cone's radius.
+// from any distance, Always Hit, so it rolls no miss, and Can't Crit (Attributes[2] 0x20000000),
+// so neither the hit nor the ticks crit (wowsims/forever reads the flag). It has no spell power
+// coefficient. It reaches only as far as the cone's radius.
 func makeDragonfirePotionMCD(character *Character, cdTimer *Timer) MajorCooldown {
 	const coneRadius = 12
 	actionID := ActionID{ItemID: 250953}
@@ -1729,7 +1730,7 @@ func makeDragonfirePotionMCD(character *Character, cdTimer *Timer) MajorCooldown
 		SpellSchool: SpellSchoolFire,
 		DefenseType: DefenseTypeMagic,
 		ProcMask:    ProcMaskEmpty,
-		Flags:       SpellFlagNoOnCastComplete,
+		Flags:       SpellFlagNoOnCastComplete | SpellFlagNoPeriodicCrit,
 		Cast: CastConfig{
 			CD: Cooldown{
 				Timer:    cdTimer,
@@ -1759,7 +1760,7 @@ func makeDragonfirePotionMCD(character *Character, cdTimer *Timer) MajorCooldown
 				DoAt: sim.CurrentTime + time.Second,
 				OnAction: func(sim *Simulation) {
 					for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
-						spell.CalcAndDealDamage(sim, aoeTarget, 280*sim.Encounter.AOECapMultiplier(), spell.OutcomeMagicCrit)
+						spell.CalcAndDealDamage(sim, aoeTarget, 280*sim.Encounter.AOECapMultiplier(), spell.OutcomeAlwaysHit)
 						spell.Dot(aoeTarget).Apply(sim)
 					}
 				},
@@ -1779,7 +1780,8 @@ func makeDragonfirePotionMCD(character *Character, cdTimer *Timer) MajorCooldown
 // potions, 2 min). Its 1252525 is a missile, range 20, at 10 yd/sec for no less than 1.5 sec,
 // that leaves the cloud 1252526 for 12 sec, which puts 1252543 on every enemy inside it: 33
 // Nature a second, rolled each tick from 31 to 35 (Variance 0.1). 1252543 states Always Hit, so
-// no tick misses (wowsims/forever 5b8a1fbc24). It has no spell power coefficient.
+// no tick misses (wowsims/forever 5b8a1fbc24), and Can't Crit (Attributes[2] 0x20000000), so no
+// tick crits. It has no spell power coefficient.
 func makeCausticSmogPotionMCD(character *Character, cdTimer *Timer) MajorCooldown {
 	const maxRange = 20
 	actionID := ActionID{ItemID: 250951}
@@ -1789,7 +1791,7 @@ func makeCausticSmogPotionMCD(character *Character, cdTimer *Timer) MajorCooldow
 		SpellSchool:  SpellSchoolNature,
 		DefenseType:  DefenseTypeMagic,
 		ProcMask:     ProcMaskEmpty,
-		Flags:        SpellFlagNoOnCastComplete,
+		Flags:        SpellFlagNoOnCastComplete | SpellFlagNoPeriodicCrit,
 		MissileSpeed: 10,
 		Cast: CastConfig{
 			CD: Cooldown{
