@@ -2061,6 +2061,47 @@
      "commits": [
       "58a1c35"
      ]
+    },
+    {
+     "title": "Dragonfire Potion and Caustic Smog Potion can't crit",
+     "kind": "sim",
+     "classes": [
+      "Paladin",
+      "Shaman"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead",
+      "shaman__elemental-level60"
+     ],
+     "note": "Both spells are flagged Can't Crit, so neither the hit nor the damage over time crits. Down 0.1 to 1.6 at 180 s.",
+     "source": "https://wago.tools/db2/SpellMisc?build=1.60.1.70707&filter[SpellID]=1252554",
+     "commits": [
+      "6d9b4d7"
+     ]
+    },
+    {
+     "title": "Faerie Fire in Cat Form has a 1 sec global cooldown and a 6 sec cooldown",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "Cat Form's passive shortens it, as it makes it free. In Bear Form it keeps the 1.5 sec global cooldown, also with the 6 sec cooldown. Up 2.0 at 180 s for the cat that keeps Faerie Fire up.",
+     "source": "https://wago.tools/db2/SpellEffect?build=1.60.1.70707&filter[SpellID]=3025",
+     "commits": [
+      "6d9b4d7"
+     ]
     }
    ],
    "internal": [
@@ -2243,6 +2284,26 @@
     {
      "commit": "d4b624303",
      "why": "leveling stat weights only; no report hash moved"
+    },
+    {
+     "commit": "82b2b31",
+     "why": "the Restoration shaman healing spec; healer and tank work; every report request's main sim reproduces its published DPS on this commit"
+    },
+    {
+     "commit": "57061b5",
+     "why": "the healer synthetic gear; healer and tank work; every report request's main sim reproduces its published DPS on this commit"
+    },
+    {
+     "commit": "0bfafa2",
+     "why": "Restoration shaman presets and healer gear scripts; healer and tank work; every report request's main sim reproduces its published DPS on this commit"
+    },
+    {
+     "commit": "cee6b83",
+     "why": "the Feral tank bear; healer and tank work; every report request's main sim reproduces its published DPS on this commit"
+    },
+    {
+     "commit": "789b028",
+     "why": "rotopt's tank search; healer and tank work; every report request's main sim reproduces its published DPS on this commit"
     }
    ],
    "source": {
