@@ -66,8 +66,20 @@ Sunder duty fillerGap=1 (+2.6 / +3.4). Each kept only where it won at 120, 160, 
 | Fury 2H | Orc 1169.9 / 1170.8 | Orc | Night Elf 1162.8 / 1162.9 | Tauren 1148.1 |
 | Arms | Orc 1094.0 / 1094.1 | Orc | Night Elf 1088.5 / 1089.2 | Tauren 1076.6 |
 
-Full table (all 10 races) in the commit "Warrior: Arms re-picks Orc"; Undead is second on Fury and Arms (3.1 to 4.9
-behind), the two Skyborne races tie. Arms switches to Orc (+3.8 / +3.1 over Undead, past the 0.5 bar on both seed sets).
+All 10 races (seeds 1 / 1000003; Dwarf with its race gear override). Undead is second on Fury and Arms (3.1 to 4.9 behind), the two Skyborne races tie. Arms switches to Orc (+3.8 / +3.1 over Undead, past the 0.5 bar on both seed sets).
+
+| Race | Faction | Fury | Fury 2H | Arms |
+|---|---|---|---|---|
+| Orc | Horde | 1152.6 / 1151.9 | 1169.9 / 1170.8 | 1094.0 / 1094.1 |
+| Undead | Horde | 1148.5 / 1147.0 | 1161.9 / 1162.4 | 1090.2 / 1091.0 |
+| NightElf | Alliance | 1146.8 / 1146.0 | 1162.8 / 1162.9 | 1088.5 / 1089.2 |
+| SkyborneHighOrder | Alliance | 1145.8 / 1146.3 | 1157.3 / 1157.2 | 1085.7 / 1087.6 |
+| SkyborneWindshaper | Horde | 1145.8 / 1146.3 | 1157.3 / 1157.2 | 1085.7 / 1087.6 |
+| Troll | Horde | 1144.5 / 1144.1 | 1160.5 / 1161.1 | 1083.0 / 1083.8 |
+| Human | Alliance | 1143.7 / 1143.4 | 1158.6 / 1158.9 | 1085.4 / 1085.6 |
+| Gnome | Alliance | 1140.2 / 1140.1 | 1155.9 / 1157.2 | 1084.9 / 1085.3 |
+| Dwarf | Alliance | 1139.2 / 1139.2 | 1153.8 / 1154.5 | 1081.4 / 1081.7 |
+| Tauren | Horde | 1132.6 / 1131.5 | 1148.1 / 1149.1 | 1076.6 / 1076.8 |
 
 ### Audit (the DPS passes applied to the warrior builds)
 
