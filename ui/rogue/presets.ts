@@ -211,6 +211,11 @@ export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
 
 // Preset name must be unique. Ex: 'Backstab DPS' cannot be used as a name more than once
 
+// Round 70753 (November 2 development notes, the reworked tree of tools/forever_talents/notes/rogue.json):
+// every build searched again on the new tree. The talent search moved points in batches of 1 to 5 at a
+// time (150 valid neighbours a round at 3000 iterations, the best 5 checked at 10000, kept for 2 standard
+// errors), alternated with the knob search over 120, 180 and 300 sec until neither moved. The numbers are
+// above PresetBuildLevel60CombatDaggers. Before round 70753:
 // The Level 60 talents, from the tools/rotopt talent searches on the synthetic Phase 1 sets (180 sec,
 // 3000 iterations a candidate, the best moves checked again at 10000), seeded from each archetype
 // and alternated with the knob search until neither moved. See PresetBuildLevel60CombatDaggers for
@@ -223,54 +228,56 @@ export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
 // (+0.6 to +1.0 with its 4 point Eviscerates, on both boss types).
 export const TalentsLevel60CombatSwords = PresetUtils.makePresetTalents(
 	'Combat Swords',
-	SavedTalents.create({ talentsString: '00530310501-32003311201515231' }),
-	{ tooltip: 'Deep Combat for Sinister Strike: Adrenaline Rush, Blade Flurry, Hack and Slash, Cold Blood.', group: 'Synthetic' },
+	SavedTalents.create({ talentsString: '00530320201-3200330112013221551' }),
+	{ tooltip: 'Deep Combat for Sinister Strike: Adrenaline Rush, Flash of Steel, Blade Flurry, Hack and Slash, Aggression, Cold Blood.', group: 'Synthetic' },
 );
 export const TalentsLevel60SealFateSwords = PresetUtils.makePresetTalents(
 	'Seal Fate Swords',
-	SavedTalents.create({ talentsString: '0053031034150005-3220132020141' }),
-	{ tooltip: 'Seal Fate, Cold Blood and Improved Poisons in Assassination with Blade Flurry, for Sinister Strike.', group: 'Synthetic' },
+	SavedTalents.create({ talentsString: '0053032024105103-320033011201312' }),
+	{ tooltip: 'Seal Fate, Relentless Strikes, Venom and Cold Blood in Assassination, with Aggression and Dual Wield Specialization, for Sinister Strike.', group: 'Synthetic' },
 );
 export const TalentsLevel60CombatDaggers = PresetUtils.makePresetTalents(
 	'Combat Daggers',
-	SavedTalents.create({ talentsString: '005303104-30230320201515231-002' }),
-	{ tooltip: 'Deep Combat for Backstab: Adrenaline Rush, Blade Flurry, Puncturing Wounds, Hack and Slash, Opportunity.', group: 'Synthetic' },
+	SavedTalents.create({ talentsString: '005203002-3203230002012221551-005' }),
+	{ tooltip: 'Deep Combat for Backstab: Adrenaline Rush, Flash of Steel, Blade Flurry, Puncturing Wounds, Hack and Slash, Opportunity.', group: 'Synthetic' },
 );
 export const TalentsLevel60SealFateDaggers = PresetUtils.makePresetTalents(
 	'Seal Fate Daggers',
-	SavedTalents.create({ talentsString: '0053031052150005-322303200013-002' }),
-	{ tooltip: 'Seal Fate, Cold Blood and Improved Poisons in Assassination with Puncturing Wounds, for Backstab.', group: 'Synthetic' },
+	SavedTalents.create({ talentsString: '0053032024105103-321303010201312' }),
+	{ tooltip: 'Seal Fate, Relentless Strikes, Venom and Cold Blood in Assassination, with Puncturing Wounds and Dual Wield Specialization, for Backstab.', group: 'Synthetic' },
 );
-export const TalentsLevel60Mutilate = PresetUtils.makePresetTalents('Mutilate', SavedTalents.create({ talentsString: '0053031033150103-302303202015-002' }), {
-	tooltip: 'Assassination for Mutilate: Seal Fate, Cold Blood, Vile Poisons, with Precision and Puncturing Wounds in Combat.',
+export const TalentsLevel60Mutilate = PresetUtils.makePresetTalents('Mutilate', SavedTalents.create({ talentsString: '00530320251451031-320303-005' }), {
+	tooltip: 'Assassination for Mutilate: Seal Fate, Relentless Strikes, Venom, Cold Blood, Vile Poisons, with Puncturing Wounds and Opportunity.',
 	group: 'Synthetic',
 });
-export const TalentsLevel60Subtlety = PresetUtils.makePresetTalents('Subtlety', SavedTalents.create({ talentsString: '0053031035140004--3021203310113011' }), {
-	tooltip: 'Subtlety for Hemorrhage, Ghostly Strike, Premeditation and Preparation, with Seal Fate in Assassination.',
+export const TalentsLevel60Subtlety = PresetUtils.makePresetTalents('Subtlety', SavedTalents.create({ talentsString: '00530301-320003-115001331320121151' }), {
+	tooltip: 'Subtlety for Death Mark, Boot Knife, Hemorrhage, Premeditation and Preparation, with Blood Splatter in Assassination.',
 	group: 'Synthetic',
 });
 
-// The same builds for a Humanoid or Giant boss, where Murder 2/2 (+4% damage) is worth more than the
-// points it takes from Lethality or Vile Poisons. The talent searches on a Humanoid boss chose these.
+// The same builds for a Humanoid boss. They kept Murder 2/2 until the November 2 development notes removed
+// Murder; since round 70753 they carry their base build's talents, and nothing in the rogue's kit tells the
+// two bosses apart (whether to keep these builds is an open question for the user,
+// orchestration/round_70753/rogue.md).
 const humanoidTalents = (name: string, talentsString: string, tooltip: string) =>
 	PresetUtils.makePresetTalents(`${name} · vs Humanoid`, SavedTalents.create({ talentsString }), {
-		tooltip: `${tooltip} With Murder 2/2, for a Humanoid or Giant boss.`,
+		tooltip: `${tooltip} The same talents as the generic boss build since Murder was removed (November 2 notes).`,
 		group: 'Synthetic',
 	});
-export const TalentsLevel60CombatSwordsHumanoid = humanoidTalents('Combat Swords', '00532310301-32003311201515231', 'Deep Combat for Sinister Strike.');
+export const TalentsLevel60CombatSwordsHumanoid = humanoidTalents('Combat Swords', '00530320201-3200330112013221551', 'Deep Combat for Sinister Strike.');
 export const TalentsLevel60SealFateSwordsHumanoid = humanoidTalents(
 	'Seal Fate Swords',
-	'0053231014150005-3220132020141',
+	'0053032024105103-320033011201312',
 	'Seal Fate with Blade Flurry for Sinister Strike.',
 );
-export const TalentsLevel60CombatDaggersHumanoid = humanoidTalents('Combat Daggers', '005323102-30230320201515231-002', 'Deep Combat for Backstab.');
+export const TalentsLevel60CombatDaggersHumanoid = humanoidTalents('Combat Daggers', '005203002-3203230002012221551-005', 'Deep Combat for Backstab.');
 export const TalentsLevel60SealFateDaggersHumanoid = humanoidTalents(
 	'Seal Fate Daggers',
-	'0053231053120005-322303200013-002',
+	'0053032024105103-321303010201312',
 	'Seal Fate with Puncturing Wounds for Backstab.',
 );
-export const TalentsLevel60MutilateHumanoid = humanoidTalents('Mutilate', '0053231013150103-302303202015-002', 'Assassination for Mutilate.');
-export const TalentsLevel60SubtletyHumanoid = humanoidTalents('Subtlety', '0053231015140004--3021203310113011', 'Subtlety for Hemorrhage.');
+export const TalentsLevel60MutilateHumanoid = humanoidTalents('Mutilate', '00530320251451031-320303-005', 'Assassination for Mutilate.');
+export const TalentsLevel60SubtletyHumanoid = humanoidTalents('Subtlety', '00530301-320003-115001331320121151', 'Subtlety for Hemorrhage.');
 
 export const TalentPresets = {
 	[Phase.Phase1]: [
