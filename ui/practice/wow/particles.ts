@@ -22,6 +22,21 @@ const fill = { color: new Float64Array(3), alpha: new Float64Array(1), size: new
 // renderer compiles their shader. In the fight an empty emitter isn't drawn at all.
 export const particleOptions = { drawEmpty: false };
 
+// Every particle and ribbon batch, which fillBatches fills before each frame draws.
+const live = new Set<{ fill(): void }>();
+
+// fillBatches puts each batch's particles together for the frame. It runs before the renderer
+// sends the frame's vertices to the GPU (the scene's onBeforeRender): filled later, while the
+// batch draws, the GPU would get the new list of triangles over the last frame's points, and a
+// ribbon's triangles would reach across to another ribbon's points.
+export function fillBatches() {
+	for (const b of live) b.fill();
+}
+
+export function addBatch(b: { fill(): void }) {
+	live.add(b);
+}
+
 type Particle = {
 	pos: THREE.Vector3;
 	vel: THREE.Vector3;
@@ -126,7 +141,7 @@ const layout = [
 // facing) in one draw call. In the raid test 20 casters each had a few emitters on their hands,
 // and they were over 200 draw calls on their own.
 //
-// The emitters fill their own data, and the batch puts it together right before it draws.
+// The emitters fill their own data, and the batch puts it together before the frame draws.
 class Batch {
 	readonly mesh: THREE.Mesh;
 	private readonly geometry = new THREE.InstancedBufferGeometry();
@@ -148,7 +163,7 @@ class Batch {
 		this.mesh.frustumCulled = false;
 		this.mesh.renderOrder = 10;
 		this.mesh.visible = false;
-		this.mesh.onBeforeRender = () => this.fill();
+		addBatch(this);
 		world.add(this.mesh);
 	}
 
@@ -168,7 +183,7 @@ class Batch {
 	// changed hears that a member's count of particles went from `was` to `now`.
 	changed(was: number, now: number) {
 		this.total += now - was;
-		this.mesh.visible = this.total > 0 || particleOptions.drawEmpty;
+		if (particleOptions.drawEmpty) this.mesh.visible = true;
 	}
 
 	leave(e: Emitter) {
@@ -176,8 +191,8 @@ class Batch {
 		this.changed(e.count, 0);
 	}
 
-	// fill puts the members' particles together, right before the batch draws.
-	private fill() {
+	// fill puts the members' particles together, before the frame draws.
+	fill() {
 		if (this.total > this.capacity) {
 			let n = this.capacity;
 			while (n < this.total) n *= 2;
@@ -194,11 +209,8 @@ class Batch {
 			at += n;
 		}
 		this.geometry.instanceCount = at;
-		if (at === 0) {
-			// The loading screen drew it empty. It stays hidden until it has particles.
-			this.mesh.visible = false;
-			return;
-		}
+		this.mesh.visible = at > 0 || particleOptions.drawEmpty;
+		if (at === 0) return;
 		for (const a of this.attrs) {
 			a.clearUpdateRanges();
 			a.addUpdateRange(0, at * a.itemSize);
@@ -212,7 +224,8 @@ const batches = new WeakMap<THREE.Object3D, Map<string, Batch>>();
 
 class Emitter {
 	private readonly particles: Particle[] = [];
-	private readonly anchor = new THREE.Object3D();
+	// Where the emitter is: it follows its bone.
+	private readonly anchor: THREE.Object3D;
 	private carry = 0;
 	// The particles' data by attribute (layout), which the batch draws.
 	readonly data = layout.map(([, size]) => new Float32Array(maxParticles * size));
@@ -233,10 +246,7 @@ class Emitter {
 		readonly e: ParticleEmitter,
 		world: THREE.Object3D,
 	) {
-		const bone = model.bones[e.bone] ?? model.bones[0];
-		const pivot = model.m2.bones[e.bone]?.pivot ?? [0, 0, 0];
-		this.anchor.position.set(e.position[0] - pivot[0], e.position[1] - pivot[1], e.position[2] - pivot[2]);
-		bone.add(this.anchor);
+		this.anchor = model.socket(e.bone, e.position);
 		// Flag 0x10 keeps the particles with the emitter. Without it they stay where they were born.
 		this.local = (e.flags & 0x10) !== 0;
 		this.alphaKeys = e.alphas.map(a => [a]);

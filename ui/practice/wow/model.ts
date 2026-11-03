@@ -1,8 +1,13 @@
 // A WoW model drawn with Three.js: its mesh, materials, skeleton and animations.
 //
-// Each bone is a Three.js bone. WoW moves a bone around its pivot: T(pivot) T(move) R S T(-pivot),
-// on top of its parent. A Three.js bone with the position (pivot - parent's pivot + move) and a
-// bind inverse of T(-pivot) gives the same result, so the skinning is Three.js's own.
+// WoW moves a bone around its pivot: T(pivot) T(move) R S T(-pivot), on top of its parent. We pose
+// the bones ourselves, in flat arrays: each bone's place in the model is its parent's times
+// T(pivot - parent's pivot + move) R S, and the skinning takes that times T(-pivot).
+//
+// The bones used to be Three.js bones in the scene. In a raid of 40 that was 9000 objects the
+// renderer placed and walked through twice a frame (for the shadows and the picture), which was
+// most of the time it spent before drawing. Now the scene holds only the sockets: the attachment
+// points and emitters that something hangs off, which follow their bone.
 
 import * as THREE from 'three';
 import { file, texture } from './files';
@@ -137,12 +142,33 @@ const leftFingers = [13, 14, 15, 16, 17];
 const upAxis = new THREE.Vector3(0, 1, 0);
 const twistQ = new THREE.Quaternion();
 const parentQ = new THREE.Quaternion();
+const boneQ = new THREE.Quaternion();
 const twistAxis = new THREE.Vector3();
+const parentWorld = new THREE.Matrix4();
+
+// skins gives each skeleton's skinning matrices (in its model's space), for the crowd (crowd.ts).
+// A cape draws with the body's skeleton, so it finds the body's here.
+export const skins = new WeakMap<THREE.Skeleton, Float32Array>();
+
+// A socket is an object that follows a bone, at an offset from its pivot.
+type Socket = { object: THREE.Object3D; bone: number; x: number; y: number; z: number };
 
 export class Model {
 	readonly root = new THREE.Group();
 	readonly mesh: THREE.SkinnedMesh;
-	readonly bones: THREE.Bone[];
+	// Each bone's place in the model (a 4 by 4 matrix, by columns), and its skinning matrix: the
+	// place times T(-pivot).
+	private readonly places: Float64Array;
+	readonly skinning: Float32Array;
+	// The bones' rotations after the twist and the billboards, which the twist needs for the
+	// bones above.
+	private readonly quats: Float64Array;
+	// The bones in an order where each parent comes before its children.
+	private readonly order: Int32Array;
+	// How much of the twist each bone takes (twistShares), and whether it faces the camera.
+	private readonly twistShare: Float64Array;
+	private readonly billboard: Uint8Array;
+	private readonly sockets: Socket[] = [];
 	private readonly mats: BatchMaterial[] = [];
 	private readonly replaceable = new Map<number, THREE.Texture>();
 	private readonly anims = new Map<number, Promise<DataView | undefined>>();
@@ -160,8 +186,9 @@ export class Model {
 	// The finger bones, with every joint below them, for holding a weapon.
 	private fingers: { right: boolean[]; left: boolean[] };
 	private points = new Map<number, THREE.Object3D>();
-	// Bones that always face the camera (bone flag 0x8): a totem's rune, the glow cards of effects.
-	private billboards: number[] = [];
+	// Whether any bone always faces the camera (bone flag 0x8): a totem's rune, the glow cards of
+	// effects.
+	private billboards = false;
 	// The camera that billboards face.
 	static camera?: THREE.Camera;
 	// twist turns the upper body around the model's up axis, in radians. A strafe turns the legs
@@ -171,7 +198,6 @@ export class Model {
 	// the head the rest. So the head faces where you face but the chest stays
 	// turned a little toward where you run.
 	twist = 0;
-	private twistShares: [bone: number, share: number][] = [];
 	private events = new Map<number, { id: string; data: number; time: number }[] | null>();
 	// onEvent hears the animations' events as they pass ($HIT, $CSS, $FSD footsteps, $SHL...).
 	// upper says it came from the upper body's animation (a swing while running).
@@ -227,37 +253,36 @@ export class Model {
 			depthMaterial.depthWrite = true;
 		};
 
-		// We pose the bones by their quaternions every frame. Three keeps each object's Euler angles
-		// in step with its quaternion, which took a seventh of the posing time, and we never read
-		// them. So the bones' quaternions don't update their angles.
-		this.bones = m2.bones.map(() => {
-			const bone = new THREE.Bone();
-			bone.quaternion._onChange(() => {});
-			return bone;
-		});
-		m2.bones.forEach((b, i) => {
-			const bone = this.bones[i];
-			const parent = b.parent >= 0 ? m2.bones[b.parent] : undefined;
-			bone.position.set(b.pivot[0] - (parent?.pivot[0] ?? 0), b.pivot[1] - (parent?.pivot[1] ?? 0), b.pivot[2] - (parent?.pivot[2] ?? 0));
-			if (b.parent >= 0) this.bones[b.parent].add(bone);
-			else this.mesh.add(bone);
-		});
-		const inverses = m2.bones.map(b => new THREE.Matrix4().makeTranslation(-b.pivot[0], -b.pivot[1], -b.pivot[2]));
-		if (this.bones.length === 0) {
-			// A model with no bones still needs one for the skinning.
-			const bone = new THREE.Bone();
-			this.mesh.add(bone);
-			this.bones.push(bone);
-			inverses.push(new THREE.Matrix4());
+		// Three's skinning needs a skeleton, but its bones stay out of the scene: the skeleton's
+		// matrices come straight from ours. The skinning is in the model's space (the mesh's), so
+		// the mesh's own place in the world goes on top (the detached bind mode).
+		const n = Math.max(1, m2.bones.length);
+		const bones = Array.from({ length: n }, () => new THREE.Bone());
+		this.places = new Float64Array(n * 16);
+		this.skinning = new Float32Array(n * 16);
+		for (let i = 0; i < n; i++) {
+			this.places[i * 16] = this.places[i * 16 + 5] = this.places[i * 16 + 10] = this.places[i * 16 + 15] = 1;
+			this.skinning[i * 16] = this.skinning[i * 16 + 5] = this.skinning[i * 16 + 10] = this.skinning[i * 16 + 15] = 1;
 		}
-		this.mesh.bind(new THREE.Skeleton(this.bones, inverses), new THREE.Matrix4());
+		this.quats = new Float64Array(n * 4);
+		const skeleton = new THREE.Skeleton(bones);
+		const skinning = this.skinning;
+		skeleton.update = function () {
+			this.boneMatrices!.set(skinning);
+			if (this.boneTexture) this.boneTexture.needsUpdate = true;
+		};
+		skins.set(skeleton, skinning);
+		this.mesh.bindMode = THREE.DetachedBindMode;
+		this.mesh.bind(skeleton, new THREE.Matrix4());
 		this.root.add(this.mesh);
+		this.order = boneOrder(m2);
 
 		// The upper body is the lower spine (key bone 4) and everything on it, which an attack
 		// moves while the legs keep running.
 		this.upper = m2.bones.map(() => false);
 		const spine = m2.keyBoneLookup[4];
-		this.twistShares = twistShares(m2, spine ?? -1, m2.keyBoneLookup[6] ?? -1);
+		this.twistShare = new Float64Array(m2.bones.length);
+		for (const [bone, share] of twistShares(m2, spine ?? -1, m2.keyBoneLookup[6] ?? -1)) this.twistShare[bone] = share;
 		if (spine !== undefined && spine >= 0) {
 			for (let i = 0; i < m2.bones.length; i++) {
 				for (let p = i; p >= 0; p = m2.bones[p].parent) {
@@ -281,7 +306,8 @@ export class Model {
 			return out;
 		};
 		this.fingers = { right: below(rightFingers), left: below(leftFingers) };
-		this.billboards = m2.bones.map((b, i) => (b.flags & 0x8 ? i : -1)).filter(i => i >= 0);
+		this.billboard = Uint8Array.from(m2.bones, b => (b.flags & 0x8 ? 1 : 0));
+		this.billboards = this.billboard.includes(1);
 		this.pose0 = new Float32Array(m2.bones.length * 10);
 		this.fadePose = new Float32Array(m2.bones.length * 10);
 		this.base = this.playing(Anim.Stand, { loop: true });
@@ -561,13 +587,51 @@ export class Model {
 		if (cached) return cached;
 		const a = this.m2.attachment(id);
 		if (!a) return undefined;
-		const bone = this.bones[a.bone] ?? this.bones[0];
-		const pivot = this.m2.bones[a.bone]?.pivot ?? [0, 0, 0];
-		const point = new THREE.Object3D();
-		point.position.set(a.position[0] - pivot[0], a.position[1] - pivot[1], a.position[2] - pivot[2]);
-		bone.add(point);
+		const point = this.socket(a.bone, a.position);
 		this.points.set(id, point);
 		return point;
+	}
+
+	// restPose puts every bone back where it rests, for the model viewer.
+	restPose() {
+		for (let i = 0; i < this.m2.bones.length; i++) {
+			const o = i * 16;
+			const pivot = this.m2.bones[i].pivot;
+			this.places.fill(0, o, o + 16);
+			this.skinning.fill(0, o, o + 16);
+			for (const d of [0, 5, 10, 15]) this.places[o + d] = this.skinning[o + d] = 1;
+			this.places[o + 12] = pivot[0];
+			this.places[o + 13] = pivot[1];
+			this.places[o + 14] = pivot[2];
+		}
+		for (const socket of this.sockets) this.placeSocket(socket);
+	}
+
+	// socket gives an object that follows a bone, at a point in the model (where the bone's pivot
+	// is at rest), for an attachment point or an emitter.
+	socket(bone: number, at: ArrayLike<number>): THREE.Object3D {
+		const b = this.m2.bones[bone] ? bone : 0;
+		const pivot = this.m2.bones[b]?.pivot ?? [0, 0, 0];
+		const object = new THREE.Object3D();
+		object.matrixAutoUpdate = false;
+		const s: Socket = { object, bone: b, x: at[0] - pivot[0], y: at[1] - pivot[1], z: at[2] - pivot[2] };
+		this.sockets.push(s);
+		this.placeSocket(s);
+		this.mesh.add(object);
+		return object;
+	}
+
+	// placeSocket puts a socket where its bone is now: the bone's place times T(offset).
+	private placeSocket(s: Socket) {
+		const m = this.places;
+		const o = s.bone * 16;
+		const e = s.object.matrix.elements;
+		for (let j = 0; j < 12; j++) e[j] = m[o + j];
+		e[12] = m[o] * s.x + m[o + 4] * s.y + m[o + 8] * s.z + m[o + 12];
+		e[13] = m[o + 1] * s.x + m[o + 5] * s.y + m[o + 9] * s.z + m[o + 13];
+		e[14] = m[o + 2] * s.x + m[o + 6] * s.y + m[o + 10] * s.z + m[o + 14];
+		e[15] = 1;
+		s.object.matrixWorldNeedsUpdate = true;
 	}
 
 	// preloadAnims loads the keys of these animations (or the ones the model plays in their
@@ -790,7 +854,16 @@ export class Model {
 		const base = this.base;
 		// Until the new animation's keys arrive, the bones keep the pose they had.
 		const fadeW = !base.source && this.posed ? 1 : this.fadeTotal > 0 && this.posed ? this.fadeLeft / this.fadeTotal : 0;
-		for (let i = 0; i < m2.bones.length; i++) {
+		const camera = this.billboards ? Model.camera : undefined;
+		if (camera) {
+			this.mesh.updateWorldMatrix(true, false);
+			camera.getWorldQuaternion(billboardTmp.q1);
+		}
+		const places = this.places;
+		const quats = this.quats;
+		const skin = this.skinning;
+		for (let k = 0; k < this.order.length; k++) {
+			const i = this.order[k];
 			const b = m2.bones[i];
 			const finger = handsSource && ((this.closed.right && this.fingers.right[i]) || (this.closed.left && this.fingers.left[i]));
 			if (finger) {
@@ -830,43 +903,50 @@ export class Model {
 			p0[o + 8] = s.s[1];
 			p0[o + 9] = s.s[2];
 			const parent = b.parent >= 0 ? m2.bones[b.parent].pivot : undefined;
-			const bone = this.bones[i];
-			bone.position.set(b.pivot[0] - (parent?.[0] ?? 0) + s.t[0], b.pivot[1] - (parent?.[1] ?? 0) + s.t[1], b.pivot[2] - (parent?.[2] ?? 0) + s.t[2]);
-			bone.quaternion.set(s.r[0], s.r[1], s.r[2], s.r[3]);
-			const share = this.twist !== 0 ? this.twistShares.find(t => t[0] === i)?.[1] : undefined;
-			if (share !== undefined) {
+			boneQ.set(s.r[0], s.r[1], s.r[2], s.r[3]);
+			const share = this.twist !== 0 ? this.twistShare[i] : 0;
+			if (share !== 0) {
 				// The twist is around the model's up (y, since the bones are in Three's frame). The
 				// parent bones lean in the run, so we turn that axis into the parent's frame.
 				parentQ.identity();
-				for (let p = b.parent; p >= 0; p = m2.bones[p].parent) parentQ.premultiply(this.bones[p].quaternion);
+				for (let p = b.parent; p >= 0; p = m2.bones[p].parent) parentQ.premultiply(twistQ.fromArray(quats, p * 4));
 				twistAxis.copy(upAxis).applyQuaternion(parentQ.invert());
-				bone.quaternion.premultiply(twistQ.setFromAxisAngle(twistAxis, this.twist * share));
+				boneQ.premultiply(twistQ.setFromAxisAngle(twistAxis, this.twist * share));
 			}
-			bone.scale.set(s.s[0], s.s[1], s.s[2]);
+			if (camera && this.billboard[i]) {
+				// A billboard turns its +x (the model's front) to the camera, with its up staying the
+				// camera's up: its rotation is the parent's in the world, undone, then the camera's.
+				parentWorld.copy(this.mesh.matrixWorld);
+				if (b.parent >= 0) parentWorld.multiply(billboardTmp.m.fromArray(places, b.parent * 16));
+				parentWorld.decompose(billboardTmp.v, billboardTmp.q2, billboardTmp.s);
+				boneQ.copy(billboardTmp.q2.invert()).multiply(billboardTmp.q1).multiply(faceFront);
+			}
+			boneQ.toArray(quats, i * 4);
+			place(
+				places,
+				i * 16,
+				b.parent >= 0 ? b.parent * 16 : -1,
+				b.pivot[0] - (parent?.[0] ?? 0) + s.t[0],
+				b.pivot[1] - (parent?.[1] ?? 0) + s.t[1],
+				b.pivot[2] - (parent?.[2] ?? 0) + s.t[2],
+				boneQ,
+				s.s[0],
+				s.s[1],
+				s.s[2],
+			);
+			// The skinning matrix is the place times T(-pivot).
+			const m = i * 16;
+			for (let j = 0; j < 12; j++) skin[m + j] = places[m + j];
+			skin[m + 12] = places[m + 12] - places[m] * b.pivot[0] - places[m + 4] * b.pivot[1] - places[m + 8] * b.pivot[2];
+			skin[m + 13] = places[m + 13] - places[m + 1] * b.pivot[0] - places[m + 5] * b.pivot[1] - places[m + 9] * b.pivot[2];
+			skin[m + 14] = places[m + 14] - places[m + 2] * b.pivot[0] - places[m + 6] * b.pivot[1] - places[m + 10] * b.pivot[2];
+			skin[m + 15] = 1;
 		}
+		for (const socket of this.sockets) this.placeSocket(socket);
 		if (base.source) this.posed = true;
-		this.faceCamera();
 		this.updateColors();
 		this.particles?.update(dt);
 		this.ribbons?.update(dt);
-	}
-
-	// faceCamera turns the billboard bones to the camera. Their +x (the model's front) points at
-	// the camera, with their up staying the camera's up.
-	private faceCamera() {
-		const camera = Model.camera;
-		if (this.billboards.length === 0 || !camera) return;
-		const camQ = camera.getWorldQuaternion(billboardTmp.q1);
-		for (const i of this.billboards) {
-			const bone = this.bones[i];
-			const parent = bone.parent;
-			if (!parent) continue;
-			// Only the bones above this one need their place in the world now. The renderer places
-			// the rest (all of a character's 220 bones) once, when it draws.
-			parent.updateWorldMatrix(true, false);
-			parent.matrixWorld.decompose(billboardTmp.v, billboardTmp.q2, billboardTmp.s);
-			bone.quaternion.copy(billboardTmp.q2.invert()).multiply(camQ).multiply(faceFront);
-		}
 	}
 
 	// trackKeys gives a track's keys for a sequence. A track on a global sequence runs on its own
@@ -1053,7 +1133,76 @@ const combinerFragment = /* glsl */ `
 #endif
 `;
 
-const billboardTmp = { q1: new THREE.Quaternion(), q2: new THREE.Quaternion(), v: new THREE.Vector3(), s: new THREE.Vector3() };
+const billboardTmp = { q1: new THREE.Quaternion(), q2: new THREE.Quaternion(), v: new THREE.Vector3(), s: new THREE.Vector3(), m: new THREE.Matrix4() };
+
+// place sets a bone's place (at o) to its parent's (at parent, or the model when -1) times
+// T(x, y, z) R(q) S(sx, sy, sz), the way Three's Matrix4.compose builds a matrix.
+function place(m: Float64Array, o: number, parent: number, x: number, y: number, z: number, q: THREE.Quaternion, sx: number, sy: number, sz: number) {
+	const { x: qx, y: qy, z: qz, w: qw } = q;
+	const x2 = qx + qx;
+	const y2 = qy + qy;
+	const z2 = qz + qz;
+	const xx = qx * x2;
+	const xy = qx * y2;
+	const xz = qx * z2;
+	const yy = qy * y2;
+	const yz = qy * z2;
+	const zz = qz * z2;
+	const wx = qw * x2;
+	const wy = qw * y2;
+	const wz = qw * z2;
+	const l0 = (1 - (yy + zz)) * sx;
+	const l1 = (xy + wz) * sx;
+	const l2 = (xz - wy) * sx;
+	const l4 = (xy - wz) * sy;
+	const l5 = (1 - (xx + zz)) * sy;
+	const l6 = (yz + wx) * sy;
+	const l8 = (xz + wy) * sz;
+	const l9 = (yz - wx) * sz;
+	const l10 = (1 - (xx + yy)) * sz;
+	if (parent < 0) {
+		m[o] = l0;
+		m[o + 1] = l1;
+		m[o + 2] = l2;
+		m[o + 4] = l4;
+		m[o + 5] = l5;
+		m[o + 6] = l6;
+		m[o + 8] = l8;
+		m[o + 9] = l9;
+		m[o + 10] = l10;
+		m[o + 12] = x;
+		m[o + 13] = y;
+		m[o + 14] = z;
+	} else {
+		const p = parent;
+		for (let r = 0; r < 3; r++) {
+			const a = m[p + r];
+			const b = m[p + 4 + r];
+			const c = m[p + 8 + r];
+			m[o + r] = a * l0 + b * l1 + c * l2;
+			m[o + 4 + r] = a * l4 + b * l5 + c * l6;
+			m[o + 8 + r] = a * l8 + b * l9 + c * l10;
+			m[o + 12 + r] = a * x + b * y + c * z + m[p + 12 + r];
+		}
+	}
+	m[o + 3] = m[o + 7] = m[o + 11] = 0;
+	m[o + 15] = 1;
+}
+
+// boneOrder lists the bones so that each parent comes before its children.
+function boneOrder(m2: M2): Int32Array {
+	const out: number[] = [];
+	const done = new Uint8Array(m2.bones.length);
+	const visit = (i: number) => {
+		if (done[i]) return;
+		done[i] = 1;
+		const p = m2.bones[i].parent;
+		if (p >= 0 && p < m2.bones.length) visit(p);
+		out.push(i);
+	};
+	for (let i = 0; i < m2.bones.length; i++) visit(i);
+	return Int32Array.from(out);
+}
 // faceFront turns the model's front (+x) to the camera's back (+z), which faces the viewer.
 const faceFront = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
 

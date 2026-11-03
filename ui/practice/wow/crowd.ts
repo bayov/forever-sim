@@ -6,14 +6,14 @@
 // The raiders are only a few looks (four races, two sexes, the same gear), so a part like "the orc
 // male's chest in this armor" draws once for every orc male in the raid.
 //
-// Each unit still animates its own skeleton. We put every bone's place in the world into one big
-// texture, and each copy of a part reads its unit's bones from there by an offset. The bones are
-// in world space, so the copies need no other place of their own. A copy also carries its colors
-// and transparency, for the parts that animate them. Copies off screen are left out, unless they
+// Each unit still animates its own skeleton. We put every bone's skinning matrix (in its model's
+// space) into one big texture, and each copy of a part reads its unit's bones from there by an
+// offset, with its model's place in the world on top. A copy also carries its colors and
+// transparency, for the parts that animate them. Copies off screen are left out, unless they
 // cast a shadow onto what's on screen.
 
 import * as THREE from 'three';
-import type { Model } from './model';
+import { skins, type Model } from './model';
 
 // The bone texture is this many texels wide: four texels to a bone, so 256 bones a row.
 const WIDTH = 1024;
@@ -25,9 +25,8 @@ type Skeleton = {
 	// How many of the crowd's meshes use it (a body and its cape).
 	users: number;
 	skeleton: THREE.Skeleton;
-	// The bones' inverses are the translation by minus their pivot (model.ts), so we keep only the
-	// pivot and add it on.
-	pivots: Float32Array;
+	// The bones' skinning matrices, which their model poses (model.ts).
+	skinning: Float32Array;
 	frame: number;
 };
 
@@ -38,6 +37,7 @@ type Batch = {
 	material: THREE.Material & { color?: THREE.Color; opacity: number };
 	bones: THREE.InstancedBufferAttribute;
 	colors: THREE.InstancedBufferAttribute;
+	places: THREE.InstancedBufferAttribute;
 	count: number;
 	// How many of the crowd's meshes have a part in it.
 	users: number;
@@ -116,8 +116,9 @@ export class Crowd {
 				}
 				parts.push({ batch, source });
 			}
-			// The model's own mesh draws no more, but its bones still move what hangs off them. A
-			// hidden mesh would hide those too, so it goes on a layer no camera looks at.
+				// The model's own mesh draws no more, but what hangs off its bones (its sockets) still
+			// follows them. A hidden mesh would hide those too, so it goes on a layer no camera
+			// looks at.
 			mesh.layers.set(31);
 			const entry = { model, mesh, skeleton, parts };
 			this.entries.push(entry);
@@ -196,14 +197,8 @@ export class Crowd {
 			return k;
 		}
 		const n = s.bones.length;
-		const pivots = new Float32Array(n * 3);
-		for (let i = 0; i < n; i++) {
-			const e = s.boneInverses[i].elements;
-			pivots[i * 3] = -e[12];
-			pivots[i * 3 + 1] = -e[13];
-			pivots[i * 3 + 2] = -e[14];
-		}
-		k = { offset: this.allocate(n), users: 1, skeleton: s, pivots, frame: -1 };
+		const skinning = skins.get(s) ?? new Float32Array(n * 16);
+		k = { offset: this.allocate(n), users: 1, skeleton: s, skinning, frame: -1 };
 		this.skeletons.set(s, k);
 		const rows = Math.ceil(this.bones / BONES_PER_ROW);
 		if (rows > this.texture.image.height) {
@@ -235,10 +230,11 @@ export class Crowd {
 		geometry.setDrawRange(start, count);
 		const bones = new THREE.InstancedBufferAttribute(new Float32Array(16), 1);
 		const colors = new THREE.InstancedBufferAttribute(new Float32Array(16 * 4), 4);
-		bones.setUsage(THREE.DynamicDrawUsage);
-		colors.setUsage(THREE.DynamicDrawUsage);
+		const places = new THREE.InstancedBufferAttribute(new Float32Array(16 * 16), 16);
+		for (const a of [bones, colors, places]) a.setUsage(THREE.DynamicDrawUsage);
 		geometry.setAttribute('crowdBone', bones);
 		geometry.setAttribute('crowdColor', colors);
+		geometry.setAttribute('crowdPlace', places);
 		geometry.instanceCount = 0;
 
 		const material = sourceMaterial.clone() as Batch['material'];
@@ -270,7 +266,7 @@ export class Crowd {
 		mesh.customDepthMaterial = depth;
 		mesh.visible = false;
 		this.group.add(mesh);
-		return { mesh, geometry, material, bones, colors, count: 0, users: 0, castShadow: solid };
+		return { mesh, geometry, material, bones, colors, places, count: 0, users: 0, castShadow: solid };
 	}
 
 	// grow makes room in a batch for one more copy.
@@ -281,8 +277,10 @@ export class Crowd {
 		while (n < b.users) n *= 2;
 		b.bones = new THREE.InstancedBufferAttribute(new Float32Array(n), 1).setUsage(THREE.DynamicDrawUsage);
 		b.colors = new THREE.InstancedBufferAttribute(new Float32Array(n * 4), 4).setUsage(THREE.DynamicDrawUsage);
+		b.places = new THREE.InstancedBufferAttribute(new Float32Array(n * 16), 16).setUsage(THREE.DynamicDrawUsage);
 		b.geometry.setAttribute('crowdBone', b.bones);
 		b.geometry.setAttribute('crowdColor', b.colors);
+		b.geometry.setAttribute('crowdPlace', b.places);
 		// Three keeps the most copies a geometry's attributes hold from its first draw, and draws no
 		// more than that.
 		(b.geometry as { _maxInstanceCount?: number })._maxInstanceCount = undefined;
@@ -321,6 +319,7 @@ export class Crowd {
 				if (!inView && !b.castShadow) continue;
 				const i = b.count++;
 				b.bones.array[i] = k.offset;
+				(b.places.array as Float32Array).set(e.mesh.matrixWorld.elements, i * 16);
 				const c = b.colors.array;
 				const color = source.color;
 				c[i * 4] = color ? color.r : 1;
@@ -344,28 +343,16 @@ export class Crowd {
 			b.colors.clearUpdateRanges();
 			b.colors.addUpdateRange(0, b.count * 4);
 			b.colors.needsUpdate = true;
+			b.places.clearUpdateRanges();
+			b.places.addUpdateRange(0, b.count * 16);
+			b.places.needsUpdate = true;
 		}
 		this.texture.needsUpdate = true;
 	}
 
-	// writeBones puts a skeleton's bones in the texture: each bone's place in the world times its
-	// inverse, which moves the bone's pivot to where the bone is.
+	// writeBones puts a skeleton's skinning matrices in the texture.
 	private writeBones(k: Skeleton) {
-		const out = this.data;
-		const bones = k.skeleton.bones;
-		const p = k.pivots;
-		for (let i = 0; i < bones.length; i++) {
-			const m = bones[i].matrixWorld.elements;
-			const o = (k.offset + i) * 16;
-			const x = p[i * 3];
-			const y = p[i * 3 + 1];
-			const z = p[i * 3 + 2];
-			for (let j = 0; j < 12; j++) out[o + j] = m[j];
-			out[o + 12] = m[12] - m[0] * x - m[4] * y - m[8] * z;
-			out[o + 13] = m[13] - m[1] * x - m[5] * y - m[9] * z;
-			out[o + 14] = m[14] - m[2] * x - m[6] * y - m[10] * z;
-			out[o + 15] = 1;
-		}
+		this.data.set(k.skinning, k.offset * 16);
 	}
 
 	dispose() {
@@ -400,6 +387,7 @@ function crowdVertex(src: string): string {
 attribute vec4 skinWeight;
 attribute float crowdBone;
 attribute vec4 crowdColor;
+attribute mat4 crowdPlace;
 uniform highp sampler2D crowdBones;
 varying vec4 vCrowdColor;
 mat4 crowdBoneMatrix(float i) {
@@ -413,8 +401,8 @@ mat4 crowdBoneMatrix(float i) {
 			'void main() {',
 			/* glsl */ `void main() {
 	vCrowdColor = crowdColor;
-	mat4 crowdSkin = skinWeight.x * crowdBoneMatrix(crowdBone + skinIndex.x) + skinWeight.y * crowdBoneMatrix(crowdBone + skinIndex.y)
-		+ skinWeight.z * crowdBoneMatrix(crowdBone + skinIndex.z) + skinWeight.w * crowdBoneMatrix(crowdBone + skinIndex.w);
+	mat4 crowdSkin = crowdPlace * (skinWeight.x * crowdBoneMatrix(crowdBone + skinIndex.x) + skinWeight.y * crowdBoneMatrix(crowdBone + skinIndex.y)
+		+ skinWeight.z * crowdBoneMatrix(crowdBone + skinIndex.z) + skinWeight.w * crowdBoneMatrix(crowdBone + skinIndex.w));
 	vec3 crowdNormal = (crowdSkin * vec4(normal, 0.0)).xyz;`,
 		)
 		.replace('#include <skinbase_vertex>', '')

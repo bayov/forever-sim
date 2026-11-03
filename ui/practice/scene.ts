@@ -6,7 +6,7 @@
 
 import * as THREE from 'three';
 import { newTextures } from './wow/files';
-import { particleOptions } from './wow/particles';
+import { fillBatches, particleOptions } from './wow/particles';
 import { Crowd } from './wow/crowd';
 import type { Model } from './wow/model';
 
@@ -105,7 +105,10 @@ export class Room {
 		this.crowd = new Crowd(this.scene, sun, () => this.renderer.shadowMap.enabled);
 		// The renderer has placed the scene's objects for the frame by now, and hasn't drawn the
 		// shadows yet.
-		this.scene.onBeforeRender = (_r, _s, camera) => this.crowd.prepare(camera);
+		this.scene.onBeforeRender = (_r, _s, camera) => {
+			this.crowd.prepare(camera);
+			fillBatches();
+		};
 
 		const ground = new THREE.Mesh(new THREE.CircleGeometry(120, 64), new THREE.MeshStandardMaterial({ color: 0x5f7d3f, roughness: 1 }));
 		ground.rotation.x = -Math.PI / 2;

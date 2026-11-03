@@ -15,7 +15,7 @@ import * as THREE from 'three';
 import { texture } from './files';
 import type { RibbonEmitter } from './m2';
 import type { Model } from './model';
-import { particleOptions } from './particles';
+import { addBatch, particleOptions } from './particles';
 
 // The most edges one ribbon keeps, whatever its rate and lifetime say.
 const maxEdges = 256;
@@ -54,7 +54,7 @@ const layout = [
 
 // A batch draws every ribbon that looks the same (the same texture and blend) in one draw call,
 // like the particles' batches (particles.ts). The ribbons fill their own points, and the batch
-// puts them together, with the triangles between each ribbon's points, right before it draws.
+// puts them together, with the triangles between each ribbon's points, before the frame draws.
 class Batch {
 	readonly mesh: THREE.Mesh;
 	private readonly geometry = new THREE.BufferGeometry();
@@ -72,7 +72,7 @@ class Batch {
 		this.mesh.frustumCulled = false;
 		this.mesh.renderOrder = 10;
 		this.mesh.visible = false;
-		this.mesh.onBeforeRender = () => this.fill();
+		addBatch(this);
 		world.add(this.mesh);
 	}
 
@@ -92,7 +92,7 @@ class Batch {
 
 	changed(was: number, now: number) {
 		this.total += now - was;
-		this.mesh.visible = this.total > 0 || particleOptions.drawEmpty;
+		if (particleOptions.drawEmpty) this.mesh.visible = true;
 	}
 
 	leave(r: Ribbon) {
@@ -100,7 +100,7 @@ class Batch {
 		this.changed(r.count < 2 ? 0 : r.count * 2, 0);
 	}
 
-	private fill() {
+	fill() {
 		if (this.total > this.capacity) {
 			let n = this.capacity;
 			while (n < this.total) n *= 2;
@@ -129,10 +129,8 @@ class Batch {
 			at += points;
 		}
 		this.geometry.setDrawRange(0, tris);
-		if (tris === 0) {
-			this.mesh.visible = false;
-			return;
-		}
+		this.mesh.visible = tris > 0 || particleOptions.drawEmpty;
+		if (tris === 0) return;
 		for (const a of this.attrs) {
 			a.clearUpdateRanges();
 			a.addUpdateRange(0, at * a.itemSize);
@@ -148,7 +146,8 @@ class Batch {
 const batches = new WeakMap<THREE.Object3D, Map<string, Batch>>();
 
 class Ribbon {
-	private readonly anchor = new THREE.Object3D();
+	// Where the emitter is: it follows its bone.
+	private readonly anchor: THREE.Object3D;
 	private readonly edges: Edge[] = [];
 	private carry = 0;
 	// The strip's points by attribute (layout), which the batch draws.
@@ -169,10 +168,7 @@ class Ribbon {
 		readonly e: RibbonEmitter,
 		world: THREE.Object3D,
 	) {
-		const bone = model.bones[e.bone] ?? model.bones[0];
-		const pivot = model.m2.bones[e.bone]?.pivot ?? [0, 0, 0];
-		this.anchor.position.set(e.position[0] - pivot[0], e.position[1] - pivot[1], e.position[2] - pivot[2]);
-		bone.add(this.anchor);
+		this.anchor = model.socket(e.bone, e.position);
 
 		// Two vertices per edge, plus the head (where the ribbon is right now).
 		const material = new THREE.ShaderMaterial({
