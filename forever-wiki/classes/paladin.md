@@ -21,12 +21,14 @@ Round 70753 re-search (`orchestration/round_70753/paladin.md`): talent searches 
 
 | Build | Before | After |
 |---|---|---|
-| Ret twist | 1043.4 / 1039.3 / 1028.9 | 1094.3 / 1090.9 / 1079.9 |
-| Ret sub-Holy | 1042.3 / 1038.1 / 1031.7 | 1092.3 / 1089.8 / 1084.3 |
+| Ret twist | 1043.4 / 1039.3 / 1028.9 | 1095.5 / 1092.1 / 1080.3 |
+| Ret sub-Holy | 1042.3 / 1038.1 / 1031.7 | 1093.3 / 1091.2 / 1085.8 |
 | Ret Shock | 983.0 / 974.9 / 968.5 | 1037.5 / 1030.2 / 1025.5 |
 | Ret sub-Holy vs Undead | 1153.9 / 1151.4 / 1145.1 | 1222.9 / 1221.4 / 1214.0 |
 
 Undead is still the best race on each build; Human is 2.3 to 5.1 behind at 180 sec (both seed sets), Dwarf 8.4 to 12.2 (on its own hit re-spend).
+
+Exploration after the round (2026-11-03): talent searches from five other starting builds found nothing new. A 20 Holy / 31 Retribution start climbed back to Ret sub-Holy, and Ret Shock with Champion of the Light 5 for Consecrated Ground took Consecrated Ground back (the Shock talents). Twist with Swift Judgement (4 / 16 / 31, also reached from 0 / 20 / 31) ends at 1028.7, 64 behind twist and short of mana. Consecrated Ground with neither Holy Shock nor Unsealed Wrath (22 / 0 / 29) reaches 942.0. One rotation change shipped: Holy Strike ahead of Judgement and the seal lines on twist and sub-Holy (+1.2 and +1.4 at 180 sec, positive at 120 / 180 / 300 sec on both seed sets; the twist and sub-Holy numbers above include it). It loses on the Crusader duty and gains under 1 at 180 sec on the Wisdom duty, Ret Shock and vs Undead, which keep it off.
 
 ## The launch realms' October 30 hotfix (1.60.1.70707+hf, 2026-11-01)
 

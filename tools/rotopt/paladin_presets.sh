@@ -36,10 +36,15 @@ gen() {
 # the fight left (twistThriftRate=30): 1043.4 / 1039.3 / 1028.9, against 2 always +0.0 / +0.3 / +2.9
 # and 3 always +4.6 / +4.6 / +1.0. Seal of Righteousness as the seal that stays up -11.5, Consecration
 # after the seal lines -7.6, twisting only within 0.5 to 3 sec of the swing -1 to -15.
-gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistThriftRate=30,twistBack=1,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0" -level 60
+# Round 70753 exploration (2026-11-03): Holy Strike ahead of the seal and twist lines (holyStrikeFirst=1)
+# on twist and sub Holy, 20000 iterations at 120 / 180 / 300 sec: twist +1.2 / +1.2 / +0.4 (seed 1) and
+# +2.4 / +1.3 / +1.9 (seed 1000003), sub Holy +1.0 / +1.4 / +1.5 and +2.5 / +2.2 / +2.5. The others keep
+# it off: the Crusader duty loses (-5.4 / -4.0 / -1.5), the Wisdom duty, Ret Shock and vs Undead gain
+# under 1 at 180 sec (+0.3 to +1.3).
+gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistThriftRate=30,twistBack=1,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0,holyStrikeFirst=1" -level 60
 # Sub Holy (level60_sub_holy): the knob search kept the twist knobs. It has the mana (Reverence,
 # Divine Intellect) to swap on 2 copies at any length: the mana rule loses 2.3 at 300 sec there.
-gen level60_sub_holy "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistBack=1,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0" -level 60
+gen level60_sub_holy "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistBack=1,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0,holyStrikeFirst=1" -level 60
 # Judgement duties (standards 23), shared by twist and sub Holy: the sub Holy knobs plus Seal of the
 # Crusader (jotc=1) or Seal of Wisdom (jotc=2) at -1.5 sec and its Judgement at the pull. Under Forever
 # the judgement lasts 40 sec and the paladin's own melee hits refresh it. The mana rule loses 2.8 at

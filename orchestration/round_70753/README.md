@@ -44,6 +44,9 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - forever-wiki/sim-status.md still has the old warrior strings (warrior worker); check every class's rows there.
 - ui/enhancement_shaman/leveling_weights.json (the XP/h parts for Enhancement levels 5-59 and the no-spec shaman) was
   measured on 11-02, before this round: measure it again (leveling-opt), then bayovui's weights.py (phase 3b's report).
+- compsearch TestReportRaid flakes on shaman__enhancement-imp-gw: about 6 DPS less in the 20-player raid than alone
+  (-6.0 against an allowed +-5.9 at 4000 iterations on master before 7df92bc; at the test's 1000 iterations it passes or
+  fails as other builds reshuffle the random numbers). Found by the paladin follow-up; a shaman or compsearch fix.
 - Two-hand Fury is now the highest warrior build at 180 s, so the warrior worker moved the class default (isDefault and
   the ui defaults) to it. Listed as a question for the user in round_70753/warrior.md.
 
