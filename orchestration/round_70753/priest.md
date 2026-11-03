@@ -135,4 +135,9 @@ Smite candidates on the Smite request (gear, consumes), 20,000 iterations, seed 
 | Shadowform + Smite filler | 801.9 | 804.7 | 795.9 |
 
 Knob search on the Spiritual Guidance build: only fight-length trade-offs (Devouring Plague mana 40 at 120 s; Holy
-Fire on, Devouring Plague off at 300 s). Not yet done for either candidate: race sweep, and the hybrid's knob search.
+Fire on, Devouring Plague off at 300 s). 
+**Shipped (2026-11-03):** the Spiritual Guidance build is the Smite preset (user: ship the Holy Smite upgrade, leave the
+Shadowform hybrid out). Published 180 s 762.0 -> 781.0. Race sweep with each race's rotation searched again on the new
+talents (req/races rewritten): Undead 781.0 (best overall and Horde), Gnome 762.2 (best Alliance; was Gnome too), Human
+757.6, Troll 752.9, Night Elf 749.5, Dwarf 746.7. The race files' gains over the preset rotation at their race: Troll
++7.4, Gnome +5.4, Dwarf +4.6, Night Elf +4.5, Human +3.4.

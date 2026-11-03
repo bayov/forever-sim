@@ -568,6 +568,10 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Smite', En
 // Round 70753 (2026-11-03, Classic race base stats): Undead 762.0, Gnome 741.0, Human 737.7, Night Elf
 // 734.7, Troll 732.9, Dwarf 730.1 at 180 sec (seed 1; seed 1000003 within 0.4); the Undead at 120 / 180 /
 // 300 sec: 777.8 / 762.0 / 687.9. The talent and knob searches keep the build and the rotation.
+// With the Spiritual Guidance talents (round 70753 exploration, 2026-11-03), each race on its own rotation
+// (req/races, searched again on the new talents): Undead 781.0 (best overall and Horde), Gnome 762.2 (best
+// Alliance), Human 757.6, Troll 752.9, Night Elf 749.5, Dwarf 746.7 at 180 sec (20000 iterations, seed 1); the
+// Undead at 120 / 180 / 300 sec: 790.5 / 781.0 / 713.5.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Smite', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Undead Holy damage priest (Smite, Power Infusion) on the synthetic Phase 1 gear, 22% behind Shadow.',
