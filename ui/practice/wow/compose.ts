@@ -90,5 +90,10 @@ export async function compose(c: Composite): Promise<THREE.Texture> {
 	t.generateMipmaps = true;
 	t.anisotropy = 4;
 	t.needsUpdate = true;
+	// Once the texture is on the GPU we let go of our copy. Each unit's skin and armor makes its
+	// own, so in a raid of 40 they were over half a gigabyte of the page's memory.
+	t.onUpdate = () => {
+		(t.image as { data: Uint8ClampedArray | null }).data = null;
+	};
 	return t;
 }
