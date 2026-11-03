@@ -1,23 +1,6 @@
 {
 	"note": "2026-10-25 regeneration: all 64 builds re-simmed locally on claude/keen-brown-o2g32n at e8a8b50d55 (the wowsims/forever alignment round and the class workers' regenerated presets), in a scratch tree with tools/dps_report/patches 0001 to 0004 applied and the binaries built with -tags=with_db; 20,000 iterations for the main runs. Then the Mark duty ruling (2026-10-25): the 7 hunter builds were re-simmed at 5429f41856 (every hunter keeps up its own Hunter's Mark, the four -duty-mark builds are gone); the other 53 are re-recorded there unchanged, since that commit's tools/rotopt changes touch only the hunter templates and specs (mksettings writes their requests byte for byte as before) and their data came out identical.",
 	"builds": {
-		"rogue__combat-daggers-humanoid": {
-			"commit": "ec771682fdea42560c2bc4b5019f501b8b53efca",
-			"recordedAt": "2026-11-03T13:12:25.737Z",
-			"inputs": {
-				"sim/core": "dcc69a9a7b1a9f463ccc5ffd51fd56df4f663487",
-				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
-				"sim/encounters": "6cc4907ce8634fdfd1086f9ee1a1b2de463f6d7c",
-				"sim/lib": "c819f7458168ea8c1b6cd47472f4b7b695871257",
-				"proto": "fb50b7afdd94e38e97864e635e09b593d9807745",
-				"assets/database": "76d57cc0405c74605320b2e464a7e7fb7c3a99b7",
-				"tools/rotopt": "ab83a4758a81363e088be5c496f4e5f3d8ddf5ca",
-				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/rogue": "053b2735f3ada8c5c4743d1bc5afcf719fbb555e",
-				"ui/rogue": "3eb38b925b4a3e1df2c65ede17a5d01b5e0a04e5",
-				"tools/dps_report/req/rogue__combat-daggers-humanoid.json": "e89cfc6505bd200a7850af34bf2267cf9df58650"
-			}
-		},
 		"rogue__combat-daggers": {
 			"commit": "ec771682fdea42560c2bc4b5019f501b8b53efca",
 			"recordedAt": "2026-11-03T13:12:25.663Z",
@@ -33,59 +16,6 @@
 				"sim/rogue": "053b2735f3ada8c5c4743d1bc5afcf719fbb555e",
 				"ui/rogue": "3eb38b925b4a3e1df2c65ede17a5d01b5e0a04e5",
 				"tools/dps_report/req/rogue__combat-daggers.json": "56ab3d0848c3cce581ab4c0dbac83f88b0df83df"
-			}
-		},
-		"rogue__combat-swords-humanoid": {
-			"commit": "ec771682fdea42560c2bc4b5019f501b8b53efca",
-			"recordedAt": "2026-11-03T13:12:25.864Z",
-			"inputs": {
-				"sim/core": "dcc69a9a7b1a9f463ccc5ffd51fd56df4f663487",
-				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
-				"sim/encounters": "6cc4907ce8634fdfd1086f9ee1a1b2de463f6d7c",
-				"sim/lib": "c819f7458168ea8c1b6cd47472f4b7b695871257",
-				"proto": "fb50b7afdd94e38e97864e635e09b593d9807745",
-				"assets/database": "76d57cc0405c74605320b2e464a7e7fb7c3a99b7",
-				"tools/rotopt": "ab83a4758a81363e088be5c496f4e5f3d8ddf5ca",
-				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/rogue": "053b2735f3ada8c5c4743d1bc5afcf719fbb555e",
-				"ui/rogue": "3eb38b925b4a3e1df2c65ede17a5d01b5e0a04e5",
-				"tools/dps_report/req/rogue__combat-swords-humanoid.json": "4649203b7b348d76ae75ffbe5bf770ee420d08cf",
-				"tools/dps_report/req/races/rogue__combat-swords.Gnome.json": "5cf3d0c7655fb284c8a627e88ca244045d8f26b5"
-			}
-		},
-		"rogue__seal-fate-daggers-humanoid": {
-			"commit": "ec771682fdea42560c2bc4b5019f501b8b53efca",
-			"recordedAt": "2026-11-03T13:12:26.118Z",
-			"inputs": {
-				"sim/core": "dcc69a9a7b1a9f463ccc5ffd51fd56df4f663487",
-				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
-				"sim/encounters": "6cc4907ce8634fdfd1086f9ee1a1b2de463f6d7c",
-				"sim/lib": "c819f7458168ea8c1b6cd47472f4b7b695871257",
-				"proto": "fb50b7afdd94e38e97864e635e09b593d9807745",
-				"assets/database": "76d57cc0405c74605320b2e464a7e7fb7c3a99b7",
-				"tools/rotopt": "ab83a4758a81363e088be5c496f4e5f3d8ddf5ca",
-				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/rogue": "053b2735f3ada8c5c4743d1bc5afcf719fbb555e",
-				"ui/rogue": "3eb38b925b4a3e1df2c65ede17a5d01b5e0a04e5",
-				"tools/dps_report/req/rogue__seal-fate-daggers-humanoid.json": "069281424f53452755f498dd20c629293ed10278"
-			}
-		},
-		"rogue__mutilate-humanoid": {
-			"commit": "ec771682fdea42560c2bc4b5019f501b8b53efca",
-			"recordedAt": "2026-11-03T13:12:25.996Z",
-			"inputs": {
-				"sim/core": "dcc69a9a7b1a9f463ccc5ffd51fd56df4f663487",
-				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
-				"sim/encounters": "6cc4907ce8634fdfd1086f9ee1a1b2de463f6d7c",
-				"sim/lib": "c819f7458168ea8c1b6cd47472f4b7b695871257",
-				"proto": "fb50b7afdd94e38e97864e635e09b593d9807745",
-				"assets/database": "76d57cc0405c74605320b2e464a7e7fb7c3a99b7",
-				"tools/rotopt": "ab83a4758a81363e088be5c496f4e5f3d8ddf5ca",
-				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/rogue": "053b2735f3ada8c5c4743d1bc5afcf719fbb555e",
-				"ui/rogue": "3eb38b925b4a3e1df2c65ede17a5d01b5e0a04e5",
-				"tools/dps_report/req/rogue__mutilate-humanoid.json": "74072b6a4dcb7d8b5dff7f1065156f21546af221",
-				"tools/dps_report/req/races/rogue__mutilate.Gnome.json": "23af9c515af17bf9c070696b3b912735ff34bafb"
 			}
 		},
 		"rogue__combat-swords": {
@@ -139,42 +69,6 @@
 				"ui/rogue": "3eb38b925b4a3e1df2c65ede17a5d01b5e0a04e5",
 				"tools/dps_report/req/rogue__mutilate.json": "284afff236d4fc6136e6eb748b3901faf4be3abf",
 				"tools/dps_report/req/races/rogue__mutilate.Gnome.json": "23af9c515af17bf9c070696b3b912735ff34bafb"
-			}
-		},
-		"rogue__seal-fate-swords-humanoid": {
-			"commit": "ec771682fdea42560c2bc4b5019f501b8b53efca",
-			"recordedAt": "2026-11-03T13:12:26.241Z",
-			"inputs": {
-				"sim/core": "dcc69a9a7b1a9f463ccc5ffd51fd56df4f663487",
-				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
-				"sim/encounters": "6cc4907ce8634fdfd1086f9ee1a1b2de463f6d7c",
-				"sim/lib": "c819f7458168ea8c1b6cd47472f4b7b695871257",
-				"proto": "fb50b7afdd94e38e97864e635e09b593d9807745",
-				"assets/database": "76d57cc0405c74605320b2e464a7e7fb7c3a99b7",
-				"tools/rotopt": "ab83a4758a81363e088be5c496f4e5f3d8ddf5ca",
-				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/rogue": "053b2735f3ada8c5c4743d1bc5afcf719fbb555e",
-				"ui/rogue": "3eb38b925b4a3e1df2c65ede17a5d01b5e0a04e5",
-				"tools/dps_report/req/rogue__seal-fate-swords-humanoid.json": "72b1b8fa58dfc0ce826407a8353ff0cd155e8f67",
-				"tools/dps_report/req/races/rogue__seal-fate-swords.Gnome.json": "00cca2d4174d74c8c99f923e7c5e524e3c6ac617"
-			}
-		},
-		"rogue__subtlety-humanoid": {
-			"commit": "ec771682fdea42560c2bc4b5019f501b8b53efca",
-			"recordedAt": "2026-11-03T13:12:26.372Z",
-			"inputs": {
-				"sim/core": "dcc69a9a7b1a9f463ccc5ffd51fd56df4f663487",
-				"sim/common": "8ee8e01a67cbcbaa0afc6de45220789830a80dba",
-				"sim/encounters": "6cc4907ce8634fdfd1086f9ee1a1b2de463f6d7c",
-				"sim/lib": "c819f7458168ea8c1b6cd47472f4b7b695871257",
-				"proto": "fb50b7afdd94e38e97864e635e09b593d9807745",
-				"assets/database": "76d57cc0405c74605320b2e464a7e7fb7c3a99b7",
-				"tools/rotopt": "ab83a4758a81363e088be5c496f4e5f3d8ddf5ca",
-				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/rogue": "053b2735f3ada8c5c4743d1bc5afcf719fbb555e",
-				"ui/rogue": "3eb38b925b4a3e1df2c65ede17a5d01b5e0a04e5",
-				"tools/dps_report/req/rogue__subtlety-humanoid.json": "15f445da928189ad81c18d51435ed8aedf1c7263",
-				"tools/dps_report/req/races/rogue__subtlety.Gnome.json": "86c6b388247fd3026d281c3db8f52f904b88fa18"
 			}
 		},
 		"rogue__seal-fate-swords": {

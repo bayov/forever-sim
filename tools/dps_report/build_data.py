@@ -33,7 +33,8 @@ DISPLAY = {'paladin__level_60': 'Ret twist', 'paladin__level_60_sub_holy': 'Ret 
            'shaman__elemental-level60': 'Elemental', 'shaman__elemental-level60-mana-tide': 'Elemental Mana Tide',
            'shaman__enhancement-level60': 'Enhancement', 'shaman__enhancement-imp-gw': 'Enh Imp GW',
            'shaman__enhancement-water-shield': 'Enh Water Shield', 'shaman__enhancement-mana-tide': 'Enh Mana Tide',
-           'druid__feral-cat': 'Feral', 'hunter__survival': 'Survival', 'warrior__fury': 'Fury', 'warrior__fury_2h': 'Fury 2H'}
+           'druid__feral-cat': 'Feral', 'hunter__survival': 'Survival', 'warrior__fury': 'Fury', 'warrior__fury_2h': 'Fury 2H',
+           'warlock__affliction_wrack': 'Affliction Wrack'}
 
 
 STAT_LABEL = {'AttackPower': 'Attack power', 'RangedAttackPower': 'Ranged attack power', 'MeleeHit': 'Melee hit %', 'MeleeCrit': 'Melee crit %',
