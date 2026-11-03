@@ -36,7 +36,12 @@ gen() {
 # ahead of the Frostbolt filler while the mana is more than 75 a second of the fight left (mana the
 # fight can't otherwise spend), and the talent search then took Arcane Meditation 3 and Incineration
 # 5 for Ice Shards: +36.4 / +16.6 / +6.3 at 120 / 180 / 300 sec on two seed sets.
-gen mage_arcane level60_arcane "blastFiller=75,blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=1,conserveMana=0,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=1,finisher=1,finishPad=0.75,wand=1"
+# Exploratory search (2026-11-03): Arcane Blast on Clearcasting (the free cast goes where four stacks
+# make the cost five times the base), and Fireball as the filler in place of Frostbolt, the Frost
+# points moved to Ignite 5 and Flame Throwing (talents 050205203100311531-5551-003): +4.5 / +8.3 /
+# +7.5 at 120 / 180 / 300 sec on two seed sets. A knob search kept every other knob. The finisher
+# pad is now Fireball's flight from 20 yd (0.85 sec, 0.75 for Frostbolt's); the same DPS either way.
+gen mage_arcane level60_arcane "blastFiller=75,blastClearcast=1,blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=1,conserveMana=0,filler=3,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=1,finisher=1,finishPad=0.85,wand=1"
 # Scorch to 5 Fire Vulnerability stacks and again with under 9 sec left on them (5 sec until the
 # 2026-11-03 knob search, round 70753: +1.4 / +0.6 / +1.5 at 120 / 180 / 300 sec on two seed sets),
 # Pyroblast at 3 Heating Up

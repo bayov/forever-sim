@@ -285,14 +285,14 @@
          "lhs": {
           "spellCastTime": {
            "spellId": {
-            "spellId": 10181
+            "spellId": 10151
            }
           }
          },
          "op": "OpAdd",
          "rhs": {
           "const": {
-           "val": "0.75s"
+           "val": "0.85s"
           }
          }
         }
@@ -389,6 +389,62 @@
     "action": {
      "castSpell": {
       "spellId": {
+       "spellId": 1239700
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "auraIsKnown": {
+          "auraId": {
+           "spellId": 400573
+          }
+         }
+        },
+        {
+         "and": {
+          "vals": [
+           {
+            "auraIsKnown": {
+             "auraId": {
+              "spellId": 12536
+             }
+            }
+           },
+           {
+            "auraIsActive": {
+             "auraId": {
+              "spellId": 12536
+             }
+            }
+           }
+          ]
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "remainingTime": {}
+          },
+          "op": "OpGt",
+          "rhs": {
+           "const": {
+            "val": "2s"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Arcane Blast on Clearcasting: the free cast goes where the stacks make the cost highest."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
        "spellId": 1326082
       }
      },
@@ -468,7 +524,7 @@
     "action": {
      "castSpell": {
       "spellId": {
-       "spellId": 10181
+       "spellId": 10151
       }
      }
     },
@@ -488,11 +544,11 @@
  },
  "note": "Rotation tuned for 2% haste: the opening Arcane Blast starts 1.47 sec before the pull, so it lands at the pull and not 30 ms before it",
  "gain": {
-  "dps": 5.21,
-  "se": 0.29,
+  "dps": 4.91,
+  "se": 0.3,
   "iterations": 20000,
   "seed": 1,
   "duration": 180
  },
- "how": "Regenerated 2026-11-03 (round 70753) when the preset took Arcane Blast ahead of the filler with spare mana (blastFiller=75) and the talents 050205203100311531-55-0531. rotopt -template mage_arcane -race SkyborneHighOrder -durs 180 -eval, the preset's knobs (blastFiller=75,blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=1,conserveMana=0,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=1,finisher=1,finishPad=0.75,wand=1) plus prepullAt=1.47 (tools/rotopt/mage_arcane.go). The preset starts the opener at -1.5 sec; Arcane Blast hits as its cast ends and has no flight time, so with 2% haste it would land 30 ms before the pull. Gain over the preset's rotation at High Order: +5.21 (seed 1) and +5.22 (seed 1000003), 20,000 iterations, 180 sec."
+ "how": "Regenerated 2026-11-03 when the preset took Fireball as the filler and Arcane Blast on Clearcasting (talents 050205203100311531-5551-003). rotopt -template mage_arcane -race SkyborneHighOrder -durs 180 -eval, the preset's knobs (blastFiller=75,blastClearcast=1,blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=1,conserveMana=0,filler=3,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=1,finisher=1,finishPad=0.85,wand=1) plus prepullAt=1.47 (tools/rotopt/mage_arcane.go). The preset starts the opener at -1.5 sec; Arcane Blast hits as its cast ends and has no flight time, so with 2% haste it would land 30 ms before the pull. Gain over the preset's rotation at High Order: +4.91 (seed 1) and +5.21 (seed 1000003), 20,000 iterations, 180 sec."
 }
