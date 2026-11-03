@@ -51,12 +51,17 @@ func (shaman *Shaman) ApplyTalents() {
 		shaman.PseudoStats.CanParry = true
 
 		// Rockbiter is the tanking imbue, so the threat modifier flips depending on which imbue is up.
-		// Enhancement picks its imbue in the class settings, the other specs in the consumes.
+		// Enhancement and the Warden pick their imbue in the class settings, the other specs in the
+		// consumes.
+		//
+		// The client (70753, 16268) cuts all threat by 30% (effect 1) and adds 86 to the threat
+		// effect of Rockbiter Weapon's passive (16313 effect 2, 0 on its own), so under Rockbiter
+		// it's 0.7 x 1.86 = 1.302, the tooltip's 30% more (docs/tank_shaman.md).
+		threat := spiritWeaponsThreatMultiplier(false)
 		if shaman.Consumes.MainHandImbue == proto.WeaponImbue_RockbiterWeapon || shaman.ShamanImbue == proto.WeaponImbue_RockbiterWeapon {
-			shaman.PseudoStats.ThreatMultiplier *= 1.30
-		} else {
-			shaman.PseudoStats.ThreatMultiplier *= 0.70
+			threat = spiritWeaponsThreatMultiplier(true)
 		}
+		shaman.PseudoStats.ThreatMultiplier *= threat
 	}
 
 	// Restoration Talents
@@ -104,6 +109,15 @@ func (shaman *Shaman) ApplyTalents() {
 			}
 		})
 	}
+}
+
+// spiritWeaponsThreatMultiplier is Spirit Weapons' threat multiplier, with Rockbiter Weapon on the
+// main hand or without it.
+func spiritWeaponsThreatMultiplier(rockbiter bool) float64 {
+	if rockbiter {
+		return 0.7 * 1.86
+	}
+	return 0.7
 }
 
 func (shaman *Shaman) applyConcussion() {
