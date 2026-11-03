@@ -110,3 +110,29 @@ self-damage) is in client 70753. The 2026-11-03 hotfix
 (`orchestration/audit/ref/client_update/sources/foreverchanges_2026-11-03_hotfix_and_70753.txt`) has no Priest line;
 its note that 70753 "writes the October 30 hotfix into the client files" for priests matches the 70707 -> 70753 diff
 above (Shadow Word: Death, Holy Binding, Cure / Abolish Disease).
+
+## Exploration after landing (2026-11-03)
+
+Talent searches (rotopt hill climb, 3,000 iterations a candidate, scored on 120/180/300 s combined, 20,000 to confirm)
+from new archetypes, with three new off-by-default `priest_shadow` knobs (Penance, Holy Fire, Smite filler; defaults
+reproduce the shipped APL):
+
+| start | ended at | combined DPS | verdict |
+|---|---|---|---|
+| 31 Disc (Power Infusion) / 20 Shadow, no Shadowform | `00530503103-1-5111220125030205` | 690.4 | dead: never reaches Shadowform |
+| 25 Holy (Spiritual Guidance) / 26 Shadow, no Shadowform | `01500503103-3-5202210125030205` | 695.1 | dead: same |
+| Shadow + Penance | | | impossible: Shadowform needs 31 Shadow points, Penance 21 Disc (52 > 51) |
+| Smite: 26 Disc (Penance) / 25 Holy (Spiritual Guidance), no Power Infusion | `50203203103-305051102120005-50002` | 761.7 | **candidate**: beats the Smite preset at every length on both seeds |
+| 20 Disc / 31 Shadow (Shadowform), Smite as the filler | `50431003103--50052101141302051` | 808.6 (Shadow settings) | question: beats every Holy Smite build, 15% behind Shadow |
+| Holy Fire kept up / Smite filler on the Level 60 Shadow build | | 894.8 / 776.1 at 180 s | lose 54 / 172 |
+
+Smite candidates on the Smite request (gear, consumes), 20,000 iterations, seed 1 (seed 1000003 within 0.3):
+
+| build | 120 s | 180 s | 300 s |
+|---|---|---|---|
+| Smite preset (Power Infusion) | 777.8 | 762.0 | 687.9 |
+| Smite, Spiritual Guidance | 790.5 | 781.0 | 713.5 |
+| Shadowform + Smite filler | 801.9 | 804.7 | 795.9 |
+
+Knob search on the Spiritual Guidance build: only fight-length trade-offs (Devouring Plague mana 40 at 120 s; Holy
+Fire on, Devouring Plague off at 300 s). Not yet done for either candidate: race sweep, and the hybrid's knob search.
