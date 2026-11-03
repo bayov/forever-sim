@@ -193,7 +193,9 @@ new made the cut; the presets stand.
     Searing Totem -15 to -30; no Fire Nova -50 to -69, Fire Nova ahead of the shocks -1 to -2; Earth Shock only -37;
     Flame and Frost Shock -15 to -17; Earth Shock only with 3 s of Flame Shock left -9 to -14. The one gain,
     `earthShockHold=1` (Earth Shock waits up to 1 s for the Stormstrike mark), is +0.3 / +0.4 / +0.3: under the 1 DPS
-    bar, optional, not shipped.
+    bar. Shipped afterwards on the user's call (the `optimized` APL, Level 60 and Imp GW): paired at 20,000
+    iterations on seeds 1 / 1000003, Level 60 +0.1 / -0.7, +0.2 / -0.7, 0.0 / 0.0 and Imp GW -0.4 / +0.2,
+    +0.1 / +0.5, +0.6 / +1.3 at 120 / 180 / 300 s (a wash on Level 60, about +0.4 on Imp GW).
   - Elemental: Earth Shock on the shock cooldown -10 to -23 (-10 to -37 with 40 / 60% mana floors); Earth Shock in place
     of Flame Shock -66 to -93 (Era's Flame Shock DoT carries 112 DPS); no Lightning Shield -3 to -9; no Searing Totem
     -20 to -28; no prepull bolt -5 to -12; no end-of-fight Earth Shock -4 to -11; the Flame Shock end gate at 0 or
