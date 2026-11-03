@@ -349,7 +349,7 @@ export const DefaultAPL = APLOptimized;
 // Stormstrike pays off in longer fights). The knob search on the new talents kept the rotation. Level
 // 60 is 894.1 / 880.1 / 863.1 at 120 / 180 / 300 sec. Unpinned, the search drops Spirit Weapons (a
 // threat talent the sim doesn't score) for that second Improved Stormstrike point instead: +5.3 at 180.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', SavedTalents.create({ talentsString: '053503102-055030011005112251' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', SavedTalents.create({ talentsString: '053503102-055030110051012251' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Synthetic',
 });
@@ -375,7 +375,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', Saved
 // Focus 1 to Improved Stormstrike 2: +1.0 / +1.9 at 180 sec, +4.9 / +3.9 at 300 and -2.8 / -2.9 at 120 on
 // two seed sets. 890.4 / 876.2 / 858.6 at 120 / 180 / 300 sec with the Optimized rotation, 3.9 behind
 // Level 60 at 180.
-export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', SavedTalents.create({ talentsString: '053503102-054032001005112251' }), {
+export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', SavedTalents.create({ talentsString: '053503102-054030010051212251' }), {
 	tooltip: 'The Enhancement talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
 	group: 'Synthetic',
 });
@@ -414,7 +414,7 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', S
 // is still 3 to 11 behind Lightning Shield on this build and on Mana Tide.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Enh Water Shield',
-	SavedTalents.create({ talentsString: '051003-054030021005112151-053020001' }),
+	SavedTalents.create({ talentsString: '051003-054030210051012151-053020001' }),
 	{ tooltip: 'Level 60 talents with 10 Restoration points for Water Shield.', group: 'Synthetic' },
 );
 // The best build that takes Water Shield and Mana Tide Totem (-require
@@ -440,13 +440,13 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // 782.1 / 778.0 before, mostly the Fire Nova cut), 7.9% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Enh Mana Tide',
-	SavedTalents.create({ talentsString: '03-055030031005112051-053051001001' }),
+	SavedTalents.create({ talentsString: '03-055030310051012051-053051001001' }),
 	{ tooltip: 'Level 60 talents with Water Shield and Mana Tide Totem.', group: 'Synthetic' },
 );
 
 // The talents the leveling optimizer ran with: level 30 with 5 extra talent points, with
 // Stormstrike, Spirit Weapons and Improved Ghost Wolf 2.
-export const TalentsLevel30Leveling = PresetUtils.makePresetTalents('Level 30 Leveling', SavedTalents.create({ talentsString: '-0540320010051122' }), {
+export const TalentsLevel30Leveling = PresetUtils.makePresetTalents('Level 30 Leveling', SavedTalents.create({ talentsString: '-0540300100512122' }), {
 	tooltip: 'Level 30 with 5 extra talent points, which the leveling optimizer ran with.',
 	group: 'Leveling',
 });

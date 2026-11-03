@@ -132,7 +132,7 @@ export const DefaultAPL = APLLevel60;
 // (+8: it keeps 70% of the casts from being pushed back), and the Restoration points into
 // Ancestral Knowledge, Shamanistic Focus and one Improved Lightning Shield. 731.3 / 721.4 /
 // 712.6 at 120 / 180 / 300 sec.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Elemental', SavedTalents.create({ talentsString: '5501331003001351-055000101-053' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Elemental', SavedTalents.create({ talentsString: '5501331003001351-05500101-053' }), {
 	tooltip: 'Level 60 talents from the talent search: Elemental Mastery, Lava Burst, Eye of the Storm, Thundering Strikes and Tidal Focus.',
 	group: 'Synthetic',
 });

@@ -48,7 +48,7 @@ func testWeaponDamage(t *testing.T, item *proto.ItemSpec, weaponMin, weaponMax, 
 		windfuryAP = 333.0
 	)
 	// Stormstrike.
-	player := newOrcShaman(60, "-0000000000001", &proto.EnhancementShaman_Options{ShamanImbue: proto.WeaponImbue_WindfuryWeapon})
+	player := newOrcShaman(60, "-000000000001", &proto.EnhancementShaman_Options{ShamanImbue: proto.WeaponImbue_WindfuryWeapon})
 	player.Equipment = &proto.EquipmentSpec{}
 	for range proto.ItemSlot_ItemSlotMainHand {
 		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})

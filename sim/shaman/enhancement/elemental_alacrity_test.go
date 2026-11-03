@@ -34,7 +34,6 @@ func TestOrcShamanElementalAlacrity(t *testing.T) {
 			{"Lightning Bolt", topRank(t, "Lightning Bolt", enh.LightningBolt), 2500 * time.Millisecond},
 			{"Lightning Bolt rank 1", enh.LightningBolt[1], 1500 * time.Millisecond},
 			{"Chain Lightning", topRank(t, "Chain Lightning", enh.ChainLightning), 2500 * time.Millisecond},
-			{"Lava Burst", enh.LavaBurst, 2500 * time.Millisecond},
 		}
 		check := func(sim *core.Simulation, label string, haste float64) {
 			for _, s := range spells {

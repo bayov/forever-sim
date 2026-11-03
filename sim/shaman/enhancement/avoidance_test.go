@@ -91,7 +91,7 @@ func TestOrcShamanEnemyAvoidance(t *testing.T) {
 func TestOrcShamanOurAvoidance(t *testing.T) {
 	_, plain := newTankSim(newOrcShaman(30, spiritWeapons, &proto.EnhancementShaman_Options{}), 34)
 	// Anticipation 3/3 and Spirit Weapons.
-	sim, enh := newTankSim(newOrcShaman(30, "-00000000030001", &proto.EnhancementShaman_Options{}), 34)
+	sim, enh := newTankSim(newOrcShaman(30, "-00000000300001", &proto.EnhancementShaman_Options{}), 34)
 	if got := enh.GetStat(stats.Dodge) - plain.GetStat(stats.Dodge); math.Abs(got-6) > 1e-9 {
 		t.Errorf("Anticipation 3/3 added %.2f%% dodge, want 6%%", got)
 	}

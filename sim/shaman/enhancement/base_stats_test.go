@@ -151,9 +151,9 @@ func TestOrcShamanHealthTalents(t *testing.T) {
 		health  float64
 	}{
 		{"no talents", "", 51, 665},
-		{"Toughness 5/5", "-00000000005", 56, 715},
+		{"Toughness 5/5", "-0000000005", 56, 715},
 		{"Improved Reincarnation 2/2", "--000002", 51, 665 * 1.04},
-		{"both", "-00000000005-000002", 56, 715 * 1.04},
+		{"both", "-0000000005-000002", 56, 715 * 1.04},
 	}
 	for _, c := range cases {
 		_, enh := newShamanSim(newOrcShaman(30, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
