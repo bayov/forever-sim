@@ -35,3 +35,9 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - The user: deploy BayovCore and Buff Coordinator to beta and forever, re-export or install the forever shaman and
   bayov auras, delete a leftover "Bayov - Shaman Lava Burst" aura if one stays, check Totemic Call's 30 s cooldown
   in game, re-check the RXP route's training-gold steps against the new trainer costs.
+
+## Phase 3 to-do (shared, the orchestrator's)
+
+- Drop Blessing of Salvation from the raid buffs: tools/rotopt/mksettings/main.go:74 and every Level 60 request's
+  raid.buffs.salvation (threat only, 0 DPS; removed in game since the 10-30 hotfix). Do it with the phase 3 re-sim so
+  the request hashes move once.
