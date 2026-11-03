@@ -73,61 +73,6 @@
       },
       {
         "action": {
-          "channelSpell": {
-            "interruptIf": {
-              "cmp": {
-                "lhs": {
-                  "currentManaPercent": {}
-                },
-                "op": "OpGe",
-                "rhs": {
-                  "const": {
-                    "val": "0.2"
-                  }
-                }
-              }
-            },
-            "spellId": {
-              "spellId": 5019
-            }
-          },
-          "condition": {
-            "and": {
-              "vals": [
-                {
-                  "cmp": {
-                    "lhs": {
-                      "currentManaPercent": {}
-                    },
-                    "op": "OpLe",
-                    "rhs": {
-                      "const": {
-                        "val": "0.1"
-                      }
-                    }
-                  }
-                },
-                {
-                  "cmp": {
-                    "lhs": {
-                      "remainingTime": {}
-                    },
-                    "op": "OpGe",
-                    "rhs": {
-                      "const": {
-                        "val": "60s"
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "notes": "Shoot the wand from 10% mana to 20% with 60 sec or more to go, to regenerate outside the five second rule."
-      },
-      {
-        "action": {
           "castSpell": {
             "spellId": {
               "spellId": 15261
@@ -143,6 +88,19 @@
                         "spellId": {
                           "spellId": 15261
                         }
+                      }
+                    }
+                  }
+                },
+                {
+                  "cmp": {
+                    "lhs": {
+                      "currentManaPercent": {}
+                    },
+                    "op": "OpGe",
+                    "rhs": {
+                      "const": {
+                        "val": "0.3"
                       }
                     }
                   }
@@ -334,13 +292,13 @@
       }
     ]
   },
-  "note": "Holy Fire on cooldown: without the Undead's Dark Sacrifice the mana goes further on Holy Fire than on the preset's Smite-only line",
+  "note": "Holy Fire above 30% mana, and no wand to regain mana: without the Undead's Dark Sacrifice the mana goes further on Holy Fire than on the preset's Smite-only line",
   "gain": {
-    "dps": 7.8,
-    "se": 0.27,
+    "dps": 7.4,
+    "se": 0.22,
     "iterations": 20000,
     "seed": 1,
     "duration": 180
   },
-  "how": "rotopt -template priest_smite -race Troll -durs 180 from the template defaults (the preset's knobs): holyFire 0 -> 1. Same rotation at the preset race (Undead): -14.7 +- 0.2."
+  "how": "rotopt -template priest_smite -race Troll -durs 180 from the template defaults (the preset's knobs), on the round 70753 Spiritual Guidance talents (2026-11-03): holyFire 0 -> 1, holyFireMana 0 -> 30, wandLow 10 -> 0. Same rotation at the preset race (Undead): -19.9."
 }

@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 1,
   "race": "Undead",
-  "talents": "525035231030001001-30505110002-3",
+  "talents": "50203203103-305051102120005-50002",
   "treeNames": [
     "Discipline",
     "Holy",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_smite",
   "apl": "level60_smite",
   "published": {
-    "dps": 762.0,
-    "source": "verify.py on this request after round 70753 (race base stats, master 5eb381750; 761.4 before), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 781.0,
+    "source": "verify.py on this request after the round 70753 Spiritual Guidance talents (2026-11-03; 762.0 with the Power Infusion build), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 762.0,
-    "stderr": 0.16,
+    "dps": 781.0,
+    "stderr": 0.15,
     "iters": 20000,
     "ok": true,
     "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03; not yet the DPS report's main run"
@@ -30,15 +30,15 @@
     "Power in Light",
     "Divine Fury",
     "Holy Precision",
-    "Power Infusion",
     "Searing Light",
     "Holy Specialization",
-    "Twin Disciplines",
+    "Spiritual Guidance",
+    "Shadow Focus",
     "Twilight Focus"
   ],
   "rotation": [
     "Pre-pull: Smite at -2s to land at the pull, then the on-use trinket at -0.1s",
-    "Dark Sacrifice (Undead) below 40% mana. Power Infusion, racials and trinkets on cooldown.",
+    "Dark Sacrifice (Undead) below 40% mana. Racials and trinkets on cooldown.",
     "Shadow Word: Pain when it is down, with 9s or more left, to keep Power in Light up",
     "Devouring Plague when it is down, with 12s or more left and 80% mana or more",
     "Shadow Word: Death when a Smite would not land before the fight ends",
@@ -62,15 +62,15 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Short on mana, so DPS falls in longer fights (786.1 / 765.7 / 689.7 at 120s / 180s / 300s). Devouring Plague (24s cooldown) is cast only above 80% mana.",
+    "Short on mana, so DPS falls in longer fights (790.5 / 781.0 / 713.5 at 120s / 180s / 300s). Devouring Plague (24s cooldown) is cast only above 80% mana.",
     "Smite VIII's base damage is ×1.09 the client's value.",
     "Forever's downrank penalty is in the sim, so the cheaper Smite is rank 7.",
-    "Penance and Mind Blast would lose DPS, so it skips them. Shadow Word: Death is cast only at the end of the fight.",
+    "It takes no Penance (Spiritual Guidance does more), and Mind Blast would lose DPS. Shadow Word: Death is cast only at the end of the fight.",
     "Only the Vestments of Conviction 2-piece is active. The 4-piece and 5-piece would add 4.7 DPS.",
     "Left out: Kreeg's Stout Beatdown and Elixir of Sages (+6.4).",
     "Dark Sacrifice gives 1600 mana plus Spirit, as its tooltip says. Client data says just 1600.",
-    "No Holy Fire, because its mana does more on Smite. Keeping it up would be -21.8 / -10.6 / +9.5 DPS at 120s / 180s / 300s.",
-    "Race spells: the Undead's Dark Sacrifice adds 28.9 DPS, the most of any racial here, because Smite is short on mana. Night Elf Starshards would cost 17 DPS: its 6s channel deals about 480 DPS against Smite's 700, and the mana it saves doesn't make that up. Dwarf Chastise works only on Humanoids, and there it costs 8.5 DPS: a Smite does more with the global cooldown. Troll Shadowguard can only be cast in Shadowform."
+    "No Holy Fire, because its mana does more on Smite. Keeping it up would be -29.1 / -22.0 / +2.6 DPS at 120s / 180s / 300s.",
+    "Race spells: the Undead's Dark Sacrifice adds 28.2 DPS, the most of any racial here, because Smite is short on mana. Night Elf Starshards would cost 17 DPS: its 6s channel deals about 480 DPS against Smite's 700, and the mana it saves doesn't make that up. Dwarf Chastise works only on Humanoids, and there it costs 8.5 DPS: a Smite does more with the global cooldown. Troll Shadowguard can only be cast in Shadowform."
   ],
   "notes": "mksettings -spec smite request, which carries ConsumesSmite from presets.ts: defaultPotion MajorManaPotion, firePowerBuff ElixirOfGreaterFirepower, manaRegenElixir GreaterMagebloodElixir, spiritElixir ElixirOfGreaterSpirit. The Goblin Land Mine (added 2026-10-23) and the Sapper went out on 2026-11-01, when the priests moved to 25 yd (30 for Smite since 2026-11-02), out of their 10 yd reach. Gear level60_phase1_smite, apl level60_smite. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Distance 30 yd since 2026-11-02 (standards 33, orchestration/caster_distance.md: every spell it casts reaches 30), 25 before."
 }

@@ -279,8 +279,16 @@ export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Shadow + Holy',
 // at 180 sec. That is 17% behind
 // Shadow at 180 sec and 24% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
 // Shadowform does for Shadow spells.
-export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Smite', SavedTalents.create({ talentsString: '525035231030001001-30505110002-3' }), {
-	tooltip: 'Holy damage talents: 31 Discipline (Power in Light, Penance, Power Infusion) and 17 Holy (Divine Fury, Searing Light, Twilight Focus).',
+// Round 70753 exploration (2026-11-03): a talent search from 26 Discipline (Penance) with 25 Holy (Spiritual
+// Guidance 5) gives up Penance and Power Infusion for Spiritual Guidance (8% of Spirit as spell damage), Holy
+// Reach and 7 Shadow points (Shadow Focus 5, Improved Shadow Word: Pain 2, which keep Power in Light's Shadow
+// Word: Pain landing and up): 19 Discipline / 25 Holy / 7 Shadow, 790.5 / 781.0 / 713.5 at 120 / 180 / 300 sec
+// against the Power Infusion build's 777.8 / 762.0 / 687.9 (20000 iterations, seeds 1 and 1000003 within 0.3).
+// The rotation is unchanged (its Power Infusion line is inert without the talent). A 20 Discipline / 31 Shadow
+// build casting Smite in Shadowform in place of Mind Flay reaches 801.9 / 804.7 / 795.9 but is a weaker Shadow
+// priest (15% behind it), so it is not a preset (user ruling 2026-11-03).
+export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Smite', SavedTalents.create({ talentsString: '50203203103-305051102120005-50002' }), {
+	tooltip: 'Holy damage talents: 19 Discipline (Power in Light, Holy Precision, Inner Focus), 25 Holy (Divine Fury, Searing Light, Spiritual Guidance) and 7 Shadow for Shadow Word: Pain.',
 	group: 'Synthetic',
 });
 
@@ -560,6 +568,10 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Smite', En
 // Round 70753 (2026-11-03, Classic race base stats): Undead 762.0, Gnome 741.0, Human 737.7, Night Elf
 // 734.7, Troll 732.9, Dwarf 730.1 at 180 sec (seed 1; seed 1000003 within 0.4); the Undead at 120 / 180 /
 // 300 sec: 777.8 / 762.0 / 687.9. The talent and knob searches keep the build and the rotation.
+// With the Spiritual Guidance talents (round 70753 exploration, 2026-11-03), each race on its own rotation
+// (req/races, searched again on the new talents): Undead 781.0 (best overall and Horde), Gnome 762.2 (best
+// Alliance), Human 757.6, Troll 752.9, Night Elf 749.5, Dwarf 746.7 at 180 sec (20000 iterations, seed 1); the
+// Undead at 120 / 180 / 300 sec: 790.5 / 781.0 / 713.5.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Smite', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Undead Holy damage priest (Smite, Power Infusion) on the synthetic Phase 1 gear, 22% behind Shadow.',

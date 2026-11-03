@@ -4,6 +4,7 @@
 // glow on your weapon, the totems' own models, and the swing and impact sounds of melee.
 
 import * as THREE from 'three';
+import type { Crowd } from './crowd';
 import { prefetch } from './files';
 import { Model } from './model';
 import { Playing, SoundRef, Sounds } from './sound';
@@ -133,6 +134,8 @@ export class Effects {
 	private imbues = new Map<string, { name: string; models: { model: Model; km: KitModel }[] }>();
 	private clock = 0;
 	melee: MeleeSounds = {};
+	// Where the raid test's casters' effects draw together.
+	crowd?: Crowd;
 	steps?: SoundRef[];
 	grunts?: SoundRef[];
 	draw?: SoundRef[];
@@ -145,7 +148,7 @@ export class Effects {
 
 	// attach loads an effect model onto a unit's attachment point (or its feet). It holds until
 	// stopped, or plays once.
-	private async attach(unit: Model | undefined, km: KitModel, hold: boolean): Promise<Live | undefined> {
+	private async attach(unit: Model | undefined, km: KitModel, hold: boolean, crowd = false): Promise<Live | undefined> {
 		if (!unit) return undefined;
 		const model = await Model.load(km.fdid).catch(e => {
 			console.warn('effect model', km.fdid, e);
@@ -158,6 +161,7 @@ export class Effects {
 		if (km.yaw) model.root.rotation.y = km.yaw;
 		point.add(model.root);
 		model.enableParticles(this.world);
+		if (crowd) this.crowd?.add([model]);
 		const first = playEffect(model, km, hold);
 		// A one-shot with no animation of its own shows for a second.
 		const seconds = hold ? Infinity : first > 0 ? first : 1;
@@ -178,7 +182,9 @@ export class Effects {
 
 	// event plays one visual event on a unit's model: its sounds and effect models. A held event
 	// keeps its models and loop sounds (in `loops`) until stopped.
-	async event(ev: VisualEvent, unit: Model | undefined, hold: boolean, loops?: Promise<Playing | undefined>[]): Promise<Live[]> {
+	//
+	// With `crowd` the models draw in the crowd (crowd.ts), for the raid test's casters.
+	async event(ev: VisualEvent, unit: Model | undefined, hold: boolean, loops?: Promise<Playing | undefined>[], crowd = false): Promise<Live[]> {
 		const delay = ev.delayMs ?? 0;
 		if (delay > 0) await new Promise(r => setTimeout(r, delay));
 		const playing = this.playSounds(ev.sounds, unit?.root);
@@ -186,7 +192,7 @@ export class Effects {
 		else for (const p of playing) p.then(h => h?.stop());
 		const out: Live[] = [];
 		for (const km of ev.models ?? []) {
-			const l = await this.attach(unit, km, hold);
+			const l = await this.attach(unit, km, hold, crowd);
 			if (l) out.push(l);
 		}
 		return out;
@@ -273,7 +279,7 @@ export class Effects {
 		const loops: Promise<Playing | undefined>[] = [];
 		let done = false;
 		for (const ev of v.events.filter(e => e.event === 'precast')) {
-			this.event(ev, caster.model, true, loops).then(l => {
+			this.event(ev, caster.model, true, loops, true).then(l => {
 				held.push(...l);
 				if (done) for (const x of l) x.stopped = true;
 			});
@@ -282,12 +288,12 @@ export class Effects {
 		done = true;
 		for (const l of held) l.stopped = true;
 		for (const p of loops) p.then(h => h?.stop());
-		for (const ev of v.events.filter(e => e.event === 'cast')) this.event(ev, caster.model, false);
+		for (const ev of v.events.filter(e => e.event === 'cast')) this.event(ev, caster.model, false, undefined, true);
 		const land = () => {
-			for (const ev of v.events.filter(e => e.event === 'impact')) this.event(ev, target?.model, false);
+			for (const ev of v.events.filter(e => e.event === 'impact')) this.event(ev, target?.model, false, undefined, true);
 		};
 		const m = v.missile;
-		if (m?.model && m.speed > 0 && caster.model && target?.model) this.launch(m, caster.model, target.model, land);
+		if (m?.model && m.speed > 0 && caster.model && target?.model) this.launch(m, caster.model, target.model, land, true);
 		else land();
 	}
 
@@ -334,7 +340,7 @@ export class Effects {
 
 	// launch sends a spell's bolt from one model to another. A totem has no bolt attachment
 	// (38), so it shoots from its spell hand (22).
-	private async launch(m: NonNullable<SpellVisual['missile']>, from: Model, to: Model, onLand?: () => void) {
+	private async launch(m: NonNullable<SpellVisual['missile']>, from: Model, to: Model, onLand?: () => void, crowd = false) {
 		const model = await Model.load(m.model!.fdid).catch(() => undefined);
 		if (!model) {
 			onLand?.();
@@ -347,6 +353,7 @@ export class Effects {
 		model.root.position.copy(start);
 		this.world.add(model.root);
 		model.enableParticles(this.world);
+		if (crowd) this.crowd?.add([model]);
 		playEffect(model, m.model!, true);
 		const sounds = kits(m.sound).map(kit => this.sounds.play(kit, model.root));
 		this.missiles.push({ model, km: m.model!, from: start, to: target, speed: m.speed, pos: start.clone(), sounds, onLand });

@@ -1187,6 +1187,25 @@ rendering, not the sim.
 - Second raid report (your PC, 37s, after the fixes): 68 FPS on average (was 49), 12.6ms frames at the median, 12.2ms
   of script a frame (drawing 7.8ms for 943 draw calls, animating 4.0ms), 1.4GB heap, and no stall. One frame over
   50ms, at the start.
+- Aiming for 240 FPS in the raid. Headless Chrome on WSL can use the real GPU (Mesa's D3D12 driver:
+  `GALLIUM_DRIVER=d3d12 MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA LD_LIBRARY_PATH=/usr/lib/wsl/lib`, ANGLE on GL), so the
+  numbers below are a 2560x1440 raid of 40 on the RTX 5090 with the frame rate uncapped. Its draw calls cost about twice
+  what they cost on your PC. The perf reports now also time the GPU (a `gpu` column and average).
+  - Before: 40 FPS, 22ms of script a frame (drawing 17ms for 1004 draw calls, animating 3.9ms), GPU 6.9ms.
+  - Raiders that look alike draw together (`wow/crowd.ts`): one draw call per part of a look (the orc male's chest in
+    this armor) for every raider wearing it. Each raider's bones go into one shared texture, and each copy reads its
+    own by an offset. Composed skins, rewrapped textures and compacted indices are shared, so copies match. Copies
+    off screen are left out unless they cast a shadow onto the screen. 77 FPS, 680 draw calls, GPU 1.0ms.
+  - The casters' hand glows, bolts and impacts draw in the crowd too, and a model with no solid part (most spell
+    effects) no longer draws into the shadows. 92 FPS, 490 draw calls.
+  - Particles and ribbons draw in one draw call per look (texture and blend), filled before the frame draws. Filled
+    during the draw, the GPU got the new triangles over the last frame's points. 111 FPS, 184 draw calls.
+  - Bones are posed in flat arrays and are out of the scene (`wow/model.ts`). The scene holds only the sockets
+    (attachment points and emitters), which follow their bone. Before, the renderer placed and walked through 9000
+    bones twice a frame. 221 FPS, 3.6ms of script a frame (animating 1.7ms, drawing 1.7ms for 180 draw calls), GPU
+    1.1ms. Solo is 400 FPS here.
+  - Tried and dropped, since they didn't measure: near raiders animating at 120 Hz, a table for the particles' sRGB
+    colors, and packed track key slots.
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit

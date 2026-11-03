@@ -189,6 +189,11 @@ export class UnitView {
 		for (const p of this.placeholder) p.visible = false;
 	}
 
+	// models gives the unit's models: the body, then its gear and weapons.
+	get models(): Model[] {
+		return this.model ? [this.model, ...this.items] : [];
+	}
+
 	// placeWeapons puts the weapons in the hands when drawn, in their sheaths when not.
 	private placeWeapons() {
 		for (const h of this.held) {

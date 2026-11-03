@@ -85,7 +85,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "05500003035001351-0002-0050055003",
+            "talentsString": "2550102003520005--0550305003",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -123,27 +123,23 @@
               ],
               "priorityList": [
                 {
+                  "notes": "Racials and trinkets on cooldown.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Racials and trinkets on cooldown."
+                  }
                 },
                 {
+                  "notes": "Life Tap when the mana runs low or the filler costs more than is left.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 11689
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "currentManaPercent": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "0.05"
@@ -164,17 +160,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Life Tap when the mana runs low or the filler costs more than is left."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 603
+                        "spellId": 11689
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Bane of Doom when it lands before the fight ends, its tick at least 1 sec after the trinket comes back, so the 2 min cooldowns fired beside the trinket are up for it.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -248,17 +244,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Bane of Doom when it lands before the fight ends, its tick at least 1 sec after the trinket comes back, so the 2 min cooldowns fired beside the trinket are up for it."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 11713
+                        "spellId": 603
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Bane of Agony while Bane of Doom is on cooldown or would not land.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -286,10 +282,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "12s"
@@ -302,6 +298,7 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpGt",
                                     "lhs": {
                                       "spellTimeToReady": {
                                         "spellId": {
@@ -309,7 +306,6 @@
                                         }
                                       }
                                     },
-                                    "op": "OpGt",
                                     "rhs": {
                                       "const": {
                                         "val": "12s"
@@ -319,10 +315,10 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLe",
                                     "lhs": {
                                       "remainingTime": {}
                                     },
-                                    "op": "OpLe",
                                     "rhs": {
                                       "const": {
                                         "val": "60s"
@@ -335,17 +331,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Bane of Agony while Bane of Doom is on cooldown or would not land."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 11672
+                        "spellId": 11713
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Corruption when it is down.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -362,10 +358,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "9s"
@@ -375,57 +371,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Corruption when it is down."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 18881
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 18881
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "remainingTime": {}
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "const": {
-                                  "val": "9s"
-                                }
-                              }
-                            }
-                          }
-                        ]
+                        "spellId": 11672
                       }
                     }
-                  },
-                  "notes": "Siphon Life when it is down."
+                  }
                 },
                 {
+                  "notes": "Immolate when it is down.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 11668
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -445,6 +401,7 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "dotRemainingTime": {
                                         "spellId": {
@@ -452,7 +409,6 @@
                                         }
                                       }
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "spellCastTime": {
                                         "spellId": {
@@ -467,10 +423,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "15s"
@@ -480,68 +436,26 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Immolate when it is down."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1316697
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "dotIsActive": {
-                              "spellId": {
-                                "spellId": 11672
-                              }
-                            }
-                          },
-                          {
-                            "or": {
-                              "vals": [
-                                {
-                                  "dotIsActive": {
-                                    "spellId": {
-                                      "spellId": 11713
-                                    }
-                                  }
-                                },
-                                {
-                                  "dotIsActive": {
-                                    "spellId": {
-                                      "spellId": 603
-                                    }
-                                  }
-                                }
-                              ]
-                            }
-                          }
-                        ]
+                        "spellId": 11668
                       }
                     }
-                  },
-                  "notes": "Wrack while Corruption and the bane are up."
+                  }
                 },
                 {
+                  "notes": "Death Coil when the filler would not land before the end.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 17926
-                      }
-                    },
                     "condition": {
                       "cmp": {
+                        "op": "OpLt",
                         "lhs": {
                           "remainingTime": {}
                         },
-                        "op": "OpLt",
                         "rhs": {
                           "math": {
+                            "op": "OpAdd",
                             "lhs": {
                               "spellCastTime": {
                                 "spellId": {
@@ -549,7 +463,6 @@
                                 }
                               }
                             },
-                            "op": "OpAdd",
                             "rhs": {
                               "const": {
                                 "val": "0.25s"
@@ -558,28 +471,29 @@
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Death Coil when the filler would not land before the end."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 17923
+                        "spellId": 17926
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Searing Pain when the filler would not land before the end.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "math": {
+                                  "op": "OpAdd",
                                   "lhs": {
                                     "spellCastTime": {
                                       "spellId": {
@@ -587,7 +501,6 @@
                                       }
                                     }
                                   },
-                                  "op": "OpAdd",
                                   "rhs": {
                                     "const": {
                                       "val": "0.25s"
@@ -599,10 +512,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "spellCastTime": {
                                   "spellId": {
@@ -614,33 +527,37 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 17923
+                      }
                     }
-                  },
-                  "notes": "Searing Pain when the filler would not land before the end."
+                  }
                 },
                 {
+                  "notes": "Troll. Berserking just before a filler, so its 15 sec of cast speed go on the casts it speeds up, not the instants of the opener. Other races ignore the warning on this line.",
                   "action": {
+                    "condition": {
+                      "gcdIsReady": {}
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 26297,
                         "tag": 2
                       }
-                    },
-                    "condition": {
-                      "gcdIsReady": {}
                     }
-                  },
-                  "notes": "Troll. Berserking just before a filler, so its 15 sec of cast speed go on the casts it speeds up, not the instants of the opener. Other races ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Shadow Bolt as the filler.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 11661
                       }
                     }
-                  },
-                  "notes": "Shadow Bolt as the filler."
+                  }
                 }
               ]
             },
