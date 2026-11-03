@@ -950,7 +950,7 @@ export const EPLevel30Leveling = PresetUtils.makePresetEpWeights(
 	{ tooltip: 'Stat weights for a solo level 30 grinding mobs of its level, by mobs killed in a session.', group: 'Leveling' },
 );
 
-// Stat weights for the leveling gear plan (2026-11-02), by mobs killed in a 20 min session, in
+// Stat weights for the leveling gear plan (2026-11-03), by mobs killed in a 20 min session, in
 // attack power, every 5 levels from 5 to 59 (leveling_weights.json). The Leveling Gear tab judges
 // the items it finds by them, and blends two of them for the levels in between. BayovCore's
 // Upgrades reads the same file for its "Shaman leveling" weights below 60 (bayovui weights.py).
@@ -971,6 +971,12 @@ export const EPLevel30Leveling = PresetUtils.makePresetEpWeights(
 // mean of three rounds: the plan's gear by the old weights (levels 10 to 30 only, so the level 30
 // ones above it), then by the first round's, then by the mean of those two. Stamina is worth
 // something only where we still die, around 10 to 20 and at 40.
+//
+// 2026-11-03, client 70753's shaman tree (stronger shocks and Stormstrike, Improved Ghost Wolf
+// from 15 Enhancement points): one more round of the same probes, on the plan's gear by the
+// 11-02 weights, with the template's knobs as they were. Level 5 (no talents) and 10 measure as
+// before. From 25 we kill 11 to 16 more mobs a session, and Intellect, Spirit and MP5 are worth
+// more (MP5 7.1 against 2.7 at 30, Spirit 5.1 against 2.6 at 50).
 export const EPLevelingGearPlan = LevelingWeightsJSON.levels.map(({ level, weights: w }) =>
 	PresetUtils.makePresetEpWeights(
 		`Level ${level} Leveling Gear`,

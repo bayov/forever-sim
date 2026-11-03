@@ -44,6 +44,8 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - forever-wiki/sim-status.md still has the old warrior strings (warrior worker); check every class's rows there.
 - ui/enhancement_shaman/leveling_weights.json (the XP/h parts for Enhancement levels 5-59 and the no-spec shaman) was
   measured on 11-02, before this round: measure it again (leveling-opt), then bayovui's weights.py (phase 3b's report).
+  Done 2026-11-03 (phase 3 fix, item 4): measured again on the new tree, template knobs unchanged; levels 5 and 10 as
+  before, 11 to 16 more mobs a session from 25. Still to do: bayovui's weights.py, from the wow repo.
 - compsearch TestReportRaid flakes on shaman__enhancement-imp-gw: about 6 DPS less in the 20-player raid than alone
   (-6.0 against an allowed +-5.9 at 4000 iterations on master before 7df92bc; at the test's 1000 iterations it passes or
   fails as other builds reshuffle the random numbers). Found by the paladin follow-up; a shaman or compsearch fix.
