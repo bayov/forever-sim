@@ -33,7 +33,9 @@ gen() {
 # Explosion (10 yd around the mage) would not reach, so the finisher no longer casts it (it was
 # +2.3 at 180 sec in a sim that doesn't hold it to its radius).
 gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=1,conserveMana=0,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=1,finisher=1,finishPad=0.75,wand=1"
-# Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating Up
+# Scorch to 5 Fire Vulnerability stacks and again with under 9 sec left on them (5 sec until the
+# 2026-11-03 knob search, round 70753: +1.4 / +0.6 / +1.5 at 120 / 180 / 300 sec on two seed sets),
+# Pyroblast at 3 Heating Up
 # stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 10% mana (since
 # 70425 every Fire Blast adds a Heating Up stack, two on a crit), Fireball. Evocation below 20% mana
 # with 90 sec of the fight left. Combustion and the on-use trinket wait for the 5th stack, so its
@@ -43,7 +45,7 @@ gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,
 # Demonic Rune's 2 min cooldown, and the rune gives more. When a Fireball would not land before the
 # end (its cast plus 1.25 sec, the Fireball's flight from Fire's 30 yd; 1.04 from 25 yd before
 # 2026-11-02, +0.6 / +0.4 / +0.3 at 120 / 180 / 300 sec), Fire Blast and Scorch instead.
-gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,racialAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.25,wand=1"
+gen mage_fire level60_fire "scorchRefresh=9,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,racialAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.25,wand=1"
 # Frostbolt to Ice Barrier (the launch realms' 2026-10-30 hotfix: Frigid Power 15% Frost damage for
 # a minute from each Ice Barrier, 5% more while the shield holds, Ice Lance 4 times the damage on a
 # Frozen target). Ice Barrier goes up before the pull and again when Frigid Power has under 6 sec
