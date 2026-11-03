@@ -7,11 +7,11 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-// Naked characters with no talents on the Forever beta (2026-10-10, /bayov export), and the
-// level 1 naked warriors of the other races on wowsims/forever's sheets (6296e8546d,
-// 2026-10-20: the class baseline 23, 20, 22, 20, 20 plus the race offset). Forever reworked the
-// races, so these rows check each race's shift against 1.12, the rows the sim builds for pairs
-// 1.12 doesn't have (Undead paladin, Skyborne), and the Orc shaman's level 30 row.
+// Forever's races have Classic's base attributes since client 1.60.1.70753 ("All Races now have
+// the correct amount of base stats. For example, Tauren Warriors now start with the correct +5
+// strength relative to Human Warriors (was incorrectly +2)", development notes 2026-11-02). Below
+// 60 that is 1.12's rows (player_levelstats), and the rows the sim builds for pairs 1.12 doesn't
+// have (Undead paladin, Skyborne) and the Orc shaman's level 30 sheet follow from them.
 func TestForeverRaceBaseAttributes(t *testing.T) {
 	cases := []struct {
 		race  proto.Race
@@ -19,31 +19,40 @@ func TestForeverRaceBaseAttributes(t *testing.T) {
 		level int32
 		attrs [5]float64 // Strength, Agility, Stamina, Intellect, Spirit
 	}{
-		{proto.Race_RaceUndead, proto.Class_ClassPaladin, 1, [5]float64{24, 19, 23, 18, 21}},
-		{proto.Race_RaceUndead, proto.Class_ClassPaladin, 20, [5]float64{44, 30, 42, 30, 34}},
-		{proto.Race_RaceUndead, proto.Class_ClassRogue, 1, [5]float64{23, 22, 22, 18, 20}},
-		{proto.Race_RaceUndead, proto.Class_ClassPriest, 1, [5]float64{22, 19, 21, 20, 23}},
-		{proto.Race_RaceUndead, proto.Class_ClassMage, 1, [5]float64{22, 19, 21, 21, 22}},
-		{proto.Race_RaceUndead, proto.Class_ClassWarrior, 1, [5]float64{25, 19, 23, 18, 20}},
-		{proto.Race_RaceUndead, proto.Class_ClassWarlock, 1, [5]float64{22, 19, 22, 20, 22}},
-		{proto.Race_RaceOrc, proto.Class_ClassShaman, 1, [5]float64{24, 17, 22, 20, 22}},
-		{proto.Race_RaceOrc, proto.Class_ClassShaman, 30, [5]float64{51, 30, 51, 46, 53}},
-		{proto.Race_RaceOrc, proto.Class_ClassWarlock, 1, [5]float64{23, 17, 22, 21, 22}},
-		{proto.Race_RaceTauren, proto.Class_ClassHunter, 1, [5]float64{22, 21, 23, 18, 21}},
-		{proto.Race_RaceTauren, proto.Class_ClassDruid, 1, [5]float64{23, 18, 22, 20, 22}},
-		{proto.Race_RaceTroll, proto.Class_ClassPriest, 1, [5]float64{21, 22, 20, 19, 23}},
-		{proto.Race_RaceSkyborneWindshaper, proto.Class_ClassHunter, 1, [5]float64{19, 24, 20, 21, 21}},
-		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassHunter, 1, [5]float64{19, 24, 20, 21, 21}},
+		// 1.12's level 1 rows.
+		{proto.Race_RaceHuman, proto.Class_ClassWarrior, 1, [5]float64{23, 20, 22, 20, 21}},
+		{proto.Race_RaceTauren, proto.Class_ClassWarrior, 1, [5]float64{28, 15, 24, 15, 22}},
+		{proto.Race_RaceUndead, proto.Class_ClassWarrior, 1, [5]float64{22, 18, 23, 18, 25}},
+		{proto.Race_RaceOrc, proto.Class_ClassWarlock, 1, [5]float64{23, 17, 23, 19, 25}},
+		{proto.Race_RaceTroll, proto.Class_ClassPriest, 1, [5]float64{21, 22, 21, 18, 24}},
+		// The Human paladin's row and the Undead's warrior gap to the Human.
+		{proto.Race_RaceUndead, proto.Class_ClassPaladin, 1, [5]float64{21, 18, 23, 18, 26}},
+		// The Orc shaman's level 30 sheet without the old Orc shift.
+		{proto.Race_RaceOrc, proto.Class_ClassShaman, 30, [5]float64{51, 30, 52, 44, 56}},
+		// The Skyborne keep their sheets' offset: the Human's row less 1 Strength and Stamina and 1 more
+		// Agility and Intellect, with no Human Spirit.
 		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassWarrior, 1, [5]float64{22, 21, 21, 21, 20}},
-		{proto.Race_RaceDwarf, proto.Class_ClassWarrior, 1, [5]float64{25, 18, 23, 19, 20}},
-		{proto.Race_RaceNightElf, proto.Class_ClassWarrior, 1, [5]float64{21, 22, 22, 20, 20}},
-		{proto.Race_RaceGnome, proto.Class_ClassWarrior, 1, [5]float64{20, 21, 21, 23, 20}},
+		{proto.Race_RaceSkyborneWindshaper, proto.Class_ClassHunter, 1, [5]float64{19, 24, 20, 21, 21}}, // the 2026-09-22 sheet
+		// Level 60: the class baseline plus Classic's offset. These are 1.12's level 60 warrior rows but for
+		// the Human's Spirit (47 there, The Human Spirit baked in) and the Gnome's Intellect (35, Expansive
+		// Mind baked in).
+		{proto.Race_RaceHuman, proto.Class_ClassWarrior, 60, [5]float64{120, 80, 110, 30, 45}},
+		{proto.Race_RaceOrc, proto.Class_ClassWarrior, 60, [5]float64{123, 77, 112, 27, 48}},
+		{proto.Race_RaceDwarf, proto.Class_ClassWarrior, 60, [5]float64{122, 76, 113, 29, 44}},
+		{proto.Race_RaceNightElf, proto.Class_ClassWarrior, 60, [5]float64{117, 85, 109, 30, 45}},
+		{proto.Race_RaceUndead, proto.Class_ClassWarrior, 60, [5]float64{119, 78, 111, 28, 50}},
+		{proto.Race_RaceTauren, proto.Class_ClassWarrior, 60, [5]float64{125, 75, 112, 25, 47}},
+		{proto.Race_RaceGnome, proto.Class_ClassWarrior, 60, [5]float64{115, 83, 109, 33, 45}},
+		{proto.Race_RaceTroll, proto.Class_ClassWarrior, 60, [5]float64{121, 82, 111, 26, 46}},
+		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassWarrior, 60, [5]float64{119, 81, 109, 31, 45}},
+		{proto.Race_RaceTauren, proto.Class_ClassDruid, 60, [5]float64{70, 55, 72, 95, 112}},
+		{proto.Race_RaceOrc, proto.Class_ClassShaman, 60, [5]float64{88, 52, 97, 87, 103}},
 	}
 	for _, c := range cases {
 		base := getBaseStatsCombo(c.race, c.class, c.level)
 		got := [5]float64{base[stats.Strength], base[stats.Agility], base[stats.Stamina], base[stats.Intellect], base[stats.Spirit]}
 		if got != c.attrs {
-			t.Errorf("level %d %s %s: got %v, the beta has %v", c.level, c.race, c.class, got, c.attrs)
+			t.Errorf("level %d %s %s: got %v, want %v", c.level, c.race, c.class, got, c.attrs)
 		}
 	}
 }
