@@ -59,6 +59,7 @@ The raw forum JSON and the foreverchanges and Blizzard news HTML can be fetched 
 | `sources/devnotes_post6_edited_2026-10-16.txt` | The same thread after post 6's wording-only edit of 2026-10-16 20:50. Diff against the next fetch to spot quiet edits | 79 KB |
 | `sources/devnotes_post7_2026-10-26.txt` | The thread with post 7 (2026-10-26 racial pass, edited 21:09). Diff the next fetch against this one | 80 KB |
 | `diffs/70532-70630.md` | `db2diff.py` 70532 → 70630 | 42 KB |
+| `diffs/70707-70753.md` | `db2diff.py` 1.60.1.70707 → 1.60.1.70753 (the plain builds, not 70707+hf). 70753 holds the launch realms' 10-30/10-31 hotfix, so most of it is that hotfix again. About 1,370 of its 1,587 spells changed only `Attributes_14: 0 -> 64` (SpellMisc); `grep -v` that line to read the rest | 230 KB |
 | `sources/fc_patch-notes.txt`, `fc_beta.txt`, `fc_changes.txt` | foreverchanges.pro patch notes, beta and changes pages as text (2026-10-16; 70450 not yet listed) | 99 KB |
 | `sources/news243015*.txt`, `news24302097.txt`, `news24302099.txt`, `news24310968.txt` | The five class deep-dive articles (Hunter+Druid, Priest+Warrior, Mage+Shaman, Paladin, Rogue+Warlock) | 105 KB |
 | `class_audit_brief.md` | The brief given to each per-class agent for the full 70009–70425 audit; reusable for a large build | 9 KB |

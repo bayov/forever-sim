@@ -1,3 +1,5 @@
+//go:build practice
+
 package practice
 
 import (
