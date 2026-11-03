@@ -44,37 +44,21 @@ with open(DIR + "player_levelstats.csv") as f:
 s, a, st, i, sp = levelstats[(5, 8)][1]
 levelstats[(5, 8)][1] = (s, a, st, sp, i)
 
-# Forever reworked the races. On the beta (2026-10-10) a naked level 1 character of each Horde
-# race has these attributes more than the 1.12 row of the same race and class. Every class we
-# saw got the same shift: the Undead on seven classes (and a level 20 paladin), the Orc on the
-# shaman and warlock, the Tauren on the hunter and druid, the Troll on the priest. With the class
-# bonus taken off, each Forever race is 20 in every attribute plus a small offset that adds up
-# to 0 and leaves Spirit at 20. The Alliance shifts come from wowsims/forever's level 1 naked
-# warrior sheets of every race against a Human (6296e8546d, 2026-10-20), which give the Horde
-# offsets above too. We assume the shift holds at every level, 60 included (RaceOffsets in
-# base_stats.go). Human is unchanged.
-FOREVER_RACE_SHIFT = {
-    2: (0, 0, -1, 2, -3),  # Orc
-    3: (0, 2, -2, 0, 1),  # Dwarf
-    4: (1, -3, 1, 0, 0),  # Night Elf
-    5: (3, 1, 0, 0, -5),  # Undead
-    6: (-3, 3, 0, 3, -2),  # Tauren
-    7: (2, -2, 0, 0, 0),  # Gnome
-    8: (0, 0, -1, 1, -1),  # Troll
-}
-for (race, cls), levels in levelstats.items():
-    if race in FOREVER_RACE_SHIFT:
-        for level, row in levels.items():
-            levels[level] = tuple(a + b for a, b in zip(row, FOREVER_RACE_SHIFT[race]))
-
-# Base attributes the Forever beta showed for a naked character with no talents (the Lua
-# UnitStat values, 2026-10-07). On top of the Orc's race shift, the Forever shaman gains 2 more
-# Strength, 1 less Agility and 1 less Intellect from level 1 to 30 than 1.12's, so this row
-# replaces the shifted 1.12 one. The other levels stay on the shifted 1.12 rows until we see
-# them on the beta.
+# Forever's races take Classic's attributes: "All Races now have the correct amount of base
+# stats. For example, Tauren Warriors now start with the correct +5 strength relative to Human
+# Warriors (was incorrectly +2)" (development notes 2026-11-02, post 9, build 1.60.1.70753). So
+# every 1.12 row stands as it is. Until then the beta's races were 20 in every attribute plus a
+# small offset (our naked level 1 sheets of 2026-10-10 and wowsims/forever 6296e8546d); that
+# shift is gone.
+#
+# The Forever shaman's own rows (the Lua UnitStat values of a naked character with no talents,
+# 2026-10-07): it gains 2 more Strength, 1 less Agility and 1 less Intellect from level 1 to 30
+# than 1.12's. The level 30 sheet was an Orc with the old Orc shift (0, 0, -1, 2, -3), taken off
+# here, so this is the Classic Orc row plus the shaman's own gain. The other levels stay on the
+# 1.12 rows until we see them.
 FOREVER_ATTRIBUTES = {
     (2, 7): {  # Orc shaman
-        30: (51, 30, 51, 46, 53),
+        30: (51, 30, 52, 44, 56),
     },
 }
 for (race, cls), levels in FOREVER_ATTRIBUTES.items():
