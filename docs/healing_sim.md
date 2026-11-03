@@ -14,8 +14,8 @@ overhealing is booked, a healing fight tracks every player's health and kills, t
 events and tank swaps, and the shaman heals others. `tools/healbench` sims a healer in a raid against made-up
 profiles and the seven boss files, whose raid damage now comes from Warcraft Logs ([Raid damage from the
 logs](#raid-damage-from-the-logs-2026-11-02)). H2, the Restoration shaman, is registered with a tank healer
-and a raid healer rotation ([H2](#h2-the-restoration-shaman-2026-11-02)), on stand-in gear. Next is H3, the
-other healers.
+and a raid healer rotation ([H2](#h2-the-restoration-shaman-2026-11-02)) and its own synthetic set. Next is
+H3, the other healers.
 
 ## The user's rulings (2026-11-02)
 
@@ -515,9 +515,15 @@ file's tank time, the raid role at the logs' median kill, 2 healers and 7 Frost 
 - **The tank healer is a long-fight rotation.** At the files' tank times (17 to 71 s, the main tank's stint)
   mana never runs short, and Water Shield, Mana Spring and Mana Tide only cost globals: up to 0.06 behind
   (Golemagg). From 180 s it carries a good deal more, since the old rotation runs dry at 178 s on Onyxia.
-- **Gear is a stand-in**, the Elemental synthetic set, which carries spell hit a healer doesn't use. A healer
-  set needs a healer stat mix in `orchestration/gear_targets.md`, and that table's source (wowsims/sod's level
-  60 BiS lists) has none for any healer (the user's decision, open).
+- **Gear** (2026-11-03, the user's ruling "yes, healer synthetic gear", standards 35): the Restoration
+  synthetic set (`tools/database/forever_synthetic_items_shaman_restoration.go`) on a healer row of
+  `orchestration/gear_targets.md` taken from two Wowhead Restoration shaman BiS lists (WoW Forever Phase 1 and
+  Classic pre-raid; wowsims/sod has none for healers): Stamina 10.8, Intellect 17.5, Spirit 10, spell power
+  22.2, healing on top of it 27.1, crit 7.0, MP5 5.4, no hit. Against the Elemental set that stood in before,
+  it heals 13 to 18% more per mana, carries the same or more on 8 of the 14 boss and role rows (Golemagg's
+  raid side 2.083 against 1.990, Vaelastrasz's 1.199 against 1.140), and up to 0.025 less on the short spiky
+  tank fights (Broodlord 0.618 against 0.643): 63 crit rating against 100, and bigger heals overheal more.
+  Onyxia's tank side at 300 s carries 0.954 against 0.830. Smaller Healing Wave ranks did worse on it.
 - The talents are the bench's (31 Restoration to Riptide, Ancestral Knowledge, Mental Dexterity and
   Shamanistic Focus), not searched: `tools/rotopt` scores DPS.
 - The UI presets (builds, rotations, talents, consumes, a raid sim preset) are in; the spec stays unlaunched.

@@ -30,6 +30,7 @@ import { Perf } from './perf';
 import { Graphics, graphicsPresets, Room } from './scene';
 import { loadCursors } from './cursors';
 import { Pointer } from './pointer';
+import { RaidTest, raidSpells } from './raid';
 import { auraColor, avoidColor, CombatText, schoolColor } from './sct';
 import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
@@ -251,6 +252,7 @@ class PracticeRoom {
 	private statsShownAt = 0;
 	private historyWidth = 0;
 	private pointer?: Pointer;
+	private raid?: RaidTest;
 	private drainTimer?: ReturnType<typeof setInterval>;
 	// Set when you leave the room, so nothing of it keeps running.
 	private left = false;
@@ -357,6 +359,7 @@ class PracticeRoom {
 		const jobs: Promise<unknown>[] = [loadCursors(this.root)];
 		// Models we draw once while loading, so their shaders and textures are ready for the fight.
 		const warm: Model[] = [];
+		const raidSize = Number(new URLSearchParams(location.search).get('raid') ?? 0);
 
 		// The ground is a flat spot in the northern Barrens (Kalimdor's WDT), with trees around it and
 		// no buildings near.
@@ -419,6 +422,16 @@ class PracticeRoom {
 				.join(',');
 			// The client's files don't say a character's sex, so it's a choice in the room (0 male).
 			const sex = Number(localStorage.getItem('practice.modelSex') ?? 0);
+			// The raid test (?raid=40): others in your gear around a boss, to measure the drawing.
+			if (raidSize > 1) {
+				const raid = new RaidTest(this.room.scene, effects);
+				jobs.push(
+					raid
+						.load(raidSize, items, url => getJSON(url))
+						.then(() => (this.raid = raid))
+						.catch(e => console.warn('raid', e)),
+				);
+			}
 			jobs.push(
 				getJSON<Record<string, SoundRef[]>>(`/api/sounds/vocal?race=${look.race}&sex=${sex}`)
 					.then(async v => {
@@ -479,7 +492,7 @@ class PracticeRoom {
 		jobs.push(
 			this.toolkitReady.then(() =>
 				effects
-					.preload([...this.toolkit.spells.filter(s => s.kind !== 'item').map(s => s.spellId ?? 0).filter(id => id > 0), ...shownSpells, ...this.shownBySim])
+					.preload([...this.toolkit.spells.filter(s => s.kind !== 'item').map(s => s.spellId ?? 0).filter(id => id > 0), ...shownSpells, ...this.shownBySim, ...(raidSize > 1 ? raidSpells : [])])
 					.then(models => warm.push(...models))
 					.catch(e => console.warn('effects', e)),
 			),
@@ -1163,7 +1176,7 @@ class PracticeRoom {
 	savePerf(summary: Summary) {
 		const perf = this.perf;
 		if (!perf) return;
-		const report = perf.report({ fight: { durationMs: summary.durationMs, dps: summary.dps }, settings: this.settings, timings: { swaps: this.timings.swaps } });
+		const report = perf.report({ fight: { durationMs: summary.durationMs, dps: summary.dps }, settings: this.settings, graphics: this.graphics, raid: this.raid?.count, timings: { swaps: this.timings.swaps } });
 		perf.reset();
 		fetch('/api/perf', { method: 'POST', body: JSON.stringify(report) })
 			.then(r => r.json())
@@ -1672,6 +1685,7 @@ class PracticeRoom {
 			this.totemPrecastAt = undefined;
 			this.effects?.totemPrecast(tp.spellId, this.room.totemModels.get(tp.element));
 		}
+		this.raid?.update(dt);
 		this.effects?.update(dt);
 		this.room.animate(dt);
 		// The facing's turn rate, for the shuffle when turning in place.
