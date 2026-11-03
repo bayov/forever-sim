@@ -1,6 +1,38 @@
 # Round 70753: Warlock
 
-## Final report (2026-11-03)
+## Follow-up: exploratory build search (2026-11-03, after the first landing)
+
+The user asked for a wider search. New seeds (each a talent search, 180 s, 2000 iterations a candidate, then a knob
+search at 3000), all checked against the tree rules first:
+
+| Seed | Result at 180 s | Verdict |
+|---|---|---|
+| Wrack + Demonic Sacrifice (Imp sacrificed, no demon out), 05500003035001351-0050003201-045 | 05500021035001351-0050003201-005004, 1032.3 | **New Affliction preset** |
+| Destruction + Demonic Sacrifice (Imp), 055-0050003201-055030500310035 | 154-0050003201-055030500310035, 1033.3 | 30 behind Destruction, same play |
+| Shadow Bolt Affliction + Demonic Sacrifice (Imp), 2550102003520005-0050003201-055 | unchanged, 934.0 | 82 behind |
+| Wrack + Improved Shadow Bolt / Ruin side, 05500003035001351--0550305002 | climbed back to the Succubus Wrack build, 999.6 | nothing new |
+| Wrack with Amplify Curse required | 1000.4 | even with 999.9 |
+| Destruction with Shadowburn (last 20%) required, 25500000035--055030510310035 | 1064.5 | even with 1063.4, and Shadowburn's shard isn't charged |
+
+The Wrack + Imp sacrifice build: knob searches at 120 and 300 s moved nothing (300 s alone wanted doomAlign=6, +1, a
+length trade-off). Races at 180 ± 20 s, 20,000 iterations, seeds 1 / 1000003: Undead 1034.1 / 1034.0, Orc 1032.8 / 1033.3,
+Human 1030.7 / 1031.2, Gnome 1026.5 / 1026.7, Troll 1023.4 / 1023.8, so Undead (best overall and Horde), Human (Alliance).
+
+What changed (commit 734fe0e and after):
+- `warlock__affliction` and its two curse duty builds are the Wrack build with the Imp sacrificed, Undead. Finals:
+  1004.9 / 1034.1 / 1032.2 at 120 / 180 / 300 s; curse duty 1025.1, recklessness duty 1019.9 at 180 s.
+- Shadow Bolt Affliction is its own preset and request, `warlock__affliction_shadow_bolt` (Orc, 997.4 / 1015.6 /
+  996.8), with its old rotation and Gnome override renamed to it.
+- The Succubus Wrack build (`warlock__affliction_wrack`, added earlier this round, never in the report) is gone. The
+  `warlock__affliction-duty-curse.Gnome.json` override (tuned for the Shadow Bolt rotation) is gone.
+- mksettings: `-spec affliction` is the Imp sacrifice setup, `-spec affliction_shadow_bolt` the Succubus one.
+- compsearch `leftOut`: `warlock__affliction_shadow_bolt` in place of `warlock__affliction_wrack`.
+- Destruction (1063.4) stays the class default.
+
+For the orchestrator's regeneration: `warlock__affliction` changed build (talents, pet, race, rotation), and
+`warlock__affliction_shadow_bolt` is the old `warlock__affliction` under a new id.
+
+## Final report (2026-11-03, first landing; superseded for Affliction by the follow-up above)
 
 Landed on master at 65c6660 (merge of `round-70753-warlock`; full sim test suite green with -timeout 40m, tsc clean). Ledger, sources and method below.
 

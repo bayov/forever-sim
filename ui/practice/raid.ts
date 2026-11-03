@@ -8,6 +8,7 @@
 
 import * as THREE from 'three';
 import { toThree } from './scene';
+import type { Crowd } from './wow/crowd';
 import type { Effects } from './wow/effects';
 import { Anim } from './wow/model';
 import { Appearance, UnitView } from './wow/unit';
@@ -75,6 +76,8 @@ export class RaidTest {
 		readonly scene: THREE.Scene,
 		readonly camera: THREE.Camera,
 		readonly effects: Effects,
+		// Where the raiders draw together. Without it they draw one by one, like you.
+		readonly crowd?: Crowd,
 	) {}
 
 	// load builds the raid: count people in all, so count - 1 others besides you.
@@ -134,6 +137,7 @@ export class RaidTest {
 				await view.load(a).catch(() => undefined);
 				if (!view.model) continue;
 				this.scene.add(view.group);
+				this.crowd?.add(view.models);
 				const home = homes[job.i];
 				const role = job.role === 'caster' && !classSpells[cls] ? 'hunter' : job.role;
 				this.raiders.push({ view, role, spells: classSpells[cls] ?? [], home, pos: [...home], next: Math.random() * 3, moveAt: 5 + Math.random() * 15, behind: 0 });

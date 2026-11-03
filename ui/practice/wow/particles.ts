@@ -22,6 +22,21 @@ const fill = { color: new Float64Array(3), alpha: new Float64Array(1), size: new
 // renderer compiles their shader. In the fight an empty emitter isn't drawn at all.
 export const particleOptions = { drawEmpty: false };
 
+// Every particle and ribbon batch, which fillBatches fills before each frame draws.
+const live = new Set<{ fill(): void }>();
+
+// fillBatches puts each batch's particles together for the frame. It runs before the renderer
+// sends the frame's vertices to the GPU (the scene's onBeforeRender): filled later, while the
+// batch draws, the GPU would get the new list of triangles over the last frame's points, and a
+// ribbon's triangles would reach across to another ribbon's points.
+export function fillBatches() {
+	for (const b of live) b.fill();
+}
+
+export function addBatch(b: { fill(): void }) {
+	live.add(b);
+}
+
 type Particle = {
 	pos: THREE.Vector3;
 	vel: THREE.Vector3;
@@ -113,17 +128,109 @@ function srgbToLinear(c: number): number {
 	return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
 }
 
-class Emitter {
+// The particle data a quad needs, by attribute, with how many numbers each takes.
+const layout = [
+	['iPos', 3],
+	['iSize', 2],
+	['iColor', 4],
+	['iUv', 4],
+	['iRot', 1],
+] as const;
+
+// A batch draws the particles of every emitter that looks the same (the same texture, blend and
+// facing) in one draw call. In the raid test 20 casters each had a few emitters on their hands,
+// and they were over 200 draw calls on their own.
+//
+// The emitters fill their own data, and the batch puts it together before the frame draws.
+class Batch {
 	readonly mesh: THREE.Mesh;
+	private readonly geometry = new THREE.InstancedBufferGeometry();
+	private attrs: THREE.InstancedBufferAttribute[] = [];
+	private capacity = 0;
+	readonly members = new Set<Emitter>();
+	// How many particles the members have in all.
+	private total = 0;
+
+	constructor(world: THREE.Object3D, material: THREE.ShaderMaterial) {
+		const quad = new THREE.PlaneGeometry(1, 1);
+		const g = this.geometry;
+		g.index = quad.index;
+		g.setAttribute('position', quad.getAttribute('position'));
+		g.setAttribute('uv', quad.getAttribute('uv'));
+		this.grow(64);
+		g.instanceCount = 0;
+		this.mesh = new THREE.Mesh(g, material);
+		this.mesh.frustumCulled = false;
+		this.mesh.renderOrder = 10;
+		this.mesh.visible = false;
+		addBatch(this);
+		world.add(this.mesh);
+	}
+
+	private grow(n: number) {
+		this.capacity = n;
+		this.attrs = layout.map(([name, size]) => {
+			const a = new THREE.InstancedBufferAttribute(new Float32Array(n * size), size);
+			a.setUsage(THREE.DynamicDrawUsage);
+			this.geometry.setAttribute(name, a);
+			return a;
+		});
+		// Three keeps the most copies a geometry's attributes hold from its first draw, and draws no
+		// more than that.
+		(this.geometry as { _maxInstanceCount?: number })._maxInstanceCount = undefined;
+	}
+
+	// changed hears that a member's count of particles went from `was` to `now`.
+	changed(was: number, now: number) {
+		this.total += now - was;
+		if (particleOptions.drawEmpty) this.mesh.visible = true;
+	}
+
+	leave(e: Emitter) {
+		if (!this.members.delete(e)) return;
+		this.changed(e.count, 0);
+	}
+
+	// fill puts the members' particles together, before the frame draws.
+	fill() {
+		if (this.total > this.capacity) {
+			let n = this.capacity;
+			while (n < this.total) n *= 2;
+			this.grow(n);
+		}
+		let at = 0;
+		for (const m of this.members) {
+			const n = m.count;
+			if (n === 0) continue;
+			for (let k = 0; k < layout.length; k++) {
+				const size = layout[k][1];
+				(this.attrs[k].array as Float32Array).set(m.data[k].subarray(0, n * size), at * size);
+			}
+			at += n;
+		}
+		this.geometry.instanceCount = at;
+		this.mesh.visible = at > 0 || particleOptions.drawEmpty;
+		if (at === 0) return;
+		for (const a of this.attrs) {
+			a.clearUpdateRanges();
+			a.addUpdateRange(0, at * a.itemSize);
+			a.needsUpdate = true;
+		}
+	}
+}
+
+// The batches of each world (the scene), by how their particles look.
+const batches = new WeakMap<THREE.Object3D, Map<string, Batch>>();
+
+class Emitter {
 	private readonly particles: Particle[] = [];
-	private readonly anchor = new THREE.Object3D();
+	// Where the emitter is: it follows its bone.
+	private readonly anchor: THREE.Object3D;
 	private carry = 0;
-	private readonly pos: THREE.InstancedBufferAttribute;
-	private readonly size: THREE.InstancedBufferAttribute;
-	private readonly color: THREE.InstancedBufferAttribute;
-	private readonly uvs: THREE.InstancedBufferAttribute;
-	private readonly rot: THREE.InstancedBufferAttribute;
-	private readonly geometry: THREE.InstancedBufferGeometry;
+	// The particles' data by attribute (layout), which the batch draws.
+	readonly data = layout.map(([, size]) => new Float32Array(maxParticles * size));
+	count = 0;
+	private batch?: Batch;
 	// Particles that keep to the emitter (flag 0x10) live in its space, the others in the world's.
 	private readonly local: boolean;
 	private readonly v = { a: new Float64Array(1), g: new Float64Array(3) };
@@ -139,33 +246,11 @@ class Emitter {
 		readonly e: ParticleEmitter,
 		world: THREE.Object3D,
 	) {
-		const bone = model.bones[e.bone] ?? model.bones[0];
-		const pivot = model.m2.bones[e.bone]?.pivot ?? [0, 0, 0];
-		this.anchor.position.set(e.position[0] - pivot[0], e.position[1] - pivot[1], e.position[2] - pivot[2]);
-		bone.add(this.anchor);
+		this.anchor = model.socket(e.bone, e.position);
 		// Flag 0x10 keeps the particles with the emitter. Without it they stay where they were born.
 		this.local = (e.flags & 0x10) !== 0;
 		this.alphaKeys = e.alphas.map(a => [a]);
 		this.cellKeys = e.headCells.map(c => [c]);
-
-		const quad = new THREE.PlaneGeometry(1, 1);
-		const g = new THREE.InstancedBufferGeometry();
-		g.index = quad.index;
-		g.setAttribute('position', quad.getAttribute('position'));
-		g.setAttribute('uv', quad.getAttribute('uv'));
-		this.pos = new THREE.InstancedBufferAttribute(new Float32Array(maxParticles * 3), 3);
-		this.size = new THREE.InstancedBufferAttribute(new Float32Array(maxParticles * 2), 2);
-		this.color = new THREE.InstancedBufferAttribute(new Float32Array(maxParticles * 4), 4);
-		this.uvs = new THREE.InstancedBufferAttribute(new Float32Array(maxParticles * 4), 4);
-		this.rot = new THREE.InstancedBufferAttribute(new Float32Array(maxParticles), 1);
-		for (const a of [this.pos, this.size, this.color, this.uvs, this.rot]) a.setUsage(THREE.DynamicDrawUsage);
-		g.setAttribute('iPos', this.pos);
-		g.setAttribute('iSize', this.size);
-		g.setAttribute('iColor', this.color);
-		g.setAttribute('iUv', this.uvs);
-		g.setAttribute('iRot', this.rot);
-		g.instanceCount = 0;
-		this.geometry = g;
 
 		const material = new THREE.ShaderMaterial({
 			vertexShader,
@@ -203,30 +288,35 @@ class Emitter {
 			material.polygonOffsetFactor = -4;
 			material.polygonOffsetUnits = -16;
 		}
-		this.mesh = new THREE.Mesh(g, material);
-		this.mesh.frustumCulled = false;
-		this.mesh.renderOrder = 10;
-		world.add(this.mesh);
 
 		// With flag 0x10000000 the texture field packs three texture indexes, 5 bits each, which
 		// the client blends. We draw the first.
 		const texIndex = e.flags & 0x10000000 ? e.texture & 0x1f : e.texture;
 		const tex = model.m2.textures[texIndex];
-		// Until its texture loads the emitter stays hidden: an empty texture reads as solid black.
-		this.mesh.visible = false;
+		// Until its texture loads the emitter has no batch and draws nothing: an empty texture reads
+		// as solid black. A replaceable particle texture, which we don't have, never draws.
 		if (tex && tex.type === 0 && tex.fdid > 0) {
 			texture(tex.fdid, false, false)
 				.then(t => {
+					if (this.disposed) return;
+					const soft = e.blend !== 0 && e.blend !== 3 && opaque(t);
 					material.uniforms.map.value = t;
-					material.uniforms.uSoft.value = e.blend !== 0 && e.blend !== 3 && opaque(t) ? 1 : 0;
+					material.uniforms.uSoft.value = soft ? 1 : 0;
+					const key = `${t.id}:${e.blend}:${e.flags & 0x1000}:${soft}`;
+					let byKey = batches.get(world);
+					if (!byKey) batches.set(world, (byKey = new Map()));
+					let batch = byKey.get(key);
+					if (!batch) byKey.set(key, (batch = new Batch(world, material)));
+					else material.dispose();
+					batch.members.add(this);
+					this.batch = batch;
 					this.ready = true;
 				})
 				.catch(err => console.warn('particle texture', err));
-		} else {
-			// A replaceable particle texture, which we don't have: hide the emitter.
-			this.mesh.visible = false;
 		}
 	}
+
+	private disposed = false;
 
 	private value(track: ParticleEmitter['speed'], fallback = 0): number {
 		return this.model.trackValue(track, this.v.a) ? this.v.a[0] : fallback;
@@ -327,6 +417,7 @@ class Emitter {
 		// Fill the instance data.
 		const n = this.particles.length;
 		const { color, alpha, size, cellOut, tmp } = fill;
+		const [pos, sizes, colors, uvs, rots] = this.data;
 		color.fill(255);
 		alpha[0] = 1;
 		size[0] = size[1] = 1;
@@ -339,9 +430,15 @@ class Emitter {
 			overLife(this.e.scales, this.e.scaleTimes, t, size);
 			tmp.copy(p.pos);
 			if (this.local) tmp.add(this.origin);
-			this.pos.setXYZ(i, tmp.x, tmp.y, tmp.z);
-			this.size.setXY(i, size[0] * 2 * scale, size[1] * 2 * scale);
-			this.color.setXYZW(i, srgbToLinear(color[0]), srgbToLinear(color[1]), srgbToLinear(color[2]), Math.max(0, Math.min(1, alpha[0])));
+			pos[i * 3] = tmp.x;
+			pos[i * 3 + 1] = tmp.y;
+			pos[i * 3 + 2] = tmp.z;
+			sizes[i * 2] = size[0] * 2 * scale;
+			sizes[i * 2 + 1] = size[1] * 2 * scale;
+			colors[i * 4] = srgbToLinear(color[0]);
+			colors[i * 4 + 1] = srgbToLinear(color[1]);
+			colors[i * 4 + 2] = srgbToLinear(color[2]);
+			colors[i * 4 + 3] = Math.max(0, Math.min(1, alpha[0]));
 			let cell = p.tile;
 			if (cell < 0) {
 				cell = this.cellKeys.length ? Math.round(overLife(this.cellKeys, this.e.cellTimes, t, cellOut)[0]) : 0;
@@ -350,27 +447,23 @@ class Emitter {
 			const rows = this.e.tileRows;
 			const col = cell % cols;
 			const row = Math.floor(cell / cols) % rows;
-			this.uvs.setXYZW(i, col / cols, row / rows, (col + 1) / cols, (row + 1) / rows);
-			this.rot.setX(i, p.angle + p.spin * p.age);
+			uvs[i * 4] = col / cols;
+			uvs[i * 4 + 1] = row / rows;
+			uvs[i * 4 + 2] = (col + 1) / cols;
+			uvs[i * 4 + 3] = (row + 1) / rows;
+			rots[i] = p.angle + p.spin * p.age;
 		}
-		this.geometry.instanceCount = n;
-		this.mesh.visible = n > 0 || particleOptions.drawEmpty;
-		// We send the GPU only the live particles, not the whole buffer of 600.
-		if (n > 0) {
-			for (const a of [this.pos, this.size, this.color, this.uvs, this.rot]) {
-				a.clearUpdateRanges();
-				a.addUpdateRange(0, n * a.itemSize);
-				a.needsUpdate = true;
-			}
-		}
+		const was = this.count;
+		this.count = n;
+		this.batch?.changed(was, n);
 	}
 
 	dispose() {
+		this.disposed = true;
 		for (const p of this.particles) freeParticles.push(p);
 		this.particles.length = 0;
-		this.mesh.removeFromParent();
-		this.geometry.dispose();
-		(this.mesh.material as THREE.Material).dispose();
+		this.batch?.leave(this);
+		this.batch = undefined;
 		this.anchor.removeFromParent();
 	}
 }
