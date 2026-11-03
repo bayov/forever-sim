@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 1131.1,
-    "source": "verify.py on this request after round 70753 (the November 2 notes, race base stats; 942.5 before), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1139.0,
+    "source": "verify.py on this request after round 70753 (the November 2 notes, race base stats; 942.5 before) and the 2026-11-03 rotation exploration (1131.1 before it), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1131.1,
+    "dps": 1139.0,
     "stderr": 0.26,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-03), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, after the rotation finds of the 2026-11-03 exploration; not yet the DPS report's main run"
   },
   "summary": "Cat with Shred, Rake and Rip, plus Shifting Power and Shadowmeld into Ravage. Predatory Discipline lets Ferocious Bite keep its extra Energy. In Forever, Cat Form swings every 1.0s with the weapon's DPS. Stones, potions, Thistle Tea and Windfury Totem all work in Cat Form.",
   "keyTalents": [
@@ -40,13 +40,14 @@
   ],
   "rotation": [
     "Opener: plain Cat Form, no Prowl. A Night Elf uses Shadowmeld in the fight for Ravage.",
+    "EZ-Thro Dark Bomb right after a main hand swing (its 1s cast restarts the swing timer) at 60 Energy or less, so the cast wastes no Energy at the cap",
     "Racials, trinkets and potions on cooldown. Elune's Light with the on-use trinket, unless waiting for it would lose a use.",
     "Shifting Power at 60 Energy or less",
     "Ferocious Bite at any combo points in the last 2s",
     "Rip at 4 combo points or more when it is down (not in the last 8s)",
     "Ferocious Bite at 5 combo points and 45 Energy while Rip has 4s or more left (or in the last 8s). Predatory Discipline keeps the extra Energy, which still adds damage",
-    "Shadowmeld into Ravage from behind on Clearcasting, or in the last 10s with the Energy for it",
-    "Rake below 5 combo points when it is down (not in the last 6s)",
+    "Shadowmeld into Ravage from behind on Clearcasting (even at 5 combo points: a free Ravage beats the wasted point), or below 5 combo points in the last 10s with the Energy for it",
+    "Rake when it is down, at 5 combo points too (not in the last 6s)",
     "Shred below 5 combo points"
   ],
   "consumes": [

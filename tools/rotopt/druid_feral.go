@@ -33,6 +33,8 @@ var (
 	druidShiftingPower = spellID(1322605)
 	druidShadowmeld    = spellID(20580)
 	druidRavage        = spellID(9867)
+	// The filler explosive (the dps report's engineering bomb slot).
+	druidBomb = itemID(260817)
 )
 
 func (druidFeral) Knobs() []Knob {
@@ -94,6 +96,16 @@ func (druidFeral) Knobs() []Knob {
 		{Name: "faerieFire", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "ffRefresh", Default: 1, Min: 0, Max: 8, Step: 1},
 		{Name: "ffPos", Default: 0, Min: 0, Max: 1, Step: 1},
+		// The filler explosive, 0/1: with 0 the autocast line throws it on cooldown; with 1 its own
+		// line throws it only at or below bombEnergy Energy (not at the cap, where the 1 sec cast
+		// wastes Energy) and right after a main hand swing (the cast restarts the swing timer).
+		{Name: "bomb", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "bombEnergy", Default: 100, Min: 20, Max: 100, Step: 20},
+		// Rake also at 5 combo points, 0/1: the bleed is worth more than the wasted point.
+		{Name: "rakeAt5", Default: 0, Min: 0, Max: 1, Step: 1},
+		// The Shadowmeld Ravage line at 5 combo points too on Clearcasting, 0/1: a free Ravage is
+		// worth more than the wasted point.
+		{Name: "meldAt5", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -110,6 +122,10 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 	}
 
 	var items []*proto.APLListItem
+	if k["bomb"] == 1 {
+		items = append(items, cast(druidBomb, and(le(energy(), num(k["bombEnergy"])), ge(mainHandTimeToNext(), sub(mainHandSwingTime(), seconds(0.4)))),
+			"The filler explosive right after a main hand swing (its 1 sec cast restarts the swing timer), and not near the Energy cap, where the cast would waste Energy."))
+	}
 	items = append(items, autocastOtherCooldowns(nil, "Racials, trinkets, potions and runes."))
 	switch k["tigersFury"] {
 	case 1:
@@ -182,11 +198,15 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		if k["shadowmeldEnd"] > 0 {
 			trigger = or(trigger, and(ge(energy(), spellCurrentCost(druidRavage)), lt(remainingTime(), seconds(k["shadowmeldEnd"]))))
 		}
+		meldCP := lt(comboPoints(), num(5))
+		if k["meldAt5"] == 1 {
+			meldCP = or(meldCP, auraIsActive(druidClearcasting))
+		}
 		meld = &proto.APLListItem{
 			Notes: "Night Elf: Shadowmeld into Ravage on Clearcasting, or in the last seconds with the Energy for it. Other races can ignore the warning on this line.",
 			Action: &proto.APLAction{
 				Condition: and(spellIsReady(druidShadowmeld), not(&proto.APLValue{Value: &proto.APLValue_FrontOfTarget{FrontOfTarget: &proto.APLValueFrontOfTarget{}}}),
-					lt(comboPoints(), num(5)), trigger),
+					meldCP, trigger),
 				Action: &proto.APLAction_StrictSequence{StrictSequence: &proto.APLActionStrictSequence{Actions: []*proto.APLAction{
 					{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: druidShadowmeld}}},
 					{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: druidRavage}}},
@@ -198,7 +218,10 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		items = append(items, meld)
 	}
 	if k["rake"] == 1 {
-		cond := and(not(dotIsActive(rake)), lt(comboPoints(), num(5)))
+		cond := not(dotIsActive(rake))
+		if k["rakeAt5"] == 0 {
+			cond = and(cond, lt(comboPoints(), num(5)))
+		}
 		note := "Rake whenever it is down."
 		if k["rakeMinTime"] > 0 {
 			cond = and(cond, gt(remainingTime(), seconds(k["rakeMinTime"])))

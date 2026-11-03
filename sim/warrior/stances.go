@@ -107,9 +107,20 @@ func (warrior *Warrior) registerBattleStanceAura() {
 }
 
 func (warrior *Warrior) registerDefensiveStanceAura() {
-	// Defiance only pays out with a shield equipped now.
-	defiance := core.TernaryFloat64(warrior.PseudoStats.CanBlock, 0.05*float64(warrior.Talents.Defiance), 0)
-	warrior.defensiveStanceThreatMultiplier = 1.3 * (1 + defiance)
+	// Defiance only pays out with a shield equipped now. Defensive Stance Passive 7376 (30%) and
+	// Defiance 12792 (15% at rank 3) are two A_MOD_THREAT auras, so they multiply.
+	// Under Forever the November 2 development notes raise Defensive Stance to 80% (was 30%) and
+	// Defiance to 7/13/20% (was 5/10/15%)
+	// (orchestration/audit/ref/client_update/sources/devnotes_post9_2026-11-02.txt). Clients 70753
+	// and 70755 unchanged; standards 37 models the notes' values.
+	stanceThreat, defiance := 1.3, 0.05*float64(warrior.Talents.Defiance)
+	if warrior.Env.IsForever() {
+		stanceThreat, defiance = 1.8, []float64{0, 0.07, 0.13, 0.20}[min(int(warrior.Talents.Defiance), 3)]
+	}
+	if !warrior.PseudoStats.CanBlock {
+		defiance = 0
+	}
+	warrior.defensiveStanceThreatMultiplier = stanceThreat * (1 + defiance)
 
 	warrior.DefensiveStanceAura = warrior.RegisterAura(core.Aura{
 		Label:    "Defensive Stance",
