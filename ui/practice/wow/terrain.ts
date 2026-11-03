@@ -202,19 +202,34 @@ export class Terrain {
 // skeleton puts it.
 function posedGeometry(m: Model): THREE.BufferGeometry {
 	m.update(0);
-	m.root.updateMatrixWorld(true);
-	m.mesh.skeleton.update();
 	const src = m.mesh.geometry;
 	const g = new THREE.BufferGeometry();
 	for (const name of Object.keys(src.attributes)) if (name !== 'skinIndex' && name !== 'skinWeight') g.setAttribute(name, src.attributes[name]);
 	const n = src.attributes.position.count;
 	const pos = new Float32Array(n * 3);
-	const v = new THREE.Vector3();
+	// Each vertex is where its bones' skinning matrices put it, by their weights.
+	const skin = m.skinning;
+	const p = src.attributes.position.array;
+	const bones = src.attributes.skinIndex.array;
+	const weights = src.attributes.skinWeight.array;
 	for (let i = 0; i < n; i++) {
-		m.mesh.getVertexPosition(i, v);
-		pos[i * 3] = v.x;
-		pos[i * 3 + 1] = v.y;
-		pos[i * 3 + 2] = v.z;
+		const x = p[i * 3];
+		const y = p[i * 3 + 1];
+		const z = p[i * 3 + 2];
+		let ox = 0;
+		let oy = 0;
+		let oz = 0;
+		for (let k = 0; k < 4; k++) {
+			const w = weights[i * 4 + k];
+			if (w === 0) continue;
+			const o = bones[i * 4 + k] * 16;
+			ox += w * (skin[o] * x + skin[o + 4] * y + skin[o + 8] * z + skin[o + 12]);
+			oy += w * (skin[o + 1] * x + skin[o + 5] * y + skin[o + 9] * z + skin[o + 13]);
+			oz += w * (skin[o + 2] * x + skin[o + 6] * y + skin[o + 10] * z + skin[o + 14]);
+		}
+		pos[i * 3] = ox;
+		pos[i * 3 + 1] = oy;
+		pos[i * 3 + 2] = oz;
 	}
 	g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
 	g.setIndex(src.index);

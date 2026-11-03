@@ -168,3 +168,10 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-03 01:10 | mechanics | pass 60 | master a0b306984d | 1 new finding | Read Leyline cast is 0.5s on 70753, sim has 2s (low)
 2026-11-03 01:10 | fairness | pass 24 | master a0b306984d | quiet | 73 builds within 0.5 DPS; top/bottom 1.49x
 2026-11-03 01:10 | client_update | pass 7 | master a0b306984d | 1 new finding | Poised (rogue/druid energy) missing from sim (low)
+2026-11-03 18:29 | results | pass 73 | master f5c99ad018 | 2 new findings | round 70753 phase 3 (forced): 68 shared sims match the class round files; Subtlety meta race "Night Elf"; hunter notes-only shares ungated (low)
+2026-11-03 18:29 | rotations | pass 49 | master f5c99ad018 | quiet | round 70753 phase 3 (forced): 28 APLs reworked; dead lines, talent legality, duties, resources and paired probes clean
+2026-11-03 18:29 | gear | pass 53 | master f5c99ad018 | quiet | round 70753 phase 3 (forced): Restoration shaman set within budget; enchants file unchanged for presets
+2026-11-03 18:29 | consumables | pass 67 | master f5c99ad018 | quiet | round 70753 phase 3 (forced): Trueshot Aura notes values, potions can't crit; no preset consume changes
+2026-11-03 18:29 | mechanics | pass 61 | master f5c99ad018 | 1 new finding | round 70753 phase 3 (forced): notes' tank threat values (Bear 115%, Def Stance 80%, Defiance) not in the sim (low, 0 DPS)
+2026-11-03 18:29 | fairness | pass 25 | master f5c99ad018 | quiet | round 70753 phase 3 (forced): every move matches its round file; top/bottom 1.73x; race picks hold
+2026-11-03 18:29 | client_update | pass 8 | master f5c99ad018 | 1 new finding | round 70753 phase 3 (forced): no build after 70753; several notes-only values ungated under Forever (low, needs ruling)
