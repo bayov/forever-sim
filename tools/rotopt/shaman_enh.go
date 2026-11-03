@@ -104,7 +104,8 @@ func (shamanEnh) Knobs() []Knob {
 		{Name: "earthShockHold", Default: 0, Min: 0, Max: 4, Step: 1},
 		// Keep the Stormstrike mark for the Maelstrom Weapon Lightning Bolt: no Earth Shock while the
 		// mark is up and Maelstrom Weapon has at least earthShockSaveStacks stacks. 1 only when the
-		// mark has 1 charge left, 2 whenever it is up, 0 never.
+		// mark has 1 charge left, 2 whenever it is up, 0 never. Forever's mark is used up by the next
+		// spell, so 1 and 2 write the same rotation there. Round 70753: -12 to -34 at every setting.
 		{Name: "earthShockSaveMark", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "earthShockSaveStacks", Default: 4, Min: 2, Max: 5, Step: 1},
 		// With shock 4, Flame Shock goes ahead of the Maelstrom Weapon Lightning Bolt.
