@@ -42,7 +42,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Searing Totem's 20 yard reach: the Level 60 elemental rotation keeps a Searing Totem up from range and leaves Magma Totem and Fire Nova out, because a caster stands 20 yards or more from the boss. The sim doesn't model totem range, so it would let a ranged shaman's Magma Totem and Fire Nova hit too.
 
 * Notes-only values from the November 2 development notes (standards 37; client 1.60.1.70753 unchanged; the full list is in orchestration/round_70753/shaman.md). Compare each with the next client build, hotfix or launch log:
-  * Chain Lightning's spell power coefficient. The notes raise the cast to 2.5 sec and the damage to 1.45 times a bolt, but give no coefficient; the sim keeps the client's 0.571 (2 / 3.5, the 2 sec cast's). At 0.714 (2.5 / 3.5, as Lightning Bolt) its hits would be about 1.27 times a bolt's and Elemental might cast it.
+  * Chain Lightning's spell power coefficient. The notes raise the cast to 2.5 sec and the damage to 1.45 times a bolt, but give no coefficient; the sim keeps the client's 0.571 (2 / 3.5, the 2 sec cast's). At 0.714 (2.5 / 3.5, as Lightning Bolt) its hits would be about 1.27 times a bolt's, but it still loses on one target for its mana (-5 to -141 at 120 / 180 / 300 sec, any mana floor; round 70753's exploration), so the rotation doesn't depend on it.
   * Chain Lightning's "comparable rank" Lightning Bolt: the sim takes the newest bolt at Chain Lightning's learn level (ranks 6, 7, 8 and 10 at 32, 40, 48 and 56). Only rank 4 matters at 60, and both are learned at 56.
   * Improved Ghost Wolf's column on row 4 (the notes give the row only; the sim puts it in column 4, the free square) and Lightning Mastery needing Call of Thunder in Lava Burst's place. Neither moves DPS; the column decides the talent string's order only if another talent goes on row 4.
   * Totemic Call puts every totem on the shaman's own spot (the notes: "teleports the Shaman's totems to the Shaman's own location"), where Totemic Projection kept each totem's offset. Leveling only.
@@ -332,6 +332,14 @@ Open questions from the game-update audit (orchestration/update_ledger.md, secti
 - The ranks come from TraitDefinitionEffectPoints curves (not downloaded). The Forever tooltips (hyjal 69876, forever-wiki) read 5% per rank for Dual Wield Specialization (25% at 5/5) and 4% per rank for Lethality, and the sim uses those. The deep dive agrees on direction for both ("increase to off-hand damage reduced", "bonus to critical damage also lowered some").
 - Not moved by any build since 69893. Dual Wield Specialization is worth about 3% to the Combat and Seal Fate Swords presets if the tooltip were wrong.
 - Settles it: the rogue's off-hand white hit range on the character sheet (or log) at Dual Wield Specialization 0 and 5. ×1.25 means the tooltip is right; ×1.5 means it is Classic's.
+
+**NTV-6. The November 2 rogue rework is in Blizzard's notes only (round 70753).**
+- Client 1.60.1.70753 and Wowhead Forever still carry the beta's rogue values, and have no Shank, Blood Splatter, Composure, Flash of Steel or Boot Knife. The sim takes the notes (orchestration/round_70753/rogue.md).
+- Assumed for Shank (no client spell; the sim's ID 1399248): 50% of the off hand's normalized weapon damage after the off-hand halving and Dual Wield Specialization; dodge, parry and crit possible, only the miss gone; its Energy only when it lands; no combo point; covered by Poised.
+- Assumed for Mutilate: the 90% also takes up the flat bonus (67 × 0.9 at 60), as the client adds the flat to the weapon damage before the percent.
+- Assumed for Ghostly Strike's opening: it starts on the cast and is spent by the next Ambush or Garrote.
+- Hemorrhage and Ghostly Strike's dagger fix has no numbers; the sim keeps the tooltip's dagger values (145% and 180%), taken to be what was intended.
+- Settles it: the first client build or hotfix with Shank, or a launch combat log (Shank hit sizes against white off-hand hits; a Mutilate half against the weapon range).
 
 ### Priest
 

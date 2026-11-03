@@ -17,6 +17,10 @@ var ShredLevel = []int32{0, 20, 30, 38, 46, 54}
 
 const ShredWeaponMultiplier = 1.55
 
+// ShredWeaponMultiplierNov2 is the November 2 development notes' 200%, under Forever only
+// (tuning_70753.go).
+const ShredWeaponMultiplierNov2 = 2.0
+
 func (druid *Druid) registerShredSpell() {
 	rank := core.HighestRankAt(druid.Level, ShredLevel)
 	if rank == 0 {
@@ -50,7 +54,7 @@ func (druid *Druid) registerShredSpell() {
 			return !druid.PseudoStats.InFrontOfTarget
 		},
 
-		DamageMultiplier: ShredWeaponMultiplier,
+		DamageMultiplier: core.TernaryFloat64(druid.Env.IsForever(), ShredWeaponMultiplierNov2, ShredWeaponMultiplier),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 

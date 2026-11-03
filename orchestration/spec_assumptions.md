@@ -633,6 +633,8 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 
 ### `druid_rip_31plus`: Rip's level 31+ ranks
 
+- **Retired 2026-11-03 (round 70753, standards 37):** the November 2 development notes raise Rip's base points and attack power part by about 25% on every rank (rank 6 to 18.75 + 31.9 a combo point a tick, above Era's 28), which settles the question. The assumption and its `druid_rip_scale` knob in patch 0004 are dropped. The history below is kept for reference.
+
 - **Builds:** Feral (Rip 22 to 25% of the damage, at 4 combo points).
 - **Sim now:** client per-combo-point values 8.5 / 12.7 / 18.2 / 25.5 at ranks 3 to 6. `sim/druid/rip.go:22-25`.
 - **Source:** client 70338.

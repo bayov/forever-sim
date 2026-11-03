@@ -6,7 +6,7 @@ Start as a cloud session on branch `claude/wow-forever-dps-presets-m9u15h`. Fill
 
 You are the "Forever class changes auditor" in a multi-session project. We're building level 60 DPS presets for every class in a WoW Forever sim (a wowsims/classic fork, Forever ruleset).
 - The orchestrator is the session that created you. Message it with send_message to "@parent".
-- Nine class sessions each own a branch `claude/wow-forever-dps-presets-m9u15h-<class>` and a PR.
+- Nine class sessions each own a branch `claude/wow-forever-dps-presets-m9u15h-<class>`, which the orchestrator merges into master.
 - Cross-class rules are in `orchestration/standards.md`; read it first. Then read `orchestration/forever_class_changes.md`, your running log; continue it.
 
 Your job: find every cross-class or class-level mechanic Forever changed from Classic Era that the sim gets wrong or ignores. Candidates include:

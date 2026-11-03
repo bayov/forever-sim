@@ -84,7 +84,7 @@
               "blessingOfKings":  true,
               "blessingOfMight":  "TristateEffectImproved"
             },
-            "talentsString":  "30305013032-25053000142210501",
+            "talentsString":  "30313113032-2503300501122100321",
             "level":  60,
             "profession1":  "Engineering",
             "profession2":  "Alchemy",
@@ -607,6 +607,16 @@
                     "castSpell":  {
                       "spellId":  {
                         "spellId":  2687
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes":  "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  1399001
                       }
                     }
                   }

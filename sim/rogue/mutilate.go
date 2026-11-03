@@ -13,7 +13,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 	if !rogue.Talents.Mutilate {
 		return
 	}
-	flatDamage := rankAt(rogue.Level, map[int32]float64{1: 17.25, 40: 24.75, 50: 36, 60: 50.25})
+	flatDamage := rankAt(rogue.Level, map[int32]float64{1: 23, 40: 33, 50: 48, 60: 67})
 
 	rogue.mutilateOH = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    MutilateActionID.WithTag(2),
@@ -27,7 +27,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 
 		CritDamageBonus: rogue.lethality(),
 
-		DamageMultiplier: rogue.AutoAttacks.OHConfig().DamageMultiplier * []float64{1, 1.05, 1.1}[rogue.Talents.Opportunity],
+		DamageMultiplier: rogue.AutoAttacks.OHConfig().DamageMultiplier * rogue.opportunityMultiplier(),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 
@@ -67,7 +67,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 
 		CritDamageBonus: rogue.lethality(),
 
-		DamageMultiplier: []float64{1, 1.05, 1.1}[rogue.Talents.Opportunity],
+		DamageMultiplier: rogue.opportunityMultiplier(),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 
@@ -88,13 +88,15 @@ func (rogue *Rogue) registerMutilateSpell() {
 	})
 }
 
-// Each half strikes for 75% weapon damage plus a flat bonus, and hits harder while one of
-// the rogue's lingering poisons is on the target. The flat bonus is the Forever rank the
-// level knows. The client adds 23, 33, 48 and 67 to the weapon damage before the 75%
-// (1310706, 399960, 1241585, 1241586 in 1.60.1.70338), so 17.25 from the talent, then
-// 24.75, 36 and 50.25 from the trainer at 40, 50 and 60.
+// Each half strikes for 90% weapon damage plus a flat bonus, and hits harder while one of the
+// rogue's lingering poisons is on the target. The client adds 23, 33, 48 and 67 to the weapon
+// damage before the weapon percent (1310706, 399960, 1241585, 1241586), the talent's rank and the
+// trainer's at 40, 50 and 60. Blizzard's November 2 development notes raise Mutilate to "90% of
+// weapon damage plus an additional amount that was also increased (was 75% weapon damage and a
+// lower amount)": the percent goes from 75 to 90 and takes the flat bonus up with it (67 x 0.9 =
+// 60.3 at 60, was 50.25). Client 1.60.1.70753 still has 75.
 func (rogue *Rogue) mutilateDamage(target *core.Unit, flatDamage float64, weaponDamage float64) float64 {
-	baseDamage := flatDamage + 0.75*weaponDamage
+	baseDamage := 0.9 * (flatDamage + weaponDamage)
 	if rogue.isPoisoned(target) {
 		baseDamage *= 1.2
 	}

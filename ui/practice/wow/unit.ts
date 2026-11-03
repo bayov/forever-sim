@@ -178,11 +178,20 @@ export class UnitView {
 		// Every animation the unit can play, so none waits on its file mid fight.
 		waits.push(model.preloadAnims(Object.values(Anim)));
 		await Promise.all(waits);
+		for (const m of [model, ...this.items]) {
+			m.compact();
+			m.cull();
+		}
 		this.model = model;
 		model.onEvent = (id, data, upper) => this.event(id, data, upper);
 		this.placeWeapons();
 		this.group.add(model.root);
 		for (const p of this.placeholder) p.visible = false;
+	}
+
+	// models gives the unit's models: the body, then its gear and weapons.
+	get models(): Model[] {
+		return this.model ? [this.model, ...this.items] : [];
 	}
 
 	// placeWeapons puts the weapons in the hands when drawn, in their sheaths when not.

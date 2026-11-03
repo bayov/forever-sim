@@ -129,7 +129,7 @@ func TestForeverShieldBlockRecastRefills(t *testing.T) {
 // and a procs-per-minute rate on it goes by the main hand's speed.
 func TestForeverShieldSlamIsOffHand(t *testing.T) {
 	_, bare := newForeverTank(t, "--251533120331221351")
-	_, specced := newForeverTank(t, "-00003005-251533120331221351") // Furious Precision 3/3, Dual Wield Specialization 5/5
+	_, specced := newForeverTank(t, "-000030005-251533120331221351") // Furious Precision 3/3, Dual Wield Specialization 5/5
 	slam := specced.ShieldSlam.Spell
 
 	if slam.ProcMask != core.ProcMaskMeleeOHSpecial {

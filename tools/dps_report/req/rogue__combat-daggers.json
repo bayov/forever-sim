@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race":  "RaceUndead",
+            "race": "RaceUndead",
             "class": "ClassRogue",
             "equipment": {
               "items": [
@@ -90,7 +90,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "005303104-30230320201515231-002",
+            "talentsString": "005203002-3203230002012221551-005",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -114,13 +114,8 @@
               ],
               "priorityList": [
                 {
+                  "notes": "Slice and Dice up at any combo points, refresh at 5 when it is about to drop or when Adrenaline Rush is waiting on a longer one.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "rank": 2,
-                        "spellId": 6774
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
@@ -129,10 +124,10 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "currentComboPoints": {}
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "1"
@@ -145,8 +140,8 @@
                                     "val": {
                                       "auraIsActive": {
                                         "auraId": {
-                                          "rank": 2,
-                                          "spellId": 6774
+                                          "spellId": 6774,
+                                          "rank": 2
                                         }
                                       }
                                     }
@@ -154,10 +149,10 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "remainingTime": {}
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "6s"
@@ -173,10 +168,10 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "currentComboPoints": {}
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "5"
@@ -186,15 +181,15 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "auraRemainingTime": {
                                         "auraId": {
-                                          "rank": 2,
-                                          "spellId": 6774
+                                          "spellId": 6774,
+                                          "rank": 2
                                         }
                                       }
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "1s"
@@ -204,10 +199,10 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpGt",
                                     "lhs": {
                                       "remainingTime": {}
                                     },
-                                    "op": "OpGt",
                                     "rhs": {
                                       "const": {
                                         "val": "9s"
@@ -223,10 +218,10 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "currentComboPoints": {}
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "5"
@@ -249,19 +244,19 @@
                                             },
                                             {
                                               "cmp": {
+                                                "op": "OpGt",
                                                 "lhs": {
                                                   "spellUsesRemaining": {
+                                                    "spellId": {
+                                                      "spellId": 13750
+                                                    },
                                                     "minTimeLeft": {
                                                       "const": {
                                                         "val": "15s"
                                                       }
-                                                    },
-                                                    "spellId": {
-                                                      "spellId": 13750
                                                     }
                                                   }
                                                 },
-                                                "op": "OpGt",
                                                 "rhs": {
                                                   "const": {
                                                     "val": "0"
@@ -271,17 +266,18 @@
                                             },
                                             {
                                               "cmp": {
+                                                "op": "OpLt",
                                                 "lhs": {
                                                   "math": {
+                                                    "op": "OpAdd",
                                                     "lhs": {
                                                       "auraRemainingTime": {
                                                         "auraId": {
-                                                          "rank": 2,
-                                                          "spellId": 6774
+                                                          "spellId": 6774,
+                                                          "rank": 2
                                                         }
                                                       }
                                                     },
-                                                    "op": "OpAdd",
                                                     "rhs": {
                                                       "spellTimeToReady": {
                                                         "spellId": {
@@ -291,7 +287,6 @@
                                                     }
                                                   }
                                                 },
-                                                "op": "OpLt",
                                                 "rhs": {
                                                   "const": {
                                                     "val": "1s"
@@ -304,12 +299,12 @@
                                       },
                                       {
                                         "cmp": {
+                                          "op": "OpLt",
                                           "lhs": {
                                             "const": {
                                               "val": "1"
                                             }
                                           },
-                                          "op": "OpLt",
                                           "rhs": {
                                             "const": {
                                               "val": "0"
@@ -325,44 +320,45 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Slice and Dice up at any combo points, refresh at 5 when it is about to drop or when Adrenaline Rush is waiting on a longer one."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 13750
+                        "spellId": 6774,
+                        "rank": 2
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Adrenaline Rush anchors the big window. Cast it low on energy so none of the extra regen is wasted.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "currentEnergy": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
-                                  "val": "39"
+                                  "val": "49"
                                 }
                               }
                             }
                           },
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "auraRemainingTime": {
                                   "auraId": {
-                                    "rank": 2,
-                                    "spellId": 6774
+                                    "spellId": 6774,
+                                    "rank": 2
                                   }
                                 }
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "1s"
@@ -372,27 +368,27 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 13750
+                      }
                     }
-                  },
-                  "notes": "Adrenaline Rush anchors the big window. Cast it low on energy so none of the extra regen is wasted."
+                  }
                 },
                 {
+                  "notes": "Blade Flurry is auto attack speed and does not feed the energy window, so it goes on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 13877
                       }
                     }
-                  },
-                  "notes": "Blade Flurry is auto attack speed and does not feed the energy window, so it goes on cooldown."
+                  }
                 },
                 {
+                  "notes": "Cold Blood is spent by the next hit, so only ever right before a 5 point Eviscerate.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 14177
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -401,10 +397,10 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "currentComboPoints": {}
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "5"
@@ -414,10 +410,10 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "currentEnergy": {}
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "spellCurrentCost": {
                                         "spellId": {
@@ -432,15 +428,15 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "auraRemainingTime": {
                                   "auraId": {
-                                    "rank": 2,
-                                    "spellId": 6774
+                                    "spellId": 6774,
+                                    "rank": 2
                                   }
                                 }
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "6s"
@@ -455,10 +451,10 @@
                                   "vals": [
                                     {
                                       "cmp": {
+                                        "op": "OpGe",
                                         "lhs": {
                                           "currentComboPoints": {}
                                         },
-                                        "op": "OpGe",
                                         "rhs": {
                                           "const": {
                                             "val": "5"
@@ -481,19 +477,19 @@
                                                 },
                                                 {
                                                   "cmp": {
+                                                    "op": "OpGt",
                                                     "lhs": {
                                                       "spellUsesRemaining": {
+                                                        "spellId": {
+                                                          "spellId": 13750
+                                                        },
                                                         "minTimeLeft": {
                                                           "const": {
                                                             "val": "15s"
                                                           }
-                                                        },
-                                                        "spellId": {
-                                                          "spellId": 13750
                                                         }
                                                       }
                                                     },
-                                                    "op": "OpGt",
                                                     "rhs": {
                                                       "const": {
                                                         "val": "0"
@@ -503,17 +499,18 @@
                                                 },
                                                 {
                                                   "cmp": {
+                                                    "op": "OpLt",
                                                     "lhs": {
                                                       "math": {
+                                                        "op": "OpAdd",
                                                         "lhs": {
                                                           "auraRemainingTime": {
                                                             "auraId": {
-                                                              "rank": 2,
-                                                              "spellId": 6774
+                                                              "spellId": 6774,
+                                                              "rank": 2
                                                             }
                                                           }
                                                         },
-                                                        "op": "OpAdd",
                                                         "rhs": {
                                                           "spellTimeToReady": {
                                                             "spellId": {
@@ -523,7 +520,6 @@
                                                         }
                                                       }
                                                     },
-                                                    "op": "OpLt",
                                                     "rhs": {
                                                       "const": {
                                                         "val": "1s"
@@ -536,12 +532,12 @@
                                           },
                                           {
                                             "cmp": {
+                                              "op": "OpLt",
                                               "lhs": {
                                                 "const": {
                                                   "val": "1"
                                                 }
                                               },
-                                              "op": "OpLt",
                                               "rhs": {
                                                 "const": {
                                                   "val": "0"
@@ -559,45 +555,45 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Cold Blood is spent by the next hit, so only ever right before a 5 point Eviscerate."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1259812
+                        "spellId": 14177
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Gnome. Eureka! on cooldown: for 8 sec, abilities cost 10% less and hit 10% harder. Other races can ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpGe",
                         "lhs": {
                           "auraRemainingTime": {
                             "auraId": {
-                              "rank": 2,
-                              "spellId": 6774
+                              "spellId": 6774,
+                              "rank": 2
                             }
                           }
                         },
-                        "op": "OpGe",
                         "rhs": {
                           "const": {
                             "val": "8s"
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Gnome. Eureka! on cooldown: for 8 sec, abilities cost 10% less and hit 10% harder. Other races can ignore the warning on this line."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20572
+                        "spellId": 1259812
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Orc. Blood Fury waits for Adrenaline Rush when the wait costs no use. Other races can ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -613,19 +609,19 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpEq",
                                     "lhs": {
                                       "spellUsesRemaining": {
+                                        "spellId": {
+                                          "spellId": 13750
+                                        },
                                         "minTimeLeft": {
                                           "const": {
                                             "val": "15s"
                                           }
-                                        },
-                                        "spellId": {
-                                          "spellId": 13750
                                         }
                                       }
                                     },
-                                    "op": "OpEq",
                                     "rhs": {
                                       "const": {
                                         "val": "0"
@@ -635,8 +631,12 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpGt",
                                     "lhs": {
                                       "spellUsesLostByDelay": {
+                                        "spellId": {
+                                          "spellId": 20572
+                                        },
                                         "delay": {
                                           "spellTimeToReady": {
                                             "spellId": {
@@ -648,13 +648,9 @@
                                           "const": {
                                             "val": "15s"
                                           }
-                                        },
-                                        "spellId": {
-                                          "spellId": 20572
                                         }
                                       }
                                     },
-                                    "op": "OpGt",
                                     "rhs": {
                                       "const": {
                                         "val": "0"
@@ -667,17 +663,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Orc. Blood Fury waits for Adrenaline Rush when the wait costs no use. Other races can ignore the warning on this line."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1259799
+                        "spellId": 20572
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Night Elf. Elune's Light waits for Adrenaline Rush when the wait costs no use. Other races can ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "or": {
                         "vals": [
@@ -690,19 +686,19 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpEq",
                               "lhs": {
                                 "spellUsesRemaining": {
+                                  "spellId": {
+                                    "spellId": 13750
+                                  },
                                   "minTimeLeft": {
                                     "const": {
                                       "val": "15s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "spellId": 13750
                                   }
                                 }
                               },
-                              "op": "OpEq",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -712,8 +708,12 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 1259799
+                                  },
                                   "delay": {
                                     "spellTimeToReady": {
                                       "spellId": {
@@ -725,13 +725,9 @@
                                     "const": {
                                       "val": "15s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "spellId": 1259799
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -741,11 +737,16 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1259799
+                      }
                     }
-                  },
-                  "notes": "Night Elf. Elune's Light waits for Adrenaline Rush when the wait costs no use. Other races can ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Troll. Berserking is auto attack speed, so it goes on cooldown. Other races can ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -753,104 +754,99 @@
                         "tag": 2
                       }
                     }
-                  },
-                  "notes": "Troll. Berserking is auto attack speed, so it goes on cooldown. Other races can ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Earthstrike on cooldown. Without the trinket ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "itemId": 21180
                       }
                     }
-                  },
-                  "notes": "Earthstrike on cooldown. Without the trinket ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "The synthetic on-use trinket on cooldown. Without the trinket ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "itemId": 994202
                       }
                     }
-                  },
-                  "notes": "The synthetic on-use trinket on cooldown. Without the trinket ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Thistle Tea when there is room for the 100 energy.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 7676
-                      }
-                    },
                     "condition": {
                       "cmp": {
+                        "op": "OpLe",
                         "lhs": {
                           "currentEnergy": {}
                         },
-                        "op": "OpLe",
                         "rhs": {
                           "const": {
                             "val": "10"
                           }
                         }
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 7676
+                      }
                     }
-                  },
-                  "notes": "Thistle Tea when there is room for the 100 energy."
+                  }
                 },
                 {
+                  "notes": "Goblin Sapper Charge on cooldown once Slice and Dice is up.",
                   "action": {
+                    "condition": {
+                      "auraIsActive": {
+                        "auraId": {
+                          "spellId": 6774,
+                          "rank": 2
+                        }
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "itemId": 10646
                       }
-                    },
-                    "condition": {
-                      "auraIsActive": {
-                        "auraId": {
-                          "rank": 2,
-                          "spellId": 6774
-                        }
-                      }
                     }
-                  },
-                  "notes": "Goblin Sapper Charge on cooldown once Slice and Dice is up."
+                  }
                 },
                 {
+                  "notes": "Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 4395
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "auraIsActive": {
                               "auraId": {
-                                "rank": 2,
-                                "spellId": 6774
+                                "spellId": 6774,
+                                "rank": 2
                               }
                             }
                           },
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "autoTimeToNext": {
                                   "autoType": "MainHand"
                                 }
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "math": {
+                                  "op": "OpSub",
                                   "lhs": {
                                     "autoSwingTime": {
                                       "autoType": "MainHand"
                                     }
                                   },
-                                  "op": "OpSub",
                                   "rhs": {
                                     "const": {
                                       "val": "0.4s"
@@ -862,31 +858,30 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 4395
+                      }
                     }
-                  },
-                  "notes": "Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time."
+                  }
                 },
                 {
+                  "notes": "Anything not listed above (trinkets).",
                   "action": {
-                    "autocastOtherCooldowns": {},
                     "condition": {
                       "auraIsActive": {
                         "auraId": {
-                          "rank": 2,
-                          "spellId": 6774
+                          "spellId": 6774,
+                          "rank": 2
                         }
                       }
-                    }
-                  },
-                  "notes": "Anything not listed above (trinkets)."
+                    },
+                    "autocastOtherCooldowns": {}
+                  }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 31016
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
@@ -895,10 +890,10 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "currentComboPoints": {}
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "4"
@@ -912,17 +907,17 @@
                                       {
                                         "auraIsActive": {
                                           "auraId": {
-                                            "rank": 2,
-                                            "spellId": 6774
+                                            "spellId": 6774,
+                                            "rank": 2
                                           }
                                         }
                                       },
                                       {
                                         "cmp": {
+                                          "op": "OpGe",
                                           "lhs": {
                                             "currentEnergy": {}
                                           },
-                                          "op": "OpGe",
                                           "rhs": {
                                             "const": {
                                               "val": "79"
@@ -932,10 +927,10 @@
                                       },
                                       {
                                         "cmp": {
+                                          "op": "OpLt",
                                           "lhs": {
                                             "remainingTime": {}
                                           },
-                                          "op": "OpLt",
                                           "rhs": {
                                             "const": {
                                               "val": "6s"
@@ -954,10 +949,10 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "currentComboPoints": {}
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "1"
@@ -967,10 +962,10 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "remainingTime": {}
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "3s"
@@ -983,10 +978,16 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 31016
+                      }
                     }
                   }
                 },
                 {
+                  "notes": "Night Elf: Shadowmeld into Ambush, as the Vanish line. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -1018,10 +1019,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpLe",
                               "lhs": {
                                 "currentComboPoints": {}
                               },
-                              "op": "OpLe",
                               "rhs": {
                                 "const": {
                                   "val": "3"
@@ -1031,10 +1032,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "currentEnergy": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "spellCurrentCost": {
                                   "spellId": {
@@ -1047,8 +1048,8 @@
                           {
                             "auraIsActive": {
                               "auraId": {
-                                "rank": 2,
-                                "spellId": 6774
+                                "spellId": 6774,
+                                "rank": 2
                               }
                             }
                           }
@@ -1073,18 +1074,40 @@
                         }
                       ]
                     }
-                  },
-                  "notes": "Night Elf: Shadowmeld into Ambush, as the Vanish line. Other races can ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Shank on cooldown at 75 energy or less, so the Energy it gives back fits; with Venom it also keeps the poisons' buff up.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLe",
+                        "lhs": {
+                          "currentEnergy": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "75"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1399248
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Backstab whenever it is affordable.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 25300
                       }
                     }
-                  },
-                  "notes": "Backstab whenever it is affordable."
+                  }
                 }
               ]
             },
@@ -1130,8 +1153,8 @@
       "faerieFire": true,
       "curseOfElements": true,
       "sunderRamp": {
-        "tank": true,
-        "pullSunders": 1
+        "pullSunders": 1,
+        "tank": true
       },
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,

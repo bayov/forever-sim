@@ -1170,6 +1170,42 @@ rendering, not the sim.
   the tanks and move. First numbers in headless Chrome on WSL (software GPU, so only the script and the counts
   carry over): draw calls 55 to 1006, triangles 71k to 424k, script a frame about 0.3 to 6ms (animating 2ms, the
   others' effects 0.6ms, placing the scene's objects 1.1ms), JS heap 0.5 to 1.9GB, and 42s to load.
+- First raid report (your PC, 40s): 60 FPS at the median, 16ms of script a frame (drawing 9.5ms for 1410 draw calls,
+  animating 6.2ms), 2.3GB heap, and two stalls of 1.3 and 2.1s with no long task in them. Fixes:
+  - A unit's parts that look alike (same material, textures and animated colors) draw as one. A raider went from 21
+    draw calls to about 11, and the hidden geosets drop out of its index.
+  - Units have bounds (their rest pose with room to spare), so the renderer skips the ones off screen and the shadows
+    of the ones outside the shadow's area. Spell effects stay always drawn.
+  - Raiders animate 10 times a second off screen, 30 past 40 yards, 60 past 20 yards and every frame near you.
+  - Copies of a model share its parsed file and its vertices (on the GPU too). Composed skin textures let go of their
+    page copy once uploaded.
+  - Scratch values for sampling animations are Float64Arrays, and particles and ribbon edges are reused. Chrome stores
+    a decimal in a plain array (and in three's vectors) as its own object, so these made about 30KB of garbage per
+    character a frame. Some is left (three's vectors, the track cache lookup, about 1.5MB a frame in the raid).
+  - In headless Chrome: draw calls 1006 to 657, animating the raid 2.0 to 0.55ms, heap 1.9 to 1.3GB, load 42 to 29s.
+  - The two stalls were Alt+Tab.
+- Second raid report (your PC, 37s, after the fixes): 68 FPS on average (was 49), 12.6ms frames at the median, 12.2ms
+  of script a frame (drawing 7.8ms for 943 draw calls, animating 4.0ms), 1.4GB heap, and no stall. One frame over
+  50ms, at the start.
+- Aiming for 240 FPS in the raid. Headless Chrome on WSL can use the real GPU (Mesa's D3D12 driver:
+  `GALLIUM_DRIVER=d3d12 MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA LD_LIBRARY_PATH=/usr/lib/wsl/lib`, ANGLE on GL), so the
+  numbers below are a 2560x1440 raid of 40 on the RTX 5090 with the frame rate uncapped. Its draw calls cost about twice
+  what they cost on your PC. The perf reports now also time the GPU (a `gpu` column and average).
+  - Before: 40 FPS, 22ms of script a frame (drawing 17ms for 1004 draw calls, animating 3.9ms), GPU 6.9ms.
+  - Raiders that look alike draw together (`wow/crowd.ts`): one draw call per part of a look (the orc male's chest in
+    this armor) for every raider wearing it. Each raider's bones go into one shared texture, and each copy reads its
+    own by an offset. Composed skins, rewrapped textures and compacted indices are shared, so copies match. Copies
+    off screen are left out unless they cast a shadow onto the screen. 77 FPS, 680 draw calls, GPU 1.0ms.
+  - The casters' hand glows, bolts and impacts draw in the crowd too, and a model with no solid part (most spell
+    effects) no longer draws into the shadows. 92 FPS, 490 draw calls.
+  - Particles and ribbons draw in one draw call per look (texture and blend), filled before the frame draws. Filled
+    during the draw, the GPU got the new triangles over the last frame's points. 111 FPS, 184 draw calls.
+  - Bones are posed in flat arrays and are out of the scene (`wow/model.ts`). The scene holds only the sockets
+    (attachment points and emitters), which follow their bone. Before, the renderer placed and walked through 9000
+    bones twice a frame. 221 FPS, 3.6ms of script a frame (animating 1.7ms, drawing 1.7ms for 180 draw calls), GPU
+    1.1ms. Solo is 400 FPS here.
+  - Tried and dropped, since they didn't measure: near raiders animating at 120 Hz, a table for the particles' sRGB
+    colors, and packed track key slots.
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit

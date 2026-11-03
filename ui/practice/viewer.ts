@@ -5,6 +5,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { texture } from './wow/files';
 import { Model } from './wow/model';
+import { fillBatches } from './wow/particles';
 import { Appearance, UnitView } from './wow/unit';
 
 const q = new URLSearchParams(location.search);
@@ -64,7 +65,7 @@ async function main() {
 	status(`loading ${fdid}...`);
 	const t0 = performance.now();
 	model = await Model.load(fdid);
-	if (q.get('rest')) for (const [i, b] of model.m2.bones.entries()) { const p = b.parent >= 0 ? model.m2.bones[b.parent].pivot : [0, 0, 0]; model.bones[i].position.set(b.pivot[0] - p[0], b.pivot[1] - p[1], b.pivot[2] - p[2]); model.bones[i].quaternion.identity(); model.bones[i].scale.set(1, 1, 1); }
+	if (q.get('rest')) model.restPose();
 	scene.add(model.root);
 	model.enableParticles(scene);
 	const geosets = q.get('geosets');
@@ -102,6 +103,7 @@ renderer.setAnimationLoop(now => {
 	last = now;
 	if (!q.get('rest') && !q.get('char')) model?.update(dt);
 	controls.update();
+	fillBatches();
 	renderer.render(scene, camera);
 });
 

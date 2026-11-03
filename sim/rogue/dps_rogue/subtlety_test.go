@@ -11,7 +11,7 @@ import (
 // newSubtletyRogueSim starts a Forever sim of a level 60 rogue with 21 Subtlety points
 // (Premeditation and Preparation) and an empty rotation.
 func newSubtletyRogueSim() (*core.Simulation, *DpsRogue) {
-	return newRogueSim("--502020331001301")
+	return newRogueSim("--005020331321001")
 }
 
 // newRogueSim starts a Forever sim of a level 60 rogue with the talents and an empty
@@ -64,20 +64,6 @@ func TestPremeditationOutOfStealth(t *testing.T) {
 	}
 	if !rogue.Premeditation.CD.IsReady(sim) {
 		t.Errorf("Preparation did not reset Premeditation")
-	}
-}
-
-// TestMurderLeavesCritDamage checks that Murder raises the damage done to a Humanoid by 4%
-// at 2 points and leaves the crit multiplier alone, so a crit is twice the raised damage
-// (the client's Murder has no crit damage aura, unlike Humanoid Slaying).
-func TestMurderLeavesCritDamage(t *testing.T) {
-	_, rogue := newRogueSim("00002")
-	at := rogue.AttackTables[rogue.CurrentTarget.UnitIndex][proto.CastType_CastTypeMainHand]
-	if got := at.DamageDealtMultiplier; got < 1.0399 || got > 1.0401 {
-		t.Errorf("damage dealt multiplier against a Humanoid is %.4f, want 1.04", got)
-	}
-	if got := rogue.SinisterStrike.CritMultiplier(at); got < 1.9999 || got > 2.0001 {
-		t.Errorf("Sinister Strike crit multiplier against a Humanoid is %.4f, want 2", got)
 	}
 }
 

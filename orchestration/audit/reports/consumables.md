@@ -1,16 +1,17 @@
-# Consumables pass 66 (master a0b306984)
+# Consumables pass 67 (master f5c99ad018)
 
-Trigger: 7 watched files moved since 796495d6f (standards.md, assumptions_def.py, spec_hunter.go, presets.ts of hunter, Enhancement shaman, Restoration shaman and warlock) and client 1.60.1.70707 -> 1.60.1.70753.
+Trigger: 20 watched files moved since 9da90fcde (forced, round 70753 phase 3). Client 1.60.1.70753, no newer 1.60 build on wago.
 
 ## Verified
-- Hunter presets.ts and spec_hunter.go: the ranged hunters (BM, MM, Lone Wolf) lose the Goblin Sapper and keep the EZ-Thro Dark Bomb; Survival keeps the Sapper (presets.ts:333, mksettings line 113 conditional). This is the fix for consumables-20261101-1; both files agree. The finding was already resolved.
-- Warlock presets.ts: Affliction race Human -> Orc and comments only. No Consumes change.
-- Enhancement shaman presets.ts: leveling weights moved to leveling_weights.json. No consumes, buff or imbue change.
-- Restoration shaman presets.ts: new healing spec (out of scope). It carries a Brilliant Mana Oil mainhand imbue, Flask of Supreme Power and other consumes; not a Level 60 DPS preset, so not audited.
-- standards.md: one ruling note (Balance Subtlety 3). assumptions_def.py: Ice Lance text only.
-- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty. Counts as before (minor-armor count 3, known: Dust Cloud; ref expects 2).
-- Class branches: scan lists them as "ahead" only through stale copies (gotcha 1); no own commits audited.
-- Client 70707 -> 70753 (builddiff.py): forever_enchants.go 53 enchants checked, 0 changed. Consumable spell changes: Minor Speed 13889 8 -> 4, Improved Drains 403511 gains a second effect, new Speed 1328947 and Enchant Boots - Speed (item 289559, spell 1328948, enchant 8737). None used by a preset, mksettings or the sim (git grep).
+- sim/core/buffs.go: Trueshot Aura ranks 20 / 35 / 50 / 75 / 100 (rank 5 = 100). Matches the Nov 2 notes line 172 (ref/client_update/sources/devnotes_post9_2026-11-02.txt) and hotfix 113534. Forever-only code path, cited in the comment, listed in round_70753/hunter.md. Not a finding (standards 37).
+- sim/core/consumes.go: Dragonfire Potion and Caustic Smog Potion no longer crit (Attributes[2] 0x20000000, SpellFlagNoPeriodicCrit, OutcomeAlwaysHit). Comments cite the flag. No preset depends on them for a ranking.
+- sim/core/debuffs.go: new ForeverDemoralizingRoarAura (bear helper, druid). No preset or mksettings raid change.
+- assumptions_def.py: druid_rip_31plus row removed (not buff related).
+- presets.ts (all DPS specs): diffs are talents, rotations, races, comments and the dropped rogue "(vs Humanoid)" builds. No Consumes.create, RaidBuffs, Debuffs or enchant line changed. mksettings did not move.
+- New warlock default gear (Phase1 Synthetic) and Affliction Wrack preset: scan clean (trinkets synthetic, no banned enchants).
+- Resto shaman gear set added: out of scope.
+- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty. Counts: minor-armor exclusive effects 3 (known, Dust Cloud; ref expects 2); mksettings default MobTypeUnknown; Salvation still on (planned drop); raid totems unchanged.
+- Class branches show as "ahead" only through stale copies (gotcha 1).
 
 ## Open
 - None.

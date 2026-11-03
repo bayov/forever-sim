@@ -1,12 +1,17 @@
 // A WoW model drawn with Three.js: its mesh, materials, skeleton and animations.
 //
-// Each bone is a Three.js bone. WoW moves a bone around its pivot: T(pivot) T(move) R S T(-pivot),
-// on top of its parent. A Three.js bone with the position (pivot - parent's pivot + move) and a
-// bind inverse of T(-pivot) gives the same result, so the skinning is Three.js's own.
+// WoW moves a bone around its pivot: T(pivot) T(move) R S T(-pivot), on top of its parent. We pose
+// the bones ourselves, in flat arrays: each bone's place in the model is its parent's times
+// T(pivot - parent's pivot + move) R S, and the skinning takes that times T(-pivot).
+//
+// The bones used to be Three.js bones in the scene. In a raid of 40 that was 9000 objects the
+// renderer placed and walked through twice a frame (for the shadows and the picture), which was
+// most of the time it spent before drawing. Now the scene holds only the sockets: the attachment
+// points and emitters that something hangs off, which follow their bone.
 
 import * as THREE from 'three';
 import { file, texture } from './files';
-import { animData, Batch, Keys, M2, M2Event, sample, Skin, Track } from './m2';
+import { animData, Batch, Keys, M2, M2Event, sample, Skin, Track, Vec } from './m2';
 import { Particles } from './particles';
 import { Ribbons } from './ribbons';
 
@@ -137,12 +142,33 @@ const leftFingers = [13, 14, 15, 16, 17];
 const upAxis = new THREE.Vector3(0, 1, 0);
 const twistQ = new THREE.Quaternion();
 const parentQ = new THREE.Quaternion();
+const boneQ = new THREE.Quaternion();
 const twistAxis = new THREE.Vector3();
+const parentWorld = new THREE.Matrix4();
+
+// skins gives each skeleton's skinning matrices (in its model's space), for the crowd (crowd.ts).
+// A cape draws with the body's skeleton, so it finds the body's here.
+export const skins = new WeakMap<THREE.Skeleton, Float32Array>();
+
+// A socket is an object that follows a bone, at an offset from its pivot.
+type Socket = { object: THREE.Object3D; bone: number; x: number; y: number; z: number };
 
 export class Model {
 	readonly root = new THREE.Group();
 	readonly mesh: THREE.SkinnedMesh;
-	readonly bones: THREE.Bone[];
+	// Each bone's place in the model (a 4 by 4 matrix, by columns), and its skinning matrix: the
+	// place times T(-pivot).
+	private readonly places: Float64Array;
+	readonly skinning: Float32Array;
+	// The bones' rotations after the twist and the billboards, which the twist needs for the
+	// bones above.
+	private readonly quats: Float64Array;
+	// The bones in an order where each parent comes before its children.
+	private readonly order: Int32Array;
+	// How much of the twist each bone takes (twistShares), and whether it faces the camera.
+	private readonly twistShare: Float64Array;
+	private readonly billboard: Uint8Array;
+	private readonly sockets: Socket[] = [];
 	private readonly mats: BatchMaterial[] = [];
 	private readonly replaceable = new Map<number, THREE.Texture>();
 	private readonly anims = new Map<number, Promise<DataView | undefined>>();
@@ -160,8 +186,9 @@ export class Model {
 	// The finger bones, with every joint below them, for holding a weapon.
 	private fingers: { right: boolean[]; left: boolean[] };
 	private points = new Map<number, THREE.Object3D>();
-	// Bones that always face the camera (bone flag 0x8): a totem's rune, the glow cards of effects.
-	private billboards: number[] = [];
+	// Whether any bone always faces the camera (bone flag 0x8): a totem's rune, the glow cards of
+	// effects.
+	private billboards = false;
 	// The camera that billboards face.
 	static camera?: THREE.Camera;
 	// twist turns the upper body around the model's up axis, in radians. A strafe turns the legs
@@ -171,25 +198,35 @@ export class Model {
 	// the head the rest. So the head faces where you face but the chest stays
 	// turned a little toward where you run.
 	twist = 0;
-	private twistShares: [bone: number, share: number][] = [];
 	private events = new Map<number, { id: string; data: number; time: number }[] | null>();
 	// onEvent hears the animations' events as they pass ($HIT, $CSS, $FSD footsteps, $SHL...).
 	// upper says it came from the upper body's animation (a swing while running).
 	onEvent?: (id: string, data: number, upper: boolean) => void;
 	private globalTime = 0;
 	private closed = { right: false, left: false };
-	private scratch = { t: [0, 0, 0], r: [0, 0, 0, 1], s: [1, 1, 1], t2: [0, 0, 0], r2: [0, 0, 0, 1], s2: [1, 1, 1] };
+	private scratch = { t: new Float64Array(3), r: Float64Array.of(0, 0, 0, 1), s: Float64Array.of(1, 1, 1), t2: new Float64Array(3), r2: Float64Array.of(0, 0, 0, 1), s2: Float64Array.of(1, 1, 1) };
 	geosets?: Set<number>;
+	// The crowd the model draws in (crowd.ts), if any.
+	crowd?: { remove(m: Model): void };
 	particles?: Particles;
 	ribbons?: Ribbons;
 	// The model's own textures, which load() waits for so a model never shows untextured.
 	private readonly loading: Promise<unknown>[] = [];
 
-	private constructor(
-		readonly m2: M2,
-		readonly skin: Skin,
-	) {
-		const geometry = buildGeometry(m2, skin);
+	readonly m2: M2;
+	readonly skin: Skin;
+
+	private constructor(private readonly shared: Parsed) {
+		const { m2, skin } = shared;
+		this.m2 = m2;
+		this.skin = skin;
+		shared.users++;
+		// The vertices are the same for every copy of the model, so the copies share them (and
+		// their memory on the GPU). Each copy gets its own list of parts, which compact changes.
+		const geometry = new THREE.BufferGeometry();
+		for (const [name, a] of Object.entries(shared.geometry.attributes)) geometry.setAttribute(name, a);
+		geometry.setIndex(shared.geometry.index);
+		for (const g of shared.geometry.groups) geometry.addGroup(g.start, g.count, g.materialIndex);
 		const materials: THREE.Material[] = [];
 		skin.batches.forEach((batch, i) => {
 			const bm = this.makeMaterial(batch, i);
@@ -204,10 +241,11 @@ export class Model {
 		});
 		this.mesh = new THREE.SkinnedMesh(geometry, materials);
 		this.mesh.frustumCulled = false;
-		this.mesh.castShadow = true;
 		// Only the solid parts cast shadows. A glow or a see-through layer (a totem's aura, an
-		// effect's flash) would darken the ground in a big square.
+		// effect's flash) would darken the ground in a big square. A model with no solid parts (most
+		// spell effects) isn't drawn into the shadows at all.
 		const solid = skin.batches.map(batch => (m2.materials[batch.material]?.blend ?? 0) <= 1);
+		this.mesh.castShadow = solid.some(x => x);
 		this.mesh.onBeforeShadow = (_r, _o, _c, _sc, _g, depthMaterial, group) => {
 			depthMaterial.depthWrite = solid[(group as unknown as { materialIndex?: number } | null)?.materialIndex ?? 0] ?? true;
 		};
@@ -215,37 +253,36 @@ export class Model {
 			depthMaterial.depthWrite = true;
 		};
 
-		// We pose the bones by their quaternions every frame. Three keeps each object's Euler angles
-		// in step with its quaternion, which took a seventh of the posing time, and we never read
-		// them. So the bones' quaternions don't update their angles.
-		this.bones = m2.bones.map(() => {
-			const bone = new THREE.Bone();
-			bone.quaternion._onChange(() => {});
-			return bone;
-		});
-		m2.bones.forEach((b, i) => {
-			const bone = this.bones[i];
-			const parent = b.parent >= 0 ? m2.bones[b.parent] : undefined;
-			bone.position.set(b.pivot[0] - (parent?.pivot[0] ?? 0), b.pivot[1] - (parent?.pivot[1] ?? 0), b.pivot[2] - (parent?.pivot[2] ?? 0));
-			if (b.parent >= 0) this.bones[b.parent].add(bone);
-			else this.mesh.add(bone);
-		});
-		const inverses = m2.bones.map(b => new THREE.Matrix4().makeTranslation(-b.pivot[0], -b.pivot[1], -b.pivot[2]));
-		if (this.bones.length === 0) {
-			// A model with no bones still needs one for the skinning.
-			const bone = new THREE.Bone();
-			this.mesh.add(bone);
-			this.bones.push(bone);
-			inverses.push(new THREE.Matrix4());
+		// Three's skinning needs a skeleton, but its bones stay out of the scene: the skeleton's
+		// matrices come straight from ours. The skinning is in the model's space (the mesh's), so
+		// the mesh's own place in the world goes on top (the detached bind mode).
+		const n = Math.max(1, m2.bones.length);
+		const bones = Array.from({ length: n }, () => new THREE.Bone());
+		this.places = new Float64Array(n * 16);
+		this.skinning = new Float32Array(n * 16);
+		for (let i = 0; i < n; i++) {
+			this.places[i * 16] = this.places[i * 16 + 5] = this.places[i * 16 + 10] = this.places[i * 16 + 15] = 1;
+			this.skinning[i * 16] = this.skinning[i * 16 + 5] = this.skinning[i * 16 + 10] = this.skinning[i * 16 + 15] = 1;
 		}
-		this.mesh.bind(new THREE.Skeleton(this.bones, inverses), new THREE.Matrix4());
+		this.quats = new Float64Array(n * 4);
+		const skeleton = new THREE.Skeleton(bones);
+		const skinning = this.skinning;
+		skeleton.update = function () {
+			this.boneMatrices!.set(skinning);
+			if (this.boneTexture) this.boneTexture.needsUpdate = true;
+		};
+		skins.set(skeleton, skinning);
+		this.mesh.bindMode = THREE.DetachedBindMode;
+		this.mesh.bind(skeleton, new THREE.Matrix4());
 		this.root.add(this.mesh);
+		this.order = boneOrder(m2);
 
 		// The upper body is the lower spine (key bone 4) and everything on it, which an attack
 		// moves while the legs keep running.
 		this.upper = m2.bones.map(() => false);
 		const spine = m2.keyBoneLookup[4];
-		this.twistShares = twistShares(m2, spine ?? -1, m2.keyBoneLookup[6] ?? -1);
+		this.twistShare = new Float64Array(m2.bones.length);
+		for (const [bone, share] of twistShares(m2, spine ?? -1, m2.keyBoneLookup[6] ?? -1)) this.twistShare[bone] = share;
 		if (spine !== undefined && spine >= 0) {
 			for (let i = 0; i < m2.bones.length; i++) {
 				for (let p = i; p >= 0; p = m2.bones[p].parent) {
@@ -269,7 +306,8 @@ export class Model {
 			return out;
 		};
 		this.fingers = { right: below(rightFingers), left: below(leftFingers) };
-		this.billboards = m2.bones.map((b, i) => (b.flags & 0x8 ? i : -1)).filter(i => i >= 0);
+		this.billboard = Uint8Array.from(m2.bones, b => (b.flags & 0x8 ? 1 : 0));
+		this.billboards = this.billboard.includes(1);
 		this.pose0 = new Float32Array(m2.bones.length * 10);
 		this.fadePose = new Float32Array(m2.bones.length * 10);
 		this.base = this.playing(Anim.Stand, { loop: true });
@@ -280,15 +318,22 @@ export class Model {
 	static onLoad?: (fdid: number, ms: number) => void;
 
 	static async load(fdid: number): Promise<Model> {
-		const data = await file(fdid);
+		let p = parsed.get(fdid);
+		if (!p) {
+			p = (async () => {
+				const data = await file(fdid);
+				const m2 = new M2(data);
+				if (m2.skins.length === 0) throw new Error(`model ${fdid} has no skin`);
+				const skin = new Skin(await file(m2.skins[0]));
+				return { m2, skin, geometry: buildGeometry(m2, skin), users: 0, indices: new Map() };
+			})();
+			parsed.set(fdid, p);
+			p.catch(() => parsed.delete(fdid));
+		}
+		const shared = await p;
 		const t0 = performance.now();
-		const m2 = new M2(data);
-		if (m2.skins.length === 0) throw new Error(`model ${fdid} has no skin`);
-		const skinData = await file(m2.skins[0]);
-		const t1 = performance.now();
-		const skin = new Skin(skinData);
-		const model = new Model(m2, skin);
-		Model.onLoad?.(fdid, performance.now() - t1 + (t1 - t0));
+		const model = new Model(shared);
+		Model.onLoad?.(fdid, performance.now() - t0);
 		await Promise.all([model.loadAnim(model.base.seq), ...model.loading]);
 		model.base.source = model.ready.get(model.base.seq);
 		model.update(0);
@@ -417,10 +462,19 @@ export class Model {
 			const wrapS = slot.flags & 1 ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
 			const wrapT = slot.flags & 2 ? THREE.RepeatWrapping : THREE.ClampToEdgeWrapping;
 			if (t.wrapS !== wrapS || t.wrapT !== wrapT) {
-				t = t.clone();
-				t.wrapS = wrapS;
-				t.wrapT = wrapT;
-				t.needsUpdate = true;
+				// Every model that wraps it the same way shares the copy.
+				const copies = rewrapped.get(t) ?? new Map<number, THREE.Texture>();
+				rewrapped.set(t, copies);
+				const key = wrapS * 65536 + wrapT;
+				let copy = copies.get(key);
+				if (!copy) {
+					copy = t.clone();
+					copy.wrapS = wrapS;
+					copy.wrapT = wrapT;
+					copy.needsUpdate = true;
+					copies.set(key, copy);
+				}
+				t = copy;
 			}
 		}
 		this.replaceable.set(type, t);
@@ -441,6 +495,86 @@ export class Model {
 		}
 	}
 
+	// compact draws the parts that look alike in one draw call, once the model's look is set.
+	//
+	// A character's body comes in about 16 parts (skin, hair, face, each piece of armor's geoset),
+	// and the renderer draws each part on its own. In a raid of 40 that was most of the frame. Parts
+	// with the same material, textures and animated colors look the same, so we put their triangles
+	// side by side and draw them as one. The hidden geosets drop out, so setGeosets can't show them
+	// again afterwards.
+	compact() {
+		const g = this.mesh.geometry;
+		const index = g.index;
+		const mats = this.mesh.material as THREE.Material[];
+		if (!index || !Array.isArray(mats)) return;
+		const key = (i: number) => {
+			const b = this.skin.batches[i];
+			return [b.material, b.textureCombo, b.textureCount, b.shader, b.color, b.weightCombo, b.transformCombo, b.coordCombo, b.priority, b.materialLayer].join();
+		};
+		type Merged = { materialIndex: number; ranges: [number, number][] };
+		const merged: Merged[] = [];
+		const opaque = new Map<string, Merged>();
+		let last: { key: string; m: Merged } | undefined;
+		for (const group of g.groups) {
+			const i = group.materialIndex ?? 0;
+			if (!mats[i]?.visible) continue;
+			const k = key(i);
+			// The renderer sorts the solid parts itself, so any two alike can merge. See-through parts
+			// draw in their order, so only neighbors merge.
+			const solid = !mats[i].transparent;
+			let m = solid ? opaque.get(k) : last?.key === k ? last.m : undefined;
+			if (!m) {
+				m = { materialIndex: i, ranges: [] };
+				merged.push(m);
+				if (solid) opaque.set(k, m);
+			}
+			m.ranges.push([group.start, group.count]);
+			last = { key: k, m };
+		}
+		const src = index.array as Uint16Array | Uint32Array;
+		let total = 0;
+		for (const m of merged) for (const r of m.ranges) total += r[1];
+		g.clearGroups();
+		let at = 0;
+		for (const m of merged) {
+			const start = at;
+			for (const [, c] of m.ranges) at += c;
+			g.addGroup(start, at - start, m.materialIndex);
+		}
+		// Copies of the model with the same parts showing share the new index, so the crowd
+		// (crowd.ts) can draw them together.
+		const parts = merged.map(m => `${m.materialIndex}:${m.ranges.map(r => r.join('+')).join(',')}`).join('|');
+		const indices = this.shared.indices;
+		let shared = indices.get(parts);
+		if (!shared) {
+			const out = src instanceof Uint32Array ? new Uint32Array(total) : new Uint16Array(total);
+			at = 0;
+			for (const m of merged) {
+				for (const [s, c] of m.ranges) {
+					out.set(src.subarray(s, s + c), at);
+					at += c;
+				}
+			}
+			shared = new THREE.BufferAttribute(out, 1);
+			indices.set(parts, shared);
+		}
+		g.setIndex(shared);
+	}
+
+	// cull lets the renderer skip the model when it's off screen, and skip its shadow when it's
+	// outside the shadow's area. The bounds come from the model's resting pose, with room to spare
+	// for its animations. Spell effects stay always drawn, since their bones fly far from the rest
+	// pose.
+	cull(margin = 1.5) {
+		const g = this.mesh.geometry;
+		g.computeBoundingSphere();
+		const sphere = g.boundingSphere?.clone();
+		if (!sphere) return;
+		sphere.radius = sphere.radius * margin + 0.5;
+		this.mesh.boundingSphere = sphere;
+		this.mesh.frustumCulled = true;
+	}
+
 	submeshIds(): number[] {
 		return [...new Set(this.skin.submeshes.map(s => s.id))].sort((a, b) => a - b);
 	}
@@ -453,13 +587,51 @@ export class Model {
 		if (cached) return cached;
 		const a = this.m2.attachment(id);
 		if (!a) return undefined;
-		const bone = this.bones[a.bone] ?? this.bones[0];
-		const pivot = this.m2.bones[a.bone]?.pivot ?? [0, 0, 0];
-		const point = new THREE.Object3D();
-		point.position.set(a.position[0] - pivot[0], a.position[1] - pivot[1], a.position[2] - pivot[2]);
-		bone.add(point);
+		const point = this.socket(a.bone, a.position);
 		this.points.set(id, point);
 		return point;
+	}
+
+	// restPose puts every bone back where it rests, for the model viewer.
+	restPose() {
+		for (let i = 0; i < this.m2.bones.length; i++) {
+			const o = i * 16;
+			const pivot = this.m2.bones[i].pivot;
+			this.places.fill(0, o, o + 16);
+			this.skinning.fill(0, o, o + 16);
+			for (const d of [0, 5, 10, 15]) this.places[o + d] = this.skinning[o + d] = 1;
+			this.places[o + 12] = pivot[0];
+			this.places[o + 13] = pivot[1];
+			this.places[o + 14] = pivot[2];
+		}
+		for (const socket of this.sockets) this.placeSocket(socket);
+	}
+
+	// socket gives an object that follows a bone, at a point in the model (where the bone's pivot
+	// is at rest), for an attachment point or an emitter.
+	socket(bone: number, at: ArrayLike<number>): THREE.Object3D {
+		const b = this.m2.bones[bone] ? bone : 0;
+		const pivot = this.m2.bones[b]?.pivot ?? [0, 0, 0];
+		const object = new THREE.Object3D();
+		object.matrixAutoUpdate = false;
+		const s: Socket = { object, bone: b, x: at[0] - pivot[0], y: at[1] - pivot[1], z: at[2] - pivot[2] };
+		this.sockets.push(s);
+		this.placeSocket(s);
+		this.mesh.add(object);
+		return object;
+	}
+
+	// placeSocket puts a socket where its bone is now: the bone's place times T(offset).
+	private placeSocket(s: Socket) {
+		const m = this.places;
+		const o = s.bone * 16;
+		const e = s.object.matrix.elements;
+		for (let j = 0; j < 12; j++) e[j] = m[o + j];
+		e[12] = m[o] * s.x + m[o + 4] * s.y + m[o + 8] * s.z + m[o + 12];
+		e[13] = m[o + 1] * s.x + m[o + 5] * s.y + m[o + 9] * s.z + m[o + 13];
+		e[14] = m[o + 2] * s.x + m[o + 6] * s.y + m[o + 10] * s.z + m[o + 14];
+		e[15] = 1;
+		s.object.matrixWorldNeedsUpdate = true;
 	}
 
 	// preloadAnims loads the keys of these animations (or the ones the model plays in their
@@ -682,7 +854,16 @@ export class Model {
 		const base = this.base;
 		// Until the new animation's keys arrive, the bones keep the pose they had.
 		const fadeW = !base.source && this.posed ? 1 : this.fadeTotal > 0 && this.posed ? this.fadeLeft / this.fadeTotal : 0;
-		for (let i = 0; i < m2.bones.length; i++) {
+		const camera = this.billboards ? Model.camera : undefined;
+		if (camera) {
+			this.mesh.updateWorldMatrix(true, false);
+			camera.getWorldQuaternion(billboardTmp.q1);
+		}
+		const places = this.places;
+		const quats = this.quats;
+		const skin = this.skinning;
+		for (let k = 0; k < this.order.length; k++) {
+			const i = this.order[k];
 			const b = m2.bones[i];
 			const finger = handsSource && ((this.closed.right && this.fingers.right[i]) || (this.closed.left && this.fingers.left[i]));
 			if (finger) {
@@ -722,43 +903,50 @@ export class Model {
 			p0[o + 8] = s.s[1];
 			p0[o + 9] = s.s[2];
 			const parent = b.parent >= 0 ? m2.bones[b.parent].pivot : undefined;
-			const bone = this.bones[i];
-			bone.position.set(b.pivot[0] - (parent?.[0] ?? 0) + s.t[0], b.pivot[1] - (parent?.[1] ?? 0) + s.t[1], b.pivot[2] - (parent?.[2] ?? 0) + s.t[2]);
-			bone.quaternion.set(s.r[0], s.r[1], s.r[2], s.r[3]);
-			const share = this.twist !== 0 ? this.twistShares.find(t => t[0] === i)?.[1] : undefined;
-			if (share !== undefined) {
+			boneQ.set(s.r[0], s.r[1], s.r[2], s.r[3]);
+			const share = this.twist !== 0 ? this.twistShare[i] : 0;
+			if (share !== 0) {
 				// The twist is around the model's up (y, since the bones are in Three's frame). The
 				// parent bones lean in the run, so we turn that axis into the parent's frame.
 				parentQ.identity();
-				for (let p = b.parent; p >= 0; p = m2.bones[p].parent) parentQ.premultiply(this.bones[p].quaternion);
+				for (let p = b.parent; p >= 0; p = m2.bones[p].parent) parentQ.premultiply(twistQ.fromArray(quats, p * 4));
 				twistAxis.copy(upAxis).applyQuaternion(parentQ.invert());
-				bone.quaternion.premultiply(twistQ.setFromAxisAngle(twistAxis, this.twist * share));
+				boneQ.premultiply(twistQ.setFromAxisAngle(twistAxis, this.twist * share));
 			}
-			bone.scale.set(s.s[0], s.s[1], s.s[2]);
+			if (camera && this.billboard[i]) {
+				// A billboard turns its +x (the model's front) to the camera, with its up staying the
+				// camera's up: its rotation is the parent's in the world, undone, then the camera's.
+				parentWorld.copy(this.mesh.matrixWorld);
+				if (b.parent >= 0) parentWorld.multiply(billboardTmp.m.fromArray(places, b.parent * 16));
+				parentWorld.decompose(billboardTmp.v, billboardTmp.q2, billboardTmp.s);
+				boneQ.copy(billboardTmp.q2.invert()).multiply(billboardTmp.q1).multiply(faceFront);
+			}
+			boneQ.toArray(quats, i * 4);
+			place(
+				places,
+				i * 16,
+				b.parent >= 0 ? b.parent * 16 : -1,
+				b.pivot[0] - (parent?.[0] ?? 0) + s.t[0],
+				b.pivot[1] - (parent?.[1] ?? 0) + s.t[1],
+				b.pivot[2] - (parent?.[2] ?? 0) + s.t[2],
+				boneQ,
+				s.s[0],
+				s.s[1],
+				s.s[2],
+			);
+			// The skinning matrix is the place times T(-pivot).
+			const m = i * 16;
+			for (let j = 0; j < 12; j++) skin[m + j] = places[m + j];
+			skin[m + 12] = places[m + 12] - places[m] * b.pivot[0] - places[m + 4] * b.pivot[1] - places[m + 8] * b.pivot[2];
+			skin[m + 13] = places[m + 13] - places[m + 1] * b.pivot[0] - places[m + 5] * b.pivot[1] - places[m + 9] * b.pivot[2];
+			skin[m + 14] = places[m + 14] - places[m + 2] * b.pivot[0] - places[m + 6] * b.pivot[1] - places[m + 10] * b.pivot[2];
+			skin[m + 15] = 1;
 		}
+		for (const socket of this.sockets) this.placeSocket(socket);
 		if (base.source) this.posed = true;
-		this.faceCamera();
 		this.updateColors();
 		this.particles?.update(dt);
 		this.ribbons?.update(dt);
-	}
-
-	// faceCamera turns the billboard bones to the camera. Their +x (the model's front) points at
-	// the camera, with their up staying the camera's up.
-	private faceCamera() {
-		const camera = Model.camera;
-		if (this.billboards.length === 0 || !camera) return;
-		const camQ = camera.getWorldQuaternion(billboardTmp.q1);
-		for (const i of this.billboards) {
-			const bone = this.bones[i];
-			const parent = bone.parent;
-			if (!parent) continue;
-			// Only the bones above this one need their place in the world now. The renderer places
-			// the rest (all of a character's 220 bones) once, when it draws.
-			parent.updateWorldMatrix(true, false);
-			parent.matrixWorld.decompose(billboardTmp.v, billboardTmp.q2, billboardTmp.s);
-			bone.quaternion.copy(billboardTmp.q2.invert()).multiply(camQ).multiply(faceFront);
-		}
 	}
 
 	// trackKeys gives a track's keys for a sequence. A track on a global sequence runs on its own
@@ -775,14 +963,14 @@ export class Model {
 		return track.get(seq, track.times.length === 1 ? this.m2.data : source);
 	}
 
-	private sampleTrack(track: Track, seq: number, time: number, source: DataView | undefined, out: number[]): boolean {
+	private sampleTrack(track: Track, seq: number, time: number, source: DataView | undefined, out: Vec): boolean {
 		const keys = this.trackKeys(track, seq, source);
 		if (!keys) return false;
 		sample(keys, track.width, this.keyTime >= 0 ? this.keyTime : time, out, track.interpolation);
 		return true;
 	}
 
-	private pose(tr: Track, rot: Track, sc: Track, seq: number, time: number, source: DataView | undefined, t: number[], r: number[], s: number[]) {
+	private pose(tr: Track, rot: Track, sc: Track, seq: number, time: number, source: DataView | undefined, t: Vec, r: Vec, s: Vec) {
 		t[0] = t[1] = t[2] = 0;
 		r[0] = r[1] = r[2] = 0;
 		r[3] = 1;
@@ -794,7 +982,7 @@ export class Model {
 
 	// trackValue samples a track (an emitter's rate, say) at the current animation's time. It's
 	// false when the track has no keys there.
-	trackValue(track: Track, out: number[]): boolean {
+	trackValue(track: Track, out: Vec): boolean {
 		return this.sampleTrack(track, this.base.seq, this.base.time, this.base.source, out);
 	}
 
@@ -828,7 +1016,7 @@ export class Model {
 	}
 
 	// updateColors applies animated colors and transparency to the batches that have them.
-	private readonly colorOut = [0, 0, 0];
+	private readonly colorOut = new Float64Array(3);
 	private updateColors() {
 		const out = this.colorOut;
 		const m2 = this.m2;
@@ -855,13 +1043,30 @@ export class Model {
 	}
 
 	dispose() {
+		this.crowd?.remove(this);
 		this.particles?.dispose();
 		this.ribbons?.dispose();
 		this.root.removeFromParent();
-		this.mesh.geometry.dispose();
+		const g = this.mesh.geometry;
+		// While other copies still draw the shared vertices, we free only this copy's own parts, so
+		// the renderer keeps the shared ones on the GPU.
+		if (--this.shared.users > 0) {
+			for (const name of Object.keys(g.attributes)) g.deleteAttribute(name);
+			if (g.index === this.shared.geometry.index || [...this.shared.indices.values()].includes(g.index!)) g.setIndex(null);
+		}
+		g.dispose();
 		for (const bm of this.mats) bm.material.dispose();
 	}
 }
+
+// A model file read once: its parsed data and vertices, shared by every copy of the model (a
+// raid of the same race, every Searing bolt), with how many copies are alive.
+// indices holds the index of each set of parts that compact made, by the parts.
+type Parsed = { m2: M2; skin: Skin; geometry: THREE.BufferGeometry; users: number; indices: Map<string, THREE.BufferAttribute> };
+const parsed = new Map<number, Promise<Parsed>>();
+
+// rewrapped holds the copies of textures that a model wraps another way than the texture does.
+const rewrapped = new WeakMap<THREE.Texture, Map<number, THREE.Texture>>();
 
 // twistShares spreads a strafe's twist over the bones from the lower spine up to the head. The
 // lower spine takes 55%, the bones between it and the head (chest and neck) 25% together, and the
@@ -928,11 +1133,80 @@ const combinerFragment = /* glsl */ `
 #endif
 `;
 
-const billboardTmp = { q1: new THREE.Quaternion(), q2: new THREE.Quaternion(), v: new THREE.Vector3(), s: new THREE.Vector3() };
+const billboardTmp = { q1: new THREE.Quaternion(), q2: new THREE.Quaternion(), v: new THREE.Vector3(), s: new THREE.Vector3(), m: new THREE.Matrix4() };
+
+// place sets a bone's place (at o) to its parent's (at parent, or the model when -1) times
+// T(x, y, z) R(q) S(sx, sy, sz), the way Three's Matrix4.compose builds a matrix.
+function place(m: Float64Array, o: number, parent: number, x: number, y: number, z: number, q: THREE.Quaternion, sx: number, sy: number, sz: number) {
+	const { x: qx, y: qy, z: qz, w: qw } = q;
+	const x2 = qx + qx;
+	const y2 = qy + qy;
+	const z2 = qz + qz;
+	const xx = qx * x2;
+	const xy = qx * y2;
+	const xz = qx * z2;
+	const yy = qy * y2;
+	const yz = qy * z2;
+	const zz = qz * z2;
+	const wx = qw * x2;
+	const wy = qw * y2;
+	const wz = qw * z2;
+	const l0 = (1 - (yy + zz)) * sx;
+	const l1 = (xy + wz) * sx;
+	const l2 = (xz - wy) * sx;
+	const l4 = (xy - wz) * sy;
+	const l5 = (1 - (xx + zz)) * sy;
+	const l6 = (yz + wx) * sy;
+	const l8 = (xz + wy) * sz;
+	const l9 = (yz - wx) * sz;
+	const l10 = (1 - (xx + yy)) * sz;
+	if (parent < 0) {
+		m[o] = l0;
+		m[o + 1] = l1;
+		m[o + 2] = l2;
+		m[o + 4] = l4;
+		m[o + 5] = l5;
+		m[o + 6] = l6;
+		m[o + 8] = l8;
+		m[o + 9] = l9;
+		m[o + 10] = l10;
+		m[o + 12] = x;
+		m[o + 13] = y;
+		m[o + 14] = z;
+	} else {
+		const p = parent;
+		for (let r = 0; r < 3; r++) {
+			const a = m[p + r];
+			const b = m[p + 4 + r];
+			const c = m[p + 8 + r];
+			m[o + r] = a * l0 + b * l1 + c * l2;
+			m[o + 4 + r] = a * l4 + b * l5 + c * l6;
+			m[o + 8 + r] = a * l8 + b * l9 + c * l10;
+			m[o + 12 + r] = a * x + b * y + c * z + m[p + 12 + r];
+		}
+	}
+	m[o + 3] = m[o + 7] = m[o + 11] = 0;
+	m[o + 15] = 1;
+}
+
+// boneOrder lists the bones so that each parent comes before its children.
+function boneOrder(m2: M2): Int32Array {
+	const out: number[] = [];
+	const done = new Uint8Array(m2.bones.length);
+	const visit = (i: number) => {
+		if (done[i]) return;
+		done[i] = 1;
+		const p = m2.bones[i].parent;
+		if (p >= 0 && p < m2.bones.length) visit(p);
+		out.push(i);
+	};
+	for (let i = 0; i < m2.bones.length; i++) visit(i);
+	return Int32Array.from(out);
+}
 // faceFront turns the model's front (+x) to the camera's back (+z), which faces the viewer.
 const faceFront = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0, 1, 0), -Math.PI / 2);
 
-function blend(s: { t: number[]; r: number[]; s: number[]; t2: number[]; r2: number[]; s2: number[] }, w: number) {
+function blend(s: { t: Vec; r: Vec; s: Vec; t2: Vec; r2: Vec; s2: Vec }, w: number) {
 	// w is the old pose's share.
 	for (let k = 0; k < 3; k++) {
 		s.t[k] = s.t[k] * (1 - w) + s.t2[k] * w;

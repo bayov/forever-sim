@@ -28,7 +28,23 @@ function scaled(img: Image, w: number, h: number): Uint8ClampedArray {
 
 // compose paints the layers. The blend modes are ChrModelTextureLayer's: 0 and 1 copy the
 // layer, 4 multiplies, 6 overlays, 7 screens, and the rest blend by the layer's alpha.
-export async function compose(c: Composite): Promise<THREE.Texture> {
+//
+// Units that look alike (the raid in your gear) ask for the same picture, so they share one
+// texture. Then the crowd (crowd.ts) can draw their parts together.
+const composed = new Map<string, Promise<THREE.Texture>>();
+
+export function compose(c: Composite): Promise<THREE.Texture> {
+	const key = JSON.stringify(c);
+	let p = composed.get(key);
+	if (!p) {
+		p = paint(c);
+		composed.set(key, p);
+		p.catch(() => composed.delete(key));
+	}
+	return p;
+}
+
+async function paint(c: Composite): Promise<THREE.Texture> {
 	const out = new Uint8ClampedArray(c.width * c.height * 4);
 	// The client starts from mid grey where nothing paints.
 	for (let i = 0; i < out.length; i += 4) {
@@ -90,5 +106,10 @@ export async function compose(c: Composite): Promise<THREE.Texture> {
 	t.generateMipmaps = true;
 	t.anisotropy = 4;
 	t.needsUpdate = true;
+	// Once the texture is on the GPU we let go of our copy. Each unit's skin and armor makes its
+	// own, so in a raid of 40 they were over half a gigabyte of the page's memory.
+	t.onUpdate = () => {
+		(t.image as { data: Uint8ClampedArray | null }).data = null;
+	};
 	return t;
 }

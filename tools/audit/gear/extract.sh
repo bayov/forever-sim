@@ -7,7 +7,7 @@
 set -euo pipefail
 ref=$1; out=$2; cd "${AUDIT_TREE:-.}"
 rm -rf "$out"; mkdir -p "$out"
-for c in warrior paladin hunter rogue priest mage warlock druid shaman; do
+for c in warrior paladin hunter rogue priest mage warlock druid shaman shaman_restoration; do
   git show "$ref:tools/database/forever_synthetic_items_$c.go" > "$out/$c.go" 2>/dev/null || rm -f "$out/$c.go"
 done
 git show "$ref:tools/database/forever_synthetic_items.go" > "$out/shaman_enh.go"

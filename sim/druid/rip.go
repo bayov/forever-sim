@@ -47,10 +47,13 @@ func (druid *Druid) newRipSpellConfig(ripRank RipRankInfo) core.SpellConfig {
 	// The combo points the Rip went up with, per target.
 	comboPoints := map[int32]float64{}
 	// AP scaling is 6% per combo point from 1 to 4, and 24% again for 5
+	// The November 2 development notes raise the base points and the attack power part by about
+	// 25% (tuning_70753.go).
+	scale := core.TernaryFloat64(druid.Env.IsForever(), nov2BleedScale, 1)
 	tickDamage := func(target *core.Unit, spell *core.Spell) float64 {
 		cp := comboPoints[target.UnitIndex]
 		cpScaling := core.TernaryFloat64(cp == 5, 4, cp)
-		return ripRank.dmgTickBase + ripRank.dmgTickPerCombo*cp + 0.01*cpScaling*spell.MeleeAttackPower(target)
+		return scale * (ripRank.dmgTickBase + ripRank.dmgTickPerCombo*cp + 0.01*cpScaling*spell.MeleeAttackPower(target))
 	}
 
 	return core.SpellConfig{
