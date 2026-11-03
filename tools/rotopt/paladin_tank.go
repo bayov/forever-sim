@@ -44,8 +44,8 @@ func (paladinTank) Knobs() []Knob {
 		{Name: "consecrationMana", Default: 60, Min: 0, Max: 100, Step: 20},
 		{Name: "consecrationFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Templar's Bulwark on cooldown from bulwarkAt seconds into the fight (a timer, no health
-		// read): -1 never.
-		{Name: "bulwarkAt", Default: -1, Min: -1, Max: 59, Step: 15},
+		// read): below 0 never.
+		{Name: "bulwarkAt", Default: 10, Min: -10, Max: 60, Step: 10},
 	}
 }
 

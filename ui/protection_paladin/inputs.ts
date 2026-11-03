@@ -39,6 +39,11 @@ export const RighteousFuryToggle = InputHelpers.makeSpecOptionsBooleanIconInput<
 export const PrimarySealSelection = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecProtectionPaladin, PaladinSeal>({
 	fieldName: 'primarySeal',
 	values: [
+		// Seal of Fury, Forever's tanking seal (sim/paladin/seal_of_fury.go).
+		{
+			actionId: () => ActionId.fromSpellId(20423),
+			value: PaladinSeal.Fury,
+		},
 		{
 			actionId: () => ActionId.fromSpellId(20293),
 			value: PaladinSeal.Righteousness,

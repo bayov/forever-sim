@@ -2,6 +2,7 @@ package protection
 
 import (
 	"math"
+	"os"
 	"testing"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/core/stats"
+	"google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -499,5 +501,63 @@ func TestBlessingOfSanctuaryGone(t *testing.T) {
 	_, pal := protSim(t, "", &proto.PaladinOptions{PrimarySeal: proto.PaladinSeal_Fury, RighteousFury: true, PersonalBlessing: proto.Blessings_BlessingOfSanctuary})
 	if pal.GetAura("Blessing of Sanctuary Trigger") != nil {
 		t.Errorf("Blessing of Sanctuary under Forever")
+	}
+}
+
+// TestForeverProtTankScore runs the tank bench's Balanced request (the synthetic set, Seal of Fury,
+// the paladin_tank rotation) as a scored tank: the replay agrees with the run, and the rotation keeps
+// Holy Shield up, casts Seal of Fury's hits and Judgement of Fury, and Templar's Bulwark on its timer.
+func TestForeverProtTankScore(t *testing.T) {
+	data, err := os.ReadFile("../../../tools/tankbench/req/paladin_protection_balanced.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	rsr := &proto.RaidSimRequest{}
+	if err := protojson.Unmarshal(data, rsr); err != nil {
+		t.Fatal(err)
+	}
+	const iterations, seconds, hps = 300, 120, 500
+	rsr.Raid.Tanks = []*proto.UnitReference{{Type: proto.UnitReference_Player, Index: 0}}
+	rsr.Encounter.Duration, rsr.Encounter.DurationVariation = seconds, 0
+	rsr.SimOptions.Iterations = iterations
+	player := rsr.Raid.Parties[0].Players[0]
+	player.HealingModel = &proto.HealingModel{Hps: hps, CadenceSeconds: 2, CadenceVariation: 1}
+	player.TankScoring = &proto.TankScoring{}
+	res := core.RunRaidSimConcurrent(rsr)
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	m := res.RaidMetrics.Parties[0].Players[0]
+	over := 0
+	for _, h := range m.TankScore.GetSurviveHps() {
+		if h > hps {
+			over++
+		}
+	}
+	near(t, "the run's deaths against the replay's", m.ChanceOfDeath, float64(over)/iterations, 1e-9)
+
+	casts := map[int32]float64{}
+	for _, a := range m.Actions {
+		if id := a.Id.GetSpellId(); id != 0 {
+			for _, tgt := range a.Targets {
+				casts[id] += float64(tgt.Casts) / iterations
+			}
+		}
+	}
+	// Holy Shield every 10 sec, Holy Strike every 6, Judgement every 8, Bulwark once in 2 min.
+	for _, c := range []struct {
+		name     string
+		id       int32
+		min, max float64
+	}{
+		{"Holy Shield rank 4", 1239570, 10, 13},
+		{"Holy Strike", 10333, 16, 21},
+		{"Judgement of Fury", 20414, 12, 17},
+		{"Templar's Bulwark", 1311015, 1, 1},
+		{"Seal of Fury's hits", 20418, 40, 200},
+	} {
+		if got := casts[c.id]; got < c.min || got > c.max {
+			t.Errorf("%s: %.1f casts a fight, want %.0f to %.0f", c.name, got, c.min, c.max)
+		}
 	}
 }

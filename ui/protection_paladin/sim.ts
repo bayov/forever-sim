@@ -159,7 +159,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 	playerIconInputs: [
 		ProtectionPaladinInputs.PrimarySealSelection,
 		ProtectionPaladinInputs.RighteousFuryToggle,
-		ProtectionPaladinInputs.BlessingSelection,
+		// Blessing of Sanctuary is gone under Forever (no client row), so its input is left out.
 		ProtectionPaladinInputs.AuraSelection,
 	],
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
