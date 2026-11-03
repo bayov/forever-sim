@@ -115,8 +115,9 @@ func TestForeverFinisherMissRefund(t *testing.T) {
 	}
 }
 
-// Forever's Instant Poison adds 0.5% of attack power a hit (wowsims/forever, "Confirmed by Zirene").
-// The same seed gives the same rolls, so 2000 more attack power adds 10 to every hit before the
+// Forever's Instant Poison adds 1% of attack power a hit (November 2 development notes, doubled from
+// wowsims/forever's 0.5%, "Confirmed by Zirene").
+// The same seed gives the same rolls, so 2000 more attack power adds 20 to every hit before the
 // multipliers, and half as much again on a crit.
 func TestForeverInstantPoisonAttackPower(t *testing.T) {
 	const casts = 500
@@ -131,7 +132,7 @@ func TestForeverInstantPoisonAttackPower(t *testing.T) {
 	base, _ := damage(0)
 	more, poison := damage(2000)
 	metrics := poison.SpellMetrics[poison.Unit.CurrentTarget.UnitIndex]
-	want := 0.005 * 2000 * poison.DamageMultiplier * (float64(metrics.Hits) + 1.5*float64(metrics.Crits))
+	want := 0.01 * 2000 * poison.DamageMultiplier * (float64(metrics.Hits) + 1.5*float64(metrics.Crits))
 	if got := more - base; math.Abs(got-want) > 0.01*want {
 		t.Errorf("2000 attack power added %.1f Instant Poison damage over %d casts, want %.1f", got, casts, want)
 	}
@@ -171,7 +172,7 @@ func TestForeverEviscerateAttackPower(t *testing.T) {
 
 // The Subtlety preset's talents (tools/dps_report/req/rogue__subtlety.json), with Hemorrhage and
 // Serrated Blades.
-const subtletyPresetTalents = "0053031035140004--3021203310113011"
+const subtletyPresetTalents = "00530320201-31-005021331321021151"
 
 // Under Forever Rupture's ticks read attack power, the damage modifiers and Hemorrhage when they
 // land, and keep only the combo points from the cast (wowsims/forever 36cfc58328, "Periodic damage
@@ -240,24 +241,25 @@ func TestForeverGarroteTicksOnLiveStats(t *testing.T) {
 	}
 }
 
-// Under Forever Ambush needs the rogue behind the target, from Stealth and through Cutthroat alike
-// (wowsims/forever ambush.go).
+// Under Forever Ambush needs the rogue behind the target, from Stealth and through Ghostly Strike's
+// opening alike (wowsims/forever ambush.go).
 func TestForeverAmbushFromBehind(t *testing.T) {
-	sim, rogue := newForeverRogueSim(t, "--302120331011301105", 18805, 18805, 1) // 5 points of Cutthroat
-	if rogue.CutthroatAura == nil {
-		t.Fatal("the talents give no Cutthroat")
+	sim, rogue := newForeverRogueSim(t, subtletyPresetTalents, 18805, 18805, 1)
+	if rogue.GhostlyStrikeOpenerAura == nil {
+		t.Fatal("the talents give no Ghostly Strike")
 	}
 	target := rogue.CurrentTarget
-	rogue.CutthroatAura.Activate(sim)
+	rogue.GhostlyStrikeOpenerAura.Activate(sim)
 	rogue.AddEnergy(sim, 100, rogue.EnergyRefundMetrics)
 	for _, inFront := range []bool{false, true} {
 		rogue.PseudoStats.InFrontOfTarget = inFront
 		if got := rogue.Ambush.CanCast(sim, target); got == inFront {
-			t.Errorf("Ambush through Cutthroat with the rogue in front %v: castable %v", inFront, got)
+			t.Errorf("Ambush through Ghostly Strike with the rogue in front %v: castable %v", inFront, got)
 		}
 	}
-	rogue.CutthroatAura.Deactivate(sim)
+	rogue.GhostlyStrikeOpenerAura.Deactivate(sim)
 	rogue.StealthAura.Activate(sim)
+	rogue.PseudoStats.InFrontOfTarget = true
 	if rogue.Ambush.CanCast(sim, target) {
 		t.Error("Ambush from Stealth in front of the target is castable")
 	}

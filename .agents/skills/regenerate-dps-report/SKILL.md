@@ -30,18 +30,22 @@ cores, or sharded over remote sessions. Work on a branch, never directly on `mas
 node tools/dps_report/stale.mjs
 ```
 
-It compares each build's inputs (git tree hashes of the shared sim inputs, `sim/<class>/`, the class's `ui/<spec>/`
-folders, and the build's own request and assumption rotations) with `ui/dps_report/provenance.json`, the record of when
-its data was last made, and lists new requests (a preset not in the report yet) and removed presets. Then:
+It compares each build's inputs (the sim's packages and protos, the step scripts, `sim/<class>/`, the item database
+entries the build wears, and the build's own request, meta and assumption rotations; README "Partial regenerations")
+with `ui/dps_report/provenance.json`, the record of when its data was last made, and lists new requests (a preset not in
+the report yet) and removed presets. A stale build *may* have moved; the probe says whether it did. Then:
 
 - **Default (incremental):** re-sim only the stale builds it lists. Never re-sim every build for a change that touches
   only some: each build's raw outputs are kept in `tools/dps_report/raw/<id>.tgz`, so the others don't need it.
 - **The user names classes or builds:** re-sim those, plus anything stale if they agree.
-- **A shared sim input changed** (`sim/core`, encounters, the item database, the local patches): every build is stale;
-  re-sim all of them.
+- **Many builds stale** (a game update, a `sim/core` or proto change): probe first. `pipeline.sh hydrate`, then
+  `pipeline.sh probe` re-runs each stale build's sims at a tenth of their iterations and compares them with the probe in
+  its raw pack (README "Probes"). Re-sim only what it says moved, plus the audit builds it picks, and publish those ids:
+  publish checks the audit and records the cleared builds (`--by probe`). If the audit fails, re-sim every cleared build.
 - **Text, tooltips or `build_data.py` only:** no sims.
-- **A false positive** (an input changed that can't feed the build, like a test-only commit or a comment): re-record it
-  (`stale.mjs --record <ids>`) instead of re-simming, and give the reason in the commit message.
+- **A false positive** the probe can't run on (no binaries at hand) and that plainly can't feed the build: re-record it
+  (`stale.mjs --record <ids> --by hand`) instead of re-simming, and give the reason in the commit message. Prefer the
+  probe: it checks instead of arguing.
 
 Tell the user the scope in one line before starting long runs.
 
@@ -59,7 +63,10 @@ The pipeline is `tools/dps_report/README.md`: build the merged tree (master plus
   as above with its id.
 - **Remove a preset:** delete `req/<id>.*` and its variants' requests, `pipeline.sh hydrate`, `pipeline.sh publish`.
 - **No sims:** `pipeline.sh hydrate`, `pipeline.sh publish`.
-- **Every build:** `pipeline.sh run`, then `pipeline.sh publish`, with no hydrate. It takes about 95 min on 4 cores; for
+- **After a probe:** `pipeline.sh run <the ids it names>` (they include the audit builds), then `pipeline.sh publish
+  <the same ids>`. Run the probe with the binaries the run will use, after the requests are regenerated.
+- **Every build:** only when the packs have no probes or an audit failed: `pipeline.sh run`, then `pipeline.sh publish`,
+  with no hydrate. It takes about 95 min on 4 cores; for
   more than one class's worth, fan out instead of running it here: one remote session per shard (`pipeline.sh shard <k>
   <n> <ids>` balances them by cost), each on the same master commit with `patches/` applied and the binaries built,
   running `pipeline.sh run <its ids>` in an empty `$DASH_DIR` and `pipeline.sh pack shard<k>.tgz <its ids>`, and pushing

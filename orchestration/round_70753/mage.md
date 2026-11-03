@@ -16,11 +16,15 @@ Status: landed on master (Phase A and B), 2026-11-03.
 
 Everything else in the notes' Mage section was in the sim already, from the 10-27 to 10-31 hotfixes and client 70707; the ledger below gives each line.
 
+### Follow-up: exploratory search (2026-11-03, after landing)
+
+Talent searches seeded from nine archetypes (Arcane + Fire with a Fireball filler, Arcane + Frost, deep Arcane, Frost + Arcane Blast with the spare-mana knobs, deep Frost, deep Fire, Fire + Arcane Blast stacks, Frostfire + an Arcane splash, and the current Arcane), and two new knobs (`blastClearcast`, Arcane Blast on Clearcasting; `blastFiller` for Frost too). Landed: Arcane with Arcane Blast on Clearcasting and Fireball as the filler, talents `050205203100311531-5551-003`, 986.1 / 962.3 / 944.5 as a Gnome (+4.5 / +8.3 / +7.5 on two seed sets; finisher pad 0.85 sec, Fireball's flight from 20 yd). Gnome stays best (962.4), Undead best Horde (960.2); the High Order override was regenerated (+4.9 / +5.2). Rejected: deep Frost (+2.5 at 120 and 180, -45 at 300, out of mana); every other seed returned to its preset or below it.
+
 ### Per build (20,000 iterations, seed 1, the report requests at 120 / 180 / 300 s with ±20 s)
 
 | Build | Race | Talents | Old | New |
 |---|---|---|---|---|
-| Arcane | Gnome | `050205203100311531-55-0531` (was `050205203100211531-25-0535`) | 944.9 / 937.5 / 930.6 | 981.3 / 953.9 / 936.8 |
+| Arcane | Gnome | `050205203100311531-5551-003` (was `050205203100211531-25-0535`) | 944.9 / 937.5 / 930.6 | 986.1 / 962.3 / 944.5 (981.3 / 953.9 / 936.8 before the follow-up) |
 | Fire | Human | `0502052-55500201230133031-003` (unchanged) | 1065.4 / 1057.1 / 1040.4 | 1066.8 / 1057.9 / 1042.0 |
 | Frost | High Order | `0502050030001-4-253500230111301211` (unchanged) | 944.5 / 944.7 / 937.7 | unchanged |
 | Frostfire (default) | Human | `-2550030103013303-0235000311203002` (unchanged) | 1052.4 / 1064.3 / 1041.8 | unchanged |

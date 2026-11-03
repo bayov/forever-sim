@@ -307,3 +307,34 @@ func iceLanceAfterBolt(k Knobs, bolt, iceLance *proto.ActionID) []*proto.APLList
 	}
 	return []*proto.APLListItem{cast(iceLance, known(fingersOfFrost, and(charges, spellInFlight(bolt))), "Ice Lance as the bolt completes: the Fingers of Frost charge is spent a spell batch late, so both read the target as Frozen.")}
 }
+
+// blastSpendKnobs are the two ways to put spare mana into Arcane Blast, for builds with the talent.
+func blastSpendKnobs() []Knob {
+	return []Knob{
+		// Arcane Blast ahead of the filler while the mana is more than this much a second of the
+		// fight left (mana the fight can't otherwise spend), 0 never.
+		{Name: "blastFiller", Default: 0, Min: 0, Max: 150, Step: 25},
+		// Arcane Blast on Clearcasting: the free cast goes on the spell whose cost the stacks
+		// multiply.
+		{Name: "blastClearcast", Default: 0, Min: 0, Max: 1, Step: 1},
+	}
+}
+
+// blastClearcastLines cast Arcane Blast while Clearcasting is up (blastClearcast).
+func blastClearcastLines(k Knobs, s mageSpells) []*proto.APLListItem {
+	if k["blastClearcast"] != 1 {
+		return nil
+	}
+	return []*proto.APLListItem{cast(s.arcaneBlast, and(auraIsKnown(arcaneBlastAura), known(mageClearcasting, auraIsActive(mageClearcasting)), gt(remainingTime(), seconds(2))),
+		"Arcane Blast on Clearcasting: the free cast goes where the stacks make the cost highest.")}
+}
+
+// blastFillerLines cast Arcane Blast ahead of the filler with mana the fight can't otherwise spend
+// (blastFiller).
+func blastFillerLines(k Knobs, s mageSpells) []*proto.APLListItem {
+	if k["blastFiller"] <= 0 {
+		return nil
+	}
+	return []*proto.APLListItem{cast(s.arcaneBlast, and(auraIsKnown(arcaneBlastAura), gt(currentMana(), mul(remainingTime(), num(k["blastFiller"])))),
+		"Arcane Blast ahead of the filler with mana the fight can't otherwise spend.")}
+}

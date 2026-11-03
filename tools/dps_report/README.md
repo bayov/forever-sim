@@ -35,6 +35,8 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `patches/` | Local-only sim patches for the merged tree (see below) | yes |
 | `raw/<id>.tgz` | Each build's raw sim outputs (about 2 MB for all), written by `rawstore.py pack` (see "Partial regenerations") | yes |
 | `rawstore.py` | Packs, unpacks, cleans and checks the raw outputs, and copies the datasets into the report | yes |
+| `probe.py`, `probe_cli.py` | The probe: every step's sims at a tenth of their iterations, fingerprinted, to tell which stale builds really moved (see "Probes") | yes |
+| `probe/`, `probe_check/`, `probe_audit.json` | Probes of this run, of the last check, and the check's verdict (what publish records) | no |
 | `changes.py`, `changes/` | The Changes tab: the updates, their public change lines and the results at each update's end (see "Changes tab") | yes |
 | `dashstats/main.go` | The `dashstats` helper. Copy it to `tools/dashstats/` in the merged tree, or let patch 0001 add it. | yes |
 | `rd/` | Headless check harness (Playwright) | scripts only |
@@ -265,11 +267,15 @@ another request, race override or assumption rotation than the current one.
 | Remove a preset | delete `req/<id>.*` (and its duty and encounter variants), `pipeline.sh hydrate`, `pipeline.sh publish` |
 | Text, tooltips, `build_data.py` or page data only | `pipeline.sh hydrate`, `pipeline.sh publish` (no sims) |
 | New assumption combos | `pipeline.sh hydrate`, `python3 tools/dps_report/run_assumptions.py <ids>` (skips combos done), `pipeline.sh publish` |
-| A shared sim input changed (`sim/core`, the DB, the patches): every build stale | `pipeline.sh run`, `pipeline.sh publish` (no hydrate) |
+| A shared sim input changed (`sim/core`, the protos, a game update): many builds stale | `pipeline.sh hydrate`, `pipeline.sh probe`, `pipeline.sh run <what it names>`, `pipeline.sh publish <the same ids>` (see "Probes") |
+| Every build, no probe (packs without probes, or a probe audit failed) | `pipeline.sh run`, `pipeline.sh publish` (no hydrate) |
 
-- `node tools/dps_report/stale.mjs` gives the scope. It hashes the shared inputs, the class's `sim/` and `ui/` folders, and
-  each build's request, race overrides (`req/races/`, its base build's too) and assumption rotations, and lists new
-  requests and removed presets.
+- `node tools/dps_report/stale.mjs` gives the scope: which builds *may* have moved. It hashes the shared inputs (the sim's
+  packages, the protos the sim compiles, the CLI and `go.mod`, the patches, `dashstats` and the step scripts), the class's
+  `sim/<class>/`, the item database entries the build wears, and each build's request, the sim fields of its meta, its
+  base build's request, race overrides (`req/races/`, its base build's too) and assumption rotations. Test files,
+  goldens, testdata and docs are left out, and so are `tools/rotopt` and `ui/<spec>` (they make requests, which are
+  hashed themselves). It lists new requests and removed presets too.
 - `hydrate [ids]` empties `$DASH_DIR`'s outputs, unpacks every pack, runs `build_data.py` and compares the sim numbers
   (`builds`, `races`, `lengths`, `hist`, `weights`, `mana`, `mana_summary`, `race_variants`, `assumption_dps`) with the
   published datasets. A build outside `[ids]` whose numbers differ stops it: re-sim it too, or find why the pack and the
@@ -291,6 +297,40 @@ another request, race override or assumption rotation than the current one.
 - **New ids to show** (new items, spells or talents): `whids.py`, then `whcache.py fortt_ids.json`, then publish.
 - **Talent links**: each rank links to the Forever client's rank 1 spell on Forever's wowhead, because Forever keeps only that one (`talent_links.py`). Forever's wowhead adds spells over time, so `python3 talent_links.py ids`, then `python3 whcache.py --retry talent_ids.json` asks it again for what it didn't know. `python3 talent_links.py refresh` then rewrites the links in the shipped `talenttrees.json` without a full `build_data.py` run.
 - `merge.mjs` (merge a partial `data/` folder into the report) is for hand repairs only now.
+
+## Probes
+
+A game update or a `sim/core` change flags most builds, though most come out the same. `pipeline.sh probe` (`probe.py
+check`) finds the ones that don't, in about a tenth of a full run:
+
+- It runs every step of the pipeline for each stale build in a scratch folder, with `probe_cli.py` standing in for the
+  binaries. Every sim runs at a tenth of its iterations (one-fight runs, replays and runs of 50 fights or fewer as
+  asked; the mana step logs 10 fights), and the probe keeps a fingerprint of each sim's whole result (lists sorted,
+  empty fields dropped) keyed by the request the script asked for, plus a fingerprint of every output the steps write.
+- The sim reseeds every fight, so unchanged code and data give the same fingerprints. `pipeline.sh run` ends by probing
+  the builds it simmed (`probe.py run`), and the packs keep that probe (`probe.json`). A check compares the new probe
+  with the pack's: the same means the full sims would come out the same; anything else names the step that moved.
+- A change only one fight in thousands reaches can hide from a probe. So a check picks up to 3 of the builds it cleared
+  for a full re-sim anyway (the audit; `PROBE_AUDIT`), and `publish` first checks that their new outputs equal their old
+  packs exactly. If one doesn't, it stops: re-sim every cleared build. Otherwise it records the cleared builds as current
+  (`stale.mjs --record <ids> --by probe`), and their packs and data stay as they are.
+- A pack without a probe (simmed before probes were kept) or from another split count, scale or architecture is re-simmed.
+
+```bash
+pipeline.sh hydrate
+pipeline.sh probe                       # prints what moved and the audit; writes $DASH_DIR/probe_audit.json
+pipeline.sh run <what moved> <audit>    # ends by probing them, for the packs
+pipeline.sh publish <the same ids>      # checks the audit, records the cleared builds --by probe, packs the re-simmed
+```
+
+On 4 cores a probe of all 74 builds takes about 16 min (about 5,700 sims, most of them short, so process start-up is
+much of it), against about 100 for a full run; `pipeline.sh run` spends the same share probing what it simmed. The probe
+needs the same binaries a run uses (`$DASH_BIN`).
+
+Checked on master's history (2026-11-03): from 251f112e1 to the hunter round's merge, `sim/testdata/report_hashes.txt`
+moved 61 builds and left the 13 warlock builds alone. The probe cleared exactly those 13, and full re-sims of two of them
+(and the variants `run` adds) on both binaries gave identical raw packs. On the moved builds it also names the steps:
+the mage, Fury, Balance and Shadow builds moved in two `run_build` sims and the mana step only.
 
 ## Changes tab
 
