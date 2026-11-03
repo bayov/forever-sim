@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "a0b306984df7ec70b83298b08ecf9d0b365486ee"
+  "master": "9da90fcde1f85856feb331bd2298be1f7d720efa"
  },
  "last_pass_at": "2026-11-03T01:16:15Z",
  "pass": 60,
  "result": "findings",
  "note": "Pass 60: 796495d6f..a0b306984. Client 70753 is a hotfix bake: shared rows (LotP/Moonkin 290, Winter's Chill 20, racials per post 7/8) all match the sim. New: Read Leyline 0.5 sec cast (mechanics-20261103-1, low). Ice Lance category 19 on all ranks confirmed. Dev notes 8 posts unchanged. 70707 hotfix-vs-70753 diff not finished (fetch too slow).",
  "client_build": "1.60.1.70753",
- "checked_at": "2026-11-03T01:16:35Z",
+ "checked_at": "2026-11-03T06:44:50Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
