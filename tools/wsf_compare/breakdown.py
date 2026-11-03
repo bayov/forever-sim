@@ -22,9 +22,10 @@ def load(path):
             i = a['id']
             key = (who, i.get('spellId') or i.get('itemId') or i.get('otherId'), i.get('tag', 0))
             agg = rows.setdefault(key, [0.0] * 6)
-            for t in a['targets'][:1]:
+            for k_, t in enumerate(a['targets']):
                 for j, f in enumerate(('damage', 'casts', 'hits', 'crits', 'misses', 'dodges')):
-                    agg[j] += t.get(f, 0)
+                    # Theirs files a cast on the caster (a potion) under the caster's own target, after the boss.
+                    if k_ == 0 or f == 'casts': agg[j] += t.get(f, 0)
     add(pl, 'player')
     for pet in pl.get('pets', []):
         add(pet, 'pet:' + pet.get('name', '?'))
