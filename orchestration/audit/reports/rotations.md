@@ -1,38 +1,58 @@
-# Rotations pass 48 (quiet: no findings)
+# Rotations pass 50 (no findings)
 
-- Master: a0b306984 (from 796495d6f), audited 2026-11-03. Client 1.60.1.70707, unchanged.
-- New baseline: `ref/rotations/baseline_a0b3069_3000it_seed424242.tsv` (replaces `baseline_796495d_...`).
+- Master: f23ea25d2 (from f5c99ad01), audited 2026-11-03. Client 1.60.1.70753, unchanged.
+- Not quiet by the diff rule: 4 Level 60 APLs changed in logic. No non-test sim `.go` changed (only
+  `sim/compsearch/pool.go`, a preset name in the left-out list, and `dps_warlock_test.go`), so the
+  regression baseline stays `ref/rotations/baseline_f5c99ad_3000it_seed424242.tsv`; `regress.py` not run.
 
-## What changed
+## What changed (`apl_logic_diff.py f5c99ad01 f23ea25d2`)
 
-| Change | Effect on Level 60 rotations |
+| Commit | Change |
 |---|---|
-| Mage: Ice Lance shares Fire Blast's category 19 cooldown; Fingers of Frost buff id 400670 -> 400669 in sim and the Frost/Frostfire APLs (d7541708d) | Frostfire -10.9 in baseline (published re-sim 1076.0 -> 1064.3). Frost unchanged (id rename only). Frostfire re-checked below: its order still wins |
-| Warlock Bane of Doom hold, doomAlign 1 s (58a1c3593), all 12 warlock APLs | Spot-check, Affliction, old Doom line vs new, paired 20k, s0 1e6: +0.83 / +2.07 / +1.83 ±0.2 at 120/180/300 s. Matches the commit's +0.9 / +2.2 / +2.0 |
-| Warrior Blood Craze (407f959a5) | A self-heal; no DPS effect on the DPS presets (no warrior row moved) |
-| Restoration shaman healer APLs (raid_healer, tank_healer), sim/shaman/restoration | Healing sim only; not a Level 60 DPS preset |
-| sim/core apl.go / apl_values_spell.go (healer values), raid_damage.go (Share, tank-only raids), tank_score.go, practice | No DPS preset moved more than 0.5 DPS except the mage/warlock rows above |
+| 734fe0e93 | Warlock Affliction becomes the Wrack build with the Imp sacrificed (Undead, `sacrificedPet: Imp`). `level60_affliction` and both duty-curse APLs gain Siphon Life (18881) and Wrack (1316697) lines; the new `level60_affliction.apl.json` is line for line the old `level60_affliction_wrack` APL audited in pass 49. The old Shadow Bolt rotation lives on as `level60_affliction_shadow_bolt` (logic unchanged; the diff shows it as new because of the rename). |
+| 203b686f6 | Enhancement `optimized`: Earth Shock (10414) waits up to 1 s for the Stormstrike mark (user's call). |
 
-## Checks
+Shared run (20k, seed 1): Affliction 1034.1, duty-curse 1025.1, duty-recklessness 1019.9, Shadow Bolt
+Affliction 1015.6. Per iteration on Affliction: Wrack 23, Immolate 9.5, Corruption 8.7, Siphon Life 5.7,
+Shadow Bolt 2.3, Life Tap ~0 (mana is not the limit, as pass 49 noted).
 
-- `apl_logic_diff.py 796495d6f a0b306984`: 16 files. Mage Frost/Frostfire FoF id swap (correct: 400669 is the buff the
-  sim now registers, `sim/mage/talents.go:803`), the 12 warlock Doom lines, the two new resto healer APLs. No dead lines
-  or wrong ids spotted.
-- Baseline diff vs `baseline_796495d`: only Frostfire (-10.9) and the five warlock rows (+1.2 to +3.2) moved more than 0.5.
-- Shared run vs published report: 0 of 73 moved more than 0.5 DPS (the re-sims already published).
-- Open findings: none.
+## A/B screens (paired, 20k as 8 x 2,500, B-A at 120 / 180 / 300 s, `ab.py`, shared CLI f23ea25d20fc)
 
-### Frostfire after the shared cooldown (paired 20k, B-A at 120 / 180 / 300 s; baseline A about 1065 at 180 s)
+Warlock Affliction (`warlock__affliction`, base 1034.4 at 180 s), seed set 1e6:
 
-| Variant | s0 1e6 | s0 2e8 | Verdict |
+| Variant | 120 | 180 | 300 |
 |---|---|---|---|
-| Drop the Fingers of Frost Ice Lance line | -27.9 / -69.7 / -64.2 | -28.2 / -70.2 / -63.9 | loses |
-| Fire Blast lines above the FoF Ice Lance | -25.1 / -11.3 / -12.3 | -26.1 / -12.6 / -12.5 | loses |
-| Drop Fire Blast (both lines) | -4.9 / +1.0 / -5.6 | -5.4 / +0.4 / -6.0 | fight-length trade-off, loses |
+| Corruption refreshed below 6 s (so it doesn't lapse under the 6 s Wrack channel) | -5.5 | -6.0 | -12.1 |
+| Corruption and Siphon Life refreshed below 6 s | -12.0 | -12.8 | -22.4 |
+| Corruption refreshed below 3 s | -2.4 | -2.4 | -5.6 |
+| Wrack above Immolate | -12.6 | -13.5 | -8.2 |
+| Immolate dropped | -12.6 | -13.6 | -8.2 |
 
-The current Frostfire order holds under the shared cooldown.
+All lose clearly on one set; no second set needed. A Shadow Trance (Nightfall) Shadow Bolt line is moot:
+the build has no Nightfall, so the aura doesn't exist (the line ran unconditionally in the test, -190).
 
-## Optional (under the bar)
+Enhancement Earth Shock hold, B = old unconditional Earth Shock, B-A:
 
-Carried over, not re-measured: Mutilate window 0.5 s (probably moot), Fury-BS HS 55, hunter end-of-fight gates, Shadow
-Mind Blast time-left gate, Destruction Fire DoT gates, Water Shield Magma gate.
+| Preset | s0 | 120 | 180 | 300 |
+|---|---|---|---|---|
+| imp-gw | 1e6 | -0.10 ±0.37 | -0.40 ±0.20 | -0.82 ±0.18 |
+| imp-gw | 2e8 | +0.18 ±0.20 | -0.18 ±0.18 | -0.52 ±0.28 |
+| level60 | 1e6 | +0.07 ±0.21 | +0.18 ±0.27 | -0.56 ±0.20 |
+| level60 | 2e8 | +0.20 ±0.20 | -0.13 ±0.20 | -0.45 ±0.34 |
+
+The hold is neutral to +0.5 for the new rotation, matching the commit ("a wash on Level 60, about +0.4 on Imp GW").
+
+## Conclusions
+
+- The Wrack rotation holds against refresh-early and Immolate variants. Nothing to file.
+- The Enhancement change landed as described and doesn't lose. Nothing to file.
+
+## Optional
+
+None.
+
+## Left for a later pass
+
+- Wrack duty-curse and duty-recklessness variants weren't screened separately. They share the base lines,
+  so the base results should carry over.
+- The open items in `passes/rotations.md` are unchanged.

@@ -168,3 +168,16 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-03 01:10 | mechanics | pass 60 | master a0b306984d | 1 new finding | Read Leyline cast is 0.5s on 70753, sim has 2s (low)
 2026-11-03 01:10 | fairness | pass 24 | master a0b306984d | quiet | 73 builds within 0.5 DPS; top/bottom 1.49x
 2026-11-03 01:10 | client_update | pass 7 | master a0b306984d | 1 new finding | Poised (rogue/druid energy) missing from sim (low)
+2026-11-03 18:29 | results | pass 73 | master f5c99ad018 | 2 new findings | round 70753 phase 3 (forced): 68 shared sims match the class round files; Subtlety meta race "Night Elf"; hunter notes-only shares ungated (low)
+2026-11-03 18:29 | rotations | pass 49 | master f5c99ad018 | quiet | round 70753 phase 3 (forced): 28 APLs reworked; dead lines, talent legality, duties, resources and paired probes clean
+2026-11-03 18:29 | gear | pass 53 | master f5c99ad018 | quiet | round 70753 phase 3 (forced): Restoration shaman set within budget; enchants file unchanged for presets
+2026-11-03 18:29 | consumables | pass 67 | master f5c99ad018 | quiet | round 70753 phase 3 (forced): Trueshot Aura notes values, potions can't crit; no preset consume changes
+2026-11-03 18:29 | mechanics | pass 61 | master f5c99ad018 | 1 new finding | round 70753 phase 3 (forced): notes' tank threat values (Bear 115%, Def Stance 80%, Defiance) not in the sim (low, 0 DPS)
+2026-11-03 18:29 | fairness | pass 25 | master f5c99ad018 | quiet | round 70753 phase 3 (forced): every move matches its round file; top/bottom 1.73x; race picks hold
+2026-11-03 18:29 | client_update | pass 8 | master f5c99ad018 | 1 new finding | round 70753 phase 3 (forced): no build after 70753; several notes-only values ungated under Forever (low, needs ruling)
+2026-11-03 19:03 | consumables | pass 68 | master f23ea25d2 | quiet | Warlock Affliction/Imp-sacrifice diff touches no consumes; client 70755 has no consumable changes
+2026-11-03 19:03 | mechanics | pass 62 | master f23ea25d2 | quiet | Imp sacrifice (Burning Shadow 15%) matches client; 70755 tables identical to 70753
+2026-11-03 19:03 | client_update | pass 9 | master f23ea25d2 | 1 new finding | build 70755 technical only; server hotfix push 113483 changes rogue talent tree (high), rest of push unverified
+2026-11-03 19:03 | results | pass 74 | master f23ea25d2 | quiet | all 68 requests within 0.15 of published except known stale shaman metas; results-20261103-1 resolved
+2026-11-03 19:03 | rotations | pass 50 | master f23ea25d2 | quiet | Wrack Affliction and Earth Shock wait hold; 5 warlock variants all lose 2-22 DPS
+2026-11-03 19:03 | fairness | pass 26 | master f23ea25d2 | quiet | every report race still best; Subtlety Night Elf fix confirmed

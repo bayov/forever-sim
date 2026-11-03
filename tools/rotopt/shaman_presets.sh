@@ -77,7 +77,11 @@ gen() {
 # Round 70753 (the November 2 notes): the bolt no longer waits for Earth Shock (earthShockBeforeBolt=0):
 # Level 60 +0.9 to +1.3 / +2.8 to +3.1 / +2.6 to +2.8 and Imp GW +0.8 to +2.6 / +2.6 to +4.2 / +2.7 to
 # +3.9 at 120 / 180 / 300 sec, paired at 20000 iterations on two seed sets.
-gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=0,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=0" -level 60
+# Round 70753 exploration: Earth Shock waits up to 1 sec for the Stormstrike mark again (earthShockHold=1),
+# shipped on the user's call though it is under the 1 DPS bar. Paired at 20000 iterations on seeds 1 / 1000003:
+# Level 60 +0.1 / -0.7, +0.2 / -0.7, 0.0 / 0.0 and Imp GW -0.4 / +0.2, +0.1 / +0.5, +0.6 / +1.3 at
+# 120 / 180 / 300 sec, a wash on Level 60 and about +0.4 on Imp GW.
+gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=1,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=0" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.

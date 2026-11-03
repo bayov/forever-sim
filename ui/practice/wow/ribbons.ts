@@ -15,7 +15,7 @@ import * as THREE from 'three';
 import { texture } from './files';
 import type { RibbonEmitter } from './m2';
 import type { Model } from './model';
-import { particleOptions } from './particles';
+import { addBatch, particleOptions } from './particles';
 
 // The most edges one ribbon keeps, whatever its rate and lifetime say.
 const maxEdges = 256;
@@ -45,15 +45,117 @@ void main() {
 	#include <colorspace_fragment>
 }`;
 
-class Ribbon {
+// The strip data a point needs, by attribute, with how many numbers each takes.
+const layout = [
+	['position', 3],
+	['uv', 2],
+	['color', 4],
+] as const;
+
+// A batch draws every ribbon that looks the same (the same texture and blend) in one draw call,
+// like the particles' batches (particles.ts). The ribbons fill their own points, and the batch
+// puts them together, with the triangles between each ribbon's points, before the frame draws.
+class Batch {
 	readonly mesh: THREE.Mesh;
-	private readonly anchor = new THREE.Object3D();
+	private readonly geometry = new THREE.BufferGeometry();
+	private attrs: THREE.BufferAttribute[] = [];
+	private index!: THREE.BufferAttribute;
+	private capacity = 0;
+	readonly members = new Set<Ribbon>();
+	// How many points the members have in all.
+	private total = 0;
+
+	constructor(world: THREE.Object3D, material: THREE.ShaderMaterial) {
+		this.grow(512);
+		this.geometry.setDrawRange(0, 0);
+		this.mesh = new THREE.Mesh(this.geometry, material);
+		this.mesh.frustumCulled = false;
+		this.mesh.renderOrder = 10;
+		this.mesh.visible = false;
+		addBatch(this);
+		world.add(this.mesh);
+	}
+
+	private grow(n: number) {
+		this.capacity = n;
+		this.attrs = layout.map(([name, size]) => {
+			const a = new THREE.BufferAttribute(new Float32Array(n * size), size);
+			a.setUsage(THREE.DynamicDrawUsage);
+			this.geometry.setAttribute(name, a);
+			return a;
+		});
+		// Each point after a ribbon's first closes a quad of two triangles.
+		this.index = new THREE.BufferAttribute(new Uint32Array(n * 3), 1);
+		this.index.setUsage(THREE.DynamicDrawUsage);
+		this.geometry.setIndex(this.index);
+	}
+
+	changed(was: number, now: number) {
+		this.total += now - was;
+		if (particleOptions.drawEmpty) this.mesh.visible = true;
+	}
+
+	leave(r: Ribbon) {
+		if (!this.members.delete(r)) return;
+		this.changed(r.count < 2 ? 0 : r.count * 2, 0);
+	}
+
+	fill() {
+		if (this.total > this.capacity) {
+			let n = this.capacity;
+			while (n < this.total) n *= 2;
+			this.grow(n);
+		}
+		const index = this.index.array as Uint32Array;
+		let at = 0;
+		let tris = 0;
+		for (const r of this.members) {
+			// n edges make 2n points.
+			const points = r.count * 2;
+			if (r.count < 2) continue;
+			for (let k = 0; k < layout.length; k++) {
+				const size = layout[k][1];
+				(this.attrs[k].array as Float32Array).set(r.data[k].subarray(0, points * size), at * size);
+			}
+			for (let i = 0; i < r.count - 1; i++) {
+				const a = at + i * 2;
+				index[tris++] = a;
+				index[tris++] = a + 1;
+				index[tris++] = a + 2;
+				index[tris++] = a + 1;
+				index[tris++] = a + 3;
+				index[tris++] = a + 2;
+			}
+			at += points;
+		}
+		this.geometry.setDrawRange(0, tris);
+		this.mesh.visible = tris > 0 || particleOptions.drawEmpty;
+		if (tris === 0) return;
+		for (const a of this.attrs) {
+			a.clearUpdateRanges();
+			a.addUpdateRange(0, at * a.itemSize);
+			a.needsUpdate = true;
+		}
+		this.index.clearUpdateRanges();
+		this.index.addUpdateRange(0, tris);
+		this.index.needsUpdate = true;
+	}
+}
+
+// The batches of each world (the scene), by how their ribbons look.
+const batches = new WeakMap<THREE.Object3D, Map<string, Batch>>();
+
+class Ribbon {
+	// Where the emitter is: it follows its bone.
+	private readonly anchor: THREE.Object3D;
 	private readonly edges: Edge[] = [];
 	private carry = 0;
-	private readonly geometry = new THREE.BufferGeometry();
-	private readonly pos: THREE.BufferAttribute;
-	private readonly uv: THREE.BufferAttribute;
-	private readonly color: THREE.BufferAttribute;
+	// The strip's points by attribute (layout), which the batch draws.
+	readonly data = layout.map(([, size]) => new Float32Array((maxEdges + 1) * 2 * size));
+	// How many edges the strip has now.
+	count = 0;
+	private batch?: Batch;
+	private disposed = false;
 	private readonly v = new Float64Array(3);
 	private readonly tint = new THREE.Color();
 	private readonly top = new THREE.Vector3();
@@ -66,28 +168,9 @@ class Ribbon {
 		readonly e: RibbonEmitter,
 		world: THREE.Object3D,
 	) {
-		const bone = model.bones[e.bone] ?? model.bones[0];
-		const pivot = model.m2.bones[e.bone]?.pivot ?? [0, 0, 0];
-		this.anchor.position.set(e.position[0] - pivot[0], e.position[1] - pivot[1], e.position[2] - pivot[2]);
-		bone.add(this.anchor);
+		this.anchor = model.socket(e.bone, e.position);
 
 		// Two vertices per edge, plus the head (where the ribbon is right now).
-		const verts = (maxEdges + 1) * 2;
-		this.pos = new THREE.BufferAttribute(new Float32Array(verts * 3), 3);
-		this.uv = new THREE.BufferAttribute(new Float32Array(verts * 2), 2);
-		this.color = new THREE.BufferAttribute(new Float32Array(verts * 4), 4);
-		for (const a of [this.pos, this.uv, this.color]) a.setUsage(THREE.DynamicDrawUsage);
-		const index: number[] = [];
-		for (let i = 0; i < maxEdges; i++) {
-			const a = i * 2;
-			index.push(a, a + 1, a + 2, a + 1, a + 3, a + 2);
-		}
-		this.geometry.setIndex(index);
-		this.geometry.setAttribute('position', this.pos);
-		this.geometry.setAttribute('uv', this.uv);
-		this.geometry.setAttribute('color', this.color);
-		this.geometry.setDrawRange(0, 0);
-
 		const material = new THREE.ShaderMaterial({
 			vertexShader,
 			fragmentShader,
@@ -128,23 +211,25 @@ class Ribbon {
 				custom(THREE.OneFactor, THREE.OneMinusSrcAlphaFactor);
 				break;
 		}
-		this.mesh = new THREE.Mesh(this.geometry, material);
-		this.mesh.frustumCulled = false;
-		this.mesh.renderOrder = 10;
-		world.add(this.mesh);
-
+		// The ribbon draws once its texture is there. A replaceable ribbon texture, which we don't
+		// have, never draws.
 		const tex = model.m2.textures[e.textures[0] ?? -1];
 		if (tex && tex.type === 0 && tex.fdid > 0) {
 			texture(tex.fdid, (tex.flags & 1) !== 0, (tex.flags & 2) !== 0)
 				.then(t => {
+					if (this.disposed) return;
 					material.uniforms.map.value = t;
+					const key = `${t.id}:${mat.blend}`;
+					let byKey = batches.get(world);
+					if (!byKey) batches.set(world, (byKey = new Map()));
+					let batch = byKey.get(key);
+					if (!batch) byKey.set(key, (batch = new Batch(world, material)));
+					else material.dispose();
+					batch.members.add(this);
+					this.batch = batch;
 				})
 				.catch(err => console.warn('ribbon texture', err));
-		} else {
-			// A replaceable ribbon texture, which we don't have: hide the ribbon.
-			this.hidden = true;
-			this.mesh.visible = false;
-		}
+		} else this.hidden = true;
 	}
 
 	private value(track: RibbonEmitter['heightAbove'], fallback: number): number {
@@ -208,39 +293,46 @@ class Ribbon {
 		const cellU = 1 / cols;
 		const cellV = 1 / rows;
 		let n = 0;
-		const put = (top: THREE.Vector3, bottom: THREE.Vector3, age: number, r: number, g: number, b: number, a: number) => {
-			const u = (Math.min(age, life) / life) * cellU;
-			const fade = a * (1 - age / life);
-			this.pos.setXYZ(n * 2, top.x, top.y, top.z);
-			this.pos.setXYZ(n * 2 + 1, bottom.x, bottom.y, bottom.z);
-			this.uv.setXY(n * 2, u, 0);
-			this.uv.setXY(n * 2 + 1, u, cellV);
-			this.color.setXYZW(n * 2, r, g, b, fade);
-			this.color.setXYZW(n * 2 + 1, r, g, b, fade);
-			n++;
-		};
-		if (shown) put(this.top, this.bottom, 0, this.tint.r, this.tint.g, this.tint.b, alpha);
+		if (shown) n = this.put(n, this.top, this.bottom, 0, life, cellU, cellV, this.tint.r, this.tint.g, this.tint.b, alpha);
 		for (const edge of this.edges) {
 			if (n > maxEdges) break;
-			put(edge.top, edge.bottom, edge.age, edge.r, edge.g, edge.b, edge.a);
+			n = this.put(n, edge.top, edge.bottom, edge.age, life, cellU, cellV, edge.r, edge.g, edge.b, edge.a);
 		}
-		// n points make n - 1 quads of two triangles.
-		this.geometry.setDrawRange(0, Math.max(0, n - 1) * 6);
-		// An empty ribbon isn't drawn, and we send the GPU only the points in use.
-		this.mesh.visible = n > 1 || particleOptions.drawEmpty;
-		if (n > 0) {
-			for (const a of [this.pos, this.uv, this.color]) {
-				a.clearUpdateRanges();
-				a.addUpdateRange(0, n * 2 * a.itemSize);
-				a.needsUpdate = true;
-			}
-		}
+		// n edges make n - 1 quads. A ribbon with one edge has nothing to draw.
+		const was = this.count;
+		this.count = n;
+		this.batch?.changed(was < 2 ? 0 : was * 2, n < 2 ? 0 : n * 2);
+	}
+
+	// put writes edge n's two points, and gives the next edge's number.
+	private put(n: number, top: THREE.Vector3, bottom: THREE.Vector3, age: number, life: number, cellU: number, cellV: number, r: number, g: number, b: number, a: number): number {
+		const [pos, uv, color] = this.data;
+		const u = (Math.min(age, life) / life) * cellU;
+		const fade = a * (1 - age / life);
+		const p = n * 6;
+		pos[p] = top.x;
+		pos[p + 1] = top.y;
+		pos[p + 2] = top.z;
+		pos[p + 3] = bottom.x;
+		pos[p + 4] = bottom.y;
+		pos[p + 5] = bottom.z;
+		const t = n * 4;
+		uv[t] = u;
+		uv[t + 1] = 0;
+		uv[t + 2] = u;
+		uv[t + 3] = cellV;
+		const c = n * 8;
+		color[c] = color[c + 4] = r;
+		color[c + 1] = color[c + 5] = g;
+		color[c + 2] = color[c + 6] = b;
+		color[c + 3] = color[c + 7] = fade;
+		return n + 1;
 	}
 
 	dispose() {
-		this.mesh.removeFromParent();
-		this.geometry.dispose();
-		(this.mesh.material as THREE.Material).dispose();
+		this.disposed = true;
+		this.batch?.leave(this);
+		this.batch = undefined;
 		this.anchor.removeFromParent();
 	}
 }

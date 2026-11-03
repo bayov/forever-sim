@@ -21,7 +21,7 @@ def row(i):
     H = [r for r in d if r not in ALLIANCE]; A = [r for r in d if r in ALLIANCE]
     h = max(H, key=d.get) if H else None; a = max(A, key=d.get) if A else None
     ha = ((f"{rn(h)} {d[h]:.1f}" if h else "none") + f" / {rn(a)}") if best in ALLIANCE else (f"{rn(h)} / " + (f"{rn(a)} {d[a]:.1f}" if a else "none"))
-    m = json.load(open(f"{REQ}/{i}.meta.json")); pub = m["published"]["dps"]; pr = m["race"]
+    m = json.load(open(f"{REQ}/{i}.meta.json")); pub = m["published"]["dps"]; pr = m["race"].replace(" ", "")  # tolerate "Night Elf" (results-20261103-1)
     return best, d[best], ha, pub, pr, d.get(pr), max(P[i].values()) if i in P else float("nan")
 rows = sorted([(NAME[i],) + row(i) for i in NAME if i in D], key=lambda r: -r[2])
 print(f"| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before ({lab}) |\n|---|---|---|---|---|---|---|---|---|")

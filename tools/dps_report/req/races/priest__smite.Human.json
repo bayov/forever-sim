@@ -130,46 +130,6 @@
         "action": {
           "castSpell": {
             "spellId": {
-              "spellId": 15261
-            }
-          },
-          "condition": {
-            "and": {
-              "vals": [
-                {
-                  "not": {
-                    "val": {
-                      "dotIsActive": {
-                        "spellId": {
-                          "spellId": 15261
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "cmp": {
-                    "lhs": {
-                      "currentManaPercent": {}
-                    },
-                    "op": "OpGe",
-                    "rhs": {
-                      "const": {
-                        "val": "0.3"
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "notes": "Holy Fire whenever its damage over time is down, for Power in Light."
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
               "spellId": 10894
             }
           },
@@ -205,59 +165,6 @@
           }
         },
         "notes": "Shadow Word: Pain whenever it is down."
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
-              "spellId": 19280
-            }
-          },
-          "condition": {
-            "and": {
-              "vals": [
-                {
-                  "not": {
-                    "val": {
-                      "dotIsActive": {
-                        "spellId": {
-                          "spellId": 19280
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "cmp": {
-                    "lhs": {
-                      "remainingTime": {}
-                    },
-                    "op": "OpGe",
-                    "rhs": {
-                      "const": {
-                        "val": "12s"
-                      }
-                    }
-                  }
-                },
-                {
-                  "cmp": {
-                    "lhs": {
-                      "currentManaPercent": {}
-                    },
-                    "op": "OpGe",
-                    "rhs": {
-                      "const": {
-                        "val": "0.8"
-                      }
-                    }
-                  }
-                }
-              ]
-            }
-          }
-        },
-        "notes": "Devouring Plague whenever it is down and off cooldown."
       },
       {
         "action": {
@@ -347,13 +254,13 @@
       }
     ]
   },
-  "note": "Holy Fire above 30% mana: without the Undead's Dark Sacrifice the mana goes further on Holy Fire than on the preset's Smite-only line",
+  "note": "No Devouring Plague: without the Undead's Dark Sacrifice its mana goes further on Smite",
   "gain": {
-    "dps": 6.2,
-    "se": 0.26,
+    "dps": 3.4,
+    "se": 0.23,
     "iterations": 20000,
     "seed": 1,
     "duration": 180
   },
-  "how": "rotopt -template priest_smite -race Human -durs 180 from the template defaults (the preset's knobs): holyFire 0 -> 1, holyFireMana 0 -> 30. Same rotation at the preset race (Undead): -12.1 +- 0.2."
+  "how": "rotopt -template priest_smite -race Human -durs 180 from the template defaults (the preset's knobs), on the round 70753 Spiritual Guidance talents (2026-11-03): dp 1 -> 0. Same rotation at the preset race (Undead): -3.9."
 }
