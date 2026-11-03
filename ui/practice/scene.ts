@@ -71,6 +71,10 @@ export class Room {
 	private graphics?: Graphics;
 	// The units drawn together (the raid test's raiders).
 	readonly crowd: Crowd;
+	crowdTotems = false;
+	// onPass hears each pass of drawing the scene start, for the performance recorder to time it
+	// on the GPU: the shadows, then the solid things, then the see-through things and effects.
+	onPass?: (pass: 'shadow' | 'opaque' | 'transparent') => void;
 
 	constructor(
 		readonly canvas: HTMLCanvasElement,
@@ -108,7 +112,23 @@ export class Room {
 		this.scene.onBeforeRender = (_r, _s, camera) => {
 			this.crowd.prepare(camera);
 			fillBatches();
+			this.onPass?.('shadow');
 		};
+		// Two markers that draw nothing, first in their lists, tell when the solid things start and
+		// when the see-through things start.
+		//
+		// A marker at the start of the shadows would split the uploads from them, but starting a GPU
+		// timer while the shadows draw lost the whole WebGL context in headless Chrome on WSL.
+		for (const pass of ['opaque', 'transparent'] as const) {
+			const g = new THREE.BufferGeometry();
+			g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
+			g.setDrawRange(0, 0);
+			const marker = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ transparent: pass === 'transparent', depthWrite: false }));
+			marker.frustumCulled = false;
+			marker.renderOrder = -1e9;
+			marker.onBeforeRender = () => this.onPass?.(pass);
+			this.scene.add(marker);
+		}
 
 		const ground = new THREE.Mesh(new THREE.CircleGeometry(120, 64), new THREE.MeshStandardMaterial({ color: 0x5f7d3f, roughness: 1 }));
 		ground.rotation.x = -Math.PI / 2;
@@ -207,6 +227,9 @@ export class Room {
 					pole.visible = false;
 					group.add(m.root);
 					m.enableParticles(this.scene);
+					// In the raid test the totems draw in the crowd too, since their few parts each took a
+					// draw call and another for the shadows.
+					if (this.crowdTotems) this.crowd.add([m]);
 					// It rises out of the ground (Birth), then stands.
 					if (m.has(127)) m.play(127, { loop: false, fade: 0, restart: true });
 					this.totemModels.set(t.element, m);
