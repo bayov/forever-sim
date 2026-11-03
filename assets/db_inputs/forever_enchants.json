@@ -1,5 +1,5 @@
 {
-"meta": {"build": "1.60.1.70753", "fetched": "2026-11-03T13:12Z", "source": "client beta 1.60.1.70753 (wago.tools)", "tool": "tools/sources/enchants.py"},
+"meta": {"build": "1.60.1.70755", "fetched": "2026-11-03T18:41Z", "source": "client beta 1.60.1.70755 (wago.tools)", "tool": "tools/sources/enchants.py"},
 "enchants": {
 "2152": {"enchant": 15, "item": 2304, "name": "Stamina +$k2 and Armor +$k1", "stats": {"BonusArmor": 8, "Stamina": 1}},
 "2165": {"enchant": 8481, "item": 2313, "name": "Stamina +$k2 and Armor +$k1", "stats": {"BonusArmor": 16, "Stamina": 2}},
