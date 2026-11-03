@@ -10,18 +10,20 @@ import (
 )
 
 // TestOrcShamanSpiritRegen checks that a naked Orc shaman regens what the Forever beta's
-// GetManaRegen showed (2026-10-07), and that the Classic ruleset keeps the 1.12 shaman
-// formula (15 + Spirit/5 every 2s tick).
+// GetManaRegen showed (2026-10-07: 5.5, 12.875 and 18.75 a second at 1, 30 and 60) with the 3
+// Spirit client 1.60.1.70753 gave back to the Orc (betaOrcShift), 0.375 a second at 8 Spirit
+// a point of regen, and that the Classic ruleset keeps the 1.12 shaman formula (15 + Spirit/5
+// every 2s tick).
 func TestOrcShamanSpiritRegen(t *testing.T) {
 	cases := []struct {
 		ruleset proto.Ruleset
 		level   int32
 		regen   float64
 	}{
-		{proto.Ruleset_RulesetForever, 1, 5.5},
-		{proto.Ruleset_RulesetForever, 30, 12.875},
-		{proto.Ruleset_RulesetForever, 60, 18.75},
-		{proto.Ruleset_RulesetClassic, 30, 12.8},
+		{proto.Ruleset_RulesetForever, 1, 6.25},
+		{proto.Ruleset_RulesetForever, 30, 13.25},
+		{proto.Ruleset_RulesetForever, 60, 19.125},
+		{proto.Ruleset_RulesetClassic, 30, 13.1},
 	}
 	for _, c := range cases {
 		player := &proto.Player{
@@ -63,7 +65,7 @@ func TestOrcShamanDriftwoodIcon(t *testing.T) {
 		Class:      proto.Class_ClassShaman,
 		Level:      30,
 		Equipment:  &proto.EquipmentSpec{Items: items},
-		BonusStats: &proto.UnitStats{Stats: stats.Stats{stats.Spirit: 30}.ToFloatArray()},
+		BonusStats: &proto.UnitStats{Stats: stats.Stats{stats.Spirit: 30}.Add(betaOrcShift).ToFloatArray()},
 		Spec: &proto.Player_EnhancementShaman{EnhancementShaman: &proto.EnhancementShaman{
 			Options: &proto.EnhancementShaman_Options{},
 		}},

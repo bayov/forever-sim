@@ -375,7 +375,8 @@ func TestForeverWarriorRendAttackPower(t *testing.T) {
 		ap := war.Rend.MeleeAttackPower(target)
 		multiplier := war.Rend.AttackerDamageMultiplier(war.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], true)
 		want := (21 + 0.02*ap) * multiplier
-		if got := tick(); math.Abs(got-want) > 0.5 {
+		// A tick rounds up with a chance equal to its fraction (sim.go roundDamage), so it is within 1.
+		if got := tick(); math.Abs(got-want) >= 1 {
 			t.Errorf("Rend at %.0f attack power ticks for %.3f, want %.3f", ap, got, want)
 		}
 	}
