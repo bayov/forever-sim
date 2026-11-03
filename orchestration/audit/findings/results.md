@@ -4,14 +4,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### results-20261103-2: hunter notes-only shares (Arcane Shot 0.15, Serpent Sting 5% a tick) and the hotfix shot tables are not gated under Forever
-- severity: low (no report number affected; only a non-Forever hunter sim would see them)
-- affects: hunter (all builds, only when Env is not Forever)
-- found: 2026-11-03, master f5c99ad018
-- evidence: sim/hunter/arcane_shot.go:19 `arcaneShotRAPCoefficient = 0.15` and sim/hunter/serpent_sting.go:22,77 `serpentStingRAPPerTick = 0.05` are plain constants; the dot tick even has an `if sim.IsForever()` right after (line 78), so the file does have Forever/Classic branches. The druid (sim/druid/tuning_70753.go, Forever-gated), rogue poisons (poisons.go:167,247 `TernaryFloat64(IsForever...)`) and paladin notes-only values are gated as standards 37 asks. orchestration/round_70753/hunter.md:126 says the hunter files are Forever-only (Aimed Shot's 166 was already ungated), so this may be accepted; sure of the code, not of the intent.
-- proposed fix: either gate the two shares (and say so in hunter.md) or record in hunter.md that sim/hunter is Forever-only by design and drop the Classic branches.
-- needs: worker fix
-
 ### results-20261102-1: shaman__elemental-level60-mana-tide meta published.dps is 0.4 off (753.2 vs 752.8)
 - severity: low (builds.json 752.8 matches my 20k seed-1 run 752.83; only the meta lags)
 - affects: tools/dps_report/req/shaman__elemental-level60-mana-tide.meta.json; runreq.sh and verify.py flag it OFF
@@ -21,8 +13,16 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-11-03, master f5c99ad018: the shaman worker left all six shaman metas at the 2026-11-02 values on purpose ("meta.published is left for the report run", round_70753/shaman.md:172). Run 970.1, 952.7, 1149.8, 1159.2, 1055.1, 1111.3 match the worker's finals; the metas still say 768.5, 753.2, 879.3, 883.5, 795.8, 834.8. Supersedes the 0.4 gap above; expect it to clear with the regeneration.
 - needs: orchestrator fix
 
-
 ## Resolved
+
+### results-20261103-2: hunter notes-only shares (Arcane Shot 0.15, Serpent Sting 5% a tick) and the hotfix shot tables are not gated under Forever
+- severity: low (no report number affected; only a non-Forever hunter sim would see them)
+- affects: hunter (all builds, only when Env is not Forever)
+- found: 2026-11-03, master f5c99ad018
+- evidence: sim/hunter/arcane_shot.go:19 `arcaneShotRAPCoefficient = 0.15` and sim/hunter/serpent_sting.go:22,77 `serpentStingRAPPerTick = 0.05` are plain constants; the dot tick even has an `if sim.IsForever()` right after (line 78), so the file does have Forever/Classic branches. The druid (sim/druid/tuning_70753.go, Forever-gated), rogue poisons (poisons.go:167,247 `TernaryFloat64(IsForever...)`) and paladin notes-only values are gated as standards 37 asks. orchestration/round_70753/hunter.md:126 says the hunter files are Forever-only (Aimed Shot's 166 was already ungated), so this may be accepted; sure of the code, not of the intent.
+- proposed fix: either gate the two shares (and say so in hunter.md) or record in hunter.md that sim/hunter is Forever-only by design and drop the Classic branches.
+- needs: worker fix
+- resolved: 2026-11-03, deee377: both shares gated under `Env.IsForever()` (outside Forever Classic's 0), and the hotfix shot tables too (Classic's Arcane Shot, Serpent Sting and Aimed Shot ranks; Sniper Shot, not in Classic, the client's 160 / 225 / 295); hunter.md says so. No Forever number moves.
 
 ### results-20261101-1: 62 of 77 metas' published.dps are stale after the 2026-11-01 re-sims (38fb06ea9, 11de3318a)
 - severity: low (no published number is wrong: builds.json matches my 20k seed-1 run on all 77 within 0.1)
