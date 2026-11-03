@@ -64,6 +64,8 @@ Reckless Swings, Improved Whirlwind, Lava Burst out and so on): their spells are
 tables and wago.tools had no hotfix rows for them on 2026-11-03. When they reach the realms,
 `hotfixes.py fetch 1.60.1.70753 --set talents --set spelltext` and
 `import_db2.py 1.60.1.70753+hf rogue warrior shaman` bring them in.
+Until then a class worker who builds one of them from the notes writes it to
+`notes/<class>.json`, which the importer lays over every client import (`notes/README.md`).
 
 Without `--write` it prints each class's differences from the current file in three kinds:
 structure (talents added, removed, moved, renamed, or given another rank count, prerequisite

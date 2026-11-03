@@ -23,6 +23,17 @@ Why: the November 2 development notes describe two kinds of talent change.
 - Paladin, druid, hunter, mage, priest and warlock: the reworks the notes list (Heart of the Wild and Furor swapped, Lacerate and Predatory Discipline on row 4, Bloom, Oath of Light, Boundless Light, Shieldsworn, Stoicism, Turn Evil, Arcane Focus and Piercing Ice out, the hunter tree's remap, and the rest) reached the realms as the 2026-10-30/31 hotfix. The sim took them on 2026-11-02 as `1.60.1.70707+hf`, and its presets were remapped then. Client 70753 bakes those rows into its tables, so its trees equal what we have.
 - Rogue, warrior and shaman: the reworks the notes list are **not** in client 70753. Its tables have no Death Mark, Boot Knife, Blood Splatter, Composure, Flash of Steel, Quick Getaway, Reckless Swings or Improved Whirlwind spell. Murder, Quietus, Cutthroat, Thousand Cuts, Improved Distract and Lava Burst are still in the trees, and Lethality, Relentless Strikes, Dual Wield Specialization, Camouflage, Opportunity, Improved Tactical Mastery, Bloodthrill and Flurry keep their old rank counts. wago.tools had no hotfix rows for build 70753 at all on 2026-11-03 13:00Z, and foreverchanges.pro's "hotfix to the November 2 build" covers only the hunter. These trees can't be imported yet. Building them by hand from the notes would guess the columns, since the notes give rows only.
 
+## Per class
+
+- Tree rework not in client 70753: rogue, left to the class worker.
+- Tree rework not in client 70753: warrior, left to the class worker.
+- Tree rework not in client 70753: shaman, left to the class worker.
+- Druid, hunter, mage, paladin, priest, warlock: client 70753 has the notes' tree changes (taken as 70707+hf on 2026-11-02). Ported, and nothing to remap.
+
+## Adding notes-only talents: `tools/forever_talents/notes/<class>.json`
+
+Under standards 37, a class worker can build a rework from the notes. It goes in `tools/forever_talents/notes/<class>.json`, and `import_db2.py` lays that file over the tree it generates from the client on every run, so a later client import doesn't wipe it. The ops are `add` (a whole talent in the `client/` shape, with row, col, max, desc per rank and req), `remove` (the talent goes to the tree's `removed` list) and `set` (change named fields; moving a talent is a `set` of row and col). Each entry has a `source` naming the announcement and saying what was guessed. When the client catches up, the importer prints `... the entry can go` for each entry the client now matches, and the client's version wins for an `add`. Two talents on one square stop the import. The format and the regeneration chain (`import_db2.py <build> <class> --write`, `import_client.py <class>`, `import_talents.py <class> --write`, then the proto message and the preset remap) are in `tools/forever_talents/notes/README.md`. No notes files exist yet.
+
 ## When the rogue, warrior and shaman trees arrive
 
 Run `tools/sources/hotfixes.py fetch 1.60.1.70753 --set talents --set spelltext`, then `tools/forever_talents/import_db2.py 1.60.1.70753+hf rogue warrior shaman`, or use the next client build. These presets spend points that the notes remove or re-rank. The list below comes from scanning the repo's talent strings, so it may miss strings stored in other formats:
