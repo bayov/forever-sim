@@ -625,8 +625,7 @@
             "Increases damage done by your Swipe ability by 30% and reduces the chance enemies have to detect you while Prowling as if you were 3 levels higher."
           ]
         ],
-        "icon": "ability_ambush",
-        "notSimulated": true
+        "icon": "ability_ambush"
       },
       {
         "fieldName": "brutalImpact",
@@ -834,8 +833,7 @@
             5
           ]
         ],
-        "icon": "ability_druid_lacerate",
-        "notSimulated": true
+        "icon": "ability_druid_lacerate"
       },
       {
         "fieldName": "predatoryDiscipline",
@@ -1036,8 +1034,7 @@
             42
           ]
         ],
-        "icon": "ability_racial_cannibalize",
-        "notSimulated": true
+        "icon": "ability_racial_cannibalize"
       },
       {
         "fieldName": "shiftingPower",

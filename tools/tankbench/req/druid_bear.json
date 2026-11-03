@@ -1,0 +1,335 @@
+{
+ "raid": {
+  "parties": [
+   {
+    "players": [
+     {
+      "race": "RaceTauren",
+      "class": "ClassDruid",
+      "level": 60,
+      "talentsString": "-5522030202310212551-055",
+      "equipment": {
+       "items": [
+        {
+         "id": 998101,
+         "enchant": 1508
+        },
+        {
+         "id": 998102,
+         "enchant": 1249059
+        },
+        {
+         "id": 998103
+        },
+        {
+         "id": 998104,
+         "enchant": 1219587
+        },
+        {
+         "id": 998105,
+         "enchant": 1891
+        },
+        {
+         "id": 998106,
+         "enchant": 1885
+        },
+        {
+         "id": 998107,
+         "enchant": 1248640
+        },
+        {
+         "id": 998108
+        },
+        {
+         "id": 998109,
+         "enchant": 1508
+        },
+        {
+         "id": 998110,
+         "enchant": 1887
+        },
+        {
+         "id": 998111
+        },
+        {
+         "id": 998112
+        },
+        {
+         "id": 998114
+        },
+        {
+         "id": 998115
+        },
+        {
+         "id": 998113,
+         "enchant": 2646
+        },
+        {},
+        {
+         "id": 220606
+        }
+       ]
+      },
+      "consumes": {
+       "flask": "FlaskOfTheTitans",
+       "food": "FoodSmokedDesertDumpling",
+       "agilityElixir": "ElixirOfTheMongoose",
+       "strengthBuff": "JujuPower",
+       "attackPowerBuff": "JujuMight",
+       "mainHandImbue": "DenseSharpeningStone",
+       "defaultPotion": "MightyRagePotion",
+       "dragonBreathChili": true
+      },
+      "feralTankDruid": {
+       "options": {
+        "startingRage": 0
+       }
+      },
+      "reactionTimeMs": 200,
+      "distanceFromTarget": 5,
+      "buffs": {
+       "blessingOfKings": true,
+       "blessingOfMight": "TristateEffectImproved"
+      },
+      "profession1": "Engineering",
+      "profession2": "Blacksmithing",
+      "rotation": {
+       "type": "TypeAPL",
+       "prepullActions": [],
+       "priorityList": [
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 9898
+           }
+          },
+          "condition": {
+           "cmp": {
+            "op": "OpLt",
+            "lhs": {
+             "auraRemainingTime": {
+              "sourceUnit": {
+               "type": "CurrentTarget"
+              },
+              "auraId": {
+               "spellId": 9898
+              }
+             }
+            },
+            "rhs": {
+             "const": {
+              "val": "3s"
+             }
+            }
+           }
+          }
+         },
+         "notes": "Demoralizing Roar kept up: the tank applies its own (the bench drops the raid's)."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 1238073
+           }
+          }
+         },
+         "notes": "Primal Bite on cooldown."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 1235827
+           }
+          },
+          "condition": {
+           "or": {
+            "vals": [
+             {
+              "cmp": {
+               "op": "OpLt",
+               "lhs": {
+                "auraNumStacks": {
+                 "sourceUnit": {
+                  "type": "CurrentTarget"
+                 },
+                 "auraId": {
+                  "spellId": 1235827
+                 }
+                }
+               },
+               "rhs": {
+                "const": {
+                 "val": "5"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "op": "OpLt",
+               "lhs": {
+                "auraRemainingTime": {
+                 "sourceUnit": {
+                  "type": "CurrentTarget"
+                 },
+                 "auraId": {
+                  "spellId": 1235827
+                 }
+                }
+               },
+               "rhs": {
+                "const": {
+                 "val": "3s"
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "Lacerate to 5 stacks, refreshed before it runs out."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 9881
+           }
+          },
+          "condition": {
+           "cmp": {
+            "op": "OpGe",
+            "lhs": {
+             "currentRage": {}
+            },
+            "rhs": {
+             "const": {
+              "val": "30"
+             }
+            }
+           }
+          }
+         },
+         "notes": "Maul queued with Rage to spare."
+        }
+       ]
+      }
+     }
+    ],
+    "buffs": {}
+   }
+  ],
+  "buffs": {
+   "giftOfTheWild": "TristateEffectImproved",
+   "powerWordFortitude": "TristateEffectImproved",
+   "bloodPact": "TristateEffectImproved",
+   "strengthOfEarthTotem": "TristateEffectRegular",
+   "graceOfAirTotem": "TristateEffectRegular",
+   "arcaneBrilliance": true,
+   "divineSpirit": true,
+   "battleShout": "TristateEffectImproved",
+   "trueshotAura": true,
+   "leaderOfThePack": true,
+   "moonkinAura": true,
+   "shadowProtection": true,
+   "frostResistanceAura": true,
+   "fireResistanceAura": true,
+   "thorns": "TristateEffectImproved",
+   "devotionAura": "TristateEffectImproved",
+   "retributionAura": "TristateEffectImproved",
+   "totemWeaponBuff": "TotemWeaponBuffWindfury"
+  },
+  "debuffs": {
+   "judgementOfWisdom": true,
+   "judgementOfLight": true,
+   "judgementOfTheCrusader": "TristateEffectImproved",
+   "faerieFire": true,
+   "curseOfElements": true,
+   "sunderRamp": {
+    "tank": true
+   },
+   "curseOfWeakness": "TristateEffectImproved",
+   "curseOfRecklessness": true,
+   "demoralizingRoar": "TristateEffectImproved",
+   "demoralizingShout": "TristateEffectImproved",
+   "thunderClap": "TristateEffectImproved",
+   "insectSwarm": true,
+   "scorpidSting": true
+  }
+ },
+ "encounter": {
+  "duration": 180,
+  "durationVariation": 20,
+  "executeProportion20": 0.2,
+  "executeProportion25": 0.25,
+  "executeProportion35": 0.35,
+  "targets": [
+   {
+    "id": 213336,
+    "name": "Level 60",
+    "level": 63,
+    "stats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     805,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3731,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     127393,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "minBaseDamage": 3000,
+    "damageSpread": 0.3333,
+    "swingSpeed": 2,
+    "parryHaste": true
+   }
+  ],
+  "raidDamageHitsPerMinute": 2,
+  "raidDamagePerHit": 1500,
+  "naturalFlaskZone": true
+ },
+ "simOptions": {
+  "iterations": 1000,
+  "randomSeed": "1"
+ }
+}

@@ -12,7 +12,7 @@ import (
 
 	"github.com/wowsims/classic/sim/druid/feral"
 	restoDruid "github.com/wowsims/classic/sim/druid/restoration"
-	// feralTank "github.com/wowsims/classic/sim/druid/tank"
+	feralTank "github.com/wowsims/classic/sim/druid/tank"
 	_ "github.com/wowsims/classic/sim/encounters"
 	"github.com/wowsims/classic/sim/hunter"
 	"github.com/wowsims/classic/sim/mage"
@@ -38,7 +38,7 @@ func RegisterAll() {
 
 	balance.RegisterBalanceDruid()
 	feral.RegisterFeralDruid()
-	// feralTank.RegisterFeralTankDruid()
+	feralTank.RegisterFeralTankDruid()
 	restoDruid.RegisterRestorationDruid()
 	elemental.RegisterElementalShaman()
 	restoration.RegisterRestorationShaman()

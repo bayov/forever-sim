@@ -5,14 +5,15 @@ TPS against damage taken, so the sim has to sim the boss hitting the tank and sa
 to dying. This comes before the raid sim's simmed tanks ([raid_sim.md](raid_sim.md), Threat), which
 replace its 700 TPS stand-in.
 
-**Where it stands (2026-11-02):** the engine reports a tank sheet with the thresholds tanks gear for, and
+**Where it stands (2026-11-03):** the engine reports a tank sheet with the thresholds tanks gear for, and
 `tools/tankbench` sims tank builds against seven Classic raid bosses (`tools/encounters`) with the healing a
 raid puts on its tank, and finds each build's healing needed and death floor. The bosses' melee, the fight lengths
 and the healing are Warcraft Logs numbers from the Anniversary realms, which score tanks, with Season of Discovery's
-kept to compare ([Encounters](#encounters)). Two builds run (Protection
-warrior and paladin, both on Classic pre-raid plate). Four audits checked the work and their findings are
+kept to compare ([Encounters](#encounters)). Three builds run: the Protection warrior and paladin on Classic
+pre-raid plate, and the Feral bear on the cat's synthetic set. Four audits checked the work and their findings are
 fixed ([Audits](#audits)). The optimizer's objective is ruled and built: the bench prints it, and rotopt's
-searches maximize it with `-tank`. Next comes the rules audit, then tank gear and rotations. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
+searches maximize it with `-tank`, with a paired noise test. The rules audit has done the warrior, the paladin and
+the bear ([Rules audit](#rules-audit)); the Warden shaman, tank gear and rotations are next. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
 
 ## The user's rulings (2026-11-02)
 
@@ -439,8 +440,8 @@ presets landing on the same build means a weight moves).
   replace it.
 - **The Protection paladin's rotation was stale** (Holy Shield only while Redoubt was up, no Holy Strike). The
   bench's is fixed ([Rules audit](#rules-audit)); its options still need Righteous Fury on (`righteousFury`).
-- **The Feral tank isn't simmed at all.** `sim/druid/_tank` and `_maul.go`, `_frenzied_regeneration.go` are
-  left out of the build, and `register_all.go` has it commented out.
+- **The Feral tank wasn't simmed at all** (WotLK code left out of the build). It's rebuilt for Forever
+  ([Rules audit](#rules-audit)).
 - **The paladin and the Warden shaman have no gear** (`blank` sets only), and no tank has Forever synthetic
   gear or a tuned rotation.
 - **Armor had no cap.** Armor now takes off at most 75% (`GetArmorDamageModifier`). Nothing simmed before
@@ -498,9 +499,40 @@ presets landing on the same build means a weight moves).
   (Broodlord 2,541 to 1,344, Ragnaros 2,961 to 2,273). Holy Shield's 4 charges go in 4 blocks, so it still takes
   12% crushing blows. The UI preset's rotation is the rotations step's.
 
+**Feral tank** (2026-11-03): **brought into the build.** Its code was WotLK's (Maul 48480, Savage Defense, Mangle)
+and left out, and Bear Form itself was commented out. It's rebuilt for Forever (`sim/druid/bear.go`,
+`bear_attacks.go`, `sim/druid/tank`, its test `TestForeverBear`), from client 70707 with its hotfixes and, where the
+client is silent, wowsims/forever's bear (forever-wiki/classes/druid.md, The bear, has every value): Dire Bear Form
+(+360% armor from items, +1,240 health, +180 attack power, 1.5x threat, the weapon's DPS at 2.5 s with a
+two-hander's Rage), Maul, Swipe, Demoralizing Roar, Enrage, Frenzied Regeneration, Lacerate and Primal Bite, and the
+bear's talents (Thick Hide, Heart of the Wild, Natural Reaction, Blood Frenzy, Feral Instinct, Savage Fury, Rend and
+Tear).
+
+- **Assumed until a log of a bear tank:** none of its attacks has threat beyond the form's 1.5x (Classic's Maul and
+  Swipe had 1.75); Enrage's armor cut is the tooltip's 16% (the client's 25503 says 26%); Thick Hide's Defense part
+  (0.67 a point) is the tooltip's.
+- **The bench's bear** (`druid_bear.json`) wears the Feral cat's synthetic set, so 507 Agility, 35% dodge and 8,900
+  health; a bear set is the gear step's. It keeps its own Demoralizing Roar up (`tankscore.OwnDebuffs` drops the
+  raid's Roar and Shout), then Primal Bite, Lacerate to 5 stacks and Maul at 30 Rage. Not in its rotation yet:
+  Enrage (its armor cut makes it a pull-time choice), Frenzied Regeneration (an emergency button, like Shield Wall),
+  Swipe (single target).
+- **On the seven Anniversary bosses** it makes about 900 TPS (the paladin's level, the warrior's 1,150), takes 5 to
+  15% more damage than the plate tanks (no block or parry, 15% crushing blows) and the biggest hits (2,000 to 4,000),
+  and has the lowest death floor at Broodlord (0.9%, 8,900 health):
+
+| Encounter | Bear TPS | DTPS | Healing needed | Death | Warrior healing needed | Paladin |
+|---|---|---|---|---|---|---|
+| Magmadar | 899 | 452 | 448 | 0% | 382 | 378 |
+| Golemagg | 902 | 490 | 496 | 0% | 432 | 442 |
+| Ragnaros | 898 | 1,381 | 2,654 | 36% | 2,717 | 2,273 |
+| Onyxia | 901 | 583 | 567 | 0% | 556 | 528 |
+| Broodlord | 897 | 649 | 1,251 | 1.2% | 1,751 | 1,344 |
+| Vaelastrasz | 879 | 1,301 | 1,605 | 0% | 1,503 | 1,530 |
+| Chromaggus | 912 | 779 | 997 | 0% | 925 | 930 |
+
 ## Next steps
 
-1. **Rules audit** of the other tanks (Feral tank, Warden shaman) like the warrior's and paladin's above.
+1. **Rules audit** of the Warden shaman like the others above (it needs gear first).
    Bring the Feral tank into the build. Ask for a dungeon boss log for Forever's boss crit.
 2. **Encounters**: Patchwerk, threat drops, armor cuts and stacking DoTs in the engine.
 3. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.

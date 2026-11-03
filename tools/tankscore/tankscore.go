@@ -104,15 +104,21 @@ func MakeTank(request *proto.RaidSimRequest, healing *proto.HealingModel, scorin
 // a main tank applies its own), so its rotation pays their Rage and GCDs, makes their threat and gets
 // its talents' worth for them (Improved Thunder Clap, Booming Voice). A warrior tank keeps Thunder
 // Clap and Demoralizing Shout up, and Demoralizing Roar goes with the Shout since the two don't
-// stack: the boss has the tank's attack power cut. Other tanks leave the raid's debuffs as they are.
+// stack: the boss has the tank's attack power cut. A bear keeps Demoralizing Roar up the same way.
+// Other tanks leave the raid's debuffs as they are.
 func OwnDebuffs(request *proto.RaidSimRequest) {
 	tank := request.Raid.Parties[0].Players[0]
 	debuffs := request.Raid.Debuffs
 	if debuffs == nil {
 		return
 	}
-	if _, ok := tank.Spec.(*proto.Player_TankWarrior); ok {
+	switch tank.Spec.(type) {
+	case *proto.Player_TankWarrior:
 		debuffs.ThunderClap = proto.TristateEffect_TristateEffectMissing
+		debuffs.DemoralizingShout = proto.TristateEffect_TristateEffectMissing
+		debuffs.DemoralizingRoar = proto.TristateEffect_TristateEffectMissing
+	case *proto.Player_FeralTankDruid:
+		// A bear keeps Demoralizing Roar up, and the raid's Shout goes with it (they don't stack).
 		debuffs.DemoralizingShout = proto.TristateEffect_TristateEffectMissing
 		debuffs.DemoralizingRoar = proto.TristateEffect_TristateEffectMissing
 	}

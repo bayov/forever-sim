@@ -100,23 +100,67 @@ type result struct {
 	// A leveling session's results (leveling.go), where dps above is the score.
 	leveling *proto.LevelingMetrics
 
-	// With -tank, the tank score, whose value is dps above, and the run's per-iteration numbers
-	// it came from, which pair two runs iteration by iteration (noise).
-	tank    *tankscore.Score
-	tankRaw *proto.TankScore
+	// With -tank, the tank score, whose value is dps above, and each run's per-iteration numbers
+	// with the objective that scored it (one a fight length or encounter), which pair two results
+	// iteration by iteration (gainNoise).
+	tank      *tankscore.Score
+	tankParts []tankPart
+}
+
+type tankPart struct {
+	raw *proto.TankScore
+	obj *tankscore.Objective
 }
 
 // gainNoise is the standard error of b's score less a's, which a search's gain is tested against. Two
 // runs share their seed, so for a tank score it's the paired error (tankscore.PairedDiff), far
 // below the two errors added up where one ability makes the bad fights. Otherwise, and for a tank
 // score over several fight lengths, it's the two errors added up.
+//
+// Over several encounters (or fight lengths) the score is their mean, so the paired error is the
+// root of the summed paired variances over their count: the encounters' runs are independent.
 func gainNoise(a, b result) float64 {
-	if tankObjective != nil && a.tankRaw != nil && b.tankRaw != nil {
-		if _, se, ok := tankObjective.PairedDiff(a.tankRaw, b.tankRaw); ok {
-			return se
+	if n := len(a.tankParts); n > 0 && n == len(b.tankParts) {
+		variance := 0.0
+		ok := true
+		for i := range a.tankParts {
+			pa, pb := a.tankParts[i], b.tankParts[i]
+			if pa.raw == nil || pb.raw == nil || pa.obj == nil {
+				ok = false
+				break
+			}
+			_, se, paired := pa.obj.PairedDiff(pa.raw, pb.raw)
+			if !paired {
+				ok = false
+				break
+			}
+			variance += se * se
+		}
+		if ok {
+			return math.Sqrt(variance) / float64(n)
 		}
 	}
 	return math.Hypot(a.stderr, b.stderr)
+}
+
+// tankSlot is one encounter of a tank search over several (-tank-encounter a.json,b.json): its
+// fight, the healing its raid puts on the tank, and the objective scored with that healing.
+type tankSlot struct {
+	enc     *tankscore.Encounter
+	healing tankscore.Healing
+	obj     *tankscore.Objective
+}
+
+// tankSlots are the encounters of a tank search over several, nil otherwise. Their index takes
+// the place of a fight length in the search (each runs at its encounter's own length).
+var tankSlots []tankSlot
+
+// objectiveFor is the tank objective of a run at this fight length, or of this encounter.
+func objectiveFor(duration float64) *tankscore.Objective {
+	if tankSlots != nil {
+		return tankSlots[int(duration)].obj
+	}
+	return tankObjective
 }
 
 // tankObjective scores the player as a tank (-tank), nil for DPS.
@@ -146,20 +190,28 @@ func (r result) String() string {
 // One sim run. The random seed is fixed so two rotations see the same crit rolls and
 // the difference between them is far less noisy than either number alone.
 func (s *setup) run(rot *proto.APLRotation, duration float64, iterations int32) (result, error) {
-	return simulate(s.runRequest(rot, duration, iterations))
+	return simulate(s.runRequest(rot, duration, iterations), objectiveFor(duration))
 }
 
 // The request for one sim run.
 func (s *setup) runRequest(rot *proto.APLRotation, duration float64, iterations int32) *proto.RaidSimRequest {
 	request := s.clone()
+	if tankSlots != nil {
+		// The encounter's own fight and healing on a clone of the setup, so a gear or talent
+		// search's changes to the setup reach every encounter.
+		slot := tankSlots[int(duration)]
+		tankscore.UseEncounter(request, slot.enc)
+		tankscore.MakeTank(request, slot.healing.Model(), &proto.TankScoring{})
+	} else {
+		request.Encounter.Duration = duration
+	}
 	request.Raid.Parties[0].Players[0].Rotation = rot
-	request.Encounter.Duration = duration
 	request.SimOptions.Iterations = iterations
 	request.SimOptions.RandomSeed = simSeed
 	return request
 }
 
-func simulate(request *proto.RaidSimRequest) (result, error) {
+func simulate(request *proto.RaidSimRequest, objective *tankscore.Objective) (result, error) {
 	iterations := request.SimOptions.Iterations
 	res := core.RunRaidSimConcurrent(request)
 	if res.Error != nil {
@@ -170,11 +222,12 @@ func simulate(request *proto.RaidSimRequest) (result, error) {
 	}
 	player := res.RaidMetrics.Parties[0].Players[0]
 	n := math.Sqrt(float64(iterations))
-	if tankObjective != nil {
+	if objective != nil {
 		// The tank objective takes DPS's place, so every search maximizes it.
-		score := tankObjective.Score(player, iterations)
-		return result{dps: score.Value, stderr: score.StdErr, tank: &score, tankRaw: player.TankScore,
-			mana: player.ManaEnd.GetAvg(), manaStderr: player.ManaEnd.GetStdev() / n, tto: player.Tto.GetAvg()}, nil
+		score := objective.Score(player, iterations)
+		return result{dps: score.Value, stderr: score.StdErr, tank: &score,
+			tankParts: []tankPart{{raw: player.TankScore, obj: objective}},
+			mana:      player.ManaEnd.GetAvg(), manaStderr: player.ManaEnd.GetStdev() / n, tto: player.Tto.GetAvg()}, nil
 	}
 	return result{
 		dps: player.Dps.Avg, stderr: player.Dps.Stdev / n,

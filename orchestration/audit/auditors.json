@@ -1,5 +1,5 @@
 {
- "_doc": "The audit loop's registry. gate.py reads it to decide who is due; each pass follows passes/<id>.md. Fields: watch/exclude are git globs (relative to the repo root); branches (optional) are globs of origin branches also watched while ahead of master; none are watched today, since class work lands on master through PRs and the old class branches still count hundreds of commits ahead after their merges; external lists outside sources ('wago_build': gate.py checks wago.tools for a newer 1.60 client build); external_every_h forces a pass that often for sources git can't see; max_quiet_days is a safety net; model is the subagent model for the pass ('sonnet' for mechanical passes, 'opus' where the pass judges mechanics or balance); sims marks passes that sim the report's requests on the new master (the loop runs them once and shares the run). branch_active_days: a branch ahead of master counts only while its newest commit is at most this many days old, so old unmerged branches don't trigger passes. owns: repo docs the pass keeps current besides its own audit files (committed with the run). wago_probe: how many build numbers past the newest one wago.tools lists the gate probes in the db2 exports (the builds list lags). skip_if_no_movement: after the loop's shared sims, the pass is skipped (recorded as quiet) when no report build moved more than 0.5 DPS against the previous shared run (ref/shared/summary.tsv), unless a changed file matches always_pass or the auditor is due for another reason. Leveling-only paths (**/*leveling*, **/leveling/**, the level 30 APLs) are excluded from the level 60 DPS auditors, as the old auditors excluded leveling-only work.",
+ "_doc": "The audit loop's registry. gate.py reads it to decide who is due; each pass follows passes/<id>.md. Fields: watch/exclude are git globs (relative to the repo root); branches (optional) are globs of origin branches also watched while ahead of master; none are watched today, since class work lands on master through PRs and the old class branches still count hundreds of commits ahead after their merges; external lists outside sources ('wago_build': gate.py checks wago.tools for a newer 1.60 client build); external_every_h forces a pass that often for sources git can't see; max_quiet_days is a safety net; model is the subagent model for the pass ('sonnet' for mechanical passes, 'opus' where the pass judges mechanics or balance); sims marks passes that sim the report's requests on the new master (the loop runs them once and shares the run). branch_active_days: a branch ahead of master counts only while its newest commit is at most this many days old, so old unmerged branches don't trigger passes. owns: repo docs the pass keeps current besides its own audit files (committed with the run). wago_probe: how many build numbers past the newest one wago.tools lists the gate probes in the db2 exports (the builds list lags). skip_if_no_movement: after the loop's shared sims, the pass is skipped (recorded as quiet) when no report build moved more than 0.5 DPS against the previous shared run (ref/shared/summary.tsv), unless a changed file matches always_pass or the auditor is due for another reason. Leveling-only paths (**/*leveling*, **/leveling/**, the level 30 APLs) are excluded from the level 60 DPS auditors, as the old auditors excluded leveling-only work. healbench / tankbench: the pass runs tools/healbench or tools/tankbench itself (the healers aren't in the report's shared sims), so run healbench and tankbench passes one at a time like the sim passes. enabled: false keeps an auditor out of the gate.",
  "branch_active_days": 2,
  "wago_probe": 300,
  "auditors": [
@@ -203,6 +203,261 @@
     "orchestration/update_ledger.md"
    ],
    "max_quiet_days": 30
+  },
+  {
+   "id": "healer_mechanics",
+   "title": "Healer mechanics",
+   "brief": "orchestration/brief_healers.md",
+   "model": "opus",
+   "watch": [
+    "sim/core/heal*.go",
+    "sim/core/health*.go",
+    "sim/core/raid_damage*.go",
+    "sim/core/mana*.go",
+    "sim/core/spell_healing*.go",
+    "sim/core/spell_result.go",
+    "sim/core/apl_values_spell*.go",
+    "sim/core/dot*.go",
+    "sim/shaman/**",
+    "sim/paladin/**",
+    "sim/druid/**",
+    "sim/priest/**",
+    "tools/healbench/**"
+   ],
+   "exclude": [
+    "**/*.results",
+    "sim/core/proto/**",
+    "**/*_test.go"
+   ],
+   "external": [
+    "wago_build",
+    "blizzard_dev_notes"
+   ],
+   "external_every_h": 72,
+   "max_quiet_days": 7,
+   "enabled": false
+  },
+  {
+   "id": "healer_rotations",
+   "title": "Healer rotations and mana",
+   "brief": "orchestration/brief_healers.md",
+   "model": "opus",
+   "watch": [
+    "ui/restoration_shaman/**",
+    "ui/holy_paladin/**",
+    "ui/restoration_druid/**",
+    "ui/healing_priest/**",
+    "tools/healbench/**",
+    "tools/encounters/*.json",
+    "sim/core/heal*.go",
+    "sim/core/health*.go",
+    "sim/core/raid_damage*.go",
+    "sim/core/mana*.go",
+    "sim/core/spell_healing*.go",
+    "sim/core/spell_result.go",
+    "sim/core/apl_values_spell*.go",
+    "sim/core/dot*.go",
+    "sim/shaman/**",
+    "sim/paladin/**",
+    "sim/druid/**",
+    "sim/priest/**"
+   ],
+   "exclude": [
+    "**/*.results",
+    "sim/core/proto/**",
+    "**/*_test.go"
+   ],
+   "max_quiet_days": 7,
+   "enabled": false,
+   "healbench": true
+  },
+  {
+   "id": "healer_gear",
+   "title": "Healer synthetic gear",
+   "brief": "orchestration/brief_healers.md",
+   "model": "sonnet",
+   "watch": [
+    "tools/database/forever_synthetic_items_*.go",
+    "ui/restoration_shaman/gear_sets/**",
+    "ui/holy_paladin/gear_sets/**",
+    "ui/restoration_druid/gear_sets/**",
+    "ui/healing_priest/gear_sets/**",
+    "orchestration/gear_targets.md",
+    "orchestration/standards.md",
+    "orchestration/tools/healers/**"
+   ],
+   "exclude": [],
+   "max_quiet_days": 14,
+   "enabled": false
+  },
+  {
+   "id": "healer_fairness",
+   "title": "Fairness between healers",
+   "brief": "orchestration/brief_healers.md",
+   "model": "opus",
+   "watch": [
+    "ui/restoration_shaman/**",
+    "ui/holy_paladin/**",
+    "ui/restoration_druid/**",
+    "ui/healing_priest/**",
+    "tools/healbench/**",
+    "tools/encounters/*.json",
+    "orchestration/standards.md",
+    "sim/shaman/**",
+    "sim/paladin/**",
+    "sim/druid/**",
+    "sim/priest/**",
+    "sim/core/heal*.go",
+    "sim/core/health*.go",
+    "sim/core/raid_damage*.go",
+    "sim/core/mana*.go",
+    "sim/core/spell_healing*.go",
+    "sim/core/spell_result.go",
+    "sim/core/apl_values_spell*.go",
+    "sim/core/dot*.go"
+   ],
+   "exclude": [
+    "**/*.results",
+    "sim/core/proto/**",
+    "**/*_test.go"
+   ],
+   "max_quiet_days": 7,
+   "enabled": false,
+   "healbench": true,
+   "owns": [
+    "orchestration/fairness_healers.md"
+   ]
+  },
+  {
+   "id": "tank_mechanics",
+   "title": "Tank mechanics",
+   "brief": "orchestration/brief_tanks.md",
+   "model": "opus",
+   "watch": [
+    "sim/core/attack.go",
+    "sim/core/target*.go",
+    "sim/core/tank_*.go",
+    "sim/core/rage.go",
+    "sim/core/raid_damage*.go",
+    "sim/core/health*.go",
+    "sim/core/threat*.go",
+    "sim/core/debuffs.go",
+    "sim/core/armor*.go",
+    "sim/warrior/**",
+    "sim/paladin/**",
+    "sim/druid/**",
+    "sim/shaman/**",
+    "tools/tankbench/**",
+    "tools/tankscore/**"
+   ],
+   "exclude": [
+    "**/*.results",
+    "sim/core/proto/**",
+    "**/*_test.go"
+   ],
+   "external": [
+    "wago_build",
+    "blizzard_dev_notes"
+   ],
+   "external_every_h": 72,
+   "max_quiet_days": 7,
+   "enabled": false
+  },
+  {
+   "id": "tank_rotations",
+   "title": "Tank rotations and resources",
+   "brief": "orchestration/brief_tanks.md",
+   "model": "opus",
+   "watch": [
+    "ui/tank_warrior/**",
+    "ui/protection_paladin/**",
+    "ui/feral_tank_druid/**",
+    "ui/warden_shaman/**",
+    "tools/tankbench/**",
+    "tools/tankscore/**",
+    "tools/rotopt/*tank*.go",
+    "tools/encounters/*.json",
+    "sim/core/attack.go",
+    "sim/core/target*.go",
+    "sim/core/tank_*.go",
+    "sim/core/rage.go",
+    "sim/core/raid_damage*.go",
+    "sim/core/health*.go",
+    "sim/core/threat*.go",
+    "sim/core/debuffs.go",
+    "sim/core/armor*.go",
+    "sim/warrior/**",
+    "sim/paladin/**",
+    "sim/druid/**",
+    "sim/shaman/**"
+   ],
+   "exclude": [
+    "**/*.results",
+    "sim/core/proto/**",
+    "**/*_test.go"
+   ],
+   "max_quiet_days": 7,
+   "enabled": false,
+   "tankbench": true
+  },
+  {
+   "id": "tank_gear",
+   "title": "Tank synthetic gear",
+   "brief": "orchestration/brief_tanks.md",
+   "model": "sonnet",
+   "watch": [
+    "tools/database/forever_synthetic_items_*tank*.go",
+    "ui/tank_warrior/gear_sets/**",
+    "ui/protection_paladin/gear_sets/**",
+    "ui/feral_tank_druid/gear_sets/**",
+    "ui/warden_shaman/gear_sets/**",
+    "orchestration/gear_targets.md",
+    "orchestration/standards.md"
+   ],
+   "exclude": [],
+   "max_quiet_days": 14,
+   "enabled": false
+  },
+  {
+   "id": "tank_fairness",
+   "title": "Fairness between tanks",
+   "brief": "orchestration/brief_tanks.md",
+   "model": "opus",
+   "watch": [
+    "ui/tank_warrior/**",
+    "ui/protection_paladin/**",
+    "ui/feral_tank_druid/**",
+    "ui/warden_shaman/**",
+    "tools/tankbench/**",
+    "tools/tankscore/**",
+    "tools/rotopt/*tank*.go",
+    "tools/encounters/*.json",
+    "orchestration/standards.md",
+    "sim/warrior/**",
+    "sim/paladin/**",
+    "sim/druid/**",
+    "sim/shaman/**",
+    "sim/core/attack.go",
+    "sim/core/target*.go",
+    "sim/core/tank_*.go",
+    "sim/core/rage.go",
+    "sim/core/raid_damage*.go",
+    "sim/core/health*.go",
+    "sim/core/threat*.go",
+    "sim/core/debuffs.go",
+    "sim/core/armor*.go"
+   ],
+   "exclude": [
+    "**/*.results",
+    "sim/core/proto/**",
+    "**/*_test.go"
+   ],
+   "max_quiet_days": 7,
+   "enabled": false,
+   "tankbench": true,
+   "owns": [
+    "orchestration/fairness_tanks.md"
+   ]
   }
  ]
 }
