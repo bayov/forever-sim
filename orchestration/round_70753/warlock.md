@@ -1,13 +1,82 @@
 # Round 70753: Warlock
 
+## Final report (2026-11-03)
+
+Landed on master (merge of `round-70753-warlock`). Ledger, sources and method below.
+
+**What changed** (sources: Blizzard's development notes of 2026-11-02; the 70753 client and the 2026-11-03 hotfix carry
+none of the warlock damage lines, so these are notes-only values, standards 37):
+- Wrack: 0.286 spell damage a tick (was 0.143), base 36 + 2.5 a level above 40 (86 at 60). Enables the new Affliction
+  Wrack preset; no other preset takes Wrack.
+- Shadow and Flame: 4% a point (was 2%). Destruction +65.9 DPS at 180 s, Destruction fire +19.6.
+- Demons: 2 health a point of the warlock's Stamina (was 7.5). No DPS effect.
+- Already in the sim and now tested: Spellstone Shadow only, Bane of Agony's live ticks, Amplify Curse +50% on Agony's base
+  (findings client_update-20261027-3 and mechanics-20261027-2 resolved), Orc Command +5% on the demons (A2's racials).
+- Talent tooltips: `tools/forever_talents/notes/warlock.json` (Shadow and Flame, Wrack).
+- New preset: Affliction Wrack (`05500003035001351-0002-0050055003`), deep Affliction where Wrack is half the damage; its
+  talents, rotation (`level60_affliction_wrack`), preset build and report request `warlock__affliction_wrack`.
+- Class default: Destruction (highest at 180 s) replaces Demonology in the UI defaults and `isDefault`.
+
+**Per build** (20,000 iterations, seed 1; 180 s is 180 ± 20 s on the request, 120 and 300 fixed). Old = master before the
+round (DPS report v-current published numbers at 180 s; the pre-round binary at 120 / 300 s):
+
+| Build | Race | Talents | Old 120 / 180 / 300 | New 120 / 180 / 300 |
+|---|---|---|---|---|
+| Destruction (default) | Orc | 255000000351--055030500310035 | 976.6 / 997.5 / 978.5 | 1040.4 / 1063.4 / 1043.5 |
+| Demonology | Orc | 051-0305003131221001351-0550004 | 1037.4 / 1054.5 / 1028.4 | 1036.8 / 1053.9 / 1028.2 |
+| Affliction | Orc | 2550102003520005--0550305003 | 997.9 / 1015.8 / 997.3 | 997.4 / 1015.6 / 996.8 |
+| Affliction Wrack (new) | Orc | 05500003035001351-0002-0050055003 | – | 966.0 / 999.9 / 992.7 |
+| Destruction fire | Undead | 252-0050003201-0050345003101351 | 965.4 / 977.1 / 954.2 | 983.6 / 996.7 / 974.0 |
+
+Duty presets at 180 s (old → new): Affliction curse 1005.2 → 1004.9, recklessness 999.6 → 999.2; Demonology curse
+1043.8 → 1043.6, recklessness 1037.4 → 1036.6; Destruction curse 987.2 → 1052.7, recklessness 981.7 → 1046.4;
+Destruction fire curse 967.5 → 987.0, recklessness 961.2 → 980.7. The small drops on Affliction and Demonology are A2's
+race base stats (−0.2 to −0.8).
+
+**Races** (180 ± 20 s, 20,000 iterations, seeds 1 and 1000003): every preset keeps its race.
+
+| Build | Human | Gnome | Orc | Undead | Troll | Best overall / Horde / Alliance |
+|---|---|---|---|---|---|---|
+| Affliction | 1013.5 | 1011.2 | **1015.6** | 1012.5 | 1007.2 | Orc / Orc / Human |
+| Affliction Wrack | 995.4 | 990.6 | **999.9** | 997.3 | 988.0 | Orc / Orc / Human |
+| Demonology | 1051.3 | 1050.8 | **1053.9** | 1050.7 | 1045.3 | Orc / Orc / Human |
+| Destruction | 1061.5 | 1059.1 | **1063.4** | 1060.1 | 1052.5 | Orc / Orc / Human |
+| Destruction fire | 991.1 | 988.5 | 994.4 | **996.7** | 985.7 | Undead / Undead / Human |
+
+Seed 1000003 (leader / runner-up): Affliction Orc 1015.6 / Human 1013.3, Wrack Orc 999.8 / Undead 997.4, Demonology
+Orc 1054.7 / Human 1052.2, Destruction Orc 1063.5 / Human 1061.5, fire Undead 997.0 / Orc 995.2. Gnome sims each build
+with its race override (Eureka timing) where one exists; Affliction Wrack has none (Gnome is 9 behind, an override
+couldn't close that).
+
+**Audit** (the DPS passes, applied to the warlock builds):
+- results: all 13 requests re-verified and published at 20k / seed 1; the new request equals mksettings' output for its
+  arguments (no drift); the only unread-field leftovers are the standing `sanctityAura` / `curseOfShadow` ones.
+- rotations: talent and knob searches for all five builds (nothing moved for the four existing ones); Affliction Wrack's
+  timeline checked (Wrack chains while Corruption and the bane are up, dots refreshed, a missed Wrack recast). Its lines
+  state their intent in the meta and presets (standards 31). Its 120 s number trails more (−31 against −16 at 180) since
+  the opening dots take a larger share of a short fight; the knob search is at 180 s, and Affliction stays the spec's
+  default either way.
+- gear: unchanged this round (no warlock gear edit).
+- consumables: `tools/audit/consumables/scan.sh` clean for the warlock builds; the new request copies Affliction's.
+- mechanics / client_update: Phase A ledger below; the two parked Amplify Curse findings resolved.
+
+**Open questions**
+1. Notes-only values (Wrack, Shadow and Flame, demon health): keep the notes' numbers and re-check the hotfix rows when the
+   realms open on November 4. Recommendation: keep.
+2. Report: `warlock__affliction_wrack` is a new build for the orchestrator's next regeneration (no duty variants; the
+   four existing builds cover curse duty).
+3. Shared, not changed: `sim/core/spell_result.go`'s comment on `liveTick` still names Bane of Agony as a dot that doesn't
+   tick live; it does (TestWarlockBaneOfAgonyLive). Comment only.
+
+No shared code changed.
+
 Worker for the Warlock DPS specs (Affliction, Demonology, Destruction Shadow Bolt, Destruction fire), branch
 `round-70753-warlock`. Brief: `briefs/warlock.md`.
 
 ## Status
 
 - Phase A (research and mechanics): done, pushed on `round-70753-warlock`.
-- Phase B: talents and rotations done on A1's sources (daeb8d230). The race sweep, the finals and the landing wait for
-  A2's racials.
+- Phase B: done on A1's and A2's sources (master 5eb381750 and later); see the final report above.
 
 ## Phase B so far (2026-11-03)
 
