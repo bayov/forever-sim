@@ -53,6 +53,23 @@ until neither moved. Seeds were hand-built valid archetypes per build. Notable c
 - Rotations: a Shank line in every template (Shank at 75 energy or less, which held in every search), a Death Mark
   line, and the Ghostly Strike Ambush and Garrote lines.
 
+**Exploratory search (user request, 2026-11-03).** Six more archetypes went through the same talent climb from a
+hand-built valid seed and then the knob search over 120 / 180 / 300 s combined. None beats the build it would
+replace or join, so nothing changes:
+
+| Candidate | Seed idea | Best (combined; talent climb at 180 s) | Against |
+|---|---|---|---|
+| Venom Combat Swords | 21 Assassination for Venom, Combat without Adrenaline Rush | 945.6 | Combat Swords 965.0 |
+| Boot Knife Swords | 30 Subtlety for Boot Knife, 21 Combat | 770.8 | Combat Swords 965.0 |
+| Death Mark Swords | 31 Subtlety, Hemorrhage builder on the sword set | 812.8 (the climb dropped Death Mark) | Combat Swords 965.0 |
+| Ghostly Subtlety | Subtlety with Ghostly Strike and its Ambush window | 881.9 (the climb dropped Ghostly Strike again: the same build as Subtlety but a filler point) | Subtlety 880.5 |
+| Mutilate, Subtlety side | Opportunity, Premeditation and Serrated Blades instead of Combat's Precision and Puncturing Wounds | 841.5 | Mutilate 867.4 |
+| Seal Fate Daggers, Opportunity | Opportunity in Subtlety instead of Combat depth | 852.8 | Seal Fate Daggers 919.3 |
+
+What the searches keep showing: Shank with Flash of Steel and Adrenaline Rush carries Combat; Venom pays only once
+the Seal Fate tree is deep anyway; Boot Knife and Death Mark pay only together and on daggers with Hemorrhage;
+Ghostly Strike's opening is worth less than the points around it.
+
 **Races** (180 s, 20k, seed 1; each race's own rotation):
 
 | Build | Ranking |

@@ -251,6 +251,10 @@ The **2026-11-03 hotfix** to 70753 (foreverchanges.pro, launch-realm cache, not 
 | HUN-HF-09 | FC 2026-11-03 hotfix, notes P9 | Serpent Sting 15 to 675 over 15 sec (was 10 to 555); AP 5% a tick from the notes (notes-only) | **yes** (every hunter) | hotfix cache; AP share not in any row | landed | `sim/hunter/serpent_sting.go:22-25` |
 | HUN-HF-10 | FC 2026-11-03 hotfix | Lightning Reflexes 3% Agility a rank (was 2%) | **yes** (Survival, any build with points) | client 19168 still 2% | landed | `sim/hunter/talents.go:180` |
 
+## Build 1.60.1.70755 (first seen 2026-11-03)
+
+70755: client-identical to 70753. All 39 tables in wago.py's `client_update` set are identical (`table_summary.py 70753 70755`), with no added rows. foreverchanges.pro: "A technical build: its game data is the same as the 2026-11-02 build's". No class, racial, talent, enchant or item change in the client. Dev notes: no post after /9. A new **server hotfix, push 113483** (wago.tools/hotfixes, region 91, build-70707 rows, logged 2026-11-03 18:29Z) changes the rogue tree: Improved Distract's node entry is removed and two new nodes, 113633 and 113635, are added. Its poison, Mutilate and Shank SpellEffect rows are listed in TASKS.md:241. It is not read in full yet and has no rows here; see finding client_update-20261103-3. No rows added.
+
 ## Per-class ledgers
 
 Each section below has five parts:
