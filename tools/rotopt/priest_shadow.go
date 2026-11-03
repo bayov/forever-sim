@@ -103,6 +103,13 @@ func (priestShadow) Knobs() []Knob {
 		// The Level 60 on-use trinket (1) and also the Major Spellblasting Potion (2) at -0.1 sec,
 		// so the pre-cast Mind Blast landing at 0 gets them (rotation auditor, 2026-10-13).
 		{Name: "prepullCDs", Default: 2, Min: 0, Max: 2, Step: 1},
+		// Exploratory hybrids, off by default. Penance (a 21 point Discipline talent, castable in
+		// Shadowform): 0 never, 1 on cooldown below Mind Blast, 2 above it.
+		{Name: "penance", Default: 0, Min: 0, Max: 2, Step: 1},
+		// Holy Fire whenever its damage over time is down, below Mind Blast (castable in Shadowform).
+		{Name: "holyFire", Default: 0, Min: 0, Max: 1, Step: 1},
+		// The filler: 0 Mind Flay, 1 Smite (castable in Shadowform since Forever's retune).
+		{Name: "smiteFiller", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -136,6 +143,10 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 	chastise := rankID(priest.ChastiseLevel[:], priest.ChastiseSpellId[:])
 	darkSacrifice := rankID(priest.DarkSacrificeLevel[:], priest.DarkSacrificeSpellId[:])
 	shadowguard := rankID(priest.ShadowguardLevel[:], priest.ShadowguardSpellId[:])
+	penance := rankID(priest.PenanceLevel[:], priest.PenanceSpellId[:])
+	holyFire := rankID(priest.HolyFireLevel[:], priest.HolyFireSpellId[:])
+	smite := rankID(priest.SmiteLevel[:], priest.SmiteSpellId[:])
+	penanceLine := channel(penance, nil, nil, "Penance on cooldown. Without the talent ignore the warning on this line.")
 
 	var items []*proto.APLListItem
 	if k["darkSacrifice"] > 0 {
@@ -202,7 +213,16 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 	} else if k["innerFocus"] == 2 {
 		items = append(items, cast(innerFocus, nil, "Inner Focus on cooldown. Without the talent ignore the warning on this line."))
 	}
+	if k["penance"] == 2 {
+		items = append(items, penanceLine)
+	}
 	items = append(items, cast(mindBlast, priestManaAbove(k["mbMana"]), "Mind Blast on cooldown."))
+	if k["penance"] == 1 {
+		items = append(items, penanceLine)
+	}
+	if k["holyFire"] == 1 {
+		items = append(items, cast(holyFire, not(dotIsActive(holyFire)), "Holy Fire whenever its damage over time is down."))
+	}
 	if swdLine != nil && k["swdFirst"] == 0 {
 		items = append(items, swdLine)
 	}
@@ -232,7 +252,11 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 		clip = or(clip, and(dotDown, ge(channeledTicks(mindFlay), num(k["mfClipDots"]))))
 		mfNotes = strings.TrimSuffix(mfNotes, ".") + ", and when a damage over time spell fell off."
 	}
-	items = append(items, channel(mindFlay, nil, clip, mfNotes))
+	if k["smiteFiller"] == 1 {
+		items = append(items, cast(smite, nil, "Smite fills."))
+	} else {
+		items = append(items, channel(mindFlay, nil, clip, mfNotes))
+	}
 	items = append(items, priestWandFallback(k)...)
 
 	rot := rotation(items...)
