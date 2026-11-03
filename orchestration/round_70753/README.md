@@ -52,4 +52,4 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
   (leveling only, older than this round).
 - Assumptions (B9): collapse `mage_ice_lance_cd` to one value (client 70753 gives every Ice Lance rank the cooldown;
   mage worker); `hunter_tsa_hm_rank` says Trueshot Aura 50, now 100 by hotfix 113534 (hunter worker).
-- `tools/audit/gear/lin2.py` fails on the current gear_targets.md (mage worker); check before the gear auditor's pass.
+- `tools/audit/gear/lin2.py` failed on the healer and tank tables of gear_targets.md: fixed (it skips rows that are not stat targets).
