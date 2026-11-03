@@ -66,7 +66,6 @@ func advance(sim *core.Simulation, d time.Duration) {
 	}
 }
 
-
 func near(t *testing.T, name string, got, want, tol float64) {
 	t.Helper()
 	if math.Abs(got-want) > tol {
