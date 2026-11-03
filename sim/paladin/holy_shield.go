@@ -40,6 +40,9 @@ func (paladin *Paladin) registerHolyShield() {
 
 	numCharges := int32(4)
 	blockBonus := 30.0 * core.BlockRatingPerBlockChance
+	// Steadfast Libram's 30% block value while Holy Shield is up, added to the other block value
+	// percents as Shield Specialization's is (both aura 272).
+	steadfast := core.TernaryFloat64(paladin.Ranged().ID == SteadfastLibram, 0.3, 0)
 	// The ranks share one category cooldown (931).
 	cdTimer := paladin.NewTimer()
 
@@ -89,9 +92,11 @@ func (paladin *Paladin) registerHolyShield() {
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				aura.SetStacks(sim, numCharges)
 				paladin.AddStatDynamic(sim, stats.Block, blockBonus)
+				paladin.PseudoStats.BlockValueMultiplier += steadfast
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				paladin.AddStatDynamic(sim, stats.Block, -blockBonus)
+				paladin.PseudoStats.BlockValueMultiplier -= steadfast
 			},
 			OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if result.DidBlock() {

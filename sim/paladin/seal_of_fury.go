@@ -93,7 +93,8 @@ func (paladin *Paladin) registerSealOfFury() {
 			ProcMask:    core.ProcMaskMeleeMHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagBinary,
 
-			DamageMultiplier: paladin.improvedSeals() * paladin.getWeaponSpecializationModifier(),
+			// Libram of Law's 4% names Judgement of Fury too (items.go).
+			DamageMultiplier: paladin.improvedSeals() * paladin.getWeaponSpecializationModifier() * core.TernaryFloat64(paladin.Ranged().ID == LibramOfLaw, 1.04, 1),
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,
 
