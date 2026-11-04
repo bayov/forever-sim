@@ -60,7 +60,7 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	spellId := ChainLightningSpellId[rank]
 	baseDamageLow := ChainLightningScaling[rank].At(ChainLightningBaseDamage[rank][0], shaman.Level)
 	baseDamageHigh := ChainLightningScaling[rank].At(ChainLightningBaseDamage[rank][1], shaman.Level)
-	spellCoeff := shaman.downrankCoefficient(ChainLightningSpellCoef[rank], ChainLightningLevel[rank])
+	spellCoeff := ChainLightningSpellCoef[rank]
 	manaCost := ChainLightningManaCost[rank]
 	level := ChainLightningLevel[rank]
 	if !shaman.Env.IsForever() {
@@ -85,6 +85,7 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	spell.SpellCode = SpellCode_ShamanChainLightning
 	spell.RequiredLevel = level
 	spell.Rank = rank
+	spell.Downrank = core.DownrankDamage
 	spell.BonusCoefficient = spellCoeff
 	spell.Cast.CD = core.Cooldown{
 		Timer:    cdTimer,

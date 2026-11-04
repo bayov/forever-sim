@@ -51,6 +51,7 @@ func (priest *Priest) getMindBlastBaseConfig(rank int, cdTimer *core.Timer) core
 
 		RequiredLevel: level,
 		Rank:          rank,
+		Downrank:      core.DownrankDamage,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: manaCost,
@@ -69,7 +70,7 @@ func (priest *Priest) getMindBlastBaseConfig(rank int, cdTimer *core.Timer) core
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		BonusCoefficient: priest.downrankCoefficient(spellCoeff, level),
+		BonusCoefficient: spellCoeff,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcDamage(sim, target, sim.Roll(baseDamageLow, baseDamageHigh), spell.OutcomeMagicHitAndCrit)
