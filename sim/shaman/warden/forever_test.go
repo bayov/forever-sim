@@ -218,15 +218,17 @@ func TestForeverWardenTalents(t *testing.T) {
 				castNow(t, sim, w, w.StoneskinTotem[6])
 				return w.PseudoStats.BonusPhysicalDamageTakenBeforeArmor
 			}, false, 36 - 30, 1e-9},
-		{"Ancestral Healing 3/3: a heal crit gives 25% armor", treeRestoration, ancestralHealing, 3,
+		// 25% more armor from items only (16177: "Increases your armor value from items"), so the
+		// measure is the gain over the armor from items, plus 1 (1 for the base build, which gains none).
+		{"Ancestral Healing 3/3: a heal crit gives 25% armor from items", treeRestoration, ancestralHealing, 3,
 			func(t *testing.T, sim *core.Simulation, w *WardenShaman) float64 {
-				before := w.Armor()
+				before, fromItems := w.Armor(), w.EquipStats()[stats.Armor]
 				heal := w.LesserHealingWave[len(w.LesserHealingWave)-1]
 				w.SetGCDTimer(sim, sim.CurrentTime)
 				heal.CalcAndDealHealing(sim, &w.Unit, 100, func(_ *core.Simulation, r *core.SpellResult, _ *core.AttackTable) {
 					r.Outcome = core.OutcomeCrit
 				})
-				return w.Armor() / before
+				return 1 + (w.Armor()-before)/fromItems
 			}, true, 1.25, 1e-6},
 	}
 	for _, c := range cases {
