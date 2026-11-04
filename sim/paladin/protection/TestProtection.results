@@ -146,6 +146,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-Phase4-AllItems-HolySynthetic(Phase1)"
+ value: {
+  dps: 267.5945
+  tps: 548.90166
+ }
+}
+dps_results: {
  key: "TestProtection-Phase4-AllItems-JudgementArmor"
  value: {
   dps: 344.48683

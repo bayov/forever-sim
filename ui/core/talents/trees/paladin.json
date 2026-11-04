@@ -36,8 +36,7 @@
             70
           ]
         ],
-        "icon": "spell_arcane_blink",
-        "notSimulated": true
+        "icon": "spell_arcane_blink"
       },
       {
         "fieldName": "divineStrength",
@@ -99,8 +98,7 @@
             12
           ]
         ],
-        "icon": "spell_holy_holybolt",
-        "notSimulated": true
+        "icon": "spell_holy_holybolt"
       },
       {
         "fieldName": "reverence",
@@ -319,8 +317,7 @@
             1
           ]
         ],
-        "icon": "ability_paladin_infusionoflight",
-        "notSimulated": true
+        "icon": "ability_paladin_infusionoflight"
       },
       {
         "fieldName": "oathOfLight",
@@ -342,8 +339,7 @@
             230
           ]
         ],
-        "icon": "spell_holy_greaterblessingoflight",
-        "notSimulated": true
+        "icon": "spell_holy_greaterblessingoflight"
       },
       {
         "fieldName": "consecratedGround",
@@ -417,8 +413,7 @@
             30
           ]
         ],
-        "icon": "ability_paladin_sacredcleansing",
-        "notSimulated": true
+        "icon": "ability_paladin_sacredcleansing"
       },
       {
         "fieldName": "holyPower",
@@ -453,8 +448,7 @@
             50
           ]
         ],
-        "icon": "spell_holy_power",
-        "notSimulated": true
+        "icon": "spell_holy_power"
       },
       {
         "fieldName": "lightsVigil",

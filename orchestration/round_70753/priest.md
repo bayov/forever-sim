@@ -86,10 +86,10 @@ another session id; this worker's commits carry its own session's id.
 
 | note line | tier and evidence | sim status | fix |
 |---|---|---|---|
-| Power Word: Shield can be replaced by an equal or higher rank | notes | n/a | healer session (no DPS preset casts it) |
+| Power Word: Shield can be replaced by an equal or higher rank | notes (no client field) | landed (healers/priest) | the healing priest's `ExtraCastCondition`: a lower rank can't go over our shield still up. Test `TestHealingPriestShieldReplaceRank`. Notes-only |
 | Shadow Word: Death: 30% of max health to the priest if the target lives (was 10%), none on a miss | client 70753 SpellEffect bp 10 -> 30, all ranks; notes | missing (the sim left the self-damage out) | shadow_word_death.go: on a landed hit that doesn't kill, `RemoveHealth(0.30 x max health)`; nothing on a miss. Test `TestShadowWordDeathSelfDamage`. No DPS effect: nothing in the DPS presets reads the priest's health (goldens unchanged). The Shadow rotations cast it on cooldown; Vampiric Embrace's 20% of Shadow damage back covers it in a raid |
 | Undead Dark Sacrifice no longer breaks crowd control | notes | n/a | the sim has no crowd control |
-| Holy: Binding Heal removed, Holy Binding in its slot | client 70753 (1328569, 1328570); notes | n/a for DPS | healer session. No DPS preset takes the slot (Smite's Holy string `30505110002` stops before it, the Shadow + Holy build has 3 in Twilight Focus only). The proto field is already `holy_binding`; A1 remaps the tree |
+| Holy: Binding Heal removed, Holy Binding in its slot | client 70753 (1328569, 1328570); notes. Binding Heal's ranks keep their SkillLineAbility rows in 70753 | landed (healers/priest): no Binding Heal rank is registered; Holy Binding heals the priest for 50% of a Flash Heal on another (1328570, no threat). n/a for DPS | healer session. No DPS preset takes the slot (Smite's Holy string `30505110002` stops before it, the Shadow + Holy build has 3 in Twilight Focus only). The proto field is already `holy_binding`; A1 remaps the tree |
 | Smite builds: every Holy talent they take | Smite takes Twilight Focus 3, Holy Specialization 5, Divine Fury 5, Holy Nova 1, Blessed Recovery 1, Searing Light 2 | no note line touches them | re-check after A1's tree port (Phase B) |
 | Devouring Contagion no longer spreads Devouring Plague from a critter | notes | n/a | the sim models only its cost cut, no spread |
 | Vampiric Embrace healing can't crit | notes | landed | vampiric_embrace.go heals a flat 20% of the damage with `GainHealth`, no crit roll |
@@ -105,8 +105,13 @@ another session id; this worker's commits carry its own session's id.
 
 ## Notes-only values
 
-None. The Priest section of the notes has no damage line, and the one value it gives (Shadow Word: Death's 30%
-self-damage) is in client 70753. The 2026-11-03 hotfix
+None for the DPS specs. The Priest section of the notes has no damage line, and the one value it gives (Shadow
+Word: Death's 30% self-damage) is in client 70753.
+
+Healing (the healing priest, `docs/healing_priest.md`; standards 37: notes 2026-11-02, client 70753 unchanged):
+- Power Word: Shield can be replaced only by a shield of equal or higher rank (the client has no field for it).
+- Binding Heal removed: client 70753 still has its ranks' SkillLineAbility rows (401937, 1240770 to 1240774); the
+  sim registers none. The 2026-11-03 hotfix
 (`orchestration/audit/ref/client_update/sources/foreverchanges_2026-11-03_hotfix_and_70753.txt`) has no Priest line;
 its note that 70753 "writes the October 30 hotfix into the client files" for priests matches the 70707 -> 70753 diff
 above (Shadow Word: Death, Holy Binding, Cure / Abolish Disease).

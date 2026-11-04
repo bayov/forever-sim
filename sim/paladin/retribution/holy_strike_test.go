@@ -118,13 +118,14 @@ func castByID(sim *core.Simulation, ret *RetributionPaladin, spellID int32) {
 
 // TestLightsVigilHealsOnly checks Light's Vigil since the October 30 hotfix (spell 1310911 in
 // 1.60.1.70707+hf: a friendly target only, heals only): with the talent there is no Vigil or
-// detonation on an enemy, and Holy Shock goes on its 10 sec cooldown.
+// detonation on an enemy (the Vigil itself is a heal now, sim/paladin/holy's tests), and Holy Shock
+// at an enemy goes on its 10 sec cooldown.
 func TestLightsVigilHealsOnly(t *testing.T) {
 	sim, ret := retSim(t, "05025211220021051-5-05233", arcaniteReaper)
 	if !ret.Talents.LightsVigil || !ret.Talents.HolyShock {
 		t.Fatalf("no Light's Vigil or Holy Shock in the talents")
 	}
-	for _, id := range []int32{1311595, 1311598} {
+	for _, id := range []int32{1311598, 1311599} {
 		if spell := ret.GetSpell(core.ActionID{SpellID: id}); spell != nil {
 			t.Errorf("spell %d registered, want no Light's Vigil on an enemy", id)
 		}

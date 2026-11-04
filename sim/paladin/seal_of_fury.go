@@ -67,11 +67,20 @@ func (paladin *Paladin) registerSealOfFury() {
 	const shieldShare = 0.5
 	const sealDuration = time.Second * 30
 
-	shield := paladin.registerAbsorbShield(core.Aura{
-		Label:    "Seal of Fury Shield" + paladin.Label,
-		ActionID: core.ActionID{SpellID: 20423, Tag: 1},
-		Duration: sealDuration,
+	// The shield goes through the core absorb pipeline (core/absorb.go), after the paladin's older
+	// shields, and books what it absorbs as this spell's healing on the paladin.
+	shieldID := core.ActionID{SpellID: 20423, Tag: 1}
+	shieldSpell := paladin.RegisterSpell(core.SpellConfig{
+		ActionID:    shieldID,
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskSpellHealing,
+		Flags:       core.SpellFlagHelpful | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 	})
+	shield := paladin.NewAbsorbArray(core.Aura{
+		Label:    "Seal of Fury Shield" + paladin.Label,
+		ActionID: shieldID,
+		Duration: sealDuration,
+	}).Get(&paladin.Unit)
 	paladin.sealOfFuryShield = shield
 
 	for i, rank := range ranks {
@@ -120,8 +129,8 @@ func (paladin *Paladin) registerSealOfFury() {
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				result := spell.CalcAndDealDamage(sim, target, rank.damage, spell.OutcomeMeleeSpecialCritOnly)
-				if paladin.PseudoStats.CanBlock {
-					shield.set(sim, result.Damage*shieldShare)
+				if paladin.PseudoStats.CanBlock && result.Damage > 0 {
+					shield.Apply(sim, shieldSpell, result.Damage*shieldShare)
 				}
 			},
 		})
