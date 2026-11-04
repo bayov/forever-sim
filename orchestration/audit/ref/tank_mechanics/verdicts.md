@@ -11,6 +11,8 @@ Setup note (pass 2): the local `wago/<build>+hf` tables can be the bare build's 
 - Pass 3 (client 1.60.1.70790+hf): mana-gain threat unmultiplied (0.5 a mana, Classic tier 3); Enrage 5229 rows; Stormstrike 150%/6 s; items in Bear/Dire Bear Form follow SpellShapeshiftForm flags 0xd8 (CanUseItems) and each spell's Attributes_0 0x10000 (tier 1): potions, runes, healthstones, EZ-Thro, Goblin Sapper Charge and Goblin Land Mine usable; Dense Dynamite, Thorium/Iron Grenade, Solid Dynamite and Holy Hand Grenade not (sim wrong on sapper and land mine, -15).
 - The Warden gets no Salvation compensation in the Nov 2 notes, and the sim gives none (tier 1 notes).
 
+- Pass 3 (master 0facd9428, client 1.60.1.70790): 70790 is a game-data build (SpellEffect +53/-10/~171 rows vs 70755). For tanks it only bakes in hotfix values the sim already uses (tier 1): Earth Shock r1-r7 (r7 531, 3.4/level), Flame Shock, Stormstrike 150% (1368308) and 6 s, Vengeance 5 stacks, Two-Handed Weapon Specialization Physical+Holy, Reckless Swings 1329554/1329555 (5 Rage x4 charges, 25% base health, 15 s), warrior ranks (Improved Tactical Mastery 3, Flurry 3, Improved Whirlwind 2, Bloodthrill 2; tools/forever_talents/data/warrior.json already has them). No bear, Protection paladin or Protection warrior ability row changed. Booming Voice's mask adds Howls (no tank effect). Mana-gain threat now unmultiplied (49f0218), replay caps on max health drops (0950b22): verified, tests pass.
+
 ## Open
 - Mana gain threat: unmultiplied since 49f0218 (Classic tier 3, to verify with a log).
 - Explosives in form: sapper and land mine (-15).

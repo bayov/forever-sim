@@ -1,174 +1,92 @@
-# Healer fairness pass 1 (2026-11-04, master c8f5858bd)
+# Healer fairness pass 2 (2026-11-04, master 0facd9428)
 
-Result: findings (4 new: 1 high, 1 medium, 2 low). This was the forced first pass after H3. It began on a1b1163d2. When
-the raid damage fix (healer_mechanics-20261104-1, b2c16f6) landed, both roles were re-benched on c8f5858bd, each
-with a healbench built from a worktree of that commit. The attribution experiments stayed on a1b1163d2: the
-tank role moved by at most 0.05 between the two.
+Result: findings (1 new, high). Resolved: -1 (tank bench raid, 7b6623f27), -2 (heal gates, 324d64834, 0b15937a8,
+a7d9b57ef, bc8e5473b), -3 (stat-less wand, dda14db65). Still open: -4 (no healing by class in the boss files).
+Due because 53 watched files changed: healbench (tank role keeps idle fillers; tanks now face the boss), all 9
+healer requests re-tuned.
 
-## 1. Same terms (the 9 requests in tools/healbench/req)
+## 1. Same terms (the 9 requests)
 
-Identical in all 9:
+Identical in all 9 (md5 of each block): consumables, raid buffs, party buffs, debuffs, encounter; level 60,
+Engineering + Alchemy. Differences, all as in pass 1 and fine: race (Human priest/paladin, Skyborne Windshaper
+shaman/druid), paladin's off-hand 990314 and Libram, weapon enchants, mana cooldowns by class. Slot 16 is now
+stat-less for all four (990514 has no stats). healbench overrides reaction (0.3 s ±25%), stopcast 0.5, assignment.
 
-- level 60, Engineering + Alchemy
-- consumables: Flask of Supreme Power, Lobster Stew, Greater Mageblood, Greater Arcane, Greater Intellect, Sages,
-  Brilliant Mana Oil, Major Mana Potion, Demonic Rune, Cerebral Cortex
-- raid buffs and debuffs, Kings and Improved Wisdom, armor enchants, the request's encounter and options
+## 2. The numbers (healbench -carry, 1,000 iterations, each file at its own length, built from 0facd9428)
 
-healbench overrides these for every healer (`tools/healbench/main.go:276-325`):
-
-- reaction 0.3 s ±25%
-- stopcast 0.5
-- heal assignment
-- encounter
-- seed
-
-| Difference | Who | Verdict |
-|---|---|---|
-| Race | Human for the priest and paladin, Skyborne Windshaper for the shaman and druid | Each class takes its best legal race; priest and paladin can't be Skyborne (`ui/core/proto_utils/utils.ts:1042-1045`). The shaman's race was never swept: Orc/Troll/Tauren/Dwarf are within 0.002 of Windshaper here. Fine. |
-| Slot 16 | The priest has a synthetic wand (+21 weighted, +2.4% of budget); the others have stat-less relics | Finding 3 (carry -0.003 without it) |
-| Weapon enchant | Paladin MH Mighty Intellect + OH Wisdom; the others staff Spellblasting | Weapon type; fine |
-| Trinkets | Each borrows its class's DPS synthetic pair (45.5-46.0 weighted) | Equal; fine |
-| Gear budget | 901-903 weighted for all four (standards 1b, 35); raw mixes differ by their Wowhead lists | Fine (healing+SP: druid 892, shaman 774, paladin 765, priest 704) |
-| Mana cooldowns | Shaman Mana Tide, druid Innervate; priest and paladin none | Class kit; nobody is mana-bound at carry anyway |
-| Power Infusion | An action in priest_holy.json the talents never take | Finding 3 (0 effect) |
-
-## 2. The numbers (healbench -carry, 1,000 iterations, each file at its own length, c8f5858bd)
-
-Tank role (in brackets: the change against the H3 table / a1b1163d2):
+Tank role:
 
 | Boss | Shaman | Holy priest | Disc priest | Paladin | Druid |
 |---|---|---|---|---|---|
-| Onyxia | 1.154 (+.013) | 1.240 (+.010) | 1.225 (+.030) | 1.097 (+.016) | 1.164 (-.001) |
-| Broodlord | 0.839 | 0.891 | 0.859 | 0.754 | 0.732 |
-| Chromaggus | 0.878 | 1.002 | 0.818 | 0.837 | 0.857 |
-| Golemagg | 1.752 (+.036) | 1.865 (-.050) | 1.802 (-.024) | 1.647 (+.022) | 1.649 |
-| Magmadar | 1.793 | 2.062 (-.027) | 1.930 | 1.637 | 1.691 |
-| Ragnaros | 0.511 | 0.578 | 0.553 | 0.510 | 0.517 |
-| Vaelastrasz | 0.793 (+.018) | 0.905 | 0.854 | 0.711 | 0.672 (-.016) |
-| **Mean** | **1.103** | **1.220** | **1.149** | **1.028** | **1.040** |
+| Onyxia | 1.346 | 1.379 | 1.378 | 1.257 | 1.327 |
+| Broodlord | 0.974 | 0.930 | 0.971 | 0.895 | 0.875 |
+| Chromaggus | 0.969 | 0.955 | 0.866 (OOM 101 s) | 0.911 | 1.029 |
+| Golemagg | 1.915 | 1.969 | 1.991 | 1.911 | 1.904 |
+| Magmadar | 2.019 | 2.104 | 2.101 | 1.875 | 2.030 |
+| Ragnaros | 0.577 | 0.592 | 0.596 | 0.572 | 0.627 |
+| Vaelastrasz | 0.894 | 0.906 | 0.927 | 0.812 | 0.852 |
+| **Mean** | **1.242** | **1.262** | **1.261** | **1.176** | **1.235** |
 
-So the tank role does move a little on c8f5858bd. In the tank bench the raid damage falls on the healer too, so
-the fix touches it.
+Pass 1 (c8f5858bd): shaman 1.103, Holy 1.220, Disc 1.149, paladin 1.028, druid 1.040. Every column rose 0.09-0.20:
+the tanks now face the boss (87f28803b: parries and blocks cut the tank's damage) and the gates were re-tuned. The
+Holy priest's lead over the shaman fell from +0.117 to +0.020, as pass 1 predicted (+0.03 to +0.05) once the bench
+and gates were fixed. The paladin is last, 7% under the priests; no cell is 15% off its file's mean (largest: Disc
+Chromaggus -8%, where it runs out of mana at 101 s, already healer_rotations-20261104-2, still open; Holy ends that
+file with 677 mana). All tank healers end at carry with 3,000-7,200 mana on 6 of 7 files: cast-time bound, not mana.
 
-Raid role (old a1b1163d2 in brackets):
+Raid role:
 
 | Boss | Shaman | Holy priest | Paladin | Druid |
 |---|---|---|---|---|
-| Onyxia | 0.923 (0.678) | 0.947 (0.709) | 0.984 (0.702) | 0.977 (0.711) |
-| Broodlord | 0.879 (0.817) | 0.925 (0.879) | 0.906 (0.838) | 0.906 (0.828) |
-| Chromaggus | 1.082 (0.906) | 1.035 (0.911) | 1.081 (0.970) | 1.103 (0.953) |
-| Golemagg | 2.645 (1.913) | 2.542 (2.064) | 2.699 (2.067) | 2.656 (2.021) |
-| Magmadar | 1.772 (1.540) | 2.007 (1.693) | 1.919 (1.500) | 1.869 (1.605) |
-| Ragnaros | 1.203 (1.171) | 1.304 (1.255) | 1.302 (1.244) | 1.287 (1.240) |
-| Vaelastrasz | 1.110 | 1.139 | 1.002 | 1.092 |
-| **Mean** | **1.373** (1.162) | **1.414** (1.236) | **1.413** (1.189) | **1.413** (1.207) |
+| Onyxia | 0.919 | 0.978 | 0.984 | 0.997 |
+| Broodlord | 0.902 | 0.901 | 0.905 | 0.920 |
+| Chromaggus | 1.090 | 1.070 | 1.081 | 1.109 |
+| Golemagg | 2.662 | 2.597 | 2.699 | 2.660 |
+| Magmadar | 1.809 | 2.054 | 1.918 | 2.002 |
+| Ragnaros | 1.235 | 1.308 | 1.301 | 1.270 |
+| Vaelastrasz | 1.152 | 1.152 | 1.002 | 1.102 |
+| **Mean** | **1.396** | **1.437** | **1.413** | **1.437** |
 
-- The raid role is now nearly level. Priest, paladin and druid are at 1.413-1.414, and the shaman is 3% behind,
-  last on 4 of 7 files.
-- No raid healer runs out of mana. Per-healer means are EHPS / overheal / EH per mana:
-  - shaman 271 / 45% / 3.56
-  - priest 286 / 43% / 2.63
-  - paladin 249 / 21% / 5.48
-  - druid 292 / 72% / 2.04
-- Full tables, per-file mana, OOM and death floors are in `ref/healer_fairness/raid_c8f5858.tsv`.
+Pass 1: 1.373 / 1.414 / 1.413 / 1.413. The shaman is still about 3% behind (last on 3 files, -12% to the priest
+on Magmadar). Nobody OOMs. Overheal: druid 45-78%, priest 42-72%, shaman 22-73%, paladin 17-23%.
 
-**The spread.** No cell is 15% off its file's mean except the tank role's Holy priest:
+### The paladin's raid preset (new finding -5)
 
-- +11% over the field's mean (1.220 against 1.103 for the shaman)
-- up to +16% on Vaelastrasz and Magmadar against the shaman, +27% against the paladin
+Pass 1's open question 4 (the tank preset beat the raid preset in the raid role on 3 files) re-measured on all 7:
 
-### Why the Holy priest leads the tank role (attribution, a1b1163d2, 1,000 iterations, all 7 files)
+| Variant, raid role, paired seeds | Mean | Note |
+|---|---|---|
+| paladin_holy_raid (shipped) | 1.413 | |
+| + the tank preset's Oath of Light line | 1.413 | no change; Oath targets Tank 0 |
+| − Holy Light 9/8 and Divine Favor | 1.426 | +0.013 |
+| paladin_holy (tank preset) | 1.438 | +0.025, up on 6 of 7 |
+| tank preset − Holy Light lines | 1.438 | identical: they never fire without a tank |
+| tank preset, Tank targets → MostHurt | 1.417 | Holy Light at the most hurt costs again |
 
-Its lead over the shaman there was +0.135. Each ablation's mean delta to the priest:
-
-| Change | Δ priest mean |
-|---|---|
-| Bench with 7 idle fillers in tank role (overlay) | **-0.085** (Magmadar -0.177) |
-| Same overlay: shaman / paladin / druid | +0.003 / +0.010 / -0.004 |
-| No Prayer of Mending in the rotation | -0.081 (with fillers: +0.007) |
-| No Holy Binding | -0.081 (with fillers: -0.012) |
-| No Inspiration | -0.066 (with fillers: -0.062) |
-| No Spiritual Healing | -0.031 (with fillers: -0.037) |
-| Meditation / Improved Renew / Holy Spec / Spiritual Guidance / Twin Disc / Inner Focus | -0.021 / -0.013 / -0.011 / -0.011 / -0.009 / -0.007 |
-| No wand (slot 16 empty) | -0.003 |
-| Inspiration on item armor only (as the shaman's Ancestral Fortitude) | -0.007 to -0.010 |
-
-The pieces of the +0.135:
-
-- **0.085 is the bench (finding 1).** With no one else in a tank-role raid, Prayer of Mending can only jump
-  between the tank and the priest. Holy Binding's self-heal sets it off on the priest at once, so the tank takes
-  about 3 PoM heals a cast instead of 1.
-- **About 0.02 is the presets' "missing ≥ Expected Healing" gate.** It costs the slow-heal classes more (finding
-  2).
-- **About 0.01 is the armor asymmetry.** Inspiration is applied to all armor and Ancestral Fortitude to item armor
-  only. This is already open as healer_mechanics-20261104-3, which says Ancestral Fortitude should be all armor.
-- **The rest, about 0.02, is kit.** Most of it is Spiritual Healing (0.037 with fillers). Inspiration is worth
-  0.06, but the shaman has the same buff through Ancestral Healing.
-
-So the shaman worker's reading is partly right: the shaman's ranks, mana gates and cooldowns don't close it. Every
-shaman lever tried was within ±0.01 except the gate:
-
-- Lesser Healing Wave gates
-- Nature's Swiftness thresholds
-- Healing Wave 10 only
-- no Mana Tide
-- Thundering Strikes
-- races
-
-But most of the lead is the bench, not the class. With the bench and the gates fixed, the expected order is
-priest about +0.03 to +0.05 over shaman, then druid and paladin. That needs a re-bench after the fixes.
-
-**Mana is not the limit for any tank healer.** At its carried damage each ends with 39-89% mana, and a mana gate
-of 0 changes nothing (`ref/healer_fairness/mana_at_carry_a1b1163.tsv`).
-
-Effective stats on Magmadar (healing / crit):
-
-- priest 1153 / 19.2%
-- shaman 1109 / 23.0%
-- paladin 1030 / 26.1%
-- druid 1226 / 19.4%
-
-Spiritual Guidance adds exactly 0.25 × Spirit. No stat bug.
+So a Flash of Light raid paladin (LoH, Holy Shock, FoL under 35%, FoL 6 at the most hurt at 0.7x) carries 1.438,
+level with the priest and druid; the shipped preset's Holy Light lines cost 0.025. Finding -5, high.
 
 ### Against the logs
 
-The boss files keep healers by class only as counts, about 5.1 priests, 3.0 shamans, 1.7 paladins and 1.2 druids of
-11 a kill. They keep no HPS by class, so the sim's ranking can't be checked against the logs' (finding 4). The
-composition fits the sim's raid role, where the classes are within 3% of each other: raids bring priests by number,
-not because a priest out-heals.
+Unchanged: the boss files keep healer counts by class (5.1 priests, 3.0 shamans, 1.7 paladins, 1.2 druids of 11)
+but no HPS by class (finding -4). The sim's raid role has all four within 3%, which fits raids picking by numbers.
 
-## 3. What a role rewards (cross-check, 500 iterations, Onyxia / Magmadar / Vaelastrasz)
+## 3. What a role rewards
 
-Means over the three files:
-
-| Bench | Shaman | Holy priest | Disc priest | Paladin | Druid |
-|---|---|---|---|---|---|
-| Raid presets in the tank role (a1b1163d2) | 1.021 | 1.356 | - | 1.135 | 1.139 |
-| Tank presets in the raid role (c8f5858bd) | 1.191 | 1.033 | 1.017 | 1.319 | 1.006 |
-
-On their own role's presets, the means over the same three files are:
-
-- tank role: shaman 1.238, Holy priest 1.407, paladin 1.150, druid 1.184
-- raid role: shaman 1.268, Holy priest 1.364, paladin 1.302, druid 1.313
-
-What this shows:
-
-- **Each preset is fitted to its role.** Every healer does worse on the other role's preset, except the paladin's
-  tank preset in the raid role. It beats the paladin's raid preset (1.319 against 1.302, within the 500-iteration
-  screen's noise), so the healer_rotations auditor may want to look at the raid preset.
-- **The H3 table is like for like.** Each column is the preset for its role, judged at that file's own length
-  (the tank time for tank, the logs' median kill for raid).
+Each column is the preset for its role at its file's own length. The tank bench now keeps the 7 fillers idle, so a
+jumping heal has a raid. The tank-presets-in-raid cross-check was re-run only for the paladin (above); the other
+classes' presets didn't change role logic. Not re-run: raid presets in the tank role.
 
 ## Reproduce
 
-- Build (worktree of the audited commit):
-  `protoc -I=./proto --go_out=./sim/core ./proto/*.proto && go build --tags=with_db -o healbench ./tools/healbench`
-- Run, one per healer and file:
-  `healbench -encounter tools/encounters/<boss>.json -role <tank|raid> -carry -iters 1000 tools/healbench/req/<req>.json`
-- Filler overlay: `ref/healer_fairness/tank_fillers_overlay.diff`, run with `HB_TANK_FILLERS=1`.
+- Build: worktree of 0facd9428; `PATH=$PATH:~/go/bin protoc -I=./proto --go_out=./sim/core ./proto/*.proto &&
+  go build --tags=with_db -o healbench ./tools/healbench`
+- Per cell, from the worktree: `healbench -encounter tools/encounters/<boss>.json -role <tank|raid> -carry -iters 1000
+  tools/healbench/req/<req>.json`; tank role for the 5 non-raid requests, raid role for the 4 `_raid` ones.
+- Rows (all columns, plus the paladin variants): `ref/healer_fairness/bench_0facd94.tsv`.
 
 ## Open items for the next pass
 
-- Re-bench the tank role after finding 1's fix and give the ranking.
-- Re-check the gate (finding 2) on each preset after any re-tune.
-- The Discipline priest OOMs on one tank file at ×1.00 damage (about 106 s, a1b1163d2): check after the fixes.
+- Re-bench the raid column after finding -5's re-tune.
+- Disc tank Chromaggus OOM at carry (healer_rotations-20261104-2): check after its fix.
+- Raid presets in the tank role were not re-run this pass.
