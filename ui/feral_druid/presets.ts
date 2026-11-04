@@ -15,6 +15,7 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	Stat,
 	StrengthBuff,
 	SunderRamp,
@@ -208,9 +209,12 @@ export const DefaultOptions = FeralDruidOptions.create({
 // 9.5, but its plans only drop in Molten Core), Thistle Tea 8.0 ahead of the
 // Demonic Rune (12.2 drunk at 25 Energy or less, sim/druid/thistle_tea.go), and the Mighty Rage
 // Potion's 60 Strength 6.3 ahead of the Major Mana Potion (Major Frenzy Potion 5.0), also at 300
-// sec. The Engineering explosives can't be used in form, but EZ-Thro Dark Bomb can: 4.1 / 3.2 / 1.9
+// sec. EZ-Thro Dark Bomb can be thrown in form: 4.1 / 3.2 / 1.9
 // ahead of none at 120 / 180 / 300 sec (standards 11 takes an explosive only when it gains; the Faerie
-// Fire duty build takes it too since 2026-11-03, below). The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal
+// Fire duty build takes it too since 2026-11-03, below). Goblin Sapper Charge and Goblin Land Mine also
+// work in form (tank_mechanics-15), the rest of the Engineering explosives don't. The sapper on top of
+// the bomb is 3.8 / 3.1 / 2.4 ahead at 120 / 180 / 300 sec (Faerie Fire duty 4.2 / 3.2 / 2.6; 20,000
+// iterations, paired, two seeds, 2026-11-04); the Land Mine in place of the bomb is 5 to 7 behind. The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal
 // Summit or the Barrow Deeps) is Aggression, +23.6 over the Flask of Distilled Wisdom (Precision
 // +22.2, Swiftness +13.8, Accuracy +0.2 with the hit capped). Rechecked on the 2026-10-23 rotation:
 // Precision 2.9 and Swiftness 10.7 behind Aggression at 180 sec.
@@ -224,6 +228,7 @@ export const DefaultConsumes = Consumes.create({
 	flask: Flask.FlaskOfNaturalAggression,
 	food: Food.FoodFlankAuPoivre,
 	mainHandImbue: WeaponImbue.DenseWeightstone,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
@@ -287,8 +292,8 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// An engineer and an alchemist like the other level 60 presets. Nothing either makes works in
-// Cat Form, so the pair is free to change.
+// An engineer and an alchemist like the other level 60 presets. Engineering gives the cat the Goblin
+// Sapper Charge, which works in Cat Form; nothing Alchemy makes does, so that one is free to change.
 export const OtherDefaults = {
 	channelClipDelay: 50,
 	distanceFromTarget: 5,
