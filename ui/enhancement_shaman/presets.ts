@@ -50,14 +50,17 @@ import {
 import { Stats } from '../core/proto_utils/stats.js';
 import Level30LevelingAPLJSON from './apls/level30_leveling.apl.json';
 import LevelingWeightsJSON from './leveling_weights.json';
+import LevelingWeightsShieldJSON from './leveling_weights_shield.json';
 import LevelingPlan10APLJSON from './apls/leveling_plan_10.apl.json';
 import LevelingPlan15APLJSON from './apls/leveling_plan_15.apl.json';
 import LevelingPlan20APLJSON from './apls/leveling_plan_20.apl.json';
 import LevelingPlan25APLJSON from './apls/leveling_plan_25.apl.json';
 import LevelingPlan30APLJSON from './apls/leveling_plan_30.apl.json';
 import LevelingPlanAuditedJSON from './apls/leveling_plan_audited.json';
+import LevelingPlanShieldJSON from './apls/leveling_plan_shield.json';
 import LevelingRouteJSON from './leveling_route.json';
 import LevelingTrainingJSON from './leveling_training.json';
+import LevelingTrainingShieldJSON from './leveling_training_shield.json';
 import MagmaAPLJSON from './apls/magma.apl.json';
 import ManaTideAPLJSON from './apls/mana_tide.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
@@ -1045,7 +1048,46 @@ export const EPLevelingGearPlan = LevelingWeightsJSON.levels.map(({ level, weigh
 	),
 );
 
-export const EPPresets = [EPLevel30Leveling, ...EPLevelingGearPlan];
+// The same for the Leveling 1-60 Shield plan. These are the regular weights above with block and
+// block value added, as of 2026-11-04. We measured shield weights too (one full round and most
+// of a second one), but the gear they picked took 85.6h against 84.7h for the regular weights.
+// The block prices changed no pick. So this file is for future reference and hasn't been through
+// the usual three rounds.
+export const EPLevelingGearPlanShield = LevelingWeightsShieldJSON.levels.map(({ level, weights: w }) =>
+	PresetUtils.makePresetEpWeights(
+		`Level ${level} Leveling Gear Shield`,
+		Stats.fromMap(
+			{
+				[Stat.StatStrength]: w.Strength,
+				[Stat.StatAgility]: w.Agility,
+				[Stat.StatStamina]: w.Stamina,
+				[Stat.StatIntellect]: w.Intellect,
+				[Stat.StatSpirit]: w.Spirit,
+				[Stat.StatAttackPower]: 1,
+				[Stat.StatMeleeHit]: w.MeleeHit,
+				[Stat.StatSpellHit]: w.MeleeHit,
+				[Stat.StatMeleeCrit]: w.MeleeCrit,
+				[Stat.StatSpellCrit]: w.MeleeCrit,
+				[Stat.StatSpellPower]: w.SpellPower,
+				[Stat.StatSpellDamage]: w.SpellPower,
+				[Stat.StatFirePower]: w.FirePower,
+				[Stat.StatNaturePower]: w.NaturePower,
+				[Stat.StatMP5]: w.MP5,
+				[Stat.StatArmor]: w.Armor,
+				[Stat.StatBonusArmor]: w.Armor,
+				[Stat.StatBlock]: w.Block,
+				[Stat.StatBlockValue]: w.BlockValue,
+			},
+			{ [PseudoStat.PseudoStatMainHandDps]: w.MainHandDps },
+		),
+		{
+			tooltip: `Stat weights for a solo level ${level} with a one-hander and shield. The Leveling Gear tab judges items by them.`,
+			group: 'Leveling Gear Plan Shield',
+		},
+	),
+);
+
+export const EPPresets = [EPLevel30Leveling, ...EPLevelingGearPlan, ...EPLevelingGearPlanShield];
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Leveling Plan
@@ -1060,8 +1102,8 @@ export const EPPresets = [EPLevel30Leveling, ...EPLevelingGearPlan];
 // Shamanistic Focus, Elemental Weapons, Improved Lightning Shield 3/3 at 24, Stormstrike at 25,
 // Improved Ghost Wolf at 26 and 27 (required, for walking), Flurry 2, Improved Stormstrike and
 // Spirit Weapons, then Restoration at 33 to 40 (Tidal Focus and Mindfulness), Mental Quickness
-// at 41 and 42, Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48, Anticipation 3, Flurry
-// 5/5 at 51 to 53, Convection 3 and Guardian Totems 2. The rotations are the audit's
+// at 41 and 42, Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48, Anticipation 3 at 49
+// to 51, Flurry 5/5 at 52 to 54 and Convection 5 at 55 to 59. The rotations are the audit's
 // "Audited 10" and so on, with the rotation search's "Searched 1", "Searched 20" and so on at 1
 // to 4, 20 to 26 and 40 to 46, where they were faster. All of them on Rockbiter Weapon.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
@@ -1115,4 +1157,25 @@ export const PresetBuildLeveling1to60 = PresetUtils.makePresetBuild('Leveling 1-
 	race: Race.RaceOrc,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	levelingPlan: DefaultLevelingPlan,
+});
+
+// The same plan in a one-hander and a shield from level 1, kept for future reference. It's slower
+// than the regular plan at nearly every level (docs/leveling_plan.md, One-hand + shield). Its
+// route and training are searched for the shield. Its rotations are the regular plan's, with the
+// rotation search's Flametongue Weapon ones at 30 to 37 and 40 to 46.
+export const DefaultLevelingPlanShield = LevelingPlanSettings.create({
+	...DefaultLevelingPlan,
+	builds: [LevelingTalentBuild.create({ level: 10, picks: LevelingPlanShieldJSON.route.map(pick => LevelingTalentPick.fromJson(pick as any)) })],
+	rotationLibrary: LevelingPlanShieldJSON.rotationLibrary.map(preset => LevelingRotationPreset.fromJson(preset as any)),
+	rotations: LevelingPlanShieldJSON.rotations.map(range => LevelingRotation.fromJson(range)),
+	training: LevelingTrainingSettings.fromJson(LevelingTrainingShieldJSON as any),
+	oneHandAndShield: true,
+});
+export const PresetBuildLeveling1to60Shield = PresetUtils.makePresetBuild('Leveling 1-60 Shield', {
+	group: 'Leveling',
+	tooltip: 'The 1 to 60 plan in a one-hander and shield. Slower than the regular plan.',
+	encounter: EncounterLevelingPlan,
+	race: Race.RaceOrc,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	levelingPlan: DefaultLevelingPlanShield,
 });

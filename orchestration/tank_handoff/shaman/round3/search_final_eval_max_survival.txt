@@ -1,0 +1,7 @@
+tank encounters (their index takes the fight length's place, scored as their mean): tools/encounters/magmadar.json,tools/encounters/golemagg.json,tools/encounters/onyxia.json,tools/encounters/broodlord.json,tools/encounters/vaelastrasz.json,tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 3 x 900 x healing needed at 5% deaths / 258, in raid DPS
+[0 1 2 3 4 5]s: -3996.4(27.5) mana 4022(5) tto 213s
+  start -3996.4(27.5) mana 4022(5) tto 213s
+  best  airTotem=0 armorTrinket=1 earthShockHold=0 earthTotem=1 fireNova=0 fireNovaMana=40 fireTotem=0 maelstromStacks=0 prepull=1 selfHealMana=0 shield=1 shieldMana=0 shock=1 shockFirst=1 shockMana=0 totemMinTime=10 trinketAt=25 waterTotem=0
+  sim runs 0
+  wrote ui/warden_shaman/apls/level60_max_survival.apl.json

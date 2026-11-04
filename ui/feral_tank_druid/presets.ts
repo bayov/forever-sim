@@ -32,6 +32,7 @@ import BalancedAPLJSON from './apls/balanced.apl.json';
 import MaxSurvivalAPLJSON from './apls/max_survival.apl.json';
 import MaxThreatAPLJSON from './apls/max_threat.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticMaxThreatGearJSON from './gear_sets/level60_phase1_synthetic_max_threat.gear.json';
 
 // The Forever bear (docs/tank_druid.md has the audit, the searches and the numbers). Three presets along
 // the tank sim's objective, 2 x SafeDPS - w x 900 x healing needed / one healer's HPS (docs/tank_sim.md,
@@ -45,19 +46,29 @@ import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic
 
 // The level 60 Phase 1 tank set, synthetic items not in the game (tools/database/
 // forever_synthetic_items_druid_tank.go has the budget math): standards 36's bear row (physical
-// archetype, 729 weighted points with the feral two-hander), 256 Stamina, 164 Agility, 122 Strength,
-// 105 Defense and 3% hit (8% with the flask). The trinkets are the tank stat trinket (23 Defense, 1%
+// archetype, about 730 weighted points with the feral two-hander), 254 Stamina, 164 Agility, 125
+// Strength, 105 Defense and 3% hit (8% with the flask). The trinkets are the tank stat trinket (23 Defense, 1%
 // dodge) and the cat's on-use Strength trinket, which the tank objective scores far over the defensive
 // armor one (its opening threat). Idol of the Ursine Twins (Lacerate resets Primal Bite 10% of the
-// time) is ahead of Idol of Brutality and Enraged Idol. Enchants: Agility on the head and legs (Lesser
-// Arcanums of Voracity), the neck, back, boots and weapon, Greater Stats, Superior Stamina on the wrist
-// and Superior Strength on the gloves, each ahead of or tied with the Stamina one at Balanced.
+// time) is ahead of Idol of Brutality and Enraged Idol. Enchants (round 3, each A/B'd at the preset's weight,
+// docs/tank_druid.md): Agility on the head and legs (Lesser Arcanums of Voracity), the neck, back (ahead of
+// Superior Defense's 70 armor), boots and weapon, Greater Stats, Superior Deflection on the wrist (ahead of
+// Superior Stamina at Balanced and Max survival) and Superior Strength on the gloves. Balanced and Max survival
+// wear this set.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Bear', Level60Phase1SyntheticGearJSON, {
-	tooltip: 'A guess at Phase 1 BiS for a bear under Forever, made of synthetic items that are not in the game.',
+	tooltip: 'A guess at Phase 1 BiS for a bear under Forever, made of synthetic items that are not in the game. The Balanced and Max survival enchants.',
 	group: 'Synthetic',
 });
 
-export const GearPresets = [GearLevel60Phase1Synthetic];
+// The same items with Max threat's enchants: Strength on the head and legs (Lesser Arcanum of Voracity, 8
+// Strength), the wrist (Superior Strength) and the weapon (2H Strength, 25), each ahead of the Agility or
+// Stamina one at weight 1/3 on two seeds; the neck stays Agility (Strength there is a tie).
+export const GearLevel60Phase1SyntheticMaxThreat = PresetUtils.makePresetGear('Bear (Max threat)', Level60Phase1SyntheticMaxThreatGearJSON, {
+	tooltip: "The synthetic bear set with Max threat's Strength enchants on the head, legs, wrist and weapon.",
+	group: 'Synthetic',
+});
+
+export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticMaxThreat];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
@@ -65,12 +76,12 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
 
-// The three presets' rotations (tools/rotopt -template druid_tank, each searched at its weight, round 2 on the
-// flat white-hit Rage). All three put Primal Bite on cooldown, keep Lacerate at 5 stacks, keep Demoralizing Roar
+// The three presets' rotations (tools/rotopt -template druid_tank, each searched at its weight; round 3 on the
+// unmultiplied mana-gain threat moved only Max threat's Enrage). All three put Primal Bite on cooldown, keep Lacerate at 5 stacks, keep Demoralizing Roar
 // up just below that line (refreshed under 3 sec), use Barkskin on its timer from 15 sec in, in the filler's
 // place, shift into Dire Bear Form 1.5 sec before the pull and Enrage in the fight. Balanced: Lacerate as the
 // filler, Maul at 20 Rage, Enrage under 40 Rage and Frenzied Regeneration at 100 Rage. Max threat: Balanced
-// without Frenzied Regeneration and with Enrage under 60 Rage. Max survival: Balanced with Lacerate kept up but
+// without Frenzied Regeneration and with Enrage under 70 Rage. Max survival: Balanced with Lacerate kept up but
 // not the filler and Maul at 10 Rage, so its Rage goes to Maul. No preset enrages before the pull any more
 // (each weight's best build enrages in the fight).
 export const APLMaxThreat = PresetUtils.makePresetAPLRotation('Max threat', MaxThreatAPLJSON);
@@ -101,7 +112,8 @@ export const DefaultTalents = TalentsBear;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-// The bear starts the pull with no Rage; its rotation shifts before the pull for Furor's.
+// The bear starts the pull with no Rage (the requests' startingRage 0); its rotation shifts into Dire
+// Bear Form 1.5 sec before the pull (the presets take no Furor, which scores nothing for it).
 export const DefaultOptions = DruidOptions.create({
 	innervateTarget: UnitReference.create(),
 	startingRage: 0,
@@ -115,12 +127,13 @@ export const DefaultRotation = DruidRotation.create({
 });
 
 // Forever launch Phase 1 consumables (nothing from a raid), each the best of its slot for the tank
-// objective at Balanced: the Flask of Natural Accuracy (5% hit and 60 Stamina in Hyjal and the Barrow
-// Deeps, standards 11; 105 ahead of the Flask of the Titans), Elixir of the Phalanx (400 health, 500
-// armor), Elixir of Greater Fortitude, Elixir of the Mongoose (taking it out costs 124), Juju Power and
-// Might, Smoked Desert Dumpling (ahead of Dirge's Stamina chops and Grilled Squid), Dragonbreath Chili,
-// a Dense Weightstone on the mace, and the Mighty Rage Potion at the pull (Greater Stoneshield, a
-// defensive potion, loses it all).
+// objective, re-checked in round 3 at each preset's weight (docs/tank_druid.md): the Flask of Natural
+// Accuracy (5% hit and 60 Stamina in Hyjal and the Barrow Deeps, standards 11; 125 to 300 ahead of the Flask
+// of the Titans), Elixir of the Phalanx (400 health, 500 armor), Elixir of Greater Fortitude, Elixir of the
+// Mongoose (45 over Greater Agility), Juju Power and Might (ahead of Giants and Winterfall Firewater), Smoked
+// Desert Dumpling (ahead of Dirge's Stamina chops at Max threat and Balanced, and of Grilled Squid),
+// Dragonbreath Chili, a Dense Weightstone on the mace, and the Mighty Rage Potion at the pull (Greater
+// Stoneshield, a defensive potion, loses 470 to 620).
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	armorElixir: ArmorElixir.ElixirOfThePhalanx,
@@ -132,6 +145,12 @@ export const DefaultConsumes = Consumes.create({
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
 	mainHandImbue: WeaponImbue.DenseWeightstone,
 	strengthBuff: StrengthBuff.JujuPower,
+});
+
+// Max survival eats Dirge's Kickin' Chimaerok Chops (25 Stamina): +80 to +90 over the Dumpling at weight 3.
+export const MaxSurvivalConsumes = Consumes.create({
+	...DefaultConsumes,
+	food: Food.FoodDirgesKickChimaerokChops,
 });
 
 // The tank bench's raid (tools/tankbench/req/druid_bear*.json): the Level 60 raid without Salvation (a
@@ -225,12 +244,23 @@ export const EncounterLevel60Tank = PresetUtils.makePresetEncounter(
 	},
 );
 
+// The same fight with Max survival's consumables (Dirge's chops for the Dumpling).
+export const EncounterLevel60TankMaxSurvival = PresetUtils.makePresetEncounter('Generic boss, tanking (Max survival)', EncounterLevel60Tank.encounter, {
+	tanks: EncounterLevel60Tank.tanks,
+	healingModel: EncounterLevel60Tank.healingModel,
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: MaxSurvivalConsumes,
+	inFrontOfTarget: true,
+});
+
 // The three presets (the user's ruling: threat against survival as weights, Balanced the default), each a
-// Night Elf (the best race at Max threat and Balanced: Elune's Light; tied with the Tauren at Max survival), on
-// the synthetic set.
+// Night Elf (the best race at Max threat and Balanced: Elune's Light; at Max survival the Tauren is 20 +- 11
+// behind, a tie), on the synthetic set (Max threat with its own enchants).
 export const PresetBuildMaxThreat = PresetUtils.makePresetBuild('Max threat', {
-	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
-	gear: GearLevel60Phase1Synthetic,
+	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Strength enchants on the head, legs, wrist and weapon; Enrage under 70 Rage.',
+	gear: GearLevel60Phase1SyntheticMaxThreat,
 	talents: TalentsBear,
 	rotation: APLMaxThreat,
 	encounter: EncounterLevel60Tank,
@@ -245,10 +275,10 @@ export const PresetBuildBalanced = PresetUtils.makePresetBuild('Balanced', {
 	race: Race.RaceNightElf,
 });
 export const PresetBuildMaxSurvival = PresetUtils.makePresetBuild('Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md).',
+	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear and talents, Dirge's chops for the Dumpling.",
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsBear,
 	rotation: APLMaxSurvival,
-	encounter: EncounterLevel60Tank,
+	encounter: EncounterLevel60TankMaxSurvival,
 	race: Race.RaceNightElf,
 });

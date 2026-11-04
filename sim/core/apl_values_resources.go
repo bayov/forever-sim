@@ -7,6 +7,10 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
+// The health values read a tank as at full health in a tank score's replay (readsNoHealth): the
+// score replays the iteration at other HPS, so a choice made on this run's health wouldn't follow
+// (tank_mechanics-20261104-14). Current Health is its max health, Current Health % 100%, Health
+// Missing 0, as a survival cooldown's health share never comes due there (major_cooldown.go).
 type APLValueCurrentHealth struct {
 	DefaultAPLValueImpl
 	unit UnitReference
@@ -36,6 +40,9 @@ func (value *APLValueCurrentHealth) GetFloat(_ *Simulation) float64 {
 	unit := value.unit.HealthUnit()
 	if unit == nil {
 		return 0
+	}
+	if unit.readsNoHealth() {
+		return unit.MaxHealth()
 	}
 	return unit.CurrentHealth()
 }
@@ -72,6 +79,9 @@ func (value *APLValueCurrentHealthPercent) GetFloat(_ *Simulation) float64 {
 	unit := value.unit.HealthUnit()
 	if unit == nil {
 		return 0
+	}
+	if unit.readsNoHealth() {
+		return 1
 	}
 	return unit.CurrentHealthPercent()
 }
@@ -144,7 +154,7 @@ func (value *APLValueHealthMissing) Type() proto.APLValueType {
 }
 func (value *APLValueHealthMissing) GetFloat(_ *Simulation) float64 {
 	unit := value.unit.Get()
-	if unit == nil || unit.IsDead() {
+	if unit == nil || unit.IsDead() || unit.readsNoHealth() {
 		return 0
 	}
 	// As the rotation's player sees it: a reaction time late, less the other healers' heals in

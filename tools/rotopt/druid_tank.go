@@ -58,7 +58,7 @@ func (druidTank) Knobs() []Knob {
 		// Rage, 3 both.
 		{Name: "enrage", Default: 0, Min: 0, Max: 3, Step: 1},
 		{Name: "enragePrepull", Default: 10, Min: 1, Max: 10, Step: 1},
-		{Name: "enrageRage", Default: 20, Min: 0, Max: 60, Step: 10},
+		{Name: "enrageRage", Default: 20, Min: 0, Max: 100, Step: 10},
 		// A shift into Dire Bear Form before the pull, for Furor's 10 Rage, 0/1 (with Enrage before the
 		// pull it comes just before it, else 1.5 sec before the pull).
 		{Name: "prepullShift", Default: 0, Min: 0, Max: 1, Step: 1},

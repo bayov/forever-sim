@@ -5,10 +5,10 @@
     "players": [
      {
       "inFrontOfTarget": true,
-      "race": "RaceTauren",
+      "race": "RaceNightElf",
       "class": "ClassShaman",
       "level": 60,
-      "talentsString": "05050002-050032203551012201-050002",
+      "talentsString": "05050003-050032203451012201-050002",
       "equipment": {
        "items": [
         {
@@ -32,7 +32,7 @@
         },
         {
          "id": 999206,
-         "enchant": 1886
+         "enchant": 1248665
         },
         {
          "id": 999207,
@@ -59,7 +59,7 @@
          "id": 999215
         },
         {
-         "id": 990015
+         "id": 999216
         },
         {
          "id": 999213,
@@ -67,7 +67,7 @@
         },
         {
          "id": 999214,
-         "enchant": 929
+         "enchant": 1886
         },
         {
          "id": 272432
@@ -183,6 +183,70 @@
           }
          },
          "notes": "The earth totem whenever it's down."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "itemId": 999216
+           }
+          },
+          "condition": {
+           "or": {
+            "vals": [
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "25s"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "spellUsesLostByDelay": {
+                 "delay": {
+                  "math": {
+                   "lhs": {
+                    "remainingTime": {}
+                   },
+                   "op": "OpSub",
+                   "rhs": {
+                    "const": {
+                     "val": "25s"
+                    }
+                   }
+                  }
+                 },
+                 "minTimeLeft": {
+                  "const": {
+                   "val": "20s"
+                  }
+                 },
+                 "spellId": {
+                  "itemId": 999216
+                 }
+                }
+               },
+               "op": "OpGt",
+               "rhs": {
+                "const": {
+                 "val": "0"
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "The defensive on-use trinket, held for the last 25 sec unless the wait costs a use. Without it ignore the warning on this line."
         },
         {
          "action": {

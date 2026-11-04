@@ -180,7 +180,7 @@ export function startReport(dash, events) {
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
   // "Duty" is off by default; it's showDuty rather than the old duty, which every earlier visit saved as on
-  const st = Object.assign({ mode: 'dps', mt: {}, tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', setupHide: false, enc: false, showDuty: false, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chVar: false, chSim: false }, saved);
+  const st = Object.assign({ mode: 'dps', mt: {}, tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rrFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', setupHide: false, enc: false, showDuty: false, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chVar: false, chSim: false }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   st.chUp = null; // nor an older update: the Changes tab opens on the newest unless a link names one
   st.mode = 'dps'; // nor another mode: an address without one is DPS's, as it always was
@@ -1915,7 +1915,8 @@ export function startReport(dash, events) {
   const roleDs = (m) => {
     const has = (x) => (`${m}_${x}` in dash.manifest ? `${m}_${x}` : null);
     return { el: '#rs-', builds: has('builds'), gear: has('gear'), rotation: has('rotation'), race_rotation: null, races: null, setup: has('setup'), tips: has('tooltips'),
-      icons: has('icons'), names: has('names'), bosses: has('bosses'), encounters: has('encounters'), raceRows: has('races'), notes: has('notes'), method: has('method') };
+      icons: has('icons'), names: has('names'), bosses: has('bosses'), encounters: has('encounters'), raceRows: has('races'), notes: has('notes'), method: has('method'),
+      asm: has('assumptions') };
   };
   const ROLE_DS = { tank: roleDs('tank'), heal: roleDs('heal') };
   const curDs = () => ROLE_DS[st.mode] || DPS_DS;
@@ -3040,7 +3041,7 @@ export function startReport(dash, events) {
   const asmHover = (node, head, lines, opts = {}) => {
     node.setAttribute('data-tip', '1');
     hoverTip(node, (pinned) => {
-      const card = $('#asm-card'), cr = card.getBoundingClientRect(), nr = node.getBoundingClientRect();
+      const card = node.closest('.fv-card'), cr = card.getBoundingClientRect(), nr = node.getBoundingClientRect();
       showTip(card, nr.left - cr.left, nr.bottom - cr.top + 4, head, lines(), { hl: node, below: true, pinned, act: opts.act });
     }, { tap: opts.tap !== false });
   };
@@ -3051,21 +3052,15 @@ export function startReport(dash, events) {
     asmRef(a) ? null : el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
       ` (${x.id === a.defaultSetting ? 'default' : SEG_NAME[x.id] || x.id}): ${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale || ''}`))),
     a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
-  const drawAsm = () => {
-    const host = $('#asm-list'), custom = asmSel().length > 0;
-    $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
-    // Picks that were never simmed together on a preset are multiplied from the single settings: an estimate.
-    const est = asmOn ? (rowsOf('builds') || []).filter((b) => !isDuty(b) && (st.enc || !isEnc(b)) && asmEst(b.id)) : [];
-    $('#asm-est').hidden = !est.length;
-    $('#asm-est').replaceChildren(...(est.length ? [el('span', { class: 'fv-asm-badge est', text: 'Estimate' }),
-      ` On ${est.length} preset${est.length === 1 ? '' : 's'}, your settings weren't simmed together, so their numbers are estimated from the single settings; not simmed.`] : []));
-    if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
-    const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen));
-    host.replaceChildren(...d3.groups(As, (a) => a.class).map(([cls, as]) => {
+  // The assumptions by class, a fold each: the DPS panel's, and a Healing page's (one-value rows only). pre keeps a
+  // mode's open classes apart in st.asmOpen (the DPS ones have none, as they always had).
+  const asmGroups = (As, pre = '') => {
+    const open = new Set(arr(st.asmOpen));
+    return d3.groups(As, (a) => a.class).map(([cls, as]) => {
       const changed = as.filter((a) => st.asm?.[a.key]).length, top = d3.max(as, asmImpact);
       const d = el('details', { class: 'fv-asm-cls', 'data-cls': cls });
-      d.open = open.has(cls);
-      d.addEventListener('toggle', () => { const o = new Set(arr(st.asmOpen)); if (d.open) o.add(cls); else o.delete(cls); st.asmOpen = [...o]; persist(); });
+      d.open = open.has(pre + cls);
+      d.addEventListener('toggle', () => { const o = new Set(arr(st.asmOpen)); if (d.open) o.add(pre + cls); else o.delete(pre + cls); st.asmOpen = [...o]; persist(); });
       d.append(el('summary', {}, cls === 'All' ? null : ringed('classicon_' + cls.toLowerCase(), 'fv-ico ring', ccol(cls)), cls === 'All' ? 'All classes' : cls,
         el('small', { text: `${as.length} assumption${as.length === 1 ? '' : 's'}${top > 0 ? ` · up to ${f1(top)}%` : ''}` }), changed ? el('span', { class: 'fv-asm-badge', text: `${changed} changed` }) : null));
       for (const a of asmSort(as)) {
@@ -3086,7 +3081,18 @@ export function startReport(dash, events) {
             !live ? el('p', { class: 'fv-asm-cap', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' }) : null)));
       }
       return d;
-    }));
+    });
+  };
+  const drawAsm = () => {
+    const host = $('#asm-list'), custom = asmSel().length > 0;
+    $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
+    // Picks that were never simmed together on a preset are multiplied from the single settings: an estimate.
+    const est = asmOn ? (rowsOf('builds') || []).filter((b) => !isDuty(b) && (st.enc || !isEnc(b)) && asmEst(b.id)) : [];
+    $('#asm-est').hidden = !est.length;
+    $('#asm-est').replaceChildren(...(est.length ? [el('span', { class: 'fv-asm-badge est', text: 'Estimate' }),
+      ` On ${est.length} preset${est.length === 1 ? '' : 's'}, your settings weren't simmed together, so their numbers are estimated from the single settings; not simmed.`] : []));
+    if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
+    host.replaceChildren(...asmGroups(rowsOf('assumptions')));
   };
   // headline figures: the overview calc, or the same figures from the adjusted presets
   const asmOverview = () => {
@@ -3519,10 +3525,10 @@ export function startReport(dash, events) {
       scoreKey: (pick) => (TANK_W.find((w) => w[0] === pick) || TANK_W[1])[2],
       metrics: [['score', 'Score'], ['safeDps', 'Safe DPS'], ['tps', 'TPS'], ['dtps', 'Damage taken', 'low'], ['healingNeeded', 'Healing needed', 'low'], ['death', 'Died', 'low', '%']],
       meanName: 'Average of six bosses', unit: '', what: 'tank',
-      note: 'Higher is better. The score weighs how much DPS your raid can do behind this tank without pulling aggro against how much healing the tank needs to stay alive. Max threat counts aggro more, Max survival counts healing more, Balanced counts both the same.',
+      note: 'The score combines threat per second and how much healing the tank needs to stay alive.',
       help: {
-        safeDps: 'Safe DPS: how much DPS a player can do behind this tank without ever pulling aggro. Higher is better.',
-        tps: 'TPS: the threat per second the tank makes. Higher is better.',
+        safeDps: 'Safe DPS: how much DPS a player can do behind this tank without ever pulling aggro.',
+        tps: 'TPS: the threat per second the tank makes.',
         dtps: 'Damage taken: the damage the tank takes per second, after armor, dodges, parries and blocks. Lower is better.',
         healingNeeded: 'Healing needed: the healing per second the tank needs to die in only 1 fight out of 20. Lower is better. "none" means no amount of healing is enough.',
         death: 'Died: how often the tank dies with the healing real raids gave their tank on that boss. Lower is better.',
@@ -3533,12 +3539,12 @@ export function startReport(dash, events) {
       scoreKey: () => 'carry',
       metrics: [['score', 'Score'], ['hps', 'HPS'], ['ehps', 'Useful HPS'], ['overheal', 'Overheal', 'low', '%'], ['ehPerMana', 'Healing per mana'], ['manaLeft', 'Mana left'], ['deaths', 'Deaths', 'low', '%']],
       meanName: 'Average of seven bosses', unit: '×', what: 'healer',
-      note: 'Higher is better. We turn the boss\'s damage up until the healer can\'t keep everyone alive. 1.20× means it kept up with 20% more damage than real raids took.',
+      note: 'How much more damage than real raids take the healer can keep up with: 1.20× is 20% more.',
       help: {
         hps: 'HPS: all the healing done per second, overhealing included. These figures are at the boss\'s normal damage.',
-        ehps: 'Useful HPS: the healing per second that wasn\'t overhealing. Higher is better.',
+        ehps: 'Useful HPS: the healing per second that wasn\'t overhealing.',
         overheal: 'Overheal: the share of the healing that landed on someone already full. Lower is better.',
-        ehPerMana: 'Healing per mana: useful healing for each point of mana spent. Higher is better.',
+        ehPerMana: 'Healing per mana: useful healing for each point of mana spent.',
         manaLeft: 'Mana left: the mana the healer has at the end of the fight.',
         deaths: 'Deaths: how often the tank (tank healer) or anyone in the group (raid healer) dies at the boss\'s normal damage. Lower is better.',
       },
@@ -3628,6 +3634,12 @@ export function startReport(dash, events) {
     seg(host, key, opts, (v) => { mst()[name] = v; persist(); render(); });
   };
 
+  // The mode's assumptions (heal_assumptions), as the DPS panel shows its one-value rows; no card when it has none.
+  const drawRoleAsm = () => {
+    const D = curDs(), host = $('#r-asm-list');
+    $('#r-asm-card').hidden = !D.asm;
+    if (D.asm && waitOr(host, [D.asm])) host.replaceChildren(...asmGroups(rowsOf(D.asm), st.mode + ':'));
+  };
   const drawRoleRank = () => {
     const R = curRole(), D = curDs(), o = rsel(), host = $('#r-rank');
     roleSeg($('#r-pick'), 'pick', R.picks, R.def);
@@ -3726,6 +3738,7 @@ export function startReport(dash, events) {
     const safe = (fn, host) => { try { fn(); } catch (err) { console.error(err); if (host) { fail(host); host.dataset.build = b.id; } } };
     safe(() => drawRoleBosses(b), $('#rs-bosstab'));
     safe(() => drawTalents(b, D), $('#rs-tal'));
+    safe(() => drawRoleSpecRaces(b), $('#rs-races'));
     $('#rs-rot-card').hidden = !D.rotation;
     if (D.rotation) safe(() => drawRotation(b, D), $('#rs-rotation'));
     $('#rs-gear-card').hidden = !D.gear;
@@ -3754,7 +3767,7 @@ export function startReport(dash, events) {
     heal: [['score', 'Score', '×'], ['hps', 'HPS'], ['ehps', 'Useful HPS'], ['overheal', 'Overheal %', '%'], ['ehPerMana', 'Healing per mana'], ['manaLeft', 'Mana left'], ['tankDied', 'Tank died %', '%'], ['otherDied', 'Others died %', '%']],
   };
   const COL_HELP = {
-    score: 'The score on this boss. Higher is better.', biggestHit: 'The biggest single hit the tank took.',
+    score: 'The score on this boss.', biggestHit: 'The biggest single hit the tank took.',
     tankDied: 'How often the tank dies at the boss\'s normal damage.', otherDied: 'How often someone other than the tank dies at the boss\'s normal damage.',
   };
   const drawRoleBosses = (b) => {
@@ -3773,6 +3786,60 @@ export function startReport(dash, events) {
     });
     rows.push(el('tr', { class: 'fv-total' }, el('td', { class: 'first', text: curRole().meanName }), ...cols.map((c) => cell(b, c))));
     table.querySelector('tbody').replaceChildren(...rows);
+  };
+  // Best races on a Tanking or Healing Specs page: the DPS Specs page's race card (drawRaceRank, its rows and faction
+  // switch), with the preset's own score as the value: a tank's at its setup, a healer's for its role. The race data
+  // has no per-racial parts, so each bar is one piece in the class colour, with the score's error as the thin line.
+  const drawRoleSpecRaces = (b) => {
+    const R = curRole(), D = curDs(), host = $('#rs-races'), axis = $('#rr-axis'), card = host.closest('.fv-card');
+    $('#rs-races-card').hidden = !D.raceRows;
+    if (!D.raceRows || !specWait(host, [D.raceRows], b)) return;
+    const sc = fixedScope('rr', b), pick = R.ownPick(b), tank = st.mode === 'tank';
+    $('#rr-note').textContent = `${tank ? `The score at ${roleName(b)}` : `The score as ${roleName(b).toLowerCase()}`}, ${R.meanName.replace(/^Average of/, 'averaged over')}.`;
+    $('#rs-races-link').onclick = (e) => { e.stopPropagation(); mst().build = b.id; persist(); hideTip(); showTab('races'); $('.sim-ui').scrollTo({ top: 0 }); };
+    const rows = rowsOf(D.raceRows).filter((r) => r.build === b.id && (sc.fac === 'All' || r.faction === sc.fac))
+      .map((r) => ({ ...r, v: mval(r, 'score', pick), se: mse(r, 'score', pick) })).filter((r) => r.v != null).sort((p, q) => q.v - p.v);
+    if (!rows.length) {
+      host.replaceChildren(el('p', { class: 'fv-note', text: sc.fac === 'All' ? 'No race data for this preset.' : 'No race of this faction plays this preset.' }));
+      axis.hidden = true;
+      return;
+    }
+    const fv = (v) => fmtV(v, R.unit);
+    const best = rows[0].v;
+    // the gap to the best race: a share of its score for a healer (always above 0), points for a tank (can be below 0)
+    const gap = (v) => (tank ? `−${fmtV(best - v)}` : `−${f2(100 * (1 - v / best))}%`);
+    rows.forEach((r, i) => { const p = rows[i - 1]; r.tie = p && r.se != null && p.se != null && isTie(r.v, r.se, p.v, p.se) ? tieText(p.race, r.v, r.se, p.v, p.se, 'points') : null; });
+    const ends = rows.flatMap((r) => (r.se != null ? [r.v - r.se, r.v + r.se] : [r.v]));
+    const hi = d3.max(ends), lo0 = d3.min(ends), span = Math.max(hi - lo0, tank ? 4 : 0.02);
+    const lo = lo0 >= 0 ? Math.max(0, lo0 - 0.35 * span) : lo0 - 0.35 * span;
+    const x = (v) => (100 * (Math.max(lo, v) - lo)) / (hi - lo || 1);
+    const sub = (r) => (tank ? `Safe DPS ${fmtV(r.safeDps)} · needs ${r.healingNeeded == null ? 'more healing than any healer gives' : `${fmtV(r.healingNeeded)} healing per second`}`
+      : `Useful HPS ${fmtV(r.ehps)} · HPS ${fmtV(r.hps)} · mana left ${fmtV(r.manaLeft)}`);
+    const raceTT = (r, n) => tt(n, `r:${r.race}:${b.class}`, true, b.id);
+    host.replaceChildren(...rows.map((r, i) => {
+      const nm = raceName(r);
+      raceTT(r, nm.querySelector('b'));
+      const track = el('div', { class: 'fv-rtrack' }, el('span', { class: 'sg last', 'data-zone': '', style: `left:0;width:${Math.max(0.6, x(r.v))}%;background:${ccol(b.class)}` }));
+      if (r.se != null) track.append(el('span', { class: 'wk', style: `left:${x(r.v - r.se)}%;width:${Math.max(0.4, x(r.v + r.se) - x(r.v - r.se))}%` }));
+      const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
+        raceTT(r, raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` })),
+        el('span', { class: 'nm' }, nm, r.isPreset ? el('i', { 'data-zone': '', text: 'preset race' }) : null),
+        el('span', { class: 'end', 'data-zone': '' }, el('small', {}, r.tie ? tieMark(r.tie, false) : null, r.tie ? ' ' : null, i === 0 ? '★ best' : gap(r.v)),
+          el('b', { text: fv(r.v) })),
+        track, el('div', { class: 'fv-rsub' }, el('span', { text: sub(r) })));
+      hoverZones(row, (zone, node, pinned) => {
+        const cr = card.getBoundingClientRect(), at = node.getBoundingClientRect(), end = node.classList.contains('end');
+        const lines = tank
+          ? [tipKey(fv(r.v), 'Score', r.se != null ? `± ${fmtV(r.se)}` : null), `Safe DPS ${fmtV(r.safeDps)}, ${fmtV(r.tps)} threat per second.`,
+            `Takes ${fmtV(r.dtps)} damage per second and ${r.healingNeeded == null ? 'no amount of healing keeps it alive on every boss' : `needs ${fmtV(r.healingNeeded)} healing per second`}.`]
+          : [tipKey(fv(r.v), 'Score'), `Useful HPS ${fmtV(r.ehps)}, HPS ${fmtV(r.hps)}, ${fmtV(r.overheal, '%')} overheal.`,
+            `${fmtV(r.ehPerMana)} useful healing per mana, ${fmtV(r.manaLeft)} mana left at the end.`];
+        showTip(card, end ? at.right - cr.left : Math.max(8, at.left - cr.left), at.bottom - cr.top + 4, tipTitle(r.race, b.label, raceIco(r.raceIcon)),
+          [...lines, r.isPreset ? el('span', { class: 'fv-tip-m', text: 'The race the preset plays.' }) : null, r.tie ? tipNote('≈ ', r.tie) : null, null], { below: true, pinned, end, hl: row });
+      });
+      return row;
+    }));
+    axisWarn(axis, Math.abs(lo) > 1e-9 ? fv(lo) : null, 'races');
   };
   // "Good to know": the notes on the preset, or on its class
   const drawRoleNotes = (b) => {
@@ -3822,7 +3889,7 @@ export function startReport(dash, events) {
     if (ttNode && !ttNode.isConnected) hideTT();
     const tab = mst().tab;
     try {
-      if (tab === 'ranking') drawRoleRank();
+      if (tab === 'ranking') { safeTop(drawRoleAsm, $('#r-asm-list')); drawRoleRank(); }
       else if (tab === 'spec') drawRoleSpec();
       else if (tab === 'races') drawRoleRaces();
       else if (tab === 'method') drawRoleMethod();

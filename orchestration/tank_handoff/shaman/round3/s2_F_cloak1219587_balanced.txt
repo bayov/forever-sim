@@ -1,0 +1,10 @@
+A=shaman_warden_balanced.json B=F_cloak_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         -222     -272   -50.0   20.9      1.5       18
+chromaggus        -474     -474    -0.7    9.6      2.6        2
+golemagg          1131     1135     3.8    5.6      2.7        0
+magmadar          1409     1407    -2.4    5.0      3.3        3
+onyxia             345      366    21.1   13.9      5.2       -2
+ragnaros         -3730    -3718    12.2   44.2      1.5       -3
+vaelastrasz       1499     1492    -6.8    6.6      1.5        8
+scoring_mean                       -5.8    4.8

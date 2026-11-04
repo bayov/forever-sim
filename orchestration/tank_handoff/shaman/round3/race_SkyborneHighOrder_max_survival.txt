@@ -1,0 +1,10 @@
+A=shaman_warden_max_survival.json B=race_SkyborneHighOrder_max_survival.json preset=max_survival iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord        -6710    -7414  -704.8  199.8     15.6       82
+chromaggus       -6462    -6699  -236.7   52.7     11.4       29
+golemagg         -2410    -2486   -76.1   41.2     17.7       11
+magmadar         -1615    -1666   -51.3   34.4     17.6        8
+onyxia           -5103    -5347  -243.9   80.2     15.2       18
+ragnaros        -15726   -17057 -1330.9  358.8     11.8      143
+vaelastrasz      -2060    -2215  -154.9   69.2     11.8       47
+scoring_mean                     -244.6   39.7

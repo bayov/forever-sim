@@ -1,0 +1,11 @@
+A=F_balanced.json B=lb863_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2696     2678   -18.1    6.3      0.1        6
+chromaggus        2111     2112     1.2    3.9     -0.5       -1
+golemagg          3269     3264    -4.4    2.5     -0.0        1
+magmadar          3428     3424    -4.6    2.1     -0.7        1
+onyxia            3150     3141    -9.0    4.4      0.8        2
+ragnaros         -1805    -1852   -47.0   11.6     -0.5       15
+vaelastrasz       3410     3404    -6.4    2.2      0.3        6
+scoring_mean                       -6.9    1.6
+exit 0

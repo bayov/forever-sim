@@ -1,0 +1,31 @@
+tank encounters (their index takes the fight length's place, scored as their mean): /home/user/forever-sim/tools/encounters/magmadar.json,/home/user/forever-sim/tools/encounters/golemagg.json,/home/user/forever-sim/tools/encounters/onyxia.json,/home/user/forever-sim/tools/encounters/broodlord.json,/home/user/forever-sim/tools/encounters/vaelastrasz.json,/home/user/forever-sim/tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 1 x 900 x healing needed at 5% deaths / 258, in raid DPS
+start -5022233202310212551-055: 1851.7(17.7) mana 3687(0) tto 3466s
+  genesis+2 brutalImpact-2: 1851.7(17.7) mana 3687(0) tto 3466s (+0.0, noise 0.0)
+  feralInstinct-2 giftOfNature+2: 1851.7(17.7) mana 3687(0) tto 3466s (+0.0, noise 0.0)
+  improvedWrath+1 feralInstinct-1: 1851.7(17.7) mana 3687(0) tto 3466s (+0.0, noise 0.0)
+  improvedWrath+2 feralInstinct-2: 1851.7(17.7) mana 3687(0) tto 3466s (+0.0, noise 0.0)
+  genesis+1 feralInstinct-1: 1851.7(17.7) mana 3687(0) tto 3466s (+0.0, noise 0.0)
+  genesis+2 feralInstinct-2: 1851.7(17.7) mana 3687(0) tto 3466s (+0.0, noise 0.0)
+  brutalImpact-2 giftOfNature+2: 1851.7(17.7) mana 3687(0) tto 3466s (+0.0, noise 0.0)
+  brutalImpact-1 giftOfNature+1: 1851.7(17.7) mana 3687(0) tto 3466s (+0.0, noise 0.0)
+  refined at 3000 iterations, current 1849.1(11.3) mana 3687(0) tto 3460s
+  genesis+2 brutalImpact-2: 1849.1(11.3) mana 3687(0) tto 3460s (+0.0, noise 0.0)
+  genesis+1 feralInstinct-1: 1849.1(11.3) mana 3687(0) tto 3460s (+0.0, noise 0.0)
+  genesis+2 feralInstinct-2: 1849.1(11.3) mana 3687(0) tto 3460s (+0.0, noise 0.0)
+  improvedWrath+1 feralInstinct-1: 1849.1(11.3) mana 3687(0) tto 3460s (+0.0, noise 0.0)
+  brutalImpact-2 giftOfNature+2: 1849.1(11.3) mana 3687(0) tto 3460s (+0.0, noise 0.0)
+  brutalImpact-1 giftOfNature+1: 1849.1(11.3) mana 3687(0) tto 3460s (+0.0, noise 0.0)
+  feralInstinct-2 giftOfNature+2: 1849.1(11.3) mana 3687(0) tto 3460s (+0.0, noise 0.0)
+  improvedWrath+2 feralInstinct-2: 1849.1(11.3) mana 3687(0) tto 3460s (+0.0, noise 0.0)
+  brutalImpact-2 naturalShapeshifter+2: 1847.6(11.3) mana 3692(0) tto 3535s (-1.5, noise 0.0)
+  feralInstinct-2 naturalShapeshifter+2: 1847.6(11.3) mana 3692(0) tto 3535s (-1.5, noise 0.0)
+  shreddingAttacks-3 naturalShapeshifter+3: 1788.7(10.9) mana 3693(0) tto 3566s (-60.4, noise 6.9)
+  bloodFrenzy-2 naturalShapeshifter+2: 1755.1(9.6) mana 3692(0) tto 3538s (-94.0, noise 7.2)
+  naturalReaction-3 naturalShapeshifter+3: 1731.9(11.8) mana 3693(0) tto 3567s (-117.2, noise 11.1)
+  naturalist-3 naturalShapeshifter+3: 1688.7(11.0) mana 3693(0) tto 3566s (-160.4, noise 0.3)
+  rendAndTear-3 naturalShapeshifter+3: 1685.5(10.9) mana 3693(0) tto 3566s (-163.6, noise 0.6)
+  thickHide-3 naturalShapeshifter+3: 1572.5(11.8) mana 3693(0) tto 3566s (-276.6, noise 4.4)
+[0 1 2 3 4 5]s: 1849.1(11.3) mana 3687(0) tto 3460s
+  talents -5022233202310212551-055
+  sim runs 1320

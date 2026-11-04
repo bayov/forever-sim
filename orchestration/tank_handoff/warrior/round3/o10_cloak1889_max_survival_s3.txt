@@ -1,0 +1,11 @@
+A=F_max_survival.json B=cloak1889_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord          729      736     7.9   15.5     -2.2       -1
+chromaggus       -1529    -1535    -6.1   13.2     -2.5        0
+golemagg          1979     1974    -4.9    6.9     -1.6        0
+magmadar          2425     2423    -2.6    6.7     -2.7       -0
+onyxia            1453     1459     5.4   11.5     -1.7       -1
+ragnaros        -12967   -12950    16.9   49.7     -2.7       -2
+vaelastrasz       2063     2064     0.8    4.6     -1.7       -1
+scoring_mean                        0.1    4.3
+exit 0

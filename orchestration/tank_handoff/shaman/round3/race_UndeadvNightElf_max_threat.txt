@@ -1,0 +1,10 @@
+A=race_NightElf_max_threat.json B=race_Undead_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1700     1592  -107.6   76.8    -31.1       45
+chromaggus        1827     1831     4.7    9.3     -2.1       -9
+golemagg          2597     2561   -36.3   10.6    -24.0      -10
+magmadar          2728     2697   -31.0   10.9    -23.5      -14
+onyxia            2464     2409   -55.5   15.4    -44.8      -20
+ragnaros            51       12   -38.8   80.3    -16.6        5
+vaelastrasz       3117     2991  -126.5   18.7    -62.3        4
+scoring_mean                      -58.7   13.7

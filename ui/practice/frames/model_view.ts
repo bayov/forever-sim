@@ -24,7 +24,11 @@ type Shot = {
 	yaw: number;
 	// 'body' frames all of you, 'face' your head (the portraits).
 	framing: 'body' | 'face';
-};
+} & BodyFraming;
+
+// BodyFraming says how big you stand in a 'body' picture: the share of its height you take, and
+// how far over the middle your middle sits, as a share of the height.
+export type BodyFraming = { fraction?: number; lift?: number };
 
 const camera = new THREE.PerspectiveCamera(30, 1, 0.05, 100);
 camera.layers.set(MODEL_LAYER);
@@ -175,10 +179,8 @@ export function drawModel(link: RoomLink, canvas: HTMLCanvasElement, width: numb
 	const tan = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
 	camera.aspect = w / h;
 	if (shot.framing === 'body') {
-		// Head to feet from a tenth of the way down to four fifths, like the game's model frame:
-		// the stats under the model cover your feet.
-		const view = size / 0.7;
-		look.set(stance.x, stance.bottom + size / 2 - view * 0.05, stance.z);
+		const view = size / (shot.fraction ?? 0.7);
+		look.set(stance.x, stance.bottom + size / 2 - view * (shot.lift ?? 0.05), stance.z);
 		camera.position.copy(look).addScaledVector(f, view / 2 / tan);
 	} else {
 		// The head and a bit of the shoulders: the eyes sit about an eighth of your height under
@@ -234,6 +236,7 @@ export class ModelView {
 		parent: HTMLElement,
 		box: { x: number; y: number; w: number; h: number },
 		private readonly link: RoomLink,
+		private readonly framing: BodyFraming = {},
 	) {
 		this.el = div(parent, 'bz-model', box);
 		this.canvas.className = 'bz-model-canvas';
@@ -277,7 +280,7 @@ export class ModelView {
 
 	private draw() {
 		const [w, h] = pixelSize(this.el);
-		const ok = !!this.stance && w >= 2 && h >= 2 && drawModel(this.link, this.canvas, w, h, { yaw: this.yaw, framing: 'body' }, this.stance);
+		const ok = !!this.stance && w >= 2 && h >= 2 && drawModel(this.link, this.canvas, w, h, { yaw: this.yaw, framing: 'body', ...this.framing }, this.stance);
 		this.canvas.style.visibility = ok ? '' : 'hidden';
 	}
 }

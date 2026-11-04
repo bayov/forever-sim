@@ -1,0 +1,10 @@
+A=shaman_warden_max_threat.json B=race_NightElf_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1763     1700   -62.8   47.9     77.6      218
+chromaggus        1759     1827    67.9    7.9     38.0        8
+golemagg          2473     2597   123.9    7.6     64.0        3
+magmadar          2606     2728   122.5    7.5     62.0        1
+onyxia            2325     2464   139.2   11.5     83.0       16
+ragnaros            91       51   -39.6   53.0     54.9      142
+vaelastrasz       2883     3117   234.4   10.5    119.3       10
+scoring_mean                      104.2    8.7

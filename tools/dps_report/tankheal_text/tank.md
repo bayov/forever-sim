@@ -136,7 +136,7 @@ The score turns both into one number, in raid DPS. More threat lets the raid do 
 costs the raid: each extra healer on the tank takes a slot that could hold a DPS player.
 
 The three setups weigh these differently. **Max threat** cares most about aggro, **Max survival** most about needing
-less healing, and **Balanced** weighs them evenly. Higher is better. A score can go below zero, mostly at Max
+less healing, and **Balanced** weighs them evenly. A score can go below zero, mostly at Max
 survival, where healing counts three times as much.
 
 ## Safe DPS

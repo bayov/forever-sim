@@ -13,7 +13,7 @@ kept to compare ([Encounters](#encounters)). Three builds run: the Protection wa
 pre-raid plate, and the Feral bear on the cat's synthetic set. Four audits checked the work and their findings are
 fixed ([Audits](#audits)). The optimizer's objective is ruled and built: the bench prints it, and rotopt's
 searches maximize it with `-tank`, with a paired noise test. The rules audit has done the warrior, the paladin and
-the bear ([Rules audit](#rules-audit)); the Warden shaman, tank gear and rotations are next. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
+the bear ([Rules audit](#rules-audit)) and the Warden shaman ([tank_shaman.md](tank_shaman.md#rules-audit)); tank gear and rotations are next. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
 
 ## The user's rulings (2026-11-02)
 
@@ -421,6 +421,16 @@ So the search's noise drops 2 to 50 times, least where survival moves. At Broodl
 the death floor (4.5%), where healing needed has no finite error and nothing pairs: a search there needs a
 sturdier tank or more healing.
 
+**Seeds** (2026-11-04, finding tank_rotations-20261104-13): the engine runs iteration i on seed + i, so seeds 1
+and 2 would share all but one iteration. The tank tools (tankbench, abtest and rotopt's tank runs, all with
+`-seed`, default 1) space the seeds a billion apart (`tankscore.Seed`: start at 1 + (seed − 1) × 10⁹), so different
+`-seed` values run disjoint iterations for any count under a billion, and the default seed 1 still starts at 1, so
+numbers benched before stand; the DPS sims keep the plain seed. One seed at 3,000 and at 10,000 iterations still shares the first
+3,000, so confirm a search's result on a different seed. The bosses of one run share their seed, so their scores
+correlate (0.11 to 0.14) and the six-boss mean's error, for absolute scores, is about 1.25 times the independent
+one: rotopt's mean over encounters and abtest's unpaired `scoring_mean` multiply it by 1.25
+(`tankscore.SharedSeedSD`). Paired differences don't need it.
+
 **First search with it** (2026-11-02): the warrior's talent search at Chromaggus (Anniversary), Balanced, 600
 iterations a candidate and 3,000 to confirm (789 sims, 73 s). It took Improved Thunder Clap's 3 points into Cruelty
 (+66, noise 8: the swap the Broodlord search couldn't tell from noise), then Improved Shield Wall's 2 (+22, noise
@@ -474,7 +484,8 @@ falls 15 to 20% for the three tanks that gained the two elixirs.
 
 The paladin passes the bear on Balanced, as tank_mechanics-20261104-1 predicted. Its lower damage taken is
 real Forever behaviour and the synthetic set's block value, not a bug (tank_fairness-20261104-2). At the
-Balanced weight, the bear's Max survival preset (1185) now beats its Balanced preset (1114).
+Balanced weight, the bear's Max survival preset (1185) then beat its Balanced preset (1114); the bear's round 2
+re-search (f0ff977) fixed that: each bear preset now wins its own weight (`docs/tank_druid.md`, Presets).
 
 ## Findings so far
 
@@ -560,9 +571,10 @@ Tear).
 - **The bench's bear** (then `druid_bear.json`; since 2026-11-04 the three presets
   `druid_bear_{max_threat,balanced,max_survival}.json` on the bear's own synthetic set, `docs/tank_druid.md`) wore the Feral cat's synthetic set, so 507 Agility, 35% dodge and 8,900
   health; a bear set is the gear step's. It keeps its own Demoralizing Roar up (`tankscore.OwnDebuffs` drops the
-  raid's Roar and Shout), then Primal Bite, Lacerate to 5 stacks and Maul at 30 Rage. Not in its rotation yet:
-  Enrage (its armor cut makes it a pull-time choice), Frenzied Regeneration (an emergency button, like Shield Wall),
-  Swipe (single target).
+  raid's Roar and Shout), then Primal Bite, Lacerate to 5 stacks and Maul at 30 Rage. That was the 2026-11-03
+  rotation; the presets since add Enrage in the fight under a Rage threshold, Barkskin on a timer, Frenzied
+  Regeneration at 100 Rage (Balanced and Max survival) and Maul at 20 or 10 Rage (`docs/tank_druid.md`,
+  Presets). Swipe stays out (single target).
 - **On the seven Anniversary bosses** it makes about 900 TPS (the paladin's level, the warrior's 1,150), takes 5 to
   15% more damage than the plate tanks (no block or parry, 15% crushing blows) and the biggest hits (2,000 to 4,000),
   and has the lowest death floor at Broodlord (0.9%, 8,900 health):
@@ -579,8 +591,7 @@ Tear).
 
 ## Next steps
 
-1. **Rules audit** of the Warden shaman like the others above (it needs gear first).
-   Bring the Feral tank into the build. Ask for a dungeon boss log for Forever's boss crit.
+1. Bring the Feral tank into the build (the Warden shaman's rules audit is done: [tank_shaman.md](tank_shaman.md#rules-audit)). Ask for a dungeon boss log for Forever's boss crit.
 2. **Encounters**: Patchwerk, threat drops, armor cuts and stacking DoTs in the engine.
 3. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.
 4. **The three presets' searches** (the paired test is in, above).

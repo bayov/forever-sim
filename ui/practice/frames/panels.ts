@@ -9,11 +9,15 @@ import './frames.css';
 import { setIcon } from '../icons';
 import { glow, loadFonts, sharedVars, SND, sound, tex } from './assets';
 
-// The game's left panel spot (UIParent's TOP_OFFSET and LEFT_OFFSET in Classic).
-const topOffset = 104;
-const leftOffset = 0;
+// The game's panel spots (UIPanelLayoutFrame's TOP_OFFSET, LEFT_OFFSET and PANEl_SPACING_X in
+// Forever's Mainline style UI).
+const topOffset = 116;
+const leftOffset = 16;
+const spacing = 32;
 
-export type PanelArea = 'left' | 'dialog' | 'free';
+// left panels stack from the left. A centerOrLeft panel (PlayerSpellsFrame) sits in the middle
+// when it's the only one open, and joins the row otherwise.
+export type PanelArea = 'left' | 'centerOrLeft' | 'dialog' | 'free';
 
 export abstract class Panel {
 	// The frame's size, as in its FrameXML.
@@ -23,6 +27,13 @@ export abstract class Panel {
 	// margin on its right.
 	stackWidth = 0;
 	area: PanelArea = 'left';
+	// checkFit panels scale down to fit the screen (width + 200, height + 140, like
+	// PlayerSpellsFrame's registration) and move up to keep 140 free at the bottom.
+	checkFit = false;
+	scale = 1;
+	// relayout runs before the panels are laid out, with whether other panels are open (the
+	// game's EvaluateAutoMinimize).
+	relayout?(othersOpen: boolean): void;
 	openSound?: number;
 	closeSound?: number;
 	el?: HTMLElement;
@@ -112,8 +123,9 @@ export class UIPanels {
 		if (p.isOpen) return;
 		p.isOpen = true;
 		if (p.openSound) sound(p.openSound);
-		if (p.area === 'left') {
+		if (p.area === 'left' || p.area === 'centerOrLeft') {
 			this.row.push(p);
+			for (const q of this.row) q.relayout?.(this.row.length > 1);
 			// The game keeps as many side by side as fit, and closes the oldest for a new one.
 			while (this.row.length > 1 && this.rowWidth() > this.uiWidth) this.close(this.row[0]);
 		}
@@ -150,17 +162,24 @@ export class UIPanels {
 	}
 
 	private rowWidth(): number {
-		return this.row.reduce((w, p) => w + (p.stackWidth || p.width), leftOffset);
+		return this.row.reduce((w, p) => w + (p.stackWidth || p.width) * p.scale + spacing, leftOffset - spacing);
 	}
 
 	// layout puts the left panels side by side from the left edge, at the game's height.
 	layout() {
 		let x = leftOffset;
+		for (const p of this.row) p.relayout?.(this.row.length > 1);
+		const alone = this.row.length === 1 && this.row[0].area === 'centerOrLeft';
 		for (const p of this.row) {
 			if (!p.el) continue;
-			p.el.style.left = `${x}px`;
-			p.el.style.top = `${topOffset}px`;
-			x += p.stackWidth || p.width;
+			// A scaled panel's own offsets are in its scaled units, like SetPoint's x / scale.
+			const s = p.checkFit ? Math.min(1, this.uiWidth / (p.width + 200), this.uiHeight / (p.height + 140)) : 1;
+			p.scale = s;
+			p.el.style.setProperty('zoom', s === 1 ? '' : String(s));
+			const top = p.checkFit ? Math.max(10, Math.min(topOffset, this.uiHeight - 140 - p.height * s)) : topOffset;
+			p.el.style.left = `${(alone ? Math.round((this.uiWidth - p.width * s) / 2) : x) / s}px`;
+			p.el.style.top = `${top / s}px`;
+			x += (p.stackWidth || p.width) * s + spacing;
 		}
 		for (const p of this.panels) {
 			if (p.area !== 'dialog' || !p.el) continue;
@@ -172,7 +191,7 @@ export class UIPanels {
 
 // ---- Widgets ----
 
-type Box = { x?: number; y?: number; w?: number; h?: number; right?: number; bottom?: number };
+export type Box = { x?: number; y?: number; w?: number; h?: number; right?: number; bottom?: number };
 
 // div makes an element with classes, placed at a spot of its parent (top-left based, in UI
 // units, y going down).

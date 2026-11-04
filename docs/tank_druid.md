@@ -161,7 +161,9 @@ What round 1's searches found (round 2's changes are under "Presets"; the detail
 - **The opener is most of SafeDPS.** SafeDPS is each fight's lowest moment for a reference DPS, and that is
   the pull, so what the bear has in its first seconds counts far over the rest: a shift into Dire Bear Form
   1.5 sec before the pull (+62 at Balanced even with Furor at 0, since the engine counts the mana that
-  Judgement of Wisdom gives back as threat; +90 with Furor), Enrage 1 sec before the pull in round 1 (its Rage at the
+  Judgement of Wisdom gives back as threat; +90 with Furor; measured when that threat was multiplied by the bear's
+  2.15. Round 3, at 0.5 a mana flat: +25.5 at Balanced, +25.6 at Max threat, +22.0 at Max survival, all of it
+  through Judgement of Wisdom, since without the debuff the shift is worth exactly 0), Enrage 1 sec before the pull in round 1 (its Rage at the
   pull, its armor cut over the first 9 sec; round 2's presets cast it in the fight instead; earlier, the Mighty Rage Potion at the pull runs into the 100
   Rage cap), the on-use Strength trinket at the pull (+166 over the armor trinket), and the Night Elf's
   Elune's Light (+172 over the Tauren after the update).
@@ -190,17 +192,126 @@ Agility, 125 Strength, 105 Defense, 3% hit (after tank_gear-20261104-4: the ches
   comparison) scores 166 lower at Balanced and lower at every weight: its armor never touches healing needed
   (the bad moments come later in a fight), while the Strength lifts the opener's threat.
 - **Idol**: Idol of the Ursine Twins, then Idol of Brutality (-19) and Enraged Idol (-36).
-- **Enchants** (each against its tank alternative at Balanced, 2,000 iterations, the same seeds): Agility on
-  the head and legs (Lesser Arcanum of Voracity, +23 over Stamina), Superior Strength on the gloves (+12 over
-  Greater Agility), Greater Agility on the boots (+12 over Greater Stamina), Agility on the back (+8 over
-  Superior Defense), Greater Stats on the chest (+13 over Major Health), Agility on the neck (+3 over
-  Strength), Superior Stamina on the wrist (a tie with Superior Strength, so the tank one), +25 Agility on
-  the weapon.
-- **Consumables**: the Flask of Natural Accuracy, Elixir of the Phalanx (+112), Elixir of Greater Fortitude
-  (+46), the Mongoose (taking it out costs 124), Juju Power and Might, Smoked Desert Dumpling (Dirge's
-  Stamina chops -5, Grilled Squid -15), Dragonbreath Chili (+28), a Dense Weightstone (the mace's stone; the
-  bench's old request had a sharpening stone on it) and the Mighty Rage Potion at the pull (Greater
-  Stoneshield loses 650: no Rage at the pull).
+- **Enchants, round 3** (tank_fairness-20261104-8, tank_gear-20261104-3 (b) and -7; every slot's alternatives
+  at each preset's weight, paired abtest, 3,000 iterations on seed 1, each gain confirmed on the disjoint seed 2
+  and the close ones at 10,000 on seeds 3 and 4; raw output in `orchestration/tank_handoff/druid/round3/`).
+  Diffs are the alternative against the round-2 enchant, Max threat / Balanced / Max survival:
+
+  | Slot (worn) | Alternative | w=1/3 | w=1 | w=3 | Verdict |
+  |---|---|---|---|---|---|
+  | Wrist (Superior Stamina 1886) | **Superior Deflection 1248665** (Defense +9) | +5.2 +- 1.9 | +4.3 +- 4.6; seed 2 +8.6 +- 5.2; **10k +6.1 +- 2.7** | +12.4 +- 13.9; seed 2 +20.3 +- 14.7; **10k +23.9 +- 7.3** | **Balanced and Max survival** |
+  | | Superior Strength 1885 | **+15.1 +- 0.4** (seed 2 +15.1 +- 0.3) | +4.5 +- 1.1; 10k +4.3 +- 0.7 | -35.0 +- 3.7 | **Max threat** |
+  | | Superior Agility 1248599 | +11.5 +- 1.6 (-4.9, -3.0 against Strength) | +7.1 +- 4.2; 10k +10.0 +- 2.4 (+2.8 +- 1.8 over Deflection, a tie) | -5.1 +- 12.6 | tie with Deflection at Balanced, so the tank one |
+  | Back (Agility 1219587) | Superior Defense 1889 (+70 armor) | -4.6 +- 1.1; seed 2 -6.9 +- 1.2 | -9.3 +- 3.0; seed 2 -10.8 +- 3.5 | -1.8 +- 8.8; seed 2 +5.2 +- 9.6 | Agility stays at every weight |
+  | Head and legs (Agility 1508) | Strength 1506 | +4.2 +- 1.4 (head); both, on Max threat's wrist and weapon: **+7.2 +- 1.9, seed 2 +7.9 +- 1.9** | -9.1 +- 4.1 | -24.1 +- 10.8 | **Max threat** |
+  | | Stamina 1507 / 100 health 1503 / 125 armor 1504 | -9.1 / -9.1 / -7.9 | -13.1 / -13.3 / -11.2 | +4.8 +- 11.0 (seed 2 -7.1) / +0.9 / -0.2 | Agility stays |
+  | Weapon (2H Agility 2646) | 2H Strength 1248668 | **+11.2 +- 2.3, seed 2 +6.3 +- 2.2** | -23.1 +- 5.8 | -77.9 +- 16.8 | **Max threat** |
+  | Neck (Agility 1249059) | Strength 1249019 | +3.5 +- 1.1; seed 2 +1.0 +- 1.2; on the new set +1.7 / +1.4 +- 1.2 | -7.7 +- 3.1 | -12.9 +- 8.7 | Agility stays (a tie at Max threat) |
+  | Chest (Greater Stats 1891) | Major Health 1892 / Superior Stamina 13858 / Rugged Armor Kit 1843 | -11.7 / -11.9 / -11.8 | -13.4 / -13.6 / -14.2 | -7.5 / -8.0 / -12.4 | Greater Stats stays |
+  | Gloves (Superior Strength 1248640) | Greater Agility 1887 / Strength 13887 | -18.2 / -15.4 | -14.4 / -14.7 | +5.8 +- 11.8 (seed 2 +7.0 +- 12.0) / -13.9 | stays |
+  | Boots (Greater Agility 1887) | Greater Stamina 929 | -7.8 +- 1.3 | -14.1 +- 3.7 | +2.2 +- 10.3 (seed 2 +4.7 +- 10.8) | stays |
+
+  Max threat's whole Strength set (head, legs, wrist, weapon) is +30.1 +- 2.9 on seed 2. Enchant ids now, each
+  found for its slot in `assets/database/db.json`: Balanced and Max survival head and legs 1508, neck
+  1249059, back 1219587, chest 1891, wrist 1248665, gloves 1248640, boots 1887, weapon 2646; Max threat the
+  same with head and legs 1506, wrist 1885, weapon 1248668 (its own UI gear set, "Bear (Max threat)"). A bear
+  has no shield, so the dead shield 929 (tank_gear-20261104-3) never reached it.
+- **Consumables, round 3** (the same runs): every slot holds but Max survival's food. The Flask of Natural
+  Accuracy (Titans -301 / -246 / -126, Natural Aggression -237 / -224 / -225), Elixir of the Phalanx and
+  Greater Fortitude (every tank's), the Mongoose (Greater Agility -46 / -48 / -42), Juju Power (Giants -9.8 /
+  -9.3 / -8.9), Juju Might (Winterfall Firewater -4.7 / -4.5 / -4.2), Dragonbreath Chili (without it -22 / -32
+  / -77), the Dense Weightstone (none -42 / -40 / -38) and the Mighty Rage Potion (Greater Stoneshield -618 /
+  -550 / -471). Food: the Smoked Desert Dumpling at Max threat and Balanced (Dirge's Kickin' Chimaerok Chops,
+  25 Stamina, -31.8 +- 0.5 / -3.1 +- 1.9; Grilled Squid and Blessed Sunfruit -17 to -21), **Dirge's chops at
+  Max survival (+89.9 +- 6.9, seed 2 +79.2 +- 6.1)**. Explosives score 0: an item can't be used in a form (the
+  sim's explosives check `IsShapeshifted`), so a bear never throws them. Three Phase 1 consumables no tank
+  request carries would gain (call 10): a Blasted Lands buff (Ground Scorpok Assay +42 / +53 / +112, R.O.I.D.S.
+  +52 / +50 / +47, Lung Juice Cocktail +9 / +36 / +127) and Rumsey Rum Black Label (+6 / +21 / +75).
+
+## Presets (round 3, 2026-11-04: unmultiplied mana-gain threat, disjoint seeds)
+
+Round 3 re-searched the three presets on master 95bd28c's engine: mana-gain threat at 0.5 a mana with no threat
+multiplier (tank_mechanics-20261104-12; the bear's 2.15 had multiplied Judgement of Wisdom's mana), and `-seed s`
+of tankbench, abtest and rotopt's tank runs on iterations disjoint from seed 1's (tank_rotations-20261104-13).
+The search is round 2's (rotopt knobs and `-talent-search -require feralSwiftness` at 1,000 iterations a
+candidate, 3,000 to confirm, the six scoring bosses at the preset's weight), then every gear, enchant and
+consumable choice A/B'd with abtest (Gear above), and every choice resting on a small paired difference
+confirmed on a disjoint seed. Raw output: `orchestration/tank_handoff/druid/round3/` (`ab_summary.txt`
+indexes the abtest files; `rotopt/` the knob and talent searches; `tankbench/` the bench).
+
+- **Talents**: `-5022233202310212551-055` at every weight, again (searched before and after the gear changes).
+- **Max threat**: Enrage's Rage knob widened to 100 (tank_rotations-20261104-12). Enrage under 70 Rage is
+  +4.0 +- 0.5 over 60 on seed 2 (80 and 100 the same, +4.0 and +3.9), so it takes 70, the search's pick.
+  Strength enchants on the head, legs, wrist and weapon (+30.1 +- 2.9). The rest as round 2.
+- **Balanced**: the rotation holds (Roar refreshed under 5 sec looked +5.7 at 3,000 on seed 1 and was -1.6 +- 5.4
+  and -1.4 +- 4.9 on seeds 2 and 3). Superior Deflection on the wrist.
+- **Max survival**: the rotation holds. Superior Deflection on the wrist, Dirge's chops for the Dumpling.
+- **Judgement of Wisdom and the shift** (tank_mechanics-20261104-12's follow-up): with mana threat unmultiplied,
+  the raid's Judgement of Wisdom is still worth 34 / 38 / 53 (Max threat / Balanced / Max survival, 3,000,
+  without it against with it), and the pre-pull shift 25.6 / 25.5 / 22.0, every point of it through Judgement of
+  Wisdom's mana (without the debuff, dropping the shift changes nothing). Both stay; the shift's value rests on
+  the to-verify mana rule (call 6).
+- **Race** (seed 3, 10,000, on the final Max survival): the Tauren is -19.8 +- 11.3 behind the Night Elf, a tie
+  that leans Night Elf (seed 2 at 3,000 on round 2's build: +0.8 +- 22.4). At Max threat and Balanced the Tauren
+  loses 161 +- 3 and 143 +- 7 (seed 2). Night Elf at every weight.
+- **Before and after** (own weight; tankbench 1,000 iterations on seed 1, so the "before" is master's re-bench
+  after the engine fix; the gain is paired, abtest at 3,000 on seed 2):
+
+  | Preset | Round 2 build | Round 3 | Paired gain | 3,000 (rotopt confirm, seed 1) |
+  |---|---|---|---|---|
+  | Max threat | 2,808.5 | 2,842.5 | +33.1 +- 2.8 | 2,844.6 |
+  | Balanced | 1,839.0 | 1,851.8 | +8.6 +- 5.2 (the wrist: +6.1 +- 2.7 at 10,000) | 1,849.1 |
+  | Max survival | -775.0 | -633.8 | +102.8 +- 15.2 | -655.6 |
+
+- **Each preset wins its own weight** (the other two builds against it, paired, 3,000, seed 2), so no two are the
+  same build:
+
+  | Weight | Max threat build | Balanced build | Max survival build |
+  |---|---|---|---|
+  | w=1/3 | **own** | -95.0 +- 5.2 | -259.5 +- 5.3 |
+  | w=1 | -127.3 +- 9.4 | **own** | -91.9 +- 9.0 |
+  | w=3 | -920.1 +- 26.3 | -125.8 +- 26.5 | **own** |
+
+### Tankbench (round 3)
+
+`tools/tankbench`, 1,000 iterations, all seven encounters (`orchestration/audit/ref/tank_bench/summary.tsv`).
+Mean of the six scoring encounters:
+
+| Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Score at its own weight |
+|---|---|---|---|---|---|---|
+| Max threat | 1,688 | 644 | 1,699 | 595 | 618 | **2,842.5** |
+| Balanced | 1,608 | 610 | 1,589 | 569 | 483 | **1,851.8** |
+| Max survival | 1,453 | 543 | 1,491 | 570 | 442 | **-633.8** |
+
+The bear's DPS is about 610 at Balanced, down from about 755 in round 1: the white hits' flat 11.25 Rage is less
+than Classic's Rage from damage gave at this gear, and the boss parries and blocks (round 2). Per encounter:
+
+| Encounter | Preset | Score (own weight) | TPS | DPS | SafeDPS | DTPS | Healing needed | Death floor |
+|---|---|---|---|---|---|---|---|---|
+| Magmadar | max threat | 2936 | 1645 | 632 | 1650 | 363 | 313 | 0.0% |
+| Magmadar | balanced | 2261 | 1577 | 603 | 1560 | 346 | 247 | 0.0% |
+| Magmadar | max survival | 788 | 1405 | 528 | 1446 | 346 | 201 | 0.0% |
+| Golemagg | max threat | 2889 | 1642 | 633 | 1652 | 390 | 358 | 0.0% |
+| Golemagg | balanced | 2111 | 1571 | 601 | 1549 | 370 | 283 | 0.0% |
+| Golemagg | max survival | 383 | 1396 | 526 | 1432 | 376 | 237 | 0.0% |
+| Onyxia | max threat | 2773 | 1728 | 656 | 1737 | 482 | 407 | 0.0% |
+| Onyxia | balanced | 1701 | 1643 | 621 | 1643 | 462 | 307 | 0.0% |
+| Onyxia | max survival | -905 | 1497 | 558 | 1554 | 462 | 259 | 0.0% |
+| Broodlord | max threat | 2829 | 1692 | 647 | 1691 | 496 | 553 | 0.0% |
+| Broodlord | balanced | 1912 | 1610 | 613 | 1587 | 471 | 421 | 0.0% |
+| Broodlord | max survival | -703 | 1456 | 546 | 1495 | 471 | 410 | 0.0% |
+| Vaelastrasz | max threat | 3161 | 1793 | 658 | 1859 | 1203 | 1327 | 0.0% |
+| Vaelastrasz | balanced | 2210 | 1671 | 609 | 1697 | 1164 | 939 | 0.0% |
+| Vaelastrasz | max survival | 95 | 1619 | 588 | 1666 | 1163 | 856 | 0.0% |
+| Chromaggus | max threat | 2467 | 1630 | 635 | 1604 | 636 | 747 | 0.0% |
+| Chromaggus | balanced | 916 | 1578 | 613 | 1500 | 601 | 702 | 0.0% |
+| Chromaggus | max survival | -3461 | 1345 | 512 | 1351 | 599 | 692 | 0.0% |
+| Ragnaros | max threat | 946 | 1628 | 632 | 1610 | 1323 | 2160 | 0.0% |
+| Ragnaros | balanced | -3541 | 1583 | 613 | 1529 | 1306 | 2090 | 0.1% |
+| Ragnaros | max survival | -15634 | 1361 | 517 | 1386 | 1305 | 1943 | 0.0% |
+
+Ragnaros needs about 1,950 to 2,150 healing a second at every preset, past what the bench's healers give, so
+it stays out of the score.
 
 ## Presets (round 2, 2026-11-04: the tank-facing engine and the audit's fixes)
 
@@ -249,49 +360,7 @@ scored) at the preset's weight, 1,000 iterations a candidate, 3,000 to confirm; 
   Windshaper.
 - **Gear choices.** The armor trinket (990815) still loses at every weight (-238 / -207 / -94); Idol of the
   Ursine Twins stays (Brutality ties at Balanced, +0.8 unpaired, and loses at the others; Enraged Idol loses
-  everywhere). Enchants and consumables were not re-checked this round.
-
-### Tankbench (round 2)
-
-`tools/tankbench`, 1,000 iterations, all seven encounters (`orchestration/audit/ref/tank_bench/summary.tsv`).
-Mean of the six scoring encounters:
-
-| Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Score at its own weight |
-|---|---|---|---|---|---|---|
-| Max threat | 1,667 | 632 | 1,685 | 578 | 593 | **2,837.3** |
-| Balanced | 1,615 | 610 | 1,603 | 576 | 484 | **1,867.5** |
-| Max survival | 1,477 | 550 | 1,520 | 577 | 463 | **-750.2** |
-
-The bear's own DPS fell from about 755 in round 1 to about 610: the white hits' flat 11.25 Rage is less than
-Classic's Rage from damage gave at this gear, and the boss now parries and blocks. Its TPS fell less (about
-1,700 to 1,615 at Balanced), since Primal Bite's threat doubled. Per encounter:
-
-| Encounter | Preset | Score (own weight) | TPS | DPS | SafeDPS | DTPS | Healing needed | Death floor |
-|---|---|---|---|---|---|---|---|---|
-| Magmadar | max threat | 2924 | 1620 | 620 | 1636 | 351 | 299 | 0.0% |
-| Magmadar | balanced | 2272 | 1577 | 602 | 1568 | 351 | 248 | 0.0% |
-| Magmadar | max survival | 743 | 1423 | 534 | 1467 | 353 | 209 | 0.0% |
-| Golemagg | max threat | 2888 | 1624 | 623 | 1644 | 376 | 345 | 0.0% |
-| Golemagg | balanced | 2148 | 1582 | 604 | 1565 | 376 | 281 | 0.0% |
-| Golemagg | max survival | 333 | 1419 | 533 | 1462 | 381 | 248 | 0.0% |
-| Onyxia | max threat | 2765 | 1707 | 645 | 1721 | 468 | 392 | 0.0% |
-| Onyxia | balanced | 1718 | 1646 | 620 | 1660 | 469 | 310 | 0.0% |
-| Onyxia | max survival | -1097 | 1522 | 566 | 1586 | 468 | 275 | 0.0% |
-| Broodlord | max threat | 2839 | 1674 | 638 | 1682 | 481 | 524 | 0.0% |
-| Broodlord | balanced | 1882 | 1617 | 614 | 1597 | 476 | 437 | 0.0% |
-| Broodlord | max survival | -952 | 1481 | 553 | 1525 | 478 | 445 | 0.0% |
-| Vaelastrasz | max threat | 3136 | 1769 | 643 | 1837 | 1181 | 1282 | 0.0% |
-| Vaelastrasz | balanced | 2279 | 1684 | 609 | 1718 | 1173 | 918 | 0.0% |
-| Vaelastrasz | max survival | 35 | 1654 | 597 | 1709 | 1172 | 895 | 0.0% |
-| Chromaggus | max threat | 2472 | 1610 | 624 | 1590 | 610 | 714 | 0.0% |
-| Chromaggus | balanced | 906 | 1582 | 614 | 1512 | 610 | 713 | 0.0% |
-| Chromaggus | max survival | -3563 | 1361 | 518 | 1370 | 608 | 707 | 0.0% |
-| Ragnaros | max threat | 965 | 1606 | 622 | 1599 | 1323 | 2121 | 0.0% |
-| Ragnaros | balanced | -3481 | 1587 | 613 | 1545 | 1307 | 2081 | 0.0% |
-| Ragnaros | max survival | -16132 | 1383 | 524 | 1413 | 1311 | 2001 | 0.0% |
-
-Ragnaros needs about 2,000 to 2,100 healing a second at every preset, past what the bench's healers give, so
-it stays out of the score.
+  everywhere). Enchants and consumables were re-checked in round 3 (Gear).
 
 ## Calls for the user
 
@@ -305,11 +374,19 @@ Each with the default the sim uses now.
    only, no client row; standards 37). Default: 2x; a bear tank's threat log would settle it.
 4. **Enrage's armor cut at the tooltip's 16%** of armor from items. Default: 16%.
 5. **Omen of Clarity in Bear Form at the cat's 2 a minute**. Default: 2 a minute.
-6. **Threat from mana gains.** The engine counts the mana that Judgement of Wisdom gives back as threat
-   (about 8 TPS here), which is most of why the prepull shift pays. That is an engine rule for every tank,
-   so not mine to change. Default: as it is.
+6. **Threat from mana gains.** The engine counts the mana that Judgement of Wisdom gives back as threat,
+   0.5 a mana with no threat multiplier (it was multiplied by the bear's 2.15 until 2026-11-04; about 8 TPS then, about
+   2 now; standards 40 keeps it unmultiplied until a Forever log shows otherwise). Judgement of Wisdom is still
+   worth 34 / 38 / 53 to the presets, and the pre-pull shift's whole 22 to 26 rests on it (round 3). That is an
+   engine rule for every tank, so not mine to change. Default: as it is.
 7. **Furor scores nothing** for a bear that shifts before the pull, so the presets drop it. Default: Furor 0.
 8. **Enrage in the fight, not before the pull**, at every weight (the round-1 presets cast it before the
    pull). Its armor cut lands mid-fight under a Rage threshold. Default: as the search found.
-9. **Max survival's race**: the Tauren ties the Night Elf (-1.8 +- 11.8 at 10,000). Default: Night Elf, as
-   the other two presets.
+9. **Max survival's race**: the Tauren ties the Night Elf (round 3: -19.8 +- 11.3 at 10,000 on a disjoint seed;
+   round 2: -1.8 +- 11.8). Default: Night Elf, as the other two presets.
+10. **Consumables no tank carries.** A Blasted Lands buff (Phase 1 quest items, standards 8) would add to every
+   preset: Ground Scorpok Assay +42 / +53 / +112, R.O.I.D.S. +52 / +50 / +47, Lung Juice Cocktail +9 / +36 / +127
+   (Max threat / Balanced / Max survival, 3,000), and Rumsey Rum Black Label +6 / +21 / +75. The DPS presets
+   take Blasted Lands buffs (standards 11, the full raid treatment); none of the four tank requests does, so
+   the bear's presets leave them out to stay comparable with the other tanks. Default: none, for every tank
+   alike; taking them is a call for all four at once.

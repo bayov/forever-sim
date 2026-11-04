@@ -1,0 +1,10 @@
+A=shaman_warden_balanced.json B=race_NightElf_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         -222     -272   -50.2   59.7     72.1       65
+chromaggus        -474     -375    99.0   15.7     41.1       -6
+golemagg          1131     1237   105.5   11.6     61.8        5
+magmadar          1409     1539   129.2   12.8     66.2        1
+onyxia             345      492   147.1   22.3     89.7        6
+ragnaros         -3730    -3867  -137.4   93.6     48.1       74
+vaelastrasz       1499     1682   182.6   16.8    109.9       30
+scoring_mean                      102.2   11.7

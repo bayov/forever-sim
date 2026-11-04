@@ -1,0 +1,11 @@
+A=F_max_survival.json B=wrist1886_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord          742      732   -10.2   19.7      2.7        2
+chromaggus       -1514    -1557   -43.4   18.2      2.2        5
+golemagg          1978     1939   -38.8    9.3      0.3        4
+magmadar          2445     2418   -26.8   10.2      3.0        3
+onyxia            1516     1457   -59.0   25.3      2.1        4
+ragnaros        -13188   -12936   251.8   84.6      3.7      -26
+vaelastrasz       2045     2034   -11.5   10.4      0.3        3
+scoring_mean                      -31.6    6.8
+exit 0
