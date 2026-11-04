@@ -4,9 +4,9 @@
    {
     "players": [
      {
-      "race": "RaceHuman",
+      "race": "RaceUndead",
       "class": "ClassPaladin",
-      "talentsString": "-55302102513521531-052",
+      "talentsString": "04-25300102513501531-5023",
       "equipment": {
        "items": [
         {
