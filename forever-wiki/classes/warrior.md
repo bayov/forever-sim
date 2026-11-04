@@ -21,10 +21,11 @@ spell. The sim takes the notes' values (standards 37), gated under Forever, and 
 - Fury: Flurry is 3 points, 10 / 20 / 30% for 3 swings (5 points of 5%), and no longer needs Death Wish; Bloodthirst
   needs Death Wish again. Enrage moves to row 3 (column 4 guessed), Gore Drinker to row 5 under Blood Craze (column 3
   guessed; Blood Craze and Gore Drinker no longer make threat), and Booming Voice also cuts Piercing Howl's cost 5-25%.
-- New: Reckless Swings (Fury row 4, 1 point, column 3 guessed): 15 sec cooldown, costs 25% of base health, the next 4
-  melee attacks within 8 sec generate 5 more Rage. The sim's assumptions: off the GCD (like Bloodrage), the 4 attacks are
-  landed swings (Heroic Strike and Cleave included, the melee auto attack proc type), 5 flat Rage a crit doesn't double,
-  and no health cost (none matters to a DPS). It has a placeholder spell id (1399001) until the client has one.
+- New: Reckless Swings (Fury row 4, 1 point; hotfix push 113539 puts it in Raging Blows' old place, column 2): 15 sec
+  cooldown, a 1 sec GCD, costs 25% of base health, the next 4 melee attacks within 8 sec generate 5 more Rage (spells
+  1329555 and 1329554). The 4 attacks are the melee auto attack proc type (Heroic Strike and Cleave included), 5 flat
+  Rage a crit doesn't double; the health cost isn't modelled (it doesn't matter to a DPS). Still an assumption: only
+  landed swings use a charge.
 - New: Improved Whirlwind (Fury row 6, 2 points, column 3 guessed): 1 / 2 sec off Whirlwind's cooldown and 15 / 30% more
   damage to the closest enemy (the sim's first target; both weapons' hits).
 - Defensive Stance's threat 80% (30%) and Defiance 7 / 13 / 20% are the tank's.
