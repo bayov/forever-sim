@@ -124,8 +124,9 @@ func (paladin *Paladin) registerOathOfLight() {
 		Flags:       core.SpellFlagHelpful | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{
-			BaseCost:   0.08,
-			Multiplier: paladin.benediction(),
+			// No Benediction: 1328548's SpellClassOptions mask is empty, so Benediction's class
+			// mask (20101 e0 aura 108 misc 14) can't reach it.
+			BaseCost: 0.08,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
