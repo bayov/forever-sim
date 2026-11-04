@@ -203,7 +203,6 @@ func TestHealingPriestLitanyOfLightSpells(t *testing.T) {
 // The fight's first heal counts as different from the last one, Penance too: Penance alone gives
 // back 10% of 385 on its first cast a fight.
 func TestHealingPriestLitanyOfLightFirstPenance(t *testing.T) {
-	t.Skip("sim bug: Penance's channel has no SpellCode, so as the fight's first heal it matches the reset lastHealCode (None) and gets nothing back")
 	litany := map[string]int{"litany_of_light": 2, "penance": 1}
 	_, m := fightTalent(t, litany, 10, nil, 0, castLine(priest.PenanceSpellId[4], "Tank", ""))
 	if got := litanyGained(m) / 10; !near(got, 38.5, 1e-6) {
