@@ -21,21 +21,31 @@ spell. The sim takes the notes' values (standards 37), gated under Forever, and 
 - Fury: Flurry is 3 points, 10 / 20 / 30% for 3 swings (5 points of 5%), and no longer needs Death Wish; Bloodthirst
   needs Death Wish again. Enrage moves to row 3 (column 4 guessed), Gore Drinker to row 5 under Blood Craze (column 3
   guessed; Blood Craze and Gore Drinker no longer make threat), and Booming Voice also cuts Piercing Howl's cost 5-25%.
-- New: Reckless Swings (Fury row 4, 1 point, column 3 guessed): 15 sec cooldown, costs 25% of base health, the next 4
-  melee attacks within 8 sec generate 5 more Rage. The sim's assumptions: off the GCD (like Bloodrage), the 4 attacks are
-  landed swings (Heroic Strike and Cleave included, the melee auto attack proc type), 5 flat Rage a crit doesn't double,
-  and no health cost (none matters to a DPS). It has a placeholder spell id (1399001) until the client has one.
+- New: Reckless Swings (Fury row 4, 1 point; hotfix push 113539 puts it in Raging Blows' old place, column 2): 15 sec
+  cooldown, a 1 sec GCD, costs 25% of base health, the next 4 melee attacks within 8 sec generate 5 more Rage (spells
+  1329555 and 1329554). The 4 attacks are the melee auto attack proc type (Heroic Strike and Cleave included), 5 flat
+  Rage a crit doesn't double; the health cost isn't modelled (it doesn't matter to a DPS). Still an assumption: only
+  landed swings use a charge.
 - New: Improved Whirlwind (Fury row 6, 2 points, column 3 guessed): 1 / 2 sec off Whirlwind's cooldown and 15 / 30% more
   damage to the closest enemy (the sim's first target; both weapons' hits).
 - Defensive Stance's threat 80% (30%) and Defiance 7 / 13 / 20% are the tank's.
 - The Level 60 presets took Reckless Swings on every build (on cooldown; worth about 29 DPS to Fury), Improved Whirlwind
   2 on both Fury builds, and Enrage 5 everywhere. Numbers: `orchestration/round_70753/warrior.md`.
 - 2026-11-04 follow-up: two-hand Fury and its duty presets move Furious Precision's 3 points (nothing with a
-  two-hander) to Unbridled Wrath 5/5 and Blood Craze (`30313113032-2505001501122100321`): 1214.5 / 1173.3 / 1135.3 at
+  two-hander) to Unbridled Wrath 5/5 and Blood Craze (`30313113032-250500150122100231`): 1214.5 / 1173.3 / 1135.3 at
   120 / 180 / 300 sec (Orc; +2.8 / +3.4 / +1.9). Dual wield Fury puts Bloodthirst ahead of Whirlwind, queues Heroic
   Strike from 60 Rage and Hamstrings from 20, both only when Bloodthirst and Whirlwind are 1 sec away or more, and
   Bloodrages under 50: 1196.2 / 1153.0 / 1128.7 (+2.0 / +0.4 / +3.9). Each won at 120, 160, 180, 200 and 300 sec on
   both seed sets at 20,000 iterations.
+- Hotfix push 113539 (2026-11-04; `orchestration/round_70753/hotfix_113539_warrior.md`): Raging Blows is gone (Cleave 20,
+  Whirlwind 25 Rage), Reckless Swings (spell 1329555) takes a 1 sec GCD, Spearing Strike is 75% weapon damage plus 75%
+  on Giants and Dragonkin. Every preset now casts Reckless Swings below its main strikes, just ahead of Heroic Strike,
+  so its GCD only goes when no strike is ready; two-hand Fury and Arms (and their duties but Arms' Sunder duty) only
+  under 20 Rage. Dual wield Fury puts Raging Blows' point in Improved Bloodrage (`30313113002-050530055120100231-1`);
+  two-hand Fury's remapped string left Bloodthirst a point short of its row, and no point in reach adds damage, so it
+  goes to Booming Voice (`30313113032-350500150122100231`). Arms keeps its talents, Reckless Swings included. At 120 /
+  180 / 300 sec (Orc, 20,000 iterations, seed 1): Fury 1179.5 / 1136.0 / 1111.6, two-hand Fury 1192.5 / 1151.0 /
+  1117.1, Arms 1101.0 / 1088.0 / 1062.3, Arms vs Dragonkin 1160.8 / 1147.0 / 1120.6. Orc stays best on all three.
 
 ## Beta client 1.60.1.70338 (2026-10-12)
 

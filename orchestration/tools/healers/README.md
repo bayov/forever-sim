@@ -12,3 +12,11 @@ standards 35). Copy and adapt them per healer spec.
 
 Fetch the guide pages with tools/database/forever_wowhead/wowhead.py (`Wowhead().page(path)`), never curl;
 the pages are cached in ~/.cache/wow-data/wowhead/pages for 7 days.
+
+The Holy paladin's (docs/healing_paladin.md):
+
+- `paladin_holy_mix.py FOREVER_GUIDE.html`: the Classic pre-raid Holy paladin list priced the same way (the
+  Forever Holy guide lists no items yet; the script checks it still has none).
+- `paladin_holy_synth.py`: the set, plate pieces and a caster main hand and held off-hand in place of the staff.
+- `paladin_holy_requests.py`: the healbench requests, UI rotations and gear set from one set of knobs;
+  `--out FILE --role tank|raid --set key=value` writes one variant for tuning.

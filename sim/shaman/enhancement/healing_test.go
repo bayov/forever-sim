@@ -73,7 +73,11 @@ func TestOrcShamanHealRanks(t *testing.T) {
 		// 224 at 28 plus 2.1 a level.
 		{"Lesser Healing Wave 2 at 30", func() (float64, float64) { return shaman.LesserHealingWaveRanks[2].At(30) }, 213.51, 242.89},
 		// 480 at 40 plus 3.7 a level to 48: the talent tooltip's 486 to 534.
-		{"Riptide at 60", func() (float64, float64) { return shaman.RiptideRank.At(60) }, 484.12, 535.08},
+		{"Riptide 1 at 60", func() (float64, float64) { return shaman.RiptideRanks[1].At(60) }, 484.12, 535.08},
+		// 612 at 50 plus 4.2 a level to 58.
+		{"Riptide 2 at 60", func() (float64, float64) { return shaman.RiptideRanks[2].At(60) }, 613.32, 677.88},
+		// 841 at 60, 10% variance.
+		{"Riptide 3 at 60", func() (float64, float64) { return shaman.RiptideRanks[3].At(60) }, 798.95, 883.05},
 	} {
 		low, high := c.rank()
 		if math.Abs(low-c.low) > 0.01 || math.Abs(high-c.high) > 0.01 {
@@ -230,23 +234,44 @@ func TestOrcShamanNaturesSwiftnessHeal(t *testing.T) {
 	runSim(sim)
 }
 
-// TestOrcShamanAncestralHealing: a heal crit gives us 25% more armor for 15 sec with 3
-// points.
+// withItemArmor gives the shaman armor from items, which Ancestral Fortitude raises.
+func withItemArmor(player *proto.Player, armor float64) *proto.Player {
+	var bonus stats.Stats
+	bonus[stats.Armor] = armor
+	player.BonusStats = &proto.UnitStats{Stats: bonus[:]}
+	return player
+}
+
+// healSimWithArmor is healSim with 2000 armor from items.
+func healSimWithArmor(t *testing.T, level int32, talents string, critBonus float64) (*core.Simulation, *EnhancementShaman) {
+	sim, enh := newShamanSim(withItemArmor(newOrcShaman(level, talents, &proto.EnhancementShaman_Options{}), 2000), &proto.Debuffs{}, 60)
+	enh.AddStatDynamic(sim, stats.Health, 5000)
+	enh.AddStatDynamic(sim, stats.SpellCrit, critBonus-enh.GetStat(stats.SpellCrit))
+	return sim, enh
+}
+
+// TestOrcShamanAncestralHealing: a heal crit gives us 25% more armor from items for 15 sec with
+// 3 points (16177: "Increases your armor value from items"). Our Agility's armor stays as it is.
 func TestOrcShamanAncestralHealing(t *testing.T) {
-	sim, enh := healSim(t, 60, restoAncestralHealing, 0, 200)
+	sim, enh := healSimWithArmor(t, 60, restoAncestralHealing, 200)
 	buff := enh.GetAura("Ancestral Fortitude")
 	if buff == nil {
 		t.Fatal("no Ancestral Fortitude aura")
 	}
 	var armor float64
-	at(sim, 0.5, func(sim *core.Simulation) { armor = enh.Armor() })
+	at(sim, 0.5, func(sim *core.Simulation) {
+		armor = enh.Armor()
+		if armor < 2001 {
+			t.Fatalf("armor %.1f, want 2000 from items and some from Agility", armor)
+		}
+	})
 	healOnce(t, sim, enh, enh.LesserHealingWave[6], 1, 1.5)
 	at(sim, 3, func(sim *core.Simulation) {
 		if !buff.IsActive() {
 			t.Fatal("no Ancestral Fortitude after a crit heal")
 		}
-		if got := enh.Armor(); math.Abs(got-armor*1.25) > 0.01 {
-			t.Errorf("armor %.1f with the buff, want %.1f", got, armor*1.25)
+		if got, want := enh.Armor(), armor+0.25*2000; math.Abs(got-want) > 0.01 {
+			t.Errorf("armor %.1f with the buff, want %.1f (all of our armor x1.25 would be %.1f)", got, want, armor*1.25)
 		}
 	})
 	at(sim, 18, func(sim *core.Simulation) {
@@ -257,23 +282,30 @@ func TestOrcShamanAncestralHealing(t *testing.T) {
 	runSim(sim)
 }
 
-// TestOrcShamanRiptide: an instant heal, then 89 + 10% of healing power every 3 sec for 15
-// sec, both with Purification's 10%. Chain Heal at us while it's up heals 25% more.
+// TestOrcShamanRiptide: the development notes' rank 3 (post 9, 2026-11-02) heals nothing at
+// once, then 161 + 10% of healing power every 3 sec for 15 sec with Purification's 10%, for 231
+// mana (the client's 385, 40% less). Chain Heal at us while it's up heals 25% more. The client's
+// Riptide healed 799 to 883 at once on top.
 func TestOrcShamanRiptide(t *testing.T) {
 	sim, enh := healSim(t, 60, restoRiptidePurif, 100, 0)
-	if enh.Riptide == nil {
-		t.Fatal("no Riptide with the talent at 60")
+	if enh.Riptide == nil || enh.Riptide != enh.RiptideRanks[3] {
+		t.Fatal("no Riptide rank 3 with the talent at 60")
+	}
+	if got := enh.Riptide.Cost.GetCurrentCost(); math.Abs(got-231) > 0.01 {
+		t.Errorf("Riptide rank 3 costs %.1f, want 231", got)
+	}
+	if got := enh.Riptide.BonusCoefficient; got != 0 {
+		t.Errorf("Riptide rank 3 has a direct coefficient %.3f, want none", got)
 	}
 	direct := healOnce(t, sim, enh, enh.Riptide, 1, 0)
 	var afterDirect float64
 	at(sim, 1.15, func(sim *core.Simulation) { afterDirect = enh.CurrentHealth() })
 	at(sim, 16.5, func(sim *core.Simulation) {
-		low, high := shaman.RiptideRank.At(60)
-		if *direct < (low+0.214*100)*1.1-0.5 || *direct > (high+0.214*100)*1.1+0.5 {
-			t.Errorf("Riptide healed %.1f at once, want %.1f to %.1f", *direct, (low+0.214*100)*1.1, (high+0.214*100)*1.1)
+		if *direct != 0 {
+			t.Errorf("Riptide healed %.1f at once, want nothing", *direct)
 		}
 		ticks := enh.CurrentHealth() - afterDirect
-		if want := 5 * (89 + 0.1*100) * 1.1; math.Abs(ticks-want) > 1 {
+		if want := 5 * (161 + 0.1*100) * 1.1; math.Abs(ticks-want) > 1 {
 			t.Errorf("Riptide's ticks healed %.1f, want %.1f", ticks, want)
 		}
 	})
@@ -303,6 +335,104 @@ func TestOrcShamanRiptide(t *testing.T) {
 	if got := chain(true); got < low*1.1*1.25-0.5 || got > high*1.1*1.25+0.5 {
 		t.Errorf("Chain Heal with Riptide up healed %.1f, want %.1f to %.1f", got, low*1.1*1.25, high*1.1*1.25)
 	}
+}
+
+// TestOrcShamanRiptideRanks: a level 60 with the talent knows all three ranks, which share the
+// notes' 12 sec cooldown, and one of our Riptides on a target replaces another rank's. Rank 1,
+// learned at 40, costs 147 (245, 40% less) and keeps 85% of its tick coefficient at 60
+// (sim/core's downranking: 5% a level past 40 + 17). A level 50 knows ranks 1 and 2, and a level
+// 40 rank 1.
+func TestOrcShamanRiptideRanks(t *testing.T) {
+	for _, c := range []struct {
+		level int32
+		ranks int
+	}{{40, 1}, {50, 2}, {59, 2}, {60, 3}} {
+		_, enh := healSim(t, c.level, restoRiptidePurif, 0, 0)
+		n := 0
+		for _, spell := range enh.RiptideRanks {
+			if spell != nil {
+				n++
+			}
+		}
+		if n != c.ranks || enh.Riptide != enh.RiptideRanks[c.ranks] {
+			t.Errorf("level %d knows %d ranks of Riptide, its highest %v, want %d", c.level, n, enh.Riptide.ActionID, c.ranks)
+		}
+	}
+	_, untalented := healSim(t, 60, "", 0, 0)
+	if untalented.Riptide != nil {
+		t.Error("Riptide without the talent")
+	}
+
+	sim, enh := healSim(t, 60, restoRiptidePurif, 100, 0)
+	r1, r3 := enh.RiptideRanks[1], enh.RiptideRanks[3]
+	if got := r1.Cost.GetCurrentCost(); math.Abs(got-147) > 0.01 {
+		t.Errorf("Riptide rank 1 costs %.1f, want 147", got)
+	}
+	if got := r1.Hot(&enh.Unit).BonusCoefficient; math.Abs(got-0.1*0.85) > 1e-9 {
+		t.Errorf("Riptide rank 1's tick coefficient at 60 is %.4f, want %.4f", got, 0.1*0.85)
+	}
+	if got := r3.Hot(&enh.Unit).BonusCoefficient; math.Abs(got-0.1) > 1e-9 {
+		t.Errorf("Riptide rank 3's tick coefficient at 60 is %.4f, want 0.1", got)
+	}
+	if got := enh.RiptideRanks[2].Cost.GetCurrentCost(); math.Abs(got-180) > 0.01 {
+		t.Errorf("Riptide rank 2 costs %.1f, want 180", got)
+	}
+
+	at(sim, 1, func(sim *core.Simulation) {
+		castNow(t, sim, enh, r1)
+		if r3.CD.IsReady(sim) {
+			t.Error("rank 3 is ready right after rank 1")
+		}
+	})
+	at(sim, 12.9, func(sim *core.Simulation) {
+		if r3.CD.IsReady(sim) {
+			t.Error("rank 3 is ready 11.9 sec after rank 1")
+		}
+	})
+	at(sim, 13.01, func(sim *core.Simulation) {
+		if !r3.CD.IsReady(sim) {
+			t.Error("rank 3 isn't ready 12 sec after rank 1")
+		}
+		enh.AddMana(sim, enh.MaxMana(), enh.GetManaNotCastingMetrics())
+		castNow(t, sim, enh, r3)
+		if r1.Hot(&enh.Unit).IsActive() || !r3.Hot(&enh.Unit).IsActive() {
+			t.Errorf("after rank 3 over rank 1: rank 1's ticks up %v, rank 3's %v; want only rank 3's",
+				r1.Hot(&enh.Unit).IsActive(), r3.Hot(&enh.Unit).IsActive())
+		}
+	})
+	runSim(sim)
+}
+
+// TestOrcShamanRiptideExpectedHealing: a rotation that casts Riptide when what's missing covers
+// its Expected Healing reads its whole heal over time (the notes' Riptide has no instant heal),
+// with healing power and Purification. 5 short of it, the line waits; 5 over, it casts. Before
+// 2026-11-03 Riptide had no Expected Healing, so such a line was dropped.
+func TestOrcShamanRiptideExpectedHealing(t *testing.T) {
+	player := newOrcShaman(60, restoRiptidePurif, &proto.EnhancementShaman_Options{})
+	rotation := &proto.APLRotation{}
+	if err := protojson.Unmarshal([]byte(rotationOf(`{"action":{"condition":{"cmp":{"op":"OpGe","lhs":{"healthMissing":{"sourceUnit":{"type":"Self"}}},"rhs":{"spellExpectedHealing":{"spellId":{"spellId":1239243}}}}},"castSpell":{"spellId":{"spellId":1239243}}}}`)), rotation); err != nil {
+		t.Fatal(err)
+	}
+	player.Rotation = rotation
+	sim, enh := newShamanSim(player, &proto.Debuffs{}, 10)
+	// A naked level 60 has about 1,500 health, room for the 940 or so its ticks heal.
+	enh.AddStatDynamic(sim, stats.HealingPower, 100)
+	want := 5 * (161 + 0.1*100) * 1.1
+	at(sim, 1, func(sim *core.Simulation) {
+		enh.RemoveHealth(sim, want-5)
+	})
+	at(sim, 1.5, func(sim *core.Simulation) {
+		if !enh.Riptide.CD.IsReady(sim) {
+			t.Errorf("Riptide was cast with %.1f missing, under its %.1f", want-5, want)
+		}
+		enh.RemoveHealth(sim, 10)
+	})
+	at(sim, 2, func(sim *core.Simulation) {
+		if enh.Riptide.CD.IsReady(sim) {
+			t.Errorf("Riptide wasn't cast with %.1f missing, over its %.1f", want+5, want)
+		}
+	})
+	runSim(sim)
 }
 
 // TestHealAtDyingMob: a heal cast at the mob we fight (a rotation's default target) heals us,

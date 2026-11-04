@@ -14,7 +14,7 @@ import (
 
 // The Arms preset's talents (tools/dps_report/req/warrior__arms.json), with Bloodthrill and
 // Improved Slam.
-const armsPresetTalents = "20303213032215201-550500000001"
+const armsPresetTalents = "20303213032215201-55050000001"
 
 // "Slam is no longer subject to spell pushback" (development notes, 2026-10-15, build
 // 1.60.1.70425). Classic keeps the pushback.
@@ -138,10 +138,11 @@ func TestForeverWarriorFlurrySpeed(t *testing.T) {
 	}
 }
 
-// Reckless Swings (development notes post 9, 2026-11-02): 15 sec cooldown, off the GCD here, and the
-// next 4 landed melee swings in 8 sec give 5 more Rage each.
+// Reckless Swings (development notes post 9, 2026-11-02; hotfix push 113539, spells 1329555 and
+// 1329554): 15 sec cooldown, a 1 sec GCD, and the next 4 landed melee swings in 8 sec give 5 more
+// Rage each.
 func TestForeverWarriorRecklessSwings(t *testing.T) {
-	sim, war := newForeverWarriorArmed(t, "-"+strings.Repeat("0", 10)+"1", 991014, 991015)
+	sim, war := newForeverWarriorArmed(t, "-"+strings.Repeat("0", 9)+"1", 991014, 991015)
 	war.AutoAttacks.CancelAutoSwing(sim)
 	if war.RecklessSwings == nil {
 		t.Fatal("no Reckless Swings with the talent")
@@ -157,15 +158,15 @@ func TestForeverWarriorRecklessSwings(t *testing.T) {
 	mh, oh := war.AutoAttacks.MHAuto(), war.AutoAttacks.OHAuto()
 	baseMH, baseOH := swing(mh, core.OutcomeHit), swing(oh, core.OutcomeHit)
 
-	gcdBefore := war.GCD.TimeToReady(sim)
+	war.GCD.Reset() // free the GCD the test setup leaves busy, to measure the cast's own
 	if !war.RecklessSwings.Cast(sim, war.CurrentTarget) {
 		t.Fatal("Reckless Swings didn't cast")
 	}
 	if got := war.RecklessSwings.CD.Duration; got != 15*time.Second {
 		t.Errorf("Reckless Swings has a %s cooldown, want 15s", got)
 	}
-	if got := war.GCD.TimeToReady(sim); got != gcdBefore {
-		t.Errorf("Reckless Swings took the GCD (%s, was %s)", got, gcdBefore)
+	if got := war.GCD.TimeToReady(sim); got != time.Second {
+		t.Errorf("Reckless Swings put the GCD at %s, want 1s", got)
 	}
 	if got := swing(mh, core.OutcomeMiss); got != 0 {
 		t.Errorf("a miss gave %g Rage, want 0", got)
@@ -208,7 +209,7 @@ func TestForeverWarriorImprovedWhirlwind(t *testing.T) {
 		return war.Whirlwind.CD.Duration, d1, d2
 	}
 	cd0, a0, b0 := damage("")
-	cd2, a2, b2 := damage("-" + strings.Repeat("0", 17) + "2")
+	cd2, a2, b2 := damage("-" + strings.Repeat("0", 15) + "2")
 	if cd0 != 10*time.Second || cd2 != 8*time.Second {
 		t.Errorf("Whirlwind's cooldown %s and %s with 2 points, want 10s and 8s", cd0, cd2)
 	}

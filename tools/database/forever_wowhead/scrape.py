@@ -21,7 +21,7 @@
 # The argument is the highest required level to scrape, by default the one the current
 # file was scraped with. Items with no required level (Forever quest rewards) come along
 # whatever their item level.
-import concurrent.futures, json, os, sys, urllib.request
+import concurrent.futures, json, os, sys, time, urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from wowhead import Wowhead, gatherer, listview_items, listview_template
@@ -130,6 +130,29 @@ def mark_quest_restrictions(items, quests):
             sides += 1
     print(f"{classes} items come from a class's own quest, {sides} from one side's", file=sys.stderr)
 
+def keep_delisted(items):
+    """Keeps every item of the current file that wowhead no longer lists, marked with the day.
+
+    Around 2026-11-04 wowhead took 320 items off its listings, like the crafted level 60
+    sets the sim builds set bonuses on (Grimstitch, Justice, Glory). All 320 still have a
+    row in the client's Item table and 300 of them are hidden items, so they're still in
+    the game. This file is the only place we have their stats. An item that comes back
+    on a listing loses its mark, because the scraped row replaces this one.
+    """
+    try:
+        with open(OUT) as f:
+            previous = json.load(f)['items']
+    except (OSError, ValueError, KeyError):
+        return
+    today = time.strftime('%Y-%m-%d', time.gmtime())
+    kept = 0
+    for item in previous:
+        if item['id'] not in items:
+            item.setdefault('delisted', today)
+            items[item['id']] = item
+            kept += 1
+    print(f'{kept} items no longer listed, kept from the last scrape', file=sys.stderr)
+
 def main():
     wh = Wowhead()
     items = {}
@@ -167,6 +190,7 @@ def main():
             print(f'slot {slot} levels {lo}-{hi}: {n} items', file=sys.stderr)
     mark_bind_on_pickup(items)
     mark_quest_restrictions(items, scrape_quests(wh))
+    keep_delisted(items)
     out = sorted(items.values(), key=lambda x: x['id'])
     # One item per line, so a rescrape diffs item by item.
     with open(OUT, 'w') as f:

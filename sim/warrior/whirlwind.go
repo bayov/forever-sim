@@ -11,10 +11,11 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 	ohResults := make([]*core.SpellResult, len(results))
 
 	// Forever's Whirlwind strikes with both weapons (the 1 October build made it baseline, it was
-	// Raging Blows' before), and Raging Blows takes 3 Rage off it.
+	// Raging Blows' before). Raging Blows and its 3 Rage off Whirlwind are gone (hotfix push 113539).
 	// Improved Whirlwind takes 1 sec a point off the cooldown and adds 15% a point to the hits on
-	// the closest enemy, the first target here (development notes post 9, 2026-11-02, a new Fury
-	// talent; client 70753 unchanged, its 24431 is the old Burning Crusade row).
+	// the closest enemy, the first target here (development notes post 9, 2026-11-02; hotfix push
+	// 113539, 2026-11-03: spell 1310315, SpellEffect 1339744 cooldown curve 128139 -1000 / -2000 and
+	// 1345686 dummy curve 128138 15 / 30; the closest-enemy part is a server script).
 	improvedPoints := warrior.Talents.ImprovedWhirlwind
 	closestMultiplier := 1 + 0.15*float64(improvedPoints)
 
@@ -32,7 +33,7 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 		Flags:       core.SpellFlagAPL | SpellFlagOffensive,
 
 		RageCost: core.RageCostOptions{
-			Cost: 25 - core.TernaryFloat64(warrior.Talents.RagingBlows, 3, 0),
+			Cost: 25,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

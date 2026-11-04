@@ -207,8 +207,9 @@ func TestForeverWarriorDamageTakenRage(t *testing.T) {
 // TestForeverWarriorSpellValues checks the Forever client values (1.60.1.70338) that are easy to get
 // wrong: Slam's cooldown and the talent Rage discounts.
 func TestForeverWarriorSpellValues(t *testing.T) {
-	// Improved Slam 2/2 and Improved Execute 2/2, Booming Voice 5/5 and Raging Blows.
-	_, war := newForeverWarrior(t, "000000000000002-500000000102")
+	// Improved Slam 2/2 and Improved Execute 2/2, Booming Voice 5/5. Raging Blows is gone (hotfix push
+	// 113539), so Whirlwind and Cleave keep their full cost.
+	_, war := newForeverWarrior(t, "000000000000002-50000000002")
 	// 15 sec less 2.5 sec a point of Improved Slam (development notes post 9, 2026-11-02).
 	if got := war.Slam.CD.Duration; got != 10*time.Second {
 		t.Errorf("Slam with Improved Slam 2/2 has a %s cooldown, want 10s", got)
@@ -219,8 +220,8 @@ func TestForeverWarriorSpellValues(t *testing.T) {
 		want  float64
 	}{
 		{"Execute", war.Execute, 10},
-		{"Whirlwind", war.Whirlwind, 22},
-		{"Cleave", war.Cleave, 17},
+		{"Whirlwind", war.Whirlwind, 25},
+		{"Cleave", war.Cleave, 20},
 		{"Battle Shout", war.BattleShout, 7.5},
 	}
 	for _, c := range costs {
@@ -243,7 +244,7 @@ func TestForeverWarriorSpellValues(t *testing.T) {
 // after Improved Execute's discount, not 80% of the base cost (wowsims/forever's RageCost
 // refunds Refund * CurCast.Cost).
 func TestForeverWarriorRefundsPaidRage(t *testing.T) {
-	sim, war := newForeverWarrior(t, "000000000000002-500000000102")
+	sim, war := newForeverWarrior(t, "000000000000002-50000000002")
 	execute := war.Execute.Spell
 	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
 	execute.CurCast.Cost = execute.Cost.GetCurrentCost()
@@ -256,7 +257,7 @@ func TestForeverWarriorRefundsPaidRage(t *testing.T) {
 // TestForeverWarriorDeepWoundsAndFlurry checks two client 70338 values: Deep Wounds' damage spell
 // (412613) cannot crit, so its ticks never do, and the Flurry buff (12966) lasts 15 sec.
 func TestForeverWarriorDeepWoundsAndFlurry(t *testing.T) {
-	_, war := newForeverWarrior(t, "30303013002-2505300151021100301-2")
+	_, war := newForeverWarrior(t, "30303013002-250530015021100031-2")
 	if war.DeepWounds == nil {
 		t.Fatal("the talents should give Deep Wounds")
 	}

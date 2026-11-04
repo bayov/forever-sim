@@ -16,6 +16,7 @@ export const AuraSelection = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecHoly
 		{ name: 'None', value: PaladinAura.NoPaladinAura },
 		{ name: 'Devotion Aura', value: PaladinAura.DevotionAura },
 		{ name: 'Retribution Aura', value: PaladinAura.RetributionAura },
+		{ name: 'Concentration Aura', value: PaladinAura.ConcentrationAura },
 	],
 });
 
