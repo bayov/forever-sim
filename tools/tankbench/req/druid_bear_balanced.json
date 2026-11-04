@@ -109,21 +109,7 @@
                   },
                   "doAtValue": {
                     "const": {
-                      "val": "-2.5s"
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 5229
-                      }
-                    }
-                  },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-1s"
+                      "val": "-1.5s"
                     }
                   }
                 }
@@ -139,31 +125,47 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 9898
+                        "spellId": 22842
                       }
                     },
                     "condition": {
                       "cmp": {
                         "lhs": {
-                          "auraRemainingTime": {
-                            "auraId": {
-                              "spellId": 9898
-                            },
-                            "sourceUnit": {
-                              "type": "CurrentTarget"
-                            }
-                          }
+                          "currentRage": {}
                         },
-                        "op": "OpLt",
+                        "op": "OpGe",
                         "rhs": {
                           "const": {
-                            "val": "3s"
+                            "val": "100"
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Demoralizing Roar kept up on the boss: the tank applies its own (the bench drops the raid's Roar and Shout)."
+                  "notes": "Frenzied Regeneration at 100 Rage: it fires at the pull's Rage peak, about once a fight (a scoring run reads no health)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 5229
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "currentRage": {}
+                        },
+                        "op": "OpLt",
+                        "rhs": {
+                          "const": {
+                            "val": "40"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Enrage in the fight under 40 Rage (off the GCD; 16% less armor from items for 10 sec)."
                 },
                 {
                   "action": {
@@ -232,11 +234,54 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 22812
+                        "spellId": 9898
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "auraRemainingTime": {
+                            "auraId": {
+                              "spellId": 9898
+                            },
+                            "sourceUnit": {
+                              "type": "CurrentTarget"
+                            }
+                          }
+                        },
+                        "op": "OpLt",
+                        "rhs": {
+                          "const": {
+                            "val": "3s"
+                          }
+                        }
                       }
                     }
                   },
-                  "notes": "Barkskin on cooldown: 20% less Physical damage for 15 sec of each minute (on a timer: a scoring run reads no health)."
+                  "notes": "Demoralizing Roar kept up on the boss: the tank applies its own (the bench drops the raid's Roar and Shout)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 22812
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "currentTime": {}
+                        },
+                        "op": "OpGt",
+                        "rhs": {
+                          "const": {
+                            "val": "15s"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Barkskin on cooldown from 15 sec in: 20% less Physical damage for 15 sec of each minute (on a timer: a scoring run reads no health)."
                 },
                 {
                   "action": {
@@ -263,13 +308,13 @@
                         "op": "OpGe",
                         "rhs": {
                           "const": {
-                            "val": "30"
+                            "val": "20"
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Maul queued at 30 Rage or more."
+                  "notes": "Maul queued at 20 Rage or more."
                 }
               ]
             }

@@ -65,11 +65,14 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
 
-// The three presets' rotations (tools/rotopt -template druid_tank, each searched at its weight). All three keep
-// Demoralizing Roar up, Primal Bite on cooldown, Lacerate to 5 stacks and then as the filler, Barkskin on
-// its timer in the filler's place, and shift into Dire Bear Form before the pull, then Enrage. Max threat
-// queues Maul at 20 Rage (Balanced and Max survival at 30); Max survival enrages 3 sec before the pull (1
-// sec for the others) and casts Frenzied Regeneration at 100 Rage, where the Rage would go to waste.
+// The three presets' rotations (tools/rotopt -template druid_tank, each searched at its weight, round 2 on the
+// flat white-hit Rage). All three put Primal Bite on cooldown, keep Lacerate at 5 stacks, keep Demoralizing Roar
+// up just below that line (refreshed under 3 sec), use Barkskin on its timer from 15 sec in, in the filler's
+// place, shift into Dire Bear Form 1.5 sec before the pull and Enrage in the fight. Balanced: Lacerate as the
+// filler, Maul at 20 Rage, Enrage under 40 Rage and Frenzied Regeneration at 100 Rage. Max threat: Balanced
+// without Frenzied Regeneration and with Enrage under 60 Rage. Max survival: Balanced with Lacerate kept up but
+// not the filler and Maul at 10 Rage, so its Rage goes to Maul. No preset enrages before the pull any more
+// (each weight's best build enrages in the fight).
 export const APLMaxThreat = PresetUtils.makePresetAPLRotation('Max threat', MaxThreatAPLJSON);
 export const APLBalanced = PresetUtils.makePresetAPLRotation('Balanced', BalancedAPLJSON);
 export const APLMaxSurvival = PresetUtils.makePresetAPLRotation('Max survival', MaxSurvivalAPLJSON);
@@ -223,7 +226,8 @@ export const EncounterLevel60Tank = PresetUtils.makePresetEncounter(
 );
 
 // The three presets (the user's ruling: threat against survival as weights, Balanced the default), each a
-// Night Elf (the best race at every weight: Elune's Light), on the synthetic set.
+// Night Elf (the best race at Max threat and Balanced: Elune's Light; tied with the Tauren at Max survival), on
+// the synthetic set.
 export const PresetBuildMaxThreat = PresetUtils.makePresetBuild('Max threat', {
 	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
 	gear: GearLevel60Phase1Synthetic,
