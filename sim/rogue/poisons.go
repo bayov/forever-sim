@@ -40,11 +40,11 @@ func (rogue *Rogue) GetInstantPoisonProcChance() float64 {
 }
 
 func (rogue *Rogue) GetDeadlyPoisonProcChance() float64 {
-	return 0.3 + rogue.improvedPoisons() + rogue.additivePoisonBonusChance
+	return 0.3 + rogue.improvedPoisons() + rogue.additivePoisonBonusChance + rogue.venomPoisonChance
 }
 
 func (rogue *Rogue) GetWoundPoisonProcChance() float64 {
-	return 0.3 + rogue.improvedPoisons() + rogue.additivePoisonBonusChance
+	return 0.3 + rogue.improvedPoisons() + rogue.additivePoisonBonusChance + rogue.venomPoisonChance
 }
 
 func (rogue *Rogue) improvedPoisons() float64 {
@@ -88,7 +88,8 @@ func (rogue *Rogue) applyInstantPoison() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+			// Shank suppresses weapon procs (shank.go).
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 				return
 			}
 
@@ -113,7 +114,8 @@ func (rogue *Rogue) applyDeadlyPoison() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+			// Shank suppresses weapon procs (shank.go).
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 				return
 			}
 			if sim.RandomFloat("Deadly Poison") < rogue.GetDeadlyPoisonProcChance() {
@@ -137,7 +139,8 @@ func (rogue *Rogue) applyWoundPoison() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+			// Shank suppresses weapon procs (shank.go).
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 				return
 			}
 

@@ -279,6 +279,10 @@ def generate(t, cls, tree_id, old):
 		base = t.build.split('+')[0]
 		source += (' That is build %s with the launch realms\' server hotfix rows laid over it (wago.tools '
 		           'hotfixes, region 91, build %s, through tools/sources/hotfixes.py).' % (base, base.rsplit('.', 1)[-1]))
+		pushes = tree_pushes(base, tree_id, {n['ID'] for n in nodes})
+		if pushes:
+			source += ' The server hotfix%s that changed this tree: %s.' % (
+				'es' if len(pushes) > 1 else '', ', '.join('push %s of %s' % (p, day) for p, day in pushes))
 	if carried_removed or carried_notes:
 		kept = []
 		if carried_removed:
@@ -287,6 +291,20 @@ def generate(t, cls, tree_id, old):
 			kept.append('the hand notes on %d talent%s' % (carried_notes, '' if carried_notes == 1 else 's'))
 		source += ' %s carried over from the hand-assembled files these replaced.' % ' and '.join(kept).capitalize()
 	return {'source': source, 'class': cls, 'trees': trees}, left
+
+
+def tree_pushes(base, tree_id, node_ids):
+	"""[(push id, day)] of the hotfix pushes whose TraitNode or TraitEdge rows touch a tree."""
+	import hotfixes  # noqa: E402 (tools/sources, only needed for a +hf build)
+	best = hotfixes.latest(base)
+	pushes = {}
+	for rec, r in best.get('TraitNode', {}).items():
+		if rec in node_ids or (r['data'] and str(r['data'][1]) == str(tree_id)):
+			pushes[int(r['push_id'])] = r['created_at'][:10]
+	for rec, r in best.get('TraitEdge', {}).items():
+		if r['data'] and (str(r['data'][2]) in node_ids or str(r['data'][3]) in node_ids):
+			pushes[int(r['push_id'])] = r['created_at'][:10]
+	return sorted(pushes.items())
 
 
 def talent_json(t, node_id, place, names, reqs, before):

@@ -6,17 +6,19 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-// The client's Mutilate cast (1310707); the off hand half is tag 2.
-var MutilateActionID = core.ActionID{SpellID: 1310707}
+// Mutilate's casts: 399956 at 40, 1241582 at 50, 1241584 at 60 (server hotfix push 113483 deleted
+// the old level 30 rank, 1310707 and its halves 1310705/6); the off hand half is tag 2.
+var MutilateActionID = core.ActionID{SpellID: 1241584}
 
 func (rogue *Rogue) registerMutilateSpell() {
 	if !rogue.Talents.Mutilate {
 		return
 	}
-	flatDamage := rankAt(rogue.Level, map[int32]float64{1: 23, 40: 33, 50: 48, 60: 67})
+	flatDamage := rankAt(rogue.Level, map[int32]float64{1: 44, 50: 63, 60: 88})
+	actionID := core.ActionID{SpellID: rankSpellID(rogue.Level, map[int32]int32{1: 399956, 50: 1241582, 60: 1241584})}
 
 	rogue.mutilateOH = rogue.RegisterSpell(core.SpellConfig{
-		ActionID:    MutilateActionID.WithTag(2),
+		ActionID:    actionID.WithTag(2),
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeOHSpecial,
@@ -39,7 +41,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 
 	rogue.Mutilate = rogue.RegisterSpell(core.SpellConfig{
 		SpellCode:   SpellCode_RogueMutilate,
-		ActionID:    MutilateActionID,
+		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
@@ -89,13 +91,12 @@ func (rogue *Rogue) registerMutilateSpell() {
 }
 
 // Each half strikes for 90% weapon damage plus a flat bonus, and hits harder while one of the
-// rogue's lingering poisons is on the target. The client adds 23, 33, 48 and 67 to the weapon
-// damage before the weapon percent (1310706, 399960, 1241585, 1241586), the talent's rank and the
-// trainer's at 40, 50 and 60. Blizzard's November 2 development notes raise Mutilate to "90% of
-// weapon damage plus an additional amount that was also increased (was 75% weapon damage and a
-// lower amount)": the percent goes from 75 to 90 and takes the flat bonus up with it (67 x 0.9 =
-// 60.3 at 60, was 50.25). Client 1.60.1.70753 still has 75, which is kept outside Forever (Classic
-// has no Mutilate; standards 37 gates the notes' value under Forever).
+// rogue's lingering poisons is on the target. Server hotfix push 113483 (launch realms, build 70707,
+// 2026-11-03; Blizzard's November 2 notes announced it) sets the halves (399960/1, 1241585/8,
+// 1241586/90) to 90% weapon damage (was 75) and a flat 44, 63 and 88 at 40, 50 and 60 (was 33, 48,
+// 67), added before the percent: 88 x 0.9 = 79.2 a half at 60. It also deletes the level 30 rank
+// (flat 23), so the talent teaches the level 40 rank. Client 1.60.1.70753 still has 75, which is kept
+// outside Forever (Classic has no Mutilate).
 func (rogue *Rogue) mutilateDamage(target *core.Unit, flatDamage float64, weaponDamage float64) float64 {
 	baseDamage := core.TernaryFloat64(rogue.Env.IsForever(), 0.9, 0.75) * (flatDamage + weaponDamage)
 	if rogue.isPoisoned(target) {

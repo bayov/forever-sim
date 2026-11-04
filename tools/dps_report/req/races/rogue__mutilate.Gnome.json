@@ -917,7 +917,7 @@
         "action": {
           "castSpell": {
             "spellId": {
-              "spellId": 1399248
+              "spellId": 1329549
             }
           },
           "condition": {
@@ -940,7 +940,7 @@
         "action": {
           "castSpell": {
             "spellId": {
-              "spellId": 1310707
+              "spellId": 1241584
             }
           }
         },

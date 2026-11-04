@@ -172,7 +172,7 @@ func TestForeverEviscerateAttackPower(t *testing.T) {
 
 // The Subtlety preset's talents (tools/dps_report/req/rogue__subtlety.json), with Hemorrhage and
 // Serrated Blades.
-const subtletyPresetTalents = "00530320201-31-005021331321021151"
+const subtletyPresetTalents = "00530320201-31-005203131321021151"
 
 // Under Forever Rupture's ticks read attack power, the damage modifiers and Hemorrhage when they
 // land, and keep only the combo points from the cast (wowsims/forever 36cfc58328, "Periodic damage
