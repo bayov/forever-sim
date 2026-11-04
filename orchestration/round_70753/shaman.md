@@ -111,6 +111,7 @@ The next hotfix check and the launch logs compare against this list first.
 | Chain Lightning ranks 1–4 first target | 1.45 × the comparable Lightning Bolt: rank 4 484.75–539.04 at 60 | 10605 unchanged (119–133) |
 | Chain Lightning mana | 248 / 304 / 360 / 495 (2.25 ×, rounded to whole mana) | 145 / 200 / 250 / 315 |
 | Chain Lightning cast | 2.5 s | 2 s |
+| Chain Lightning spell power coefficient | 0.714 at every rank (2.5 / 3.5, the standard one for the 2.5 s cast; standards 39, user ruling 2026-11-04; the notes name none) | 0.571 (rank 3 0.517) |
 | Earth / Flame / Frost Shock base | Era's: 517–545, 292 + 4 × 80, 492–520 at 60 (every rank) | 301 / 166 + 4 × 44 / 283 centres |
 | Lightning Overload | 10 / 20 / 30% | 408438 3 / 7 / 10% |
 | Maelstrom Weapon | 4 PPM a point (doubled from the sim's 2; the rate is server side either way) | 408498 ProcChance 100, no PPM row |
