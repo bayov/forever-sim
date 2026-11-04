@@ -45,8 +45,15 @@ func (warriorTank) Knobs() []Knob {
 		{Name: "sunderRage", Default: 40, Min: 0, Max: 60, Step: 10},
 		// Heroic Strike on the next swing above this much Rage (100: never).
 		{Name: "hsRage", Default: 50, Min: 20, Max: 100, Step: 10},
+		// Slam above this much Rage (0: never), ahead of the Sunder Armor filler: the November 2 notes'
+		// 15 sec cooldown, a 1.5 sec cast that resets the swing (Improved Slam is out of a tank's reach).
+		{Name: "slamRage", Default: 0, Min: 0, Max: 80, Step: 20},
 		// Bloodrage below this much Rage (0: never). It costs 20% of base health.
 		{Name: "bloodrageRage", Default: 30, Min: 0, Max: 70, Step: 10},
+		// Reckless Swings (Fury row 4, the November 2 notes: 15 sec, off the GCD, the next 4 swings give 5
+		// more Rage each, 25% of base health) below this much Rage, 0 never, 100 on cooldown. Without
+		// the talent the line does nothing.
+		{Name: "recklessSwingsRage", Default: 100, Min: 0, Max: 100, Step: 10},
 		// The opener: 0 none, 1 Bloodrage before the pull, 2 Charge (from Defensive Stance with
 		// Vanguard, or from Battle Stance and back: chargeFrom), 3 both.
 		{Name: "opener", Default: 0, Min: 0, Max: 3, Step: 1},
@@ -88,6 +95,14 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 	var items []*proto.APLListItem
 	if k["bloodrageRage"] > 0 {
 		items = append(items, cast(bloodrage, lt(currentRage(), num(k["bloodrageRage"])), "Bloodrage for Rage (20% of base health)."))
+	}
+	if k["recklessSwingsRage"] > 0 {
+		var below value
+		if k["recklessSwingsRage"] < 100 {
+			below = lt(currentRage(), num(k["recklessSwingsRage"]))
+		}
+		items = append(items, cast(recklessSwings, below,
+			"Reckless Swings for the Rage of the next 4 swings (25% of base health). Without the talent ignore the warning on this line."))
 	}
 	switch k["potion"] {
 	case 1:
@@ -152,6 +167,9 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 	if k["hsRage"] < 100 {
 		items = append(items, cast(heroicStrikeNext, ge(currentRage(), num(k["hsRage"])), "Heroic Strike with Rage to spare."))
 	}
+	if k["slamRage"] > 0 {
+		items = append(items, cast(slam, ge(currentRage(), num(k["slamRage"])), "Slam (15 sec cooldown under Forever) with Rage to spare."))
+	}
 	if k["sunderRage"] > 0 {
 		items = append(items, cast(sunderArmor, ge(currentRage(), num(k["sunderRage"])), "Sunder Armor as the filler, for its threat."))
 	}
@@ -167,7 +185,7 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 		// Vanguard: Charge from Defensive Stance, keeping all its Rage.
 		rot.PrepullActions = append(rot.PrepullActions, prepull(defensiveStance, 1), prepull(charge, 0.5))
 	case opener&2 != 0:
-		// Without Vanguard: from Battle Stance and back, Tactical Mastery keeping 10 Rage (and 3 a
+		// Without Vanguard: from Battle Stance and back, Tactical Mastery keeping 10 Rage (and 5 a
 		// point of Improved Tactical Mastery).
 		rot.PrepullActions = append(rot.PrepullActions,
 			prepull(battleStance, 2.5), prepull(charge, 1.5), prepull(defensiveStance, 0.5))

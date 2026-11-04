@@ -74,7 +74,7 @@ func near(t *testing.T, name string, got, want, tol float64) {
 }
 
 // The P1 build: Defensive Stance with Defiance 3/3 and a shield is 1.3 x 1.15.
-const p1Stance = 1.3 * 1.15
+const p1Stance = 1.8 * 1.2 // the November 2 notes: Defensive Stance 80%, Defiance 7/13/20%
 
 // TestForeverTankAbilityCosts checks the Rage costs and cooldowns of the tank's buttons against
 // client 70753, with the P1 talents (Improved Thunder Clap 3/3, Improved Sunder Armor 3/3, Focused
@@ -138,7 +138,7 @@ func TestForeverTankShieldBlockSpends(t *testing.T) {
 }
 
 // TestForeverTankThreat checks each threat button's threat per landed hit in Defensive Stance with
-// Defiance 3/3 (x1.3 x1.15): Sunder Armor 206 + 5% of attack power (client E_THREAT, wowsims/forever's
+// Defiance 3/3 (x1.8 x1.2, the November 2 notes): Sunder Armor 206 + 5% of attack power (client E_THREAT, wowsims/forever's
 // capture), Heroic Strike its damage + 2.54 a spell level (142.24), Cleave + 1.53 a level (91.8),
 // Revenge 2.25 x its damage, Thunder Clap 2.5 x (Classic's), Shield Slam its damage + 508 (the sim's,
 // unconfirmed), Demoralizing Shout 47 (client E_THREAT at 60).
@@ -188,15 +188,15 @@ func TestForeverTankThreat(t *testing.T) {
 }
 
 // TestForeverTankDefensiveStance checks Defensive Stance (71, passive 7376): 10% less damage taken
-// and dealt, 30% more threat, and Defiance's 5% a point only with a shield (12792 names the shield),
-// multiplied in as the tooltip's formula does.
+// and dealt, 80% more threat (the November 2 notes; client 70753 still 30%), and Defiance's 7 / 13 / 20%
+// only with a shield (12792 names the shield; the notes' values), multiplied in as the tooltip's formula does.
 func TestForeverTankDefensiveStance(t *testing.T) {
 	_, none := newTank(t, "", bulwark)
 	_, shield := newTank(t, "--000000000300000000", bulwark)
 	_, noShield := newTank(t, "--000000000300000000", 0)
-	near(t, "threat with no Defiance", none.PseudoStats.ThreatMultiplier, 1.3, 1e-9)
-	near(t, "threat with Defiance 3/3 and a shield", shield.PseudoStats.ThreatMultiplier, 1.3*1.15, 1e-9)
-	near(t, "threat with Defiance 3/3 and no shield", noShield.PseudoStats.ThreatMultiplier, 1.3, 1e-9)
+	near(t, "threat with no Defiance", none.PseudoStats.ThreatMultiplier, 1.8, 1e-9)
+	near(t, "threat with Defiance 3/3 and a shield", shield.PseudoStats.ThreatMultiplier, 1.8*1.2, 1e-9)
+	near(t, "threat with Defiance 3/3 and no shield", noShield.PseudoStats.ThreatMultiplier, 1.8, 1e-9)
 	near(t, "damage taken", none.PseudoStats.DamageTakenMultiplier, 0.9, 1e-9)
 	near(t, "damage dealt", none.PseudoStats.DamageDealtMultiplier, 0.9, 1e-9)
 }
@@ -295,6 +295,50 @@ func TestForeverTankBloodrage(t *testing.T) {
 		if war.Bloodrage.CD.Duration != time.Minute || war.Bloodrage.DefaultCast.GCD != 0 {
 			t.Errorf("Bloodrage: %s cooldown, %s GCD; want 1m and none", war.Bloodrage.CD.Duration, war.Bloodrage.DefaultCast.GCD)
 		}
+	}
+}
+
+// TestForeverTankRecklessSwings checks Reckless Swings (Fury row 4 since the November 2 notes, which a
+// tank reaches with 16 Fury points): off the GCD on a 15 sec cooldown, it costs 25% of base health
+// (damage taken for the tank's score), and the next 4 landed white swings give 5 Rage more each.
+func TestForeverTankRecklessSwings(t *testing.T) {
+	sim, war := newTank(t, "-00000000001", bulwark) // Reckless Swings, Fury's 11th talent
+	if war.RecklessSwings == nil {
+		t.Fatal("Reckless Swings is missing with the talent")
+	}
+	if war.RecklessSwings.CD.Duration != 15*time.Second || war.RecklessSwings.DefaultCast.GCD != 0 {
+		t.Errorf("Reckless Swings: %s cooldown, %s GCD; want 15s and none", war.RecklessSwings.CD.Duration, war.RecklessSwings.DefaultCast.GCD)
+	}
+	health := war.CurrentHealth()
+	if !war.RecklessSwings.Cast(sim, war.CurrentTarget) {
+		t.Fatal("Reckless Swings didn't cast")
+	}
+	near(t, "Reckless Swings' health cost", health-war.CurrentHealth(), 0.25*war.GetBaseStats()[stats.Health], 1e-6)
+
+	swing := war.AutoAttacks.MHAuto()
+	var extra float64
+	landed := 0
+	for i := 0; i < 50 && war.RecklessSwingsAura.IsActive(); i++ {
+		before := war.CurrentRage()
+		stacks := war.RecklessSwingsAura.GetStacks()
+		result := swing.CalcAndDealDamage(sim, war.CurrentTarget, 100, swing.OutcomeMeleeWhite)
+		if result.Landed() {
+			landed++
+			if got := war.RecklessSwingsAura.GetStacks(); war.RecklessSwingsAura.IsActive() && got != stacks-1 {
+				t.Errorf("a landed swing left %d charges of %d", got, stacks)
+			}
+			extra += war.CurrentRage() - before
+		}
+	}
+	if landed != 4 {
+		t.Errorf("Reckless Swings lasted %d landed swings, want 4", landed)
+	}
+	// Each landed swing makes its own Rage from its damage too; Reckless Swings adds a flat 5.
+	if extra < 20 {
+		t.Errorf("4 swings under Reckless Swings gave %.1f Rage, want at least their 4 x 5", extra)
+	}
+	if _, none := newTank(t, "", bulwark); none.RecklessSwings != nil {
+		t.Error("Reckless Swings is there without the talent")
 	}
 }
 
@@ -465,7 +509,7 @@ func TestForeverTankProcTalents(t *testing.T) {
 	rate("Shield Specialization 1/5", ss, blocks, 0.2)
 	rate("Master of Defense 1/2", mod, avoids, 0.5)
 
-	m, melee = tankedRun(t, "-0000000005")
+	m, melee = tankedRun(t, "-00000005") // Enrage 5/5 (Fury row 3 since the November 2 notes)
 	_, _, damaging := outcomes(melee)
 	var procs float64
 	for _, a := range m.Auras {

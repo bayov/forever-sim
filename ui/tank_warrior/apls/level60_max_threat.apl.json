@@ -1,8 +1,7 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":71}}},"doAtValue":{"const":{"val":"-1s"}}},
-        {"action":{"castSpell":{"spellId":{"rank":3,"spellId":11578}}},"doAtValue":{"const":{"val":"-0.5s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":71}}},"doAtValue":{"const":{"val":"-1s"}}}
     ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":2687}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpLt","rhs":{"const":{"val":"30"}}}}},"notes":"Bloodrage for Rage (20% of base health)."},
@@ -14,7 +13,7 @@
         {"action":{"castSpell":{"spellId":{"rank":5,"spellId":11601}}},"notes":"Revenge after a block, dodge or parry."},
         {"action":{"castSpell":{"spellId":{"rank":4,"spellId":23925}}},"notes":"Shield Slam on cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":11597}},"condition":{"and":{"vals":[{"or":{"vals":[{"cmp":{"lhs":{"auraNumStacks":{"auraId":{"spellId":11597},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"5"}}}},{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"spellId":11597},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"3s"}}}}]}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"auraRemainingTime":{"auraId":{"spellId":11597},"sourceUnit":{"type":"CurrentTarget"}}}}}]}}},"notes":"Sunder Armor to 5 stacks, refreshed in its last 3 sec."},
-        {"action":{"castSpell":{"spellId":{"rank":8,"spellId":11567,"tag":1}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"20"}}}}},"notes":"Heroic Strike with Rage to spare."},
+        {"action":{"castSpell":{"spellId":{"rank":8,"spellId":11567,"tag":1}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"30"}}}}},"notes":"Heroic Strike with Rage to spare."},
         {"action":{"castSpell":{"spellId":{"spellId":11597}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"30"}}}}},"notes":"Sunder Armor as the filler, for its threat."},
         {"action":{"castSpell":{"spellId":{"spellId":71}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":71}}}}}}}
     ]

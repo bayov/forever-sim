@@ -44,7 +44,7 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 export const GearP0BISSwordBoard = PresetUtils.makePresetGear('Pre-BiS (Sword and Board)', P0BISSwordBoardGear);
 
 // The synthetic Level 60 Phase 1 Protection set (standards 36, tools/database/forever_synthetic_items_warrior_tank.go):
-// 106 Defense, 110 block value, 239 Stamina, 7.2% hit, the tank stat trinket and the attack power on-use.
+// 106 Defense, 110 block value, 239 Stamina, 8% hit (the cap), the tank stat trinket and the attack power on-use.
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Level60Phase1SyntheticGear);
 
 export const GearPresets = {
@@ -85,16 +85,16 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 
 export const TalentsP1Prot = PresetUtils.makePresetTalents('Protection', SavedTalents.create({ talentsString: '35--251533120331221351' }));
 
-// The talent search's build at Max threat and Balanced (the Max threat search found no move past its noise):
-// Cruelty 5/5 in place of Improved Thunder Clap and Improved Shield Wall, Anticipation 5/5.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60 Protection', SavedTalents.create({ talentsString: '35-05-251530120331201351' }));
-export const TalentsLevel60MaxSurvival = PresetUtils.makePresetTalents(
-	'Level 60 Protection (Max survival)',
-	SavedTalents.create({ talentsString: 'SURVIVAL_TALENTS' }),
+// The talent searches' builds (docs/tank_warrior.md, Presets), on the six scoring encounters.
+// Balanced and Max survival (whose search kept Balanced's build): Deflection 5; Cruelty, Unbridled Wrath and Enrage 5/5; Protection 31 with Shield Slam, no Last Stand or Vanguard.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60 Protection', SavedTalents.create({ talentsString: '05-05050005-250530020310001351' }));
+// Max threat: Improved Heroic Strike 3 in place of Deflection, Blood Craze 1, Anticipation 4, Improved Sunder Armor 3.
+export const TalentsLevel60MaxThreat = PresetUtils.makePresetTalents(
+	'Level 60 Protection (Max threat)',
+	SavedTalents.create({ talentsString: '3-05050015-250430020330001351' }),
 );
-
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60MaxSurvival, TalentsP1Prot],
+	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60MaxThreat, TalentsP1Prot],
 };
 
 export const DefaultTalents = TalentPresets[Phase.Phase1][0];
@@ -105,23 +105,23 @@ export const PresetBuildTanky = PresetUtils.makePresetBuild('Tanky', { gear: Gea
 export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
 	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
 	gear: GearLevel60Synthetic,
-	talents: TalentsLevel60,
+	talents: TalentsLevel60MaxThreat,
 	rotation: APLLevel60MaxThreat,
-	race: Race.RaceRACE_MAX_THREAT,
+	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
 	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md).',
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60Balanced,
-	race: Race.RaceRACE_BALANCED,
+	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
 	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md).',
 	gear: GearLevel60Synthetic,
-	talents: TalentsLevel60MaxSurvival,
+	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,
-	race: Race.RaceRACE_MAX_SURVIVAL,
+	race: Race.RaceUndead,
 });
 
 ///////////////////////////////////////////////////////////////////////////

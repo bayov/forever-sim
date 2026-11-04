@@ -1,0 +1,21 @@
+{
+    "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":71}}},"doAtValue":{"const":{"val":"-1s"}}}
+    ],
+    "priorityList": [
+        {"action":{"castSpell":{"spellId":{"spellId":2687}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpLt","rhs":{"const":{"val":"30"}}}}},"notes":"Bloodrage for Rage (20% of base health)."},
+        {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"notes":"Mighty Rage Potion at the pull."},
+        {"action":{"castSpell":{"spellId":{"itemId":990617}}},"notes":"The on-use trinket. Ignore the warning on the trinket that isn't worn."},
+        {"action":{"castSpell":{"spellId":{"itemId":991018}}},"notes":"The on-use trinket. Ignore the warning on the trinket that isn't worn."},
+        {"action":{"castSpell":{"spellId":{"spellId":871}},"condition":{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"12s"}}}}},"notes":"Shield Wall for the end of the fight."},
+        {"action":{"castSpell":{"spellId":{"spellId":2565}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2565}}}}}},"notes":"Shield Block: 2 blocks over 7 sec on a 5 sec cooldown."},
+        {"action":{"castSpell":{"spellId":{"rank":4,"spellId":23925}}},"notes":"Shield Slam on cooldown."},
+        {"action":{"castSpell":{"spellId":{"rank":5,"spellId":11601}}},"notes":"Revenge after a block, dodge or parry."},
+        {"action":{"castSpell":{"spellId":{"rank":6,"spellId":11581}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"rank":6,"spellId":11581},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"2s"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"auraRemainingTime":{"auraId":{"rank":6,"spellId":11581},"sourceUnit":{"type":"CurrentTarget"}}}}}]}}},"notes":"Thunder Clap kept up: the tank applies its own slow."},
+        {"action":{"castSpell":{"spellId":{"spellId":11597}},"condition":{"and":{"vals":[{"or":{"vals":[{"cmp":{"lhs":{"auraNumStacks":{"auraId":{"spellId":11597},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"5"}}}},{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"spellId":11597},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"3s"}}}}]}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"auraRemainingTime":{"auraId":{"spellId":11597},"sourceUnit":{"type":"CurrentTarget"}}}}}]}}},"notes":"Sunder Armor to 5 stacks, refreshed in its last 3 sec."},
+        {"action":{"castSpell":{"spellId":{"rank":8,"spellId":11567,"tag":1}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"50"}}}}},"notes":"Heroic Strike with Rage to spare."},
+        {"action":{"castSpell":{"spellId":{"spellId":11597}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"30"}}}}},"notes":"Sunder Armor as the filler, for its threat."},
+        {"action":{"castSpell":{"spellId":{"spellId":71}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":71}}}}}}}
+    ]
+}
