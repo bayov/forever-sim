@@ -118,12 +118,17 @@ func (mb *manaBar) gainMakesThreat(metrics *ResourceMetrics) bool {
 		!metrics.ActionID.SameActionIgnoreTag(ActionID{SpellID: 34917})
 }
 
-// manaGainThreat books a mana gain's threat under Forever, the way Rage gains do
-// (foreverRageGainThreat): half a threat a mana, times the unit's threat multiplier at the time,
-// split between the enemies in combat, when the mana comes. Classic gives it in full to every enemy
-// at the end of the iteration (doneIteration).
+// manaGainThreat books a mana gain's threat under Forever: half a threat a mana, split between the
+// enemies in combat, when the mana comes. Classic gives it in full to every enemy at the end of the
+// iteration (doneIteration).
+//
+// To verify (standards 40): no threat multiplier. Classic leaves resource-gain threat from mana
+// unmultiplied, and nothing measures mana under Forever. The Rage rule (foreverRageGainThreat)
+// multiplies, from wowsims/forever's in-game Rage measurements, but those say nothing about mana.
+// Keep it unmultiplied unless a Forever log (a bear's or paladin's threat on a Judgement of Wisdom
+// mana gain) shows otherwise.
 func (mb *manaBar) manaGainThreat(sim *Simulation, gain float64) {
-	mb.manaGainSpell.BookSplitThreat(sim, gain*ThreatPerManaGained*mb.unit.PseudoStats.ThreatMultiplier)
+	mb.manaGainSpell.BookSplitThreat(sim, gain*ThreatPerManaGained)
 	mb.manaGainSpell.SpellMetrics[0].Casts++
 }
 
