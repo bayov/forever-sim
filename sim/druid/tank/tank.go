@@ -71,6 +71,13 @@ func (bear *FeralTankDruid) Initialize() {
 	bear.KeepFlatWeaponDamage()
 	bear.AutoAttacks.SetMH(bear.GetBearWeapon())
 	bear.RegisterFeralTankSpells()
+	// Standards 21: under Forever a bear's white hit gives the two-hander's 4.5 Rage a second of
+	// swing (11.25 a 2.5 sec swing), not Classic's Rage from damage, and a crit doubles it (the
+	// October 8 notes: Bear and Dire Bear Form crit Rage 100%, as the warrior's).
+	if bear.Env.IsForever() {
+		bear.AddCritDealtRageMultiplier(2)
+		bear.EnableForeverNormalizedRage()
+	}
 }
 
 func (bear *FeralTankDruid) Reset(sim *core.Simulation) {
