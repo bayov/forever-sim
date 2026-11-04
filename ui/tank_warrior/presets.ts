@@ -2,6 +2,7 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
+	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
 	Consumes,
@@ -17,6 +18,7 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	Stat,
 	StrengthBuff,
 	TotemWeaponBuff,
@@ -24,6 +26,7 @@ import {
 	UnitReference,
 	UnitReference_Type,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -145,6 +148,19 @@ export const DefaultConsumes = Consumes.create({
 	// The stone goes on the main hand: a shield can't hold one. The Elemental stone beats the Dense by 14 to 21.
 	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
 	strengthBuff: StrengthBuff.JujuPower,
+	// Round 4's raid set (docs/tank_warrior.md, Round 4 consumables, the full raid set): Spirit of Zanza (+78 to +161 over
+	// none; Balanced and Max survival), Rumsey Rum Black Label (+11 to +48) and the Goblin Sapper Charge (Engineering;
+	// +181 to +212: its threat at the pull; the rotations throw it after the trinkets). Thrown explosives lose (their
+	// 1 sec cast at the pull costs 270 to 430), so none is taken (standards 11).
+	zanzaBuff: ZanzaBuff.SpiritOfZanza,
+	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
+});
+
+// Max threat takes R.O.I.D.S. in the Zanza slot (+30 over Spirit of Zanza, +19 to +23 over Ground Scorpok Assay).
+export const MaxThreatConsumes = Consumes.create({
+	...DefaultConsumes,
+	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
 // Max survival eats Dirge's Kickin' Chimaerok Chops (+41 to +46 over the Dumpling) and drinks the Greater
@@ -241,6 +257,17 @@ export const EncounterLevel60Tank = PresetUtils.makePresetEncounter(
 	},
 );
 
+// The same fight with Max threat's consumables.
+export const EncounterLevel60TankMaxThreat = PresetUtils.makePresetEncounter('Generic boss, tanking (Max threat)', EncounterLevel60Tank.encounter, {
+	tanks: EncounterLevel60Tank.tanks,
+	healingModel: EncounterLevel60Tank.healingModel,
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: MaxThreatConsumes,
+	inFrontOfTarget: true,
+});
+
 // The same fight with Max survival's consumables.
 export const EncounterLevel60TankMaxSurvival = PresetUtils.makePresetEncounter('Generic boss, tanking (Max survival)', EncounterLevel60Tank.encounter, {
 	tanks: EncounterLevel60Tank.tanks,
@@ -264,7 +291,7 @@ export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60MaxThreat,
 	rotation: APLLevel60MaxThreat,
-	encounter: EncounterLevel60Tank,
+	encounter: EncounterLevel60TankMaxThreat,
 	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {

@@ -1,0 +1,10 @@
+A=warrior_protection_max_survival.json B=lo_zanza_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1971     1773  -198.6    8.6     -3.8       21
+chromaggus        -236     -353  -117.3    4.7     -3.6       12
+golemagg          2850     2720  -130.5    3.3     -3.7       12
+magmadar          3212     3085  -126.8    2.5     -3.7       11
+onyxia            2361     2123  -238.0    7.3     -3.9       15
+ragnaros        -11503   -12380  -876.3   50.4     -3.8       92
+vaelastrasz       2682     2563  -119.6    3.8     -5.0       29
+scoring_mean                     -155.1    2.2

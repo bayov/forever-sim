@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=flask_titans_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3585     3063  -521.6   32.1   -308.5      -32
+chromaggus        2912     2312  -600.4   19.3   -313.2       -9
+golemagg          4032     3461  -570.7   16.0   -301.4       -9
+magmadar          4192     3637  -554.9   13.6   -296.2      -11
+onyxia            3986     3460  -526.1   20.7   -302.9      -15
+ragnaros          -794    -1252  -457.7   82.8   -317.7      -56
+vaelastrasz       4465     3917  -547.7   18.5   -298.6      -39
+scoring_mean                     -553.6    8.5

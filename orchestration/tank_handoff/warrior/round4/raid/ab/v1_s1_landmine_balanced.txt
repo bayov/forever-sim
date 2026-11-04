@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=landmine_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3182     2917  -265.1   40.9   -119.5        9
+chromaggus        2709     2504  -205.1   18.0   -112.4       -7
+golemagg          3828     3612  -215.9   17.0   -113.0       -3
+magmadar          3992     3770  -222.6   16.5   -112.6       -1
+onyxia            3658     3388  -269.5   25.3   -132.3        1
+ragnaros         -1492    -1893  -400.4  115.6   -114.7       54
+vaelastrasz       4018     3551  -466.8   25.5   -230.2        5
+scoring_mean                     -274.2   10.3

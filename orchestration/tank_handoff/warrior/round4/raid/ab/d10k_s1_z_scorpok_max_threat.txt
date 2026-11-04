@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=z_scorpok_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         4479     4469   -10.3    6.6    -15.9      -21
+chromaggus        4162     4146   -15.7    3.9    -18.4      -21
+golemagg          4631     4610   -20.7    3.6    -17.4      -12
+magmadar          4703     4677   -26.2    3.7    -19.8      -12
+onyxia            4737     4721   -16.2    4.8    -15.4       -8
+ragnaros          2852     2814   -38.0    9.9    -13.4       11
+vaelastrasz       5109     5087   -21.5    3.7    -13.2      -12
+scoring_mean                      -18.5    1.8
