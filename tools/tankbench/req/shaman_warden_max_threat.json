@@ -8,7 +8,7 @@
       "race": "RaceTauren",
       "class": "ClassShaman",
       "level": 60,
-      "talentsString": "05050001-050032303551012201-050002",
+      "talentsString": "0535-050032303351012201-050002",
       "equipment": {
        "items": [
         {
@@ -171,7 +171,7 @@
            }
           }
          },
-         "notes": "The shield whenever it's down. Water Shield needs the Restoration talent."
+         "notes": "Lightning Shield whenever its orbs are gone: their threat beats the 370 mana."
         },
         {
          "action": {
@@ -208,21 +208,21 @@
          "action": {
           "castSpell": {
            "spellId": {
-            "spellId": 17364
-           }
-          }
-         },
-         "notes": "Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike."
-        },
-        {
-         "action": {
-          "castSpell": {
-           "spellId": {
             "spellId": 10414
            }
           }
          },
          "notes": "Earth Shock: twice its damage in threat."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 17364
+           }
+          }
+         },
+         "notes": "Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike."
         },
         {
          "action": {

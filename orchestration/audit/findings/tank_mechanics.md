@@ -74,6 +74,7 @@
 - How sure: 50/50 on the mechanic; sure of the size.
 - needs: user ruling
 - ruling: 2026-11-04, the user left it to the orchestrator: keep 72 × weapon speed on specials too (wowsims/forever's reading, and the sim closest to Forever), with a to-verify note in docs/tank_shaman.md and the code (one Stormstrike's threat in a combat log settles it). Worker fix: shaman, the note only.
+- fixed: 2026-11-04, 952a7a4 (to-verify note in sim/shaman/rockbiter_weapon.go) and dd4b82a (docs/tank_shaman.md, call (c)); no value change.
 
 ### tank_mechanics-20261104-6: Unbridled Wrath procs on Heroic Strike
 - severity: medium
@@ -119,6 +120,7 @@
 - proposed fix: `ref/tank_mechanics/patches/shaman_01_docs_tiers.patch` and `warrior_revenge_ap_call_doc.patch`; the druid and paladin lines by hand.
 - needs: worker fix
 - fixed (paladin line only): 2026-11-04, 3f9c055. round_70753/paladin.md now says Templar's Bulwark's Magic is client data; docs/tank_paladin.md already had it as N, C.
+- fixed (shaman part): 2026-11-04, 952a7a4 (shaman_01_docs_tiers.patch) and dd4b82a (the tier key no longer names vmangos).
 
 ### tank_mechanics-20261104-11: Tank mechanics with no test that fails when they break
 - severity: low (none known wrong except -6, -7, -8)
@@ -133,6 +135,7 @@
 - proposed fix: add the tests, with the ones for -1, -2 and -7 first.
 - needs: worker fix
 - fixed (paladin row only): 2026-11-04, 639590a. Deflection, Divine Strength (TestProtectionStatTalents), TestJudgementCooldownAndCost, TestImprovedSealsOnSealOfFury, TestConsecrationAndHolyStrikeCosts; each seen failing on a broken value.
+- fixed (Warden part): 2026-11-04, 952a7a4 (`TestForeverWardenAvoidedHits`: no orb on an avoided swing, no Rockbiter threat on an avoided Stormstrike, Stoneskin before the crit and crush multipliers).
 
 ## Resolved
 

@@ -340,6 +340,78 @@ func TestForeverWardenAbilities(t *testing.T) {
 	}
 }
 
+// TestForeverWardenAvoidedHits checks what a hit the Warden avoids or takes badly does to its
+// tank mechanics (tank_mechanics-20261104-11): a missed, dodged or parried swing fires no Lightning
+// Shield orb (the shield fires on a landed hit; a blocked one lands), a Stormstrike the boss dodges
+// or parries carries none of Rockbiter's threat, and Stoneskin's 36 come off before armor and
+// before a crit's or crushing blow's multiplier.
+func TestForeverWardenAvoidedHits(t *testing.T) {
+	// forced rolls the boss's white swing on a table where only want can happen, through the
+	// engine's own enemy swing table.
+	forced := func(want core.HitOutcome) core.OutcomeApplier {
+		return func(sim *core.Simulation, r *core.SpellResult, at *core.AttackTable) {
+			table := *at
+			table.BaseMissChance, table.BaseDodgeChance, table.BaseParryChance, table.BaseBlockChance = -10, -10, -10, -10
+			table.BaseCritChance, table.BaseCrushChance = -10, -10
+			switch want {
+			case core.OutcomeMiss:
+				table.BaseMissChance = 10
+			case core.OutcomeDodge:
+				table.BaseDodgeChance = 10
+			case core.OutcomeParry:
+				table.BaseParryChance = 10
+			case core.OutcomeBlock:
+				table.BaseBlockChance = 10
+			case core.OutcomeCrit:
+				table.BaseCritChance = 10
+			case core.OutcomeCrush:
+				table.BaseCrushChance = 10
+			}
+			r.Target.PseudoStats.CanParry, r.Target.PseudoStats.CanBlock = true, true
+			at.Attacker.AutoAttacks.MHAuto().OutcomeEnemyMeleeWhite(sim, r, &table)
+			if !r.Outcome.Matches(want) {
+				t.Fatalf("the forced swing rolled %s, want %s", r.Outcome, want)
+			}
+		}
+	}
+
+	for _, c := range []struct {
+		outcome core.HitOutcome
+		orb     bool
+	}{{core.OutcomeMiss, false}, {core.OutcomeDodge, false}, {core.OutcomeParry, false}, {core.OutcomeBlock, true}, {core.OutcomeHit, true}} {
+		sim, w := newWarden(t, wardenTalents, proto.WeaponImbue_RockbiterWeapon)
+		boss := sim.Encounter.TargetUnits[0]
+		castNow(t, sim, w, w.LightningShield[7])
+		advance(sim, sim.CurrentTime+5*time.Second) // past the orbs' 3.5 sec recovery
+		applier := forced(c.outcome)
+		if c.outcome == core.OutcomeHit {
+			applier = func(_ *core.Simulation, r *core.SpellResult, _ *core.AttackTable) { r.Outcome = core.OutcomeHit }
+		}
+		boss.AutoAttacks.MHAuto().CalcAndDealDamage(sim, &w.Unit, 100, applier)
+		want := int32(3)
+		if c.orb {
+			want = 2
+		}
+		if got := w.LightningShieldAuras[7].GetStacks(); got != want {
+			t.Errorf("after a %s Lightning Shield has %d orbs, want %d", c.outcome, got, want)
+		}
+	}
+
+	_, w := newWarden(t, wardenTalents, proto.WeaponImbue_RockbiterWeapon)
+	for _, o := range []core.HitOutcome{core.OutcomeMiss, core.OutcomeDodge, core.OutcomeParry} {
+		near(t, "a "+o.String()+" Stormstrike's threat", w.Stormstrike.ThreatFromDamage(o, 0), 0, 1e-9)
+	}
+
+	sim, w := newWarden(t, wardenTalents, proto.WeaponImbue_RockbiterWeapon)
+	boss := sim.Encounter.TargetUnits[0]
+	castNow(t, sim, w, w.StoneskinTotem[6])
+	armor := w.Armor()
+	afterArmor := (1000 - 36) * (1 - armor/(armor+400+85*63))
+	swing := boss.AutoAttacks.MHAuto()
+	near(t, "a crit under Stoneskin", swing.CalcDamage(sim, &w.Unit, 1000, forced(core.OutcomeCrit)).Damage, afterArmor*2, 1e-6)
+	near(t, "a crushing blow under Stoneskin", swing.CalcDamage(sim, &w.Unit, 1000, forced(core.OutcomeCrush)).Damage, afterArmor*1.5, 1e-6)
+}
+
 // TestForeverWardenImprovedStormstrikeReset checks the Warden's half of Improved Stormstrike: at 2/2
 // every dodge or parry of the boss's swing resets Stormstrike's cooldown (a blocked hit doesn't).
 func TestForeverWardenImprovedStormstrikeReset(t *testing.T) {

@@ -59,6 +59,12 @@ func (shaman *Shaman) RegisterRockbiterImbue(procMask core.ProcMask) {
 	// and done melee special), and the proc's script effect adds its points for every second of the
 	// weapon's swing (wowsims/forever's reading of it, weapon_imbues.go). Before 2026-11-03 we
 	// gave a special the flat 72, without the speed (docs/tank_shaman.md).
+	//
+	// To verify: the x speed on a special (Stormstrike) is a tier 2 reading (wowsims/sod gives a
+	// special the flat 72). The user left it to us on 2026-11-04 (standards 40,
+	// tank_mechanics-20261104-5): keep 72 x weapon speed until a combat log shows one Stormstrike's
+	// threat. The flat case is orchestration/audit/ref/tank_mechanics/patches/
+	// shaman_02_rockbiter_special_flat_CONDITIONAL.patch.
 	shaman.OnSpellRegistered(func(spell *core.Spell) {
 		if !spell.ProcMask.Matches(procMask) || spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 			return

@@ -34,6 +34,7 @@
 - evidence: Earth Shock does about 2,225 threat a cast against Stormstrike's 1,500 (Golemagg, -actions), and with Stormstrike first it waits whenever both are ready. Order hard-coded at tools/rotopt/shaman_tank.go:150; Stormstrike at tools/tankbench/req/shaman_warden_*.json:194/204/208. Swapping them, paired, 3k, scoring mean: Max threat +62.0 ± 16.2 (+2.4%); Balanced +51.2 ± 48.6; Max survival -18.7 ± 148. SafeDPS rises on every scoring boss at all three weights (Vaelastrasz +75, Onyxia +43); the Balanced and Max survival error comes from Broodlord's death floor near 5% (without Broodlord: +67 / +48).
 - proposed fix: emit the shock before Stormstrike in the template (swaps lines 12↔13 in level60_max_threat/max_survival, 11↔12 in level60_balanced, and the requests). Confirm Balanced and Max survival with a rotopt -eval first. Reproduce: `tools/audit/tank_rotations/mk_warden.py <preset> swap 'i=[j for j,a in enumerate(pl) if a["action"].get("castSpell",{}).get("spellId",{}).get("spellId")==17364][0]; pl[i],pl[i+1]=pl[i+1],pl[i]'`.
 - needs: worker fix
+- fixed: 2026-11-04, 952a7a4 (template knob `shockFirst`, default 1) and dd4b82a (the three presets re-searched with it; paired: Max threat +91.6 ± 10.6, Balanced +105.0 ± 12.5, Max survival +129.3 ± 33.1).
 
 ### tank_rotations-20261104-5: Bear Max survival's Enrage at -3 s loses to Balanced's -1 s
 - severity: medium (+46, about 5% of a negative score of -844)
@@ -67,5 +68,6 @@
 - evidence: (a) Warden's shield line, a Lightning Shield cast, is noted "Water Shield needs the Restoration talent" (tools/rotopt/shaman_tank.go:118, every level60_*.apl.json). (b) Warrior's Defensive Stance line (spell 71) has no note in all three APLs. (c) docs/tank_druid.md:217 says "Enrage at the pull and 1 sec before it", but the APL casts it only before the pull (an in-fight Enrage loses -5.3 ± 1.3). Bear Max survival's Frenzied Regeneration at 100 Rage fires about once, at the pull's Rage peak, not "on cooldown" as its note says (the line itself is right: removing it costs 432).
 - proposed fix: (a) "Lightning Shield whenever its orbs are gone: their threat beats the 370 mana." (b) "Defensive Stance kept up: the tank's stance." (c) the doc: "Enrage 1 sec before the pull"; the Frenzied Regeneration note: "at the pull's Rage peak".
 - needs: worker fix
+- fixed (shaman part, (a)): 2026-11-04, 952a7a4 (the template's shield note; the APLs carry it since af78f8a).
 
 ## Resolved

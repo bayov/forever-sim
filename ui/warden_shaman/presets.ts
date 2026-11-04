@@ -82,19 +82,24 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '35050013-0502333135510102' }));
 
-// The optimized tank builds (docs/tank_shaman.md, Presets): Balanced and Max survival share one, Max threat trades
-// Shamanistic Focus and a point of Elemental Warding for Elemental Weapons 3.
+// The optimized tank builds (docs/tank_shaman.md, Presets), one a weight: Balanced from the earlier shared build
+// takes Elemental Weapons 3 for Shamanistic Focus; Max survival a point of Elemental Warding for a point of Flurry;
+// Max threat Elemental Devastation 3 for Elemental Warding and Toughness 2.
 export const TalentsLevel60Tank = PresetUtils.makePresetTalents(
 	'Level 60 Tank',
-	SavedTalents.create({ talentsString: '05050002-050032113551012201-050002' }),
+	SavedTalents.create({ talentsString: '05050002-050032203551012201-050002' }),
+);
+export const TalentsLevel60TankMaxSurvival = PresetUtils.makePresetTalents(
+	'Level 60 Tank Max survival',
+	SavedTalents.create({ talentsString: '05050003-050032113541012201-050002' }),
 );
 export const TalentsLevel60TankMaxThreat = PresetUtils.makePresetTalents(
 	'Level 60 Tank Max threat',
-	SavedTalents.create({ talentsString: '05050001-050032303551012201-050002' }),
+	SavedTalents.create({ talentsString: '0535-050032303351012201-050002' }),
 );
 
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60Tank, TalentsLevel60TankMaxThreat],
+	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60Tank, TalentsLevel60TankMaxThreat, TalentsLevel60TankMaxSurvival],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -122,7 +127,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
 	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md).',
 	gear: GearLevel60SyntheticArmorTrinket,
-	talents: TalentsLevel60Tank,
+	talents: TalentsLevel60TankMaxSurvival,
 	rotation: APLLevel60MaxSurvival,
 	race: Race.RaceTauren,
 });
