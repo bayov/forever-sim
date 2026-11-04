@@ -18,6 +18,13 @@ import (
 // (docs/tank_druid.md has the audit). Each test builds a level 60 bear with nothing but what it
 // checks, casts by hand and reads the results.
 
+// The November 2 development notes' values (client 70753 unchanged, standards 37): Bear and Dire Bear
+// Form threat 115% (21178 still says 50), and Rend and Tear 3% a point (the tree still says 2%).
+const (
+	formThreat   = 2.15
+	rendAndTear5 = 1.15
+)
+
 // feralOrder is the Feral tree in the talent string's order (proto/druid.proto).
 var feralOrder = []string{"ferocity", "furor", "feralSwiftness", "feralInstinct", "brutalImpact", "thickHide",
 	"shreddingAttacks", "savageFury", "feralCharge", "sharpenedClaws", "predatoryStrikes", "lacerate",
@@ -251,7 +258,7 @@ func plainHits(hits []hit) []hit {
 }
 
 // TestBearForm: Dire Bear Form (9634, its passive 9635) at 60 gives 1,240 health, 180 attack power,
-// 4.6 times the armor from items, 1.5 times the threat (21178), the Rage bar, and a 2.5 sec swing.
+// 4.6 times the armor from items, 2.15 times the threat (the November 2 notes' 115%; 21178 still says 50, standards 37), the Rage bar, and a 2.5 sec swing.
 func TestBearForm(t *testing.T) {
 	sim, bear := newBear(t, bearOpts{armor: 0})
 	health, ap, armor := bear.MaxHealth(), bear.GetStat(stats.AttackPower), bear.GetStat(stats.Armor)
@@ -273,8 +280,8 @@ func TestBearForm(t *testing.T) {
 	if got := (armor - bear.GetStat(stats.Armor)) / itemArmor(bear); !near(got, 3.6, 0.01) {
 		t.Errorf("Dire Bear Form adds %.3f times the armor from items, want 3.6 (+360%%)", got)
 	}
-	if got := threat / bear.PseudoStats.ThreatMultiplier; !near(got, 1.5, 1e-9) {
-		t.Errorf("Bear Form's threat multiplier is %.3f, want 1.5", got)
+	if got := threat / bear.PseudoStats.ThreatMultiplier; !near(got, formThreat, 1e-9) {
+		t.Errorf("Bear Form's threat multiplier is %.3f, want %.2f", got, formThreat)
 	}
 }
 
@@ -293,7 +300,7 @@ func TestBearFormLevels(t *testing.T) {
 }
 
 // TestMaul: rank 7 (9881) is the weapon's damage plus 128 on the next swing, 15 Rage (Ferocity 1 a
-// point less, Idol of Brutality 2 less), threat its damage times the form's 1.5.
+// point less, Idol of Brutality 2 less), threat its damage times the form's 2.15.
 func TestMaul(t *testing.T) {
 	sim, bear := newBear(t, bearOpts{armor: 0, rage: 100})
 	hits := record(bear, bear.Maul.ActionID)
@@ -322,8 +329,8 @@ func TestMaul(t *testing.T) {
 		if h.damage < 128+lo-1 || h.damage > 128+hi+1 {
 			t.Fatalf("a Maul hit for %.0f, want 128 plus the weapon's %.0f to %.0f", h.damage, lo, hi)
 		}
-		if !near(h.threat, 1.5*h.damage, 0.01) {
-			t.Fatalf("a Maul hit for %.0f made %.0f threat, want 1.5 times its damage", h.damage, h.threat)
+		if !near(h.threat, formThreat*h.damage, 0.01) {
+			t.Fatalf("a Maul hit for %.0f made %.0f threat, want %.2f times its damage", h.damage, h.threat, formThreat)
 		}
 	}
 	if got := bear.Maul.DefaultCast.Cost; got != 15 {
@@ -370,7 +377,7 @@ func TestSwipe(t *testing.T) {
 }
 
 // TestDemoralizingRoar: rank 5 (9898) cuts every enemy's attack power by 204 at 60 for 30 sec, 10
-// Rage, and makes 42 + 0.8 a level from 52 threat a target (48.4 at 60), times the form's 1.5.
+// Rage, and makes 42 + 0.8 a level from 52 threat a target (48.4 at 60), times the form's 2.15.
 func TestDemoralizingRoar(t *testing.T) {
 	sim, bear := newBear(t, bearOpts{targets: 2})
 	hits := record(bear, bear.DemoralizingRoar.ActionID)
@@ -390,8 +397,8 @@ func TestDemoralizingRoar(t *testing.T) {
 		t.Error("Demoralizing Roar missed the second enemy")
 	}
 	for _, h := range hits() {
-		if h.outcome.Matches(core.OutcomeLanded) && !near(h.threat, 48.4*1.5, 0.01) {
-			t.Errorf("Demoralizing Roar made %.2f threat on a target, want 48.4 x 1.5", h.threat)
+		if h.outcome.Matches(core.OutcomeLanded) && !near(h.threat, 48.4*formThreat, 0.01) {
+			t.Errorf("Demoralizing Roar made %.2f threat on a target, want 48.4 x %.2f", h.threat, formThreat)
 		}
 	}
 }
@@ -457,8 +464,8 @@ func TestLacerate(t *testing.T) {
 	from := len(hits())
 	advance(sim, sim.CurrentTime+4*time.Second)
 	for _, h := range hits()[from:] {
-		if h.tick && !near(h.damage, 75*1.1, 0.01) {
-			t.Errorf("a 5 stack Lacerate tick with Rend and Tear 5/5 did %.2f, want 82.5", h.damage)
+		if h.tick && !near(h.damage, 75*rendAndTear5, 0.01) {
+			t.Errorf("a 5 stack Lacerate tick with Rend and Tear 5/5 did %.2f, want %.2f", h.damage, 75*rendAndTear5)
 		}
 	}
 }
@@ -507,8 +514,8 @@ func TestPrimalBite(t *testing.T) {
 			if h.damage < 77+lo-1 || h.damage > 77+hi+1 {
 				t.Fatalf("a Primal Bite hit for %.0f, want 77 plus the weapon's %.0f to %.0f", h.damage, lo, hi)
 			}
-			if !near(h.threat, 1.5*h.damage, 0.01) {
-				t.Fatalf("a Primal Bite made %.0f threat for %.0f damage, want 1.5 times", h.threat, h.damage)
+			if !near(h.threat, formThreat*h.damage, 0.01) {
+				t.Fatalf("a Primal Bite made %.0f threat for %.0f damage, want %.2f times", h.threat, h.damage, formThreat)
 			}
 		case h.outcome.Matches(core.OutcomeMiss | core.OutcomeDodge | core.OutcomeParry):
 			refunded = true
@@ -769,7 +776,7 @@ func TestBearTalentStats(t *testing.T) {
 }
 
 // TestBearTalentDamage: Savage Fury 5% a point on Maul, Naturalist 2% a point on everything, Rend and
-// Tear 2% a point on a bleeding target, Natural Instinct 10% a point more crit damage bonus on the
+// Tear 3% a point (the notes) on a bleeding target, Natural Instinct 10% a point more crit damage bonus on the
 // bear's attacks.
 func TestBearTalentDamage(t *testing.T) {
 	mean := func(o bearOpts, bleed bool) float64 {
@@ -778,7 +785,8 @@ func TestBearTalentDamage(t *testing.T) {
 		lacerate := bear.Lacerate
 		for i := 0; i < 300; i++ {
 			topUp(sim, bear)
-			if bleed && !lacerate.Dot(bear.CurrentTarget).IsActive() {
+			for bleed && lacerate.Dot(bear.CurrentTarget).RemainingDuration(sim) < 5*time.Second {
+				topUp(sim, bear) // keep the bleed up through the next swing: a Lacerate that misses leaves none
 				ready(bear, lacerate)
 				lacerate.Cast(sim, bear.CurrentTarget)
 			}
@@ -801,8 +809,8 @@ func TestBearTalentDamage(t *testing.T) {
 	}
 	lac := talents(map[string]int{"lacerate": 1}, "")
 	bleeding := mean(bearOpts{armor: 0, talents: lac}, true)
-	if got := mean(bearOpts{armor: 0, talents: talents(map[string]int{"lacerate": 1, "rendAndTear": 5}, "")}, true) / bleeding; !near(got, 1.1, 0.02) {
-		t.Errorf("Rend and Tear 5/5 moves Maul on a bleeding target by %.3f, want 1.1", got)
+	if got := mean(bearOpts{armor: 0, talents: talents(map[string]int{"lacerate": 1, "rendAndTear": 5}, "")}, true) / bleeding; !near(got, rendAndTear5, 0.02) {
+		t.Errorf("Rend and Tear 5/5 moves Maul on a bleeding target by %.3f, want %.2f", got, rendAndTear5)
 	}
 	_, instinct := newBear(t, bearOpts{talents: talents(map[string]int{"naturalInstinct": 2, "lacerate": 1, "primalBite": 1}, "")})
 	for _, spell := range []*druid.DruidSpell{instinct.Maul, instinct.SwipeBear, instinct.PrimalBite, instinct.Lacerate} {
