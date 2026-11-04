@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "f23ea25d20fc577b96fcb227ffc1ab56f5bbcb65"
+  "master": "f331f0cff0d8f25e101d607fca449ebbc024ff0b"
  },
- "last_pass_at": "2026-11-03T18:59:00Z",
- "pass": 50,
+ "last_pass_at": "2026-11-04T00:56:54Z",
+ "pass": 51,
  "result": "quiet",
- "note": "Pass 50: Wrack Affliction (Imp sacrificed) takes the Affliction presets; Enhancement Earth Shock hold. Five Wrack variants lose, the ES hold is neutral to +0.5. No findings, no sim change.",
+ "note": "Pass 51: Feral bomb line (+7.7..+8.1 confirmed on both seed sets), Balance Wrath fallback (+0.4..+2.1), Ret Holy Strike first; sim changes gate non-Forever values and tank threat only (no Forever DPS move). No findings.",
  "client_build": "1.60.1.70753",
- "checked_at": "2026-11-03T19:03:26Z",
- "baseline": "baseline_f5c99ad_3000it_seed424242.tsv"
+ "checked_at": "2026-11-04T01:07:35Z",
+ "baseline": "baseline_f331f0c_3000it_seed424242.tsv"
 }

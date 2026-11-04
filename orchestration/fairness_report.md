@@ -4,7 +4,73 @@ From the fairness auditor. The question this answers: is every DPS spec simmed u
 
 Method: each class's shipped Level 60 build (gear, talents, APL), built with mksettings and run with wowsimcli. I read code and logs and did not use rotopt. Measurements change one input at a time against the same seed. Two switches existed only in my local worktrees and were never pushed: one turns weapon racials off, one skips set-bonus tiers.
 
-## 1. Cross-spec table (master f5c99ad: round 70753, client 1.60.1.70753, the November 2 development notes and the 2026-11-03 hunter hotfix in all nine classes, Classic's race base attributes (7598b8015); full re-sweep 2026-11-03)
+## 1. Cross-spec table (master f331f0c: Salvation dropped from the raid buffs (90e0bb01a), the druid rotation finds (d560d30b8), Holy Strike ahead of Judgement for Ret and sub-Holy (e799dccfa), Smite's Spiritual Guidance build (da726bbe1), the standards 37 gating of notes-only values outside Forever (13c34f20f); full re-sweep 2026-11-04)
+
+5000 iterations, seed 1, race overrides, on the f331f0c requests and binary (the loop's shared CLI). "Before" is the f5c99ad table. The loop's 20k master run matches 62 of 68 metas within 0.5. The other six are the shaman metas, still at their 2026-11-02 values (results-20261102-1); the deployed builds.json matches all 68. `audit1b.py`: 19 of 19 "5a PASS | 1b PASS".
+
+| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (f5c99ad) |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Lone Wolf (hunter) | Night Elf | 1314.4 | Windshaper 1309.8 / Night Elf | Night Elf (1314.4) | 1313.7 | +0.7 | 1314.4 (+0.0%) |
+| 2 | Marksmanship | Orc | 1254.6 | Orc / Night Elf 1254.0 | Orc (1254.6) | 1254.3 | +0.3 | 1254.6 (+0.0%) |
+| 3 | Beast Mastery | Orc | 1195.7 | Orc / Night Elf 1190.2 | Orc (1195.7) | 1195.6 | +0.1 | 1195.7 (+0.0%) |
+| 4 | Fury (two-hand) | Orc | 1170.7 | Orc / Night Elf 1163.0 | Orc (1170.7) | 1169.9 | +0.8 | 1170.7 (+0.0%) |
+| 5 | Enhancement | Orc | 1159.9 | Orc / Dwarf 1152.1 | Orc (1159.9) | 883.5 | +276.4 | 1159.5 (+0.0%) |
+| 6 | Fury (dual wield) | Orc | 1153.6 | Orc / Night Elf 1146.9 | Orc (1153.6) | 1152.6 | +1.0 | 1153.6 (+0.0%) |
+| 7 | Feral | Night Elf | 1139.7 | Windshaper 1122.9 / Night Elf | Night Elf (1139.7) | 1139.0 | +0.7 | 1131.0 (+0.8%) |
+| 8 | Arms | Orc | 1097.9 | Orc / Night Elf 1092.5 | Orc (1097.9) | 1097.7 | +0.2 | 1097.9 (+0.0%) |
+| 9 | Retribution | Undead | 1091.3 | Undead / Human 1087.6 | Undead (1091.3) | 1092.1 | -0.8 | 1090.7 (+0.1%) |
+| 10 | Frostfire | Human | 1065.7 | Undead 1058.3 / Human | Human (1065.7) | 1064.3 | +1.4 | 1065.7 (+0.0%) |
+| 11 | Destruction | Orc | 1063.2 | Orc / Human 1060.8 | Orc (1063.2) | 1063.4 | -0.2 | 1063.2 (+0.0%) |
+| 12 | Fire | Human | 1058.2 | Undead 1057.2 / Human | Human (1058.2) | 1057.9 | +0.3 | 1058.2 (+0.0%) |
+| 13 | Demonology | Orc | 1055.3 | Orc / Human 1051.7 | Orc (1055.3) | 1053.9 | +1.4 | 1055.3 (+0.0%) |
+| 14 | Survival | Orc | 1041.1 | Orc / Night Elf 1034.1 | Orc (1041.1) | 1041.2 | -0.1 | 1041.1 (+0.0%) |
+| 15 | Affliction | Undead | 1034.2 | Undead / Human 1030.4 | Undead (1034.2) | 1034.1 | +0.1 | 1015.8 (+1.8%) |
+| 16 | Destruction Fire | Undead | 997.1 | Undead / Human 992.1 | Undead (997.1) | 996.7 | +0.4 | 997.1 (+0.0%) |
+| 17 | Elemental | Windshaper | 970.4 | Windshaper / Dwarf 956.2 | Windshaper (970.4) | 768.5 | +201.9 | 970.4 (+0.0%) |
+| 18 | Rogue Combat Swords | Orc | 963.8 | Orc / Gnome 959.8 | Undead (963.3) | 963.5 | -0.2 | 963.8 (+0.0%) |
+| 19 | Arcane | Gnome | 962.3 | Undead 961.1 / Gnome | Gnome (962.3) | 962.3 | +0.0 | 962.3 (+0.0%) |
+| 20 | Rogue Seal Fate Swords | Undead | 957.7 | Undead / Night Elf 955.9 | Undead (957.7) | 957.0 | +0.7 | 957.7 (+0.0%) |
+| 21 | Balance | Night Elf | 952.1 | Tauren 940.9 / Night Elf | Night Elf (952.1) | 952.2 | -0.1 | 950.9 (+0.1%) |
+| 22 | Shadow | Undead | 948.6 | Undead / Human 945.4 | Undead (948.6) | 948.7 | -0.1 | 948.6 (+0.0%) |
+| 23 | Rogue Combat Daggers | Undead | 947.3 | Undead / Gnome 946.3 | Undead (947.3) | 946.6 | +0.7 | 947.3 (+0.0%) |
+| 24 | Frost | High Order | 943.6 | Undead 939.1 / High Order | High Order (943.6) | 944.7 | -1.1 | 943.6 (+0.0%) |
+| 25 | Rogue Seal Fate Daggers | Undead | 921.3 | Undead / Gnome 919.5 | Undead (921.3) | 920.7 | +0.6 | 921.3 (+0.0%) |
+| 26 | Rogue Subtlety | Night Elf | 881.2 | Undead 879.9 / Night Elf | Night Elf (881.2) | 881.7 | -0.5 | 881.2 (+0.0%) |
+| 27 | Rogue Mutilate | Undead | 866.4 | Undead / Gnome 862.0 | Undead (866.4) | 866.1 | +0.3 | 866.4 (+0.0%) |
+| 28 | Smite | Undead | 781.0 | Undead / Gnome 756.6 | Undead (781.0) | 781.0 | +0.0 | 761.9 (+2.5%) |
+
+| Variant | Best race | DPS | Report's published (at its race) | Before |
+|---|---|---|---|---|
+| druid__balance-wrath | Night Elf | 862.2 | 861.5 (at Night Elf 862.2) | 862.2 |
+| hunter__beast-mastery-tallstrider | Orc | 1136.9 | 1136.9 (at Orc 1136.9) | 1136.9 |
+| hunter__beast-mastery-wolf | Orc | 1150.3 | 1150.5 (at Orc 1150.3) | 1150.3 |
+| hunter__marksmanship-tallstrider | Night Elf | 1222.2 | 1220.9 (at Orc 1221.4) | 1222.2 |
+| hunter__marksmanship-wolf | Night Elf | 1228.8 | 1228.3 (at Orc 1228.3) | 1228.8 |
+| hunter__survival-tallstrider | Orc | 1006.5 | 1007.4 (at Orc 1006.5) | 1006.5 |
+| hunter__survival-wolf | Orc | 1015.1 | 1014.5 (at Orc 1015.1) | 1015.1 |
+| paladin__level_60_shock_ret | Undead | 1030.5 | 1030.2 (at Undead 1030.5) | 1030.5 |
+| paladin__level_60_sub_holy | Undead | 1090.1 | 1091.2 (at Undead 1090.1) | 1090.0 |
+| priest__shadow-holy | Undead | 906.8 | 906.6 (at Undead 906.8) | 906.8 |
+| shaman__elemental-level60-mana-tide | Windshaper | 953.1 | 753.2 (at Windshaper 953.1) | 953.1 |
+| shaman__enhancement-imp-gw | Orc | 1151.1 | 879.3 (at Orc 1151.1) | 1151.9 |
+| shaman__enhancement-mana-tide | Orc | 1056.0 | 795.8 (at Orc 1056.0) | 1056.0 |
+| shaman__enhancement-water-shield | Orc | 1113.4 | 834.8 (at Orc 1113.4) | 1113.4 |
+| warlock__affliction_shadow_bolt | Orc | 1015.8 | 1015.6 (at Orc 1015.8) | 1015.6 (f23ea25, 20k; new variant) |
+
+Top over bottom: 1.68x
+
+What moved / findings:
+
+- Pass 27 (f331f0c, 2026-11-04, full re-sweep): no new finding. Every move traces to its own class: Feral +8.7 and Balance +1.2 (the druid rotation finds, d560d30b8); Smite +19.1, 761.9 -> 781.0 (Spiritual Guidance, da726bbe1; published 781.0); Ret +0.6 and sub-Holy +0.1 (Holy Strike first, e799dccfa); Affliction +18.4 (the Wrack preset, already in pass 26). Enhancement +0.4 and imp-gw -0.8 are 5k noise. Nothing moved in a class whose code didn't change, so nothing shared leaked.
+- Shared changes: Salvation is gone from all requests, race files and mksettings. It only lowered threat, so no DPS moved. The standards 37 gates (shaman, hunter, warlock, warrior, rogue) change only non-Forever runs, and every Forever number is unchanged.
+- Published against current: every build is within 1.4 at 5k except the six shamans (+199 to +276, stale metas, results-20261102-1).
+- Best race: the report race is the best race everywhere within noise. Combat Swords' Undead is 0.5 under Orc, and the MM tallstrider / wolf builds' Orc is 0.8 / 0.5 under Night Elf.
+- Ranking: unchanged except Smite (781.0, still last). Top over bottom 1.68x (was 1.73x).
+
+
+<details><summary>Previous §1 (f5c99ad, 2026-11-03)</summary>
+
+### 1 (superseded 2026-11-04, f331f0c) Cross-spec table (master f5c99ad: round 70753, client 1.60.1.70753, the November 2 development notes and the 2026-11-03 hunter hotfix in all nine classes, Classic's race base attributes (7598b8015); full re-sweep 2026-11-03)
 
 5000 iterations, seed 1, race overrides, on the f5c99ad requests and binary (the loop's shared CLI). "Before" is the a0b3069 table. The loop's 20k master run matches every meta within 0.5 but the six shaman builds, whose metas are intentionally stale until the phase 3 regeneration (Enhancement +276, Elemental +202). `audit1b.py`: 19 of 19 "5a PASS | 1b PASS".
 
@@ -68,6 +134,8 @@ What moved / findings:
 - Published against current: base builds within 1.4 at 5k (Frostfire +1.4, Demonology +1.4, Frost -1.1); shamans excepted as above.
 - Notes-only values (standards 37): spot-checked against the notes' text for druid, hunter, paladin, rogue, shaman, warlock and warrior; all match and are listed in their round files. Hunter gating is results-20261103-2.
 - Ranking: hunters take 1 to 3, Enhancement 5th, Feral 7th; rogues 18 to 27, Smite last. Top over bottom 1.73x (was 1.49x).
+
+</details>
 
 <details><summary>Previous §1 (a0b3069, 2026-11-03)</summary>
 

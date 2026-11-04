@@ -181,3 +181,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-03 19:03 | results | pass 74 | master f23ea25d2 | quiet | all 68 requests within 0.15 of published except known stale shaman metas; results-20261103-1 resolved
 2026-11-03 19:03 | rotations | pass 50 | master f23ea25d2 | quiet | Wrack Affliction and Earth Shock wait hold; 5 warlock variants all lose 2-22 DPS
 2026-11-03 19:03 | fairness | pass 26 | master f23ea25d2 | quiet | every report race still best; Subtlety Night Elf fix confirmed
+2026-11-04 01:07 | results | pass 75 | master f331f0cff | 0 new findings | 68 builds match published within 0.15; six shaman metas stale (update on results-20261102-1)
+2026-11-04 01:07 | rotations | pass 51 | master f331f0cff | quiet | Feral/Balance/Ret rotation changes confirmed (+7.7..8.1 feral, +0.4..0.6 balance); no Forever DPS moved by sim code
+2026-11-04 01:07 | gear | pass 54 | master f331f0cff | quiet | only enchants meta stamp changed (build 70755)
+2026-11-04 01:07 | consumables | pass 69 | master f331f0cff | 1 new findings | presets.ts still has salvation:true after mksettings dropped it (consumables-20261104-1, low)
+2026-11-04 01:07 | mechanics | pass 63 | master f331f0cff | quiet | Salvation removal and tank threat values match dev notes post 9
+2026-11-04 01:07 | fairness | pass 27 | master f331f0cff | quiet | all 43 builds re-swept, report race best everywhere, top/bottom 1.68x

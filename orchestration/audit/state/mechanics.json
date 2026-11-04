@@ -1,17 +1,17 @@
 {
  "last": {
-  "master": "f23ea25d20fc577b96fcb227ffc1ab56f5bbcb65"
+  "master": "f331f0cff0d8f25e101d607fca449ebbc024ff0b"
  },
- "last_pass_at": "2026-11-03T19:05:00Z",
- "pass": 62,
+ "last_pass_at": "2026-11-04T00:53:09Z",
+ "pass": 63,
  "result": "quiet",
- "note": "Pass 62: f5c99ad01..f23ea25d2. Only shared-adjacent change: mksettings affliction sacrifices the Imp (Burning Shadow 18789 = aura 79 misc 32 Shadow 15%, tier 1, matches). 70755: all 27 mechanics-set tables byte-identical to 70753. Hotfix push 113574 (Holy Strike NPC text) only. Blue: 11-03 overview article 24315821, no values.",
+ "note": "Pass 63: f23ea25d2..f331f0cff. Salvation dropped from raid buffs (post 9 removal, threat only); tank threat notes values under Forever (resolves mechanics-20261103-2, matches post 9); 13c34f20f gates notes-only values, Forever paths unchanged. 70755 newest, no mechanics hotfix rows. Post 9 edited 11-03 20:47Z: Gamepad wording only.",
  "client_build": "1.60.1.70755",
- "checked_at": "2026-11-03T19:03:26Z",
+ "checked_at": "2026-11-04T01:07:35Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/9",
   "date": "2026-11-03T03:20:33Z",
-  "edited": "2026-11-03T03:20:33Z",
+  "edited": "2026-11-03T20:47:06Z",
   "post1_edited": "2026-11-03T03:20:46Z"
  },
  "hotfixes_seen": {
@@ -25,5 +25,5 @@
   "newest_push": 113574,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-03T19:05:00Z"
+ "blue_tracker_seen": "2026-11-03T21:41:36Z"
 }

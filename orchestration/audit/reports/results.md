@@ -1,7 +1,7 @@
-# Results pass 74, master f23ea25d2 (2026-11-03)
+# Results pass 75 (master f331f0cff, client 70755)
 
-- Shared run (68 requests, 20k, seed 1): all within 0.15 of published except the six shaman metas (still the 2026-11-02 values on purpose; results-20261102-1 update).
-- Warlock: Affliction is now the Wrack build (Imp sacrificed, Siphon Life + Wrack in the APL): 1034.1 vs published 1034.1; Affliction Shadow Bolt 1015.6 (renamed from affliction_wrack/old Wrack 999.9); duty variants 1025.1 and 1019.9 match. mksettings spec_warlock.go and the requests agree (0 drift).
-- Drift report vs reference: only two differences, both explained: rogue__subtlety now regenerates (5b766ca2b) and warlock__affliction_wrack renamed affliction_shadow_bolt. Expected duty drift unchanged.
-- sim/compsearch/pool.go leftOut key renamed to match.
-- results-20261103-1 resolved. results-20261103-2 (hunter ungated shares) and results-20261102-1 (shaman metas) remain open.
+Reused the shared run /tmp/audit-work/runs/master (68 builds, 20k, seed 1).
+- builds.json vs run: all 68 within 0.15 (no moves, no unexplained gaps).
+- meta published.dps vs run: 6 shaman metas stale (768.5/753.2/879.3/883.5/795.8/834.8 vs 970.1/952.7/1149.8/1159.4/1055.1/1111.3); known, open under results-20261102-1.
+- Changes since the last pass: hunter gating (13c34f2, no Forever number moves), tank threat (0dcb0d8), report republish on 70755 (no sims), Salvation hash rewrite. Nothing else moved.
+- ref/results/req_summary.txt is old (pre-dates the 68-build set); not refreshed this pass.

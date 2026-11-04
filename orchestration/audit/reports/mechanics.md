@@ -1,28 +1,25 @@
-# Mechanics pass 62 (2026-11-03, master f23ea25d2)
+# Mechanics pass 63 (2026-11-04, master f331f0cff)
 
-Quiet: no findings.
+Quiet: no new findings. mechanics-20261103-2 (tank threat) was already moved to Resolved (0dcb0d87a).
 
 ## Range
 
-f5c99ad01..f23ea25d2. One non-test code commit under the watched paths:
+f23ea25d2..f331f0cff. Three non-test code commits under the watched paths:
 
 | Commit | What | Mechanics check |
 |---|---|---|
-| 734fe0e93 | Affliction (Wrack) preset sacrifices the Imp, no demon out; Shadow Bolt Affliction keeps the Succubus (`tools/rotopt/mksettings/spec_warlock.go`, `sim/compsearch/pool.go` left-out list) | Imp sacrifice = Burning Shadow 18789: aura 79, misc 32 (Shadow), 15, 7200000 ms on client 70753 (tier 1). `sim/warlock/talents.go` applyDemonicSacrifice gives 15% Shadow for 2 h. Matches. |
+| 90e0bb01a | mksettings drops Blessing of Salvation; every Level 60 request loses `raid.buffs.salvation` | Post 9 (tier 1): "Salvation, Mass Salvation, and Revoke have been removed." Salvation was threat only (aura 10, −30%), so no DPS moves; commit measured fury / fire identical. Correct. verdicts row updated. |
+| 0dcb0d87a | Bear Form x2.15, Defensive Stance x1.8 times Defiance 1.07/1.13/1.20, under Forever | Matches post 9 wording exactly ("from 50% to 115%", "from 30% to 80%", "7/13/20% from 5/10/15%"); client 70753/70755 still bp 50 / 30, so notes-only per standards 37. Classic keeps old values. Threat only. Resolves mechanics-20261103-2. |
+| 13c34f20f | Gates round 70753's notes-only / hotfix-only values (rogue, hunter, paladin, shaman, warlock pet health) under Forever | Read the code hunks: every Forever branch keeps its prior value; only the non-Forever path changes (report_hashes.txt unchanged). No shared mechanic touched. |
 
-`sim/testdata/report_hashes.txt` is test data. f23ea25d2 (TASKS.md) adds the Nov 2 notes' tank / heal values (already
-mechanics-20261103-2) and hotfix push 113483's rogue poison / Shank rows (class rows, for the rogue and rank tuning
-auditors; not shared mechanics).
+`sim/testdata/report_hashes.txt` is test data. No sim/core, racial, raid buff/debuff or consume code moved.
 
 ## Getting current
 
 | Source | Result |
 |---|---|
-| Client 1.60.1.70755 | Fetched the mechanics set (27 tables); every file is byte-identical to 70753's, so `wago.py diff --by-spell` is empty. All verdicts hold. |
-| Hotfixes (wago.tools, product wowf) | Newest spell push 113574 (70707, region 91, 2026-11-03 18:29): Spell / SpellName text of the NPC Holy Strike ranks only. No 70753 / 70755 spell rows past 113557. |
-| Dev notes thread 2360696 | Still 9 posts; post 9 created and edited 2026-11-03T03:20:33Z, post 1 edited 03:20:46Z (as last pass). |
-| Blue tracker | One new post: "WoW: Forever—What's New and What Feels Familiar" (2026-11-03 18:00, worldofwarcraft.com/en-us/news/24315821). An overview (presets, dungeons, Skyborne, Legacy points, camping, rulesets); it states no mechanic values. |
-
-## Open items
-
-None new. Open findings unchanged (mechanics-20261103-2, tank threat values).
+| Client build | 1.60.1.70755 still newest (gate). |
+| Hotfixes | `hotfixes.py pushes --set mechanics 70755`: no rows. |
+| Dev notes post 9 | Edited 2026-11-03T20:47:06Z. Diff against the saved copy: only "Gamepad Support has entered a functional Beta state" (was "a complete functional state"). No mechanic. |
+| Blue tracker | Since 11-03 19:05: "Explore WoW: Forever with a Gamepad" article (no values), Linxy "Bunmover needs work!" (category 17, not Forever mechanics). |
+| Daily update | No TASKS.md / update_ledger.md changes in range besides the audit-loop commit. |

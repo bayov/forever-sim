@@ -11,6 +11,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: shared run /tmp/audit-work/runs/master/summary.tsv: 752.83 vs meta 753.2; the other 72 metas are within 0.15. Likely the meta was set before the last mana-tide re-search; sure of the numbers, not of the cause.
 - proposed fix: set the meta's published.dps to 752.8 and its source from builds.json.
 - update 2026-11-03, master f5c99ad018: the shaman worker left all six shaman metas at the 2026-11-02 values on purpose ("meta.published is left for the report run", round_70753/shaman.md:172). Run 970.1, 952.7, 1149.8, 1159.2, 1055.1, 1111.3 match the worker's finals; the metas still say 768.5, 753.2, 879.3, 883.5, 795.8, 834.8. Supersedes the 0.4 gap above; expect it to clear with the regeneration.
+- update 2026-11-04, master f331f0cff: unchanged. Shared run (68 builds, 20k, seed 1) matches builds.json on all 68 within 0.15; only the six shaman metas still carry the 2026-11-02 values (+199 to +277 DPS gap in meta vs run).
 - needs: orchestrator fix
 
 ## Resolved
