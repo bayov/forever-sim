@@ -206,9 +206,8 @@ cap (`sim/core/racials_forever.go`): a call (below). Without it, Tauren leads at
 Balanced and Max survival, and the Skyborne and Tauren tie at Max threat.
 
 What the searches dropped: Slam (15 s under Forever) at every weight (-150 to -380), Reckless Swings (no searched build
-keeps it: a 16-point Fury start traded it for Deflection), Demoralizing Shout (the tank pays for it, `tankscore.OwnDebuffs`,
-and the boss's attack power cut buys less than the Rage), Vanguard and the Charge opener (Charge from Defensive Stance
-needs Vanguard; `opener=0` scores the same as the old Bloodrage-and-Charge opener), Last Stand (its health change isn't
+keeps it: a 16-point Fury start traded it for Deflection), Demoralizing Shout (the tank pays for it, `tankscore.OwnDebuffs`),
+Vanguard and the Charge opener (Charge from Defensive Stance needs Vanguard; `opener=0` scores the same as the old Bloodrage-and-Charge opener), Last Stand (its health change isn't
 followed by the replay, see Rotation template), Gore Drinker (unreachable with Shield Slam).
 
 Files: `tools/tankbench/req/warrior_protection_{max_threat,balanced,max_survival}.json`,
