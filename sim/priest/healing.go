@@ -16,8 +16,9 @@ import (
 // hotfix: SpellEffect, SpellLevels, SpellMisc, SpellPower and SpellCastTimes on wago.tools), read
 // the way the shaman's heals are (sim/shaman/healing.go): a rank heals its base at the level it's
 // learned plus its growth per level up to its max level, spread evenly by the variance around
-// that. The coefficients are the client's per rank, and Forever's downranking takes them down for
-// a rank far below our level (downrankCoefficient, measured on the beta's heals).
+// that. The coefficients are the client's per rank, and Forever's downranking (sim/core/downrank.go,
+// from each spell's Rank and RequiredLevel, or DownrankLevel on a rank-less sub-spell) takes them
+// down for a rank far below our level.
 type healRank struct {
 	spellID              int32
 	base, perLevel       float64
@@ -31,6 +32,16 @@ type healRank struct {
 // SpellID is the rank's spell ID.
 func (r healRank) SpellID() int32 {
 	return r.spellID
+}
+
+// Coefficient is the rank's spell power coefficient before downranking.
+func (r healRank) Coefficient() float64 {
+	return r.coefficient
+}
+
+// LearnLevel is the level the rank is learned at.
+func (r healRank) LearnLevel() int32 {
+	return r.learnLevel
 }
 
 // At is the rank's lowest and highest heal at the character's level.
@@ -72,20 +83,6 @@ var FlashHealRanks = []healRank{
 	{10915, 507, 3.299999952, 0.1728395075, 44, 49, 0.4289999902, 1500 * time.Millisecond, 265},
 	{10916, 644, 3.700000048, 0.1704545468, 50, 55, 0.4289999902, 1500 * time.Millisecond, 315},
 	{10917, 825, 4.199999809, 0.1649717539, 56, 61, 0.4289999902, 1500 * time.Millisecond, 380},
-}
-
-// Binding Heal heals its target and the priest, each for the rank's heal (two heal effects; the
-// second is the caster's, ImplicitTarget 1). Trained at 25 since the October 30 hotfix, a spell
-// of its own where the beta had it as the 16 point Holy talent. Rank 2's self heal grows 2.2 a
-// level where its target's grows 2.5, a client quirk left out: both use the target's.
-var BindingHealRanks = []healRank{
-	{},
-	{401937, 247, 2.200000048, 0.1958039999, 25, 31, 0.4289999902, 1500 * time.Millisecond, 155},
-	{1240770, 312, 2.5, 0.1833329946, 32, 37, 0.4289999902, 1500 * time.Millisecond, 185},
-	{1240771, 383, 2.799999952, 0.1776770055, 38, 43, 0.4289999902, 1500 * time.Millisecond, 215},
-	{1240772, 507, 3.299999952, 0.1728399992, 44, 49, 0.4289999902, 1500 * time.Millisecond, 265},
-	{1240773, 644.0001221, 3.700000048, 0.170454815, 50, 55, 0.4289999902, 1500 * time.Millisecond, 315},
-	{1240774, 825, 4.199999809, 0.1649720073, 56, 61, 0.4289999902, 1500 * time.Millisecond, 380},
 }
 
 // Prayer of Healing heals its target and the target's party (the deep dive of 2026-09-30: "heals
@@ -184,7 +181,7 @@ const (
 )
 
 func init() {
-	for _, ranks := range [][]healRank{LesserHealRanks, HealRanks, GreaterHealRanks, FlashHealRanks, BindingHealRanks,
+	for _, ranks := range [][]healRank{LesserHealRanks, HealRanks, GreaterHealRanks, FlashHealRanks,
 		PrayerOfHealingRanks, HolyNovaRanks, RenewRanks, PowerWordShieldRanks, PrayerOfMendingRanks} {
 		core.RegisterSpellRanks(healRankIDs(ranks)...)
 	}
@@ -211,7 +208,6 @@ func (priest *Priest) RegisterHealingSpells() {
 	priest.Heal = priest.registerHealRanks(HealRanks, SpellCode_PriestHeal)
 	priest.GreaterHeal = priest.registerHealRanks(GreaterHealRanks, SpellCode_PriestGreaterHeal)
 	priest.FlashHeal = priest.registerHealRanks(FlashHealRanks, SpellCode_PriestFlashHeal)
-	priest.BindingHeal = priest.registerHealRanks(BindingHealRanks, SpellCode_PriestBindingHeal)
 	priest.PrayerOfHealing = priest.registerHealRanks(PrayerOfHealingRanks, SpellCode_PriestPrayerOfHealing)
 	if priest.Talents.HolyNova {
 		priest.HolyNova = priest.registerHealRanks(HolyNovaRanks, SpellCode_PriestHolyNova)
@@ -266,7 +262,7 @@ func (priest *Priest) registerHealRank(r healRank, rank int, spellCode int32) *c
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		BonusCoefficient: priest.downrankCoefficient(r.coefficient, int(r.learnLevel)),
+		BonusCoefficient: r.coefficient,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			target = priest.healTarget(target)
@@ -282,11 +278,6 @@ func (priest *Priest) registerHealRank(r healRank, rank int, spellCode int32) *c
 				priest.directHeal(sim, spell, unit, sim.Roll(low, high))
 			}
 			switch spellCode {
-			case SpellCode_PriestBindingHeal:
-				heal(target)
-				if target != &priest.Unit {
-					heal(&priest.Unit)
-				}
 			case SpellCode_PriestPrayerOfHealing:
 				for _, unit := range priest.partyOf(target) {
 					heal(unit)
@@ -300,8 +291,7 @@ func (priest *Priest) registerHealRank(r healRank, rank int, spellCode int32) *c
 			}
 		},
 		// Other healers see the heal in flight at its average on its target (heal_comm.go):
-		// Prayer of Healing's other targets and Binding Heal's self heal aren't counted, as
-		// Chain Heal's jumps aren't.
+		// Prayer of Healing's other targets aren't counted, as Chain Heal's jumps aren't.
 		ExpectedHealing: func(target *core.Unit) float64 {
 			return spell.ExpectedHealing(priest.healTarget(target), (low+high)/2)
 		},
@@ -385,7 +375,7 @@ func (priest *Priest) registerRenewSpell() {
 				},
 				NumberOfTicks:    RenewTicks,
 				TickLength:       RenewTickLength,
-				BonusCoefficient: priest.downrankCoefficient(r.coefficient, int(r.learnLevel)),
+				BonusCoefficient: r.coefficient,
 				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 					dot.SnapshotHeal(target, r.base, isRollover)
 				},
@@ -466,10 +456,10 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 			continue
 		}
 		low, _ := r.At(priest.Level)
-		coefficient := priest.downrankCoefficient(r.coefficient, int(r.learnLevel))
 		var spell *core.Spell
+		// spell.BonusCoefficient is the rank's after Forever's downranking (sim/core/downrank.go).
 		amount := func(target *core.Unit) float64 {
-			return (low + coefficient*spell.HealingPower(target)) * absorbMultiplier * priest.PseudoStats.ShieldDealtMultiplier
+			return (low + spell.BonusCoefficient*spell.HealingPower(target)) * absorbMultiplier * priest.PseudoStats.ShieldDealtMultiplier
 		}
 		priest.powerWordShieldAbsorbs[rank] = amount
 		spell = priest.RegisterSpell(core.SpellConfig{
@@ -492,13 +482,21 @@ func (priest *Priest) registerPowerWordShieldSpell() {
 				},
 				CD: cd,
 			},
+			// Weakened Soul blocks it, and a shield of ours still up can be replaced only by an equal
+			// or higher rank (the November 2 notes: "can now correctly be replaced by a Power Word:
+			// Shield of equal or greater rank"; client 70753 has no field for it).
 			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 				target = priest.healTarget(target)
-				return !target.IsDead() && !priest.WeakenedSouls.Get(target).IsActive()
+				if target.IsDead() || priest.WeakenedSouls.Get(target).IsActive() {
+					return false
+				}
+				shield := priest.PowerWordShieldAbsorbs.Get(target)
+				return !shield.Aura.IsActive() || shield.Spell.Rank <= rank
 			},
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
+			BonusCoefficient: r.coefficient,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				target = priest.healTarget(target)
@@ -621,7 +619,6 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 		if !priest.KnowsRank(r.spellID, r.learnLevel) {
 			continue
 		}
-		coefficient := priest.downrankCoefficient(r.coefficient, int(r.learnLevel))
 		heal := priest.RegisterSpell(core.SpellConfig{
 			SpellCode:   SpellCode_PriestPrayerOfMending,
 			ActionID:    core.ActionID{SpellID: PrayerOfMendingHealID, Tag: int32(rank)},
@@ -630,9 +627,12 @@ func (priest *Priest) registerPrayerOfMendingSpell() {
 			ProcMask:    core.ProcMaskSpellHealing,
 			Flags:       SpellFlagPriest | core.SpellFlagHelpful | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 
+			// The jumps' heal has no rank of its own: it downranks as the rank cast.
+			DownrankLevel: int(r.learnLevel),
+
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BonusCoefficient: coefficient,
+			BonusCoefficient: r.coefficient,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				if !target.IsDead() {

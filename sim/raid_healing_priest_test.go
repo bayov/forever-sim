@@ -174,7 +174,6 @@ func TestHealingPriestRanks(t *testing.T) {
 		{"Greater Heal 1", hp.GreaterHeal[1], 844 + 5.1*5, 0.857 * 0.85, 370, 3},
 		{"Greater Heal 5", hp.GreaterHeal[5], 1960, 0.857, 710, 3},
 		{"Flash Heal 7", hp.FlashHeal[7], 825 + 4.2*4, 0.429, 380, 1.5},
-		{"Binding Heal 6", hp.BindingHeal[6], 825 + 4.2*4, 0.429, 380, 1.5},
 		{"Prayer of Healing 5", hp.PrayerOfHealing[5], 649 + 1.6*9, 0.286, 1070, 3},
 		{"Holy Nova 6", hp.HolyNova[6], 311, 0.107, 750, 0},
 	}
@@ -211,6 +210,38 @@ func TestHealingPriestRanks(t *testing.T) {
 	}
 	if got := top(hp.Penance); got == nil || got.Cost.GetCurrentCost() != 385 || got.CD.Duration != 12*time.Second {
 		t.Errorf("Penance 4: %v", got)
+	}
+	// Binding Heal is gone since the November 2 notes, every rank.
+	for _, id := range []int32{401937, 1240770, 1240771, 1240772, 1240773, 1240774} {
+		if hp.GetSpell(core.ActionID{SpellID: id}) != nil {
+			t.Errorf("Binding Heal %d is registered", id)
+		}
+	}
+	// Forever's downranking (sim/core/downrank.go) on the sub-spells that carry their rank's learn
+	// level, and on the shield: a rank's coefficient keeps 1 - 5% a level past 17.
+	for _, c := range []struct {
+		name  string
+		spell *core.Spell
+		coef  float64
+		learn int
+	}{
+		{"Penance 1's heal bolt", hp.GetSpell(core.ActionID{SpellID: priest.PenanceHealSpellId[1]}), 0.19, 30},
+		{"Prayer of Mending 1's heal", hp.GetSpell(core.ActionID{SpellID: priest.PrayerOfMendingHealID, Tag: 1}), 0.429, 40},
+		{"Power Word: Shield 5", hp.PowerWordShield[5], priest.PowerWordShieldRanks[5].Coefficient(), int(priest.PowerWordShieldRanks[5].LearnLevel())},
+		{"Renew 5", hp.Renew[5], priest.RenewRanks[5].Coefficient(), int(priest.RenewRanks[5].LearnLevel())},
+	} {
+		if c.spell == nil {
+			t.Errorf("%s isn't registered", c.name)
+			continue
+		}
+		got := c.spell.BonusCoefficient
+		if c.name == "Renew 5" {
+			got = c.spell.Hot(&tank.Unit).BonusCoefficient
+		}
+		want := c.coef * core.DownrankFactor(60, c.learn)
+		if want >= c.coef || !near(got, want, 1e-6) {
+			t.Errorf("%s has a %.4f coefficient, want %.4f (%.3f downranked)", c.name, got, want, c.coef)
+		}
 	}
 }
 
@@ -263,8 +294,8 @@ func TestHealingPriestDirectHeals(t *testing.T) {
 	}
 }
 
-// Binding Heal heals its target and the priest, Prayer of Healing its target's party, Holy Nova the
-// priest's party, each for the rank's heal.
+// Prayer of Healing heals its target's party, Holy Nova the priest's party, each for the rank's
+// heal.
 func TestHealingPriestGroupHeals(t *testing.T) {
 	talents := priestTalents(map[string]int{"holy_nova": 1})
 	for _, c := range []struct {
@@ -273,7 +304,6 @@ func TestHealingPriestGroupHeals(t *testing.T) {
 		target      string
 		wantTargets int
 	}{
-		{"Binding Heal", priest.BindingHealRanks[6].SpellID(), "Tank", 2},
 		{"Prayer of Healing", priest.PrayerOfHealingRanks[5].SpellID(), "Tank", 5},
 		{"Holy Nova", priest.HolyNovaRanks[6].SpellID(), "", 5},
 	} {
@@ -382,6 +412,24 @@ func TestHealingPriestShieldUnused(t *testing.T) {
 	}
 	if m.Ehps.Avg != 0 {
 		t.Errorf("unused shields gave %.2f EHPS", m.Ehps.Avg)
+	}
+}
+
+// A shield still up can be replaced by an equal or higher rank only (the November 2 notes). Rank
+// 10 at the start, then rank 9 whenever it can be cast: Weakened Soul lifts at 15 s, but rank 10's
+// shield holds rank 9 back until it runs out at 30 s; rank 9 then replaces itself at 45 s (a 55 s
+// fight, so no cast lands on its last moment).
+func TestHealingPriestShieldReplaceRank(t *testing.T) {
+	rsr := priestRaid(t, "", 1)
+	rsr.SimOptions.Iterations = 1
+	rsr.Encounter.Duration = 55
+	_, hp := newPriestSim(t, rsr)
+	high, low := hp.PowerWordShield[10], hp.PowerWordShield[9]
+	_, m, _, _ := fightPriest(t, rsr,
+		castLine(high.SpellID, "", `{"cmp":{"op":"OpLt","lhs":{"currentTime":{}},"rhs":{"const":{"val":"1s"}}}}`),
+		castLine(low.SpellID, "", ""))
+	if h, l := actionMetrics(m, high.SpellID, -1).casts, actionMetrics(m, low.SpellID, -1).casts; h != 1 || l != 2 {
+		t.Errorf("rank 10 cast %d times and rank 9 %d, want 1 and 2 (at 30 s and 45 s)", h, l)
 	}
 }
 

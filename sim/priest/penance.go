@@ -89,6 +89,8 @@ func (priest *Priest) registerPenanceRank(rank int, cdTimer *core.Timer) *core.S
 		ProcMask:    core.ProcMaskSpellHealing,
 		Flags:       SpellFlagPriest | core.SpellFlagHelpful | core.SpellFlagNoOnCastComplete,
 
+		DownrankLevel: PenanceLevel[rank],
+
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 		BonusCoefficient: 0.19,

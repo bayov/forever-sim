@@ -14,7 +14,7 @@ import (
 
 // healCodes are the priest's heals that aren't a shield.
 var healCodes = []int32{SpellCode_PriestLesserHeal, SpellCode_PriestHeal, SpellCode_PriestGreaterHeal, SpellCode_PriestFlashHeal,
-	SpellCode_PriestBindingHeal, SpellCode_PriestPrayerOfHealing, SpellCode_PriestHolyNova, SpellCode_PriestRenew,
+	SpellCode_PriestPrayerOfHealing, SpellCode_PriestHolyNova, SpellCode_PriestRenew,
 	SpellCode_PriestPrayerOfMending, SpellCode_PriestPenance}
 
 // isHeal is whether the spell is one of the priest's heals (Penance's healing bolts, not its
@@ -162,14 +162,16 @@ func (priest *Priest) afterDirectHeal(sim *core.Simulation, spell *core.Spell, r
 			}
 		}
 	}
-	// Holy Binding: a Flash Heal on another heals us for half as much.
+	// Holy Binding (1328569, in Binding Heal's old slot since the November 2 notes: a dummy aura,
+	// 50%, proc type 16384, a helpful spell done; the server reads its Flash Heal from the
+	// tooltip): a Flash Heal on another heals us for half as much with 1328570, no threat.
 	if priest.holyBinding != nil && spell.SpellCode == SpellCode_PriestFlashHeal && target != &priest.Unit {
 		priest.holyBinding.CalcAndDealHealing(sim, &priest.Unit, HolyBindingShare*result.Damage, priest.holyBinding.OutcomeHealing)
 	}
 }
 
 // Renewed Hope's heals: Flash Heal, Lesser Heal, Heal, Greater Heal and Penance (425280's
-// tooltip in 70753; the deep dive also named Binding Heal, which the newer tooltip leaves out).
+// tooltip in 70753; the deep dive also named Binding Heal, which the November 2 notes removed).
 func renewedHopeSpell(spell *core.Spell) bool {
 	return isHeal(spell, SpellCode_PriestFlashHeal, SpellCode_PriestLesserHeal, SpellCode_PriestHeal, SpellCode_PriestGreaterHeal,
 		SpellCode_PriestPenance)

@@ -31,7 +31,6 @@ const (
 	SpellCode_PriestPenance
 	SpellCode_PriestShadowguard
 	SpellCode_PriestLesserHeal
-	SpellCode_PriestBindingHeal
 	SpellCode_PriestPrayerOfHealing
 	SpellCode_PriestHolyNova
 	SpellCode_PriestRenew
@@ -45,7 +44,6 @@ type Priest struct {
 
 	Latency float64
 
-	BindingHeal       []*core.Spell
 	Chastise          []*core.Spell
 	DarkSacrifice     *core.Spell
 	DevouringPlague   []*core.Spell

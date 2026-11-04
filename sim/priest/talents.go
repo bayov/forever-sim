@@ -159,7 +159,7 @@ func (priest *Priest) applyTwilightFocus() {
 	priest.OnSpellRegistered(func(spell *core.Spell) {
 		if spellIn(spell, SpellCode_PriestSmite, SpellCode_PriestHolyFire, SpellCode_PriestMindBlast, SpellCode_PriestMindFlay,
 			SpellCode_PriestPenance, SpellCode_PriestStarshards, SpellCode_PriestFlashHeal, SpellCode_PriestGreaterHeal, SpellCode_PriestHeal,
-			SpellCode_PriestLesserHeal, SpellCode_PriestBindingHeal, SpellCode_PriestPrayerOfHealing) {
+			SpellCode_PriestLesserHeal, SpellCode_PriestPrayerOfHealing) {
 			spell.PushbackReduction = chance
 		}
 	})
