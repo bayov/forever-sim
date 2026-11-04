@@ -2,22 +2,6 @@
 
 ## Open
 
-### tank_rotations-20261104-14: Warden Max threat and Balanced leave Searing Totem and Fire Nova unused; both in the last 60 s gain about 2% and 8%
-- severity: high (Max threat +1.9%, Balanced +8%)
-- affects: Warden shaman Max threat, Balanced (Max survival unconfirmed)
-- found: 2026-11-04 (pass 3), master dc303b0
-- evidence: the Warden priority lists end at Stormstrike, with no fire totem and no Fire Nova (tools/tankbench/req/shaman_warden_max_threat.json:221, shaman_warden_balanced.json:271; ui/warden_shaman/apls/level60_{max_threat,balanced}.apl.json). B adds Searing Totem (10438) before the pull, ahead of the water totem; in the fight, Searing Totem recast when down with at least 10 s left, and Fire Nova (408345) after Stormstrike at 40% mana or more, both only while remainingTime <= 60 s. Balanced's B also has finding 15's Mana Spring. Paired, 3k, B minus preset: Max threat +43.2 ± 9.7 (seed 21), +46.4 ± 8.4 (22), +48.4 ± 9.2 (23); Vaelastrasz +144 / +121 / +133, Golemagg, Magmadar and Onyxia +36 to +53, Chromaggus -37 / -34 / -39, Ragnaros -45 / +17 / -45. Balanced +70.5 ± 15.0 / +48.8 ± 13.1 / +76.0 ± 12.8; Vaelastrasz +171 / +143 / +156, Chromaggus +18 / +10 / -2. Max survival +22.6 ± 32.2 / +71.8 ± 36.3, unconfirmed. Without the 60 s gate Chromaggus loses about 100 (Earth Shock short of mana, 16.7 to 13.5 casts) and the gain doesn't confirm at Balanced (+52.4 ± 13.1 / +19.3 ± 13.6); a 40 s gate ties 60 s, 90 s -3.3 ± 3.2. Round 3's rotopt search moved one knob at a time from fireNova=0: fireTotem=1 alone was -18 to -38 inside its noise, and fireNova=1 does nothing without a fire totem, so the pair was never tried. Part of the Vaelastrasz gain is mana spent under his mana regen and given back as threat (mana-gain TPS 29.7 to 57.4), so it rests on fd9538c's mana-gain threat, which docs/tank_druid.md call 6 still lists as unverified; tank_mechanics territory. Sure: high that it scores, medium on the size.
-- proposed fix: a rotopt knob that searches fireTotem and fireNova together, with a "last N s" gate (40-90), then a re-search of all three Warden presets. Repro: `abtest -iters 3000 -seed 22 tools/tankbench/req/shaman_warden_max_threat.json $P/w_f1n1g60b_max_threat.json` and `... shaman_warden_balanced.json $P/w_f1n1w1g60b_balanced.json` (P=$AUDIT_WORK/tank_rotations/probe/v; the variant files are scratch, so rebuild B from the lines above).
-- needs: worker fix
-
-### tank_rotations-20261104-15: Warden Balanced doesn't put Mana Spring down before the pull, as Max threat does
-- severity: medium (+1.4%)
-- affects: Warden shaman Balanced (Max survival unconfirmed)
-- found: 2026-11-04 (pass 3), master dc303b0
-- evidence: Max threat's prepull is Lightning Shield -4.5 s, Stoneskin -3 s, Mana Spring -1.5 s, with an in-fight Mana Spring line; Balanced has no Mana Spring (tools/tankbench/req/shaman_warden_balanced.json prepullActions). B = Max threat's prepull and its Mana Spring line. Paired, 3k: +12.7 ± 3.9 (seed 21), +10.6 ± 4.4 (22), +10.8 ± 4.6 (23); Chromaggus +37 / +32 / +43, the rest within ±10. Max survival +8.6 ± 9.8 / +11.0 ± 9.8, unconfirmed. Put down only in the fight: +0.1 ± 16.8 (1k). Round 3's search saw waterTotem=1 at +8.2 / +8.6, inside its noise. Healing Stream instead: +24.2 ± 14.4 / +0.5 ± 14.4, swinging on Broodlord, unsettled. Sure: medium-high.
-- proposed fix: waterTotem=1 (Mana Spring before the pull) at Balanced, searched together with finding 14. Repro: `abtest -iters 3000 -seed 22 tools/tankbench/req/shaman_warden_balanced.json $P/w_manaspringpp_balanced.json`.
-- needs: worker fix
-
 ### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
 - severity: medium
 - affects: Protection warrior Max survival
@@ -40,6 +24,24 @@
 - pass 3: still open (user ruling, docs/tank_paladin.md call 7); not re-tested.
 
 ## Resolved
+
+### tank_rotations-20261104-14: Warden Max threat and Balanced leave Searing Totem and Fire Nova unused; both in the last 60 s gain about 2% and 8%
+- severity: high (Max threat +1.9%, Balanced +8%)
+- affects: Warden shaman Max threat, Balanced (Max survival unconfirmed)
+- found: 2026-11-04 (pass 3), master dc303b0
+- evidence: the Warden priority lists end at Stormstrike, with no fire totem and no Fire Nova (tools/tankbench/req/shaman_warden_max_threat.json:221, shaman_warden_balanced.json:271; ui/warden_shaman/apls/level60_{max_threat,balanced}.apl.json). B adds Searing Totem (10438) before the pull, ahead of the water totem; in the fight, Searing Totem recast when down with at least 10 s left, and Fire Nova (408345) after Stormstrike at 40% mana or more, both only while remainingTime <= 60 s. Balanced's B also has finding 15's Mana Spring. Paired, 3k, B minus preset: Max threat +43.2 ± 9.7 (seed 21), +46.4 ± 8.4 (22), +48.4 ± 9.2 (23); Vaelastrasz +144 / +121 / +133, Golemagg, Magmadar and Onyxia +36 to +53, Chromaggus -37 / -34 / -39, Ragnaros -45 / +17 / -45. Balanced +70.5 ± 15.0 / +48.8 ± 13.1 / +76.0 ± 12.8; Vaelastrasz +171 / +143 / +156, Chromaggus +18 / +10 / -2. Max survival +22.6 ± 32.2 / +71.8 ± 36.3, unconfirmed. Without the 60 s gate Chromaggus loses about 100 (Earth Shock short of mana, 16.7 to 13.5 casts) and the gain doesn't confirm at Balanced (+52.4 ± 13.1 / +19.3 ± 13.6); a 40 s gate ties 60 s, 90 s -3.3 ± 3.2. Round 3's rotopt search moved one knob at a time from fireNova=0: fireTotem=1 alone was -18 to -38 inside its noise, and fireNova=1 does nothing without a fire totem, so the pair was never tried. Part of the Vaelastrasz gain is mana spent under his mana regen and given back as threat (mana-gain TPS 29.7 to 57.4), so it rests on fd9538c's mana-gain threat, which docs/tank_druid.md call 6 still lists as unverified; tank_mechanics territory. Sure: high that it scores, medium on the size.
+- proposed fix: a rotopt knob that searches fireTotem and fireNova together, with a "last N s" gate (40-90), then a re-search of all three Warden presets. Repro: `abtest -iters 3000 -seed 22 tools/tankbench/req/shaman_warden_max_threat.json $P/w_f1n1g60b_max_threat.json` and `... shaman_warden_balanced.json $P/w_f1n1w1g60b_balanced.json` (P=$AUDIT_WORK/tank_rotations/probe/v; the variant files are scratch, so rebuild B from the lines above).
+- needs: worker fix
+- fixed: 2026-11-04, 4745ce4 (branch warden-trinket). rotopt's shaman_tank has a `fireLast` knob (fire totem and Fire Nova only in the last N s; the prepull totem still goes down); searched with fireTotem/fireNova together at all three presets (3k s3 screens of gates 0-90 s, Magma and Flametongue, Fire Nova's mana floor), confirmed at 10k on seeds 1 / 2: Searing + Fire Nova at 60 s, Max threat +53.9 ± 4.7 / +47.7 ± 5.0, Balanced (with Mana Spring) +67.7 ± 7.1 / +59.2 ± 6.4, Max survival +59.3 ± 17.7 / +55.7 ± 18.2. All three presets take it (docs/tank_shaman.md, Round 4 A/Bs).
+
+### tank_rotations-20261104-15: Warden Balanced doesn't put Mana Spring down before the pull, as Max threat does
+- severity: medium (+1.4%)
+- affects: Warden shaman Balanced (Max survival unconfirmed)
+- found: 2026-11-04 (pass 3), master dc303b0
+- evidence: Max threat's prepull is Lightning Shield -4.5 s, Stoneskin -3 s, Mana Spring -1.5 s, with an in-fight Mana Spring line; Balanced has no Mana Spring (tools/tankbench/req/shaman_warden_balanced.json prepullActions). B = Max threat's prepull and its Mana Spring line. Paired, 3k: +12.7 ± 3.9 (seed 21), +10.6 ± 4.4 (22), +10.8 ± 4.6 (23); Chromaggus +37 / +32 / +43, the rest within ±10. Max survival +8.6 ± 9.8 / +11.0 ± 9.8, unconfirmed. Put down only in the fight: +0.1 ± 16.8 (1k). Round 3's search saw waterTotem=1 at +8.2 / +8.6, inside its noise. Healing Stream instead: +24.2 ± 14.4 / +0.5 ± 14.4, swinging on Broodlord, unsettled. Sure: medium-high.
+- proposed fix: waterTotem=1 (Mana Spring before the pull) at Balanced, searched together with finding 14. Repro: `abtest -iters 3000 -seed 22 tools/tankbench/req/shaman_warden_balanced.json $P/w_manaspringpp_balanced.json`.
+- needs: worker fix
+- fixed: 2026-11-04, 4745ce4 (branch warden-trinket). waterTotem=1 at Balanced, 10k: +9.3 ± 2.3 (seed 1), +10.8 ± 1.8 (seed 2); taken. Max survival +5.3 ± 5.8 / +4.0 ± 5.1, inside its error: not taken.
 
 ### tank_rotations-20261104-13: rotopt's -seed overlaps the search's iterations, and the six-boss score's error is understated by about a quarter
 - severity: medium (tooling; no preset choice found wrong)

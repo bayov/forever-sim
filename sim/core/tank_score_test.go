@@ -35,3 +35,22 @@ func TestTankScoreReplayCapsAtMaxHealthDrop(t *testing.T) {
 		t.Errorf("the tank at 50 of 50 died to 49 damage")
 	}
 }
+
+// A heal's threat counts the health it restores, which reads the target's health. In a score's
+// replay the tank's health is the stand-in healer's, so a self-heal books threat on the whole heal
+// there, not on what this run's health leaves room for (tank_mechanics-20261104-16).
+func TestHealingThreatReadsNoHealthInReplay(t *testing.T) {
+	tank := &Unit{}
+	tank.stats[stats.Health] = 1000
+	tank.healthBar = healthBar{unit: tank, currentHealth: 900}
+	tank.PseudoStats.ThreatMultiplier = 1
+	spell := &Spell{Unit: tank, ThreatMultiplier: 1}
+	result := &SpellResult{Target: tank, Damage: 300, Outcome: OutcomeHit}
+	if got := spell.healingThreat(result); got != 50 {
+		t.Errorf("live run: heal threat %v, want 50 (100 effective healing)", got)
+	}
+	tank.tankScore = &tankScore{replay: true}
+	if got := spell.healingThreat(result); got != 150 {
+		t.Errorf("replay: heal threat %v, want 150 (the whole 300 heal)", got)
+	}
+}

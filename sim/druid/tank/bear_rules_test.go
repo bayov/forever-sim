@@ -54,6 +54,8 @@ type bearOpts struct {
 	bonus   stats.Stats
 	tanked  bool
 	rage    float64 // starting Rage
+	// consumes, used with Engineering when set
+	consumes *proto.Consumes
 }
 
 // newBear builds a Tauren bear on the Feral cat's synthetic two-hander, in Dire Bear Form after the
@@ -87,6 +89,10 @@ func newBear(t *testing.T, o bearOpts) (*core.Simulation, *druid.Druid) {
 		Rotation:      &proto.APLRotation{},
 		Spec: &proto.Player_FeralTankDruid{FeralTankDruid: &proto.FeralTankDruid{
 			Options: &proto.FeralTankDruid_Options{StartingRage: o.rage}}},
+	}
+	if o.consumes != nil {
+		player.Consumes = o.consumes
+		player.Profession1 = proto.Profession_Engineering
 	}
 	if o.bonus != (stats.Stats{}) {
 		player.BonusStats = &proto.UnitStats{Stats: o.bonus[:]}
@@ -950,6 +956,44 @@ func TestBearWhiteHitRage(t *testing.T) {
 		}
 		if !near(gained, want, 1e-6) {
 			t.Errorf("at +%.0f attack power the white hits gave %.2f Rage, want %.2f (11.25 a landed swing, 22.5 a crit)", ap, gained, want)
+		}
+	}
+}
+
+// Goblin Sapper Charge 13241 and Goblin Land Mine 4100 lack SPELL_ATTR0_NOT_SHAPESHIFTED, and Dire
+// Bear Form carries CanUseItems (client 1.60.1.70790+hf), so the bear uses them without leaving its
+// form. Dense Dynamite 23063 and Thorium Grenade 19769 carry the flag: the bear doesn't throw them in
+// form, and throwing one anyway drops the form (tank_mechanics-15).
+func TestExplosivesInForm(t *testing.T) {
+	cases := []struct {
+		name     string
+		consumes *proto.Consumes
+		id       core.ActionID
+		inForm   bool
+	}{
+		{"Goblin Sapper Charge", &proto.Consumes{SapperExplosive: proto.SapperExplosive_SapperGoblinSapper}, core.SapperActionID, true},
+		{"Goblin Land Mine", &proto.Consumes{FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine}, core.GoblinLandMineActionID, true},
+		{"Dense Dynamite", &proto.Consumes{FillerExplosive: proto.Explosive_ExplosiveDenseDynamite}, core.DenseDynamiteActionID, false},
+		{"Thorium Grenade", &proto.Consumes{FillerExplosive: proto.Explosive_ExplosiveThoriumGrenade}, core.ThoriumGrenadeActionID, false},
+	}
+	for _, c := range cases {
+		sim, bear := newBear(t, bearOpts{consumes: c.consumes})
+		mcd := bear.GetMajorCooldown(c.id)
+		if mcd == nil {
+			t.Fatalf("%s: no cooldown", c.name)
+		}
+		if got := mcd.TryActivate(sim, &bear.Character); got != c.inForm {
+			t.Errorf("%s: used in Dire Bear Form %v, want %v", c.name, got, c.inForm)
+		}
+		if !c.inForm {
+			mcd.Spell.Cast(sim, bear.CurrentTarget)
+		}
+		advance(sim, 2*time.Second)
+		if mcd.Spell.SpellMetrics[0].Casts != 1 {
+			t.Errorf("%s: %d casts, want 1", c.name, mcd.Spell.SpellMetrics[0].Casts)
+		}
+		if got := bear.InForm(druid.Bear); got != c.inForm {
+			t.Errorf("%s: in Dire Bear Form after use %v, want %v", c.name, got, c.inForm)
 		}
 	}
 }

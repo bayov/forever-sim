@@ -2,6 +2,8 @@
 
 ## Open
 
+## Resolved
+
 ### tank_mechanics-20261104-15: Goblin Sapper Charge and Goblin Land Mine are blocked in a form; the client allows them
 - severity: high (bear Max threat score +158 / +189, about +6-7%; Balanced +134 / +169; Max survival +63 / +110; SafeDPS +85 / +99)
 - affects: Feral tank (all three presets; they have Engineering). Possibly Feral cat DPS presets that use the sapper (not measured)
@@ -10,6 +12,7 @@
 - proposed fix: gate each explosive's in-form use on its spell's Attributes_0 0x10000, as the EZ-Thro rows already do: allow the sapper and the land mine in form, and don't cancel the form. Add a test that a shapeshifted druid throws the sapper and not Dense Dynamite. Then the druid worker re-runs the bear's consumable A/B (sapper, land mine) and fixes docs/tank_druid.md:226-227.
 - How sure: sure of the client rows and the sim's block. The score gain is measured on one preset family with two seeds.
 - needs: orchestrator fix (sim/core/consumes.go), then worker fix (bear presets and doc)
+- fixed: 2026-11-04, 22a7d79 (engine: explicit in-form list from the client's NOT_SHAPESHIFTED rows, TestExplosivesInForm), df0f99724 (bear presets take the sapper, no filler: +184 to +299 at own weight, 10k, seeds 1/2), e77fb293b (Feral cat DPS presets take the sapper, about +3 DPS at 180 s). The Warden takes it too (4745ce48d). The paladin and warrior presets carry no explosive (outside this fix; reported).
 
 ### tank_mechanics-20261104-16: Warden armor-trinket knobs partly inert; a latent health read in heal threat
 - severity: low (no score is wrong today, but the search spends knob values on nothing)
@@ -21,8 +24,8 @@
   - spell.healingThreat (sim/core/spell_result.go:145) uses effectiveHealing, which reads the tank's current health. No tank preset casts a self heal that books threat in a scoring run today (Frenzied Regeneration uses GainHealth with no threat), so it is latent, as -14 was.
 - proposed fix: classify BonusArmor as survival in major_cooldown.go (or tag the synthetic armor trinkets Survival); clamp trinketAt's search range to at least the 20 s minTimeLeft, or derive minTimeLeft from the knob; add a rotopt test for trinketAt; book heal threat from the raw heal in a scoring run.
 - needs: orchestrator fix (engine), Warden worker (knob range, test)
+- fixed: 2026-11-04, 464deda (BonusArmor counts as armor, so the armor trinkets are survival cooldowns; heldForLast uses min(trinketAt, 20 s) as minTimeLeft; healingThreat books the whole heal when the target reads no health; TestWardenArmorTrinketHold, TestHealingThreatReadsNoHealthInReplay). Re-checked the Warden's 25 s hold, 10k, seeds 1/2: every value from 0 to 30 loses at Balanced and Max survival (4745ce48d). The same fixed-minTimeLeft pattern is in the warrior DPS knobs (warrior_common.go trinketAt/racialAt/potionAt, 15 s), left for the DPS side.
 
-## Resolved
 
 ### tank_mechanics-20261104-12: Mana gains make threat times the tank's threat multiplier, with no source
 - severity: high (Balanced bear -2.9% with Judgement of Wisdom off; how much of it is wrong is unknown)

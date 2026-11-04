@@ -1,0 +1,10 @@
+A=shaman_warden_max_threat.json B=Y_max_threat_FoodBlessSunfruit.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1978     1969    -9.8    0.2     -4.9        0
+chromaggus        1809     1799    -9.3    0.0     -4.6        0
+golemagg          2679     2670    -9.3    0.0     -4.7        0
+magmadar          2833     2824    -9.6    0.0     -4.8        0
+onyxia            2632     2622   -10.5    0.1     -5.2        0
+ragnaros           187      178    -8.7    0.1     -4.4        0
+vaelastrasz       3468     3458   -10.9    0.0     -5.4        0
+scoring_mean                       -9.9    0.0
