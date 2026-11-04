@@ -25,3 +25,26 @@ Items found late that don't affect any shipped Level 60 preset, left out of the 
 - **Class-cast debuffs at low level** (shaman audit 10.4, 2026-10-15). The raid debuffs now take the rank for the raid's level under Forever, but a class's own cast doesn't. `core.SunderArmorAura` is fixed at 450 a stack, `FaerieFireAura` and Forever's `CurseOfRecklessnessAura` at 505, and `ExposeArmorAura` at 2250, so a warrior, druid, warlock or rogue below level 54 to 58 gets too much. The warrior's own Demoralizing Shout (`sim/warrior/demoralizing_shout.go`) is Classic's with Improved 5, where Forever's rank 5 takes 204 at 60 for 45 sec with no Improved talent (`foreverDemoralizingShout` in `debuffs.go`). The paladin's own Judgement of the Crusader (`sim/paladin/sotc.go`) gives 1.15 x Classic, so 34.5 / 57.5 / 126.5 where the client has 35 / 58 / 127. None of it moves a Level 60 DPS preset.
 
 - **DPS report staleness, the rest** (orchestration/dash_raw_store.md section F, 2026-10-26). Partly done 2026-11-03: `stale.mjs` now hashes the step scripts, the sim fields of the meta, the base build's request and only the database entries a build wears, and `pipeline.sh probe` checks the sims and the scripts' outputs themselves (tools/dps_report/README.md, "Probes"). Left from the list below: the structured `edits` field and the mtime skips. `stale.mjs` now hashes each build's request and assumption rotations and counts the dashboard patches as shared. Still not covered: the sim step scripts' own settings (iterations, lengths, races, stat lists, mana fight length, ablation entries, `assumptions_def.py` entries) and their env knobs, which a change only shows by its diff. The fix: a fingerprint per step and build (binary, script, its `assumptions_def` entries) stored in the raw pack and compared by `stale.mjs`, and a structured `edits` field in each request's meta in place of the prose `notes`, so a script can regenerate every request and flag any that differ. Also, `weights.py`, `run_races.py` and `run_assumptions.py` skip or reuse by file mtimes; they should compare the request hash the output was made from.
+
+- **DPS report luck goals** (2026-11-04). An audit of every sim number on the page, reviewed for its statistics, its
+  pipeline cost and its readers, set these goals for one standard error of what a reader compares:
+
+  | Number | Goal | How |
+  |---|---|---|
+  | Spec DPS, Compare A vs B, duty/pet cost | ≤ 0.5 DPS per spec | met; ties marked (done) |
+  | Race against race, same spec | ≤ 0.35 DPS on the paired difference (user, 2026-11-04) | adaptive fights, ceiling 40k |
+  | Racial parts, racials off, target types | ≤ max(0.25 DPS, 10%) | exact Shapley per fight; today's split for 3+ parts is a ratio of means and its se is hypot(base, off) (`build_races.py:146-157`) |
+  | Stat weights (worth) | ≤ max(0.02, 3%) | larger steps for the stats whose fights drift (hit, crit, Int, Spirit, MP5), not more fights |
+  | Assumption effects | ≤ max(0.25 DPS, 5%) | combinations not simmed are flagged as estimates (done): the product of single factors is off by 0.8 DPS median, 5.8 at most |
+  | Fight lengths | ties, no more sims | equal fight-seconds per length with N from each build's own sd; the 180 s point from the main run; the assumption base rows change with it (`run_assumptions.py:170-191`) |
+  | Percentiles | p10/p90 ≤ 1 DPS | min and max dropped from the page (done) |
+  | Mana, ablation | deferred | ablation later as three states at about 2k fights |
+
+  Sharing fights cancels luck well only for flat stats (paired sd about 2% of a fight's for AP, SP, Str); a change that
+  moves a hit roll, a proc or a mana tick keeps 23-105% of it (crit 0.23, Int 0.45, Agi 0.54, hit 0.68, hit down 1.05),
+  so races need their own measurement. Done: the page's tie marks (≈, `report.js` seDiff/isTie, independent errors for
+  now) and its reworded precision claims. Left, in order: measure the paired spreads on four classes; the full run for
+  round 70753; adaptive sims with paired se stored in the rows (pilot 1-2k fights, N = 1.2 (sd / goal)² on a ×2 grid,
+  one top-up of every arm, means from the concatenated per-fight values, done checks that test the goal, per-entry
+  ablation iterations, per-fight vectors kept unpacked); a goal check at publish that warns; a second full run; paired
+  se on the page.
