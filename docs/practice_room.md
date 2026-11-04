@@ -1245,6 +1245,25 @@ rendering, not the sim.
   - Your call: with 20 or more raiders, helms, shoulders and cloaks cast no shadow.
   - Headless, fight, 1920x1080, varied gear: 128 FPS (was 103), 6.7ms of script (animating 2.7ms, drawing 3.7ms, was
     5.4ms), 450 draw calls, 210 uploads a frame, a garbage collection every 420ms.
+- Fifth raid report (your PC, 65s): about 145 FPS for 30s, then 100 to 114 once the fight started (390 to 430 draw
+  calls). GPU 4.4ms: uploads 0.01ms, shadows 1.2ms, solid 1.3ms, see-through 1.8ms. So the uploads weren't the GPU's
+  time, but the shadows and solid things went from 3.75 to 2.56ms. 5.6ms of script (animating 2.5ms, drawing 2.8ms),
+  a garbage collection every 270ms.
+  - Shadows: a model's solid parts now cast their shadow in one draw call (one per side), apart from parts cut by their
+    texture's alpha. A body of one race and sex casts one for all its raiders. Those batches draw only in the shadows:
+    they're on a layer the camera sees only while the shadows draw. Shadow draw calls in the fight went from 171 to 128.
+  - Animation: gear with nothing that moves (most helms, shoulders and shields) keeps its first pose instead of
+    animating each frame, and spell effects animate like the raiders, 60 times a second past 20 yards and 30 past 40.
+  - Garbage: the pose loop no longer mixes decimals with other values (a root bone's parent pivot was undefined, a
+    bone's twist share was 0 or a decimal), which Chrome boxed, 30 bytes a bone a frame. Headless, a garbage
+    collection every 770ms (was 420ms). What's left is mostly Three building shader parameters when one depth
+    material serves both skinned and instanced meshes in the shadows.
+  - See-through: a camera facing particle is kept to about 40% of the screen's height. Only a particle a few of its
+    sizes from the camera gets that big.
+  - Headless, fight, 1920x1080: 125 FPS, 6.8ms of script (animating 2.4ms, drawing 3.9ms), 440 draw calls. The
+    drawing didn't drop here: 330 of the draw calls are the crowd's picture (65 bodies, 155 gear, 108 see-through
+    layers of gear and effects), which need different textures. Drawing those in fewer calls needs texture arrays
+    for gear, or multi-draw.
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
