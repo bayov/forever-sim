@@ -22,6 +22,11 @@ type setup struct {
 	request *proto.RaidSimRequest
 	// talents replaces the player's talent string when set. The talent search moves it.
 	talents string
+
+	// hit puts each talent string on its hit-trade gear step (-hit-steps, hitsteps.go);
+	// hitStep, when set, forces one step.
+	hit     *hitSteps
+	hitStep *int
 }
 
 func loadSetup(path string) (*setup, error) {
@@ -76,6 +81,7 @@ func (s *setup) clone() *proto.RaidSimRequest {
 	if s.talents != "" {
 		request.Raid.Parties[0].Players[0].TalentsString = s.talents
 	}
+	s.wearHitStep(request)
 	return request
 }
 

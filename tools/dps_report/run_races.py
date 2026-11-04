@@ -42,8 +42,8 @@ PARTS = {
 }
 PRIEST_ONLY = {'chastise', 'starshards', 'darksacrifice', 'shadowguard'}
 PET_ONLY = {'command'}  # Orc Command: Hunter and Warlock pets only
-# The racial a race's own gear (a race override's bonusStats) is tuned around. A sim that leaves it out wears the
-# preset's gear, so the racial's bar holds the gear trade too (user ruling, 2026-10-28).
+# The racial a race's own gear (a race override's bonusStats or equipment) is tuned around. A sim that leaves it out
+# wears the preset's gear, so the racial's bar holds the gear trade too (user ruling, 2026-10-28).
 GEAR_PART = {'Dwarf': 'precision'}
 TARGETS = {'beast': 'MobTypeBeast', 'elemental': 'MobTypeElemental'}
 CLASS_TARGETS = {'Priest': {'humanoid': 'MobTypeHumanoid'}}  # a racial that cares about Humanoids (Chastise)
@@ -72,7 +72,7 @@ def gear_on(race, off):
 def scenario_req(req, race, off=None, mob=None, bid=None, meta=None):
     if bid:
         ov = race_override.load(bid, race, meta)
-        if ov and ov.get('bonusStats') and race not in GEAR_PART:
+        if race_override.has_gear(ov) and race not in GEAR_PART:
             raise RuntimeError(f'{bid} {race}: a gear override, and no GEAR_PART says which racial it is tuned around')
     req, _ = race_override.apply(req, bid, race, meta, gear=gear_on(race, off)) if bid else (copy.deepcopy(req), None)
     player(req)['race'] = 'Race' + race

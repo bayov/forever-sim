@@ -71,6 +71,9 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMa
 # too): +8.2 / +8.0 / +7.6 at 120 / 180 / 300 sec (seed 1000003 +7.6 / +7.7 / +7.5, 20,000
 # iterations), almost all from the bomb line. With that line the Faerie Fire duty build takes the
 # bomb too (+4.2 / +3.7 / +3.2, seed 1000003 +4.9 / +4.3 / +3.5).
+# Round 70753 phase 5 (2026-11-04, hit trade): talents 050022-53200032023012125001-055 (Nature's Reach 2
+# for Natural Shapeshifter 2) on the set's hit-4 step, same knobs: +26.0 / +25.9 / +22.0 at 120 / 180 /
+# 300 sec (orchestration/round_70753/hit_trade/druid.md).
 gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=4,shiftEnergy=60,shiftHoldForBite=0,endBite=2,ripMinTime=8,biteRipTime=4,biteEnergy=45,cdStack=1,tigersFury=0,elune=1,bomb=1,bombEnergy=60,rakeAt5=1,meldAt5=1"
 # The cat's Faerie Fire duty: the caster Faerie Fire from Cat Form (Forever has no Faerie Fire
 # (Feral); it's free in Cat Form, 1.5 sec global cooldown, no cooldown), first after the cooldowns and

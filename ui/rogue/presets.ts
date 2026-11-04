@@ -40,6 +40,12 @@ import Level60SyntheticMutilateGear from './gear_sets/level60_phase1_synthetic_m
 import Level60SyntheticSealFateSwordsGear from './gear_sets/level60_phase1_synthetic_seal_fate_swords.gear.json';
 import Level60SyntheticSubtletyGear from './gear_sets/level60_phase1_synthetic_subtlety.gear.json';
 import Level60SyntheticSwordsGear from './gear_sets/level60_phase1_synthetic_swords.gear.json';
+import Level60SyntheticSwordsHitPlus2Gear from './gear_sets/level60_phase1_synthetic_swords_hit+2.gear.json';
+import Level60SyntheticCombatDaggersHitPlus2Gear from './gear_sets/level60_phase1_synthetic_combat_daggers_hit+2.gear.json';
+import Level60SyntheticSealFateSwordsHitPlus3Gear from './gear_sets/level60_phase1_synthetic_seal_fate_swords_hit+3.gear.json';
+import Level60SyntheticDaggersHitPlus3Gear from './gear_sets/level60_phase1_synthetic_daggers_hit+3.gear.json';
+import Level60SyntheticSubtletyHitPlus2Gear from './gear_sets/level60_phase1_synthetic_subtlety_hit+2.gear.json';
+import Level60SyntheticMutilateHitPlus3Gear from './gear_sets/level60_phase1_synthetic_mutilate_hit+3.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -107,6 +113,34 @@ export const GearLevel60SyntheticMutilate = PresetUtils.makePresetGear('Mutilate
 	group: 'Synthetic',
 });
 
+// The hit-trade steps (round 70753 phase 5, orchestration/round_70753/hit_trade/rogue.md): each build's set with 2 or 3% more
+// gear hit in place of other stats (12 to 13% total hit against the 8% yellow cap; the poisons and white swings still gain).
+// The six builds wear them; talents and rotations are unchanged.
+export const GearLevel60SyntheticSwordsHitPlus2 = PresetUtils.makePresetGear('Combat Swords (hit+2)', Level60SyntheticSwordsHitPlus2Gear, {
+	tooltip: 'The swords set with 2% more hit in place of other stats, for Sinister Strike.',
+	group: 'Synthetic',
+});
+export const GearLevel60SyntheticCombatDaggersHitPlus2 = PresetUtils.makePresetGear('Combat Daggers (hit+2)', Level60SyntheticCombatDaggersHitPlus2Gear, {
+	tooltip: 'The combat daggers set with 2% more hit in place of other stats, for Combat Backstab.',
+	group: 'Synthetic',
+});
+export const GearLevel60SyntheticSealFateSwordsHitPlus3 = PresetUtils.makePresetGear('Seal Fate Swords (hit+3)', Level60SyntheticSealFateSwordsHitPlus3Gear, {
+	tooltip: 'The seal fate swords set with 3% more hit in place of other stats, for Seal Fate Sinister Strike.',
+	group: 'Synthetic',
+});
+export const GearLevel60SyntheticDaggersHitPlus3 = PresetUtils.makePresetGear('Seal Fate Daggers (hit+3)', Level60SyntheticDaggersHitPlus3Gear, {
+	tooltip: 'The seal fate daggers set with 3% more hit in place of other stats, for Seal Fate Backstab.',
+	group: 'Synthetic',
+});
+export const GearLevel60SyntheticSubtletyHitPlus2 = PresetUtils.makePresetGear('Subtlety (hit+2)', Level60SyntheticSubtletyHitPlus2Gear, {
+	tooltip: 'The subtlety set with 2% more hit in place of other stats, for Subtlety.',
+	group: 'Synthetic',
+});
+export const GearLevel60SyntheticMutilateHitPlus3 = PresetUtils.makePresetGear('Mutilate (hit+3)', Level60SyntheticMutilateHitPlus3Gear, {
+	tooltip: 'The mutilate set with 3% more hit in place of other stats, for Mutilate.',
+	group: 'Synthetic',
+});
+
 export const GearPresets = {
 	[Phase.Phase1]: [
 		GearLevel60SyntheticSwords,
@@ -115,6 +149,12 @@ export const GearPresets = {
 		GearLevel60SyntheticSealFateSwords,
 		GearLevel60SyntheticCombatDaggers,
 		GearLevel60SyntheticMutilate,
+		GearLevel60SyntheticSwordsHitPlus2,
+		GearLevel60SyntheticCombatDaggersHitPlus2,
+		GearLevel60SyntheticSealFateSwordsHitPlus3,
+		GearLevel60SyntheticDaggersHitPlus3,
+		GearLevel60SyntheticSubtletyHitPlus2,
+		GearLevel60SyntheticMutilateHitPlus3,
 	],
 	[Phase.Phase2]: [
 		GearLevel60SyntheticSwords,
@@ -123,13 +163,19 @@ export const GearPresets = {
 		GearLevel60SyntheticSealFateSwords,
 		GearLevel60SyntheticCombatDaggers,
 		GearLevel60SyntheticMutilate,
+		GearLevel60SyntheticSwordsHitPlus2,
+		GearLevel60SyntheticCombatDaggersHitPlus2,
+		GearLevel60SyntheticSealFateSwordsHitPlus3,
+		GearLevel60SyntheticDaggersHitPlus3,
+		GearLevel60SyntheticSubtletyHitPlus2,
+		GearLevel60SyntheticMutilateHitPlus3,
 	],
 };
 
 // Combat Swords is the class default since round 70753 (November 2 notes): with Aggression off Backstab and
 // Flash of Steel on Shank it leads Combat Daggers by 16.8 at 180 sec (963.5 against 946.7). Combat Daggers
 // was the default from 2026-10-23.
-export const DefaultGear = GearLevel60SyntheticSwords;
+export const DefaultGear = GearLevel60SyntheticSwordsHitPlus2;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets[]
@@ -590,7 +636,7 @@ const level60Build = (
 export const PresetBuildLevel60CombatDaggers = level60Build(
 	'Combat Daggers',
 	'Level 60 Undead Combat Backstab on the synthetic Phase 1 dagger and a slow mace off hand.',
-	GearLevel60SyntheticCombatDaggers,
+	GearLevel60SyntheticCombatDaggersHitPlus2,
 	TalentsLevel60CombatDaggers,
 	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 	EncounterLevel60CombatDaggers,
@@ -599,7 +645,7 @@ export const PresetBuildLevel60CombatDaggers = level60Build(
 export const PresetBuildLevel60SealFateDaggers = level60Build(
 	'Seal Fate Daggers',
 	'Level 60 Undead Seal Fate Backstab on the synthetic Phase 1 daggers.',
-	GearLevel60SyntheticDaggers,
+	GearLevel60SyntheticDaggersHitPlus3,
 	TalentsLevel60SealFateDaggers,
 	ROTATION_PRESET_LEVEL60_SEAL_FATE_DAGGERS,
 	EncounterLevel60,
@@ -608,7 +654,7 @@ export const PresetBuildLevel60SealFateDaggers = level60Build(
 export const PresetBuildLevel60CombatSwords = level60Build(
 	'Combat Swords',
 	'Level 60 Undead Combat Sinister Strike on a slow synthetic Phase 1 axe and a mace off hand, in a 3 minute raid fight.',
-	GearLevel60SyntheticSwords,
+	GearLevel60SyntheticSwordsHitPlus2,
 	TalentsLevel60CombatSwords,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 	EncounterLevel60CombatSwords,
@@ -617,7 +663,7 @@ export const PresetBuildLevel60CombatSwords = level60Build(
 export const PresetBuildLevel60SealFateSwords = level60Build(
 	'Seal Fate Swords',
 	'Level 60 Undead Seal Fate Sinister Strike on the synthetic Phase 1 axe and a fast dagger off hand.',
-	GearLevel60SyntheticSealFateSwords,
+	GearLevel60SyntheticSealFateSwordsHitPlus3,
 	TalentsLevel60SealFateSwords,
 	ROTATION_PRESET_LEVEL60_SEAL_FATE_SWORDS,
 	EncounterLevel60SapperOnly,
@@ -626,7 +672,7 @@ export const PresetBuildLevel60SealFateSwords = level60Build(
 export const PresetBuildLevel60Mutilate = level60Build(
 	'Mutilate',
 	'Level 60 Undead Assassination Mutilate on two synthetic Phase 1 daggers.',
-	GearLevel60SyntheticMutilate,
+	GearLevel60SyntheticMutilateHitPlus3,
 	TalentsLevel60Mutilate,
 	ROTATION_PRESET_LEVEL60_MUTILATE,
 	EncounterLevel60SapperOnly,
@@ -635,7 +681,7 @@ export const PresetBuildLevel60Mutilate = level60Build(
 export const PresetBuildLevel60Subtlety = level60Build(
 	'Subtlety',
 	'Level 60 Night Elf Subtlety (Death Mark, Boot Knife, Hemorrhage, Premeditation, Vanish and Shadowmeld into Ambush) on the synthetic Phase 1 daggers.',
-	GearLevel60SyntheticSubtlety,
+	GearLevel60SyntheticSubtletyHitPlus2,
 	TalentsLevel60Subtlety,
 	ROTATION_PRESET_LEVEL60_SUBTLETY,
 	EncounterLevel60,

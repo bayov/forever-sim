@@ -25,3 +25,11 @@ keep only its result in your own context:
   itself. Never pass a whole task down to one agent, since that adds a level that only
   waits, and never go more than two levels below the main session. Each agent's brief
   says what it must hand back.
+
+## Waiting on workers
+
+A session that runs workers (cloud sessions or background agents) waits for their messages:
+a hand-back or task notification wakes it. Don't poll them, since every wake re-reads the
+whole context: a wake every 15 minutes for two days is about 200 turns. Schedule at most
+one fallback check-in, 60 minutes or more ahead, in case a worker hangs, and have it read
+`get_session` before any transcript.

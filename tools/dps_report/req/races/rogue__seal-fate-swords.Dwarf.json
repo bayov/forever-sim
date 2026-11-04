@@ -1,0 +1,77 @@
+{
+ "gearSet": "level60_phase1_synthetic_seal_fate_swords_hit+2",
+ "equipment": {
+  "items": [
+   {
+    "id": 994001,
+    "enchant": 1508
+   },
+   {
+    "id": 994002,
+    "enchant": 1249059
+   },
+   {
+    "id": 994003
+   },
+   {
+    "id": 994004,
+    "enchant": 1219587
+   },
+   {
+    "id": 994005,
+    "enchant": 1891
+   },
+   {
+    "id": 994313,
+    "enchant": 1885
+   },
+   {
+    "id": 994007,
+    "enchant": 1248640
+   },
+   {
+    "id": 994008
+   },
+   {
+    "id": 994009,
+    "enchant": 1508
+   },
+   {
+    "id": 994010,
+    "enchant": 1887
+   },
+   {
+    "id": 994314
+   },
+   {
+    "id": 994012
+   },
+   {
+    "id": 994201
+   },
+   {
+    "id": 994202
+   },
+   {
+    "id": 994013,
+    "enchant": 1900
+   },
+   {
+    "id": 994017,
+    "enchant": 1900
+   },
+   {
+    "id": 994015
+   }
+  ]
+ },
+ "note": "1% hit over the cap traded through the set's hit +2 step",
+ "gain": {
+  "dps": 0.48,
+  "se": 0.06,
+  "iterations": 20000,
+  "seed": 1,
+  "duration": 180
+ },
+ "how": "race_gear.py: Dwarf hit 14% against the 8% yellow cap. The preset wears level60_phase1_synthetic_seal_fate_swords_hit+3 (hit step +3); Dwarf wears the set's step +2, level60_phase1_synthetic_seal_fate_swords_hit+2 (10 less gear hit rating, traded at the budget prices by orchestration/tools/hit_steps.py). Dwarf 933.1 with the preset's gear, 933.6 with the swap; gain.se is the paired error (the same seeded fights), 0.40 unpaired."
+}

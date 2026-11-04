@@ -41,6 +41,9 @@ gen() {
 # points moved to Ignite 5 and Flame Throwing (talents 050205203100311531-5551-003): +4.5 / +8.3 /
 # +7.5 at 120 / 180 / 300 sec on two seed sets. A knob search kept every other knob. The finisher
 # pad is now Fireball's flight from 20 yd (0.85 sec, 0.75 for Frostbolt's); the same DPS either way.
+# Round 70753 phase 5 (2026-11-04, hit trade): the Gnome wears the Arcane set's hit-1 step and Flame
+# Throwing 1 moved to Master of Elements 1 (050205203100311531-5550000000001-003), same knobs: +7.4 /
+# +7.6 / +7.6 (orchestration/round_70753/hit_trade/mage.md).
 gen mage_arcane level60_arcane "blastFiller=75,blastClearcast=1,blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=1,conserveMana=0,filler=3,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=1,finisher=1,finishPad=0.85,wand=1"
 # Scorch to 5 Fire Vulnerability stacks and again with under 9 sec left on them (5 sec until the
 # 2026-11-03 knob search, round 70753: +1.4 / +0.6 / +1.5 at 120 / 180 / 300 sec on two seed sets),

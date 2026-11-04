@@ -296,3 +296,81 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
 }
+
+// BEGIN hit-trade steps: warrior_arms (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsWarriorArms...)
+}
+
+var hitStepsWarriorArms = []*proto.UIItem{
+	// Warrior Synthetic Feet (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (991010).
+	{
+		Id: 991300, Name: "Warrior Synthetic Feet (Phase 1, hit -10)", Icon: "inv_boot_plate_raidwarriorhyjalc60_d_01",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:      stats.Stats{stats.Strength: 24, stats.Stamina: 12, stats.Armor: 515}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  9,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
+	},
+}
+
+// END hit-trade steps: warrior_arms
+
+// BEGIN hit-trade steps: warrior_fury (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsWarriorFury...)
+}
+
+var hitStepsWarriorFury = []*proto.UIItem{
+	// Fury Synthetic Head (Phase 1), hit-trade step: 10 hit rating less, 10 Strength more (991019).
+	{
+		Id: 991301, Name: "Fury Synthetic Head (Phase 1, hit -10)", Icon: "inv_helm_plate_raidwarriorhyjalc60_d_01",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:     stats.Stats{stats.Strength: 29, stats.Stamina: 16, stats.Armor: 608}.ToFloatArray(),
+		HitRating: 27,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
+		SetName:        "Warrior Synthetic (Phase 1)",
+	},
+	// Fury Synthetic Feet (Phase 1), hit-trade step: 10 hit rating less, 10 Strength more (991020).
+	{
+		Id: 991302, Name: "Fury Synthetic Feet (Phase 1, hit -10)", Icon: "inv_boot_plate_raidwarriorhyjalc60_d_01",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:     stats.Stats{stats.Strength: 26, stats.Stamina: 12, stats.Armor: 515}.ToFloatArray(),
+		HitRating: 17,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
+	},
+	// Fury Synthetic Head (Phase 1), hit-trade step: 20 hit rating less, 20 Strength more (991019).
+	{
+		Id: 991303, Name: "Fury Synthetic Head (Phase 1, hit -20)", Icon: "inv_helm_plate_raidwarriorhyjalc60_d_01",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:     stats.Stats{stats.Strength: 39, stats.Stamina: 16, stats.Armor: 608}.ToFloatArray(),
+		HitRating: 17,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
+		SetName:        "Warrior Synthetic (Phase 1)",
+	},
+	// Warrior Synthetic Shoulder (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (991003).
+	{
+		Id: 991304, Name: "Warrior Synthetic Shoulder (Phase 1, hit +10)", Icon: "inv_shoulder_plate_raidwarriorhyjalc60_d_01",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:      stats.Stats{stats.Strength: 9, stats.Stamina: 12, stats.Armor: 562}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 24,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
+	},
+	// Warrior Synthetic Chest (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (991005).
+	{
+		Id: 991305, Name: "Warrior Synthetic Chest (Phase 1, hit +10)", Icon: "inv_chest_plate_raidwarriorhyjalc60_d_01",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:     stats.Stats{stats.Strength: 12, stats.Stamina: 14, stats.Agility: 36, stats.Armor: 749}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
+	},
+}
+
+// END hit-trade steps: warrior_fury

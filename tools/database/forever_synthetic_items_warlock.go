@@ -414,3 +414,124 @@ var warlockSyntheticItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
 	},
 }
+
+// BEGIN hit-trade steps: warlock (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsWarlock...)
+}
+
+var hitStepsWarlock = []*proto.UIItem{
+	// Warlock Synthetic Head (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (997001).
+	{
+		Id: 997300, Name: "Warlock Synthetic Head (Phase 1, hit +10)", Icon: "inv_helmet_58",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 7, stats.SpellPower: 39, stats.Armor: 83}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 16,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
+		SetName:        "Warlock Synthetic (Phase 1)",
+	},
+	// Warlock Synthetic Neck (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (997002).
+	{
+		Id: 997301, Name: "Warlock Synthetic Neck (Phase 1, hit +10)", Icon: "inv_jewelry_necklace_17",
+		Type:       proto.ItemType_ItemTypeNeck,
+		Stats:      stats.Stats{stats.Stamina: 8, stats.SpellPower: 22}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 9,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
+	},
+	// Warlock Synthetic Shoulder (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (997003).
+	{
+		Id: 997302, Name: "Warlock Synthetic Shoulder (Phase 1, hit +10)", Icon: "inv_shoulder_23",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 10, stats.Intellect: 3, stats.SpellPower: 28, stats.Armor: 76}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 12,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
+	},
+	// Warlock Synthetic Back (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (997004).
+	{
+		Id: 997303, Name: "Warlock Synthetic Back (Phase 1, hit +10)", Icon: "inv_misc_cape_20",
+		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Stamina: 8, stats.Spirit: 10, stats.SpellPower: 21, stats.Armor: 54}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
+	},
+	// Warlock Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (997006).
+	{
+		Id: 997304, Name: "Warlock Synthetic Wrist (Phase 1, hit +10)", Icon: "inv_bracer_07",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 8, stats.SpellPower: 22, stats.Armor: 44}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 9,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
+	},
+}
+
+// END hit-trade steps: warlock
+
+// BEGIN hit-trade steps: warlock_demonology (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsWarlockDemonology...)
+}
+
+var hitStepsWarlockDemonology = []*proto.UIItem{
+	// Warlock Demonology Synthetic Head (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (997023).
+	{
+		Id: 997305, Name: "Warlock Demonology Synthetic Head (Phase 1, hit +10)", Icon: "inv_helmet_58",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 10, stats.SpellPower: 39, stats.Armor: 83}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 18,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
+		SetName:        "Warlock Synthetic (Phase 1)",
+	},
+	// Warlock Demonology Synthetic Neck (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (997024).
+	{
+		Id: 997306, Name: "Warlock Demonology Synthetic Neck (Phase 1, hit +10)", Icon: "inv_jewelry_necklace_17",
+		Type:       proto.ItemType_ItemTypeNeck,
+		Stats:      stats.Stats{stats.Intellect: 7, stats.SpellPower: 16}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 15,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
+	},
+	// Warlock Demonology Synthetic Shoulder (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (997025).
+	{
+		Id: 997307, Name: "Warlock Demonology Synthetic Shoulder (Phase 1, hit +10)", Icon: "inv_shoulder_23",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 1, stats.SpellPower: 31, stats.Armor: 76}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 12,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
+	},
+	// Warlock Demonology Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (997028).
+	{
+		Id: 997308, Name: "Warlock Demonology Synthetic Wrist (Phase 1, hit +10)", Icon: "inv_bracer_07",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Intellect: 7, stats.SpellPower: 16, stats.Armor: 44}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 15,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
+	},
+	// Warlock Demonology Synthetic Finger II (Phase 1), hit-trade step: 10 hit rating more, 10 crit rating less (997034).
+	{
+		Id: 997309, Name: "Warlock Demonology Synthetic Finger II (Phase 1, hit +10)", Icon: "inv_jewelry_ring_15",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Stamina: 15, stats.SpellPower: 16}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 7,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},
+	},
+}
+
+// END hit-trade steps: warlock_demonology

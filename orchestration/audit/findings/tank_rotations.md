@@ -2,22 +2,45 @@
 
 ## Open
 
-### tank_rotations-20261104-1: Bear's Demoralizing Roar takes the pull's first GCD and costs about a tenth of the score
-- severity: high
-- affects: Feral bear, all three presets
-- found: 2026-11-04, master f62bfc74
-- evidence: Roar is the first priority line, so it takes the first GCD and 10 Rage ahead of Primal Bite and Lacerate, while SafeDPS is set in the first seconds (tools/rotopt/druid_tank.go:103 appends it above them; ui/feral_tank_druid/apls/*.apl.json:9, max_survival :10; tools/tankbench/req/druid_bear_{balanced,max_threat}.json:141, druid_bear_max_survival.json:164). Moving the line to just below "Lacerate to 5 stacks" (paired, `tools/audit/tank_rotations/abtest`, scoring mean): Balanced +197.5 ± 16.7 (1k; 1855 → ~2053, +10.6%), Max threat +207.8 ± 11.7 (1k), Max survival +176.9 ± 30.0 (3k). Every scoring boss gains (+160 to +244 at Balanced); Ragnaros +128 / +150. Healing needed moves -5 to +29 per boss. Removing Roar wins more (+224) but breaks the 11-02 ruling that the tank applies its own Roar, so it isn't proposed. Roar right after Primal Bite: only +40. Sure: high.
-- proposed fix: Roar's line just below the Lacerate keep-up line in all three APLs and requests. Give the template a knob (e.g. `roarAfterLacerate`), since the hard-coded order kept rotopt from finding it. Reproduce B: `tools/audit/tank_rotations/mk_bear.py balanced B.json 'r_=pl.pop(1); pl.insert(3,r_)'` (`pop(2)/insert(4)` for max_survival).
+### tank_rotations-20261104-13: rotopt's -seed overlaps the search's iterations, and the six-boss score's error is understated by about a quarter
+- severity: medium (tooling; no preset choice found wrong)
+- affects: every tank preset decision made with rotopt, tankbench or abtest
+- found: 2026-11-04 (pass 2), master b38ff16
+- evidence: the druid worker's report that "-seed has no effect" and that 3k and 10k means differ by 20-40 at the same build. -seed does reach the sim (tools/rotopt/main.go:90,99; tools/rotopt/run.go:210), but iteration i runs on seed RandomSeed+i (sim/core/sim.go:298-299, :428; split kept in sim/core/sim_concurrent.go:42-50), so -seed 2 at 3k replays 2,999 of seed 1's 3,000 iterations (Onyxia, bear: seed 1 1163.3, seed 2 1163.2, seed 1000001 1111.7), and a 10k confirm at one seed re-uses the 3k search's iterations. The 3k-vs-10k gap is sampling luck, not a bias in N: healing needed is the empirical 95% quantile (sim/core/tank_score.go:203-229), SafeDPS and the death floor don't depend on N, and bear Balanced at 30k is 1843.0 against 1844.5 ± 3.9 over 25 independent 1k seeds; seed 1's first 3,000 iterations are +30 (2.7 SD) lucky. Bosses run at one seed share iteration seeds, so their scores correlate (0.11-0.14) and the six-boss mean's SD is about 1.25× what rotopt (tools/rotopt/run.go:119-121, gainNoise) and abtest's scoring_mean assume (bear 19.3 vs 14.9 at 1k). Paired differences are fine: four of round 2's small calls (Shield Wall 17 vs 16 s, Sunder filler 15 vs 30, Bulwark 13 vs 10 without Broodlord, bear in-fight Enrage) keep their sign on 5 disjoint 3k seeds and two 10k seeds, and the reported paired ± covers the seed-to-seed spread. Sure: high. Scratch: $AUDIT_WORK/tank_rotations/noise/.
+- proposed fix: (a) derive each iteration's seed from hash(seed, i) instead of seed+i (sim/core/sim.go:428), or step -seed by 1e6, and add -seed to tankbench and abtest; (b) rotopt's confirm and every "re-check at 10k" on a seed disjoint from the search's; (c) give each encounter its own seed offset, or multiply the scoring-mean error by 1.25 for absolute scores; (d) report absolute preset scores at one fixed count (10k or more) and never compare them across seeds or counts without their ±; (e) adopt a change only at |diff| > 2× paired error, confirmed on a second disjoint seed; gains under about 3 at 3k stay ties.
+- needs: orchestrator fix
+
+### tank_rotations-20261104-12: Bear Max threat's in-fight Enrage under 60 Rage sits at the knob's edge; higher wins a little
+- severity: low
+- affects: Feral bear Max threat
+- found: 2026-11-04 (pass 2), master b38ff16
+- evidence: ui/feral_tank_druid/apls/max_threat.apl.json:8, tools/tankbench/req/druid_bear_max_threat.json:128 (`currentRage < 60`); enrageRage's Max is 60 (tools/rotopt/druid_tank.go:61). Under 80 Rage, paired, 3k: +3.0 ± 0.5 (every boss ≥ 0 but Chromaggus -2.9 ± 2.1; Ragnaros +9.0 ± 4.7); 1k: under 70 +4.0 ± 0.7, under 90 +3.8, no condition +3.7, under 40 -21.8. Balanced's 40 holds (60: -8.1 ± 12.0; 20: -23.9 ± 10.3). Sure: high, but small (0.1%).
+- proposed fix: raise the knob's Max to 100 (or allow "on cooldown") and re-search Max threat. Repro: `abtest -iters 3000 $P/A_druid_bear_max_threat.json $P/bt_enr80.json` (P=$AUDIT_WORK/tank_rotations/probe).
 - needs: worker fix
 
-### tank_rotations-20261104-2: Warrior's Shield Wall in the last 12 s is too late; the last 16–18 s wins at Balanced and Max survival
-- severity: high
-- affects: Protection warrior Balanced, Max survival
-- found: 2026-11-04, master f62bfc74
-- evidence: line `remainingTime <= 12s` (ui/tank_warrior/apls/level60_{balanced,max_survival}.apl.json:11, tools/tankbench/req/warrior_protection_{balanced,max_survival}.json:162). rotopt's `wallAt` grid is Min 12, Step 12 (tools/rotopt/warrior_tank.go:67), so 13–23 s was never searched (contradicts docs/tank_warrior.md:283-285, "no template knob moves Max survival"). Paired, 3k, scoring mean: 18 s gives Balanced +46.0 ± 7.1 (+1.2%) and Max survival +175.3 ± 19.7 (+11.8%); 16 s gives +37.1 ± 5.8 and +137 ± 16; 20 s +20 / +110; 22 s loses. Vaelastrasz (17 ± 8 s fight) goes the other way: -107 / -283 at 18 s, -56 / -132 at 16 s. Ragnaros +13 / +52 (noise). Max threat at 18 s is -2.4 ± 3.9, so leave it at 12 s.
-- proposed fix: 18 s (or 16 s, which costs Vaelastrasz half as much) for Balanced and Max survival, and a finer grid in the template (Min 6, Step 2) with a re-search. Reproduce B: `tools/audit/tank_rotations/mk_warrior.py tools/tankbench/req/warrior_protection_balanced.json B.json setcond 4 '{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"18s"}}}}'`
+### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
+- severity: medium
+- affects: Protection warrior Max survival
+- found: 2026-11-04 (pass 2), master b38ff16
+- evidence: round 2 gave Max survival the armor on-use trinket 990617 (tools/tankbench/req/warrior_protection_max_survival.json:61) with both trinket lines held by `trinketAt=35` and a uses-lost guard (:146, :163); the lines do what their notes say. Against Balanced's choice, 991018 used on the pull (paired, 3k, B minus preset): -21.5 ± 10.8 on the scoring mean, but Broodlord -483 and every other boss but Onyxia favours 991018 (Chromaggus +94, Golemagg +49, Magmadar +78, Onyxia -38, Vaelastrasz +171; Ragnaros +182): without Broodlord, 991018 on the pull is about +71. The hold alone (990617 on the pull vs held 35 s): -104.7 ± 10.1, of which Broodlord -599. The same Broodlord-script dependency as finding 3 (tools/encounters/broodlord.json's first-ability timers, called "probably wrong" in that file). Sure: medium.
+- proposed fix: decide with finding 3's ruling. If Broodlord's timers aren't trusted, Max survival goes back to 991018 on the pull (Balanced's trinket); if they are, keep it. Repro: `abtest -iters 3000 $P/A_warrior_protection_max_survival.json $P/ws_aptrink.json`.
+- needs: user ruling
+
+### tank_rotations-20261104-10: Warden Balanced loses about 96 by wearing 990015 on cooldown instead of the armor trinket held for the last 30 s
+- severity: high (+17% of a 548 score)
+- affects: Warden shaman Balanced
+- found: 2026-11-04 (pass 2), master b38ff16
+- evidence: tools/tankbench/req/shaman_warden_balanced.json trinket slot (990015) and the autocast line (:189; ui/warden_shaman/apls/level60_balanced.apl.json:10). B = 999216 in slot 14, held as in finding 9. Paired, 3k: +95.6 ± 7.3 (Broodlord +372, Onyxia +136, Golemagg +22, Vaelastrasz +18, Chromaggus +14, Magmadar +11; Ragnaros -8 ± 24); without Broodlord about +36, still a win. 1k: hold 25 s +95, 35 s +72. At Max threat the same swap loses -26.3 ± 3.8, so leave Max threat. Sure: medium-high. This is a rotation and gear choice, not the class gap ruled on in standards 40.
+- proposed fix: with finding 9's knob, let rotopt choose the armor trinket at Balanced and re-search. Repro: `abtest -iters 3000 $P/A_shaman_warden_balanced.json $P/sb_armt30.json`.
 - needs: worker fix
-- fixed: 2026-11-04, 5d9a3aa18 (warrior): Shield Wall in the last 17 s for Balanced and Max survival (+20.7 ± 5.4, +113.2 ± 13.5 paired 3k vs 12 s; Vaelastrasz -112 / -163), Max threat stays 12 s; template grid 1 s (d9e001609).
+
+### tank_rotations-20261104-9: Warden Max survival fires its armor trinket on the pull; held for the last 25-30 s it gains about 330
+- severity: high (+7.5% of a -4357 score)
+- affects: Warden shaman Max survival
+- found: 2026-11-04 (pass 2), master b38ff16
+- evidence: armor trinket 999216 is used by autocastOtherCooldowns, "trinkets on cooldown" (tools/tankbench/req/shaman_warden_max_survival.json:189, ui/warden_shaman/apls/level60_max_survival.apl.json:10); the template has no hold knob (tools/rotopt/shaman_tank.go:64, :149, :154), though the warrior's got `trinketAt` in round 2. B = an explicit top line for 999216 with the warrior's hold condition, (remainingTime <= 30s) or spellUsesLostByDelay(remainingTime - 30s, minTimeLeft 20s) > 0. Paired, 3k: +328.5 ± 17.0 (Broodlord +1459, Onyxia +284, Chromaggus +125, Golemagg +53, Magmadar +51, Vaelastrasz 0; Ragnaros +78 ± 63); without Broodlord about +92, still a win. Hold scan at 1k: 25 s +350, 30 s +334, 35 s +273, 40 s +186, 45 s +71. Sure: high.
+- proposed fix: a `trinketAt` knob in shaman_tank.go like warrior_tank.go's, and a re-search of all three Warden presets (30 s for Max survival). Repro: `abtest -iters 3000 $P/A_shaman_warden_max_survival.json $P/ss_trg30.json`.
+- needs: worker fix
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -27,6 +50,31 @@
 - proposed fix: the knob gets Step 1–2 and a re-search. Adopt 13 s only if Broodlord's first-ability timers are trusted; otherwise keep 10 s and fix the timers first. Reproduce B: `tools/audit/tank_rotations/mk_paladin.py A.json B.json bulwark_13s`.
 - needs: user ruling
 - left open: 2026-11-04 (tank-paladin, e9751cc). bulwarkAt now steps by 1 sec, and rotopt holds it at 10 (`-freeze bulwarkAt`). Paired, 3,000 iterations, 13 s minus 10 s: on the five scoring bosses without Broodlord Max threat -1.1 ± 1.1, Balanced -6.2 ± 3.0, Max survival -18.5 ± 9.0 (Vaelastrasz -24 / -66 / -199, Onyxia +9 / +26 / +79); with Broodlord +16.5 ± 1.4 / +49.3 ± 3.9 / +147.9 ± 11.7 (Broodlord +105 / +327 / +980). 13 s wins only on Broodlord's suspect timers, so 10 s stays. The user's call (docs/tank_paladin.md, Calls): 13 s if Broodlord's timers are trusted, and Bulwark on a timer every pull at all.
+- pass 2: still open (user ruling). Bulwark 13 s vs 10 s without Broodlord: -3.6 mean over 5 disjoint 3k seeds (-0.1 to -9.4), -4.4 / -4.2 at 10k, so 10 s holds there; the sign rests on Vaelastrasz (-55) against Onyxia (+23) and Magmadar (+11), i.e. on the encounter set, not on noise. Finding 11 below is the warrior's version of the same Broodlord question.
+
+## Resolved
+
+### tank_rotations-20261104-1: Bear's Demoralizing Roar takes the pull's first GCD and costs about a tenth of the score
+- severity: high
+- affects: Feral bear, all three presets
+- found: 2026-11-04, master f62bfc74
+- evidence: Roar is the first priority line, so it takes the first GCD and 10 Rage ahead of Primal Bite and Lacerate, while SafeDPS is set in the first seconds (tools/rotopt/druid_tank.go:103 appends it above them; ui/feral_tank_druid/apls/*.apl.json:9, max_survival :10; tools/tankbench/req/druid_bear_{balanced,max_threat}.json:141, druid_bear_max_survival.json:164). Moving the line to just below "Lacerate to 5 stacks" (paired, `tools/audit/tank_rotations/abtest`, scoring mean): Balanced +197.5 ± 16.7 (1k; 1855 → ~2053, +10.6%), Max threat +207.8 ± 11.7 (1k), Max survival +176.9 ± 30.0 (3k). Every scoring boss gains (+160 to +244 at Balanced); Ragnaros +128 / +150. Healing needed moves -5 to +29 per boss. Removing Roar wins more (+224) but breaks the 11-02 ruling that the tank applies its own Roar, so it isn't proposed. Roar right after Primal Bite: only +40. Sure: high.
+- proposed fix: Roar's line just below the Lacerate keep-up line in all three APLs and requests. Give the template a knob (e.g. `roarAfterLacerate`), since the hard-coded order kept rotopt from finding it. Reproduce B: `tools/audit/tank_rotations/mk_bear.py balanced B.json 'r_=pl.pop(1); pl.insert(3,r_)'` (`pop(2)/insert(4)` for max_survival).
+- needs: worker fix
+- fixed: 2026-11-04, bde6912 (rotopt knob `roarAfterLacerate`), f0ff977 (all three presets; +218 / +191 / +270 at own weight from the move alone, 1k)
+- pass 2: holds. Roar below the Lacerate keep-up line in all three (ui/feral_tank_druid/apls/*.apl.json:11-12); moving it back to the top costs -234.9 ± 8.3 / -212.6 ± 11.6 / -120.3 ± 30.0 (Max threat / Balanced / Max survival, paired, 3k).
+- resolved: 2026-11-04, f0ff977
+
+### tank_rotations-20261104-2: Warrior's Shield Wall in the last 12 s is too late; the last 16–18 s wins at Balanced and Max survival
+- severity: high
+- affects: Protection warrior Balanced, Max survival
+- found: 2026-11-04, master f62bfc74
+- evidence: line `remainingTime <= 12s` (ui/tank_warrior/apls/level60_{balanced,max_survival}.apl.json:11, tools/tankbench/req/warrior_protection_{balanced,max_survival}.json:162). rotopt's `wallAt` grid is Min 12, Step 12 (tools/rotopt/warrior_tank.go:67), so 13–23 s was never searched (contradicts docs/tank_warrior.md:283-285, "no template knob moves Max survival"). Paired, 3k, scoring mean: 18 s gives Balanced +46.0 ± 7.1 (+1.2%) and Max survival +175.3 ± 19.7 (+11.8%); 16 s gives +37.1 ± 5.8 and +137 ± 16; 20 s +20 / +110; 22 s loses. Vaelastrasz (17 ± 8 s fight) goes the other way: -107 / -283 at 18 s, -56 / -132 at 16 s. Ragnaros +13 / +52 (noise). Max threat at 18 s is -2.4 ± 3.9, so leave it at 12 s.
+- proposed fix: 18 s (or 16 s, which costs Vaelastrasz half as much) for Balanced and Max survival, and a finer grid in the template (Min 6, Step 2) with a re-search. Reproduce B: `tools/audit/tank_rotations/mk_warrior.py tools/tankbench/req/warrior_protection_balanced.json B.json setcond 4 '{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"18s"}}}}'`
+- needs: worker fix
+- fixed: 2026-11-04, 5d9a3aa18 (warrior): Shield Wall in the last 17 s for Balanced and Max survival (+20.7 ± 5.4, +113.2 ± 13.5 paired 3k vs 12 s; Vaelastrasz -112 / -163), Max threat stays 12 s; template grid 1 s (d9e001609).
+- pass 2: holds. remainingTime <= 17s (Balanced, Max survival :11), 12 s at Max threat. Paired, 3k, variant minus preset: Balanced 12 s -27.4 ± 6.1, 16 s -8.8 ± 4.2, 18 s -5.6 ± 5.0; Max survival 12 s -89.9 ± 12.8, 16 s -16.2 ± 10.4, 18 s -20.6 ± 11.0. 16 vs 17 s holds on 5 disjoint seeds and at 10k (-5.4, -7.0).
+- resolved: 2026-11-04, 5d9a3aa18
 
 ### tank_rotations-20261104-4: Warden's Stormstrike sits above Earth Shock, which makes more threat per GCD
 - severity: high (Max threat); medium elsewhere
@@ -36,6 +84,8 @@
 - proposed fix: emit the shock before Stormstrike in the template (swaps lines 12↔13 in level60_max_threat/max_survival, 11↔12 in level60_balanced, and the requests). Confirm Balanced and Max survival with a rotopt -eval first. Reproduce: `tools/audit/tank_rotations/mk_warden.py <preset> swap 'i=[j for j,a in enumerate(pl) if a["action"].get("castSpell",{}).get("spellId",{}).get("spellId")==17364][0]; pl[i],pl[i+1]=pl[i+1],pl[i]'`.
 - needs: worker fix
 - fixed: 2026-11-04, 952a7a4 (template knob `shockFirst`, default 1) and dd4b82a (the three presets re-searched with it; paired: Max threat +91.6 ± 10.6, Balanced +105.0 ± 12.5, Max survival +129.3 ± 33.1).
+- pass 2: holds. Earth Shock above Stormstrike in all three; swapping back costs -99.0 ± 6.1 / -88.1 ± 11.6 / -95.9 ± 34.8 (3k).
+- resolved: 2026-11-04, dd4b82a
 
 ### tank_rotations-20261104-5: Bear Max survival's Enrage at -3 s loses to Balanced's -1 s
 - severity: medium (+46, about 5% of a negative score of -844)
@@ -44,6 +94,9 @@
 - evidence: prepull shift -4.5 s and Enrage -3 s (tools/tankbench/req/druid_bear_max_survival.json:111, :125), reasoned in docs/tank_druid.md:224 as "so its armor cut ends sooner". Shift -2.5 s and Enrage -1 s, paired, 3k: +45.6 ± 16.6 on top of finding 1, +60.1 ± 17.6 on today's preset. Chromaggus -6 and Magmadar -13 (noise); Ragnaros -50 ± 200.
 - proposed fix: shift at -2.5 s and Enrage at -1 s, as Balanced does, and fix the doc's reason. Reproduce: `tools/audit/tank_rotations/mk_bear.py max_survival B.json 'r_=pl.pop(2); pl.insert(4,r_); pre[0]["doAtValue"]["const"]["val"]="-2.5s"; pre[1]["doAtValue"]["const"]["val"]="-1s"'`.
 - needs: worker fix
+- fixed: 2026-11-04, f0ff977. Confirmed (-1 s beats -3 s by +50.7 ± 16.0, 3k), but the re-search puts Enrage in the fight at every weight, which beats both; the doc's reason is gone with it
+- pass 2: holds. Enrage in the fight under 40 Rage (Balanced, Max survival :9); pre-pull -1 s loses by 60 (5 disjoint seeds at 3k: -46 to -69; 10k: -60, -70).
+- resolved: 2026-11-04, f0ff977
 
 ### tank_rotations-20261104-6: Paladin's on-use trinket waits behind every GCD line
 - severity: medium
@@ -53,6 +106,8 @@
 - proposed fix: move the line to the top, with the note "Trinkets on cooldown from the pull, off the global cooldown." Reproduce: `tools/audit/tank_rotations/mk_paladin.py A.json B.json autocast_top`.
 - needs: worker fix
 - fixed: 2026-11-04, 86b9631 (the presets; rotopt's template in e9751cc).
+- pass 2: holds. autocastOtherCooldowns is line 8 in all three; moving it last costs -12.9 ± 0.2 / -12.3 ± 0.4 / -11.0 ± 1.3 (3k).
+- resolved: 2026-11-04, 86b9631
 
 ### tank_rotations-20261104-7: Warrior Max threat's Sunder filler at 30 Rage is a little high
 - severity: low
@@ -62,6 +117,8 @@
 - proposed fix: Sunder filler at 15 Rage, if the template is re-searched anyway.
 - needs: worker fix
 - fixed: 2026-11-04, 5d9a3aa18: Sunder filler at 15 Rage on the re-searched Max threat talents (+6.9 ± 1.6; -0.3 ± 0.8 on the old ones).
+- pass 2: holds. currentRage >= 15 (level60_max_threat.apl.json:17); 30 loses -6.9 ± 1.6 (3k), -5.4 to -8.1 on 5 disjoint seeds, -5.7 at 10k.
+- resolved: 2026-11-04, 5d9a3aa18
 
 ### tank_rotations-20261104-8: Rotation notes that don't say what the line does (standards 31)
 - severity: low
@@ -72,5 +129,6 @@
 - needs: worker fix
 - fixed (shaman part, (a)): 2026-11-04, 952a7a4 (the template's shield note; the APLs carry it since af78f8a).
 - fixed (warrior part b): 2026-11-04, c588675a6 and 61db5cccb. (a) and (c) are the shaman and druid workers'.
-
-## Resolved
+- fixed (bear part): 2026-11-04, bde6912 (Frenzied Regeneration's note: "at the pull's Rage peak"), f0ff977 (the doc's Enrage wording, rewritten with the new presets)
+- pass 2: all three parts hold (Warden shield note level60_*.apl.json:8-9; warrior Defensive Stance note balanced/max_survival:19, max_threat:18; bear FR note :8; docs/tank_druid.md:164 labels the pre-pull Enrage as round 1).
+- resolved: 2026-11-04, f0ff977

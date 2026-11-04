@@ -18,7 +18,8 @@ import (
 // The Feral tank's on-use trinket (tools/database/forever_synthetic_items_druid_tank.go, standards 36)
 // is the defensive kind of the same worth: 1,665 bonus armor (at 0.1 a point, 166.5 weighted points,
 // 37 over 180 sec) for 20 sec every 2 min, on the defensive trinket cooldown, used on a timer that
-// reads no health.
+// reads no health. The bear presets wear the Strength one (998115) instead, which every bear
+// objective scores higher (docs/tank_druid.md); 990815 is there for the gear search.
 const (
 	BalanceSyntheticSpellPowerTrinket = 998015
 	FeralSyntheticStrengthTrinket     = 998115

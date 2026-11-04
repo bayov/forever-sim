@@ -9,7 +9,7 @@
             "equipment": {
               "items": [
                 {
-                  "id": 997001,
+                  "id": 997300,
                   "enchant": 1509
                 },
                 {
@@ -85,7 +85,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "252-0050003201-0050345003101351",
+            "talentsString": "242-0050003201-0050355003101351",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",

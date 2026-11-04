@@ -12,7 +12,7 @@
     "Protection",
     "Retribution"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase1_synthetic_hit-3",
   "apl": "level60",
   "published": {
     "dps": 1092.1,
@@ -78,5 +78,5 @@
     "Seal of Righteousness adds 12% of spell power per hit with a two-hander, counted once, as its tooltip says (spell 70425). Counted twice, DPS would be 46-51 higher. At the proc spell's 0%, it would be 53-59 lower.",
     "No filler explosive, because each 1s cast resets the swing."
   ],
-  "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh)."
+  "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh). 2026-11-04 (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/paladin.md): talents kept (050050002-503-05233101201301351), on the hit-3 step (level60_phase1_synthetic_hit-3, 30 hit rating traded for 30 crit rating, melee hit 11% to the 8% cap); 1107.7 / 1103.2 / 1093.3 at 120 / 180 / 300 s (+12.2 / +11.1 / +13.0), not yet re-verified here."
 }

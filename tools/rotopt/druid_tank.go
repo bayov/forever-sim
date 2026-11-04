@@ -36,6 +36,9 @@ func (druidTank) Knobs() []Knob {
 	return []Knob{
 		// Demoralizing Roar again once it has less than roarRefresh seconds left on the boss.
 		{Name: "roarRefresh", Default: 3, Min: 0, Max: 9, Step: 1},
+		// Demoralizing Roar's line just below Lacerate's keep-up line, 0/1 (0: ahead of the attacks,
+		// where it takes the pull's first GCD and Rage; tank_rotations-20261104-1).
+		{Name: "roarAfterLacerate", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Primal Bite on cooldown, 0/1.
 		{Name: "primalBite", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Lacerate: 0 never, 1 build it to 5 stacks and keep them up (again under lacerateRefresh
@@ -93,15 +96,21 @@ func (druidTank) Build(k Knobs) *proto.APLRotation {
 		items = append(items, barkskin)
 	}
 	if k["frRage"] > 0 {
-		items = append(items, cast(bearFrenziedRegen, ge(currentRage(), num(k["frRage"])),
-			fmt.Sprintf("Frenzied Regeneration on cooldown at %.0f Rage or more (on a timer: a scoring run reads no health).", k["frRage"])))
+		note := fmt.Sprintf("Frenzied Regeneration on cooldown at %.0f Rage or more (on a timer: a scoring run reads no health).", k["frRage"])
+		if k["frRage"] >= 100 {
+			note = "Frenzied Regeneration at 100 Rage: it fires at the pull's Rage peak, about once a fight (a scoring run reads no health)."
+		}
+		items = append(items, cast(bearFrenziedRegen, ge(currentRage(), num(k["frRage"])), note))
 	}
 	if k["enrage"] >= 2 {
 		items = append(items, cast(bearEnrage, lt(currentRage(), num(k["enrageRage"])),
 			fmt.Sprintf("Enrage in the fight under %.0f Rage (off the GCD; 16%% less armor from items for 10 sec).", k["enrageRage"])))
 	}
-	items = append(items, cast(bearDemoRoar, lt(targetAuraRemainingTime(bearDemoRoar), seconds(k["roarRefresh"])),
-		"Demoralizing Roar kept up on the boss: the tank applies its own (the bench drops the raid's Roar and Shout)."))
+	roar := cast(bearDemoRoar, lt(targetAuraRemainingTime(bearDemoRoar), seconds(k["roarRefresh"])),
+		"Demoralizing Roar kept up on the boss: the tank applies its own (the bench drops the raid's Roar and Shout).")
+	if k["roarAfterLacerate"] == 0 {
+		items = append(items, roar)
+	}
 
 	keepLacerate := cast(bearLacerate, or(lt(targetAuraNumStacks(bearLacerate), num(5)), lt(dotRemainingTime(bearLacerate), seconds(k["lacerateRefresh"]))),
 		fmt.Sprintf("Lacerate to 5 stacks, and again before they drop (under %.0f sec left).", k["lacerateRefresh"]))
@@ -113,6 +122,9 @@ func (druidTank) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["lacerate"] >= 1 && k["lacerateFirst"] == 0 {
 		items = append(items, keepLacerate)
+	}
+	if k["roarAfterLacerate"] == 1 {
+		items = append(items, roar)
 	}
 	if k["barkskin"] == 2 {
 		items = append(items, barkskin)
