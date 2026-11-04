@@ -1,38 +1,48 @@
-# Fairness pass 29 (2026-11-04, master 6b480b0)
+# Fairness pass 30 (2026-11-04, master 0facd94)
 
-Result: quiet (no new finding). 141 watched files changed since fb584ea (97 commits), including `sim/core`, the item
-database and the warrior / rogue / shaman code, so this was a full pass: `audit1b.py` and a full 5k race sweep on a
-CLI and tree built at 6b480b0 (origin/master had moved to 41aa107 meanwhile; not audited). New baseline: 6b480b0.
+Result: quiet (no new finding). 336 watched files changed since 6b480b0 (335 commits): `sim/core`, the item
+database, standards 29 and 40, most classes' presets and the report requests, so this was a full pass: `audit1b.py`,
+a full 5k race sweep on the loop's 0facd94 CLI and tree, and a second best-race sweep with the req/races overrides.
+New baseline: 0facd94.
 
 ## What changed
 
 | Change | Commit | Effect on fairness |
 |---|---|---|
-| Warrior hotfix push 113539 (tree, Spearing Strike, Raging Blows out, Reckless Swings on the GCD) | 7cd399e88, e07adf11b | Fury 2H -20.0, Fury DW -17.8, Arms -9.9; published within 0.3 |
-| Rogue hotfix push 113483 (tree, Shank, Mutilate, Venom) | 316a600ac, e9185b1aa | SF Daggers -18.2, SF Swords -16.6, Mutilate -8.5, Combat Swords -4.8, Combat Daggers +2.7, Sub -0.4 |
-| Forever downranking moved into sim/core, applied to every spell | 8f304b240, b57f5cc0a | no report build moves (every build casts top ranks; probe abaec7e0b agrees) |
-| Shaman Chain Lightning 0.714, metas refreshed | a4fc1d715 | no DPS change (CL not in the rotations); shaman metas now current |
-| Power Infusion heals, absorb pipeline, healer classes | 72b236b48 and others | no DPS report build moves |
-| Item db for 70755, random suffixes to 60 | 993314e0e, bd00cd090 | no DPS change in any class (synthetic sets unchanged) |
-| Labeled random streams in the report sims | ca0ca1285 | report-tool only; shared 20k run matches builds |
-| Standards 40 (Enhancement sims both imbue pairings on endgame gear) | 0998dd5b7 | ruling for later gear; Phase 1 synthetic keeps WF Weapon + FT Totem |
+| Phase 5 hit-trade regears (standards 4) | 74cc2b8e3, 3f4d44d4a, 3e4796fe7, c8a7b4ac3, 31c10b61c | Feral +25.8, Ret +11.8, Enhancement +8.6, Arcane +7.9, rogues +4.2 to +6.0, Destruction Fire +0.8 |
+| Shaman hotfix push 113380 (Lightning Bolt, Chain Lightning, shocks) | 87922bb77 | Elemental +7.0, Mana Tide +6.9, Enh variants +1.4 to +6.5 |
+| Unbridled Wrath on auto attacks only | 9173d087a | Arms +0.5 (request unchanged), Fury within 0.1 |
+| Standards 29: hit-trade race gear for every race | 18f431e15 | report race still best (see below) |
+| Tank / healer engine (mana threat, raid damage share, health costs tank-only, Berserking reads) | 49f02184c, b2c16f671, 318fc7efb, 87f28803b | no DPS build moves |
+| Standards 40 (tank rulings) | f09015d81 | tanks only |
 
 ## What I checked
 
 - Gear: `audit1b.py` 19 of 19 "5a PASS | 1b PASS".
-- Sweep (5k, seed 1, every race) against the f331f0c baseline: every hunter, mage, warlock, druid, paladin, priest and
-  shaman build identical to 0.1. Only warrior and rogue moved, both from their own hotfix commits. Nothing shared leaked.
-- Published against current: within 1.4 everywhere but five rogue metas (SF Daggers -17.6, SF Swords -15.9, Mutilate
-  -8.2, Combat Swords -5.2, Combat Daggers +3.2). Already open as results-20261104-1 (metas lag; builds.json is right);
-  independent confirmation here, not filed again. results-20261102-1's shaman gaps are gone (+0.3 to +2.1 now).
-- Best race: report race is best within noise. Combat Swords Undead 0.7 under Orc, Combat Daggers Undead 0.2 under
-  Gnome (both under the 1.0 note threshold).
+- Movement against the 6b480b0 baseline: every hunter, the other mages and warlocks, priests, Balance, Fury DW / 2H
+  identical to 0.1. Every move above traces to its own class's commit. Nothing shared leaked.
+- Published against current: 13 builds off by more than 1.5 (Feral +26.5, SF Swords -11.9, SF Daggers -11.6, Ret
+  +11.0, Enhancement +9.1, Arcane +7.9, Combat Daggers +7.9, Elemental +7.3, Subtlety +4.0, Mutilate -2.7, ...;
+  variants Enh Mana Tide +7.4, Water Shield +7.3, Elemental Mana Tide +7.3). Already open as results-20261104-1 / -2
+  (metas lag the regears; the phase 5 re-sim brief c40ede3b5 covers it). Independent confirmation here, not filed
+  again. Note for that re-sim: the stale numbers misorder the published ranking (Feral shown behind both Furies,
+  now ahead of them; Combat Daggers shown under Balance, now 2.4 above).
+- Best race: report race is best everywhere. With the req/races overrides applied (`OVERRIDES=1 sweep.py`, the 27
+  builds that have files) the overridden races gain 0.5 to 11 (High Order Fire +11.2, Balance Skyborne +10.6), but none
+  passes the report race. Seal Fate Swords' Undead ties Night Elf and Gnome (0.2 under, noise).
 
 ## Ranking
 
-Lone Wolf 1314.4, MM 1254.6, BM 1195.7, Enhancement 1159.9, Fury 2H 1150.7, Feral 1139.7, Fury DW 1135.8, Ret 1091.3,
-Arms 1088.0, ... Smite 781.0 last. Top over bottom 1.68x. Full table: `orchestration/fairness_report.md` §1.
+Lone Wolf 1314.4, MM 1254.6, BM 1195.7, Enhancement 1168.5, Feral 1165.5, Fury 2H 1150.8, Fury DW 1135.7, Ret 1103.1,
+Arms 1088.5, ... Smite 781.0 last. Top over bottom 1.68x. Full table: `orchestration/fairness_report.md` §1.
+
+## Tooling
+
+- `tools/audit/fairness/sweep.py`: `THREADS` (default 4) for loaded machines, and `OVERRIDES=1` to sim each race the
+  way the report does (req/races rotation and hit-trade gear via the tree's `race_override.py`). The baseline log is
+  without overrides; keep movement comparisons on plain sweeps.
 
 ## Open items (carried)
 
-- None new. Next full sweep when `sim/` or the database changes again.
+- None new. Next full sweep when `sim/` or the database changes again, and after the phase 5 report re-sim (expect
+  the published gaps to close).

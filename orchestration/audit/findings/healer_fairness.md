@@ -2,6 +2,41 @@
 
 ## Open
 
+### healer_fairness-20261104-5: the Holy paladin raid preset's Holy Light lines cost it 0.025 carry; a Flash of Light raid paladin is first, not third
+- severity: high (+0.025 mean raid carry, 1.8%; the paladin goes from 1.413, third, to 1.438, level with the Holy priest and druid at 1.437)
+- affects: Holy paladin raid healer (tools/healbench/req/paladin_holy_raid.json and the ui preset it comes from)
+- found: 2026-11-04, master 0facd9428
+- evidence: healbench -role raid -carry, 1,000 iterations, all 7 files, paired seeds (same seed for every variant):
+  the tank preset (paladin_holy.json) in the raid role 1.034 .904 1.121 2.695 1.954 1.331 1.027 (mean 1.438) against
+  the raid preset 0.984 .905 1.081 2.699 1.918 1.301 1.002 (1.413); up on 6 of 7, Golemagg -0.004. In the raid role
+  the bench has no tank, so the tank preset's Holy Light and Oath of Light lines (target Tank 0) never fire: removing
+  its Holy Light lines leaves every cell unchanged (1.438), and adding its Oath of Light line to the raid preset
+  changes nothing (1.413). What runs is Lay on Hands, Holy Shock, Flash of Light under 35% and Flash of Light 6 at the
+  most hurt at its 0.7x gate. The raid preset with its Holy Light 9/8 and Divine Favor lines removed: 1.426 (+0.013;
+  the rest is the Flash of Light lines' gate). Mana is no limit either way (about 7,900 of the pool left at carry, no
+  OOM). Answers open question 4 of orchestration/fairness_healers.md (pass 1 saw +0.017 on 3 files at 500 it).
+  Variant requests were built with jq/python from the two presets; rows in `ref/healer_fairness/bench_0facd94.tsv`
+  (healers paladin_holy in role raid, paladin_holy_raid_nohl, paladin_holy_tank_nohl, paladin_holy_tank_mosthurt).
+  Sure of the direction (paired seeds, 6 of 7 files); the best raid APL itself is not searched.
+- proposed fix: re-tune the raid preset with Holy Light 9/8 and Divine Favor dropped or gated far higher, and Flash
+  of Light 6 at the most hurt at 0.7x (as the tank preset's); the healer_rotations auditor can search the best. Then
+  re-bench H3's raid column.
+- needs: worker fix
+
+### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
+- severity: low (blocks a check; moves no number)
+- affects: the pass's step 2 for every healer
+- found: 2026-11-04, master c8f5858bd
+- evidence: `jq '.raidHealing' tools/encounters/<boss>.json` holds `healerClasses` (mean count a kill), `hpsEachHealer`
+  (one median for all healers, with overheal), `raidHps`, `hpsOnTanks`, `hpsOnOthers`, nothing by class
+  (`tools/encounters/raid_from_logs.py:144-158`); the mined `tools/encounters/logs/anniversary_*_raid.json` keep
+  the same. Composition over the 7 files: priest 5.11, shaman 3.00, paladin 1.69, druid 1.21 of 11.
+- proposed fix: have `wclcli.py raid` (tools/warcraftlogs/wclcli.py) keep effective HPS and tank share by healer
+  class (median per player), re-mine, and store it in `raidHealing.byClass`.
+- needs: orchestrator fix
+
+## Resolved
+
 ### healer_fairness-20261104-1: the tank-role bench has no raid, so Prayer of Mending ping-pongs between the tank and the priest
 - severity: high (Holy priest tank carry -0.085 mean, -0.177 on Magmadar, once fixed; the priest's lead over the shaman goes from +0.135 to +0.05)
 - affects: Holy priest tank healer (the Discipline preset casts no PoM); every tank-role ranking in docs/healing_sim.md H3
@@ -22,6 +57,7 @@
 - proposed fix: in `-role tank`, keep the fillers (or a few idle raid members) in the raid, taking no raid damage and
   not counted in the score; or keep PoM from jumping to healers in a tank bench. Then re-bench the tank columns of H3.
 - needs: orchestrator fix
+- resolved: 2026-11-04, 7b6623f27 (healbench: the tank role keeps the raid, idle). Re-benched on 0facd9428: the Holy priest tank lead over the shaman is +0.020 (1.262 against 1.242).
 
 ### healer_fairness-20261104-2: the shared "missing at least the heal's Expected Healing" gate holds back the shaman, paladin and druid tank presets
 - severity: medium (shaman +0.026 mean carry, paladin +0.018, druid +0.011, priest +0.005; no rank changes)
@@ -36,6 +72,7 @@
 - proposed fix: re-tune each tank preset's gate (0.6-0.8x) in its class's preset and request; the healer_rotations
   auditor can confirm the best per class.
 - needs: worker fix
+- resolved: 2026-11-04, 324d64834 (shaman 0.6x), 0b15937a8 (paladin 0.7x), a7d9b57ef (priest 0.8x/0.5x), bc8e5473b (druid 0.8x/0.7x); the workers measured each against the old gate on all 7 files.
 
 ### healer_fairness-20261104-3: the Holy priest preset's slot 16 is a budgeted synthetic wand, the others' a stat-less relic; its Power Infusion line never fires
 - severity: low (wand -0.003 carry mean when removed; Power Infusion 0)
@@ -48,17 +85,4 @@
 - proposed fix: count the wand inside the 902 budget (or give it no stats), and drop the dead Power Infusion line
   (or take the talent if it gains).
 - needs: worker fix
-
-### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
-- severity: low (blocks a check; moves no number)
-- affects: the pass's step 2 for every healer
-- found: 2026-11-04, master c8f5858bd
-- evidence: `jq '.raidHealing' tools/encounters/<boss>.json` holds `healerClasses` (mean count a kill), `hpsEachHealer`
-  (one median for all healers, with overheal), `raidHps`, `hpsOnTanks`, `hpsOnOthers`, nothing by class
-  (`tools/encounters/raid_from_logs.py:144-158`); the mined `tools/encounters/logs/anniversary_*_raid.json` keep
-  the same. Composition over the 7 files: priest 5.11, shaman 3.00, paladin 1.69, druid 1.21 of 11.
-- proposed fix: have `wclcli.py raid` (tools/warcraftlogs/wclcli.py) keep effective HPS and tank share by healer
-  class (median per player), re-mine, and store it in `raidHealing.byClass`.
-- needs: orchestrator fix
-
-## Resolved
+- resolved: 2026-11-04, dda14db65 (990514 carries no stats; Power Infusion line dropped).

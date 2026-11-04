@@ -2,6 +2,46 @@
 
 ## Open
 
+### healer_mechanics-20261104-11: Riptide's Forever mana is 0.6 x the old client cost; client 70790 now gives 150/180/230
+- severity: low (rank 3, the one the level 60 presets cast, is 1 mana dear at 231 vs 230; rank 1 is 3 mana cheap)
+- affects: Restoration shaman (all presets and leveling)
+- found: 2026-11-04, master 0facd9428
+- evidence: client 1.60.1.70790 (wago.tools, tier 1) puts the dev notes' Riptide into the tables: SpellPower 304804,
+  310863, 310864 ManaCost 245/300/385 -> 150/180/230; SpellCooldowns 84834, 94614, 94615 CategoryRecoveryTime 6000 ->
+  12000; SpellEffect 1072707, 1236793, 1236796 (effect 0) Effect 10 HEAL -> 3 DUMMY, base 0. HoT ticks (89/115/161,
+  coef .1) and the Chain Heal bonus row are unchanged. The sim (`sim/shaman/healing.go:104-135`) keeps the 70755 row
+  values and scales the cost by `RiptideNotesManaScale` 0.6 rounded: 147/180/231. Cooldown and no instant heal already
+  match. `python3 tools/sources/wago.py diff 1.60.1.70755 1.60.1.70790 --set mechanics` reproduces it. Sure.
+- proposed fix: set RiptideRanks' manaCost to 150/180/230, cooldown 12 s, instant heal base 0 from 70790 and drop the
+  notes switch (`riptideNotes`, `RiptideNotesManaScale`, `RiptideNotesCooldown`) so Forever reads the client; update the
+  Riptide table in `docs/healing_shaman.md` (:284), the tests that pin 231/147 (`sim/shaman/enhancement/healing_test.go:294`,
+  `healing_talents_test.go:105`), and close shaman call 1 (the client now agrees with the notes). DPS/HPS
+  effect is negligible (1 mana a cast at 60); not measured.
+- needs: worker fix
+
+### healer_mechanics-20261104-10: many heal ranks, healing talents and engine paths have no test that fails when they break
+- severity: low (none found wrong apart from the findings above)
+- affects: all four healers and the engine
+- found: 2026-11-04, master a1b1163d2 (lines re-checked on f62bfc7)
+- evidence: the lists are in `reports/healer_mechanics.md` ("Untested"). The largest gaps: the raid damage share below one
+  target (finding 1), heal assignments, Lowest Health by percent, the 1.5x heal crit and HoT tick crits, cancelled heals'
+  cost and five-second rule, two absorbs on one unit; Swiftmend's HoT surviving (finding 2); most middle heal ranks of every
+  class; Holy Power on Holy Shock and Light's Vigil; Spiritual Healing / Holy Specialization beyond Greater Heal; Prayer of
+  Mending's triggers; Riptide tick crits and Tidal Mastery on them; all healer set bonuses; and no spec suite at all in
+  `sim/druid/restoration` (`sim/priest/healing/healing_priest_test.go` has only commented-out suites).
+- proposed fix: add the tests named in the report, one heal or talent at a time, with the class's next change.
+- needs: worker fix (engine items: orchestrator fix)
+- update 2026-11-04 (master 0facd9428): the class workers added `sim/shaman/enhancement/healing_untested_test.go`
+  and `healing_set_test.go` (rank table, Riptide tick crits, Ancestral Fortitude with two shamans, the T1 set),
+  `sim/paladin/holy/healing_more_test.go` (lower ranks, Holy Shock and Light's Vigil ranks, Benediction, Holy Power),
+  `sim/druid/healing_ranks_test.go` and Swiftmend's kept HoT in `sim/raid_healing_druid*_test.go`, and priest suites in
+  `sim/priest/healing/healing_priest_test.go`; all pass. Still no engine test for the three engine fixes: the raid
+  damage share under one target (`TestHealingFightRaidDamageShare` has no share x N < 1 case), the health clamp when
+  max health falls, and the school crit bonus on direct heals; nor for heal assignments, Lowest Health by percent,
+  cancelled heals, or two absorbs on one unit.
+
+## Resolved
+
 ### healer_mechanics-20261104-1: a raid damage event's share is rounded up to one target, so small-share abilities hit far too often
 - severity: high (moves the raid carry by 3 to 30% and flips the shaman / priest order on Chromaggus)
 - affects: engine, every healer's raid and `both` roles on the boss files (Onyxia, Chromaggus, Magmadar, Broodlord most)
@@ -21,6 +61,7 @@
   right), or keep one target and stretch the event's interval by 1 / (share × N). Add a share × N < 1 case to
   `TestHealingFightRaidDamageShare`, then re-run the raid carry tables in `docs/healing_sim.md` and the class docs.
 - needs: orchestrator fix
+- resolved: 2026-11-04, b2c16f671 (re-checked on master 0facd9428)
 
 ### healer_mechanics-20261104-2: Swiftmend still consumes the Rejuvenation or Regrowth it reads; Forever's does not
 - severity: high (tank carry +1.5% on average, Vaelastrasz +7.7%, Ragnaros +3.1%, Magmadar +2.4%)
@@ -42,6 +83,7 @@
   Swiftmend section and calls 2-3, make `TestDruidSwiftmend` require the HoT to survive, and re-tune the Swiftmend and
   Rejuvenation lines of both druid presets.
 - needs: worker fix
+- resolved: 2026-11-04, bc8e5473b (re-checked on master 0facd9428)
 
 ### healer_mechanics-20261104-3: Ancestral Fortitude raises only item armor; its client aura is the all-armor one
 - severity: medium (estimate, not measured: about +200 to 300 tank armor while it is up, under 1% of the tank score)
@@ -56,6 +98,7 @@
 - proposed fix: apply it as Inspiration (all armor), or document why aura 101 here means item armor; update
   `TestOrcShamanAncestralHealing`, `TestOrcShamanHealTalentPoints`, `TestHealingFightShamanAncestralFortitude` and the doc.
 - needs: worker fix
+- resolved: 2026-11-04, 4648ff419 (re-checked on master 0facd9428)
 
 ### healer_mechanics-20261104-4: Benediction cuts Divine Favor's and Oath of Light's cost; the client mask can't reach them
 - severity: low (about 5 mana a minute, under 0.05% of the preset's spend; estimate)
@@ -68,6 +111,7 @@
   mask over the "all instant spells" tooltip for Hammer of Wrath (`sim/paladin/hammer_of_wrath.go:53`). Tier 1, sure.
 - proposed fix: drop the multiplier on both spells and the three doc lines.
 - needs: worker fix
+- resolved: 2026-11-04, d64804b9f (re-checked on master 0facd9428)
 
 ### healer_mechanics-20261104-5: the Vestments of Conviction 5-piece misses Prayer of Mending
 - severity: low (no preset wears the 5-piece: 0 today)
@@ -77,6 +121,7 @@
   `sim/priest/item_sets_pve.go:222-229` takes 1 s off Penance only. Sure.
 - proposed fix: also take 1 s off Prayer of Mending's cooldown.
 - needs: worker fix
+- resolved: 2026-11-04, dda14db65 (re-checked on master 0facd9428)
 
 ### healer_mechanics-20261104-6: the Restoration shaman's synthetic gear carries no Tier 1 set (standards 6)
 - severity: low (+10 Spirit live; the 4-piece +26 healing and 5-piece Riptide -1 s unreported)
@@ -90,6 +135,7 @@
   is for the orchestrator.
 - proposed fix: register the set on two Restoration synthetic pieces, and report the 4- and 5-piece gain separately.
 - needs: worker fix
+- resolved: 2026-11-04, c938028ee (re-checked on master 0facd9428)
 
 ### healer_mechanics-20261104-7: direct heals don't take school crit bonuses that HoT ticks do
 - severity: low (no preset wears a school-crit set today)
@@ -99,6 +145,7 @@
   through `SpellCritChance`, get it. Sure.
 - proposed fix: add the school bonus term to `HealingCritChance`, with a test.
 - needs: orchestrator fix
+- resolved: 2026-11-04, 0aed93989 (re-checked on master 0facd9428)
 
 ### healer_mechanics-20261104-8: current health isn't clamped when max health falls
 - severity: low
@@ -108,6 +155,7 @@
   (`sim/core/health.go:113`) cuts it to max and books a negative gain into healing done. Sure of the code; size not measured.
 - proposed fix: clamp current health to max when max health changes.
 - needs: orchestrator fix
+- resolved: 2026-11-04, 0aed93989 (re-checked on master 0facd9428)
 
 ### healer_mechanics-20261104-9: doc numbers wrong for some druid ranks and the paladin's Libram of Holy Alacrity
 - severity: low (docs only; the sim's numbers are right)
@@ -121,18 +169,5 @@
   449980 (item 228175). The trigger condition is server side. Tier 1, sure.
 - proposed fix: correct the numbers and the comment; answer paladin call 9 from the client rows.
 - needs: worker fix
+- resolved: 2026-11-04, d64804b9f (paladin call 9), bc8e5473b (druid tables, Genesis comment) (re-checked on master 0facd9428)
 
-### healer_mechanics-20261104-10: many heal ranks, healing talents and engine paths have no test that fails when they break
-- severity: low (none found wrong apart from the findings above)
-- affects: all four healers and the engine
-- found: 2026-11-04, master a1b1163d2 (lines re-checked on f62bfc7)
-- evidence: the lists are in `reports/healer_mechanics.md` ("Untested"). The largest gaps: the raid damage share below one
-  target (finding 1), heal assignments, Lowest Health by percent, the 1.5x heal crit and HoT tick crits, cancelled heals'
-  cost and five-second rule, two absorbs on one unit; Swiftmend's HoT surviving (finding 2); most middle heal ranks of every
-  class; Holy Power on Holy Shock and Light's Vigil; Spiritual Healing / Holy Specialization beyond Greater Heal; Prayer of
-  Mending's triggers; Riptide tick crits and Tidal Mastery on them; all healer set bonuses; and no spec suite at all in
-  `sim/druid/restoration` (`sim/priest/healing/healing_priest_test.go` has only commented-out suites).
-- proposed fix: add the tests named in the report, one heal or talent at a time, with the class's next change.
-- needs: worker fix (engine items: orchestrator fix)
-
-## Resolved

@@ -1,7 +1,8 @@
-# Healer mechanics audit: verdicts (as of 2026-11-04 UTC, master a1b1163d2, client 1.60.1.70755)
+# Healer mechanics audit: verdicts (as of 2026-11-04 UTC, master 0facd9428, client 1.60.1.70790)
 
 Tier: 1 = Forever client (wago.tools) or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never vmangos.
-Pass 1 checked every heal rank and healing talent of the four healers and the engine. A row marked match holds on
+Pass 2 (2026-11-04, 0facd9428): findings 1-9 fixed on master and re-checked; 70790 touches only Riptide among
+healer spells. Pass 1 checked every heal rank and healing talent of the four healers and the engine. A row marked match holds on
 70755; re-check it when a newer build or Blizzard post touches the spell. Open rulings stay in each
 `docs/healing_<class>.md` "Calls for the user"; open findings in `../../findings/healer_mechanics.md`.
 
@@ -9,10 +10,10 @@ Pass 1 checked every heal rank and healing talent of the four healers and the en
 
 - The user's healing rulings in `docs/healing_sim.md` (score, assignments, bound ranks, scares reported only).
 - Healing on top of spell power is its own stat, priced 0.45 in gear (standards 1b, 35).
-- Notes-only values the sim takes over the client on purpose (Riptide: no instant heal, 12 s, 147/180/231 mana, where
-  70755 still has the instant heal, 6 s and 245/300/385) are tier 1 notes over the client rows; open as shaman call 1.
+- Riptide under Forever: no instant heal, 12 s. Client 70790 now agrees (effect 0 HEAL -> DUMMY base 0, category
+  recovery 12000, mana 150/180/230); the sim's notes-scaled mana 147/180/231 is off by 3 and 1 (healer_mechanics-20261104-11).
 - Swiftmend: news 24301515 and dev notes post 9 (2026-11-04 edit) say it no longer consumes the HoT; the 18562
-  tooltip still says "consumed". Tier 1 notes win; the sim still consumes (healer_mechanics-20261104-2).
+  tooltip still says "consumed". Tier 1 notes win; fixed on master bc8e5473b (Forever keeps the HoT).
 
 ## Restoration shaman
 
@@ -26,10 +27,10 @@ Pass 1 checked every heal rank and healing talent of the four healers and the en
 | Chain Heal jumps / falloff | EffectChainTargets 3, EffectChainAmplitude 0.5; party-only when cast on party member (tooltip) | 3 targets, ×0.5 a jump, most hurt, party-only rule | match | 1 |
 | GCD (HW, LHW, CH, Riptide) | 1500 (SpellCooldowns StartRecoveryTime) | GCDDefault | match | 1 |
 | Riptide ranks | 408521 40 (max 48), 1239242 50 (58), 1239243 60 (68) | 3 ranks, same levels | match | 1 |
-| Riptide instant heal | 480+3.7 / 612+4.2 / 841+4.9, var .10, coef .214 | none under Forever (dev notes post 9) | deliberate notes-only (open call 1) | 1 vs notes |
+| Riptide instant heal | 70790: effect 0 is DUMMY (3), base 0 (70755 had HEAL 480/612/841) | none under Forever | match (client 70790) | 1 |
 | Riptide ticks | 89 / 115 / 161 (+3.7 a level past 60 on r3), every 3 s, 15 s, coef .1 | 5 ticks, same values, coef .1, downranked | match | 1 |
 | Riptide tick crit | Attributes_8 0x200 (periodic can crit) on all ranks | Forever ruleset: dot ticks roll crit (core/ruleset.go) | match (untested for Riptide) | 1 |
-| Riptide mana / cooldown | 245/300/385; 6 s category 1228 shared | 147/180/231; 12 s shared timer (notes) | deliberate notes-only (open call 1) | notes |
+| Riptide mana / cooldown | 70790: 150/180/230; category recovery 12000 (70755: 245/300/385, 6 s) | 147/180/231 (0.6 x 70755); 12 s shared timer; T1 5P -1 s | cooldown match; mana off by 3/0/1 (finding 11) | 1 |
 | Riptide Chain Heal bonus | eff 2 dummy aura 4, 25%; tooltip "casts directly on that target" | +25% on the whole chain when first target has our Riptide | open call 2 (not a finding) | 1 |
 | Healing Stream Totem 1-5 | 5394…10463: lvl 20/30/40/50/60, mana 40-80, heal 5/6/7/9/11 per 2 s (5672…10461), coef .022, 300 s, GCD 1 s | same | match | 1 |
 | Healing Stream crit | heal 10461 has Attributes_8 0x200 (periodic can crit) | flat 5% (beta log ruling), not spell crit | ruling; client says "can crit", chance unknown | 1 + logs |
@@ -46,8 +47,8 @@ Pass 1 checked every heal rank and healing talent of the four healers and the en
 | Restorative Totems | +5%/pt Mana Spring (misc 8), +10%/pt Healing Stream (misc 22 periodic) | same; whole heal under Forever | match | 1 |
 | Totemic Focus | -5%/pt every totem's cost | same | match | 1 |
 | Mindfulness / Natural Grace | 17/33/50% casting regen; -5/10/15% threat all magic schools | same | match | 1 |
-| Ancestral Healing → Ancestral Fortitude | 16176 proc 0x15550 (no periodic), 16177 **aura 101** (MOD_RESISTANCE_PCT, armor) 8/17/25% | armor **from items only** (ApplyDynamicEquipScaling, Toughness-style) | **mismatch** (finding A) | 1 |
-| Forever Tier 1 Restoration set | 1300960 2P +10 Spirit; 1301059 3P totem radius; 1301093 4P +26 healing/+9 dmg; 1301713 5P Riptide -1 s | no set; resto synthetic items carry no set | **not modeled** (finding B) | 1 |
+| Ancestral Healing → Ancestral Fortitude | 16176 proc 0x15550 (no periodic), 16177 **aura 101** (MOD_RESISTANCE_PCT, armor) 8/17/25% | PseudoStats.ArmorMultiplier on all armor (4648ff419) | match | 1 |
+| Forever Tier 1 Restoration set | 1300960 2P +10 Spirit; 1301059 3P totem radius; 1301093 4P +26 healing/+9 dmg; 1301713 5P Riptide -1 s | synthetic set on head and chest, 2P live; 4P 17 healing + 9 SP; 5P riptideCooldownCut (c938028ee) | match | 1 |
 | Relics: Tidal Totem, Totem of Urgency | 1291076 HW -5% cost; 1306448 LHW +4% crit | modeled | match | 1 |
 | Tidebringer's Claw (280605, ilvl 40) | 1309539 +2% crit HW/LHW | not modeled | not modeled (leveling only) | 1 |
 | Totem of Life / Flowing Water | Naxx (ilvl 78/83) | not modeled | not modeled (standards 8a) | 1 |
@@ -70,20 +71,20 @@ Pass 1 checked every heal rank and healing talent of the four healers and the en
 | Downranking (heals, Oath bonus) | engine rule (user ruling, foreverchanges) | `core.DownrankFactor` on coef and Oath bonus | match / Oath = open Call 2 | ruling |
 | Healing Light (20237) | aura 108 misc 0, curve 4/8/12; mask 0x6000,0x10000 → HL, FoL, HS heal (+Oath/BoL bonus spells), not Vigil | ×1.04/rank on HL, FoL, HS heal (Oath included) | match | 1 |
 | Spiritual Focus (20205) | curve 14…70; aura 108 misc 9; mask → HL, FoL, Light's Vigil | PushbackReduction 0.14/rank on all three | match | 1 |
-| Divine Favor (20216) | +100% crit (aura 107 misc 7), mask → HL, FoL, Holy Shock (cast, dmg, heal); 1 charge; 4% base mana; CD 120 s; GCD 0; **own class mask 0** | same, but Benediction cuts its cost | mismatch (F1) | 1 |
+| Divine Favor (20216) | +100% crit (aura 107 misc 7), mask → HL, FoL, Holy Shock (cast, dmg, heal); 1 charge; 4% base mana; CD 120 s; GCD 0; **own class mask 0** | same; no Benediction (d64804b9f) | match | 1 |
 | Illumination (20210) | "$m1% chance… $m3% of base cost": eff0 curve 20…100, eff2 50 | 20%/rank, 50% of the rank's base cost | match | 1 |
 | Illumination on Vigil | tooltip lists Light's Vigil | once per detonation, Vigil base cost | open Call 3 | 1 |
 | Infusion of Light (426065 → 437063) | curve −500/−1000 ms; buff 15 s, 1 charge, mask HL; procs on helpful and harmful | 0.5 s/rank, 15 s, 1 charge, FoL/HS (dmg+heal) crits | match | 1 |
 | Holy Power (5923) | aura 50 misc 2 (Holy), curve 10…50 | CritDamageBonus 0.3/rank (225% at 5/5) | reading = open Call 1 | 1 |
-| Oath of Light (1328548) | 8% base mana, GCD 1.5, 5 min; rpl 6.6667/1.9167/3.8333 → 400/115/230 at 60; **class mask 0** | same values; Benediction cuts its cost | value match; cost mismatch (F1) | 1 |
+| Oath of Light (1328548) | 8% base mana, GCD 1.5, 5 min; rpl 6.6667/1.9167/3.8333 → 400/115/230 at 60; **class mask 0** | same; no Benediction (d64804b9f) | match | 1 |
 | Boundless Light (1328550) | curve 15/30, dummy | +15%/rank HS heal crit when not on Oath target | match | 1 |
 | Divine Intellect (20257) | aura 137, Int (bitmask 8), curve 2…10 | ×(1+0.02/rank) Int | match | 1 |
 | Reverence (1310899) | aura 134, curve 15/30 | +0.15/rank casting regen | match | 1 |
 | Conviction (20117) | aura 290, curve 2/4/6 | +2%/rank spell and melee crit | match | 1 |
-| Benediction (20101) | aura 108 misc 14, curve −2…−10; mask covers Holy Shock (cast and heal) and seals etc.; **not** Divine Favor or Oath (mask 0) | 2%/rank off Holy Shock, DF, Oath | Holy Shock match; DF/Oath mismatch (F1) | 1 |
+| Benediction (20101) | aura 108 misc 14, curve −2…−10; mask covers Holy Shock (cast and heal) and seals etc.; **not** Divine Favor or Oath (mask 0) | Holy Shock, not DF/Oath; `TestBenediction` | match | 1 |
 | Libram of Economy (272436 → 1291089) | −5% cost, mask HL only | ×0.95 HL cost; Illumination stays on 660 base | match | 1 |
 | Libram of Infusion (279248 → 1306429) | +6% crit, mask HS cast + HS heal | +6% crit on both | match | 1 |
-| Libram of Holy Alacrity (228175 → 449980 → 449982) | 449982 **now has rows**: aura 107 misc 10 −200 ms, mask HL, 10 s, 1 charge | not modeled (doc: "no effect rows in 70753") | not modeled; doc stale (F2) | 1 |
+| Libram of Holy Alacrity (228175 → 449980 → 449982) | 449982: aura 107 misc 10 −200 ms, mask HL, 10 s, 1 charge | doc answered from the client (call 9) | doc match; trigger server side | 1 |
 | Justice Armor 2pc (1300948) | +10 Spirit | +10 Spirit | match | 1 |
 | Justice Armor 4pc (1301080) | +26 healing (aura 135), +9 damage (aura 13) | +26 HP, +9 SD | match | 1 |
 | Justice Armor 5pc (1301694) | aura 107 misc 11 −1000 ms, mask Holy Shock | Holy Shock CD −1 s | match | 1 |
@@ -101,7 +102,7 @@ Pass 1 checked every heal rank and healing talent of the four healers and the en
 | Tranquility r1-4 (740...9863) | eff 35 aura 8 bp 87/129/196/285, rppl 0.6/0.7/0.9/1.0, MaxLevel 36/46/56/66, 2 s x5 (10 s), coef 0.067, 375...925 mana, category CD 300 s | same (healing.go:151-157) | match | 1 |
 | Swiftmend 18562 cost/CD/GCD | PowerCostPct 20, CD 15 s, GCD 1.5 s | same | match | 1 |
 | Swiftmend amount | tooltip: "full duration of the periodic effect" | all ticks (Splendor's too) at the HoT's snapshot, Swiftmend's own mods | match (amount reading is doc call 2) | 1 |
-| **Swiftmend consumes the HoT** | news 24301515 ("Redesigned to not consume the Rejuvenation or Regrowth effect"); dev notes post 9, 11-04 edit ("does not consume") | `hot.Cancel(sim)` healing.go:701; doc + `TestDruidSwiftmend` assert consumption | **mismatch** | 1 |
+| Swiftmend keeps the HoT | news 24301515 ("Redesigned to not consume the Rejuvenation or Regrowth effect"); dev notes post 9, 11-04 edit | healing.go:698 cancels only outside Forever (bc8e5473b); tests in sim/raid_healing_druid*_test.go | match | 1 |
 | Swiftmend which HoT | not in data | least time left | not in data (doc call 3) | - |
 | Wild Growth r1-3 | bp 40/60/97, rppl 1/1.3/1.6, 3 s cast, 6 s CD, 7x1 s, coef 0.033, 550/755/1050, 5 targets | same | match (shape = doc call 1) | 1 |
 | Bloom 1328621/1328622 | 100% Spirit (50% dispel), heal has no mask | same | match | 1 |
@@ -127,7 +128,7 @@ Pass 1 checked every heal rank and healing talent of the four healers and the en
 | Idol of Swiftness 1306488 | Swiftmend -3 s | same | match | 1 |
 | Stormrage 5/8, Cenarion 8 | (Era sets; not in the 70755 ItemSparse export) | "Nothing to do" | not modeled (likely moot) | 3 |
 | Downranking | ranks' SpellLevel/MaxLevel | engine rule (user ruling 2026-11-04) | ruling, not audited | - |
-| Doc tables, lower ranks | formula above | doc: HT r8 "1100 to 1311 (1205)", RG r8 "815 to 911", RG r7 "659 to 738", Tranq r3 205 / r2 136 | **doc wrong** (sim right: 1095-1303 (1199), 800-894, 633-710, 201.4, 133.2) | 1 |
+| Doc tables, lower ranks | formula above | doc now 1095-1303, 800-894, 633-710, Tranq from the client | match (fixed) | 1 |
 
 ## Holy and Discipline priest
 
@@ -152,7 +153,7 @@ Pass 1 checked every heal rank and healing talent of the four healers and the en
 | Divine Fury 18530 | -100 ms/r cast; Heal, GH, Smite, HF | Heal, GH (+dmg spells) | match | 1 |
 | Improved Healing 14912 | -5/10/15% cost; LH, Heal, GH, Penance cast, PoM cast | same | match | 1 |
 | Spiritual Guidance 14901 | a174 1/3/5/6/8% Spirit->SP; a175 5..25% Spirit->healing | same | match | 1 |
-| Meditation 14521 | a134 17/33/50 | SpiritRegenRateCasting .17/.33/.5 | match | 1 |
+| Meditation 14521 | a134 17/33/50 | SpiritRegenRateCasting += .17/.33/.5 (859bdef1a: adds, no longer overwrites) | match | 1 |
 | Mental Agility 14520 | -3/7/10% cost; heals: Renew, PW:S, HN cast, PoM cast (+PI, SW:P, DP, Smite, HF...) | same | match | 1 |
 | Mental Strength 18551 | 2..10% Int (a137 stat mask 8 = Int) | 2%/r Int | match | 1 |
 | Improved PW:S 14748 | +7/14/20% PointsIndex0 on PW:S | x1.07/1.14/1.20 on (base + .1 SP) | match (order of SP vs mod not in client data) | 1 |
@@ -168,7 +169,7 @@ Pass 1 checked every heal rank and healing talent of the four healers and the en
 | Holy Binding 1328569/1328570 | 50% of FH on other, no threat | same | match | 1 |
 | Blessed Recovery 27811/27813 | 8/17/25% over 6 s (2 s period), melee/ranged crit or >30% hit (proc 0x2A8) | same, carry-over | match | 1 |
 | Spirit Tap 15270, Martyrdom, Spirit of Redemption, Holy Reach | non-healing / range | not modeled in healer | n/a | 1 |
-| Vestments of Conviction 5pc 1301703 | CD -1000 ms on Penance (0x800000) AND PoM (0x20) | Penance only (item_sets_pve.go:222-229) | mismatch (F1) | 1 |
+| Vestments of Conviction 5pc 1301703 | CD -1000 ms on Penance (0x800000) AND PoM (0x20) | both (dda14db65) | match | 1 |
 | Vestments of Conviction 2/4pc | +10 Spi; +26 heal / +9 dmg | same | match | 1 |
 | Era sets (Prophecy 3/8pc, Transcendence 8pc, Oracle, Faith 2/4pc) | heal bonuses | "Nothing to do" | not modeled (no such items in Forever ItemSparse 70755; not on presets) | 3 |
 | docs/healing_priest.md audit tables | say client 70753 | every value equals 70755 | match (label only) | 1 |
@@ -178,7 +179,7 @@ Pass 1 checked every heal rank and healing talent of the four healers and the en
 | Check | Rule (source, tier) | Sim (file:line) | Verdict |
 |---|---|---|---|
 | Death at 0 health, dead player stops, heals and casts can't reach the dead | game rule; H1 design | health.go:215-232, player_death.go:10-54, spell.go:560-565, apl_values_resources.go:147 | OK |
-| Max health falls (Last Stand ends): current health clamps to the new max | game rule (current health never above max) | warrior/talents.go:610 lowers max only; health.go:113 clamps only on the next heal (and then *lowers* health, booking a negative gain) | Departure, low (finding 3) |
+| Max health falls (Last Stand ends): current health clamps to the new max | game rule (current health never above max) | unit.go processDynamicBonus clamps on a negative Health bonus (0aed93989) | match (no engine test) |
 | Max health rises (buff): current health stays | game rule (a buff adds max, not current) | health.go: nothing on stat change | OK |
 | Most Hurt / Lowest Health: living, hurt, in the assignment, seen health less others' heals in flight | H1 design (user ruling) | heal_targets.go:36-57, heal_comm.go:48-50 | OK |
 | Tank N; dead tank reads 0 missing, heal on it refused | design | environment.go:442-446, apl_values_resources.go:147, spell.go:563 | OK |
@@ -195,13 +196,13 @@ Pass 1 checked every heal rank and healing talent of the four healers and the en
 | HoT refresh: recast replaces the HoT with a new snapshot and ticks | Classic (tier 3) | dot.go:139-145 (`Apply`) | OK |
 | HoT ticks crit under Forever | client SpellMisc Attributes_8 0x200 on Renew, Rejuvenation, Regrowth, Tranquility, Wild Growth, Riptide 1239242, Healing Stream 5672-10461 (tier 1); verdicts "Periodic crits" | ruleset.go:15-28, spell_outcome.go:31-49 | OK. Bloom (1328622) has no 0x200 but is a direct heal in the sim |
 | Crit heal size 1.5x (talents aside) | Classic (tier 3); client has no general change | spell_outcome.go:1063-1068 (DefenseTypeMagic: 1 + (1.5*at.CritMultiplier-1)*CritDamageBonus) | OK |
-| Heal crit chance source | spell crit with all bonuses, school ones too (tier 3: Vestments of Prophecy 5pc "chance to crit with Holy spells") | direct heals: spell_result.go:303-312 (SpellCrit + spell BonusCritRating, no school bonus); HoT ticks: spell_result.go:286-291 (with school bonus) | Departure, low (finding 2) |
+| Heal crit chance source | spell crit with all bonuses, school ones too (tier 3: Vestments of Prophecy 5pc "chance to crit with Holy spells") | HealingCritChance adds GetSchoolBonusCritChance (0aed93989), as HoT ticks | match (no engine test) |
 | Five second rule, Spirit regen under Forever, continuous settle | verdicts (verified) | mana.go:195-270, sim.go:861-866 | not redone; settle on every advance, so mid-interval rate changes are right |
 | Innervate: Spirit regen x5, full regen while casting, 20 s, 6 min | client 29166: aura 110 bp 400, aura 134 bp 100, dur 20000, cd 360000 (tier 1) | buffs.go:1396-1397, 1465-1474 | OK |
 | Mana Spring, Mana Tide, Healing Stream, Tranquility reach: party | client 5677/10494, 16191, 5672/10461, 9863: effect 35 (area aura, party), radius index 10 (30 yd) / 9 (tier 1) | shaman water_totems.go, totem_receivers.go; external Mana Tide buffs.go:1528-1556 pays only the member it's on | OK |
 | External Mana Tide (raid sim placeholder) 290 a tick, 4 ticks | rank 4 1325256 (290); 16191 period 3000 | buffs.go:1538 | OK for rank 4 |
 | Raid damage: physical through armor (attacker 63: armor/(armor+400+85*63)), magic through Forever resists, DoT ticks a tenth of resistance, no armor on physical ticks | shared verdicts; Classic armor formula (tier 3) | raid_damage.go:40-57, spell_resistances.go:43-57, 108-114, 187-209 | OK |
-| Raid damage: who and how many | encounter files: `share` = the logs' share of the non-tanks a cast hits, rate fitted on share x non-tanks (tools/encounters/raid_from_logs.py:66-79) | raid_damage.go:188-196: `count = max(count, 1)` | **Bug (finding 1)** |
+| Raid damage: who and how many | encounter files: `share` = the logs' share of the non-tanks a cast hits, rate fitted on share x non-tanks (tools/encounters/raid_from_logs.py:66-79) | raid_damage.go:188-200: share x N < 1 hits one player that often, nobody otherwise (b2c16f671) | match (no engine test) |
 | Raid damage DoT ticks can crit (dot.canCrit under Forever) | n/a | raid_damage.go:107 | harmless: bosses have no SpellCrit stat, so 0% |
 | Spell pushback on a healer hit while casting: 1.0, 0.8 ... 0.2 s | source is cmangos code (cast.go:97-107), not tier 1-3 | cast.go:108-200 | source gap, not a finding (verdicts only checks "not past its start") |
 
