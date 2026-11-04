@@ -44,7 +44,9 @@ We don't take the best item for each level. While leveling we gear up as we go:
   route's quests and boss loot like any other weapon. White ones are one more plain weapon kind,
   with armor and block value at 90% of a green shield's, by a line through zero fit to the greens
   up to item level 30. Items are judged by the "Leveling Gear Plan Shield" stat weights, which
-  also price block and block value. The Gear part's switch shows once a spec has those weights.
+  also price block and block value. The Gear part's switch shows once a spec has those weights. The
+  enhancement shaman's are its regular weights plus those two (docs/leveling_plan.md, One-hand +
+  shield).
 
 The stat weights come from the leveling sim, by mobs killed in a session. The enhancement shaman
 has them every 5 levels from 5 to 59 (the "Leveling Gear Plan" presets, from

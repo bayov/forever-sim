@@ -515,6 +515,38 @@ build, and the "Level N Leveling Plan" rotations (the leveling optimizer's best 
 25 and 30, still in the rotation presets), with the Level 30 one up to 59. A run of 10 to 60
 (2026-10-18, 200 sessions a level) took about 120 hours, 19.4 of them from 10 to 30.
 
+## One-hand + shield
+
+"Leveling 1-60 Shield" is the same plan in a one-hander and a shield from level 1, kept for future
+reference. It takes 84.69h against 78.67h for the regular plan (seeds 1 and 1000001, 2000 sessions
+a level, 2026-11-04). So the two-hander is 6h faster. The shield is only ahead at 4 and 7 to 11, by
+under a minute a level.
+
+| Levels | Two-hander | Shield | Difference |
+|---|---|---|---|
+| 1-9 | 1.95h | 1.93h | -1 min |
+| 10-19 | 6.20h | 6.57h | +22 min |
+| 20-29 | 9.62h | 10.50h | +53 min |
+| 30-39 | 13.37h | 15.30h | +116 min |
+| 40-49 | 20.29h | 21.55h | +76 min |
+| 50-59 | 27.24h | 28.85h | +96 min |
+
+The route (`apls/leveling_plan_shield.json`) comes from a route search with the shield and matches
+the regular plan through 47. After that it takes Rage of the Farseer at 48, Flurry at 49 and 59,
+Convection at 50 to 54, Call of Flame at 55 to 57 and Elemental Devastation at 58. It has no
+Anticipation. The rotations are the regular plan's, except at 30 to 37 and 40 to 46, where the
+rotation search's Flametongue Weapon ones were about 35 minutes faster in total. From 47 they were
+slower, since that template never uses Maelstrom Weapon stacks. Training has its own schedule
+(`leveling_training_shield.json`), and Earth Shock still comes at its own levels.
+
+We didn't polish this one, because the gap is far bigger than what's left to gain. The stat weights
+are the regular plan's, with block and block value added (`leveling_weights_shield.json`). We
+measured real shield weights for one full round and most of a second, but the gear they picked took
+85.62h against 84.69h. Block and block value changed no pick. So the usual three rounds never ran,
+and a retest of Flametongue Weapon at 49 to 53 is still open. All of this is on one gear history,
+so the exact levels can move with other finds. BayovCore doesn't show this plan, because it reads
+only the regular plan and its weights.
+
 ## Open
 
 - A sim history for the Leveling mode.
