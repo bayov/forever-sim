@@ -70,7 +70,12 @@ void main() {
 		mv = viewMatrix * vec4(iPos + vec3(corner.x, 0.0, corner.y), 1.0);
 	} else {
 		mv = viewMatrix * vec4(iPos, 1.0);
-		mv.xy += corner;
+		// A puff right at the camera would cover the screen, blended over and over. We keep it to
+		// about 40% of the screen's height (at the room's 70 degree view), which a particle only
+		// reaches when it's a few of its sizes from the camera.
+		float cap = 0.6 * max(-mv.z, 0.0);
+		float big = max(abs(iSize.x), abs(iSize.y));
+		mv.xy += big > cap ? corner * (cap / big) : corner;
 	}
 	gl_Position = projectionMatrix * mv;
 	vUv = vec2(mix(iUv.x, iUv.z, uv.x), mix(iUv.w, iUv.y, uv.y));
