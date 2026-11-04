@@ -14,6 +14,8 @@ type Posed = { poser: Poser; fdid: number; places: Float64Array[]; skinning: Flo
 const files = new Map<number, M2>();
 const anims = new Map<number, Map<number, DataView>>();
 const models = new Map<number, Posed>();
+// The frame's requests, in memory shared with the page (it writes them before each frame message).
+let requests = new Float64Array(0);
 
 const camera = new THREE.Quaternion();
 const world = new THREE.Matrix4();
@@ -53,9 +55,12 @@ self.onmessage = (e: MessageEvent<ToWorker>) => {
 		case 'drop':
 			models.delete(msg.id);
 			return;
+		case 'requests':
+			requests = new Float64Array(msg.buffer);
+			return;
 		case 'frame': {
-			const d = msg.data;
-			for (let o = 0; o + RECORD <= d.length; o += RECORD) {
+			const d = requests;
+			for (let o = 0; o + RECORD <= msg.count * RECORD; o += RECORD) {
 				const m = models.get(d[o]);
 				if (!m) continue;
 				const target = d[o + 1];

@@ -82,7 +82,7 @@ export class Perf {
 	private uploads = 0;
 	private uploadBytes = 0;
 	// The WebGL calls by kind since the recording started (with ?glcount=1), and over how many frames.
-	private glCalls = new Map<string, number>();
+	private glCounters = new Map<string, { n: number }>();
 
 	constructor(readonly renderer: THREE.WebGLRenderer) {
 		// We count the uploads to the GPU (buffers and textures), each with its size.
@@ -96,18 +96,29 @@ export class Perf {
 				if (!d || typeof d.value !== 'function' || name === 'constructor') continue;
 				const f = (d.value as (...a: unknown[]) => unknown).bind(gl);
 				const before = own[name] !== d.value ? (own[name] as (...a: unknown[]) => unknown) : f;
-				own[name] = (...a: unknown[]) => {
-					this.glCalls.set(name, (this.glCalls.get(name) ?? 0) + 1);
-					return before(...a);
+				// A counter per kind, and no array of the arguments (spread, each call made garbage:
+				// 2300 calls a frame).
+				const count = { n: 0 };
+				this.glCounters.set(name, count);
+				own[name] = function (this: unknown) {
+					count.n++;
+					// eslint-disable-next-line prefer-rest-params
+					return before.apply(gl, arguments as unknown as unknown[]);
 				};
 			}
 		}
 		for (const name of ['bufferSubData', 'bufferData', 'texSubImage2D', 'texImage2D', 'texSubImage3D', 'texImage3D'] as const) {
 			const f = (gl[name] as (...a: unknown[]) => void).bind(gl);
-			(gl as unknown as Record<string, unknown>)[name] = (...a: unknown[]) => {
-				this.uploads++;
-				for (const x of a) if (ArrayBuffer.isView(x)) this.uploadBytes += x.byteLength;
-				return f(...a);
+			const perf = this;
+			(gl as unknown as Record<string, unknown>)[name] = function (this: unknown) {
+				perf.uploads++;
+				for (let i = 0; i < arguments.length; i++) {
+					// eslint-disable-next-line prefer-rest-params
+					const x = arguments[i];
+					if (ArrayBuffer.isView(x)) perf.uploadBytes += x.byteLength;
+				}
+				// eslint-disable-next-line prefer-rest-params
+				return f.apply(gl, arguments as unknown as unknown[]);
 			};
 		}
 		// When the GPU drops the page's drawing (a lost context), the queries out are gone, and the
@@ -325,7 +336,15 @@ export class Perf {
 			// The GPU's time by pass, and the uploads to it a frame, on average.
 			gpuPassesAvgMs: gpuPasses,
 			// The WebGL calls a frame by kind, with ?glcount=1.
-			glCallsAvg: this.glCalls.size ? Object.fromEntries([...this.glCalls].sort((a, b) => b[1] - a[1]).slice(0, 25).map(([k, v]) => [k, round(v / Math.max(1, frames.length))])) : undefined,
+			glCallsAvg: this.glCounters.size
+				? Object.fromEntries(
+						[...this.glCounters]
+							.filter(([, c]) => c.n > 0)
+							.sort((a, b) => b[1].n - a[1].n)
+							.slice(0, 25)
+							.map(([k, c]) => [k, round(c.n / Math.max(1, frames.length))]),
+					)
+				: undefined,
 			uploadsAvg: { calls: round(frames.reduce((a, f) => a + f.uploads, 0) / Math.max(1, frames.length)), kb: round(frames.reduce((a, f) => a + f.uploadKb, 0) / Math.max(1, frames.length)) },
 			gpuInfo: {
 				renderer: info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
@@ -349,7 +368,7 @@ export class Perf {
 		this.frames = [];
 		this.notes = [];
 		this.lastT = 0;
-		this.glCalls.clear();
+		for (const c of this.glCounters.values()) c.n = 0;
 		this.startedAt = performance.now();
 	}
 }
