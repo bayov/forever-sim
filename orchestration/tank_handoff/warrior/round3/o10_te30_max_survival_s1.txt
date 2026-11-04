@@ -1,0 +1,11 @@
+A=cur_max_survival.json B=te30_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord          742      695   -47.2    8.7      0.0        5
+chromaggus       -1514    -1541   -27.3    5.6      0.0        3
+golemagg          1978     1945   -32.8    4.3      0.0        3
+magmadar          2445     2418   -26.9    3.8      0.0        3
+onyxia            1516     1462   -53.3    7.2      0.0        3
+ragnaros        -13188   -13206   -18.2   13.7     -0.0        2
+vaelastrasz       2045     2045     0.0    0.0      0.0        0
+scoring_mean                      -31.3    2.3
+exit 0

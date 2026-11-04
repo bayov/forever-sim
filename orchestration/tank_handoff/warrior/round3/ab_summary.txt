@@ -1,0 +1,77 @@
+# Paired abtest (tools/audit/tank_rotations/abtest), six scoring bosses at the preset's weight, B - A; A = the preset as it stands (o3_wall13/o3_s15/o3_s20/o3_sb40/o10_wall*/te*/sb40: round-2 presets, req/cur_*.json; cloak/wrist/armor/Fsb40: final presets, req/final/F_*.json).
+# o3 = 3,000 iterations, o10 = 10,000; _sN = -seed N (disjoint iterations). columns: file | scoring mean diff ± paired error | Vaelastrasz diff ± error | notes
+o10_Fsb40_max_threat_s1.txt              1.6 ±  0.9 | vael   -0.3 ±  0.3 | Shield Block above 40 Rage vs 0, on the final Max threat (wall 13)
+o10_Fsb40_max_threat_s2.txt              0.9 ±  0.8 | vael    1.0 ±  0.4 | Shield Block above 40 Rage vs 0, on the final Max threat (wall 13)
+o10_armorEnd35_balanced_s1.txt        -146.3 ±  1.8 | vael -240.4 ±  2.0 | armor trinket 990617 held for the last 35 s vs AP trinket 991018 on the pull
+o10_armorEnd35_balanced_s2.txt        -145.4 ±  1.6 | vael -241.1 ±  2.0 | armor trinket 990617 held for the last 35 s vs AP trinket 991018 on the pull
+o10_armorEnd35_max_threat_s1.txt      -192.1 ±  0.8 | vael -266.6 ±  1.3 | armor trinket 990617 held for the last 35 s vs AP trinket 991018 on the pull
+o10_armorEnd35_max_threat_s2.txt      -192.2 ±  0.8 | vael -265.4 ±  1.3 | armor trinket 990617 held for the last 35 s vs AP trinket 991018 on the pull
+o10_armorPull_balanced_s1.txt         -179.7 ±  1.3 | vael -240.4 ±  2.0 | armor trinket 990617 on the pull vs AP trinket 991018 (same knobs)
+o10_armorPull_balanced_s2.txt         -178.8 ±  1.4 | vael -241.1 ±  2.0 | armor trinket 990617 on the pull vs AP trinket 991018 (same knobs)
+o10_armorPull_max_threat_s1.txt       -209.6 ±  0.7 | vael -266.6 ±  1.3 | armor trinket 990617 on the pull vs AP trinket 991018 (same knobs)
+o10_armorPull_max_threat_s2.txt       -209.3 ±  0.6 | vael -265.4 ±  1.3 | armor trinket 990617 on the pull vs AP trinket 991018 (same knobs)
+o10_cloak1889_balanced_s1.txt           -5.6 ±  1.8 | vael   -7.9 ±  2.6 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o10_cloak1889_balanced_s2.txt            0.5 ±  1.7 | vael   -1.6 ±  2.2 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o10_cloak1889_balanced_s3.txt           -3.4 ±  1.6 | vael   -2.1 ±  2.0 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o10_cloak1889_balanced_s4.txt           -5.1 ±  1.8 | vael   -9.1 ±  2.3 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o10_cloak1889_max_survival_s1.txt      -10.1 ±  4.5 | vael  -13.4 ±  6.4 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o10_cloak1889_max_survival_s2.txt        1.2 ±  4.5 | vael   -1.0 ±  5.7 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o10_cloak1889_max_survival_s3.txt        0.1 ±  4.3 | vael    0.8 ±  4.6 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o10_cloak1889_max_survival_s4.txt       -1.3 ±  4.2 | vael   -6.0 ±  4.7 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o10_cloak1889_max_threat_s1.txt         -6.3 ±  1.0 | vael   -7.6 ±  2.3 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o10_cloak1889_max_threat_s2.txt         -6.0 ±  1.0 | vael   -2.4 ±  1.9 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o10_finding11_s1.txt                    12.8 ±  5.4 | vael -177.6 ±  5.1 | tank_rotations-20261104-11 at Max survival weight: B = Max survival (990617 held 35 s) vs A = Balanced (991018 on the pull)
+o10_finding11_s2.txt                    15.9 ±  4.8 | vael -176.4 ±  5.0 | tank_rotations-20261104-11 at Max survival weight: B = Max survival (990617 held 35 s) vs A = Balanced (991018 on the pull)
+o10_sb40_max_threat_s1.txt               1.2 ±  0.8 | vael   -0.6 ±  0.4 | Shield Block only above 40 Rage vs 0, on the round-2 Max threat (wall 12)
+o10_sb40_max_threat_s2.txt              -0.5 ±  0.8 | vael    0.5 ±  0.3 | Shield Block only above 40 Rage vs 0, on the round-2 Max threat (wall 12)
+o10_te30_max_survival_s1.txt           -31.3 ±  2.3 | vael    0.0 ±  0.0 | armor trinket held for the last 30 s vs 35
+o10_te30_max_survival_s2.txt           -35.2 ±  2.7 | vael    0.0 ±  0.0 | armor trinket held for the last 30 s vs 35
+o10_te40_max_survival_s1.txt            -5.1 ±  3.2 | vael    0.0 ±  0.0 | armor trinket held for the last 40 s vs 35
+o10_te40_max_survival_s2.txt            -2.3 ±  3.3 | vael    0.0 ±  0.0 | armor trinket held for the last 40 s vs 35
+o10_wall11_max_threat_s1.txt            -8.8 ±  1.3 | vael  -24.1 ±  6.9 | Max threat wall 11 s vs 12
+o10_wall11_max_threat_s2.txt            -6.6 ±  1.3 | vael   -1.9 ±  6.5 | Max threat wall 11 s vs 12
+o10_wall13_max_threat_s1.txt             4.6 ±  1.4 | vael  -13.5 ±  7.0 | Max threat Shield Wall in the last 13 s vs 12 (ADOPTED)
+o10_wall13_max_threat_s2.txt             3.5 ±  1.3 | vael   -4.1 ±  6.6 | Max threat Shield Wall in the last 13 s vs 12 (ADOPTED)
+o10_wall14_max_threat_s1.txt             1.7 ±  1.7 | vael  -44.6 ±  8.5 | Max threat wall 14 s vs 12
+o10_wall14_max_threat_s2.txt             0.6 ±  1.7 | vael  -33.0 ±  8.3 | Max threat wall 14 s vs 12
+o10_wall16_balanced_s1.txt              -5.4 ±  2.3 | vael    8.5 ±  8.0 | wall 16 s vs 17
+o10_wall16_balanced_s2.txt              -4.6 ±  2.2 | vael  -13.6 ±  7.7 | wall 16 s vs 17
+o10_wall16_max_survival_s1.txt          -6.9 ±  5.6 | vael  -13.0 ± 14.4 | wall 16 s vs 17
+o10_wall16_max_survival_s2.txt         -14.1 ±  5.4 | vael  -53.1 ± 16.2 | wall 16 s vs 17
+o10_wall18_balanced_s1.txt               0.1 ±  2.3 | vael  -23.1 ±  7.4 | wall 18 s vs 17
+o10_wall18_balanced_s2.txt              -2.4 ±  2.2 | vael  -39.7 ±  7.0 | wall 18 s vs 17
+o10_wall18_max_survival_s1.txt          -8.3 ±  5.7 | vael  -56.9 ± 15.9 | wall 18 s vs 17
+o10_wall18_max_survival_s2.txt         -11.8 ±  5.5 | vael  -69.7 ± 15.0 | wall 18 s vs 17
+o10_wrist1886_balanced_s1.txt          -10.4 ±  2.9 | vael   -7.7 ±  4.3 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o10_wrist1886_balanced_s2.txt           -0.8 ±  2.9 | vael    4.1 ±  3.8 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o10_wrist1886_balanced_s3.txt            0.3 ±  2.6 | vael   12.1 ±  3.5 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o10_wrist1886_balanced_s4.txt           -7.3 ±  2.9 | vael   -5.8 ±  4.0 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o10_wrist1886_max_survival_s1.txt      -31.6 ±  6.8 | vael  -11.5 ± 10.4 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o10_wrist1886_max_survival_s2.txt      -13.0 ±  7.4 | vael    9.6 ±  9.9 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o10_wrist1886_max_survival_s3.txt      -11.5 ±  6.3 | vael   16.8 ±  8.3 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o10_wrist1886_max_survival_s4.txt      -32.7 ±  7.1 | vael   -9.0 ±  8.1 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o10_wrist1886_max_threat_s1.txt         -4.8 ±  1.7 | vael    2.5 ±  3.7 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o10_wrist1886_max_threat_s2.txt         -3.9 ±  1.6 | vael   -1.8 ±  3.6 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o3_cloak1889_balanced_s1.txt            -7.6 ±  3.5 | vael   -5.3 ±  3.6 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o3_cloak1889_balanced_s2.txt             1.3 ±  3.5 | vael    3.7 ±  5.0 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o3_cloak1889_max_survival_s1.txt       -14.7 ±  8.6 | vael   -2.3 ±  7.8 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o3_cloak1889_max_survival_s2.txt         9.2 ±  8.9 | vael    7.7 ± 10.5 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o3_cloak1889_max_threat_s1.txt          -7.2 ±  1.9 | vael   -9.5 ±  4.1 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o3_cloak1889_max_threat_s2.txt          -4.9 ±  2.0 | vael   -0.0 ±  3.2 | cloak Superior Defense +70 armor (1889) vs Agility +5 (1219587)
+o3_s15_balanced_s1.txt                   2.8 ±  1.8 | vael   -0.1 ±  0.2 | Sunder filler at 15 Rage vs 30
+o3_s15_balanced_s2.txt                   0.9 ±  2.2 | vael   -0.8 ±  2.4 | Sunder filler at 15 Rage vs 30
+o3_s20_max_survival_s1.txt               4.6 ±  4.6 | vael   -0.1 ±  0.2 | Sunder filler at 20 Rage vs 30
+o3_s20_max_survival_s2.txt               6.4 ±  6.3 | vael    1.2 ±  5.0 | Sunder filler at 20 Rage vs 30
+o3_sb40_max_threat.txt                   1.5 ±  1.6 | vael   -1.1 ±  0.9 | Shield Block only above 40 Rage vs 0, on the round-2 Max threat (wall 12)
+o3_wall13_max_threat_s1.txt              3.1 ±  2.5 | vael  -17.7 ± 12.7 | Max threat Shield Wall in the last 13 s vs 12 (ADOPTED)
+o3_wall13_max_threat_s2.txt              4.4 ±  2.5 | vael   -6.3 ± 11.9 | Max threat Shield Wall in the last 13 s vs 12 (ADOPTED)
+o3_wrist1886_balanced_s1.txt            -8.2 ±  5.3 | vael    2.8 ±  6.6 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o3_wrist1886_balanced_s2.txt             3.7 ±  5.5 | vael    9.6 ±  7.9 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o3_wrist1886_max_survival_s1.txt       -33.9 ± 12.5 | vael    5.7 ± 15.5 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o3_wrist1886_max_survival_s2.txt         6.9 ± 13.6 | vael   24.4 ± 17.1 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o3_wrist1886_max_threat_s1.txt          -7.4 ±  3.1 | vael    4.1 ±  7.2 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+o3_wrist1886_max_threat_s2.txt           0.7 ±  3.3 | vael    5.4 ±  6.9 | wrist Superior Stamina (1886) vs Superior Deflection (1248665)
+# finding11 per boss (s1 / s2): broodlord +437.2±27.5 / +433.0±22.2, chromaggus -100.7±8.6 / -105.8±10.6, golemagg -56.9±5.4 / -48.8±5.6,
+#   magmadar -75.6±4.7 / -72.0±4.3, onyxia +50.6±11.2 / +65.2±12.2, vaelastrasz -177.6±5.1 / -176.4±5.0;
+#   mean of five without Broodlord -72.0 ± 3.3 / -67.6 ± 3.7 (error: per-boss paired errors added in quadrature / 5).
+# Pooled over seeds 1-4 (10,000 each): cloak 1889 Balanced -3.4, Max survival -2.5 ± 2.2; wrist 1886 Balanced -4.6, Max survival -22.2 ± 3.4.

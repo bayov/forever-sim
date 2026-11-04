@@ -1,0 +1,11 @@
+A=F_max_threat.json B=cloak1889_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3560     3551    -8.4    3.4     -3.1        2
+chromaggus        3266     3261    -5.2    2.2     -3.9       -3
+golemagg          3738     3730    -7.3    1.9     -4.0       -1
+magmadar          3812     3805    -6.4    2.0     -2.7        1
+onyxia            3777     3771    -6.0    2.4     -2.9        0
+ragnaros          1978     1971    -7.0    6.7     -3.5        0
+vaelastrasz       3973     3970    -2.4    1.9     -1.5       -1
+scoring_mean                       -6.0    1.0
+exit 0
