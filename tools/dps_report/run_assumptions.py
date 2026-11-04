@@ -29,7 +29,7 @@ import copy, itertools, json, math, os, random, subprocess, sys, tempfile, threa
 from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from dashpaths import D, BIN, TREE  # noqa: E402
+from dashpaths import D, BIN, TREE, RNG  # noqa: E402
 from assumptions_def import A  # noqa: E402
 
 CLI = os.path.join(BIN, 'wowsimcli_assume')
@@ -100,7 +100,7 @@ def request(bid, combo, rot):
 def run(req, env, iters, secs):
     req = copy.deepcopy(req)
     req['encounter']['duration'] = secs
-    req['simOptions'] = {'iterations': iters, 'randomSeed': '1'}
+    req['simOptions'] = {'iterations': iters, 'randomSeed': '1', **RNG}
     e = dict(os.environ)
     e.pop('DASH_NAMES', None)
     e.pop('DASH_RACIALS_OFF', None)
@@ -222,7 +222,7 @@ def identical(ids, iters=1000):
     bad = 0
     for bid in ids:
         req = json.load(open(os.path.join(D, 'req', bid + '.json')))
-        req['simOptions'] = {'iterations': iters, 'randomSeed': '1'}
+        req['simOptions'] = {'iterations': iters, 'randomSeed': '1', **RNG}
         outs = []
         for cli in (os.environ.get('PLAIN_CLI') or os.path.join(BIN, 'wowsimcli'), CLI):
             with tempfile.TemporaryDirectory() as d:

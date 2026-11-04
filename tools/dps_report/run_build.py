@@ -13,7 +13,7 @@ iteration), so the main run's saved values already hold the 30 seeds' DPS and th
 """
 import json, os, re, subprocess, sys, tempfile, copy, math
 
-from dashpaths import D, BIN, TREE  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
+from dashpaths import D, BIN, TREE, RNG  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
 import race_override
 CLI = os.path.join(BIN, 'wowsimcli')
 STATS = os.path.join(BIN, 'dashstats')
@@ -39,7 +39,7 @@ def run(req, iters, seed, debug=False, save_all=False, race=None, duration=None,
         req['raid']['parties'][0]['players'][0]['race'] = 'Race' + race
     if duration:
         req['encounter']['duration'] = duration
-    req['simOptions'] = {'iterations': iters, 'randomSeed': str(seed)}
+    req['simOptions'] = {'iterations': iters, 'randomSeed': str(seed), **RNG}
     if debug:
         req['simOptions']['debugFirstIteration'] = True
     if save_all:
