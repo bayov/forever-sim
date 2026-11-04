@@ -30,7 +30,7 @@ rotation conditions shown in compact form: []
 tooltips: 1099 rows, 447 KB
 tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit', "setup Sunder Ramp ({'pullSunders': 1, 'tank': True})", "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]
 talenttrees: 467 rows, 179 KB
-wowhead coverage: {'item:forever': 71, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 251, 'spell:wiki': 12, 'spell:client': 15, 'item:db': 272, 'enchant:forever': 287, 'enchant:db': 62, 'setup:sim': 5, 'setup:forever': 35, 'setup:none': 3} {'forever': 308, 'other': 22} {'forever': 1343, 'none': 28}
+wowhead coverage: {'item:forever': 71, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 252, 'spell:wiki': 12, 'spell:client': 14, 'item:db': 272, 'enchant:forever': 287, 'enchant:db': 62, 'setup:sim': 5, 'setup:forever': 35, 'setup:none': 3} {'forever': 309, 'other': 22} {'forever': 1344, 'none': 27}
 icons: 81 rows, 163 KB
 icons_more: 615 rows, 935 KB
 names: 310 rows, 30 KB

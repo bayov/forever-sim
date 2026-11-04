@@ -174,7 +174,7 @@
   "title": "Talent trees",
   "description": "Every class talent tree as the sim UI lays it out: each talent’s row, column, ranks, prerequisite, text from ui/core/talents/trees, and the wowhead page of each rank (Forever's database where it has the spell, else Classic's).",
   "updated": {
-   "at": "2026-11-04T09:15:09.661Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "common"
@@ -255,7 +255,7 @@
   "title": "Game tooltip text",
   "description": "Tooltip text for the spells, items, enchants, consumes, races and stat weights on the page: wowhead's WoW Forever database first (with a link to its page), the Forever client's talent text and the Forever wiki where it has nothing, Classic's text only as a marked last resort, the sim's own numbers where they differ, the item database for the synthetic gear, and the Forever racials.",
   "updated": {
-   "at": "2026-11-04T09:51:48.996Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "common"
@@ -329,7 +329,7 @@
   "title": "Tanking presets and scores",
   "description": "One row per tanking preset: class, spec, preset kind and its weight (max threat 1/3, balanced 1, max survival 3), race, talents, and the means over the six scored bosses (Magmadar, Golemagg, Onyxia, Broodlord, Vaelastrasz, Chromaggus; Ragnaros is shown but not scored) of the three scores, safe DPS, healing needed, death floor, death chance, TPS, DPS, DTPS and TMI, with standard errors and the rank among presets of the same kind. From tools/tankbench, 1,000 iterations a boss, each req's own seed.",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -338,7 +338,7 @@
   "title": "Tanking by boss",
   "description": "Per tanking preset and boss (7 bosses): the three scores, safe DPS, healing needed (and as a multiple of DTPS), death floor, TPS, DPS, DTPS, TMI, death chance, health, effective health, biggest hit, armor, defense and the table (miss, dodge, parry, block, crit, crush). A score the bench reports as \"none\" (no healing saves the tank) is null with a flag.",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -356,7 +356,7 @@
   "title": "Tanking by race",
   "description": "Per tanking preset and every race the class can be: the six-boss mean scores, safe DPS, healing needed, DTPS and TPS, the preset's own race flagged. Each race is the same req with only the race changed.",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -365,7 +365,7 @@
   "title": "Tanking gear",
   "description": "Per tanking preset, every equipped item with its enchant and the reason for the pick, in the DPS gear dataset's shape.",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -374,7 +374,7 @@
   "title": "Tanking rotations",
   "description": "Per tanking preset, the APL's steps in the DPS rotation dataset's shape (no cast counts; the bench reports none), with each step's notes.",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -383,7 +383,7 @@
   "title": "Tanking consumables and buffs",
   "description": "Per tanking preset, the consumables, raid buffs and debuffs it is simmed with, in the DPS setup dataset's shape.",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -392,7 +392,7 @@
   "title": "Tanking tooltips",
   "description": "Item and spell tooltips the tanking pages show that the common tooltips dataset lacks, same row shape.",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -428,7 +428,7 @@
   "title": "Tanking names",
   "description": "Names, ranks, icons and colors of the spells and items the tanking pages show that the common names dataset lacks.",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -500,7 +500,7 @@
   "title": "Healing tooltips",
   "description": "Item and spell tooltips the healing pages show that the common tooltips dataset lacks, same row shape.",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
@@ -536,7 +536,7 @@
   "title": "Healing icons",
   "description": "The icons the healing pages show that the common icons datasets lack, as data URLs (\":l\" keys are the large versions).",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
@@ -545,7 +545,7 @@
   "title": "Healing names",
   "description": "Names, ranks, icons and colors of the spells and items the healing pages show that the common names dataset lacks.",
   "updated": {
-   "at": "2026-11-04T17:11:31.398Z",
+   "at": "2026-11-04T20:39:04.479Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"

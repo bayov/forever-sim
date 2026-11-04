@@ -3993,6 +3993,10 @@
     {
      "commit": "49f0218",
      "why": "Mana-gain threat (threat only, read by the Tanking mode); no DPS moves."
+    },
+    {
+     "commit": "c9973fb",
+     "why": "Test goldens only: the item set tests master added or changed leave the hit-trade step items out; no preset moves."
     }
    ],
    "source": {
