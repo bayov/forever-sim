@@ -509,9 +509,9 @@ func TestShieldSpecializationMakesNoThreat(t *testing.T) {
 	if got := manaGain.SpellMetrics[pal.CurrentTarget.UnitIndex].TotalThreat - threat; got != 0 {
 		t.Errorf("Shield Specialization's mana made %.1f threat, want none", got)
 	}
-	// Another mana gain does make threat, half a threat a mana times Righteous Fury's 1.33.
+	// Another mana gain does make threat: half a threat a mana, which Righteous Fury does not multiply.
 	pal.AddMana(sim, 100, pal.NewManaMetrics(core.ActionID{SpellID: 1}))
-	near(t, "threat of 100 other mana", manaGain.SpellMetrics[pal.CurrentTarget.UnitIndex].TotalThreat-threat, 100*0.5*1.33, 1e-6)
+	near(t, "threat of 100 other mana", manaGain.SpellMetrics[pal.CurrentTarget.UnitIndex].TotalThreat-threat, 100*0.5, 1e-6)
 }
 
 // TestIronCreedAndShieldsworn checks Iron Creed 3/3 (1311034: 30% Holy Strike threat, and with
