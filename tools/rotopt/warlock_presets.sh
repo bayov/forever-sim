@@ -14,6 +14,12 @@
 #   go run --tags=with_db ./tools/rotopt -template warlock -settings lock60.json -durs 180 -talent-search \
 #       -require suppression \
 #       -iters 2000 -knobs bane=2,corruption=1,immolate=1,siphonLife=1,conflagrate=1,shadowburn=2,soulFire=0,filler=2,soulLink=1,lifeTapMana=5
+#
+# Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/warlock.md) searched with
+# -hit-steps on the build's set and -hit-cap spell:16, so the hit Suppression gives can come from gear instead.
+# Destruction fire moved to 242-0050003201-0050355003101351 on the shared set's hit+1 step (+0.3 / +1.1 / +1.3
+# at 120 / 180 / 300 sec). Demonology keeps Suppression 5/5 (standards 26, -require suppression); without the pin it
+# found 101-0305003131221001351-0550005003 on hit+5 (+67.3 at 180 sec), left for a user ruling. Same knobs.
 #   go run --tags=with_db ./tools/rotopt -template warlock -settings lock60.json -durs 180 -iters 3000 -knobs ...
 set -e
 settings=$1

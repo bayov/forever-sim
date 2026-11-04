@@ -161,7 +161,8 @@ What round 1's searches found (round 2's changes are under "Presets"; the detail
 - **The opener is most of SafeDPS.** SafeDPS is each fight's lowest moment for a reference DPS, and that is
   the pull, so what the bear has in its first seconds counts far over the rest: a shift into Dire Bear Form
   1.5 sec before the pull (+62 at Balanced even with Furor at 0, since the engine counts the mana that
-  Judgement of Wisdom gives back as threat; +90 with Furor), Enrage 1 sec before the pull in round 1 (its Rage at the
+  Judgement of Wisdom gives back as threat; +90 with Furor; measured when that threat was multiplied by the bear's
+  2.15, now 0.5 a mana flat, so the gain is smaller, not re-measured), Enrage 1 sec before the pull in round 1 (its Rage at the
   pull, its armor cut over the first 9 sec; round 2's presets cast it in the fight instead; earlier, the Mighty Rage Potion at the pull runs into the 100
   Rage cap), the on-use Strength trinket at the pull (+166 over the armor trinket), and the Night Elf's
   Elune's Light (+172 over the Tauren after the update).
@@ -258,9 +259,9 @@ Mean of the six scoring encounters:
 
 | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Score at its own weight |
 |---|---|---|---|---|---|---|
-| Max threat | 1,667 | 632 | 1,685 | 578 | 593 | **2,837.3** |
-| Balanced | 1,615 | 610 | 1,603 | 576 | 484 | **1,867.5** |
-| Max survival | 1,477 | 550 | 1,520 | 577 | 463 | **-750.2** |
+| Max threat | 1,661 | 632 | 1,670 | 578 | 593 | **2,808.5** |
+| Balanced | 1,609 | 610 | 1,589 | 576 | 484 | **1,839.0** |
+| Max survival | 1,471 | 550 | 1,507 | 577 | 463 | **-775.0** |
 
 The bear's own DPS fell from about 755 in round 1 to about 610: the white hits' flat 11.25 Rage is less than
 Classic's Rage from damage gave at this gear, and the boss now parries and blocks. Its TPS fell less (about
@@ -268,27 +269,27 @@ Classic's Rage from damage gave at this gear, and the boss now parries and block
 
 | Encounter | Preset | Score (own weight) | TPS | DPS | SafeDPS | DTPS | Healing needed | Death floor |
 |---|---|---|---|---|---|---|---|---|
-| Magmadar | max threat | 2924 | 1620 | 620 | 1636 | 351 | 299 | 0.0% |
-| Magmadar | balanced | 2272 | 1577 | 602 | 1568 | 351 | 248 | 0.0% |
-| Magmadar | max survival | 743 | 1423 | 534 | 1467 | 353 | 209 | 0.0% |
-| Golemagg | max threat | 2888 | 1624 | 623 | 1644 | 376 | 345 | 0.0% |
-| Golemagg | balanced | 2148 | 1582 | 604 | 1565 | 376 | 281 | 0.0% |
-| Golemagg | max survival | 333 | 1419 | 533 | 1462 | 381 | 248 | 0.0% |
-| Onyxia | max threat | 2765 | 1707 | 645 | 1721 | 468 | 392 | 0.0% |
-| Onyxia | balanced | 1718 | 1646 | 620 | 1660 | 469 | 310 | 0.0% |
-| Onyxia | max survival | -1097 | 1522 | 566 | 1586 | 468 | 275 | 0.0% |
-| Broodlord | max threat | 2839 | 1674 | 638 | 1682 | 481 | 524 | 0.0% |
-| Broodlord | balanced | 1882 | 1617 | 614 | 1597 | 476 | 437 | 0.0% |
-| Broodlord | max survival | -952 | 1481 | 553 | 1525 | 478 | 445 | 0.0% |
-| Vaelastrasz | max threat | 3136 | 1769 | 643 | 1837 | 1181 | 1282 | 0.0% |
-| Vaelastrasz | balanced | 2279 | 1684 | 609 | 1718 | 1173 | 918 | 0.0% |
-| Vaelastrasz | max survival | 35 | 1654 | 597 | 1709 | 1172 | 895 | 0.0% |
-| Chromaggus | max threat | 2472 | 1610 | 624 | 1590 | 610 | 714 | 0.0% |
-| Chromaggus | balanced | 906 | 1582 | 614 | 1512 | 610 | 713 | 0.0% |
-| Chromaggus | max survival | -3563 | 1361 | 518 | 1370 | 608 | 707 | 0.0% |
-| Ragnaros | max threat | 965 | 1606 | 622 | 1599 | 1323 | 2121 | 0.0% |
-| Ragnaros | balanced | -3481 | 1587 | 613 | 1545 | 1307 | 2081 | 0.0% |
-| Ragnaros | max survival | -16132 | 1383 | 524 | 1413 | 1311 | 2001 | 0.0% |
+| Magmadar | max threat | 2899 | 1616 | 620 | 1623 | 351 | 299 | 0.0% |
+| Magmadar | balanced | 2246 | 1573 | 602 | 1555 | 351 | 248 | 0.0% |
+| Magmadar | max survival | 723 | 1419 | 534 | 1457 | 353 | 209 | 0.0% |
+| Golemagg | max threat | 2863 | 1620 | 623 | 1632 | 376 | 345 | 0.0% |
+| Golemagg | balanced | 2124 | 1578 | 604 | 1553 | 376 | 281 | 0.0% |
+| Golemagg | max survival | 313 | 1415 | 533 | 1452 | 381 | 248 | 0.0% |
+| Onyxia | max threat | 2734 | 1700 | 645 | 1705 | 468 | 392 | 0.0% |
+| Onyxia | balanced | 1689 | 1639 | 620 | 1646 | 469 | 310 | 0.0% |
+| Onyxia | max survival | -1123 | 1515 | 566 | 1572 | 468 | 275 | 0.0% |
+| Broodlord | max threat | 2810 | 1668 | 638 | 1667 | 481 | 524 | 0.0% |
+| Broodlord | balanced | 1854 | 1611 | 614 | 1583 | 476 | 437 | 0.0% |
+| Broodlord | max survival | -977 | 1475 | 553 | 1513 | 478 | 445 | 0.0% |
+| Vaelastrasz | max threat | 3092 | 1755 | 643 | 1815 | 1181 | 1282 | 0.0% |
+| Vaelastrasz | balanced | 2236 | 1671 | 609 | 1696 | 1173 | 918 | 0.0% |
+| Vaelastrasz | max survival | -8 | 1641 | 597 | 1688 | 1172 | 895 | 0.0% |
+| Chromaggus | max threat | 2453 | 1607 | 624 | 1580 | 610 | 714 | 0.0% |
+| Chromaggus | balanced | 885 | 1580 | 614 | 1501 | 610 | 713 | 0.0% |
+| Chromaggus | max survival | -3578 | 1359 | 518 | 1362 | 608 | 707 | 0.0% |
+| Ragnaros | max threat | 942 | 1602 | 622 | 1587 | 1323 | 2121 | 0.0% |
+| Ragnaros | balanced | -3506 | 1583 | 613 | 1532 | 1307 | 2081 | 0.0% |
+| Ragnaros | max survival | -16150 | 1380 | 524 | 1404 | 1311 | 2001 | 0.0% |
 
 Ragnaros needs about 2,000 to 2,100 healing a second at every preset, past what the bench's healers give, so
 it stays out of the score.
@@ -305,8 +306,9 @@ Each with the default the sim uses now.
    only, no client row; standards 37). Default: 2x; a bear tank's threat log would settle it.
 4. **Enrage's armor cut at the tooltip's 16%** of armor from items. Default: 16%.
 5. **Omen of Clarity in Bear Form at the cat's 2 a minute**. Default: 2 a minute.
-6. **Threat from mana gains.** The engine counts the mana that Judgement of Wisdom gives back as threat
-   (about 8 TPS here), which is most of why the prepull shift pays. That is an engine rule for every tank,
+6. **Threat from mana gains.** The engine counts the mana that Judgement of Wisdom gives back as threat,
+   0.5 a mana with no threat multiplier (it was multiplied by the bear's 2.15 until 2026-11-04; about 8 TPS then, about
+   2 now), which was most of why the prepull shift paid. That is an engine rule for every tank,
    so not mine to change. Default: as it is.
 7. **Furor scores nothing** for a bear that shifts before the pull, so the presets drop it. Default: Furor 0.
 8. **Enrage in the fight, not before the pull**, at every weight (the round-1 presets cast it before the

@@ -22,6 +22,11 @@ type setup struct {
 	request *proto.RaidSimRequest
 	// talents replaces the player's talent string when set. The talent search moves it.
 	talents string
+
+	// hit puts each talent string on its hit-trade gear step (-hit-steps, hitsteps.go);
+	// hitStep, when set, forces one step.
+	hit     *hitSteps
+	hitStep *int
 }
 
 func loadSetup(path string) (*setup, error) {
@@ -76,6 +81,7 @@ func (s *setup) clone() *proto.RaidSimRequest {
 	if s.talents != "" {
 		request.Raid.Parties[0].Players[0].TalentsString = s.talents
 	}
+	s.wearHitStep(request)
 	return request
 }
 
@@ -140,6 +146,7 @@ func gainNoise(a, b result) float64 {
 			return math.Sqrt(variance) / float64(n)
 		}
 	}
+	// Over several tank encounters each stderr already carries tankscore.SharedSeedSD (combine).
 	return math.Hypot(a.stderr, b.stderr)
 }
 
@@ -208,6 +215,11 @@ func (s *setup) runRequest(rot *proto.APLRotation, duration float64, iterations 
 	request.Raid.Parties[0].Players[0].Rotation = rot
 	request.SimOptions.Iterations = iterations
 	request.SimOptions.RandomSeed = simSeed
+	if tankSlots != nil || tankObjective != nil {
+		// A tank run's seed is spaced apart so different -seed values run disjoint iterations
+		// (tankscore.Seed; -seed 1 maps to itself). DPS runs keep the plain seed, so their numbers don't move.
+		request.SimOptions.RandomSeed = tankscore.Seed(simSeed)
+	}
 	return request
 }
 

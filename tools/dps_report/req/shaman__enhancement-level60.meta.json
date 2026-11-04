@@ -6,13 +6,13 @@
   "isDefault": true,
   "pr": 7,
   "race": "Orc",
-  "talents": "353003102-055030110051012251-02",
+  "talents": "353003102-055030110051012151-03",
   "treeNames": [
     "Elemental",
     "Enhancement",
     "Restoration"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase1_synthetic_hit-3",
   "apl": "optimized",
   "published": {
     "dps": 1159.4,
@@ -83,5 +83,5 @@
     "Convection 3 and Tidal Focus 2 in place of Reverberation 5 since the November 2 notes, +11 at 180s. Convection 4, Improved Stormstrike 1 and Tidal Focus 3 ties it (+2.5 at 120s, -2 to -3 at 300s).",
     "The relic is Totem of the Storm, 0.9 to 2.1 DPS ahead of Burning Totem at every fight length. It lets Lightning Bolt trigger Maelstrom Weapon at half the chance."
   ],
-  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself). Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself). Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md"
 }

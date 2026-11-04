@@ -1,19 +1,16 @@
-// The character frame's Skills tab: the Classic SkillFrame. Your skills under their headers (Class
-// Skills, Professions, Weapon Skills, Armor Proficiencies, Languages) as bars, and the picked
-// skill's bar and description under the list.
+// The character frame's Skills tab, as Forever's Camelot/SkillsFrame.xml: your skills under
+// their headers (Professions, Weapon Skills, Armor Proficiencies, Languages) in a scrolling list,
+// each with its rank bar, and the picked skill's details in the pane on the right. Forever hides
+// the Class Skills header.
 //
 // The game reads these from the server. We build them from small tables by class and race: the
 // skills a level 60 of the class has trained, at the level's cap. Only the weapon skill and
 // Defense bonuses come from the sim's sheet.
 
+import { atlasTexture, setAtlas } from './atlas';
+import { SidePane, progressBar, scrollBox, sliced, type ProgressBar, type ScrollBox } from './character_widgets';
 import type { RoomLink } from './link';
-import { button, clickable, div, scrollFrame, text, texture } from './panels';
-import { SND, sound, tex, texVars, glow, TX } from './assets';
-
-const plusUp = 130838;
-const plusHighlight = 130837;
-const minusUp = 130821;
-const horizontalBar = 130968; // classtrainerframe/ui-classtrainer-horizontalbar
+import { clickable, div, text } from './panels';
 
 // The weapon skills the sheet has a bonus for, by the PseudoStat enum.
 const weaponPseudo: Record<string, number> = {
@@ -33,44 +30,38 @@ const weaponPseudo: Record<string, number> = {
 	Thrown: 19,
 };
 
-type ClassSkills = { spec: string[]; weapons: string[]; armor: string[] };
+type ClassSkills = { weapons: string[]; armor: string[] };
 
 // What each class has trained by level 60 in Classic. Shaman first, the one we play. We list
 // two-handed axes and maces for shamans because Forever's enhancement builds use them.
 const classSkills: Record<string, ClassSkills> = {
 	ClassShaman: {
-		spec: ['Elemental Combat', 'Enhancement', 'Restoration'],
 		weapons: ['Axes', 'Daggers', 'Fist Weapons', 'Maces', 'Staves', 'Two-Handed Axes', 'Two-Handed Maces', 'Unarmed'],
 		armor: ['Cloth', 'Leather', 'Mail', 'Shield'],
 	},
 	ClassWarrior: {
-		spec: ['Arms', 'Fury', 'Protection'],
 		weapons: ['Axes', 'Bows', 'Crossbows', 'Daggers', 'Fist Weapons', 'Guns', 'Maces', 'Polearms', 'Staves', 'Swords', 'Thrown', 'Two-Handed Axes', 'Two-Handed Maces', 'Two-Handed Swords', 'Unarmed'],
 		armor: ['Cloth', 'Leather', 'Mail', 'Plate Mail', 'Shield'],
 	},
 	ClassPaladin: {
-		spec: ['Holy', 'Protection', 'Retribution'],
 		weapons: ['Axes', 'Maces', 'Polearms', 'Swords', 'Two-Handed Axes', 'Two-Handed Maces', 'Two-Handed Swords', 'Unarmed'],
 		armor: ['Cloth', 'Leather', 'Mail', 'Plate Mail', 'Shield'],
 	},
 	ClassHunter: {
-		spec: ['Beast Mastery', 'Marksmanship', 'Survival'],
 		weapons: ['Axes', 'Bows', 'Crossbows', 'Daggers', 'Fist Weapons', 'Guns', 'Polearms', 'Staves', 'Swords', 'Thrown', 'Two-Handed Axes', 'Two-Handed Swords', 'Unarmed'],
 		armor: ['Cloth', 'Leather', 'Mail'],
 	},
 	ClassRogue: {
-		spec: ['Assassination', 'Combat', 'Subtlety'],
 		weapons: ['Bows', 'Crossbows', 'Daggers', 'Fist Weapons', 'Guns', 'Maces', 'Swords', 'Thrown', 'Unarmed'],
 		armor: ['Cloth', 'Leather'],
 	},
 	ClassDruid: {
-		spec: ['Balance', 'Feral Combat', 'Restoration'],
 		weapons: ['Daggers', 'Fist Weapons', 'Maces', 'Staves', 'Two-Handed Maces', 'Unarmed'],
 		armor: ['Cloth', 'Leather'],
 	},
-	ClassMage: { spec: ['Arcane', 'Fire', 'Frost'], weapons: ['Daggers', 'Staves', 'Swords', 'Unarmed', 'Wands'], armor: ['Cloth'] },
-	ClassPriest: { spec: ['Discipline', 'Holy', 'Shadow Magic'], weapons: ['Daggers', 'Maces', 'Staves', 'Unarmed', 'Wands'], armor: ['Cloth'] },
-	ClassWarlock: { spec: ['Affliction', 'Demonology', 'Destruction'], weapons: ['Daggers', 'Staves', 'Swords', 'Unarmed', 'Wands'], armor: ['Cloth'] },
+	ClassMage: { weapons: ['Daggers', 'Staves', 'Swords', 'Unarmed', 'Wands'], armor: ['Cloth'] },
+	ClassPriest: { weapons: ['Daggers', 'Maces', 'Staves', 'Unarmed', 'Wands'], armor: ['Cloth'] },
+	ClassWarlock: { weapons: ['Daggers', 'Staves', 'Swords', 'Unarmed', 'Wands'], armor: ['Cloth'] },
 };
 
 // The languages each race speaks.
@@ -123,10 +114,6 @@ function skillList(link: RoomLink): Header[] {
 	const headers: Header[] = [];
 	const add = (name: string, skills: Skill[]) => skills.length && headers.push({ name, skills, open: true });
 
-	add(
-		'Class Skills',
-		cls.spec.map(name => ({ name, rank: 1, max: 1, modifier: 0 })),
-	);
 	const player = (loaded.request as { raid?: { parties?: { players?: { profession1?: string; profession2?: string }[] }[] } })?.raid?.parties?.[0]?.players?.[0];
 	const professions = [player?.profession1, player?.profession2].filter((p): p is string => !!p && !!professionNames[p]);
 	// The sim knows which professions you have but not their skill. We show them at the cap.
@@ -155,85 +142,62 @@ function skillList(link: RoomLink): Header[] {
 	return headers;
 }
 
-// The bar colors from SkillFrame.lua: blue for a skill with ranks, gray for one you just have.
-const rankColors = { fill: 'rgb(0,0,255)', back: 'rgb(0,0,191)' };
-const plainColors = { fill: 'rgb(128,128,128)', back: 'rgb(64,64,64)' };
 
-type Bar = { el: HTMLDivElement; set(s: Skill): void };
+// The weapon skills the detail pane gives hit and crit numbers for (WEAPON_SKILL_LINES), and
+// which of them are ranged.
+const weaponSkillLines = new Set(['Swords', 'Axes', 'Bows', 'Guns', 'Maces', 'Two-Handed Swords', 'Staves', 'Two-Handed Maces', 'Two-Handed Axes', 'Daggers', 'Thrown', 'Crossbows', 'Wands', 'Polearms', 'Unarmed']);
+const rangedSkills = new Set(['Bows', 'Guns', 'Thrown', 'Crossbows', 'Wands']);
+const raidBossLevel = 63;
 
-// skillBar is a SkillRankFrameTemplate: the bar with the skill's name on the left and its rank on
-// the right, in a thin border.
-function skillBar(parent: HTMLElement, box: { x: number; y: number; w: number }): Bar {
-	const el = div(parent, 'bz-skill-bar', { ...box, h: 12 });
-	const back = div(el, 'bz-skill-bar-bg');
-	const fill = div(el, 'bz-skill-bar-fill');
-	div(el, 'bz-skill-bar-border');
-	const name = text(el, '', 'GameFontHighlightSmall', { x: 6 });
-	const rank = text(el, '', 'GameFontHighlightSmall');
-	rank.classList.add('bz-skill-rank');
-	return {
-		el,
-		set(s) {
-			const c = s.max > 1 ? rankColors : plainColors;
-			back.style.backgroundColor = c.back;
-			fill.style.backgroundColor = c.fill;
-			fill.style.width = `${Math.min(1, s.rank / (s.max || 1)) * 100}%`;
-			name.textContent = s.name;
-			rank.textContent = '';
-			if (s.max <= 1) return;
-			// The game shows a bonus as "300 (+5)/300", the bonus in green.
-			if (!s.modifier) rank.textContent = `${s.rank}/${s.max}`;
-			else {
-				rank.append(`${s.rank} (`);
-				const m = document.createElement('span');
-				m.className = s.modifier > 0 ? 'up' : 'down';
-				m.textContent = s.modifier > 0 ? `+${s.modifier}` : String(s.modifier);
-				rank.append(m, `)/${s.max}`);
-			}
-		},
-	};
+// signed is FormatSignedPercent: "+0.20%", "0.00%" or "-0.60%".
+function signed(v: number): string {
+	const t = `${(Math.abs(v) < 0.005 ? 0 : v).toFixed(2)}%`;
+	return v >= 0.005 ? `+${t}` : t;
 }
 
-// SkillsPage is the Skills tab's content.
+// glancing is the Classic glancing blow chance and damage cut against a target's defense, as the
+// sim has them (core/target.go).
+function glancing(skill: number, level: number, defense: number): [chance: number, penalty: number] {
+	const capped = Math.min(skill, level * 5);
+	const chance = Math.max(0, Math.min(0.4, 0.1 + (defense - capped) * 0.02));
+	const lo = Math.max(0.01, Math.min(0.91, 1.3 - 0.05 * (defense - skill)));
+	const hi = Math.max(0.2, Math.min(0.99, 1.2 - 0.03 * (defense - skill)));
+	return [chance, 1 - (lo + hi) / 2];
+}
+
+// rankText is the bar's text: "300 / 300", or "300 (+5) / 300" with the bonus in green.
+function rankText(s: Skill): Node[] {
+	if (!s.modifier) return [document.createTextNode(`${s.rank} / ${s.max}`)];
+	const m = document.createElement('span');
+	m.className = s.modifier > 0 ? 'bz-green' : 'bz-red';
+	m.textContent = `(${s.modifier > 0 ? '+' : ''}${s.modifier})`;
+	return [document.createTextNode(`${s.rank} `), m, document.createTextNode(` / ${s.max}`)];
+}
+
+// SkillsPage is the Skills tab's content: the list on the left, the details on the right.
 export class SkillsPage {
 	private headers: Header[] = [];
-	private list!: ReturnType<typeof scrollFrame>;
+	private list: ScrollBox;
 	private selected?: Skill;
-	private detailBar!: Bar;
-	private detailText!: HTMLDivElement;
-	private allToggle!: HTMLDivElement;
+	private readonly pane: SidePane;
+	private readonly rankBar: ProgressBar;
 
 	constructor(
-		private readonly page: HTMLElement,
+		page: HTMLElement,
 		private readonly link: RoomLink,
-		close: () => void,
+		// expand opens the right pane when you pick a skill while it's collapsed.
+		private readonly expand: () => void,
 	) {
-		void texVars({
-			'bz-skill-bar': () => tex(TX.skillsBar),
-			'bz-skill-border': () => tex(TX.skillsBarBorder),
-			'bz-skill-border-highlight': () => tex(TX.skillsBarBorderHighlight),
-			'bz-skill-plus': () => tex(plusUp),
-			'bz-skill-minus': () => tex(minusUp),
-			'bz-skill-plus-highlight': () => glow(plusHighlight),
-		});
-		// The "All" button opens or closes every header.
-		const all = div(page, 'bz-skill-row bz-skill-header', { x: 22, y: 76, w: 60 });
-		this.allToggle = div(all, 'bz-skill-toggle');
-		text(all, 'All', 'GameFontNormal');
-		clickable(all, () => {
-			const open = !this.headers.every(h => h.open);
-			for (const h of this.headers) h.open = open;
-			this.render();
-		});
-		this.list = scrollFrame(page, { x: 20, y: 96, w: 299, h: 144 });
-		// The bar between the list and the detail.
-		texture(page, horizontalBar, { x: 15, y: 250, w: 256, h: 16 }, { coords: [0, 1, 0, 0.25], size: [256, 64] });
-		texture(page, horizontalBar, { x: 271, y: 250, w: 75, h: 16 }, { coords: [0, 0.29296875, 0.25, 0.5], size: [256, 64] });
-		// The detail under the list: the picked skill's bar and what it does.
-		this.detailBar = skillBar(page, { x: 30, y: 272, w: 270 });
-		this.detailText = text(page, '', 'GameFontHighlightSmall', { x: 30, y: 294, w: 280 });
-		this.detailText.classList.add('bz-skill-desc');
-		button(page, 'Close', { x: 264, y: 409, w: 80, h: 22 }, close);
+		// The ScrollBox sits 10, 40 into the left pane (which starts 20 down the frame) and 25, 15
+		// from its other corner, with the long lines at its top and bottom.
+		this.list = scrollBox(page, { x: 10, y: 60, w: 363, h: 409 }, { x: 378, y: 62, h: 403 });
+		this.list.content.classList.add('bz-skill-list');
+		atlasTexture(page, 'UI-Character-Info-ScrollLine-Long', { x: 10 + 363 / 2 - 192, y: 56, w: 384, h: 8 }, { cls: 'bz-cs-line' });
+		atlasTexture(page, 'UI-Character-Info-ScrollLine-Long', { x: 10 + 363 / 2 - 192, y: 465, w: 384, h: 8 }, { cls: 'bz-cs-line' });
+		this.pane = new SidePane(page, { x: 414, y: 34, w: 205, h: 436 });
+		this.pane.el.classList.add('bz-right-pane');
+		this.rankBar = progressBar(this.pane.extra, { w: 180 });
+		this.rankBar.el.style.position = 'relative';
 	}
 
 	// refresh rebuilds the list from the sheet, keeping which headers are open.
@@ -241,9 +205,8 @@ export class SkillsPage {
 		const open = new Map(this.headers.map(h => [h.name, h.open]));
 		this.headers = skillList(this.link);
 		for (const h of this.headers) h.open = open.get(h.name) ?? true;
-		const names = new Set(this.headers.flatMap(h => h.skills.map(s => s.name)));
-		if (!this.selected || !names.has(this.selected.name)) this.selected = this.headers.find(h => h.name === 'Weapon Skills')?.skills[0] ?? this.headers[0]?.skills[0];
-		else this.selected = this.headers.flatMap(h => h.skills).find(s => s.name === this.selected!.name);
+		const all = this.headers.flatMap(h => h.skills);
+		this.selected = all.find(s => s.name === this.selected?.name) ?? all[0];
 		this.render();
 	}
 
@@ -255,37 +218,93 @@ export class SkillsPage {
 	private render() {
 		const c = this.list.content;
 		c.textContent = '';
-		const row = 15;
-		let y = 0;
-		this.allToggle.style.backgroundImage = this.headers.every(h => h.open) ? 'var(--bz-skill-minus)' : 'var(--bz-skill-plus)';
 		for (const h of this.headers) {
-			const hr = div(c, 'bz-skill-row bz-skill-header', { y, w: 290 });
-			const t = div(hr, 'bz-skill-toggle');
-			t.style.backgroundImage = h.open ? 'var(--bz-skill-minus)' : 'var(--bz-skill-plus)';
-			text(hr, h.name, 'GameFontNormal');
+			// SkillsHeaderTemplate: the collapse bar art, the name and a plus or minus.
+			const hr = div(c, 'bz-skill-header');
+			const bg = div(hr, 'bz-skill-header-bg');
+			void sliced(bg, 'common-button-list-collapseExpand', [18, 0, 18, 0], true);
+			const hi = div(hr, 'bz-skill-header-hi');
+			void sliced(hi, 'common-button-list-collapseExpand', [18, 0, 18, 0], true);
+			const name = text(hr, h.name, 'GameFontNormal');
+			name.classList.add('bz-skill-header-name');
+			const state = div(hr, 'bz-skill-header-state');
+			void setAtlas(state, h.open ? 'common-button-list-minus' : 'common-button-list-plus', { useAtlasSize: true });
 			clickable(hr, () => {
 				h.open = !h.open;
 				this.render();
 			});
-			y += row;
 			if (!h.open) continue;
 			for (const s of h.skills) {
-				const r = div(c, 'bz-skill-row', { y, w: 290 });
+				// SkillsEntryTemplate: the name on the left, the rank bar on the right, and a soft
+				// white band when picked or hovered.
+				const r = div(c, 'bz-skill-entry');
 				r.classList.toggle('selected', s === this.selected);
-				skillBar(r, { x: 20, y: 2, w: 268 }).set(s);
+				const band = div(r, 'bz-skill-band');
+				const l = atlasTexture(band, 'charactercreate-customize-dropdown-linemouseover-side', {}, { cls: 'bz-band-l' });
+				const m = atlasTexture(band, 'charactercreate-customize-dropdown-linemouseover-middle', {}, { cls: 'bz-band-m' });
+				const rr = atlasTexture(band, 'charactercreate-customize-dropdown-linemouseover-side', {}, { cls: 'bz-band-r', flipX: true });
+				void [l, m, rr];
+				const name = text(r, s.name, 'GameFontHighlight');
+				name.classList.add('bz-skill-name');
+				const bar = progressBar(r, { w: 160 });
+				bar.el.classList.add('bz-skill-bar');
+				bar.set(s.rank / (s.max || 1), rankText(s));
 				clickable(r, () => {
 					this.selected = s;
-					sound(SND.menuOption);
+					this.expand();
 					this.render();
 				});
-				y += row;
 			}
 		}
-		c.style.height = `${y}px`;
 		this.list.update();
+		this.renderDetail();
+	}
+
+	// renderDetail fills the right pane with the picked skill (SkillDetailFrameMixin:Refresh).
+	private renderDetail() {
 		const s = this.selected;
-		this.detailBar.el.style.display = s ? '' : 'none';
-		if (s) this.detailBar.set(s);
-		this.detailText.textContent = s?.description ?? '';
+		const p = this.pane;
+		if (!s) {
+			p.setEmpty('Select a skill to view its details.');
+			this.rankBar.el.style.display = 'none';
+			return;
+		}
+		p.clearEmpty();
+		this.rankBar.el.style.display = '';
+		const weapon = weaponSkillLines.has(s.name);
+		p.setTitle(s.name);
+		this.rankBar.set(s.rank / (s.max || 1), rankText(s));
+		p.setDescription(s.description, weapon ? 40 : 120);
+		p.reset();
+		if (!weapon) return;
+		const level = this.link.sheet()?.level ?? this.link.loaded.level;
+		const skill = s.rank + s.modifier;
+		const chance = (offset: number) => signed((skill - (level + offset) * 5) * 0.04);
+		const ranged = rangedSkills.has(s.name);
+		p.addSpacer(6);
+		p.addCategory('Equal-Level Enemy');
+		p.addWrapped(ranged ? hitLines(chance(0), chance(0)) : meleeLines(chance(0), chance(0)));
+		p.addSpacer(8);
+		p.addCategory('Against Raid Bosses');
+		const boss = chance(raidBossLevel - level);
+		if (ranged) p.addWrapped(hitLines(boss, boss));
+		else {
+			const [g, cut] = glancing(skill, level, raidBossLevel * 5);
+			p.addWrapped([...meleeLines(boss, boss), '\n\n', { white: 'Glancing Blows' }, ` occur ${Math.round(g * 100)}% of the time and deal ${Math.round(cut * 100)}% less damage`]);
+		}
 	}
 }
+
+// The detail rows' text (WEAPON_SKILL_DETAIL_*): gold with the key words in white.
+const meleeLines = (hit: string, crit: string) => [
+	'Chance to ',
+	{ white: 'Hit' },
+	', and to avoid being ',
+	{ white: 'Dodged' },
+	' or ',
+	{ white: 'Parried' },
+	`: ${hit}\n\nChance to `,
+	{ white: 'Critically Hit' },
+	`: ${crit}`,
+];
+const hitLines = (hit: string, crit: string) => ['Chance to ', { white: 'Hit' }, `: ${hit}\n\nChance to `, { white: 'Critically Hit' }, `: ${crit}`];

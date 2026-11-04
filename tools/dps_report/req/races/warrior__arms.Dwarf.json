@@ -1,18 +1,74 @@
 {
- "bonusStats": {
-  "MeleeHit": -1.0,
-  "Strength": 5.082,
-  "MeleeCrit": 0.1,
-  "Agility": 2.425,
-  "AttackPower": 2.175
+ "gearSet": "level60_phase1_synthetic_arms_hit-1",
+ "equipment": {
+  "items": [
+   {
+    "id": 991001,
+    "enchant": 1506
+   },
+   {
+    "id": 991002,
+    "enchant": 1249019
+   },
+   {
+    "id": 991003
+   },
+   {
+    "id": 991004,
+    "enchant": 1219587
+   },
+   {
+    "id": 991005,
+    "enchant": 1891
+   },
+   {
+    "id": 991006,
+    "enchant": 1885
+   },
+   {
+    "id": 991007,
+    "enchant": 1248640
+   },
+   {
+    "id": 991008
+   },
+   {
+    "id": 991009,
+    "enchant": 1506
+   },
+   {
+    "id": 991300,
+    "enchant": 1887
+   },
+   {
+    "id": 991011
+   },
+   {
+    "id": 991012
+   },
+   {
+    "id": 991017
+   },
+   {
+    "id": 991018
+   },
+   {
+    "id": 991016,
+    "enchant": 1900
+   },
+   {},
+   {
+    "id": 991013
+   }
+  ]
  },
- "note": "1% hit over the cap re-spent as 5.1 Strength, 2.4 Agility, 2.2 attack power and 0.10% crit",
+ "note": "1% hit over the cap traded through the set's hit -1 step",
  "gain": {
-  "dps": 5.03,
-  "se": 0.16,
+  "dps": 6.53,
+  "se": 0.12,
   "iterations": 20000,
   "seed": 1,
   "duration": 180
  },
- "how": "race_gear.py: Dwarf hit 9% against the 8% yellow cap, the set's own hit 8%: 1% (10 budget points) re-spent over the set's shares at the 1b prices (Strength 50.8%, Agility 24.3%, CritRating 14.1%, AttackPower 10.9%). Hit and crit are one pool for the gear, so each is written once. Dwarf 889.8 with the preset's gear, 894.8 with the swap; gain.se is the paired error (the same seeded fights), 0.54 unpaired."
+ "how": "race_gear.py: Dwarf hit 9% against the 8% yellow cap. The preset wears level60_phase1_synthetic_arms (hit step +0); Dwarf wears the set's step -1, level60_phase1_synthetic_arms_hit-1 (10 less gear hit rating, traded at the budget prices by orchestration/tools/hit_steps.py). Dwarf 1069.7 with the preset's gear, 1076.2 with the swap; gain.se is the paired error (the same seeded fights), 0.67 unpaired."
 }

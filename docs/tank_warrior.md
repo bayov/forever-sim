@@ -210,7 +210,7 @@ knob searches alternated until neither moved. Raw output: `orchestration/tank_ha
 | Balanced (w = 1, default) | `05-05050005-250530020310001351`: Deflection 5; Cruelty, Unbridled Wrath, Enrage 5/5; Protection 31 with Shield Slam, Improved Sunder Armor 1, no Last Stand or Vanguard | (the base) | attack power on-use (991018) | Undead | 3,008.5 |
 | Max survival (w = 3) | Balanced's (its own search ends there) | `trinketAt=35` (the armor trinket held for the last 35 s) | armor on-use (990617), `level60_phase1_synthetic_armor_trinket.gear.json` | Undead | 1,205.0 |
 
-All three wear Superior Deflection (Defense +9) on the wrists, Superior Stamina (+9, enchant 1886) on the shield.
+All three wear Superior Deflection (Defense +9) on the wrists, Enchant Shield - Greater Stamina (spell 20017, +9 Stamina, enchant 1886, the id the bracer's Superior Stamina shares) on the shield.
 
 Balanced's knobs: `shieldBlock=1` (whenever its buff is down), `sbRage=0`, `demo=0`, `tc=1`, `tcRefresh=2`,
 `debuffsFirst=0`, `revengeFirst=0`, `sunderUp=1`, `sunderRage=30`, `hsRage=50`, `bloodrageRage=30`, `opener=0`,

@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/tools/tankscore"
 )
 
 // Coordinate descent over the knobs. Every knob in turn tries each of its values with the
@@ -61,7 +62,8 @@ type searcher struct {
 
 // Mean DPS and end mana over the fight lengths, with the standard errors of those means.
 func (s *searcher) score(knobs Knobs) result {
-	return s.scoreAll([]*pendingScore{s.prepare(knobs)})[0]
+	pending, steps := s.prepareSteps(knobs)
+	return s.pickStep(s.setup.effectiveTalents(), s.scoreAll(pending), steps)
 }
 
 // pendingScore is a score still to work out: a sim request for each fight length, made from
@@ -83,7 +85,7 @@ func (s *searcher) prepare(knobs Knobs) *pendingScore {
 	rot := s.template.Build(knobs)
 	p := &pendingScore{knobs: knobs, cache: s.cache}
 	for _, d := range s.durations {
-		key := fmt.Sprintf("%s|%g|%s|%d", s.setup.talents, d, knobs, s.iterations)
+		key := fmt.Sprintf("%s%s|%g|%s|%d", s.setup.talents, s.setup.hitKey(), d, knobs, s.iterations)
 		r, ok := s.cache[key]
 		var request *proto.RaidSimRequest
 		if !ok {
@@ -167,6 +169,12 @@ func (s *searcher) combine(p *pendingScore) result {
 		tto:    tto / n,
 		health: p.health, armor: p.armor,
 		tankParts: parts,
+	}
+	if len(tankSlots) > 1 {
+		// The tank encounters' runs share their seed, so their scores correlate and the mean's
+		// error is about 1.25 times the independent one (tankscore.SharedSeedSD, finding
+		// tank_rotations-20261104-13). gainNoise's paired error doesn't need it.
+		r.stderr *= tankscore.SharedSeedSD
 	}
 	if len(s.durations) == 1 {
 		r.leveling = p.results[0].leveling

@@ -306,9 +306,9 @@ the six scoring encounters (Ragnaros is reported, not scored).
 
 | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|---|---|
-| Max threat | 1,345 | 589 | 1,494 | 320 | 238 | **2,785** | 2,380 | 1,164 |
-| Balanced | 1,313 | 576 | 1,457 | 301 | 208 | 2,742 | **2,398** | 1,337 |
-| Max survival | 1,313 | 576 | 1,457 | 301 | 208 | 2,742 | 2,398 | **1,337** |
+| Max threat | 1,334 | 589 | 1,482 | 320 | 238 | **2,761** | 2,356 | 1,140 |
+| Balanced | 1,302 | 576 | 1,446 | 301 | 208 | 2,718 | **2,374** | 1,340 |
+| Max survival | 1,302 | 576 | 1,446 | 301 | 208 | 2,718 | 2,374 | **1,340** |
 
 Before round 2 (the master bench of 23b2ec2, the same requests before this round's changes): 2,786 / 2,411 /
 1,422 at each preset's own weight.
@@ -317,20 +317,20 @@ Per encounter (Max survival is Balanced's build, so its rows equal Balanced's an
 
 | Encounter | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Magmadar | Max threat | 1331 | 584 | 1453 | 163 | 30 | 0.0% | 2872 | 2802 | 2594 |
-| Magmadar | Balanced | 1296 | 569 | 1414 | 150 | 14 | 0.0% | 2811 | 2777 | 2676 |
-| Golemagg | Max threat | 1304 | 572 | 1420 | 201 | 84 | 0.0% | 2743 | 2549 | 1966 |
-| Golemagg | Balanced | 1276 | 560 | 1388 | 186 | 62 | 0.0% | 2705 | 2561 | 2128 |
-| Onyxia | Max threat | 1399 | 614 | 1557 | 178 | 34 | 0.0% | 3056 | 2939 | 2586 |
-| Onyxia | Balanced | 1366 | 600 | 1524 | 165 | 13 | 0.0% | 3025 | 2979 | 2842 |
-| Broodlord | Max threat | 1327 | 581 | 1460 | 321 | 364 | 0.0% | 2555 | 1828 | -356 |
-| Broodlord | Balanced | 1294 | 567 | 1422 | 302 | 307 | 0.0% | 2538 | 1924 | 83 |
-| Vaelastrasz | Max threat | 1413 | 618 | 1682 | 626 | 435 | 0.0% | 3182 | 2816 | 1720 |
-| Vaelastrasz | Balanced | 1380 | 604 | 1638 | 604 | 403 | 0.0% | 3107 | 2769 | 1753 |
-| Chromaggus | Max threat | 1294 | 567 | 1390 | 429 | 484 | 0.0% | 2302 | 1344 | -1529 |
-| Chromaggus | Balanced | 1267 | 556 | 1358 | 400 | 451 | 0.0% | 2269 | 1376 | -1302 |
-| Ragnaros | Max threat | 1172 | 518 | 1270 | 953 | 1609 | 0.0% | 847 | -2540 | -12700 |
-| Ragnaros | Balanced | 1142 | 506 | 1235 | 948 | 1626 | 0.0% | 759 | -2665 | -12936 |
+| Magmadar | Max threat | 1321 | 584 | 1442 | 163 | 30 | 0.0% | 2848 | 2779 | 2570 |
+| Magmadar | Balanced | 1285 | 569 | 1402 | 150 | 14 | 0.0% | 2788 | 2754 | 2653 |
+| Golemagg | Max threat | 1294 | 572 | 1409 | 201 | 84 | 0.0% | 2720 | 2526 | 1943 |
+| Golemagg | Balanced | 1265 | 560 | 1377 | 186 | 62 | 0.0% | 2682 | 2537 | 2105 |
+| Onyxia | Max threat | 1388 | 614 | 1545 | 178 | 34 | 0.0% | 3032 | 2914 | 2562 |
+| Onyxia | Balanced | 1355 | 600 | 1512 | 165 | 13 | 0.0% | 3000 | 2955 | 2817 |
+| Broodlord | Max threat | 1316 | 581 | 1448 | 321 | 364 | 0.0% | 2532 | 1804 | -379 |
+| Broodlord | Balanced | 1283 | 567 | 1411 | 302 | 307 | 0.0% | 2514 | 1901 | 60 |
+| Vaelastrasz | Max threat | 1402 | 618 | 1669 | 626 | 435 | 0.0% | 3155 | 2790 | 1694 |
+| Vaelastrasz | Balanced | 1369 | 604 | 1625 | 604 | 403 | 0.0% | 3081 | 2742 | 1727 |
+| Chromaggus | Max threat | 1283 | 567 | 1379 | 429 | 484 | 0.0% | 2279 | 1321 | -1552 |
+| Chromaggus | Balanced | 1256 | 556 | 1346 | 400 | 451 | 0.0% | 2246 | 1353 | -1325 |
+| Ragnaros | Max threat | 1162 | 518 | 1259 | 953 | 1609 | 0.0% | 825 | -2562 | -12722 |
+| Ragnaros | Balanced | 1132 | 506 | 1224 | 948 | 1626 | 0.0% | 737 | -2686 | -12957 |
 
 Max threat buys 37 SafeDPS (32 TPS) for 30 more healing needed: Improved Seals over Anticipation's 20 Defense.
 
@@ -338,9 +338,9 @@ Max threat buys 37 SafeDPS (32 TPS) for 30 more healing needed: Improved Seals o
 
 | Tank | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|
-| Protection paladin (round 2) | 1,457 | 301 | 208 | 2,742 | 2,398 | 1,363 |
-| Feral tank (`docs/tank_druid.md`) | 1,714 | 570 | 582 | 2,904 | 1,855 | -1,292 |
-| Warden shaman (`docs/tank_shaman.md`) | 1,745 | 816 | 1,055 | 2,493 | 501 | -5,475 |
+| Protection paladin (round 2) | 1,446 | 301 | 208 | 2,718 | 2,374 | 1,340 |
+| Feral tank (`docs/tank_druid.md`) | 1,589 | 576 | 484 | 2,732 | 1,839 | -839 |
+| Warden shaman (`docs/tank_shaman.md`) | 1,542 | 792 | 905 | 2,232 | 530 | -4,579 |
 | Protection warrior | no committed numbers yet | | | | | |
 
 ## Calls for the user
