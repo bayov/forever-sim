@@ -39,7 +39,7 @@ func (warrior *Warrior) makeStanceSpell(stance Stance, aura *core.Aura, stanceCD
 	// Forever trains Tactical Mastery at 14, keeping 10 Rage (client 70338, spell 1310185), and
 	// Improved Tactical Mastery adds 5 a point over 3 points (development notes post 9,
 	// 2026-11-02: "5/10/15 additional Rage (was a 5-point talent granting 3/6/9/12/15)"; client
-	// 70753 still has 3 a point on spell 12295).
+	// 70753 still has 3 a point on spell 12295; hotfix push 113539, curve 83313, carries 5/10/15).
 	maxRetainedRage := 3 * float64(warrior.Talents.ImprovedTacticalMastery)
 	if warrior.Env.IsForever() {
 		maxRetainedRage = 5 * float64(min(warrior.Talents.ImprovedTacticalMastery, 3))
