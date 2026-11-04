@@ -3519,10 +3519,10 @@ export function startReport(dash, events) {
       scoreKey: (pick) => (TANK_W.find((w) => w[0] === pick) || TANK_W[1])[2],
       metrics: [['score', 'Score'], ['safeDps', 'Safe DPS'], ['tps', 'TPS'], ['dtps', 'Damage taken', 'low'], ['healingNeeded', 'Healing needed', 'low'], ['death', 'Died', 'low', '%']],
       meanName: 'Average of six bosses', unit: '', what: 'tank',
-      note: 'Higher is better. The score weighs how much DPS your raid can do behind this tank without pulling aggro against how much healing the tank needs to stay alive. Max threat counts aggro more, Max survival counts healing more, Balanced counts both the same.',
+      note: 'The score combines threat per second and how much healing the tank needs to stay alive.',
       help: {
-        safeDps: 'Safe DPS: how much DPS a player can do behind this tank without ever pulling aggro. Higher is better.',
-        tps: 'TPS: the threat per second the tank makes. Higher is better.',
+        safeDps: 'Safe DPS: how much DPS a player can do behind this tank without ever pulling aggro.',
+        tps: 'TPS: the threat per second the tank makes.',
         dtps: 'Damage taken: the damage the tank takes per second, after armor, dodges, parries and blocks. Lower is better.',
         healingNeeded: 'Healing needed: the healing per second the tank needs to die in only 1 fight out of 20. Lower is better. "none" means no amount of healing is enough.',
         death: 'Died: how often the tank dies with the healing real raids gave their tank on that boss. Lower is better.',
@@ -3533,12 +3533,12 @@ export function startReport(dash, events) {
       scoreKey: () => 'carry',
       metrics: [['score', 'Score'], ['hps', 'HPS'], ['ehps', 'Useful HPS'], ['overheal', 'Overheal', 'low', '%'], ['ehPerMana', 'Healing per mana'], ['manaLeft', 'Mana left'], ['deaths', 'Deaths', 'low', '%']],
       meanName: 'Average of seven bosses', unit: '×', what: 'healer',
-      note: 'Higher is better. We turn the boss\'s damage up until the healer can\'t keep everyone alive. 1.20× means it kept up with 20% more damage than real raids took.',
+      note: 'How much more damage than real raids take the healer can keep up with: 1.20× is 20% more.',
       help: {
         hps: 'HPS: all the healing done per second, overhealing included. These figures are at the boss\'s normal damage.',
-        ehps: 'Useful HPS: the healing per second that wasn\'t overhealing. Higher is better.',
+        ehps: 'Useful HPS: the healing per second that wasn\'t overhealing.',
         overheal: 'Overheal: the share of the healing that landed on someone already full. Lower is better.',
-        ehPerMana: 'Healing per mana: useful healing for each point of mana spent. Higher is better.',
+        ehPerMana: 'Healing per mana: useful healing for each point of mana spent.',
         manaLeft: 'Mana left: the mana the healer has at the end of the fight.',
         deaths: 'Deaths: how often the tank (tank healer) or anyone in the group (raid healer) dies at the boss\'s normal damage. Lower is better.',
       },
@@ -3754,7 +3754,7 @@ export function startReport(dash, events) {
     heal: [['score', 'Score', '×'], ['hps', 'HPS'], ['ehps', 'Useful HPS'], ['overheal', 'Overheal %', '%'], ['ehPerMana', 'Healing per mana'], ['manaLeft', 'Mana left'], ['tankDied', 'Tank died %', '%'], ['otherDied', 'Others died %', '%']],
   };
   const COL_HELP = {
-    score: 'The score on this boss. Higher is better.', biggestHit: 'The biggest single hit the tank took.',
+    score: 'The score on this boss.', biggestHit: 'The biggest single hit the tank took.',
     tankDied: 'How often the tank dies at the boss\'s normal damage.', otherDied: 'How often someone other than the tank dies at the boss\'s normal damage.',
   };
   const drawRoleBosses = (b) => {
