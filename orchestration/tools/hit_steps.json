@@ -1,3 +1,486 @@
 {
-  "enhancement": {"file": "forever_synthetic_items.go", "gear": "ui/enhancement_shaman/gear_sets/level60_phase1_synthetic", "stat": ["crit", "Strength", "Agility", "AttackPower"], "down": 5, "up": 0, "id0": 990040, "arch": "hybrid"}
+ "enhancement": {
+  "file": "forever_synthetic_items.go",
+  "gear": "ui/enhancement_shaman/gear_sets/level60_phase1_synthetic",
+  "stat": [
+   "crit",
+   "Intellect",
+   "SpellPower",
+   "Strength",
+   "AttackPower",
+   "Agility"
+  ],
+  "down": 6,
+  "up": 2,
+  "id0": 990040,
+  "arch": "hybrid",
+  "why": "Tidal Focus 5 + Dwarf 1 down; up for spell hit (span). Crit 7.4 per 10 budget, Int 5.2, SP 4.2, Str 4.1.",
+  "give": [
+   "Agility",
+   "Strength",
+   "AttackPower",
+   "SpellPower",
+   "Intellect",
+   "crit"
+  ]
+ },
+ "enhancement_burning_totem": {
+  "file": "forever_synthetic_items.go",
+  "gear": "ui/enhancement_shaman/gear_sets/level60_phase1_synthetic_burning_totem",
+  "stat": [
+   "crit",
+   "Intellect",
+   "SpellPower",
+   "Strength",
+   "AttackPower",
+   "Agility"
+  ],
+  "down": 6,
+  "up": 2,
+  "id0": 990040,
+  "arch": "hybrid",
+  "why": "as enhancement",
+  "give": [
+   "Agility",
+   "Strength",
+   "AttackPower",
+   "SpellPower",
+   "Intellect",
+   "crit"
+  ]
+ },
+ "elemental": {
+  "file": "forever_synthetic_items_shaman.go",
+  "gear": "ui/elemental_shaman/gear_sets/level60_phase1_synthetic",
+  "stat": [
+   "SpellPower",
+   "crit"
+  ],
+  "down": 1,
+  "up": 5,
+  "id0": 990150,
+  "arch": "caster",
+  "why": "set counts Tidal Focus 5/5; Dwarf 1 down, up 5 for builds without it. SP 7.95, crit 5.15.",
+  "give": [
+   "Intellect",
+   "crit",
+   "SpellPower"
+  ]
+ },
+ "ret": {
+  "file": "forever_synthetic_items_paladin.go",
+  "gear": "ui/retribution_paladin/gear_sets/level60_phase1_synthetic",
+  "stat": [
+   "crit",
+   "Agility",
+   "SpellPower",
+   "Intellect",
+   "Strength",
+   "AttackPower"
+  ],
+  "down": 4,
+  "up": 2,
+  "id0": 992300,
+  "arch": "hybrid",
+  "why": "Precision 3 + Dwarf 1 down, up 2 for spell hit (span). Crit 6.1, Agi 5.8, SP 5.1.",
+  "give": [
+   "Strength",
+   "AttackPower",
+   "Intellect",
+   "SpellPower",
+   "Agility",
+   "crit"
+  ]
+ },
+ "ret_undead": {
+  "file": "forever_synthetic_items_paladin.go",
+  "gear": "ui/retribution_paladin/gear_sets/level60_phase1_synthetic_undead",
+  "stat": [
+   "crit",
+   "Agility",
+   "SpellPower",
+   "Intellect",
+   "Strength",
+   "AttackPower"
+  ],
+  "down": 4,
+  "up": 2,
+  "id0": 992300,
+  "arch": "hybrid",
+  "why": "Precision 3 + Dwarf 1 down, up 2 for spell hit (span). Crit 6.1, Agi 5.8, SP 5.1.",
+  "give": [
+   "Strength",
+   "AttackPower",
+   "Intellect",
+   "SpellPower",
+   "Agility",
+   "crit"
+  ]
+ },
+ "ret_crusader_duty": {
+  "file": "forever_synthetic_items_paladin.go",
+  "gear": "ui/retribution_paladin/gear_sets/level60_phase1_synthetic_crusader_duty",
+  "stat": [
+   "crit",
+   "Agility",
+   "SpellPower",
+   "Intellect",
+   "Strength",
+   "AttackPower"
+  ],
+  "down": 4,
+  "up": 2,
+  "id0": 992300,
+  "arch": "hybrid",
+  "why": "Precision 3 + Dwarf 1 down, up 2 for spell hit (span). Crit 6.1, Agi 5.8, SP 5.1.",
+  "give": [
+   "Strength",
+   "AttackPower",
+   "Intellect",
+   "SpellPower",
+   "Agility",
+   "crit"
+  ]
+ },
+ "warrior_arms": {
+  "file": "forever_synthetic_items_warrior.go",
+  "gear": "ui/warrior/gear_sets/level60_phase1_synthetic_arms",
+  "stat": [
+   "crit",
+   "Strength",
+   "AttackPower"
+  ],
+  "down": 1,
+  "up": 0,
+  "id0": 991300,
+  "arch": "phys",
+  "why": "Dwarf 1 down. Crit 6.6-8.1, Str 5.1-6.3.",
+  "give": [
+   "AttackPower",
+   "Strength",
+   "Agility",
+   "crit"
+  ]
+ },
+ "warrior_fury": {
+  "file": "forever_synthetic_items_warrior.go",
+  "gear": "ui/warrior/gear_sets/level60_phase1_synthetic_fury",
+  "stat": [
+   "crit",
+   "Strength",
+   "AttackPower"
+  ],
+  "down": 3,
+  "up": 2,
+  "id0": 991300,
+  "arch": "phys",
+  "why": "dual wield, set at 10%: 2 down to the yellow cap + Dwarf 1, up 2 (span). Crit 8.7, Str 6.7.",
+  "give": [
+   "AttackPower",
+   "Strength",
+   "Agility",
+   "crit"
+  ]
+ },
+ "rogue_swords": {
+  "file": "forever_synthetic_items_rogue.go",
+  "gear": "ui/rogue/gear_sets/level60_phase1_synthetic_swords",
+  "stat": [
+   "Agility",
+   "AttackPower",
+   "crit",
+   "Strength"
+  ],
+  "down": 7,
+  "up": 3,
+  "id0": 994300,
+  "arch": "phys",
+  "why": "dual wield: down as far as the set's hit goes (Dwarf, Flask of Natural Accuracy, the yellow cap), up 3 for builds without Precision (span).",
+  "give": [
+   "Strength",
+   "AttackPower",
+   "Agility",
+   "crit"
+  ]
+ },
+ "rogue_seal_fate_swords": {
+  "file": "forever_synthetic_items_rogue.go",
+  "gear": "ui/rogue/gear_sets/level60_phase1_synthetic_seal_fate_swords",
+  "stat": [
+   "Agility",
+   "crit",
+   "AttackPower",
+   "Strength"
+  ],
+  "down": 7,
+  "up": 3,
+  "id0": 994300,
+  "arch": "phys",
+  "why": "dual wield: down as far as the set's hit goes (Dwarf, Flask of Natural Accuracy, the yellow cap), up 3 for builds without Precision (span).",
+  "give": [
+   "Strength",
+   "AttackPower",
+   "Agility",
+   "crit"
+  ]
+ },
+ "rogue_combat_daggers": {
+  "file": "forever_synthetic_items_rogue.go",
+  "gear": "ui/rogue/gear_sets/level60_phase1_synthetic_combat_daggers",
+  "stat": [
+   "AttackPower",
+   "Agility",
+   "crit",
+   "Strength"
+  ],
+  "down": 7,
+  "up": 3,
+  "id0": 994300,
+  "arch": "phys",
+  "why": "dual wield: down as far as the set's hit goes (Dwarf, Flask of Natural Accuracy, the yellow cap), up 3 for builds without Precision (span).",
+  "give": [
+   "Strength",
+   "AttackPower",
+   "Agility",
+   "crit"
+  ]
+ },
+ "rogue_daggers": {
+  "file": "forever_synthetic_items_rogue.go",
+  "gear": "ui/rogue/gear_sets/level60_phase1_synthetic_daggers",
+  "stat": [
+   "crit",
+   "AttackPower",
+   "Agility",
+   "Strength"
+  ],
+  "down": 7,
+  "up": 3,
+  "id0": 994300,
+  "arch": "phys",
+  "why": "dual wield: down as far as the set's hit goes (Dwarf, Flask of Natural Accuracy, the yellow cap), up 3 for builds without Precision (span).",
+  "give": [
+   "Strength",
+   "AttackPower",
+   "Agility",
+   "crit"
+  ]
+ },
+ "rogue_mutilate": {
+  "file": "forever_synthetic_items_rogue.go",
+  "gear": "ui/rogue/gear_sets/level60_phase1_synthetic_mutilate",
+  "stat": [
+   "crit",
+   "AttackPower",
+   "Agility",
+   "Strength"
+  ],
+  "down": 7,
+  "up": 3,
+  "id0": 994300,
+  "arch": "phys",
+  "why": "dual wield: down as far as the set's hit goes (Dwarf, Flask of Natural Accuracy, the yellow cap), up 3 for builds without Precision (span).",
+  "give": [
+   "Strength",
+   "AttackPower",
+   "Agility",
+   "crit"
+  ]
+ },
+ "rogue_subtlety": {
+  "file": "forever_synthetic_items_rogue.go",
+  "gear": "ui/rogue/gear_sets/level60_phase1_synthetic_subtlety",
+  "stat": [
+   "AttackPower",
+   "crit",
+   "Agility",
+   "Strength"
+  ],
+  "down": 7,
+  "up": 3,
+  "id0": 994300,
+  "arch": "phys",
+  "why": "dual wield: down as far as the set's hit goes (Dwarf, Flask of Natural Accuracy, the yellow cap), up 3 for builds without Precision (span).",
+  "give": [
+   "Strength",
+   "AttackPower",
+   "Agility",
+   "crit"
+  ]
+ },
+ "hunter_ranged": {
+  "file": "forever_synthetic_items_hunter.go",
+  "gear": "ui/hunter/gear_sets/level60_phase1_synthetic_ranged",
+  "stat": [
+   "crit",
+   "Agility",
+   "RangedAttackPower"
+  ],
+  "down": 4,
+  "up": 0,
+  "id0": 993300,
+  "arch": "hunter",
+  "why": "Surefooted 3 + Dwarf 1 down. Crit 7.4-7.9, Agi 7.1-7.7, RAP 6.2-7.0."
+ },
+ "hunter_survival": {
+  "file": "forever_synthetic_items_hunter.go",
+  "gear": "ui/hunter/gear_sets/level60_phase1_synthetic_survival",
+  "stat": [
+   "crit",
+   "AttackPower",
+   "Agility"
+  ],
+  "down": 1,
+  "up": 3,
+  "id0": 993300,
+  "arch": "hunter",
+  "why": "set counts Surefooted 3/3: Dwarf 1 down, up 3 without it. Crit 6.9, AP 5.0, Agi 4.6.",
+  "give": [
+   "Intellect",
+   "Agility",
+   "AttackPower",
+   "crit"
+  ]
+ },
+ "balance": {
+  "file": "forever_synthetic_items_druid.go",
+  "gear": "ui/balance_druid/gear_sets/level60_phase1_synthetic",
+  "stat": [
+   "SpellPower",
+   "crit"
+  ],
+  "down": 0,
+  "up": 4,
+  "id0": 998300,
+  "arch": "caster",
+  "why": "set counts Nature's Reach 2/2 (4%): up 4 without it. SP 9.1, crit 5.9.",
+  "give": [
+   "Intellect",
+   "crit",
+   "SpellPower"
+  ]
+ },
+ "balance_wrath": {
+  "file": "forever_synthetic_items_druid.go",
+  "gear": "ui/balance_druid/gear_sets/level60_phase1_synthetic_wrath",
+  "stat": [
+   "SpellPower",
+   "crit"
+  ],
+  "down": 0,
+  "up": 4,
+  "id0": 998300,
+  "arch": "caster",
+  "why": "set counts Nature's Reach 2/2 (4%): up 4 without it. SP 9.1, crit 5.9.",
+  "give": [
+   "Intellect",
+   "crit",
+   "SpellPower"
+  ]
+ },
+ "feral": {
+  "file": "forever_synthetic_items_druid.go",
+  "gear": "ui/feral_druid/gear_sets/level60_phase1_synthetic",
+  "stat": [
+   "Agility",
+   "Strength",
+   "crit"
+  ],
+  "down": 4,
+  "up": 0,
+  "id0": 998300,
+  "arch": "phys",
+  "why": "Nature's Reach 2/2 (4%) down. Agi 7.0, Str 6.4, crit 6.3."
+ },
+ "mage": {
+  "file": "forever_synthetic_items_mage.go",
+  "gear": "ui/mage/gear_sets/level60_phase1_synthetic",
+  "stat": [
+   "SpellPower",
+   "crit"
+  ],
+  "down": 0,
+  "up": 6,
+  "id0": 996300,
+  "arch": "caster",
+  "why": "set counts Precision 3/3 (6%): up 6 without it. SP 8.0-9.6, crit 4.8-8.8.",
+  "give": [
+   "Intellect",
+   "crit",
+   "SpellPower"
+  ]
+ },
+ "mage_arcane": {
+  "file": "forever_synthetic_items_mage.go",
+  "gear": "ui/mage/gear_sets/level60_phase1_synthetic_arcane",
+  "stat": [
+   "SpellPower",
+   "Intellect",
+   "crit"
+  ],
+  "down": 1,
+  "up": 6,
+  "id0": 996300,
+  "arch": "caster",
+  "why": "set at 17%: 1 down, up 6 without Precision. SP 6.7, Int 6.6.",
+  "give": [
+   "crit",
+   "Intellect",
+   "SpellPower"
+  ]
+ },
+ "warlock": {
+  "file": "forever_synthetic_items_warlock.go",
+  "gear": "ui/warlock/gear_sets/level60_phase1_synthetic",
+  "stat": [
+   "SpellPower",
+   "crit"
+  ],
+  "down": 0,
+  "up": 5,
+  "id0": 997300,
+  "arch": "caster",
+  "why": "set counts Suppression 5/5: up 5 without it. SP 9.2-9.6, crit 5.6-7.6.",
+  "give": [
+   "Intellect",
+   "crit",
+   "SpellPower"
+  ]
+ },
+ "warlock_demonology": {
+  "file": "forever_synthetic_items_warlock.go",
+  "gear": "ui/warlock/gear_sets/level60_phase1_synthetic_demonology",
+  "stat": [
+   "SpellPower",
+   "crit"
+  ],
+  "down": 0,
+  "up": 5,
+  "id0": 997300,
+  "arch": "caster",
+  "why": "set counts Suppression 5/5: up 5 without it. SP 9.2-9.6, crit 5.6-7.6.",
+  "give": [
+   "Intellect",
+   "crit",
+   "SpellPower"
+  ]
+ },
+ "shadow": {
+  "file": "forever_synthetic_items_priest.go",
+  "gear": "ui/shadow_priest/gear_sets/level60_phase1_synthetic",
+  "stat": [
+   "SpellPower",
+   "crit"
+  ],
+  "down": 1,
+  "up": 5,
+  "id0": 995300,
+  "arch": "caster",
+  "why": "set counts Shadow Focus 5/5: Dwarf 1 down, up 5 without it. SP 6.3, crit 5.5.",
+  "give": [
+   "Intellect",
+   "crit",
+   "SpellPower"
+  ]
+ }
 }

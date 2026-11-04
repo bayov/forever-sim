@@ -98,7 +98,7 @@ func init() {
 			Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypePlate,
 			Stats:      stats.Stats{stats.Strength: 11, stats.Stamina: 14, stats.Intellect: 18, stats.SpellPower: 18, stats.Armor: 562}.ToFloatArray(),
 			CritRating: 5,
-			Ilvl:      66,
+			Ilvl:       66,
 		}),
 		// Back, item level 71, in place of Cape of the Black Baron.
 		retribution(&proto.UIItem{
@@ -198,3 +198,80 @@ func init() {
 		}),
 	)
 }
+
+// BEGIN hit-trade steps: ret (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRet...)
+}
+
+var hitStepsRet = []*proto.UIItem{
+	// Retribution Synthetic Neck (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (992002).
+	{
+		Id: 992300, Name: "Retribution Synthetic Neck (Phase 1, hit -10)", Icon: "inv_jewelry_necklace_09",
+		Type:       proto.ItemType_ItemTypeNeck,
+		Stats:      stats.Stats{stats.Strength: 9, stats.Stamina: 9, stats.SpellPower: 24}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       71,
+	},
+	// Retribution Synthetic Back (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (992004).
+	{
+		Id: 992301, Name: "Retribution Synthetic Back (Phase 1, hit -10)", Icon: "inv_misc_cape_20",
+		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Agility: 5, stats.Stamina: 9, stats.Spirit: 5, stats.SpellPower: 22, stats.Armor: 58}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       71,
+	},
+	// Retribution Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (992006).
+	{
+		Id: 992302, Name: "Retribution Synthetic Wrist (Phase 1, hit -10)", Icon: "inv_bracer_14",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:      stats.Stats{stats.Strength: 9, stats.Stamina: 9, stats.SpellPower: 24, stats.Armor: 353}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       71,
+	},
+	// Retribution Synthetic Legs (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (992009).
+	{
+		Id: 992303, Name: "Retribution Synthetic Legs (Phase 1, hit -10)", Icon: "inv_pants_04",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:      stats.Stats{stats.Strength: 24, stats.Stamina: 24, stats.Spirit: 25, stats.Armor: 655}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       66,
+	},
+	// Retribution Synthetic Legs (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (992009).
+	{
+		Id: 992304, Name: "Retribution Synthetic Legs (Phase 1, hit +10)", Icon: "inv_pants_04",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:     stats.Stats{stats.Strength: 14, stats.Stamina: 24, stats.Spirit: 25, stats.Armor: 655}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      66,
+	},
+	// Retribution Synthetic Shoulder (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (992003).
+	{
+		Id: 992305, Name: "Retribution Synthetic Shoulder (Phase 1, hit +10)", Icon: "inv_shoulder_10",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:      stats.Stats{stats.Strength: 1, stats.Stamina: 14, stats.Intellect: 18, stats.SpellPower: 18, stats.Armor: 562}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 5,
+		Ilvl:       66,
+	},
+}
+
+// END hit-trade steps: ret
+
+// BEGIN hit-trade steps: ret_undead (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRetUndead...)
+}
+
+var hitStepsRetUndead = []*proto.UIItem{}
+
+// END hit-trade steps: ret_undead
+
+// BEGIN hit-trade steps: ret_crusader_duty (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRetCrusaderDuty...)
+}
+
+var hitStepsRetCrusaderDuty = []*proto.UIItem{}
+
+// END hit-trade steps: ret_crusader_duty

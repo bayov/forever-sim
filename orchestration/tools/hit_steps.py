@@ -160,6 +160,9 @@ def build(spec, cfg, used):
     # The stat the freed budget buys, or a list in order of preference: each piece takes the first
     # that keeps the piece within the 1b budget (+-1%) and shape (+-6%) checks.
     stats_pref = cfg['stat'] if isinstance(cfg['stat'], list) else [cfg['stat']]
+    # Steps up pay for their hit with the least valuable of the set's stats first ("give"), by default
+    # the trade stats in reverse.
+    give_pref = cfg.get('give') or stats_pref[::-1]
 
     def variant(i, direction, u):
         """The piece with u steps of hit traded, as (text, stat, what), or None when no listed stat
@@ -168,7 +171,7 @@ def build(spec, cfg, used):
         hit = field(text, 'HitRating') + direction * 10 * u
         if hit < 0:
             return None
-        for rank, stat in enumerate(stats_pref):
+        for rank, stat in enumerate(stats_pref if direction < 0 else give_pref):
             per10 = PER10[stat]
             trade = trade_amount(text, stat) - direction * per10 * u
             if trade < 0:
@@ -215,7 +218,7 @@ def build(spec, cfg, used):
         if len(units) < n:
             print('%s: only %d of %d steps %s fit on the set' % (spec, len(units), n, 'down' if direction < 0 else 'up'))
             n = len(units)
-        variants = SHARED.setdefault((cfg['file'], tuple(stats_pref)), {})
+        variants = SHARED.setdefault((cfg['file'], tuple(stats_pref), tuple(give_pref)), {})
         for k in range(1, n + 1):
             taken = {}
             for i in units[:k]:

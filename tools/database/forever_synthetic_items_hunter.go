@@ -376,3 +376,100 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
 }
+
+// BEGIN hit-trade steps: hunter_ranged (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsHunterRanged...)
+}
+
+var hitStepsHunterRanged = []*proto.UIItem{
+	// Ranged Hunter Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (993006).
+	{
+		Id: 993300, Name: "Ranged Hunter Synthetic Wrist (Phase 1, hit -10)", Icon: "inv_bracer_17",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Agility: 19, stats.Stamina: 11, stats.Armor: 198}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  5,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Ranged Hunter Synthetic Legs (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (993009).
+	{
+		Id: 993301, Name: "Ranged Hunter Synthetic Legs (Phase 1, hit -10)", Icon: "inv_pants_mail_03",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Agility: 31, stats.Stamina: 14, stats.Spirit: 19, stats.Armor: 369}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  4,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Ranged Hunter Synthetic Neck (Phase 1), hit-trade step: 10 hit rating less, 25 RangedAttackPower more (993002).
+	{
+		Id: 993302, Name: "Ranged Hunter Synthetic Neck (Phase 1, hit -10)", Icon: "inv_jewelry_necklace_09",
+		Type:      proto.ItemType_ItemTypeNeck,
+		Stats:     stats.Stats{stats.Agility: 15, stats.RangedAttackPower: 25}.ToFloatArray(),
+		HitRating: 3, CritRating: 17,
+		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Ranged Hunter Synthetic Finger (Phase 1), hit-trade step: 10 hit rating less, 25 RangedAttackPower more (993011).
+	{
+		Id: 993303, Name: "Ranged Hunter Synthetic Finger (Phase 1, hit -10)", Icon: "inv_jewelry_ring_15",
+		Type:      proto.ItemType_ItemTypeFinger,
+		Stats:     stats.Stats{stats.Agility: 15, stats.RangedAttackPower: 25}.ToFloatArray(),
+		HitRating: 3, CritRating: 17,
+		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+}
+
+// END hit-trade steps: hunter_ranged
+
+// BEGIN hit-trade steps: hunter_survival (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsHunterSurvival...)
+}
+
+var hitStepsHunterSurvival = []*proto.UIItem{
+	// Survival Synthetic Finger II (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (993112).
+	{
+		Id: 993304, Name: "Survival Synthetic Finger II (Phase 1, hit -10)", Icon: "inv_jewelry_ring_15",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Agility: 20, stats.Stamina: 11}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  4,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Survival Synthetic Feet (Phase 1), hit-trade step: 10 hit rating more, 10 Agility less (993110).
+	{
+		Id: 993305, Name: "Survival Synthetic Feet (Phase 1, hit +10)", Icon: "inv_boots_chain_04",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Agility: 11, stats.Stamina: 11, stats.Spirit: 15, stats.Armor: 290}.ToFloatArray(),
+		HitRating: 23,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Survival Synthetic Hands (Phase 1), hit-trade step: 10 hit rating more, 10 Agility less (993107).
+	{
+		Id: 993306, Name: "Survival Synthetic Hands (Phase 1, hit +10)", Icon: "inv_gauntlets_10",
+		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Agility: 7, stats.Stamina: 10, stats.AttackPower: 21, stats.RangedAttackPower: 21, stats.Armor: 264}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 23,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+	// Survival Synthetic Waist (Phase 1), hit-trade step: 10 hit rating more, 10 Agility less (993108).
+	{
+		Id: 993307, Name: "Survival Synthetic Waist (Phase 1, hit +10)", Icon: "inv_belt_28",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Agility: 6, stats.Stamina: 11, stats.Spirit: 14, stats.Armor: 237}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 24,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
+	},
+}
+
+// END hit-trade steps: hunter_survival
