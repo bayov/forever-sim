@@ -72,7 +72,7 @@
               ]
             },
             "consumes": {
-              "flask": "FlaskOfNaturalAccuracy",
+              "flask": "FlaskOfNaturalPrecision",
               "food": "FoodDirgesKickChimaerokChops",
               "agilityElixir": "ElixirOfTheMongoose",
               "armorElixir": "ElixirOfThePhalanx",
@@ -80,9 +80,11 @@
               "strengthBuff": "JujuPower",
               "attackPowerBuff": "JujuMight",
               "mainHandImbue": "DenseWeightstone",
-              "defaultPotion": "MightyRagePotion",
+              "defaultPotion": "GreaterStoneshieldPotion",
               "dragonBreathChili": true,
-              "sapperExplosive": "SapperGoblinSapper"
+              "sapperExplosive": "SapperGoblinSapper",
+              "alcohol": "AlcoholRumseyRumBlackLabel",
+              "zanzaBuff": "SpiritOfZanza"
             },
             "feralTankDruid": {
               "options": {
@@ -116,6 +118,16 @@
                 }
               ],
               "priorityList": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "otherId": "OtherActionPotion"
+                      }
+                    }
+                  },
+                  "notes": "Greater Stoneshield Potion on cooldown."
+                },
                 {
                   "action": {
                     "autocastOtherCooldowns": {}

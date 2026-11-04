@@ -222,19 +222,6 @@
            "spellId": {
             "spellId": 20924
            }
-          },
-          "condition": {
-           "cmp": {
-            "lhs": {
-             "currentManaPercent": {}
-            },
-            "op": "OpGe",
-            "rhs": {
-             "const": {
-              "val": "0.6"
-             }
-            }
-           }
           }
          },
          "notes": "Consecration with the mana to spare."

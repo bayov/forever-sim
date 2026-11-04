@@ -1,0 +1,10 @@
+A=shaman_warden_balanced.json B=ap_firewater_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord           35       32    -2.2    0.0     -1.1        0
+chromaggus        -303     -306    -2.1    0.0     -1.0        0
+golemagg          1392     1389    -2.1    0.0     -1.1        0
+magmadar          1688     1686    -2.2    0.0     -1.1        0
+onyxia             746      744    -2.3    0.0     -1.2        0
+ragnaros         -3545    -3547    -2.0    0.0     -1.0        0
+vaelastrasz       2105     2103    -2.5    0.0     -1.2        0
+scoring_mean                       -2.2    0.0

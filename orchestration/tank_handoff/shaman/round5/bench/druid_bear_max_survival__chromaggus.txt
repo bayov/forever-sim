@@ -1,0 +1,11 @@
+Healing: 8 healers on the tank at 303 HPS each, 3.1 s heals (930 a heal).
+Encounter: Chromaggus. Picks Incinerate and Corrosive Acid of the five breaths. Corrosive Acid's armor cut isn't modelled. Frenzy (+150% attack speed every 15 s) is in the logs' swing rate, as much of it as the raids let through. Brood Afflictions on the raid are the healing sim's.
+Stand-in healer: 2424 HPS every 0.38 ± 0.19 s. TMI over 6 s windows. 1000 iterations.
+
+Objective: 2 x SafeDPS - w x 900 x healing needed at 5% deaths / 303, in raid DPS (Max threat w = 1/3, Balanced 1, Max survival 3).
+
+| Build | Max threat | Balanced | Max survival | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS | TMI | Death | Health | EH | Biggest hit | Armor | Def | No crit at | Miss | Dodge | Parry | Block | Crit | Crush | Crush gap | Took: avoid | block | crit | crush |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+2026/11/04 21:54:57 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 21:54:58 All 4 sims finished successfully.
+| druid_bear_max_survival | 2395 ± 12 | 1228 ± 19 | -2272 ± 50 | 1489 ± 5 | 589 ± 5 (1.08x DTPS) | 0.0% | 1415 | 542 | 548 | 42 | 0.0% | 11483 | 31765 | 2348 (4.9 to kill) | 10165 (63.9%) | 437 | 315 | 11.9% | 39.2% | 0.0% | 0.0% | 0.0% | 15.0% | 48.9% | 51.3% | 0.0% | 0.0% | 14.8% |

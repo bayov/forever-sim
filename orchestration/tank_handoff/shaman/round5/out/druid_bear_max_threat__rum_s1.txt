@@ -1,0 +1,10 @@
+A=druid_bear_max_threat.json B=rum_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3093     3101     7.2    0.8      0.0       -7
+chromaggus        2665     2670     4.8    0.4      0.0       -5
+golemagg          3104     3108     3.6    0.3      0.0       -3
+magmadar          3175     3179     4.1    0.2      0.0       -4
+onyxia            3036     3045     8.7    0.5      0.0       -5
+ragnaros          1179     1224    44.4    5.8      0.0      -42
+vaelastrasz       3656     3664     7.3    0.6      0.0      -17
+scoring_mean                        5.9    0.2

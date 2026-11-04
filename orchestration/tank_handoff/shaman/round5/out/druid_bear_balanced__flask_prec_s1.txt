@@ -1,0 +1,10 @@
+A=druid_bear_balanced.json B=flask_prec_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2114     2389   274.8   17.4    130.8       -4
+chromaggus        1154     1414   260.4    9.3    127.9       -2
+golemagg          2348     2609   260.4    7.9    129.8       -0
+magmadar          2478     2741   262.7    9.2    128.4       -2
+onyxia            1917     2160   243.4   16.2    138.0        6
+ragnaros         -3135    -2882   253.8   79.3    134.5        5
+vaelastrasz       2743     3029   286.5   16.3    155.8       20
+scoring_mean                      264.7    5.4

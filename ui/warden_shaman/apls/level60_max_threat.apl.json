@@ -9,6 +9,7 @@
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}}]}}},"notes":"Lightning Shield whenever its orbs are gone: their threat beats the 370 mana."},
         {"action":{"castSpell":{"spellId":{"spellId":10408}},"condition":{"cmp":{"lhs":{"totemRemainingTime":{"totemType":"Earth"}},"op":"OpLe","rhs":{"const":{"val":"0s"}}}}},"notes":"The earth totem whenever it's down."},
+        {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}},"notes":"Greater Stoneshield Potion on cooldown."},
         {"action":{"autocastOtherCooldowns":{}},"notes":"Rage of the Farseer, racials, trinkets on cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":10414}}},"notes":"Earth Shock: twice its damage in threat."},
         {"action":{"castSpell":{"spellId":{"spellId":17364}}},"notes":"Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike."},

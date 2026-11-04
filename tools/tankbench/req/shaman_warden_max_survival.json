@@ -75,16 +75,22 @@
        ]
       },
       "consumes": {
-       "flask": "FlaskOfTheTitans",
+       "flask": "FlaskOfNaturalPrecision",
        "food": "FoodDirgesKickChimaerokChops",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
        "healthElixir": "ElixirOfGreaterFortitude",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
-       "defaultPotion": "MajorManaPotion",
+       "defaultPotion": "GreaterStoneshieldPotion",
        "dragonBreathChili": true,
-       "sapperExplosive": "SapperGoblinSapper"
+       "sapperExplosive": "SapperGoblinSapper",
+       "alcohol": "AlcoholRumseyRumBlackLabel",
+       "spellPowerBuff": "GreaterArcaneElixir",
+       "naturePowerBuff": "ElixirOfNaturePower",
+       "intellectElixir": "ElixirOfGreaterIntellect",
+       "zanzaBuff": "SpiritOfZanza",
+       "defaultConjured": "ConjuredDemonicRune"
       },
       "wardenShaman": {
        "options": {
@@ -262,6 +268,16 @@
           }
          },
          "notes": "The defensive on-use trinket, held for the last 25 sec unless the wait costs a use. Without it ignore the warning on this line."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "otherId": "OtherActionPotion"
+           }
+          }
+         },
+         "notes": "Greater Stoneshield Potion on cooldown."
         },
         {
          "action": {

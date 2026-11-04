@@ -1,0 +1,10 @@
+A=druid_bear_max_threat.json B=flask_swift_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3093     2861  -232.3    8.3   -115.5        1
+chromaggus        2665     2439  -225.9    6.2   -110.7        5
+golemagg          3104     2877  -227.3    6.6   -113.3        1
+magmadar          3175     2954  -221.0    6.6   -109.3        2
+onyxia            3036     2785  -250.8    8.8   -121.9        4
+ragnaros          1179      987  -192.7   25.9   -106.1      -18
+vaelastrasz       3656     3406  -250.3   11.1   -124.1        5
+scoring_mean                     -234.6    3.3
