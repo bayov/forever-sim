@@ -157,10 +157,7 @@ func (shamanTank) Build(k Knobs) *proto.APLRotation {
 		note := "The defensive on-use trinket on cooldown, on a timer. Without it ignore the warning on this line."
 		if k["trinketAt"] > 0 {
 			note = fmt.Sprintf("The defensive on-use trinket, held for the last %d sec unless the wait costs a use. Without it ignore the warning on this line.", int(k["trinketAt"]))
-			when = or(
-				le(remainingTime(), seconds(k["trinketAt"])),
-				gt(spellUsesLostByDelay(trinket, sub(remainingTime(), seconds(k["trinketAt"])), seconds(20)), num(0)),
-			)
+			when = heldForLast(trinket, k["trinketAt"], 20)
 		}
 		items = append(items, cast(trinket, when, note))
 	}
