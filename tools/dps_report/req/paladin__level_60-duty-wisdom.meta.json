@@ -12,7 +12,7 @@
     "Protection",
     "Retribution"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase1_synthetic_hit-3",
   "apl": "level60_wisdom_duty",
   "published": {
     "dps": 1075.3,
@@ -81,7 +81,7 @@
     "Seal of Righteousness adds 12% of spell power per hit with a two-hander, counted once, as its tooltip says (spell 70425). Counted twice, DPS would be 46-51 higher. At the proc spell's 0%, it would be 53-59 lower.",
     "No filler explosive, because each 1s cast resets the swing."
   ],
-  "notes": "Request: paladin__level_60 with raid debuff judgementOfWisdom removed and the level60_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh).",
+  "notes": "Request: paladin__level_60 with raid debuff judgementOfWisdom removed and the level60_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh). 2026-11-04 (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/paladin.md): talents kept (050050002-503-05233101201301351), on the hit-3 step (level60_phase1_synthetic_hit-3, 30 hit rating traded for 30 crit rating, melee hit 11% to the 8% cap); 1081.8 / 1086.0 / 1080.5 at 120 / 180 / 300 s (+12.2 / +10.7 / +11.4), not yet re-verified here.",
   "duty": "Judgement of Wisdom",
   "baseBuild": "paladin__level_60"
 }

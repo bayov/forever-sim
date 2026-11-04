@@ -12,7 +12,7 @@
     "Fury",
     "Protection"
   ],
-  "gearSet": "level60_phase1_synthetic_fury",
+  "gearSet": "level60_phase1_synthetic_fury_hit+2",
   "apl": "level60_fury_battle_shout",
   "published": {
     "dps": 1124.2,
@@ -75,7 +75,7 @@
     "Saving the second Mighty Rage Potion for the last 20s adds 10.4 DPS at 180s and 0.0 at 120s.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury_battle_shout -talents 30313113002-050530055120100231 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.",
+  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury_battle_shout -talents 30313113002-050530055120100231 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one. 2026-11-04 (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/warrior.md): regeared onto level60_phase1_synthetic_fury_hit+2 (12% gear hit, was 10%; talents unchanged); paired +2 against +0 over 10 seeds: +3.48 ± 0.59 / +2.68 ± 0.82 / +0.88 ± 0.53 at 120 / 180 / 300 s. Duties (seed 1, 20,000 iterations): Battle Shout +2.8 / +1.8 / +1.0 at 120 / 180 / 300 s. Not yet re-verified here.",
   "duty": "Battle Shout",
   "baseBuild": "warrior__fury"
 }

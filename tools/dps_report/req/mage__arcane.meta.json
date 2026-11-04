@@ -6,13 +6,13 @@
   "isDefault": false,
   "pr": 98,
   "race": "Gnome",
-  "talents": "050205203100311531-5551-003",
+  "talents": "050205203100311531-5550000000001-003",
   "treeNames": [
     "Arcane",
     "Fire",
     "Frost"
   ],
-  "gearSet": "level60_phase1_synthetic_arcane",
+  "gearSet": "level60_phase1_synthetic_arcane_hit-1",
   "apl": "level60_arcane",
   "published": {
     "dps": 962.3,
@@ -74,5 +74,5 @@
     "Assumed: how Arcane Mind adds crit.",
     "No Ahn'Qiraj book ranks, so Fireball stops at rank XI, Frostbolt at X and Arcane Missiles at VII. The books would add 50 DPS to Frost, 30 to Arcane, 17 to Fire and 0 to Frostfire."
   ],
-  "notes": "Request written by mksettings -spec mage_arcane unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Precision) as a mage option, as the preset does. Gnome since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Distance 20 yd since 2026-11-02 (standards 33, orchestration/caster_distance.md: Fire Blast, which its finisher casts; the finisher dropped Arcane Explosion, 10 yd), 25 before."
+  "notes": "Request written by mksettings -spec mage_arcane unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Precision) as a mage option, as the preset does. Gnome since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Distance 20 yd since 2026-11-02 (standards 33, orchestration/caster_distance.md: Fire Blast, which its finisher casts; the finisher dropped Arcane Explosion, 10 yd), 25 before. 2026-11-04 (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/mage.md): the hit-1 step (level60_phase1_synthetic_arcane_hit-1, 17% to the 16% cap) and Flame Throwing 1 moved to Master of Elements 1 (050205203100311531-5550000000001-003); 993.5 / 969.9 / 952.1 at 120 / 180 / 300 s (+7.4 / +7.6 / +7.6), not yet re-verified here."
 }

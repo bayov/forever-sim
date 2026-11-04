@@ -445,3 +445,413 @@ var rogueSyntheticItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
 }
+
+// BEGIN hit-trade steps: rogue_swords (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRogueSwords...)
+}
+
+var hitStepsRogueSwords = []*proto.UIItem{
+	// Combat Swords Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating less, 10 Agility more (994006).
+	{
+		Id: 994300, Name: "Combat Swords Synthetic Wrist (Phase 1, hit -10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Strength: 17, stats.Stamina: 15, stats.Agility: 10, stats.Armor: 88}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Head (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994001).
+	{
+		Id: 994301, Name: "Combat Swords Synthetic Head (Phase 1, hit -10)", Icon: "inv_helmet_41",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Agility: 34, stats.Stamina: 28, stats.AttackPower: 20, stats.Armor: 163}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Waist (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994008).
+	{
+		Id: 994302, Name: "Combat Swords Synthetic Waist (Phase 1, hit -10)", Icon: "inv_belt_23",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Agility: 27, stats.Stamina: 22, stats.AttackPower: 20, stats.Armor: 113}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Finger (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994011).
+	{
+		Id: 994303, Name: "Combat Swords Synthetic Finger (Phase 1, hit -10)", Icon: "inv_jewelry_ring_15",
+		Type:  proto.ItemType_ItemTypeFinger,
+		Stats: stats.Stats{stats.Strength: 15, stats.Agility: 17, stats.AttackPower: 20}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Finger II (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994012).
+	{
+		Id: 994304, Name: "Combat Swords Synthetic Finger II (Phase 1, hit -10)", Icon: "inv_jewelry_ring_03",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Agility: 17, stats.AttackPower: 20}.ToFloatArray(),
+		CritRating: 15,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (994006).
+	{
+		Id: 994305, Name: "Combat Swords Synthetic Wrist (Phase 1, hit +10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 7, stats.Stamina: 15, stats.Armor: 88}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Finger (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (994011).
+	{
+		Id: 994306, Name: "Combat Swords Synthetic Finger (Phase 1, hit +10)", Icon: "inv_jewelry_ring_15",
+		Type:      proto.ItemType_ItemTypeFinger,
+		Stats:     stats.Stats{stats.Strength: 5, stats.Agility: 17}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Legs (Phase 1), hit-trade step: 10 hit rating more, 20 AttackPower less (994009).
+	{
+		Id: 994307, Name: "Combat Swords Synthetic Legs (Phase 1, hit +10)", Icon: "inv_pants_06",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 28, stats.Agility: 30, stats.AttackPower: 9, stats.Armor: 175, stats.RangedAttackPower: 29}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+		SetName:        "Combat Swords Synthetic (Phase 1)",
+	},
+}
+
+// END hit-trade steps: rogue_swords
+
+// BEGIN hit-trade steps: rogue_seal_fate_swords (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRogueSealFateSwords...)
+}
+
+var hitStepsRogueSealFateSwords = []*proto.UIItem{
+	// Combat Swords Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating less, 10 Agility more (994006).
+	{
+		Id: 994308, Name: "Combat Swords Synthetic Wrist (Phase 1, hit -10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Strength: 17, stats.Stamina: 15, stats.Agility: 10, stats.Armor: 88}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Head (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (994001).
+	{
+		Id: 994309, Name: "Combat Swords Synthetic Head (Phase 1, hit -10)", Icon: "inv_helmet_41",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:      stats.Stats{stats.Agility: 34, stats.Stamina: 28, stats.Armor: 163}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Waist (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (994008).
+	{
+		Id: 994310, Name: "Combat Swords Synthetic Waist (Phase 1, hit -10)", Icon: "inv_belt_23",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:      stats.Stats{stats.Agility: 27, stats.Stamina: 22, stats.Armor: 113}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Finger (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (994011).
+	{
+		Id: 994311, Name: "Combat Swords Synthetic Finger (Phase 1, hit -10)", Icon: "inv_jewelry_ring_15",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Strength: 15, stats.Agility: 17}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Finger II (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994012).
+	{
+		Id: 994312, Name: "Combat Swords Synthetic Finger II (Phase 1, hit -10)", Icon: "inv_jewelry_ring_03",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Agility: 17, stats.AttackPower: 20}.ToFloatArray(),
+		CritRating: 15,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (994006).
+	{
+		Id: 994313, Name: "Combat Swords Synthetic Wrist (Phase 1, hit +10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 7, stats.Stamina: 15, stats.Armor: 88}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Finger (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (994011).
+	{
+		Id: 994314, Name: "Combat Swords Synthetic Finger (Phase 1, hit +10)", Icon: "inv_jewelry_ring_15",
+		Type:      proto.ItemType_ItemTypeFinger,
+		Stats:     stats.Stats{stats.Strength: 5, stats.Agility: 17}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Combat Swords Synthetic Legs (Phase 1), hit-trade step: 10 hit rating more, 20 AttackPower less (994009).
+	{
+		Id: 994315, Name: "Combat Swords Synthetic Legs (Phase 1, hit +10)", Icon: "inv_pants_06",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 28, stats.Agility: 30, stats.AttackPower: 9, stats.Armor: 175, stats.RangedAttackPower: 29}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+		SetName:        "Combat Swords Synthetic (Phase 1)",
+	},
+}
+
+// END hit-trade steps: rogue_seal_fate_swords
+
+// BEGIN hit-trade steps: rogue_combat_daggers (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRogueCombatDaggers...)
+}
+
+var hitStepsRogueCombatDaggers = []*proto.UIItem{
+	// Daggers Synthetic Head (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994101).
+	{
+		Id: 994316, Name: "Daggers Synthetic Head (Phase 1, hit -10)", Icon: "inv_helmet_41",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Agility: 33, stats.Stamina: 29, stats.AttackPower: 20, stats.Armor: 163}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994106).
+	{
+		Id: 994317, Name: "Daggers Synthetic Wrist (Phase 1, hit -10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Strength: 17, stats.Stamina: 15, stats.AttackPower: 20, stats.Armor: 88}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Waist (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994108).
+	{
+		Id: 994318, Name: "Daggers Synthetic Waist (Phase 1, hit -10)", Icon: "inv_belt_23",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Agility: 26, stats.Stamina: 23, stats.AttackPower: 20, stats.Armor: 113}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Finger (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994111).
+	{
+		Id: 994319, Name: "Daggers Synthetic Finger (Phase 1, hit -10)", Icon: "inv_jewelry_ring_15",
+		Type:  proto.ItemType_ItemTypeFinger,
+		Stats: stats.Stats{stats.Strength: 16, stats.Agility: 16, stats.AttackPower: 20}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (994106).
+	{
+		Id: 994320, Name: "Daggers Synthetic Wrist (Phase 1, hit +10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 7, stats.Stamina: 15, stats.Armor: 88}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Finger (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (994111).
+	{
+		Id: 994321, Name: "Daggers Synthetic Finger (Phase 1, hit +10)", Icon: "inv_jewelry_ring_15",
+		Type:      proto.ItemType_ItemTypeFinger,
+		Stats:     stats.Stats{stats.Strength: 6, stats.Agility: 16}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Legs (Phase 1), hit-trade step: 10 hit rating more, 20 AttackPower less (994109).
+	{
+		Id: 994322, Name: "Daggers Synthetic Legs (Phase 1, hit +10)", Icon: "inv_pants_06",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 27, stats.Agility: 26, stats.AttackPower: 19, stats.Armor: 175, stats.RangedAttackPower: 39}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+		SetName:        "Daggers Synthetic (Phase 1)",
+	},
+}
+
+// END hit-trade steps: rogue_combat_daggers
+
+// BEGIN hit-trade steps: rogue_daggers (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRogueDaggers...)
+}
+
+var hitStepsRogueDaggers = []*proto.UIItem{
+	// Daggers Synthetic Head (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (994101).
+	{
+		Id: 994323, Name: "Daggers Synthetic Head (Phase 1, hit -10)", Icon: "inv_helmet_41",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:      stats.Stats{stats.Agility: 33, stats.Stamina: 29, stats.Armor: 163}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (994106).
+	{
+		Id: 994324, Name: "Daggers Synthetic Wrist (Phase 1, hit -10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:      stats.Stats{stats.Strength: 17, stats.Stamina: 15, stats.Armor: 88}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Waist (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (994108).
+	{
+		Id: 994325, Name: "Daggers Synthetic Waist (Phase 1, hit -10)", Icon: "inv_belt_23",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:      stats.Stats{stats.Agility: 26, stats.Stamina: 23, stats.Armor: 113}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Finger (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (994111).
+	{
+		Id: 994326, Name: "Daggers Synthetic Finger (Phase 1, hit -10)", Icon: "inv_jewelry_ring_15",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Strength: 16, stats.Agility: 16}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Finger II (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994112).
+	{
+		Id: 994327, Name: "Daggers Synthetic Finger II (Phase 1, hit -10)", Icon: "inv_jewelry_ring_03",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Agility: 15, stats.AttackPower: 20}.ToFloatArray(),
+		CritRating: 17,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (994106).
+	{
+		Id: 994328, Name: "Daggers Synthetic Wrist (Phase 1, hit +10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 7, stats.Stamina: 15, stats.Armor: 88}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Finger (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (994111).
+	{
+		Id: 994329, Name: "Daggers Synthetic Finger (Phase 1, hit +10)", Icon: "inv_jewelry_ring_15",
+		Type:      proto.ItemType_ItemTypeFinger,
+		Stats:     stats.Stats{stats.Strength: 6, stats.Agility: 16}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Legs (Phase 1), hit-trade step: 10 hit rating more, 20 AttackPower less (994109).
+	{
+		Id: 994330, Name: "Daggers Synthetic Legs (Phase 1, hit +10)", Icon: "inv_pants_06",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 27, stats.Agility: 26, stats.AttackPower: 19, stats.Armor: 175, stats.RangedAttackPower: 39}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+		SetName:        "Daggers Synthetic (Phase 1)",
+	},
+}
+
+// END hit-trade steps: rogue_daggers
+
+// BEGIN hit-trade steps: rogue_mutilate (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRogueMutilate...)
+}
+
+var hitStepsRogueMutilate = []*proto.UIItem{}
+
+// END hit-trade steps: rogue_mutilate
+
+// BEGIN hit-trade steps: rogue_subtlety (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRogueSubtlety...)
+}
+
+var hitStepsRogueSubtlety = []*proto.UIItem{
+	// Daggers Synthetic Head (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994101).
+	{
+		Id: 994331, Name: "Daggers Synthetic Head (Phase 1, hit -10)", Icon: "inv_helmet_41",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Agility: 33, stats.Stamina: 29, stats.AttackPower: 20, stats.Armor: 163}.ToFloatArray(),
+		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994106).
+	{
+		Id: 994332, Name: "Daggers Synthetic Wrist (Phase 1, hit -10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Strength: 17, stats.Stamina: 15, stats.AttackPower: 20, stats.Armor: 88}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Waist (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994108).
+	{
+		Id: 994333, Name: "Daggers Synthetic Waist (Phase 1, hit -10)", Icon: "inv_belt_23",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Agility: 26, stats.Stamina: 23, stats.AttackPower: 20, stats.Armor: 113}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Finger (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994111).
+	{
+		Id: 994334, Name: "Daggers Synthetic Finger (Phase 1, hit -10)", Icon: "inv_jewelry_ring_15",
+		Type:  proto.ItemType_ItemTypeFinger,
+		Stats: stats.Stats{stats.Strength: 16, stats.Agility: 16, stats.AttackPower: 20}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Finger II (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994112).
+	{
+		Id: 994335, Name: "Daggers Synthetic Finger II (Phase 1, hit -10)", Icon: "inv_jewelry_ring_03",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Agility: 15, stats.AttackPower: 20}.ToFloatArray(),
+		CritRating: 17,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Subtlety Synthetic Back (Phase 1), hit-trade step: 10 hit rating less, 20 AttackPower more (994121).
+	{
+		Id: 994336, Name: "Subtlety Synthetic Back (Phase 1, hit -10)", Icon: "inv_misc_cape_18",
+		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Agility: 16, stats.Stamina: 16, stats.AttackPower: 20, stats.Armor: 54}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (994106).
+	{
+		Id: 994337, Name: "Daggers Synthetic Wrist (Phase 1, hit +10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 7, stats.Stamina: 15, stats.Armor: 88}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Finger (Phase 1), hit-trade step: 10 hit rating more, 10 Strength less (994111).
+	{
+		Id: 994338, Name: "Daggers Synthetic Finger (Phase 1, hit +10)", Icon: "inv_jewelry_ring_15",
+		Type:      proto.ItemType_ItemTypeFinger,
+		Stats:     stats.Stats{stats.Strength: 6, stats.Agility: 16}.ToFloatArray(),
+		HitRating: 20,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+	// Daggers Synthetic Legs (Phase 1), hit-trade step: 10 hit rating more, 20 AttackPower less (994109).
+	{
+		Id: 994339, Name: "Daggers Synthetic Legs (Phase 1, hit +10)", Icon: "inv_pants_06",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 27, stats.Agility: 26, stats.AttackPower: 19, stats.Armor: 175, stats.RangedAttackPower: 39}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+		SetName:        "Daggers Synthetic (Phase 1)",
+	},
+}
+
+// END hit-trade steps: rogue_subtlety

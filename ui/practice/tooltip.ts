@@ -67,16 +67,17 @@ export class Tooltip {
 		parent.append(this.el);
 	}
 
-	// attach shows content while the mouse is over an element.
-	attach(el: HTMLElement, content: () => TooltipContent | undefined) {
+	// attach shows content while the mouse is over an element. With nextTo, the tooltip sits by
+	// the element instead of at the fixed spot, like the game's tooltips for bag slots.
+	attach(el: HTMLElement, content: () => TooltipContent | undefined, nextTo = false) {
 		el.addEventListener('mouseenter', () => {
 			const c = content();
-			if (c) this.show(c);
+			if (c) this.show(c, nextTo ? el : undefined);
 		});
 		el.addEventListener('mouseleave', () => this.hide());
 	}
 
-	async show(content: TooltipContent) {
+	async show(content: TooltipContent, owner?: HTMLElement) {
 		this.shown = content;
 		clearInterval(this.timer);
 		const body = document.createElement('div');
@@ -129,10 +130,13 @@ export class Tooltip {
 		}
 		this.el.replaceChildren(body);
 		this.el.classList.remove('hidden');
-		const { left, top } = this.at();
-		// The fixed spot is the tooltip's centre, kept on screen.
 		const w = this.el.offsetWidth;
 		const h = this.el.offsetHeight;
+		// By an element, its bottom right corner goes on the element's top left corner, or its
+		// bottom left on the top right when the element is on the screen's left half.
+		const r = owner?.getBoundingClientRect();
+		const { left, top } = r ? { left: r.right < innerWidth / 2 ? r.right + w / 2 : r.left - w / 2, top: r.top - h / 2 } : this.at();
+		// The fixed spot is the tooltip's centre, kept on screen.
 		this.el.style.left = `${Math.max(4, Math.min(innerWidth - w - 4, left - w / 2))}px`;
 		this.el.style.top = `${Math.max(4, Math.min(innerHeight - h - 4, top - h / 2))}px`;
 	}

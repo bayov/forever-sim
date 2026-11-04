@@ -120,7 +120,7 @@ Real raids tank him in fire resistance gear, which this tank doesn't wear, so he
 ## How healers are scored
 We turn the boss's damage up until the healer can't keep everyone alive any more. The score is how far it got:
 **1.20** means the healer still kept up with 20% more damage than real raids took on that boss, and **0.80** means
-it fell behind at 80% of it. Higher is better.
+it fell behind at 80% of it.
 
 This counts everything that matters in a fight: how much you heal, how well your heals land where they're needed,
 and whether your mana lasts.

@@ -66,6 +66,11 @@ gen60() {
 	rm "$settings"
 	echo "wrote ui/rogue/apls/$name.apl.json ($knobs)"
 }
+# Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/rogue.md): the six builds moved onto hit steps of
+# their sets (talents and knobs unchanged): Combat Swords level60_phase1_synthetic_swords_hit+2, Combat Daggers
+# level60_phase1_synthetic_combat_daggers_hit+2, Seal Fate Swords level60_phase1_synthetic_seal_fate_swords_hit+3, Seal Fate Daggers
+# level60_phase1_synthetic_daggers_hit+3, Subtlety level60_phase1_synthetic_subtlety_hit+2, Mutilate level60_phase1_synthetic_mutilate_hit+3;
+# use those as -gear in the gen60 lines below for them.
 # Round 70753 (2026-11-03, the November 2 notes' rework; the tree is server hotfix push 113483's (1.60.1.70707+hf) since 2026-11-04, strings remapped to its order):
 # talents searched again in batches of 1 to 5 point moves (scratch script, 150 valid neighbours a round at
 # 3000 iterations, the best checked at 10000 and kept for 2 standard errors), alternated with the knob

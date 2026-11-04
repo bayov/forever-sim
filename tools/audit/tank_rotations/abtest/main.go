@@ -1,10 +1,11 @@
 // Command abtest is a paired A/B run of two tankbench requests (same tank, e.g. one APL line
 // apart) on the tank encounters, scored the way tools/tankbench -encounter does.
 //
-//	abtest [-preset max_threat|balanced|max_survival] [-iters 1000] A.json B.json [encounter.json ...]
+//	abtest [-preset max_threat|balanced|max_survival] [-iters 1000] [-seed 1] A.json B.json [encounter.json ...]
 //
-// The preset is inferred from A's filename suffix when not given. Both runs use the requests'
-// own seed, so iteration k of each has the same rolls, and tankscore's PairedDiff pairs them.
+// The preset is inferred from A's filename suffix when not given. Both runs use the same seed
+// (-seed, spaced apart by tankscore.Seed so two seeds share no iterations), so iteration k of each has
+// the same rolls, and tankscore's PairedDiff pairs them.
 package main
 
 import (
@@ -36,10 +37,11 @@ const (
 func main() {
 	preset := flag.String("preset", "", "max_threat|balanced|max_survival; default: A's filename suffix")
 	iters := flag.Int("iters", 1000, "iterations per run")
+	seed := flag.Int64("seed", 1, "random seed, spaced a billion iterations apart (tankscore.Seed) so two seeds share no iterations")
 	flag.Parse()
 	args := flag.Args()
 	if len(args) < 2 {
-		fail(fmt.Errorf("usage: abtest [-preset p] [-iters n] A.json B.json [encounter.json ...]"))
+		fail(fmt.Errorf("usage: abtest [-preset p] [-iters n] [-seed s] A.json B.json [encounter.json ...]"))
 	}
 	pathA, pathB, encs := args[0], args[1], args[2:]
 	if *preset == "" {
@@ -69,6 +71,7 @@ func main() {
 	fmt.Printf("%-13s %8s %8s %7s %6s %8s %8s\n", "boss", "scoreA", "scoreB", "diff", "se", "safeDiff", "needDiff")
 	var sum, sumSq float64
 	var n int
+	unpaired := false
 	for _, ep := range encs {
 		enc, err := tankscore.LoadEncounter(ep)
 		if err != nil {
@@ -80,14 +83,15 @@ func main() {
 			each = enc.Healing.HpsEach
 		}
 		obj := tankscore.Objective{Weight: weight, ThreatMembers: threatMembers, DpsSlot: dpsSlot, HealerEach: each, Death: deathTarget}
-		ma := runOne(pathA, enc, *iters)
-		mb := runOne(pathB, enc, *iters)
+		ma := runOne(pathA, enc, *iters, *seed)
+		mb := runOne(pathB, enc, *iters, *seed)
 		sa, sb := obj.Score(ma, int32(*iters)), obj.Score(mb, int32(*iters))
 		diff, se, paired := obj.PairedDiff(ma.TankScore, mb.TankScore)
 		note := ""
 		if !paired {
 			diff, se = sb.Value-sa.Value, math.Hypot(sa.StdErr, sb.StdErr)
 			note = " (unpaired)"
+			unpaired = true
 		}
 		need := fmt.Sprintf("%8.0f", sb.Needed-sa.Needed)
 		if sa.Needed < 0 || sb.Needed < 0 {
@@ -101,12 +105,19 @@ func main() {
 		}
 	}
 	if n > 0 {
-		fmt.Printf("%-13s %8s %8s %7.1f %6.1f\n", "scoring_mean", "", "", sum/float64(n), math.Sqrt(sumSq)/float64(n))
+		se := math.Sqrt(sumSq) / float64(n)
+		if unpaired {
+			// An unpaired boss's error is that of two absolute scores, and the bosses share the
+			// seed, so their scores correlate: the mean's error is about 1.25 times the independent
+			// one (tankscore.SharedSeedSD, finding tank_rotations-20261104-13). Paired diffs don't need it.
+			se *= tankscore.SharedSeedSD
+		}
+		fmt.Printf("%-13s %8s %8s %7.1f %6.1f\n", "scoring_mean", "", "", sum/float64(n), se)
 	}
 }
 
 // runOne sets the request up as tankbench -encounter does and returns the tank's metrics.
-func runOne(path string, enc *tankscore.Encounter, iters int) *proto.UnitMetrics {
+func runOne(path string, enc *tankscore.Encounter, iters int, seed int64) *proto.UnitMetrics {
 	data, err := os.ReadFile(path)
 	if err != nil {
 		fail(err)
@@ -116,6 +127,7 @@ func runOne(path string, enc *tankscore.Encounter, iters int) *proto.UnitMetrics
 		fail(fmt.Errorf("%s: %w", path, err))
 	}
 	rsr.SimOptions.Iterations = int32(iters)
+	rsr.SimOptions.RandomSeed = tankscore.Seed(seed)
 	tankscore.UseEncounter(rsr, enc)
 	h := enc.Healing
 	var hm *proto.HealingModel

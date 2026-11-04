@@ -6,13 +6,13 @@
   "isDefault": false,
   "pr": 7,
   "race": "Orc",
-  "talents": "052002-054030210051012151-053020001",
+  "talents": "052002-055030110051012151-053020001",
   "treeNames": [
     "Elemental",
     "Enhancement",
     "Restoration"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase1_synthetic_hit-4",
   "apl": "magma",
   "published": {
     "dps": 1111.3,
@@ -77,5 +77,5 @@
     "Assumed: another shaman's Flametongue Totem stacks with this shaman's Windfury Weapon. It adds 18 to 19 DPS at 180s and isn't tested in game yet.",
     "The relic is Totem of the Storm, within 0.4 DPS of Burning Totem here. It lets Lightning Bolt trigger Maelstrom Weapon at half the chance."
   ],
-  "notes": "mksettings -spec enh -apl magma -talents 051003-054030021005112151-053020001 -race Orc -gear level60_phase1_synthetic -duration 180 -level 60 (standards 25: the raid's Grace of Air and Flametongue Totem; the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "mksettings -spec enh -apl magma -talents 051003-054030021005112151-053020001 -race Orc -gear level60_phase1_synthetic -duration 180 -level 60 (standards 25: the raid's Grace of Air and Flametongue Totem; the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md"
 }

@@ -1,7 +1,5 @@
-// The talent trees the talent frame draws: the sim's Forever trees (ui/core/talents/trees), the
-// character's points from the request's talents string, and the game's art for each tree.
-
-import { talentBackgrounds } from './assets';
+// The talent trees the talents frame draws: the sim's Forever trees (ui/core/talents/trees), the
+// character's points from the request's talents string, and where the client puts each talent.
 
 export type TalentLoc = { rowIdx: number; colIdx: number };
 
@@ -51,25 +49,6 @@ export function talentsString(request: unknown): string {
 	return r?.raid?.parties?.[0]?.players?.[0]?.talentsString ?? '';
 }
 
-// The client's file names for the trees whose name differs from the sim's tree name.
-const bgNames: Record<string, string> = {
-	Elemental: 'ElementalCombat',
-	Retribution: 'Combat',
-	'Shadow Magic': 'Shadow',
-	Affliction: 'Curses',
-	Demonology: 'Summoning',
-};
-
-// background gives a tree's background textures (top-left, top-right, bottom-left,
-// bottom-right). The listfile has each tree's four files in the order bottomleft, bottomright,
-// topleft, topright, so they sit around the top-left's id. Like the game, Mage Fire is the
-// fallback.
-export function background(cls: string, tree: string): [number, number, number, number] {
-	const name = cls.replace(/^Class/, '') + (bgNames[tree] ?? tree.replace(/\s+/g, ''));
-	const tl = talentBackgrounds[name] ?? talentBackgrounds.MageFire;
-	return [tl, tl + 1, tl - 2, tl - 1];
-}
-
 // description fills a rank's values into the talent's {n} placeholders.
 export function description(t: TalentData, rank: number): string {
 	const values = t.ranks?.[Math.max(0, rank - 1)] ?? t.ranks?.[0] ?? [];
@@ -92,155 +71,30 @@ export const classCircleCoords: Record<string, [number, number, number, number]>
 	ClassPaladin: [0, 0.25, 0.5, 0.75],
 };
 
-// The prerequisite lines between talents, as Blizzard_TalentUI's TALENT_BRANCH_ARRAY: per tier
-// and column, which branch pieces and arrows go there. 1 is lit (the prerequisite is met), -1
-// gray, 0 none.
-export type BranchNode = {
-	id?: number;
-	up: number;
-	down: number;
-	left: number;
-	right: number;
-	leftArrow: number;
-	rightArrow: number;
-	topArrow: number;
-};
+// Where the client puts the talents. Forever's three trees of a class are one trait tree, and
+// each talent is a TraitNode at PosX, PosY (the same grid for every class at build 70425). The
+// frame draws a node's center at PosX / 10, PosY / 10 from the talent frame's top-left, less
+// its pan offset (ClassTalentsFrame's basePanOffset 49, 24 less the Camelot ClassVisuals
+// panOffset 60, 31).
+const treeLeft = [102, 502, 908];
+const rowTop = 213;
+const step = 60;
+const pan = { x: 49 - 60, y: 24 - 31 };
 
-export const MAX_TIERS = 7;
-export const COLUMNS = 4;
-
-export function newBranches(): BranchNode[][] {
-	const a: BranchNode[][] = [];
-	for (let i = 1; i <= MAX_TIERS + 1; i++) {
-		a[i] = [];
-		for (let j = 1; j <= COLUMNS + 1; j++) a[i][j] = { up: 0, down: 0, left: 0, right: 0, leftArrow: 0, rightArrow: 0, topArrow: 0 };
-	}
-	return a;
+// nodeCenter gives a talent's center in the talent frame, from its tree and grid spot.
+export function nodeCenter(tree: number, loc: TalentLoc): { x: number; y: number } {
+	return { x: treeLeft[tree] + loc.colIdx * step - pan.x, y: rowTop + loc.rowIdx * step - pan.y };
 }
 
-// drawLines marks the path from a prerequisite (tier, column) to the talent at (buttonTier,
-// buttonColumn), 1-based like the game. It's TalentFrame_DrawLines.
-export function drawLines(a: BranchNode[][], buttonTier: number, buttonColumn: number, tier: number, column: number, met: boolean) {
-	const m = met ? 1 : -1;
-	if (buttonColumn === column) {
-		for (let i = tier + 1; i <= buttonTier - 1; i++) if (a[i][buttonColumn].id !== undefined) return;
-		for (let i = tier; i <= buttonTier - 1; i++) {
-			a[i][buttonColumn].down = m;
-			if (i + 1 <= buttonTier - 1) a[i + 1][buttonColumn].up = m;
-		}
-		a[buttonTier][buttonColumn].topArrow = m;
-		return;
-	}
-	if (buttonTier === tier) {
-		const left = Math.min(buttonColumn, column);
-		const right = Math.max(buttonColumn, column);
-		for (let i = left + 1; i <= right - 1; i++) if (a[tier][i].id !== undefined) return;
-		for (let i = left; i <= right - 1; i++) {
-			a[tier][i].right = m;
-			a[tier][i + 1].left = m;
-		}
-		if (buttonColumn < column) a[buttonTier][buttonColumn].rightArrow = m;
-		else a[buttonTier][buttonColumn].leftArrow = m;
-		return;
-	}
-	// The prerequisite is diagonal from us. We go across its tier first, then down.
-	let left = Math.min(buttonColumn, column);
-	let right = Math.max(buttonColumn, column);
-	if (left === column) left++;
-	else right--;
-	let blocked = false;
-	for (let i = left; i <= right; i++) if (a[tier][i].id !== undefined) blocked = true;
-	left = Math.min(buttonColumn, column);
-	right = Math.max(buttonColumn, column);
-	if (!blocked) {
-		a[tier][buttonColumn].down = m;
-		a[buttonTier][buttonColumn].up = m;
-		for (let i = tier; i <= buttonTier - 1; i++) {
-			a[i][buttonColumn].down = m;
-			a[i + 1][buttonColumn].up = m;
-		}
-		for (let i = left; i <= right - 1; i++) {
-			a[tier][i].right = m;
-			a[tier][i + 1].left = m;
-		}
-		a[buttonTier][buttonColumn].topArrow = m;
-		return;
-	}
-	// Blocked going across first, so we go down the prerequisite's column, then across.
-	if (left === buttonColumn) left++;
-	else right--;
-	for (let i = left; i <= right; i++) if (a[buttonTier][i].id !== undefined) return;
-	for (let i = tier; i <= buttonTier - 1; i++) {
-		a[i][column].up = m;
-		a[i + 1][column].down = m;
-	}
-	if (buttonColumn < column) a[buttonTier][buttonColumn].rightArrow = m;
-	else a[buttonTier][buttonColumn].leftArrow = m;
-}
-
-type Coords = [number, number, number, number];
-
-// TALENT_BRANCH_TEXTURECOORDS and TALENT_ARROW_TEXTURECOORDS: [lit, gray]. A left above its
-// right means the piece is drawn mirrored.
-export const branchCoords: Record<string, [Coords, Coords]> = {
-	up: [
-		[0.12890625, 0.25390625, 0, 0.484375],
-		[0.12890625, 0.25390625, 0.515625, 1.0],
-	],
-	down: [
-		[0, 0.125, 0, 0.484375],
-		[0, 0.125, 0.515625, 1.0],
-	],
-	left: [
-		[0.2578125, 0.3828125, 0, 0.5],
-		[0.2578125, 0.3828125, 0.5, 1.0],
-	],
-	right: [
-		[0.2578125, 0.3828125, 0, 0.5],
-		[0.2578125, 0.3828125, 0.5, 1.0],
-	],
-	topright: [
-		[0.515625, 0.640625, 0, 0.5],
-		[0.515625, 0.640625, 0.5, 1.0],
-	],
-	topleft: [
-		[0.640625, 0.515625, 0, 0.5],
-		[0.640625, 0.515625, 0.5, 1.0],
-	],
-	bottomright: [
-		[0.38671875, 0.51171875, 0, 0.5],
-		[0.38671875, 0.51171875, 0.5, 1.0],
-	],
-	bottomleft: [
-		[0.51171875, 0.38671875, 0, 0.5],
-		[0.51171875, 0.38671875, 0.5, 1.0],
-	],
-	tdown: [
-		[0.64453125, 0.76953125, 0, 0.5],
-		[0.64453125, 0.76953125, 0.5, 1.0],
-	],
-	tup: [
-		[0.7734375, 0.8984375, 0, 0.5],
-		[0.7734375, 0.8984375, 0.5, 1.0],
-	],
+// The trees' icons (TalentTab's icon), in the order of the class's trees.
+export const treeIcons: Record<string, string[]> = {
+	ClassDruid: ['spell_nature_starfall', 'ability_racial_bearform', 'spell_nature_healingtouch'],
+	ClassHunter: ['ability_hunter_beasttaming', 'ability_marksmanship', 'ability_hunter_swiftstrike'],
+	ClassMage: ['spell_holy_magicalsentry', 'spell_fire_firebolt02', 'spell_frost_frostbolt02'],
+	ClassPaladin: ['spell_holy_holybolt', 'spell_holy_devotionaura', 'spell_holy_auraoflight'],
+	ClassPriest: ['spell_holy_wordfortitude', 'spell_holy_guardianspirit', 'spell_shadow_shadowwordpain'],
+	ClassRogue: ['ability_rogue_eviscerate', 'ability_backstab', 'ability_stealth'],
+	ClassShaman: ['spell_nature_lightning', 'spell_nature_lightningshield', 'spell_nature_magicimmunity'],
+	ClassWarlock: ['spell_shadow_deathcoil', 'spell_shadow_metamorphosis', 'spell_shadow_rainoffire'],
+	ClassWarrior: ['ability_rogue_eviscerate', 'ability_warrior_innerrage', 'inv_shield_06'],
 };
-
-export const arrowCoords: Record<string, [Coords, Coords]> = {
-	top: [
-		[0, 0.5, 0, 0.5],
-		[0, 0.5, 0.5, 1.0],
-	],
-	right: [
-		[1.0, 0.5, 0, 0.5],
-		[1.0, 0.5, 0.5, 1.0],
-	],
-	left: [
-		[0.5, 1.0, 0, 0.5],
-		[0.5, 1.0, 0.5, 1.0],
-	],
-};
-
-// pick gives the lit or gray coords for a node's value (1 or -1).
-export function pick(c: [Coords, Coords], v: number): Coords {
-	return v > 0 ? c[0] : c[1];
-}

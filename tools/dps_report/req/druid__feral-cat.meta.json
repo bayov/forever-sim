@@ -6,13 +6,13 @@
   "isDefault": true,
   "pr": 8,
   "race": "NightElf",
-  "talents": "05002-53200032023012125001-05502",
+  "talents": "050022-53200032023012125001-055",
   "treeNames": [
     "Balance",
     "Feral Combat",
     "Restoration"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase1_synthetic_hit-4",
   "apl": "level60",
   "published": {
     "dps": 1139.0,
@@ -77,5 +77,5 @@
     "The melee group has Windfury Totem and a second shaman's Grace of Air. No Elemental Sharpening Stone, since its recipe comes from Molten Core.",
     "Takes Feral Swiftness 2 (movement speed). It costs nothing: the points it needs above Shredding Attacks would otherwise go to Furor, which does nothing for a cat that stays in Cat Form."
   ],
-  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. Feral options: prepull Clearcasting on. No edits needed. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. 2026-11-01: on the launch realms' 2026-10-30 hotfix trees (tools/forever_talents/client/druid.json): talents and rotation from tools/rotopt/druid_presets.sh, the request's talentsString and rotation edited to match."
+  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. Feral options: prepull Clearcasting on. No edits needed. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. 2026-11-01: on the launch realms' 2026-10-30 hotfix trees (tools/forever_talents/client/druid.json): talents and rotation from tools/rotopt/druid_presets.sh, the request's talentsString and rotation edited to match. 2026-11-04 (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/druid.md): talents 050022-53200032023012125001-055 (Nature's Reach 2 for Natural Shapeshifter 2) on the hit-4 step (level60_phase1_synthetic_hit-4, 40 hit rating less re-spent on Agility, Strength and crit), melee hit still 8% = cap; 1176.5 / 1164.9 / 1146.4 at 120 / 180 / 300 s (+26.0 / +25.9 / +22.0), not yet re-verified here."
 }

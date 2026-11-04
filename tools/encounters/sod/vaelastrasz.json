@@ -43,7 +43,7 @@
     "name": "Vaelastrasz the Corrupt",
     "level": 63,
     "mobType": "MobTypeUnknown",
-    "parryHaste": true,
+    "parryHaste": false,
     "stats": [
      0,
      0,

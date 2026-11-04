@@ -160,7 +160,7 @@ func (hb *healthBar) removeHealth(sim *Simulation, amount float64, tmi bool) {
 	metrics.AddEvent(-amount, newHealth-oldHealth)
 
 	if ts := hb.unit.tankScore; ts != nil {
-		ts.damageTaken(amount)
+		ts.damageTaken(hb.unit, amount)
 	}
 
 	// TMI calculations need timestamps and Max HP information for each damage taken event
