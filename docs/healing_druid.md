@@ -247,21 +247,26 @@ effect is on the presets where it was measured.
 
 ### Against the Restoration shaman (1,000 iterations, carry)
 
+On master 41aa10700 (the shaman's new Riptide: three ranks, no instant heal, 12 sec cooldown), each healer's
+request from `tools/healbench/req`, one healbench built from this branch:
+
 | Boss file | Tank: druid | Tank: shaman | Raid: druid | Raid: shaman |
 |---|---|---|---|---|
-| Magmadar | 1.699 | 1.536 | 1.605 | 1.605 |
-| Golemagg | 1.648 | 1.441 | 2.021 | 2.083 |
-| Ragnaros | 0.517 | 0.469 | 1.240 | 1.203 |
-| Onyxia | 1.165 | 1.017 | 0.711 | 0.692 |
-| Broodlord | 0.731 | 0.618 | 0.828 | 0.835 |
-| Vaelastrasz | 0.688 | 0.648 | 1.092 | 1.199 |
-| Chromaggus | 0.870 | 0.764 | 0.953 | 0.969 |
-| Onyxia, 180 sec | 1.087 | 0.965 | 0.637 | 0.623 |
-| Onyxia, 300 sec | 1.063 | 0.956 | 0.548 | 0.557 |
+| Magmadar | 1.699 | 1.798 | 1.605 | 1.540 |
+| Golemagg | 1.648 | 1.716 | 2.021 | 1.913 |
+| Ragnaros | 0.517 | 0.521 | 1.240 | 1.171 |
+| Onyxia | 1.165 | 1.141 | 0.711 | 0.678 |
+| Broodlord | 0.731 | 0.837 | 0.828 | 0.817 |
+| Vaelastrasz | 0.688 | 0.775 | 1.092 | 1.110 |
+| Chromaggus | 0.870 | 0.884 | 0.953 | 0.906 |
+| Onyxia, 180 sec | 1.087 | 1.010 | 0.637 | 0.599 |
+| Onyxia, 300 sec | 1.063 | 0.969 | 0.548 | 0.531 |
 
-The druid is ahead on every tank row, by 0.04 (Vaelastrasz) to 0.21 (Golemagg). On the raid side it's ahead on
-Ragnaros and Onyxia, level on Magmadar, and behind on Golemagg, Broodlord, Chromaggus and Vaelastrasz (-0.107),
-the files where the shaman's Chain Heal reaches three players a cast.
+The druid raid healer is ahead on every file but Vaelastrasz (-0.018), by up to 0.108 (Golemagg). On the tank
+side the shaman's new Riptide put it ahead on the short fights (Broodlord +0.106, Magmadar +0.099, Vaelastrasz
++0.087); the druid stays ahead on Onyxia and on the long fights (+0.077 and +0.094 at 180 and 300 sec). Before the shaman's change (master 3d1cb9701) the druid
+was ahead on every tank row (shaman Onyxia 1.017, Broodlord 0.618, Vaelastrasz 0.648, Chromaggus 0.764) and
+behind on four raid rows.
 
 ### Downranking on the presets
 
@@ -291,8 +296,10 @@ iterations:
 ### The shared change
 
 `sim/core/apl_helpers.go` (`GetAPLDot`): a dot or HoT check aimed at Most Hurt or Lowest Health finds the HoT
-through `HealthUnit()` instead of `Get()`, which is nil while the rotation is built (nobody is hurt yet), so the
-check had been dropped. The Restoration shaman's raid rotation has one such check (Riptide not active at the
-most hurt). Measured on its raid request at 1,000 iterations on all seven boss files, with and without the
-change: the same to the third decimal on every file (Magmadar 1.605, Golemagg 2.083, Ragnaros 1.203, Onyxia 0.692,
-Broodlord 0.835, Vaelastrasz 1.199, Chromaggus 0.969).
+through `HealthUnit()` instead of `Get()`, which is nil while the rotation is built (nobody is hurt yet). For a
+spell whose HoT is a `Hot` (no `Dot`), `CurDot()` was nil too, so the check was dropped from the condition
+(`TestDruidHotAtMostHurt`). The Restoration shaman's raid rotation has one such check (Riptide 1239243 not active
+at the most hurt). Its raid request at 1,000 iterations on all seven boss files, healbench built from this branch
+with and without the change: the same to the third decimal on every file (Magmadar 1.540, Golemagg 1.913,
+Ragnaros 1.171, Onyxia 0.678, Broodlord 0.817, Vaelastrasz 1.110, Chromaggus 0.906; mean 1.162 both ways). The
+same held on the shaman's rotation before 41aa10700.
