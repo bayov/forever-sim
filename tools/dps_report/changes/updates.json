@@ -3304,7 +3304,8 @@
      ],
      "note": "One more Rapid Fire in a 5 minute fight; no change at 2 and 3 minutes.",
      "commits": [
-      "b682e47"
+      "b682e47",
+      "9660fff"
      ]
     }
    ],
@@ -3916,6 +3917,10 @@
     {
      "commit": "2a76db4",
      "why": "the Fury Sunder duty's rotation description on the page only; its sim request is unchanged"
+    },
+    {
+     "commit": "aa7cd24",
+     "why": "Test goldens only: the item set tests leave the hit-trade step items out; no preset moves."
     }
    ],
    "source": {
