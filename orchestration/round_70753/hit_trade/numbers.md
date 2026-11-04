@@ -42,6 +42,5 @@ regear (`cd3f44cf2^`, hotfix in, set `level60_phase1_synthetic_fury`, same binar
 | warrior__fury-duty-battle-shout | 1168.7±0.5 / 1124.2±0.4 / 1096.4±0.3 | 1172.1±0.5 / 1126.9±0.4 / 1097.1±0.3 | +2.7 |
 | warrior__fury-duty-sunder | 1138.4±0.5 / 1097.4±0.4 / 1075.4±0.3 | 1141.4±0.5 / 1100.1±0.4 / 1077.0±0.3 | +2.7 |
 
-Other notes: the Warlock Destruction Fire builds also changed talents (Fire 2/5 and one Destruction point moved); their
-gain is small (+0.9 to +1.1). Shaman Mana Tide and Water Shield, the Feral cats and the Arcane mage re-spent talents as
-shown. The rogues, paladins keep their talents; their numbers match the class result files within noise.
+Other notes: the Warlock Destruction Fire builds also changed talents; their gain is small (+0.9 to +1.1). Feral cats,
+Arcane, the Enhancement shamans and Fury re-spent talents as the column shows. Rogues and paladins kept theirs.
