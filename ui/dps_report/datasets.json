@@ -19,7 +19,7 @@
   "title": "Presets and headline DPS",
   "description": "One row per level 60 preset: mean DPS over 20,000 simulated 180 s fights against the generic boss, percentiles, best race overall and per faction, and talents. Encounter presets (the boss as one creature type) are extra rows with their creature type and why they are advantaged (in full and in one short line). Duty presets (the preset keeps a raid buff or debuff up itself, with the raid's copy off) are extra rows with the duty, their base preset and the DPS it costs; they get the main run, lengths and race sweep only. Simmed on master baed22e62's class code plus warrior 38b94b40a; most builds ran before per-hit rounding (about 0.007%), see provenance.json.",
   "updated": {
-   "at": "2026-11-04T07:09:43.444Z",
+   "at": "2026-11-04T07:50:26.429Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -51,7 +51,7 @@
   "title": "More icons",
   "description": "36 px spell, item and aura icons and the sim UI's empty gear-slot icons, as data URLs. They load after the Ranking tab is up.",
   "updated": {
-   "at": "2026-11-04T07:09:43.444Z",
+   "at": "2026-11-04T07:50:26.429Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -91,7 +91,7 @@
   "title": "Talents, rotation and caveats",
   "description": "Per preset, its key talents, rotation priority, consumes and open questions, plus the gear rules every synthetic set follows (build _round, kind gear).",
   "updated": {
-   "at": "2026-11-04T07:09:43.444Z",
+   "at": "2026-11-04T07:50:26.429Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -139,7 +139,7 @@
   "title": "Rotation priority lists",
   "description": "Each preset's APL as simmed: pre-pull casts with their timing, then the priority list in order, each line's spell, a plain-English condition, the APL's own note, its exact condition and the spell's casts per fight.",
   "updated": {
-   "at": "2026-11-04T07:09:43.444Z",
+   "at": "2026-11-04T07:50:26.429Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -171,7 +171,7 @@
   "title": "Talent trees",
   "description": "Every class talent tree as the sim UI lays it out: each talent’s row, column, ranks, prerequisite, text from ui/core/talents/trees, and the wowhead page of each rank (Forever's database where it has the spell, else Classic's).",
   "updated": {
-   "at": "2026-11-04T07:09:43.444Z",
+   "at": "2026-11-04T07:50:26.429Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -251,7 +251,7 @@
   "title": "Game tooltip text",
   "description": "Tooltip text for the spells, items, enchants, consumes, races and stat weights on the page: wowhead's WoW Forever database first (with a link to its page), the Forever client's talent text and the Forever wiki where it has nothing, Classic's text only as a marked last resort, the sim's own numbers where they differ, the item database for the synthetic gear, and the Forever racials.",
   "updated": {
-   "at": "2026-11-04T07:09:43.444Z",
+   "at": "2026-11-04T07:50:26.429Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -307,7 +307,7 @@
   "title": "Updates",
   "description": "The report's updates, newest first: game updates (a new client build or development notes) and sim/preset updates (our own changes to the sim, rotations, gear, talents, consumes or races), each with its date, source and public change list. Each line may name the classes, presets, races and racial parts it touches.",
   "updated": {
-   "at": "2026-11-04T07:31:29.322Z",
+   "at": "2026-11-04T07:50:27.502Z",
    "by": "Claude (forever-sim)"
   }
  },

@@ -49,6 +49,8 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - compsearch TestReportRaid flakes on shaman__enhancement-imp-gw: about 6 DPS less in the 20-player raid than alone
   (-6.0 against an allowed +-5.9 at 4000 iterations on master before 7df92bc; at the test's 1000 iterations it passes or
   fails as other builds reshuffle the random numbers). Found by the paladin follow-up; a shaman or compsearch fix.
+  Phase 4 (shaman_phase4.md): noise, -0.4 ± 0.6 over 23,000 iterations; the hunters (+2 to +3) and Demonology (-3.2)
+  sit further off in the raid. Tolerance kept.
 - Two-hand Fury is now the highest warrior build at 180 s, so the warrior worker moved the class default (isDefault and
   the ui defaults) to it. Listed as a question for the user in round_70753/warrior.md.
 
