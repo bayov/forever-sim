@@ -25,8 +25,8 @@ import (
 // steps around that one and keeps whichever sims best, for specs where hit past the yellow cap
 // still pays (a dual wielder's white swings, a hybrid's spells).
 type hitSteps struct {
-	base string                          // the gear set path without .gear.json
-	gear map[int]*proto.EquipmentSpec // by step: the change in gear hit in percent, 0 the set itself
+	base   string                       // the gear set path without .gear.json
+	gear   map[int]*proto.EquipmentSpec // by step: the change in gear hit in percent, 0 the set itself
 	lo, hi int
 
 	kind proto.Stat // MeleeHit (melee and ranged) or SpellHit
@@ -213,7 +213,7 @@ func (s *setup) hitKey() string {
 // prepareSteps is prepare for every step the talent string tries: one without -hit-span.
 func (s *searcher) prepareSteps(knobs Knobs) ([]*pendingScore, []int) {
 	h := s.setup.hit
-	if h == nil || h.span == 0 {
+	if h == nil || h.span == 0 || s.setup.hitStep != nil {
 		return []*pendingScore{s.prepare(knobs)}, nil
 	}
 	steps := h.candidates(s.setup, s.setup.effectiveTalents())

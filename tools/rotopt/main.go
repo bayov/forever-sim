@@ -54,6 +54,7 @@ func main() {
 	hitCap := flag.String("hit-cap", "", "with -hit-steps, the hit cap the steps aim at: melee:8, ranged:8 or spell:16")
 	hitSchool := flag.String("hit-school", "", "with -hit-steps, school-only hit talents the stat sheet misses, fieldName:percent per rank, e.g. shadowFocus:1")
 	hitSpan := flag.Int("hit-span", 0, "with -hit-steps, the talent search also tries this many steps either side of the cap step and keeps the best (hit past the cap that still pays)")
+	hitStepFlag := flag.String("hit-step", "", "with -hit-steps, wear this step (e.g. -2 or +1) whatever the talents call for, for the final numbers of a step a span search picked")
 	requiredTalents := flag.String("require", "", "talents the talent search keeps at max rank, by field name, e.g. spiritWeapons for the threat cut the sim does not score")
 	gearSearch := flag.Bool("gear-search", false, "search every slot over the items the player can equip at their level, with the starting knobs (prints the gear and writes it to -gear-out)")
 	gearOut := flag.String("gear-out", "", "settings JSON to write with the gear the search found, for the next run")
@@ -171,6 +172,14 @@ func main() {
 			os.Exit(2)
 		}
 		setup.hit = h
+		if *hitStepFlag != "" {
+			st, err := strconv.Atoi(strings.TrimPrefix(*hitStepFlag, "+"))
+			if _, ok := h.gear[st]; err != nil || !ok {
+				fmt.Fprintf(os.Stderr, "-hit-step %s: no such step\n", *hitStepFlag)
+				os.Exit(2)
+			}
+			setup.hitStep = &st
+		}
 	}
 	if *bonus != "" {
 		p := setup.player()
