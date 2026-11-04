@@ -2,6 +2,25 @@
 
 ## Open
 
+### tank_mechanics-20261104-15: Goblin Sapper Charge and Goblin Land Mine are blocked in a form; the client allows them
+- severity: high (bear Max threat score +158 / +189, about +6-7%; Balanced +134 / +169; Max survival +63 / +110; SafeDPS +85 / +99)
+- affects: Feral tank (all three presets; they have Engineering). Possibly Feral cat DPS presets that use the sapper (not measured)
+- found: 2026-11-04, master dc303b026
+- evidence: client 1.60.1.70790+hf (tier 1): SpellShapeshiftForm 5 (Bear Form) and 8 (Dire Bear Form) Flags 0xd8, which includes CanUseItems 0x80 and CanUseEquippedItems 0x40. SpellMisc Attributes_0 is 0x0 for Goblin Sapper Charge 13241 and Goblin Land Mine 4100 (also for Ez-Thro Dynamite 23000 and the EZ-Thro rows), with no SpellShapeshift row. Only Dense Dynamite 23063, Thorium Grenade 19769, Iron Grenade 4068, Solid Dynamite 12419 and Holy Hand Grenade 1317268 carry SPELL_ATTR0_NOT_SHAPESHIFTED (0x10000). The sim blocks the sapper with `!character.IsShapeshifted()` (sim/core/consumes.go:1258-1259), cancels the form in its ModifyCast (:1351-1353), and blocks the land mine (:1304-1305). Its own comment at :1220-1222 says the sapper's row lacks the flag. docs/tank_druid.md:226-227 says "Explosives score 0: an item can't be used in a form". That holds only for the flagged explosives. The sim also throws the EZ-Thro Dark Bomb in form, and it scores -28 at Max threat, not 0. Measured with tankbench on a patched copy that drops the in-form block and the cancel: sapper added, 3,000 iterations, seeds 1 and 2. The patch and output are in the session scratch (not kept).
+- proposed fix: gate each explosive's in-form use on its spell's Attributes_0 0x10000, as the EZ-Thro rows already do: allow the sapper and the land mine in form, and don't cancel the form. Add a test that a shapeshifted druid throws the sapper and not Dense Dynamite. Then the druid worker re-runs the bear's consumable A/B (sapper, land mine) and fixes docs/tank_druid.md:226-227.
+- How sure: sure of the client rows and the sim's block. The score gain is measured on one preset family with two seeds.
+- needs: orchestrator fix (sim/core/consumes.go), then worker fix (bear presets and doc)
+
+### tank_mechanics-20261104-16: Warden armor-trinket knobs partly inert; a latent health read in heal threat
+- severity: low (no score is wrong today, but the search spends knob values on nothing)
+- affects: Warden (tools/rotopt/shaman_tank.go), engine
+- found: 2026-11-04, master dc303b026
+- evidence:
+  - sim/core/major_cooldown.go:398-403 classifies a cooldown by its stats against stats.Armor. The synthetic armor trinket 999216 (sim/shaman/forever_synthetic_trinkets.go:27) grants stats.BonusArmor, so it is typed CooldownTypeDPS, not Survival. autocastOtherCooldowns then fires it on cooldown when armorTrinket=0, which makes knob value 0 the same as 1 and contradicts the comment at shaman_tank.go:64-65.
+  - trinketAt (shaman_tank.go:67-69, 154-166) uses SpellUsesLostByDelay with minTimeLeft fixed at 20 s. For trinketAt 5 to 15 the delay window is negative and "uses lost" is always above 0, so those values act like 0 except in the last 20 s. The preset's 25 works: used at the pull, held from 120 s, used at 155 s on a 180 s fight. It reads no health. No test covers trinketAt or SpellUsesLostByDelay.
+  - spell.healingThreat (sim/core/spell_result.go:145) uses effectiveHealing, which reads the tank's current health. No tank preset casts a self heal that books threat in a scoring run today (Frenzied Regeneration uses GainHealth with no threat), so it is latent, as -14 was.
+- proposed fix: classify BonusArmor as survival in major_cooldown.go (or tag the synthetic armor trinkets Survival); clamp trinketAt's search range to at least the 20 s minTimeLeft, or derive minTimeLeft from the knob; add a rotopt test for trinketAt; book heal threat from the raw heal in a scoring run.
+- needs: orchestrator fix (engine), Warden worker (knob range, test)
 
 ## Resolved
 
@@ -15,6 +34,7 @@
 - needs: orchestrator fix (or user ruling, to keep it as to-verify)
 - fixed: 2026-11-04, 49f0218 (+ re-bench c5200fc). Forever mana-gain threat is 0.5 a mana with no threat multiplier, as Classic and wowsims/forever (its mana.go books gain*ThreatPerManaGained unmultiplied); to-verify note in mana.go and standards 40 (keep unmultiplied unless a log shows otherwise). TestBearManaGainThreat fails with the old multiplier (107.5 vs 50 for 100 mana in Bear Form). The Rage rule's multiplier keeps its source: wowsims/forever 913a5bcf6's message, "Owner's in-game threat measurements: ... Rage gained is 5 threat per rage, times the unit's threat multiplier" (no log attached; c48ea6cea3 only moves the booking to the gain). Re-bench, 1k, own weight six-boss mean: bear 2837.3/1867.5/-750.2 -> 2808.5/1839.0/-775.0, paladin 2785.0/2397.7/1363.3 -> 2761.0/2373.7/1339.5, Warden 2292.3/547.8/-4356.7 -> 2272.2/529.5/-4367.5 (Max threat/Balanced/Max survival).
 - bear follow-up: 2026-11-04, ad93b95. With mana threat unmultiplied, Judgement of Wisdom is still worth 34 / 38 / 53 to the bear presets (Max threat / Balanced / Max survival, 3,000), and the pre-pull shift 25.6 / 25.5 / 22.0, all of it through JoW's mana (without JoW the shift changes nothing). Both stay; docs/tank_druid.md call 6.
+- resolved: 2026-11-04, verified pass 3 on master dc303b026 (fix holds; named tests pass)
 
 ### tank_mechanics-20261104-13: Stale source labels and comments after round 2
 - severity: low (docs and comments; no number moves)
@@ -29,6 +49,7 @@
 - needs: worker fix
 - fixed: 2026-11-04, 49f0218 (stormstrike.go and tank_shaman.md rows cite hotfix push 113380 as tier 1; bear_attacks.go comment; tank_warrior.md shield enchant; forever_enchants.go; round_70753/paladin.md:138).
 - fixed (Warden part): 2026-11-04, 71a107e on tank-shaman-3 (the same stormstrike.go and doc citations), merged with 49f0218 in 6c73945.
+- resolved: 2026-11-04, verified pass 3 on master dc303b026 (fix holds; named tests pass)
 
 ### tank_mechanics-20261104-14: Scoring-run guards with latent holes, and SoD encounters still double parry haste
 - severity: low (latent; no preset or scored encounter hits them today)
@@ -41,6 +62,7 @@
 - proposed fix: record maxHealth on replay damage events and cap there; have MakeTank reject (or warn on) health-reading APL values in a scoring run; set parryHaste false in the SoD copies as 87f28803b did for the top-level files.
 - needs: orchestrator fix
 - fixed: 2026-11-04, 0950b22. Replay damage events carry max health and cap on it (TestTankScoreReplayCapsAtMaxHealthDrop); CurrentHealth, CurrentHealthPercent and HealthMissing read full health in a scoring run (TestScoringRunAPLReadsNoHealth, all four tanks); tools/encounters/sod/*.json parryHaste false (fitted by the same from_logs.py from swing gaps that include parry haste).
+- resolved: 2026-11-04, verified pass 3 on master dc303b026 (fix holds; named tests pass)
 
 ### tank_mechanics-20261104-11: Tank mechanics with no test that fails when they break
 - severity: low (none known wrong except -6, -7, -8)
@@ -61,6 +83,7 @@
 - pass 2 (2026-11-04, master b38ff167d): the class rows hold (all named tests pass). Still open: engine part. TestMakeTankInFront and TestScoringRunReadsNoHealth now exist, but no test fails if parry haste stops firing for a MakeTank tank (proposed: DTPS with parryHaste on > off), TestScoringRunReadsNoHealth leaves out the warrior (the only tank with self health costs and a Shield Wall timer), and rolled crush vs the sheet, the block value formula, OwnDebuffs/Score/PairedDiff and Forever-crit OutcomeEnemyMeleeSpecial stay untested. Also TestReckoning has no periodic-crit case (holds today only through the core routing ticks to OnPeriodicDamageTaken, spell_result.go:607-613).
 - needs (now): orchestrator fix (engine tests); paladin worker (Reckoning periodic case)
 - fixed (engine part): 2026-11-04, 0950b22. TestMakeTankParryHaste, TestScoringRunReadsNoHealth with the warrior (its APL needed autocast and no pull potion for a cooldown to ever read health), TestForeverRolledOutcomesMatchSheet, TestBlockValueFormula, TestForeverBossMeleeAbilityForeverCrit, TestOwnDebuffs/TestMakeTankSetup/TestScore/TestPairedDiff, and TestReckoning's periodic case (20177 says non-periodic, so a periodic crit gives no charge); each seen failing on a broken value.
+- resolved: 2026-11-04, verified pass 3 on master dc303b026 (fix holds; named tests pass)
 
 ### tank_mechanics-20261104-1: Every scored tank stands behind the boss: no boss parries or blocks, no parry haste
 - severity: high
