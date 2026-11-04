@@ -219,8 +219,8 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-RestorationSynthetic(Phase1)"
  value: {
-  dps: 1097.16833
-  tps: 954.97462
+  dps: 1105.63033
+  tps: 962.30785
   dtps: 1.84017
  }
 }
