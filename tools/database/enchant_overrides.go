@@ -131,7 +131,8 @@ var EnchantOverrides = []*proto.UIEnchant{
 	{EffectId: 856, SpellId: 13661, Name: "Enchant Bracer - Strength", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.Strength: 5}.ToFloatArray(), Type: proto.ItemType_ItemTypeWrist},
 	{EffectId: 905, SpellId: 13822, Name: "Enchant Bracer - Intellect", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.Intellect: 5}.ToFloatArray(), Type: proto.ItemType_ItemTypeWrist},
 	{EffectId: 907, SpellId: 13846, Name: "Enchant Bracer - Greater Spirit", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.Spirit: 7}.ToFloatArray(), Type: proto.ItemType_ItemTypeWrist},
-	{EffectId: 923, SpellId: 13931, Name: "Enchant Bracer - Deflection", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Defense: 3}.ToFloatArray(), Type: proto.ItemType_ItemTypeWrist},
+	// Forever's Deflection is Defense +7 (client 70755: spell 13931, enchant 923; Classic's +3).
+	{EffectId: 923, SpellId: 13931, Name: "Enchant Bracer - Deflection", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Defense: 7}.ToFloatArray(), Type: proto.ItemType_ItemTypeWrist},
 	{EffectId: 927, SpellId: 13939, Name: "Enchant Bracer - Greater Strength", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.Strength: 7}.ToFloatArray(), Type: proto.ItemType_ItemTypeWrist},
 	{EffectId: 929, SpellId: 13945, Name: "Enchant Bracer - Greater Stamina", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Stamina: 7}.ToFloatArray(), Type: proto.ItemType_ItemTypeWrist},
 	{EffectId: 1883, SpellId: 20008, Name: "Enchant Bracer - Greater Intellect", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Intellect: 7}.ToFloatArray(), Type: proto.ItemType_ItemTypeWrist},
@@ -218,7 +219,9 @@ var EnchantOverrides = []*proto.UIEnchant{
 	{EffectId: 863, ItemId: 11168, SpellId: 13689, Name: "Enchant Shield - Lesser Block", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Block: 2 * core.BlockRatingPerBlockChance}.ToFloatArray(), Type: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},
 	{EffectId: 852, ItemId: 11202, SpellId: 13817, Name: "Enchant Shield - Stamina", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Stamina: 5}.ToFloatArray(), Type: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},
 	{EffectId: 926, ItemId: 11224, SpellId: 13933, Name: "Enchant Shield - Frost Resistance", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.FrostResistance: 8}.ToFloatArray(), Type: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},
-	{EffectId: 929, ItemId: 16217, SpellId: 20017, Name: "Enchant Shield - Greater Stamina", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.Stamina: 7}.ToFloatArray(), Type: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},
+	// Forever's formula 16217 casts 20017, which gives enchant 1886, Stamina +9 (client 70755), the
+	// id Bracer Superior Stamina uses; Classic's 20017 gave 929, +7 (still Bracer and Boots Greater Stamina).
+	{EffectId: 1886, ItemId: 16217, SpellId: 20017, Name: "Enchant Shield - Greater Stamina", Quality: proto.ItemQuality_ItemQualityCommon, Stats: stats.Stats{stats.Stamina: 9}.ToFloatArray(), Type: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},
 	{EffectId: 1890, ItemId: 16222, SpellId: 20016, Name: "Enchant Shield - Superior Spirit", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.Spirit: 9}.ToFloatArray(), Type: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},
 	{EffectId: 7603, ItemId: 228982, SpellId: 463871, Name: "Enchant Shield - Law of Nature", Quality: proto.ItemQuality_ItemQualityUncommon, Stats: stats.Stats{stats.SpellDamage: 30, stats.HealingPower: 55}.ToFloatArray(), Type: proto.ItemType_ItemTypeWeapon, EnchantType: proto.EnchantType_EnchantTypeShield},
 

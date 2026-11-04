@@ -55,7 +55,7 @@ const loginMusic = 53223;
 // Glue files come straight from the asset route, not through wow/files.ts, so they don't count
 // in the room's loading bar or in its remembered file list.
 const raw = new Map<number, Promise<ArrayBuffer>>();
-function fetchFile(fdid: number): Promise<ArrayBuffer> {
+export function fetchFile(fdid: number): Promise<ArrayBuffer> {
 	let p = raw.get(fdid);
 	if (!p) {
 		p = fetch(`/api/assets/${fdid}`).then(r => {
@@ -69,7 +69,7 @@ function fetchFile(fdid: number): Promise<ArrayBuffer> {
 }
 
 const images = new Map<number, Promise<Image>>();
-function image(fdid: number): Promise<Image> {
+export function image(fdid: number): Promise<Image> {
 	let p = images.get(fdid);
 	if (!p) {
 		p = fetchFile(fdid).then(decodeBLP);
@@ -78,7 +78,7 @@ function image(fdid: number): Promise<Image> {
 	return p;
 }
 
-function canvasOf(img: Image, x = 0, y = 0, w = img.width, h = img.height): HTMLCanvasElement {
+export function canvasOf(img: Image, x = 0, y = 0, w = img.width, h = img.height): HTMLCanvasElement {
 	const c = document.createElement('canvas');
 	c.width = w;
 	c.height = h;
@@ -86,13 +86,13 @@ function canvasOf(img: Image, x = 0, y = 0, w = img.width, h = img.height): HTML
 	return c;
 }
 
-async function url(fdid: number): Promise<string> {
+export async function url(fdid: number): Promise<string> {
 	return canvasOf(await image(fdid)).toDataURL();
 }
 
 // glowUrl is for the textures the game adds on top (button glows and highlights): black is
 // nothing there. We turn their brightness into alpha, so they look the same drawn normally.
-async function glowUrl(fdid: number): Promise<string> {
+export async function glowUrl(fdid: number): Promise<string> {
 	const img = await image(fdid);
 	const rgba = new Uint8ClampedArray(img.rgba);
 	for (let i = 0; i < rgba.length; i += 4) {
@@ -109,7 +109,7 @@ async function glowUrl(fdid: number): Promise<string> {
 // border9 turns a backdrop edge file (eight square cells in a row: left, right, top, bottom and
 // the four corners) into one 3x3 image for a CSS border-image. The top and bottom cells are
 // drawn on their side in the file, like the game draws them.
-async function border9(fdid: number): Promise<string> {
+export async function border9(fdid: number): Promise<string> {
 	const img = await image(fdid);
 	const e = img.height;
 	const src = canvasOf(img);
@@ -139,7 +139,7 @@ async function border9(fdid: number): Promise<string> {
 }
 
 let fontReady: Promise<void> | undefined;
-function loadFont(): Promise<void> {
+export function loadFont(): Promise<void> {
 	fontReady ??= fetchFile(glueFont)
 		.then(buf => new FontFace('Friz Quadrata', buf).load())
 		.then(f => void document.fonts.add(f))
@@ -163,7 +163,7 @@ export async function art(): Promise<HTMLCanvasElement> {
 
 const vars = new Map<string, Promise<void>>();
 // cssVars sets the textures as CSS variables on the page, once.
-function cssVars(list: Record<string, () => Promise<string>>): Promise<void> {
+export function cssVars(list: Record<string, () => Promise<string>>): Promise<void> {
 	return Promise.all(
 		Object.entries(list).map(([name, make]) => {
 			let p = vars.get(name);
@@ -232,6 +232,54 @@ export async function dressSetup(screen: HTMLElement): Promise<void> {
 
 // The room's master volume (Sounds.volume in wow/sound.ts), so a click is as loud there as here.
 const volume = 0.6;
+
+// The Sound options, each from 0 to 1 on top of the room's own level. Off mutes everything.
+export type SoundLevels = { enabled: boolean; master: number; effects: number; music: number; ambience: number };
+const levelsKey = 'practice.sound';
+const defaultLevels: SoundLevels = { enabled: true, master: 1, effects: 1, music: 1, ambience: 1 };
+let levels: SoundLevels = { ...defaultLevels };
+try {
+	levels = { ...defaultLevels, ...JSON.parse(localStorage.getItem(levelsKey) ?? '{}') };
+} catch {
+	// The defaults.
+}
+const levelListeners = new Set<(l: SoundLevels) => void>();
+
+export function soundLevels(): SoundLevels {
+	return { ...levels };
+}
+
+export function defaultSoundLevels(): SoundLevels {
+	return { ...defaultLevels };
+}
+
+// setSoundLevels changes the volumes everywhere at once and keeps them for the next visit.
+export function setSoundLevels(next: SoundLevels) {
+	levels = { ...next };
+	try {
+		localStorage.setItem(levelsKey, JSON.stringify(levels));
+	} catch {
+		// Only this visit keeps it.
+	}
+	if (audio) audio.out.gain.value = uiVolume();
+	if (music) music.volume = musicVolume();
+	for (const f of levelListeners) f(soundLevels());
+}
+
+// onSoundLevels calls f now and whenever the levels change.
+export function onSoundLevels(f: (l: SoundLevels) => void): () => void {
+	levelListeners.add(f);
+	f(soundLevels());
+	return () => levelListeners.delete(f);
+}
+
+function uiVolume(): number {
+	return levels.enabled ? volume * levels.master * levels.effects : 0;
+}
+
+function musicVolume(): number {
+	return levels.enabled ? volume * 0.5 * levels.master * levels.music : 0;
+}
 let audio: { ctx: AudioContext; out: GainNode } | undefined;
 const buffers = new Map<number, Promise<AudioBuffer | undefined>>();
 
@@ -239,7 +287,7 @@ function context() {
 	if (!audio) {
 		const ctx = new AudioContext();
 		const out = ctx.createGain();
-		out.gain.value = volume;
+		out.gain.value = uiVolume();
 		out.connect(ctx.destination);
 		audio = { ctx, out };
 	}
@@ -310,7 +358,7 @@ export function startMusic() {
 		music = new Audio(`/api/assets/${loginMusic}`);
 		music.loop = true;
 	}
-	music.volume = volume * 0.5;
+	music.volume = musicVolume();
 	music.play().catch(() => {
 		const retry = () => {
 			removeEventListener('pointerdown', retry);

@@ -27,6 +27,7 @@ import Level60MaxSurvivalAPLJSON from './apls/level60_max_survival.apl.json';
 import Level60MaxThreatAPLJSON from './apls/level60_max_threat.apl.json';
 import ProtectionAPLJSON from './apls/protection.apl.json';
 import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticArmorTrinketGear from './gear_sets/level60_phase1_synthetic_armor_trinket.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
 import P0BISSwordBoardGear from './gear_sets/p0.bis_sword_board.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
@@ -42,11 +43,19 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 export const GearP0BISSwordBoard = PresetUtils.makePresetGear('Pre-BiS (Sword and Board)', P0BISSwordBoardGear);
 
 // The synthetic Level 60 Phase 1 Protection set (standards 36, tools/database/forever_synthetic_items_warrior_tank.go):
-// 106 Defense, 110 block value, 239 Stamina, 8% hit (the cap), the tank stat trinket and the attack power on-use.
+// 106 Defense from the items, 110 block value, 239 Stamina, 8% hit (the cap), the tank stat trinket and the attack power on-use,
+// Superior Deflection (Defense +9) on the wrists: it beat Superior Stamina at every weight (docs/tank_warrior.md, Gear A/Bs).
+// Max threat and Balanced wear it: the attack power on-use beat the armor one by 210 and 176.
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Level60Phase1SyntheticGear);
+// The same set with the armor on-use trinket (990617) in place of the attack power one: Max survival's, where it
+// wins by 19 ± 5 when held for the last 35 sec (all of it on Broodlord; it loses on four of the six bosses).
+export const GearLevel60SyntheticArmorTrinket = PresetUtils.makePresetGear(
+	'Level 60 Phase 1 (Synthetic, armor trinket)',
+	Level60Phase1SyntheticArmorTrinketGear,
+);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Synthetic, GearP0BISSwordBoard, GearP0BIS, GearP1BIS],
+	[Phase.Phase1]: [GearLevel60Synthetic, GearLevel60SyntheticArmorTrinket, GearP0BISSwordBoard, GearP0BIS, GearP1BIS],
 };
 
 export const DefaultGear = GearLevel60Synthetic;
@@ -84,12 +93,13 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 export const TalentsP1Prot = PresetUtils.makePresetTalents('Protection', SavedTalents.create({ talentsString: '35--251533120331221351' }));
 
 // The talent searches' builds (docs/tank_warrior.md, Presets), on the six scoring encounters.
-// Balanced and Max survival (whose search kept Balanced's build): Deflection 5; Cruelty, Unbridled Wrath and Enrage 5/5; Protection 31 with Shield Slam, no Last Stand or Vanguard.
+// Balanced and Max survival (both searches end on the same talents): Deflection 5; Cruelty, Unbridled Wrath and Enrage 5/5; Protection 31 with Shield Slam, no Last Stand or Vanguard.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60 Protection', SavedTalents.create({ talentsString: '05-05050005-250530020310001351' }));
-// Max threat: Improved Heroic Strike 3 in place of Deflection, Blood Craze 1, Anticipation 4, Improved Sunder Armor 3.
+// Max threat: Deflection 4, Blood Craze 1, Anticipation 3, Improved Sunder Armor 3 (Improved Heroic Strike went once
+// Unbridled Wrath stopped proccing on Heroic Strike).
 export const TalentsLevel60MaxThreat = PresetUtils.makePresetTalents(
 	'Level 60 Protection (Max threat)',
-	SavedTalents.create({ talentsString: '3-05050015-250430020330001351' }),
+	SavedTalents.create({ talentsString: '04-05050015-250330020330001351' }),
 );
 export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60MaxThreat, TalentsP1Prot],
@@ -115,8 +125,8 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md).',
-	gear: GearLevel60Synthetic,
+	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation, with the armor trinket held for the last 35 sec.',
+	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,
 	race: Race.RaceUndead,

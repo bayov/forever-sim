@@ -18,6 +18,7 @@
 - evidence: ui/tank_warrior/gear_sets/level60_phase1_synthetic.gear.json:14 wears 991018 (+335 AP on use), not the defensive 990617 (1,665 bonus armor). Standards 36 says to take whichever scores higher on the tank objective. The Go comment (forever_synthetic_items_warrior_tank.go:48-51) points to "docs/tank_warrior.md, Gear", but that doc has no such comparison, and orchestration/tank_handoff/warrior has only a trinketAt search. By contrast, the paladin's defensive alternative was simmed lower, and the bear's choice is explained in presets.ts:49-52. Confidence about 75% that no A/B exists anywhere.
 - proposed fix: run rotopt -eval on the six tank encounters with 991018 swapped for 990617, keep the winner, and record the result in docs/tank_warrior.md.
 - needs: worker fix
+- fixed: 2026-11-04, 5d9a3aa18: A/B at each weight: 990617 loses at Max threat (-209) and Balanced (-176), wins at Max survival held for the last 35 s (+19.0 ± 4.8, 10k, all from Broodlord); recorded in docs/tank_warrior.md.
 
 ### tank_gear-20261104-3: Tank enchants use stale Classic values; shield Greater Stamina and the Deflection bracer enchant are underrated
 - severity: low
@@ -29,6 +30,7 @@
   - Chest Major Health is Major Stamina +10 in the client, which doesn't change the Greater Stats pick.
 - proposed fix: apply the client stats to the stale enchant_overrides.go entries. Move the shields to 1886 (+2 Stamina). Sim Superior Deflection against Superior Stamina on the wrist for each tank, and keep the winner.
 - needs: worker fix
+- fixed: 2026-11-04, d10eaea1f (shared values: shield 1886 +9, Bracer Deflection +7, Superior Deflection in the DB) and 5d9a3aa18 (warrior wears Superior Deflection: +4.3 / +6.6 / +25.8 at 1/3, 1, 3). Paladin and Warden sets still put 929 (+7, still right for 929's other spells) on the shield: their workers move them to 1886. No set wore Bracer Deflection.
 
 ### tank_gear-20261104-4: Feral bear chest is 1.3% under its linear budget and the set's Stamina share 0.2 over tolerance
 - severity: low
@@ -52,6 +54,7 @@
 - proposed fix: correct the comments to match the code.
 - needs: worker fix
 - fixed (bear part): 2026-11-04, bde6912 (both comments name 998115 as worn, 990815 as the search's alternative)
+- fixed (warrior part): 2026-11-04, 1593a8278. The bear part is the druid worker's.
 
 ### tank_gear-20261104-6: Warden boots take Greater Stamina where Mystic Rugged Armor Kit is worth more
 - severity: low

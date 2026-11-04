@@ -1,0 +1,63 @@
+# Paired abtest (tools/audit/tank_rotations/abtest), six scoring bosses at the preset's weight; o3 = 3,000 iterations, o10 = 10,000.
+# o3_<variant>_<preset>: B = the variant vs A = the branch's preset at 318fc7e (wall14..20 = Shield Wall in the last N s; trinket = armor trinket 990617 on the pull; trinketEndN = armor trinket held for the last N s; wrist = Superior Deflection 1248665; sunder15 = Sunder filler at 15 Rage).
+# o3_te<T>w<W>_vs_w17: Max survival, armor trinket at T s and Shield Wall at W s vs AP trinket with Shield Wall at 17 s. o3_w16v18: 16 s vs 18 s.
+# o3_F*: on the final presets (F = final): Fwrist = SD vs Superior Stamina, Ftr = trinket swap, F_s<N> = Max threat Sunder at N vs 30 (15v20 = 15 vs 20), F_s15_<p> = Sunder 15 at Balanced/Max survival. o3_reopt_<p>: final vs 318fc7e.
+# columns: scoring mean diff ± paired error | Vaelastrasz diff ± error
+o3_F_s10.txt                       6.4 ± 1.7 | vael 0.5 ± 2.1
+o3_F_s15.txt                       6.9 ± 1.6 | vael 0.3 ± 2.0
+o3_F_s15_balanced.txt              2.8 ± 1.8 | vael -0.1 ± 0.2
+o3_F_s15_max_survival.txt          1.6 ± 4.6 | vael -0.1 ± 0.2
+o3_F_s15v20.txt                    -0.2 ± 1.0 | vael 0.5 ± 1.1
+o3_F_s20.txt                       6.7 ± 1.5 | vael 0.9 ± 1.9
+o3_F_s25.txt                       3.4 ± 1.3 | vael -0.2 ± 0.9
+o3_Ftr0_ms.txt                     21.5 ± 10.8 | vael -170.6 ± 9.4
+o3_Ftr_ms.txt                      106.1 ± 10.8 | vael -170.6 ± 9.4
+o3_Ftr_mt.txt                      -210.4 ± 1.2 | vael -264.3 ± 2.5
+o3_Fwrist_balanced.txt             8.2 ± 5.3 | vael -2.8 ± 6.6
+o3_Fwrist_max_survival.txt         33.9 ± 12.5 | vael -5.7 ± 15.5
+o3_Fwrist_max_threat.txt           8.1 ± 3.1 | vael 4.6 ± 7.2
+o3_reopt_balanced.txt              28.8 ± 6.7 | vael -114.5 ± 18.3
+o3_reopt_max_survival.txt          164.3 ± 15.3 | vael -344.1 ± 31.0
+o3_reopt_max_threat.txt            45.2 ± 4.8 | vael 21.0 ± 11.1
+o3_sunder15_max_threat.txt         -0.3 ± 0.8 | vael -1.6 ± 1.1
+o3_te25w12_vs_w17.txt              -135.3 ± 13.5 | vael 30.5 ± 31.7
+o3_te25w17_vs_w17.txt              -74.5 ± 9.3 | vael -175.5 ± 7.5
+o3_te30w12_vs_w17.txt              -57.0 ± 13.4 | vael 30.5 ± 31.7
+o3_te30w17_vs_w17.txt              -12.9 ± 8.5 | vael -175.5 ± 7.5
+o3_te35w12_vs_w17.txt              -49.7 ± 14.0 | vael 30.5 ± 31.7
+o3_te35w17_vs_w17.txt              17.2 ± 8.8 | vael -175.5 ± 7.5
+o3_te40w12_vs_w17.txt              -79.7 ± 15.1 | vael 30.5 ± 31.7
+o3_te40w17_vs_w17.txt              14.3 ± 8.7 | vael -175.5 ± 7.5
+o3_trinketEnd20_balanced.txt       -188.3 ± 2.5 | vael -232.4 ± 3.5
+o3_trinketEnd20_max_survival.txt   -107.6 ± 7.3 | vael -139.7 ± 9.0
+o3_trinketEnd30_balanced.txt       -133.6 ± 2.5 | vael -230.0 ± 3.6
+o3_trinketEnd30_max_survival.txt   56.3 ± 7.4 | vael -132.4 ± 9.3
+o3_trinketEnd45_balanced.txt       -155.6 ± 2.8 | vael -230.0 ± 3.6
+o3_trinketEnd45_max_survival.txt   -9.6 ± 8.3 | vael -132.4 ± 9.3
+o3_trinket_balanced.txt            -176.0 ± 2.0 | vael -230.0 ± 3.6
+o3_trinket_max_survival.txt        -70.8 ± 5.6 | vael -132.4 ± 9.3
+o3_trinket_max_threat.txt          -208.9 ± 1.2 | vael -261.1 ± 2.2
+o3_w16v18_balanced.txt             2.0 ± 5.5 | vael -59.8 ± 17.9
+o3_w16v18_max_survival.txt         20.3 ± 14.9 | vael -120.9 ± 40.7
+o3_wall14_balanced.txt             10.5 ± 4.3 | vael -41.9 ± 17.5
+o3_wall14_max_survival.txt         52.4 ± 10.1 | vael -56.3 ± 28.7
+o3_wall14_max_threat.txt           -0.9 ± 3.3 | vael -52.7 ± 16.0
+o3_wall16_balanced.txt             13.3 ± 5.6 | vael -113.9 ± 19.5
+o3_wall16_max_survival.txt         78.8 ± 14.1 | vael -209.0 ± 35.0
+o3_wall16_max_threat.txt           -8.4 ± 3.6 | vael -108.3 ± 17.4
+o3_wall17_balanced.txt             20.7 ± 5.4 | vael -111.7 ± 18.5
+o3_wall17_max_survival.txt         113.2 ± 13.5 | vael -162.9 ± 31.9
+o3_wall18_balanced.txt             15.3 ± 5.9 | vael -173.7 ± 20.1
+o3_wall18_max_survival.txt         99.1 ± 14.9 | vael -330.0 ± 37.0
+o3_wall18_max_threat.txt           -1.4 ± 4.0 | vael -114.8 ± 18.7
+o3_wall20_balanced.txt             -10.4 ± 6.6 | vael -346.1 ± 27.1
+o3_wall20_max_survival.txt         34.9 ± 16.9 | vael -850.7 ± 62.0
+o3_wall20_max_threat.txt           -17.9 ± 4.4 | vael -197.5 ± 20.6
+o3_wrist_balanced.txt              1.4 ± 4.6 | vael -6.5 ± 5.3
+o3_wrist_max_survival.txt          12.0 ± 12.4 | vael -17.7 ± 10.2
+o3_wrist_max_threat.txt            3.4 ± 3.1 | vael -6.8 ± 6.5
+o10_te35w17_vs_w17.txt             19.0 ± 4.8 | vael -165.1 ± 5.2
+o10_te40w17_vs_w17.txt             14.8 ± 4.6 | vael -165.1 ± 5.2
+o10_wrist_balanced.txt             6.6 ± 2.8 | vael -4.5 ± 3.4
+o10_wrist_max_survival.txt         25.8 ± 7.8 | vael -7.3 ± 6.6
+o10_wrist_max_threat.txt           4.3 ± 1.7 | vael -0.2 ± 3.6

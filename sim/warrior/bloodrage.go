@@ -18,7 +18,11 @@ func (warrior *Warrior) registerBloodrageCD() {
 
 	// Under Forever it costs 20% of base health (client 70753, spell 2687: power type health,
 	// PowerCostPct 20; wowsims/forever's bloodrage.go takes it off the base stats' health too). A
-	// tank's survival score counts it as damage taken.
+	// tank's survival score counts it as damage taken (healing needed), but not TMI or DTPS
+	// (PayHealthCost).
+	// To verify: base health here is our class base health at the level (emulator convention:
+	// 1689 for an Orc warrior at 60). wowsims/forever 841a787806 takes it from a base that counts
+	// base Stamina (2629), with no evidence cited; a level 60 Bloodrage in a combat log settles it.
 	healthCost := 0.0
 	if warrior.Env.IsForever() {
 		healthCost = 0.2 * warrior.GetBaseStats()[stats.Health]
@@ -45,7 +49,7 @@ func (warrior *Warrior) registerBloodrageCD() {
 			// Only a tank's: the sim heals no DPS, so the cost would only run a DPS warrior's health
 			// down to 0, where its survival cooldowns (Berserker Rage) fire.
 			if healthCost > 0 && warrior.IsTanking() {
-				warrior.RemoveHealth(sim, healthCost)
+				warrior.PayHealthCost(sim, healthCost)
 			}
 
 			core.StartPeriodicAction(sim, core.PeriodicActionOptions{

@@ -17,7 +17,8 @@ import (
 //     Heroic Strike and Cleave use a charge as they do for those (SpellAuraOptions 249144).
 //   - Each charge is a flat 5 Rage (1329554 effect 0, energize 50 tenths), which a crit doesn't double.
 //   - 25% of base health (SpellPower 315180), taken from the warrior's health: nothing for a DPS,
-//     damage taken for a tank's survival score.
+//     damage taken for a tank's survival score (healing needed), not TMI or DTPS (PayHealthCost).
+//     Base health is Bloodrage's, to verify the same way (see bloodrage.go).
 //
 // Still an assumption (report assumption warr_rs_landed, one value, user ruling 2026-11-04): only landed
 // swings use a charge (the hit mask is server side, not in the data).
@@ -62,7 +63,7 @@ func (warrior *Warrior) registerRecklessSwingsCD() {
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			warrior.RecklessSwingsAura.Activate(sim)
 			if warrior.IsTanking() { // as Bloodrage's: the sim heals no DPS
-				warrior.RemoveHealth(sim, healthCost)
+				warrior.PayHealthCost(sim, healthCost)
 			}
 		},
 	})

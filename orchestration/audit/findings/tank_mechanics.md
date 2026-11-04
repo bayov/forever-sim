@@ -65,6 +65,7 @@
 - How sure: unsure which value is right.
 - needs: user ruling
 - ruling: 2026-11-04, user: use 0.25 for now, with a to-verify note (a level 60 Revenge log after 70707 settles it). Worker fix: warrior.
+- fixed: 2026-11-04, 53709995e: 0.25 on every rank, to verify in code and docs/tank_warrior.md.
 
 ### tank_mechanics-20261104-5: Rockbiter's flat threat on Stormstrike: 72 × weapon speed or 72
 - severity: medium
@@ -84,6 +85,7 @@
 - proposed fix: skip Unbridled Wrath on melee specials under Forever (`ref/tank_mechanics/patches/warrior_unbridled_wrath_heroic_strike.patch`). Rerun the DPS Report's Fury rows after.
 - How sure: fairly sure.
 - needs: worker fix
+- fixed: 2026-11-04, 9173d087a: auto attacks only; test TestForeverTankUnbridledWrath. DPS presets (20k it.): Fury 1136.0 → 1134.9 (-0.10%), Fury 2H 1151.0 → 1150.8, Arms 1088.0 → 1088.3 (noise); TestP1DPSWarrior .results 1557.45 → 1553.30.
 
 ### tank_mechanics-20261104-7: The bear's white hits use Classic's damage Rage, and crits don't double it
 - severity: medium (moves nothing today: the bear's Rage isn't binding)
@@ -121,6 +123,7 @@
 - proposed fix: `ref/tank_mechanics/patches/shaman_01_docs_tiers.patch` and `warrior_revenge_ap_call_doc.patch`; the druid and paladin lines by hand.
 - needs: worker fix
 - fixed (druid rows): 2026-11-04, bde6912 (white-hit Rage row, Swipe's 3% as tier 1, Primal Bite's notes threat in the table and calls)
+- fixed (warrior row, Call 3): 2026-11-04, 53709995e. Shaman, druid and paladin rows are their workers'.
 - fixed (paladin line only): 2026-11-04, 3f9c055. round_70753/paladin.md now says Templar's Bulwark's Magic is client data; docs/tank_paladin.md already had it as N, C.
 
 ### tank_mechanics-20261104-11: Tank mechanics with no test that fails when they break
@@ -135,6 +138,7 @@
   - Engine: tank in front (-1); parry haste in a tank run; rolled crush vs the sheet; the block value formula; health invariance of a scoring run (-8); the cast-time no-avoidance rule (spell_outcome.go:673); tools/tankscore has no tests (OwnDebuffs, MakeTank, Score, PairedDiff); OutcomeEnemyMeleeSpecial under Forever's crit (only ClassicCrit is tested).
 - proposed fix: add the tests, with the ones for -1, -2 and -7 first.
 - needs: worker fix
+- fixed (warrior list): 2026-11-04, 9173d087a: sim/warrior/tank_warrior/talents_test.go (Unbridled Wrath, Enrage, Blood Craze, Heroic Strike +138, Shield Block charges on real blocks). Other classes and engine: their workers'.
 - fixed (paladin row only): 2026-11-04, 639590a. Deflection, Divine Strength (TestProtectionStatTalents), TestJudgementCooldownAndCost, TestImprovedSealsOnSealOfFury, TestConsecrationAndHolyStrikeCosts; each seen failing on a broken value.
 - fixed (bear rows): 2026-11-04, bde6912 (TestBearWhiteHitRage, TestPrimalBite's 2×, TestThickHideDefenseChange, TestBearRageGainThreat); each seen failing on a broken value.
 

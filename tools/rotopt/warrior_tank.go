@@ -1,6 +1,10 @@
 package main
 
-import "github.com/wowsims/classic/sim/core/proto"
+import (
+	"fmt"
+
+	"github.com/wowsims/classic/sim/core/proto"
+)
 
 // The Protection warrior tank under Forever rules, sword and board in Defensive Stance, scored with
 // -tank (docs/tank_sim.md, docs/tank_warrior.md). It decides what a tank decides: Shield Block's
@@ -42,7 +46,7 @@ func (warriorTank) Knobs() []Knob {
 		// Sunder Armor up to 5 stacks, then refreshed in its last 3 sec (1), or only as the filler (0).
 		{Name: "sunderUp", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Sunder Armor as the filler above this much Rage (0: never).
-		{Name: "sunderRage", Default: 40, Min: 0, Max: 60, Step: 10},
+		{Name: "sunderRage", Default: 40, Min: 0, Max: 60, Step: 5},
 		// Heroic Strike on the next swing above this much Rage (100: never).
 		{Name: "hsRage", Default: 50, Min: 20, Max: 100, Step: 10},
 		// Slam above this much Rage (0: never), ahead of the Sunder Armor filler: the November 2 notes'
@@ -62,12 +66,13 @@ func (warriorTank) Knobs() []Knob {
 		// The Mighty Rage Potion: 0 never, 1 at the pull, 2 below potionRage Rage.
 		{Name: "potion", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "potionRage", Default: 20, Min: 10, Max: 40, Step: 10},
-		// Shield Wall on a timer: 0 never, 1 at the pull, 2 in the last wallAt seconds.
+		// Shield Wall on a timer: 0 never, 1 at the pull, 2 in the last wallAt seconds (a 1 s grid:
+		// the last 17 s beat 12 at Balanced and Max survival, tank_rotations-20261104-2).
 		{Name: "shieldWall", Default: 0, Min: 0, Max: 2, Step: 1},
-		{Name: "wallAt", Default: 12, Min: 12, Max: 60, Step: 12},
+		{Name: "wallAt", Default: 12, Min: 6, Max: 60, Step: 1},
 		// The on-use trinket (the synthetic set's armor one or the DPS set's attack power one): 0 on
 		// cooldown, else held for the last trinketAt seconds when the wait costs no use.
-		{Name: "trinketAt", Default: 0, Min: 0, Max: 40, Step: 10},
+		{Name: "trinketAt", Default: 0, Min: 0, Max: 60, Step: 5},
 	}
 }
 
@@ -80,13 +85,15 @@ func tankTrinketLines(k Knobs) []*proto.APLListItem {
 	var items []*proto.APLListItem
 	for _, trinket := range []*proto.ActionID{tankBulwarkTrinket, battleTrinket} {
 		var when value
+		note := "The on-use trinket. Ignore the warning on the trinket that isn't worn."
 		if k["trinketAt"] > 0 {
+			note = fmt.Sprintf("The on-use trinket, held for the last %d sec unless the wait costs a use. Ignore the warning on the trinket that isn't worn.", int(k["trinketAt"]))
 			when = or(
 				le(remainingTime(), seconds(k["trinketAt"])),
 				gt(spellUsesLostByDelay(trinket, sub(remainingTime(), seconds(k["trinketAt"])), seconds(20)), num(0)),
 			)
 		}
-		items = append(items, cast(trinket, when, "The on-use trinket. Ignore the warning on the trinket that isn't worn."))
+		items = append(items, cast(trinket, when, note))
 	}
 	return items
 }
@@ -173,7 +180,7 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 	if k["sunderRage"] > 0 {
 		items = append(items, cast(sunderArmor, ge(currentRage(), num(k["sunderRage"])), "Sunder Armor as the filler, for its threat."))
 	}
-	items = append(items, cast(defensiveStance, not(auraIsActive(defensiveStance)), ""))
+	items = append(items, cast(defensiveStance, not(auraIsActive(defensiveStance)), "Defensive Stance kept up: the tank's stance."))
 
 	rot := rotation(items...)
 	opener := int(k["opener"])

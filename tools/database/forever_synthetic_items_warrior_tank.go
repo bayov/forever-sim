@@ -33,15 +33,15 @@ import (
 //	Main Hand  71  onehand   32.0  31.9      -     -  sta 9 str 9 def 6 crit 5
 //	Ranged     71  ranged    19.5  19.7      -     -  sta 9 agi 5 hit 5 ap 1
 //
-// Totals: armor 650.1, the set 760.5 (target 761.0). The stat mix is gear_targets.md's Protection
+// Totals: armor 649.6, the set 760.0 (target 761.0). The stat mix is gear_targets.md's Protection
 // warrior row (Tanks, 2026-11-03: wowsims/sod's phase 4 tanky and damage sets at standards 36's
 // prices), linear shares, enchants and trinkets left out:
 //
 //	Set              Sta   Str   Agi   AP    Hit   Crit  Def   Block value
 //	Target (row)     31.4  15.5  6.0   3.4   9.4   7.7   20.9  5.8
-//	These items      31.4  15.4  5.9   3.4   10.5  6.6   20.9  5.8
+//	These items      31.4  15.4  5.9   3.4   10.5  6.4   21.1  5.8
 //
-// That is 106 Defense (and 7 more from the 2-piece bonus), 110 block value with the shield's own, 80 hit
+// That is 107 Defense (and 7 more from the 2-piece bonus), 110 block value with the shield's own, 80 hit
 // rating (8%, the cap: standards 4; no warrior tank talent gives hit, so Finger II carries 8 hit for 8 crit
 // over the row's mix, 2026-11-04) and 239 Stamina. The sword keeps Mirah's Song's speed class: the
 // Fury main hand's damage and 2.8 sec speed (standards 22's weapon damage of the Era Phase 1 BiS one-hander),
@@ -54,9 +54,10 @@ import (
 //
 // The trinkets (standards 36): the tank trinket is 1b's stat trinket of tank stats in the row's
 // proportions, Defense and block value (24 Defense, 25 block value: 46.0 weighted linear, 1.7-norm
-// 38.4 against 36.8); the second is a defensive on-use of 1b's average value at 0.1 a point of bonus
-// armor, 1,665 armor for 20 sec every 2 min (sim/warrior/forever_synthetic_trinkets.go), which the tank
-// objective picks over the DPS set's attack power on-use or not (docs/tank_warrior.md, Gear).
+// 38.3 against 36.8); the second is a defensive on-use of 1b's average value at 0.1 a point of bonus
+// armor, 1,665 armor for 20 sec every 2 min (sim/warrior/forever_synthetic_trinkets.go). Max survival
+// wears it (held for the last 35 sec); Max threat and Balanced wear the DPS set's attack power on-use
+// (991018), which scores higher there (docs/tank_warrior.md, Gear A/Bs).
 func init() {
 	ForeverSyntheticItems = append(ForeverSyntheticItems, foreverSyntheticWarriorTankItems...)
 }
