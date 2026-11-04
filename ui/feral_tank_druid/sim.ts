@@ -144,7 +144,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralTankDruid, {
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceNightElf,
-				[Faction.Horde]: Race.RaceTauren,
+				[Faction.Horde]: Race.RaceSkyborneWindshaper,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
