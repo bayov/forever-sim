@@ -3323,6 +3323,21 @@
       "e77fb29",
       "22a7d79"
      ]
+    },
+    {
+     "title": "Ferocious Bite gains more from extra Energy",
+     "kind": "game",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "Hotfix 113403 raised Ferocious Bite's damage per point of extra Energy on every rank (top rank 2.7 to 3.3).",
+     "commits": [
+      "ff56f8d"
+     ]
     }
    ],
    "internal": [
@@ -4045,6 +4060,30 @@
     {
      "commit": "464deda",
      "why": "Tanking and Healing modes only: armor trinkets and threat in replays; the DPS builds re-check unchanged."
+    },
+    {
+     "commit": "3d9a721",
+     "why": "Optimizer test only; no preset moves."
+    },
+    {
+     "commit": "7872f00",
+     "why": "Leveling only: level 30 gear lists removed."
+    },
+    {
+     "commit": "1975660",
+     "why": "Rotation optimizer only (warrior cooldown holds while searching); the published warrior rotations don't move."
+    },
+    {
+     "commit": "443c547",
+     "why": "Tanking mode only: Warden and Bear consumables."
+    },
+    {
+     "commit": "9f2216b",
+     "why": "Tanking mode only: Paladin tank presets."
+    },
+    {
+     "commit": "5890f7c",
+     "why": "Tanking mode only: Warrior tank presets."
     }
    ],
    "source": {
