@@ -298,18 +298,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 1.57589
+  weights: 1.63104
   weights: 0
-  weights: 0.3798
+  weights: 0.40757
   weights: 0
   weights: 0.08494
   weights: 0
   weights: 0
-  weights: 0.29487
+  weights: 0.32264
   weights: 0
   weights: 0
-  weights: 7.29539
-  weights: 3.83481
+  weights: 7.51423
+  weights: 3.97811
   weights: 0
   weights: 0
   weights: 0
@@ -347,18 +347,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: -0.16561
+  weights: -0.14999
   weights: 0
-  weights: 0.39047
+  weights: 0.4184
   weights: 0
   weights: 0.08528
   weights: 0
   weights: 0
-  weights: 0.30519
+  weights: 0.33312
   weights: 0
   weights: 0
-  weights: 6.39114
-  weights: 4.20502
+  weights: 6.54572
+  weights: 4.36805
   weights: 0
   weights: 0
   weights: 0
@@ -396,18 +396,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.20586
+  weights: 0.23578
   weights: 0
-  weights: 0.44352
+  weights: 0.4745
   weights: 0
   weights: 0.09001
   weights: 0
   weights: 0
-  weights: 0.35351
+  weights: 0.38449
   weights: 0
   weights: 0
-  weights: 6.77405
-  weights: 4.84234
+  weights: 7.06454
+  weights: 5.00883
   weights: 0
   weights: 0
   weights: 0
@@ -445,18 +445,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.75465
+  weights: 0.77241
   weights: 0
-  weights: 0.4619
+  weights: 0.49429
   weights: 0
   weights: 0.08994
   weights: 0
   weights: 0
-  weights: 0.37196
+  weights: 0.40434
   weights: 0
   weights: 0
   weights: 0
-  weights: 5.02371
+  weights: 5.18803
   weights: 0
   weights: 0
   weights: 0
@@ -494,18 +494,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.51936
+  weights: 0.461
   weights: 0
-  weights: 0.46035
+  weights: 0.49325
   weights: 0
   weights: 0.09266
   weights: 0
   weights: 0
-  weights: 0.36768
+  weights: 0.40059
   weights: 0
   weights: 0
-  weights: 9.57084
-  weights: 5.24307
+  weights: 9.85714
+  weights: 5.42238
   weights: 0
   weights: 0
   weights: 0
@@ -543,18 +543,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.96328
+  weights: 0.99053
   weights: 0
-  weights: 0.45657
+  weights: 0.48993
   weights: 0
   weights: 0.09481
   weights: 0
   weights: 0
-  weights: 0.36176
+  weights: 0.39512
   weights: 0
   weights: 0
-  weights: 9.41753
-  weights: 5.56478
+  weights: 9.79566
+  weights: 5.76286
   weights: 0
   weights: 0
   weights: 0
@@ -589,1596 +589,1596 @@ stat_weights_results: {
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 489.43383
-  tps: 368.23129
+  dps: 503.6795
+  tps: 378.83685
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Champion'sStormcaller"
  value: {
-  dps: 531.46817
-  tps: 398.28539
+  dps: 547.25617
+  tps: 409.89093
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Champion'sThunderfist"
  value: {
-  dps: 523.89517
-  tps: 393.31145
+  dps: 540.26
+  tps: 405.39387
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Champion'sWartide"
  value: {
-  dps: 515.302
-  tps: 387.78124
+  dps: 530.72117
+  tps: 399.24844
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 600.65433
-  tps: 450.12624
+  dps: 621.683
+  tps: 465.63138
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 584.34033
-  tps: 437.70902
+  dps: 603.641
+  tps: 451.98325
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 591.4305
-  tps: 443.68098
+  dps: 610.14467
+  tps: 457.46508
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 573.88683
-  tps: 429.97822
+  dps: 592.47917
+  tps: 443.72997
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 584.34033
-  tps: 437.70902
+  dps: 603.641
+  tps: 451.98325
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 506.29533
-  tps: 380.5077
+  dps: 521.37433
+  tps: 391.65181
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 547.76417
-  tps: 410.04129
+  dps: 565.071
+  tps: 422.75409
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 545.39633
-  tps: 409.51891
+  dps: 561.753
+  tps: 421.64238
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 579.75317
-  tps: 436.23719
+  dps: 599.27417
+  tps: 450.76008
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 489.43383
-  tps: 368.23129
+  dps: 503.6795
+  tps: 378.83685
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 523.89517
-  tps: 393.31145
+  dps: 540.26
+  tps: 405.39387
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 515.302
-  tps: 387.78124
+  dps: 530.72117
+  tps: 399.24844
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 630.8735
-  tps: 471.65113
+  dps: 651.29417
+  tps: 486.71066
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-TheEarthfury"
  value: {
-  dps: 582.35083
-  tps: 437.91104
+  dps: 596.5285
+  tps: 448.4502
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-TheEarthshatterer"
  value: {
-  dps: 579.0985
-  tps: 435.35999
+  dps: 591.6605
+  tps: 444.70528
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-TheFiveThunders"
  value: {
-  dps: 583.49983
-  tps: 437.18583
+  dps: 600.45083
+  tps: 449.72109
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-TheTenStorms"
  value: {
-  dps: 619.492
-  tps: 464.05593
+  dps: 636.0135
+  tps: 476.32894
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 506.29533
-  tps: 380.5077
+  dps: 521.37433
+  tps: 391.65181
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 547.76417
-  tps: 410.04129
+  dps: 565.071
+  tps: 422.75409
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Warlord'sWartide"
  value: {
-  dps: 545.39633
-  tps: 409.51891
+  dps: 561.753
+  tps: 421.64238
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Average-Default"
  value: {
-  dps: 577.1954
-  tps: 434.27583
+  dps: 596.96299
+  tps: 448.91564
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Orc-phase_1-Adaptive-default-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1688.63667
-  tps: 476.91476
+  dps: 1725.29133
+  tps: 503.89919
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Orc-phase_1-Adaptive-default-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 565.57517
-  tps: 423.95506
+  dps: 584.24767
+  tps: 437.7501
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Orc-phase_1-Adaptive-default-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 840.7075
-  tps: 636.02255
+  dps: 860.9975
+  tps: 650.84724
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Orc-phase_1-Adaptive-default-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 756.92783
-  tps: 217.80425
+  dps: 772.06483
+  tps: 229.03347
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Orc-phase_1-Adaptive-default-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 245.96583
-  tps: 187.63852
+  dps: 254.12783
+  tps: 193.62693
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Orc-phase_1-Adaptive-default-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 552.27167
-  tps: 423.36141
+  dps: 566.63083
+  tps: 433.98725
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Troll-phase_1-Adaptive-default-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1705.11683
-  tps: 478.80729
+  dps: 1741.84067
+  tps: 505.72885
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Troll-phase_1-Adaptive-default-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 582.62483
-  tps: 435.15295
+  dps: 602.21783
+  tps: 449.61955
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Troll-phase_1-Adaptive-default-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 861.9425
-  tps: 658.79105
+  dps: 882.155
+  tps: 673.98445
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Troll-phase_1-Adaptive-default-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 740.076
-  tps: 214.40433
+  dps: 754.319
+  tps: 225.09828
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Troll-phase_1-Adaptive-default-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 251.48167
-  tps: 193.38436
+  dps: 259.55217
+  tps: 199.39789
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-Settings-Troll-phase_1-Adaptive-default-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 568.15167
-  tps: 439.11851
+  dps: 582.44917
+  tps: 449.90484
  }
 }
 dps_results: {
  key: "TestElemental-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 584.157
-  tps: 437.55369
+  dps: 603.5595
+  tps: 451.91165
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 505.97967
-  tps: 383.71095
+  dps: 520.01617
+  tps: 394.03534
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Champion'sStormcaller"
  value: {
-  dps: 555.81817
-  tps: 420.49692
+  dps: 571.69433
+  tps: 432.21771
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Champion'sThunderfist"
  value: {
-  dps: 553.31833
-  tps: 418.93329
+  dps: 570.00933
+  tps: 431.31494
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Champion'sWartide"
  value: {
-  dps: 534.017
-  tps: 403.96247
+  dps: 549.48217
+  tps: 415.36579
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 638.41433
-  tps: 480.57299
+  dps: 660.0835
+  tps: 496.45751
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 620.71383
-  tps: 467.37924
+  dps: 641.31233
+  tps: 482.54278
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 628.66183
-  tps: 474.27517
+  dps: 648.11817
+  tps: 488.6043
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 610.602
-  tps: 460.0791
+  dps: 630.46833
+  tps: 474.70934
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 620.71383
-  tps: 467.37924
+  dps: 641.31233
+  tps: 482.54278
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 535.241
-  tps: 406.21377
+  dps: 550.6005
+  tps: 417.59907
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 575.17517
-  tps: 434.04278
+  dps: 592.76417
+  tps: 447.03628
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 567.79033
-  tps: 429.23991
+  dps: 584.56417
+  tps: 441.64701
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 608.93567
-  tps: 456.4054
+  dps: 629.545
+  tps: 471.62194
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 505.97967
-  tps: 383.71095
+  dps: 520.01617
+  tps: 394.03534
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 553.31833
-  tps: 418.93329
+  dps: 570.00933
+  tps: 431.31494
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 534.017
-  tps: 403.96247
+  dps: 549.48217
+  tps: 415.36579
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 658.971
-  tps: 495.24905
+  dps: 679.64817
+  tps: 510.40431
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheEarthfury"
  value: {
-  dps: 596.25117
-  tps: 451.25214
+  dps: 610.62467
+  tps: 461.94714
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheEarthshatterer"
  value: {
-  dps: 593.49117
-  tps: 449.15986
+  dps: 606.21333
+  tps: 458.62051
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheFiveThunders"
  value: {
-  dps: 595.39017
-  tps: 448.77099
+  dps: 612.38917
+  tps: 461.27742
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheTenStorms"
  value: {
-  dps: 633.8215
-  tps: 477.85274
+  dps: 650.55283
+  tps: 490.24088
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 535.241
-  tps: 406.21377
+  dps: 550.6005
+  tps: 417.59907
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 575.17517
-  tps: 434.04278
+  dps: 592.76417
+  tps: 447.03628
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Warlord'sWartide"
  value: {
-  dps: 567.79033
-  tps: 429.23991
+  dps: 584.56417
+  tps: 441.64701
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Average-Default"
  value: {
-  dps: 614.19946
-  tps: 464.86813
+  dps: 634.91801
+  tps: 480.21334
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Orc-phase_2-Adaptive-default-FullBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 1787.73317
-  tps: 492.53762
+  dps: 1826.60067
+  tps: 521.01177
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Orc-phase_2-Adaptive-default-FullBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 582.90017
-  tps: 436.74193
+  dps: 602.15517
+  tps: 450.9801
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Orc-phase_2-Adaptive-default-FullBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 860.96167
-  tps: 650.95997
+  dps: 881.97917
+  tps: 666.30999
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Orc-phase_2-Adaptive-default-NoBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 776.99533
-  tps: 223.54216
+  dps: 792.96433
+  tps: 235.42388
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Orc-phase_2-Adaptive-default-NoBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 258.03817
-  tps: 194.54978
+  dps: 266.59367
+  tps: 200.74771
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Orc-phase_2-Adaptive-default-NoBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 563.2225
-  tps: 431.13278
+  dps: 578.09833
+  tps: 442.13469
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Troll-phase_2-Adaptive-default-FullBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 1753.2365
-  tps: 491.82073
+  dps: 1791.23467
+  tps: 519.97767
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Troll-phase_2-Adaptive-default-FullBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 596.185
-  tps: 445.52467
+  dps: 616.522
+  tps: 460.50585
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Troll-phase_2-Adaptive-default-FullBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 882.96417
-  tps: 674.47408
+  dps: 903.9075
+  tps: 690.20952
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Troll-phase_2-Adaptive-default-NoBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 762.55483
-  tps: 221.23306
+  dps: 777.4275
+  tps: 232.32116
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Troll-phase_2-Adaptive-default-NoBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 260.05083
-  tps: 198.79859
+  dps: 268.69283
+  tps: 205.23223
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Settings-Troll-phase_2-Adaptive-default-NoBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 580.84833
-  tps: 448.74131
+  dps: 595.65
+  tps: 459.91201
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 618.3835
-  tps: 464.96048
+  dps: 639.13033
+  tps: 480.24488
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 543.1895
-  tps: 408.44527
+  dps: 559.47833
+  tps: 420.50608
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Champion'sStormcaller"
  value: {
-  dps: 588.406
-  tps: 441.23773
+  dps: 606.14867
+  tps: 454.36309
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Champion'sThunderfist"
  value: {
-  dps: 583.33233
-  tps: 436.37169
+  dps: 601.9045
+  tps: 449.97825
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Champion'sWartide"
  value: {
-  dps: 571.33783
-  tps: 428.87852
+  dps: 588.8415
+  tps: 441.84881
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 698.72683
-  tps: 522.30352
+  dps: 722.27133
+  tps: 539.73775
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 667.41917
-  tps: 499.44007
+  dps: 689.4855
+  tps: 515.70338
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 702.038
-  tps: 525.6334
+  dps: 723.042
+  tps: 541.27447
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 655.745
-  tps: 490.8611
+  dps: 676.874
+  tps: 506.44338
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 667.41917
-  tps: 499.44007
+  dps: 689.4855
+  tps: 515.70338
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 562.85983
-  tps: 421.79701
+  dps: 579.96817
+  tps: 434.35677
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 607.47183
-  tps: 455.44836
+  dps: 626.89417
+  tps: 469.84337
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 593.9215
-  tps: 444.5044
+  dps: 611.98467
+  tps: 457.83694
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 663.60183
-  tps: 495.17455
+  dps: 685.1125
+  tps: 510.99459
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 543.1895
-  tps: 408.44527
+  dps: 559.47833
+  tps: 420.50608
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 583.33233
-  tps: 436.37169
+  dps: 601.9045
+  tps: 449.97825
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 571.33783
-  tps: 428.87852
+  dps: 588.8415
+  tps: 441.84881
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 689.63333
-  tps: 515.71207
+  dps: 712.1755
+  tps: 532.37745
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-TheEarthfury"
  value: {
-  dps: 623.79083
-  tps: 467.50794
+  dps: 639.15883
+  tps: 478.89514
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-TheEarthshatterer"
  value: {
-  dps: 621.21917
-  tps: 465.59244
+  dps: 634.81633
+  tps: 475.6542
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-TheFiveThunders"
  value: {
-  dps: 618.17433
-  tps: 462.66312
+  dps: 636.46383
+  tps: 476.12067
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-TheTenStorms"
  value: {
-  dps: 660.03567
-  tps: 494.2181
+  dps: 677.92517
+  tps: 507.49129
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 562.85983
-  tps: 421.79701
+  dps: 579.96817
+  tps: 434.35677
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 607.47183
-  tps: 455.44836
+  dps: 626.89417
+  tps: 469.84337
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Warlord'sWartide"
  value: {
-  dps: 593.9215
-  tps: 444.5044
+  dps: 611.98467
+  tps: 457.83694
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Average-Default"
  value: {
-  dps: 686.38098
-  tps: 513.55149
+  dps: 709.42634
+  tps: 530.60171
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Orc-phase_3-Adaptive-default-FullBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 2045.01033
-  tps: 557.38809
+  dps: 2089.96217
+  tps: 590.36582
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Orc-phase_3-Adaptive-default-FullBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 685.65983
-  tps: 515.17288
+  dps: 708.98533
+  tps: 532.61615
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Orc-phase_3-Adaptive-default-FullBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 994.89583
-  tps: 755.29864
+  dps: 1020.25417
+  tps: 774.14179
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Orc-phase_3-Adaptive-default-NoBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 883.5805
-  tps: 250.15463
+  dps: 901.46917
+  tps: 263.28838
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Orc-phase_3-Adaptive-default-NoBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 294.61433
-  tps: 225.05811
+  dps: 304.9715
+  tps: 232.7342
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Orc-phase_3-Adaptive-default-NoBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 657.1475
-  tps: 504.70352
+  dps: 674.48417
+  tps: 517.62835
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Troll-phase_3-Adaptive-default-FullBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 2073.49083
-  tps: 558.51381
+  dps: 2116.72383
+  tps: 590.67014
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Troll-phase_3-Adaptive-default-FullBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 680.10833
-  tps: 506.742
+  dps: 702.774
+  tps: 523.40713
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Troll-phase_3-Adaptive-default-FullBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 1024.65
-  tps: 779.76684
+  dps: 1048.98
+  tps: 797.86618
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Troll-phase_3-Adaptive-default-NoBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 883.55983
-  tps: 253.75203
+  dps: 901.273
+  tps: 266.82153
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Troll-phase_3-Adaptive-default-NoBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 288.29133
-  tps: 220.59346
+  dps: 298.01367
+  tps: 227.94801
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-Settings-Troll-phase_3-Adaptive-default-NoBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 675.78333
-  tps: 518.25182
+  dps: 693.1025
+  tps: 531.30275
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 684.62
-  tps: 510.99123
+  dps: 707.40683
+  tps: 527.77079
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 549.78067
-  tps: 414.26198
+  dps: 566.493
+  tps: 426.67086
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Champion'sStormcaller"
  value: {
-  dps: 590.86833
-  tps: 443.20628
+  dps: 608.59233
+  tps: 456.30172
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Champion'sThunderfist"
  value: {
-  dps: 589.04733
-  tps: 442.23093
+  dps: 607.842
+  tps: 456.07083
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Champion'sWartide"
  value: {
-  dps: 574.0555
-  tps: 432.43739
+  dps: 591.6095
+  tps: 445.54127
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 710.601
-  tps: 531.57203
+  dps: 735.20667
+  tps: 549.80889
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 697.32483
-  tps: 522.43068
+  dps: 721.0205
+  tps: 539.96346
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 718.9345
-  tps: 537.95878
+  dps: 740.54883
+  tps: 553.96351
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 685.06117
-  tps: 513.3285
+  dps: 707.74567
+  tps: 530.11539
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 697.32483
-  tps: 522.43068
+  dps: 721.0205
+  tps: 539.96346
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 567.4705
-  tps: 426.29303
+  dps: 584.6535
+  tps: 438.98457
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 612.021
-  tps: 460.08845
+  dps: 631.76067
+  tps: 474.77776
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 598.54967
-  tps: 448.9756
+  dps: 616.8705
+  tps: 462.55371
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 688.95583
-  tps: 515.38824
+  dps: 712.1825
+  tps: 532.48387
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 549.78067
-  tps: 414.26198
+  dps: 566.493
+  tps: 426.67086
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 589.04733
-  tps: 442.23093
+  dps: 607.842
+  tps: 456.07083
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 574.0555
-  tps: 432.43739
+  dps: 591.6095
+  tps: 445.54127
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 712.65467
-  tps: 531.8135
+  dps: 735.91433
+  tps: 548.97252
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-TheEarthfury"
  value: {
-  dps: 631.62983
-  tps: 473.01898
+  dps: 647.15317
+  tps: 484.54834
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-TheEarthshatterer"
  value: {
-  dps: 626.57533
-  tps: 469.26363
+  dps: 640.27367
+  tps: 479.42634
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-TheFiveThunders"
  value: {
-  dps: 624.02667
-  tps: 466.74885
+  dps: 642.3395
+  tps: 480.25631
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-TheTenStorms"
  value: {
-  dps: 668.635
-  tps: 499.81572
+  dps: 686.80767
+  tps: 513.31523
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 567.4705
-  tps: 426.29303
+  dps: 584.6535
+  tps: 438.98457
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 612.021
-  tps: 460.08845
+  dps: 631.76067
+  tps: 474.77776
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Warlord'sWartide"
  value: {
-  dps: 598.54967
-  tps: 448.9756
+  dps: 616.8705
+  tps: 462.55371
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Average-Default"
  value: {
-  dps: 721.34863
-  tps: 538.68856
+  dps: 746.00787
+  tps: 556.93875
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Orc-phase_4-Adaptive-default-FullBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 2175.43967
-  tps: 589.04672
+  dps: 2223.267
+  tps: 624.43839
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Orc-phase_4-Adaptive-default-FullBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 705.28867
-  tps: 527.25749
+  dps: 730.0785
+  tps: 545.72252
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Orc-phase_4-Adaptive-default-FullBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 1036.205
-  tps: 779.36787
+  dps: 1063.6775
+  tps: 799.92395
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Orc-phase_4-Adaptive-default-NoBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 916.2975
-  tps: 254.51183
+  dps: 934.9835
+  tps: 268.36393
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Orc-phase_4-Adaptive-default-NoBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 299.18067
-  tps: 225.87441
+  dps: 310.0505
+  tps: 233.9651
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Orc-phase_4-Adaptive-default-NoBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 679.57917
-  tps: 516.03871
+  dps: 697.83167
+  tps: 529.64253
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Troll-phase_4-Adaptive-default-FullBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 2198.23433
-  tps: 588.61065
+  dps: 2245.2355
+  tps: 623.3073
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Troll-phase_4-Adaptive-default-FullBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 715.24383
-  tps: 533.68486
+  dps: 740.145
+  tps: 552.09476
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Troll-phase_4-Adaptive-default-FullBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 1074.24167
-  tps: 813.77699
+  dps: 1101.4025
+  tps: 834.05742
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Troll-phase_4-Adaptive-default-NoBuffs-P2-Consumes-LongMultiTarget"
  value: {
-  dps: 922.221
-  tps: 258.7135
+  dps: 940.46067
+  tps: 272.39071
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Troll-phase_4-Adaptive-default-NoBuffs-P2-Consumes-LongSingleTarget"
  value: {
-  dps: 298.62217
-  tps: 226.59183
+  dps: 308.88367
+  tps: 234.17156
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-Settings-Troll-phase_4-Adaptive-default-NoBuffs-P2-Consumes-ShortSingleTarget"
  value: {
-  dps: 715.3
-  tps: 547.03512
+  dps: 733.37833
+  tps: 560.60639
  }
 }
 dps_results: {
  key: "TestElemental-Phase4-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 721.5945
-  tps: 538.55013
+  dps: 746.72767
+  tps: 557.09786
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 581.36283
-  tps: 435.50109
+  dps: 600.49533
+  tps: 449.55837
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Champion'sStormcaller"
  value: {
-  dps: 633.37433
-  tps: 473.6898
+  dps: 654.20183
+  tps: 489.01285
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Champion'sThunderfist"
  value: {
-  dps: 621.04883
-  tps: 464.45015
+  dps: 642.3185
+  tps: 480.08464
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Champion'sWartide"
  value: {
-  dps: 610.901
-  tps: 457.18658
+  dps: 631.2415
+  tps: 472.1171
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 743.40033
-  tps: 555.92923
+  dps: 771.17233
+  tps: 576.41906
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 748.30433
-  tps: 559.48568
+  dps: 775.78133
+  tps: 579.76785
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 752.264
-  tps: 562.54635
+  dps: 776.674
+  tps: 580.55542
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 735.43117
-  tps: 549.89898
+  dps: 761.89083
+  tps: 569.42444
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 748.30433
-  tps: 559.48568
+  dps: 775.78133
+  tps: 579.76785
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 600.8915
-  tps: 450.94243
+  dps: 620.86483
+  tps: 465.71152
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 651.40817
-  tps: 487.05988
+  dps: 673.86067
+  tps: 503.60849
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 638.91483
-  tps: 478.20237
+  dps: 660.1265
+  tps: 493.83536
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 724.67567
-  tps: 540.9831
+  dps: 750.866
+  tps: 560.21361
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 581.36283
-  tps: 435.50109
+  dps: 600.49533
+  tps: 449.55837
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 621.04883
-  tps: 464.45015
+  dps: 642.3185
+  tps: 480.08464
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 610.901
-  tps: 457.18658
+  dps: 631.2415
+  tps: 472.1171
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 763.29733
-  tps: 570.23163
+  dps: 789.7145
+  tps: 589.80175
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-TheEarthfury"
  value: {
-  dps: 674.467
-  tps: 505.16341
+  dps: 692.21333
+  tps: 518.40068
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-TheEarthshatterer"
  value: {
-  dps: 671.042
-  tps: 501.53445
+  dps: 687.20533
+  tps: 513.52667
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-TheFiveThunders"
  value: {
-  dps: 667.355
-  tps: 499.68223
+  dps: 688.17117
+  tps: 515.11298
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-TheTenStorms"
  value: {
-  dps: 713.1925
-  tps: 533.59451
+  dps: 733.5065
+  tps: 548.75594
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 600.8915
-  tps: 450.94243
+  dps: 620.86483
+  tps: 465.71152
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 651.40817
-  tps: 487.05988
+  dps: 673.86067
+  tps: 503.60849
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Warlord'sWartide"
  value: {
-  dps: 638.91483
-  tps: 478.20237
+  dps: 660.1265
+  tps: 493.83536
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Average-Default"
  value: {
-  dps: 774.16122
-  tps: 576.98486
+  dps: 802.87784
+  tps: 598.22647
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Orc-phase_5-Adaptive-default-FullBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 2268.488
-  tps: 618.94761
+  dps: 2323.36933
+  tps: 659.14201
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Orc-phase_5-Adaptive-default-FullBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 764.59417
-  tps: 572.77085
+  dps: 793.04383
+  tps: 594.04589
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Orc-phase_5-Adaptive-default-FullBuffs-P5-Consumes-ShortSingleTarget"
  value: {
-  dps: 1144.10083
-  tps: 858.97526
+  dps: 1176.39417
+  tps: 883.05511
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Orc-phase_5-Adaptive-default-NoBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 979.99583
-  tps: 273.31604
+  dps: 1002.027
+  tps: 289.47627
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Orc-phase_5-Adaptive-default-NoBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 319.21267
-  tps: 239.94355
+  dps: 331.605
+  tps: 249.0703
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Orc-phase_5-Adaptive-default-NoBuffs-P5-Consumes-ShortSingleTarget"
  value: {
-  dps: 745.64667
-  tps: 566.52231
+  dps: 767.21917
+  tps: 582.71492
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Troll-phase_5-Adaptive-default-FullBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 2265.97417
-  tps: 626.72434
+  dps: 2319.153
+  tps: 666.23896
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Troll-phase_5-Adaptive-default-FullBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 765.89867
-  tps: 570.72791
+  dps: 794.63567
+  tps: 591.84963
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Troll-phase_5-Adaptive-default-FullBuffs-P5-Consumes-ShortSingleTarget"
  value: {
-  dps: 1178.24583
-  tps: 893.49854
+  dps: 1209.78833
+  tps: 917.03727
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Troll-phase_5-Adaptive-default-NoBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 966.75367
-  tps: 271.7737
+  dps: 987.55217
+  tps: 287.16428
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Troll-phase_5-Adaptive-default-NoBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 320.34517
-  tps: 243.44948
+  dps: 332.2525
+  tps: 252.3489
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-Settings-Troll-phase_5-Adaptive-default-NoBuffs-P5-Consumes-ShortSingleTarget"
  value: {
-  dps: 797.45417
-  tps: 611.88303
+  dps: 819.17667
+  tps: 628.24334
  }
 }
 dps_results: {
  key: "TestElemental-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 771.69483
-  tps: 575.65227
+  dps: 800.30883
+  tps: 596.7289
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 593.75433
-  tps: 445.72274
+  dps: 613.97317
+  tps: 460.71033
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Champion'sStormcaller"
  value: {
-  dps: 648.306
-  tps: 483.47327
+  dps: 670.92983
+  tps: 499.98112
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Champion'sThunderfist"
  value: {
-  dps: 638.28833
-  tps: 477.94768
+  dps: 661.24767
+  tps: 494.85884
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Champion'sWartide"
  value: {
-  dps: 627.567
-  tps: 468.24249
+  dps: 649.64583
+  tps: 484.45725
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 774.821
-  tps: 578.85288
+  dps: 804.646
+  tps: 600.85638
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 773.02367
-  tps: 578.25385
+  dps: 802.09217
+  tps: 599.73179
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 793.84833
-  tps: 593.12453
+  dps: 820.40567
+  tps: 612.72902
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 759.91667
-  tps: 568.50993
+  dps: 787.93933
+  tps: 589.21316
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 773.02367
-  tps: 578.25385
+  dps: 802.09217
+  tps: 599.73179
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 618.3
-  tps: 463.03197
+  dps: 639.699
+  tps: 478.77123
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 670.29183
-  tps: 501.18244
+  dps: 694.798
+  tps: 519.21155
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 656.24717
-  tps: 490.15733
+  dps: 679.31667
+  tps: 507.11789
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 748.6325
-  tps: 558.74064
+  dps: 776.42567
+  tps: 579.22266
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 593.75433
-  tps: 445.72274
+  dps: 613.97317
+  tps: 460.71033
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 638.28833
-  tps: 477.94768
+  dps: 661.24767
+  tps: 494.85884
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 627.567
-  tps: 468.24249
+  dps: 649.64583
+  tps: 484.45725
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 767.45817
-  tps: 572.71909
+  dps: 795.463
+  tps: 593.43885
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheEarthfury"
  value: {
-  dps: 697.52033
-  tps: 521.60625
+  dps: 717.3285
+  tps: 536.29905
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheEarthshatterer"
  value: {
-  dps: 694.33817
-  tps: 519.37899
+  dps: 712.375
+  tps: 532.73373
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheFiveThunders"
  value: {
-  dps: 685.44967
-  tps: 512.26684
+  dps: 707.97817
+  tps: 528.89626
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheTenStorms"
  value: {
-  dps: 738.2545
-  tps: 552.2798
+  dps: 760.65117
+  tps: 568.92279
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 618.3
-  tps: 463.03197
+  dps: 639.699
+  tps: 478.77123
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 670.29183
-  tps: 501.18244
+  dps: 694.798
+  tps: 519.21155
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Warlord'sWartide"
  value: {
-  dps: 656.24717
-  tps: 490.15733
+  dps: 679.31667
+  tps: 507.11789
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Average-Default"
  value: {
-  dps: 801.95724
-  tps: 597.46518
+  dps: 832.79641
+  tps: 620.28707
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Orc-phase_6-Adaptive-default-FullBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 2323.42583
-  tps: 652.60927
+  dps: 2382.40917
+  tps: 695.85169
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Orc-phase_6-Adaptive-default-FullBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 784.54717
-  tps: 585.94594
+  dps: 815.0795
+  tps: 608.66697
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Orc-phase_6-Adaptive-default-FullBuffs-P5-Consumes-ShortSingleTarget"
  value: {
-  dps: 1196.875
-  tps: 901.13201
+  dps: 1230.92333
+  tps: 926.43618
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Orc-phase_6-Adaptive-default-NoBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 1021.95367
-  tps: 285.11632
+  dps: 1045.35217
+  tps: 302.49551
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Orc-phase_6-Adaptive-default-NoBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 337.459
-  tps: 255.56847
+  dps: 351.05533
+  tps: 265.62867
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Orc-phase_6-Adaptive-default-NoBuffs-P5-Consumes-ShortSingleTarget"
  value: {
-  dps: 787.32
-  tps: 599.26936
+  dps: 810.32917
+  tps: 616.59745
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Troll-phase_6-Adaptive-default-FullBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 2348.346
-  tps: 651.7847
+  dps: 2405.495
+  tps: 694.47709
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Troll-phase_6-Adaptive-default-FullBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 795.38433
-  tps: 594.63923
+  dps: 826.15233
+  tps: 617.37464
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Troll-phase_6-Adaptive-default-FullBuffs-P5-Consumes-ShortSingleTarget"
  value: {
-  dps: 1252.2675
-  tps: 949.10796
+  dps: 1285.865
+  tps: 974.24439
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Troll-phase_6-Adaptive-default-NoBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 1012.4255
-  tps: 285.21822
+  dps: 1034.94767
+  tps: 301.92305
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Troll-phase_6-Adaptive-default-NoBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 336.10683
-  tps: 255.5247
+  dps: 348.91183
+  tps: 264.99871
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-Settings-Troll-phase_6-Adaptive-default-NoBuffs-P5-Consumes-ShortSingleTarget"
  value: {
-  dps: 843.66417
-  tps: 644.77003
+  dps: 866.9675
+  tps: 662.33577
  }
 }
 dps_results: {
  key: "TestElemental-Phase6-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 798.36367
-  tps: 596.934
+  dps: 829.20083
+  tps: 619.71733
  }
 }
