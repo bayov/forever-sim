@@ -36,8 +36,7 @@
             70
           ]
         ],
-        "icon": "spell_arcane_blink",
-        "notSimulated": true
+        "icon": "spell_arcane_blink"
       },
       {
         "fieldName": "divineStrength",
@@ -99,8 +98,7 @@
             12
           ]
         ],
-        "icon": "spell_holy_holybolt",
-        "notSimulated": true
+        "icon": "spell_holy_holybolt"
       },
       {
         "fieldName": "reverence",
@@ -319,8 +317,7 @@
             1
           ]
         ],
-        "icon": "ability_paladin_infusionoflight",
-        "notSimulated": true
+        "icon": "ability_paladin_infusionoflight"
       },
       {
         "fieldName": "oathOfLight",
@@ -342,8 +339,7 @@
             230
           ]
         ],
-        "icon": "spell_holy_greaterblessingoflight",
-        "notSimulated": true
+        "icon": "spell_holy_greaterblessingoflight"
       },
       {
         "fieldName": "consecratedGround",
@@ -417,8 +413,7 @@
             30
           ]
         ],
-        "icon": "ability_paladin_sacredcleansing",
-        "notSimulated": true
+        "icon": "ability_paladin_sacredcleansing"
       },
       {
         "fieldName": "holyPower",
@@ -872,8 +867,7 @@
             20
           ]
         ],
-        "icon": "spell_holy_stoicism",
-        "notSimulated": true
+        "icon": "spell_holy_stoicism"
       },
       {
         "fieldName": "holyShield",
@@ -1323,7 +1317,7 @@
         ],
         "maxPoints": 3,
         "name": "Two-Handed Weapon Specialization",
-        "description": "Increases the physical damage you deal by {0}%, and reduces all threat you generate by {1}% while a two-handed melee weapon is equipped.",
+        "description": "Increases the Physical and Holy damage you deal by {0}%, and reduces all threat you generate by {1}% while a two-handed melee weapon is equipped.",
         "ranks": [
           [
             2,
@@ -1409,17 +1403,17 @@
           [
             1,
             30,
-            3
+            5
           ],
           [
             2,
             30,
-            3
+            5
           ],
           [
             3,
             30,
-            3
+            5
           ]
         ],
         "icon": "ability_racial_avatar"
@@ -1486,8 +1480,7 @@
             3
           ]
         ],
-        "icon": "spell_holy_blessedresillience",
-        "notSimulated": true
+        "icon": "spell_holy_blessedresillience"
       }
     ]
   }

@@ -4,48 +4,72 @@
    {
     "players": [
      {
-      "race": "RaceTauren",
+      "race": "RaceUndead",
       "class": "ClassPaladin",
-      "talentsString": "-55302102513521531-052",
+      "talentsString": "04-25300102513501531-5023",
       "equipment": {
        "items": [
         {
-         "id": 16731
-        },
-        {},
-        {
-         "id": 16733
-        },
-        {},
-        {
-         "id": 16730
+         "id": 990701,
+         "enchant": 1507
         },
         {
-         "id": 16735
+         "id": 990702,
+         "enchant": 1249019
         },
         {
-         "id": 16737
+         "id": 990703
         },
         {
-         "id": 16736
+         "id": 990704,
+         "enchant": 1219587
         },
         {
-         "id": 16732
+         "id": 990705,
+         "enchant": 1891
         },
         {
-         "id": 16734
-        },
-        {},
-        {},
-        {},
-        {},
-        {
-         "id": 15806
+         "id": 990706,
+         "enchant": 1886
         },
         {
-         "id": 12602
+         "id": 990707,
+         "enchant": 1248640
         },
-        {}
+        {
+         "id": 990708
+        },
+        {
+         "id": 990709,
+         "enchant": 1507
+        },
+        {
+         "id": 990710,
+         "enchant": 929
+        },
+        {
+         "id": 990711
+        },
+        {
+         "id": 990712
+        },
+        {
+         "id": 990715
+        },
+        {
+         "id": 990716
+        },
+        {
+         "id": 990713,
+         "enchant": 1900
+        },
+        {
+         "id": 990714,
+         "enchant": 929
+        },
+        {
+         "id": 279247
+        }
        ]
       },
       "rotation": {
@@ -53,11 +77,15 @@
        "prepullActions": [
         {
          "action": {
-          "castPaladinPrimarySeal": {}
+          "castSpell": {
+           "spellId": {
+            "spellId": 20423
+           }
+          }
          },
          "doAtValue": {
           "const": {
-           "val": "-3.5s"
+           "val": "-3s"
           }
          }
         },
@@ -65,28 +93,13 @@
          "action": {
           "castSpell": {
            "spellId": {
-            "spellId": 20928,
-            "rank": 3
+            "spellId": 1239570
            }
           }
          },
          "doAtValue": {
           "const": {
-           "val": "-2s"
-          }
-         }
-        },
-        {
-         "action": {
-          "castSpell": {
-           "spellId": {
-            "itemId": 11832
-           }
-          }
-         },
-         "doAtValue": {
-          "const": {
-           "val": "-0.5s"
+           "val": "-1.5s"
           }
          }
         }
@@ -94,86 +107,136 @@
        "priorityList": [
         {
          "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 1311015
+           }
+          },
+          "condition": {
+           "cmp": {
+            "lhs": {
+             "currentTime": {}
+            },
+            "op": "OpGe",
+            "rhs": {
+             "const": {
+              "val": "10s"
+             }
+            }
+           }
+          }
+         },
+         "notes": "Templar's Bulwark on cooldown from 10 sec in, on a timer (a scoring run reads no health). Off the global cooldown. Without the talent ignore the warning on this line."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 20423
+           }
+          },
           "condition": {
            "not": {
             "val": {
              "auraIsActive": {
               "auraId": {
-               "spellId": 20928
+               "spellId": 20423
               }
              }
             }
            }
+          }
+         },
+         "notes": "Seal of Fury whenever it is down. Judgement does not consume it under Forever."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 1310994
+           }
           },
-          "castSpell": {
-           "spellId": {
-            "spellId": 20928,
-            "rank": 3
-           }
-          }
-         },
-         "notes": "Holy Shield kept up (10 sec, 4 charges, on a 10 sec cooldown)."
-        },
-        {
-         "action": {
-          "castSpell": {
-           "spellId": {
-            "spellId": 10333,
-            "rank": 8
-           }
-          }
-         },
-         "notes": "Holy Strike on cooldown (6 sec with Shieldsworn): Iron Creed's threat and damage cut, and Shieldsworn's Holy Shield hit."
-        },
-        {
-         "action": {
           "condition": {
-           "cmp": {
-            "op": "OpLt",
-            "lhs": {
-             "currentSealRemainingTime": {}
-            },
-            "rhs": {
-             "const": {
-              "val": "2s"
-             }
+           "auraIsActive": {
+            "auraId": {
+             "spellId": 20423
             }
            }
-          },
+          }
+         },
+         "notes": "Swift Judgement on cooldown, off the global cooldown. Without the talent ignore the warning on this line."
+        },
+        {
+         "action": {
           "castSpell": {
            "spellId": {
             "spellId": 20271
            }
-          }
-         }
-        },
-        {
-         "action": {
-          "condition": {
-           "cmp": {
-            "op": "OpLe",
-            "lhs": {
-             "currentSealRemainingTime": {}
-            },
-            "rhs": {
-             "const": {
-              "val": "1"
-             }
-            }
-           }
           },
-          "castPaladinPrimarySeal": {}
-         }
+          "condition": {
+           "and": {
+            "vals": [
+             {
+              "auraIsActive": {
+               "auraId": {
+                "spellId": 20423
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "Judgement on cooldown, off the global cooldown."
         },
         {
          "action": {
           "castSpell": {
            "spellId": {
-            "spellId": 20924,
-            "rank": 5
+            "spellId": 1239570
            }
           }
-         }
+         },
+         "notes": "Holy Shield on cooldown: 30% block for 10 sec or 4 blocks, its damage at 1.2 times the threat."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10333
+           }
+          }
+         },
+         "notes": "Holy Strike on cooldown: Iron Creed's threat and damage cut, and with Shieldsworn Holy Shield's damage."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 20924
+           }
+          },
+          "condition": {
+           "cmp": {
+            "lhs": {
+             "currentManaPercent": {}
+            },
+            "op": "OpGe",
+            "rhs": {
+             "const": {
+              "val": "0.6"
+             }
+            }
+           }
+          }
+         },
+         "notes": "Consecration with the mana to spare."
+        },
+        {
+         "action": {
+          "autocastOtherCooldowns": {}
+         },
+         "notes": "Racials and trinkets on a free GCD."
         }
        ]
       },
@@ -193,7 +256,7 @@
       },
       "protectionPaladin": {
        "options": {
-        "primarySeal": "Righteousness",
+        "primarySeal": "Fury",
         "righteousFury": true,
         "aura": "DevotionAura"
        }

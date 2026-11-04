@@ -40,7 +40,8 @@ export type ToWorker =
 	| { type: 'anim'; fdid: number; seq: number; bytes: ArrayBuffer }
 	| { type: 'model'; id: number; fdid: number; places: SharedArrayBuffer[]; skinning: SharedArrayBuffer[] }
 	| { type: 'drop'; id: number }
-	| { type: 'frame'; frame: number; data: Float64Array };
+	| { type: 'requests'; buffer: SharedArrayBuffer }
+	| { type: 'frame'; frame: number; count: number };
 export const RECORD = 40;
 
 // Bones that move the fingers: right hand 8 to 12, left hand 13 to 17 (key bone ids).

@@ -146,6 +146,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-Phase5-AllItems-HolySynthetic(Phase1)"
+ value: {
+  dps: 344.21617
+  tps: 377.06016
+ }
+}
+dps_results: {
  key: "TestRetribution-Phase5-AllItems-JudgementArmor"
  value: {
   dps: 467.6125
@@ -225,15 +232,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-ProtectionPaladinSynthetic(Phase1)"
  value: {
-  dps: 365.21333
-  tps: 398.04321
+  dps: 341.343
+  tps: 374.18222
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-ProtectionPaladinSyntheticStrengthOn-UseTrinket(Phase1)-990716"
  value: {
-  dps: 354.5735
-  tps: 387.40655
+  dps: 330.12917
+  tps: 362.97113
  }
 }
 dps_results: {

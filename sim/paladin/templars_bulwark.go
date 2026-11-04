@@ -23,11 +23,13 @@ func (paladin *Paladin) registerTemplarsBulwark() {
 		return
 	}
 	actionID := core.ActionID{SpellID: TemplarsBulwarkSpellId}
-	shield := paladin.registerAbsorbShield(core.Aura{
+	// The core absorb pipeline (core/absorb.go) runs it with any other shield on the paladin, oldest
+	// first, and books what it absorbs as the Bulwark's healing.
+	shield := paladin.NewAbsorbArray(core.Aura{
 		Label:    "Templar's Bulwark" + paladin.Label,
 		ActionID: actionID,
 		Duration: time.Second * 8,
-	})
+	}).Get(&paladin.Unit)
 	paladin.templarsBulwarkShield = shield
 
 	paladin.RegisterSpell(core.SpellConfig{
@@ -46,8 +48,8 @@ func (paladin *Paladin) registerTemplarsBulwark() {
 				Duration: time.Minute*5 - paladin.sacredDutyCooldownCut(),
 			},
 		},
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			shield.set(sim, paladin.MaxHealth())
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
+			shield.Apply(sim, spell, paladin.MaxHealth())
 		},
 	})
 }

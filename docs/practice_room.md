@@ -1317,6 +1317,32 @@ rendering, not the sim.
   - Pixel check, one frozen frame (lineup and the fight's view), merge on, off, and on again: the same, apart from a
     few hundred pixels of effects glows that also differ between two frames with the merge on.
   - `?glcount=1` counts every WebGL call by kind (`glCallsAvg` in the report).
+  - Two reports at 5 FPS turned out to be Chrome drawing in software ("Microsoft Basic Render Driver") after an
+    NVIDIA driver update, not the merge. Headless, the merge's steady frames upload less than without it (120 calls
+    and 1.3MB a frame, against 250 and 1.6MB). The room now shows "Software graphics · restart Chrome" when the
+    WebGL renderer is a software one (not in test runs: `navigator.webdriver` or `?bench`), and the report's
+    `gpuInfo.software` says so.
+- Ninth raid report (your PC, RTX 5090, `?glcount=1`): about 172 FPS in the fight (frames 64% at 4.2ms, 36% at
+  8.3ms), 3.7ms of script (animating 1.2ms, drawing 2.2ms), GPU 3.7ms, 330 draw calls, 2330 WebGL calls a frame, and a
+  garbage collection every 190ms (more than before).
+  - The garbage was the call counter's own: each counted call spread its arguments into an array, 2300 a frame. The
+    counters are plain functions now, and the upload counter too. The pose worker's requests also go through
+    shared memory, so a frame sends it a small message instead of a copy of every request.
+  - Particles that add their light (blends 1 and 4) draw together across textures, from texture arrays by size (the
+    same sampling as their own textures), each particle with its texture's layer. Added light comes out the same in
+    any order, but merged they can't keep their place among the other particle batches, so they draw after them
+    (light over smoke): the one change to the look, where added light overlaps smoke. `?particlearrays=0` turns it
+    off. Headless: 334 to 292 draw calls, 2410 to 2160 WebGL calls a frame.
+- The solid things draw grouped by shader, then texture, then vertices (`opaqueOrder` in `scene.ts`), not by
+  material as Three does (every copy of a model has its own materials). Headless: 2160 to 2030 WebGL calls a frame,
+  programs 211 to 165, texture binds 390 to 348. Pixel check in a frozen frame: the fight's view 3 pixels apart; a
+  close lineup of all 39 raiders about 1100 (0.1%), where two solid surfaces lie at exactly one depth and the other
+  one now draws last. `?sortsolid=0` turns it off.
+  - The crowd's see-through layers stay as they are: most are spell effects, which come and go and fade by the
+    frame, and merging gear layers across models keeps their order only if no other see-through thing draws
+    between them.
+  - The 50 `frontFace` calls a frame come from the shadows: a solid part's shadow draws its back faces, a double
+    sided one both, so the winding flips as the shadow pass goes from one to the other in the scene's order.
   - Headless (fight, 1920x1080): 127 to 144 FPS, drawing 4.8 to 4.1ms, 420 to 326 draw calls, 3040 to 2350 WebGL
     calls a frame (texture binds 528 to 423, vertex array binds 478 to 385, programs 276 to 210, matrix uniforms 271
     to 174).

@@ -66,6 +66,8 @@ attribute vec2 iSize;
 attribute vec4 iColor;
 attribute vec4 iUv;
 attribute float iRot;
+attribute float iLayer;
+varying float vLayer;
 uniform float uFlat;
 varying vec2 vUv;
 varying vec2 vQuad;
@@ -90,10 +92,16 @@ void main() {
 	vUv = vec2(mix(iUv.x, iUv.z, uv.x), mix(iUv.w, iUv.y, uv.y));
 	vQuad = uv;
 	vColor = iColor;
+	vLayer = iLayer;
 }`;
 
 const fragmentShader = /* glsl */ `
+#ifdef PARTICLE_ARRAY
+uniform highp sampler2DArray maps;
+varying float vLayer;
+#else
 uniform sampler2D map;
+#endif
 uniform float alphaTest;
 uniform float uByColor;
 uniform float uSoft;
@@ -101,7 +109,11 @@ varying vec2 vUv;
 varying vec2 vQuad;
 varying vec4 vColor;
 void main() {
+#ifdef PARTICLE_ARRAY
+	vec4 c = texture(maps, vec3(vUv, vLayer)) * vColor;
+#else
 	vec4 c = texture2D(map, vUv) * vColor;
+#endif
 	// A texture with no see-through part (a cloud tile) would draw a square. It fades out toward
 	// the quad's edge instead, into a round puff.
 	if (uSoft > 0.5) c.a *= 1.0 - smoothstep(0.35, 1.0, length(vQuad * 2.0 - 1.0));
@@ -151,8 +163,9 @@ const layout = [
 	['iColor', 5, 4],
 	['iUv', 9, 4],
 	['iRot', 13, 1],
+	['iLayer', 14, 1],
 ] as const;
-const STRIDE = 14;
+const STRIDE = 15;
 
 // A batch draws the particles of every emitter that looks the same (the same texture, blend and
 // facing) in one draw call. In the raid test 20 casters each had a few emitters on their hands,
@@ -233,6 +246,62 @@ class Batch {
 	}
 }
 
+// The arrays of additive particles' textures, by size. Off with ?particlearrays=0.
+type TextureArray = { width: number; height: number; layers: Map<THREE.Texture, number>; capacity: number; data: Uint8Array; texture: THREE.DataArrayTexture; uniform: { value: THREE.DataArrayTexture }; uploaded: boolean };
+const particleArrays = { on: typeof location === 'undefined' || new URLSearchParams(location.search).get('particlearrays') !== '0', bySize: new Map<string, TextureArray>() };
+
+// arrayFor gives the array for a particle texture's size, or undefined for one that wouldn't
+// sample the same from an array.
+function arrayFor(t: THREE.Texture): TextureArray | undefined {
+	const image = t.image as { width: number; height: number; data?: ArrayLike<number> | null };
+	if (!(t as THREE.DataTexture).isDataTexture || !image?.data || image.data.length !== image.width * image.height * 4) return undefined;
+	if (t.format !== THREE.RGBAFormat || t.type !== THREE.UnsignedByteType || t.colorSpace !== THREE.SRGBColorSpace || t.flipY) return undefined;
+	if (t.wrapS !== THREE.ClampToEdgeWrapping || t.wrapT !== THREE.ClampToEdgeWrapping) return undefined;
+	if (t.magFilter !== THREE.LinearFilter || t.minFilter !== THREE.LinearMipmapLinearFilter || !t.generateMipmaps || t.anisotropy !== 4) return undefined;
+	const key = `${image.width}x${image.height}`;
+	let a = particleArrays.bySize.get(key);
+	if (!a) {
+		a = { width: image.width, height: image.height, layers: new Map(), capacity: 0, data: new Uint8Array(0), texture: undefined!, uniform: { value: null! }, uploaded: false };
+		growArray(a, 4);
+		particleArrays.bySize.set(key, a);
+	}
+	return a;
+}
+
+// layerIn gives a texture its layer in an array, copying its picture in the first time.
+function layerIn(a: TextureArray, t: THREE.Texture): number {
+	const known = a.layers.get(t);
+	if (known !== undefined) return known;
+	if (a.layers.size === a.capacity) growArray(a, a.capacity * 2);
+	const layer = a.layers.size;
+	a.layers.set(t, layer);
+	a.data.set((t.image as { data: ArrayLike<number> }).data, layer * a.width * a.height * 4);
+	if (a.uploaded) a.texture.addLayerUpdate(layer);
+	a.texture.needsUpdate = true;
+	return layer;
+}
+
+// growArray makes room for more layers, with the same sampling as a particle texture's.
+function growArray(a: TextureArray, capacity: number) {
+	const data = new Uint8Array(a.width * a.height * 4 * capacity);
+	data.set(a.data);
+	a.data = data;
+	a.capacity = capacity;
+	a.texture?.dispose();
+	const t = new THREE.DataArrayTexture(data, a.width, a.height, capacity);
+	t.colorSpace = THREE.SRGBColorSpace;
+	t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+	t.magFilter = THREE.LinearFilter;
+	t.minFilter = THREE.LinearMipmapLinearFilter;
+	t.generateMipmaps = true;
+	t.anisotropy = 4;
+	t.needsUpdate = true;
+	a.uploaded = false;
+	t.onUpdate = () => (a.uploaded = true);
+	a.texture = t;
+	a.uniform.value = t;
+}
+
 // The batches of each world (the scene), by how their particles look.
 const batches = new WeakMap<THREE.Object3D, Map<string, Batch>>();
 
@@ -243,6 +312,8 @@ class Emitter {
 	private carry = 0;
 	// The particles' data (layout), which the batch draws.
 	readonly data = new Float32Array(maxParticles * STRIDE);
+	// The emitter's texture's layer in its batch's array (0 for a batch of one texture).
+	private layer = 0;
 	count = 0;
 	private batch?: Batch;
 	// Particles that keep to the emitter (flag 0x10) live in its space, the others in the world's.
@@ -316,12 +387,25 @@ class Emitter {
 					const soft = e.blend !== 0 && e.blend !== 3 && opaque(t);
 					material.uniforms.map.value = t;
 					material.uniforms.uSoft.value = soft ? 1 : 0;
-					const key = `${t.id}:${e.blend}:${e.flags & 0x1000}:${soft}`;
+					// Particles that add their light (blends 1 and 4) come out the same in any order, so
+					// the ones of a blend and facing draw together whatever their texture, from an array
+					// of their textures by size. The others draw by texture.
+					const array = (e.blend === 1 || e.blend === 4) && particleArrays.on ? arrayFor(t) : undefined;
+					this.layer = array ? layerIn(array, t) : 0;
+					const key = array ? `array${array.width}x${array.height}:${e.blend}:${e.flags & 0x1000}:${soft}` : `${t.id}:${e.blend}:${e.flags & 0x1000}:${soft}`;
 					let byKey = batches.get(world);
 					if (!byKey) batches.set(world, (byKey = new Map()));
 					let batch = byKey.get(key);
-					if (!batch) byKey.set(key, (batch = new Batch(world, material)));
-					else material.dispose();
+					if (!batch) {
+						if (array) {
+							material.defines = { PARTICLE_ARRAY: '' };
+							material.uniforms.maps = array.uniform;
+						}
+						byKey.set(key, (batch = new Batch(world, material)));
+						// Merged, the additive particles can't keep their place among the other particle
+						// batches, so they all draw after them (light added over smoke).
+						if (array) batch.mesh.renderOrder = drawOrder.particles + 0.2;
+					} else material.dispose();
 					batch.members.add(this);
 					this.batch = batch;
 					this.ready = true;
@@ -471,6 +555,7 @@ class Emitter {
 			d[o + 11] = (col + 1) / cols;
 			d[o + 12] = (row + 1) / rows;
 			d[o + 13] = p.angle + p.spin * p.age;
+			d[o + 14] = this.layer;
 		}
 		const was = this.count;
 		this.count = w;

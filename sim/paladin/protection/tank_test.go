@@ -216,6 +216,13 @@ func TestSealOfFury(t *testing.T) {
 	if judgement.SpellMetrics[pal.CurrentTarget.UnitIndex].Casts != before+1 {
 		t.Errorf("Judgement under Seal of Fury didn't cast Judgement of Fury")
 	}
+
+	// Forever's downranking penalty: the top rank (58) keeps its coefficients at 60, and rank 4
+	// (34; its hit 20415, its judgement 20411) keeps 1 - 5% x (60 - 17 - 34) = 55% of them.
+	near(t, "rank 7 hit's coefficient", proc.BonusCoefficient, 0.1, 1e-9)
+	near(t, "Judgement of Fury rank 7's coefficient", judgement.BonusCoefficient, 0.429, 1e-9)
+	near(t, "rank 4 hit's coefficient", spell(t, pal, 20415).BonusCoefficient, 0.1*0.55, 1e-9)
+	near(t, "Judgement of Fury rank 4's coefficient", spell(t, pal, 20411).BonusCoefficient, 0.429*0.55, 1e-9)
 }
 
 // TestSealOfFuryNeedsShield checks that without a shield the seal's hit gives no absorb.
@@ -538,13 +545,15 @@ func TestForeverProtTankScore(t *testing.T) {
 
 	casts := map[int32]float64{}
 	for _, a := range m.Actions {
-		if id := a.Id.GetSpellId(); id != 0 {
+		// Holy Shield rank 4's block damage carries its spell ID with tag 1, so only tag 0 is a cast.
+		if id := a.Id.GetSpellId(); id != 0 && a.Id.GetTag() == 0 {
 			for _, tgt := range a.Targets {
 				casts[id] += float64(tgt.Casts) / iterations
 			}
 		}
 	}
-	// Holy Shield every 10 sec, Holy Strike every 6, Judgement every 8, Bulwark once in 2 min.
+	// Holy Shield every 10 sec, Holy Strike every 6, Judgement every 8 and Swift Judgement's every 60
+	// (both judge Seal of Fury), Bulwark once in 2 min.
 	for _, c := range []struct {
 		name     string
 		id       int32
@@ -552,7 +561,7 @@ func TestForeverProtTankScore(t *testing.T) {
 	}{
 		{"Holy Shield rank 4", 1239570, 10, 13},
 		{"Holy Strike", 10333, 16, 21},
-		{"Judgement of Fury", 20414, 12, 17},
+		{"Judgement of Fury", 20414, 15, 19},
 		{"Templar's Bulwark", 1311015, 1, 1},
 		{"Seal of Fury's hits", 20418, 40, 200},
 	} {
