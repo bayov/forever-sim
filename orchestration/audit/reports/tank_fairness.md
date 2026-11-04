@@ -1,93 +1,142 @@
-# tank_fairness pass 2: 2026-11-04, master b38ff16
+# tank_fairness pass 3: 2026-11-04, master dc303b0
 
-Forced by hand after round 2 (four class workers fixed pass 1's findings and re-optimized every preset).
-Raw table: `ref/tank_fairness/summary.tsv` (84 rows: 12 preset requests × 6 scoring boss files, scores at all three weights).
+Forced by hand after round 3: the engine fix fd9538c (mana-gain threat unmultiplied, disjoint tank seeds) and the four
+class workers' fixes for pass 2's findings, with re-optimized presets.
+Raw table: `ref/tank_fairness/summary.tsv` (72 rows: 12 preset requests × 6 scoring bosses, seed 1, scores at all three weights).
 
 ## How
 
-- `go build -tags=with_db -o tankbench ./tools/tankbench` (a fresh checkout needs
-  `protoc -I=./proto --go_out=./sim/core ./proto/*.proto` first), then per boss
-  `tankbench -iters 3000 -encounter tools/encounters/<boss>.json tools/tankbench/req/*_{max_threat,balanced,max_survival}.json`
-  (seed 1; about 1 s a boss). Six-boss mean error = sqrt(Σerr²)/6; paired error taken as the quadrature of two means' (conservative).
-- Same terms: all 12 requests flattened with jq, gear/talents/rotation set aside.
-- Equal care: the round-2 sections of docs/tank_*.md and the UI presets (ui/{tank_warrior,protection_paladin,feral_tank_druid,warden_shaman}/presets.ts) against the requests.
-- DPS Report Tanking mode: ui/dps_report (Tanking code and data), tools/dps_report/tankheal.py.
-- Variants: Max threat with Flask of Natural Accuracy (warrior, paladin, Warden); paladin with improved Blessing of Wisdom.
+- `go build -tags=with_db -o tankbench ./tools/tankbench` (protoc-gen-go needs `PATH=$PATH:/root/go/bin`), then per boss
+  `tankbench -iters 3000 -encounter tools/encounters/<boss>.json tools/tankbench/req/*_{max_threat,balanced,max_survival}.json`,
+  seed 1 and again on seed 7. Six-boss mean error = sqrt(Σerr²)/6.
+- Same terms: all 12 requests flattened and compared by script, with gear, talents and rotation set aside. UI presets
+  compared slot by slot (gear, enchants, talents, APL JSON, race, buffs, debuffs, consumables, professions, options).
+- Equal care: orchestration/tank_round3/*.md, orchestration/tank_handoff/<class>/round3/, and the round-3 sections of docs/tank_*.md.
+- Variants (scratch requests): the flask swapped on all 12 presets, Dirge's Kickin' Chimaerok Chops on the warrior, paladin and
+  Warden, and warrior queueDelay 250.
 
-## Own-weight six-boss means (3000 iterations) against round 2's claims
+## Own-weight six-boss means (3000 iterations, seed 1 ± error [seed 7]) against round 3's claims
 
 | preset | warrior | paladin | bear | Warden |
 |---|---|---|---|---|
-| Max threat (w 1/3) | 3696.8 ± 5.8 (3694.8) | 2781.8 ± 3.0 (2785.0) | 2836.7 ± 5.8 (2837.3) | 2288.8 ± 4.5 (2292) |
-| Balanced (w 1) | 3012.3 ± 7.7 (3008.5) | 2387.3 ± 5.1 (2397.7) | 1873.5 ± 8.6 (1867.6) | 536.8 ± 8.7 (548) |
-| Max survival (w 3) | 1204.2 ± 15.3 (1205.0) | 1336.7 ± 13.7 (1363.3) | -736.0 ± 22.3 (-750.2) | -4391.5 ± 24.1 (-4357) |
+| Max threat (w 1/3) | 3700.0 ± 5.8 [3694.7] (3695.6) | 2800.7 ± 3.1 [2796.8] (2793.7) | 2844.5 ± 5.9 [2821.3] (2842.5) | 2421.8 ± 6.5 [2409.7] (2430.0) |
+| Balanced (w 1) | 3012.3 ± 7.7 [2991.3] (3010.6) | 2418.3 ± 5.5 [2405.3] (2415.0) | 1849.0 ± 9.1 [1829.0] (1851.8) | 748.2 ± 9.7 [723.3] (767.2) |
+| Max survival (w 3) | 1204.2 ± 15.3 [1166.7] (1202.1) | 1449.0 ± 14.9 [1409.7] (1445.2) | -655.5 ± 22.0 [-718.8] (-633.8) | -3996.3 ± 22.1 [-3986.0] (-3970.8) |
 
-Every claim reproduces within 2× error (the workers' 1000-iteration means). The paladin Max survival figure is the weakest (-1.95%), and it's the Balanced file at w=3.
-Mean TPS (Balanced): warrior 1895, bear 1618, Warden 1428, paladin 1311. Healing needed (Balanced, six-boss mean): paladin 211, warrior 323, bear 488, Warden 912.
-The workers' rows in `ref/tank_bench/summary.tsv` (1000 iterations) all agree with this run within noise; its header still names 23b2ec2 (finding -9).
+- Every claim reproduces within 2× error on seed 1.
+- The Warden's Balanced is soft: it was a 1,000-iteration figure, and seed 7 is 44 under it. This is noted under finding -9.
+- Seed-to-seed spread at w=3 reaches about 40, more than the quoted errors.
 
-## Does each preset win its own weight (rows preset, columns w = 1/3, 1, 3)
+## Does each preset win its own weight (rows: preset; columns: w = 1/3, 1, 3)
 
 | | 1/3 | 1 | 3 |
 |---|---|---|---|
-| warrior MT / Bal / MS | **3696.8** / 3622.2 / 3423.2 | 2886.8 / **3012.3** / 2868.3 | 456.3 / 1182.3 / **1204.2** |
-| paladin MT / Bal=MS | **2781.8** / 2737.5 | 2374.8 / **2387.3** | 1153.2 / **1336.7** |
-| bear MT / Bal / MS | **2836.7** / 2769.2 / 2625.3 | 1763.2 / **1873.5** / 1785.0 | -1456.5 / -813.5 / **-736.0** |
-| Warden MT / Bal / MS | **2288.8** / 2246.7 / 2145.2 | 498.5 / **536.8** / 511.0 | -4873.3 / -4592.8 / **-4391.5** |
+| warrior MT / Bal / MS | **3700** / 3622 / 3423 | 2905 / **3012** / 2868 | 519 / 1182 / **1204** |
+| paladin MT / Bal=MS | **2801** / 2742 | **2430** / 2418 | 1320 / **1449** |
+| bear MT / Bal / MS | **2845** / 2742 / 2581 | 1729 / **1849** / 1772 | -1617 / -828 / **-656** |
+| Warden MT / Bal / MS | **2422** / 2350 / 2247 | 531 / **748** / 686 | -5144 / -4057 / **-3996** |
 
-Yes, everywhere. These ties are within 2× paired error: warrior MS over Bal at w=3 (+21.8 against 48.6), paladin Bal over MT at w=1 (+12.5 against 15.0), and the paladin's Bal and MS (byte-identical files).
-The docs say the weights don't separate those, which the brief allows (finding -4 closed). Builds that differ:
-- Warrior: Bal and MS differ only in a trinket (991018 against 990617) and the APL.
-- Paladin: MT and Bal differ only in talents.
-- Bear: one talent string; only the APL differs.
-- Warden: Bal and MS differ in talents and the second trinket.
+Within noise:
+- the warrior's Max survival over Balanced at w=3 (+22 ± 24);
+- the Warden's Max survival over Balanced at w=3 (+60 ± 35);
+- at w=1 the paladin's Max threat edges out Balanced (+11.8 ± 7.9, 1.5×).
+
+The paladin's Max threat and Balanced differ only in talents and one enchant; its Balanced and Max survival are byte-identical. Finding -4 allowed this kind of tie and it was documented, so it isn't re-raised.
 
 ## Same terms
 
-The 12 requests are equal on:
-- level 60, reaction 200 ms, inFrontOfTarget;
-- Engineering + Blacksmithing;
-- food, Mongoose, Juju Power and Might, Dragonbreath Chili;
+All 12 requests are equal on:
+- level 60, 200 ms reaction, 5 yd, in front;
 - Kings and improved Might;
-- every raid buff and debuff, the encounter and simOptions;
+- Engineering and Blacksmithing;
+- all 18 raid buffs and 13 debuffs (the tank's own debuffs stripped by `tankscore.OwnDebuffs`);
+- the encounter and sim options;
 - no Salvation.
 
-Phalanx + Greater Fortitude are on all 12, and the paladin and warrior both have Dense Sharpening Stone (finding -1 holds). The fair differences:
-- races are each spec's best;
+The accepted differences hold:
+- races are each spec's best (the Warden's now differ by preset: Night Elf, Night Elf, Undead);
 - mana users take Major Mana Potion;
-- Wisdom is on the Warden only (worth nothing on the paladin: -1.5 ± 7 Balanced);
-- the bear's Weightstone, the Warden's Rockbiter;
+- Wisdom is on the Warden only;
+- the bear's weightstone and the Warden's Rockbiter;
 - the paladin's Greater Arcane Elixir.
 
-Open: the flask was never re-picked at Max threat. Natural Accuracy is +30.4 for the Warden at w=1/3, -23 for the warrior and 0 for the paladin (finding -7).
+New since pass 2, and A/B'd:
+- The bear takes Flask of Natural Accuracy on all three presets (Titans -309 at Max threat). The Warden's Max threat takes it too.
+- Every other preset keeps Titans, and each swap measured here confirms its current flask (-24 to -270 on two seeds, paladin Max threat -6.5 ± 4.3).
+- The bear's Max survival eats Dirge's chops. No other tank was tried on it, and it gains for the paladin and Warden: finding -10.
+- Enchants differ by class, each A/B'd: the paladin takes Lesser Block on the shield (its call 11) and the Warden Superior Defense on the cloak.
 
-## Spread at Balanced, per boss (vs the mean of the other three)
+Open question 4 from pass 2 is answered: rotopt goes through `tankscore.MakeTank` (tools/rotopt/run.go:211, main.go:274), which calls `OwnDebuffs`.
 
-- Warrior ahead on all 6 bosses: score +58% to +233%, TPS +27% to +41% on 5. Revenge, Heroic Strike and Shield Slam, all sourced; accepted in pass 1.
-- Paladin ahead on all 6: score +15% to +73%, healing needed -43% to -96%. Finding -2: the mechanics are checked; three calls wait on the user.
-- Warden behind on all 6: score -48% to -130%, healing needed +82% to +263%. Ruled a class gap (standards 40).
-- Bear: +46% score on Broodlord, -19% on Onyxia; otherwise in line.
+## Spread at Balanced (per boss, vs the mean of the other three)
 
-Logs: the Anniversary logs' main tanks are warriors (druids on four), with no paladin or shaman main tank. The sim ranks the paladin second at Balanced and first in damage taken, the disagreement noted in pass 1 and parked as finding -2's calls.
+| boss | warrior | paladin | bear | Warden |
+|---|---|---|---|---|
+| Magmadar | 3438 (+56%) | 2813 (+17%) | 2239 (-14%) | 1560 (-45%) |
+| Golemagg | 3263 (+64%) | 2590 (+17%) | 2111 (-11%) | 1274 (-52%) |
+| Onyxia | 3155 (+81%) | 2978 (+65%) | 1706 (-24%) | 558 (-79%) |
+| Broodlord | 2678 (+127%) | 1928 (+35%) | 1872 (+29%) | -262 (-112%) |
+| Vaelastrasz | 3435 (+53%) | 2764 (+12%) | 2220 (-16%) | 1734 (-38%) |
+| Chromaggus | 2105 (+214%) | 1437 (+61%) | 946 (-10%) | -375 (-125%) |
 
-## Equal care (round 2)
+| Balanced, six-boss mean | warrior | paladin | bear | Warden |
+|---|---|---|---|---|
+| TPS | 1895 | 1306 | 1610 | 1441 |
+| DTPS | 366 | 288 | 570 | 730 |
+| Healing needed | 323 | 197 | 488 | 853 |
 
-All four classes searched at 1,000 iterations, confirmed at 3,000, and scored the six-boss mean at the preset's weight. What differed:
-- The warrior also re-searched races, trinkets and the wrist enchant, and committed its raw output.
-- The Warden kept round 1's race and trinket.
-- The paladin ran no gear or enchant A/B.
-- The bear skipped enchants and consumables.
+Explanations, all unchanged from pass 2:
+- **Warrior threat (+22% to +41% TPS):** Revenge, Heroic Strike and Shield Slam, all sourced.
+- **Paladin damage taken (healing needed -45% to -99%):** finding -2. The mechanics are checked; three user calls remain.
+- **Warden healing need (+83% to +236%):** a class gap by ruling (standards 40).
+- **Paladin TPS (about 21% under the others):** still unexplained (open question below).
 
-All of this is in finding -8 (low; nothing measured lost).
-UI presets match their requests on gear, talents, race and consumables. They don't match on individual buffs (paladin: Wisdom only; Warden: none) or on professions (warrior, Warden): finding -6.
+The logs disagree as before: the Anniversary main tanks are warriors (druids on four bosses), with no paladin or shaman.
+
+## Equal care (round 3)
+
+| | warrior | paladin | bear | Warden |
+|---|---|---|---|---|
+| search / confirm | 1k / 3k | 1k / 3k | 1k / 3k | 3k A/Bs on the round-2 search |
+| final numbers | 10k, seeds 1 and 2 | 10k, seed 1 | 3k (UI: 1k) | 1k |
+| races × 3 weights | yes | yes | yes | yes |
+| talents, APL knobs | yes | yes (Bulwark frozen) | yes | yes |
+| enchants A/B'd | cloak, wrist, shield | wrist, cloak, boots, shield | 8+ slots | wrist, cloak, shield |
+| consumables A/B'd | none | none | all, each weight | Max threat flask only |
+| raw output committed | yes | yes | yes | yes |
+
+The uneven part that matters is consumables, and it is measured in finding -10.
+
+No class's choices rest only on 1,000-iteration runs. The Warden's headline scores do, and they are slightly high (finding -9).
+
+## UI = bench
+
+Script-checked for all 12 presets: gear, enchants, talents, APL JSON, race, professions, individual and raid buffs, and consumables match their requests.
+
+Finding -6 is closed. One exception remains, the warrior:
+- queueDelay is 250 in the UI and 0 on the bench, which is -75 at Max threat;
+- its UI debuffs keep Thunder Clap, the Shouts and the tank Sunder ramp that the bench strips.
+
+Both are finding -11.
+
+Two small things, not findings:
+- The bear's Max survival food comes from its encounter preset, not its build.
+- The paladin and Warden UIs default to a non-tank build until a build is chosen.
 
 ## DPS Report, Tanking mode
 
-- Code: no per-class special case. tankheal.py runs every tank with the same 7 boss files, the same 1000 iterations and seed, and 6 scored bosses (Ragnaros shown, scored for none). Only the legacy warrior_protection.json is excluded. report.js uses one path for all four tanks: the same weights, sort, ± display and class colours. The notes are uneven in count, but none is unfair, and the Warden's "needs the most healing" fits standards 40.
-- Data: stale. ui/dps_report/data/tank_*.json was committed in e9e1a637d from a bench at 51e2f5ea (13:47Z). Every round-2 preset commit is later: paladin 14:52, Warden 15:00, warrior 15:09, bear 15:30. The warrior Max threat and all three Warden talent strings differ from the requests. A separate session is regenerating it, and the new data hasn't landed on master, so this pass doesn't judge the numbers. No finding: the next pass checks the regenerated data.
+- **Data:** the regen had not landed on master at dc303b0. The last tank data, 4feee54c2 (17:13Z), predates every round-3 preset commit (17:54 to 18:20). tank_builds.json still holds:
+  - the Warden's round-2 races and talents, at 2292 / 548 / -4357 against round 3's 2430 / 767 / -3971;
+  - the paladin's old Balanced wrist and 1363.3 Max survival;
+  - the Warden's Max threat on Titans.
+
+  This is recorded here, not as a finding, because a regen session is deploying it now. The next pass checks tank_builds.json against the requests.
+- **Code:** tankheal.py and report.js treat all four tanks alike: the same 7 boss files, 1,000 iterations, weights 1/3, 1 and 3, six scored bosses, and no per-class case.
 
 ## Findings
 
-- Closed: -1 (elixirs and stone), -3 (ruled and checked), -4 (each preset wins its weight; ties documented).
-- Still open: -2 (paladin damage taken; user calls a, b, c), -5 (legacy warrior file; the healing session's call).
-- New: -6 medium UI buffs and professions; -7 medium Warden Max threat flask; -8 low uneven search; -9 low stale notes and docs.
+- **Closed:** -6 (UI buffs and professions), -7 (the Warden's Max threat flask holds, Titans -24.7 / -32.7), -8 (round 3 searched all four with raw output; what's left is -10).
+- **Still open:** -2 (paladin damage taken; user calls), -5 (legacy warrior file; the healing session's call), -9 (partly fixed; the tank_bench/summary.tsv header, docs/tank_sim.md status, paladin call 11, warrior doc line 199 and the Warden's 1k Balanced figure remain).
+- **New:**
+  - -10 (high): consumables were searched for the bear only; Dirge's chops gain +62 on paladin Max survival, +42 on Warden Balanced and +157 on Warden Max survival.
+  - -11 (medium): the warrior UI's queueDelay 250 and bench-stripped debuffs.
