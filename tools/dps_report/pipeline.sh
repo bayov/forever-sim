@@ -18,6 +18,12 @@
 #   pipeline.sh shard <k> <n> <ids...>  the ids of shard k of n (0-based), balanced by estimated cost
 #   pipeline.sh pack  <tgz> <ids...>    these builds' raw outputs, to merge on another machine (a shard's hand-back)
 #   pipeline.sh unpack <tgz>            merge a pack into $DASH_DIR (replaces those builds' files and result lines)
+#   pipeline.sh tankheal [tank|heal]    the Tanking and Healing modes' sims alone (tankheal.py run: tankbench and
+#                                       healbench, every preset, seven bosses, races; then publish)
+#
+# The Tanking and Healing modes (tankheal.py) ride along: run with no ids (or TANKHEAL=1) runs their sims after the
+# DPS steps, hydrate unpacks their raw packs (raw/bench/<mode>.tgz), publish builds their datasets (tank_*, heal_*)
+# before the copy and, for a mode simmed since, records it (stale.mjs --record-bench) and packs it.
 #
 # After a code or data change (a game update), stale.mjs says what may have moved: hydrate, probe, run <what probe
 # names>, publish <the same ids>. Re-sim a few builds: hydrate, run <ids>, publish <ids>. Add a preset: write req/<id>.*, then the same. Remove one:
@@ -53,9 +59,11 @@ hydrate)
 	if [ "$PWD" != "$T" ]; then  # a separate $DASH_DIR reads the inputs from this checkout
 		for f in req forever_tt_cache fortt_ids.json talent_ids.json asm_apls bin; do [ -e "$f" ] || ln -s "$T/$f" "$f"; done
 	fi
-	rm -rf out names weights mana rv asm abl probe probe_check data vec
+	rm -rf out names weights mana rv asm abl probe probe_check data vec tank heal
 	python3 $T/rawstore.py unpack
+	python3 $T/tankheal.py unpack
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
+	python3 $T/tankheal.py build >tankheal.log || { tail -20 tankheal.log; exit 1; }
 	python3 $T/rawstore.py check "$@"
 	;;
 clean)
@@ -77,8 +85,14 @@ publish)
 	else
 		python3 $T/events.py --data "$DASH_DIR/data" --out "$R/ui/dps_report/data/events" --lookups-only
 	fi
+	python3 $T/tankheal.py build >tankheal.log || { tail -20 tankheal.log; exit 1; }  # the tank_* and heal_* datasets
 	python3 $T/rawstore.py copy
 	if [ $# -gt 0 ]; then (cd "$R" && node tools/dps_report/stale.mjs --record "$@" --iterations 20000 ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
+	BENCHED=$(python3 $T/tankheal.py fresh)  # the Tanking and Healing modes simmed since the last publish
+	if [ -n "$BENCHED" ]; then
+		(cd "$R" && node tools/dps_report/stale.mjs --record-bench $BENCHED --iterations 1000 ${SIM_COMMIT:+--commit $SIM_COMMIT})
+		python3 $T/tankheal.py pack && python3 $T/tankheal.py fresh --clear
+	fi
 	if [ -n "$PASSED" ]; then (cd "$R" && node tools/dps_report/stale.mjs --record $PASSED --by probe ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
 	rm -f probe_audit.json
 	# only the re-simmed builds' packs: the others are already the outputs they were made from
@@ -149,9 +163,19 @@ EOF
 	PAR=$P python3 $T/run_assumptions.py $BASE | tail -2
 	mark probe  # these sims at a tenth of their iterations, kept in the packs for the next probe check
 	PROBE_P=$P python3 $T/probe.py run $ALL
+	if [ $# -eq 0 ] || [ -n "${TANKHEAL:-}" ]; then  # a full run (or TANKHEAL=1): the Tanking and Healing modes too
+		mark tankheal
+		TH=tank\ heal
+		if [ "$cmd" = resume ]; then TH=$(for m in tank heal; do [ -e $m/.fresh ] || echo $m; done); fi
+		[ -n "$TH" ] && TANKHEAL_BIN=$REAL_BIN python3 $T/tankheal.py run $TH $([ "$cmd" = resume ] && echo --resume)
+	fi
 	mark done
 	python3 $T/timing.py "$TIMING_LOG"
 	echo "next: pipeline.sh publish $*"
+	;;
+tankheal)
+	TANKHEAL_BIN=${TANKHEAL_BIN:-${DASH_BIN:-$DASH_DIR/bin}} python3 $T/tankheal.py run "$@"
+	echo "next: pipeline.sh publish"
 	;;
 shard)
 	k=$1 n=$2; shift 2
@@ -211,5 +235,5 @@ EOF
 	rm -rf "$tmp"
 	;;
 *)
-	sed -n '2,13p' "$0"; exit 1 ;;
+	sed -n '2,22p' "$0"; exit 1 ;;
 esac

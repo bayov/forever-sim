@@ -12,6 +12,10 @@ the user, and publish the report. Auditors report through `orchestration/audit/f
 Run only the building blocks (section 3) the request needs; section 4 lists common
 combinations.
 
+The report also has Tanking and Healing modes, from tools/tankbench and tools/healbench via
+`tools/dps_report/tankheal.py` (README "Tanking and Healing"); a change to a tank or healer preset,
+its class doc or a class's sim code re-sims them through regenerate-dps-report.
+
 ## 1. Read first (in this order)
 
 All paths are on `master`, and new coordination work goes straight to master. Run
