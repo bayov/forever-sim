@@ -1,0 +1,9 @@
+A=wall17_max_survival.json B=te40w17_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+magmadar          2492     2427   -65.2    4.9   -105.3      -14
+golemagg          1990     1950   -40.2    4.9   -104.1      -16
+onyxia            1408     1471    62.3   11.1   -123.8      -20
+broodlord          273      650   377.1   21.1   -119.4      -68
+vaelastrasz       2199     2034  -165.1    5.2   -135.8      -28
+chromaggus       -1456    -1536   -80.3   10.6    -89.1      -11
+scoring_mean                       14.8    4.6

@@ -1,6 +1,14 @@
 # Protection warrior tank: handoff
 
-**Status 2026-11-04 (cloud session): done.** The searches converged, races ran at all three weights (Undead at each),
+**Status 2026-11-04, round 2 (branch tank-warrior): presets re-searched.** On the round-2 engine and the warrior fixes:
+Shield Wall in the last 17 s for Balanced and Max survival (Max threat 12 s), Superior Deflection on the wrists at every
+weight, Max survival on the armor trinket held for the last 35 s (its own gear set), Max threat on
+`04-05050015-250330020330001351` with the Sunder filler at 15 Rage; Undead kept. Scores at own weight (master, fixes only,
+re-searched): Max threat 3,752.2 / 3,665.3 / 3,694.8, Balanced 3,073.7 / 2,982.8 / 3,008.5, Max survival 1,124.7 /
+1,033.2 / 1,205.0. Balanced and Max survival share talents, race and knobs (trinket apart). A/Bs, searches and races in
+`warrior/round2/` (`ab_summary.txt`); the doc's Presets, Numbers and Calls are rewritten. Not merged to master yet.
+
+**Status 2026-11-04 (cloud session, round 1): done.** The searches converged, races ran at all three weights (Undead at each),
 the three presets, APLs and requests are written, step 7 ran, and the doc's Presets, Numbers and Calls are written
 (`docs/tank_warrior.md`). The list under "Left" below is finished; the rest of this file is the earlier state.
 

@@ -160,6 +160,18 @@ export type ToolkitSpell = {
 	kind: 'spell' | 'item' | 'totem';
 };
 
+// Sheet is the character sheet when the session starts (sim/practice/sheet.go). Stats and base
+// are by the Stat enum's index (proto/common.proto), pseudo by the PseudoStat enum's.
+export type Sheet = {
+	level: number;
+	stats: number[];
+	base: number[];
+	pseudo: number[];
+	weapons: { slot: 'mainHand' | 'offHand' | 'ranged'; min: number; max: number; speed: number; type?: string }[] | null;
+	items: { slot: number; id: number; quality: number; name: string; enchant?: number }[] | null;
+	damageMultiplier: number;
+};
+
 // Messages between the page and the worker.
 export type ToWorker =
 	| { type: 'start'; request: unknown; settings: Settings; seed: number; wallNow: number }
@@ -172,7 +184,7 @@ export type ToWorker =
 
 export type FromWorker =
 	| { type: 'ready'; loadMs: number }
-	| { type: 'started'; toolkit: ToolkitSpell[]; shown?: number[]; startMs: number; batch: Batch; wallAtStart: number; callMs: number }
+	| { type: 'started'; toolkit: ToolkitSpell[]; shown?: number[]; sheet?: Sheet; startMs: number; batch: Batch; wallAtStart: number; callMs: number }
 	| { type: 'batch'; batch: Batch; simNowMs: number; clock: ClockState; callMs: number }
 	| { type: 'attempt'; attempt: unknown }
 	| { type: 'error'; message: string };

@@ -44,6 +44,9 @@ export class Sounds {
 	private ready = new Map<string, number>();
 	private moving: { panner: PannerNode; at: THREE.Object3D; done: boolean }[] = [];
 	private readonly tmp = new THREE.Vector3();
+	// The Sound options' channels: the zone's loops go through ambience, the rest through effects.
+	private readonly effects: GainNode;
+	private readonly ambienceGain: GainNode;
 
 	constructor(scene: THREE.Object3D) {
 		this.anchor.add(this.listener);
@@ -60,12 +63,24 @@ export class Sounds {
 		limiter.release.value = 0.1;
 		this.listener.gain.disconnect();
 		this.listener.gain.connect(limiter).connect(c.destination);
+		this.effects = c.createGain();
+		this.ambienceGain = c.createGain();
+		this.effects.connect(this.listener.getInput());
+		this.ambienceGain.connect(this.listener.getInput());
 		// Browsers start audio only after a key press or click.
 		const resume = () => {
 			if (c.state !== 'running') c.resume();
 		};
 		addEventListener('keydown', resume);
 		addEventListener('pointerdown', resume);
+	}
+
+	// setLevels sets the Sound options' volumes, each from 0 to 1. The master one scales the
+	// room's own level.
+	setLevels(master: number, effects: number, ambience: number) {
+		this.listener.setMasterVolume(this.volume * master);
+		this.effects.gain.value = effects;
+		this.ambienceGain.gain.value = ambience;
 	}
 
 	// place moves the listener: to your character's head, turned like the camera.
@@ -106,7 +121,7 @@ export class Sounds {
 		const start = () => {
 			if (started || c.state !== 'running') return;
 			started = true;
-			for (const kit of kits) this.play(kit.map(s => ({ ...s, loop: true, fadeInMs: s.fadeInMs || 2000 })));
+			for (const kit of kits) this.play(kit.map(s => ({ ...s, loop: true, fadeInMs: s.fadeInMs || 2000 })), undefined, undefined, true);
 		};
 		c.addEventListener('statechange', start);
 		start();
@@ -125,7 +140,7 @@ export class Sounds {
 	// play plays one sound of a kit, at an object in the world or flat when there's none. The same
 	// kit doesn't stack within 40ms (two hits in one batch), or within its own cooldown. It gives
 	// a handle to stop it (for a loop).
-	async play(kit: SoundRef[] | undefined, at?: THREE.Object3D, key?: string): Promise<Playing | undefined> {
+	async play(kit: SoundRef[] | undefined, at?: THREE.Object3D, key?: string, ambience = false): Promise<Playing | undefined> {
 		const c = this.listener.context;
 		if (!kit || kit.length === 0 || c.state !== 'running') return undefined;
 		const now = performance.now();
@@ -172,7 +187,7 @@ export class Sounds {
 				this.moving.push(moving);
 			}
 		}
-		tail.connect(this.listener.getInput());
+		tail.connect(ambience ? this.ambienceGain : this.effects);
 		src.start(t);
 		src.onended = () => {
 			if (moving) moving.done = true;

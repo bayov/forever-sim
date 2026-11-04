@@ -388,6 +388,7 @@ func (s *server) handleSpells(w http.ResponseWriter, r *http.Request) {
 		var id int32
 		if _, err := fmt.Sscan(part, &id); err == nil {
 			if n, ok := s.spells.names[id]; ok {
+				n.Tab = s.spellTab(id)
 				out[part] = n
 			}
 		}

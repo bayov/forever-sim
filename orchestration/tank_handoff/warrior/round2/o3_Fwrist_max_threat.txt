@@ -1,0 +1,9 @@
+A=Fwrist_max_threat.json B=F_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+magmadar          3821     3830     8.7    5.9      1.7       -5
+golemagg          3729     3735     5.3    5.9     -1.0       -6
+onyxia            3765     3785    20.5    8.9      5.9       -5
+broodlord         3569     3571     2.2    9.6     -4.5      -11
+vaelastrasz       3992     3996     4.6    7.2      2.2       -0
+chromaggus        3257     3264     7.4    7.6     -2.5      -12
+scoring_mean                        8.1    3.1

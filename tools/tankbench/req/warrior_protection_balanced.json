@@ -31,7 +31,7 @@
                 },
                 {
                   "id": 990606,
-                  "enchant": 1886
+                  "enchant": 1248665
                 },
                 {
                   "id": 990607,
@@ -66,7 +66,7 @@
                 },
                 {
                   "id": 990615,
-                  "enchant": 929
+                  "enchant": 1886
                 },
                 {
                   "id": 990613
@@ -160,7 +160,7 @@
                         "op": "OpLe",
                         "rhs": {
                           "const": {
-                            "val": "12s"
+                            "val": "17s"
                           }
                         }
                       }
@@ -414,7 +414,8 @@
                         }
                       }
                     }
-                  }
+                  },
+                  "notes": "Defensive Stance kept up: the tank's stance."
                 }
               ]
             },

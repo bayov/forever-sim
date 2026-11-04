@@ -1,0 +1,6 @@
+/* The backpack (frames/bags.ts). The bag's art draws each slot's frame and its empty look, so
+   the item buttons show only the quickslot frame over a filled slot. */
+
+.bz-bags .bz-item.framed:not(.filled)::before {
+	display: none;
+}

@@ -1,0 +1,9 @@
+A=A_max_survival.json B=wall17_max_survival.json preset=max_survival iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+magmadar          2342     2500   157.6   13.9     -5.6      -16
+golemagg          1830     1995   164.7   13.9     -0.5      -16
+onyxia            1111     1412   300.8   52.4    -15.7      -21
+broodlord           29      221   191.6   47.9    -11.4      -24
+vaelastrasz       2439     2276  -162.9   31.9    -43.0       20
+chromaggus       -1513    -1485    27.5   11.2     -0.5       -3
+scoring_mean                      113.2   13.5

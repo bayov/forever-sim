@@ -21,6 +21,15 @@ type spellName struct {
 	Name string `json:"name"`
 	Rank string `json:"rank,omitempty"`
 	Icon int    `json:"icon,omitempty"`
+	// Tab is the spellbook tab the spell sits on (its class skill line), for the room's spellbook.
+	Tab *spellTab `json:"tab,omitempty"`
+}
+
+// spellTab is a skill line of the spellbook: its name and the icon file of its side tab.
+type spellTab struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+	Icon int    `json:"icon,omitempty"`
 }
 
 type spellNames struct {
@@ -161,4 +170,33 @@ func fillDatabase(request *proto.RaidSimRequest) {
 			player.Database = db
 		}
 	}
+}
+
+// spellTab finds a spell's spellbook tab in the client's SkillLineAbility table: the class skill
+// line (category 7) it belongs to, or General (skill line 0 in the game) for the class's spells
+// on no tree line. It is nil without a client or when the spell is no class ability.
+func (s *server) spellTab(id int32) *spellTab {
+	if s.db2 == nil {
+		return nil
+	}
+	abilities, err := s.db2.Table("SkillLineAbility")
+	if err != nil {
+		return nil
+	}
+	lines, err := s.db2.Table("SkillLine")
+	if err != nil {
+		return nil
+	}
+	for _, row := range abilities.Where("Spell", int(id)) {
+		line := lines.Get(row.Int("SkillLine"))
+		if !line.Ok() {
+			continue
+		}
+		// Category 7 is a class's talent tree lines (Enhancement, Combat), 8 the armor and
+		// weapon skills, 11 professions. Only the trees have their own tab.
+		if line.Int("CategoryID") == 7 {
+			return &spellTab{ID: line.Int("ID"), Name: line.Str("DisplayName_lang"), Icon: line.Int("SpellIconFileID")}
+		}
+	}
+	return nil
 }

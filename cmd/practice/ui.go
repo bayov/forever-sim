@@ -51,6 +51,10 @@ func (c *wowClient) ellesmereUI(account string) map[string]any {
 		"customColors":    profile["customColors"],
 		"fonts":           profile["fonts"],
 	}
+	// The chat window's spot and size, for the room's chat frame.
+	if chat := luaTable(addons, "EllesmereUIChat", "chat"); chat != nil {
+		out["chat"] = map[string]any{"position": chat["chatPosition"], "size": chat["chatSize"]}
+	}
 	if dm := luaTable(addons, "EllesmereUIDamageMeters", "dm"); dm != nil {
 		out["damageMeter"] = map[string]any{
 			"window":       luaTable(dm, "windows", "1"),
