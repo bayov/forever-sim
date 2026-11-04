@@ -2756,7 +2756,7 @@
      "classes": [
       "Shaman"
      ],
-     "note": "Launch realm hotfixes set every rank's damage, replacing the sim's reading of the development notes. Lightning Bolt rank 10 deals 342 to 381 at 60 (the notes' 78% of the original gave 334 to 372), and ranks 1 to 3 a little more. Chain Lightning rank 4 deals 494 to 552 to its first target (485 to 539 from the notes' 145% of Lightning Bolt) and its ranks cost 245 / 360 / 425 / 495 mana. The top shock ranks barely move; lower ranks deal a few percent more.",
+     "note": "Launch realm hotfixes set every rank's damage, replacing the sim's reading of the development notes. Lightning Bolt rank 10 deals 342 to 381 at 60 (the notes' 78% of the original gave 334 to 372), and ranks 1 to 3 a little more. Chain Lightning rank 4 deals 494 to 552 to its first target (485 to 539 from the notes' 145% of Lightning Bolt) and its ranks cost 245 / 360 / 425 / 495 mana. The top shock ranks barely move; lower ranks deal a few percent more. At 180 s: Elemental 970.1 to 976.9, Elemental with Mana Tide 952.7 to 959.6; the Enhancement builds gain about 1 (their shocks).",
      "source": {
       "label": "wago.tools, launch realm hotfixes",
       "url": "https://wago.tools/hotfixes?product=wowf&search=113380"
@@ -2764,6 +2764,14 @@
      "commits": [
       "87922bb",
       "e24abed"
+     ],
+     "builds": [
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-imp-gw"
      ]
     },
     {
