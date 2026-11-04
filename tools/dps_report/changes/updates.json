@@ -3266,6 +3266,38 @@
      "commits": [
       "72c7d15"
      ]
+    },
+    {
+     "title": "Ret twist is the paladin's default build, in place of sub-Holy",
+     "kind": "method",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60_sub_holy"
+     ],
+     "moves": false,
+     "note": "With its gear trading hit for other stats it is now the paladin's highest build at every fight length.",
+     "commits": [
+      "b682e47"
+     ]
+    },
+    {
+     "title": "Survival hunter takes Rapid Killing in place of a point of Resourcefulness",
+     "kind": "talents",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__survival",
+      "hunter__survival-wolf",
+      "hunter__survival-tallstrider"
+     ],
+     "note": "One more Rapid Fire in a 5 minute fight; no change at 2 and 3 minutes.",
+     "commits": [
+      "b682e47"
+     ]
     }
    ],
    "internal": [
