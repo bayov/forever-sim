@@ -258,7 +258,6 @@
 		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
-		"power_word_fortitude",
 		"strength_of_earth_totem",
 		"sunder_ramp",
 		"totem_weapon_flametongue",
@@ -269,7 +268,6 @@
 		"arcane_brilliance",
 		"battle_shout",
 		"blessing_of_might",
-		"camp.first_aid_kit",
 		"camp.incense_candle",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
@@ -277,7 +275,6 @@
 		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
-		"power_word_fortitude",
 		"strength_of_earth_totem",
 		"sunder_ramp",
 		"totem_weapon_flametongue",
@@ -430,29 +427,6 @@
 		"mana_spring_totem",
 		"trueshot_aura"
 	],
-	"rogue__combat-daggers-humanoid": [
-		"arcane_brilliance",
-		"blessing_of_wisdom",
-		"divine_spirit",
-		"innervates",
-		"judgement_of_the_crusader",
-		"judgement_of_wisdom",
-		"mana_spring_totem",
-		"trueshot_aura"
-	],
-	"rogue__combat-daggers-humanoid+camps": [
-		"arcane_brilliance",
-		"blessing_of_wisdom",
-		"camp.faction_banner",
-		"camp.incense_candle",
-		"camp.mana_well",
-		"divine_spirit",
-		"innervates",
-		"judgement_of_the_crusader",
-		"judgement_of_wisdom",
-		"mana_spring_totem",
-		"trueshot_aura"
-	],
 	"rogue__seal-fate-daggers": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
@@ -476,29 +450,6 @@
 		"mana_spring_totem",
 		"trueshot_aura"
 	],
-	"rogue__seal-fate-daggers-humanoid": [
-		"arcane_brilliance",
-		"blessing_of_wisdom",
-		"divine_spirit",
-		"innervates",
-		"judgement_of_the_crusader",
-		"judgement_of_wisdom",
-		"mana_spring_totem",
-		"trueshot_aura"
-	],
-	"rogue__seal-fate-daggers-humanoid+camps": [
-		"arcane_brilliance",
-		"blessing_of_wisdom",
-		"camp.faction_banner",
-		"camp.incense_candle",
-		"camp.mana_well",
-		"divine_spirit",
-		"innervates",
-		"judgement_of_the_crusader",
-		"judgement_of_wisdom",
-		"mana_spring_totem",
-		"trueshot_aura"
-	],
 	"rogue__subtlety": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
@@ -510,29 +461,6 @@
 		"trueshot_aura"
 	],
 	"rogue__subtlety+camps": [
-		"arcane_brilliance",
-		"blessing_of_wisdom",
-		"camp.faction_banner",
-		"camp.incense_candle",
-		"camp.mana_well",
-		"divine_spirit",
-		"innervates",
-		"judgement_of_the_crusader",
-		"judgement_of_wisdom",
-		"mana_spring_totem",
-		"trueshot_aura"
-	],
-	"rogue__subtlety-humanoid": [
-		"arcane_brilliance",
-		"blessing_of_wisdom",
-		"divine_spirit",
-		"innervates",
-		"judgement_of_the_crusader",
-		"judgement_of_wisdom",
-		"mana_spring_totem",
-		"trueshot_aura"
-	],
-	"rogue__subtlety-humanoid+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
@@ -632,10 +560,12 @@
 	"warlock__affliction": [
 		"battle_shout",
 		"blessing_of_might",
+		"faerie_fire",
 		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"strength_of_earth_totem",
+		"sunder_ramp",
 		"totem_weapon_flametongue",
 		"totem_weapon_windfury",
 		"trueshot_aura"
@@ -645,10 +575,12 @@
 		"blessing_of_might",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
+		"faerie_fire",
 		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"strength_of_earth_totem",
+		"sunder_ramp",
 		"totem_weapon_flametongue",
 		"totem_weapon_windfury",
 		"trueshot_aura"
@@ -656,10 +588,12 @@
 	"warlock__affliction-duty-curse": [
 		"battle_shout",
 		"blessing_of_might",
+		"faerie_fire",
 		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"strength_of_earth_totem",
+		"sunder_ramp",
 		"totem_weapon_flametongue",
 		"totem_weapon_windfury",
 		"trueshot_aura"
@@ -669,10 +603,12 @@
 		"blessing_of_might",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
+		"faerie_fire",
 		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"strength_of_earth_totem",
+		"sunder_ramp",
 		"totem_weapon_flametongue",
 		"totem_weapon_windfury",
 		"trueshot_aura"
@@ -684,6 +620,7 @@
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"strength_of_earth_totem",
+		"sunder_ramp",
 		"totem_weapon_flametongue",
 		"totem_weapon_windfury",
 		"trueshot_aura"
@@ -697,6 +634,7 @@
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"strength_of_earth_totem",
+		"sunder_ramp",
 		"totem_weapon_flametongue",
 		"totem_weapon_windfury",
 		"trueshot_aura"
@@ -872,12 +810,14 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
+		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__arms+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
+		"camp.first_aid_kit",
 		"camp.incense_candle",
 		"camp.mana_well",
 		"divine_spirit",
@@ -886,6 +826,7 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
+		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__arms-duty-battle-shout": [
@@ -898,12 +839,14 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
+		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__arms-duty-battle-shout+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
+		"camp.first_aid_kit",
 		"camp.incense_candle",
 		"camp.mana_well",
 		"divine_spirit",
@@ -913,6 +856,7 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
+		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__arms-duty-sunder": [
@@ -924,12 +868,14 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
+		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__arms-duty-sunder+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
+		"camp.first_aid_kit",
 		"camp.incense_candle",
 		"camp.mana_well",
 		"divine_spirit",
@@ -938,6 +884,7 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
+		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__arms_dragonkin": [
@@ -1006,12 +953,14 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
+		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__fury-duty-battle-shout+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
+		"camp.first_aid_kit",
 		"camp.incense_candle",
 		"camp.mana_well",
 		"divine_spirit",
@@ -1021,6 +970,7 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
+		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__fury-duty-sunder": [
@@ -1032,12 +982,14 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
+		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__fury-duty-sunder+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
+		"camp.first_aid_kit",
 		"camp.incense_candle",
 		"camp.mana_well",
 		"divine_spirit",
@@ -1046,6 +998,7 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
+		"power_word_fortitude",
 		"trueshot_aura"
 	]
 }
