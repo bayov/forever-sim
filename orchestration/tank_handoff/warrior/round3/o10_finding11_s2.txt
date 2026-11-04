@@ -1,0 +1,11 @@
+A=F_balanced.json B=F_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord          317      750   433.0   22.2   -119.1      -75
+chromaggus       -1418    -1524  -105.8   10.6    -89.7       -8
+golemagg          2012     1963   -48.8    5.6   -104.0      -15
+magmadar          2524     2452   -72.0    4.3   -105.8      -13
+onyxia            1394     1459    65.2   12.2   -122.8      -20
+ragnaros        -12950   -13104  -154.7   30.1    -95.7       -4
+vaelastrasz       2240     2063  -176.4    5.0   -136.8      -26
+scoring_mean                       15.9    4.8
+exit 0

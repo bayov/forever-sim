@@ -1,0 +1,11 @@
+A=F_max_threat.json B=lb863_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3573     3561   -12.4    2.5     -0.8       11
+chromaggus        3257     3252    -5.8    2.7     -1.5        3
+golemagg          3740     3737    -3.5    1.2     -0.2        3
+magmadar          3828     3826    -2.0    1.1     -0.8        0
+onyxia            3806     3800    -5.9    2.2      0.2        4
+ragnaros          2005     1980   -25.0   10.6      0.1       24
+vaelastrasz       3969     3972     3.1    2.6      2.7        6
+scoring_mean                       -4.4    0.9
+exit 0

@@ -210,6 +210,60 @@ Fury leaves no debuff, and the raid's Judgements are other paladins'.
 
 ## Presets (step 6)
 
+The presets now (talents, race and rotation unchanged since the first round):
+
+| Preset | Weight | Race | Talents | Rotation | Request, APL (gear set if not the shared one) |
+|---|---|---|---|---|---|
+| Max threat | 1/3 | Undead | `05005-25300102413001531-5023` | the template's defaults | `paladin_protection_max_threat.json`, `level60_max_threat.apl.json`, `level60_phase1_synthetic_max_threat.gear.json` |
+| Balanced (default) | 1 | Undead | `04-25300102513501531-5023` | the template's defaults | `paladin_protection_balanced.json`, `level60_balanced.apl.json` |
+| Max survival | 3 | Undead | `04-25300102513501531-5023` | the template's defaults | `paladin_protection_max_survival.json`, `level60_max_survival.apl.json` |
+
+Enchants since round 3: wrist Superior Deflection 1248665, shield Lesser Block 863, cloak Agility 1219587,
+boots Greater Stamina 929 (Max threat: Greater Agility 1887).
+
+**Round 3 (2026-11-04, tank-paladin-3, on master a096b3e: mana-gain threat without the threat multiplier,
+tank_mechanics-20261104-12; disjoint tank-tool seeds, tank_rotations-20261104-13).** The same search as round 2
+(rotopt on the six scoring encounters, 1,000 iterations a candidate, 3,000 to confirm, `-freeze bulwarkAt` at
+10), plus the enchant A/Bs round 2 skipped (tank_fairness-20261104-8, tank_gear-20261104-3 / -7). Every choice
+resting on a paired difference was checked on a second, disjoint seed (`-seed 2`); a change is taken only over
+twice its paired error on both. The raw output, scripts and exact commands are in
+`orchestration/tank_handoff/paladin/round3/` (`ab_summary.txt` has every A/B).
+
+- **Shield** (round 2's 929 is gone from the database; 1886 Greater Stamina +9 is the start). Paired, 3,000, B
+  minus 1886, seed 1 / seed 2, at w = 1/3, 1, 3: **Lesser Block 863** (+2% block, a world-drop formula)
+  +24.6 ± 1.8 / +20.2 ± 1.8, +35.3 ± 4.0 / +37.0 ± 4.4, +68.8 ± 11.7 / +76.8 ± 12.9: **taken at every
+  preset**. Lesser Protection 848 (+30 armor) -3.8 / -9.0 / -24.8 and Superior Spirit 1890 -4.8 / -11.0 / -31.1
+  lose. Not tried: Frost Resistance 926 (standards 36: no resistances), Off-Hand Wisdom 1219579 (held-in-off-hand
+  items only), Law of Nature 7603 (Season of Discovery), Stamina +5 852 (below 1886).
+- **Wrist: Superior Deflection 1248665 against Greater Stamina 1886**: +10.5 ± 2.1 / +4.8 ± 2.0, +20.8 ± 4.6 /
+  +17.6 ± 4.6, +64.2 ± 13.3 / +59.8 ± 13.4: **taken at every preset**, as the warrior did.
+- **Cloak: Superior Defense 1889 against Agility 1219587**: -3.1 ± 1.2 / -4.7 ± 1.3, -2.1 ± 2.7 / +0.2 ± 2.5,
+  -0.2 ± 8.0 / +8.6 ± 7.3; on the new wrist and shield -4.3 / -6.2 / -14.8 (seed 1). **Agility stays** at every
+  preset.
+- **Boots: Greater Agility 1887 against Greater Stamina 929** (on the new wrist and shield): +7.5 ± 1.5 / +4.4 ±
+  1.4 at w = 1/3, +3.5 ± 3.5 / -1.2 ± 3.4 at w = 1, +0.9 ± 10.3 / -5.9 ± 9.9 at w = 3. **Taken at Max threat
+  only**; Agility +5 (904) ties. So Max threat has its own UI gear set
+  (`level60_phase1_synthetic_max_threat.gear.json`, the same but for the boots); each preset's gear equals its
+  request.
+- **Gear rows.** Only enchants moved; `python3 tools/audit/tank_gear/paladin.py` still passes (Stamina 32.6
+  against 32.4 ± 1.5, set total 841.8 against 844.1).
+- **Talents.** The search at each weight on the new enchants again found only mana tie-breaks
+  (`02-25300102513501531-50232`, `03-25300102513501531-50231`), -2 to -23 paired on both seeds: the strings stay.
+  Max threat's build at w = 1 is +11.9 ± 6.0 (seed 1) / +1.4 ± 5.7 (seed 2): a tie, so Balanced keeps its own.
+- **Rotation.** The knob search kept every default at all three weights.
+- **Races** (paired, final build): Undead leads at w = 1 (Night Elf -22.0 ± 7.1) and w = 3 (-92.6 ± 19.6); at
+  Max threat Night Elf ties (-1.8 ± 4.1 / +2.4 ± 3.9), so Undead stays.
+- **Templar's Bulwark at 13 s minus 10 s** (final build, paired, seed 1 / seed 2): on the six +15.6 / +18.9,
+  +51.4 / +50.4, +154.2 / +151.1, all of it Broodlord (+107 / +322 / +964 on him alone); on the five without him
+  -2.6 / -1.2, -2.6 / -6.9, -7.8 / -20.8. **10 s stays**: a call (below).
+- **Max survival is still Balanced's build**: searched at w = 3 it lands on the same talents, rotation, race and
+  enchants, so the two requests are byte-identical. Max survival keeps its own files, as in round 2; a call.
+- **Before and after** (own weight, six-boss mean, 10,000 iterations, seed 1; "before" is the requests at
+  a096b3e with the 1886 shield): Max threat 2756.7 ± 2.1 → **2793.7 ± 2.1**, Balanced 2362.2 ± 3.7 → **2415.0 ±
+  3.9**, Max survival 1317.3 ± 9.8 → **1445.2 ± 10.5**. Each preset at each weight (3,000, seed 1): Max threat's
+  build 2800.7 / 2430.2 / 1320.2, Balanced's (and Max survival's) 2741.7 / 2418.3 / 1449.0 at w = 1/3, 1, 3:
+  each preset wins its own weight, Balanced over Max threat at w = 1 inside the noise.
+
 **Round 2 (2026-11-04, tank-paladin, on the engine of 5668ea5: the tank faces the boss, the logs' swing gap with
 parryHaste off, health-blind survival cooldowns, Elixir of the Phalanx and Greater Fortitude on every tank).**
 Before the searches: Reckoning takes spell crits (tank_mechanics-20261104-9), the trinket line is first
@@ -246,12 +300,6 @@ Seal of Fury, Devotion Aura, Righteous Fury, Engineering and Blacksmithing), 600
 to confirm, and 20,000 paired iterations where the confirms were inside the noise. Everything below is on the
 merged code (the healer merge and `claude/clever-galileo-qim1ee`, 2026-11-04); the pre-merge bests re-evaluated
 at 3,000 within 10 of their old scores (Human Balanced 2432.0 to 2422.5, Undead 2544.2 to 2543.7).
-
-| Preset | Weight | Race | Talents | Rotation | Request, APL |
-|---|---|---|---|---|---|
-| Max threat | 1/3 | Undead | `05005-25300102413001531-5023` | the template's defaults | `paladin_protection_max_threat.json`, `level60_max_threat.apl.json` |
-| Balanced (default) | 1 | Undead | `04-25300102513501531-5023` | the template's defaults | `paladin_protection_balanced.json`, `level60_balanced.apl.json` |
-| Max survival | 3 | Undead | `04-25300102513501531-5023` | the template's defaults | `paladin_protection_max_survival.json`, `level60_max_survival.apl.json` |
 
 - **Talents.** Balanced's search (from the pre-merge best, Undead) took three rounds to
   `03-15310102513501531-50231` (Divine Strength 5 to 4, Anticipation back, Sanctified Judgement +1, Divine
@@ -299,46 +347,50 @@ at 3,000 within 10 of their old scores (Human Balanced 2432.0 to 2422.5, Undead 
 
 ## Numbers (step 7)
 
-`tools/tankbench -iters 1000 -encounter tools/encounters/<e>.json` for the three requests on all seven
-Anniversary encounters (round 2, 2026-11-04; the rows of `orchestration/audit/ref/tank_bench/summary.tsv`).
-Healing needed is at 5% deaths, in HPS; the three scores are the objective at w = 1/3, 1 and 3; the mean is over
-the six scoring encounters (Ragnaros is reported, not scored).
+`tankbench -iters 3000 -seed 1` for the three requests on all seven Anniversary encounters (round 3,
+2026-11-04; `orchestration/tank_handoff/paladin/round3/matrix_3k_seed1.txt`; the 1,000-iteration rows of
+`orchestration/audit/ref/tank_bench/summary.tsv` are the same requests). Healing needed is at 5% deaths, in HPS;
+the three scores are the objective at w = 1/3, 1 and 3; the mean is over the six scoring encounters (Ragnaros
+is reported, not scored). The six-boss means carry about ± 4 / 7 / 19 at w = 1/3 / 1 / 3.
 
-| Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
-|---|---|---|---|---|---|---|---|---|
-| Max threat | 1,334 | 589 | 1,482 | 320 | 238 | **2,761** | 2,356 | 1,140 |
-| Balanced | 1,302 | 576 | 1,446 | 301 | 208 | 2,718 | **2,374** | 1,340 |
-| Max survival | 1,302 | 576 | 1,446 | 301 | 208 | 2,718 | 2,374 | **1,340** |
+| Preset | TPS | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|---|
+| Max threat | 1,342 | 1,493 | 304 | 221 | **2,801** | 2,430 | 1,320 |
+| Balanced | 1,306 | 1,452 | 288 | 197 | 2,742 | **2,418** | 1,449 |
+| Max survival | 1,306 | 1,452 | 288 | 197 | 2,742 | 2,418 | **1,449** |
 
-Before round 2 (the master bench of 23b2ec2, the same requests before this round's changes): 2,786 / 2,411 /
-1,422 at each preset's own weight.
+Before round 3 (the requests at a096b3e, with the 1886 shield; 10,000 iterations, seed 1): 2,757 / 2,362 / 1,317
+at each preset's own weight; after, on the same count and seed, 2,794 / 2,415 / 1,445. Round 2's own bench
+(1,000 iterations, before the mana-threat fix): 2,785 / 2,398 / 1,363; Max survival is 1,337 ± 14 at 3,000
+(tank_fairness-20261104-9).
 
 Per encounter (Max survival is Balanced's build, so its rows equal Balanced's and are left out):
 
-| Encounter | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Magmadar | Max threat | 1321 | 584 | 1442 | 163 | 30 | 0.0% | 2848 | 2779 | 2570 |
-| Magmadar | Balanced | 1285 | 569 | 1402 | 150 | 14 | 0.0% | 2788 | 2754 | 2653 |
-| Golemagg | Max threat | 1294 | 572 | 1409 | 201 | 84 | 0.0% | 2720 | 2526 | 1943 |
-| Golemagg | Balanced | 1265 | 560 | 1377 | 186 | 62 | 0.0% | 2682 | 2537 | 2105 |
-| Onyxia | Max threat | 1388 | 614 | 1545 | 178 | 34 | 0.0% | 3032 | 2914 | 2562 |
-| Onyxia | Balanced | 1355 | 600 | 1512 | 165 | 13 | 0.0% | 3000 | 2955 | 2817 |
-| Broodlord | Max threat | 1316 | 581 | 1448 | 321 | 364 | 0.0% | 2532 | 1804 | -379 |
-| Broodlord | Balanced | 1283 | 567 | 1411 | 302 | 307 | 0.0% | 2514 | 1901 | 60 |
-| Vaelastrasz | Max threat | 1402 | 618 | 1669 | 626 | 435 | 0.0% | 3155 | 2790 | 1694 |
-| Vaelastrasz | Balanced | 1369 | 604 | 1625 | 604 | 403 | 0.0% | 3081 | 2742 | 1727 |
-| Chromaggus | Max threat | 1283 | 567 | 1379 | 429 | 484 | 0.0% | 2279 | 1321 | -1552 |
-| Chromaggus | Balanced | 1256 | 556 | 1346 | 400 | 451 | 0.0% | 2246 | 1353 | -1325 |
-| Ragnaros | Max threat | 1162 | 518 | 1259 | 953 | 1609 | 0.0% | 825 | -2562 | -12722 |
-| Ragnaros | Balanced | 1132 | 506 | 1224 | 948 | 1626 | 0.0% | 737 | -2686 | -12957 |
+| Encounter | Preset | TPS | DTPS | SafeDPS | Healing needed | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|---|---|
+| Magmadar | Max threat | 1327 | 150 | 1449 | 19 | 2877 | 2833 | 2703 |
+| Magmadar | Balanced | 1292 | 139 | 1411 | 3 | 2819 | 2813 | 2795 |
+| Golemagg | Max threat | 1306 | 186 | 1422 | 71 | 2762 | 2596 | 2100 |
+| Golemagg | Balanced | 1274 | 173 | 1387 | 52 | 2712 | 2590 | 2224 |
+| Onyxia | Max threat | 1397 | 166 | 1558 | 21 | 3078 | 3004 | 2783 |
+| Onyxia | Balanced | 1360 | 155 | 1515 | 10 | 3013 | 2978 | 2875 |
+| Broodlord | Max threat | 1322 | 304 | 1457 | 339 | 2576 | 1897 | -138 |
+| Broodlord | Balanced | 1286 | 288 | 1417 | 302 | 2532 | 1928 | 116 |
+| Vaelastrasz | Max threat | 1405 | 613 | 1678 | 417 | 3181 | 2830 | 1779 |
+| Vaelastrasz | Balanced | 1365 | 592 | 1626 | 387 | 3089 | 2764 | 1789 |
+| Chromaggus | Max threat | 1294 | 405 | 1392 | 459 | 2330 | 1421 | -1306 |
+| Chromaggus | Balanced | 1261 | 383 | 1354 | 428 | 2285 | 1437 | -1105 |
+| Ragnaros | Max threat | 1172 | 943 | 1269 | 1667 | 784 | -2725 | -13251 |
+| Ragnaros | Balanced | 1142 | 937 | 1234 | 1598 | 785 | -2579 | -12672 |
 
-Max threat buys 37 SafeDPS (32 TPS) for 30 more healing needed: Improved Seals over Anticipation's 20 Defense.
+Max threat buys about 41 SafeDPS (36 TPS) for 24 more healing needed: Improved Seals over
+Anticipation's 20 Defense, and Greater Agility on the boots.
 
 **Next to the other tanks** (Balanced preset, mean of the six, 1,000 iterations, from their docs on this branch):
 
 | Tank | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|
-| Protection paladin (round 2) | 1,446 | 301 | 208 | 2,718 | 2,374 | 1,340 |
+| Protection paladin (round 3, 3,000 iterations) | 1,452 | 288 | 197 | 2,742 | 2,418 | 1,449 |
 | Feral tank (`docs/tank_druid.md`) | 1,589 | 576 | 484 | 2,732 | 1,839 | -839 |
 | Warden shaman (`docs/tank_shaman.md`) | 1,542 | 792 | 905 | 2,232 | 530 | -4,579 |
 | Protection warrior | no committed numbers yet | | | | | |
@@ -370,7 +422,7 @@ encounters, unless it says otherwise).
 5. **Templar's Bulwark is Magic** (dispellable). The client carries it since 70753 (SpellCategories DispelType 1
    on 1311015; round 70753's `paladin.md` and foreverchanges.pro list it as notes-only). **Default: as the client
    says, and it moves nothing**: no scoring boss dispels, and the sim's auras have no dispel type to set. The
-   round file's note could be corrected to "client and notes".
+   round file now says "N, C" (tank_mechanics-20261104-13).
 6. **Undead over Human and Dwarf.** Undead leads at every weight, through Touch of the Grave modelled at its cap
    (5% of max health every 15 sec at the most, "up to" with no published amount; Presets, above). **Default:
    Undead** (+121 over Human at Balanced, +140 over Dwarf, +19 over Night Elf; +86 / +105 / +3 at Max threat;
@@ -378,11 +430,11 @@ encounters, unless it says otherwise).
    Max survival perhaps Tauren's 5% health) may be the pick: Undead's base stats are below Human's but for Spirit.
    Not measured with a smaller drain (it needs a sim change to the shared racial). An in-game log
    of the drain's amount would settle it.
-7. **Templar's Bulwark at 13 sec instead of 10** (tank_rotations-20261104-3). 13 s wins on all six scoring bosses
-   (+16.5 ± 1.4 / +49.3 ± 3.9 / +147.9 ± 11.7, Max threat / Balanced / Max survival, paired, 3,000) but loses
-   on the five without Broodlord (-1.1 ± 1.1 / -6.2 ± 3.0 / -18.5 ± 9.0). **Default: 10 s**, since the gain
-   is Broodlord's first-ability timers, which his file calls probably wrong. Take 13 s if those timers are
-   confirmed (a log of the pull).
+7. **Templar's Bulwark at 13 sec instead of 10** (tank_rotations-20261104-3). Round 3, final build, paired,
+   3,000, seed 1 / seed 2: 13 s wins on the six scoring bosses (+15.6 / +18.9, +51.4 / +50.4, +154.2 / +151.1 at
+   Max threat / Balanced / Max survival) but loses on the five without Broodlord (-2.6 / -1.2, -2.6 / -6.9,
+   -7.8 / -20.8). **Default: 10 s**, since the gain is Broodlord's first-ability timers, which his file calls
+   probably wrong. Take 13 s if those timers are confirmed (a log of the pull).
 8. **Templar's Bulwark on a timer every pull** (the core worker, tank_fairness-20261104-2 (b)). It absorbs 100%
    of max health for 8 sec once a fight, worth about 38 DTPS on a 53 sec encounter (Magmadar / Golemagg: +38 /
    +31 DTPS with it off). **Default: in**, at 10 s. The alternative: a scored preset keeps no emergency button
@@ -396,3 +448,11 @@ encounters, unless it says otherwise).
     item (BayovCore ItemsSeen, client 70450, `assets/db_inputs/forever_seen_in_game.json:79`); Wowhead lists no
     stats for it and nothing newer exists. **Default: +30.** A look at its tooltip on the current build would
     confirm it (+14 / +13 DTPS on Magmadar / Golemagg with it off).
+11. **Lesser Block on the shield** (round 3). Enchant 863 (+2% block, a world-drop formula; Forever lists "Block %
+    2 added") beats Greater Stamina 1886 by +25 / +35 / +69 (Max threat / Balanced / Max survival, paired,
+    confirmed on a second seed), so all three paladin presets take it. **Default: taken**, as the A/B says. The
+    warrior and the Warden still carry 1886 and were not tested with 863: until their workers A/B it, the
+    paladin has a shield enchant the other shield tanks don't, a cross-class fairness gap.
+12. **Max survival as its own preset.** Searched at w = 3 again in round 3, its best is Balanced's build in every
+    part, enchants included, and the two requests are byte-identical. **Default: kept as its own files**, as in
+    round 2 (tank_fairness-20261104-4: not forced apart). The alternative: drop it, or point it at Balanced's.

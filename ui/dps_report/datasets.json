@@ -523,6 +523,15 @@
   },
   "mode": "heal"
  },
+ "heal_assumptions": {
+  "title": "Healing assumptions",
+  "description": "Values Forever hasn't confirmed that the healing presets depend on, by class, in plain words, with the assumptions dataset's shape: a question-style label, a short answer, a description (what the alternative would cost, measured when the healers were tuned) and its source, the healing presets it touches, and its one setting, the one the presets use. None is simmed.",
+  "updated": {
+   "at": "2026-11-04T18:02:14.569Z",
+   "by": "Claude (forever-sim)"
+  },
+  "mode": "heal"
+ },
  "heal_icons": {
   "title": "Healing icons",
   "description": "The icons the healing pages show that the common icons datasets lack, as data URLs (\":l\" keys are the large versions).",

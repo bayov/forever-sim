@@ -1,0 +1,24 @@
+tank encounters (their index takes the fight length's place, scored as their mean): tools/encounters/magmadar.json,tools/encounters/golemagg.json,tools/encounters/onyxia.json,tools/encounters/broodlord.json,tools/encounters/vaelastrasz.json,tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 0.3333333333333333 x 900 x healing needed at 5% deaths / 258, in raid DPS
+start 04-05050015-250330020330001351: 3694.8(12.5)
+  improvedHeroicStrike+1 deflection-1: 3698.1(12.4) (+3.2, noise 5.6)
+  anticipation-1 improvedDisarm+1: 3696.9(12.5) (+2.1, noise 4.3)
+  anticipation-1 improvedShieldWall+1: 3696.9(12.5) (+2.1, noise 4.3)
+  anticipation-1 lastStand+1: 3696.9(12.5) (+2.1, noise 4.3)
+  anticipation-1 improvedShieldBash+1: 3696.9(12.5) (+2.1, noise 4.3)
+  ironWill+1 anticipation-1: 3696.9(12.5) (+2.1, noise 4.3)
+  anticipation-1 vanguard+1: 3696.9(12.5) (+2.1, noise 4.3)
+  anticipation-1 improvedThunderClap+1: 3696.9(12.5) (+2.1, noise 4.3)
+  refined at 3000 iterations, current 3696.9(7.3)
+  anticipation-1 improvedThunderClap+1: 3691.5(7.2) (-5.5, noise 2.2)
+  anticipation-1 improvedDisarm+1: 3691.5(7.2) (-5.5, noise 2.2)
+  anticipation-1 improvedShieldWall+1: 3691.5(7.2) (-5.5, noise 2.2)
+  anticipation-1 lastStand+1: 3691.5(7.2) (-5.5, noise 2.2)
+  anticipation-1 improvedShieldBash+1: 3691.5(7.2) (-5.5, noise 2.2)
+  ironWill+1 anticipation-1: 3691.5(7.2) (-5.5, noise 2.2)
+  anticipation-1 vanguard+1: 3691.5(7.2) (-5.5, noise 2.2)
+  improvedHeroicStrike+1 deflection-1: 3683.6(7.2) (-13.3, noise 3.1)
+[0 1 2 3 4 5]s: 3696.9(7.3)
+  talents 04-05050015-250330020330001351
+  sim runs 1320
+exit 0

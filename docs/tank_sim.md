@@ -484,7 +484,8 @@ falls 15 to 20% for the three tanks that gained the two elixirs.
 
 The paladin passes the bear on Balanced, as tank_mechanics-20261104-1 predicted. Its lower damage taken is
 real Forever behaviour and the synthetic set's block value, not a bug (tank_fairness-20261104-2). At the
-Balanced weight, the bear's Max survival preset (1185) now beats its Balanced preset (1114).
+Balanced weight, the bear's Max survival preset (1185) then beat its Balanced preset (1114); the bear's round 2
+re-search (f0ff977) fixed that: each bear preset now wins its own weight (`docs/tank_druid.md`, Presets).
 
 ## Findings so far
 
@@ -570,9 +571,10 @@ Tear).
 - **The bench's bear** (then `druid_bear.json`; since 2026-11-04 the three presets
   `druid_bear_{max_threat,balanced,max_survival}.json` on the bear's own synthetic set, `docs/tank_druid.md`) wore the Feral cat's synthetic set, so 507 Agility, 35% dodge and 8,900
   health; a bear set is the gear step's. It keeps its own Demoralizing Roar up (`tankscore.OwnDebuffs` drops the
-  raid's Roar and Shout), then Primal Bite, Lacerate to 5 stacks and Maul at 30 Rage. Not in its rotation yet:
-  Enrage (its armor cut makes it a pull-time choice), Frenzied Regeneration (an emergency button, like Shield Wall),
-  Swipe (single target).
+  raid's Roar and Shout), then Primal Bite, Lacerate to 5 stacks and Maul at 30 Rage. That was the 2026-11-03
+  rotation; the presets since add Enrage in the fight under a Rage threshold, Barkskin on a timer, Frenzied
+  Regeneration at 100 Rage (Balanced and Max survival) and Maul at 20 or 10 Rage (`docs/tank_druid.md`,
+  Presets). Swipe stays out (single target).
 - **On the seven Anniversary bosses** it makes about 900 TPS (the paladin's level, the warrior's 1,150), takes 5 to
   15% more damage than the plate tanks (no block or parry, 15% crushing blows) and the biggest hits (2,000 to 4,000),
   and has the lowest death floor at Broodlord (0.9%, 8,900 health):

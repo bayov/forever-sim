@@ -32,7 +32,7 @@
                 },
                 {
                   "id": 990806,
-                  "enchant": 1886
+                  "enchant": 1248665
                 },
                 {
                   "id": 990807,
@@ -73,7 +73,7 @@
             },
             "consumes": {
               "flask": "FlaskOfNaturalAccuracy",
-              "food": "FoodSmokedDesertDumpling",
+              "food": "FoodDirgesKickChimaerokChops",
               "agilityElixir": "ElixirOfTheMongoose",
               "armorElixir": "ElixirOfThePhalanx",
               "healthElixir": "ElixirOfGreaterFortitude",

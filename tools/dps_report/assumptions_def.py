@@ -11,6 +11,7 @@ Each assumption is written for a player who hasn't read our notes:
   knob reads, edit names a request edit run_assumptions.py applies. The page tags each setting Low / Expected / High
   from its id.
 - warn (optional): {build: note}, a warning icon with that note on the build's non-default cells.
+HEAL, at the end, is the Healing page's list: one-value rows only, the same rules, builds naming the Healing presets.
 status 'pending' = listed but not simulated yet; 'inert' = no longer applies.
 """
 import json, os
@@ -440,5 +441,60 @@ A = [
       src='Forever client 70338, builds 70009 and 70291.',
       builds=['druid__balance-wrath', 'druid__balance'],
       settings=[S('expected', 'Halfway (+8.5%)', 'Wrath rank 8 ×1.085', 'Halfway to the level 30 rank.')],
+      default='expected', expected='expected'),
+]
+
+# The Healing page's assumptions (tankheal.py writes them as heal_assumptions): one-value rows only, written the same
+# way, with builds naming the Healing presets (tools/healbench/req). Nothing here is simmed: an alternative's cost is
+# in desc, measured when the healers were tuned.
+HEAL = [
+ dict(key='heal_druid_swiftmend_hot', cls='Druid', group='swiftmend', label='Does Swiftmend leave the HoT up?',
+      short="Yes. The Rejuvenation or Regrowth it uses keeps ticking, as Forever's notes say.",
+      desc="The game's tooltip still says Swiftmend consumes it; the druid's rotations were retuned around it staying (the tank healer went from 1.07× to 1.14× with that round of fixes). To check in game, Swiftmend a target with Rejuvenation and see if Rejuvenation stays.",
+      src="Forever's development notes and news (Swiftmend no longer consumes the effect) over the tooltip in build 70755.",
+      builds=['druid__restoration', 'druid__restoration_raid'],
+      settings=[S('expected', 'The HoT stays', 'Swiftmend heals and the HoT ticks on', "Forever's notes, which come before the tooltip.")],
+      default='expected', expected='expected'),
+ dict(key='heal_druid_tank_regrowth', cls='Druid', group='druid_tank', label="Is Regrowth the tank healer's main heal?",
+      short='Nearly. It casts Swiftmend, then Regrowth, whenever the tank is under 85% health.',
+      desc="Healing Touch fills in behind them. Saving the two for emergencies, under 40% health, scored 1.09× against 1.14× when measured.",
+      src='Tuned on the seven bosses, lines from 40% to 95% health tried.',
+      builds=['druid__restoration'],
+      settings=[S('expected', 'Under 85% health', 'Swiftmend, then Regrowth, at the tank under 85% health', 'The best line tried.')],
+      default='expected', expected='expected'),
+ dict(key='heal_shaman_riptide', cls='Shaman', group='riptide', label='Which Riptide does Forever have?',
+      short="As Forever's notes say: ticks only, no instant heal, a 12 sec cooldown, 40% less mana.",
+      desc="The game's data still has the older one, with an instant heal, a 6 sec cooldown and 245, 300 or 385 mana. With it the shaman would score about 0.07 higher as a raid healer and 0.035 higher as a tank healer.",
+      src="Forever's development notes (Riptide; 147, 180 and 231 mana by rank) over the game's data in build 70753.",
+      builds=['shaman__restoration', 'shaman__restoration_raid'],
+      settings=[S('expected', "The notes' Riptide", 'ticks only, 12 sec cooldown, 147, 180 or 231 mana', "Forever's notes, which come before the game's data.")],
+      default='expected', expected='expected'),
+ dict(key='heal_shaman_tank_lhw', cls='Shaman', group='shaman_tank', label='Does the tank healer pre-cast Lesser Healing Wave?',
+      short='Yes. It casts it at the tank whenever its mana is at least 50%.',
+      desc="It doesn't wait for the tank to be hurt, as a player casts before a big hit lands, and a cast that would mostly overheal is stopped. It adds about 0.019 to the tank healer's score.",
+      src='Tuned on the seven bosses.',
+      builds=['shaman__restoration'],
+      settings=[S('expected', 'On mana alone', 'Lesser Healing Wave at the tank whenever mana is at least 50%', 'A player pre-casting before a hit.')],
+      default='expected', expected='expected'),
+ dict(key='heal_paladin_oath_flat', cls='Paladin', group='oath', label="Does healing power raise Oath of Light's bonus?",
+      short='No. A flat bonus: 400 on Holy Light, 115 on Flash of Light, 230 on Holy Shock.',
+      desc="The bonus can crit. If healing power scaled it like the heal itself, the paladin would score about 0.01 lower over the bosses, and 0.053 lower on Onyxia at 300 sec.",
+      src="Forever's game data (Oath of Light, \"up to\" its amounts at 60).",
+      builds=['paladin__holy', 'paladin__holy_raid'],
+      settings=[S('expected', 'Flat', 'up to 400, 115 and 230 more healing, no healing power', "The tooltip's amounts.")],
+      default='expected', expected='expected'),
+ dict(key='heal_paladin_holy_power', cls='Paladin', group='holy_power', label="How big are Holy Power's crits at 5/5?",
+      short='A crit heals 225%: the usual 150%, times 1.5.',
+      desc="The tooltip says it raises the crit healing bonus by 50%, which could also mean 200% or 175%. Either would score up to about 0.025 lower (Onyxia at 300 sec), under 0.02 at the bosses' usual lengths.",
+      src="Forever's game data (Holy Power's effect, read as in the 1.12 and Burning Crusade servers).",
+      builds=['paladin__holy', 'paladin__holy_raid'],
+      settings=[S('expected', '225%', 'a 5/5 crit heals 150% × 1.5', "How the talent's effect works elsewhere.")],
+      default='expected', expected='expected'),
+ dict(key='heal_priest_disc_mana', cls='Priest', group='disc_tank', label='Does the Discipline tank healer save mana?',
+      short='No. It heals for the most, and runs out of mana on long fights.',
+      desc="It runs dry on Chromaggus at about 101 sec, and on Golemagg in a 300 sec fight. A mana plan that lasts the whole fight lowers its score by about 0.05.",
+      src='Tuned on the seven bosses; the mana plans tried all lost.',
+      builds=['priest__discipline'],
+      settings=[S('expected', 'Most healing', 'heals for the most, mana or not', 'It scores highest.')],
       default='expected', expected='expected'),
 ]

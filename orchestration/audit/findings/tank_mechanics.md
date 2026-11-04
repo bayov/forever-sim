@@ -14,6 +14,7 @@
 - How sure: sure the multiplier on mana has no source; unsure what the game does.
 - needs: orchestrator fix (or user ruling, to keep it as to-verify)
 - fixed: 2026-11-04, 49f0218 (+ re-bench c5200fc). Forever mana-gain threat is 0.5 a mana with no threat multiplier, as Classic and wowsims/forever (its mana.go books gain*ThreatPerManaGained unmultiplied); to-verify note in mana.go and standards 40 (keep unmultiplied unless a log shows otherwise). TestBearManaGainThreat fails with the old multiplier (107.5 vs 50 for 100 mana in Bear Form). The Rage rule's multiplier keeps its source: wowsims/forever 913a5bcf6's message, "Owner's in-game threat measurements: ... Rage gained is 5 threat per rage, times the unit's threat multiplier" (no log attached; c48ea6cea3 only moves the booking to the gain). Re-bench, 1k, own weight six-boss mean: bear 2837.3/1867.5/-750.2 -> 2808.5/1839.0/-775.0, paladin 2785.0/2397.7/1363.3 -> 2761.0/2373.7/1339.5, Warden 2292.3/547.8/-4356.7 -> 2272.2/529.5/-4367.5 (Max threat/Balanced/Max survival).
+- bear follow-up: 2026-11-04, ad93b95. With mana threat unmultiplied, Judgement of Wisdom is still worth 34 / 38 / 53 to the bear presets (Max threat / Balanced / Max survival, 3,000), and the pre-pull shift 25.6 / 25.5 / 22.0, all of it through JoW's mana (without JoW the shift changes nothing). Both stay; docs/tank_druid.md call 6.
 
 ### tank_mechanics-20261104-13: Stale source labels and comments after round 2
 - severity: low (docs and comments; no number moves)

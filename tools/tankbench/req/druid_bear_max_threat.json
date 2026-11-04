@@ -13,7 +13,7 @@
               "items": [
                 {
                   "id": 990801,
-                  "enchant": 1508
+                  "enchant": 1506
                 },
                 {
                   "id": 990802,
@@ -32,7 +32,7 @@
                 },
                 {
                   "id": 990806,
-                  "enchant": 1886
+                  "enchant": 1885
                 },
                 {
                   "id": 990807,
@@ -43,7 +43,7 @@
                 },
                 {
                   "id": 990809,
-                  "enchant": 1508
+                  "enchant": 1506
                 },
                 {
                   "id": 990810,
@@ -63,7 +63,7 @@
                 },
                 {
                   "id": 990813,
-                  "enchant": 2646
+                  "enchant": 1248668
                 },
                 {},
                 {
@@ -136,13 +136,13 @@
                         "op": "OpLt",
                         "rhs": {
                           "const": {
-                            "val": "60"
+                            "val": "70"
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Enrage in the fight under 60 Rage (off the GCD; 16% less armor from items for 10 sec)."
+                  "notes": "Enrage in the fight under 70 Rage (off the GCD; 16% less armor from items for 10 sec)."
                 },
                 {
                   "action": {
