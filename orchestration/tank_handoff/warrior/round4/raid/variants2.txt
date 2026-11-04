@@ -1,0 +1,10 @@
+# stacked: Zanza-slot choice + Rumsey Rum Black Label + Goblin Sapper Charge (APL: sapper after the trinkets), and leave-outs
+c_spirit zanzaBuff=SpiritOfZanza alcohol=AlcoholRumseyRumBlackLabel sapperExplosive=SapperGoblinSapper apl=10646@4
+c_roids zanzaBuff=ROIDS alcohol=AlcoholRumseyRumBlackLabel sapperExplosive=SapperGoblinSapper apl=10646@4
+c_scorpok zanzaBuff=GroundScorpokAssay alcohol=AlcoholRumseyRumBlackLabel sapperExplosive=SapperGoblinSapper apl=10646@4
+c_lung zanzaBuff=LungJuiceCocktail alcohol=AlcoholRumseyRumBlackLabel sapperExplosive=SapperGoblinSapper apl=10646@4
+c_nozanza alcohol=AlcoholRumseyRumBlackLabel sapperExplosive=SapperGoblinSapper apl=10646@4
+c_spirit_norum zanzaBuff=SpiritOfZanza sapperExplosive=SapperGoblinSapper apl=10646@4
+c_roids_norum zanzaBuff=ROIDS sapperExplosive=SapperGoblinSapper apl=10646@4
+c_spirit_nosap zanzaBuff=SpiritOfZanza alcohol=AlcoholRumseyRumBlackLabel
+c_roids_nosap zanzaBuff=ROIDS alcohol=AlcoholRumseyRumBlackLabel

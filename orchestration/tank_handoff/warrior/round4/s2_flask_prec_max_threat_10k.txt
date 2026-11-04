@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=flask_prec_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3560     4188   628.7   10.7    349.3       70
+chromaggus        3266     3950   683.0    6.4    349.8       17
+golemagg          3738     4396   658.2    7.0    336.5       13
+magmadar          3812     4475   663.8    7.3    340.1       14
+onyxia            3777     4440   663.1    9.3    350.2       22
+ragnaros          1978     2563   585.7   20.8    347.2      103
+vaelastrasz       3973     4651   678.4    9.6    344.9       27
+scoring_mean                      662.5    3.5

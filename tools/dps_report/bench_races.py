@@ -90,7 +90,7 @@ class Bench:
         with tempfile.TemporaryDirectory() as d:
             p, out = os.path.join(d, stem + '.json'), os.path.join(d, 'v.jsonl')
             json.dump(req, open(p, 'w'))
-            r = subprocess.run([self.exe, '-iters', str(count), '-seed', str(seed), '-labeled', '-vectors', out] + args + [p],
+            r = subprocess.run([self.exe, '-iters', str(count), '-first-seed' if self.mode == 'tank' else '-seed', str(seed), '-labeled', '-vectors', out] + args + [p],
                                cwd=self.tree, env=env, capture_output=True, text=True)
             if r.returncode or not os.path.exists(out):
                 raise RuntimeError(f'{self.exe} {stem} {race} {off}: {r.stderr[-1500:]}')

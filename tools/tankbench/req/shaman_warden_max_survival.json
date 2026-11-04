@@ -5,10 +5,10 @@
     "players": [
      {
       "inFrontOfTarget": true,
-      "race": "RaceTauren",
+      "race": "RaceUndead",
       "class": "ClassShaman",
       "level": 60,
-      "talentsString": "05050003-050032113541012201-050002",
+      "talentsString": "05050003-050230113541012201-050002",
       "equipment": {
        "items": [
         {
@@ -32,7 +32,7 @@
         },
         {
          "id": 999206,
-         "enchant": 1886
+         "enchant": 1248665
         },
         {
          "id": 999207,
@@ -67,7 +67,7 @@
         },
         {
          "id": 999214,
-         "enchant": 929
+         "enchant": 1886
         },
         {
          "id": 272432
@@ -76,14 +76,15 @@
       },
       "consumes": {
        "flask": "FlaskOfTheTitans",
-       "food": "FoodSmokedDesertDumpling",
+       "food": "FoodDirgesKickChimaerokChops",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
        "healthElixir": "ElixirOfGreaterFortitude",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
        "defaultPotion": "MajorManaPotion",
-       "dragonBreathChili": true
+       "dragonBreathChili": true,
+       "sapperExplosive": "SapperGoblinSapper"
       },
       "wardenShaman": {
        "options": {
@@ -112,7 +113,7 @@
          },
          "doAtValue": {
           "const": {
-           "val": "-3s"
+           "val": "-4.5s"
           }
          }
         },
@@ -121,6 +122,20 @@
           "castSpell": {
            "spellId": {
             "spellId": 10408
+           }
+          }
+         },
+         "doAtValue": {
+          "const": {
+           "val": "-3s"
+          }
+         }
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10438
            }
           }
          },
@@ -186,6 +201,70 @@
         },
         {
          "action": {
+          "castSpell": {
+           "spellId": {
+            "itemId": 999216
+           }
+          },
+          "condition": {
+           "or": {
+            "vals": [
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "25s"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "spellUsesLostByDelay": {
+                 "delay": {
+                  "math": {
+                   "lhs": {
+                    "remainingTime": {}
+                   },
+                   "op": "OpSub",
+                   "rhs": {
+                    "const": {
+                     "val": "25s"
+                    }
+                   }
+                  }
+                 },
+                 "minTimeLeft": {
+                  "const": {
+                   "val": "20s"
+                  }
+                 },
+                 "spellId": {
+                  "itemId": 999216
+                 }
+                }
+               },
+               "op": "OpGt",
+               "rhs": {
+                "const": {
+                 "val": "0"
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "The defensive on-use trinket, held for the last 25 sec unless the wait costs a use. Without it ignore the warning on this line."
+        },
+        {
+         "action": {
           "autocastOtherCooldowns": {}
          },
          "notes": "Rage of the Farseer, racials, trinkets on cooldown."
@@ -209,6 +288,105 @@
           }
          },
          "notes": "Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10438
+           }
+          },
+          "condition": {
+           "and": {
+            "vals": [
+             {
+              "cmp": {
+               "lhs": {
+                "totemRemainingTime": {
+                 "totemType": "Fire"
+                }
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "0s"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpGe",
+               "rhs": {
+                "const": {
+                 "val": "10s"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "60s"
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "The fire totem whenever it's down in the last 60 sec: earlier its mana is Earth Shock's."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 408345
+           }
+          },
+          "condition": {
+           "and": {
+            "vals": [
+             {
+              "cmp": {
+               "lhs": {
+                "currentManaPercent": {}
+               },
+               "op": "OpGe",
+               "rhs": {
+                "const": {
+                 "val": "0.4"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "60s"
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "Fire Nova around the fire totem in the last 60 sec: our own threat, with mana we'd otherwise end on."
         }
        ]
       }

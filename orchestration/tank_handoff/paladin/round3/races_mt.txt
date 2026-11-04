@@ -1,0 +1,10 @@
+Undead [0 1 2 3 4 5]s: 2793.7(2.1) mana 2471(2) tto 358s
+NightElf [0 1 2 3 4 5]s: 2795.6(2.1) mana 2502(2) tto 359s
+Human [0 1 2 3 4 5]s: 2695.0(2.1) mana 2508(2) tto 364s
+Dwarf [0 1 2 3 4 5]s: 2677.8(2.1) mana 2490(2) tto 363s
+Gnome [0 1 2 3 4 5]s: 2695.4(2.1) mana 2806(2) tto 463s
+Orc [0 1 2 3 4 5]s: 2722.9(2.1) mana 2429(2) tto 343s
+Tauren [0 1 2 3 4 5]s: 2689.2(2.1) mana 2391(2) tto 334s
+Troll [0 1 2 3 4 5]s: 2725.3(2.1) mana 2425(2) tto 347s
+SkyborneHighOrder [0 1 2 3 4 5]s: 2699.3(2.1) mana 2549(2) tto 391s
+SkyborneWindshaper [0 1 2 3 4 5]s: 2699.3(2.1) mana 2549(2) tto 391s

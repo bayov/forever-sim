@@ -1,0 +1,472 @@
+/* The spells frame (frames/playerspells*.ts): Forever's PlayerSpellsFrame with its Spellbook and
+   Talents. Sizes are FrameXML's, in UI units. */
+
+.bz-ps-content {
+	position: absolute;
+	inset: 0;
+}
+
+/* MaximizeMinimizeButtonFrameTemplate: Expand while minimized, Condense while maximized. */
+.bz-ps-maxmin {
+	position: absolute;
+	z-index: 5;
+}
+.bz-ps-max,
+.bz-ps-min,
+.bz-ps-maxmin div {
+	position: absolute;
+	inset: 0;
+}
+.bz-ps-max,
+.bz-ps-min {
+	cursor: pointer;
+}
+.bz-ps-maxmin:not(.minimized) .bz-ps-max,
+.bz-ps-maxmin.minimized .bz-ps-min {
+	display: none;
+}
+.bz-ps-mm-down,
+.bz-ps-mm-hi,
+.pushed > .bz-ps-mm-up {
+	visibility: hidden;
+}
+.pushed > .bz-ps-mm-down,
+.bz-ps-max:hover > .bz-ps-mm-hi,
+.bz-ps-max.v-hover > .bz-ps-mm-hi,
+.bz-ps-min:hover > .bz-ps-mm-hi,
+.bz-ps-min.v-hover > .bz-ps-mm-hi {
+	visibility: visible;
+}
+.bz-ps-mm-hi {
+	mix-blend-mode: screen;
+}
+
+/* ---- Spellbook ---- */
+
+.bz-sb-page {
+	position: absolute;
+}
+.bz-sb-tabs,
+.bz-sb-view {
+	position: absolute;
+}
+
+/* SpellBookCategoryTabTemplate in square mode: the icon (36 by 35, cut by SquareMask) under the
+   tab frame, which glows on the open tab. */
+.bz-sb-tab {
+	cursor: pointer;
+}
+.bz-sb-tab > div {
+	position: absolute;
+	pointer-events: none;
+}
+.bz-sb-tab-icon {
+	left: 4px;
+	top: 0.5px;
+	width: 34px;
+	height: 33px;
+	background-size: 36px 35px;
+	background-position: 0 -2px;
+}
+.bz-sb-tab-bg,
+.bz-sb-tab-glow {
+	left: 0.5px;
+	top: -7px;
+	width: 43px;
+	height: 38px;
+	background: var(--sb-tab) 0 0 / 100% 100% no-repeat;
+}
+.bz-sb-tab-glow {
+	display: none;
+	top: -6px;
+	background-image: var(--sb-tab-gradient);
+	mix-blend-mode: screen;
+}
+.bz-sb-tab.selected .bz-sb-tab-bg {
+	background-image: var(--sb-tab-glow);
+}
+.bz-sb-tab.selected .bz-sb-tab-glow {
+	display: block;
+}
+
+/* SpellBookHeaderTemplate. */
+.bz-sb-header,
+.bz-sb-header > div,
+.bz-sb-item,
+.bz-sb-item div {
+	position: absolute;
+}
+.bz-sb-header {
+	pointer-events: none;
+}
+.bz-sb-header-plate {
+	background: var(--sb-list-backplate) 0 0 / 100% 100% no-repeat;
+	opacity: 0.65;
+}
+.bz-sb-header-text {
+	font:
+		24px 'Friz Quadrata',
+		serif;
+	line-height: 30px;
+	color: rgb(46, 27, 15);
+	white-space: nowrap;
+	overflow: hidden;
+}
+.bz-sb-header-divider {
+	background: var(--sb-divider) 0 0 / 100% 100% no-repeat;
+}
+
+/* SpellBookItemTemplate. */
+.bz-sb-backplate {
+	left: calc(50% - 128px + 5px);
+	top: 3px;
+	width: 256px;
+	height: 64px;
+	background: var(--sb-backplate) 0 0 / 100% 100% no-repeat;
+	opacity: 0.25;
+	pointer-events: none;
+}
+.bz-sb-item:has(.bz-sb-button:hover) .bz-sb-backplate,
+.bz-sb-item:has(.bz-sb-button.v-hover) .bz-sb-backplate {
+	opacity: 1;
+}
+.bz-sb-button {
+	cursor: pointer;
+}
+.bz-sb-button > div {
+	pointer-events: none;
+}
+.bz-sb-icon {
+	left: 2px;
+	top: 2px;
+	width: 36px;
+	height: 36px;
+	background-size: 100% 100%;
+	mask: var(--sb-icon-mask) 0 0 / 100% 100%;
+	-webkit-mask: var(--sb-icon-mask) 0 0 / 100% 100%;
+}
+.bz-sb-shadow {
+	left: -12px;
+	top: -3px;
+	width: 54px;
+	height: 51px;
+	background: var(--sb-iconframe-shadow) 0 0 / 100% 100% no-repeat;
+}
+.bz-sb-border {
+	left: -11px;
+	top: -1px;
+	width: 52px;
+	height: 48px;
+	background: var(--sb-iconframe) 0 0 / 100% 100% no-repeat;
+}
+.bz-sb-hi {
+	inset: 0;
+	background: var(--sb-iconframe-hover) 0 0 / 100% 100% no-repeat;
+	mix-blend-mode: screen;
+	opacity: 0.35;
+	display: none;
+}
+.bz-sb-button:hover .bz-sb-hi,
+.bz-sb-button.v-hover .bz-sb-hi {
+	display: block;
+}
+.bz-sb-button.pushed .bz-sb-hi {
+	display: block;
+	opacity: 0.65;
+}
+/* The name (SystemFont_Large) and rank (SystemFont_Med1) beside the icon, centered 1 below the
+   item's middle. */
+.bz-sb-text {
+	left: 50px;
+	right: 0;
+	top: 31px;
+	transform: translateY(-50%);
+	pointer-events: none;
+	color: rgb(46, 27, 15);
+}
+.bz-sb-text > div {
+	position: static !important;
+}
+.bz-sb-name {
+	font:
+		16px 'Friz Quadrata',
+		serif;
+	line-height: 1.1;
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+.bz-sb-sub {
+	font:
+		12px 'Friz Quadrata',
+		serif;
+	line-height: 1.1;
+	margin-top: 2px;
+}
+
+/* PagingControlsHorizontalTemplate: the page (SystemFont_Med3 in the book's ink) and the two
+   UI-SpellbookIcon page buttons, 8 apart. */
+.bz-sb-paging {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+.bz-sb-pagetext {
+	position: static;
+	font:
+		14px 'Friz Quadrata',
+		serif;
+	color: rgb(46, 27, 15);
+	text-shadow: none;
+	white-space: nowrap;
+	line-height: 32px;
+}
+.bz-sb-pagebtn {
+	position: relative;
+	width: 32px;
+	height: 32px;
+	flex: none;
+	cursor: pointer;
+	background: var(--sb-prev-up) 0 0 / 100% 100%;
+}
+.bz-sb-pagebtn.pushed {
+	background-image: var(--sb-prev-down);
+}
+.bz-sb-pagebtn.disabled {
+	background-image: var(--sb-prev-disabled);
+	cursor: default;
+}
+.bz-sb-pagebtn.next {
+	background-image: var(--sb-next-up);
+}
+.bz-sb-pagebtn.next.pushed {
+	background-image: var(--sb-next-down);
+}
+.bz-sb-pagebtn.next.disabled {
+	background-image: var(--sb-next-disabled);
+}
+.bz-sb-pagebtn:not(.disabled):hover::after,
+.bz-sb-pagebtn:not(.disabled).v-hover::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--sb-mouse-hilight) 0 0 / 100% 100%;
+	mix-blend-mode: screen;
+}
+
+/* ---- Talents ---- */
+
+.bz-tal-frame,
+.bz-tal-layer,
+.bz-tal-header,
+.bz-tal-header > div,
+.bz-tal-tabs,
+.bz-tal-tab,
+.bz-tal-tab > div,
+.bz-tal-btn,
+.bz-tal-btn > div {
+	position: absolute;
+}
+.bz-tal-layer {
+	inset: 0;
+	pointer-events: none;
+}
+.bz-tal-layer > * {
+	pointer-events: auto;
+}
+.bz-tal-border {
+	position: absolute;
+	pointer-events: none;
+}
+
+/* ClassTalentTreeHeaderTemplate: the round icon and its ring, the points box and the name. */
+.bz-tal-header {
+	pointer-events: none;
+}
+.bz-tal-header-icon {
+	border-radius: 50%;
+	background-size: 100% 100%;
+}
+.bz-tal-header-name {
+	font:
+		16px 'Friz Quadrata',
+		serif;
+	line-height: 20px;
+	color: #fff;
+	text-shadow:
+		-1px 0 #000,
+		1px 0 #000,
+		0 -1px #000,
+		0 1px #000,
+		1px 1px 0 #000;
+}
+
+/* ClassTalentCurrencyDisplayTemplate. */
+.bz-tal-unspent-label {
+	position: absolute;
+	line-height: 14px;
+}
+.bz-tal-unspent {
+	position: absolute;
+	font-size: 32px;
+	line-height: 36px;
+	text-shadow: 2px 2px 0 #000;
+}
+
+/* ClassTalentsFrameTabTemplate, a top tab: the art upside down, the text 4 under the middle. */
+.bz-tal-tab-art {
+	inset: 0;
+	transform: rotate(180deg);
+}
+.bz-tal-tab-text {
+	left: 0;
+	right: 0;
+	top: 20px;
+	transform: translateY(-50%);
+	text-align: center;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 4px;
+}
+.bz-tal-check,
+.bz-tal-lock {
+	display: inline-block;
+	background: var(--tal-checkmark) 0 0 / 100% 100% no-repeat;
+	width: 20px;
+	height: 15px;
+}
+.bz-tal-lock {
+	background-image: var(--tal-lock);
+	width: 10px;
+	height: 14px;
+}
+.tooltip .tt-title.bz-tal-error {
+	color: #ff2020;
+}
+
+/* TalentButtonSquareTemplate: the shadow, the icon, the dark overlay when dimmed, the state's
+   border (brighter on hover) and the points in its corner (SystemFont16_Shadow_ThickOutline). */
+.bz-tal-btn {
+	cursor: pointer;
+}
+.bz-tal-btn > div {
+	pointer-events: none;
+}
+.bz-tal-shadow {
+	left: -19px;
+	top: -19px;
+	width: 78px;
+	height: 78px;
+	background: var(--tal-shadow) 0 0 / 100% 100% no-repeat;
+}
+.bz-tal-icon,
+.bz-tal-dim {
+	left: 2px;
+	top: 2px;
+	width: 36px;
+	height: 36px;
+	background-size: 100% 100%;
+}
+.bz-tal-dim {
+	background: #000;
+	opacity: 0.25;
+	display: none;
+}
+.bz-tal-btn.gated .bz-tal-dim {
+	opacity: 0.7;
+}
+.bz-tal-btn.gated .bz-tal-dim,
+.bz-tal-btn.disabled .bz-tal-dim {
+	display: block;
+}
+.bz-tal-btn.gated .bz-tal-icon,
+.bz-tal-btn.disabled .bz-tal-icon {
+	filter: grayscale(1);
+}
+.bz-tal-state {
+	inset: 0;
+	background: var(--tal-selectable) 0 0 / 100% 100% no-repeat;
+}
+.bz-tal-btn.maxed .bz-tal-state {
+	background-image: var(--tal-maxed);
+}
+.bz-tal-btn.disabled .bz-tal-state {
+	background-image: var(--tal-disabled);
+}
+.bz-tal-btn.gated .bz-tal-state {
+	background-image: var(--tal-locked);
+}
+.bz-tal-state.hover {
+	display: none;
+	mix-blend-mode: screen;
+}
+.bz-tal-btn:hover .bz-tal-state.hover,
+.bz-tal-btn.v-hover .bz-tal-state.hover {
+	display: block;
+}
+.bz-tal-btn.gated .bz-tal-state.hover,
+.bz-tal-btn.disabled .bz-tal-state.hover {
+	opacity: 0.4;
+}
+.bz-tal-spend {
+	left: 31px;
+	bottom: 4px;
+	transform: translateX(-50%);
+	font:
+		16px 'Friz Quadrata',
+		serif;
+	line-height: 16px;
+	color: rgb(25, 255, 25);
+	text-shadow:
+		-1px -1px 0 #000,
+		1px -1px 0 #000,
+		-1px 1px 0 #000,
+		1px 1px 0 #000,
+		0 0 2px #000;
+	-webkit-text-stroke: 1px #000;
+	paint-order: stroke fill;
+	white-space: nowrap;
+}
+.bz-tal-btn.maxed .bz-tal-spend {
+	color: rgb(255, 255, 0);
+}
+
+/* ClassTalentEdgeArrowTemplate: a 6 thick line, the head at its end. */
+.bz-tal-line,
+.bz-tal-head {
+	position: absolute;
+	pointer-events: none !important;
+}
+.bz-tal-line {
+	transform-origin: 0 50%;
+	background: var(--tal-line-gray) 0 0 / 8px 6px repeat-x;
+}
+.bz-tal-line.yellow {
+	background-image: var(--tal-line-yellow);
+}
+.bz-tal-line.locked {
+	background-image: var(--tal-line-locked);
+}
+.bz-tal-head {
+	background: var(--tal-head-gray) 0 0 / 100% 100% no-repeat;
+}
+.bz-tal-head.yellow {
+	background-image: var(--tal-head-yellow);
+}
+.bz-tal-head.locked {
+	background-image: var(--tal-head-locked);
+}
+
+/* The talent tooltip's line colors: the title's classes say which lines are white (wN) or red
+   (rN), by their place in the tooltip. The rest are gold. */
+.tooltip .tt-title.bz-tt-talent.w2 ~ .tt-line:nth-child(2),
+.tooltip .tt-title.bz-tt-talent.w6 ~ .tt-line:nth-child(6) {
+	color: #fff;
+}
+.tooltip .tt-title.bz-tt-talent.r6 ~ .tt-line:nth-child(6),
+.tooltip .tt-title.bz-tt-talent.r9 ~ .tt-line:nth-child(9) {
+	color: #ff2020;
+}

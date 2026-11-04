@@ -8,10 +8,14 @@ Setup note (pass 2): the local `wago/<build>+hf` tables can be the bare build's 
 - Every tank ability and talent the presets use matches the client rows (tier 1). Tables: reports/tank_mechanics.md.
 - Pass 2: Revenge 0.25 AP (ruled, to verify); Unbridled Wrath auto attacks only; Reckoning on any non-periodic crit; Primal Bite 2× threat (notes); bear white-hit Rage 11.25/22.5, auto swings only; tank enchants 1886 (+9 Stam), Deflection +7, Superior Deflection +9 Defense (client rows); Elixir of the Phalanx and Greater Fortitude (1250920, 1250931) applied once; Ancestral Fortitude aura 101 on all armor (no Warden takes it); hotfix 113380 shocks and Stormstrike match; Templar's Bulwark 1311015; Enrage, Frenzied Regeneration, Demoralizing Roar rows.
 - Engine (tier 3 Classic rules): boss white table and melee ability, crush, Forever 0.6% boss crit and `classic_crit`, armor and its cap, block, raid damage events rolling avoidance, Rage gain threat (tier 2 measurements). Tanks face the boss; parry haste fires; encounters don't double it; a scoring run reads no health (warrior measured HPS-invariant). Self health costs (PayHealthCost) go once into healing needed, not DTPS or TMI.
+- Pass 3 (client 1.60.1.70790+hf): mana-gain threat unmultiplied (0.5 a mana, Classic tier 3); Enrage 5229 rows; Stormstrike 150%/6 s; items in Bear/Dire Bear Form follow SpellShapeshiftForm flags 0xd8 (CanUseItems) and each spell's Attributes_0 0x10000 (tier 1): potions, runes, healthstones, EZ-Thro, Goblin Sapper Charge and Goblin Land Mine usable; Dense Dynamite, Thorium/Iron Grenade, Solid Dynamite and Holy Hand Grenade not (sim wrong on sapper and land mine, -15).
 - The Warden gets no Salvation compensation in the Nov 2 notes, and the sim gives none (tier 1 notes).
 
+- Pass 3 (master 0facd9428, client 1.60.1.70790): 70790 is a game-data build (SpellEffect +53/-10/~171 rows vs 70755). For tanks it only bakes in hotfix values the sim already uses (tier 1): Earth Shock r1-r7 (r7 531, 3.4/level), Flame Shock, Stormstrike 150% (1368308) and 6 s, Vengeance 5 stacks, Two-Handed Weapon Specialization Physical+Holy, Reckless Swings 1329554/1329555 (5 Rage x4 charges, 25% base health, 15 s), warrior ranks (Improved Tactical Mastery 3, Flurry 3, Improved Whirlwind 2, Bloodthrill 2; tools/forever_talents/data/warrior.json already has them). No bear, Protection paladin or Protection warrior ability row changed. Booming Voice's mask adds Howls (no tank effect). Mana-gain threat now unmultiplied (49f0218), replay caps on max health drops (0950b22): verified, tests pass.
+
 ## Open
-- Mana gain threat × threat multiplier (-12): no source; Classic is unmultiplied.
+- Mana gain threat: unmultiplied since 49f0218 (Classic tier 3, to verify with a log).
+- Explosives in form: sapper and land mine (-15).
 - Revenge 0.25 (ruled, to verify): a level 60 Revenge log after 70707.
 - Rockbiter on Stormstrike, ×speed (ruled, to verify): a log.
 - Bloodrage / Reckless Swings base health: class base 1689 (Orc 60) vs wowsims' 2629; Bloodrage only in the presets, ~+0.9% healing needed at stake. A level 60 Bloodrage log.

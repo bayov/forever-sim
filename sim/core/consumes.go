@@ -1218,21 +1218,38 @@ var HolyHandGrenadeActionID = ActionID{ItemID: 284868}
 //   - EZ-Thro Thorium Grenade 260816 (1269330): 400 Fire ±25% (Variance 0.5), 300 to 500, level 57.
 //   - Holy Hand Grenade of Alterac 284868 (1317268): 400 Holy ±25%, 300 to 500, level 52.
 //
-// The two EZ-Thro rows lack SPELL_ATTR0_NOT_SHAPESHIFTED (Attributes[0] 0x10000), which every
-// Engineering explosive's row but the sapper's and the Holy Hand Grenade's carry, so a druid
-// throws them without leaving its form (wowsims/forever's NewSpellDataExplosive).
+// Whether a druid can throw these without leaving its form is in explosiveUsableInForm.
 type openExplosive struct {
 	actionID      ActionID
 	school        SpellSchool
 	min, max      float64
 	requiredLevel int32
-	inForm        bool
 }
 
 var openExplosives = map[proto.Explosive]openExplosive{
-	proto.Explosive_ExplosiveEZThroDarkBomb:       {EZThroDarkBombActionID, SpellSchoolFire, 225, 675, 60, true},
-	proto.Explosive_ExplosiveEZThroThoriumGrenade: {EZThroThoriumGrenadeActionID, SpellSchoolFire, 300, 500, 57, true},
-	proto.Explosive_ExplosiveHolyHandGrenade:      {HolyHandGrenadeActionID, SpellSchoolHoly, 300, 500, 52, false},
+	proto.Explosive_ExplosiveEZThroDarkBomb:       {EZThroDarkBombActionID, SpellSchoolFire, 225, 675, 60},
+	proto.Explosive_ExplosiveEZThroThoriumGrenade: {EZThroThoriumGrenadeActionID, SpellSchoolFire, 300, 500, 57},
+	proto.Explosive_ExplosiveHolyHandGrenade:      {HolyHandGrenadeActionID, SpellSchoolHoly, 300, 500, 52},
+}
+
+// The explosives a druid uses without leaving its form. The sim has no spell attributes, so this
+// lists them from client 1.60.1.70790+hf: their SpellMisc rows have Attributes[0] 0x0, without
+// SPELL_ATTR0_NOT_SHAPESHIFTED (0x10000), and no SpellShapeshift row, and Cat, Bear and Dire Bear
+// Form (SpellShapeshiftForm 1, 5, 8) carry CanUseItems (0x80). Goblin Sapper Charge 13241, Goblin
+// Land Mine 4100, EZ-Thro Dark Bomb 1269334 and EZ-Thro Thorium Grenade 1269330 lack the flag.
+// Solid Dynamite 12419, Dense Dynamite 23063, Iron Grenade 4068, Thorium Grenade 19769 and Holy
+// Hand Grenade of Alterac 1317268 carry it, so using one leaves the form (tank_mechanics-15).
+var explosivesUsableInForm = map[int32]bool{
+	SapperActionID.ItemID:               true,
+	GoblinLandMineActionID.ItemID:       true,
+	EZThroDarkBombActionID.ItemID:       true,
+	EZThroThoriumGrenadeActionID.ItemID: true,
+}
+
+// explosiveUsableInForm says whether the explosive can be used without leaving a form: one whose
+// row lacks NOT_SHAPESHIFTED, in an environment whose forms allow items (canUseItemsInForm).
+func (character *Character) explosiveUsableInForm(actionID ActionID) bool {
+	return explosivesUsableInForm[actionID.ItemID] && character.canUseItemsInForm()
 }
 
 func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
@@ -1256,7 +1273,7 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 			Type:     CooldownTypeDPS | CooldownTypeExplosive,
 			Priority: CooldownPriorityLow + 30,
 			ShouldActivate: func(s *Simulation, c *Character) bool {
-				return !character.IsShapeshifted()
+				return character.explosiveUsableInForm(SapperActionID) || !character.IsShapeshifted()
 			},
 		})
 	}
@@ -1266,15 +1283,12 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 			return
 		}
 		config := character.newBasicExplosiveSpellConfig(sharedTimer, explosive.actionID, explosive.school, explosive.min, explosive.max, Cooldown{}, 0, 0)
-		if explosive.inForm {
-			config.Cast.ModifyCast = nil
-		}
 		character.AddMajorCooldown(MajorCooldown{
 			Spell:    character.GetOrRegisterSpell(config),
 			Type:     CooldownTypeDPS | CooldownTypeExplosive,
 			Priority: CooldownPriorityLow + 10,
 			ShouldActivate: func(s *Simulation, c *Character) bool {
-				return explosive.inForm || !character.IsShapeshifted()
+				return character.explosiveUsableInForm(explosive.actionID) || !character.IsShapeshifted()
 			},
 		})
 		return
@@ -1302,7 +1316,7 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 			Type:     CooldownTypeDPS | CooldownTypeExplosive,
 			Priority: CooldownPriorityLow + 10,
 			ShouldActivate: func(s *Simulation, c *Character) bool {
-				return !character.IsShapeshifted()
+				return character.explosiveUsableInForm(filler.ActionID) || !character.IsShapeshifted()
 			},
 		})
 	}
@@ -1349,7 +1363,9 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 				Duration: time.Minute,
 			},
 			ModifyCast: func(sim *Simulation, _ *Spell, _ *Cast) {
-				character.CancelShapeshift(sim)
+				if !character.explosiveUsableInForm(actionID) {
+					character.CancelShapeshift(sim)
+				}
 			},
 		},
 

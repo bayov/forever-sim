@@ -1,30 +1,43 @@
-# Mechanics pass 65 (2026-11-04, master 6b480b060)
+# Mechanics pass 66 (2026-11-04, master 0facd9428)
 
-Quiet: no new findings.
+One new finding (low): mechanics-20261104-1.
 
 ## Range
 
-fb584eafa..6b480b060 (68 watched files). Non-test commits under `sim/**/*.go`:
+6b480b060..0facd9428 (70 watched files). Shared-engine commits (sim/core, no mksettings change):
 
 | Commit | What | Mechanics check |
 |---|---|---|
-| 8f304b240, b57f5cc0a | Downranking penalty moved into `sim/core/downrank.go` and applied to every ranked non-physical spell (user ruling 2026-11-04); `DownrankLevel` for rank-less sub-spells (Arcane Missiles / Penance ticks, Insect Swarm, totems, imbue and seal procs) | Formula 1 - 0.05 x (level - 17 - learn level), clamped. Settled by the ruling; moved from open items to Settled in verdicts. Level 60 presets cast ranks learned at 43+, so factor 1 at 60; report hashes unchanged per commit. Every file with `Rank:` sets `RequiredLevel` or `DownrankLevel` except Blessing of Sanctuary (no coefficient). |
-| fbddbcba5 (buffs.go) | Power Infusion adds +20% healing | Client 70755 10060: aura 136 bp 20 and aura 79 bp 20. Verified, row added. |
-| absorb.go, spell_result.go, unit.go | Absorb pipeline for shields on friendly units; helpful HoT snapshot uses `CasterHealingMultiplier` | Runs only on units with shields (healing sims); enemy targets carry none, so DPS presets are untouched. |
-| fa66465bd, 72b236b48, fa128f029, 620ff0fdb | Holy paladin and healing priest (heals, healing talents, Binding Heal out) | Class scope (healing); no shared mechanic beyond the rows above. |
-| 7cd399e88, 316a600ac, f6a98acd3 | Warrior / rogue / paladin server hotfix pushes 113539 / 113483 / 113542 | Class data, ledger rows by the client update auditor. |
-| 280fd26e2 | Chain Lightning 0.714 every rank (standards 39) | Class, ruling. |
+| 49f02184c, 9c20070c9 (mana.go) | Mana-gain threat under Forever no longer multiplied by the threat multiplier; NoThreat sources make none | Marked "to verify" (standards 40). Classic and wowsims/forever leave it unmultiplied; no Forever source. Tank threat only. Added to verdicts' open items. |
+| 659cad198 (tank_score.go) | Tank score threat per damage 0.7 -> 1 | Salvation removed (verdicts row, post 9, tier 1). Consistent. |
+| 0aed93989 (spell_result.go, unit.go) | Direct heal crit takes the school crit bonus; losing max health clamps current health | Healing only; same rule HoT ticks used. No DPS path. |
+| b2c16f671 (raid_damage.go) | A fractional raid-damage share can hit nobody | Raid-damage model, not a game mechanic; the Level 60 presets' 2 hits a minute at full share are unchanged. |
+| 87f28803b, 318fc7efb, 0950b2242 (health.go, major_cooldown.go, apl_values_resources.go, racials.go, apl_helpers.go) | Health costs (Bloodrage, Reckless Swings) out of TMI; tank-score replay reads no health (survival cooldowns, health APL values, Berserking at 10%) | Replay-only scoring guards. Berserking outside the replay unchanged (10% to 30% by health). |
+| Class commits (shaman 113380, warrior Revenge / Unbridled Wrath, paladin, priest, druid, warden) | Class scope | Ported hotfix values; class auditors and the client update ledger. |
 
 ## Getting current
 
 | Source | Result |
 |---|---|
-| Client build | 1.60.1.70755 still newest (gate). |
-| Hotfixes | wago.tools 70755 pushes since 113574: 113526 (Creature), 113528 (GlobalStrings), 113595 (Great Stamina 5041/5042 rank text only), 113600, 113604, 113605 (items). No spell mechanics. |
-| Dev notes thread | 9 posts, no edits after post 9's 2026-11-04T02:12:27Z. |
-| Blue tracker | Kaivax, Aggrend, Gnedi, Linxy, Brenoch: nothing after 11-03 21:41 (Linxy). |
-| Daily update | update_ledger.md: rogue hotfix 113483 and paladin 113542 rows (class). No forever-update merges. |
+| Client build | **1.60.1.70790** new (probe). 23 of 34 mechanics tables differ from 70755. |
+| 70790 content | Bake of hotfix pushes since 70707 (shaman, warrior, rogue, paladin, hunter, Riptide) plus the November 2 druid values, new in the client. Shared: Trueshot Aura 20/35/50/75/100 matches the sim; no racial, raid debuff, consumable or enchant change (SpellItemEnchantment: rogue poison charges only). CurvePoint (+756 rows) and Trait tables: talent-tree data (rogue/warrior/paladin hotfix trees). |
+| Dev notes thread | 9 posts; post 9 last edited 2026-11-04T02:12:27Z (seen). Nothing new. |
+| Blue tracker | One post since 11-03 21:41: Kaivax "World of Warcraft: Forever Launch Time" (2026-11-04T18:13Z), no mechanics. |
+| Daily update | No forever-update merges; TASKS.md / update_ledger.md only via branch merges. |
+| Hotfix pushes | `hotfixes.py pushes` printed nothing this pass; 70790 supersedes the pushes through 113605 seen last pass. |
+
+## Spot checks of 70790 class deltas against the sim
+
+| Spell | Client 70790 | Sim |
+|---|---|---|
+| Chain Lightning | 0.714, CastingTimeIndex 19 | 0.714, 2.5 s (hotfix 113341) — matches |
+| Slam | 15 s category cooldown, Improved Slam -5000 | 15 s minus 2.5 s a point — matches |
+| Earth Shock r7 | 531 | 531 — matches |
+| Shred / Claw / Ravage | 200 / 140 / 435 | matches |
+| Ferocious Bite r6 | 102, 181 a CP, 3.3 an Energy | 102.5, 183.75, 2.7 — finding |
+| Starfire r7 | 533, 3.4 a level | 533.4, 3.36 — finding (tiny) |
+| Rogue poisons | charges 250 / 240 (no damage change) | charges not modelled; no DPS |
 
 ## Conclusions
 
-Every verdict holds on 70755. Open findings unchanged. Downranking scope is now a user ruling, not an open item.
+No shared mechanic moved against tier 1 data. Every shared verdict holds on 70790. The client update auditor should read 70790 in full for class rows (the notes-only gates of every class can now be checked against the client).

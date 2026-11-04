@@ -160,7 +160,9 @@ and what the pet costs against its base, and its base's assumption factor.
 Each assumption in `assumptions_def.py` is written for a player who hasn't read our notes: a question-style `label`
 (8 words at most), a `short` line (20 words at most) the Ranking panel shows under it, setting labels that say what each
 choice means with a `rationale` of 15 words at most, and a `desc` of 2 to 4 sentences plus its `src` (written to the
-data as `source`) for the Method tab.
+data as `source`) for the Method tab. The Healing page's assumptions are `HEAL` at the end of the same file, written the same
+way with `builds` naming the Healing presets: one-value rows only, never simmed (an alternative's measured cost goes in
+`desc`), which `tankheal.py build` writes as `heal_assumptions` and the Healing Ranking shows above its ranking.
 
 ### Race overrides (`req/races/`)
 
@@ -354,7 +356,7 @@ Datasets per mode: `<mode>_builds`, `_bosses`, `_encounters`, `_races` (with `ps
 gap to every other race), `_race_breakdown` (base stats and each racial part, `v` and `se`, in the preset's score),
 `_gear`, `_rotation`, `_setup` (the DPS shapes),
 `_tooltips` (rows the common tooltips lack), `_notes`, `_method`, `_icons` and `_names` (what the common icons and names
-lack).
+lack), and for Healing `heal_assumptions` (`assumptions_def.HEAL`, the DPS `assumptions` shape).
 
 The words players read come from `tankheal_text/tank.md` and `heal.md`, written for players, never from the docs
 (docs/tank_*.md and healing_*.md are the developers' record and the facts behind the text). Each file has a summary

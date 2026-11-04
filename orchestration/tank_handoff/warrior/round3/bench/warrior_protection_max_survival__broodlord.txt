@@ -1,0 +1,11 @@
+Healing: 8 healers on the tank at 300 HPS each, 3.0 s heals (912 a heal).
+Encounter: Broodlord Lashlayer. Knock Away's 50% threat cut isn't modelled. Blast Wave hits everyone near him, here the tanks only, and the healing sim adds the melee.
+Stand-in healer: 2400 HPS every 0.38 ± 0.19 s. TMI over 6 s windows. 1000 iterations.
+
+Objective: 2 x SafeDPS - w x 900 x healing needed at 5% deaths / 300, in raid DPS (Max threat w = 1/3, Balanced 1, Max survival 3).
+
+| Build | Max threat | Balanced | Max survival | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS | TMI | Death | Health | EH | Biggest hit | Armor | Def | No crit at | Miss | Dodge | Parry | Block | Crit | Crush | Crush gap | Took: avoid | block | crit | crush |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+2026/11/04 17:52:32 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 17:52:32 All 4 sims finished successfully.
+| warrior_protection_max_survival | 3334 ± 20 | 2685 ± 34 | 738 ± 89 | 1829 ± 9 | 325 ± 10 (1.03x DTPS) | 0.0% | 1812 | 499 | 316 | 35 | 0.0% | 9319 | 27040 | 1723 (5.4 to kill) | 9274 (61.7%) | 467 | 315 | 13.1% | 19.8% | 16.1% | 16.1% | 0.0% | 15.0% | 34.9% | 48.5% | 44.7% | 0.0% | 2.9% |

@@ -1,0 +1,10 @@
+A=shaman_warden_max_threat.json B=race_SkyborneWindshaper_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1763     1510  -252.3   72.9     15.1      283
+chromaggus        1759     1785    26.4    8.1     18.4       11
+golemagg          2473     2498    25.3    9.4     19.1       11
+magmadar          2606     2638    31.9    8.5     19.8        7
+onyxia            2325     2336    10.6   11.9     15.6       12
+ragnaros            91      -26  -116.3   52.9     19.8      148
+vaelastrasz       2883     2917    34.7   12.9     25.1       37
+scoring_mean                      -20.6   12.8

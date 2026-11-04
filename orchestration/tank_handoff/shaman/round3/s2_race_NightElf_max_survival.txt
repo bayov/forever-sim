@@ -1,0 +1,10 @@
+A=shaman_warden_max_survival.json B=race_NightElf_max_survival.json preset=max_survival iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord        -6794    -7352  -557.8  180.1     69.0       77
+chromaggus       -6562    -6512    49.9   41.2     42.0        4
+golemagg         -2435    -2355    79.7   34.5     56.3        3
+magmadar         -1656    -1553   103.1   29.8     65.5        3
+onyxia           -5188    -5209   -21.0   66.3     82.7       12
+ragnaros        -16174   -16683  -508.5  281.8     48.6       64
+vaelastrasz      -2184    -2024   160.3   43.2    111.6       17
+scoring_mean                      -31.0   34.4

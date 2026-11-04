@@ -193,7 +193,182 @@ tank's health:
 
 Last Stand stays out: it changes max health, which the survival replay doesn't follow.
 
-## Presets (2026-11-04, round 2)
+## Round 4 consumables (2026-11-04, findings tank_fairness -10, -11 and -9)
+
+The bear's consumable A/B (`orchestration/tank_handoff/druid/round3/`) run for the warrior at each weight: every
+consumable slot, one change at a time against the request, paired `abtest -preset <p>` on the six scoring bosses at
+the preset's own weight, screened at 3,000 iterations (seed 1), the winners decided at 10,000 on seeds 1 and 2 (disjoint).
+Raw output, scripts (`gen.py`, `ab.sh`, `ab2.sh`) and an index: `orchestration/tank_handoff/warrior/round4/`.
+
+| Change (six-boss mean, 10,000) | Max threat | Balanced | Max survival |
+|---|---|---|---|
+| **Flask of Natural Precision** for the Titans | +662.2 ± 3.4 / +662.5 ± 3.5 | +533.2 ± 5.1 / +536.9 ± 4.9 | +377.6 ± 11.2 / +386.4 ± 11.1 |
+| **Elemental Sharpening Stone** for the Dense | +18.7 ± 0.4 / +19.0 ± 0.4 | +18.9 ± 0.9 / +21.0 ± 0.9 | +14.2 ± 2.1 / +16.6 ± 2.4 |
+| Dirge's chops for the Dumpling (on the new flask and stone) | -30.4 ± 0.8 (3,000) | -6.3 ± 2.1 (3,000) | **+46.0 ± 2.5 / +43.8 ± 2.3** |
+| Greater Stoneshield Potion for the Mighty Rage Potion (same) | -252 (3,000) | -183 (3,000) | **+83.4 ± 11.0 / +92.4 ± 10.4** |
+| both together | | | **+118.5 ± 10.9 / +124.3 ± 10.3** |
+
+(Seed 1 / seed 2.) The Precision flask gives 5% expertise in the Natural flasks' zones (`naturalFlaskZone`, true in every
+bench encounter, as for the bear), which takes 5% off the boss's parry and dodge of the warrior's attacks; the boss's
+parry also hastes its swing, so it hits the tank less often as well as the tank landing more attacks. It was never
+searched for the warrior: round 3's Natural Accuracy lost to the Titans (-23 / -55 / -150) and Aggression and Swiftness
+are +44 / +4 / -109 and +27 / -29 / -142 on the old base, 490 to 680 behind Precision on the new one (3,000). Everything else
+holds on the new base (3,000 iterations, six-boss mean, Max threat / Balanced / Max survival): Mongoose over Greater
+Agility (-50 / -49 / -48), Elixir of the Phalanx over Superior Defense (-30 / -74 / -172), Greater Fortitude (without
+-26 / -58 / -131 on the old base), Juju Power over Giants (-11 / -11 / -12), Juju Might over Winterfall Firewater
+(-4.5), the Mighty Rage Potion over Great Rage (-144 / -170 / -201), the Dragonbreath Chili (off: -2 +- 7 / +8 +- 10 /
++11 +- 21: a tie, kept), Tender Wolf Steak (-26 / -16 / +22 +- 12, behind Dirge's) and Grilled Squid or Blessed Sunfruit
+(-25 to -31). The Dense Weightstone doesn't fit a warrior's weapon (it scores as no stone). The Zanza slot, Rumsey Rum
+Black Label and the Goblin Sapper Charge came in a second pass (below, "the full raid set").
+
+Own-weight six-boss mean, 10,000 iterations, before (round 3's requests) → after, seed 1 / seed 2:
+
+| Preset | Seed 1 | Seed 2 |
+|---|---|---|
+| Max threat | 3,695.5 → **4,381.7** (+686.0 ± 3.4) | 3,687.7 → **4,373.5** (+685.9 ± 3.5) |
+| Balanced | 3,010.7 → **3,567.5** (+556.9 ± 5.1) | 3,005.7 → **3,564.3** (+558.7 ± 4.9) |
+| Max survival | 1,202.0 → **1,717.3** (+515.2 ± 10.6) | 1,193.8 → **1,721.2** (+527.4 ± 11.1) |
+
+At 1,000 iterations (`summary.tsv`): 4,382.8 / 3,562.0 / 1,696.7. The talents and knobs were searched on the old
+consumables and are not re-searched here: the flask moves what the boss's parry is worth, so a rotopt pass on the new
+requests may move a knob or a talent.
+
+**The UI presets match the bench** (finding -11, 2026-11-04). `ui/tank_warrior/presets.ts` had `queueDelay: 250`
+(the bench's requests carry none; 250 costs 2% at Max threat), and loaded Thunder Clap, Demoralizing Shout, Demoralizing
+Roar and the tank Sunder ramp, which `tankscore.OwnDebuffs` takes off for the warrior because its rotation keeps them up
+(it pays their Rage and GCDs). The UI now has queueDelay 0 and none of the four, the bench's flask, stone, and for Max
+survival its food and potion (`EncounterLevel60TankMaxSurvival`), and the bench's fight as a preset encounter (the Level 60
+boss, a 600 HPS healer every 2 s, 180 s, the Natural flasks' zone) that the three builds load, as the bear's UI does; the
+reaction time is the UI's default 200 ms, the bench's. Rotation, gear, talents, race, professions, raid buffs, party
+and individual buffs were already the bench's. Nothing stripped is there for a real reason: the four debuffs are the
+warrior's own to cast and the UI's rotations cast them (or leave them out, as Max threat's `tc=0` does).
+
+### Round 4 consumables, the full raid set (2026-11-04, tank-fixes6)
+
+Standards 11 for the tanks too: the Zanza / Blasted Lands slot, Rumsey Rum Black Label and the explosives, which the
+first pass left out under the bear's "call 10" (a worker's choice, not a ruling; dropped). Shared set, all three:
+Flask of Natural Precision (the Natural flasks' zone on for all six bosses, Onyxia too), Elixir of the Mongoose, Elixir
+of the Phalanx, Elixir of Greater Fortitude, Juju Power, Juju Might, Elemental Sharpening Stone, Dragonbreath Chili,
+**Rumsey Rum Black Label** and the **Goblin Sapper Charge**, which the three rotations throw right after the trinkets
+(once a fight, its 5 min cooldown). Zanza slot: **R.O.I.D.S.** for Max threat, **Spirit of Zanza** for Balanced and Max
+survival. Food and potion as before: Smoked Desert Dumpling and Mighty Rage Potion; Max survival Dirge's chops and the
+Greater Stoneshield Potion. The warrior already has Engineering (with Blacksmithing), so no profession changes.
+
+Method as the first pass (paired `abtest -preset <p>`, own weight, six scoring bosses): every option alone on the old
+requests at 3,000 (seed 1), the stack and its leave-outs, then flask, food, elixirs, stone, potion and chili re-checked
+on the stacked set, the close calls at 10,000 on seeds 1 and 2. Raw output, scripts and an index:
+`orchestration/tank_handoff/warrior/round4/raid/` (`README.txt`, `ab_summary.txt`).
+
+| Each item on the final set (leave it out, 10,000, seed 1 / seed 2) | Max threat | Balanced | Max survival |
+|---|---|---|---|
+| Goblin Sapper Charge | +181.4 / +198.5 (± 3.8) | +184.2 / +185.8 (± 5.5) | +212.3 / +211.8 (± 9.9) |
+| Zanza slot (R.O.I.D.S. / Spirit / Spirit) | +64.7 / +64.9 (± 0.1) | +77.5 / +77.4 (± 1.5) | +160.3 / +155.1 (± 2.3) |
+| Rumsey Rum Black Label | +10.8 / +10.6 (± 0.4) | +21.1 / +22.2 (± 0.9) | +46.4 / +48.0 (± 1.4) |
+
+The sapper is instant and off the GCD; its 450 to 750 Fire at the pull is threat when the raid's threat ceiling is
+lowest, and its 375 to 625 self-damage costs little. Every other explosive loses: Thorium Grenade, Dense and Solid
+Dynamite, Goblin Land Mine, EZ-Thro Dark Bomb and Thorium Grenade and the Holy Hand Grenade (all 1 sec casts that
+reset the swing) cost 270 to 430 at the pull (3,000), and a grenade or Dark Bomb after the sapper (the shared 1 min
+timer: at 60 and 120 s) costs 14 to 18 (3,000), so none is taken (standards 11). The Zanza slot (10,000, seed 1 / 2, against
+the pick): Max threat Ground Scorpok -18.5 / -23.0, Spirit -30.4 / -30.4; Balanced R.O.I.D.S. -13.2 / -13.0, Scorpok
+-15.2 / -25.1; Max survival Scorpok -65.8 / -51.2; Lung Juice -36 to -80 (3,000). Sheen and Swiftness of Zanza, Gizzard
+Gum and Cerebral Cortex do nothing for a warrior in the sim (0.0); the Darnassus Gift Collection (+30 Agility, a Love
+is in the Air holiday item of an Alliance city) was screened (+50 / +73 / +126 on the old requests, under the picks)
+and not taken. Alcohol: Gordok Green Grog -3.7 / -6.3 / -16.9 against the Black Label (Rumsey Rum Dark the same), Rum Light less,
+Kreeg's Stout nothing. Re-checked on the final set and kept (3,000 unless noted): the Precision flask (Titans -393 to
+-654, the other Natural flasks -464 to -672), Mongoose (Greater Agility -43 to -53), Phalanx (Superior Defense -29 to
+-127), Greater Fortitude (none -26 to -117), Juju Power (Giants -12 to -14), Juju Might (Firewater -5.5), the
+Elemental stone (none -32 to -43), Dumpling at Max threat and Balanced (Tender Wolf Steak -22.4 / -27.9 and -14.3 /
+-20.1, Dirge's -14.9 / -14.2 at Balanced, 10,000), Dirge's at Max survival (Dumpling -27.7 / -27.7, Wolf Steak -24.3 /
+-11.2, 10,000), the Stoneshield at Max survival (Mighty Rage -82.9 / -91.8, 10,000) and the chili (off: -8.8 / -13.5,
+-20.2 / -14.3, -5.3 ± 9.6 / -3.5 ± 10.3, 10,000).
+
+Own-weight six-boss mean, 10,000 iterations, before (the first pass's requests) → after, seed 1 / seed 2:
+
+| Preset | Seed 1 | Seed 2 |
+|---|---|---|
+| Max threat | 4,381.7 → **4,636.8** (+255.3 ± 3.8) | 4,373.5 → **4,645.5** (+272.2 ± 3.8) |
+| Balanced | 3,567.5 → **3,851.5** (+284.3 ± 5.3) | 3,564.3 → **3,850.5** (+286.2 ± 5.6) |
+| Max survival | 1,717.3 → **2,141.2** (+423.7 ± 10.0) | 1,721.2 → **2,140.0** (+418.9 ± 10.1) |
+
+At 1,000 iterations (`summary.tsv` rows: `round4/summary_warrior_rows.tsv`): 4,644.5 / 3,867.3 / 2,138.7. The UI
+presets carry the same: `ui/tank_warrior/presets.ts` (Max threat its own consumables and encounter preset, for
+R.O.I.D.S.) and the sapper action in `ui/tank_warrior/apls/level60_*.apl.json`, which are the requests' rotations. As
+in the first pass, talents and knobs were not re-searched on the new consumables; round 5 (next) did.
+
+### Round 5: talents and knobs on the full raid set (2026-11-04, tank-fixes6)
+
+Round 3's search on round 4's requests: `rotopt -template warrior_tank -tank <preset>` on the six scoring bosses at the
+preset's own weight, talents then knobs (1,000 a candidate, 3,000 to confirm), again until neither moved, and every
+candidate at 10,000 on seeds 1 and 2 (`abtest -preset <p> -seed N`, paired, disjoint seeds). The template now writes
+round 4's Goblin Sapper Charge line after the trinkets, so its APLs are the UI's byte for byte. Two changes beat twice
+their error on both seeds:
+
+| Preset | Change | 10,000, seed 1 | 10,000, seed 2 |
+|---|---|---|---|
+| Max threat | Talents `05-05050005-250330020330001351`: Deflection 5 instead of Blood Craze 1 | 4,636.8 → **4,644.8** (+8.1 ± 2.3) | 4,645.5 → **4,653.0** (+7.4 ± 2.2) |
+| Balanced | Sunder Armor as the filler from 25 Rage instead of 30 (`sunderRage=25`) | 3,851.5 → **3,856.0** (+4.2 ± 1.0) | 3,850.5 → **3,854.3** (+4.0 ± 1.1) |
+| Max survival | none | 2,141.2 | 2,140.0 |
+
+Not adopted (10,000, seed 1 / seed 2, against the round 4 request): Max survival's Sunder filler at 25 (+7.1 ± 2.5 /
++4.6 ± 2.8: under twice its error on seed 2), Max threat's talents with Shield Wall at 12 s (+5.6 / +3.0 ± 2.4, below
+the talents alone), Max threat's talents at Balanced (-0.6 / +1.1 ± 3.8; with Sunder at 25 +1.8 / +2.9) and at Max
+survival (-10.1 / -22.3 ± 8). The knob searches moved nothing else; Balanced's second talent search (with Sunder at 25)
+kept its talents. At 1,000 iterations (`tankbench`, default seed) the presets bench **4,651.7 / 3,880.3 / 2,138.7**
+(Max survival unchanged). Raw output, scripts and the A/B index: `orchestration/tank_handoff/warrior/round5/`
+(`README.txt`, `ab_summary.txt`).
+
+## Presets (2026-11-04, round 2; round 3 on top)
+
+**Round 3** (2026-11-04, after the second tank audit; master fd9538c: mana-gain threat unmultiplied, tank_mechanics
+-12, and disjoint tank seeds, tank_rotations -13). The warrior gains no mana; at 1,000 iterations the presets bench
+3,700.2 / 3,008.5 / 1,205.0 (Max threat 3,694.8 in round 2: Shield Wall at 13 s moved it; Balanced and Max survival
+as in round 2; round 4's consumables above move all three to 4,382.8 / 3,562.0 / 1,696.7, and the full raid set to 4,644.5 / 3,867.3 / 2,138.7). The same search as round 2
+(talents and knobs alternated, all nine races, the gear A/Bs) moved one thing: Max threat's Shield Wall in the last
+13 s instead of 12 (+4.6 ± 1.4 on seed 1, +3.5 ± 1.3 on seed 2, 10,000 iterations; 14 s +1.7 / +0.6, 11 s
+-8.8 / -6.6). Every small call was checked on a second, disjoint seed (`-seed 2`). Raw output, commands and the A/B
+index: `orchestration/tank_handoff/warrior/round3/` (`README.txt`, `ab_summary.txt`).
+
+Own-weight six-boss mean, `rotopt -eval`, 10,000 iterations (± about 4 / 5 / 10), before → after:
+
+| Preset | Seed 1 | Seed 2 |
+|---|---|---|
+| Max threat | 3,690.9 → **3,695.6** | 3,684.0 → **3,687.5** |
+| Balanced | 3,010.6 (unchanged) | 3,005.6 |
+| Max survival | 1,202.1 (unchanged) | 1,193.9 |
+
+3×3 check (3,000 iterations, each request at each weight): Max threat 3,700.0 / 2,904.8 / 519.4, Balanced
+3,622.1 / **3,012.2** / 1,182.4, Max survival 3,423.3 / 2,868.4 / **1,204.0**: each preset leads at its own weight.
+Not adopted: Shield Block from 40 Rage at Max threat (+1.6 / +0.9 ± 0.8), Balanced's Sunder filler at 15 (+2.8 / +0.9),
+Max survival's at 20 (+4.6 / +6.4 ± 5 to 6), the armor trinket held 40 s (-5.1 / -2.3 against 35 s), Shield Wall at 16 s
+or 18 s at Balanced and Max survival (all ties or losses). The paired error held across seeds at Max threat, but at
+Balanced and Max survival two seeds disagreed by more than it allows (cloak at Balanced -5.6 ± 1.8 against +0.5 ± 1.7),
+so those A/Bs ran four seeds.
+
+### Round 3 gear A/Bs
+
+Paired, 10,000 iterations, B − A at each preset's weight, seeds 1 / 2 (/ 3 / 4):
+
+| A/B | Max threat | Balanced | Max survival |
+|---|---|---|---|
+| Cloak: Superior Defense (+70 armor, 1889) vs Agility +5 (1219587) | -6.3 / -6.0 (± 1.0) | -5.6 / +0.5 / -3.4 / -5.1 (± 1.7) | -10.1 / +1.2 / +0.1 / -1.3 (± 4.4; mean -2.5 ± 2.2) |
+| Wrist: Superior Stamina (1886) vs Superior Deflection (1248665) | -4.8 / -3.9 (± 1.6) | -10.4 / -0.8 / +0.3 / -7.3 (± 2.9) | -31.6 / -13.0 / -11.5 / -32.7 (± 7) |
+| Shield: Lesser Block (+2 block, 863) vs Greater Stamina (+9, 1886), round 3b | -4.4 / -3.3 (± 0.9) | -6.9 / -9.8 (± 1.6) | -18.7 / -22.8 (± 4.1) |
+| Armor trinket 990617 on the pull vs 991018 | -209.6 / -209.3 | -179.7 / -178.8 | (below) |
+| Armor trinket held for the last 35 s vs 991018 | -192.1 / -192.2 | -146.3 / -145.4 | (below) |
+
+Agility stays on the cloak (it wins or ties at every weight) and Superior Deflection on the wrists. The shield carries
+1886 (+9) in all three requests and both gear sets; it beats Lesser Block (863, the paladin's pick) at every weight
+on seeds 1 and 2 (raw output in `orchestration/tank_handoff/warrior/round3b/`). (929 is only a bracer and boots enchant in the database; the boots
+keep it).
+
+**Max survival's armor trinket** (tank_rotations-20261104-11, a call): 990617 held for the last 35 s against Balanced's
+991018 on the pull, at w = 3: **+12.8 ± 5.4** (seed 1), **+15.9 ± 4.8** (seed 2). Per boss (seed 1 / 2): Broodlord
++437 / +433, Onyxia +51 / +65, Magmadar -76 / -72, Golemagg -57 / -49, Chromaggus -101 / -106, Vaelastrasz -178 / -176.
+Without Broodlord (the five others' mean): **-72.0 ± 3.3 / -67.6 ± 3.7**, so 991018 on the pull would win by about 70.
+The preset keeps the armor trinket (call 7).
+
+### Round 2
 
 Round 2 re-searched the three presets on the engine after the first tank audit (the boss faces the tank, logs' swing
 gaps, Phalanx and Greater Fortitude on every tank) and the warrior fixes (Revenge 0.25 attack power, Unbridled Wrath on
@@ -204,21 +379,22 @@ candidate and 3,000 to confirm; gear, Shield Wall and Sunder A/Bs with the rotat
 knob searches alternated until neither moved. Raw output: `orchestration/tank_handoff/warrior/round2/`
 (`ab_summary.txt` lists every A/B).
 
-| Preset | Talents | Knobs that differ from Balanced | Gear | Race | Score at own weight (tankbench, 1,000) |
-|---|---|---|---|---|---|
-| Max threat (w = 1/3) | `04-05050015-250330020330001351`: Deflection 4, Blood Craze 1, Anticipation 3, Improved Sunder Armor 3 | `tc=0` (no Thunder Clap), `hsRage=30`, `revengeFirst=1`, `sunderRage=15`, `wallAt=12` | attack power on-use (991018) | Undead | 3,694.8 |
-| Balanced (w = 1, default) | `05-05050005-250530020310001351`: Deflection 5; Cruelty, Unbridled Wrath, Enrage 5/5; Protection 31 with Shield Slam, Improved Sunder Armor 1, no Last Stand or Vanguard | (the base) | attack power on-use (991018) | Undead | 3,008.5 |
-| Max survival (w = 3) | Balanced's (its own search ends there) | `trinketAt=35` (the armor trinket held for the last 35 s) | armor on-use (990617), `level60_phase1_synthetic_armor_trinket.gear.json` | Undead | 1,205.0 |
+| Preset | Talents | Knobs that differ from Balanced | Gear | Race | Consumables beyond the shared set (round 4) | Score at own weight (tankbench, 1,000) |
+|---|---|---|---|---|---|---|
+| Max threat (w = 1/3) | `05-05050005-250330020330001351` (round 5; was `04-05050015-...`, Deflection 4 and Blood Craze 1): Deflection 5, Anticipation 3, Improved Sunder Armor 3 | `tc=0` (no Thunder Clap), `hsRage=30`, `revengeFirst=1`, `sunderRage=15`, `wallAt=13` (round 3; was 12) | attack power on-use (991018) | Undead | R.O.I.D.S., Desert Dumpling, Mighty Rage Potion | 3,700.2 (round 3); 4,644.5 (round 4, full raid set); **4,651.7** (round 5) |
+| Balanced (w = 1, default) | `05-05050005-250530020310001351`: Deflection 5; Cruelty, Unbridled Wrath, Enrage 5/5; Protection 31 with Shield Slam, Improved Sunder Armor 1, no Last Stand or Vanguard | (the base; `sunderRage=25` from round 5) | attack power on-use (991018) | Undead | Spirit of Zanza, Desert Dumpling, Mighty Rage Potion | 3,008.5; 3,867.3 (round 4); **3,880.3** (round 5) |
+| Max survival (w = 3) | Balanced's (its own search ends there) | `trinketAt=35` (the armor trinket held for the last 35 s); `sunderRage=30` (round 5: Balanced moved to 25) | armor on-use (990617), `level60_phase1_synthetic_armor_trinket.gear.json` | Undead | Spirit of Zanza, Dirge's chops, Greater Stoneshield Potion | 1,205.0; 2,138.7 (round 4 and 5) |
 
-All three wear Superior Deflection (Defense +9) on the wrists, Superior Stamina (+9, enchant 1886) on the shield.
+All three wear Superior Deflection (Defense +9) on the wrists, Enchant Shield - Greater Stamina (spell 20017, +9 Stamina, enchant 1886, the id the bracer's Superior Stamina shares) on the shield.
 
 Balanced's knobs: `shieldBlock=1` (whenever its buff is down), `sbRage=0`, `demo=0`, `tc=1`, `tcRefresh=2`,
-`debuffsFirst=0`, `revengeFirst=0`, `sunderUp=1`, `sunderRage=30`, `hsRage=50`, `bloodrageRage=30`, `opener=0`,
+`debuffsFirst=0`, `revengeFirst=0`, `sunderUp=1`, `sunderRage=25` (30 before round 5), `hsRage=50`, `bloodrageRage=30`, `opener=0`,
 `chargeFrom=0`, `potion=1`, `shieldWall=2`, `wallAt=17` (Shield Wall in the last 17 s), `trinketAt=0`,
 `recklessSwingsRage=0`, `slamRage=0`.
 
 **Shared builds** (tank_fairness-20261104-4): Balanced and Max survival end on the same talents, race and knobs; they
-differ only in the trinket (and so `trinketAt`). The searches found nothing else that moves Max survival past its noise,
+differ only in the trinket (and so `trinketAt`), and since round 5 in the Sunder filler (25 Rage at Balanced, 30 at Max
+survival, where 25 stayed under twice its error on one seed). The searches found nothing else that moves Max survival past its noise,
 and nothing is forced apart.
 
 **What moved Max threat**: with Unbridled Wrath off Heroic Strike, Improved Heroic Strike's 3 points went to Deflection
@@ -238,9 +414,9 @@ Paired, 3,000 iterations, against the last 12 s (the scoring mean; Vaelastrasz i
 | 18 s | -1.4 ± 4.0 (-115) | +15.3 ± 5.9 (-174) | +99.1 ± 14.9 (-330) |
 | 20 s | -17.9 ± 4.4 (-198) | -10.4 ± 6.6 (-346) | +34.9 ± 16.9 (-851) |
 
-Balanced and Max survival take 17 s, the best of the grid; rotopt's `wallAt` is now on a 1 s grid from 6 s and its knob
+Balanced and Max survival take 17 s, the best of the grid (round 3 kept it); rotopt's `wallAt` is now on a 1 s grid from 6 s and its knob
 search on the final builds kept 17 (16 and 18 within noise of it). Vaelastrasz (a 17 ± 8 s fight) loses at every wall
-time past 12, about as much at 17 s as at 16 s; the other five gain. Max threat keeps 12 s (nothing past it gains).
+time past 12, about as much at 17 s as at 16 s; the other five gain. Max threat kept 12 s in round 2 (nothing past it gained); round 3 moved it to 13 s (+4.6 / +3.5 on two seeds, 10,000).
 The finding's larger gains (+46, +175 at 18 s) were on master before the fixes; on this branch they are a third and a half
 of that.
 
@@ -311,7 +487,9 @@ scored), Undead. Raw output: `orchestration/tank_handoff/warrior/bench_table.txt
 The fixes cost about 90 at every weight (unpaired, about ± 12 at Balanced): all of it SafeDPS and TPS (Balanced TPS
 1,960 to 1,904), mostly Unbridled Wrath leaving Heroic Strike and Revenge's 0.25; healing needed didn't move (335.7).
 
-**Max threat preset**
+**Max threat preset** (round 2's, Shield Wall at 12 s; round 3's at 13 s benches a six-boss mean of **3,700.2** at
+w = 1/3, SafeDPS 2,051.0, healing needed 410.7, TPS 1,968.8: its rows are in `orchestration/audit/ref/tank_bench/summary.tsv`
+and the full tables in `orchestration/tank_handoff/warrior/round3/bench/`)
 
 | Encounter | w = 1/3 | w = 1 | w = 3 | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS |
 |---|---|---|---|---|---|---|---|---|---|
@@ -367,12 +545,15 @@ at w = 1, 3,008.5 against 2,877.8 and 2,869.7).
 5. **Base health for the self costs** (to verify): Bloodrage's 20% and Reckless Swings' 25% are taken from our class
    base (1,689 at 60, the emulator convention); wowsims/forever takes them from a base that counts base Stamina (2,629
    for an Orc), with no evidence cited. A level 60 Bloodrage in a combat log settles it (What changed, above).
-6. **Superior Deflection on the wrists**: it beats Superior Stamina at every weight (+4 to +26), so the presets wear it,
+6. **Superior Deflection on the wrists**: it beats Superior Stamina at every weight (round 3: +4 to +22 at 10,000 on two to four seeds), so the presets wear it,
    but its formula-to-spell mapping (1248665, client enchant 8214) is unverified and the Forever formulas may not be
    Phase 1 (tank_gear-20261104-3). If it isn't obtainable, the presets go back to Superior Stamina (1886) at the cost above.
-7. **Max survival's armor trinket** wins by 19 ± 5, all of it on Broodlord, whose first-ability timers the encounter
-   file calls probably wrong (the paladin's Bulwark finding, tank_rotations-20261104-3, hangs on the same timers). If
-   they're fixed and the gain goes, Max survival takes the attack power trinket and is Balanced's build outright.
+7. **Max survival's armor trinket** (tank_rotations-20261104-11, next to the paladin's Templar's Bulwark timer,
+   tank_rotations-20261104-3: both hang on Broodlord's first-ability timers, which the encounter file calls probably
+   wrong). Round 3, 10,000 iterations: held for the last 35 s it wins by +12.8 ± 5.4 / +15.9 ± 4.8 (seeds 1 / 2) over
+   991018 on the pull, all of it on Broodlord (+437); without Broodlord 991018 on the pull wins by about 70 (-72.0 ± 3.3
+   / -67.6 ± 3.7). Default: the armor trinket, held (the current choice). If Broodlord's timers aren't trusted, Max
+   survival takes 991018 on the pull and is Balanced's build outright.
 8. **Shield Wall at 17 s** costs Vaelastrasz (-112 Balanced, -163 Max survival) for gains on the other five; a raid that
    weighs that fight more would keep 12 s.
 9. **Max survival's levers that read health** (Last Stand, Shield Wall on low health) can't be scored (brief step 2);

@@ -1,0 +1,7 @@
+magmadar -1666 64
+golemagg -2505 47
+onyxia -5344 109
+broodlord -8116 230
+vaelastrasz -1944 67
+chromaggus -6565 59
+MEAN -4356.7 ± 46.9

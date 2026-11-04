@@ -1,0 +1,11 @@
+Healing: 7 healers on the tank at 258 HPS each, 3.2 s heals (833 a heal).
+Encounter: Golemagg the Incinerator. The Core Ragers are another tank's job and left out. Magma Splash is modelled as a steady 4 stacks (200 Fire every 3 s), the log's tick average, without its 93 to 107 Fire hit on each application or its armor cut (about 250 a stack, so about 1,000 at 4 stacks, client data), which the sim can't model on an event yet. Earthquake below 10% health and Pyroblast on random players are left out.
+Stand-in healer: 1806 HPS every 0.46 ± 0.23 s. TMI over 6 s windows. 1000 iterations.
+
+Objective: 2 x SafeDPS - w x 900 x healing needed at 5% deaths / 258, in raid DPS (Max threat w = 1/3, Balanced 1, Max survival 3).
+
+| Build | Max threat | Balanced | Max survival | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS | TMI | Death | Health | EH | Biggest hit | Armor | Def | No crit at | Miss | Dodge | Parry | Block | Crit | Crush | Crush gap | Took: avoid | block | crit | crush |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+2026/11/04 17:52:32 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 17:52:32 All 4 sims finished successfully.
+| warrior_protection_max_survival | 3473 ± 17 | 3094 ± 21 | 1956 ± 43 | 1831 ± 8 | 163 ± 4 (0.64x DTPS) | 0.0% | 1823 | 506 | 253 | 20 | 0.0% | 9319 | 27040 | 1567 (5.9 to kill) | 9274 (61.7%) | 467 | 315 | 13.1% | 19.8% | 16.1% | 16.1% | 0.0% | 15.0% | 34.9% | 48.8% | 44.9% | 0.0% | 2.6% |

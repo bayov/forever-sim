@@ -1,0 +1,10 @@
+A=shaman_warden_max_survival.json B=Y_max_survival_FoodBlessSunfruit.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord        -6927    -6937   -10.0    0.7     -4.4        0
+chromaggus       -6361    -6370    -8.5    0.3     -4.1        0
+golemagg         -2088    -2097    -8.8    0.3     -4.2        0
+magmadar         -1300    -1309    -9.2    0.3     -4.3        0
+onyxia           -4803    -4813    -9.9    0.6     -4.7        0
+ragnaros        -16720   -16728    -7.9    1.0     -4.0        0
+vaelastrasz      -1809    -1819    -9.6    0.2     -4.8        0
+scoring_mean                       -9.3    0.2

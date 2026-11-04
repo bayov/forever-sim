@@ -31,7 +31,7 @@
         },
         {
          "id": 990706,
-         "enchant": 1886
+         "enchant": 1248665
         },
         {
          "id": 990707,
@@ -46,7 +46,7 @@
         },
         {
          "id": 990710,
-         "enchant": 929
+         "enchant": 1887
         },
         {
          "id": 990711
@@ -66,7 +66,7 @@
         },
         {
          "id": 990714,
-         "enchant": 929
+         "enchant": 863
         },
         {
          "id": 279247
@@ -222,19 +222,6 @@
            "spellId": {
             "spellId": 20924
            }
-          },
-          "condition": {
-           "cmp": {
-            "lhs": {
-             "currentManaPercent": {}
-            },
-            "op": "OpGe",
-            "rhs": {
-             "const": {
-              "val": "0.6"
-             }
-            }
-           }
           }
          },
          "notes": "Consecration with the mana to spare."
@@ -242,17 +229,20 @@
        ]
       },
       "consumes": {
-       "flask": "FlaskOfTheTitans",
-       "food": "FoodSmokedDesertDumpling",
+       "flask": "FlaskOfSupremePower",
+       "food": "FoodNightfinSoup",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
        "healthElixir": "ElixirOfGreaterFortitude",
-       "mainHandImbue": "DenseSharpeningStone",
+       "mainHandImbue": "ElementalSharpeningStone",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
        "spellPowerBuff": "GreaterArcaneElixir",
        "defaultPotion": "MajorManaPotion",
-       "dragonBreathChili": true
+       "dragonBreathChili": true,
+       "zanzaBuff": "GroundScorpokAssay",
+       "alcohol": "AlcoholRumseyRumBlackLabel",
+       "sapperExplosive": "SapperGoblinSapper"
       },
       "buffs": {
        "blessingOfKings": true,

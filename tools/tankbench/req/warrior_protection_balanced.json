@@ -149,6 +149,16 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "itemId": 10646
+                      }
+                    }
+                  },
+                  "notes": "Goblin Sapper Charge on cooldown (once a fight): its threat at the pull (docs/tank_warrior.md, Round 4 consumables)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 871
                       }
                     },
@@ -388,7 +398,7 @@
                         "op": "OpGe",
                         "rhs": {
                           "const": {
-                            "val": "30"
+                            "val": "25"
                           }
                         }
                       }
@@ -420,16 +430,19 @@
               ]
             },
             "consumes": {
-              "flask": "FlaskOfTheTitans",
+              "flask": "FlaskOfNaturalPrecision",
               "food": "FoodSmokedDesertDumpling",
               "agilityElixir": "ElixirOfTheMongoose",
               "armorElixir": "ElixirOfThePhalanx",
               "healthElixir": "ElixirOfGreaterFortitude",
               "strengthBuff": "JujuPower",
               "attackPowerBuff": "JujuMight",
-              "mainHandImbue": "DenseSharpeningStone",
+              "mainHandImbue": "ElementalSharpeningStone",
               "defaultPotion": "MightyRagePotion",
-              "dragonBreathChili": true
+              "dragonBreathChili": true,
+              "zanzaBuff": "SpiritOfZanza",
+              "alcohol": "AlcoholRumseyRumBlackLabel",
+              "sapperExplosive": "SapperGoblinSapper"
             },
             "buffs": {
               "blessingOfKings": true,

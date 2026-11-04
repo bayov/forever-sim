@@ -1,0 +1,10 @@
+A=warrior_protection_max_survival.json B=flask_titans_max_survival.json preset=max_survival iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1920     1565  -355.1   52.1   -262.6      -19
+chromaggus        -184     -665  -481.3   28.9   -288.9      -11
+golemagg          2808     2444  -364.6   32.7   -264.0      -16
+magmadar          3232     2784  -448.0   26.5   -271.6       -9
+onyxia            2385     2129  -256.3   65.5   -268.5      -18
+ragnaros        -11709   -11574   135.8  261.8   -284.3      -74
+vaelastrasz       2743     2293  -449.7   33.6   -257.5      -17
+scoring_mean                     -392.5   17.3

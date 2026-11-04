@@ -5,7 +5,7 @@
     ],
     "priorityList": [
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials, trinkets and potions."},
-        {"action":{"castSpell":{"spellId":{"spellId":5229}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpLt","rhs":{"const":{"val":"60"}}}}},"notes":"Enrage in the fight under 60 Rage (off the GCD; 16% less armor from items for 10 sec)."},
+        {"action":{"castSpell":{"spellId":{"spellId":5229}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpLt","rhs":{"const":{"val":"70"}}}}},"notes":"Enrage in the fight under 70 Rage (off the GCD; 16% less armor from items for 10 sec)."},
         {"action":{"castSpell":{"spellId":{"spellId":1238070}}},"notes":"Primal Bite on cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":1235827}},"condition":{"or":{"vals":[{"cmp":{"lhs":{"auraNumStacks":{"auraId":{"spellId":1235827},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"5"}}}},{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":1235827}}},"op":"OpLt","rhs":{"const":{"val":"4s"}}}}]}}},"notes":"Lacerate to 5 stacks, and again before they drop (under 4 sec left)."},
         {"action":{"castSpell":{"spellId":{"spellId":9898}},"condition":{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"spellId":9898},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"3s"}}}}},"notes":"Demoralizing Roar kept up on the boss: the tank applies its own (the bench drops the raid's Roar and Shout)."},

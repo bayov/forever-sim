@@ -523,3 +523,95 @@
 .bz-options-cat:not(.selected).v-hover::before {
 	opacity: 0.35;
 }
+
+/* Forever's frame chrome (frames/modern.ts). */
+.bz-portrait-frame .bz-pf-bg {
+	position: absolute;
+	overflow: hidden;
+}
+.bz-portrait-frame .bz-pf-rock {
+	inset: 0;
+	width: auto !important;
+	height: auto !important;
+	background-size: 256px 256px !important;
+	background-repeat: repeat !important;
+}
+.bz-pf-portrait {
+	position: absolute;
+	border-radius: 50%;
+	overflow: hidden;
+}
+.bz-nineslice {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+.bz-pf-title {
+	position: absolute;
+	pointer-events: none;
+}
+.bz-redx {
+	position: absolute;
+	cursor: pointer;
+	z-index: 5;
+}
+.bz-redx > div {
+	position: absolute;
+	inset: 0;
+	background-size: 100% 100%;
+	pointer-events: none;
+}
+.bz-redx-down,
+.bz-redx.pushed .bz-redx-up,
+.bz-redx-hi {
+	visibility: hidden;
+}
+.bz-redx.pushed .bz-redx-down,
+.bz-redx:hover .bz-redx-hi,
+.bz-redx.v-hover .bz-redx-hi {
+	visibility: visible;
+}
+.bz-redx-hi {
+	mix-blend-mode: screen;
+}
+.bz-ptab {
+	position: absolute;
+	cursor: pointer;
+}
+.bz-ptab > div[class^='bz-ptab-'] {
+	position: absolute;
+	pointer-events: none;
+}
+.bz-ptab-la,
+.bz-ptab-ma,
+.bz-ptab-ra,
+.bz-ptab.selected .bz-ptab-l,
+.bz-ptab.selected .bz-ptab-m,
+.bz-ptab.selected .bz-ptab-r {
+	visibility: hidden;
+}
+.bz-ptab.selected .bz-ptab-la,
+.bz-ptab.selected .bz-ptab-ma,
+.bz-ptab.selected .bz-ptab-ra {
+	visibility: visible;
+}
+.bz-ptab .bz-ptab-text {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 9px;
+	text-align: center;
+}
+.bz-ptab:hover .bz-ptab-text,
+.bz-ptab.v-hover .bz-ptab-text,
+.bz-ptab.selected .bz-ptab-text {
+	color: #fff;
+}
+.bz-ptab:not(.selected):hover .bz-ptab-l,
+.bz-ptab:not(.selected):hover .bz-ptab-m,
+.bz-ptab:not(.selected):hover .bz-ptab-r,
+.bz-ptab:not(.selected).v-hover .bz-ptab-l,
+.bz-ptab:not(.selected).v-hover .bz-ptab-m,
+.bz-ptab:not(.selected).v-hover .bz-ptab-r {
+	filter: brightness(1.4);
+}

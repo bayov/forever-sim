@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=food_wolfsteak_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3585     3585    -0.5   19.0    -17.3      -11
+chromaggus        2912     2905    -7.2   11.2    -14.9       -8
+golemagg          4032     4012   -19.9    8.0    -18.3       -5
+magmadar          4192     4170   -21.2    6.8    -16.4       -3
+onyxia            3986     3982    -4.0   12.1    -15.2       -5
+ragnaros          -794     -838   -44.4   38.7    -18.9        2
+vaelastrasz       4465     4442   -22.5    6.0    -14.2       -5
+scoring_mean                      -12.6    4.7

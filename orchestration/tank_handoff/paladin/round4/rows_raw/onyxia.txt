@@ -1,0 +1,17 @@
+Healing: 8 healers on the tank at 174 HPS each, 4.5 s heals (780 a heal).
+Encounter: Onyxia. Phase 1 and 3 on the ground only (the air phase at 65% to 40% is left out). Knock Away's 25% threat cut and Bellowing Roar's fear aren't modelled.
+Stand-in healer: 1392 HPS every 0.56 ± 0.28 s. TMI over 6 s windows. 1000 iterations.
+
+Objective: 2 x SafeDPS - w x 900 x healing needed at 5% deaths / 174, in raid DPS (Max threat w = 1/3, Balanced 1, Max survival 3).
+
+| Build | Max threat | Balanced | Max survival | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS | TMI | Death | Health | EH | Biggest hit | Armor | Def | No crit at | Miss | Dodge | Parry | Block | Crit | Crush | Crush gap | Took: avoid | block | crit | crush |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+2026/11/04 19:57:26 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 19:57:26 All 4 sims finished successfully.
+| paladin_protection_max_threat | 3402 ± 13 | 3234 ± 26 | 2729 ± 73 | 1743 ± 5 | 49 ± 5 (0.30x DTPS) | 0.0% | 1561 | 679 | 163 | 23 | 0.0% | 7881 | 23153 | 1106 (7.1 to kill) | 9631 (62.6%) | 443 | 315 | 12.1% | 18.3% | 15.1% | 17.1% | 0.0% | 15.0% | 37.3% | 46.1% | 45.2% | 0.0% | 6.3% |
+2026/11/04 19:57:26 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 19:57:26 All 4 sims finished successfully.
+| paladin_protection_balanced | 3314 ± 14 | 3184 ± 30 | 2794 ± 86 | 1690 ± 5 | 38 ± 6 (0.25x DTPS) | 0.0% | 1510 | 659 | 152 | 21 | 0.0% | 7961 | 23576 | 1097 (7.3 to kill) | 9754 (62.9%) | 463 | 315 | 12.9% | 18.7% | 15.9% | 17.9% | 0.0% | 15.0% | 34.5% | 47.8% | 45.5% | 0.0% | 4.6% |
+2026/11/04 19:57:26 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 19:57:26 All 4 sims finished successfully.
+| paladin_protection_max_survival | 3235 ± 12 | 3187 ± 25 | 3045 ± 69 | 1629 ± 5 | 14 ± 4 (0.09x DTPS) | 0.0% | 1453 | 647 | 156 | 18 | 0.0% | 8891 | 26330 | 1097 (8.1 to kill) | 9754 (62.9%) | 463 | 315 | 12.9% | 18.7% | 15.9% | 17.9% | 0.0% | 15.0% | 34.5% | 47.1% | 46.3% | 0.0% | 4.4% |

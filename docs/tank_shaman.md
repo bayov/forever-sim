@@ -9,34 +9,140 @@ Shield for threat, Stoneskin Totem and Guardian Totems for mitigation. The tank 
 parries with Spirit Weapons, and Rockbiter's and Spirit Weapons' threat are on), every tank ability and talent
 is audited against client 70753 (the October 30 hotfix's build) and tested, it wears a synthetic tank set by
 standards 36, and it has a rotopt template (`tools/rotopt/shaman_tank.go`) and three presets
-(`tools/tankbench/req/shaman_warden_*.json`, `ui/warden_shaman`).
+(`tools/tankbench/req/shaman_warden_*.json`, `ui/warden_shaman`), re-optimized in tank round 3 and extended in round 4 (Presets).
 
-## Presets (re-optimized 2026-11-04, tank round 2)
+## Presets (re-optimized 2026-11-04, tank round 3; round 4 the same day)
 
 Three presets on the six scoring encounters (Magmadar, Golemagg, Onyxia, Broodlord, Vaelastrasz, Chromaggus), by
 the tank objective at w = 1/3, 1 and 3 (`docs/tank_sim.md`): `tools/tankbench/req/shaman_warden_<preset>.json`,
-`ui/warden_shaman/apls/level60_<preset>.apl.json`, the synthetic set (`gear_sets/phase1_synthetic_tank.gear.json`,
-and `phase1_synthetic_tank_armor_trinket.gear.json` for Max survival) and three builds in `presets.ts`. The spec
-page's launch state is unchanged (blank gear, the default APL, the Level 60 talents). Ragnaros is benched, not
-scored. Re-searched on the round 2 engine (master 5668ea5: the boss in front parries and blocks, the logs' swing
-gap with parry haste off, survival cooldowns that never read health in scoring runs, Elixir of the Phalanx and
-Greater Fortitude on every tank).
+`ui/warden_shaman/apls/level60_<preset>.apl.json`, the synthetic set (`gear_sets/phase1_synthetic_tank.gear.json`
+for Max threat, `phase1_synthetic_tank_armor_trinket.gear.json` for Balanced and Max survival) and three builds in
+`presets.ts`. The spec page's launch state is unchanged (blank gear, the default APL, the Level 60 talents).
+Ragnaros is benched, not scored. Re-searched on the round 3 engine (master fd9538c: mana gains make threat without
+the tank's threat multiplier, tank_mechanics-20261104-12; disjoint iteration seeds, tank_rotations-20261104-13) with
+round 2's search (`rotopt` talent and knob searches, paired `abtest` at 3,000 iterations), plus the round 3 items
+below. Every choice resting on a small paired difference was re-run on another seed (3,000 at seeds 2 and 3, or
+10,000 at a disjoint `tankscore.Seed`). Raw output: `orchestration/tank_handoff/shaman/round3/` (`ab_summary.txt`
+lists every A/B; tank_fairness-20261104-8).
 
-| Preset | Talents | On-use trinket | Rotation (knobs off the template's defaults) | Race |
-|---|---|---|---|---|
-| Max threat | `0535-050032303351012201-050002` | attack power (990015) | Mana Spring Totem (`waterTotem=1`), `armorTrinket=0` | Tauren |
-| Balanced | `05050002-050032203551012201-050002` | attack power (990015) | `armorTrinket=0` | Tauren |
-| Max survival | `05050003-050032113541012201-050002` | armor (999216) | `armorTrinket=0` (the trinket goes out with the other cooldowns) | Tauren |
+The spec page's raid buffs, blessings (Kings, improved Might and Wisdom), debuffs (the tank's Sunder ramp, no Expose
+Armor), consumables, professions (Engineering + Blacksmithing) and distance are the requests' (tank_fairness-20261104-6;
+they had no blessings and Alchemy + Enchanting before), and each build loads its own flask.
 
-All three put the shock above Stormstrike (`shockFirst=1`, the template's default since this round).
+| Preset | Race | Talents | On-use trinket (knobs) | Flask | Wrist / cloak / shield | Six-boss mean, own weight |
+|---|---|---|---|---|---|---|
+| Max threat | Night Elf | `0515-050032303551012201-050002` | attack power (990015) on cooldown (`armorTrinket=0`, `waterTotem=1`: Mana Spring Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Natural Accuracy | 1886 / 1889 / 1886 | 2,588.2 +/- 10.5 |
+| Balanced | Night Elf | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=1`, `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Titans | 1248665 / 1889 / 1886 | 944.3 +/- 17.5 |
+| Max survival | Undead | `05050003-050230113541012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Titans | 1248665 / 1889 / 1886 | -3,718.0 +/- 54.0 |
 
-**Scores** (mean of the six at the preset's own weight; tankbench, 1,000 iterations, `orchestration/audit/ref/tank_bench/summary.tsv`):
+Enchants: 1886 on the wrists is Superior Stamina (+9), 1248665 Superior Deflection (Defense +9); 1889 on the back is
+Superior Defense (+70 armor); 1886 on the shield is Enchant Shield - Greater Stamina (+9). All three keep the template's
+other defaults (Stoneskin, Lightning Shield, Earth Shock on cooldown above Stormstrike with `shockFirst=1`, no self
+heal). Since round 4 all three put Searing Totem down before the pull and recast it, with Fire Nova at 40% mana or
+more, only in the fight's last 60 s (`fireLast=60`; Round 4 below), and all three eat Dirge's Kickin' Chimaerok Chops
+and use the Goblin Sapper Charge (autocast with the other cooldowns, no filler explosive). `trinketAt` holds the
+trinket for the fight's last N seconds unless the wait costs a use (`tools/rotopt/shaman_tank.go`, as the warrior's;
+tank_rotations-20261104-9). Re-checked after 464deda made values under 20 s work and `armorTrinket=0` really mean
+unused (tank_mechanics-16): 0, 5, 10, 15, 20 and 30 against 25, and no trinket line, at 10,000 iterations on seeds 1
+and 2, all lose at Balanced and Max survival, so 25 stays (Round 4 below).
 
-| Preset | Before (round 1 build on the round 2 engine) | After |
-|---|---|---|
-| Max threat | 2,175 | 2,292 |
-| Balanced | 414 | 548 |
-| Max survival | -4,571 | -4,357 |
+**Scores** (mean of the six at the preset's own weight; tankbench, 1,000 iterations, seed 1,
+`orchestration/audit/ref/tank_bench/summary.tsv`; "before" is round 2's build on the round 3 engine, "round 3" the
+round 3 build before round 4's fire totem, Mana Spring, sapper and food):
+
+| Preset | Before | Round 3 | After (round 4) |
+|---|---|---|---|
+| Max threat | 2,276.0 +/- 7.9 | 2,430.0 +/- 10.4 | 2,588.2 +/- 10.5 |
+| Balanced | 534.3 +/- 15.2 | 767.2 +/- 18.0 | 944.3 +/- 17.5 |
+| Max survival | -4,356.7 +/- 46.9 | -3,970.8 +/- 47.7 | -3,718.0 +/- 54.0 |
+
+Round 3's build against round 4's at 10,000 iterations (errors x1.25 for the shared seed, `docs/tank_sim.md` Seeds),
+seed 1 / seed 2: Max threat 2,415.8 +/- 4.2 / 2,420.0 +/- 4.4 to 2,583.5 +/- 3.2 / 2,579.8 +/- 3.6; Balanced 732.2
++/- 6.5 / 737.5 +/- 5.8 to 943.8 +/- 6.2 / 937.7 +/- 5.8; Max survival -4,016.0 +/- 15.8 / -4,020.8 +/- 15.7 to
+-3,719.8 +/- 15.4 / -3,682.7 +/- 16.3.
+
+Paired, round 3's final request against round 2's (3,000 iterations, seed 1): Max threat +151.6 +/- 6.4, Balanced
++225.7 +/- 11.9, Max survival +388.7 +/- 30.0.
+
+### Round 4 A/Bs (2026-11-04)
+
+Paired `abtest`, scoring mean at the preset's weight, B minus A (A the preset as it stood before the item, B the
+variant), 10,000 iterations at seeds 1 / 2 (disjoint, `tankscore.Seed`) unless marked "3k s3" (a 3,000-iteration
+screen at seed 3). Adopted only what wins on both seeds beyond its error. Raw output:
+`orchestration/tank_handoff/shaman/round4/` (`ab_summary.txt` lists every A/B).
+
+- **`trinketAt` re-check** (tank_mechanics-16; against 25 s). Balanced: 0 (on cooldown) -134.4 +/- 4.6 / -135.6
+  +/- 4.4, 5 s -178.8 / -181.3, 10 s -125.4 / -128.7, 15 s -77.2 / -80.0, 20 s -24.8 +/- 3.7 / -23.9 +/- 3.0, 30 s
+  -6.4 +/- 4.0 / -13.0 +/- 3.9, no trinket line (`armorTrinket=0`) -219.3 / -215.2. Max survival: 0 -389.7 / -384.7,
+  5 s -536.8 / -519.7, 10 s -400.0 / -360.6, 15 s -247.8 / -204.8, 20 s -76.1 +/- 11.0 / -59.7 +/- 9.6, 30 s -20.2
+  +/- 10.1 / -36.0 +/- 10.6, no trinket line -642.4 / -630.2 (errors 3.8 to 4.6 at Balanced, 10 to 14 at Max
+  survival). 25 s stays.
+- **Fire totem and Fire Nova** (tank_rotations-20261104-14). The template's new `fireLast` knob gates the fire totem
+  and Fire Nova to the fight's last N s (the totem still goes down before the pull). 3k s3 screens, Searing Totem with
+  Fire Nova: gate 0 (whole fight) / 30 / 40 / 50 / 60 / 75 / 90 s, Max threat +34.0 / +22.6 / +33.8 / +43.0 / +44.5 /
+  +42.4 / +40.3 (+/- 9), Balanced (with Mana Spring) +34.8 / +42.6 / +48.0 / +44.1 / +42.5 / +42.4 / +38.1 (+/- 13 to
+  15), Max survival (with Mana Spring) +41.6 / +42.5 / +50.9 / +27.4 / +23.1 / +31.9 / +30.0 (+/- 33 to 40). At 60 s,
+  Searing without Fire Nova -9.8 / +0.2 / +20.8, Magma Totem +24.1 / +22.6 / +76.9, Flametongue Totem -162.7 / -144.4
+  / -64.6; Fire Nova's mana floor 0 / 20 / 60% within 8 of 40%. Confirmed: Max threat 60 s +53.9 +/- 4.7 / +47.7 +/-
+  5.0 (40 s +39.0 / +36.0); Balanced with Mana Spring 60 s +67.7 +/- 7.1 / +59.2 +/- 6.4 (40 s +53.4 / +42.6; without
+  Mana Spring +55.4 / +43.8); Max survival 60 s +59.3 +/- 17.7 / +55.7 +/- 18.2 (with Mana Spring +56.5 / +60.0, 40 s
+  +43.7 / +54.8, Magma +46.0 / +85.2 +/- 18). All three take Searing Totem and Fire Nova in the last 60 s.
+- **Mana Spring before the pull** (tank_rotations-20261104-15; `waterTotem=1`, Max threat's). Balanced +9.3 +/- 2.3 /
+  +10.8 +/- 1.8: taken. Max survival +5.3 +/- 5.8 / +4.0 +/- 5.1: inside its error, not taken.
+- **Explosives** (standards rule 11; the Warden has Engineering). On the fire totem builds, the Goblin Sapper Charge
+  (`sapperExplosive`, a DPS cooldown the rotation's `autocastOtherCooldowns` line fires): Max threat +101.0 +/- 4.5 /
+  +99.0 +/- 4.7, Balanced +102.7 +/- 6.9 / +101.2 +/- 6.9, Max survival +75.1 +/- 18.2 / +115.1 +/- 17.5. A filler on
+  top (sapper and filler against the preset): Goblin Land Mine +94.8 / +94.4, +94.9 / +94.1, +68.7 / +100.0; Dense
+  Dynamite and Thorium Grenade +94.4 / +93.9, +94.5 / +93.7, +68.4 / +99.7; EZ-Thro Dark Bomb as the Land Mine within
+  0.4. Every filler costs 4 to 15 against the sapper alone (the GCDs, as for the bear). All three take the sapper, no
+  filler.
+- **Food** (tank_fairness-20261104-10; against the Smoked Desert Dumpling, with the sapper). Dirge's Kickin' Chimaerok
+  Chops: Max threat +12.7 +/- 1.6 / +13.2 +/- 1.6, Balanced +41.1 +/- 1.8 / +40.1 +/- 1.9, Max survival +161.5 +/- 4.5
+  / +167.1 +/- 5.1. Grilled Squid +0.4 / +2.0, +5.4 / +4.8, +5.0 / +1.1 (+/- 1.5 to 7). Blessed Sunfruit -9.9, -9.8,
+  -9.2 on both seeds. All three take Dirge's chops.
+
+### Round 3 A/Bs
+
+Paired `abtest` (`tools/audit/tank_rotations/abtest`), scoring mean at the preset's weight, B minus A, B the variant;
+3,000 iterations at seed 1 unless a seed is named (s2, s3: 3,000 at seed 2 or 3; 10k sN: 10,000 at disjoint seed N).
+Listed as Max threat / Balanced / Max survival where all three were run.
+
+- **Armor trinket hold** (tank_rotations-20261104-9, -10). 999216 held for the last N s against the round 2 request
+  (autocast on cooldown at Max survival, 990015 on cooldown at Balanced). Max survival: 20 s +265.6 +/- 19.7, 25 s
+  +344.3 +/- 15.3, 30 s +321.9 +/- 16.4, 35 s +252.1 +/- 18.0, 40 s +159.8 +/- 16.6, 45 s +83.1 +/- 12.8. Balanced:
+  20 s +78.6 +/- 7.0, 25 s +98.5 +/- 7.3, 30 s +97.2 +/- 7.3, 35 s +67.3 +/- 6.5, worn on cooldown -6.5 +/- 3.7. Max
+  threat keeps 990015: 999216 held 30 s -26.0 +/- 2.2, on cooldown -65.1 +/- 1.3 (on the final build: -12.2 +/- 4.2 and
+  -68.2 +/- 1.5). On the final builds, 990015 on cooldown in place of the held armor trinket: Balanced -112.3 +/- 8.1,
+  Max survival -544.6 +/- 25.0.
+- **25 s against 30 s** (final builds): Balanced +6.9 +/- 5.8, s2 +6.4 +/- 5.4, 10k s4 +16.6 +/- 4.2, 10k s5 +8.9 +/- 3.2;
+  Max survival +20.6 +/- 15.5, s2 +23.4 +/- 17.7, 10k s3 +7.6 +/- 9.2, 10k s4 +29.5 +/- 10.2, 10k s5 +33.2 +/- 11.0.
+  35 s against 30 s loses (-29.4 +/- 5.9, -100.8 +/- 15.8). So 25 s, confirmed only at 10,000 (call (i)).
+- **Flask** (tank_fairness-20261104-7). Natural Accuracy against Titans at Max threat: +31.1 +/- 3.8 on round 2's
+  build; on the final build Titans against Natural Accuracy -24.5 +/- 5.0. Max threat takes Natural Accuracy.
+- **Shield** (tank_gear-20261104-3). Lesser Block (863) against Greater Stamina (1886): -8.6 +/- 3.4 / -12.6 +/- 4.9 /
+  -40.6 +/- 12.7; s2 -10.9 +/- 3.6 / -16.6 +/- 4.3 / -71.6 +/- 14.9. 1886 stays.
+- **Wrists** (tank_gear-20261104-3). Superior Deflection (1248665) against Superior Stamina (1886). Max threat +1.2 +/-
+  4.1, s2 -1.4 +/- 5.2, final build -2.1 +/- 6.7: keeps 1886. Balanced +2.3 +/- 7.8, s2 +1.0 +/- 7.0, final +4.7 +/- 7.6,
+  10k s5 +6.7 +/- 4.3, 10k s6 (Night Elf, 25 s) +15.8 +/- 4.3. Max survival +6.7 +/- 20.4, s2 +26.8 +/- 19.9, 10k s3
+  +15.4 +/- 10.6, final +7.9 +/- 22.0, 10k s4 +26.1 +/- 12.2, 10k s5 +34.5 +/- 12.2, 10k s6 (Undead, 25 s) -2.7 +/- 10.5.
+  Balanced and Max survival take 1248665 on the pooled gain (call (h)).
+- **Cloak** (tank_gear-20261104-7). Agility +5 (1219587) against Superior Defense (1889): +1.0 +/- 2.6 / -5.1 +/- 5.2 /
+  -15.2 +/- 13.6; s2 +3.0 +/- 3.3 / -5.8 +/- 4.8 / -21.2 +/- 12.1; final builds +1.8 +/- 3.0 / -1.8 +/- 4.5 / -7.2 +/-
+  15.3. 1889 stays everywhere (Max threat's gain is inside its error).
+- **Race** (tank_fairness-20261104-8; against Tauren, on round 3's Tauren talents). Night Elf +104.2 +/- 8.7 / +111.3
+  +/- 10.4 / -83.6 +/- 31.8, s2 +99.9 +/- 9.2 / +102.2 +/- 11.7 / -31.0 +/- 34.4 (Elune's Light). Undead +45.5 +/- 11.5 /
+  +76.9 +/- 12.4 / +14.0 +/- 33.7; at Max survival s2 +100.1 +/- 30.9, 10k s3 +38.9 +/- 18.4, and on the final build
+  Tauren against Undead 10k s7 -27.5 +/- 17.5: about +43 +/- 11 pooled over the four (call (f)). Undead against Night
+  Elf: Max threat -58.7 +/- 13.7, Balanced -34.4 +/- 11.0. Troll +38.2 / +2.3 / -188.6, Gnome +33.9 / -5.9 / -159.9,
+  Orc +27.8 / -3.5 / -176.2, Human, Dwarf and the Skyborne lower at every weight. So Night Elf at Max threat and
+  Balanced (call (g)), Undead at Max survival.
+- **Talents** (rotopt talent searches on Tauren, then again after the race change; paired against the round 2 build).
+  Max threat, Elemental Devastation 1 and Toughness 5 (Night Elf): +16.4 +/- 6.4, s2 +17.2 +/- 6.3. Balanced, Elemental
+  Warding 3 and Toughness 4: +5.0 +/- 1.7, s2 +8.1 +/- 1.9. Max survival, Guardian Totems 2 for Improved Lightning
+  Shield 2: +3.3 +/- 1.2, s2 +2.5 +/- 1.5, s3 +3.1 +/- 3.4 (call (j)). The knob searches moved nothing else (Balanced's
+  `shockMana=10`: +0.7 +/- 1.2, not taken).
+
+### Round 2 (for the record)
 
 **Earth Shock above Stormstrike** (tank_rotations-20261104-4). Earth Shock makes about 2,225 threat a cast against
 Stormstrike's 1,500, and with Stormstrike first the shock waited whenever both were ready. Swapping the two lines in
@@ -45,7 +151,7 @@ iterations), Balanced +105.0 +/- 12.5 (3,000), Max survival +129.3 +/- 33.1 (3,0
 every weight (Broodlord +141 / +104 / +107). The template's `shockFirst` knob (default 1) emits it, and the knob
 searches kept it at all three weights.
 
-**Talents** (`rotopt -talent-search -require spiritWeapons`, 1,000 iterations a candidate, 3,000 to confirm; paired
+**Talents, round 2** (`rotopt -talent-search -require spiritWeapons`, 1,000 iterations a candidate, 3,000 to confirm; paired
 diffs at 3,000 with `abtest`):
 - Max threat: from the round 1 build, Elemental Devastation 3 for a point of Elemental Warding and Toughness 2:
   +26.7 +/- 2.8. Balanced's talents score worse here (2,228 against 2,289).
@@ -57,14 +163,10 @@ diffs at 3,000 with `abtest`):
 - So the three builds differ, but Balanced's and Max survival's are not separable at their own weights by more than
   the paired error (tank_fairness-20261104-4): either build serves both.
 
-**Knobs** (600 to 1,000 iterations, 3,000 to confirm): the defaults everywhere (Stoneskin, Lightning Shield, Earth
+**Knobs, round 2** (600 to 1,000 iterations, 3,000 to confirm): the defaults everywhere (Stoneskin, Lightning Shield, Earth
 Shock on cooldown above Stormstrike, no fire totem, no self heal), plus Mana Spring Totem at Max threat. Max
 survival's dedicated armor trinket line lost 3.3 +/- 1.2 to the autocast line: since round 2's engine a scoring run
-never reads health, so the autocast line fires the defensive trinket on cooldown too.
-
-**Races**: not re-searched this round; round 1 put Tauren first at every weight by a wide margin (Tauren 2,501 /
-515 / -5,312 against Orc 2,441 / 123 / -6,830 and the rest lower; its 5% health keeps Broodlord's death floor
-lowest).
+never reads health, so the autocast line fires the defensive trinket on cooldown too. Round 3's `trinketAt` hold beats both (above).
 
 **Hit** (tank_fairness-20261104-3; the gear auditor found the set over the hit cap). The set's 5.5% gear hit plus
 Tidal Focus's 5% is 10.5% against the 8% melee cap, 2.5% over. Gear hit counts for spells in Forever
@@ -79,10 +181,6 @@ survival -26.1 +/- 6.7; Forceful Rugged Armor Kit (1254965: 10 attack power, 40 
 -27.2 +/- 6.7. Greater Stamina wins at Balanced and Max survival. Max threat shares Balanced's set, so it keeps
 Greater Stamina too (call (e)).
 
-**On-use trinket** (round 1, B, 3,000 iterations): the armor one (999216) against the attack power one (990015): Max
-threat 2,395 against 2,476, Balanced 444 against 463, Max survival -5,409 against -5,575. So Max survival wears the
-armor trinket and the other two the attack power one. Not re-run this round.
-
 **Gear and mechanics checked for correctness, not for the gap** (tank_fairness-20261104-3, user ruling 2026-11-04,
 standards 40). The Warden's 2 to 3 times higher healing need than the plate tanks is a real class gap: a mail class
 with much less defense built in, which won't necessarily be a viable raid tank. Nothing here compensates for it. What
@@ -93,48 +191,48 @@ row.
 
 ### Numbers (1,000 iterations, all seven encounters)
 
-`tankbench -iters 1000` on each encounter. Healing needed is at 5% deaths, in HPS; the three scores are the
-objective at w = 1/3, 1 and 3. The mean is over the six scoring encounters (Ragnaros is reported, not scored). The
-other tanks' rows are in `orchestration/audit/ref/tank_bench/summary.tsv`.
+`tankbench -iters 1000` on each encounter, seed 1 (`orchestration/audit/ref/tank_bench/summary.tsv`). Healing needed is
+at 5% deaths, in HPS; the score is the objective at the preset's own weight, +/- its error. The mean is over the six
+scoring encounters (Ragnaros is reported, not scored). The other tanks' rows are in the same file.
 
-**Max threat** (`shaman_warden_max_threat.json`)
+**Max threat** (`shaman_warden_max_threat.json`, score at w = 1/3)
 
-| Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
-|---|---|---|---|---|---|---|---|---|
-| Magmadar | 1458 | 1555 | 527 | 471 | 0.0% | 2562 | 1467 | -1819 |
-| Golemagg | 1434 | 1523 | 572 | 536 | 0.0% | 2423 | 1177 | -2563 |
-| Onyxia | 1567 | 1691 | 657 | 618 | 0.0% | 2318 | 189 | -6200 |
-| Broodlord | 1504 | 1612 | 763 | 1346 | 0.2% | 1878 | -813 | -8888 |
-| Vaelastrasz | 1559 | 1761 | 1411 | 1658 | 0.0% | 2826 | 1433 | -2746 |
-| Chromaggus | 1315 | 1415 | 911 | 1095 | 0.0% | 1747 | -421 | -6925 |
-| Ragnaros | 1346 | 1432 | 1426 | 2450 | 0.1% | 286 | -4871 | -20341 |
-| Mean of the six | 1473 | 1593 | 807 | 954 | 0.0% | 2292 | 505 | -4857 |
+| Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Score |
+|---|---|---|---|---|---|---|
+| Magmadar | 1,496 | 1,630 | 512 | 479 | 0.0% | 2,702 +/- 13 |
+| Golemagg | 1,488 | 1,614 | 558 | 551 | 0.0% | 2,586 +/- 13 |
+| Onyxia | 1,621 | 1,787 | 646 | 637 | 0.0% | 2,476 +/- 17 |
+| Broodlord | 1,558 | 1,708 | 744 | 1,526 | 0.5% | 1,890 +/- 50 |
+| Vaelastrasz | 1,671 | 1,912 | 1,399 | 1,731 | 0.0% | 3,097 +/- 25 |
+| Chromaggus | 1,335 | 1,455 | 891 | 1,092 | 0.0% | 1,829 +/- 12 |
+| Ragnaros | 1,392 | 1,515 | 1,421 | 2,754 | 0.3% | 130 +/- 61 |
+| Mean of the six | 1,528 | 1,684 | 792 | 1,003 | 0.1% | 2,430.0 +/- 10.4 |
 
-**Balanced** (`shaman_warden_balanced.json`)
+**Balanced** (`shaman_warden_balanced.json`, score at w = 1)
 
-| Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
-|---|---|---|---|---|---|---|---|---|
-| Magmadar | 1417 | 1517 | 521 | 458 | 0.0% | 2502 | 1437 | -1759 |
-| Golemagg | 1387 | 1479 | 568 | 532 | 0.0% | 2339 | 1103 | -2607 |
-| Onyxia | 1523 | 1649 | 644 | 592 | 0.0% | 2277 | 237 | -5884 |
-| Broodlord | 1464 | 1573 | 758 | 1237 | 0.0% | 1910 | -563 | -7983 |
-| Vaelastrasz | 1521 | 1723 | 1359 | 1554 | 0.0% | 2793 | 1487 | -2430 |
-| Chromaggus | 1261 | 1365 | 900 | 1058 | 0.0% | 1682 | -414 | -6701 |
-| Ragnaros | 1302 | 1392 | 1348 | 2046 | 0.0% | 631 | -3675 | -16594 |
-| Mean of the six | 1429 | 1551 | 792 | 905 | 0.0% | 2250 | 548 | -4561 |
+| Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Score |
+|---|---|---|---|---|---|---|
+| Magmadar | 1,423 | 1,536 | 484 | 436 | 0.0% | 1,551 +/- 18 |
+| Golemagg | 1,412 | 1,511 | 524 | 496 | 0.0% | 1,293 +/- 21 |
+| Onyxia | 1,530 | 1,671 | 591 | 542 | 0.0% | 538 +/- 36 |
+| Broodlord | 1,470 | 1,595 | 684 | 1,110 | 0.2% | -140 +/- 87 |
+| Vaelastrasz | 1,555 | 1,775 | 1,250 | 1,445 | 0.0% | 1,729 +/- 36 |
+| Chromaggus | 1,266 | 1,376 | 848 | 1,050 | 0.0% | -368 +/- 28 |
+| Ragnaros | 1,317 | 1,417 | 1,293 | 2,133 | 0.0% | -3,902 +/- 152 |
+| Mean of the six | 1,443 | 1,577 | 730 | 846 | 0.0% | 767.2 +/- 18.0 |
 
-**Max survival** (`shaman_warden_max_survival.json`)
+**Max survival** (`shaman_warden_max_survival.json`, score at w = 3)
 
-| Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
-|---|---|---|---|---|---|---|---|---|
-| Magmadar | 1359 | 1440 | 496 | 434 | 0.0% | 2375 | 1366 | -1660 |
-| Golemagg | 1340 | 1407 | 548 | 508 | 0.0% | 2224 | 1044 | -2498 |
-| Onyxia | 1424 | 1546 | 611 | 544 | 0.0% | 2155 | 279 | -5347 |
-| Broodlord | 1378 | 1477 | 718 | 1232 | 0.0% | 1721 | -744 | -8137 |
-| Vaelastrasz | 1439 | 1649 | 1272 | 1385 | 0.0% | 2716 | 1552 | -1940 |
-| Chromaggus | 1318 | 1378 | 879 | 1045 | 0.0% | 1721 | -349 | -6558 |
-| Ragnaros | 1268 | 1337 | 1301 | 1933 | 0.1% | 640 | -3429 | -15635 |
-| Mean of the six | 1376 | 1483 | 754 | 858 | 0.0% | 2152 | 525 | -4357 |
+| Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Score |
+|---|---|---|---|---|---|---|
+| Magmadar | 1,375 | 1,468 | 492 | 416 | 0.0% | -1,418 +/- 44 |
+| Golemagg | 1,368 | 1,446 | 534 | 482 | 0.0% | -2,151 +/- 51 |
+| Onyxia | 1,448 | 1,580 | 599 | 517 | 0.0% | -4,868 +/- 96 |
+| Broodlord | 1,396 | 1,507 | 698 | 1,106 | 0.2% | -6,940 +/- 245 |
+| Vaelastrasz | 1,461 | 1,691 | 1,260 | 1,447 | 0.0% | -2,092 +/- 70 |
+| Chromaggus | 1,342 | 1,410 | 865 | 1,030 | 0.0% | -6,356 +/- 58 |
+| Ragnaros | 1,286 | 1,358 | 1,291 | 2,069 | 0.0% | -16,886 +/- 619 |
+| Mean of the six | 1,398 | 1,517 | 741 | 833 | 0.0% | -3,970.8 +/- 47.7 |
 
 ## Calls for the user
 
@@ -143,9 +241,10 @@ other tanks' rows are in `orchestration/audit/ref/tank_bench/summary.tsv`.
   Measured in round 1 on the then Balanced preset (1,000 iterations, means of the six, older engine): at 1, TPS
   1,589 to 1,399, SafeDPS 1,745 to 1,526, scores 2,493 / 501 / -5,475 to 2,056 / 63 / -5,913. With the shock now
   above Stormstrike more of the Warden's threat rests on it. A /combatlog threat check in game would settle it.
-- **(b) The defensive on-use trinket.** Default: the synthetic 1,665 armor for 20 s every 2 min (999216) in Max
-  survival, as the defensive counterpart of the Enhancement set's attack power trinket at the same item level. The
-  alternative, the attack power trinket everywhere, cost Max survival 166 in round 1 (-5,575 against -5,409).
+- **(b) The defensive on-use trinket.** Default: the synthetic 1,665 armor for 20 s every 2 min (999216), held for
+  the last 25 s, in Balanced and Max survival, as the defensive counterpart of the Enhancement set's attack power
+  trinket at the same item level. The alternative, the attack power trinket, costs Balanced 112.3 +/- 8.1 and Max
+  survival 544.6 +/- 25.0 on round 3's builds.
 - **(c) Rockbiter's threat on Stormstrike** (to verify; ruled 2026-11-04, standards 40). The sim keeps 72 x weapon
   speed on specials, as on white swings (wowsims/forever's reading); wowsims/sod gives a special a flat 72, which
   would take about 35 TPS (2.5%) off the Warden. One Stormstrike's threat in a combat log settles it
@@ -154,8 +253,25 @@ other tanks' rows are in `orchestration/audit/ref/tank_bench/summary.tsv`.
 - **(d) Hit above the melee cap.** Default: the set keeps the row's 5.5% gear hit (10.5% with Tidal Focus); moving
   the 2.5% over the cap into crit ties at Balanced on the round 2 engine (415 against 404, unpaired).
 - **(e) Boots for Max threat.** Max threat would gain 2.7 +/- 0.5 (0.1%) from Mystic Rugged Armor Kit on the boots,
-  but it shares Balanced's gear set, where Greater Stamina wins by 6.6. Default: one set, Greater Stamina; a Max
-  threat set of its own is the alternative.
+  but the sets share one boots enchant, and Greater Stamina wins by 6.6 at Balanced. Default: Greater Stamina
+  everywhere; Mystic Rugged boots on Max threat's set alone is the alternative.
+- **(f) Undead at Max survival** (tank round 3). Undead beats Tauren by about +43 +/- 11 pooled over four seeds
+  (+14.0 +/- 33.7, s2 +100.1 +/- 30.9, 10k s3 +38.9 +/- 18.4, 10k s7 +27.5 +/- 17.5), but no single run clears 3
+  sigma. The gain rests on how the sim models Touch of the Grave's drain, and Undead loses Tauren's Broodlord margin
+  (the 5% health that kept his death floor lowest). Default: Undead; Tauren is the alternative.
+- **(g) Faction.** Night Elf (Alliance) now leads Max threat and Balanced by about 100 (+104.2 +/- 8.7 and +111.3 +/-
+  10.4 against Tauren, seed 2 alike) through Elune's Light, which reverses round 1's Tauren-first conclusion; Undead
+  is the best Horde race there (-58.7 +/- 13.7 and -34.4 +/- 11.0 against Night Elf). The faction is the user's choice.
+  Default: Night Elf at Max threat and Balanced, Undead at Max survival (a mixed-faction set of presets).
+- **(h) Superior Deflection wrists at Balanced and Max survival.** Taken on small pooled gains: Balanced +1.0 to +15.8
+  over five runs, Max survival +6.7 to +34.5 over six runs but -2.7 +/- 10.5 on the final build at 10k seed 6.
+  Default: Superior Deflection (1248665); Superior Stamina (1886) is the alternative.
+- **(i) The armor trinket held 25 s against 30 s.** 25 s wins at both weights, but only the 10,000-iteration runs
+  separate them (Balanced +16.6 +/- 4.2 and +8.9 +/- 3.2, Max survival +29.5 +/- 10.2 and +33.2 +/- 11.0; the
+  3,000-iteration runs and 10k s3 at Max survival, +7.6 +/- 9.2, are inside their errors). Default: 25 s.
+- **(j) Max survival's talents.** Guardian Totems 2 for Improved Lightning Shield 2 gains +3.3 +/- 1.2 at seed 1,
+  but under twice the error at seeds 2 and 3 (+2.5 +/- 1.5, +3.1 +/- 3.4). Default: the new build; round 2's
+  `05050003-050032113541012201-050002` is the alternative.
 - The Warden's higher healing need is not a call any more: the user ruled it a real class gap (standards 40, above).
 
 ## Why the Warden takes more damage than the other tanks (2026-11-04)
@@ -187,7 +303,9 @@ Two different things, both a **real class gap**, not the gear or the rotation:
    5% deaths is unbounded; an Orc, Troll or Dwarf Warden (8,120 to 8,140) is at 6.5 to 8.1%, past the 5% line
    ("none works"). +1,500 health takes the floor to 0.1% (healing needed 1,315), +1,200 armor to 0.5% (1,440). The
    warrior and paladin get there with less health through Shield Block, Holy Shield and their reductions.
-   Broodlord therefore decides the Warden's score and its race: Tauren is the only race that survives him.
+   Broodlord therefore decides the Warden's score and its race: Tauren is the only race that survives him. (On round
+   3's engine and builds the death floor is 0.2 to 0.5% for every preset, and Night Elf and Undead score higher:
+   Presets.)
 
 The gear isn't the cause: the set's Stamina share is the row's (23.9%) and the Warden has the most health of the
 shield tanks (8,536 against 7,079 and 6,994); what a hybrid set spends on Intellect, Spirit and spell power the other
@@ -222,7 +340,8 @@ Elemental Warding and the heals are as audited below. What moved for the Warden:
 ## Rules audit
 
 Client 70753 (`tools/sources/wago.py`, no hotfix rows logged for it: the October 30 hotfix is in its tables,
-`orchestration/update_ledger.md`), forever-wiki/classes/shaman.md, `shaman_audit.md` (the shaman's DPS audit,
+`orchestration/update_ledger.md`) and hotfix push 113380 (build 70755, 2026-11-04, wago.tools/hotfixes region 91:
+the shocks and Stormstrike), forever-wiki/classes/shaman.md, `shaman_audit.md` (the shaman's DPS audit,
 whose sections are cited as 6.4, 7.4 and so on). Tiers for what the client doesn't state: (1) a Forever log or
 beta measurement, (2) wowsims/forever's reading, (3) Classic's (wowsims/classic).
 
@@ -235,9 +354,9 @@ beta measurement, (2) wowsims/forever's reading, (3) Classic's (wowsims/classic)
 | Spirit Weapons' threat (16268) | effect 1 -30% threat, all schools; effect 2 +86 on Rockbiter's passive threat effect (0 alone) | **0.7 x 1.86 = 1.302 under Rockbiter (was 1.3)**, 0.7 otherwise; picked by the imbue in the options or consumes | client, tier 1 | **fixed** |
 | Spirit Weapons' parry | not a client effect ("Gives a chance to parry") | can parry: 5% base, plus Defense, less 0.6% for the boss's level | beta (6.4: 18 of 380 below us, low above), tier 1 | right |
 | Shield block | Classic's: 5% base with a shield, Defense on top | 5% (less 0.6% vs a level 63), block value = the shield's + Strength / 20 - 1 | Classic, tier 3; no shaman shield on the beta (6.4) | right |
-| Earth Shock rank 7 (10414) | client 70753: 301 centre (unchanged); **the notes: Era's base, 517-545 at 60** (notes-only, standards 37); 38.6% of spell power, 450 mana, 6 s shared shock cooldown (category 19), 1.5 s GCD, "Causes a high amount of threat" | 517-545 (master's shaman round, `earth_shock.go`; the x1.08 is 1.0 now); threat 2 x damage | threat multiplier: 2, Season of Discovery's (wowsims/sod earth_shock.go `ThreatMultiplier = 2`), tier 2, and Classic's (wowsims/classic), tier 3; no vmangos; wowsims/forever gives 1 (no source); the tooltip says "high" | right, **call (a)** |
+| Earth Shock rank 7 (10414) | client 70753: 301 centre; **hotfix push 113380 (build 70755, 2026-11-04; SpellEffect 688559): Era's base, 531, 517-545 at 60**, as the November 2 notes said; 38.6% of spell power, 450 mana, 6 s shared shock cooldown (category 19), 1.5 s GCD, "Causes a high amount of threat" | 517-545 (master's shaman round, `earth_shock.go`; the x1.08 is 1.0 now); threat 2 x damage | damage: hotfix 113380, client data, tier 1; threat multiplier: 2, Season of Discovery's (wowsims/sod earth_shock.go `ThreatMultiplier = 2`), tier 2, and Classic's (wowsims/classic), tier 3; no vmangos; wowsims/forever gives 1 (no source); the tooltip says "high" | right, **call (a)** |
 | Flame Shock, Frost Shock | no threat text | threat 1 x damage | client text, tier 3 | right |
-| Stormstrike (17364) | client 70753: 100% weapon damage, 8 s (unchanged); **the notes: 150% normalized weapon damage, 6 s** (notes-only); 8% of base mana, +20% to the next Lightning Bolt, Chain Lightning or Earth Shock | 150%, 6 s (master's round, `stormstrike.go`; a flat "+N damage" stays 1 x); threat 1 x damage plus Rockbiter's 72 x speed (not scaled by the 150%) | notes, client, 7.7 | right |
+| Stormstrike (17364) | client 70753: 100% weapon damage, 8 s; **hotfix push 113380 (build 70755; SpellEffect 1368308, SpellCooldowns 55241): 150% normalized weapon damage, 6 s**, as the notes said; 8% of base mana, +20% to the next Lightning Bolt, Chain Lightning or Earth Shock | 150%, 6 s (master's round, `stormstrike.go`; a flat "+N damage" stays 1 x); threat 1 x damage plus Rockbiter's 72 x speed (not scaled by the 150%) | hotfix 113380 (client data, tier 1), client, 7.7 | right |
 | Lightning Shield rank 7 (10432, orb 26363) | 3 orbs of 178 + 26.7% of spell power, 370 mana, 10 min, one orb every 3.5 s (ProcCategoryRecovery) at whoever hits us | the same; orbs roll spell hit, never crit (beta, 7.15); threat 1 x damage | client and beta, tier 1 | right |
 | Stoneskin Totem rank 6 (10408, buff 10405) | -30 physical damage taken (aura 14), 210 mana, 5 min | -30 before armor, x1.1 / 1.2 with Guardian Totems; a crit or crushing blow doubles what's left | client; beta fit before armor (6.3, 7.29), tier 1 | right |
 | Strength of Earth Totem rank 4 (10442) | Strength (block value at Strength / 20) | the raid's (another shaman's, raid-wide since 70425) in the bench; ours a knob | the DPS audit, 7.21 | right |
@@ -300,7 +419,7 @@ its healers anyway, but a real Warden lives through some bursts the score counts
   none on a dodge, Earth Shock's 2 x damage, an orb's 1 x; 0.7 with Windfury Weapon and no Rockbiter threat;
   1 without Spirit Weapons.
 - `TestForeverWardenAbilities`: Earth Shock's 5 s cooldown with Reverberation 5/5, shared with Flame Shock, its
-  GCD; Stormstrike's 6 s (the notes) and 8% of base mana; Lightning Shield's 10 min, 3 orbs, 3.5 s apart, gone after the
+  GCD; Stormstrike's 6 s (hotfix 113380) and 8% of base mana; Lightning Shield's 10 min, 3 orbs, 3.5 s apart, gone after the
   third; Stoneskin Totem's 210 mana, 5 min and 36 off a hit before armor.
 - `TestForeverWardenAvoidedHits` (tank round 2): a missed, dodged or parried swing fires no Lightning Shield orb (a
   blocked one or a hit does); a missed, dodged or parried Stormstrike carries none of Rockbiter's threat;
@@ -327,8 +446,11 @@ rating, Defense 26, block value 50 (all on the shield). A 2.9 s one-hand axe at 
 an on-use trinket: the Enhancement set's 335 attack power (990015) or the Warden's 1,665 armor (999216), both 20 s
 every 2 min. Hands and legs carry The Spiritcaller's Rage (2 piece: 1% attack and casting speed). Enchants:
 Lesser Arcanum of Voracity (Stamina) on head and legs, Strength on the neck, Superior Defense on the back, Greater
-Stats on the chest, Superior Stamina on the wrists, Superior Strength on the hands, Greater Stamina on the feet
-(it beats the Rugged Armor Kits at Balanced and Max survival, Presets) and the shield, Crusader on the weapon.
+Stats on the chest, Superior Stamina (1886) on Max threat's wrists and Superior Deflection (1248665) on Balanced's
+and Max survival's (tank round 3), Superior Strength on the hands, Greater Stamina on the feet
+(929, +7; it beats the Rugged Armor Kits at Balanced and Max survival, Presets), Enchant Shield - Greater Stamina
+on the shield (enchant 1886, +9, spell 20017; tank round 3 moved it from 929, which is no longer a shield enchant in
+the DB, so the CLI gave +7 and the web UI loaded no enchant: tank_gear-20261104-3), Crusader on the weapon.
 
 ## Rotation
 

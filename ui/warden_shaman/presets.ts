@@ -14,7 +14,10 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	StrengthBuff,
+	SunderRamp,
+	TotemWeaponBuff,
 	TristateEffect,
 	WeaponImbue,
 } from '../core/proto/common.js';
@@ -37,12 +40,10 @@ import Phase1SyntheticTankArmorTrinketGear from './gear_sets/phase1_synthetic_ta
 ///////////////////////////////////////////////////////////////////////////
 
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
-// The synthetic Phase 1 tank set (docs/tank_shaman.md), with the attack power on-use trinket or the armor one.
+// The synthetic Phase 1 tank set (docs/tank_shaman.md): Max threat's with the attack power on-use trinket and Superior
+// Stamina wrists, Balanced and Max survival's with the armor one and Superior Deflection wrists.
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Phase1SyntheticTankGear);
-export const GearLevel60SyntheticArmorTrinket = PresetUtils.makePresetGear(
-	'Level 60 Phase 1 (Synthetic, armor trinket)',
-	Phase1SyntheticTankArmorTrinketGear,
-);
+export const GearLevel60SyntheticArmorTrinket = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic, armor trinket)', Phase1SyntheticTankArmorTrinketGear);
 
 export const GearPresets = {
 	[Phase.Phase1]: [GearBlank, GearLevel60Synthetic, GearLevel60SyntheticArmorTrinket],
@@ -82,20 +83,17 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '35050013-0502333135510102' }));
 
-// The optimized tank builds (docs/tank_shaman.md, Presets), one a weight: Balanced from the earlier shared build
-// takes Elemental Weapons 3 for Shamanistic Focus; Max survival a point of Elemental Warding for a point of Flurry;
-// Max threat Elemental Devastation 3 for Elemental Warding and Toughness 2.
-export const TalentsLevel60Tank = PresetUtils.makePresetTalents(
-	'Level 60 Tank',
-	SavedTalents.create({ talentsString: '05050002-050032203551012201-050002' }),
-);
+// The optimized tank builds (docs/tank_shaman.md, Presets), one a weight (round 3): Balanced takes Elemental Warding 3
+// and Toughness 4; Max survival Guardian Totems 2 for Improved Lightning Shield 2; Max threat Elemental Devastation 1
+// and Toughness 5.
+export const TalentsLevel60Tank = PresetUtils.makePresetTalents('Level 60 Tank', SavedTalents.create({ talentsString: '05050003-050032203451012201-050002' }));
 export const TalentsLevel60TankMaxSurvival = PresetUtils.makePresetTalents(
 	'Level 60 Tank Max survival',
-	SavedTalents.create({ talentsString: '05050003-050032113541012201-050002' }),
+	SavedTalents.create({ talentsString: '05050003-050230113541012201-050002' }),
 );
 export const TalentsLevel60TankMaxThreat = PresetUtils.makePresetTalents(
 	'Level 60 Tank Max threat',
-	SavedTalents.create({ talentsString: '0535-050032303351012201-050002' }),
+	SavedTalents.create({ talentsString: '0515-050032303551012201-050002' }),
 );
 
 export const TalentPresets = {
@@ -109,29 +107,6 @@ export const TalentPresets = {
 
 export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 
-// The three Level 60 tank presets (threat against survival as weights, Balanced the default; docs/tank_sim.md).
-export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
-	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
-	gear: GearLevel60Synthetic,
-	talents: TalentsLevel60TankMaxThreat,
-	rotation: APLLevel60MaxThreat,
-	race: Race.RaceTauren,
-});
-export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
-	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md).',
-	gear: GearLevel60Synthetic,
-	talents: TalentsLevel60Tank,
-	rotation: APLLevel60Balanced,
-	race: Race.RaceTauren,
-});
-export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md).',
-	gear: GearLevel60SyntheticArmorTrinket,
-	talents: TalentsLevel60TankMaxSurvival,
-	rotation: APLLevel60MaxSurvival,
-	race: Race.RaceTauren,
-});
-
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
@@ -143,52 +118,112 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 
 export const DefaultConsumes = Consumes.create({
 	// The tank bench's consumables (tools/tankbench/req/shaman_warden_*.json): every tank takes the same
-	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec.
+	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec. Dirge's Kickin' Chimaerok Chops and the
+	// Goblin Sapper Charge (Engineering, autocast; no filler explosive) won at all three weights (docs/tank_shaman.md, Round 4).
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MajorManaPotion,
 	dragonBreathChili: true,
 	flask: Flask.FlaskOfTheTitans,
-	food: Food.FoodSmokedDesertDumpling,
+	food: Food.FoodDirgesKickChimaerokChops,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.JujuPower,
 });
 
+// The raid, blessings and debuffs of the tank bench's requests (tools/tankbench/req/shaman_warden_*.json, the same
+// in all three), so a preset loads the setup it was scored with (tank_fairness-20261104-6).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
+	bloodPact: TristateEffect.TristateEffectImproved,
+	devotionAura: TristateEffect.TristateEffectImproved,
 	divineSpirit: true,
 	fireResistanceAura: true,
-	fireResistanceTotem: true,
+	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
-	manaSpringTotem: TristateEffect.TristateEffectRegular,
+	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	retributionAura: TristateEffect.TristateEffectImproved,
+	shadowProtection: true,
+	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
+	thorns: TristateEffect.TristateEffectImproved,
+	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
+	trueshotAura: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	fengusFerocity: false,
-	moldarsMoxie: false,
-	rallyingCryOfTheDragonslayer: false,
-	slipkiksSavvy: false,
-	songflowerSerenade: false,
-	spiritOfZandalar: false,
-	warchiefsBlessing: false,
+	blessingOfKings: true,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
+	blessingOfWisdom: TristateEffect.TristateEffectImproved,
 });
 
 export const DefaultDebuffs = Debuffs.create({
+	curseOfElements: true,
 	curseOfRecklessness: true,
-	exposeArmor: TristateEffect.TristateEffectImproved,
+	curseOfWeakness: TristateEffect.TristateEffectImproved,
+	demoralizingRoar: TristateEffect.TristateEffectImproved,
+	demoralizingShout: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
 	insectSwarm: true,
-	sunderArmor: true,
-	thunderClap: TristateEffect.TristateEffectRegular,
+	judgementOfLight: true,
+	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
+	judgementOfWisdom: true,
+	scorpidSting: true,
+	sunderRamp: SunderRamp.create({ tank: true }),
+	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
 export const OtherDefaults = {
 	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
 	inFrontOfTarget: true,
-	profession1: Profession.Alchemy,
-	profession2: Profession.Enchanting,
+	distanceFromTarget: 5,
+	// The bench's professions (Engineering + Blacksmithing, as every tank's request).
+	profession1: Profession.Engineering,
+	profession2: Profession.Blacksmithing,
 };
+
+// The bench's buffs and consumables for the builds to load (tank_fairness-20261104-6): Max threat takes Flask of
+// Natural Accuracy (tank_fairness-20261104-7), Balanced and Max survival the Flask of the Titans.
+export const MaxThreatConsumes = Consumes.create({ ...DefaultConsumes, flask: Flask.FlaskOfNaturalAccuracy });
+const encounterOptions = { raidBuffs: DefaultRaidBuffs, buffs: DefaultIndividualBuffs, debuffs: DefaultDebuffs };
+export const EncounterDefault = PresetUtils.makePresetEncounter('Level 60 tank bench', undefined, { ...encounterOptions, consumes: DefaultConsumes });
+export const EncounterMaxThreat = PresetUtils.makePresetEncounter('Level 60 tank bench (Max threat)', undefined, {
+	...encounterOptions,
+	consumes: MaxThreatConsumes,
+});
+
+// The three Level 60 tank presets (threat against survival as weights, Balanced the default; docs/tank_sim.md).
+export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
+	tooltip:
+		"Scored with survival weighed at 1/3 (docs/tank_sim.md). Night Elf (Elune's Light), Flask of Natural Accuracy, Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the attack power trinket on cooldown.",
+	gear: GearLevel60Synthetic,
+	talents: TalentsLevel60TankMaxThreat,
+	rotation: APLLevel60MaxThreat,
+	encounter: EncounterMaxThreat,
+	race: Race.RaceNightElf,
+	professions: [Profession.Engineering, Profession.Blacksmithing],
+});
+export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
+	tooltip:
+		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists.",
+	gear: GearLevel60SyntheticArmorTrinket,
+	talents: TalentsLevel60Tank,
+	rotation: APLLevel60Balanced,
+	encounter: EncounterDefault,
+	race: Race.RaceNightElf,
+	professions: [Profession.Engineering, Profession.Blacksmithing],
+});
+export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
+	tooltip:
+		'Scored with survival weighed at 3 (docs/tank_sim.md). Undead (Touch of the Grave), Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists.',
+	gear: GearLevel60SyntheticArmorTrinket,
+	talents: TalentsLevel60TankMaxSurvival,
+	rotation: APLLevel60MaxSurvival,
+	encounter: EncounterDefault,
+	race: Race.RaceUndead,
+	professions: [Profession.Engineering, Profession.Blacksmithing],
+});

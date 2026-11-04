@@ -78,7 +78,19 @@ func (warriorTank) Knobs() []Knob {
 
 var (
 	tankBulwarkTrinket = itemID(990617)
+	tankSapper         = itemID(10646)
 )
+
+// heldForLast holds an on-use cooldown for the last at seconds of the fight unless the wait costs a
+// use. A use counts when it starts with at least min(at, buff) seconds left, buff being the effect's
+// duration: with a fixed buff, an at under it never counted the held use, so every at below buff
+// acted like 0 (tank_mechanics-20261104-16).
+func heldForLast(spell *proto.ActionID, at, buff float64) value {
+	return or(
+		le(remainingTime(), seconds(at)),
+		gt(spellUsesLostByDelay(spell, sub(remainingTime(), seconds(at)), seconds(min(at, buff))), num(0)),
+	)
+}
 
 // tankTrinketLines use whichever on-use trinket is worn.
 func tankTrinketLines(k Knobs) []*proto.APLListItem {
@@ -88,10 +100,7 @@ func tankTrinketLines(k Knobs) []*proto.APLListItem {
 		note := "The on-use trinket. Ignore the warning on the trinket that isn't worn."
 		if k["trinketAt"] > 0 {
 			note = fmt.Sprintf("The on-use trinket, held for the last %d sec unless the wait costs a use. Ignore the warning on the trinket that isn't worn.", int(k["trinketAt"]))
-			when = or(
-				le(remainingTime(), seconds(k["trinketAt"])),
-				gt(spellUsesLostByDelay(trinket, sub(remainingTime(), seconds(k["trinketAt"])), seconds(20)), num(0)),
-			)
+			when = heldForLast(trinket, k["trinketAt"], 20)
 		}
 		items = append(items, cast(trinket, when, note))
 	}
@@ -118,6 +127,8 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(potion, lt(currentRage(), num(k["potionRage"])), "Mighty Rage Potion when short of Rage."))
 	}
 	items = append(items, tankTrinketLines(k)...)
+	// The presets' Goblin Sapper Charge (standards 11, round 4): right after the trinkets, once a fight.
+	items = append(items, cast(tankSapper, nil, "Goblin Sapper Charge on cooldown (once a fight): its threat at the pull (docs/tank_warrior.md, Round 4 consumables)."))
 	switch k["shieldWall"] {
 	case 1:
 		items = append(items, cast(shieldWall, nil, "Shield Wall at the pull (on a timer: the score can't follow health)."))

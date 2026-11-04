@@ -1,0 +1,10 @@
+A=shaman_warden_max_survival.json B=Y_max_survival_FoodGrilledSquid.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord        -6927    -6932    -5.1   32.5      2.2        1
+chromaggus       -6361    -6367    -6.2   15.7      1.7        1
+golemagg         -2088    -2087     1.6    8.6      1.2        0
+magmadar         -1300    -1288    12.2    8.6      2.5       -1
+onyxia           -4803    -4774    28.9   18.3      1.2       -2
+ragnaros        -16720   -16632    88.0   94.3      1.9       -9
+vaelastrasz      -1809    -1811    -1.5    9.3      2.7        2
+scoring_mean                        5.0    7.2

@@ -1,0 +1,388 @@
+{
+ "raid": {
+  "parties": [
+   {
+    "players": [
+     {
+      "inFrontOfTarget": true,
+      "race": "RaceUndead",
+      "class": "ClassPaladin",
+      "talentsString": "05005-25300102413001531-5023",
+      "equipment": {
+       "items": [
+        {
+         "id": 990701,
+         "enchant": 1507
+        },
+        {
+         "id": 990702,
+         "enchant": 1249019
+        },
+        {
+         "id": 990703
+        },
+        {
+         "id": 990704,
+         "enchant": 1219587
+        },
+        {
+         "id": 990705,
+         "enchant": 1891
+        },
+        {
+         "id": 990706,
+         "enchant": 1248665
+        },
+        {
+         "id": 990707,
+         "enchant": 1248640
+        },
+        {
+         "id": 990708
+        },
+        {
+         "id": 990709,
+         "enchant": 1507
+        },
+        {
+         "id": 990710,
+         "enchant": 1887
+        },
+        {
+         "id": 990711
+        },
+        {
+         "id": 990712
+        },
+        {
+         "id": 990715
+        },
+        {
+         "id": 990716
+        },
+        {
+         "id": 990713,
+         "enchant": 1900
+        },
+        {
+         "id": 990714,
+         "enchant": 863
+        },
+        {
+         "id": 279247
+        }
+       ]
+      },
+      "rotation": {
+       "type": "TypeAPL",
+       "prepullActions": [
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 20423
+           }
+          }
+         },
+         "doAtValue": {
+          "const": {
+           "val": "-3s"
+          }
+         }
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 1239570
+           }
+          }
+         },
+         "doAtValue": {
+          "const": {
+           "val": "-1.5s"
+          }
+         }
+        }
+       ],
+       "priorityList": [
+        {
+         "action": {
+          "autocastOtherCooldowns": {}
+         },
+         "notes": "Trinkets on cooldown from the pull, off the global cooldown."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 1311015
+           }
+          },
+          "condition": {
+           "cmp": {
+            "lhs": {
+             "currentTime": {}
+            },
+            "op": "OpGe",
+            "rhs": {
+             "const": {
+              "val": "10s"
+             }
+            }
+           }
+          }
+         },
+         "notes": "Templar's Bulwark on cooldown from 10 sec in, on a timer (a scoring run reads no health). Off the global cooldown. Without the talent ignore the warning on this line."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 20423
+           }
+          },
+          "condition": {
+           "not": {
+            "val": {
+             "auraIsActive": {
+              "auraId": {
+               "spellId": 20423
+              }
+             }
+            }
+           }
+          }
+         },
+         "notes": "Seal of Fury whenever it is down. Judgement does not consume it under Forever."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 1310994
+           }
+          },
+          "condition": {
+           "auraIsActive": {
+            "auraId": {
+             "spellId": 20423
+            }
+           }
+          }
+         },
+         "notes": "Swift Judgement on cooldown, off the global cooldown. Without the talent ignore the warning on this line."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 20271
+           }
+          },
+          "condition": {
+           "and": {
+            "vals": [
+             {
+              "auraIsActive": {
+               "auraId": {
+                "spellId": 20423
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "Judgement on cooldown, off the global cooldown."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 1239570
+           }
+          }
+         },
+         "notes": "Holy Shield on cooldown: 30% block for 10 sec or 4 blocks, its damage at 1.2 times the threat."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10333
+           }
+          }
+         },
+         "notes": "Holy Strike on cooldown: Iron Creed's threat and damage cut, and with Shieldsworn Holy Shield's damage."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 20924
+           }
+          },
+          "condition": {
+           "cmp": {
+            "lhs": {
+             "currentManaPercent": {}
+            },
+            "op": "OpGe",
+            "rhs": {
+             "const": {
+              "val": "0.6"
+             }
+            }
+           }
+          }
+         },
+         "notes": "Consecration with the mana to spare."
+        }
+       ]
+      },
+      "consumes": {
+       "flask": "FlaskOfSupremePower",
+       "food": "FoodNightfinSoup",
+       "agilityElixir": "ElixirOfTheMongoose",
+       "armorElixir": "ElixirOfThePhalanx",
+       "healthElixir": "ElixirOfGreaterFortitude",
+       "mainHandImbue": "ElementalSharpeningStone",
+       "strengthBuff": "JujuPower",
+       "attackPowerBuff": "JujuMight",
+       "spellPowerBuff": "GreaterArcaneElixir",
+       "defaultPotion": "MajorManaPotion",
+       "dragonBreathChili": true,
+       "zanzaBuff": "CerebralCortexCompound"
+      },
+      "buffs": {
+       "blessingOfKings": true,
+       "blessingOfMight": "TristateEffectImproved"
+      },
+      "protectionPaladin": {
+       "options": {
+        "primarySeal": "Fury",
+        "righteousFury": true,
+        "aura": "DevotionAura"
+       }
+      },
+      "level": 60,
+      "reactionTimeMs": 200,
+      "distanceFromTarget": 5,
+      "profession1": "Engineering",
+      "profession2": "Blacksmithing"
+     }
+    ],
+    "buffs": {}
+   }
+  ],
+  "buffs": {
+   "giftOfTheWild": "TristateEffectImproved",
+   "powerWordFortitude": "TristateEffectImproved",
+   "bloodPact": "TristateEffectImproved",
+   "strengthOfEarthTotem": "TristateEffectRegular",
+   "graceOfAirTotem": "TristateEffectRegular",
+   "arcaneBrilliance": true,
+   "divineSpirit": true,
+   "battleShout": "TristateEffectImproved",
+   "trueshotAura": true,
+   "leaderOfThePack": true,
+   "moonkinAura": true,
+   "shadowProtection": true,
+   "frostResistanceAura": true,
+   "fireResistanceAura": true,
+   "thorns": "TristateEffectImproved",
+   "devotionAura": "TristateEffectImproved",
+   "retributionAura": "TristateEffectImproved",
+   "totemWeaponBuff": "TotemWeaponBuffWindfury"
+  },
+  "debuffs": {
+   "judgementOfWisdom": true,
+   "judgementOfLight": true,
+   "judgementOfTheCrusader": "TristateEffectImproved",
+   "faerieFire": true,
+   "curseOfElements": true,
+   "sunderRamp": {
+    "tank": true
+   },
+   "curseOfWeakness": "TristateEffectImproved",
+   "curseOfRecklessness": true,
+   "demoralizingRoar": "TristateEffectImproved",
+   "demoralizingShout": "TristateEffectImproved",
+   "thunderClap": "TristateEffectImproved",
+   "insectSwarm": true,
+   "scorpidSting": true
+  }
+ },
+ "encounter": {
+  "duration": 180,
+  "durationVariation": 20,
+  "executeProportion20": 0.2,
+  "executeProportion25": 0.25,
+  "executeProportion35": 0.35,
+  "targets": [
+   {
+    "id": 213336,
+    "name": "Level 60",
+    "level": 63,
+    "stats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     805,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3731,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     127393,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "minBaseDamage": 3000,
+    "damageSpread": 0.3333,
+    "swingSpeed": 2,
+    "parryHaste": true
+   }
+  ],
+  "raidDamageHitsPerMinute": 2,
+  "raidDamagePerHit": 1500,
+  "naturalFlaskZone": true
+ },
+ "simOptions": {
+  "iterations": 1000,
+  "randomSeed": "1"
+ }
+}

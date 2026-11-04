@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=chili_off_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3574     3533   -41.5   19.5     -6.0       10
+chromaggus        2913     2890   -23.2    8.3     -6.8        3
+golemagg          4030     4014   -15.9    8.3     -4.2        2
+magmadar          4187     4164   -23.1    7.1     -7.3        2
+onyxia            3947     3941    -6.5   14.2    -10.6       -3
+ragnaros          -844     -891   -47.1   56.0     -2.6       13
+vaelastrasz       4458     4447   -11.1   12.5     -1.4        7
+scoring_mean                      -20.2    5.1

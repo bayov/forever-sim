@@ -1,0 +1,10 @@
+A=shaman_warden_max_threat.json B=Y_max_threat_FoodGrilledSquid.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2004     1995    -9.5    9.1      0.8       11
+chromaggus        1803     1808     4.4    2.3      2.3        0
+golemagg          2686     2689     2.8    1.5      1.1       -0
+magmadar          2836     2839     2.9    1.6      2.0        1
+onyxia            2630     2632     2.2    2.2      1.7        1
+ragnaros           227      242    14.4   15.2      0.6      -13
+vaelastrasz       3466     3466    -0.2    1.7      0.2        1
+scoring_mean                        0.4    1.7

@@ -703,7 +703,7 @@ class PracticeRoom {
 		);
 		this.loadSlots();
 		this.renderBars();
-		this.frames.spellbook.refresh();
+		this.frames.spells.refresh();
 		this.renderPack();
 	}
 
@@ -1221,8 +1221,10 @@ class PracticeRoom {
 			this.editing = !this.editing;
 			this.binding = false;
 			this.cursor = undefined;
-			if (this.editing) void this.frames.panels.open(this.frames.spellbook);
-			else this.frames.panels.close(this.frames.spellbook);
+			if (this.editing) {
+				this.frames.spells.showTab('spellbook');
+				void this.frames.panels.open(this.frames.spells);
+			} else this.frames.panels.close(this.frames.spells);
 			this.renderBars();
 		};
 		q('.bind-keys').onclick = () => {
@@ -1230,7 +1232,7 @@ class PracticeRoom {
 			this.editing = false;
 			this.renderBars();
 		};
-		q('.book').onclick = () => this.frames.panels.toggle(this.frames.spellbook);
+		q('.book').onclick = () => this.frames.toggleSpells('spellbook');
 		this.bindSounds();
 		this.makeFrames();
 		this.hud.addEventListener('mousemove', e => {

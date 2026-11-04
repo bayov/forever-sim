@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=ap_firewater_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3575     3570    -4.5    0.0     -2.2        0
+chromaggus        3267     3263    -4.5    0.0     -2.3        0
+golemagg          3737     3733    -4.5    0.0     -2.3        0
+magmadar          3835     3830    -4.6    0.0     -2.3        0
+onyxia            3807     3802    -4.4    0.0     -2.2        0
+ragnaros          1983     1979    -4.4    0.0     -2.2        0
+vaelastrasz       3979     3975    -4.2    0.0     -2.1        0
+scoring_mean                       -4.5    0.0

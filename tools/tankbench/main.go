@@ -42,6 +42,7 @@ func main() {
 	variation := flag.Float64("cadence-variation", 1, "how far a heal's timing varies from the cadence, in seconds")
 	window := flag.Int("tmi-window", 6, "seconds of the TMI's moving window")
 	iterations := flag.Int("iters", 3000, "iterations per build")
+	seed := flag.Int64("seed", 1, "random seed, spaced a billion iterations apart (tankscore.Seed) so two seeds share no iterations; the same seed at more iterations still repeats the first ones")
 	duration := flag.Float64("dur", 0, "fight length in seconds, 0 keeps the request's")
 	bossLevel := flag.Int("boss-level", 0, "the boss's level, 0 keeps the request's")
 	swing := flag.Float64("boss-damage", 0, "the boss's smallest white hit before armor, 0 keeps the request's")
@@ -58,7 +59,7 @@ func main() {
 	healers := flag.Float64("healers", 0, "healers on the tank, in place of the encounter's (with -healer-hps and -heal-cast; -hps and -cadence win over them)")
 	healerHps := flag.Float64("healer-hps", 0, "each healer's healing per second on the tank, in place of the encounter's")
 	healCast := flag.Float64("heal-cast", 0, "seconds a healer's heal takes to cast, in place of the encounter's")
-	seed := flag.Int64("seed", 0, "the first fight's random seed, 0 keeps the request's (fight i is the fight a one-fight run with seed + i sims)")
+	firstSeed := flag.Int64("first-seed", 0, "the first fight's raw random seed in place of -seed's spaced one, 0 for -seed's (fight i is the fight a one-fight run with first-seed + i sims; bench_races.py tops paired fights up with it)")
 	labeled := flag.Bool("labeled", false, "give each kind of random roll its own stream (SimOptions.useLabeledRands), so two builds' fights stay alike past where they differ")
 	vectors := flag.String("vectors", "", "also append each build's per-fight values to this file, one JSON line a build: SafeDPS, the healing it lives through (-1: none), DTPS and TPS")
 	bossStats := flag.Bool("boss-stats", false, "print, as JSON, the boss's attack power, flat weapon damage and attack speed under each request's debuffs, and sim nothing (tools/encounters/from_logs.py reads it to turn a log's swings into the file's)")
@@ -139,8 +140,9 @@ func main() {
 			fail(fmt.Errorf("%s: %w", path, err))
 		}
 		rsr.SimOptions.Iterations = int32(*iterations)
-		if *seed != 0 {
-			rsr.SimOptions.RandomSeed = *seed
+		rsr.SimOptions.RandomSeed = tankscore.Seed(*seed)
+		if *firstSeed != 0 {
+			rsr.SimOptions.RandomSeed = *firstSeed
 		}
 		if *labeled {
 			rsr.SimOptions.UseLabeledRands = true
@@ -310,7 +312,7 @@ func deathAt(path string, rsr *proto.RaidSimRequest, hps float64) float64 {
 // off (1000 times its DTPS, since a heal is the HPS times the gap since the last one, and gaps go
 // down to half the cadence), so only damage between two heals kills it. When the floor is over the
 // target, no healing gets there (a one-shot or a burst faster than the heals), and the HPS is -1.
-// No damage taken needs no healing (0). Every run uses the request's seed, so the chance of death
+// No damage taken needs no healing (0). Every run uses the same (-seed) seed, so the chance of death
 // only moves with the HPS, as long as nothing in the request acts on the tank's health (a health
 // potion, a defensive at a health share, an APL condition on health).
 func healingNeeded(path string, rsr *proto.RaidSimRequest, dtps, target float64) (float64, float64) {

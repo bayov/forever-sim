@@ -1,0 +1,298 @@
+/* The Game Menu and the Settings panel (frames/gamemenu.ts). */
+
+/* Fonts frames.css doesn't have (Blizzard_Fonts_Shared/Shared/FontStyles.xml). */
+.gm-f-HighlightLarge,
+.gm-f-NormalMed1,
+.gm-f-HighlightHuge,
+.gm-f-HighlightMedium {
+	text-shadow: 1px 1px 0 #000;
+}
+.gm-f-HighlightLarge {
+	font: 16px 'Friz Quadrata', serif;
+	color: #fff;
+}
+.gm-f-NormalMed1 {
+	font: 13px 'Friz Quadrata', serif;
+	color: #ffd200;
+}
+.gm-f-HighlightHuge {
+	font: 20px 'Friz Quadrata', serif;
+	color: #fff;
+}
+.gm-f-HighlightMedium {
+	font: 14px 'Friz Quadrata', serif;
+	color: #fff;
+}
+.gm-f-White {
+	font: 12px 'Friz Quadrata', serif;
+	color: #fff;
+}
+
+/* DialogBorderTemplate and DialogHeaderTemplate. */
+.gm-dialog-bg {
+	background-repeat: repeat;
+	background-size: 64px 64px;
+}
+.gm-header {
+	position: absolute;
+	top: -11px;
+	left: 50%;
+	transform: translateX(-50%);
+	height: 39px;
+	padding: 0 32px;
+	pointer-events: none;
+}
+.gm-header-text {
+	position: relative;
+	margin-top: 13px;
+}
+
+/* BigRedThreeSliceButtonTemplate. */
+.gm-red {
+	cursor: pointer;
+}
+.gm-red-n,
+.gm-red-p {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+.gm-red-p,
+.gm-red.pushed .gm-red-n {
+	display: none;
+}
+.gm-red.pushed .gm-red-p {
+	display: block;
+}
+.gm-red-hi {
+	mix-blend-mode: plus-lighter;
+	opacity: 0;
+}
+.gm-red:hover .gm-red-hi,
+.gm-red.v-hover .gm-red-hi {
+	opacity: 1;
+}
+.gm-red-text {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.gm-red.pushed .gm-red-text {
+	transform: translate(-2px, 1px);
+}
+
+/* SettingsFrameTemplate's FlatPanelBackgroundTemplate (PANEL_BACKGROUND_COLOR). */
+.gm-flat-bg {
+	pointer-events: auto;
+}
+.gm-flat-top,
+.gm-flat-bl,
+.gm-flat-edge,
+.gm-flat-br {
+	position: absolute;
+	background: rgba(31, 30, 33, 0.8);
+}
+.gm-flat-top {
+	inset: 0 0 16px 0;
+}
+.gm-flat-bl,
+.gm-flat-br {
+	bottom: 0;
+	width: 16px;
+	height: 16px;
+	mask-size: 100% 100%;
+}
+.gm-flat-bl {
+	left: 0;
+}
+.gm-flat-br {
+	right: 0;
+}
+.gm-flat-edge {
+	left: 16px;
+	right: 16px;
+	bottom: 0;
+	height: 16px;
+}
+.gm-title {
+	overflow: hidden;
+}
+
+/* MinimalTabTemplate. */
+.gm-tabs {
+	display: flex;
+	gap: 5px;
+}
+.gm-tab {
+	position: relative;
+	height: 37px;
+	padding: 0 20px;
+	cursor: pointer;
+}
+.gm-tab-u,
+.gm-tab-a {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+.gm-tab-a,
+.gm-tab.selected .gm-tab-u {
+	display: none;
+}
+.gm-tab.selected .gm-tab-a {
+	display: block;
+}
+.gm-tab-text {
+	position: relative;
+	margin-top: 21px;
+	font: 10px 'Friz Quadrata', serif;
+	color: #ffd200;
+	text-shadow: 1px 1px 0 #000;
+}
+.gm-tab:hover .gm-tab-text,
+.gm-tab.v-hover .gm-tab-text,
+.gm-tab.selected .gm-tab-text {
+	color: #fff;
+}
+.gm-tab.selected .gm-tab-text {
+	margin-top: 19px;
+}
+.gm-tab.disabled {
+	cursor: default;
+}
+.gm-tab.disabled .gm-tab-text {
+	color: #808080;
+}
+
+/* The category list. */
+.gm-cat {
+	cursor: pointer;
+}
+.gm-cat-bar {
+	display: none;
+}
+.gm-cat.selected .gm-cat-bar,
+.gm-cat:hover .gm-cat-bar,
+.gm-cat.v-hover .gm-cat-bar {
+	display: block;
+}
+
+/* The settings list rows, with the hover background (HoverBackgroundTemplate). */
+.gm-row::before {
+	content: '';
+	position: absolute;
+	inset: 0 5px 0 -10px;
+	background: rgba(255, 255, 255, 0.1);
+	display: none;
+	pointer-events: none;
+}
+.gm-row:hover::before,
+.gm-row.v-hover::before {
+	display: block;
+}
+.gm-row-label {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.gm-check,
+.gm-step,
+.gm-slider-track,
+.gm-dd,
+.gm-dd-step {
+	cursor: pointer;
+}
+.gm-step.disabled {
+	opacity: 0.5;
+	filter: grayscale(1);
+	cursor: default;
+}
+
+/* WowStyle2DropdownTemplate: its art cut 12 from each side. */
+.gm-dd-bg {
+	position: absolute;
+	inset: -7px;
+	border-style: solid;
+	border-width: 0 12px;
+	border-image-slice: 0 12 fill;
+	border-image-width: 0 12px;
+	border-image-repeat: stretch;
+}
+.gm-dd-arrow {
+	display: none;
+}
+.gm-dd:hover .gm-dd-arrow,
+.gm-dd.v-hover .gm-dd-arrow {
+	display: block;
+}
+.gm-dd-text {
+	position: absolute;
+	left: 13px;
+	right: 13px;
+	top: 6px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.gm-dd.pushed .gm-dd-text {
+	transform: translate(2px, 1px);
+}
+.gm-dd-step.pushed .gm-dd-icon {
+	transform: translate(2px, 1px);
+}
+.gm-dd-step.disabled {
+	cursor: default;
+}
+
+/* MenuStyle2Mixin: the list's background and its highlight radios. */
+.gm-menu-list {
+	z-index: 100;
+}
+.gm-menu-bg {
+	position: absolute;
+	left: -17px;
+	right: -17px;
+	top: -12px;
+	bottom: -22px;
+	border-style: solid;
+	border-width: 18px 23px 28px;
+	border-image: var(--gm-menu-bg) 18 23 28 fill / 18px 23px 28px stretch;
+}
+.gm-menu-item {
+	cursor: pointer;
+}
+.gm-menu-item .GameFontNormal {
+	color: #e5e5e5;
+}
+.gm-menu-item.selected .GameFontNormal {
+	color: #ffd200;
+}
+.gm-menu-item:not(.selected):hover .GameFontNormal,
+.gm-menu-item:not(.selected).v-hover .GameFontNormal {
+	color: #fff;
+}
+.gm-menu-hi {
+	inset: 0;
+	border-style: solid;
+	border-width: 4px;
+	border-image: var(--gm-menu-hi) 4 fill / 4px stretch;
+	opacity: 0;
+}
+.gm-menu-item:hover .gm-menu-hi,
+.gm-menu-item.v-hover .gm-menu-hi {
+	opacity: 0.15;
+}
+
+/* OutputText. */
+.gm-output {
+	position: absolute;
+	left: 0;
+	right: 0;
+	text-align: center;
+}
+.gm-page {
+	pointer-events: none;
+}
+.gm-page > * {
+	pointer-events: auto;
+}

@@ -1,0 +1,10 @@
+A=shaman_warden_max_threat.json B=G_flaskTitans_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1849     1980   131.2   26.4    -43.4     -218
+chromaggus        1810     1776   -33.7    7.0    -30.1      -27
+golemagg          2580     2505   -75.0    5.7    -43.0       -9
+magmadar          2713     2650   -62.9    5.1    -36.4       -8
+onyxia            2467     2427   -39.5    6.5    -37.0      -20
+ragnaros           144      282   138.2   34.1    -41.0     -209
+vaelastrasz       3112     3045   -67.4    7.8    -45.5      -56
+scoring_mean                      -24.5    5.0

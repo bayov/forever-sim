@@ -7,7 +7,7 @@
       "inFrontOfTarget": true,
       "race": "RaceUndead",
       "class": "ClassPaladin",
-      "talentsString": "04-25300102513501531-5023",
+      "talentsString": "05005-25300102413001531-5023",
       "equipment": {
        "items": [
         {
@@ -31,7 +31,7 @@
         },
         {
          "id": 990706,
-         "enchant": 1886
+         "enchant": 1248665
         },
         {
          "id": 990707,
@@ -46,7 +46,7 @@
         },
         {
          "id": 990710,
-         "enchant": 929
+         "enchant": 1887
         },
         {
          "id": 990711
@@ -66,7 +66,7 @@
         },
         {
          "id": 990714,
-         "enchant": 929
+         "enchant": 863
         },
         {
          "id": 279247
@@ -242,17 +242,20 @@
        ]
       },
       "consumes": {
-       "flask": "FlaskOfTheTitans",
-       "food": "FoodSmokedDesertDumpling",
+       "flask": "FlaskOfSupremePower",
+       "food": "FoodNightfinSoup",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
        "healthElixir": "ElixirOfGreaterFortitude",
-       "mainHandImbue": "DenseSharpeningStone",
+       "mainHandImbue": "ElementalSharpeningStone",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
        "spellPowerBuff": "GreaterArcaneElixir",
        "defaultPotion": "MajorManaPotion",
-       "dragonBreathChili": true
+       "dragonBreathChili": true,
+       "zanzaBuff": "SpiritOfZanza",
+       "alcohol": "AlcoholRumseyRumBlackLabel",
+       "sapperExplosive": "SapperGoblinSapper"
       },
       "buffs": {
        "blessingOfKings": true,

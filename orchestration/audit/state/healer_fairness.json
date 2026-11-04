@@ -1,10 +1,12 @@
 {
  "last": {
-  "master": "c8f5858bd"
+  "master": "dc303b02610f2af14685bb439fe43817ff9ccb1f"
  },
- "last_pass_at": "2026-11-04T13:50:10Z",
- "pass": 1,
+ "last_pass_at": "2026-11-04T19:28:40Z",
+ "pass": 2,
  "result": "findings",
- "baseline": "c8f5858bd",
- "note": "Pass 1 (forced, first after H3). Both roles benched on c8f5858bd (ref/healer_fairness/{tank,raid}_c8f5858.tsv); attribution of the Holy priest's tank lead on a1b1163d2. 4 findings: tank bench PoM ping-pong (high), heal-size gate (medium), priest wand/PI (low), logs lack per-class HPS (low)."
+ "baseline": "0facd9428",
+ "note": "Pass 2: both roles re-benched on 0facd9428 (ref/healer_fairness/bench_0facd94.tsv). Resolved -1, -2, -3. Tank: Holy 1.262, Disc 1.261, shaman 1.242, druid 1.235, paladin 1.176. Raid: Holy 1.437, druid 1.437, paladin 1.413, shaman 1.396. New -5 (high): paladin raid preset's Holy Light lines cost 0.025.",
+ "client_build": "1.60.1.70790",
+ "checked_at": "2026-11-04T19:33:35Z"
 }
