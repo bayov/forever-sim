@@ -235,7 +235,7 @@
    ],
    "external_every_h": 72,
    "max_quiet_days": 7,
-   "enabled": false
+   "enabled": true
   },
   {
    "id": "healer_rotations",
@@ -268,7 +268,7 @@
     "**/*_test.go"
    ],
    "max_quiet_days": 7,
-   "enabled": false,
+   "enabled": true,
    "healbench": true
   },
   {
@@ -288,7 +288,7 @@
    ],
    "exclude": [],
    "max_quiet_days": 14,
-   "enabled": false
+   "enabled": true
   },
   {
    "id": "healer_fairness",
@@ -322,7 +322,7 @@
     "**/*_test.go"
    ],
    "max_quiet_days": 7,
-   "enabled": false,
+   "enabled": true,
    "healbench": true,
    "owns": [
     "orchestration/fairness_healers.md"

@@ -63,6 +63,7 @@
 - proposed fix: a level 60 Revenge log taken after 70707 settles it. Until then, fix Call 3's framing (`ref/tank_mechanics/patches/warrior_revenge_ap_call_doc.patch`).
 - How sure: unsure which value is right.
 - needs: user ruling
+- ruling: 2026-11-04, user: use 0.25 for now, with a to-verify note (a level 60 Revenge log after 70707 settles it). Worker fix: warrior.
 
 ### tank_mechanics-20261104-5: Rockbiter's flat threat on Stormstrike: 72 × weapon speed or 72
 - severity: medium
@@ -72,6 +73,7 @@
 - proposed fix: none until a combat log shows one Stormstrike's threat. The patch for the flat case is `ref/tank_mechanics/patches/shaman_02_rockbiter_special_flat_CONDITIONAL.patch`.
 - How sure: 50/50 on the mechanic; sure of the size.
 - needs: user ruling
+- ruling: 2026-11-04, the user left it to the orchestrator: keep 72 × weapon speed on specials too (wowsims/forever's reading, and the sim closest to Forever), with a to-verify note in docs/tank_shaman.md and the code (one Stormstrike's threat in a combat log settles it). Worker fix: shaman, the note only.
 
 ### tank_mechanics-20261104-6: Unbridled Wrath procs on Heroic Strike
 - severity: medium

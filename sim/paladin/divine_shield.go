@@ -22,7 +22,8 @@ import (
 // roll), and Divine Protection stops the paladin's swings (pacify) for its duration; the spells a
 // paladin tank casts are Holy, so it leaves them alone. Like Templar's Bulwark these are emergency
 // buttons, and whether a boss keeps swinging at an immune tank or turns to the next on its threat
-// list is not modelled (Calls for the user in docs/tank_paladin.md).
+// list is not modelled. A bubble loses the paladin its aggro (user ruling 2026-11-04, standards 40),
+// so no paladin tank rotation casts these (no_bubble_test.go in protection).
 var DivineShieldSpellId = [...]int32{0, 642, 1020}
 var DivineProtectionSpellId = [...]int32{0, 498, 5573}
 
