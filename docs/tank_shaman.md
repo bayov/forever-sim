@@ -5,11 +5,36 @@ Weapon and a shield, Spirit Weapons for the parry and the threat, Stormstrike, E
 Shield for threat, Stoneskin Totem and Guardian Totems for mitigation. The tank workers' brief
 (`orchestration/brief_tanks.md`, T1) and `docs/tank_sim.md` say how tanks are scored.
 
-**Where it stands (2026-11-03):** the Warden tanks in the sim (the boss attacks it, it blocks with its shield,
+**Where it stands (2026-11-03, realigned 2026-11-04 to client 70753 and the November 2 notes, below):** the Warden tanks in the sim (the boss attacks it, it blocks with its shield,
 parries with Spirit Weapons, and Rockbiter's and Spirit Weapons' threat are on), every tank ability and talent
 is audited against client 70753 (the October 30 hotfix's build) and tested, it wears a synthetic tank set by
 standards 36, and it has a rotopt template (`tools/rotopt/shaman_tank.go`) and three presets
 (`tools/tankbench/req/shaman_warden_*.json`, `ui/warden_shaman`).
+
+## Realigned to client 70753 and the November 2 notes (2026-11-04)
+
+Master's shaman round (`orchestration/round_70753/shaman.md`) brought the notes' shaman lines, standards 37 (the
+notes' value where client 70753 and the hotfixes don't carry it). Client 70753 changed no tank row of the shaman
+(`db2diff.py 70707 70753`: 173 shaman spells, all only by `SpellMisc.Attributes_14`): Rockbiter Weapon and its threat
+proc 20871, Spirit Weapons (16268), Lightning Shield, Stoneskin Totem, Anticipation, Toughness, Guardian Totems,
+Elemental Warding and the heals are as audited below. What moved for the Warden:
+
+- **Notes-only values the Warden uses** (the round's list, all under `IsForever()`): Earth Shock at Era's base
+  (517-545 at 60, threat 2 x damage: the biggest threat change), Stormstrike 150% and 6 s, Mental Dexterity
+  50 / 100 / 150%, Flurry 6 to 30%, Maelstrom Weapon 4 PPM a point, Lightning Bolt rank 10 at 334-372.
+- **The tree:** Improved Ghost Wolf moved to row 4 (after Stormstrike), so every Enhancement string moved: the Level
+  60 build `35050013-0502303313551102` is `35050013-0502333135510102` (the same points). Remapped in the tests'
+  base build and talent indices, the bench request and the UI preset (the DPS worker had done the preset).
+  Lava Burst's square is Call of Thunder, which no Warden build takes.
+- **Salvation is gone:** SafeDPS's reference member makes 1 threat a point of damage (was 0.7); no tank request had
+  Salvation on the tank.
+- **Races:** Tauren Endurance is 5% health and nothing else (A2), still the Warden's best by the objective (below).
+- **Merge check:** `git diff f9cc1ecaf HEAD -- sim/shaman/` (my last commit before the update against today): no
+  mechanic applied twice or lost. Rockbiter's threat on Stormstrike (72 x speed) and Spirit Weapons' 1.302 are
+  intact, master's round only scaled Stormstrike's damage. The Warden golden (`TestWardenShaman.results`) had been
+  regenerated on master without the 1.302 (TPS 0.15% low) and without the synthetic set's two rows: regenerated.
+- **Tests:** `TestForeverWardenTalents` reads Mental Dexterity at 50 / 100 / 150% and the new talent indices,
+  `TestForeverWardenAbilities` Stormstrike's 6 s.
 
 ## Rules audit
 
@@ -27,9 +52,9 @@ beta measurement, (2) wowsims/forever's reading, (3) Classic's (vmangos, wowsims
 | Spirit Weapons' threat (16268) | effect 1 -30% threat, all schools; effect 2 +86 on Rockbiter's passive threat effect (0 alone) | **0.7 x 1.86 = 1.302 under Rockbiter (was 1.3)**, 0.7 otherwise; picked by the imbue in the options or consumes | client, tier 1 | **fixed** |
 | Spirit Weapons' parry | not a client effect ("Gives a chance to parry") | can parry: 5% base, plus Defense, less 0.6% for the boss's level | beta (6.4: 18 of 380 below us, low above), tier 1 | right |
 | Shield block | Classic's: 5% base with a shield, Defense on top | 5% (less 0.6% vs a level 63), block value = the shield's + Strength / 20 - 1 | Classic, tier 3; no shaman shield on the beta (6.4) | right |
-| Earth Shock rank 7 (10414) | 293-309 (x1.08, the report's assumption), 38.6% of spell power, 450 mana, 6 s shared shock cooldown (category 19), 1.5 s GCD, "Causes a high amount of threat" | the same; threat 2 x damage | threat multiplier: Classic's 2 (wowsims/classic, vmangos), tier 3; wowsims/forever gives 1 (no source); the tooltip says "high" | right, **call (a)** |
+| Earth Shock rank 7 (10414) | client 70753: 301 centre (unchanged); **the notes: Era's base, 517-545 at 60** (notes-only, standards 37); 38.6% of spell power, 450 mana, 6 s shared shock cooldown (category 19), 1.5 s GCD, "Causes a high amount of threat" | 517-545 (master's shaman round, `earth_shock.go`; the x1.08 is 1.0 now); threat 2 x damage | threat multiplier: Classic's 2 (wowsims/classic, vmangos), tier 3; wowsims/forever gives 1 (no source); the tooltip says "high" | right, **call (a)** |
 | Flame Shock, Frost Shock | no threat text | threat 1 x damage | client text, tier 3 | right |
-| Stormstrike (17364) | weapon damage, 8% of base mana, 8 s, +20% to the next Lightning Bolt, Chain Lightning or Earth Shock | the same, threat 1 x damage plus Rockbiter's | client, 7.7 | right |
+| Stormstrike (17364) | client 70753: 100% weapon damage, 8 s (unchanged); **the notes: 150% normalized weapon damage, 6 s** (notes-only); 8% of base mana, +20% to the next Lightning Bolt, Chain Lightning or Earth Shock | 150%, 6 s (master's round, `stormstrike.go`; a flat "+N damage" stays 1 x); threat 1 x damage plus Rockbiter's 72 x speed (not scaled by the 150%) | notes, client, 7.7 | right |
 | Lightning Shield rank 7 (10432, orb 26363) | 3 orbs of 178 + 26.7% of spell power, 370 mana, 10 min, one orb every 3.5 s (ProcCategoryRecovery) at whoever hits us | the same; orbs roll spell hit, never crit (beta, 7.15); threat 1 x damage | client and beta, tier 1 | right |
 | Stoneskin Totem rank 6 (10408, buff 10405) | -30 physical damage taken (aura 14), 210 mana, 5 min | -30 before armor, x1.1 / 1.2 with Guardian Totems; a crit or crushing blow doubles what's left | client; beta fit before armor (6.3, 7.29), tier 1 | right |
 | Strength of Earth Totem rank 4 (10442) | Strength (block value at Strength / 20) | the raid's (another shaman's, raid-wide since 70425) in the bench; ours a knob | the DPS audit, 7.21 | right |
@@ -50,9 +75,9 @@ beta measurement, (2) wowsims/forever's reading, (3) Classic's (vmangos, wowsims
 | Improved Lightning Shield (16261) | orbs +5% a point | the same | right |
 | Shamanistic Focus (1223030) | shocks and Lightning Shield cost 45% less | the same, multiplied with Convection | right |
 | Thundering Strikes (16255) | 1% crit a point, melee and spells | the same | right |
-| Mental Dexterity, Mental Quickness | attack power from 33 / 67 / 100% of Intellect; spell power from 15% a point | the same | right |
+| Mental Dexterity, Mental Quickness | client: attack power from 33 / 67 / 100% of Intellect, **the notes: 50 / 100 / 150%** (notes-only); spell power from 15% a point | 50 / 100 / 150%; 15% a point | right |
 | Stormstrike, Improved Stormstrike (1223031) | at 2/2 every dodge or parry of ours resets Stormstrike; 50% regen while casting, 15 s | the same | right (beta, 8.32) |
-| Flurry, Maelstrom Weapon, Rage of the Farseer | DPS talents (attack speed, Lightning Bolt, 30% attack speed for 25 s, 3 min) | as the DPS audit (8.28, 8.33, 8.34) | right |
+| Flurry, Maelstrom Weapon, Rage of the Farseer | DPS talents; the notes: Flurry 6 / 12 / 18 / 24 / 30%, Maelstrom Weapon's chance doubled (the sim's 4 PPM a point), Lightning Bolt's top rank +76%; Rage of the Farseer 30% attack speed for 25 s, 3 min | as master's shaman round (`round_70753/shaman.md`) | right |
 | Convection, Concussion, Reverberation | shock costs -2% a point; Earth Shock +1% a point; shock cooldown -0.2 s a point | the same | right |
 | Elemental Warding (28996) | -3 / 7 / 10% Fire, Frost and Nature damage taken | the same | right; worth something at Chromaggus, Onyxia, Ragnaros |
 | Elemental Devastation, Elemental Focus | spell crits give 3% melee crit a point for 10 s; Clearcasting | as the DPS audit | right |
@@ -92,7 +117,7 @@ its healers anyway, but a real Warden lives through some bursts the score counts
   none on a dodge, Earth Shock's 2 x damage, an orb's 1 x; 0.7 with Windfury Weapon and no Rockbiter threat;
   1 without Spirit Weapons.
 - `TestForeverWardenAbilities`: Earth Shock's 5 s cooldown with Reverberation 5/5, shared with Flame Shock, its
-  GCD; Stormstrike's 8 s and 8% of base mana; Lightning Shield's 10 min, 3 orbs, 3.5 s apart, gone after the
+  GCD; Stormstrike's 6 s (the notes) and 8% of base mana; Lightning Shield's 10 min, 3 orbs, 3.5 s apart, gone after the
   third; Stoneskin Totem's 210 mana, 5 min and 36 off a hit before armor.
 - `TestForeverWardenImprovedStormstrikeReset`: a dodge or parry of the boss's swing resets Stormstrike, a
   block or a hit doesn't.
