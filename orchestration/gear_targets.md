@@ -68,6 +68,13 @@ level 60 BiS sets for any healer. The healing sim's healers (docs/healing_sim.md
 | Set | Lists | Sta | Int | Spi | SP | Healing | Crit | MP5 | top stat / non-Sta |
 |---|---|---|---|---|---|---|---|---|---|
 | Restoration shaman | 2 | 10.8 | 17.5 | 10.0 | 22.2 | 27.1 | 7.0 | 5.4 | Healing 30% |
+| Restoration druid | 2 | 14.8 | 18.7 | 10.0 | 17.5 | 35.2 | 1.0 | 2.8 | Healing 41% |
+
+The Restoration druid row (docs/healing_druid.md) takes the same rule from the two cached druid lists: the
+Forever Restoration druid Phase 1 guide and the Classic Restoration druid pre-raid guide, first pick a slot, the
+staff path (`orchestration/tools/healers/druid_restoration_mix.py`, lists' average Sta 14.8, Int 17.4, Spi 14.7,
+SP 16.2, healing 32.7, hit 0.7, crit 0.9, MP5 2.6; `druid_restoration_synth.py` the target). The set is ids
+990401 to 990413 in `tools/database/forever_synthetic_items_druid_restoration.go`.
 
 ## Tanks (2026-11-03)
 

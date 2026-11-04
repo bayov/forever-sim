@@ -35,6 +35,27 @@ A rank's heal at level 60 is its base plus its growth a level up to its max leve
 (the shaman's reading of the same tables, `sim/shaman/healing.go`, which gives the DPS spells' tables to the
 point). The sim's value is the client's in every row below; "sim before" is what the sim had before H3.
 
+### The November 2 notes (round 70753)
+
+The healing lines of the development notes (post 9, 2026-11-02; `orchestration/round_70753/druid.md` rows 172 to
+178 hand them to this worker), against client 1.60.1.70753 (70755's tables are the same). Every one is in the
+client, so none is notes-only (standards 37).
+
+| Note line | Client 70753 | Sim |
+|---|---|---|
+| Bloom: new row 3 talent, an expiring Rejuvenation or Regrowth heals for 100% of Spirit (50% if dispelled) | 1328621 (bp 100 / 50, TraitDefinition 134379 replacing Gift of the Earthmother 414673), heal 1328622 | in (`registerBloomSpell`), `TestDruidBloom` |
+| Wild Growth: 3 sec base cast | SpellMisc of 408120 / 1238214 / 1238215 | in, `TestDruidWildGrowth` |
+| Naturalist: 2/4/6/8/10% damage, and 0.1 to 0.5 sec off Wild Growth | 17069's description and class mask (hotfix 113283) | the damage in `talents.go` (Feral and Balance worker), the cast time cut here; `TestDruidHealingTalentMultipliers` |
+| Swiftmend needs the caster's own Rejuvenation or Regrowth | 18562's description: "with your active Rejuvenation or Regrowth" | in: `swiftmendHot` reads only our ranks; `TestDruidSwiftmend` |
+| Gift of the Earthmother removed | gone from the tree | nothing to remove (the sim never had it) |
+| Reflection and Subtlety swap rows | TraitDefinition 134378 / 134381 | tree position only (the tree file); talent strings unchanged (`orchestration/talent_remap_70753.md`: druid, nothing to remap) |
+| Genesis 2/4/6/8/10% periodic damage and healing | hotfix 113283 | in, on the HoTs and Swiftmend |
+
+Shared lines that reach the healer: Human Spirit is 10% (`sim/core`, no druid race), and the High Order Skyborne's
+Read Leyline is 50% regeneration for 15 sec, can't go up under Innervate, and an Innervate ends it (notes-only, in
+`sim/core/racials_forever.go`). The rotation generator's `leyline` knob casts it only while Innervate is on
+cooldown, so neither wastes the other.
+
 ### Healing Touch (Nature, 25297 at 60)
 
 | Rank | Spell | Learned | Heal at 60 | Mana | Cast | Coefficient | Sim before |
@@ -46,8 +67,9 @@ point). The sim's value is the client's in every row below; "sim before" is what
 | 7 to 1 | 8903 … 5185 | 38 … 1 | 921 … 45 | 425 … 25 | 3.5 … 1.5 s | 1.0 … 0.429 | missing |
 
 Forever's Healing Touch is below 1.12's (rank 11 2267 to 2677). Downranking: 5% of the coefficient a level past
-the rank's learn level plus 17 (Forever's rule, the shaman's and priest's `downrankCoefficient`), so rank 9 keeps
-all of it at 60, rank 7 75%, rank 4 none.
+the rank's learn level plus 17, from the engine (`sim/core/downrank.go`, every ranked spell, heals included: user
+ruling 2026-11-04), so ranks 8 to 11 keep all of it at 60, rank 7 75%, rank 6 45%, rank 4 none. The HoTs take it
+the same way on their ticks (Rejuvenation rank 6 55%, Regrowth rank 4 35%); `TestDruidDownrankedHeals`.
 
 ### Regrowth (Nature, 9858 at 60)
 
@@ -187,9 +209,8 @@ effect is on the presets where it was measured.
    time, the 1.12 melee rate the Balance druid's spells use too), when it's cast. The client leaves the chance to
    the server.
 7. **Bloom can crit** (the heal has no "can't crit" bit). Default yes.
-8. **Downranking.** Default: Forever's rule as the shaman's and priest's heals have it (5% of the coefficient a
-   level past the rank's learn level plus 17). The October 1 notes give no numbers; a rank 7 Healing Touch at 60
-   keeps 75%.
+8. **Downranking** is no longer a call: the engine applies it to every ranked spell (user ruling 2026-11-04,
+   `sim/core/downrank.go`). What it moved on the presets is under "Downranking on the presets" below.
 9. **The raid sim's Restoration druid placeholder** (`sim/compsearch/presets.go`) keeps its old talents; whether
    it takes the bench's build is the raid sim's (H6).
 10. **Launching the spec page** (`ui/core/launched_sims.ts`) is the user's call; it stays unlaunched.

@@ -10,6 +10,7 @@ RJ = {11: 25299, 10: 9841, 9: 9840, 8: 9839, 7: 8910, 6: 3627, 5: 2091}
 TRANQ = 9863
 WG = {3: 1238215, 2: 1238214, 1: 408120}
 SWIFTMEND, NS, INNERVATE = 18562, 17116, 29166
+READ_LEYLINE = 1259705  # the High Order Skyborne's racial
 
 
 def unit(t):
@@ -87,6 +88,12 @@ def build(role, k):
     who = 'Tank' if role == 'tank' else 'MostHurt'
     pl.append(line(cast(INNERVATE), cmp('OpLe', mana(), const(k['innervate'])),
                    f'Innervate on ourselves at {int(100 * float(k["innervate"]))}% mana.'))
+    if k.get('leyline', '0') != '0':
+        # Read Leyline can't go up under Innervate, and an Innervate ends it (racials_forever.go), so it
+        # waits for Innervate to be on cooldown.
+        pl.append(line(cast(READ_LEYLINE), AND(cmp('OpLe', mana(), const(k['leyline'])),
+                                               NOT({'spellIsReady': {'spellId': {'spellId': INNERVATE}}})),
+                       f'Read Leyline at {int(100 * float(k["leyline"]))}% mana while Innervate is on cooldown (High Order Skyborne).'))
     # Emergency: someone in the assignment low.
     low = float(k['low'])
     if k.get('ns', '0') != '0':
