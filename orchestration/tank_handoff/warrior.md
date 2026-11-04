@@ -1,4 +1,8 @@
-# Protection warrior tank: handoff (stopped 2026-11-04 for the move to its own cloud session)
+# Protection warrior tank: handoff
+
+**Status 2026-11-04 (cloud session): done.** The searches converged, races ran at all three weights (Undead at each),
+the three presets, APLs and requests are written, step 7 ran, and the doc's Presets, Numbers and Calls are written
+(`docs/tank_warrior.md`). The list under "Left" below is finished; the rest of this file is the earlier state.
 
 Brief: `orchestration/brief_tanks.md` (its last section, "Restart after the 70753 update (T2)"). Doc: `docs/tank_warrior.md`.
 Raw search output, the scripts and the Balanced APL found are in `orchestration/tank_handoff/warrior/`.
