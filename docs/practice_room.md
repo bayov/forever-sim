@@ -1304,10 +1304,22 @@ rendering, not the sim.
   moving raiders need no rebuild; it's rebuilt when raiders join. A body's hidden submeshes are left out when it's
   built. Parts cut by their texture's alpha (hair) and the effects' shadows still draw on their own. Shadow draw
   calls went from 128 to 83. `?mergeshadows=0` turns it off. Headless: 112 to 123 FPS, and 88 to 115 on a slow run.
-- Not done: merging the crowd's picture draws (65 bodies, 130 gear, 90 see-through). The gear's textures differ in
-  size and wrapping, so they'd need texture arrays by size and wrap (and a second set for the combiner's second
-  texture), one vertex buffer for all gear, and the copies' data read by draw in the shader (WEBGL_multi_draw has no
-  base instance). See-through layers can't merge without changing their order.
+- Eighth raid report (your PC, worker on): about 125 FPS, 5.0ms of script (animating 1.6ms, was 2.45), 315 draw
+  calls (was 400), GPU 4.9ms. Script and GPU time move together in every 10s window, so the GPU timer seems to count
+  the GPU waiting for our commands: the limit is how many WebGL calls we send, which Chrome's GPU process translates.
+- The merged picture (`wow/crowd.ts`): the raiders' solid parts (bodies and gear) draw in one call per kind of part,
+  like the merged shadow: one mesh of all their triangles, each vertex with its bones, its raider's place, and its
+  texture's layer in a texture array. The gear's textures go in arrays by size and wrapping (and the second texture
+  of the parts that mix two), the bodies' skins in theirs. A kind is a material (the same shader, side and mixing)
+  with the same arrays, 45 kinds for the raid. Parts that draw on their own: see-through ones, ones cut by alpha,
+  ones whose color or transparency changes (a track with keys that differ; a steady one is fine), and ones whose
+  texture isn't the plain kind. `?mergepicture=0` turns it off.
+  - Pixel check, one frozen frame (lineup and the fight's view), merge on, off, and on again: the same, apart from a
+    few hundred pixels of effects glows that also differ between two frames with the merge on.
+  - `?glcount=1` counts every WebGL call by kind (`glCallsAvg` in the report).
+  - Headless (fight, 1920x1080): 127 to 144 FPS, drawing 4.8 to 4.1ms, 420 to 326 draw calls, 3040 to 2350 WebGL
+    calls a frame (texture binds 528 to 423, vertex array binds 478 to 385, programs 276 to 210, matrix uniforms 271
+    to 174).
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
