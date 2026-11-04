@@ -72,6 +72,14 @@ rounds disagree most on Spirit and MP5 at 50 to 59 (Spirit 1.6 to 5.0 at 55, MP5
 and on Stamina at 25 and 40, so treat those as rough. With these weights the plan's gear takes
 79.551h (seeds 1 and 1000001, 2000 sessions a level), 0.37h less than 79.926h before.
 
+We measured them again the same day (three rounds the same way) on the plan after hotfix 113380
+(stronger Lightning Bolt, Chain Lightning and shocks), with Stormstrike at 25 and Convection 5 at
+55 to 59. Crit at 59 is 34.2 (30.5 before), and Agility at 59 is 2.3 (2.1). With Stormstrike at
+25, spells are worth less there: Spell Power at 25 is 1.7 (3.4), Nature Power 1.0 (2.1), and hit
+15.2 (18.3). Spirit and MP5 at 50 are a little higher (4.1 and 6.5, against 3.7 and 5.9). The
+plan's gear by these weights takes 78.63h (78.634h and 78.629h), 2 min less than 78.66h by the
+weights before.
+
 Stamina, Intellect and MP5 move with the gear, because they decide how often we die. At level
 20, +10 Stamina was worth 2.29 a point on gear with little Intellect (0.19 deaths a session)
 and nothing on the gear those weights picked (more Intellect, 0.08 deaths). So each level's
