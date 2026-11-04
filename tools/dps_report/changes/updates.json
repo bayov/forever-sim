@@ -3997,6 +3997,10 @@
     {
      "commit": "c9973fb",
      "why": "Test goldens only: the item set tests master added or changed leave the hit-trade step items out; no preset moves."
+    },
+    {
+     "commit": "1923846",
+     "why": "The raid comp search cache only (which raid buffs each build ignores); no report number moves."
     }
    ],
    "source": {
