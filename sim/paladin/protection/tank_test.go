@@ -602,6 +602,29 @@ func TestReckoning(t *testing.T) {
 			t.Errorf("Reckoning 5/5 on a %s: charge %v, want %v", c.name, got, c.want)
 		}
 	}
+
+	// A periodic crit taken gives no charge ("non-periodic critical strike"), and a direct one
+	// does, both dealt through the core: it routes a tick to OnPeriodicDamageTaken, which
+	// Reckoning doesn't hook (spell_result.go, tank_mechanics-20261104-11).
+	for _, c := range []struct {
+		name     string
+		periodic bool
+		want     bool
+	}{{"periodic crit", true, false}, {"direct spell crit", false, true}} {
+		stored.SetStacks(sim, 0)
+		sim.CurrentTime += 2 * time.Second
+		r := magic.NewResult(&pal.Unit)
+		r.Outcome = core.OutcomeCrit
+		r.Damage = 1
+		if c.periodic {
+			magic.DealPeriodicDamage(sim, r)
+		} else {
+			magic.DealDamage(sim, r)
+		}
+		if got := stored.GetStacks() > 0; got != c.want {
+			t.Errorf("Reckoning 5/5 on a %s dealt by the core: charge %v, want %v", c.name, got, c.want)
+		}
+	}
 }
 
 // TestBlessingOfSanctuaryGone checks that Forever has no Blessing of Sanctuary (no client row).

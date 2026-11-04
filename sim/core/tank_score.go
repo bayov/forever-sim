@@ -45,7 +45,9 @@ type tankScore struct {
 }
 
 // tankReplayEvent is damage taken, a heal of a fixed size, or a stand-in heal of units times the
-// HPS, each capped at the max health then.
+// HPS, each capped at the max health then. Damage carries the max health too: when max health drops
+// (Last Stand ending), the live run cuts current health to it (unit.go, processDynamicBonus), so the
+// replay does the same before taking the damage.
 type tankReplayEvent struct {
 	damage    float64
 	heal      float64
@@ -103,9 +105,9 @@ func (ts *tankScore) startPull(unit *Unit) {
 	ts.startHealth = unit.CurrentHealth()
 }
 
-func (ts *tankScore) damageTaken(amount float64) {
+func (ts *tankScore) damageTaken(unit *Unit, amount float64) {
 	if ts.replay {
-		ts.events = append(ts.events, tankReplayEvent{damage: amount})
+		ts.events = append(ts.events, tankReplayEvent{damage: amount, maxHealth: unit.MaxHealth()})
 	}
 }
 
@@ -152,7 +154,7 @@ func (ts *tankScore) lives(hps float64) bool {
 	for _, e := range ts.events {
 		switch {
 		case e.damage > 0:
-			health -= e.damage
+			health = min(e.maxHealth, health) - e.damage
 			if health <= 0 {
 				return false
 			}
