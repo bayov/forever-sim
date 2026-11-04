@@ -197,8 +197,8 @@ dps_results: {
 dps_results: {
  key: "TestP1TankWarrior-Phase1-AllItems-WarriorSynthetic(Phase1)"
  value: {
-  dps: 387.61033
-  tps: 1031.2848
+  dps: 391.47733
+  tps: 1037.95967
  }
 }
 dps_results: {

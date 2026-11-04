@@ -42,6 +42,8 @@ import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
 import Level60WisdomDutyAPLJSON from './apls/level60_wisdom_duty.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticCrusaderDutyGearJSON from './gear_sets/level60_phase1_synthetic_crusader_duty.gear.json';
+import Level60Phase1SyntheticCrusaderDutyHitMinus3GearJSON from './gear_sets/level60_phase1_synthetic_crusader_duty_hit-3.gear.json';
+import Level60Phase1SyntheticHitMinus3GearJSON from './gear_sets/level60_phase1_synthetic_hit-3.gear.json';
 import Level60Phase1SyntheticUndeadGearJSON from './gear_sets/level60_phase1_synthetic_undead.gear.json';
 
 // Preset options for this spec.
@@ -121,7 +123,32 @@ export const GearLevel60Phase1SyntheticCrusaderDuty = PresetUtils.makePresetGear
 	},
 );
 
-export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticUndead, GearLevel60Phase1SyntheticCrusaderDuty];
+// The hit-3 steps of the set and of its Crusader duty set (round 70753 phase 5, hit trade,
+// orchestration/round_70753/hit_trade/paladin.md): 30 hit rating less, re-spent on 30 crit rating
+// (orchestration/tools/hit_steps.json, "ret"). The twist builds' Precision 3 (+3% hit) put them at 11%
+// melee hit on the base sets, 3% over the 8% cap; on the step they sit at the cap and gain +11 to +13
+// DPS at 120 / 180 / 300 sec. The twist builds and their duty variants wear them; sub Holy, vs Undead
+// and Shock have no melee hit talent and stay on the base sets.
+export const GearLevel60Phase1SyntheticHitMinus3 = PresetUtils.makePresetGear('Ret twist (hit-3)', Level60Phase1SyntheticHitMinus3GearJSON, {
+	tooltip: "The synthetic Phase 1 set with 3% hit traded for crit, for the twist talents' Precision 3.",
+	group: 'Synthetic',
+});
+export const GearLevel60Phase1SyntheticCrusaderDutyHitMinus3 = PresetUtils.makePresetGear(
+	'Ret twist (hit-3) · Judgement of the Crusader duty',
+	Level60Phase1SyntheticCrusaderDutyHitMinus3GearJSON,
+	{
+		tooltip: 'The Libram of Fervor set with 3% hit traded for crit, for the twist Crusader duty build.',
+		group: 'Synthetic',
+	},
+);
+
+export const GearPresets = [
+	GearLevel60Phase1Synthetic,
+	GearLevel60Phase1SyntheticUndead,
+	GearLevel60Phase1SyntheticCrusaderDuty,
+	GearLevel60Phase1SyntheticHitMinus3,
+	GearLevel60Phase1SyntheticCrusaderDutyHitMinus3,
+];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
@@ -260,6 +287,10 @@ export const DefaultAPL = APLLevel60SubHoly;
 // Repentance, Vengeance, Champion of the Light 5, a Vindication point to reach row 4), Divine Strength
 // 5, Improved Seals 5 and Holy Conduit 2 in Holy, Divine Intellect 5 and Precision 3 in Protection.
 // The search kept the seed: Champion of the Light is 80 a point pair, Improved Seals 10 a point.
+// Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/paladin.md): with the
+// set's hit tradeable for crit the search keeps these talents (Precision -1 for Reverence +1 loses 6.0
+// even with the extra step) and the builds wear the hit-3 step: 1107.7 / 1103.2 / 1093.3 at 120 / 180 /
+// 300 sec (20,000 iterations, seed 1), +12.2 / +11.1 / +13.0.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Ret twist', SavedTalents.create({ talentsString: '050050002-503-05233101201301351' }), {
 	tooltip: 'Level 60 talents: Retribution to Unsealed Wrath, Divine Strength, Improved Seals and Holy Conduit in Holy, Divine Intellect and Precision.',
 	group: 'Synthetic',
@@ -479,7 +510,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Ret twist', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Ret twist talents and rotation, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticHitMinus3,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
@@ -540,7 +571,7 @@ export const EncounterLevel60CrusaderDuty = PresetUtils.makePresetEncounter('Jud
 export const PresetBuildLevel60CrusaderDuty = PresetUtils.makePresetBuild('Ret twist · Judgement of the Crusader duty', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Undead with the twist talents that keeps Judgement of the Crusader on the boss for the raid.',
-	gear: GearLevel60Phase1SyntheticCrusaderDuty,
+	gear: GearLevel60Phase1SyntheticCrusaderDutyHitMinus3,
 	talents: TalentsLevel60,
 	rotation: APLLevel60CrusaderDuty,
 	encounter: EncounterLevel60CrusaderDuty,
@@ -594,7 +625,7 @@ export const EncounterLevel60WisdomDuty = PresetUtils.makePresetEncounter('Judge
 export const PresetBuildLevel60WisdomDuty = PresetUtils.makePresetBuild('Ret twist · Judgement of Wisdom duty', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Undead with the twist talents that keeps Judgement of Wisdom on the boss for the raid.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticHitMinus3,
 	talents: TalentsLevel60,
 	rotation: APLLevel60WisdomDuty,
 	encounter: EncounterLevel60WisdomDuty,

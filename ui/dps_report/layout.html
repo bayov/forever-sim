@@ -476,6 +476,25 @@
       <div class="fv-trees" id="rs-tal"></div>
     </div>
 
+    <div class="content-block fv-card" id="rs-races-card">
+      <div class="content-block-header"><h6 class="content-block-title">Best races</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-rs-races">How are races compared?</button></div>
+      <div class="fv-about-body" id="about-rs-races" data-title="How races are compared" hidden>
+        <p><b>How.</b> The preset is simmed as every race its class can be, on the same bosses as its score. Gear, talents, rotation and consumes stay the same. Only the race changes.</p>
+        <p><b>Limits.</b></p>
+        <ul>
+          <li>Every race keeps the preset's talents and rotation. A race that would play a bit differently may come out a little low.</li>
+          <li>A race marked ≈ is within the sim's luck of the race above it. Its place could go either way.</li>
+        </ul>
+      </div>
+      <div class="fv-toolbar">
+        <div class="fv-controls"><div class="fv-seg" id="rr-fac" role="group" aria-label="Faction"></div></div>
+      </div>
+      <p class="fv-note" id="rr-note"></p>
+      <p class="fv-axiswarn" id="rr-axis" hidden></p>
+      <div id="rs-races"></div>
+      <button class="btn btn-link fv-linkbtn" type="button" id="rs-races-link">Open in Races ›</button>
+    </div>
+
     <div class="content-block fv-card" id="rs-rot-card">
       <div class="content-block-header"><h6 class="content-block-title">Rotation</h6></div>
       <div class="fv-toolbar" hidden><div class="fv-controls"><div class="fv-seg fv-rot-seg" id="rs-rot-race" role="group" aria-label="Rotation for which race"></div></div></div>

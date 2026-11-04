@@ -81,6 +81,10 @@ gen() {
 # shipped on the user's call though it is under the 1 DPS bar. Paired at 20000 iterations on seeds 1 / 1000003:
 # Level 60 +0.1 / -0.7, +0.2 / -0.7, 0.0 / 0.0 and Imp GW -0.4 / +0.2, +0.1 / +0.5, +0.6 / +1.3 at
 # 120 / 180 / 300 sec, a wash on Level 60 and about +0.4 on Imp GW.
+# Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/shaman.md): Level 60, Water Shield and
+# Mana Tide moved to new talents and a hit step (hit-3, hit-4, and hit-4 on the Burning Totem set; settings files in
+# tools/dps_report/req), same knobs: +7.8 / +5.9 / +3.6, +6.4 / +6.1 / +5.3 and +3.5 / +5.2 / +8.5 at 120 / 180 / 300 sec.
+# Imp GW and both Elemental builds are unchanged.
 gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=1,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=0" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A

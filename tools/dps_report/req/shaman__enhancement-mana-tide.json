@@ -28,18 +28,18 @@
                   "enchant": 1891
                 },
                 {
-                  "id": 990006,
+                  "id": 990042,
                   "enchant": 1885
                 },
                 {
-                  "id": 990007,
+                  "id": 990040,
                   "enchant": 1248640
                 },
                 {
                   "id": 990008
                 },
                 {
-                  "id": 990009,
+                  "id": 990043,
                   "enchant": 1506
                 },
                 {
@@ -47,7 +47,7 @@
                   "enchant": 1887
                 },
                 {
-                  "id": 990011
+                  "id": 990041
                 },
                 {
                   "id": 990013
@@ -93,7 +93,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "03-055030310051012051-053051001001",
+            "talentsString": "03-055030210051012151-053111031001",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
