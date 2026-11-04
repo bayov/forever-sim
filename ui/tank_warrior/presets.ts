@@ -15,6 +15,8 @@ import {
 	Race,
 	RaidBuffs,
 	StrengthBuff,
+	SunderRamp,
+	TotemWeaponBuff,
 	TristateEffect,
 	WeaponImbue,
 } from '../core/proto/common.js';
@@ -44,11 +46,13 @@ export const GearP0BISSwordBoard = PresetUtils.makePresetGear('Pre-BiS (Sword an
 
 // The synthetic Level 60 Phase 1 Protection set (standards 36, tools/database/forever_synthetic_items_warrior_tank.go):
 // 106 Defense from the items, 110 block value, 239 Stamina, 8% hit (the cap), the tank stat trinket and the attack power on-use,
-// Superior Deflection (Defense +9) on the wrists: it beat Superior Stamina at every weight (docs/tank_warrior.md, Gear A/Bs).
-// Max threat and Balanced wear it: the attack power on-use beat the armor one by 210 and 176.
+// Superior Deflection (Defense +9) on the wrists and Agility +5 on the cloak: they beat Superior Stamina and Superior Defense
+// at every weight or tie (docs/tank_warrior.md, Round 3 gear A/Bs).
+// Max threat and Balanced wear it: the attack power on-use beats the armor one by 210 and 180 (round 3).
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Level60Phase1SyntheticGear);
 // The same set with the armor on-use trinket (990617) in place of the attack power one: Max survival's, where it
-// wins by 19 ± 5 when held for the last 35 sec (all of it on Broodlord; it loses on four of the six bosses).
+// wins by 13 to 16 ± 5 when held for the last 35 sec (round 3, two seeds): all of it on Broodlord; without Broodlord the attack
+// power trinket would win by about 70 (tank_rotations-20261104-11, a call for the user).
 export const GearLevel60SyntheticArmorTrinket = PresetUtils.makePresetGear(
 	'Level 60 Phase 1 (Synthetic, armor trinket)',
 	Level60Phase1SyntheticArmorTrinketGear,
@@ -111,21 +115,21 @@ export const PresetBuildTanky = PresetUtils.makePresetBuild('Tanky', { gear: Gea
 
 // The three Level 60 tank presets (the user's ruling: threat against survival as weights, Balanced the default).
 export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
-	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
+	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Its own talents, no Thunder Clap, Shield Wall in the last 13 sec.',
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60MaxThreat,
 	rotation: APLLevel60MaxThreat,
 	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
-	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md).',
+	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md). Shield Wall in the last 17 sec.',
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60Balanced,
 	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation, with the armor trinket held for the last 35 sec.',
+	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,
@@ -159,43 +163,55 @@ export const DefaultConsumes = Consumes.create({
 	strengthBuff: StrengthBuff.JujuPower,
 });
 
+// The raid's buffs and the boss's debuffs are the tank bench's (tools/tankbench/req/warrior_protection_*.json), so the
+// UI presets load what the bench scores (tank_fairness-20261104-6).
 export const DefaultRaidBuffs = RaidBuffs.create({
+	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
-	devotionAura: TristateEffect.TristateEffectRegular,
+	bloodPact: TristateEffect.TristateEffectImproved,
+	devotionAura: TristateEffect.TristateEffectImproved,
+	divineSpirit: true,
 	fireResistanceAura: true,
-	fireResistanceTotem: true,
+	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	graceOfAirTotem: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
+	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
-	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-	stoneskinTotem: TristateEffect.TristateEffectRegular,
+	retributionAura: TristateEffect.TristateEffectImproved,
+	shadowProtection: true,
+	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
+	thorns: TristateEffect.TristateEffectImproved,
+	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
+	trueshotAura: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
-	fengusFerocity: false,
-	moldarsMoxie: false,
-	rallyingCryOfTheDragonslayer: false,
-	songflowerSerenade: false,
-	spiritOfZandalar: false,
-	warchiefsBlessing: false,
 });
 
 export const DefaultDebuffs = Debuffs.create({
+	curseOfElements: true,
 	curseOfRecklessness: true,
-	exposeArmor: TristateEffect.TristateEffectImproved,
+	curseOfWeakness: TristateEffect.TristateEffectImproved,
+	demoralizingRoar: TristateEffect.TristateEffectImproved,
+	demoralizingShout: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
-	giftOfArthas: true,
 	insectSwarm: true,
-	sunderArmor: true,
+	judgementOfLight: true,
+	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
+	judgementOfWisdom: true,
+	scorpidSting: true,
+	sunderRamp: SunderRamp.create({ tank: true }),
+	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
 export const OtherDefaults = {
 	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
 	inFrontOfTarget: true,
-	profession1: Profession.Blacksmithing,
-	profession2: Profession.Enchanting,
-	race: Race.RaceHuman,
+	// The bench's professions and race (tank_fairness-20261104-6).
+	profession1: Profession.Engineering,
+	profession2: Profession.Blacksmithing,
+	race: Race.RaceUndead,
 };

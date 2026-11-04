@@ -1,0 +1,11 @@
+A=F_balanced.json B=armorPull_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2701     2502  -199.2    4.8   -119.1      -13
+chromaggus        2108     1937  -171.0    2.5    -89.7       -3
+golemagg          3254     3103  -150.5    2.1   -104.0      -17
+magmadar          3424     3258  -165.7    1.8   -105.8      -13
+onyxia            3113     2967  -145.5    5.3   -122.8      -19
+ragnaros         -1768    -1932  -163.9    9.7    -95.7       -9
+vaelastrasz       3434     3193  -241.1    2.0   -136.8      -26
+scoring_mean                     -178.8    1.4
+exit 0

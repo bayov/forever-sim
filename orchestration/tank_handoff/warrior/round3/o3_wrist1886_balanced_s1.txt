@@ -1,0 +1,11 @@
+A=F_balanced.json B=wrist1886_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2678     2673    -5.1   19.5      2.0        3
+chromaggus        2105     2094   -10.9   13.3      2.2        5
+golemagg          3263     3256    -7.0    8.7      0.1        2
+magmadar          3438     3433    -4.6    7.5      1.6        2
+onyxia            3155     3131   -24.1   17.0      2.2        6
+ragnaros         -1746    -1712    34.1   52.1      3.1       -9
+vaelastrasz       3435     3437     2.8    6.6     -0.6       -3
+scoring_mean                       -8.2    5.3
+exit 0

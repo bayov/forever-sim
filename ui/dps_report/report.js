@@ -1915,7 +1915,8 @@ export function startReport(dash, events) {
   const roleDs = (m) => {
     const has = (x) => (`${m}_${x}` in dash.manifest ? `${m}_${x}` : null);
     return { el: '#rs-', builds: has('builds'), gear: has('gear'), rotation: has('rotation'), race_rotation: null, races: null, setup: has('setup'), tips: has('tooltips'),
-      icons: has('icons'), names: has('names'), bosses: has('bosses'), encounters: has('encounters'), raceRows: has('races'), notes: has('notes'), method: has('method') };
+      icons: has('icons'), names: has('names'), bosses: has('bosses'), encounters: has('encounters'), raceRows: has('races'), notes: has('notes'), method: has('method'),
+      asm: has('assumptions') };
   };
   const ROLE_DS = { tank: roleDs('tank'), heal: roleDs('heal') };
   const curDs = () => ROLE_DS[st.mode] || DPS_DS;
@@ -3040,7 +3041,7 @@ export function startReport(dash, events) {
   const asmHover = (node, head, lines, opts = {}) => {
     node.setAttribute('data-tip', '1');
     hoverTip(node, (pinned) => {
-      const card = $('#asm-card'), cr = card.getBoundingClientRect(), nr = node.getBoundingClientRect();
+      const card = node.closest('.fv-card'), cr = card.getBoundingClientRect(), nr = node.getBoundingClientRect();
       showTip(card, nr.left - cr.left, nr.bottom - cr.top + 4, head, lines(), { hl: node, below: true, pinned, act: opts.act });
     }, { tap: opts.tap !== false });
   };
@@ -3051,21 +3052,15 @@ export function startReport(dash, events) {
     asmRef(a) ? null : el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
       ` (${x.id === a.defaultSetting ? 'default' : SEG_NAME[x.id] || x.id}): ${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale || ''}`))),
     a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
-  const drawAsm = () => {
-    const host = $('#asm-list'), custom = asmSel().length > 0;
-    $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
-    // Picks that were never simmed together on a preset are multiplied from the single settings: an estimate.
-    const est = asmOn ? (rowsOf('builds') || []).filter((b) => !isDuty(b) && (st.enc || !isEnc(b)) && asmEst(b.id)) : [];
-    $('#asm-est').hidden = !est.length;
-    $('#asm-est').replaceChildren(...(est.length ? [el('span', { class: 'fv-asm-badge est', text: 'Estimate' }),
-      ` On ${est.length} preset${est.length === 1 ? '' : 's'}, your settings weren't simmed together, so their numbers are estimated from the single settings; not simmed.`] : []));
-    if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
-    const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen));
-    host.replaceChildren(...d3.groups(As, (a) => a.class).map(([cls, as]) => {
+  // The assumptions by class, a fold each: the DPS panel's, and a Healing page's (one-value rows only). pre keeps a
+  // mode's open classes apart in st.asmOpen (the DPS ones have none, as they always had).
+  const asmGroups = (As, pre = '') => {
+    const open = new Set(arr(st.asmOpen));
+    return d3.groups(As, (a) => a.class).map(([cls, as]) => {
       const changed = as.filter((a) => st.asm?.[a.key]).length, top = d3.max(as, asmImpact);
       const d = el('details', { class: 'fv-asm-cls', 'data-cls': cls });
-      d.open = open.has(cls);
-      d.addEventListener('toggle', () => { const o = new Set(arr(st.asmOpen)); if (d.open) o.add(cls); else o.delete(cls); st.asmOpen = [...o]; persist(); });
+      d.open = open.has(pre + cls);
+      d.addEventListener('toggle', () => { const o = new Set(arr(st.asmOpen)); if (d.open) o.add(pre + cls); else o.delete(pre + cls); st.asmOpen = [...o]; persist(); });
       d.append(el('summary', {}, cls === 'All' ? null : ringed('classicon_' + cls.toLowerCase(), 'fv-ico ring', ccol(cls)), cls === 'All' ? 'All classes' : cls,
         el('small', { text: `${as.length} assumption${as.length === 1 ? '' : 's'}${top > 0 ? ` · up to ${f1(top)}%` : ''}` }), changed ? el('span', { class: 'fv-asm-badge', text: `${changed} changed` }) : null));
       for (const a of asmSort(as)) {
@@ -3086,7 +3081,18 @@ export function startReport(dash, events) {
             !live ? el('p', { class: 'fv-asm-cap', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' }) : null)));
       }
       return d;
-    }));
+    });
+  };
+  const drawAsm = () => {
+    const host = $('#asm-list'), custom = asmSel().length > 0;
+    $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
+    // Picks that were never simmed together on a preset are multiplied from the single settings: an estimate.
+    const est = asmOn ? (rowsOf('builds') || []).filter((b) => !isDuty(b) && (st.enc || !isEnc(b)) && asmEst(b.id)) : [];
+    $('#asm-est').hidden = !est.length;
+    $('#asm-est').replaceChildren(...(est.length ? [el('span', { class: 'fv-asm-badge est', text: 'Estimate' }),
+      ` On ${est.length} preset${est.length === 1 ? '' : 's'}, your settings weren't simmed together, so their numbers are estimated from the single settings; not simmed.`] : []));
+    if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
+    host.replaceChildren(...asmGroups(rowsOf('assumptions')));
   };
   // headline figures: the overview calc, or the same figures from the adjusted presets
   const asmOverview = () => {
@@ -3628,6 +3634,12 @@ export function startReport(dash, events) {
     seg(host, key, opts, (v) => { mst()[name] = v; persist(); render(); });
   };
 
+  // The mode's assumptions (heal_assumptions), as the DPS panel shows its one-value rows; no card when it has none.
+  const drawRoleAsm = () => {
+    const D = curDs(), host = $('#r-asm-list');
+    $('#r-asm-card').hidden = !D.asm;
+    if (D.asm && waitOr(host, [D.asm])) host.replaceChildren(...asmGroups(rowsOf(D.asm), st.mode + ':'));
+  };
   const drawRoleRank = () => {
     const R = curRole(), D = curDs(), o = rsel(), host = $('#r-rank');
     roleSeg($('#r-pick'), 'pick', R.picks, R.def);
@@ -3877,7 +3889,7 @@ export function startReport(dash, events) {
     if (ttNode && !ttNode.isConnected) hideTT();
     const tab = mst().tab;
     try {
-      if (tab === 'ranking') drawRoleRank();
+      if (tab === 'ranking') { safeTop(drawRoleAsm, $('#r-asm-list')); drawRoleRank(); }
       else if (tab === 'spec') drawRoleSpec();
       else if (tab === 'races') drawRoleRaces();
       else if (tab === 'method') drawRoleMethod();

@@ -1,0 +1,11 @@
+A=F_max_threat.json B=armorEnd35_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3573     3439  -134.5    3.9   -122.0     -109
+chromaggus        3257     3091  -166.5    1.6    -89.6      -13
+golemagg          3740     3551  -189.1    1.0   -106.6      -21
+magmadar          3828     3635  -192.6    0.9   -107.6      -19
+onyxia            3806     3603  -203.0    1.7   -126.3      -29
+ragnaros          2005     1817  -188.0    3.1    -95.8       -3
+vaelastrasz       3969     3702  -266.6    1.3   -140.6      -35
+scoring_mean                     -192.1    0.8
+exit 0

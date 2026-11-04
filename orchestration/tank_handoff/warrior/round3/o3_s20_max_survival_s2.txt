@@ -1,0 +1,11 @@
+A=cur_max_survival.json B=s20_max_survival.json preset=max_survival iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord          630      656    26.9   20.2      1.2       -3
+chromaggus       -1542    -1542    -0.1   19.5     -0.3       -0
+golemagg          1935     1936     0.8   11.0      1.5        0
+magmadar          2445     2459    14.0   13.6      0.8       -1
+onyxia            1396     1391    -4.4   17.4     -0.5        0
+ragnaros        -12601   -12663   -61.6   75.0     -0.0        6
+vaelastrasz       2061     2062     1.2    5.0     -0.5       -1
+scoring_mean                        6.4    6.3
+exit 0

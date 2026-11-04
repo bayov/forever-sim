@@ -16,10 +16,12 @@ import {
 	RaidBuffs,
 	SpellPowerBuff,
 	StrengthBuff,
+	SunderRamp,
+	TotemWeaponBuff,
 	TristateEffect,
 	WeaponImbue,
 } from '../core/proto/common.js';
-import { Blessings, PaladinAura, PaladinOptions as ProtectionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
+import { PaladinAura, PaladinOptions as ProtectionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import APLBasicProtectionJson from './apls/basic_prot.apl.json';
 import APLP5ProtJson from './apls/p5prot.apl.json';
@@ -28,6 +30,7 @@ import Level60MaxSurvivalAPLJson from './apls/level60_max_survival.apl.json';
 import Level60MaxThreatAPLJson from './apls/level60_max_threat.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticMaxThreatGear from './gear_sets/level60_phase1_synthetic_max_threat.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -40,9 +43,15 @@ import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gea
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Level60Phase1SyntheticGear);
+// Max threat's set: the same items, Greater Agility (+7) on the boots for Greater Stamina (+7). It won at w = 1/3 on
+// two disjoint seeds and tied at the other weights (docs/tank_paladin.md, round 3).
+export const GearLevel60SyntheticMaxThreat = PresetUtils.makePresetGear(
+	'Level 60 Phase 1 (Synthetic, Max threat)',
+	Level60Phase1SyntheticMaxThreatGear,
+);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Synthetic, GearBlank],
+	[Phase.Phase1]: [GearLevel60Synthetic, GearLevel60SyntheticMaxThreat, GearBlank],
 };
 
 export const DefaultGear = GearBlank;
@@ -121,7 +130,7 @@ const Level60TankOptions = { primarySeal: PaladinSeal.Fury, righteousFury: true,
 
 export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
 	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
-	gear: GearLevel60Synthetic,
+	gear: GearLevel60SyntheticMaxThreat,
 	talents: TalentsLevel60MaxThreat,
 	rotation: APLLevel60MaxThreat,
 	race: Race.RaceUndead,
@@ -138,7 +147,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 	options: Level60TankOptions,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md).',
+	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's build: the search at this weight lands on the same one.",
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,
@@ -152,9 +161,9 @@ export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 
 ///////////////////////////////////////////////////////////////////////////
 
 export const DefaultOptions = ProtectionPaladinOptions.create({
-	aura: PaladinAura.RetributionAura,
-	primarySeal: PaladinSeal.Righteousness,
-	personalBlessing: Blessings.BlessingOfSanctuary,
+	// The tank presets' options (the bench's): Seal of Fury, Righteous Fury, Devotion Aura.
+	aura: PaladinAura.DevotionAura,
+	primarySeal: PaladinSeal.Fury,
 	righteousFury: true,
 });
 
@@ -174,8 +183,11 @@ export const DefaultConsumes = Consumes.create({
 	strengthBuff: StrengthBuff.JujuPower,
 });
 
+// The tank bench's buffs and debuffs (tools/tankbench/req/paladin_protection_*.json; tank_fairness-20261104-6):
+// loading a preset gives the build the bench ranks.
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfKings: true,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
 	fengusFerocity: false,
 	moldarsMoxie: false,
 	rallyingCryOfTheDragonslayer: false,
@@ -185,27 +197,46 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
-	powerWordFortitude: TristateEffect.TristateEffectImproved,
-	arcaneBrilliance: true,
-	battleShout: TristateEffect.TristateEffectImproved,
-	divineSpirit: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	bloodPact: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
+	arcaneBrilliance: true,
+	divineSpirit: true,
+	battleShout: TristateEffect.TristateEffectImproved,
+	trueshotAura: true,
+	leaderOfThePack: true,
+	moonkinAura: true,
+	shadowProtection: true,
+	frostResistanceAura: true,
+	fireResistanceAura: true,
+	thorns: TristateEffect.TristateEffectImproved,
+	devotionAura: TristateEffect.TristateEffectImproved,
+	retributionAura: TristateEffect.TristateEffectImproved,
+	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	curseOfRecklessness: true,
-	faerieFire: true,
-	giftOfArthas: true,
-	exposeArmor: TristateEffect.TristateEffectImproved,
 	judgementOfWisdom: true,
+	judgementOfLight: true,
 	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
-	improvedScorch: true,
+	faerieFire: true,
+	curseOfElements: true,
+	sunderRamp: SunderRamp.create({ tank: true }),
+	curseOfWeakness: TristateEffect.TristateEffectImproved,
+	curseOfRecklessness: true,
+	demoralizingRoar: TristateEffect.TristateEffectImproved,
+	demoralizingShout: TristateEffect.TristateEffectImproved,
+	thunderClap: TristateEffect.TristateEffectImproved,
+	insectSwarm: true,
+	scorpidSting: true,
 });
 
 export const OtherDefaults = {
 	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
 	inFrontOfTarget: true,
 	distanceFromTarget: 5, // Max melee range
-	profession1: Profession.Blacksmithing,
-	profession2: Profession.Engineering,
+	profession1: Profession.Engineering,
+	profession2: Profession.Blacksmithing,
 };
