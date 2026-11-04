@@ -59,6 +59,8 @@ func (priest *Priest) ApplyTalents() {
 		priest.AddStatDependency(stats.Spirit, stats.SpellDamage, []float64{0, 0.01, 0.03, 0.05, 0.06, 0.08}[priest.Talents.SpiritualGuidance])
 	}
 
+	priest.applyHealingTalents()
+
 	// Shadow
 	priest.registerVampiricEmbraceSpell()
 	priest.registerShadowform()
@@ -77,7 +79,9 @@ func spellIn(spell *core.Spell, codes ...int32) bool {
 // Twin Disciplines: 1% a rank more damage on the priest spells in its class masks (client
 // 1225132). 70425 widened both: the direct mask now has Shadow Word: Death, Chastise and
 // Penance's bolts, the periodic mask Shadow Word: Pain, Mind Flay, Starshards and Devouring
-// Plague (70338: Chastise, and Shadow Word: Pain and Devouring Plague). Devouring Plague is
+// Plague (70338: Chastise, and Shadow Word: Pain and Devouring Plague). Its heals are Holy Nova,
+// Prayer of Mending and Penance's healing bolts in the direct mask and Renew in the periodic one
+// (not Power Word: Shield). Devouring Plague is
 // in through the fourth mask word (0x10), the bit Devouring Contagion uses. Shadowguard's
 // strike is in the direct mask (0x10000000 of its 0x92000000).
 func (priest *Priest) applyTwinDisciplines() {
@@ -88,7 +92,8 @@ func (priest *Priest) applyTwinDisciplines() {
 	bonus := 0.01 * float64(priest.Talents.TwinDisciplines)
 	priest.OnSpellRegistered(func(spell *core.Spell) {
 		if spellIn(spell, SpellCode_PriestShadowWordDeath, SpellCode_PriestChastise, SpellCode_PriestPenance, SpellCode_PriestShadowguard,
-			SpellCode_PriestShadowWordPain, SpellCode_PriestMindFlay, SpellCode_PriestStarshards, SpellCode_PriestDevouringPlague) {
+			SpellCode_PriestShadowWordPain, SpellCode_PriestMindFlay, SpellCode_PriestStarshards, SpellCode_PriestDevouringPlague,
+			SpellCode_PriestHolyNova, SpellCode_PriestPrayerOfMending, SpellCode_PriestRenew) {
 			spell.DamageMultiplierAdditive += bonus
 		}
 	})
@@ -108,8 +113,8 @@ func (priest *Priest) reduceCost(spell *core.Spell, percent int32) {
 
 // Mental Agility: 3, 7 and 10% off the mana cost of Smite, Holy Fire and the instant
 // spells in its mask (Shadow Word: Pain, Devouring Plague, Vampiric Embrace, Shadowform,
-// Power Infusion, Chastise, Shadowguard and others). Mind Blast, Mind Flay and Shadow Word:
-// Death are not in it.
+// Power Infusion, Chastise, Shadowguard and others; of the heals Renew, Power Word: Shield,
+// Holy Nova and Prayer of Mending). Mind Blast, Mind Flay and Shadow Word: Death are not in it.
 func (priest *Priest) applyMentalAgility() {
 	if priest.Talents.MentalAgility == 0 {
 		return
@@ -121,7 +126,7 @@ func (priest *Priest) applyMentalAgility() {
 			return
 		}
 		if spellIn(spell, SpellCode_PriestShadowWordPain, SpellCode_PriestDevouringPlague, SpellCode_PriestSmite, SpellCode_PriestHolyFire, SpellCode_PriestChastise,
-			SpellCode_PriestShadowguard) ||
+			SpellCode_PriestShadowguard, SpellCode_PriestRenew, SpellCode_PriestPowerWordShield, SpellCode_PriestHolyNova, SpellCode_PriestPrayerOfMending) ||
 			slices.Contains([]int32{15286, 15473, 10060}, spell.SpellID) {
 			priest.reduceCost(spell, discount)
 		}
@@ -153,20 +158,22 @@ func (priest *Priest) applyTwilightFocus() {
 	chance := []float64{0, 0.23, 0.47, 0.70}[priest.Talents.TwilightFocus]
 	priest.OnSpellRegistered(func(spell *core.Spell) {
 		if spellIn(spell, SpellCode_PriestSmite, SpellCode_PriestHolyFire, SpellCode_PriestMindBlast, SpellCode_PriestMindFlay,
-			SpellCode_PriestPenance, SpellCode_PriestStarshards, SpellCode_PriestFlashHeal, SpellCode_PriestGreaterHeal, SpellCode_PriestHeal) {
+			SpellCode_PriestPenance, SpellCode_PriestStarshards, SpellCode_PriestFlashHeal, SpellCode_PriestGreaterHeal, SpellCode_PriestHeal,
+			SpellCode_PriestLesserHeal, SpellCode_PriestPrayerOfHealing) {
 			spell.PushbackReduction = chance
 		}
 	})
 }
 
-// Holy Specialization: 1% crit a rank for Smite, Holy Fire, Penance and Holy Nova.
+// Holy Specialization: 1% crit a rank for the Holy spells in its mask (14889): Smite, Holy Fire,
+// Penance and every heal (Renew's ticks too), not Power Word: Shield.
 func (priest *Priest) applyHolySpecialization() {
 	if priest.Talents.HolySpecialization == 0 {
 		return
 	}
 
 	priest.OnSpellRegistered(func(spell *core.Spell) {
-		if spellIn(spell, SpellCode_PriestSmite, SpellCode_PriestHolyFire, SpellCode_PriestPenance) {
+		if spellIn(spell, SpellCode_PriestSmite, SpellCode_PriestHolyFire) || isHeal(spell, healCodes...) || spellIn(spell, SpellCode_PriestPenance) {
 			spell.BonusCritRating += 1 * float64(priest.Talents.HolySpecialization) * core.CritRatingPerCritChance
 		}
 	})

@@ -26,7 +26,7 @@ import { CameraOptions, Mover } from './controls';
 import { iconName, iconUrl, meleeIcon, setIcon } from './icons';
 import { css, HudLayout, pack, place, readLayout, Rect } from './layout';
 import { AuraState, Batch, ClockState, FromWorker, HitEvent, Input, PlayerState, Settings, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
-import { Perf } from './perf';
+import { Perf, softwareRenderer } from './perf';
 import { drawn } from './wow/particles';
 import { Graphics, graphicsPresets, Room } from './scene';
 import { loadCursors } from './cursors';
@@ -295,6 +295,7 @@ class PracticeRoom {
 		this.room.setGraphics(this.graphics);
 		this.perf = new Perf(this.room.renderer);
 		this.room.onPass = pass => this.perf?.gpuPass(pass);
+		this.warnSoftwareGraphics();
 		this.perf.particles = () => drawn.particles;
 		this.pointer = new Pointer(this.root);
 		// A model built mid fight (a spell's effect) can cost a frame.
@@ -1225,6 +1226,21 @@ class PracticeRoom {
 		if (document.pointerLockElement) document.exitPointerLock();
 		void this.sounds?.listener.context.close().catch(() => {});
 		this.room.renderer.dispose();
+	}
+
+	// warnSoftwareGraphics shows a line when Chrome draws without the graphics card (it falls back
+	// to software after a driver update, and a raid then runs at 5 FPS). Not in test runs.
+	private warnSoftwareGraphics() {
+		const gl = this.room.renderer.getContext();
+		const info = gl.getExtension('WEBGL_debug_renderer_info');
+		const name = String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+		if (!softwareRenderer(name) || navigator.webdriver || new URLSearchParams(location.search).has('bench')) return;
+		const line = document.createElement('div');
+		line.className = 'software-graphics';
+		line.textContent = 'Software graphics · restart Chrome';
+		line.title = name;
+		Object.assign(line.style, { position: 'fixed', top: '40px', left: '50%', transform: 'translateX(-50%)', padding: '4px 10px', background: 'rgba(120, 20, 20, 0.85)', color: '#fff', font: '13px sans-serif', borderRadius: '4px', zIndex: '1000', pointerEvents: 'none' });
+		this.root.append(line);
 	}
 
 	// savePerf sends the fight's performance report to the practice server

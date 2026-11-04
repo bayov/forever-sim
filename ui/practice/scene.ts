@@ -45,6 +45,39 @@ export const graphicsPresets: Record<'low' | 'medium' | 'high', Graphics> = {
 	high: { preset: 'high', renderScale: 1, shadows: 'high', maxHeight: 1440 },
 };
 
+// opaqueOrder sorts the solid things to draw: by group and render order as Three does, then by
+// shader, texture and vertices, then front to back.
+type RenderItem = { id: number; groupOrder: number; renderOrder: number; material: THREE.Material; geometry: THREE.BufferGeometry; z: number };
+const shaderIds = new Map<string, number>();
+const shaderOf = new WeakMap<THREE.Material, number>();
+function shaderId(m: THREE.Material): number {
+	let id = shaderOf.get(m);
+	if (id === undefined) {
+		const map = (m as THREE.MeshBasicMaterial).map;
+		const key = [m.type, m.customProgramCacheKey(), JSON.stringify(m.defines ?? {}), !!map, m.alphaTest > 0, m.vertexColors, m.side, (m as THREE.MeshBasicMaterial).fog].join('|');
+		id = shaderIds.get(key);
+		if (id === undefined) shaderIds.set(key, (id = shaderIds.size + 1));
+		shaderOf.set(m, id);
+	}
+	return id;
+}
+function opaqueOrder(a: RenderItem, b: RenderItem): number {
+	if (a.groupOrder !== b.groupOrder) return a.groupOrder - b.groupOrder;
+	if (a.renderOrder !== b.renderOrder) return a.renderOrder - b.renderOrder;
+	const sa = shaderId(a.material);
+	const sb = shaderId(b.material);
+	if (sa !== sb) return sa - sb;
+	const ta = (a.material as THREE.MeshBasicMaterial).map?.id ?? 0;
+	const tb = (b.material as THREE.MeshBasicMaterial).map?.id ?? 0;
+	if (ta !== tb) return ta - tb;
+	if (a.geometry.id !== b.geometry.id) return a.geometry.id - b.geometry.id;
+	const ma = (a.material as unknown as { id: number }).id;
+	const mb = (b.material as unknown as { id: number }).id;
+	if (ma !== mb) return ma - mb;
+	if (a.z !== b.z) return a.z - b.z;
+	return a.id - b.id;
+}
+
 export class Room {
 	readonly renderer: THREE.WebGLRenderer;
 	private readonly sun: THREE.DirectionalLight;
@@ -88,6 +121,12 @@ export class Room {
 		this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', desynchronized: true } as THREE.WebGLRendererParameters);
 		this.renderer.setPixelRatio(window.devicePixelRatio);
 		this.renderer.shadowMap.enabled = true;
+		// The solid things draw grouped by shader, then texture, then vertices, so the renderer
+		// switches each as rarely as it can (Three's own order goes by material, and every copy of a
+		// model has its own materials). Solid things hide what's behind them whatever the order.
+		// Where two solid surfaces lie at exactly one depth (an armor layer on the body), the one
+		// drawn last shows, so a few such pixels can come out the other way. Off with ?sortsolid=0.
+		if (new URLSearchParams(location.search).get('sortsolid') !== '0') this.renderer.setOpaqueSort(opaqueOrder as unknown as (a: unknown, b: unknown) => number);
 		this.scene.background = new THREE.Color(0x87a7c4);
 		this.scene.fog = new THREE.Fog(0x87a7c4, 60, 160);
 		this.camera = new THREE.PerspectiveCamera(70, 1, 0.1, 500);
