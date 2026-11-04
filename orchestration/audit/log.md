@@ -216,3 +216,17 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-04 19:01 | tank_mechanics | pass 3 | master dc303b026 | 2 new findings | forced after tank round 3: -11..-14 verified and resolved; -15 (high) Goblin Sapper Charge and Land Mine blocked in bear form though client allows (bear Max threat +6-7%); -16 (low) Warden armor-trinket knob quirks + latent heal-threat health read
 2026-11-04 19:03 | tank_fairness | pass 3 | master dc303b0 | 2 new findings | round 3 claims reproduce at 3k (Warden Bal 767 soft: 748/723); closed -6,-7,-8; -9 partly open; new -10 (high) consumables searched for the bear only, Dirge's chops +42..+157 for paladin/Warden; -11 (medium) warrior UI queueDelay 250 (-75 MT) and bench-stripped debuffs; Tanking data not yet regenerated
 2026-11-04 19:06 | tank_rotations | pass 3 | master dc303b0 | 2 new findings | round 3 holds on disjoint seeds: -9, -10, -12, -13 resolved (Warden 25 s hold, bear Enrage 70, warrior MT Shield Wall 13 s all keep their sign), -3, -11 open (user calls); -14 (high) Warden MT/Bal Searing Totem + Fire Nova in last 60 s (+46 / +65), -15 (medium) Warden Bal Mana Spring before the pull (+11)
+2026-11-04 19:33 | gear | pass 57 | master 0facd9428 | quiet | hit-step sets show stat-mix flags per standards 4; no weapon or trinket drift
+2026-11-04 19:33 | healer_gear | pass 2 | master 0facd9428 | quiet | priest wand stat-less, shaman set bonus present; shares within tolerance
+2026-11-04 19:33 | tank_gear | pass 3 | master 0facd9428 | quiet | all four sets within tolerance; -3 still open for Warden
+2026-11-04 19:33 | consumables | pass 72 | master 0facd9428 | quiet | no buff or enchant change; client 70790 poison charge counts only
+2026-11-04 19:33 | mechanics | pass 66 | master 0facd9428 | 1 new finding | -1 (low) druid Ferocious Bite/Starfire scales vs client 70790
+2026-11-04 19:33 | healer_mechanics | pass 2 | master 0facd9428 | 1 new finding | -11 (low) Riptide mana now in client 70790; findings 1-9 resolved
+2026-11-04 19:33 | tank_mechanics | pass 3 | master 0facd9428 | quiet | prior -11..-14 fixed; dev-notes re-read rate-limited
+2026-11-04 19:33 | tank_rotations | pass 3 | master 0facd9428 | quiet | round 3 rotation changes hold; Warden trinket -9/-10 still open
+2026-11-04 19:33 | tank_fairness | pass 3 | master 0facd9428 | 1 new finding | -10 (high) only bear eats Dirge chops at Max survival; ranking unchanged
+2026-11-04 19:33 | results | pass 78 | master 0facd9428 | 1 new finding | -2 (low) 31 builds moved vs published after hit-trade regears and shaman hotfix; re-sim needed
+2026-11-04 19:33 | rotations | pass 54 | master 0facd9428 | quiet | no DPS APL changed; baseline refreshed; Arms HS at 100 Rage loses
+2026-11-04 19:33 | fairness | pass 30 | master 0facd9428 | quiet | report race best in every build; stale published numbers confirmed (results -1,-2)
+2026-11-04 19:33 | healer_fairness | pass 2 | master 0facd9428 | 1 new finding | -5 (high) Holy paladin raid preset Holy Light 9/8 and Divine Favor lines cost 0.025 carry
+2026-11-04 19:33 | healer_rotations | pass 2 | master 0facd9428 | 1 new finding | -3 (low) shaman tank LHW5 never casts; -2 Disc mana still open

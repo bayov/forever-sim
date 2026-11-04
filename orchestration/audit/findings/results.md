@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### results-20261104-2: 33 metas / builds.json lag the phase 5 hit-trade regears (feral +26, Ret +11, Fury builds.json -16 to -25)
+- severity: low (no sim error; the requests moved, the published numbers have not been re-simmed yet)
+- affects: druid feral-cat (+2), paladin level_60 (+3), mage arcane, rogue (6), shaman (6), warlock destruction_fire (3), warrior arms/fury (builds.json only)
+- found: 2026-11-04, master 0facd9428
+- evidence: shared run (68 builds, 20k, seed 1) vs meta published.dps: feral-cat 1164.9 vs 1139.0 and duty-ff 1160.1 vs 1134.1 (74cc2b8e3 regear, hit-4); paladin level_60 1103.2 vs 1092.1, duty-crusader +11.8, duty-wisdom +10.7 (3f4d44d4a, Ret twist regear onto hit-3); mage arcane +7.6 (74cc2b8e3); shaman elemental/enh +6.5 to +7.4 (87922bb77 hotfix 113380 LB/CL/shock, 3e4796fe7 regear); rogues -12 to +7.9 (31c10b61c, aa4551a04 regear onto hit steps, on top of results-20261104-1); warlock destruction_fire +0.8 to +1.1 (c8a7b4ac3, talents 242, the meta note says +1.1 at 180 s, matches). Warrior: metas match the run (cd3f44cf2, <=1.6), builds.json is 6.6 to 25 higher than the run (arms, fury, fury_2h families), waiting on the republish. Shock Ret duties are within 0.3. Drift report equals the reference; no new drift.
+- proposed fix: re-sim and republish the report (metas and builds.json) for these builds.
+- needs: orchestrator fix
+
 ### results-20261104-1: five rogue metas' published.dps lag the hotfix re-sim (up to 17.3 DPS)
 - severity: low (builds.json, from e9185b1aa, matches my 20k seed-1 run on all five; only the metas lag)
 - affects: tools/dps_report/req/rogue__{seal-fate-daggers,seal-fate-swords,mutilate,combat-swords,combat-daggers}.meta.json; runreq.sh and verify.py flag them OFF
