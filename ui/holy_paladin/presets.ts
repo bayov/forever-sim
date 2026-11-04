@@ -60,7 +60,8 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // Both rotations put the trinkets, Major Mana Potion and Demonic Rune out through Autocast Other
 // Cooldowns, cast Holy Shock at whoever in the assignment drops under 50% health and Flash of Light 6
 // under 35%, Lay on Hands under 10%, and bind at most 4 ranks of a heal (the user's ruling), each cast when
-// what's missing covers its Expected Healing.
+// what's missing covers its Expected Healing (the tank healer: 70% of it, the healbench's best gate,
+// healer_fairness-20261104-2; the raid healer's 0.7x gain was within noise, so it stays at 100%).
 //
 // The tank healer: Oath of Light on the tank (at -1.5 sec and whenever it's off: 400 more on its Holy
 // Lights, 115 on its Flashes), Divine Favor before a Holy Light 9 the tank misses, Holy Light 9 and 8 at
