@@ -130,41 +130,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10060
-                      },
-                      "target": {
-                        "type": "Self"
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "Tank"
-                            }
-                          }
-                        },
-                        "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 25314
-                            },
-                            "targetUnit": {
-                              "type": "Tank"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Power Infusion on myself when a big heal is due: 20% more healing for 15 sec."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 1240827
                       },
                       "target": {

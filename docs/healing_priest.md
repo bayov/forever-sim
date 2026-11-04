@@ -207,7 +207,11 @@ or not (24.0% shielded against 65.3% without), so the score reads the shields on
 ## The presets
 
 Three builds, all on the healing priest synthetic set (990501 to 990514, the healing priest row of
-`orchestration/gear_targets.md`), the Restoration shaman's consumables, raid buffs and debuffs, and level 60:
+`orchestration/gear_targets.md`), the Restoration shaman's consumables, raid buffs and debuffs, and level 60.
+The set's wand (990514, slot 16) carries no stats since 2026-11-04 (healer_fairness-20261104-3): it had 6
+Intellect, 10 spell power and 15 healing, 21.4 weighted points (the wand budget of standards 1b), on top of the
+902 the four healers' armor spends, while the shaman, paladin and druid fill slot 16 with a stat-less relic.
+That put the priest 2.4% over the others; the stats were worth 0.003 carry.
 
 | Build | Talents | Rotation | Knobs (`priest_tuning/presets.sh`) |
 |---|---|---|---|
@@ -218,15 +222,21 @@ Three builds, all on the healing priest synthetic set (990501 to 990514, the hea
 The rotations are written by `orchestration/tools/healers/priest_tuning/rots.py` (run `presets.sh` from the repo
 root; it also writes `tools/healbench/req/priest_holy.json`, `priest_holy_raid.json` and
 `priest_discipline.json`, which are the shaman's request with the priest in its slot). Every rotation casts
-Flash Heal 7 at whoever in its assignment drops under the emergency line, Power Infusion on the priest when a big
-heal is due, Inner Focus right before the biggest heal, and binds at most 4 ranks of a heal, each cast once
-what's missing covers its Expected Healing.
+Flash Heal 7 at whoever in its assignment drops under the emergency line and binds at most 4 ranks of a heal,
+each cast once what's missing covers its Expected Healing (or the `share=` part of it, the heal gate). The
+tank healers cast Inner Focus right before the biggest heal; the Discipline tank healer also casts Power
+Infusion on the priest when a big heal is due. The Holy build has no Power Infusion (it's the Discipline tree's
+31-point talent and Holy spends 18 there), so the Holy rotations carry no Power Infusion line
+(healer_rotations-20261104-1, healer_fairness-20261104-3; Power Infusion builds under "Talents").
 
 - **Holy tank**: Prayer of Mending and Renew on the tank whenever they're off, Flash Heal 7 and 4 first while
-  mana is over 70%, then Greater Heal 5, 4, 2 and Flash Heal 7, 4.
+  mana is over 70%, then Inner Focus, Greater Heal 5, 4, 2 and Flash Heal 7, 4.
 - **Holy raid**: Prayer of Mending at the most hurt whenever it's ready, a shield on whoever drops under 60%,
-  then at the most hurt Flash Heal 7, 4, Prayer of Healing 5, Renew (once what's missing covers 60% of it) and
-  Greater Heal 5, 2.
+  then Flash Heal 7, 4 at the most hurt. That's all it casts: until 2026-11-04 the rotation went on with
+  Prayer of Healing 5, Renew, Inner Focus and Greater Heal 5, 2, but Flash Heal 7 and 4 take every hole those
+  would, so they never fired (0 casts in logged iterations on five bosses, Inner Focus once), and moving any of
+  them ahead of Flash Heal loses (Prayer of Healing first -0.094 mean carry, Renew first -0.182, Inner Focus
+  first -0.003; healer_rotations-20261104-1). They're dropped; `rots.py`'s `order=` knob still writes them.
 - **Discipline tank**: Power Word: Shield whenever Weakened Soul is off the tank (under 50% mana only once
   what's missing covers a Greater Heal 5), Penance once what's missing covers its 3 bolts, Renew, then the Holy
   tank healer's Flash Heal and Greater Heal.
