@@ -80,3 +80,11 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
   procs only Venom and Boot Knife) is a reading of the hotfix's attribute flags; a log check or a ruling settles it.
 - Follow-ups (brief `briefs/phase4_followups.md`): the db.bin missing synthetic item 998001, warlock compsearch
   TestDropsAreUnread, the paladin rows of push 113483, stale.mjs calling every build stale, the warrior Fury note.
+  Done 2026-11-04: 998001 is in db.bin and the hash test passes (the failure came from an old pipeline tree); the
+  warlock drop table predated the Wrack build (Fortitude and the first aid kit now read); compsearch's solo hunters
+  keep another hunter's Hunter's Mark (MM +2.3, SV +3.1 were real); Demonology -2 next to a Shadow priest is real,
+  cause unfound (cast vs given Dark Inspiration?). Paladin rows are push 113542 (Vengeance 5 stacks, Holy 2H Spec),
+  already modelled: citations only, no DPS (`hotfix_113483_paladin.md`). stale.mjs was right: 4 Fury builds simmed
+  before 7b4dc5d's requests, re-simmed (Fury 1152.6 -> 1153.0, 2H Fury 1169.9 -> 1173.3 at 180 s); the other 64 cleared
+  by probe. Open: warrior push 113539 (Raging Blows out, Spearing Strike 75/75, Slam, Sweeping Strikes, Deep Wounds,
+  Concussion Blow) is not in the sim; `pal_2h_spec_holy` and the paladin wiki still call those values notes-only.

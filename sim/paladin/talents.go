@@ -276,12 +276,14 @@ func (paladin *Paladin) applyShieldSpecializationMana() {
 // too (wowsims/forever d35afca4da measured Seal and Judgement of Righteousness gaining from it;
 // report assumption pal_2h_spec_holy).
 //
-// Notes-only value (round 70753): the November 2 development notes change it "to increase both
-// Holy and Physical damage by 2/4/6%". Client 1.60.1.70753 is unchanged (20111 effect 0 is still
-// aura 79 misc 1) and no server hotfix row carries it, so under Forever the sim follows the notes
-// (orchestrator's rule of 2026-11-03, orchestration/round_70753/README.md): the Holy school takes
-// it as a whole, Consecration, Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock included, and
-// the melee-rolled Holy spells no longer take it a second time from their own multiplier.
+// Server hotfix push 113542 (wago.tools hotfixes, region 91, build 70707, 2026-11-03 18:29Z, logged
+// with the rogue push 113483; 1.60.1.70707+hf) makes it "Physical and Holy": SpellEffect 697263
+// (20111 effect 0, aura 79) school mask 1 -> 3, base points 2 a rank unchanged, and the Spell 20111
+// tooltip "Increases the Physical and Holy damage you deal by $s1%". This is the November 2
+// development notes' line, which the sim had taken as a notes-only value in round 70753; client
+// 1.60.1.70755 still has misc 1. Under Forever the Holy school takes it as a whole, Consecration,
+// Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock included, and the melee-rolled Holy spells
+// no longer take it a second time from their own multiplier.
 func (paladin *Paladin) twoHandedSpecializationMultiplier() float64 {
 	if paladin.MainHand().HandType == proto.HandType_HandTypeTwoHand {
 		return 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
@@ -316,10 +318,11 @@ func (paladin *Paladin) applyWeaponSpecialization() {
 // stacks, for 30 sec. Classic was a flat 3% per point for 8 sec.
 //
 // The 2026-09-24 beta build cut it from 5 stacks to 3 and made only non-periodic crits
-// count. Notes-only value (round 70753): the November 2 development notes put it back to
-// "stacking up to 5 times (Was stacking up to 3 times)". Client 1.60.1.70753 still has 3 (20050
-// SpellAuraOptions CumulativeAura) and no server hotfix row changes it, so the sim follows the
-// notes (orchestrator's rule of 2026-11-03, orchestration/round_70753/README.md).
+// count. Server hotfix push 113542 (region 91, build 70707, 2026-11-03 18:29Z; 1.60.1.70707+hf)
+// puts it back to 5: SpellAuraOptions 247421 (20050) CumulativeAura 3 -> 5, duration and proc
+// chance unchanged, so the talent tooltip ("$20050u times") reads 5. That is the November 2
+// development notes' line, which the sim had taken as a notes-only value in round 70753; client
+// 1.60.1.70755 still has 3.
 //
 // The hit callback below never sees a periodic tick (those go to the periodic callback), so
 // the non-periodic rule needs nothing here.
@@ -364,7 +367,7 @@ func (paladin *Paladin) applyVengeance() {
 }
 
 // Classic's Vengeance: 3% Physical and Holy damage a point for 8 sec after a crit, no stacks. The
-// Forever model above (and its notes-only 5 stacks) is gated under Forever (standards 37).
+// Forever model above (5 stacks, hotfix push 113542) is gated under Forever.
 func (paladin *Paladin) applyClassicVengeance() {
 	vengeanceMultiplier := 1 + 0.03*float64(paladin.Talents.Vengeance)
 

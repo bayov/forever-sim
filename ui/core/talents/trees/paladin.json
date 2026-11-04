@@ -453,7 +453,8 @@
             50
           ]
         ],
-        "icon": "spell_holy_power"
+        "icon": "spell_holy_power",
+        "notSimulated": true
       },
       {
         "fieldName": "lightsVigil",
@@ -872,8 +873,7 @@
             20
           ]
         ],
-        "icon": "spell_holy_stoicism",
-        "notSimulated": true
+        "icon": "spell_holy_stoicism"
       },
       {
         "fieldName": "holyShield",
@@ -1323,7 +1323,7 @@
         ],
         "maxPoints": 3,
         "name": "Two-Handed Weapon Specialization",
-        "description": "Increases the physical damage you deal by {0}%, and reduces all threat you generate by {1}% while a two-handed melee weapon is equipped.",
+        "description": "Increases the Physical and Holy damage you deal by {0}%, and reduces all threat you generate by {1}% while a two-handed melee weapon is equipped.",
         "ranks": [
           [
             2,
@@ -1409,17 +1409,17 @@
           [
             1,
             30,
-            3
+            5
           ],
           [
             2,
             30,
-            3
+            5
           ],
           [
             3,
             30,
-            3
+            5
           ]
         ],
         "icon": "ability_racial_avatar"
@@ -1486,8 +1486,7 @@
             3
           ]
         ],
-        "icon": "spell_holy_blessedresillience",
-        "notSimulated": true
+        "icon": "spell_holy_blessedresillience"
       }
     ]
   }

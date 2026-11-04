@@ -85,7 +85,10 @@ func reportRaid(t *testing.T, ids []string, iters int32) *proto.RaidSimRequest {
 //     ramp: with a warrior or two in the raid the boss's armor is down sooner, worth about 1.5 DPS a
 //     warrior to a Beast Mastery hunter;
 //   - a Shadow priest's Dark Inspiration for its party (+3.7 to Demonology, +4.4 to Fire), which the
-//     search doesn't give yet but the raid's priest casts.
+//     search doesn't give yet but the raid's priest casts;
+//   - Hunter's Mark for a hunter with another hunter in the raid: every raid hunter casts its own, so
+//     the mark overlaps and a hunter skips its own recasts and GCDs, worth +1 to +2.5 DPS a hunter
+//     (the shared mark, docs/raid_sim.md). Alone it gets the mark given and skips its own cast.
 func soloRequest(p *Pool, ids []string, i int, iters int32) *proto.RaidSimRequest {
 	b := p.Builds[ids[i]]
 	alone := cloneReq(b.Req)
@@ -110,7 +113,16 @@ func soloRequest(p *Pool, ids []string, i int, iters int32) *proto.RaidSimReques
 			alone.Raid.Parties[0].Buffs.DarkInspiration = true
 		}
 	}
+	if h, ok := player0(alone).Spec.(*proto.Player_Hunter); ok && slices.ContainsFunc(ids[:i], isHunter(p)) || ok && slices.ContainsFunc(ids[i+1:], isHunter(p)) {
+		h.Hunter.Options.SkipHuntersMark = true
+		alone.Raid.Debuffs.HuntersMark = proto.TristateEffect_TristateEffectRegular
+	}
 	return alone
+}
+
+// isHunter is whether a pool build is a hunter.
+func isHunter(p *Pool) func(string) bool {
+	return func(id string) bool { return player0(p.Builds[id].Req).Class == proto.Class_ClassHunter }
 }
 
 // darkInspirer is whether a build is a priest with Dark Inspiration, which reaches its party.

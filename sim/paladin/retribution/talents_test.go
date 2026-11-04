@@ -89,8 +89,8 @@ func TestConsecrationFirstFourTargets(t *testing.T) {
 
 // TestJudgementOfRighteousnessMelee checks that Forever's Judgement of Righteousness (client
 // 20286, DefenseType 2) is a melee attack: it crits for double and Two-Handed Weapon
-// Specialization (3/3: 6%) reaches it, through the Holy school since round 70753's notes-only
-// value (the specialization raises all Holy damage).
+// Specialization (3/3: 6%) reaches it, through the Holy school since server hotfix push 113542
+// (SpellEffect 697263 school mask 3: the specialization raises all Holy damage).
 func TestJudgementOfRighteousnessMelee(t *testing.T) {
 	_, with := retSim(t, "--000000000003", arcaniteReaper)
 	_, without := retSim(t, "", arcaniteReaper)
