@@ -1,12 +1,12 @@
 builds: 68 rows, 102 KB
 races: 247 rows, 76 KB
 lengths: 340 rows, 28 KB
-abilities: 696 rows, 194 KB
+abilities: 697 rows, 194 KB
 auras: 1217 rows, 175 KB
 hist: 2794 rows, 149 KB
 stats: 671 rows, 55 KB
 gear: 632 rows, 120 KB
-setup: 1839 rows, 458 KB
+setup: 1840 rows, 458 KB
 notes: 1529 rows, 185 KB
 WARNING notes: 2 texts name the project's process, e.g. "Round 70753: the November 2 notes' rogue rework isn't in client 70753, so Shank, the new talents and the re-ranked ones take the notes' values. Shank'"
 race_variants: 954 rows, 322 KB

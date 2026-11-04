@@ -3307,6 +3307,22 @@
       "b682e47",
       "9660fff"
      ]
+    },
+    {
+     "title": "Feral cats use the Goblin Sapper Charge",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "Goblin Sapper Charge and Goblin Land Mine work in Cat and Bear Form (the game's own item data allows them in a form), so the Feral cat presets now take the sapper.",
+     "commits": [
+      "e77fb29",
+      "22a7d79"
+     ]
     }
    ],
    "internal": [
@@ -4001,6 +4017,34 @@
     {
      "commit": "1923846",
      "why": "The raid comp search cache only (which raid buffs each build ignores); no report number moves."
+    },
+    {
+     "commit": "05ca74d",
+     "why": "Tanking mode only: Paladin tank consumables."
+    },
+    {
+     "commit": "4a3bcd2",
+     "why": "Tanking mode only: Warrior tank consumables."
+    },
+    {
+     "commit": "c89e3bd",
+     "why": "Tanking mode only: Paladin tank consumable search and UI."
+    },
+    {
+     "commit": "4745ce4",
+     "why": "Tanking mode only: Warden tank rotation and consumables."
+    },
+    {
+     "commit": "88d044d",
+     "why": "Tanking mode only: Warrior tank consumable search and UI."
+    },
+    {
+     "commit": "df0f997",
+     "why": "Tanking mode only: Bear tank presets."
+    },
+    {
+     "commit": "464deda",
+     "why": "Tanking and Healing modes only: armor trinkets and threat in replays; the DPS builds re-check unchanged."
     }
    ],
    "source": {
