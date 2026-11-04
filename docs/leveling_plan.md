@@ -140,7 +140,7 @@ its gold.
   level we want them by, like `-require` in the DPS talent search (tools/rotopt). Every route the
   search looks at has them by then, and each respec has them from its level on. A new one
   starts at the earliest level its row allows. The enhancement shaman's plan requires Improved
-  Ghost Wolf 2/2 by 16, as early as its row opens.
+  Ghost Wolf 2/2 by 27 and Spirit Weapons by 31.
 - **Talents the sim gives nothing for** (`notSimulated`) get no points unless they're
   required. Threat isn't simmed either, and solo leveling doesn't need Spirit Weapons.
 - **Rotations stay as they are.** A respec into another tree plays the plan's rotation for
@@ -473,14 +473,25 @@ seeds 1 and 1000001:
   takes 79.93h with it (79.926h and 79.922h, ±0.007), 47 min faster than the legal old order
   and 1 min faster than the old plan's illegal one. The gear plan by the 2026-11-04 leveling
   weights lowers that to 79.55h (79.551h on both seeds, ±0.007).
+- **Hotfix 113380** (stronger Lightning Bolt, Chain Lightning and shocks) came after that, and
+  the same plan takes 79.00h (78.997h and 78.989h).
+- **Improved Ghost Wolf may come after Stormstrike** (user, 2026-11-04), so the plan requires
+  it by 27, not 26. The route search (518s) then takes Stormstrike at 25 and Improved Ghost
+  Wolf at 26 and 27, which saves 17 min at 25 and 26. It also changes the end: Rage of the
+  Farseer at 48, Anticipation at 49, 50 and 54, Flurry 3 to 5 at 51 to 53, Convection 3 at 55
+  to 57 and Guardian Totems 2 at 58 and 59, in place of Concussion and Call of Flame. That
+  saves 5 min more. The plan takes 78.63h (78.632h and 78.625h, ±0.007), 22 min faster.
+- **Training** searched again on that route (414s) trains Searing Totem 3 and 4 and Lesser
+  Healing Wave 2 to 4 at their levels, but that's 4 min slower at 2000 sessions (78.694h and
+  78.688h, Searing Totem 3 at 30 costs time), so we keep the schedule above.
 
 The route: Thundering Strikes 5, Mental Dexterity 3, Improved Lightning Shield 2 at 18 and 19,
-Shamanistic Focus, Elemental Weapons 3, Improved Lightning Shield 3/3 at 24, Improved Ghost Wolf
-at 25 and 26 (required), Stormstrike at 27, Flurry 2, Improved Stormstrike, Spirit Weapons at
+Shamanistic Focus, Elemental Weapons 3, Improved Lightning Shield 3/3 at 24, Stormstrike at 25,
+Improved Ghost Wolf at 26 and 27 (required), Flurry 2, Improved Stormstrike, Spirit Weapons at
 31 (required), Tidal Focus 5 and Mindfulness 3 at 33 to 40, Mental Quickness 2, Maelstrom
-Weapon 5 at 43 to 47, Anticipation 3, Rage of the Farseer at 51, Convection 3, Concussion 2 and
-Call of Flame 3. Rockbiter Weapon all the way, with Windfury Totem from 32 and Stoneskin Totem
-for the earth totem. The respecs still save nothing.
+Weapon 5 at 43 to 47, Rage of the Farseer at 48, Anticipation 3, Flurry 5/5, Convection 3 and
+Guardian Totems 2. Rockbiter Weapon all the way, with Windfury Totem from 32 and Stoneskin
+Totem for the earth totem. The respecs still save nothing.
 
 The route before (2026-11-01, The audit) was Thundering Strikes, Improved Ghost Wolf at 15 and
 16 (required), Mental Dexterity, Shamanistic Focus, Elemental Weapons, Improved Lightning
