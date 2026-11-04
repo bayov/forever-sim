@@ -63,5 +63,6 @@
 - evidence: phase1_synthetic_tank*.gear.json: the feet (999210) take enchant 929, Stamina +7 (7 weighted). Mystic Rugged Armor Kit (1254966) gives 6 SP and 40 armor, about 9.2 weighted, and Forceful Rugged (1254965) about 9.0. Both are vendor patterns (252941/252942, skill 235). That is about +0.2% of the weighted budget. This is not simmed, and the tank objective may still prefer Stamina.
 - proposed fix: sim Mystic Rugged against Greater Stamina on the feet, and keep the winner.
 - needs: worker fix
+- fixed: 2026-11-04, dd4b82a. Simmed (paired, 3,000): Mystic Rugged +2.7 ± 0.5 / -6.6 ± 2.7 / -26.1 ± 6.7 (Max threat / Balanced / Max survival), Forceful Rugged +1.6 / -7.7 / -27.2; Greater Stamina stays (Max threat shares Balanced's set; call (e) in docs/tank_shaman.md).
 
 ## Resolved

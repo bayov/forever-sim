@@ -487,8 +487,9 @@ Balanced weight, the bear's Max survival preset (1185) now beats its Balanced pr
   bench's is fixed ([Rules audit](#rules-audit)); its options still need Righteous Fury on (`righteousFury`).
 - **The Feral tank wasn't simmed at all** (WotLK code left out of the build). It's rebuilt for Forever
   ([Rules audit](#rules-audit)).
-- **The paladin and the Warden shaman have no gear** (`blank` sets only), and no tank has Forever synthetic
-  gear or a tuned rotation.
+- **The paladin and the Warden shaman had no gear** (`blank` sets only), and no tank had Forever synthetic
+  gear or a tuned rotation. Fixed since 2026-11-04: every tank wears a synthetic set at its Tanks row (standards
+  36; the paladin's 9907xx, the Warden's 9992xx).
 - **Armor had no cap.** Armor now takes off at most 75% (`GetArmorDamageModifier`). Nothing simmed before
   got near it.
 

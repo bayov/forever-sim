@@ -15,6 +15,7 @@ import {
 	Modifiers,
 	mouseButtonName,
 	parseMacro,
+	ParsedMacro,
 	runMacro,
 	shortKey,
 	slotForCommand,
@@ -32,6 +33,7 @@ import { Graphics, graphicsPresets, Room } from './scene';
 import { loadCursors } from './cursors';
 import { dressLoading, dressSetup, musicOn, onSoundLevels, playSound, preloadSounds, setMusic, startMusic, stopMusic, uiSounds } from './glue';
 import { Frames, RoomLink } from './frames';
+import { tex } from './frames/assets';
 import type { ChatLayout } from './frames/chat';
 import { Pointer } from './pointer';
 import { RaidTest, raidSpells } from './raid';
@@ -100,6 +102,9 @@ const classColors: Record<string, string> = {
 	ClassPriest: '#ffffff',
 	ClassDruid: '#ff7c0a',
 };
+
+// The macro icon that asks the game to show the macro's spell or item (INV_Misc_QuestionMark).
+const dynamicMacroIcon = 134400;
 
 const defaultSettings: Settings = { mode: 'free', lengthMs: 180000, countdownMs: 5000, pingMs: 60, executeFromStart: false, spellQueueWindowMs: 400 };
 
@@ -1505,6 +1510,20 @@ class PracticeRoom {
 		if (this.cursor) this.fillButton(c, this.cursor);
 	}
 
+	// macroItem is the item a macro's #showtooltip or first /use shows: a trinket slot (13, 14)
+	// or an item you carry by name.
+	macroItem(macro: ParsedMacro): number | undefined {
+		const args = [macro.showtooltip, ...macro.lines.filter(l => l.command === '/use').map(l => l.args)];
+		for (const a of args) {
+			const arg = a?.replace(/\[[^\]]*\]/g, '').trim();
+			if (!arg) continue;
+			if (arg === '13' || arg === '14') return this.loaded.trinkets?.[+arg - 13] || undefined;
+			const id = this.itemsByName.get(arg.toLowerCase());
+			if (id) return id;
+		}
+		return undefined;
+	}
+
 	fillButton(b: HTMLElement, content: SlotContent | undefined) {
 		const icon = (b.querySelector('.icon') as HTMLElement) ?? b;
 		const name = b.querySelector('.name') as HTMLElement | null;
@@ -1520,8 +1539,15 @@ class PracticeRoom {
 		} else {
 			const macro = parseMacro(content.body);
 			const shown = this.toolkit ? macroIconSpell(macro, this.toolkit, this.macroContext({ alt: false, ctrl: false, shift: false })) : undefined;
+			const item = shown ? undefined : this.macroItem(macro);
 			if (shown) setIcon(icon, 'spell', shown);
-			else icon.style.backgroundImage = `url(${iconUrl('inv_misc_questionmark')})`;
+			else if (item) setIcon(icon, 'item', item);
+			// The macro's own icon, unless it's the question mark that asks the game to pick one.
+			else if (content.icon && content.icon !== dynamicMacroIcon) {
+				const key = `file:${content.icon}`;
+				icon.dataset.icon = key;
+				void tex(content.icon).then(u => icon.dataset.icon === key && (icon.style.backgroundImage = `url(${u})`));
+			} else icon.style.backgroundImage = `url(${iconUrl('inv_misc_questionmark')})`;
 			if (name) name.textContent = content.name;
 			b.classList.toggle('unsupported', macro.unsupported.length > 0);
 			b.dataset.spell = shown ? String(shown) : '';

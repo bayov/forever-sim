@@ -44,6 +44,7 @@
 - proposed fix: tank_gear to confirm the Warden set's Defense budget at its Tanks row is intended (standard 36), and tank_mechanics that the Warden's active mitigation is all modelled; if both hold, the user rules that the Warden ranks last. Update docs/tank_sim.md.
 - needs: user ruling (after the two checks)
 - ruling: 2026-11-04, user: a real class gap. The Warden is a mail class with much less defense built in than the plate tanks, and it won't necessarily be a viable raid tank. Don't compensate for it; keep its gear and mechanics checks to correctness. (standards.md, Raid duties)
+- fixed: 2026-11-04, dd4b82a. Gear and mechanics checked for correctness only (docs/tank_shaman.md, Presets); hit over the cap: moving the 2.5% over 8% into crit ties at Balanced (415 against 404); docs/tank_sim.md's "no gear" line updated.
 
 ### tank_fairness-20261104-4: Balanced and Max survival are the same build for the paladin and warrior; the bear's Balanced is its Max threat
 - severity: medium
@@ -55,6 +56,7 @@
 - fixed (bear part): 2026-11-04, f0ff977 (Balanced re-searched; each bear preset now wins its own weight: Balanced beats Max survival by 89 ± 9 at w=1 and Max threat by 110 ± 9; no two are equal)
 - warrior: 2026-11-04, 9f9c96e80: re-searched at w = 3, Balanced and Max survival share talents, race and rotation and differ only in the trinket (armor 990617 at Max survival); said in the doc and presets.ts, not forced apart.
 - paladin, 2026-11-04 (tank-paladin): re-searched at w = 3 on the new engine (talents, knobs, race); Max survival's best is still Balanced's build, and its note says so. Not forced apart.
+- fixed (Warden part): 2026-11-04, dd4b82a. The three Warden builds now differ, but Balanced's and Max survival's are within the paired error of each other at both weights (16.3 ± 11.1 at Balanced, 44.2 ± 32.5 at Max survival); the doc says so.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low

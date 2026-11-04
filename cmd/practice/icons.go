@@ -42,6 +42,9 @@ func newIconCache(path string) *iconCache {
 }
 
 func (c *iconCache) get(kind string, id int) iconInfo {
+	if info, ok := syntheticInfo(kind, id); ok {
+		return info
+	}
 	key := fmt.Sprintf("%s:%d", kind, id)
 	c.mu.Lock()
 	info, ok := c.entries[key]

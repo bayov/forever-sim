@@ -50,6 +50,8 @@ func (shamanTank) Knobs() []Knob {
 		{Name: "shockMana", Default: 0, Min: 0, Max: 60, Step: 10},
 		// 1 holds Earth Shock while Stormstrike's +20% is coming within 2 sec, so the shock takes it.
 		{Name: "earthShockHold", Default: 0, Min: 0, Max: 1, Step: 1},
+		// 1: the shock line above Stormstrike (it makes more threat a GCD); 0: below it, as before 2026-11-04.
+		{Name: "shockFirst", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Fire Nova (a shaman spell, our threat) around the fire totem: 0 never, 1 after the shock.
 		{Name: "fireNova", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "fireNovaMana", Default: 40, Min: 0, Max: 80, Step: 20},
@@ -114,8 +116,11 @@ func (shamanTank) Build(k Knobs) *proto.APLRotation {
 	}
 	if shieldID != nil {
 		pre = append(pre, shieldID)
-		items = append(items, cast(shieldID, and(not(auraIsActive(shieldID)), lowManaOnly(k["shieldMana"])),
-			"The shield whenever it's down. Water Shield needs the Restoration talent."))
+		note := "Lightning Shield whenever its orbs are gone: their threat beats the 370 mana."
+		if k["shield"] == 2 {
+			note = "Water Shield whenever its globes are gone (it needs the Restoration talent)."
+		}
+		items = append(items, cast(shieldID, and(not(auraIsActive(shieldID)), lowManaOnly(k["shieldMana"])), note))
 	}
 
 	var earthID *proto.ActionID
@@ -147,8 +152,13 @@ func (shamanTank) Build(k Knobs) *proto.APLRotation {
 	}
 	items = append(items,
 		autocastOtherCooldowns(nil, "Rage of the Farseer, racials, trinkets on cooldown."),
-		cast(stormstrike, nil, "Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike."),
 	)
+	// Stormstrike goes below the shock by default: Earth Shock makes about 2,225 threat a GCD against
+	// Stormstrike's 1,500, so when both are ready the shock goes first (tank_rotations-20261104-4).
+	ssItem := cast(stormstrike, nil, "Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike.")
+	if k["shockFirst"] == 0 {
+		items = append(items, ssItem)
+	}
 
 	when := manaFloor(k["shockMana"])
 	esWhen := when
@@ -166,6 +176,9 @@ func (shamanTank) Build(k Knobs) *proto.APLRotation {
 		items = append(items,
 			cast(flameShock, and(not(dotIsActive(flameShock)), when), "Flame Shock while its DoT is down."),
 			cast(earthShock, esWhen, "Earth Shock otherwise."))
+	}
+	if k["shockFirst"] == 1 {
+		items = append(items, ssItem)
 	}
 
 	var fireID *proto.ActionID
