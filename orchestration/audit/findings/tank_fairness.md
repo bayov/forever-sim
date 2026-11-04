@@ -43,6 +43,7 @@
 - proposed fix: tank_gear to confirm the Warden set's Defense budget at its Tanks row is intended (standard 36), and tank_mechanics that the Warden's active mitigation is all modelled; if both hold, the user rules that the Warden ranks last. Update docs/tank_sim.md.
 - needs: user ruling (after the two checks)
 - ruling: 2026-11-04, user: a real class gap. The Warden is a mail class with much less defense built in than the plate tanks, and it won't necessarily be a viable raid tank. Don't compensate for it; keep its gear and mechanics checks to correctness. (standards.md, Raid duties)
+- fixed: 2026-11-04, dd4b82a. Gear and mechanics checked for correctness only (docs/tank_shaman.md, Presets); hit over the cap: moving the 2.5% over 8% into crit ties at Balanced (415 against 404); docs/tank_sim.md's "no gear" line updated.
 
 ### tank_fairness-20261104-4: Balanced and Max survival are the same build for the paladin and warrior; the bear's Balanced is its Max threat
 - severity: medium
@@ -51,6 +52,7 @@
 - evidence: jq on tools/tankbench/req: paladin_protection_balanced.json and _max_survival.json have the same gear, talents and rotation, as do warrior_protection_balanced.json and _max_survival.json; their results match exactly on every boss. The bear's three presets differ only in rotation, and Balanced and Max threat are within about 1% on every boss. Max survival wins the Balanced weight for the bear on Golemagg and Onyxia (Onyxia 1663 vs 1476, 12%). Max threat has the highest TPS in 26 of 28 spec-boss cells (exceptions: bear and Warden with no encounter, Warden on Chromaggus).
 - proposed fix: search the paladin and warrior at the Max survival weight (w = 3) for talents/rotation that differ, or rule that the weights don't separate them and ship two presets; re-search the bear's Balanced preset.
 - needs: worker fix (or user ruling on dropping a preset)
+- fixed (Warden part): 2026-11-04, dd4b82a. The three Warden builds now differ, but Balanced's and Max survival's are within the paired error of each other at both weights (16.3 ± 11.1 at Balanced, 44.2 ± 32.5 at Max survival); the doc says so.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low

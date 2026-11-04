@@ -74,6 +74,7 @@
 - How sure: 50/50 on the mechanic; sure of the size.
 - needs: user ruling
 - ruling: 2026-11-04, the user left it to the orchestrator: keep 72 × weapon speed on specials too (wowsims/forever's reading, and the sim closest to Forever), with a to-verify note in docs/tank_shaman.md and the code (one Stormstrike's threat in a combat log settles it). Worker fix: shaman, the note only.
+- fixed: 2026-11-04, 952a7a4 (to-verify note in sim/shaman/rockbiter_weapon.go) and dd4b82a (docs/tank_shaman.md, call (c)); no value change.
 
 ### tank_mechanics-20261104-6: Unbridled Wrath procs on Heroic Strike
 - severity: medium
@@ -117,6 +118,7 @@
 - evidence: in docs/tank_shaman.md, Earth Shock's ×2 threat rests on "wowsims/classic, vmangos". vmangos is never a source; wowsims/sod earth_shock.go:54 is a tier 2 source for the same 2. Rockbiter's white-hit threat is labeled tier 2, but 20871's designer note makes it tier 1. In docs/tank_druid.md, the white-hit Rage row is wrong (-7), and Swipe's 3% AP is tier 1 (post 4 notes, line 241), not tier 2. In orchestration/round_70753/paladin.md:114, Templar's Bulwark's dispel is "notes only", but 1311015 has DispelType 1 (Magic) in 70755+hf. In docs/tank_warrior.md, Call 3's framing is off (-4).
 - proposed fix: `ref/tank_mechanics/patches/shaman_01_docs_tiers.patch` and `warrior_revenge_ap_call_doc.patch`; the druid and paladin lines by hand.
 - needs: worker fix
+- fixed (shaman part): 2026-11-04, 952a7a4 (shaman_01_docs_tiers.patch) and dd4b82a (the tier key no longer names vmangos).
 
 ### tank_mechanics-20261104-11: Tank mechanics with no test that fails when they break
 - severity: low (none known wrong except -6, -7, -8)
@@ -130,5 +132,6 @@
   - Engine: tank in front (-1); parry haste in a tank run; rolled crush vs the sheet; the block value formula; health invariance of a scoring run (-8); the cast-time no-avoidance rule (spell_outcome.go:673); tools/tankscore has no tests (OwnDebuffs, MakeTank, Score, PairedDiff); OutcomeEnemyMeleeSpecial under Forever's crit (only ClassicCrit is tested).
 - proposed fix: add the tests, with the ones for -1, -2 and -7 first.
 - needs: worker fix
+- fixed (Warden part): 2026-11-04, 952a7a4 (`TestForeverWardenAvoidedHits`: no orb on an avoided swing, no Rockbiter threat on an avoided Stormstrike, Stoneskin before the crit and crush multipliers).
 
 ## Resolved
