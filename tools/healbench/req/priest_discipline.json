@@ -1,0 +1,671 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceHuman",
+            "class": "ClassPriest",
+            "equipment": {
+              "items": [
+                {
+                  "id": 990501,
+                  "enchant": 1509
+                },
+                {
+                  "id": 990502,
+                  "enchant": 1249058
+                },
+                {
+                  "id": 990503
+                },
+                {
+                  "id": 990504,
+                  "enchant": 1888
+                },
+                {
+                  "id": 990505,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990506,
+                  "enchant": 2566
+                },
+                {
+                  "id": 990507
+                },
+                {
+                  "id": 990508
+                },
+                {
+                  "id": 990509,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990510,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990511
+                },
+                {
+                  "id": 990512
+                },
+                {
+                  "id": 995033
+                },
+                {
+                  "id": 995034
+                },
+                {
+                  "id": 990513,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 990514
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "mainHandImbue": "BrilliantManaOil",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "CerebralCortexCompound",
+              "intellectElixir": "ElixirOfGreaterIntellect",
+              "spiritElixir": "ElixirOfSages"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved"
+            },
+            "talentsString": "005005031330011531-0350510303",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Alchemy",
+            "rotation": {
+              "type": "TypeAPL",
+              "priorityList": [
+                {
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  },
+                  "notes": "Trinkets, potions and Demonic Rune."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10917
+                      },
+                      "target": {
+                        "type": "LowestHealth"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "currentHealthPercent": {
+                            "sourceUnit": {
+                              "type": "LowestHealth"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.5"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Someone in my assignment is under 50% health: the fast heal."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10060
+                      },
+                      "target": {
+                        "type": "Self"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25314
+                            },
+                            "targetUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Power Infusion on myself when a big heal is due."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10901
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    }
+                  },
+                  "notes": "Power Word: Shield on the tank whenever Weakened Soul is off it (Renewed Hope cuts it short)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1316995
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 1316995
+                            },
+                            "targetUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Penance once what is missing covers its 3 bolts."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 25315
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    },
+                    "condition": {
+                      "not": {
+                        "val": {
+                          "dotIsActive": {
+                            "spellId": {
+                              "spellId": 25315
+                            },
+                            "targetUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Renew on the tank whenever it is off."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10917
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.7"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "healthMissing": {
+                                  "sourceUnit": {
+                                    "type": "Tank"
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "spellExpectedHealing": {
+                                  "spellId": {
+                                    "spellId": 10917
+                                  },
+                                  "targetUnit": {
+                                    "type": "Tank"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Flash Heal first while mana is over 70%: more healing a second, if less a mana."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9474
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.7"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "healthMissing": {
+                                  "sourceUnit": {
+                                    "type": "Tank"
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "spellExpectedHealing": {
+                                  "spellId": {
+                                    "spellId": 9474
+                                  },
+                                  "targetUnit": {
+                                    "type": "Tank"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14751
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25314
+                            },
+                            "targetUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Inner Focus right before a big heal: free, and 25% more crit."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 25314
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25314
+                            },
+                            "targetUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Greater Heal 5, 4, 2 at the tank: each rank, biggest first, once what is missing covers its Expected Healing."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10965
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10965
+                            },
+                            "targetUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10963
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10963
+                            },
+                            "targetUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10917
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10917
+                            },
+                            "targetUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Flash Heal 7, 4 at the tank: each rank, biggest first, once what is missing covers its Expected Healing."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9474
+                      },
+                      "target": {
+                        "type": "Tank"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 9474
+                            },
+                            "targetUnit": {
+                              "type": "Tank"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 20,
+            "healingPriest": {
+              "options": {}
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "sunderRamp": {
+        "tank": true,
+        "pullSunders": 1
+      },
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

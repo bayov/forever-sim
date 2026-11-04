@@ -13,8 +13,9 @@ def k(knobs, name, default):
     return v
 
 def emergency(knobs, target):
-    return cast(FH[7], LOWEST, cmp('OpLt', health_pct(LOWEST), const(k(knobs, 'emergency', 0.35))),
-                'Someone in my assignment is under 35% health: the fast heal.')
+    line = k(knobs, 'emergency', 0.35)
+    return cast(FH[7], LOWEST, cmp('OpLt', health_pct(LOWEST), const(line)),
+                f'Someone in my assignment is under {line:.0%} health: the fast heal.')
 
 def inner_focus(knobs, spell, unit):
     return cast(INNER_FOCUS, None, covers(spell, unit), 'Inner Focus right before a big heal: free, and 25% more crit.')
@@ -22,8 +23,15 @@ def inner_focus(knobs, spell, unit):
 def power_infusion(knobs):
     return cast(PI, SELF, cmp('OpGe', mana_pct(), const(0)) if False else None, 'Power Infusion on myself: 20% more healing for 15 sec.')
 
+NAMES = {id(GH): 'Greater Heal', id(FH): 'Flash Heal', id(POH): 'Prayer of Healing'}
+UNITS = {'Tank': 'the tank', 'MostHurt': 'the most hurt', 'LowestHealth': 'the lowest'}
+
 def bound(spells, ranks, unit, share=1.0):
-    return [cast(spells[r], unit, covers(spells[r], unit, share)) for r in ranks]
+    # The ranks bound for a heal (at most 4), biggest first: each when what's missing covers it.
+    name = NAMES.get(id(spells), 'the heal')
+    what = 'what is missing covers its Expected Healing' if share >= 1 else f'what is missing covers {share:.0%} of its Expected Healing'
+    note = f"{name} {', '.join(map(str, ranks))} at {UNITS[unit['type']]}: each rank, biggest first, once {what}."
+    return [cast(spells[r], unit, covers(spells[r], unit, share), note if i == 0 else None) for i, r in enumerate(ranks)]
 
 def holy_tank(knobs):
     items = [autocast(), emergency(knobs, TANK)]
@@ -42,7 +50,8 @@ def holy_tank(knobs):
     if k(knobs, 'fhfirst', False):
         for r in fh:
             cond = covers(FH[r], TANK)
-            items.append(cast(FH[r], TANK, AND(rich, cond) if rich else cond))
+            items.append(cast(FH[r], TANK, AND(rich, cond) if rich else cond,
+                              f'Flash Heal first while mana is over {gate:.0%}: more healing a second, if less a mana.' if r == fh[0] else ''))
     items.append(inner_focus(knobs, GH[gh[0]], TANK))
     items += bound(GH, gh, TANK, k(knobs, 'ghshare', 1.0))
     items += bound(FH, fh, TANK)
@@ -71,7 +80,8 @@ def disc_tank(knobs):
     if k(knobs, 'fhfirst', False):
         for r in fh:
             cond = covers(FH[r], TANK)
-            items.append(cast(FH[r], TANK, AND(rich, cond) if rich else cond))
+            items.append(cast(FH[r], TANK, AND(rich, cond) if rich else cond,
+                              f'Flash Heal first while mana is over {gate:.0%}: more healing a second, if less a mana.' if r == fh[0] else ''))
     items.append(inner_focus(knobs, GH[gh[0]], TANK))
     items += bound(GH, gh, TANK, k(knobs, 'ghshare', 1.0))
     items += bound(FH, fh, TANK)
@@ -83,7 +93,7 @@ def holy_raid(knobs):
         items.append(cast(PI, SELF, cmp('OpGe', missing(MOSTHURT), expected(POH[5], MOSTHURT)), 'Power Infusion on myself when the raid is hurt.'))
     pws = k(knobs, 'pws', 0.0)
     if pws > 0:
-        items.append(cast(PWS[10], LOWEST, cmp('OpLt', health_pct(LOWEST), const(pws)), 'Power Word: Shield on whoever drops low, for the next hit.'))
+        items.append(cast(PWS[10], LOWEST, cmp('OpLt', health_pct(LOWEST), const(pws)), f'Power Word: Shield on whoever drops under {pws:.0%} health, for the next hit.'))
     if k(knobs, 'pom', True):
         items.append(cast(POM[3], MOSTHURT, None, 'Prayer of Mending at the most hurt whenever it is ready.'))
     first = k(knobs, 'first', 'poh')
@@ -94,7 +104,7 @@ def holy_raid(knobs):
         'poh': bound(POH, poh, MOSTHURT, k(knobs, 'pohshare', 1.0)) if poh else [],
         'fh': bound(FH, fh, MOSTHURT),
         'gh': ([inner_focus(knobs, GH[gh[0]], MOSTHURT)] + bound(GH, gh, MOSTHURT)) if gh else [],
-        'renew': [cast(RENEW[k(knobs, 'renewrank', 10)], MOSTHURT, covers(RENEW[k(knobs, 'renewrank', 10)], MOSTHURT, k(knobs, 'renewshare', 1.0)), 'Renew at the most hurt when its whole heal fits.')] if k(knobs, 'renew', True) else [],
+        'renew': [cast(RENEW[k(knobs, 'renewrank', 10)], MOSTHURT, covers(RENEW[k(knobs, 'renewrank', 10)], MOSTHURT, k(knobs, 'renewshare', 1.0)), f"Renew at the most hurt once what is missing covers {k(knobs, 'renewshare', 1.0):.0%} of its Expected Healing.")] if k(knobs, 'renew', True) else [],
     }
     for name in k(knobs, 'order', 'poh,gh,renew,fh').split(','):
         items += blocks[name]

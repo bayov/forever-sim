@@ -1,0 +1,612 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceHuman",
+            "class": "ClassPriest",
+            "equipment": {
+              "items": [
+                {
+                  "id": 990501,
+                  "enchant": 1509
+                },
+                {
+                  "id": 990502,
+                  "enchant": 1249058
+                },
+                {
+                  "id": 990503
+                },
+                {
+                  "id": 990504,
+                  "enchant": 1888
+                },
+                {
+                  "id": 990505,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990506,
+                  "enchant": 2566
+                },
+                {
+                  "id": 990507
+                },
+                {
+                  "id": 990508
+                },
+                {
+                  "id": 990509,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990510,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990511
+                },
+                {
+                  "id": 990512
+                },
+                {
+                  "id": 995033
+                },
+                {
+                  "id": 995034
+                },
+                {
+                  "id": 990513,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 990514
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "mainHandImbue": "BrilliantManaOil",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "CerebralCortexCompound",
+              "intellectElixir": "ElixirOfGreaterIntellect",
+              "spiritElixir": "ElixirOfSages"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved"
+            },
+            "talentsString": "00500503113-03505103030121531",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Alchemy",
+            "rotation": {
+              "type": "TypeAPL",
+              "priorityList": [
+                {
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  },
+                  "notes": "Trinkets, potions and Demonic Rune."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10917
+                      },
+                      "target": {
+                        "type": "LowestHealth"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "currentHealthPercent": {
+                            "sourceUnit": {
+                              "type": "LowestHealth"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.35"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Someone in my assignment is under 35% health: the fast heal."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10060
+                      },
+                      "target": {
+                        "type": "Self"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25316
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Power Infusion on myself when the raid is hurt."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10901
+                      },
+                      "target": {
+                        "type": "LowestHealth"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "currentHealthPercent": {
+                            "sourceUnit": {
+                              "type": "LowestHealth"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.6"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Power Word: Shield on whoever drops under 60% health, for the next hit."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1240827
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    }
+                  },
+                  "notes": "Prayer of Mending at the most hurt whenever it is ready."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10917
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10917
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Flash Heal 7, 5, 3 at the most hurt: each rank, biggest first, once what is missing covers its Expected Healing."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10915
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10915
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9473
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 9473
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 25316
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25316
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Prayer of Healing 5 at the most hurt: each rank, biggest first, once what is missing covers its Expected Healing."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 25315
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 25315
+                                },
+                                "targetUnit": {
+                                  "type": "MostHurt"
+                                }
+                              }
+                            },
+                            "rhs": {
+                              "const": {
+                                "val": "0.6"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Renew at the most hurt once what is missing covers 60% of its Expected Healing."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14751
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25314
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Inner Focus right before a big heal: free, and 25% more crit."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 25314
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 25314
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Greater Heal 5, 2 at the most hurt: each rank, biggest first, once what is missing covers its Expected Healing."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10963
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 10963
+                            },
+                            "targetUnit": {
+                              "type": "MostHurt"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 20,
+            "healingPriest": {
+              "options": {}
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "sunderRamp": {
+        "tank": true,
+        "pullSunders": 1
+      },
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}
