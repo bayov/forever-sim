@@ -215,16 +215,84 @@ effect is on the presets where it was measured.
    it takes the bench's build is the raid sim's (H6).
 10. **Launching the spec page** (`ui/core/launched_sims.ts`) is the user's call; it stays unlaunched.
 
-## Tuning so far (WIP, before the game update)
+## Tuning and the presets
 
 `orchestration/tools/healers/druid_restoration_apl.py` writes the two rotations from knobs and
-`druid_restoration_req.py` the bench requests (Thicc Resto `05302001--5053025153113051`, Windshaper Skyborne,
-the synthetic set). Tank healer, 500 iterations, carry: Healing Touch bound at ranks 11, 8 and 6 beats 11, 10, 9
-on every file (Onyxia 1.165 against 1.094, Broodlord 0.730 against 0.701, Vaelastrasz 0.695 against 0.617,
-Chromaggus 0.859 against 0.790, Onyxia at 180 / 300 s 1.062 / 1.042 against 0.959 / 0.911); Regrowth's HoT and
-Swiftmend on the tank both pay; the Innervate threshold doesn't matter (5,000 mana left at 300 s). Raid healer,
-400 iterations: Rejuvenation at the most hurt once it misses 30% of the HoT is best of the first round (Onyxia
-0.684, Broodlord 0.821, Vaelastrasz 1.098, Chromaggus 0.917, Ragnaros 1.196). The first baseline against the
-shaman's presets (1,000 iterations, tank role): Magmadar 1.541 / 1.536, Golemagg 1.503 / 1.440, Ragnaros 0.479 /
-0.467, Onyxia 1.087 / 1.016, Broodlord 0.710 / 0.618, Vaelastrasz 0.620 / 0.639, Chromaggus 0.783 / 0.764.
-Next: round 3 (talent builds, races, more raid knobs), then the presets and the full numbers.
+`druid_restoration_req.py` the bench requests from the shaman's (the same raid, buffs and consumes): Thicc Resto
+`05302001--5053025153113051`, Windshaper Skyborne, the synthetic set. Carry on `tools/healbench`, screened at 400 to
+500 iterations, the finalists and the table at 1,000, on master with client 70753 and the November 2 notes.
+
+- **Tank healer** (`apls/tank_healer.apl.json`, `req/druid_restoration.json`: `ht=11,8,6 low=0.4 ht_scale=0.9`):
+  - Healing Touch bound at ranks 11, 8 and 6 beats 11, 10, 9 on every file (Onyxia 1.165 against 1.094,
+    Vaelastrasz 0.695 against 0.617, 500 iterations) and 11, 8, 7 or 11, 8, 6, 5 (500: 1.159 and 1.147 on Onyxia).
+  - The emergency line at 40% and Healing Touch at 90% of its heal against the 35% line at the full heal, at
+    1,000: Golemagg 1.648 / 1.618, Onyxia at 180 / 300 sec 1.087 / 1.065 and 1.063 / 1.046, Chromaggus 0.870 /
+    0.867, Onyxia 1.165 / 1.164; Ragnaros 0.517 / 0.526, Broodlord 0.731 / 0.740 and Vaelastrasz 0.688 / 0.693 the
+    other way. Shipped for the long fights.
+  - Lost or level: Nature's Swiftness at 25% (+0.02 Broodlord, -0.015 Vaelastrasz), Regrowth at half its heal,
+    Swiftmend at half, the Innervate threshold (6,000 mana left at the end: the tank side isn't mana bound).
+  - Talents (500): Heart of the Wild for Nature's Focus level (1.177 / 1.172 on Onyxia, 1.095 / 1.087 at 180
+    sec), all 51 in Restoration -0.08 on Onyxia, 46 with Genesis -0.06. Races: Night Elf and Tauren within 0.01
+    of the Windshaper, the High Order the same as it (its Read Leyline never goes up, since Innervate is never
+    on cooldown at 60% mana; the generator's `leyline` knob is there for a build that is mana bound).
+- **Raid healer** (`apls/raid_healer.apl.json`, `req/druid_restoration_raid.json`: `rj_scale=0.2 low=0.5`):
+  - Rejuvenation at the most hurt once it misses 20% of the HoT, with a 50% emergency line, against 30% and 35%,
+    at 1,000: ahead on every file (Onyxia 0.711 / 0.679, Chromaggus 0.953 / 0.887, Ragnaros 1.240 / 1.181,
+    Magmadar 1.605 / 1.456, Golemagg 2.021 / 1.877).
+  - Lost or mixed (500): Rejuvenation at 10% (Ragnaros +0.03, Broodlord and Chromaggus -0.01), a second rank of
+    Rejuvenation (Vaelastrasz +0.07, Chromaggus -0.05), Wild Growth at half or 1.5 times its HoT, no Regrowth,
+    Tranquility at 40%, Nature's Swiftness; Heart of the Wild or all 51 in Restoration lose up to 0.05.
+  - It overheals about 60% (HPS 950, effective 370 on Onyxia): Wild Growth's other four targets and HoTs on
+    players the next heal tops up. It still isn't mana bound (3,700 to 6,000 left).
+
+### Against the Restoration shaman (1,000 iterations, carry)
+
+| Boss file | Tank: druid | Tank: shaman | Raid: druid | Raid: shaman |
+|---|---|---|---|---|
+| Magmadar | 1.699 | 1.536 | 1.605 | 1.605 |
+| Golemagg | 1.648 | 1.441 | 2.021 | 2.083 |
+| Ragnaros | 0.517 | 0.469 | 1.240 | 1.203 |
+| Onyxia | 1.165 | 1.017 | 0.711 | 0.692 |
+| Broodlord | 0.731 | 0.618 | 0.828 | 0.835 |
+| Vaelastrasz | 0.688 | 0.648 | 1.092 | 1.199 |
+| Chromaggus | 0.870 | 0.764 | 0.953 | 0.969 |
+| Onyxia, 180 sec | 1.087 | 0.965 | 0.637 | 0.623 |
+| Onyxia, 300 sec | 1.063 | 0.956 | 0.548 | 0.557 |
+
+The druid is ahead on every tank row, by 0.04 (Vaelastrasz) to 0.21 (Golemagg). On the raid side it's ahead on
+Ragnaros and Onyxia, level on Magmadar, and behind on Golemagg, Broodlord, Chromaggus and Vaelastrasz (-0.107),
+the files where the shaman's Chain Heal reaches three players a cast.
+
+### Downranking on the presets
+
+The engine applies Forever's downranking to the druid's heals now (8f304b240, b57f5cc0a). This branch had the same
+rule in the druid package before (so the tuning above already had it); measured against the heals at their full
+coefficients (the scope without heals, `ForeverDownrankScope = DownrankDamage`, the round 3 rotations), 1,000
+iterations:
+
+| Boss file | Tank, with | Tank, without | Raid, with | Raid, without |
+|---|---|---|---|---|
+| Magmadar | 1.699 | 1.684 | 1.456 | 1.456 |
+| Golemagg | 1.618 | 1.613 | 1.877 | 1.877 |
+| Ragnaros | 0.526 | 0.504 | 1.181 | 1.181 |
+| Onyxia | 1.164 | 1.089 | 0.679 | 0.679 |
+| Broodlord | 0.740 | 0.715 | 0.815 | 0.815 |
+| Vaelastrasz | 0.693 | 0.652 | 1.086 | 1.086 |
+| Chromaggus | 0.867 | 0.837 | 0.887 | 0.887 |
+| Onyxia, 180 / 300 sec | 1.065 / 1.046 | 1.033 / 1.008 | | |
+
+- The raid healer casts only ranks learned at 50 or later (Rejuvenation 11, Regrowth 9, Healing Touch 11 and 9,
+  Wild Growth 3), which keep their whole coefficient, so nothing moves.
+- The tank healer's Healing Touch 6 (learned at 32) keeps 45% of its coefficient. Without the penalty it heals
+  about 650 more, close to rank 8, so the ladder of 11, 8 and 6 loses its small step: the rank 6 line fires
+  less, rank 11 more, and the carry drops by 0.005 to 0.075. A rotation tuned without the penalty would bind other
+  ranks; this one was tuned with it, so the "without" column is a lower bound on what the rule costs.
+
+### The shared change
+
+`sim/core/apl_helpers.go` (`GetAPLDot`): a dot or HoT check aimed at Most Hurt or Lowest Health finds the HoT
+through `HealthUnit()` instead of `Get()`, which is nil while the rotation is built (nobody is hurt yet), so the
+check had been dropped. The Restoration shaman's raid rotation has one such check (Riptide not active at the
+most hurt). Measured on its raid request at 1,000 iterations on all seven boss files, with and without the
+change: the same to the third decimal on every file (Magmadar 1.605, Golemagg 2.083, Ragnaros 1.203, Onyxia 0.692,
+Broodlord 0.835, Vaelastrasz 1.199, Chromaggus 0.969).

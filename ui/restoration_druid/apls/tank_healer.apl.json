@@ -52,13 +52,13 @@
       },
       "rhs": {
        "const": {
-        "val": "0.35"
+        "val": "0.4"
        }
       }
      }
     }
    },
-   "notes": "Swiftmend whoever in my assignment is under 35% health and has my HoT."
+   "notes": "Swiftmend whoever in my assignment is under 40% health and has my HoT."
   },
   {
    "action": {
@@ -82,13 +82,13 @@
       },
       "rhs": {
        "const": {
-        "val": "0.35"
+        "val": "0.4"
        }
       }
      }
     }
    },
-   "notes": "Regrowth at whoever is under 35%: the fast heal."
+   "notes": "Regrowth at whoever is under 40%: the fast heal."
   },
   {
    "action": {
@@ -239,26 +239,36 @@
        }
       },
       "rhs": {
-       "spellExpectedHealing": {
-        "spellId": {
-         "spellId": 25297
+       "math": {
+        "op": "OpMul",
+        "lhs": {
+         "spellExpectedHealing": {
+          "spellId": {
+           "spellId": 25297
+          },
+          "targetUnit": {
+           "type": "Tank",
+           "index": 0
+          }
+         }
         },
-        "targetUnit": {
-         "type": "Tank",
-         "index": 0
+        "rhs": {
+         "const": {
+          "val": "0.9"
+         }
         }
        }
       }
      }
     }
    },
-   "notes": "Healing Touch rank 11 at the tank, the biggest that what it misses covers."
+   "notes": "Healing Touch rank 11 at the tank, the biggest that what it misses covers (90% of the heal)."
   },
   {
    "action": {
     "castSpell": {
      "spellId": {
-      "spellId": 9889
+      "spellId": 9758
      },
      "target": {
       "type": "Tank",
@@ -277,26 +287,36 @@
        }
       },
       "rhs": {
-       "spellExpectedHealing": {
-        "spellId": {
-         "spellId": 9889
+       "math": {
+        "op": "OpMul",
+        "lhs": {
+         "spellExpectedHealing": {
+          "spellId": {
+           "spellId": 9758
+          },
+          "targetUnit": {
+           "type": "Tank",
+           "index": 0
+          }
+         }
         },
-        "targetUnit": {
-         "type": "Tank",
-         "index": 0
+        "rhs": {
+         "const": {
+          "val": "0.9"
+         }
         }
        }
       }
      }
     }
    },
-   "notes": "Healing Touch rank 10 at the tank, the biggest that what it misses covers."
+   "notes": "Healing Touch rank 8 at the tank, the biggest that what it misses covers (90% of the heal)."
   },
   {
    "action": {
     "castSpell": {
      "spellId": {
-      "spellId": 9888
+      "spellId": 6778
      },
      "target": {
       "type": "Tank",
@@ -315,20 +335,30 @@
        }
       },
       "rhs": {
-       "spellExpectedHealing": {
-        "spellId": {
-         "spellId": 9888
+       "math": {
+        "op": "OpMul",
+        "lhs": {
+         "spellExpectedHealing": {
+          "spellId": {
+           "spellId": 6778
+          },
+          "targetUnit": {
+           "type": "Tank",
+           "index": 0
+          }
+         }
         },
-        "targetUnit": {
-         "type": "Tank",
-         "index": 0
+        "rhs": {
+         "const": {
+          "val": "0.9"
+         }
         }
        }
       }
      }
     }
    },
-   "notes": "Healing Touch rank 9 at the tank, the biggest that what it misses covers."
+   "notes": "Healing Touch rank 6 at the tank, the biggest that what it misses covers (90% of the heal)."
   },
   {
    "action": {

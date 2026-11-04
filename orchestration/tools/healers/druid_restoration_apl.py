@@ -70,6 +70,10 @@ def mana():
     return {'currentManaPercent': {}}
 
 
+def pct(v):
+    return f'{round(100 * float(v))}%'
+
+
 def line(action, cond=None, notes=''):
     a = {'action': dict(action)}
     if cond:
@@ -120,7 +124,7 @@ def build(role, k):
             pl.append(line(cast(SWIFTMEND, 'Tank'), cmp('OpGe', missing('Tank'), expected(SWIFTMEND, 'Tank', float(k['sm_scale']))),
                            'Swiftmend at the tank when what it misses covers it.'))
         for r in [int(x) for x in k['ht'].split(',')]:
-            pl.append(bound(HT[r], 'Tank', float(k['ht_scale']), f'Healing Touch rank {r} at the tank, the biggest that what it misses covers.'))
+            pl.append(bound(HT[r], 'Tank', float(k['ht_scale']), f'Healing Touch rank {r} at the tank, the biggest that what it misses covers ({pct(k["ht_scale"])} of the heal).'))
         if k.get('filler', '1') == '1':
             # The tank topped: HoTs on the most hurt of the rest.
             pl.append(line(cast(rj, 'MostHurt'), AND(NOT(hot_active(rj, 'MostHurt')), cmp('OpGe', missing('MostHurt'), expected(rj, 'MostHurt'))),
@@ -137,7 +141,7 @@ def build(role, k):
         rj2 = RJ[int(k['rejuv2'])] if k.get('rejuv2') else None
         none_up = AND(NOT(hot_active(rj, 'MostHurt')), NOT(hot_active(rj2, 'MostHurt')) if rj2 else None)
         pl.append(line(cast(rj, 'MostHurt'), AND(none_up, cmp('OpGe', missing('MostHurt'), expected(rj, 'MostHurt', float(k['rj_scale'])))),
-                       f'Rejuvenation rank {k["rejuv"]} at the most hurt when it has none and it fits.'))
+                       f'Rejuvenation rank {k["rejuv"]} at the most hurt when it has none and misses {pct(k["rj_scale"])} of the HoT.'))
         if rj2:
             pl.append(line(cast(rj2, 'MostHurt'), AND(none_up, cmp('OpGe', missing('MostHurt'), expected(rj2, 'MostHurt', float(k['rj_scale'])))),
                            f'Rejuvenation rank {k["rejuv2"]} for a smaller hole.'))
@@ -149,7 +153,7 @@ def build(role, k):
             pl.append(line(cast(rg, 'MostHurt'), AND(NOT(hot_active(rg, 'MostHurt')), cmp('OpGe', missing('MostHurt'), expected(rg, 'MostHurt', float(k['rg_scale'])))),
                            f'Regrowth rank {r} at the most hurt.'))
         for r in [int(x) for x in k['ht'].split(',') if x]:
-            pl.append(bound(HT[r], 'MostHurt', float(k['ht_scale']), f'Healing Touch rank {r} at the most hurt.'))
+            pl.append(bound(HT[r], 'MostHurt', float(k['ht_scale']), f'Healing Touch rank {r} at the most hurt when what it misses covers {pct(k["ht_scale"])} of the heal.'))
     return {'type': 'TypeAPL', 'priorityList': pl}
 
 

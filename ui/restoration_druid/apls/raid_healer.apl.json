@@ -52,13 +52,13 @@
       },
       "rhs": {
        "const": {
-        "val": "0.35"
+        "val": "0.5"
        }
       }
      }
     }
    },
-   "notes": "Swiftmend whoever in my assignment is under 35% health and has my HoT."
+   "notes": "Swiftmend whoever in my assignment is under 50% health and has my HoT."
   },
   {
    "action": {
@@ -82,13 +82,13 @@
       },
       "rhs": {
        "const": {
-        "val": "0.35"
+        "val": "0.5"
        }
       }
      }
     }
    },
-   "notes": "Regrowth at whoever is under 35%: the fast heal."
+   "notes": "Regrowth at whoever is under 50%: the fast heal."
   },
   {
    "action": {
@@ -163,12 +163,22 @@
           }
          },
          "rhs": {
-          "spellExpectedHealing": {
-           "spellId": {
-            "spellId": 25299
+          "math": {
+           "op": "OpMul",
+           "lhs": {
+            "spellExpectedHealing": {
+             "spellId": {
+              "spellId": 25299
+             },
+             "targetUnit": {
+              "type": "MostHurt"
+             }
+            }
            },
-           "targetUnit": {
-            "type": "MostHurt"
+           "rhs": {
+            "const": {
+             "val": "0.2"
+            }
            }
           }
          }
@@ -178,7 +188,7 @@
      }
     }
    },
-   "notes": "Rejuvenation at the most hurt when it has none and it fits."
+   "notes": "Rejuvenation rank 11 at the most hurt when it has none and misses 20% of the HoT."
   },
   {
    "action": {
@@ -303,7 +313,7 @@
      }
     }
    },
-   "notes": "Healing Touch rank 11 at the most hurt."
+   "notes": "Healing Touch rank 11 at the most hurt when what it misses covers 100% of the heal."
   },
   {
    "action": {
@@ -338,7 +348,7 @@
      }
     }
    },
-   "notes": "Healing Touch rank 9 at the most hurt."
+   "notes": "Healing Touch rank 9 at the most hurt when what it misses covers 100% of the heal."
   }
  ]
 }
