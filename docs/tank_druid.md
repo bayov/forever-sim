@@ -223,8 +223,11 @@ Agility, 125 Strength, 105 Defense, 3% hit (after tank_gear-20261104-4: the ches
   / -77), the Dense Weightstone (none -42 / -40 / -38) and the Mighty Rage Potion (Greater Stoneshield -618 /
   -550 / -471). Food: the Smoked Desert Dumpling at Max threat and Balanced (Dirge's Kickin' Chimaerok Chops,
   25 Stamina, -31.8 +- 0.5 / -3.1 +- 1.9; Grilled Squid and Blessed Sunfruit -17 to -21), **Dirge's chops at
-  Max survival (+89.9 +- 6.9, seed 2 +79.2 +- 6.1)**. Explosives score 0: an item can't be used in a form (the
-  sim's explosives check `IsShapeshifted`), so a bear never throws them. Three Phase 1 consumables no tank
+  Max survival (+89.9 +- 6.9, seed 2 +79.2 +- 6.1)**. Explosives scored 0 here only because the sim
+  then blocked every explosive in a form. The client allows the Goblin Sapper Charge and the Goblin Land Mine
+  in Bear and Dire Bear Form (their spells lack NOT_SHAPESHIFTED; tank_mechanics-15), so they are re-run
+  under Consumables, round 4. Dense Dynamite, Solid Dynamite and the Iron and Thorium Grenades carry the flag
+  and still can't be used in a form. Three Phase 1 consumables no tank
   request carries would gain (call 10): a Blasted Lands buff (Ground Scorpok Assay +42 / +53 / +112, R.O.I.D.S.
   +52 / +50 / +47, Lung Juice Cocktail +9 / +36 / +127) and Rumsey Rum Black Label (+6 / +21 / +75).
 
