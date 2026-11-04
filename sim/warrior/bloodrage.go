@@ -42,7 +42,9 @@ func (warrior *Warrior) registerBloodrageCD() {
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			warrior.BloodrageAura.Activate(sim)
 			warrior.AddRage(sim, instantRage, rageMetrics)
-			if healthCost > 0 {
+			// Only a tank's: the sim heals no DPS, so the cost would only run a DPS warrior's health
+			// down to 0, where its survival cooldowns (Berserker Rage) fire.
+			if healthCost > 0 && warrior.IsTanking() {
 				warrior.RemoveHealth(sim, healthCost)
 			}
 

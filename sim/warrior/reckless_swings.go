@@ -60,7 +60,9 @@ func (warrior *Warrior) registerRecklessSwingsCD() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			warrior.RecklessSwingsAura.Activate(sim)
-			warrior.RemoveHealth(sim, healthCost)
+			if warrior.IsTanking() { // as Bloodrage's: the sim heals no DPS
+				warrior.RemoveHealth(sim, healthCost)
+			}
 		},
 	})
 }

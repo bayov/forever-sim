@@ -49,6 +49,11 @@ func newTank(t *testing.T, talents string, offHand int32) (*core.Simulation, *wa
 	return sim, war
 }
 
+// tanking makes the warrior the boss's target, so its health costs apply (a DPS warrior pays none).
+func tanking(war *warrior.Warrior) {
+	war.CurrentTarget.CurrentTarget = &war.Unit
+}
+
 // ready clears a spell's cooldown and the GCD and tops the Rage up.
 func ready(sim *core.Simulation, war *warrior.Warrior, spell *core.Spell) {
 	if spell.CD.Timer != nil {
@@ -285,6 +290,7 @@ func TestForeverTankBloodrage(t *testing.T) {
 	}{{"", 20}, {"--1", 25}, {"--2", 30}} {
 		sim, war := newTank(t, c.talents, bulwark)
 		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+		tanking(war)
 		health := war.CurrentHealth()
 		if !war.Bloodrage.Cast(sim, war.CurrentTarget) {
 			t.Fatal("Bloodrage didn't cast")
@@ -309,6 +315,7 @@ func TestForeverTankRecklessSwings(t *testing.T) {
 	if war.RecklessSwings.CD.Duration != 15*time.Second || war.RecklessSwings.DefaultCast.GCD != time.Second {
 		t.Errorf("Reckless Swings: %s cooldown, %s GCD; want 15s and 1s", war.RecklessSwings.CD.Duration, war.RecklessSwings.DefaultCast.GCD)
 	}
+	tanking(war)
 	health := war.CurrentHealth()
 	if !war.RecklessSwings.Cast(sim, war.CurrentTarget) {
 		t.Fatal("Reckless Swings didn't cast")
