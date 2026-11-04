@@ -243,7 +243,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	thorns: TristateEffect.TristateEffectImproved,
 	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 	trueshotAura: true,
-	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
