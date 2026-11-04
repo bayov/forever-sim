@@ -131,6 +131,11 @@ when it was free of one, so the talent searches weren't rerun.
 - **Heroic Strike** +145 → +142.2, **Cleave** +100 → +91.8 (T2), **Demoralizing Shout** 43.2 → 47 (T1).
 - **Bloodrage costs 20% of base health** (client): the warrior's 1,689 base health makes it 338 a cast, as damage
   taken for the survival score.
+  - **To verify, base health** (2026-11-04): Bloodrage's 20% and Reckless Swings' 25% are taken from our class base
+    health at the level (the emulator convention). wowsims/forever 841a787806 takes it from a base that counts base
+    Stamina (Orc warrior at 60: 2629, not 1689), no evidence cited; a level 60 Bloodrage in a combat log settles it.
+  - Both self costs are healing the tank needs (the tank score's replay) but not DTPS or TMI, which measure the boss's
+    damage (`PayHealthCost`, sim/core/health.go; until 2026-11-04 they were in TMI; DTPS never counted them).
 - **The tank keeps its own Sunders** (`tankscore.OwnDebuffs`): the bench requests' raid debuffs had a warrior tank's
   Sunder ramp (5 stacks in 5 GCDs, then forever) on top of the tank's own. A warrior tank now drops the ramp's tank
   part (other warriors' pull Sunders stay), and its rotation builds and refreshes the stacks.
@@ -156,6 +161,13 @@ next to `forever_test.go`'s Shield Wall, Shield Block, Shield Slam, sheet and sc
   Voice, Focused Rage on and off its mask).
 - `TestForeverTankRecklessSwings` (2026-11-04, 1 s GCD since 113539): 15 s cooldown, a 1 s GCD, 25% of base health, 4 landed swings at 5 Rage more each,
   none without the talent.
+- `talents_test.go` (2026-11-04): `TestForeverTankUnbridledWrath` (60% of landed white swings at 5/5, 1 Rage each,
+  never on Heroic Strike or Cleave), `TestForeverTankEnrage` (+2% Physical a point for 12 s), `TestForeverTankBloodCraze`
+  (1% of max health a point over 3 ticks after a crit or a hit over 20% of max health, none after a small hit, no
+  threat), `TestForeverTankHeroicStrikeDamage` (weapon + 138), `TestForeverTankShieldBlockCharges` (the boss's real
+  blocks spend the 2 charges, the 75% goes with the last).
+- `self_cost_test.go`: `TestForeverTankSelfCosts`, Bloodrage and Reckless Swings raise the healing needed but leave
+  DTPS and TMI as they are; base health 1,689.
 - `TestForeverTankProcTalents`: over 20 tanked fights, Shield Specialization 5/5 and Master of Defense 2/2 give 5 Rage
   on every block and every dodge or parry, 1/5 and 1/2 at 20% and 50% (within 4 standard errors), and Enrage procs on
   30% of the damaging hits taken.
@@ -224,8 +236,8 @@ followed by the replay, see Rotation template), Gore Drinker (unreachable with S
 
 Files: `tools/tankbench/req/warrior_protection_{max_threat,balanced,max_survival}.json`,
 `ui/tank_warrior/apls/level60_{max_threat,balanced,max_survival}.apl.json`, `ui/tank_warrior/presets.ts` (the three
-builds, Balanced first). `tools/tankbench/req/warrior_protection.json` is left as it was (`35--251533120331221351`,
-Orc, its old gear): `sim/raid_healing_test.go`, `tools/healbench`, `tools/encounters/from_logs.py` and
+builds, Balanced first). `tools/tankbench/req/warrior_protection.json` is legacy (Warbringer gear, Orc, the old
+talents `35--251533120331221351`), kept until the healing session decides (tank_fairness-20261104-5). It is left as it was: `sim/raid_healing_test.go`, `tools/healbench`, `tools/encounters/from_logs.py` and
 `TestForeverTankScore` read it, and replacing it breaks `TestForeverTankScore` (no iteration needs 500 HPS on the
 synthetic set) and `TestHealingFightHealComm`. Whether the healing tools move to the Balanced request is the
 orchestrator's to decide with the healing session.
