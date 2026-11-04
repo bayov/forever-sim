@@ -268,3 +268,58 @@ region 91 / 70755 copy, which most pushes of the batch share.
 | 113525, 113529, 113532, 113533, 113536, 113538, 113540, 113541, 113543, 113544, 113547, 113549-113553, 113555, 113558 | 0 | | nothing logged | |
 
 No push of the batch but 113539 has a warrior row.
+
+## Landed (2026-11-04, branch phase5-warrior-hotfix)
+
+- Tree 1117 imported from `1.60.1.70755+hf` (`import_db2.py ... warrior --write`, `import_client.py`, `import_talents.py
+  --write`). `notes/warrior.json` is removed: the hotfix carries every entry it had. A full fetch of the 70755 hotfix rows
+  (`hotfixes.py fetch 1.60.1.70755 --set talents --set spelltext`; every Trait search complete, "70755 spell" 22,909 of
+  22,952 rows, 43 lost to the site's paging) changes nothing more: 0 structure, 0 numbers, 0 wording.
+- Push 113539 alone came in through a search split by the record id's leading digits (`enus 113539 <prefix>`): 848 rows,
+  all four copies. `hotfixes.py fetch --search` splits by the trailing digits, which can't divide a push search.
+- `sim/warrior`: Spearing Strike 75% + 75% (`spearing_strike.go`); Raging Blows and its 3 Rage off Cleave and Whirlwind
+  gone (`heroic_strike_cleave.go`, `whirlwind.go`); Reckless Swings 1329555 / 1329554 with a 1 sec GCD
+  (`reckless_swings.go`, `TestForeverWarriorRecklessSwings`); Slam, Improved Slam, Improved Whirlwind, Two-Handed Weapon
+  Specialization, Improved Tactical Mastery, Bloodthrill and Flurry cite the push. Proto `WarriorTalents` renumbered
+  (Fury 18 talents), `TalentTreeSizes` 17/18/18, every warrior talent string remapped.
+- `tools/sources/spelltext.py`: power type -2 reads "Health" (Reckless Swings' cost line).
+
+### Reckless Swings: what the hotfix settles
+
+The user's open question (warrior.md, "Open questions") was its GCD and which attacks count. The hotfix answers both: it
+is **on a 1 sec GCD** (SpellCooldowns 102442, category 133), not off it as the sim had assumed; its 4 charges use proc
+type 4, the melee auto attack, as Flurry's and Unbridled Wrath's do, so Heroic Strike and Cleave count. The 15 sec
+cooldown, 8 sec, flat 5 Rage a charge and 25% of base health are as the notes said. Still open: whether a miss or dodge
+uses a charge (server side). On the GCD it costs DPS cast on cooldown ahead of the strikes, so every preset now casts it
+below the main strikes (rotopt knob `rsLate`), and several only above 20 Rage (`recklessSwingsRage`). With that, every
+build keeps the talent.
+
+### Talents and rotations
+
+- Fury (and its duties): `30313113002-050530055120100231-1`, the Raging Blows point to Improved Bloodrage (+1.3).
+- Fury 2H (and its duties): `30313113032-350500150122100231`, the point to Booming Voice; no placement adds damage. The
+  mechanical remap (`...-250500150122100231`) was illegal: 29 Fury points above Bloodthirst's row, which needs 30.
+- Arms, Arms Dragonkin: picks unchanged (`30303213032215201-05050005012-2`, `30303213132215201-05050005012-1`).
+- `rsLate` 0 -> 1 on all ten presets; `recklessSwingsRage` 100 -> 20 on Fury 2H and its duties, Arms and Arms Battle
+  Shout duty (each kept only where it won at 120, 160, 180, 200 and 300 s on seeds 1 and 1000003).
+- Races (180 s, seeds 1 / 1000003): Orc stays best on Fury, Fury 2H and Arms. Fury 2H stays the class default.
+
+### DPS (20,000 iterations, seed 1; old is the published report, its 120 and 300 at 5,000)
+
+| Build | Old 120 / 180 / 300 | Hotfix, remapped presets | New 120 / 180 / 300 |
+|---|---|---|---|
+| Fury | 1196.0 / 1153.0 / 1130.2 | 1171.7 / 1127.9 / 1106.1 | 1179.5 / **1136.0** / 1111.6 |
+| Fury Sunder duty | 1156.6 / 1117.7 / 1096.8 | 1131.8 / 1095.4 / 1071.4 | 1137.7 / **1097.6** / 1076.0 |
+| Fury Battle Shout duty | 1193.1 / 1150.5 / 1123.6 | 1165.5 / 1118.2 / 1093.3 | 1169.0 / **1124.2** / 1096.7 |
+| Fury 2H | 1213.4 / 1173.3 / 1135.6 | 1181.1 / 1134.3 / 1102.5 | 1192.5 / **1151.0** / 1117.1 |
+| Fury 2H Sunder duty | 1174.9 / 1134.6 / 1105.2 | 1144.7 / 1102.7 / 1075.7 | 1153.2 / **1115.2** / 1086.5 |
+| Fury 2H Battle Shout duty | 1213.5 / 1168.8 / 1134.0 | 1179.3 / 1131.3 / 1099.4 | 1190.6 / **1147.6** / 1114.6 |
+| Arms | 1110.1 / 1097.7 / 1071.1 | 1089.1 / 1075.8 / 1051.2 | 1101.0 / **1088.0** / 1062.3 |
+| Arms Sunder duty | 1054.7 / 1047.1 / 1027.7 | 1033.7 / 1026.1 / 1010.6 | 1046.7 / **1040.0** / 1021.5 |
+| Arms Battle Shout duty | 1111.1 / 1094.0 / 1069.0 | 1088.0 / 1073.3 / 1048.2 | 1100.8 / **1084.4** / 1060.1 |
+| Arms Dragonkin | 1157.4 / 1142.2 / 1114.8 | 1147.8 / 1133.7 / 1107.7 | 1160.8 / **1147.0** / 1120.6 |
+
+Raging Blows' lost discount and the GCD on Reckless Swings cost every build; the rotation change gives some back, and
+Spearing Strike's 75 / 75 puts Arms Dragonkin above where it was. Measured on the branch before master's labeled random
+streams (ca0ca1285), so the report's full run will move these by about their error. Not published or deployed (the
+orchestrator's change to the publish step): a full run of all builds follows.
