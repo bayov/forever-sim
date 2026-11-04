@@ -94,17 +94,21 @@ def build(builds, races_rows, stats_rows, dump):
     for bid, s in st.items():
         role[bid] = 'Ranged' if s.get('RangedAttackPower', 0) > s.get('AttackPower', 0) else 'Caster' if s.get('SpellPower', 0) > s.get('AttackPower', 0) else 'Melee'
 
-    res = defaultdict(dict)  # (build, race display) -> variant -> (dps, se)
+    # (build, race display) -> variant -> (dps, se, paired se against the race's sweep, same fights as the sweep, iters)
+    res = defaultdict(dict)
     for line in open(os.path.join(D, 'rv', 'results.jsonl')):
         x = json.loads(line)
-        res[(x['build'], rn(x['race']))][x['variant']] = (x['dps'], x['se'])
+        res[(x['build'], rn(x['race']))][x['variant']] = (x['dps'], x['se'], x.get('pse'), x.get('same'), x.get('iters'))
+    pse = {}  # (build, race display) -> {other race display: paired se of the two races' difference}
     tuned = {}  # (build, race display) -> the note of the race's own rotation or gear (req/races/, race_override.py)
     for o in sorted(os.listdir(os.path.join(D, 'out'))):
         if not o.endswith('.json'):
             continue
         out = json.load(open(os.path.join(D, 'out', o)))
         for r in out['races']:
-            res[(out['id'], rn(r['race']))]['baseline'] = (r['dps'], r['se'])
+            res[(out['id'], rn(r['race']))]['baseline'] = (r['dps'], r['se'], 0.0, True, r.get('iters'))
+            if r.get('pse'):
+                pse[(out['id'], rn(r['race']))] = {rn(o): x for o, x in r['pse'].items()}
             if r.get('override'):
                 tuned[(out['id'], rn(r['race']))] = (race_note(r['override']), tuned_kind(r['override']))
 
@@ -128,33 +132,47 @@ def build(builds, races_rows, stats_rows, dump):
                 if var == 'baseline':
                     val, sim = base, True
                 else:
-                    val, sim = v.get(var, (None, None)), var in v
+                    val, sim = v.get(var, (None,) * 5), var in v
                 if var == 'humanoid' and not sim:
                     continue  # only the classes with a Humanoid racial (Priests) have this scenario
                 if val[0] is None:
                     raise SystemExit(f'missing {bid} {race} {var}')
-                rows.append({'build': bid, 'class': cls, 'race': race, 'faction': 'Horde' if race in HORDE else 'Alliance', 'variant': var,
-                             'dps': round(val[0], 1), 'se': round(val[1], 2), 'isPreset': race == b['race'], 'simmed': sim, 'note': note,
+                row = {'build': bid, 'class': cls, 'race': race, 'faction': 'Horde' if race in HORDE else 'Alliance', 'variant': var,
+                       'dps': round(val[0], 1), 'se': round(val[1], 2)}
+                # the paired errors (adaptive.py): against each other race (baseline) or against the race's own baseline
+                if var == 'baseline' and (bid, race) in pse:
+                    row['pse'] = pse[(bid, race)]
+                elif var != 'baseline' and val[2] is not None:
+                    row['pseBase'] = val[2]
+                rows.append(row | {'isPreset': race == b['race'], 'simmed': sim, 'note': note,
                              'tuned': tuned.get((bid, race), ('', ''))[0], 'tunedKind': tuned.get((bid, race), ('', ''))[1], 'raceIcon': RACE_ICON.get(race)})
             # breakdown: base stats, then each racial part (Shapley split when two parts count, so the parts add up exactly)
             off = v['off']
             ps = [p for p in RR.parts_for(cls, rc, req)]
             if len(ps) > 2:  # a part whose own sim matches the baseline exactly (same seed) does nothing on this preset
-                ps = [p for p in ps if v['off:' + p][0] != base[0]]
+                ps = [p for p in ps if not (v['off:' + p][3] if v['off:' + p][3] is not None else v['off:' + p][0] == base[0])]
+
+            def err(*xs):
+                """The error of a part from its scenarios' paired errors against the race (their sum: a bound, since the
+                parts' per-fight values aren't kept), or the two runs' independent one for rows from before them."""
+                if all(x[2] is not None for x in xs):
+                    return sum(x[2] for x in xs) / (2 if len(xs) == 3 else 1)
+                return math.hypot(base[1], off[1])
             contrib = {}
             if len(ps) == 1:
-                contrib[ps[0]] = (base[0] - off[0], math.hypot(base[1], off[1]))
+                contrib[ps[0]] = (base[0] - off[0], err(off))
             elif len(ps) == 2:
                 a, c = ps
                 oa, oc = v['off:' + a], v['off:' + c]
-                contrib[a] = (0.5 * ((base[0] - oa[0]) + (oc[0] - off[0])), math.hypot(base[1], off[1]))
-                contrib[c] = (0.5 * ((base[0] - oc[0]) + (oa[0] - off[0])), math.hypot(base[1], off[1]))
+                contrib[a] = (0.5 * ((base[0] - oa[0]) + (oc[0] - off[0])), err(oa, oc, off))
+                contrib[c] = (0.5 * ((base[0] - oc[0]) + (oa[0] - off[0])), err(oa, oc, off))
             elif len(ps) > 2:
                 # three or more live parts: each part's leave-one-out loss, scaled so the parts add up to all of them
                 loo = {p: base[0] - v['off:' + p][0] for p in ps}
                 scale = (base[0] - off[0]) / sum(loo.values()) if sum(loo.values()) else 0
                 for p in ps:
-                    contrib[p] = (loo[p] * scale, math.hypot(base[1], off[1]))
+                    e = max(abs(scale) * v['off:' + p][2], off[2]) if v['off:' + p][2] is not None and off[2] is not None else math.hypot(base[1], off[1])
+                    contrib[p] = (loo[p] * scale, e)
             breakdown.append({'build': bid, 'race': race, 'scenario': 'all', 'part': 'base', 'label': PART_INFO['base'][0], 'dps': round(off[0], 2),
                               'se': round(off[1], 2), 'active': True, 'note': ''})
             for p in RACE_PARTS[race]:
@@ -177,7 +195,7 @@ def build(builds, races_rows, stats_rows, dump):
                     continue
                 tv = v[t]
                 breakdown.append({'build': bid, 'race': race, 'scenario': t, 'part': 'target', 'label': {'beast': 'Beast target', 'elemental': 'Elemental target', 'humanoid': 'Humanoid target'}[t],
-                                  'dps': round(tv[0] - base[0], 2), 'se': round(math.hypot(tv[1], base[1]), 2), 'active': True, 'note': ''})
+                                  'dps': round(tv[0] - base[0], 2), 'se': round(tv[2] if tv[2] is not None else math.hypot(tv[1], base[1]), 2), 'active': True, 'note': ''})
         # gap to the best race within each scenario, and the rank
         for var in VARIANTS:
             vr = sorted([r for r in rows if r['variant'] == var], key=lambda r: -r['dps'])

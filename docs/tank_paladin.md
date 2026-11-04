@@ -324,8 +324,9 @@ encounters, unless it says otherwise).
    would settle it.
 2. **The immunities out of scoring.** Divine Shield, Divine Protection and Lay on Hands are built, tested and in
    the UI, but no preset casts them: an immune or pacified tank keeps no threat and the boss turns to someone
-   else, which the tank score doesn't model (it has one tank), and Lay on Hands reacts to health. **Default:
-   out.** Templar's Bulwark stays in on a timer (`bulwarkAt=10`, worth 280 to 320 at Balanced), and it shares
+   else, which the tank score doesn't model (it has one tank), and Lay on Hands reacts to health. **Ruled
+   out** (user, 2026-11-04: a bubble loses the paladin its aggro; standards 40). No paladin tank rotation casts
+   Divine Shield, Divine Protection or Blessing of Protection, and `no_bubble_test.go` fails if one does. Templar's Bulwark stays in on a timer (`bulwarkAt=10`, worth 280 to 320 at Balanced), and it shares
    Forbearance with them, so casting either would cost it.
 3. **Pursuit of Justice** (movement speed). **Default: not taken**; the score has no movement, so it is worth 0 in
    every preset. A call only if movement matters on a fight the bench doesn't model.
