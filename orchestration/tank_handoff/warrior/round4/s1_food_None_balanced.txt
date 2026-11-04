@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=food_None_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2678     2637   -41.2    0.4    -19.6        1
+chromaggus        2105     2063   -42.0    0.3    -20.4        0
+golemagg          3263     3221   -41.9    0.3    -20.3        0
+magmadar          3438     3395   -42.4    0.2    -20.4        0
+onyxia            3155     3113   -41.3    0.4    -19.4        0
+ragnaros         -1746    -1785   -39.7    0.7    -19.6        0
+vaelastrasz       3435     3398   -36.5    0.3    -18.1        0
+scoring_mean                      -40.9    0.1

@@ -102,6 +102,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecTankWarrior, {
 		partyBuffs: PartyBuffs.create({}),
 		individualBuffs: Presets.DefaultIndividualBuffs,
 		debuffs: Presets.DefaultDebuffs,
+		encounter: Presets.EncounterLevel60Tank.encounter,
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.

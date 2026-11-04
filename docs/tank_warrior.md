@@ -193,11 +193,64 @@ tank's health:
 
 Last Stand stays out: it changes max health, which the survival replay doesn't follow.
 
+## Round 4 consumables (2026-11-04, findings tank_fairness -10, -11 and -9)
+
+The bear's consumable A/B (`orchestration/tank_handoff/druid/round3/`) run for the warrior at each weight: every
+consumable slot, one change at a time against the request, paired `abtest -preset <p>` on the six scoring bosses at
+the preset's own weight, screened at 3,000 iterations (seed 1), the winners decided at 10,000 on seeds 1 and 2 (disjoint).
+Raw output, scripts (`gen.py`, `ab.sh`, `ab2.sh`) and an index: `orchestration/tank_handoff/warrior/round4/`.
+
+| Change (six-boss mean, 10,000) | Max threat | Balanced | Max survival |
+|---|---|---|---|
+| **Flask of Natural Precision** for the Titans | +662.2 ± 3.4 / +662.5 ± 3.5 | +533.2 ± 5.1 / +536.9 ± 4.9 | +377.6 ± 11.2 / +386.4 ± 11.1 |
+| **Elemental Sharpening Stone** for the Dense | +18.7 ± 0.4 / +19.0 ± 0.4 | +18.9 ± 0.9 / +21.0 ± 0.9 | +14.2 ± 2.1 / +16.6 ± 2.4 |
+| Dirge's chops for the Dumpling (on the new flask and stone) | -30.4 ± 0.8 (3,000) | -6.3 ± 2.1 (3,000) | **+46.0 ± 2.5 / +43.8 ± 2.3** |
+| Greater Stoneshield Potion for the Mighty Rage Potion (same) | -252 (3,000) | -183 (3,000) | **+83.4 ± 11.0 / +92.4 ± 10.4** |
+| both together | | | **+118.5 ± 10.9 / +124.3 ± 10.3** |
+
+(Seed 1 / seed 2.) The Precision flask gives 5% expertise in the Natural flasks' zones (`naturalFlaskZone`, true in every
+bench encounter, as for the bear), which takes 5% off the boss's parry and dodge of the warrior's attacks; the boss's
+parry also hastes its swing, so it hits the tank less often as well as the tank landing more attacks. It was never
+searched for the warrior: round 3's Natural Accuracy lost to the Titans (-23 / -55 / -150) and Aggression and Swiftness
+are +44 / +4 / -109 and +27 / -29 / -142 on the old base, 490 to 680 behind Precision on the new one (3,000). Everything else
+holds on the new base (3,000 iterations, six-boss mean, Max threat / Balanced / Max survival): Mongoose over Greater
+Agility (-50 / -49 / -48), Elixir of the Phalanx over Superior Defense (-30 / -74 / -172), Greater Fortitude (without
+-26 / -58 / -131 on the old base), Juju Power over Giants (-11 / -11 / -12), Juju Might over Winterfall Firewater
+(-4.5), the Mighty Rage Potion over Great Rage (-144 / -170 / -201), the Dragonbreath Chili (off: -2 +- 7 / +8 +- 10 /
++11 +- 21: a tie, kept), Tender Wolf Steak (-26 / -16 / +22 +- 12, behind Dirge's) and Grilled Squid or Blessed Sunfruit
+(-25 to -31). The Dense Weightstone doesn't fit a warrior's weapon (it scores as no stone). Not adopted, as for the
+bear (call 10): Zanza and Blasted Lands buffs (Spirit of Zanza +32 / +71 / +173, Ground Scorpok Assay +30 / +56 / +116,
+R.O.I.D.S. +51 to +55, Lung Juice +16 / +34 / +85), Rumsey Rum Black Label (+9 / +20 / +52) and Gordok Green Grog
+(+6 / +14 / +36): no tank request carries them.
+
+Own-weight six-boss mean, 10,000 iterations, before (round 3's requests) → after, seed 1 / seed 2:
+
+| Preset | Seed 1 | Seed 2 |
+|---|---|---|
+| Max threat | 3,695.5 → **4,381.7** (+686.0 ± 3.4) | 3,687.7 → **4,373.5** (+685.9 ± 3.5) |
+| Balanced | 3,010.7 → **3,567.5** (+556.9 ± 5.1) | 3,005.7 → **3,564.3** (+558.7 ± 4.9) |
+| Max survival | 1,202.0 → **1,717.3** (+515.2 ± 10.6) | 1,193.8 → **1,721.2** (+527.4 ± 11.1) |
+
+At 1,000 iterations (`summary.tsv`): 4,382.8 / 3,562.0 / 1,696.7. The talents and knobs were searched on the old
+consumables and are not re-searched here: the flask moves what the boss's parry is worth, so a rotopt pass on the new
+requests may move a knob or a talent.
+
+**The UI presets match the bench** (finding -11, 2026-11-04). `ui/tank_warrior/presets.ts` had `queueDelay: 250`
+(the bench's requests carry none; 250 costs 2% at Max threat), and loaded Thunder Clap, Demoralizing Shout, Demoralizing
+Roar and the tank Sunder ramp, which `tankscore.OwnDebuffs` takes off for the warrior because its rotation keeps them up
+(it pays their Rage and GCDs). The UI now has queueDelay 0 and none of the four, the bench's flask, stone, and for Max
+survival its food and potion (`EncounterLevel60TankMaxSurvival`), and the bench's fight as a preset encounter (the Level 60
+boss, a 600 HPS healer every 2 s, 180 s, the Natural flasks' zone) that the three builds load, as the bear's UI does; the
+reaction time is the UI's default 200 ms, the bench's. Rotation, gear, talents, race, professions, raid buffs, party
+and individual buffs were already the bench's. Nothing stripped is there for a real reason: the four debuffs are the
+warrior's own to cast and the UI's rotations cast them (or leave them out, as Max threat's `tc=0` does).
+
 ## Presets (2026-11-04, round 2; round 3 on top)
 
 **Round 3** (2026-11-04, after the second tank audit; master fd9538c: mana-gain threat unmultiplied, tank_mechanics
--12, and disjoint tank seeds, tank_rotations -13). The warrior gains no mana, and the presets bench as before (1,000
-iterations: 3,694.8 / 3,008.5 / 1,204.9 against round 2's 3,694.8 / 3,008.5 / 1,205.0). The same search as round 2
+-12, and disjoint tank seeds, tank_rotations -13). The warrior gains no mana; at 1,000 iterations the presets bench
+3,700.2 / 3,008.5 / 1,205.0 (Max threat 3,694.8 in round 2: Shield Wall at 13 s moved it; Balanced and Max survival
+as in round 2; round 4's consumables below move all three to 4,382.8 / 3,562.0 / 1,696.7). The same search as round 2
 (talents and knobs alternated, all nine races, the gear A/Bs) moved one thing: Max threat's Shield Wall in the last
 13 s instead of 12 (+4.6 ± 1.4 on seed 1, +3.5 ± 1.3 on seed 2, 10,000 iterations; 14 s +1.7 / +0.6, 11 s
 -8.8 / -6.6). Every small call was checked on a second, disjoint seed (`-seed 2`). Raw output, commands and the A/B

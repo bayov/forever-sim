@@ -1,0 +1,17 @@
+Healing: 8 healers on the tank at 300 HPS each, 3.0 s heals (912 a heal).
+Encounter: Broodlord Lashlayer. Knock Away's 50% threat cut isn't modelled. Blast Wave hits everyone near him, here the tanks only, and the healing sim adds the melee.
+Stand-in healer: 2400 HPS every 0.38 ± 0.19 s. TMI over 6 s windows. 1000 iterations.
+
+Objective: 2 x SafeDPS - w x 900 x healing needed at 5% deaths / 300, in raid DPS (Max threat w = 1/3, Balanced 1, Max survival 3).
+
+| Build | Max threat | Balanced | Max survival | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS | TMI | Death | Health | EH | Biggest hit | Armor | Def | No crit at | Miss | Dodge | Parry | Block | Crit | Crush | Crush gap | Took: avoid | block | crit | crush |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+2026/11/04 19:57:24 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 19:57:24 All 4 sims finished successfully.
+| paladin_protection_max_threat | 2840 ± 14 | 1971 ± 32 | -636 ± 91 | 1637 ± 5 | 435 ± 10 (1.44x DTPS) | 0.0% | 1483 | 645 | 302 | 52 | 0.0% | 7881 | 23153 | 1631 (4.8 to kill) | 9631 (62.6%) | 443 | 315 | 12.1% | 18.3% | 15.1% | 17.1% | 0.0% | 15.0% | 37.3% | 45.8% | 46.5% | 0.0% | 6.2% |
+2026/11/04 19:57:24 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 19:57:24 All 4 sims finished successfully.
+| paladin_protection_balanced | 2761 ± 14 | 1949 ± 31 | -488 ± 90 | 1584 ± 5 | 406 ± 10 (1.41x DTPS) | 0.0% | 1434 | 624 | 287 | 50 | 0.0% | 7961 | 23576 | 1618 (4.9 to kill) | 9754 (62.9%) | 463 | 315 | 12.9% | 18.7% | 15.9% | 17.9% | 0.0% | 15.0% | 34.5% | 47.8% | 46.4% | 0.0% | 4.4% |
+2026/11/04 19:57:24 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 19:57:24 All 4 sims finished successfully.
+| paladin_protection_max_survival | 2762 ± 14 | 2151 ± 36 | 316 ± 105 | 1534 ± 4 | 306 ± 12 (1.06x DTPS) | 0.0% | 1384 | 615 | 288 | 42 | 0.0% | 8891 | 26330 | 1618 (5.5 to kill) | 9754 (62.9%) | 463 | 315 | 12.9% | 18.7% | 15.9% | 17.9% | 0.0% | 15.0% | 34.5% | 46.9% | 47.7% | 0.0% | 4.2% |

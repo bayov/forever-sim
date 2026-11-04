@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=zanza_lung_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2678     2740    61.9   10.0      1.8      -19
+chromaggus        2105     2129    24.5    2.9      1.7       -7
+golemagg          3263     3288    24.9    1.6      1.8       -6
+magmadar          3438     3464    26.5    1.4      1.8       -7
+onyxia            3155     3198    43.1    4.0      1.9       -8
+ragnaros         -1746    -1588   157.8   23.9      1.8      -49
+vaelastrasz       3435     3457    22.9    2.1      2.5      -14
+scoring_mean                       34.0    1.9

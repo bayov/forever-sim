@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=armor_superior_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3182     3011  -170.7   16.0     -2.8       55
+chromaggus        2709     2656   -53.4    4.5     -2.6       16
+golemagg          3828     3781   -47.0    3.2     -2.6       12
+magmadar          3992     3947   -45.6    2.7     -2.7       12
+onyxia            3658     3578   -80.1    5.6     -3.0       14
+ragnaros         -1492    -1803  -310.8   33.6     -2.7       97
+vaelastrasz       4018     3969   -48.6    4.5     -3.9       32
+scoring_mean                      -74.2    3.1

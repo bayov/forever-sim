@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=stone_elemental_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2696     2716    20.2    3.5     10.0       -0
+chromaggus        2111     2129    18.5    2.2      9.5        0
+golemagg          3269     3288    19.7    1.6      9.7       -0
+magmadar          3428     3447    18.8    1.6      9.7        0
+onyxia            3150     3168    18.3    2.2      9.1       -0
+ragnaros         -1805    -1787    17.7    4.1      7.9       -1
+vaelastrasz       3410     3428    17.9    1.3      8.9        0
+scoring_mean                       18.9    0.9

@@ -242,12 +242,12 @@
        ]
       },
       "consumes": {
-       "flask": "FlaskOfTheTitans",
-       "food": "FoodSmokedDesertDumpling",
+       "flask": "FlaskOfNaturalPrecision",
+       "food": "FoodDirgesKickChimaerokChops",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
        "healthElixir": "ElixirOfGreaterFortitude",
-       "mainHandImbue": "DenseSharpeningStone",
+       "mainHandImbue": "ElementalSharpeningStone",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
        "spellPowerBuff": "GreaterArcaneElixir",

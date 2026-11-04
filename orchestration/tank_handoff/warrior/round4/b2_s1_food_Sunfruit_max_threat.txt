@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=food_Sunfruit_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         4216     4191   -25.0    0.2    -12.2        1
+chromaggus        3963     3938   -25.1    0.1    -12.5        0
+golemagg          4425     4400   -25.4    0.1    -12.5        0
+magmadar          4493     4468   -25.2    0.1    -12.5        0
+onyxia            4482     4458   -24.6    0.2    -12.1        0
+ragnaros          2615     2591   -24.4    0.2    -12.1        0
+vaelastrasz       4680     4657   -22.8    0.1    -11.4        0
+scoring_mean                      -24.7    0.1
