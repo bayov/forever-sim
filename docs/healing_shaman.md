@@ -133,6 +133,45 @@ never read: it read 408521 alone.
   `TestRestorationSyntheticSet`). What the 4 and 5 pieces would add is under "Presets".
 - **Totem of Life and Totem of Flowing Water** (Naxxramas, standards 8a) aren't modelled.
 
+## Fixes after the healer audit (2026-11-04)
+
+Branch `healers/fix-shaman`. Master already had the orchestrator's engine fixes (raid damage share, school crit on
+direct heals, health clamp, the tank bench's idle raid fillers), which moved every healer's bench; the tables
+under "Presets (round 70753)" below are from before them.
+
+- **healer_mechanics-20261104-3**, fixed: Ancestral Fortitude raises all armor (item 4 under "What changed").
+- **healer_mechanics-20261104-6**, fixed: the synthetic head and chest carry the Tier 1 Restoration set, 2 piece
+  live. What the rest would add, 1,000 iterations, carry, 7-boss mean: 4 piece +0.003 tank, +0.000 raid; 5 piece
+  (also Riptide 1 sec) the same +0.003 tank (the tank APL recasts Riptide only when its HoT is off, so the
+  cooldown never binds) and -0.007 raid (noise). Neither is in the preset (standards 6).
+- **healer_mechanics-20261104-10**, fixed: the untested list has tests (under "Tests"); every value matched client
+  70753. The client's Riptide branch runs only outside Forever and has none (standards 38).
+- **healer_fairness-20261104-2**, fixed: the gates re-tuned, 1,000 iterations, carry, mean of the 7 boss files.
+  - Tank: Healing Wave 10/8/6 on the tank when it misses at least x of the heal's Expected Healing, with the
+    Lesser Healing Wave 6/5 lines either gated the same way at 1.0x or only on mana (at least 50%):
+
+    | Healing Wave gate | Lesser Healing Wave gated | Lesser Healing Wave on mana only |
+    |---|---|---|
+    | 1.0x (before) | 1.115 | 1.129 |
+    | 0.9x | 1.107 | 1.129 |
+    | 0.8x | 1.096 | 1.130 |
+    | 0.7x | 1.099 | 1.130 |
+    | **0.6x** | 1.097 | **1.134** |
+    | 0.5x / 0.4x / 0.3x | | 1.134 / 1.133 / 1.134 |
+
+    Kept: 0.6x, and Lesser Healing Wave on mana only (+0.019). The win is almost all the Lesser Healing Wave
+    gate's; with it off, the Healing Wave gate is flat from 0.3x to 0.6x.
+  - Raid: the Healing Wave gate at the most hurt changes nothing (0.6x and 0.8x equal). Chain Heal 3/2/1's gate:
+    1.0x 1.380, 0.9x 1.392, 0.8x 1.395, **0.7x 1.396**, 0.6x 1.387. Kept 0.7x (+0.016).
+  - In `ui/restoration_shaman/apls/{tank,raid}_healer.apl.json` and the bench requests that copy them.
+
+**Final, 1,000 iterations, carry, default length** (this branch):
+
+| Role | Magmadar | Golemagg | Ragnaros | Onyxia | Broodlord | Vaelastrasz | Chromaggus | Mean |
+|---|---|---|---|---|---|---|---|---|
+| Tank | 1.852 | 1.777 | 0.525 | 1.235 | 0.852 | 0.818 | 0.881 | **1.134** |
+| Raid | 1.809 | 2.662 | 1.235 | 0.919 | 0.902 | 1.152 | 1.090 | **1.396** |
+
 ## Presets (round 70753)
 
 The bench (`tools/healbench`), one healer, each row at its own length; 500 iterations to screen and 1,000 for
