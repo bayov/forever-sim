@@ -1,0 +1,31 @@
+# tankbench -iters 10000 -seed 1; mean = the six scoring bosses (Ragnaros benched, not scored)
+== paladin_protection_max_threat
+| Encounter | Max threat | Balanced | Max survival | SafeDPS | Healing needed | TPS | DTPS |
+| magmadar | 3197 ± 3 | 3103 ± 4 | 2819 ± 9 | 1622 ± 1 | 41 ± 1 (0.28x DTPS) | 1483 | 147 |
+| golemagg | 3078 ± 3 | 2860 ± 4 | 2205 ± 10 | 1594 ± 1 | 94 ± 1 (0.52x DTPS) | 1462 | 182 |
+| onyxia | 3383 ± 4 | 3184 ± 9 | 2589 ± 24 | 1741 ± 2 | 58 ± 2 (0.35x DTPS) | 1559 | 163 |
+| broodlord | 2831 ± 5 | 1951 ± 11 | -690 ± 30 | 1636 ± 2 | 440 ± 3 (1.46x DTPS) | 1480 | 301 |
+| vaelastrasz | 3555 ± 7 | 3097 ± 9 | 1720 ± 20 | 1892 ± 3 | 546 ± 5 (0.87x DTPS) | 1580 | 627 |
+| chromaggus | 2634 ± 3 | 1675 ± 5 | -1203 ± 15 | 1557 ± 1 | 484 ± 2 (1.21x DTPS) | 1446 | 401 |
+| ragnaros | 817 ± 21 | -3277 ± 64 | -15558 ± 191 | 1432 ± 1 | 1945 ± 20 (2.06x DTPS) | 1321 | 944 |
+| mean of six | 3113.0 ± 2.3 | 2645.0 ± 3.8 | 1240.0 ± 10.0 | 1673.7 ± 0.9 | 277.2 ± 1.4 | 1501.7 | 303.5 |
+== paladin_protection_balanced
+| Encounter | Max threat | Balanced | Max survival | SafeDPS | Healing needed | TPS | DTPS |
+| magmadar | 3113 ± 3 | 3058 ± 4 | 2892 ± 8 | 1570 ± 1 | 24 ± 1 (0.17x DTPS) | 1436 | 136 |
+| golemagg | 3002 ± 3 | 2831 ± 4 | 2316 ± 9 | 1544 ± 1 | 74 ± 1 (0.44x DTPS) | 1417 | 169 |
+| onyxia | 3291 ± 4 | 3140 ± 8 | 2686 ± 22 | 1683 ± 2 | 44 ± 1 (0.29x DTPS) | 1510 | 154 |
+| broodlord | 2766 ± 5 | 1970 ± 11 | -418 ± 32 | 1582 ± 2 | 398 ± 3 (1.40x DTPS) | 1433 | 285 |
+| vaelastrasz | 3432 ± 7 | 3004 ± 9 | 1722 ± 21 | 1823 ± 3 | 509 ± 5 (0.84x DTPS) | 1525 | 607 |
+| chromaggus | 2566 ± 2 | 1674 ± 4 | -1004 ± 12 | 1506 ± 1 | 451 ± 1 (1.19x DTPS) | 1401 | 379 |
+| ragnaros | 803 ± 20 | -3118 ± 60 | -14882 ± 180 | 1382 ± 1 | 1863 ± 19 (1.99x DTPS) | 1276 | 937 |
+| mean of six | 3028.3 ± 2.2 | 2612.8 ± 3.7 | 1365.7 ± 9.9 | 1618.0 ± 0.9 | 250.0 ± 1.3 | 1453.7 | 288.3 |
+== paladin_protection_max_survival
+| Encounter | Max threat | Balanced | Max survival | SafeDPS | Healing needed | TPS | DTPS |
+| magmadar | 3023 ± 2 | 3007 ± 3 | 2957 ± 7 | 1516 ± 1 | 7 ± 1 (0.05x DTPS) | 1379 | 138 |
+| golemagg | 2913 ± 2 | 2786 ± 4 | 2404 ± 10 | 1488 ± 1 | 55 ± 1 (0.32x DTPS) | 1358 | 171 |
+| onyxia | 3222 ± 4 | 3168 ± 9 | 3005 ± 25 | 1624 ± 1 | 16 ± 2 (0.10x DTPS) | 1450 | 157 |
+| broodlord | 2736 ± 5 | 2087 ± 12 | 140 ± 36 | 1530 ± 1 | 325 ± 4 (1.13x DTPS) | 1379 | 287 |
+| vaelastrasz | 3329 ± 6 | 2986 ± 8 | 1958 ± 18 | 1750 ± 3 | 408 ± 4 (0.69x DTPS) | 1462 | 593 |
+| chromaggus | 2485 ± 2 | 1629 ± 4 | -940 ± 11 | 1456 ± 1 | 432 ± 1 (1.13x DTPS) | 1346 | 382 |
+| ragnaros | 984 ± 13 | -2408 ± 38 | -12583 ± 115 | 1340 ± 1 | 1611 ± 12 (1.73x DTPS) | 1229 | 933 |
+| mean of six | 2951.3 ± 2.0 | 2610.5 ± 3.8 | 1587.3 ± 10.4 | 1560.7 ± 0.8 | 207.2 ± 1.3 | 1395.7 | 288.0 |

@@ -264,6 +264,49 @@ twice its paired error on both. The raw output, scripts and exact commands are i
   build 2800.7 / 2430.2 / 1320.2, Balanced's (and Max survival's) 2741.7 / 2418.3 / 1449.0 at w = 1/3, 1, 3:
   each preset wins its own weight, Balanced over Max threat at w = 1 inside the noise.
 
+**Round 4 consumables (2026-11-04, tank-fixes5, tank_fairness-20261104-10).** The bear's consumable A/B
+(`orchestration/tank_handoff/druid/round3`) run for the paladin: `tools/audit/tank_rotations/abtest`, paired, six
+scoring bosses at each preset's own weight, one consumable at a time against the round-3 request (3,000 iterations,
+seed 1; about 40 variants a preset: food, flask, Zanza, elixirs, Juju, potion, stone, alcohol, Sapper, chili), then
+the standard-set winners stacked and the finalists at 10,000 iterations on seeds 1 and 2 (disjoint). Raw output,
+scripts and the summary are in `orchestration/tank_handoff/paladin/round4/` (`ab_summary.txt`). **The consumables
+no tank carries are left out** (call 10 of `docs/tank_druid.md`: Zanza, Rumsey Rum, Blasted Lands buffs, Goblin
+Sapper), so the four tanks are scored on the same set; the stack was searched again without them.
+
+| Slot | Max threat | Balanced | Max survival | Was |
+|---|---|---|---|---|
+| Flask | Supreme Power | Supreme Power | **Natural Precision** | Titans |
+| Food | Nightfin Soup | Nightfin Soup | Dirge's Kickin' Chimaerok Chops | Smoked Desert Dumpling |
+| Weapon stone | Elemental Sharpening Stone | same | same | Dense |
+
+Max survival's request is no longer Balanced's: the flask and food differ. The elixirs, Juju, chili and the potion
+stay: no variant of them wins (Greater Stoneshield against the Major Mana Potion is 0.0 ± 0.0 at every weight: the
+paladin APL never drinks one). The standard set, 10,000 iterations, paired against round 3's request, seed 1 / seed
+2: Max threat Supreme Power + Nightfin + Elemental **+319.5 ± 0.6 / +318.8 ± 0.7** (Natural Precision in place of
+Supreme Power +256 / +255); Balanced the same **+197.7 ± 1.8 / +200.7 ± 1.9**, with Natural Precision in place of
+Supreme Power +211.1 ± 3.7 / +204.7 ± 3.4 (direct, Supreme Power → Natural Precision +13.4 ± 3.6 / +4.0 ± 3.7: not
+beyond the error on both seeds, so Supreme Power stays); Max survival Natural Precision + Dirge's chops + Elemental
+**+142.3 ± 10.2 / +129.3 ± 10.3**, ahead of Tender Wolf Steak (direct +10.0 ± 7.0 / +14.4 ± 7.3), Nightfin (+97.9 /
++83.2) and Titans with Dirge (3,000: +74). Dirge's chops alone over the Dumpling (the audit's item), 10,000: Balanced
++11.9 ± 1.0 / +12.4 ± 1.0, Max survival +64.4 ± 2.9 / +65.8 ± 3.1. Stone: Dense -14 and Consecrated -35 against
+Elemental, every preset, both seeds. **Before and after** (own weight, six-boss mean, 10,000 iterations, seed 1 /
+seed 2): Max threat 2793.7 ± 2.1 → **3113.0 ± 2.3** / 2795.8 → 3114.7 ± 2.3; Balanced 2415.0 ± 3.9 → **2612.8 ±
+3.7** / 2416.7 → 2617.5 ± 4.0; Max survival 1445.2 ± 10.5 → **1587.3 ± 10.4** / 1442.2 → 1571.5 ± 9.9. The ranking
+at each weight is unchanged.
+
+**Left out (call 10 of `docs/tank_druid.md`), gains the sim shows for the paladin**, single swaps against round 3's
+request, 3,000 iterations, seed 1 (Max threat / Balanced / Max survival): Goblin Sapper Charge +82 / +82 / +61; Spirit
+of Zanza +26 / +52 / +144; Ground Scorpok Assay +30 / +54 / +127; Rumsey Rum Black Label +8 / +17 / +48. All of them
+stacked on the standard set earned about +130 at Max threat, +180 at Balanced and +290 at Max survival (10,000: Max
+threat 449.0 / 449.4, Balanced 380.6 / 379.3 with Supreme Power, Max survival 1873.8 own-weight mean). If the call is
+reversed, the requests are in `orchestration/tank_handoff/paladin/round4/var/` (`c_*` files) and the stacks above.
+The Sapper is one 450-750 Fire hit every 5 minutes with 375-625 back on the tank in the sim
+(`sim/core/consumes.go`); its size is worth a check in the game. The UI (`ui/protection_paladin/presets.ts`) carries
+each preset's consumables, plus the bench's boss and 600 HPS healer as an encounter preset; its buffs, debuffs, APLs,
+gear, talents, race and professions were checked equal to the requests (the paladin has no queue delay option and
+`tankscore.OwnDebuffs` strips nothing from a paladin's raid, so the debuffs stay as the requests set them; reaction
+time is the UI's 200 ms, as the requests).
+
 **Round 2 (2026-11-04, tank-paladin, on the engine of 5668ea5: the tank faces the boss, the logs' swing gap with
 parryHaste off, health-blind survival cooldowns, Elixir of the Phalanx and Greater Fortitude on every tank).**
 Before the searches: Reckoning takes spell crits (tank_mechanics-20261104-9), the trinket line is first
@@ -451,8 +494,9 @@ encounters, unless it says otherwise).
 11. **Lesser Block on the shield** (round 3). Enchant 863 (+2% block, a world-drop formula; Forever lists "Block %
     2 added") beats Greater Stamina 1886 by +25 / +35 / +69 (Max threat / Balanced / Max survival, paired,
     confirmed on a second seed), so all three paladin presets take it. **Default: taken**, as the A/B says. The
-    warrior and the Warden still carry 1886 and were not tested with 863: until their workers A/B it, the
-    paladin has a shield enchant the other shield tanks don't, a cross-class fairness gap.
+    warrior and the Warden were tested with 863 too, and both lose it to 1886 (`docs/tank_warrior.md` "Round 3
+    gear A/Bs": -8.6 / -12.6 / -40.6; `docs/tank_shaman.md`), so the paladin is the one shield tank on 863: the
+    shield is a per-class result of each class's own paired A/B, not a gap.
 12. **Max survival as its own preset.** Searched at w = 3 again in round 3, its best is Balanced's build in every
-    part, enchants included, and the two requests are byte-identical. **Default: kept as its own files**, as in
+    part, enchants included, and the two requests were byte-identical (round 4's consumables now set them apart). **Default: kept as its own files**, as in
     round 2 (tank_fairness-20261104-4: not forced apart). The alternative: drop it, or point it at Balanced's.

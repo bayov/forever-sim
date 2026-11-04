@@ -1,0 +1,27 @@
+# master 23b2ec2 plus tank-fixes5 paladin round 4, 1000 iterations, default seed, date 2026-11-04. tankbench -iters 1000 -encounter tools/encounters/<boss>.json tools/tankbench/req/<request>.json
+# weight = the request name's preset (Max threat 1/3, Balanced 1, Max survival 3); score = tankbench's column at that weight, raid DPS; * = legacy request, Balanced assumed. scoring_mean = mean of the 6 bosses without ragnaros; "none" = no healing saves it.
+request	boss	weight	score	score_err	safe_dps	tps	dtps	healing_needed	death_floor	tmi	death_pct	biggest_hit	dps
+paladin_protection_balanced	broodlord	1	1949.0	31.0	1584.0	1434.0	287.0	406.0	0.0	50.0	0.0	1618.0	624.0
+paladin_protection_balanced	chromaggus	1	1692.0	13.0	1508.0	1402.0	380.0	446.0	0.0	51.0	0.0	2108.0	610.0
+paladin_protection_balanced	golemagg	1	2848.0	13.0	1545.0	1416.0	169.0	69.0	0.0	16.0	0.0	1476.0	616.0
+paladin_protection_balanced	magmadar	1	3052.0	12.0	1567.0	1435.0	136.0	24.0	0.0	14.0	0.0	1237.0	625.0
+paladin_protection_balanced	onyxia	1	3184.0	30.0	1690.0	1510.0	152.0	38.0	0.0	21.0	0.0	1097.0	659.0
+paladin_protection_balanced	vaelastrasz	1	3056.0	31.0	1834.0	1540.0	604.0	486.0	0.0	68.0	0.0	2383.0	669.0
+paladin_protection_balanced	ragnaros	1	-3105.0	168.0	1379.0	1274.0	943.0	1856.0	0.2	121.0	6.6	1353.0	559.0
+paladin_protection_balanced	scoring_mean	1	2630.2		1621.3	1456.2	288.0	244.8	0.0	36.7	0.0	1653.2	633.8
+paladin_protection_max_survival	broodlord	3	316.0	105.0	1534.0	1384.0	288.0	306.0	0.0	42.0	0.0	1618.0	615.0
+paladin_protection_max_survival	chromaggus	3	-856.0	30.0	1456.0	1343.0	381.0	423.0	0.0	44.0	0.0	2108.0	596.0
+paladin_protection_max_survival	golemagg	3	2404.0	25.0	1489.0	1358.0	172.0	55.0	0.0	14.0	0.0	1476.0	603.0
+paladin_protection_max_survival	magmadar	3	2929.0	27.0	1510.0	1372.0	138.0	9.0	0.0	12.0	0.0	1237.0	609.0
+paladin_protection_max_survival	onyxia	3	3045.0	69.0	1629.0	1453.0	156.0	14.0	0.0	18.0	0.0	1097.0	647.0
+paladin_protection_max_survival	vaelastrasz	3	1969.0	59.0	1758.0	1470.0	595.0	409.0	0.0	61.0	0.0	2383.0	651.0
+paladin_protection_max_survival	ragnaros	3	-12016.0	251.0	1334.0	1226.0	924.0	1550.0	0.0	104.0	2.8	1353.0	550.0
+paladin_protection_max_survival	scoring_mean	3	1634.5		1562.7	1396.7	288.3	202.7	0.0	31.8	0.0	1653.2	620.2
+paladin_protection_max_threat	broodlord	0.333	2840.0	14.0	1637.0	1483.0	302.0	435.0	0.0	52.0	0.0	1631.0	645.0
+paladin_protection_max_threat	chromaggus	0.333	2636.0	8.0	1557.0	1446.0	402.0	482.0	0.0	55.0	0.0	2124.0	628.0
+paladin_protection_max_threat	golemagg	0.333	3077.0	9.0	1592.0	1460.0	181.0	91.0	0.0	17.0	0.0	1488.0	635.0
+paladin_protection_max_threat	magmadar	0.333	3194.0	9.0	1620.0	1481.0	147.0	40.0	0.0	15.0	0.0	1247.0	644.0
+paladin_protection_max_threat	onyxia	0.333	3402.0	13.0	1743.0	1561.0	163.0	49.0	0.0	23.0	0.0	1106.0	679.0
+paladin_protection_max_threat	vaelastrasz	0.333	3590.0	23.0	1910.0	1596.0	630.0	547.0	0.0	71.0	0.0	2402.0	692.0
+paladin_protection_max_threat	ragnaros	0.333	788.0	52.0	1426.0	1315.0	946.0	1961.0	0.3	123.0	8.7	1364.0	576.0
+paladin_protection_max_threat	scoring_mean	0.333	3123.2		1676.5	1504.5	304.2	274.0	0.0	38.8	0.0	1666.3	653.8
