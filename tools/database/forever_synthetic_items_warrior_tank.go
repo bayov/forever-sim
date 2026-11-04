@@ -28,7 +28,7 @@ import (
 //	Legs       66  T1        72.0  72.4   48.1  46.5  sta 22 def 24 agi 14
 //	Feet       66  T2        55.0  54.8   35.9  34.9  sta 17 hit 13 str 25
 //	Finger     71  T3        42.0  42.0   26.7  28.0  sta 13 crit 14 ap 30
-//	Finger II  71  T3        42.0  42.0   26.8  28.0  sta 13 hit 16 crit 13
+//	Finger II  71  T3        42.0  42.0   29.5  28.0  sta 13 hit 24 crit 5
 //	Shield     71  shield    58.9  58.9      -     -  sta 21 def 13 block value 46
 //	Main Hand  71  onehand   32.0  31.9      -     -  sta 9 str 9 def 6 crit 5
 //	Ranged     71  ranged    19.5  19.7      -     -  sta 9 agi 5 hit 5 ap 1
@@ -39,10 +39,11 @@ import (
 //
 //	Set              Sta   Str   Agi   AP    Hit   Crit  Def   Block value
 //	Target (row)     31.4  15.5  6.0   3.4   9.4   7.7   20.9  5.8
-//	These items      31.4  15.4  5.9   3.4   9.5   7.7   20.9  5.8
+//	These items      31.4  15.4  5.9   3.4   10.5  6.6   20.9  5.8
 //
-// That is 106 Defense (and 7 more from the 2-piece bonus), 110 block value with the shield's own, 72 hit
-// rating (7.2%, under the 8% cap) and 239 Stamina. The sword keeps Mirah's Song's speed class: the
+// That is 106 Defense (and 7 more from the 2-piece bonus), 110 block value with the shield's own, 80 hit
+// rating (8%, the cap: standards 4; no warrior tank talent gives hit, so Finger II carries 8 hit for 8 crit
+// over the row's mix, 2026-11-04) and 239 Stamina. The sword keeps Mirah's Song's speed class: the
 // Fury main hand's damage and 2.8 sec speed (standards 22's weapon damage of the Era Phase 1 BiS one-hander),
 // so a slow Heroic Strike hand. The plate keeps the DPS set's armor, the shield an item level 71 Era epic
 // shield's (2,680, between Jagged Obsidian Shield at 70 and Red Dragonscale Protector at 74).
@@ -96,7 +97,7 @@ var foreverSyntheticWarriorTankItems = []*proto.UIItem{
 	warriorTankItem(990611, "Protection Synthetic Finger (Phase 1)", "inv_jewelry_ring_15", proto.ItemType_ItemTypeFinger, proto.ArmorType_ArmorTypeUnknown, 71,
 		stats.Stats{stats.Stamina: 13, stats.AttackPower: 30}, 0, 14, ""),
 	warriorTankItem(990612, "Protection Synthetic Finger II (Phase 1)", "inv_jewelry_ring_16", proto.ItemType_ItemTypeFinger, proto.ArmorType_ArmorTypeUnknown, 71,
-		stats.Stats{stats.Stamina: 13}, 16, 13, ""),
+		stats.Stats{stats.Stamina: 13}, 24, 5, ""),
 	{
 		Id: 990613, Name: "Protection Synthetic Ranged (Phase 1)", Icon: "inv_weapon_rifle_06",
 		Type:             proto.ItemType_ItemTypeRanged,
