@@ -298,16 +298,16 @@ func TestForeverTankBloodrage(t *testing.T) {
 	}
 }
 
-// TestForeverTankRecklessSwings checks Reckless Swings (Fury row 4 since the November 2 notes, which a
-// tank reaches with 16 Fury points): off the GCD on a 15 sec cooldown, it costs 25% of base health
+// TestForeverTankRecklessSwings checks Reckless Swings (1329555, Fury row 4, which a tank reaches with
+// 16 Fury points; hotfix push 113539): a 1 sec GCD on a 15 sec cooldown, it costs 25% of base health
 // (damage taken for the tank's score), and the next 4 landed white swings give 5 Rage more each.
 func TestForeverTankRecklessSwings(t *testing.T) {
-	sim, war := newTank(t, "-00000000001", bulwark) // Reckless Swings, Fury's 11th talent
+	sim, war := newTank(t, "-0000000001", bulwark) // Reckless Swings, Fury's 10th talent since Raging Blows left (113539)
 	if war.RecklessSwings == nil {
 		t.Fatal("Reckless Swings is missing with the talent")
 	}
-	if war.RecklessSwings.CD.Duration != 15*time.Second || war.RecklessSwings.DefaultCast.GCD != 0 {
-		t.Errorf("Reckless Swings: %s cooldown, %s GCD; want 15s and none", war.RecklessSwings.CD.Duration, war.RecklessSwings.DefaultCast.GCD)
+	if war.RecklessSwings.CD.Duration != 15*time.Second || war.RecklessSwings.DefaultCast.GCD != time.Second {
+		t.Errorf("Reckless Swings: %s cooldown, %s GCD; want 15s and 1s", war.RecklessSwings.CD.Duration, war.RecklessSwings.DefaultCast.GCD)
 	}
 	health := war.CurrentHealth()
 	if !war.RecklessSwings.Cast(sim, war.CurrentTarget) {

@@ -44,7 +44,7 @@ Verdicts: **ok** (the sim matches), **fixed** (wrong, fixed 2026-11-03 or, after
 | Charge (11578, rank 3) | 15 Rage, out of combat, Battle Stance (Defensive with Vanguard), no threat for its Rage | same | client; T2 (6067c8469d) | ok |
 | Battle Shout (11551, rank 6) | 111 + 0.6/level AP, 3 min, 10 Rage, raid-wide | the raid's buff; the tank doesn't cast it | client | ok (raid's) |
 | Slam (11605, rank 5) | weapon + 87, 15 Rage, 1.5 s cast that resets the swing, 18 s cooldown (the notes: **15 s**; Improved Slam out of a tank's reach) | 15 s under Forever | notes | notes; in the template as `slamRage`, which the searches leave off (below) |
-| Reckless Swings (talent, no client spell; placeholder 1399001) | the notes: 15 s, 25% of base health, the next 4 melee attacks +5 Rage each, 8 s | off the GCD, landed white swings (Heroic Strike included), flat 5; **its health cost taken since 2026-11-04** (damage taken for the score; it was left out for the DPS) | notes; GCD and which swings count are the round's reading | notes; **fixed** (health cost) |
+| Reckless Swings (1329555 cast and buff, 1329554 Rage; hotfix push 113539) | 15 s cooldown, **1 s GCD** (SpellCooldowns 102442), 25% of base health (SpellPower 315180), the next 4 melee attacks +5 Rage each (curve 128140), 8 s | the same: 15 s, 1 s GCD, 25% of base health taken (damage taken for the score), 4 landed swings at 5 Rage | client (113539 hotfix rows) | ok (the health cost was fixed 2026-11-04; master's 113539 round moved the id and the GCD) |
 | Shield Bash (1672, rank 3) | 45 damage, 10 Rage, 12 s, interrupts | not simmed | client | n/a (an interrupt; 45 × 1.5 threat for 10 Rage loses to Sunder's ~400) |
 | Concussion Blow (12809) | 5 s stun, 10 Rage, 45 s, no GCD, no damage | not simmed | client | n/a (bosses don't stun; Shield Slam's prerequisite) |
 | Taunt (355), Mocking Blow (20560), Challenging Shout (1161) | taunts: 8 s, 2 min, 10 min | not simmed | client | n/a (one tank, one boss: nothing to taunt off) |
@@ -84,7 +84,7 @@ Protection (all 18), Arms and Fury rows a 51-point build can reach. Values are t
 | Unbridled Wrath (12322, Fury) | 12% a point for 1 Rage on a white hit | same | ok |
 | Blood Craze (16487, Fury) | 1/2/3% health over 6 s after a crit taken or a hit over 20% of health; the notes: **makes no threat** | simmed since 2026-11-02 (`docs/tank_sim.md`); its heal's threat multiplier 0 under Forever (659cad198) | notes |
 | Enrage (12317, Fury) | 30% chance on any damaging hit taken for +2% Physical damage a point, 12 s; the notes move it to **row 3** (10 Fury points) | same; `TestForeverTankProcTalents` reads it at Fury's 8th place | ok |
-| Reckless Swings (Fury row 4, the notes) | above, under Abilities | 16 Fury points reach it with Shield Slam (35 Protection, no Arms) | notes |
+| Reckless Swings (Fury row 4, col 2; the 10th Fury talent since 113539) | above, under Abilities | 16 Fury points reach it with Shield Slam (35 Protection, no Arms) | ok |
 | Piercing Howl (12323, Fury) | snare | not simmed | n/a |
 
 Not reachable by a tank build: Gore Drinker (the notes move it to row 5 under Blood Craze, and it makes no threat: 20 Fury
@@ -96,6 +96,18 @@ talents the talent search may still try.
 **Battleplate of Glory** (set 2103, Forever's Tier 1 Protection set, items 280905 to 280910): 2-piece +7 Defense
 (1300970), 3 Intervene's cooldown −10 s (not simmed: no Intervene), 4 −1.2% dodged and parried (not simmed: the core has
 no parry reduction), 5 Shield Wall −30 s. The synthetic set carries the 2-piece only (standards 6).
+
+### Hotfix push 113539 (2026-11-04)
+
+Master's warrior round for push 113539 (`orchestration/round_70753/hotfix_113539_warrior.md`) re-imported the Fury tree
+from the client: Raging Blows is gone (its node is now Improved Whirlwind, row 6), so every Fury talent after Dual Wield
+Specialization moves up one place, and Reckless Swings is a real spell (1329555 / 1329554) on a 1 s GCD. The tank
+presets spend no Fury point past Enrage (the 8th), so their strings read the same in the new tree and nothing moved:
+re-run on the merged sim, Max threat 4,709.0 ± 5.3, Balanced 3,795.3 ± 7.5, Max survival 1,485.0 ± 19.2 (6,000), each
+exactly as before, with byte-identical APLs, so the Numbers below stand. Remapped: `TestForeverTankRecklessSwings`'s
+string (`-00000000001` to `-0000000001`) and its GCD check (none to 1 s); the template's `recklessSwingsRage` now
+defaults to 0 (never), as every preset already set it. The GCD only makes Reckless Swings dearer, and no search kept it
+when it was free of one, so the talent searches weren't rerun.
 
 ### What the update changed (2026-11-04)
 
@@ -142,7 +154,7 @@ next to `forever_test.go`'s Shield Wall, Shield Block, Shield Slam, sheet and sc
 - `TestForeverTankTalentStats` (Shield Specialization, Anticipation, Deflection, Cruelty, Bastion with and without a
   shield, each on against off), `TestForeverTankTalentModifiers` (Improved Revenge, Improved Shield Wall, Booming
   Voice, Focused Rage on and off its mask).
-- `TestForeverTankRecklessSwings` (2026-11-04): 15 s off the GCD, 25% of base health, 4 landed swings at 5 Rage more each,
+- `TestForeverTankRecklessSwings` (2026-11-04, 1 s GCD since 113539): 15 s cooldown, a 1 s GCD, 25% of base health, 4 landed swings at 5 Rage more each,
   none without the talent.
 - `TestForeverTankProcTalents`: over 20 tanked fights, Shield Specialization 5/5 and Master of Defense 2/2 give 5 Rage
   on every block and every dodge or parry, 1/5 and 1/2 at 20% and 50% (within 4 standard errors), and Enrage procs on

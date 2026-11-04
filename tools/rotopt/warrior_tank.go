@@ -50,10 +50,10 @@ func (warriorTank) Knobs() []Knob {
 		{Name: "slamRage", Default: 0, Min: 0, Max: 80, Step: 20},
 		// Bloodrage below this much Rage (0: never). It costs 20% of base health.
 		{Name: "bloodrageRage", Default: 30, Min: 0, Max: 70, Step: 10},
-		// Reckless Swings (Fury row 4, the November 2 notes: 15 sec, off the GCD, the next 4 swings give 5
-		// more Rage each, 25% of base health) below this much Rage, 0 never, 100 on cooldown. Without
-		// the talent the line does nothing.
-		{Name: "recklessSwingsRage", Default: 100, Min: 0, Max: 100, Step: 10},
+		// Reckless Swings (1329555, Fury row 4, hotfix push 113539: 15 sec, a 1 sec GCD, the next 4 melee
+		// swings give 5 more Rage each, 25% of base health) below this much Rage, 0 never (the default:
+		// no searched build takes the talent), 100 on cooldown. Without the talent the line does nothing.
+		{Name: "recklessSwingsRage", Default: 0, Min: 0, Max: 100, Step: 10},
 		// The opener: 0 none, 1 Bloodrage before the pull, 2 Charge (from Defensive Stance with
 		// Vanguard, or from Battle Stance and back: chargeFrom), 3 both.
 		{Name: "opener", Default: 0, Min: 0, Max: 3, Step: 1},
