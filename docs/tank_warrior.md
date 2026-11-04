@@ -31,7 +31,7 @@ Verdicts: **ok** (the sim matches), **fixed** (wrong, fixed 2026-11-03 or, after
 | Defensive Stance (71, passive 7376) | −10% damage taken, −10% dealt, +30% threat (the notes: **80%**); Defiance multiplies in (tooltip `(30+100)×(1+s1/100)`) | 0.9, 0.9, **1.8** × (1 + Defiance's 7 / 13 / 20%): ×2.16 at 3/3 with a shield | client; threat the notes (client 70753 and 70755 still 30%) | notes (master 0dcb0d87a) |
 | Shield Block (2565) | 75% block, 2 charges, 7 s, 10 Rage, 5 s cd, no GCD, Defensive Stance + shield | same; a recast refreshes both charges | client; wowsims/forever | ok |
 | Shield Slam (23925, rank 4) | 655 ± 4.57% + block value, 20 Rage, 6 s, GCD, shield, any stance; "very high threat", no number | 625–685 + block value, no AP; threat = damage + **508** | client; threat none | ok (damage); **call** (threat) |
-| Revenge (11601, rank 5) | 121 ± 19.7%, 5 Rage, 5 s, GCD, Defensive Stance; tooltip's AP ratio since 70707 reads 22.5% | 97–145 + 28% AP, threat 2.25 × damage, no flat | AP: T2 log fit 0.277 ± 0.009; threat: T2 capture | ok; **call** (AP 22.5% vs 28%) |
+| Revenge (11601, rank 5) | 121 ± 19.7%, 5 Rage, 5 s, GCD, Defensive Stance; tooltip's AP ratio since 70707 reads 22.5% | 97–145 + 25% AP (to verify), threat 2.25 × damage, no flat | AP: the 70707 tooltip (22.5% in stance = 25%), ruled 2026-11-04 over the pre-70707 T2 log fit 0.277 ± 0.009; threat: T2 capture | ok; **to verify** (a level 60 Revenge log after 70707) |
 | Defensive State (5302, Revenge's window) | 5 s, 1 charge, on block, dodge or parry | 5 s, used by Revenge | client | ok |
 | Sunder Armor (11597, rank 5) | −450 armor a stack, 5 stacks, 30 s, 15 Rage, GCD; E_THREAT **206** | was 261 flat; **now 206 + 5% of AP** | T1 (206) + T2 (rank 1 capture: 34 = its E_THREAT, + 0.05 × AP) | **fixed** |
 | Thunder Clap (11581, rank 6) | 103, 20% slow 30 s, 20 Rage, 6 s cd, GCD, Battle or Defensive, 4 targets | 103 + 7% AP, threat 2.5 × damage | damage T2 (rank 1 log); threat T3 (Classic 2.5×; wowsims/forever leaves 1× unmeasured) | ok (damage); **call** (threat) |
@@ -277,7 +277,7 @@ the Balanced preset (new talents +170, Undead +178).
    drain the presets would take Tauren (Balanced 3,680.6, Max survival 1,368.9; Max threat the Skyborne 4,603.1).
 2. **Shield Slam's threat** (flat **508** on top of damage): the client says "very high threat" with no number. Default
    the sim's 508 (Rules audit, Shield Slam row).
-3. **Revenge's attack power ratio**: the tooltip reads 22.5% since 70707; the sim keeps 28% (T2, a log fit of 0.277 ± 0.009).
+3. **Revenge's attack power ratio** (ruled 2026-11-04, standards 40: **0.25, to verify**): the tooltip reads 22.5% in Defensive Stance since 70707, which is 25% before the stance's 10% less damage (wowsims/forever d7a38ae, 2026-11-04, uses 0.25 on every rank, source the tooltip, unmeasured). The sim now takes 0.25 on every rank, down from 0.28 (T2, a log fit of 0.277 ± 0.009 on ranks 1 and 2, taken before 70707). At 25% Balanced scored 3.0% less and Max survival 5.6% less than at 28% (tankbench, the presets' requests; TPS −2.7%). To verify: a level 60 Revenge log after 70707 settles it.
 4. **Thunder Clap's threat** (2.5 × damage): T3 (Classic); wowsims/forever leaves it at 1× unmeasured. Max threat drops
    Thunder Clap (`tc=0`) either way; Balanced keeps it up.
 5. **Max survival is Balanced's build**: no knob or talent of the template moves it past its noise. Its real levers react to

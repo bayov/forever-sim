@@ -12,6 +12,13 @@ var RevengeSpellId = [RevengeRanks + 1]int32{0, 6572, 6574, 7379, 11600, 11601, 
 var RevengeBaseDamage = [RevengeRanks + 1][]float64{{0, 0}, {12, 14}, {18, 22}, {25, 31}, {43, 53}, {64, 78}, {81, 99}}
 var RevengeLevel = [RevengeRanks + 1]int{0, 14, 24, 34, 44, 54, 60}
 
+// RevengeAPCoefficientForever is the attack power share every Revenge rank adds under Forever:
+// 0.25, the 70707 tooltip's 22.5% in Defensive Stance before the stance's 10% less damage (as
+// wowsims/forever d7a38ae), down from the 0.28 log fit (3a6c7df46e: 0.277 ± 0.009 over 254 rank 1
+// hits, taken before 70707).
+// To verify: a level 60 Revenge log after 70707 settles it (user ruling 2026-11-04, standards 40).
+const RevengeAPCoefficientForever = 0.25
+
 func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	// Ranks from the Ahn'Qiraj books are out under Forever (no source in client 70338).
 	aq := warrior.Env.IncludeAQRanks()
@@ -22,12 +29,12 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	revengeLevel := core.TernaryFloat64(aq, 60.0, 54.0)
 	apCoef := 0.0
 	flatThreat := 2.25 * 2 * revengeLevel
-	// Forever's rank 5 deals 121 ± 19.7% (97 to 145) (client 70425, spell 11601) plus 28% of
-	// attack power, which wowsims/forever fits from logs (3a6c7df46e: 0.277 ± 0.009 over 254 rank 1
-	// hits). Its threat is 2.25 times its damage with nothing on top (913a5bcf69, measured in game).
+	// Forever's rank 5 deals 121 ± 19.7% (97 to 145) (client 70425, spell 11601) plus 25% of
+	// attack power (RevengeAPCoefficientForever, to verify: a level 60 Revenge log after 70707
+	// settles it (user ruling 2026-11-04, standards 40)). Its threat is 2.25 times its damage with nothing on top (913a5bcf69, measured in game).
 	if warrior.Env.IsForever() && !aq {
 		damageLow, damageHigh = 97, 145
-		apCoef = 0.28
+		apCoef = RevengeAPCoefficientForever
 		flatThreat = 0
 	}
 	basedamageLow := damageLow + core.TernaryFloat64(has2pcDreadnaught, 75, 0)
