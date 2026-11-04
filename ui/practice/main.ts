@@ -34,7 +34,7 @@ import { RaidTest, raidSpells } from './raid';
 import { auraColor, avoidColor, CombatText, schoolColor } from './sct';
 import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
-import { decodeHooks, fileProgress } from './wow/files';
+import { decodeHooks, file, fileProgress, hasFile, prefetch } from './wow/files';
 import { find, setStyle, setText } from './dom';
 import { Model } from './wow/model';
 import { Terrain } from './wow/terrain';
@@ -337,14 +337,28 @@ class PracticeRoom {
 		this.root.append(screen);
 		const text = screen.querySelector('.loading-text') as HTMLElement;
 		const fill = screen.querySelector('.loading-bar > div') as HTMLElement;
+		const raidSize = Number(new URLSearchParams(location.search).get('raid') ?? 0);
+		// We only learn which textures a model needs once the model itself has come back, so the
+		// number of files to load grows from about 300 to 1300 while we load. So we remember which
+		// files the last load of this same room asked for. We ask for them all right away, which
+		// shows the real total from the start and doesn't wait on the models to name them.
+		const setupKey = `${raidSize}|${JSON.stringify(this.loaded.look ?? {})}|${(this.loaded.rotationSpells ?? []).join(',')}|${this.loaded.name}`;
+		const remembered = loadFileList(setupKey).filter(id => !hasFile(id));
+		const startIds = fileProgress.ids.length;
 		const startAsked = fileProgress.asked;
 		const startDone = fileProgress.done;
+		if (remembered.length > 0) {
+			prefetch(remembered).then(() => {
+				for (const id of remembered) file(id).catch(() => undefined);
+			});
+		}
 		let shown = 0;
 		const tick = () => {
 			if (!screen.isConnected) return;
-			const asked = fileProgress.asked - startAsked;
+			const asked = Math.max(fileProgress.asked - startAsked, remembered.length);
 			const done = fileProgress.done - startDone;
-			// The total grows as models name their textures, so the bar never runs backwards.
+			// On a first load (or when the room changed) the total still grows, so the bar never runs
+			// backwards.
 			shown = Math.max(shown, asked > 0 ? done / asked : 0);
 			fill.style.width = `${(shown * 100).toFixed(1)}%`;
 			text.textContent = `Loading · ${done}/${asked} files`;
@@ -360,7 +374,6 @@ class PracticeRoom {
 		const jobs: Promise<unknown>[] = [loadCursors(this.root)];
 		// Models we draw once while loading, so their shaders and textures are ready for the fight.
 		const warm: Model[] = [];
-		const raidSize = Number(new URLSearchParams(location.search).get('raid') ?? 0);
 
 		// The ground is a flat spot in the northern Barrens (Kalimdor's WDT), with trees around it and
 		// no buildings near.
@@ -503,6 +516,7 @@ class PracticeRoom {
 		);
 		await Promise.all(jobs);
 		await this.room.warmUp(warm, !!effects.crowd).catch(e => console.warn('warm up', e));
+		saveFileList(setupKey, fileProgress.ids.slice(startIds));
 		screen.remove();
 		this.loadingModels = false;
 	}
@@ -2293,6 +2307,34 @@ function fmtLeft(ms: number): string {
 	if (s >= 3600) return `${Math.floor(s / 3600)}h`;
 	if (s >= 60) return `${Math.floor(s / 60)}m`;
 	return s < 10 ? s.toFixed(1) : String(Math.floor(s));
+}
+
+// The files each room setup loaded last time (see loadModels), for the last few setups.
+const fileListKey = 'practice.loadFiles';
+const fileListSetups = 8;
+
+function loadFileList(setup: string): number[] {
+	try {
+		const all = JSON.parse(localStorage.getItem(fileListKey) ?? '[]') as { setup: string; ids: number[] }[];
+		return all.find(e => e.setup === setup)?.ids ?? [];
+	} catch {
+		return [];
+	}
+}
+
+function saveFileList(setup: string, ids: number[]) {
+	if (ids.length === 0) return;
+	try {
+		const all = JSON.parse(localStorage.getItem(fileListKey) ?? '[]') as { setup: string; ids: number[] }[];
+		const old = all.find(e => e.setup === setup)?.ids ?? [];
+		// A load that found most files already in the page (you came back to the room) only adds
+		// to the list.
+		const kept = [...new Set([...old, ...ids])];
+		const rest = all.filter(e => e.setup !== setup).slice(0, fileListSetups - 1);
+		localStorage.setItem(fileListKey, JSON.stringify([{ setup, ids: kept }, ...rest]));
+	} catch {
+		// No storage (a private window): the bar's total grows as before.
+	}
 }
 
 async function enterRoom(loaded: Loaded, guid: string, character: CharacterData) {
