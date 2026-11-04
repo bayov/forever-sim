@@ -19,10 +19,10 @@ message ShamanTalents {
 	int32 eye_of_the_storm = 10;
 	bool earthbound = 11;
 	int32 elemental_reach = 12;
-	bool lava_burst = 13;
+	bool call_of_thunder = 13;
 	int32 lightning_overload = 14;
 	int32 elemental_fury = 15;
-	bool elemental_mastery = 16;
+	bool lightning_mastery = 16;
 
 	// Enhancement
 	int32 earths_grasp = 17;
@@ -30,14 +30,14 @@ message ShamanTalents {
 	int32 ancestral_knowledge = 19;
 	int32 guardian_totems = 20;
 	int32 mental_dexterity = 21;
-	int32 improved_ghost_wolf = 22;
-	int32 improved_lightning_shield = 23;
-	int32 elemental_weapons = 24;
-	bool shamanistic_focus = 25;
-	int32 anticipation = 26;
-	int32 toughness = 27;
-	int32 flurry = 28;
-	bool stormstrike = 29;
+	int32 improved_lightning_shield = 22;
+	int32 elemental_weapons = 23;
+	bool shamanistic_focus = 24;
+	int32 anticipation = 25;
+	int32 toughness = 26;
+	int32 flurry = 27;
+	bool stormstrike = 28;
+	int32 improved_ghost_wolf = 29;
 	bool spirit_weapons = 30;
 	int32 mental_quickness = 31;
 	int32 improved_stormstrike = 32;

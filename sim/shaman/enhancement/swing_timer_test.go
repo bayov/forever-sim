@@ -34,7 +34,7 @@ func TestOrcShamanCastSwingTimer(t *testing.T) {
 		castTime time.Duration
 	}{
 		{"Lightning Bolt", lb, 0, false, 2500 * time.Millisecond},
-		{"Chain Lightning", cl, 0, false, 2000 * time.Millisecond},
+		{"Chain Lightning", cl, 0, false, 2500 * time.Millisecond},
 		{"Lightning Bolt with 3 Maelstrom Weapon stacks", lb, 3, false, time.Second},
 		{"Lightning Bolt with 5 Maelstrom Weapon stacks", lb, 5, false, -1},
 		{"Lightning Bolt with Nature's Swiftness", lb, 0, true, -1},

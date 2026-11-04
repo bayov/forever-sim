@@ -4,7 +4,7 @@
   "className": "Shaman",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-10-16T06:59:12Z",
+  "generatedAt": "2026-11-03T14:00:20Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -101,22 +101,25 @@
           "spellId": 16035
         },
         {
-          "id": "elemental-warding",
-          "name": "Elemental Warding",
-          "row": 2,
-          "col": 1,
+          "id": "elemental-devastation",
+          "name": "Elemental Devastation",
+          "row": 1,
+          "col": 0,
           "maxRank": 3,
-          "icon": "spell_nature_spiritarmor",
+          "icon": "spell_fire_elementaldevastation",
           "iconSource": "client",
-          "description": "Reduces damage taken from Fire, Frost, and Nature effects by {0}%.",
+          "description": "Your Critical Strikes with direct damage spells increase your chance to get a Critical Strike with melee attacks by {0}% for {1} sec.",
           "ranks": [
             [
-              3
+              3,
+              10
             ],
             [
-              7
+              6,
+              10
             ],
             [
+              9,
               10
             ]
           ],
@@ -126,7 +129,7 @@
             3
           ],
           "ranksSource": "client",
-          "spellId": 28996
+          "spellId": 30160
         },
         {
           "id": "reverberation",
@@ -165,6 +168,34 @@
           "spellId": 16040
         },
         {
+          "id": "elemental-alacrity",
+          "name": "Elemental Alacrity",
+          "row": 1,
+          "col": 2,
+          "maxRank": 3,
+          "icon": "spell_lightning_lightningbolt01",
+          "iconSource": "client",
+          "description": "Reduces the cast time of your Lightning Bolt, Chain Lightning, and Lava Burst spells by {0} sec.",
+          "ranks": [
+            [
+              0.17
+            ],
+            [
+              0.33
+            ],
+            [
+              0.5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 16578
+        },
+        {
           "id": "call-of-flame",
           "name": "Call of Flame",
           "row": 1,
@@ -196,37 +227,6 @@
           "spellId": 16038
         },
         {
-          "id": "elemental-devastation",
-          "name": "Elemental Devastation",
-          "row": 1,
-          "col": 0,
-          "maxRank": 3,
-          "icon": "spell_fire_elementaldevastation",
-          "iconSource": "client",
-          "description": "Your offensive spell critical strikes will increase your chance to get a critical strike with melee attacks by {0}% for {1} sec.",
-          "ranks": [
-            [
-              3,
-              10
-            ],
-            [
-              6,
-              10
-            ],
-            [
-              9,
-              10
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2,
-            3
-          ],
-          "ranksSource": "client",
-          "spellId": 30160
-        },
-        {
           "id": "elemental-focus",
           "name": "Elemental Focus",
           "row": 2,
@@ -246,6 +246,187 @@
           ],
           "ranksSource": "client",
           "spellId": 16164
+        },
+        {
+          "id": "elemental-warding",
+          "name": "Elemental Warding",
+          "row": 2,
+          "col": 1,
+          "maxRank": 3,
+          "icon": "spell_nature_spiritarmor",
+          "iconSource": "client",
+          "description": "Reduces damage taken from Fire, Frost, and Nature effects by {0}%.",
+          "ranks": [
+            [
+              3
+            ],
+            [
+              7
+            ],
+            [
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 28996
+        },
+        {
+          "id": "trial-by-fire",
+          "name": "Trial by Fire",
+          "row": 3,
+          "col": 0,
+          "maxRank": 2,
+          "icon": "spell_fire_sealoffire",
+          "iconSource": "client",
+          "description": "Increases the damage done by your Fire Nova spell by {0}% and reduces its cooldown by {1} sec, and increases the duration of your Magma Totem by {2} sec.",
+          "ranks": [
+            [
+              10,
+              2,
+              10
+            ],
+            [
+              20,
+              4,
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 16086
+        },
+        {
+          "id": "eye-of-the-storm",
+          "name": "Eye of the Storm",
+          "row": 3,
+          "col": 1,
+          "maxRank": 3,
+          "icon": "spell_nature_eyeofthestorm",
+          "iconSource": "client",
+          "description": "Gives your Lightning Bolt, Chain Lightning, and Lava Burst spells a {0}% chance to not lose casting time when you take damage.",
+          "ranks": [
+            [
+              23
+            ],
+            [
+              47
+            ],
+            [
+              70
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 29062
+        },
+        {
+          "id": "earthbound",
+          "name": "Earthbound",
+          "row": 3,
+          "col": 3,
+          "maxRank": 1,
+          "icon": "spell_nature_stranglevines",
+          "iconSource": "client",
+          "description": "Your Earthbind Totem Immobilizes nearby targets for {0} sec when cast.",
+          "ranks": [
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "spellId": 1222988
+        },
+        {
+          "id": "elemental-reach",
+          "name": "Elemental Reach",
+          "row": 4,
+          "col": 0,
+          "maxRank": 2,
+          "icon": "spell_nature_stormreach",
+          "iconSource": "client",
+          "description": "Increases the range of your Lightning Bolt, Chain Lightning and Fire Nova spells by {0} yards.",
+          "ranks": [
+            [
+              3
+            ],
+            [
+              6
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 28999
+        },
+        {
+          "id": "call-of-thunder",
+          "name": "Call of Thunder",
+          "row": 4,
+          "col": 1,
+          "maxRank": 1,
+          "icon": "spell_nature_callstorm",
+          "iconSource": "client",
+          "description": "Increases the critical strike chance of your Lightning Bolt and Chain Lightning spells by {0}%.",
+          "ranks": [
+            [
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client"
+        },
+        {
+          "id": "lightning-overload",
+          "name": "Lightning Overload",
+          "row": 4,
+          "col": 2,
+          "maxRank": 3,
+          "icon": "spell_nature_lightningoverload",
+          "iconSource": "client",
+          "description": "Gives your Lightning Bolt and Chain Lightning spells a {0}% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.",
+          "ranks": [
+            [
+              10
+            ],
+            [
+              20
+            ],
+            [
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "requires": [
+            {
+              "talent": "elemental-alacrity",
+              "rank": 3
+            }
+          ],
+          "spellId": 408438
         },
         {
           "id": "elemental-fury",
@@ -290,201 +471,14 @@
           "spellId": 16089
         },
         {
-          "id": "improved-fire-nova",
-          "name": "Improved Fire Nova",
-          "row": 3,
-          "col": 0,
-          "maxRank": 2,
-          "icon": "spell_fire_sealoffire",
-          "iconSource": "client",
-          "description": "Increases the damage done by your Fire Nova spell by {0}% and reduces its cooldown by {1} sec, and increases the duration of your Magma Totem by {2} sec.",
-          "ranks": [
-            [
-              10,
-              2,
-              10
-            ],
-            [
-              20,
-              4,
-              20
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 16086
-        },
-        {
-          "id": "eye-of-the-storm",
-          "name": "Eye of the Storm",
-          "row": 3,
-          "col": 1,
-          "maxRank": 3,
-          "icon": "spell_nature_eyeofthestorm",
-          "iconSource": "client",
-          "description": "Reduces the pushback suffered from damaging attacks while casting Lightning Bolt, Chain Lightning, and Lava Burst by {0}%.",
-          "ranks": [
-            [
-              23
-            ],
-            [
-              47
-            ],
-            [
-              70
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2,
-            3
-          ],
-          "ranksSource": "client",
-          "spellId": 29062
-        },
-        {
-          "id": "elemental-reach",
-          "name": "Elemental Reach",
-          "row": 4,
-          "col": 0,
-          "maxRank": 2,
-          "icon": "spell_nature_stormreach",
-          "iconSource": "client",
-          "description": "Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by {0} yards and reduces the cooldown of Totemic Projection by {1} sec.",
-          "ranks": [
-            [
-              3,
-              10
-            ],
-            [
-              6,
-              20
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 28999
-        },
-        {
-          "id": "lightning-overload",
-          "name": "Lightning Overload",
-          "row": 4,
-          "col": 2,
-          "maxRank": 3,
-          "icon": "spell_nature_lightningoverload",
-          "iconSource": "client",
-          "description": "Gives your Lightning Bolt and Chain Lightning spells a {0}% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.",
-          "ranks": [
-            [
-              3
-            ],
-            [
-              7
-            ],
-            [
-              10
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2,
-            3
-          ],
-          "ranksSource": "client",
-          "requires": [
-            {
-              "talent": "elemental-alacrity",
-              "rank": 3
-            }
-          ],
-          "spellId": 408438
-        },
-        {
-          "id": "earthbound",
-          "name": "Earthbound",
-          "row": 3,
-          "col": 3,
-          "maxRank": 1,
-          "icon": "spell_nature_stranglevines",
-          "iconSource": "client",
-          "description": "Your Earthbind Totem Immobilizes nearby targets for {0} sec when cast.",
-          "ranks": [
-            [
-              5
-            ]
-          ],
-          "ranksObserved": [
-            1
-          ],
-          "ranksSource": "client",
-          "spellId": 1222988
-        },
-        {
-          "id": "elemental-alacrity",
-          "name": "Elemental Alacrity",
-          "row": 1,
-          "col": 2,
-          "maxRank": 3,
-          "icon": "spell_lightning_lightningbolt01",
-          "iconSource": "client",
-          "description": "Reduces the cast time of your Lightning Bolt, Chain Lightning, and Lava Burst spells by {0} sec.",
-          "ranks": [
-            [
-              0.17
-            ],
-            [
-              0.33
-            ],
-            [
-              0.5
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2,
-            3
-          ],
-          "ranksSource": "client",
-          "spellId": 16578
-        },
-        {
-          "id": "lava-burst",
-          "name": "Lava Burst",
-          "row": 4,
-          "col": 1,
-          "maxRank": 1,
-          "icon": "spell_shaman_lavaburst",
-          "iconSource": "client",
-          "description": "You hurl molten lava at the target, dealing {0} to {1} Fire damage. If your Flame Shock is on the target, Lava Burst deals {2}% increased damage.",
-          "ranks": [
-            [
-              113,
-              146,
-              20
-            ]
-          ],
-          "ranksObserved": [
-            1
-          ],
-          "ranksSource": "client",
-          "cost": "135 Mana; 30 yd range; 2.5 sec cast; 10 sec cooldown",
-          "spellId": 408490
-        },
-        {
-          "id": "elemental-mastery",
-          "name": "Elemental Mastery",
+          "id": "lightning-mastery",
+          "name": "Lightning Mastery",
           "row": 6,
           "col": 1,
           "maxRank": 1,
           "icon": "spell_nature_wispheal",
           "iconSource": "client",
-          "description": "Gain mastery over Fire and Lightning, reducing the cast time of Lightning Bolt and Lava Burst by {0} sec, and removing the cooldown from Chain Lightning. Lasts {1} sec.",
+          "description": "Gain mastery over Lightning, reducing the cast time of Lightning Bolt by {0} sec, and removing the cooldown from Chain Lightning. Lasts {1} sec.",
           "ranks": [
             [
               0.5,
@@ -498,7 +492,7 @@
           "cost": "Instant; 3 min cooldown",
           "requires": [
             {
-              "talent": "lava-burst",
+              "talent": "call-of-thunder",
               "rank": 1
             }
           ],
@@ -650,13 +644,13 @@
           "description": "Increases your Attack Power by an amount equal to {0}% of your Intellect.",
           "ranks": [
             [
-              33
-            ],
-            [
-              67
+              50
             ],
             [
               100
+            ],
+            [
+              150
             ]
           ],
           "ranksObserved": [
@@ -666,30 +660,6 @@
           ],
           "ranksSource": "client",
           "spellId": 415140
-        },
-        {
-          "id": "improved-ghost-wolf",
-          "name": "Improved Ghost Wolf",
-          "row": 1,
-          "col": 2,
-          "maxRank": 2,
-          "icon": "spell_nature_spiritwolf",
-          "iconSource": "client",
-          "description": "Reduces the cast time of your Ghost Wolf spell by {0} sec, and Ghost Wolf may be used indoors.",
-          "ranks": [
-            [
-              1
-            ],
-            [
-              3
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 16262
         },
         {
           "id": "improved-lightning-shield",
@@ -848,23 +818,23 @@
           "description": "Increases your attack speed by {0}% for your next {1} swings after dealing a melee critical strike.",
           "ranks": [
             [
-              5,
+              6,
               3
             ],
             [
-              10,
+              12,
               3
             ],
             [
-              15,
+              18,
               3
             ],
             [
-              20,
+              24,
               3
             ],
             [
-              25,
+              30,
               3
             ]
           ],
@@ -892,9 +862,10 @@
           "maxRank": 1,
           "icon": "ability_shaman_stormstrike",
           "iconSource": "client",
-          "description": "Instantly strike for normal weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by {0}% for {1} sec.",
+          "description": "Instantly strike for {0}% normalized weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by {1}% for {2} sec.",
           "ranks": [
             [
+              150,
               20,
               12
             ]
@@ -903,8 +874,32 @@
             1
           ],
           "ranksSource": "client",
-          "cost": "125 Mana; Melee Range; Instant; 8 sec cooldown",
+          "cost": "8% base Mana; Melee Range; Instant; 6 sec cooldown",
           "spellId": 17364
+        },
+        {
+          "id": "improved-ghost-wolf",
+          "name": "Improved Ghost Wolf",
+          "row": 3,
+          "col": 3,
+          "maxRank": 2,
+          "icon": "spell_nature_spiritwolf",
+          "iconSource": "client",
+          "description": "Reduces the cast time of your Ghost Wolf spell by {0} sec, and Ghost Wolf may be used indoors.",
+          "ranks": [
+            [
+              1
+            ],
+            [
+              3
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 16262
         },
         {
           "id": "spirit-weapons",
@@ -1109,28 +1104,33 @@
           "spellId": 16182
         },
         {
-          "id": "tidal-mastery",
-          "name": "Tidal Mastery",
-          "row": 3,
-          "col": 0,
+          "id": "tidal-focus",
+          "name": "Tidal Focus",
+          "row": 0,
+          "col": 2,
           "maxRank": 5,
-          "icon": "spell_nature_tranquility",
+          "icon": "spell_frost_manarecharge",
           "iconSource": "client",
-          "description": "Increases the critical effect chance of your healing spells by {0}%.",
+          "description": "Reduces the Mana cost of your healing spells by {0}% and improves your chance to hit by {1}%.",
           "ranks": [
             [
+              1,
               1
             ],
             [
+              2,
               2
             ],
             [
+              3,
               3
             ],
             [
+              4,
               4
             ],
             [
+              5,
               5
             ]
           ],
@@ -1142,7 +1142,7 @@
             5
           ],
           "ranksSource": "client",
-          "spellId": 16194
+          "spellId": 16179
         },
         {
           "id": "mindfulness",
@@ -1201,34 +1201,29 @@
           "spellId": 29187
         },
         {
-          "id": "tidal-focus",
-          "name": "Tidal Focus",
-          "row": 0,
+          "id": "totemic-focus",
+          "name": "Totemic Focus",
+          "row": 1,
           "col": 2,
           "maxRank": 5,
-          "icon": "spell_frost_manarecharge",
+          "icon": "spell_nature_moonglow",
           "iconSource": "client",
-          "description": "Reduces the Mana cost of your healing spells by {0}% and improves your chance to hit by {1}%.",
+          "description": "Reduces the Mana cost of your totems and any spells that summon or move them by {0}%.",
           "ranks": [
             [
-              1,
-              1
-            ],
-            [
-              2,
-              2
-            ],
-            [
-              3,
-              3
-            ],
-            [
-              4,
-              4
-            ],
-            [
-              5,
               5
+            ],
+            [
+              10
+            ],
+            [
+              15
+            ],
+            [
+              20
+            ],
+            [
+              25
             ]
           ],
           "ranksObserved": [
@@ -1239,7 +1234,7 @@
             5
           ],
           "ranksSource": "client",
-          "spellId": 16179
+          "spellId": 16173
         },
         {
           "id": "improved-reincarnation",
@@ -1308,7 +1303,7 @@
           "maxRank": 3,
           "icon": "spell_nature_healingwavelesser",
           "iconSource": "client",
-          "description": "Gives you a {0}% chance to avoid interruption caused by damage while casting any healing spell.",
+          "description": "Gives your healing spells a {0}% chance to not lose casting time when you take damage.",
           "ranks": [
             [
               23
@@ -1336,7 +1331,7 @@
           "maxRank": 1,
           "icon": "ability_shaman_watershield",
           "iconSource": "client",
-          "description": "The caster is surrounded by {0} globes of water. When a spell, melee, or ranged attack hits the caster or when one of the caster's healing spells gets a critical result, {1}% of maximum mana is restored to the caster, expending one water globe. Only one globe will activate every few seconds. Lasts {2} min. Only one Elemental Shield can be active on the Shaman at any one time.",
+          "description": "The caster is surrounded by {0} globes of water. When a spell, melee, or ranged attack hits the caster or when one of the caster's spells gets a critical result, {1}% of maximum mana is restored to the caster, expending one water globe. Only one globe will activate every few seconds. Lasts {2} min. Only one Elemental Shield can be active on the Shaman at any one time.",
           "ranks": [
             [
               3,
@@ -1348,33 +1343,33 @@
             1
           ],
           "ranksSource": "client",
-          "cost": "Instant; 15 sec cooldown",
+          "cost": "Instant",
           "spellId": 408510
         },
         {
-          "id": "totemic-focus",
-          "name": "Totemic Focus",
-          "row": 1,
-          "col": 2,
+          "id": "tidal-mastery",
+          "name": "Tidal Mastery",
+          "row": 3,
+          "col": 0,
           "maxRank": 5,
-          "icon": "spell_nature_moonglow",
+          "icon": "spell_nature_tranquility",
           "iconSource": "client",
-          "description": "Reduces the Mana cost of your totems and any spells that summon or move them by {0}%.",
+          "description": "Increases the critical effect chance of your healing spells by {0}%.",
           "ranks": [
             [
+              1
+            ],
+            [
+              2
+            ],
+            [
+              3
+            ],
+            [
+              4
+            ],
+            [
               5
-            ],
-            [
-              10
-            ],
-            [
-              15
-            ],
-            [
-              20
-            ],
-            [
-              25
             ]
           ],
           "ranksObserved": [
@@ -1385,7 +1380,7 @@
             5
           ],
           "ranksSource": "client",
-          "spellId": 16173
+          "spellId": 16194
         },
         {
           "id": "restorative-totems",
@@ -1573,6 +1568,6 @@
     }
   ],
   "notes": [
-    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-09-24 development notes changed updated to build 1.60.1.70009 from foreverchanges.pro; tree moves, Elemental Mastery, Call of Thunder removed and the Call of Flame, Improved Fire Nova (Trial by Fire) and Elemental Reach effects from build 1.60.1.70425 (wago.tools)"
+    "wago.tools Trait, TalentTab, SkillLine and Spell tables of the WoW Forever beta client build 1.60.1.70753 (TraitTree 1082), generated by tools/forever_talents/import_db2.py. The trees' removed lists and the hand notes on 1 talent carried over from the hand-assembled files these replaced. 9 notes-only changes from tools/forever_talents/notes/shaman.json laid over it."
   ]
 }

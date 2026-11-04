@@ -23,7 +23,7 @@
 Env ALIGN="<their stat index>=<value>,..." adds bonus stats to theirs (align.py finds them).
 Env NOSPELLS="<id>,..." names talent spells the build doesn't have, see nospell() below.
 
-Rogues, hunters, warriors, shamans and mages are mapped. Adding one means its options, its consumables and its spell ids
+Rogues, hunters, warriors, shamans, mages, warlocks, priests, druids and paladins are mapped. Adding one means its options, its consumables and its spell ids
 (SKILL.md, "Adding a class").
 """
 import copy, json, os, re, sys
@@ -94,6 +94,8 @@ for it in p['equipment']['items']:
     so = {'stats': {str(k): v for k, v in stats_map(i.get('stats'), i.get('hitRating', 0), i.get('critRating', 0)).items()}, 'ilvl': i['ilvl']}
     if 'weaponDamageMin' in i:
         so['weaponDamageMin'] = i['weaponDamageMin']; so['weaponDamageMax'] = i['weaponDamageMax']
+        # Theirs' Cat and Bear Form paw takes the weapon's DPS from unroundedDps (a 1 damage paw without it).
+        so['unroundedDps'] = (i['weaponDamageMin'] + i['weaponDamageMax']) / 2 / i['weaponSpeed']
     item = {'id': i['id'], 'name': i['name'], 'weaponSpeed': i.get('weaponSpeed', 0),
             'classAllowlist': [CLS[c] for c in i.get('classAllowlist', [])], 'scalingOptions': {'0': so}}
     for f in EN:
@@ -132,7 +134,7 @@ C = {'FlaskOfNaturalAggression': 274274, 'FlaskOfNaturalPrecision': 274275, 'Fla
      'GreaterArcaneElixir': 13454, 'ElixirOfShadowPower': 9264, 'ElixirOfFirepower': 6373, 'ElixirOfSages': 250338,
      'ElixirOfNaturePower': 250343, 'ShadowOil': 3824, 'WizardOil': 20750, 'CausticSmogPotion': 250951,
      'CerebralCortexCompound': 8423, 'ElixirOfFrostPower': 17708, 'MajorSpellblastingPotion': 250937,
-     'ElixirOfTheOwl': 250337, 'ElixirOfGreaterFirepower': 21546, 'ElixirOfGreaterSpirit': 250347}  # Greater Firepower is Forever's Elixir of Holy Power  # Deadly Poison IV (theirs has no AQ book rank), Instant VI
+     'ElixirOfTheOwl': 250337, 'ElixirOfGreaterFirepower': 21546, 'ElixirOfGreaterSpirit': 250347, 'DragonfirePotion': 250953}  # Greater Firepower is Forever's Elixir of Holy Power  # Deadly Poison IV (theirs has no AQ book rank), Instant VI
 def c(k):
     v = cs.get(k)
     if not v: return 0
@@ -316,10 +318,6 @@ elif klass == 'ClassMage':
     def remap(n):
         if n.get('spellId') == 26297:  # Berserking: ours keys the mage's 26297 (tagged), theirs Forever's 20554
             n = {k: v for k, v in n.items() if k != 'tag'}; n['spellId'] = 20554
-        if 'spellInFlight' in n and len(n) == 1:
-            # Ours counts a bolt in flight from the moment its cast completes. Theirs picks the next spell 400 ms
-            # before that (its spell queue), while the bolt is still casting, and counts it in flight only after.
-            return {'or': {'vals': [{'_done': n}, {'spellIsCasting': n['spellInFlight']}]}}
         return n
 elif klass == 'ClassWarlock':
     wo = p['warlock'].get('options', {})
@@ -354,6 +352,27 @@ elif klass == 'ClassPriest':
     def remap(n):
         if n.get('spellId') == 26297:  # Berserking: ours keys 26297 (tagged), theirs Forever's 20554
             n = {k: v for k, v in n.items() if k != 'tag'}; n['spellId'] = 20554
+        return n
+elif klass == 'ClassDruid':
+    spec = 'balanceDruid' if 'balanceDruid' in p else 'feralDruid'
+    do = p[spec].get('options', {})
+    copt = {'classOptions': {'innervateTarget': do.get('innervateTarget') or {}}}
+    if spec == 'balanceDruid':
+        class_opts = {'balanceDruid': {'options': copt}}
+        SET_BONUS[TS['StatHitRating']] = 10  # Grovekeeper's Eclipse's 2 piece on our synthetic set: 1% hit
+    else:  # The Grovekeeper's Ferocity 2 piece (1% attack speed) is registered by cmpsim on the head, 998101.
+        class_opts = {'feralCatDruid': {'options': {**copt, 'prepullClearcasting': do.get('prepullClearcasting', False)}}}
+    CD.update({('item', 998015): '120s', ('item', 998115): '120s'})
+    SELF_SPENT.update({9876})  # Starfire spends Clearcasting
+    def remap(n): return n
+elif klass == 'ClassPaladin':
+    # Theirs' paladin plays its APL only: the seal and aura come from the rotation, as in ours.
+    # Justice Battlegear's 2 piece (1% attack speed) is registered by cmpsim on our synthetic head, 992001.
+    class_opts = {'retributionPaladin': {'options': {'classOptions': {}}}}
+    CD.update({('item', 992015): '120s'})
+    def remap(n):
+        if n.get('spellId') == 20930:  # Holy Shock rank 4: theirs keys the damage row it casts, 25902
+            n = {**n, 'spellId': 25902}
         return n
 else:
     raise SystemExit(f'{klass} is not mapped yet (SKILL.md, "Adding a class")')
@@ -419,6 +438,11 @@ def walk(n):
                 n = {**n, k2: {**n[k2], 'autoType': n[k2]['autoType'] + 'Auto'}}  # (autoSwingTime keeps MainHand)
         if n.get('otherId') == 'OtherActionPotion':  # theirs: one placeholder per potion class
             n = {**n, 'otherId': 'OtherActionResourcePotion' if consumables.get('resourcePotId') else 'OtherActionOffensivePotion'}
+        if 'spellInFlight' in n and len(n) == 1:
+            # Ours counts a bolt in flight from the moment its cast completes. Theirs picks the next spell 400 ms
+            # before that (its spell queue), while the bolt is still casting, and counts it in flight only after
+            # (Frost's Ice Lance as the bolt lands, Balance's Wrath for Eclipse).
+            return {'or': {'vals': [n, {'spellIsCasting': n['spellInFlight']}]}}
         n = remap(n)
         return {k3: walk(v) for k3, v in n.items()}
     if isinstance(n, list): return [walk(x) for x in n]

@@ -33,6 +33,9 @@ func main() {
 		996032: {stats.SpellDamage: 140},
 		997022: {stats.SpellDamage: 140},
 		995034: {stats.SpellDamage: 140},
+		998015: {stats.SpellDamage: 140},
+		992015: {stats.SpellDamage: 140},
+		998115: {stats.Strength: 165},
 	} {
 		id, st := id, st
 		core.NewItemEffect(id, func(agent core.Agent) {
@@ -51,7 +54,7 @@ func main() {
 	// Our synthetic sets' 2 piece bonus, 1% attack and casting speed, on the head piece, which each set's two pieces
 	// include (the enhancement shaman's on its hands): the hunters' (Wildstalker Armor's), the warriors' (Battlegear
 	// of Glory's) and the enhancement shaman's (The Spiritcaller's Rage).
-	for _, id := range []int32{993001, 993101, 991001, 991019, 990007} {
+	for _, id := range []int32{993001, 993101, 991001, 991019, 990007, 998101, 992001} {
 		core.NewItemEffect(id, func(agent core.Agent) {
 			character := agent.GetCharacter()
 			core.MakePermanent(character.RegisterAura(core.Aura{

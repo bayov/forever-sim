@@ -66,7 +66,8 @@ func (rogue *Rogue) registerHackAndSlashExtraAttack(mask core.ProcMask, procChan
 			if !result.Landed() {
 				return
 			}
-			if !spell.ProcMask.Matches(mask) {
+			// Shank suppresses the caster's procs (shank.go).
+			if !spell.ProcMask.Matches(mask) || spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 				return
 			}
 			if !icd.IsReady(sim) {

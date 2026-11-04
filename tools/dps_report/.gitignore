@@ -9,6 +9,11 @@
 /weights_*/
 /names/
 /mana/
+/probe/
+/probe_check/
+/probe_work/
+/probe_audit.json
+/timing/
 /icons/
 /data/
 /page/

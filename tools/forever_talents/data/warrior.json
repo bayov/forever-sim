@@ -4,7 +4,7 @@
   "className": "Warrior",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-10-12T07:05:47Z",
+  "generatedAt": "2026-11-03T14:00:12Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -149,22 +149,16 @@
           "name": "Improved Tactical Mastery",
           "row": 1,
           "col": 1,
-          "maxRank": 5,
+          "maxRank": 3,
           "icon": "spell_nature_enchantarmor",
           "iconSource": "client",
           "description": "Tactical Mastery lets you retain up to an additional {0} Rage when you change stances.",
           "ranks": [
             [
-              3
+              5
             ],
             [
-              6
-            ],
-            [
-              9
-            ],
-            [
-              12
+              10
             ],
             [
               15
@@ -173,9 +167,7 @@
           "ranksObserved": [
             1,
             2,
-            3,
-            4,
-            5
+            3
           ],
           "ranksSource": "client",
           "spellId": 12295
@@ -227,7 +219,7 @@
           "requires": [
             {
               "talent": "improved-tactical-mastery",
-              "rank": 5
+              "rank": 3
             }
           ],
           "spellId": 12296
@@ -302,13 +294,13 @@
           "description": "Increases the damage you deal with two-handed melee weapons by {0}%.",
           "ranks": [
             [
-              1
-            ],
-            [
               2
             ],
             [
-              3
+              4
+            ],
+            [
+              6
             ]
           ],
           "ranksObserved": [
@@ -354,38 +346,21 @@
           "name": "Bloodthrill",
           "row": 4,
           "col": 0,
-          "maxRank": 5,
+          "maxRank": 2,
           "icon": "inv_sword_01",
           "iconSource": "client",
-          "description": "Your Main Hand melee attacks against enemies afflicted by your Rend have a {0}% chance to allow the use of your Overpower ability on the target. Lasts {1} sec.",
+          "description": "Grants your Main Hand melee attacks against enemies afflicted by your Rend a {0}% chance to allow an activation of Overpower.",
           "ranks": [
             [
-              4,
-              6
+              10
             ],
             [
-              8,
-              6
-            ],
-            [
-              12,
-              6
-            ],
-            [
-              16,
-              6
-            ],
-            [
-              20,
-              6
+              20
             ]
           ],
           "ranksObserved": [
             1,
-            2,
-            3,
-            4,
-            5
+            2
           ],
           "ranksSource": "client",
           "spellId": 1289682
@@ -469,11 +444,11 @@
           "ranks": [
             [
               0.25,
-              3
+              2.5
             ],
             [
               0.5,
-              3
+              5
             ]
           ],
           "ranksObserved": [
@@ -744,10 +719,9 @@
           "maxRank": 1,
           "icon": "spell_shadow_deathscream",
           "iconSource": "client",
-          "description": "Causes all enemies within {0} yds to be Dazed, reducing movement speed by {1}% for {2} sec.",
+          "description": "Causes all enemies within ? yds to be Dazed, reducing movement speed by {0}% for {1} sec.",
           "ranks": [
             [
-              10,
               50,
               6
             ]
@@ -792,6 +766,52 @@
           ],
           "ranksSource": "client",
           "spellId": 16487
+        },
+        {
+          "id": "enrage",
+          "name": "Enrage",
+          "row": 2,
+          "col": 3,
+          "maxRank": 5,
+          "icon": "spell_shadow_unholyfrenzy",
+          "iconSource": "client",
+          "description": "Gives you a {0}% chance to deal {1}% increased Physical damage for {2} sec after being the victim of any damaging attack.",
+          "ranks": [
+            [
+              30,
+              2,
+              12
+            ],
+            [
+              30,
+              4,
+              12
+            ],
+            [
+              30,
+              6,
+              12
+            ],
+            [
+              30,
+              8,
+              12
+            ],
+            [
+              30,
+              10,
+              12
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ],
+          "ranksSource": "client",
+          "spellId": 12317
         },
         {
           "id": "dual-wield-specialization",
@@ -855,50 +875,26 @@
           "spellId": 1310315
         },
         {
-          "id": "enrage",
-          "name": "Enrage",
+          "id": "reckless-swings",
+          "name": "Reckless Swings",
           "row": 3,
           "col": 2,
-          "maxRank": 5,
-          "icon": "spell_shadow_unholyfrenzy",
+          "maxRank": 1,
+          "icon": "inv_misc_questionmark",
           "iconSource": "client",
-          "description": "Gives you a {0}% chance to deal {1}% increased Physical damage for {2} sec after being the victim of any damaging attack.",
+          "description": "Your next {0} melee attacks generate {1} additional Rage. Lasts {2} sec.",
           "ranks": [
             [
-              30,
-              2,
-              12
-            ],
-            [
-              30,
               4,
-              12
-            ],
-            [
-              30,
-              6,
-              12
-            ],
-            [
-              30,
-              8,
-              12
-            ],
-            [
-              30,
-              10,
-              12
+              5,
+              8
             ]
           ],
           "ranksObserved": [
-            1,
-            2,
-            3,
-            4,
-            5
+            1
           ],
           "ranksSource": "client",
-          "spellId": 12317
+          "cost": "25% of base health; Instant; 15 sec cooldown"
         },
         {
           "id": "improved-execute",
@@ -974,6 +970,38 @@
           "spellId": 12328
         },
         {
+          "id": "gore-drinker",
+          "name": "Gore Drinker",
+          "row": 4,
+          "col": 2,
+          "maxRank": 2,
+          "icon": "racial_troll_berserk",
+          "iconSource": "client",
+          "description": "Your Enrage, Berserker Rage, Bloodrage, Death Wish, and Bloodthirst abilities cause your next {0} melee attacks to restore {1}% of your maximum Health.",
+          "ranks": [
+            [
+              3,
+              0.5
+            ],
+            [
+              3,
+              1
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "requires": [
+            {
+              "talent": "blood-craze",
+              "rank": 3
+            }
+          ],
+          "spellId": 1323967
+        },
+        {
           "id": "improved-intercept",
           "name": "Improved Intercept",
           "row": 4,
@@ -1002,21 +1030,13 @@
           "name": "Flurry",
           "row": 5,
           "col": 1,
-          "maxRank": 5,
+          "maxRank": 3,
           "icon": "ability_ghoulfrenzy",
           "iconSource": "client",
           "description": "Increases your melee attack speed by {0}% for your next {1} swings after dealing a melee critical strike.",
           "ranks": [
             [
-              5,
-              3
-            ],
-            [
               10,
-              3
-            ],
-            [
-              15,
               3
             ],
             [
@@ -1024,57 +1044,42 @@
               3
             ],
             [
-              25,
+              30,
               3
             ]
           ],
           "ranksObserved": [
             1,
             2,
-            3,
-            4,
-            5
+            3
           ],
           "ranksSource": "client",
-          "requires": [
-            {
-              "talent": "death-wish",
-              "rank": 1
-            }
-          ],
           "spellId": 12319
         },
         {
-          "id": "gore-drinker",
-          "name": "Gore Drinker",
+          "id": "improved-whirlwind",
+          "name": "Improved Whirlwind",
           "row": 5,
           "col": 2,
           "maxRank": 2,
-          "icon": "racial_troll_berserk",
+          "icon": "ability_whirlwind",
           "iconSource": "client",
-          "description": "Your Enrage, Berserker Rage, Bloodrage, Death Wish, and Bloodthirst abilities cause your next {0} melee attacks to restore {1}% of your maximum Health.",
+          "description": "Reduces the cooldown of your Whirlwind ability by {0} sec and increases the damage it deals to the closest enemy by {1}%.",
           "ranks": [
             [
-              3,
-              0.5
+              1,
+              15
             ],
             [
-              3,
-              1
+              2,
+              30
             ]
           ],
           "ranksObserved": [
             1,
             2
           ],
-          "ranksSource": "client",
-          "requires": [
-            {
-              "talent": "enrage",
-              "rank": 5
-            }
-          ],
-          "spellId": 1323967
+          "ranksSource": "client"
         },
         {
           "id": "bloodthirst",
@@ -1098,6 +1103,12 @@
           ],
           "ranksSource": "client",
           "cost": "30 Rage; Melee Range; Instant; 6 sec cooldown",
+          "requires": [
+            {
+              "talent": "death-wish",
+              "rank": 1
+            }
+          ],
           "spellId": 23881
         }
       ]
@@ -1107,7 +1118,7 @@
       "name": "Protection",
       "page": "primary",
       "order": 2,
-      "icon": "ability_warrior_defensivestance",
+      "icon": "inv_shield_06",
       "rows": 7,
       "cols": 4,
       "talents": [
@@ -1634,6 +1645,6 @@
     }
   ],
   "notes": [
-    "wago.tools Trait tables (TraitNode, TraitNodeEntry, TraitDefinition, TraitEdge, TraitDefinitionEffectPoints) and SpellEffect, WoW Forever beta client build 1.60.1.70338, read 2026-10-12. Tooltips of talents unchanged since 1.60.1.69876 are hyjal.cc's from that build."
+    "wago.tools Trait, TalentTab, SkillLine and Spell tables of the WoW Forever beta client build 1.60.1.70753 (TraitTree 1117), generated by tools/forever_talents/import_db2.py. 10 notes-only changes from tools/forever_talents/notes/warrior.json laid over it."
   ]
 }

@@ -11,14 +11,15 @@ import (
 
 // Elemental under Forever rules, a caster at range in a raid. Every line names the highest rank
 // the player's level knows, except the Lightning Bolt that downranks when the mana runs low.
-// Lines for spells the build cannot have (Lava Burst without the talent, Mana Tide Totem) only
-// warn, and a knob at 0 drops its line entirely.
+// Lines for spells the build cannot have (Mana Tide Totem) only warn, and a knob at 0 drops its
+// line entirely.
 //
 // The shaman stands 20 yards or more from the boss, so Searing Totem (20 yards) is the only fire
 // totem that reaches it. Magma Totem and Fire Nova hit around the totem (8 and 10 yards), so the
 // template leaves them out.
 //
-// The burst is Elemental Mastery (the 30-point talent since client 70425), the racials and the
+// The burst is Lightning Mastery (the 30-point talent since client 70425, Elemental Mastery until
+// the November 2 development notes; Lava Burst is gone with them), the racials and the
 // trinkets, which go out on cooldown with the other cooldowns (potions, Demonic Rune, Nature's
 // Swiftness), unless berserkingAfterMastery holds Troll Berserking.
 type shamanEle struct{}
@@ -38,15 +39,12 @@ func (shamanEle) Knobs() []Knob {
 		{Name: "fireTotem", Default: 1, Min: 0, Max: 1, Step: 1},
 		// No new fire totem with less than this long to go, its mana is better in a bolt.
 		{Name: "fireTotemMinTime", Default: 20, Min: 10, Max: 30, Step: 10},
-		// Flame Shock whenever its DoT is down, 0 never. Lava Burst does 20% more while it ticks.
+		// Flame Shock whenever its DoT is down, 0 never.
 		{Name: "flameShock", Default: 1, Min: 0, Max: 1, Step: 1},
-		// 0 never, 1 Lava Burst on cooldown, 2 only while Flame Shock ticks.
-		{Name: "lavaBurst", Default: 1, Min: 0, Max: 2, Step: 1},
-		// 0 never, 1 Chain Lightning on cooldown (one target, so it is a 2 sec bolt on a 6 sec
-		// cooldown).
-		{Name: "chainLightning", Default: 1, Min: 0, Max: 1, Step: 1},
-		// Chain Lightning ahead of Lava Burst when both are ready.
-		{Name: "chainLightningFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// 0 never, 1 Chain Lightning on cooldown (on one target a 2.5 sec cast for 1.45 times a
+		// Lightning Bolt's damage and 2.25 times its mana, on a 6 sec cooldown that Lightning
+		// Mastery takes away), 2 only while Lightning Mastery is up.
+		{Name: "chainLightning", Default: 1, Min: 0, Max: 2, Step: 1},
 		// Chain Lightning only above this much mana, or while Clearcasting makes it free.
 		{Name: "chainLightningMana", Default: 0, Min: 0, Max: 80, Step: 10},
 		// Earth Shock on the shared shock cooldown when Flame Shock does not need it, 0 never.
@@ -71,9 +69,6 @@ func (shamanEle) Knobs() []Knob {
 		// 1 starts a Lightning Bolt 2.9 sec before the pull, so it lands just after the fight
 		// starts. The totems go down around it.
 		{Name: "prepullBolt", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Lava Burst waits while Flame Shock has this many seconds or less left, since the 20%
-		// counts when the cast ends. 0 never waits.
-		{Name: "lavaBurstFlameShockLeft", Default: 0, Min: 0, Max: 3, Step: 1},
 		// 1 casts Earth Shock at the end of the fight, once a Lightning Bolt (its cast and about 1
 		// sec of flight) would no longer land in time.
 		{Name: "earthShockFinish", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -90,10 +85,10 @@ func (shamanEle) Knobs() []Knob {
 		{Name: "shieldMinTime", Default: 0, Min: 0, Max: 120, Step: 30},
 		// 1 puts the shield up 1.5 sec before the first prepull action.
 		{Name: "prepullShield", Default: 0, Min: 0, Max: 1, Step: 1},
-		// 1 holds Troll Berserking (10% cast speed, 15 sec) until Elemental Mastery has run out.
-		// Both come off cooldown together, and under Elemental Mastery Lightning Bolt and Lava
-		// Burst are 1.5 sec casts that Berserking can only take under the 1.5 sec GCD, so the
-		// autocast at the pull wastes it. 0 adds no line (Berserking goes out with the autocast).
+		// 1 holds Troll Berserking (10% cast speed, 15 sec) until Lightning Mastery has run out.
+		// Both come off cooldown together, and under Lightning Mastery Lightning Bolt is a 1.5 sec
+		// cast (2 sec without Elemental Alacrity) that Berserking can only take under the 1.5 sec
+		// GCD, so the autocast at the pull wastes it. 0 adds no line (Berserking goes out with the autocast).
 		{Name: "berserkingAfterMastery", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
@@ -106,7 +101,7 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 	flameShock := rankID(shaman.FlameShockLevel[:], shaman.FlameShockSpellId[:])
 	lightningBolt := rankID(shaman.LightningBoltLevel[:], shaman.LightningBoltSpellId[:])
 	chainLightning := rankID(shaman.ChainLightningLevel[:], shaman.ChainLightningSpellId[:])
-	lavaBurst := rankID(shaman.LavaBurstLevel, shaman.LavaBurstSpellId)
+	lightningMastery := spellID(16166)
 	lightningShield := rankID(shaman.LightningShieldLevel[:], shaman.LightningShieldSpellId[:])
 
 	manaFloor := func(pct float64) value {
@@ -120,9 +115,8 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 	var totems []*proto.ActionID
 	items = append(items, autocastOtherCooldowns(nil, "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown."))
 	if k["berserkingAfterMastery"] == 1 {
-		elementalMastery := spellID(16166)
-		items = append(items, cast(berserking, and(not(auraIsActive(elementalMastery)), not(spellIsReady(elementalMastery))),
-			"Troll. Berserking once Elemental Mastery has run out: under it the bolts are 1.5 sec casts and the GCD takes the haste. Other races ignore the warning on this line."))
+		items = append(items, cast(berserking, and(not(auraIsActive(lightningMastery)), not(spellIsReady(lightningMastery))),
+			"Troll. Berserking once Lightning Mastery has run out: under it the bolts are short casts and the GCD takes the haste. Other races ignore the warning on this line."))
 	}
 	if k["manaTideMana"] > 0 {
 		items = append(items, cast(manaTideTotem, le(currentManaPercent(), num(k["manaTideMana"]/100)),
@@ -157,38 +151,19 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 		}
 		items = append(items, cast(flameShock, when, notes))
 	}
-	lavaBurstLine := func() {
-		switch k["lavaBurst"] {
-		case 1:
-			var when value
-			notes := "Lava Burst on cooldown. Without the talent ignore the warning on this line."
-			if left := k["lavaBurstFlameShockLeft"]; left > 0 && k["flameShock"] == 1 {
-				when = or(not(dotIsActive(flameShock)), gt(dotRemainingTime(flameShock), seconds(left)))
-				notes = "Lava Burst on cooldown, unless Flame Shock runs out before the cast ends. Without the talent ignore the warning on this line."
-			}
-			items = append(items, cast(lavaBurst, when, notes))
-		case 2:
-			items = append(items, cast(lavaBurst, dotIsActive(flameShock),
-				"Lava Burst while Flame Shock ticks (20% more). Without the talent ignore the warning on this line."))
+	if c := k["chainLightning"]; c > 0 {
+		when := manaFloor(k["chainLightningMana"])
+		if when != nil {
+			// The sim drops a condition on an aura the build does not have, which leaves just
+			// the mana floor without Elemental Focus.
+			when = or(when, auraIsActive(clearcasting))
 		}
-	}
-	chainLightningLine := func() {
-		if k["chainLightning"] == 1 {
-			when := manaFloor(k["chainLightningMana"])
-			if when != nil {
-				// The sim drops a condition on an aura the build does not have, which leaves just
-				// the mana floor without Elemental Focus.
-				when = or(when, auraIsActive(clearcasting))
-			}
-			items = append(items, cast(chainLightning, when, "Chain Lightning on cooldown."))
+		notes := "Chain Lightning on cooldown: on one target it hits for 1.45 times a Lightning Bolt."
+		if c == 2 {
+			when = and(auraIsActive(lightningMastery), when)
+			notes = "Chain Lightning while Lightning Mastery takes its cooldown away: on one target it hits for 1.45 times a Lightning Bolt, for 2.25 times the mana."
 		}
-	}
-	if k["chainLightningFirst"] == 1 {
-		chainLightningLine()
-		lavaBurstLine()
-	} else {
-		lavaBurstLine()
-		chainLightningLine()
+		items = append(items, cast(chainLightning, when, notes))
 	}
 	if k["earthShock"] == 1 {
 		when := manaFloor(k["shockMana"])

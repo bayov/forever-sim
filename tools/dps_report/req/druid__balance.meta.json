@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 892.3,
-    "source": "verify.py on this request after the standards 33 distances (2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 952.2,
+    "source": "verify.py on this request after round 70753 (the November 2 notes, race base stats; 892.3 before) and the 2026-11-03 rotation exploration (951.5 before it), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 892.3,
-    "stderr": 0.23,
+    "dps": 952.2,
+    "stderr": 0.26,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, after the rotation finds of the 2026-11-03 exploration; not yet the DPS report's main run"
   },
   "summary": "Moonkin that keeps Insect Swarm and Moonfire up. It weaves Wrath and Starfire to spend every Eclipse charge.",
   "keyTalents": [
@@ -43,10 +43,10 @@
     "Elune's Light (Night Elf) with the spell power trinket, and at -0.1s with it and the potion",
     "Insect Swarm when it is down, with more than 8s left",
     "Moonfire when its DoT is down, with more than 8s left",
-    "Starfire when Clearcasting is up. Wrath doesn't use it up.",
     "Moonfire when a Starfire would not land before the end",
     "Wrath when Eclipse is at 2 charges or fewer and no Wrath is in flight",
-    "Otherwise Starfire"
+    "Otherwise Starfire",
+    "Wrath when Starfire's mana is not there, rather than waiting for it"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -62,13 +62,13 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "No Ahn'Qiraj book ranks, so Starfire stops at rank 6. That costs 13.3 DPS at 180s.",
+    "No Ahn'Qiraj book ranks, so Starfire stops at rank 6. That cost 13.3 DPS at 180s before round 70753.",
     "The Grovekeeper 5-piece Eclipse bonus would add 12.6 DPS over the 2-piece. Swarming Idol is worth 3.3. Both were measured on older gear.",
     "Mana runs out in 300s fights, where a plain weave is 2 DPS ahead.",
-    "Wrath VIII's base damage is ×1.085 the client's value.",
+    "Wrath VIII's base damage is ×1.085 the client's value. Starfire's base damage is ×1.40, the November 2 development notes' value; client 70753 still has the old one.",
     "Unverified: Omen of Clarity's proc chance on spells, and that Eclipse charges come when Wrath lands.",
     "Only one +2% crit elixir. A second one (Owl) would add 15.1 DPS.",
-    "Subtlety 3 (Restoration) is taken for threat. It costs 12.5 / 12.6 / 12.6 DPS at 120s / 180s / 300s against Genesis 5 in its place."
+    "Subtlety 3 (Restoration) is taken for threat. It cost 12.5 / 12.6 / 12.6 DPS at 120s / 180s / 300s against Genesis 5 in its place before round 70753."
   ],
   "notes": "Request from mksettings -spec balance (caster group: Mana Spring, Kings + Wisdom, no Might, own Moonkin Form crit; 36 yd range since 2026-11-02, standards 33: 30 yd spells with Nature's Reach 2/2; Innervate on self). Duration set to 180s, durationVariation 20 as in EncounterLevel60. No edits needed. Night Elf since the 2026-10-27 race re-pick, with the level60 rotation regenerated with elune=1 (tools/rotopt/druid_presets.sh), which was req/races/druid__balance.NightElf.json; the same rotation is 0.0 for a Tauren (Elune's Light is the Night Elf's). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. 2026-11-01: on the launch realms' 2026-10-30 hotfix trees (tools/forever_talents/client/druid.json): the same talents in the new layout (Subtlety moved to row 3), the rotation kept by the knob search, the request's talentsString and rotation edited to match."
 }

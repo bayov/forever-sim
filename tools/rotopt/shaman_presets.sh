@@ -74,7 +74,14 @@ gen() {
 # longer waits for the Stormstrike mark (earthShockHold=0), paired at 20000 iterations on seeds 1 and 1000003:
 # Level 60 +1.5 / +0.3 / +0.9 and +2.1 / +0.9 / +0.8 at 120 / 180 / 300 sec, Imp GW +1.6 / +0.6 / +0.4 and
 # +2.1 / +0.9 / +1.0, both on their new talents (Improved Stormstrike 2 for Tidal Focus 1).
-gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=0,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=1" -level 60
+# Round 70753 (the November 2 notes): the bolt no longer waits for Earth Shock (earthShockBeforeBolt=0):
+# Level 60 +0.9 to +1.3 / +2.8 to +3.1 / +2.6 to +2.8 and Imp GW +0.8 to +2.6 / +2.6 to +4.2 / +2.7 to
+# +3.9 at 120 / 180 / 300 sec, paired at 20000 iterations on two seed sets.
+# Round 70753 exploration: Earth Shock waits up to 1 sec for the Stormstrike mark again (earthShockHold=1),
+# shipped on the user's call though it is under the 1 DPS bar. Paired at 20000 iterations on seeds 1 / 1000003:
+# Level 60 +0.1 / -0.7, +0.2 / -0.7, 0.0 / 0.0 and Imp GW -0.4 / +0.2, +0.1 / +0.5, +0.6 / +1.3 at
+# 120 / 180 / 300 sec, a wash on Level 60 and about +0.4 on Imp GW.
+gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=1,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=0" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.
@@ -85,7 +92,10 @@ gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=
 # Flametongue Totem: +3.0 to +3.5 / +2.3 to +2.9 / +1.6 to +2.3 on two seed sets.
 # Since 2026-10-16 Flame Shock goes ahead of Stormstrike and the bolt after Earth Shock (flameShockFirst=2,
 # earthShockBeforeBolt=1): +1.3 to +1.9 on Water Shield at every length, two seed sets.
-gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,flameShockFirst=2,earthShockBeforeBolt=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
+# Round 70753: Flame Shock no longer goes ahead of Stormstrike (flameShockFirst=0) and Magma Totem goes
+# down 1.5 sec before the pull (prepullFireLead=1.5): +0.5 to +0.8 / 0 to +1.3 / +0.5 to +1.1 at 120 /
+# 180 / 300 sec, paired at 20000 iterations on two seed sets.
+gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,flameShockFirst=0,earthShockBeforeBolt=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5" -level 60
 # On 2026-10-12, on the searched Water Shield build (050031-053030031005112151-052030001), Fire
 # Nova ahead of the shocks is +2.7 here too, and holding Earth Shock while Flame Shock has 1 sec
 # or less left (so the shock cooldown is back when the DoT runs out) +1.0: 762.3 as the mean of
@@ -107,10 +117,12 @@ gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNova
 gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=2,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
 
 # The elemental presets in ui/elemental_shaman/apls, from the shaman_ele template. Mana Spring and
-# Searing Totem, Flame Shock when its DoT is down, Lava Burst on cooldown unless Flame Shock runs
-# out before the cast ends (lavaBurstFlameShockLeft=2), Lightning Bolt, rank 8 once the mana would not
+# Searing Totem, Flame Shock when its DoT is down, Lightning Bolt, a lower rank once the mana would not
 # last the rest of the fight (lightningBoltDownrankManaPerSec, below), and no Chain Lightning (it
-# loses on one target even above 80% mana). The fight opens with Mana Spring at -3.9 sec, a Lightning
+# loses on one target even above 80% mana). The November 2 development notes removed Lava Burst
+# (its line and lavaBurstFlameShockLeft are gone). Chain Lightning under them is 1.45 times a bolt for
+# 2.25 times the mana: on cooldown -80.6 and only under Lightning Mastery -35.6 at the mean of 120 /
+# 180 / 300 sec (3000 iterations, round 70753). The fight opens with Mana Spring at -3.9 sec, a Lightning
 # Bolt at -2.9 (it lands 0.1 sec into the fight) and Searing Totem at -0.9 (prepullBolt=1). Mana Tide
 # Totem goes down at 10% mana on the Mana Tide talents (manaTideMana, below). An Earth
 # Shock ends the fight once a Lightning Bolt (cast plus about 1 sec of flight) would not land in time
@@ -139,6 +151,9 @@ gen_ele() {
 # +0.3 at 240 sec and over). Searched over 120, 150 to 300 sec in 30 sec steps, 360 and 180 ± 20 (8 seeds
 # x 2500 iterations, paired): Level 60 needs 28 or more to hold at 210 and 240 (24: -0.5 / -1.2) and
 # loses ground at 300 above 30; Mana Tide needs 22 or less at 300 (24: +1.0, 26: -1.3).
-ele60="chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,earthShockFinish=1,waterTotemMinTime=20,shield=1,shieldMinMana=50,shieldMinTime=60,prepullShield=1,flameShockMinTime=9"
-gen_ele level60 "$ele60,lightningBoltDownrankManaPerSec=30"
-gen_ele level60_mana_tide "$ele60,manaTideMana=10,lightningBoltDownrankManaPerSec=20"
+ele60="chainLightning=0,prepullBolt=1,earthShockFinish=1,waterTotemMinTime=20,shield=1,shieldMinMana=50,shieldMinTime=60,prepullShield=1,flameShockMinTime=9"
+# Round 70753: Level 60 drops one rank (rank 9) in place of two once the mana runs short
+# (lightningBoltDownrank=1, the cheaper ranks 8 and 9 deal 0.78 of Era's now): 0 / 0 / +5.0 to +5.3 at
+# 120 / 180 / 300 sec, paired at 20000 iterations on two seed sets. Mana Tide keeps rank 8.
+gen_ele level60 "$ele60,lightningBoltDownrank=1,lightningBoltDownrankManaPerSec=30"
+gen_ele level60_mana_tide "$ele60,lightningBoltDownrank=2,manaTideMana=10,lightningBoltDownrankManaPerSec=20"

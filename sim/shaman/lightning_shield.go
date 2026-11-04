@@ -63,6 +63,7 @@ func (shaman *Shaman) registerNewLightningShieldSpell(rank int) {
 		DamageMultiplier: impLightningShieldBonus,
 		ThreatMultiplier: 1,
 		BonusCoefficient: spellCoeff,
+		DownrankLevel:    level,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			outcome := spell.OutcomeAlwaysHit

@@ -88,7 +88,7 @@
               "blessingOfKings": true,
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "30305013002-25053005142010501",
+            "talentsString": "30313113002-0505300551120100321",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
@@ -113,8 +113,8 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "rank": 3,
-                        "spellId": 11578
+                        "spellId": 11578,
+                        "rank": 3
                       }
                     }
                   },
@@ -141,8 +141,10 @@
               ],
               "priorityList": [
                 {
+                  "notes": "Sunder Armor once at the pull. The tanks keep it up after.",
                   "action": {
                     "sequence": {
+                      "name": "sunder",
                       "actions": [
                         {
                           "castSpell": {
@@ -151,19 +153,13 @@
                             }
                           }
                         }
-                      ],
-                      "name": "sunder"
+                      ]
                     }
-                  },
-                  "notes": "Sunder Armor once at the pull. The tanks keep it up after."
+                  }
                 },
                 {
+                  "notes": "Sunder Armor on duty for the raid: 5 stacks from the pull, then refreshed in its last 3 sec, unless it lasts the fight.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 11597
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -177,17 +173,17 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "auraNumStacks": {
-                                        "auraId": {
-                                          "spellId": 11597
-                                        },
                                         "sourceUnit": {
                                           "type": "CurrentTarget"
+                                        },
+                                        "auraId": {
+                                          "spellId": 11597
                                         }
                                       }
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "5"
@@ -197,17 +193,17 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "auraRemainingTime": {
-                                        "auraId": {
-                                          "spellId": 11597
-                                        },
                                         "sourceUnit": {
                                           "type": "CurrentTarget"
+                                        },
+                                        "auraId": {
+                                          "spellId": 11597
                                         }
                                       }
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "3s"
@@ -220,17 +216,17 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "auraRemainingTime": {
-                                  "auraId": {
-                                    "spellId": 11597
-                                  },
                                   "sourceUnit": {
                                     "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 11597
                                   }
                                 }
                               }
@@ -238,17 +234,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Sunder Armor on duty for the raid: 5 stacks from the pull, then refreshed in its last 3 sec, unless it lasts the fight."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 12328
+                        "spellId": 11597
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Without the talent ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -257,10 +253,10 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpLe",
                                     "lhs": {
                                       "remainingTime": {}
                                     },
-                                    "op": "OpLe",
                                     "rhs": {
                                       "const": {
                                         "val": "33s"
@@ -270,14 +266,18 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpGt",
                                     "lhs": {
                                       "spellUsesLostByDelay": {
+                                        "spellId": {
+                                          "spellId": 12328
+                                        },
                                         "delay": {
                                           "math": {
+                                            "op": "OpSub",
                                             "lhs": {
                                               "remainingTime": {}
                                             },
-                                            "op": "OpSub",
                                             "rhs": {
                                               "const": {
                                                 "val": "33s"
@@ -289,13 +289,9 @@
                                           "const": {
                                             "val": "30s"
                                           }
-                                        },
-                                        "spellId": {
-                                          "spellId": 12328
                                         }
                                       }
                                     },
-                                    "op": "OpGt",
                                     "rhs": {
                                       "const": {
                                         "val": "0"
@@ -313,17 +309,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20572
+                        "spellId": 12328
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Other races can ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "or": {
                         "vals": [
@@ -336,19 +332,19 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpEq",
                               "lhs": {
                                 "spellUsesRemaining": {
+                                  "spellId": {
+                                    "spellId": 12328
+                                  },
                                   "minTimeLeft": {
                                     "const": {
                                       "val": "30s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "spellId": 12328
                                   }
                                 }
                               },
-                              "op": "OpEq",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -358,8 +354,12 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 20572
+                                  },
                                   "delay": {
                                     "max": {
                                       "vals": [
@@ -372,10 +372,10 @@
                                         },
                                         {
                                           "math": {
+                                            "op": "OpSub",
                                             "lhs": {
                                               "remainingTime": {}
                                             },
-                                            "op": "OpSub",
                                             "rhs": {
                                               "const": {
                                                 "val": "33s"
@@ -390,13 +390,9 @@
                                     "const": {
                                       "val": "15s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "spellId": 20572
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -406,112 +402,112 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20572
+                      }
                     }
-                  },
-                  "notes": "Other races can ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 12328
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpEq",
+                              "lhs": {
+                                "spellUsesRemaining": {
+                                  "spellId": {
+                                    "spellId": 12328
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "30s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 26297,
+                                    "tag": 2
+                                  },
+                                  "delay": {
+                                    "max": {
+                                      "vals": [
+                                        {
+                                          "spellTimeToReady": {
+                                            "spellId": {
+                                              "spellId": 12328
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "math": {
+                                            "op": "OpSub",
+                                            "lhs": {
+                                              "remainingTime": {}
+                                            },
+                                            "rhs": {
+                                              "const": {
+                                                "val": "33s"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 26297,
                         "tag": 2
                       }
-                    },
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 12328
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellUsesRemaining": {
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "30s"
-                                    }
-                                  },
-                                  "spellId": {
-                                    "spellId": 12328
-                                  }
-                                }
-                              },
-                              "op": "OpEq",
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "delay": {
-                                    "max": {
-                                      "vals": [
-                                        {
-                                          "spellTimeToReady": {
-                                            "spellId": {
-                                              "spellId": 12328
-                                            }
-                                          }
-                                        },
-                                        {
-                                          "math": {
-                                            "lhs": {
-                                              "remainingTime": {}
-                                            },
-                                            "op": "OpSub",
-                                            "rhs": {
-                                              "const": {
-                                                "val": "33s"
-                                              }
-                                            }
-                                          }
-                                        }
-                                      ]
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  },
-                                  "spellId": {
-                                    "spellId": 26297,
-                                    "tag": 2
-                                  }
-                                }
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
                     }
-                  },
-                  "notes": "Other races can ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Elune's Light with the cooldowns, never during Recklessness, whose 100% crit makes its 10% worthless. Other races can ignore the warning on this line.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1259799
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -531,19 +527,19 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpEq",
                                     "lhs": {
                                       "spellUsesRemaining": {
+                                        "spellId": {
+                                          "spellId": 1719
+                                        },
                                         "minTimeLeft": {
                                           "const": {
                                             "val": "0s"
                                           }
-                                        },
-                                        "spellId": {
-                                          "spellId": 1719
                                         }
                                       }
                                     },
-                                    "op": "OpEq",
                                     "rhs": {
                                       "const": {
                                         "val": "0"
@@ -568,19 +564,19 @@
                                                 },
                                                 {
                                                   "cmp": {
+                                                    "op": "OpEq",
                                                     "lhs": {
                                                       "spellUsesRemaining": {
+                                                        "spellId": {
+                                                          "spellId": 12328
+                                                        },
                                                         "minTimeLeft": {
                                                           "const": {
                                                             "val": "30s"
                                                           }
-                                                        },
-                                                        "spellId": {
-                                                          "spellId": 12328
                                                         }
                                                       }
                                                     },
-                                                    "op": "OpEq",
                                                     "rhs": {
                                                       "const": {
                                                         "val": "0"
@@ -596,19 +592,19 @@
                                               "vals": [
                                                 {
                                                   "cmp": {
+                                                    "op": "OpLe",
                                                     "lhs": {
                                                       "spellUsesRemaining": {
+                                                        "spellId": {
+                                                          "spellId": 12328
+                                                        },
                                                         "minTimeLeft": {
                                                           "const": {
                                                             "val": "30s"
                                                           }
-                                                        },
-                                                        "spellId": {
-                                                          "spellId": 12328
                                                         }
                                                       }
                                                     },
-                                                    "op": "OpLe",
                                                     "rhs": {
                                                       "const": {
                                                         "val": "1"
@@ -618,6 +614,7 @@
                                                 },
                                                 {
                                                   "cmp": {
+                                                    "op": "OpLe",
                                                     "lhs": {
                                                       "max": {
                                                         "vals": [
@@ -630,10 +627,10 @@
                                                           },
                                                           {
                                                             "math": {
+                                                              "op": "OpSub",
                                                               "lhs": {
                                                                 "remainingTime": {}
                                                               },
-                                                              "op": "OpSub",
                                                               "rhs": {
                                                                 "const": {
                                                                   "val": "33s"
@@ -644,7 +641,6 @@
                                                         ]
                                                       }
                                                     },
-                                                    "op": "OpLe",
                                                     "rhs": {
                                                       "const": {
                                                         "val": "15s"
@@ -665,26 +661,25 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1259799
+                      }
                     }
-                  },
-                  "notes": "Elune's Light with the cooldowns, never during Recklessness, whose 100% crit makes its 10% worthless. Other races can ignore the warning on this line."
+                  }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "otherId": "OtherActionPotion"
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLe",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpLe",
                               "rhs": {
                                 "const": {
                                   "val": "20s"
@@ -694,14 +689,18 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "otherId": "OtherActionPotion"
+                                  },
                                   "delay": {
                                     "math": {
+                                      "op": "OpSub",
                                       "lhs": {
                                         "remainingTime": {}
                                       },
-                                      "op": "OpSub",
                                       "rhs": {
                                         "const": {
                                           "val": "20s"
@@ -713,13 +712,9 @@
                                     "const": {
                                       "val": "15s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "otherId": "OtherActionPotion"
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -729,25 +724,25 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "otherId": "OtherActionPotion"
+                      }
                     }
                   }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 991018
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLe",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpLe",
                               "rhs": {
                                 "const": {
                                   "val": "30s"
@@ -757,14 +752,18 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "itemId": 991018
+                                  },
                                   "delay": {
                                     "math": {
+                                      "op": "OpSub",
                                       "lhs": {
                                         "remainingTime": {}
                                       },
-                                      "op": "OpSub",
                                       "rhs": {
                                         "const": {
                                           "val": "30s"
@@ -776,13 +775,9 @@
                                     "const": {
                                       "val": "15s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "itemId": 991018
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -792,38 +787,49 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 991018
+                      }
                     }
                   }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 2687
-                      }
-                    },
                     "condition": {
                       "cmp": {
+                        "op": "OpLt",
                         "lhs": {
                           "currentRage": {}
                         },
-                        "op": "OpLt",
                         "rhs": {
                           "const": {
                             "val": "20"
                           }
                         }
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 2687
+                      }
                     }
                   }
                 },
                 {
+                  "notes": "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1719
+                        "spellId": 1399001
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Recklessness with the fight's last Death Wish.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -839,19 +845,19 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpEq",
                                     "lhs": {
                                       "spellUsesRemaining": {
+                                        "spellId": {
+                                          "spellId": 12328
+                                        },
                                         "minTimeLeft": {
                                           "const": {
                                             "val": "30s"
                                           }
-                                        },
-                                        "spellId": {
-                                          "spellId": 12328
                                         }
                                       }
                                     },
-                                    "op": "OpEq",
                                     "rhs": {
                                       "const": {
                                         "val": "0"
@@ -869,32 +875,52 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Recklessness with the fight's last Death Wish."
-                },
-                {
-                  "action": {
-                    "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Sapper and trinkets."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1680
+                        "spellId": 1719
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Sapper and trinkets.",
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  }
+                },
+                {
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
+                          }
+                        ]
                       }
                     },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 23894,
+                        "rank": 4
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "currentRage": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "25"
@@ -909,17 +935,16 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1680
+                      }
                     }
                   }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "rank": 4,
-                        "spellId": 23894
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -930,62 +955,42 @@
                           }
                         ]
                       }
-                    }
-                  }
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "rank": 5,
-                        "spellId": 20662
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "sequenceIsComplete": {
-                              "sequenceName": "sunder"
-                            }
-                          }
-                        ]
+                        "spellId": 20662,
+                        "rank": 5
                       }
                     }
                   }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "rank": 8,
-                        "spellId": 11567,
-                        "tag": 1
-                      }
-                    },
                     "condition": {
                       "cmp": {
+                        "op": "OpGe",
                         "lhs": {
                           "currentRage": {}
                         },
-                        "op": "OpGe",
                         "rhs": {
                           "const": {
-                            "val": "80"
+                            "val": "70"
                           }
                         }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 11567,
+                        "tag": 1,
+                        "rank": 8
                       }
                     }
                   }
                 },
                 {
+                  "notes": "For the procs.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "rank": 3,
-                        "spellId": 7373
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -994,10 +999,10 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "currentRage": {}
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "10"
@@ -1024,17 +1029,17 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 7373,
+                        "rank": 3
+                      }
                     }
-                  },
-                  "notes": "For the procs."
+                  }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 2458
-                      }
-                    },
                     "condition": {
                       "not": {
                         "val": {
@@ -1044,6 +1049,11 @@
                             }
                           }
                         }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 2458
                       }
                     }
                   }
@@ -1083,8 +1093,7 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury",
-      "salvation": true
+      "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
       "judgementOfWisdom": true,

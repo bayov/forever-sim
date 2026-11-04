@@ -10,6 +10,31 @@ Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. T
 
 Update 2026-10-12: every multi-rank talent below that is still in the tree was checked against the client's per-rank curves (TraitDefinitionEffectPoints and CurvePoint, build 1.60.1.70338) and the sim's per-rank values match them, so those are marked [ranks settled by the 70338 trait curves]. Talents marked [not in client 70338] are no longer in the tree; the current tree is in the "Beta client 1.60.1.70338" section.
 
+## Client 1.60.1.70753 and the November 2 development notes (2026-11-03)
+
+Client 70753 bakes the 2026-10-30 hotfix's tree into its own tables (the druid tree below is unchanged) and adds Poised. Blizzard's notes of 2 November (post 9) also raise the cat's and Balance's damage, but none of those values is in the client, Wowhead or a hotfix yet; under standards 37 the sim takes the notes' numbers (gated under Forever, `sim/druid/tuning_70753.go`). The ledger is `orchestration/round_70753/druid.md`.
+
+- **Poised** (passive 1328829, level 32; buff 1328827): at full Energy out of combat, the next Claw, Shred, Rake, Rip, Ferocious Bite, Ravage, Pounce or Cower costs 10 less (aura 107 misc 14 bp -10, one charge, no end). The sim gives one charge at the pull at full Energy (`sim/druid/poised.go`). The Level 60 opener is a Clearcast Ravage, which is free already and uses the charge up.
+- **Notes-only values:** Shred 200% weapon damage (client 155%), Claw 140% (110%), Ravage 435% (350%); Rip, Rake, Ferocious Bite and Pounce base points and attack power part ×1.25 (Bite's damage a point of extra Energy unchanged); Starfire base damage ×1.40; Rend and Tear 3% a point (2%; `tools/forever_talents/notes/druid.json` carries the tooltip).
+- Already in the sim from the hotfix: Ferocious Bite's new rank 1 at 24, Genesis and Naturalist 2% a point, Leader of the Pack and Moonkin Aura all crit and exclusive, Predatory Discipline, Shifting Power at 8 sec, Berserk gone, Heart of the Wild and Furor swapped, Reflection and Subtlety swapped.
+- Bear and healer lines (Lacerate as a talent, Primal Bite, Bear Form threat 115%, Bloom, Swiftmend, Wild Growth) are the tank and healer sims'.
+
+The presets, re-searched on 70753 with the round's race base stats (gear fixed, the generic boss, 180 ± 20 sec, 20,000 iterations, seed 1; seed 1000003 within 0.7). The talent searches (180 sec) and the knob searches (120, 180 and 300 sec together) kept every build's talents and rotation:
+
+| Build | Talents | 120 s | 180 s | 300 s | 180 s before |
+|---|---|---|---|---|---|
+| Feral (Night Elf) | `05002-53200032023012125001-05502` | 1142.4 | 1131.1 | 1116.8 | 942.5 |
+| Feral, Faerie Fire duty | the same | 1137.5 | 1127.8 | 1114.2 | 939.3 |
+| Balance (Night Elf) | `5232220115501351--505003` | 954.1 | 951.5 | 942.1 | 892.3 |
+| Balance, Faerie Fire duty | the same | 914.8 | 914.8 | 908.2 | 858.6 |
+| Balance Wrath (Night Elf) | `5502220115501351--505003` | 858.3 | 861.5 | 859.3 | 853.0 |
+| Balance Wrath, Faerie Fire duty | the same | 823.9 | 829.0 | 829.4 | 820.8 |
+
+- Feral gains 20% from the notes' cat values. Balance gains 6.6% from Starfire. The Wrath builds gain 1% (Starfire only on Clearcasting).
+- Balance's talent search moved two Moonglow points into Genesis: +4.0 at 180 sec, but out of mana at 300 sec (844.0 against 941.9). Its best rotation then scores 936.0 over the three lengths against the current 948.9, so Moonglow stays.
+- Races (180 sec, seeds 1 and 1000003): Night Elf is best for every build and is the best Alliance race (Feral 1131.1, Balance 951.0, Wrath 861.6). The best Horde race is Windshaper Skyborne (Feral 1113.2, Balance 949.3, Wrath 857.1), ahead of the Tauren (1105.4, 940.1, 852.0). High Order Skyborne equals Windshaper.
+- A wider rotation exploration the same day added three Feral lines: EZ-Thro Dark Bomb only right after a main hand swing at 60 Energy or less (its 1 sec cast restarts the swing timer), Rake at 5 combo points too, and Shadowmeld Ravage on Clearcasting at 5 combo points too. That is +8.2 / +8.0 / +7.6 at 120 / 180 / 300 sec (1139.0 at 180 sec), and the Faerie Fire duty build now takes the bomb as well (1134.1). For Balance it added Wrath when Starfire's mana is not there, rather than waiting for the mana, and dropped the Clearcasting Starfire line: +0.9 / +0.7 / +2.0 (952.2 at 180 sec; duty 915.5). No talent variant gained.
+
 ## Launch-realm hotfix to 1.60.1.70707 (2026-10-30)
 
 The launch realms' hotfix of 30 October reworked the druid tree on build 70707 without a new client (wago.tools hotfixes, product wowf, region 91, push 113283 and its neighbours, read through `tools/sources/hotfixes.py` into the cached `1.60.1.70707+hf` tables; [foreverchanges.pro](https://foreverchanges.pro/talents/druid) shows the same). `tools/forever_talents/client/druid.json` is that tree, and the sim follows it since 2026-11-01. It supersedes the sections below wherever they disagree; every druid talent string changed.

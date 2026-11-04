@@ -48,8 +48,18 @@ var classicBearPaw = core.Weapon{
 }
 
 // bearFormThreatMultiplier is Bear Form (Passive2) 21178: A_MOD_THREAT on every school, 50 in the
-// hotfixed client.
+// hotfixed client. It is the whole form bonus: the sim's Feral Instinct (Swipe damage) adds no threat.
 const bearFormThreatMultiplier = 1.5
+
+// bearFormThreatMultiplierNov2 is the November 2 development notes' Bear and Dire Bear Form threat
+// bonus, 115% (was 50%), "to compensate for Blessing of Salvation being removed"
+// (orchestration/audit/ref/client_update/sources/devnotes_post9_2026-11-02.txt). Clients 70753 and
+// 70755 unchanged (21178 bp 50); standards 37 models the notes' value under Forever.
+const bearFormThreatMultiplierNov2 = 2.15
+
+func (druid *Druid) formThreatMultiplier() float64 {
+	return core.TernaryFloat64(druid.Env.IsForever(), bearFormThreatMultiplierNov2, bearFormThreatMultiplier)
+}
 
 // bearFormValues are a bear form's passive (Bear Form (Passive) 1178 from level 10, Dire Bear Form
 // (Passive) 9635 from 40): armor from items up by the percent, health and attack power, each a base
@@ -112,6 +122,7 @@ func (druid *Druid) registerBearFormSpell() {
 		hotwDep = druid.NewDynamicMultiplyStat(stats.Stamina, 1+0.04*float64(druid.Talents.HeartOfTheWild))
 	}
 
+	threatMultiplier := druid.formThreatMultiplier()
 	druid.BearFormAura = druid.RegisterAura(core.Aura{
 		Label:      "Bear Form",
 		ActionID:   actionID,
@@ -124,7 +135,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.form = Bear
 			druid.SetCurrentPowerBar(core.RageBar)
 			druid.AutoAttacks.SetMH(druid.GetBearWeapon())
-			druid.PseudoStats.ThreatMultiplier *= bearFormThreatMultiplier
+			druid.PseudoStats.ThreatMultiplier *= threatMultiplier
 			druid.SetShapeshift(aura)
 
 			druid.ApplyDynamicEquipScaling(sim, stats.Armor, armorMultiplier)
@@ -149,7 +160,7 @@ func (druid *Druid) registerBearFormSpell() {
 			druid.form = Humanoid
 			druid.SetCurrentPowerBar(core.ManaBar)
 			druid.AutoAttacks.SetMH(druid.humanoidWeapon())
-			druid.PseudoStats.ThreatMultiplier /= bearFormThreatMultiplier
+			druid.PseudoStats.ThreatMultiplier /= threatMultiplier
 			druid.SetShapeshift(nil)
 
 			druid.RemoveDynamicEquipScaling(sim, stats.Armor, armorMultiplier)

@@ -8,8 +8,8 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-// Forever's traps can be set in combat and have a 30 sec cooldown (Classic 15), Fire traps sharing one
-// and Frost traps another. The trap itself is Classic's: 690 over 15 sec at rank 5, a tick every 3 sec
+// Forever's traps can be set in combat and have a 30 sec cooldown (Classic 15), one for every trap
+// since client 1.60.1.70753 (hunter.go). The trap itself is Classic's: 690 over 15 sec at rank 5, a tick every 3 sec
 // (client 14301, build 1.60.1.70338).
 //
 // Report assumption hunter_trap_ap: the 15 October dev notes say "The Hunter's Fire traps now

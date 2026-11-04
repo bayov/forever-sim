@@ -6,16 +6,21 @@
 #                                       build outside [ids] that differs stops it (orchestration/dash_raw_store.md)
 #   pipeline.sh plan  <ids...>          count every step's sims and check each script can enumerate its work (seconds)
 #   pipeline.sh run   <ids...>          add the ids' duty and encounter variants, clean them, plan, then the sim
-#                                       steps; prints a timestamp per step
+#                                       steps; prints a timestamp per step, and at the end where the time went (timing.py)
 #   pipeline.sh resume <ids...>         run without the clean, to finish a run that stopped (every step skips done work)
 #   pipeline.sh clean <ids...>          drop these builds from every raw output, so every step re-sims them
+#   pipeline.sh probe [ids...]          which stale builds really moved (probe.py check): each one's sims at a tenth of
+#                                       their iterations against the probe in its raw pack; prints what to re-sim, and
+#                                       publish records the ones it cleared (default ids: what stale.mjs lists)
 #   pipeline.sh publish [ids...]        build_data.py, the sample fights of [ids] and their variants (events.py),
-#                                       every dataset into ui/dps_report/data, and provenance and raw packs for them
+#                                       every dataset into ui/dps_report/data, and provenance and raw packs for them;
+#                                       after a probe, it checks the audit first and records the cleared builds
 #   pipeline.sh shard <k> <n> <ids...>  the ids of shard k of n (0-based), balanced by estimated cost
 #   pipeline.sh pack  <tgz> <ids...>    these builds' raw outputs, to merge on another machine (a shard's hand-back)
 #   pipeline.sh unpack <tgz>            merge a pack into $DASH_DIR (replaces those builds' files and result lines)
 #
-# Re-sim a few builds: hydrate, run <ids>, publish <ids>. Add a preset: write req/<id>.*, then the same. Remove one:
+# After a code or data change (a game update), stale.mjs says what may have moved: hydrate, probe, run <what probe
+# names>, publish <the same ids>. Re-sim a few builds: hydrate, run <ids>, publish <ids>. Add a preset: write req/<id>.*, then the same. Remove one:
 # delete req/<id>.*, hydrate, publish. A text or page-data change: hydrate, publish. Everything stale (a shared sim
 # input changed): run, publish, with no hydrate. Then commit ui/dps_report/data, provenance.json, raw/ and changes/
 # together.
@@ -48,7 +53,7 @@ hydrate)
 	if [ "$PWD" != "$T" ]; then  # a separate $DASH_DIR reads the inputs from this checkout
 		for f in req forever_tt_cache fortt_ids.json talent_ids.json asm_apls bin; do [ -e "$f" ] || ln -s "$T/$f" "$f"; done
 	fi
-	rm -rf out names weights mana rv asm abl data
+	rm -rf out names weights mana rv asm abl probe probe_check data
 	python3 $T/rawstore.py unpack
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
 	python3 $T/rawstore.py check "$@"
@@ -56,8 +61,13 @@ hydrate)
 clean)
 	python3 $T/rawstore.py clean "$@"
 	;;
+probe)
+	python3 $T/probe.py check "$@"
+	;;
 publish)
 	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi  # what run <ids> re-simmed
+	python3 $T/probe.py audit "$@"  # after a probe check: its audit builds must come out unchanged (exits 1 if not)
+	PASSED=$(python3 $T/probe.py passed "$@")  # the builds it cleared, recorded below without sims
 	python3 $T/rawstore.py prune  # removed presets: their outputs, packs and sample fights
 	rm -rf data
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
@@ -69,6 +79,8 @@ publish)
 	fi
 	python3 $T/rawstore.py copy
 	if [ $# -gt 0 ]; then (cd "$R" && node tools/dps_report/stale.mjs --record "$@" --iterations 20000 ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
+	if [ -n "$PASSED" ]; then (cd "$R" && node tools/dps_report/stale.mjs --record $PASSED --by probe ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
+	rm -f probe_audit.json
 	# only the re-simmed builds' packs: the others are already the outputs they were made from
 	if [ $# -gt 0 ]; then python3 $T/rawstore.py pack "$@"; fi
 	python3 $T/changes.py build  # the Changes tab: the live update against the report's new data
@@ -107,19 +119,38 @@ EOF
 		MANA_FORCE=
 		ABL=$(python3 -c "import json,os,sys; d=json.load(open('abl/ablate.json'))['builds'] if os.path.exists('abl/ablate.json') else {}; print(' '.join(b for b in sys.argv[1:] if b not in d))" $BASE)
 	fi
-	echo "== run_build $(date -u +%H:%M:%S)"
+	# what every sim costs: the binaries run through timing_cli.py, which logs each call's CPU and wall time to
+	# timing/<start>.jsonl (with a line per step below); timing.py sums it up at the end
+	REAL_BIN=$(cd "${DASH_BIN:-$DASH_DIR/bin}" && pwd)
+	mkdir -p timing/bin
+	for b in wowsimcli wowsimcli_r wowsimcli_assume dashstats; do
+		rm -f timing/bin/$b
+		if [ -e "$REAL_BIN/$b" ]; then ln -s "$T/timing_cli.py" timing/bin/$b; fi
+	done
+	export TIMING_REAL_BIN=$REAL_BIN DASH_BIN=$DASH_DIR/timing/bin TIMING_LOG=$DASH_DIR/timing/$(date -u +%Y%m%dT%H%M%SZ).jsonl
+	python3 -c 'import json, os, sys; print(json.dumps({"start": sys.argv[1], "P": int(sys.argv[2]), "cores": os.cpu_count(), "ids": sys.argv[3].split(), "base": sys.argv[4].split()}))' \
+		"$cmd" "$P" "$ALL" "$BASE" >"$TIMING_LOG"
+	mark() {  # a step starts: its time on screen and in the log, and the step the log's sims count under
+		echo "== $1 $(date -u +%H:%M:%S)"
+		export TIMING_STEP=$1
+		echo "{\"mark\": \"$1\", \"t\": $(date +%s.%N)}" >>"$TIMING_LOG"
+	}
+	mark run_build
 	[ -n "$RB" ] && echo $RB | tr ' ' '\n' | xargs -P$P -n1 python3 $T/run_build.py
-	echo "== weights $(date -u +%H:%M:%S)"
+	mark weights
 	echo $BASE | tr ' ' '\n' | xargs -P$P -n1 python3 $T/weights.py
-	echo "== races $(date -u +%H:%M:%S)"
+	mark races
 	python3 $T/run_races.py $BASE | tail -3
-	echo "== mana $(date -u +%H:%M:%S)"
+	mark mana
 	[ -n "$MANA" ] && PAR=$P python3 $T/mana_curves.py $MANA_FORCE $MANA | tail -3
-	echo "== ablate $(date -u +%H:%M:%S)"
+	mark ablate
 	[ -n "$ABL" ] && ABL_MERGE=1 PAR=$P python3 $T/ablate.py $ABL | tail -1
-	echo "== assumptions $(date -u +%H:%M:%S)"
+	mark assumptions
 	PAR=$P python3 $T/run_assumptions.py $BASE | tail -2
-	echo "== done $(date -u +%H:%M:%S)"
+	mark probe  # these sims at a tenth of their iterations, kept in the packs for the next probe check
+	PROBE_P=$P python3 $T/probe.py run $ALL
+	mark done
+	python3 $T/timing.py "$TIMING_LOG"
 	echo "next: pipeline.sh publish $*"
 	;;
 shard)
@@ -141,7 +172,7 @@ pack)
 	python3 - "$tmp" "$@" <<'EOF'
 import json, os, shutil, sys
 tmp, ids = sys.argv[1], set(sys.argv[2:])
-for d, ext in (('out', '.json'), ('names', '.tsv'), ('weights', '.json'), ('mana', '.json')):
+for d, ext in (('out', '.json'), ('names', '.tsv'), ('weights', '.json'), ('mana', '.json'), ('probe', '.json')):
     for i in ids:
         if os.path.exists(f'{d}/{i}{ext}'):
             os.makedirs(f'{tmp}/{d}', exist_ok=True); shutil.copy(f'{d}/{i}{ext}', f'{tmp}/{d}/')
@@ -161,7 +192,7 @@ unpack)
 import glob, json, os, shutil, sys
 tmp = sys.argv[1]
 ids = {os.path.basename(p)[:-5] for p in glob.glob(f'{tmp}/out/*.json')}
-for d in ('out', 'names', 'weights', 'mana'):
+for d in ('out', 'names', 'weights', 'mana', 'probe'):
     for p in glob.glob(f'{tmp}/{d}/*'):
         os.makedirs(d, exist_ok=True); shutil.copy(p, d)
 for f in ('rv/results.jsonl', 'asm/results.jsonl'):

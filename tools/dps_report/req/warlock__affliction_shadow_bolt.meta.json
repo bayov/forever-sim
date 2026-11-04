@@ -1,0 +1,75 @@
+{
+  "id": "warlock__affliction_shadow_bolt",
+  "class": "Warlock",
+  "spec": "Affliction",
+  "build": "Affliction Shadow Bolt",
+  "isDefault": false,
+  "pr": 104,
+  "race": "Orc",
+  "talents": "2550102003520005--0550305003",
+  "treeNames": [
+    "Affliction",
+    "Demonology",
+    "Destruction"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_affliction_shadow_bolt",
+  "published": {
+    "dps": 1015.6,
+    "source": "verify.py on this request after round 70753 (the 2026-11-02 development notes: Wrack, Shadow and Flame, demon health; A2's race base stats; Affliction's Wrack build with the Imp sacrificed), 20,000 iterations, seed 1, 180 ± 20 s"
+  },
+  "verify": {
+    "dps": 1015.6,
+    "stderr": 0.39,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, round 70753"
+  },
+  "summary": "Shadow Bolt Affliction with Nightfall, plus Improved Shadow Bolt and Ruin from Destruction (the Affliction preset until round 70753).",
+  "keyTalents": [
+    "Shadow Mastery",
+    "Pandemic",
+    "Malevolence",
+    "Nightfall",
+    "Improved Shadow Bolt",
+    "Ruin",
+    "Agonizing Flames"
+  ],
+  "rotation": [
+    "Pre-pull: Shadow Bolt at -2.5s (lands just after the pull)",
+    "Racials on cooldown, except Troll Berserking",
+    "Life Tap below 5% mana or when the filler costs more than the mana left",
+    "Bane of Doom with more than 60s left, so it lands before the end",
+    "Bane of Agony while Bane of Doom is on cooldown or would not land",
+    "Corruption when it is down (more than 9s left)",
+    "Immolate when it is down or ends within its cast time, with more than 15s left",
+    "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
+    "Troll Berserking right before a Shadow Bolt, so the haste goes on cast spells, not instants",
+    "Shadow Bolt as the filler (instant on Nightfall procs)"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of Firepower",
+    "Elixir of Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Cerebral Cortex Compound",
+    "Lobster Stew",
+    "Wizard Oil",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Major Spellstone (weapon imbue)"
+  ],
+  "caveats": [
+    "The Wrack build with the Imp sacrificed (warlock__affliction, the Affliction preset since round 70753) is 17 DPS ahead at 180 s. Drain fillers were 124 to 349 behind.",
+    "How much of the warlock's stats a demon gets, and Succubus melee, come from pet sheets at levels 20 and 30, not 60.",
+    "Bane of Doom's coefficient is 4.0 (Era has 1.0). At 2.0, Shadow Bolt builds would lose about 4%. At 1.0, about 6%.",
+    "No Ahn'Qiraj book ranks, so Shadow Bolt stops at rank IX, Immolate at VII and Corruption at VI. The books would add 7 to 13 DPS.",
+    "Only the Demonheart Raiment 2-piece is active. The 5-piece added about 8 to 13 DPS on an older gear set.",
+    "Soul shards and Life Tap's health cost aren't tracked.",
+    "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
+  ],
+  "notes": "The Affliction request until round 70753 (was warlock__affliction), renamed when the Wrack build took the Affliction preset; made with mksettings -spec affliction_shadow_bolt -gear level60_phase1_synthetic -apl level60_affliction_shadow_bolt -talents 2550102003520005--0550305003 -race Orc -duration 180 (the old -spec affliction setup). Request straight from mksettings -spec affliction -gear level60_phase1_synthetic -apl level60_affliction -race Orc -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 30 (standards 33 since 2026-11-02, the longest range its spells reach; 25 from 2026-11-01, 5 before) and channelClipDelayMs 50, as the UI preset does. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Orc since 2026-11-02 (fairness-20261101-2), was Human: at 30 yd the Orc leads by 1.0 at 180 sec (20,000 iterations, seed 1, Orc 1013.6 against 1012.7); the Human stays the best Alliance race."
+}

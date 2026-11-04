@@ -6,7 +6,9 @@
 
 import * as THREE from 'three';
 import { newTextures } from './wow/files';
-import { particleOptions } from './wow/particles';
+import { drawOrder, fillBatches, particleOptions } from './wow/particles';
+import { Crowd, SHADOW_LAYER } from './wow/crowd';
+import { poseClient } from './wow/poseClient';
 import type { Model } from './wow/model';
 
 export type CameraState = { yaw: number; pitch: number; distance: number };
@@ -68,6 +70,12 @@ export class Room {
 	// would make the browser lay the page out again after the HUD's changes.
 	private cssSize: [number, number] = [1, 1];
 	private graphics?: Graphics;
+	// The units drawn together (the raid test's raiders).
+	readonly crowd: Crowd;
+	crowdTotems = false;
+	// onPass hears each pass of drawing the scene start, for the performance recorder to time it
+	// on the GPU: the shadows, then the solid things, then the see-through things and effects.
+	onPass?: (pass: 'upload' | 'shadow' | 'opaque' | 'transparent' | 'boss' | 'gear' | 'effects' | 'particles' | 'ribbons') => void;
 
 	constructor(
 		readonly canvas: HTMLCanvasElement,
@@ -99,6 +107,59 @@ export class Room {
 		sun.shadow.bias = -0.0005;
 		sun.shadow.normalBias = 0.04;
 		this.scene.add(sun, sun.target);
+		this.crowd = new Crowd(this.scene, sun, () => this.renderer.shadowMap.enabled);
+		// The renderer has placed the scene's objects for the frame by now, and hasn't drawn the
+		// shadows yet.
+		this.scene.onBeforeRender = (_r, _s, camera) => {
+			// The crowd's shadow batches draw only in the shadows: the camera sees their layer from
+			// when the shadows start (below) to when the picture starts (the solid marker).
+			camera.layers.disable(SHADOW_LAYER);
+			// The crowd's poses for the next frame go to the pose worker now, while this one draws.
+			poseClient.flush();
+			this.crowd.prepare(camera);
+			fillBatches();
+			this.onPass?.('upload');
+		};
+		// The shadows start when the renderer switches to the shadow map, which we hear just before.
+		// A GPU timer started there (or once the shadow map was bound) lost the whole WebGL context
+		// in headless Chrome on WSL (Mesa's D3D12 driver), so we split the uploads from the shadows
+		// only on Chrome's own Direct3D 11.
+		const gl = this.renderer.getContext();
+		const info = gl.getExtension('WEBGL_debug_renderer_info');
+		const splitShadows = /Direct3D11/.test(String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : '')) && !location.search.includes('noshadowtimer');
+		const setRenderTarget = this.renderer.setRenderTarget.bind(this.renderer);
+		this.renderer.setRenderTarget = (target, face, level) => {
+			if (target && target === this.sun.shadow.map) {
+				this.camera.layers.enable(SHADOW_LAYER);
+				if (splitShadows) this.onPass?.('shadow');
+			}
+			setRenderTarget(target, face, level);
+		};
+		// Markers that draw nothing tell when the solid things start, when the see-through things
+		// start (first in their lists), and when each kind of see-through thing starts (just before
+		// its render order, drawOrder).
+		const markers = [
+			['opaque', -1e9],
+			['transparent', -1e9],
+			['boss', drawOrder.boss - 0.1],
+			['gear', drawOrder.gear - 0.5],
+			['effects', drawOrder.effects - 0.5],
+			['particles', drawOrder.particles - 0.5],
+			['ribbons', drawOrder.ribbons - 0.5],
+		] as const;
+		for (const [pass, order] of markers) {
+			const g = new THREE.BufferGeometry();
+			g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
+			g.setDrawRange(0, 0);
+			const marker = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ transparent: pass !== 'opaque', depthWrite: false }));
+			marker.frustumCulled = false;
+			marker.renderOrder = order;
+			marker.onBeforeRender = () => {
+				this.camera.layers.disable(SHADOW_LAYER);
+				this.onPass?.(pass);
+			};
+			this.scene.add(marker);
+		}
 
 		const ground = new THREE.Mesh(new THREE.CircleGeometry(120, 64), new THREE.MeshStandardMaterial({ color: 0x5f7d3f, roughness: 1 }));
 		ground.rotation.x = -Math.PI / 2;
@@ -197,6 +258,9 @@ export class Room {
 					pole.visible = false;
 					group.add(m.root);
 					m.enableParticles(this.scene);
+					// In the raid test the totems draw in the crowd too, since their few parts each took a
+					// draw call and another for the shadows.
+					if (this.crowdTotems) this.crowd.add([m]);
 					// It rises out of the ground (Birth), then stands.
 					if (m.has(127)) m.play(127, { loop: false, fade: 0, restart: true });
 					this.totemModels.set(t.element, m);
@@ -253,7 +317,9 @@ export class Room {
 	// model in the scene once (with their particles), compile what they need, and send every texture
 	// we decoded. We keep the models (out of the scene), because disposing them would let the
 	// renderer throw away the shaders we just made.
-	async warmUp(models: Model[]) {
+	//
+	// With `crowd` the effects also get ready to draw in the crowd (the raid test's casters).
+	async warmUp(models: Model[], crowd = false) {
 		const group = new THREE.Group();
 		group.position.copy(this.camera.position);
 		particleOptions.drawEmpty = true;
@@ -263,11 +329,16 @@ export class Room {
 			m.update(0);
 		}
 		this.scene.add(group);
+		const unwarm = crowd ? this.crowd.warm(models) : undefined;
 		try {
+			// The emitters join their batches once their textures are in (particles.ts), a moment
+			// after they're made.
+			await new Promise(r => setTimeout(r, 0));
 			await this.renderer.compileAsync(this.scene, this.camera);
 			for (const t of newTextures.list) this.renderer.initTexture(t);
 		} finally {
 			particleOptions.drawEmpty = false;
+			unwarm?.();
 			this.scene.remove(group);
 			newTextures.keep = false;
 			newTextures.list = [];

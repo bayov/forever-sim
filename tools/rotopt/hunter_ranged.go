@@ -30,7 +30,7 @@ var (
 	hunterImmolationTrap   = spellID(14305)
 	nightElfElunesLight    = spellID(1259799)
 	hunterHuntersMark      = spellID(14325) // rank 4, sim/hunter/hunters_mark.go
-	// The High Order's Read Leyline (sim/core/racials_forever.go): a 2 sec cast on the GCD, 2 min
+	// The High Order's Read Leyline (sim/core/racials_forever.go): a 0.5 sec cast on the GCD, 2 min
 	// cooldown, half again the Spirit part of the mana regen for 15 sec.
 	hunterReadLeyline = spellID(1259705)
 	// The ranged sets' synthetic on-use trinket (sim/hunter/forever_synthetic_trinkets.go).

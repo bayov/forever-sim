@@ -8,6 +8,28 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents (now settled for every talent in the 70338 tree, see Trait curves below): the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## The November 2 development notes and client 1.60.1.70753 (2026-11-03)
+
+Blizzard's development notes of 2 November (post 9, `orchestration/audit/ref/client_update/sources/devnotes_post9_2026-11-02.txt`) go with client 1.60.1.70753, which writes the October 30 hotfix into the client tables. Every paladin line the client carries was already in the sim from that hotfix (the paladin trees are unchanged, so no talent string moved). Two Retribution lines are in the notes only; client 70753 and the server hotfixes (none for 70753 on wago.tools as of 2026-11-03) still have the old values. The sim takes the notes' numbers under Forever (standards 37, the user's ruling of 2026-11-03):
+
+- **Vengeance** stacks up to 5 times (was 3): up to 15% more Physical and Holy damage at 3/3. Client 20050 still has CumulativeAura 3.
+- **Two-Handed Weapon Specialization** raises Holy and Physical damage by 2 / 4 / 6% with a two-hander (was Physical, plus the Holy seals, judgements and Holy Strike that roll as melee). Consecration, Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock now get it too. Client 20111 effect 0 is still aura 79 on the Physical school.
+
+The rest of the paladin section: Salvation, Mass Salvation, Revoke and Blessing of Light are gone (Salvation is threat only; the shared raid still sets it until the orchestrator's cleanup), Judgement of Fury lasts 3 sec (Seal of Fury isn't simmed), Voice of Truth is a level 20 trainer spell (immunity to Silence and Interrupt, not simmed), and the tank and healing lines belong to those specs. Races: the base stats fix gives every race Classic's offsets (Undead Ret -2.1).
+
+Round 70753 re-search (`orchestration/round_70753/paladin.md`): talent searches at 180 sec kept every build's talents, and knob searches over 120, 180 and 300 sec kept every rotation except vs Undead, which now puts Consecration first and Hammer of Wrath at the top (+7.0 at 180 sec). Undead, 20,000 iterations, seed 1, 120 / 180 / 300 sec:
+
+| Build | Before | After |
+|---|---|---|
+| Ret twist | 1043.4 / 1039.3 / 1028.9 | 1095.5 / 1092.1 / 1080.3 |
+| Ret sub-Holy | 1042.3 / 1038.1 / 1031.7 | 1093.3 / 1091.2 / 1085.8 |
+| Ret Shock | 983.0 / 974.9 / 968.5 | 1037.5 / 1030.2 / 1025.5 |
+| Ret sub-Holy vs Undead | 1153.9 / 1151.4 / 1145.1 | 1222.9 / 1221.4 / 1214.0 |
+
+Undead is still the best race on each build; Human is 2.3 to 5.1 behind at 180 sec (both seed sets), Dwarf 8.4 to 12.2 (on its own hit re-spend).
+
+Exploration after the round (2026-11-03): talent searches from five other starting builds found nothing new. A 20 Holy / 31 Retribution start climbed back to Ret sub-Holy, and Ret Shock with Champion of the Light 5 for Consecrated Ground took Consecrated Ground back (the Shock talents). Twist with Swift Judgement (4 / 16 / 31, also reached from 0 / 20 / 31) ends at 1028.7, 64 behind twist and short of mana. Consecrated Ground with neither Holy Shock nor Unsealed Wrath (22 / 0 / 29) reaches 942.0. One rotation change shipped: Holy Strike ahead of Judgement and the seal lines on twist and sub-Holy (+1.2 and +1.4 at 180 sec, positive at 120 / 180 / 300 sec on both seed sets; the twist and sub-Holy numbers above include it). It loses on the Crusader duty and gains under 1 at 180 sec on the Wisdom duty, Ret Shock and vs Undead, which keep it off.
+
 ## The launch realms' October 30 hotfix (1.60.1.70707+hf, 2026-11-01)
 
 The launch realms reworked the whole paladin tree with a server hotfix to the October 30 build. Client 70707 still has the old tree; the realms send the new rows as hotfixes. We read them from wago.tools' hotfix log (https://wago.tools/hotfixes?product=wowf, region 91, build 70707; the paladin push is 113139) through `tools/sources/hotfixes.py`, as the cached pseudo-version `1.60.1.70707+hf`, and the trees in `tools/forever_talents/client/paladin.json` come from it. foreverchanges.pro's calculator (https://foreverchanges.pro/talents/paladin) has the same trees. The per-talent listing under Talents below is older than this hotfix; the client file is the current tree. Every paladin talent string reads differently.

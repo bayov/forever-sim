@@ -1,7 +1,7 @@
 {
- "updated": "2026-11-02",
- "note": "2026-10-27: dev notes post 7 and 8 racial passes in the sim (post 1's 10-26 date is an edit stamp); client 70630 Spellstone Shadow only; Missile Barrage no missile proc (user ruling). Standards 29: race sweeps use each race's own rotation and gear (tools/dps_report/req/races/, 34 files: 14 Dwarf hit re-spends, caster and rogue race rotations); presets re-picked their race twice (after post 7 and after post 8). Ret Shock rotation re-tuned (883.2 at 180 s). Open: Amplify Curse needs an in-game test (TASKS.md); Arcane may not want Missile Barrage 2/2 any more; ties within noise kept their race (Fire, Frostfire, Affliction, Balance Wrath). 2026-10-28: low-value racial audit: race rotations for High Order Frostfire (lanceHold) and Arcane (prepullAt), Troll Elemental (berserkingAfterMastery), Night Elf Fury (Elune's Light at the pull), Gnome warlocks (eureka); Fire's haste and Shadow's Berserking stay low by mechanics (GCD floor, unhasted channels). No race re-pick. 2026-10-28: launch-realm hotfix taken (user ruling): Trueshot Aura 15/22/30/40/50, Aspect of the Hawk 15/22/30/38/47/55 (rank 6 cast); hunters -0.1% to -2.2%. Server hotfixes now rank as server data (docs/data_sources.md). 2026-10-28: standards 31 (rotation lines state their intent, checked at 120/180/300 s and 180±20): audit orchestration/apl_intent_audit.md (9 fragile lines, all resolved); 22 presets re-simmed, 36 re-recorded (shared tools/rotopt only). 2026-11-02: launch-realm hotfix of 2026-10-30 (paladin and druid talent reworks, hunter tree remap, Frost mage values, Arcane Blast 12%/+100%/18 s, Moonkin Aura and Leader of the Pack 3% all crit not stacking, Kang's Rend, Improved Drains off Wrack) and the two-hand Rage crit fix: 30 builds re-simmed (paladin, druid, Arcane, Frost, Frostfire, two-hand warriors), 47 re-recorded (report hashes unchanged since their data). Frost mage now High Order. 2026-11-02: user rulings: the deep Holy Shock paladin build is dropped (paladin__level_60_shock, its Crusader and Wisdom duty runs and paladin__level_60_shock_undead; Ret Shock stays), and Frostfire is the mage default (sim UI and the report's isDefault). Partial regeneration with no sims; 73 builds, all re-recorded at 231d549. 2026-11-02 (later): rotation re-searches for hunter (MM/LW Aimed Shot above 40% mana), warrior (2H Fury thresholds, Arms Sunder duty Slam first, DW Fury no pull potion) and rogue (builders whenever affordable, Seal Fate Daggers' own rotation); Demonology's own set (standards 34); caster distances by spell range and Beast Mastery from 12 yd (standards 33, orchestration/caster_distance.md); Balance Wrath Night Elf. Report why notes cover every spec.",
- "foreverClientBuild": "1.60.1.70707 + launch-realm hotfix",
+ "updated": "2026-11-03",
+ "note": "2026-10-27: dev notes post 7 and 8 racial passes in the sim (post 1's 10-26 date is an edit stamp); client 70630 Spellstone Shadow only; Missile Barrage no missile proc (user ruling). Standards 29: race sweeps use each race's own rotation and gear (tools/dps_report/req/races/, 34 files: 14 Dwarf hit re-spends, caster and rogue race rotations); presets re-picked their race twice (after post 7 and after post 8). Ret Shock rotation re-tuned (883.2 at 180 s). Open: Amplify Curse needs an in-game test (TASKS.md); Arcane may not want Missile Barrage 2/2 any more; ties within noise kept their race (Fire, Frostfire, Affliction, Balance Wrath). 2026-10-28: low-value racial audit: race rotations for High Order Frostfire (lanceHold) and Arcane (prepullAt), Troll Elemental (berserkingAfterMastery), Night Elf Fury (Elune's Light at the pull), Gnome warlocks (eureka); Fire's haste and Shadow's Berserking stay low by mechanics (GCD floor, unhasted channels). No race re-pick. 2026-10-28: launch-realm hotfix taken (user ruling): Trueshot Aura 15/22/30/40/50, Aspect of the Hawk 15/22/30/38/47/55 (rank 6 cast); hunters -0.1% to -2.2%. Server hotfixes now rank as server data (docs/data_sources.md). 2026-10-28: standards 31 (rotation lines state their intent, checked at 120/180/300 s and 180±20): audit orchestration/apl_intent_audit.md (9 fragile lines, all resolved); 22 presets re-simmed, 36 re-recorded (shared tools/rotopt only). 2026-11-02: launch-realm hotfix of 2026-10-30 (paladin and druid talent reworks, hunter tree remap, Frost mage values, Arcane Blast 12%/+100%/18 s, Moonkin Aura and Leader of the Pack 3% all crit not stacking, Kang's Rend, Improved Drains off Wrack) and the two-hand Rage crit fix: 30 builds re-simmed (paladin, druid, Arcane, Frost, Frostfire, two-hand warriors), 47 re-recorded (report hashes unchanged since their data). Frost mage now High Order. 2026-11-02: user rulings: the deep Holy Shock paladin build is dropped (paladin__level_60_shock, its Crusader and Wisdom duty runs and paladin__level_60_shock_undead; Ret Shock stays), and Frostfire is the mage default (sim UI and the report's isDefault). Partial regeneration with no sims; 73 builds, all re-recorded at 231d549. 2026-11-02 (later): rotation re-searches for hunter (MM/LW Aimed Shot above 40% mana), warrior (2H Fury thresholds, Arms Sunder duty Slam first, DW Fury no pull potion) and rogue (builders whenever affordable, Seal Fate Daggers' own rotation); Demonology's own set (standards 34); caster distances by spell range and Beast Mastery from 12 yd (standards 33, orchestration/caster_distance.md); Balance Wrath Night Elf. Report why notes cover every spec. 2026-11-03: round 70753 (Nov 2 development notes, client 70753; 70755 has the same tables): full re-sim of all 68 builds (race base stats changed), the class follow-ups re-simmed after it, Salvation out of the raid buffs, assumption rows updated, rogue vs Humanoid builds dropped, Affliction Shadow Bolt added, defaults warrior Fury 2H and rogue Combat Swords; deployed f435e8b7 from 0a988c9. Summary: orchestration/round_70753/report.md.",
+ "foreverClientBuild": "1.60.1.70755",
  "coordinationBranch": {
   "name": "claude/wow-forever-dps-presets-m9u15h",
   "head": "1e1d201af"
@@ -26,7 +26,10 @@
   "Intermittent 'send on closed channel' panic in sim/core/simsignals (bulksim.go getRankedResults ~280-290)",
   "DPS report events view at phone width clips the Typical/Lucky/Unlucky row",
   "Still open, need a log: rage k at level 60, 1% spell miss floor, extra attacks vs swing timer, Eviscerate AP share, Maelstrom Weapon rate (two weak data points), race stat offsets, and the rest in alignment_round_2026-10-23.md 'Still open'",
-  "APL duration x fractional constant truncates to 0 (sim/core/apl_values_operators.go)"
+  "APL duration x fractional constant truncates to 0 (sim/core/apl_values_operators.go)",
+  "Shaman req metas carry pre-round published.dps (report data correct)",
+  "Wildstalker caveat numbers not re-measured; stale druid_rip_31plus text in spec_assumptions.md",
+  "4 unstamped comp searches (m1_10_class_buffs, m1_20, m1_20_class_buffs, m1_40_class_buffs)"
  ],
  "merged": {
   "date": "2026-10-13",
@@ -58,21 +61,20 @@
   "note": "the last artifact publish; retired 2026-10-25, see reportSite"
  },
  "reportData": {
-  "commit": "da7d7b636 on master",
-  "simmedAt": "re-sims per build on 2026-11-02 (hunter MM/LW, warriors, rogues, Demonology, the 26 distance builds); provenance per build in ui/dps_report/provenance.json",
-  "date": "2026-11-02",
-  "builds": 73,
-  "rawPacks": "tools/dps_report/raw/ (73 packs)",
-  "note": "rotation re-searches, Demonology set, caster distances (see note)"
+  "commit": "0a988c9 on master",
+  "simmedAt": "full re-sim of all 68 builds on 2026-11-03 (round 70753), plus the follow-ups re-simmed after it; provenance per build in ui/dps_report/provenance.json",
+  "date": "2026-11-03",
+  "builds": 68,
+  "rawPacks": "tools/dps_report/raw/ (68 packs)"
  },
  "reportSite": {
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "master da7d7b636",
-  "date": "2026-11-02",
-  "deployId": "eb5a3ded",
+  "publishedFrom": "master 0a988c9",
+  "date": "2026-11-03",
+  "deployId": "f435e8b7",
   "analytics": "Cloudflare Web Analytics enabled by the user 2026-10-28 (dashboard: Analytics & Logs > Web Analytics, site forever-dps.pages.dev); Pages injects the beacon, deploy_pages.py's live check strips it. The session token has no analytics read permission."
  },
- "changesTab": "Changes tab live 2026-10-28 (standards 30): tools/dps_report/changes/, live update 2026-10-30-hotfix (game: \"Launch hotfix: paladin and druid talent reworks\")"
+ "changesTab": "Changes tab live 2026-10-28 (standards 30): tools/dps_report/changes/, live update 2026-11-02-build-70753 (game: build 1.60.1.70753 and the November 2 development notes)"
 }

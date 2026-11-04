@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 7,
   "race": "Orc",
-  "talents": "053503102-054032001005112251",
+  "talents": "353003102-055030110051212151-01",
   "treeNames": [
     "Elemental",
     "Enhancement",
@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 879.3,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1149.8,
+    "source": "DPS report 2026-11-04 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
     "dps": 879.3,
@@ -45,8 +45,8 @@
     "Stormstrike on cooldown",
     "Fire Nova while Clearcasting is up",
     "Flame Shock when its DoT is down",
-    "Earth Shock otherwise",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
+    "Earth Shock otherwise",
     "Fire Nova while mana is above 12 per second of fight left",
     "Lightning Shield when it is down and nothing else is ready. Its orbs fire at the boss when the shaman takes a hit, about 2 a minute."
   ],
@@ -71,12 +71,12 @@
     "Goblin Sapper Charge"
   ],
   "caveats": [
-    "Assumed: Maelstrom Weapon procs 2 times a minute per point. It can't be tested until the beta reaches level 34.",
+    "Assumed: Maelstrom Weapon procs 4 times a minute per point. The November 2 notes doubled its chance, over the old guess of 2. The rate is server side.",
     "Open: whether Stormstrike can trigger Elemental Focus. If it can, Enhancement gets more Clearcasting procs than shown.",
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
-    "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259.",
+    "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259. Stormstrike (150%, 6s), Maelstrom Weapon, Mental Dexterity, Flurry and the shocks take the November 2 notes' values. Client 1.60.1.70753 doesn't carry them yet.",
     "Assumed: another shaman's Flametongue Totem stacks with this shaman's Windfury Weapon. It adds 18 to 19 DPS at 180s and isn't tested in game yet.",
-    "Improved Stormstrike 2 instead of Tidal Focus 1 is picked for 180s fights. It's about -3 DPS at 120s, +1 to +2 at 180s and +4 to +5 at 300s.",
+    "Improved Ghost Wolf moved to row 4 in the November 2 notes, so its two points now need 15 Enhancement points above them. They come out of Improved Stormstrike and Elemental points.",
     "The relic is Totem of the Storm, 0.9 to 2.1 DPS ahead of Burning Totem at every fight length. It lets Lightning Bolt trigger Maelstrom Weapon at half the chance."
   ],
   "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself). Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
