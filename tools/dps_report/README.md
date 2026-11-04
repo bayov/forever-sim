@@ -39,6 +39,8 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `probe/`, `probe_check/`, `probe_audit.json` | Probes of this run, of the last check, and the check's verdict (what publish records) | no |
 | `timing.py`, `timing_cli.py` | Where a `pipeline.sh run` spent its time: every sim's CPU and wall time, logged by `timing_cli.py` standing in for the binaries and summed up by `timing.py` (see "Sim steps") | yes |
 | `timing/` | One log per `pipeline.sh run` or `resume` (`<start>.jsonl`) and the binary links the run used (`timing/bin`) | no |
+| `adaptive.py` | The luck goals and the fight counts sized to them: a pilot, then a top-up to what the paired spread needs (see "Luck goals") | yes |
+| `vec/` | Per-fight DPS of the race, racial and assumption sims, keyed by request, which the top-ups extend; cleared per build by `run_build.py`, never packed | no |
 | `changes.py`, `changes/` | The Changes tab: the updates, their public change lines and the results at each update's end (see "Changes tab") | yes |
 | `dashstats/main.go` | The `dashstats` helper. Copy it to `tools/dashstats/` in the merged tree, or let patch 0001 add it. | yes |
 | `rd/` | Headless check harness (Playwright) | scripts only |
@@ -198,12 +200,12 @@ Each step is restartable: it skips work whose output already exists. To redo a b
 
 | Step | Command | Sims | Writes | Runtime, 4 CPUs |
 |---|---|---|---|---|
-| main + races + lengths + samples | `runner.sh` (start up to 4) or `python3 run_build.py <id>...`; `--resample <id>` redoes only the sample fights | Per build: main 180 s, 20k iterations, seed 1, all values saved. Race sweep: every race the class can be, 10k, each with its race override if any. Lengths 60/120/180/300/480 s, 5k. 30 one-iteration rolls, then 3 logged sample fights at the 10th, 50th and 90th percentile. dashstats stat sheet. | `out/<id>.json`, `names/<id>.tsv` | about 22 min for all 36 (2 to 5 min per class) |
+| main + races + lengths + samples | `runner.sh` (start up to 4) or `python3 run_build.py <id>...`; `--resample <id>` redoes only the sample fights | Per build: main 180 s, 20k iterations, seed 1, all values saved. Race sweep: every race the class can be, each with its race override if any, at the fights the race goal needs (2k pilot, up to 40k). Lengths 60/120/180/300/480 s, 5k. 30 one-iteration rolls, then 3 logged sample fights at the 10th, 50th and 90th percentile. dashstats stat sheet. | `out/<id>.json`, `names/<id>.tsv` | about 22 min for all 36 (2 to 5 min per class) |
 | stat weights | `ls req/*.meta.json \| xargs -n1 basename \| sed 's/.meta.json//' \| xargs -P4 -n1 python3 weights.py` | Per build: the baseline plus 6 to 8 bonus-stat runs (hit also measured downward), 180 s, 40k iterations, seed 1 | `weights/<id>.json` | about 30 min |
-| race scenarios | `python3 run_races.py [ids]` (`PAR=4` threads) | Per default build × race (encounter presets get only the race sweep): `off`, `off:<part>`, `beast`, `elemental`, `humanoid` (Priests only: Dwarf Chastise), and `weapon` / `weaponNoRacial` where the racial weapon is legal and neither hand holds it. The swap changes one weapon (the one whose speed changes least, the off hand on a tie) to the racial's type, at the nearest Phase 1 BiS speed of that type. Each race with its race override if any, except that a sim leaving out the racial a race's own gear is tuned around (`GEAR_PART`: Dwarf Artisan's Precision) wears the preset's gear, so the gear trade counts in that racial. 10k iterations, seed 1. The last full run was 1,084 sims. | appends to `rv/results.jsonl` (keyed build, race, variant) | about 35 min for all; the 458 beast and elemental reruns took about 16 min |
+| race scenarios | `python3 run_races.py [ids]` (`PAR=4` threads) | Per default build × race (encounter presets get only the race sweep): `off`, `off:<part>`, `beast`, `elemental`, `humanoid` (Priests only: Dwarf Chastise), and `weapon` / `weaponNoRacial` where the racial weapon is legal and neither hand holds it. The swap changes one weapon (the one whose speed changes least, the off hand on a tie) to the racial's type, at the nearest Phase 1 BiS speed of that type. Each race with its race override if any, except that a sim leaving out the racial a race's own gear is tuned around (`GEAR_PART`: Dwarf Artisan's Precision) wears the preset's gear, so the gear trade counts in that racial. Seed 1, at the fights the racial goal needs (1k pilot, up to 40k), paired with the race's sweep fights. The last full run was 1,084 sims. | appends to `rv/results.jsonl` (keyed build, race, variant) | about 35 min for all; the 458 beast and elemental reruns took about 16 min |
 | mana curves | `python3 mana_curves.py [ids]` (`FIGHTS=100 PAR=8`, `--force` redoes builds that already have an output) | Per mana-using build (every class but warrior and rogue): 100 logged one-fight runs at a fixed 480 s with no duration variation, seeds 1001 and up, the player's mana read from the log every 5 s. Plus one 5k run for the sim's seconds out of mana, time to OOM and mana left at the end. | `mana/<id>.json` | about 17 s for the 6 shaman builds |
 | setup ablation | `python3 ablate.py [ids]` (`ITERS=300 SEED=11 PAR=4`; `ABL_MERGE=1` keeps the other builds' entries) | Each preset with one consume, buff, debuff or profession left out, plus the non-stacking pairs. 1,957 sims. | `abl/ablate.json` | about 5 min |
-| assumption scenarios | `python3 run_assumptions.py [ids]` (`PAR=4`) | Per build an assumption touches (`assumptions_def.py`): the base, every non-default setting alone at 180 s (20k) and 120 / 300 s (5k), every combination at 180 s where a build has 3 or fewer assumptions, and 12 random combinations otherwise (the multiplicative estimate's check). About 1,100 sims. | appends to `asm/results.jsonl`; `build_data.py` (via `asm_data.py`) writes `assumptions` and `assumption_dps` | about 1.5 h for all |
+| assumption scenarios | `python3 run_assumptions.py [ids]` (`PAR=4`) | Per build an assumption touches (`assumptions_def.py`): the base, every non-default setting alone at 180 s (at the fights the assumption goal needs: 1k pilot, up to 40k) and 120 / 300 s (5k), every combination at 180 s where a build has 3 or fewer assumptions, and 12 random combinations otherwise (the multiplicative estimate's check). About 1,100 sims. | appends to `asm/results.jsonl`; `build_data.py` (via `asm_data.py`) writes `assumptions` and `assumption_dps` | about 1.5 h for all |
 | tooltip ids | `python3 whids.py` (after a first `build_data.py`) | none | `fortt_ids.json` | seconds |
 | tooltip fetch | `python3 whcache.py fortt_ids.json` | none. Fetches from `nether.wowhead.com/{forever,classic}/tooltip/<kind>/<id>`, only ids missing from the cache. | `forever_tt_cache/` | about 13 min cold (about 1,400 requests at 0.35 s); seconds when warm |
 | datasets | `python3 build_data.py` | none | `data/*.json`, `fortt_coverage.json` | about 10 s warm; about 1 min more when icons must be fetched |
@@ -213,6 +215,28 @@ roll gets its own random stream, so two sims of the same seeds that differ in on
 roll. That makes the paired comparisons (race against race, racials off, assumptions, weights, ablation) need about 9x
 fewer fights for the same error, for about 24% more time per fight. It changed every published number by about its
 error, so data from before it and after it don't mix: the switch came with a full run.
+
+### Luck goals
+
+Each comparison the page shows sims as many fights as it takes to meet its luck goal (`adaptive.py`, since
+2026-11-04; the goals and why are in `orchestration/followups.md`, "DPS report luck goals"). The goal is one standard
+error of the difference the reader compares, and every sim uses seed 1, so the two sides of a comparison fight the same
+fights and the error is the paired one, sd(b_i - a_i) / sqrt(N):
+
+| Comparison | Goal | Step | Pilot |
+|---|---|---|---|
+| A race against the next race of the same preset | 0.35 DPS | `run_build.py` race sweep: every race of the preset gets the same N, from the widest spread between races next to each other | 2k |
+| A racial (or all of them) left out, another boss type, against the race | max(0.25 DPS, 10%) | `run_races.py`, each scenario against its race's sweep fights | 1k |
+| An assumption setting or combination against the preset, 180 s | max(0.25 DPS, 5%) | `run_assumptions.py`, against the main run's fights | 1k |
+
+From the pilot's paired sd, N = 1.2 x (sd / goal)^2, rounded up to a whole number of pilots, up to 40k (`ADAPT_PILOT`,
+`ADAPT_RACE_PILOT`, `ADAPT_MAX`), and both sides are topped up to N once: the top-up is a run from seed 1 + pilot, so
+the fights are exactly a seed-1 run of N. A row's DPS is its reference's (the main run's 20k mean, or the race's
+sweep) plus the paired difference, so a setting that changes nothing gives the reference exactly, and the preset race's
+row is the preset's DPS. The rows carry `iters` and the paired error: `pse` (a race against each other race, in
+`races` and the `race_variants` baseline rows) and `pseBase` (a scenario against its race). The page's race ties use
+it (`raceSe` in report.js). `run_build.py` prints a race pair still over its goal after the top-up. The spec DPS
+(20k, error about 0.35), the weights (paired, their own top-up rule) and the fight lengths (5k) keep their counts.
 
 The runtimes above are from the runs that first measured them, before later changes to the scripts. `pipeline.sh run`
 and `resume` now measure every run: the binaries run through `timing_cli.py`, which logs each call's step, class, race,
@@ -235,8 +259,8 @@ All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.
 
 | Dataset | Made by | Depends on | Runtime |
 |---|---|---|---|
-| builds | build_data.py | out (main 20k, race sweep 10k, 120/300 s lengths), req meta, ranks across all builds | run_build |
-| races | build_data.py | out race sweep: every legal race, 180 s, 10k | run_build |
+| builds | build_data.py | out (main 20k, race sweep, 120/300 s lengths), req meta, ranks across all builds | run_build |
+| races | build_data.py | out race sweep: every legal race, 180 s, its fights; `pse` the paired error to each other race | run_build |
 | lengths | build_data.py | out lengths: 60, 120, 180, 300 and 480 s at 5k | run_build |
 | hist | build_data.py | out main run: all 20k fight DPS values, 5-DPS bins | run_build |
 | abilities | build_data.py | out main run per-action metrics, names | run_build |

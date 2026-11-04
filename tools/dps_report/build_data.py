@@ -412,7 +412,9 @@ for o in outs:
                       'dps': round(r['dps'], 1), 'se': round(r['se'], 2), 'vsBest': round(100 * (r['dps'] / best['dps'] - 1), 2),
                       'isPreset': r['race'] == m['race'], 'raceIcon': RACE_ICON.get(race_name(r['race'])),
                       'tuned': race_note(r.get('override')),  # the race's own rotation or gear (race_override.py)
-                      'tunedKind': tuned_kind(r.get('override'))})
+                      'tunedKind': tuned_kind(r.get('override')),
+                      # the paired error of its difference to each other race (run_build.py's race_sweep, adaptive.py)
+                      **({'pse': {race_name(o): x for o, x in r['pse'].items()}} if r.get('pse') else {})})
     total = sum(a['dps'] for a in mn['actions'])
     seen = defaultdict(int)
     for a in mn['actions']:

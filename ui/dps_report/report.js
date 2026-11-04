@@ -71,14 +71,17 @@ export function startReport(dash, events) {
   const rankOf = (b, list) => 1 + list.filter((x) => +x.dps > +b.dps).length;
   // ---------- luck: when a gap between two figures is only the sim's luck ----------
   // Every tie on the page, and the Changes tab's noise, comes from these, so the rule lives in one place. For now the
-  // error of a difference treats the two figures as independent runs, hypot(se_a, se_b). That overstates it, since
-  // presets and races share random rolls, so it calls a few more ties than a paired error would. Once the data carries
-  // paired errors, seDiff is where they go in.
+  // error of a difference treats the two figures as independent runs, hypot(se_a, se_b), except between two races of
+  // one preset, which share their fights and use the paired error (raceSe).
   const seDiff = (sa, sb) => Math.hypot(+sa || 0, +sb || 0);
   // the gap luck alone can make: 2 standard errors of the difference
   const luckOf = (sa, sb) => 2 * seDiff(sa, sb);
   // two figures are tied when they're closer than that
   const isTie = (a, sa, b, sb) => a != null && b != null && Math.abs(a - b) < luckOf(sa, sb);
+  // The error of the gap between two races of one preset. The race sweep sims every race on the same fights, so the
+  // data carries the paired error of each two races' difference (pse, run_build.py's race_sweep), far smaller than
+  // seDiff's. Pass it as the first error and 0 as the second: isTie(a.dps, raceSe(a, b), b.dps, 0).
+  const raceSe = (a, b) => (a.build === b.build && !a.tag && !b.tag ? (a.pse?.[b.race] ?? b.pse?.[a.race]) : null) ?? seDiff(a.se, b.se);
   // A 10th or 90th percentile's error, from the mean's: on a normal curve it is sqrt(p(1 - p) / n) / φ(z_p) standard
   // deviations, sqrt(0.09) / φ(1.2816) = 1.71 times the mean's sd / sqrt(n). The fights' spread is close enough to
   // normal for a tie mark.
@@ -481,9 +484,9 @@ export function startReport(dash, events) {
       spec.numsHead = (rowsOf('builds') || []).find((x) => x.id === b)?.label;
       // the race next to it in the preset's order (the one after the best, else the one above) when within luck of it
       const order = (raceRows('') || []).filter((x) => x.build === b), k = order.findIndex((x) => x.race === race), nb = order[k === 0 ? 1 : k - 1];
-      const tie = k >= 0 && nb && isTie(order[k].dps, order[k].se, nb.dps, nb.se) ? nb : null;
+      const tie = k >= 0 && nb && isTie(order[k].dps, raceSe(order[k], nb), nb.dps, 0) ? nb : null;
       spec.nums = nums([['DPS', `${f1(rr.dps)} ± ${f2(rr.se)}`], [rr.vsBest >= -0.005 ? 'Best race' : 'Behind the best race', rr.vsBest >= -0.005 ? '★' : `${f2(-rr.vsBest)}%`],
-        tie ? ['≈ Tied with', `${tie.race} (${f2(Math.abs(order[k].dps - tie.dps))} apart, ±${f2(luckOf(order[k].se, tie.se))})`] : null, rr.isPreset ? ['Preset race', '✓'] : null]);
+        tie ? ['≈ Tied with', `${tie.race} (${f2(Math.abs(order[k].dps - tie.dps))} apart, ±${f2(luckOf(raceSe(order[k], tie), 0))})`] : null, rr.isPreset ? ['Preset race', '✓'] : null]);
     }
     return spec;
   };
@@ -1205,8 +1208,8 @@ export function startReport(dash, events) {
         const sib = races.filter((q) => q.build === b.id).sort((p, q) => q.dps - p.dps);
         const card = $('#racespread-card'), cr = card.getBoundingClientRect(), nr = tr.getBoundingClientRect();
         showTip(card, 20, nr.bottom - cr.top + 4, tipTitle(b.label, null, specIco(b, '')), [tipKey(`${f2(r.spreadPct)}%`, null, 'from best to worst'),
-          tipGrid(sib.map((q, k) => [q.name + (q.isPreset ? ' (preset race)' : ''), (k > 0 && isTie(q.dps, q.se, sib[k - 1].dps, sib[k - 1].se) ? '≈ ' : '')
-            + (k === 0 ? `${f1(q.dps)} DPS` : `−${f2(100 * (1 - q.dps / sib[0].dps))}%`)])), sib.some((q, k) => k > 0 && isTie(q.dps, q.se, sib[k - 1].dps, sib[k - 1].se)) ? tipNote("≈ within the sim's luck of the race above.") : null],
+          tipGrid(sib.map((q, k) => [q.name + (q.isPreset ? ' (preset race)' : ''), (k > 0 && isTie(q.dps, raceSe(q, sib[k - 1]), sib[k - 1].dps, 0) ? '≈ ' : '')
+            + (k === 0 ? `${f1(q.dps)} DPS` : `−${f2(100 * (1 - q.dps / sib[0].dps))}%`)])), sib.some((q, k) => k > 0 && isTie(q.dps, raceSe(q, sib[k - 1]), sib[k - 1].dps, 0)) ? tipNote("≈ within the sim's luck of the race above.") : null],
           { hl: row, open: b.id, below: true, pinned, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
       };
       hoverTip(row, tip);
@@ -1276,7 +1279,7 @@ export function startReport(dash, events) {
     for (const r of rv) {
       if (!ADV.includes(r.variant) || !r.simmed || !tgt) continue;
       const own = base.get(r.build + '|' + r.race);
-      if (!own || Math.abs(r.dps - (own.dropped ? own.dps + own.dropped.dps : own.dps)) < 3 * Math.hypot(r.se, own.se)) continue;
+      if (!own || Math.abs(r.dps - (own.dropped ? own.dps + own.dropped.dps : own.dps)) < 3 * (r.pseBase ?? Math.hypot(r.se, own.se))) continue;  // pseBase: its paired error against the race (run_races.py)
       const weapon = r.variant === 'weapon' ? weaponOf(r.build, r.race) : null;
       const tag = advTag(r.variant, weapon);
       rows.push({ ...r, key: `${r.race}|${r.variant}`, name: `${r.race} ${tag}`, tag, weapon, adv: true, isPreset: false });
@@ -1500,7 +1503,7 @@ export function startReport(dash, events) {
         if (!acc.has(r.key)) acc.set(r.key, { ...r, parts: new Map(), shares: [], ranks: [], idle, tunedOn: [] });
         const a = acc.get(r.key);
         // tied: within the sim's luck of the preset's best entry, which counts as a shared win
-        a.shares.push({ build, share: (100 * r.dps) / best, tied: i > 0 && isTie(r.dps, r.se, best, rs[0].se) });
+        a.shares.push({ build, share: (100 * r.dps) / best, tied: i > 0 && isTie(r.dps, raceSe(r, rs[0]), best, 0) });
         if (r.tuned) a.tunedOn.push(build);
         a.ranks.push(i + 1);
         for (const sg of segs) {
@@ -1523,7 +1526,7 @@ export function startReport(dash, events) {
     const fv = (v) => (one ? f1(v) : `${f2(v)}%`), fd = (v) => (one ? sgn(v, f1) : `${sgn(v, f2)}%`);
     const who = (r) => (r.tag ? `${r.race} ${r.tag}` : r.race);
     // On one preset, an entry within the sim's luck of the entry above it gets a ≈ (only ever its neighbour, no chains).
-    if (one) rows.forEach((r, i) => { const p = rows[i - 1]; r.tie = p && isTie(r.dps, r.se, p.dps, p.se) ? tieText(who(p), r.dps, r.se, p.dps, p.se) : null; });
+    if (one) rows.forEach((r, i) => { const p = rows[i - 1]; r.tie = p && isTie(r.dps, raceSe(r, p), p.dps, 0) ? tieText(who(p), r.dps, raceSe(r, p), p.dps, 0) : null; });
     const kinds = new Set();
     // The weakest base stats in view, which the tooltip measures each race's base stats against.
     const baseOf = (r) => r.segs.find((sg) => sg.part === 'base')?.v;
@@ -1981,7 +1984,7 @@ export function startReport(dash, events) {
     const rankTies = [byDps[at - 1], byDps[at + 1]].filter((x) => x && isTie(b.dps, b.se, x.dps, x.se));
     // The best race says when the race after it is within luck of it, on the generic boss as the Races card shows it.
     const raceTop = (raceRows('') || []).filter((r) => r.build === b.id);
-    const raceTie = raceTop.length > 1 && raceTop[0].race === b.bestRace && isTie(raceTop[0].dps, raceTop[0].se, raceTop[1].dps, raceTop[1].se) ? raceTop[1] : null;
+    const raceTie = raceTop.length > 1 && raceTop[0].race === b.bestRace && isTie(raceTop[0].dps, raceSe(raceTop[0], raceTop[1]), raceTop[1].dps, 0) ? raceTop[1] : null;
     $('#sp-tiles').replaceChildren(
       tile('Mean DPS', f1(b.dps), `± ${f2(b.se)} error`, 'builds', 'dps', W),
       tile('Rank', String(rankOf(b, builds)), el('span', {}, `of ${builds.length} presets`,
@@ -1989,7 +1992,7 @@ export function startReport(dash, events) {
       tile('Unlucky fight', f1(b.p10), '10th percentile', 'builds', 'p10', W),
       tile('Lucky fight', f1(b.p90), '90th percentile', 'builds', 'p90', W),
       tt(tile('Best race', b.bestRace, el('span', {}, `${f1(b.bestRaceDps)} DPS`,
-        raceTie ? tiedLine([raceTie.race], [tieText(raceTie.race, raceTop[0].dps, raceTop[0].se, raceTie.dps, raceTie.se)], false) : null), 'builds', 'bestRace', W, null, b.bestRaceIcon), `r:${b.bestRace}:${b.class}`, true, b.id),
+        raceTie ? tiedLine([raceTie.race], [tieText(raceTie.race, raceTop[0].dps, raceSe(raceTop[0], raceTie), raceTie.dps, 0)], false) : null), 'builds', 'bestRace', W, null, b.bestRaceIcon), `r:${b.bestRace}:${b.class}`, true, b.id),
       extra);
     $('#sp-asm').hidden = !b.asmF;
     $('#sp-asm-est').hidden = !b.asmEst;
