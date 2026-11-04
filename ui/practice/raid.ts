@@ -11,6 +11,7 @@ import * as THREE from 'three';
 import { toThree } from './scene';
 import type { Crowd } from './wow/crowd';
 import type { Effects } from './wow/effects';
+import { drawOrder } from './wow/particles';
 import { Anim } from './wow/model';
 import { Appearance, UnitView } from './wow/unit';
 
@@ -265,6 +266,7 @@ export class RaidTest {
 			this.scene.add(view.group);
 			view.group.position.copy(toThree(boss[0], boss[1]));
 			view.group.rotation.y = bossFacing;
+			for (const m of view.models) m.mesh.renderOrder = drawOrder.boss;
 			this.boss = view;
 		});
 

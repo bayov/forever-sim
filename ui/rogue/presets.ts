@@ -212,7 +212,7 @@ export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
 
 // Preset name must be unique. Ex: 'Backstab DPS' cannot be used as a name more than once
 
-// Round 70753 (November 2 development notes, the reworked tree of tools/forever_talents/notes/rogue.json):
+// Round 70753 (November 2 development notes, the reworked tree, since 2026-11-04 read from server hotfix push 113483 (1.60.1.70707+hf); strings remapped to its order):
 // every build searched again on the new tree. The talent search moved points in batches of 1 to 5 at a
 // time (150 valid neighbours a round at 3000 iterations, the best 5 checked at 10000, kept for 2 standard
 // errors), alternated with the knob search over 120, 180 and 300 sec until neither moved. The numbers are
@@ -229,12 +229,12 @@ export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
 // (+0.6 to +1.0 with its 4 point Eviscerates, on both boss types).
 export const TalentsLevel60CombatSwords = PresetUtils.makePresetTalents(
 	'Combat Swords',
-	SavedTalents.create({ talentsString: '00530320201-3200330112013221551' }),
+	SavedTalents.create({ talentsString: '00530320201-3200330112012321551' }),
 	{ tooltip: 'Deep Combat for Sinister Strike: Adrenaline Rush, Flash of Steel, Blade Flurry, Hack and Slash, Aggression, Cold Blood.', group: 'Synthetic' },
 );
 export const TalentsLevel60SealFateSwords = PresetUtils.makePresetTalents(
 	'Seal Fate Swords',
-	SavedTalents.create({ talentsString: '0053032024105103-320033011201312' }),
+	SavedTalents.create({ talentsString: '0053032024105103-320033011201132' }),
 	{
 		tooltip: 'Seal Fate, Relentless Strikes, Venom and Cold Blood in Assassination, with Aggression and Dual Wield Specialization, for Sinister Strike.',
 		group: 'Synthetic',
@@ -247,7 +247,7 @@ export const TalentsLevel60CombatDaggers = PresetUtils.makePresetTalents(
 );
 export const TalentsLevel60SealFateDaggers = PresetUtils.makePresetTalents(
 	'Seal Fate Daggers',
-	SavedTalents.create({ talentsString: '0053032024105103-321303010201312' }),
+	SavedTalents.create({ talentsString: '0053032024105103-321303010201132' }),
 	{
 		tooltip: 'Seal Fate, Relentless Strikes, Venom and Cold Blood in Assassination, with Puncturing Wounds and Dual Wield Specialization, for Backstab.',
 		group: 'Synthetic',
@@ -257,7 +257,7 @@ export const TalentsLevel60Mutilate = PresetUtils.makePresetTalents('Mutilate', 
 	tooltip: 'Assassination for Mutilate: Seal Fate, Relentless Strikes, Venom, Cold Blood, Vile Poisons, with Puncturing Wounds and Opportunity.',
 	group: 'Synthetic',
 });
-export const TalentsLevel60Subtlety = PresetUtils.makePresetTalents('Subtlety', SavedTalents.create({ talentsString: '00530301-320003-115001331320121151' }), {
+export const TalentsLevel60Subtlety = PresetUtils.makePresetTalents('Subtlety', SavedTalents.create({ talentsString: '00530301-320003-115003231320021151' }), {
 	tooltip: 'Subtlety for Death Mark, Boot Knife, Hemorrhage, Premeditation and Preparation, with Blood Splatter in Assassination.',
 	group: 'Synthetic',
 });

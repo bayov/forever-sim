@@ -117,7 +117,7 @@ for _s in db['spellIcons']:
 racial_names = {}
 MANUAL = {'i10646': 'Goblin Sapper Charge', 'i12662': 'Demonic Rune', 'i13444': 'Major Mana Potion', 'i5513': 'Mana Jade', 'i5514': 'Mana Agate', 'i8007': 'Mana Citrine', 'i8008': 'Mana Ruby', 's15851': 'Dragonbreath Chili',
           's11281': 'Backstab', 's11356': 'Deadly Poison', 's11780': 'Lash of Pain', 's1293813': 'Incinerate', 's1310786': 'Sniper Shot',
-          's1311598': "Light's Vigil", 's1310707': 'Mutilate', 's1310707t1': 'Mutilate (main hand)', 's1310707t2': 'Mutilate (off hand)', 's1382': 'Shadow Oil',
+          's1311598': "Light's Vigil", 's1310707': 'Mutilate', 's1310707t1': 'Mutilate (main hand)', 's1310707t2': 'Mutilate (off hand)', 's1241584': 'Mutilate', 's1241584t1': 'Mutilate (main hand)', 's1241584t2': 'Mutilate (off hand)', 's1329549': 'Shank', 's1329549t1': 'Shank (Boot Knife)', 's1382': 'Shadow Oil',
           's17261': 'Bite', 's20947': 'Seal of Command', 's20966': 'Judgement of Command', 's3009': 'Claw', 'i4395': 'Goblin Land Mine', 'i7676': 'Thistle Tea',
           **{f's11300t{i}': f'Eviscerate ({i} CP)' for i in range(1, 6)}, 's11300': 'Eviscerate',
           **{f's6774t{i}': f'Slice and Dice ({i} CP)' for i in range(1, 6)}, **{f's11275t{i}': f'Rupture ({i} CP)' for i in range(1, 6)},

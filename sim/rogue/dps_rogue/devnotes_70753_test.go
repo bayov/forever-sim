@@ -53,11 +53,18 @@ func TestForeverPoisedAtThePull(t *testing.T) {
 	}
 }
 
-// Shank: 5 Energy, gives back 25 at level 60, 10 sec cooldown, never misses.
+// Shank (server hotfix push 113483, 1329549 at level 60): 5 Energy, gives back 25, 10 sec cooldown,
+// always hits (no miss, dodge or parry) and procs no poison or weapon effect.
 func TestForeverShank(t *testing.T) {
 	sim, rogue := newForeverRogueSim(t, "", 18832, 18805, 1)
 	if rogue.Shank == nil {
 		t.Fatal("no Shank at level 60")
+	}
+	if rogue.Shank.SpellID != 1329549 {
+		t.Errorf("Shank's spell ID is %d, want 1329549", rogue.Shank.SpellID)
+	}
+	if !rogue.Shank.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
+		t.Error("Shank doesn't suppress weapon procs")
 	}
 	target := rogue.CurrentTarget
 	rogue.PoisedAura.Deactivate(sim)
@@ -67,14 +74,15 @@ func TestForeverShank(t *testing.T) {
 		rogue.AddEnergy(sim, 50, rogue.EnergyRefundMetrics)
 		rogue.SetGCDTimer(sim, sim.CurrentTime)
 		rogue.Shank.CD.Reset()
-		dodges := rogue.Shank.SpellMetrics[target.UnitIndex].Dodges + rogue.Shank.SpellMetrics[target.UnitIndex].Parries
 		if !rogue.Shank.Cast(sim, target) {
 			t.Fatal("Shank didn't cast")
 		}
-		landed := rogue.Shank.SpellMetrics[target.UnitIndex].Dodges+rogue.Shank.SpellMetrics[target.UnitIndex].Parries == dodges
-		if want := core.TernaryFloat64(landed, 70, 49); math.Abs(rogue.CurrentEnergy()-want) > 1e-6 {
-			t.Fatalf("Energy after a Shank (landed %v) is %.1f, want %.0f", landed, rogue.CurrentEnergy(), want)
+		if math.Abs(rogue.CurrentEnergy()-70) > 1e-6 {
+			t.Fatalf("Energy after a Shank is %.1f, want 70", rogue.CurrentEnergy())
 		}
+	}
+	if m := rogue.Shank.SpellMetrics[target.UnitIndex]; m.Dodges+m.Parries != 0 {
+		t.Errorf("Shank was dodged or parried %d times", m.Dodges+m.Parries)
 	}
 	if misses := rogue.Shank.SpellMetrics[target.UnitIndex].Misses; misses != 0 {
 		t.Errorf("Shank missed %d times", misses)
@@ -84,7 +92,8 @@ func TestForeverShank(t *testing.T) {
 	}
 }
 
-// Venom is a passive now: a Shank gives 30% more poison damage and 20% more poison procs for 6 sec.
+// Venom is a passive now: a Shank gives 30% more poison damage for 6 sec, and 20% more procs to Deadly
+// and Wound Poison but not Instant Poison (server hotfix push 113483, 1310703 effect 2's class mask).
 func TestForeverVenomFromShank(t *testing.T) {
 	sim, rogue := newForeverRogueSim(t, "00000000000001", 18805, 18816, 1) // Venom only; Core Hound Tooth, Perdition's Blade
 	if rogue.VenomAura == nil {
@@ -92,6 +101,7 @@ func TestForeverVenomFromShank(t *testing.T) {
 	}
 	target := rogue.CurrentTarget
 	base := rogue.GetDeadlyPoisonProcChance()
+	baseInstant := rogue.GetInstantPoisonProcChance()
 	for !rogue.VenomAura.IsActive() {
 		rogue.AddEnergy(sim, 100, rogue.EnergyRefundMetrics)
 		rogue.SetGCDTimer(sim, sim.CurrentTime)
@@ -100,6 +110,9 @@ func TestForeverVenomFromShank(t *testing.T) {
 	}
 	if got := rogue.GetDeadlyPoisonProcChance() - base; math.Abs(got-0.2) > 1e-9 {
 		t.Errorf("Venom adds %.2f to the poison chance, want 0.20", got)
+	}
+	if got := rogue.GetInstantPoisonProcChance() - baseInstant; got != 0 {
+		t.Errorf("Venom adds %.2f to Instant Poison's chance, want 0", got)
 	}
 	if got := rogue.VenomAura.RemainingDuration(sim); got != 6*time.Second {
 		t.Errorf("Venom lasts %s, want 6s", got)
@@ -149,7 +162,8 @@ func TestForeverHemorrhageGarrote(t *testing.T) {
 	}
 }
 
-// Mutilate's halves strike for 90% of (weapon damage + 67) at level 60, was 75%: against a
+// Mutilate's halves strike for 90% of (weapon damage + 88) at level 60 (server hotfix push 113483; was
+// 75% of weapon damage + 67): against a
 // target with no armor, the same seed and no crits, the damage is 0.9 times the weapon part.
 func TestForeverMutilateNinetyPercent(t *testing.T) {
 	sim, rogue := newMutilateRogueSim(t, 600)
@@ -168,15 +182,15 @@ func TestForeverMutilateNinetyPercent(t *testing.T) {
 	rogue.Mutilate.Cast(sim, target)
 	got := rogue.Mutilate.SpellMetrics[target.UnitIndex].TotalDamage / rogue.Mutilate.DamageMultiplier /
 		rogue.Mutilate.AttackerDamageMultiplier(rogue.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], false)
-	if got < 0.9*(67+low)-1e-6 || got > 0.9*(67+high)+1e-6 {
-		t.Errorf("a Mutilate main hand half hit for %.2f, want between %.2f and %.2f", got, 0.9*(67+low), 0.9*(67+high))
+	if got < 0.9*(88+low)-1e-6 || got > 0.9*(88+high)+1e-6 {
+		t.Errorf("a Mutilate main hand half hit for %.2f, want between %.2f and %.2f", got, 0.9*(88+low), 0.9*(88+high))
 	}
 }
 
 // Flawless Execution takes 15 off Eviscerate; Aggression 3/3 raises Sinister Strike and Eviscerate
 // by 15% and no longer Backstab.
 func TestForeverFlawlessExecutionAndAggression(t *testing.T) {
-	sim, rogue := newForeverRogueSim(t, "-0000000000013", 18805, 18805, 1)
+	sim, rogue := newForeverRogueSim(t, "-00000000000103", 18805, 18805, 1)
 	if !rogue.Talents.FlawlessExecution || rogue.Talents.Aggression != 3 {
 		t.Fatal("the talents give no Flawless Execution or no Aggression 3")
 	}

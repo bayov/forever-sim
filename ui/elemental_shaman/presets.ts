@@ -103,6 +103,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // Round 70753 (the November 2 notes): the Lava Burst line is gone with the spell. Chain Lightning, now
 // a 2.5 sec cast for 1.45 times a Lightning Bolt's damage and 2.25 times its mana, still loses on one
 // target: -80.6 on cooldown and -35.6 only under Lightning Mastery (the mean of 120 / 180 / 300 sec).
+// At the 0.714 coefficient the 2.5 sec cast takes (standards 39, 2026-11-04) too: -14 / -76 / -140 on
+// cooldown and -2 / -11 / -24 at best (an 80% mana floor, or 40% at 120 sec) at 120 / 180 / 300 sec;
+// on Mana Tide +3 at 120 sec on cooldown but -12 / -70 at 180 / 300 (20000 iterations, two seed sets).
 // The lower rank once the mana runs short is rank 9, one below the top (lightningBoltDownrank=1, the
 // ranks at 0.78 of Era's now): 0 / 0 / +5.0 to +5.3 at 120 / 180 / 300 sec, paired at 20000
 // iterations on two seed sets. Mana Tide keeps rank 8.

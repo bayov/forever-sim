@@ -17,8 +17,10 @@ the notes-only list). Where the notes give a rule, the numbers come from the Era
 - Lightning Bolt ranks 4 to 10 at 0.78 of Era's base (rank 10 334 to 372 at 60, was 190 to 212; the x1.12 report
   assumption is gone). Ranks 1 to 3 already deal more than that and keep the client's values.
 - Chain Lightning: 2.5 sec cast, the first target 1.45 times the comparable Lightning Bolt (rank 4 485 to 539), 2.25
-  times its mana (495). Its coefficient stays the client's 0.571 (the 2 sec cast's), so a hit is only about 1.09
-  times a bolt's and the rotations still leave it out (-27 to -80 at every length, every mana floor tried).
+  times its mana (495). The notes give no coefficient, so it takes the standard one for a 2.5 sec cast, 0.714
+  (the client's is 0.571), and a hit is about 1.27 times a bolt's. The rotations still leave it out on one target:
+  mana, not damage, keeps it out (Level 60 Elemental -14 / -76 / -140 on cooldown at 120 / 180 / 300 sec, -2 to
+  -24 with the best mana floor; Mana Tide +3 at 120 sec on cooldown but -12 / -70 at 180 / 300).
 - Every shock at Era's base: Earth Shock 7 517 to 545, Flame Shock 6 292 plus 320 over 12 sec, Frost Shock 4 492 to
   520 (the x1.08 on Earth Shock 7 is gone).
 - Lightning Overload 10 / 20 / 30%. Lava Burst is removed; Call of Thunder (5% crit for Lightning Bolt and Chain
