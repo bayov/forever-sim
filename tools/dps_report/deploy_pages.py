@@ -1,7 +1,12 @@
 #!/usr/bin/env python3
-"""Deploy dist/dps_report.html to Cloudflare Pages (https://forever-dps.pages.dev).
+"""Deploy the DPS Report site to Cloudflare Pages (https://forever-dps.pages.dev).
 
-    python3 tools/dps_report/deploy_pages.py [file] [--branch main] [--project forever-dps]
+    python3 tools/dps_report/deploy_pages.py [dir or file] [--branch main] [--project forever-dps]
+
+The default is dist/dps_report_site (build_artifact.mjs): the page, index.html, and its data files, one per
+report mode (data/<mode>.<hash>.json) and one per preset's sample fights, which the page fetches when it needs
+them. Every file is uploaded, and after the deploy each one is fetched from the live site and compared. A single
+file (dist/dps_report.html, the self-contained page) still deploys as before, as /index.html.
 
 Needs CLOUDFLARE_ACCOUNT_ID, and a token with Account > Cloudflare Pages > Edit: either
 CLOUDFLARE_API_TOKEN in the environment, or the cloud environment's network secret for
@@ -16,10 +21,10 @@ A production deploy (--branch main) must come from what master serves: the repor
 --unmerged deploys a commit that isn't on master yet, when the user asked for that. The
 deployment records the commit it was built from.
 
-The deploy serves the file as /index.html, inside the doctype, <head> and <body> the artifact
-host used to add. After a production deploy the script fetches the
-live site and compares it byte for byte, apart from the Cloudflare Web Analytics beacon that
-Pages injects into every page (enabled 2026-10-28); if it doesn't match, it rolls production
+A single file is served as /index.html, inside the doctype, <head> and <body> the artifact host
+used to add (the site's index.html has them already). After a deploy the script fetches every file
+from the live site and compares it byte for byte, apart from the Cloudflare Web Analytics beacon that
+Pages injects into every HTML page (enabled 2026-10-28); if one doesn't match, it rolls production
 back to the deployment that was live before.
 """
 
@@ -51,8 +56,8 @@ def strip_beacon(html):
 # for added the doctype, <head> with the charset and viewport, and <body>. Pages serves the file as it is,
 # so we add the same wrapper. It keeps phones at device width and the page out of quirks mode, and it
 # gives Pages the </body> it puts the Web Analytics beacon in front of. The tab icon is crossed swords
-# (ui/dps_report/favicon.svg, with a 64 px PNG of it for browsers without SVG icons), inline so the
-# site stays one file.
+# (ui/dps_report/favicon.svg, with a 64 px PNG of it for browsers without SVG icons), inline, as
+# build_artifact.mjs puts them in the site's index.html.
 _ui = os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../ui/dps_report/")
 FAVICON = base64.b64encode(open(_ui + "favicon.png", "rb").read())
 FAVICON_SVG = base64.b64encode(open(_ui + "favicon.svg", "rb").read())
@@ -94,9 +99,33 @@ def assets(path, payload, jwt):
         return curl(["-X", "POST", *data, url], auth=jwt)
 
 
+# The content type each kind of site file is served with. The sample fights stay gzipped: the page unzips them
+# itself (events.ts), so they go out as plain bytes, not with a Content-Encoding.
+TYPES = {".html": "text/html", ".json": "application/json", ".gz": "application/gzip", ".js": "application/javascript",
+         ".css": "text/css", ".png": "image/png", ".svg": "image/svg+xml", ".jpg": "image/jpeg"}
+# One upload call carries at most about this much base64; Pages takes 50 MB a request.
+BATCH = 40 * 1024 * 1024
+
+
+def site_files(path):
+    """{ "/index.html": bytes, "/data/...": bytes } for a site directory, or one file served as /index.html."""
+    if os.path.isfile(path):
+        return {"/index.html": document(open(path, "rb").read())}
+    files = {}
+    for root, _, names in os.walk(path):
+        for n in sorted(names):
+            full = os.path.join(root, n)
+            rel = "/" + os.path.relpath(full, path).replace(os.sep, "/")
+            data = open(full, "rb").read()
+            files[rel] = document(data) if rel == "/index.html" else data
+    if "/index.html" not in files:
+        sys.exit(f"{path} has no index.html")
+    return files
+
+
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("file", nargs="?", default="dist/dps_report.html")
+    ap.add_argument("path", nargs="?", default="dist/dps_report_site", help="the site directory, or one HTML file")
     ap.add_argument("--project", default="forever-dps")
     ap.add_argument("--branch", default="main", help="main is production; anything else is a preview")
     ap.add_argument("--unmerged", action="store_true", help="allow a production deploy of a commit not on origin/master")
@@ -119,27 +148,46 @@ def main():
     token = os.environ.get("CLOUDFLARE_API_TOKEN")
     proj = f"{API}/accounts/{account}/pages/projects/{a.project}"
 
-    content = document(open(a.file, "rb").read())
-    b64 = base64.b64encode(content).decode()
-    # Any 32-hex key works; wrangler's is blake3, this is the same length from sha256.
-    key = hashlib.sha256(b64.encode() + b"html").hexdigest()[:32]
+    files = site_files(a.path)
+    entries = {}
+    for rel, data in files.items():
+        ext = os.path.splitext(rel)[1]
+        b64 = base64.b64encode(data).decode()
+        # Any 32-hex key works; wrangler's is blake3, this is the same length from sha256.
+        key = hashlib.sha256(b64.encode() + ext.lstrip(".").encode()).hexdigest()[:32]
+        entries[rel] = {"key": key, "b64": b64, "type": TYPES.get(ext, "application/octet-stream")}
+    keys = sorted({e["key"] for e in entries.values()})
 
     project = curl([proj], auth=token)
     prod = (project.get("canonical_deployment") or {}).get("id")
     jwt = curl([f"{proj}/upload-token"], auth=token)["jwt"]
 
     with tempfile.TemporaryDirectory() as tmp:
-        hashes = json.dumps({"hashes": [key]})
-        if assets("check-missing", hashes, jwt):
-            up = os.path.join(tmp, "upload.json")
+        hashes = json.dumps({"hashes": keys})
+        missing = set(assets("check-missing", hashes, jwt) or [])
+        todo = [e for e in {e["key"]: e for e in entries.values()}.values() if e["key"] in missing]
+        # in batches, each under the request limit
+        batches, cur, size = [], [], 0
+        for e in todo:
+            if cur and size + len(e["b64"]) > BATCH:
+                batches.append(cur)
+                cur, size = [], 0
+            cur.append(e)
+            size += len(e["b64"])
+        if cur:
+            batches.append(cur)
+        for i, batch in enumerate(batches):
+            up = os.path.join(tmp, f"upload{i}.json")
             with open(up, "w") as f:
-                json.dump([{"key": key, "value": b64, "metadata": {"contentType": "text/html"}, "base64": True}], f)
+                json.dump([{"key": e["key"], "value": e["b64"], "metadata": {"contentType": e["type"]}, "base64": True} for e in batch], f)
             assets("upload", "@" + up, jwt)
+        print(f"{len(files)} files, {len(todo)} uploaded in {len(batches)} call(s), {len(keys) - len(todo)} already there")
         assets("upsert-hashes", hashes, jwt)
         if assets("check-missing", hashes, jwt):
             sys.exit("the upload didn't stick; not deploying")
 
-    dep = curl(["-X", "POST", "-F", "manifest=" + json.dumps({"/index.html": key}), "-F", f"branch={a.branch}",
+    manifest = {rel: e["key"] for rel, e in entries.items()}
+    dep = curl(["-X", "POST", "-F", "manifest=" + json.dumps(manifest), "-F", f"branch={a.branch}",
                 "-F", f"commit_hash={head}", "-F", f"commit_dirty={'true' if dirty else 'false'}",
                 f"{proj}/deployments"], auth=token)
     for _ in range(60):
@@ -150,19 +198,28 @@ def main():
     if stage["status"] != "success":
         sys.exit(f"deployment {dep['id']} ended at {stage['name']} {stage['status']}")
 
-    live = f"https://{a.project}.pages.dev/" if dep["environment"] == "production" else dep["url"] + "/"
-    for _ in range(12):
-        # A deployment's own preview URL can stall partway through the file, so each fetch has a time limit.
-        got = subprocess.run(["curl", "-sS", "--max-time", "120", live], capture_output=True).stdout
-        if strip_beacon(got) == strip_beacon(content):
-            beacon = " with the Web Analytics beacon" if BEACON.search(got) else ""
-            print(f"deployed {len(content)} bytes{beacon}, {dep['environment']}: {live} ({dep['url']})")
-            return
-        time.sleep(5)
+    live = f"https://{a.project}.pages.dev" if dep["environment"] == "production" else dep["url"]
+    # Every file, as the live site serves it. The page is checked last: the data files it names are there by then.
+    bad = []
+    for rel in sorted(files, key=lambda r: r == "/index.html"):
+        want = strip_beacon(files[rel]) if rel.endswith(".html") else files[rel]
+        url = live + ("/" if rel == "/index.html" else rel)
+        for _ in range(12):
+            # A deployment's own preview URL can stall partway through a file, so each fetch has a time limit.
+            got = subprocess.run(["curl", "-sS", "--max-time", "120", url], capture_output=True).stdout
+            if (strip_beacon(got) if rel.endswith(".html") else got) == want:
+                break
+            time.sleep(5)
+        else:
+            bad.append(rel)
+    if not bad:
+        size = sum(len(d) for d in files.values())
+        print(f"deployed {len(files)} files, {size} bytes, each checked live; {dep['environment']}: {live}/ ({dep['url']})")
+        return
     if dep["environment"] == "production" and prod:
         curl(["-X", "POST", f"{proj}/deployments/{prod}/rollback"], auth=token)
-        sys.exit(f"{live} didn't serve the new file; rolled production back to {prod}")
-    sys.exit(f"{live} didn't serve the new file")
+        sys.exit(f"{live} didn't serve {', '.join(bad[:5])}; rolled production back to {prod}")
+    sys.exit(f"{live} didn't serve {', '.join(bad[:5])}")
 
 
 if __name__ == "__main__":

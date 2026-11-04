@@ -229,19 +229,29 @@
               }
             },
             "rhs": {
-              "spellExpectedHealing": {
-                "spellId": {
-                  "spellId": 10623
+              "math": {
+                "op": "OpMul",
+                "lhs": {
+                  "spellExpectedHealing": {
+                    "spellId": {
+                      "spellId": 10623
+                    },
+                    "targetUnit": {
+                      "type": "MostHurt"
+                    }
+                  }
                 },
-                "targetUnit": {
-                  "type": "MostHurt"
+                "rhs": {
+                  "const": {
+                    "val": "0.7"
+                  }
                 }
               }
             }
           }
         }
       },
-      "notes": "Chain Heal rank 3 at the most hurt, the biggest that what they miss covers; it jumps to two more."
+      "notes": "Chain Heal rank 3 at the most hurt, the biggest whose heal 70% of what they miss covers; it jumps to two more."
     },
     {
       "action": {
@@ -264,12 +274,22 @@
               }
             },
             "rhs": {
-              "spellExpectedHealing": {
-                "spellId": {
-                  "spellId": 10622
+              "math": {
+                "op": "OpMul",
+                "lhs": {
+                  "spellExpectedHealing": {
+                    "spellId": {
+                      "spellId": 10622
+                    },
+                    "targetUnit": {
+                      "type": "MostHurt"
+                    }
+                  }
                 },
-                "targetUnit": {
-                  "type": "MostHurt"
+                "rhs": {
+                  "const": {
+                    "val": "0.7"
+                  }
                 }
               }
             }
@@ -299,12 +319,22 @@
               }
             },
             "rhs": {
-              "spellExpectedHealing": {
-                "spellId": {
-                  "spellId": 1064
+              "math": {
+                "op": "OpMul",
+                "lhs": {
+                  "spellExpectedHealing": {
+                    "spellId": {
+                      "spellId": 1064
+                    },
+                    "targetUnit": {
+                      "type": "MostHurt"
+                    }
+                  }
                 },
-                "targetUnit": {
-                  "type": "MostHurt"
+                "rhs": {
+                  "const": {
+                    "val": "0.7"
+                  }
                 }
               }
             }

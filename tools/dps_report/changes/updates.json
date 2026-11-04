@@ -2751,6 +2751,21 @@
      ]
     },
     {
+     "title": "Hotfix: Lightning Bolt, Chain Lightning and the shocks take their launch damage",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "note": "Launch realm hotfixes set every rank's damage, replacing the sim's reading of the development notes. Lightning Bolt rank 10 deals 342 to 381 at 60 (the notes' 78% of the original gave 334 to 372), and ranks 1 to 3 a little more. Chain Lightning rank 4 deals 494 to 552 to its first target (485 to 539 from the notes' 145% of Lightning Bolt) and its ranks cost 245 / 360 / 425 / 495 mana. The top shock ranks barely move; lower ranks deal a few percent more.",
+     "source": {
+      "label": "wago.tools, launch realm hotfixes",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113380"
+     },
+     "commits": [
+      "87922bb"
+     ]
+    },
+    {
      "title": "Shaman presets re-picked for the new tree",
      "kind": "talents",
      "classes": [
@@ -3166,7 +3181,8 @@
     },
     {
      "commit": "8f304b2",
-     "why": "Forever's downranking penalty moved into sim/core with the same scope; every report number unchanged"    },
+     "why": "Forever's downranking penalty moved into sim/core with the same scope; every report number unchanged"
+    },
     {
      "commit": "a4fc1d7",
      "why": "report data for the shaman re-sim after Chain Lightning 0.714; no preset's number moved"

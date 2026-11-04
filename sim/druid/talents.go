@@ -112,8 +112,8 @@ func (druid *Druid) applyImprovedWrath() {
 	})
 }
 
-// Genesis: 2% a point more periodic damage from Moonfire, Insect Swarm, Rake and Rip (and
-// healing over time, which the sim does not use). 1% a point before the launch realms'
+// Genesis: 2% a point more periodic damage from Moonfire, Insect Swarm, Rake and Rip (its healing
+// over time and on Swiftmend is genesisHealingMultiplier in healing.go). 1% a point before the launch realms'
 // 2026-10-30 hotfix doubled its TraitDefinitionEffectPoints curves (85325, 97153; wago.tools
 // hotfixes, region 91, build 70707).
 func (druid *Druid) applyGenesis() {

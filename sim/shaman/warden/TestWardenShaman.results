@@ -209,6 +209,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-RestorationSynthetic(Phase1)"
+ value: {
+  dps: 379.805
+  tps: 661.01248
+ }
+}
+dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Stormcaller'sGarb"
  value: {
   dps: 454.78183

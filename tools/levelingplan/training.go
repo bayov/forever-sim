@@ -918,6 +918,9 @@ func trainingFile(db *proto.UIDatabase, in, out string, sessions int32, goldAt40
 	if err != nil {
 		return err
 	}
+	if err := routeProblem(p.plan, p.shape); err != nil {
+		return err
+	}
 	result, err := searchTraining(context.Background(), p, sessions)
 	if err != nil {
 		return err

@@ -127,8 +127,8 @@ func TestOrcShamanHealTalentPoints(t *testing.T) {
 		}
 	}
 
-	// Ancestral Healing (16176): 8, 17 or 25% more armor from items for 15 sec after a heal
-	// crit (2000 of our armor is from items).
+	// Ancestral Healing (16176): 8, 17 or 25% more of all our armor for 15 sec after a heal
+	// crit (aura 101, as Inspiration; 2000 of our armor is from items, the rest from Agility).
 	for points, bonus := range []float64{0, .08, .17, .25} {
 		if points == 0 {
 			continue
@@ -138,8 +138,8 @@ func TestOrcShamanHealTalentPoints(t *testing.T) {
 		at(sim, 0.5, func(sim *core.Simulation) { armor = enh.Armor() })
 		healOnce(t, sim, enh, enh.LesserHealingWave[6], 1, 1.5)
 		at(sim, 3, func(sim *core.Simulation) {
-			if got, want := enh.Armor(), armor+bonus*2000; math.Abs(got-want) > 0.01 {
-				t.Errorf("Ancestral Healing %d: armor %.1f after a crit heal, want %.1f", points, got, want)
+			if got, want := enh.Armor(), armor*(1+bonus); math.Abs(got-want) > 0.01 {
+				t.Errorf("Ancestral Healing %d: armor %.1f after a crit heal, want %.1f (from items only: %.1f)", points, got, want, armor+bonus*2000)
 			}
 		})
 		runSim(sim)
