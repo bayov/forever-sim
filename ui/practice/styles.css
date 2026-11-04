@@ -124,8 +124,6 @@ button.primary {
 	text-shadow: 1px 1px 0 #000;
 }
 .hud button,
-.hud .fight-settings,
-.hud .spellbook,
 .hud .bar-tools,
 .hud .summary,
 .hud .uf,
@@ -812,73 +810,12 @@ button.primary {
 	font-variant-numeric: tabular-nums;
 	white-space: nowrap;
 }
-.fight-settings {
-	position: absolute;
-	z-index: 2;
-	top: calc(6 * var(--u) + 36px);
-	left: calc(6 * var(--u));
-	background: var(--eui-panel);
-	border: 1px solid #000;
-	padding: 10px;
-	display: grid;
-	grid-template-columns: auto auto;
-	gap: 6px 12px;
-}
-.fight-settings label {
-	display: contents;
-}
-.fight-settings input,
-.fight-settings select {
-	width: 90px;
-	background: #0f1218;
-	color: var(--text);
-	border: 1px solid #333a48;
-}
 .bar-tools {
 	position: absolute;
 	left: calc(6 * var(--u));
 	bottom: calc(6 * var(--u));
 	display: flex;
 	gap: 4px;
-}
-.spellbook {
-	position: absolute;
-	left: calc(6 * var(--u));
-	bottom: calc(6 * var(--u) + 34px);
-	width: 420px;
-	max-height: 60vh;
-	overflow: auto;
-	background: var(--eui-panel);
-	border: 1px solid #000;
-	padding: 8px;
-}
-.book-title {
-	color: var(--eui-accent);
-	margin-bottom: 6px;
-}
-.book-grid {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: 4px;
-}
-.book-entry {
-	position: relative;
-	display: flex;
-	gap: 6px;
-	align-items: center;
-	cursor: pointer;
-}
-.book-entry .icon {
-	width: 28px;
-	height: 28px;
-	background-size: 112% auto;
-	background-position: center;
-	border: 1px solid #000;
-	flex: none;
-}
-.book-entry:hover,
-.book-entry.v-hover {
-	background: rgba(255, 255, 255, 0.08);
 }
 .cursor-icon {
 	position: fixed;
