@@ -1333,6 +1333,16 @@ rendering, not the sim.
     any order, but merged they can't keep their place among the other particle batches, so they draw after them
     (light over smoke): the one change to the look, where added light overlaps smoke. `?particlearrays=0` turns it
     off. Headless: 334 to 292 draw calls, 2410 to 2160 WebGL calls a frame.
+- The solid things draw grouped by shader, then texture, then vertices (`opaqueOrder` in `scene.ts`), not by
+  material as Three does (every copy of a model has its own materials). Headless: 2160 to 2030 WebGL calls a frame,
+  programs 211 to 165, texture binds 390 to 348. Pixel check in a frozen frame: the fight's view 3 pixels apart; a
+  close lineup of all 39 raiders about 1100 (0.1%), where two solid surfaces lie at exactly one depth and the other
+  one now draws last. `?sortsolid=0` turns it off.
+  - The crowd's see-through layers stay as they are: most are spell effects, which come and go and fade by the
+    frame, and merging gear layers across models keeps their order only if no other see-through thing draws
+    between them.
+  - The 50 `frontFace` calls a frame come from the shadows: a solid part's shadow draws its back faces, a double
+    sided one both, so the winding flips as the shadow pass goes from one to the other in the scene's order.
   - Headless (fight, 1920x1080): 127 to 144 FPS, drawing 4.8 to 4.1ms, 420 to 326 draw calls, 3040 to 2350 WebGL
     calls a frame (texture binds 528 to 423, vertex array binds 478 to 385, programs 276 to 210, matrix uniforms 271
     to 174).
