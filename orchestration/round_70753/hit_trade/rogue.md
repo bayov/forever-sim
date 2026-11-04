@@ -77,11 +77,13 @@ every step file was tried, at 3000 iterations, with the best 4 plus the build at
 | Combat Daggers | 16 | 955.3 | 940.3 (`005203002-3213220102010321551-005`) | -15.0 |
 | Seal Fate Swords | 12 | 946.1 | 934.7 (`0053032024105103-320132021201032`) | -11.4 |
 | Seal Fate Daggers | 10 | 909.7 | 898.0 (`0053032024105103-321312020201032`) | -11.7 |
-| Subtlety | | | pending (still running at hand-back) | |
-| Mutilate | | | pending (still running at hand-back) | |
+| Subtlety | 68 | 885.9 | 884.5 (`005303011-320002-115003231320021151`, Precision 2/3, the point to Assassination) | -1.4 |
+| Mutilate | 67 | 864.8 | 863.0 (`00530320251551031-320302-005`, Precision 2/3, the point to Assassination) | -1.8 |
 
-Precision 3/3 + Weapon Expertise is worth 11 to 15 DPS over anything the freed 5 points buy, even when the gear may
-put the hit back. In Forever's tree Weapon Expertise has Precision as its prerequisite. Several candidates tie to
+On the four Combat-deep builds, Precision 3/3 + Weapon Expertise is worth 11 to 15 DPS over anything the freed 5
+points buy, even when the gear may put the hit back. Subtlety and Mutilate have no Weapon Expertise. There, a Precision
+point is worth only 1.4 and 1.8 DPS (7 to 9 standard errors) over the best other use of it, so Precision stays but
+with little margin. In Forever's tree Weapon Expertise has Precision as its prerequisite. Several candidates tie to
 the decimal: points that land in talents the rotation never uses.
 
 ## The talent climb
