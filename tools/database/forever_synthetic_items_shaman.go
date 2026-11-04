@@ -210,3 +210,72 @@ var elementalSyntheticItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
 }
+
+// BEGIN hit-trade steps: elemental (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsElemental...)
+}
+
+var hitStepsElemental = []*proto.UIItem{
+	// Elemental Synthetic Legs (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (990109).
+	{
+		Id: 990150, Name: "Elemental Synthetic Legs (Phase 1, hit -10)", Icon: "inv_pants_mail_15",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Stamina: 13, stats.Intellect: 15, stats.SpellPower: 35, stats.Armor: 369}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  12,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+		SetName:        "Elemental Synthetic (Phase 1)",
+	},
+	// Elemental Synthetic Head (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (990101).
+	{
+		Id: 990151, Name: "Elemental Synthetic Head (Phase 1, hit +10)", Icon: "inv_helmet_09",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Stamina: 13, stats.Intellect: 6, stats.SpellPower: 36, stats.Armor: 343}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 20,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+	},
+	// Elemental Synthetic Shoulder (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (990103).
+	{
+		Id: 990152, Name: "Elemental Synthetic Shoulder (Phase 1, hit +10)", Icon: "inv_shoulder_29",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Stamina: 10, stats.Intellect: 2, stats.Spirit: 15, stats.SpellPower: 25, stats.Armor: 399}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+	},
+	// Elemental Synthetic Chest (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (990105).
+	{
+		Id: 990153, Name: "Elemental Synthetic Chest (Phase 1, hit +10)", Icon: "inv_chest_chain_11",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Stamina: 13, stats.Intellect: 6, stats.SpellPower: 36, stats.Armor: 422}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 20,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+	},
+	// Elemental Synthetic Waist (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (990108).
+	{
+		Id: 990154, Name: "Elemental Synthetic Waist (Phase 1, hit +10)", Icon: "inv_belt_14",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Stamina: 10, stats.Intellect: 2, stats.SpellPower: 29, stats.Armor: 255}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 16,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+	},
+	// Elemental Synthetic Feet (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (990110).
+	{
+		Id: 990155, Name: "Elemental Synthetic Feet (Phase 1, hit +10)", Icon: "inv_boots_plate_06",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Stamina: 10, stats.Intellect: 2, stats.Spirit: 15, stats.SpellPower: 25, stats.Armor: 290}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+	},
+}
+
+// END hit-trade steps: elemental

@@ -350,3 +350,110 @@ var foreverSyntheticDruidItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
 	},
 }
+
+// BEGIN hit-trade steps: balance (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsBalance...)
+}
+
+var hitStepsBalance = []*proto.UIItem{
+	// Balance Synthetic Head (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (998001).
+	{
+		Id: 998300, Name: "Balance Synthetic Head (Phase 1, hit +10)", Icon: "inv_helmet_09",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:      stats.Stats{stats.Stamina: 17, stats.Intellect: 8, stats.SpellPower: 34, stats.Armor: 163}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 16,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
+		SetName:        "Balance Synthetic (Phase 1)",
+	},
+	// Balance Synthetic Chest (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (998005).
+	{
+		Id: 998301, Name: "Balance Synthetic Chest (Phase 1, hit +10)", Icon: "inv_chest_cloth_06",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Stamina: 17, stats.Intellect: 8, stats.Spirit: 16, stats.SpellPower: 34, stats.Armor: 200}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
+		SetName:        "Balance Synthetic (Phase 1)",
+	},
+	// Balance Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (998006).
+	{
+		Id: 998302, Name: "Balance Synthetic Wrist (Phase 1, hit +10)", Icon: "inv_bracer_03",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:      stats.Stats{stats.Spirit: 7, stats.SpellPower: 24, stats.Armor: 88}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 8,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
+	},
+	// Balance Synthetic Feet (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (998010).
+	{
+		Id: 998303, Name: "Balance Synthetic Feet (Phase 1, hit +10)", Icon: "inv_boots_08",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Stamina: 12, stats.Intellect: 3, stats.Spirit: 10, stats.SpellPower: 28, stats.Armor: 138}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
+	},
+}
+
+// END hit-trade steps: balance
+
+// BEGIN hit-trade steps: balance_wrath (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsBalanceWrath...)
+}
+
+var hitStepsBalanceWrath = []*proto.UIItem{}
+
+// END hit-trade steps: balance_wrath
+
+// BEGIN hit-trade steps: feral (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsFeral...)
+}
+
+var hitStepsFeral = []*proto.UIItem{
+	// Feral Synthetic Neck (Phase 1), hit-trade step: 10 hit rating less, 10 Strength more (998102).
+	{
+		Id: 998304, Name: "Feral Synthetic Neck (Phase 1, hit -10)", Icon: "inv_jewelry_necklace_09",
+		Type:  proto.ItemType_ItemTypeNeck,
+		Stats: stats.Stats{stats.Agility: 12, stats.Stamina: 20, stats.Strength: 10}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
+	},
+	// Feral Synthetic Shoulder (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (998103).
+	{
+		Id: 998305, Name: "Feral Synthetic Shoulder (Phase 1, hit -10)", Icon: "inv_shoulder_25",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:      stats.Stats{stats.Strength: 20, stats.Agility: 19, stats.Armor: 150}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  6,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
+	},
+	// Feral Synthetic Hands (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (998107).
+	{
+		Id: 998306, Name: "Feral Synthetic Hands (Phase 1, hit -10)", Icon: "inv_gauntlets_23",
+		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:      stats.Stats{stats.Strength: 20, stats.Agility: 19, stats.Armor: 125}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  6,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
+	},
+	// Feral Synthetic Legs (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (998109).
+	{
+		Id: 998307, Name: "Feral Synthetic Legs (Phase 1, hit -10)", Icon: "inv_pants_wolf",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:      stats.Stats{stats.Strength: 30, stats.Agility: 29, stats.Armor: 175}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  3,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
+	},
+}
+
+// END hit-trade steps: feral

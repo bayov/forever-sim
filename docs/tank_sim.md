@@ -421,6 +421,16 @@ So the search's noise drops 2 to 50 times, least where survival moves. At Broodl
 the death floor (4.5%), where healing needed has no finite error and nothing pairs: a search there needs a
 sturdier tank or more healing.
 
+**Seeds** (2026-11-04, finding tank_rotations-20261104-13): the engine runs iteration i on seed + i, so seeds 1
+and 2 would share all but one iteration. The tank tools (tankbench, abtest and rotopt's tank runs, all with
+`-seed`, default 1) space the seeds a billion apart (`tankscore.Seed`: start at 1 + (seed − 1) × 10⁹), so different
+`-seed` values run disjoint iterations for any count under a billion, and the default seed 1 still starts at 1, so
+numbers benched before stand; the DPS sims keep the plain seed. One seed at 3,000 and at 10,000 iterations still shares the first
+3,000, so confirm a search's result on a different seed. The bosses of one run share their seed, so their scores
+correlate (0.11 to 0.14) and the six-boss mean's error, for absolute scores, is about 1.25 times the independent
+one: rotopt's mean over encounters and abtest's unpaired `scoring_mean` multiply it by 1.25
+(`tankscore.SharedSeedSD`). Paired differences don't need it.
+
 **First search with it** (2026-11-02): the warrior's talent search at Chromaggus (Anniversary), Balanced, 600
 iterations a candidate and 3,000 to confirm (789 sims, 73 s). It took Improved Thunder Clap's 3 points into Cruelty
 (+66, noise 8: the swap the Broodlord search couldn't tell from noise), then Improved Shield Wall's 2 (+22, noise

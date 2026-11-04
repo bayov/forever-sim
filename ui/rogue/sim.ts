@@ -161,10 +161,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			defaultGear: {
 				[Faction.Unknown]: {},
 				[Faction.Alliance]: {
-					1: Presets.GearLevel60SyntheticMutilate.gear,
+					1: Presets.GearLevel60SyntheticMutilateHitPlus3.gear,
 				},
 				[Faction.Horde]: {
-					1: Presets.GearLevel60SyntheticMutilate.gear,
+					1: Presets.GearLevel60SyntheticMutilateHitPlus3.gear,
 				},
 			},
 		},

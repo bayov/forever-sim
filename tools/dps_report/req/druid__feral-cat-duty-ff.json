@@ -13,11 +13,11 @@
                   "enchant": 1508
                 },
                 {
-                  "id": 998102,
+                  "id": 998304,
                   "enchant": 1249059
                 },
                 {
-                  "id": 998103
+                  "id": 998305
                 },
                 {
                   "id": 998104,
@@ -32,14 +32,14 @@
                   "enchant": 1885
                 },
                 {
-                  "id": 998107,
+                  "id": 998306,
                   "enchant": 1248640
                 },
                 {
                   "id": 998108
                 },
                 {
-                  "id": 998109,
+                  "id": 998307,
                   "enchant": 1508
                 },
                 {
@@ -86,7 +86,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "05002-53200032023012125001-05502",
+            "talentsString": "050022-53200032023012125001-055",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",

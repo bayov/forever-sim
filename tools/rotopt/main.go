@@ -50,6 +50,11 @@ func main() {
 	talents := flag.String("talents", "", "override the player's talent string")
 	talentSearch := flag.Bool("talent-search", false, "search the talent tree with the starting knobs instead of the knobs (prints the best talent string)")
 	talentsFile := flag.String("talents-file", "", "score every talent string in this file (one per line) with the starting knobs, best first")
+	hitStepsBase := flag.String("hit-steps", "", "hit-trade gear steps (hitsteps.go): the gear set path without .gear.json, e.g. ui/enhancement_shaman/gear_sets/level60_phase1_synthetic; every run wears the step <set>_hit±N its talents and race call for")
+	hitCap := flag.String("hit-cap", "", "with -hit-steps, the hit cap the steps aim at: melee:8, ranged:8 or spell:16")
+	hitSchool := flag.String("hit-school", "", "with -hit-steps, school-only hit talents the stat sheet misses, fieldName:percent per rank, e.g. shadowFocus:1")
+	hitSpan := flag.Int("hit-span", 0, "with -hit-steps, the talent search also tries this many steps either side of the cap step and keeps the best (hit past the cap that still pays)")
+	hitStepFlag := flag.String("hit-step", "", "with -hit-steps, wear this step (e.g. -2 or +1) whatever the talents call for, for the final numbers of a step a span search picked")
 	requiredTalents := flag.String("require", "", "talents the talent search keeps at max rank, by field name, e.g. spiritWeapons for the threat cut the sim does not score")
 	gearSearch := flag.Bool("gear-search", false, "search every slot over the items the player can equip at their level, with the starting knobs (prints the gear and writes it to -gear-out)")
 	gearOut := flag.String("gear-out", "", "settings JSON to write with the gear the search found, for the next run")
@@ -87,7 +92,7 @@ func main() {
 	session := flag.Bool("session", false, "leveling settings: print one session's pulls, rests and searches for the starting knobs, no search")
 	sessionRaw := flag.Bool("session-raw", false, "leveling settings: with -session, print the session's whole log as the UI gets it instead of the summary")
 	sessionSeed := flag.Int64("session-seed", 1, "leveling settings: the random seed of the -session, for another sample session")
-	seed := flag.Int64("seed", 1, "random seed of the scoring runs, to check a gain holds on other fights or sessions")
+	seed := flag.Int64("seed", 1, "random seed of the scoring runs, to check a gain holds on other fights or sessions (a tank run's is spaced a billion iterations apart, tankscore.Seed, so two seeds share no iterations)")
 	tankPreset := flag.String("tank", "", "score the player as a tank instead of by DPS: max-threat, balanced or max-survival, or a survival weight (docs/tank_sim.md, The optimizer's objective)")
 	tankEncounter := flag.String("tank-encounter", "", "tank: a boss encounter file (tools/encounters/*.json) for the fight and the healing on the tank; its fight length replaces -durs unless -durs is given")
 	tankHps := flag.Float64("tank-hps", 600, "tank, without -tank-encounter: the stand-in healer's HPS, a heal every 2 s")
@@ -158,6 +163,23 @@ func main() {
 	}
 	if *targets > 0 {
 		setup.setTargets(*targets)
+	}
+	if *hitStepsBase != "" {
+		class := strings.ToLower(strings.TrimPrefix(setup.player().Class.String(), "Class"))
+		h, err := loadHitSteps(*hitStepsBase, *hitCap, *hitSchool, *hitSpan, class)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "-hit-steps: %v\n", err)
+			os.Exit(2)
+		}
+		setup.hit = h
+		if *hitStepFlag != "" {
+			st, err := strconv.Atoi(strings.TrimPrefix(*hitStepFlag, "+"))
+			if _, ok := h.gear[st]; err != nil || !ok {
+				fmt.Fprintf(os.Stderr, "-hit-step %s: no such step\n", *hitStepFlag)
+				os.Exit(2)
+			}
+			setup.hitStep = &st
+		}
 	}
 	if *bonus != "" {
 		p := setup.player()
@@ -282,6 +304,9 @@ func main() {
 
 	if *printStats {
 		fmt.Print(setup.finalStats(template.Build(start)))
+		if note := setup.hitStepNote(); note != "" {
+			fmt.Println(note)
+		}
 		return
 	}
 
@@ -453,6 +478,9 @@ func main() {
 		}
 		setup.talents = best
 		fmt.Printf("%gs: %s\n  talents %s\n  sim runs %d\n", durations, confirm.score(start), best, s.evals)
+		if note := setup.hitStepNote(); note != "" {
+			fmt.Printf("  %s\n", note)
+		}
 		return
 	}
 

@@ -1,22 +1,117 @@
-/* The character frame (frames/character.ts, skills.ts, model_view.ts). Sizes are UI units. */
+/* The character frame (frames/character.ts, character_stats.ts, character_widgets.ts, skills.ts,
+   model_view.ts). Sizes are UI units. */
 
+.bz-char-body,
 .bz-char-page {
 	position: absolute;
 	inset: 0;
 }
-.bz-char-portrait {
-	position: absolute;
-	border-radius: 50%;
-	overflow: hidden;
-	background: #000 center / 100% 100%;
+.bz-char.collapsed .bz-right-pane {
+	display: none !important;
+}
+.bz-char .bz-tex {
+	pointer-events: none;
+}
+.bz-char .bz-pf-title .GameFontHighlight {
+	color: #fff;
+}
+.GameFontNormalMed2Outline {
+	font-size: 14px;
+	line-height: 20px;
+	white-space: nowrap;
+	text-shadow:
+		-1px 0 0 #000,
+		1px 0 0 #000,
+		0 -1px 0 #000,
+		0 1px 0 #000,
+		1px 1px 0 #000;
+}
+.GameFontNormalMed3 {
+	font-size: 14px;
+}
+.bz-green {
+	color: #20ff20;
+}
+.bz-red {
+	color: #ff2020;
+}
+.bz-white {
+	color: #fff;
 }
 
-/* The paper doll's slots: the hover box sits on the art's slot frame. */
+/* The rock strip over the model, tiled at its own size. */
+.bz-char-rock {
+	background-size: 256px 256px !important;
+	background-repeat: repeat !important;
+}
+
+/* The RightPaneToggleButton. */
+.bz-char-toggle {
+	position: absolute;
+	cursor: pointer;
+	z-index: 6;
+}
+.bz-char-toggle > div {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+.bz-char-toggle-down,
+.bz-char-toggle.pushed .bz-char-toggle-up,
+.bz-char-toggle-hi {
+	display: none;
+}
+.bz-char-toggle.pushed .bz-char-toggle-down,
+.bz-char-toggle:hover .bz-char-toggle-hi,
+.bz-char-toggle.v-hover .bz-char-toggle-hi {
+	display: block;
+}
+.bz-char-toggle-hi {
+	background-size: 100% 100%;
+	mix-blend-mode: screen;
+}
+.bz-char-divider {
+	pointer-events: none;
+}
+
+/* The mode tabs on the frame's right side (LargeSideTabButtonTemplate). */
+.bz-char-modetabs {
+	position: absolute;
+	left: 100%;
+	width: 64px;
+}
+.bz-sidetab {
+	position: absolute;
+	cursor: pointer;
+}
+.bz-sidetab-masked {
+	position: absolute;
+	pointer-events: none;
+}
+.bz-sidetab-icon {
+	position: absolute;
+	border-radius: 0;
+	background-size: 100% 100%;
+}
+.bz-sidetab.pushed .bz-sidetab-icon {
+	transform: translate(1px, 1px);
+}
+.bz-sidetab-selected,
+.bz-sidetab-hover {
+	display: none;
+}
+.bz-sidetab.selected .bz-sidetab-selected,
+.bz-sidetab:hover .bz-sidetab-hover,
+.bz-sidetab.v-hover .bz-sidetab-hover {
+	display: block;
+}
+
+/* The paper doll's slots: the bronze frame behind each button. */
 .bz-char-slot .bz-item-empty {
 	opacity: 1;
 }
 
-/* The model: drawn under the stats and the resistances, turned by dragging. */
+/* The model: drawn over the backdrop, under the slots, turned by dragging. */
 .bz-model {
 	position: absolute;
 	cursor: grab;
@@ -28,195 +123,312 @@
 	height: 100%;
 }
 
-/* The stat boxes and their rows: a gold label on the left, the value on the right. */
-.bz-stat-box {
+/* The sidebar tabs over the stats. */
+.bz-sidebar-tab {
 	position: absolute;
-	width: 115px;
-	height: 79px;
+}
+.bz-sidebar-tab.disabled {
+	opacity: 0.5;
+}
+.bz-sidebar-tab.disabled .bz-sidebar-icon {
+	filter: grayscale(1);
+}
+.bz-sidebar-icon {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+}
+.bz-sidebar-portrait canvas {
+	border-radius: 0 !important;
+	transform: scale(1.28);
+}
+
+/* The scroll boxes and the MinimalScrollBar. */
+.bz-cs-box {
+	position: absolute;
+	overflow: hidden;
+}
+.bz-cs-content {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 0;
+}
+.bz-cs-line {
+	z-index: 2;
+}
+.bz-msb {
+	position: absolute;
+}
+.bz-msb-track {
+	position: absolute;
+	left: 0;
+	width: 8px;
+	top: 19px;
+	bottom: 19px;
+}
+.bz-msb-thumb {
+	position: absolute;
+	cursor: pointer;
+}
+.bz-msb-thumb:hover {
+	filter: brightness(1.3);
+}
+.bz-msb-arrow {
+	position: absolute;
+	cursor: pointer;
+}
+.bz-msb-arrow > div {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	display: none;
+}
+.bz-msb-arrow .bz-msb-arrow-tex-normal,
+.bz-msb-arrow:hover:not(.disabled) .bz-msb-arrow-tex-over,
+.bz-msb-arrow.pushed:not(.disabled) .bz-msb-arrow-tex-down {
+	display: block;
+}
+.bz-msb-arrow:hover:not(.disabled) .bz-msb-arrow-tex-normal,
+.bz-msb-arrow.pushed:not(.disabled) .bz-msb-arrow-tex-over {
+	display: none;
+}
+.bz-msb-arrow.disabled {
+	opacity: 0.5;
+	filter: grayscale(1);
+	cursor: default;
+}
+
+/* The Character Stats list. */
+.bz-stat-cat {
+	position: relative;
+	height: 40px;
+}
+.bz-stat-cat-title {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 12px;
 }
 .bz-stat-row {
-	position: absolute;
-	left: 6px;
-	width: 104px;
-	height: 13px;
+	position: relative;
+	height: 23px;
 }
 .bz-stat-row .bz-text {
 	position: absolute;
-	top: 1px;
-}
-.bz-stat-row .bz-stat-value {
-	right: 0;
-	text-align: right;
-}
-.bz-stat-value.up {
-	color: #19ff19;
-}
-.bz-stat-value.down {
-	color: #ff1919;
-}
-
-/* UIDropDownMenuTemplate: the label frame and the arrow button, with its list under it. */
-.bz-dd {
-	position: absolute;
-	height: 32px;
-	cursor: pointer;
-}
-.bz-dd-l,
-.bz-dd-m,
-.bz-dd-r {
-	position: absolute;
-	top: -17px;
-	height: 64px;
-	pointer-events: none;
-}
-.bz-dd-text {
-	position: absolute;
-	top: 9px;
-	text-align: right;
-}
-.bz-dd-button {
-	position: absolute;
-	top: 1px;
-	width: 24px;
-	height: 24px;
-	background-size: 100% 100%;
-}
-.bz-dd.pushed .bz-dd-button {
-	background-image: var(--bz-dd-arrow-down) !important;
-}
-.bz-dd:hover .bz-dd-button::after,
-.bz-dd.v-hover .bz-dd-button::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: var(--bz-dd-arrow-highlight) 0 0 / 100% 100%;
-}
-.bz-dd-list {
-	position: absolute;
-	z-index: 20;
-	padding: 8px 6px;
-	background: rgba(0, 0, 0, 0.92);
-	border: 1px solid #a0a0a0;
-	border-radius: 4px;
-	box-shadow: inset 0 0 0 1px #3a3a3a;
-}
-.bz-dd-item {
-	position: relative;
-	height: 16px;
-	padding: 2px 8px 0 18px;
-	cursor: pointer;
+	top: 5px;
 	white-space: nowrap;
 }
-.bz-dd-item:hover,
-.bz-dd-item.v-hover {
-	background: linear-gradient(90deg, rgba(64, 96, 200, 0.55), rgba(64, 96, 200, 0.25));
+.bz-stat-row .bz-stat-value {
+	right: 8px;
+	text-align: right;
 }
-.bz-dd-item.checked::before {
-	content: '';
+.bz-stat-icon {
 	position: absolute;
-	left: 2px;
-	top: 1px;
-	width: 14px;
-	height: 14px;
-	background: var(--bz-check-check) 0 0 / 100% 100%;
+}
+.bz-stat-pad {
+	height: 8px;
 }
 
-/* The resistances on the model's top right: an icon with its value at the bottom. */
-.bz-res {
-	position: absolute;
-	width: 32px;
-	height: 29px;
+/* The ColoredProgressBarTemplate. */
+.bz-cpb {
+	position: relative;
 }
-.bz-res .bz-text {
+.bz-cpb > div,
+.bz-cpb-area {
 	position: absolute;
-	left: 0;
-	right: 0;
-	bottom: 2px;
-	text-align: center;
 }
-
-/* The Skills tab: headers with a + or - button, and skill bars. */
-.bz-skill-row {
-	position: absolute;
-	left: 0;
-	height: 15px;
-	cursor: pointer;
-}
-.bz-skill-toggle {
-	position: absolute;
-	left: 2px;
-	top: 0;
-	width: 14px;
-	height: 14px;
-	background-size: 100% 100%;
-}
-.bz-skill-header .bz-text {
-	position: absolute;
-	left: 20px;
-	top: 1px;
-}
-.bz-skill-header:hover .bz-skill-toggle::after,
-.bz-skill-header.v-hover .bz-skill-toggle::after {
-	content: '';
-	position: absolute;
+.bz-cpb-bg,
+.bz-cpb-masked {
 	inset: 0;
-	background: var(--bz-skill-plus-highlight) 0 0 / 100% 100%;
 }
-.bz-skill-bar {
-	position: absolute;
-	height: 12px;
-}
-.bz-skill-bar-bg,
-.bz-skill-bar-fill {
-	position: absolute;
-	left: 0;
+.bz-cpb-area {
+	left: 6px;
+	right: 6px;
 	top: 0;
 	bottom: 0;
 }
-.bz-skill-bar-bg {
+.bz-cpb-fill {
+	position: absolute;
+	left: 0;
+	top: 7px;
+	height: 15px;
+	transform: scaleY(-1);
+}
+.bz-cpb .bz-cpb-text {
+	left: 0;
 	right: 0;
-}
-.bz-skill-bar-bg,
-.bz-skill-bar-fill {
-	background-image: var(--bz-skill-bar);
-	background-size: 100% 100%;
-	background-blend-mode: multiply;
-	opacity: 0.5;
-}
-.bz-skill-bar-border {
-	position: absolute;
-	left: -5px;
-	right: -5px;
-	top: -10px;
-	height: 32px;
-	background: var(--bz-skill-border) 0 0 / 100% 100%;
-	pointer-events: none;
-}
-.bz-skill-row:hover .bz-skill-bar-border,
-.bz-skill-row.v-hover .bz-skill-bar-border,
-.bz-skill-row.selected .bz-skill-bar-border {
-	background-image: var(--bz-skill-border-highlight);
-}
-.bz-skill-bar .bz-text {
-	position: absolute;
-	top: 0;
-}
-.bz-skill-rank {
-	right: 6px;
-	text-align: right;
-}
-.bz-skill-rank .up {
-	color: #19ff19;
-}
-.bz-skill-rank .down {
-	color: #ff1919;
-}
-.bz-skill-desc {
-	white-space: normal;
-	line-height: 1.3;
+	top: 4.5px;
+	height: 20px;
+	line-height: 20px;
+	text-align: center;
+	white-space: nowrap;
 }
 
-/* The Reputation tab's note. */
-.bz-rep-empty {
+/* The detail pane on the right (CharacterFrameSidePaneTemplate). */
+.bz-sidepane {
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.bz-sidepane > .bz-text {
+	position: relative;
+}
+.bz-sp-title {
+	width: 195px;
+	text-align: center;
+	min-height: 14px;
+}
+.bz-sp-divider {
+	position: relative !important;
+	flex: none;
+	margin-top: 7px;
+}
+.bz-sp-extra {
+	position: relative;
+	margin-top: 6px;
+	width: 180px;
+}
+.bz-sp-desc {
+	align-self: stretch;
 	white-space: normal;
+	margin: 8px 14px 0 0;
+	overflow: hidden;
+	color: #fff;
+}
+.bz-sp-rows {
+	position: relative;
+	width: 195px;
+	margin-top: 6px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+.bz-sp-cat {
+	position: relative;
+	height: 40px;
+}
+.bz-sp-cat-label {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 12px;
+	color: #fff;
+}
+.bz-sp-wrapped {
+	position: relative;
+	white-space: pre-line !important;
+	width: 205px;
+	white-space: pre-line;
+}
+.bz-sp-empty {
+	display: none;
+	white-space: normal !important;
+	position: absolute !important;
+	width: 170px;
+	left: calc(50% - 85px);
+	top: calc(50% - 30px);
+	transform: translateY(-50%);
+}
+.bz-sidepane.empty > :not(.bz-sp-empty) {
+	display: none;
+}
+.bz-sidepane.empty .bz-sp-empty {
+	display: block;
+}
+
+/* The Skills list. */
+.bz-skill-header,
+.bz-skill-entry {
+	position: relative;
+	cursor: pointer;
+}
+.bz-skill-list {
+	padding: 7px 10px 10px 10px;
+}
+.bz-skill-header {
+	height: 28px;
+	margin-top: 3px;
+}
+.bz-skill-entry {
+	height: 30px;
+	margin: 3px 0 0 2px;
+}
+.bz-skill-header-bg,
+.bz-skill-header-hi {
+	position: absolute;
+	inset: 0;
+}
+.bz-skill-header-hi {
+	display: none;
+	opacity: 0.3;
+	mix-blend-mode: screen;
+}
+.bz-skill-header:hover .bz-skill-header-hi,
+.bz-skill-header.v-hover .bz-skill-header-hi {
+	display: block;
+}
+.bz-skill-header-name {
+	position: absolute;
+	left: 10px;
+	top: 7px;
+}
+.bz-skill-header.pushed .bz-skill-header-name {
+	transform: translate(1px, 1px);
+}
+.bz-skill-header-state {
+	position: absolute;
+	right: 8px;
+	top: 50%;
+	transform: translateY(calc(-50% + 1px));
+}
+.bz-skill-band {
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	pointer-events: none;
+}
+.bz-skill-band > div {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+}
+.bz-band-l {
+	left: 0;
+	width: 6px;
+}
+.bz-band-r {
+	right: 0;
+	width: 6px;
+}
+.bz-band-m {
+	left: 6px;
+	right: 6px;
+}
+.bz-skill-entry:hover .bz-skill-band,
+.bz-skill-entry.v-hover .bz-skill-band {
+	opacity: 0.1;
+}
+.bz-skill-entry.selected .bz-skill-band {
+	opacity: 0.2;
+}
+.bz-skill-name {
+	position: absolute;
+	left: 2px;
+	right: 173px;
+	top: 8px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+.bz-skill-entry .bz-skill-bar {
+	position: absolute;
+	right: 3px;
+	top: 0.5px;
+	width: 160px;
+}
+.bz-skill-entry.pushed .bz-skill-name,
+.bz-skill-entry.pushed .bz-skill-bar {
+	transform: translate(1px, 1px);
 }

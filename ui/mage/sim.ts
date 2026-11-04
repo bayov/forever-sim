@@ -129,7 +129,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 			defaultGear: {
 				[Faction.Unknown]: {},
 				[Faction.Alliance]: {
-					1: Presets.GearLevel60Phase1SyntheticArcane.gear,
+					// The Gnome's racial hit puts it 1% over the cap on the Arcane set, so it wears the hit-1 step.
+					1: Presets.GearLevel60Phase1SyntheticArcaneHitMinus1.gear,
 				},
 				[Faction.Horde]: {
 					1: Presets.GearLevel60Phase1SyntheticArcane.gear,

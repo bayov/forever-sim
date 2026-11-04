@@ -14,8 +14,10 @@ import (
 // Under Classic it keeps the 21% base mana cost, the 20 sec cooldown and the shared debuff
 // with two Nature charges.
 //
-// The November 2 development notes (post 9, for launch; not in client 1.60.1.70753) make it
-// 150% normalized weapon damage (was 100%) and cut the cooldown to 6 sec (was 8).
+// The November 2 development notes (post 9, for launch) make it 150% normalized weapon damage (was
+// 100%) and cut the cooldown to 6 sec (was 8). Client 1.60.1.70753 had neither; hotfix push 113380
+// (wago.tools/hotfixes, region 91) puts both in client data: SpellEffect 1368308 and
+// SpellCooldowns 55241 (tier 1).
 const StormstrikeForeverBonus = 1.2
 
 // StormstrikeWeaponDamagePercent is the share of normalized weapon damage the strike deals.

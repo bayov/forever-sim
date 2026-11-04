@@ -1,16 +1,19 @@
-// The chat frame (ChatFrame1 of Classic Era's FloatingChatFrame.xml): the General tab with the
-// room's system lines and what you type, and the Combat Log tab with your hits.
+// The chat frame as Forever draws it (ChatFrame1 and ChatFrame2 of Mainline's
+// FloatingChatFrame.xml, which Forever loads as is): the General tab with the room's system
+// lines and what you type, and the Combat Log tab with your hits.
 //
-// It looks and fades like the game's. The background, tabs and scroll buttons fade in while the
-// mouse is over the frame and fade out a second after it leaves (CSS transitions). Lines fade
-// out two minutes after they came and come back when you scroll or hover. The Combat Log keeps
-// its hits in a list and only makes lines while its tab is shown.
+// It looks and fades like the game's. The background, its border and the button column stay at
+// the default window alpha (0.25). The tabs rest at 0.4 (the selected one) and 0.2, and with the
+// scroll bar they fade in while the mouse is over the frame and fade out a second after it
+// leaves. Lines fade out two minutes after they came and come back when you scroll or hover.
+// The Combat Log keeps its hits in a list and only makes lines while its tab is shown.
 
 import './chat.css';
 import type { HitEvent } from '../protocol';
-import { glow, loadFonts, SND, sound, tex, texVars } from './assets';
+import { setAtlas } from './atlas';
+import { glow, loadFonts, sound, tex, texVars } from './assets';
 import type { RoomLink } from './link';
-import { clickable, div } from './panels';
+import { clickable, div, text } from './panels';
 
 // ChatLayout is where the user's EllesmereUI keeps chat (cmd/practice/ui.go), in UI units.
 export type ChatLayout = { position?: { point?: string; relPoint?: string; x?: number; y?: number }; size?: { w?: number; h?: number } };
@@ -26,21 +29,25 @@ const CT = {
 	tabHlLeft: 374168,
 	tabHlMid: 374170,
 	tabHlRight: 374172,
-	upUp: 130958,
-	upDown: 130957,
-	downUp: 130952,
-	downDown: 130951,
-	endUp: 130955,
-	endDown: 130954,
-	blink: 130945,
-	mouseHilight: 130757,
+	borderCorner: 374189,
+	borderLeft: 374190,
+	borderTop: 374191,
 	inputLeft: 375507,
 	inputMid: 389190,
 	inputRight: 375508,
+	focusLeft: 374197,
+	focusMid: 374198,
+	focusRight: 374199,
+	menuUp: 130949,
+	menuDown: 130948,
+	mouseHilight: 130757,
 };
 
-// The game's chat colors (ChatTypeInfo) and combat log colors (COMBATLOG_DEFAULT_COLORS: your
-// lines are 0.7 gray, and the spell, amount and school are that times 1.5).
+// The sound files of the chat's SOUNDKITs in Forever: U_CHAT_SCROLL_BUTTON (tabs and the scroll
+// thumb), IG_CHAT_BOTTOM and SCROLLBAR_STEP all play this one.
+const chatScroll = 567407;
+
+// The game's chat colors (ChatTypeInfo).
 const SYSTEM = '#ffff00';
 const SAY = '#ffffff';
 
@@ -59,14 +66,24 @@ const schools: [number, string][] = [
 const generalCap = 128;
 const combatCap = 500;
 
+// The Combat Log's quick button bar (CombatLogQuickButtonFrame_Custom) is 24 high, and the
+// combat log's lines start that much lower.
+const quickHeight = 24;
+// The scroll bar's track starts 19 below its top and ends 19 above its bottom, and its thumb is
+// at least 23 high (MinimalScrollBar).
+const trackInset = 19;
+const minThumb = 23;
+
 type Line = { text: string; color: string };
 
 export class ChatFrame {
 	readonly el = document.createElement('div');
 	private readonly msgs: HTMLDivElement;
 	private readonly lines: HTMLDivElement;
-	private readonly quickBar: HTMLDivElement;
 	private readonly tabs: HTMLDivElement[] = [];
+	private readonly bar: HTMLDivElement;
+	private readonly track: HTMLDivElement;
+	private readonly thumb: HTMLDivElement;
 	private readonly bottomButton: HTMLDivElement;
 	private readonly editBox: HTMLDivElement;
 	private readonly input: HTMLInputElement;
@@ -103,13 +120,26 @@ export class ChatFrame {
 		el.style.width = `${this.w}px`;
 		el.style.height = `${this.h}px`;
 
-		div(el, 'bz-chat-bg');
-		this.quickBar = div(el, 'bz-chat-quick');
-		div(this.quickBar, 'bz-chat-quick-btn', undefined, 'My actions');
+		// FloatingBorderedFrame: the black background and its thin border, on the chat and on the
+		// button column left of it.
+		bordered(el, 'bz-chat-bg');
+		const buttons = div(el, 'bz-chat-buttons');
+		bordered(buttons, 'bz-chat-bg');
+		// ChatFrameChannelButton on top and ChatFrameMenuButton at the bottom. The room has no
+		// channels or chat menu, so they don't open anything.
+		const channel = div(buttons, 'bz-chat-channel');
+		div(channel, 'bz-chat-channel-icon');
+		div(buttons, 'bz-chat-menu');
+
 		this.msgs = div(el, 'bz-chat-msgs');
 		this.lines = div(this.msgs, 'bz-chat-lines');
 
-		// The dock: the tabs sit on the frame's top edge.
+		// The quick button bar sits on the tab, so it fades with it. We have only your own hits,
+		// so it has only "My actions" (the filter that's on, drawn highlighted).
+		const quick = div(el, 'bz-chat-quick');
+		text(quick, 'My actions', 'GameFontHighlight').classList.add('bz-chat-quick-btn');
+
+		// The dock: the tabs stand on the background's top edge, 1 apart.
 		const dock = div(el, 'bz-chat-dock');
 		for (const [i, label] of ['General', 'Combat Log'].entries()) {
 			const t = div(dock, 'bz-chat-tab');
@@ -120,26 +150,49 @@ export class ChatFrame {
 			}
 			div(t, 'bz-chat-tab-text', undefined, label);
 			clickable(t, () => {
-				sound(SND.chatScroll);
+				sound(chatScroll);
 				this.selectTab(i);
 			});
 			this.tabs.push(t);
 		}
 
-		// The scroll buttons on the left, bottom up: to the end, down, up.
-		const buttons = div(el, 'bz-chat-buttons');
-		const up = div(buttons, 'bz-chat-btn up');
-		const down = div(buttons, 'bz-chat-btn down');
-		this.bottomButton = div(buttons, 'bz-chat-btn end');
-		clickable(up, () => this.scrollLines(-1));
-		clickable(down, () => this.scrollLines(1));
-		clickable(this.bottomButton, () => this.scrollToBottom());
+		// The MinimalScrollBar on the right, over the scroll to bottom button.
+		this.bar = div(el, 'bz-chat-bar');
+		const back = div(this.bar, 'bz-chat-step back');
+		const forward = div(this.bar, 'bz-chat-step forward');
+		this.track = div(this.bar, 'bz-chat-track');
+		div(this.track, 'bz-chat-track-top');
+		div(this.track, 'bz-chat-track-mid');
+		div(this.track, 'bz-chat-track-bottom');
+		this.thumb = div(this.track, 'bz-chat-thumb');
+		for (const state of ['up', 'over', 'down']) {
+			div(this.thumb, `bz-chat-thumb-top ${state}`);
+			div(this.thumb, `bz-chat-thumb-mid ${state}`);
+			div(this.thumb, `bz-chat-thumb-bottom ${state}`);
+		}
+		clickable(back, () => {
+			sound(chatScroll);
+			this.scrollLines(-1);
+		});
+		clickable(forward, () => {
+			sound(chatScroll);
+			this.scrollLines(1);
+		});
+		this.bindThumb();
+		this.bottomButton = div(el, 'bz-chat-end');
+		div(this.bottomButton, 'bz-chat-end-flash');
+		clickable(this.bottomButton, () => {
+			sound(chatScroll);
+			this.scrollToBottom();
+		});
 
-		// The edit box under the frame.
+		// The edit box under the frame. In the game's default chat style (IM) it stays there at
+		// 0.35 alpha, and Enter or a click opens it.
 		this.editBox = div(el, 'bz-chat-edit');
-		div(this.editBox, 'bz-chat-edit-l');
-		div(this.editBox, 'bz-chat-edit-m');
-		div(this.editBox, 'bz-chat-edit-r');
+		for (const part of ['l', 'm', 'r']) {
+			div(this.editBox, `bz-chat-edit-bg ${part}`);
+			div(this.editBox, `bz-chat-edit-focus ${part}`);
+		}
 		this.header = div(this.editBox, 'bz-chat-edit-header', undefined, 'Say: ');
 		this.input = document.createElement('input');
 		this.input.className = 'bz-chat-input';
@@ -148,6 +201,13 @@ export class ChatFrame {
 		this.input.autocomplete = 'off';
 		this.editBox.append(this.input);
 		this.bindInput();
+		this.editBox.addEventListener('mousedown', e => {
+			e.stopPropagation();
+			if (!this.editOpen) {
+				e.preventDefault();
+				this.openEditBox();
+			}
+		});
 
 		this.msgs.addEventListener(
 			'wheel',
@@ -190,6 +250,25 @@ export class ChatFrame {
 	private async load() {
 		const t = (fdid: number) => () => tex(fdid);
 		const g = (fdid: number) => () => glow(fdid);
+		const atlas = (sel: string, name: string) => this.el.querySelectorAll<HTMLElement>(sel).forEach(e => void setAtlas(e, name));
+		atlas('.bz-chat-channel', 'chatframe-button-up');
+		atlas('.bz-chat-channel-icon', 'chatframe-button-icon-voicechat');
+		atlas('.bz-chat-step.back', 'minimal-scrollbar-arrow-top');
+		atlas('.bz-chat-step.forward', 'minimal-scrollbar-arrow-bottom');
+		atlas('.bz-chat-track-top', 'minimal-scrollbar-track-top');
+		atlas('.bz-chat-track-mid', '!minimal-scrollbar-track-middle');
+		atlas('.bz-chat-track-bottom', 'minimal-scrollbar-track-bottom');
+		for (const [state, suffix] of [
+			['up', ''],
+			['over', '-over'],
+			['down', '-down'],
+		]) {
+			atlas(`.bz-chat-thumb-top.${state}`, `minimal-scrollbar-small-thumb-top${suffix}`);
+			atlas(`.bz-chat-thumb-mid.${state}`, `minimal-scrollbar-small-thumb-middle${suffix}`);
+			atlas(`.bz-chat-thumb-bottom.${state}`, `minimal-scrollbar-small-thumb-bottom${suffix}`);
+		}
+		atlas('.bz-chat-end', 'minimal-scrollbar-arrow-returntobottom');
+		atlas('.bz-chat-end-flash', 'minimal-scrollbar-arrow-returntobottom');
 		await Promise.all([
 			loadFonts(),
 			texVars({
@@ -202,37 +281,40 @@ export class ChatFrame {
 				'bz-chat-tabhl-l': g(CT.tabHlLeft),
 				'bz-chat-tabhl-m': g(CT.tabHlMid),
 				'bz-chat-tabhl-r': g(CT.tabHlRight),
-				'bz-chat-up': t(CT.upUp),
-				'bz-chat-up-down': t(CT.upDown),
-				'bz-chat-down': t(CT.downUp),
-				'bz-chat-down-down': t(CT.downDown),
-				'bz-chat-end': t(CT.endUp),
-				'bz-chat-end-down': t(CT.endDown),
-				'bz-chat-blink': g(CT.blink),
-				'bz-chat-btn-hl': g(CT.mouseHilight),
+				'bz-chat-border-c': t(CT.borderCorner),
+				'bz-chat-border-l': t(CT.borderLeft),
+				'bz-chat-border-t': t(CT.borderTop),
 				'bz-chat-input-l': t(CT.inputLeft),
 				'bz-chat-input-m': t(CT.inputMid),
 				'bz-chat-input-r': t(CT.inputRight),
+				'bz-chat-focus-l': t(CT.focusLeft),
+				'bz-chat-focus-m': t(CT.focusMid),
+				'bz-chat-focus-r': t(CT.focusRight),
+				'bz-chat-menu-up': t(CT.menuUp),
+				'bz-chat-menu-down': t(CT.menuDown),
+				'bz-chat-btn-hl': g(CT.mouseHilight),
 			}),
 		]).catch(e => console.warn('chat', e));
 		this.layoutTabs();
+		this.updateBar();
 	}
 
-	// place puts the frame where the layout says, kept on screen like the game's clamp: the scroll
-	// buttons fit on its left (35) and the edit box under it. We also keep the edit box above the
-	// room's Edit bars, Bind keys and Spellbook buttons in the bottom left corner.
+	// place puts the frame where the layout says, kept on screen like the game's clamp: the
+	// button column fits on its left and the edit box under it. We also keep the edit box above
+	// the room's Edit bars, Bind keys and Spellbook buttons in the bottom left corner.
 	private place() {
 		const layer = this.el.parentElement;
 		const zoom = parseFloat(layer?.style.getPropertyValue('zoom') ?? '') || 1;
 		const hudButton = document.querySelector('.hud .edit-bars, .hud .bind-keys');
 		const hudTop = hudButton ? (innerHeight - hudButton.getBoundingClientRect().top) / zoom : 0;
-		const x = Math.max(35, this.layoutX);
+		const x = Math.max(38, this.layoutX);
 		const y = Math.max(50, this.layoutY, hudTop + 36);
 		this.el.style.left = `${Math.round(x)}px`;
 		this.el.style.bottom = `${Math.round(y)}px`;
 	}
 
-	// layoutTabs sizes each tab to its text, like PanelTemplates_TabResize with the chat's padding.
+	// layoutTabs sizes each tab to its text plus 20, like PanelTemplates_TabResize, at least as
+	// wide as its two ends.
 	private layoutTabs() {
 		if (!this.el.isConnected) {
 			requestAnimationFrame(() => this.layoutTabs());
@@ -240,11 +322,11 @@ export class ChatFrame {
 		}
 		let x = 0;
 		for (const t of this.tabs) {
-			const text = t.querySelector('.bz-chat-tab-text') as HTMLElement;
-			const w = Math.ceil(text.offsetWidth) + 32 + 10;
+			const label = t.querySelector('.bz-chat-tab-text') as HTMLElement;
+			const w = Math.max(32, Math.ceil(label.offsetWidth) + 20);
 			t.style.left = `${x}px`;
 			t.style.width = `${w}px`;
-			x += w;
+			x += w + 1;
 		}
 	}
 
@@ -373,6 +455,7 @@ export class ChatFrame {
 		for (let i = kids.length - keep - 1; i >= 0 && kids[i].classList.contains('new'); i--) kids[i].classList.remove('new');
 		if (this.atBottom) this.msgs.scrollTop = this.msgs.scrollHeight;
 		else this.bottomButton.classList.add('flash');
+		this.updateBar();
 	}
 
 	private lineHeight(): number {
@@ -395,6 +478,51 @@ export class ChatFrame {
 		this.bottomButton.classList.toggle('flash', !this.atBottom);
 		this.lines.classList.toggle('scrolled', !this.atBottom);
 		this.restartFades();
+		this.updateBar();
+	}
+
+	// updateBar shows the scroll bar once there are two lines, and sizes and places its thumb
+	// for the part of the lines in view.
+	private updateBar() {
+		const m = this.msgs;
+		this.bar.style.display = this.lines.childElementCount > 1 ? '' : 'none';
+		const track = this.track.clientHeight;
+		if (!track) return;
+		const total = m.scrollHeight;
+		const view = m.clientHeight;
+		const size = Math.min(track, Math.max(minThumb, total > 0 ? (track * view) / total : track));
+		const max = total - view;
+		const f = max > 0 ? m.scrollTop / max : 1;
+		this.thumb.style.height = `${size}px`;
+		this.thumb.style.top = `${Math.round((track - size) * f)}px`;
+	}
+
+	// bindThumb lets you drag the thumb.
+	private bindThumb() {
+		this.thumb.addEventListener('mousedown', e => {
+			if (e.button !== 0) return;
+			e.stopPropagation();
+			e.preventDefault();
+			sound(chatScroll);
+			this.thumb.classList.add('pushed');
+			const startY = e.clientY;
+			const start = this.msgs.scrollTop;
+			const zoom = this.thumb.getBoundingClientRect().height / (this.thumb.offsetHeight || 1);
+			const move = (ev: MouseEvent) => {
+				const m = this.msgs;
+				const room = this.track.clientHeight - this.thumb.offsetHeight;
+				if (room <= 0) return;
+				m.scrollTop = start + ((ev.clientY - startY) / zoom / room) * (m.scrollHeight - m.clientHeight);
+				this.afterScroll();
+			};
+			const up = () => {
+				this.thumb.classList.remove('pushed');
+				removeEventListener('mousemove', move);
+				removeEventListener('mouseup', up);
+			};
+			addEventListener('mousemove', move);
+			addEventListener('mouseup', up);
+		});
 	}
 
 	// restartFades shows the faded lines again and starts their two minutes over.
@@ -502,4 +630,13 @@ function roman(n: number): string {
 
 function escape(s: string): string {
 	return s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+}
+
+// bordered draws FloatingBorderedFrame's background and border on a frame: the background 2
+// past its sides, 3 above and 6 below, and the border's 8 by 8 corners 4 outside the
+// background's corners with the 16 wide edges between them.
+function bordered(parent: HTMLElement, cls: string) {
+	const bg = div(parent, cls);
+	for (const part of ['tl', 'tr', 'bl', 'br', 'l', 'r', 't', 'b']) div(bg, `bz-chat-border ${part}`);
+	return bg;
 }

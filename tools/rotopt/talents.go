@@ -301,13 +301,20 @@ type talentCandidate struct {
 // scoreBuilds scores each build against the current one, best DPS gain first.
 func (s *searcher) scoreBuilds(builds []build, current result, knobs Knobs) []talentCandidate {
 	var pending []*pendingScore
+	var groups [][]int // each build's step list (nil without -hit-span) and where its scores start
+	var starts []int
 	for _, c := range builds {
 		s.setup.talents = c.String()
-		pending = append(pending, s.prepare(knobs))
+		p, steps := s.prepareSteps(knobs)
+		starts = append(starts, len(pending))
+		groups = append(groups, steps)
+		pending = append(pending, p...)
 	}
+	results := s.scoreAll(pending)
 	var cands []talentCandidate
-	for i, score := range s.scoreAll(pending) {
-		c := builds[i]
+	for i, c := range builds {
+		n := max(1, len(groups[i]))
+		score := s.pickStep(c.String(), results[starts[i]:starts[i]+n], groups[i])
 		gain := score.dps - current.dps
 		noise := gainNoise(current, score)
 		cands = append(cands, talentCandidate{c, score, gain, noise})

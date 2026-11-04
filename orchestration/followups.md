@@ -51,3 +51,10 @@ Items found late that don't affect any shipped Level 60 preset, left out of the 
   timing summary then refreshes `W` in pipeline.sh); exact Shapley per fight for 2+ racial parts (their error is a
   bound today, `build_races.py` err()); weight step sizes; equal fight-seconds per length with the assumption lengths;
   a goal check at publish that warns; per-entry ablation iterations.
+
+- **Rogue gear may carry too much Strength** (hit-trade round, 2026-11-04; user: "not for now, it'll take too long. Note
+  for next time"). Every rogue preset gains 4 to 5 DPS at 180 s by trading Strength for hit (steps +2 and +3,
+  `orchestration/round_70753/hit_trade/rogue.md`). Gear hit also lifts poison spell hit, and Strength is the rogue
+  set's cheapest stat, so the base rogue sets probably over-buy Strength. Next gear round: re-price the rogue sets'
+  stat mix (stat weights against the set's spend), not only the hit step. Seal Fate already sits at +3, the top step
+  that exists, so add higher steps when this is done.

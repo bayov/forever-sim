@@ -2,6 +2,9 @@
 
 ## Open
 
+
+## Resolved
+
 ### tank_mechanics-20261104-12: Mana gains make threat times the tank's threat multiplier, with no source
 - severity: high (Balanced bear -2.9% with Judgement of Wisdom off; how much of it is wrong is unknown)
 - affects: engine; Feral tank most (2.15× form), Protection paladin and Warden too
@@ -10,6 +13,7 @@
 - proposed fix: either find a source for the multiplier on mana (a wowsims/forever measurement or a Forever log: a bear or paladin's threat on a JoW tick), or use the unmultiplied 0.5 a mana under Forever, as Classic, until one turns up. Then rebench the bear, paladin and Warden presets. If the user would rather keep the extrapolation, record it as a to-verify value like Revenge's.
 - How sure: sure the multiplier on mana has no source; unsure what the game does.
 - needs: orchestrator fix (or user ruling, to keep it as to-verify)
+- fixed: 2026-11-04, 49f0218 (+ re-bench c5200fc). Forever mana-gain threat is 0.5 a mana with no threat multiplier, as Classic and wowsims/forever (its mana.go books gain*ThreatPerManaGained unmultiplied); to-verify note in mana.go and standards 40 (keep unmultiplied unless a log shows otherwise). TestBearManaGainThreat fails with the old multiplier (107.5 vs 50 for 100 mana in Bear Form). The Rage rule's multiplier keeps its source: wowsims/forever 913a5bcf6's message, "Owner's in-game threat measurements: ... Rage gained is 5 threat per rage, times the unit's threat multiplier" (no log attached; c48ea6cea3 only moves the booking to the gain). Re-bench, 1k, own weight six-boss mean: bear 2837.3/1867.5/-750.2 -> 2808.5/1839.0/-775.0, paladin 2785.0/2397.7/1363.3 -> 2761.0/2373.7/1339.5, Warden 2292.3/547.8/-4356.7 -> 2272.2/529.5/-4367.5 (Max threat/Balanced/Max survival).
 
 ### tank_mechanics-20261104-13: Stale source labels and comments after round 2
 - severity: low (docs and comments; no number moves)
@@ -22,7 +26,7 @@
   - Paladin: orchestration/round_70753/paladin.md:138 still says "(Templar's Bulwark magic: N only)", against :115, :210 and docs/tank_paladin.md:43 (N, C; 1311015 DispelType 1).
 - proposed fix: cite push 113380 as tier 1 in the shaman rows and comment; reword the bear comment; "Greater Stamina (+9, enchant 1886)" and drop "no preset yet"; "N, C" at paladin.md:138.
 - needs: worker fix
-- fixed (bear part): 2026-11-04, 0b901ff: sim/druid/bear_attacks.go now names the form's multiplier (x2.15 under Forever) and Primal Bite's x2.
+- fixed: 2026-11-04, 49f0218 (stormstrike.go and tank_shaman.md rows cite hotfix push 113380 as tier 1; bear_attacks.go comment; tank_warrior.md shield enchant; forever_enchants.go; round_70753/paladin.md:138).
 
 ### tank_mechanics-20261104-14: Scoring-run guards with latent holes, and SoD encounters still double parry haste
 - severity: low (latent; no preset or scored encounter hits them today)
@@ -34,6 +38,7 @@
   - tools/encounters/sod/*.json (all 7) keep `parryHaste: true` on log-fitted swing gaps, so comparing Anniversary with SoD counts SoD's parry haste twice (about +5% DTPS). Kept for comparison only (docs/tank_sim.md:68), not scored.
 - proposed fix: record maxHealth on replay damage events and cap there; have MakeTank reject (or warn on) health-reading APL values in a scoring run; set parryHaste false in the SoD copies as 87f28803b did for the top-level files.
 - needs: orchestrator fix
+- fixed: 2026-11-04, 0950b22. Replay damage events carry max health and cap on it (TestTankScoreReplayCapsAtMaxHealthDrop); CurrentHealth, CurrentHealthPercent and HealthMissing read full health in a scoring run (TestScoringRunAPLReadsNoHealth, all four tanks); tools/encounters/sod/*.json parryHaste false (fitted by the same from_logs.py from swing gaps that include parry haste).
 
 ### tank_mechanics-20261104-11: Tank mechanics with no test that fails when they break
 - severity: low (none known wrong except -6, -7, -8)
@@ -53,8 +58,7 @@
 - fixed (Warden part): 2026-11-04, 952a7a4 (`TestForeverWardenAvoidedHits`: no orb on an avoided swing, no Rockbiter threat on an avoided Stormstrike, Stoneskin before the crit and crush multipliers).
 - pass 2 (2026-11-04, master b38ff167d): the class rows hold (all named tests pass). Still open: engine part. TestMakeTankInFront and TestScoringRunReadsNoHealth now exist, but no test fails if parry haste stops firing for a MakeTank tank (proposed: DTPS with parryHaste on > off), TestScoringRunReadsNoHealth leaves out the warrior (the only tank with self health costs and a Shield Wall timer), and rolled crush vs the sheet, the block value formula, OwnDebuffs/Score/PairedDiff and Forever-crit OutcomeEnemyMeleeSpecial stay untested. Also TestReckoning has no periodic-crit case (holds today only through the core routing ticks to OnPeriodicDamageTaken, spell_result.go:607-613).
 - needs (now): orchestrator fix (engine tests); paladin worker (Reckoning periodic case)
-
-## Resolved
+- fixed (engine part): 2026-11-04, 0950b22. TestMakeTankParryHaste, TestScoringRunReadsNoHealth with the warrior (its APL needed autocast and no pull potion for a cooldown to ever read health), TestForeverRolledOutcomesMatchSheet, TestBlockValueFormula, TestForeverBossMeleeAbilityForeverCrit, TestOwnDebuffs/TestMakeTankSetup/TestScore/TestPairedDiff, and TestReckoning's periodic case (20177 says non-periodic, so a periodic crit gives no charge); each seen failing on a broken value.
 
 ### tank_mechanics-20261104-1: Every scored tank stands behind the boss: no boss parries or blocks, no parry haste
 - severity: high

@@ -6,13 +6,13 @@
   "isDefault": false,
   "pr": 104,
   "race": "Undead",
-  "talents": "252-0050003201-0050345003101351",
+  "talents": "242-0050003201-0050355003101351",
   "treeNames": [
     "Affliction",
     "Demonology",
     "Destruction"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase1_synthetic_hit+1",
   "apl": "level60_destruction_fire",
   "published": {
     "dps": 996.7,
@@ -75,5 +75,5 @@
     "Soul shards and Life Tap's health cost aren't tracked.",
     "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
   ],
-  "notes": "Request straight from mksettings -spec destruction_fire -gear level60_phase1_synthetic -apl level60_destruction_fire -race Undead -duration 180, no edits. Demon Armor; no demon out (Summon NoSummon), sacrificed Succubus, imbue Firestone. mksettings sets distanceFromTarget 30 (standards 33 since 2026-11-02, the longest range its spells reach; 25 from 2026-11-01, 5 before) and channelClipDelayMs 50, as the UI preset does. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "Request straight from mksettings -spec destruction_fire -gear level60_phase1_synthetic -apl level60_destruction_fire -race Undead -duration 180, no edits. Demon Armor; no demon out (Summon NoSummon), sacrificed Succubus, imbue Firestone. mksettings sets distanceFromTarget 30 (standards 33 since 2026-11-02, the longest range its spells reach; 25 from 2026-11-01, 5 before) and channelClipDelayMs 50, as the UI preset does. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. 2026-11-04 (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/warlock.md): new talents 242-0050003201-0050355003101351 (Suppression 5 to 4 (1% hit from the set's hit+1 step), Aftermath 4 to 5; was 252-0050003201-0050345003101351) on level60_phase1_synthetic_hit+1; 1002.8 / 997.8 / 977.8 at 120 / 180 / 300 s (+0.3 / +1.1 / +1.3), not yet re-verified here."
 }

@@ -71,3 +71,32 @@ func TestBearRageGainThreat(t *testing.T) {
 		}
 	}
 }
+
+// TestBearManaGainThreat: under Forever a mana gain makes half a threat a mana with no threat
+// multiplier (to verify, standards 40: Classic's rule, nothing measures mana under Forever), split
+// over the targets, booked at once. Bear Form's 2.15 must not apply, as it does on Rage gains.
+func TestBearManaGainThreat(t *testing.T) {
+	for _, targets := range []int{1, 2} {
+		sim, bear := newBear(t, bearOpts{targets: targets})
+		spell := bear.GetSpell(core.ActionID{OtherID: proto.OtherAction_OtherActionManaGain})
+		if spell == nil {
+			t.Fatal("no mana gain spell")
+		}
+		if !bear.BearFormAura.IsActive() || bear.PseudoStats.ThreatMultiplier < 2 {
+			t.Fatalf("want the bear in Bear Form with its threat multiplier, have %.2f", bear.PseudoStats.ThreatMultiplier)
+		}
+		const gain = 100.0
+		bear.SpendMana(sim, 2*gain, bear.NewManaMetrics(core.ActionID{SpellID: 1}))
+		var before []float64
+		for _, m := range spell.SpellMetrics {
+			before = append(before, m.TotalThreat)
+		}
+		bear.AddMana(sim, gain, bear.NewManaMetrics(core.ActionID{SpellID: 20190}))
+		want := core.ThreatPerManaGained * gain / float64(targets)
+		for i := 0; i < targets; i++ {
+			if got := spell.SpellMetrics[i].TotalThreat - before[i]; !near(got, want, 1e-6) {
+				t.Errorf("%d targets: %.0f mana in Bear Form made %.3f threat on target %d, want %.3f (unmultiplied)", targets, gain, got, i, want)
+			}
+		}
+	}
+}

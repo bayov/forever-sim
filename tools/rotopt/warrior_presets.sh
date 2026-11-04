@@ -15,6 +15,10 @@
 #       -apl level60_fury -talents 30313113002-050530055120100231-1 -race Human -duration 180 -out fury.json
 #   tools/rotopt/warrior_presets.sh fury.json
 #
+# Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/warrior.md): dual wield Fury and its
+# duties moved to level60_phase1_synthetic_fury_hit+2 (12% gear hit, was 10%; talents and knobs unchanged); use
+# -gear level60_phase1_synthetic_fury_hit+2 in the mksettings line above for them. Arms, Fury 2H and Dragonkin stay on +0.
+#
 # mineSync=0 since 2026-10-24: the presets take no Goblin Land Mine (standards 11, explosives only
 # when they gain), so the Sapper goes with the other cooldowns (within 0.6 of mineSync=1 without the
 # Land Mine at 180 sec on every build).

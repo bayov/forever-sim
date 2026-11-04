@@ -387,3 +387,141 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 	},
 }
+
+// BEGIN hit-trade steps: mage (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsMage...)
+}
+
+var hitStepsMage = []*proto.UIItem{
+	// Mage Synthetic Shoulder (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (996003).
+	{
+		Id: 996300, Name: "Mage Synthetic Shoulder (Phase 1, hit +10)", Icon: "inv_shoulder_02",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 9, stats.Intellect: 2, stats.SpellPower: 31, stats.Armor: 76}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 11,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+	},
+	// Mage Synthetic Chest (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (996005).
+	{
+		Id: 996301, Name: "Mage Synthetic Chest (Phase 1, hit +10)", Icon: "inv_chest_cloth_03",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Stamina: 12, stats.Intellect: 6, stats.Spirit: 18, stats.SpellPower: 40, stats.Armor: 102}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+		SetName:        "Mage Synthetic (Phase 1)",
+	},
+	// Mage Synthetic Legs (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (996009).
+	{
+		Id: 996302, Name: "Mage Synthetic Legs (Phase 1, hit +10)", Icon: "inv_pants_08",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 13, stats.Intellect: 6, stats.SpellPower: 42, stats.Armor: 101}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 15,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+	},
+	// Mage Synthetic Feet (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (996010).
+	{
+		Id: 996303, Name: "Mage Synthetic Feet (Phase 1, hit +10)", Icon: "inv_boots_07",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Stamina: 9, stats.Intellect: 2, stats.Spirit: 13, stats.SpellPower: 29, stats.Armor: 70}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+	},
+	// Mage Synthetic Head (Phase 1), hit-trade step: 10 hit rating more, 12 SpellPower less (996001).
+	{
+		Id: 996304, Name: "Mage Synthetic Head (Phase 1, hit +10)", Icon: "inv_helmet_53",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Stamina: 10, stats.Intellect: 16, stats.SpellPower: 25, stats.Armor: 83}.ToFloatArray(),
+		HitRating: 32,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+		SetName:        "Mage Synthetic (Phase 1)",
+	},
+}
+
+// END hit-trade steps: mage
+
+// BEGIN hit-trade steps: mage_arcane (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsMageArcane...)
+}
+
+var hitStepsMageArcane = []*proto.UIItem{
+	// Mage Arcane Synthetic Head (Phase 1), hit-trade step: 10 hit rating less, 12 SpellPower more (996017).
+	{
+		Id: 996305, Name: "Mage Arcane Synthetic Head (Phase 1, hit -10)", Icon: "inv_helmet_53",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Stamina: 10, stats.Intellect: 13, stats.SpellPower: 41, stats.Armor: 83}.ToFloatArray(),
+		HitRating: 22,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+		SetName:        "Mage Synthetic (Phase 1)",
+	},
+	// Mage Arcane Synthetic Chest (Phase 1), hit-trade step: 10 hit rating more, 10 crit rating less (996021).
+	{
+		Id: 996306, Name: "Mage Arcane Synthetic Chest (Phase 1, hit +10)", Icon: "inv_chest_cloth_03",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 18, stats.SpellPower: 42, stats.Armor: 102}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 2,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+		SetName:        "Mage Synthetic (Phase 1)",
+	},
+	// Mage Arcane Synthetic Neck (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (996018).
+	{
+		Id: 996307, Name: "Mage Arcane Synthetic Neck (Phase 1, hit +10)", Icon: "inv_jewelry_necklace_17",
+		Type:       proto.ItemType_ItemTypeNeck,
+		Stats:      stats.Stats{stats.Stamina: 8, stats.SpellPower: 24}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 7,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+	},
+	// Mage Arcane Synthetic Shoulder (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (996019).
+	{
+		Id: 996308, Name: "Mage Arcane Synthetic Shoulder (Phase 1, hit +10)", Icon: "inv_shoulder_02",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 11, stats.Intellect: 3, stats.SpellPower: 30, stats.Armor: 76}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 9,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+	},
+	// Mage Arcane Synthetic Back (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (996020).
+	{
+		Id: 996309, Name: "Mage Arcane Synthetic Back (Phase 1, hit +10)", Icon: "inv_misc_cape_16",
+		Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 8, stats.SpellPower: 24, stats.Armor: 54}.ToFloatArray(),
+		HitRating:  10,
+		CritRating: 7,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+	},
+	// Mage Arcane Synthetic Legs (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (996025).
+	{
+		Id: 996310, Name: "Mage Arcane Synthetic Legs (Phase 1, hit +10)", Icon: "inv_pants_08",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Stamina: 12, stats.Intellect: 6, stats.Spirit: 21, stats.SpellPower: 36, stats.Armor: 101}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+	},
+	// Mage Arcane Synthetic Feet (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (996026).
+	{
+		Id: 996311, Name: "Mage Arcane Synthetic Feet (Phase 1, hit +10)", Icon: "inv_boots_07",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Stamina: 9, stats.Intellect: 2, stats.Spirit: 15, stats.SpellPower: 26, stats.Armor: 70}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
+	},
+}
+
+// END hit-trade steps: mage_arcane
