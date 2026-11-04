@@ -106,7 +106,7 @@ Wowhead's tooltip in the cached guide shows rank 3 as 700 to 740, its value at t
 |---|---|---|---|
 | Spiritual Focus (20205) | 14% a rank of 5: Flash of Light, Holy Light and Light's Vigil don't lose cast time to a hit | not read | PushbackReduction on the three, added to Concentration Aura's 35% (it was the larger of the two) |
 | Healing Light (20237) | 4 / 8 / 12% healing, aura 108 on Holy Light, Flash of Light and Holy Shock's heal (and the Oath bonus spells) | not read | the same |
-| Divine Favor (20216) | next Flash of Light, Holy Light or Holy Shock 100% crit, 1 charge; 4% of base mana; 2 min; off the global cooldown | Holy Shock's damage only, free | all of them, 60.48 mana (Benediction off it) |
+| Divine Favor (20216) | next Flash of Light, Holy Light or Holy Shock 100% crit, 1 charge; 4% of base mana; 2 min; off the global cooldown | Holy Shock's damage only, free | all of them, 60.48 mana; no Benediction (its class mask is empty; healer_mechanics-20261104-4) |
 | Illumination (20210) | a crit of Flash of Light, Holy Light, Light's Vigil or Holy Shock's heal: 20% a rank of 5 for mana equal to 50% of the spell's base cost (Classic's 100%) | not read | the same; Light's Vigil once a detonation (Calls for the user) |
 | Infusion of Light (426065, buff 437063) | Holy Shock and Flash of Light crits take 0.5 sec a rank of 2 off the next Holy Light within 15 sec (proc flags: helpful and harmful spells) | not read | the same; Holy Shock's damage crits count too |
 | Oath of Light (1328548) | on one ally for 5 min: Holy Light up to 400, Flash of Light up to 115, Holy Shock up to 230 more (6.67, 1.92 and 3.83 a level); 8% of base mana; one Oath | not read | the bonus on the heal itself (Calls for the user) |
@@ -116,7 +116,7 @@ Wowhead's tooltip in the cached guide shows rank 3 as 700 to 740, its value at t
 | Divine Intellect (Protection, 20257) | 2 to 10% Intellect | in | unchanged |
 | Reverence (1310899) | 15% a rank of 2 of the regen while casting | in | unchanged |
 | Conviction (Retribution, 20117) | 2% crit a rank of 3 with all spells and attacks | in (spell crit) | reaches the heals |
-| Benediction (Retribution) | 2% a rank off instant spells | in | also Divine Favor and Oath of Light |
+| Benediction (Retribution) | 2% a rank off instant spells, by class mask (20101 e0 aura 108 misc 14, mask 0x1be11fbf / 0x26018242 / 0x20212100 / 0x8800) | in | Holy Shock; not Divine Favor or Oath of Light, whose class masks are empty (healer_mechanics-20261104-4; it took 10% off both until 2026-11-04) |
 | Champion of the Light (Retribution, 1311084) | aura 174: spell damage from Intellect | spell power (heals too) | unchanged: no healer build reaches it (it needs 25 Retribution points); noted below |
 
 Not modelled, no healing effect in a raid fight: Purifying Power's Cleanse cost, Unyielding Faith,
@@ -128,8 +128,10 @@ Guardian's Favor, Stoicism, Divine Precision (Holy hit), Consecrated Ground, Hol
   mana. Added (`sim/paladin/healing.go`).
 - **Libram of Infusion** (279248): Holy Shock 6% crit, the heal too (its mask covers 1311605's family). Was
   already in for the damage.
-- **Libram of Holy Alacrity** (228175): Holy Shock takes time off the next Holy Light, but its buff spell
-  (449982) has no effect rows in 70753, so its value is unknown. Not added.
+- **Libram of Holy Alacrity** (228175): its proc 449980 triggers buff 449982, which client 70755 (tables
+  byte-identical to 70753's) gives e0 aura 107 misc 10 bp -200: the next Holy Light casts 0.2 sec faster, 10 sec,
+  1 charge. The trigger condition is server side (the tooltip: casting Holy Shock). Not added (call 9);
+  healer_mechanics-20261104-9 corrected this line, which said 449982 had no effect rows.
 - Libram of Divinity (23201) heals the party for 25 on a Judgement now (1302540), and Libram of Light is
   Naxxramas. Not used.
 - Justice Armor (2107), the Tier 1 Holy set: the synthetic set carries its 2-piece (+10 Spirit) on two
@@ -308,7 +310,7 @@ iterations:
   Holy Power and Illumination once the fight is long enough for mana to count, Spiritual Focus in the raid
   role, where the healer takes hits (Vaelastrasz -0.085; the tank role never hits the healer, so it reads
   0 there).
-- The Retribution side is for Benediction (10% off Holy Shock, Divine Favor and the Oath) and Conviction's 3%
+- The Retribution side is for Benediction (10% off Holy Shock; Divine Favor and the Oath are outside its class mask) and Conviction's 3%
   crit, which feeds Illumination, Infusion of Light and Holy Power. A deeper Holy build has no healing
   talent left to buy: 31 points take every Holy healing talent, and Light's Vigil (the 31st) is only the
   capstone the presets don't cast (their Vigil variant was noise).
@@ -377,5 +379,7 @@ Each is the default I used, with the alternatives' measured effect (tank healer,
    only; no healer build reaches it (25 Retribution points), so no number moves.
 8. **The raid sim's placeholder talents** (`StandardTalents` in presets.ts, used by the raid sim's paladin
    slot) are unchanged: whether the raid sim's paladin heals is the raid sim's call.
-9. **Libram of Holy Alacrity** (228175): its buff has no effect rows in 70753, so it isn't added; a log or a
-   Wowhead tooltip with numbers settles it.
+9. **Libram of Holy Alacrity** (228175): answered from the client (healer_mechanics-20261104-9): buff 449982
+   takes 0.2 sec off the next Holy Light within 10 sec, 1 charge, triggered (server side) by Holy Shock. At one
+   Holy Shock every 15 sec that is at most 0.2 sec a 15 sec, about 1.3% more casting time, against the 6% Holy
+   Shock crit of Libram of Infusion or the mana of Libram of Economy; not added. Whether to add it is open.
