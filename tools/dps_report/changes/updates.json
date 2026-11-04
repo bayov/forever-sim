@@ -2333,7 +2333,7 @@
       "warrior__fury_2h-duty-battle-shout",
       "warrior__fury_2h-duty-sunder"
      ],
-     "note": "At 180 s: Fury 1041.5 to 1152.6, two-hand Fury 1044.4 to 1169.9, Arms 1008.7 to 1097.7, Arms vs Dragonkin 1050.3 to 1142.2.",
+     "note": "At 180 s: Fury 1041.5 to 1153.0, two-hand Fury 1044.4 to 1173.3, Arms 1008.7 to 1097.7, Arms vs Dragonkin 1050.3 to 1142.2.",
      "commits": [
       "00792ad",
       "62e3a0f",
@@ -3178,6 +3178,18 @@
     {
      "commit": "0c0b4e8",
      "why": "a merge of master into a work branch; no new change of its own"
+    },
+    {
+     "commit": "f6a98ac",
+     "why": "paladin talent tooltips and hotfix citations for Vengeance and Holy Two-Handed Weapon Specialization, which the existing lines already cover; the probe clears every paladin build"
+    },
+    {
+     "commit": "5be8bb6",
+     "why": "comp search test and drop list only; no report request changes"
+    },
+    {
+     "commit": "45111f0",
+     "why": "comp search test and drop list only; no report request changes"
     }
    ],
    "source": {
