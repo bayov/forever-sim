@@ -223,9 +223,9 @@ func (b *bench) request(scale float64, floor bool) *proto.RaidSimRequest {
 	if b.o.role == "raid" {
 		tanks = 0
 	}
-	if b.o.role == "tank" {
-		fillers = 0
-	}
+	// The tank role keeps the fillers, idle (below): a raid around the tank, so a heal that jumps
+	// (Prayer of Mending) has the raid to land on, not only the tank and the healer
+	// (healer_fairness-20261104-1). They take no damage there, since the role drops the raid's.
 
 	// The tanks go in the first party, the healers one to a party in turn, and the fillers in the
 	// slots left, so Chain Heal and the party heals see a raid's spread.
@@ -278,6 +278,9 @@ func (b *bench) request(scale float64, floor bool) *proto.RaidSimRequest {
 				healerNumber++
 			}
 			player.HealingModel = nil
+			if r == roleFiller && b.o.role == "tank" {
+				player.Rotation = &proto.APLRotation{Type: proto.APLRotation_TypeAPL}
+			}
 			player.Name = fmt.Sprintf("Player %d", pi*5+si+1)
 			if r == roleHealer && b.o.role == "tank" {
 				for _, idx := range b.tankIndexes {
