@@ -19,7 +19,8 @@ import (
 //   - 25% of base health (SpellPower 315180), taken from the warrior's health: nothing for a DPS,
 //     damage taken for a tank's survival score.
 //
-// Still an assumption: only landed swings use a charge (the hit mask is server side, not in the data).
+// Still an assumption (report assumption warr_rs_landed, one value, user ruling 2026-11-04): only landed
+// swings use a charge (the hit mask is server side, not in the data).
 func (warrior *Warrior) registerRecklessSwingsCD() {
 	if !warrior.Talents.RecklessSwings {
 		return

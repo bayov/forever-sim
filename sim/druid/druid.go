@@ -37,6 +37,7 @@ const (
 type Druid struct {
 	core.Character
 	SelfBuffs
+	DruidHealing
 
 	Talents *proto.DruidTalents
 

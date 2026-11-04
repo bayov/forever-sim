@@ -4,6 +4,16 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### results-20261104-1: five rogue metas' published.dps lag the hotfix re-sim (up to 17.3 DPS)
+- severity: low (builds.json, from e9185b1aa, matches my 20k seed-1 run on all five; only the metas lag)
+- affects: tools/dps_report/req/rogue__{seal-fate-daggers,seal-fate-swords,mutilate,combat-swords,combat-daggers}.meta.json; runreq.sh and verify.py flag them OFF
+- found: 2026-11-04, master 6b480b060
+- evidence: shared run vs meta: seal-fate-daggers 903.4 vs 920.7, seal-fate-swords 940.4 vs 957.0, mutilate 858.4 vs 866.1, combat-swords 958.6 vs 963.5, combat-daggers 949.9 vs 946.6. The moves come from 316a600ac (hotfix 113483: Mutilate 44/63/88, Shank, Venom, tree); rogue__subtlety's meta was set (881.7 vs 881.3), the other five were not.
+- proposed fix: set the five metas' published.dps and source from builds.json.
+- needs: orchestrator fix
+
+## Resolved
+
 ### results-20261102-1: shaman__elemental-level60-mana-tide meta published.dps is 0.4 off (753.2 vs 752.8)
 - severity: low (builds.json 752.8 matches my 20k seed-1 run 752.83; only the meta lags)
 - affects: tools/dps_report/req/shaman__elemental-level60-mana-tide.meta.json; runreq.sh and verify.py flag it OFF
@@ -14,8 +24,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-11-04, master f331f0cff: unchanged. Shared run (68 builds, 20k, seed 1) matches builds.json on all 68 within 0.15; only the six shaman metas still carry the 2026-11-02 values (+199 to +277 DPS gap in meta vs run).
 - update 2026-11-04, master fb584eafa: unchanged for the shaman metas. The warrior Fury follow-up (7b4dc5d97) set its six metas to the run (all within 0.15); builds.json still has the pre-follow-up warrior numbers (fury_2h 1169.9 vs run 1173.3, fury_2h-duty-bs 1165.4 vs 1168.8, fury_2h-duty-sunder 1132.6 vs 1134.6), waiting on the republish.
 - needs: orchestrator fix
-
-## Resolved
+- resolved: 2026-11-04, 6b480b060 (shaman metas now match the run; builds.json caught up with the Fury follow-up)
 
 ### results-20261103-2: hunter notes-only shares (Arcane Shot 0.15, Serpent Sting 5% a tick) and the hotfix shot tables are not gated under Forever
 - severity: low (no report number affected; only a non-Forever hunter sim would see them)

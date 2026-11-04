@@ -1,35 +1,38 @@
-# Fairness pass 28 (2026-11-04, master fb584ea)
+# Fairness pass 29 (2026-11-04, master 6b480b0)
 
-Result: quiet (no new finding). 23 watched files changed since f331f0c (14 commits), but no `sim/`, `proto/` or
-item database change. So the only builds that can move are the four Fury requests that 7b4dc5d97 changed. I re-swept
-the two Fury base builds (5k, seed 1, every race) on the loop's fb584ea CLI and tree. The baseline stays f331f0c
-(not a full sweep).
+Result: quiet (no new finding). 141 watched files changed since fb584ea (97 commits), including `sim/core`, the item
+database and the warrior / rogue / shaman code, so this was a full pass: `audit1b.py` and a full 5k race sweep on a
+CLI and tree built at 6b480b0 (origin/master had moved to 41aa107 meanwhile; not audited). New baseline: 6b480b0.
 
 ## What changed
 
 | Change | Commit | Effect on fairness |
 |---|---|---|
-| Fury DW rotation (Bloodthirst first, HS from 60, Hamstring from 20, Bloodrage under 50) | 7b4dc5d97 | Fury DW 1153.6 -> 1152.5 at 5k (noise; worker's 20k: +0.4) |
-| Fury 2H talents: Unbridled Wrath 5/5 for Furious Precision (2505001501...) | 7b4dc5d97 | Fury 2H 1170.7 -> 1172.3 at 5k (worker's 20k: +3.4) |
-| Standards 38 (Forever only), 39 (cast time / 3.5 s coefficient) | d9ba4a55c | rulings only; Chain Lightning 0.714 not in code yet (shaman brief ca22004a3) |
-| UI presets drop Salvation (`ui/*/presets.ts`) | fdb14acd0 | no request carries Salvation (grep), so no report number moves; threat only anyway |
-| report_hashes.txt | fb584eafa | test data |
+| Warrior hotfix push 113539 (tree, Spearing Strike, Raging Blows out, Reckless Swings on the GCD) | 7cd399e88, e07adf11b | Fury 2H -20.0, Fury DW -17.8, Arms -9.9; published within 0.3 |
+| Rogue hotfix push 113483 (tree, Shank, Mutilate, Venom) | 316a600ac, e9185b1aa | SF Daggers -18.2, SF Swords -16.6, Mutilate -8.5, Combat Swords -4.8, Combat Daggers +2.7, Sub -0.4 |
+| Forever downranking moved into sim/core, applied to every spell | 8f304b240, b57f5cc0a | no report build moves (every build casts top ranks; probe abaec7e0b agrees) |
+| Shaman Chain Lightning 0.714, metas refreshed | a4fc1d715 | no DPS change (CL not in the rotations); shaman metas now current |
+| Power Infusion heals, absorb pipeline, healer classes | 72b236b48 and others | no DPS report build moves |
+| Item db for 70755, random suffixes to 60 | 993314e0e, bd00cd090 | no DPS change in any class (synthetic sets unchanged) |
+| Labeled random streams in the report sims | ca0ca1285 | report-tool only; shared 20k run matches builds |
+| Standards 40 (Enhancement sims both imbue pairings on endgame gear) | 0998dd5b7 | ruling for later gear; Phase 1 synthetic keeps WF Weapon + FT Totem |
 
 ## What I checked
 
 - Gear: `audit1b.py` 19 of 19 "5a PASS | 1b PASS".
-- Shared 20k run (`runs/vs_published.txt`): 62 of 68 within 0.5. The six shamans (+199 to +277) are the stale metas in
-  results-20261102-1 (not filed again; confirmed: no shaman input changed this window).
-- Fury sweep (5k): DW Orc 1152.5 (published 1153.0, -0.5), Night Elf next at 1146.8; 2H Orc 1172.3 (published 1173.3,
-  -1.0), Night Elf next at 1166.1. Report race is the best race on both. Gaps within the ±1.5 noise.
-- Results overlap: results-20261102-1's 2026-11-04 update notes builds.json still has the pre-follow-up warrior numbers
-  (waiting on the republish). Independent confirmation: the 5k sweep matches the new metas, not builds.json.
+- Sweep (5k, seed 1, every race) against the f331f0c baseline: every hunter, mage, warlock, druid, paladin, priest and
+  shaman build identical to 0.1. Only warrior and rogue moved, both from their own hotfix commits. Nothing shared leaked.
+- Published against current: within 1.4 everywhere but five rogue metas (SF Daggers -17.6, SF Swords -15.9, Mutilate
+  -8.2, Combat Swords -5.2, Combat Daggers +3.2). Already open as results-20261104-1 (metas lag; builds.json is right);
+  independent confirmation here, not filed again. results-20261102-1's shaman gaps are gone (+0.3 to +2.1 now).
+- Best race: report race is best within noise. Combat Swords Undead 0.7 under Orc, Combat Daggers Undead 0.2 under
+  Gnome (both under the 1.0 note threshold).
 
 ## Ranking
 
-Unchanged: Lone Wolf 1314.4, MM 1254.6, BM 1195.7, Fury 2H 1172.3, Enhancement 1159.9 (published 883.5, stale),
-Fury DW 1152.5, ... Smite 781.0 last. Top over bottom 1.68x. Full table: `orchestration/fairness_report.md` §1.
+Lone Wolf 1314.4, MM 1254.6, BM 1195.7, Enhancement 1159.9, Fury 2H 1150.7, Feral 1139.7, Fury DW 1135.8, Ret 1091.3,
+Arms 1088.0, ... Smite 781.0 last. Top over bottom 1.68x. Full table: `orchestration/fairness_report.md` §1.
 
 ## Open items (carried)
 
-- Next full sweep when `sim/` or the database changes (the shaman phase 4 port, Chain Lightning 0.714, will be one).
+- None new. Next full sweep when `sim/` or the database changes again.

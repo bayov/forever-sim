@@ -216,6 +216,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Feral-Phase1-AllItems-RestorationDruidSynthetic(Phase1)"
+ value: {
+  dps: 1475.77783
+  tps: 1062.40644
+ }
+}
+dps_results: {
  key: "TestP1Feral-Phase1-AllItems-StormrageRaiment"
  value: {
   dps: 1200.80183

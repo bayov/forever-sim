@@ -402,6 +402,9 @@ Totem 1 (70 min), Lightning Shield 5 and 6 (30 and 27 min), Rockbiter Weapon 4 a
 each) and Earth Shock 1 (24 min at 4 to 7). The plan no longer casts Frost Shock, so the
 schedule buys none of it. BayovCore's route trains rank 1 for utility (2026-11-01, the user).
 Before the Earth Shock change, Frost Shock 1 was worth 24 min and Earth Shock 3 to 5 waited.
+The schedule now comes from the 2026-11-04 plan (The enhancement shaman's plan), where every
+rank at its level takes 80.32h and the schedule 79.94h (1000 sessions), so the worths above are
+the old plan's.
 
 Imbues and fire totems, 1000 paired sessions a level against the plan's Rockbiter Weapon
 (2026-10-30, the plan's rotations, not tuned again): Flametongue Weapon is a little slower at
@@ -433,16 +436,51 @@ The last run stays in the browser's storage. The Leveling mode has no sim histor
 
 `DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`, since 2026-10-19 the audited
 plan (The audit): 102h 8m for 10 to 60 then. Since 2026-10-30 it starts at level 1 (the
-"Leveling 1-60" preset), where 1 to 9 play the first range's rotation with the spells we have
-by then and no talents, and with the route's gear and the training schedule it took 97.87h, and 97.80h with the route and Earth Shock of 2026-11-01. The route and the ranges are in
+"Leveling 1-60" preset), and with the route's gear and the training schedule it took 97.87h,
+and 97.80h with the route and Earth Shock of 2026-11-01. The route and the ranges are in
 `ui/enhancement_shaman/apls/leveling_plan_audited.json`, with a range only where the rotation
-changes. Thundering Strikes, Improved Ghost Wolf at 15 and 16 (required), Mental Dexterity,
-Shamanistic Focus, Elemental Weapons, Improved Lightning Shield, Stormstrike at 25, Improved
-Lightning Shield 3/3 at 27, Flurry 2, Improved Stormstrike, Spirit Weapons and Mental
-Quickness, then Tidal Focus and Mindfulness at 35 to 42, Maelstrom Weapon at 43 to 47, Rage of
-the Farseer at 48, Convection and Call of Flame at 49 to 56, and Anticipation at 57 to 59
-(since 2026-11-01, The audit). Rockbiter Weapon all the way, with Windfury Totem from 32 and
-Stoneskin Totem for the earth totem.
+changes.
+
+On 2026-11-04 we searched it again for client 70755's shaman changes (Stormstrike every 6s,
+Maelstrom Weapon twice as often, stronger shocks, Lava Burst gone, Improved Ghost Wolf on row
+4), on the item data with suffixes up to 60. All the numbers here are 2000 sessions a level, on
+seeds 1 and 1000001:
+
+- **The old plan breaks the new tree.** With Improved Ghost Wolf moved to 25 and 26, the old
+  route put Shamanistic Focus at 18 and Stormstrike at 23, before their rows open. The sim
+  doesn't check the tree, so that plan took 79.95h. Played in a legal order (Improved
+  Lightning Shield 2 at 18 and 19, Stormstrike at 27) it takes 80.71h.
+- **The route search** from the legal order, with Spirit Weapons required by 31, takes 80.50h.
+  It moves Restoration earlier (Tidal Focus at 33 to 37, Mindfulness at 38 to 40, Mental
+  Quickness after them at 41 and 42), and takes Anticipation at 48 to 50, Rage of the Farseer
+  at 51, then Convection 3, Concussion 2 and Call of Flame 3 at 52 to 59.
+- **The rotation search** loses overall. Its template rotations take 81.92h on that route, but
+  they win at 1 to 4 (2 min), 20 to 26 (7 min) and 40 to 46 (22 min). At 47 and up they lose 7
+  to 11 min a level, because the template doesn't use Maelstrom Weapon stacks (Open). So the
+  plan plays "Searched 1", "Searched 4", "Searched 20" to "Searched 26" and "Searched 40" to
+  "Searched 46" there, and the audited rotations everywhere else: 79.98h. The searched ones put
+  Healing Stream Totem in the water slot from 20, and drop Fire Nova from 42. A route search
+  with them found nothing more (one point moved, 0.01h).
+- **Training** under that plan buys Searing Totem 3 and 4 at 38 and 41, Lesser Healing Wave 2
+  to 4 at 35, 39 and 47, Healing Stream Totem 2 at 40, and never Healing Stream Totem 4 and 5.
+  It keeps every Earth Shock rank at its level (14, 24 and 36), as we pinned them. The plan
+  takes 79.93h with it (79.926h and 79.922h, ±0.007), 47 min faster than the legal old order
+  and 1 min faster than the old plan's illegal one.
+
+The route: Thundering Strikes 5, Mental Dexterity 3, Improved Lightning Shield 2 at 18 and 19,
+Shamanistic Focus, Elemental Weapons 3, Improved Lightning Shield 3/3 at 24, Improved Ghost Wolf
+at 25 and 26 (required), Stormstrike at 27, Flurry 2, Improved Stormstrike, Spirit Weapons at
+31 (required), Tidal Focus 5 and Mindfulness 3 at 33 to 40, Mental Quickness 2, Maelstrom
+Weapon 5 at 43 to 47, Anticipation 3, Rage of the Farseer at 51, Convection 3, Concussion 2 and
+Call of Flame 3. Rockbiter Weapon all the way, with Windfury Totem from 32 and Stoneskin Totem
+for the earth totem. The respecs still save nothing.
+
+The route before (2026-11-01, The audit) was Thundering Strikes, Improved Ghost Wolf at 15 and
+16 (required), Mental Dexterity, Shamanistic Focus, Elemental Weapons, Improved Lightning
+Shield, Stormstrike at 25, Improved Lightning Shield 3/3 at 27, Flurry 2, Improved Stormstrike,
+Spirit Weapons and Mental Quickness, then Tidal Focus and Mindfulness at 35 to 42, Maelstrom
+Weapon at 43 to 47, Rage of the Farseer at 48, Convection and Call of Flame at 49 to 56, and
+Anticipation at 57 to 59.
 
 Before the audit it was the route and rotations of the 10 to 60 rotation search (Rotation
 search, the third run): 107h 5m, in `leveling_plan_searched.json` (removed, it's in the
@@ -461,6 +499,7 @@ build, and the "Level N Leveling Plan" rotations (the leveling optimizer's best 
   for that reason. It now checks Talent Points (4 or more in Maelstrom Weapon) first, which
   any line can use, but other lines on missing auras still act this way.
 - The rotation search should tune `maelstromStacks` again at the 4th Maelstrom Weapon point.
+  Without it the searched rotations lose 7 to 11 min a level from 47 (2026-11-04).
 - Ghost Wolf's run speed between pulls isn't simmed, so Improved Ghost Wolf is worth nothing
   in the sim.
 - Forever's XP table.

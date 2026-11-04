@@ -35,7 +35,7 @@
       "action": {
         "autocastOtherCooldowns": {}
       },
-      "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness."
+      "notes": "Racials, trinkets, potions and Demonic Rune."
     },
     {
       "action": {
@@ -166,7 +166,35 @@
       "action": {
         "castSpell": {
           "spellId": {
-            "spellId": 408521
+            "spellId": 16188
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpLt",
+            "lhs": {
+              "currentHealthPercent": {
+                "sourceUnit": {
+                  "type": "Tank",
+                  "index": 0
+                }
+              }
+            },
+            "rhs": {
+              "const": {
+                "val": "0.5"
+              }
+            }
+          }
+        }
+      },
+      "notes": "Nature's Swiftness when the tank is under 50% health: the next Healing Wave is instant."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 1239243
           },
           "target": {
             "type": "Tank"
@@ -177,7 +205,7 @@
             "val": {
               "dotIsActive": {
                 "spellId": {
-                  "spellId": 408521
+                  "spellId": 1239243
                 },
                 "targetUnit": {
                   "type": "Tank"
@@ -187,7 +215,120 @@
           }
         }
       },
-      "notes": "Riptide on the tank whenever it's off: an instant heal and a HoT."
+      "notes": "Riptide on the tank whenever it's off: a HoT, and Chain Heal's 25% on it."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10468
+          },
+          "target": {
+            "type": "Tank",
+            "index": 0
+          }
+        },
+        "condition": {
+          "and": {
+            "vals": [
+              {
+                "cmp": {
+                  "op": "OpGe",
+                  "lhs": {
+                    "currentManaPercent": {}
+                  },
+                  "rhs": {
+                    "const": {
+                      "val": "0.5"
+                    }
+                  }
+                }
+              },
+              {
+                "cmp": {
+                  "op": "OpGe",
+                  "lhs": {
+                    "healthMissing": {
+                      "sourceUnit": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    }
+                  },
+                  "rhs": {
+                    "spellExpectedHealing": {
+                      "spellId": {
+                        "spellId": 10468
+                      },
+                      "targetUnit": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      },
+      "notes": "Lesser Healing Wave 6 and 5 at the tank while mana is at least 50%: more healing a second than Healing Wave, if less a mana."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10467
+          },
+          "target": {
+            "type": "Tank",
+            "index": 0
+          }
+        },
+        "condition": {
+          "and": {
+            "vals": [
+              {
+                "cmp": {
+                  "op": "OpGe",
+                  "lhs": {
+                    "currentManaPercent": {}
+                  },
+                  "rhs": {
+                    "const": {
+                      "val": "0.5"
+                    }
+                  }
+                }
+              },
+              {
+                "cmp": {
+                  "op": "OpGe",
+                  "lhs": {
+                    "healthMissing": {
+                      "sourceUnit": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    }
+                  },
+                  "rhs": {
+                    "spellExpectedHealing": {
+                      "spellId": {
+                        "spellId": 10467
+                      },
+                      "targetUnit": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
     },
     {
       "action": {
@@ -225,7 +366,7 @@
           }
         }
       },
-      "notes": "Healing Wave rank 10 at the tank, the biggest that what it misses covers."
+      "notes": "Healing Wave rank 10 at the tank, the biggest that what it misses covers (below 50% mana first)."
     },
     {
       "action": {

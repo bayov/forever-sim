@@ -193,3 +193,10 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-04 UTC | consumables | pass 70 | master fb584eafa | quiet | Salvation dropped from all 12 presets, resolved consumables-20261104-1
 2026-11-04 UTC | mechanics | pass 64 | master fb584eafa | quiet | no sim code changed; dev notes post 9 Swiftmend edit needs no sim change
 2026-11-04 UTC | fairness | pass 28 | master fb584eafa | quiet | Fury rebuilt per race, Orc best, gear check 19/19
+2026-11-04 13:12 | results | pass 77 | master 6b480b0604 | 1 new finding | results-20261104-1: five rogue metas' published DPS lag hotfix 113483
+2026-11-04 13:12 | rotations | pass 53 | master 6b480b0604 | quiet | rogue/warrior hotfix rotations hold; baseline refreshed
+2026-11-04 13:12 | gear | pass 56 | master 6b480b0604 | quiet | new healer sets pass
+2026-11-04 13:12 | consumables | pass 71 | master 6b480b0604 | quiet | no consumable value changes
+2026-11-04 13:12 | mechanics | pass 65 | master 6b480b0604 | quiet | downrank ruling settled; Power Infusion healing verified
+2026-11-04 13:12 | fairness | pass 29 | master 6b480b0604 | quiet | only warrior/rogue moved, from hotfixes
+2026-11-04 UTC | healer_gear | pass 1 | master a1b1163d2 | quiet | forced first pass: 4 healer sets within 1b budget/shape and row shares, relics modelled; Wowhead cache empty so rows not re-derived from pages
