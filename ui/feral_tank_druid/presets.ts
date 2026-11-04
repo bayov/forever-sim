@@ -65,13 +65,34 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
 
-APL_PLACEHOLDER
+// The three presets' rotations (tools/rotopt -template druid_tank, each searched at its weight). All three keep
+// Demoralizing Roar up, Primal Bite on cooldown, Lacerate to 5 stacks and then as the filler, Barkskin on
+// its timer in the filler's place, and shift into Dire Bear Form before the pull, then Enrage. Max threat
+// queues Maul at 20 Rage (Balanced and Max survival at 30); Max survival enrages 3 sec before the pull (1
+// sec for the others) and casts Frenzied Regeneration at 100 Rage, where the Rage would go to waste.
+export const APLMaxThreat = PresetUtils.makePresetAPLRotation('Max threat', MaxThreatAPLJSON);
+export const APLBalanced = PresetUtils.makePresetAPLRotation('Balanced', BalancedAPLJSON);
+export const APLMaxSurvival = PresetUtils.makePresetAPLRotation('Max survival', MaxSurvivalAPLJSON);
+
+export const APLPresets = [APLBalanced, APLMaxThreat, APLMaxSurvival];
+
+export const DefaultAPL = APLBalanced;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
 ///////////////////////////////////////////////////////////////////////////
 
-TALENT_PLACEHOLDER
+// The talent search's build at all three weights (tools/rotopt -talent-search on the scoring encounters):
+// Ferocity, Feral Swiftness, Thick Hide, Shredding Attacks (Lacerate 12 Rage), Savage Fury, Sharpened
+// Claws, Predatory Strikes, Lacerate, Blood Frenzy, Leader of the Pack, Natural Instinct, Rend and Tear,
+// Natural Reaction and Primal Bite, with Heart of the Wild and Naturalist in Restoration. Furor scores
+// nothing now (a hair under, at every weight), so its 2 points went to Brutal Impact (Bash, which the
+// scoring fights don't use); Feral Instinct's 2 are Swipe's, for packs.
+export const TalentsBear = PresetUtils.makePresetTalents('Bear', SavedTalents.create({ talentsString: '-5022233202310212551-055' }));
+
+export const TalentPresets = [TalentsBear];
+
+export const DefaultTalents = TalentsBear;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -157,7 +178,7 @@ export const OtherDefaults = {
 	distanceFromTarget: 5,
 	profession1: Profession.Engineering,
 	profession2: Profession.Blacksmithing,
-	race: RACE_PLACEHOLDER,
+	race: Race.RaceNightElf,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -198,4 +219,29 @@ export const EncounterLevel60Tank = PresetUtils.makePresetEncounter(
 	},
 );
 
-BUILD_PLACEHOLDER
+// The three presets (the user's ruling: threat against survival as weights, Balanced the default), each a
+// Night Elf (the best race at every weight: Elune's Light), on the synthetic set.
+export const PresetBuildMaxThreat = PresetUtils.makePresetBuild('Max threat', {
+	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsBear,
+	rotation: APLMaxThreat,
+	encounter: EncounterLevel60Tank,
+	race: Race.RaceNightElf,
+});
+export const PresetBuildBalanced = PresetUtils.makePresetBuild('Balanced', {
+	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md). The default.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsBear,
+	rotation: APLBalanced,
+	encounter: EncounterLevel60Tank,
+	race: Race.RaceNightElf,
+});
+export const PresetBuildMaxSurvival = PresetUtils.makePresetBuild('Max survival', {
+	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md).',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsBear,
+	rotation: APLMaxSurvival,
+	encounter: EncounterLevel60Tank,
+	race: Race.RaceNightElf,
+});

@@ -5,68 +5,71 @@
     "players": [
      {
       "race": "RaceTauren",
-      "class": "ClassDruid",
+      "class": "ClassShaman",
       "level": 60,
-      "talentsString": "-5522030202310212551-055",
+      "talentsString": "05050001-050032303551012201-050002",
       "equipment": {
        "items": [
         {
-         "id": 998101,
-         "enchant": 1508
+         "id": 999201,
+         "enchant": 1507
         },
         {
-         "id": 998102,
-         "enchant": 1249059
+         "id": 999202,
+         "enchant": 1249019
         },
         {
-         "id": 998103
+         "id": 999203
         },
         {
-         "id": 998104,
-         "enchant": 1219587
+         "id": 999204,
+         "enchant": 1889
         },
         {
-         "id": 998105,
+         "id": 999205,
          "enchant": 1891
         },
         {
-         "id": 998106,
-         "enchant": 1885
+         "id": 999206,
+         "enchant": 1886
         },
         {
-         "id": 998107,
+         "id": 999207,
          "enchant": 1248640
         },
         {
-         "id": 998108
+         "id": 999208
         },
         {
-         "id": 998109,
-         "enchant": 1508
+         "id": 999209,
+         "enchant": 1507
         },
         {
-         "id": 998110,
-         "enchant": 1887
+         "id": 999210,
+         "enchant": 929
         },
         {
-         "id": 998111
+         "id": 999211
         },
         {
-         "id": 998112
+         "id": 999212
         },
         {
-         "id": 998114
+         "id": 999215
         },
         {
-         "id": 998115
+         "id": 990015
         },
         {
-         "id": 998113,
-         "enchant": 2646
+         "id": 999213,
+         "enchant": 1900
         },
-        {},
         {
-         "id": 220606
+         "id": 999214,
+         "enchant": 929
+        },
+        {
+         "id": 272432
         }
        ]
       },
@@ -76,113 +79,87 @@
        "agilityElixir": "ElixirOfTheMongoose",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
-       "mainHandImbue": "DenseSharpeningStone",
-       "defaultPotion": "MightyRagePotion",
+       "defaultPotion": "MajorManaPotion",
        "dragonBreathChili": true
       },
-      "feralTankDruid": {
+      "wardenShaman": {
        "options": {
-        "startingRage": 0
+        "shamanImbue": "RockbiterWeapon"
        }
       },
       "reactionTimeMs": 200,
       "distanceFromTarget": 5,
       "buffs": {
        "blessingOfKings": true,
-       "blessingOfMight": "TristateEffectImproved"
+       "blessingOfMight": "TristateEffectImproved",
+       "blessingOfWisdom": "TristateEffectImproved"
       },
       "profession1": "Engineering",
       "profession2": "Blacksmithing",
       "rotation": {
        "type": "TypeAPL",
-       "prepullActions": [],
+       "prepullActions": [
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10432
+           }
+          }
+         },
+         "doAtValue": {
+          "const": {
+           "val": "-4.5s"
+          }
+         }
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10408
+           }
+          }
+         },
+         "doAtValue": {
+          "const": {
+           "val": "-3s"
+          }
+         }
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10497
+           }
+          }
+         },
+         "doAtValue": {
+          "const": {
+           "val": "-1.5s"
+          }
+         }
+        }
+       ],
        "priorityList": [
         {
          "action": {
           "castSpell": {
            "spellId": {
-            "spellId": 9898
+            "spellId": 10432
            }
           },
           "condition": {
-           "cmp": {
-            "op": "OpLt",
-            "lhs": {
-             "auraRemainingTime": {
-              "sourceUnit": {
-               "type": "CurrentTarget"
-              },
-              "auraId": {
-               "spellId": 9898
-              }
-             }
-            },
-            "rhs": {
-             "const": {
-              "val": "3s"
-             }
-            }
-           }
-          }
-         },
-         "notes": "Demoralizing Roar kept up: the tank applies its own (the bench drops the raid's)."
-        },
-        {
-         "action": {
-          "castSpell": {
-           "spellId": {
-            "spellId": 1238070
-           }
-          }
-         },
-         "notes": "Primal Bite on cooldown."
-        },
-        {
-         "action": {
-          "castSpell": {
-           "spellId": {
-            "spellId": 1235827
-           }
-          },
-          "condition": {
-           "or": {
+           "and": {
             "vals": [
              {
-              "cmp": {
-               "op": "OpLt",
-               "lhs": {
-                "auraNumStacks": {
-                 "sourceUnit": {
-                  "type": "CurrentTarget"
-                 },
+              "not": {
+               "val": {
+                "auraIsActive": {
                  "auraId": {
-                  "spellId": 1235827
+                  "spellId": 10432
                  }
-                }
-               },
-               "rhs": {
-                "const": {
-                 "val": "5"
-                }
-               }
-              }
-             },
-             {
-              "cmp": {
-               "op": "OpLt",
-               "lhs": {
-                "auraRemainingTime": {
-                 "sourceUnit": {
-                  "type": "CurrentTarget"
-                 },
-                 "auraId": {
-                  "spellId": 1235827
-                 }
-                }
-               },
-               "rhs": {
-                "const": {
-                 "val": "3s"
                 }
                }
               }
@@ -191,30 +168,102 @@
            }
           }
          },
-         "notes": "Lacerate to 5 stacks, refreshed before it runs out."
+         "notes": "The shield whenever it's down. Water Shield needs the Restoration talent."
         },
         {
          "action": {
           "castSpell": {
            "spellId": {
-            "spellId": 9881
+            "spellId": 10408
            }
           },
           "condition": {
            "cmp": {
-            "op": "OpGe",
             "lhs": {
-             "currentRage": {}
+             "totemRemainingTime": {
+              "totemType": "Earth"
+             }
             },
+            "op": "OpLe",
             "rhs": {
              "const": {
-              "val": "30"
+              "val": "0s"
              }
             }
            }
           }
          },
-         "notes": "Maul queued with Rage to spare."
+         "notes": "The earth totem whenever it's down."
+        },
+        {
+         "action": {
+          "autocastOtherCooldowns": {}
+         },
+         "notes": "Rage of the Farseer, racials, trinkets on cooldown."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 17364
+           }
+          }
+         },
+         "notes": "Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10414
+           }
+          }
+         },
+         "notes": "Earth Shock: twice its damage in threat."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10497
+           }
+          },
+          "condition": {
+           "and": {
+            "vals": [
+             {
+              "cmp": {
+               "lhs": {
+                "totemRemainingTime": {
+                 "totemType": "Water"
+                }
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "0s"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpGe",
+               "rhs": {
+                "const": {
+                 "val": "10s"
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "The water totem whenever it's down."
         }
        ]
       }

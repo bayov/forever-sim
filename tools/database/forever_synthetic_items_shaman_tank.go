@@ -5,8 +5,9 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-// The synthetic Phase 1 Warden shaman (shaman tank) items, ids 999000 to 999099. See forever_synthetic_items.go
-// for what these items are and why we need them, and docs/tank_shaman.md for the set's numbers.
+// The synthetic Phase 1 Warden shaman (shaman tank) items, ids 999200 to 999299 (999000 to 999099 collided with
+// sim/core's test items). See forever_synthetic_items.go for what these items are and why we need them, and
+// docs/tank_shaman.md for the set's numbers.
 //
 // The budget is standards 36 (orchestration/standards.md): a tank piece carries its class's 1b archetype budget,
 // hybrid for the shaman (f 1.093 / 1.103 / 1.048, 4 stat lines a piece), with the tank prices on top of 1b's
@@ -79,32 +80,32 @@ func wardenArmor(id int32, name, icon string, slot proto.ItemType, armorType pro
 var wardenSyntheticItems = func() []*proto.UIItem {
 	mail, cloth, none := proto.ArmorType_ArmorTypeMail, proto.ArmorType_ArmorTypeCloth, proto.ArmorType_ArmorTypeUnknown
 	items := []*proto.UIItem{
-		wardenArmor(999001, "Head", "inv_helmet_09", proto.ItemType_ItemTypeHead, mail, 66,
+		wardenArmor(999201, "Head", "inv_helmet_09", proto.ItemType_ItemTypeHead, mail, 66,
 			stats.Stats{stats.Stamina: 22, stats.Strength: 20, stats.Intellect: 21, stats.Armor: 392}, 0, 20),
-		wardenArmor(999002, "Neck", "inv_jewelry_necklace_09", proto.ItemType_ItemTypeNeck, none, 71,
+		wardenArmor(999202, "Neck", "inv_jewelry_necklace_09", proto.ItemType_ItemTypeNeck, none, 71,
 			stats.Stats{stats.Stamina: 10, stats.Strength: 8, stats.AttackPower: 35}, 13, 0),
-		wardenArmor(999003, "Shoulder", "inv_shoulder_25", proto.ItemType_ItemTypeShoulder, mail, 66,
+		wardenArmor(999203, "Shoulder", "inv_shoulder_25", proto.ItemType_ItemTypeShoulder, mail, 66,
 			stats.Stats{stats.Stamina: 16, stats.Intellect: 16, stats.Spirit: 15, stats.SpellPower: 19, stats.Armor: 317}, 0, 0),
-		wardenArmor(999004, "Back", "inv_misc_cape_05", proto.ItemType_ItemTypeBack, cloth, 71,
+		wardenArmor(999204, "Back", "inv_misc_cape_05", proto.ItemType_ItemTypeBack, cloth, 71,
 			stats.Stats{stats.Stamina: 13, stats.Strength: 11, stats.Defense: 9, stats.Armor: 54}, 0, 11),
-		wardenArmor(999005, "Chest", "inv_chest_chain_11", proto.ItemType_ItemTypeChest, mail, 66,
+		wardenArmor(999205, "Chest", "inv_chest_chain_11", proto.ItemType_ItemTypeChest, mail, 66,
 			stats.Stats{stats.Stamina: 21, stats.Strength: 20, stats.Intellect: 21, stats.Spirit: 21, stats.Armor: 422}, 0, 0),
-		wardenArmor(999006, "Wrist", "inv_bracer_02", proto.ItemType_ItemTypeWrist, mail, 71,
+		wardenArmor(999206, "Wrist", "inv_bracer_02", proto.ItemType_ItemTypeWrist, mail, 71,
 			stats.Stats{stats.Stamina: 11, stats.Intellect: 12, stats.Spirit: 12, stats.Defense: 9, stats.Armor: 198}, 0, 0),
-		wardenArmor(999007, "Hands", "inv_gauntlets_26", proto.ItemType_ItemTypeHands, mail, 66,
+		wardenArmor(999207, "Hands", "inv_gauntlets_26", proto.ItemType_ItemTypeHands, mail, 66,
 			stats.Stats{stats.Stamina: 15, stats.Strength: 13, stats.Armor: 264}, 21, 14),
-		wardenArmor(999008, "Waist", "inv_belt_23", proto.ItemType_ItemTypeWaist, mail, 71,
+		wardenArmor(999208, "Waist", "inv_belt_23", proto.ItemType_ItemTypeWaist, mail, 71,
 			stats.Stats{stats.Stamina: 17, stats.Intellect: 17, stats.SpellPower: 21, stats.Armor: 255}, 0, 16),
-		wardenArmor(999009, "Legs", "inv_pants_06", proto.ItemType_ItemTypeLegs, mail, 66,
+		wardenArmor(999209, "Legs", "inv_pants_06", proto.ItemType_ItemTypeLegs, mail, 66,
 			stats.Stats{stats.Stamina: 21, stats.Strength: 20, stats.Intellect: 21, stats.Spirit: 21, stats.Armor: 369}, 0, 0),
-		wardenArmor(999010, "Feet", "inv_boots_01", proto.ItemType_ItemTypeFeet, mail, 66,
+		wardenArmor(999210, "Feet", "inv_boots_01", proto.ItemType_ItemTypeFeet, mail, 66,
 			stats.Stats{stats.Stamina: 16, stats.Strength: 15, stats.Spirit: 16, stats.SpellPower: 19, stats.Armor: 290}, 0, 0),
-		wardenArmor(999011, "Finger", "inv_jewelry_ring_07", proto.ItemType_ItemTypeFinger, none, 71,
+		wardenArmor(999211, "Finger", "inv_jewelry_ring_07", proto.ItemType_ItemTypeFinger, none, 71,
 			stats.Stats{stats.Stamina: 9, stats.AttackPower: 35}, 13, 9),
-		wardenArmor(999012, "Finger II", "inv_jewelry_ring_15", proto.ItemType_ItemTypeFinger, none, 71,
+		wardenArmor(999212, "Finger II", "inv_jewelry_ring_15", proto.ItemType_ItemTypeFinger, none, 71,
 			stats.Stats{stats.Stamina: 9, stats.Intellect: 10, stats.AttackPower: 38, stats.SpellPower: 12}, 0, 0),
 		{
-			Id: 999013, Name: "Warden Synthetic Main Hand (Phase 1)", Icon: "inv_axe_09",
+			Id: 999213, Name: "Warden Synthetic Main Hand (Phase 1)", Icon: "inv_axe_09",
 			Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeOneHand,
 			Stats:     stats.Stats{stats.Strength: 13, stats.Stamina: 8}.ToFloatArray(),
 			HitRating: 8, CritRating: 8,
@@ -114,7 +115,7 @@ var wardenSyntheticItems = func() []*proto.UIItem {
 			ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 		},
 		{
-			Id: 999014, Name: "Warden Synthetic Shield (Phase 1)", Icon: "inv_shield_10",
+			Id: 999214, Name: "Warden Synthetic Shield (Phase 1)", Icon: "inv_shield_10",
 			Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeShield, HandType: proto.HandType_HandTypeOffHand,
 			Stats: stats.Stats{stats.Stamina: 14, stats.Intellect: 13, stats.Defense: 8, stats.BlockValue: 50, stats.Armor: 2681}.ToFloatArray(),
 			Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -122,7 +123,7 @@ var wardenSyntheticItems = func() []*proto.UIItem {
 		},
 		// The tank trinket, item level 71: the row's Defense and block value.
 		{
-			Id: 999015, Name: "Warden Synthetic Trinket (Phase 1)", Icon: "inv_jewelry_talisman_02",
+			Id: 999215, Name: "Warden Synthetic Trinket (Phase 1)", Icon: "inv_jewelry_talisman_02",
 			Type:  proto.ItemType_ItemTypeTrinket,
 			Stats: stats.Stats{stats.Defense: 20, stats.BlockValue: 40}.ToFloatArray(),
 			Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
@@ -131,7 +132,7 @@ var wardenSyntheticItems = func() []*proto.UIItem {
 		// The defensive on-use trinket, item level 71: 1,665 bonus armor for 20 sec every 2 min
 		// (sim/shaman/forever_synthetic_trinkets.go), on a timer in the rotation.
 		{
-			Id: 999016, Name: "Warden Synthetic On-Use Trinket (Phase 1)", Icon: "inv_misc_stonetablet_05",
+			Id: 999216, Name: "Warden Synthetic On-Use Trinket (Phase 1)", Icon: "inv_misc_stonetablet_05",
 			Type:  proto.ItemType_ItemTypeTrinket,
 			Stats: stats.Stats{}.ToFloatArray(),
 			Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
