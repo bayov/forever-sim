@@ -1,0 +1,9 @@
+A=F_max_threat.json B=s10_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+magmadar          3819     3831    11.8    4.7      7.2        2
+golemagg          3722     3733    11.3    4.0      5.4       -1
+onyxia            3780     3785     5.1    3.8      2.8        0
+broodlord         3565     3569     3.6    5.7      0.6       -2
+vaelastrasz       3996     3997     0.5    2.1      0.2        0
+chromaggus        3257     3263     6.0    3.4      1.9       -2
+scoring_mean                        6.4    1.7

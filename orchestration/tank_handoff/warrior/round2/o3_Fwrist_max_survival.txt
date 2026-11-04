@@ -1,0 +1,9 @@
+A=Fwrist_max_survival.json B=F_max_survival.json preset=max_survival iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+magmadar          2420     2442    21.9   15.7     -1.7       -2
+golemagg          1926     1967    40.7   21.7     -0.2       -4
+onyxia            1463     1531    68.2   47.0     -2.1       -5
+broodlord          716      727    11.5   36.1     -2.4       -2
+vaelastrasz       2100     2095    -5.7   15.5      0.6        2
+chromaggus       -1604    -1537    67.0   34.6     -1.8       -8
+scoring_mean                       33.9   12.5

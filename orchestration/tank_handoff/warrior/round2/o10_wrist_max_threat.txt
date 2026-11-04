@@ -1,0 +1,9 @@
+A=A_max_threat.json B=wrist_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+magmadar          3801     3805     3.8    3.3     -1.1       -5
+golemagg          3711     3712     1.1    3.2     -2.3       -5
+onyxia            3722     3732    10.7    4.9     -0.3       -7
+broodlord         3512     3515     3.0    5.2      0.0       -3
+vaelastrasz       3963     3963    -0.2    3.6     -0.1       -0
+chromaggus        3196     3204     7.1    3.6     -1.2      -10
+scoring_mean                        4.3    1.7

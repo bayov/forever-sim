@@ -1,0 +1,9 @@
+A=Ftr0_max_survival.json B=F_max_survival.json preset=max_survival iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+magmadar          2520     2442   -78.2    6.9   -105.9      -13
+golemagg          2016     1967   -49.4   11.1   -103.9      -15
+onyxia            1493     1531    37.9   20.9   -123.8      -18
+broodlord          244      727   483.1   57.0   -120.0      -80
+vaelastrasz       2265     2095  -170.6    9.4   -136.1      -27
+chromaggus       -1444    -1537   -93.6   16.3    -89.4      -10
+scoring_mean                       21.5   10.8
