@@ -28,14 +28,20 @@ Wowhead sits behind AWS WAF, with two separate checks:
    curl_cffi, which looks like Chrome.
 2. **A rate limit.** About 110 requests in a minute or two gets the address a 403 for
    everything, browser or not, for some minutes, and a new token doesn't help.
-   `wowhead.py` asks once every 3.5 seconds (`DELAY`). On a 403 it waits five minutes,
-   then longer, and slows down for the rest of the run. Don't run two scrapes at once,
-   and don't loop over Wowhead pages from your own code: use `Wowhead.page()`.
+   Since 2026-11-04 it can also answer a 405 with a captcha after about 30 pages, even
+   at one request every 8 seconds. We can't answer a captcha and don't try to get past
+   one: it went away within 20 minutes, and it didn't come back at 12 seconds.
+   `wowhead.py` asks once every 12 seconds (`DELAY`). On a 403 or 405 it waits five
+   minutes, then longer, and slows down for the rest of the run. Don't run two scrapes at
+   once, and don't loop over Wowhead pages from your own code: use `Wowhead.page()`.
 
 Every page is kept, gzipped, in `~/.cache/wow-data/wowhead/pages`, so a stopped run picks
 up where it left off. A page younger than `WOWHEAD_CACHE_DAYS` (7 by default) isn't
 fetched again. Use `WOWHEAD_CACHE_DAYS=0` when you need something Wowhead changed today,
-and for `recipes.py` after the game patched. Its meta block's `oldestPage` gives the age
+and for `recipes.py` after the game patched (about 2,900 pages, so about 10 hours at this
+pace). To only find new recipes, delete the cached `forever%2Fitems%2Frecipes*` and
+`forever%2Fspells%2F{professions,secondary-skills}*` listing pages and run it without the
+variable: it fetches the listings and each new recipe's pages. Its meta block's `oldestPage` gives the age
 of the oldest page it used, and BayovCore lets that data replace what it saw at a vendor
 or trainer only when the scrape is newer than its look, so cached pages from before the
 patch can't.
