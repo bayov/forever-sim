@@ -7,7 +7,7 @@
 import * as THREE from 'three';
 import { newTextures } from './wow/files';
 import { fillBatches, particleOptions } from './wow/particles';
-import { Crowd } from './wow/crowd';
+import { Crowd, SHADOW_LAYER } from './wow/crowd';
 import type { Model } from './wow/model';
 
 export type CameraState = { yaw: number; pitch: number; distance: number };
@@ -110,6 +110,9 @@ export class Room {
 		// The renderer has placed the scene's objects for the frame by now, and hasn't drawn the
 		// shadows yet.
 		this.scene.onBeforeRender = (_r, _s, camera) => {
+			// The crowd's shadow batches draw only in the shadows: the camera sees their layer from
+			// when the shadows start (below) to when the picture starts (the solid marker).
+			camera.layers.disable(SHADOW_LAYER);
 			this.crowd.prepare(camera);
 			fillBatches();
 			this.onPass?.('upload');
@@ -123,7 +126,10 @@ export class Room {
 		const splitShadows = /Direct3D11/.test(String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : '')) && !location.search.includes('noshadowtimer');
 		const setRenderTarget = this.renderer.setRenderTarget.bind(this.renderer);
 		this.renderer.setRenderTarget = (target, face, level) => {
-			if (splitShadows && target && target === this.sun.shadow.map) this.onPass?.('shadow');
+			if (target && target === this.sun.shadow.map) {
+				this.camera.layers.enable(SHADOW_LAYER);
+				if (splitShadows) this.onPass?.('shadow');
+			}
 			setRenderTarget(target, face, level);
 		};
 		// Two markers that draw nothing, first in their lists, tell when the solid things start and
@@ -135,7 +141,10 @@ export class Room {
 			const marker = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ transparent: pass === 'transparent', depthWrite: false }));
 			marker.frustumCulled = false;
 			marker.renderOrder = -1e9;
-			marker.onBeforeRender = () => this.onPass?.(pass);
+			marker.onBeforeRender = () => {
+				this.camera.layers.disable(SHADOW_LAYER);
+				this.onPass?.(pass);
+			};
 			this.scene.add(marker);
 		}
 
