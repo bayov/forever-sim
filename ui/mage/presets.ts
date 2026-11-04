@@ -34,6 +34,7 @@ import Level60FrostAPL from './apls/level60_frost.apl.json';
 import Level60FrostfireAPL from './apls/level60_frostfire.apl.json';
 import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticArcaneGear from './gear_sets/level60_phase1_synthetic_arcane.gear.json';
+import Level60Phase1SyntheticArcaneHitMinus1Gear from './gear_sets/level60_phase1_synthetic_arcane_hit-1.gear.json';
 
 // The Level 60 presets were searched on 2026-10-12, and again on 2026-10-13 on the Forever
 // budget gear, with tools/rotopt (the mage_arcane, mage_fire, mage_frost and mage_frostfire
@@ -86,8 +87,16 @@ export const GearLevel60Phase1SyntheticArcane = PresetUtils.makePresetGear('Arca
 	group: 'Synthetic',
 });
 
+// The hit-1 step of the Arcane set (round 70753 phase 5, hit trade): the Gnome's racial hit put the Arcane
+// build at 17% against the 16% cap, so 10 hit rating on the head goes to other stats (16/16). +7.1 / +7.0 /
+// +6.8 at 120 / 180 / 300 sec on the old talents. The Arcane build wears it.
+export const GearLevel60Phase1SyntheticArcaneHitMinus1 = PresetUtils.makePresetGear('Arcane (hit-1)', Level60Phase1SyntheticArcaneHitMinus1Gear, {
+	tooltip: 'The Level 60 synthetic Arcane set with 1% hit traded away, for a Gnome at the cap with Precision 3.',
+	group: 'Synthetic',
+});
+
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticArcane],
+	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticArcane, GearLevel60Phase1SyntheticArcaneHitMinus1],
 };
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
@@ -299,7 +308,11 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Fire', SavedTal
 // iterations, seed 1, the report request), +4.5 / +8.3 / +7.5 on two seed sets. The Frostbolt build
 // with Arcane Blast on Clearcasting is 983.5 / 956.9 / 940.8. Gnome stays best (962.4 at 180 sec),
 // then Undead 960.2, Human 957.7, Orc 957.6, High Order 951.8 (own opener), Troll 950.1.
-export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Arcane', SavedTalents.create({ talentsString: '050205203100311531-5551-003' }), {
+// Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/mage.md): on the
+// Arcane set's hit-1 step (the Gnome was 1% over the cap), the search moved Flame Throwing 1 to Master
+// of Elements 1 (050205203100311531-5550000000001-003, +0.3 / +0.6 / +0.8 on the step, small). 993.5 /
+// 969.9 / 952.1 as a Gnome (20,000 iterations, seed 1), +7.4 / +7.6 / +7.6, nearly all from the step.
+export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Arcane', SavedTalents.create({ talentsString: '050205203100311531-5550000000001-003' }), {
 	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Arcane Wrath with Accelerant, Missile Barrage, Fireball with Ignite.',
 	group: 'Synthetic',
 });
@@ -560,7 +573,7 @@ export const PresetBuildLevel60Arcane = PresetUtils.makePresetBuild('Arcane', {
 	...buildCommon,
 	distanceFromTarget: DistanceArcane,
 	tooltip: 'Level 60 Gnome Arcane on the synthetic Phase 1 gear, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1SyntheticArcane,
+	gear: GearLevel60Phase1SyntheticArcaneHitMinus1,
 	talents: TalentsLevel60Arcane,
 	rotation: APLLevel60Arcane,
 	race: Race.RaceGnome,

@@ -29,6 +29,7 @@ import { Stats } from '../core/proto_utils/stats.js';
 import Level60APLJSON from './apls/level60.apl.json';
 import Level60FaerieFireAPLJSON from './apls/level60_ff.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticHitMinus4GearJSON from './gear_sets/level60_phase1_synthetic_hit-4.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -65,9 +66,17 @@ export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Feral', Le
 	group: 'Synthetic',
 });
 
-export const GearPresets = [GearLevel60Phase1Synthetic];
+// The hit-4 step of the set (round 70753 phase 5, hit trade): 40 hit rating less, re-spent on Agility,
+// Strength and crit (orchestration/tools/hit_steps.json, "feral"), for the Level 60 talents' Nature's
+// Reach 2 (+4% hit), so the build still sits at the 8% cap. The Feral builds wear it.
+export const GearLevel60Phase1SyntheticHitMinus4 = PresetUtils.makePresetGear('Feral (hit-4)', Level60Phase1SyntheticHitMinus4GearJSON, {
+	tooltip: "The synthetic Phase 1 set with 4% hit traded for Agility, Strength and crit, for Nature's Reach 2.",
+	group: 'Synthetic',
+});
 
-export const DefaultGear = GearLevel60Phase1Synthetic;
+export const GearPresets = [GearLevel60Phase1SyntheticHitMinus4, GearLevel60Phase1Synthetic];
+
+export const DefaultGear = GearLevel60Phase1SyntheticHitMinus4;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -155,7 +164,12 @@ export const DefaultRotation = FeralDruidRotation.create({
 // traded Furor's points for mana; scored at 20,000 iterations over 120, 180 and 300 sec together, the
 // two spare points tie in Natural Shapeshifter, Reflection or both (941.5) and Furor 5 or Nature's Reach
 // 2 is 0.9 behind (the long fight's mana).
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Feral', SavedTalents.create({ talentsString: '05002-53200032023012125001-05502' }), {
+// Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/druid.md): with the set's
+// hit tradeable for other stats, the search (120, 180 and 300 sec together) moved Natural Shapeshifter 2 to
+// Nature's Reach 2 (+4% hit) and wears the hit-4 step: 1176.5 / 1164.9 / 1146.4 at 120 / 180 / 300 sec
+// (20,000 iterations, seed 1), +26.0 / +25.9 / +22.0. Without Natural Shapeshifter the cat ends 300 sec
+// with about 480 mana (time to run dry about 280 sec at the end of the range).
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Feral', SavedTalents.create({ talentsString: '050022-53200032023012125001-055' }), {
 	tooltip: 'The talent search best on the synthetic Phase 1 set.',
 	group: 'Synthetic',
 });
@@ -364,7 +378,7 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('F
 export const PresetBuildLevel60 =PresetUtils.makePresetBuild('Feral', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Feral rotation, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticHitMinus4,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
@@ -378,7 +392,7 @@ export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Feral Â
 	group: 'Synthetic',
 	tooltip:
 		"The Feral build keeping Faerie Fire on the target for the raid (free in Cat Form). It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticHitMinus4,
 	talents: TalentsLevel60,
 	rotation: APLLevel60FaerieFire,
 	encounter: EncounterLevel60FaerieFireDuty,
