@@ -10,6 +10,7 @@
 - proposed fix: one line in each tooltip; refresh docs/tank_sim.md's status and bear sections; update the summary.tsv header and the paladin Max survival number.
 - needs: worker fix
 - fixed (bear part): 2026-11-04, 0b901ff: docs/tank_sim.md's bear Max survival over Balanced and its 2026-11-03 rotation marked as since fixed; the bear UI comments' set totals and Furor wording. Bear numbers move with the round-3 re-search. The shared status paragraph (tank_sim.md:8-17) is left to the orchestrator.
+- bear numbers: 2026-11-04, ad93b95: docs/tank_druid.md's preset table, the tooltips and the summary.tsv bear rows are round 3's.
 
 ### tank_fairness-20261104-8: Round 2 searched the four tanks unevenly
 - severity: low (no measured loss yet, but the search coverage differs)
@@ -18,6 +19,7 @@
 - evidence: from the round-2 sections of docs/tank_*.md. The warrior re-searched all 9 races at 3 weights, A/B'd armor against AP trinket at 3 weights, and A/B'd wrist Superior Deflection (Defense +9) against Stamina, taking Deflection. The Warden's races and trinket A/B were not re-run on the new engine (docs/tank_shaman.md:65, 'Not re-run this round'). The engine change moved the autocast trinket, so the round-1 picks are unverified. The paladin ran no gear, trinket, enchant or libram A/B in round 2, and its wrist, boots and shield enchants have no Deflection or Defense check like the warrior's. The bear's doc says 'enchants and consumables were not re-checked'. Only the warrior committed raw search output (orchestration/tank_handoff/warrior/round2/); the other three can't be re-audited from files. Tauren led the Warden's round-1 race search by a wide margin, so a race change is unlikely.
 - proposed fix: Warden race at 3000 iterations and its trinket A/B on the current engine. Paladin and Warden wrist Superior Deflection against Stamina, and shield and boots enchant A/B, at the three weights. Bear enchant re-check. Commit each class's search summary next to the warrior's.
 - needs: worker fix
+- bear part: fixed: 2026-11-04, ad93b95. Every bear enchant slot and consumable slot A/B'd at each preset's weight (3,000, confirmed on a disjoint seed); Max threat takes Strength on the head, legs, wrist and weapon (+30.1 ± 2.9), Balanced and Max survival Superior Deflection on the wrist, Max survival Dirge's chops (+79 to +90); the rest holds. Raw search output committed in orchestration/tank_handoff/druid/round3/ (ab_summary.txt, rotopt/, tankbench/). A Blasted Lands buff and Rumsey Rum would gain but no tank carries them: left as a call for all four tanks (docs/tank_druid.md call 10).
 
 ### tank_fairness-20261104-7: Warden Max threat takes Titans where Natural Accuracy wins at its weight
 - severity: medium (+30 at w=1/3, 1.3% of the preset's score)

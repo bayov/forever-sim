@@ -18,6 +18,7 @@
 - evidence: ui/feral_tank_druid/apls/max_threat.apl.json:8, tools/tankbench/req/druid_bear_max_threat.json:128 (`currentRage < 60`); enrageRage's Max is 60 (tools/rotopt/druid_tank.go:61). Under 80 Rage, paired, 3k: +3.0 ± 0.5 (every boss ≥ 0 but Chromaggus -2.9 ± 2.1; Ragnaros +9.0 ± 4.7); 1k: under 70 +4.0 ± 0.7, under 90 +3.8, no condition +3.7, under 40 -21.8. Balanced's 40 holds (60: -8.1 ± 12.0; 20: -23.9 ± 10.3). Sure: high, but small (0.1%).
 - proposed fix: raise the knob's Max to 100 (or allow "on cooldown") and re-search Max threat. Repro: `abtest -iters 3000 $P/A_druid_bear_max_threat.json $P/bt_enr80.json` (P=$AUDIT_WORK/tank_rotations/probe).
 - needs: worker fix
+- fixed: 2026-11-04, ad93b95. enrageRage's Max is 100 (tools/rotopt/druid_tank.go); the knob search on the new engine picks 70, +4.0 ± 0.5 over 60 at 3,000 on the disjoint seed 2 (80 +4.0, 100 +3.9: the same). Max threat's request and UI APL enrage under 70. docs/tank_druid.md, Presets (round 3).
 
 ### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
 - severity: medium

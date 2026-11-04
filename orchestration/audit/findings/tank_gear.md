@@ -9,6 +9,7 @@
 - evidence: the warrior, paladin and bear backs (990604, 990704, 990804) take 1219587 Enchant Cloak - Agility (+5 Agility, 5 weighted at 1b/36 prices); the Warden's (999204) takes 1889 Superior Defense (+70 armor, 7 weighted at 36's 0.1 a point of bonus armor). Both are outside the raids. None of docs/tank_{warrior,paladin,druid,shaman}.md records the comparison. For the bear, armor from enchants may also take Dire Bear Form's multiplier, which would favour 1889 further; Agility's dodge, crit and threat may favour 1219587 at Max threat. Not simmed; the difference is about 2 weighted points, under 0.3% of a set (estimate). Confidence about 60% that one of the three would switch at Max survival.
 - proposed fix: A/B 1889 against 1219587 on the back for each of the three at each preset's weight; keep the winner and record it in the class doc.
 - needs: worker fix
+- bear part: fixed: 2026-11-04, ad93b95. Superior Defense 1889 against Agility 1219587 on the back: -4.6 ± 1.1 / -9.3 ± 3.0 / -1.8 ± 8.8 at Max threat / Balanced / Max survival (seed 2: -6.9 ± 1.2 / -10.8 ± 3.5 / +5.2 ± 9.6), so Agility stays at every weight; recorded in docs/tank_druid.md, Gear.
 
 ### tank_gear-20261104-3: Tank enchants use stale Classic values; shield Greater Stamina and the Deflection bracer enchant are underrated
 - severity: low
@@ -26,6 +27,7 @@
 - bear part (a): 2026-11-04, 0b901ff: no shield, so no 929; every bear enchant id is live for its slot (docs/tank_druid.md, Gear). Part (b), the wrist 1248665 against 1886 A/B, waits for the round-3 score phase.
 
 ## Resolved
+- bear part (b): fixed: 2026-11-04, ad93b95. Wrist A/B at each weight (3,000, seeds 1 and 2; 10,000 on seeds 3 and 4 for the close ones): Superior Deflection 1248665 wins at Balanced (+6.1 ± 2.7 at 10k) and Max survival (+23.9 ± 7.3 at 10k) and is worn there; at Max threat Superior Strength 1885 wins (+15.1 ± 0.3, seed 2), Deflection +5.2 ± 1.9. docs/tank_druid.md, Gear.
 
 ### tank_gear-20261104-1: Protection paladin set's Stamina share 30.2% is outside the row's 32.4 ±1.5
 - severity: medium
