@@ -24,7 +24,7 @@ var (
 	stealth       = spellID(1787)
 	garrote       = spellIDRank(11290, 6)
 	deathMark     = spellID(1325758)
-	mutilate      = spellID(1310707)
+	mutilate      = spellID(1241584)
 	ghostlyOpener = spellIDTag(14278, 1)
 	shadowmeld    = spellID(20580)
 )

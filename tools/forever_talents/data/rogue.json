@@ -4,7 +4,7 @@
   "className": "Rogue",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-11-03T14:00:53Z",
+  "generatedAt": "2026-11-04T06:32:07Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -224,7 +224,7 @@
           "row": 2,
           "col": 1,
           "maxRank": 1,
-          "icon": "ability_rogue_bloodsplatter",
+          "icon": "ability_rogue_rupture",
           "iconSource": "client",
           "description": "Increases the duration of your Rupture ability by {0} sec and your Garrote ability by {1} sec.",
           "ranks": [
@@ -236,7 +236,8 @@
           "ranksObserved": [
             1
           ],
-          "ranksSource": "client"
+          "ranksSource": "client",
+          "spellId": 1329256
         },
         {
           "id": "lethality",
@@ -379,7 +380,7 @@
           "maxRank": 5,
           "icon": "ability_warrior_decisivestrike",
           "iconSource": "client",
-          "description": "Your finishing moves have a {0}% chance per combo point to restore {1} Energy.",
+          "description": "Your finishing moves have a {0}% chance per Combo Point to restore {1} Energy.",
           "ranks": [
             [
               4,
@@ -420,7 +421,7 @@
           "maxRank": 1,
           "icon": "inv_sword_31",
           "iconSource": "client",
-          "description": "Your Shank ability increases the damage of your Poisons by {0}% and your chance to apply Poisons by {1}% for {2} sec.",
+          "description": "Causes your Shank ability to increase your Poison damage by {0}% and your chance to apply Poisons by {1}% for {2} sec.",
           "ranks": [
             [
               30,
@@ -432,8 +433,7 @@
             1
           ],
           "ranksSource": "client",
-          "cost": "25 Energy; 1\u20135 Combo Points; 100 yd range; Instant",
-          "spellId": 1310703
+          "spellId": 1329328
         },
         {
           "id": "improved-kidney-shot",
@@ -467,7 +467,7 @@
           "maxRank": 3,
           "icon": "spell_shadow_chilltouch",
           "iconSource": "client",
-          "description": "Your critical strikes from abilities that add combo points have a {0}% chance to add an additional combo point.",
+          "description": "Your critical strikes from abilities that add Combo Points have a {0}% chance to add an additional Combo Point.",
           "ranks": [
             [
               33
@@ -495,10 +495,11 @@
           "maxRank": 1,
           "icon": "ability_rogue_deadlybrew",
           "iconSource": "client",
-          "description": "Instantly attacks with both weapons for {0}% weapon damage plus an additional amount with each weapon. Damage is increased by {1}% against Poisoned targets. Awards {2} combo points.",
+          "description": "Instantly attacks with both weapons for {0}% weapon damage plus an additional {1} with each weapon. Damage increased by {2}% against Poisoned targets. Awards {3} Combo Points.",
           "ranks": [
             [
               90,
+              40,
               20,
               2
             ]
@@ -508,7 +509,13 @@
           ],
           "ranksSource": "client",
           "cost": "60 Energy; Melee Range; Instant",
-          "spellId": 1310707
+          "requires": [
+            {
+              "talent": "venom",
+              "rank": 1
+            }
+          ],
+          "spellId": 399956
         }
       ]
     },
@@ -781,9 +788,9 @@
           "id": "composure",
           "name": "Composure",
           "row": 2,
-          "col": 2,
+          "col": 3,
           "maxRank": 2,
-          "icon": "ability_rogue_quickrecovery",
+          "icon": "ability_rogue_fleetfooted",
           "iconSource": "client",
           "description": "Increases the Energy cost reduction of your Poised ability by {0}.",
           "ranks": [
@@ -798,7 +805,8 @@
             1,
             2
           ],
-          "ranksSource": "client"
+          "ranksSource": "client",
+          "spellId": 1329265
         },
         {
           "id": "improved-kick",
@@ -847,10 +855,40 @@
           "spellId": 1310711
         },
         {
+          "id": "weapon-expertise",
+          "name": "Weapon Expertise",
+          "row": 3,
+          "col": 2,
+          "maxRank": 2,
+          "icon": "spell_holy_blessingofstrength",
+          "iconSource": "client",
+          "description": "Reduces the chance for your attacks to be Dodged or Parried by {0}%.",
+          "ranks": [
+            [
+              1
+            ],
+            [
+              2
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "requires": [
+            {
+              "talent": "precision",
+              "rank": 3
+            }
+          ],
+          "spellId": 30919
+        },
+        {
           "id": "aggression",
           "name": "Aggression",
           "row": 3,
-          "col": 2,
+          "col": 3,
           "maxRank": 3,
           "icon": "ability_racial_avatar",
           "iconSource": "client",
@@ -875,30 +913,6 @@
           "spellId": 18427
         },
         {
-          "id": "weapon-expertise",
-          "name": "Weapon Expertise",
-          "row": 3,
-          "col": 3,
-          "maxRank": 2,
-          "icon": "spell_holy_blessingofstrength",
-          "iconSource": "client",
-          "description": "Reduces the chance for your attacks to be Dodged or Parried by {0}%.",
-          "ranks": [
-            [
-              1
-            ],
-            [
-              2
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 30919
-        },
-        {
           "id": "dual-wield-specialization",
           "name": "Dual Wield Specialization",
           "row": 4,
@@ -920,12 +934,6 @@
             2
           ],
           "ranksSource": "client",
-          "requires": [
-            {
-              "talent": "precision",
-              "rank": 3
-            }
-          ],
           "spellId": 13715
         },
         {
@@ -1000,9 +1008,9 @@
           "id": "flash-of-steel",
           "name": "Flash of Steel",
           "row": 5,
-          "col": 1,
+          "col": 2,
           "maxRank": 5,
-          "icon": "ability_rogue_focusedattacks",
+          "icon": "ability_rogue_restlessblades",
           "iconSource": "client",
           "description": "Increases the Energy generated by your Shank ability by {0} and reduces its cooldown by {1} sec.",
           "ranks": [
@@ -1034,7 +1042,8 @@
             4,
             5
           ],
-          "ranksSource": "client"
+          "ranksSource": "client",
+          "spellId": 1329284
         },
         {
           "id": "adrenaline-rush",
@@ -1056,6 +1065,12 @@
           ],
           "ranksSource": "client",
           "cost": "Instant; 5 min cooldown",
+          "requires": [
+            {
+              "talent": "blade-flurry",
+              "rank": 1
+            }
+          ],
           "spellId": 13750
         }
       ]
@@ -1077,7 +1092,7 @@
           "maxRank": 3,
           "icon": "spell_nature_mirrorimage",
           "iconSource": "client",
-          "description": "Gives you a {0}% chance to add a combo point to your target after dodging their attack or fully resisting one of their spells.",
+          "description": "Gives you a {0}% chance to add a Combo Point to your target after Dodging their attack or fully resisting one of their spells.",
           "ranks": [
             [
               15
@@ -1156,14 +1171,38 @@
           "spellId": 14057
         },
         {
+          "id": "dirty-deeds",
+          "name": "Dirty Deeds",
+          "row": 1,
+          "col": 0,
+          "maxRank": 2,
+          "icon": "spell_shadow_summonsuccubus",
+          "iconSource": "client",
+          "description": "Reduces the Energy cost of your Cheap Shot and Garrote abilities by {0}, and your Garrote ability no longer requires you to be behind your target.",
+          "ranks": [
+            [
+              10
+            ],
+            [
+              20
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 14082
+        },
+        {
           "id": "camouflage",
           "name": "Camouflage",
           "row": 1,
-          "col": 0,
+          "col": 1,
           "maxRank": 3,
           "icon": "ability_stealth",
           "iconSource": "client",
-          "description": "Increases your speed while stealthed by {0}% and reduces the cooldown of your Stealth ability by {1} sec.",
+          "description": "Reduces your speed penalty from your Stealth ability by {0}% and reduces its cooldown by {1} sec.",
           "ranks": [
             [
               5,
@@ -1187,58 +1226,10 @@
           "spellId": 13975
         },
         {
-          "id": "dirty-deeds",
-          "name": "Dirty Deeds",
-          "row": 1,
-          "col": 1,
-          "maxRank": 2,
-          "icon": "spell_shadow_summonsuccubus",
-          "iconSource": "client",
-          "description": "Reduces the Energy cost of your Cheap Shot and Garrote abilities by {0}, and your Garrote ability no longer requires you to be behind your target.",
-          "ranks": [
-            [
-              10
-            ],
-            [
-              20
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 14082
-        },
-        {
-          "id": "dirty-tricks",
-          "name": "Dirty Tricks",
-          "row": 1,
-          "col": 2,
-          "maxRank": 2,
-          "icon": "ability_sap",
-          "iconSource": "client",
-          "description": "Reduces the Energy cost of your Sap and Blind abilities by {0}%.",
-          "ranks": [
-            [
-              25
-            ],
-            [
-              50
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 1224782
-        },
-        {
           "id": "improved-ambush",
           "name": "Improved Ambush",
           "row": 1,
-          "col": 3,
+          "col": 2,
           "maxRank": 3,
           "icon": "ability_rogue_ambush",
           "iconSource": "client",
@@ -1261,6 +1252,30 @@
           ],
           "ranksSource": "client",
           "spellId": 14079
+        },
+        {
+          "id": "dirty-tricks",
+          "name": "Dirty Tricks",
+          "row": 1,
+          "col": 3,
+          "maxRank": 2,
+          "icon": "ability_sap",
+          "iconSource": "client",
+          "description": "Reduces the Energy cost of your Sap and Blind abilities by {0}%.",
+          "ranks": [
+            [
+              25
+            ],
+            [
+              50
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 1224782
         },
         {
           "id": "initiative",
@@ -1375,12 +1390,13 @@
           "maxRank": 1,
           "icon": "spell_shadow_curse",
           "iconSource": "client",
-          "description": "A strike that deals {0}% ({1}% if a Dagger is equipped in your Main Hand) weapon damage and increases your chance to dodge by {2}% for {3} sec. Awards {4} combo point.",
+          "description": "A strike that deals {0}% ({1}% if a Dagger is equipped in your Main Hand) weapon damage, increases your chance to dodge by {2}% for {3} sec, and causes your next Ambush or Garrote cast within {4} sec to not require Stealth. Awards {5} combo point.",
           "ranks": [
             [
               125,
               180,
               15,
+              7,
               7,
               1
             ]
@@ -1398,9 +1414,9 @@
           "row": 3,
           "col": 3,
           "maxRank": 2,
-          "icon": "ability_rogue_fleetfooted",
+          "icon": "ability_rogue_blackjack",
           "iconSource": "client",
-          "description": "Increases the maximum number of targets you may have Sapped by {0}, and increases your movement speed by {1}% for {2} sec after sapping a target.",
+          "description": "Increases the maximum number of targets you may have Sapped by {0}, and increases your movement speed by {1}% for {2} sec after Sapping a target.",
           "ranks": [
             [
               1,
@@ -1417,7 +1433,14 @@
             1,
             2
           ],
-          "ranksSource": "client"
+          "ranksSource": "client",
+          "requires": [
+            {
+              "talent": "dirty-tricks",
+              "rank": 2
+            }
+          ],
+          "spellId": 1310728
         },
         {
           "id": "heightened-senses",
@@ -1466,7 +1489,7 @@
           "maxRank": 1,
           "icon": "spell_shadow_lifedrain",
           "iconSource": "client",
-          "description": "An instant strike that deals {0}% weapon damage ({1}% if a Dagger is equipped) and causes the target to take {2}% increased Rupture and Garrote damage from the Rogue. Lasts {3} sec. Awards {4} combo point.",
+          "description": "An instant strike that deals {0}% weapon damage ({1}% if a Dagger is equipped) and causes the target to take {2}% increased Rupture and Garrote damage from the Rogue. Lasts {3} sec. Awards {4} Combo Point.",
           "ranks": [
             [
               100,
@@ -1493,11 +1516,11 @@
           "id": "boot-knife",
           "name": "Boot Knife",
           "row": 5,
-          "col": 1,
+          "col": 2,
           "maxRank": 5,
-          "icon": "inv_throwingknife_02",
+          "icon": "inv_sword_32",
           "iconSource": "client",
-          "description": "Gives your Shank ability a {0}% chance to add {1} combo points to the target.",
+          "description": "Grants your Shank ability a {0}% chance to add {1} Combo Points to the target.",
           "ranks": [
             [
               20,
@@ -1527,7 +1550,8 @@
             4,
             5
           ],
-          "ranksSource": "client"
+          "ranksSource": "client",
+          "spellId": 1329286
         },
         {
           "id": "death-mark",
@@ -1535,26 +1559,41 @@
           "row": 6,
           "col": 1,
           "maxRank": 1,
-          "icon": "ability_rogue_slaughterfromtheshadows",
+          "icon": "ability_creature_cursed_02",
           "iconSource": "client",
-          "description": "Finishing move that marks the target, storing a portion of the damage dealt by your attacks per combo point. Garrote and Rupture damage is stored at twice the rate. After {0} sec, the stored damage is dealt, up to a maximum increased by Attack Power and critical strike chance. {1} Energy, {2} yd range, {3} sec cooldown. Curse.",
+          "description": "Finishing move that marks the target, storing a portion of the damage dealt by your attacks per Combo Point. Garrote and Rupture damage is stored at twice the rate. After {0} sec, the stored damage is dealt, up to a maximum increased by Attack Power and Critical Strike chance: {1} point: {2}% stored, ? damage cap {3} points: {4}% stored, ? damage cap {5} points: {6}% stored, ? damage cap {7} points: {8}% stored, ? damage cap {9} points: {10}% stored, ? damage cap",
           "ranks": [
             [
               6,
-              25,
-              20,
-              10
+              1,
+              12,
+              2,
+              24,
+              3,
+              36,
+              4,
+              48,
+              5,
+              60
             ]
           ],
           "ranksObserved": [
             1
           ],
-          "ranksSource": "client"
+          "ranksSource": "client",
+          "cost": "25 Energy; 1\u20135 Combo Points; 20 yd range; Instant; 10 sec cooldown",
+          "requires": [
+            {
+              "talent": "preparation",
+              "rank": 1
+            }
+          ],
+          "spellId": 1316709
         }
       ]
     }
   ],
   "notes": [
-    "wago.tools Trait, TalentTab, SkillLine and Spell tables of the WoW Forever beta client build 1.60.1.70753 (TraitTree 1111), generated by tools/forever_talents/import_db2.py. The trees' removed lists carried over from the hand-assembled files these replaced. 35 notes-only changes from tools/forever_talents/notes/rogue.json laid over it."
+    "wago.tools Trait, TalentTab, SkillLine and Spell tables of the WoW Forever beta client build 1.60.1.70707+hf (TraitTree 1111), generated by tools/forever_talents/import_db2.py. That is build 1.60.1.70707 with the launch realms' server hotfix rows laid over it (wago.tools hotfixes, region 91, build 70707, through tools/sources/hotfixes.py). The server hotfix that changed this tree: push 113483 of 2026-11-03. The trees' removed lists carried over from the hand-assembled files these replaced."
   ]
 }

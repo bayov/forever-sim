@@ -151,17 +151,18 @@ the rogue its new tree; it has to be built from the notes (rows and rank counts 
 
 ## Notes-only values (standards 37)
 
-All gated under Forever (finding client_update-20261103-2), citing the notes and "client 1.60.1.70753 unchanged".
-Outside Forever: Classic's Lethality 6%, Relentless Strikes 20% a combo point, Seal Fate 20% a point, Dual Wield
-Specialization 10%, Aggression 2/4/6%, Improved Eviscerate 5/10/15%, Improved Sinister Strike on Sinister Strike alone; no
-Shank, no Ghostly Strike opener, no Hemorrhage on Garrote. Mutilate and Flawless Execution aren't in Classic, so they keep
-the client's 75% and 10. Venom, Blood Splatter, Composure, Flash of Steel, Boot Knife and Death Mark are Forever-only
-talents with no Classic value. Replace each when a client build or
-hotfix brings it: Shank (whole spell, ID 1399248 is the sim's), Venom as a Shank passive (30% / 20% / 6 s), Deadly
-Poison 0.009 and Instant Poison 0.01 AP, Mutilate 90%, Flawless Execution 15, Aggression 5/10/15% (no Backstab),
-Ghostly Strike's 7 s opening, Hemorrhage on Garrote. Phase B adds Lethality, Blood Splatter, Relentless Strikes, Seal
-Fate, Coup de Grace on Death Mark, Efficient Strikes, Composure, Dual Wield Specialization, Flash of Steel, Opportunity,
-Boot Knife and the removals.
+Server hotfix push 113483 (launch realms, build 70707, 2026-11-03 18:29Z; `hotfix_113483.md`) carries the rest
+of the rework, so its values replace the notes' and these are no longer notes-only: Shank (now 1329283 / 1329549,
+always hits, no procs), Venom as a Shank passive (proc chance on Deadly and Wound only), Mutilate (90% and a flat
+44 / 63 / 88), Flawless Execution 15, Aggression 5/10/15% (no Backstab), Ghostly Strike's 7 s opening, Hemorrhage
+on Garrote, Lethality, Blood Splatter, Relentless Strikes, Seal Fate, Coup de Grace on Death Mark, Efficient
+Strikes, Composure, Dual Wield Specialization, Flash of Steel, Opportunity, Boot Knife and the removed talents
+(the tree is now imported from 1.60.1.70707+hf; `notes/rogue.json` is retired).
+
+Still notes-only, gated under Forever, citing the notes and "client 1.60.1.70753 unchanged, no hotfix":
+- Deadly Poison 0.009 and Instant Poison 0.01 of attack power (the client has no coefficient; the hotfix changes only
+  the poisons' charges).
+- The Hemorrhage and Ghostly Strike dagger fix (no numbers anywhere; the sim keeps the tooltips' 145% and 180%).
 
 ## Ledger
 
