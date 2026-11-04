@@ -231,3 +231,62 @@ var ForeverSyntheticItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
 }
+
+// BEGIN hit-trade steps: enhancement (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsEnhancement...)
+}
+
+var hitStepsEnhancement = []*proto.UIItem{
+	// Enhancement Synthetic Hands (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (990007).
+	{
+		Id: 990040, Name: "Enhancement Synthetic Hands (Phase 1, hit -10)", Icon: "inv_gauntlets_26",
+		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Strength: 9, stats.Stamina: 12, stats.Intellect: 8, stats.SpellPower: 25, stats.Armor: 264}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  3,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+		SetName:        "Enhancement Synthetic (Phase 1)",
+	},
+	// Enhancement Synthetic Finger (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (990011).
+	{
+		Id: 990041, Name: "Enhancement Synthetic Finger (Phase 1, hit -10)", Icon: "inv_jewelry_ring_07",
+		Type:       proto.ItemType_ItemTypeFinger,
+		Stats:      stats.Stats{stats.Strength: 8, stats.Stamina: 11, stats.SpellPower: 21}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  1,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+	},
+	// Enhancement Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (990006).
+	{
+		Id: 990042, Name: "Enhancement Synthetic Wrist (Phase 1, hit -10)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:      stats.Stats{stats.Stamina: 10, stats.AttackPower: 22, stats.SpellPower: 20, stats.Armor: 198}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+	},
+	// Enhancement Synthetic Waist (Phase 1), hit-trade step: 10 hit rating less, 10 Strength more (990008).
+	{
+		Id: 990043, Name: "Enhancement Synthetic Waist (Phase 1, hit -10)", Icon: "inv_belt_23",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Strength: 22, stats.Agility: 6, stats.Stamina: 16, stats.Spirit: 17, stats.Armor: 255}.ToFloatArray(),
+		HitRating: 7,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+	},
+	// Enhancement Synthetic Legs (Phase 1), hit-trade step: 10 hit rating less, 10 Strength more (990009).
+	{
+		Id: 990044, Name: "Enhancement Synthetic Legs (Phase 1, hit -10)", Icon: "inv_pants_06",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Strength: 22, stats.Stamina: 16, stats.Intellect: 11, stats.SpellPower: 32, stats.Armor: 369}.ToFloatArray(),
+		HitRating: 7,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
+		SetName:        "Enhancement Synthetic (Phase 1)",
+	},
+}
+
+// END hit-trade steps: enhancement
