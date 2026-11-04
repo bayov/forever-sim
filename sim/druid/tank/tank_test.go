@@ -8,6 +8,7 @@ import (
 	_ "github.com/wowsims/classic/sim/common"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/simsignals"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -101,5 +102,33 @@ func TestForeverBear(t *testing.T) {
 	}
 	if math.IsNaN(m.Dtps.Avg) || m.Dtps.Avg <= 0 {
 		t.Errorf("DTPS %.0f, want the boss to hit the bear", m.Dtps.Avg)
+	}
+}
+
+// TestForeverBearFormThreat checks the November 2 development notes' Bear Form threat bonus, 115%
+// (was 50%; clients 70753 and 70755 unchanged, standards 37), under Forever, and the client's 50%
+// under Classic.
+func TestForeverBearFormThreat(t *testing.T) {
+	data, err := os.ReadFile("../../../tools/tankbench/req/druid_bear.json")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for ruleset, want := range map[proto.Ruleset]float64{proto.Ruleset_RulesetForever: 2.15, proto.Ruleset_RulesetClassic: 1.5} {
+		rsr := &proto.RaidSimRequest{}
+		if err := protojson.Unmarshal(data, rsr); err != nil {
+			t.Fatal(err)
+		}
+		rsr.SimOptions.Ruleset = ruleset
+		sim := core.NewSim(rsr, simsignals.CreateSignals())
+		sim.Reset()
+		bear := sim.Raid.Parties[0].Players[0].(*FeralTankDruid)
+		if !bear.BearFormAura.IsActive() {
+			t.Fatal("the bear isn't in Bear Form after Reset")
+		}
+		inForm := bear.PseudoStats.ThreatMultiplier
+		bear.CancelShapeshift(sim)
+		if got := inForm / bear.PseudoStats.ThreatMultiplier; math.Abs(got-want) > 1e-9 {
+			t.Errorf("%v: Bear Form threat x%.4f, want x%.2f", ruleset, got, want)
+		}
 	}
 }

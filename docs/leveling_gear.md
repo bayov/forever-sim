@@ -49,7 +49,10 @@ reads the same file for its leveling weights below 60, and blends them by level 
 Hit is the larger of +1% and -1%. From 40 the plan's gear is at the hit cap, so +1% adds
 nothing, but an item that takes 1% away still costs 10 to 15 attack power. The 2026-11-02 run
 (three rounds, as below) found crit going from 1.3 attack power at level 5 to about 28 at 59,
-and Spirit rising after 40, since it shortens the rests.
+and Spirit rising after 40, since it shortens the rests. On client 70753's shaman tree we
+measured one more round (2026-11-03) on the plan's gear by those weights: level 5 (no talents)
+and 10 come out as before, and from 25 we kill 11 to 16 more mobs a session (74.6 against 61.5
+at 30, 65.9 against 52.1 at 59), with Intellect, Spirit and MP5 worth more and crit about 30 at 59.
 
 Stamina, Intellect and MP5 move with the gear, because they decide how often we die. At level
 20, +10 Stamina was worth 2.29 a point on gear with little Intellect (0.19 deaths a session)

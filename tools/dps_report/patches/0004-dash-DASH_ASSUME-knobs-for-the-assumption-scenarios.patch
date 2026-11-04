@@ -24,6 +24,9 @@ bleed_tick_crit, warr_dt_rage_k) so a setting can come back without a rebase, an
 no setting now that Hunter's Mark is settled at 143.
 2026-10-26: haste_gcd is new (1: cast speed shortens a spell's GCD, down to 1s, as in wowsims/forever's
 hastedGCD; physical abilities keep theirs, as there).
+2026-11-03: druid_rip_scale is dropped (the November 2 development notes raise Rip by 25%, standards 37).
+2026-11-03: sham_lb_31plus and sham_es7_tuning are dropped (the notes retune Lightning Bolt and Earth Shock;
+the sim's scales are 1.0 and the report rows are gone).
 
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
@@ -245,27 +248,6 @@ index 3ec786998f..ba41b8eb2a 100644
  
  	result.Damage *= averageMultiplier
  }
-diff --git a/sim/druid/rip.go b/sim/druid/rip.go
-index c6ce1c0fdf..bcf1772060 100644
---- a/sim/druid/rip.go
-+++ b/sim/druid/rip.go
-@@ -46,11 +46,15 @@ func (druid *Druid) newRipSpellConfig(ripRank RipRankInfo) core.SpellConfig {
- 
- 	// The combo points the Rip went up with, per target.
- 	comboPoints := map[int32]float64{}
-+	perCombo := ripRank.dmgTickPerCombo
-+	if v, ok := core.AssumeOk("druid_rip_scale"); ok && ripRank.level >= 36 {
-+		perCombo *= v // dashboard assumption: the 31+ ranks retuned
-+	}
- 	// AP scaling is 6% per combo point from 1 to 4, and 24% again for 5
- 	tickDamage := func(target *core.Unit, spell *core.Spell) float64 {
- 		cp := comboPoints[target.UnitIndex]
- 		cpScaling := core.TernaryFloat64(cp == 5, 4, cp)
--		return ripRank.dmgTickBase + ripRank.dmgTickPerCombo*cp + 0.01*cpScaling*spell.MeleeAttackPower(target)
-+		return ripRank.dmgTickBase + perCombo*cp + 0.01*cpScaling*spell.MeleeAttackPower(target)
- 	}
- 
- 	return core.SpellConfig{
 diff --git a/sim/druid/wrath.go b/sim/druid/wrath.go
 index ff053ca26b..b96bb9e9eb 100644
 --- a/sim/druid/wrath.go
@@ -488,48 +470,16 @@ index 773381ee0c..b33a611eca 100644
  				}
  				if costSpell(spell) {
  					spell.Cost.Factor /= 0.5
-diff --git a/sim/shaman/earth_shock.go b/sim/shaman/earth_shock.go
-index 3eb71a8411..3854aa1f28 100644
---- a/sim/shaman/earth_shock.go
-+++ b/sim/shaman/earth_shock.go
-@@ -42,8 +42,9 @@ func EarthShockBaseDamageAt(rank int, level int32) (float64, float64) {
- 	low := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][0], level)
- 	high := EarthShockScaling[rank].At(EarthShockBaseDamage[rank][1], level)
- 	if rank == 7 {
--		low *= EarthShockRank7DamageScale
--		high *= EarthShockRank7DamageScale
-+		scale := core.Assume("sham_es7_tuning", EarthShockRank7DamageScale) // dashboard assumption
-+		low *= scale
-+		high *= scale
- 	}
- 	return low, high
- }
-diff --git a/sim/shaman/lightning_bolt.go b/sim/shaman/lightning_bolt.go
-index 86ba717790..ff2f1caafd 100644
---- a/sim/shaman/lightning_bolt.go
-+++ b/sim/shaman/lightning_bolt.go
-@@ -56,8 +56,9 @@ func LightningBoltBaseDamageAt(rank int, level int32) (float64, float64) {
- 	low := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][0], level)
- 	high := LightningBoltScaling[rank].At(LightningBoltBaseDamage[rank][1], level)
- 	if rank == 10 {
--		low *= LightningBoltRank10DamageScale
--		high *= LightningBoltRank10DamageScale
-+		scale := core.Assume("sham_lb_31plus", LightningBoltRank10DamageScale) // dashboard assumption
-+		low *= scale
-+		high *= scale
- 	}
- 	return low, high
- }
 diff --git a/sim/shaman/talents.go b/sim/shaman/talents.go
 index 6b7d7a5670..eb020325ab 100644
 --- a/sim/shaman/talents.go
 +++ b/sim/shaman/talents.go
-@@ -532,7 +532,11 @@ func (shaman *Shaman) applyMaelstromWeapon() {
- 
- 	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
- 	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
--	ppmm := shaman.AutoAttacks.NewPPMManager(2*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
-+	mwPPM := 2 * float64(shaman.Talents.MaelstromWeapon)
+@@ -554,7 +554,11 @@ func (shaman *Shaman) applyMaelstromWeapon() {
+ 	// Classic has no Maelstrom Weapon; outside Forever it keeps the sim's 2 PPM a point from before
+ 	// the notes (standards 37).
+ 	ppmPerPoint := core.TernaryFloat64(shaman.Env.IsForever(), 4, 2)
+-	ppmm := shaman.AutoAttacks.NewPPMManager(ppmPerPoint*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
++	mwPPM := ppmPerPoint * float64(shaman.Talents.MaelstromWeapon)
 +	if v, ok := core.AssumeOk("sham_mw_ppm"); ok {
 +		mwPPM = v / 5 * float64(shaman.Talents.MaelstromWeapon) // dashboard assumption: the rate at 5/5
 +	}

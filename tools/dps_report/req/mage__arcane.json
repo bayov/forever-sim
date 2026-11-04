@@ -85,7 +85,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "050205203100211531-25-0535",
+            "talentsString": "050205203100311531-5551-003",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -375,14 +375,14 @@
                             "lhs": {
                               "spellCastTime": {
                                 "spellId": {
-                                  "spellId": 10181
+                                  "spellId": 10151
                                 }
                               }
                             },
                             "op": "OpAdd",
                             "rhs": {
                               "const": {
-                                "val": "0.75s"
+                                "val": "0.85s"
                               }
                             }
                           }
@@ -479,6 +479,62 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 1239700
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400573
+                              }
+                            }
+                          },
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "auraIsKnown": {
+                                    "auraId": {
+                                      "spellId": 12536
+                                    }
+                                  }
+                                },
+                                {
+                                  "auraIsActive": {
+                                    "auraId": {
+                                      "spellId": 12536
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "const": {
+                                  "val": "2s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Arcane Blast on Clearcasting: the free cast goes where the stacks make the cost highest."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 1326082
                       }
                     },
@@ -514,7 +570,51 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10181
+                        "spellId": 1239700
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400573
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "currentMana": {}
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "math": {
+                                  "lhs": {
+                                    "remainingTime": {}
+                                  },
+                                  "op": "OpMul",
+                                  "rhs": {
+                                    "const": {
+                                      "val": "75"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Arcane Blast ahead of the filler with mana the fight can't otherwise spend."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10151
                       }
                     }
                   },
@@ -562,8 +662,7 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved",
-      "salvation": true
+      "retributionAura": "TristateEffectImproved"
     },
     "debuffs": {
       "judgementOfWisdom": true,

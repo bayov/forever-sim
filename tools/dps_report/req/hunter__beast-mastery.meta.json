@@ -6,7 +6,7 @@
   "isDefault": true,
   "pr": 5,
   "race": "Orc",
-  "talents": "5021201505021241-00520503005",
+  "talents": "5021201505021241-00510504005",
   "treeNames": [
     "Beast Mastery",
     "Marksmanship",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm",
   "published": {
-    "dps": 1046.5,
-    "source": "verify.py on this request without the Goblin Sapper (consumables-20261101-1, 2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1195.6,
+    "source": "verify.py on this request (round 70753: the 2026-11-03 server hotfix's hunter values and the re-optimized rotation), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1046.5,
-    "stderr": 0.2,
+    "dps": 1195.6,
+    "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03 (round 70753); not yet the DPS report's main run"
   },
   "summary": "Beast Mastery with a cat, using Bestial Wrath, Frenzy and Unleashed Fury. Melee weaves between Auto Shots. The pet does about 28% of the damage.",
   "keyTalents": [
@@ -61,18 +61,18 @@
     "EZ-Thro Dark Bomb"
   ],
   "caveats": [
-    "Trueshot Aura's top rank gives 50 ranged attack power, from the launch realms' hotfix of 2026-10-28 (ranks 1 to 4: 15, 22, 30 and 40). Hunter's Mark gives 143 after a server hotfix (the client says 71).",
-    "Uses Aspect of the Hawk rank 6 (55 ranged attack power). The 2026-10-28 hotfix lowers ranks 1 to 5 to 15, 22, 30, 38 and 47.",
+    "Trueshot Aura's top rank gives 100 ranged attack power, from the launch realms' hotfix of 2026-11-03 (ranks 20, 35, 50, 75 and 100). Hunter's Mark gives 143 after a server hotfix (older clients said 71).",
+    "Uses Aspect of the Hawk rank 6 (110 ranged attack power), from the launch realms' hotfix of 2026-11-03 (the client still says 55).",
     "The pet gets 10% of the hunter's ranged attack power on top of its own 254, plus the hunter's crit and hit (from beta pet sheets).",
-    "Arcane Shot gets 10% of ranged attack power, and Serpent Sting 3% a tick. Beta logs fit 11% and 3.5%.",
+    "Arcane Shot gets 15% of ranged attack power, and Serpent Sting 5% a tick, from Blizzard's November 2 notes. No game data has them.",
     "Auto Shot keeps firing during casts. Moving cancels its 0.5s wind-up.",
     "Pet consumables are off (Forever pets get no player buffs). They would add 17 DPS.",
     "Intimidation is talented but not cast.",
-    "Major Frenzy Potion is 25.7 DPS behind Major Mana Potion at 180s.",
+    "Major Frenzy Potion is 17.0 DPS behind Major Mana Potion at 180s.",
     "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
     "Uses a 2.5s bow with Rhok'delar's 44.0 weapon DPS. A 2.6s gun sims 0.3 to 1.0 DPS higher with a 15% ammo pouch, or 3.4 to 5.2 lower with Era's 14% pouch.",
     "Pet hits scale with attack speed, as seen on a level 17 pet. A 1.0s raptor would add about 2.5 DPS (Savage Rend), but none that fast is known.",
-    "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (0.5 here).",
+    "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0 to 2.9 DPS at 180s (0.0 here).",
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
   ],
   "notes": "Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Orc since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Starts at 12 yd since 2026-11-02 (standards 33: a weaving hunter stands where weaving does best; the rotation walks to 12 yd before the pull either way, so this is where the pet starts; +3 to +4 at 120 + 180 + 300 sec against 25 yd on both seeds, orchestration/caster_distance.md), 25 before. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the EZ-Thro Dark Bomb stays."

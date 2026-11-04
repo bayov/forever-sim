@@ -60,8 +60,10 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 	multiplier := 1 + 0.01*float64(warrior.Talents.TwoHandedWeaponSpecialization)
 	// Under Forever it raises all Physical damage while a two-hander is equipped, Rend, Deep
 	// Wounds and Thunder Clap included (client 70425, spell 12163: A_MOD_DAMAGE_PERCENT_DONE on
-	// school 1, equip class two-handers).
+	// school 1, equip class two-handers), by 2/4/6% (development notes post 9, 2026-11-02: "was
+	// 1/2/3%"; client 70753 still has the 1% curve).
 	if warrior.Env.IsForever() {
+		multiplier = 1 + 0.02*float64(min(warrior.Talents.TwoHandedWeaponSpecialization, 3))
 		warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= multiplier
 		return
 	}
@@ -168,7 +170,8 @@ func (warrior *Warrior) registerWeaponmasterExtraAttack(procMask core.ProcMask, 
 }
 
 // Bloodthrill hands out Overpower charges off the back of Rend instead of waiting for a dodge.
-// 4% a point (client 70338: curve 4 to 20) from main hand white swings, extra attacks included,
+// 10% a point, 2 points (development notes post 9, 2026-11-02: "a 10/20% chance (was a 5-point
+// talent granting a 4/8/12/16/20% chance)"; client 70753 still has 4% a point) from main hand white swings, extra attacks included,
 // and the on-next-swing Heroic Strike and Cleave. The row's proc types also name melee abilities,
 // but in game the instant specials never proc it (wowsims/forever 788f62ce0f, combat logs:
 // Hamstring 0/99, Overpower 0/9, Execute 0/7, off hand 0/200, Thunder Clap 0/13).
@@ -178,6 +181,9 @@ func (warrior *Warrior) applyBloodthrill() {
 	}
 
 	procChance := 0.04 * float64(warrior.Talents.Bloodthrill)
+	if warrior.Env.IsForever() {
+		procChance = 0.1 * float64(min(warrior.Talents.Bloodthrill, 2))
+	}
 
 	// The Overpower window it opens is spell 1282733, 5 sec (duration index 0 of client
 	// 70009 to 70425; until 69893 the talent pointed at 1289681, 6 sec).
@@ -346,6 +352,13 @@ func (warrior *Warrior) makeFlurryAura(points int32) *core.Aura {
 
 	spellID := []int32{12319, 12971, 12972, 12973, 12974}[points-1]
 	attackSpeed := []float64{1.05, 1.1, 1.15, 1.2, 1.25}[points-1]
+	// Forever's Flurry has 3 points for 10/20/30% (development notes post 9, 2026-11-02: "was 5
+	// points granting 5/10/15/20/25%"; client 70753 still has the 5 point curve).
+	if warrior.Env.IsForever() {
+		points = min(points, 3)
+		spellID = []int32{12319, 12971, 12972}[points-1]
+		attackSpeed = 1 + 0.1*float64(points)
+	}
 
 	aura := warrior.GetOrRegisterAura(core.Aura{
 		Label:    fmt.Sprintf("Flurry Proc (%d)", spellID),

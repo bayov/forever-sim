@@ -77,7 +77,7 @@ func (priest *Priest) getDevouringPlagueConfig(rank int, cdTimer *core.Timer) co
 
 			NumberOfTicks:    ticks,
 			TickLength:       time.Second * 3,
-			BonusCoefficient: priest.downrankCoefficient(DevouringPlagueTickCoef, level),
+			BonusCoefficient: DevouringPlagueTickCoef,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDotDamage, isRollover)

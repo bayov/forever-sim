@@ -88,7 +88,7 @@
               "blessingOfKings": true,
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "30305013002-25053005142010501",
+            "talentsString": "30313113002-0505300551120100321",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
@@ -824,6 +824,16 @@
                   }
                 },
                 {
+                  "notes": "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1399001
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Recklessness with the fight's last Death Wish.",
                   "action": {
                     "condition": {
@@ -1088,8 +1098,7 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury",
-      "salvation": true
+      "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
       "judgementOfWisdom": true,

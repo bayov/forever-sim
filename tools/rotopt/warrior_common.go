@@ -9,24 +9,27 @@ import (
 // Shared pieces of the Arms and Fury templates (warrior_arms.go, warrior_fury.go). The spells are
 // the level 60 ranks, the warrior templates only build level 60 rotations.
 var (
-	battleShout      = spellIDRank(11551, 6)
-	sunderArmor      = spellID(11597)
-	charge           = spellIDRank(11578, 3)
-	battleStance     = spellID(2457)
-	berserkerStance  = spellID(2458)
-	bloodrage        = spellID(2687)
-	berserkerRage    = spellID(18499)
-	deathWish        = spellID(12328)
-	recklessness     = spellID(1719)
-	bloodthirst      = spellIDRank(23894, 4)
-	mortalStrike     = spellIDRank(21553, 4)
-	whirlwind        = spellID(1680)
-	slam             = spellIDRank(11605, 5)
-	execute          = spellIDRank(20662, 5)
-	overpower        = spellIDRank(11585, 4)
-	rend             = spellIDRank(11574, 7)
-	hamstring        = spellIDRank(7373, 3)
-	spearingStrike   = spellID(1310222)
+	battleShout     = spellIDRank(11551, 6)
+	sunderArmor     = spellID(11597)
+	charge          = spellIDRank(11578, 3)
+	battleStance    = spellID(2457)
+	berserkerStance = spellID(2458)
+	bloodrage       = spellID(2687)
+	berserkerRage   = spellID(18499)
+	deathWish       = spellID(12328)
+	recklessness    = spellID(1719)
+	bloodthirst     = spellIDRank(23894, 4)
+	mortalStrike    = spellIDRank(21553, 4)
+	whirlwind       = spellID(1680)
+	slam            = spellIDRank(11605, 5)
+	execute         = spellIDRank(20662, 5)
+	overpower       = spellIDRank(11585, 4)
+	rend            = spellIDRank(11574, 7)
+	hamstring       = spellIDRank(7373, 3)
+	spearingStrike  = spellID(1310222)
+	// Reckless Swings, the Fury talent of the November 2 development notes. The client has no spell
+	// for it yet, so the sim gives it a placeholder id (sim/warrior/reckless_swings.go).
+	recklessSwings   = spellID(1399001)
 	heroicStrikeNext = &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: 11567}, Tag: 1, Rank: 8}
 	potion           = &proto.ActionID{RawId: &proto.ActionID_OtherId{OtherId: proto.OtherAction_OtherActionPotion}}
 	// The synthetic on-use trinket (sim/warrior/forever_synthetic_trinkets.go): 20 sec, 2 min.
@@ -75,6 +78,12 @@ func warriorKnobs() []Knob {
 		{Name: "recklessAt", Default: 15, Min: 10, Max: 30, Step: 5},
 		// Bloodrage below this much Rage.
 		{Name: "bloodrageRage", Default: 70, Min: 0, Max: 100, Step: 10},
+		// Reckless Swings (15 sec, off the GCD: the next 4 swings give 5 more Rage each) below this
+		// much Rage, 0 never. 100 is on cooldown.
+		{Name: "recklessSwingsRage", Default: 100, Min: 0, Max: 100, Step: 10},
+		// Heroic Strike above this much Rage while Reckless Swings is up (its swing gives 5 Rage
+		// back too), when that is below hsRage. 0 the same as hsRage.
+		{Name: "rsHsRage", Default: 0, Min: 0, Max: 90, Step: 10},
 		// Berserker Rage below this much Rage (it only gives Rage with the talent), 0 never.
 		{Name: "berserkerRageRage", Default: 70, Min: 0, Max: 100, Step: 10},
 		// Heroic Strike on the next swing above this much Rage, and 0/1 to keep queueing it in the
@@ -184,6 +193,14 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	items = append(items,
 		cast(bloodrage, lt(currentRage(), num(k["bloodrageRage"])), ""),
 	)
+	if k["recklessSwingsRage"] > 0 {
+		var below value
+		if k["recklessSwingsRage"] < 100 {
+			below = lt(currentRage(), num(k["recklessSwingsRage"]))
+		}
+		items = append(items, cast(recklessSwings, below,
+			"Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line."))
+	}
 	if k["berserkerRageRage"] > 0 {
 		items = append(items, cast(berserkerRage, lt(currentRage(), num(k["berserkerRageRage"])),
 			"Berserker Rage for its Rage (Improved Berserker Rage). It needs Berserker Stance."))
@@ -355,6 +372,9 @@ func potionLine(k Knobs, hold func(*proto.ActionID, bool) value) *proto.APLListI
 // heroicStrikeLine queues Heroic Strike with Rage to spare.
 func heroicStrikeLine(k Knobs) *proto.APLListItem {
 	when := ge(currentRage(), num(k["hsRage"]))
+	if k["rsHsRage"] > 0 && k["rsHsRage"] < k["hsRage"] {
+		when = or(when, and(auraIsActive(recklessSwings), ge(currentRage(), num(k["rsHsRage"]))))
+	}
 	if k["hsExecute"] == 0 {
 		when = and(when, not(executePhase()))
 	}

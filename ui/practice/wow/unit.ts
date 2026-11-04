@@ -139,6 +139,7 @@ export class UnitView {
 						if (c.geosets) m.setGeosets(c.geosets);
 						await applyReplaceable(m, c.replaceable, c.textures);
 						m.mesh.bind(model.mesh.skeleton, new THREE.Matrix4());
+						m.slot = c.slot;
 						model.root.add(m.mesh);
 						this.items.push(m);
 					})
@@ -149,6 +150,7 @@ export class UnitView {
 			waits.push(
 				Model.load(att.model)
 					.then(async m => {
+						m.slot = att.slot;
 						await applyReplaceable(m, att.replaceable, att.textures);
 						// Gear can have its own glow (the Crown of Destruction's fire).
 						if (this.world) m.enableParticles(this.world);
@@ -178,11 +180,20 @@ export class UnitView {
 		// Every animation the unit can play, so none waits on its file mid fight.
 		waits.push(model.preloadAnims(Object.values(Anim)));
 		await Promise.all(waits);
+		for (const m of [model, ...this.items]) {
+			m.compact();
+			m.cull();
+		}
 		this.model = model;
 		model.onEvent = (id, data, upper) => this.event(id, data, upper);
 		this.placeWeapons();
 		this.group.add(model.root);
 		for (const p of this.placeholder) p.visible = false;
+	}
+
+	// models gives the unit's models: the body, then its gear and weapons.
+	get models(): Model[] {
+		return this.model ? [this.model, ...this.items] : [];
 	}
 
 	// placeWeapons puts the weapons in the hands when drawn, in their sheaths when not.
@@ -350,6 +361,9 @@ export class UnitView {
 		if (!motion.airborne) {
 			const target = !moving ? 0 : back ? Math.atan2(-motion.left, -motion.forward) : Math.atan2(motion.left, motion.forward);
 			this.bodyYaw += angleTo(this.bodyYaw, target) * Math.min(1, dt * 12);
+			// It settles on the target, so a unit standing still keeps the same place in the world
+			// frame to frame (the crowd sends a copy's data only when it changes).
+			if (Math.abs(angleTo(this.bodyYaw, target)) < 1e-4) this.bodyYaw = target;
 		}
 		m.root.rotation.y = this.bodyYaw;
 		m.twist = this.twists ? -this.bodyYaw : 0;

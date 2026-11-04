@@ -10,14 +10,41 @@
 
 import * as THREE from 'three';
 import { texture } from './files';
-import type { ParticleEmitter } from './m2';
+import type { ParticleEmitter, Vec } from './m2';
 import type { Model } from './model';
 
 const maxParticles = 600;
 
+// The emitters' scratch values while filling the GPU's data, shared so a frame makes no garbage.
+const fill = { color: new Float64Array(3), alpha: new Float64Array(1), size: new Float64Array(2), cellOut: new Float64Array(1), tmp: new THREE.Vector3() };
+
 // While the loading screen warms the shaders up, the emitters draw even with no particles, so the
 // renderer compiles their shader. In the fight an empty emitter isn't drawn at all.
 export const particleOptions = { drawEmpty: false };
+
+// drawOrder is where each kind of see-through thing draws, as its render order: the units'
+// own see-through parts first (0), then the raid test's boss, its raiders' gear and bodies, the
+// spell effects, the particles and the ribbons. The perf recorder times each (scene.ts).
+export const drawOrder = { boss: 0.3, gear: 1, effects: 2, particles: 10, ribbons: 11 };
+
+// The particles the batches drew in the last frame, for the perf recorder.
+export const drawn = { particles: 0 };
+
+// Every particle and ribbon batch, which fillBatches fills before each frame draws.
+const live = new Set<{ fill(): void }>();
+
+// fillBatches puts each batch's particles together for the frame. It runs before the renderer
+// sends the frame's vertices to the GPU (the scene's onBeforeRender): filled later, while the
+// batch draws, the GPU would get the new list of triangles over the last frame's points, and a
+// ribbon's triangles would reach across to another ribbon's points.
+export function fillBatches() {
+	drawn.particles = 0;
+	for (const b of live) b.fill();
+}
+
+export function addBatch(b: { fill(): void }) {
+	live.add(b);
+}
 
 type Particle = {
 	pos: THREE.Vector3;
@@ -29,6 +56,9 @@ type Particle = {
 	angle: number;
 	spin: number;
 };
+
+// Particles that died, kept to be born again, so a burst of sparks makes no garbage.
+const freeParticles: Particle[] = [];
 
 const vertexShader = /* glsl */ `
 attribute vec3 iPos;
@@ -49,7 +79,12 @@ void main() {
 		mv = viewMatrix * vec4(iPos + vec3(corner.x, 0.0, corner.y), 1.0);
 	} else {
 		mv = viewMatrix * vec4(iPos, 1.0);
-		mv.xy += corner;
+		// A puff right at the camera would cover the screen, blended over and over. We keep it to
+		// about 40% of the screen's height (at the room's 70 degree view), which a particle only
+		// reaches when it's a few of its sizes from the camera.
+		float cap = 0.6 * max(-mv.z, 0.0);
+		float big = max(abs(iSize.x), abs(iSize.y));
+		mv.xy += big > cap ? corner * (cap / big) : corner;
 	}
 	gl_Position = projectionMatrix * mv;
 	vUv = vec2(mix(iUv.x, iUv.z, uv.x), mix(iUv.w, iUv.y, uv.y));
@@ -79,19 +114,22 @@ void main() {
 
 // overLife blends keys over a particle's life by their times (0 to 1 of the life). Without times,
 // the keys spread evenly (the usual three: birth, middle and death).
-function overLife(keys: number[][], times: number[], t: number, out: number[]): number[] {
+function lifeAt(times: number[], n: number, i: number): number {
+	return times.length === n ? times[i] : n === 1 ? 0 : i / (n - 1);
+}
+
+function overLife(keys: number[][], times: number[], t: number, out: Vec): Vec {
 	const n = keys.length;
 	if (n === 0) return out;
-	const at = (i: number) => (times.length === n ? times[i] : n === 1 ? 0 : i / (n - 1));
 	let i = 0;
-	while (i < n - 1 && t > at(i + 1)) i++;
-	if (i >= n - 1 || t <= at(i)) {
-		const k = t <= at(0) ? keys[0] : keys[n - 1];
+	while (i < n - 1 && t > lifeAt(times, n, i + 1)) i++;
+	if (i >= n - 1 || t <= lifeAt(times, n, i)) {
+		const k = t <= lifeAt(times, n, 0) ? keys[0] : keys[n - 1];
 		for (let c = 0; c < k.length; c++) out[c] = k[c];
 		return out;
 	}
-	const span = at(i + 1) - at(i);
-	const f = span > 0 ? (t - at(i)) / span : 0;
+	const span = lifeAt(times, n, i + 1) - lifeAt(times, n, i);
+	const f = span > 0 ? (t - lifeAt(times, n, i)) / span : 0;
 	const a = keys[i];
 	const b = keys[i + 1];
 	for (let c = 0; c < a.length; c++) out[c] = a[c] * (1 - f) + b[c] * f;
@@ -104,20 +142,112 @@ function srgbToLinear(c: number): number {
 	return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
 }
 
-class Emitter {
+// The particle data a quad needs, one particle after the other, STRIDE numbers each: by attribute,
+// where it starts and how many numbers it takes. Interleaved, a batch's particles go to the GPU in
+// one upload (on Windows each upload is a copy of its own on the GPU).
+const layout = [
+	['iPos', 0, 3],
+	['iSize', 3, 2],
+	['iColor', 5, 4],
+	['iUv', 9, 4],
+	['iRot', 13, 1],
+] as const;
+const STRIDE = 14;
+
+// A batch draws the particles of every emitter that looks the same (the same texture, blend and
+// facing) in one draw call. In the raid test 20 casters each had a few emitters on their hands,
+// and they were over 200 draw calls on their own.
+//
+// The emitters fill their own data, and the batch puts it together before the frame draws.
+class Batch {
 	readonly mesh: THREE.Mesh;
+	private readonly geometry = new THREE.InstancedBufferGeometry();
+	private buffer!: THREE.InstancedInterleavedBuffer;
+	private capacity = 0;
+	readonly members = new Set<Emitter>();
+	// How many particles the members have in all.
+	private total = 0;
+
+	constructor(world: THREE.Object3D, material: THREE.ShaderMaterial) {
+		const quad = new THREE.PlaneGeometry(1, 1);
+		const g = this.geometry;
+		g.index = quad.index;
+		g.setAttribute('position', quad.getAttribute('position'));
+		g.setAttribute('uv', quad.getAttribute('uv'));
+		this.grow(64);
+		g.instanceCount = 0;
+		this.mesh = new THREE.Mesh(g, material);
+		this.mesh.frustumCulled = false;
+		this.mesh.renderOrder = drawOrder.particles;
+		this.mesh.visible = false;
+		addBatch(this);
+		world.add(this.mesh);
+	}
+
+	private grow(n: number) {
+		this.capacity = n;
+		this.buffer = new THREE.InstancedInterleavedBuffer(new Float32Array(n * STRIDE), STRIDE);
+		this.buffer.setUsage(THREE.DynamicDrawUsage);
+		for (const [name, offset, size] of layout) this.geometry.setAttribute(name, new THREE.InterleavedBufferAttribute(this.buffer, size, offset));
+		// Three keeps the most copies a geometry's attributes hold from its first draw, and draws no
+		// more than that.
+		(this.geometry as { _maxInstanceCount?: number })._maxInstanceCount = undefined;
+	}
+
+	// changed hears that a member's count of particles went from `was` to `now`.
+	changed(was: number, now: number) {
+		this.total += now - was;
+		if (particleOptions.drawEmpty) this.mesh.visible = true;
+	}
+
+	leave(e: Emitter) {
+		if (!this.members.delete(e)) return;
+		this.changed(e.count, 0);
+	}
+
+	// fill puts the members' particles together, before the frame draws.
+	fill() {
+		if (this.total > this.capacity) {
+			let n = this.capacity;
+			while (n < this.total) n *= 2;
+			this.grow(n);
+		}
+		let at = 0;
+		const to = this.buffer.array as Float32Array;
+		for (const m of this.members) {
+			const n = m.count;
+			if (n === 0) continue;
+			// A plain loop: a subarray is a new object each time.
+			const from = m.data;
+			const o = at * STRIDE;
+			for (let j = 0; j < n * STRIDE; j++) to[o + j] = from[j];
+			at += n;
+		}
+		this.geometry.instanceCount = at;
+		drawn.particles += at;
+		this.mesh.visible = at > 0 || particleOptions.drawEmpty;
+		if (at === 0) return;
+		this.buffer.clearUpdateRanges();
+		this.buffer.addUpdateRange(0, at * STRIDE);
+		this.buffer.needsUpdate = true;
+	}
+}
+
+// The batches of each world (the scene), by how their particles look.
+const batches = new WeakMap<THREE.Object3D, Map<string, Batch>>();
+
+class Emitter {
 	private readonly particles: Particle[] = [];
-	private readonly anchor = new THREE.Object3D();
+	// Where the emitter is: it follows its bone.
+	private readonly anchor: THREE.Object3D;
 	private carry = 0;
-	private readonly pos: THREE.InstancedBufferAttribute;
-	private readonly size: THREE.InstancedBufferAttribute;
-	private readonly color: THREE.InstancedBufferAttribute;
-	private readonly uvs: THREE.InstancedBufferAttribute;
-	private readonly rot: THREE.InstancedBufferAttribute;
-	private readonly geometry: THREE.InstancedBufferGeometry;
+	// The particles' data (layout), which the batch draws.
+	readonly data = new Float32Array(maxParticles * STRIDE);
+	count = 0;
+	private batch?: Batch;
 	// Particles that keep to the emitter (flag 0x10) live in its space, the others in the world's.
 	private readonly local: boolean;
-	private readonly v = { a: [0], g: [0, 0, 0] };
+	private readonly v = { a: new Float64Array(1), g: new Float64Array(3) };
 	private readonly alphaKeys: number[][];
 	private readonly cellKeys: number[][];
 	private readonly worldScale = new THREE.Vector3();
@@ -130,33 +260,11 @@ class Emitter {
 		readonly e: ParticleEmitter,
 		world: THREE.Object3D,
 	) {
-		const bone = model.bones[e.bone] ?? model.bones[0];
-		const pivot = model.m2.bones[e.bone]?.pivot ?? [0, 0, 0];
-		this.anchor.position.set(e.position[0] - pivot[0], e.position[1] - pivot[1], e.position[2] - pivot[2]);
-		bone.add(this.anchor);
+		this.anchor = model.socket(e.bone, e.position);
 		// Flag 0x10 keeps the particles with the emitter. Without it they stay where they were born.
 		this.local = (e.flags & 0x10) !== 0;
 		this.alphaKeys = e.alphas.map(a => [a]);
 		this.cellKeys = e.headCells.map(c => [c]);
-
-		const quad = new THREE.PlaneGeometry(1, 1);
-		const g = new THREE.InstancedBufferGeometry();
-		g.index = quad.index;
-		g.setAttribute('position', quad.getAttribute('position'));
-		g.setAttribute('uv', quad.getAttribute('uv'));
-		this.pos = new THREE.InstancedBufferAttribute(new Float32Array(maxParticles * 3), 3);
-		this.size = new THREE.InstancedBufferAttribute(new Float32Array(maxParticles * 2), 2);
-		this.color = new THREE.InstancedBufferAttribute(new Float32Array(maxParticles * 4), 4);
-		this.uvs = new THREE.InstancedBufferAttribute(new Float32Array(maxParticles * 4), 4);
-		this.rot = new THREE.InstancedBufferAttribute(new Float32Array(maxParticles), 1);
-		for (const a of [this.pos, this.size, this.color, this.uvs, this.rot]) a.setUsage(THREE.DynamicDrawUsage);
-		g.setAttribute('iPos', this.pos);
-		g.setAttribute('iSize', this.size);
-		g.setAttribute('iColor', this.color);
-		g.setAttribute('iUv', this.uvs);
-		g.setAttribute('iRot', this.rot);
-		g.instanceCount = 0;
-		this.geometry = g;
 
 		const material = new THREE.ShaderMaterial({
 			vertexShader,
@@ -194,30 +302,35 @@ class Emitter {
 			material.polygonOffsetFactor = -4;
 			material.polygonOffsetUnits = -16;
 		}
-		this.mesh = new THREE.Mesh(g, material);
-		this.mesh.frustumCulled = false;
-		this.mesh.renderOrder = 10;
-		world.add(this.mesh);
 
 		// With flag 0x10000000 the texture field packs three texture indexes, 5 bits each, which
 		// the client blends. We draw the first.
 		const texIndex = e.flags & 0x10000000 ? e.texture & 0x1f : e.texture;
 		const tex = model.m2.textures[texIndex];
-		// Until its texture loads the emitter stays hidden: an empty texture reads as solid black.
-		this.mesh.visible = false;
+		// Until its texture loads the emitter has no batch and draws nothing: an empty texture reads
+		// as solid black. A replaceable particle texture, which we don't have, never draws.
 		if (tex && tex.type === 0 && tex.fdid > 0) {
 			texture(tex.fdid, false, false)
 				.then(t => {
+					if (this.disposed) return;
+					const soft = e.blend !== 0 && e.blend !== 3 && opaque(t);
 					material.uniforms.map.value = t;
-					material.uniforms.uSoft.value = e.blend !== 0 && e.blend !== 3 && opaque(t) ? 1 : 0;
+					material.uniforms.uSoft.value = soft ? 1 : 0;
+					const key = `${t.id}:${e.blend}:${e.flags & 0x1000}:${soft}`;
+					let byKey = batches.get(world);
+					if (!byKey) batches.set(world, (byKey = new Map()));
+					let batch = byKey.get(key);
+					if (!batch) byKey.set(key, (batch = new Batch(world, material)));
+					else material.dispose();
+					batch.members.add(this);
+					this.batch = batch;
 					this.ready = true;
 				})
 				.catch(err => console.warn('particle texture', err));
-		} else {
-			// A replaceable particle texture, which we don't have: hide the emitter.
-			this.mesh.visible = false;
 		}
 	}
+
+	private disposed = false;
 
 	private value(track: ParticleEmitter['speed'], fallback = 0): number {
 		return this.model.trackValue(track, this.v.a) ? this.v.a[0] : fallback;
@@ -249,7 +362,12 @@ class Emitter {
 			const p = this.particles[i];
 			p.age += dt;
 			if (p.age >= p.life) {
-				this.particles.splice(i, 1);
+				// The last one takes its place (the order doesn't matter), and the dead one waits to be
+				// born again.
+				const list = this.particles;
+				list[i] = list[list.length - 1];
+				list.pop();
+				freeParticles.push(p);
 				continue;
 			}
 			p.vel.x += g[0] * scale * dt;
@@ -278,20 +396,20 @@ class Emitter {
 				// (the vertical range is the angle from up). A sphere sends them out around it (the
 				// vertical range is the angle above and below level): a Fire Nova ring with none
 				// spreads flat.
-				const dir =
-					e.emitterType === 2
-						? new THREE.Vector3(Math.cos(polar) * Math.cos(azimuth), Math.sin(polar), Math.cos(polar) * Math.sin(azimuth))
-						: new THREE.Vector3(Math.sin(polar) * Math.cos(azimuth), Math.cos(polar), Math.sin(polar) * Math.sin(azimuth));
-				let pos: THREE.Vector3;
+				const p = freeParticles.pop() ?? { pos: new THREE.Vector3(), vel: new THREE.Vector3(), age: 0, life: 1, tile: -1, angle: 0, spin: 0 };
+				const dir = p.vel;
+				if (e.emitterType === 2) dir.set(Math.cos(polar) * Math.cos(azimuth), Math.sin(polar), Math.cos(polar) * Math.sin(azimuth));
+				else dir.set(Math.sin(polar) * Math.cos(azimuth), Math.cos(polar), Math.sin(polar) * Math.sin(azimuth));
+				const pos = p.pos;
 				if (e.emitterType === 2) {
 					// A sphere: start between the two radii (length the inner, width the outer) and
 					// fly outward.
 					const r = length + Math.random() * Math.max(0, width - length);
-					pos = dir.clone().multiplyScalar(r);
+					pos.copy(dir).multiplyScalar(r);
 				} else {
-					pos = new THREE.Vector3((Math.random() * 2 - 1) * length * 0.5, 0, (Math.random() * 2 - 1) * width * 0.5);
+					pos.set((Math.random() * 2 - 1) * length * 0.5, 0, (Math.random() * 2 - 1) * width * 0.5);
 				}
-				const v = dir.clone();
+				const v = dir;
 				pos.applyMatrix4(world);
 				v.transformDirection(world);
 				// A particle that keeps to its emitter holds its offset from it: it moves with your
@@ -299,38 +417,47 @@ class Emitter {
 				if (this.local) pos.sub(this.origin);
 				v.multiplyScalar(speed * (1 + speedVar * (Math.random() * 2 - 1)) * scale);
 				const cells = e.tileRows * e.tileCols;
-				this.particles.push({
-					pos,
-					vel: v,
-					age: 0,
-					life: Math.max(0.05, lifespan * (1 + e.lifespanVary * (Math.random() * 2 - 1))),
-					tile: e.flags & 0x10000 ? Math.floor(Math.random() * cells) : -1,
-					angle: e.baseSpin + Math.random() * e.baseSpinVary,
-					// Flag 0x200 spins half the particles the other way.
-					spin: (e.spin + Math.random() * e.spinVary) * (e.flags & 0x200 && Math.random() < 0.5 ? -1 : 1),
-				});
+				p.age = 0;
+				p.life = Math.max(0.05, lifespan * (1 + e.lifespanVary * (Math.random() * 2 - 1)));
+				p.tile = e.flags & 0x10000 ? Math.floor(Math.random() * cells) : -1;
+				p.angle = e.baseSpin + Math.random() * e.baseSpinVary;
+				// Flag 0x200 spins half the particles the other way.
+				p.spin = (e.spin + Math.random() * e.spinVary) * (e.flags & 0x200 && Math.random() < 0.5 ? -1 : 1);
+				this.particles.push(p);
 			}
 			if (this.carry > 1) this.carry = 1;
 		} else this.carry = 0;
 
 		// Fill the instance data.
 		const n = this.particles.length;
-		const color = [255, 255, 255];
-		const alpha = [1];
-		const size = [1, 1];
-		const cellOut = [0];
-		const tmp = new THREE.Vector3();
+		const { color, alpha, size, cellOut, tmp } = fill;
+		const d = this.data;
+		color.fill(255);
+		alpha[0] = 1;
+		size[0] = size[1] = 1;
+		cellOut[0] = 0;
+		let w = 0;
 		for (let i = 0; i < n; i++) {
 			const p = this.particles[i];
 			const t = p.age / p.life;
 			overLife(this.e.colors, this.e.colorTimes, t, color);
 			overLife(this.alphaKeys, this.e.alphaTimes, t, alpha);
 			overLife(this.e.scales, this.e.scaleTimes, t, size);
+			// A particle faded all the way out (most fade in at birth and out at death) draws nothing
+			// in any blend mode, so it isn't sent.
+			if (alpha[0] < 1 / 255) continue;
 			tmp.copy(p.pos);
 			if (this.local) tmp.add(this.origin);
-			this.pos.setXYZ(i, tmp.x, tmp.y, tmp.z);
-			this.size.setXY(i, size[0] * 2 * scale, size[1] * 2 * scale);
-			this.color.setXYZW(i, srgbToLinear(color[0]), srgbToLinear(color[1]), srgbToLinear(color[2]), Math.max(0, Math.min(1, alpha[0])));
+			const o = w++ * STRIDE;
+			d[o] = tmp.x;
+			d[o + 1] = tmp.y;
+			d[o + 2] = tmp.z;
+			d[o + 3] = size[0] * 2 * scale;
+			d[o + 4] = size[1] * 2 * scale;
+			d[o + 5] = srgbToLinear(color[0]);
+			d[o + 6] = srgbToLinear(color[1]);
+			d[o + 7] = srgbToLinear(color[2]);
+			d[o + 8] = Math.max(0, Math.min(1, alpha[0]));
 			let cell = p.tile;
 			if (cell < 0) {
 				cell = this.cellKeys.length ? Math.round(overLife(this.cellKeys, this.e.cellTimes, t, cellOut)[0]) : 0;
@@ -339,25 +466,33 @@ class Emitter {
 			const rows = this.e.tileRows;
 			const col = cell % cols;
 			const row = Math.floor(cell / cols) % rows;
-			this.uvs.setXYZW(i, col / cols, row / rows, (col + 1) / cols, (row + 1) / rows);
-			this.rot.setX(i, p.angle + p.spin * p.age);
+			d[o + 9] = col / cols;
+			d[o + 10] = row / rows;
+			d[o + 11] = (col + 1) / cols;
+			d[o + 12] = (row + 1) / rows;
+			d[o + 13] = p.angle + p.spin * p.age;
 		}
-		this.geometry.instanceCount = n;
-		this.mesh.visible = n > 0 || particleOptions.drawEmpty;
-		// We send the GPU only the live particles, not the whole buffer of 600.
-		if (n > 0) {
-			for (const a of [this.pos, this.size, this.color, this.uvs, this.rot]) {
-				a.clearUpdateRanges();
-				a.addUpdateRange(0, n * a.itemSize);
-				a.needsUpdate = true;
-			}
-		}
+		const was = this.count;
+		this.count = w;
+		this.batch?.changed(was, w);
+	}
+
+	// reset lets the particles go and starts over, for a model used again (model.ts recycle).
+	reset() {
+		for (const p of this.particles) freeParticles.push(p);
+		this.particles.length = 0;
+		this.carry = 0;
+		const was = this.count;
+		this.count = 0;
+		this.batch?.changed(was, 0);
 	}
 
 	dispose() {
-		this.mesh.removeFromParent();
-		this.geometry.dispose();
-		(this.mesh.material as THREE.Material).dispose();
+		this.disposed = true;
+		for (const p of this.particles) freeParticles.push(p);
+		this.particles.length = 0;
+		this.batch?.leave(this);
+		this.batch = undefined;
 		this.anchor.removeFromParent();
 	}
 }
@@ -374,6 +509,11 @@ export class Particles {
 
 	update(dt: number) {
 		for (const e of this.emitters) e.update(dt, this.emitting);
+	}
+
+	reset() {
+		this.emitting = true;
+		for (const e of this.emitters) e.reset();
 	}
 
 	dispose() {

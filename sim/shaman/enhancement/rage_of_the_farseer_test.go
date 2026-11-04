@@ -16,7 +16,7 @@ import (
 // (70338) and build 70009's tooltip say (shaman_audit.md 8.34). It fails when the buff speeds
 // up spellcasting again, or when its attack speed, duration or cooldown change.
 func TestOrcShamanRageOfTheFarseer(t *testing.T) {
-	sim, enh := newShamanSim(newOrcShaman(60, "-000000000000100051-00000000100001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 200)
+	sim, enh := newShamanSim(newOrcShaman(60, "-000000000001000051-00000000100001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 200)
 	rage := enh.GetSpell(core.ActionID{SpellID: 425336})
 	if rage == nil {
 		t.Fatal("no Rage of the Farseer")

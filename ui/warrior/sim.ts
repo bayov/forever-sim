@@ -154,8 +154,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceUndead,
+				[Faction.Alliance]: Race.RaceNightElf,
+				[Faction.Horde]: Race.RaceOrc,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

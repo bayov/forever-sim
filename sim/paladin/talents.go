@@ -271,36 +271,64 @@ func (paladin *Paladin) applyShieldSpecializationMana() {
 //
 // The hotfix rewrote the tooltip to "Increases the physical damage you deal by 6%, and reduces
 // all threat you generate by 20% while a two-handed melee weapon is equipped" (spell 20111 in
-// 1.60.1.70707+hf), but its damage effect is the row it was (effect 0, aura 79 on the Physical
-// school), so it keeps reaching what it reached in game before: everything physical the weapon
-// deals, plus the seal procs and judgements that roll as melee and Holy Strike (wowsims/forever
-// d35afca4da measured Seal and Judgement of Righteousness gaining from it). Report assumption
-// pal_2h_spec_holy.
-func (paladin *Paladin) getWeaponSpecializationModifier() float64 {
+// 1.60.1.70707+hf), and its damage effect is the row it was (effect 0, aura 79 on the Physical
+// school). In game it reached the seal procs and judgements that roll as melee and Holy Strike
+// too (wowsims/forever d35afca4da measured Seal and Judgement of Righteousness gaining from it;
+// report assumption pal_2h_spec_holy).
+//
+// Notes-only value (round 70753): the November 2 development notes change it "to increase both
+// Holy and Physical damage by 2/4/6%". Client 1.60.1.70753 is unchanged (20111 effect 0 is still
+// aura 79 misc 1) and no server hotfix row carries it, so under Forever the sim follows the notes
+// (orchestrator's rule of 2026-11-03, orchestration/round_70753/README.md): the Holy school takes
+// it as a whole, Consecration, Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock included, and
+// the melee-rolled Holy spells no longer take it a second time from their own multiplier.
+func (paladin *Paladin) twoHandedSpecializationMultiplier() float64 {
 	if paladin.MainHand().HandType == proto.HandType_HandTypeTwoHand {
 		return 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
 	}
 	return 1
 }
 
-// Affects all physical damage or spells that can be rolled as physical. The threat cut is the
+// getWeaponSpecializationModifier is the specialization's share on a Holy spell's own damage
+// multiplier: none under Forever, where the Holy school carries it.
+func (paladin *Paladin) getWeaponSpecializationModifier() float64 {
+	if paladin.Env.IsForever() {
+		return 1
+	}
+	return paladin.twoHandedSpecializationMultiplier()
+}
+
+// Affects all physical damage, and under Forever all Holy damage. The threat cut is the
 // hotfix's new effect 1 (aura 10, all schools, -20 at 3 ranks; the trait ranks 7 / 14 / 20%), a
 // percent row of its own, so it multiplies with Righteous Fury's.
 func (paladin *Paladin) applyWeaponSpecialization() {
-	paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= paladin.getWeaponSpecializationModifier()
+	multiplier := paladin.twoHandedSpecializationMultiplier()
+	paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= multiplier
+	if paladin.Env.IsForever() {
+		paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= multiplier
+	}
 	if paladin.has2hEquipped() && paladin.Talents.TwoHandedWeaponSpecialization > 0 {
 		paladin.PseudoStats.ThreatMultiplier *= 1 - []float64{0, 0.07, 0.14, 0.20}[paladin.Talents.TwoHandedWeaponSpecialization]
 	}
 }
 
-// Vengeance stacks 1% per point of Physical and Holy damage for every crit, up to 3
+// Vengeance stacks 1% per point of Physical and Holy damage for every crit, up to 5
 // stacks, for 30 sec. Classic was a flat 3% per point for 8 sec.
 //
 // The 2026-09-24 beta build cut it from 5 stacks to 3 and made only non-periodic crits
-// count. The hit callback below never sees a periodic tick (those go to the periodic
-// callback), so the second half needs nothing here.
+// count. Notes-only value (round 70753): the November 2 development notes put it back to
+// "stacking up to 5 times (Was stacking up to 3 times)". Client 1.60.1.70753 still has 3 (20050
+// SpellAuraOptions CumulativeAura) and no server hotfix row changes it, so the sim follows the
+// notes (orchestrator's rule of 2026-11-03, orchestration/round_70753/README.md).
+//
+// The hit callback below never sees a periodic tick (those go to the periodic callback), so
+// the non-periodic rule needs nothing here.
 func (paladin *Paladin) applyVengeance() {
 	if paladin.Talents.Vengeance == 0 {
+		return
+	}
+	if !paladin.Env.IsForever() {
+		paladin.applyClassicVengeance()
 		return
 	}
 
@@ -313,7 +341,7 @@ func (paladin *Paladin) applyVengeance() {
 		Label:     "Vengeance Proc",
 		ActionID:  core.ActionID{SpellID: 20059},
 		Duration:  time.Second * 30,
-		MaxStacks: 3,
+		MaxStacks: 5,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
 			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= multiplier(newStacks) / multiplier(oldStacks)
 			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= multiplier(newStacks) / multiplier(oldStacks)
@@ -330,6 +358,39 @@ func (paladin *Paladin) applyVengeance() {
 			if result.DidCrit() {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
+			}
+		},
+	})
+}
+
+// Classic's Vengeance: 3% Physical and Holy damage a point for 8 sec after a crit, no stacks. The
+// Forever model above (and its notes-only 5 stacks) is gated under Forever (standards 37).
+func (paladin *Paladin) applyClassicVengeance() {
+	vengeanceMultiplier := 1 + 0.03*float64(paladin.Talents.Vengeance)
+
+	procAura := paladin.RegisterAura(core.Aura{
+		Label:    "Vengeance Proc",
+		ActionID: core.ActionID{SpellID: 20059},
+		Duration: time.Second * 8,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= vengeanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= vengeanceMultiplier
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] /= vengeanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= vengeanceMultiplier
+		},
+	})
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Vengeance",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() {
+				procAura.Activate(sim)
 			}
 		},
 	})

@@ -8,6 +8,18 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled: 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Development notes of November 2 (client 1.60.1.70753, round 70753)
+
+The Warlock lines of Blizzard's notes of 2026-11-02 (post 9) and how the sim takes them (orchestration/round_70753/warlock.md has the ledger):
+
+- Wrack: 0.286 spell damage a tick (was 0.143) and base damage 36 + 2.5 a level above 40, 86 a second at 60 (was 36). The 70753 client still has 36 and 0.143, so these are the notes' values (standards 37).
+- Shadow and Flame: 4 / 8 / 12 / 16 / 20% Shadow or Fire damage (was 2 to 10%). The client's trait curves still read 2 to 10; notes' values. Destruction +66 DPS at 180 sec, Destruction fire +19.
+- Demons get 2 health a point of the warlock's Stamina (was 7.5). No DPS effect.
+- Already in the sim: Spellstone gives Shadow damage only (client 70630), Bane of Agony's ticks read spell damage as they land (every Forever damage over time spell does), Improved Drains covers Drain Mana and not Wrack (the 10-30 hotfix), and Amplify Curse adds 50% to Bane of Agony's base (now confirmed by the notes).
+- Drain Soul's lower shard chance: the sim counts no Soul Shards.
+- Affliction is a Wrack build now (05500021035001351-0050003201-005004): deep Affliction with Siphon Life, Soul Siphon and Wrack as the main spell, and the Imp sacrificed for 15% Shadow damage with no demon out. Undead (the Orc's Command has no demon). 1004.9 / 1034.1 / 1032.2 at 120 / 180 / 300 sec against 997.4 / 1015.6 / 996.8 for the Shadow Bolt Affliction build, which stays as its own preset (Affliction Shadow Bolt). The same Wrack build with the Succubus out is 33 behind at 180 sec, Shadow Bolt Affliction with the Imp sacrificed 82 behind, Destruction with the Imp sacrificed 30 behind Destruction, and Amplify Curse and Shadowburn are even with the builds they'd join (searched 2026-11-03).
+- Races: Orc for Destruction, Demonology and Shadow Bolt Affliction, Undead for Affliction and Destruction fire; the Human is the best Alliance race for each. Destruction (1063.4 at 180 sec) passes Demonology (1053.9) and is the class default now.
+
 ## Level 60 presets: Affliction is an Orc (2026-11-02)
 
 - Affliction and its two curse duty builds move from the Human to the Orc (fairness-20261101-2). At 30 yd (standards 33), 180 +- 20 sec, 20000 iterations, seed 1, each race with its own setup: Orc 1013.6, Human 1012.7, Undead 1010.8, Gnome 1009.9, Troll 1006.6. The Human stays the best Alliance race. At 120 / 180 / 300 sec Affliction goes from 1015.2 / 1012.6 / 996.2 to 1015.0 / 1013.6 / 996.3, the Curse of the Elements duty from 999.9 / 1003.7 / 989.5 to 999.4 / 1005.2 / 990.2, the Curse of Recklessness duty from 998.3 / 997.4 / 983.1 to 998.2 / 999.6 / 984.2.

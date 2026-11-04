@@ -89,7 +89,8 @@ func TestConsecrationFirstFourTargets(t *testing.T) {
 
 // TestJudgementOfRighteousnessMelee checks that Forever's Judgement of Righteousness (client
 // 20286, DefenseType 2) is a melee attack: it crits for double and Two-Handed Weapon
-// Specialization (3/3: 6%) reaches it.
+// Specialization (3/3: 6%) reaches it, through the Holy school since round 70753's notes-only
+// value (the specialization raises all Holy damage).
 func TestJudgementOfRighteousnessMelee(t *testing.T) {
 	_, with := retSim(t, "--000000000003", arcaniteReaper)
 	_, without := retSim(t, "", arcaniteReaper)
@@ -100,7 +101,9 @@ func TestJudgementOfRighteousnessMelee(t *testing.T) {
 	if got := jor.CritMultiplier(with.AttackTables[with.CurrentTarget.UnitIndex][jor.CastType]); got != 2 {
 		t.Errorf("Judgement of Righteousness crit multiplier = %.2f, want 2", got)
 	}
-	ratio := jor.DamageMultiplier / without.GetSpell(core.ActionID{SpellID: 20286}).DamageMultiplier
+	holy := stats.SchoolIndexHoly
+	ratio := jor.DamageMultiplier * with.PseudoStats.SchoolDamageDealtMultiplier[holy] /
+		(without.GetSpell(core.ActionID{SpellID: 20286}).DamageMultiplier * without.PseudoStats.SchoolDamageDealtMultiplier[holy])
 	if ratio < 1.0599 || ratio > 1.0601 {
 		t.Errorf("Two-Handed Weapon Specialization 3/3 on Judgement of Righteousness = %.4f, want 1.06", ratio)
 	}

@@ -14,6 +14,10 @@ var ClawLevel = []int32{0, 20, 28, 38, 48, 58}
 
 const ClawWeaponMultiplier = 1.1
 
+// ClawWeaponMultiplierNov2 is the November 2 development notes' 140%, under Forever only
+// (tuning_70753.go).
+const ClawWeaponMultiplierNov2 = 1.4
+
 func (druid *Druid) registerClawSpell() {
 	rank := core.HighestRankAt(druid.Level, ClawLevel)
 	if rank == 0 {
@@ -44,7 +48,7 @@ func (druid *Druid) registerClawSpell() {
 			IgnoreHaste: true,
 		},
 
-		DamageMultiplier: ClawWeaponMultiplier,
+		DamageMultiplier: core.TernaryFloat64(druid.Env.IsForever(), ClawWeaponMultiplierNov2, ClawWeaponMultiplier),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 

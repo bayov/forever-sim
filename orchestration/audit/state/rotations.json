@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "9da90fcde1f85856feb331bd2298be1f7d720efa"
+  "master": "fb584eafaf39e7eedc6587809f7657a49c0762ac"
  },
- "last_pass_at": "2026-11-03T00:56:17Z",
- "pass": 48,
+ "last_pass_at": "2026-11-04T06:56:13Z",
+ "pass": 52,
  "result": "quiet",
- "note": "Seeded from the long-running auditor session at the move to the audit loop.",
- "client_build": "1.60.1.70707",
- "checked_at": "2026-11-03T06:44:50Z",
- "baseline": "baseline_a0b3069_3000it_seed424242.tsv"
+ "note": "Pass 52: dual wield Fury rotation follow-up (HS 60, Hamstring 20, Bloodrage 50, BT first) screened with 7 one-line variants, all at or below noise; no sim change. No findings.",
+ "client_build": "1.60.1.70753",
+ "checked_at": "2026-11-04T06:58:15Z",
+ "baseline": "baseline_f331f0c_3000it_seed424242.tsv"
 }
