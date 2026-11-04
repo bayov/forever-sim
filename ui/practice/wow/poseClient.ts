@@ -22,6 +22,8 @@ type Handle = {
 	// The latest request, waiting for the next flush.
 	record: Float64Array;
 	waiting: boolean;
+	// The set the worker writes this frame.
+	target: number;
 };
 
 class PoseClient {
@@ -33,8 +35,10 @@ class PoseClient {
 	private sentAnims = new Set<string>();
 	private frame = 0;
 	// The frame the worker is posing, and the models in it with the set each is written to.
-	private busy?: { frame: number; posed: [Handle, number][] };
-	private data = new Float64Array(RECORD * 64);
+	private busy?: { frame: number; posed: Handle[] };
+	// The frame's requests, in memory shared with the worker, so a frame sends only a small message.
+	private data = new Float64Array(0);
+	private posedList: Handle[] = [];
 
 	private post(msg: ToWorker, transfer: Transferable[] = []) {
 		if (!this.worker) {
@@ -65,6 +69,7 @@ class PoseClient {
 			read: 0,
 			record: new Float64Array(RECORD),
 			waiting: false,
+			target: 1,
 		};
 		for (const p of h.placeSets) p.set(own.places);
 		for (const p of h.skinSets) p.set(own.skinning);
@@ -138,20 +143,26 @@ class PoseClient {
 	// the last frame's (then they wait for the next).
 	flush() {
 		if (this.busy) return;
-		const posed: [Handle, number][] = [];
-		for (const h of this.handles.values()) if (h.waiting) posed.push([h, 1 - h.read]);
+		const posed = this.posedList;
+		posed.length = 0;
+		for (const h of this.handles.values()) if (h.waiting) posed.push(h);
 		if (posed.length === 0) return;
-		if (this.data.length < posed.length * RECORD) this.data = new Float64Array(posed.length * RECORD * 2);
+		if (this.data.length < posed.length * RECORD) {
+			this.data = new Float64Array(new SharedArrayBuffer(posed.length * RECORD * 2 * 8));
+			this.post({ type: 'requests', buffer: this.data.buffer as SharedArrayBuffer });
+		}
 		const d = this.data;
-		posed.forEach(([h, target], i) => {
-			h.record[1] = target;
+		for (let i = 0; i < posed.length; i++) {
+			const h = posed[i];
+			h.target = 1 - h.read;
+			h.record[1] = h.target;
 			d.set(h.record, i * RECORD);
 			h.record[7] = 0;
 			h.waiting = false;
-		});
+		}
 		this.frame++;
 		this.busy = { frame: this.frame, posed };
-		this.post({ type: 'frame', frame: this.frame, data: d.slice(0, posed.length * RECORD) });
+		this.post({ type: 'frame', frame: this.frame, count: posed.length });
 	}
 
 	// done swaps in the new poses, and moves what hangs off the bones to them.
@@ -159,8 +170,9 @@ class PoseClient {
 		const busy = this.busy;
 		if (!busy || busy.frame !== frame) return;
 		this.busy = undefined;
-		for (const [h, target] of busy.posed) {
+		for (const h of busy.posed) {
 			if (this.handles.get(h.model) !== h || !h.model.remote) continue;
+			const target = h.target;
 			h.read = target;
 			h.model.remote.places = h.placeSets[target];
 			h.model.remote.skinning = h.skinSets[target];

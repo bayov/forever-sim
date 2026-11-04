@@ -156,6 +156,9 @@ type Unit struct {
 	AttackTables                []map[proto.CastType]*AttackTable
 	DynamicDamageTakenModifiers []DynamicDamageTakenModifier
 
+	// The shields up on us, oldest first (absorb.go).
+	absorbs []*Absorb
+
 	GCD *Timer
 
 	// Used for applying the effect of a hardcast spell when casting finishes.
@@ -557,6 +560,7 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	unit.Hardcast.Expires = startingCDTime
 	unit.ChanneledDot = nil
 	unit.channelHoldsFSR = false
+	unit.absorbs = unit.absorbs[:0]
 	unit.Metrics.reset()
 	if unit.tankScore != nil {
 		unit.tankScore.reset()

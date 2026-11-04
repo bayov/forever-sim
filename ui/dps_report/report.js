@@ -27,7 +27,7 @@ export function startReport(dash, events) {
   };
   const enc = encodeURIComponent;
   let asmOn = false;
-  const ASM_FIELDS = new Set(['dps', 'se', 'p1', 'p10', 'p25', 'p50', 'p75', 'p90', 'min', 'max', 'stdev', 'dps120', 'dps300', 'rank', 'rankAll', 'bestRaceDps', 'hordeDps', 'allianceDps', 'cv']);
+  const ASM_FIELDS = new Set(['dps', 'se', 'p1', 'p10', 'p25', 'p50', 'p75', 'p90', 'p99', 'stdev', 'dps120', 'dps300', 'rank', 'rankAll', 'bestRaceDps', 'hordeDps', 'allianceDps', 'cv']);
   const mark = (n, src, field, where) => {
     if (asmOn && ((src === 'builds' && ASM_FIELDS.has(field)) || src === 'pairs' || (src === 'lengths' && field === 'dps'))) {
       for (const a of ['data-source', 'data-field', 'data-where']) n.removeAttribute(a);
@@ -69,6 +69,24 @@ export function startReport(dash, events) {
   const genB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isEnc(b) && !isDuty(b)); };
   const dutyBase = (id) => { const b = (rowsOf('builds') || []).find((x) => x.id === id); return isDuty(b) ? b.baseBuild : id; };
   const rankOf = (b, list) => 1 + list.filter((x) => +x.dps > +b.dps).length;
+  // ---------- luck: when a gap between two figures is only the sim's luck ----------
+  // Every tie on the page, and the Changes tab's noise, comes from these, so the rule lives in one place. For now the
+  // error of a difference treats the two figures as independent runs, hypot(se_a, se_b). That overstates it, since
+  // presets and races share random rolls, so it calls a few more ties than a paired error would. Once the data carries
+  // paired errors, seDiff is where they go in.
+  const seDiff = (sa, sb) => Math.hypot(+sa || 0, +sb || 0);
+  // the gap luck alone can make: 2 standard errors of the difference
+  const luckOf = (sa, sb) => 2 * seDiff(sa, sb);
+  // two figures are tied when they're closer than that
+  const isTie = (a, sa, b, sb) => a != null && b != null && Math.abs(a - b) < luckOf(sa, sb);
+  // A 10th or 90th percentile's error, from the mean's: on a normal curve it is sqrt(p(1 - p) / n) / φ(z_p) standard
+  // deviations, sqrt(0.09) / φ(1.2816) = 1.71 times the mean's sd / sqrt(n). The fights' spread is close enough to
+  // normal for a tie mark.
+  const PCT_SE = 1.71;
+  // What a tie mark says: who it's tied with, the gap, and the luck it's within.
+  const tieText = (name, a, sa, b, sb, unit = 'DPS') => `Within the sim's luck of ${name}: ${f2(Math.abs(a - b))} ${unit} apart, error ±${f2(luckOf(sa, sb))}.`;
+  // The ≈ on a row tied with the row above. A row only ever says so about its neighbour, so ties never chain into groups.
+  const tieMark = (text, tip = true) => el('span', { class: 'fv-tie', title: tip ? text : null, 'aria-label': text, text: '≈' });
   // ---------- assumptions: each preset's DPS under the picked settings ----------
   const asmSel = () => Object.entries(st.asm || {}).filter(([, v]) => v).sort((p, q) => (p[0] < q[0] ? -1 : 1));
   const asmReady = () => statusOf('assumptions') === 'ok' && statusOf('assumption_dps') === 'ok';
@@ -79,27 +97,32 @@ export function startReport(dash, events) {
     return asmIdxCache.get(d);
   };
   const asmKeysOf = (bid) => new Set((rowsOf('assumptions') || []).filter((a) => arr(a.builds).includes(bid)).map((a) => a.key));
-  // the exact combination where it was simmed, else the single settings multiplied
-  const asmFactor = (bid, L) => {
-    if (!asmOn) return 1;
+  // the exact combination where it was simmed, else the single settings multiplied. est says it's the latter: an
+  // estimate, since settings that touch the same preset can add up to more or less than their product.
+  const asmCalc = (bid, L) => {
+    const one = { x: 1, est: false };
+    if (!asmOn) return one;
     bid = dutyBase(bid);
     const ks = asmKeysOf(bid), sel = asmSel().filter(([k]) => ks.has(k));
     const idx = asmIdx().get(bid);
-    if (!sel.length || !idx) return 1;
+    if (!sel.length || !idx) return one;
     const f = +L === 120 ? 'dps120' : +L === 300 ? 'dps300' : 'dps180';
     const base = idx.get('');
-    if (!base || !+base[f]) return 1;
+    if (!base || !+base[f]) return one;
     const exact = idx.get(sel.map(([k, v]) => `${k}=${v}`).join('|'));
-    if (exact && +exact[f]) return +exact[f] / +base[f];
-    let x = 1;
-    for (const [k, v] of sel) { const one = idx.get(`${k}=${v}`); if (one && +one[f]) x *= +one[f] / +base[f]; }
-    return x;
+    if (exact && +exact[f]) return { x: +exact[f] / +base[f], est: false };
+    let x = 1, n = 0;
+    for (const [k, v] of sel) { const r = idx.get(`${k}=${v}`); if (r && +r[f]) { x *= +r[f] / +base[f]; n++; } }
+    return { x, est: n > 1 };
   };
+  const asmFactor = (bid, L) => asmCalc(bid, L).x;
+  const asmEst = (bid) => asmCalc(bid, 180).est;
+  const ASM_EST = 'Estimated from the single settings; not simmed together.';
   const adjB = (b) => {
-    const x = asmFactor(b.id, 180);
+    const { x, est } = asmCalc(b.id, 180);
     if (x === 1) return b;
-    const o = { ...b, asmF: x };
-    for (const k of ['dps', 'se', 'p1', 'p10', 'p25', 'p50', 'p75', 'p90', 'min', 'max', 'stdev', 'bestRaceDps', 'hordeDps', 'allianceDps']) if (o[k] != null) o[k] = +o[k] * x;
+    const o = { ...b, asmF: x, asmEst: est };
+    for (const k of ['dps', 'se', 'p1', 'p10', 'p25', 'p50', 'p75', 'p90', 'p99', 'stdev', 'bestRaceDps', 'hordeDps', 'allianceDps']) if (o[k] != null) o[k] = +o[k] * x;
     o.dps120 = +b.dps120 * asmFactor(b.id, 120); o.dps300 = +b.dps300 * asmFactor(b.id, 300);
     return o;
   };
@@ -289,17 +312,23 @@ export function startReport(dash, events) {
   };
   // A duty preset's badge on its ranking row, and what the duty costs against its base preset (the raid covers it there).
   // A pet variant's badge names its pet, and what the pet costs against the base preset's.
-  // What the duty costs, signed: a duty can come out level with its base, or a hair ahead within the noise.
-  const dutyCostText = (b, base) => { const c = base.dps - b.dps; return Math.abs(c) < 0.05 ? '±0' : c > 0 ? `−${f1(c)}` : `+${f1(-c)}`; };
+  // What the duty costs, signed, or "about the same" when it's within the sim's luck of its base (the tie rule), so a
+  // duty that comes out a hair ahead isn't shown as a gain.
+  const dutyTied = (b, base) => isTie(b.dps, b.se, base.dps, base.se);
+  const dutyCostText = (b, base) => { const c = base.dps - b.dps; return dutyTied(b, base) ? 'about the same' : c > 0 ? `−${f1(c)}` : `+${f1(-c)}`; };
+  const dutyLuck = (b, base) => `${sgn(b.dps - base.dps)} DPS, within the sim's luck (±${f1(luckOf(b.se, base.se))})`;
   const dutyCostEl = (b, list) => {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
     const what = isPet(b) ? b.pet : b.duty;
-    return +base.dps ? el('span', {}, `${what} · ${dutyCostText(b, base)} DPS `, tipDelta(100 * (b.dps / base.dps - 1))) : what;
+    if (!+base.dps) return what;
+    return dutyTied(b, base) ? el('span', {}, `${what} · about the same `, el('span', { class: 'fv-tip-m', text: `(${sgn(b.dps - base.dps)} DPS, ±${f1(luckOf(b.se, base.se))})` }))
+      : el('span', {}, `${what} · ${dutyCostText(b, base)} DPS `, tipDelta(100 * (b.dps / base.dps - 1)));
   };
   const dutyTip = (b, list) => {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
     return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(isPet(b) ? `${b.pet} as the pet` : `On ${b.duty} duty`),
-      +base.dps ? tipKey(dutyCostText(b, base), 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}`)) : null,
+      !+base.dps ? null : dutyTied(b, base) ? tipKey('About the same', null, `as ${base.build}: ${dutyLuck(b, base)}`)
+        : tipKey(dutyCostText(b, base), 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}`)),
       b.dutyDefensive === true ? tipText("It's defensive, so the raid gains no DPS from it.") : null,
       tipText(b.summary));
   };
@@ -450,7 +479,11 @@ export function startReport(dash, events) {
     const spec = { title: race, icon: rr?.raceIcon, color: HORDE.has(race) ? '#ff5a4a' : '#5aa2ff', sub: String(r?.sub ?? (HORDE.has(race) ? 'Horde' : 'Alliance')), lines: arr(r?.lines), nums: [] };
     if (b && rr && rr.build === b) {
       spec.numsHead = (rowsOf('builds') || []).find((x) => x.id === b)?.label;
-      spec.nums = nums([['DPS', `${f1(rr.dps)} ± ${f2(rr.se)}`], [rr.vsBest >= -0.005 ? 'Best race' : 'Behind the best race', rr.vsBest >= -0.005 ? '★' : `${f2(-rr.vsBest)}%`], rr.isPreset ? ['Preset race', '✓'] : null]);
+      // the race next to it in the preset's order (the one after the best, else the one above) when within luck of it
+      const order = (raceRows('') || []).filter((x) => x.build === b), k = order.findIndex((x) => x.race === race), nb = order[k === 0 ? 1 : k - 1];
+      const tie = k >= 0 && nb && isTie(order[k].dps, order[k].se, nb.dps, nb.se) ? nb : null;
+      spec.nums = nums([['DPS', `${f1(rr.dps)} ± ${f2(rr.se)}`], [rr.vsBest >= -0.005 ? 'Best race' : 'Behind the best race', rr.vsBest >= -0.005 ? '★' : `${f2(-rr.vsBest)}%`],
+        tie ? ['≈ Tied with', `${tie.race} (${f2(Math.abs(order[k].dps - tie.dps))} apart, ±${f2(luckOf(order[k].se, tie.se))})`] : null, rr.isPreset ? ['Preset race', '✓'] : null]);
     }
     return spec;
   };
@@ -930,8 +963,18 @@ export function startReport(dash, events) {
     const x = (v) => (100 * v / max) + '%';
     const top = d3.max(builds, val);
     if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No preset matches these filters.' })); return; }
+    // A row within the sim's luck of the row shown above it, on the figure the list is sorted by: the mean (or the DPS
+    // at the picked length), or the 10th or 90th percentile. Steadiest gets no mark, since the spread's error depends
+    // on the shape of each preset's luckiest and unluckiest fights.
+    const figOf = { dps: (b) => [val(b), L === 180 ? b.se : (lenMap.get(b.id)?.se ?? 0) * asmFactor(b.id, L)], p10: (b) => [b.p10, PCT_SE * b.se], p90: (b) => [b.p90, PCT_SE * b.se] }[sortKey];
+    const figName = { p10: '10th percentile', p90: '90th percentile' }[sortKey];
+    const tieAbove = (i) => {
+      if (!figOf || i === 0) return null;
+      const [a, sa] = figOf(rows[i]), [p, sp] = figOf(rows[i - 1]);
+      return isTie(a, sa, p, sp) ? tieText(figName ? `${rows[i - 1].label}'s ${figName}` : rows[i - 1].label, a, sa, p, sp) : null;
+    };
     host.replaceChildren(...rows.map((b, i) => {
-      const v = val(b);
+      const v = val(b), tie = tieAbove(i);
       const valEl = el('span', { class: 'fv-row-val', text: f1(v) });
       if (L === 180) mark(valEl, 'builds', 'dps', 'id=' + enc(b.id));
       else mark(valEl, 'lengths', 'dps', `build=${enc(b.id)}&secs=${L}`);
@@ -944,8 +987,8 @@ export function startReport(dash, events) {
           el('span', { class: 'fv-med', style: `left:${x(b.p50)}` }));
         partTip(track, b, max);
       }
-      const row = el('button', { class: 'fv-row' + (i === 0 && rows.length > 1 ? ' top' : ''), 'data-tip': '1', 'data-id': b.id, 'aria-label': `${b.label}, ${f1(v)} DPS` },
-        el('span', { class: 'fv-row-pos', text: String(i + 1) }),
+      const row = el('button', { class: 'fv-row' + (i === 0 && rows.length > 1 ? ' top' : '') + (tie ? ' tied' : ''), 'data-tip': '1', 'data-id': b.id, 'aria-label': `${b.label}, ${f1(v)} DPS${tie ? `. ${tie}` : ''}` },
+        el('span', { class: 'fv-row-pos' }, String(i + 1), tie ? tieMark(tie) : null),
         specIco(b) || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }),
         el('span', { class: 'fv-row-main' },
           el('span', { class: 'fv-row-name' }, el('b', { text: isEnc(b) ? String(b.build).replace(/ · vs .*$/, '') : isDuty(b) ? String(b.build).replace(isPet(b) ? / · [^·]*$/ : / · [^·]* duty$/, '') : b.build }), el('span', { text: '· ' + b.class })),
@@ -965,6 +1008,8 @@ export function startReport(dash, events) {
           ? [tipKey(f1(b.dps), 'DPS', `± ${f2(b.se)}`), tipGrid([['Rank', el('span', {}, `${rankOf(b, builds)} of ${builds.length} · `, behind)], ['10th–90th', `${f1(b.p10)}–${f1(b.p90)}`],
             ['Middle half', `${f1(b.p25)}–${f1(b.p75)}`], ['Spread', `${f2(b.cv)}%`], ['Race', race], isEnc(b) ? ['Boss', `${b.encounter} · advantaged`] : null, isDuty(b) ? [isPet(b) ? 'Pet' : 'Duty', dutyCostEl(b, builds)] : null])]
           : [tipKey(f1(v), 'DPS', se != null ? `± ${f2(se)} at ${L}s` : `at ${L}s`), tipGrid([['vs 180s', el('span', {}, `${f1(b.dps)} · `, tipDelta(100 * (v / b.dps - 1)))], ['vs the top', behind], ['Race', race]])];
+        if (tie) lines.push(tipNote('≈ ', tie));
+        if (b.asmEst) lines.push(tipNote(ASM_EST));
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, tipTitle(b.label, null, specIco(b, '')), lines, { hl: row, open: b.id, below: true });
       });
       return row;
@@ -1160,7 +1205,8 @@ export function startReport(dash, events) {
         const sib = races.filter((q) => q.build === b.id).sort((p, q) => q.dps - p.dps);
         const card = $('#racespread-card'), cr = card.getBoundingClientRect(), nr = tr.getBoundingClientRect();
         showTip(card, 20, nr.bottom - cr.top + 4, tipTitle(b.label, null, specIco(b, '')), [tipKey(`${f2(r.spreadPct)}%`, null, 'from best to worst'),
-          tipGrid(sib.map((q, k) => [q.name + (q.isPreset ? ' (preset race)' : ''), k === 0 ? `${f1(q.dps)} DPS` : `−${f2(100 * (1 - q.dps / sib[0].dps))}%`]))],
+          tipGrid(sib.map((q, k) => [q.name + (q.isPreset ? ' (preset race)' : ''), (k > 0 && isTie(q.dps, q.se, sib[k - 1].dps, sib[k - 1].se) ? '≈ ' : '')
+            + (k === 0 ? `${f1(q.dps)} DPS` : `−${f2(100 * (1 - q.dps / sib[0].dps))}%`)])), sib.some((q, k) => k > 0 && isTie(q.dps, q.se, sib[k - 1].dps, sib[k - 1].se)) ? tipNote("≈ within the sim's luck of the race above.") : null],
           { hl: row, open: b.id, below: true, pinned, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
       };
       hoverTip(row, tip);
@@ -1453,7 +1499,8 @@ export function startReport(dash, events) {
         const { segs, idle } = segsOf(r, bd.get(build + '|' + r.race) || []);
         if (!acc.has(r.key)) acc.set(r.key, { ...r, parts: new Map(), shares: [], ranks: [], idle, tunedOn: [] });
         const a = acc.get(r.key);
-        a.shares.push({ build, share: (100 * r.dps) / best });
+        // tied: within the sim's luck of the preset's best entry, which counts as a shared win
+        a.shares.push({ build, share: (100 * r.dps) / best, tied: i > 0 && isTie(r.dps, r.se, best, rs[0].se) });
         if (r.tuned) a.tunedOn.push(build);
         a.ranks.push(i + 1);
         for (const sg of segs) {
@@ -1465,7 +1512,7 @@ export function startReport(dash, events) {
     const rows = [...acc.values()].map((a) => {
       const n = a.shares.length;
       const avg = d3.mean(a.shares, (g) => g.share);
-      return { ...a, n, value: one ? a.dps : avg, avg, timesBest: a.shares.filter((g) => g.share > 99.995).length, medianRank: d3.median(a.ranks),
+      return { ...a, n, value: one ? a.dps : avg, avg, timesBest: a.shares.filter((g) => g.share > 99.995).length, timesTop: a.shares.filter((g) => g.share > 99.995 || g.tied).length, medianRank: d3.median(a.ranks),
         segs: [...a.parts.values()].map((p) => ({ ...p, v: p.sum / n })) };
     }).sort((p, q) => q.value - p.value);
     for (const r of rows) { let at = 0; for (const sg of r.segs) { sg.from = at; at += sg.v; sg.to = at; } }
@@ -1475,6 +1522,8 @@ export function startReport(dash, events) {
     const x = (v) => (100 * (Math.max(lo, v) - lo)) / (hi - lo);
     const fv = (v) => (one ? f1(v) : `${f2(v)}%`), fd = (v) => (one ? sgn(v, f1) : `${sgn(v, f2)}%`);
     const who = (r) => (r.tag ? `${r.race} ${r.tag}` : r.race);
+    // On one preset, an entry within the sim's luck of the entry above it gets a ≈ (only ever its neighbour, no chains).
+    if (one) rows.forEach((r, i) => { const p = rows[i - 1]; r.tie = p && isTie(r.dps, r.se, p.dps, p.se) ? tieText(who(p), r.dps, r.se, p.dps, p.se) : null; });
     const kinds = new Set();
     // The weakest base stats in view, which the tooltip measures each race's base stats against.
     const baseOf = (r) => r.segs.find((sg) => sg.part === 'base')?.v;
@@ -1578,7 +1627,8 @@ export function startReport(dash, events) {
         raceTT(r, raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` })),
         el('span', { class: 'nm' }, tagZone(r, raceNameTT(r)), one && r.isPreset ? head(el('i', { text: 'preset race' })) : null,
           one && r.tuned ? el('span', { class: 'fv-rtag tuned', 'data-zone': 'tuned', text: TUNED_LABEL[r.tunedKind] || 'own setup' }) : null, ...idle),
-        el('span', { class: 'end', 'data-zone': '' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
+        el('span', { class: 'end', 'data-zone': '' }, el('small', {}, one && r.tie ? tieMark(r.tie, false) : null, one && r.tie ? ' ' : null,
+          one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesTop > r.timesBest ? `best or tied on ${r.timesTop} of ${r.n}` : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best'),
           el('b', { text: one ? f1(r.dps) : pct(r.avg) })),
         track, cap);
       // Each part of the entry has its own tooltip. A piece of the bar, or its caption under the bar, says what
@@ -1634,16 +1684,20 @@ export function startReport(dash, events) {
           return;
         }
         // A race with its own rotation or gear (standards 29) says what it changed.
-        let head = [tipKey(f1(r.dps), 'DPS', `± ${f2(r.se)}`), r.tuned ? el('span', { class: 'fv-tip-m' }, el('b', { text: `${TUNED_TITLE[r.tunedKind] || 'Its own setup'}. ` }), `${String(r.tuned).replace(/\.$/, '')}.`) : null];
+        let head = [tipKey(f1(r.dps), 'DPS', `± ${f2(r.se)}`), r.tuned ? el('span', { class: 'fv-tip-m' }, el('b', { text: `${TUNED_TITLE[r.tunedKind] || 'Its own setup'}. ` }), `${String(r.tuned).replace(/\.$/, '')}.`) : null,
+          one && r.tie ? tipNote('≈ ', r.tie) : null];
         if (!one) {
           const order = new Map(sc.builds.map((b, k) => [b.id, k]));
-          const best = r.shares.filter((g) => g.share > 99.995).sort((p, q) => order.get(p.build) - order.get(q.build));
+          // A preset where it's within the sim's luck of the best race counts as a win it shares, marked ≈.
+          const best = r.shares.filter((g) => g.share > 99.995 || g.tied).sort((p, q) => order.get(p.build) - order.get(q.build));
+          const nTied = best.filter((g) => g.tied).length;
           const pick = best.length ? best : [...r.shares].sort((p, q) => q.share - p.share).slice(0, 3);
           const list = d3.groups(pick.map((g) => ({ g, b: bmap.get(g.build) })).filter((o) => o.b), (o) => o.b.class).map(([cls, os]) => el('span', {},
             ringed('classicon_' + cls.toLowerCase(), 'fv-ico ring', ccol(cls)), el('span', {}, el('b', { text: `${cls}: `, style: `color:${ccol(cls)}` }),
-              os.map((o) => o.b.build + (best.length ? '' : ` (${pct(o.g.share)})`)).join(', '))));
-          head = [tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.n} presets`),
+              os.map((o) => o.b.build + (best.length ? (o.g.tied ? ' ≈' : '') : ` (${pct(o.g.share)})`)).join(', '))));
+          head = [tipKey(best.length ? `${nTied ? 'Best or tied' : 'Best race'} on ${best.length}` : 'Never the best race', `of ${r.n} presets`),
             best.length ? null : el('span', { class: 'fv-tip-m', text: 'Closest on:' }), el('div', { class: 'fv-tip-specs' }, ...list),
+            nTied ? tipNote(`≈ tied: within the sim's luck of the best race (2 standard errors of the gap), so it shares the win. Tied on ${nTied}, best outright on ${best.length - nTied}.`) : null,
             r.tunedOn.length ? el('span', { class: 'fv-tip-m', text: `Own rotation or gear on ${r.tunedOn.map((id) => bmap.get(id)?.label || id).join(', ')}.` }) : null];
         }
         // The tooltip goes under the part the pointer is on. Under the numbers on the right it ends where they end.
@@ -1886,7 +1940,11 @@ export function startReport(dash, events) {
     abil.filter((a) => a.dps > 0).slice(0, 8).forEach((a, i) => m.set(a.key, nameColor(a.key) || dash.colors[i]));
     return m;
   };
-  const tile = (k, v, s, src, field, where, unit, icon) => el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: k }), el('span', { class: 'v' }, icon ? iconImg(icon, 'fv-ico md') : null, icon ? ' ' : null, mark(el('span', { text: v }), src, field, where), unit ? el('small', { text: unit }) : null), s ? el('span', { class: 's', text: s }) : null);
+  // s, the line under the value, is text or a node
+  const tile = (k, v, s, src, field, where, unit, icon) => el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: k }), el('span', { class: 'v' }, icon ? iconImg(icon, 'fv-ico md') : null, icon ? ' ' : null, mark(el('span', { text: v }), src, field, where), unit ? el('small', { text: unit }) : null), s ? el('span', { class: 's' }, s) : null);
+  // A tile's "tied with" line: the ≈, the names, and the luck in its tooltip.
+  // A tile with a game tooltip of its own (the best race's) says the luck there instead (tip false).
+  const tiedLine = (names, texts, tip = true) => el('span', { class: 'fv-tile-tie', title: tip ? texts.join(' ') : null }, tieMark(texts.join(' '), false), ` tied with ${names.join(' and ')}`);
 
   const drawSpec = () => {
     if (!waitOr($('#sp-head'), ['builds'])) return;
@@ -1918,14 +1976,23 @@ export function startReport(dash, events) {
     const extra = b.petDps > 0 ? tile('Pet damage', f1(b.petShare), `${f1(b.petDps)} DPS from pets`, 'builds', 'petShare', W, '%')
       : b.oomSecs > 0 ? tile('Time out of mana', f1(b.oomSecs), 'per fight', 'builds', 'oomSecs', W, 's')
         : tile('Threat per second', f0(b.tps), null, 'builds', 'tps', W);
+    // The rank stays strict; the presets just above and below it that are within the sim's luck of it are named under it.
+    const byDps = [...builds].sort((p, q) => q.dps - p.dps), at = byDps.indexOf(b);
+    const rankTies = [byDps[at - 1], byDps[at + 1]].filter((x) => x && isTie(b.dps, b.se, x.dps, x.se));
+    // The best race says when the race after it is within luck of it, on the generic boss as the Races card shows it.
+    const raceTop = (raceRows('') || []).filter((r) => r.build === b.id);
+    const raceTie = raceTop.length > 1 && raceTop[0].race === b.bestRace && isTie(raceTop[0].dps, raceTop[0].se, raceTop[1].dps, raceTop[1].se) ? raceTop[1] : null;
     $('#sp-tiles').replaceChildren(
       tile('Mean DPS', f1(b.dps), `± ${f2(b.se)} error`, 'builds', 'dps', W),
-      tile('Rank', String(rankOf(b, builds)), `of ${builds.length} presets`, 'builds', st.enc ? 'rankAll' : 'rank', W),
+      tile('Rank', String(rankOf(b, builds)), el('span', {}, `of ${builds.length} presets`,
+        rankTies.length ? tiedLine(rankTies.map((x) => x.label), rankTies.map((x) => tieText(x.label, b.dps, b.se, x.dps, x.se))) : null), 'builds', st.enc ? 'rankAll' : 'rank', W),
       tile('Unlucky fight', f1(b.p10), '10th percentile', 'builds', 'p10', W),
       tile('Lucky fight', f1(b.p90), '90th percentile', 'builds', 'p90', W),
-      tt(tile('Best race', b.bestRace, `${f1(b.bestRaceDps)} DPS`, 'builds', 'bestRace', W, null, b.bestRaceIcon), `r:${b.bestRace}:${b.class}`, true, b.id),
+      tt(tile('Best race', b.bestRace, el('span', {}, `${f1(b.bestRaceDps)} DPS`,
+        raceTie ? tiedLine([raceTie.race], [tieText(raceTie.race, raceTop[0].dps, raceTop[0].se, raceTie.dps, raceTie.se)], false) : null), 'builds', 'bestRace', W, null, b.bestRaceIcon), `r:${b.bestRace}:${b.class}`, true, b.id),
       extra);
     $('#sp-asm').hidden = !b.asmF;
+    $('#sp-asm-est').hidden = !b.asmEst;
     for (const h of ['#sp-head', '#sp-tiles']) $(h).dataset.build = b.id;
     const i = order.findIndex((x) => x.id === b.id);
     $('#sp-prev').onclick = () => openSpec(order[(i - 1 + order.length) % order.length].id);
@@ -2011,7 +2078,8 @@ export function startReport(dash, events) {
     drawHist(host, [{ name: b.build, color: ccol(b.class), bins: binsFor(rowsOf('hist'), b.id) }],
       { mode: st.distMode, marks: [{ v: b.p10, label: '10th' }, { v: b.dps, label: 'mean', strong: true }, { v: b.p90, label: '90th' }] });
     const t = $('#sp-pct'), W = 'id=' + enc(b.id);
-    const cols = [['Worst', 'min'], ['1st', 'p1'], ['10th', 'p10'], ['25th', 'p25'], ['Median', 'p50'], ['75th', 'p75'], ['90th', 'p90'], ['99th', 'p99'], ['Best', 'max'], ['Std dev', 'stdev']];
+    // No worst or best fight: each is one fight, and they spread further the more fights are simmed.
+    const cols = [['1st', 'p1'], ['10th', 'p10'], ['25th', 'p25'], ['Median', 'p50'], ['75th', 'p75'], ['90th', 'p90'], ['99th', 'p99'], ['Std dev', 'stdev']];
     t.querySelector('thead tr').replaceChildren(...cols.map(([h]) => el('th', { class: 'n', text: h })));
     t.querySelector('tbody tr').replaceChildren(...cols.map(([, k]) => mark(el('td', { class: 'n', text: f1(b[k]) }), 'builds', k, W)));
     t.dataset.build = b.id;
@@ -2629,7 +2697,20 @@ export function startReport(dash, events) {
       if (!s.full) return el('td', { class: 'n', text: NA });
       return mark(el('td', { class: 'n', text: f(s.b[k]) }), 'builds', k, 'id=' + enc(s.b.id));
     };
-    const diffOf = (k) => {
+    // B against A on the mean, the 10th and the 90th percentile: within the sim's luck it's muted, with a ≈ that says so.
+    const figs = (k) => (k === 'dps' && anyVar ? (sA.row && sB.row ? [[sA.row.dps, sA.row.se], [sB.row.dps, sB.row.se]] : null)
+      : anyVar ? null : k === 'dps' ? [[A.dps, A.se], [B.dps, B.se]] : k === 'p10' || k === 'p90' ? [[A[k], PCT_SE * A.se], [B[k], PCT_SE * B.se]] : null);
+    const tieTd = (td, k) => {
+      const fg = figs(k);
+      if (!fg || !isTie(fg[1][0], fg[1][1], fg[0][0], fg[0][1])) return td;
+      const text = tieText(`A${k === 'dps' ? '' : `'s ${k === 'p10' ? '10th' : '90th'} percentile`}`, fg[1][0], fg[1][1], fg[0][0], fg[0][1]);
+      td.className = 'n fv-cmp-tied';
+      td.title = text;
+      td.prepend(tieMark(text, false), ' ');
+      return td;
+    };
+    const diffOf = (k) => tieTd(diffOf0(k), k);
+    const diffOf0 = (k) => {
       if (k === 'dps' && anyVar) return diffTd(sA.row && sB.row ? pct(sA.row.dps, sB.row.dps) : null, f2);
       if (anyVar || !pr || pr[k] == null) return diffTd(null);
       const td = diffTd(pr[k], f1, ['pairs', k, `a=${enc(A.id)}&b=${enc(B.id)}`]);
@@ -2874,6 +2955,11 @@ export function startReport(dash, events) {
   const drawAsm = () => {
     const host = $('#asm-list'), custom = asmSel().length > 0;
     $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
+    // Picks that were never simmed together on a preset are multiplied from the single settings: an estimate.
+    const est = asmOn ? (rowsOf('builds') || []).filter((b) => !isDuty(b) && (st.enc || !isEnc(b)) && asmEst(b.id)) : [];
+    $('#asm-est').hidden = !est.length;
+    $('#asm-est').replaceChildren(...(est.length ? [el('span', { class: 'fv-asm-badge est', text: 'Estimate' }),
+      ` On ${est.length} preset${est.length === 1 ? '' : 's'}, your settings weren't simmed together, so their numbers are estimated from the single settings; not simmed.`] : []));
     if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
     const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen));
     host.replaceChildren(...d3.groups(As, (a) => a.class).map(([cls, as]) => {
@@ -2928,8 +3014,8 @@ export function startReport(dash, events) {
   const chDate = (d) => d3.utcFormat('%b %-d')(new Date(d + 'T00:00:00Z'));
   // within 0.05 a figure rounded to 0.1 didn't move: builds no change touches keep their numbers exactly
   const chSame = (d) => Math.abs(d) < 0.05;
-  // the noise on a change between two runs, 2 standard errors of the difference
-  const chNoise = (a, b) => 2 * Math.hypot(a || 0, b || 0);
+  // the noise on a change between two runs, 2 standard errors of the difference (luckOf, the page's one tie rule)
+  const chNoise = luckOf;
   let chCache = null;
   const chStates = () => {
     const snap = rowsOf('changes_snap'), ups = rowsOf('changes');
