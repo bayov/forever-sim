@@ -28,6 +28,9 @@ type SpellConfig struct {
 	MetricSplits  int
 	Rank          int
 	RequiredLevel int
+	// Downrank opts a ranked spell into Forever's downranking penalty (downrank.go), which
+	// reads RequiredLevel as the rank's learn level.
+	Downrank DownrankKind
 
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
@@ -226,6 +229,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 	if config.PeriodicDamageMultiplierAdditive == 0 {
 		config.PeriodicDamageMultiplierAdditive = 1
 	}
+
+	unit.applyDownrank(&config)
 
 	// Default CastSlot to mainhand
 	if config.CastType == proto.CastType_CastTypeUnknown {

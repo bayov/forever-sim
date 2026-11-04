@@ -191,6 +191,9 @@ export class Model {
 	// Whether any bone always faces the camera (bone flag 0x8): a totem's rune, the glow cards of
 	// effects.
 	private billboards = false;
+	// Whether nothing in the model moves: no animated bone, color or transparency, no particles
+	// or ribbons, no billboards.
+	private readonly still: boolean;
 	// The camera that billboards face.
 	static camera?: THREE.Camera;
 	// twist turns the upper body around the model's up axis, in radians. A strafe turns the legs
@@ -208,6 +211,9 @@ export class Model {
 	private closed = { right: false, left: false };
 	private scratch = { t: new Float64Array(3), r: Float64Array.of(0, 0, 0, 1), s: Float64Array.of(1, 1, 1), t2: new Float64Array(3), r2: Float64Array.of(0, 0, 0, 1), s2: Float64Array.of(1, 1, 1) };
 	geosets?: Set<number>;
+	// The gear slot the model is worn in (1 the head, 3 the shoulders, 15 the back...), for a
+	// unit's gear.
+	slot?: number;
 	// The crowd the model draws in (crowd.ts), if any.
 	crowd?: { remove(m: Model): void };
 	particles?: Particles;
@@ -310,6 +316,13 @@ export class Model {
 		this.fingers = { right: below(rightFingers), left: below(leftFingers) };
 		this.billboard = Uint8Array.from(m2.bones, b => (b.flags & 0x8 ? 1 : 0));
 		this.billboards = this.billboard.includes(1);
+		this.still =
+			!this.billboards &&
+			m2.particles.length === 0 &&
+			m2.ribbons.length === 0 &&
+			m2.bones.every(b => !b.translation.animated && !b.rotation.animated && !b.scale.animated) &&
+			m2.colors.every(c => !c.color.animated && !c.alpha.animated) &&
+			m2.textureWeights.every(t => !t.animated);
 		this.pose0 = new Float32Array(m2.bones.length * 10);
 		this.fadePose = new Float32Array(m2.bones.length * 10);
 		this.base = this.playing(Anim.Stand, { loop: true });
@@ -848,6 +861,8 @@ export class Model {
 
 	// update moves the animations on by dt seconds and poses the bones.
 	update(dt: number) {
+		// A model with nothing that moves (most gear: a shield, a helm) keeps its first pose.
+		if (this.still && this.posed) return;
 		const dtMs = dt * 1000;
 		this.globalTime += dtMs;
 		this.advance(this.base, dt, 'base');
@@ -924,7 +939,10 @@ export class Model {
 			p0[o + 7] = s.s[0];
 			p0[o + 8] = s.s[1];
 			p0[o + 9] = s.s[2];
-			const parent = b.parent >= 0 ? m2.bones[b.parent].pivot : undefined;
+			// The numbers here never mix with a missing value (a root bone's parent pivot is zero, a
+			// bone without a twist has a share of zero): Chrome boxes a decimal that meets another
+			// kind of value, and that was 30 bytes a bone, every frame.
+			const parent = b.parent >= 0 ? m2.bones[b.parent].pivot : zeroPivot;
 			// The rotation goes straight into quats. Through a Three quaternion's set, each of its four
 			// numbers was boxed, every bone. Only the twist and the billboards need one.
 			const q = i * 4;
@@ -932,8 +950,8 @@ export class Model {
 			quats[q + 1] = s.r[1];
 			quats[q + 2] = s.r[2];
 			quats[q + 3] = s.r[3];
-			const share = this.twist !== 0 ? this.twistShare[i] : 0;
-			const turned = share !== 0 || (camera && this.billboard[i]);
+			const share = this.twistShare[i] * this.twist;
+			const turned = share !== 0 || (camera !== undefined && this.billboard[i] === 1);
 			if (turned) boneQ.fromArray(quats, q);
 			if (share !== 0) {
 				// The twist is around the model's up (y, since the bones are in Three's frame). The
@@ -941,7 +959,7 @@ export class Model {
 				parentQ.identity();
 				for (let p = b.parent; p >= 0; p = m2.bones[p].parent) parentQ.premultiply(twistQ.fromArray(quats, p * 4));
 				twistAxis.copy(upAxis).applyQuaternion(parentQ.invert());
-				boneQ.premultiply(twistQ.setFromAxisAngle(twistAxis, this.twist * share));
+				boneQ.premultiply(twistQ.setFromAxisAngle(twistAxis, share));
 			}
 			if (camera && this.billboard[i]) {
 				// A billboard turns its +x (the model's front) to the camera, with its up staying the
@@ -953,9 +971,9 @@ export class Model {
 			}
 			if (turned) boneQ.toArray(quats, q);
 			const at = placeAt;
-			at[0] = b.pivot[0] - (parent?.[0] ?? 0) + s.t[0];
-			at[1] = b.pivot[1] - (parent?.[1] ?? 0) + s.t[1];
-			at[2] = b.pivot[2] - (parent?.[2] ?? 0) + s.t[2];
+			at[0] = b.pivot[0] - parent[0] + s.t[0];
+			at[1] = b.pivot[1] - parent[1] + s.t[1];
+			at[2] = b.pivot[2] - parent[2] + s.t[2];
 			at[3] = quats[q];
 			at[4] = quats[q + 1];
 			at[5] = quats[q + 2];
@@ -1052,17 +1070,20 @@ export class Model {
 
 	// updateColors applies animated colors and transparency to the batches that have them.
 	private readonly colorOut = new Float64Array(3);
+	private readonly alphaBox = new Float64Array(1);
 	private updateColors() {
 		const out = this.colorOut;
 		const m2 = this.m2;
 		const base = this.base;
 		for (const bm of this.mats) {
 			const { batch } = bm;
-			let alpha = 1;
+			// alpha is a Float64Array's number, so it isn't boxed as it's multiplied.
+			const alpha = this.alphaBox;
+			alpha[0] = 1;
 			if (batch.color >= 0 && m2.colors[batch.color]) {
 				const c = m2.colors[batch.color];
 				this.at[0] = base.time;
-				if (this.sampleTrack(c.alpha, base.seq, base.source, out)) alpha *= out[0] / 32767;
+				if (this.sampleTrack(c.alpha, base.seq, base.source, out)) alpha[0] *= out[0] / 32767;
 				// M2 colors are gamma values, like the textures.
 				if (bm.material.color && this.sampleTrack(c.color, base.seq, base.source, out))
 					bm.material.color.setRGB(out[0], out[1], out[2], THREE.SRGBColorSpace);
@@ -1070,11 +1091,11 @@ export class Model {
 			const wi = m2.transparencyLookup[batch.weightCombo];
 			if (wi !== undefined && m2.textureWeights[wi]) {
 				this.at[0] = base.time;
-				if (this.sampleTrack(m2.textureWeights[wi], base.seq, base.source, out)) alpha *= out[0] / 32767;
+				if (this.sampleTrack(m2.textureWeights[wi], base.seq, base.source, out)) alpha[0] *= out[0] / 32767;
 			}
-			if (alpha < 0.999 || bm.material.transparent) {
-				bm.material.opacity = Math.max(0, Math.min(1, alpha));
-				if (alpha < 0.999) bm.material.transparent = true;
+			if (alpha[0] < 0.999 || bm.material.transparent) {
+				bm.material.opacity = Math.max(0, Math.min(1, alpha[0]));
+				if (alpha[0] < 0.999) bm.material.transparent = true;
 			}
 		}
 	}
@@ -1219,6 +1240,11 @@ const combinerFragment = /* glsl */ `
 `;
 
 const billboardTmp = { q1: new THREE.Quaternion(), q2: new THREE.Quaternion(), v: new THREE.Vector3(), s: new THREE.Vector3(), m: new THREE.Matrix4() };
+
+// A root bone's parent pivot. It's an array of decimals (made with one, then zeroed), like the
+// bones' pivots.
+const zeroPivot = [0.5, 0.5, 0.5];
+zeroPivot.fill(0);
 
 // placeAt holds the bone's move, rotation and scale for place. Passed as numbers, Chrome boxed
 // each one, which was 70 bytes of garbage a bone.

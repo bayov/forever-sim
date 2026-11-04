@@ -12,7 +12,8 @@ var FrostShockSpellId = [FrostShockRanks + 1]int32{0, 8056, 8058, 10472, 10473}
 // coefficient, from the Forever client data that https://foreverchanges.pro reads
 // (downrank calculator). Forever cut most rank damage well below 1.12, and it gave the
 // low ranks close to full coefficients instead of the 1.12 penalty for spells learned
-// below level 20.
+// below level 20. The shocks don't opt into Forever's downranking penalty (core.DownrankKind):
+// the 2026-10-10 beta log hits at full coefficient (TestOrcShamanSpellPowerBeta).
 //
 // The November 2 development notes (post 9, for launch; not in client 1.60.1.70753) revert every
 // shock's base damage to Classic Era's: the 1.15.9 client's base points, die and growth per

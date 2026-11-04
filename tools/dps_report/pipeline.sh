@@ -6,7 +6,7 @@
 #                                       build outside [ids] that differs stops it (orchestration/dash_raw_store.md)
 #   pipeline.sh plan  <ids...>          count every step's sims and check each script can enumerate its work (seconds)
 #   pipeline.sh run   <ids...>          add the ids' duty and encounter variants, clean them, plan, then the sim
-#                                       steps; prints a timestamp per step
+#                                       steps; prints a timestamp per step, and at the end where the time went (timing.py)
 #   pipeline.sh resume <ids...>         run without the clean, to finish a run that stopped (every step skips done work)
 #   pipeline.sh clean <ids...>          drop these builds from every raw output, so every step re-sims them
 #   pipeline.sh probe [ids...]          which stale builds really moved (probe.py check): each one's sims at a tenth of
@@ -119,21 +119,38 @@ EOF
 		MANA_FORCE=
 		ABL=$(python3 -c "import json,os,sys; d=json.load(open('abl/ablate.json'))['builds'] if os.path.exists('abl/ablate.json') else {}; print(' '.join(b for b in sys.argv[1:] if b not in d))" $BASE)
 	fi
-	echo "== run_build $(date -u +%H:%M:%S)"
+	# what every sim costs: the binaries run through timing_cli.py, which logs each call's CPU and wall time to
+	# timing/<start>.jsonl (with a line per step below); timing.py sums it up at the end
+	REAL_BIN=$(cd "${DASH_BIN:-$DASH_DIR/bin}" && pwd)
+	mkdir -p timing/bin
+	for b in wowsimcli wowsimcli_r wowsimcli_assume dashstats; do
+		rm -f timing/bin/$b
+		if [ -e "$REAL_BIN/$b" ]; then ln -s "$T/timing_cli.py" timing/bin/$b; fi
+	done
+	export TIMING_REAL_BIN=$REAL_BIN DASH_BIN=$DASH_DIR/timing/bin TIMING_LOG=$DASH_DIR/timing/$(date -u +%Y%m%dT%H%M%SZ).jsonl
+	python3 -c 'import json, os, sys; print(json.dumps({"start": sys.argv[1], "P": int(sys.argv[2]), "cores": os.cpu_count(), "ids": sys.argv[3].split(), "base": sys.argv[4].split()}))' \
+		"$cmd" "$P" "$ALL" "$BASE" >"$TIMING_LOG"
+	mark() {  # a step starts: its time on screen and in the log, and the step the log's sims count under
+		echo "== $1 $(date -u +%H:%M:%S)"
+		export TIMING_STEP=$1
+		echo "{\"mark\": \"$1\", \"t\": $(date +%s.%N)}" >>"$TIMING_LOG"
+	}
+	mark run_build
 	[ -n "$RB" ] && echo $RB | tr ' ' '\n' | xargs -P$P -n1 python3 $T/run_build.py
-	echo "== weights $(date -u +%H:%M:%S)"
+	mark weights
 	echo $BASE | tr ' ' '\n' | xargs -P$P -n1 python3 $T/weights.py
-	echo "== races $(date -u +%H:%M:%S)"
+	mark races
 	python3 $T/run_races.py $BASE | tail -3
-	echo "== mana $(date -u +%H:%M:%S)"
+	mark mana
 	[ -n "$MANA" ] && PAR=$P python3 $T/mana_curves.py $MANA_FORCE $MANA | tail -3
-	echo "== ablate $(date -u +%H:%M:%S)"
+	mark ablate
 	[ -n "$ABL" ] && ABL_MERGE=1 PAR=$P python3 $T/ablate.py $ABL | tail -1
-	echo "== assumptions $(date -u +%H:%M:%S)"
+	mark assumptions
 	PAR=$P python3 $T/run_assumptions.py $BASE | tail -2
-	echo "== probe $(date -u +%H:%M:%S)"  # these sims at a tenth of their iterations, kept in the packs for the next probe check
+	mark probe  # these sims at a tenth of their iterations, kept in the packs for the next probe check
 	PROBE_P=$P python3 $T/probe.py run $ALL
-	echo "== done $(date -u +%H:%M:%S)"
+	mark done
+	python3 $T/timing.py "$TIMING_LOG"
 	echo "next: pipeline.sh publish $*"
 	;;
 shard)

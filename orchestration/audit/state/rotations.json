@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "f331f0cff0d8f25e101d607fca449ebbc024ff0b"
+  "master": "fb584eafaf39e7eedc6587809f7657a49c0762ac"
  },
- "last_pass_at": "2026-11-04T00:56:54Z",
- "pass": 51,
+ "last_pass_at": "2026-11-04T06:56:13Z",
+ "pass": 52,
  "result": "quiet",
- "note": "Pass 51: Feral bomb line (+7.7..+8.1 confirmed on both seed sets), Balance Wrath fallback (+0.4..+2.1), Ret Holy Strike first; sim changes gate non-Forever values and tank threat only (no Forever DPS move). No findings.",
+ "note": "Pass 52: dual wield Fury rotation follow-up (HS 60, Hamstring 20, Bloodrage 50, BT first) screened with 7 one-line variants, all at or below noise; no sim change. No findings.",
  "client_build": "1.60.1.70753",
- "checked_at": "2026-11-04T01:07:35Z",
+ "checked_at": "2026-11-04T06:58:15Z",
  "baseline": "baseline_f331f0c_3000it_seed424242.tsv"
 }

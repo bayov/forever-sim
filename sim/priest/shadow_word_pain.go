@@ -50,6 +50,7 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 
 		RequiredLevel: level,
 		Rank:          rank,
+		Downrank:      core.DownrankDamage,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: manaCost,
@@ -71,7 +72,7 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 			// Improved Shadow Word: Pain adds 3 sec (one tick) a rank.
 			NumberOfTicks:    ticks + priest.Talents.ImprovedShadowWordPain,
 			TickLength:       time.Second * 3,
-			BonusCoefficient: priest.downrankCoefficient(ShadowWordPainTickCoef, level),
+			BonusCoefficient: ShadowWordPainTickCoef,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.Snapshot(target, baseDotDamage, isRollover)

@@ -1230,6 +1230,40 @@ rendering, not the sim.
   - Headless, fight, 1920x1080, varied gear: without the arrays and masks 80 FPS, 9.8ms of script, 575 draw calls.
     With them 103 FPS, 8.7ms (animating 3.0ms, drawing 5.4ms), 470 draw calls, 505k triangles, 1.7GB heap. This is the
     new baseline. Most of the rest is gear: each item model (helms are by race) draws on its own, with its shadow.
+- Fourth raid report (your PC, 95s, varied gear): about 127 FPS in the fight, frames mostly 8.3ms. 5.8ms of script
+  (animating 2.4ms, drawing 3.0ms), 460 draw calls, 506k triangles. GPU 5.75ms: shadows with the uploads before them
+  3.1ms, see-through 2.0ms, solid 0.65ms. A garbage collection every 190ms.
+  - The uploads: each crowd batch sent five attributes every frame and each particle batch five more, about 1900
+    uploads a frame, and on Windows each is a copy of its own on the GPU. Now a batch's copies are one interleaved
+    buffer that goes up only when a copy changed (a raider moved, an effect's hand glow followed the hand), and the
+    particles and ribbons are interleaved too. A unit standing still settles its turn exactly, so its place stops
+    changing. About 210 uploads a frame now, 2MB (the bone texture is 0.9MB of it).
+  - The body batches kept the first raider's own skin as their map, only so their shader samples one. Three sent it
+    to the GPU anyway (8MB each, and empty once we let go of the picture). They have a one pixel stand-in now.
+  - The reports count the uploads a frame (calls and kilobytes), and on Chrome's Direct3D 11 they time the uploads
+    apart from the shadows (the timer starts just before the renderer switches to the shadow map).
+  - Your call: with 20 or more raiders, helms, shoulders and cloaks cast no shadow.
+  - Headless, fight, 1920x1080, varied gear: 128 FPS (was 103), 6.7ms of script (animating 2.7ms, drawing 3.7ms, was
+    5.4ms), 450 draw calls, 210 uploads a frame, a garbage collection every 420ms.
+- Fifth raid report (your PC, 65s): about 145 FPS for 30s, then 100 to 114 once the fight started (390 to 430 draw
+  calls). GPU 4.4ms: uploads 0.01ms, shadows 1.2ms, solid 1.3ms, see-through 1.8ms. So the uploads weren't the GPU's
+  time, but the shadows and solid things went from 3.75 to 2.56ms. 5.6ms of script (animating 2.5ms, drawing 2.8ms),
+  a garbage collection every 270ms.
+  - Shadows: a model's solid parts now cast their shadow in one draw call (one per side), apart from parts cut by their
+    texture's alpha. A body of one race and sex casts one for all its raiders. Those batches draw only in the shadows:
+    they're on a layer the camera sees only while the shadows draw. Shadow draw calls in the fight went from 171 to 128.
+  - Animation: gear with nothing that moves (most helms, shoulders and shields) keeps its first pose instead of
+    animating each frame, and spell effects animate like the raiders, 60 times a second past 20 yards and 30 past 40.
+  - Garbage: the pose loop no longer mixes decimals with other values (a root bone's parent pivot was undefined, a
+    bone's twist share was 0 or a decimal), which Chrome boxed, 30 bytes a bone a frame. Headless, a garbage
+    collection every 770ms (was 420ms). What's left is mostly Three building shader parameters when one depth
+    material serves both skinned and instanced meshes in the shadows.
+  - See-through: a camera facing particle is kept to about 40% of the screen's height. Only a particle a few of its
+    sizes from the camera gets that big.
+  - Headless, fight, 1920x1080: 125 FPS, 6.8ms of script (animating 2.4ms, drawing 3.9ms), 440 draw calls. The
+    drawing didn't drop here: 330 of the draw calls are the crowd's picture (65 bodies, 155 gear, 108 see-through
+    layers of gear and effects), which need different textures. Drawing those in fewer calls needs texture arrays
+    for gear, or multi-draw.
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit

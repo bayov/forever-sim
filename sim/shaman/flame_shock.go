@@ -13,7 +13,8 @@ var FlameShockSpellId = [FlameShockRanks + 1]int32{0, 8050, 8052, 8053, 10447, 1
 
 // Direct damage at each rank's cap, its growth per level up to there, and the spell power
 // coefficients, from the Forever client data that https://foreverchanges.pro reads
-// (downrank calculator). The DoT does not grow with level.
+// (downrank calculator). The DoT does not grow with level. Like the other shocks it takes no
+// downranking penalty (core.DownrankKind; the 2026-10-10 beta log, TestOrcShamanSpellPowerBeta).
 //
 // The November 2 development notes (post 9, for launch; not in client 1.60.1.70753) revert every
 // shock's base damage to Classic Era's: the 1.15.9 client's base points, die and growth per
