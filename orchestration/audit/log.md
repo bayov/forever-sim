@@ -201,3 +201,4 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-04 13:12 | fairness | pass 29 | master 6b480b0604 | quiet | only warrior/rogue moved, from hotfixes
 2026-11-04 UTC | healer_gear | pass 1 | master a1b1163d2 | quiet | forced first pass: 4 healer sets within 1b budget/shape and row shares, relics modelled; Wowhead cache empty so rows not re-derived from pages
 2026-11-04 13:35 | healer_mechanics | pass 1 | master a1b1163d2 | findings | first pass, 4 healers + engine vs 70755: raid damage share floor (high), Swiftmend consumes HoT (high), Ancestral Fortitude armor (medium), 7 low
+2026-11-04 13:32 | tank_gear | pass 1 | master f62bfc74b | 6 new findings | forced first pass: all pieces in budget/shape bar bear chest -1.3%; paladin Stamina share out; warrior trinket A/B missing; enchant values stale
