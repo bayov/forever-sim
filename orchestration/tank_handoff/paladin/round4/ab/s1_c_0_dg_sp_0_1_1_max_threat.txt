@@ -1,0 +1,5 @@
+A=base_max_threat.json B=c_0_dg_sp_0_1_1_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+2026/11/04 19:28:24 Running 3000 iterations on 4 concurrent sims.
+2026/11/04 19:28:24 All 4 sims finished successfully.
+open orchestration/tank_handoff/paladin/round4/var/c_0_dg_sp_0_1_1_max_threat.json: no such file or directory

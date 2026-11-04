@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=chili_off_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         4216     4209    -7.0   18.8     -5.9       -5
+chromaggus        3963     3962    -1.0   11.9     -1.7       -2
+golemagg          4425     4410   -15.2   13.0     -7.5        0
+magmadar          4493     4493     0.1   13.7     -0.8       -1
+onyxia            4482     4490     8.1   19.1      1.0       -3
+ragnaros          2615     2585   -29.7   36.1     -1.3       26
+vaelastrasz       4680     4686     6.0   22.1      3.3        2
+scoring_mean                       -1.5    6.9

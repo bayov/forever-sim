@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=flask_prec_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2696     3147   451.1   19.8    304.4       53
+chromaggus        2111     2695   584.8    9.7    315.2       15
+golemagg          3269     3814   545.8    8.4    297.5       14
+magmadar          3428     3972   543.4    8.3    293.8       13
+onyxia            3150     3643   493.1   13.3    299.7       21
+ragnaros         -1805    -1559   246.1   60.4    313.4      121
+vaelastrasz       3410     3991   580.7   11.1    316.0       41
+scoring_mean                      533.2    5.1
