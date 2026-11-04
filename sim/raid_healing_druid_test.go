@@ -183,7 +183,7 @@ func (l druidLog) multiplier(t *testing.T, events []healEvent) float64 {
 	return m
 }
 
-func near(a, b, tol float64) bool { return math.Abs(a-b) <= tol }
+func druidNear(a, b, tol float64) bool { return math.Abs(a-b) <= tol }
 
 const (
 	htTop  = 25297 // Healing Touch rank 11
@@ -210,7 +210,7 @@ func TestDruidHealingTouch(t *testing.T) {
 			t.Fatalf("a Healing Touch of %.1f with %.0f healing power at %s, want %.0f to %.0f plus it at the tank", h.base, h.healingPower, h.target, low, high)
 		}
 	}
-	if m := l.multiplier(t, heals); !near(m, 1, 0.001) {
+	if m := l.multiplier(t, heals); !druidNear(m, 1, 0.001) {
 		t.Errorf("multiplier %.4f with no talents", m)
 	}
 	c := l.casts[htTop][0]
@@ -280,7 +280,7 @@ func TestDruidRegrowth(t *testing.T) {
 		}
 	}
 	for _, h := range ticks {
-		if !near(h.base, 142+0.071*h.healingPower, 0.2) {
+		if !druidNear(h.base, 142+0.071*h.healingPower, 0.2) {
 			t.Fatalf("a Regrowth tick of %.1f with %.0f healing power", h.base, h.healingPower)
 		}
 	}
@@ -301,7 +301,7 @@ func TestDruidRejuvenation(t *testing.T) {
 		l := runDruidLog(t, druidRaid(t, map[string]int{"naturesSplendor": splendor}, 0, castAt(rjTop, "Tank", hotOff(rjTop, "Tank"))))
 		ticks := l.ticks(rjTop)
 		for _, h := range ticks {
-			if !near(h.base, 194+0.2*h.healingPower, 0.2) {
+			if !druidNear(h.base, 194+0.2*h.healingPower, 0.2) {
 				t.Fatalf("a Rejuvenation tick of %.1f with %.0f healing power", h.base, h.healingPower)
 			}
 		}
@@ -327,13 +327,13 @@ func TestDruidTranquility(t *testing.T) {
 		if len(casts) == 0 || casts[0].cost != 925 {
 			t.Fatalf("Tranquility casts %v, want 925 mana", casts)
 		}
-		if cd, want := l.cooldowns[trTop][0], 300*(1-0.3*float64(imp)); !near(cd, want, 0.01) {
+		if cd, want := l.cooldowns[trTop][0], 300*(1-0.3*float64(imp)); !druidNear(cd, want, 0.01) {
 			t.Errorf("Improved Tranquility %d: cooldown %.1f s, want %.0f", imp, cd, want)
 		}
 		ticks := l.ticks(trTop)
 		perTarget := map[string]int{}
 		for _, h := range ticks {
-			if !near(h.base, 285+0.067*h.healingPower, 0.2) {
+			if !druidNear(h.base, 285+0.067*h.healingPower, 0.2) {
 				t.Fatalf("a Tranquility tick of %.1f with %.0f healing power", h.base, h.healingPower)
 			}
 			if h.at < 10.01 {
@@ -362,7 +362,7 @@ func TestDruidSwiftmend(t *testing.T) {
 		t.Fatalf("%d Swiftmends", len(sm))
 	}
 	for _, h := range sm {
-		if !near(h.base, 5*(194+0.2*h.healingPower), 2) {
+		if !druidNear(h.base, 5*(194+0.2*h.healingPower), 2) {
 			t.Errorf("a Swiftmend of %.1f, want 5 Rejuvenation ticks at %.0f healing power", h.base, h.healingPower)
 		}
 	}
@@ -403,17 +403,17 @@ func TestDruidWildGrowth(t *testing.T) {
 	for _, naturalist := range []int{0, 5} {
 		l := runDruidLog(t, druidRaid(t, map[string]int{"wildGrowth": 1, "naturalist": naturalist}, 3, castAt(wgTop, "Tank", "")))
 		c := l.casts[wgTop]
-		if len(c) == 0 || c[0].cost != 1050 || !near(c[0].castTime, 3-0.1*float64(naturalist), 0.001) {
+		if len(c) == 0 || c[0].cost != 1050 || !druidNear(c[0].castTime, 3-0.1*float64(naturalist), 0.001) {
 			t.Fatalf("Naturalist %d: Wild Growth casts %v", naturalist, c[:min(1, len(c))])
 		}
 		// The cooldown starts as the cast ends.
-		if cd := l.cooldowns[wgTop][0]; !near(cd, c[0].castTime+6, 0.001) {
+		if cd := l.cooldowns[wgTop][0]; !druidNear(cd, c[0].castTime+6, 0.001) {
 			t.Errorf("cooldown %.1f from the cast's start, want the cast and 6 sec", cd)
 		}
 		first := c[0].at + c[0].castTime
 		perTarget := map[string][]healEvent{}
 		for _, h := range l.ticks(wgTop) {
-			if !near(h.base, 97+0.033*h.healingPower, 0.2) {
+			if !druidNear(h.base, 97+0.033*h.healingPower, 0.2) {
 				t.Fatalf("a Wild Growth tick of %.1f with %.0f healing power", h.base, h.healingPower)
 			}
 			if h.at <= first+7.01 {
@@ -428,7 +428,7 @@ func TestDruidWildGrowth(t *testing.T) {
 				t.Errorf("%s got %d ticks, want 7", who, len(ticks))
 				continue
 			}
-			if r := (ticks[0].afterMods / ticks[0].base) / (ticks[6].afterMods / ticks[6].base); !near(r, 1.06/0.94, 0.003) {
+			if r := (ticks[0].afterMods / ticks[0].base) / (ticks[6].afterMods / ticks[6].base); !druidNear(r, 1.06/0.94, 0.003) {
 				t.Errorf("the first tick heals %.3f times the last, want %.3f", r, 1.06/0.94)
 			}
 		}
@@ -456,7 +456,7 @@ func TestDruidBloom(t *testing.T) {
 	}
 	// Living Spirit 3/3: 15% more Spirit, so Bloom heals 15% more.
 	spirited := runDruidLog(t, druidRaid(t, map[string]int{"bloom": 1, "livingSpirit": 3}, 0, castAt(rjTop, "Tank", hotOff(rjTop, "Tank"))))
-	if a, b := blooms[0].base, spirited.directs(bloom)[0].base; !near(b/a, 1.15, 0.01) {
+	if a, b := blooms[0].base, spirited.directs(bloom)[0].base; !druidNear(b/a, 1.15, 0.01) {
 		t.Errorf("Bloom heals %.0f with Living Spirit 3/3 against %.0f", b, a)
 	}
 }
@@ -499,7 +499,7 @@ func TestDruidHealingTalentMultipliers(t *testing.T) {
 	} {
 		l := runDruidLog(t, druidRaid(t, tc.talents, 0, rotation...))
 		got := want{l.multiplier(t, l.directs(htTop)), l.multiplier(t, l.directs(rgTop)), l.multiplier(t, l.ticks(rgTop)), l.multiplier(t, l.ticks(rjTop))}
-		if !near(got.ht, tc.want.ht, 0.002) || !near(got.rgDirect, tc.want.rgDirect, 0.002) || !near(got.rgTick, tc.want.rgTick, 0.002) || !near(got.rj, tc.want.rj, 0.002) {
+		if !druidNear(got.ht, tc.want.ht, 0.002) || !druidNear(got.rgDirect, tc.want.rgDirect, 0.002) || !druidNear(got.rgTick, tc.want.rgTick, 0.002) || !druidNear(got.rj, tc.want.rj, 0.002) {
 			t.Errorf("%v: Healing Touch, Regrowth, its HoT and Rejuvenation take %+v, want %+v", tc.talents, got, tc.want)
 		}
 	}
@@ -507,10 +507,10 @@ func TestDruidHealingTalentMultipliers(t *testing.T) {
 	// Tranquil Spirit 5/5: 10% off Healing Touch and Tranquility, not Regrowth. Naturalist 5/5: 0.5 sec off
 	// Healing Touch.
 	l := runDruidLog(t, druidRaid(t, map[string]int{"tranquilSpirit": 5, "naturalist": 5}, 0, castAt(trTop, "", ""), rotation[1], rotation[2]))
-	if c := l.casts[htTop][0]; !near(c.cost, 756, 0.01) || c.castTime != 3 {
+	if c := l.casts[htTop][0]; !druidNear(c.cost, 756, 0.01) || c.castTime != 3 {
 		t.Errorf("Healing Touch costs %.1f in %.2f s, want 756 in 3", c.cost, c.castTime)
 	}
-	if c := l.casts[trTop][0]; !near(c.cost, 832.5, 0.01) {
+	if c := l.casts[trTop][0]; !druidNear(c.cost, 832.5, 0.01) {
 		t.Errorf("Tranquility costs %.1f, want 832.5", c.cost)
 	}
 	if c := l.casts[rgTop][0]; c.cost != 525 || c.castTime != 2 {
@@ -542,13 +542,13 @@ func TestDruidHealingCritTalents(t *testing.T) {
 	rot := []string{castAt(rgTop, "Tank", hotOff(rgTop, "Tank")), castAt(htTop, "Tank", "")}
 	base := critRate(t, druidRaid(t, nil, 0, rot...), rgTop)
 	baseHT := critRate(t, druidRaid(t, nil, 0, rot...), htTop)
-	if imp := critRate(t, druidRaid(t, map[string]int{"improvedRegrowth": 5}, 0, rot...), rgTop); !near(imp-base, 0.5, 0.06) {
+	if imp := critRate(t, druidRaid(t, map[string]int{"improvedRegrowth": 5}, 0, rot...), rgTop); !druidNear(imp-base, 0.5, 0.06) {
 		t.Errorf("Regrowth crits %.3f with Improved Regrowth 5/5 against %.3f", imp, base)
 	}
-	if ht := critRate(t, druidRaid(t, map[string]int{"improvedRegrowth": 5}, 0, rot...), htTop); !near(ht, baseHT, 0.04) {
+	if ht := critRate(t, druidRaid(t, map[string]int{"improvedRegrowth": 5}, 0, rot...), htTop); !druidNear(ht, baseHT, 0.04) {
 		t.Errorf("Healing Touch crits %.3f with Improved Regrowth against %.3f", ht, baseHT)
 	}
-	if nm := critRate(t, druidRaid(t, map[string]int{"naturesMajesty": 2}, 0, rot...), htTop); !near(nm-baseHT, 0.04, 0.025) {
+	if nm := critRate(t, druidRaid(t, map[string]int{"naturesMajesty": 2}, 0, rot...), htTop); !druidNear(nm-baseHT, 0.04, 0.025) {
 		t.Errorf("Healing Touch crits %.3f with Nature's Majesty 2/2 against %.3f", nm, baseHT)
 	}
 }
@@ -563,7 +563,7 @@ func TestDruidIntellectTalents(t *testing.T) {
 	if gain := ni - base; gain < 50 || gain > 120 {
 		t.Errorf("Natural Instinct 2/2 adds %.0f healing power", gain)
 	}
-	if r := (both - base) / (ni - base); !near(r, 1.1, 0.02) {
+	if r := (both - base) / (ni - base); !druidNear(r, 1.1, 0.02) {
 		t.Errorf("Heart of the Wild 5/5 moves Natural Instinct's healing power by %.3f, want 1.1", r)
 	}
 }
@@ -592,7 +592,7 @@ func TestDruidNaturesGraceOnHeals(t *testing.T) {
 		hurt := `{"cmp":{"op":"OpGe","lhs":{"healthMissing":{"sourceUnit":{"type":"Tank"}}},"rhs":{"const":{"val":"2000"}}}}`
 		l := runDruidLog(t, druidRaid(t, talents, 0, castAt(rjTop, "Tank", graced), castAt(htTop, "Tank", hurt)))
 		for _, c := range l.casts[rjTop] {
-			if near(c.effective, 1.35, 0.001) {
+			if druidNear(c.effective, 1.35, 0.001) {
 				n++
 			}
 		}

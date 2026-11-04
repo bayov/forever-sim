@@ -77,7 +77,7 @@ func TestDruidSubtlety(t *testing.T) {
 	}
 	t0, h0 := threat(0)
 	t3, h3 := threat(3)
-	if r := (t3 / h3) / (t0 / h0); !near(r, 0.7, 0.01) {
+	if r := (t3 / h3) / (t0 / h0); !druidNear(r, 0.7, 0.01) {
 		t.Errorf("threat per effective healing %.3f times without Subtlety, want 0.7", r)
 	}
 }
