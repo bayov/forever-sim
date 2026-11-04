@@ -80,7 +80,10 @@ def disc_tank(knobs):
     if k(knobs, 'pom', False):
         items.append(cast(POM[3], TANK, None, 'Prayer of Mending on the tank whenever it is ready.'))
     if k(knobs, 'renew', True):
-        items.append(cast(RENEW[10], TANK, NOT(dot_active(RENEW[10], TANK)), 'Renew on the tank whenever it is off.'))
+        rg = k(knobs, 'renewgate', 0.0)
+        rc = NOT(dot_active(RENEW[10], TANK))
+        items.append(cast(RENEW[10], TANK, AND(rc, cmp('OpGe', mana_pct(), const(rg))) if rg > 0 else rc,
+                          'Renew on the tank whenever it is off' + (f' and mana is over {rg:.0%}.' if rg > 0 else '.')))
     gh = k(knobs, 'gh', [5, 4, 2])
     fh = k(knobs, 'fh', [7])
     # share: the heal gate, the part of a heal's Expected Healing the tank must miss before it's cast
