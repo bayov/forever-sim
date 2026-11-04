@@ -1,14 +1,13 @@
 # Rotation audit: reference files
 
-- `baseline_6b480b0_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  6b480b060 (pass 53). Against the previous f331f0c baseline only rogue and warrior rows moved, both from server
-  hotfixes (rogue req files only remapped, warrior ones re-tuned): rogue 113483 (316a600ac: Shank no longer procs poisons or enchants, Mutilate
-  flat bonus; Seal Fate Daggers -17.8, Seal Fate Swords -16.0, Mutilate -8.2, Combat Swords -4.1, Combat Daggers
-  +2.2) and warrior 113539 (7cd399e88 + e07adf11b: Raging Blows out, Reckless Swings on a 1 s GCD; -6.6 to -26.7,
-  Dragonkin +6.0). The downranking (b57f5cc0a) and Chain Lightning 0.714 (280fd26e2) changes moved no row.
+- `baseline_0facd94_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  0facd9428 (pass 54). Against the previous 6b480b0 baseline: Feral cat +26 (Nature's Reach 2, hit-4 step), Ret
+  +10 to +12 (hit-3 step), rogues +5 to +8 (hit+2/+3 steps), Arcane +7 (hit-1, Master of Elements 1),
+  Elemental +7 (hotfix 113380), Enhancement +7.5 to +9 (talents, hit steps, hotfix), warriors -2.9 to +1.3
+  (Unbridled Wrath on autos only, Reckless Swings on landed swings, Fury hit+2), Destruction fire +0.8.
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at 6b480b060 (`/tmp/audit-cache/cli/6b480b06046c/wowsimcli`).
+  - The CLI was the audit loop's shared build at 0facd9428 (`/tmp/audit-cache/cli/0facd9428f42/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

@@ -137,12 +137,17 @@ func (spell *Spell) bookHitThreat(result *SpellResult, isPeriodic bool) {
 const ThreatPerHealingDone = 0.5
 
 // healingThreat is a heal's threat: half of the health it restores (not the overhealing), times the
-// spell's and the healer's threat multipliers. A target without a health bar takes the whole heal.
+// spell's and the healer's threat multipliers. A target without a health bar takes the whole heal,
+// and so does a tank in a score's replay: its health there is the stand-in healer's, which the score
+// may not read (docs/tank_sim.md, tank_mechanics-20261104-16).
 func (spell *Spell) healingThreat(result *SpellResult) float64 {
 	if !result.Landed() {
 		return 0
 	}
-	effective := result.Target.effectiveHealing(result.Damage)
+	effective := result.Damage
+	if !result.Target.readsNoHealth() {
+		effective = result.Target.effectiveHealing(result.Damage)
+	}
 	return (effective*ThreatPerHealingDone*spell.ThreatMultiplier + spell.FlatThreatBonus) * spell.Unit.PseudoStats.ThreatMultiplier
 }
 

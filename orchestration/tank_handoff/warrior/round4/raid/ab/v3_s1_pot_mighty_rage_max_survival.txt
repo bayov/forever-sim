@@ -1,0 +1,10 @@
+A=warrior_protection_max_survival.json B=pot_mighty_rage_max_survival.json preset=max_survival iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1920     1788  -132.3   64.3    176.7       54
+chromaggus        -184     -673  -489.5   37.8    107.3       79
+golemagg          2808     2736   -72.0   34.2    151.2       36
+magmadar          3232     3200   -32.3   27.0    153.1       32
+onyxia            2385     2347   -38.4   63.1    195.7       28
+ragnaros        -11709   -11359   350.2  265.7    140.3       -7
+vaelastrasz       2743     3069   325.8   41.4    218.9       30
+scoring_mean                      -73.1   19.1

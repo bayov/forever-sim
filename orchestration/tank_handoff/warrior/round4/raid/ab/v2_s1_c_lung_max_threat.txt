@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=c_lung_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         4216     4454   238.0   19.4     91.2      -56
+chromaggus        3963     4121   157.3   11.7     70.3      -17
+golemagg          4425     4572   146.5   13.7     68.5       -8
+magmadar          4493     4643   150.3   13.7     73.1       -4
+onyxia            4482     4696   214.0   17.3     95.1      -14
+ragnaros          2615     2817   201.6   38.4     68.1      -62
+vaelastrasz       4680     5054   373.8   23.3    186.3       -3
+scoring_mean                      213.3    6.9

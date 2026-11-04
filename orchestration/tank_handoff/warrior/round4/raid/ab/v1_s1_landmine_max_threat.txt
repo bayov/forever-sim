@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=landmine_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         4216     3954  -261.8   21.1   -150.8      -40
+chromaggus        3963     3720  -243.3   14.7   -117.9        8
+golemagg          4425     4159  -266.5   13.9   -133.9       -1
+magmadar          4493     4255  -238.1   15.4   -116.9        4
+onyxia            4482     4160  -322.6   19.8   -157.8        4
+ragnaros          2615     2398  -217.0   38.7   -122.8      -27
+vaelastrasz       4680     4166  -514.6   24.0   -259.6      -11
+scoring_mean                     -307.8    7.6

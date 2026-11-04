@@ -1,0 +1,38 @@
+A=base_max_survival.json B=pot_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+2026/11/04 19:42:43 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:44 All 4 sims finished successfully.
+2026/11/04 19:42:44 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:46 All 4 sims finished successfully.
+magmadar          2886     2886     0.0    0.0      0.0        0
+2026/11/04 19:42:46 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:47 All 4 sims finished successfully.
+2026/11/04 19:42:47 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:49 All 4 sims finished successfully.
+golemagg          2469     2469     0.0    0.0      0.0        0
+2026/11/04 19:42:49 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:50 All 4 sims finished successfully.
+2026/11/04 19:42:50 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:51 All 4 sims finished successfully.
+onyxia            3133     3133     0.0    0.0      0.0        0
+2026/11/04 19:42:51 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:52 All 4 sims finished successfully.
+2026/11/04 19:42:52 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:53 All 4 sims finished successfully.
+broodlord          714      714     0.0    0.0      0.0        0
+2026/11/04 19:42:53 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:54 All 4 sims finished successfully.
+2026/11/04 19:42:54 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:54 All 4 sims finished successfully.
+vaelastrasz       2212     2212     0.0    0.0      0.0        0
+2026/11/04 19:42:55 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:42:57 All 4 sims finished successfully.
+2026/11/04 19:42:57 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:43:00 All 4 sims finished successfully.
+chromaggus        -805     -805     0.0    0.0      0.0        0
+2026/11/04 19:43:00 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:43:02 All 4 sims finished successfully.
+2026/11/04 19:43:02 Running 10000 iterations on 4 concurrent sims.
+2026/11/04 19:43:04 All 4 sims finished successfully.
+ragnaros        -11678   -11678    -0.0    0.0     -0.0        0
+scoring_mean                        0.0    0.0

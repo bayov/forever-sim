@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=stone_dense_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         4216     4188   -27.7    3.6    -13.0        2
+chromaggus        3963     3944   -19.1    1.6    -10.0       -1
+golemagg          4425     4397   -28.2    2.2    -13.9        0
+magmadar          4493     4474   -18.9    1.9     -9.4        0
+onyxia            4482     4461   -21.4    1.9    -10.9       -0
+ragnaros          2615     2587   -28.2    5.5    -10.2        7
+vaelastrasz       4680     4656   -23.8    2.3    -11.9        0
+scoring_mean                      -23.2    1.0

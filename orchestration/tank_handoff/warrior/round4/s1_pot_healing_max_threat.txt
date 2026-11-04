@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=pot_healing_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3575     3219  -356.0   20.2   -175.8        5
+chromaggus        3267     3056  -211.6   12.1   -106.9       -2
+golemagg          3737     3438  -299.6   14.0   -149.8        0
+magmadar          3835     3531  -303.8   15.2   -154.1       -4
+onyxia            3807     3363  -443.6   20.8   -221.4        0
+ragnaros          1983     1631  -352.2   32.6   -157.2       36
+vaelastrasz       3979     3531  -447.9   18.3   -224.6       -3
+scoring_mean                     -343.8    7.0

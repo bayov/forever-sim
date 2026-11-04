@@ -193,11 +193,115 @@ tank's health:
 
 Last Stand stays out: it changes max health, which the survival replay doesn't follow.
 
+## Round 4 consumables (2026-11-04, findings tank_fairness -10, -11 and -9)
+
+The bear's consumable A/B (`orchestration/tank_handoff/druid/round3/`) run for the warrior at each weight: every
+consumable slot, one change at a time against the request, paired `abtest -preset <p>` on the six scoring bosses at
+the preset's own weight, screened at 3,000 iterations (seed 1), the winners decided at 10,000 on seeds 1 and 2 (disjoint).
+Raw output, scripts (`gen.py`, `ab.sh`, `ab2.sh`) and an index: `orchestration/tank_handoff/warrior/round4/`.
+
+| Change (six-boss mean, 10,000) | Max threat | Balanced | Max survival |
+|---|---|---|---|
+| **Flask of Natural Precision** for the Titans | +662.2 ± 3.4 / +662.5 ± 3.5 | +533.2 ± 5.1 / +536.9 ± 4.9 | +377.6 ± 11.2 / +386.4 ± 11.1 |
+| **Elemental Sharpening Stone** for the Dense | +18.7 ± 0.4 / +19.0 ± 0.4 | +18.9 ± 0.9 / +21.0 ± 0.9 | +14.2 ± 2.1 / +16.6 ± 2.4 |
+| Dirge's chops for the Dumpling (on the new flask and stone) | -30.4 ± 0.8 (3,000) | -6.3 ± 2.1 (3,000) | **+46.0 ± 2.5 / +43.8 ± 2.3** |
+| Greater Stoneshield Potion for the Mighty Rage Potion (same) | -252 (3,000) | -183 (3,000) | **+83.4 ± 11.0 / +92.4 ± 10.4** |
+| both together | | | **+118.5 ± 10.9 / +124.3 ± 10.3** |
+
+(Seed 1 / seed 2.) The Precision flask gives 5% expertise in the Natural flasks' zones (`naturalFlaskZone`, true in every
+bench encounter, as for the bear), which takes 5% off the boss's parry and dodge of the warrior's attacks; the boss's
+parry also hastes its swing, so it hits the tank less often as well as the tank landing more attacks. It was never
+searched for the warrior: round 3's Natural Accuracy lost to the Titans (-23 / -55 / -150) and Aggression and Swiftness
+are +44 / +4 / -109 and +27 / -29 / -142 on the old base, 490 to 680 behind Precision on the new one (3,000). Everything else
+holds on the new base (3,000 iterations, six-boss mean, Max threat / Balanced / Max survival): Mongoose over Greater
+Agility (-50 / -49 / -48), Elixir of the Phalanx over Superior Defense (-30 / -74 / -172), Greater Fortitude (without
+-26 / -58 / -131 on the old base), Juju Power over Giants (-11 / -11 / -12), Juju Might over Winterfall Firewater
+(-4.5), the Mighty Rage Potion over Great Rage (-144 / -170 / -201), the Dragonbreath Chili (off: -2 +- 7 / +8 +- 10 /
++11 +- 21: a tie, kept), Tender Wolf Steak (-26 / -16 / +22 +- 12, behind Dirge's) and Grilled Squid or Blessed Sunfruit
+(-25 to -31). The Dense Weightstone doesn't fit a warrior's weapon (it scores as no stone). The Zanza slot, Rumsey Rum
+Black Label and the Goblin Sapper Charge came in a second pass (below, "the full raid set").
+
+Own-weight six-boss mean, 10,000 iterations, before (round 3's requests) → after, seed 1 / seed 2:
+
+| Preset | Seed 1 | Seed 2 |
+|---|---|---|
+| Max threat | 3,695.5 → **4,381.7** (+686.0 ± 3.4) | 3,687.7 → **4,373.5** (+685.9 ± 3.5) |
+| Balanced | 3,010.7 → **3,567.5** (+556.9 ± 5.1) | 3,005.7 → **3,564.3** (+558.7 ± 4.9) |
+| Max survival | 1,202.0 → **1,717.3** (+515.2 ± 10.6) | 1,193.8 → **1,721.2** (+527.4 ± 11.1) |
+
+At 1,000 iterations (`summary.tsv`): 4,382.8 / 3,562.0 / 1,696.7. The talents and knobs were searched on the old
+consumables and are not re-searched here: the flask moves what the boss's parry is worth, so a rotopt pass on the new
+requests may move a knob or a talent.
+
+**The UI presets match the bench** (finding -11, 2026-11-04). `ui/tank_warrior/presets.ts` had `queueDelay: 250`
+(the bench's requests carry none; 250 costs 2% at Max threat), and loaded Thunder Clap, Demoralizing Shout, Demoralizing
+Roar and the tank Sunder ramp, which `tankscore.OwnDebuffs` takes off for the warrior because its rotation keeps them up
+(it pays their Rage and GCDs). The UI now has queueDelay 0 and none of the four, the bench's flask, stone, and for Max
+survival its food and potion (`EncounterLevel60TankMaxSurvival`), and the bench's fight as a preset encounter (the Level 60
+boss, a 600 HPS healer every 2 s, 180 s, the Natural flasks' zone) that the three builds load, as the bear's UI does; the
+reaction time is the UI's default 200 ms, the bench's. Rotation, gear, talents, race, professions, raid buffs, party
+and individual buffs were already the bench's. Nothing stripped is there for a real reason: the four debuffs are the
+warrior's own to cast and the UI's rotations cast them (or leave them out, as Max threat's `tc=0` does).
+
+### Round 4 consumables, the full raid set (2026-11-04, tank-fixes6)
+
+Standards 11 for the tanks too: the Zanza / Blasted Lands slot, Rumsey Rum Black Label and the explosives, which the
+first pass left out under the bear's "call 10" (a worker's choice, not a ruling; dropped). Shared set, all three:
+Flask of Natural Precision (the Natural flasks' zone on for all six bosses, Onyxia too), Elixir of the Mongoose, Elixir
+of the Phalanx, Elixir of Greater Fortitude, Juju Power, Juju Might, Elemental Sharpening Stone, Dragonbreath Chili,
+**Rumsey Rum Black Label** and the **Goblin Sapper Charge**, which the three rotations throw right after the trinkets
+(once a fight, its 5 min cooldown). Zanza slot: **R.O.I.D.S.** for Max threat, **Spirit of Zanza** for Balanced and Max
+survival. Food and potion as before: Smoked Desert Dumpling and Mighty Rage Potion; Max survival Dirge's chops and the
+Greater Stoneshield Potion. The warrior already has Engineering (with Blacksmithing), so no profession changes.
+
+Method as the first pass (paired `abtest -preset <p>`, own weight, six scoring bosses): every option alone on the old
+requests at 3,000 (seed 1), the stack and its leave-outs, then flask, food, elixirs, stone, potion and chili re-checked
+on the stacked set, the close calls at 10,000 on seeds 1 and 2. Raw output, scripts and an index:
+`orchestration/tank_handoff/warrior/round4/raid/` (`README.txt`, `ab_summary.txt`).
+
+| Each item on the final set (leave it out, 10,000, seed 1 / seed 2) | Max threat | Balanced | Max survival |
+|---|---|---|---|
+| Goblin Sapper Charge | +181.4 / +198.5 (± 3.8) | +184.2 / +185.8 (± 5.5) | +212.3 / +211.8 (± 9.9) |
+| Zanza slot (R.O.I.D.S. / Spirit / Spirit) | +64.7 / +64.9 (± 0.1) | +77.5 / +77.4 (± 1.5) | +160.3 / +155.1 (± 2.3) |
+| Rumsey Rum Black Label | +10.8 / +10.6 (± 0.4) | +21.1 / +22.2 (± 0.9) | +46.4 / +48.0 (± 1.4) |
+
+The sapper is instant and off the GCD; its 450 to 750 Fire at the pull is threat when the raid's threat ceiling is
+lowest, and its 375 to 625 self-damage costs little. Every other explosive loses: Thorium Grenade, Dense and Solid
+Dynamite, Goblin Land Mine, EZ-Thro Dark Bomb and Thorium Grenade and the Holy Hand Grenade (all 1 sec casts that
+reset the swing) cost 270 to 430 at the pull (3,000), and a grenade or Dark Bomb after the sapper (the shared 1 min
+timer: at 60 and 120 s) costs 14 to 18 (3,000), so none is taken (standards 11). The Zanza slot (10,000, seed 1 / 2, against
+the pick): Max threat Ground Scorpok -18.5 / -23.0, Spirit -30.4 / -30.4; Balanced R.O.I.D.S. -13.2 / -13.0, Scorpok
+-15.2 / -25.1; Max survival Scorpok -65.8 / -51.2; Lung Juice -36 to -80 (3,000). Sheen and Swiftness of Zanza, Gizzard
+Gum and Cerebral Cortex do nothing for a warrior in the sim (0.0); the Darnassus Gift Collection (+30 Agility, a Love
+is in the Air holiday item of an Alliance city) was screened (+50 / +73 / +126 on the old requests, under the picks)
+and not taken. Alcohol: Gordok Green Grog -3.7 / -6.3 / -16.9 against the Black Label (Rumsey Rum Dark the same), Rum Light less,
+Kreeg's Stout nothing. Re-checked on the final set and kept (3,000 unless noted): the Precision flask (Titans -393 to
+-654, the other Natural flasks -464 to -672), Mongoose (Greater Agility -43 to -53), Phalanx (Superior Defense -29 to
+-127), Greater Fortitude (none -26 to -117), Juju Power (Giants -12 to -14), Juju Might (Firewater -5.5), the
+Elemental stone (none -32 to -43), Dumpling at Max threat and Balanced (Tender Wolf Steak -22.4 / -27.9 and -14.3 /
+-20.1, Dirge's -14.9 / -14.2 at Balanced, 10,000), Dirge's at Max survival (Dumpling -27.7 / -27.7, Wolf Steak -24.3 /
+-11.2, 10,000), the Stoneshield at Max survival (Mighty Rage -82.9 / -91.8, 10,000) and the chili (off: -8.8 / -13.5,
+-20.2 / -14.3, -5.3 ± 9.6 / -3.5 ± 10.3, 10,000).
+
+Own-weight six-boss mean, 10,000 iterations, before (the first pass's requests) → after, seed 1 / seed 2:
+
+| Preset | Seed 1 | Seed 2 |
+|---|---|---|
+| Max threat | 4,381.7 → **4,636.8** (+255.3 ± 3.8) | 4,373.5 → **4,645.5** (+272.2 ± 3.8) |
+| Balanced | 3,567.5 → **3,851.5** (+284.3 ± 5.3) | 3,564.3 → **3,850.5** (+286.2 ± 5.6) |
+| Max survival | 1,717.3 → **2,141.2** (+423.7 ± 10.0) | 1,721.2 → **2,140.0** (+418.9 ± 10.1) |
+
+At 1,000 iterations (`summary.tsv` rows: `round4/summary_warrior_rows.tsv`): 4,644.5 / 3,867.3 / 2,138.7. The UI
+presets carry the same: `ui/tank_warrior/presets.ts` (Max threat its own consumables and encounter preset, for
+R.O.I.D.S.) and the sapper action in `ui/tank_warrior/apls/level60_*.apl.json`, which are the requests' rotations. As
+in the first pass, talents and knobs were not re-searched on the new consumables.
+
 ## Presets (2026-11-04, round 2; round 3 on top)
 
 **Round 3** (2026-11-04, after the second tank audit; master fd9538c: mana-gain threat unmultiplied, tank_mechanics
--12, and disjoint tank seeds, tank_rotations -13). The warrior gains no mana, and the presets bench as before (1,000
-iterations: 3,694.8 / 3,008.5 / 1,204.9 against round 2's 3,694.8 / 3,008.5 / 1,205.0). The same search as round 2
+-12, and disjoint tank seeds, tank_rotations -13). The warrior gains no mana; at 1,000 iterations the presets bench
+3,700.2 / 3,008.5 / 1,205.0 (Max threat 3,694.8 in round 2: Shield Wall at 13 s moved it; Balanced and Max survival
+as in round 2; round 4's consumables above move all three to 4,382.8 / 3,562.0 / 1,696.7, and the full raid set to 4,644.5 / 3,867.3 / 2,138.7). The same search as round 2
 (talents and knobs alternated, all nine races, the gear A/Bs) moved one thing: Max threat's Shield Wall in the last
 13 s instead of 12 (+4.6 ± 1.4 on seed 1, +3.5 ± 1.3 on seed 2, 10,000 iterations; 14 s +1.7 / +0.6, 11 s
 -8.8 / -6.6). Every small call was checked on a second, disjoint seed (`-seed 2`). Raw output, commands and the A/B
@@ -253,11 +357,11 @@ candidate and 3,000 to confirm; gear, Shield Wall and Sunder A/Bs with the rotat
 knob searches alternated until neither moved. Raw output: `orchestration/tank_handoff/warrior/round2/`
 (`ab_summary.txt` lists every A/B).
 
-| Preset | Talents | Knobs that differ from Balanced | Gear | Race | Score at own weight (tankbench, 1,000) |
-|---|---|---|---|---|---|
-| Max threat (w = 1/3) | `04-05050015-250330020330001351`: Deflection 4, Blood Craze 1, Anticipation 3, Improved Sunder Armor 3 | `tc=0` (no Thunder Clap), `hsRage=30`, `revengeFirst=1`, `sunderRage=15`, `wallAt=13` (round 3; was 12) | attack power on-use (991018) | Undead | 3,700.2 (round 3) |
-| Balanced (w = 1, default) | `05-05050005-250530020310001351`: Deflection 5; Cruelty, Unbridled Wrath, Enrage 5/5; Protection 31 with Shield Slam, Improved Sunder Armor 1, no Last Stand or Vanguard | (the base) | attack power on-use (991018) | Undead | 3,008.5 |
-| Max survival (w = 3) | Balanced's (its own search ends there) | `trinketAt=35` (the armor trinket held for the last 35 s) | armor on-use (990617), `level60_phase1_synthetic_armor_trinket.gear.json` | Undead | 1,205.0 |
+| Preset | Talents | Knobs that differ from Balanced | Gear | Race | Consumables beyond the shared set (round 4) | Score at own weight (tankbench, 1,000) |
+|---|---|---|---|---|---|---|
+| Max threat (w = 1/3) | `04-05050015-250330020330001351`: Deflection 4, Blood Craze 1, Anticipation 3, Improved Sunder Armor 3 | `tc=0` (no Thunder Clap), `hsRage=30`, `revengeFirst=1`, `sunderRage=15`, `wallAt=13` (round 3; was 12) | attack power on-use (991018) | Undead | R.O.I.D.S., Desert Dumpling, Mighty Rage Potion | 3,700.2 (round 3); 4,644.5 (round 4, full raid set) |
+| Balanced (w = 1, default) | `05-05050005-250530020310001351`: Deflection 5; Cruelty, Unbridled Wrath, Enrage 5/5; Protection 31 with Shield Slam, Improved Sunder Armor 1, no Last Stand or Vanguard | (the base) | attack power on-use (991018) | Undead | Spirit of Zanza, Desert Dumpling, Mighty Rage Potion | 3,008.5; 3,867.3 (round 4) |
+| Max survival (w = 3) | Balanced's (its own search ends there) | `trinketAt=35` (the armor trinket held for the last 35 s) | armor on-use (990617), `level60_phase1_synthetic_armor_trinket.gear.json` | Undead | Spirit of Zanza, Dirge's chops, Greater Stoneshield Potion | 1,205.0; 2,138.7 (round 4) |
 
 All three wear Superior Deflection (Defense +9) on the wrists, Enchant Shield - Greater Stamina (spell 20017, +9 Stamina, enchant 1886, the id the bracer's Superior Stamina shares) on the shield.
 

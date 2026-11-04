@@ -1,0 +1,10 @@
+A=warrior_protection_max_survival.json B=chili_off_max_survival.json preset=max_survival iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1920     1932    11.4   55.9     -6.0       -3
+chromaggus        -184     -209   -25.6   33.2    -12.4        0
+golemagg          2808     2866    57.3   26.6      1.1       -5
+magmadar          3232     3209   -23.5   22.9     -7.7        1
+onyxia            2385     2436    50.8   66.9     -0.6       -3
+ragnaros        -11709   -11760   -50.0  274.4     -3.1        5
+vaelastrasz       2743     2707   -36.4   38.6     -1.8        9
+scoring_mean                        5.7   17.8

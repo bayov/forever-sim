@@ -1,0 +1,10 @@
+A=warrior_protection_max_survival.json B=food_dumpling_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1971     1922   -48.9    5.9     21.6       10
+chromaggus        -236     -241    -5.8    4.0     22.3        6
+golemagg          2850     2836   -13.7    2.6     22.2        6
+magmadar          3212     3199   -12.3    2.0     22.1        5
+onyxia            2361     2291   -70.7    4.6     21.3        7
+ragnaros        -11503   -11854  -351.0   42.8     21.5       42
+vaelastrasz       2682     2668   -14.5    2.7     20.1       14
+scoring_mean                      -27.7    1.6

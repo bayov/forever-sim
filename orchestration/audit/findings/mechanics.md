@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261104-1: Client 70790 carries the November 2 druid values; the sim's "about 25% / 40%" scales differ from them, Ferocious Bite's Energy part most
+- severity: low (estimated, not measured: under 0.5% on the cat presets, under 0.1% on Balance)
+- affects: druid (Feral cat presets, Balance)
+- found: 2026-11-04, master 0facd9428, client 1.60.1.70790 (tier 1)
+- evidence: `sim/druid/tuning_70753.go:13-21` says "None of it is in the client" and scales by nov2BleedScale 1.25 / nov2StarfireScale 1.4. 70790 SpellEffect (`AUDIT_DB=~/.cache/wow-data/wago/1.60.1.70790 python3 tools/audit/mechanics/sp.py 31018`, and `wago.py diff 1.60.1.70755 1.60.1.70790 --by-spell`): Ferocious Bite r6 31018 #0 bp 82->102, per combo point 147->181 (x1.231; sim 183.75), #1 (damage a point of extra Energy) 270->330 (x1.222; sim keeps 2.7, `ferocious_bite.go:113-115` "the damage a point of extra Energy stays"); Starfire r7 25298 bp 381->533, per level 2.4->3.4 (x1.417; sim 3.36); Rip r6 9896 15->19, 25.5->31.9; Rake r4 9904 61->76 / 34->42; Pounce r3 9826 25->31; Shred 200, Claw 140, Ravage 435 match the sim. The attack power coefficients aren't in the client (apcoef 0), so the 1.25 on them stays the notes' reading.
+- proposed fix: take the 70790 rows for the base and per-point values (Ferocious Bite per Energy 3.3 at r6 and the other ranks' #1 values; per combo point 181 etc.; Starfire growth 3.4 a level and the other ranks' RealPointsPerLevel), keep nov2BleedScale only on the attack power parts, and fix the stale "None of it is in the client" comment. The client update auditor should re-read every class's notes-only gates against 70790 the same way.
+- needs: worker fix
+
 ## Resolved
 
 ### mechanics-20261103-2: The notes' tank threat values (Bear Form 115%, Defensive Stance 80%, Defiance 7/13/20%) are not in the sim

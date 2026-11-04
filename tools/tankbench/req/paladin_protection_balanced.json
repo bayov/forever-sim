@@ -242,17 +242,20 @@
        ]
       },
       "consumes": {
-       "flask": "FlaskOfTheTitans",
-       "food": "FoodSmokedDesertDumpling",
+       "flask": "FlaskOfSupremePower",
+       "food": "FoodNightfinSoup",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
        "healthElixir": "ElixirOfGreaterFortitude",
-       "mainHandImbue": "DenseSharpeningStone",
+       "mainHandImbue": "ElementalSharpeningStone",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
        "spellPowerBuff": "GreaterArcaneElixir",
        "defaultPotion": "MajorManaPotion",
-       "dragonBreathChili": true
+       "dragonBreathChili": true,
+       "zanzaBuff": "SpiritOfZanza",
+       "alcohol": "AlcoholRumseyRumBlackLabel",
+       "sapperExplosive": "SapperGoblinSapper"
       },
       "buffs": {
        "blessingOfKings": true,

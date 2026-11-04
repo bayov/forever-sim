@@ -75,6 +75,7 @@
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
               "fillerExplosive": "ExplosiveEZThroDarkBomb",
+              "sapperExplosive": "SapperGoblinSapper",
               "mainHandImbue": "DenseWeightstone",
               "defaultPotion": "MightyRagePotion",
               "defaultConjured": "ConjuredRogueThistleTea",

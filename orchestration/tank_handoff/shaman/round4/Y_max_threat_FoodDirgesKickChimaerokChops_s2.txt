@@ -1,0 +1,10 @@
+A=shaman_warden_max_threat.json B=Y_max_threat_FoodDirgesKickChimaerokChops.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1978     2088   109.5    9.7     -9.8     -129
+chromaggus        1809     1806    -2.5    1.0     -9.2      -16
+golemagg          2679     2669   -10.5    0.5     -9.3       -7
+magmadar          2833     2822   -10.9    0.4     -9.6       -7
+onyxia            2632     2634     1.8    1.1    -10.4      -13
+ragnaros           187      311   124.1   10.2     -8.7     -134
+vaelastrasz       3468     3460    -8.0    0.9    -10.9      -33
+scoring_mean                       13.2    1.6
