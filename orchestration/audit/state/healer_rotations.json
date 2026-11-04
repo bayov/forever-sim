@@ -1,1 +1,10 @@
-{"last": {"master": "36cd929a2"}}
+{
+ "last": {
+  "master": "a1b1163d2de909f588c22d9473422b8108eedd12"
+ },
+ "last_pass_at": "2026-11-04T13:40:39Z",
+ "pass": 1,
+ "result": "findings",
+ "note": "Pass 1 (forced, first after H3): baseline of 9 requests x 7 boss files at 1,000 it equals the H3 carry table exactly; 15 one-line variants and the 180/300 s mana side, none wins by 0.02. One low finding (Holy priest dead lines). Disc tank healer OOM at 227 s on Golemagg 300 s left as an open item.",
+ "baseline": "ref/healer_bench/summary.tsv"
+}
