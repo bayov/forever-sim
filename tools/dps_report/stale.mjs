@@ -30,7 +30,8 @@
 // DPS-only CLI, patches and step scripts), the top-level sim/*.go that registers the classes, its bench
 // (tools/tankbench or tools/healbench: main.go and the requests), tools/tankscore, the seven boss files in
 // tools/encounters, the class packages its presets (and, for healing, the bench's tank and filler) use, tankheal.py,
-// and the database entries its requests wear. They are listed apart (`benches` in --json, a second block in the
+// the race sims' scripts and racials switch (bench_races.py, adaptive.py, patches 0002 and 0006; format 2), and the
+// database entries its requests wear. They are listed apart (`benches` in --json, a second block in the
 // text), so probe.py, which reads `stale`, sees DPS builds only.
 //
 // Usage:
@@ -164,8 +165,10 @@ export const fingerprint = memo((r, id) => {
 });
 
 // the Tanking and Healing modes' inputs (tankheal.py)
-export const BENCH_FORMAT = 1;
-const BENCH_SHARED = ['sim/core', 'sim/common', 'sim/encounters', 'sim/lib', 'proto', 'go.mod', 'go.sum', 'tools/tankscore', 'tools/dps_report/tankheal.py'];
+export const BENCH_FORMAT = 2;
+const BENCH_SHARED = ['sim/core', 'sim/common', 'sim/encounters', 'sim/lib', 'proto', 'go.mod', 'go.sum', 'tools/tankscore', 'tools/dps_report/tankheal.py',
+	'tools/dps_report/bench_races.py', 'tools/dps_report/adaptive.py', 'tools/dps_report/patches/0002-dash-DASH_RACIALS_OFF-switch-to-leave-racial-parts-o.patch',
+	'tools/dps_report/patches/0006-dash-DASH_RACIALS_OFF_CLASS-scopes-the-racials-switch.patch'];
 const BOSSES = ['magmadar', 'golemagg', 'onyxia', 'broodlord', 'vaelastrasz', 'chromaggus', 'ragnaros'];
 const BENCH = {
 	tank: { dir: 'tools/tankbench', classes: ['warrior', 'paladin', 'druid', 'shaman'], extra: [] },

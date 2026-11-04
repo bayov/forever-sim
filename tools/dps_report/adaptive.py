@@ -9,17 +9,23 @@ it picks N = SAFETY x (sd / goal)^2 fights, rounded up to a whole number of pilo
 fights PILOT+1..N are a run with seed 1+PILOT, so the topped-up values are exactly a seed-1 run of N fights.
 
 The Tanking and Healing modes (bench_races.py) size their race and racial sims the same way, on their own scores, with
-BENCH_GOALS: the DPS goals put in each score's unit.
+BENCH_GOALS: the DPS goals' floors made BENCH_LOOSE (2.5) times looser, put in each score's unit (user ruling,
+2026-11-04: these modes may be 2 to 3 times less precise than DPS). The racial goal keeps the DPS one's 10% of the
+difference, so a racial that does something real still reads as above or below the noise (its error is at most a tenth
+of it) however loose the floor; only racials smaller than the floor can read as noise.
   tank   the score is raid DPS already (2 x SafeDPS less the DPS of the healer slots the tank's healing needs), so the
-         goals are the DPS ones as they are: a race 0.35, a racial max(0.25, 10%), in score points. The score's paired
-         spread is about 250 to 300 points a fight (healing needed is a 95th percentile), so a race comparison stops at
-         CEIL fights (an error of about 1.5 points) and a racial at what 10% of its difference asks for.
-  heal   the score is the damage carried, a scale of the encounter's damage (about 1.15 for the typical preset), so the
-         goals keep the DPS goals' relative precision at the report's typical DPS: a race 0.35 / TYPICAL_DPS of
-         TYPICAL_CARRY, a racial max(0.25 / TYPICAL_DPS of TYPICAL_CARRY, 10%). The carry's paired spread is about 0.2 a
-         fight (whether a fight dies at a given scale), so those goals would need some 300k fights; healing sims stop at
-         HEAL_CEIL instead (an error of about 0.0025), the most the full run's time allows (about 1.3 ms a fight over
-         seven bosses and two lattice scales). The errors shown are the ones reached, and the report's ties use them.
+         floors are the DPS ones times BENCH_LOOSE, in score points: a race 0.875, a racial max(0.625, 10%). The score's
+         paired spread between two races is about 130 to 300 points a fight (healing needed is a 95th percentile), so a
+         race comparison still mostly stops at CEIL fights (an error of 0.7 to 1.5 points); a racial's spread is far
+         smaller (about 16 points), so most racials need only the pilot.
+  heal   the score is the damage carried, a scale of the encounter's damage (about TYPICAL_CARRY for the typical
+         preset), so the floors keep the loosened DPS floors' relative precision at the report's typical DPS: a race
+         0.875 / TYPICAL_DPS of TYPICAL_CARRY, a racial max(0.625 / TYPICAL_DPS of TYPICAL_CARRY, 10%). The carry's
+         paired spread is about 0.2 a fight (whether a fight dies at a given scale), so even those goals would need some
+         50k fights; healing sims stop at HEAL_CEIL instead (an error of about 0.0025, a quarter of a percent of the
+         damage), the most the full run's time allows (about 1.3 ms a fight over seven bosses and two lattice scales).
+         That still reads the racials that matter (a 1% one is four errors). The errors shown are the ones reached,
+         and the report's ties use them.
 
 N is set from the paired sd, not from the error, so it comes out the same at a tenth of the fights (probe.py's runs).
 
@@ -45,10 +51,11 @@ GOALS = {'race': (0.35, 0.0), 'racial': (0.25, 0.10), 'asm': (0.25, 0.05)}  # (D
 TYPICAL_DPS = 1047  # the median DPS of the report's generic-boss presets (2026-11-04)
 TYPICAL_CARRY = 1.15  # the median damage carried of the healing presets (2026-11-04)
 HEAL_CEIL = int(os.environ.get('ADAPT_HEAL_MAX', 6000))
+BENCH_LOOSE = 2.5  # the Tanking and Healing goals' floors against the DPS ones (user ruling, 2026-11-04)
 BENCH_GOALS = {
-    'tank': {'race': GOALS['race'], 'racial': GOALS['racial']},
-    'heal': {'race': (GOALS['race'][0] * TYPICAL_CARRY / TYPICAL_DPS, 0.0),
-             'racial': (GOALS['racial'][0] * TYPICAL_CARRY / TYPICAL_DPS, GOALS['racial'][1]), 'ceil': HEAL_CEIL},
+    'tank': {'race': (GOALS['race'][0] * BENCH_LOOSE, 0.0), 'racial': (GOALS['racial'][0] * BENCH_LOOSE, GOALS['racial'][1])},
+    'heal': {'race': (GOALS['race'][0] * BENCH_LOOSE * TYPICAL_CARRY / TYPICAL_DPS, 0.0),
+             'racial': (GOALS['racial'][0] * BENCH_LOOSE * TYPICAL_CARRY / TYPICAL_DPS, GOALS['racial'][1]), 'ceil': HEAL_CEIL},
 }
 
 

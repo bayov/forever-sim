@@ -191,6 +191,9 @@ to:
 from: ,? on a timer \(a scoring run reads no health\)
 to:
 
+from: \s*\(a scoring run reads no health\)
+to:
+
 from: : the tank applies its own \(the bench drops the raid's Roar and Shout\)
 to: . Only your own counts here, not another player's Roar or Shout
 

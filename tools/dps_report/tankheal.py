@@ -21,7 +21,12 @@ Healing: every request in tools/healbench/req, `healbench -carry -role tank|raid
 (files ending _raid are raid healers), at each file's own length, the bench's seed (101): the score is the damage
 carried (docs/healing_sim.md "What a healer scores" and "The score in the bench"), its mean over the seven boss files
 (docs/healing_sim.md, H3: "The shaman's raid mean over these 7 files").
-Races: each preset again at every race its class can be (run_build.CLASS_RACES), the request's race changed.
+Races (bench_races.py, into <mode>/races.jsonl): each preset at every race its class can be (run_build.CLASS_RACES),
+with every racial left out (off) and each racial part left out (off:<part>), per-fight values from seed 1 with labeled
+random streams so every side fights the same fights, sized by adaptive.py's BENCH_GOALS (paired pilots; tank up to
+CEIL fights, heal up to HEAL_CEIL). The build moves every race by the preset race's gap to its main-run numbers, keeps
+the paired errors between races (pse), and splits each race's gap over its base stats into its racial parts
+(<mode>_race_breakdown, split_parts: Shapley for two parts, scaled leave-one-out for three or more).
 Text: what players read (preset lines, notes, boss lines, Method, rotation rewording) is written in tankheal_text/
 <mode>.md, not taken from the docs; the build stops when a string the page shows has a tool or file word (LEAK).
 
@@ -586,6 +591,104 @@ def dump(name, rows):
     print(f'{name}: {len(rows)} rows')
 
 
+RACE_KEYS = {'tank': ('scoreMaxThreat', 'scoreBalanced', 'scoreMaxSurvival', 'safeDps', 'healingNeeded', 'dtps', 'tps'),
+             'heal': ('carry', 'hps', 'ehps', 'overheal', 'manaLeft')}
+SCORE_KEY = {'max_threat': 'scoreMaxThreat', 'balanced': 'scoreBalanced', 'max_survival': 'scoreMaxSurvival'}
+# What each racial part does: the DPS report's text (build_races.py), and Night Elf Quickness, which only a tank feels.
+PART_DODGE = ('Quickness', 'Dodge chance increased by 1%.', 'ability_racial_shadowmeld')
+
+
+def race_results(src):
+    """<src>/races.jsonl (race_sims) by preset: {race: {variant: row}}."""
+    out = {}
+    p = os.path.join(src, 'races.jsonl')
+    if os.path.exists(p):
+        for line in open(p):
+            r = json.loads(line)
+            out.setdefault(r['build'], {}).setdefault(r['race'], {})[r['variant']] = r
+    return out
+
+
+def split_parts(cls, race, v, key):
+    """Each racial part's share of the race's gap over its base stats, from its race sims (v: variant -> row), and its
+    error: a part alone is the race less "off"; two parts are split by their average contribution (Shapley), so they
+    add up exactly; three or more get their leave-one-out loss, scaled so they add up to the whole gap (build_races.py
+    does the same for DPS). Returns {part: (value, error, does something)}."""
+    ps = bench_races.parts_for(cls, race)
+    base, off = v['race'][key], v['off'][key]
+    # a sim that moved no fight's number (the part does nothing here, e.g. dodge for a healer) is idle like a same one
+    idle = lambda var: v[var].get('same') or (v[var][key] is not None and abs(v[var][key] - base) < 1e-12 and not v[var].get('pseBase'))
+    if base is None or off is None:
+        return {}
+    one = lambda var: (v[var][key], v[var].get('pseBase') or 0.0)
+    if len(ps) == 1:
+        return {ps[0]: (base - off, v['off'].get('pseBase') or 0.0, not idle('off'))}
+    live = [p for p in ps if not idle('off:' + p) and v['off:' + p][key] is not None]
+    out = {p: (0.0, 0.0, False) for p in ps}
+    if len(live) == 1:
+        out[live[0]] = (base - off, v['off'].get('pseBase') or 0.0, True)
+    elif len(live) == 2:
+        a, c = live
+        oa, oc = one('off:' + a), one('off:' + c)
+        e = (oa[1] + oc[1] + (v['off'].get('pseBase') or 0.0)) / 2
+        out[a] = (0.5 * ((base - oa[0]) + (oc[0] - off)), e, True)
+        out[c] = (0.5 * ((base - oc[0]) + (oa[0] - off)), e, True)
+    elif live:
+        loo = {p: base - v['off:' + p][key] for p in live}
+        scale = (base - off) / sum(loo.values()) if sum(loo.values()) else 0
+        for p in live:
+            out[p] = (loo[p] * scale, max(abs(scale) * (v['off:' + p].get('pseBase') or 0.0), v['off'].get('pseBase') or 0.0), True)
+    return out
+
+
+def race_rows(mode, H, bid, s, cls, req, cr, main, rs):
+    """The preset's race rows and their racial parts. Every race comes from the race sims (one set of fights), moved by
+    the preset race's gap to its main-run numbers, so the preset race's row is the main run's and the gaps between
+    races are the paired ones. Each row's pse holds the paired error of its gap to every other race."""
+    import build_races
+    own = race_of(req)
+    rname = lambda rc: H['race_name'](rc)
+    keys = RACE_KEYS[mode]
+    skey = next(v for k, v in SCORE_KEY.items() if s.endswith(k)) if mode == 'tank' else 'carry'
+    ref = (rs.get(own) or {}).get('race')
+    shift = {k: (main[k] - ref[k]) if ref and main.get(k) is not None and ref.get(k) is not None else 0.0 for k in keys}
+    races, parts = [], []
+    for rc in cr[cls]:
+        v = rs.get(rc) or {}
+        r = v.get('race')
+        if rc != own and not r:
+            continue
+        nm = rname(rc)
+        row = {'build': bid, 'race': nm, 'raceIcon': H['RACE_ICON'].get(nm), 'faction': 'Horde' if nm in ('Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper') else 'Alliance',
+               'isPreset': rc == own}
+        for k in keys:
+            row[k] = main.get(k) if rc == own or not r else (r[k] + shift[k] if r.get(k) is not None else None)
+        po = (r or {}).get('pse', {}).get(own) if rc != own else None
+        if mode == 'tank':
+            for k in ('scoreMaxThreat', 'scoreBalanced', 'scoreMaxSurvival', 'safeDps', 'healingNeeded'):
+                row[k + 'Se'] = main.get(k + 'Se') if rc == own else (math.hypot(main.get(k + 'Se') or 0, po or 0) if k == skey else main.get(k + 'Se'))
+            row['healingNone'] = main['healingNone'] if rc == own or not r else r['none']
+        else:
+            row['role'] = heal_role(s)
+            row['carrySe'] = po
+        row['pse'] = {rname(o): round(e, 5) for o, e in ((r or {}).get('pse') or {}).items() if e is not None}
+        row['iters'] = (r or {}).get('iters')
+        races.append(row)
+        if not r or 'off' not in v:
+            continue
+        lo = v['off'][skey] + shift[skey] if v['off'].get(skey) is not None else None
+        if lo is None:
+            continue
+        parts.append({'build': bid, 'race': nm, 'part': 'base', 'label': build_races.PART_INFO['base'][0], 'v': round(lo, 4),
+                      'se': round(v['off'].get('pseBase') or 0.0, 4), 'active': True, 'note': '', 'text': build_races.PART_INFO['base'][1]})
+        for p, (d, e, live) in split_parts(cls, rc, v, skey).items():
+            title, text, icon = PART_DODGE if p == 'dodge' else (*build_races.PART_INFO[p], build_races.PART_ICON.get(p))
+            text = build_races.PART_SHORT.get(p, text)
+            parts.append({'build': bid, 'race': nm, 'part': p, 'label': title, 'v': round(d, 4), 'se': round(e, 4), 'active': live,
+                          'note': '' if live else 'no effect on this preset', 'text': text, 'icon': icon})
+    return races, parts
+
+
 def build():
     for mode in MODES:
         if not os.path.isdir(os.path.join(D, mode)):
@@ -617,10 +720,10 @@ def build():
         T = page_text(mode)
         need(mode, 'Presets', T['Presets'], [bid_of(s) for s in stems])
         need(mode, 'Bosses', T['Bosses'], BOSSES)
-        builds, bosses, encs, races, gear, setup, rot = [], [], [], [], [], [], []
+        builds, bosses, encs, races, rparts, gear, setup, rot = [], [], [], [], [], [], [], []
         outs_tt = []
+        RS = race_results(src)
         per = {}  # stem -> boss -> row
-        rper = {}  # stem@Race -> boss -> row
         for bi, boss in enumerate(BOSSES):
             e = json.load(open(os.path.join(TREE, 'tools/encounters', boss + '.json')))
             if mode == 'tank':
@@ -628,10 +731,6 @@ def build():
                 hd = tank_header(txt)
                 for k, v in tank_rows(txt).items():
                     per.setdefault(k, {})[boss] = v
-                rp = os.path.join(src, 'races', boss + '.txt')
-                if os.path.exists(rp):
-                    for k, v in tank_rows(open(rp).read()).items():
-                        rper.setdefault(k, {})[boss] = v
                 h = e.get('healing') or {}
                 encs.append({'boss': boss, 'name': e['name'], 'scored': boss in SCORED, 'order': bi, 'duration': e['encounter'].get('duration'),
                              'durationVariation': e['encounter'].get('durationVariation'), 'healers': h.get('healers'), 'healerHps': h.get('hpsEach'),
@@ -645,10 +744,6 @@ def build():
                     er['notes'] = T['Bosses'][boss]
                     for k, v in heal_rows(txt).items():
                         per.setdefault(k, {})[boss] = dict(v, duration=hd['duration'])
-                    rp = os.path.join(src, 'races', f'{role}_{boss}.txt')
-                    if os.path.exists(rp):
-                        for k, v in heal_rows(open(rp).read()).items():
-                            rper.setdefault(k, {})[boss] = v
                 rh = e.get('raidHealing') or {}
                 er.update({'raidHealers': rh.get('healers'), 'raidHealerClasses': rh.get('healerClasses'), 'raidHps': rh.get('raidHps'),
                            'tankHealers': (e.get('healing') or {}).get('healers')})
@@ -691,30 +786,10 @@ def build():
                 for b in BOSSES:
                     if b in rows:
                         bosses.append({'build': bid, 'boss': b, 'role': role, **rows[b]})
-            # races: the preset's own race from the main run, the others from the race copies
-            for rc in cr[cls]:
-                rname = H['race_name'](rc)
-                own = rc == race_of(req)
-                rr = rows if own else rper.get(f'{s}@{rc}', {})
-                if not rr:
-                    continue
-                row = {'build': bid, 'race': rname, 'raceIcon': H['RACE_ICON'].get(rname), 'faction': 'Horde' if rname in ('Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper') else 'Alliance',
-                       'isPreset': own}
-                if mode == 'tank':
-                    sc = [rr[b] for b in SCORED if b in rr]
-                    for k in ('scoreMaxThreat', 'scoreBalanced', 'scoreMaxSurvival', 'safeDps', 'healingNeeded'):
-                        row[k] = mean([r[k] for r in sc]) if len(sc) == 6 else None
-                        row[k + 'Se'] = mean_se([r[k + 'Se'] for r in sc]) if len(sc) == 6 else None
-                    row['dtps'] = mean([r['dtps'] for r in sc]) if len(sc) == 6 else None
-                    row['tps'] = mean([r['tps'] for r in sc]) if len(sc) == 6 else None
-                    row['healingNone'] = sum(1 for r in sc if r['healingNone'])
-                else:
-                    sc = [rr[b] for b in BOSSES if b in rr]
-                    row['role'] = heal_role(s)
-                    row['carry'] = round(sum(r['carry'] for r in sc) / len(sc), 4) if len(sc) == 7 else None
-                    for k in ('hps', 'ehps', 'overheal', 'ehPerMana', 'manaLeft'):
-                        row[k] = mean([r[k] for r in sc]) if len(sc) == 7 else None
-                races.append(row)
+            # races: every race from the race sims, put on the main run's numbers (race_rows)
+            rr_, rp_ = race_rows(mode, H, bid, s, cls, req, cr, agg, RS.get(s, {}))
+            races += rr_
+            rparts += rp_
             g, st = gear_setup(H, bid, req)
             gear += g
             setup += st
@@ -748,12 +823,13 @@ def build():
         notes = notes_rows(md2html, T, builds)
         method = method_rows(md2html, mode, T, encs)
         p = 'tank_' if mode == 'tank' else 'heal_'
-        leak_check(mode, {p + 'builds': builds, p + 'bosses': bosses, p + 'encounters': encs, p + 'races': races, p + 'gear': gear,
+        leak_check(mode, {p + 'builds': builds, p + 'bosses': bosses, p + 'encounters': encs, p + 'races': races, p + 'race_breakdown': rparts, p + 'gear': gear,
                           p + 'rotation': rot, p + 'setup': setup, p + 'tooltips': tt_rows, p + 'notes': notes, p + 'method': method})
         dump(p + 'builds', builds)
         dump(p + 'bosses', bosses)
         dump(p + 'encounters', encs)
         dump(p + 'races', races)
+        dump(p + 'race_breakdown', rparts)
         dump(p + 'gear', gear)
         dump(p + 'rotation', rot)
         dump(p + 'setup', setup)
@@ -763,7 +839,7 @@ def build():
         # names (with their colour) and icons the common datasets lack
         known = {r['key'] for r in common('names')}
         mine = sorted({r['key'] for r in rot if r['key']} | {r['key'] for r in tt_rows if r['kind'] in ('spell', 'item')})
-        icons = icon_rows(H, {r.get('icon') for r in gear + setup + rot + tt_rows + races} | {H['names'][k]['icon'] for k in mine if k in H['names']} |
+        icons = icon_rows(H, {r.get('icon') for r in gear + setup + rot + tt_rows + races + rparts} | {H['names'][k]['icon'] for k in mine if k in H['names']} |
                           {b[k] for b in builds for k in ('classIcon', 'specIcon', 'raceIcon')}, {b['specIcon'] for b in builds})
         dump(p + 'icons', icons)
         nrows = []

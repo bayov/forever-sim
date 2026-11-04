@@ -14,7 +14,10 @@ combinations.
 
 The report also has Tanking and Healing modes, from tools/tankbench and tools/healbench via
 `tools/dps_report/tankheal.py` (README "Tanking and Healing"); a change to a tank or healer preset,
-its class doc or a class's sim code re-sims them through regenerate-dps-report.
+its class doc or a class's sim code re-sims them through regenerate-dps-report. Their Specs
+pages have the DPS race card (same bar pieces, captions, legend and tooltips, drawn by the same
+helpers in report.js) from `<mode>_races` and `<mode>_race_breakdown`: every race and each of
+its racial parts on paired fights, with the paired errors behind the ≈ ties.
 
 ## 1. Read first (in this order)
 

@@ -46,8 +46,9 @@ and removed presets. A stale build *may* have moved; the probe says whether it d
 
 It also lists stale Tanking and Healing modes in a second block (`benches` in `--json`):
 their fingerprint covers the shared sim code, the classes' code, the encounters and the
-benches. A stale mode re-sims whole (`pipeline.sh tankheal tank`, about 30 s;
-`pipeline.sh tankheal heal`, about 35 min); there is no probe for it.
+benches. A stale mode re-sims whole (`pipeline.sh tankheal tank`, about TANK_TIME;
+`pipeline.sh tankheal heal`, about HEAL_TIME, most of each the race sims); there is no probe
+for it. Run it in the background with its log in a file.
 
 Tell the user the scope in one line before long runs.
 
@@ -83,7 +84,12 @@ set `SIM_COMMIT=<rev>` if the sims didn't run at HEAD. `merge.mjs` is for hand r
 `TANKHEAL=1`; `publish` builds their datasets, and for a mode simmed since its last publish
 records its provenance and repacks `raw/bench/<mode>.tgz`. Their settings are the docs'
 (docs/tank_sim.md, docs/healing_sim.md): 1,000 iterations, the 7 boss encounters, the reqs'
-seeds (healbench: 101). Build `tankbench` and `healbench` with the binaries (README). Their text
+seeds (healbench: 101). Their races (`bench_races.py`) sim every race, its racials off and each
+racial part off on paired fights (seed 1, labeled streams), sized by adaptive.py's `BENCH_GOALS`
+(the DPS luck goals with floors 2.5 times looser, in each score's unit; healing capped at
+6,000 fights), into `<mode>/races.jsonl` and the `<mode>_races` and `<mode>_race_breakdown`
+datasets. Build `tankbench` and `healbench` with `tankheal.py bins` (HEAD plus patches 0002 and
+0006, the racials switch); a bench without the switch stops the run. Their text
 (preset lines, notes, boss lines, Method) is written in `tools/dps_report/tankheal_text/{tank,heal}.md`,
 for players, not taken from the docs: a new preset or boss needs its entry there, and the build
 stops on a missing one or on a tool or file word in anything the page shows (`tankheal.py` LEAK).

@@ -96,6 +96,7 @@ git commit -am "dash: regenerate db"                               # local only
 git am -3 ../forever-sim/tools/dps_report/patches/000[1-3]-*.patch  # `git am --skip` a patch the merged heads already contain
 git apply ../forever-sim/tools/dps_report/patches/0004-*.patch    # a plain diff, not a mail
 git apply ../forever-sim/tools/dps_report/patches/0005-*.patch    # DASH_SPLITS, a plain diff too
+git apply ../forever-sim/tools/dps_report/patches/0006-*.patch    # DASH_RACIALS_OFF_CLASS on top of 0002 (tankheal.py's race sims)
 protoc -I=./proto --go_out=./sim/core ./proto/*.proto              # only if sim/core/proto/*.pb.go are missing (protoc-gen-go in ~/go/bin on PATH)
 B=../forever-sim/tools/dps_report/bin; mkdir -p $B
 go build -tags=with_db -o $B/wowsimcli ./cmd/wowsimcli
@@ -116,10 +117,11 @@ dashboard-only and never go to a class branch.
 | Patch | What it does | Needed by |
 |---|---|---|
 | `0001` DASH_NAMES dump, dashstats, manaAbove dedupe | In `sim/core/environment.go` (finalize): when `DASH_NAMES=<file>` is set, appends every unit's aura `spellId itemId otherId tag label` to that file. Also adds `tools/dashstats/main.go`, and drops the duplicate `manaAbove` from `tools/rotopt/priest_shadow.go`. | `run_build.py` (`names/<id>.tsv`, used for aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`). `stats` needs dashstats. rotopt needs the dedupe to build. |
-| `0002` DASH_RACIALS_OFF | In `sim/core/racials_forever.go` and the priest racials (Chastise, Dark Sacrifice, Starshards, Shadowguard): `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` leaves those racial parts out. Parts: spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command, bloodfury, touch, endurance, berserking, windblessed, insight, leyline, chastise, starshards, darksacrifice, shadowguard. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants) |
+| `0002` DASH_RACIALS_OFF | In `sim/core/racials_forever.go` and the priest racials (Chastise, Dark Sacrifice, Starshards, Shadowguard): `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` leaves those racial parts out. Parts: spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command, bloodfury, touch, endurance, berserking, windblessed, insight, leyline, chastise, starshards, darksacrifice, shadowguard. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants), `bench_races.py` (the same for the Tanking and Healing races, with 0006) |
 | `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | nothing in the report: master has the Forever half since PR #94, and the patch keeps only the Classic `racials.go` line. |
 | `0004` DASH_ASSUME knobs | `sim/core/assumptions.go`: `DASH_ASSUME="key=value,..."` overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). A plain diff against master with 0001 to 0003 applied; apply with `git apply`. A knob on a constant master already sets (the caster rank scales, Ice Lance's coefficient, Rend's attack power share, the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's Mark ranks) defaults to that constant, so a run with no knob reproduces master. Rebased 2026-10-23 onto the wowsims/forever alignment round: the knobs of the assumptions it settled are gone (orchestration/alignment_round_2026-10-23.md). Build it as `$DASH_BIN/wowsimcli_assume`. | `run_assumptions.py` |
 | `0005` DASH_SPLITS | `sim/core/sim_concurrent.go`: `DASH_SPLITS=<n>` sets how many parts a sim's iterations are split into (default one per CPU). `pipeline.sh` sets 4, so the raw outputs are the same on every machine: the splits' seeds already continue each other, but averaging the parts moves the last bits. A plain diff; apply with `git apply`. | `pipeline.sh` (every step), `rawstore.py` (refuses packs made with another count) |
+| `0006` DASH_RACIALS_OFF_CLASS | On top of 0002: `DASH_RACIALS_OFF_CLASS=<Class>` (`Paladin`, `Priest`, ...) keeps the switch to the players of that class, so a healing preset's racials go while the healbench raid's tank (an Orc Warrior) and damage dealers keep theirs. `core.DashRacialOffFor(class, part)`. | `bench_races.py` (sets it to the preset's class) |
 
 The db regeneration commit isn't exported because it's binary; rerun gen_db instead. Merge commits aren't exported either:
 their conflict resolutions follow the rules above. With no env var set, the patches leave the Forever sim's behaviour
@@ -311,8 +313,23 @@ What is simmed (the docs say how, `tankheal.py` does not choose):
 - Healing: the presets in `tools/healbench/req/`, `-carry`, `-role tank` for the tank healer files and `-role raid` for
   `_raid`, 1,000 iterations, each file at its own length, healbench's fixed seed 101, and the mean over the 7 boss files
   (docs/healing_sim.md, the "Carry, 1,000 iterations" table and the shaman's "raid mean over these 7 files").
-- Races: every race the class can be (`CLASS_RACES` in run_build.py), as a copy of the req with the race changed, in
-  one extra bench call per boss (`--no-races` skips it).
+- Races (`bench_races.py`, into `<mode>/races.jsonl`; `--no-races` skips them): every race the class can be
+  (`CLASS_RACES` in run_build.py), and each race with every racial left out (`off`) and, for a race with more than one
+  part that can count, each part left out (`off:<part>`: the DPS parts plus Night Elf `dodge`; the beast and elemental
+  parts are skipped, since no bench boss has a creature type). The benches write each fight's values (`-vectors`):
+  tankbench its SafeDPS, the healing it lived through, DTPS and TPS; healbench, at a list of damage scales (`-scales`),
+  each fight's deaths (`fight_deaths`), HPS, useful HPS and mana left. Every side runs seed 1 with labeled random
+  streams (`-seed 1 -labeled`), so fight i is the same fight for every race and racial, and adaptive.py's `values`
+  keeps the vectors (`vec/bench_tank`, `vec/bench_heal`) and tops them up. Fights are sized like the DPS race sims,
+  with the paired pilots and `BENCH_GOALS` (adaptive.py's docstring says how they follow from the DPS goals): races
+  pilot 2,000 fights, then go to what the widest gap between neighbouring races needs (tank up to `CEIL`, 40,000;
+  heal up to `HEAL_CEIL`, 6,000), racials pilot 1,000 and go to what their difference needs. A tank's score per fight
+  set is the bosses' mean of 2 x SafeDPS less the healer slots the 95th percentile of its healing needs; a healer's
+  carry per boss walks the lattice of scales 1.03^j from the main run's carry and interpolates where the deaths cross
+  the line (tank healer: tank deaths 2%; raid healer: any death 5%). The errors are a paired bootstrap (400 resamples
+  of the fights, shared by every side). The build puts the races on the main run's numbers (each race moved by the
+  preset race's gap) and splits a race's gap over its base stats into its parts (`_race_breakdown`: Shapley for two,
+  scaled leave-one-out for three or more, like build_races.py).
 
 Commands (`DASH_DIR` as for the DPS steps; with no `$DASH_DIR` tree they read the repository itself):
 
@@ -333,7 +350,9 @@ fresh mode records its provenance (`stale.mjs --record-bench <modes> --iteration
 `--json`, so probe.py's ids are unchanged): its fingerprint covers the shared sim code, `sim/<class>/`, the encounters,
 the reqs' db items, tools/tankbench, tools/healbench, tools/tankscore and `tankheal.py`.
 
-Datasets per mode: `<mode>_builds`, `_bosses`, `_encounters`, `_races`, `_gear`, `_rotation`, `_setup` (the DPS shapes),
+Datasets per mode: `<mode>_builds`, `_bosses`, `_encounters`, `_races` (with `pse`, the paired error of each race's
+gap to every other race), `_race_breakdown` (base stats and each racial part, `v` and `se`, in the preset's score),
+`_gear`, `_rotation`, `_setup` (the DPS shapes),
 `_tooltips` (rows the common tooltips lack), `_notes`, `_method`, `_icons` and `_names` (what the common icons and names
 lack).
 
@@ -347,16 +366,19 @@ library is installed). Then `tankheal.py`'s leak check reads every string the pa
 tool, file or process word (`LEAK`: tools/, docs/, file extensions, bench, rotopt, seed, iterations, template,
 request, APL, code spans, ...): reword the text file, don't widen `LEAK_SKIP`.
 
-Building the benches (they need the generated protos and the item db; the binaries go wherever `TANKHEAL_BIN` points):
+Building the benches: `PATH=$PATH:~/go/bin tankheal.py bins` builds both into the binaries directory from a worktree
+of HEAD with patches 0002 and 0006 applied (the racials switch; a bench without it fails the race sims, since every
+racial would measure exactly nothing). By hand:
 
 ```sh
+git apply tools/dps_report/patches/0002-*.patch tools/dps_report/patches/0006-*.patch
 PATH=$PATH:~/go/bin npx protoc -I=./proto --go_out=./sim/core ./proto/*.proto
 go build -tags=with_db -o $B/tankbench ./tools/tankbench
 go build -tags=with_db -o $B/healbench ./tools/healbench
 ```
 
-A full run takes about half a minute for tanking and about 25 minutes for healing (most of it the raid files' race
-copies).
+The main bench calls take about half a minute for tanking and a few minutes for healing; the race sims take most of
+the run (RUNTIMES_PLACEHOLDER).
 
 ## Partial regenerations
 

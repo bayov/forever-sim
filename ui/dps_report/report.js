@@ -1402,8 +1402,7 @@ export function startReport(dash, events) {
   const shortLabel = (s) => String(s).replace('Specialization', 'Spec.');
   // A racial's game icon (race_notes) with a ring in its kind's colour, so it still ties to its part of the bar. The
   // weapon swap and a boss type with no racial behind it keep a plain swatch.
-  const partIco = (p, cls = 'fv-pico') => {
-    const ic = noteRow('part', p)?.icon;
+  const partIco = (p, cls = 'fv-pico', ic = noteRow('part', p)?.icon) => {
     const img = ic && iconMap() ? iconImg(ic, cls) : null;
     if (!img) return el('i', { style: `background:${partCol(p)}` });
     img.style.setProperty('--ring', partCol(p));
@@ -1551,6 +1550,29 @@ export function startReport(dash, events) {
     }
   };
 
+  // A race's bar split into its parts, base stats first, then each racial (segs: { part, v, from, to }, x: value to
+  // percent of the track), and the captions under it, each starting where its piece starts. The DPS race card and the
+  // Tanking and Healing ones draw their bars with these. kinds collects the racial kinds drawn, for the legend.
+  const partTrack = (segs, x, kinds) => {
+    const track = el('div', { class: 'fv-rtrack' });
+    segs.forEach((sg, k) => {
+      // the first piece runs from the track's start to its value, which can be below 0 (a tank's score)
+      const a = Math.min(sg.from, sg.to), z = Math.max(sg.from, sg.to);
+      if (sg.part !== 'base') kinds.add(sg.part === 'swap' ? 'swap' : PART_KIND[sg.part] ?? 0);
+      const neg = sg.v < 0 && sg.part !== 'base';
+      track.append(el('span', { class: 'sg' + (neg ? ' neg' : '') + (sg.part === 'swap' ? ' swap' : '') + (k === segs.length - 1 ? ' last' : ''), 'data-zone': sg.part,
+        style: `left:${k === 0 ? 0 : x(a)}%;width:${Math.max(k === 0 ? 0 : 0.6, k === 0 ? x(sg.to) : x(z) - x(a))}%;background:${partCol(sg.part)};${neg ? 'z-index:1;' : ''}` }));
+    });
+    return track;
+  };
+  // min: the smallest part that gets a caption. icon: a part's game icon when race_notes doesn't have it.
+  const partCaps = (segs, x, fd, min, icon = () => undefined) => el('div', { class: 'fv-rsub fv-rcap' }, ...segs.map((sg, k) => ({ sg, at: k === 0 ? 0 : x(Math.min(sg.from, sg.to)) }))
+    .filter(({ sg }) => sg.part !== 'base' && Math.abs(sg.v) >= min)
+    .map(({ sg, at }) => el('span', { 'data-zone': sg.part, 'data-at': at, style: `left:${at}%` }, partIco(sg.part, undefined, icon(sg.part)), `${shortLabel(sg.label)} ${fd(sg.v)}`)));
+  // The head of a part's tooltip: its icon, what it's worth (name) and what it does (text, the game's words when game).
+  const partTipHead = (part, name, text, game, icon) => el('div', { class: 'fv-tip-racial' }, part === 'base' ? el('i', { style: 'background:var(--cds-chart-muted)' }) : partIco(part, 'fv-ico', icon),
+    el('span', {}, el('b', { text: name }), text ? el('span', { class: game ? GAME_TEXT : null, text }) : null));
+
   // ---------- races: best races ----------
   // Every race, and each advantage as its own entry, ranked over the presets in the filter. On one preset a bar is
   // the entry's DPS. Over several presets it's the entry's DPS as a share of the best entry's on the same preset,
@@ -1693,18 +1715,9 @@ export function startReport(dash, events) {
     };
     const raceNameTT = (r) => { const n = raceName(r); raceTT(r, n.querySelector('b')); return n; };
     host.replaceChildren(...rows.map((r, i) => {
-      const track = el('div', { class: 'fv-rtrack' });
-      r.segs.forEach((sg, k) => {
-        const a = Math.min(sg.from, sg.to), z = Math.max(sg.from, sg.to);
-        if (sg.part !== 'base') kinds.add(sg.part === 'swap' ? 'swap' : PART_KIND[sg.part] ?? 0);
-        const neg = sg.v < 0 && sg.part !== 'base';
-        track.append(el('span', { class: 'sg' + (neg ? ' neg' : '') + (sg.part === 'swap' ? ' swap' : '') + (k === r.segs.length - 1 ? ' last' : ''), 'data-zone': sg.part,
-          style: `left:${k === 0 ? 0 : x(a)}%;width:${Math.max(k === 0 ? 0 : 0.6, x(z) - (k === 0 ? 0 : x(a)))}%;background:${partCol(sg.part)};${neg ? 'z-index:1;' : ''}` }));
-      });
+      const track = partTrack(r.segs, x, kinds);
       if (one) track.append(el('span', { class: 'wk', style: `left:${x(r.dps - r.se)}%;width:${Math.max(0.4, x(r.dps + r.se) - x(r.dps - r.se))}%` }));
-      const cap = el('div', { class: 'fv-rsub fv-rcap' }, ...r.segs.map((sg, k) => ({ sg, at: k === 0 ? 0 : x(Math.min(sg.from, sg.to)) }))
-        .filter(({ sg }) => sg.part !== 'base' && Math.abs(sg.v) >= (one ? 0.05 : 0.005))
-        .map(({ sg, at }) => el('span', { 'data-zone': sg.part, 'data-at': at, style: `left:${at}%` }, partIco(sg.part), `${shortLabel(sg.label)} ${fd(sg.v)}`)));
+      const cap = partCaps(r.segs, x, fd, one ? 0.05 : 0.005);
       // A racial with no effect here gets its reason after the race name, so it costs no extra line.
       const idle = one ? r.idle.slice(0, 3).map((q) => el('small', { 'data-zone': 'idle:' + q.part, text: `${shortLabel(q.label)}: ${q.note}` })) : [];
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
@@ -1762,8 +1775,7 @@ export function startReport(dash, events) {
           const own = node.closest('.fv-rsub, .fv-rtag');
           const at = (own ? node : segEl || node).getBoundingClientRect();
           showTip(card, Math.max(8, at.left - cr.left), (own ? at.bottom : rw.bottom) - cr.top + 4, title,
-            [el('div', { class: 'fv-tip-racial' }, part === 'base' ? el('i', { style: 'background:var(--cds-chart-muted)' }) : partIco(ip, 'fv-ico'),
-              el('span', {}, el('b', { text: name }), text ? el('span', { class: text === info?.text && racialText(ip) ? GAME_TEXT : null, text }) : null)), ...sub],
+            [partTipHead(part === 'base' ? 'base' : ip, name, text, text === info?.text && racialText(ip)), ...sub],
             { ...opts, hl: [row, segEl, capEl] });
           return;
         }
@@ -1915,7 +1927,7 @@ export function startReport(dash, events) {
   const roleDs = (m) => {
     const has = (x) => (`${m}_${x}` in dash.manifest ? `${m}_${x}` : null);
     return { el: '#rs-', builds: has('builds'), gear: has('gear'), rotation: has('rotation'), race_rotation: null, races: null, setup: has('setup'), tips: has('tooltips'),
-      icons: has('icons'), names: has('names'), bosses: has('bosses'), encounters: has('encounters'), raceRows: has('races'), notes: has('notes'), method: has('method') };
+      icons: has('icons'), names: has('names'), bosses: has('bosses'), encounters: has('encounters'), raceRows: has('races'), raceParts: has('race_breakdown'), notes: has('notes'), method: has('method') };
   };
   const ROLE_DS = { tank: roleDs('tank'), heal: roleDs('heal') };
   const curDs = () => ROLE_DS[st.mode] || DPS_DS;
@@ -3775,59 +3787,125 @@ export function startReport(dash, events) {
     rows.push(el('tr', { class: 'fv-total' }, el('td', { class: 'first', text: curRole().meanName }), ...cols.map((c) => cell(b, c))));
     table.querySelector('tbody').replaceChildren(...rows);
   };
-  // Best races on a Tanking or Healing Specs page: the DPS Specs page's race card (drawRaceRank, its rows and faction
-  // switch), with the preset's own score as the value: a tank's at its setup, a healer's for its role. The race data
-  // has no per-racial parts, so each bar is one piece in the class colour, with the score's error as the thin line.
+  // Best races on a Tanking or Healing Specs page: the DPS Specs page's race card (drawRaceRank, its rows, faction
+  // switch, bar pieces, captions, legend and tooltips), with the preset's own score as the value: a tank's at its
+  // setup, a healer's for its role. Each bar is the race's base stats and what each of its racials adds
+  // (race_breakdown), the score's error the thin line, and the gap between two races uses their paired error (raceSe).
   const drawRoleSpecRaces = (b) => {
     const R = curRole(), D = curDs(), host = $('#rs-races'), axis = $('#rr-axis'), card = host.closest('.fv-card');
     $('#rs-races-card').hidden = !D.raceRows;
-    if (!D.raceRows || !specWait(host, [D.raceRows], b)) return;
+    if (!D.raceRows || !specWait(host, [D.raceRows, D.raceParts].filter(Boolean), b)) return;
     const sc = fixedScope('rr', b), pick = R.ownPick(b), tank = st.mode === 'tank';
     $('#rr-note').textContent = `${tank ? `The score at ${roleName(b)}` : `The score as ${roleName(b).toLowerCase()}`}, ${R.meanName.replace(/^Average of/, 'averaged over')}.`;
     $('#rs-races-link').onclick = (e) => { e.stopPropagation(); mst().build = b.id; persist(); hideTip(); showTab('races'); $('.sim-ui').scrollTo({ top: 0 }); };
+    const bd = d3.group((D.raceParts ? rowsOf(D.raceParts) : []).filter((q) => q.build === b.id), (q) => q.race);
     const rows = rowsOf(D.raceRows).filter((r) => r.build === b.id && (sc.fac === 'All' || r.faction === sc.fac))
       .map((r) => ({ ...r, v: mval(r, 'score', pick), se: mse(r, 'score', pick) })).filter((r) => r.v != null).sort((p, q) => q.v - p.v);
     if (!rows.length) {
       host.replaceChildren(el('p', { class: 'fv-note', text: sc.fac === 'All' ? 'No race data for this preset.' : 'No race of this faction plays this preset.' }));
-      axis.hidden = true;
+      axis.hidden = true; $('#rr-legend').replaceChildren();
       return;
     }
     const fv = (v) => fmtV(v, R.unit);
+    // A part's worth: score points for a tank, for a healer the share of the encounter's damage it carries more.
+    const fd = (v) => (tank ? sgn(v, f1) : `${sgn(100 * v, f1)}%`);
+    const fdLong = (v) => (tank ? `${sgn(v, f1)} score` : `${sgn(100 * v, f1)}% damage carried`);
     const best = rows[0].v;
     // the gap to the best race: a share of its score for a healer (always above 0), points for a tank (can be below 0)
     const gap = (v) => (tank ? `−${fmtV(best - v)}` : `−${f2(100 * (1 - v / best))}%`);
-    rows.forEach((r, i) => { const p = rows[i - 1]; r.tie = p && r.se != null && p.se != null && isTie(r.v, r.se, p.v, p.se) ? tieText(p.race, r.v, r.se, p.v, p.se, 'points') : null; });
-    const ends = rows.flatMap((r) => (r.se != null ? [r.v - r.se, r.v + r.se] : [r.v]));
+    const unitName = tank ? 'points' : '× damage';
+    // A race's pieces: base stats, then each racial that does something here, in the race's order. One within its
+    // error of nothing, or that changes nothing, gets its reason after the race's name instead, like the DPS card.
+    for (const r of rows) {
+      const mine = bd.get(r.race) || [];
+      const base = mine.find((q) => q.part === 'base');
+      const live = mine.filter((q) => q.part !== 'base' && q.active && !isNoise(+q.v, q.se));
+      r.idle = mine.filter((q) => q.part !== 'base' && (!q.active || isNoise(+q.v, q.se))).map((q) => ({ ...q, note: q.active ? NOISE : q.note || 'no effect on this preset' }));
+      r.segs = base ? [{ part: 'base', label: base.label, v: +base.v, r: base }, ...live.map((q) => ({ part: q.part, label: q.label, v: +q.v, r: q }))]
+        : [{ part: 'base', label: 'Score', v: r.v, r: null }];
+      let at = 0;
+      for (const sg of r.segs) { sg.from = at; at += sg.v; sg.to = at; }
+      const p = rows[rows.indexOf(r) - 1];
+      r.tie = p && isTie(r.v, raceSe(r, p), p.v, 0) ? tieText(p.race, r.v, raceSe(r, p), p.v, 0, unitName) : null;
+    }
+    const ends = rows.flatMap((r) => r.segs.flatMap((sg) => [sg.from || sg.to, sg.to]).concat(r.se != null ? [r.v - r.se, r.v + r.se] : [r.v]));
     const hi = d3.max(ends), lo0 = d3.min(ends), span = Math.max(hi - lo0, tank ? 4 : 0.02);
     const lo = lo0 >= 0 ? Math.max(0, lo0 - 0.35 * span) : lo0 - 0.35 * span;
     const x = (v) => (100 * (Math.max(lo, v) - lo)) / (hi - lo || 1);
+    const kinds = new Set();
+    const icon = (part) => [...bd.values()].flat().find((q) => q.part === part)?.icon;
     const sub = (r) => (tank ? `Safe DPS ${fmtV(r.safeDps)} · needs ${r.healingNeeded == null ? 'more healing than any healer gives' : `${fmtV(r.healingNeeded)} healing per second`}`
       : `Useful HPS ${fmtV(r.ehps)} · HPS ${fmtV(r.hps)} · mana left ${fmtV(r.manaLeft)}`);
+    const baseOf = (r) => (r.segs[0].r ? r.segs[0].v : null);
+    const low = d3.least(rows.filter((r) => baseOf(r) != null), baseOf);
     const raceTT = (r, n) => tt(n, `r:${r.race}:${b.class}`, true, b.id);
     host.replaceChildren(...rows.map((r, i) => {
       const nm = raceName(r);
       raceTT(r, nm.querySelector('b'));
-      const track = el('div', { class: 'fv-rtrack' }, el('span', { class: 'sg last', 'data-zone': '', style: `left:0;width:${Math.max(0.6, x(r.v))}%;background:${ccol(b.class)}` }));
+      const track = partTrack(r.segs, x, kinds);
+      if (!r.segs[0].r) track.firstChild.style.background = ccol(b.class);
       if (r.se != null) track.append(el('span', { class: 'wk', style: `left:${x(r.v - r.se)}%;width:${Math.max(0.4, x(r.v + r.se) - x(r.v - r.se))}%` }));
+      const idle = r.idle.slice(0, 3).map((q) => el('small', { 'data-zone': 'idle:' + q.part, text: `${shortLabel(q.label)}: ${q.note}` }));
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
         raceTT(r, raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` })),
-        el('span', { class: 'nm' }, nm, r.isPreset ? el('i', { 'data-zone': '', text: 'preset race' }) : null),
+        el('span', { class: 'nm' }, nm, r.isPreset ? el('i', { 'data-zone': '', text: 'preset race' }) : null, ...idle),
         el('span', { class: 'end', 'data-zone': '' }, el('small', {}, r.tie ? tieMark(r.tie, false) : null, r.tie ? ' ' : null, i === 0 ? '★ best' : gap(r.v)),
           el('b', { text: fv(r.v) })),
-        track, el('div', { class: 'fv-rsub' }, el('span', { text: sub(r) })));
+        track, partCaps(r.segs, x, fd, tank ? 0.05 : 0.0005, icon), el('div', { class: 'fv-rsub' }, el('span', { text: sub(r) })));
       hoverZones(row, (zone, node, pinned) => {
-        const cr = card.getBoundingClientRect(), at = node.getBoundingClientRect(), end = node.classList.contains('end');
+        const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
+        const title = tipTitle(r.race, b.label, raceIco(r.raceIcon));
+        if (zone) {
+          // a piece of the bar, its caption, or a racial with no effect: what it's worth and what it does
+          const [what, part] = zone.startsWith('idle:') ? ['idle', zone.slice(5)] : ['seg', zone];
+          const sg = r.segs.find((g) => g.part === part), q = r.idle.find((g) => g.part === part);
+          const info = (bd.get(r.race) || []).find((g) => g.part === part);
+          let name;
+          const sub2 = [];
+          if (what === 'idle' && q) {
+            name = shortLabel(q.label);
+            sub2.push(el('span', { class: 'fv-tip-m', text: q.note[0].toUpperCase() + q.note.slice(1) + '.' }));
+          } else if (part === 'base' && sg?.r) {
+            name = `Base stats ${fv(sg.v)}`;
+            if (low && rows.length > 1) {
+              const d = sg.v - baseOf(low);
+              sub2.push(el('span', { class: 'fv-tip-m', text: low.race === r.race ? 'The weakest base stats here.'
+                : Math.abs(d) < (tank ? 0.05 : 0.0005) ? `Same as ${low.race}, the weakest here.` : `${fd(d).slice(1)}${tank ? ' points' : ''} above ${low.race}, the weakest here.` }));
+            }
+          } else if (sg && sg.r) {
+            name = `${sg.label} ${fdLong(sg.v)}`;
+            if (sg.r.se) sub2.push(el('span', { class: 'fv-tip-m', text: `Error ±${tank ? f1(sg.r.se) : f2(100 * sg.r.se) + '%'}.` }));
+          }
+          if (!name) return;
+          const text = info?.text;
+          const segEl = what === 'seg' ? row.querySelector(`.sg[data-zone="${part}"]`) : null;
+          const capEl = row.querySelector(`.fv-rsub [data-zone="${zone}"]`);
+          const own = node.closest('.fv-rsub');
+          const at = (own ? node : segEl || node).getBoundingClientRect();
+          showTip(card, Math.max(8, at.left - cr.left), (own ? at.bottom : rw.bottom) - cr.top + 4, title,
+            [partTipHead(part, name, text, part !== 'base' && part !== 'dodge' && racialText(part), info?.icon), ...sub2], { below: true, pinned, hl: [row, segEl, capEl] });
+          return;
+        }
+        const at = node.getBoundingClientRect(), end = node.classList.contains('end');
         const lines = tank
           ? [tipKey(fv(r.v), 'Score', r.se != null ? `± ${fmtV(r.se)}` : null), `Safe DPS ${fmtV(r.safeDps)}, ${fmtV(r.tps)} threat per second.`,
             `Takes ${fmtV(r.dtps)} damage per second and ${r.healingNeeded == null ? 'no amount of healing keeps it alive on every boss' : `needs ${fmtV(r.healingNeeded)} healing per second`}.`]
-          : [tipKey(fv(r.v), 'Score'), `Useful HPS ${fmtV(r.ehps)}, HPS ${fmtV(r.hps)}, ${fmtV(r.overheal, '%')} overheal.`,
-            `${fmtV(r.ehPerMana)} useful healing per mana, ${fmtV(r.manaLeft)} mana left at the end.`];
-        showTip(card, end ? at.right - cr.left : Math.max(8, at.left - cr.left), at.bottom - cr.top + 4, tipTitle(r.race, b.label, raceIco(r.raceIcon)),
+          : [tipKey(fv(r.v), 'Score', r.se != null ? `± ${f2(r.se)}` : null), `Useful HPS ${fmtV(r.ehps)}, HPS ${fmtV(r.hps)}, ${fmtV(r.overheal, '%')} overheal.`,
+            `${fmtV(r.manaLeft)} mana left at the end.`];
+        showTip(card, end ? at.right - cr.left : Math.max(8, at.left - cr.left), at.bottom - cr.top + 4, title,
           [...lines, r.isPreset ? el('span', { class: 'fv-tip-m', text: 'The race the preset plays.' }) : null, r.tie ? tipNote('≈ ', r.tie) : null, null], { below: true, pinned, end, hl: row });
       });
       return row;
     }));
     axisWarn(axis, Math.abs(lo) > 1e-9 ? fv(lo) : null, 'races');
+    legend($('#rr-legend'), kinds, rows.some((r) => r.segs[0].r));
+    layoutCaps(host);
+    if (!host.dataset.capWatch) {
+      host.dataset.capWatch = '1';
+      let w = 0;
+      new ResizeObserver(() => { if (host.clientWidth !== w) { w = host.clientWidth; layoutCaps(host); } }).observe(host);
+      document.fonts?.ready.then(() => layoutCaps(host));
+    }
   };
   // "Good to know": the notes on the preset, or on its class
   const drawRoleNotes = (b) => {
