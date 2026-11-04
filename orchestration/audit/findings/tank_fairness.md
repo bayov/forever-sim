@@ -51,6 +51,7 @@
 - evidence: jq on tools/tankbench/req: paladin_protection_balanced.json and _max_survival.json have the same gear, talents and rotation, as do warrior_protection_balanced.json and _max_survival.json; their results match exactly on every boss. The bear's three presets differ only in rotation, and Balanced and Max threat are within about 1% on every boss. Max survival wins the Balanced weight for the bear on Golemagg and Onyxia (Onyxia 1663 vs 1476, 12%). Max threat has the highest TPS in 26 of 28 spec-boss cells (exceptions: bear and Warden with no encounter, Warden on Chromaggus).
 - proposed fix: search the paladin and warrior at the Max survival weight (w = 3) for talents/rotation that differ, or rule that the weights don't separate them and ship two presets; re-search the bear's Balanced preset.
 - needs: worker fix (or user ruling on dropping a preset)
+- fixed (bear part): 2026-11-04, f0ff977 (Balanced re-searched; each bear preset now wins its own weight: Balanced beats Max survival by 89 ± 9 at w=1 and Max threat by 110 ± 9; no two are equal)
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low

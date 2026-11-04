@@ -36,6 +36,7 @@
 - proposed fix: 2× under Forever only, as a notes-only value (standards 37). The patch is `ref/tank_mechanics/patches/bear_fix_primal_bite_threat.patch`. Then change bear_rules_test.go:517 from 2.15×damage to 2×2.15. Rerun the Lacerate and filler knobs.
 - How sure: sure that the note applies and the sim omits it; moderately sure of exactly 2.0, since the note says "roughly".
 - needs: worker fix
+- fixed: 2026-11-04, bde6912 (2× under Forever, notes-only; TestPrimalBite asserts 2 × 2.15)
 
 ### tank_mechanics-20261104-3: Anniversary encounter files count parry haste twice
 - severity: high (once -1 lands; today parry haste never fires)
@@ -92,6 +93,7 @@
 - proposed fix: `ref/tank_mechanics/patches/bear_fix_bear_white_rage.patch` (in Initialize, under Forever). Add a test asserting 11.25 a swing, 22.5 on a crit, independent of AP.
 - How sure: sure.
 - needs: worker fix
+- fixed: 2026-11-04, bde6912 (TestBearWhiteHitRage: 11.25 a landed swing, 22.5 a crit, at +0 and +3,000 AP)
 
 ### tank_mechanics-20261104-8: Survival cooldowns and Berserking read health in a scoring run
 - severity: low (latent: no preset hits it)
@@ -117,6 +119,7 @@
 - evidence: in docs/tank_shaman.md, Earth Shock's ×2 threat rests on "wowsims/classic, vmangos". vmangos is never a source; wowsims/sod earth_shock.go:54 is a tier 2 source for the same 2. Rockbiter's white-hit threat is labeled tier 2, but 20871's designer note makes it tier 1. In docs/tank_druid.md, the white-hit Rage row is wrong (-7), and Swipe's 3% AP is tier 1 (post 4 notes, line 241), not tier 2. In orchestration/round_70753/paladin.md:114, Templar's Bulwark's dispel is "notes only", but 1311015 has DispelType 1 (Magic) in 70755+hf. In docs/tank_warrior.md, Call 3's framing is off (-4).
 - proposed fix: `ref/tank_mechanics/patches/shaman_01_docs_tiers.patch` and `warrior_revenge_ap_call_doc.patch`; the druid and paladin lines by hand.
 - needs: worker fix
+- fixed (druid rows): 2026-11-04, bde6912 (white-hit Rage row, Swipe's 3% as tier 1, Primal Bite's notes threat in the table and calls)
 
 ### tank_mechanics-20261104-11: Tank mechanics with no test that fails when they break
 - severity: low (none known wrong except -6, -7, -8)
@@ -132,3 +135,4 @@
 - needs: worker fix
 
 ## Resolved
+- fixed (bear rows): 2026-11-04, bde6912 (TestBearWhiteHitRage, TestPrimalBite's 2×, TestThickHideDefenseChange, TestBearRageGainThreat)

@@ -39,6 +39,7 @@
   - The stat trinket 990814 (23 Def + 1% dodge) is +1.4% linear. No whole Defense and dodge pair fits the band, so I take that as rounding and not a defect.
 - proposed fix: chest Stamina 24 to 25, then re-check the norm. Move about 2 to 3 points of Stamina into Defense or Strength.
 - needs: worker fix
+- fixed: 2026-11-04, bde6912 (chest Stamina 25: linear 72.5 / 72.44; 3 Stamina to Strength: Stamina share 34.8 against 33.4 ±1.5)
 
 ### tank_gear-20261104-5: Stale comments in the tank gear files
 - severity: low
@@ -49,6 +50,7 @@
   - Warrior: the Go header's numbers are stale. It gives armor 650.1 (should be 649.6), set 760.5 (760.0), Defense 106 (107), crit 6.6% (6.4%) and trinket norm 38.4 (38.3).
 - proposed fix: correct the comments to match the code.
 - needs: worker fix
+- fixed (bear part): 2026-11-04, bde6912 (both comments name 998115 as worn, 990815 as the search's alternative)
 
 ### tank_gear-20261104-6: Warden boots take Greater Stamina where Mystic Rugged Armor Kit is worth more
 - severity: low

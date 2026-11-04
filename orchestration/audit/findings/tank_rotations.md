@@ -9,6 +9,7 @@
 - evidence: Roar is the first priority line, so it takes the first GCD and 10 Rage ahead of Primal Bite and Lacerate, while SafeDPS is set in the first seconds (tools/rotopt/druid_tank.go:103 appends it above them; ui/feral_tank_druid/apls/*.apl.json:9, max_survival :10; tools/tankbench/req/druid_bear_{balanced,max_threat}.json:141, druid_bear_max_survival.json:164). Moving the line to just below "Lacerate to 5 stacks" (paired, `tools/audit/tank_rotations/abtest`, scoring mean): Balanced +197.5 ± 16.7 (1k; 1855 → ~2053, +10.6%), Max threat +207.8 ± 11.7 (1k), Max survival +176.9 ± 30.0 (3k). Every scoring boss gains (+160 to +244 at Balanced); Ragnaros +128 / +150. Healing needed moves -5 to +29 per boss. Removing Roar wins more (+224) but breaks the 11-02 ruling that the tank applies its own Roar, so it isn't proposed. Roar right after Primal Bite: only +40. Sure: high.
 - proposed fix: Roar's line just below the Lacerate keep-up line in all three APLs and requests. Give the template a knob (e.g. `roarAfterLacerate`), since the hard-coded order kept rotopt from finding it. Reproduce B: `tools/audit/tank_rotations/mk_bear.py balanced B.json 'r_=pl.pop(1); pl.insert(3,r_)'` (`pop(2)/insert(4)` for max_survival).
 - needs: worker fix
+- fixed: 2026-11-04, bde6912 (rotopt knob `roarAfterLacerate`), f0ff977 (all three presets; +218 / +191 / +270 at own weight from the move alone, 1k)
 
 ### tank_rotations-20261104-2: Warrior's Shield Wall in the last 12 s is too late; the last 16–18 s wins at Balanced and Max survival
 - severity: high
@@ -41,6 +42,7 @@
 - evidence: prepull shift -4.5 s and Enrage -3 s (tools/tankbench/req/druid_bear_max_survival.json:111, :125), reasoned in docs/tank_druid.md:224 as "so its armor cut ends sooner". Shift -2.5 s and Enrage -1 s, paired, 3k: +45.6 ± 16.6 on top of finding 1, +60.1 ± 17.6 on today's preset. Chromaggus -6 and Magmadar -13 (noise); Ragnaros -50 ± 200.
 - proposed fix: shift at -2.5 s and Enrage at -1 s, as Balanced does, and fix the doc's reason. Reproduce: `tools/audit/tank_rotations/mk_bear.py max_survival B.json 'r_=pl.pop(2); pl.insert(4,r_); pre[0]["doAtValue"]["const"]["val"]="-2.5s"; pre[1]["doAtValue"]["const"]["val"]="-1s"'`.
 - needs: worker fix
+- fixed: 2026-11-04, f0ff977. Confirmed (-1 s beats -3 s by +50.7 ± 16.0, 3k), but the re-search puts Enrage in the fight at every weight, which beats both; the doc's reason is gone with it
 
 ### tank_rotations-20261104-6: Paladin's on-use trinket waits behind every GCD line
 - severity: medium
@@ -67,3 +69,4 @@
 - needs: worker fix
 
 ## Resolved
+- fixed (bear part): 2026-11-04, bde6912 (Frenzied Regeneration's note: "at the pull's Rage peak"), f0ff977 (the doc's Enrage wording, rewritten with the new presets)
