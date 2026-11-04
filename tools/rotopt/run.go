@@ -140,6 +140,7 @@ func gainNoise(a, b result) float64 {
 			return math.Sqrt(variance) / float64(n)
 		}
 	}
+	// Over several tank encounters each stderr already carries tankscore.SharedSeedSD (combine).
 	return math.Hypot(a.stderr, b.stderr)
 }
 
@@ -208,6 +209,11 @@ func (s *setup) runRequest(rot *proto.APLRotation, duration float64, iterations 
 	request.Raid.Parties[0].Players[0].Rotation = rot
 	request.SimOptions.Iterations = iterations
 	request.SimOptions.RandomSeed = simSeed
+	if tankSlots != nil || tankObjective != nil {
+		// A tank run's seed is spaced apart so different -seed values run disjoint iterations
+		// (tankscore.Seed; -seed 1 maps to itself). DPS runs keep the plain seed, so their numbers don't move.
+		request.SimOptions.RandomSeed = tankscore.Seed(simSeed)
+	}
 	return request
 }
 

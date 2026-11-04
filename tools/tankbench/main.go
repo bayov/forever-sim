@@ -41,6 +41,7 @@ func main() {
 	variation := flag.Float64("cadence-variation", 1, "how far a heal's timing varies from the cadence, in seconds")
 	window := flag.Int("tmi-window", 6, "seconds of the TMI's moving window")
 	iterations := flag.Int("iters", 3000, "iterations per build")
+	seed := flag.Int64("seed", 1, "random seed, spaced a billion iterations apart (tankscore.Seed) so two seeds share no iterations; the same seed at more iterations still repeats the first ones")
 	duration := flag.Float64("dur", 0, "fight length in seconds, 0 keeps the request's")
 	bossLevel := flag.Int("boss-level", 0, "the boss's level, 0 keeps the request's")
 	swing := flag.Float64("boss-damage", 0, "the boss's smallest white hit before armor, 0 keeps the request's")
@@ -135,6 +136,7 @@ func main() {
 			fail(fmt.Errorf("%s: %w", path, err))
 		}
 		rsr.SimOptions.Iterations = int32(*iterations)
+		rsr.SimOptions.RandomSeed = tankscore.Seed(*seed)
 		if enc != nil {
 			// The fight is the file's. What it leaves unset of the request's own fight setup
 			// (the execute phases, the natural flask zone) carries over.
@@ -266,7 +268,7 @@ func deathAt(path string, rsr *proto.RaidSimRequest, hps float64) float64 {
 // off (1000 times its DTPS, since a heal is the HPS times the gap since the last one, and gaps go
 // down to half the cadence), so only damage between two heals kills it. When the floor is over the
 // target, no healing gets there (a one-shot or a burst faster than the heals), and the HPS is -1.
-// No damage taken needs no healing (0). Every run uses the request's seed, so the chance of death
+// No damage taken needs no healing (0). Every run uses the same (-seed) seed, so the chance of death
 // only moves with the HPS, as long as nothing in the request acts on the tank's health (a health
 // potion, a defensive at a health share, an APL condition on health).
 func healingNeeded(path string, rsr *proto.RaidSimRequest, dtps, target float64) (float64, float64) {

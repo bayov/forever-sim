@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/tools/tankscore"
 )
 
 // Coordinate descent over the knobs. Every knob in turn tries each of its values with the
@@ -167,6 +168,12 @@ func (s *searcher) combine(p *pendingScore) result {
 		tto:    tto / n,
 		health: p.health, armor: p.armor,
 		tankParts: parts,
+	}
+	if len(tankSlots) > 1 {
+		// The tank encounters' runs share their seed, so their scores correlate and the mean's
+		// error is about 1.25 times the independent one (tankscore.SharedSeedSD, finding
+		// tank_rotations-20261104-13). gainNoise's paired error doesn't need it.
+		r.stderr *= tankscore.SharedSeedSD
 	}
 	if len(s.durations) == 1 {
 		r.leveling = p.results[0].leveling
