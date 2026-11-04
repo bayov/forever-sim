@@ -2,6 +2,7 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
+	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
 	Consumes,
@@ -17,6 +18,7 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	SpellPowerBuff,
 	Stat,
 	StrengthBuff,
@@ -26,6 +28,7 @@ import {
 	UnitReference,
 	UnitReference_Type,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common.js';
 import { PaladinAura, PaladinOptions as ProtectionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -142,11 +145,12 @@ export const DefaultOptions = ProtectionPaladinOptions.create({
 	righteousFury: true,
 });
 
-// Round 4 (2026-11-04, orchestration/tank_handoff/paladin/round4, docs/tank_paladin.md "Round 4 consumables"): the
-// standard consumable set (the bear's and the warrior's: no Zanza, Rumsey Rum, Blasted Lands buff or Goblin Sapper,
-// docs/tank_druid.md call 10), searched per preset. Balanced is the default.
+// Round 4 (2026-11-04, orchestration/tank_handoff/paladin/round4, docs/tank_paladin.md "Round 4 consumables"): the full
+// raid consumable set (orchestration/standards.md item 11), searched per preset. Balanced is the default: Spirit of
+// Zanza, Rumsey Rum Black Label and the Goblin Sapper Charge (Engineering) on the standard set.
 export const BalancedConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
+	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
 	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MajorManaPotion,
@@ -155,12 +159,17 @@ export const BalancedConsumes = Consumes.create({
 	food: Food.FoodNightfinSoup,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
 	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,
+	zanzaBuff: ZanzaBuff.SpiritOfZanza,
 });
 
-// Max threat takes Balanced's consumables.
-export const MaxThreatConsumes = BalancedConsumes;
+// Max threat takes Balanced's consumables with the Ground Scorpok Assay (25 Agility) in the Zanza slot.
+export const MaxThreatConsumes = Consumes.create({
+	...BalancedConsumes,
+	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
+});
 
 // Max survival takes the Flask of Natural Precision (+5% expertise in the natural-flask zone) and Dirge's Kickin'
 // Chimaerok Chops (25 Stamina).

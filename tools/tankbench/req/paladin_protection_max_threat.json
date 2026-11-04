@@ -252,7 +252,10 @@
        "attackPowerBuff": "JujuMight",
        "spellPowerBuff": "GreaterArcaneElixir",
        "defaultPotion": "MajorManaPotion",
-       "dragonBreathChili": true
+       "dragonBreathChili": true,
+       "zanzaBuff": "GroundScorpokAssay",
+       "alcohol": "AlcoholRumseyRumBlackLabel",
+       "sapperExplosive": "SapperGoblinSapper"
       },
       "buffs": {
        "blessingOfKings": true,
