@@ -25,6 +25,7 @@
 - evidence: tankbench, Balanced requests: healing needed +89% to +259% against the others on 6 of 7 runs (onyxia 646 vs 49 to 388; broodlord 1818 with 2.8% death at the encounter's own healing); no-encounter run 66% death at 600 HPS. Sheet: Defense 346 against 428 to 460, armor 54.2% against 60 to 64%, parry 6.2% and block 6.2% (15.7% each for the warrior), 15.1% of swings crush against 3 to 6% for the paladin and warrior; effective health 19.4k against 23.8k to 28.7k. Still 3x the warrior with both elixirs of finding -1 (584 vs 191 on Onyxia). docs/tank_sim.md still says the paladin and Warden have only blank sets, which no longer holds (they wear 9907xx / 9992xx).
 - proposed fix: tank_gear to confirm the Warden set's Defense budget at its Tanks row is intended (standard 36), and tank_mechanics that the Warden's active mitigation is all modelled; if both hold, the user rules that the Warden ranks last. Update docs/tank_sim.md.
 - needs: user ruling (after the two checks)
+- ruling: 2026-11-04, user: a real class gap. The Warden is a mail class with much less defense built in than the plate tanks, and it won't necessarily be a viable raid tank. Don't compensate for it; keep its gear and mechanics checks to correctness. (standards.md, Raid duties)
 
 ### tank_fairness-20261104-4: Balanced and Max survival are the same build for the paladin and warrior; the bear's Balanced is its Max threat
 - severity: medium
