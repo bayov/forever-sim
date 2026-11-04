@@ -1264,6 +1264,22 @@ rendering, not the sim.
     drawing didn't drop here: 330 of the draw calls are the crowd's picture (65 bodies, 155 gear, 108 see-through
     layers of gear and effects), which need different textures. Drawing those in fewer calls needs texture arrays
     for gear, or multi-draw.
+- Sixth raid report (your PC, 107s): about 143 FPS in the fight (was 100 to 114), 4.9ms of script (animating 2.0ms,
+  drawing 2.6ms), 420 draw calls. GPU 5.3ms, and the see-through things are most of it: 2.8 to 3.0ms in the fight,
+  2.0ms before it.
+  - The reports now time the see-through things by kind: the units' own see-through parts, the boss, the raiders'
+    gear and bodies, the spell effects, the particles and the ribbons. Each kind draws at its own render order
+    (`drawOrder` in `wow/particles.ts`), with a marker before it that starts its timer. A frame column also counts
+    the particles drawn. Headless, the spell effects' layers were the biggest (0.87ms), then the gear's and the
+    particles.
+  - A see-through layer faded all the way out still cost its pixels. A fifth of the raid's see-through copies were
+    (58 of 286), so a copy with no alpha in a blending that goes by alpha is left out. A particle faded all the way
+    out (they fade in at birth and out at death) draws nothing in any blend mode, so it isn't sent either.
+  - Not the cause: Ragnaros has no see-through parts, and its own 24 emitters don't run (only gear gets particles
+    in the raid test). Finished effects aren't drawn: a fading one hides its model while its particles die out,
+    and a pooled one is out of the scene. The raid draws about 3600 particles, most on the casters' hands and their
+    bolts' trails (a Fireball's trail is 200).
+  - Headless: effects 0.87 to 0.71ms, gear 0.30 to 0.19ms, particles 0.25 to 0.18ms.
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
