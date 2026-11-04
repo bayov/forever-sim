@@ -60,6 +60,14 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - Gnome Intellect offset +3 (level 1 offset; the 1.12 level 60 rows' +5 to +9 read as Expansive Mind baked in).
 - Human Spirit below 60: the 1.12 rows may already include the old 5%, and the sim applies the new 10% on top
   (leveling only, older than this round).
-- Assumptions (B9): shaman: drop `sham_lb_31plus` and `sham_es7_tuning` (now 1.0), move `sham_mw_ppm` to 20, Chain Lightning coefficient unannounced (kept 0.571); reword `pal_2h_spec_holy` (Two-Handed Weapon Specialization now covers all Holy damage; paladin worker); collapse `mage_ice_lance_cd` to one value (client 70753 gives every Ice Lance rank the cooldown;
+- Assumptions (B9): shaman: drop `sham_lb_31plus` and `sham_es7_tuning` (now 1.0), move `sham_mw_ppm` to 20, Chain Lightning coefficient 0.714 (standards 39, user ruling 2026-11-04; was kept at 0.571); reword `pal_2h_spec_holy` (Two-Handed Weapon Specialization now covers all Holy damage; paladin worker); collapse `mage_ice_lance_cd` to one value (client 70753 gives every Ice Lance rank the cooldown;
   mage worker); `hunter_tsa_hm_rank` says Trueshot Aura 50, now 100 by hotfix 113534 (hunter worker).
 - `tools/audit/gear/lin2.py` failed on the healer and tank tables of gear_targets.md: fixed (it skips rows that are not stat targets).
+
+## User rulings, 2026-11-04
+
+- Rogue: Mutilate and Seal Fate stay separate presets (Mutilate, Seal Fate Swords, Seal Fate Daggers); the
+  Assassination default is not switched to Seal Fate.
+- Chain Lightning's coefficient is the standard one for its 2.5 s cast, 0.714 (standards 39).
+- The sim is Forever only (standards 38): fix.md's Classic questions (a) and (b) are moot, and Classic gating is no
+  longer a finding.

@@ -213,3 +213,6 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
    - Each one is gated under Forever, cites the notes and "client <build> unchanged", and is listed under "Notes-only values" in the class's round file (`orchestration/round_70753/<class>.md`).
    - A client value or server hotfix that arrives later replaces it (the source tiers stay the same: server hotfixes > client data > Wowhead > Blizzard's notes). The next hotfix check and the launch logs compare against the notes-only list first.
    - Where the notes give only a rough size ("about 25%", "~110%"), use it as written, rounded the way the client rounds that field, and say so.
+
+38. The sim is Forever only (user ruling 2026-11-04: "We can ignore classic mode in this repo, this sim is forever only"). Classic-mode results, goldens and fallbacks are not checked or kept up: a value that applies outside Forever is not a finding, and new Forever values need no Classic fallback. Existing Forever gates may stay.
+39. An announced cast time change with no announced coefficient takes the standard coefficient for the new cast time, cast time / 3.5 s (user ruling 2026-11-04, on Chain Lightning's 2.5 s cast: "use chain lightning coef 2.5s cast", so 2.5 / 3.5 = 0.714). It is a notes-only value under standards 37.
