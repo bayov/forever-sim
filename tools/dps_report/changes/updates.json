@@ -3921,6 +3921,10 @@
     {
      "commit": "aa7cd24",
      "why": "Test goldens only: the item set tests leave the hit-trade step items out; no preset moves."
+    },
+    {
+     "commit": "5e3c45f",
+     "why": "The re-sim's own data commit: report data, the Survival report hashes (covered by the Survival line) and tank page wording."
     }
    ],
    "source": {

@@ -297,7 +297,7 @@
   "title": "Event view names",
   "description": "The name, icon and rank of every spell and item in the sample fights and of each preset's weapons, as the sim UI's database and wowhead name them. Made by tools/dps_report/events.py.",
   "updated": {
-   "at": "2026-11-04T09:15:09.661Z",
+   "at": "2026-11-04T19:17:26.949Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -305,7 +305,7 @@
   "title": "Event view icons",
   "description": "36 px icons, as data URLs, that the sample fights show and icons and icons_more lack. Made by tools/dps_report/events.py.",
   "updated": {
-   "at": "2026-11-04T07:09:43.444Z",
+   "at": "2026-11-04T19:17:26.949Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -392,7 +392,7 @@
   "title": "Tanking tooltips",
   "description": "Item and spell tooltips the tanking pages show that the common tooltips dataset lacks, same row shape.",
   "updated": {
-   "at": "2026-11-04T19:09:57.278Z",
+   "at": "2026-11-04T19:17:26.949Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -500,7 +500,7 @@
   "title": "Healing tooltips",
   "description": "Item and spell tooltips the healing pages show that the common tooltips dataset lacks, same row shape.",
   "updated": {
-   "at": "2026-11-04T19:09:57.278Z",
+   "at": "2026-11-04T19:17:26.949Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
