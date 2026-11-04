@@ -1,0 +1,36 @@
+wrist_defl|ench(5,1248665)
+wrist_str|ench(5,1885)
+wrist_agi|ench(5,1248599)
+back_armor|ench(3,1889)
+head_sta|ench(0,1507)
+head_str|ench(0,1506)
+head_armor|ench(0,1504)
+head_hp|ench(0,1503)
+neck_str|ench(1,1249019)
+chest_hp|ench(4,1892)
+chest_sta|ench(4,13858)
+chest_kit|ench(4,1843)
+hands_agi|ench(6,1887)
+hands_str7|ench(6,13887)
+feet_sta|ench(9,929)
+weapon_str|ench(14,1248668)
+flask_titans|c['flask']='FlaskOfTheTitans'
+flask_aggr|c['flask']='FlaskOfNaturalAggression'
+agi_greater|c['agilityElixir']='ElixirOfGreaterAgility'
+str_giants|c['strengthBuff']='ElixirOfGiants'
+ap_firewater|c['attackPowerBuff']='WinterfallFirewater'
+food_dirge|c['food']='FoodDirgesKickChimaerokChops'
+food_squid|c['food']='FoodGrilledSquid'
+food_sunfruit|c['food']='FoodBlessSunfruit'
+chili_off|c['dragonBreathChili']=False
+stone_none|c.pop('mainHandImbue')
+pot_stoneshield|c['defaultPotion']='GreaterStoneshieldPotion'
+zanza_scorpok|c['zanzaBuff']='GroundScorpokAssay'
+zanza_roids|c['zanzaBuff']='ROIDS'
+zanza_lung|c['zanzaBuff']='LungJuiceCocktail'
+rum|c['alcohol']='AlcoholRumseyRumBlackLabel'
+sapper|c['sapperExplosive']='SapperGoblinSapper'
+grenade|c['fillerExplosive']='ExplosiveThoriumGrenade'
+nojow|d['raid']['debuffs']['judgementOfWisdom']=False
+noshift|r['prepullActions']=[a for a in pre if sid(a)!=9634]
+noshift_nojow|r['prepullActions']=[a for a in pre if sid(a)!=9634]; d['raid']['debuffs']['judgementOfWisdom']=False

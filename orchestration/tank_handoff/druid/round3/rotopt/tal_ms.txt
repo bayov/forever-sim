@@ -1,0 +1,35 @@
+tank encounters (their index takes the fight length's place, scored as their mean): /home/user/forever-sim/tools/encounters/magmadar.json,/home/user/forever-sim/tools/encounters/golemagg.json,/home/user/forever-sim/tools/encounters/onyxia.json,/home/user/forever-sim/tools/encounters/broodlord.json,/home/user/forever-sim/tools/encounters/vaelastrasz.json,/home/user/forever-sim/tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 3 x 900 x healing needed at 5% deaths / 258, in raid DPS
+start -5022233202310212551-055: -774.9(47.1) mana 3687(0) tto 3466s
+  shreddingAttacks-1 bloom+1: -767.5(52.8) mana 3687(0) tto 3466s (+7.4, noise 29.3)
+  improvedWrath+1 shreddingAttacks-1: -767.5(52.8) mana 3687(0) tto 3466s (+7.4, noise 29.3)
+  genesis+1 shreddingAttacks-1: -767.5(52.8) mana 3687(0) tto 3466s (+7.4, noise 29.3)
+  feralInstinct+1 shreddingAttacks-1: -767.5(52.8) mana 3687(0) tto 3466s (+7.4, noise 29.3)
+  shreddingAttacks-1 feralCharge+1: -767.5(52.8) mana 3687(0) tto 3466s (+7.4, noise 29.3)
+  shreddingAttacks-1 giftOfNature+1: -767.5(52.8) mana 3687(0) tto 3466s (+7.4, noise 29.3)
+  shreddingAttacks-1 predatoryDiscipline+1: -767.5(52.8) mana 3687(0) tto 3466s (+7.4, noise 29.3)
+  shreddingAttacks-1 naturesFocus+1: -767.5(52.8) mana 3687(0) tto 3466s (+7.4, noise 29.3)
+  refined at 3000 iterations, current -760.7(28.0) mana 3687(0) tto 3459s
+  feralInstinct-2 naturalShapeshifter+2: -762.1(28.0) mana 3692(0) tto 3535s (-1.4, noise 0.0)
+  brutalImpact-2 naturalShapeshifter+2: -762.1(28.0) mana 3692(0) tto 3535s (-1.4, noise 0.0)
+  feralInstinct+1 shreddingAttacks-1: -795.9(27.8) mana 3687(0) tto 3459s (-35.2, noise 14.7)
+  shreddingAttacks-1 naturesFocus+1: -795.9(27.8) mana 3687(0) tto 3459s (-35.2, noise 14.7)
+  improvedWrath+1 shreddingAttacks-1: -795.9(27.8) mana 3687(0) tto 3459s (-35.2, noise 14.7)
+  shreddingAttacks-1 giftOfNature+1: -795.9(27.8) mana 3687(0) tto 3459s (-35.2, noise 14.7)
+  genesis+1 shreddingAttacks-1: -795.9(27.8) mana 3687(0) tto 3459s (-35.2, noise 14.7)
+  shreddingAttacks-1 predatoryDiscipline+1: -795.9(27.8) mana 3687(0) tto 3459s (-35.2, noise 14.7)
+  shreddingAttacks-1 feralCharge+1: -795.9(27.8) mana 3687(0) tto 3459s (-35.2, noise 14.7)
+  shreddingAttacks-1 bloom+1: -795.9(27.8) mana 3687(0) tto 3459s (-35.2, noise 14.7)
+  shreddingAttacks-3 naturalShapeshifter+3: -832.9(25.6) mana 3693(0) tto 3565s (-72.2, noise 19.3)
+  bloodFrenzy-2 naturalShapeshifter+2: -879.5(24.1) mana 3692(0) tto 3538s (-118.8, noise 23.6)
+  naturalist-3 naturalShapeshifter+3: -913.9(27.9) mana 3693(0) tto 3566s (-153.1, noise 0.3)
+  rendAndTear-3 naturalShapeshifter+3: -922.6(27.9) mana 3693(0) tto 3566s (-161.9, noise 0.6)
+  naturalReaction-3 naturalShapeshifter+3: -1013.6(34.2) mana 3693(0) tto 3566s (-252.8, noise 33.4)
+  thickHide-3 naturalShapeshifter+3: -1575.0(28.8) mana 3693(0) tto 3566s (-814.3, noise 13.5)
+[0 1 2 3 4 5]s: -760.7(28.0) mana 3687(0) tto 3459s
+  talents -5022233202310212551-055
+  sim runs 1320
+
+real	6m31.706s
+user	8m49.739s
+sys	0m4.232s
