@@ -2929,7 +2929,9 @@
      },
      "note": "Salvation, Mass Salvation and Revoke were removed from the game. Salvation only lowered threat, so no preset's damage moves.",
      "commits": [
-      "90e0bb0"
+      "90e0bb0",
+      "f331f0c",
+      "fdb14ac"
      ]
     },
     {
@@ -2976,6 +2978,30 @@
      "note": "+1.2 and +1.4 at 180 s. The duty builds and the vs Undead build keep their rotation.",
      "commits": [
       "e799dcc"
+     ]
+    },
+    {
+     "title": "Rogue server hotfix: Shank always hits and no longer procs poisons or weapon effects, Mutilate's flat damage raised to 44 / 63 / 88, Venom's extra poison chance covers only Deadly and Wound Poison, talent tree layout updated",
+     "kind": "game",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-daggers",
+      "rogue__combat-swords",
+      "rogue__mutilate",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords",
+      "rogue__subtlety"
+     ],
+     "source": {
+      "label": "wago.tools: WoW Forever server hotfixes (push 113483)",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113483"
+     },
+     "note": "Improved Distract is gone and several talents moved column; Quick Getaway now needs Dirty Tricks, so Subtlety's point moves there. The poisons' charges went up too, which moves no number. At 180 s: Combat Swords 963.5 to 958.6, Seal Fate Swords 957.0 to 940.4, Combat Daggers 946.7 to 949.8, Seal Fate Daggers 920.7 to 903.4, Subtlety 881.7 to 881.3, Mutilate 866.1 to 858.3.",
+     "commits": [
+      "316a600",
+      "e9185b1"
      ]
     }
    ],
@@ -3107,6 +3133,14 @@
     {
      "commit": "b00dccd",
      "why": "a warrior rotation search knob, off by default; no preset's rotation changes"
+    },
+    {
+     "commit": "f6ca172",
+     "why": "Enhancement shaman leveling weights; no report build reads them"
+    },
+    {
+     "commit": "13c34f2",
+     "why": "Classic-ruleset branches for notes-only and hotfix-only values; every Forever number, report hash and golden unchanged"
     }
    ],
    "source": {
