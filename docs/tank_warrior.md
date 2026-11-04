@@ -227,11 +227,13 @@ Paired, 10,000 iterations, B − A at each preset's weight, seeds 1 / 2 (/ 3 / 4
 |---|---|---|---|
 | Cloak: Superior Defense (+70 armor, 1889) vs Agility +5 (1219587) | -6.3 / -6.0 (± 1.0) | -5.6 / +0.5 / -3.4 / -5.1 (± 1.7) | -10.1 / +1.2 / +0.1 / -1.3 (± 4.4; mean -2.5 ± 2.2) |
 | Wrist: Superior Stamina (1886) vs Superior Deflection (1248665) | -4.8 / -3.9 (± 1.6) | -10.4 / -0.8 / +0.3 / -7.3 (± 2.9) | -31.6 / -13.0 / -11.5 / -32.7 (± 7) |
+| Shield: Lesser Block (+2 block, 863) vs Greater Stamina (+9, 1886), round 3b | -4.4 / -3.3 (± 0.9) | -6.9 / -9.8 (± 1.6) | -18.7 / -22.8 (± 4.1) |
 | Armor trinket 990617 on the pull vs 991018 | -209.6 / -209.3 | -179.7 / -178.8 | (below) |
 | Armor trinket held for the last 35 s vs 991018 | -192.1 / -192.2 | -146.3 / -145.4 | (below) |
 
 Agility stays on the cloak (it wins or ties at every weight) and Superior Deflection on the wrists. The shield carries
-1886 (+9) in all three requests and both gear sets (929 is only a bracer and boots enchant in the database; the boots
+1886 (+9) in all three requests and both gear sets; it beats Lesser Block (863, the paladin's pick) at every weight
+on seeds 1 and 2 (raw output in `orchestration/tank_handoff/warrior/round3b/`). (929 is only a bracer and boots enchant in the database; the boots
 keep it).
 
 **Max survival's armor trinket** (tank_rotations-20261104-11, a call): 990617 held for the last 35 s against Balanced's
