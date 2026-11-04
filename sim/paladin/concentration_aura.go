@@ -19,7 +19,9 @@ func (paladin *Paladin) registerConcentrationAura() {
 	}
 
 	paladin.OnSpellRegistered(func(spell *core.Spell) {
-		spell.PushbackReduction = max(spell.PushbackReduction, 0.35)
+		// It adds to Spiritual Focus's chance, as the two did in Classic (each a chance to keep the
+		// cast time, summed).
+		spell.PushbackReduction = min(1, spell.PushbackReduction+0.35)
 	})
 
 	core.MakePermanent(paladin.RegisterAura(core.Aura{
