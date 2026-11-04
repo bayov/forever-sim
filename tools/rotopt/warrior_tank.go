@@ -42,7 +42,7 @@ func (warriorTank) Knobs() []Knob {
 		// Sunder Armor up to 5 stacks, then refreshed in its last 3 sec (1), or only as the filler (0).
 		{Name: "sunderUp", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Sunder Armor as the filler above this much Rage (0: never).
-		{Name: "sunderRage", Default: 40, Min: 0, Max: 60, Step: 10},
+		{Name: "sunderRage", Default: 40, Min: 0, Max: 60, Step: 5},
 		// Heroic Strike on the next swing above this much Rage (100: never).
 		{Name: "hsRage", Default: 50, Min: 20, Max: 100, Step: 10},
 		// Slam above this much Rage (0: never), ahead of the Sunder Armor filler: the November 2 notes'
@@ -62,13 +62,13 @@ func (warriorTank) Knobs() []Knob {
 		// The Mighty Rage Potion: 0 never, 1 at the pull, 2 below potionRage Rage.
 		{Name: "potion", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "potionRage", Default: 20, Min: 10, Max: 40, Step: 10},
-		// Shield Wall on a timer: 0 never, 1 at the pull, 2 in the last wallAt seconds (a 2 s grid:
-		// the last 16 to 18 s beat 12 at Balanced and Max survival, tank_rotations-20261104-2).
+		// Shield Wall on a timer: 0 never, 1 at the pull, 2 in the last wallAt seconds (a 1 s grid:
+		// the last 17 s beat 12 at Balanced and Max survival, tank_rotations-20261104-2).
 		{Name: "shieldWall", Default: 0, Min: 0, Max: 2, Step: 1},
-		{Name: "wallAt", Default: 12, Min: 6, Max: 60, Step: 2},
+		{Name: "wallAt", Default: 12, Min: 6, Max: 60, Step: 1},
 		// The on-use trinket (the synthetic set's armor one or the DPS set's attack power one): 0 on
 		// cooldown, else held for the last trinketAt seconds when the wait costs no use.
-		{Name: "trinketAt", Default: 0, Min: 0, Max: 40, Step: 10},
+		{Name: "trinketAt", Default: 0, Min: 0, Max: 60, Step: 5},
 	}
 }
 
