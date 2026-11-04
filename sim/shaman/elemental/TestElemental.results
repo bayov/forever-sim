@@ -734,6 +734,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-Phase1-AllItems-WardenSynthetic(Phase1)"
+ value: {
+  dps: 596.40983
+  tps: 448.55636
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase1-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
+ value: {
+  dps: 591.94367
+  tps: 443.46058
+ }
+}
+dps_results: {
  key: "TestElemental-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
   dps: 521.37433
@@ -997,6 +1011,20 @@ dps_results: {
  value: {
   dps: 650.55283
   tps: 490.24088
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase2-AllItems-WardenSynthetic(Phase1)"
+ value: {
+  dps: 637.171
+  tps: 481.10282
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase2-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
+ value: {
+  dps: 629.55683
+  tps: 473.92795
  }
 }
 dps_results: {
@@ -1266,6 +1294,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-Phase3-AllItems-WardenSynthetic(Phase1)"
+ value: {
+  dps: 709.064
+  tps: 530.25873
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase3-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
+ value: {
+  dps: 676.81867
+  tps: 506.3881
+ }
+}
+dps_results: {
  key: "TestElemental-Phase3-AllItems-Warlord'sEarthshaker"
  value: {
   dps: 579.96817
@@ -1529,6 +1571,20 @@ dps_results: {
  value: {
   dps: 686.80767
   tps: 513.31523
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase4-AllItems-WardenSynthetic(Phase1)"
+ value: {
+  dps: 727.67267
+  tps: 543.94393
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase4-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
+ value: {
+  dps: 707.74567
+  tps: 530.11539
  }
 }
 dps_results: {
@@ -1798,6 +1854,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElemental-Phase5-AllItems-WardenSynthetic(Phase1)"
+ value: {
+  dps: 771.70767
+  tps: 576.67767
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase5-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
+ value: {
+  dps: 761.88167
+  tps: 569.41523
+ }
+}
+dps_results: {
  key: "TestElemental-Phase5-AllItems-Warlord'sEarthshaker"
  value: {
   dps: 620.86483
@@ -2061,6 +2131,20 @@ dps_results: {
  value: {
   dps: 760.65117
   tps: 568.92279
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase6-AllItems-WardenSynthetic(Phase1)"
+ value: {
+  dps: 807.451
+  tps: 604.27442
+ }
+}
+dps_results: {
+ key: "TestElemental-Phase6-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
+ value: {
+  dps: 787.93933
+  tps: 589.21316
  }
 }
 dps_results: {

@@ -23,15 +23,16 @@ const (
 )
 
 // wardenTalents is the Warden's Level 60 build, the base the talent tests change one talent of.
-const wardenTalents = "35050013-0502303313551102"
+const wardenTalents = "35050013-0502333135510102"
 
-// The talents' places in their trees (proto/shaman.proto ShamanTalents).
+// The talents' places in their trees (proto/shaman.proto ShamanTalents; the November 2 tree, with
+// Improved Ghost Wolf moved to row 4, after Stormstrike).
 const (
 	treeElemental, treeEnhancement, treeRestoration = 0, 1, 2
 
 	convection, concussion, reverberation, elementalWarding                                          = 0, 1, 3, 7
-	thunderingStrikes, guardianTotems, mentalDexterity, improvedLightningShield, elementalWeapons    = 1, 3, 4, 6, 7
-	shamanisticFocus, anticipation, toughness, spiritWeapons, mentalQuickness, improvedStormstrikeIx = 8, 9, 10, 13, 14, 15
+	thunderingStrikes, guardianTotems, mentalDexterity, improvedLightningShield, elementalWeapons    = 1, 3, 4, 5, 6
+	shamanisticFocus, anticipation, toughness, spiritWeapons, mentalQuickness, improvedStormstrikeIx = 7, 8, 9, 13, 14, 15
 	tidalFocus, naturalGrace, improvedReincarnation, ancestralHealing                                = 1, 3, 5, 6
 )
 
@@ -173,9 +174,9 @@ func TestForeverWardenTalents(t *testing.T) {
 			}, true, 1 / (0.9 * 0.9 * 0.9), 1e-9},
 		{"Elemental Weapons 3/3: Rockbiter's 653 attack power 20% more", treeEnhancement, elementalWeapons, 0,
 			stat(stats.AttackPower), false, -653 * 0.2, 0.01},
-		{"Mental Dexterity 3/3: attack power from all Intellect", treeEnhancement, mentalDexterity, 0,
+		{"Mental Dexterity 3/3: attack power from 150% of Intellect (the November 2 notes)", treeEnhancement, mentalDexterity, 0,
 			func(_ *testing.T, _ *core.Simulation, w *WardenShaman) float64 {
-				return w.GetStat(stats.AttackPower) - []float64{0, .33, .67, 1}[w.Talents.MentalDexterity]*w.GetStat(stats.Intellect)
+				return w.GetStat(stats.AttackPower) - []float64{0, .5, 1, 1.5}[w.Talents.MentalDexterity]*w.GetStat(stats.Intellect)
 			}, false, 0, 0.01},
 		{"Mental Quickness 2/2: spell power from 30% of Intellect", treeEnhancement, mentalQuickness, 2,
 			func(_ *testing.T, _ *core.Simulation, w *WardenShaman) float64 {
@@ -273,7 +274,7 @@ func TestForeverWardenRockbiterThreat(t *testing.T) {
 
 // TestForeverWardenAbilities checks the tank abilities' client rows (70753): Earth Shock rank 7 (10414,
 // 450 mana, the shocks' 6 sec shared cooldown less Reverberation, the 1.5 sec GCD), Stormstrike (17364,
-// 8% of base mana, 8 sec), Lightning Shield rank 7 (10432, 370 mana, 3 orbs, 10 min, an orb at most
+// 8% of base mana; 6 sec by the November 2 notes, the client's 8 sec before), Lightning Shield rank 7 (10432, 370 mana, 3 orbs, 10 min, an orb at most
 // every 3.5 sec at whoever hits us), and Stoneskin Totem rank 6 (10408, 210 mana, 5 min, 30 off each
 // physical hit before armor, 36 with Guardian Totems 2/2).
 func TestForeverWardenAbilities(t *testing.T) {
@@ -293,8 +294,8 @@ func TestForeverWardenAbilities(t *testing.T) {
 	}
 
 	castNow(t, sim, w, w.Stormstrike)
-	if got := w.Stormstrike.CD.TimeToReady(sim); got != 8*time.Second {
-		t.Errorf("Stormstrike is ready in %s, want 8s", got)
+	if got := w.Stormstrike.CD.TimeToReady(sim); got != 6*time.Second {
+		t.Errorf("Stormstrike is ready in %s, want 6s (the November 2 notes)", got)
 	}
 	near(t, "Stormstrike's cost", w.Stormstrike.Cost.GetCurrentCost(), 0.08*w.BaseMana, 1e-9)
 
