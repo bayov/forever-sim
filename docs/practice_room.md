@@ -691,9 +691,10 @@ Errors show in red at the top center. The texts come from GlobalStrings, and the
   (`interactOnLeftClick` 1). Right click targets and attacks.
 - Tab picks the nearest enemy in front of you, then cycles (`TargetNearestUseNew` 1). When your target is in combat,
   Tab cycles only enemies in combat (`TargetPriorityCombatLock` 1).
-- Esc first closes menus, then stops your cast or channel, and only clears your target when there's nothing else to
-  do. So Esc during Lightning Bolt cancels the bolt and keeps the target. Clicking the ground keeps the target
-  (`deselectOnClick` 0, "Sticky Targeting").
+- Esc goes like the game's: it closes the Game Menu or Options (or the chat's edit box), then stops your cast or
+  channel, then closes the open windows (character, spellbook, talents, bags), then clears your target, and with
+  none of those it opens the Game Menu. So Esc during Lightning Bolt cancels the bolt and keeps the target. Clicking
+  the ground keeps the target (`deselectOnClick` 0, "Sticky Targeting").
 - `@mouseover` is the unit under the cursor. A right press and release with no movement is a click, and the unit is
   picked at mousedown.
 - No soft targeting: it's for gamepads only.
@@ -733,6 +734,21 @@ Errors show in red at the top center. The texts come from GlobalStrings, and the
   the cast bar.
 - **Audio** starts on the first click or key press, since browsers block it before one. Sound files are decoded ahead
   of time.
+
+### Blizzard frames
+
+The game's own windows live in `ui/practice/frames/`, drawn from the client's textures and fonts in the Classic Era
+look: the Game Menu (Esc) and Options (graphics, sound, encounter), the character frame (paper doll, 3D model, stats,
+Skills and Reputation tabs), the spellbook (pick a spell up to drop it on a bar), the talent frame (read only), the
+backpack (the toolkit's usable items, read only) and the chat frame (General and Combat Log). Your Forever binds open
+them (TOGGLECHARACTER0, TOGGLESPELLBOOK, TOGGLETALENTS, OPENALLBAGS, OPENCHAT), and the left ones stack side by side
+like UIParent's panels. The stats come from the sim (`sim/practice/sheet.go`, sent with the session's start), the
+spellbook tabs from the client's SkillLineAbility table (`/api/spells` gives each spell's `tab`), the chat's spot from
+the EllesmereUI profile. A closed frame does no work, and its textures load on its first open.
+
+Forever's real default UI is its own "Camelot" flavor (the Gethe/wow-ui-source `forever` branch: a Cata style
+character frame on `Char-Paperdoll-Parts`, the modern spellbook and talent frames on `*-c60` atlases, Edit Mode). The
+frames here follow Classic Era 1.15 instead.
 
 ### Input and frames
 

@@ -285,8 +285,9 @@ func TestSealOfRighteousnessSpellPowerOnce(t *testing.T) {
 }
 
 // TestReckoningCharges checks Reckoning since client 70425 (spell 1326084): a crit taken stores a
-// charge (5/5: always, at most once every 1.5 sec) without touching the swing timer, and the next
-// main-hand swing spends it.
+// charge (5/5: always) without touching the swing timer, a block too (5/5: 40%) but at most once
+// every 1.5 sec ("Cannot occur from Blocks more than once every 1.5 sec", 20177), and the next
+// main-hand swing spends them.
 func TestReckoningCharges(t *testing.T) {
 	sim, ret := retSim(t, "-000000000000005", arcaniteReaper)
 	trigger := ret.GetAura("Reckoning Trigger")
@@ -298,10 +299,18 @@ func TestReckoningCharges(t *testing.T) {
 	crit.Outcome = core.OutcomeCrit
 	swingAt := ret.AutoAttacks.MainhandSwingAt()
 	trigger.OnSpellHitTaken(trigger, sim, mh, crit)
-	trigger.OnSpellHitTaken(trigger, sim, mh, crit) // inside the 1.5 sec cooldown
+	trigger.OnSpellHitTaken(trigger, sim, mh, crit) // the blocks' cooldown doesn't hold crits back
 	stored := ret.GetAuraByID(core.ActionID{SpellID: 21919})
-	if stored == nil || stored.GetStacks() != 1 {
-		t.Fatalf("stored extra attacks after two crits inside 1.5 sec = %v, want 1", stored)
+	if stored == nil || stored.GetStacks() != 2 {
+		t.Fatalf("stored extra attacks after two crits = %v, want 2", stored)
+	}
+	block := mh.NewResult(&ret.Unit)
+	block.Outcome = core.OutcomeBlock
+	for range 50 { // 40% a block, so one charge comes in 50 tries, and only one inside 1.5 sec
+		trigger.OnSpellHitTaken(trigger, sim, mh, block)
+	}
+	if got := stored.GetStacks(); got != 3 {
+		t.Fatalf("stored extra attacks after 50 blocks inside 1.5 sec = %d, want 3", got)
 	}
 	if got := ret.AutoAttacks.MainhandSwingAt(); got != swingAt {
 		t.Errorf("a stored charge moved the next swing from %s to %s", swingAt, got)

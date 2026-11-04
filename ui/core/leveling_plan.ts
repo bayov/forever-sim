@@ -303,6 +303,27 @@ export function pickProblems(picks: LevelingTalentPick[], shape: TalentShape): A
 	});
 }
 
+// The first pick of the plan's builds that breaks the tree's rules, in words, or null when none
+// does. The sim takes each level's talents as they are, so it would sim such a route without a
+// word, and its hours would be ones we can't play. We check only the picks the plan plays
+// (before its last level), so a route that runs past a short plan's end doesn't stop it.
+export function routeProblem(plan: LevelingPlanSettings, shape: TalentShape): string | null {
+	const builds = sortedBuilds(plan);
+	for (let b = 0; b < builds.length; b++) {
+		const start = b == 0 ? plan.fromLevel : builds[b].level;
+		const problems = pickProblems(builds[b].picks, shape);
+		for (let i = 0; i < problems.length; i++) {
+			const level = pickLevel(i, start, plan.bonusTalentPoints);
+			if (level >= plan.toLevel) break;
+			if (!problems[i]) continue;
+			const pick = builds[b].picks[i];
+			const name = shape.trees[pick.tree]?.talents[pick.talent]?.name ?? 'A talent';
+			return `${name} at level ${level}${b > 0 ? ` (respec at ${builds[b].level})` : ''}: ${problems[i]}`;
+		}
+	}
+	return null;
+}
+
 // The picks that take us from the counts we have to the target, in an order we can take them.
 // We take the talents of the lowest row first, and in a row the tree and the talent that come
 // first. When nothing left can be taken (a target the tree doesn't allow), we put the rest at

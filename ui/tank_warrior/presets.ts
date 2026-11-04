@@ -2,7 +2,6 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
-	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
 	Consumes,
@@ -18,13 +17,17 @@ import {
 	StrengthBuff,
 	TristateEffect,
 	WeaponImbue,
-	ZanzaBuff,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { TankWarrior_Options as TankWarriorOptions, WarriorShout, WarriorStance } from '../core/proto/warrior.js';
 import APLNoReckJSON from './apls/dps_no_reck.apl.json';
 import APLReckJSON from './apls/dps_reck.apl.json';
+import Level60BalancedAPLJSON from './apls/level60_balanced.apl.json';
+import Level60MaxSurvivalAPLJSON from './apls/level60_max_survival.apl.json';
+import Level60MaxThreatAPLJSON from './apls/level60_max_threat.apl.json';
 import ProtectionAPLJSON from './apls/protection.apl.json';
+import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticArmorTrinketGear from './gear_sets/level60_phase1_synthetic_armor_trinket.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
 import P0BISSwordBoardGear from './gear_sets/p0.bis_sword_board.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
@@ -39,11 +42,23 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // Shield Block and Revenge have a shield to use. The golden suite (sim/warrior/tank_warrior) uses it.
 export const GearP0BISSwordBoard = PresetUtils.makePresetGear('Pre-BiS (Sword and Board)', P0BISSwordBoardGear);
 
+// The synthetic Level 60 Phase 1 Protection set (standards 36, tools/database/forever_synthetic_items_warrior_tank.go):
+// 106 Defense from the items, 110 block value, 239 Stamina, 8% hit (the cap), the tank stat trinket and the attack power on-use,
+// Superior Deflection (Defense +9) on the wrists: it beat Superior Stamina at every weight (docs/tank_warrior.md, Gear A/Bs).
+// Max threat and Balanced wear it: the attack power on-use beat the armor one by 210 and 176.
+export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Level60Phase1SyntheticGear);
+// The same set with the armor on-use trinket (990617) in place of the attack power one: Max survival's, where it
+// wins by 19 ± 5 when held for the last 35 sec (all of it on Broodlord; it loses on four of the six bosses).
+export const GearLevel60SyntheticArmorTrinket = PresetUtils.makePresetGear(
+	'Level 60 Phase 1 (Synthetic, armor trinket)',
+	Level60Phase1SyntheticArmorTrinketGear,
+);
+
 export const GearPresets = {
-	[Phase.Phase1]: [GearP0BISSwordBoard, GearP0BIS, GearP1BIS],
+	[Phase.Phase1]: [GearLevel60Synthetic, GearLevel60SyntheticArmorTrinket, GearP0BISSwordBoard, GearP0BIS, GearP1BIS],
 };
 
-export const DefaultGear = GearP0BISSwordBoard;
+export const DefaultGear = GearLevel60Synthetic;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -55,9 +70,15 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // cooldown, Revenge, Sunder Armor to 5 stacks, Heroic Strike from 50 Rage and Sunder Armor as the
 // filler from 40, Bloodrage under 30 Rage.
 export const APLProtection = PresetUtils.makePresetAPLRotation('Protection', ProtectionAPLJSON);
+// The three tank presets (docs/tank_warrior.md, Presets): the rotopt template warrior_tank searched on the six
+// Anniversary encounters at the survival weights 1/3, 1 and 3. None reads the tank's health; Shield Wall goes on a
+// timer and Last Stand is left to the player.
+export const APLLevel60MaxThreat = PresetUtils.makePresetAPLRotation('Level 60 Max threat', Level60MaxThreatAPLJSON);
+export const APLLevel60Balanced = PresetUtils.makePresetAPLRotation('Level 60 Balanced', Level60BalancedAPLJSON);
+export const APLLevel60MaxSurvival = PresetUtils.makePresetAPLRotation('Level 60 Max survival', Level60MaxSurvivalAPLJSON);
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLProtection, APLNoReck, AplReck],
+	[Phase.Phase1]: [APLLevel60Balanced, APLLevel60MaxThreat, APLLevel60MaxSurvival, APLProtection, APLNoReck, AplReck],
 };
 
 export const DefaultAPL = APLPresets[Phase.Phase1][0];
@@ -71,13 +92,45 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 
 export const TalentsP1Prot = PresetUtils.makePresetTalents('Protection', SavedTalents.create({ talentsString: '35--251533120331221351' }));
 
+// The talent searches' builds (docs/tank_warrior.md, Presets), on the six scoring encounters.
+// Balanced and Max survival (both searches end on the same talents): Deflection 5; Cruelty, Unbridled Wrath and Enrage 5/5; Protection 31 with Shield Slam, no Last Stand or Vanguard.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60 Protection', SavedTalents.create({ talentsString: '05-05050005-250530020310001351' }));
+// Max threat: Deflection 4, Blood Craze 1, Anticipation 3, Improved Sunder Armor 3 (Improved Heroic Strike went once
+// Unbridled Wrath stopped proccing on Heroic Strike).
+export const TalentsLevel60MaxThreat = PresetUtils.makePresetTalents(
+	'Level 60 Protection (Max threat)',
+	SavedTalents.create({ talentsString: '04-05050015-250330020330001351' }),
+);
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsP1Prot],
+	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60MaxThreat, TalentsP1Prot],
 };
 
 export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 
-export const PresetBuildTanky = PresetUtils.makePresetBuild('Tanky', { gear: DefaultGear, talents: TalentsP1Prot, rotation: DefaultAPL });
+export const PresetBuildTanky = PresetUtils.makePresetBuild('Tanky', { gear: GearP0BISSwordBoard, talents: TalentsP1Prot, rotation: APLProtection });
+
+// The three Level 60 tank presets (the user's ruling: threat against survival as weights, Balanced the default).
+export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
+	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
+	gear: GearLevel60Synthetic,
+	talents: TalentsLevel60MaxThreat,
+	rotation: APLLevel60MaxThreat,
+	race: Race.RaceUndead,
+});
+export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
+	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md).',
+	gear: GearLevel60Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLLevel60Balanced,
+	race: Race.RaceUndead,
+});
+export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
+	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation, with the armor trinket held for the last 35 sec.',
+	gear: GearLevel60SyntheticArmorTrinket,
+	talents: TalentsLevel60,
+	rotation: APLLevel60MaxSurvival,
+	race: Race.RaceUndead,
+});
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options Presets
@@ -91,20 +144,19 @@ export const DefaultOptions = TankWarriorOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
+	// The tank bench's consumables (tools/tankbench/req/warrior_protection_*.json): every tank takes the same
+	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec.
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
-	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
-	armorElixir: ArmorElixir.ElixirOfSuperiorDefense,
+	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
 	food: Food.FoodSmokedDesertDumpling,
 	flask: Flask.FlaskOfTheTitans,
-	healthElixir: HealthElixir.ElixirOfFortitude,
-	// The stone goes on the main hand: a shield can't hold one, and under Forever Elemental Sharpening
-	// Stone crits only the hand it is on (da4f2018a7).
-	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
+	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
+	// The stone goes on the main hand: a shield can't hold one.
+	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	strengthBuff: StrengthBuff.JujuPower,
-	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -141,6 +193,8 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const OtherDefaults = {
+	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
+	inFrontOfTarget: true,
 	profession1: Profession.Blacksmithing,
 	profession2: Profession.Enchanting,
 	race: Race.RaceHuman,

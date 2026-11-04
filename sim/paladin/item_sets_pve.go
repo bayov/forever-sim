@@ -222,6 +222,18 @@ var ItemSetRetributionSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Bonuses: justiceBattlegearBonuses,
 })
 
+// ItemSetProtectionSyntheticPhase1 is the set of the synthetic Phase 1 Protection paladin items
+// (tools/database/forever_synthetic_items_paladin_tank.go): its head and chest carry Justice
+// Battleplate's 2-piece bonus, +7 Defense (1300949).
+var ItemSetProtectionSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name: "Protection Paladin Synthetic (Phase 1)",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Defense, 7)
+		},
+	},
+})
+
 // Forever's Tier 1 paladin sets, by the client's set IDs (ItemSetSpell, as wowsims/forever registers
 // them in item_sets.go). Their 18 pieces carry the set ID and armor only. Each set's 3-piece bonus is a
 // utility cooldown the sim does not cast: Hammer of Justice (2106), Blessing of Protection (2107) and

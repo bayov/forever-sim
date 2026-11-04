@@ -2,31 +2,31 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
-	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
-	Conjured,
 	Consumes,
 	Debuffs,
-	FirePowerBuff,
 	Flask,
 	Food,
 	HealthElixir,
 	IndividualBuffs,
-	ManaRegenElixir,
 	Potions,
 	Profession,
+	Race,
 	RaidBuffs,
-	SpellPowerBuff,
 	StrengthBuff,
 	TristateEffect,
 	WeaponImbue,
-	ZanzaBuff,
 } from '../core/proto/common.js';
 import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import DefaultAPLJSON from './apls/default.apl.json';
+import Level60BalancedAPLJSON from './apls/level60_balanced.apl.json';
+import Level60MaxSurvivalAPLJSON from './apls/level60_max_survival.apl.json';
+import Level60MaxThreatAPLJSON from './apls/level60_max_threat.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
+import Phase1SyntheticTankGear from './gear_sets/phase1_synthetic_tank.gear.json';
+import Phase1SyntheticTankArmorTrinketGear from './gear_sets/phase1_synthetic_tank_armor_trinket.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -37,9 +37,15 @@ import BlankGear from './gear_sets/blank.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
+// The synthetic Phase 1 tank set (docs/tank_shaman.md), with the attack power on-use trinket or the armor one.
+export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Phase1SyntheticTankGear);
+export const GearLevel60SyntheticArmorTrinket = PresetUtils.makePresetGear(
+	'Level 60 Phase 1 (Synthetic, armor trinket)',
+	Phase1SyntheticTankArmorTrinketGear,
+);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearBlank],
+	[Phase.Phase1]: [GearBlank, GearLevel60Synthetic, GearLevel60SyntheticArmorTrinket],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -55,8 +61,12 @@ export const DefaultGear = GearBlank;
 
 export const APLDefault = PresetUtils.makePresetAPLRotation('Default', DefaultAPLJSON);
 
+export const APLLevel60MaxThreat = PresetUtils.makePresetAPLRotation('Level 60 Max threat', Level60MaxThreatAPLJSON);
+export const APLLevel60Balanced = PresetUtils.makePresetAPLRotation('Level 60 Balanced', Level60BalancedAPLJSON);
+export const APLLevel60MaxSurvival = PresetUtils.makePresetAPLRotation('Level 60 Max survival', Level60MaxSurvivalAPLJSON);
+
 export const APLPresets = {
-	[Phase.Phase1]: [APLDefault],
+	[Phase.Phase1]: [APLDefault, APLLevel60MaxThreat, APLLevel60Balanced, APLLevel60MaxSurvival],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -72,8 +82,24 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '35050013-0502333135510102' }));
 
+// The optimized tank builds (docs/tank_shaman.md, Presets), one a weight: Balanced from the earlier shared build
+// takes Elemental Weapons 3 for Shamanistic Focus; Max survival a point of Elemental Warding for a point of Flurry;
+// Max threat Elemental Devastation 3 for Elemental Warding and Toughness 2.
+export const TalentsLevel60Tank = PresetUtils.makePresetTalents(
+	'Level 60 Tank',
+	SavedTalents.create({ talentsString: '05050002-050032203551012201-050002' }),
+);
+export const TalentsLevel60TankMaxSurvival = PresetUtils.makePresetTalents(
+	'Level 60 Tank Max survival',
+	SavedTalents.create({ talentsString: '05050003-050032113541012201-050002' }),
+);
+export const TalentsLevel60TankMaxThreat = PresetUtils.makePresetTalents(
+	'Level 60 Tank Max threat',
+	SavedTalents.create({ talentsString: '0535-050032303351012201-050002' }),
+);
+
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60],
+	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60Tank, TalentsLevel60TankMaxThreat, TalentsLevel60TankMaxSurvival],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -82,6 +108,29 @@ export const TalentPresets = {
 };
 
 export const DefaultTalents = TalentPresets[Phase.Phase1][0];
+
+// The three Level 60 tank presets (threat against survival as weights, Balanced the default; docs/tank_sim.md).
+export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
+	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
+	gear: GearLevel60Synthetic,
+	talents: TalentsLevel60TankMaxThreat,
+	rotation: APLLevel60MaxThreat,
+	race: Race.RaceTauren,
+});
+export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
+	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md).',
+	gear: GearLevel60Synthetic,
+	talents: TalentsLevel60Tank,
+	rotation: APLLevel60Balanced,
+	race: Race.RaceTauren,
+});
+export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
+	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md).',
+	gear: GearLevel60SyntheticArmorTrinket,
+	talents: TalentsLevel60TankMaxSurvival,
+	rotation: APLLevel60MaxSurvival,
+	race: Race.RaceTauren,
+});
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -93,21 +142,17 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
+	// The tank bench's consumables (tools/tankbench/req/shaman_warden_*.json): every tank takes the same
+	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec.
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
-	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
-	armorElixir: ArmorElixir.ElixirOfSuperiorDefense,
+	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
-	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	dragonBreathChili: true,
-	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfTheTitans,
-	food: Food.FoodBlessSunfruit,
-	healthElixir: HealthElixir.ElixirOfFortitude,
-	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
+	food: Food.FoodSmokedDesertDumpling,
+	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
 	strengthBuff: StrengthBuff.JujuPower,
-	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -142,6 +187,8 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const OtherDefaults = {
+	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
+	inFrontOfTarget: true,
 	profession1: Profession.Alchemy,
 	profession2: Profession.Enchanting,
 };

@@ -1,0 +1,364 @@
+{
+ "type": "TypeAPL",
+ "priorityList": [
+  {
+   "action": {
+    "autocastOtherCooldowns": {}
+   },
+   "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 29166
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpLe",
+      "lhs": {
+       "currentManaPercent": {}
+      },
+      "rhs": {
+       "const": {
+        "val": "0.35"
+       }
+      }
+     }
+    }
+   },
+   "notes": "Innervate on ourselves at 35% mana."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 18562
+     },
+     "target": {
+      "type": "LowestHealth"
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpLt",
+      "lhs": {
+       "currentHealthPercent": {
+        "sourceUnit": {
+         "type": "LowestHealth"
+        }
+       }
+      },
+      "rhs": {
+       "const": {
+        "val": "0.6"
+       }
+      }
+     }
+    }
+   },
+   "notes": "Swiftmend whoever in my assignment is under 60% health and has my HoT."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 9858
+     },
+     "target": {
+      "type": "LowestHealth"
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpLt",
+      "lhs": {
+       "currentHealthPercent": {
+        "sourceUnit": {
+         "type": "LowestHealth"
+        }
+       }
+      },
+      "rhs": {
+       "const": {
+        "val": "0.6"
+       }
+      }
+     }
+    }
+   },
+   "notes": "Regrowth at whoever is under 60%: the fast heal."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 1238215
+     },
+     "target": {
+      "type": "MostHurt"
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpGe",
+      "lhs": {
+       "healthMissing": {
+        "sourceUnit": {
+         "type": "MostHurt"
+        }
+       }
+      },
+      "rhs": {
+       "spellExpectedHealing": {
+        "spellId": {
+         "spellId": 1238215
+        },
+        "targetUnit": {
+         "type": "MostHurt"
+        }
+       }
+      }
+     }
+    }
+   },
+   "notes": "Wild Growth at the most hurt: a HoT on its whole party."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 25299
+     },
+     "target": {
+      "type": "MostHurt"
+     }
+    },
+    "condition": {
+     "and": {
+      "vals": [
+       {
+        "not": {
+         "val": {
+          "dotIsActive": {
+           "spellId": {
+            "spellId": 25299
+           },
+           "targetUnit": {
+            "type": "MostHurt"
+           }
+          }
+         }
+        }
+       },
+       {
+        "cmp": {
+         "op": "OpGe",
+         "lhs": {
+          "healthMissing": {
+           "sourceUnit": {
+            "type": "MostHurt"
+           }
+          }
+         },
+         "rhs": {
+          "math": {
+           "op": "OpMul",
+           "lhs": {
+            "spellExpectedHealing": {
+             "spellId": {
+              "spellId": 25299
+             },
+             "targetUnit": {
+              "type": "MostHurt"
+             }
+            }
+           },
+           "rhs": {
+            "const": {
+             "val": "0.2"
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   },
+   "notes": "Rejuvenation rank 11 at the most hurt when it has none and misses 20% of the HoT."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 18562
+     },
+     "target": {
+      "type": "MostHurt"
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpGe",
+      "lhs": {
+       "healthMissing": {
+        "sourceUnit": {
+         "type": "MostHurt"
+        }
+       }
+      },
+      "rhs": {
+       "math": {
+        "op": "OpMul",
+        "lhs": {
+         "spellExpectedHealing": {
+          "spellId": {
+           "spellId": 18562
+          },
+          "targetUnit": {
+           "type": "MostHurt"
+          }
+         }
+        },
+        "rhs": {
+         "const": {
+          "val": "0.6"
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "notes": "Swiftmend at the most hurt when what it misses covers it."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 9858
+     },
+     "target": {
+      "type": "MostHurt"
+     }
+    },
+    "condition": {
+     "and": {
+      "vals": [
+       {
+        "not": {
+         "val": {
+          "dotIsActive": {
+           "spellId": {
+            "spellId": 9858
+           },
+           "targetUnit": {
+            "type": "MostHurt"
+           }
+          }
+         }
+        }
+       },
+       {
+        "cmp": {
+         "op": "OpGe",
+         "lhs": {
+          "healthMissing": {
+           "sourceUnit": {
+            "type": "MostHurt"
+           }
+          }
+         },
+         "rhs": {
+          "spellExpectedHealing": {
+           "spellId": {
+            "spellId": 9858
+           },
+           "targetUnit": {
+            "type": "MostHurt"
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   },
+   "notes": "Regrowth rank 9 at the most hurt."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 25297
+     },
+     "target": {
+      "type": "MostHurt"
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpGe",
+      "lhs": {
+       "healthMissing": {
+        "sourceUnit": {
+         "type": "MostHurt"
+        }
+       }
+      },
+      "rhs": {
+       "spellExpectedHealing": {
+        "spellId": {
+         "spellId": 25297
+        },
+        "targetUnit": {
+         "type": "MostHurt"
+        }
+       }
+      }
+     }
+    }
+   },
+   "notes": "Healing Touch rank 11 at the most hurt when what it misses covers 100% of the heal."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 9888
+     },
+     "target": {
+      "type": "MostHurt"
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpGe",
+      "lhs": {
+       "healthMissing": {
+        "sourceUnit": {
+         "type": "MostHurt"
+        }
+       }
+      },
+      "rhs": {
+       "spellExpectedHealing": {
+        "spellId": {
+         "spellId": 9888
+        },
+        "targetUnit": {
+         "type": "MostHurt"
+        }
+       }
+      }
+     }
+    }
+   },
+   "notes": "Healing Touch rank 9 at the most hurt when what it misses covers 100% of the heal."
+  }
+ ]
+}

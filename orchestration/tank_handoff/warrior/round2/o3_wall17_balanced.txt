@@ -1,0 +1,9 @@
+A=A_balanced.json B=wall17_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+magmadar          3388     3433    45.0    5.5     -5.6      -16
+golemagg          3202     3256    54.3    5.2     -0.5      -16
+onyxia            3051     3131    79.3   19.1    -15.7      -21
+broodlord         2625     2673    48.7   16.6    -11.4      -24
+vaelastrasz       3549     3437  -111.7   18.5    -43.0       20
+chromaggus        2085     2094     8.4    3.9     -0.5       -3
+scoring_mean                       20.7    5.4

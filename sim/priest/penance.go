@@ -157,7 +157,9 @@ func (priest *Priest) registerPenanceRank(rank int, cdTimer *core.Timer) *core.S
 				if target.IsDead() {
 					return
 				}
-				priest.litanyOfLight(sim, spell, PenanceManaCost[rank])
+				// The channel spell has no SpellCode (giving it one would put it under the
+				// Penance damage and cost talents), so Litany of Light reads the heal bolt's.
+				priest.litanyOfLight(sim, healBolt, PenanceManaCost[rank])
 			}
 			bolts(target).Cast(sim, target)
 			spell.Dot(target).Apply(sim)

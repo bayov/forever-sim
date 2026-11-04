@@ -70,6 +70,7 @@ type startReply struct {
 	Shown   []int32          `json:"shown"`
 	StartMs float64          `json:"startMs"`
 	Batch   *practice.Batch  `json:"batch"`
+	Sheet   practice.Sheet   `json:"sheet"`
 }
 
 func start(args []js.Value) (any, error) {
@@ -86,7 +87,7 @@ func start(args []js.Value) (any, error) {
 		return nil, err
 	}
 	session = s
-	return startReply{Toolkit: s.Toolkit(), Shown: s.ShownSpells(), StartMs: ms(s.Now()), Batch: s.TakeBatch()}, nil
+	return startReply{Toolkit: s.Toolkit(), Shown: s.ShownSpells(), StartMs: ms(s.Now()), Batch: s.TakeBatch(), Sheet: s.Sheet()}, nil
 }
 
 // input takes an input and the sim time of its press in ms, runs the sim to nowMs, and returns

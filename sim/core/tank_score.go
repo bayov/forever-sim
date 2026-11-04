@@ -69,7 +69,9 @@ func (character *Character) setupTankScore(scoring *proto.TankScoring, healingMo
 		ts.dpsStart = 2
 	}
 	if ts.threatPerDamage == 0 {
-		ts.threatPerDamage = 0.7
+		// 1 threat a point of damage: Forever removed Blessing of Salvation (the October 30 hotfix,
+		// and the November 2 notes), which was 0.7.
+		ts.threatPerDamage = 1
 	}
 	if ts.pullRatio == 0 {
 		ts.pullRatio = MeleePullRatio
@@ -81,6 +83,13 @@ func (character *Character) setupTankScore(scoring *proto.TankScoring, healingMo
 		ts.streamMetrics = character.healingModelMetrics
 	}
 	character.Unit.tankScore = ts
+}
+
+// readsNoHealth is whether the unit is scored by a tank score's replay, where nothing may read its
+// health: the score replays the iteration at other HPS, so a choice made on this run's health
+// wouldn't follow (docs/tank_sim.md).
+func (unit *Unit) readsNoHealth() bool {
+	return unit.tankScore != nil && unit.tankScore.replay
 }
 
 func (ts *tankScore) reset() {

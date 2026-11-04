@@ -192,7 +192,11 @@ func (env *Environment) raidDamageTargets(sim *Simulation, event *proto.RaidDama
 		if sim.RandomFloat("Raid Damage Share") < n-float64(count) {
 			count++
 		}
-		count = max(count, 1)
+		// A share under one player hits one player that often and nobody otherwise, so the
+		// event lands its share of the damage in any raid size (healer_mechanics-20261104-1).
+		if count == 0 {
+			return nil
+		}
 	}
 	if count <= 0 || count >= len(group) {
 		return group

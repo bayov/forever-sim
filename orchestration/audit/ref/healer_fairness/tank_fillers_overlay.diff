@@ -1,0 +1,33 @@
+--- tools/healbench/main.go	2026-11-04 13:11:04.000000000 +0000
++++ tools/healbench/main.go (overlay)	2026-11-04 13:21:54.031918336 +0000
+@@ -128,6 +128,21 @@
+ 	for _, path := range flag.Args() {
+ 		rsr := read(path)
+ 		b := bench{o: o, fight: fight, tank: tank, healer: firstPlayer(rsr), filler: filler, buffs: rsr.Raid.Buffs, debuffs: rsr.Raid.Debuffs}
++		if os.Getenv("HB_STATS") != "" {
++			req := b.request(o.scale, false)
++			cs := core.ComputeStats(&proto.ComputeStatsRequest{Raid: req.Raid, Encounter: req.Encounter})
++			for pi, party := range cs.RaidStats.Parties {
++				for si, ps := range party.Players {
++					if b.slots[pi][si] != roleHealer {
++						continue
++					}
++					f := ps.FinalStats.Stats
++					fmt.Printf("STATS %s Int %.0f Spi %.0f SP %.0f HealPow %.0f MP5 %.0f SpellCrit %.2f Mana %.0f Health %.0f\n", filepath.Base(path), f[proto.Stat_StatIntellect], f[proto.Stat_StatSpirit], f[proto.Stat_StatSpellPower], f[proto.Stat_StatHealingPower], f[proto.Stat_StatMP5], f[proto.Stat_StatSpellCrit], f[proto.Stat_StatMana], f[proto.Stat_StatHealth])
++					break
++				}
++			}
++			continue
++		}
+ 		if *logOne {
+ 			req := b.request(o.scale, false)
+ 			req.SimOptions.Iterations = 1
+@@ -223,7 +238,7 @@
+ 	if b.o.role == "raid" {
+ 		tanks = 0
+ 	}
+-	if b.o.role == "tank" {
++	if b.o.role == "tank" && os.Getenv("HB_TANK_FILLERS") == "" {
+ 		fillers = 0
+ 	}
+ 

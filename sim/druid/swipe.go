@@ -15,7 +15,7 @@ var SwipeLevel = [SwipeRanks + 1]int32{0, 16, 24, 34, 44, 54}
 const swipeAPCoefficient = 0.03
 
 // registerSwipeBearSpell is the bear's Swipe under Forever (rank 5, 9908: 83 to up to 3 enemies,
-// 20 Rage, Ferocity 1 a point less). Feral Instinct is now 10% more Swipe damage a point (the
+// 20 Rage, Ferocity 1 a point less, Idol of Brutality 2 less; Clearcasting makes it free). Feral Instinct is now 10% more Swipe damage a point (the
 // client tree; it was threat). Savage Fury's 5% a point is in talents.go. No threat on top of the
 // form's (bear_attacks.go): SoD's +101% Swipe threat (its tuning passive 436895) isn't Forever's.
 func (druid *Druid) registerSwipeBearSpell() {
@@ -37,13 +37,13 @@ func (druid *Druid) registerSwipeBearSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagOmen,
 
 		Rank:          rank,
 		RequiredLevel: int(SwipeLevel[rank]),
 
 		RageCost: core.RageCostOptions{
-			Cost: 20 - float64(druid.Talents.Ferocity),
+			Cost: 20 - float64(druid.Talents.Ferocity) - druid.brutalityRage(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{GCD: core.GCDDefault},

@@ -220,7 +220,7 @@ dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-VestmentsofTranscendence"
  value: {
   dps: 956.18783
-  tps: 685.92513
+  tps: 683.56218
   dtps: 1.87367
  }
 }

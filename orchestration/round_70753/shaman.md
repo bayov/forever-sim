@@ -91,7 +91,7 @@ Water Shield.
 | Stormstrike 150% normalized weapon damage, 6 s cooldown | notes | wrong (100%, 8 s) | `stormstrike.go`: 1.5 × (weapon roll + normalized AP part); a flat "+N damage" stays 1 ×. Tests `TestOrcShamanWeaponDamage`, `TestOrcShamanStormstrikeOutcomes` | 0 / 0 / +105 / +105 / +117 / +117 |
 | Mental Dexterity 50 / 100 / 150% of Intellect as AP | notes (415140 still 33/67/100 curve) | wrong | `talents.go`. Test `TestOrcShamanMentalDexterity` | 0 / 0 / +27 / +26 / +26 / +26 |
 | Flurry 6 / 12 / 18 / 24 / 30% | notes | wrong (5–25%) | `talents.go`. Test `TestOrcShamanHaste` | 0 / 0 / +13 / +14 / +12 / +12 |
-| Riptide | notes | n/a | healing session | – |
+| Riptide: no initial heal, 12 s cooldown, about 40% less mana | notes; 408521 / 1239242 / 1239243 unchanged in 70753 and 70755 | wrong (the client's) | healing session (`healers/shaman`): `healing.go` under Forever, ticks only, 12 s, 0.6 × mana. Tests `TestOrcShamanRiptide`, `TestOrcShamanRiptideRanks`, `TestOrcShamanRiptideExpectedHealing` | healing only (`docs/healing_shaman.md`) |
 | Talents no longer have a low-rank proc penalty | notes | n/a for the shaman (no shaman talent applies one in the sim) | A2 (shared part) | 0 |
 | Races: Dwarf Artisan's Precision, Orc Savage removed and Blood Fury 2 min, Troll Berserking 15 s, Skyborne Wind-Blessed Haste 2%, Tauren Endurance, base stats fix | notes | mostly landed in the 10-26 racial pass; base stats are A2's | A2 | – |
 | Threat and healing lines | – | n/a | tank / healer sessions | – |
@@ -105,24 +105,25 @@ All changes together (the same runs): Elemental Level 60 767.5 → 931.1 (+163.6
 Every value below comes from the notes alone; client 1.60.1.70753 unchanged (its rows are 70707's), no server hotfix.
 The next hotfix check and the launch logs compare against this list first.
 
+Server hotfixes for region 91, build 1.60.1.70755 (2026-11-03/04, wago.tools) replaced the damage rows that were here, and
+the sim takes theirs now (2026-11-04): push 113380 sets every Lightning Bolt, Chain Lightning, Earth, Flame and Frost Shock
+rank's base points and growth per level, and Chain Lightning's 0.714 coefficient (Lightning Bolt rank 10 341.82–380.98 at
+60, Chain Lightning rank 4 494.13–552.27, Earth Shock rank 7 517–545, Flame Shock rank 6 292 + 4 × 80, Frost Shock rank
+4 495.33–523.87); push 113341 the 2.5 s Chain Lightning cast; push 113282 Chain Lightning's mana, 245 / 360 / 425 / 495.
+
 | Value | Sim | Client 1.60.1.70753 |
 |---|---|---|
-| Lightning Bolt ranks 4–10 base | 0.78 × Era: rank 10 334.31–371.75 at 60, +1.87 a level | 15208 196 (± 5.4%) + 1.2 a level at 56 |
-| Chain Lightning ranks 1–4 first target | 1.45 × the comparable Lightning Bolt: rank 4 484.75–539.04 at 60 | 10605 unchanged (119–133) |
-| Chain Lightning mana | 248 / 304 / 360 / 495 (2.25 ×, rounded to whole mana) | 145 / 200 / 250 / 315 |
-| Chain Lightning cast | 2.5 s | 2 s |
-| Chain Lightning spell power coefficient | 0.714 at every rank (2.5 / 3.5, the standard one for the 2.5 s cast; standards 39, user ruling 2026-11-04; the notes name none) | 0.571 (rank 3 0.517) |
-| Earth / Flame / Frost Shock base | Era's: 517–545, 292 + 4 × 80, 492–520 at 60 (every rank) | 301 / 166 + 4 × 44 / 283 centres |
 | Lightning Overload | 10 / 20 / 30% | 408438 3 / 7 / 10% |
 | Maelstrom Weapon | 4 PPM a point (doubled from the sim's 2; the rate is server side either way) | 408498 ProcChance 100, no PPM row |
 | Stormstrike | 150% normalized weapon damage, 6 s | 17364 100%, 8 s |
 | Mental Dexterity | 50 / 100 / 150% | 415140 33 / 67 / 100% |
 | Flurry | 6 / 12 / 18 / 24 / 30% | 5 to 25% |
 | Totemic Call | 30 s, totems to the shaman's spot | 437009 Totemic Projection, 1 min |
+| Riptide (healing session, `docs/healing_shaman.md`) | no instant heal (ticks only), 12 s cooldown, mana 147 / 180 / 231 (the client's × 0.6, the notes' "about 40%" less, rounded to whole mana) | 408521 / 1239242 / 1239243: 480 / 612 / 841 at once, 6 s, 245 / 300 / 385 |
 
 Gating (finding client_update-20261103-2): every value above is under `Env.IsForever()`. Outside Forever, Lightning Bolt
 ranks 4–10 take Era's (Classic's) full damage, Chain Lightning Classic's damage and mana, Flurry Classic's 10–30%; the
-shocks' Era bases are Classic's already. Lightning Overload, Maelstrom Weapon, Mental Dexterity and Totemic Call don't exist
+shocks take the hotfix's values in both, as they did the notes' Era bases. Lightning Overload, Maelstrom Weapon, Mental Dexterity and Totemic Call don't exist
 in Classic, so outside Forever they keep the client's (or the sim's pre-notes) value. Stormstrike's cooldown and 150% sit
 inside its `IsForever()` branch.
 

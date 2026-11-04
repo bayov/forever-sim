@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "fb584eafaf39e7eedc6587809f7657a49c0762ac"
+  "master": "6b480b06046c3a8680fa86a7e979754e055410b1"
  },
- "last_pass_at": "2026-11-04T06:56:13Z",
- "pass": 52,
+ "last_pass_at": "2026-11-04T13:05:19Z",
+ "pass": 53,
  "result": "quiet",
- "note": "Pass 52: dual wield Fury rotation follow-up (HS 60, Hamstring 20, Bloodrage 50, BT first) screened with 7 one-line variants, all at or below noise; no sim change. No findings.",
+ "note": "Pass 53: rogue hotfix 113483 and warrior hotfix 113539 APL/sim changes checked; Shank gate, Reckless Swings rage gate and Elemental CL under Elemental Mastery screened on two seed sets, all at or below noise or losing. Baseline refreshed. No findings.",
  "client_build": "1.60.1.70753",
  "checked_at": "2026-11-04T06:58:15Z",
- "baseline": "baseline_f331f0c_3000it_seed424242.tsv"
+ "baseline": "baseline_6b480b0_3000it_seed424242.tsv"
 }

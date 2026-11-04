@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // Reckless Swings, a new Fury talent: "15 second cooldown. Costs 25% of base health. Your next 4
@@ -15,9 +16,12 @@ import (
 //   - 8 sec, 4 charges, proc type 4 (the melee auto attack, as Flurry's and Unbridled Wrath's), so
 //     Heroic Strike and Cleave use a charge as they do for those (SpellAuraOptions 249144).
 //   - Each charge is a flat 5 Rage (1329554 effect 0, energize 50 tenths), which a crit doesn't double.
-//   - 25% of base health (SpellPower 315180). Nothing for a DPS, so it isn't modelled.
+//   - 25% of base health (SpellPower 315180), taken from the warrior's health: nothing for a DPS,
+//     damage taken for a tank's survival score (healing needed), not TMI or DTPS (PayHealthCost).
+//     Base health is Bloodrage's, to verify the same way (see bloodrage.go).
 //
-// Still an assumption: only landed swings use a charge (the hit mask is server side, not in the data).
+// Still an assumption (report assumption warr_rs_landed, one value, user ruling 2026-11-04): only landed
+// swings use a charge (the hit mask is server side, not in the data).
 func (warrior *Warrior) registerRecklessSwingsCD() {
 	if !warrior.Talents.RecklessSwings {
 		return
@@ -25,6 +29,7 @@ func (warrior *Warrior) registerRecklessSwingsCD() {
 
 	actionID := core.ActionID{SpellID: 1329555}
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 1329554})
+	healthCost := 0.25 * warrior.GetBaseStats()[stats.Health]
 
 	warrior.RecklessSwingsAura = warrior.RegisterAura(core.Aura{
 		Label:     "Reckless Swings",
@@ -57,6 +62,9 @@ func (warrior *Warrior) registerRecklessSwingsCD() {
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			warrior.RecklessSwingsAura.Activate(sim)
+			if warrior.IsTanking() { // as Bloodrage's: the sim heals no DPS
+				warrior.PayHealthCost(sim, healthCost)
+			}
 		},
 	})
 }

@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-11-04 UTC, master fb584eafa, client 1.60.1.70755)
+# Mechanics audit: verdicts and settled items (as of 2026-11-04 UTC, master 6b480b060, client 1.60.1.70755)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -68,6 +68,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Stones, oils, scrolls on weapons | Only on weapons their SpellEquippedItems allow: sharpening stones edged (mask 33219), weightstones blunt (9264), elemental / consecrated stones and oils any melee weapon; a misfit does nothing (f3017897f) | Era 1.15.9 and 70707, per commit; masks decode to axe/polearm/sword/dagger and mace/staff/fist; pass 51 |
 | Threat talents (70630/70707) | Subtlety -10/-20/-30% Nature and Arcane threat (17118, 3 ranks); Instrument of Law -10/-20% all threat without Righteous Fury (1311085 e1, curve 110348); Demonic Brand -17/-33/-50% Searing Pain threat (1293695 e0 op 2, curve 83195). Threat only | 70707 TraitDefinitionEffectPoints; pass 51 |
 | Intellect elixirs | Elixir of Wisdom 3 Int (spell 3166, named Lesser Intellect), Elixir of Lesser Intellect 6 (its own spell 1250988), 30 min | 70707 3166 / 1250988 aura 29 bp 3 / 6; pass 50 |
+| Power Infusion | +20% spell damage and +20% healing for 15 s, 3 min cooldown; the healing part since fbddbcba5 (sim/core/buffs.go `PowerInfusionAura`) | 70755 10060: e0 aura 136 bp 20, e1 aura 79 bp 20 misc 126; pass 65 |
 
 ## Settled (don't re-flag)
 
@@ -76,6 +77,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 - Extra attacks swing at once and keep the swing timer under Forever (user ruling 2026-10-30, wowsims/forever, notes.md to verify; Era resets, tier 3). Eviscerate 4% AP a combo point under Forever (user ruling 2026-10-30, wowsims/forever estimate; Era 3%).
 - Bane of Doom: with the user.
 - Trueshot Aura is 20 / 35 / 50 / 75 / 100 since the 2026-11-03 server hotfix (foreverchanges.pro hotfix cache; dev notes post 9 give the same; sim c975a8297, pass 61), replacing the row below. Report assumptions decided by user rulings 2026-10-15 / 16: Trueshot Aura ranks 15 / 22 / 30 / 40 / 50 and Aspect of the Hawk ranks 15 / 22 / 30 / 38 / 47 / 55 (launch-realm server hotfix seen by foreverchanges.pro 2026-10-28, user ruling 2026-10-28 replacing rank 5 at 100; client 70707 now has the hotfix values too, TSA 15/22/30/40/50 and Hawk 15/22/30/38/47/55, all matching the sim; level 60 casts Hawk rank 6 14322, 110 mana; commit 73cedc9a9, pass 46); Hunter's Mark rank 4 143 (2026-10-21 hotfix, user 2026-10-23; the hotfix table has 14325 effect 1 at 143); Arcane Shot 0.10 / Serpent Sting 0.03; hunter crit per Agility Classic's at 60 (Forever's PlayerExpectedStat by level, user ruling 2026-10-25; ×1.22 before; all 60 sim values match 70532 PlayerExpectedStat ClassID 3, pass 39); pet hits scale with speed; Raptor Strike rank 8 96; Rend 2% AP a tick; Frostbolt rank 10 ×1.04; Ice Lance 0.429; Lightning Bolt rank 10 ×1.12; warr_crit_rage +100%; warr_rage_oh 0.5; level_partial_resist none; sham_ftt_stack (raid Flametongue Totem with Windfury Weapon).
+- Downranking penalty: user ruling 2026-11-04 (b57f5cc0a, sim/core/downrank.go) applies foreverchanges.pro's heal-measured formula, keep 1 - 5% a level past learn level + 17, to every ranked non-physical spell, heals and damage alike. Dev notes post 4 (tier 1) state the penalty without numbers; the 2026-10-10 beta log's rank 1 shocks at full coefficient (tier 1) is taken to predate a later fix. Every Level 60 preset casts ranks learned at 43 or later, so report DPS doesn't move (report hashes unchanged in b57f5cc0a). Don't re-flag the scope or the shock log.
 
 ## Open items (not blocking)
 
@@ -86,5 +88,4 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 - Normal mob health above level 35 is extrapolated; since 2026-10-23 it no longer feeds damage-taken Rage (the formula uses the attacker's level only), only leveling.
 - Class-side open assumptions (owned by the class workers): Paladin 2H Weapon Specialization on seal procs, Seal of Righteousness stored base points, Maelstrom Weapon proc rate, Omen of Clarity chance, Arcane Blast's bonus on Arcane Missiles.
 - Kang the Decapitator (2291) Rend proc 17153: 100 every 3 sec for 15 sec, physical bleed, verified on 70707 (`sp.py 17153`: dur 15000, eff 6 aura 3 bp 100 per 3000); 1 PPM assumed (no rate in the client). Pass 55, tier 1.
-- Downranking penalty (pass 64): dev notes post 4 (tier 1) state it without numbers; the sim applies foreverchanges.pro's heal-measured formula to priest nukes and shaman Lightning Bolt / Chain Lightning / heals only, and a 2026-10-10 beta log shows rank 1 shocks at full coefficient. Scope is an open user ruling tracked in orchestration/handoff_downranking.md; Level 60 presets cast max ranks, so no report DPS moves. Not a finding while the ruling is pending.
-- Swiftmend (pass 64): post 9's 2026-11-04T02:12Z edit adds "This ability does not consume the Rejuvenation or Regrowth effect on the target" (tier 1). The sim has no Swiftmend spell, so nothing to change.
+- Swiftmend (pass 64): post 9's 2026-11-04T02:12Z edit adds "This ability does not consume the Rejuvenation or Regrowth effect on the target" (tier 1). Correction (healer_mechanics-20261104-2/-9): the sim has Swiftmend (`sim/druid/healing.go`); it consumed the HoT until the druid worker gated the cancel off under Forever.

@@ -1,0 +1,429 @@
+{
+ "type": "TypeAPL",
+ "priorityList": [
+  {
+   "action": {
+    "autocastOtherCooldowns": {}
+   },
+   "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 29166
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpLe",
+      "lhs": {
+       "currentManaPercent": {}
+      },
+      "rhs": {
+       "const": {
+        "val": "0.35"
+       }
+      }
+     }
+    }
+   },
+   "notes": "Innervate on ourselves at 35% mana."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 18562
+     },
+     "target": {
+      "type": "LowestHealth"
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpLt",
+      "lhs": {
+       "currentHealthPercent": {
+        "sourceUnit": {
+         "type": "LowestHealth"
+        }
+       }
+      },
+      "rhs": {
+       "const": {
+        "val": "0.85"
+       }
+      }
+     }
+    }
+   },
+   "notes": "Swiftmend whoever in my assignment is under 85% health and has my HoT."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 9858
+     },
+     "target": {
+      "type": "LowestHealth"
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpLt",
+      "lhs": {
+       "currentHealthPercent": {
+        "sourceUnit": {
+         "type": "LowestHealth"
+        }
+       }
+      },
+      "rhs": {
+       "const": {
+        "val": "0.85"
+       }
+      }
+     }
+    }
+   },
+   "notes": "Regrowth at whoever is under 85%: the fast heal."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 25299
+     },
+     "target": {
+      "type": "Tank",
+      "index": 0
+     }
+    },
+    "condition": {
+     "not": {
+      "val": {
+       "dotIsActive": {
+        "spellId": {
+         "spellId": 25299
+        },
+        "targetUnit": {
+         "type": "Tank",
+         "index": 0
+        }
+       }
+      }
+     }
+    }
+   },
+   "notes": "Rejuvenation on the tank whenever it's off."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 9858
+     },
+     "target": {
+      "type": "Tank",
+      "index": 0
+     }
+    },
+    "condition": {
+     "and": {
+      "vals": [
+       {
+        "not": {
+         "val": {
+          "dotIsActive": {
+           "spellId": {
+            "spellId": 9858
+           },
+           "targetUnit": {
+            "type": "Tank",
+            "index": 0
+           }
+          }
+         }
+        }
+       },
+       {
+        "cmp": {
+         "op": "OpGe",
+         "lhs": {
+          "healthMissing": {
+           "sourceUnit": {
+            "type": "Tank",
+            "index": 0
+           }
+          }
+         },
+         "rhs": {
+          "math": {
+           "op": "OpMul",
+           "lhs": {
+            "spellExpectedHealing": {
+             "spellId": {
+              "spellId": 9858
+             },
+             "targetUnit": {
+              "type": "Tank",
+              "index": 0
+             }
+            }
+           },
+           "rhs": {
+            "const": {
+             "val": "0.7"
+            }
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   },
+   "notes": "Regrowth on the tank when its HoT is off and what it misses covers the heal."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 18562
+     },
+     "target": {
+      "type": "Tank",
+      "index": 0
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpGe",
+      "lhs": {
+       "healthMissing": {
+        "sourceUnit": {
+         "type": "Tank",
+         "index": 0
+        }
+       }
+      },
+      "rhs": {
+       "spellExpectedHealing": {
+        "spellId": {
+         "spellId": 18562
+        },
+        "targetUnit": {
+         "type": "Tank",
+         "index": 0
+        }
+       }
+      }
+     }
+    }
+   },
+   "notes": "Swiftmend at the tank when what it misses covers it."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 25297
+     },
+     "target": {
+      "type": "Tank",
+      "index": 0
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpGe",
+      "lhs": {
+       "healthMissing": {
+        "sourceUnit": {
+         "type": "Tank",
+         "index": 0
+        }
+       }
+      },
+      "rhs": {
+       "math": {
+        "op": "OpMul",
+        "lhs": {
+         "spellExpectedHealing": {
+          "spellId": {
+           "spellId": 25297
+          },
+          "targetUnit": {
+           "type": "Tank",
+           "index": 0
+          }
+         }
+        },
+        "rhs": {
+         "const": {
+          "val": "0.8"
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "notes": "Healing Touch rank 11 at the tank, the biggest that what it misses covers (80% of the heal)."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 9758
+     },
+     "target": {
+      "type": "Tank",
+      "index": 0
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpGe",
+      "lhs": {
+       "healthMissing": {
+        "sourceUnit": {
+         "type": "Tank",
+         "index": 0
+        }
+       }
+      },
+      "rhs": {
+       "math": {
+        "op": "OpMul",
+        "lhs": {
+         "spellExpectedHealing": {
+          "spellId": {
+           "spellId": 9758
+          },
+          "targetUnit": {
+           "type": "Tank",
+           "index": 0
+          }
+         }
+        },
+        "rhs": {
+         "const": {
+          "val": "0.8"
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "notes": "Healing Touch rank 8 at the tank, the biggest that what it misses covers (80% of the heal)."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 6778
+     },
+     "target": {
+      "type": "Tank",
+      "index": 0
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpGe",
+      "lhs": {
+       "healthMissing": {
+        "sourceUnit": {
+         "type": "Tank",
+         "index": 0
+        }
+       }
+      },
+      "rhs": {
+       "math": {
+        "op": "OpMul",
+        "lhs": {
+         "spellExpectedHealing": {
+          "spellId": {
+           "spellId": 6778
+          },
+          "targetUnit": {
+           "type": "Tank",
+           "index": 0
+          }
+         }
+        },
+        "rhs": {
+         "const": {
+          "val": "0.8"
+         }
+        }
+       }
+      }
+     }
+    }
+   },
+   "notes": "Healing Touch rank 6 at the tank, the biggest that what it misses covers (80% of the heal)."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 25299
+     },
+     "target": {
+      "type": "MostHurt"
+     }
+    },
+    "condition": {
+     "and": {
+      "vals": [
+       {
+        "not": {
+         "val": {
+          "dotIsActive": {
+           "spellId": {
+            "spellId": 25299
+           },
+           "targetUnit": {
+            "type": "MostHurt"
+           }
+          }
+         }
+        }
+       },
+       {
+        "cmp": {
+         "op": "OpGe",
+         "lhs": {
+          "healthMissing": {
+           "sourceUnit": {
+            "type": "MostHurt"
+           }
+          }
+         },
+         "rhs": {
+          "spellExpectedHealing": {
+           "spellId": {
+            "spellId": 25299
+           },
+           "targetUnit": {
+            "type": "MostHurt"
+           }
+          }
+         }
+        }
+       }
+      ]
+     }
+    }
+   },
+   "notes": "Rejuvenation at the most hurt of the rest when it fits."
+  }
+ ]
+}

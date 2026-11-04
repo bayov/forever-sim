@@ -137,13 +137,23 @@ func (mcd *MajorCooldown) shouldActivateHelper(sim *Simulation, character *Chara
 		return sim.CurrentTime >= mcd.timings[mcd.numUsages]
 	}
 
-	if mcd.Type.Matches(CooldownTypeSurvival) { // survival cooldowns are now skipped unless HpPercentForDefensives is > 0
-		if character.CurrentHealthPercent() > character.cooldownConfigs.HpPercentForDefensives {
-			return false
-		}
+	if mcd.Type.Matches(CooldownTypeSurvival) && !character.survivalCooldownDue() {
+		return false
 	}
 
 	return mcd.ShouldActivate(sim, character)
+}
+
+// survivalCooldownDue is whether the character's health is low enough for a survival cooldown:
+// at or under HpPercentForDefensives. 0 (the default) means never, as does a tank score's replay,
+// whose score may not read the tank's health (its health there is the stand-in healer's, not the
+// HPS the replay judges).
+func (character *Character) survivalCooldownDue() bool {
+	limit := character.cooldownConfigs.HpPercentForDefensives
+	if limit <= 0 || character.readsNoHealth() {
+		return false
+	}
+	return character.CurrentHealthPercent() <= limit
 }
 
 // Activates this MCD, if all the conditions pass.

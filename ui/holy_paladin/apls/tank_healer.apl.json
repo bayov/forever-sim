@@ -165,13 +165,23 @@
               }
             },
             "rhs": {
-              "spellExpectedHealing": {
-                "spellId": {
-                  "spellId": 25292
+              "math": {
+                "op": "OpMul",
+                "lhs": {
+                  "spellExpectedHealing": {
+                    "spellId": {
+                      "spellId": 25292
+                    },
+                    "targetUnit": {
+                      "type": "Tank",
+                      "index": 0
+                    }
+                  }
                 },
-                "targetUnit": {
-                  "type": "Tank",
-                  "index": 0
+                "rhs": {
+                  "const": {
+                    "val": "0.7"
+                  }
                 }
               }
             }
@@ -206,13 +216,23 @@
                     }
                   },
                   "rhs": {
-                    "spellExpectedHealing": {
-                      "spellId": {
-                        "spellId": 25292
+                    "math": {
+                      "op": "OpMul",
+                      "lhs": {
+                        "spellExpectedHealing": {
+                          "spellId": {
+                            "spellId": 25292
+                          },
+                          "targetUnit": {
+                            "type": "Tank",
+                            "index": 0
+                          }
+                        }
                       },
-                      "targetUnit": {
-                        "type": "Tank",
-                        "index": 0
+                      "rhs": {
+                        "const": {
+                          "val": "0.7"
+                        }
                       }
                     }
                   }
@@ -263,13 +283,23 @@
                     }
                   },
                   "rhs": {
-                    "spellExpectedHealing": {
-                      "spellId": {
-                        "spellId": 10329
+                    "math": {
+                      "op": "OpMul",
+                      "lhs": {
+                        "spellExpectedHealing": {
+                          "spellId": {
+                            "spellId": 10329
+                          },
+                          "targetUnit": {
+                            "type": "Tank",
+                            "index": 0
+                          }
+                        }
                       },
-                      "targetUnit": {
-                        "type": "Tank",
-                        "index": 0
+                      "rhs": {
+                        "const": {
+                          "val": "0.7"
+                        }
                       }
                     }
                   }
@@ -315,12 +345,22 @@
               }
             },
             "rhs": {
-              "spellExpectedHealing": {
-                "spellId": {
-                  "spellId": 19943
+              "math": {
+                "op": "OpMul",
+                "lhs": {
+                  "spellExpectedHealing": {
+                    "spellId": {
+                      "spellId": 19943
+                    },
+                    "targetUnit": {
+                      "type": "MostHurt"
+                    }
+                  }
                 },
-                "targetUnit": {
-                  "type": "MostHurt"
+                "rhs": {
+                  "const": {
+                    "val": "0.7"
+                  }
                 }
               }
             }

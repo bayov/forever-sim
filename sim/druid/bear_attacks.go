@@ -21,7 +21,9 @@ var maulRanks = []struct {
 }
 
 // registerMaulSpell is Maul, the bear's next swing: the weapon's damage plus the rank's, 15 Rage
-// (Ferocity 1 a point less), queued like a warrior's Heroic Strike and struck in the swing's place.
+// (Ferocity 1 a point less, Idol of Brutality 2 less), queued like a warrior's Heroic Strike and
+// struck in the swing's place. Clearcasting makes it free (16870's class mask takes in Maul's 0x800):
+// the swing pays no Rage, and Maul uses the proc up as it lands.
 func (druid *Druid) registerMaulSpell() {
 	rank := maulRanks[0]
 	for _, r := range maulRanks {
@@ -36,10 +38,10 @@ func (druid *Druid) registerMaulSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete | SpellFlagOmen,
 
 		RageCost: core.RageCostOptions{
-			Cost:   15 - float64(druid.Talents.Ferocity),
+			Cost:   15 - float64(druid.Talents.Ferocity) - druid.brutalityRage(),
 			Refund: 0.8,
 		},
 
@@ -49,6 +51,11 @@ func (druid *Druid) registerMaulSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if druid.MaulQueueAura != nil {
 				druid.MaulQueueAura.Deactivate(sim)
+			}
+			// Maul skips the cast hooks (it's the swing), so it uses up the Clearcasting that made
+			// it free here.
+			if druid.ClearcastingAura != nil && druid.ClearcastingAura.IsActive() {
+				druid.ClearcastingAura.Deactivate(sim)
 			}
 			damage := (rank.damage + spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target))) *
 				druid.RendAndTearMultiplier(target)
@@ -75,7 +82,7 @@ func (druid *Druid) registerMaulSpell() {
 		Flags:    core.SpellFlagMeleeMetrics | core.SpellFlagAPL | core.SpellFlagCastTimeNoGCD,
 		ExtraCastCondition: func(sim *core.Simulation, _ *core.Unit) bool {
 			return !druid.MaulQueueAura.IsActive() && !queued &&
-				druid.CurrentRage() >= maul.DefaultCast.Cost && realismICD.IsReady(sim)
+				druid.CurrentRage() >= maul.Cost.GetCurrentCost() && realismICD.IsReady(sim)
 		},
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			queued = true
@@ -105,10 +112,13 @@ func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *cor
 	return druid.Maul.Spell
 }
 
-// Lacerate (Feral row 4 talent; rank 5, 1235827 at 58): 15 Rage (Shredding Attacks 1 a point less),
-// a bleed of 15 a stack every 3 sec for 15 sec, up to 5 stacks, and a hit of 10% of weapon damage
-// for each stack already on the target (the tree's "plus 10% weapon damage per existing
-// application", so the first one hits for nothing).
+// Lacerate (Feral row 4 talent; client 1.60.1.70753, ranks 1328617 at 25, 1328616 at 34, 414644 at
+// 42, 1235826 at 50 and 1235827 at 58, a tick of 4, 6, 10, 12 and 15): 15 Rage (Shredding Attacks 1
+// a point less), a bleed of the rank's tick a stack every 3 sec for 15 sec, up to 5 stacks, and a hit
+// of 10% of weapon damage for each stack already on the target (the tree's "plus 10% weapon damage
+// per existing application", so the first one hits for nothing). Rend and Tear raises the ticks as it
+// does Rake's and Rip's (wowsims/forever has the same). Idol of the Ursine Twins: a Lacerate that
+// lands resets Primal Bite's cooldown 10% of the time (1306483, ProcChance 10).
 func (druid *Druid) registerLacerateSpell() {
 	if !druid.Talents.Lacerate {
 		return
@@ -118,7 +128,7 @@ func (druid *Druid) registerLacerateSpell() {
 		spellID int32
 		tick    float64
 	}
-	ranks := []lacerateRank{{42, 414644, 10}, {50, 1235826, 12}, {58, 1235827, 15}}
+	ranks := []lacerateRank{{25, 1328617, 4}, {34, 1328616, 6}, {42, 414644, 10}, {50, 1235826, 12}, {58, 1235827, 15}}
 	if druid.Level < ranks[0].level {
 		return
 	}
@@ -134,7 +144,7 @@ func (druid *Druid) registerLacerateSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagOmen,
 
 		RageCost: core.RageCostOptions{
 			Cost:   15 - float64(druid.Talents.ShreddingAttacks),
@@ -158,7 +168,7 @@ func (druid *Druid) registerLacerateSpell() {
 			OnSnapshot: func(_ *core.Simulation, target *core.Unit, dot *core.Dot, _ bool) {
 				attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex][dot.Spell.CastType]
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable, true)
-				dot.SnapshotBaseDamage = rank.tick * float64(dot.GetStacks())
+				dot.SnapshotBaseDamage = rank.tick * float64(dot.GetStacks()) * druid.RendAndTearMultiplier(target)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
@@ -183,12 +193,17 @@ func (druid *Druid) registerLacerateSpell() {
 				dot.AddStack(sim)
 			}
 			dot.TakeSnapshot(sim, true)
+			if druid.ursineTwins && druid.PrimalBite != nil && sim.Proc(0.1, "Idol of the Ursine Twins") {
+				druid.PrimalBite.CD.Reset()
+			}
 		},
 	})
 }
 
-// Primal Bite (Feral row 7 talent; rank 4, 1238073 at 60, bear only): 100% weapon damage plus 77,
-// 20 Rage (Ferocity 1 a point less), 6 sec cooldown.
+// Primal Bite (Feral row 7 talent, bear only; client 1.60.1.70753 SkillLineAbility: 407995 at 40,
+// 1238069 at 50, 1238070 at 60, plus 42, 62 and 77): 100% weapon damage plus the rank's, 20 Rage
+// (Ferocity 1 a point less), 6 sec cooldown. 1238073 (77 at 60) is in the spell tables but no
+// trainer or talent teaches it.
 func (druid *Druid) registerPrimalBiteSpell() {
 	if !druid.Talents.PrimalBite {
 		return
@@ -197,7 +212,7 @@ func (druid *Druid) registerPrimalBiteSpell() {
 		level   int32
 		spellID int32
 		damage  float64
-	}{{25, 407995, 26}, {36, 1238069, 38}, {48, 1238070, 59}, {60, 1238073, 77}}
+	}{{40, 407995, 42}, {50, 1238069, 62}, {60, 1238070, 77}}
 	if druid.Level < ranks[0].level {
 		return
 	}
@@ -213,7 +228,7 @@ func (druid *Druid) registerPrimalBiteSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagOmen,
 
 		RageCost: core.RageCostOptions{
 			Cost:   20 - float64(druid.Talents.Ferocity),

@@ -1,0 +1,24 @@
+tank encounters (their index takes the fight length's place, scored as their mean): tools/encounters/magmadar.json,tools/encounters/golemagg.json,tools/encounters/onyxia.json,tools/encounters/broodlord.json,tools/encounters/vaelastrasz.json,tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 3 x 900 x healing needed at 5% deaths / 258, in raid DPS
+start 05-05050005-250530020310001351: 1195.9(24.2)
+  bloodCraze+1 enrage-1: 1201.3(26.9) (+5.3, noise 29.4)
+  bloodCraze+3 enrage-3: 1201.1(25.3) (+5.1, noise 30.0)
+  improvedBloodrage-1 improvedSunderArmor+1: 1197.8(25.4) (+1.9, noise 12.9)
+  boomingVoice+1 unbridledWrath-1: 1195.8(24.1) (-0.1, noise 9.6)
+  lingeringRage+1 unbridledWrath-1: 1195.8(24.1) (-0.1, noise 9.6)
+  improvedDisarm+1 improvedSunderArmor-1: 1179.2(25.2) (-16.8, noise 15.3)
+  lastStand+1 improvedSunderArmor-1: 1179.2(25.2) (-16.8, noise 15.3)
+  ironWill+1 improvedSunderArmor-1: 1179.2(25.2) (-16.8, noise 15.3)
+  refined at 6000 iterations, current 1165.1(15.8)
+  improvedBloodrage-1 improvedSunderArmor+1: 1165.1(16.2) (-0.1, noise 7.2)
+  boomingVoice+1 unbridledWrath-1: 1162.3(15.8) (-2.9, noise 5.3)
+  lingeringRage+1 unbridledWrath-1: 1162.3(15.8) (-2.9, noise 5.3)
+  bloodCraze+1 enrage-1: 1157.1(15.1) (-8.1, noise 19.1)
+  bloodCraze+3 enrage-3: 1151.6(16.0) (-13.5, noise 18.4)
+  improvedDisarm+1 improvedSunderArmor-1: 1138.4(15.7) (-26.7, noise 8.6)
+  lastStand+1 improvedSunderArmor-1: 1138.4(15.7) (-26.7, noise 8.6)
+  ironWill+1 improvedSunderArmor-1: 1138.4(15.7) (-26.7, noise 8.6)
+[0 1 2 3 4 5]s: 1165.1(15.8)
+  talents 05-05050005-250530020310001351
+  sim runs 1224
+exit 0

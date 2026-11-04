@@ -32,7 +32,7 @@ Items found late that don't affect any shipped Level 60 preset, left out of the 
   | Number | Goal | How |
   |---|---|---|
   | Spec DPS, Compare A vs B, duty/pet cost | ≤ 0.5 DPS per spec | met; ties marked (done) |
-  | Race against race, same spec | ≤ 0.35 DPS on the paired difference (user, 2026-11-04) | adaptive fights, ceiling 40k |
+  | Race against race, same spec | ≤ 0.35 DPS on the paired difference (user, 2026-11-04) | adaptive fights, ceiling 40k (done) |
   | Racial parts, racials off, target types | ≤ max(0.25 DPS, 10%) | exact Shapley per fight; today's split for 3+ parts is a ratio of means and its se is hypot(base, off) (`build_races.py:146-157`) |
   | Stat weights (worth) | ≤ max(0.02, 3%) | larger steps for the stats whose fights drift (hit, crit, Int, Spirit, MP5), not more fights |
   | Assumption effects | ≤ max(0.25 DPS, 5%) | combinations not simmed are flagged as estimates (done): the product of single factors is off by 0.8 DPS median, 5.8 at most |
@@ -42,9 +42,12 @@ Items found late that don't affect any shipped Level 60 preset, left out of the 
 
   Sharing fights cancels luck well only for flat stats (paired sd about 2% of a fight's for AP, SP, Str); a change that
   moves a hit roll, a proc or a mana tick keeps 23-105% of it (crit 0.23, Int 0.45, Agi 0.54, hit 0.68, hit down 1.05),
-  so races need their own measurement. Done: the page's tie marks (≈, `report.js` seDiff/isTie, independent errors for
-  now) and its reworded precision claims. Left, in order: measure the paired spreads on four classes; the full run for
-  round 70753; adaptive sims with paired se stored in the rows (pilot 1-2k fights, N = 1.2 (sd / goal)² on a ×2 grid,
-  one top-up of every arm, means from the concatenated per-fight values, done checks that test the goal, per-entry
-  ablation iterations, per-fight vectors kept unpacked); a goal check at publish that warns; a second full run; paired
-  se on the page.
+  so races need their own measurement. Done: the page's tie marks (≈, `report.js` seDiff/isTie) and its reworded
+  precision claims; the paired spreads measured on five classes, which led to labeled random streams (`dashpaths.RNG`,
+  about 9x fewer fights for the same paired error); adaptive fights for the race sweep, the race scenarios and the
+  180 s assumption rows (`adaptive.py`: pilot 2k for races, 1k otherwise, N = 1.2 (sd / goal)² rounded up to whole
+  pilots, ceiling 40k, one top-up of both sides, per-fight vectors in `$DASH_DIR/vec`), with the paired errors stored
+  in the rows (`pse`, `pseBase`) and used by the page's race ties (`raceSe`). Left, in order: a full run with it (the
+  timing summary then refreshes `W` in pipeline.sh); exact Shapley per fight for 2+ racial parts (their error is a
+  bound today, `build_races.py` err()); weight step sizes; equal fight-seconds per length with the assumption lengths;
+  a goal check at publish that warns; per-entry ablation iterations.

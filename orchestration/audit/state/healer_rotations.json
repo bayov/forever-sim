@@ -1,0 +1,10 @@
+{
+ "last": {
+  "master": "1e9eb71f72c2c1f9045d93327617a99430250f44"
+ },
+ "last_pass_at": "2026-11-04T14:07:06Z",
+ "pass": 1,
+ "result": "findings",
+ "note": "Pass 1 (forced, first after H3), redone for the raid role on 1e9eb71f7 after the raid damage fix (c8f5858bd). Baseline 9 requests x 7 boss files at 1,000 it; raid rows up to +0.73, tank rows within 0.05 (tank-branch warrior changes, b2c16f6). No one-line variant wins by 0.02. Findings: -2 medium (Disc OOM on Chromaggus at 107 of 115 s), -1 low (Holy priest dead lines).",
+ "baseline": "ref/healer_bench/summary.tsv"
+}

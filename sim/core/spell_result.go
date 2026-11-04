@@ -304,7 +304,9 @@ func (spell *Spell) healingCritRating() float64 {
 	return spell.Unit.GetStat(stats.SpellCrit) + spell.BonusCritRating
 }
 func (spell *Spell) HealingCritChance() float64 {
-	return spell.healingCritRating() / (CritRatingPerCritChance * 100)
+	// The school's crit bonus too (+2% Holy, +3% Nature from set bonuses), as a HoT tick's
+	// SpellCritChance has it (healer_mechanics-20261104-7).
+	return (spell.healingCritRating() + spell.Unit.GetSchoolBonusCritChance(spell)) / (CritRatingPerCritChance * 100)
 }
 
 func (spell *Spell) HealingCritCheck(sim *Simulation) bool {

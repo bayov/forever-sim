@@ -277,6 +277,14 @@ var ItemSetEnhancementSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Bonuses: spiritcallersRageBonuses,
 })
 
+// ItemSetWardenSyntheticPhase1 is the set of the synthetic Phase 1 Warden (shaman tank) items
+// (tools/database/forever_synthetic_items_shaman_tank.go), with The Spiritcaller's Rage bonuses like the
+// Enhancement set: Forever's melee shaman set, and the only one it has at level 60.
+var ItemSetWardenSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Warden Synthetic (Phase 1)",
+	Bonuses: spiritcallersRageBonuses,
+})
+
 // spiritcallersStormBonuses are the set bonuses of The Spiritcaller's Storm, Forever's elemental Tier 1
 // set (item set 2111 in the 1.60.1.70338 client, wago.tools ItemSetSpell and SpellEffect). The client
 // links the crafted Spiritcaller Kilt, Gloves, Mantle and Boots (276538 to 276541) to it as well.
@@ -328,4 +336,31 @@ var spiritcallersStormBonuses = map[int32]core.ApplyEffect{
 var ItemSetElementalSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Name:    "Elemental Synthetic (Phase 1)",
 	Bonuses: spiritcallersStormBonuses,
+})
+
+// ItemSetRestorationSyntheticPhase1 carries the bonuses of Forever's Tier 1 Restoration shaman set
+// (Molten Core; bonus spells 1300960, 1301059, 1301093 and 1301713 in the client) on two pieces of the
+// synthetic Phase 1 Restoration set (tools/database/forever_synthetic_items_shaman_restoration.go), so
+// only the 2 piece is live (standards 6; healer_mechanics-20261104-6).
+var ItemSetRestorationSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name: "Restoration Synthetic (Phase 1)",
+	Bonuses: map[int32]core.ApplyEffect{
+		// +10 Spirit (1300960).
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Spirit, 10)
+		},
+		// The radius of your totems that affect friendly targets is larger (1301059).
+		3: func(agent core.Agent) {
+			// Nothing to do
+		},
+		// Increases healing done by up to 26 and damage done by up to 9 for all magical spells and
+		// effects (1301093). Spell power heals too, so 9 spell power and 17 healing.
+		4: func(agent core.Agent) {
+			agent.GetCharacter().AddStats(stats.Stats{stats.HealingPower: 17, stats.SpellPower: 9})
+		},
+		// Riptide's cooldown 1 sec shorter (1301713, aura 107 on Riptide's cooldown, mask word 2 0x10).
+		5: func(agent core.Agent) {
+			agent.(ShamanAgent).GetShaman().riptideCooldownCut += time.Second
+		},
+	},
 })

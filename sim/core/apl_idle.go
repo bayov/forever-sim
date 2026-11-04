@@ -345,7 +345,7 @@ func (mcd *MajorCooldown) waitsForEvent(sim *Simulation, character *Character) b
 	}
 	// We only use survival cooldowns below some health, and health only changes with a hit or a
 	// heal.
-	if mcd.Type.Matches(CooldownTypeSurvival) && character.CurrentHealthPercent() > character.cooldownConfigs.HpPercentForDefensives {
+	if mcd.Type.Matches(CooldownTypeSurvival) && !character.survivalCooldownDue() {
 		return true
 	}
 	return mcd.ShouldActivateNeedsEvent && !mcd.ShouldActivate(sim, character)

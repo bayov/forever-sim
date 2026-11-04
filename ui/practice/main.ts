@@ -15,6 +15,7 @@ import {
 	Modifiers,
 	mouseButtonName,
 	parseMacro,
+	ParsedMacro,
 	runMacro,
 	shortKey,
 	slotForCommand,
@@ -25,11 +26,15 @@ import {
 import { CameraOptions, Mover } from './controls';
 import { iconName, iconUrl, meleeIcon, setIcon } from './icons';
 import { css, HudLayout, pack, place, readLayout, Rect } from './layout';
-import { AuraState, Batch, ClockState, FromWorker, HitEvent, Input, PlayerState, Settings, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
+import { AuraState, Batch, ClockState, FromWorker, HitEvent, Input, PlayerState, Settings, Sheet, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
 import { Perf, softwareRenderer } from './perf';
 import { drawn } from './wow/particles';
 import { Graphics, graphicsPresets, Room } from './scene';
 import { loadCursors } from './cursors';
+import { dressLoading, dressSetup, musicOn, onSoundLevels, playSound, preloadSounds, setMusic, startMusic, stopMusic, uiSounds } from './glue';
+import { Frames, RoomLink } from './frames';
+import { tex } from './frames/assets';
+import type { ChatLayout } from './frames/chat';
 import { Pointer } from './pointer';
 import { RaidTest, raidSpells } from './raid';
 import { auraColor, avoidColor, CombatText, schoolColor } from './sct';
@@ -98,6 +103,9 @@ const classColors: Record<string, string> = {
 	ClassDruid: '#ff7c0a',
 };
 
+// The macro icon that asks the game to show the macro's spell or item (INV_Misc_QuestionMark).
+const dynamicMacroIcon = 134400;
+
 const defaultSettings: Settings = { mode: 'free', lengthMs: 180000, countdownMs: 5000, pingMs: 60, executeFromStart: false, spellQueueWindowMs: 400 };
 
 function el<K extends keyof HTMLElementTagNameMap>(tag: K, attrs: Record<string, string> = {}, ...children: (Node | string)[]): HTMLElementTagNameMap[K] {
@@ -120,11 +128,17 @@ async function getJSON<T>(url: string, init?: RequestInit): Promise<T> {
 // ---- Setup ----
 
 async function showSetup(error?: string) {
-	app.replaceChildren();
+	// The page looks like the game's login screen: the loading art dimmed behind, the logo, and
+	// the build in a dialog frame.
+	const screen = el('div', { class: 'glue-screen' });
 	const panel = el('div', { class: 'setup' });
-	app.append(panel);
+	screen.append(el('div', { class: 'glue-logo' }), panel);
 	panel.append(el('h1', {}, 'Practice Room'));
 	if (error) panel.append(el('div', { class: 'setup-error' }, error));
+	preloadSounds();
+	startMusic();
+	// We wait a moment for the glue textures, so the page doesn't show its plain look first.
+	const dressed = dressSetup(screen);
 
 	const presets = await getJSON<string[]>('/api/presets').catch(() => [] as string[]);
 	const records = await getJSON<RecordSummary[]>('/api/records').catch(() => [] as RecordSummary[]);
@@ -141,6 +155,7 @@ async function showSetup(error?: string) {
 	recordSelect.append(el('option', { value: 'default' }, 'No record (default keys)'));
 	for (const r of records) recordSelect.append(el('option', { value: r.guid }, `${r.name} · ${r.realm} · ${r.race} ${r.class} ${r.level}`));
 	recordSelect.value = last.record ?? (records[0]?.guid || 'default');
+	presetSelect.onchange = recordSelect.onchange = () => playSound(uiSounds.click);
 
 	panel.append(
 		el('label', {}, 'Build', presetSelect),
@@ -149,8 +164,19 @@ async function showSetup(error?: string) {
 	);
 	const start = el('button', { id: 'enter', class: 'primary' }, 'Enter room');
 	panel.append(start);
+	const musicButton = el('button', { class: 'glue-panel music' });
+	const showMusic = () => (musicButton.textContent = musicOn() ? 'Music On' : 'Music Off');
+	showMusic();
+	musicButton.onclick = () => {
+		playSound(uiSounds.glueButton);
+		setMusic(!musicOn());
+		showMusic();
+	};
+	screen.append(el('div', { class: 'glue-corner' }, musicButton));
 	start.onclick = async () => {
 		start.disabled = true;
+		playSound(uiSounds.enterWorld);
+		stopMusic();
 		try {
 			const text = presetSelect.value ? await (await fetch(`/api/presets/${presetSelect.value}`)).text() : textarea.value;
 			localStorage.setItem('practice.setup', JSON.stringify({ preset: presetSelect.value, text: textarea.value, record: recordSelect.value }));
@@ -161,6 +187,8 @@ async function showSetup(error?: string) {
 			showSetup(String(e));
 		}
 	};
+	await Promise.race([dressed, new Promise(r => setTimeout(r, 2000))]);
+	app.replaceChildren(screen);
 }
 
 // ---- The room ----
@@ -245,6 +273,9 @@ class PracticeRoom {
 	private sct?: CombatText;
 	perf?: Perf;
 	graphics: Graphics = readGraphics();
+	// The game's own frames: character, spellbook, talents, bags, menus and chat.
+	frames!: Frames;
+	sheet?: Sheet;
 	// Your auras in the last update, so the combat text shows the ones you gain.
 	private aurasSeen?: Set<string>;
 	// The buffs you start with that never run out (the sim's raid buffs and consumables). They get
@@ -272,8 +303,9 @@ class PracticeRoom {
 		}
 		const stored = JSON.parse(localStorage.getItem(settingKey) ?? '{}');
 		this.settings = { ...defaultSettings, ...stored, ...(character.saved?.fight ?? {}) };
+		// The game's spell queue window, unless you set one in the room's options.
 		const queueWindow = parseFloat(character.cvars.SpellQueueWindow ?? '');
-		if (queueWindow > 0) this.settings.spellQueueWindowMs = queueWindow;
+		if (queueWindow > 0 && character.saved?.fight?.spellQueueWindowMs === undefined) this.settings.spellQueueWindowMs = queueWindow;
 		this.worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' });
 		this.worker.onmessage = (e: MessageEvent<FromWorker>) => this.onWorker(e.data);
 	}
@@ -328,6 +360,8 @@ class PracticeRoom {
 		await this.loadModels();
 		// What you did behind the loading screen doesn't count: the session starts over.
 		this.start();
+		// The frames' shared textures and fonts load in the background, so the first open is quick.
+		setTimeout(() => this.frames.preload(), 1000);
 	}
 
 	// loadModels loads every model, texture, animation and sound the room uses behind a loading
@@ -338,6 +372,8 @@ class PracticeRoom {
 		screen.className = 'loading';
 		screen.innerHTML = '<div class="loading-box"><div class="loading-text">Loading</div><div class="loading-bar"><div></div></div></div>';
 		this.root.append(screen);
+		// The loading art and bar come first, so they show before anything else loads.
+		await dressLoading(screen);
 		const text = screen.querySelector('.loading-text') as HTMLElement;
 		const fill = screen.querySelector('.loading-bar > div') as HTMLElement;
 		const raidSize = Number(new URLSearchParams(location.search).get('raid') ?? 0);
@@ -405,6 +441,8 @@ class PracticeRoom {
 		Model.camera = this.room.camera;
 		this.sounds = new Sounds(this.room.scene);
 		this.sounds.self = this.room.player;
+		const sounds = this.sounds;
+		onSoundLevels(l => sounds.setLevels(l.enabled ? l.master : 0, l.effects, l.ambience));
 		const effects = new Effects(this.room.scene, this.sounds);
 		this.effects = effects;
 		const jobs: Promise<unknown>[] = [loadCursors(this.root)];
@@ -595,6 +633,7 @@ class PracticeRoom {
 				this.sessions++;
 				const first = !this.toolkit;
 				this.running = true;
+				if (msg.sheet) this.sheet = msg.sheet;
 				if (first) {
 					this.shownBySim = msg.shown ?? [];
 					this.setupToolkit(msg.toolkit);
@@ -664,7 +703,7 @@ class PracticeRoom {
 		);
 		this.loadSlots();
 		this.renderBars();
-		this.renderSpellbook();
+		this.frames.spellbook.refresh();
 		this.renderPack();
 	}
 
@@ -753,6 +792,7 @@ class PracticeRoom {
 		this.fight = b.fight;
 		for (const e of b.errors ?? []) this.showError(e);
 		this.combatText(b.hits ?? []);
+		if (b.hits?.length) this.frames.chat.combat(b.hits);
 		for (const h of b.hits ?? []) this.animateHit(h);
 		for (const c of b.casts ?? []) {
 			this.addHistory(c.at, c.spellId, c.itemId);
@@ -766,6 +806,7 @@ class PracticeRoom {
 		if (b.pulled) {
 			this.pulledAt = 0;
 			if (b.pulled.early) this.showMessage('Early pull!');
+			this.frames.chat.system(b.pulled.early ? 'Early pull: the encounter has begun.' : 'The encounter has begun.');
 		}
 		if (b.units) {
 			const enemy = b.units.find(u => u.ref.kind === 'enemy');
@@ -781,6 +822,8 @@ class PracticeRoom {
 			this.running = false;
 			if (b.ended.summary) {
 				this.summary = b.ended.summary;
+				const sum = b.ended.summary;
+				this.frames.chat.system(`Encounter ${b.ended.stoppedEarly ? 'stopped' : 'ended'} · ${fmtNumber(sum.dps)} DPS · ${fmtNumber(sum.damage)} damage in ${fmtTime(sum.durationMs)}`);
 				// Procs and other spells outside the toolkit need their names too.
 				const missing = (b.ended.summary.spells ?? []).map(s => s.spellId).filter(id => id && !this.toolkit.names[id]);
 				if (missing.length) Object.assign(this.toolkit.names, await getJSON<SpellNames>(`/api/spells?ids=${missing.join(',')}`).catch(() => ({})));
@@ -917,7 +960,7 @@ class PracticeRoom {
 		this.root.addEventListener(
 			'wheel',
 			e => {
-				if ((e.target as Element).closest?.('.spellbook, .fight-settings, .summary, .v-select')) return;
+				if ((e.target as Element).closest?.('.bz-frame, .bz-chat, .summary, .v-select')) return;
 				e.preventDefault();
 				const base = e.deltaY < 0 ? 'MOUSEWHEELUP' : 'MOUSEWHEELDOWN';
 				const command = commandFor(this.bindings, base, this.mods(e));
@@ -950,28 +993,30 @@ class PracticeRoom {
 		if (button === 2) this.sendInput({ kind: 'startAttack' }, wall);
 	}
 
-	// Esc closes menus first, then stops your cast, and only then clears your target.
+	// Esc goes like the game's: it closes the Game Menu or Options, then stops your cast, then
+	// closes the open windows, then clears your target, and with none of those it opens the Game
+	// Menu.
 	escape(wall: number) {
-		if (this.editing || this.binding) {
-			this.editing = this.binding = false;
-			this.cursor = undefined;
-			this.renderBars();
-			this.hud.querySelector('.spellbook')?.classList.add('hidden');
-			return;
-		}
-		const book = this.hud.querySelector('.spellbook');
-		if (book && !book.classList.contains('hidden')) {
-			book.classList.add('hidden');
-			return;
-		}
+		if (this.frames.escapeDialog()) return;
 		if (this.player?.cast && this.player.cast.end > this.now()) {
 			this.sendInput({ kind: 'cancelCast' }, wall);
 			return;
 		}
+		let closed = this.frames.closeWindows();
+		if (this.editing || this.binding || this.cursor) {
+			this.editing = this.binding = false;
+			this.cursor = undefined;
+			this.renderBars();
+			this.renderCursor();
+			closed = true;
+		}
+		if (closed) return;
 		if (this.hasTarget) {
 			this.hasTarget = false;
 			this.sendInput({ kind: 'clearTarget' }, wall);
+			return;
 		}
+		this.frames.openMenu();
 	}
 
 	runCommand(command: string, down: boolean, e: { altKey: boolean; ctrlKey: boolean; shiftKey: boolean }, wall: number) {
@@ -1014,10 +1059,8 @@ class PracticeRoom {
 			case 'ATTACKTARGET':
 				this.sendInput({ kind: 'startAttack' }, wall);
 				return;
-			case 'TOGGLESPELLBOOK':
-				this.hud.querySelector('.spellbook')?.classList.toggle('hidden');
-				return;
 		}
+		if (this.frames.command(command)) return;
 		const slot = slotForCommand(command);
 		if (slot !== undefined) this.pressSlot(slot, this.mods(e), wall);
 	}
@@ -1123,14 +1166,12 @@ class PracticeRoom {
 				<button class="start-encounter">Start Encounter</button>
 				<button class="stop">Stop</button>
 				<button class="restart">Restart</button>
-				<button class="settings-toggle">Settings</button>
+				<button class="settings-toggle">Menu</button>
 				<button class="fullscreen">Full screen</button>
 				<button class="leave">Leave</button>
 			</div>
-			<div class="fight-settings hidden"></div>
 			<div class="countdown"></div>
 			<div class="bar-tools"><button class="edit-bars">Edit bars</button><button class="bind-keys">Bind keys</button><button class="book">Spellbook</button></div>
-			<div class="spellbook hidden"></div>
 			<div class="cursor-icon hidden"></div>
 			<div class="combat-text"></div>`;
 		const q = (s: string) => this.hud.querySelector(s) as HTMLElement;
@@ -1155,7 +1196,7 @@ class PracticeRoom {
 		tip('.net', () => ({ kind: 'lines', title: 'Latency · FPS', lines: ['Simulated ping, set in Settings'] }));
 		tip('.fullscreen', () => ({ kind: 'lines', title: 'Full screen', lines: ['Ctrl+T, Ctrl+W and Esc reach your binds'] }));
 		tip('.leave', () => ({ kind: 'lines', title: 'Leave', lines: ['Back to the build and character pick'] }));
-		tip('.settings-toggle', () => ({ kind: 'lines', title: 'Settings', lines: ['Graphics, fight mode, length and ping'] }));
+		tip('.settings-toggle', () => ({ kind: 'lines', title: 'Game Menu', lines: ['Options, key bindings and leaving'] }));
 		tip('.edit-bars', () => ({ kind: 'lines', title: 'Edit bars', lines: ['Pick up a spell, then click a slot'] }));
 		tip('.bind-keys', () => ({ kind: 'lines', title: 'Bind keys', lines: ['Hover a button and press a key'] }));
 		tip('.book', () => ({ kind: 'lines', title: 'Spellbook', lines: ['Every spell and item you can use'] }));
@@ -1170,7 +1211,7 @@ class PracticeRoom {
 			this.leave();
 			showSetup();
 		};
-		q('.settings-toggle').onclick = () => q('.fight-settings').classList.toggle('hidden');
+		q('.settings-toggle').onclick = () => this.frames.toggleMenu();
 		q('.fullscreen').onclick = () => this.toggleFullscreen();
 		document.addEventListener('fullscreenchange', () => {
 			q('.fullscreen').textContent = document.fullscreenElement ? 'Exit full screen' : 'Full screen';
@@ -1180,7 +1221,8 @@ class PracticeRoom {
 			this.editing = !this.editing;
 			this.binding = false;
 			this.cursor = undefined;
-			q('.spellbook').classList.toggle('hidden', !this.editing);
+			if (this.editing) void this.frames.panels.open(this.frames.spellbook);
+			else this.frames.panels.close(this.frames.spellbook);
 			this.renderBars();
 		};
 		q('.bind-keys').onclick = () => {
@@ -1188,12 +1230,93 @@ class PracticeRoom {
 			this.editing = false;
 			this.renderBars();
 		};
-		q('.book').onclick = () => q('.spellbook').classList.toggle('hidden');
-		this.renderFightSettings();
+		q('.book').onclick = () => this.frames.panels.toggle(this.frames.spellbook);
+		this.bindSounds();
+		this.makeFrames();
 		this.hud.addEventListener('mousemove', e => {
 			const c = q('.cursor-icon');
 			c.style.left = `${e.clientX + 8}px`;
 			c.style.top = `${e.clientY + 8}px`;
+		});
+	}
+
+	// makeFrames makes the game's frames and puts them in the HUD, under the tooltip and the
+	// cursor's icon.
+	makeFrames() {
+		const room = this;
+		const link: RoomLink = {
+			loaded: this.loaded,
+			tooltip: this.tooltip,
+			playerName: () => this.playerName(),
+			toolkit: () => this.toolkit,
+			sheet: () => this.sheet,
+			whenReady: () => this.toolkitReady,
+			itemName: id => this.itemNames.get(id),
+			enemyName: () => this.target?.name ?? 'Target Dummy',
+			labelOf: s => this.labelOf(s),
+			pickUp: content => {
+				this.cursor = content;
+				this.editing = true;
+				this.renderBars();
+				this.renderCursor();
+			},
+			three: () => {
+				const view = this.orcView ?? this.playerView;
+				return view ? { renderer: this.room.renderer, scene: this.room.scene, player: view.group } : undefined;
+			},
+		};
+		this.frames = new Frames(
+			link,
+			{
+				graphics: () => room.graphics,
+				setGraphics: next => {
+					room.graphics = next;
+					try {
+						localStorage.setItem(graphicsKey, JSON.stringify(next));
+					} catch {
+						// Only this visit keeps it.
+					}
+					room.room.setGraphics(next);
+				},
+				fight: () => room.settings,
+				applyFight: next => {
+					room.settings = { ...room.settings, ...next };
+					localStorage.setItem(settingKey, JSON.stringify(room.settings));
+					const saved = room.saved();
+					const s = room.settings;
+					saved.fight = { mode: s.mode, lengthMs: s.lengthMs, countdownMs: s.countdownMs, pingMs: s.pingMs, executeFromStart: s.executeFromStart, spellQueueWindowMs: s.spellQueueWindowMs };
+					room.save(saved);
+					room.post({ type: 'stop', wallNow: wallNow() });
+					room.running = false;
+					setTimeout(() => room.start(), 50);
+				},
+				bindKeys: () => {
+					room.binding = true;
+					room.editing = false;
+					room.renderBars();
+				},
+				leave: () => {
+					room.leave();
+					showSetup();
+				},
+			},
+			(this.character.ui as { chat?: ChatLayout } | undefined)?.chat,
+		);
+		this.frames.attach(this.hud, this.hud.querySelector('.cursor-icon'));
+		this.frames.chat.system('Welcome to the practice room.');
+	}
+
+	// bindSounds plays the game's click for the HUD's buttons, dropdowns and checkboxes. The game's
+	// frames (frames/) play their own sounds.
+	bindSounds() {
+		const panels = new Set(['settings-toggle', 'book', 'edit-bars']);
+		this.hud.addEventListener('click', e => {
+			const b = (e.target as Element).closest?.('button');
+			if (b && ![...b.classList].some(c => panels.has(c))) playSound(uiSounds.click);
+		});
+		this.hud.addEventListener('change', e => {
+			const t = e.target as Element;
+			if (t.matches?.('select, input[type=checkbox]') && !t.closest('.bz-frame')) playSound(uiSounds.click);
 		});
 	}
 
@@ -1281,6 +1404,7 @@ class PracticeRoom {
 		this.u = H / L.uiHeight;
 		const u = this.u;
 		this.hud.style.setProperty('--u', `${u}px`);
+		this.frames.setScale(u);
 		const q = (s: string) => this.hud.querySelector(s) as HTMLElement;
 		place(q('.player-frame'), L.player, u, W, H);
 		place(q('.target-frame'), L.target, u, W, H);
@@ -1295,86 +1419,6 @@ class PracticeRoom {
 		q('.dm-bar').style.height = `${L.meterBarHeight * u}px`;
 		this.renderBars();
 		this.renderPack();
-	}
-
-	renderFightSettings() {
-		const box = this.hud.querySelector('.fight-settings') as HTMLElement;
-		box.replaceChildren();
-		const s = this.settings;
-		const mode = el('select', {}, el('option', { value: 'free' }, 'Free'), el('option', { value: 'encounter' }, 'Encounter'));
-		mode.value = s.mode;
-		const length = el('input', { type: 'number', min: '10', step: '10', value: String(s.lengthMs / 1000) });
-		const countdown = el('input', { type: 'number', min: '0', step: '1', value: String(s.countdownMs / 1000) });
-		const ping = el('input', { type: 'number', min: '0', step: '10', value: String(s.pingMs) });
-		const execute = el('input', { type: 'checkbox' });
-		execute.checked = s.executeFromStart;
-		const apply = el('button', {}, 'Apply · Restart');
-		apply.onclick = () => {
-			this.settings = {
-				...this.settings,
-				mode: mode.value as Settings['mode'],
-				lengthMs: Math.max(10, +length.value) * 1000,
-				countdownMs: Math.max(0, +countdown.value) * 1000,
-				pingMs: Math.max(0, +ping.value),
-				executeFromStart: execute.checked,
-			};
-			localStorage.setItem(settingKey, JSON.stringify(this.settings));
-			const saved = this.saved();
-			saved.fight = { mode: this.settings.mode, lengthMs: this.settings.lengthMs, countdownMs: this.settings.countdownMs, pingMs: this.settings.pingMs, executeFromStart: this.settings.executeFromStart };
-			this.save(saved);
-			box.classList.add('hidden');
-			this.post({ type: 'stop', wallNow: wallNow() });
-			this.running = false;
-			setTimeout(() => this.start(), 50);
-		};
-		// Graphics apply at once. A preset sets the others, and changing one makes it Custom.
-		const g = this.graphics;
-		const preset = el('select', {}, el('option', { value: 'low' }, 'Low'), el('option', { value: 'medium' }, 'Medium'), el('option', { value: 'high' }, 'High'), el('option', { value: 'custom' }, 'Custom'));
-		preset.value = g.preset;
-		const scale = el('select', {}, ...[0.5, 0.75, 1].map(v => el('option', { value: String(v) }, `${v * 100}%`)));
-		scale.value = String(g.renderScale);
-		const shadows = el('select', {}, el('option', { value: 'off' }, 'Off'), el('option', { value: 'low' }, 'Low'), el('option', { value: 'medium' }, 'Medium'), el('option', { value: 'high' }, 'High'));
-		shadows.value = g.shadows;
-		// The screen's own height in pixels (the first choice), and the common heights under it.
-		const nativeH = Math.round(screen.height * devicePixelRatio);
-		const heights = [2160, 1440, 1080, 720].filter(v => v < nativeH);
-		const resolution = el('select', {}, el('option', { value: '0' }, `${nativeH}p`), ...heights.map(v => el('option', { value: String(v) }, `${v}p`)));
-		const resolutionValue = (h: number) => (heights.includes(h) ? String(h) : '0');
-		resolution.value = resolutionValue(g.maxHeight);
-		const setGraphics = (next: Graphics) => {
-			this.graphics = next;
-			try {
-				localStorage.setItem(graphicsKey, JSON.stringify(next));
-			} catch {
-				// Only this visit keeps it.
-			}
-			this.room.setGraphics(next);
-			preset.value = next.preset;
-			scale.value = String(next.renderScale);
-			shadows.value = next.shadows;
-			resolution.value = resolutionValue(next.maxHeight);
-		};
-		preset.onchange = () => preset.value !== 'custom' && setGraphics({ ...graphicsPresets[preset.value as 'low' | 'medium' | 'high'], maxHeight: this.graphics.maxHeight });
-		resolution.onchange = () => setGraphics({ ...this.graphics, maxHeight: +resolution.value });
-		scale.onchange = () => setGraphics({ ...this.graphics, preset: 'custom', renderScale: +scale.value });
-		shadows.onchange = () => setGraphics({ ...this.graphics, preset: 'custom', shadows: shadows.value as Graphics['shadows'] });
-		box.append(
-			el('label', { class: 'resolution-label' }, 'Resolution', resolution),
-			el('label', {}, 'Graphics', preset),
-			el('label', { class: 'scale-label' }, 'Render scale', scale),
-			el('label', {}, 'Shadows', shadows),
-			el('div', { class: 'settings-gap' }),
-			el('div', { class: 'settings-gap' }),
-			el('label', {}, 'Mode', mode),
-			el('label', {}, 'Length (s)', length),
-			el('label', {}, 'Countdown (s)', countdown),
-			el('label', {}, 'Ping (ms)', ping),
-			el('label', { class: 'execute-label' }, 'Execute range', execute),
-			apply,
-		);
-		this.tooltip.attach(box.querySelector('.resolution-label') as HTMLElement, () => ({ kind: 'lines', title: 'Resolution', lines: ['Draws at this height, stretched to fit the screen', 'Lower is faster on a 4K screen'] }));
-		this.tooltip.attach(box.querySelector('.scale-label') as HTMLElement, () => ({ kind: 'lines', title: 'Render scale', lines: ['Lower draws fewer pixels, for more FPS'] }));
-		this.tooltip.attach(box.querySelector('.execute-label') as HTMLElement, () => ({ kind: 'lines', title: 'Execute range', lines: ['The dummy is under 20% health from the start'] }));
 	}
 
 	// renderBars draws the action bars where EllesmereUI has them, each a block of buttons.
@@ -1466,6 +1510,20 @@ class PracticeRoom {
 		if (this.cursor) this.fillButton(c, this.cursor);
 	}
 
+	// macroItem is the item a macro's #showtooltip or first /use shows: a trinket slot (13, 14)
+	// or an item you carry by name.
+	macroItem(macro: ParsedMacro): number | undefined {
+		const args = [macro.showtooltip, ...macro.lines.filter(l => l.command === '/use').map(l => l.args)];
+		for (const a of args) {
+			const arg = a?.replace(/\[[^\]]*\]/g, '').trim();
+			if (!arg) continue;
+			if (arg === '13' || arg === '14') return this.loaded.trinkets?.[+arg - 13] || undefined;
+			const id = this.itemsByName.get(arg.toLowerCase());
+			if (id) return id;
+		}
+		return undefined;
+	}
+
 	fillButton(b: HTMLElement, content: SlotContent | undefined) {
 		const icon = (b.querySelector('.icon') as HTMLElement) ?? b;
 		const name = b.querySelector('.name') as HTMLElement | null;
@@ -1481,34 +1539,19 @@ class PracticeRoom {
 		} else {
 			const macro = parseMacro(content.body);
 			const shown = this.toolkit ? macroIconSpell(macro, this.toolkit, this.macroContext({ alt: false, ctrl: false, shift: false })) : undefined;
+			const item = shown ? undefined : this.macroItem(macro);
 			if (shown) setIcon(icon, 'spell', shown);
-			else icon.style.backgroundImage = `url(${iconUrl('inv_misc_questionmark')})`;
+			else if (item) setIcon(icon, 'item', item);
+			// The macro's own icon, unless it's the question mark that asks the game to pick one.
+			else if (content.icon && content.icon !== dynamicMacroIcon) {
+				const key = `file:${content.icon}`;
+				icon.dataset.icon = key;
+				void tex(content.icon).then(u => icon.dataset.icon === key && (icon.style.backgroundImage = `url(${u})`));
+			} else icon.style.backgroundImage = `url(${iconUrl('inv_misc_questionmark')})`;
 			if (name) name.textContent = content.name;
 			b.classList.toggle('unsupported', macro.unsupported.length > 0);
 			b.dataset.spell = shown ? String(shown) : '';
 		}
-	}
-
-	renderSpellbook() {
-		const book = this.hud.querySelector('.spellbook') as HTMLElement;
-		book.replaceChildren(el('div', { class: 'book-title' }, 'Spellbook · click to pick up, then click a slot'));
-		const grid = el('div', { class: 'book-grid' });
-		const entries = [...this.toolkit.spells].sort((a, b) => (a.kind === b.kind ? this.labelOf(a).localeCompare(this.labelOf(b)) : a.kind.localeCompare(b.kind)));
-		for (const s of entries) {
-			const content: SlotContent = s.itemId ? { kind: 'item', id: s.itemId } : { kind: 'spell', id: s.spellId! };
-			const item = el('div', { class: 'book-entry' }, el('div', { class: 'icon' }), el('span', {}, this.labelOf(s)));
-			this.fillButton(item, content);
-			this.tooltip.attach(item, () => (s.itemId ? { kind: 'item', id: s.itemId } : { kind: 'spell', id: s.spellId! }));
-			item.onmousedown = e => {
-				e.stopPropagation();
-				this.cursor = content;
-				this.editing = true;
-				this.renderBars();
-				this.renderCursor();
-			};
-			grid.append(item);
-		}
-		book.append(grid);
 	}
 
 	labelOf(s: ToolkitSpell): string {

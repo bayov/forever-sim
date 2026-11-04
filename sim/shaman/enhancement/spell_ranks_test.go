@@ -76,10 +76,11 @@ func TestOrcShamanSpellRanks(t *testing.T) {
 	}
 }
 
-// TestOrcShamanRankTuning checks the November 2 development notes' damage at 60: Lightning Bolt
-// at 0.78 of Era's base (rank 10 +76% over the client's 190 to 212, so the report's x1.12 ruling
-// of 2026-10-15 is gone), Chain Lightning's first target at 1.45 of the comparable Lightning
-// Bolt, and the shocks at Era's base (Earth Shock rank 7 517 to 545, so the x1.08 is gone too).
+// TestOrcShamanRankTuning checks the launch damage at 60 from hotfix push 113380 (region 91, build
+// 1.60.1.70755): Lightning Bolt rank 10 at 353 base and 2.1 a level from 56 (+80% over the client's
+// 190 to 212, so the report's x1.12 ruling of 2026-10-15 is gone), Chain Lightning rank 4 at 510 and
+// 3.3, and Earth Shock rank 7 at 531 (517 to 545, so the x1.08 is gone too). Push 113282 sets Chain
+// Lightning's mana.
 func TestOrcShamanRankTuning(t *testing.T) {
 	chainLightning := func(rank int, level int32) (float64, float64) {
 		return shaman.ChainLightningScaling[rank].At(shaman.ChainLightningBaseDamage[rank][0], level), shaman.ChainLightningScaling[rank].At(shaman.ChainLightningBaseDamage[rank][1], level)
@@ -90,21 +91,20 @@ func TestOrcShamanRankTuning(t *testing.T) {
 		rank      int
 		low, high float64
 	}{
-		{"Lightning Bolt", shaman.LightningBoltBaseDamageAt, 10, 0.78 * (419 + 4*2.4), 0.78 * (467 + 4*2.4)},
-		{"Lightning Bolt", shaman.LightningBoltBaseDamageAt, 9, 0.78 * (347 + 5*2.1), 0.78 * (389 + 5*2.1)},
-		{"Chain Lightning", chainLightning, 4, 1.45 * 0.78 * (419 + 4*2.4), 1.45 * 0.78 * (467 + 4*2.4)},
+		{"Lightning Bolt", shaman.LightningBoltBaseDamageAt, 10, 341.82, 380.98},
+		{"Lightning Bolt", shaman.LightningBoltBaseDamageAt, 9, 285.71, 320.29},
+		{"Chain Lightning", chainLightning, 4, 494.13, 552.27},
 		{"Earth Shock", shaman.EarthShockBaseDamageAt, 7, 517, 545},
-		{"Earth Shock", shaman.EarthShockBaseDamageAt, 6, 372, 394},
+		{"Earth Shock", shaman.EarthShockBaseDamageAt, 6, 379.38, 402.62},
 	} {
 		low, high := c.at(c.rank, 60)
 		if math.Abs(low-c.low) > 0.01 || math.Abs(high-c.high) > 0.01 {
 			t.Errorf("%s rank %d at 60: %.2f to %.2f, want %.2f to %.2f", c.name, c.rank, low, high, c.low, c.high)
 		}
 	}
-	// Chain Lightning costs about 2.25 times the comparable Lightning Bolt's mana.
-	for rank, bolt := range map[int]int{1: 6, 2: 7, 3: 8, 4: 10} {
-		if got, want := shaman.ChainLightningManaCost[rank], 2.25*shaman.LightningBoltManaCost[bolt]; math.Abs(got-want) > 0.5 {
-			t.Errorf("Chain Lightning rank %d costs %.0f, want about %.1f (2.25 x Lightning Bolt rank %d)", rank, got, want, bolt)
+	for rank, want := range map[int]float64{1: 245, 2: 360, 3: 425, 4: 495} {
+		if got := shaman.ChainLightningManaCost[rank]; got != want {
+			t.Errorf("Chain Lightning rank %d costs %.0f, want %.0f", rank, got, want)
 		}
 	}
 }

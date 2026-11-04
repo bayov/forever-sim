@@ -478,7 +478,8 @@ func landedRange(sim *core.Simulation, spell *core.Spell, target *core.Unit, n i
 }
 
 // TestForeverWarriorProtectionValues checks the Protection rows under Forever (client 70425):
-// Revenge rank 5 rolls 97 to 145 plus 28% of attack power (11601; wowsims/forever 3a6c7df46e),
+// Revenge rank 5 rolls 97 to 145 plus 25% of attack power (11601; the 70707 tooltip as wowsims/forever
+// d7a38ae, to verify by a level 60 Revenge log after 70707: user ruling 2026-11-04, standards 40),
 // Shield Slam 625 to 685 plus the block value once and no attack power (23925), Thunder Clap 103
 // plus 7% of attack power (11581; 1172f1c745), Demoralizing Shout lasts 45 sec (11556), and
 // Bastion raises Physical damage only (16538).
@@ -511,7 +512,7 @@ func TestForeverWarriorProtectionValues(t *testing.T) {
 			t.Errorf("%s at %.0f attack power hits for %.1f to %.1f, want %.1f to %.1f", name, ap, gotLow, gotHigh, wantLow, wantHigh)
 		}
 	}
-	check("Revenge", war.Revenge.Spell, 97, 145, 0.28)
+	check("Revenge", war.Revenge.Spell, 97, 145, 0.25)
 	check("Shield Slam", war.ShieldSlam.Spell, 625+war.BlockValue(), 685+war.BlockValue(), 0)
 	check("Thunder Clap", war.ThunderClap.Spell, 103, 103, 0.07)
 

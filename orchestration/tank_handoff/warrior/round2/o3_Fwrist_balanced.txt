@@ -1,0 +1,9 @@
+A=Fwrist_balanced.json B=F_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+magmadar          3433     3438     4.6    7.5     -1.6       -2
+golemagg          3256     3263     7.0    8.7     -0.1       -2
+onyxia            3131     3155    24.1   17.0     -2.2       -6
+broodlord         2673     2678     5.1   19.5     -2.0       -3
+vaelastrasz       3437     3435    -2.8    6.6      0.6        3
+chromaggus        2094     2105    10.9   13.3     -2.2       -5
+scoring_mean                        8.2    5.3

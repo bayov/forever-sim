@@ -221,7 +221,9 @@ func (rot *APLRotation) GetAPLDot(targetUnit UnitReference, spellId *proto.Actio
 	} else if spell.AOEDot() != nil {
 		return spell.AOEDot()
 	} else {
-		target := targetUnit.Get()
+		// A HoT at Most Hurt or Lowest Health: nobody is hurt as the rotation is built, so a full
+		// player stands in to find the HoT (the value reads the target of the moment).
+		target := targetUnit.HealthUnit()
 		if target != nil {
 			return spell.Dot(target)
 		} else {

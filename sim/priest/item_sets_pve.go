@@ -223,7 +223,8 @@ var vestmentsOfConvictionBonuses = map[int32]core.ApplyEffect{
 	5: func(agent core.Agent) {
 		priest := agent.(PriestAgent).GetPriest()
 		priest.OnSpellRegistered(func(spell *core.Spell) {
-			if spell.CD.Timer != nil && slices.Contains(PenanceSpellId[:], spell.SpellID) {
+			if spell.CD.Timer != nil && (slices.Contains(PenanceSpellId[:], spell.SpellID) ||
+				spell.SpellCode == SpellCode_PriestPrayerOfMending) {
 				spell.CD.Duration -= time.Second
 			}
 		})
@@ -232,7 +233,8 @@ var vestmentsOfConvictionBonuses = map[int32]core.ApplyEffect{
 
 // ItemSetSmiteSyntheticPhase1 is the set of the synthetic Phase 1 Smite items, with the
 // Vestments of Conviction bonuses. The Level 60 Smite set puts it on two pieces, so only the 2
-// piece (10 Spirit) is live; the 4 piece is the 9 spell damage and the 5 piece Penance.
+// piece (10 Spirit) is live; the 4 piece is the 9 spell damage and the 5 piece Penance and
+// Prayer of Mending.
 var ItemSetSmiteSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Name:    "Smite Synthetic (Phase 1)",
 	Bonuses: vestmentsOfConvictionBonuses,

@@ -1,0 +1,24 @@
+tank encounters (their index takes the fight length's place, scored as their mean): tools/encounters/magmadar.json,tools/encounters/golemagg.json,tools/encounters/onyxia.json,tools/encounters/broodlord.json,tools/encounters/vaelastrasz.json,tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 0.3333333333333333 x 900 x healing needed at 5% deaths / 258, in raid DPS
+start 3-05050015-250430020330001351: 4594.6(12.1)
+  bloodCraze+1 anticipation-1: 4605.2(12.3) (+10.6, noise 5.5)
+  anticipation-1 vanguard+1: 4601.0(12.3) (+6.4, noise 5.4)
+  anticipation-1 improvedShieldBash+1: 4601.0(12.3) (+6.4, noise 5.4)
+  ragingBlows+1 anticipation-1: 4601.0(12.3) (+6.4, noise 5.4)
+  recklessSwings+1 anticipation-1: 4601.0(12.3) (+6.4, noise 5.4)
+  improvedExecute+1 anticipation-1: 4601.0(12.3) (+6.4, noise 5.4)
+  furiousPrecision+1 anticipation-1: 4601.0(12.3) (+6.4, noise 5.4)
+  ironWill+1 anticipation-1: 4601.0(12.3) (+6.4, noise 5.4)
+  refined at 3000 iterations, current 4574.0(5.2)
+  bloodCraze+1 anticipation-1: 4575.5(5.1) (+1.4, noise 2.1)
+  anticipation-1 vanguard+1: 4569.9(5.1) (-4.1, noise 2.1)
+  anticipation-1 improvedShieldBash+1: 4569.9(5.1) (-4.1, noise 2.1)
+  ragingBlows+1 anticipation-1: 4569.9(5.1) (-4.1, noise 2.1)
+  recklessSwings+1 anticipation-1: 4569.9(5.1) (-4.1, noise 2.1)
+  improvedExecute+1 anticipation-1: 4569.9(5.1) (-4.1, noise 2.1)
+  furiousPrecision+1 anticipation-1: 4569.9(5.1) (-4.1, noise 2.1)
+  ironWill+1 anticipation-1: 4569.9(5.1) (-4.1, noise 2.1)
+[0 1 2 3 4 5]s: 4574.0(5.2)
+  talents 3-05050015-250430020330001351
+  sim runs 1836
+exit 0

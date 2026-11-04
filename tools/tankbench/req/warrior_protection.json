@@ -4,6 +4,7 @@
    {
     "players": [
      {
+      "inFrontOfTarget": true,
       "race": "RaceOrc",
       "class": "ClassWarrior",
       "talentsString": "35--251533120331221351",
@@ -295,6 +296,8 @@
        "flask": "FlaskOfTheTitans",
        "food": "FoodSmokedDesertDumpling",
        "agilityElixir": "ElixirOfTheMongoose",
+       "armorElixir": "ElixirOfThePhalanx",
+       "healthElixir": "ElixirOfGreaterFortitude",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
        "mainHandImbue": "DenseSharpeningStone",

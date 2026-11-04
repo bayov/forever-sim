@@ -193,3 +193,18 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-04 UTC | consumables | pass 70 | master fb584eafa | quiet | Salvation dropped from all 12 presets, resolved consumables-20261104-1
 2026-11-04 UTC | mechanics | pass 64 | master fb584eafa | quiet | no sim code changed; dev notes post 9 Swiftmend edit needs no sim change
 2026-11-04 UTC | fairness | pass 28 | master fb584eafa | quiet | Fury rebuilt per race, Orc best, gear check 19/19
+2026-11-04 13:12 | results | pass 77 | master 6b480b0604 | 1 new finding | results-20261104-1: five rogue metas' published DPS lag hotfix 113483
+2026-11-04 13:12 | rotations | pass 53 | master 6b480b0604 | quiet | rogue/warrior hotfix rotations hold; baseline refreshed
+2026-11-04 13:12 | gear | pass 56 | master 6b480b0604 | quiet | new healer sets pass
+2026-11-04 13:12 | consumables | pass 71 | master 6b480b0604 | quiet | no consumable value changes
+2026-11-04 13:12 | mechanics | pass 65 | master 6b480b0604 | quiet | downrank ruling settled; Power Infusion healing verified
+2026-11-04 13:12 | fairness | pass 29 | master 6b480b0604 | quiet | only warrior/rogue moved, from hotfixes
+2026-11-04 UTC | healer_gear | pass 1 | master a1b1163d2 | quiet | forced first pass: 4 healer sets within 1b budget/shape and row shares, relics modelled; Wowhead cache empty so rows not re-derived from pages
+2026-11-04 13:35 | healer_mechanics | pass 1 | master a1b1163d2 | findings | first pass, 4 healers + engine vs 70755: raid damage share floor (high), Swiftmend consumes HoT (high), Ancestral Fortitude armor (medium), 7 low
+2026-11-04 13:32 | tank_gear | pass 1 | master f62bfc74b | 6 new findings | forced first pass: all pieces in budget/shape bar bear chest -1.3%; paladin Stamina share out; warrior trinket A/B missing; enchant values stale
+2026-11-04 13:34 | tank_fairness | pass 1 | master f62bfc74bc | 5 new findings | forced first pass: bear alone has Phalanx/Fortitude (high); paladin half the damage taken, Warden 2-3x healing, Balanced=Max survival for pal/war, legacy warrior req
+2026-11-04 13:38 | tank_rotations | pass 1 | master f62bfc74bc | 8 new findings | first baseline ref/tank_bench/summary.tsv; bear Roar order +198, warrior Shield Wall 18s +46/+175, paladin Bulwark 13s (Broodlord), Warden shock order +62
+2026-11-04 13:39 | tank_mechanics | pass 1 | master f62bfc74b | 11 new findings | forced first pass: tanks simmed behind the boss (high), parry haste double-counted in encounters (high), Primal Bite misses notes' x2 threat (high)
+2026-11-04 13:40 | healer_rotations | pass 1 | master a1b1163d2 | findings | baseline = H3 table exactly; 15 variants none win; healer_rotations-20261104-1 (low) Holy priest dead lines
+2026-11-04 13:50 | healer_fairness | pass 1 | master c8f5858bd | findings | 4 new: tank bench lets Prayer of Mending bounce tank-priest (+0.085 Holy priest, high), heal-size gate holds back shaman/paladin/druid (medium), 2 low
+2026-11-04 14:07 | healer_rotations | pass 1 (redo) | master 1e9eb71f7 | findings | raid role redone after the raid damage fix; healer_rotations-20261104-2 (medium) Disc OOM on Chromaggus at 107 s; -1 (low) stands
