@@ -48,7 +48,7 @@ func (paladin *Paladin) registerLightsVigil() {
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BonusCoefficient: paladin.downrankCoefficient(r.coefficient, r.learnLevel),
+			BonusCoefficient: r.coefficient, // downranked by the engine (core.applyDownrank)
 			CritDamageBonus:  paladin.holyPowerCritBonus(),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

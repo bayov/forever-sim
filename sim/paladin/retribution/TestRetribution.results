@@ -148,8 +148,8 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Phase5-AllItems-HolySynthetic(Phase1)"
  value: {
-  dps: 371.71
-  tps: 404.54649
+  dps: 344.21617
+  tps: 377.06016
  }
 }
 dps_results: {

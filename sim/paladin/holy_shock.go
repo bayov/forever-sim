@@ -122,7 +122,7 @@ func (paladin *Paladin) registerHolyShockHeal(rank int, extraCrit float64) *holy
 
 		DamageMultiplier: paladin.healingLightMultiplier(),
 		ThreatMultiplier: 1,
-		BonusCoefficient: paladin.downrankCoefficient(r.coefficient, r.learnLevel),
+		BonusCoefficient: r.coefficient, // downranked by the engine (core.applyDownrank)
 		BonusCritRating:  extraCrit,
 		CritDamageBonus:  paladin.holyPowerCritBonus(),
 

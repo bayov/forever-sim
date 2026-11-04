@@ -21,8 +21,10 @@ tooltip of Light's Vigil embedded in the cached Holy guide page. A heal's value 
 base at its learn level plus its growth per level up to its max level, spread by the variance:
 `base * (1 - v/2)` to `base * (1 + v/2)`, as the shaman's heals (`sim/shaman/healing.go`) read the same
 tables. The footage agrees to the point (Holy Light 6 at 38: 610 to 682; Flash of Light 3 at 38: 101 to 114).
-Forever's downranking (5% of the coefficient a level past learn level + 17, the shaman's and the priest's
-rule) applies to every heal.
+Forever's downranking (5% of the coefficient a level past learn level + 17) applies to every heal, from the
+engine since master 8f304b240 and b57f5cc0a (`sim/core/downrank.go`, a user ruling): the heals give their
+`Rank` and `RequiredLevel` and `RegisterSpell` scales the coefficient. This branch had the same rule by hand
+before the merge, so nothing moved (see "Round 70753" below).
 
 "Before" is the sim on master 58d6e8814; "now" is this branch.
 

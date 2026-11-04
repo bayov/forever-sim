@@ -17,8 +17,8 @@ import (
 // variance around that, base * (1 - variance / 2) to base * (1 + variance / 2). The level 38
 // footage of the BlizzCon build agrees (Holy Light rank 6 610 to 682, Flash of Light rank 3 101 to
 // 114, forever-wiki/classes/paladin.md). The spell power coefficients are the client's, and
-// Forever's downranking takes them down for a rank learned far below our level
-// (downrankCoefficient).
+// Forever's downranking (sim/core/downrank.go) takes them down for a rank learned far below our
+// level: Holy Light rank 6 (learned at 38) keeps 75% at 60.
 type healRank struct {
 	spellID              int32
 	base, perLevel       float64
@@ -104,19 +104,14 @@ func HealRankLevels(ranks []healRank) []int32 {
 	return levels
 }
 
-// downrankCoefficient is what a rank keeps of its spell power coefficient under Forever: 5% less
-// for each level the caster is past the rank's learn level + 17, down to nothing (Blizzard's
-// 2026-10-01 development notes, https://foreverchanges.pro/downranking; the shaman's and the
-// priest's rule). Holy Light rank 6 (learned at 38) keeps 75% at 60.
-func (paladin *Paladin) downrankCoefficient(coefficient float64, learnLevel int32) float64 {
-	return coefficient * paladin.downrankFactor(learnLevel)
-}
-
+// downrankFactor is what a rank keeps of the Oath of Light bonus (holy_talents.go), Forever's
+// downranking penalty from the engine (core.DownrankFactor). The heals' coefficients take the
+// penalty in RegisterSpell (core.applyDownrank), from their Rank and RequiredLevel.
 func (paladin *Paladin) downrankFactor(learnLevel int32) float64 {
 	if paladin.Env == nil || !paladin.Env.IsForever() {
 		return 1
 	}
-	return max(0, min(1, 1-0.05*float64(paladin.Level-17-learnLevel)))
+	return core.DownrankFactor(paladin.Level, int(learnLevel))
 }
 
 // healTarget is where a heal cast at target lands: the player it was cast at, or ourselves for a
@@ -203,7 +198,7 @@ func (paladin *Paladin) newHealSpellConfig(r healRank, rank int, spellCode int32
 
 		DamageMultiplier: paladin.healingLightMultiplier(),
 		ThreatMultiplier: 1,
-		BonusCoefficient: paladin.downrankCoefficient(r.coefficient, r.learnLevel),
+		BonusCoefficient: r.coefficient, // downranked by the engine (core.applyDownrank)
 		CritDamageBonus:  paladin.holyPowerCritBonus(),
 		// Spiritual Focus: a chance for a hit not to push the heal back.
 		PushbackReduction: paladin.spiritualFocusChance(),
