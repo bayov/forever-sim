@@ -121,7 +121,7 @@ export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,
-	race: Race.RaceRACE_MAX_SURVIVAL,
+	race: Race.RaceUndead,
 });
 
 ///////////////////////////////////////////////////////////////////////////

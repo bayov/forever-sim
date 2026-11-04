@@ -168,3 +168,107 @@ tank's health:
 - **Shield Wall on a timer**: never, at the pull, or for the last so many seconds (it reads no health).
 
 Last Stand stays out: it changes max health, which the survival replay doesn't follow.
+
+## Presets (2026-11-04)
+
+Searched with `tools/rotopt -template warrior_tank -tank <preset>` on the six scoring encounters (their mean), the
+synthetic Level 60 set, 600 iterations a candidate and 3,000 to confirm (Max survival 2,000 and 6,000: its paired
+noise is about three times Balanced's). Talent and knob searches alternated until neither moved. The raw output is in
+`orchestration/tank_handoff/warrior/` (`ts_*`, `knobs_*`, `races_*`).
+
+| Preset | Talents | Knobs that differ from Balanced | Race | Score (Undead, confirm) |
+|---|---|---|---|---|
+| Max threat (w = 1/3) | `3-05050015-250430020330001351`: Improved Heroic Strike 3 in place of Deflection, Blood Craze 1, Anticipation 4, Improved Sunder Armor 3 | `tc=0` (no Thunder Clap), `hsRage=30`, `revengeFirst=1` | Undead | 4,709.0 ± 5.3 |
+| Balanced (w = 1, default) | `05-05050005-250530020310001351`: Deflection 5; Cruelty, Unbridled Wrath, Enrage 5/5; Protection 31 with Shield Slam, Improved Sunder Armor 1, no Last Stand or Vanguard | (the base) | Undead | 3,795.3 ± 7.5 |
+| Max survival (w = 3) | Balanced's: the talent search from it found no move past its noise (best +5.3, noise 29.4) | none (the knob search kept every knob: `demo=1` -62 ± 34, `hsRage=30` -67 ± 26) | Undead | 1,485.0 ± 19.2 (6,000) |
+
+Balanced's knobs: `shieldBlock=1` (whenever its buff is down), `sbRage=0`, `demo=0`, `tc=1`, `tcRefresh=2`,
+`debuffsFirst=0`, `revengeFirst=0`, `sunderUp=1`, `sunderRage=30`, `hsRage=50`, `bloodrageRage=30`, `opener=0`,
+`chargeFrom=0`, `potion=1`, `shieldWall=2` (the last 12 s), `wallAt=12`, `trinketAt=0`, `recklessSwingsRage=0`,
+`slamRage=0`. Max survival's APL is Balanced's (same talents and knobs); it gets its own file so the UI keeps three.
+
+Races (rotopt `-eval`, the preset's talents and knobs; Max threat and Balanced at 3,000 iterations, Max survival at 6,000):
+
+| Race | Max threat | Balanced | Max survival |
+|---|---|---|---|
+| Undead | **4,709.0** | **3,795.3** | **1,485.0** |
+| Tauren | 4,598.1 | 3,680.6 | 1,368.9 |
+| Human | 4,595.7 | 3,637.4 | 1,204.2 |
+| the Skyborne (both) | 4,603.1 | 3,626.1 | 1,174.7 |
+| Night Elf | 4,569.6 | 3,625.4 | 1,240.6 |
+| Troll | 4,578.1 | 3,622.9 | 1,202.2 |
+| Orc | 4,574.0 | 3,617.2 | 1,187.3 |
+| Dwarf | 4,571.1 | 3,613.3 | 1,176.6 |
+| Gnome | 4,565.0 | 3,610.8 | 1,186.9 |
+
+Undead's lead at every weight is Touch of the Grave's drain healing the tank, modelled at its "up to 5% of max health"
+cap (`sim/core/racials_forever.go`): a call (below). Without it, Tauren leads at
+Balanced and Max survival, and the Skyborne and Tauren tie at Max threat.
+
+What the searches dropped: Slam (15 s under Forever) at every weight (-150 to -380), Reckless Swings (no searched build
+keeps it: a 16-point Fury start traded it for Deflection), Demoralizing Shout (the tank pays for it, `tankscore.OwnDebuffs`,
+and the boss's attack power cut buys less than the Rage), Vanguard and the Charge opener (Charge from Defensive Stance
+needs Vanguard; `opener=0` scores the same as the old Bloodrage-and-Charge opener), Last Stand (its health change isn't
+followed by the replay, see Rotation template), Gore Drinker (unreachable with Shield Slam).
+
+Files: `tools/tankbench/req/warrior_protection_{max_threat,balanced,max_survival}.json`,
+`ui/tank_warrior/apls/level60_{max_threat,balanced,max_survival}.apl.json`, `ui/tank_warrior/presets.ts` (the three
+builds, Balanced first). `tools/tankbench/req/warrior_protection.json` is left as it was (`35--251533120331221351`,
+Orc, its old gear): `sim/raid_healing_test.go`, `tools/healbench`, `tools/encounters/from_logs.py` and
+`TestForeverTankScore` read it, and replacing it breaks `TestForeverTankScore` (no iteration needs 500 HPS on the
+synthetic set) and `TestHealingFightHealComm`. Whether the healing tools move to the Balanced request is the
+orchestrator's to decide with the healing session.
+
+## Numbers (2026-11-04)
+
+`tools/tankbench`, 1,000 iterations, the presets' requests on all seven Anniversary encounters (Ragnaros benched, not
+scored), Undead. The score at each weight (`Max threat`, `Balanced`, `Max survival` columns), SafeDPS, healing needed
+(per second at 5% deaths), the death floor, TPS, DPS and DTPS. Raw output: `orchestration/tank_handoff/warrior/bench_table.txt`.
+
+**Max threat preset**
+
+| Encounter | w = 1/3 | w = 1 | w = 3 | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS |
+|---|---|---|---|---|---|---|---|---|---|
+| Magmadar | 4,882 | 4,228 | 2,264 | 2,605 | 281 | 0.0% | 2,427 | 674 | 323 |
+| Golemagg | 4,800 | 3,995 | 1,578 | 2,602 | 346 | 0.0% | 2,447 | 682 | 365 |
+| Onyxia | 4,768 | 3,698 | 487 | 2,651 | 310 | 0.0% | 2,478 | 686 | 362 |
+| Broodlord | 4,474 | 2,929 | -1,707 | 2,623 | 773 | 0.0% | 2,462 | 682 | 443 |
+| Vaelastrasz | 5,043 | 4,534 | 3,008 | 2,649 | 605 | 0.0% | 2,403 | 653 | 608 |
+| Chromaggus | 4,281 | 2,637 | -2,296 | 2,552 | 830 | 0.0% | 2,448 | 686 | 654 |
+| Ragnaros | 2,889 | -1,429 | -14,385 | 2,524 | 2,051 | 0.0% | 2,393 | 667 | 1,088 |
+| **Mean of six** | **4,708.0** | 3,670.2 | 555.7 | 2,613.7 | 524.2 | 0.0% | 2,444.2 | 677.2 | 459.2 |
+
+**Balanced preset** (Max survival's request is the same build and scores the same, row for row)
+
+| Encounter | w = 1/3 | w = 1 | w = 3 | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS |
+|---|---|---|---|---|---|---|---|---|---|
+| Magmadar | 4,648 | 4,229 | 2,973 | 2,429 | 180 | 0.0% | 2,266 | 629 | 253 |
+| Golemagg | 4,626 | 4,097 | 2,509 | 2,445 | 227 | 0.0% | 2,291 | 637 | 280 |
+| Onyxia | 4,623 | 3,809 | 1,365 | 2,515 | 236 | 0.0% | 2,345 | 648 | 313 |
+| Broodlord | 4,375 | 3,214 | -269 | 2,477 | 580 | 0.0% | 2,319 | 642 | 361 |
+| Vaelastrasz | 4,858 | 4,435 | 3,164 | 2,535 | 504 | 0.0% | 2,300 | 622 | 555 |
+| Chromaggus | 4,253 | 2,986 | -815 | 2,443 | 640 | 0.0% | 2,355 | 658 | 507 |
+| Ragnaros | 2,788 | -1,384 | -13,903 | 2,437 | 1,982 | 0.3% | 2,320 | 646 | 1,044 |
+| **Mean of six** | 4,563.8 | **3,795.0** | **1,487.8** | 2,474.0 | 394.5 | 0.0% | 2,312.7 | 639.3 | 378.2 |
+
+The other tanks, as their docs on this branch stand (Balanced, the mean of the six): the Warden shaman 501
+(`docs/tank_shaman.md`), the bear 1,833.6 before its presets (`docs/tank_druid.md`); the orchestrator lines them up in
+`docs/tank_sim.md` with their final numbers.
+
+**What the update moved** (Balanced, the mean of the six): 3,360.8 before it and 3,447.0 after on the same build
+(`35-05-251530120331201351`, Orc, 3,000 iterations: TPS +45% from the stance and Defiance, SafeDPS +2%), then 3,795.3 with
+the Balanced preset (new talents +170, Undead +178).
+
+## Calls for the user
+
+1. **Touch of the Grave's drain** (Undead): modelled at its "up to 5% of max health" cap, which makes Undead the best race
+   at every weight (+115 Balanced, +106 Max threat, +116 Max survival over the next race). Default: Undead. At a lower
+   drain the presets would take Tauren (Balanced 3,680.6, Max survival 1,368.9; Max threat the Skyborne 4,603.1).
+2. **Shield Slam's threat** (flat **508** on top of damage): the client says "very high threat" with no number. Default
+   the sim's 508 (Rules audit, Shield Slam row).
+3. **Revenge's attack power ratio**: the tooltip reads 22.5% since 70707; the sim keeps 28% (T2, a log fit of 0.277 ± 0.009).
+4. **Thunder Clap's threat** (2.5 × damage): T3 (Classic); wowsims/forever leaves it at 1× unmeasured. Max threat drops
+   Thunder Clap (`tc=0`) either way; Balanced keeps it up.
+5. **Max survival is Balanced's build**: no knob or talent of the template moves it past its noise. Its real levers react to
+   health (Last Stand, Shield Wall on low health), which the score can't see (brief step 2): they're in the UI for the
+   player, not in the presets. The alternative, a Shield Wall timer, is in the template (`shieldWall=2`, the last 12 s).
