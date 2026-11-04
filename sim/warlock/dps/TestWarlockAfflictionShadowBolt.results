@@ -211,9 +211,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-WarlockSynthetic(Phase1)"
  value: {
-  dps: 1307.52033
-  tps: 1028.70503
-  hps: 3.7205
+  dps: 1326.71133
+  tps: 1043.65226
+  hps: 3.507
  }
 }
 dps_results: {
