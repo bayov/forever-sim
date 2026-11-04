@@ -37,6 +37,8 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `rawstore.py` | Packs, unpacks, cleans and checks the raw outputs, and copies the datasets into the report | yes |
 | `probe.py`, `probe_cli.py` | The probe: every step's sims at a tenth of their iterations, fingerprinted, to tell which stale builds really moved (see "Probes") | yes |
 | `probe/`, `probe_check/`, `probe_audit.json` | Probes of this run, of the last check, and the check's verdict (what publish records) | no |
+| `timing.py`, `timing_cli.py` | Where a `pipeline.sh run` spent its time: every sim's CPU and wall time, logged by `timing_cli.py` standing in for the binaries and summed up by `timing.py` (see "Sim steps") | yes |
+| `timing/` | One log per `pipeline.sh run` or `resume` (`<start>.jsonl`) and the binary links the run used (`timing/bin`) | no |
 | `changes.py`, `changes/` | The Changes tab: the updates, their public change lines and the results at each update's end (see "Changes tab") | yes |
 | `dashstats/main.go` | The `dashstats` helper. Copy it to `tools/dashstats/` in the merged tree, or let patch 0001 add it. | yes |
 | `rd/` | Headless check harness (Playwright) | scripts only |
@@ -205,6 +207,18 @@ Each step is restartable: it skips work whose output already exists. To redo a b
 | tooltip ids | `python3 whids.py` (after a first `build_data.py`) | none | `fortt_ids.json` | seconds |
 | tooltip fetch | `python3 whcache.py fortt_ids.json` | none. Fetches from `nether.wowhead.com/{forever,classic}/tooltip/<kind>/<id>`, only ids missing from the cache. | `forever_tt_cache/` | about 13 min cold (about 1,400 requests at 0.35 s); seconds when warm |
 | datasets | `python3 build_data.py` | none | `data/*.json`, `fortt_coverage.json` | about 10 s warm; about 1 min more when icons must be fetched |
+
+The runtimes above are from the runs that first measured them, before later changes to the scripts. `pipeline.sh run`
+and `resume` now measure every run: the binaries run through `timing_cli.py`, which logs each call's step, class, race,
+iterations, fight length, targets, CPU seconds and wall seconds to `timing/<start>.jsonl`, and the run ends with
+`timing.py`'s summary of that log. It shows:
+- **Per step:** wall time, the CPU time of its sims, and how many cores those kept busy. A busy figure well under P
+  means the step was waiting on its last builds or on its own Python.
+- **Sim kinds:** the costliest kinds of sim, grouped by step, binary, iterations, fight length and targets.
+- **Per class:** core-minutes per base build. This is the unit of pipeline.sh's cost table `W`, which orders and shards
+  builds, so the summary is what to refresh `W` from.
+
+`python3 timing.py [log]` shows a past run's log again.
 
 Diagnostics, which produce no datasets: `whdump.py` prints Forever and Classic tooltip text side by side for the setup chips,
 and `wagocheck.py` compares the real items' ilvl and stats across Forever wowhead, the Forever client and the sim's db.
