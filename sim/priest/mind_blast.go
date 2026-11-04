@@ -51,7 +51,6 @@ func (priest *Priest) getMindBlastBaseConfig(rank int, cdTimer *core.Timer) core
 
 		RequiredLevel: level,
 		Rank:          rank,
-		Downrank:      core.DownrankDamage,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: manaCost,

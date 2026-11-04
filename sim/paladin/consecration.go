@@ -148,9 +148,10 @@ func (paladin *Paladin) registerConsecration() {
 						// The base tick has no spell power coefficient, so the Holy damage the
 						// target takes extra doesn't reach it either.
 						dot.SnapshotBaseDamage = baseSnapshot
+						coefficient := dot.BonusCoefficient // tickCoefficient after the downranking penalty
 						dot.BonusCoefficient = 0
 						dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeMagicHitAndTick)
-						dot.BonusCoefficient = tickCoefficient
+						dot.BonusCoefficient = coefficient
 					}
 				},
 			},

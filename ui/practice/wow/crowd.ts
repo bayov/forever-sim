@@ -21,6 +21,7 @@ import * as THREE from 'three';
 import { forget } from './compose';
 import { skins, type Model } from './model';
 import { drawOrder } from './particles';
+import { poseClient } from './poseClient';
 
 // The bone texture is this many texels wide: four texels to a bone, so 256 bones a row.
 const WIDTH = 1024;
@@ -32,14 +33,18 @@ type Skeleton = {
 	// How many of the crowd's meshes use it (a body and its cape).
 	users: number;
 	skeleton: THREE.Skeleton;
-	// The bones' skinning matrices, which their model poses (model.ts).
-	skinning: Float32Array;
+	// The model that poses the bones (model.ts), whose skinning matrices we copy.
+	model?: Model;
 	frame: number;
+	// The model's pose we last copied (Model.poseVersion).
+	version: number;
 };
 
 // The painted skins of one size, as layers of one texture array.
 // uploaded says the GPU has the array, so a new layer goes up on its own.
-type SkinArray = { width: number; height: number; layers: number; capacity: number; data: Uint8Array; texture: THREE.DataArrayTexture; uniform: { value: THREE.DataArrayTexture }; uploaded: boolean };
+// The gear's textures go in arrays too, by size and wrapping (wrapS, wrapT), for the merged
+// picture (see Picture).
+type SkinArray = { width: number; height: number; layers: number; capacity: number; data: Uint8Array; texture: THREE.DataArrayTexture; uniform: { value: THREE.DataArrayTexture }; uploaded: boolean; wrapS?: THREE.Wrapping; wrapT?: THREE.Wrapping };
 
 // A copy's data in its batch's buffer: [attribute, offset, size], STRIDE floats in all.
 const layout: [string, number, number][] = [
@@ -56,9 +61,17 @@ const standIn = new THREE.DataTexture(new Uint8Array([128, 128, 128, 255]), 1, 1
 standIn.colorSpace = THREE.SRGBColorSpace;
 standIn.needsUpdate = true;
 
+// The merged shadow: the raid test's raiders cast their solid shadows (bodies and gear, by side) in
+// one draw call. It's one mesh of all their shadow triangles, each vertex with its bones in the
+// bone texture and its raider's place in the world in a places texture, rebuilt as raiders join.
+// Parts cut by their texture's alpha and the effects' shadows still draw in their batches.
+
 // The layer of the batches that draw only in the shadows. The room's camera sees it only while
 // the shadows draw (scene.ts).
 export const SHADOW_LAYER = 30;
+
+// The place of a merged entry that's hidden: everything at one point.
+const nowhere = new Array<number>(16).fill(0);
 
 // One copy's data, written here first to see whether it changed.
 const copy = new Float32Array(STRIDE);
@@ -115,6 +128,8 @@ type Batch = {
 	mesh: THREE.Mesh;
 	geometry: THREE.InstancedBufferGeometry;
 	material: THREE.Material & { color?: THREE.Color; opacity: number };
+	// The array the batch reads its skins from, if any.
+	skins?: SkinArray;
 	// The copies' data, STRIDE floats each (see layout), in one buffer: their bone offset, skin
 	// layer, color, place and mask (for a body's batches, see Body). One buffer goes up in one call,
 	// and only when a copy changed.
@@ -137,12 +152,18 @@ type Entry = {
 	mesh: THREE.SkinnedMesh;
 	skeleton: Skeleton;
 	// layer is the part's skin in its batch's texture array, or 0.
-	parts: { batch: Batch; source: THREE.Material & { color?: THREE.Color; opacity: number }; layer: number }[];
+	// merged says the part draws in the merged picture (see Picture), not its batch.
+	parts: { batch: Batch; source: THREE.Material & { color?: THREE.Color; opacity: number }; layer: number; merged?: boolean }[];
 	// The submeshes a body shows (see Body), as 24 bits a float.
 	mask?: Float32Array;
 	// The batches its shadow draws in: all its solid parts in one (by side), apart from the ones
 	// cut by their texture's alpha, which draw their own.
 	shadows: Batch[];
+	// A raider's body or gear has a slot in the places texture, for the merged shadow (see
+	// MergedShadow) and the merged picture (see Picture). shadowMerged says its solid shadow is
+	// in the merged shadow.
+	slot?: number;
+	shadowMerged?: boolean;
 };
 
 const ids = new WeakMap<object, number>();
@@ -178,10 +199,34 @@ export class Crowd {
 	private texture = this.makeTexture(8);
 	private readonly uniform = { value: this.texture as THREE.Texture };
 	private frame = 0;
+	private bonesChanged = false;
+	// The merged shadow (see MergedShadow): its meshes (one per side), the places texture of its
+	// entries, and whether it needs building again.
+	// mergeShadows is off with ?mergeshadows=0.
+	mergeShadows = new URLSearchParams(location.search).get('mergeshadows') !== '0';
+	private mergedShadows: THREE.Mesh[] = [];
+	private slots = 0;
+	private freeSlots: number[] = [];
+	private placesData = new Float32Array(WIDTH * 4 * 4);
+	private placesTexture = this.makePlaces(4);
+	private readonly placesUniform = { value: this.placesTexture as THREE.Texture };
+	private placesChanged = false;
+	private shadowDirty = false;
+	private shadowBuilt = 0;
+	private readonly mergedDepth = this.makeMergedDepth();
+	// The merged picture (see Picture): its meshes, one per kind of part. Off until we know what
+	// made a raid run at 5 FPS on Windows with it; on with ?mergepicture=1.
+	mergePicture = new URLSearchParams(location.search).get('mergepicture') === '1';
+	private pictures: THREE.Mesh[] = [];
+	private pictureDirty = false;
+	private pictureBuilt = 0;
 
 	// useSkinArrays puts painted skins in texture arrays. Off, each skin draws on its own (to
 	// measure what the arrays save, with ?skinarrays=0).
 	useSkinArrays = new URLSearchParams(location.search).get('skinarrays') !== '0';
+
+	// useWorker poses the crowd in the pose worker (poseClient.ts). Off with ?poseworker=0.
+	useWorker = new URLSearchParams(location.search).get('poseworker') !== '0';
 
 	// noShadowSlots are the gear slots whose models cast no shadow: in a big raid the helms,
 	// shoulders and cloaks, whose shadows mostly fall in the body's.
@@ -240,9 +285,19 @@ export class Crowd {
 			const shadows = body ? body.shadows : this.shadowsOf(model, mats);
 			const entry: Entry = { model, mesh, skeleton, parts, mask: body?.mask, shadows: [...shadows] };
 			for (const b of entry.shadows) this.grow(b);
+			// A raider's solid shadows (its body's and gear's) go into the merged shadow; an
+			// effect's stay in their batches, since effects come and go.
+			if ((this.mergeShadows || this.mergePicture) && (body || model.slot !== undefined)) {
+				entry.slot = this.placeSlot();
+				entry.shadowMerged = this.mergeShadows && entry.shadows.length > 0;
+				this.shadowDirty = true;
+				this.pictureDirty = true;
+			}
 			this.entries.push(entry);
 			this.byModel.set(model, entry);
 			model.crowd = this;
+			// The crowd's models pose in the pose worker, when the page can share memory with it.
+			if (this.useWorker) poseClient.attach(model);
 			for (const p of parts) this.grow(p.batch);
 		}
 	}
@@ -472,6 +527,12 @@ export class Crowd {
 		if (!entry) return;
 		this.byModel.delete(model);
 		model.crowd = undefined;
+		poseClient.detach(model);
+		if (entry.slot !== undefined) {
+			this.freeSlots.push(entry.slot);
+			this.shadowDirty = true;
+			this.pictureDirty = true;
+		}
 		const i = this.entries.indexOf(entry);
 		this.entries[i] = this.entries[this.entries.length - 1];
 		this.entries.pop();
@@ -516,6 +577,41 @@ export class Crowd {
 		return offset;
 	}
 
+	// makeMergedDepth makes the merged shadow's depth material: each vertex reads its bones from
+	// the bone texture and its entry's place from the places texture.
+	private makeMergedDepth(): THREE.MeshDepthMaterial {
+		const depth = new THREE.MeshDepthMaterial();
+		depth.onBeforeCompile = shader => {
+			shader.uniforms.crowdBones = this.uniform;
+			shader.uniforms.crowdPlaces = this.placesUniform;
+			shader.vertexShader = shader.vertexShader
+				.replace(
+					'#include <skinning_pars_vertex>',
+					/* glsl */ `attribute vec4 crowdBoneIds;
+attribute vec4 crowdWeights;
+attribute float crowdSlot;
+uniform highp sampler2D crowdBones;
+uniform highp sampler2D crowdPlaces;
+mat4 crowdMatrix(highp sampler2D tex, float i) {
+	int j = int(i) * 4;
+	int x = j % ${WIDTH};
+	int y = j / ${WIDTH};
+	return mat4(texelFetch(tex, ivec2(x, y), 0), texelFetch(tex, ivec2(x + 1, y), 0), texelFetch(tex, ivec2(x + 2, y), 0), texelFetch(tex, ivec2(x + 3, y), 0));
+}`,
+				)
+				.replace(
+					'#include <skinning_vertex>',
+					/* glsl */ `mat4 crowdSkin = crowdMatrix(crowdPlaces, crowdSlot) * (crowdWeights.x * crowdMatrix(crowdBones, crowdBoneIds.x) + crowdWeights.y * crowdMatrix(crowdBones, crowdBoneIds.y)
+		+ crowdWeights.z * crowdMatrix(crowdBones, crowdBoneIds.z) + crowdWeights.w * crowdMatrix(crowdBones, crowdBoneIds.w));
+	transformed = (crowdSkin * vec4(transformed, 1.0)).xyz;`,
+				)
+				.replace('#include <skinbase_vertex>', '')
+				.replace('#include <skinnormal_vertex>', '');
+		};
+		depth.customProgramCacheKey = () => 'crowd-merged-depth';
+		return depth;
+	}
+
 	// skeletonOf gives a skeleton its place in the bone texture. A cape shares the body's.
 	private skeletonOf(s: THREE.Skeleton): Skeleton {
 		let k = this.skeletons.get(s);
@@ -524,8 +620,7 @@ export class Crowd {
 			return k;
 		}
 		const n = s.bones.length;
-		const skinning = skins.get(s) ?? new Float32Array(n * 16);
-		k = { offset: this.allocate(n), users: 1, skeleton: s, skinning, frame: -1 };
+		k = { offset: this.allocate(n), users: 1, skeleton: s, model: skins.get(s), frame: -1, version: -1 };
 		this.skeletons.set(s, k);
 		const rows = Math.ceil(this.bones / BONES_PER_ROW);
 		if (rows > this.texture.image.height) {
@@ -598,7 +693,8 @@ export class Crowd {
 		a.texture?.dispose();
 		const t = new THREE.DataArrayTexture(data, a.width, a.height, capacity);
 		t.colorSpace = THREE.SRGBColorSpace;
-		t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+		t.wrapS = a.wrapS ?? THREE.ClampToEdgeWrapping;
+		t.wrapT = a.wrapT ?? THREE.ClampToEdgeWrapping;
 		t.magFilter = THREE.LinearFilter;
 		t.minFilter = THREE.LinearMipmapLinearFilter;
 		t.generateMipmaps = true;
@@ -671,7 +767,7 @@ export class Crowd {
 		const m = material;
 		const clearAtZero =
 			m.alphaTest > 0 || m.blending === THREE.NormalBlending || (m.blending === THREE.CustomBlending && (m.blendSrc === THREE.SrcAlphaFactor || m.premultipliedAlpha));
-		return { mesh, geometry, material, data, masked: !!sub, clearAtZero, count: 0, sent: 0, dirty: true, users: 0, castShadow: solid };
+		return { mesh, geometry, material, data, skins, masked: !!sub, clearAtZero, count: 0, sent: 0, dirty: true, users: 0, castShadow: solid };
 	}
 
 	// copyData gives a batch's geometry a buffer for n copies, with the attributes that read it.
@@ -726,6 +822,9 @@ export class Crowd {
 			}
 		};
 		for (const e of this.entries) {
+			// A merged entry's place is in the merged shadow every frame, hidden or not (a sheathed
+			// weapon that hides casts nothing: its place shrinks to a point).
+			if (e.slot !== undefined) this.writePlace(e.slot, shown(e.mesh) ? e.mesh.matrixWorld.elements : nowhere);
 			if (!shown(e.mesh)) continue;
 			let inView = true;
 			let inShadow = !!shadowFrustum;
@@ -746,13 +845,13 @@ export class Crowd {
 			for (let j = 0; j < 16; j++) one[6 + j] = w[j];
 			const mask = e.mask;
 			for (let j = 0; j < 8; j++) one[22 + j] = mask ? mask[j] : 0;
-			if (inShadow) {
+			if (!e.shadowMerged && inShadow) {
 				one[1] = 0;
 				one[2] = one[3] = one[4] = one[5] = 1;
 				for (const b of e.shadows) put(b);
 			}
-			for (const { batch: b, source, layer } of e.parts) {
-				if (!inView && !b.castShadow) continue;
+			for (const { batch: b, source, layer, merged } of e.parts) {
+				if (merged || (!inView && !b.castShadow)) continue;
 				one[1] = layer;
 				const color = source.color;
 				one[2] = color ? color.r : 1;
@@ -783,12 +882,298 @@ export class Crowd {
 				b.sent = b.count;
 			}
 		}
-		this.texture.needsUpdate = true;
+		if (this.bonesChanged) this.texture.needsUpdate = true;
+		this.bonesChanged = false;
+		if (this.placesChanged) this.placesTexture.needsUpdate = true;
+		this.placesChanged = false;
+		if (this.shadowDirty && performance.now() - this.shadowBuilt > 300) this.buildMergedShadow();
+		if (this.pictureDirty && performance.now() - this.pictureBuilt > 1000) this.buildPicture();
 	}
 
-	// writeBones puts a skeleton's skinning matrices in the texture.
+	// placeSlot gives a merged entry its slot in the places texture.
+	private placeSlot(): number {
+		const free = this.freeSlots.pop();
+		if (free !== undefined) return free;
+		const slot = this.slots++;
+		const rows = Math.ceil((this.slots * 4) / WIDTH);
+		if (rows > this.placesTexture.image.height) {
+			const height = Math.ceil(rows / 4) * 4;
+			const data = new Float32Array(WIDTH * height * 4);
+			data.set(this.placesData);
+			this.placesData = data;
+			this.placesTexture.dispose();
+			this.placesTexture = this.makePlaces(height);
+			this.placesUniform.value = this.placesTexture;
+		}
+		return slot;
+	}
+
+	private makePlaces(height: number): THREE.DataTexture {
+		const t = new THREE.DataTexture(this.placesData, WIDTH, height, THREE.RGBAFormat, THREE.FloatType);
+		t.minFilter = t.magFilter = THREE.NearestFilter;
+		t.generateMipmaps = false;
+		t.needsUpdate = true;
+		return t;
+	}
+
+	// writePlace puts a merged entry's place in the world in the places texture, when it moved.
+	private writePlace(slot: number, w: ArrayLike<number>) {
+		const d = this.placesData;
+		const o = slot * 16;
+		for (let j = 0; j < 16; j++) {
+			if (d[o + j] !== Math.fround(w[j])) {
+				d[o + j] = w[j];
+				this.placesChanged = true;
+			}
+		}
+	}
+
+	// gearArray gives the texture array for a gear texture's size and wrapping, or undefined for a
+	// texture that wouldn't sample the same from an array (not the plain kind every BLP decodes to).
+	private gearArray(t: THREE.Texture): SkinArray | undefined {
+		const image = t.image as { width: number; height: number; data?: ArrayLike<number> | null };
+		if (!(t as THREE.DataTexture).isDataTexture || !image?.data || t.userData.composed) return undefined;
+		if (t.format !== THREE.RGBAFormat || t.type !== THREE.UnsignedByteType || t.colorSpace !== THREE.SRGBColorSpace) return undefined;
+		if (t.magFilter !== THREE.LinearFilter || t.minFilter !== THREE.LinearMipmapLinearFilter || !t.generateMipmaps || t.anisotropy !== 4 || t.flipY) return undefined;
+		if (image.data.length !== image.width * image.height * 4) return undefined;
+		const key = `gear${image.width}x${image.height}:${t.wrapS}:${t.wrapT}`;
+		let a = this.skinArrays.get(key);
+		if (!a) {
+			a = { width: image.width, height: image.height, layers: 0, capacity: 0, data: new Uint8Array(0), texture: undefined!, uniform: { value: null! }, uploaded: false, wrapS: t.wrapS, wrapT: t.wrapT };
+			this.growSkins(a, 4);
+			this.skinArrays.set(key, a);
+		}
+		return a;
+	}
+
+	// pictureKind tells how a part draws, for the merged picture: the parts of one kind draw
+	// together. It's undefined for a part that draws on its own: see-through, cut by alpha, with
+	// animated colors, or with a texture that can't go in an array.
+	private pictureKind(e: Entry, part: Entry['parts'][number]): { key: string; maps: [SkinArray, number]; maps2?: [SkinArray, number] } | undefined {
+		const m = part.source as THREE.MeshLambertMaterial & { userData: { wow?: { map2: { value: THREE.Texture | null }; wowMode: { value: number }; wowEnv0: { value: boolean }; wowEnv1: { value: boolean }; wowUv2: { value: boolean } } } };
+		if (m.transparent || m.alphaTest > 0 || !m.depthWrite || m.polygonOffset || !m.map || m.vertexColors) return undefined;
+		if (m.color && (m.color.r !== 1 || m.color.g !== 1 || m.color.b !== 1)) return undefined;
+		// Animated colors and transparency vary by copy.
+		const mats = e.mesh.material as THREE.Material[];
+		const mi = mats.indexOf(m);
+		const b = e.model.skin.batches[mi];
+		if (!b) return undefined;
+		const m2 = e.model.m2;
+		const c = b.color >= 0 ? m2.colors[b.color] : undefined;
+		if (c && (!e.model.steady(c.color, 1) || !e.model.steady(c.alpha, 32767))) return undefined;
+		const wi = m2.transparencyLookup[b.weightCombo];
+		if (wi !== undefined && m2.textureWeights[wi] && !e.model.steady(m2.textureWeights[wi], 32767)) return undefined;
+		if (m.opacity !== 1) return undefined;
+		let maps: [SkinArray, number];
+		if (part.batch.skins) maps = [part.batch.skins, part.layer];
+		else {
+			const a = this.gearArray(m.map);
+			if (!a) return undefined;
+			maps = [a, this.layerOf(a, m.map)];
+		}
+		const wow = m.userData.wow;
+		let maps2: [SkinArray, number] | undefined;
+		if (wow && wow.wowMode.value > 0) {
+			const t2 = wow.map2.value;
+			const a2 = t2 ? this.gearArray(t2) : undefined;
+			if (!t2 || !a2) return undefined;
+			maps2 = [a2, this.layerOf(a2, t2)];
+		}
+		const combiner = wow ? `${wow.wowMode.value}:${wow.wowEnv0.value}:${wow.wowEnv1.value}:${wow.wowUv2.value}` : 'plain';
+		const key = [m.type, m.side, m.fog, m.depthTest, combiner, idOf(maps[0]), maps2 ? idOf(maps2[0]) : 0].join('|');
+		return { key, maps, maps2 };
+	}
+
+	// buildPicture builds the merged picture (see Picture) from every merged entry's parts that
+	// can draw in it.
+	private buildPicture() {
+		this.pictureDirty = false;
+		this.pictureBuilt = performance.now();
+		type Kind = { source: Entry['parts'][number]['source']; maps: SkinArray; maps2?: SkinArray; pos: number[]; normal: number[]; uv: number[]; uv1: number[]; bones: number[]; weights: number[]; slot: number[]; layers: number[]; index: number[] };
+		const kinds = new Map<string, Kind>();
+		for (const e of this.entries) {
+			for (const part of e.parts) part.merged = false;
+			if (!this.mergePicture || e.slot === undefined) continue;
+			const offset = e.skeleton.offset;
+			for (const part of e.parts) {
+				const kind = this.pictureKind(e, part);
+				if (!kind) continue;
+				let out = kinds.get(kind.key);
+				if (!out) kinds.set(kind.key, (out = { source: part.source, maps: kind.maps[0], maps2: kind.maps2?.[0], pos: [], normal: [], uv: [], uv1: [], bones: [], weights: [], slot: [], layers: [], index: [] }));
+				part.merged = true;
+				const g = part.batch.geometry;
+				const index = g.index!.array;
+				const pos = g.getAttribute('position').array;
+				const nor = g.getAttribute('normal').array;
+				const uv = g.getAttribute('uv').array;
+				const uv1 = g.getAttribute('uv1').array;
+				const si = g.getAttribute('skinIndex').array;
+				const sw = g.getAttribute('skinWeight').array;
+				const sub = part.batch.masked ? g.getAttribute('crowdSub').array : undefined;
+				const remap = new Map<number, number>();
+				const end = g.drawRange.start + g.drawRange.count;
+				for (let t = g.drawRange.start; t + 2 < end; t += 3) {
+					// A body's triangle shows when its submesh does (the raider's mask).
+					if (sub && e.mask) {
+						const sm = sub[index[t]];
+						if (Math.floor(e.mask[Math.floor(sm / 24)] / 2 ** (sm % 24)) % 2 !== 1) continue;
+					}
+					for (let k = 0; k < 3; k++) {
+						const v = index[t + k];
+						let m = remap.get(v);
+						if (m === undefined) {
+							m = out.slot.length;
+							remap.set(v, m);
+							out.pos.push(pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]);
+							out.normal.push(nor[v * 3], nor[v * 3 + 1], nor[v * 3 + 2]);
+							out.uv.push(uv[v * 2], uv[v * 2 + 1]);
+							out.uv1.push(uv1[v * 2], uv1[v * 2 + 1]);
+							for (let j = 0; j < 4; j++) {
+								out.bones.push(offset + si[v * 4 + j]);
+								out.weights.push(sw[v * 4 + j]);
+							}
+							out.slot.push(e.slot);
+							out.layers.push(kind.maps[1], kind.maps2?.[1] ?? 0);
+						}
+						out.index.push(m);
+					}
+				}
+			}
+		}
+		for (const m of this.pictures) {
+			m.removeFromParent();
+			m.geometry.dispose();
+			(m.material as THREE.Material).dispose();
+		}
+		this.pictures = [];
+		for (const [key, d] of kinds) {
+			const g = new THREE.BufferGeometry();
+			g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(d.pos), 3));
+			g.setAttribute('normal', new THREE.BufferAttribute(new Float32Array(d.normal), 3));
+			g.setAttribute('uv', new THREE.BufferAttribute(new Float32Array(d.uv), 2));
+			g.setAttribute('uv1', new THREE.BufferAttribute(new Float32Array(d.uv1), 2));
+			g.setAttribute('crowdBoneIds', new THREE.BufferAttribute(new Float32Array(d.bones), 4));
+			g.setAttribute('crowdWeights', new THREE.BufferAttribute(new Float32Array(d.weights), 4));
+			g.setAttribute('crowdSlot', new THREE.BufferAttribute(new Float32Array(d.slot), 1));
+			g.setAttribute('crowdLayers', new THREE.BufferAttribute(new Float32Array(d.layers), 2));
+			g.setIndex(d.slot.length > 65535 ? new THREE.BufferAttribute(new Uint32Array(d.index), 1) : new THREE.BufferAttribute(new Uint16Array(d.index), 1));
+			const mesh = new THREE.Mesh(g, this.pictureMaterial(d.source, d.maps, d.maps2, key));
+			mesh.frustumCulled = false;
+			mesh.matrixAutoUpdate = false;
+			mesh.renderOrder = drawOrder.gear;
+			this.group.add(mesh);
+			this.pictures.push(mesh);
+		}
+	}
+
+	// pictureMaterial makes a merged picture kind's material: its part's own, reading its textures
+	// from the arrays by each vertex's layers, and its bones and place from the textures.
+	private pictureMaterial(source: Batch['material'], maps: SkinArray, maps2: SkinArray | undefined, key: string): THREE.Material {
+		const material = source.clone() as Batch['material'];
+		(material as THREE.MeshLambertMaterial).map = standIn;
+		const before = source.onBeforeCompile;
+		material.onBeforeCompile = (shader, renderer) => {
+			before.call(source, shader, renderer);
+			shader.uniforms.crowdBones = this.uniform;
+			shader.uniforms.crowdPlaces = this.placesUniform;
+			shader.uniforms.crowdMaps = maps.uniform;
+			shader.uniforms.crowdMaps2 = (maps2 ?? maps).uniform;
+			shader.vertexShader = pictureVertex(shader.vertexShader);
+			shader.fragmentShader = shader.fragmentShader
+				.replace(
+					'#include <common>',
+					`#include <common>
+uniform highp sampler2DArray crowdMaps;
+uniform highp sampler2DArray crowdMaps2;
+varying vec2 vCrowdLayers;
+vec4 crowdSample(vec2 uv) { return texture(crowdMaps, vec3(uv, vCrowdLayers.x)); }
+vec4 crowdSample2(vec2 uv) { return texture(crowdMaps2, vec3(uv, vCrowdLayers.y)); }`,
+				)
+				.replace('#include <map_fragment>', '#ifdef USE_MAP\ndiffuseColor *= crowdSample(vMapUv);\n#endif')
+				.replace('texture2D(map, ', 'crowdSample(')
+				.replace('texture2D(map2, ', 'crowdSample2(');
+		};
+		material.customProgramCacheKey = () => `crowd-picture-${key}`;
+		return material;
+	}
+
+	// buildMergedShadow builds the merged shadow (MergedShadow) from every merged entry's solid
+	// shadow parts: their triangles, with each vertex's bones in the bone texture and its entry's
+	// slot in the places texture.
+	private buildMergedShadow() {
+		this.shadowDirty = false;
+		this.shadowBuilt = performance.now();
+		const bySide = new Map<number, { pos: number[]; bones: number[]; weights: number[]; slot: number[]; index: number[] }>();
+		for (const e of this.entries) {
+			if (!e.shadowMerged || e.slot === undefined) continue;
+			const offset = e.skeleton.offset;
+			for (const b of e.shadows) {
+				const g = b.geometry;
+				const index = g.index!.array;
+				const pos = g.getAttribute('position').array;
+				const si = g.getAttribute('skinIndex').array;
+				const sw = g.getAttribute('skinWeight').array;
+				const sub = b.masked ? g.getAttribute('crowdSub').array : undefined;
+				const side = b.material.side;
+				let out = bySide.get(side);
+				if (!out) bySide.set(side, (out = { pos: [], bones: [], weights: [], slot: [], index: [] }));
+				const remap = new Map<number, number>();
+				const end = g.drawRange.start + g.drawRange.count;
+				for (let t = g.drawRange.start; t + 2 < end; t += 3) {
+					// A body's triangle shows when its submesh does (the raider's mask).
+					if (sub && e.mask) {
+						const sm = sub[index[t]];
+						if (Math.floor(e.mask[Math.floor(sm / 24)] / 2 ** (sm % 24)) % 2 !== 1) continue;
+					}
+					for (let k = 0; k < 3; k++) {
+						const v = index[t + k];
+						let m = remap.get(v);
+						if (m === undefined) {
+							m = out.slot.length;
+							remap.set(v, m);
+							out.pos.push(pos[v * 3], pos[v * 3 + 1], pos[v * 3 + 2]);
+							for (let j = 0; j < 4; j++) {
+								out.bones.push(offset + si[v * 4 + j]);
+								out.weights.push(sw[v * 4 + j]);
+							}
+							out.slot.push(e.slot);
+						}
+						out.index.push(m);
+					}
+				}
+			}
+		}
+		for (const m of this.mergedShadows) {
+			m.removeFromParent();
+			m.geometry.dispose();
+		}
+		this.mergedShadows = [];
+		for (const [side, d] of bySide) {
+			const g = new THREE.BufferGeometry();
+			g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(d.pos), 3));
+			g.setAttribute('crowdBoneIds', new THREE.BufferAttribute(new Float32Array(d.bones), 4));
+			g.setAttribute('crowdWeights', new THREE.BufferAttribute(new Float32Array(d.weights), 4));
+			g.setAttribute('crowdSlot', new THREE.BufferAttribute(new Float32Array(d.slot), 1));
+			g.setIndex(d.slot.length > 65535 ? new THREE.BufferAttribute(new Uint32Array(d.index), 1) : new THREE.BufferAttribute(new Uint16Array(d.index), 1));
+			const mesh = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ side: side as THREE.Side }));
+			mesh.customDepthMaterial = this.mergedDepth;
+			mesh.castShadow = true;
+			mesh.frustumCulled = false;
+			mesh.matrixAutoUpdate = false;
+			mesh.layers.set(SHADOW_LAYER);
+			this.group.add(mesh);
+			this.mergedShadows.push(mesh);
+		}
+	}
+
+	// writeBones puts a skeleton's skinning matrices in the texture, when they changed since. A
+	// raider far away poses only now and then, and gear that never moves only once.
 	private writeBones(k: Skeleton) {
-		this.data.set(k.skinning, k.offset * 16);
+		const m = k.model;
+		if (!m || m.poseVersion === k.version) return;
+		k.version = m.poseVersion;
+		this.data.set(m.skinning, k.offset * 16);
+		this.bonesChanged = true;
 	}
 
 	dispose() {
@@ -859,6 +1244,41 @@ mat4 crowdBoneMatrix(float i) {
 	vCrowdLayer = crowdLayer;
 	mat4 crowdSkin = crowdPlace * (skinWeight.x * crowdBoneMatrix(crowdBone + skinIndex.x) + skinWeight.y * crowdBoneMatrix(crowdBone + skinIndex.y)
 		+ skinWeight.z * crowdBoneMatrix(crowdBone + skinIndex.z) + skinWeight.w * crowdBoneMatrix(crowdBone + skinIndex.w));
+	vec3 crowdNormal = (crowdSkin * vec4(normal, 0.0)).xyz;`,
+		)
+		.replace('#include <skinbase_vertex>', '')
+		.replace('#include <skinnormal_vertex>', 'objectNormal = (crowdSkin * vec4(objectNormal, 0.0)).xyz;')
+		.replace('#include <skinning_vertex>', 'transformed = (crowdSkin * vec4(transformed, 1.0)).xyz;')
+		.replace('vWowNormal = normalize(normalMatrix * normal);', 'vWowNormal = normalize(normalMatrix * crowdNormal);');
+}
+
+// pictureVertex skins a merged picture's vertex by its bones in the bone texture and its raider's
+// place in the places texture (see Picture), in place of Three's skinning, the way crowdVertex
+// does for a batch's copies.
+function pictureVertex(src: string): string {
+	return src
+		.replace(
+			'#include <skinning_pars_vertex>',
+			/* glsl */ `attribute vec4 crowdBoneIds;
+attribute vec4 crowdWeights;
+attribute float crowdSlot;
+attribute vec2 crowdLayers;
+uniform highp sampler2D crowdBones;
+uniform highp sampler2D crowdPlaces;
+varying vec2 vCrowdLayers;
+mat4 crowdMatrix(highp sampler2D tex, float i) {
+	int j = int(i) * 4;
+	int x = j % ${WIDTH};
+	int y = j / ${WIDTH};
+	return mat4(texelFetch(tex, ivec2(x, y), 0), texelFetch(tex, ivec2(x + 1, y), 0), texelFetch(tex, ivec2(x + 2, y), 0), texelFetch(tex, ivec2(x + 3, y), 0));
+}`,
+		)
+		.replace(
+			'void main() {',
+			/* glsl */ `void main() {
+	vCrowdLayers = crowdLayers;
+	mat4 crowdSkin = crowdMatrix(crowdPlaces, crowdSlot) * (crowdWeights.x * crowdMatrix(crowdBones, crowdBoneIds.x) + crowdWeights.y * crowdMatrix(crowdBones, crowdBoneIds.y)
+		+ crowdWeights.z * crowdMatrix(crowdBones, crowdBoneIds.z) + crowdWeights.w * crowdMatrix(crowdBones, crowdBoneIds.w));
 	vec3 crowdNormal = (crowdSkin * vec4(normal, 0.0)).xyz;`,
 		)
 		.replace('#include <skinbase_vertex>', '')

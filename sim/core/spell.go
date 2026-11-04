@@ -28,9 +28,11 @@ type SpellConfig struct {
 	MetricSplits  int
 	Rank          int
 	RequiredLevel int
-	// Downrank opts a ranked spell into Forever's downranking penalty (downrank.go), which
-	// reads RequiredLevel as the rank's learn level.
-	Downrank DownrankKind
+	// Forever's downranking penalty (downrank.go): Downrank sets the spell's kind (read from the
+	// ProcMask by default) or exempts it, and DownrankLevel gives a rank-less sub-spell (a tick,
+	// a totem's attack, an imbue's proc) the learn level of the rank it belongs to.
+	Downrank      DownrankKind
+	DownrankLevel int
 
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions

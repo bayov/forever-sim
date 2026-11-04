@@ -89,6 +89,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 			DamageMultiplier: paladin.getWeaponSpecializationModifier() * improvedSeals,
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,
+			DownrankLevel:    int(rank.level),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(minDamage, maxDamage) * 0.5 // unless stunned
@@ -125,6 +126,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 			ThreatMultiplier: 1,
 
 			BonusCoefficient: 0.29,
+			DownrankLevel:    int(rank.level),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target))
