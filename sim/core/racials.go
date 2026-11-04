@@ -168,6 +168,10 @@ func makeBerserkingCooldown(character *Character, customPercentage float64, time
 		if customPercentage != 0 {
 			return customPercentage
 		}
+		// A tank score's replay may not read health: it takes the tank as topped up.
+		if character.readsNoHealth() {
+			return 0.1
+		}
 		// from 10% at full health to 30% at 40% or less health
 		switch hp := character.CurrentHealthPercent(); {
 		case hp >= 1:

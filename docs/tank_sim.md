@@ -91,6 +91,14 @@ each file's `source`, `reports` and `warcraftLogs` say which kills.
   the tank, parry haste and Frenzy in. Both are taken back through the debuffs the bench puts on him
   (`tankbench -boss-stats`: attack power 805 to 601, −37 a swing, attack speed 0.833), so under them he
   swings as in the logs. That assumes the logged raids had about the bench's debuffs.
+- **Parry haste is off in these files** (`parryHaste: false`, 2026-11-04, tank_mechanics-20261104-3). The
+  fitted gap already holds the logged tanks' parry haste, so the sim's own on top counted it twice (+5% DTPS on
+  Chromaggus once the tank stood in front). The other choice, the boss's base gap with the sim's parry haste,
+  needs how often the boss parried the logged tanks, and the mined logs hold only the boss's swings at the
+  tank, not the tank's swings at him, so that base gap can't be fitted. The fitted gap with parry haste off
+  gives every tank the logs' mean gap. What it loses: a tank the boss parries more or less often than the
+  logged warriors doesn't swing him faster or slower. The bench's own default boss (no file) keeps Classic's
+  parry haste.
 - **The length** is the kills' median, except Onyxia and Ragnaros (the main tank's time on him a kill) and
   Vaelastrasz (his longest stretch on one tank, one tank's stint).
 - **The healing** is the healers with 5% or more of the main tank's healing in the median kill, the

@@ -2,27 +2,21 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
-	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
-	Conjured,
 	Consumes,
 	Debuffs,
-	FirePowerBuff,
 	Flask,
 	Food,
 	HealthElixir,
 	IndividualBuffs,
-	ManaRegenElixir,
 	Potions,
 	Profession,
 	Race,
 	RaidBuffs,
-	SpellPowerBuff,
 	StrengthBuff,
 	TristateEffect,
 	WeaponImbue,
-	ZanzaBuff,
 } from '../core/proto/common.js';
 import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -143,21 +137,17 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
+	// The tank bench's consumables (tools/tankbench/req/shaman_warden_*.json): every tank takes the same
+	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec.
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
-	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
-	armorElixir: ArmorElixir.ElixirOfSuperiorDefense,
+	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
-	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	dragonBreathChili: true,
-	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	flask: Flask.FlaskOfTheTitans,
-	food: Food.FoodBlessSunfruit,
-	healthElixir: HealthElixir.ElixirOfFortitude,
-	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
+	food: Food.FoodSmokedDesertDumpling,
+	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
 	strengthBuff: StrengthBuff.JujuPower,
-	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -192,6 +182,8 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const OtherDefaults = {
+	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
+	inFrontOfTarget: true,
 	profession1: Profession.Alchemy,
 	profession2: Profession.Enchanting,
 };

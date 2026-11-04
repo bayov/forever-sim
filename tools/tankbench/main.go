@@ -165,6 +165,9 @@ func main() {
 		}
 		tankscore.OwnDebuffs(rsr)
 		tank := rsr.Raid.Parties[0].Players[0]
+		// The tank faces the boss: the boss parries and blocks its attacks, and its parries haste the
+		// boss's swing.
+		tank.InFrontOfTarget = true
 		tank.TankScoring = &proto.TankScoring{DpsStart: *dpsStart, ThreatPerDamage: *dpsThreat}
 		tank.HealingModel = &proto.HealingModel{
 			Hps:              noPresim(*hps),

@@ -267,6 +267,10 @@ func (b *bench) request(scale float64, floor bool) *proto.RaidSimRequest {
 	for pi, party := range b.slots {
 		for si, r := range party {
 			player := clone(map[role]*proto.Player{roleTank: b.tank, roleHealer: b.healer, roleFiller: b.filler}[r])
+			if r == roleTank {
+				// A tank faces the boss: the boss parries and blocks it, and its parries haste the swing.
+				player.InFrontOfTarget = true
+			}
 			if r == roleHealer {
 				// Each healer reacts a little differently, so identical healers don't act in lockstep.
 				spread := 0.0
