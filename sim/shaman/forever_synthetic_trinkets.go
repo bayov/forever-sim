@@ -17,7 +17,7 @@ const (
 	// The Warden's defensive on-use trinket: 1,665 bonus armor for 20 sec every 2 min, the same 37 weighted
 	// points over 180 sec at standards 36's 0.1 a point of bonus armor (1665 * 0.1 * 40 / 180 = 37.0). It's a
 	// defensive cooldown (the shared defensive trinket timer), so the rotation uses it on a timer.
-	WardenSyntheticOnUseTrinket = 999016
+	WardenSyntheticOnUseTrinket = 999216
 )
 
 func init() {

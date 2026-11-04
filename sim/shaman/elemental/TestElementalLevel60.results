@@ -265,7 +265,7 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestElementalLevel60-Phase1-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999016"
+ key: "TestElementalLevel60-Phase1-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
   dps: 1150.20417
   tps: 1002.48349

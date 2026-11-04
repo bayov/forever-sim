@@ -11,6 +11,42 @@ is audited against client 70753 (the October 30 hotfix's build) and tested, it w
 standards 36, and it has a rotopt template (`tools/rotopt/shaman_tank.go`) and three presets
 (`tools/tankbench/req/shaman_warden_*.json`, `ui/warden_shaman`).
 
+## Why the Warden takes more damage than the other tanks (2026-11-04)
+
+The preliminary bench before the update put the Warden far behind the other tanks on survival. On the realigned sim,
+the balanced request (before the searches) against the other tanks' current requests, 1,000 iterations:
+
+| Healing needed (HPS) | Magmadar | Golemagg | Onyxia | Broodlord | Vaelastrasz | Chromaggus | Mean | Mean without Broodlord |
+|---|---|---|---|---|---|---|---|---|
+| Warden | 509 | 574 | 654 | 3,007 (floor 4.3%) | 1,706 | 1,152 | 1,267 | 919 |
+| Protection warrior | 383 | 435 | 555 | 1,882 (2.1%) | 1,504 | 922 | 947 | 760 |
+| Protection paladin | 376 | 439 | 522 | 1,341 (0.6%) | 1,494 | 913 | 848 | 749 |
+| Feral tank | 447 | 496 | 572 | 1,237 (0.8%) | 1,624 | 979 | 893 | 824 |
+
+Two different things, both a **real class gap**, not the gear or the rotation:
+
+1. **Damage taken is about 30% higher** (Magmadar: Warden 537 DTPS, warrior 409, paladin 416, bear 455). Taking
+   the gap apart with bonus stats on the Warden (Magmadar, 1,000 iterations): the paladin's armor (+1,200, 54.2% to
+   58.2% reduction) takes its DTPS to 494 (-8%); a block chance like Holy Shield's or Shield Block's (+45%) to 500
+   (-7%); and the warrior's Defensive Stance takes 10% more off. 0.92 x 0.93 x 0.90 of 537 is 413, the warrior's
+   409. So the Warden lacks exactly the three things the other shield tanks have: plate (or the bear's armor
+   multiplier), an active block that also pushes crushing blows off the table (the Warden takes 15% crushing blows,
+   the warrior 4%), and a stance or talent that cuts damage taken. Forever's shaman tree has none of them (no
+   Shield Specialization, no armor talent: Toughness is Stamina, Shield Block is a warrior's), and the notes add
+   none. Its own mitigation is Stoneskin Totem (36 off a hit before armor, about 3% at these bosses), 5% passive
+   block and Spirit Weapons' parry; its avoidance (33%) is in fact the best of the shield tanks.
+2. **Broodlord is a health threshold.** Mortal Strike (11,000 to 16,000 before armor) between two heals kills a
+   tank whose health is close to it. The Tauren Warden (8,536 health) has a 4.3% death floor, so healing needed at
+   5% deaths is unbounded; an Orc, Troll or Dwarf Warden (8,120 to 8,140) is at 6.5 to 8.1%, past the 5% line
+   ("none works"). +1,500 health takes the floor to 0.1% (healing needed 1,315), +1,200 armor to 0.5% (1,440). The
+   warrior and paladin get there with less health through Shield Block, Holy Shield and their reductions.
+   Broodlord therefore decides the Warden's score and its race: Tauren is the only race that survives him.
+
+The gear isn't the cause: the set's Stamina share is the row's (23.9%) and the Warden has the most health of the
+shield tanks (8,536 against 7,079 and 6,994); what a hybrid set spends on Intellect, Spirit and spell power the other
+tanks spend on threat stats, not on mitigation. The rotation can only add Stoneskin (on), Healing Stream Totem or a
+health-blind Lesser Healing Wave (searched below).
+
 ## Realigned to client 70753 and the November 2 notes (2026-11-04)
 
 Master's shaman round (`orchestration/round_70753/shaman.md`) brought the notes' shaman lines, standards 37 (the
@@ -130,12 +166,12 @@ parrying without the talent, Stoneskin after armor).
 
 ## Gear
 
-`tools/database/forever_synthetic_items_shaman_tank.go`, ids 999001 to 999016, by standards 36 at the Warden row
+`tools/database/forever_synthetic_items_shaman_tank.go`, ids 999201 to 999216, by standards 36 at the Warden row
 of `orchestration/gear_targets.md` (from wowsims/sod's phase_4_enh_tank): hybrid budget, 845.1 weighted, Stamina
 202, Strength 120, Intellect 131, Spirit 85, attack power 108, spell power 71, hit 55 rating (5.5%), crit 78
 rating, Defense 26, block value 50 (all on the shield). A 2.9 s one-hand axe at Deathbringer's 56.4 DPS, the
 0.72 x L(71) shield (2,681 armor, 50 block value, 8 Defense), the tank trinket (20 Defense, 40 block value), and
-an on-use trinket: the Enhancement set's 335 attack power (990015) or the Warden's 1,665 armor (999016), both 20 s
+an on-use trinket: the Enhancement set's 335 attack power (990015) or the Warden's 1,665 armor (999216), both 20 s
 every 2 min. Hands and legs carry The Spiritcaller's Rage (2 piece: 1% attack and casting speed). Enchants:
 Lesser Arcanum of Voracity (Stamina) on head and legs, Strength on the neck, Superior Defense on the back, Greater
 Stats on the chest, Superior Stamina on the wrists, Superior Strength on the hands, Greater Stamina on the feet

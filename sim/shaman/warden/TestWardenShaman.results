@@ -251,7 +251,7 @@ dps_results: {
  }
 }
 dps_results: {
- key: "TestWardenShaman-Phase1-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999016"
+ key: "TestWardenShaman-Phase1-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
   dps: 364.17767
   tps: 639.55885
