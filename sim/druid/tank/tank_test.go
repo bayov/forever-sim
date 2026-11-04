@@ -78,8 +78,9 @@ func TestForeverBear(t *testing.T) {
 			t.Errorf("%s cast %.1f times a fight, want it in the rotation", name, casts[id])
 		}
 	}
-	// Primal Bite's 6 sec cooldown caps it at 21 a 120 sec fight.
-	if casts[1238070] > seconds/6+1 {
+	// Primal Bite's 6 sec cooldown caps it at 21 a 120 sec fight, plus one for each reset by the Idol of
+	// the Ursine Twins (10% of the Lacerates that land).
+	if casts[1238070] > seconds/6+1+0.1*casts[1235827] {
 		t.Errorf("Primal Bite cast %.1f times in %d sec, over its cooldown", casts[1238070], seconds)
 	}
 
@@ -90,7 +91,9 @@ func TestForeverBear(t *testing.T) {
 			uptime = a.UptimeSecondsAvg / seconds
 		}
 	}
-	if uptime < 0.9 {
+	// Roar's line is below Lacerate's keep-up (rotopt's roarAfterLacerate), so the first Roar waits for
+	// Lacerate's 5 stacks and an early refresh can wait a GCD or two.
+	if uptime < 0.8 {
 		t.Errorf("Demoralizing Roar up %.0f%% of the fight, want it kept up", 100*uptime)
 	}
 
