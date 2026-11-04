@@ -63,6 +63,9 @@ import ManaTideAPLJSON from './apls/mana_tide.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticBurningTotemGearJSON from './gear_sets/level60_phase1_synthetic_burning_totem.gear.json';
+import Level60Phase1SyntheticBurningTotemHitMinus4GearJSON from './gear_sets/level60_phase1_synthetic_burning_totem_hit-4.gear.json';
+import Level60Phase1SyntheticHitMinus3GearJSON from './gear_sets/level60_phase1_synthetic_hit-3.gear.json';
+import Level60Phase1SyntheticHitMinus4GearJSON from './gear_sets/level60_phase1_synthetic_hit-4.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -144,9 +147,32 @@ export const GearLevel60Phase1SyntheticBurningTotem = PresetUtils.makePresetGear
 	group: 'Synthetic',
 });
 
-export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticBurningTotem];
+// The hit-3, hit-4 steps (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/shaman.md): gear hit traded
+// away for other stats, with the build's new talents. Paired sims picked hit-3 for Level 60, hit-4 for Water Shield and
+// hit-4 on the Burning Totem set for Mana Tide. Imp GW stays on the base set.
+export const GearLevel60Phase1SyntheticHitMinus3 = PresetUtils.makePresetGear('Enhancement (hit-3)', Level60Phase1SyntheticHitMinus3GearJSON, {
+	tooltip: 'The synthetic Phase 1 set with 3% hit traded away, for the Level 60 build.',
+	group: 'Synthetic',
+});
+export const GearLevel60Phase1SyntheticHitMinus4 = PresetUtils.makePresetGear('Enhancement (hit-4)', Level60Phase1SyntheticHitMinus4GearJSON, {
+	tooltip: 'The synthetic Phase 1 set with 4% hit traded away, for the Water Shield build.',
+	group: 'Synthetic',
+});
+export const GearLevel60Phase1SyntheticBurningTotemHitMinus4 = PresetUtils.makePresetGear('Enh Mana Tide (hit-4)', Level60Phase1SyntheticBurningTotemHitMinus4GearJSON, {
+	tooltip: 'The Burning Totem set with 4% hit traded away, for the Mana Tide build.',
+	group: 'Synthetic',
+});
 
-export const DefaultGear = GearLevel60Phase1Synthetic;
+export const GearPresets = [
+	GearLevel60Phase1Synthetic,
+	GearLevel60Phase1SyntheticHitMinus3,
+	GearLevel60Phase1SyntheticHitMinus4,
+	GearLevel60Phase1SyntheticBurningTotem,
+	GearLevel60Phase1SyntheticBurningTotemHitMinus4,
+];
+
+// The class default build is Level 60, which wears the hit-3 step.
+export const DefaultGear = GearLevel60Phase1SyntheticHitMinus3;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -366,7 +392,12 @@ export const DefaultAPL = APLOptimized;
 // paired at 20000 iterations. 443003102-055030110051012151-03 (Convection 4, Improved Stormstrike 1,
 // Tidal Focus 3) ties it: +2.5 at 120, -2 to -3 at 300 and the same mean. 1169.0 / 1159.2 / 1140.5
 // at 120 / 180 / 300 sec (892.8 / 883.0 / 866.7 before the round, on the same race base stats).
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', SavedTalents.create({ talentsString: '353003102-055030110051012251-02' }), {
+// Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/shaman.md): on the hit-3 step the
+// search moved a point from Improved Stormstrike (2 to 1) to Tidal Focus (2 to 3), which also brings the gear's hit
+// from 10 to 11, so the build wears the hit-3 step (353003102-055030110051012151-03, was
+// 353003102-055030110051012251-02): 1176.9 / 1165.3 / 1144.1 at 120 / 180 / 300 sec (1169.1 / 1159.4 / 1140.5
+// before), +7.8 / +5.9 / +3.6, paired at 20000 iterations.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', SavedTalents.create({ talentsString: '353003102-055030110051012151-03' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons, Concussion, Convection and Tidal Focus.',
 	group: 'Synthetic',
 });
@@ -439,9 +470,12 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', S
 // Round 70753: the search (Water Shield and Spirit Weapons pinned) moved a Call of Flame point to
 // Elemental Devastation 2: 1118.9 / 1111.3 / 1108.1 at 120 / 180 / 300 sec (842.9 / 834.2 /
 // 830.4 before), 4.1% behind Level 60 at 180.
+// Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/shaman.md): one point moved inside
+// the Enhancement tree (052002-055030110051012151-053020001, a mana tie-break) and the build wears the hit-4 step:
+// 1125.3 / 1117.4 / 1113.4 at 120 / 180 / 300 sec (1118.9 / 1111.3 / 1108.1 before), +6.4 / +6.1 / +5.3.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Enh Water Shield',
-	SavedTalents.create({ talentsString: '052002-054030210051012151-053020001' }),
+	SavedTalents.create({ talentsString: '052002-055030110051012151-053020001' }),
 	{ tooltip: 'Level 60 talents with 10 Restoration points for Water Shield.', group: 'Synthetic' },
 );
 // The best build that takes Water Shield and Mana Tide Totem (-require
@@ -469,9 +503,12 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // Round 70753: the search found only moves inside the noise; the build stays, best on both seed sets
 // at 180 sec. 1065.1 / 1055.1 / 1046.7 at 120 / 180 / 300 sec (803.4 / 795.4 / 789.4 before), 9.0%
 // behind Level 60 at 180.
+// Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/shaman.md): new talents
+// (03-055030210051012151-053111031001, partly mana tie-break moves) on the Burning Totem set's hit-4 step:
+// 1068.6 / 1060.3 / 1055.2 at 120 / 180 / 300 sec (1065.1 / 1055.1 / 1046.7 before), +3.5 / +5.2 / +8.5.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Enh Mana Tide',
-	SavedTalents.create({ talentsString: '03-055030310051012051-053051001001' }),
+	SavedTalents.create({ talentsString: '03-055030210051012151-053111031001' }),
 	{ tooltip: 'Level 60 talents with Water Shield and Mana Tide Totem.', group: 'Synthetic' },
 );
 
@@ -777,7 +814,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Enhancement', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Enhancement rotation, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticHitMinus3,
 	talents: TalentsLevel60,
 	rotation: APLOptimized,
 	encounter: EncounterLevel60,
@@ -803,7 +840,7 @@ export const PresetBuildLevel60ImpGW = PresetUtils.makePresetBuild('Enh Imp GW',
 export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Enh Water Shield', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 with the Water Shield talents and rotation.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticHitMinus4,
 	talents: TalentsLevel60WaterShield,
 	rotation: APLMagma,
 	encounter: EncounterLevel60,
@@ -816,7 +853,7 @@ export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Enh Wa
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Enh Mana Tide', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 with the Water Shield and Mana Tide talents and rotation.',
-	gear: GearLevel60Phase1SyntheticBurningTotem,
+	gear: GearLevel60Phase1SyntheticBurningTotemHitMinus4,
 	talents: TalentsLevel60ManaTide,
 	rotation: APLManaTide,
 	encounter: EncounterLevel60,
