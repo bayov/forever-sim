@@ -37,9 +37,12 @@ for the healing talents are done again here against `sim/shaman/healing.go` and 
    average). The raid healer's line "Riptide at the
    most hurt when it fits" compared Health Missing with `spellExpectedHealing(Riptide)`, which Riptide didn't
    have: the APL dropped that value with a warning, so the line cast Riptide whenever the most hurt had none.
-4. **Ancestral Fortitude raises armor from items only** (16177: "Increases your armor value from items",
-   aura 101 on armor). The sim raised all of the target's armor (Agility's and buffs' too). It's the
-   paladin's Toughness way now (`ApplyDynamicEquipScaling`). The tank healer's preset takes Ancestral Healing.
+4. **Ancestral Fortitude raises all armor** (healer_mechanics-20261104-3, 2026-11-04). 16177 is aura 101
+   (MOD_RESISTANCE_PCT) on armor, the priest's Inspiration (14893) aura, which the sim applies to all armor;
+   the "from items" talents (Toughness 12299, 20143) are aura 142. Only 16177's tooltip says "from items",
+   the talent's (16176) "Increases your target's armor value". So the sim follows the aura
+   (`PseudoStats.ArmorMultiplier`, as Inspiration); from 11-03 to 11-04 it raised armor from items only. The
+   tank healer's preset takes Ancestral Healing.
 5. **Two Restoration relics** are in (`sim/shaman/items.go`): Tidal Totem (272431, Pix Xizzix, Healing
    Wave 5% cheaper, 1291076) and Totem of Urgency (279249, crafted, Lesser Healing Wave +4% crit, 1306448).
    Both are Phase 1 and allowed by standards 8a.
@@ -96,7 +99,7 @@ never read: it read 408521 alone.
 | Natural Grace (29187) | -5% threat a point on every magic school | same | curve 85314 | `natural_grace_test.go` |
 | Totemic Focus (16173) | -5% a point on every totem's cost | same | curve 85315 | `mana_costs_test.go` |
 | Improved Reincarnation (16184) | +2% health a point (the sim's only part) | same | | `base_stats_test.go` |
-| Ancestral Healing (16176) | after one of our heals crits, its target's armor from items +8/17/25% for 15 sec (16177, aura 101); proc flags 0x15550 (no periodic) | **was all armor, now armor from items** | curve 85318 | `TestOrcShamanAncestralHealing`, `TestOrcShamanHealTalentPoints`, `TestHealingFightShamanAncestralFortitude` |
+| Ancestral Healing (16176) | after one of our heals crits, its target's armor +8/17/25% for 15 sec (16177, aura 101, all armor as Inspiration); proc flags 0x15550 (no periodic) | **all armor again (healer_mechanics-20261104-3; items only 11-03 to 11-04)** | curve 85318 | `TestOrcShamanAncestralHealing`, `TestOrcShamanHealTalentPoints`, `TestHealingFightShamanAncestralFortitude` |
 | Healing Focus (16181) | 23/47/70% chance a hit doesn't push a heal back | same | curve 85317 | `TestOrcShamanHealingFocusPushback` |
 | Water Shield (talent) | teaches 408510 | same | | `mana_returns_test.go` |
 | Tidal Mastery (16194) | +1% crit a point on Healing Wave, Lesser Healing Wave, Chain Heal and Riptide (0x5c0 + word 2 0x10; 0x400 is Lightning Shield, whose orbs never crit) | same | curve 85308 | `TestOrcShamanHealTalentPoints` |
@@ -123,8 +126,11 @@ never read: it read 408521 alone.
   a direct heal takes `CasterHealingMultiplier`. Fixed on master by the priest's session (it now takes
   `CasterHealingMultiplier`); no shaman number moved, since nothing a Restoration shaman has moved one but not
   the other.
-- **The Spiritcaller** (2109, the Restoration tier set: 5 pieces take 1 sec off Riptide's cooldown) has no
-  stats in the client yet, and the synthetic set doesn't use it.
+- **Forever's Tier 1 Restoration set** (The Spiritcaller, 2109; bonus spells 1300960, 1301059, 1301093,
+  1301713): +10 Spirit, friendly totems' radius, +26 healing (9 of it damage), Riptide 1 sec off its cooldown
+  (aura 107, mask word 2 0x10). The synthetic set carries it on the head and chest, so only the 2 piece is live
+  (standards 6; healer_mechanics-20261104-6, `ItemSetRestorationSyntheticPhase1`,
+  `TestRestorationSyntheticSet`). What the 4 and 5 pieces would add is under "Presets".
 - **Totem of Life and Totem of Flowing Water** (Naxxramas, standards 8a) aren't modelled.
 
 ## Presets (round 70753)
@@ -215,7 +221,7 @@ run against the old code, or with the mechanic taken out, and fail):
   crit on the heals.
 - `sim/shaman/enhancement/healing_relics_test.go`: Tidal Totem and Totem of Urgency.
 - `sim/raid_healing_shaman_test.go`: on a healing fight, Ancestral Fortitude lands on the healed tank and raises
-  its armor from items only.
+  all of its armor.
 - Already there: `sim/raid_healing_test.go` (Chain Heal's jumps and falloff, bound ranks, the mana tools),
   `periodic_test.go` (Healing Stream), `mana_returns_test.go` (Mana Spring, Mana Tide, Water Shield),
   `mana_costs_test.go` (Totemic Focus), `mindfulness_test.go`, `natural_grace_test.go`,
