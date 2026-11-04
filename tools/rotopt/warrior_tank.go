@@ -1,6 +1,10 @@
 package main
 
-import "github.com/wowsims/classic/sim/core/proto"
+import (
+	"fmt"
+
+	"github.com/wowsims/classic/sim/core/proto"
+)
 
 // The Protection warrior tank under Forever rules, sword and board in Defensive Stance, scored with
 // -tank (docs/tank_sim.md, docs/tank_warrior.md). It decides what a tank decides: Shield Block's
@@ -81,13 +85,15 @@ func tankTrinketLines(k Knobs) []*proto.APLListItem {
 	var items []*proto.APLListItem
 	for _, trinket := range []*proto.ActionID{tankBulwarkTrinket, battleTrinket} {
 		var when value
+		note := "The on-use trinket. Ignore the warning on the trinket that isn't worn."
 		if k["trinketAt"] > 0 {
+			note = fmt.Sprintf("The on-use trinket, held for the last %d sec unless the wait costs a use. Ignore the warning on the trinket that isn't worn.", int(k["trinketAt"]))
 			when = or(
 				le(remainingTime(), seconds(k["trinketAt"])),
 				gt(spellUsesLostByDelay(trinket, sub(remainingTime(), seconds(k["trinketAt"])), seconds(20)), num(0)),
 			)
 		}
-		items = append(items, cast(trinket, when, "The on-use trinket. Ignore the warning on the trinket that isn't worn."))
+		items = append(items, cast(trinket, when, note))
 	}
 	return items
 }
