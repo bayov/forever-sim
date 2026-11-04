@@ -13,8 +13,8 @@ left the bar is hidden.
 | Mode | Tabs | Datasets |
 |---|---|---|
 | DPS (default) | Ranking, Specs, Races, Compare, Changes, Method | those with no `mode` in `datasets.json` |
-| Tanking | Ranking (score at a threat/survival weight, per boss or the six-boss mean, or any metric), Specs (per-boss table, talents, rotation, gear, setup, notes), Races, Method | `mode: "tank"` (`tank_*`) |
-| Healing | the same four, ranking the healers' carry as tank healer or raid healer | `mode: "heal"` (`heal_*`) |
+| Tanking | Ranking (one row a spec: the preset of the setup picked, Max threat, Balanced or Max survival; its score, per boss or the six-boss average, or any figure), Specs (any preset: per-boss table, talents, rotation, gear, setup, "Good to know"), Races, Method | `mode: "tank"` (`tank_*`) |
+| Healing | the same four, ranking the healers' score (damage carried) as tank healer or raid healer | `mode: "heal"` (`heal_*`) |
 
 Raid is not a mode yet. The modes share the `mode: "common"` datasets (icons, names, races, tooltips).
 
