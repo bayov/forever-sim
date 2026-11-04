@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=zanza_swift_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3182     3182     0.0    0.0      0.0        0
+chromaggus        2709     2709     0.0    0.0      0.0        0
+golemagg          3828     3828     0.0    0.0      0.0        0
+magmadar          3992     3992     0.0    0.0      0.0        0
+onyxia            3658     3658     0.0    0.0      0.0        0
+ragnaros         -1492    -1492     0.0    0.0      0.0        0
+vaelastrasz       4018     4018     0.0    0.0      0.0        0
+scoring_mean                        0.0    0.0

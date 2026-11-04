@@ -1,0 +1,10 @@
+A=cur_balanced.json B=talsu25_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3561     3548   -13.3   16.8     11.0       12
+chromaggus        2902     2914    12.2    7.6     13.3        5
+golemagg          4028     4046    17.8    6.5     17.9        5
+magmadar          4186     4204    17.6    5.7     17.2        5
+onyxia            3952     3940   -12.8    9.6     13.4        8
+ragnaros          -857     -861    -4.1   35.8      6.9        6
+vaelastrasz       4474     4470    -4.0    3.8      0.0        3
+scoring_mean                        2.9    3.8

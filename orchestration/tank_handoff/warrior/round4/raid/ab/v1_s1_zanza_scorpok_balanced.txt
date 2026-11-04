@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=zanza_scorpok_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3182     3252    70.1   21.0     11.6      -16
+chromaggus        2709     2790    80.3   13.0     13.0      -18
+golemagg          3828     3894    66.3   11.4     12.6      -12
+magmadar          3992     4030    37.7    8.3      6.9       -7
+onyxia            3658     3721    63.6   16.7     12.5       -7
+ragnaros         -1492    -1380   112.3   60.0     13.8      -27
+vaelastrasz       4018     4055    37.8    8.3     13.2       -9
+scoring_mean                       59.3    5.7

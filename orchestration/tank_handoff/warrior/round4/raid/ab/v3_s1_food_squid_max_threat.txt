@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=food_squid_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         4480     4458   -21.5    3.6    -11.4       -1
+chromaggus        4179     4155   -24.7    1.5    -12.1        0
+golemagg          4625     4600   -24.8    1.9    -12.9       -1
+magmadar          4698     4672   -25.9    1.7    -12.2        1
+onyxia            4738     4720   -17.8    2.9     -8.8        0
+ragnaros          2855     2831   -24.0    5.3    -11.8        0
+vaelastrasz       5104     5087   -17.4    2.7     -8.8       -0
+scoring_mean                      -22.0    1.0

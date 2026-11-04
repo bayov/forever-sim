@@ -2,6 +2,7 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
+	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
 	Consumes,
@@ -17,6 +18,7 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	Stat,
 	StrengthBuff,
 	TotemWeaponBuff,
@@ -24,6 +26,7 @@ import {
 	UnitReference,
 	UnitReference_Type,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -105,11 +108,11 @@ export const TalentsP1Prot = PresetUtils.makePresetTalents('Protection', SavedTa
 // The talent searches' builds (docs/tank_warrior.md, Presets), on the six scoring encounters.
 // Balanced and Max survival (both searches end on the same talents): Deflection 5; Cruelty, Unbridled Wrath and Enrage 5/5; Protection 31 with Shield Slam, no Last Stand or Vanguard.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60 Protection', SavedTalents.create({ talentsString: '05-05050005-250530020310001351' }));
-// Max threat: Deflection 4, Blood Craze 1, Anticipation 3, Improved Sunder Armor 3 (Improved Heroic Strike went once
-// Unbridled Wrath stopped proccing on Heroic Strike).
+// Max threat: Deflection 5, no Blood Craze (round 5, on the full raid consumables), Anticipation 3, Improved Sunder
+// Armor 3 (Improved Heroic Strike went once Unbridled Wrath stopped proccing on Heroic Strike).
 export const TalentsLevel60MaxThreat = PresetUtils.makePresetTalents(
 	'Level 60 Protection (Max threat)',
-	SavedTalents.create({ talentsString: '04-05050015-250330020330001351' }),
+	SavedTalents.create({ talentsString: '05-05050005-250330020330001351' }),
 );
 export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60MaxThreat, TalentsP1Prot],
@@ -145,6 +148,19 @@ export const DefaultConsumes = Consumes.create({
 	// The stone goes on the main hand: a shield can't hold one. The Elemental stone beats the Dense by 14 to 21.
 	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
 	strengthBuff: StrengthBuff.JujuPower,
+	// Round 4's raid set (docs/tank_warrior.md, Round 4 consumables, the full raid set): Spirit of Zanza (+78 to +161 over
+	// none; Balanced and Max survival), Rumsey Rum Black Label (+11 to +48) and the Goblin Sapper Charge (Engineering;
+	// +181 to +212: its threat at the pull; the rotations throw it after the trinkets). Thrown explosives lose (their
+	// 1 sec cast at the pull costs 270 to 430), so none is taken (standards 11).
+	zanzaBuff: ZanzaBuff.SpiritOfZanza,
+	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
+});
+
+// Max threat takes R.O.I.D.S. in the Zanza slot (+30 over Spirit of Zanza, +19 to +23 over Ground Scorpok Assay).
+export const MaxThreatConsumes = Consumes.create({
+	...DefaultConsumes,
+	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
 // Max survival eats Dirge's Kickin' Chimaerok Chops (+41 to +46 over the Dumpling) and drinks the Greater
@@ -241,6 +257,17 @@ export const EncounterLevel60Tank = PresetUtils.makePresetEncounter(
 	},
 );
 
+// The same fight with Max threat's consumables.
+export const EncounterLevel60TankMaxThreat = PresetUtils.makePresetEncounter('Generic boss, tanking (Max threat)', EncounterLevel60Tank.encounter, {
+	tanks: EncounterLevel60Tank.tanks,
+	healingModel: EncounterLevel60Tank.healingModel,
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: MaxThreatConsumes,
+	inFrontOfTarget: true,
+});
+
 // The same fight with Max survival's consumables.
 export const EncounterLevel60TankMaxSurvival = PresetUtils.makePresetEncounter('Generic boss, tanking (Max survival)', EncounterLevel60Tank.encounter, {
 	tanks: EncounterLevel60Tank.tanks,
@@ -264,7 +291,7 @@ export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60MaxThreat,
 	rotation: APLLevel60MaxThreat,
-	encounter: EncounterLevel60Tank,
+	encounter: EncounterLevel60TankMaxThreat,
 	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
@@ -276,7 +303,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation, Dirge\'s chops and the Greater Stoneshield Potion, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
+	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation (but Sunder Armor as filler from 30 Rage, not 25), Dirge\'s chops and the Greater Stoneshield Potion, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,

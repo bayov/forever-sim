@@ -46,7 +46,7 @@
         },
         {
          "id": 990710,
-         "enchant": 929
+         "enchant": 1887
         },
         {
          "id": 990711
@@ -252,7 +252,10 @@
        "attackPowerBuff": "JujuMight",
        "spellPowerBuff": "GreaterArcaneElixir",
        "defaultPotion": "MajorManaPotion",
-       "dragonBreathChili": true
+       "dragonBreathChili": true,
+       "zanzaBuff": "SpiritOfZanza",
+       "alcohol": "AlcoholRumseyRumBlackLabel",
+       "sapperExplosive": "SapperGoblinSapper"
       },
       "buffs": {
        "blessingOfKings": true,

@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=ap_firewater_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3585     3580    -5.5    0.0     -2.7        0
+chromaggus        2912     2907    -5.7    0.0     -2.9        0
+golemagg          4032     4026    -5.7    0.0     -2.8        0
+magmadar          4192     4186    -5.7    0.0     -2.8        0
+onyxia            3986     3981    -5.4    0.0     -2.7        0
+ragnaros          -794     -799    -5.5    0.0     -2.8        0
+vaelastrasz       4465     4460    -5.1    0.0     -2.5        0
+scoring_mean                       -5.5    0.0

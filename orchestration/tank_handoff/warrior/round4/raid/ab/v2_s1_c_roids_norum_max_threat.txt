@@ -1,0 +1,10 @@
+A=warrior_protection_max_threat.json B=c_roids_norum_max_threat.json preset=max_threat iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         4216     4459   242.9   20.7    120.8       -1
+chromaggus        3963     4171   208.1   11.5    101.7       -5
+golemagg          4425     4619   193.7   13.9     98.5        3
+magmadar          4493     4691   198.6   13.9    103.2        7
+onyxia            4482     4724   241.5   17.5    123.7        3
+ragnaros          2615     2805   189.4   35.1    100.6       11
+vaelastrasz       4680     5098   418.0   23.2    213.4       21
+scoring_mean                      250.5    7.1

@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=hp_none_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3585     3475  -110.2   11.0     -2.7       35
+chromaggus        2912     2871   -41.3    3.2     -2.4       12
+golemagg          4032     3996   -35.9    2.9     -2.6        9
+magmadar          4192     4153   -38.2    1.9     -2.5        9
+onyxia            3986     3913   -73.2    6.0     -2.8       13
+ragnaros          -794    -1025  -231.0   25.1     -2.5       72
+vaelastrasz       4465     4430   -35.2    2.4     -3.7       22
+scoring_mean                      -55.7    2.3

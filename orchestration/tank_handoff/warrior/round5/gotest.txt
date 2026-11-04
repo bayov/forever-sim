@@ -1,0 +1,7 @@
+?   	github.com/wowsims/classic/sim/warrior	[no test files]
+ok  	github.com/wowsims/classic/sim/warrior/dps_warrior	15.802s
+ok  	github.com/wowsims/classic/sim/warrior/tank_warrior	7.960s
+ok  	github.com/wowsims/classic/tools/tankbench	0.750s
+ok  	github.com/wowsims/classic/tools/tankscore	1.112s
+ok  	github.com/wowsims/classic/tools/rotopt	1.080s
+exit 0

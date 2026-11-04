@@ -1,0 +1,27 @@
+# re-confirm on the stacked set (base3: Max threat R.O.I.D.S., Balanced and Max survival Spirit of Zanza; Rum; Sapper)
+z_spirit zanzaBuff=SpiritOfZanza
+z_roids zanzaBuff=ROIDS
+z_scorpok zanzaBuff=GroundScorpokAssay
+z_lung zanzaBuff=LungJuiceCocktail
+rum_grog alcohol=AlcoholGordokGreenGrog
+flask_titans flask=FlaskOfTheTitans
+flask_aggr flask=FlaskOfNaturalAggression
+flask_acc flask=FlaskOfNaturalAccuracy
+flask_swift flask=FlaskOfNaturalSwiftness
+food_dumpling food=FoodSmokedDesertDumpling
+food_dirges food=FoodDirgesKickChimaerokChops
+food_squid food=FoodGrilledSquid
+food_nightfin food=FoodNightfinSoup
+food_sunfruit food=FoodBlessSunfruit
+food_wolfsteak food=FoodTenderWolfSteak
+food_runntum food=FoodRunnTumTuberSurprise
+agi_greater agilityElixir=ElixirOfGreaterAgility
+armor_superior armorElixir=ElixirOfSuperiorDefense
+hp_none healthElixir=-
+str_giants strengthBuff=ElixirOfGiants
+ap_firewater attackPowerBuff=WinterfallFirewater
+stone_none mainHandImbue=-
+stone_dense_weight mainHandImbue=DenseWeightstone
+pot_mighty_rage defaultPotion=MightyRagePotion
+pot_stoneshield defaultPotion=GreaterStoneshieldPotion
+chili_off dragonBreathChili=false

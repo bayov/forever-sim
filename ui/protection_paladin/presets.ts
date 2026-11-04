@@ -2,6 +2,7 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
+	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
 	Consumes,
@@ -17,6 +18,7 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	SpellPowerBuff,
 	Stat,
 	StrengthBuff,
@@ -26,6 +28,7 @@ import {
 	UnitReference,
 	UnitReference_Type,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common.js';
 import { PaladinAura, PaladinOptions as ProtectionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -37,7 +40,6 @@ import Level60MaxSurvivalAPLJson from './apls/level60_max_survival.apl.json';
 import Level60MaxThreatAPLJson from './apls/level60_max_threat.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
-import Level60Phase1SyntheticMaxThreatGear from './gear_sets/level60_phase1_synthetic_max_threat.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -49,16 +51,12 @@ import Level60Phase1SyntheticMaxThreatGear from './gear_sets/level60_phase1_synt
 
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 
+// Greater Agility (+7) on the boots for every preset since round 5 (docs/tank_paladin.md): on the round 4 consumables it
+// beats Greater Stamina at all three weights on two disjoint seeds (round 3 took it at Max threat only).
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Level60Phase1SyntheticGear);
-// Max threat's set: the same items, Greater Agility (+7) on the boots for Greater Stamina (+7). It won at w = 1/3 on
-// two disjoint seeds and tied at the other weights (docs/tank_paladin.md, round 3).
-export const GearLevel60SyntheticMaxThreat = PresetUtils.makePresetGear(
-	'Level 60 Phase 1 (Synthetic, Max threat)',
-	Level60Phase1SyntheticMaxThreatGear,
-);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Synthetic, GearLevel60SyntheticMaxThreat, GearBlank],
+	[Phase.Phase1]: [GearLevel60Synthetic, GearBlank],
 };
 
 export const DefaultGear = GearBlank;
@@ -107,15 +105,17 @@ export const P5ProtTalents = {
 	}),
 };
 
+// Max survival's string.
 export const TalentsLevel60 = {
-	name: 'Level 60 Protection',
+	name: 'Level 60 Protection (Max survival)',
 	data: SavedTalents.create({
 		talentsString: '04-25300102513501531-5023',
 	}),
 };
 
+// Max threat's and, since round 5, Balanced's string (docs/tank_paladin.md, call 14 resolved).
 export const TalentsLevel60MaxThreat = {
-	name: 'Level 60 Protection (Max threat)',
+	name: 'Level 60 Protection (Max threat, Balanced)',
 	data: SavedTalents.create({
 		talentsString: '05005-25300102413001531-5023',
 	}),
@@ -142,11 +142,12 @@ export const DefaultOptions = ProtectionPaladinOptions.create({
 	righteousFury: true,
 });
 
-// Round 4 (2026-11-04, orchestration/tank_handoff/paladin/round4, docs/tank_paladin.md "Round 4 consumables"): the
-// standard consumable set (the bear's and the warrior's: no Zanza, Rumsey Rum, Blasted Lands buff or Goblin Sapper,
-// docs/tank_druid.md call 10), searched per preset. Balanced is the default.
+// Round 4 (2026-11-04, orchestration/tank_handoff/paladin/round4, docs/tank_paladin.md "Round 4 consumables"): the full
+// raid consumable set (orchestration/standards.md item 11), searched per preset. Balanced is the default: Spirit of
+// Zanza, Rumsey Rum Black Label and the Goblin Sapper Charge (Engineering) on the standard set.
 export const BalancedConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
+	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
 	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MajorManaPotion,
@@ -155,12 +156,17 @@ export const BalancedConsumes = Consumes.create({
 	food: Food.FoodNightfinSoup,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
 	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,
+	zanzaBuff: ZanzaBuff.SpiritOfZanza,
 });
 
-// Max threat takes Balanced's consumables.
-export const MaxThreatConsumes = BalancedConsumes;
+// Max threat takes Balanced's consumables with the Ground Scorpok Assay (25 Agility) in the Zanza slot.
+export const MaxThreatConsumes = Consumes.create({
+	...BalancedConsumes,
+	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
+});
 
 // Max survival takes the Flask of Natural Precision (+5% expertise in the natural-flask zone) and Dirge's Kickin'
 // Chimaerok Chops (25 Stamina).
@@ -278,12 +284,12 @@ export const EncounterLevel60TankMaxSurvival = bench_encounter('Generic boss, ta
 ///////////////////////////////////////////////////////////////////////////
 
 // The three Level 60 tank presets (the user's ruling: threat against survival as weights, Balanced the default;
-// docs/tank_sim.md). Undead sims best at every weight: Touch of the Grave's drain heals and makes threat.
+// docs/tank_sim.md). Undead sims best of the paladin's races at every weight: Touch of the Grave's drain heals and makes threat.
 const Level60TankOptions = { primarySeal: PaladinSeal.Fury, righteousFury: true, aura: PaladinAura.DevotionAura };
 
 export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
 	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Consumables: Flask of Supreme Power, Nightfin Soup, Elemental Sharpening Stone (+319 over round 3).',
-	gear: GearLevel60SyntheticMaxThreat,
+	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60MaxThreat,
 	rotation: APLLevel60MaxThreat,
 	race: Race.RaceUndead,
@@ -292,9 +298,9 @@ export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60
 	encounter: EncounterLevel60TankMaxThreat,
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
-	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md). Consumables: Flask of Supreme Power, Nightfin Soup, Elemental Sharpening Stone (+198 over round 3).',
+	tooltip: "Scored with survival weighed at 1 (docs/tank_sim.md). Max threat's talents and gear on Undead (round 5). Consumables: Flask of Supreme Power, Nightfin Soup, Elemental Sharpening Stone (+198 over round 3).",
 	gear: GearLevel60Synthetic,
-	talents: TalentsLevel60,
+	talents: TalentsLevel60MaxThreat,
 	rotation: APLLevel60Balanced,
 	race: Race.RaceUndead,
 	professions: [Profession.Engineering, Profession.Blacksmithing],
@@ -302,7 +308,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 	encounter: EncounterLevel60Tank,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear, talents and rotation (the search at this weight lands on the same ones); the consumables differ: Flask of Natural Precision, Dirge's Kickin' Chimaerok Chops, Elemental Sharpening Stone (+142 over round 3).",
+	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear and rotation on its own talents (Anticipation over Improved Seals); the consumables differ: Flask of Natural Precision, Dirge's Kickin' Chimaerok Chops, Elemental Sharpening Stone (+142 over round 3).",
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,

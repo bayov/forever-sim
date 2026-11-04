@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=c_roids_norum_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3182     3428   246.4   35.3    134.6        8
+chromaggus        2709     2903   193.7   16.6     89.1       -5
+golemagg          3828     4027   198.4   17.3     99.5        0
+magmadar          3992     4190   198.1   15.7    105.2        4
+onyxia            3658     3925   267.5   26.0    140.7        3
+ragnaros         -1492    -1170   322.7  107.8    107.6      -34
+vaelastrasz       4018     4462   444.7   23.8    221.6       -1
+scoring_mean                      258.1    9.6

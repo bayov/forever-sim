@@ -1,0 +1,10 @@
+A=cur_max_survival.json B=su25_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1971     1970    -1.7    7.9      2.0        1
+chromaggus        -236     -238    -2.6    6.7      0.6        0
+golemagg          2850     2853     3.0    3.9      1.5        0
+magmadar          3212     3219     7.1    4.2      2.2       -0
+onyxia            2361     2382    21.2   11.7      0.5       -1
+ragnaros        -11503   -11508    -4.2   28.7      0.4        1
+vaelastrasz       2682     2683     0.6    1.9      0.1       -0
+scoring_mean                        4.6    2.8
