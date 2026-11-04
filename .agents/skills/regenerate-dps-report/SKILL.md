@@ -16,9 +16,12 @@ One source, two outputs:
   raw bench outputs in `tools/dps_report/raw/bench/{tank,heal}.tgz` (README "Tanking and
   Healing").
 - Output 1: the sim UI at `/forever/dps_report/`.
-- Output 2: `make dps-report-artifact` writes `dist/dps_report.html`, deployed to
-  https://forever-dps.pages.dev (Cloudflare Pages project `forever-dps`). Never publish the
-  report as a Claude artifact.
+- Output 2: `make dps-report-artifact` writes the site, `dist/dps_report_site/` (the page in
+  `index.html`, one data file per mode, `data/{dps,tank,heal,common}.<hash>.json`, and one per
+  preset's sample fights in `data/events/`, each fetched when the page first needs it), and the
+  same report as one self-contained file, `dist/dps_report.html`. `make dps-report-deploy`
+  uploads the site directory to https://forever-dps.pages.dev (Cloudflare Pages project
+  `forever-dps`) and checks every file live. Never publish the report as a Claude artifact.
 
 Work on a local branch, never directly on `master`.
 
@@ -105,11 +108,16 @@ what it writes (`tools/dps_report/changes/`, the two datasets, `datasets.json`).
 
 ## 3. Check both outputs
 
-- `make dps-report-artifact`. It fails over 25 MiB (Cloudflare's per-file limit).
-- Open `dist/dps_report.html` in Playwright with `executablePath: '/opt/pw-browsers/chromium'`,
-  wrapped in `<!doctype html><html><head><meta charset="utf-8"></head><body>...</body></html>`
-  and with the session's proxy so d3 loads from cdnjs. Click through Ranking, Races, Specs,
-  Compare, Changes and Method at phone and desktop width; look for console errors.
+- `make dps-report-artifact`. It fails when any file is over 25 MiB (Cloudflare's per-file
+  limit). Its last line lists the site's files and size; a mode whose datasets are missing has
+  no `data/<mode>.*.json` and is left out of the page's mode bar.
+- Serve `dist/dps_report_site/` (`python3 -m http.server -d dist/dps_report_site`) and open it
+  in Playwright with `executablePath: '/opt/pw-browsers/chromium'` and the session's proxy so
+  d3 loads from cdnjs. In each mode (DPS, `#tank`, `#heal`) click through its tabs at phone and
+  desktop width; look for console errors, and check in the network log that a mode fetches only
+  its own data file and `common`.
+- Open `dist/dps_report.html` the same way (it holds the whole page, so a `file://` URL or any
+  static server works) and spot-check one page per mode.
 - Page changed: also check `npx vite serve` at `/forever/dps_report/`.
 - Run `go run -tags=with_db ./tools/raid_sim_data` and commit `ui/raid_sim/data/` with the
   report. Then `go run -tags=with_db ./tools/compsearch -stale` lists comp searches whose

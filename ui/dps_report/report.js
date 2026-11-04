@@ -2307,7 +2307,7 @@ export function startReport(dash, events) {
       !shown && r.extra ? ['t', r.extra] : null,
       !shown && r.notes ? ['m', plainWhen(r.notes)] : null,
       was ? ['m', section === 'prepull' ? `The preset casts it at ${fmtT(+was.at)}.` : `The preset’s line: ${plainWhen(was.when) || 'when ready'}.`] : null,
-      r.why && (!shown || r.diff === 'changed' || r.diff === 'added') ? ['t', r.why] : null,
+      r.why && r.why !== r.notes && (!shown || r.diff === 'changed' || r.diff === 'added') ? ['t', plainWhen(r.why)] : null,
     ].filter(Boolean);
     return { ...base, icon: base.icon || r.icon, title: String(r.key && !/^oOther/.test(r.key) ? base.title : r.name), lines: [...lines, ...(base.lines && base.lines.length ? [['s'], ...base.lines] : [])] };
   };
@@ -2368,10 +2368,11 @@ export function startReport(dash, events) {
         why === 'race' ? el('span', { class: 'wh', text: raceFold(run) })
           : el('span', { class: 'wh' }, 'Off in this preset', ...offWhy(run[0], b.id))));
     // a why that asks its own question ("Why swap at 2…? Because…") shows the question in bold, in place of a label
+    // (none where it only repeats the line's note, as the Tanking and Healing rows' do)
     const whyLine = (r) => {
-      if (!r.why) return null;
+      if (!r.why || r.why === r.notes) return null;
       const q = /^(Why\b[^?]*\?)\s*(.*)$/s.exec(r.why);
-      return el('span', { class: 'fv-why' }, ...(q ? [el('b', { text: q[1] }), ' ' + q[2]] : [el('b', { text: 'Why: ' }), r.why]));
+      return el('span', { class: 'fv-why' }, ...(q ? [el('b', { text: q[1] }), ' ', ...richWhen(q[2], b.id)] : [el('b', { text: 'Why: ' }), ...richWhen(r.why, b.id)]));
     };
     // one priority line as a card: number, icon, name and tags, condition, note, casts, and any lines under it.
     // sameRace: a tag already names the line's race (a racial a race adds for itself), so it needs no "only" tag.
@@ -3668,6 +3669,8 @@ export function startReport(dash, events) {
     const builds = roleBuilds();
     const b = builds.find((x) => x.id === roleSpecId());
     if (!b) return;
+    // a #tank/spec link, now that its preset is known, names it, in the same history entry
+    if (location.hash === `#${st.mode}/spec`) dash.setLink(linkName('spec'));
     const W = 'id=' + enc(b.id);
     rolePicker($('#rs-isel'), builds, b.id, (v) => openSpec(v));
     const i = builds.indexOf(b);
