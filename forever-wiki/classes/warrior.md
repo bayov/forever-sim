@@ -30,6 +30,12 @@ spell. The sim takes the notes' values (standards 37), gated under Forever, and 
 - Defensive Stance's threat 80% (30%) and Defiance 7 / 13 / 20% are the tank's.
 - The Level 60 presets took Reckless Swings on every build (on cooldown; worth about 29 DPS to Fury), Improved Whirlwind
   2 on both Fury builds, and Enrage 5 everywhere. Numbers: `orchestration/round_70753/warrior.md`.
+- 2026-11-04 follow-up: two-hand Fury and its duty presets move Furious Precision's 3 points (nothing with a
+  two-hander) to Unbridled Wrath 5/5 and Blood Craze (`30313113032-2505001501122100321`): 1214.5 / 1173.3 / 1135.3 at
+  120 / 180 / 300 sec (Orc; +2.8 / +3.4 / +1.9). Dual wield Fury puts Bloodthirst ahead of Whirlwind, queues Heroic
+  Strike from 60 Rage and Hamstrings from 20, both only when Bloodthirst and Whirlwind are 1 sec away or more, and
+  Bloodrages under 50: 1196.2 / 1153.0 / 1128.7 (+2.0 / +0.4 / +3.9). Each won at 120, 160, 180, 200 and 300 sec on
+  both seed sets at 20,000 iterations.
 
 ## Beta client 1.60.1.70338 (2026-10-12)
 

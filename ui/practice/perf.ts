@@ -5,7 +5,7 @@
 // Things that often cause a hitch get noted with their time: a model or shader that loads mid
 // fight, a long task, Chrome's long animation frames with the scripts that ran in them, and drops
 // in the JS heap (a garbage collection). We also time the GPU's work on drawing the scene by pass
-// (the shadows, the solid things, and the see-through things with the effects), when the browser
+// (the uploads, the shadows, the solid things, and the see-through things with the effects), when the browser
 // lets us (EXT_disjoint_timer_query_webgl2). When the fight ends, the report goes to the practice
 // server, which keeps it in ~/forever-practice/perf/.
 
@@ -17,9 +17,9 @@ export type Part = (typeof parts)[number];
 
 // The passes of drawing the scene that we time on the GPU, in the order they run.
 //
-// 'shadow' also holds what comes before the shadows: the renderer sends the frame's changed
-// vertices to the GPU and clears the picture.
-export const passes = ['shadow', 'opaque', 'transparent'] as const;
+// 'upload' is what comes before the shadows: the renderer sends the frame's changed vertices and
+// textures to the GPU.
+export const passes = ['upload', 'shadow', 'opaque', 'transparent'] as const;
 export type Pass = (typeof passes)[number];
 
 // One frame: when it started, the time since the frame before, the time of each part, and the
@@ -30,6 +30,9 @@ type Frame = {
 	cpu: number;
 	parts: number[];
 	calls: number;
+	// The frame's uploads to the GPU: how many calls, and how many kilobytes.
+	uploads: number;
+	uploadKb: number;
 	tris: number;
 	// The GPU's time for drawing the scene, in all and by pass. It comes in a few frames later, so
 	// it stays -1 when a result never came (or the browser can't time the GPU).
@@ -68,7 +71,20 @@ export class Perf {
 	// The passes timed in the frame so far, which go out with the frame at its end.
 	private framePasses: { query: WebGLQuery; pass: number }[] = [];
 
+	private uploads = 0;
+	private uploadBytes = 0;
+
 	constructor(readonly renderer: THREE.WebGLRenderer) {
+		// We count the uploads to the GPU (buffers and textures), each with its size.
+		const gl = renderer.getContext() as WebGL2RenderingContext;
+		for (const name of ['bufferSubData', 'bufferData', 'texSubImage2D', 'texImage2D', 'texSubImage3D', 'texImage3D'] as const) {
+			const f = (gl[name] as (...a: unknown[]) => void).bind(gl);
+			(gl as unknown as Record<string, unknown>)[name] = (...a: unknown[]) => {
+				this.uploads++;
+				for (const x of a) if (ArrayBuffer.isView(x)) this.uploadBytes += x.byteLength;
+				return f(...a);
+			};
+		}
 		// When the GPU drops the page's drawing (a lost context), the queries out are gone, and the
 		// timer is found again once it's back.
 		const canvas = renderer.domElement;
@@ -212,6 +228,8 @@ export class Perf {
 			cpu: round(performance.now() - c.start),
 			parts: c.parts.map(round),
 			calls: info.render.calls,
+			uploads: this.uploads,
+			uploadKb: round(this.uploadBytes / 1024),
 			tris: info.render.triangles,
 			gpu: -1,
 			gpuPasses: passes.map(() => 0),
@@ -222,6 +240,8 @@ export class Perf {
 			heapMb: heap === undefined ? undefined : round(heap / 1048576),
 		};
 		this.lastT = c.t;
+		this.uploads = 0;
+		this.uploadBytes = 0;
 		frame.gpuOut = this.framePasses.length;
 		this.frameNo++;
 		for (const p of this.framePasses) this.queries.push({ ...p, frame, at: this.frameNo });
@@ -276,8 +296,9 @@ export class Perf {
 				'100ms': gaps.filter(g => g > 100).length,
 			},
 			partsAvgMs: { ...Object.fromEntries(parts.map((p, i) => [p, round(partSums[i])])), gpu },
-			// The GPU's time by pass, on average.
+			// The GPU's time by pass, and the uploads to it a frame, on average.
 			gpuPassesAvgMs: gpuPasses,
+			uploadsAvg: { calls: round(frames.reduce((a, f) => a + f.uploads, 0) / Math.max(1, frames.length)), kb: round(frames.reduce((a, f) => a + f.uploadKb, 0) / Math.max(1, frames.length)) },
 			gpuInfo: {
 				renderer: info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
 				vendor: info ? gl.getParameter(info.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR),
@@ -288,8 +309,8 @@ export class Perf {
 			slowest: slow,
 			notes: this.notes,
 			// Every frame, as [time, gap, cpu, ...parts, calls, triangles, heap MB, GPU ms].
-			frames: frames.map(f => [f.t, f.gap, f.cpu, ...f.parts, f.calls, f.tris, f.heapMb ?? 0, f.gpu, ...(f.gpu >= 0 ? f.gpuPasses : passes.map(() => -1))]),
-			frameColumns: ['t', 'gap', 'cpu', ...parts, 'calls', 'tris', 'heapMb', 'gpu', ...passes.map(p => `gpu_${p}`)],
+			frames: frames.map(f => [f.t, f.gap, f.cpu, ...f.parts, f.calls, f.tris, f.heapMb ?? 0, f.uploads, f.uploadKb, f.gpu, ...(f.gpu >= 0 ? f.gpuPasses : passes.map(() => -1))]),
+			frameColumns: ['t', 'gap', 'cpu', ...parts, 'calls', 'tris', 'heapMb', 'uploads', 'uploadKb', 'gpu', ...passes.map(p => `gpu_${p}`)],
 			...extra,
 		};
 	}

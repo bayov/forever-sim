@@ -40,6 +40,24 @@ type Skeleton = {
 // uploaded says the GPU has the array, so a new layer goes up on its own.
 type SkinArray = { width: number; height: number; layers: number; capacity: number; data: Uint8Array; texture: THREE.DataArrayTexture; uniform: { value: THREE.DataArrayTexture }; uploaded: boolean };
 
+// A copy's data in its batch's buffer: [attribute, offset, size], STRIDE floats in all.
+const layout: [string, number, number][] = [
+	['crowdBone', 0, 1],
+	['crowdLayer', 1, 1],
+	['crowdColor', 2, 4],
+	['crowdPlace', 6, 16],
+	['crowdMaskA', 22, 4],
+	['crowdMaskB', 26, 4],
+];
+const STRIDE = 32;
+// The map of a batch whose skins come from an array (see makeBatch).
+const standIn = new THREE.DataTexture(new Uint8Array([128, 128, 128, 255]), 1, 1);
+standIn.colorSpace = THREE.SRGBColorSpace;
+standIn.needsUpdate = true;
+
+// One copy's data, written here first to see whether it changed.
+const copy = new Float32Array(STRIDE);
+
 // The masks have room for this many submeshes (a character model has up to about 150), 24 to a
 // float.
 const MASK_BITS = 192;
@@ -88,13 +106,15 @@ type Batch = {
 	mesh: THREE.Mesh;
 	geometry: THREE.InstancedBufferGeometry;
 	material: THREE.Material & { color?: THREE.Color; opacity: number };
-	bones: THREE.InstancedBufferAttribute;
-	colors: THREE.InstancedBufferAttribute;
-	places: THREE.InstancedBufferAttribute;
-	layers: THREE.InstancedBufferAttribute;
-	// The copies' masks, for a body's batches (see Body).
-	masks?: THREE.InstancedBufferAttribute[];
+	// The copies' data, STRIDE floats each (see layout), in one buffer: their bone offset, skin
+	// layer, color, place and mask (for a body's batches, see Body). One buffer goes up in one call,
+	// and only when a copy changed.
+	data: THREE.InstancedInterleavedBuffer;
+	masked: boolean;
 	count: number;
+	// The count the GPU has, and whether the data changed since.
+	sent: number;
+	dirty: boolean;
 	// How many of the crowd's meshes have a part in it.
 	users: number;
 	castShadow: boolean;
@@ -147,6 +167,10 @@ export class Crowd {
 	// measure what the arrays save, with ?skinarrays=0).
 	useSkinArrays = new URLSearchParams(location.search).get('skinarrays') !== '0';
 
+	// noShadowSlots are the gear slots whose models cast no shadow: in a big raid the helms,
+	// shoulders and cloaks, whose shadows mostly fall in the body's.
+	noShadowSlots = new Set<number>();
+
 	constructor(
 		readonly scene: THREE.Scene,
 		// The sun, whose shadow camera tells which units off screen cast a shadow onto the screen.
@@ -181,7 +205,7 @@ export class Crowd {
 				let batch = this.batches.get(key);
 				if (!batch) {
 					const b = model.skin.batches[mi];
-					const solid = (model.m2.materials[b?.material ?? -1]?.blend ?? 0) <= 1;
+					const solid = (model.m2.materials[b?.material ?? -1]?.blend ?? 0) <= 1 && !this.noShadowSlots.has(model.slot ?? 0);
 					batch = this.makeBatch(geometry, g.start, g.count, source, solid, skins);
 					this.batches.set(key, batch);
 				}
@@ -486,24 +510,15 @@ export class Crowd {
 		for (const [name, a] of Object.entries(source.attributes)) geometry.setAttribute(name, a);
 		geometry.setIndex(source.index);
 		geometry.setDrawRange(start, count);
-		const bones = new THREE.InstancedBufferAttribute(new Float32Array(16), 1);
-		const colors = new THREE.InstancedBufferAttribute(new Float32Array(16 * 4), 4);
-		const places = new THREE.InstancedBufferAttribute(new Float32Array(16 * 16), 16);
-		const layers = new THREE.InstancedBufferAttribute(new Float32Array(16), 1);
-		for (const a of [bones, colors, places, layers]) a.setUsage(THREE.DynamicDrawUsage);
-		geometry.setAttribute('crowdBone', bones);
-		geometry.setAttribute('crowdColor', colors);
-		geometry.setAttribute('crowdPlace', places);
-		geometry.setAttribute('crowdLayer', layers);
-		const masks = [new THREE.InstancedBufferAttribute(new Float32Array(16 * 4), 4), new THREE.InstancedBufferAttribute(new Float32Array(16 * 4), 4)];
-		if (sub) {
-			geometry.setAttribute('crowdSub', sub);
-			geometry.setAttribute('crowdMaskA', masks[0].setUsage(THREE.DynamicDrawUsage));
-			geometry.setAttribute('crowdMaskB', masks[1].setUsage(THREE.DynamicDrawUsage));
-		}
+		const data = this.copyData(geometry, 16, !!sub);
+		if (sub) geometry.setAttribute('crowdSub', sub);
 		geometry.instanceCount = 0;
 
 		const material = sourceMaterial.clone() as Batch['material'];
+		// A batch that reads its skins from an array keeps a map only so its shader samples one (and
+		// gets the texture coordinates). The first raider's own skin there would go to the GPU
+		// (after we let go of its picture, as an empty one), so it gets a one-pixel stand-in.
+		if (skins) (material as THREE.MeshLambertMaterial).map = standIn;
 		material.color?.setRGB(1, 1, 1);
 		material.opacity = 1;
 		const before = sourceMaterial.onBeforeCompile;
@@ -540,31 +555,31 @@ export class Crowd {
 		mesh.customDepthMaterial = depth;
 		mesh.visible = false;
 		this.group.add(mesh);
-		return { mesh, geometry, material, bones, colors, places, layers, masks: sub ? masks : undefined, count: 0, users: 0, castShadow: solid };
+		return { mesh, geometry, material, data, masked: !!sub, count: 0, sent: 0, dirty: true, users: 0, castShadow: solid };
+	}
+
+	// copyData gives a batch's geometry a buffer for n copies, with the attributes that read it.
+	private copyData(geometry: THREE.InstancedBufferGeometry, n: number, masked: boolean): THREE.InstancedInterleavedBuffer {
+		const data = new THREE.InstancedInterleavedBuffer(new Float32Array(n * STRIDE), STRIDE);
+		data.setUsage(THREE.DynamicDrawUsage);
+		for (const [name, offset, size] of layout) {
+			if (!masked && name.startsWith('crowdMask')) continue;
+			geometry.setAttribute(name, new THREE.InterleavedBufferAttribute(data, size, offset));
+		}
+		// Three keeps the most copies a geometry's attributes hold from its first draw, and draws no
+		// more than that.
+		(geometry as { _maxInstanceCount?: number })._maxInstanceCount = undefined;
+		return data;
 	}
 
 	// grow makes room in a batch for one more copy.
 	private grow(b: Batch) {
 		b.users++;
-		if (b.users <= b.bones.count) return;
-		let n = b.bones.count;
+		if (b.users <= b.data.count) return;
+		let n = b.data.count;
 		while (n < b.users) n *= 2;
-		b.bones = new THREE.InstancedBufferAttribute(new Float32Array(n), 1).setUsage(THREE.DynamicDrawUsage);
-		b.colors = new THREE.InstancedBufferAttribute(new Float32Array(n * 4), 4).setUsage(THREE.DynamicDrawUsage);
-		b.places = new THREE.InstancedBufferAttribute(new Float32Array(n * 16), 16).setUsage(THREE.DynamicDrawUsage);
-		b.layers = new THREE.InstancedBufferAttribute(new Float32Array(n), 1).setUsage(THREE.DynamicDrawUsage);
-		b.geometry.setAttribute('crowdLayer', b.layers);
-		if (b.masks) {
-			b.masks = b.masks.map(() => new THREE.InstancedBufferAttribute(new Float32Array(n * 4), 4).setUsage(THREE.DynamicDrawUsage));
-			b.geometry.setAttribute('crowdMaskA', b.masks[0]);
-			b.geometry.setAttribute('crowdMaskB', b.masks[1]);
-		}
-		b.geometry.setAttribute('crowdBone', b.bones);
-		b.geometry.setAttribute('crowdColor', b.colors);
-		b.geometry.setAttribute('crowdPlace', b.places);
-		// Three keeps the most copies a geometry's attributes hold from its first draw, and draws no
-		// more than that.
-		(b.geometry as { _maxInstanceCount?: number })._maxInstanceCount = undefined;
+		b.data = this.copyData(b.geometry, n, b.masked);
+		b.dirty = true;
 	}
 
 	// prepare writes the bones and the copies to draw, once the scene's objects have their places
@@ -581,6 +596,7 @@ export class Crowd {
 			shadowFrustum = sun.shadow.getFrustum();
 		}
 		for (const b of this.batches.values()) b.count = 0;
+		const one = copy;
 		for (const e of this.entries) {
 			if (!shown(e.mesh)) continue;
 			let inView = true;
@@ -599,23 +615,27 @@ export class Crowd {
 			for (const { batch: b, source, layer } of e.parts) {
 				if (!inView && !b.castShadow) continue;
 				const i = b.count++;
-				b.bones.array[i] = k.offset;
-				b.layers.array[i] = layer;
-				if (b.masks && e.mask) {
-					const ma = b.masks[0].array;
-					const mb = b.masks[1].array;
-					for (let j = 0; j < 4; j++) {
-						ma[i * 4 + j] = e.mask[j];
-						mb[i * 4 + j] = e.mask[4 + j];
+				one[0] = k.offset;
+				one[1] = layer;
+				const color = source.color;
+				one[2] = color ? color.r : 1;
+				one[3] = color ? color.g : 1;
+				one[4] = color ? color.b : 1;
+				one[5] = source.opacity;
+				const w = e.mesh.matrixWorld.elements;
+				for (let j = 0; j < 16; j++) one[6 + j] = w[j];
+				const mask = e.mask;
+				for (let j = 0; j < 8; j++) one[22 + j] = mask ? mask[j] : 0;
+				// Most raiders stand still, so most copies are as they were: we write (and send) only
+				// what changed.
+				const out = b.data.array as Float32Array;
+				const o = i * STRIDE;
+				for (let j = 0; j < 30; j++) {
+					if (out[o + j] !== one[j]) {
+						out[o + j] = one[j];
+						b.dirty = true;
 					}
 				}
-				(b.places.array as Float32Array).set(e.mesh.matrixWorld.elements, i * 16);
-				const c = b.colors.array;
-				const color = source.color;
-				c[i * 4] = color ? color.r : 1;
-				c[i * 4 + 1] = color ? color.g : 1;
-				c[i * 4 + 2] = color ? color.b : 1;
-				c[i * 4 + 3] = source.opacity;
 				// A part that fades turns see-through, and stays so (model.ts updateColors).
 				if (source.transparent && !b.material.transparent) {
 					b.material.transparent = true;
@@ -627,13 +647,14 @@ export class Crowd {
 			b.geometry.instanceCount = b.count;
 			b.mesh.visible = b.count > 0;
 			if (b.count === 0) continue;
-			// The copies' data goes up whole: it's a few kilobytes a batch, and asking for only the
-			// part in use made five little objects a batch, every frame.
-			b.bones.needsUpdate = true;
-			b.colors.needsUpdate = true;
-			b.places.needsUpdate = true;
-			b.layers.needsUpdate = true;
-			if (b.masks) b.masks[0].needsUpdate = b.masks[1].needsUpdate = true;
+			// The copies' data goes up whole when it changed. It's a few kilobytes, and on Windows each
+			// upload is its own copy on the GPU, which for 400 batches of 5 attributes each was
+			// most of the 3ms before the shadows.
+			if (b.dirty || b.count !== b.sent) {
+				b.data.needsUpdate = true;
+				b.dirty = false;
+				b.sent = b.count;
+			}
 		}
 		this.texture.needsUpdate = true;
 	}

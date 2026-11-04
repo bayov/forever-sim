@@ -128,14 +128,17 @@ function srgbToLinear(c: number): number {
 	return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
 }
 
-// The particle data a quad needs, by attribute, with how many numbers each takes.
+// The particle data a quad needs, one particle after the other, STRIDE numbers each: by attribute,
+// where it starts and how many numbers it takes. Interleaved, a batch's particles go to the GPU in
+// one upload (on Windows each upload is a copy of its own on the GPU).
 const layout = [
-	['iPos', 3],
-	['iSize', 2],
-	['iColor', 4],
-	['iUv', 4],
-	['iRot', 1],
+	['iPos', 0, 3],
+	['iSize', 3, 2],
+	['iColor', 5, 4],
+	['iUv', 9, 4],
+	['iRot', 13, 1],
 ] as const;
+const STRIDE = 14;
 
 // A batch draws the particles of every emitter that looks the same (the same texture, blend and
 // facing) in one draw call. In the raid test 20 casters each had a few emitters on their hands,
@@ -145,7 +148,7 @@ const layout = [
 class Batch {
 	readonly mesh: THREE.Mesh;
 	private readonly geometry = new THREE.InstancedBufferGeometry();
-	private attrs: THREE.InstancedBufferAttribute[] = [];
+	private buffer!: THREE.InstancedInterleavedBuffer;
 	private capacity = 0;
 	readonly members = new Set<Emitter>();
 	// How many particles the members have in all.
@@ -169,12 +172,9 @@ class Batch {
 
 	private grow(n: number) {
 		this.capacity = n;
-		this.attrs = layout.map(([name, size]) => {
-			const a = new THREE.InstancedBufferAttribute(new Float32Array(n * size), size);
-			a.setUsage(THREE.DynamicDrawUsage);
-			this.geometry.setAttribute(name, a);
-			return a;
-		});
+		this.buffer = new THREE.InstancedInterleavedBuffer(new Float32Array(n * STRIDE), STRIDE);
+		this.buffer.setUsage(THREE.DynamicDrawUsage);
+		for (const [name, offset, size] of layout) this.geometry.setAttribute(name, new THREE.InterleavedBufferAttribute(this.buffer, size, offset));
 		// Three keeps the most copies a geometry's attributes hold from its first draw, and draws no
 		// more than that.
 		(this.geometry as { _maxInstanceCount?: number })._maxInstanceCount = undefined;
@@ -199,27 +199,22 @@ class Batch {
 			this.grow(n);
 		}
 		let at = 0;
+		const to = this.buffer.array as Float32Array;
 		for (const m of this.members) {
 			const n = m.count;
 			if (n === 0) continue;
-			for (let k = 0; k < layout.length; k++) {
-				const size = layout[k][1];
-				// A plain loop: a subarray is a new object each time.
-				const from = m.data[k];
-				const to = this.attrs[k].array;
-				const o = at * size;
-				for (let j = 0; j < n * size; j++) to[o + j] = from[j];
-			}
+			// A plain loop: a subarray is a new object each time.
+			const from = m.data;
+			const o = at * STRIDE;
+			for (let j = 0; j < n * STRIDE; j++) to[o + j] = from[j];
 			at += n;
 		}
 		this.geometry.instanceCount = at;
 		this.mesh.visible = at > 0 || particleOptions.drawEmpty;
 		if (at === 0) return;
-		for (const a of this.attrs) {
-			a.clearUpdateRanges();
-			a.addUpdateRange(0, at * a.itemSize);
-			a.needsUpdate = true;
-		}
+		this.buffer.clearUpdateRanges();
+		this.buffer.addUpdateRange(0, at * STRIDE);
+		this.buffer.needsUpdate = true;
 	}
 }
 
@@ -231,8 +226,8 @@ class Emitter {
 	// Where the emitter is: it follows its bone.
 	private readonly anchor: THREE.Object3D;
 	private carry = 0;
-	// The particles' data by attribute (layout), which the batch draws.
-	readonly data = layout.map(([, size]) => new Float32Array(maxParticles * size));
+	// The particles' data (layout), which the batch draws.
+	readonly data = new Float32Array(maxParticles * STRIDE);
 	count = 0;
 	private batch?: Batch;
 	// Particles that keep to the emitter (flag 0x10) live in its space, the others in the world's.
@@ -421,7 +416,7 @@ class Emitter {
 		// Fill the instance data.
 		const n = this.particles.length;
 		const { color, alpha, size, cellOut, tmp } = fill;
-		const [pos, sizes, colors, uvs, rots] = this.data;
+		const d = this.data;
 		color.fill(255);
 		alpha[0] = 1;
 		size[0] = size[1] = 1;
@@ -434,15 +429,16 @@ class Emitter {
 			overLife(this.e.scales, this.e.scaleTimes, t, size);
 			tmp.copy(p.pos);
 			if (this.local) tmp.add(this.origin);
-			pos[i * 3] = tmp.x;
-			pos[i * 3 + 1] = tmp.y;
-			pos[i * 3 + 2] = tmp.z;
-			sizes[i * 2] = size[0] * 2 * scale;
-			sizes[i * 2 + 1] = size[1] * 2 * scale;
-			colors[i * 4] = srgbToLinear(color[0]);
-			colors[i * 4 + 1] = srgbToLinear(color[1]);
-			colors[i * 4 + 2] = srgbToLinear(color[2]);
-			colors[i * 4 + 3] = Math.max(0, Math.min(1, alpha[0]));
+			const o = i * STRIDE;
+			d[o] = tmp.x;
+			d[o + 1] = tmp.y;
+			d[o + 2] = tmp.z;
+			d[o + 3] = size[0] * 2 * scale;
+			d[o + 4] = size[1] * 2 * scale;
+			d[o + 5] = srgbToLinear(color[0]);
+			d[o + 6] = srgbToLinear(color[1]);
+			d[o + 7] = srgbToLinear(color[2]);
+			d[o + 8] = Math.max(0, Math.min(1, alpha[0]));
 			let cell = p.tile;
 			if (cell < 0) {
 				cell = this.cellKeys.length ? Math.round(overLife(this.cellKeys, this.e.cellTimes, t, cellOut)[0]) : 0;
@@ -451,11 +447,11 @@ class Emitter {
 			const rows = this.e.tileRows;
 			const col = cell % cols;
 			const row = Math.floor(cell / cols) % rows;
-			uvs[i * 4] = col / cols;
-			uvs[i * 4 + 1] = row / rows;
-			uvs[i * 4 + 2] = (col + 1) / cols;
-			uvs[i * 4 + 3] = (row + 1) / rows;
-			rots[i] = p.angle + p.spin * p.age;
+			d[o + 9] = col / cols;
+			d[o + 10] = row / rows;
+			d[o + 11] = (col + 1) / cols;
+			d[o + 12] = (row + 1) / rows;
+			d[o + 13] = p.angle + p.spin * p.age;
 		}
 		const was = this.count;
 		this.count = n;

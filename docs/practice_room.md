@@ -1230,6 +1230,21 @@ rendering, not the sim.
   - Headless, fight, 1920x1080, varied gear: without the arrays and masks 80 FPS, 9.8ms of script, 575 draw calls.
     With them 103 FPS, 8.7ms (animating 3.0ms, drawing 5.4ms), 470 draw calls, 505k triangles, 1.7GB heap. This is the
     new baseline. Most of the rest is gear: each item model (helms are by race) draws on its own, with its shadow.
+- Fourth raid report (your PC, 95s, varied gear): about 127 FPS in the fight, frames mostly 8.3ms. 5.8ms of script
+  (animating 2.4ms, drawing 3.0ms), 460 draw calls, 506k triangles. GPU 5.75ms: shadows with the uploads before them
+  3.1ms, see-through 2.0ms, solid 0.65ms. A garbage collection every 190ms.
+  - The uploads: each crowd batch sent five attributes every frame and each particle batch five more, about 1900
+    uploads a frame, and on Windows each is a copy of its own on the GPU. Now a batch's copies are one interleaved
+    buffer that goes up only when a copy changed (a raider moved, an effect's hand glow followed the hand), and the
+    particles and ribbons are interleaved too. A unit standing still settles its turn exactly, so its place stops
+    changing. About 210 uploads a frame now, 2MB (the bone texture is 0.9MB of it).
+  - The body batches kept the first raider's own skin as their map, only so their shader samples one. Three sent it
+    to the GPU anyway (8MB each, and empty once we let go of the picture). They have a one pixel stand-in now.
+  - The reports count the uploads a frame (calls and kilobytes), and on Chrome's Direct3D 11 they time the uploads
+    apart from the shadows (the timer starts just before the renderer switches to the shadow map).
+  - Your call: with 20 or more raiders, helms, shoulders and cloaks cast no shadow.
+  - Headless, fight, 1920x1080, varied gear: 128 FPS (was 103), 6.7ms of script (animating 2.7ms, drawing 3.7ms, was
+    5.4ms), 450 draw calls, 210 uploads a frame, a garbage collection every 420ms.
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
