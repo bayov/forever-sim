@@ -187,3 +187,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-04 01:07 | consumables | pass 69 | master f331f0cff | 1 new findings | presets.ts still has salvation:true after mksettings dropped it (consumables-20261104-1, low)
 2026-11-04 01:07 | mechanics | pass 63 | master f331f0cff | quiet | Salvation removal and tank threat values match dev notes post 9
 2026-11-04 01:07 | fairness | pass 27 | master f331f0cff | quiet | all 43 builds re-swept, report race best everywhere, top/bottom 1.68x
+2026-11-04 UTC | results | pass 76 | master fb584eafa | quiet | 68 sims match metas within 0.15 except six stale shaman metas (results-20261102-1)
+2026-11-04 UTC | rotations | pass 52 | master fb584eafa | quiet | 7 one-line Fury APL variants, none beat the new level60_fury
+2026-11-04 UTC | gear | pass 55 | master fb584eafa | quiet | only standards.md 38/39 changed, no gear rule
+2026-11-04 UTC | consumables | pass 70 | master fb584eafa | quiet | Salvation dropped from all 12 presets, resolved consumables-20261104-1
+2026-11-04 UTC | mechanics | pass 64 | master fb584eafa | quiet | no sim code changed; dev notes post 9 Swiftmend edit needs no sim change
+2026-11-04 UTC | fairness | pass 28 | master fb584eafa | quiet | Fury rebuilt per race, Orc best, gear check 19/19

@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-11-04 UTC, master f331f0cff, client 1.60.1.70755)
+# Mechanics audit: verdicts and settled items (as of 2026-11-04 UTC, master fb584eafa, client 1.60.1.70755)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -86,3 +86,5 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 - Normal mob health above level 35 is extrapolated; since 2026-10-23 it no longer feeds damage-taken Rage (the formula uses the attacker's level only), only leveling.
 - Class-side open assumptions (owned by the class workers): Paladin 2H Weapon Specialization on seal procs, Seal of Righteousness stored base points, Maelstrom Weapon proc rate, Omen of Clarity chance, Arcane Blast's bonus on Arcane Missiles.
 - Kang the Decapitator (2291) Rend proc 17153: 100 every 3 sec for 15 sec, physical bleed, verified on 70707 (`sp.py 17153`: dur 15000, eff 6 aura 3 bp 100 per 3000); 1 PPM assumed (no rate in the client). Pass 55, tier 1.
+- Downranking penalty (pass 64): dev notes post 4 (tier 1) state it without numbers; the sim applies foreverchanges.pro's heal-measured formula to priest nukes and shaman Lightning Bolt / Chain Lightning / heals only, and a 2026-10-10 beta log shows rank 1 shocks at full coefficient. Scope is an open user ruling tracked in orchestration/handoff_downranking.md; Level 60 presets cast max ranks, so no report DPS moves. Not a finding while the ruling is pending.
+- Swiftmend (pass 64): post 9's 2026-11-04T02:12Z edit adds "This ability does not consume the Rejuvenation or Regrowth effect on the target" (tier 1). The sim has no Swiftmend spell, so nothing to change.
