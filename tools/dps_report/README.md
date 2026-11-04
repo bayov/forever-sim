@@ -378,7 +378,8 @@ go build -tags=with_db -o $B/healbench ./tools/healbench
 ```
 
 The main bench calls take about half a minute for tanking and a few minutes for healing; the race sims take most of
-the run (RUNTIMES_PLACEHOLDER).
+the run: on a 4-core machine about 15 minutes for tanking (2026-11-04: 12 minutes, some race fights already kept)
+and about 3 hours for healing (most of it the raid healers' race sims, 25 to 95 minutes a preset).
 
 ## Partial regenerations
 

@@ -3814,14 +3814,16 @@ export function startReport(dash, events) {
     // the gap to the best race: a share of its score for a healer (always above 0), points for a tank (can be below 0)
     const gap = (v) => (tank ? `−${fmtV(best - v)}` : `−${f2(100 * (1 - v / best))}%`);
     const unitName = tank ? 'points' : '× damage';
-    // A race's pieces: base stats, then each racial that does something here, in the race's order. One within its
-    // error of nothing, or that changes nothing, gets its reason after the race's name instead, like the DPS card.
+    // A race's pieces: base stats, then each racial that does something here, in the race's order, so the pieces end
+    // at the race's score. One that changes nothing gets its reason after the race's name instead, like the DPS card;
+    // one within its error of nothing keeps its piece, so the bar still adds up, but no caption or sign: its reason
+    // goes after the name too.
     for (const r of rows) {
       const mine = bd.get(r.race) || [];
       const base = mine.find((q) => q.part === 'base');
-      const live = mine.filter((q) => q.part !== 'base' && q.active && !isNoise(+q.v, q.se));
+      const live = mine.filter((q) => q.part !== 'base' && q.active);
       r.idle = mine.filter((q) => q.part !== 'base' && (!q.active || isNoise(+q.v, q.se))).map((q) => ({ ...q, note: q.active ? NOISE : q.note || 'no effect on this preset' }));
-      r.segs = base ? [{ part: 'base', label: base.label, v: +base.v, r: base }, ...live.map((q) => ({ part: q.part, label: q.label, v: +q.v, r: q }))]
+      r.segs = base ? [{ part: 'base', label: base.label, v: +base.v, r: base }, ...live.map((q) => ({ part: q.part, label: q.label, v: +q.v, r: q, noise: isNoise(+q.v, q.se) }))]
         : [{ part: 'base', label: 'Score', v: r.v, r: null }];
       let at = 0;
       for (const sg of r.segs) { sg.from = at; at += sg.v; sg.to = at; }
@@ -3851,7 +3853,7 @@ export function startReport(dash, events) {
         el('span', { class: 'nm' }, nm, r.isPreset ? el('i', { 'data-zone': '', text: 'preset race' }) : null, ...idle),
         el('span', { class: 'end', 'data-zone': '' }, el('small', {}, r.tie ? tieMark(r.tie, false) : null, r.tie ? ' ' : null, i === 0 ? '★ best' : gap(r.v)),
           el('b', { text: fv(r.v) })),
-        track, partCaps(r.segs, x, fd, tank ? 0.05 : 0.0005, icon), el('div', { class: 'fv-rsub' }, el('span', { text: sub(r) })));
+        track, partCaps(r.segs.filter((sg) => !sg.noise), x, fd, tank ? 0.05 : 0.0005, icon), el('div', { class: 'fv-rsub' }, el('span', { text: sub(r) })));
       hoverZones(row, (zone, node, pinned) => {
         const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
         const title = tipTitle(r.race, b.label, raceIco(r.raceIcon));
@@ -3872,6 +3874,9 @@ export function startReport(dash, events) {
               sub2.push(el('span', { class: 'fv-tip-m', text: low.race === r.race ? 'The weakest base stats here.'
                 : Math.abs(d) < (tank ? 0.05 : 0.0005) ? `Same as ${low.race}, the weakest here.` : `${fd(d).slice(1)}${tank ? ' points' : ''} above ${low.race}, the weakest here.` }));
             }
+          } else if (sg && sg.r && sg.noise) {
+            name = shortLabel(sg.label);
+            sub2.push(el('span', { class: 'fv-tip-m', text: `${NOISE[0].toUpperCase() + NOISE.slice(1)}: ${fd(sg.v)}, within its error of ±${tank ? f1(sg.r.se) : f2(100 * sg.r.se) + '%'}.` }));
           } else if (sg && sg.r) {
             name = `${sg.label} ${fdLong(sg.v)}`;
             if (sg.r.se) sub2.push(el('span', { class: 'fv-tip-m', text: `Error ±${tank ? f1(sg.r.se) : f2(100 * sg.r.se) + '%'}.` }));

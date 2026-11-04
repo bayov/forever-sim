@@ -46,8 +46,8 @@ and removed presets. A stale build *may* have moved; the probe says whether it d
 
 It also lists stale Tanking and Healing modes in a second block (`benches` in `--json`):
 their fingerprint covers the shared sim code, the classes' code, the encounters and the
-benches. A stale mode re-sims whole (`pipeline.sh tankheal tank`, about TANK_TIME;
-`pipeline.sh tankheal heal`, about HEAL_TIME, most of each the race sims); there is no probe
+benches. A stale mode re-sims whole (`pipeline.sh tankheal tank`, about 15 min;
+`pipeline.sh tankheal heal`, about 3 h on 4 cores, most of each the race sims); there is no probe
 for it. Run it in the background with its log in a file.
 
 Tell the user the scope in one line before long runs.
