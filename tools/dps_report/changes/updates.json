@@ -3032,6 +3032,140 @@
       "316a600",
       "e9185b1"
      ]
+    },
+    {
+     "title": "Warrior hotfix: Raging Blows removed, Reckless Swings on a 1 sec global cooldown, Spearing Strike 75% (plus 75% against Giants and Dragonkin)",
+     "kind": "game",
+     "classes": [
+      "Warrior"
+     ],
+     "note": "Fury loses the Raging Blows point and takes it in Improved Bloodrage (dual wield) or Booming Voice (two-hand). Reckless Swings now waits for the main strikes: every preset casts it just ahead of Heroic Strike, and two-hand Fury and Arms only under 20 Rage.",
+     "source": {
+      "label": "wago.tools, launch realm hotfixes",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113539"
+     },
+     "commits": [
+      "7cd399e",
+      "d26a4ed",
+      "d8522c3",
+      "e07adf1",
+      "1974c4a"
+     ]
+    },
+    {
+     "title": "Unbridled Wrath triggers on auto attacks only, not Heroic Strike or Cleave",
+     "kind": "sim",
+     "classes": [
+      "Warrior"
+     ],
+     "note": "Fury and Arms lose Rage and damage they were getting from Unbridled Wrath procs on Heroic Strike and Cleave. Fury down 1.4 to 2.2% at 180 s, Arms 1% or less.",
+     "commits": [
+      "9173d08",
+      "b13bddf"
+     ]
+    },
+    {
+     "title": "Bloodrage and Reckless Swings cost health only on a tank",
+     "kind": "sim",
+     "classes": [
+      "Warrior"
+     ],
+     "note": "The sim heals no DPS player, so the costs ran a DPS warrior's health to 0 and Berserker Rage fired as a survival cooldown. DPS warriors now pay nothing; tanks still do.",
+     "commits": [
+      "20ad1aa"
+     ]
+    },
+    {
+     "title": "New assumption: a swing that doesn't land uses no Reckless Swings charge",
+     "kind": "method",
+     "classes": [
+      "Warrior"
+     ],
+     "moves": false,
+     "note": "Whether a miss, dodge or parry uses one of the four charges is decided server side. The other reading costs dual-wield Fury about 2.6 DPS and Fury 2H and Arms nothing.",
+     "commits": [
+      "72c7d15"
+     ]
+    },
+    {
+     "title": "Meditation adds to casting Mana regeneration instead of replacing it",
+     "kind": "sim",
+     "classes": [
+      "Priest"
+     ],
+     "note": "It wiped the Vestments of Transcendence 3-piece bonus; Shadow priests are within 0.3 DPS of before.",
+     "commits": [
+      "859bdef"
+     ]
+    },
+    {
+     "title": "Divine Favor and Oath of Light get no Benediction discount; Libram of Holy Alacrity from the client",
+     "kind": "sim",
+     "classes": [
+      "Paladin"
+     ],
+     "note": "Benediction's spell mask doesn't reach either spell, so Divine Favor costs its full 4% of base mana.",
+     "commits": [
+      "d64804b",
+      "c07c772"
+     ]
+    },
+    {
+     "title": "Gear re-spent on each spec's hit steps: rogues, dual-wield Fury, Enhancement, Retribution twist, Feral cat, Arcane and Destruction fire",
+     "kind": "gear",
+     "classes": [
+      "Rogue",
+      "Warrior",
+      "Shaman",
+      "Paladin",
+      "Druid",
+      "Mage",
+      "Warlock"
+     ],
+     "note": "Where a talent or racial gives hit, the set wears the step that puts hit just at the cap instead of past it, and the spare points go to other stats. Feral cat up 2.3%, twist Retribution up 1%. Every other race wears the step that puts its own hit at the cap, up or down.",
+     "commits": [
+      "31c10b6",
+      "aa4551a",
+      "cd3f44c",
+      "3e4796f",
+      "3f4d44d",
+      "74cc2b8",
+      "c8a7b4a",
+      "812a42a",
+      "18f431e",
+      "9522f40",
+      "657a628",
+      "64d6082",
+      "035f88b",
+      "a6c243f",
+      "5adc9dd",
+      "3232e08"
+     ]
+    },
+    {
+     "title": "Mana gained is no longer multiplied when it makes threat",
+     "kind": "game",
+     "classes": [
+      "Warrior",
+      "Paladin",
+      "Druid",
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "The sim now counts threat from mana gains without the class's threat multiplier, as the wowsims Forever sim does (not yet confirmed in game), so threat per second is lower for classes that gain mana in combat. Damage per second is unchanged.",
+     "commits": [
+      "49f0218",
+      "9c20070"
+     ]
+    },
+    {
+     "title": "Comparisons are simmed to a luck goal, with a random stream for each kind of roll",
+     "kind": "method",
+     "note": "Race, racial and assumption rows run extra fights until the difference with the row they are compared to is within a set error, and two sims that differ in one setting share every other roll. Every number moves by about its error; the race and assumption rows carry far less noise.",
+     "commits": [
+      "ca0ca12",
+      "18ec491"
+     ]
     }
    ],
    "internal": [
@@ -3210,6 +3344,526 @@
     {
      "commit": "b57f5cc",
      "why": "the downranking penalty now covers every lower-rank spell; every report build casts top ranks, and the probe clears all of them"
+    },
+    {
+     "commit": "9883bd5",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "0facd94",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "abc98a2",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "6a9dea8",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "ad93b95",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "b07bdf4",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "a624264",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "f1a221b",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "0950b22",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "a774463",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "df481a4",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "71a107e",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "9e01b3e",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "0b901ff",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "e37867b",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "9eb6f93",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "8d0b618",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "f0b9bee",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "f0ff977",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "9a4b75f",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "5d9a3aa",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "7ca2afc",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "dd4b82a",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "53ced51",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "af78f8a",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "a7d9b57",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "d9e0016",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "86b9631",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "bc8e547",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "599e09a",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "318fc7e",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "e24abed",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "61db5cc",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "c588675",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "1593a82",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "fdca8cf",
+     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
+    },
+    {
+     "commit": "d10eaea",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "639590a",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "5370999",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "324d648",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "952a7a4",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "e9751cc",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "bde6912",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "f2736ef",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "0b15937",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "c19fd77",
+     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
+    },
+    {
+     "commit": "3f8d901",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "9ebec49",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "86b5f2f",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "8fa852a",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "55d72f6",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "dda14db",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "c938028",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "4648ff4",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "982f5a6",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "0aed939",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "6c9daed",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "87f2880",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "b2c16f6",
+     "why": "tank, healer or tooling work that no DPS report request reaches; the full re-sim shows the DPS builds unmoved by it"
+    },
+    {
+     "commit": "f62bfc7",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "8946f01",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "a68b203",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "d8dbb87",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "d2996ce",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "66ab8ad",
+     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
+    },
+    {
+     "commit": "f61fc00",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "049c493",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "d764d29",
+     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
+    },
+    {
+     "commit": "fed250c",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "75695f7",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "e4768f2",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "f15379f",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "bd00cd0",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "43ff80f",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "71fb81a",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "e5e5a4b",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "3fac80a",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "b73b6bd",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "df62a44",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "49e5502",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "e69b029",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "993314e",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "e7c51e4",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "7714244",
+     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
+    },
+    {
+     "commit": "ce06045",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "97c9692",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "bf0ea76",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "556bf41",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "617ea86",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "c9220cd",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "68e977b",
+     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
+    },
+    {
+     "commit": "3013df6",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "620ff0f",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "adefe98",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "fa128f0",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "0d96069",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "659cad1",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "7d662a8",
+     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
+    },
+    {
+     "commit": "aed188a",
+     "why": "tank, healer or tooling work that no DPS report request reaches; the full re-sim shows the DPS builds unmoved by it"
+    },
+    {
+     "commit": "1bac596",
+     "why": "tank, healer or tooling work that no DPS report request reaches; the full re-sim shows the DPS builds unmoved by it"
+    },
+    {
+     "commit": "4bd813a",
+     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+    },
+    {
+     "commit": "b718f62",
+     "why": "a merge of master into a work branch; no new change of its own"
+    },
+    {
+     "commit": "b87b4a1",
+     "why": "a merge of master into a work branch; no new change of its own"
+    },
+    {
+     "commit": "095e140",
+     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
+    },
+    {
+     "commit": "2b2a495",
+     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
+    },
+    {
+     "commit": "8609a44",
+     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
+    },
+    {
+     "commit": "28a0c35",
+     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
+    },
+    {
+     "commit": "8c29a5a",
+     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
+    },
+    {
+     "commit": "f163816",
+     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
+    },
+    {
+     "commit": "191565b",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "03e7e70",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "0e27653",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "739a1d7",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "4a0ed31",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "48409c0",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "72b236b",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "8e1e899",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "8ce437c",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "fa66465",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "f9cc1ec",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "99619da",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "2446d22",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "928138a",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "3c2e87c",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "506cc83",
+     "why": "healer work (Healing mode only); no DPS report request reaches it"
+    },
+    {
+     "commit": "c2999dd",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "25be25d",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "5c09e7b",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "74b7a7e",
+     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+    },
+    {
+     "commit": "d5aa54b",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
     }
    ],
    "source": {
