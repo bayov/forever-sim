@@ -64,6 +64,9 @@ func newPlanner(req *proto.LevelingPlanSearchRequest, db *proto.UIDatabase) (*pl
 	if req.Base == nil || req.Plan == nil || req.TalentShape == nil {
 		return nil, fmt.Errorf("the request needs base, plan and talent_shape")
 	}
+	if err := checkShape(req); err != nil {
+		return nil, err
+	}
 	p := &planner{req: req, plan: req.Plan, shape: req.TalentShape, seed: req.Base.GetSimOptions().GetRandomSeed()}
 	p.gear = planLevelingGear(gearInputs(req, db))
 	if err := p.checkUIGear(); err != nil {

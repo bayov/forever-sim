@@ -2342,5 +2342,73 @@
 				"assets/database (the entries it wears)": "60c2f59eb10c62f3d0327efc153563378a3729a67187e6f054ec169b391394a8"
 			}
 		}
+	},
+	"benches": {
+		"tank": {
+			"commit": "9c8233ba1da65a6dfbb84958a17da824ec040017",
+			"recordedAt": "2026-11-04T14:29:20.314Z",
+			"iterations": 1000,
+			"format": 1,
+			"inputs": {
+				"sim/core": "5604a623bd5c540db342edd916f7c0ef24e719a86ad6688b0e3d51632fac2a1f",
+				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
+				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
+				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
+				"proto": "418d9c122e4992639aae6f51b5e48bc41892bbc0bfd22cbdeba546a763a7ec1b",
+				"go.mod": "c9816d3d9714776ca295cf4b5378c12faacf4e0f892e17fc139fb38d724a9b08",
+				"go.sum": "5bf8cc59f57eb456a689c038bfce5ff51e1a3b4210d4e25b88ad5ab3d706a05e",
+				"tools/tankscore": "233cd2f85f325621d9a9ffbeef915b6a6075c9e33fe45ded172de6509f3fd233",
+				"tools/dps_report/tankheal.py": "9623e5559a4aca3bc43d8c94c05cdbf5e5772db73c9c42e242dde6fe8fbaf78b",
+				"tools/tankbench": "5c6927ce0f864fa1faef1b2be8446ac320406028f30b9a735c71d447dacf8e29",
+				"sim/warrior": "a6f0624595546c7576ac4a7cff28edea95b165b3b41bfb7470be0c94d7583834",
+				"sim/paladin": "24206a76d214dcb01837e4800d50e086b67c3cf5e84c39401b6d7c761ad243ca",
+				"sim/druid": "6b0a99836529ecee51e54bf0c03a1717a9c38eca94ee0616002da32214943418",
+				"sim/shaman": "172dc7750a31be874c28abb827a62464746959f3f868a8666cd3fdfe0728bdff",
+				"tools/encounters/magmadar.json": "3c82f5171bcca875ccf1b04e29ffa9f09eaa94fa8eb8fec6ee7f85406404a8d0",
+				"tools/encounters/golemagg.json": "3663ab1b68cfc8b4c6202dc759d2d1b72692270c10581d3da54f873bd25a6590",
+				"tools/encounters/onyxia.json": "46b592488510a1df3c23d2d752e10d0e7161ef005ee537a2fd04495aa235bbf5",
+				"tools/encounters/broodlord.json": "c5dabcd64ca32705067d9d22d6b6269009e73f605ce97ba2b5bef06e49beac83",
+				"tools/encounters/vaelastrasz.json": "194716ac1f65fd014a5d768cdfae2ae8abbba4ceb3ee2594d02cc661a6d259ac",
+				"tools/encounters/chromaggus.json": "45783e44d85c6e9c6b25da7a471f6ce681a26687d474755a8788f6890a18613c",
+				"tools/encounters/ragnaros.json": "26b4c1aa92b3e763ddb7ffbb003189fcd967dfa967d10077fe6c1dcaa6e7114f",
+				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
+				"assets/database (the entries it wears)": "b45afda2824030862f782d6e80fba978cf03f8b58e6db3ad171d9950968e4526"
+			}
+		},
+		"heal": {
+			"commit": "9c8233ba1da65a6dfbb84958a17da824ec040017",
+			"recordedAt": "2026-11-04T14:29:20.520Z",
+			"iterations": 1000,
+			"format": 1,
+			"inputs": {
+				"sim/core": "5604a623bd5c540db342edd916f7c0ef24e719a86ad6688b0e3d51632fac2a1f",
+				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
+				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
+				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
+				"proto": "418d9c122e4992639aae6f51b5e48bc41892bbc0bfd22cbdeba546a763a7ec1b",
+				"go.mod": "c9816d3d9714776ca295cf4b5378c12faacf4e0f892e17fc139fb38d724a9b08",
+				"go.sum": "5bf8cc59f57eb456a689c038bfce5ff51e1a3b4210d4e25b88ad5ab3d706a05e",
+				"tools/tankscore": "233cd2f85f325621d9a9ffbeef915b6a6075c9e33fe45ded172de6509f3fd233",
+				"tools/dps_report/tankheal.py": "9623e5559a4aca3bc43d8c94c05cdbf5e5772db73c9c42e242dde6fe8fbaf78b",
+				"tools/healbench": "7433f93f31d8ca4659e814ba3103eab1197867d0d9228fd27455041c8aed4178",
+				"tools/tankbench/req/warrior_protection.json": "e8282c41db9e68a67131fa92bedf4c8f41abfe310221dfc4cb77b1c9a0659e78",
+				"tools/dps_report/req/mage__frost.json": "178ede9885d0a7138615c49529fb19b675fb6b5b3e565587d32674696d4cc214",
+				"sim/priest": "f4421d45d2ddb37c246084eb3910c73b413e626dec430ae8277aeab18875dabc",
+				"sim/paladin": "24206a76d214dcb01837e4800d50e086b67c3cf5e84c39401b6d7c761ad243ca",
+				"sim/druid": "6b0a99836529ecee51e54bf0c03a1717a9c38eca94ee0616002da32214943418",
+				"sim/shaman": "172dc7750a31be874c28abb827a62464746959f3f868a8666cd3fdfe0728bdff",
+				"sim/warrior": "a6f0624595546c7576ac4a7cff28edea95b165b3b41bfb7470be0c94d7583834",
+				"sim/mage": "eba1eccf624c579c0a4272f65b6089df298a9f8d28857e4f22833bee9187288d",
+				"tools/encounters/magmadar.json": "3c82f5171bcca875ccf1b04e29ffa9f09eaa94fa8eb8fec6ee7f85406404a8d0",
+				"tools/encounters/golemagg.json": "3663ab1b68cfc8b4c6202dc759d2d1b72692270c10581d3da54f873bd25a6590",
+				"tools/encounters/onyxia.json": "46b592488510a1df3c23d2d752e10d0e7161ef005ee537a2fd04495aa235bbf5",
+				"tools/encounters/broodlord.json": "c5dabcd64ca32705067d9d22d6b6269009e73f605ce97ba2b5bef06e49beac83",
+				"tools/encounters/vaelastrasz.json": "194716ac1f65fd014a5d768cdfae2ae8abbba4ceb3ee2594d02cc661a6d259ac",
+				"tools/encounters/chromaggus.json": "45783e44d85c6e9c6b25da7a471f6ce681a26687d474755a8788f6890a18613c",
+				"tools/encounters/ragnaros.json": "26b4c1aa92b3e763ddb7ffbb003189fcd967dfa967d10077fe6c1dcaa6e7114f",
+				"sim/*.go": "faa546bc2dd3c92a2df460b36af0243e65065c5d9d6d119b7f1dc4a5cc06ef3d",
+				"assets/database (the entries it wears)": "d41e87ca875d6c2ebe37f58b146cf3edaa7a1f852f0c43e7598d52890d83f86a"
+			}
+		}
 	}
 }

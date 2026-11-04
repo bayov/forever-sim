@@ -57,19 +57,17 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // covers its Expected Healing (Forever's downranking from the engine takes the low ranks' coefficients down).
 //
 // The tank healer: Rejuvenation on the tank whenever it's off, Regrowth on it when its HoT is off and the hole
-// covers the heal, Swiftmend at it, Healing Touch 11, 8 and 6 at 90% of the heal, then Rejuvenation at the most
-// hurt of the rest. The emergency line is 40%. 1,000 iterations, carry: Onyxia 1.165, Broodlord 0.731,
-// Vaelastrasz 0.688, Chromaggus 0.870, Onyxia at 180 / 300 sec 1.087 / 1.063, against the Restoration shaman's
-// 1.141, 0.837, 0.775, 0.884, 1.010 / 0.969. Healing Touch 11, 10, 9 instead (500 iterations): 1.094, 0.701,
-// 0.617, 0.790.
+// covers 70% of the heal, Swiftmend at it, Healing Touch 11, 8 and 6 at 80% of the heal, then Rejuvenation at the
+// most hurt of the rest. The emergency line is 85%. 1,000 iterations on the seven boss files, carry (2026-11-04,
+// docs/healing_druid.md): mean 1.140 against 1.069 for the 40% line and 90% Healing Touch.
 export const APLTankHealer = PresetUtils.makePresetAPLRotation('Tank healer', TankHealerAPLJson, {
 	tooltip: 'Rejuvenation and Regrowth on the tank, Swiftmend and bound ranks of Healing Touch at it, with Innervate on yourself.',
 	group: 'Healing sim',
 });
 // The raid healer: Wild Growth at the most hurt, Rejuvenation 11 at the most hurt once it misses 20% of the HoT,
-// Swiftmend, Regrowth 9, then Healing Touch 11 and 9; the emergency line is 50%. 1,000 iterations, carry:
-// Onyxia 0.711, Broodlord 0.828, Vaelastrasz 1.092, Chromaggus 0.953, Ragnaros 1.240, against the shaman's 0.678,
-// 0.817, 1.110, 0.906, 1.171. Rejuvenation at 30% and a 35% line: 0.679, 0.815, 1.086, 0.887, 1.181.
+// Swiftmend once the hole covers 60% of it, Regrowth 9, then Healing Touch 11 and 9; the emergency line is 60%.
+// 1,000 iterations on the seven boss files, carry (2026-11-04, docs/healing_druid.md): mean 1.437 against 1.425
+// for the 50% line and the full Swiftmend gate.
 export const APLRaidHealer = PresetUtils.makePresetAPLRotation('Raid healer', RaidHealerAPLJson, {
 	tooltip: 'Rejuvenation, Wild Growth, Swiftmend and Regrowth at the most hurt, Healing Touch for a big hole, with Innervate on yourself.',
 	group: 'Healing sim',

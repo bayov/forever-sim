@@ -290,6 +290,7 @@ func (shaman *Shaman) newRiptideSpellConfig(rank int, timer *core.Timer) core.Sp
 	if notes {
 		coefficient, cooldown = 0, RiptideNotesCooldown
 	}
+	cooldown -= shaman.riptideCooldownCut
 
 	var spell *core.Spell // this rank, once registered, for ExpectedHealing
 	return core.SpellConfig{
