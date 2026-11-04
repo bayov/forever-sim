@@ -398,3 +398,71 @@ var foreverSyntheticPriestItems = []*proto.UIItem{
 		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
 	},
 }
+
+// BEGIN hit-trade steps: shadow (orchestration/tools/hit_steps.py, do not edit by hand)
+func init() {
+	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsShadow...)
+}
+
+var hitStepsShadow = []*proto.UIItem{
+	// Shadow Synthetic Head (Phase 1), hit-trade step: 10 hit rating less, 10 crit rating more (995001).
+	{
+		Id: 995300, Name: "Shadow Synthetic Head (Phase 1, hit -10)", Icon: "inv_helmet_34",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:      stats.Stats{stats.Stamina: 16, stats.Intellect: 19, stats.SpellPower: 38, stats.Armor: 83}.ToFloatArray(),
+		CritRating: 10,
+		HitRating:  3,
+		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+		SetName:        "Shadow Synthetic (Phase 1)",
+	},
+	// Shadow Synthetic Head (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (995001).
+	{
+		Id: 995301, Name: "Shadow Synthetic Head (Phase 1, hit +10)", Icon: "inv_helmet_34",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Stamina: 16, stats.Intellect: 9, stats.SpellPower: 38, stats.Armor: 83}.ToFloatArray(),
+		HitRating: 23,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+		SetName:        "Shadow Synthetic (Phase 1)",
+	},
+	// Shadow Synthetic Shoulder (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (995003).
+	{
+		Id: 995302, Name: "Shadow Synthetic Shoulder (Phase 1, hit +10)", Icon: "inv_shoulder_02",
+		Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Stamina: 12, stats.Intellect: 4, stats.SpellPower: 27, stats.Armor: 76}.ToFloatArray(),
+		HitRating: 19,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+		SetName:        "Shadow Synthetic (Phase 1)",
+	},
+	// Shadow Synthetic Wrist (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (995006).
+	{
+		Id: 995303, Name: "Shadow Synthetic Wrist (Phase 1, hit +10)", Icon: "inv_bracer_09",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Stamina: 9, stats.Intellect: 1, stats.SpellPower: 22, stats.Armor: 44}.ToFloatArray(),
+		HitRating: 17,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+	},
+	// Shadow Synthetic Hands (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (995007).
+	{
+		Id: 995304, Name: "Shadow Synthetic Hands (Phase 1, hit +10)", Icon: "inv_gauntlets_14",
+		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats:     stats.Stats{stats.Intellect: 4, stats.SpellPower: 27, stats.Armor: 63}.ToFloatArray(),
+		HitRating: 19, CritRating: 13,
+		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+	},
+	// Shadow Synthetic Finger (Phase 1), hit-trade step: 10 hit rating more, 10 Intellect less (995011).
+	{
+		Id: 995305, Name: "Shadow Synthetic Finger (Phase 1, hit +10)", Icon: "inv_jewelry_ring_29",
+		Type:      proto.ItemType_ItemTypeFinger,
+		Stats:     stats.Stats{stats.Intellect: 1, stats.SpellPower: 21}.ToFloatArray(),
+		HitRating: 17, CritRating: 10,
+		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
+	},
+}
+
+// END hit-trade steps: shadow

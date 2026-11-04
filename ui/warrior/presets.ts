@@ -38,6 +38,7 @@ import Level60FuryShoutAPLJSON from './apls/level60_fury_battle_shout.apl.json';
 import Level60FurySunderAPLJSON from './apls/level60_fury_sunder.apl.json';
 import Level60Phase1SyntheticArmsGearJSON from './gear_sets/level60_phase1_synthetic_arms.gear.json';
 import Level60Phase1SyntheticFuryGearJSON from './gear_sets/level60_phase1_synthetic_fury.gear.json';
+import Level60Phase1SyntheticFuryHitPlus2GearJSON from './gear_sets/level60_phase1_synthetic_fury_hit+2.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -83,6 +84,12 @@ export const GearLevel60Phase1SyntheticFury = PresetUtils.makePresetGear('Fury',
 	tooltip: 'A guess at Phase 1 BiS under Forever for a dual wield warrior, made of synthetic items that are not in the game.',
 	group: 'Synthetic',
 });
+// The Fury set's hit+2 step (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/warrior.md): 12% gear
+// hit in place of 10%, for dual wield Fury and its duties. Paired +2 against +0: +3.48 / +2.68 / +0.88 at 120 / 180 / 300 sec.
+export const GearLevel60Phase1SyntheticFuryHitPlus2 = PresetUtils.makePresetGear('Fury (hit+2)', Level60Phase1SyntheticFuryHitPlus2GearJSON, {
+	tooltip: 'The Fury set with 2% more hit in place of other stats, for dual wield Fury and its duties.',
+	group: 'Synthetic',
+});
 // The same armor with a two-hander in place of Bonereaver's Edge, for Arms and two-hand Fury. It is a
 // 3.7 sec axe, the slowest Era Phase 1 BiS two-hand speed (standards 22).
 export const GearLevel60Phase1SyntheticArms = PresetUtils.makePresetGear('Fury 2H', Level60Phase1SyntheticArmsGearJSON, {
@@ -91,7 +98,7 @@ export const GearLevel60Phase1SyntheticArms = PresetUtils.makePresetGear('Fury 2
 });
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1SyntheticFury, GearLevel60Phase1SyntheticArms],
+	[Phase.Phase1]: [GearLevel60Phase1SyntheticFury, GearLevel60Phase1SyntheticFuryHitPlus2, GearLevel60Phase1SyntheticArms],
 };
 
 // The class default is the build highest at 180 sec: two-hand Fury since the November 2 notes
@@ -634,7 +641,7 @@ export const EncounterLevel60ArmsSunderDuty = PresetUtils.makePresetEncounter('A
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Fury', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1SyntheticFury,
+	gear: GearLevel60Phase1SyntheticFuryHitPlus2,
 	talents: TalentsLevel60Fury,
 	rotation: APLLevel60Fury,
 	encounter: EncounterLevel60,
@@ -647,7 +654,7 @@ export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Fury', {
 export const PresetBuildLevel60FuryShout = PresetUtils.makePresetBuild('Fury · Battle Shout duty', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 dual wield Fury keeping Battle Shout up. The warrior shouts for the party, so the raid has no other Battle Shout.',
-	gear: GearLevel60Phase1SyntheticFury,
+	gear: GearLevel60Phase1SyntheticFuryHitPlus2,
 	talents: TalentsLevel60Fury,
 	rotation: APLLevel60FuryShout,
 	encounter: EncounterLevel60BattleShoutDuty,
@@ -660,7 +667,7 @@ export const PresetBuildLevel60FuryShout = PresetUtils.makePresetBuild('Fury · 
 export const PresetBuildLevel60FurySunder = PresetUtils.makePresetBuild('Fury · Sunder Armor duty', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 dual wield Fury keeping Sunder Armor up. The warrior keeps 5 Sunder Armor stacks up, so the raid has no other Sunder Armor.',
-	gear: GearLevel60Phase1SyntheticFury,
+	gear: GearLevel60Phase1SyntheticFuryHitPlus2,
 	talents: TalentsLevel60Fury,
 	rotation: APLLevel60FurySunder,
 	encounter: EncounterLevel60SunderDuty,

@@ -49,6 +49,7 @@ import Level60DestructionFireDutyRecklessnessAPL from './apls/level60_destructio
 // gear
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticDemonologyGearJSON from './gear_sets/level60_phase1_synthetic_demonology.gear.json';
+import Level60Phase1SyntheticHitPlus1GearJSON from './gear_sets/level60_phase1_synthetic_hit+1.gear.json';
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
@@ -92,7 +93,18 @@ export const GearLevel60Phase1SyntheticDemonology = PresetUtils.makePresetGear('
 	tooltip: 'The Level 60 synthetic Demonology set (more crit, less spell power and Intellect). Hit capped with Suppression 5/5.',
 	group: 'Synthetic',
 });
-export const GearPresets = [GearLevel60Phase1SyntheticDemonology, GearLevel60Phase1Synthetic];
+// The shared set's hit+1 step (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/warlock.md):
+// 1% more hit rating in place of other stats, for Destruction fire with Suppression 4/5 (Aftermath 5/5), back at the
+// 16% spell hit cap. Demonology keeps Suppression 5/5 (standards 26) and its own set.
+export const GearLevel60Phase1SyntheticHitPlus1 = PresetUtils.makePresetGear('Destruction Fire (hit+1)', Level60Phase1SyntheticHitPlus1GearJSON, {
+	tooltip: 'The Level 60 synthetic set with 1% more hit, for Destruction fire with Suppression 4/5.',
+	group: 'Synthetic',
+});
+export const GearPresets = [
+	GearLevel60Phase1SyntheticDemonology,
+	GearLevel60Phase1Synthetic,
+	GearLevel60Phase1SyntheticHitPlus1,
+];
 
 // Destruction is the class default since round 70753 (the highest at 180 sec: 1063.4 against
 // Demonology's 1053.9, after Shadow and Flame doubled).
@@ -310,10 +322,13 @@ export const TalentsLevel60AfflictionShadowBolt = PresetUtils.makePresetTalents(
 // talent search from it moved nothing. Bane of Havoc's point does nothing in the sim.
 // Shadow and Flame doubled (the 2026-11-02 notes): 965.4 / 977.1 / 954.2 before, 983.6 / 996.7 / 974.0
 // at 120 / 180 / 300 sec after; talents and knobs searched again, nothing moved.
+// Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/warlock.md): on the
+// set's hit+1 step, Suppression 5 to 4 and Aftermath 4 to 5 (242-0050003201-0050355003101351): 1002.8 /
+// 997.8 / 977.8 at 120 / 180 / 300 sec (Undead, 20,000 iterations, seed 1), +0.3 / +1.1 / +1.3.
 
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Destruction Fire',
-	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
+	SavedTalents.create({ talentsString: '242-0050003201-0050355003101351' }),
 	{ group: 'Synthetic', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with the Succubus sacrificed for 15% Fire damage.' },
 );
 
@@ -607,7 +622,7 @@ export const PresetBuildLevel60AfflictionShadowBolt = PresetUtils.makePresetBuil
 export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Destruction Fire', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Undead Destruction fire warlock on the synthetic Phase 1 gear, the Succubus sacrificed, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticHitPlus1,
 	talents: TalentsLevel60DestructionFire,
 	rotation: RotationLevel60DestructionFire,
 	encounter: EncounterLevel60,

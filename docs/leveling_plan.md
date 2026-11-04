@@ -484,13 +484,21 @@ seeds 1 and 1000001:
 - **Training** searched again on that route (414s) trains Searing Totem 3 and 4 and Lesser
   Healing Wave 2 to 4 at their levels, but that's 4 min slower at 2000 sessions (78.694h and
   78.688h, Searing Totem 3 at 30 costs time), so we keep the schedule above.
+- **The end of the route by hand** (user, 2026-11-04). We tried other orders for 49 to 59 on
+  that plan (2000 sessions, seeds 1 and 1000001). Anticipation 3/3 at 49 to 51 before Flurry 3
+  to 5 at 52 to 54 ties the search's order (0.1 min faster). For the last 2 points, Guardian
+  Totems 2 beats Convection 4 and 5 by 2 min and Concussion 2 by 1.7 min. Call of Flame 3 needs
+  5 Elemental points first, so it costs Anticipation and Guardian Totems, and it's 6 to 8 min
+  slower (with Convection 5 or Concussion 5 before it). The user picked Anticipation 3/3, then
+  Flurry 3 to 5 and Convection 5, toward the level 60 build. That takes 78.66h (78.667h and
+  78.659h, ±0.007), 2 min slower than Guardian Totems.
 
 The route: Thundering Strikes 5, Mental Dexterity 3, Improved Lightning Shield 2 at 18 and 19,
 Shamanistic Focus, Elemental Weapons 3, Improved Lightning Shield 3/3 at 24, Stormstrike at 25,
 Improved Ghost Wolf at 26 and 27 (required), Flurry 2, Improved Stormstrike, Spirit Weapons at
 31 (required), Tidal Focus 5 and Mindfulness 3 at 33 to 40, Mental Quickness 2, Maelstrom
-Weapon 5 at 43 to 47, Rage of the Farseer at 48, Anticipation 3, Flurry 5/5, Convection 3 and
-Guardian Totems 2. Rockbiter Weapon all the way, with Windfury Totem from 32 and Stoneskin
+Weapon 5 at 43 to 47, Rage of the Farseer at 48, Anticipation 3 at 49 to 51, Flurry 5/5 at 52
+to 54 and Convection 5 at 55 to 59. Rockbiter Weapon all the way, with Windfury Totem from 32 and Stoneskin
 Totem for the earth totem. The respecs still save nothing.
 
 The route before (2026-11-01, The audit) was Thundering Strikes, Improved Ghost Wolf at 15 and

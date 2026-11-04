@@ -138,9 +138,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-Phase1-AllItems-ShadowSynthetic(Phase1)"
  value: {
-  tps: 51.9423
-  dtps: 111.11817
-  hps: 112.16531
+  tps: 51.91385
+  dtps: 111.36867
+  hps: 111.85885
  }
 }
 dps_results: {

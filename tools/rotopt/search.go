@@ -62,7 +62,8 @@ type searcher struct {
 
 // Mean DPS and end mana over the fight lengths, with the standard errors of those means.
 func (s *searcher) score(knobs Knobs) result {
-	return s.scoreAll([]*pendingScore{s.prepare(knobs)})[0]
+	pending, steps := s.prepareSteps(knobs)
+	return s.pickStep(s.setup.effectiveTalents(), s.scoreAll(pending), steps)
 }
 
 // pendingScore is a score still to work out: a sim request for each fight length, made from
@@ -84,7 +85,7 @@ func (s *searcher) prepare(knobs Knobs) *pendingScore {
 	rot := s.template.Build(knobs)
 	p := &pendingScore{knobs: knobs, cache: s.cache}
 	for _, d := range s.durations {
-		key := fmt.Sprintf("%s|%g|%s|%d", s.setup.talents, d, knobs, s.iterations)
+		key := fmt.Sprintf("%s%s|%g|%s|%d", s.setup.talents, s.setup.hitKey(), d, knobs, s.iterations)
 		r, ok := s.cache[key]
 		var request *proto.RaidSimRequest
 		if !ok {

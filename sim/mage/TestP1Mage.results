@@ -176,8 +176,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-MageSynthetic(Phase1)"
  value: {
-  dps: 1363.30933
-  tps: 855.1269
+  dps: 1371.4925
+  tps: 859.536
  }
 }
 dps_results: {
