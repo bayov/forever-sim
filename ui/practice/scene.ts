@@ -6,7 +6,7 @@
 
 import * as THREE from 'three';
 import { newTextures } from './wow/files';
-import { fillBatches, particleOptions } from './wow/particles';
+import { drawOrder, fillBatches, particleOptions } from './wow/particles';
 import { Crowd, SHADOW_LAYER } from './wow/crowd';
 import type { Model } from './wow/model';
 
@@ -74,7 +74,7 @@ export class Room {
 	crowdTotems = false;
 	// onPass hears each pass of drawing the scene start, for the performance recorder to time it
 	// on the GPU: the shadows, then the solid things, then the see-through things and effects.
-	onPass?: (pass: 'upload' | 'shadow' | 'opaque' | 'transparent') => void;
+	onPass?: (pass: 'upload' | 'shadow' | 'opaque' | 'transparent' | 'boss' | 'gear' | 'effects' | 'particles' | 'ribbons') => void;
 
 	constructor(
 		readonly canvas: HTMLCanvasElement,
@@ -132,15 +132,25 @@ export class Room {
 			}
 			setRenderTarget(target, face, level);
 		};
-		// Two markers that draw nothing, first in their lists, tell when the solid things start and
-		// when the see-through things start.
-		for (const pass of ['opaque', 'transparent'] as const) {
+		// Markers that draw nothing tell when the solid things start, when the see-through things
+		// start (first in their lists), and when each kind of see-through thing starts (just before
+		// its render order, drawOrder).
+		const markers = [
+			['opaque', -1e9],
+			['transparent', -1e9],
+			['boss', drawOrder.boss - 0.1],
+			['gear', drawOrder.gear - 0.5],
+			['effects', drawOrder.effects - 0.5],
+			['particles', drawOrder.particles - 0.5],
+			['ribbons', drawOrder.ribbons - 0.5],
+		] as const;
+		for (const [pass, order] of markers) {
 			const g = new THREE.BufferGeometry();
 			g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
 			g.setDrawRange(0, 0);
-			const marker = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ transparent: pass === 'transparent', depthWrite: false }));
+			const marker = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ transparent: pass !== 'opaque', depthWrite: false }));
 			marker.frustumCulled = false;
-			marker.renderOrder = -1e9;
+			marker.renderOrder = order;
 			marker.onBeforeRender = () => {
 				this.camera.layers.disable(SHADOW_LAYER);
 				this.onPass?.(pass);

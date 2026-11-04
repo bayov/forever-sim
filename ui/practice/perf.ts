@@ -19,7 +19,11 @@ export type Part = (typeof parts)[number];
 //
 // 'upload' is what comes before the shadows: the renderer sends the frame's changed vertices and
 // textures to the GPU.
-export const passes = ['upload', 'shadow', 'opaque', 'transparent'] as const;
+//
+// The see-through things come in kinds (drawOrder, wow/particles.ts): 'transparent' is the units'
+// own see-through parts, then the raid test's boss, its raiders' gear and bodies, the spell
+// effects, the particles and the ribbons.
+export const passes = ['upload', 'shadow', 'opaque', 'transparent', 'boss', 'gear', 'effects', 'particles', 'ribbons'] as const;
 export type Pass = (typeof passes)[number];
 
 // One frame: when it started, the time since the frame before, the time of each part, and the
@@ -30,6 +34,8 @@ type Frame = {
 	cpu: number;
 	parts: number[];
 	calls: number;
+	// How many particles the frame drew.
+	particles: number;
 	// The frame's uploads to the GPU: how many calls, and how many kilobytes.
 	uploads: number;
 	uploadKb: number;
@@ -71,6 +77,8 @@ export class Perf {
 	// The passes timed in the frame so far, which go out with the frame at its end.
 	private framePasses: { query: WebGLQuery; pass: number }[] = [];
 
+	// particles counts the particles drawn in the frame (set by the room).
+	particles?: () => number;
 	private uploads = 0;
 	private uploadBytes = 0;
 
@@ -229,6 +237,7 @@ export class Perf {
 			parts: c.parts.map(round),
 			calls: info.render.calls,
 			uploads: this.uploads,
+			particles: this.particles?.() ?? 0,
 			uploadKb: round(this.uploadBytes / 1024),
 			tris: info.render.triangles,
 			gpu: -1,
@@ -309,8 +318,8 @@ export class Perf {
 			slowest: slow,
 			notes: this.notes,
 			// Every frame, as [time, gap, cpu, ...parts, calls, triangles, heap MB, GPU ms].
-			frames: frames.map(f => [f.t, f.gap, f.cpu, ...f.parts, f.calls, f.tris, f.heapMb ?? 0, f.uploads, f.uploadKb, f.gpu, ...(f.gpu >= 0 ? f.gpuPasses : passes.map(() => -1))]),
-			frameColumns: ['t', 'gap', 'cpu', ...parts, 'calls', 'tris', 'heapMb', 'uploads', 'uploadKb', 'gpu', ...passes.map(p => `gpu_${p}`)],
+			frames: frames.map(f => [f.t, f.gap, f.cpu, ...f.parts, f.calls, f.tris, f.heapMb ?? 0, f.uploads, f.uploadKb, f.particles, f.gpu, ...(f.gpu >= 0 ? f.gpuPasses : passes.map(() => -1))]),
+			frameColumns: ['t', 'gap', 'cpu', ...parts, 'calls', 'tris', 'heapMb', 'uploads', 'uploadKb', 'particles', 'gpu', ...passes.map(p => `gpu_${p}`)],
 			...extra,
 		};
 	}

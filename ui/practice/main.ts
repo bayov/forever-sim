@@ -27,6 +27,7 @@ import { iconName, iconUrl, meleeIcon, setIcon } from './icons';
 import { css, HudLayout, pack, place, readLayout, Rect } from './layout';
 import { AuraState, Batch, ClockState, FromWorker, HitEvent, Input, PlayerState, Settings, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
 import { Perf } from './perf';
+import { drawn } from './wow/particles';
 import { Graphics, graphicsPresets, Room } from './scene';
 import { loadCursors } from './cursors';
 import { Pointer } from './pointer';
@@ -294,6 +295,7 @@ class PracticeRoom {
 		this.room.setGraphics(this.graphics);
 		this.perf = new Perf(this.room.renderer);
 		this.room.onPass = pass => this.perf?.gpuPass(pass);
+		this.perf.particles = () => drawn.particles;
 		this.pointer = new Pointer(this.root);
 		// A model built mid fight (a spell's effect) can cost a frame.
 		Model.onLoad = (fdid, ms) => !this.loadingModels && this.perf?.note('model', performance.now(), ms, String(fdid));
