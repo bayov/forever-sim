@@ -10,6 +10,7 @@
 - proposed fix: A/B 1889 against 1219587 on the back for each of the three at each preset's weight; keep the winner and record it in the class doc.
 - needs: worker fix
 - fixed (paladin): 2026-11-04, b07bdf476: Superior Defense 1889 against Agility 1219587 at 1/3, 1, 3 (seed 1 / 2): -3.1 / -4.7, -2.1 / +0.2, -0.2 / +8.6; on the final wrist and shield -4.3 / -6.2 / -14.8. Agility stays; recorded in docs/tank_paladin.md (85db121aa).
+- fixed (warrior part): 2026-11-04, a624264: paired 10k at each weight, 1889 minus 1219587: Max threat -6.3 / -6.0 ± 1.0 (seeds 1/2), Balanced -5.6 / +0.5 / -3.4 / -5.1 ± 1.7 (seeds 1-4), Max survival -10.1 / +1.2 / +0.1 / -1.3 ± 4.4 (mean -2.5 ± 2.2). Agility stays; recorded in docs/tank_warrior.md (Round 3 gear A/Bs). Paladin and bear parts are their workers'.
 
 ### tank_gear-20261104-3: Tank enchants use stale Classic values; shield Greater Stamina and the Deflection bracer enchant are underrated
 - severity: low
@@ -24,9 +25,10 @@
 - fixed: 2026-11-04, d10eaea1f (shared values: shield 1886 +9, Bracer Deflection +7, Superior Deflection in the DB) and 5d9a3aa18 (warrior wears Superior Deflection: +4.3 / +6.6 / +25.8 at 1/3, 1, 3). Paladin and Warden sets still put 929 (+7, still right for 929's other spells) on the shield: their workers move them to 1886. No set wore Bracer Deflection.
 - reopened: 2026-11-04 (pass 2), master b38ff16. Only the warrior moved. (a) The paladin and Warden shields (990714, 999214) still carry 929 in both the UI gear sets (ui/protection_paladin/gear_sets/level60_phase1_synthetic.gear.json, ui/warden_shaman/gear_sets/phase1_synthetic_tank*.gear.json) and the tankbench requests (paladin_protection_*.json, shaman_warden_*.json). 929 is no longer a shield enchant in the DB (assets/database/db.json has 929 only as Bracer and Boots Greater Stamina; the shield entry is 1886). So the CLI and tankbench give the shield +7 Stamina through EnchantsByEffectID (sim/core/database.go:269, no slot check), the warrior gets +9, and the web UI's lookupItemSpec (ui/core/proto_utils/database.ts:184-190) searches only the off-hand slot's enchants, finds no 929 and loads the paladin and Warden shields with no enchant at all. (b) Superior Deflection (1248665, Defense +9, 13.5 weighted against Superior Stamina's 9) was simmed only for the warrior (+4.3 / +6.6 / +25.8 at 1/3, 1, 3). The paladin, bear and Warden wrists still wear 1886 Superior Stamina with no A/B recorded (no mention in docs/tank_{paladin,druid,shaman}.md). Not simmed here; the warrior's gain suggests a few points at Balanced and more at Max survival.
 - proposed fix (pass 2): shields 929 -> 1886 in the paladin and Warden gear sets and requests; A/B 1248665 against 1886 on the wrist for the paladin, bear and Warden at each weight and keep the winner.
+- fixed (warrior part, round 3): 2026-11-04, a624264: the warrior shield is 1886 in all three requests and both gear sets; wrist re-A/B'd on the new engine, 1886 minus 1248665 at 10k: -4.8 / -3.9 (Max threat), -10.4 / -0.8 / +0.3 / -7.3 (Balanced), -31.6 / -13.0 / -11.5 / -32.7 (Max survival); Superior Deflection stays. Paladin and Warden parts are their workers'.
+- fixed (paladin): 2026-11-04, e37867b (shield 929 -> 1886 in the UI set and requests) and b07bdf476 (A/B at 1/3, 1, 3, paired, seeds 1 and 2: wrist Superior Deflection 1248665 over 1886 +10.5 / +20.8 / +64.2, taken; shield Lesser Block 863 over 1886 +24.6 / +35.3 / +68.8, taken); docs/tank_paladin.md round 3 (85db121aa).
 
 ## Resolved
-- fixed (paladin): 2026-11-04, e37867b (shield 929 -> 1886 in the UI set and requests) and b07bdf476 (A/B at 1/3, 1, 3, paired, seeds 1 and 2: wrist Superior Deflection 1248665 over 1886 +10.5 / +20.8 / +64.2, taken; shield Lesser Block 863 over 1886 +24.6 / +35.3 / +68.8, taken); docs/tank_paladin.md round 3 (85db121aa).
 
 ### tank_gear-20261104-1: Protection paladin set's Stamina share 30.2% is outside the row's 32.4 ±1.5
 - severity: medium

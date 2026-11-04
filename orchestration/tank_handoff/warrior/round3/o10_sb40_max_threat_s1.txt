@@ -1,0 +1,11 @@
+A=cur_max_threat.json B=sb40_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3563     3565     1.9    2.9      1.5        1
+chromaggus        3256     3258     1.4    1.6      0.9        0
+golemagg          3736     3740     3.9    1.9      3.1        2
+magmadar          3823     3824     0.5    2.0      1.4        2
+onyxia            3785     3785     0.0    2.1      1.2        1
+ragnaros          1994     1992    -2.7    4.5      0.2        3
+vaelastrasz       3982     3982    -0.6    0.4     -0.3        0
+scoring_mean                        1.2    0.8
+exit 0

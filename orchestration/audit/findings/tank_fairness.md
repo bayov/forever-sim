@@ -10,6 +10,7 @@
 - proposed fix: one line in each tooltip; refresh docs/tank_sim.md's status and bear sections; update the summary.tsv header and the paladin Max survival number.
 - needs: worker fix
 - fixed (paladin): 2026-11-04, e37867b (Max survival tooltip says it is Balanced's build) and 73d70c283 (summary.tsv paladin rows re-benched for round 3; docs/tank_paladin.md's numbers from the 3,000-iteration matrix, round 2's 1,363 noted as 1,337 ± 14 at 3,000).
+- fixed (warrior part): 2026-11-04, a624264: warrior preset tooltips and gear comments carry the round-3 numbers (Shield Wall 13 / 17 s, trinket A/B, cloak and wrist A/Bs); docs/tank_warrior.md round-3 section, summary.tsv warrior rows rewritten.
 
 ### tank_fairness-20261104-8: Round 2 searched the four tanks unevenly
 - severity: low (no measured loss yet, but the search coverage differs)
@@ -19,6 +20,7 @@
 - proposed fix: Warden race at 3000 iterations and its trinket A/B on the current engine. Paladin and Warden wrist Superior Deflection against Stamina, and shield and boots enchant A/B, at the three weights. Bear enchant re-check. Commit each class's search summary next to the warrior's.
 - needs: worker fix
 - fixed (paladin): 2026-11-04, b07bdf476: wrist, cloak, shield and boots enchant A/Bs, talents, knobs and races at the three weights on the current engine, each choice confirmed on a disjoint seed; gear rows re-checked (tools/audit/tank_gear/paladin.py passes). Raw output, scripts and commands in orchestration/tank_handoff/paladin/round3/.
+- warrior (round 3): 2026-11-04, a624264: raw search output, commands and A/B index in orchestration/tank_handoff/warrior/round3/ (README.txt, ab_summary.txt).
 
 ### tank_fairness-20261104-7: Warden Max threat takes Titans where Natural Accuracy wins at its weight
 - severity: medium (+30 at w=1/3, 1.3% of the preset's score)
@@ -36,6 +38,7 @@
 - proposed fix: set each UI's DefaultIndividualBuffs and professions to its request's (Kings + improved Might; plus improved Wisdom for the Warden; Engineering + Blacksmithing).
 - needs: worker fix
 - fixed (paladin): 2026-11-04, e37867b: ui/protection_paladin/presets.ts individual buffs (Kings, improved Might), raid buffs, debuffs, options (Seal of Fury, Devotion Aura) and professions equal tools/tankbench/req/paladin_protection_*.json; consumables already did. Max threat gear set split in b07bdf476 so each preset's gear equals its request.
+- fixed (warrior part): 2026-11-04, 9eb6f93: ui/tank_warrior/presets.ts loads the bench's Engineering + Blacksmithing, Undead, raid buffs (incl. Kings and improved Might), and boss debuffs exactly as tools/tankbench/req/warrior_protection_*.json; consumables already matched. Paladin and Warden parts are their workers'.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)

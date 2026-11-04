@@ -1,0 +1,11 @@
+A=cur_max_threat.json B=wall14_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3553     3562     9.1    3.7     -2.6      -14
+chromaggus        3266     3266     0.4    0.8     -0.6       -2
+golemagg          3735     3739     4.4    1.5     -1.3       -6
+magmadar          3806     3815     9.1    1.6      0.2       -7
+onyxia            3769     3782    13.7    4.3     -8.2      -17
+ragnaros          1972     1984    12.4    4.6     -1.0      -14
+vaelastrasz       3977     3944   -33.0    8.3    -17.3       -4
+scoring_mean                        0.6    1.7
+exit 0

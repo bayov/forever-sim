@@ -1,0 +1,11 @@
+A=F_balanced.json B=cloak1889_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2712     2718     6.3    4.6     -2.2       -4
+chromaggus        2102     2095    -6.9    4.2     -2.8        0
+golemagg          3269     3261    -7.7    3.3     -2.0        1
+magmadar          3415     3409    -6.1    2.8     -2.9        0
+onyxia            3119     3115    -3.9    5.2     -1.8        0
+ragnaros         -1745    -1741     3.6   14.7     -2.6       -3
+vaelastrasz       3437     3435    -2.1    2.0     -1.9       -1
+scoring_mean                       -3.4    1.6
+exit 0
