@@ -94,6 +94,7 @@ func (shaman *Shaman) newHealingStreamTotemSpellConfig(rank int) core.SpellConfi
 		DamageMultiplier: healingMultiplier,
 		ThreatMultiplier: 1,
 		BonusCoefficient: spellCoeff,
+		DownrankLevel:    level,
 
 		// Under Forever each heal can crit for 1.5 times, 5% of the time whatever our spell crit.
 		//

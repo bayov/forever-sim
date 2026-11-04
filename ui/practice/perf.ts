@@ -81,10 +81,27 @@ export class Perf {
 	particles?: () => number;
 	private uploads = 0;
 	private uploadBytes = 0;
+	// The WebGL calls by kind since the recording started (with ?glcount=1), and over how many frames.
+	private glCalls = new Map<string, number>();
 
 	constructor(readonly renderer: THREE.WebGLRenderer) {
 		// We count the uploads to the GPU (buffers and textures), each with its size.
 		const gl = renderer.getContext() as WebGL2RenderingContext;
+		// With ?glcount=1 we count every WebGL call by kind (it costs a little time each), since
+		// Chrome's GPU process takes time for each command we send, not only each draw.
+		if (new URLSearchParams(location.search).get('glcount') === '1') {
+			const own = gl as unknown as Record<string, unknown>;
+			for (const name of Object.getOwnPropertyNames(WebGL2RenderingContext.prototype)) {
+				const d = Object.getOwnPropertyDescriptor(WebGL2RenderingContext.prototype, name);
+				if (!d || typeof d.value !== 'function' || name === 'constructor') continue;
+				const f = (d.value as (...a: unknown[]) => unknown).bind(gl);
+				const before = own[name] !== d.value ? (own[name] as (...a: unknown[]) => unknown) : f;
+				own[name] = (...a: unknown[]) => {
+					this.glCalls.set(name, (this.glCalls.get(name) ?? 0) + 1);
+					return before(...a);
+				};
+			}
+		}
 		for (const name of ['bufferSubData', 'bufferData', 'texSubImage2D', 'texImage2D', 'texSubImage3D', 'texImage3D'] as const) {
 			const f = (gl[name] as (...a: unknown[]) => void).bind(gl);
 			(gl as unknown as Record<string, unknown>)[name] = (...a: unknown[]) => {
@@ -307,6 +324,8 @@ export class Perf {
 			partsAvgMs: { ...Object.fromEntries(parts.map((p, i) => [p, round(partSums[i])])), gpu },
 			// The GPU's time by pass, and the uploads to it a frame, on average.
 			gpuPassesAvgMs: gpuPasses,
+			// The WebGL calls a frame by kind, with ?glcount=1.
+			glCallsAvg: this.glCalls.size ? Object.fromEntries([...this.glCalls].sort((a, b) => b[1] - a[1]).slice(0, 25).map(([k, v]) => [k, round(v / Math.max(1, frames.length))])) : undefined,
 			uploadsAvg: { calls: round(frames.reduce((a, f) => a + f.uploads, 0) / Math.max(1, frames.length)), kb: round(frames.reduce((a, f) => a + f.uploadKb, 0) / Math.max(1, frames.length)) },
 			gpuInfo: {
 				renderer: info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
@@ -329,6 +348,7 @@ export class Perf {
 		this.frames = [];
 		this.notes = [];
 		this.lastT = 0;
+		this.glCalls.clear();
 		this.startedAt = performance.now();
 	}
 }

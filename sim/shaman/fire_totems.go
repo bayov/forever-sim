@@ -59,6 +59,7 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 
 		DamageMultiplier: shaman.callOfFlameMultiplier(),
 		BonusCoefficient: spellCoeff,
+		DownrankLevel:    level,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
@@ -171,6 +172,7 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 
 		DamageMultiplier: shaman.callOfFlameMultiplier(),
 		BonusCoefficient: spellCoeff,
+		DownrankLevel:    level,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			for _, aoeTarget := range shaman.fireTotemMobs(sim, magmaTotemRadius) {
@@ -325,6 +327,7 @@ func (shaman *Shaman) newFireNovaHitSpellConfig(rank int) core.SpellConfig {
 		DamageMultiplier: shaman.callOfFlameMultiplier() * (1 + shaman.improvedFireNovaBonus()),
 		ThreatMultiplier: 1,
 		BonusCoefficient: FireNovaSpellCoeff[rank],
+		DownrankLevel:    FireNovaLevel[rank],
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			for _, aoeTarget := range shaman.fireTotemMobs(sim, fireNovaRadius) {
