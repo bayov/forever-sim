@@ -5,13 +5,13 @@
         {"action":{"castSpell":{"spellId":{"spellId":1239570}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Trinkets on cooldown from the pull, off the global cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":1311015}},"condition":{"cmp":{"lhs":{"currentTime":{}},"op":"OpGe","rhs":{"const":{"val":"10s"}}}}},"notes":"Templar's Bulwark on cooldown from 10 sec in, on a timer (a scoring run reads no health). Off the global cooldown. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":20423}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":20423}}}}}},"notes":"Seal of Fury whenever it is down. Judgement does not consume it under Forever."},
         {"action":{"castSpell":{"spellId":{"spellId":1310994}},"condition":{"auraIsActive":{"auraId":{"spellId":20423}}}},"notes":"Swift Judgement on cooldown, off the global cooldown. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":20423}}}]}}},"notes":"Judgement on cooldown, off the global cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":1239570}}},"notes":"Holy Shield on cooldown: 30% block for 10 sec or 4 blocks, its damage at 1.2 times the threat."},
         {"action":{"castSpell":{"spellId":{"spellId":10333}}},"notes":"Holy Strike on cooldown: Iron Creed's threat and damage cut, and with Shieldsworn Holy Shield's damage."},
-        {"action":{"castSpell":{"spellId":{"spellId":20924}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.6"}}}}},"notes":"Consecration with the mana to spare."},
-        {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on a free GCD."}
+        {"action":{"castSpell":{"spellId":{"spellId":20924}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.6"}}}}},"notes":"Consecration with the mana to spare."}
     ]
 }
