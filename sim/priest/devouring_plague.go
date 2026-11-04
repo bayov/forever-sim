@@ -53,7 +53,6 @@ func (priest *Priest) getDevouringPlagueConfig(rank int, cdTimer *core.Timer) co
 
 		Rank:          rank,
 		RequiredLevel: level,
-		Downrank:      core.DownrankDamage,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: manaCost,

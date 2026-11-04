@@ -1264,6 +1264,62 @@ rendering, not the sim.
     drawing didn't drop here: 330 of the draw calls are the crowd's picture (65 bodies, 155 gear, 108 see-through
     layers of gear and effects), which need different textures. Drawing those in fewer calls needs texture arrays
     for gear, or multi-draw.
+- Sixth raid report (your PC, 107s): about 143 FPS in the fight (was 100 to 114), 4.9ms of script (animating 2.0ms,
+  drawing 2.6ms), 420 draw calls. GPU 5.3ms, and the see-through things are most of it: 2.8 to 3.0ms in the fight,
+  2.0ms before it.
+  - The reports now time the see-through things by kind: the units' own see-through parts, the boss, the raiders'
+    gear and bodies, the spell effects, the particles and the ribbons. Each kind draws at its own render order
+    (`drawOrder` in `wow/particles.ts`), with a marker before it that starts its timer. A frame column also counts
+    the particles drawn. Headless, the spell effects' layers were the biggest (0.87ms), then the gear's and the
+    particles.
+  - A see-through layer faded all the way out still cost its pixels. A fifth of the raid's see-through copies were
+    (58 of 286), so a copy with no alpha in a blending that goes by alpha is left out. A particle faded all the way
+    out (they fade in at birth and out at death) draws nothing in any blend mode, so it isn't sent either.
+  - Not the cause: Ragnaros has no see-through parts, and its own 24 emitters don't run (only gear gets particles
+    in the raid test). Finished effects aren't drawn: a fading one hides its model while its particles die out,
+    and a pooled one is out of the scene. The raid draws about 3600 particles, most on the casters' hands and their
+    bolts' trails (a Fireball's trail is 200).
+  - Headless: effects 0.87 to 0.71ms, gear 0.30 to 0.19ms, particles 0.25 to 0.18ms.
+- Seventh raid report (your PC): about 125 FPS, 5.8ms of script (animating 2.5ms, drawing 2.9ms), GPU 4.5ms (shadows
+  1.1, solid 1.4, effects 0.95, gear 0.36, particles 0.30, ribbons 0.31), 400 draw calls. Solo holds 239 FPS.
+- The pose worker (`wow/pose.ts`, `wow/poseWorker.ts`, `wow/poseClient.ts`): the raid test's crowd (raiders, their
+  gear and the effects in the crowd) poses off the page's thread. Posing is one class (`Poser`) that both the page
+  (your character, the boss, and everything when the page can't share memory) and the worker run. A model keeps its
+  animation state (what plays, its times and fades, its events) and asks for its pose each update. Once a frame the
+  page sends the worker every model's latest request, and the worker writes each model's bone matrices into memory
+  shared with the page, in one of two sets: the page reads the other, and they swap when the frame's poses are done.
+  So the crowd's poses are a frame behind, and what hangs off their bones moves when the new pose comes in. Your
+  character still poses itself, with no lag.
+  - Shared memory needs a cross-origin isolated page, so the practice server sends `Cross-Origin-Opener-Policy:
+    same-origin` and `Cross-Origin-Embedder-Policy: credentialless` (credentialless, so the icons from wow.zamimg.com
+    still load). Without them (an old server) the crowd poses on the page as before. `?poseworker=0` turns it off.
+  - The crowd copies a skeleton into the bone texture only when its pose changed (a far raider poses now and then,
+    still gear once), and the bone texture goes up only when one did.
+  - Headless (WSL GPU, fight, 1920x1080): animating 2.8 to 1.6ms, but drawing 4.1 to 5.5ms, so about even. Drawing
+    here is bound by the GPU process translating to Direct3D 12, so the time saved shows up as waiting.
+  - A copy of a painted texture that wraps another way (`setTexture`) shares the picture, which the original let go of
+    once on the GPU, so the copy went up empty. The original now keeps it.
+- The merged shadow (`wow/crowd.ts`): the raiders' solid shadows (bodies and gear) are one mesh, drawn in one call per
+  side. Each vertex has its bones in the bone texture and its raider's place in the world in a places texture, so
+  moving raiders need no rebuild; it's rebuilt when raiders join. A body's hidden submeshes are left out when it's
+  built. Parts cut by their texture's alpha (hair) and the effects' shadows still draw on their own. Shadow draw
+  calls went from 128 to 83. `?mergeshadows=0` turns it off. Headless: 112 to 123 FPS, and 88 to 115 on a slow run.
+- Eighth raid report (your PC, worker on): about 125 FPS, 5.0ms of script (animating 1.6ms, was 2.45), 315 draw
+  calls (was 400), GPU 4.9ms. Script and GPU time move together in every 10s window, so the GPU timer seems to count
+  the GPU waiting for our commands: the limit is how many WebGL calls we send, which Chrome's GPU process translates.
+- The merged picture (`wow/crowd.ts`): the raiders' solid parts (bodies and gear) draw in one call per kind of part,
+  like the merged shadow: one mesh of all their triangles, each vertex with its bones, its raider's place, and its
+  texture's layer in a texture array. The gear's textures go in arrays by size and wrapping (and the second texture
+  of the parts that mix two), the bodies' skins in theirs. A kind is a material (the same shader, side and mixing)
+  with the same arrays, 45 kinds for the raid. Parts that draw on their own: see-through ones, ones cut by alpha,
+  ones whose color or transparency changes (a track with keys that differ; a steady one is fine), and ones whose
+  texture isn't the plain kind. `?mergepicture=0` turns it off.
+  - Pixel check, one frozen frame (lineup and the fight's view), merge on, off, and on again: the same, apart from a
+    few hundred pixels of effects glows that also differ between two frames with the merge on.
+  - `?glcount=1` counts every WebGL call by kind (`glCallsAvg` in the report).
+  - Headless (fight, 1920x1080): 127 to 144 FPS, drawing 4.8 to 4.1ms, 420 to 326 draw calls, 3040 to 2350 WebGL
+    calls a frame (texture binds 528 to 423, vertex array binds 478 to 385, programs 276 to 210, matrix uniforms 271
+    to 174).
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit

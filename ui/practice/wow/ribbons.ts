@@ -15,7 +15,7 @@ import * as THREE from 'three';
 import { texture } from './files';
 import type { RibbonEmitter } from './m2';
 import type { Model } from './model';
-import { addBatch, particleOptions } from './particles';
+import { addBatch, drawOrder, particleOptions } from './particles';
 
 // The most edges one ribbon keeps, whatever its rate and lifetime say.
 const maxEdges = 256;
@@ -73,7 +73,7 @@ class Batch {
 		this.geometry.setDrawRange(0, 0);
 		this.mesh = new THREE.Mesh(this.geometry, material);
 		this.mesh.frustumCulled = false;
-		this.mesh.renderOrder = 10;
+		this.mesh.renderOrder = drawOrder.ribbons;
 		this.mesh.visible = false;
 		addBatch(this);
 		world.add(this.mesh);

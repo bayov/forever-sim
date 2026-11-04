@@ -309,8 +309,10 @@ func TestMageAreaCoefficientsAndCombustion(t *testing.T) {
 		if spell == nil {
 			continue
 		}
-		if got := spell.AOEDot().BonusCoefficient; math.Abs(got-0.032) > 1e-9 {
-			t.Errorf("Flamestrike rank %d DoT coefficient %v, want 0.032", rank, got)
+		// Forever's downranking penalty (sim/core/downrank.go) cuts the low ranks at 60.
+		want := 0.032 * core.DownrankFactor(mage.Level, spell.RequiredLevel)
+		if got := spell.AOEDot().BonusCoefficient; math.Abs(got-want) > 1e-9 {
+			t.Errorf("Flamestrike rank %d DoT coefficient %v, want %v", rank, got, want)
 		}
 	}
 	if mage.CombustionAura != nil && mage.CombustionAura.MaxStacks != 10 {
@@ -326,8 +328,10 @@ func TestMageRankTuning(t *testing.T) {
 		if spell == nil {
 			continue
 		}
-		if got := spell.BonusCoefficient; math.Abs(got-0.429) > 1e-9 {
-			t.Errorf("Ice Lance rank %d coefficient %v, want 0.429", rank, got)
+		// Forever's downranking penalty (sim/core/downrank.go) cuts the low ranks at 60.
+		want := 0.429 * core.DownrankFactor(mage.Level, spell.RequiredLevel)
+		if got := spell.BonusCoefficient; math.Abs(got-want) > 1e-9 {
+			t.Errorf("Ice Lance rank %d coefficient %v, want %v", rank, got, want)
 		}
 	}
 	for _, c := range []struct {
