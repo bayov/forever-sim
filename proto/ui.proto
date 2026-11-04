@@ -359,6 +359,9 @@ message LevelingPlanSettings {
 	repeated LevelingTalentRequirement required_talents = 9;
 	// Which spell ranks we train when, under a gold budget (docs/leveling_plan.md, Training).
 	LevelingTrainingSettings training = 10;
+	// We level in a one-hander and a shield from level 1. The gear plan takes no two-handers and
+	// no items held in the off hand, and it judges items by the spec's shield stat weights.
+	bool one_hand_and_shield = 11;
 }
 
 // Training: the gold we have by level, riding, and when we buy each rank.

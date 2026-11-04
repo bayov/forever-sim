@@ -36,7 +36,10 @@ CACHE = os.path.join(os.environ.get('WOW_DATA_CACHE') or os.path.expanduser('~/.
 TOKEN_FILE = os.path.join(CACHE, 'token.json')
 PAGES = os.path.join(CACHE, 'pages')
 # Seconds between requests, and the most we slow down to after blocks.
-DELAY, MAX_DELAY = 3.5, 20.0
+#
+# On 2026-11-04 the bot check asked for a captcha after about 30 pages at 3.5 s and at
+# 5.2 s and 7.9 s. It stopped asking at 11.8 s, so we start near there.
+DELAY, MAX_DELAY = 12.0, 20.0
 # How long we wait out each block in a row, in seconds. After the last we give up.
 BLOCK_WAITS = [300, 600, 900, 1800, 1800]
 PORT = 9334
@@ -182,7 +185,9 @@ class Wowhead:
                         raise RuntimeError(f'wowhead keeps challenging us at {url}')
                     self._renew()
                     continue
-                if r.status_code in (403, 429) or r.status_code >= 500:
+                # A 405 is the bot check asking for a captcha. We can't answer one, but it
+                # went away within 20 minutes on 2026-11-04, so we wait it out like a 403.
+                if r.status_code in (403, 405, 429) or r.status_code >= 500:
                     if blocks >= len(BLOCK_WAITS):
                         raise RuntimeError(f'wowhead still refuses us ({r.status_code}) at {url}, '
                                            f'after {self.fetched} pages fetched this run')

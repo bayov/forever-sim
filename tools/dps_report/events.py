@@ -25,7 +25,7 @@ import argparse, base64, copy, gzip, json, os, re, subprocess, sys, tempfile, ur
 from concurrent.futures import ThreadPoolExecutor
 
 import whcache
-from dashpaths import D, BIN, TREE
+from dashpaths import D, BIN, TREE, RNG
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 REPORT_DATA = os.path.join(HERE, '..', '..', 'ui', 'dps_report', 'data')
@@ -56,7 +56,7 @@ def fight(req, seed):
         for player in party['players']:
             if player.get('class') and not player.get('name'):
                 player['name'] = 'Player'
-    req['simOptions'] = {'iterations': 1, 'randomSeed': str(seed), 'debugFirstIteration': True}
+    req['simOptions'] = {'iterations': 1, 'randomSeed': str(seed), 'debugFirstIteration': True, **RNG}
     return req, sim(req)
 
 

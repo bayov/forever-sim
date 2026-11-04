@@ -248,6 +248,8 @@ Retribution was also affected by `flat_bonus_inside_pct`, settled 2026-10-16 (Ho
 
 ### `pal_2h_spec_holy`: Two-Handed Weapon Specialization on Holy damage (resolved 2026-10-23, one value; widened 2026-11-03)
 
+- **Hotfix 113542 (2026-11-03, cited 2026-11-04):** the launch realms' hotfix sets spell 20111 effect 0's school mask to Physical and Holy (was Physical) and its tooltip to "Physical and Holy damage", so the value below is no longer notes-only; nothing in the sim moves.
+
 - **Round 70753 (2026-11-03):** the November 2 development notes make Two-Handed Weapon Specialization raise all Holy damage with a two-handed weapon, so Exorcism, Consecration, Holy Shock, Holy Wrath and Hammer of Wrath join the seals, judgements and Holy Strike. Client 70753 still has spell 20111 as Physical only; the sim takes the notes' value (standards 37, a notes-only value in `orchestration/round_70753/paladin.md`). The row's one value now reads "All Holy damage".
 
 - **Resolved 2026-10-23 (one value):** wowsims/forever d35afca4da states that in game One- and Two-Handed Weapon Specialization "also raise Seal and Judgement of Righteousness, Seal and Judgement of Fury and Holy Strike: all Holy, all melee defense", and the magic-defense Holy spells (Exorcism, Consecration, Holy Wrath) stay out. Our 9b7228699b follows it for Judgement of Righteousness. That is the sim's Expected, so the client-mask Low is dropped and its knob is out of patch 0004. The history below is kept for reference.

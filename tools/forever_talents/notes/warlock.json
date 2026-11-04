@@ -14,7 +14,7 @@
           "5": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 20% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 20% for 20 sec. In addition, Conflagrate has a 100% chance not to consume Immolate, and Shadowburn has a 100% chance to instantly refund a Soul Shard."
         }
       },
-      "source": "development notes 2026-11-02 (post 9): Shadow and Flame's damage bonuses 4/8/12/16/20%, up from 2/4/6/8/10% (client 70753 still 2 to 10)"
+      "source": "development notes 2026-11-02 (post 9): Shadow and Flame's damage bonuses 4/8/12/16/20%, up from 2/4/6/8/10% (client 70753 still 2 to 10); confirmed by hotfix push 113527 (2026-11-03, curves 111671 and 111672: 4/8/12/16/20)"
     },
     {
       "tree": "Affliction",
@@ -25,7 +25,7 @@
           "1": "Tears the target apart from within, inflicting 86 Shadow damage every 1 sec and increasing the damage they take from your other Shadow damage over time effects by 10% for 6 sec."
         }
       },
-      "source": "development notes 2026-11-02 (post 9): Wrack's base damage a second grows 2.5 a level, 36 to 86 at 60, and its spell damage coefficient doubles to 0.286 a second (client 70753 still 36)"
+      "source": "development notes 2026-11-02 (post 9): Wrack's base damage a second grows 2.5 a level, 36 to 86 at 60, and its spell damage coefficient doubles to 0.286 a second (client 70753 still 36); confirmed by hotfix push 113527 (2026-11-03, SpellEffect 1349556 of 1316697: 36 base, 2.5 a level, coefficient 0.286)"
     }
   ]
 }

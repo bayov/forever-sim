@@ -171,8 +171,10 @@ type gearPlanInputs struct {
 	pins        []*proto.LevelingGearPin
 	// The spec's leveling route, or nil when the plan makes up the quest rewards and dungeon
 	// runs.
-	route     *proto.LevelingRoute
-	weightsAt func(level int32) weights
+	route *proto.LevelingRoute
+	// We wear a one-hander and a shield all the way: no two-handers, nothing held in the off hand.
+	oneHandAndShield bool
+	weightsAt        func(level int32) weights
 }
 
 type gearPlan struct {
@@ -188,11 +190,15 @@ func planLevelingGear(in *gearPlanInputs) *gearPlan {
 	var levels []gearLevel
 	runs := planDungeonRuns(in, pool)
 
-	// We start in white chest, legs and boots, with a white weapon.
+	// We start in white chest, legs and boots, with a white weapon, and a white shield if we level
+	// with one.
 	for _, slot := range []proto.ItemSlot{proto.ItemSlot_ItemSlotChest, proto.ItemSlot_ItemSlotLegs, proto.ItemSlot_ItemSlotFeet, proto.ItemSlot_ItemSlotMainHand} {
 		if item := pool.plainItem(slotType[slot], 1, 1, func() float64 { return 0 }); item != nil {
 			gear[slot] = gearPiece{item: item, source: "start", since: 1}
 		}
+	}
+	if in.oneHandAndShield {
+		gear[proto.ItemSlot_ItemSlotOffHand] = gearPiece{item: pool.plainShield(1), source: "start", since: 1}
 	}
 
 	for level := int32(1); level <= gearMaxLevel; level++ {
@@ -598,6 +604,9 @@ func (pool *itemPool) canUse(item *proto.UIItem) bool {
 	}
 	switch item.Type {
 	case proto.ItemType_ItemTypeWeapon:
+		if pool.in.oneHandAndShield && item.WeaponType == proto.WeaponType_WeaponTypeOffHand {
+			return false
+		}
 		return pool.canWield(item.WeaponType, item.HandType == proto.HandType_HandTypeTwoHand)
 	case proto.ItemType_ItemTypeRanged:
 		return slices.Contains(pool.in.rules.RangedWeaponTypes, item.RangedWeaponType)
@@ -606,6 +615,9 @@ func (pool *itemPool) canUse(item *proto.UIItem) bool {
 }
 
 func (pool *itemPool) canWield(weaponType proto.WeaponType, twoHand bool) bool {
+	if twoHand && pool.in.oneHandAndShield {
+		return false
+	}
 	if !slices.Contains(pool.in.rules.WeaponTypes, weaponType) {
 		return false
 	}
@@ -708,7 +720,16 @@ func (pool *itemPool) plainItem(itemType proto.ItemType, ilvl, level int32, rand
 		if len(kinds) == 0 {
 			return nil
 		}
-		w := plainWeapons[kinds[int(math.Floor(rand()*float64(len(kinds))))]]
+		// A shield is one more kind of white item we can come across, if we level with one.
+		count := len(kinds)
+		if pool.in.oneHandAndShield {
+			count++
+		}
+		kind := int(math.Floor(rand() * float64(count)))
+		if kind == len(kinds) {
+			return pool.plainShield(ilvl)
+		}
+		w := plainWeapons[kinds[kind]]
 		item = pool.plain.weapon(w.weaponType, w.twoHand, ilvl)
 	} else {
 		armorType := pool.maxArmorAt(level)
@@ -723,20 +744,38 @@ func (pool *itemPool) plainItem(itemType proto.ItemType, ilvl, level int32, rand
 	return item
 }
 
+func (pool *itemPool) plainShield(ilvl int32) *proto.UIItem {
+	item := pool.plain.shield(ilvl)
+	pool.usedPlain[item.Id] = item
+	return item
+}
+
 // plainItems are the white items the plan makes up, since the item database has none (the TS
 // PlainItems). Their armor and weapon DPS go with item level, at 90% of a green piece's armor
-// and 85% of a green weapon's DPS, by lines fit to the database.
+// and 85% of a green weapon's DPS, by lines fit to the database. A shield's armor and block value
+// are at 90% of a green shield's, by a line through zero fit to the greens up to item level 30.
 type plainItems struct {
-	armorFit  map[[2]int32][2]float64
-	weaponFit map[bool][2]float64
+	armorFit                map[[2]int32][2]float64
+	weaponFit               map[bool][2]float64
+	shieldArmorPerIlvl      float64
+	shieldBlockValuePerIlvl float64
 }
+
+const plainShieldFitMaxIlvl = 30
 
 func newPlainItems(items []*proto.UIItem) *plainItems {
 	weaponSamples := map[bool][][2]float64{}
 	armorSamples := map[[2]int32][][2]float64{}
+	var shieldIlvlSquares, shieldArmor, shieldBlockValue float64
 	for _, item := range items {
 		if item.Quality != proto.ItemQuality_ItemQualityUncommon {
 			continue
+		}
+		if item.WeaponType == proto.WeaponType_WeaponTypeShield && item.Ilvl <= plainShieldFitMaxIlvl {
+			ilvl := float64(item.Ilvl)
+			shieldIlvlSquares += ilvl * ilvl
+			shieldArmor += ilvl * stat(item.Stats, proto.Stat_StatArmor)
+			shieldBlockValue += ilvl * stat(item.Stats, proto.Stat_StatBlockValue)
 		}
 		twoHand := item.HandType == proto.HandType_HandTypeTwoHand
 		if item.WeaponSpeed > 0 {
@@ -752,6 +791,10 @@ func newPlainItems(items []*proto.UIItem) *plainItems {
 	}
 	for k, s := range weaponSamples {
 		p.weaponFit[k] = lineFit(s)
+	}
+	if shieldIlvlSquares > 0 {
+		p.shieldArmorPerIlvl = shieldArmor / shieldIlvlSquares
+		p.shieldBlockValuePerIlvl = shieldBlockValue / shieldIlvlSquares
 	}
 	return p
 }
@@ -787,6 +830,15 @@ func (p *plainItems) weapon(weaponType proto.WeaponType, twoHand bool, ilvl int3
 	item.WeaponSpeed = speed
 	item.WeaponDamageMin = jsRound(dps * speed * 0.8)
 	item.WeaponDamageMax = jsRound(dps * speed * 1.2)
+	return item
+}
+
+func (p *plainItems) shield(ilvl int32) *proto.UIItem {
+	item := madeUpItem(plainID(proto.ItemType_ItemTypeWeapon, int32(proto.WeaponType_WeaponTypeShield)*10, ilvl), proto.ItemType_ItemTypeWeapon, ilvl)
+	item.WeaponType = proto.WeaponType_WeaponTypeShield
+	item.HandType = proto.HandType_HandTypeOffHand
+	item.Stats[proto.Stat_StatArmor] = max(1, jsRound(0.9*p.shieldArmorPerIlvl*float64(ilvl)))
+	item.Stats[proto.Stat_StatBlockValue] = max(1, jsRound(0.9*p.shieldBlockValuePerIlvl*float64(ilvl)))
 	return item
 }
 

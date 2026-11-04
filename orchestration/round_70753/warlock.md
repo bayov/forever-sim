@@ -41,6 +41,9 @@ none of the warlock damage lines, so these are notes-only values, standards 37):
 - Wrack: 0.286 spell damage a tick (was 0.143), base 36 + 2.5 a level above 40 (86 at 60). Enables the new Affliction
   Wrack preset; no other preset takes Wrack.
 - Shadow and Flame: 4% a point (was 2%). Destruction +65.9 DPS at 180 s, Destruction fire +19.6.
+- 2026-11-04: hotfix push 113527 (logged 2026-11-03) carries both values (Wrack: SpellEffect 1349556 of 1316697, 36 base,
+  2.5 a level, 0.286; Shadow and Flame: curves 111671 and 111672, 4/8/12/16/20), so they are hotfix values now, not
+  notes-only. No DPS moves.
 - Demons: 2 health a point of the warlock's Stamina (was 7.5). No DPS effect.
 - Already in the sim and now tested: Spellstone Shadow only, Bane of Agony's live ticks, Amplify Curse +50% on Agony's base
   (findings client_update-20261027-3 and mechanics-20261027-2 resolved), Orc Command +5% on the demons (A2's racials).

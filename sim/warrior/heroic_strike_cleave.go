@@ -65,8 +65,10 @@ func (warrior *Warrior) registerCleaveSpell(realismICD *core.Cooldown) {
 		threat = 1.53 * 60
 	}
 
-	// Improved Cleave is gone from the Forever tree, and Raging Blows takes 3 Rage off Cleave.
-	rageCost := 20 - core.TernaryFloat64(warrior.Talents.RagingBlows, 3, 0)
+	// Improved Cleave is gone from the Forever tree. Raging Blows, which took 3 Rage off Cleave and
+	// Whirlwind, is gone too: hotfix push 113539 (2026-11-03) turns its spell 1310315 into Improved
+	// Whirlwind and drops the cost effect.
+	rageCost := 20.0
 
 	results := make([]*core.SpellResult, min(int32(2), warrior.Env.GetNumTargets()))
 

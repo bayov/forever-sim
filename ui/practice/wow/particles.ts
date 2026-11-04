@@ -314,6 +314,8 @@ class Emitter {
 	readonly data = new Float32Array(maxParticles * STRIDE);
 	// The emitter's texture's layer in its batch's array (0 for a batch of one texture).
 	private layer = 0;
+	// The particles' color in linear when every color key is the same (else undefined).
+	private readonly steadyColor?: Float64Array;
 	count = 0;
 	private batch?: Batch;
 	// Particles that keep to the emitter (flag 0x10) live in its space, the others in the world's.
@@ -335,6 +337,9 @@ class Emitter {
 		// Flag 0x10 keeps the particles with the emitter. Without it they stay where they were born.
 		this.local = (e.flags & 0x10) !== 0;
 		this.alphaKeys = e.alphas.map(a => [a]);
+		const first = e.colors[0] ?? [255, 255, 255];
+		if (e.colors.every(c => c.length === first.length && c.every((v, k) => v === first[k])))
+			this.steadyColor = Float64Array.of(srgbToLinear(first[0] ?? 255), srgbToLinear(first[1] ?? 255), srgbToLinear(first[2] ?? 255));
 		this.cellKeys = e.headCells.map(c => [c]);
 
 		const material = new THREE.ShaderMaterial({
@@ -520,11 +525,13 @@ class Emitter {
 		alpha[0] = 1;
 		size[0] = size[1] = 1;
 		cellOut[0] = 0;
+		// An emitter whose color keys are all one color (most are) turns it to linear once.
+		const steady = this.steadyColor;
 		let w = 0;
 		for (let i = 0; i < n; i++) {
 			const p = this.particles[i];
 			const t = p.age / p.life;
-			overLife(this.e.colors, this.e.colorTimes, t, color);
+			if (!steady) overLife(this.e.colors, this.e.colorTimes, t, color);
 			overLife(this.alphaKeys, this.e.alphaTimes, t, alpha);
 			overLife(this.e.scales, this.e.scaleTimes, t, size);
 			// A particle faded all the way out (most fade in at birth and out at death) draws nothing
@@ -538,9 +545,15 @@ class Emitter {
 			d[o + 2] = tmp.z;
 			d[o + 3] = size[0] * 2 * scale;
 			d[o + 4] = size[1] * 2 * scale;
-			d[o + 5] = srgbToLinear(color[0]);
-			d[o + 6] = srgbToLinear(color[1]);
-			d[o + 7] = srgbToLinear(color[2]);
+			if (steady) {
+				d[o + 5] = steady[0];
+				d[o + 6] = steady[1];
+				d[o + 7] = steady[2];
+			} else {
+				d[o + 5] = srgbToLinear(color[0]);
+				d[o + 6] = srgbToLinear(color[1]);
+				d[o + 7] = srgbToLinear(color[2]);
+			}
 			d[o + 8] = Math.max(0, Math.min(1, alpha[0]));
 			let cell = p.tile;
 			if (cell < 0) {

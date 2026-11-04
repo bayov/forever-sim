@@ -171,6 +171,18 @@ All 10 races (seeds 1 / 1000003; Dwarf with its race gear override). Undead is s
 
 ### Notes-only values
 
+**2026-11-04, hotfix push 113539** (`hotfix_113539_warrior.md`): the launch realms' hotfix carries every line below
+except the two threat values, so they are hotfix values now and drop off this list: Slam 15 sec (SpellCooldowns),
+Improved Slam 2.5 / 5 sec (curve 128144), Two-Handed Weapon Specialization 2/4/6% (curve 83308), Improved Tactical
+Mastery 5/10/15 (curve 83313), Bloodthrill 10/20% (curve 109366), Flurry 10/20/30% with no Death Wish prerequisite
+(curve 83289, tree edges), Reckless Swings (real spells 1329555 / 1329554: 15 sec, 8 sec, 4 charges, flat 5 Rage, 25% of
+base health, **on a 1 sec GCD**), Improved Whirlwind (spell 1310315, curves 128139 and 128138, the former Raging Blows
+row) and the tree moves (tree 1117 imported from 1.60.1.70755+hf; `notes/warrior.json` removed). The hotfix also
+removes Raging Blows (3 Rage off Cleave and Whirlwind) and sets Spearing Strike to 75% plus 75% on Giants and Dragonkin.
+Still notes-only: Defensive Stance threat 80% and Defiance 7/13/20% (not in the push).
+
+The original list, kept for the record:
+
 Per the orchestrator's provisional source rule (round README, a32a20024): modelled from the notes under Forever,
 citing the notes and "client 70753 unchanged". For the warrior, client 70753 carries none of the class's lines, talent
 reworks included (no Trait rows for tree 1117, no Reckless Swings spell), and the 2026-11-03 hotfix has hunter lines only.

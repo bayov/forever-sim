@@ -233,6 +233,9 @@ export class Model {
 		});
 		this.mesh = new THREE.SkinnedMesh(geometry, materials);
 		this.mesh.frustumCulled = false;
+		// The mesh sits at its model's root and never moves there, so Three needn't rebuild its
+		// matrix each frame (a raid has 400 of them).
+		this.mesh.matrixAutoUpdate = false;
 		// Only the solid parts cast shadows. A glow or a see-through layer (a totem's aura, an
 		// effect's flash) would darken the ground in a big square. A model with no solid parts (most
 		// spell effects) isn't drawn into the shadows at all.

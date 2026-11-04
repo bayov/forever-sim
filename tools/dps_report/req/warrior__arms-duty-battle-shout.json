@@ -84,7 +84,7 @@
               "blessingOfKings": true,
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "30303213032215201-050500050012-2",
+            "talentsString": "30303213032215201-05050005012-2",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
@@ -577,16 +577,6 @@
                   }
                 },
                 {
-                  "notes": "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1399001
-                      }
-                    }
-                  }
-                },
-                {
                   "notes": "Sapper and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
@@ -763,6 +753,40 @@
                       "spellId": {
                         "spellId": 20662,
                         "rank": 5
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "currentRage": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1329555
                       }
                     }
                   }

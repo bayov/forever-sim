@@ -38,6 +38,13 @@ We don't take the best item for each level. While leveling we gear up as we go:
   levels. A ring or a trinket replaces the weaker of the two, and a two-hander also takes the
   off hand.
 - **Start.** Level 1 starts in a white chest, legs and boots, with a white weapon.
+- **One-hand + shield.** A plan can level with a one-hander and a shield from level 1
+  (`LevelingPlanSettings.one_hand_and_shield`). We start with a white shield too, and the plan
+  takes no two-handers and nothing held in the off hand. Shields come from the weapon finds, the
+  route's quests and boss loot like any other weapon. White ones are one more plain weapon kind,
+  with armor and block value at 90% of a green shield's, by a line through zero fit to the greens
+  up to item level 30. Items are judged by the "Leveling Gear Plan Shield" stat weights, which
+  also price block and block value. The Gear part's switch shows once a spec has those weights.
 
 The stat weights come from the leveling sim, by mobs killed in a session. The enhancement shaman
 has them every 5 levels from 5 to 59 (the "Leveling Gear Plan" presets, from
