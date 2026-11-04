@@ -148,13 +148,13 @@
           }
         }
       },
-      "notes": "Flash Heal 7, 5, 3 at the most hurt: each rank, biggest first, once what is missing covers its Expected Healing."
+      "notes": "Flash Heal 7, 4 at the most hurt: each rank, biggest first, once what is missing covers its Expected Healing."
     },
     {
       "action": {
         "castSpell": {
           "spellId": {
-            "spellId": 10915
+            "spellId": 9474
           },
           "target": {
             "type": "MostHurt"
@@ -173,41 +173,7 @@
             "rhs": {
               "spellExpectedHealing": {
                 "spellId": {
-                  "spellId": 10915
-                },
-                "targetUnit": {
-                  "type": "MostHurt"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    {
-      "action": {
-        "castSpell": {
-          "spellId": {
-            "spellId": 9473
-          },
-          "target": {
-            "type": "MostHurt"
-          }
-        },
-        "condition": {
-          "cmp": {
-            "op": "OpGe",
-            "lhs": {
-              "healthMissing": {
-                "sourceUnit": {
-                  "type": "MostHurt"
-                }
-              }
-            },
-            "rhs": {
-              "spellExpectedHealing": {
-                "spellId": {
-                  "spellId": 9473
+                  "spellId": 9474
                 },
                 "targetUnit": {
                   "type": "MostHurt"

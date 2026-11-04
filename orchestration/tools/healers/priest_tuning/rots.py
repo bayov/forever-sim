@@ -68,7 +68,10 @@ def disc_tank(knobs):
     if pwsgate > 0:
         # Below the gate, a shield only when the tank is hurt enough to use it soon.
         pwscond = OR(cmp('OpGe', mana_pct(), const(pwsgate)), covers(GH[5], TANK, k(knobs, 'pwsneed', 0.5)))
-    items.append(cast(PWS[10], TANK, pwscond, 'Power Word: Shield on the tank whenever Weakened Soul is off it (Renewed Hope cuts it short).'))
+    pwsnote = 'Power Word: Shield on the tank whenever Weakened Soul is off it (Renewed Hope cuts it short)'
+    if pwsgate > 0:
+        pwsnote += f"; under {pwsgate:.0%} mana only once what is missing covers {k(knobs, 'pwsneed', 0.5):.0%} of a Greater Heal 5"
+    items.append(cast(PWS[10], TANK, pwscond, pwsnote + '.'))
     if k(knobs, 'penance', True):
         items.append(cast(PEN[4], TANK, covers(PEN[4], TANK, k(knobs, 'penshare', 1.0)), 'Penance once what is missing covers its 3 bolts.'))
     if k(knobs, 'pom', False):

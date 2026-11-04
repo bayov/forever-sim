@@ -64,17 +64,21 @@ export const APLHolyTankHealer = PresetUtils.makePresetAPLRotation('Holy tank he
 	tooltip: 'Prayer of Mending and Renew on the tank, Flash Heal while mana lasts, then bound ranks of Greater Heal.',
 	group: 'Healing sim',
 });
-// HOLY_RAID_NOTE
+// Holy raid: Prayer of Mending at the most hurt whenever it's ready, a shield on whoever drops under 60%, then
+// at the most hurt Flash Heal 7 and 4, Prayer of Healing 5, Renew once what's missing covers 60% of it, and
+// Greater Heal 5 and 2. On tools/healbench (raid role, damage carried) it carries 0.71 of Onyxia's damage (the
+// shaman raid healer 0.69), 0.88 of Broodlord's (0.87) and 0.59 over 300 s (0.56). Flash Heal first beats
+// Prayer of Healing first: Forever's Prayer of Healing heals little for its mana.
 export const APLHolyRaidHealer = PresetUtils.makePresetAPLRotation('Holy raid healer', HolyRaidHealerAPLJson, {
-	tooltip: 'Flash Heal, Prayer of Healing and Renew at the most hurt, Prayer of Mending, a shield for whoever drops low.',
+	tooltip: 'Flash Heal, Prayer of Healing, Renew and Greater Heal at the most hurt, Prayer of Mending, a shield for whoever drops low.',
 	group: 'Healing sim',
 });
-// Discipline tank: Power Word: Shield whenever Weakened Soul is off the tank, Penance once what's missing covers
-// its bolts, Renew, then the Holy tank healer's Flash Heal and Greater Heal. It carries 1.22 of Onyxia's damage
-// and 0.88 of Broodlord's, under the Holy build's on both, and 0.70 over 300 s, since the shield's mana runs
-// it dry by 150 s. Shielding only when mana is full or the tank is hurt carries 0.82 over 300 s for 1.15 and 0.83.
+// Discipline tank: Power Word: Shield whenever Weakened Soul is off the tank (under 50% mana only once what's
+// missing covers a Greater Heal 5), Penance once what's missing covers its bolts, Renew, then the Holy tank
+// healer's Flash Heal and Greater Heal. It carries 1.22 of Onyxia's damage and 0.88 of Broodlord's, under the
+// Holy build on Onyxia, and 0.74 over 300 s (Holy 0.96), since the shields run it dry by 150 s.
 export const APLDisciplineTankHealer = PresetUtils.makePresetAPLRotation('Discipline tank healer', DisciplineTankHealerAPLJson, {
-	tooltip: 'Power Word: Shield, Penance and Renew on the tank, then bound ranks of Greater Heal and Flash Heal.',
+	tooltip: 'Power Word: Shield, Penance and Renew on the tank, Flash Heal while mana lasts, then bound ranks of Greater Heal.',
 	group: 'Healing sim',
 });
 
