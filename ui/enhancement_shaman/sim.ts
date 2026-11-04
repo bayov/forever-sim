@@ -136,6 +136,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 			Presets.PresetBuildLevel60WaterShield,
 			Presets.PresetBuildLevel60ManaTide,
 			Presets.PresetBuildLeveling1to60,
+			Presets.PresetBuildLeveling1to60Shield,
 		],
 		epWeights: Presets.EPPresets,
 		talents: Presets.TalentPresets,
