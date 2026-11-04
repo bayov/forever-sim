@@ -347,46 +347,50 @@ at 3,000 within 10 of their old scores (Human Balanced 2432.0 to 2422.5, Undead 
 
 ## Numbers (step 7)
 
-`tools/tankbench -iters 1000 -encounter tools/encounters/<e>.json` for the three requests on all seven
-Anniversary encounters (round 2, 2026-11-04; the rows of `orchestration/audit/ref/tank_bench/summary.tsv`).
-Healing needed is at 5% deaths, in HPS; the three scores are the objective at w = 1/3, 1 and 3; the mean is over
-the six scoring encounters (Ragnaros is reported, not scored).
+`tankbench -iters 3000 -seed 1` for the three requests on all seven Anniversary encounters (round 3,
+2026-11-04; `orchestration/tank_handoff/paladin/round3/matrix_3k_seed1.txt`; the 1,000-iteration rows of
+`orchestration/audit/ref/tank_bench/summary.tsv` are the same requests). Healing needed is at 5% deaths, in HPS;
+the three scores are the objective at w = 1/3, 1 and 3; the mean is over the six scoring encounters (Ragnaros
+is reported, not scored). The six-boss means carry about ± 4 / 7 / 19 at w = 1/3 / 1 / 3.
 
-| Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
-|---|---|---|---|---|---|---|---|---|
-| Max threat | 1,334 | 589 | 1,482 | 320 | 238 | **2,761** | 2,356 | 1,140 |
-| Balanced | 1,302 | 576 | 1,446 | 301 | 208 | 2,718 | **2,374** | 1,340 |
-| Max survival | 1,302 | 576 | 1,446 | 301 | 208 | 2,718 | 2,374 | **1,340** |
+| Preset | TPS | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|---|
+| Max threat | 1,342 | 1,493 | 304 | 221 | **2,801** | 2,430 | 1,320 |
+| Balanced | 1,306 | 1,452 | 288 | 197 | 2,742 | **2,418** | 1,449 |
+| Max survival | 1,306 | 1,452 | 288 | 197 | 2,742 | 2,418 | **1,449** |
 
-Before round 2 (the master bench of 23b2ec2, the same requests before this round's changes): 2,786 / 2,411 /
-1,422 at each preset's own weight.
+Before round 3 (the requests at a096b3e, with the 1886 shield; 10,000 iterations, seed 1): 2,757 / 2,362 / 1,317
+at each preset's own weight; after, on the same count and seed, 2,794 / 2,415 / 1,445. Round 2's own bench
+(1,000 iterations, before the mana-threat fix): 2,785 / 2,398 / 1,363; Max survival is 1,337 ± 14 at 3,000
+(tank_fairness-20261104-9).
 
 Per encounter (Max survival is Balanced's build, so its rows equal Balanced's and are left out):
 
-| Encounter | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
-|---|---|---|---|---|---|---|---|---|---|---|
-| Magmadar | Max threat | 1321 | 584 | 1442 | 163 | 30 | 0.0% | 2848 | 2779 | 2570 |
-| Magmadar | Balanced | 1285 | 569 | 1402 | 150 | 14 | 0.0% | 2788 | 2754 | 2653 |
-| Golemagg | Max threat | 1294 | 572 | 1409 | 201 | 84 | 0.0% | 2720 | 2526 | 1943 |
-| Golemagg | Balanced | 1265 | 560 | 1377 | 186 | 62 | 0.0% | 2682 | 2537 | 2105 |
-| Onyxia | Max threat | 1388 | 614 | 1545 | 178 | 34 | 0.0% | 3032 | 2914 | 2562 |
-| Onyxia | Balanced | 1355 | 600 | 1512 | 165 | 13 | 0.0% | 3000 | 2955 | 2817 |
-| Broodlord | Max threat | 1316 | 581 | 1448 | 321 | 364 | 0.0% | 2532 | 1804 | -379 |
-| Broodlord | Balanced | 1283 | 567 | 1411 | 302 | 307 | 0.0% | 2514 | 1901 | 60 |
-| Vaelastrasz | Max threat | 1402 | 618 | 1669 | 626 | 435 | 0.0% | 3155 | 2790 | 1694 |
-| Vaelastrasz | Balanced | 1369 | 604 | 1625 | 604 | 403 | 0.0% | 3081 | 2742 | 1727 |
-| Chromaggus | Max threat | 1283 | 567 | 1379 | 429 | 484 | 0.0% | 2279 | 1321 | -1552 |
-| Chromaggus | Balanced | 1256 | 556 | 1346 | 400 | 451 | 0.0% | 2246 | 1353 | -1325 |
-| Ragnaros | Max threat | 1162 | 518 | 1259 | 953 | 1609 | 0.0% | 825 | -2562 | -12722 |
-| Ragnaros | Balanced | 1132 | 506 | 1224 | 948 | 1626 | 0.0% | 737 | -2686 | -12957 |
+| Encounter | Preset | TPS | DTPS | SafeDPS | Healing needed | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|---|---|
+| Magmadar | Max threat | 1327 | 150 | 1449 | 19 | 2877 | 2833 | 2703 |
+| Magmadar | Balanced | 1292 | 139 | 1411 | 3 | 2819 | 2813 | 2795 |
+| Golemagg | Max threat | 1306 | 186 | 1422 | 71 | 2762 | 2596 | 2100 |
+| Golemagg | Balanced | 1274 | 173 | 1387 | 52 | 2712 | 2590 | 2224 |
+| Onyxia | Max threat | 1397 | 166 | 1558 | 21 | 3078 | 3004 | 2783 |
+| Onyxia | Balanced | 1360 | 155 | 1515 | 10 | 3013 | 2978 | 2875 |
+| Broodlord | Max threat | 1322 | 304 | 1457 | 339 | 2576 | 1897 | -138 |
+| Broodlord | Balanced | 1286 | 288 | 1417 | 302 | 2532 | 1928 | 116 |
+| Vaelastrasz | Max threat | 1405 | 613 | 1678 | 417 | 3181 | 2830 | 1779 |
+| Vaelastrasz | Balanced | 1365 | 592 | 1626 | 387 | 3089 | 2764 | 1789 |
+| Chromaggus | Max threat | 1294 | 405 | 1392 | 459 | 2330 | 1421 | -1306 |
+| Chromaggus | Balanced | 1261 | 383 | 1354 | 428 | 2285 | 1437 | -1105 |
+| Ragnaros | Max threat | 1172 | 943 | 1269 | 1667 | 784 | -2725 | -13251 |
+| Ragnaros | Balanced | 1142 | 937 | 1234 | 1598 | 785 | -2579 | -12672 |
 
-Max threat buys 37 SafeDPS (32 TPS) for 30 more healing needed: Improved Seals over Anticipation's 20 Defense.
+Max threat buys about 41 SafeDPS (36 TPS) for 24 more healing needed: Improved Seals over
+Anticipation's 20 Defense, and Greater Agility on the boots.
 
 **Next to the other tanks** (Balanced preset, mean of the six, 1,000 iterations, from their docs on this branch):
 
 | Tank | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|
-| Protection paladin (round 2) | 1,446 | 301 | 208 | 2,718 | 2,374 | 1,340 |
+| Protection paladin (round 3, 3,000 iterations) | 1,452 | 288 | 197 | 2,742 | 2,418 | 1,449 |
 | Feral tank (`docs/tank_druid.md`) | 1,589 | 576 | 484 | 2,732 | 1,839 | -839 |
 | Warden shaman (`docs/tank_shaman.md`) | 1,542 | 792 | 905 | 2,232 | 530 | -4,579 |
 | Protection warrior | no committed numbers yet | | | | | |
