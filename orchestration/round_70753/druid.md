@@ -3,7 +3,7 @@
 The Druid worker's ledger and report for the November 2 development notes (client 1.60.1.70753).
 Branch `round-70753-druid`.
 
-**Status: landed (Phase A and Phase B) at master e697d9045 (2026-11-03).**
+**Status: landed (Phase A and Phase B) at master e697d9045 (2026-11-03); the post-landing rotation exploration landed the same day (see "Rotation exploration after landing").**
 
 ## Final summary (2026-11-03)
 
@@ -88,6 +88,21 @@ Every notes-only line is gated under `Env.IsForever()`, cites the notes and "cli
    - `assumptions_def.py` lost `druid_rip_31plus`.
    - `orchestration/spec_assumptions.md` marks it retired.
 
+### Rotation exploration after landing (2026-11-03)
+
+A wider search of rotation ideas and talent variants, run after Phase B landed, found two rotation changes. Both are positive at 120, 180 and 300 s on seeds 1 and 1000003 (20,000 iterations, wowsimcli):
+
+| Build | 120 / 180 / 300 before | 120 / 180 / 300 after (seed 1) | Seed 1000003 gain |
+|---|---|---|---|
+| Feral | 1142.4 / 1131.1 / 1116.8 | 1150.6 / 1139.0 / 1124.4 | +7.6 / +7.7 / +7.5 |
+| Feral, Faerie Fire duty (now with the bomb) | 1137.5 / 1127.8 / 1114.2 | 1143.3 / 1134.1 / 1120.4 | |
+| Balance | 954.1 / 951.5 / 942.1 | 955.0 / 952.2 / 944.1 | +0.9 / +0.5 / +1.7 |
+| Balance, Faerie Fire duty | 914.8 at 180 | 915.5 at 180 | |
+
+- **Feral** (`druid_feral.go` knobs `bomb=1,bombEnergy=60,rakeAt5=1,meldAt5=1`): EZ-Thro Dark Bomb on its own line, at 60 Energy or less and right after a main hand swing (its 1 s cast restarts the swing timer), instead of the autocast line throwing it on cooldown; Rake at 5 combo points too; Shadowmeld Ravage on Clearcasting at 5 combo points too. Almost all of the gain is the bomb line. With it the Faerie Fire duty build now takes the bomb: +4.2 / +3.7 / +3.2 at 120 / 180 / 300 s (seed 1000003 +4.9 / +4.3 / +3.5), where on cooldown it had lost.
+- **Balance** (`druid_balance.go` knob `wrathFallback=1`, with `clearcastStarfire=0`): Wrath after the Starfire lines, cast when Starfire's mana is not there instead of waiting for it. The Clearcasting Starfire line goes, since the Starfire line takes the free cast anyway. The Skyborne overrides take it too: +0.9 / +0.6 / +2.4 (duty +0.8 / +0.6 / +2.3).
+- **Lost or tied:** for Feral, Rip clipping, Shred at the Energy cap at 5 combo points, Ferocious Bite at 4, the builder at 5 on Clearcasting, other bomb Energy thresholds, a Poised opener (−3), shiftEnergy 70 and holding Shifting Power for Bite. For Balance, mana budgets for the Starfire filler or the dots, Genesis builds (about −26 at 300 s even with the fallback), Reflection (−16), Heart of the Wild (−5) and Wrath-build talent variants (−2 to −11). No Feral talent swap beats the current string, since about 7 points have no useful home (Furor, Feral Swiftness, Natural Shapeshifter and Nature's Reach are all filler).
+
 ## Sources checked (2026-11-03)
 
 - Client tables 1.60.1.70707 and 1.60.1.70753 from wago.tools (`wago.py fetch ... --set client_update`), diffed with
@@ -122,6 +137,7 @@ carries are modelled at the notes' value, gated under Forever, citing the notes 
 | Ferocious Bite base and AP part | 22829 rows | x1.25 (Energy part unchanged) | `nov2BleedScale`, ferocious_bite.go |
 | Starfire base damage | 25298 / 9876 rows | x1.40 | `nov2StarfireScale`, starfire.go |
 | Rend and Tear | 2% a point | 3% a point | `RendAndTearMultiplier` |
+| Bear / Dire Bear Form threat | 50% (21178 bp 50; 70755 too) | 115% (x2.15, the whole form bonus) | `bearFormThreatMultiplierNov2`, bear.go; `TestForeverBearFormThreat` |
 | Pounce | | n/a (not simulated) | |
 
 ## Ledger
@@ -130,7 +146,7 @@ carries are modelled at the notes' value, gated under Forever, citing the notes 
 |---|---|---|---|
 | Lacerate is now a Feral talent, not learned by all | client 70753: TraitDefinition 134410 -> 1328617, new ranks 1328616/1328617 | n/a for the DPS specs (bear) | tank session |
 | Ferocious Bite new rank 1 at 24, ranks relabeled | client 70753 (1328618, "Rank N" subtexts), hotfix 113283 | landed (10-30 hotfix: `ferocious_bite.go`) | none |
-| Bear / Dire Bear Form threat 50% -> 115% | notes | n/a | tank session |
+| Bear / Dire Bear Form threat 50% -> 115% | notes only (client 70753 21178 bp 50, 70755 unchanged) | wrong (x1.5) | **fixed** (mechanics-20261103-2): x2.15 under Forever, `sim/druid/bear.go`; `TestForeverBearFormThreat`. 0 DPS; no golden moved (no bear golden records threat) |
 | Poised (new passive, level 32) | client 70753: 1328829 passive, buff 1328827 aura 107 misc 14 bp -10, 1 charge, DurationIndex 21, class mask Claw/Shred/Rake/Rip/FB/Ravage/Pounce/Cower; not in the notes' text beyond the line | missing (finding client_update-20261103-1) | **fixed**: `sim/druid/poised.go`, one charge at the pull at full Energy, -10 on the next of those abilities; test `TestCatPoised`. DPS +0.0 on both feral builds: the opener is a Clearcast Ravage, which is free already and uses up the charge |
 | Shred 155% -> 200% | notes only (client 70753 bp 155, Wowhead 155%, no hotfix) | wrong (155%) | **fixed**: `ShredWeaponMultiplier` 2.0; `TestCatShredDamage` |
 | Claw 110% -> 140% | notes only (client bp 110) | wrong | **fixed**: 1.4; `TestCatClawDamage` |

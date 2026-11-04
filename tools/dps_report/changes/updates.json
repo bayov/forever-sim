@@ -2298,6 +2298,685 @@
      "commits": [
       "6d9b4d7"
      ]
+    },
+    {
+     "title": "Warrior talents reworked: Slam on a 15 sec cooldown (Improved Slam takes 2.5 / 5 sec off), Two-Handed Weapon Specialization 2 / 4 / 6%, Flurry 10 / 20 / 30% in 3 points, and the new Reckless Swings and Improved Whirlwind",
+     "kind": "game",
+     "classes": [
+      "Warrior"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Improved Tactical Mastery (5 / 10 / 15 Rage) and Bloodthrill (10 / 20%) take fewer points, Flurry no longer needs Death Wish, and Bloodthirst does. Every warrior talent string changed. Client 1.60.1.70753 doesn't carry these yet, so the sim uses the notes' values.",
+     "commits": [
+      "4f13529",
+      "b471314"
+     ]
+    },
+    {
+     "title": "Warrior presets re-picked for the new tree; Arms and Dragonkin Slam ahead of Mortal Strike, every build casts Reckless Swings on cooldown",
+     "kind": "talents",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "At 180 s: Fury 1041.5 to 1152.6, two-hand Fury 1044.4 to 1169.9, Arms 1008.7 to 1097.7, Arms vs Dragonkin 1050.3 to 1142.2.",
+     "commits": [
+      "00792ad",
+      "62e3a0f",
+      "5051206"
+     ]
+    },
+    {
+     "title": "Arms warrior presets are Orc (were Undead)",
+     "kind": "race",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin"
+     ],
+     "commits": [
+      "3950898"
+     ]
+    },
+    {
+     "title": "Two-hand Fury is the warrior's default build, in place of dual-wield Fury",
+     "kind": "method",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__fury_2h",
+      "warrior__fury"
+     ],
+     "moves": false,
+     "note": "It is now the warrior's highest build at 180 s.",
+     "commits": [
+      "e18fe0b"
+     ]
+    },
+    {
+     "title": "Hunter damage raised: Aimed Shot, Arcane Shot, Serpent Sting and Sniper Shot hit harder; Aspect of the Hawk gives 110 and Trueshot Aura 100 ranged attack power; Barrage 5 / 10 / 15%, Lightning Reflexes 3% Agility a rank",
+     "kind": "game",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__lone-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf"
+     ],
+     "source": {
+      "label": "wago.tools, launch realm hotfixes",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113534"
+     },
+     "note": "Arcane Shot's 15% of ranged attack power and Serpent Sting's 5% a tick come from the November 2 notes, which the hotfix's rows don't show. All traps now share one 30 sec cooldown (no preset lays a trap).",
+     "commits": [
+      "c975a82"
+     ]
+    },
+    {
+     "title": "Hunter rotations re-searched: Marksmanship and Lone Wolf cast Aimed Shot at any mana, Beast Mastery takes Improved Arcane Shot 4 for a point of Improved Stings",
+     "kind": "rotation",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__lone-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf"
+     ],
+     "note": "At 180 s: Lone Wolf 1089.9 to 1313.7, Marksmanship 1066.3 to 1254.3, Beast Mastery 1046.5 to 1195.6, Survival 1024.6 to 1041.2, with the hotfix above.",
+     "commits": [
+      "e4779bf",
+      "c3373e1"
+     ]
+    },
+    {
+     "title": "Feral damage raised: Shred 200%, Claw 140% and Ravage 435% weapon damage; Rip, Rake and Ferocious Bite 25% more; Rend and Tear 3% a point",
+     "kind": "game",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Ferocious Bite's extra damage per Energy is unchanged. Feral at 180 s: 942.5 to 1131.1. Client 1.60.1.70753 doesn't carry these yet, so the sim uses the notes' values.",
+     "commits": [
+      "35408c0",
+      "9a34e27",
+      "80adf7c"
+     ]
+    },
+    {
+     "title": "Starfire deals 40% more base damage",
+     "kind": "game",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__balance",
+      "druid__balance-duty-ff",
+      "druid__balance-wrath",
+      "druid__balance-wrath-duty-ff"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Balance at 180 s: 892.3 to 951.5; the Wrath build gains 8.5. Client 1.60.1.70753 doesn't carry it yet, so the sim uses the notes' value.",
+     "commits": [
+      "35408c0"
+     ]
+    },
+    {
+     "title": "New passive Poised: out of combat at full Energy, the next Energy ability costs 10 less",
+     "kind": "game",
+     "classes": [
+      "Druid",
+      "Rogue"
+     ],
+     "source": "https://wago.tools/db2/SpellEffect?build=1.60.1.70753&filter[SpellID]=exact:1328826",
+     "note": "Rogues' Composure adds 5 a rank. The Feral opener is a Clearcasting Ravage, which is free already, so Feral gains nothing.",
+     "commits": [
+      "31ff01f"
+     ]
+    },
+    {
+     "title": "Vengeance stacks up to 5 times (was 3)",
+     "kind": "game",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "About +45 DPS at 180 s on every Retribution preset. Client 1.60.1.70753 doesn't carry it yet, so the sim uses the notes' value.",
+     "commits": [
+      "7d9da41"
+     ]
+    },
+    {
+     "title": "Two-Handed Weapon Specialization raises all Holy damage, not just Physical",
+     "kind": "game",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Consecration, Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock now gain it too: +8 at 180 s on twisting and sub-Holy, +15 on Retribution Shock. Client 1.60.1.70753 doesn't carry it yet, so the sim uses the notes' value.",
+     "commits": [
+      "7d9da41"
+     ]
+    },
+    {
+     "title": "Retribution vs Undead: Consecration first, and Hammer of Wrath at the top in the execute phase",
+     "kind": "rotation",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "note": "+7.0 at 180 s.",
+     "commits": [
+      "0de4e9a",
+      "58406b5",
+      "aca14b4"
+     ]
+    },
+    {
+     "title": "Shadow Word: Death costs the priest 30% of maximum health when the target survives (was 10%), and nothing on a miss",
+     "kind": "game",
+     "classes": [
+      "Priest"
+     ],
+     "source": "https://wago.tools/db2/SpellEffect?build=1.60.1.70753&filter[SpellID]=exact:1309595",
+     "moves": false,
+     "note": "No preset's damage depends on the priest's health.",
+     "commits": [
+      "adfcbc2",
+      "5d36190",
+      "8e697aa"
+     ]
+    },
+    {
+     "title": "Smite priest takes Spiritual Guidance and Shadow Focus in place of Power Infusion and Twin Disciplines",
+     "kind": "talents",
+     "classes": [
+      "Priest"
+     ],
+     "builds": [
+      "priest__smite"
+     ],
+     "note": "Smite at 180 s: 762.0 to 781.0.",
+     "commits": [
+      "da726bb",
+      "2e3508d"
+     ]
+    },
+    {
+     "title": "Rogue talents reworked: Murder, Quietus, Cutthroat and Thousand Cuts removed; Aggression 5 / 10 / 15%, Flawless Execution 15, Ghostly Strike opens Ambush and Garrote outside Stealth, Hemorrhage raises Garrote, Coup de Grace raises Death Mark",
+     "kind": "game",
+     "classes": [
+      "Rogue"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Lethality, Relentless Strikes, Seal Fate, Dual Wield Specialization and Opportunity change ranks, Blood Splatter is new, and Efficient Strikes covers Hemorrhage. Every rogue talent string changed. Client 1.60.1.70753 doesn't carry these yet, so the sim uses the notes' values.",
+     "commits": [
+      "f78c72a"
+     ]
+    },
+    {
+     "title": "New rogue ability Shank; Venom is now a passive on Shank, poisons gain twice the attack power, Mutilate deals 90% weapon damage",
+     "kind": "game",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-daggers",
+      "rogue__combat-swords",
+      "rogue__mutilate",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords",
+      "rogue__subtlety"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Flash of Steel adds Energy to Shank and cuts its cooldown; Boot Knife gives it 2 combo points. Client 1.60.1.70753 doesn't carry these yet, so the sim uses the notes' values.",
+     "commits": [
+      "31ff01f"
+     ]
+    },
+    {
+     "title": "Rogue presets re-picked for the new tree, with Shank in every rotation; Subtlety now takes Death Mark and Boot Knife",
+     "kind": "talents",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-daggers",
+      "rogue__combat-swords",
+      "rogue__mutilate",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords",
+      "rogue__subtlety"
+     ],
+     "note": "At 180 s: Combat Swords 780.4 to 963.5, Seal Fate Swords 745.5 to 957.0, Combat Daggers 789.6 to 946.7, Seal Fate Daggers 751.9 to 920.7, Subtlety 731.8 to 881.7, Mutilate 742.7 to 866.1.",
+     "commits": [
+      "66376f5",
+      "ff134a2",
+      "405f97c",
+      "25fc79c",
+      "66d152a"
+     ]
+    },
+    {
+     "title": "Subtlety rogue preset is Night Elf (was Undead)",
+     "kind": "race",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__subtlety"
+     ],
+     "commits": [
+      "25fc79c",
+      "5b766ca"
+     ]
+    },
+    {
+     "title": "Combat Swords is the rogue's default build",
+     "kind": "method",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-swords"
+     ],
+     "moves": false,
+     "note": "It is now the rogue's highest build at 180 s.",
+     "commits": [
+      "66d152a"
+     ]
+    },
+    {
+     "title": "Rogue presets vs Humanoid dropped",
+     "kind": "method",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-daggers-humanoid",
+      "rogue__combat-swords-humanoid",
+      "rogue__mutilate-humanoid",
+      "rogue__seal-fate-daggers-humanoid",
+      "rogue__seal-fate-swords-humanoid",
+      "rogue__subtlety-humanoid"
+     ],
+     "moves": false,
+     "note": "With Murder gone they sim exactly like their base builds.",
+     "commits": [
+      "e5495c8",
+      "9039a67"
+     ]
+    },
+    {
+     "title": "Lightning Bolt and every shock deal more, Lightning Overload 10 / 20 / 30%",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Lightning Bolt ranks 4 to 10 are raised (rank 10 by 76%) and the shocks take their original base damage. Elemental at 180 s: 767.6 to 970.1 with the talents below. Client 1.60.1.70753 doesn't carry these yet, so the sim uses the notes' values.",
+     "commits": [
+      "052514c"
+     ]
+    },
+    {
+     "title": "Stormstrike deals 150% weapon damage on a 6 sec cooldown, Maelstrom Weapon procs twice as often, Mental Dexterity 150%, Flurry 30%",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Enhancement at 180 s: 883.0 to 1159.2 with the talents below. Client 1.60.1.70753 doesn't carry these yet, so the sim uses the notes' values.",
+     "commits": [
+      "052514c"
+     ]
+    },
+    {
+     "title": "Shaman talents: Lava Burst removed and Call of Thunder in its place, Elemental Mastery becomes Lightning Mastery, Totemic Projection becomes Totemic Call, Improved Ghost Wolf moves down; Chain Lightning a 2.5 sec cast",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Every Enhancement talent string changed.",
+     "commits": [
+      "206ebef"
+     ]
+    },
+    {
+     "title": "Shaman presets re-picked for the new tree",
+     "kind": "talents",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield"
+     ],
+     "note": "Enhancement drops Earth Shock ahead of Lightning Bolt, Elemental downranks Lightning Bolt when mana runs short, and the Lava Burst lines are gone.",
+     "commits": [
+      "251f112",
+      "f6a17e9"
+     ]
+    },
+    {
+     "title": "Enhancement holds Earth Shock up to 1 sec for the Stormstrike mark",
+     "kind": "rotation",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw"
+     ],
+     "note": "About even on the Enhancement preset and a small gain with Improved Ghost Wolf.",
+     "commits": [
+      "203b686"
+     ]
+    },
+    {
+     "title": "Wrack deals twice the spell damage a tick and more base damage; Shadow and Flame 4% a point (was 2%)",
+     "kind": "game",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__destruction",
+      "warlock__destruction-duty-curse",
+      "warlock__destruction-duty-recklessness",
+      "warlock__destruction_fire",
+      "warlock__destruction_fire-duty-curse",
+      "warlock__destruction_fire-duty-recklessness",
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Destruction at 180 s: 997.5 to 1063.4. Demons' health from the warlock's Stamina drops to 2 a point. Client 1.60.1.70753 doesn't carry these yet, so the sim uses the notes' values.",
+     "commits": [
+      "5a47c42"
+     ]
+    },
+    {
+     "title": "Affliction warlock reworked: deep Affliction with Wrack as the main spell, the Imp sacrificed and no demon out",
+     "kind": "method",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__affliction_shadow_bolt"
+     ],
+     "note": "Affliction at 180 s: 1034.1 as an Undead. The Shadow Bolt Affliction build with Nightfall, Improved Shadow Bolt and Ruin, the Affliction preset until now, stays as Affliction Shadow Bolt (1015.6 as an Orc).",
+     "commits": [
+      "c8ac35b",
+      "734fe0e",
+      "dc0a0fc",
+      "b17875a",
+      "28ecf7e"
+     ]
+    },
+    {
+     "title": "Destruction is the warlock's default build, in place of Demonology",
+     "kind": "method",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__destruction",
+      "warlock__demonology"
+     ],
+     "moves": false,
+     "note": "It is now the warlock's highest build at 180 s.",
+     "commits": [
+      "2ff888b"
+     ]
+    },
+    {
+     "title": "Clearcasting stays up when Arcane Missiles is cast on Missile Barrage; Ignite takes Flamestrike's burn",
+     "kind": "game",
+     "classes": [
+      "Mage"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Within noise on every preset (none casts Flamestrike).",
+     "commits": [
+      "d635913"
+     ]
+    },
+    {
+     "title": "Arcane mage: Fireball as the filler, Arcane Blast on Clearcasting and with spare mana; talents re-picked (Arcane Meditation 3, Incineration 5)",
+     "kind": "rotation",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__arcane"
+     ],
+     "note": "Arcane used to end fights with about 5000 mana unspent. At 180 s: 937.5 to 962.3.",
+     "commits": [
+      "3d27d8a",
+      "e908a14",
+      "af7945b",
+      "443a9ce"
+     ]
+    },
+    {
+     "title": "Fire mage refreshes Fire Vulnerability with Scorch under 9 sec left (was 5)",
+     "kind": "rotation",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__fire"
+     ],
+     "note": "+0.6 at 180 s.",
+     "commits": [
+      "906e136"
+     ]
+    },
+    {
+     "title": "Every race has Classic's base attributes",
+     "kind": "race",
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "A Tauren warrior has 5 more Strength than a Human, for example. The notes give no numbers for the two Skyborne races, so they keep their earlier offsets. Most presets move by under 1 DPS.",
+     "commits": [
+      "7598b80"
+     ]
+    },
+    {
+     "title": "Read Leyline is a 0.5 sec cast (was 2 sec) and can't be used under Innervate",
+     "kind": "race",
+     "races": [
+      "High Order"
+     ],
+     "parts": [
+      "leyline"
+     ],
+     "source": "https://wago.tools/db2/SpellMisc?build=1.60.1.70753&filter[SpellID]=exact:1259705",
+     "note": "The Innervate rule is from the November 2 notes.",
+     "commits": [
+      "60f857c"
+     ]
+    },
+    {
+     "title": "Blessing of Salvation is gone from the raid buffs",
+     "kind": "game",
+     "moves": false,
+     "source": {
+      "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
+      "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+     },
+     "note": "Salvation, Mass Salvation and Revoke were removed from the game. Salvation only lowered threat, so no preset's damage moves.",
+     "commits": [
+      "90e0bb0"
+     ]
+    },
+    {
+     "title": "Feral cat throws an EZ-Thro Dark Bomb at 60 Energy or less right after a main hand swing, and uses Rake and Shadowmeld Ravage at 5 combo points too",
+     "kind": "rotation",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "+8.0 at 180 s; the Faerie Fire duty build takes the bomb too (+6.2).",
+     "commits": [
+      "4f8edc2",
+      "6b70728",
+      "d560d30",
+      "4b76182"
+     ]
+    },
+    {
+     "title": "Balance druid casts Wrath when the mana for Starfire isn't there, and no longer has a separate Clearcasting Starfire line",
+     "kind": "rotation",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__balance",
+      "druid__balance-duty-ff"
+     ],
+     "note": "+0.7 at 180 s, the Skyborne races' rotations too.",
+     "commits": []
+    },
+    {
+     "title": "Twist and sub-Holy paladins use Holy Strike ahead of Judgement and the seals",
+     "kind": "rotation",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60_sub_holy"
+     ],
+     "note": "+1.2 and +1.4 at 180 s. The duty builds and the vs Undead build keep their rotation.",
+     "commits": [
+      "e799dcc"
+     ]
     }
    ],
    "internal": [
@@ -2320,6 +2999,114 @@
     {
      "commit": "789b028",
      "why": "rotopt's tank search; healer and tank work; every report request's main sim reproduces its published DPS on this commit"
+    },
+    {
+     "commit": "1fc3e67",
+     "why": "the race breakdown's racials-off switch rebased onto the new racials; it moves no number"
+    },
+    {
+     "commit": "32f4f65",
+     "why": "assumption scenario rows and caveat text; no main result moves"
+    },
+    {
+     "commit": "806325c",
+     "why": "an assumption scenario retired (the notes' Rip values replace it); no main result moves"
+    },
+    {
+     "commit": "a1c3199",
+     "why": "test goldens only (Trueshot Aura on the stat sheet)"
+    },
+    {
+     "commit": "260fe98",
+     "why": "test goldens and report hashes only"
+    },
+    {
+     "commit": "a4dfd6d",
+     "why": "report hashes only"
+    },
+    {
+     "commit": "806e49f",
+     "why": "report hashes and the warrior round file only"
+    },
+    {
+     "commit": "e697d90",
+     "why": "report hashes only"
+    },
+    {
+     "commit": "7711ade",
+     "why": "report hashes only"
+    },
+    {
+     "commit": "949d4f1",
+     "why": "report hashes only"
+    },
+    {
+     "commit": "094b91b",
+     "why": "report hashes only"
+    },
+    {
+     "commit": "7c845ea",
+     "why": "report hashes only"
+    },
+    {
+     "commit": "5eb3817",
+     "why": "report hashes only"
+    },
+    {
+     "commit": "daeb8d2",
+     "why": "report hashes only"
+    },
+    {
+     "commit": "99da30e",
+     "why": "report hashes only"
+    },
+    {
+     "commit": "dfcbba3",
+     "why": "report hashes only"
+    },
+    {
+     "commit": "52662c2",
+     "why": "the comp search's pool; no report build reads it"
+    },
+    {
+     "commit": "ca421e3",
+     "why": "a Totemic Call test only"
+    },
+    {
+     "commit": "3353575",
+     "why": "a warlock test only"
+    },
+    {
+     "commit": "ec1f988",
+     "why": "practice-room build tags; no report build uses it"
+    },
+    {
+     "commit": "9a72baa",
+     "why": "hidden gear items no preset wears; the item database is unchanged"
+    },
+    {
+     "commit": "1fe1b7e",
+     "why": "a rotation search knob, off by default; no preset's rotation changes"
+    },
+    {
+     "commit": "a152536",
+     "why": "a comment on that knob and the shaman round file; no preset changes"
+    },
+    {
+     "commit": "91edc9f",
+     "why": "a rotation search knob, off by default; no preset's rotation changes"
+    },
+    {
+     "commit": "d57aa24",
+     "why": "client 70755 tables identical to 70753: inputs restamped, spell name rows and client talent trees rewritten; spot re-sims of a rogue, a warlock and a hunter build came out identical, no build moves"
+    },
+    {
+     "commit": "0dcb0d8",
+     "why": "tank threat modifiers (Bear Form, Defensive Stance, Defiance); no report build tanks, and the re-sim of the warrior and druid builds came out unchanged"
+    },
+    {
+     "commit": "b00dccd",
+     "why": "a warrior rotation search knob, off by default; no preset's rotation changes"
     }
    ],
    "source": {

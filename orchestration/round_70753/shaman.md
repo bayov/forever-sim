@@ -119,8 +119,11 @@ The next hotfix check and the launch logs compare against this list first.
 | Flurry | 6 / 12 / 18 / 24 / 30% | 5 to 25% |
 | Totemic Call | 30 s, totems to the shaman's spot | 437009 Totemic Projection, 1 min |
 
-Gating: the shaman's spell tables and these talents were already Forever-only values (the fork keeps no Classic copy of
-them); Stormstrike's cooldown and 150% sit inside its `IsForever()` branch.
+Gating (finding client_update-20261103-2): every value above is under `Env.IsForever()`. Outside Forever, Lightning Bolt
+ranks 4–10 take Era's (Classic's) full damage, Chain Lightning Classic's damage and mana, Flurry Classic's 10–30%; the
+shocks' Era bases are Classic's already. Lightning Overload, Maelstrom Weapon, Mental Dexterity and Totemic Call don't exist
+in Classic, so outside Forever they keep the client's (or the sim's pre-notes) value. Stormstrike's cooldown and 150% sit
+inside its `IsForever()` branch.
 
 ## Shared files touched
 
@@ -172,6 +175,46 @@ them); Stormstrike's cooldown and 150% sit inside its `IsForever()` branch.
 - **Results**: the six requests' 180 s numbers match the finals above (the same requests and binary); `meta.published`
   is left for the report run.
 
+## Exploration after landing (2026-11-03)
+
+A wider search for builds and variants the round's searches (all seeded from the presets) could have missed. Nothing
+new made the cut; the presets stand.
+
+- **Talents** (talent search at 180 s, knob search at 120 / 180 / 300 s, talent search again; Spirit Weapons pinned on
+  Enhancement; 3,000 iterations):
+  - Enhancement seeded with 24 Elemental points (Lightning Overload 3, Call of Thunder, no Rage of the Farseer,
+    `55303310000013-05503011005101212`) and with Reverberation 5 for the Era shocks (`55050310-055030110051012251`):
+    both climb back to `443003102-055030110051012151-03` (1160.1), the build that ties the shipped Level 60.
+  - Enhancement seeded with 19 Restoration points (`-055030110051012251-0530510014`): stuck at
+    `0530031-055030310051012151-051`, 1133.2 (26 behind Level 60, pinning no talent, so no preset).
+  - Elemental seeded with more Enhancement points (Improved Lightning Shield 3, Shamanistic Focus,
+    `5501331003001351-05500301-051`) and with Reverberation 5 for Eye of the Storm (`5505331000001351-0550010-053`):
+    both climb back to the shipped `5501331003001351-05500101-053` (970.2).
+- **Rotation pairs the one-knob search can't reach** (5,000 iterations, the same seed as the preset, 120 / 180 / 300 s):
+  - Enhancement: Lightning Bolt at 4 Maelstrom Weapon stacks -29 (-27 with the Stormstrike hold); hard-cast bolts at
+    40 / 60 / 80% mana -8 to -54; Earth Shock held up to 2 s for the mark -4 to -5; a 20% shock mana floor -1 to -32;
+    Searing Totem -15 to -30; no Fire Nova -50 to -69, Fire Nova ahead of the shocks -1 to -2; Earth Shock only -37;
+    Flame and Frost Shock -15 to -17; Earth Shock only with 3 s of Flame Shock left -9 to -14. The one gain,
+    `earthShockHold=1` (Earth Shock waits up to 1 s for the Stormstrike mark), is +0.3 / +0.4 / +0.3: under the 1 DPS
+    bar. Shipped afterwards on the user's call (the `optimized` APL, Level 60 and Imp GW): paired at 20,000
+    iterations on seeds 1 / 1000003, Level 60 +0.1 / -0.7, +0.2 / -0.7, 0.0 / 0.0 and Imp GW -0.4 / +0.2,
+    +0.1 / +0.5, +0.6 / +1.3 at 120 / 180 / 300 s (a wash on Level 60, about +0.4 on Imp GW).
+  - The user's follow-ups on the Stormstrike mark (5,000 iterations, seed 1, paired with the shipped APL, Level 60 and Imp GW,
+    120 / 180 / 300 s). The Maelstrom bolt waiting for the mark on top of the Earth Shock hold (`maelstromHold=1`): -0.6 to
+    +0.6 on Level 60, -1.0 to -1.8 on Imp GW; `maelstromHold=2` -2.5 to -5.6. No Earth Shock while the mark is up and
+    Maelstrom Weapon has 3+ stacks (the new `earthShockSaveMark` knob) -25 to -34, at 4+ stacks -12 to -17 (-12 to -17 with
+    the bolt hold too, -10 to -15 without the Earth Shock hold), at 5 stacks no change (the instant bolt is ahead of Earth
+    Shock anyway). Forever's mark is used by the next spell, so the "last charge" and "whenever up" variants are the same.
+    Nothing shipped.
+  - Elemental: Earth Shock on the shock cooldown -10 to -23 (-10 to -37 with 40 / 60% mana floors); Earth Shock in place
+    of Flame Shock -66 to -93 (Era's Flame Shock DoT carries 112 DPS); no Lightning Shield -3 to -9; no Searing Totem
+    -20 to -28; no prepull bolt -5 to -12; no end-of-fight Earth Shock -4 to -11; the Flame Shock end gate at 0 or
+    12 s -0.1 to -3.4.
+- **Chain Lightning at a 0.714 coefficient** (question 4's other reading, a throwaway build): it still loses on one
+  target, on cooldown -13 / -77 / -141, under Lightning Mastery only -15 / -19 / -75, with 40 to 60% mana floors -5
+  to -42 at 120 / 180 / 300 s. Mana, not damage per cast, keeps it out, so the coefficient question can't change the
+  Elemental rotation.
+
 ## Questions for the orchestrator
 
 1. **Three report assumptions are now settled by the notes**: `sham_lb_31plus` (×1.12, the notes retuned Lightning
@@ -186,7 +229,8 @@ them); Stormstrike's cooldown and 150% sit inside its `IsForever()` branch.
 4. **Chain Lightning's spell power coefficient** (open, `notes.md`). The notes raise the cast to 2.5 s but name no
    coefficient, so the sim keeps the client's 0.571 (2 / 3.5). If Blizzard moved it with the cast to 0.714 (2.5 / 3.5,
    as Lightning Bolt), Chain Lightning would hit for about 1.27 × a bolt and might enter Elemental's rotation.
-   Recommendation: keep the client's value (standards 37) and check the first launch log.
+   Recommendation: keep the client's value (standards 37) and check the first launch log. Low stakes: at 0.714 it
+   still loses on one target (see the exploration above).
 5. **Other sessions' files** I had to touch because the tree moved: the Warden and Restoration presets' strings, the
    Warden golden, and the Restoration healer preset, which now has Improved Ghost Wolf 2 on row 4 with only 8
    Enhancement points (illegal in game). The healing session should pick new points.

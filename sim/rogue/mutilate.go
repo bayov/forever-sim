@@ -94,9 +94,10 @@ func (rogue *Rogue) registerMutilateSpell() {
 // trainer's at 40, 50 and 60. Blizzard's November 2 development notes raise Mutilate to "90% of
 // weapon damage plus an additional amount that was also increased (was 75% weapon damage and a
 // lower amount)": the percent goes from 75 to 90 and takes the flat bonus up with it (67 x 0.9 =
-// 60.3 at 60, was 50.25). Client 1.60.1.70753 still has 75.
+// 60.3 at 60, was 50.25). Client 1.60.1.70753 still has 75, which is kept outside Forever (Classic
+// has no Mutilate; standards 37 gates the notes' value under Forever).
 func (rogue *Rogue) mutilateDamage(target *core.Unit, flatDamage float64, weaponDamage float64) float64 {
-	baseDamage := 0.9 * (flatDamage + weaponDamage)
+	baseDamage := core.TernaryFloat64(rogue.Env.IsForever(), 0.9, 0.75) * (flatDamage + weaponDamage)
 	if rogue.isPoisoned(target) {
 		baseDamage *= 1.2
 	}

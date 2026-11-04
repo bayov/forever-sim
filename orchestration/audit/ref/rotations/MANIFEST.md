@@ -1,12 +1,14 @@
 # Rotation audit: reference files
 
-- `baseline_a0b3069_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  a0b306984 (pass 48). Since 796495d: Frostfire -10.9 (Ice Lance shares Fire Blast's category 19 cooldown, d7541708d),
-  the warlocks' Bane of Doom hold (doomAlign, 58a1c3593: Affliction +2.8, duty-curse +3.2, duty-recklessness +1.6,
-  Demonology +1.2, Destruction +1.6) and Affliction as an Orc (b33ad307d). Nothing else moved more than 0.5 DPS.
+- `baseline_f331f0c_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  f331f0cff (pass 51). Against the previous f5c99ad baseline only rotation and talent changes moved rows: Feral
+  +8.2 / FF duty +6.3 (bomb line), Balance +1.1 / duty +0.3 (Wrath fallback), Ret twist +0.5 / sub-Holy +1.3
+  (Holy Strike first), Priest Smite +19.1 (Spiritual Guidance talents), Affliction +18..+19 (Wrack build, 734fe0e93).
+  The sim changes in between (13c34f20f non-Forever gates, 0dcb0d87a tank threat, Salvation dropped) moved no
+  Forever DPS (Enhancement -0.13, RNG).
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at a0b306984 (`/tmp/audit-cache/cli/a0b306984df7/wowsimcli`).
+  - The CLI was the audit loop's shared build at f331f0cff (`/tmp/audit-cache/cli/f331f0cff0d8/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

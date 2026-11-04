@@ -123,7 +123,7 @@ Values neither client 70753 nor a hotfix row carries; the sim takes the notes' v
 | Arcane Shot's attack power share | 0.15 ("raised from 0.1") | 0.10 (report assumption `hunter_shot_ap_shares`) | `arcaneShotRAPCoefficient`, `sim/hunter/arcane_shot.go` |
 | Serpent Sting's attack power share a tick | 5% ("increased to 5% from 3%") | 3% (same assumption) | `serpentStingRAPPerTick`, `sim/hunter/serpent_sting.go` |
 
-Both shares were server side before too (the hotfix rows' BonusCoefficientFromAP is 0). The Hunter shot files hold Forever's values with no Classic branch (Aimed Shot's 166 was already ungated), so these are Forever-only like the rest of the file.
+Both shares were server side before too (the hotfix rows' BonusCoefficientFromAP is 0). Both shares and the hotfix shot tables (Aimed Shot, Arcane Shot, Serpent Sting, Sniper Shot) are gated under `Env.IsForever()` (finding results-20261103-2): outside Forever Arcane Shot and Serpent Sting take Classic's ranks and no attack power share, Aimed Shot Classic's bonus, and Sniper Shot, which Classic doesn't have, the client's 160 / 225 / 295. The shot files' older beta values (casts, coefficients) are still ungated.
 
 ## Phase A DPS effect
 

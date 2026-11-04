@@ -24,9 +24,19 @@ const serpentStingRAPPerTick = 0.05
 // SerpentStingDamage is each rank's damage over the 15 sec, before attack power.
 var SerpentStingDamage = [10]float64{0, 15, 35, 70, 130, 200, 290, 375, 500, 675}
 
+// Outside Forever the Classic values below apply (standards 37: notes-only and hotfix-only values are
+// gated under Forever).
+// Classic's Serpent Sting has no attack power share.
+var classicSerpentStingDamage = [10]float64{0, 20, 40, 80, 140, 210, 290, 385, 490, 555}
+
 func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 	spellId := [10]int32{0, 1978, 13549, 13550, 13551, 13552, 13553, 13554, 13555, 25295}[rank]
 	baseDamage := SerpentStingDamage[rank] / 5
+	rapPerTick := serpentStingRAPPerTick
+	if !hunter.Env.IsForever() {
+		baseDamage = classicSerpentStingDamage[rank] / 5
+		rapPerTick = 0
+	}
 	manaCost := [10]float64{0, 15, 30, 50, 80, 115, 150, 190, 230, 250}[rank]
 	level := [10]int{0, 4, 10, 18, 26, 34, 42, 50, 58, 60}[rank]
 
@@ -74,7 +84,7 @@ func (hunter *Hunter) getSerpentStingConfig(rank int) core.SpellConfig {
 				dot.Snapshot(target, baseDamage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				dot.SnapshotBaseDamage = (baseDamage + serpentStingRAPPerTick*dot.Spell.RangedAttackPower(target, false)) * dot.Spell.BaseDamageMultiplierAdditive
+				dot.SnapshotBaseDamage = (baseDamage + rapPerTick*dot.Spell.RangedAttackPower(target, false)) * dot.Spell.BaseDamageMultiplierAdditive
 				if sim.IsForever() {
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTickPhysicalCrit)
 				} else {

@@ -72,7 +72,10 @@ func init() {
 	// The Level 60 builds' demons and imbues (ui/warlock/presets.ts).
 	specs["demonology"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_Imp, proto.WarlockOptions_Spellstone)
 	specs["destruction"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Spellstone)
-	specs["affliction"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Spellstone)
+	// Affliction (Wrack) sacrifices the Imp (15% Shadow damage) and keeps no demon out (round 70753).
+	specs["affliction"] = warlockSpec(proto.WarlockOptions_NoSummon, proto.WarlockOptions_Imp, proto.WarlockOptions_Spellstone)
+	// Shadow Bolt Affliction keeps the Succubus out.
+	specs["affliction_shadow_bolt"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Spellstone)
 	// The fire build sacrifices the Succubus (15% Fire damage) and keeps no demon out.
 	specs["destruction_fire"] = warlockSpec(proto.WarlockOptions_NoSummon, proto.WarlockOptions_Succubus, proto.WarlockOptions_Firestone)
 

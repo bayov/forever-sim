@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_ff",
   "published": {
-    "dps": 914.8,
-    "source": "verify.py on this request after round 70753 (the November 2 notes, race base stats; 858.6 before), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 915.5,
+    "source": "verify.py on this request after round 70753 (the November 2 notes, race base stats; 858.6 before) and the 2026-11-03 rotation exploration (914.8 before it), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 914.8,
+    "dps": 915.5,
     "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03, after the rotation finds of the 2026-11-03 exploration; not yet the DPS report's main run"
   },
   "summary": "The Balance build, keeping Faerie Fire on the boss for the raid. The armor cut doesn't help its spells, so it only costs GCDs.",
   "keyTalents": [
@@ -44,10 +44,10 @@
     "Faerie Fire first after the pull, and again when it has under 1.5s left",
     "Insect Swarm when it is down, with more than 8s left",
     "Moonfire when its DoT is down, with more than 8s left",
-    "Starfire when Clearcasting is up. Wrath doesn't use it up.",
     "Moonfire when a Starfire would not land before the end",
     "Wrath when Eclipse is at 2 charges or fewer and no Wrath is in flight",
-    "Otherwise Starfire"
+    "Otherwise Starfire",
+    "Wrath when Starfire's mana is not there, rather than waiting for it"
   ],
   "consumes": [
     "Flask of Supreme Power",

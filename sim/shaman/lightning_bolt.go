@@ -69,9 +69,17 @@ func LightningBoltBaseDamageAt(rank int, level int32) (float64, float64) {
 	return low, high
 }
 
+// Ranks 4 to 10 take the notes' 0.78 of Era's damage under Forever only; outside Forever they deal
+// Era's (Classic's) full damage (standards 37: notes-only values are gated under Forever).
+const lightningBoltNotesShareOfEra = 0.78
+
 func (shaman *Shaman) newLightningBoltSpellConfig(rank int) core.SpellConfig {
 	spellId := LightningBoltSpellId[rank]
 	baseDamageLow, baseDamageHigh := LightningBoltBaseDamageAt(rank, shaman.Level)
+	if !shaman.Env.IsForever() && rank >= 4 {
+		baseDamageLow /= lightningBoltNotesShareOfEra
+		baseDamageHigh /= lightningBoltNotesShareOfEra
+	}
 	level := LightningBoltLevel[rank]
 	spellCoeff := shaman.downrankCoefficient(LightningBoltSpellCoef[rank], level)
 	castTime := LightningBoltCastTime[rank]

@@ -136,7 +136,7 @@ All 10 races (seeds 1 / 1000003; Dwarf with its race gear override). Undead is s
 | Note line | Tier and evidence | Sim status before | Fix |
 |---|---|---|---|
 | Victory Rush tooltip fixed | notes | n/a (not in a DPS rotation; needs a killing blow) | none |
-| Defensive Stance threat 30% → 80% | notes | n/a | tank/healer sessions (tanking) |
+| Defensive Stance threat 30% → 80% | notes; client 70753 still 30 (7376 e2 aura 10), 70755 too | wrong (x1.3) | **fixed** (mechanics-20261103-2): x1.8 under Forever, `sim/warrior/stances.go`; `TestForeverDefensiveStanceThreat`. TestP1TankWarrior TPS x1.445 (with Defiance), DPS unchanged |
 | Slam cooldown 15 sec (was 18) | notes; client 70753 still 18000 | wrong (18 sec) | `sim/warrior/slam.go`: 15 sec under Forever. Test `TestForeverWarriorSpellValues` |
 | Arms: Improved Tactical Mastery 3 points, 5/10/15 Rage (was 5 points of 3) | notes; client 70753 still 3 a point (12295) | wrong (3 a point) | `sim/warrior/stances.go`: 5 a point, points capped at 3 (old 5 point strings keep 15). Test `TestForeverWarriorImprovedTacticalMastery`. Tree max rank: Phase B (A1's remap) |
 | Arms: Two-Handed Weapon Specialization 2/4/6% (was 1/2/3%) | notes; client 70753 still 1% curve | wrong (1% a point) | `sim/warrior/talents.go`: 2% a point under Forever. Test `TestForeverWarriorTwoHandedSpecialization` |
@@ -152,7 +152,7 @@ All 10 races (seeds 1 / 1000003; Dwarf with its race gear override). Undead is s
 | Fury: Flurry 3 points, 10/20/30% for 3 swings (was 5 points of 5%) | notes; client 70753 still the 5 point tree | wrong | `talents.go` `makeFlurryAura`: 10% a point, capped at 3, under Forever. Tests `TestForeverWarriorFlurrySpeed`, `TestForeverWarriorDeepWoundsAndFlurry`. Tree: Phase B |
 | Fury: new talent Improved Whirlwind (row 6, 2 points, -1/2 sec Whirlwind cd, +15/30% to the closest enemy) | notes (24431 in the client is the old row) | missing | Phase B: needs the talent field. Plan: cooldown 10 − points sec; +15% a point on the main and off hand hits on the first target only |
 | Fury: Bloodthirst needs Death Wish | notes | tree only | Phase B (tree) |
-| Protection: Defiance 7/13/20% | notes | n/a | tank/healer sessions (tanking) |
+| Protection: Defiance 7/13/20% | notes; client 70753 still 5/10/15 (12792 bp 15), 70755 too | wrong (5% a point) | **fixed** (mechanics-20261103-2): 7/13/20% under Forever, multiplying the stance (two A_MOD_THREAT auras): x1.8 x 1.2 = x2.16 at 3/3 with a shield (was x1.495); `TestForeverDefensiveStanceThreat` |
 | Talents lose the low-rank proc penalty | notes | n/a (no warrior talent has one) | A2 (shared part) |
 | Races: Dwarf Artisan's Precision, Human Ruthless 1% / Spirit 10%, Orc Savage removed and Blood Fury 2 min, Skyborne Wind-Blessed 2%, Tauren Endurance, Troll Berserking 15 sec, Undead Touch of the Grave 15 sec | notes (10-26 racial pass), client 70753 | landed (ledger 70753 section, `sim/core/racials_forever.go`) | none; Phase B race sweep |
 | Bug fix: race base stats (Tauren warrior +5 Str over Human) | notes | A2 | A2; Phase B race sweep |
@@ -174,6 +174,8 @@ reworks included (no Trait rows for tree 1117, no Reckless Swings spell), and th
 - Reckless Swings (15 sec, next 4 swings +5 Rage, 8 sec; no client spell, placeholder id 1399001) and Improved
   Whirlwind (1 / 2 sec, +15 / 30% on the closest enemy). Tests `TestForeverWarriorRecklessSwings`,
   `TestForeverWarriorImprovedWhirlwind`.
+- Defensive Stance threat 80% (client 30%) and Defiance 7/13/20% (client 5/10/15%), multiplied: x2.16 at Defiance 3/3
+  with a shield (`sim/warrior/stances.go`, test `TestForeverDefensiveStanceThreat`; mechanics-20261103-2).
 - The tree moves: Enrage row 3, Gore Drinker row 5 under Blood Craze, Bloodthirst under Death Wish
   (`tools/forever_talents/notes/warrior.json`).
 

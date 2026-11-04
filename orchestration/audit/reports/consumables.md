@@ -1,16 +1,12 @@
-# Consumables pass 66 (master a0b306984)
+# Consumables pass 69, master f331f0cff (since f23ea25d2)
 
-Trigger: 7 watched files moved since 796495d6f (standards.md, assumptions_def.py, spec_hunter.go, presets.ts of hunter, Enhancement shaman, Restoration shaman and warlock) and client 1.60.1.70707 -> 1.60.1.70753.
+Findings: consumables-20261104-1 (low): presets.ts still tick Salvation after 90e0bb01a dropped it from mksettings/requests.
 
-## Verified
-- Hunter presets.ts and spec_hunter.go: the ranged hunters (BM, MM, Lone Wolf) lose the Goblin Sapper and keep the EZ-Thro Dark Bomb; Survival keeps the Sapper (presets.ts:333, mksettings line 113 conditional). This is the fix for consumables-20261101-1; both files agree. The finding was already resolved.
-- Warlock presets.ts: Affliction race Human -> Orc and comments only. No Consumes change.
-- Enhancement shaman presets.ts: leveling weights moved to leveling_weights.json. No consumes, buff or imbue change.
-- Restoration shaman presets.ts: new healing spec (out of scope). It carries a Brilliant Mana Oil mainhand imbue, Flask of Supreme Power and other consumes; not a Level 60 DPS preset, so not audited.
-- standards.md: one ruling note (Balance Subtlety 3). assumptions_def.py: Ice Lance text only.
-- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty. Counts as before (minor-armor count 3, known: Dust Cloud; ref expects 2).
-- Class branches: scan lists them as "ahead" only through stale copies (gotcha 1); no own commits audited.
-- Client 70707 -> 70753 (builddiff.py): forever_enchants.go 53 enchants checked, 0 changed. Consumable spell changes: Minor Speed 13889 8 -> 4, Improved Drains 403511 gains a second effect, new Speed 1328947 and Enchant Boots - Speed (item 289559, spell 1328948, enchant 8737). None used by a preset, mksettings or the sim (git grep).
-
-## Open
-- None.
+Verified:
+- forever_enchants.json: only the meta build moved (70755, same build as last pass); no enchant changed.
+- assumptions_def.py: DPS-report text/ruling updates only (Trueshot +100, MW 20 ppm, Ice Lance, 2H spec), no consume values.
+- mksettings main.go: Salvation removed (finding above); rest unchanged.
+- presets.ts diffs (balance, enh, feral, ret, shadow): comments, talents (shadow Smite), Feral FF duty now takes the EZ-Thro Dark Bomb (same as DefaultConsumes; Dark Bomb is usable in form per standing note). No Consumes/raid changes otherwise.
+- scan.sh: banned/Revelation/trinkets/crit-elixir sections empty. Counts: minor-armor effects 3 (ref says 2): the third is Dust Cloud (debuffs.go:1167, 30 sec, sharing the slot); no preset uses it, FF and CoR still share the slot. Scan expectation should be 3 ; totems as expected.
+- wago latest: 1.60.1.70755, nothing newer. Class branches are stale (hundreds to thousands of commits behind), not audited.
+No other open items.

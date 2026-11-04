@@ -43,15 +43,15 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 |---|---|---|---|---|---|---|---|---|---|---|
 | Warrior | 83 | 52 | 0 | 2 | 0 | 2 | 0 | 4 | 23 | 0 |
 | Paladin | 66 | 37 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
-| Hunter | 85 | 44 | 2 | 8 | 1 | 1 | 3 | 3 | 22 | 1 info |
-| Rogue | 69 | 38 | 0 | 1 | 2 | 2 | 1 | 3 | 22 | 0 |
+| Hunter | 93 | 52 | 2 | 8 | 1 | 1 | 3 | 3 | 22 | 1 info |
+| Rogue | 69 | 39 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
 | Shaman | 103 | 58 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
 | Mage | 66 | 17 | 9 | 9 | 0 | 1 | 5 | 7 | 18 | 0 |
 | Warlock | 90 | 47 | 4 | 0 | 0 | 3 | 3 | 1 | 31 | 1 covered by another row |
-| Druid | 70 | 31 | 0 | 3 | 2 | 2 | 2 | 0 | 30 | 0 |
+| Druid | 70 | 32 | 0 | 2 | 2 | 2 | 2 | 0 | 30 | 0 |
 | Shared (races, mechanics, items) | 70 | 26 | 1 | 2 | 3 | 2 | 3 | 9 | 24 | 0 |
-| **Total** | **757** | **370** | **47** | **33** | **8** | **19** | **21** | **33** | **222** | **4** |
+| **Total** | **765** | **380** | **47** | **31** | **8** | **19** | **21** | **33** | **222** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -231,8 +231,29 @@ Checked against the sim and matching (no rows, all already landed from the hotfi
 
 | ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
 |---|---|---|---|---|---|---|
-| ROG-U-01 | FC 2026-11-02 (70753), client | Poised (rogue, level 18, passive 1328825): while at max Energy and out of combat, the next ability costs 10 Energy less (aura 1328826, 1 charge) | **yes** (every rogue request opens at full Energy) | new spells 1328825 / 1328826: aura 107 misc 14 (flat cost) bp −10, ProcCharges 1, DurationIndex 21 | missing | no `Poised` in `sim/`; finding client_update-20261103-1 |
-| DRU-U-15 | FC 2026-11-02 (70753), client | Poised (druid, level 32, passive 1328829, aura 1328827): the same 10 Energy off the first ability | **yes** (feral cat requests) | new spells 1328827 / 1328829, same rows (class set 7) | missing | finding client_update-20261103-1 |
+| ROG-U-01 | FC 2026-11-02 (70753), client | Poised (rogue, level 18, passive 1328825): while at max Energy and out of combat, the next ability costs 10 Energy less (aura 1328826, 1 charge) | **yes** (every rogue request opens at full Energy) | new spells 1328825 / 1328826: aura 107 misc 14 (flat cost) bp −10, ProcCharges 1, DurationIndex 21 | landed 2026-11-03 (31ff01f80) | `sim/rogue/poised.go` (Forever, level 18+; Composure adds 5 a rank); finding client_update-20261103-1 resolved |
+| DRU-U-15 | FC 2026-11-02 (70753), client | Poised (druid, level 32, passive 1328829, aura 1328827): the same 10 Energy off the first ability | **yes** (feral cat requests) | new spells 1328827 / 1328829, same rows (class set 7) | landed 2026-11-03 (35408c0af) | `sim/druid/poised.go` (Forever, level 32+); finding client_update-20261103-1 resolved |
+
+### Development notes post 9 (2026-11-02) and the 2026-11-03 hotfix (round 70753)
+
+Blizzard's development notes post 9 ("Updated November 2", Kaivax, posted 2026-11-03T03:20Z; text in `orchestration/audit/ref/client_update/sources/devnotes_post9_2026-11-02.txt`) cover 70753 and launch. The client carries their druid, paladin, mage, priest and hunter talent changes but not the rogue, warrior and shaman tree reworks, nor most damage lines. Round 70753 ported them, one ledger per class in `orchestration/round_70753/<class>.md` (announced line, client check, sim status, DPS), which are this build's per-class ledger and are not copied here. Notes lines that neither the client nor a hotfix carries are modelled at the notes' value under standards 37 (user ruling 2026-11-03) and listed under "Notes-only values" in each class file; the 2026-11-03 client_update pass (8) checked every listed value against the notes' text (all match; gating: finding client_update-20261103-2). Re-checked 2026-11-03 17:52Z: no post after /9 (post /1 re-dated only), foreverchanges.pro has nothing after the 11-03 hotfix, wago.tools' newest 1.60 build is still 70753.
+
+The **2026-11-03 hotfix** to 70753 (foreverchanges.pro, launch-realm cache, not in Blizzard's notes as numbers; `sources/foreverchanges_2026-11-03_hotfix_and_70753.txt`) is server data and supersedes HUN-HF-01 and HUN-HF-02:
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| HUN-HF-03 | FC 2026-11-03 hotfix | Aspect of the Hawk ranks 1-6: 20/35/50/70/90/110 ranged AP (were 15/22/30/38/47/55 since the 10-28 hotfix); rank 7 120 | **yes** (BM, LW, MM) | hotfix cache only; client 70753 keeps the 10-28 values | landed | `sim/hunter/aspects.go:49` |
+| HUN-HF-04 | FC 2026-11-03 hotfix | Trueshot Aura ranks 1-5: 20/35/50/75/100 ranged AP (were 15/22/30/40/50) | **yes** (every party with a MM hunter) | hotfix cache only | landed | `sim/core/buffs.go:1831-1834` (`ForeverTrueshotAuraRank5RAP` 100); report assumption `hunter_tsa_hm_rank` still says 50 (round README, phase 3 to-do) |
+| HUN-HF-05 | FC 2026-11-03 hotfix | Barrage 5/10/15% (was 3/7/10%) | **yes** (MM) | client 19461 still 3/7/10 | landed | `sim/hunter/talents.go:342` |
+| HUN-HF-06 | FC 2026-11-03 hotfix | Sniper Shot +320/450/590 (was 160/225/295) | **yes** (MM) | hotfix cache only | landed | `sim/hunter/sniper_shot.go:17` |
+| HUN-HF-07 | FC 2026-11-03 hotfix | Aimed Shot +40/70/115/185/260/350 (was 20 to 166) | **yes** (MM, BM) | hotfix cache only | landed | `sim/hunter/aimed_shot.go:17` |
+| HUN-HF-08 | FC 2026-11-03 hotfix, notes P9 | Arcane Shot 25/35/50/85/120/175/220/280 (was 20 to 217); AP share 0.15 from the notes (notes-only) | **yes** (every hunter) | hotfix cache; AP share not in any row | landed | `sim/hunter/arcane_shot.go:19-21` |
+| HUN-HF-09 | FC 2026-11-03 hotfix, notes P9 | Serpent Sting 15 to 675 over 15 sec (was 10 to 555); AP 5% a tick from the notes (notes-only) | **yes** (every hunter) | hotfix cache; AP share not in any row | landed | `sim/hunter/serpent_sting.go:22-25` |
+| HUN-HF-10 | FC 2026-11-03 hotfix | Lightning Reflexes 3% Agility a rank (was 2%) | **yes** (Survival, any build with points) | client 19168 still 2% | landed | `sim/hunter/talents.go:180` |
+
+## Build 1.60.1.70755 (first seen 2026-11-03)
+
+70755: client-identical to 70753. All 39 tables in wago.py's `client_update` set are identical (`table_summary.py 70753 70755`), with no added rows. foreverchanges.pro: "A technical build: its game data is the same as the 2026-11-02 build's". No class, racial, talent, enchant or item change in the client. Dev notes: no post after /9. A new **server hotfix, push 113483** (wago.tools/hotfixes, region 91, build-70707 rows, logged 2026-11-03 18:29Z) changes the rogue tree: Improved Distract's node entry is removed and two new nodes, 113633 and 113635, are added. Its poison, Mutilate and Shank SpellEffect rows are listed in TASKS.md:241. It is not read in full yet and has no rows here; see finding client_update-20261103-3. No rows added.
 
 ## Per-class ledgers
 

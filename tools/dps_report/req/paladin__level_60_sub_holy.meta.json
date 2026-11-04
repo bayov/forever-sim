@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_sub_holy",
   "published": {
-    "dps": 1089.8,
-    "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
+    "dps": 1091.2,
+    "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats, and Holy Strike ahead of Judgement and the seal lines (round 70753 exploration) (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
   },
   "verify": {
-    "dps": 1089.8,
+    "dps": 1091.2,
     "stderr": 0.43,
     "iters": 20000,
     "ok": true,
@@ -41,10 +41,10 @@
     "Pre-pull: Seal of Command at -1.5s",
     "Hammer of Wrath under 20% boss health, before Consecration",
     "Consecration on cooldown at 20%+ mana",
+    "Holy Strike on cooldown, ahead of Judgement and the seal lines",
     "Judgement on cooldown on whichever damage seal is up",
     "Seal of Command whenever no damage seal is up",
     "Unsealed Wrath: with Seal of Command up, once it has stored 2 copies, Seal of Righteousness, so the next swing spends them all (one Seal of Command roll each) and stores a Righteousness copy. Back to Seal of Command once that copy is stored",
-    "Holy Strike on cooldown",
     "Exorcism on cooldown (only against Undead and Demons)",
     "Racials on free GCDs"
   ],

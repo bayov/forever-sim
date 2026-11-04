@@ -4,6 +4,17 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+## Resolved
+
+### mechanics-20261103-2: The notes' tank threat values (Bear Form 115%, Defensive Stance 80%, Defiance 7/13/20%) are not in the sim
+- severity: low (threat only, 0 DPS; moves the tank sim's threat numbers, not the DPS report)
+- affects: druid (Feral tank), warrior (Protection / tank bench)
+- found: 2026-11-03, master f5c99ad01
+- evidence: dev notes post 9 (2026-11-02, tier 1): "Bear Form and Dire Bear Form: Threat bonus increased from 50% to 115%. This is to compensate for Blessing of Salvation being removed.", "Defensive Stance: Threat bonus increased from 30% to 80%.", "Defiance: Threat bonus increased to 7/13/20% from 5/10/15%." Client 70753 has none of them (21178 Bear Form (Passive2) e0 aura 10 bp 50), and no hotfix push up to 113557 carries them, so standards 37 says model the notes' values under Forever. The sim keeps the old ones: sim/druid/bear.go:52 `bearFormThreatMultiplier = 1.5`; sim/warrior/stances.go:110-112 `0.05*Defiance`, `1.3 * (1 + defiance)`. The round files list them as deferred to "tank sessions" (round_70753/druid.md:133, warrior.md:139), but neither the round README's phase 3 to-do nor TASKS.md has them, and they are not in the "Notes-only values" lists. Sure: high.
+- proposed fix: under `Env.IsForever()`: bear.go `bearFormThreatMultiplier = 2.15`; stances.go Defiance `[]float64{0, 0.07, 0.13, 0.20}[Talents.Defiance]` and Defensive Stance `1.8 * (1 + defiance)`; cite post 9 and "client 70753 unchanged" and add the three to round_70753/druid.md and warrior.md "Notes-only values". Re-run the tank goldens.
+- needs: worker fix
+- resolved: 2026-11-03, 0dcb0d8: Bear Form x2.15 (sim/druid/bear.go `bearFormThreatMultiplierNov2`), Defensive Stance x1.8 times Defiance 7/13/20% (sim/warrior/stances.go; the two A_MOD_THREAT auras multiply, x2.16 at 3/3 with a shield), under Forever; tests TestForeverBearFormThreat, TestForeverDefensiveStanceThreat; TestP1TankWarrior TPS x1.445, DPS and report hashes unchanged
+
 ### mechanics-20261031-1: Efficiency should discount Lacerate (its class bit is in the mask)
 - severity: low (mana only; no report build both takes Efficiency and casts Lacerate: Marksmanship / Lone Wolf have Efficiency 5 but no Lacerate in their APLs, Survival casts Lacerate 1299332 but has Efficiency 0). Not simmed: no published number moves.
 - affects: hunter (any build with Efficiency and Lacerate)
@@ -11,8 +22,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: tier 1, clients 1.60.1.70425 / 70450 / 70630 / 70707: Efficiency 19416 e0 (aura 108 misc 14, -3% a rank) EffectSpellClassMask_1 = -2146955264 = 0x80081000. Lacerate's SpellClassOptions (24118 / 24119 / 24120 / 1299332, set 9) mask word 1 = 4096 = 0x1000, inside it; `AUDIT_DB=<70707> python3 tools/audit/mechanics/mask.py 19416` lists Lacerate. The sim leaves it out: sim/hunter/talents.go:59 "Lacerate is not in it", and sim/hunter/talents_test.go:48 TestEfficiencyClassMask wants Lacerate at 100 because it reads the mask as "0x80080000" (the 0x1000 bit dropped). Resourcefulness (440529, word 1 0x80000) rightly skips Lacerate. Sure: high (four builds, two tables agree).
 - proposed fix: add `SpellCode_HunterLacerate` to Efficiency's case list in sim/hunter/talents.go:63-67, fix the comment, and change the test's Lacerate row to 85 with the mask 0x80081000 (patch: $AUDIT_WORK/mechanics/efficiency_lacerate.patch, key hunk: `SpellCode_HunterSniperShot, SpellCode_HunterStriderKick, SpellCode_HunterLacerate:`).
 - needs: worker fix
-
-## Resolved
+- resolved: 2026-11-03, c975a8297 (Lacerate added to Efficiency's case list, sim/hunter/talents.go:68)
 
 ### mechanics-20261027-2: Amplify Curse no longer boosts Bane of Agony on client 70630
 - severity: low (no preset takes Amplify Curse; rotopt's `amplifyCurse` knob defaults to 0)

@@ -1,45 +1,48 @@
-builds: 73 rows, 109 KB
-races: 296 rows, 62 KB
-lengths: 365 rows, 30 KB
-abilities: 833 rows, 234 KB
-auras: 1415 rows, 206 KB
-hist: 2870 rows, 153 KB
-stats: 743 rows, 62 KB
-gear: 718 rows, 136 KB
-setup: 2143 rows, 536 KB
-notes: 1673 rows, 200 KB
-race_variants: 934 rows, 283 KB
-race_breakdown: 1156 rows, 174 KB
+builds: 68 rows, 102 KB
+races: 247 rows, 51 KB
+lengths: 340 rows, 28 KB
+abilities: 696 rows, 194 KB
+auras: 1215 rows, 175 KB
+hist: 2787 rows, 148 KB
+stats: 671 rows, 55 KB
+gear: 632 rows, 119 KB
+setup: 1839 rows, 458 KB
+notes: 1527 rows, 184 KB
+WARNING notes: 2 texts name the project's process, e.g. "Round 70753: the November 2 notes' rogue rework isn't in client 70753, so Shank, the new talents and the re-ranked ones take the notes' values. Shank'"
+race_variants: 954 rows, 289 KB
+race_breakdown: 1180 rows, 177 KB
 race_summary: 328 rows, 100 KB
 race_notes: 47 rows, 11 KB
-weights: 295 rows, 59 KB
-mana: 4947 rows, 383 KB
-mana_summary: 51 rows, 15 KB
-assumptions: 57 rows, 63 KB
-WARNING assumptions: 1 texts name the project's process, e.g. "Forever client 70707 (SpellCooldowns 101119 and SpellCategories 187717, spell 1312002: category 19, Fire Blast's). foreverchanges.pro, build 1.60.1.70"
-assumption_dps: 343 rows, 57 KB
-rotation: 753 rows, 238 KB
-race_rotation: 418 rows, 153 KB
-WARNING rotation: 1 rotation_text.json notes entries no line uses, e.g. Bane of Doom when it lands before the fight ends.
-WARNING rotation: 1 conditions read like code, with no wording in rotation_text.json, e.g. No Bane of Agony on the boss and over 60s of the fight left and (Warlock Synthetic Talisman (Phase 1) is ready within 59s or over 60s until the trinket is ready)
-WARNING rotation: 3 rotation_text.json entries no line uses, e.g. [[tal:Mage:1:11|Heating Up]] talent taken and Heating Up at 3+ stacks and ([[tal:Mage:2:15|Fingers of Frost]] talent not taken or Fingers of Frost is not up or Pyroblast takes 1.49s or more to cast)
+weights: 266 rows, 53 KB
+mana: 5044 rows, 391 KB
+mana_summary: 52 rows, 16 KB
+assumptions: 54 rows, 60 KB
+WARNING assumptions: 1 texts name the project's process, e.g. 'Forever client 70753 (every Ice Lance rank: 8 sec cooldown, category 19). Client 70707 (spell 1312002). foreverchanges.pro. User rulings 2026-10-30 an'
+assumption_dps: 339 rows, 56 KB
+rotation: 656 rows, 210 KB
+race_rotation: 293 rows, 108 KB
+WARNING race_rotation: 5 changed lines with no why in race_text.json, e.g. priest__smite Gnome priority:s10934
+WARNING rotation: 8 rotation_text.json notes entries no line uses, e.g. Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab.
+WARNING rotation: 2 conditions read like code, with no wording in rotation_text.json, e.g. No Bane of Agony on the boss and over 60s of the fight left and (Warlock Synthetic Talisman (Phase 1) is ready within 59s or over 60s until the trinket is ready)
+WARNING rotation: 9 rotation_text.json entries no line uses, e.g. (any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 3s left and over 9s of the fight left)
+WARNING rotation: 4 rotation_text.json why entries no line uses, e.g. {'builds': ['mage__arcane'], 'key': 's10181', 'why': 'Why Frostbolt in an Arcane build? Without a Missile Barrage proc it beats Arcane Missiles.'}
 rotation conditions shown in compact form: []
-tooltips: 1123 rows, 446 KB
-tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit', "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]
-talenttrees: 465 rows, 179 KB
-wowhead coverage: {'item:forever': 71, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 243, 'spell:wiki': 9, 'spell:client': 16, 'item:db': 254, 'enchant:forever': 343, 'enchant:db': 58, 'setup:sim': 5, 'setup:forever': 35, 'setup:wiki': 1, 'setup:none': 2} {'forever': 304, 'other': 21} {'forever': 1357, 'none': 12}
-icons: 79 rows, 158 KB
-icons_more: 611 rows, 929 KB
-names: 299 rows, 29 KB
-names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark', 'Curse of Elements', 'Dark Inspiration', 'Decimation', 'Decimation - Execute', 'Demonic Knowledge', 'Dragonfire Potion', 'Echo of Command', 'Echo of Righteousness', 'Eclipse', 'Frigid Power', 'Heating Up', 'Improved Stormstrike', 'Item 260817', 'Lacerating Strikes', 'Maelstrom Weapon', 'Major Frenzy Potion', 'Major Spellblasting Potion', 'Mana gain', 'Missile Barrage', 'Movement', 'Potion', 'Quick Strikes', 'Rage gain', 'Raid damage hit', 'Resourcefulness', 'Shadow Word Death', 'Shadow and Flame (Shadow)', 'Tenets of the Silver Hand', 'Unsealed Wrath']
+tooltips: 1080 rows, 437 KB
+tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit', 's1399248 Spell 1399248', "setup Sunder Ramp ({'pullSunders': 1, 'tank': True})", "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]
+talenttrees: 468 rows, 179 KB
+wowhead coverage: {'item:forever': 71, 'spell:none': 2, 'spell:sim': 8, 'spell:forever': 249, 'spell:wiki': 12, 'spell:client': 15, 'item:db': 254, 'enchant:forever': 287, 'enchant:db': 62, 'setup:sim': 5, 'setup:forever': 35, 'setup:none': 3} {'forever': 306, 'other': 22} {'forever': 1340, 'none': 32}
+icons: 81 rows, 163 KB
+icons_more: 616 rows, 936 KB
+names: 309 rows, 30 KB
+names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark', 'Curse of Elements', 'Dark Inspiration', 'Death Mark', 'Death Mark', 'Death Mark', 'Decimation', 'Decimation - Execute', 'Demonic Knowledge', 'Dragonfire Potion', 'Echo of Command', 'Echo of Righteousness', 'Eclipse', 'Frigid Power', 'Heating Up', 'Improved Stormstrike', 'Item 260817', 'Lacerating Strikes', 'Maelstrom Weapon', 'Major Frenzy Potion', 'Major Spellblasting Potion', 'Mana gain', 'Missile Barrage', 'Movement', 'Potion', 'Quick Strikes', 'Rage gain', 'Raid damage hit', 'Reckless Swings', 'Resourcefulness', 'Shadow Word Death', 'Shadow and Flame (Shadow)', 'Spell 1399248', 'Tenets of the Silver Hand', 'Unsealed Wrath']
 treeart: 27 rows, 1063 KB
 missing icons: []
-timeline_warrior: 12 rows, 37 KB
-timeline_rogue: 36 rows, 83 KB
-timeline_hunter: 12 rows, 40 KB
-timeline_paladin: 12 rows, 48 KB
-timeline_shaman: 18 rows, 49 KB
-timeline_druid: 9 rows, 24 KB
+timeline_warrior: 12 rows, 43 KB
+timeline_rogue: 18 rows, 49 KB
+timeline_hunter: 12 rows, 39 KB
+timeline_paladin: 12 rows, 50 KB
+timeline_shaman: 18 rows, 54 KB
+timeline_druid: 9 rows, 25 KB
 timeline_mage: 12 rows, 39 KB
-timeline_warlock: 12 rows, 21 KB
+timeline_warlock: 15 rows, 28 KB
 timeline_priest: 9 rows, 23 KB

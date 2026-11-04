@@ -2,12 +2,14 @@
 //
 // Open the room with ?raid=40 (or another count). Raiders of the four Horde races stand where a
 // raid would: two tanks in front of the boss, the melee around its back, and casters, hunters and
-// healers in rows in front of it. They all wear your gear. The melee swing, the casters cast with
+// healers in rows in front of it. Each wears its class's raid gear: a dungeon, tier 1 or tier 2 set,
+// with weapons for its role and a cloak, so two mages rarely look the same. The melee swing, the casters cast with
 // their hand glows and bolts, the healers heal the tanks, the boss hits the main tank, and the
 // ranged move now and then. Nothing here talks to the sim: it's only for drawing.
 
 import * as THREE from 'three';
 import { toThree } from './scene';
+import type { Crowd } from './wow/crowd';
 import type { Effects } from './wow/effects';
 import { Anim } from './wow/model';
 import { Appearance, UnitView } from './wow/unit';
@@ -56,6 +58,146 @@ const looks: Record<Role, [number, number][]> = {
 };
 const classSpells: Record<number, number[]> = { 8: spells.mage, 9: spells.warlock, 7: spells.shaman, 5: spells.priest, 11: spells.priest };
 
+// The armor sets by class (the dungeon set, tier 1 and tier 2), as item ids for head, shoulders,
+// chest, waist, legs, feet, wrists and hands.
+const armorSlots = [1, 3, 5, 6, 7, 8, 9, 10];
+const sets: Record<number, number[][]> = {
+	// Warrior: Valor, Might, Wrath.
+	1: [
+		[16731, 16733, 16730, 16736, 16732, 16734, 16735, 16737],
+		[16866, 16868, 16865, 16864, 16867, 16862, 16861, 16863],
+		[16963, 16961, 16966, 16960, 16962, 16965, 16959, 16964],
+	],
+	// Hunter: Beaststalker, Giantstalker, Dragonstalker.
+	3: [
+		[16677, 16679, 16674, 16680, 16678, 16675, 16681, 16676],
+		[16846, 16848, 16845, 16851, 16847, 16849, 16850, 16852],
+		[16939, 16937, 16942, 16936, 16938, 16941, 16935, 16940],
+	],
+	// Rogue: Shadowcraft, Nightslayer, Bloodfang.
+	4: [
+		[16707, 16708, 16721, 16713, 16709, 16711, 16710, 16712],
+		[16821, 16823, 16820, 16827, 16822, 16824, 16825, 16826],
+		[16908, 16832, 16905, 16910, 16909, 16906, 16911, 16907],
+	],
+	// Priest: Devout, Prophecy, Transcendence.
+	5: [
+		[16693, 16695, 16690, 16696, 16694, 16691, 16697, 16692],
+		[16813, 16816, 16815, 16817, 16814, 16811, 16819, 16812],
+		[16921, 16924, 16923, 16925, 16922, 16919, 16926, 16920],
+	],
+	// Shaman: The Elements, Earthfury, Ten Storms.
+	7: [
+		[16667, 16669, 16666, 16673, 16668, 16670, 16671, 16672],
+		[16842, 16844, 16841, 16838, 16843, 16837, 16840, 16839],
+		[16947, 16945, 16950, 16944, 16946, 16949, 16943, 16948],
+	],
+	// Mage: Magister, Arcanist, Netherwind.
+	8: [
+		[16686, 16689, 16688, 16685, 16687, 16682, 16683, 16684],
+		[16795, 16797, 16798, 16802, 16796, 16800, 16799, 16801],
+		[16914, 16917, 16916, 16818, 16915, 16912, 16918, 16913],
+	],
+	// Warlock: Dreadmist, Felheart, Nemesis.
+	9: [
+		[16698, 16701, 16700, 16702, 16699, 16704, 16703, 16705],
+		[16808, 16807, 16809, 16806, 16810, 16803, 16804, 16805],
+		[16929, 16932, 16931, 16933, 16930, 16927, 16934, 16928],
+	],
+	// Druid: Wildheart, Cenarion, Stormrage.
+	11: [
+		[16720, 16718, 16706, 16716, 16719, 16715, 16714, 16717],
+		[16834, 16836, 16833, 16828, 16835, 16829, 16830, 16831],
+		[16900, 16902, 16897, 16903, 16901, 16898, 16904, 16899],
+	],
+};
+
+// The weapons by class and role, as [main hand, off hand, ranged] (0 for none). Three choices
+// each, from Molten Core and Blackwing Lair.
+const weapons: Record<string, number[][]> = {
+	// Brutality Blade, Chromatically Tempered Sword or Maladath, with Drillborer Disk or the
+	// Elementium Reinforced Bulwark.
+	'1:tank': [
+		[18832, 17066, 0],
+		[19352, 19349, 0],
+		[19351, 17066, 0],
+	],
+	// Ashkandi, Bonereaver's Edge, or Brutality Blade and Deathbringer.
+	'1:melee': [
+		[19364, 0, 0],
+		[17076, 0, 0],
+		[18832, 17068, 0],
+	],
+	// Core Hound Tooth and Perdition's Blade, Dragonfang Blade and Gutgore Ripper, or two swords.
+	'4:melee': [
+		[18805, 18816, 0],
+		[19346, 17071, 0],
+		[19352, 19351, 0],
+	],
+	// A polearm or a two-handed sword, with Striker's Mark, Rhok'delar or a gun.
+	'3:hunter': [
+		[19874, 0, 17069],
+		[12583, 0, 18713],
+		[18520, 0, 19368],
+	],
+	// Spinal Reaper, Herald of Woe or Draconic Avenger.
+	'7:melee': [
+		[17104, 0, 0],
+		[19357, 0, 0],
+		[19354, 0, 0],
+	],
+	// Lok'amir, Aurastone Hammer or Spineshatter, with a shield.
+	'7:caster': [
+		[19360, 17106, 0],
+		[17105, 19349, 0],
+		[19335, 17106, 0],
+	],
+	// Staff of Dominance, Azuresong Mageblade and the Fire Runed Grimoire, or the Staff of the
+	// Shadow Flame.
+	'8:caster': [
+		[18842, 0, 0],
+		[17103, 19142, 0],
+		[19356, 0, 0],
+	],
+	// Shadow Wing Focus Staff, Sorcerous Dagger and the Tome of the Ice Lord, or the Staff of the
+	// Shadow Flame.
+	'9:caster': [
+		[19355, 0, 0],
+		[18878, 19310, 0],
+		[19356, 0, 0],
+	],
+	// Benediction, Lok'amir and the Master Dragonslayer's Orb, or Aurastone Hammer and the Fire
+	// Runed Grimoire.
+	'5:healer': [
+		[18608, 0, 0],
+		[19360, 19366, 0],
+		[17105, 19142, 0],
+	],
+	// Staff of Dominance, Hammer of Ji'zhi, or Lok'amir and the Master Dragonslayer's Orb.
+	'11:healer': [
+		[18842, 0, 0],
+		[21703, 0, 0],
+		[19360, 19366, 0],
+	],
+};
+weapons['7:healer'] = weapons['7:caster'];
+
+// Cloaks from Molten Core, Onyxia, Blackwing Lair and Stratholme. (The Shroud of Pure Thought's
+// texture isn't in the client.)
+const cloaks = [17107, 19436, 17102, 19398, 17078, 18541, 19378, 13340];
+
+// gear gives a raider's items for the appearance request: its class's set, its role's weapons and
+// a cloak, picked by `pick` so raiders of one class wear different things.
+function gear(cls: number, role: Role, pick: number): string {
+	const armor = sets[cls]?.[pick % 3] ?? [];
+	const kind = role === 'tank' ? 'tank' : role;
+	const arms = weapons[`${cls}:${kind}`]?.[pick % 3] ?? [0, 0, 0];
+	const out = armor.map((id, i) => `${armorSlots[i]}:${id}`);
+	out.push(`15:${cloaks[(pick * 3 + cls) % cloaks.length]}`);
+	arms.forEach((id, i) => id && out.push(`${16 + i}:${id}`));
+	return out.join(',');
+}
+
 const boss: [number, number] = [0, 20];
 // The boss faces the raid, down the room toward where you start.
 const bossFacing = (3 * Math.PI) / 2;
@@ -75,10 +217,12 @@ export class RaidTest {
 		readonly scene: THREE.Scene,
 		readonly camera: THREE.Camera,
 		readonly effects: Effects,
+		// Where the raiders draw together. Without it they draw one by one, like you.
+		readonly crowd?: Crowd,
 	) {}
 
 	// load builds the raid: count people in all, so count - 1 others besides you.
-	async load(count: number, items: string, getJSON: <T>(url: string) => Promise<T>) {
+	async load(count: number, getJSON: <T>(url: string) => Promise<T>) {
 		const roles: Role[] = [];
 		const others = Math.max(0, count - 1);
 		const plan: [Role, number][] = [
@@ -122,18 +266,29 @@ export class RaidTest {
 		});
 
 		// Eight at a time, so the practice server isn't asked for 39 character textures at once.
-		const queue = roles.map((role, i) => ({ role, i }));
+		// k is the raider's place among those of its role.
+		const seen = new Map<Role, number>();
+		const queue = roles.map((role, i) => {
+			const k = seen.get(role) ?? 0;
+			seen.set(role, k + 1);
+			return { role, i, k };
+		});
 		const work = async () => {
 			for (let job = queue.shift(); job; job = queue.shift()) {
 				const options = looks[job.role];
-				const [race, cls] = options[job.i % options.length];
+				const [race, cls] = options[job.k % options.length];
 				const sex = job.i % 3 === 0 ? 1 : 0;
+				// The raiders of one look (race and class) go through the sets in turn. The tanks wear
+				// tier 1 and tier 2.
+				const pick = job.role === 'tank' ? 1 + job.k : Math.floor(job.k / options.length) + job.k;
+				const items = gear(cls, job.role, pick);
 				const a = await getJSON<Appearance>(`/api/appearance/character?race=${race}&sex=${sex}&class=${cls}&items=${items}`).catch(() => undefined);
 				if (!a) continue;
 				const view = new UnitView(new THREE.Group(), [], this.scene);
 				await view.load(a).catch(() => undefined);
 				if (!view.model) continue;
 				this.scene.add(view.group);
+				this.crowd?.add(view.models);
 				const home = homes[job.i];
 				const role = job.role === 'caster' && !classSpells[cls] ? 'hunter' : job.role;
 				this.raiders.push({ view, role, spells: classSpells[cls] ?? [], home, pos: [...home], next: Math.random() * 3, moveAt: 5 + Math.random() * 15, behind: 0 });

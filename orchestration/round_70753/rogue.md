@@ -53,6 +53,23 @@ until neither moved. Seeds were hand-built valid archetypes per build. Notable c
 - Rotations: a Shank line in every template (Shank at 75 energy or less, which held in every search), a Death Mark
   line, and the Ghostly Strike Ambush and Garrote lines.
 
+**Exploratory search (user request, 2026-11-03).** Six more archetypes went through the same talent climb from a
+hand-built valid seed and then the knob search over 120 / 180 / 300 s combined. None beats the build it would
+replace or join, so nothing changes:
+
+| Candidate | Seed idea | Best (combined; talent climb at 180 s) | Against |
+|---|---|---|---|
+| Venom Combat Swords | 21 Assassination for Venom, Combat without Adrenaline Rush | 945.6 | Combat Swords 965.0 |
+| Boot Knife Swords | 30 Subtlety for Boot Knife, 21 Combat | 770.8 | Combat Swords 965.0 |
+| Death Mark Swords | 31 Subtlety, Hemorrhage builder on the sword set | 812.8 (the climb dropped Death Mark) | Combat Swords 965.0 |
+| Ghostly Subtlety | Subtlety with Ghostly Strike and its Ambush window | 881.9 (the climb dropped Ghostly Strike again: the same build as Subtlety but a filler point) | Subtlety 880.5 |
+| Mutilate, Subtlety side | Opportunity, Premeditation and Serrated Blades instead of Combat's Precision and Puncturing Wounds | 841.5 | Mutilate 867.4 |
+| Seal Fate Daggers, Opportunity | Opportunity in Subtlety instead of Combat depth | 852.8 | Seal Fate Daggers 919.3 |
+
+What the searches keep showing: Shank with Flash of Steel and Adrenaline Rush carries Combat; Venom pays only once
+the Seal Fate tree is deep anyway; Boot Knife and Death Mark pay only together and on daggers with Hemorrhage;
+Ghostly Strike's opening is worth less than the points around it.
+
 **Races** (180 s, 20k, seed 1; each race's own rotation):
 
 | Build | Ranking |
@@ -134,7 +151,12 @@ the rogue its new tree; it has to be built from the notes (rows and rank counts 
 
 ## Notes-only values (standards 37)
 
-All gated under Forever, citing the notes and "client 1.60.1.70753 unchanged". Replace each when a client build or
+All gated under Forever (finding client_update-20261103-2), citing the notes and "client 1.60.1.70753 unchanged".
+Outside Forever: Classic's Lethality 6%, Relentless Strikes 20% a combo point, Seal Fate 20% a point, Dual Wield
+Specialization 10%, Aggression 2/4/6%, Improved Eviscerate 5/10/15%, Improved Sinister Strike on Sinister Strike alone; no
+Shank, no Ghostly Strike opener, no Hemorrhage on Garrote. Mutilate and Flawless Execution aren't in Classic, so they keep
+the client's 75% and 10. Venom, Blood Splatter, Composure, Flash of Steel, Boot Knife and Death Mark are Forever-only
+talents with no Classic value. Replace each when a client build or
 hotfix brings it: Shank (whole spell, ID 1399248 is the sim's), Venom as a Shank passive (30% / 20% / 6 s), Deadly
 Poison 0.009 and Instant Poison 0.01 AP, Mutilate 90%, Flawless Execution 15, Aggression 5/10/15% (no Backstab),
 Ghostly Strike's 7 s opening, Hemorrhage on Garrote. Phase B adds Lethality, Blood Splatter, Relentless Strikes, Seal

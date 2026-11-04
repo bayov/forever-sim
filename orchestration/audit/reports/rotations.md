@@ -1,38 +1,62 @@
-# Rotations pass 48 (quiet: no findings)
+# Rotations pass 51 (no findings)
 
-- Master: a0b306984 (from 796495d6f), audited 2026-11-03. Client 1.60.1.70707, unchanged.
-- New baseline: `ref/rotations/baseline_a0b3069_3000it_seed424242.tsv` (replaces `baseline_796495d_...`).
+- Master: f331f0cff (from f23ea25d2), audited 2026-11-04. Client 1.60.1.70753 / 70755 (70755 identical tables).
+- Not quiet by the diff rule: 6 Level 60 APLs changed in logic, and non-test sim `.go` changed.
+- New regression baseline: `ref/rotations/baseline_f331f0c_3000it_seed424242.tsv` (old f5c99ad one removed).
 
 ## What changed
 
-| Change | Effect on Level 60 rotations |
+| Commit | Change |
 |---|---|
-| Mage: Ice Lance shares Fire Blast's category 19 cooldown; Fingers of Frost buff id 400670 -> 400669 in sim and the Frost/Frostfire APLs (d7541708d) | Frostfire -10.9 in baseline (published re-sim 1076.0 -> 1064.3). Frost unchanged (id rename only). Frostfire re-checked below: its order still wins |
-| Warlock Bane of Doom hold, doomAlign 1 s (58a1c3593), all 12 warlock APLs | Spot-check, Affliction, old Doom line vs new, paired 20k, s0 1e6: +0.83 / +2.07 / +1.83 ±0.2 at 120/180/300 s. Matches the commit's +0.9 / +2.2 / +2.0 |
-| Warrior Blood Craze (407f959a5) | A self-heal; no DPS effect on the DPS presets (no warrior row moved) |
-| Restoration shaman healer APLs (raid_healer, tank_healer), sim/shaman/restoration | Healing sim only; not a Level 60 DPS preset |
-| sim/core apl.go / apl_values_spell.go (healer values), raid_damage.go (Share, tank-only raids), tank_score.go, practice | No DPS preset moved more than 0.5 DPS except the mage/warlock rows above |
+| 4f8edc219 | Feral (`level60`, `level60_ff`): EZ-Thro Dark Bomb (item 260817) on its own line at <=60 Energy right after a main-hand swing; Rake and Shadowmeld Ravage also at 5 combo points. Balance (`level60`, `level60_ff`): Clearcasting Starfire line dropped, Wrath (9912) fallback after the Starfire lines. |
+| e799dccfa | Ret twist and sub-Holy: Holy Strike (10333) moved ahead of Judgement and the seals. |
+| da726bbe1 | Priest Smite preset: Spiritual Guidance talents (user-approved, round 70753 priest.md). |
+| 13c34f20f | Sim: notes-only values gated under Forever (rogue, hunter, paladin Vengeance, shaman, warlock demon health). Outside Forever only. |
+| 0dcb0d87a, 90e0bb01a | Sim/settings: tank threat (Bear Form, Defensive Stance, Defiance); Salvation removed from raid buffs. Threat only. |
 
-## Checks
+## Regression check (`baseline.py`, 3,000 it, seed 424242, shared CLI f331f0cff0d8)
 
-- `apl_logic_diff.py 796495d6f a0b306984`: 16 files. Mage Frost/Frostfire FoF id swap (correct: 400669 is the buff the
-  sim now registers, `sim/mage/talents.go:803`), the 12 warlock Doom lines, the two new resto healer APLs. No dead lines
-  or wrong ids spotted.
-- Baseline diff vs `baseline_796495d`: only Frostfire (-10.9) and the five warlock rows (+1.2 to +3.2) moved more than 0.5.
-- Shared run vs published report: 0 of 73 moved more than 0.5 DPS (the re-sims already published).
-- Open findings: none.
+Against `baseline_f5c99ad` every row within 0.05 DPS except:
 
-### Frostfire after the shared cooldown (paired 20k, B-A at 120 / 180 / 300 s; baseline A about 1065 at 180 s)
+| Preset | old | new | moved | cause |
+|---|---|---|---|---|
+| druid__feral-cat | 1130.52 | 1138.73 | +8.21 | bomb line |
+| druid__feral-cat-duty-ff | 1127.80 | 1134.09 | +6.29 | bomb line |
+| druid__balance | 952.49 | 953.59 | +1.10 | Wrath fallback |
+| druid__balance-duty-ff | 915.79 | 916.13 | +0.34 | Wrath fallback |
+| paladin__level_60 | 1090.09 | 1090.63 | +0.54 | Holy Strike first |
+| paladin__level_60_sub_holy | 1090.77 | 1092.10 | +1.33 | Holy Strike first |
+| priest__smite | 762.14 | 781.25 | +19.11 | talents |
+| warlock__affliction (+2 duty) | 1016.08 | 1035.19 | +18..+19 | Wrack build, 734fe0e93 (pass 50) |
+| shaman__enhancement-level60 | 1158.50 | 1158.37 | -0.13 | RNG (Salvation line dropped) |
 
-| Variant | s0 1e6 | s0 2e8 | Verdict |
-|---|---|---|---|
-| Drop the Fingers of Frost Ice Lance line | -27.9 / -69.7 / -64.2 | -28.2 / -70.2 / -63.9 | loses |
-| Fire Blast lines above the FoF Ice Lance | -25.1 / -11.3 / -12.3 | -26.1 / -12.6 / -12.5 | loses |
-| Drop Fire Blast (both lines) | -4.9 / +1.0 / -5.6 | -5.4 / +0.4 / -6.0 | fight-length trade-off, loses |
+So the sim changes move no Forever DPS, as 13c34f20f claims; `regress.py` was not needed.
 
-The current Frostfire order holds under the shared cooldown.
+## Verification of the shipped rotation changes (paired, `ab.py`, 20k as 8 x 2,500, old req rotation vs new)
 
-## Optional (under the bar)
+| Preset | seed set | 120 | 180 | 300 |
+|---|---|---|---|---|
+| Feral (base 1131.1) | 1e6 | +8.01 ±0.38 | +7.67 ±0.41 | +7.35 ±0.30 |
+| Feral | 2e8 | +7.70 ±0.43 | +8.09 ±0.39 | +7.53 ±0.22 |
+| Balance (base 952.2) | 1e6 | +0.73 ±0.18 | +0.39 ±0.18 | +1.69 ±0.16 |
+| Balance | 2e8 | +1.02 ±0.16 | +0.61 ±0.17 | +2.07 ±0.11 |
 
-Carried over, not re-measured: Mutilate window 0.5 s (probably moot), Fury-BS HS 55, hunter end-of-fight gates, Shadow
-Mind Blast time-left gate, Destruction Fire DoT gates, Water Shield Magma gate.
+Both hold on both seed sets and match the druid worker's numbers (round_70753/druid.md). Balance is under
+the 1 DPS bar at 180 s but positive everywhere, so shipping it is fine. Paladin's change was measured by its
+worker on two seed sets (+1.2/+1.3 twist, +1.4/+2.2 sub-Holy at 180 s); the baseline agrees in sign; not re-run.
+
+## Notes for others
+
+- `runs/vs_published.txt`: the six shaman presets are 26-33% above their `published` meta values (e.g.
+  Enhancement 883.5 published vs 1159.4). Master matches pass 49's baseline, so this is stale published
+  data from before the shaman rework, not a rotation or sim regression (results auditor's area).
+- Priest Smite (Spiritual Guidance) drops to 713.5 at 300 s against 781 at 180 s (mana). The worker's knob
+  search found only fight-length trade-offs; not re-screened here.
+
+## Optional
+
+- None new.
+
+## Open items carried
+
+- Balance Night Elf Elune's Light vs Tauren, Elemental Mastery hold, warlock duty-curse variants (see pass doc).

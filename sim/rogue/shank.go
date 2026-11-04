@@ -16,7 +16,8 @@ import (
 var ShankActionID = core.ActionID{SpellID: 1399248}
 
 func (rogue *Rogue) registerShank() {
-	if rogue.Level < 24 || !rogue.HasOHWeapon() {
+	// Forever only: Classic has no Shank (standards 37).
+	if !rogue.Env.IsForever() || rogue.Level < 24 || !rogue.HasOHWeapon() {
 		return
 	}
 
