@@ -257,6 +257,22 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-WardenSynthetic(Phase1)"
+ value: {
+  dps: 1091.40767
+  tps: 952.31509
+  dtps: 1.84017
+ }
+}
+dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
+ value: {
+  dps: 1150.20417
+  tps: 1002.48349
+  dtps: 1.84017
+ }
+}
+dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
   dps: 964.6985

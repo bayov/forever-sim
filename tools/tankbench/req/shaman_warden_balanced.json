@@ -7,65 +7,65 @@
       "race": "RaceTauren",
       "class": "ClassShaman",
       "level": 60,
-      "talentsString": "35050013-0502303313551102",
+      "talentsString": "05050002-050032113551012201-050002",
       "equipment": {
        "items": [
         {
-         "id": 999001,
+         "id": 999201,
          "enchant": 1507
         },
         {
-         "id": 999002,
+         "id": 999202,
          "enchant": 1249019
         },
         {
-         "id": 999003
+         "id": 999203
         },
         {
-         "id": 999004,
+         "id": 999204,
          "enchant": 1889
         },
         {
-         "id": 999005,
+         "id": 999205,
          "enchant": 1891
         },
         {
-         "id": 999006,
+         "id": 999206,
          "enchant": 1886
         },
         {
-         "id": 999007,
+         "id": 999207,
          "enchant": 1248640
         },
         {
-         "id": 999008
+         "id": 999208
         },
         {
-         "id": 999009,
+         "id": 999209,
          "enchant": 1507
         },
         {
-         "id": 999010,
+         "id": 999210,
          "enchant": 929
         },
         {
-         "id": 999011
+         "id": 999211
         },
         {
-         "id": 999012
+         "id": 999212
         },
         {
-         "id": 999015
+         "id": 999215
         },
         {
          "id": 990015
         },
         {
-         "id": 999013,
+         "id": 999213,
          "enchant": 1900
         },
         {
-         "id": 999014,
+         "id": 999214,
          "enchant": 929
         },
         {
@@ -180,16 +180,6 @@
           }
          },
          "notes": "The earth totem whenever it's down."
-        },
-        {
-         "action": {
-          "castSpell": {
-           "spellId": {
-            "itemId": 999016
-           }
-          }
-         },
-         "notes": "The defensive on-use trinket on cooldown, on a timer. Without it ignore the warning on this line."
         },
         {
          "action": {
