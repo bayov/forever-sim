@@ -1,0 +1,10 @@
+A=cur_max_threat.json B=tal_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         4487     4496     9.4    7.4     -2.4      -14
+chromaggus        4172     4179     7.0    4.6      3.9        1
+golemagg          4648     4651     2.7    3.1     -2.0       -6
+magmadar          4711     4719     8.0    3.2      0.0       -7
+onyxia            4740     4748     7.5    6.0      5.0        1
+ragnaros          2818     2860    42.9   21.0     -0.6      -42
+vaelastrasz       5115     5125     9.6    6.0      5.3        2
+scoring_mean                        7.4    2.2

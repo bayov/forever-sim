@@ -1,0 +1,10 @@
+A=cur_balanced.json B=su25_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3561     3562     0.9    3.8      1.7        1
+chromaggus        2902     2907     5.5    3.0      1.4       -1
+golemagg          4028     4034     6.4    2.2      2.5       -0
+magmadar          4186     4192     6.5    2.0      2.2       -1
+onyxia            3952     3956     3.6    3.0      1.8        0
+ragnaros          -857     -873   -15.9   12.7      0.5        5
+vaelastrasz       4474     4475     1.0    0.7      0.0       -1
+scoring_mean                        4.0    1.1
