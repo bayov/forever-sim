@@ -117,15 +117,16 @@ func loadHitSteps(base, capSpec, school string, span int, class string) (*hitSte
 	return h, nil
 }
 
-// The steps a search with -hit-span tries for this talent string, the cap step first.
+// The steps a search with -hit-span tries for this talent string, the cap step first: span
+// steps either side of the cap step, and for a set worn past the cap (a dual wielder's, whose
+// white swings still gain), up to span steps past the set itself too, so the search can keep or
+// raise the set's own hit (phase 5: Fury on the set's 10% has cap step -2, and +2 won).
 func (h *hitSteps) candidates(s *setup, talents string) []int {
 	auto := h.capStep(s, talents)
 	steps := []int{auto}
-	for d := 1; d <= h.span; d++ {
-		for _, st := range []int{auto + d, auto - d} {
-			if st >= h.lo && st <= h.hi {
-				steps = append(steps, st)
-			}
+	for st := auto - h.span; st <= max(auto, 0)+h.span; st++ {
+		if st != auto && st >= h.lo && st <= h.hi {
+			steps = append(steps, st)
 		}
 	}
 	return steps
