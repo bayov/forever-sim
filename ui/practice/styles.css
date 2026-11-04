@@ -1,4 +1,4 @@
-/* EllesmereUI's font, served from the WoW client by the practice server. */
+/* Avant Garde, served from the WoW client's addons by the practice server (cmd/practice/ui.go). */
 @font-face {
 	font-family: 'Avant Garde';
 	src: url('/api/font/eui') format('truetype');
@@ -18,7 +18,22 @@
 	--eui-panel: rgba(10, 10, 12, 0.88);
 	--eui-accent: #0cd29d;
 	font-family: 'Avant Garde', 'Segoe UI', Roboto, Arial, sans-serif;
+	/* Avant Garde has one weight, so the browser fakes bold by smearing it. On small timers the
+	   smear and the black outline swallowed the dot, and "1.3" read as "13". */
+	font-synthesis: none;
 	color: var(--text);
+}
+
+/* Timer digits sit close in Avant Garde, so we give them a little room for the dot. */
+.pk-icon .time,
+.aura .time,
+.button .cd {
+	letter-spacing: 0.06em;
+}
+
+/* Chrome's own dropdown list uses the system font unless the options ask for ours. */
+option {
+	font-family: inherit;
 }
 
 html,
