@@ -222,6 +222,17 @@ run against the old code, or with the mechanic taken out, and fail):
 - `sim/shaman/enhancement/healing_relics_test.go`: Tidal Totem and Totem of Urgency.
 - `sim/raid_healing_shaman_test.go`: on a healing fight, Ancestral Fortitude lands on the healed tank and raises
   all of its armor.
+- `sim/shaman/enhancement/healing_untested_test.go` (healer_mechanics-20261104-10, against client 70753's
+  tables): `TestOrcShamanHealRankTable` (every rank of Healing Wave, Lesser Healing Wave and Chain Heal: base,
+  growth, variance, mana, cast time, coefficient; Healing Wave 2-3 at 2 / 2.5 sec and .571 / .714),
+  `TestOrcShamanChainHealAmount` (Chain Heal 3 and its .714), `TestOrcShamanRiptideTickCrits` (ticks crit,
+  Attributes_8 0x200, and Tidal Mastery reaches them), `TestOrcShamanRiptideTickCritsProcNothing` (no Ancestral
+  Fortitude or Water Shield globe from a tick crit), `TestOrcShamanNaturesSwiftnessKept` (Riptide and a totem
+  leave it up), `TestOrcShamanHealingStreamNoTidalTalents`, `TestOrcShamanAncestralFortitudeTwoShamans` (one
+  buff, refreshed, not stacked). The client's Riptide branch runs only outside Forever, so it has no test
+  (standards 38).
+- `sim/shaman/enhancement/healing_set_test.go`: `TestRestorationSyntheticSet`, the Tier 1 set on two pieces and
+  its 4 and 5 piece.
 - Already there: `sim/raid_healing_test.go` (Chain Heal's jumps and falloff, bound ranks, the mana tools),
   `periodic_test.go` (Healing Stream), `mana_returns_test.go` (Mana Spring, Mana Tide, Water Shield),
   `mana_costs_test.go` (Totemic Focus), `mindfulness_test.go`, `natural_grace_test.go`,
