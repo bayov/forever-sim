@@ -2,6 +2,7 @@ package shaman
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -73,9 +74,9 @@ var ChainHealRanks = []healRank{
 
 // Riptide (the 31 point Restoration talent) has three ranks in Forever: the talent teaches rank
 // 1 (408521) at 40, the trainer rank 2 (1239242) at 50 and rank 3 (1239243) at 60 (client
-// 1.60.1.70753, SkillLineAbility on the Restoration line). Each is an instant heal, a heal every
-// 3 sec for 15 sec and 25% more on a Chain Heal cast at the target while it's up. 6 sec
-// cooldown (category 1228, every rank).
+// 1.60.1.70753, SkillLineAbility on the Restoration line). In the client each is an instant heal,
+// a heal every 3 sec for 15 sec and 25% more on a Chain Heal cast at the target while it's up,
+// with a 6 sec cooldown (category 1228, every rank):
 //
 // | Rank | Learned | Heal | Grows a level, to | Tick | Mana |
 // |---|---|---|---|---|---|
@@ -83,9 +84,13 @@ var ChainHealRanks = []healRank{
 // | 2 | 50 | 612 | 4.2, to 58 | 115 | 300 |
 // | 3 | 60 | 841 | 4.9, to 68 | 161, 3.7 a level past 60 | 385 |
 //
-// The heal's coefficient is 0.214, each tick's 0.1, both taken down for a rank far below our
-// level (downrankCoefficient). Until 2026-11-03 the sim had rank 1 only: 510 and 89 a tick at 60
-// for 245 mana, where rank 3 heals 841 and 161 a tick for 385.
+// Blizzard's development notes (post 9, 2026-11-02, devnotes_post9_2026-11-02.txt) take the
+// instant heal out, raise the cooldown to 12 sec and cut the mana by "about 40%". Client 70753
+// (and 70755) is unchanged and no server hotfix has them, so under Forever the sim models the
+// notes (standards 37): ticks only, 12 sec, and 60% of the client's mana rounded to whole mana
+// (147 / 180 / 231). The ticks and the Chain Heal bonus are the client's. The ticks'
+// coefficient is 0.1 (0.214 was the instant heal's); sim/core takes it down for a rank far below
+// our level (downrank.go).
 type riptideRank struct {
 	healRank
 	tick, tickPerLevel float64
@@ -106,7 +111,28 @@ var RiptideRanks = []riptideRank{
 const (
 	RiptideTickCoefficient = 0.1
 	RiptideChainHealBonus  = 0.25
+	RiptideTicks           = 5
+
+	// The development notes' Riptide (post 9, 2026-11-02; client 1.60.1.70753 unchanged).
+	RiptideNotesManaScale = 0.6
+	RiptideNotesCooldown  = 12 * time.Second
+	riptideClientCooldown = 6 * time.Second
 )
+
+// riptideNotes is whether Riptide takes the development notes' values: no instant heal, a 12 sec
+// cooldown and 40% less mana (Forever only, standards 37).
+func (shaman *Shaman) riptideNotes() bool {
+	return shaman.Env != nil && shaman.Env.IsForever()
+}
+
+// RiptideManaCost is a rank's mana: the notes' 60% of the client's under Forever, rounded.
+func (shaman *Shaman) RiptideManaCost(rank int) float64 {
+	cost := RiptideRanks[rank].manaCost
+	if shaman.riptideNotes() {
+		cost = math.Round(cost * RiptideNotesManaScale)
+	}
+	return cost
+}
 
 func riptideRankIDs() []int32 {
 	ids := make([]int32, 0, len(RiptideRanks)-1)
@@ -254,10 +280,16 @@ func (shaman *Shaman) registerRiptideSpell() {
 	}
 }
 
-func (shaman *Shaman) newRiptideSpellConfig(rank int, cooldown *core.Timer) core.SpellConfig {
+func (shaman *Shaman) newRiptideSpellConfig(rank int, timer *core.Timer) core.SpellConfig {
 	r := RiptideRanks[rank]
 	low, high := r.At(shaman.Level)
 	tick := r.TickAt(shaman.Level)
+	notes := shaman.riptideNotes()
+	coefficient := r.coefficient
+	cooldown := riptideClientCooldown
+	if notes {
+		coefficient, cooldown = 0, RiptideNotesCooldown
+	}
 
 	var spell *core.Spell // this rank, once registered, for ExpectedHealing
 	return core.SpellConfig{
@@ -272,15 +304,15 @@ func (shaman *Shaman) newRiptideSpellConfig(rank int, cooldown *core.Timer) core
 		Rank:          rank,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: r.manaCost,
+			FlatCost: shaman.RiptideManaCost(rank),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
 			CD: core.Cooldown{
-				Timer:    cooldown,
-				Duration: time.Second * 6,
+				Timer:    timer,
+				Duration: cooldown,
 			},
 		},
 
@@ -288,16 +320,16 @@ func (shaman *Shaman) newRiptideSpellConfig(rank int, cooldown *core.Timer) core
 		// ticks' through the snapshot).
 		DamageMultiplier: shaman.purificationMultiplier(),
 		ThreatMultiplier: 1,
-		BonusCoefficient: shaman.downrankCoefficient(r.coefficient, int(r.learnLevel)),
+		BonusCoefficient: coefficient,
 
 		Hot: core.DotConfig{
 			Aura: core.Aura{
 				// Each rank its own aura: ranks sharing a label would share one on the target.
 				Label: fmt.Sprintf("Riptide (Rank %d)", rank),
 			},
-			NumberOfTicks:    5,
+			NumberOfTicks:    RiptideTicks,
 			TickLength:       time.Second * 3,
-			BonusCoefficient: shaman.downrankCoefficient(RiptideTickCoefficient, int(r.learnLevel)),
+			BonusCoefficient: RiptideTickCoefficient,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				dot.SnapshotHeal(target, tick, isRollover)
 			},
@@ -311,7 +343,9 @@ func (shaman *Shaman) newRiptideSpellConfig(rank int, cooldown *core.Timer) core
 			if target.IsDead() {
 				return
 			}
-			spell.CalcAndDealHealing(sim, target, sim.Roll(low, high), spell.OutcomeHealingCrit)
+			if !notes {
+				spell.CalcAndDealHealing(sim, target, sim.Roll(low, high), spell.OutcomeHealingCrit)
+			}
 			// One Riptide of ours on a target: a rank replaces another's heal over time.
 			if hot := shaman.riptideOn(target); hot != nil && hot.Spell != spell {
 				hot.Deactivate(sim)
@@ -320,13 +354,19 @@ func (shaman *Shaman) newRiptideSpellConfig(rank int, cooldown *core.Timer) core
 				hot.Apply(sim)
 			}
 		},
-		// The instant heal's average, for a rotation that casts it when it fits what's missing
-		// (APLValueSpellExpectedHealing). The ticks aren't in it.
+		// For a rotation that casts it when it fits what's missing (APLValueSpellExpectedHealing):
+		// the notes' Riptide is all ticks, so the whole heal over time; the client's is the instant
+		// heal's average, without the ticks.
 		ExpectedHealing: func(target *core.Unit) float64 {
 			if spell == nil {
 				spell = shaman.GetSpell(core.ActionID{SpellID: r.spellID})
 			}
-			return spell.ExpectedHealing(shaman.healTarget(target), (low+high)/2)
+			target = shaman.healTarget(target)
+			if !notes {
+				return spell.ExpectedHealing(target, (low+high)/2)
+			}
+			hot := spell.Hot(target)
+			return RiptideTicks * spell.ExpectedHealing(target, tick+hot.BonusCoefficient*spell.HealingPower(target)) * hot.DamageMultiplier
 		},
 	}
 }

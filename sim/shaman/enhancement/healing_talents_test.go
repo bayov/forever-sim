@@ -62,7 +62,7 @@ func TestOrcShamanHealTalentPoints(t *testing.T) {
 	}
 
 	// Purification (16178): 2% more a point on Healing Wave, Lesser Healing Wave, Chain Heal
-	// and Riptide (its heal and its ticks), but not on Healing Stream Totem.
+	// and Riptide (its ticks), but not on Healing Stream Totem.
 	_, plain := healSim(t, 60, "", 0, 0)
 	for points := 1; points <= 5; points++ {
 		_, enh := healSim(t, 60, resto(restoIdxPurification, points, "1"), 0, 0)
@@ -95,13 +95,14 @@ func TestOrcShamanHealTalentPoints(t *testing.T) {
 		}
 	}
 
-	// Tidal Focus (16179): 1% off every heal's cost a point, Riptide's too (word 2's 0x10).
+	// Tidal Focus (16179): 1% off every heal's cost a point, Riptide's too (word 2's 0x10), on
+	// the development notes' Riptide mana (60% of the client's).
 	for points := 1; points <= 5; points++ {
 		_, enh := healSim(t, 60, resto(restoIdxTidalFocus, points, "00000000000001"), 0, 0)
 		for _, c := range []struct {
 			spell *core.Spell
 			cost  float64
-		}{{enh.HealingWave[10], 620}, {enh.LesserHealingWave[6], 380}, {enh.ChainHeal[3], 405}, {enh.RiptideRanks[3], 385}, {enh.RiptideRanks[1], 245}} {
+		}{{enh.HealingWave[10], 620}, {enh.LesserHealingWave[6], 380}, {enh.ChainHeal[3], 405}, {enh.RiptideRanks[3], 231}, {enh.RiptideRanks[1], 147}} {
 			want := c.cost * (1 - .01*float64(points))
 			if got := c.spell.Cost.GetCurrentCost(); math.Abs(got-want) > 0.01 {
 				t.Errorf("Tidal Focus %d: %s costs %.2f, want %.2f", points, c.spell.ActionID, got, want)
@@ -199,6 +200,24 @@ func TestOrcShamanHealingFocusPushback(t *testing.T) {
 		t.Logf("Healing Focus %d: %d of %d hits pushed Healing Wave back, want about %.0f", c.points, got, casts, want)
 		if math.Abs(float64(got)-want) > margin {
 			t.Errorf("Healing Focus %d: %d of %d hits pushed Healing Wave back, want %.0f +- %.0f", c.points, got, casts, want, margin)
+		}
+	}
+}
+
+// TestOrcShamanThunderingStrikesHeals: Thundering Strikes (16255, Enhancement) is 1% more crit
+// a point on every spell, the heals too, which is why the Restoration presets put their
+// Enhancement points past Ancestral Knowledge there.
+func TestOrcShamanThunderingStrikesHeals(t *testing.T) {
+	heals := func(talents string) []*core.Spell {
+		_, enh := newShamanSim(newOrcShaman(60, talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 1)
+		return []*core.Spell{enh.HealingWave[10], enh.LesserHealingWave[6], enh.ChainHeal[3]}
+	}
+	base := heals("")
+	for points := 1; points <= 5; points++ {
+		for i, spell := range heals(fmt.Sprintf("-0%d", points)) {
+			if diff := spell.HealingCritChance() - base[i].HealingCritChance(); math.Abs(diff-.01*float64(points)) > 1e-9 {
+				t.Errorf("Thundering Strikes %d: %s gets %.3f more crit, want %.3f", points, spell.ActionID, diff, .01*float64(points))
+			}
 		}
 	}
 }

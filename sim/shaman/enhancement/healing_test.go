@@ -282,24 +282,27 @@ func TestOrcShamanAncestralHealing(t *testing.T) {
 	runSim(sim)
 }
 
-// TestOrcShamanRiptide: rank 3 heals at once, then 161 + 10% of healing power every 3 sec for
-// 15 sec, both with Purification's 10%, for 385 mana. Chain Heal at us while it's up heals 25%
-// more. Rank 1 alone (the sim before 2026-11-03) heals 510 and 89 a tick.
+// TestOrcShamanRiptide: the development notes' rank 3 (post 9, 2026-11-02) heals nothing at
+// once, then 161 + 10% of healing power every 3 sec for 15 sec with Purification's 10%, for 231
+// mana (the client's 385, 40% less). Chain Heal at us while it's up heals 25% more. The client's
+// Riptide healed 799 to 883 at once on top.
 func TestOrcShamanRiptide(t *testing.T) {
 	sim, enh := healSim(t, 60, restoRiptidePurif, 100, 0)
 	if enh.Riptide == nil || enh.Riptide != enh.RiptideRanks[3] {
 		t.Fatal("no Riptide rank 3 with the talent at 60")
 	}
-	if got := enh.Riptide.Cost.GetCurrentCost(); math.Abs(got-385) > 0.01 {
-		t.Errorf("Riptide rank 3 costs %.1f, want 385", got)
+	if got := enh.Riptide.Cost.GetCurrentCost(); math.Abs(got-231) > 0.01 {
+		t.Errorf("Riptide rank 3 costs %.1f, want 231", got)
+	}
+	if got := enh.Riptide.BonusCoefficient; got != 0 {
+		t.Errorf("Riptide rank 3 has a direct coefficient %.3f, want none", got)
 	}
 	direct := healOnce(t, sim, enh, enh.Riptide, 1, 0)
 	var afterDirect float64
 	at(sim, 1.15, func(sim *core.Simulation) { afterDirect = enh.CurrentHealth() })
 	at(sim, 16.5, func(sim *core.Simulation) {
-		low, high := shaman.RiptideRanks[3].At(60)
-		if *direct < (low+0.214*100)*1.1-0.5 || *direct > (high+0.214*100)*1.1+0.5 {
-			t.Errorf("Riptide healed %.1f at once, want %.1f to %.1f", *direct, (low+0.214*100)*1.1, (high+0.214*100)*1.1)
+		if *direct != 0 {
+			t.Errorf("Riptide healed %.1f at once, want nothing", *direct)
 		}
 		ticks := enh.CurrentHealth() - afterDirect
 		if want := 5 * (161 + 0.1*100) * 1.1; math.Abs(ticks-want) > 1 {
@@ -335,9 +338,10 @@ func TestOrcShamanRiptide(t *testing.T) {
 }
 
 // TestOrcShamanRiptideRanks: a level 60 with the talent knows all three ranks, which share the
-// 6 sec cooldown, and one of our Riptides on a target replaces another rank's. Rank 1, learned at
-// 40, keeps 85% of its coefficients at 60 (downranking: 5% a level past 40 + 17). A level 50
-// knows ranks 1 and 2, and a level 40 rank 1.
+// notes' 12 sec cooldown, and one of our Riptides on a target replaces another rank's. Rank 1,
+// learned at 40, costs 147 (245, 40% less) and keeps 85% of its tick coefficient at 60
+// (sim/core's downranking: 5% a level past 40 + 17). A level 50 knows ranks 1 and 2, and a level
+// 40 rank 1.
 func TestOrcShamanRiptideRanks(t *testing.T) {
 	for _, c := range []struct {
 		level int32
@@ -361,17 +365,17 @@ func TestOrcShamanRiptideRanks(t *testing.T) {
 
 	sim, enh := healSim(t, 60, restoRiptidePurif, 100, 0)
 	r1, r3 := enh.RiptideRanks[1], enh.RiptideRanks[3]
-	if got := r1.Cost.GetCurrentCost(); math.Abs(got-245) > 0.01 {
-		t.Errorf("Riptide rank 1 costs %.1f, want 245", got)
-	}
-	if got := r1.BonusCoefficient; math.Abs(got-0.214*0.85) > 1e-9 {
-		t.Errorf("Riptide rank 1's coefficient at 60 is %.4f, want %.4f", got, 0.214*0.85)
+	if got := r1.Cost.GetCurrentCost(); math.Abs(got-147) > 0.01 {
+		t.Errorf("Riptide rank 1 costs %.1f, want 147", got)
 	}
 	if got := r1.Hot(&enh.Unit).BonusCoefficient; math.Abs(got-0.1*0.85) > 1e-9 {
 		t.Errorf("Riptide rank 1's tick coefficient at 60 is %.4f, want %.4f", got, 0.1*0.85)
 	}
-	if got := r3.BonusCoefficient; math.Abs(got-0.214) > 1e-9 {
-		t.Errorf("Riptide rank 3's coefficient at 60 is %.4f, want 0.214", got)
+	if got := r3.Hot(&enh.Unit).BonusCoefficient; math.Abs(got-0.1) > 1e-9 {
+		t.Errorf("Riptide rank 3's tick coefficient at 60 is %.4f, want 0.1", got)
+	}
+	if got := enh.RiptideRanks[2].Cost.GetCurrentCost(); math.Abs(got-180) > 0.01 {
+		t.Errorf("Riptide rank 2 costs %.1f, want 180", got)
 	}
 
 	at(sim, 1, func(sim *core.Simulation) {
@@ -380,14 +384,14 @@ func TestOrcShamanRiptideRanks(t *testing.T) {
 			t.Error("rank 3 is ready right after rank 1")
 		}
 	})
-	at(sim, 6.9, func(sim *core.Simulation) {
+	at(sim, 12.9, func(sim *core.Simulation) {
 		if r3.CD.IsReady(sim) {
-			t.Error("rank 3 is ready 5.9 sec after rank 1")
+			t.Error("rank 3 is ready 11.9 sec after rank 1")
 		}
 	})
-	at(sim, 7.01, func(sim *core.Simulation) {
+	at(sim, 13.01, func(sim *core.Simulation) {
 		if !r3.CD.IsReady(sim) {
-			t.Error("rank 3 isn't ready 6 sec after rank 1")
+			t.Error("rank 3 isn't ready 12 sec after rank 1")
 		}
 		enh.AddMana(sim, enh.MaxMana(), enh.GetManaNotCastingMetrics())
 		castNow(t, sim, enh, r3)
@@ -400,9 +404,9 @@ func TestOrcShamanRiptideRanks(t *testing.T) {
 }
 
 // TestOrcShamanRiptideExpectedHealing: a rotation that casts Riptide when what's missing covers
-// its Expected Healing reads the instant heal's average with healing power and Purification, not
-// the ticks. 5 short of it, the line waits; 5 over, it casts. Before 2026-11-03 Riptide had no
-// Expected Healing, so the raid healer preset's "when it fits" was dropped.
+// its Expected Healing reads its whole heal over time (the notes' Riptide has no instant heal),
+// with healing power and Purification. 5 short of it, the line waits; 5 over, it casts. Before
+// 2026-11-03 Riptide had no Expected Healing, so such a line was dropped.
 func TestOrcShamanRiptideExpectedHealing(t *testing.T) {
 	player := newOrcShaman(60, restoRiptidePurif, &proto.EnhancementShaman_Options{})
 	rotation := &proto.APLRotation{}
@@ -411,10 +415,9 @@ func TestOrcShamanRiptideExpectedHealing(t *testing.T) {
 	}
 	player.Rotation = rotation
 	sim, enh := newShamanSim(player, &proto.Debuffs{}, 10)
-	// A naked level 60 has about 1,500 health, room for the 950 or so it heals at once.
+	// A naked level 60 has about 1,500 health, room for the 940 or so its ticks heal.
 	enh.AddStatDynamic(sim, stats.HealingPower, 100)
-	low, high := shaman.RiptideRanks[3].At(60)
-	want := ((low+high)/2 + 0.214*100) * 1.1
+	want := 5 * (161 + 0.1*100) * 1.1
 	at(sim, 1, func(sim *core.Simulation) {
 		enh.RemoveHealth(sim, want-5)
 	})

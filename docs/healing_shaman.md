@@ -1,4 +1,4 @@
-# The Restoration shaman's heals: audit, tests and presets (H3, 2026-11-03)
+# The Restoration shaman's heals: audit, tests and presets (H3, 2026-11-03; round 70753, 2026-11-04)
 
 The healer workers' brief (`orchestration/brief_healers.md`) steps 1, 3 and a re-check of 5 for the
 Restoration shaman, the H2 healer (`docs/healing_sim.md`, H2). Branch `healers/shaman`.
@@ -12,26 +12,45 @@ TraitNodeEntry and CurvePoint); the tooltips in the same client (Spell.Descripti
 touched the paladin, druid, mage, priest, warlock and hunter, not the shaman tree); then wowsims/sod as a
 second reading of a Classic-era mechanic. wowsims/forever has no shaman heals.
 
+Then **Blizzard's development notes, post 9** (2026-11-02,
+`orchestration/audit/ref/client_update/sources/devnotes_post9_2026-11-02.txt`), whose one Restoration line is
+Riptide's. Client 70753 doesn't carry it, 70755 has the same tables (`orchestration/round_70753/client_70755.md`),
+and no server hotfix touches the shaman (`orchestration/round_70753/shaman.md`), so the sim models the notes'
+values under Forever (standards 37; under "Notes-only values" below and in the round file).
+
 "Client" below is 70753. `shaman_audit.md` audited the shaman before the heals existed; its section 8 entries
 for the healing talents are done again here against `sim/shaman/healing.go` and `talents.go`.
 
 ## What changed
 
-1. **Riptide has three ranks** (was one). The talent teaches rank 1 (408521) at 40, and the Restoration
+1. **Riptide is the development notes' (round 70753)**: no instant heal, ticks only; a 12 sec cooldown (6 in
+   the client); 40% less mana, 147 / 180 / 231 for ranks 1 / 2 / 3 (the client's 245 / 300 / 385 × 0.6, the
+   notes' "about 40%", rounded to whole mana as SpellPower's ManaCost is). The ticks, their 0.1 coefficient and
+   the Chain Heal bonus are the client's. Its Expected Healing (item 3) is now the whole heal over time.
+2. **Riptide has three ranks** (was one). The talent teaches rank 1 (408521) at 40, and the Restoration
    trainer line has rank 2 (1239242) at 50 and rank 3 (1239243) at 60 (SkillLineAbility 53198 and 53199). The
-   sim had rank 1 only: at 60 it healed 484 to 535 and 89 a tick for 245 mana, where rank 3 heals 799 to 883
-   and 161 a tick for 385. Ranks share the 6 sec cooldown, and one rank of ours on a target replaces another's
-   heal over time. Rank 1 and 2 take Forever's downranking on both coefficients. The presets, the APLs and
-   the bench's requests cast rank 3 (`1239243`).
-2. **Riptide has an Expected Healing** (its instant heal's average). The raid healer's line "Riptide at the
+   sim had rank 1 only: at 60 it healed 484 to 535 and 89 a tick for 245 mana, where the client's rank 3 heals
+   799 to 883 and 161 a tick for 385. Ranks share one cooldown, and one rank of ours on a target replaces
+   another's heal over time. Ranks 1 and 2 take Forever's downranking (now sim/core's, item 6). The presets,
+   the APLs and the bench's requests cast rank 3 (`1239243`).
+3. **Riptide has an Expected Healing** (the whole heal over time; on the client's Riptide, the instant heal's
+   average). The raid healer's line "Riptide at the
    most hurt when it fits" compared Health Missing with `spellExpectedHealing(Riptide)`, which Riptide didn't
    have: the APL dropped that value with a warning, so the line cast Riptide whenever the most hurt had none.
-3. **Ancestral Fortitude raises armor from items only** (16177: "Increases your armor value from items",
+4. **Ancestral Fortitude raises armor from items only** (16177: "Increases your armor value from items",
    aura 101 on armor). The sim raised all of the target's armor (Agility's and buffs' too). It's the
-   paladin's Toughness way now (`ApplyDynamicEquipScaling`). No preset takes Ancestral Healing yet.
-4. **Two Restoration relics** are in (`sim/shaman/items.go`): Tidal Totem (272431, Pix Xizzix, Healing
+   paladin's Toughness way now (`ApplyDynamicEquipScaling`). The tank healer's preset takes Ancestral Healing.
+5. **Two Restoration relics** are in (`sim/shaman/items.go`): Tidal Totem (272431, Pix Xizzix, Healing
    Wave 5% cheaper, 1291076) and Totem of Urgency (279249, crafted, Lesser Healing Wave +4% crit, 1306448).
    Both are Phase 1 and allowed by standards 8a.
+6. **Downranking is sim/core's** (master 8f304b240 and b57f5cc0a, round 70753): every ranked spell takes
+   `core.DownrankFactor` from its `Rank` and `RequiredLevel` (or `DownrankLevel`), so the shaman's own
+   `downrankCoefficient` is gone and Riptide's ranks take the engine's, with the same 5% a level past learn
+   level + 17. What it moved here: nothing at 60. Healing Stream Totem is in the penalty now (rank 5 is
+   learned at 60, so it keeps its coefficient), and the bench casts top ranks only; master's own shaman bench
+   is H2's to the third decimal (Onyxia tank 1.017, below).
+7. **The talents are re-picked on the new tree** (round 70753, master f0bb9d4 moved Improved Ghost Wolf to row
+   4, where 8 Enhancement points can't reach it). See "Presets" below.
 
 The tests (below) cover each change: the old code fails each of them.
 
@@ -52,11 +71,11 @@ The tests (below) cover each change: the old code fails each of them.
 | | cast, coefficient | 2.5 sec, 0.714 | same | |
 | | targets, falloff | 3 (EffectChainTargets), 50% a jump (EffectChainAmplitude 0.5; 65% only with SoD's Coherence 415096, not in Forever) | 3, 50%, to the most hurt, within the target's party when it's in ours | SpellEffect, tooltip |
 | Riptide | ranks | 408521 at 40 (talent), 1239242 at 50, 1239243 at 60 (trainer) | **was 1 rank, now 3** | SkillLineAbility, SpellLevels |
-| | heal, growth, variance | 480 + 3.7 to 48; 612 + 4.2 to 58; 841 + 4.9 to 68; 10% | same | SpellEffect eff 0 |
+| | heal, growth, variance | 480 + 3.7 to 48; 612 + 4.2 to 58; 841 + 4.9 to 68; 10% | **none under Forever** (the notes); the client's table is kept outside it | SpellEffect eff 0; notes post 9 |
 | | ticks | every 3 sec for 15 sec: 89, 115, 161 (+3.7 a level past 60) | 5 ticks of the same | SpellEffect eff 1 (aura 8), SpellDuration |
-| | coefficients | 0.214 heal, 0.1 a tick | same, times downranking (rank 1 keeps 85% at 60) | |
-| | cost | 245, 300, 385 | same | SpellPower |
-| | cooldown, GCD | 6 sec category 1228 (all ranks), 1.5 sec GCD | same, one timer | SpellCooldowns, SpellCategories |
+| | coefficients | 0.214 heal, 0.1 a tick | 0.1 a tick, times sim/core's downranking (rank 1 keeps 85% at 60) | |
+| | cost | 245, 300, 385 | **147, 180, 231** (the notes' 40% less) | SpellPower; notes post 9 |
+| | cooldown, GCD | 6 sec category 1228 (all ranks), 1.5 sec GCD | **12 sec** (the notes), one timer; 1.5 sec GCD | SpellCooldowns, SpellCategories; notes post 9 |
 | | Chain Heal bonus | 25%, a dummy effect (aura 4): "the effectiveness of your Chain Heal casts directly on that target" | 25% on the whole chain when its first target has our Riptide (a call below) | SpellEffect eff 2, tooltip |
 | Healing Stream Totem 1-5 | levels, cost, heal | 20-60, 40-80 mana, 5/6/7/9/11 every 2 sec, 0.022 coefficient, 5 min | same (`water_totems.go`) | 5394-10463, 5672-10461 |
 | Mana Spring Totem 1-4 | levels, cost, mana | 26/36/46/56, 40/60/80/100 mana, 4/6/8/10 every 2 sec | same | 5675-10497, 5677-10494 |
@@ -88,10 +107,15 @@ never read: it read 408521 alone.
 | Purification (16178) | +2% a point on Healing Wave, Lesser Healing Wave, Chain Heal and Riptide's heal (eff 0) and Riptide's ticks (eff 1, misc 22). Not Healing Stream (0x2000) | same | curves 85323, 87379 | `TestOrcShamanHealTalentPoints`, `TestOrcShamanRiptide` |
 | Riptide (talent) | rank 1, then ranks 2 and 3 from the trainer | **was rank 1 only** | | `TestOrcShamanRiptideRanks` |
 | Ancestral Knowledge (17485, Enhancement) | +2% Intellect a point | same | curve 85266 | `stat_multipliers_test.go` |
+| Thundering Strikes (16255, Enhancement) | +1% crit a point on every spell and attack | same, the heals too | talent ranks | `TestOrcShamanThunderingStrikes`, `TestOrcShamanThunderingStrikesHeals` |
 | Mental Quickness (30812, Enhancement) | 15% of Intellect a point as spell damage and healing | same (spell power, which heals count) | curves 85302, 85303 | `mental_quickness_test.go` |
 
 ### Not changed, and why
 
+- **Notes-only values** (standards 37; client 1.60.1.70753 and 70755 unchanged, no server hotfix): Riptide's
+  missing instant heal, its 12 sec cooldown and its 147 / 180 / 231 mana. All under `Env.IsForever()`
+  (`riptideNotes`); listed in `orchestration/round_70753/shaman.md` as well. The next hotfix check or the
+  launch logs settle them.
 - **Healing Wave below level 20.** Classic's servers cut the coefficient of a spell learned below 20; no
   client field holds it and the sim applies it to no spell (Lightning Bolt neither). Leveling only.
 - **Chain Heal's Expected Healing** counts the first target only, as HealComm did. Bound ranks pick by it.
@@ -111,14 +135,16 @@ run against the old code, or with the mechanic taken out, and fail):
 
 - `sim/shaman/enhancement/healing_test.go`: the rank tables (Riptide's three), each heal's amount with healing
   power, Purification and Healing Way, cast times, costs, Nature's Swiftness, Ancestral Healing on armor from
-  items, Riptide rank 3's heal, ticks, cost and Chain Heal bonus (`TestOrcShamanRiptide`), the ranks a level
-  knows, their shared cooldown, one Riptide a target and rank 1's downranking (`TestOrcShamanRiptideRanks`),
-  and Riptide's Expected Healing in a rotation (`TestOrcShamanRiptideExpectedHealing`).
-- `sim/shaman/enhancement/healing_talents_test.go`: every point of every healing talent against its curve,
-  Healing Focus's pushback chance over 400 casts.
+  items, Riptide rank 3's missing instant heal, its ticks, cost and Chain Heal bonus (`TestOrcShamanRiptide`),
+  the ranks a level knows, their costs, the shared 12 sec cooldown, one Riptide a target and rank 1's
+  downranking (`TestOrcShamanRiptideRanks`), and Riptide's Expected Healing in a rotation
+  (`TestOrcShamanRiptideExpectedHealing`).
+- `sim/shaman/enhancement/healing_talents_test.go`: every point of every healing talent against its curve
+  (Tidal Focus on the notes' Riptide mana), Healing Focus's pushback chance over 400 casts, Thundering Strikes'
+  crit on the heals.
 - `sim/shaman/enhancement/healing_relics_test.go`: Tidal Totem and Totem of Urgency.
 - `sim/raid_healing_shaman_test.go`: on a healing fight, Ancestral Fortitude lands on the healed tank and raises
-  its armor from items only; Riptide rank 3 on the tank ticks 5 times.
+  its armor from items only.
 - Already there: `sim/raid_healing_test.go` (Chain Heal's jumps and falloff, bound ranks, the mana tools),
   `periodic_test.go` (Healing Stream), `mana_returns_test.go` (Mana Spring, Mana Tide, Water Shield),
   `mana_costs_test.go` (Totemic Focus), `mindfulness_test.go`, `natural_grace_test.go`,
