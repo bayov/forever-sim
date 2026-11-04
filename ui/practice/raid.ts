@@ -223,6 +223,9 @@ export class RaidTest {
 
 	// load builds the raid: count people in all, so count - 1 others besides you.
 	async load(count: number, getJSON: <T>(url: string) => Promise<T>) {
+		// With 20 or more, helms, shoulders and cloaks cast no shadow (their shadows mostly fall in
+		// the body's), which saves a shadow draw call each.
+		if (count >= 20) for (const slot of [1, 3, 15]) this.crowd?.noShadowSlots.add(slot);
 		const roles: Role[] = [];
 		const others = Math.max(0, count - 1);
 		const plan: [Role, number][] = [

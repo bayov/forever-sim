@@ -7,7 +7,7 @@
 import * as THREE from 'three';
 import { newTextures } from './wow/files';
 import { fillBatches, particleOptions } from './wow/particles';
-import { Crowd } from './wow/crowd';
+import { Crowd, SHADOW_LAYER } from './wow/crowd';
 import type { Model } from './wow/model';
 
 export type CameraState = { yaw: number; pitch: number; distance: number };
@@ -74,7 +74,7 @@ export class Room {
 	crowdTotems = false;
 	// onPass hears each pass of drawing the scene start, for the performance recorder to time it
 	// on the GPU: the shadows, then the solid things, then the see-through things and effects.
-	onPass?: (pass: 'shadow' | 'opaque' | 'transparent') => void;
+	onPass?: (pass: 'upload' | 'shadow' | 'opaque' | 'transparent') => void;
 
 	constructor(
 		readonly canvas: HTMLCanvasElement,
@@ -110,15 +110,30 @@ export class Room {
 		// The renderer has placed the scene's objects for the frame by now, and hasn't drawn the
 		// shadows yet.
 		this.scene.onBeforeRender = (_r, _s, camera) => {
+			// The crowd's shadow batches draw only in the shadows: the camera sees their layer from
+			// when the shadows start (below) to when the picture starts (the solid marker).
+			camera.layers.disable(SHADOW_LAYER);
 			this.crowd.prepare(camera);
 			fillBatches();
-			this.onPass?.('shadow');
+			this.onPass?.('upload');
+		};
+		// The shadows start when the renderer switches to the shadow map, which we hear just before.
+		// A GPU timer started there (or once the shadow map was bound) lost the whole WebGL context
+		// in headless Chrome on WSL (Mesa's D3D12 driver), so we split the uploads from the shadows
+		// only on Chrome's own Direct3D 11.
+		const gl = this.renderer.getContext();
+		const info = gl.getExtension('WEBGL_debug_renderer_info');
+		const splitShadows = /Direct3D11/.test(String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : '')) && !location.search.includes('noshadowtimer');
+		const setRenderTarget = this.renderer.setRenderTarget.bind(this.renderer);
+		this.renderer.setRenderTarget = (target, face, level) => {
+			if (target && target === this.sun.shadow.map) {
+				this.camera.layers.enable(SHADOW_LAYER);
+				if (splitShadows) this.onPass?.('shadow');
+			}
+			setRenderTarget(target, face, level);
 		};
 		// Two markers that draw nothing, first in their lists, tell when the solid things start and
 		// when the see-through things start.
-		//
-		// A marker at the start of the shadows would split the uploads from them, but starting a GPU
-		// timer while the shadows draw lost the whole WebGL context in headless Chrome on WSL.
 		for (const pass of ['opaque', 'transparent'] as const) {
 			const g = new THREE.BufferGeometry();
 			g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
@@ -126,7 +141,10 @@ export class Room {
 			const marker = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ transparent: pass === 'transparent', depthWrite: false }));
 			marker.frustumCulled = false;
 			marker.renderOrder = -1e9;
-			marker.onBeforeRender = () => this.onPass?.(pass);
+			marker.onBeforeRender = () => {
+				this.camera.layers.disable(SHADOW_LAYER);
+				this.onPass?.(pass);
+			};
 			this.scene.add(marker);
 		}
 

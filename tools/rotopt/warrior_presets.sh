@@ -63,6 +63,16 @@
 # Arms on Sunder duty keeps Mortal Strike first with Slam after a swing (the move loses 2.0 at 120
 # sec on seed 1000003).
 #
+# 2026-11-04 (follow-up, each change kept only where it won at 120, 160, 180, 200 and 300 sec on seeds
+# 1 and 1000003 at 20,000 iterations): two-hand Fury and its duty presets take Unbridled Wrath 5 (was
+# 3) for Furious Precision's 3 points, which do nothing with a two-hander, and the spare point in Blood
+# Craze (30313113032-2505001501122100321): +2.8 / +3.4 / +1.9 at 120 / 180 / 300 sec (seed 1000003
+# +2.3 / +1.4 / +1.5); Sunder duty +2.0 / +1.5 and Battle Shout duty +3.4 / +2.1 at 180 sec. Dual
+# wield Fury (not its duty presets) puts Bloodthirst ahead of Whirlwind (wwFirst=0), queues Heroic
+# Strike from 60 Rage (was 80) and Hamstrings from 20 (was 10), both only when Bloodthirst and
+# Whirlwind are 1 sec away or more (fillerGap=1), and Bloodrages under 50 (was 20): +2.0 / +0.4 / +3.9 at 120 / 180 /
+# 300 sec (seed 1000003 +0.9 / +1.2 / +3.0), +1.2 / +3.5 at 160 / 200 sec.
+#
 # The searches: tools/rotopt -talent-search and the knob search, one after the other until
 # neither moved, from these talents and knobs.
 set -e
@@ -77,7 +87,7 @@ gen() {
 	echo "wrote ui/warrior/apls/$name.apl.json ($knobs)"
 }
 gen warrior_fury level60_fury 30313113002-0505300551120100321 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=1,hsRage=80,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=1,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=50,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=1,hamstringRage=20,hsExecute=1,hsRage=60,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury on Sunder Armor duty (docs/raid_sim.md, Sunder upkeep): 5 stacks from the pull,
 # refreshed in their last 3 sec, for a raid with no warrior tank (its request has no raid Sunder Armor).
 gen warrior_fury level60_fury_sunder 30313113002-0505300551120100321 \
@@ -85,15 +95,15 @@ gen warrior_fury level60_fury_sunder 30313113002-0505300551120100321 \
 # level60_fury on Battle Shout duty (standards 23): shouts before the pull and refreshes it.
 gen warrior_fury level60_fury_battle_shout 30313113002-0505300551120100321 \
 	battleShout=1,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=1,hsRage=80,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=1,wwRage=25
-gen warrior_fury level60_fury_2h 30313113032-2503300501122100321 \
+gen warrior_fury level60_fury_2h 30313113032-2505001501122100321 \
 	battleShout=0,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=100,recklessness=2,slamAfterSwing=1,slamRage=60,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury_2h on Sunder Armor duty (docs/raid_sim.md, Sunder upkeep): 5 stacks from the pull,
 # refreshed in their last 3 sec, for a raid with no warrior tank (its request has no raid Sunder Armor).
-gen warrior_fury level60_fury_2h_sunder 30313113032-2503300501122100321 \
+gen warrior_fury level60_fury_2h_sunder 30313113032-2505001501122100321 \
 	battleShout=0,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=1,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=100,recklessness=2,slamAfterSwing=1,slamRage=60,spearDance=0,sunderDuty=1,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury_2h on Battle Shout duty (standards 23): shouts before the pull and refreshes it. The duty
 # search takes Bloodrage below 20 Rage (+1.6 at 180 sec), since the pull's Bloodrage goes before the shout.
-gen warrior_fury level60_fury_2h_battle_shout 30313113032-2503300501122100321 \
+gen warrior_fury level60_fury_2h_battle_shout 30313113032-2505001501122100321 \
 	battleShout=1,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=100,recklessness=2,slamAfterSwing=1,slamRage=60,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
 gen warrior_arms level60_arms 30303213032215201-050500050012-2 \
 	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25

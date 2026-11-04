@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 4,
   "race": "Orc",
-  "talents": "30313113032-2503300501122100321",
+  "talents": "30313113032-2505001501122100321",
   "treeNames": [
     "Arms",
     "Fury",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h_battle_shout",
   "published": {
-    "dps": 1165.4,
-    "source": "round 70753 (the November 2 development notes), the Warrior worker's finals 2026-11-03: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1168.8,
+    "source": "the 2026-11-04 Warrior follow-up (round 70753): wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1165.4,
+    "dps": 1168.8,
     "stderr": 0.52,
     "iters": 20000,
     "ok": true,
-    "note": "the Warrior worker's final run of this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-03)"
+    "note": "verify.py on this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-04)"
   },
   "summary": "Keeps Battle Shout up for its party. The raid's Battle Shout is off.",
   "keyTalents": [
@@ -33,6 +33,7 @@
     "Two-Handed Weapon Specialization",
     "Cruelty",
     "Impale",
+    "Unbridled Wrath",
     "Enrage",
     "Reckless Swings",
     "Improved Whirlwind"
@@ -73,7 +74,7 @@
     "Saving Death Wish for the last 36s adds 17.4 DPS at 180s and 28.4 at 120s.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_arms -apl level60_fury_2h_battle_shout -talents 30313113032-2503300501122100321 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Uses the Fury class options (Berserker Stance) as the preset build does; the preset's DefaultConsumes keep an off-hand stone, which has no effect without an off hand. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.",
+  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_arms -apl level60_fury_2h_battle_shout -talents 30313113032-2505001501122100321 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Uses the Fury class options (Berserker Stance) as the preset build does; the preset's DefaultConsumes keep an off-hand stone, which has no effect without an off hand. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.",
   "duty": "Battle Shout",
   "baseBuild": "warrior__fury_2h"
 }

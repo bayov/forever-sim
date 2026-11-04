@@ -4,7 +4,7 @@ From the fairness auditor. The question this answers: is every DPS spec simmed u
 
 Method: each class's shipped Level 60 build (gear, talents, APL), built with mksettings and run with wowsimcli. I read code and logs and did not use rotopt. Measurements change one input at a time against the same seed. Two switches existed only in my local worktrees and were never pushed: one turns weapon racials off, one skips set-bonus tiers.
 
-## 1. Cross-spec table (master f331f0c: Salvation dropped from the raid buffs (90e0bb01a), the druid rotation finds (d560d30b8), Holy Strike ahead of Judgement for Ret and sub-Holy (e799dccfa), Smite's Spiritual Guidance build (da726bbe1), the standards 37 gating of notes-only values outside Forever (13c34f20f); full re-sweep 2026-11-04)
+## 1. Cross-spec table (master f331f0c: Salvation dropped from the raid buffs (90e0bb01a), the druid rotation finds (d560d30b8), Holy Strike ahead of Judgement for Ret and sub-Holy (e799dccfa), Smite's Spiritual Guidance build (da726bbe1), the standards 37 gating of notes-only values outside Forever (13c34f20f); full re-sweep 2026-11-04; the two Fury rows re-swept on fb584ea, the warrior follow-up 7b4dc5d97)
 
 5000 iterations, seed 1, race overrides, on the f331f0c requests and binary (the loop's shared CLI). "Before" is the f5c99ad table. The loop's 20k master run matches 62 of 68 metas within 0.5. The other six are the shaman metas, still at their 2026-11-02 values (results-20261102-1); the deployed builds.json matches all 68. `audit1b.py`: 19 of 19 "5a PASS | 1b PASS".
 
@@ -13,9 +13,9 @@ Method: each class's shipped Level 60 build (gear, talents, APL), built with mks
 | 1 | Lone Wolf (hunter) | Night Elf | 1314.4 | Windshaper 1309.8 / Night Elf | Night Elf (1314.4) | 1313.7 | +0.7 | 1314.4 (+0.0%) |
 | 2 | Marksmanship | Orc | 1254.6 | Orc / Night Elf 1254.0 | Orc (1254.6) | 1254.3 | +0.3 | 1254.6 (+0.0%) |
 | 3 | Beast Mastery | Orc | 1195.7 | Orc / Night Elf 1190.2 | Orc (1195.7) | 1195.6 | +0.1 | 1195.7 (+0.0%) |
-| 4 | Fury (two-hand) | Orc | 1170.7 | Orc / Night Elf 1163.0 | Orc (1170.7) | 1169.9 | +0.8 | 1170.7 (+0.0%) |
+| 4 | Fury (two-hand) | Orc | 1172.3 | Orc / Night Elf 1166.1 | Orc (1172.3) | 1173.3 | -1.0 | 1170.7 (+0.1%) (fb584ea) |
 | 5 | Enhancement | Orc | 1159.9 | Orc / Dwarf 1152.1 | Orc (1159.9) | 883.5 | +276.4 | 1159.5 (+0.0%) |
-| 6 | Fury (dual wield) | Orc | 1153.6 | Orc / Night Elf 1146.9 | Orc (1153.6) | 1152.6 | +1.0 | 1153.6 (+0.0%) |
+| 6 | Fury (dual wield) | Orc | 1152.5 | Orc / Night Elf 1146.8 | Orc (1152.5) | 1153.0 | -0.5 | 1153.6 (-0.1%) (fb584ea) |
 | 7 | Feral | Night Elf | 1139.7 | Windshaper 1122.9 / Night Elf | Night Elf (1139.7) | 1139.0 | +0.7 | 1131.0 (+0.8%) |
 | 8 | Arms | Orc | 1097.9 | Orc / Night Elf 1092.5 | Orc (1097.9) | 1097.7 | +0.2 | 1097.9 (+0.0%) |
 | 9 | Retribution | Undead | 1091.3 | Undead / Human 1087.6 | Undead (1091.3) | 1092.1 | -0.8 | 1090.7 (+0.1%) |
@@ -61,6 +61,7 @@ Top over bottom: 1.68x
 
 What moved / findings:
 
+- Pass 28 (fb584ea, 2026-11-04, warrior-only re-sweep): no new finding. The only sim inputs that changed are the four Fury requests (7b4dc5d97: dual wield rotation, two-hand Unbridled Wrath 5/5). Fury 2H +1.6 (1172.3, published 1173.3) and Fury DW -1.1 (1152.5, published 1153.0), both within 5k noise of the worker's 20k numbers; Orc stays best by 5.7 / 6.2. Standards 38 / 39 are rulings with no sim change yet; the UI Salvation removal doesn't reach the requests (none carry it). No sim/ or database change, so no other build can move. Ranking unchanged.
 - Pass 27 (f331f0c, 2026-11-04, full re-sweep): no new finding. Every move traces to its own class: Feral +8.7 and Balance +1.2 (the druid rotation finds, d560d30b8); Smite +19.1, 761.9 -> 781.0 (Spiritual Guidance, da726bbe1; published 781.0); Ret +0.6 and sub-Holy +0.1 (Holy Strike first, e799dccfa); Affliction +18.4 (the Wrack preset, already in pass 26). Enhancement +0.4 and imp-gw -0.8 are 5k noise. Nothing moved in a class whose code didn't change, so nothing shared leaked.
 - Shared changes: Salvation is gone from all requests, race files and mksettings. It only lowered threat, so no DPS moved. The standards 37 gates (shaman, hunter, warlock, warrior, rogue) change only non-Forever runs, and every Forever number is unchanged.
 - Published against current: every build is within 1.4 at 5k except the six shamans (+199 to +276, stale metas, results-20261102-1).
