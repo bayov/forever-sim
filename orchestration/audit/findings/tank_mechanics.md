@@ -20,6 +20,7 @@
 - proposed fix: in MakeTank, set `tank.InFrontOfTarget = true` (`ref/tank_mechanics/patches/engine_01_tank_in_front.patch`). Add a test asserting the boss parries the tank in a scoring run. Then rerun the tank presets, the tank knobs and the docs' numbers. Lands together with -3.
 - How sure: high.
 - needs: orchestrator fix
+- fixed: 2026-11-04, 87f2880
 
 ### tank_mechanics-20261104-2: Primal Bite misses Forever's "threat roughly doubled"
 - severity: high
@@ -52,6 +53,7 @@
 - proposed fix: set `parryHaste: false` in the 7 files (`ref/tank_mechanics/patches/engine_02_encounters_no_double_parry_haste.patch`). A better fix keeps the sim's parry haste and takes the logged tanks' parry haste out of the swing gap, but that needs the logs' parry counts.
 - How sure: high.
 - needs: orchestrator fix
+- fixed: 2026-11-04, 87f2880
 
 ### tank_mechanics-20261104-4: Revenge's attack power ratio, 0.28 (log fit) vs 0.25 (70707 tooltip)
 - severity: medium (high if 0.25 is confirmed)
@@ -96,6 +98,7 @@
 - evidence: two places hold survival cooldowns while `CurrentHealthPercent() > HpPercentForDefensives` (default 0): major_cooldown.go:140-141 and apl_idle.go:348. In a scoring run those cooldowns fire only once the tank's own health hits 0, which depends on the bench's HPS. Troll Berserking reads health too (racials.go:172). That breaks the rule that nothing in a scoring run reads the tank's health. Measured: Warden and warrior Balanced at 300, 600 and 5,000 HPS, and a bear with the 990815 trinket at 200, 400 and 3,000, all give identical SafeDPS, DTPS and healing needed. A gear search with an armor, dodge or health on-use item, a health potion, or Shield Wall on autocast could hit it.
 - proposed fix: when `ts.replay`, skip survival cooldowns or force `HpPercentForDefensives = -1`, and give Berserking a fixed percentage. Or have tankscore reject requests that carry them. Add a test that SafeDPS and DTPS are equal at two HPS.
 - needs: orchestrator fix
+- fixed: 2026-11-04, 87f2880
 
 ### tank_mechanics-20261104-9: Reckoning ignores spell crits
 - severity: low
