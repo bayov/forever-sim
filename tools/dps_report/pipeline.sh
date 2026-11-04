@@ -47,8 +47,9 @@ ids() {  # the given ids or every request, most expensive first
 	python3 - "$@" <<'EOF'
 import glob, json, os, sys
 ids = sys.argv[1:] or sorted(os.path.basename(p)[:-10] for p in glob.glob('req/*.meta.json'))
-# core-minutes per build for every step, from the 2026-10-16 runs (a duty preset or pet variant gets run_build.py only)
-W = {'rogue': 6.6, 'shaman': 6.3, 'warrior': 5.6, 'hunter': 4.9, 'mage': 3.8, 'paladin': 3.4, 'warlock': 3.3, 'druid': 2.5, 'priest': 1.7}
+# core-minutes per base build for every step, probe included, from timing.py on the 2026-11-04 full run (labeled random
+# streams, adaptive fight counts); a duty preset or pet variant counts 0.35
+W = {'hunter': 12.1, 'warrior': 9.6, 'rogue': 6.5, 'warlock': 5.4, 'shaman': 4.7, 'mage': 4.4, 'druid': 4.3, 'paladin': 4.2, 'priest': 2.5}
 cost = lambda i: W.get(i.split('__')[0], 4) * (0.35 if any(json.load(open(f'req/{i}.meta.json')).get(k) for k in ('duty', 'pet')) else 1)
 print(' '.join(sorted(ids, key=lambda i: (-cost(i), i))))
 EOF
@@ -115,12 +116,12 @@ w = sum(len(weights.stat_list(json.load(open(f'req/{b}.meta.json')))[1]) + 2 for
 r = sum(1 for b in base if not json.load(open(f'req/{b}.meta.json')).get('encounter') for _ in run_races.tasks(b))
 a = sum(1 for b in base for _ in run_assumptions.tasks(b))
 import glob
-W = {'rogue': 6.6, 'shaman': 6.3, 'warrior': 5.6, 'hunter': 4.9, 'mage': 3.8, 'paladin': 3.4, 'warlock': 3.3, 'druid': 2.5, 'priest': 1.7}
+W = {'hunter': 12.1, 'warrior': 9.6, 'rogue': 6.5, 'warlock': 5.4, 'shaman': 4.7, 'mage': 4.4, 'druid': 4.3, 'paladin': 4.2, 'priest': 2.5}
 cost = lambda i: W.get(i.split('__')[0], 4) * (0.35 if any(json.load(open(f'req/{i}.meta.json')).get(k) for k in ('duty', 'pet')) else 1)
 every = [os.path.basename(p)[:-10] for p in glob.glob('req/*.meta.json')]
-# the whole 66-build set: about 380 core-minutes with these scripts (2026-10-16 timings, scaled; the weights step
-# saves about 30% with paired errors, since melee hit and crit steps still need 40k)
-eta = 380 * sum(cost(i) for i in '$ALL'.split()) / sum(cost(i) for i in every) / os.cpu_count()
+# the whole 68-build set: 310 core-minutes on the 2026-11-04 full run (timing.py; the tank and healer step, about
+# 45 min wall, isn't counted)
+eta = 310 * sum(cost(i) for i in '$ALL'.split()) / sum(cost(i) for i in every) / os.cpu_count()
 print(f'plan: $(echo $ALL | wc -w) builds; weights {w} sims, races {r}, assumption combos {a}, mana $(echo $MANA | wc -w) builds; '
       f'about {eta:.0f} min on {os.cpu_count()} cores')
 EOF
@@ -182,7 +183,7 @@ shard)
 	python3 - $k $n $(ids "$@") <<'EOF'
 import json, sys
 k, n, ids = int(sys.argv[1]), int(sys.argv[2]), sys.argv[3:]
-W = {'rogue': 6.6, 'shaman': 6.3, 'warrior': 5.6, 'hunter': 4.9, 'mage': 3.8, 'paladin': 3.4, 'warlock': 3.3, 'druid': 2.5, 'priest': 1.7}
+W = {'hunter': 12.1, 'warrior': 9.6, 'rogue': 6.5, 'warlock': 5.4, 'shaman': 4.7, 'mage': 4.4, 'druid': 4.3, 'paladin': 4.2, 'priest': 2.5}
 load, out = [0.0] * n, [[] for _ in range(n)]
 for i in ids:  # already most expensive first: give each build to the least loaded shard
     c = W.get(i.split('__')[0], 4) * (0.35 if any(json.load(open(f'req/{i}.meta.json')).get(k) for k in ('duty', 'pet')) else 1)
