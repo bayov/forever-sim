@@ -13,7 +13,7 @@ kept to compare ([Encounters](#encounters)). Three builds run: the Protection wa
 pre-raid plate, and the Feral bear on the cat's synthetic set. Four audits checked the work and their findings are
 fixed ([Audits](#audits)). The optimizer's objective is ruled and built: the bench prints it, and rotopt's
 searches maximize it with `-tank`, with a paired noise test. The rules audit has done the warrior, the paladin and
-the bear ([Rules audit](#rules-audit)); the Warden shaman, tank gear and rotations are next. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
+the bear ([Rules audit](#rules-audit)) and the Warden shaman ([tank_shaman.md](tank_shaman.md#rules-audit)); tank gear and rotations are next. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
 
 ## The user's rulings (2026-11-02)
 
@@ -579,8 +579,7 @@ Tear).
 
 ## Next steps
 
-1. **Rules audit** of the Warden shaman like the others above (it needs gear first).
-   Bring the Feral tank into the build. Ask for a dungeon boss log for Forever's boss crit.
+1. Bring the Feral tank into the build (the Warden shaman's rules audit is done: [tank_shaman.md](tank_shaman.md#rules-audit)). Ask for a dungeon boss log for Forever's boss crit.
 2. **Encounters**: Patchwerk, threat drops, armor cuts and stacking DoTs in the engine.
 3. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.
 4. **The three presets' searches** (the paired test is in, above).
