@@ -1,6 +1,47 @@
-/* The backpack (frames/bags.ts). The bag's art draws each slot's frame and its empty look, so
-   the item buttons show only the quickslot frame over a filled slot. */
+/* The backpack (frames/bags.ts), in UI units, y down. PortraitFrameFlatTemplate: the flat
+   background 2 in from the sides, 20 under the top and 3 over the bottom, the metal NineSlice,
+   the round portrait and the title between 35 from the left (the bags' title offset) and 24 from the
+   right. */
 
-.bz-bags .bz-item.framed:not(.filled)::before {
+.bz-bags-bg {
+	position: absolute;
+	left: 2px;
+	right: 2px;
+	top: 20px;
+	bottom: 3px;
+	border-radius: 0 0 1.5px 1.5px;
+	background: rgba(31, 30, 33, 0.8);
+}
+
+/* The portrait sits above the NineSlice (its container is at frame level 400), cut round. The
+   bag frames make it 36 by 36 at -4, 1, inside the ring of the small corner. */
+.bz-bags-portrait {
+	position: absolute;
+	left: -4px;
+	top: -1px;
+	width: 36px;
+	height: 36px;
+	border-radius: 50%;
+	background-size: 100% 100%;
+	pointer-events: none;
+}
+.bz-bags-title {
+	position: absolute;
+	left: 35px;
+	right: 24px;
+	top: 6px;
+}
+
+/* A slot: the empty slot art (bags-item-slot64) under the item's icon, which has the round
+   corners of the client's icon mask. */
+.bz-bags-slot {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+.bz-bags .bz-item.filled .bz-bags-slot {
 	display: none;
+}
+.bz-bags .bz-item-icon {
+	border-radius: 3px;
 }
