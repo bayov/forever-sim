@@ -52,7 +52,13 @@ are dropped), which fails the same way at ca22004, before this phase.
 
 ## Left open
 
-- `changes.py check` lists six older master commits with no Changes line (fdb14ac, f331f0c, f6ca172, 13c34f2,
-  f6e868b, 0c0b4e8), not this phase's.
+- `changes.py check`: every commit of the live update is covered (the last publish run added the missing lines).
 - `stale.mjs` lists 62 of 68 builds as stale ("tools/dps_report/patches changed", warlock also sim/warlock) from
   13c34f2, after the data commit; a probe would clear them.
+- Master has two failures this phase didn't cause and didn't fix (a follow-up session has them):
+  TestRaidForeverReportHashesStable "No item with id: 998001" (druid Balance synthetic gear missing from db.bin since
+  d57aa24; it passed on this branch before the merge of 9ff134b0b) and compsearch TestDropsAreUnread (warlock__affliction).
+- Hydrate notes that the four warrior Fury packs were simmed from another request than the current one (the warrior
+  follow-up's requests); a warrior re-sim, not this phase's.
+- The shaman builds were re-simmed twice, at f3c17a2 and on master's downranking refactor plus the rogue hotfix
+  (d12e98cd9): identical to 0.1 both times.
