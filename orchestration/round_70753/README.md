@@ -71,3 +71,10 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - Chain Lightning's coefficient is the standard one for its 2.5 s cast, 0.714 (standards 39).
 - The sim is Forever only (standards 38): fix.md's Classic questions (a) and (b) are moot, and Classic gating is no
   longer a finding.
+
+## Phase 4 (2026-11-04)
+
+- Rogue hotfix 113483: master 9ff134b0b, deployed (`hotfix_113483.md`). Open for the user: Shank's no-proc model (it
+  procs only Venom and Boot Knife) is a reading of the hotfix's attribute flags; a log check or a ruling settles it.
+- Follow-ups (brief `briefs/phase4_followups.md`): the db.bin missing synthetic item 998001, warlock compsearch
+  TestDropsAreUnread, the paladin rows of push 113483, stale.mjs calling every build stale, the warrior Fury note.
