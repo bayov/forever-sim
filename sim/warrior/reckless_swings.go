@@ -17,7 +17,8 @@ import (
 //   - Each charge is a flat 5 Rage (1329554 effect 0, energize 50 tenths), which a crit doesn't double.
 //   - 25% of base health (SpellPower 315180). Nothing for a DPS, so it isn't modelled.
 //
-// Still an assumption: only landed swings use a charge (the hit mask is server side, not in the data).
+// Still an assumption (report assumption warr_rs_landed, one value, user ruling 2026-11-04): only landed
+// swings use a charge (the hit mask is server side, not in the data).
 func (warrior *Warrior) registerRecklessSwingsCD() {
 	if !warrior.Talents.RecklessSwings {
 		return
