@@ -291,3 +291,9 @@ run against the old code, or with the mechanic taken out, and fail):
 4. **The raid healer's Enhancement points.** Default: `-035` (Thundering Strikes 3), as the tank healer. H2's
    `-005102` (still legal, and what `sim/compsearch/presets.go` and `ui/raid_sim/data/table.json` give a raid
    member): +0.003 mean, within noise.
+5. **Ancestral Fortitude on all armor or armor from items** (healer_mechanics-20261104-3). Default: all armor,
+   as its aura 101 (Inspiration's) says; the buff's tooltip says "from items", and how the server applies 101
+   against 142 can't be read from the client. Under 1% of the tank's score either way.
+6. **The tank healer's Lesser Healing Wave on mana alone** (healer_fairness-20261104-2). Default: Lesser Healing
+   Wave 6/5 at the tank whenever mana is at least 50%, without a health check (+0.019 tank mean); its overheal is
+   cut by the bench's stop-cast rule. A player would cast it on a tank about to be hit, as the bench does.
