@@ -1,77 +1,76 @@
-# tank_rotations: pass 2 (2026-11-04, master b38ff16)
+# tank_rotations: pass 3 (2026-11-04, master dc303b0)
 
-Forced by hand after tank round 2 landed (b38ff16): the four class workers fixed pass 1's findings and re-searched
-every tank's Max threat / Balanced / Max survival presets with new rotopt knobs (warrior wallAt grid and Sunder
-count, paladin Bulwark step, bear roarAfterLacerate and in-fight Enrage, Warden shockFirst).
+Forced by hand after tank round 3 landed (dc303b0 and earlier): engine fd9538c (mana-gain threat unmultiplied,
+disjoint tank seeds via tankscore.Seed, six-boss error x1.25), then the four class workers fixed pass 2's findings
+and re-optimized every preset (orchestration/tank_round3/*.md; raw output in orchestration/tank_handoff/<class>/round3/).
 
-## What changed (f62bfc74..b38ff16)
-All 13 tankbench requests, all 12 preset APLs and presets.ts, rotopt's four tank templates, tools/tankbench/main.go,
-tools/tankscore, sim/core/tank_score.go and the class sim files of round 2 (71 watched files).
+## What changed (b38ff16..dc303b0)
+32 watched files: all 12 preset requests' rows, the Warden's Balanced and Max survival APLs (armor trinket hold),
+bear Max threat (Enrage under 70, a Max threat gear set), warrior Max threat (Shield Wall 13 s), paladin gear,
+rotopt's tank templates (shaman trinketAt, druid enrageRage max 100), tools/tankscore/seed.go, the class sim files.
 
-## Baseline (ref/tank_bench/summary.tsv, header updated to b38ff16)
-Every request on every boss, 1,000 iterations, default seed. Every row equals the table the class workers wrote after
-round 2, so no row moved without a rotation change. Scoring mean (six bosses without Ragnaros), score at own weight:
+## Baseline (ref/tank_bench/summary.tsv, header now dc303b0)
+Every request on every boss, 1,000 iterations, default seed. Every row reproduces the ref the class workers had
+already committed (589208463), so nothing moved without a rotation, gear or engine change. Scoring mean (six
+bosses without Ragnaros) at own weight, b38ff16 -> dc303b0:
 
-| request | w | score | SafeDPS | DTPS | healing needed | death floor |
-|---|---|---|---|---|---|---|
-| druid_bear_max_threat | 1/3 | 2837.3 | 1685.0 | 577.8 | 592.7 | 0 |
-| druid_bear_balanced | 1 | 1867.5 | 1603.3 | 575.8 | 484.5 | 0 |
-| druid_bear_max_survival | 3 | -750.2 | 1519.8 | 576.7 | 463.2 | 0 |
-| paladin_protection_max_threat | 1/3 | 2785.0 | 1493.7 | 319.7 | 238.5 | 0 |
-| paladin_protection_balanced | 1 | 2397.7 | 1457.3 | 301.2 | 208.3 | 0 |
-| paladin_protection_max_survival | 3 | 1363.3 | 1457.3 | 301.2 | 208.3 | 0 |
-| shaman_warden_max_threat | 1/3 | 2292.3 | 1592.8 | 806.8 | 954.0 | 0 |
-| shaman_warden_balanced | 1 | 547.8 | 1551.0 | 791.7 | 905.2 | 0 |
-| shaman_warden_max_survival | 3 | -4356.7 | 1482.8 | 754.0 | 858.0 | 0 |
-| warrior_protection_max_threat | 1/3 | 3694.8 | 2051.8 | 416.8 | 416.8 | 0 |
-| warrior_protection_balanced | 1 | 3008.5 | 1963.5 | 366.8 | 324.0 | 0 |
-| warrior_protection_max_survival | 3 | 1205.0 | 1851.0 | 353.5 | 295.8 | 0 |
-| warrior_protection (legacy) | 1* | -14.2 | 1048.2 | 637.3 | 757.0 | 0 |
+| request | w | score | SafeDPS | DTPS | healing needed |
+|---|---|---|---|---|---|
+| druid_bear_max_threat | 1/3 | 2837 -> 2842 | 1685 -> 1699 | 578 -> 595 | 593 -> 618 |
+| druid_bear_balanced | 1 | 1868 -> 1852 | 1603 -> 1589 | 576 -> 569 | 484 -> 483 |
+| druid_bear_max_survival | 3 | -750 -> -634 | 1520 -> 1491 | 577 -> 570 | 463 -> 442 |
+| paladin_protection_max_threat | 1/3 | 2785 -> 2804 | 1494 -> 1493 | 320 -> 304 | 238 -> 219 |
+| paladin_protection_balanced | 1 | 2398 -> 2437 | 1457 -> 1453 | 301 -> 288 | 208 -> 191 |
+| paladin_protection_max_survival | 3 | 1363 -> 1500 | 1457 -> 1453 | 301 -> 288 | 208 -> 191 |
+| shaman_warden_max_threat | 1/3 | 2292 -> 2430 | 1593 -> 1684 | 807 -> 792 | 954 -> 1003 |
+| shaman_warden_balanced | 1 | 548 -> 767 | 1551 -> 1577 | 792 -> 730 | 905 -> 846 |
+| shaman_warden_max_survival | 3 | -4357 -> -3971 | 1483 -> 1517 | 754 -> 741 | 858 -> 833 |
+| warrior_protection_max_threat | 1/3 | 3695 -> 3700 | 2052 -> 2051 | 417 -> 412 | 417 -> 411 |
+| warrior_protection_balanced | 1 | 3008 (same) | 1964 | 367 | 324 |
+| warrior_protection_max_survival | 3 | 1205 (same) | 1851 | 354 | 296 |
+| warrior_protection (legacy) | 1* | -14 (same) | | | |
 
-Drift: in all 12 preset requests, priorityList and prepullActions equal the ui APL exactly, and talents and gear
-match presets.ts.
+Death floor 0 everywhere. Moved beyond error: the three paladin rows, the three Warden rows and bear Max survival;
+each has a round-3 preset commit and the engine change (not split). Every row matches the workers' own round-3
+tables in docs/tank_{druid,shaman,warrior}.md. The paladin doc's "Next to the other tanks" table still quotes
+round-2 bear and Warden numbers (1,839 / -839, 530 / -4,579): a stale doc, not a rotation issue.
+Drift: in all 12 preset requests, priorityList and prepullActions equal the ui APL, and talents, race and gear
+equal presets.ts and its gear sets.
 
-## Pass 1's findings (paired, 3k, six-boss mean; fix reverted minus preset)
+## Pass 2's findings (paired, B minus preset, disjoint seeds 11-13 at 3k, 14 at 10k)
 | finding | state | check |
 |---|---|---|
-| 1 bear Roar below Lacerate | resolved | -234.9 ± 8.3 / -212.6 ± 11.6 / -120.3 ± 30.0 (MT / Bal / MS) |
-| 2 warrior Shield Wall 17 s | resolved | Bal 12 s -27.4 ± 6.1, 16 s -8.8 ± 4.2, 18 s -5.6 ± 5.0; MS 12 s -89.9, 16 s -16.2, 18 s -20.6 |
-| 3 paladin Bulwark 13 s | open (user ruling) | without Broodlord 13 s loses -3.6 (5 seeds), -4.4 / -4.2 at 10k; rests on Vaelastrasz vs Onyxia |
-| 4 Warden shock first | resolved | -99.0 ± 6.1 / -88.1 ± 11.6 / -95.9 ± 34.8 |
-| 5 bear Enrage | resolved | in-fight under 40 Rage beats pre-pull -1 s by 60 (5 seeds and 10k) |
-| 6 paladin autocast top | resolved | -12.9 ± 0.2 / -12.3 ± 0.4 / -11.0 ± 1.3 |
-| 7 warrior Sunder filler 15 | resolved | 30 Rage -6.9 ± 1.6; -5.7 at 10k |
-| 8 notes | resolved | all three parts present (the prepull stance action still has no note: a nit) |
+| 9 Warden MS armor trinket held 25 s | resolved | 30 s -29 / -41 / -15, 10k -34.4 ± 10.0; 20 s -74 / -74 / -48; autocast -360 / -398 / -354 |
+| 10 Warden Bal armor trinket held 25 s | resolved | 30 s +2 / -5 / -13, 10k -17.5 ± 4.1; 20 s -21 / -15 / -20; autocast -126 / -149 / -144 |
+| 12 bear MT Enrage under 70 | resolved | 60 -3.4 / -5.3 / -3.9; 80 +0.5 / +0.3 / +0.5, 10k +0.4 ± 0.1 (0.01%, a plateau); none +0.3 / -0.1 / +0.2 |
+| 13 seeds | resolved | disjoint seeds in use; every round-3 call keeps its sign on fresh seeds |
+| warrior MT Shield Wall 13 s (round 3) | holds | 12 s -2.7 / -3.9 / -7.0, 10k -1.8 ± 1.4; 14 s +0.5 / -2.8 / +0.2, 10k -4.8 ± 1.4 (Vaelastrasz -34) |
+| warrior Bal / MS Shield Wall 17 s | holds | 16 s -7.3 ± 4.4 / 0.0 ± 10.1; 18 s -3.8 ± 4.2 / -6.8 ± 9.6 (seed 11) |
+| 3 paladin Bulwark 13 s | open, user call | not re-tested |
+| 11 warrior MS armor trinket | open, user call | hold 30 s vs 35 s -29.6 ± 5.7 (seed 11) |
+Warden Max threat keeps 990015 on autocast, as round 3 chose.
 
-## Seed and iteration count (the druid worker's report)
-- rotopt -seed does reach the sim, but iteration i runs on seed+i (sim/core/sim.go:428), so -seed 2 replays 2,999 of
-  seed 1's 3,000 iterations, and a 10k confirm at the same seed contains the 3k search. That's why it looked inert.
-- The 3k-vs-10k gap is luck in seed 1's first 3,000 iterations (+30 for the bear, 2.7 SD), not an N-dependent
-  bias: healing needed is the empirical 95% quantile (sim/core/tank_score.go:203-229); bear Balanced at 30k is
-  1843.0 vs 1844.5 ± 3.9 over 25 independent 1k seeds; warrior 3005.0 vs 3006.8 ± 2.8.
-- Bosses share iteration seeds, so the six-boss mean's error is about 1.25× what rotopt and abtest assume.
-- Paired calls hold: Shield Wall 16 vs 17 s, Sunder 30 vs 15, Bulwark 13 vs 10 (without Broodlord), bear Enrage
-  keep their sign on 5 disjoint 3k seeds and two 10k seeds, and the paired ± covers the seed spread.
-- Tooling asks are in finding 13 (hash the iteration seed, disjoint confirm seed, per-boss seed offsets or a
-  1.25× error, fixed count for absolute scores, a 2× paired-error rule on a second seed).
+## Line-by-line probe (45 A/Bs, seeds 21 and 22, wins confirmed on 23)
+New: finding 14 (Warden Searing Totem and Fire Nova in the last 60 s: Max threat +43.2 / +46.4 / +48.4 ± 9,
+Balanced with Mana Spring +70.5 / +48.8 / +76.0 ± 13 to 15), finding 15 (Warden Balanced Mana Spring before the
+pull, +12.7 / +10.6 / +10.8 ± 4 to 4.6).
 
-## Line-by-line probe (about 45 A/Bs, 1k, wins settled at 3k)
-New findings: 9 (Warden Max survival armor trinket held for the last 30 s, +328.5 ± 17.0), 10 (Warden Balanced
-armor trinket held instead of 990015, +95.6 ± 7.3), 11 (warrior Max survival's held armor trinket wins only on
-Broodlord), 12 (bear Max threat Enrage at the knob's edge, +3.0 ± 0.5).
+Tried, no win (1k unless said): paladin Balanced Hammer of Wrath under 20% (-67.4), Consecration above Holy Strike
+(-90.6), Holy Strike above Holy Shield (-20.0), Judgement before the pull (-100.3), a lower Consecration rank
+(-62.7); round 3's knob output shows the Consecration mana floor flat 0-60 on the new engine. Warden Earth Shock
+rank 6 (Bal -196.9, MT -247.7), rank 5 under 30% mana (-2.6 / -1.1, ties); Flametongue + Fire Nova (-103.2);
+Searing + Fire Nova without a time gate (MT +34 but Chromaggus -100; Bal unconfirmed); Healing Stream before the
+pull (Bal +24.2 / +0.5 ± 14.4, Broodlord swing, unsettled); Max survival fire totem / Mana Spring (unconfirmed,
+± 30 to 36). Bear Balanced Enrage under 30 / 50 (-20.2, -0.5 ± 11.8), Max survival 30 / 50 (-34.0, -118.6).
+Warrior Balanced Heroic Strike floor 40 / 60 (+11.5 ± 13.4, -13.1 ± 12.9: noise).
 
-Tried, no win (1k, paired): bear Barkskin in the last 15 s (Bal -44.8, MS -123.5), from the pull (Bal +8.2 ± 10.6),
-none at MT (-34.5); bear Balanced Enrage under 60 (-8.1 ± 12.0) or 20 (-23.9); bear potion on a Rage condition
-(-0.5 to -1.5); bear armor trinket 990815 held (MS +12.8 ± 18.2 at 30 s; Bal -179.9); Warden shockFirst=0 (Bal
--94.8, MS -119.7); Warden Balanced autocast to the top (+0.5 ± 7.1) or 990015 held 35 s (-23.2); paladin
-Consecration mana 0.5/0.7 (all within ±1 error); warrior Bloodrage on cooldown (Bal +1.6 ± 3.6, MS -10.0); warrior
-Sunder keep-up to 3 (MT +0.4, Bal -2.6), no keep-up at MT (+0.6 ± 1.5).
-Per-ability output (Golemagg): no Rage capping; bear and warrior use every GCD; the paladin's ~15 idle GCDs are
-Consecration held by mana (thresholds flat); Holy Shield about every 10 s.
+Chromaggus GCDs (pass 2's open item): structural. At Balanced the Warden casts Stormstrike 29, Earth Shock 16-17,
+Lightning Shield 8, about 54 of 77 GCDs; both shocks are on cooldown and every GCD-only filler loses, except Fire
+Nova inside the 60 s gate (finding 14). Mana runs out around 95 s and costs about 3 Earth Shocks.
 
 ## Open items for the next pass
-- A defensive held to the fight's end wins every time, mostly on Broodlord and Onyxia (findings 3, 9-11, Shield
-  Wall). Whether the replay's healing need at a fight's end is over-weighted is a question for tank_mechanics,
-  untested here.
-- The Warden uses about 52 of 77 GCDs on Chromaggus at Balanced; not tested why.
-- Scratch (gone with the session): $AUDIT_WORK/tank_rotations/{bench,noise,probe}/.
+- Finding 14's Vaelastrasz gain partly comes from mana spent under his regen being given back as mana-gain threat
+  (fd9538c, still "to verify"); whether Essence of the Red's regen makes threat in game is tank_mechanics'.
+- The paladin's pre-pull Judgement losing 100 for one GCD is large; possibly its cooldown pushing Swift Judgement
+  out of line. Not chased.
+- Scratch (gone with the session): $AUDIT_WORK/tank_rotations/{base,verify,probe}/.
