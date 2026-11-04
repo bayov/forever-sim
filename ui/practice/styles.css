@@ -1047,6 +1047,309 @@ button.primary {
 	background: linear-gradient(#e2b347, #9a6a12);
 	transition: width 0.15s;
 }
+
+/* The game's glue screens (glue.ts). The loading art covers the window at its own aspect: the
+   wide art is a 16:9 picture squeezed into a square texture. */
+.glue-art {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: max(100vw, 100vh * var(--aspect));
+	height: max(100vh, 100vw / var(--aspect));
+	transform: translate(-50%, -50%);
+}
+
+/* The loading bar sits where the game draws it: in a centered 4:3 box, the border 60% of its
+   width and 5% of its height, centered 7.5% up from the bottom, and the fill 52.5% by 2.5%. */
+.loading.glue {
+	--fw: min(100vw, 100vh * 4 / 3);
+	--fh: min(100vh, 75vw);
+	background: #000;
+	overflow: hidden;
+}
+.loading.glue .loading-box {
+	position: absolute;
+	left: 50%;
+	bottom: calc((100vh - var(--fh)) / 2 + 0.05 * var(--fh));
+	width: calc(0.6 * var(--fw));
+	height: calc(0.05 * var(--fh));
+	transform: translateX(-50%);
+}
+.loading.glue .loading-text {
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 100%;
+	margin: 0;
+	color: #ffd100;
+	font-family: 'Friz Quadrata', 'Avant Garde', sans-serif;
+	font-size: max(12px, var(--fh) * 14 / 768);
+	text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000, 0 0 3px #000;
+}
+.loading.glue .loading-bar {
+	position: absolute;
+	left: 6.25%;
+	width: 87.5%;
+	top: 25%;
+	height: 50%;
+	border: 0;
+	background: none;
+}
+.loading.glue .loading-bar > div {
+	position: relative;
+	background: var(--load-fill) 0 0 / 100% 100%;
+}
+.loading-spark {
+	position: absolute;
+	right: 0;
+	top: -50%;
+	height: 200%;
+	aspect-ratio: 1;
+	transform: translateX(50%);
+	background: var(--load-spark) 0 0 / 100% 100%;
+}
+.loading-border {
+	position: absolute;
+	inset: 0;
+	background: var(--load-border) 0 0 / 100% 100%;
+}
+
+/* The setup page as the game's login screen. Sizes are in the glue screen's units: the game
+   lays it out on a screen 768 units tall. */
+.glue-screen {
+	position: fixed;
+	inset: 0;
+	overflow: auto;
+	--g: min(100vh / 768, 100vw / 1024);
+}
+.glue-screen:not(.glue) .glue-logo,
+.glue-screen:not(.glue) .glue-corner {
+	display: none;
+}
+.glue-screen.glue {
+	background: #000;
+	font-family: 'Friz Quadrata', 'Avant Garde', sans-serif;
+}
+.glue-screen.glue .glue-art {
+	position: fixed;
+	filter: blur(calc(3 * var(--g))) brightness(0.42) saturate(0.8);
+}
+.glue-screen.glue::before {
+	content: '';
+	position: fixed;
+	inset: 0;
+	z-index: 1;
+	background: radial-gradient(ellipse at 50% 45%, transparent 35%, rgba(0, 0, 0, 0.7));
+}
+.glue-logo {
+	position: relative;
+	z-index: 2;
+	width: calc(384 * var(--g));
+	height: calc(192 * var(--g));
+	margin: calc(-4 * var(--g)) auto 0;
+	background: var(--glue-logo) center / 100% 100% no-repeat;
+}
+.glue-screen.glue .setup {
+	position: relative;
+	z-index: 2;
+	box-sizing: border-box;
+	width: calc(470 * var(--g));
+	max-width: calc(100vw - 32px);
+	margin: calc(24 * var(--g)) auto calc(40 * var(--g));
+	padding: calc(20 * var(--g)) calc(8 * var(--g)) calc(10 * var(--g));
+	gap: calc(12 * var(--g));
+	background: none;
+	border: calc(32 * var(--g)) solid transparent;
+	border-image: var(--glue-dialog-border) 32 / calc(32 * var(--g)) stretch;
+	border-radius: 0;
+}
+.glue-screen.glue .setup::before {
+	content: '';
+	position: absolute;
+	inset: calc(-21 * var(--g));
+	z-index: -1;
+	background: var(--glue-dialog-bg) 0 0 / calc(32 * var(--g)) repeat, rgba(0, 0, 0, 0.5);
+}
+.glue-screen.glue .setup h1 {
+	position: absolute;
+	left: 50%;
+	top: calc(-32 * var(--g) - 22 * var(--g));
+	width: calc(184 * var(--g));
+	height: calc(55 * var(--g));
+	margin: 0;
+	transform: translateX(-50%);
+	background: var(--glue-header) 0 0 / 100% 100% no-repeat;
+	color: #ffd100;
+	font-size: calc(14 * var(--g));
+	font-weight: normal;
+	line-height: calc(48 * var(--g));
+	text-align: center;
+	text-shadow: 1px 1px 0 #000;
+	white-space: nowrap;
+}
+.glue-screen.glue .setup label {
+	position: relative;
+	gap: calc(5 * var(--g));
+	color: #ffd100;
+	font-size: calc(12 * var(--g));
+	text-shadow: 1px 1px 0 #000;
+}
+.glue-screen.glue .setup select,
+.glue-screen.glue .setup textarea {
+	appearance: none;
+	box-sizing: border-box;
+	border: calc(7 * var(--g)) solid transparent;
+	border-image: var(--glue-edit) 7 fill / calc(7 * var(--g)) stretch;
+	border-radius: 0;
+	background: none;
+	padding: calc(2 * var(--g)) calc(6 * var(--g));
+	color: #fff;
+	font-family: inherit;
+	font-size: calc(12 * var(--g));
+	text-shadow: 1px 1px 0 #000;
+	outline: none;
+}
+.glue-screen.glue .setup select {
+	height: calc(34 * var(--g));
+	padding-right: calc(28 * var(--g));
+	cursor: pointer;
+}
+.glue-screen.glue .setup textarea {
+	resize: none;
+}
+.glue-screen.glue .setup textarea::placeholder {
+	color: #8a8a8a;
+}
+.glue-screen.glue .setup option {
+	background: #0c0c0c;
+	color: #fff;
+}
+/* The dropdown's arrow, the chat frame's scroll down button. */
+.glue-screen.glue .setup label:has(> select)::after {
+	content: '';
+	position: absolute;
+	right: calc(6 * var(--g));
+	bottom: calc(5 * var(--g));
+	width: calc(24 * var(--g));
+	height: calc(24 * var(--g));
+	background: var(--glue-arrow) 0 0 / 100% 100%;
+	pointer-events: none;
+}
+.glue-screen.glue .setup:has(select:hover) label:has(> select:hover)::after {
+	filter: brightness(1.3);
+}
+.glue-screen.glue .setup-error {
+	color: #ff4040;
+	font-size: calc(12 * var(--g));
+	text-shadow: 1px 1px 0 #000;
+}
+
+/* The big glue button (Enter World), with its pulsing glow and its highlight added on top. */
+.glue-screen.glue #enter {
+	position: relative;
+	align-self: center;
+	width: calc(156 * var(--g));
+	height: calc(32 * var(--g));
+	margin-top: calc(14 * var(--g));
+	padding: 0;
+	border: 0;
+	border-radius: 0;
+	background: var(--glue-big-up) calc(-50 * var(--g)) calc(-16 * var(--g)) / calc(256 * var(--g)) calc(64 * var(--g)) no-repeat;
+	color: #ffd100;
+	font-size: calc(15 * var(--g));
+	text-shadow: 1px 1px 0 #000;
+}
+.glue-screen.glue #enter::before,
+.glue-screen.glue #enter::after {
+	content: '';
+	position: absolute;
+	left: calc(-50 * var(--g));
+	top: calc(-16 * var(--g));
+	width: calc(256 * var(--g));
+	height: calc(64 * var(--g));
+	pointer-events: none;
+}
+.glue-screen.glue #enter::before {
+	background: var(--glue-big-glow) 0 0 / 100% 100%;
+	animation: glue-pulse 1s ease-in-out infinite alternate;
+}
+.glue-screen.glue #enter::after {
+	background: var(--glue-big-highlight) 0 0 / 100% 100%;
+	opacity: 0;
+}
+.glue-screen.glue #enter:hover::after,
+.glue-screen.glue #enter.v-hover::after {
+	opacity: 1;
+}
+.glue-screen.glue #enter:hover,
+.glue-screen.glue #enter.v-hover {
+	color: #fff;
+}
+.glue-screen.glue #enter:active {
+	background-image: var(--glue-big-down);
+	padding: calc(2 * var(--g)) 0 0 calc(2 * var(--g));
+}
+.glue-screen.glue #enter:disabled {
+	color: #808080;
+}
+.glue-screen.glue #enter:disabled::before {
+	display: none;
+}
+@keyframes glue-pulse {
+	from {
+		opacity: 0.2;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+/* The red glue panel buttons, like the login screen's Options and Quit in the bottom right. */
+.glue-corner {
+	position: fixed;
+	right: calc(14 * var(--g));
+	bottom: calc(14 * var(--g));
+	z-index: 2;
+	display: flex;
+	flex-direction: column;
+	gap: calc(4 * var(--g));
+}
+.glue-panel {
+	position: relative;
+	width: calc(118 * var(--g));
+	height: calc(38 * var(--g));
+	padding: 0 0 calc(2 * var(--g));
+	border: 0;
+	border-radius: 0;
+	background: var(--glue-panel-up) 0 0 / calc(205 * var(--g)) calc(51 * var(--g)) no-repeat;
+	color: #ffd100;
+	font-size: calc(12 * var(--g));
+	text-shadow: 1px 1px 0 #000;
+}
+.glue-panel::after {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: calc(205 * var(--g));
+	height: calc(51 * var(--g));
+	background: var(--glue-panel-highlight) 0 0 / 100% 100%;
+	opacity: 0;
+	pointer-events: none;
+}
+.glue-panel:hover,
+.glue-panel.v-hover {
+	background-color: transparent;
+	color: #fff;
+}
+.glue-panel:hover::after,
+.glue-panel.v-hover::after {
+	opacity: 1;
+}
+.glue-panel:active {
+	background-image: var(--glue-panel-down);
+	padding: calc(2 * var(--g)) 0 0 calc(2 * var(--g));
+}
 .settings-gap {
 	height: calc(4 * var(--u));
 }
