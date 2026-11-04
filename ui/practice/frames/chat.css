@@ -1,39 +1,137 @@
-/* The chat frame (frames/chat.ts), in UI units like the other frames. Positions follow Classic
-   Era's FloatingChatFrame.xml: the background 2 to 3 past the frame, the tabs on its top edge,
-   the scroll buttons 3 left of the background and the edit box 2 under the frame.
+/* The chat frame (frames/chat.ts), in UI units like the other frames, y down. Positions follow
+   Mainline's FloatingChatFrame.xml and FloatingChatFrame.lua, which Forever loads unchanged:
+   the background 2 left of the frame, 15 right of it (room for the scroll bar), 3 above and 6
+   below. The button column is 3 left of the background, the tabs stand on its top edge, the
+   scroll bar runs down the frame's right side over the scroll to bottom button, and the edit
+   box is 2 under the frame.
 
-   Fades follow FloatingChatFrame.lua: things fade in over 0.15s while the mouse is over the
-   frame and fade out over 2s a second after it leaves. */
+   Fades follow FCF_FadeInChatFrame and FCF_FadeOutChatFrame: the tabs, the scroll bar and the
+   scroll to bottom button fade in over 0.15s once the mouse rests 0.2s over the frame, and fade
+   out over 2s a second after it leaves. The background stays at the window alpha. */
 
 .bz-chat {
 	position: absolute;
 	pointer-events: auto;
-	--fade-in: opacity 0.15s linear;
+	--fade-in: opacity 0.15s linear 0.2s;
 	--fade-out: opacity 2s linear 1s;
 }
 .bz-chat * {
 	box-sizing: border-box;
 }
+.bz-chat-hover {
+	display: none;
+}
 
-/* The background (chatframebackground in black), 0.25 alpha while hovered. */
+/* FloatingBorderedFrame: black at the default window alpha (DEFAULT_CHATFRAME_ALPHA, 0.25),
+   with the border at the same alpha. */
 .bz-chat-bg {
 	position: absolute;
 	left: -2px;
-	right: -3px;
+	right: -2px;
 	top: -3px;
 	bottom: -6px;
 	background: #000;
-	outline: 1px solid #000;
-	opacity: 0;
-	transition: var(--fade-out);
+	opacity: 0.25;
 	pointer-events: none;
 }
-.bz-chat:is(:hover, .v-hover) .bz-chat-bg {
-	opacity: 0.25;
-	transition: var(--fade-in);
+.bz-chat > .bz-chat-bg {
+	right: -15px;
+}
+.bz-chat-border {
+	position: absolute;
+}
+.bz-chat-border.tl,
+.bz-chat-border.tr,
+.bz-chat-border.bl,
+.bz-chat-border.br {
+	width: 8px;
+	height: 8px;
+	background: var(--bz-chat-border-c) 0 0 / 100% 100%;
+}
+.bz-chat-border.tl {
+	left: -4px;
+	top: -4px;
+}
+.bz-chat-border.tr {
+	right: -4px;
+	top: -4px;
+	transform: scaleX(-1);
+}
+.bz-chat-border.bl {
+	left: -4px;
+	bottom: -4px;
+	transform: scaleY(-1);
+}
+.bz-chat-border.br {
+	right: -4px;
+	bottom: -4px;
+	transform: scale(-1, -1);
+}
+.bz-chat-border.l,
+.bz-chat-border.r {
+	top: 4px;
+	bottom: 4px;
+	width: 16px;
+	background: var(--bz-chat-border-l) 0 0 / 16px 16px repeat-y;
+}
+.bz-chat-border.l {
+	left: -4px;
+}
+.bz-chat-border.r {
+	right: -4px;
+	transform: scaleX(-1);
+}
+.bz-chat-border.t,
+.bz-chat-border.b {
+	left: 4px;
+	right: 4px;
+	height: 16px;
+	background: var(--bz-chat-border-t) 0 0 / 16px 16px repeat-x;
+}
+.bz-chat-border.t {
+	top: -4px;
+}
+.bz-chat-border.b {
+	bottom: -4px;
+	transform: scaleY(-1);
 }
 
-/* The messages: newest at the bottom, the view scrolled by the wheel and the buttons. */
+/* The button column (ChatFrame1ButtonFrame, 29 wide). The chat is docked, so it stays at full
+   alpha. */
+.bz-chat-buttons {
+	position: absolute;
+	left: -34px;
+	width: 29px;
+	top: 0;
+	bottom: 0;
+}
+/* ChatFrameChannelButton (VoiceToggleButtonTemplate): 27 by 26 with a 15 by 15 icon. */
+.bz-chat-channel {
+	position: absolute;
+	left: 1px;
+	top: 0;
+	width: 27px;
+	height: 26px;
+}
+.bz-chat-channel-icon {
+	position: absolute;
+	left: 6px;
+	top: 5.5px;
+	width: 15px;
+	height: 15px;
+}
+/* ChatFrameMenuButton: the speech bubble, 32 by 32 at the column's bottom. */
+.bz-chat-menu {
+	position: absolute;
+	left: -1.5px;
+	bottom: 0;
+	width: 32px;
+	height: 32px;
+	background: var(--bz-chat-menu-up) 0 0 / 100% 100%;
+}
+
+/* The messages: newest at the bottom, the view scrolled by the wheel and the scroll bar. The
+   combat log's lines start under its quick button bar. */
 .bz-chat-msgs {
 	position: absolute;
 	inset: 0;
@@ -48,8 +146,8 @@
 	flex-direction: column;
 	justify-content: flex-end;
 }
-/* ChatFontNormal. A line fades out two minutes after it came (the game's time visible and fade
-   duration). Hover or a scroll brings them back. */
+/* ChatFontNormal (ARIALN 14 with a shadow). A line fades out two minutes after it came (the
+   game's time visible and fade duration). Hover or a scroll brings them back. */
 .bz-chat-line {
 	font: 14px 'Arial Narrow WoW', 'Arial Narrow', sans-serif;
 	line-height: 15px;
@@ -78,18 +176,18 @@
 	}
 }
 
-/* The Combat Log's quick button bar (CombatLogQuickButtonFrame_Custom) on top of its lines. Its
-   parent is the tab, so it fades with it. */
+/* The Combat Log's quick button bar: black at 0.7, from 3 above the log's top to the scroll
+   bar's right edge. Its parent is the tab, so it has the tab's alpha. */
 .bz-chat-quick {
 	display: none;
-	opacity: 0;
-	transition: var(--fade-out);
 	position: absolute;
 	left: 0;
-	right: 0;
-	top: 0;
+	right: -8px;
+	top: -3px;
 	height: 24px;
 	background: rgba(0, 0, 0, 0.7);
+	opacity: 0.4;
+	transition: var(--fade-out);
 }
 .bz-chat.combat .bz-chat-quick {
 	display: block;
@@ -98,33 +196,34 @@
 	opacity: 1;
 	transition: var(--fade-in);
 }
+/* The quick button is its text plus 13, 3 from the bar's left. */
 .bz-chat-quick-btn {
 	position: absolute;
-	left: 8px;
-	top: 6px;
-	font: 12px 'Friz Quadrata', serif;
-	color: #fff;
-	text-shadow: 1px 1px 0 #000;
-	white-space: nowrap;
+	left: 9.5px;
+	top: 5px;
 }
 
-/* The tabs (ChatTabArtTemplate): 16 wide ends and a tiled middle, 32 high, hidden until the
-   frame is hovered. The selected one has the orange glow on top. */
+/* The tabs (ChatTabArtTemplate): 16 wide ends that hang 2 past the tab and a tiled middle, 32
+   high. The selected tab rests at 0.4 and the others at 0.2, and hovering the frame brings them
+   to 1 and 0.6. The selected art and the highlight are added on top, tinted (1, 0.5, 0.25). */
 .bz-chat-dock {
 	position: absolute;
-	left: 0;
-	top: -35px;
-	height: 32px;
+	left: -2px;
+	bottom: calc(100% + 3px);
 	width: 0;
+	height: 0;
 }
 .bz-chat-tab {
 	position: absolute;
-	top: 0;
+	bottom: 0;
 	height: 32px;
 	width: 64px;
 	cursor: pointer;
-	opacity: 0;
+	opacity: 0.2;
 	transition: var(--fade-out);
+}
+.bz-chat-tab.selected {
+	opacity: 0.4;
 }
 .bz-chat:is(:hover, .v-hover) .bz-chat-tab {
 	opacity: 0.6;
@@ -140,15 +239,15 @@
 	pointer-events: none;
 }
 .bz-chat-tab > .l {
-	left: 0;
+	left: -2px;
 	width: 16px;
 }
 .bz-chat-tab > .m {
-	left: 16px;
-	right: 16px;
+	left: 14px;
+	right: 14px;
 }
 .bz-chat-tab > .r {
-	right: 0;
+	right: -2px;
 	width: 16px;
 }
 .bz-chat-tab-bg.l {
@@ -160,15 +259,16 @@
 .bz-chat-tab-bg.r {
 	background: var(--bz-chat-tab-r) 0 0 / 100% 100%;
 }
-/* The selected and highlight art is added on top in the game, tinted (1, 0.5, 0.25). */
 .bz-chat-tab-sel,
 .bz-chat-tab-hl {
 	display: none;
 	background: rgb(255, 128, 64);
 	mask-size: 100% 100%;
 }
-.bz-chat-tab-hl {
-	opacity: 0.6;
+.bz-chat-tab-sel.m,
+.bz-chat-tab-hl.m {
+	mask-size: 32px 32px;
+	mask-repeat: repeat-x;
 }
 .bz-chat-tab.selected .bz-chat-tab-sel,
 .bz-chat-tab:is(:hover, .v-hover) .bz-chat-tab-hl {
@@ -192,10 +292,12 @@
 .bz-chat-tab-hl.r {
 	mask-image: var(--bz-chat-tabhl-r);
 }
+/* GameFontNormalSmall, centered 5 below the tab's middle. */
 .bz-chat-tab > .bz-chat-tab-text {
-	left: 16px;
+	left: 50%;
 	top: 15px;
 	height: auto;
+	transform: translateX(-50%);
 	font: 10px 'Friz Quadrata', serif;
 	line-height: 12px;
 	color: #ffd200;
@@ -203,115 +305,195 @@
 	white-space: nowrap;
 }
 
-/* The scroll buttons (the button frame, 29 wide), 0.2 alpha until the frame is hovered. */
-.bz-chat-buttons {
+/* The scroll bar (MinimalScrollBar, 8 wide) from the frame's top right down to 2 above the
+   scroll to bottom button. It rests hidden and fades in to 0.6. */
+.bz-chat-bar {
 	position: absolute;
-	left: -34px;
-	width: 29px;
-	bottom: -6px;
-	height: 92px;
-	opacity: 0.2;
+	left: 100%;
+	width: 8px;
+	top: 0;
+	bottom: 25px;
+	opacity: 0;
 	transition: var(--fade-out);
 }
-.bz-chat:is(:hover, .v-hover) .bz-chat-buttons {
-	opacity: 1;
+.bz-chat.combat .bz-chat-bar {
+	top: 24px;
+}
+.bz-chat:is(:hover, .v-hover) .bz-chat-bar {
+	opacity: 0.6;
 	transition: var(--fade-in);
 }
-.bz-chat-btn {
+.bz-chat-step {
 	position: absolute;
-	left: -1.5px;
-	width: 32px;
-	height: 32px;
+	left: -4.5px;
+	width: 17px;
+	height: 11px;
 	cursor: pointer;
-	background-size: 100% 100%;
 }
-.bz-chat-btn.end {
+.bz-chat-step.back {
+	top: 0;
+}
+.bz-chat-step.forward {
 	bottom: 0;
-	background-image: var(--bz-chat-end);
 }
-.bz-chat-btn.down {
-	bottom: 30px;
-	background-image: var(--bz-chat-down);
+.bz-chat-step:is(:hover, .v-hover),
+.bz-chat-end:is(:hover, .v-hover) {
+	filter: brightness(1.35);
 }
-.bz-chat-btn.up {
-	bottom: 60px;
-	background-image: var(--bz-chat-up);
+.bz-chat-step.pushed,
+.bz-chat-end.pushed {
+	filter: brightness(0.8);
 }
-.bz-chat-btn.end.pushed {
-	background-image: var(--bz-chat-end-down);
+.bz-chat-track {
+	position: absolute;
+	left: 0;
+	width: 8px;
+	top: 19px;
+	bottom: 19px;
 }
-.bz-chat-btn.down.pushed {
-	background-image: var(--bz-chat-down-down);
+.bz-chat-track > div,
+.bz-chat-thumb > div {
+	position: absolute;
+	left: 0;
+	width: 8px;
 }
-.bz-chat-btn.up.pushed {
-	background-image: var(--bz-chat-up-down);
+.bz-chat-track-top,
+.bz-chat-thumb-top {
+	top: 0;
+	height: 8px;
 }
-.bz-chat-btn:is(:hover, .v-hover)::after {
-	content: '';
+.bz-chat-track-bottom,
+.bz-chat-thumb-bottom {
+	bottom: 0;
+	height: 8px;
+}
+.bz-chat-track-mid,
+.bz-chat-thumb-mid {
+	top: 8px;
+	bottom: 8px;
+}
+.bz-chat-track > .bz-chat-thumb {
+	height: 23px;
+	cursor: pointer;
+}
+.bz-chat-thumb > .over,
+.bz-chat-thumb > .down,
+.bz-chat-thumb:is(:hover, .v-hover) > .up,
+.bz-chat-thumb.pushed > .up,
+.bz-chat-thumb.pushed > .over {
+	display: none;
+}
+.bz-chat-thumb:is(:hover, .v-hover) > .over,
+.bz-chat-thumb.pushed > .down {
+	display: block;
+}
+
+/* The scroll to bottom button, 17 by 15, rests hidden and fades in to 0.65. While newer lines
+   are below the view it shows at full alpha and its glow blinks (0.1s in, 0.5s on, 0.1s out,
+   0.5s off). */
+.bz-chat-end {
+	position: absolute;
+	left: calc(100% - 4px);
+	bottom: 8px;
+	width: 17px;
+	height: 15px;
+	cursor: pointer;
+	opacity: 0;
+	transition: var(--fade-out);
+}
+.bz-chat:is(:hover, .v-hover) .bz-chat-end {
+	opacity: 0.65;
+	transition: opacity 0.1s linear 0.2s;
+}
+.bz-chat .bz-chat-end.flash {
+	opacity: 1;
+	transition: none;
+}
+.bz-chat-end-flash {
+	display: none;
 	position: absolute;
 	inset: 0;
-	background: var(--bz-chat-btn-hl) 0 0 / 100% 100%;
+	mix-blend-mode: plus-lighter;
 	pointer-events: none;
 }
-/* The bottom button blinks while newer lines are below the view. */
-.bz-chat-btn.end.flash::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: var(--bz-chat-blink) 0 0 / 100% 100%;
-	animation: bz-chat-blink 1.2s linear infinite;
-	pointer-events: none;
+.bz-chat-end.flash .bz-chat-end-flash {
+	display: block;
+	animation: bz-chat-flash 1.2s linear infinite;
 }
-@keyframes bz-chat-blink {
-	0%,
-	100% {
+@keyframes bz-chat-flash {
+	0% {
 		opacity: 0;
 	}
-	10%,
+	8.3%,
 	50% {
 		opacity: 1;
 	}
-	60% {
+	58.3%,
+	100% {
 		opacity: 0;
 	}
 }
 
-/* The edit box (ChatFrameEditBoxTemplate): the stone border, "Say: " and the text. */
+/* The edit box (ChatFrameEditBoxTemplate): from 5 left of the frame to 8 past the scroll bar,
+   2 under the frame. Inactive it shows only the stone border at 0.35 alpha. Open, it has the
+   focus border tinted the chat type's color (Say is white), the "Say: " header and the text. */
 .bz-chat-edit {
-	display: none;
 	position: absolute;
 	left: -5px;
-	right: -5px;
+	right: -16px;
 	top: calc(100% + 2px);
 	height: 32px;
+	opacity: 0.35;
 }
 .bz-chat-edit.open {
-	display: block;
+	opacity: 1;
 }
-.bz-chat-edit-l,
-.bz-chat-edit-m,
-.bz-chat-edit-r {
+.bz-chat-edit > .l,
+.bz-chat-edit > .m,
+.bz-chat-edit > .r {
 	position: absolute;
 	top: 0;
 	height: 32px;
 	pointer-events: none;
 }
-.bz-chat-edit-l {
+.bz-chat-edit > .l {
 	left: 0;
 	width: 32px;
-	background: var(--bz-chat-input-l) 0 0 / 100% 100%;
 }
-.bz-chat-edit-m {
+.bz-chat-edit > .m {
 	left: 32px;
 	right: 32px;
-	background: var(--bz-chat-input-m) 0 0 / 32px 32px repeat-x;
 }
-.bz-chat-edit-r {
+.bz-chat-edit > .r {
 	right: 0;
 	width: 32px;
+}
+.bz-chat-edit-bg.l {
+	background: var(--bz-chat-input-l) 0 0 / 100% 100%;
+}
+.bz-chat-edit-bg.m {
+	background: var(--bz-chat-input-m) 0 0 / 32px 32px repeat-x;
+}
+.bz-chat-edit-bg.r {
 	background: var(--bz-chat-input-r) 0 0 / 100% 100%;
 }
+.bz-chat-edit-focus {
+	display: none;
+}
+.bz-chat-edit.open .bz-chat-edit-focus {
+	display: block;
+}
+.bz-chat-edit-focus.l {
+	background: var(--bz-chat-focus-l) 0 0 / 100% 100%;
+}
+.bz-chat-edit-focus.m {
+	background: var(--bz-chat-focus-m) 0 0 / 32px 32px repeat-x;
+}
+.bz-chat-edit-focus.r {
+	background: var(--bz-chat-focus-r) 0 0 / 100% 100%;
+}
 .bz-chat-edit-header {
+	display: none;
 	position: absolute;
 	left: 15px;
 	top: 8px;
@@ -321,6 +503,9 @@
 	text-shadow: 1px 1px 0 #000;
 	white-space: pre;
 	pointer-events: none;
+}
+.bz-chat-edit.open .bz-chat-edit-header {
+	display: block;
 }
 .bz-chat-input {
 	position: absolute;
@@ -337,5 +522,8 @@
 	color: #fff;
 	caret-color: #fff;
 	text-shadow: 1px 1px 0 #000;
+	pointer-events: none;
+}
+.bz-chat-edit.open .bz-chat-input {
 	pointer-events: auto;
 }

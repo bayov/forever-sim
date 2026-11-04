@@ -8,8 +8,7 @@ import { ChatFrame, ChatLayout } from './chat';
 import { GameMenu, MenuHost, OptionsFrame } from './gamemenu';
 import type { RoomLink } from './link';
 import { UIPanels } from './panels';
-import { SpellbookFrame } from './spellbook';
-import { TalentFrame } from './talents';
+import { PlayerSpellsFrame } from './playerspells';
 
 export type { MenuHost } from './gamemenu';
 export type { RoomLink } from './link';
@@ -17,8 +16,8 @@ export type { RoomLink } from './link';
 export class Frames {
 	readonly panels = new UIPanels();
 	readonly character: CharacterFrame;
-	readonly spellbook: SpellbookFrame;
-	readonly talents: TalentFrame;
+	// The spellbook and the talents are tabs of one frame in Forever, like Mainline's.
+	readonly spells: PlayerSpellsFrame;
 	readonly bags: BagsFrame;
 	readonly menu: GameMenu;
 	readonly options: OptionsFrame;
@@ -31,14 +30,13 @@ export class Frames {
 	) {
 		const p = this.panels;
 		this.character = p.add(new CharacterFrame(link));
-		this.spellbook = p.add(new SpellbookFrame(link));
-		this.talents = p.add(new TalentFrame(link));
+		this.spells = p.add(new PlayerSpellsFrame(link));
 		this.bags = p.add(new BagsFrame(link));
-		this.options = p.add(new OptionsFrame(host));
+		this.options = p.add(new OptionsFrame(host, link.tooltip));
 		this.menu = p.add(
 			new GameMenu([
+				[{ label: 'Options', run: () => this.openOptions() }],
 				[
-					{ label: 'Options', run: () => this.openOptions() },
 					{
 						label: 'Key Bindings',
 						run: () => {
@@ -56,7 +54,7 @@ export class Frames {
 						},
 					},
 				],
-				[{ label: 'Return to Game', run: () => p.close(this.menu) }],
+				[{ label: 'Return to Game', run: () => p.close(this.menu, true) }],
 			]),
 		);
 		// Closing Options brings the Game Menu back, like the game.
@@ -107,10 +105,10 @@ export class Frames {
 				this.toggleCharacter(2);
 				return true;
 			case 'TOGGLESPELLBOOK':
-				p.toggle(this.spellbook);
+				this.toggleSpells('spellbook');
 				return true;
 			case 'TOGGLETALENTS':
-				p.toggle(this.talents);
+				this.toggleSpells('talents');
 				return true;
 			case 'OPENALLBAGS':
 			case 'TOGGLEBACKPACK':
@@ -137,6 +135,17 @@ export class Frames {
 		}
 	}
 
+	// toggleSpells opens the spells frame on a tab, switches tabs when it's open on another, and
+	// closes it when it's open on that one.
+	toggleSpells(tab: 'spellbook' | 'talents') {
+		const f = this.spells;
+		if (f.isOpen && f.tab === tab) this.panels.close(f);
+		else {
+			f.showTab(tab);
+			void this.panels.open(f);
+		}
+	}
+
 	toggleMenu() {
 		if (this.options.isOpen) {
 			this.panels.close(this.options);
@@ -150,7 +159,7 @@ export class Frames {
 	escapeDialog(): boolean {
 		if (this.chat.closeEditBox()) return true;
 		if (this.options.isOpen) {
-			this.panels.close(this.options);
+			if (!this.options.closeMenus()) this.panels.close(this.options);
 			return true;
 		}
 		if (this.menu.isOpen) {
@@ -169,3 +178,4 @@ export class Frames {
 		void this.panels.open(this.menu);
 	}
 }
+

@@ -737,18 +737,17 @@ Errors show in red at the top center. The texts come from GlobalStrings, and the
 
 ### Blizzard frames
 
-The game's own windows live in `ui/practice/frames/`, drawn from the client's textures and fonts in the Classic Era
-look: the Game Menu (Esc) and Options (graphics, sound, encounter), the character frame (paper doll, 3D model, stats,
-Skills and Reputation tabs), the spellbook (pick a spell up to drop it on a bar), the talent frame (read only), the
-backpack (the toolkit's usable items, read only) and the chat frame (General and Combat Log). Your Forever binds open
-them (TOGGLECHARACTER0, TOGGLESPELLBOOK, TOGGLETALENTS, OPENALLBAGS, OPENCHAT), and the left ones stack side by side
-like UIParent's panels. The stats come from the sim (`sim/practice/sheet.go`, sent with the session's start), the
-spellbook tabs from the client's SkillLineAbility table (`/api/spells` gives each spell's `tab`), the chat's spot from
-the EllesmereUI profile. A closed frame does no work, and its textures load on its first open.
+The game's own windows live in `ui/practice/frames/`, built after Forever's real default UI: its "Camelot" flavor of
+the Mainline interface (the Gethe/wow-ui-source `forever` branch), with Forever's own art. The Game Menu (Esc) and the
+Settings panel (graphics, audio, encounter), the character frame (paper doll, 3D model, the stats pane, Skills and
+Reputation), the spells frame (spellbook and talents, read only, pick a spell up to drop it on a bar), the backpack
+(the toolkit's usable items, read only) and the chat frame (General and Combat Log). Your Forever binds open them
+(TOGGLECHARACTER0, TOGGLESPELLBOOK, TOGGLETALENTS, OPENALLBAGS, OPENCHAT), and panels stack like UIParent's.
 
-Forever's real default UI is its own "Camelot" flavor (the Gethe/wow-ui-source `forever` branch: a Cata style
-character frame on `Char-Paperdoll-Parts`, the modern spellbook and talent frames on `*-c60` atlases, Edit Mode). The
-frames here follow Classic Era 1.15 instead.
+The art comes by atlas name from the client's UiTextureAtlas tables (`/api/atlas`, `cmd/practice/atlas.go`), the stats
+from the sim (`sim/practice/sheet.go`, sent with the session's start), the spellbook tabs from SkillLineAbility
+(`/api/spells` gives each spell's `tab`), the chat's spot from the EllesmereUI profile. A closed frame does no work,
+and its art loads on its first open.
 
 ### Input and frames
 
