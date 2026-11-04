@@ -1,12 +1,14 @@
-# Consumables pass 70, master fb584eafa (since f331f0cff)
+# Consumables pass 71, master 6b480b060 (since fb584eafa)
 
-Findings: none new. consumables-20261104-1 (Salvation ticked in presets.ts) is resolved: all 12 presets.ts dropped `salvation: true`; mksettings and the requests already had.
+Findings: none new. No open items.
 
 Verified:
-- ui/*/presets.ts diffs (12 specs): the only Consumes/raid change is the Salvation removal; warrior also has APL/talent comment and talent-string changes (Fury 2H), no consumes.
-- standards.md: new rules 38 (Forever only) and 39 (cast-time coefficient); nothing for this audit.
-- scan.sh on master: banned, Revelation, trinkets and crit-elixir sections empty. Counts as last pass (minor-armor effects 3, the third is Dust Cloud, unused by presets; totems as expected).
-- wago latest: 1.60.1.70755, nothing newer. Class branches are stale, not audited.
-- Pass doc standing check "Salvation on" is now stale: it should say Salvation off (Forever removed it, 2026-10-30 hotfix).
-
-No open items.
+- sim/core/buffs.go: Power Infusion now also raises healing dealt by 20% (client 10060, auras 79 and 136); the spell side stays 1.2. No DPS effect on the audited presets.
+- tools/dps_report/assumptions_def.py: only the Paladin Two-Handed Spec text (hotfix push 113542); no buff or consumable assumption.
+- ui/elemental_shaman, rogue, warrior presets.ts: comment and talent-string changes only; no Consumes, RaidBuffs or Debuffs change.
+- healing_priest and holy_paladin presets and level60 gear: out of scope.
+- standards.md: new rule 40 (Enhancement imbue pairings); nothing for this audit.
+- No change in mksettings, level60 gear sets of the audited specs, or the other watched code files.
+- scan.sh on master: banned, Revelation, trinkets and crit-elixir sections empty; counts as last pass (minor-armor effects 3, Salvation absent).
+- wago latest: 1.60.1.70755, nothing newer. Class branches stale, not audited.
+- Pass doc standing check "Salvation on" is stale: it should say Salvation off (Forever removed it in the 2026-10-30 hotfix).

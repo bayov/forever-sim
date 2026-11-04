@@ -1,14 +1,14 @@
 # Rotation audit: reference files
 
-- `baseline_f331f0c_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  f331f0cff (pass 51). Against the previous f5c99ad baseline only rotation and talent changes moved rows: Feral
-  +8.2 / FF duty +6.3 (bomb line), Balance +1.1 / duty +0.3 (Wrath fallback), Ret twist +0.5 / sub-Holy +1.3
-  (Holy Strike first), Priest Smite +19.1 (Spiritual Guidance talents), Affliction +18..+19 (Wrack build, 734fe0e93).
-  The sim changes in between (13c34f20f non-Forever gates, 0dcb0d87a tank threat, Salvation dropped) moved no
-  Forever DPS (Enhancement -0.13, RNG).
+- `baseline_6b480b0_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  6b480b060 (pass 53). Against the previous f331f0c baseline only rogue and warrior rows moved, both from server
+  hotfixes (rogue req files only remapped, warrior ones re-tuned): rogue 113483 (316a600ac: Shank no longer procs poisons or enchants, Mutilate
+  flat bonus; Seal Fate Daggers -17.8, Seal Fate Swords -16.0, Mutilate -8.2, Combat Swords -4.1, Combat Daggers
+  +2.2) and warrior 113539 (7cd399e88 + e07adf11b: Raging Blows out, Reckless Swings on a 1 s GCD; -6.6 to -26.7,
+  Dragonkin +6.0). The downranking (b57f5cc0a) and Chain Lightning 0.714 (280fd26e2) changes moved no row.
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at f331f0cff (`/tmp/audit-cache/cli/f331f0cff0d8/wowsimcli`).
+  - The CLI was the audit loop's shared build at 6b480b060 (`/tmp/audit-cache/cli/6b480b06046c/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.
