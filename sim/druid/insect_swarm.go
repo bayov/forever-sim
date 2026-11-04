@@ -43,11 +43,12 @@ func (druid *Druid) registerInsectSwarmSpell() {
 			spellCoef := .158
 
 			druid.InsectSwarm[rank] = druid.RegisterSpell(Humanoid|Moonkin, core.SpellConfig{
-				SpellCode:   SpellCode_DruidInsectSwarm,
-				ActionID:    core.ActionID{SpellID: spellID},
-				SpellSchool: core.SpellSchoolNature,
-				DefenseType: core.DefenseTypeMagic,
-				ProcMask:    core.ProcMaskSpellDamage,
+				SpellCode:     SpellCode_DruidInsectSwarm,
+				ActionID:      core.ActionID{SpellID: spellID},
+				SpellSchool:   core.SpellSchoolNature,
+				DefenseType:   core.DefenseTypeMagic,
+				ProcMask:      core.ProcMaskSpellDamage,
+				DownrankLevel: level,
 				// Under Forever its ticks meet the target's full resistance, where other DoTs' meet a
 				// tenth (wowsims/forever a59a3e4931: 21 of 22 ticks resisted, 20.8 expected at the full
 				// resistance).

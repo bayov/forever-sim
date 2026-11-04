@@ -58,6 +58,8 @@ func (priest *Priest) registerShadowguardRank(rank int, icd core.Cooldown) {
 		Flags:        SpellFlagPriest | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 		MissileSpeed: 20,
 
+		DownrankLevel: ShadowguardLevel[rank],
+
 		DamageMultiplier: 1,
 		ThreatMultiplier: 0,
 		BonusCoefficient: ShadowguardStrikeCoef,

@@ -85,7 +85,6 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	spell.SpellCode = SpellCode_ShamanChainLightning
 	spell.RequiredLevel = level
 	spell.Rank = rank
-	spell.Downrank = core.DownrankDamage
 	spell.BonusCoefficient = spellCoeff
 	spell.Cast.CD = core.Cooldown{
 		Timer:    cdTimer,

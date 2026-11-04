@@ -50,7 +50,6 @@ func (priest *Priest) getShadowWordPainConfig(rank int) core.SpellConfig {
 
 		RequiredLevel: level,
 		Rank:          rank,
-		Downrank:      core.DownrankDamage,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: manaCost,
