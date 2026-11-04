@@ -7,10 +7,14 @@ rotation tuned on `tools/healbench`, and its numbers against the Restoration sha
 
 **Where it stands (2026-11-04):** registered (`sim/paladin/holy`), every heal and healing talent in and
 tested, re-checked against client 1.60.1.70753, the November 2 notes and the 11-03 hotfixes (no Holy
-change left to take), a synthetic set (990301-990314), two presets tuned on the merged build. The tank
-healer carries 5 to 21% more than the Restoration shaman's preset on every boss file; the raid healer is
-level on five files and behind on Magmadar and Vaelastrasz. The UI spec page stays unlaunched (the user's
+change left to take), a synthetic set (990301-990314), two presets tuned on the merged build. Re-benched
+2026-11-04 after the engine fixes: tank healer mean carry 1.043, raid healer 1.413 over the 7 boss files
+(the side-by-side with the other healers is H3 in healing_sim.md). The UI spec page stays unlaunched (the user's
 call).
+
+A healing paladin never bubbles the tank (standards 40, user ruling 2026-11-04: it costs the tank its threat):
+no preset or bench request casts Blessing of Protection, Divine Intervention, Divine Shield or Divine
+Protection (`sim/paladin/holy/no_bubble_test.go`).
 
 ## The rules audit
 
@@ -106,7 +110,7 @@ Wowhead's tooltip in the cached guide shows rank 3 as 700 to 740, its value at t
 |---|---|---|---|
 | Spiritual Focus (20205) | 14% a rank of 5: Flash of Light, Holy Light and Light's Vigil don't lose cast time to a hit | not read | PushbackReduction on the three, added to Concentration Aura's 35% (it was the larger of the two) |
 | Healing Light (20237) | 4 / 8 / 12% healing, aura 108 on Holy Light, Flash of Light and Holy Shock's heal (and the Oath bonus spells) | not read | the same |
-| Divine Favor (20216) | next Flash of Light, Holy Light or Holy Shock 100% crit, 1 charge; 4% of base mana; 2 min; off the global cooldown | Holy Shock's damage only, free | all of them, 60.48 mana (Benediction off it) |
+| Divine Favor (20216) | next Flash of Light, Holy Light or Holy Shock 100% crit, 1 charge; 4% of base mana; 2 min; off the global cooldown | Holy Shock's damage only, free | all of them, 60.48 mana; no Benediction (its class mask is empty; healer_mechanics-20261104-4) |
 | Illumination (20210) | a crit of Flash of Light, Holy Light, Light's Vigil or Holy Shock's heal: 20% a rank of 5 for mana equal to 50% of the spell's base cost (Classic's 100%) | not read | the same; Light's Vigil once a detonation (Calls for the user) |
 | Infusion of Light (426065, buff 437063) | Holy Shock and Flash of Light crits take 0.5 sec a rank of 2 off the next Holy Light within 15 sec (proc flags: helpful and harmful spells) | not read | the same; Holy Shock's damage crits count too |
 | Oath of Light (1328548) | on one ally for 5 min: Holy Light up to 400, Flash of Light up to 115, Holy Shock up to 230 more (6.67, 1.92 and 3.83 a level); 8% of base mana; one Oath | not read | the bonus on the heal itself (Calls for the user) |
@@ -116,7 +120,7 @@ Wowhead's tooltip in the cached guide shows rank 3 as 700 to 740, its value at t
 | Divine Intellect (Protection, 20257) | 2 to 10% Intellect | in | unchanged |
 | Reverence (1310899) | 15% a rank of 2 of the regen while casting | in | unchanged |
 | Conviction (Retribution, 20117) | 2% crit a rank of 3 with all spells and attacks | in (spell crit) | reaches the heals |
-| Benediction (Retribution) | 2% a rank off instant spells | in | also Divine Favor and Oath of Light |
+| Benediction (Retribution) | 2% a rank off instant spells, by class mask (20101 e0 aura 108 misc 14, mask 0x1be11fbf / 0x26018242 / 0x20212100 / 0x8800) | in | Holy Shock; not Divine Favor or Oath of Light, whose class masks are empty (healer_mechanics-20261104-4; it took 10% off both until 2026-11-04) |
 | Champion of the Light (Retribution, 1311084) | aura 174: spell damage from Intellect | spell power (heals too) | unchanged: no healer build reaches it (it needs 25 Retribution points); noted below |
 
 Not modelled, no healing effect in a raid fight: Purifying Power's Cleanse cost, Unyielding Faith,
@@ -128,8 +132,10 @@ Guardian's Favor, Stoicism, Divine Precision (Holy hit), Consecrated Ground, Hol
   mana. Added (`sim/paladin/healing.go`).
 - **Libram of Infusion** (279248): Holy Shock 6% crit, the heal too (its mask covers 1311605's family). Was
   already in for the damage.
-- **Libram of Holy Alacrity** (228175): Holy Shock takes time off the next Holy Light, but its buff spell
-  (449982) has no effect rows in 70753, so its value is unknown. Not added.
+- **Libram of Holy Alacrity** (228175): its proc 449980 triggers buff 449982, which client 70755 (tables
+  byte-identical to 70753's) gives e0 aura 107 misc 10 bp -200: the next Holy Light casts 0.2 sec faster, 10 sec,
+  1 charge. The trigger condition is server side (the tooltip: casting Holy Shock). Not added (call 9);
+  healer_mechanics-20261104-9 corrected this line, which said 449982 had no effect rows.
 - Libram of Divinity (23201) heals the party for 25 on a Judgement now (1302540), and Libram of Light is
   Naxxramas. Not used.
 - Justice Armor (2107), the Tier 1 Holy set: the synthetic set carries its 2-piece (+10 Spirit) on two
@@ -308,46 +314,67 @@ iterations:
   Holy Power and Illumination once the fight is long enough for mana to count, Spiritual Focus in the raid
   role, where the healer takes hits (Vaelastrasz -0.085; the tank role never hits the healer, so it reads
   0 there).
-- The Retribution side is for Benediction (10% off Holy Shock, Divine Favor and the Oath) and Conviction's 3%
+- The Retribution side is for Benediction (10% off Holy Shock; Divine Favor and the Oath are outside its class mask) and Conviction's 3%
   crit, which feeds Illumination, Infusion of Light and Holy Power. A deeper Holy build has no healing
   talent left to buy: 31 points take every Holy healing talent, and Light's Vigil (the 31st) is only the
   capstone the presets don't cast (their Vigil variant was noise).
 
-## The numbers (the presets against the Restoration shaman's)
+## The numbers (re-benched 2026-11-04)
 
 The presets (`tools/healbench/req/paladin_holy.json`, `paladin_holy_raid.json`, the UI's
-`ui/holy_paladin/apls/`) against the shaman's (`shaman_restoration.json`, `shaman_restoration_raid.json`),
-healbench `-carry`, 1,000 iterations, every boss file at its own length (the tank time in the tank role, the
-median kill in the raid role), and Onyxia at 180 and 300 sec. The merged build (client 70753, master
-f2e9ba0c1's engine). EHPS is effective healing a second; carry is the damage scale at the death line, and
-the ratio is the paladin's carry over the shaman's.
+`ui/holy_paladin/apls/`), healbench `-carry`, 1,000 iterations, every boss file at its own length and
+default carry, on branch `healers/fix-paladin` (master 0606686d3 plus this round). That master already
+has the orchestrator's engine fixes that moved every healer: the raid damage share under one player
+(healer_mechanics-20261104-1), school crit on direct heals (-7), the health clamp (-8) and the healbench
+tank role keeping the raid as idle fillers (healer_fairness-20261104-1), so the earlier table against
+the shaman is gone; the side-by-side is the H3 table in [healing_sim.md](healing_sim.md). EHPS is
+effective healing a second; carry is the damage scale at the death line.
 
-| Boss | Role | Paladin EHPS | Shaman EHPS | Paladin overheal | Paladin EH per mana | Paladin carry | Shaman carry | Ratio |
+| Boss | Role | HPS | EHPS | Overheal | EH per mana | Mana left | Carry | Carry at a 1.0x gate |
 |---|---|---|---|---|---|---|---|---|
-| onyxia | tank | 529 | 509 | 22.8% | 6.40 | **1.081** | 1.017 | 1.06 |
-| broodlord | tank | 475 | 390 | 18.8% | 5.43 | **0.750** | 0.618 | 1.21 |
-| chromaggus | tank | 626 | 487 | 16.7% | 6.33 | **0.825** | 0.764 | 1.08 |
-| golemagg | tank | 458 | 446 | 15.1% | 7.40 | **1.625** | 1.441 | 1.13 |
-| magmadar | tank | 417 | 404 | 17.7% | 7.30 | **1.645** | 1.536 | 1.07 |
-| ragnaros | tank | 290 | 183 | 16.3% | 5.57 | **0.521** | 0.469 | 1.11 |
-| vaelastrasz | tank | 639 | 402 | 15.5% | 6.09 | **0.723** | 0.648 | 1.12 |
-| onyxia | raid | 331 | 350 | 19.1% | 4.39 | **0.702** | 0.692 | 1.01 |
-| broodlord | raid | 403 | 455 | 21.3% | 4.22 | **0.838** | 0.835 | 1.00 |
-| chromaggus | raid | 178 | 193 | 22.3% | 4.52 | **0.970** | 0.969 | 1.00 |
-| golemagg | raid | 203 | 242 | 22.2% | 6.16 | **2.067** | 2.083 | 0.99 |
-| magmadar | raid | 370 | 408 | 16.2% | 6.62 | **1.500** | 1.605 | 0.93 |
-| ragnaros | raid | 349 | 364 | 20.0% | 6.06 | **1.244** | 1.203 | 1.03 |
-| vaelastrasz | raid | 706 | 876 | 19.7% | 5.16 | **1.002** | 1.199 | 0.84 |
-| onyxia 180 s | tank | 590 | 581 | 18.6% | 6.38 | **1.031** | 0.965 | 1.07 |
-| onyxia 180 s | raid | 505 | 530 | 16.7% | 4.30 | **0.630** | 0.623 | 1.01 |
-| onyxia 300 s | tank | 595 | 579 | 15.6% | 6.77 | **1.003** | 0.956 | 1.05 |
-| onyxia 300 s | raid | 446 | 552 | 14.8% | 4.46 | **0.582** | 0.557 | 1.04 |
+| broodlord | tank | 640 | 487 | 23.9% | 5.13 | 6776 | **0.769** | 0.754 |
+| chromaggus | tank | 783 | 628 | 19.9% | 5.86 | 3512 | **0.828** | 0.835 |
+| golemagg | tank | 626 | 463 | 25.9% | 6.11 | 6993 | **1.701** | 1.648 |
+| magmadar | tank | 588 | 427 | 27.5% | 6.23 | 7092 | **1.661** | 1.638 |
+| onyxia | tank | 747 | 542 | 27.5% | 5.94 | 7043 | **1.106** | 1.097 |
+| ragnaros | tank | 442 | 350 | 20.7% | 5.54 | 6630 | **0.517** | 0.510 |
+| vaelastrasz | tank | 845 | 645 | 23.7% | 5.50 | 7305 | **0.721** | 0.711 |
+| broodlord | raid | 396 | 313 | 21.0% | 4.30 | 7493 | **0.905** | |
+| chromaggus | raid | 108 | 83 | 22.8% | 4.84 | 7884 | **1.081** | |
+| golemagg | raid | 57 | 44 | 22.6% | 6.12 | 7971 | **2.699** | |
+| magmadar | raid | 216 | 179 | 16.9% | 6.62 | 7885 | **1.918** | |
+| onyxia | raid | 154 | 122 | 20.9% | 5.26 | 7667 | **0.984** | |
+| ragnaros | raid | 371 | 296 | 20.2% | 6.02 | 7742 | **1.301** | |
+| vaelastrasz | raid | 879 | 706 | 19.7% | 5.15 | 7079 | **1.002** | |
 
-- **Tank healer: the paladin is ahead on every file**, 5 to 21% more carry (most on Broodlord), at more
-  overheal than the shaman (15 to 23% against its 12 to 13% on Onyxia and Broodlord).
-- **Raid healer: level with the shaman** on five files and at 180 and 300 sec, behind on Magmadar (-7%) and
-  Vaelastrasz (-16%). The paladin heals one player a cast; those are the files where the shaman's Chain Heal
-  has the most hurt players to bounce to (my reading, not measured apart).
+- **Tank healer: mean carry 1.043** (1.028 at the old 1.0x gate). No deaths below the carry on any file;
+  out of mana only past 398 s, so it is never mana-bound at its carry.
+- **Raid healer: mean carry 1.413.** Its floor on the others is 0 to 3.6%, none on the tanks.
+
+### The gate (healer_fairness-20261104-2)
+
+Every main heal at the tank (Holy Light 9 and 8, Divine Favor before Holy Light 9, Flash of Light 6 at the
+most hurt) fired only when the tank missed the heal's whole Expected Healing. Scaling those gates, tank
+role, 1,000 iterations, the 7 files' mean carry: 1.0x 1.028, 0.6x 1.037, **0.7x 1.043** (up on 6 of 7,
+Chromaggus -0.007), 0.8x 1.038; Holy Light 9's gate alone at 0.4-0.8x 1.000-1.031 (nothing over noise);
+Holy Light 8 and Flash of Light only at 0.6x 1.044. The tank preset takes 0.7x on all four. The raid
+preset at 0.6 / 0.7 / 0.8x: 1.407 / 1.417 / 1.411 against 1.413, up on 4 of 7 at best, noise; it stays at
+1.0x. Health-percent gates (Holy Shock under 50%, Flash of Light 6 under 35%, Lay on Hands under 10%) and
+the mana gates are unchanged.
+
+### This round's fixes (2026-11-04)
+
+- healer_mechanics-20261104-4: Benediction no longer takes 10% off Divine Favor (60.48 mana) or Oath of
+  Light (120.96); their class masks are empty. Holy Shock keeps it. Test `TestBenediction`.
+- healer_mechanics-20261104-9: Libram of Holy Alacrity's buff read from the client (Items, call 9).
+- healer_mechanics-20261104-10: the untested list is tested in `sim/paladin/holy/healing_more_test.go`
+  (lower Holy Light / Flash of Light ranks incl. Holy Light 8, Holy Shock and Light's Vigil ranks and
+  costs, Benediction, Divine Intellect, Holy Power on Holy Shock / Vigil heals and not on Holy Shock damage,
+  Illumination on the Vigil and under Libram of Economy, Infusion of Light, Divine Favor on Holy Shock
+  damage and off the Vigil, the Oath on downranked ranks, Lay on Hands ranks, Healing Light off the Vigil,
+  Justice Armor, Libram of Infusion, Spiritual Focus pushback with Concentration Aura). No sim bug found.
+  The holy package's tests need `-tags=with_db`.
+- healer_fairness-20261104-2: the tank gate above.
 
 ## Calls for the user
 
@@ -377,5 +404,7 @@ Each is the default I used, with the alternatives' measured effect (tank healer,
    only; no healer build reaches it (25 Retribution points), so no number moves.
 8. **The raid sim's placeholder talents** (`StandardTalents` in presets.ts, used by the raid sim's paladin
    slot) are unchanged: whether the raid sim's paladin heals is the raid sim's call.
-9. **Libram of Holy Alacrity** (228175): its buff has no effect rows in 70753, so it isn't added; a log or a
-   Wowhead tooltip with numbers settles it.
+9. **Libram of Holy Alacrity** (228175): answered from the client (healer_mechanics-20261104-9): buff 449982
+   takes 0.2 sec off the next Holy Light within 10 sec, 1 charge, triggered (server side) by Holy Shock. At one
+   Holy Shock every 15 sec that is at most 0.2 sec a 15 sec, about 1.3% more casting time, against the 6% Holy
+   Shock crit of Libram of Infusion or the mana of Libram of Economy; not added. Whether to add it is open.
