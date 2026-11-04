@@ -17,6 +17,7 @@
 - evidence: line `remainingTime <= 12s` (ui/tank_warrior/apls/level60_{balanced,max_survival}.apl.json:11, tools/tankbench/req/warrior_protection_{balanced,max_survival}.json:162). rotopt's `wallAt` grid is Min 12, Step 12 (tools/rotopt/warrior_tank.go:67), so 13–23 s was never searched (contradicts docs/tank_warrior.md:283-285, "no template knob moves Max survival"). Paired, 3k, scoring mean: 18 s gives Balanced +46.0 ± 7.1 (+1.2%) and Max survival +175.3 ± 19.7 (+11.8%); 16 s gives +37.1 ± 5.8 and +137 ± 16; 20 s +20 / +110; 22 s loses. Vaelastrasz (17 ± 8 s fight) goes the other way: -107 / -283 at 18 s, -56 / -132 at 16 s. Ragnaros +13 / +52 (noise). Max threat at 18 s is -2.4 ± 3.9, so leave it at 12 s.
 - proposed fix: 18 s (or 16 s, which costs Vaelastrasz half as much) for Balanced and Max survival, and a finer grid in the template (Min 6, Step 2) with a re-search. Reproduce B: `tools/audit/tank_rotations/mk_warrior.py tools/tankbench/req/warrior_protection_balanced.json B.json setcond 4 '{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"18s"}}}}'`
 - needs: worker fix
+- fixed: 2026-11-04, 5d9a3aa18 (warrior): Shield Wall in the last 17 s for Balanced and Max survival (+20.7 ± 5.4, +113.2 ± 13.5 paired 3k vs 12 s; Vaelastrasz -112 / -163), Max threat stays 12 s; template grid 1 s (d9e001609).
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -57,6 +58,7 @@
 - evidence: priorityList[10] `currentRage >= 30`; `>= 15` gives +3.9 ± 1.1 (3k, paired, every boss ≥ 0, Ragnaros +1.9 ± 10.6). Bloodrage on cooldown gives +1.4 ± 0.5 too (noted only).
 - proposed fix: Sunder filler at 15 Rage, if the template is re-searched anyway.
 - needs: worker fix
+- fixed: 2026-11-04, 5d9a3aa18: Sunder filler at 15 Rage on the re-searched Max threat talents (+6.9 ± 1.6; -0.3 ± 0.8 on the old ones).
 
 ### tank_rotations-20261104-8: Rotation notes that don't say what the line does (standards 31)
 - severity: low
@@ -65,5 +67,6 @@
 - evidence: (a) Warden's shield line, a Lightning Shield cast, is noted "Water Shield needs the Restoration talent" (tools/rotopt/shaman_tank.go:118, every level60_*.apl.json). (b) Warrior's Defensive Stance line (spell 71) has no note in all three APLs. (c) docs/tank_druid.md:217 says "Enrage at the pull and 1 sec before it", but the APL casts it only before the pull (an in-fight Enrage loses -5.3 ± 1.3). Bear Max survival's Frenzied Regeneration at 100 Rage fires about once, at the pull's Rage peak, not "on cooldown" as its note says (the line itself is right: removing it costs 432).
 - proposed fix: (a) "Lightning Shield whenever its orbs are gone: their threat beats the 370 mana." (b) "Defensive Stance kept up: the tank's stance." (c) the doc: "Enrage 1 sec before the pull"; the Frenzied Regeneration note: "at the pull's Rage peak".
 - needs: worker fix
+- fixed (warrior part b): 2026-11-04, c588675a6 and 61db5cccb. (a) and (c) are the shaman and druid workers'.
 
 ## Resolved

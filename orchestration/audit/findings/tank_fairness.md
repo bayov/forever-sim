@@ -51,6 +51,7 @@
 - evidence: jq on tools/tankbench/req: paladin_protection_balanced.json and _max_survival.json have the same gear, talents and rotation, as do warrior_protection_balanced.json and _max_survival.json; their results match exactly on every boss. The bear's three presets differ only in rotation, and Balanced and Max threat are within about 1% on every boss. Max survival wins the Balanced weight for the bear on Golemagg and Onyxia (Onyxia 1663 vs 1476, 12%). Max threat has the highest TPS in 26 of 28 spec-boss cells (exceptions: bear and Warden with no encounter, Warden on Chromaggus).
 - proposed fix: search the paladin and warrior at the Max survival weight (w = 3) for talents/rotation that differ, or rule that the weights don't separate them and ship two presets; re-search the bear's Balanced preset.
 - needs: worker fix (or user ruling on dropping a preset)
+- warrior: 2026-11-04, 9f9c96e80: re-searched at w = 3, Balanced and Max survival share talents, race and rotation and differ only in the trinket (armor 990617 at Max survival); said in the doc and presets.ts, not forced apart.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low
@@ -59,5 +60,6 @@
 - evidence: tools/tankbench/req/warrior_protection.json uses real Warbringer item ids, no enchants, Orc, talents 35--251533120331221351, 1590 to 1740 TPS against 2150 to 2470 for the suffixed presets. orchestration/tank_handoff/warrior.md:63 says the Balanced request replaces it, but sim/raid_healing_test.go:35, sim/warrior/tank_warrior/forever_test.go:315, tools/encounters/from_logs.py:23 and tools/healbench/main.go:64 still read it (druid_bear.json was removed the same way). The glob tools/tankbench/req/*.json also runs it alongside the presets.
 - proposed fix: point those four readers at warrior_protection_balanced.json and delete the file.
 - needs: worker fix
+- left open: the healing session decides warrior_protection.json's fate (brief); docs/tank_warrior.md calls it legacy (318fc7efb).
 
 ## Resolved
