@@ -15,7 +15,7 @@ events and tank swaps, and the shaman heals others. `tools/healbench` sims a hea
 profiles and the seven boss files, whose raid damage now comes from Warcraft Logs ([Raid damage from the
 logs](#raid-damage-from-the-logs-2026-11-02)). H2, the Restoration shaman, is registered with a tank healer
 and a raid healer rotation ([H2](#h2-the-restoration-shaman-2026-11-02)) and its own synthetic set. H3, the
-priest and paladin healers and the shaman's update to the November 2 notes, is in (the druid to come) ([H3](#h3-the-other-healers-2026-11-04)).
+priest, paladin and druid healers and the shaman's update to the November 2 notes, is in ([H3](#h3-the-other-healers-2026-11-04)).
 
 ## The user's rulings (2026-11-02)
 
@@ -531,11 +531,11 @@ file's tank time, the raid role at the logs' median kill, 2 healers and 7 Frost 
 ## H3: the other healers (2026-11-04)
 
 One worker a class (brief `orchestration/brief_healers.md`), each with its own doc: [healing_priest.md](healing_priest.md),
-[healing_paladin.md](healing_paladin.md), healing_druid.md (to come) and, for the shaman's audit and
+[healing_paladin.md](healing_paladin.md), [healing_druid.md](healing_druid.md) and, for the shaman's audit and
 tests, [healing_shaman.md](healing_shaman.md). Each audited every heal and healing talent against client 70753
 and the November 2 notes (standards 37: a notes-only value is gated under Forever and listed in the class's
 `orchestration/round_70753/<class>.md`), has a test per heal and talent, a synthetic set on the Healers rows of
-`orchestration/gear_targets.md` (ids 990301-990314 paladin, 990501-990514 priest), a tank healer and a raid
+`orchestration/gear_targets.md` (ids 990301-990314 paladin, 990401-990413 druid, 990501-990514 priest), a tank healer and a raid
 healer preset (the priest a Discipline tank healer too) and healbench requests. The UI pages stay unlaunched.
 
 - **Priest** (`sim/priest/healing`): Binding Heal removed and Holy Binding in its slot, a Power Word: Shield is
@@ -548,27 +548,34 @@ healer preset (the priest a Discipline tank healer too) and healbench requests. 
 - **Holy paladin** (`sim/paladin/holy`): every Holy healing line of the notes is in client 70753 (Oath of
   Light, Boundless Light, Holy Power on crit healing, Light's Vigil friendly only, Divine Precision 2). Both
   presets cast Holy Light 9 and 8 only above 50% mana.
+- **Restoration druid** (`sim/druid/restoration`): every druid line of the notes is in client 70753 (Bloom,
+  Wild Growth's 3 s cast and Naturalist, Swiftmend on our own HoT, Gift of the Earthmother gone, Reflection and
+  Subtlety swapped). Innervate on oneself follows the Read Leyline rule. Its one core change, `GetAPLDot` reading
+  a HoT on the APL's heal target (`HealthUnit()`), moves the shaman's raid preset by 0.000 on all 7 files.
 - **Restoration shaman**: Riptide on the notes (no instant heal, 12 s, 147/180/231 mana; notes-only, the client
   still has the old one), three ranks; the talents on the new tree (`-035-...`); the tank healer adds Lesser
   Healing Wave 6 and 5 above 50% mana and Nature's Swiftness under 50% health (tank mean carry 0.935 to
   1.072); the raid healer loses about 0.07 to the notes' Riptide (1.183 to 1.123).
 - **Downranking** is the engine's for every heal now (b57f5cc0a, the user's ruling). On the presets it moved
-  nothing: the ranks they cast keep full value at 60 (priest, paladin and shaman measured).
+  nothing: the ranks they cast keep full value at 60 (priest, paladin and shaman measured; the druid's raid
+  preset 0, its tank preset tuned with the rule binds ranks the rule favours, up to +0.075 against the same
+  rotation at full coefficients).
 
 Carry, 1,000 iterations, each file at its own length (tools/healbench):
 
-| Boss | Tank: shaman | Holy priest | Disc priest | Paladin | Raid: shaman | Holy priest | Paladin |
-|---|---|---|---|---|---|---|---|
-| Onyxia | 1.141 | 1.230 | 1.195 | 1.081 | | 0.709 | 0.702 |
-| Broodlord | 0.837 | 0.891 | 0.852 | 0.750 | | 0.879 | 0.838 |
-| Chromaggus | 0.884 | 1.006 | 0.824 | 0.825 | | 0.911 | 0.970 |
-| Golemagg | 1.716 | 1.915 | 1.826 | 1.625 | | 2.064 | 2.067 |
-| Magmadar | 1.798 | 2.089 | 1.941 | 1.645 | | 1.693 | 1.500 |
-| Ragnaros | 0.521 | 0.582 | 0.562 | 0.521 | | 1.255 | 1.244 |
-| Vaelastrasz | 0.775 | 0.903 | 0.865 | 0.723 | | 1.139 | 1.002 |
+| Boss | Tank: shaman | Holy priest | Disc priest | Paladin | Druid | Raid: shaman | Holy priest | Paladin | Druid |
+|---|---|---|---|---|---|---|---|---|---|
+| Onyxia | 1.141 | 1.230 | 1.195 | 1.081 | 1.165 | 0.678 | 0.709 | 0.702 | 0.711 |
+| Broodlord | 0.837 | 0.891 | 0.852 | 0.750 | 0.731 | 0.817 | 0.879 | 0.838 | 0.828 |
+| Chromaggus | 0.884 | 1.006 | 0.824 | 0.825 | 0.870 | 0.906 | 0.911 | 0.970 | 0.953 |
+| Golemagg | 1.716 | 1.915 | 1.826 | 1.625 | 1.648 | 1.913 | 2.064 | 2.067 | 2.021 |
+| Magmadar | 1.798 | 2.089 | 1.941 | 1.645 | 1.699 | 1.540 | 1.693 | 1.500 | 1.605 |
+| Ragnaros | 0.521 | 0.582 | 0.562 | 0.521 | 0.517 | 1.171 | 1.255 | 1.244 | 1.240 |
+| Vaelastrasz | 0.775 | 0.903 | 0.865 | 0.723 | 0.688 | 1.110 | 1.139 | 1.002 | 1.092 |
 
-The shaman's raid column is in healing_shaman.md (mean 1.123 after the notes' Riptide). The priest and paladin
-raid numbers were benched against the shaman's H2 Riptide. The priest's tank lead is the class's kit (Prayer of
+The shaman's columns and the druid's are on the notes' Riptide (master 41aa10700); the priest and paladin
+were benched before it, and their numbers don't depend on the shaman's. The shaman's raid mean over these 7
+files is 1.162 (healing_shaman.md's 1.123 takes in the made-up raid profile too, 0.847). The priest's tank lead is the class's kit (Prayer of
 Mending, Spiritual Healing, Holy Binding), which no shaman rank, mana gate or cooldown closes.
 
 ## Milestones
