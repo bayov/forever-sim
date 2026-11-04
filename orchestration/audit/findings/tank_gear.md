@@ -9,6 +9,7 @@
 - evidence: the warrior, paladin and bear backs (990604, 990704, 990804) take 1219587 Enchant Cloak - Agility (+5 Agility, 5 weighted at 1b/36 prices); the Warden's (999204) takes 1889 Superior Defense (+70 armor, 7 weighted at 36's 0.1 a point of bonus armor). Both are outside the raids. None of docs/tank_{warrior,paladin,druid,shaman}.md records the comparison. For the bear, armor from enchants may also take Dire Bear Form's multiplier, which would favour 1889 further; Agility's dodge, crit and threat may favour 1219587 at Max threat. Not simmed; the difference is about 2 weighted points, under 0.3% of a set (estimate). Confidence about 60% that one of the three would switch at Max survival.
 - proposed fix: A/B 1889 against 1219587 on the back for each of the three at each preset's weight; keep the winner and record it in the class doc.
 - needs: worker fix
+- fixed (paladin): 2026-11-04, b07bdf476: Superior Defense 1889 against Agility 1219587 at 1/3, 1, 3 (seed 1 / 2): -3.1 / -4.7, -2.1 / +0.2, -0.2 / +8.6; on the final wrist and shield -4.3 / -6.2 / -14.8. Agility stays; recorded in docs/tank_paladin.md (85db121aa).
 
 ### tank_gear-20261104-3: Tank enchants use stale Classic values; shield Greater Stamina and the Deflection bracer enchant are underrated
 - severity: low
@@ -25,6 +26,7 @@
 - proposed fix (pass 2): shields 929 -> 1886 in the paladin and Warden gear sets and requests; A/B 1248665 against 1886 on the wrist for the paladin, bear and Warden at each weight and keep the winner.
 
 ## Resolved
+- fixed (paladin): 2026-11-04, e37867b (shield 929 -> 1886 in the UI set and requests) and b07bdf476 (A/B at 1/3, 1, 3, paired, seeds 1 and 2: wrist Superior Deflection 1248665 over 1886 +10.5 / +20.8 / +64.2, taken; shield Lesser Block 863 over 1886 +24.6 / +35.3 / +68.8, taken); docs/tank_paladin.md round 3 (85db121aa).
 
 ### tank_gear-20261104-1: Protection paladin set's Stamina share 30.2% is outside the row's 32.4 ±1.5
 - severity: medium
