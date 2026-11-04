@@ -508,10 +508,11 @@ two-hander's Rage), Maul, Swipe, Demoralizing Roar, Enrage, Frenzied Regeneratio
 bear's talents (Thick Hide, Heart of the Wild, Natural Reaction, Blood Frenzy, Feral Instinct, Savage Fury, Rend and
 Tear).
 
-- **Assumed until a log of a bear tank:** none of its attacks has threat beyond the form's 1.5x (Classic's Maul and
+- **Assumed until a log of a bear tank:** none of its attacks has threat beyond the form's 1.5x (2.15x under the November 2 notes; Classic's Maul and
   Swipe had 1.75); Enrage's armor cut is the tooltip's 16% (the client's 25503 says 26%); Thick Hide's Defense part
   (0.67 a point) is the tooltip's.
-- **The bench's bear** (`druid_bear.json`) wears the Feral cat's synthetic set, so 507 Agility, 35% dodge and 8,900
+- **The bench's bear** (then `druid_bear.json`; since 2026-11-04 the three presets
+  `druid_bear_{max_threat,balanced,max_survival}.json` on the bear's own synthetic set, `docs/tank_druid.md`) wore the Feral cat's synthetic set, so 507 Agility, 35% dodge and 8,900
   health; a bear set is the gear step's. It keeps its own Demoralizing Roar up (`tankscore.OwnDebuffs` drops the
   raid's Roar and Shout), then Primal Bite, Lacerate to 5 stacks and Maul at 30 Rage. Not in its rotation yet:
   Enrage (its armor cut makes it a pull-time choice), Frenzied Regeneration (an emergency button, like Shield Wall),

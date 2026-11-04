@@ -13,7 +13,7 @@ standard:
 |---|---|---|---|---|---|
 | warrior | Protection warrior (`TankWarrior`) | `sim/warrior/tank_warrior` | `ui/tank_warrior` | `warrior_protection.json` | 990600-990699 |
 | paladin | Protection paladin (`ProtectionPaladin`) | `sim/paladin/protection` | `ui/protection_paladin` | `paladin_protection_valor.json` | 990700-990799 |
-| druid | Feral tank (`FeralTankDruid`) | `sim/druid/tank` (new, `bear.go`, `bear_attacks.go`) | `ui/feral_tank_druid` | `druid_bear.json` | 990800-990899 |
+| druid | Feral tank (`FeralTankDruid`) | `sim/druid/tank` (new, `bear.go`, `bear_attacks.go`) | `ui/feral_tank_druid` | `druid_bear.json` (now `druid_bear_<preset>.json`) | 990800-990899 |
 | shaman | Warden shaman (`WardenShaman`) | `sim/shaman/warden` | `ui/warden_shaman` | none yet | 999000-999099 |
 | gear | the tank gear standard (standards 36, the Tanks rows of `orchestration/gear_targets.md`) | - | - | - | - |
 
