@@ -12,6 +12,9 @@ One source, two outputs:
   Per-build rows carry `build`, the preset id `<class>__<preset>` (`id` in `builds.json`).
 - `tools/dps_report/raw/<id>.tgz`: each build's raw sim outputs, committed with its
   datasets.
+- The Tanking and Healing modes: `<mode>_*.json` datasets (`"mode"` in datasets.json),
+  raw bench outputs in `tools/dps_report/raw/bench/{tank,heal}.tgz` (README "Tanking and
+  Healing").
 - Output 1: the sim UI at `/forever/dps_report/`.
 - Output 2: `make dps-report-artifact` writes `dist/dps_report.html`, deployed to
   https://forever-dps.pages.dev (Cloudflare Pages project `forever-dps`). Never publish the
@@ -37,6 +40,11 @@ and removed presets. A stale build *may* have moved; the probe says whether it d
 - **Text, tooltips or `build_data.py` only:** no sims.
 - **A false positive** that plainly can't feed the build, with no binaries for a probe:
   `stale.mjs --record <ids> --by hand`, reason in the commit message. Prefer the probe.
+
+It also lists stale Tanking and Healing modes in a second block (`benches` in `--json`):
+their fingerprint covers the shared sim code, the classes' code, the encounters and the
+benches. A stale mode re-sims whole (`pipeline.sh tankheal tank`, about 30 s;
+`pipeline.sh tankheal heal`, about 25 min); there is no probe for it.
 
 Tell the user the scope in one line before long runs.
 
@@ -67,6 +75,12 @@ Build the merged tree (master plus `patches/`) and the binaries per
 A stopped run finishes with `pipeline.sh resume <ids>`. `publish` writes every output
 (datasets, Changes data, sample fights, provenance, raw packs, removed presets dropped);
 set `SIM_COMMIT=<rev>` if the sims didn't run at HEAD. `merge.mjs` is for hand repairs only.
+
+`run` and `resume` also sim the Tanking and Healing modes when nothing DPS is stale or with
+`TANKHEAL=1`; `publish` builds their datasets, and for a mode simmed since its last publish
+records its provenance and repacks `raw/bench/<mode>.tgz`. Their settings are the docs'
+(docs/tank_sim.md, docs/healing_sim.md): 1,000 iterations, the 7 boss encounters, the reqs'
+seeds (healbench: 101). Build `tankbench` and `healbench` with the binaries (README).
 
 Settings come from `orchestration/standards.md`: 20,000+ iterations, the generic boss,
 120 / 180 / 300 s, binaries rebuilt after the last gear or DB change.

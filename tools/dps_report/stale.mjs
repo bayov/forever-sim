@@ -25,10 +25,20 @@
 // their iterations and compares them with the probe stored in its raw pack, and only the builds that differ are
 // re-simmed. Builds it clears are recorded with --by probe.
 //
+// The Tanking and Healing modes (tankheal.py) are recorded per mode, not per build, under provenance.json's `benches`
+// (tank, heal): every preset of a mode runs in one bench call a boss. A mode depends on the sim's packages (not the
+// DPS-only CLI, patches and step scripts), the top-level sim/*.go that registers the classes, its bench
+// (tools/tankbench or tools/healbench: main.go and the requests), tools/tankscore, the seven boss files in
+// tools/encounters, the class packages its presets (and, for healing, the bench's tank and filler) use, tankheal.py,
+// and the database entries its requests wear. They are listed apart (`benches` in --json, a second block in the
+// text), so probe.py, which reads `stale`, sees DPS builds only.
+//
 // Usage:
 //   node tools/dps_report/stale.mjs [--commit <rev>] [--json]       list stale builds (default rev: HEAD)
 //   node tools/dps_report/stale.mjs --record <id...|all> [--commit <rev>] [--iterations N] [--by sim|probe|hand]
 //                                                                   record builds as current at <rev>
+//   node tools/dps_report/stale.mjs --record-bench <tank|heal...> [--commit <rev>] [--iterations N]
+//                                                                   record a mode's datasets as current at <rev>
 import { execFileSync } from 'child_process';
 import crypto from 'crypto';
 import fs from 'fs';
@@ -153,6 +163,32 @@ export const fingerprint = memo((r, id) => {
 	return fp;
 });
 
+// the Tanking and Healing modes' inputs (tankheal.py)
+export const BENCH_FORMAT = 1;
+const BENCH_SHARED = ['sim/core', 'sim/common', 'sim/encounters', 'sim/lib', 'proto', 'go.mod', 'go.sum', 'tools/tankscore', 'tools/dps_report/tankheal.py'];
+const BOSSES = ['magmadar', 'golemagg', 'onyxia', 'broodlord', 'vaelastrasz', 'chromaggus', 'ragnaros'];
+const BENCH = {
+	tank: { dir: 'tools/tankbench', classes: ['warrior', 'paladin', 'druid', 'shaman'], extra: [] },
+	// healbench's default tank and filler requests (tools/healbench/main.go -tank, -filler)
+	heal: {
+		dir: 'tools/healbench',
+		classes: ['priest', 'paladin', 'druid', 'shaman', 'warrior', 'mage'],
+		extra: ['tools/tankbench/req/warrior_protection.json', 'tools/dps_report/req/mage__frost.json'],
+	},
+};
+export const benchFingerprint = memo((r, mode) => {
+	const b = BENCH[mode];
+	const fp = {};
+	for (const p of [...BENCH_SHARED, b.dir, ...b.extra, ...b.classes.map(c => `sim/${c}`), ...BOSSES.map(x => `tools/encounters/${x}.json`)])
+		fp[p] = inputHash(r, p);
+	const top = lsTree(r, 'sim/').filter(f => /^sim\/[^/]+\.go$/.test(f.path) && !IGNORED.test(f.path));
+	fp['sim/*.go'] = sha(top.map(f => `${f.blob} ${f.path}`).join('\n'));
+	const reqs = [...lsTree(r, `${b.dir}/req/`).map(f => f.path), ...b.extra].filter(p => p.endsWith('.json'));
+	fp['assets/database (the entries it wears)'] = sha(reqs.map(p => dbSlice(r, showJson(r, p))).join('\n'));
+	return fp;
+});
+const benchModes = Object.keys(BENCH).filter(m => fs.existsSync(path.join(dataDir, `${m}_builds.json`)));
+
 const diff = (a, b) => [...new Set([...Object.keys(a), ...Object.keys(b)])].filter(k => (a[k] ?? null) !== (b[k] ?? null)).sort();
 
 // every build in the report, and every request not in it yet (a new preset)
@@ -164,6 +200,29 @@ const requested = fs
 const builds = [...new Set([...published, ...requested])].filter(id => requested.includes(id)).sort();
 const removed = published.filter(id => !requested.includes(id));
 const prov = fs.existsSync(provPath) ? JSON.parse(fs.readFileSync(provPath, 'utf8')) : { builds: {} };
+
+if (args.includes('--record-bench')) {
+	const i = args.indexOf('--record-bench');
+	const modes = [];
+	for (const a of args.slice(i + 1)) {
+		if (a.startsWith('--')) break;
+		if (!BENCH[a]) throw new Error(`Unknown mode ${a}: tank or heal`);
+		modes.push(a);
+	}
+	const commit = git('rev-parse', rev).trim();
+	prov.benches = prov.benches || {};
+	for (const m of modes)
+		prov.benches[m] = {
+			commit,
+			recordedAt: new Date().toISOString(),
+			iterations: Number(opt('--iterations')) || undefined,
+			format: BENCH_FORMAT,
+			inputs: benchFingerprint(commit, m),
+		};
+	fs.writeFileSync(provPath, JSON.stringify(prov, null, '\t') + '\n');
+	console.log(`Recorded ${modes.join(' ') || 'no mode'} at ${commit.slice(0, 10)}`);
+	process.exit(0);
+}
 
 if (args.includes('--record')) {
 	const i = args.indexOf('--record');
@@ -218,12 +277,25 @@ for (const id of builds) {
 	if (changed.length) stale.push({ id, reasons: changed.map(p => `${p} changed`) });
 }
 
+const benches = [];
+for (const m of benchModes) {
+	const rec = (prov.benches || {})[m];
+	if (!rec) benches.push({ id: m, reasons: ['no provenance record'] });
+	else if (rec.format !== BENCH_FORMAT) benches.push({ id: m, reasons: ['recorded with an older input set'] });
+	else {
+		const changed = diff(rec.inputs, benchFingerprint(rev, m));
+		if (changed.length) benches.push({ id: m, reasons: changed.map(p => `${p} changed`) });
+	}
+}
+
 if (args.includes('--json')) {
-	console.log(JSON.stringify({ rev, total: builds.length, stale, removed }, null, 2));
+	console.log(JSON.stringify({ rev, total: builds.length, stale, removed, benches }, null, 2));
 } else {
 	console.log(`${stale.length} of ${builds.length} builds are stale at ${rev}.`);
 	for (const s of stale) console.log(`  ${s.id}: ${s.reasons.join(', ')}`);
 	if (removed.length) console.log(`In the report with no request (removed presets; pipeline.sh publish drops them): ${removed.join(' ')}`);
+	console.log(`${benches.length} of ${benchModes.length} Tanking and Healing modes are stale (tankheal.py run <mode>, then publish).`);
+	for (const s of benches) console.log(`  ${s.id}: ${s.reasons.join(', ')}`);
 	if (missing.size)
 		console.log(`Fetch the recorded commits to compare them (git fetch --shallow-since=<a date before them> origin master): ${[...missing].join(' ')}`);
 }
