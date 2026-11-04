@@ -510,6 +510,13 @@ ol.fv-list li::marker {
 	font-weight: 700;
 }
 
+// A row tied with the row above: its ≈ sits under the place number.
+.fv-row-pos .fv-tie {
+	display: block;
+	line-height: 1;
+	font-size: 0.95rem;
+}
+
 .fv-row > .fv-ico,
 .fv-row > .fv-dot {
 	grid-row: 1 / span 2;
@@ -801,6 +808,23 @@ ol.fv-list li::marker {
 
 .fv td.neg {
 	color: var(--color-bad);
+}
+
+// A gap within the sim's luck (report.js, isTie): the ≈ mark, muted, in the accent so it reads as a note on the number.
+.fv-tie {
+	color: var(--fv-gold);
+	font-weight: 700;
+	cursor: help;
+}
+
+// Compare's B vs A that's within luck: no up or down colour.
+.fv td.fv-cmp-tied {
+	color: var(--color-fg-muted);
+}
+
+// The tie under a Specs tile's line, on its own line.
+.fv-tile-tie {
+	display: block;
 }
 
 .fv tr.clk:hover td,
@@ -3290,6 +3314,10 @@ div.tt-embed:not(.fv-tt) {
 	border-radius: 999px;
 	color: var(--fv-gold);
 	background: var(--fv-gold-soft);
+}
+
+.fv-asm-est .fv-asm-badge {
+	margin-right: 0.35rem;
 }
 
 .fv-asm-tools {

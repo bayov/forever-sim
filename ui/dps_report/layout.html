@@ -47,6 +47,7 @@
       <div class="content-block-header fv-asm-head"><h6 class="content-block-title">Assumptions</h6><span class="fv-asm-badge" id="asm-badge" hidden>Custom assumptions</span>
         <span class="fv-asm-tools"><button class="fv-chip fv-chip-action" id="asm-reset" hidden>Reset</button></span></div>
       <p class="fv-note">Values Forever hasn't confirmed yet, biggest effect first. Click a column to use its value everywhere.</p>
+      <p class="fv-note fv-asm-est" id="asm-est" hidden></p>
       <div id="asm-list" data-source="assumptions assumption_dps"></div>
     </div>
 
@@ -137,7 +138,7 @@
       <p class="fv-swipe">Swipe for the next preset</p>
     </div>
     <div class="fv-tiles" id="sp-tiles"></div>
-    <p class="fv-note" id="sp-asm" hidden>Mean DPS and rank use your changed assumptions. The rest uses the defaults.</p>
+    <p class="fv-note" id="sp-asm" hidden>Mean DPS and rank use your changed assumptions. The rest uses the defaults.<span id="sp-asm-est" hidden> Your settings weren't simmed together for this preset, so they're estimated from the single settings.</span></p>
     <nav class="fv-jump" id="sp-jump-bar" aria-label="Jump to a section">
       <span class="fv-jump-title">Sections <span class="fv-jump-chev">›</span></span>
       <ul class="nav fv-jump-tabs" id="sp-jump"></ul>
@@ -168,12 +169,12 @@
       <div class="fv-about-body" id="about-races" data-title="How races are compared" hidden>
         <p><b>How.</b> The preset is simmed as every race its class can be, <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights each at 180s. Gear, talents, rotation, consumes and random rolls stay the same. The racials are Forever's, from its client. The preset plays the best race.</p>
         <p><b>Own rotation or gear.</b> A race that clearly does better with its own rotation or gear is simmed with it. Its row gets a tag, and the Rotation card shows each change and why.</p>
-        <p><b>Why trust it.</b> Only the race changes, and every race gets the same random fights. So the gaps come from the race, not from luck.</p>
+        <p><b>Why trust it.</b> Only the race changes, and every race starts from the same random rolls. Once the race changes a hit or a cast, the fights drift apart, so some luck is left. Races within about 1 DPS of each other are marked as tied (≈).</p>
         <p><b>Limits.</b></p>
         <ul>
           <li>Every race keeps the preset's talents. A race that would play a bit differently, but not clearly better, may come out a little low.</li>
           <li>Only damage on a boss that stands still counts. Utility racials, like Stoneform, Will of the Forsaken, Escape Artist and threat drops, count as nothing.</li>
-          <li>Races within 1 or 2 DPS of each other are tied.</li>
+          <li>A race marked ≈ is within the sim's luck of the race above it. Its place could go either way.</li>
         </ul>
       </div>
       <div class="fv-toolbar">
@@ -204,7 +205,7 @@
         <div class="content-block-header"><h6 class="content-block-title">DPS distribution</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-fights">How are fights simmed?</button></div>
         <div class="fv-about-body" id="about-fights" data-title="How fights are simmed" hidden>
           <p><b>How.</b> <span data-source="builds" data-field="iters" data-row="0">—</span> fights of <span data-source="builds" data-field="fightSecs" data-row="0">—</span>s (± <span data-source="builds" data-field="fightVar" data-row="0">—</span>s) against a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss with <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor and no creature type. A full raid's buffs and debuffs are up. Every preset gets the same random rolls. The boss hits each player for 1,500 twice a minute, which pushes back casts and gives Rage.</p>
-          <p><b>Why trust it.</b> With this many fights, the mean is accurate to about half a DPS, so the ranking order isn't luck. Every preset was checked to be simmed the same way. The sim's spells were checked against Forever's client data.</p>
+          <p><b>Why trust it.</b> With this many fights, each mean is accurate to about half a DPS. Presets within about 1 DPS of each other are marked as tied (≈), since their order could be luck. Every preset was checked to be simmed the same way. The sim's spells were checked against Forever's client data.</p>
           <p><b>Limits.</b> The boss stands still all fight. There's no movement, adds, target switching or phases. Real fights come out lower and vary more.</p>
         </div>
         <p class="fv-note" id="sp-dist-note">Every fight, in 5 DPS bins.</p>
