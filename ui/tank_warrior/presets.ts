@@ -44,7 +44,7 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 export const GearP0BISSwordBoard = PresetUtils.makePresetGear('Pre-BiS (Sword and Board)', P0BISSwordBoardGear);
 
 // The synthetic Level 60 Phase 1 Protection set (standards 36, tools/database/forever_synthetic_items_warrior_tank.go):
-// 106 Defense, 110 block value, 239 Stamina, 7.2% hit, the tank stat trinket and the attack power on-use.
+// 106 Defense, 110 block value, 239 Stamina, 8% hit (the cap), the tank stat trinket and the attack power on-use.
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Level60Phase1SyntheticGear);
 
 export const GearPresets = {

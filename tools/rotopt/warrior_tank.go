@@ -45,6 +45,9 @@ func (warriorTank) Knobs() []Knob {
 		{Name: "sunderRage", Default: 40, Min: 0, Max: 60, Step: 10},
 		// Heroic Strike on the next swing above this much Rage (100: never).
 		{Name: "hsRage", Default: 50, Min: 20, Max: 100, Step: 10},
+		// Slam above this much Rage (0: never), ahead of the Sunder Armor filler: the November 2 notes'
+		// 15 sec cooldown, a 1.5 sec cast that resets the swing (Improved Slam is out of a tank's reach).
+		{Name: "slamRage", Default: 0, Min: 0, Max: 80, Step: 20},
 		// Bloodrage below this much Rage (0: never). It costs 20% of base health.
 		{Name: "bloodrageRage", Default: 30, Min: 0, Max: 70, Step: 10},
 		// Reckless Swings (Fury row 4, the November 2 notes: 15 sec, off the GCD, the next 4 swings give 5
@@ -163,6 +166,9 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["hsRage"] < 100 {
 		items = append(items, cast(heroicStrikeNext, ge(currentRage(), num(k["hsRage"])), "Heroic Strike with Rage to spare."))
+	}
+	if k["slamRage"] > 0 {
+		items = append(items, cast(slam, ge(currentRage(), num(k["slamRage"])), "Slam (15 sec cooldown under Forever) with Rage to spare."))
 	}
 	if k["sunderRage"] > 0 {
 		items = append(items, cast(sunderArmor, ge(currentRage(), num(k["sunderRage"])), "Sunder Armor as the filler, for its threat."))
