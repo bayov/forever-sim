@@ -4,6 +4,7 @@
    {
     "players": [
      {
+      "inFrontOfTarget": true,
       "race": "RaceUndead",
       "class": "ClassPaladin",
       "talentsString": "04-25300102513501531-5023",
@@ -244,6 +245,9 @@
        "flask": "FlaskOfTheTitans",
        "food": "FoodSmokedDesertDumpling",
        "agilityElixir": "ElixirOfTheMongoose",
+       "armorElixir": "ElixirOfThePhalanx",
+       "healthElixir": "ElixirOfGreaterFortitude",
+       "mainHandImbue": "DenseSharpeningStone",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
        "spellPowerBuff": "GreaterArcaneElixir",

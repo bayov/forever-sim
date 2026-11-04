@@ -41,7 +41,7 @@
     "name": "Onyxia",
     "level": 63,
     "mobType": "MobTypeUnknown",
-    "parryHaste": true,
+    "parryHaste": false,
     "stats": [
      0,
      0,

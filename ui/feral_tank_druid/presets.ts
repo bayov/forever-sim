@@ -175,6 +175,8 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const OtherDefaults = {
+	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
+	inFrontOfTarget: true,
 	distanceFromTarget: 5,
 	profession1: Profession.Engineering,
 	profession2: Profession.Blacksmithing,
@@ -216,6 +218,7 @@ export const EncounterLevel60Tank = PresetUtils.makePresetEncounter(
 		debuffs: DefaultDebuffs,
 		buffs: DefaultIndividualBuffs,
 		consumes: DefaultConsumes,
+		inFrontOfTarget: true,
 	},
 );
 
