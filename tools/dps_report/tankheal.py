@@ -546,6 +546,8 @@ def build():
     for mode in MODES:
         if not os.path.isdir(os.path.join(D, mode)):
             unpack([mode])
+    import asm_data
+    from assumptions_def import HEAL
     import md2html
     import rotation as rot_mod
     import tooltips as tt_mod
@@ -704,8 +706,11 @@ def build():
         notes = notes_rows(md2html, T, builds)
         method = method_rows(md2html, mode, T, encs)
         p = 'tank_' if mode == 'tank' else 'heal_'
+        # the Healing page's assumptions (assumptions_def.HEAL): one-value rows, the DPS panel's shape
+        asm = asm_data.asm_rows(HEAL, {b['id'] for b in builds}) if mode == 'heal' else None
         leak_check(mode, {p + 'builds': builds, p + 'bosses': bosses, p + 'encounters': encs, p + 'races': races, p + 'gear': gear,
-                          p + 'rotation': rot, p + 'setup': setup, p + 'tooltips': tt_rows, p + 'notes': notes, p + 'method': method})
+                          p + 'rotation': rot, p + 'setup': setup, p + 'tooltips': tt_rows, p + 'notes': notes, p + 'method': method,
+                          **({p + 'assumptions': asm} if asm else {})})
         dump(p + 'builds', builds)
         dump(p + 'bosses', bosses)
         dump(p + 'encounters', encs)
@@ -716,6 +721,8 @@ def build():
         dump(p + 'tooltips', tt_rows)
         dump(p + 'notes', notes)
         dump(p + 'method', method)
+        if asm:
+            dump(p + 'assumptions', asm)
         # names (with their colour) and icons the common datasets lack
         known = {r['key'] for r in common('names')}
         mine = sorted({r['key'] for r in rot if r['key']} | {r['key'] for r in tt_rows if r['kind'] in ('spell', 'item')})

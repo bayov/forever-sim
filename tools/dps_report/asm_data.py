@@ -38,6 +38,20 @@ def predict(res, bid, combo, secs=180):
     return base[0] * f
 
 
+def asm_rows(As, names=None, sens=None):
+    """The rows of `assumptions` (and of the Healing page's `heal_assumptions`, assumptions_def.HEAL), in class order.
+    names: the page's preset ids (an assumption's other builds stay out); sens: each setting's effect, by key."""
+    arows = []
+    for i, a in enumerate(As):
+        arows.append({'order': i, 'class': a['cls'], 'group': a.get('group') or a['key'], 'key': a['key'], 'label': a['label'], 'short': a.get('short') or a['desc'], 'description': a['desc'], 'source': a.get('src', ''), 'builds': [b for b in a['builds'] if b in names] if names else a['builds'],  # a removed preset's id stays out
+                      'settings': [{k: s[k] for k in ('id', 'label', 'value', 'rationale')} for s in a['settings']],
+                      'defaultSetting': a['default'], 'expectedSetting': a['expected'], 'status': a.get('status', 'live'),
+                      **({'warn': {b: w for b, w in a['warn'].items() if b in names or not names}} if a.get('warn') else {}),
+                      'sens': sorted((sens or {}).get(a['key'], []), key=lambda x: (x['setting'], x['build']))})
+    arows.sort(key=lambda r: (CLASS_ORDER.index(r['class']), r['order']))
+    return arows
+
+
 def build(dump, builds=None):
     from assumptions_def import A
     res = load()
@@ -57,14 +71,7 @@ def build(dump, builds=None):
                 k, sid = combo.split('=')
                 sens[k].append({'build': bid, 'name': names.get(bid, bid), 'setting': sid, 'pct': round(100 * (by_secs[180][0] / base[0] - 1), 2),
                                 'dps': round(by_secs[180][0] - base[0], 1)})
-    arows = []
-    for i, a in enumerate(A):
-        arows.append({'order': i, 'class': a['cls'], 'group': a.get('group') or a['key'], 'key': a['key'], 'label': a['label'], 'short': a.get('short') or a['desc'], 'description': a['desc'], 'source': a.get('src', ''), 'builds': [b for b in a['builds'] if b in names] if names else a['builds'],  # a removed preset's id stays out
-                      'settings': [{k: s[k] for k in ('id', 'label', 'value', 'rationale')} for s in a['settings']],
-                      'defaultSetting': a['default'], 'expectedSetting': a['expected'], 'status': a.get('status', 'live'),
-                      **({'warn': {b: w for b, w in a['warn'].items() if b in names or not names}} if a.get('warn') else {}),
-                      'sens': sorted(sens.get(a['key'], []), key=lambda x: (x['setting'], x['build']))})
-    arows.sort(key=lambda r: (CLASS_ORDER.index(r['class']), r['order']))
+    arows = asm_rows(A, names, sens)
     dump('assumptions', arows)
     dump('assumption_dps', rows)
     return arows, rows, res
