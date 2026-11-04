@@ -70,6 +70,7 @@ level 60 BiS sets for any healer. The healing sim's healers (docs/healing_sim.md
 | Restoration shaman | 2 | 10.8 | 17.5 | 10.0 | 22.2 | 27.1 | 7.0 | 5.4 | Healing 30% |
 | Healing priest (Holy and Discipline) | 2 | 12.1 | 15.3 | 10.0 | 27.5 | 21.1 | 5.9 | 8.1 | SP 31% |
 | Holy paladin | 1 | 14.7 | 18.7 | 10.0 | 21.9 | 26.8 | 2.8 | 5.1 | Healing 31% |
+| Restoration druid | 2 | 14.8 | 18.7 | 10.0 | 17.5 | 35.2 | 1.0 | 2.8 | Healing 41% |
 
 - **Healing priest** (2026-11-04, the priest healer worker): Wowhead's two WoW Forever priest guides (Holy and
 Discipline) have every slot table empty ("filled in once more items are discovered at max level") and a gear
@@ -90,6 +91,11 @@ both specs: the lists don't split Holy from Discipline. Set: `tools/database/for
   rest in its proportions. The Forever guide's advice ("heavy healing power and intellect items ... a good
   amount of spirit") agrees. Scripts: orchestration/tools/healers/paladin_holy_mix.py and paladin_holy_synth.py;
   the set is tools/database/forever_synthetic_items_paladin_holy.go.
+- **Restoration druid** (2026-11-04, docs/healing_druid.md): the row takes the same rule from the two cached druid
+  lists: the Forever Restoration druid Phase 1 guide and the Classic Restoration druid pre-raid guide, first pick
+  a slot, the staff path (`orchestration/tools/healers/druid_restoration_mix.py`, lists' average Sta 14.8, Int
+  17.4, Spi 14.7, SP 16.2, healing 32.7, hit 0.7, crit 0.9, MP5 2.6; `druid_restoration_synth.py` the target). The
+  set is ids 990401 to 990413 in `tools/database/forever_synthetic_items_druid_restoration.go`.
 
 ## Tanks (2026-11-03)
 

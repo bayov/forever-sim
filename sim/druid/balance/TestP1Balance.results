@@ -202,6 +202,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-RestorationDruidSynthetic(Phase1)"
+ value: {
+  dps: 1084.25017
+  tps: 775.33568
+ }
+}
+dps_results: {
  key: "TestP1Balance-Phase1-AllItems-StormrageRaiment"
  value: {
   dps: 824.02967

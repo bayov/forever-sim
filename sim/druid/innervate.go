@@ -13,7 +13,12 @@ func (druid *Druid) registerInnervateCD() {
 	}
 	innervateTargetChar := druid.Env.Raid.GetPlayerFromUnit(innervateTarget).GetCharacter()
 
+	// The tag tells several druids' Innervates on one target apart. One on ourselves needs none, so a
+	// rotation names it by its spell ID alone, wherever we stand in the raid.
 	actionID := core.ActionID{SpellID: 29166, Tag: druid.Index}
+	if innervateTarget == &druid.Unit {
+		actionID.Tag = 0
+	}
 
 	innervateCD := core.InnervateCD
 

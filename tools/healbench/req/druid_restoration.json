@@ -1,0 +1,632 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceSkyborneWindshaper",
+            "class": "ClassDruid",
+            "equipment": {
+              "items": [
+                {
+                  "id": 990401,
+                  "enchant": 1509
+                },
+                {
+                  "id": 990402,
+                  "enchant": 1249058
+                },
+                {
+                  "id": 990403
+                },
+                {
+                  "id": 990404,
+                  "enchant": 1888
+                },
+                {
+                  "id": 990405,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990406,
+                  "enchant": 2566
+                },
+                {
+                  "id": 990407
+                },
+                {
+                  "id": 990408
+                },
+                {
+                  "id": 990409,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990410,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 990411
+                },
+                {
+                  "id": 990412
+                },
+                {
+                  "id": 998014
+                },
+                {
+                  "id": 998015
+                },
+                {
+                  "id": 990413,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 279250
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "defaultPotion": "MajorManaPotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "zanzaBuff": "CerebralCortexCompound",
+              "intellectElixir": "ElixirOfGreaterIntellect",
+              "spiritElixir": "ElixirOfSages",
+              "mainHandImbue": "BrilliantManaOil"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved"
+            },
+            "talentsString": "05302001--5053025153113051",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Alchemy",
+            "rotation": {
+              "type": "TypeAPL",
+              "priorityList": [
+                {
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  },
+                  "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 29166
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLe",
+                        "lhs": {
+                          "currentManaPercent": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.35"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Innervate on ourselves at 35% mana."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 18562
+                      },
+                      "target": {
+                        "type": "LowestHealth"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "currentHealthPercent": {
+                            "sourceUnit": {
+                              "type": "LowestHealth"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.4"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Swiftmend whoever in my assignment is under 40% health and has my HoT."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9858
+                      },
+                      "target": {
+                        "type": "LowestHealth"
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "currentHealthPercent": {
+                            "sourceUnit": {
+                              "type": "LowestHealth"
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.4"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Regrowth at whoever is under 40%: the fast heal."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 25299
+                      },
+                      "target": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    },
+                    "condition": {
+                      "not": {
+                        "val": {
+                          "dotIsActive": {
+                            "spellId": {
+                              "spellId": 25299
+                            },
+                            "targetUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Rejuvenation on the tank whenever it's off."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9858
+                      },
+                      "target": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 9858
+                                  },
+                                  "targetUnit": {
+                                    "type": "Tank",
+                                    "index": 0
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "healthMissing": {
+                                  "sourceUnit": {
+                                    "type": "Tank",
+                                    "index": 0
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "spellExpectedHealing": {
+                                  "spellId": {
+                                    "spellId": 9858
+                                  },
+                                  "targetUnit": {
+                                    "type": "Tank",
+                                    "index": 0
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Regrowth on the tank when its HoT is off and what it misses covers the heal."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 18562
+                      },
+                      "target": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "spellExpectedHealing": {
+                            "spellId": {
+                              "spellId": 18562
+                            },
+                            "targetUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Swiftmend at the tank when what it misses covers it."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 25297
+                      },
+                      "target": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 25297
+                                },
+                                "targetUnit": {
+                                  "type": "Tank",
+                                  "index": 0
+                                }
+                              }
+                            },
+                            "rhs": {
+                              "const": {
+                                "val": "0.9"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Healing Touch rank 11 at the tank, the biggest that what it misses covers (90% of the heal)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9758
+                      },
+                      "target": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 9758
+                                },
+                                "targetUnit": {
+                                  "type": "Tank",
+                                  "index": 0
+                                }
+                              }
+                            },
+                            "rhs": {
+                              "const": {
+                                "val": "0.9"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Healing Touch rank 8 at the tank, the biggest that what it misses covers (90% of the heal)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 6778
+                      },
+                      "target": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "healthMissing": {
+                            "sourceUnit": {
+                              "type": "Tank",
+                              "index": 0
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 6778
+                                },
+                                "targetUnit": {
+                                  "type": "Tank",
+                                  "index": 0
+                                }
+                              }
+                            },
+                            "rhs": {
+                              "const": {
+                                "val": "0.9"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Healing Touch rank 6 at the tank, the biggest that what it misses covers (90% of the heal)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 25299
+                      },
+                      "target": {
+                        "type": "MostHurt"
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 25299
+                                  },
+                                  "targetUnit": {
+                                    "type": "MostHurt"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "healthMissing": {
+                                  "sourceUnit": {
+                                    "type": "MostHurt"
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "spellExpectedHealing": {
+                                  "spellId": {
+                                    "spellId": 25299
+                                  },
+                                  "targetUnit": {
+                                    "type": "MostHurt"
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Rejuvenation at the most hurt of the rest when it fits."
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 20,
+            "restorationDruid": {
+              "options": {
+                "innervateTarget": {
+                  "type": "Self"
+                }
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "sunderRamp": {
+        "tank": true,
+        "pullSunders": 1
+      },
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}
