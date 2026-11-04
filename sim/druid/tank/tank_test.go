@@ -16,15 +16,15 @@ func init() {
 	RegisterFeralTankDruid()
 }
 
-// TestForeverBear runs the tank bench's bear (tools/tankbench/req/druid_bear.json) against its
+// TestForeverBear runs the tank bench's bear (tools/tankbench/req/druid_bear_balanced.json) against its
 // boss with a stand-in healer and checks that the Forever bear is put together: Dire Bear Form's
 // health and armor, the rotation's abilities, its own Demoralizing Roar, and a tank score.
-// runBench runs the tank bench's bear (tools/tankbench/req/druid_bear.json) for 200 iterations of
+// runBench runs the tank bench's bear (tools/tankbench/req/druid_bear_balanced.json) for 200 iterations of
 // 120 sec against its boss with a 900 HPS stand-in healer, its own Demoralizing Roar and a tank
 // score, after mod.
 func runBench(t *testing.T, mod func(*proto.RaidSimRequest)) (*proto.RaidSimResult, float64) {
 	t.Helper()
-	data, err := os.ReadFile("../../../tools/tankbench/req/druid_bear.json")
+	data, err := os.ReadFile("../../../tools/tankbench/req/druid_bear_balanced.json")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -109,7 +109,7 @@ func TestForeverBear(t *testing.T) {
 // (was 50%; clients 70753 and 70755 unchanged, standards 37), under Forever, and the client's 50%
 // under Classic.
 func TestForeverBearFormThreat(t *testing.T) {
-	data, err := os.ReadFile("../../../tools/tankbench/req/druid_bear.json")
+	data, err := os.ReadFile("../../../tools/tankbench/req/druid_bear_balanced.json")
 	if err != nil {
 		t.Fatal(err)
 	}
