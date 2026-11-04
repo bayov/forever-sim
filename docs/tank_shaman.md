@@ -34,9 +34,9 @@ All three put the shock above Stormstrike (`shockFirst=1`, the template's defaul
 
 | Preset | Before (round 1 build on the round 2 engine) | After |
 |---|---|---|
-| Max threat | 2,175 | 2,292 |
-| Balanced | 414 | 548 |
-| Max survival | -4,571 | -4,357 |
+| Max threat | 2,175 | 2,272 |
+| Balanced | 414 | 530 |
+| Max survival | -4,571 | -4,368 |
 
 **Earth Shock above Stormstrike** (tank_rotations-20261104-4). Earth Shock makes about 2,225 threat a cast against
 Stormstrike's 1,500, and with Stormstrike first the shock waited whenever both were ready. Swapping the two lines in
@@ -101,40 +101,40 @@ other tanks' rows are in `orchestration/audit/ref/tank_bench/summary.tsv`.
 
 | Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|---|---|
-| Magmadar | 1458 | 1555 | 527 | 471 | 0.0% | 2562 | 1467 | -1819 |
-| Golemagg | 1434 | 1523 | 572 | 536 | 0.0% | 2423 | 1177 | -2563 |
-| Onyxia | 1567 | 1691 | 657 | 618 | 0.0% | 2318 | 189 | -6200 |
-| Broodlord | 1504 | 1612 | 763 | 1346 | 0.2% | 1878 | -813 | -8888 |
-| Vaelastrasz | 1559 | 1761 | 1411 | 1658 | 0.0% | 2826 | 1433 | -2746 |
-| Chromaggus | 1315 | 1415 | 911 | 1095 | 0.0% | 1747 | -421 | -6925 |
-| Ragnaros | 1346 | 1432 | 1426 | 2450 | 0.1% | 286 | -4871 | -20341 |
-| Mean of the six | 1473 | 1593 | 807 | 954 | 0.0% | 2292 | 505 | -4857 |
+| Magmadar | 1448 | 1544 | 527 | 471 | 0.0% | 2540 | 1445 | -1841 |
+| Golemagg | 1424 | 1513 | 572 | 536 | 0.0% | 2402 | 1155 | -2584 |
+| Onyxia | 1554 | 1680 | 657 | 618 | 0.0% | 2295 | 166 | -6223 |
+| Broodlord | 1492 | 1600 | 763 | 1346 | 0.2% | 1855 | -836 | -8911 |
+| Vaelastrasz | 1551 | 1754 | 1411 | 1658 | 0.0% | 2811 | 1418 | -2761 |
+| Chromaggus | 1307 | 1407 | 911 | 1095 | 0.0% | 1730 | -438 | -6942 |
+| Ragnaros | 1337 | 1423 | 1426 | 2450 | 0.1% | 267 | -4890 | -20361 |
+| Mean of the six | 1463 | 1583 | 807 | 954 | 0.0% | 2272 | 485 | -4877 |
 
 **Balanced** (`shaman_warden_balanced.json`)
 
 | Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|---|---|
-| Magmadar | 1417 | 1517 | 521 | 458 | 0.0% | 2502 | 1437 | -1759 |
-| Golemagg | 1387 | 1479 | 568 | 532 | 0.0% | 2339 | 1103 | -2607 |
-| Onyxia | 1523 | 1649 | 644 | 592 | 0.0% | 2277 | 237 | -5884 |
-| Broodlord | 1464 | 1573 | 758 | 1237 | 0.0% | 1910 | -563 | -7983 |
-| Vaelastrasz | 1521 | 1723 | 1359 | 1554 | 0.0% | 2793 | 1487 | -2430 |
-| Chromaggus | 1261 | 1365 | 900 | 1058 | 0.0% | 1682 | -414 | -6701 |
-| Ragnaros | 1302 | 1392 | 1348 | 2046 | 0.0% | 631 | -3675 | -16594 |
-| Mean of the six | 1429 | 1551 | 792 | 905 | 0.0% | 2250 | 548 | -4561 |
+| Magmadar | 1407 | 1507 | 521 | 458 | 0.0% | 2482 | 1417 | -1779 |
+| Golemagg | 1377 | 1469 | 568 | 532 | 0.0% | 2320 | 1084 | -2627 |
+| Onyxia | 1510 | 1638 | 644 | 592 | 0.0% | 2256 | 216 | -5905 |
+| Broodlord | 1453 | 1563 | 758 | 1237 | 0.0% | 1888 | -585 | -8004 |
+| Vaelastrasz | 1513 | 1716 | 1359 | 1554 | 0.0% | 2780 | 1474 | -2443 |
+| Chromaggus | 1254 | 1357 | 900 | 1058 | 0.0% | 1667 | -429 | -6716 |
+| Ragnaros | 1294 | 1383 | 1348 | 2046 | 0.0% | 613 | -3693 | -16612 |
+| Mean of the six | 1419 | 1542 | 792 | 905 | 0.0% | 2232 | 530 | -4579 |
 
 **Max survival** (`shaman_warden_max_survival.json`)
 
 | Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|---|---|
-| Magmadar | 1359 | 1440 | 496 | 434 | 0.0% | 2375 | 1366 | -1660 |
-| Golemagg | 1340 | 1407 | 548 | 508 | 0.0% | 2224 | 1044 | -2498 |
-| Onyxia | 1424 | 1546 | 611 | 544 | 0.0% | 2155 | 279 | -5347 |
-| Broodlord | 1378 | 1477 | 718 | 1232 | 0.0% | 1721 | -744 | -8137 |
-| Vaelastrasz | 1439 | 1649 | 1272 | 1385 | 0.0% | 2716 | 1552 | -1940 |
-| Chromaggus | 1318 | 1378 | 879 | 1045 | 0.0% | 1721 | -349 | -6558 |
-| Ragnaros | 1268 | 1337 | 1301 | 1933 | 0.1% | 640 | -3429 | -15635 |
-| Mean of the six | 1376 | 1483 | 754 | 858 | 0.0% | 2152 | 525 | -4357 |
+| Magmadar | 1353 | 1434 | 496 | 434 | 0.0% | 2364 | 1356 | -1671 |
+| Golemagg | 1333 | 1402 | 548 | 508 | 0.0% | 2214 | 1033 | -2508 |
+| Onyxia | 1419 | 1541 | 611 | 544 | 0.0% | 2144 | 269 | -5357 |
+| Broodlord | 1373 | 1471 | 718 | 1232 | 0.0% | 1710 | -754 | -8148 |
+| Vaelastrasz | 1434 | 1643 | 1272 | 1385 | 0.0% | 2704 | 1540 | -1951 |
+| Chromaggus | 1311 | 1372 | 879 | 1045 | 0.0% | 1708 | -361 | -6570 |
+| Ragnaros | 1262 | 1332 | 1301 | 1933 | 0.1% | 629 | -3440 | -15646 |
+| Mean of the six | 1370 | 1477 | 754 | 858 | 0.0% | 2141 | 514 | -4368 |
 
 ## Calls for the user
 
