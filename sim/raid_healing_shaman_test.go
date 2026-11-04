@@ -13,7 +13,7 @@ import (
 )
 
 // The bench's talents with Healing Focus's 3 points in Ancestral Healing.
-const restoAncestralHealingTalents = "-005102-5530503015513151"
+const restoAncestralHealingTalents = "-035-5530503015513151"
 
 // Ancestral Healing 3: a crit from the shaman's heal on the tank gives the tank 25% more armor from
 // items (Ancestral Fortitude, 16177), not 25% more of all its armor (its Agility's, Devotion Aura's),

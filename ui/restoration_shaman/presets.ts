@@ -90,21 +90,23 @@ export const DefaultAPL = APLTankHealer;
 ///////////////////////////////////////////////////////////////////////////
 
 // 31 Restoration points to Riptide, with Water Shield, Mana Tide Totem, Healing Way and Nature's
-// Swiftness, and Ancestral Knowledge, Mental Dexterity and Shamanistic Focus in Enhancement. The raid
-// healer's: raid damage hits it, so Healing Focus keeps its heals from being pushed back (Ancestral
-// Healing in its place carries 0.04 to 0.21 less on every boss). Not searched beyond that:
-// tools/rotopt's talent search scores DPS.
-export const TalentsRestoration = PresetUtils.makePresetTalents('Restoration', SavedTalents.create({ talentsString: '-0051000000002-5530500315513151' }), {
+// Swiftness, and Ancestral Knowledge 5 and Thundering Strikes 3 (1% crit a point on the heals) in
+// Enhancement: on round 70753's tree (Improved Ghost Wolf moved to row 4) nothing else there helps a
+// healer. The raid healer's: raid damage hits it, so Healing Focus keeps its heals from being pushed
+// back (Ancestral Healing in its place carries 0.03 less on average, 0.075 on Vaelastrasz;
+// docs/healing_shaman.md). Not searched beyond that: tools/rotopt's talent search scores DPS.
+export const TalentsRestoration = PresetUtils.makePresetTalents('Restoration', SavedTalents.create({ talentsString: '-035-5530500315513151' }), {
 	tooltip: 'Riptide, Water Shield, Mana Tide Totem, Healing Way and Nature\'s Swiftness.',
 	group: 'Healing sim',
 });
 
 // The tank healer's: nothing hits a healer in the tank role, so Healing Focus's 3 points go to
 // Ancestral Healing, which gives the tank 25% more armor from items for 15 sec after a heal crit
-// (docs/healing_shaman.md). It carries 0.004 to 0.09 more on every boss.
+// (docs/healing_shaman.md). It carries 0.04 more on average (0.918 against 0.959 over the bench's
+// nine rows).
 export const TalentsRestorationTank = PresetUtils.makePresetTalents(
 	'Restoration (tank healer)',
-	SavedTalents.create({ talentsString: '-005102-5530503015513151' }),
+	SavedTalents.create({ talentsString: '-035-5530503015513151' }),
 	{
 		tooltip: 'Riptide, Water Shield, Mana Tide Totem, Healing Way, Nature\'s Swiftness and Ancestral Healing.',
 		group: 'Healing sim',
