@@ -227,7 +227,8 @@ new made the cut; the presets stand.
    row is in `notes.md`.
 3. **Chain Lightning's "comparable rank"** is our reading (the newest Lightning Bolt at Chain Lightning's learn level).
    Only rank 4 matters at 60, and there it's unambiguous (both learned at 56).
-4. **Chain Lightning's spell power coefficient** (open, `notes.md`). The notes raise the cast to 2.5 s but name no
+4. **Chain Lightning's spell power coefficient** (ruled 2026-11-04, standards 39: 0.714 at every rank, landed in
+   phase 4, `shaman_phase4.md`; still out of every single-target rotation). The notes raise the cast to 2.5 s but name no
    coefficient, so the sim keeps the client's 0.571 (2 / 3.5). If Blizzard moved it with the cast to 0.714 (2.5 / 3.5,
    as Lightning Bolt), Chain Lightning would hit for about 1.27 × a bolt and might enter Elemental's rotation.
    Recommendation: keep the client's value (standards 37) and check the first launch log. Low stakes: at 0.714 it
