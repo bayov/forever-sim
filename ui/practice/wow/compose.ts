@@ -124,6 +124,9 @@ async function paint(c: Composite): Promise<THREE.Texture> {
 	// Once the texture is on the GPU we let go of our copy. Each unit's skin and armor makes its
 	// own, so in a raid of 40 they were over half a gigabyte of the page's memory.
 	t.onUpdate = () => {
+		// A copy that wraps another way (model.ts setTexture) shares the picture and goes to the
+		// GPU on its own, so then we keep it.
+		if (t.userData.rewrapped) return;
 		(t.image as { data: Uint8ClampedArray | null }).data = null;
 	};
 	return t;

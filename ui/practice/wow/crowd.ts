@@ -21,6 +21,7 @@ import * as THREE from 'three';
 import { forget } from './compose';
 import { skins, type Model } from './model';
 import { drawOrder } from './particles';
+import { poseClient } from './poseClient';
 
 // The bone texture is this many texels wide: four texels to a bone, so 256 bones a row.
 const WIDTH = 1024;
@@ -32,9 +33,11 @@ type Skeleton = {
 	// How many of the crowd's meshes use it (a body and its cape).
 	users: number;
 	skeleton: THREE.Skeleton;
-	// The bones' skinning matrices, which their model poses (model.ts).
-	skinning: Float32Array;
+	// The model that poses the bones (model.ts), whose skinning matrices we copy.
+	model?: Model;
 	frame: number;
+	// The model's pose we last copied (Model.poseVersion).
+	version: number;
 };
 
 // The painted skins of one size, as layers of one texture array.
@@ -178,10 +181,14 @@ export class Crowd {
 	private texture = this.makeTexture(8);
 	private readonly uniform = { value: this.texture as THREE.Texture };
 	private frame = 0;
+	private bonesChanged = false;
 
 	// useSkinArrays puts painted skins in texture arrays. Off, each skin draws on its own (to
 	// measure what the arrays save, with ?skinarrays=0).
 	useSkinArrays = new URLSearchParams(location.search).get('skinarrays') !== '0';
+
+	// useWorker poses the crowd in the pose worker (poseClient.ts). Off with ?poseworker=0.
+	useWorker = new URLSearchParams(location.search).get('poseworker') !== '0';
 
 	// noShadowSlots are the gear slots whose models cast no shadow: in a big raid the helms,
 	// shoulders and cloaks, whose shadows mostly fall in the body's.
@@ -243,6 +250,8 @@ export class Crowd {
 			this.entries.push(entry);
 			this.byModel.set(model, entry);
 			model.crowd = this;
+			// The crowd's models pose in the pose worker, when the page can share memory with it.
+			if (this.useWorker) poseClient.attach(model);
 			for (const p of parts) this.grow(p.batch);
 		}
 	}
@@ -472,6 +481,7 @@ export class Crowd {
 		if (!entry) return;
 		this.byModel.delete(model);
 		model.crowd = undefined;
+		poseClient.detach(model);
 		const i = this.entries.indexOf(entry);
 		this.entries[i] = this.entries[this.entries.length - 1];
 		this.entries.pop();
@@ -524,8 +534,7 @@ export class Crowd {
 			return k;
 		}
 		const n = s.bones.length;
-		const skinning = skins.get(s) ?? new Float32Array(n * 16);
-		k = { offset: this.allocate(n), users: 1, skeleton: s, skinning, frame: -1 };
+		k = { offset: this.allocate(n), users: 1, skeleton: s, model: skins.get(s), frame: -1, version: -1 };
 		this.skeletons.set(s, k);
 		const rows = Math.ceil(this.bones / BONES_PER_ROW);
 		if (rows > this.texture.image.height) {
@@ -783,12 +792,18 @@ export class Crowd {
 				b.sent = b.count;
 			}
 		}
-		this.texture.needsUpdate = true;
+		if (this.bonesChanged) this.texture.needsUpdate = true;
+		this.bonesChanged = false;
 	}
 
-	// writeBones puts a skeleton's skinning matrices in the texture.
+	// writeBones puts a skeleton's skinning matrices in the texture, when they changed since. A
+	// raider far away poses only now and then, and gear that never moves only once.
 	private writeBones(k: Skeleton) {
-		this.data.set(k.skinning, k.offset * 16);
+		const m = k.model;
+		if (!m || m.poseVersion === k.version) return;
+		k.version = m.poseVersion;
+		this.data.set(m.skinning, k.offset * 16);
+		this.bonesChanged = true;
 	}
 
 	dispose() {

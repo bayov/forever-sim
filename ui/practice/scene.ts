@@ -8,6 +8,7 @@ import * as THREE from 'three';
 import { newTextures } from './wow/files';
 import { drawOrder, fillBatches, particleOptions } from './wow/particles';
 import { Crowd, SHADOW_LAYER } from './wow/crowd';
+import { poseClient } from './wow/poseClient';
 import type { Model } from './wow/model';
 
 export type CameraState = { yaw: number; pitch: number; distance: number };
@@ -113,6 +114,8 @@ export class Room {
 			// The crowd's shadow batches draw only in the shadows: the camera sees their layer from
 			// when the shadows start (below) to when the picture starts (the solid marker).
 			camera.layers.disable(SHADOW_LAYER);
+			// The crowd's poses for the next frame go to the pose worker now, while this one draws.
+			poseClient.flush();
 			this.crowd.prepare(camera);
 			fillBatches();
 			this.onPass?.('upload');
