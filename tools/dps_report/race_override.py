@@ -6,13 +6,18 @@ proto race name without "Race": Dwarf, NightElf, SkyborneHighOrder, ...):
 
   {"rotation": {...an APL rotation, the shape of the request's player.rotation...},   optional
    "bonusStats": {"SpellHit": -1, "SpellPower": 11.6},                                optional, proto.Stat names
+   "gearSet": "level60_phase1_synthetic_hit-1",                                       optional, with "equipment"
+   "equipment": {"items": [...the gear set file's items...]},                         optional
    "note": "one line for the Races tab",
    "gain": {"dps": .., "se": .., "iterations": 20000, "seed": 1, "duration": 180},
    "how": "how it was made"}
 
 `rotation` replaces the player's rotation and `bonusStats` is added to the player's bonus stats (on top of the gear).
+`equipment` replaces the player's equipment: a whole gear set, `gearSet` naming its file (ui/<spec>/gear_sets/, a hit-trade
+step of the preset's set, race_gear.py). The file holds the equipment itself, so the sims and the staleness hashes read
+the override alone. Both `bonusStats` and `equipment` count as the race's gear.
 A duty or encounter variant (a build with `baseBuild`) without a file of its own takes its base build's, but only the
-parts that fit it: the rotation when the variant's rotation is the base's, the bonus stats when its gear is the base's
+parts that fit it: the rotation when the variant's rotation is the base's, the bonus stats or equipment when its gear is the base's
 (a duty preset's rotation keeps its duty up, and a variant may wear other gear). The preset's own race is never
 overridden: its request is the preset.
 
@@ -63,7 +68,13 @@ def tuned_kind(ov):
     'rotation+gear' ('' for none). The Races tab names it on the race's badge."""
     if not ov:
         return ''
-    return '+'.join(k for k, on in (('rotation', ov.get('rotation')), ('gear', ov.get('bonusStats'))) if on)
+    return '+'.join(k for k, on in (('rotation', ov.get('rotation')), ('gear', has_gear(ov))) if on)
+
+
+def has_gear(ov):
+    """Whether an override (its file, or the summary an out/ file records) changes the race's gear: bonus stats or a
+    gear set of its own."""
+    return bool(ov and (ov.get('bonusStats') or ov.get('gearSet') or ov.get('equipment')))
 
 
 # The report's words for each race's own setup: a `note` for the Races tab and, for a rotation, a `why` per line it
@@ -115,17 +126,21 @@ def load(bid, race, meta=None):
     if 'rotation' in ov and mine.get('rotation') != theirs.get('rotation'):
         dropped.append('rotation')
         del ov['rotation']
-    if 'bonusStats' in ov and mine.get('equipment') != theirs.get('equipment'):
-        dropped.append('bonusStats')
-        del ov['bonusStats']
+    if mine.get('equipment') != theirs.get('equipment'):
+        for k in ('bonusStats', 'equipment'):
+            if k in ov:
+                dropped.append(k)
+                del ov[k]
+        ov.pop('gearSet', None)
     if dropped:
         ov['dropped'] = dropped
-    return ov if ('rotation' in ov or 'bonusStats' in ov) else None
+    return ov if ('rotation' in ov or 'bonusStats' in ov or 'equipment' in ov) else None
 
 
 def apply(req, bid, race, meta=None, gear=True):
     """(the request at this race with its override applied, the override or None). Sets the race either way. gear=False
-    leaves the bonus stats out (run_races.py's sims without the racial the gear is tuned around)."""
+    leaves the race's gear out, bonus stats and equipment (run_races.py's sims without the racial the gear is tuned
+    around)."""
     req = copy.deepcopy(req)
     pl = req['raid']['parties'][0]['players'][0]
     pl['race'] = 'Race' + race
@@ -134,6 +149,8 @@ def apply(req, bid, race, meta=None, gear=True):
         return req, None
     if 'rotation' in ov:
         pl['rotation'] = copy.deepcopy(ov['rotation'])
+    if gear and ov.get('equipment'):
+        pl['equipment'] = copy.deepcopy(ov['equipment'])
     if gear and ov.get('bonusStats'):
         bs = pl.setdefault('bonusStats', {})
         for name, v in ov['bonusStats'].items():
@@ -149,6 +166,8 @@ def summary(ov):
     if not ov:
         return None
     s = {'note': ov.get('note', ''), 'file': ov['file'], 'rotation': 'rotation' in ov, 'bonusStats': ov.get('bonusStats') or {}}
+    if ov.get('gearSet'):
+        s['gearSet'] = ov['gearSet']
     if ov.get('from'):
         s['from'] = ov['from']
     if ov.get('dropped'):
@@ -166,6 +185,7 @@ if __name__ == '__main__':
         for race in CLASS_RACES[m['class']]:
             ov = load(bid, race, m)
             if ov:
-                parts = (['rotation'] if 'rotation' in ov else []) + (['bonusStats ' + json.dumps(ov['bonusStats'])] if ov.get('bonusStats') else [])
+                parts = (['rotation'] if 'rotation' in ov else []) + (['bonusStats ' + json.dumps(ov['bonusStats'])] if ov.get('bonusStats') else []) + (
+                    ['gear set ' + ov.get('gearSet', '?')] if ov.get('equipment') else [])
                 extra = (f" (from {ov['from']}" + (f", left out: {', '.join(ov['dropped'])}" if ov.get('dropped') else '') + ')') if ov.get('from') else ''
                 print(f"{bid} {race}: {' + '.join(parts)}{extra}: {ov.get('note', '')}")

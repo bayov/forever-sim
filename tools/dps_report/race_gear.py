@@ -8,6 +8,18 @@ and encounter variants take their base build's file), this works out:
   hit      the Dwarf's hit from the gear, talents, set bonus, buffs and consumes (dashstats' final sheet at Dwarf), plus a
            priest's school talent the sheet doesn't hold (Shadow Focus 1% a rank, Holy Precision 6% a rank)
   cap      casters (spell power above attack power): the 16% spell cap; melee and hunters: the 8% yellow cap
+
+Where the build's gear set has hit-trade steps (standards 4, orchestration/tools/hit_steps.py: real synthetic sets
+`<set>_hit-1`, `_hit-2`, ... with 10, 20, ... less gear hit rating, 1% each, re-spent at the budget prices, and `_hit+1`,
+... with more; the set is the meta's `gearSet`, found in the merged tree's ui/*/gear_sets/ as the one file whose items
+are the request's), the trade is a whole step:
+
+  step     the preset's own step (the step file the request's equipment is, 0 for the base set) minus round(hit - cap),
+           where hit - cap counts only when above 0, clamped to the lowest step there is (the gear's own hit)
+  swap     that step's gear set, when it is another step than the preset's
+
+Otherwise (no steps, or the set can't be found) the trade is bonus stats:
+
   excess   min(1%, hit - cap, the gear's own hit)
   swap     the gear's hit lowered by the excess, and its 10 budget points a percent (standards 1b) given to the set's
            other non-Stamina, non-Spirit stats in the set's own proportions (orchestration/gear_targets.md, the
@@ -16,16 +28,16 @@ and encounter variants take their base build's file), this works out:
 
 Then it sims Dwarf with the preset's gear and with the swap (180 s, seed 1, 20,000 iterations, both with the same
 seed, so the fights pair up: the error is the standard error of the per-fight difference). With --write it writes
-req/races/<id>.Dwarf.json (race_override.py) where the swap gains at least 2 standard errors, and removes a file of an
-earlier run that no longer does. Dual wielders' extra hit still lowers their white misses, so a swap can lose.
+req/races/<id>.Dwarf.json (race_override.py) where the swap gains at least 2 standard errors: `gearSet` and `equipment`
+(the step set's items) for a step, `bonusStats` otherwise. It removes a file of an earlier run that no longer does. Dual wielders' extra hit still lowers their white misses, so a swap can lose.
 
 The gear's hit and crit are one pool under Forever (sim/core/ruleset.go unifyEquipHitAndCrit adds the melee and spell
-values, bonus stats included), so the swap writes each once: MeleeHit and MeleeCrit for melee and hunters, SpellHit and
+values, bonus stats included), so the bonus stats swap writes each once: MeleeHit and MeleeCrit for melee and hunters, SpellHit and
 SpellCrit for casters. Either works for both kinds of attack.
 
 Writes $DASH_DIR/race_gear.json (every build's numbers) and prints a table.
 """
-import json, math, os, subprocess, sys, tempfile
+import glob, json, math, os, re, subprocess, sys, tempfile
 from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -106,6 +118,42 @@ def set_stats(pl, names):
     return amt, hit
 
 
+STEP = re.compile(r'_hit([+-]\d+)$')
+
+
+def _ids(eq):
+    return [it.get('id', 0) for it in (eq or {}).get('items', [])]
+
+
+def gear_steps(meta, pl):
+    """The hit-trade steps of the build's gear set, or None when it has none or the set isn't found (no file, or more
+    than one, in ui/*/gear_sets/ named the meta's `gearSet` with the request's items):
+    {'dir', 'base', 'steps': {step: gear set name}, 'own': the step the request wears}."""
+    gs = meta.get('gearSet')
+    if not gs:
+        return None
+    mine = _ids(pl.get('equipment'))
+    dirs = [os.path.dirname(f) for f in sorted(glob.glob(os.path.join(TREE, 'ui', '*', 'gear_sets', gs + '.gear.json')))
+            if _ids(json.load(open(f))) == mine]
+    if len(dirs) != 1:
+        return None
+    base = STEP.sub('', gs)
+    steps = {0: base} if os.path.exists(os.path.join(dirs[0], base + '.gear.json')) else {}
+    for f in glob.glob(os.path.join(dirs[0], base + '_hit*.gear.json')):
+        m = STEP.search(os.path.basename(f)[:-len('.gear.json')])
+        if m and os.path.basename(f) == base + m.group(0) + '.gear.json':
+            steps[int(m.group(1))] = base + m.group(0)
+    m = STEP.search(gs)
+    own = int(m.group(1)) if m else 0
+    if len(steps) < 2 or steps.get(own) != gs:
+        return None
+    return {'dir': dirs[0], 'base': base, 'steps': steps, 'own': own}
+
+
+def step_equipment(st, step):
+    return json.load(open(os.path.join(st['dir'], st['steps'][step] + '.gear.json')))
+
+
 def price(k):
     return PRICE['AttackPower'] if k == 'AttackPowerBoth' else PRICE[k]
 
@@ -133,6 +181,20 @@ def plan(bid):
     excess = round(max(0.0, min(1.0, hit - cap, gear_hit)), 4)
     p = {'build': bid, 'class': meta['class'], 'spec': meta.get('spec'), 'role': 'caster' if caster else 'melee/ranged',
          'hit': round(hit, 2), 'hitFrom': why, 'cap': cap, 'gearHit': gear_hit, 'excess': excess}
+    st = gear_steps(meta, pl)
+    if st:
+        over = max(0.0, hit - cap)
+        step = max(st['own'] - math.floor(over + 0.5), min(st['steps']))
+        p.update({'gearSet': meta['gearSet'], 'ownStep': st['own'], 'step': step, 'steps': sorted(st['steps']),
+                  'excess': st['own'] - step})
+        if step != st['own']:
+            p['stepSet'] = st['steps'][step]
+            p['equipment'] = step_equipment(st, step)
+        elif over >= 0.5:
+            p['skip'] = 'the set has no lower hit step'
+        else:
+            p['skip'] = 'no whole step of hit over the cap' if over > 0 else 'no hit over the cap'
+        return p, req, meta
     if excess <= 0:
         return p, req, meta
     pts = excess * HIT_RATING
@@ -165,14 +227,21 @@ def describe(p):
     return f"{pct} hit over the cap re-spent as {', '.join(parts[:-1]) + ' and ' + parts[-1] if len(parts) > 1 else parts[0]}"
 
 
-def paired(req, bonus, iters):
+def describe_step(p):
+    return f"{p['excess']:g}% hit over the cap traded through the set's hit {p['step']:+d} step"
+
+
+def paired(req, bonus, iters, equipment=None):
+    """The preset's gear against the swap: bonus stats on top of it, or another gear set (equipment)."""
     def one(r):
         res = run(r, iters, 1, save_all=True)
         return res['raidMetrics']['parties'][0]['players'][0]['dps']
     swap = json.loads(json.dumps(req))
     pl = swap['raid']['parties'][0]['players'][0]
-    bs = pl.setdefault('bonusStats', {})
-    for name, v in bonus.items():
+    if equipment is not None:
+        pl['equipment'] = json.loads(json.dumps(equipment))
+    bs = pl.setdefault('bonusStats', {}) if bonus else {}
+    for name, v in (bonus or {}).items():
         field, i = race_override.stat_index(name)
         arr = bs.setdefault(field, [])
         arr.extend([0] * (i + 1 - len(arr)))
@@ -199,21 +268,26 @@ def main(args):
         if meta.get('baseBuild') or RACE not in CLASS_RACES[meta['class']]:
             continue  # variants use their base build's file; a class Dwarf can't be has nothing to do
         p, req, meta = plan(bid)
+        eq = p.pop('equipment', None)  # a step's gear set: the override file holds it, race_gear.json names it
         path = race_override.own_path(bid, RACE)
         if meta['race'] == RACE:
             p['skip'] = 'the preset is a Dwarf: its own set is the preset'
+        elif p.get('skip'):
+            pass
         elif p['excess'] <= 0:
             p['skip'] = 'no hit over the cap' if p['gearHit'] > 0 else 'the set carries no hit'
         else:
             dw = at_race(req)
             dw['encounter']['duration'] = 180
-            base, swap, gain, se, se_unpaired = paired(dw, p['bonusStats'], iters)
+            base, swap, gain, se, se_unpaired = paired(dw, p.get('bonusStats'), iters, eq)
             p.update({'dpsPreset': round(base, 2), 'dpsSwap': round(swap, 2), 'gain': round(gain, 2), 'se': round(se, 2),
                       'seUnpaired': round(se_unpaired, 2),
-                      'keep': gain >= 2 * se, 'note': describe(p)})
+                      'keep': gain >= 2 * se, 'note': describe_step(p) if eq else describe(p)})
         results[bid] = p
         json.dump(results, open(out_p, 'w'), indent=1)
         line = f"{bid:40s} hit {p['hit']:5.2f} cap {p['cap']:4.1f} excess {p['excess']:.2f}"
+        if 'step' in p:
+            line += f" step {p['ownStep']:+d} -> {p['step']:+d}"
         if 'gain' in p:
             line += f"  {p['dpsPreset']:8.1f} -> {p['dpsSwap']:8.1f}  gain {p['gain']:+6.2f} ± {p['se']:.2f}  {'KEEP' if p['keep'] else 'drop'}  {p['note']}"
         else:
@@ -228,6 +302,20 @@ def main(args):
                     print(f'  {path} has a rotation: merge the gear by hand and confirm the pair', file=sys.stderr)
                     continue
             os.makedirs(os.path.dirname(path), exist_ok=True)
+            gain_rec = {'dps': p['gain'], 'se': p['se'], 'iterations': iters, 'seed': 1, 'duration': 180}
+            if eq:
+                how = (f"race_gear.py: Dwarf hit {p['hit']:g}%{' (with ' + p['hitFrom'] + ')' if p['hitFrom'] else ''} against the "
+                       f"{p['cap']:g}% {'spell' if p['role'] == 'caster' else 'yellow'} cap. The preset wears {p['gearSet']} "
+                       f"(hit step {p['ownStep']:+d}); the Dwarf wears the set's step {p['step']:+d}, {p['stepSet']} "
+                       f"({p['excess'] * HIT_RATING:g} less gear hit rating, re-spent at the budget prices by "
+                       f"orchestration/tools/hit_steps.py). Dwarf {p['dpsPreset']:.1f} with the preset's gear, "
+                       f"{p['dpsSwap']:.1f} with the step; gain.se is the paired error (the same seeded fights), "
+                       f"{p['seUnpaired']:.2f} unpaired.")
+                json.dump({'gearSet': p['stepSet'], 'equipment': eq, 'note': p['note'], 'gain': gain_rec, 'how': how},
+                          open(path, 'w'), indent=1)
+                open(path, 'a').write('\n')
+                print('  wrote', path)
+                continue
             shares = ', '.join(f'{k} {v}%' for k, v in p['shares'].items())
             how = (f"race_gear.py: Dwarf hit {p['hit']:g}%{' (with ' + p['hitFrom'] + ')' if p['hitFrom'] else ''} against the "
                    f"{p['cap']:g}% {'spell' if p['role'] == 'caster' else 'yellow'} cap, the set's own hit {p['gearHit']:g}%: "
