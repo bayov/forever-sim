@@ -167,7 +167,7 @@ EOF
 		mark tankheal
 		TH=tank\ heal
 		if [ "$cmd" = resume ]; then TH=$(for m in tank heal; do [ -e $m/.fresh ] || echo $m; done); fi
-		[ -n "$TH" ] && TANKHEAL_BIN=$REAL_BIN python3 $T/tankheal.py run $TH
+		[ -n "$TH" ] && TANKHEAL_BIN=$REAL_BIN python3 $T/tankheal.py run $TH $([ "$cmd" = resume ] && echo --resume)
 	fi
 	mark done
 	python3 $T/timing.py "$TIMING_LOG"

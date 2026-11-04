@@ -289,6 +289,7 @@ Commands (`DASH_DIR` as for the DPS steps; with no `$DASH_DIR` tree they read th
 
 ```sh
 pipeline.sh tankheal [tank|heal]   # = TANKHEAL_BIN=<bin dir> tankheal.py run: sims into $DASH_DIR/{tank,heal}/, run.json, .fresh
+tankheal.py run heal --resume      # a stopped run keeps the bench calls it finished (.progress.json, same commit)
 tankheal.py build                  # $DASH_DIR/{tank,heal}/ -> $DASH_DIR/data/{tank,heal}_*.json
 tankheal.py pack | unpack          # tools/dps_report/raw/bench/{tank,heal}.tgz <-> $DASH_DIR/{tank,heal}/
 tankheal.py fresh [--clear]        # the modes simmed since their last publish

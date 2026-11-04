@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """tankheal.py: the report's Tanking and Healing modes, from tools/tankbench and tools/healbench.
 
-  tankheal.py run [tank|heal ...] [--no-races]   the sims, into $DASH_DIR/tank and $DASH_DIR/heal (the benches' text,
-                                                 log lines dropped, and run.json); marks the mode fresh for publish
+  tankheal.py run [tank|heal ...] [--no-races] [--resume]
+                                                 the sims, into $DASH_DIR/tank and $DASH_DIR/heal (the benches' text,
+                                                 log lines dropped, and run.json); marks the mode fresh for publish.
+                                                 --resume keeps the bench calls a stopped run finished (.progress.json)
   tankheal.py build                              the tank_* and heal_* datasets into $DASH_DIR/data (unpacks the raw
                                                  packs first when $DASH_DIR/tank or heal is missing)
   tankheal.py pack                               $DASH_DIR/tank and heal into raw/bench/<mode>.tgz (deterministic)
@@ -131,13 +133,23 @@ def race_files(mode, stems, tmp):
     return files
 
 
-def run(modes, races=True):
+def run(modes, races=True, resume=False):
     commit = subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=TREE, capture_output=True, text=True).stdout.strip()
     for mode in modes:
         out = os.path.join(D, mode)
-        shutil.rmtree(out, ignore_errors=True)
+        prog = os.path.join(out, '.progress.json')
+        done = json.load(open(prog)) if resume and os.path.exists(prog) else {}
+        if done.get('commit') != commit or os.path.exists(os.path.join(out, 'run.json')):
+            done = {}  # another commit's outputs, or a finished run: start over
+        if not done:
+            shutil.rmtree(out, ignore_errors=True)
+        os.makedirs(os.path.join(out, 'races'), exist_ok=True)
         stems = presets(mode)
-        secs, t0 = {}, time.time()
+        secs, t0 = dict(done.get('secs', {})), time.time() - done.get('seconds', 0)
+
+        def note(k, v):
+            secs[k] = v
+            json.dump({'commit': commit, 'secs': secs, 'seconds': round(time.time() - t0, 1)}, open(prog, 'w'))
         groups = {'tank': stems} if mode == 'tank' else {r: [s for s in stems if heal_role(s) == r] for r in ('tank', 'raid')}
         tmp = tempfile.mkdtemp(prefix=f'{mode}_races_')
         rgroups = race_files(mode, stems, tmp) if races else {}
@@ -147,17 +159,19 @@ def run(modes, races=True):
                 files = [req_path(mode, s) for s in st]
                 name = boss if mode == 'tank' else f'{g}_{boss}'
                 args = enc if mode == 'tank' else ['-carry', '-role', g] + enc
-                secs[name] = round(bench(mode, args, files, os.path.join(out, name + '.txt')), 1)
-                print(f'{mode} {name}: {secs[name]} s', flush=True)
-                if g in rgroups:
-                    k = 'races/' + name
-                    secs[k] = round(bench(mode, args, rgroups[g], os.path.join(out, 'races', name + '.txt')), 1)
+                if name not in secs:
+                    note(name, round(bench(mode, args, files, os.path.join(out, name + '.txt')), 1))
+                    print(f'{mode} {name}: {secs[name]} s', flush=True)
+                k = 'races/' + name
+                if g in rgroups and k not in secs:
+                    note(k, round(bench(mode, args, rgroups[g], os.path.join(out, 'races', name + '.txt')), 1))
                     print(f'{mode} {k}: {secs[k]} s ({len(rgroups[g])} race copies)', flush=True)
         shutil.rmtree(tmp, ignore_errors=True)
         info = {'iterations': ITERS, 'seed': 'the requests\' simOptions.randomSeed' if mode == 'tank' else HEAL_SEED,
                 'commit': commit, 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'seconds': round(time.time() - t0, 1),
                 'runSeconds': secs, 'races': races}
         json.dump(info, open(os.path.join(out, 'run.json'), 'w'), indent=1)
+        os.remove(prog)
         open(os.path.join(out, '.fresh'), 'w').write(commit + '\n')
         print(f'{mode}: {info["seconds"]} s')
 
@@ -387,7 +401,9 @@ def identity(H, bid, cls, req):
 
 
 # spells build_data.py's name sources miss (ranks the sim keys in struct literals, not a *SpellId array): name, rank
-SPELL_NAMES = {1235827: ('Lacerate', 5), 1235826: ('Lacerate', 4), 1238070: ('Primal Bite', 3), 1238069: ('Primal Bite', 2)}
+SPELL_NAMES = {1235827: ('Lacerate', 5), 1235826: ('Lacerate', 4), 1238070: ('Primal Bite', 3), 1238069: ('Primal Bite', 2),
+              1238215: ('Wild Growth', 3), 1238214: ('Wild Growth', 2), 1240827: ('Prayer of Mending', 3), 1240826: ('Prayer of Mending', 2),
+              1239243: ('Riptide', 3), 1239242: ('Riptide', 2)}
 
 
 def tank_nm(H):
@@ -741,7 +757,7 @@ def fresh(clear=False):
 if __name__ == '__main__':
     cmd, args = (sys.argv[1], sys.argv[2:]) if len(sys.argv) > 1 else ('', [])
     if cmd == 'run':
-        run([a for a in args if a in MODES] or list(MODES), races='--no-races' not in args)
+        run([a for a in args if a in MODES] or list(MODES), races='--no-races' not in args, resume='--resume' in args)
     elif cmd == 'build':
         build()
     elif cmd == 'pack':
