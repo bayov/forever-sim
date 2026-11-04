@@ -3166,7 +3166,18 @@
     },
     {
      "commit": "8f304b2",
-     "why": "Forever's downranking penalty moved into sim/core with the same scope; every report number unchanged"
+     "why": "Forever's downranking penalty moved into sim/core with the same scope; every report number unchanged"    },
+    {
+     "commit": "a4fc1d7",
+     "why": "report data for the shaman re-sim after Chain Lightning 0.714; no preset's number moved"
+    },
+    {
+     "commit": "f6e868b",
+     "why": "warlock ledger and findings (docs); Amplify Curse is not in any report build"
+    },
+    {
+     "commit": "0c0b4e8",
+     "why": "a merge of master into a work branch; no new change of its own"
     }
    ],
    "source": {
