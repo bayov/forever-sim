@@ -223,10 +223,23 @@ Agility, 125 Strength, 105 Defense, 3% hit (after tank_gear-20261104-4: the ches
   / -77), the Dense Weightstone (none -42 / -40 / -38) and the Mighty Rage Potion (Greater Stoneshield -618 /
   -550 / -471). Food: the Smoked Desert Dumpling at Max threat and Balanced (Dirge's Kickin' Chimaerok Chops,
   25 Stamina, -31.8 +- 0.5 / -3.1 +- 1.9; Grilled Squid and Blessed Sunfruit -17 to -21), **Dirge's chops at
-  Max survival (+89.9 +- 6.9, seed 2 +79.2 +- 6.1)**. Explosives score 0: an item can't be used in a form (the
-  sim's explosives check `IsShapeshifted`), so a bear never throws them. Three Phase 1 consumables no tank
+  Max survival (+89.9 +- 6.9, seed 2 +79.2 +- 6.1)**. Explosives scored 0 here only because the sim
+  then blocked every explosive in a form. The client allows the Goblin Sapper Charge and the Goblin Land Mine
+  in Bear and Dire Bear Form (their spells lack NOT_SHAPESHIFTED; tank_mechanics-15), so they are re-run
+  under Consumables, round 4. Dense Dynamite, Solid Dynamite and the Iron and Thorium Grenades carry the flag
+  and still can't be used in a form. Three Phase 1 consumables no tank
   request carries would gain (call 10): a Blasted Lands buff (Ground Scorpok Assay +42 / +53 / +112, R.O.I.D.S.
   +52 / +50 / +47, Lung Juice Cocktail +9 / +36 / +127) and Rumsey Rum Black Label (+6 / +21 / +75).
+- **Consumables, round 4** (2026-11-04, branch bear-explosives on 22a7d79; abtest, 10,000 iterations on
+  seeds 1 and 2, the six-boss mean at each preset's own weight, Max threat / Balanced / Max survival). The bear
+  already has Engineering (with Blacksmithing), so the sapper displaces nothing. **The Goblin Sapper Charge
+  gains at every weight**: Max threat 2,829.5 → 3,121.5 (+292.0 +- 4.2; seed 2 +298.7 +- 4.2), Balanced
+  1,830.2 → 2,125.7 (+295.4 +- 6.4; seed 2 +287.7 +- 6.5), Max survival -684.7 → -500.7 (+184.1 +- 15.8; seed
+  2 +227.2 +- 17.3). It goes off once in the 3 minute fight. With it, every filler explosive loses on both
+  seeds: the Goblin Land Mine -4.5 / -4.7 / -17.5 (seed 2 -4.1 / -9.5 / -14.5, +- 0.5 / 1.3 / 4), the EZ-Thro
+  Dark Bomb the same to 0.1, the EZ-Thro Thorium Grenade -5.0 / -5.1 / -18.0 (seed 2 -4.6 / -9.9 / -15.1).
+  A filler is thrown about 2.4 times a fight for about 1,375 damage, which doesn't pay for the GCDs it takes.
+  So every preset takes the sapper and no filler.
 
 ## Presets (round 3, 2026-11-04: unmultiplied mana-gain threat, disjoint seeds)
 
@@ -246,6 +259,9 @@ indexes the abtest files; `rotopt/` the knob and talent searches; `tankbench/` t
 - **Balanced**: the rotation holds (Roar refreshed under 5 sec looked +5.7 at 3,000 on seed 1 and was -1.6 +- 5.4
   and -1.4 +- 4.9 on seeds 2 and 3). Superior Deflection on the wrist.
 - **Max survival**: the rotation holds. Superior Deflection on the wrist, Dirge's chops for the Dumpling.
+- **Every preset, round 4**: the Goblin Sapper Charge and no filler explosive (Consumables, round 4: +292 / +295 /
+  +184 on seed 1, +299 / +288 / +227 on seed 2). The tables below are round 3's builds with it; the
+  before-and-after table is without it.
 - **Judgement of Wisdom and the shift** (tank_mechanics-20261104-12's follow-up): with mana threat unmultiplied,
   the raid's Judgement of Wisdom is still worth 34 / 38 / 53 (Max threat / Balanced / Max survival, 3,000,
   without it against with it), and the pre-pull shift 25.6 / 25.5 / 22.0, every point of it through Judgement of
@@ -272,45 +288,45 @@ indexes the abtest files; `rotopt/` the knob and talent searches; `tankbench/` t
   | w=1 | -127.3 +- 9.4 | **own** | -91.9 +- 9.0 |
   | w=3 | -920.1 +- 26.3 | -125.8 +- 26.5 | **own** |
 
-### Tankbench (round 3)
+### Tankbench (round 3, with round 4's Goblin Sapper Charge)
 
 `tools/tankbench`, 1,000 iterations, all seven encounters (`orchestration/audit/ref/tank_bench/summary.tsv`).
 Mean of the six scoring encounters:
 
 | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Score at its own weight |
 |---|---|---|---|---|---|---|
-| Max threat | 1,688 | 644 | 1,699 | 595 | 618 | **2,842.5** |
-| Balanced | 1,608 | 610 | 1,589 | 569 | 483 | **1,851.8** |
-| Max survival | 1,453 | 543 | 1,491 | 570 | 442 | **-633.8** |
+| Max threat | 1,733 | 665 | 1,851 | 611 | 630 | **3,132.0** |
+| Balanced | 1,657 | 634 | 1,752 | 586 | 498 | **2,125.3** |
+| Max survival | 1,498 | 565 | 1,623 | 585 | 463 | **-515.7** |
 
-The bear's DPS is about 610 at Balanced, down from about 755 in round 1: the white hits' flat 11.25 Rage is less
+The bear's DPS is about 635 at Balanced with the sapper (610 without), down from about 755 in round 1: the white hits' flat 11.25 Rage is less
 than Classic's Rage from damage gave at this gear, and the boss parries and blocks (round 2). Per encounter:
 
 | Encounter | Preset | Score (own weight) | TPS | DPS | SafeDPS | DTPS | Healing needed | Death floor |
 |---|---|---|---|---|---|---|---|---|
-| Magmadar | max threat | 2936 | 1645 | 632 | 1650 | 363 | 313 | 0.0% |
-| Magmadar | balanced | 2261 | 1577 | 603 | 1560 | 346 | 247 | 0.0% |
-| Magmadar | max survival | 788 | 1405 | 528 | 1446 | 346 | 201 | 0.0% |
-| Golemagg | max threat | 2889 | 1642 | 633 | 1652 | 390 | 358 | 0.0% |
-| Golemagg | balanced | 2111 | 1571 | 601 | 1549 | 370 | 283 | 0.0% |
-| Golemagg | max survival | 383 | 1396 | 526 | 1432 | 376 | 237 | 0.0% |
-| Onyxia | max threat | 2773 | 1728 | 656 | 1737 | 482 | 407 | 0.0% |
-| Onyxia | balanced | 1701 | 1643 | 621 | 1643 | 462 | 307 | 0.0% |
-| Onyxia | max survival | -905 | 1497 | 558 | 1554 | 462 | 259 | 0.0% |
-| Broodlord | max threat | 2829 | 1692 | 647 | 1691 | 496 | 553 | 0.0% |
-| Broodlord | balanced | 1912 | 1610 | 613 | 1587 | 471 | 421 | 0.0% |
-| Broodlord | max survival | -703 | 1456 | 546 | 1495 | 471 | 410 | 0.0% |
-| Vaelastrasz | max threat | 3161 | 1793 | 658 | 1859 | 1203 | 1327 | 0.0% |
-| Vaelastrasz | balanced | 2210 | 1671 | 609 | 1697 | 1164 | 939 | 0.0% |
-| Vaelastrasz | max survival | 95 | 1619 | 588 | 1666 | 1163 | 856 | 0.0% |
-| Chromaggus | max threat | 2467 | 1630 | 635 | 1604 | 636 | 747 | 0.0% |
-| Chromaggus | balanced | 916 | 1578 | 613 | 1500 | 601 | 702 | 0.0% |
-| Chromaggus | max survival | -3461 | 1345 | 512 | 1351 | 599 | 692 | 0.0% |
-| Ragnaros | max threat | 946 | 1628 | 632 | 1610 | 1323 | 2160 | 0.0% |
-| Ragnaros | balanced | -3541 | 1583 | 613 | 1529 | 1306 | 2090 | 0.1% |
-| Ragnaros | max survival | -15634 | 1361 | 517 | 1386 | 1305 | 1943 | 0.0% |
+| Magmadar | max threat | 3190 | 1684 | 650 | 1785 | 372 | 327 | 0.0% |
+| Magmadar | balanced | 2471 | 1607 | 619 | 1690 | 355 | 261 | 0.0% |
+| Magmadar | max survival | 1014 | 1438 | 544 | 1546 | 355 | 199 | 0.0% |
+| Golemagg | max threat | 3113 | 1670 | 646 | 1772 | 404 | 371 | 0.0% |
+| Golemagg | balanced | 2349 | 1602 | 616 | 1674 | 385 | 286 | 0.0% |
+| Golemagg | max survival | 457 | 1423 | 539 | 1526 | 384 | 248 | 0.0% |
+| Onyxia | max threat | 3024 | 1761 | 674 | 1876 | 501 | 422 | 0.0% |
+| Onyxia | balanced | 1926 | 1691 | 643 | 1799 | 482 | 323 | 0.0% |
+| Onyxia | max survival | -728 | 1538 | 578 | 1681 | 481 | 264 | 0.0% |
+| Broodlord | max threat | 3119 | 1743 | 669 | 1845 | 516 | 570 | 0.0% |
+| Broodlord | balanced | 2059 | 1639 | 627 | 1738 | 492 | 472 | 0.0% |
+| Broodlord | max survival | -872 | 1485 | 560 | 1613 | 492 | 455 | 0.0% |
+| Vaelastrasz | max threat | 3685 | 1897 | 708 | 2123 | 1233 | 1336 | 0.0% |
+| Vaelastrasz | balanced | 2763 | 1796 | 670 | 1978 | 1195 | 947 | 0.0% |
+| Vaelastrasz | max survival | 471 | 1747 | 649 | 1946 | 1194 | 905 | 0.0% |
+| Chromaggus | max threat | 2661 | 1641 | 640 | 1702 | 638 | 752 | 0.0% |
+| Chromaggus | balanced | 1184 | 1605 | 626 | 1631 | 605 | 700 | 0.0% |
+| Chromaggus | max survival | -3436 | 1355 | 518 | 1428 | 604 | 706 | 0.0% |
+| Ragnaros | max threat | 1259 | 1651 | 643 | 1730 | 1333 | 2092 | 0.0% |
+| Ragnaros | balanced | -3191 | 1595 | 619 | 1644 | 1314 | 2052 | 0.1% |
+| Ragnaros | max survival | -15562 | 1385 | 528 | 1476 | 1317 | 1954 | 0.0% |
 
-Ragnaros needs about 1,950 to 2,150 healing a second at every preset, past what the bench's healers give, so
+Ragnaros needs about 1,950 to 2,100 healing a second at every preset, past what the bench's healers give, so
 it stays out of the score.
 
 ## Presets (round 2, 2026-11-04: the tank-facing engine and the audit's fixes)

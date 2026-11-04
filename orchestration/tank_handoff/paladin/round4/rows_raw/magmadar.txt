@@ -1,0 +1,17 @@
+Healing: 8 healers on the tank at 258 HPS each, 3.1 s heals (789 a heal).
+Encounter: Magmadar. Frenzy (+150% attack speed for 8 s) is in the logs' swing rate, as much of it as the raids let through. Magma Spit (a Fire DoT on attackers), Panic (fear) and Lava Bomb are left out. Lava Breath's timer is assumed (the script triggers it with Frenzy in cmangos).
+Stand-in healer: 2064 HPS every 0.38 ± 0.19 s. TMI over 6 s windows. 1000 iterations.
+
+Objective: 2 x SafeDPS - w x 900 x healing needed at 5% deaths / 258, in raid DPS (Max threat w = 1/3, Balanced 1, Max survival 3).
+
+| Build | Max threat | Balanced | Max survival | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS | TMI | Death | Health | EH | Biggest hit | Armor | Def | No crit at | Miss | Dodge | Parry | Block | Crit | Crush | Crush gap | Took: avoid | block | crit | crush |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+2026/11/04 19:57:25 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 19:57:25 All 4 sims finished successfully.
+| paladin_protection_max_threat | 3194 ± 9 | 3101 ± 14 | 2823 ± 34 | 1620 ± 4 | 40 ± 3 (0.27x DTPS) | 0.0% | 1481 | 644 | 147 | 15 | 0.0% | 7881 | 23153 | 1247 (6.3 to kill) | 9631 (62.6%) | 443 | 315 | 12.1% | 18.3% | 15.1% | 17.1% | 0.0% | 15.0% | 37.3% | 45.6% | 46.5% | 0.0% | 6.1% |
+2026/11/04 19:57:25 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 19:57:25 All 4 sims finished successfully.
+| paladin_protection_balanced | 3107 ± 9 | 3052 ± 12 | 2887 ± 28 | 1567 ± 4 | 24 ± 3 (0.17x DTPS) | 0.0% | 1435 | 625 | 136 | 14 | 0.0% | 7961 | 23576 | 1237 (6.4 to kill) | 9754 (62.9%) | 463 | 315 | 12.9% | 18.7% | 15.9% | 17.9% | 0.0% | 15.0% | 34.5% | 47.6% | 46.7% | 0.0% | 4.3% |
+2026/11/04 19:57:25 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 19:57:25 All 4 sims finished successfully.
+| paladin_protection_max_survival | 3010 ± 7 | 2990 ± 11 | 2929 ± 27 | 1510 ± 3 | 9 ± 2 (0.06x DTPS) | 0.0% | 1372 | 609 | 138 | 12 | 0.0% | 8891 | 26330 | 1237 (7.2 to kill) | 9754 (62.9%) | 463 | 315 | 12.9% | 18.7% | 15.9% | 17.9% | 0.0% | 15.0% | 34.5% | 47.9% | 46.1% | 0.0% | 4.4% |

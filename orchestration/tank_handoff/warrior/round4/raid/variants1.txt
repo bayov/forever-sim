@@ -1,0 +1,26 @@
+zanza_spirit zanzaBuff=SpiritOfZanza
+zanza_sheen zanzaBuff=SheenOfZanza
+zanza_swift zanzaBuff=SwiftnessOfZanza
+zanza_roids zanzaBuff=ROIDS
+zanza_scorpok zanzaBuff=GroundScorpokAssay
+zanza_cortex zanzaBuff=CerebralCortexCompound
+zanza_gizzard zanzaBuff=GizzardGum
+zanza_lung zanzaBuff=LungJuiceCocktail
+zanza_darnassus zanzaBuff=DarnassusGiftCollection
+rum alcohol=AlcoholRumseyRumBlackLabel
+rum_dark alcohol=AlcoholRumseyRumDark
+rum_light alcohol=AlcoholRumseyRumLight
+grog alcohol=AlcoholGordokGreenGrog
+kreeg alcohol=AlcoholKreegsStoutBeatdown
+sapper sapperExplosive=SapperGoblinSapper apl=10646@4
+sapper_late sapperExplosive=SapperGoblinSapper apl=10646@11
+sapper_noapl sapperExplosive=SapperGoblinSapper
+grenade fillerExplosive=ExplosiveThoriumGrenade apl=15993@4
+dense_dyn fillerExplosive=ExplosiveDenseDynamite apl=18641@4
+solid_dyn fillerExplosive=ExplosiveSolidDynamite apl=10507@4
+landmine fillerExplosive=ExplosiveGoblinLandMine apl=4395@4
+ezdark fillerExplosive=ExplosiveEZThroDarkBomb apl=260817@4
+ezthor fillerExplosive=ExplosiveEZThroThoriumGrenade apl=260816@4
+hhg fillerExplosive=ExplosiveHolyHandGrenade apl=284868@4
+sapper_grenade sapperExplosive=SapperGoblinSapper fillerExplosive=ExplosiveThoriumGrenade apl=10646@4 apl=15993@4
+sapper_ezdark sapperExplosive=SapperGoblinSapper fillerExplosive=ExplosiveEZThroDarkBomb apl=10646@4 apl=260817@4

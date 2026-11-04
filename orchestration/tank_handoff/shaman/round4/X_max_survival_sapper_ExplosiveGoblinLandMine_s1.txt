@@ -1,0 +1,10 @@
+A=shaman_warden_max_survival.json B=X_max_survival_sapper_ExplosiveGoblinLandMine.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord        -7027    -6927   100.2   89.3     50.0       -0
+chromaggus       -6354    -6378   -24.0   27.6     20.8        7
+golemagg         -2143    -2102    41.4   20.0     41.7        4
+magmadar         -1344    -1307    36.8   20.8     37.7        4
+onyxia           -4860    -4803    56.5   38.8     53.8        3
+ragnaros        -16991   -16661   329.9  198.3     33.9      -28
+vaelastrasz      -2011    -1809   201.6   29.6    101.2        0
+scoring_mean                       68.7   18.2

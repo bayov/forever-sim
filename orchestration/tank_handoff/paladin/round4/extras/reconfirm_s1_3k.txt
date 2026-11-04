@@ -1,0 +1,63 @@
+s1_f_sc_vs_q_agi_greater_max_threat_3k.txt six   -48.2 ±  0.7 * | five (no Broodlord)   -48.3 ±  0.7 | brood   -47.8 | vael   -59.0 ± 1.9
+s1_f_sc_vs_q_agi_none_max_threat_3k.txt    six   -84.2 ±  2.5 * | five (no Broodlord)   -81.4 ±  2.5 | brood   -98.2 | vael   -87.6 ± 5.7
+s1_f_sc_vs_q_ap_firewater_max_threat_3k.txt six    -1.9 ±  0.0 * | five (no Broodlord)    -1.9 ±  0.0 | brood    -1.8 | vael    -2.1 ± 0.0
+s1_f_sc_vs_q_arm_superior_max_threat_3k.txt six   -26.1 ±  0.9 * | five (no Broodlord)   -20.9 ±  0.7 | brood   -51.8 | vael   -30.0 ± 1.6
+s1_f_sc_vs_q_chili_off_max_threat_3k.txt   six   -45.7 ±  4.1 * | five (no Broodlord)   -43.5 ±  4.3 | brood   -57.1 | vael   -67.9 ± 14.5
+s1_f_sc_vs_q_fl_aggr_max_threat_3k.txt     six  -220.6 ±  1.2 * | five (no Broodlord)  -228.2 ±  1.1 | brood  -182.5 | vael  -272.6 ± 3.6
+s1_f_sc_vs_q_fl_natacc_max_threat_3k.txt   six  -279.3 ±  2.6 * | five (no Broodlord)  -285.1 ±  2.6 | brood  -250.6 | vael  -344.9 ± 6.7
+s1_f_sc_vs_q_fl_natprec_max_threat_3k.txt  six   -69.5 ±  3.5 * | five (no Broodlord)   -73.3 ±  3.3 | brood   -50.4 | vael  -107.0 ± 10.1
+s1_f_sc_vs_q_fl_supreme_max_threat_3k.txt  six     0.0 ±  0.0   | five (no Broodlord)     0.0 ±  0.0 | brood     0.0 | vael     0.0 ± 0.0
+s1_f_sc_vs_q_fl_titans_max_threat_3k.txt   six  -280.3 ±  1.0 * | five (no Broodlord)  -291.2 ±  0.7 | brood  -225.9 | vael  -343.4 ± 2.2
+s1_f_sc_vs_q_food_dirge_max_threat_3k.txt  six   -35.4 ±  0.8 * | five (no Broodlord)   -38.3 ±  0.4 | brood   -20.8 | vael   -43.9 ± 1.1
+s1_f_sc_vs_q_food_dumpling_max_threat_3k.txt six   -31.6 ±  0.1 * | five (no Broodlord)   -31.8 ±  0.1 | brood   -30.5 | vael   -39.7 ± 0.2
+s1_f_sc_vs_q_food_nightfin_max_threat_3k.txt six     0.0 ±  0.0   | five (no Broodlord)     0.0 ±  0.0 | brood     0.0 | vael     0.0 ± 0.0
+s1_f_sc_vs_q_food_squid_max_threat_3k.txt  six   -26.5 ±  0.6 * | five (no Broodlord)   -26.8 ±  0.6 | brood   -25.0 | vael   -34.3 ± 2.0
+s1_f_sc_vs_q_food_tenderwolf_max_threat_3k.txt six   -29.0 ±  2.1 * | five (no Broodlord)   -28.8 ±  1.9 | brood   -30.2 | vael   -40.8 ± 4.1
+s1_f_sc_vs_q_hp_fort_max_threat_3k.txt     six   -16.4 ±  0.7 * | five (no Broodlord)   -13.2 ±  0.5 | brood   -32.7 | vael   -18.8 ± 1.2
+s1_f_sc_vs_q_pot_stoneshield_max_threat_3k.txt six     0.0 ±  0.0   | five (no Broodlord)     0.0 ±  0.0 | brood     0.0 | vael     0.0 ± 0.0
+s1_f_sc_vs_q_sp_none_max_threat_3k.txt     six   -79.7 ±  0.1 * | five (no Broodlord)   -80.1 ±  0.1 | brood   -77.6 | vael   -95.2 ± 0.4
+s1_f_sc_vs_q_st_consec_max_threat_3k.txt   six   -35.9 ±  0.4 * | five (no Broodlord)   -36.1 ±  0.4 | brood   -35.0 | vael   -44.1 ± 1.5
+s1_f_sc_vs_q_st_dense_max_threat_3k.txt    six   -15.7 ±  0.4 * | five (no Broodlord)   -15.8 ±  0.4 | brood   -15.1 | vael   -22.0 ± 1.5
+s1_f_sc_vs_q_str_giants_max_threat_3k.txt  six    -4.6 ±  0.0 * | five (no Broodlord)    -4.6 ±  0.0 | brood    -4.5 | vael    -5.1 ± 0.0
+s1_f_sp_vs_r_agi_greater_balanced_3k.txt   six   -46.7 ±  1.4 * | five (no Broodlord)   -46.3 ±  1.0 | brood   -48.7 | vael   -55.4 ± 2.5
+s1_f_sp_vs_r_agi_greater_max_survival_3k.txt six   -45.9 ±  3.6 * | five (no Broodlord)   -49.4 ±  3.1 | brood   -28.7 | vael   -48.8 ± 8.3
+s1_f_sp_vs_r_agi_none_balanced_3k.txt      six  -110.1 ±  5.6 * | five (no Broodlord)  -101.2 ±  4.5 | brood  -154.9 | vael  -100.5 ± 9.7
+s1_f_sp_vs_r_agi_none_max_survival_3k.txt  six  -184.5 ± 13.9 * | five (no Broodlord)  -170.4 ± 11.6 | brood  -254.6 | vael  -109.8 ± 24.5
+s1_f_sp_vs_r_ap_firewater_balanced_3k.txt  six    -1.8 ±  0.0 * | five (no Broodlord)    -1.8 ±  0.0 | brood    -1.8 | vael    -2.0 ± 0.0
+s1_f_sp_vs_r_ap_firewater_max_survival_3k.txt six    -2.1 ±  0.0 * | five (no Broodlord)    -2.1 ±  0.0 | brood    -2.1 | vael    -2.3 ± 0.0
+s1_f_sp_vs_r_arm_superior_balanced_3k.txt  six   -58.6 ±  2.0 * | five (no Broodlord)   -47.3 ±  1.3 | brood  -115.2 | vael   -58.4 ± 3.7
+s1_f_sp_vs_r_arm_superior_max_survival_3k.txt six  -130.3 ±  6.0 * | five (no Broodlord)  -110.9 ±  4.9 | brood  -227.7 | vael  -118.7 ± 13.5
+s1_f_sp_vs_r_chili_off_balanced_3k.txt     six   -49.7 ±  6.5 * | five (no Broodlord)   -46.6 ±  6.1 | brood   -65.1 | vael   -89.0 ± 17.4
+s1_f_sp_vs_r_chili_off_max_survival_3k.txt six   -26.6 ± 19.6   | five (no Broodlord)   -24.4 ± 14.3 | brood   -37.6 | vael    -0.6 ± 44.8
+s1_f_sp_vs_r_fl_aggr_balanced_3k.txt       six  -156.3 ±  2.5 * | five (no Broodlord)  -170.0 ±  2.0 | brood   -87.8 | vael  -201.9 ± 5.6
+s1_f_sp_vs_r_fl_aggr_max_survival_3k.txt   six  -155.4 ± 15.8 * | five (no Broodlord)  -160.0 ± 13.2 | brood  -132.1 | vael  -150.9 ± 34.4
+s1_f_sp_vs_r_fl_natacc_balanced_3k.txt     six  -211.0 ±  5.4 * | five (no Broodlord)  -222.9 ±  4.7 | brood  -151.4 | vael  -275.5 ± 9.4
+s1_f_sp_vs_r_fl_natacc_max_survival_3k.txt six  -217.8 ± 16.7 * | five (no Broodlord)  -211.7 ± 13.4 | brood  -247.8 | vael  -234.2 ± 34.9
+s1_f_sp_vs_r_fl_natprec_balanced_3k.txt    six    -4.6 ±  6.3   | five (no Broodlord)   -15.9 ±  5.2 | brood    52.1 | vael   -47.4 ± 14.2
+s1_f_sp_vs_r_fl_natprec_max_survival_3k.txt six     0.0 ±  0.0   | five (no Broodlord)     0.0 ±  0.0 | brood     0.0 | vael     0.0 ± 0.0
+s1_f_sp_vs_r_fl_supreme_balanced_3k.txt    six     0.0 ±  0.0   | five (no Broodlord)     0.0 ±  0.0 | brood     0.0 | vael     0.0 ± 0.0
+s1_f_sp_vs_r_fl_supreme_max_survival_3k.txt six  -115.8 ± 16.3 * | five (no Broodlord)   -83.8 ± 13.4 | brood  -275.6 | vael   -54.3 ± 32.9
+s1_f_sp_vs_r_fl_titans_balanced_3k.txt     six  -188.3 ±  3.1 * | five (no Broodlord)  -210.2 ±  2.6 | brood   -78.6 | vael  -244.7 ± 5.3
+s1_f_sp_vs_r_fl_titans_max_survival_3k.txt six  -125.6 ± 15.8 * | five (no Broodlord)  -157.0 ± 11.8 | brood    31.6 | vael  -102.1 ± 33.3
+s1_f_sp_vs_r_food_dirge_balanced_3k.txt    six   -13.3 ±  1.5 * | five (no Broodlord)   -18.5 ±  0.9 | brood    12.7 | vael   -19.2 ± 2.9
+s1_f_sp_vs_r_food_dirge_max_survival_3k.txt six     0.0 ±  0.0   | five (no Broodlord)     0.0 ±  0.0 | brood     0.0 | vael     0.0 ± 0.0
+s1_f_sp_vs_r_food_dumpling_balanced_3k.txt six   -28.3 ±  0.2 * | five (no Broodlord)   -28.4 ±  0.1 | brood   -27.7 | vael   -35.3 ± 0.3
+s1_f_sp_vs_r_food_dumpling_max_survival_3k.txt six   -57.5 ±  4.8 * | five (no Broodlord)   -44.0 ±  3.6 | brood  -124.6 | vael   -55.9 ± 10.3
+s1_f_sp_vs_r_food_nightfin_balanced_3k.txt six     0.0 ±  0.0   | five (no Broodlord)     0.0 ±  0.0 | brood     0.0 | vael     0.0 ± 0.0
+s1_f_sp_vs_r_food_nightfin_max_survival_3k.txt six   -27.8 ±  4.8 * | five (no Broodlord)   -14.0 ±  3.5 | brood   -96.7 | vael   -19.1 ± 10.3
+s1_f_sp_vs_r_food_squid_balanced_3k.txt    six   -23.3 ±  1.1 * | five (no Broodlord)   -23.4 ±  1.1 | brood   -23.0 | vael   -29.7 ± 2.7
+s1_f_sp_vs_r_food_squid_max_survival_3k.txt six   -56.3 ±  5.2 * | five (no Broodlord)   -41.9 ±  4.2 | brood  -128.4 | vael   -51.8 ± 10.9
+s1_f_sp_vs_r_food_tenderwolf_balanced_3k.txt six    -1.9 ±  4.3   | five (no Broodlord)    -4.9 ±  3.5 | brood    13.4 | vael   -30.2 ± 5.7
+s1_f_sp_vs_r_food_tenderwolf_max_survival_3k.txt six    16.7 ± 12.3   | five (no Broodlord)     8.6 ±  9.4 | brood    57.5 | vael   -35.5 ± 17.6
+s1_f_sp_vs_r_hp_fort_balanced_3k.txt       six   -36.7 ±  1.6 * | five (no Broodlord)   -30.3 ±  1.0 | brood   -68.7 | vael   -37.5 ± 3.2
+s1_f_sp_vs_r_hp_fort_max_survival_3k.txt   six   -81.2 ±  4.8 * | five (no Broodlord)   -67.6 ±  3.7 | brood  -149.4 | vael   -79.3 ± 10.3
+s1_f_sp_vs_r_pot_stoneshield_balanced_3k.txt six     0.0 ±  0.0   | five (no Broodlord)     0.0 ±  0.0 | brood     0.0 | vael     0.0 ± 0.0
+s1_f_sp_vs_r_pot_stoneshield_max_survival_3k.txt six     0.0 ±  0.0   | five (no Broodlord)     0.0 ±  0.0 | brood     0.0 | vael     0.0 ± 0.0
+s1_f_sp_vs_r_sp_none_balanced_3k.txt       six   -75.2 ±  0.2 * | five (no Broodlord)   -75.4 ±  0.2 | brood   -73.8 | vael   -88.3 ± 0.4
+s1_f_sp_vs_r_sp_none_max_survival_3k.txt   six   -85.1 ±  0.7 * | five (no Broodlord)   -85.1 ±  0.6 | brood   -85.2 | vael   -96.7 ± 0.6
+s1_f_sp_vs_r_st_consec_balanced_3k.txt     six   -34.5 ±  0.6 * | five (no Broodlord)   -34.5 ±  0.6 | brood   -34.5 | vael   -40.1 ± 1.3
+s1_f_sp_vs_r_st_consec_max_survival_3k.txt six   -33.9 ±  1.1 * | five (no Broodlord)   -34.5 ±  1.2 | brood   -31.0 | vael   -36.3 ± 2.3
+s1_f_sp_vs_r_st_dense_balanced_3k.txt      six   -14.6 ±  0.6 * | five (no Broodlord)   -14.5 ±  0.6 | brood   -15.0 | vael   -18.4 ± 1.3
+s1_f_sp_vs_r_st_dense_max_survival_3k.txt  six   -11.1 ±  1.1 * | five (no Broodlord)   -11.6 ±  1.2 | brood    -8.6 | vael   -11.6 ± 2.3
+s1_f_sp_vs_r_str_giants_balanced_3k.txt    six    -4.9 ±  0.1 * | five (no Broodlord)    -4.8 ±  0.1 | brood    -5.0 | vael    -4.9 ± 0.1
+s1_f_sp_vs_r_str_giants_max_survival_3k.txt six    -6.3 ±  0.2 * | five (no Broodlord)    -6.2 ±  0.2 | brood    -6.8 | vael    -5.8 ± 0.2

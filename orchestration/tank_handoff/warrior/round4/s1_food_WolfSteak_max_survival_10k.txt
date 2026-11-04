@@ -1,0 +1,10 @@
+A=warrior_protection_max_survival.json B=food_WolfSteak_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord          742      780    37.8   22.0    -15.6       -8
+chromaggus       -1514    -1487    26.3   18.1    -17.3       -7
+golemagg          1978     1990    11.6    9.4    -14.3       -4
+magmadar          2445     2462    17.4    9.9    -15.7       -5
+onyxia            1516     1562    45.9   20.6    -14.0       -5
+ragnaros        -13188   -13340  -151.4   79.2    -13.3       13
+vaelastrasz       2045     2049     3.9    9.9    -10.3       -6
+scoring_mean                       23.8    6.5

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "6b480b06046c3a8680fa86a7e979754e055410b1"
+  "master": "0facd9428f4200a86348e23009f1dc6e90871b3d"
  },
- "last_pass_at": "2026-11-04T13:05:19Z",
- "pass": 53,
+ "last_pass_at": "2026-11-04T19:00:00Z",
+ "pass": 54,
  "result": "quiet",
- "note": "Pass 53: rogue hotfix 113483 and warrior hotfix 113539 APL/sim changes checked; Shank gate, Reckless Swings rage gate and Elemental CL under Elemental Mastery screened on two seed sets, all at or below noise or losing. Baseline refreshed. No findings.",
+ "note": "Pass 54: 335 commits; no DPS APL logic change (23 tank/healer APLs). Moves attributed to regears (feral, ret, rogue, arcane, enh, destro, fury), shaman hotfix 113380 and warrior Unbridled Wrath / Reckless Swings changes. Arms Dragonkin HS 100 screened on two seed sets: loses. Baseline refreshed. No findings.",
  "client_build": "1.60.1.70753",
  "checked_at": "2026-11-04T06:58:15Z",
- "baseline": "baseline_6b480b0_3000it_seed424242.tsv"
+ "baseline": "baseline_0facd94_3000it_seed424242.tsv"
 }

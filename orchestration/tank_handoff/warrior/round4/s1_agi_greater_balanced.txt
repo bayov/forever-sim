@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=agi_greater_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2678     2640   -38.2    8.7    -19.5       -0
+chromaggus        2105     2063   -41.3    3.4    -20.5        0
+golemagg          3263     3222   -40.9    3.8    -20.5       -0
+magmadar          3438     3395   -43.0    3.0    -21.1        0
+onyxia            3155     3100   -54.5    5.2    -22.6        2
+ragnaros         -1746    -1786   -40.6   10.7    -20.3        0
+vaelastrasz       3435     3394   -40.7    2.1    -20.4        0
+scoring_mean                      -43.1    2.0

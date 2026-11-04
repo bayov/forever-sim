@@ -1,0 +1,4 @@
+# leave-outs on base3 (each item's gain on the final set = minus these)
+lo_zanza zanzaBuff=-
+lo_rum alcohol=-
+lo_sapper sapperExplosive=-   (and the sapper APL action removed by hand, see README)

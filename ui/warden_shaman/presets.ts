@@ -14,6 +14,7 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	StrengthBuff,
 	SunderRamp,
 	TotemWeaponBuff,
@@ -117,15 +118,17 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 
 export const DefaultConsumes = Consumes.create({
 	// The tank bench's consumables (tools/tankbench/req/shaman_warden_*.json): every tank takes the same
-	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec.
+	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec. Dirge's Kickin' Chimaerok Chops and the
+	// Goblin Sapper Charge (Engineering, autocast; no filler explosive) won at all three weights (docs/tank_shaman.md, Round 4).
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MajorManaPotion,
 	dragonBreathChili: true,
 	flask: Flask.FlaskOfTheTitans,
-	food: Food.FoodSmokedDesertDumpling,
+	food: Food.FoodDirgesKickChimaerokChops,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.JujuPower,
 });
 
@@ -196,7 +199,7 @@ export const EncounterMaxThreat = PresetUtils.makePresetEncounter('Level 60 tank
 // The three Level 60 tank presets (threat against survival as weights, Balanced the default; docs/tank_sim.md).
 export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
 	tooltip:
-		"Scored with survival weighed at 1/3 (docs/tank_sim.md). Night Elf (Elune's Light), Flask of Natural Accuracy, Mana Spring Totem, the attack power trinket on cooldown.",
+		"Scored with survival weighed at 1/3 (docs/tank_sim.md). Night Elf (Elune's Light), Flask of Natural Accuracy, Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the attack power trinket on cooldown.",
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60TankMaxThreat,
 	rotation: APLLevel60MaxThreat,
@@ -206,7 +209,7 @@ export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
 	tooltip:
-		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), the armor trinket held for the last 25 sec, Superior Deflection on the wrists.",
+		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists.",
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60Tank,
 	rotation: APLLevel60Balanced,
@@ -216,7 +219,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
 	tooltip:
-		'Scored with survival weighed at 3 (docs/tank_sim.md). Undead (Touch of the Grave), the armor trinket held for the last 25 sec, Superior Deflection on the wrists.',
+		'Scored with survival weighed at 3 (docs/tank_sim.md). Undead (Touch of the Grave), Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists.',
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60TankMaxSurvival,
 	rotation: APLLevel60MaxSurvival,

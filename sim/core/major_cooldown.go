@@ -395,8 +395,10 @@ func (mcdm *majorCooldownManager) sort() {
 func RegisterTemporaryStatsOnUseCD(character *Character, auraLabel string, tempStats stats.Stats, duration time.Duration, config SpellConfig) {
 	aura := character.NewTemporaryStatsAura(auraLabel, config.ActionID, tempStats, duration)
 
+	// Bonus armor is armor too: the synthetic tank armor trinkets grant BonusArmor, and as DPS
+	// cooldowns they were autocast on cooldown (tank_mechanics-20261104-16).
 	cdType := CooldownTypeUnknown
-	if tempStats.DotProduct(stats.Stats{stats.Armor: 1, stats.Block: 1, stats.BlockValue: 1, stats.Dodge: 1, stats.Parry: 1, stats.Health: 1}).Equals(stats.Stats{}) {
+	if tempStats.DotProduct(stats.Stats{stats.Armor: 1, stats.BonusArmor: 1, stats.Block: 1, stats.BlockValue: 1, stats.Dodge: 1, stats.Parry: 1, stats.Health: 1}).Equals(stats.Stats{}) {
 		cdType |= CooldownTypeDPS
 	} else {
 		cdType |= CooldownTypeSurvival

@@ -1,15 +1,16 @@
 {
  "last": {
-  "master": "a1b1163d2"
+  "master": "dc303b02610f2af14685bb439fe43817ff9ccb1f"
  },
- "last_pass_at": "2026-11-04T13:35:00Z",
- "pass": 1,
+ "last_pass_at": "2026-11-04T18:55:10Z",
+ "pass": 2,
  "result": "findings",
- "note": "Pass 1 (forced, first after H3): every heal rank and healing talent of the four healers and the engine against 70755. 10 findings: raid damage share floor (high), Swiftmend consumes the HoT (high), Ancestral Fortitude armor (medium), 7 low. Full tables in ref/healer_mechanics/verdicts.md.",
- "client_build": "1.60.1.70755",
+ "note": "Pass 2: findings 1-9 fixed on master and re-checked; 70790 changes only Riptide among healer spells (now matches the notes); 1 new low finding (Riptide mana 147/180/231 vs client 150/180/230); finding 10 updated. Dev notes: no post newer than post 9 (02:12 edit).",
+ "client_build": "1.60.1.70790",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/9",
   "date": "2026-11-03T03:20:33Z",
   "edited": "2026-11-04T02:12:27Z"
- }
+ },
+ "checked_at": "2026-11-04T19:33:35Z"
 }

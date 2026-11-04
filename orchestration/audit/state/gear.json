@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "41aa10700c899ef1f05663176c0ba82edaff334d"
+  "master": "0facd9428f4200a86348e23009f1dc6e90871b3d"
  },
- "last_pass_at": "2026-11-04T12:51:51Z",
- "pass": 56,
+ "last_pass_at": "2026-11-04T14:00:00Z",
+ "pass": 57,
  "result": "quiet",
- "note": "Pass 56: new healer sets (Holy paladin 990301-314, healing priest 990501-514) checked with tools/audit/gear/healers.py; clean.",
+ "note": "Pass 57: hit-trade steps (hit+N/-N sets, standards 4/29) checked: base sets, trinkets and weapons clean; step sets drift in stat mix by design (Int/SP up to ~3.5 points at the extreme steps).",
  "client_build": "1.60.1.70755",
  "checked_at": "2026-11-04T13:12:31Z"
 }

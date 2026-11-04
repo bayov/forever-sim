@@ -1,0 +1,99 @@
+role	boss	healer	hps	ehps	oh	ehpm	mana	oom	tdtps	rdtps	tdied	odied	first	tsc	rsc	carry	floor
+raid	broodlord	druid_restoration_raid	964	342	64.5%	2.60	6521	(1659 s)	0	390	0.0%	11.9%	28 s	0.00	0.37	0.920	0.0% tank, 2.8% other
+raid	broodlord	paladin_holy	365	316	13.5%	5.13	7608	(2457 s)	0	383	0.0%	10.2%	29 s	0.00	0.28	0.904	0.0% tank, 2.1% other
+raid	broodlord	paladin_holy_raid	396	313	21.0%	4.30	7493	(2332 s)	0	380	0.0%	10.1%	30 s	0.00	0.32	0.905	0.0% tank, 2.1% other
+raid	broodlord	paladin_holy_raid_nohl	351	308	12.0%	5.12	7614	(2508 s)	0	381	0.0%	10.6%	29 s	0.00	0.29	0.917	0.0% tank, 2.3% other
+raid	broodlord	paladin_holy_raid_oath	396	313	21.0%	4.30	7493	(2332 s)	0	380	0.0%	10.1%	30 s	0.00	0.32	0.905	0.0% tank, 2.1% other
+raid	broodlord	paladin_holy_tank_mosthurt	532	318	40.2%	3.37	7391	(2005 s)	0	381	0.0%	11.9%	29 s	0.00	0.30	0.906	0.0% tank, 2.1% other
+raid	broodlord	paladin_holy_tank_nohl	365	316	13.5%	5.13	7608	(2457 s)	0	383	0.0%	10.2%	29 s	0.00	0.28	0.904	0.0% tank, 2.1% other
+raid	broodlord	priest_holy_raid	574	334	41.8%	2.71	6862	(852 s)	0	367	0.0%	8.5%	27 s	0.00	0.30	0.901	0.0% tank, 3.3% other
+raid	broodlord	shaman_restoration_raid	497	325	34.6%	4.12	7381	(2230 s)	0	391	0.0%	11.3%	30 s	0.00	0.22	0.902	0.0% tank, 2.8% other
+raid	chromaggus	druid_restoration_raid	396	89	77.6%	1.86	6907	(3039 s)	0	96	0.0%	1.9%	83 s	0.00	0.16	1.109	0.0% tank, 3.3% other
+raid	chromaggus	paladin_holy	121	87	28.1%	4.99	7905	(3532 s)	0	97	0.0%	1.6%	79 s	0.00	0.14	1.121	0.0% tank, 3.3% other
+raid	chromaggus	paladin_holy_raid	108	83	22.8%	4.84	7884	(3504 s)	0	99	0.0%	2.2%	87 s	0.00	0.14	1.081	0.0% tank, 2.1% other
+raid	chromaggus	paladin_holy_raid_nohl	106	82	22.5%	5.13	7894	(3522 s)	0	97	0.0%	2.0%	86 s	0.00	0.14	1.090	0.0% tank, 2.4% other
+raid	chromaggus	paladin_holy_raid_oath	108	83	22.8%	4.84	7884	(3504 s)	0	99	0.0%	2.2%	87 s	0.00	0.14	1.081	0.0% tank, 2.1% other
+raid	chromaggus	paladin_holy_tank_mosthurt	137	85	37.7%	4.07	7876	(3477 s)	0	95	0.0%	1.4%	87 s	0.00	0.13	1.109	0.0% tank, 3.1% other
+raid	chromaggus	paladin_holy_tank_nohl	121	87	28.1%	4.99	7905	(3532 s)	0	97	0.0%	1.6%	79 s	0.00	0.14	1.121	0.0% tank, 3.3% other
+raid	chromaggus	priest_holy_raid	244	94	61.6%	1.53	7339	(2903 s)	0	96	0.0%	1.7%	80 s	0.00	0.19	1.070	0.0% tank, 3.2% other
+raid	chromaggus	shaman_restoration_raid	235	90	61.8%	2.28	7577	(3464 s)	0	94	0.0%	1.6%	81 s	0.00	0.14	1.090	0.0% tank, 3.5% other
+raid	golemagg	druid_restoration_raid	208	52	75.0%	1.90	7019	(3063 s)	0	61	0.0%	0.0%	-	0.00	0.00	2.660	0.0% tank, 3.1% other
+raid	golemagg	paladin_holy	90	49	45.6%	4.25	7967	(3557 s)	0	60	0.0%	0.0%	-	0.00	0.00	2.695	0.0% tank, 3.4% other
+raid	golemagg	paladin_holy_raid	57	44	22.6%	6.12	7971	(3568 s)	0	61	0.0%	0.0%	-	0.00	0.00	2.699	0.0% tank, 3.6% other
+raid	golemagg	paladin_holy_raid_nohl	68	44	34.9%	4.89	7975	(3579 s)	0	60	0.0%	0.0%	-	0.00	0.00	2.703	0.0% tank, 3.7% other
+raid	golemagg	paladin_holy_raid_oath	57	44	22.6%	6.12	7971	(3568 s)	0	61	0.0%	0.0%	-	0.00	0.00	2.699	0.0% tank, 3.6% other
+raid	golemagg	paladin_holy_tank_mosthurt	75	49	35.0%	5.17	7964	(3548 s)	0	60	0.0%	0.0%	-	0.00	0.00	2.694	0.0% tank, 3.3% other
+raid	golemagg	paladin_holy_tank_nohl	90	49	45.6%	4.25	7967	(3557 s)	0	60	0.0%	0.0%	-	0.00	0.00	2.695	0.0% tank, 3.4% other
+raid	golemagg	priest_holy_raid	190	53	72.1%	0.93	7456	(2666 s)	0	59	0.0%	0.0%	-	0.00	0.00	2.597	0.0% tank, 4.7% other
+raid	golemagg	shaman_restoration_raid	207	56	72.9%	1.58	7617	(3395 s)	0	60	0.0%	0.0%	-	0.00	0.00	2.662	0.0% tank, 2.2% other
+raid	magmadar	druid_restoration_raid	800	202	74.7%	1.99	6539	(1554 s)	0	221	0.0%	0.0%	-	0.00	0.00	2.002	0.0% tank, 0.1% other
+raid	magmadar	paladin_holy	277	194	30.2%	5.85	7885	(3106 s)	0	218	0.0%	0.0%	-	0.00	0.00	1.954	0.0% tank, 0.1% other
+raid	magmadar	paladin_holy_raid	216	179	16.9%	6.62	7885	(3113 s)	0	218	0.0%	0.0%	-	0.00	0.00	1.918	0.0% tank, 0.0% other
+raid	magmadar	paladin_holy_raid_nohl	224	177	20.8%	6.60	7897	(3148 s)	0	216	0.0%	0.0%	-	0.00	0.00	1.958	0.0% tank, 0.1% other
+raid	magmadar	paladin_holy_raid_oath	216	179	16.9%	6.62	7885	(3113 s)	0	218	0.0%	0.0%	-	0.00	0.00	1.918	0.0% tank, 0.0% other
+raid	magmadar	paladin_holy_tank_mosthurt	261	193	26.1%	5.86	7869	(3017 s)	0	218	0.0%	0.0%	-	0.00	0.00	1.923	0.0% tank, 0.0% other
+raid	magmadar	paladin_holy_tank_nohl	277	194	30.2%	5.85	7885	(3106 s)	0	218	0.0%	0.0%	-	0.00	0.00	1.954	0.0% tank, 0.1% other
+raid	magmadar	priest_holy_raid	462	201	56.6%	2.11	7162	(1644 s)	0	215	0.0%	0.0%	-	0.00	0.00	2.054	0.0% tank, 0.4% other
+raid	magmadar	shaman_restoration_raid	415	200	51.8%	2.91	7467	(2618 s)	0	214	0.0%	0.0%	-	0.00	0.00	1.809	0.0% tank, 0.0% other
+raid	onyxia	druid_restoration_raid	560	136	75.7%	1.83	5965	(1341 s)	0	150	0.0%	5.4%	124 s	0.00	0.19	0.997	0.0% tank, 2.1% other
+raid	onyxia	paladin_holy	169	128	24.2%	5.54	7705	(3257 s)	0	147	0.0%	4.5%	121 s	0.00	0.22	1.034	0.0% tank, 2.5% other
+raid	onyxia	paladin_holy_raid	154	122	20.9%	5.26	7667	(3167 s)	0	146	0.0%	5.4%	120 s	0.00	0.22	0.984	0.0% tank, 2.3% other
+raid	onyxia	paladin_holy_raid_nohl	154	123	20.1%	5.50	7687	(3259 s)	0	146	0.0%	5.3%	121 s	0.00	0.24	0.994	0.0% tank, 2.2% other
+raid	onyxia	paladin_holy_raid_oath	154	122	20.9%	5.26	7667	(3167 s)	0	146	0.0%	5.4%	120 s	0.00	0.22	0.984	0.0% tank, 2.3% other
+raid	onyxia	paladin_holy_tank_mosthurt	210	129	38.8%	3.99	7501	(2677 s)	0	146	0.0%	4.5%	120 s	0.00	0.18	1.009	0.0% tank, 2.3% other
+raid	onyxia	paladin_holy_tank_nohl	169	128	24.2%	5.54	7705	(3257 s)	0	147	0.0%	4.5%	121 s	0.00	0.22	1.034	0.0% tank, 2.5% other
+raid	onyxia	priest_holy_raid	280	139	50.1%	2.18	6779	(1657 s)	0	145	0.0%	6.9%	119 s	0.00	0.16	0.978	0.0% tank, 2.8% other
+raid	onyxia	shaman_restoration_raid	267	132	50.5%	3.07	7273	(2709 s)	0	148	0.0%	9.1%	120 s	0.00	0.22	0.919	0.0% tank, 1.6% other
+raid	ragnaros	druid_restoration_raid	1406	305	78.3%	1.81	5353	(733 s)	0	321	0.0%	0.1%	30 s	0.00	0.02	1.270	0.0% tank, 1.1% other
+raid	ragnaros	paladin_holy	403	303	24.8%	5.97	7777	(3074 s)	0	324	0.0%	0.1%	90 s	0.00	0.03	1.331	0.0% tank, 2.0% other
+raid	ragnaros	paladin_holy_raid	371	296	20.2%	6.02	7742	(2945 s)	0	328	0.0%	0.3%	64 s	0.00	0.04	1.301	0.0% tank, 1.5% other
+raid	ragnaros	paladin_holy_raid_nohl	367	295	19.6%	6.26	7771	(3060 s)	0	327	0.0%	0.1%	80 s	0.00	0.04	1.316	0.0% tank, 1.6% other
+raid	ragnaros	paladin_holy_raid_oath	371	296	20.2%	6.02	7742	(2945 s)	0	328	0.0%	0.3%	64 s	0.00	0.04	1.301	0.0% tank, 1.5% other
+raid	ragnaros	paladin_holy_tank_mosthurt	448	299	33.3%	4.80	7647	(2633 s)	0	319	0.0%	0.0%	-	0.00	0.04	1.293	0.0% tank, 1.6% other
+raid	ragnaros	paladin_holy_tank_nohl	403	303	24.8%	5.97	7777	(3074 s)	0	324	0.0%	0.1%	90 s	0.00	0.03	1.331	0.0% tank, 2.0% other
+raid	ragnaros	priest_holy_raid	691	312	54.9%	2.33	6636	(1140 s)	0	315	0.0%	0.3%	53 s	0.00	0.03	1.308	0.0% tank, 2.4% other
+raid	ragnaros	shaman_restoration_raid	564	307	45.6%	3.62	7292	(2397 s)	0	323	0.0%	0.5%	64 s	0.00	0.06	1.235	0.0% tank, 1.0% other
+raid	vaelastrasz	druid_restoration_raid	1710	940	45.0%	3.62	5787	(314 s)	0	1119	0.0%	2.7%	23 s	0.00	0.26	1.102	0.0% tank, 0.0% other
+raid	vaelastrasz	paladin_holy	839	703	16.2%	5.78	7117	(625 s)	0	1106	0.0%	4.4%	25 s	0.00	0.58	1.027	0.0% tank, 0.0% other
+raid	vaelastrasz	paladin_holy_raid	879	706	19.7%	5.15	7079	(690 s)	0	1089	0.0%	4.9%	24 s	0.00	0.59	1.002	0.0% tank, 0.0% other
+raid	vaelastrasz	paladin_holy_raid_nohl	812	688	15.3%	5.71	7137	(709 s)	0	1102	0.0%	4.9%	24 s	0.00	0.66	1.004	0.0% tank, 0.0% other
+raid	vaelastrasz	paladin_holy_raid_oath	879	706	19.7%	5.15	7079	(690 s)	0	1089	0.0%	4.9%	24 s	0.00	0.59	1.002	0.0% tank, 0.0% other
+raid	vaelastrasz	paladin_holy_tank_mosthurt	1025	709	30.8%	4.17	6925	(566 s)	0	1100	0.0%	6.5%	24 s	0.00	0.77	0.988	0.0% tank, 0.0% other
+raid	vaelastrasz	paladin_holy_tank_nohl	839	703	16.2%	5.78	7117	(625 s)	0	1106	0.0%	4.4%	25 s	0.00	0.58	1.027	0.0% tank, 0.0% other
+raid	vaelastrasz	priest_holy_raid	1649	943	42.8%	4.82	6639	(367 s)	0	1086	0.0%	1.4%	24 s	0.00	0.14	1.152	0.0% tank, 0.0% other
+raid	vaelastrasz	shaman_restoration_raid	1056	821	22.2%	5.52	6869	(575 s)	0	1099	0.0%	2.5%	24 s	0.00	0.28	1.152	0.0% tank, 0.0% other
+tank	broodlord	druid_restoration	765	537	29.8%	4.92	6045	(529 s)	585	649	14.7%	14.7%	26 s	0.34	0.36	0.875	0.1% tank, 0.0% other
+tank	broodlord	paladin_holy	702	535	23.8%	5.20	6694	(525 s)	588	638	14.1%	13.9%	26 s	0.38	0.41	0.895	0.1% tank, 0.0% other
+tank	broodlord	priest_discipline	656	539	17.9%	3.72	6159	(305 s)	390	410	4.4%	4.4%	26 s	0.17	0.18	0.971	0.4% tank, 0.0% other
+tank	broodlord	priest_holy	800	521	34.8%	3.95	6394	(408 s)	548	575	5.6%	5.6%	25 s	0.24	0.26	0.930	0.1% tank, 0.0% other
+tank	broodlord	shaman_restoration	662	523	20.9%	3.52	6357	(353 s)	548	564	3.7%	3.7%	26 s	0.24	0.25	0.974	0.4% tank, 0.0% other
+tank	chromaggus	druid_restoration	979	731	25.3%	5.46	4062	(320 s)	740	742	0.4%	0.4%	77 s	0.23	0.23	1.029	0.0% tank, 0.0% other
+tank	chromaggus	paladin_holy	864	692	19.9%	5.89	3041	(239 s)	714	750	11.4%	11.2%	75 s	0.61	0.62	0.911	0.0% tank, 0.0% other
+tank	chromaggus	priest_discipline	745	619	16.9%	4.48	365	101 s	537	585	31.4%	25.2%	105 s	0.35	0.38	0.866	0.0% tank, 0.0% other
+tank	chromaggus	priest_holy	933	651	30.3%	4.48	677	(124 s)	672	681	8.0%	5.8%	105 s	0.23	0.24	0.955	0.0% tank, 0.0% other
+tank	chromaggus	shaman_restoration	790	651	17.6%	4.41	2012	(170 s)	667	678	3.6%	3.5%	79 s	0.60	0.61	0.969	0.0% tank, 0.0% other
+tank	golemagg	druid_restoration	716	454	36.6%	5.50	6138	(673 s)	460	460	0.0%	0.0%	-	0.00	0.00	1.904	0.0% tank, 0.0% other
+tank	golemagg	paladin_holy	603	447	25.9%	6.24	7043	(652 s)	456	456	0.0%	0.0%	-	0.00	0.00	1.911	0.0% tank, 0.0% other
+tank	golemagg	priest_discipline	559	427	23.6%	3.62	6234	(444 s)	285	285	0.0%	0.0%	-	0.00	0.00	1.991	0.0% tank, 0.0% other
+tank	golemagg	priest_holy	673	421	37.4%	3.83	6241	(410 s)	424	424	0.0%	0.0%	-	0.00	0.00	1.969	0.0% tank, 0.0% other
+tank	golemagg	shaman_restoration	582	413	29.1%	3.45	6333	(439 s)	420	420	0.0%	0.0%	-	0.00	0.00	1.915	0.0% tank, 0.0% other
+tank	magmadar	druid_restoration	704	418	40.7%	5.27	6207	(608 s)	427	427	0.0%	0.0%	-	0.00	0.00	2.030	0.0% tank, 0.0% other
+tank	magmadar	paladin_holy	566	410	27.4%	6.26	7119	(686 s)	424	424	0.0%	0.0%	-	0.00	0.00	1.875	0.0% tank, 0.0% other
+tank	magmadar	priest_discipline	527	395	25.0%	3.49	6072	(330 s)	263	263	0.0%	0.0%	-	0.00	0.00	2.101	0.0% tank, 0.0% other
+tank	magmadar	priest_holy	630	389	38.2%	3.66	6371	(402 s)	397	397	0.0%	0.0%	-	0.00	0.00	2.104	0.0% tank, 0.0% other
+tank	magmadar	shaman_restoration	529	387	26.8%	3.55	6458	(466 s)	394	394	0.0%	0.0%	-	0.00	0.00	2.019	0.0% tank, 0.0% other
+tank	onyxia	druid_restoration	790	544	31.2%	5.28	6044	(328 s)	568	568	0.0%	0.0%	-	0.00	0.00	1.327	0.2% tank, 0.2% other
+tank	onyxia	paladin_holy	725	525	27.6%	5.95	7060	(383 s)	564	564	0.0%	0.0%	-	0.02	0.02	1.257	0.0% tank, 0.0% other
+tank	onyxia	priest_discipline	643	515	19.8%	3.90	6068	(205 s)	364	364	0.0%	0.0%	-	0.00	0.00	1.378	0.8% tank, 0.8% other
+tank	onyxia	priest_holy	764	492	35.6%	4.09	6459	(284 s)	536	536	0.0%	0.0%	-	0.00	0.00	1.379	0.8% tank, 0.8% other
+tank	onyxia	shaman_restoration	608	496	18.4%	3.86	6563	(314 s)	532	532	0.0%	0.0%	-	0.00	0.00	1.346	0.5% tank, 0.4% other
+tank	ragnaros	druid_restoration	575	501	12.8%	5.42	5200	(560 s)	606	1080	87.7%	85.5%	30 s	0.73	0.76	0.627	0.0% tank, 0.0% other
+tank	ragnaros	paladin_holy	583	474	18.7%	5.62	6018	(927 s)	582	1059	90.6%	87.4%	30 s	1.09	1.13	0.572	0.1% tank, 0.0% other
+tank	ragnaros	priest_discipline	520	485	6.7%	4.89	4783	(482 s)	486	972	92.1%	89.0%	32 s	0.60	0.65	0.596	0.1% tank, 0.0% other
+tank	ragnaros	priest_holy	586	431	26.5%	4.78	5266	(571 s)	538	1036	89.1%	87.1%	27 s	0.77	0.79	0.592	0.0% tank, 0.0% other
+tank	ragnaros	shaman_restoration	377	364	3.6%	4.60	6184	(894 s)	475	1017	94.9%	94.3%	26 s	0.61	0.64	0.577	0.0% tank, 0.0% other
+tank	vaelastrasz	druid_restoration	1150	957	16.8%	5.34	5916	(147 s)	1205	1249	16.9%	4.7%	14 s	0.47	0.50	0.852	0.0% tank, 0.0% other
+tank	vaelastrasz	paladin_holy	1009	797	21.1%	5.84	7191	(615 s)	1103	1261	34.8%	17.3%	12 s	0.63	0.69	0.812	0.0% tank, 0.0% other
+tank	vaelastrasz	priest_discipline	1076	968	10.0%	5.20	6374	(121 s)	927	953	7.9%	2.5%	14 s	0.27	0.30	0.927	0.1% tank, 0.0% other
+tank	vaelastrasz	priest_holy	1330	930	30.1%	4.85	6435	(154 s)	1181	1205	12.9%	3.1%	15 s	0.36	0.39	0.906	0.0% tank, 0.0% other
+tank	vaelastrasz	shaman_restoration	890	855	3.9%	4.38	6628	(201 s)	1177	1198	20.6%	1.5%	16 s	0.41	0.43	0.894	0.0% tank, 0.0% other

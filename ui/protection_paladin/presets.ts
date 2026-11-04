@@ -2,27 +2,37 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
+	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
 	Consumes,
 	Debuffs,
+	Encounter,
 	Flask,
 	Food,
+	HealingModel,
 	HealthElixir,
 	IndividualBuffs,
+	MobType,
 	Potions,
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	SpellPowerBuff,
+	Stat,
 	StrengthBuff,
 	SunderRamp,
 	TotemWeaponBuff,
 	TristateEffect,
+	UnitReference,
+	UnitReference_Type,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common.js';
 import { PaladinAura, PaladinOptions as ProtectionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
 import { SavedTalents } from '../core/proto/ui.js';
+import { Stats } from '../core/proto_utils/stats.js';
 import APLBasicProtectionJson from './apls/basic_prot.apl.json';
 import APLP5ProtJson from './apls/p5prot.apl.json';
 import Level60BalancedAPLJson from './apls/level60_balanced.apl.json';
@@ -124,38 +134,6 @@ export const TalentPresets = {
 
 export const DefaultTalents = TalentPresets[Phase.Phase5][0];
 
-// The three Level 60 tank presets (the user's ruling: threat against survival as weights, Balanced the default;
-// docs/tank_sim.md). Undead sims best at every weight: Touch of the Grave's drain heals and makes threat.
-const Level60TankOptions = { primarySeal: PaladinSeal.Fury, righteousFury: true, aura: PaladinAura.DevotionAura };
-
-export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
-	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
-	gear: GearLevel60SyntheticMaxThreat,
-	talents: TalentsLevel60MaxThreat,
-	rotation: APLLevel60MaxThreat,
-	race: Race.RaceUndead,
-	professions: [Profession.Engineering, Profession.Blacksmithing],
-	options: Level60TankOptions,
-});
-export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
-	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md).',
-	gear: GearLevel60Synthetic,
-	talents: TalentsLevel60,
-	rotation: APLLevel60Balanced,
-	race: Race.RaceUndead,
-	professions: [Profession.Engineering, Profession.Blacksmithing],
-	options: Level60TankOptions,
-});
-export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's build: the search at this weight lands on the same one.",
-	gear: GearLevel60Synthetic,
-	talents: TalentsLevel60,
-	rotation: APLLevel60MaxSurvival,
-	race: Race.RaceUndead,
-	professions: [Profession.Engineering, Profession.Blacksmithing],
-	options: Level60TankOptions,
-});
-
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
@@ -167,21 +145,41 @@ export const DefaultOptions = ProtectionPaladinOptions.create({
 	righteousFury: true,
 });
 
-export const DefaultConsumes = Consumes.create({
-	// The tank bench's consumables (tools/tankbench/req/paladin_protection_*.json): every tank takes the same
-	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec.
+// Round 4 (2026-11-04, orchestration/tank_handoff/paladin/round4, docs/tank_paladin.md "Round 4 consumables"): the full
+// raid consumable set (orchestration/standards.md item 11), searched per preset. Balanced is the default: Spirit of
+// Zanza, Rumsey Rum Black Label and the Goblin Sapper Charge (Engineering) on the standard set.
+export const BalancedConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
+	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
 	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MajorManaPotion,
 	dragonBreathChili: true,
-	food: Food.FoodSmokedDesertDumpling,
-	flask: Flask.FlaskOfTheTitans,
+	flask: Flask.FlaskOfSupremePower,
+	food: Food.FoodNightfinSoup,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
-	mainHandImbue: WeaponImbue.DenseSharpeningStone,
+	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,
+	zanzaBuff: ZanzaBuff.SpiritOfZanza,
 });
+
+// Max threat takes Balanced's consumables with the Ground Scorpok Assay (25 Agility) in the Zanza slot.
+export const MaxThreatConsumes = Consumes.create({
+	...BalancedConsumes,
+	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
+});
+
+// Max survival takes the Flask of Natural Precision (+5% expertise in the natural-flask zone) and Dirge's Kickin'
+// Chimaerok Chops (25 Stamina).
+export const MaxSurvivalConsumes = Consumes.create({
+	...BalancedConsumes,
+	flask: Flask.FlaskOfNaturalPrecision,
+	food: Food.FoodDirgesKickChimaerokChops,
+});
+
+export const DefaultConsumes = BalancedConsumes;
 
 // The tank bench's buffs and debuffs (tools/tankbench/req/paladin_protection_*.json; tank_fairness-20261104-6):
 // loading a preset gives the build the bench ranks.
@@ -240,3 +238,85 @@ export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Blacksmithing,
 };
+
+///////////////////////////////////////////////////////////////////////////
+//                                Encounter
+///////////////////////////////////////////////////////////////////////////
+
+// The tank bench's boss (docs/tank_sim.md, The bench): the shared Level 60 boss (level 63, 805 attack power, a 2.0 sec
+// swing) on the paladin, with the stand-in healer at 600 HPS every 2 sec (1 to 3), a 3 minute fight. The presets were
+// searched on the Anniversary encounters (tools/encounters), which the UI doesn't load; this is the bench's own default
+// fight. The player's reaction time is the UI default, 200 ms, as the requests have.
+const bench_encounter = (name: string, consumes: Consumes) =>
+	PresetUtils.makePresetEncounter(
+		name,
+		Encounter.create({
+			duration: 180,
+			durationVariation: 20,
+			...PresetUtils.LEVEL_60_ZONE,
+			targets: [
+				{
+					id: 213336,
+					name: 'Level 60',
+					level: 63,
+					mobType: MobType.MobTypeUnknown,
+					stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+					minBaseDamage: 3000,
+					damageSpread: 0.3333,
+					swingSpeed: 2,
+					parryHaste: true,
+				},
+			],
+		}),
+		{
+			tanks: [UnitReference.create({ type: UnitReference_Type.Player, index: 0 })],
+			healingModel: HealingModel.create({ hps: 600, cadenceSeconds: 2, cadenceVariation: 1 }),
+			raidBuffs: DefaultRaidBuffs,
+			debuffs: DefaultDebuffs,
+			buffs: DefaultIndividualBuffs,
+			consumes,
+			inFrontOfTarget: true,
+		},
+	);
+export const EncounterLevel60Tank = bench_encounter('Generic boss, tanking', BalancedConsumes);
+export const EncounterLevel60TankMaxThreat = bench_encounter('Generic boss, tanking (Max threat)', MaxThreatConsumes);
+export const EncounterLevel60TankMaxSurvival = bench_encounter('Generic boss, tanking (Max survival)', MaxSurvivalConsumes);
+
+///////////////////////////////////////////////////////////////////////////
+//                                 Builds
+///////////////////////////////////////////////////////////////////////////
+
+// The three Level 60 tank presets (the user's ruling: threat against survival as weights, Balanced the default;
+// docs/tank_sim.md). Undead sims best at every weight: Touch of the Grave's drain heals and makes threat.
+const Level60TankOptions = { primarySeal: PaladinSeal.Fury, righteousFury: true, aura: PaladinAura.DevotionAura };
+
+export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
+	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Consumables: Flask of Supreme Power, Nightfin Soup, Elemental Sharpening Stone (+319 over round 3).',
+	gear: GearLevel60SyntheticMaxThreat,
+	talents: TalentsLevel60MaxThreat,
+	rotation: APLLevel60MaxThreat,
+	race: Race.RaceUndead,
+	professions: [Profession.Engineering, Profession.Blacksmithing],
+	options: Level60TankOptions,
+	encounter: EncounterLevel60TankMaxThreat,
+});
+export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
+	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md). Consumables: Flask of Supreme Power, Nightfin Soup, Elemental Sharpening Stone (+198 over round 3).',
+	gear: GearLevel60Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLLevel60Balanced,
+	race: Race.RaceUndead,
+	professions: [Profession.Engineering, Profession.Blacksmithing],
+	options: Level60TankOptions,
+	encounter: EncounterLevel60Tank,
+});
+export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
+	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear, talents and rotation (the search at this weight lands on the same ones); the consumables differ: Flask of Natural Precision, Dirge's Kickin' Chimaerok Chops, Elemental Sharpening Stone (+142 over round 3).",
+	gear: GearLevel60Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLLevel60MaxSurvival,
+	race: Race.RaceUndead,
+	professions: [Profession.Engineering, Profession.Blacksmithing],
+	options: Level60TankOptions,
+	encounter: EncounterLevel60TankMaxSurvival,
+});

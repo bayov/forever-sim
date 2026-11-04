@@ -1,0 +1,10 @@
+A=shaman_warden_max_survival.json B=Y_max_survival_FoodDirgesKickChimaerokChops.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord        -6892    -6359   533.2   27.7     -7.5      -61
+chromaggus       -6302    -6206    96.2    5.5     -7.1      -12
+golemagg         -2083    -2019    63.6    3.1     -7.2       -7
+magmadar         -1291    -1230    61.5    2.9     -7.5       -7
+onyxia           -4721    -4555   165.2    8.5     -8.0      -12
+ragnaros        -16879   -16204   675.9   50.4     -6.8      -73
+vaelastrasz      -1810    -1727    82.6    6.4     -7.9      -26
+scoring_mean                      167.1    5.1

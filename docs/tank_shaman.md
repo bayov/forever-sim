@@ -9,9 +9,9 @@ Shield for threat, Stoneskin Totem and Guardian Totems for mitigation. The tank 
 parries with Spirit Weapons, and Rockbiter's and Spirit Weapons' threat are on), every tank ability and talent
 is audited against client 70753 (the October 30 hotfix's build) and tested, it wears a synthetic tank set by
 standards 36, and it has a rotopt template (`tools/rotopt/shaman_tank.go`) and three presets
-(`tools/tankbench/req/shaman_warden_*.json`, `ui/warden_shaman`), re-optimized in tank round 3 (Presets).
+(`tools/tankbench/req/shaman_warden_*.json`, `ui/warden_shaman`), re-optimized in tank round 3 and extended in round 4 (Presets).
 
-## Presets (re-optimized 2026-11-04, tank round 3)
+## Presets (re-optimized 2026-11-04, tank round 3; round 4 the same day)
 
 Three presets on the six scoring encounters (Magmadar, Golemagg, Onyxia, Broodlord, Vaelastrasz, Chromaggus), by
 the tank objective at w = 1/3, 1 and 3 (`docs/tank_sim.md`): `tools/tankbench/req/shaman_warden_<preset>.json`,
@@ -31,27 +31,75 @@ they had no blessings and Alchemy + Enchanting before), and each build loads its
 
 | Preset | Race | Talents | On-use trinket (knobs) | Flask | Wrist / cloak / shield | Six-boss mean, own weight |
 |---|---|---|---|---|---|---|
-| Max threat | Night Elf | `0515-050032303551012201-050002` | attack power (990015) on cooldown (`armorTrinket=0`, `waterTotem=1`: Mana Spring Totem) | Natural Accuracy | 1886 / 1889 / 1886 | 2,430.0 +/- 10.4 |
-| Balanced | Night Elf | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`) | Titans | 1248665 / 1889 / 1886 | 767.2 +/- 18.0 |
-| Max survival | Undead | `05050003-050230113541012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`) | Titans | 1248665 / 1889 / 1886 | -3,970.8 +/- 47.7 |
+| Max threat | Night Elf | `0515-050032303551012201-050002` | attack power (990015) on cooldown (`armorTrinket=0`, `waterTotem=1`: Mana Spring Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Natural Accuracy | 1886 / 1889 / 1886 | 2,588.2 +/- 10.5 |
+| Balanced | Night Elf | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=1`, `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Titans | 1248665 / 1889 / 1886 | 944.3 +/- 17.5 |
+| Max survival | Undead | `05050003-050230113541012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Titans | 1248665 / 1889 / 1886 | -3,718.0 +/- 54.0 |
 
 Enchants: 1886 on the wrists is Superior Stamina (+9), 1248665 Superior Deflection (Defense +9); 1889 on the back is
 Superior Defense (+70 armor); 1886 on the shield is Enchant Shield - Greater Stamina (+9). All three keep the template's
-other defaults (Stoneskin, Lightning Shield, Earth Shock on cooldown above Stormstrike with `shockFirst=1`, no fire
-totem, no self heal). `trinketAt` holds the trinket for the fight's last N seconds unless the wait costs a use
-(`tools/rotopt/shaman_tank.go`, as the warrior's; tank_rotations-20261104-9).
+other defaults (Stoneskin, Lightning Shield, Earth Shock on cooldown above Stormstrike with `shockFirst=1`, no self
+heal). Since round 4 all three put Searing Totem down before the pull and recast it, with Fire Nova at 40% mana or
+more, only in the fight's last 60 s (`fireLast=60`; Round 4 below), and all three eat Dirge's Kickin' Chimaerok Chops
+and use the Goblin Sapper Charge (autocast with the other cooldowns, no filler explosive). `trinketAt` holds the
+trinket for the fight's last N seconds unless the wait costs a use (`tools/rotopt/shaman_tank.go`, as the warrior's;
+tank_rotations-20261104-9). Re-checked after 464deda made values under 20 s work and `armorTrinket=0` really mean
+unused (tank_mechanics-16): 0, 5, 10, 15, 20 and 30 against 25, and no trinket line, at 10,000 iterations on seeds 1
+and 2, all lose at Balanced and Max survival, so 25 stays (Round 4 below).
 
 **Scores** (mean of the six at the preset's own weight; tankbench, 1,000 iterations, seed 1,
-`orchestration/audit/ref/tank_bench/summary.tsv`; "before" is round 2's build on the round 3 engine):
+`orchestration/audit/ref/tank_bench/summary.tsv`; "before" is round 2's build on the round 3 engine, "round 3" the
+round 3 build before round 4's fire totem, Mana Spring, sapper and food):
 
-| Preset | Before | After |
-|---|---|---|
-| Max threat | 2,276.0 +/- 7.9 | 2,430.0 +/- 10.4 |
-| Balanced | 534.3 +/- 15.2 | 767.2 +/- 18.0 |
-| Max survival | -4,356.7 +/- 46.9 | -3,970.8 +/- 47.7 |
+| Preset | Before | Round 3 | After (round 4) |
+|---|---|---|---|
+| Max threat | 2,276.0 +/- 7.9 | 2,430.0 +/- 10.4 | 2,588.2 +/- 10.5 |
+| Balanced | 534.3 +/- 15.2 | 767.2 +/- 18.0 | 944.3 +/- 17.5 |
+| Max survival | -4,356.7 +/- 46.9 | -3,970.8 +/- 47.7 | -3,718.0 +/- 54.0 |
 
-Paired, the final request against round 2's (3,000 iterations, seed 1): Max threat +151.6 +/- 6.4, Balanced
+Round 3's build against round 4's at 10,000 iterations (errors x1.25 for the shared seed, `docs/tank_sim.md` Seeds),
+seed 1 / seed 2: Max threat 2,415.8 +/- 4.2 / 2,420.0 +/- 4.4 to 2,583.5 +/- 3.2 / 2,579.8 +/- 3.6; Balanced 732.2
++/- 6.5 / 737.5 +/- 5.8 to 943.8 +/- 6.2 / 937.7 +/- 5.8; Max survival -4,016.0 +/- 15.8 / -4,020.8 +/- 15.7 to
+-3,719.8 +/- 15.4 / -3,682.7 +/- 16.3.
+
+Paired, round 3's final request against round 2's (3,000 iterations, seed 1): Max threat +151.6 +/- 6.4, Balanced
 +225.7 +/- 11.9, Max survival +388.7 +/- 30.0.
+
+### Round 4 A/Bs (2026-11-04)
+
+Paired `abtest`, scoring mean at the preset's weight, B minus A (A the preset as it stood before the item, B the
+variant), 10,000 iterations at seeds 1 / 2 (disjoint, `tankscore.Seed`) unless marked "3k s3" (a 3,000-iteration
+screen at seed 3). Adopted only what wins on both seeds beyond its error. Raw output:
+`orchestration/tank_handoff/shaman/round4/` (`ab_summary.txt` lists every A/B).
+
+- **`trinketAt` re-check** (tank_mechanics-16; against 25 s). Balanced: 0 (on cooldown) -134.4 +/- 4.6 / -135.6
+  +/- 4.4, 5 s -178.8 / -181.3, 10 s -125.4 / -128.7, 15 s -77.2 / -80.0, 20 s -24.8 +/- 3.7 / -23.9 +/- 3.0, 30 s
+  -6.4 +/- 4.0 / -13.0 +/- 3.9, no trinket line (`armorTrinket=0`) -219.3 / -215.2. Max survival: 0 -389.7 / -384.7,
+  5 s -536.8 / -519.7, 10 s -400.0 / -360.6, 15 s -247.8 / -204.8, 20 s -76.1 +/- 11.0 / -59.7 +/- 9.6, 30 s -20.2
+  +/- 10.1 / -36.0 +/- 10.6, no trinket line -642.4 / -630.2 (errors 3.8 to 4.6 at Balanced, 10 to 14 at Max
+  survival). 25 s stays.
+- **Fire totem and Fire Nova** (tank_rotations-20261104-14). The template's new `fireLast` knob gates the fire totem
+  and Fire Nova to the fight's last N s (the totem still goes down before the pull). 3k s3 screens, Searing Totem with
+  Fire Nova: gate 0 (whole fight) / 30 / 40 / 50 / 60 / 75 / 90 s, Max threat +34.0 / +22.6 / +33.8 / +43.0 / +44.5 /
+  +42.4 / +40.3 (+/- 9), Balanced (with Mana Spring) +34.8 / +42.6 / +48.0 / +44.1 / +42.5 / +42.4 / +38.1 (+/- 13 to
+  15), Max survival (with Mana Spring) +41.6 / +42.5 / +50.9 / +27.4 / +23.1 / +31.9 / +30.0 (+/- 33 to 40). At 60 s,
+  Searing without Fire Nova -9.8 / +0.2 / +20.8, Magma Totem +24.1 / +22.6 / +76.9, Flametongue Totem -162.7 / -144.4
+  / -64.6; Fire Nova's mana floor 0 / 20 / 60% within 8 of 40%. Confirmed: Max threat 60 s +53.9 +/- 4.7 / +47.7 +/-
+  5.0 (40 s +39.0 / +36.0); Balanced with Mana Spring 60 s +67.7 +/- 7.1 / +59.2 +/- 6.4 (40 s +53.4 / +42.6; without
+  Mana Spring +55.4 / +43.8); Max survival 60 s +59.3 +/- 17.7 / +55.7 +/- 18.2 (with Mana Spring +56.5 / +60.0, 40 s
+  +43.7 / +54.8, Magma +46.0 / +85.2 +/- 18). All three take Searing Totem and Fire Nova in the last 60 s.
+- **Mana Spring before the pull** (tank_rotations-20261104-15; `waterTotem=1`, Max threat's). Balanced +9.3 +/- 2.3 /
+  +10.8 +/- 1.8: taken. Max survival +5.3 +/- 5.8 / +4.0 +/- 5.1: inside its error, not taken.
+- **Explosives** (standards rule 11; the Warden has Engineering). On the fire totem builds, the Goblin Sapper Charge
+  (`sapperExplosive`, a DPS cooldown the rotation's `autocastOtherCooldowns` line fires): Max threat +101.0 +/- 4.5 /
+  +99.0 +/- 4.7, Balanced +102.7 +/- 6.9 / +101.2 +/- 6.9, Max survival +75.1 +/- 18.2 / +115.1 +/- 17.5. A filler on
+  top (sapper and filler against the preset): Goblin Land Mine +94.8 / +94.4, +94.9 / +94.1, +68.7 / +100.0; Dense
+  Dynamite and Thorium Grenade +94.4 / +93.9, +94.5 / +93.7, +68.4 / +99.7; EZ-Thro Dark Bomb as the Land Mine within
+  0.4. Every filler costs 4 to 15 against the sapper alone (the GCDs, as for the bear). All three take the sapper, no
+  filler.
+- **Food** (tank_fairness-20261104-10; against the Smoked Desert Dumpling, with the sapper). Dirge's Kickin' Chimaerok
+  Chops: Max threat +12.7 +/- 1.6 / +13.2 +/- 1.6, Balanced +41.1 +/- 1.8 / +40.1 +/- 1.9, Max survival +161.5 +/- 4.5
+  / +167.1 +/- 5.1. Grilled Squid +0.4 / +2.0, +5.4 / +4.8, +5.0 / +1.1 (+/- 1.5 to 7). Blessed Sunfruit -9.9, -9.8,
+  -9.2 on both seeds. All three take Dirge's chops.
 
 ### Round 3 A/Bs
 

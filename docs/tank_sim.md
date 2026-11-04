@@ -5,15 +5,18 @@ TPS against damage taken, so the sim has to sim the boss hitting the tank and sa
 to dying. This comes before the raid sim's simmed tanks ([raid_sim.md](raid_sim.md), Threat), which
 replace its 700 TPS stand-in.
 
-**Where it stands (2026-11-03):** the engine reports a tank sheet with the thresholds tanks gear for, and
+**Where it stands (2026-11-04):** the engine reports a tank sheet with the thresholds tanks gear for, and
 `tools/tankbench` sims tank builds against seven Classic raid bosses (`tools/encounters`) with the healing a
 raid puts on its tank, and finds each build's healing needed and death floor. The bosses' melee, the fight lengths
 and the healing are Warcraft Logs numbers from the Anniversary realms, which score tanks, with Season of Discovery's
-kept to compare ([Encounters](#encounters)). Three builds run: the Protection warrior and paladin on Classic
-pre-raid plate, and the Feral bear on the cat's synthetic set. Four audits checked the work and their findings are
-fixed ([Audits](#audits)). The optimizer's objective is ruled and built: the bench prints it, and rotopt's
-searches maximize it with `-tank`, with a paired noise test. The rules audit has done the warrior, the paladin and
-the bear ([Rules audit](#rules-audit)) and the Warden shaman ([tank_shaman.md](tank_shaman.md#rules-audit)); tank gear and rotations are next. Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
+kept to compare ([Encounters](#encounters)). Four tanks run, three presets each (Max threat, Balanced, Max
+survival): the Protection warrior, the Protection paladin, the Feral bear and the Warden shaman. Each has had three
+rounds of talent, rotation, race, gear and consumable searches on the score (the class docs: [tank_warrior.md](tank_warrior.md),
+[tank_paladin.md](tank_paladin.md), [tank_druid.md](tank_druid.md), [tank_shaman.md](tank_shaman.md)); the current
+numbers are in `orchestration/audit/ref/tank_bench/summary.tsv`. The optimizer's objective is ruled and built: the
+bench prints it, and rotopt's searches maximize it with `-tank`, with a paired noise test. The rules audit has done
+all four tanks ([Rules audit](#rules-audit), [tank_shaman.md](tank_shaman.md#rules-audit)), and the tank_fairness,
+tank_mechanics and tank_rotations audits run on the bench (`orchestration/audit/findings/`). Real healers come from the healing sim ([healing_sim.md](healing_sim.md)).
 
 ## The user's rulings (2026-11-02)
 
@@ -446,8 +449,8 @@ share, APL conditions on health). A scoring run leaves those out.
 
 ## Open decisions
 
-None for the objective. The weights of the presets get checked once the gear search runs on them (two
-presets landing on the same build means a weight moves).
+None for the objective. The weights were checked by the gear searches: where two presets land on the same build
+(the paladin's Balanced and Max survival) the class doc says so.
 
 ## Before and after the core tank fixes (2026-11-04)
 
@@ -459,7 +462,8 @@ Branch `tank-fixes-core`. Three changes:
 Each row is a mean over the six scoring bosses, 1,000 iterations on tankbench, default seed. Before is master
 f62bfc74; after is `orchestration/audit/ref/tank_bench/summary.tsv`. The score is at the preset's own weight;
 the legacy warrior request is scored at Balanced. The last column is the Ragnaros score at the same weight.
-Talents and rotations are unchanged: the class workers re-search them next.
+Talents and rotations are unchanged here; the class workers re-searched them in rounds 2 and 3, so this table is
+a snapshot of the core fixes, not the current scores (those are in `summary.tsv` and the class docs).
 
 | Preset | Score before → after | SafeDPS | DTPS | Healing needed | Ragnaros score |
 |---|---|---|---|---|---|
@@ -591,14 +595,13 @@ Tear).
 
 ## Next steps
 
-1. Bring the Feral tank into the build (the Warden shaman's rules audit is done: [tank_shaman.md](tank_shaman.md#rules-audit)). Ask for a dungeon boss log for Forever's boss crit.
+Done since the 2026-11-03 list: the Feral tank is in the build, the four tanks' rotations, the three presets'
+searches and the tank gear searches (rounds 2 and 3, and round 4's warrior and paladin consumables).
+
+1. Ask for a dungeon boss log for Forever's boss crit.
 2. **Encounters**: Patchwerk, threat drops, armor cuts and stacking DoTs in the engine.
-3. **Rotations**: the paladin's and the Warden's first, then rotopt templates for all four.
-4. **The three presets' searches** (the paired test is in, above).
-5. **Tank gear**: a tank row in `orchestration/gear_targets.md` and synthetic tank items, then gear and talent
-   searches on the score.
-6. **The report**: a tank section with TPS next to damage taken, healing needed and the sheet's thresholds.
-7. **The raid sim**: the simmed tank's threat in place of the 700 TPS stand-in, then the comp search.
+3. **The report**: a tank section with TPS next to damage taken, healing needed and the sheet's thresholds.
+4. **The raid sim**: the simmed tank's threat in place of the 700 TPS stand-in, then the comp search.
 
 ## Audits
 

@@ -57,6 +57,10 @@ func (shamanTank) Knobs() []Knob {
 		// Fire Nova (a shaman spell, our threat) around the fire totem: 0 never, 1 after the shock.
 		{Name: "fireNova", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "fireNovaMana", Default: 40, Min: 0, Max: 80, Step: 20},
+		// The fire totem and Fire Nova in the fight only in its last fireLast seconds, 0 the whole
+		// fight (the prepull totem, if any, still goes down). Early on their mana starves Earth Shock;
+		// late it's mana we'd end the fight with (tank_rotations-20261104-14).
+		{Name: "fireLast", Default: 0, Min: 0, Max: 120, Step: 10},
 		// Lightning Bolt at this many Maelstrom Weapon stacks (5 is instant), 0 never.
 		{Name: "maelstromStacks", Default: 0, Min: 0, Max: 5, Step: 1},
 		// Lesser Healing Wave on ourselves whenever the mana is over this, 0 never. It reads no health.
@@ -157,10 +161,7 @@ func (shamanTank) Build(k Knobs) *proto.APLRotation {
 		note := "The defensive on-use trinket on cooldown, on a timer. Without it ignore the warning on this line."
 		if k["trinketAt"] > 0 {
 			note = fmt.Sprintf("The defensive on-use trinket, held for the last %d sec unless the wait costs a use. Without it ignore the warning on this line.", int(k["trinketAt"]))
-			when = or(
-				le(remainingTime(), seconds(k["trinketAt"])),
-				gt(spellUsesLostByDelay(trinket, sub(remainingTime(), seconds(k["trinketAt"])), seconds(20)), num(0)),
-			)
+			when = heldForLast(trinket, k["trinketAt"], 20)
 		}
 		items = append(items, cast(trinket, when, note))
 	}
@@ -206,9 +207,20 @@ func (shamanTank) Build(k Knobs) *proto.APLRotation {
 	}
 	if fireID != nil {
 		pre = append(pre, fireID)
-		items = append(items, cast(fireID, totemDown(proto.ShamanTotems_Fire, true), "The fire totem whenever it's down."))
+		var late value
+		totemNote, novaNote := "The fire totem whenever it's down.", "Fire Nova around the fire totem: our own threat."
+		if k["fireLast"] > 0 {
+			late = le(remainingTime(), seconds(k["fireLast"]))
+			totemNote = fmt.Sprintf("The fire totem whenever it's down in the last %d sec: earlier its mana is Earth Shock's.", int(k["fireLast"]))
+			novaNote = fmt.Sprintf("Fire Nova around the fire totem in the last %d sec: our own threat, with mana we'd otherwise end on.", int(k["fireLast"]))
+		}
+		totemWhen, novaWhen := totemDown(proto.ShamanTotems_Fire, true), manaFloor(k["fireNovaMana"])
+		if late != nil {
+			totemWhen, novaWhen = andAlso(totemWhen, late), and(novaWhen, late)
+		}
+		items = append(items, cast(fireID, totemWhen, totemNote))
 		if k["fireNova"] == 1 {
-			items = append(items, cast(fireNova, manaFloor(k["fireNovaMana"]), "Fire Nova around the fire totem: our own threat."))
+			items = append(items, cast(fireNova, novaWhen, novaNote))
 		}
 	}
 	var waterID *proto.ActionID

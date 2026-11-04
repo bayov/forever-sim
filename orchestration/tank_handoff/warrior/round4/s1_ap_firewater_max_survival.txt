@@ -1,0 +1,10 @@
+A=warrior_protection_max_survival.json B=ap_firewater_max_survival.json preset=max_survival iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord          727      723    -4.4    0.0     -2.2        0
+chromaggus       -1537    -1542    -4.5    0.0     -2.2        0
+golemagg          1967     1962    -4.5    0.0     -2.2        0
+magmadar          2442     2437    -4.5    0.0     -2.3        0
+onyxia            1531     1527    -4.3    0.0     -2.2        0
+ragnaros        -13078   -13082    -4.3    0.0     -2.2        0
+vaelastrasz       2095     2090    -4.1    0.0     -2.1        0
+scoring_mean                       -4.4    0.0

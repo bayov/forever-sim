@@ -1,0 +1,10 @@
+A=shaman_warden_balanced.json B=X_balanced_sapper_ExplosiveThoriumGrenade.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         -213     -131    82.0   30.8     50.3        6
+chromaggus        -370     -360     9.6   12.9     12.7        5
+golemagg          1325     1380    55.2    8.2     38.1        6
+magmadar          1614     1680    65.6    7.4     39.2        4
+onyxia             580      708   128.0   18.2     64.6        0
+ragnaros         -3761    -3751    10.2   55.5     30.8       16
+vaelastrasz       1864     2091   226.7   13.5    112.4       -1
+scoring_mean                       94.5    7.0
