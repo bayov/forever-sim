@@ -18,7 +18,7 @@ func init() {
 }
 
 func (mageArcane) Knobs() []Knob {
-	return append(append(append(mageCommonKnobs(), finisherKnobs(0)...), arcaneKnobs(2, 1)...),
+	return append(append(append(append(mageCommonKnobs(), finisherKnobs(0)...), arcaneKnobs(2, 1)...), blastSpendKnobs()...),
 		// Below this much mana Arcane Blast only goes to one stack, 0 never.
 		Knob{Name: "conserveMana", Default: 30, Min: 0, Max: 60, Step: 10},
 		// The filler: 1 Arcane Missiles, 2 Frostbolt, 3 Fireball.
@@ -80,6 +80,7 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 		enoughMana = not(lowMana)
 	}
 	items = append(items, arcaneBlastBuffLines(k, s, enoughMana)...)
+	items = append(items, blastClearcastLines(k, s)...)
 	if k["barrageFirst"] == 1 {
 		items = append(items, barrage...)
 		items = append(items, arcaneWrathLines(k, s)...)
@@ -87,6 +88,7 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 		items = append(items, arcaneWrathLines(k, s)...)
 		items = append(items, barrage...)
 	}
+	items = append(items, blastFillerLines(k, s)...)
 	items = append(items, cast(filler, nil, "The filler."))
 	items = append(items, wandLines(k)...)
 	rot := rotation(items...)

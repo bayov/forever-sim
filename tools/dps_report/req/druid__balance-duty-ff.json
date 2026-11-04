@@ -366,23 +366,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 9876
-                      }
-                    },
-                    "condition": {
-                      "auraIsActive": {
-                        "auraId": {
-                          "spellId": 16870
-                        }
-                      }
-                    }
-                  },
-                  "notes": "A free Starfire on Clearcasting, which Wrath does not use up."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 9835
                       }
                     },
@@ -457,6 +440,16 @@
                     }
                   },
                   "notes": "Starfire."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9912
+                      }
+                    }
+                  },
+                  "notes": "Wrath when Starfire's mana is not there, rather than waiting for it."
                 }
               ]
             },
@@ -489,8 +482,7 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved",
-      "salvation": true
+      "retributionAura": "TristateEffectImproved"
     },
     "debuffs": {
       "judgementOfWisdom": true,

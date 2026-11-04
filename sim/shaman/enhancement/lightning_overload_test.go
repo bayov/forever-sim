@@ -11,7 +11,7 @@ import (
 // TestOrcShamanLightningOverload checks the copies Lightning Overload casts (shaman_audit.md
 // 8.13).
 //
-// With 3/3 each Lightning Bolt has a 10% chance to cast a second one of the same rank on the
+// With 3/3 each Lightning Bolt has a 30% chance (10% before the November 2 notes) to cast a second one of the same rank on the
 // same target. The copy is free and deals half damage with no threat, and it never makes a
 // copy of its own. We cast 2000 rank 10 bolts at level 60 and count the copies, then cast the
 // copy itself 2000 times and want no more casts than that.
@@ -51,8 +51,8 @@ func TestOrcShamanLightningOverload(t *testing.T) {
 	var copies int32
 	at(sim, float64(1+3*casts), func(sim *core.Simulation) {
 		copies = overload.SpellMetrics[target.UnitIndex].Casts - 1
-		if rate := float64(copies) / casts; math.Abs(rate-.10) > .02 {
-			t.Errorf("%d of %d bolts overloaded (%.1f%%), want 10%%", copies, casts, rate*100)
+		if rate := float64(copies) / casts; math.Abs(rate-.30) > .03 {
+			t.Errorf("%d of %d bolts overloaded (%.1f%%), want 30%%", copies, casts, rate*100)
 		}
 	})
 

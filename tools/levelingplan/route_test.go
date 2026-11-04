@@ -117,9 +117,12 @@ func djb2(s string) uint32 {
 	return h
 }
 
-// The shaman's trees from the UI's talent files, with Improved Ghost Wolf not simmed.
+// The shaman's trees as the UI's talent file had them before round 70753 (client 70707, Improved
+// Ghost Wolf on row 2; testdata/shaman_tree_70707.json), with Improved Ghost Wolf not simmed. The
+// tests use the trees as a fixed problem for the search, so a later tree change (the November 2
+// notes moved Improved Ghost Wolf to row 4) doesn't move the routes they compare.
 func shamanShape(t *testing.T) *proto.LevelingTalentShape {
-	data, err := os.ReadFile("../../ui/core/talents/trees/shaman.json")
+	data, err := os.ReadFile("testdata/shaman_tree_70707.json")
 	if err != nil {
 		t.Fatal(err)
 	}

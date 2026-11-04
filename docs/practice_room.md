@@ -1170,6 +1170,156 @@ rendering, not the sim.
   the tanks and move. First numbers in headless Chrome on WSL (software GPU, so only the script and the counts
   carry over): draw calls 55 to 1006, triangles 71k to 424k, script a frame about 0.3 to 6ms (animating 2ms, the
   others' effects 0.6ms, placing the scene's objects 1.1ms), JS heap 0.5 to 1.9GB, and 42s to load.
+- First raid report (your PC, 40s): 60 FPS at the median, 16ms of script a frame (drawing 9.5ms for 1410 draw calls,
+  animating 6.2ms), 2.3GB heap, and two stalls of 1.3 and 2.1s with no long task in them. Fixes:
+  - A unit's parts that look alike (same material, textures and animated colors) draw as one. A raider went from 21
+    draw calls to about 11, and the hidden geosets drop out of its index.
+  - Units have bounds (their rest pose with room to spare), so the renderer skips the ones off screen and the shadows
+    of the ones outside the shadow's area. Spell effects stay always drawn.
+  - Raiders animate 10 times a second off screen, 30 past 40 yards, 60 past 20 yards and every frame near you.
+  - Copies of a model share its parsed file and its vertices (on the GPU too). Composed skin textures let go of their
+    page copy once uploaded.
+  - Scratch values for sampling animations are Float64Arrays, and particles and ribbon edges are reused. Chrome stores
+    a decimal in a plain array (and in three's vectors) as its own object, so these made about 30KB of garbage per
+    character a frame. Some is left (three's vectors, the track cache lookup, about 1.5MB a frame in the raid).
+  - In headless Chrome: draw calls 1006 to 657, animating the raid 2.0 to 0.55ms, heap 1.9 to 1.3GB, load 42 to 29s.
+  - The two stalls were Alt+Tab.
+- Second raid report (your PC, 37s, after the fixes): 68 FPS on average (was 49), 12.6ms frames at the median, 12.2ms
+  of script a frame (drawing 7.8ms for 943 draw calls, animating 4.0ms), 1.4GB heap, and no stall. One frame over
+  50ms, at the start.
+- Aiming for 240 FPS in the raid. Headless Chrome on WSL can use the real GPU (Mesa's D3D12 driver:
+  `GALLIUM_DRIVER=d3d12 MESA_D3D12_DEFAULT_ADAPTER_NAME=NVIDIA LD_LIBRARY_PATH=/usr/lib/wsl/lib`, ANGLE on GL), so the
+  numbers below are a 2560x1440 raid of 40 on the RTX 5090 with the frame rate uncapped. Its draw calls cost about twice
+  what they cost on your PC. The perf reports now also time the GPU (a `gpu` column and average).
+  - Before: 40 FPS, 22ms of script a frame (drawing 17ms for 1004 draw calls, animating 3.9ms), GPU 6.9ms.
+  - Raiders that look alike draw together (`wow/crowd.ts`): one draw call per part of a look (the orc male's chest in
+    this armor) for every raider wearing it. Each raider's bones go into one shared texture, and each copy reads its
+    own by an offset. Composed skins, rewrapped textures and compacted indices are shared, so copies match. Copies
+    off screen are left out unless they cast a shadow onto the screen. 77 FPS, 680 draw calls, GPU 1.0ms.
+  - The casters' hand glows, bolts and impacts draw in the crowd too, and a model with no solid part (most spell
+    effects) no longer draws into the shadows. 92 FPS, 490 draw calls.
+  - Particles and ribbons draw in one draw call per look (texture and blend), filled before the frame draws. Filled
+    during the draw, the GPU got the new triangles over the last frame's points. 111 FPS, 184 draw calls.
+  - Bones are posed in flat arrays and are out of the scene (`wow/model.ts`). The scene holds only the sockets
+    (attachment points and emitters), which follow their bone. Before, the renderer placed and walked through 9000
+    bones twice a frame. 221 FPS, 3.6ms of script a frame (animating 1.7ms, drawing 1.7ms for 180 draw calls), GPU
+    1.1ms. Solo is 400 FPS here.
+  - Tried and dropped, since they didn't measure: near raiders animating at 120 Hz, a table for the particles' sRGB
+    colors, and packed track key slots.
+- Third raid report (your PC, 44s): about 155 FPS in the fight (207 in the first 5s). Frames were 4.2ms or 8.4ms, so
+  half missed the 240 Hz refresh. 4.2ms of script (animating 2.3ms, drawing 1.7ms), GPU 4.6ms, 168 draw calls at the
+  start and 260 in the fight, a garbage collection every 90ms (about 110MB/s) and 2043 effect models made.
+  - The reports now time the GPU by pass: the shadows (with the frame's uploads before them), the solid things, and
+    the see-through things with the effects. They also name the GPU and say the canvas size and MSAA. A timer started
+    inside the shadow pass lost the whole WebGL context in headless Chrome, so the shadows and uploads stay one
+    number. In headless runs the GPU time follows the script's drawing time, so only your PC's numbers say where the
+    GPU's time goes.
+  - Spell effects are reused: a done effect waits for the next one of the same model, instead of a new model with new
+    materials each cast. 500 effect models made in 10s of the fight became 15.
+  - Less garbage: the animation's times and the bones' moves no longer go through function arguments (Chrome boxed
+    each decimal), Track.get is small enough to inline, the crowd uploads its copies whole, and the effect batches copy
+    with plain loops. A garbage collection every 90ms became one every 450ms.
+  - The fight's extra draw calls are your totems and effects. In the raid test they draw in the crowd too.
+- The raiders wear their class's raid gear: the dungeon set, tier 1 or tier 2, with weapons for their role (tanks a
+  sword and shield, rogues two daggers or swords, hunters a bow or gun and a polearm, casters a staff or a main hand and
+  off hand, healers a mace and an off hand) and a cloak. Raiders of one class go through the sets, so two mages rarely
+  match. Your character keeps your gear.
+  - Each raider's skin is painted for its armor, so in a raid of 40 no two match. The skins go into texture arrays
+    (by size, those over 1024 wide at half size), and each copy reads its layer. A body of one race and sex draws every
+    part any of its raiders shows, and each copy hides the parts its raider doesn't (a mask of its submeshes).
+  - Headless, fight, 1920x1080, varied gear: without the arrays and masks 80 FPS, 9.8ms of script, 575 draw calls.
+    With them 103 FPS, 8.7ms (animating 3.0ms, drawing 5.4ms), 470 draw calls, 505k triangles, 1.7GB heap. This is the
+    new baseline. Most of the rest is gear: each item model (helms are by race) draws on its own, with its shadow.
+- Fourth raid report (your PC, 95s, varied gear): about 127 FPS in the fight, frames mostly 8.3ms. 5.8ms of script
+  (animating 2.4ms, drawing 3.0ms), 460 draw calls, 506k triangles. GPU 5.75ms: shadows with the uploads before them
+  3.1ms, see-through 2.0ms, solid 0.65ms. A garbage collection every 190ms.
+  - The uploads: each crowd batch sent five attributes every frame and each particle batch five more, about 1900
+    uploads a frame, and on Windows each is a copy of its own on the GPU. Now a batch's copies are one interleaved
+    buffer that goes up only when a copy changed (a raider moved, an effect's hand glow followed the hand), and the
+    particles and ribbons are interleaved too. A unit standing still settles its turn exactly, so its place stops
+    changing. About 210 uploads a frame now, 2MB (the bone texture is 0.9MB of it).
+  - The body batches kept the first raider's own skin as their map, only so their shader samples one. Three sent it
+    to the GPU anyway (8MB each, and empty once we let go of the picture). They have a one pixel stand-in now.
+  - The reports count the uploads a frame (calls and kilobytes), and on Chrome's Direct3D 11 they time the uploads
+    apart from the shadows (the timer starts just before the renderer switches to the shadow map).
+  - Your call: with 20 or more raiders, helms, shoulders and cloaks cast no shadow.
+  - Headless, fight, 1920x1080, varied gear: 128 FPS (was 103), 6.7ms of script (animating 2.7ms, drawing 3.7ms, was
+    5.4ms), 450 draw calls, 210 uploads a frame, a garbage collection every 420ms.
+- Fifth raid report (your PC, 65s): about 145 FPS for 30s, then 100 to 114 once the fight started (390 to 430 draw
+  calls). GPU 4.4ms: uploads 0.01ms, shadows 1.2ms, solid 1.3ms, see-through 1.8ms. So the uploads weren't the GPU's
+  time, but the shadows and solid things went from 3.75 to 2.56ms. 5.6ms of script (animating 2.5ms, drawing 2.8ms),
+  a garbage collection every 270ms.
+  - Shadows: a model's solid parts now cast their shadow in one draw call (one per side), apart from parts cut by their
+    texture's alpha. A body of one race and sex casts one for all its raiders. Those batches draw only in the shadows:
+    they're on a layer the camera sees only while the shadows draw. Shadow draw calls in the fight went from 171 to 128.
+  - Animation: gear with nothing that moves (most helms, shoulders and shields) keeps its first pose instead of
+    animating each frame, and spell effects animate like the raiders, 60 times a second past 20 yards and 30 past 40.
+  - Garbage: the pose loop no longer mixes decimals with other values (a root bone's parent pivot was undefined, a
+    bone's twist share was 0 or a decimal), which Chrome boxed, 30 bytes a bone a frame. Headless, a garbage
+    collection every 770ms (was 420ms). What's left is mostly Three building shader parameters when one depth
+    material serves both skinned and instanced meshes in the shadows.
+  - See-through: a camera facing particle is kept to about 40% of the screen's height. Only a particle a few of its
+    sizes from the camera gets that big.
+  - Headless, fight, 1920x1080: 125 FPS, 6.8ms of script (animating 2.4ms, drawing 3.9ms), 440 draw calls. The
+    drawing didn't drop here: 330 of the draw calls are the crowd's picture (65 bodies, 155 gear, 108 see-through
+    layers of gear and effects), which need different textures. Drawing those in fewer calls needs texture arrays
+    for gear, or multi-draw.
+- Sixth raid report (your PC, 107s): about 143 FPS in the fight (was 100 to 114), 4.9ms of script (animating 2.0ms,
+  drawing 2.6ms), 420 draw calls. GPU 5.3ms, and the see-through things are most of it: 2.8 to 3.0ms in the fight,
+  2.0ms before it.
+  - The reports now time the see-through things by kind: the units' own see-through parts, the boss, the raiders'
+    gear and bodies, the spell effects, the particles and the ribbons. Each kind draws at its own render order
+    (`drawOrder` in `wow/particles.ts`), with a marker before it that starts its timer. A frame column also counts
+    the particles drawn. Headless, the spell effects' layers were the biggest (0.87ms), then the gear's and the
+    particles.
+  - A see-through layer faded all the way out still cost its pixels. A fifth of the raid's see-through copies were
+    (58 of 286), so a copy with no alpha in a blending that goes by alpha is left out. A particle faded all the way
+    out (they fade in at birth and out at death) draws nothing in any blend mode, so it isn't sent either.
+  - Not the cause: Ragnaros has no see-through parts, and its own 24 emitters don't run (only gear gets particles
+    in the raid test). Finished effects aren't drawn: a fading one hides its model while its particles die out,
+    and a pooled one is out of the scene. The raid draws about 3600 particles, most on the casters' hands and their
+    bolts' trails (a Fireball's trail is 200).
+  - Headless: effects 0.87 to 0.71ms, gear 0.30 to 0.19ms, particles 0.25 to 0.18ms.
+- Seventh raid report (your PC): about 125 FPS, 5.8ms of script (animating 2.5ms, drawing 2.9ms), GPU 4.5ms (shadows
+  1.1, solid 1.4, effects 0.95, gear 0.36, particles 0.30, ribbons 0.31), 400 draw calls. Solo holds 239 FPS.
+- The pose worker (`wow/pose.ts`, `wow/poseWorker.ts`, `wow/poseClient.ts`): the raid test's crowd (raiders, their
+  gear and the effects in the crowd) poses off the page's thread. Posing is one class (`Poser`) that both the page
+  (your character, the boss, and everything when the page can't share memory) and the worker run. A model keeps its
+  animation state (what plays, its times and fades, its events) and asks for its pose each update. Once a frame the
+  page sends the worker every model's latest request, and the worker writes each model's bone matrices into memory
+  shared with the page, in one of two sets: the page reads the other, and they swap when the frame's poses are done.
+  So the crowd's poses are a frame behind, and what hangs off their bones moves when the new pose comes in. Your
+  character still poses itself, with no lag.
+  - Shared memory needs a cross-origin isolated page, so the practice server sends `Cross-Origin-Opener-Policy:
+    same-origin` and `Cross-Origin-Embedder-Policy: credentialless` (credentialless, so the icons from wow.zamimg.com
+    still load). Without them (an old server) the crowd poses on the page as before. `?poseworker=0` turns it off.
+  - The crowd copies a skeleton into the bone texture only when its pose changed (a far raider poses now and then,
+    still gear once), and the bone texture goes up only when one did.
+  - Headless (WSL GPU, fight, 1920x1080): animating 2.8 to 1.6ms, but drawing 4.1 to 5.5ms, so about even. Drawing
+    here is bound by the GPU process translating to Direct3D 12, so the time saved shows up as waiting.
+  - A copy of a painted texture that wraps another way (`setTexture`) shares the picture, which the original let go of
+    once on the GPU, so the copy went up empty. The original now keeps it.
+- The merged shadow (`wow/crowd.ts`): the raiders' solid shadows (bodies and gear) are one mesh, drawn in one call per
+  side. Each vertex has its bones in the bone texture and its raider's place in the world in a places texture, so
+  moving raiders need no rebuild; it's rebuilt when raiders join. A body's hidden submeshes are left out when it's
+  built. Parts cut by their texture's alpha (hair) and the effects' shadows still draw on their own. Shadow draw
+  calls went from 128 to 83. `?mergeshadows=0` turns it off. Headless: 112 to 123 FPS, and 88 to 115 on a slow run.
+- Eighth raid report (your PC, worker on): about 125 FPS, 5.0ms of script (animating 1.6ms, was 2.45), 315 draw
+  calls (was 400), GPU 4.9ms. Script and GPU time move together in every 10s window, so the GPU timer seems to count
+  the GPU waiting for our commands: the limit is how many WebGL calls we send, which Chrome's GPU process translates.
+- The merged picture (`wow/crowd.ts`): the raiders' solid parts (bodies and gear) draw in one call per kind of part,
+  like the merged shadow: one mesh of all their triangles, each vertex with its bones, its raider's place, and its
+  texture's layer in a texture array. The gear's textures go in arrays by size and wrapping (and the second texture
+  of the parts that mix two), the bodies' skins in theirs. A kind is a material (the same shader, side and mixing)
+  with the same arrays, 45 kinds for the raid. Parts that draw on their own: see-through ones, ones cut by alpha,
+  ones whose color or transparency changes (a track with keys that differ; a steady one is fine), and ones whose
+  texture isn't the plain kind. `?mergepicture=0` turns it off.
+  - Pixel check, one frozen frame (lineup and the fight's view), merge on, off, and on again: the same, apart from a
+    few hundred pixels of effects glows that also differ between two frames with the merge on.
+  - `?glcount=1` counts every WebGL call by kind (`glCallsAvg` in the report).
+  - Headless (fight, 1920x1080): 127 to 144 FPS, drawing 4.8 to 4.1ms, 420 to 326 draw calls, 3040 to 2350 WebGL
+    calls a frame (texture binds 528 to 423, vertex array binds 478 to 385, programs 276 to 210, matrix uniforms 271
+    to 174).
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit

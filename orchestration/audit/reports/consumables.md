@@ -1,16 +1,12 @@
-# Consumables pass 66 (master a0b306984)
+# Consumables pass 70, master fb584eafa (since f331f0cff)
 
-Trigger: 7 watched files moved since 796495d6f (standards.md, assumptions_def.py, spec_hunter.go, presets.ts of hunter, Enhancement shaman, Restoration shaman and warlock) and client 1.60.1.70707 -> 1.60.1.70753.
+Findings: none new. consumables-20261104-1 (Salvation ticked in presets.ts) is resolved: all 12 presets.ts dropped `salvation: true`; mksettings and the requests already had.
 
-## Verified
-- Hunter presets.ts and spec_hunter.go: the ranged hunters (BM, MM, Lone Wolf) lose the Goblin Sapper and keep the EZ-Thro Dark Bomb; Survival keeps the Sapper (presets.ts:333, mksettings line 113 conditional). This is the fix for consumables-20261101-1; both files agree. The finding was already resolved.
-- Warlock presets.ts: Affliction race Human -> Orc and comments only. No Consumes change.
-- Enhancement shaman presets.ts: leveling weights moved to leveling_weights.json. No consumes, buff or imbue change.
-- Restoration shaman presets.ts: new healing spec (out of scope). It carries a Brilliant Mana Oil mainhand imbue, Flask of Supreme Power and other consumes; not a Level 60 DPS preset, so not audited.
-- standards.md: one ruling note (Balance Subtlety 3). assumptions_def.py: Ice Lance text only.
-- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty. Counts as before (minor-armor count 3, known: Dust Cloud; ref expects 2).
-- Class branches: scan lists them as "ahead" only through stale copies (gotcha 1); no own commits audited.
-- Client 70707 -> 70753 (builddiff.py): forever_enchants.go 53 enchants checked, 0 changed. Consumable spell changes: Minor Speed 13889 8 -> 4, Improved Drains 403511 gains a second effect, new Speed 1328947 and Enchant Boots - Speed (item 289559, spell 1328948, enchant 8737). None used by a preset, mksettings or the sim (git grep).
+Verified:
+- ui/*/presets.ts diffs (12 specs): the only Consumes/raid change is the Salvation removal; warrior also has APL/talent comment and talent-string changes (Fury 2H), no consumes.
+- standards.md: new rules 38 (Forever only) and 39 (cast-time coefficient); nothing for this audit.
+- scan.sh on master: banned, Revelation, trinkets and crit-elixir sections empty. Counts as last pass (minor-armor effects 3, the third is Dust Cloud, unused by presets; totems as expected).
+- wago latest: 1.60.1.70755, nothing newer. Class branches are stale, not audited.
+- Pass doc standing check "Salvation on" is now stale: it should say Salvation off (Forever removed it, 2026-10-30 hotfix).
 
-## Open
-- None.
+No open items.

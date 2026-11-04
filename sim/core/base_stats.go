@@ -27,36 +27,44 @@ var BaseStats = map[BaseStatsKey]stats.Stats{}
 // These are also scattered in various dbc/casc files,
 // `octbasempbyclass.txt`, `combatratings.txt`, `chancetospellcritbase.txt`, etc.
 
-// Forever reworked the races. At level 1 each of them is the class baseline plus an offset that
-// adds up to 0 over Strength, Agility, Stamina and Intellect and leaves Spirit alone. Our beta
-// sheets (2026-10-10) show the Horde ones, wowsims/forever's level 1 naked warrior sheets of
-// every race against a Human (6296e8546d, 2026-10-20) give the same table with the Alliance
-// races, and their Skyborne sheets (2026-09-22: four Human/High Order class pairs and a
-// Windshaper warrior) the Skyborne line. We assume the offsets hold at 60, and the lower levels
-// have them too (tools/gen_level_base_stats.py).
+// Each race is the class baseline (ClassBaseStats, Classic's Human rows without The Human
+// Spirit) plus Classic's race offset: "All Races now have the correct amount of base stats. For
+// example, Tauren Warriors now start with the correct +5 strength relative to Human Warriors (was
+// incorrectly +2). This fix was also applied to High Order and Windshaper Skyborne base stats"
+// (development notes 2026-11-02, post 9, build 1.60.1.70753). The offsets are 1.12's level 1
+// race attributes against the Human's (Classic's 20, 20, 20, 20, 20), and the level 60 rows of
+// player_levelstats have the same gaps (the Gnome's Intellect +5 to +9 there is 1.12's
+// Expansive Mind baked in, which Forever moved to the mana pool, so +3). The lower levels use
+// the 1.12 rows themselves (tools/gen_level_base_stats.py). Before 70753 the races were the
+// baseline plus a smaller offset with Spirit 0 (our beta sheets of 2026-10-10 and wowsims/forever
+// 6296e8546d: Tauren +2 Strength).
+//
+// The client has no base stat table, and nothing gives the Skyborne's corrected numbers yet, so
+// both keep the offset of wowsims/forever's Skyborne sheets (2026-09-22: four Human/High Order
+// class pairs and a Windshaper warrior), which the fix may have changed.
 var RaceOffsets = map[proto.Race]stats.Stats{
 	proto.Race_RaceUnknown: {},
 	proto.Race_RaceHuman:   {},
 	proto.Race_RaceOrc: {
 		stats.Agility:   -3,
 		stats.Strength:  3,
-		stats.Intellect: -1,
-		stats.Spirit:    0,
-		stats.Stamina:   1,
+		stats.Intellect: -3,
+		stats.Spirit:    3,
+		stats.Stamina:   2,
 	},
 	proto.Race_RaceDwarf: {
-		stats.Agility:   -2,
+		stats.Agility:   -4,
 		stats.Strength:  2,
 		stats.Intellect: -1,
-		stats.Spirit:    0,
-		stats.Stamina:   1,
+		stats.Spirit:    -1,
+		stats.Stamina:   3,
 	},
 	proto.Race_RaceNightElf: {
-		stats.Agility:   2,
-		stats.Strength:  -2,
+		stats.Agility:   5,
+		stats.Strength:  -3,
 		stats.Intellect: 0,
 		stats.Spirit:    0,
-		stats.Stamina:   0,
+		stats.Stamina:   -1,
 	},
 	proto.Race_RaceSkyborneHighOrder: {
 		stats.Agility:   1,
@@ -73,22 +81,22 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 		stats.Stamina:   -1,
 	},
 	proto.Race_RaceUndead: {
-		stats.Agility:   -1,
-		stats.Strength:  2,
+		stats.Agility:   -2,
+		stats.Strength:  -1,
 		stats.Intellect: -2,
-		stats.Spirit:    0,
+		stats.Spirit:    5,
 		stats.Stamina:   1,
 	},
 	proto.Race_RaceTauren: {
-		stats.Agility:   -2,
-		stats.Strength:  2,
-		stats.Intellect: -2,
-		stats.Spirit:    0,
+		stats.Agility:   -5,
+		stats.Strength:  5,
+		stats.Intellect: -5,
+		stats.Spirit:    2,
 		stats.Stamina:   2,
 	},
 	proto.Race_RaceGnome: {
-		stats.Agility:   1,
-		stats.Strength:  -3,
+		stats.Agility:   3,
+		stats.Strength:  -5,
 		stats.Intellect: 3,
 		stats.Spirit:    0,
 		stats.Stamina:   -1,
@@ -96,9 +104,9 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 	proto.Race_RaceTroll: {
 		stats.Agility:   2,
 		stats.Strength:  1,
-		stats.Intellect: -3,
-		stats.Spirit:    0,
-		stats.Stamina:   0,
+		stats.Intellect: -4,
+		stats.Spirit:    1,
+		stats.Stamina:   1,
 	},
 }
 
@@ -336,7 +344,7 @@ func getBaseStatsCombo(r proto.Race, c proto.Class, level int32) stats.Stats {
 	}
 	// 1.12 has no Skyborne rows, so we build both Skyborne's rows from the Undead ones and the
 	// gap between the two races in RaceOffsets. The Undead rows don't have the Human's Spirit
-	// racial baked in like 1.12's Human rows do.
+	// racial baked in like 1.12's Human rows do, nor a Gnome's Expansive Mind.
 	var raceShift stats.Stats
 	switch r {
 	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:

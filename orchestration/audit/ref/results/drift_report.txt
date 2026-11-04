@@ -60,24 +60,12 @@
 ## priest__shadow-holy spec=shadow_holy diffs=0 (apl/prepull 0)
 ## priest__shadow spec=shadow diffs=0 (apl/prepull 0)
 ## priest__smite spec=smite diffs=0 (apl/prepull 0)
-## rogue__combat-daggers-humanoid spec=rogue_combat_daggers diffs=1 (apl/prepull 0)
-   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
 ## rogue__combat-daggers spec=rogue_combat_daggers diffs=0 (apl/prepull 0)
-## rogue__combat-swords-humanoid spec=rogue_combat_swords diffs=1 (apl/prepull 0)
-   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
 ## rogue__combat-swords spec=rogue_combat_swords diffs=0 (apl/prepull 0)
-## rogue__mutilate-humanoid spec=rogue_assassination diffs=1 (apl/prepull 0)
-   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
 ## rogue__mutilate spec=rogue_assassination diffs=0 (apl/prepull 0)
-## rogue__seal-fate-daggers-humanoid spec=rogue_combat diffs=1 (apl/prepull 0)
-   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
 ## rogue__seal-fate-daggers spec=rogue_combat diffs=0 (apl/prepull 0)
-## rogue__seal-fate-swords-humanoid spec=rogue_combat_swords diffs=1 (apl/prepull 0)
-   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
 ## rogue__seal-fate-swords spec=rogue_combat_swords diffs=0 (apl/prepull 0)
-## rogue__subtlety-humanoid spec=rogue_subtlety diffs=1 (apl/prepull 0)
-   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
-## rogue__subtlety spec=rogue_subtlety diffs=0 (apl/prepull 0)
+## rogue__subtlety spec=rogue_subtlety MKSETTINGS FAIL: unknown race "Night Elf"
 ## shaman__elemental-level60-mana-tide spec=ele_mana_tide diffs=0 (apl/prepull 0)
 ## shaman__elemental-level60 spec=ele diffs=0 (apl/prepull 0)
 ## shaman__enhancement-imp-gw spec=enh diffs=0 (apl/prepull 0)
@@ -90,6 +78,7 @@
    .raid.debuffs.curseOfRecklessness: committed=<absent> regen=True
    .raid.debuffs.faerieFire: committed=<absent> regen=True
 ## warlock__affliction spec=affliction diffs=0 (apl/prepull 0)
+## warlock__affliction_wrack spec=affliction diffs=0 (apl/prepull 0)
 ## warlock__demonology-duty-curse spec=demonology diffs=1 (apl/prepull 0)
    .raid.debuffs.curseOfElements: committed=False regen=True
 ## warlock__demonology-duty-recklessness spec=demonology diffs=2 (apl/prepull 0)

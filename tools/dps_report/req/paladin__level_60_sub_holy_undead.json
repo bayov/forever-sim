@@ -216,6 +216,39 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 24239
+                      }
+                    }
+                  },
+                  "notes": "Hammer of Wrath below 20% health."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20924
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "currentManaPercent": {}
+                        },
+                        "op": "OpGe",
+                        "rhs": {
+                          "const": {
+                            "val": "0.2"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Consecration with the mana to spare."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 20271
                       }
                     },
@@ -372,16 +405,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 24239
-                      }
-                    }
-                  },
-                  "notes": "Hammer of Wrath below 20% health."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 10333
                       }
                     }
@@ -397,29 +420,6 @@
                     }
                   },
                   "notes": "Exorcism on cooldown, only against Undead and Demons."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20924
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "lhs": {
-                          "currentManaPercent": {}
-                        },
-                        "op": "OpGe",
-                        "rhs": {
-                          "const": {
-                            "val": "0.2"
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Consecration with the mana to spare."
                 },
                 {
                   "action": {
@@ -462,8 +462,7 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury",
-      "salvation": true
+      "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
       "judgementOfWisdom": true,

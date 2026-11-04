@@ -1,38 +1,39 @@
-# Rotations pass 48 (quiet: no findings)
+# Rotations pass 52 (no findings)
 
-- Master: a0b306984 (from 796495d6f), audited 2026-11-03. Client 1.60.1.70707, unchanged.
-- New baseline: `ref/rotations/baseline_a0b3069_3000it_seed424242.tsv` (replaces `baseline_796495d_...`).
+- Master: fb584eafa (from f331f0cff), audited 2026-11-04. Client 1.60.1.70753 (no ledger change).
+- No non-test sim `.go` changed. One Level 60 APL changed in logic (`ui/warrior/apls/level60_fury.apl.json`), so not quiet by the diff rule; screened it.
+- Regression baseline kept (`ref/rotations/baseline_f331f0c_3000it_seed424242.tsv`): no sim change, only Fury's rows move by the rotation.
 
 ## What changed
 
-| Change | Effect on Level 60 rotations |
+| Commit | Change |
 |---|---|
-| Mage: Ice Lance shares Fire Blast's category 19 cooldown; Fingers of Frost buff id 400670 -> 400669 in sim and the Frost/Frostfire APLs (d7541708d) | Frostfire -10.9 in baseline (published re-sim 1076.0 -> 1064.3). Frost unchanged (id rename only). Frostfire re-checked below: its order still wins |
-| Warlock Bane of Doom hold, doomAlign 1 s (58a1c3593), all 12 warlock APLs | Spot-check, Affliction, old Doom line vs new, paired 20k, s0 1e6: +0.83 / +2.07 / +1.83 ±0.2 at 120/180/300 s. Matches the commit's +0.9 / +2.2 / +2.0 |
-| Warrior Blood Craze (407f959a5) | A self-heal; no DPS effect on the DPS presets (no warrior row moved) |
-| Restoration shaman healer APLs (raid_healer, tank_healer), sim/shaman/restoration | Healing sim only; not a Level 60 DPS preset |
-| sim/core apl.go / apl_values_spell.go (healer values), raid_damage.go (Share, tank-only raids), tank_score.go, practice | No DPS preset moved more than 0.5 DPS except the mage/warlock rows above |
+| 7b4dc5d97 | Dual wield Fury (`level60_fury`): Bloodthirst ahead of Whirlwind; Heroic Strike from 60 Rage (was 80) and Hamstring from 20 (was 10), both only when Bloodthirst and Whirlwind are >= 1 s from ready; Bloodrage under 50 (was 20). Duty presets keep their rotations. Fury 2H talents: Unbridled Wrath 5/5 (talents only, 2H APL unchanged). |
+| fdb14acd0 | Salvation dropped from the UI raid buffs (req files already had it out). |
+| d9ba4a55c | Standards 38 (Forever only) and 39 (cast time coefficient). No rotation effect. |
 
-## Checks
+Checks: `tools/dps_report/req/warrior__fury.json` embeds exactly the new APL (priority list and prepull equal). Shared run: warrior__fury 1153.0 at 180 s.
 
-- `apl_logic_diff.py 796495d6f a0b306984`: 16 files. Mage Frost/Frostfire FoF id swap (correct: 400669 is the buff the
-  sim now registers, `sim/mage/talents.go:803`), the 12 warlock Doom lines, the two new resto healer APLs. No dead lines
-  or wrong ids spotted.
-- Baseline diff vs `baseline_796495d`: only Frostfire (-10.9) and the five warlock rows (+1.2 to +3.2) moved more than 0.5.
-- Shared run vs published report: 0 of 73 moved more than 0.5 DPS (the re-sims already published).
-- Open findings: none.
+## Screen of the new Fury rotation (`ab.py`, 20k it, 8 blocks, S0 = 1e6, shared CLI fb584eafaf39)
 
-### Frostfire after the shared cooldown (paired 20k, B-A at 120 / 180 / 300 s; baseline A about 1065 at 180 s)
+B-A at 120 / 180 / 300 s, each variant one line from master:
 
-| Variant | s0 1e6 | s0 2e8 | Verdict |
+| Variant | 120 | 180 | 300 |
 |---|---|---|---|
-| Drop the Fingers of Frost Ice Lance line | -27.9 / -69.7 / -64.2 | -28.2 / -70.2 / -63.9 | loses |
-| Fire Blast lines above the FoF Ice Lance | -25.1 / -11.3 / -12.3 | -26.1 / -12.6 / -12.5 | loses |
-| Drop Fire Blast (both lines) | -4.9 / +1.0 / -5.6 | -5.4 / +0.4 / -6.0 | fight-length trade-off, loses |
+| Heroic Strike 50 | -2.58 ±0.67 | -2.55 ±0.59 | -2.84 ±0.25 |
+| Heroic Strike 70 | -1.06 ±0.81 | +0.52 ±0.48 | -0.74 ±0.44 |
+| Hamstring 15 | -0.30 ±0.39 | +0.04 ±0.37 | -0.36 ±0.35 |
+| Hamstring 30 | -0.26 ±0.43 | -1.28 ±0.46 | -1.93 ±0.43 |
+| Bloodrage < 40 | -0.02 ±0.18 | +0.37 ±0.29 | -0.72 ±0.29 |
+| Bloodrage < 70 | -0.02 ±0.30 | -0.22 ±0.69 | -0.61 ±0.48 |
+| Whirlwind before Bloodthirst | -1.17 ±0.57 | -0.64 ±0.47 | +0.10 ±0.26 |
 
-The current Frostfire order holds under the shared cooldown.
+No variant reaches the bar (none gains at 120 and 300 s), so no second seed set was needed. The new thresholds sit at a local optimum.
 
-## Optional (under the bar)
+## Optional
 
-Carried over, not re-measured: Mutilate window 0.5 s (probably moot), Fury-BS HS 55, hunter end-of-fight gates, Shadow
-Mind Blast time-left gate, Destruction Fire DoT gates, Water Shield Magma gate.
+None new. Earlier optional items stand (see `passes/rotations.md`).
+
+## Open
+
+- Fury duty presets (`fury-duty-battle-shout`, `fury-duty-sunder`) still run the old thresholds by design; whether the new ones carry over to them was not screened.

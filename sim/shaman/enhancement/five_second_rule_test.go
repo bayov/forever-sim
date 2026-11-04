@@ -21,7 +21,7 @@ func newFiveSecondRuleSim(level int32, talents string) (*core.Simulation, *Enhan
 
 	player := newOrcShaman(level, talents, &proto.EnhancementShaman_Options{})
 	player.Equipment = &proto.EquipmentSpec{Items: items}
-	player.BonusStats = &proto.UnitStats{Stats: stats.Stats{stats.Spirit: 30}.ToFloatArray()}
+	player.BonusStats = &proto.UnitStats{Stats: stats.Stats{stats.Spirit: 30}.Add(betaOrcShift).ToFloatArray()}
 	return newShamanSim(player, &proto.Debuffs{}, 60)
 }
 
@@ -198,7 +198,7 @@ func TestOrcShamanFiveSecondRule(t *testing.T) {
 // so we regen the same as when not casting.
 func TestOrcShamanCastingRegenCap(t *testing.T) {
 	// Stormstrike, Improved Stormstrike 2/2 and Mindfulness 3/3.
-	sim, enh := newFiveSecondRuleSim(60, "-0000000000001002-003")
+	sim, enh := newFiveSecondRuleSim(60, "-0000000000010002-003")
 	full := enh.ManaRegenPerSecondWhileNotCasting()
 	casting := 0.58 * full
 	if got := enh.ManaRegenPerSecondWhileCasting(); math.Abs(got-casting) > 1e-9 {

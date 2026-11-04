@@ -2,9 +2,9 @@
 
 Every race gets four racials: two active, two passive. Blizzard's stated goal is similar overall value split differently across offence, defence and utility. Resistance racials are gone. Since client 1.60.1.70425 no racial depends on the weapon held: Human Ruthless gives crit with any weapon, and the Dwarf's mace racial became Earth Fury (crit damage), which the 2026-10-26 pass replaced with Artisan's Precision (hit).
 
-**The 2026-10-26 racial pass.** Blizzard's development notes of 2026-10-26 (post 7, "Racial Abilities and Traits") retune several racials server side; client 1.60.1.70630 still has the old rows, so the text below gives the notes' version, marked "2026-10-26", with the client's in brackets. The sim follows the notes (sim/core/racials_forever.go), and the UI's racials.json carries them through tools/sources/racials_hotfix.json: Human Ruthless 1% crit (was 2%) and The Human Spirit 10% Spirit (was 5%); Dwarf Earth Fury removed for Artisan's Precision, +1% hit with spells and attacks; Tauren Endurance only 5% health, Plainsrunning 2% a stack to 60% and no mounted bonus; Orc Savage removed and Command back, +5% Hunter and Warlock pet damage; Skyborne Wind Blessed 2% haste (was 3%), Read Leyline 50% regen for 15 sec (100% while Attuned), Skysight 15% for 15 sec (30% while Charged).
+**The 2026-10-26 racial pass.** Blizzard's development notes of 2026-10-26 (post 7, "Racial Abilities and Traits") retune several racials; they were server side until client 1.60.1.70753, which carries every one of them (with post 8's Blood Fury 2 min, Berserking 15 sec and Touch of the Grave's 15 sec lockout), so the notes and the client now agree. The text below gives the notes' version, marked "2026-10-26", with the older clients' in brackets. The sim follows the notes (sim/core/racials_forever.go), and the UI's racials.json carries them through tools/sources/racials_hotfix.json: Human Ruthless 1% crit (was 2%) and The Human Spirit 10% Spirit (was 5%); Dwarf Earth Fury removed for Artisan's Precision, +1% hit with spells and attacks; Tauren Endurance only 5% health, Plainsrunning 2% a stack to 60% and no mounted bonus; Orc Savage removed and Command back, +5% Hunter and Warlock pet damage; Skyborne Wind Blessed 2% haste (was 3%), Read Leyline 50% regen for 15 sec (100% while Attuned), Skysight 15% for 15 sec (30% while Charged).
 
-Otherwise the text below is the client's, checked line by line against build 1.60.1.70425 (unchanged in 70630 but for Eureka!'s "for 8 sec") (wago.tools Spell, SpellEffect, SpellEquippedItems, SpellCooldowns, SpellAuraOptions, 2026-10-16; first read from build 1.60.1.69876 through hyjal.cc's racials page), with the cost line the client shows. Each change 70425 made from 70338 says so, with 70338's text. A racial that reads differently per class lists each version. Berserking's duration is missing from the client data ("?"); the sim uses the 15 sec of the 2026-10-27 notes. The earlier BlizzCon transcriptions (wowforevertalents.com, Method, Mobalytics) agreed with this text except for the numbers the client added: Eureka!'s cost cut, Shatter Curse's 15%, Stoneform's 10%, Cannibalize's 7% ticks, Plainsrunning's 1% per 5 sec to 30%, Touch of the Grave's 10% for casters.
+Otherwise the text below is the client's, checked line by line against build 1.60.1.70425 (unchanged in 70630 but for Eureka!'s "for 8 sec") (wago.tools Spell, SpellEffect, SpellEquippedItems, SpellCooldowns, SpellAuraOptions, 2026-10-16; first read from build 1.60.1.69876 through hyjal.cc's racials page), with the cost line the client shows. Each change 70425 made from 70338 says so, with 70338's text. A racial that reads differently per class lists each version. Berserking's duration was missing from the client data until 70753, which gives the 15 sec of the 2026-10-27 notes (DurationIndex 8), as the sim has it. The earlier BlizzCon transcriptions (wowforevertalents.com, Method, Mobalytics) agreed with this text except for the numbers the client added: Eureka!'s cost cut, Shatter Curse's 15%, Stoneform's 10%, Cannibalize's 7% ticks, Plainsrunning's 1% per 5 sec to 30%, Touch of the Grave's 10% for casters.
 
 Legend: NEW = new in Forever, CHANGED = changed from Classic, same = same as Classic, REMOVED = Classic racial not in Forever.
 
@@ -14,22 +14,24 @@ Six at launch: Gnome Priest, Human Hunter, Dwarf Shaman, Orc Mage, Troll Warlock
 
 ## Base attributes
 
-Forever redesigned the races' attributes (user ruling 2026-10-25). At level 1 every race is the class baseline plus a race offset that adds up to 0 over Strength, Agility, Stamina and Intellect and leaves Spirit alone. The sim (sim/core/base_stats.go RaceOffsets at 60, tools/gen_level_base_stats.py below 60) takes, relative to the Human:
+Every race has Classic's base attributes since client 1.60.1.70753: "All Races now have the correct amount of base stats. For example, Tauren Warriors now start with the correct +5 strength relative to Human Warriors (was incorrectly +2). This fix was also applied to High Order and Windshaper Skyborne base stats" (development notes 2026-11-02, post 9). The client has no base stat table, so this is tier 4 (the notes). The sim (sim/core/base_stats.go RaceOffsets at 60, the 1.12 rows themselves in tools/gen_level_base_stats.py below 60) takes, relative to the Human:
 
-| Race | Str | Agi | Sta | Int | Spi | Classic 1.12 (Str, Agi, Sta, Int, Spi) |
+| Race | Str | Agi | Sta | Int | Spi | Before 70753 (Str, Agi, Sta, Int, Spi) |
 | --- | --- | --- | --- | --- | --- | --- |
 | Human | 0 | 0 | 0 | 0 | 0 | 0, 0, 0, 0, 0 |
-| Dwarf | +2 | -2 | +1 | -1 | 0 | +2, -4, +3, -1, -1 |
-| Night Elf | -2 | +2 | 0 | 0 | 0 | -3, +5, -1, 0, 0 |
-| Gnome | -3 | +1 | -1 | +3 | 0 | -5, +3, -1, +3, 0 |
-| High Order Skyborne | -1 | +1 | -1 | +1 | 0 | (new race) |
-| Orc | +3 | -3 | +1 | -1 | 0 | +3, -3, +2, -3, +3 |
-| Undead | +2 | -1 | +1 | -2 | 0 | -1, -2, +1, -2, +5 |
-| Tauren | +2 | -2 | +2 | -2 | 0 | +5, -5, +2, -5, +2 |
-| Troll | +1 | +2 | 0 | -3 | 0 | +1, +2, +1, -4, +1 |
-| Windshaper Skyborne | -1 | +1 | -1 | +1 | 0 | (new race) |
+| Dwarf | +2 | -4 | +3 | -1 | -1 | +2, -2, +1, -1, 0 |
+| Night Elf | -3 | +5 | -1 | 0 | 0 | -2, +2, 0, 0, 0 |
+| Gnome | -5 | +3 | -1 | +3 | 0 | -3, +1, -1, +3, 0 |
+| High Order Skyborne | -1 | +1 | -1 | +1 | 0 | -1, +1, -1, +1, 0 (kept, see below) |
+| Orc | +3 | -3 | +2 | -3 | +3 | +3, -3, +1, -1, 0 |
+| Undead | -1 | -2 | +1 | -2 | +5 | +2, -1, +1, -2, 0 |
+| Tauren | +5 | -5 | +2 | -5 | +2 | +2, -2, +2, -2, 0 |
+| Troll | +1 | +2 | +1 | -4 | +1 | +1, +2, 0, -3, 0 |
+| Windshaper Skyborne | -1 | +1 | -1 | +1 | 0 | -1, +1, -1, +1, 0 (kept, see below) |
 
-Sources: our naked level 1 beta sheets (2026-10-10, Horde, several classes each, the same shift on every class), wowsims/forever 6296e8546d (#597, 2026-10-20: naked level 1 warrior sheets of every race against a Human, this exact table with Spirit 0 everywhere), and their Skyborne sheets (2026-09-22: four Human/High Order class pairs and a Windshaper warrior, the same delta). The Human keeps its Spirit racial (10% since 2026-10-26) on top. We assume the offsets hold at every level, 60 included. Open: wowsims/forever 6fc22306b1 (#619, 2026-10-21) put the seven original races back on Classic's offsets, saying Forever restored them, with no sheet or source; a naked level 1 sheet taken after 2026-10-21 settles it (notes.md).
+The Classic offsets are 1.12's level 1 race attributes against the Human's (player_levelstats); its level 60 rows have the same gaps, but for the Human's Spirit and the Gnome's Intellect, which bake in The Human Spirit and Expansive Mind (the sim applies the Human's 10% Spirit itself, and Forever's Expansive Mind raises the mana pool instead). wowsims/forever has had the same table since 6fc22306b1 (#619, 2026-10-21). The "before" column came from our naked level 1 beta sheets (2026-10-10, Horde) and wowsims/forever 6296e8546d (#597, 2026-10-20, every race's level 1 warrior).
+
+Open: the Skyborne's corrected numbers. Nothing gives them yet (no client table, no sheet since the fix), so both keep the offset of wowsims/forever's Skyborne sheets (2026-09-22: four Human/High Order class pairs and a Windshaper warrior), which the fix may have changed. A naked level 1 Skyborne sheet beside a Human of the same class settles it.
 
 ## Alliance
 
@@ -39,8 +41,8 @@ Classes: Hunter (new), Mage, Paladin, Priest, Rogue, Warlock, Warrior.
 
 - Will to Survive (active) NEW: [Instant; 3 min cooldown] Instantly removes all Stun effects.
 - Perception (active) same: [Instant; 3 min cooldown] Dramatically increases stealth detection for 20 sec.
-- Ruthless (passive) CHANGED: Increases your critical strike chance with all spells and attacks by 1%. (2026-10-26: "Ruthless now increases critical chance by 1% (was 2%)"; client 70630 still reads 2%. 70425 renamed it from Sword Specialization and dropped the weapon rule; 70338: "... by 2% while you have a sword or two-handed sword equipped".)
-- The Human Spirit (passive) CHANGED: Spirit increased by 10%. (2026-10-26: "Human Spirit now increases Spirit by 10% (was 5%)"; client 70630 reads 5%, Classic's.)
+- Ruthless (passive) CHANGED: Increases your critical strike chance with all spells and attacks by 1%. (2026-10-26: "Ruthless now increases critical chance by 1% (was 2%)"; client 70630 still read 2%, 70753 reads 1%. 70425 renamed it from Sword Specialization and dropped the weapon rule; 70338: "... by 2% while you have a sword or two-handed sword equipped".)
+- The Human Spirit (passive) CHANGED: Spirit increased by 10%. (2026-10-26: "Human Spirit now increases Spirit by 10% (was 5%)"; client 70630 read 5%, Classic's; 70753 reads 10%.)
 - Diplomacy REMOVED (was: Reputation gains increased by 10%).
 - Mace Specialization REMOVED (was: Skill with Maces and Two-Handed Maces increased by 5).
 
@@ -50,7 +52,7 @@ Classes: Hunter, Paladin, Priest, Rogue, Shaman (new), Warrior.
 
 - Stoneform (active) CHANGED: [Instant; 3 min cooldown] Instantly removes and grants immunity to all Bleed, Poison, and Disease effects, and reduces all Physical damage taken by 10% for 8 sec.
 - Find Treasure (active) CHANGED: [Instant] Allows the dwarf to sense nearby treasure, making it appear on the minimap. Lasts until cancelled.
-- Artisan's Precision (passive) NEW: Increases your hit chance with spells and attacks by 1%. (2026-10-26: "Earth Fury (2% increased critical strike damage and healing) removed. Added: Artisan's Precision". No client spell yet; client 70630 still has Earth Fury 1259719, "Increases your critical strike bonus to damage and healing by 2%", which 70425 put in place of 70338's Mace Specialization, 1% crit with a mace or two-handed mace.) The sim adds 1% melee (and ranged) hit and 1% spell hit.
+- Artisan's Precision (passive) NEW: Increases your hit chance with spells and attacks by 1%. (2026-10-26: "Earth Fury (2% increased critical strike damage and healing) removed. Added: Artisan's Precision". Client 70753 has it as 1259719, auras 54 and 55 (melee and spell hit) at 1%; until 70707 that spell was Earth Fury, "Increases your critical strike bonus to damage and healing by 2%", which 70425 put in place of 70338's Mace Specialization, 1% crit with a mace or two-handed mace.) The sim adds 1% melee (and ranged) hit and 1% spell hit.
 - Big Game Hunter (passive) NEW: Damage dealt versus Beasts increased by 5%.
 - Frost Resistance REMOVED. Gun Specialization REMOVED.
 
@@ -91,9 +93,9 @@ Classes: Mage, Priest (new), Rogue, Warlock, Warrior.
 Classes: Druid, Hunter, Mage, Rogue, Warrior.
 
 - Walk on Air (active) NEW: [Instant; 1.5 min cooldown, 2 min in 70338] Glide downward through the air for 10 sec while controlling your direction of travel.
-- Read Leyline (active) NEW: [2 sec cast; 2 min cooldown] Increases your Health and Mana regeneration by 50% for 15 sec. Used at a Ley Line it also grants Attuned for 1 hour (it persists through death), which raises the bonus to 100%. It cannot be used while Innervate is active. (2026-10-26: "now increases Mana and Health regeneration by 50% (was 100%), with a 15-second duration". Client 70630 still reads "increasing your Health and Mana regeneration by 100%. Lasts 30 sec if no leyline is nearby, and 15 min if one is found"; 15 sec in 70338, client 70425 moved Energized 1270842 from DurationIndex 8 to 9, wowsims/forever e307ef4b0a.)
-  - The sim (since 2026-10-23) casts it only from an APL, and since 2026-10-26 gives 50% for 15 sec; its fights have no Ley Line, so never the Attuned 100%. Energized is aura 110 (MOD_POWER_REGEN_PERCENT), Innervate's and Evocation's, so it raises the Spirit part of the regen and not mp5; wowsims/forever raises the whole regen. No preset casts it: it lost on the Level 60 Frost, Arcane, Fire and Balance builds at 180 sec, and Frost never gets low enough on mana to want it, even at 480 sec.
-- Wind Blessed (passive) NEW: Increases your spellcasting, melee, and ranged Haste by 2%. (2026-10-26: "Wind-Blessed Haste bonus reduced to 2% (was 3%)"; clients 70425 to 70630 read 3%, 70338 1%.)
+- Read Leyline (active) NEW: [0.5 sec cast; 2 min cooldown] Increases your Health and Mana regeneration by 50% for 15 sec. Used at a Ley Line it also grants Attuned (1259691) for 1 hour (it persists through death, and is removed upon entering a raid), which raises the bonus to 100%. It cannot be used while Innervate is active, and an Innervate replaces it. (Client 1.60.1.70753 cut the cast from 2 sec to 0.5, SpellMisc CastingTimeIndex 5 to 3, and has the 2026-10-26 notes' 50% for 15 sec on Energized 1270842, which 70630 to 70707 read as 100% for 30 sec; 15 sec in 70338. The Innervate rule is the development notes' of 2026-11-02, with no client aura restriction row.)
+  - The sim (since 2026-10-23) casts it only from an APL: a 0.5 sec cast since 70753, 50% for 15 sec, not under an Innervate, and an Innervate ends it. Its fights have no Ley Line, so never the Attuned 100%. Energized is aura 110 (MOD_POWER_REGEN_PERCENT), Innervate's and Evocation's, so it raises the Spirit part of the regen and not mp5; wowsims/forever raises the whole regen. No preset casts it: it lost on the Level 60 Frost, Arcane, Fire and Balance builds at 180 sec with its old 2 sec cast, and Frost never gets low enough on mana to want it, even at 480 sec.
+- Wind Blessed (passive) NEW: Increases your spellcasting, melee, and ranged Haste by 2%. (2026-10-26: "Wind-Blessed Haste bonus reduced to 2% (was 3%)"; clients 70425 to 70707 read 3%, 70338 1%; 70753 reads 2%.)
 - Elemental Insight (passive) NEW: Damage dealt versus Elementals increased by 5%.
 
 ## Horde
@@ -102,9 +104,9 @@ Classes: Druid, Hunter, Mage, Rogue, Warrior.
 
 Classes: Hunter, Mage (new), Rogue, Shaman, Warlock, Warrior.
 
-- Blood Fury (active) CHANGED: [Instant; 2 min cooldown] Increases Attack Power and Spell Power by 10% for 15 sec. The client (70425 to 70634) reads a 3 min cooldown; the development notes of 2026-10-27 (post 8) put it back to 2 min, as in 70338, and the sim follows them.
+- Blood Fury (active) CHANGED: [Instant; 2 min cooldown] Increases Attack Power and Spell Power by 10% for 15 sec. The client (70425 to 70707) read a 3 min cooldown, and 70753 reads 2 min (SpellCooldowns 120000); the development notes of 2026-10-27 (post 8) put it back to 2 min, as in 70338, and the sim follows them.
 - Shatter Curse (active) NEW: [Instant; 3 min cooldown] Instantly removes all Curses and Banes, and reduces all Magical damage taken by 5% for 8 sec. (70338: "Instantly removes and grants immunity to all Curses and Banes, and reduces all Magical damage taken by 15%".)
-- Command (passive) same: Damage dealt by Hunter and Warlock pets increased by 5%. (2026-10-26: "Savage removed (1% increased critical strike chance). Command re-added, increasing Warlock and Hunter pet damage by 5%". Client 70630 still has Savage 20574, "Increases your critical strike chance with all spells and abilities by 1%", which 70425 made of Axe Specialization by dropping the axe requirement, and no Command row; the UI uses Classic's 21563.) The sim multiplies the damage of a hunter's or warlock's pet by 1.05, guardians (hawks, Infernal) not included, as Classic's Command.
+- Command (passive) same: Damage dealt by Hunter and Warlock pets increased by 5%. (2026-10-26: "Savage removed (1% increased critical strike chance). Command re-added, increasing Warlock and Hunter pet damage by 5%". Client 70630 still has Savage 20574, "Increases your critical strike chance with all spells and abilities by 1%", which 70425 made of Axe Specialization by dropping the axe requirement, and no Command row. Client 70753 has Command again in the Orc skill line (20576 for hunters, 20575 for warlocks, 21563 a placeholder for the other classes) and no Savage.) The sim multiplies the damage of a hunter's or warlock's pet by 1.05, guardians (hawks, Infernal) not included, as Classic's Command.
 - Hardiness (passive) CHANGED: Duration of Stun effects on you reduced by 20%.
 - Savage REMOVED (2026-10-26).
 
@@ -115,7 +117,7 @@ Classes: Mage, Paladin (new), Priest, Rogue, Warlock, Warrior.
 - Will of the Forsaken (active) CHANGED: [Instant; 2 min cooldown] Instantly removes all Charm, Fear and Sleep effects.
 - Cannibalize (active) CHANGED: [5 yd range; Instant; 2 min cooldown] When activated, regenerates 7% of total Health and 7% of total Mana every 2 sec for 10 sec. Only works on Humanoid or Undead corpses within 5 yds. Any movement, action, or damage taken while Cannibalizing will cancel the effect.
 - Underwater Breathing (passive) same: Underwater breath lasts 300% longer than normal.
-- Touch of the Grave (passive) NEW: Your spells and attacks have a chance to drain Health from the target, up to 5% of your maximum Health. Client 70425: 20% (Warrior, Rogue, Paladin, spell 1260189) or 30% (Mage, Priest, Warlock, 1260201) a hit, at most once every 25 sec in the client (SpellAuraOptions, still in 70634), 15 sec since the development notes of 2026-10-27 (post 8), which the sim follows. It was 5% and 10% with no lockout before. Since client 70425 the drain no longer scales with Shadow damage bonuses on the target or the caster (development notes 2026-10-15: "Touch of the Dead no longer scales with Shadow increases on the target or the caster"); the sim gives it no damage modifiers at all.
+- Touch of the Grave (passive) NEW: Your spells and attacks have a chance to drain Health from the target, up to 5% of your maximum Health. Client 70425: 20% (Warrior, Rogue, Paladin, spell 1260189) or 30% (Mage, Priest, Warlock, 1260201) a hit, at most once every 25 sec in the client (SpellAuraOptions, 70425 to 70707), 15 sec since the development notes of 2026-10-27 (post 8) and in client 70753 (ProcCategoryRecovery 15000), which the sim follows. It was 5% and 10% with no lockout before. Since client 70425 the drain no longer scales with Shadow damage bonuses on the target or the caster (development notes 2026-10-15: "Touch of the Dead no longer scales with Shadow increases on the target or the caster"); the sim gives it no damage modifiers at all.
   - Since the 2026-09-24 build it does not break crowd control, and abilities with no damage component (Distract, Pick Pocket, Polymorph, Expose Armor) no longer activate it. A damage over time spell activates it on the cast, not on its ticks (Shadow Word: Pain, the development notes' example). The sim rolls on the cast of a spell with a damage multiplier and on each landed attack that comes without a cast; periodic ticks never roll.
   - Client 70630 takes four attributes off the drain (1260198): Ignore Caster Modifiers (Attributes_3 0x20000000) and three healing ones (Attributes_9 0x1000000 Ignore Caster Healing Modifiers, Attributes_10 0x2, Attributes_13 0x4000000). It keeps Ignore Damage Taken Modifiers (Attributes_4 0x100) and Ignore Caster Damage Modifiers (Attributes_6 0x20000000), and the drain (effect 9, 5 base points) has no spell power coefficient, so its damage still takes no modifier on either side, as the sim has it.
 - Shadow Resistance REMOVED.
@@ -146,7 +148,7 @@ Classes: Druid, Hunter, Rogue, Shaman, Warrior.
 
 - Walk on Air (active) NEW: [Instant; 1.5 min cooldown, 2 min in 70338] Glide downward through the air for 10 sec while controlling your direction of travel.
 - Skysight (active) NEW: [0.5 sec cast; 2 min cooldown] Increases your movement speed by 15% for 15 sec. Used at an elemental convergence it also grants Charged for 1 hour (it persists through death), which raises the bonus to 30%. (2026-10-26: "Skysight is now a 15% increased movement speed (was 10%), with a 15-second duration". Client 70630 reads "increasing your movement and mounted movement speeds by 10%. Lasts 30 sec if no elemental convergence is nearby, and 15 min if one is found".) Movement only; the sim leaves it out.
-- Wind Blessed (passive) NEW: Increases your spellcasting, melee, and ranged Haste by 2%. (2026-10-26; clients 70425 to 70630 read 3%, 70338 1%.)
+- Wind Blessed (passive) NEW: Increases your spellcasting, melee, and ranged Haste by 2%. (2026-10-26; clients 70425 to 70707 read 3%, 70338 1%; 70753 reads 2%.)
 - Elemental Insight (passive) NEW: Damage dealt versus Elementals increased by 5%.
 
 ## DPS-relevant summary (development notes 2026-10-26 over client 70630)

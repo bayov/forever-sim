@@ -20,9 +20,11 @@ import (
 // Forever's poisons also scale with attack power: Instant Poison adds 0.5% of it a hit, and each
 // Deadly Poison stack 0.45% of it over the whole 12 sec, read when each tick lands (wowsims/forever
 // 16d879ae28 and a8f1e0b5d2, "Confirmed by Zirene"). The client has no coefficient for either.
+// Blizzard's November 2 development notes double both: Deadly Poison 0.009 (was 0.0045) and
+// Instant Poison 0.01 (was 0.005).
 const (
-	instantPoisonAPCoefficient = 0.005
-	deadlyPoisonAPCoefficient  = 0.0045
+	instantPoisonAPCoefficient = 0.01
+	deadlyPoisonAPCoefficient  = 0.009
 )
 
 // TODO: Add charges to poisons
@@ -38,11 +40,11 @@ func (rogue *Rogue) GetInstantPoisonProcChance() float64 {
 }
 
 func (rogue *Rogue) GetDeadlyPoisonProcChance() float64 {
-	return 0.3 + rogue.improvedPoisons() + rogue.additivePoisonBonusChance
+	return 0.3 + rogue.improvedPoisons() + rogue.additivePoisonBonusChance + rogue.venomPoisonChance
 }
 
 func (rogue *Rogue) GetWoundPoisonProcChance() float64 {
-	return 0.3 + rogue.improvedPoisons() + rogue.additivePoisonBonusChance
+	return 0.3 + rogue.improvedPoisons() + rogue.additivePoisonBonusChance + rogue.venomPoisonChance
 }
 
 func (rogue *Rogue) improvedPoisons() float64 {
@@ -86,7 +88,8 @@ func (rogue *Rogue) applyInstantPoison() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+			// Shank suppresses weapon procs (shank.go).
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 				return
 			}
 
@@ -111,7 +114,8 @@ func (rogue *Rogue) applyDeadlyPoison() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+			// Shank suppresses weapon procs (shank.go).
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 				return
 			}
 			if sim.RandomFloat("Deadly Poison") < rogue.GetDeadlyPoisonProcChance() {
@@ -135,7 +139,8 @@ func (rogue *Rogue) applyWoundPoison() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
+			// Shank suppresses weapon procs (shank.go).
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(core.SpellFlagSuppressWeaponProcs) {
 				return
 			}
 

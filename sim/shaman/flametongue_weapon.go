@@ -59,6 +59,7 @@ func (shaman *Shaman) newFlametongueImbueSpell(weapon *core.Item) *core.Spell {
 		DamageMultiplier: []float64{1, 1.05, 1.1, 1.15}[shaman.Talents.ElementalWeapons],
 		ThreatMultiplier: 1,
 		BonusCoefficient: spellCoeff,
+		DownrankLevel:    int(FlametongueWeaponLevel[rank]),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			if weapon.SwingSpeed != 0 {

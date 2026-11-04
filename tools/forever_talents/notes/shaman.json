@@ -1,0 +1,115 @@
+{
+ "class": "shaman",
+ "entries": [
+  {
+   "tree": "Elemental Combat",
+   "op": "remove",
+   "name": "Lava Burst",
+   "source": "development notes 2026-11-02 (post 9): Lava Burst removed, replaced with Call of Thunder"
+  },
+  {
+   "tree": "Elemental Combat",
+   "op": "add",
+   "talent": {
+    "name": "Call of Thunder",
+    "max": 1,
+    "row": 5,
+    "col": 2,
+    "passive": true,
+    "icon": "spell_nature_callstorm",
+    "desc": {
+     "1": "Increases the critical strike chance of your Lightning Bolt and Chain Lightning spells by 5%."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Call of Thunder replaces Lava Burst; on Lava Burst's square (row 5, col 2), the notes give no position; text from the client's 16120"
+  },
+  {
+   "tree": "Elemental Combat",
+   "op": "set",
+   "name": "Elemental Mastery",
+   "fields": {
+    "name": "Lightning Mastery",
+    "req": "Call of Thunder",
+    "desc": {
+     "1": "Gain mastery over Lightning, reducing the cast time of Lightning Bolt by 0.5 sec, and removing the cooldown from Chain Lightning. Lasts 15 sec."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Elemental Mastery renamed Lightning Mastery, all references to Lava Burst removed; it needs Call of Thunder in Lava Burst's place (guessed); the new icon isn't named"
+  },
+  {
+   "tree": "Elemental Combat",
+   "op": "set",
+   "name": "Elemental Reach",
+   "fields": {
+    "desc": {
+     "1": "Increases the range of your Lightning Bolt, Chain Lightning and Fire Nova spells by 3 yards.",
+     "2": "Increases the range of your Lightning Bolt, Chain Lightning and Fire Nova spells by 6 yards."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): no longer reduces the cooldown of Totemic Projection; Lava Burst removed"
+  },
+  {
+   "tree": "Elemental Combat",
+   "op": "set",
+   "name": "Lightning Overload",
+   "fields": {
+    "desc": {
+     "1": "Gives your Lightning Bolt and Chain Lightning spells a 10% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.",
+     "2": "Gives your Lightning Bolt and Chain Lightning spells a 20% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat.",
+     "3": "Gives your Lightning Bolt and Chain Lightning spells a 30% chance to cast a second, similar spell on the same target at no additional cost that causes half damage and no threat."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): 10/20/30% (was 3/7/10%)"
+  },
+  {
+   "tree": "Enhancement",
+   "op": "set",
+   "name": "Improved Ghost Wolf",
+   "fields": {
+    "row": 4,
+    "col": 4
+   },
+   "source": "development notes 2026-11-02 (post 9): moved from row 2 to row 4; column 4 guessed (the only free square on row 4)"
+  },
+  {
+   "tree": "Enhancement",
+   "op": "set",
+   "name": "Mental Dexterity",
+   "fields": {
+    "desc": {
+     "1": "Increases your Attack Power by an amount equal to 50% of your Intellect.",
+     "2": "Increases your Attack Power by an amount equal to 100% of your Intellect.",
+     "3": "Increases your Attack Power by an amount equal to 150% of your Intellect."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): 50/100/150% (was 33/67/100%)"
+  },
+  {
+   "tree": "Enhancement",
+   "op": "set",
+   "name": "Flurry",
+   "fields": {
+    "desc": {
+     "1": "Increases your attack speed by 6% for your next 3 swings after dealing a melee critical strike.",
+     "2": "Increases your attack speed by 12% for your next 3 swings after dealing a melee critical strike.",
+     "3": "Increases your attack speed by 18% for your next 3 swings after dealing a melee critical strike.",
+     "4": "Increases your attack speed by 24% for your next 3 swings after dealing a melee critical strike.",
+     "5": "Increases your attack speed by 30% for your next 3 swings after dealing a melee critical strike."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): 6/12/18/24/30% (was 5 to 25%)"
+  },
+  {
+   "tree": "Enhancement",
+   "op": "set",
+   "name": "Stormstrike",
+   "fields": {
+    "desc": {
+     "1": "Instantly strike for 150% normalized weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec."
+    },
+    "cost": "8% base Mana; Melee Range; Instant; 6 sec cooldown"
+   },
+   "source": "development notes 2026-11-02 (post 9): 150% normalized weapon damage (was 100%), 6 sec cooldown (was 8)"
+  }
+ ]
+}

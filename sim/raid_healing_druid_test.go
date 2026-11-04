@@ -219,6 +219,55 @@ func TestDruidHealingTouch(t *testing.T) {
 	}
 }
 
+// Forever's downranking (sim/core/downrank.go) takes a rank learned more than 17 levels below 60 down 5%
+// a level, the direct heal and the HoT alike: Healing Touch rank 6 (learned at 32) keeps 45% of its
+// coefficient, Rejuvenation rank 6 (34) 55% of its 20% a tick, Regrowth rank 4 (30) 35%, and rank 8 of
+// Healing Touch (44) all of it.
+func TestDruidDownrankedHeals(t *testing.T) {
+	for _, c := range []struct {
+		name    string
+		spellID int32
+		tick    bool
+		base    func(hp float64) (float64, float64)
+	}{
+		{"Healing Touch rank 6", 6778, false, func(hp float64) (float64, float64) {
+			low, high := druid.HealingTouchRanks[6].At(60)
+			return low + 0.45*hp, high + 0.45*hp
+		}},
+		{"Healing Touch rank 8", 9758, false, func(hp float64) (float64, float64) {
+			low, high := druid.HealingTouchRanks[8].At(60)
+			return low + hp, high + hp
+		}},
+		{"Rejuvenation rank 6", 3627, true, func(hp float64) (float64, float64) {
+			tick := druid.RejuvenationRanks[6].TickAt(60) + 0.55*0.2*hp
+			return tick, tick
+		}},
+		{"Regrowth rank 4", 8940, true, func(hp float64) (float64, float64) {
+			tick := druid.RegrowthRanks[4].TickAt(60) + 0.35*0.071*hp
+			return tick, tick
+		}},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			cond, heals := "", []healEvent(nil)
+			if c.tick {
+				cond = hotOff(c.spellID, "Tank")
+			}
+			l := runDruidLog(t, druidRaid(t, nil, 0, castAt(c.spellID, "Tank", cond)))
+			if heals = l.directs(c.spellID); c.tick {
+				heals = l.ticks(c.spellID)
+			}
+			if len(heals) == 0 {
+				t.Fatalf("no heals")
+			}
+			for _, h := range heals {
+				if low, high := c.base(h.healingPower); h.base < low-0.5 || h.base > high+0.5 {
+					t.Fatalf("%.1f with %.0f healing power, want %.1f to %.1f", h.base, h.healingPower, low, high)
+				}
+			}
+		})
+	}
+}
+
 // Regrowth rank 9: 1021 ± 5.5% plus 28.6% of healing power, then 7 ticks of 142 plus 7.1%, 525 mana, 2
 // sec. Recast while its HoT is up, it starts over.
 func TestDruidRegrowth(t *testing.T) {

@@ -80,7 +80,7 @@ const (
 	whirlwind   = 6975  // Whirlwind Axe, a level 30 two-handed axe.
 	treeChop    = 2907  // Dwarven Tree Chopper, a two-handed axe with 0.6% expertise and no skill.
 	thorium     = 12775 // Huge Thorium Battleaxe, a two-handed axe with +2 skill under Forever.
-	stormstrike = "-0000000000001"
+	stormstrike = "-000000000001"
 )
 
 // newTargetLevelSim starts a Forever sim of an Orc shaman at level, holding weapon, against

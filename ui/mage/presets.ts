@@ -135,7 +135,9 @@ export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Frost', Level6
 // and Fireball. Combustion and the on-use
 // trinket wait for the 5th Fire Vulnerability stack. When a Fireball would not land before the
 // end (its cast plus 1.25 sec, the Fireball's flight from Fire's 30 yd), Fire Blast and Scorch
-// instead.
+// instead. Since round 70753 (2026-11-03) Scorch refreshes the stacks with under 9 sec left on
+// them, not 5: +1.4 / +0.6 / +1.5 at 120 / 180 / 300 sec on two seed sets. It is 1066.8 / 1057.9 /
+// 1042.0 as a Human (20,000 iterations, seed 1, the report request).
 export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Fire', Level60FireAPL, {
 	tooltip: 'Fireball, Pyroblast on 3 Heating Up stacks, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Synthetic',
@@ -152,8 +154,14 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Fire', Level60F
 // the on-use trinket unless it won't be back before the last 15 sec. When a Frostbolt would not
 // land before the end (its cast plus 0.75 sec), Fire Blast instead. Arcane stands at Fire Blast's
 // 20 yd, out of Arcane Explosion's 10, so the finisher no longer casts it (2026-11-02).
+// Round 70753 (2026-11-03): the build ended its fights with about 5000 mana it couldn't spend, so
+// Arcane Blast goes ahead of the Frostbolt filler while the mana is more than 75 a second of the
+// fight left (blastFiller, tools/rotopt/mage_arcane.go).
+// Since the exploratory search of 2026-11-03 Arcane Blast also goes on Clearcasting (the free cast goes
+// where four stacks make the cost five times the base), and Fireball is the filler in place of
+// Frostbolt, with the finisher's pad Fireball's flight from 20 yd (0.85 sec).
 export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Arcane', Level60ArcaneAPL, {
-	tooltip: 'Four Arcane Blast stacks for spell damage, Arcane Wrath on cooldown, Arcane Missiles on Missile Barrage, Frostbolt.',
+	tooltip: 'Four Arcane Blast stacks for spell damage, Arcane Wrath on cooldown, Arcane Missiles on Missile Barrage, Fireball.',
 	group: 'Synthetic',
 });
 
@@ -281,8 +289,18 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Fire', SavedTal
 // Frost Channeling 2 to Accelerant 5 (0.5 sec off Arcane Wrath's cast) and Incineration 2 (31/7/13).
 // With Presence of Mind on Arcane Wrath it is 947.3 / 939.0 / 931.1 as a Gnome (20,000 iterations,
 // seed 1; seed 1000003 within 0.4), +48 / +45 / +43.
-export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Arcane', SavedTalents.create({ talentsString: '050205203100211531-25-0535' }), {
-	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Arcane Wrath with Accelerant, Missile Barrage, Frostbolt.',
+// Round 70753 (2026-11-03): with the extra Arcane Blasts spending the spare mana, the talent search
+// at 180 sec moved Ice Shards 4 to Arcane Meditation 3 and Incineration 5 (31/10/10). With the
+// rotation it is 981.3 / 953.9 / 936.8 as a Gnome (20,000 iterations, seed 1, the report request),
+// +36.4 / +16.6 / +6.3 over the old build and rotation on two seed sets.
+// Exploratory search (2026-11-03, talent searches seeded from Arcane + Fire, Arcane + Frost and deep
+// Arcane): with Fireball as the filler the Frost points go to Ignite 5 and Flame Throwing 1, keeping
+// Precision 3 (31/16/3+, 050205203100311531-5551-003). 986.1 / 962.3 / 944.5 as a Gnome (20,000
+// iterations, seed 1, the report request), +4.5 / +8.3 / +7.5 on two seed sets. The Frostbolt build
+// with Arcane Blast on Clearcasting is 983.5 / 956.9 / 940.8. Gnome stays best (962.4 at 180 sec),
+// then Undead 960.2, Human 957.7, Orc 957.6, High Order 951.8 (own opener), Troll 950.1.
+export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Arcane', SavedTalents.create({ talentsString: '050205203100311531-5551-003' }), {
+	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Arcane Wrath with Accelerant, Missile Barrage, Fireball with Ignite.',
 	group: 'Synthetic',
 });
 
@@ -366,7 +384,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
-	salvation: true,
 });
 
 // Blessings of Kings and Wisdom.
@@ -496,6 +513,13 @@ export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Frost', le
 //   Frostfire: Human 1078.6 / 1076.6 / 1055.7, Gnome 1076.7 / 1075.1 / 1050.9, Undead 1075.5 / 1070.8 / 1050.2,
 //              Orc 1073.0 / 1070.5 / 1048.5, Troll 1069.1 / 1063.7 / 1043.4, High Order 1063.9 / 1055.5 / 1036.0
 //              (+14 with its own rotation).
+// Race check (2026-11-03, round 70753: Classic's race base stats, the Nov 2 racials; 20000 iterations,
+// seed 1, 180 sec, each race's own rotation where it has one). Every preset keeps its race.
+//   Arcane:    Gnome 953.9, Undead 952.2, High Order 948.4, Human 948.3, Orc 948.1, Troll 944.3.
+//   Fire:      Gnome 1058.4, Human 1057.9 (Gnome's 0.4 is under the 0.5 a switch needs), Undead 1057.0,
+//              Orc 1054.6, High Order 1046.8, Troll 1046.7.
+//   Frost:     High Order 944.7, Troll 938.4, Undead 937.9, Orc 937.2, Gnome 937.0, Human 934.5.
+//   Frostfire: Human 1064.3, Gnome 1061.5, Troll 1059.4, Undead 1058.4, Orc 1058.3, High Order 1055.3.
 const buildCommon = {
 	group: 'Synthetic',
 	gear: GearLevel60Phase1Synthetic,

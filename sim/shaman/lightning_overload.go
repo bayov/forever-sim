@@ -28,9 +28,14 @@ func (shaman *Shaman) registerOverloadSpell(config core.SpellConfig) *core.Spell
 	return shaman.RegisterSpell(config)
 }
 
-// 3 / 7 / 10% per the beta client.
+// 10 / 20 / 30% since the November 2 development notes (post 9, for launch; 3 / 7 / 10% in the
+// beta client, 1.60.1.70753 included). Classic has no Lightning Overload talent; outside Forever it
+// keeps the client's 3 / 7 / 10% (standards 37: notes-only values are gated under Forever).
 func (shaman *Shaman) lightningOverloadChance() float64 {
-	return []float64{0, .03, .07, .10}[shaman.Talents.LightningOverload]
+	if !shaman.Env.IsForever() {
+		return []float64{0, .03, .07, .10}[shaman.Talents.LightningOverload]
+	}
+	return []float64{0, .10, .20, .30}[shaman.Talents.LightningOverload]
 }
 
 func (shaman *Shaman) tryLightningOverload(sim *core.Simulation, target *core.Unit, spell *core.Spell, overload *core.Spell) {

@@ -1,0 +1,20 @@
+{
+ "class": "druid",
+ "entries": [
+  {
+   "tree": "Feral Combat",
+   "op": "set",
+   "name": "Rend and Tear",
+   "fields": {
+    "desc": {
+     "1": "Increases damage done by your melee abilities on Bleeding targets by 3%.",
+     "2": "Increases damage done by your melee abilities on Bleeding targets by 6%.",
+     "3": "Increases damage done by your melee abilities on Bleeding targets by 9%.",
+     "4": "Increases damage done by your melee abilities on Bleeding targets by 12%.",
+     "5": "Increases damage done by your melee abilities on Bleeding targets by 15%."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Rend and Tear damage bonus increased to 3/6/9/12/15% (was 2/4/6/8/10%); client 70753 unchanged"
+  }
+ ]
+}

@@ -4,6 +4,7 @@
 // glow on your weapon, the totems' own models, and the swing and impact sounds of melee.
 
 import * as THREE from 'three';
+import type { Crowd } from './crowd';
 import { prefetch } from './files';
 import { Model } from './model';
 import { Playing, SoundRef, Sounds } from './sound';
@@ -119,7 +120,23 @@ function kits(sounds: KitSound[] | undefined): KitSound[][] {
 
 // An effect model on a unit. A one-shot ends when its animation does. One that holds runs its
 // hold until it's stopped, then its decay.
-type Live = { model: Model; km: KitModel; hold: boolean; until: number; stopped: boolean; ending?: boolean; fadeUntil?: number };
+// behind is the time the effect's animation hasn't caught up on yet (see updateEvery).
+type Live = { model: Model; km: KitModel; hold: boolean; until: number; stopped: boolean; ending?: boolean; fadeUntil?: number; behind?: number };
+
+// updateEvery is how often an effect animates, by its distance from the camera, like the raid
+// test's raiders: past 40 yards 30 times a second, past 20 yards 60, and near you every frame.
+// In the raid test 150 effects played at once, most on the casters' hands 20 to 30 yards away.
+function updateEvery(m: Model): number {
+	const camera = Model.camera;
+	if (!camera) return 0;
+	const e = m.root.matrixWorld.elements;
+	const c = camera.matrixWorld.elements;
+	const d2 = (e[12] - c[12]) ** 2 + (e[13] - c[13]) ** 2 + (e[14] - c[14]) ** 2;
+	return d2 > 1600 ? 1 / 30 : d2 > 400 ? 1 / 60 : 0;
+}
+
+const missileStep = new THREE.Vector3();
+const noseFirst = new THREE.Vector3(1, 0, 0);
 
 export class Effects {
 	private live: Live[] = [];
@@ -133,6 +150,8 @@ export class Effects {
 	private imbues = new Map<string, { name: string; models: { model: Model; km: KitModel }[] }>();
 	private clock = 0;
 	melee: MeleeSounds = {};
+	// Where the raid test's effects draw together.
+	crowd?: Crowd;
 	steps?: SoundRef[];
 	grunts?: SoundRef[];
 	draw?: SoundRef[];
@@ -158,6 +177,8 @@ export class Effects {
 		if (km.yaw) model.root.rotation.y = km.yaw;
 		point.add(model.root);
 		model.enableParticles(this.world);
+		// In the raid test the effects draw in the crowd, yours with the casters' same ones.
+		this.crowd?.add([model]);
 		const first = playEffect(model, km, hold);
 		// A one-shot with no animation of its own shows for a second.
 		const seconds = hold ? Infinity : first > 0 ? first : 1;
@@ -343,10 +364,12 @@ export class Effects {
 		const start = new THREE.Vector3();
 		(from.attachPoint(m.attachment ?? 38) ?? from.attachPoint(22) ?? from.root).getWorldPosition(start);
 		const dest = to.attachPoint(m.destinationAttachment ?? 34) ?? to.root;
-		const target = () => dest.getWorldPosition(new THREE.Vector3());
+		const at = new THREE.Vector3();
+		const target = () => dest.getWorldPosition(at);
 		model.root.position.copy(start);
 		this.world.add(model.root);
 		model.enableParticles(this.world);
+		this.crowd?.add([model]);
 		playEffect(model, m.model!, true);
 		const sounds = kits(m.sound).map(kit => this.sounds.play(kit, model.root));
 		this.missiles.push({ model, km: m.model!, from: start, to: target, speed: m.speed, pos: start.clone(), sounds, onLand });
@@ -416,7 +439,7 @@ export class Effects {
 		const key = `${name ?? ''}@${weapon ? weapon.m2.name : ''}`;
 		const was = this.imbues.get(hand);
 		if (was?.name === key) return;
-		for (const m of was?.models ?? []) m.model.dispose();
+		for (const m of was?.models ?? []) m.model.recycle();
 		const now = { name: key, models: [] as { model: Model; km: KitModel }[] };
 		this.imbues.set(hand, now);
 		if (!name || !weapon) return;
@@ -501,20 +524,24 @@ export class Effects {
 				m.mesh.visible = false;
 			}
 			if (l.fadeUntil !== undefined && this.clock >= l.fadeUntil) {
-				m.dispose();
+				m.recycle();
 				this.live.splice(i, 1);
 				continue;
 			}
-			m.update(dt);
+			l.behind = (l.behind ?? 0) + dt;
+			if (l.behind >= updateEvery(m)) {
+				m.update(l.behind);
+				l.behind = 0;
+			}
 		}
 		for (let i = this.missiles.length - 1; i >= 0; i--) {
 			const m = this.missiles[i];
 			const to = m.to();
 			const step = m.speed * dt;
-			const d = to.clone().sub(m.pos);
+			const d = missileStep.subVectors(to, m.pos);
 			if (d.length() <= step) {
 				for (const p of m.sounds) p.then(h => h?.stop(100));
-				m.model.dispose();
+				m.model.recycle();
 				m.onLand?.();
 				this.missiles.splice(i, 1);
 				continue;
@@ -523,7 +550,7 @@ export class Effects {
 			m.pos.addScaledVector(d, step);
 			m.model.root.position.copy(m.pos);
 			// The missile flies nose first (+x).
-			m.model.root.quaternion.setFromUnitVectors(new THREE.Vector3(1, 0, 0), d);
+			m.model.root.quaternion.setFromUnitVectors(noseFirst, d);
 			if (m.model.baseDone) {
 				const loop = holdAnim(m.model, m.km);
 				if (loop !== undefined) m.model.play(loop, { loop: true, fade: 0 });

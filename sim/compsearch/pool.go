@@ -126,6 +126,7 @@ var leftOut = map[string]string{
 	"rogue__seal-fate-swords":          "Seal Fate Daggers is the Assassination build",
 	"shaman__enhancement-level60":      "Imp GW is the Enhancement build",
 	"shaman__enhancement-water-shield": "Imp GW is the Enhancement build",
+	"warlock__affliction_shadow_bolt":  "Affliction (Wrack) is the Affliction build",
 	"warlock__destruction_fire":        "Destruction is the Destruction build",
 	"warrior__fury_2h":                 "Fury Dual Wield is the Fury build",
 }

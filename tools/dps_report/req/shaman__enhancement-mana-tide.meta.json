@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 7,
   "race": "Orc",
-  "talents": "03-055030031005112051-053051001001",
+  "talents": "03-055030310051012051-053051001001",
   "treeNames": [
     "Elemental",
     "Enhancement",
@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_burning_totem",
   "apl": "mana_tide",
   "published": {
-    "dps": 795.8,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1055.1,
+    "source": "DPS report 2026-11-04 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
     "dps": 795.8,
@@ -72,10 +72,10 @@
   "caveats": [
     "Mana Tide Totem adds only about 0.1 DPS to the shaman itself.",
     "Water Shield goes unused, because Lightning Shield does more.",
-    "Assumed: Maelstrom Weapon procs 2 times a minute per point. It can't be tested until the beta reaches level 34.",
+    "Assumed: Maelstrom Weapon procs 4 times a minute per point. The November 2 notes doubled its chance, over the old guess of 2. The rate is server side.",
     "Open: whether Stormstrike can trigger Elemental Focus. If it can, Enhancement gets more Clearcasting procs than shown.",
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
-    "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259.",
+    "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259. Stormstrike (150%, 6s), Maelstrom Weapon, Mental Dexterity, Flurry and the shocks take the November 2 notes' values. Client 1.60.1.70753 doesn't carry them yet.",
     "Assumed: another shaman's Flametongue Totem stacks with this shaman's Windfury Weapon. It adds 18 to 19 DPS at 180s and isn't tested in game yet.",
     "The relic is Burning Totem, on its own gear set. Totem of the Storm is 0.1 to 1.5 DPS behind here."
   ],

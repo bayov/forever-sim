@@ -18,8 +18,9 @@ import (
 // SpellDuration and SpellCooldowns). A rank heals its base at the level it's learned, plus its growth
 // per level up to its max level, and the variance spreads a direct heal evenly around that, as the
 // shaman's heals read the same tables (sim/shaman/healing.go). A HoT's tick has no variance. The spell
-// power coefficients are the client's EffectBonusCoefficient, and Forever's downranking takes them down
-// for a rank far below our level (downrankCoefficient, the shaman's and priest's rule).
+// power coefficients are the client's EffectBonusCoefficient. Forever's downranking takes them down for
+// a rank far below our level in the engine (sim/core/downrank.go, from each rank's Rank and
+// RequiredLevel, the direct part and the HoT alike).
 //
 // The talents are the client's spell modifiers, each on the spells its class mask names
 // (healingTalentMultipliers). Percent modifiers of one kind multiply, as the cost ones do
@@ -243,16 +244,6 @@ func (druid *Druid) healTarget(target *core.Unit) *core.Unit {
 	return target
 }
 
-// downrankCoefficient is Forever's downranking (development notes of 1 October, build 70170: a spell
-// cast at a rank far below our level gets less of our spell power), 5% a level past the rank's learn
-// level plus 17, as the shaman and priest have it.
-func (druid *Druid) downrankCoefficient(coefficient float64, learnLevel int32) float64 {
-	if druid.Env == nil || !druid.Env.IsForever() {
-		return coefficient
-	}
-	return coefficient * max(0, min(1, 1-0.05*float64(druid.Level-17-learnLevel)))
-}
-
 // The healing talents, as multipliers on each heal (the spell modifiers' class masks):
 //
 //   - Gift of Nature (17104): 2% a point on Healing Touch, Regrowth, Tranquility and Swiftmend (its
@@ -299,7 +290,8 @@ func (druid *Druid) newHotConfig(label string, ticks int32, tickLength time.Dura
 }
 
 // expectedHot is what a HoT heals over its ticks at target, before crits.
-func expectedHot(spell *core.Spell, target *core.Unit, ticks int32, tick, coefficient, periodic float64) float64 {
+func expectedHot(spell *core.Spell, target *core.Unit, ticks int32, tick, periodic float64) float64 {
+	coefficient := spell.Hot(target).BonusCoefficient
 	total := float64(ticks) * (tick + coefficient*spell.HealingPower(target)) * periodic
 	return spell.ExpectedHealing(target, total)
 }
@@ -356,7 +348,7 @@ func (druid *Druid) newHealingTouchConfig(r healRank, rank int) core.SpellConfig
 
 		DamageMultiplier:  druid.giftOfNatureMultiplier(),
 		ThreatMultiplier:  1,
-		BonusCoefficient:  druid.downrankCoefficient(r.coefficient, r.learnLevel),
+		BonusCoefficient:  r.coefficient,
 		PushbackReduction: druid.naturesFocusChance(),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -378,7 +370,7 @@ func (druid *Druid) newHealingTouchConfig(r healRank, rank int) core.SpellConfig
 func (druid *Druid) newRegrowthConfig(r healRank, rank int) core.SpellConfig {
 	low, high := r.At(druid.Level)
 	tick := r.TickAt(druid.Level)
-	tickCoefficient := druid.downrankCoefficient(RegrowthTickCoefficient, r.learnLevel)
+	tickCoefficient := RegrowthTickCoefficient
 	// Nature's Splendor: 6 sec more, 2 more ticks.
 	ticks := int32(RegrowthTicks + core.TernaryInt32(druid.Talents.NaturesSplendor, 2, 0))
 	periodic := druid.genesisHealingMultiplier()
@@ -411,7 +403,7 @@ func (druid *Druid) newRegrowthConfig(r healRank, rank int) core.SpellConfig {
 
 		DamageMultiplier:  druid.giftOfNatureMultiplier(),
 		ThreatMultiplier:  1,
-		BonusCoefficient:  druid.downrankCoefficient(RegrowthCoefficient, r.learnLevel),
+		BonusCoefficient:  RegrowthCoefficient,
 		PushbackReduction: druid.naturesFocusChance(),
 
 		Hot: druid.newHotConfig("Regrowth "+strconv.Itoa(rank), ticks, 3*time.Second, tick, tickCoefficient, periodic, druid.bloomOnLastTick),
@@ -436,7 +428,7 @@ func (druid *Druid) newRegrowthConfig(r healRank, rank int) core.SpellConfig {
 
 func (druid *Druid) newRejuvenationConfig(r healRank, rank int) core.SpellConfig {
 	tick := r.TickAt(druid.Level)
-	tickCoefficient := druid.downrankCoefficient(RejuvenationTickCoefficient, r.learnLevel)
+	tickCoefficient := RejuvenationTickCoefficient
 	// Nature's Splendor: 3 sec more, one more tick.
 	ticks := int32(RejuvenationTicks + core.TernaryInt32(druid.Talents.NaturesSplendor, 1, 0))
 	periodic := druid.giftOfNatureMultiplier() * druid.genesisHealingMultiplier() * (1 + 0.05*float64(druid.Talents.ImprovedRejuvenation))
@@ -479,7 +471,7 @@ func (druid *Druid) newRejuvenationConfig(r healRank, rank int) core.SpellConfig
 			if spell == nil {
 				spell = druid.GetSpell(core.ActionID{SpellID: r.spellID})
 			}
-			return expectedHot(spell, druid.healTarget(target), ticks, tick, tickCoefficient, periodic)
+			return expectedHot(spell, druid.healTarget(target), ticks, tick, periodic)
 		},
 	}
 }
@@ -532,7 +524,7 @@ func (druid *Druid) newTranquilityConfig(r healRank, rank int) core.SpellConfig 
 
 		DamageMultiplier: druid.giftOfNatureMultiplier(),
 		ThreatMultiplier: 1 - 0.5*float64(druid.Talents.ImprovedTranquility),
-		BonusCoefficient: druid.downrankCoefficient(TranquilityTickCoefficient, r.learnLevel),
+		BonusCoefficient: TranquilityTickCoefficient,
 
 		// The channel, on us: each tick heals every living member of our party (the area aura's
 		// "all nearby party members"; everyone is in reach).
@@ -569,7 +561,7 @@ func (druid *Druid) newTranquilityConfig(r healRank, rank int) core.SpellConfig 
 
 func (druid *Druid) newWildGrowthConfig(r healRank, rank int) core.SpellConfig {
 	tick := r.TickAt(druid.Level)
-	tickCoefficient := druid.downrankCoefficient(WildGrowthTickCoefficient, r.learnLevel)
+	tickCoefficient := WildGrowthTickCoefficient
 	periodic := druid.giftOfNatureMultiplier() * druid.genesisHealingMultiplier()
 	// Naturalist: 0.1 sec a point off the cast (since the 2026-10-30 hotfix).
 	castTime := WildGrowthCastTime - 100*time.Millisecond*time.Duration(druid.Talents.Naturalist)
@@ -631,7 +623,7 @@ func (druid *Druid) newWildGrowthConfig(r healRank, rank int) core.SpellConfig {
 			if spell == nil {
 				spell = druid.GetSpell(core.ActionID{SpellID: r.spellID})
 			}
-			return expectedHot(spell, druid.healTarget(target), WildGrowthTicks, tick, tickCoefficient, periodic)
+			return expectedHot(spell, druid.healTarget(target), WildGrowthTicks, tick, periodic)
 		},
 	}
 }

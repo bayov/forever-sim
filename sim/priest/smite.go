@@ -76,7 +76,7 @@ func (priest *Priest) getSmiteBaseConfig(rank int) core.SpellConfig {
 			},
 		},
 
-		BonusCoefficient: priest.downrankCoefficient(spellCoeff, level),
+		BonusCoefficient: spellCoeff,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

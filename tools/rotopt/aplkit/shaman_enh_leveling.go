@@ -28,7 +28,7 @@ import (
 //   - The fight: Stormstrike, the shocks above a mana floor, Fire Nova on packs, Lightning
 //     Shield, a heal below a threshold, and the cooldowns.
 //   - Past level 30, all off by default: Lightning Bolt on Maelstrom Weapon stacks, Chain
-//     Lightning and Lava Burst, an air totem, and Healing Stream Totem for the water one.
+//     Lightning, an air totem, and Healing Stream Totem for the water one.
 //     Frost Shock has no rule, because its slow does nothing in the sim: our mobs don't flee
 //     and we never kite.
 //   - From the plan audit of 2026-10-19 (docs/leveling_plan.md, The audit), off by default:
@@ -130,9 +130,6 @@ func (ShamanEnhLeveling) Knobs() []Knob {
 		{Name: "airTotem", Default: 0, Min: 0, Max: 2, Step: 1, Needs: []string{"windfuryTotem", "graceOfAir"}, WithImbue: true},
 		// Healing Stream Totem in the water slot, in place of Mana Spring Totem (1).
 		{Name: "healingStream", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"healingStream"}},
-		// Lava Burst, the Elemental talent, above shockMana: 0 never, 1 on cooldown, 2 only
-		// with our Flame Shock on the target (20% more damage).
-		{Name: "lavaBurst", Default: 0, Min: 0, Max: 2, Step: 1, Needs: []string{"lavaBurst"}},
 	}
 }
 
@@ -161,8 +158,6 @@ func (t ShamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 	chainLightning := topRankID(t.Level, shaman.ChainLightningLevel[:], shaman.ChainLightningSpellId[:])
 	windfuryTotem := topRankID(t.Level, shaman.WindfuryTotemLevel[:], shaman.WindfuryTotemSpellId[:])
 	graceOfAir := topRankID(t.Level, shaman.GraceOfAirTotemLevel[:], shaman.GraceOfAirTotemSpellId[:])
-	// The talent gives rank 1 before its level, so we always name the top rank.
-	lavaBurst := SpellID(shaman.LavaBurstSpellId[len(shaman.LavaBurstSpellId)-1])
 
 	// The water totem: Healing Stream Totem in place of Mana Spring Totem, or none.
 	var waterTotem *proto.ActionID
@@ -356,15 +351,6 @@ func (t ShamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 		items = append(items, Cast(lightningBolt, And(inCombat, Ge(TalentPoints("maelstromWeapon"), Num(4)), Ge(AuraNumStacks(SpellID(408505)), Num(k["maelstromStacks"]))),
 			"Lightning Bolt at enough Maelstrom Weapon stacks, 5 is instant, with 4 or more points in the talent."))
 	}
-	if k["lavaBurst"] > 0 {
-		cond := And(inCombat, shockFloor)
-		notes := "Lava Burst on cooldown. Without the talent ignore the warning on this line."
-		if k["lavaBurst"] == 2 {
-			cond = And(cond, DotIsActive(flameShock))
-			notes = "Lava Burst while our Flame Shock is on the target. Without the talent ignore the warning on this line."
-		}
-		items = append(items, Cast(lavaBurst, cond, notes))
-	}
 	if k["chainLightning"] > 0 && chainLightning.GetSpellId() != 0 {
 		items = append(items, Cast(chainLightning, And(Ge(MobsOnUs(), Num(k["chainLightning"])), shockFloor), "Chain Lightning with enough mobs on us."))
 	}
@@ -436,7 +422,7 @@ func (t ShamanEnhLeveling) Abilities(hasTalent func(name string) bool) []string 
 	if t.Level >= 20 {
 		out = append(out, "totemicRecall")
 	}
-	for _, talent := range []string{"stormstrike", "maelstromWeapon", "lavaBurst"} {
+	for _, talent := range []string{"stormstrike", "maelstromWeapon"} {
 		if hasTalent(talent) {
 			out = append(out, talent)
 		}

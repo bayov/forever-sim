@@ -94,7 +94,9 @@ export const GearPresets = {
 	[Phase.Phase1]: [GearLevel60Phase1SyntheticFury, GearLevel60Phase1SyntheticArms],
 };
 
-export const DefaultGear = GearLevel60Phase1SyntheticFury;
+// The class default is the build highest at 180 sec: two-hand Fury since the November 2 notes
+// (1169.9 against dual wield Fury's 1152.6, Orc, 180 +- 20 sec, 20,000 iterations).
+export const DefaultGear = GearLevel60Phase1SyntheticArms;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -117,7 +119,10 @@ export const DefaultGear = GearLevel60Phase1SyntheticFury;
 // (+2.4 / +1.3 at 120 sec on seeds 1 / 1000003, identical at 180 and 300). The Sapper goes on cooldown with the other
 // cooldowns (no Goblin Land Mine since 2026-10-24, see the consumables below). Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
 // no use. It is 1031.1 (Human) where the old Classic rotation (dps_reck.apl.json) is 981.2. Slam on its 18 sec
-// cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
+// cooldown and holding the fillers for Bloodthirst and Whirlwind both lost then. 2026-11-04, on the
+// November 2 notes' tree: Bloodthirst ahead of Whirlwind, Heroic Strike from 60 Rage and Hamstring
+// from 20, both only when Bloodthirst and Whirlwind are 1 sec away or more, Bloodrage under 50: +2.0 / +0.4
+// / +3.9 at 120 / 180 / 300 sec, ahead at every length on both seeds (the duty presets keep theirs).
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Fury', Level60FuryAPLJSON, { group: 'Synthetic' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
 // Heroic Strike from 90 Rage, Hamstring from 10 (20 until 2026-10-30, +3.1 at 180 sec), Bloodrage under 20, Berserker Rage under 10 for its
@@ -205,7 +210,7 @@ export const APLPresets = {
 	],
 };
 
-export const DefaultAPLs = [APLLevel60Fury];
+export const DefaultAPLs = [APLLevel60Fury2H];
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -219,7 +224,11 @@ export const DefaultAPLs = [APLLevel60Fury];
 // search at flat Rage (+1.6 at 180 sec, 20,000 iterations). Weaponmaster
 // hybrids (25 Arms for the swords' extra attacks, no Bloodthirst) were 823.5 on the earlier gear,
 // 17% behind.
-export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30305013002-25053005142010501' }), {
+// 2026-11-03, the November 2 notes' tree (Flurry 3 points without Death Wish, Improved Tactical
+// Mastery 3, Reckless Swings, Improved Whirlwind): the search from the remapped build drops Booming
+// Voice and a point of Improved Berserker Rage for Reckless Swings, Improved Whirlwind 2/2 and Enrage
+// 5/5, and fills Arms' rows with Improved Charge and Improved Overpower: 1069.6 to 1153.4 at 180 sec.
+export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30313113002-0505300551120100321' }), {
 	tooltip: 'Level 60 dual wield Fury talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -227,7 +236,13 @@ export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTal
 // of Dual Wield Specialization and Furious Precision. 899.4 at 180 sec (Human), 13% behind dual wield
 // Fury but its own way to play, so it gets its own preset. At flat Rage (2026-10-25) a point of
 // Enrage moves to Improved Berserker Rage (2/2, 10 Rage a Berserker Rage): +0.8 at 180 sec.
-export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30305013032-25053000142210501' }), {
+// 2026-11-03, the November 2 notes' tree: Flurry's 3 points left Bloodthirst short of its row, so the
+// start takes Reckless Swings and Improved Whirlwind 2/2; the search then moves 2 points of Unbridled
+// Wrath to Enrage 5/5: 1163.9 to 1170.1 at 180 sec. Furious Precision does nothing with a two-hander,
+// but no move of its points scored better then. 2026-11-04: Unbridled Wrath 5/5 for Furious
+// Precision's 3 points, the spare one in Blood Craze: +2.8 / +3.4 / +1.9 at 120 / 180 / 300 sec,
+// ahead at every length on both seeds.
+export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30313113032-2505001501122100321' }), {
 	tooltip: 'Level 60 two-hand Fury talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -239,15 +254,21 @@ export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', Sav
 // own preset as the Mortal Strike spec. The 2026-10-25 search at flat Rage kept it: Improved Bloodrage
 // 2/2 for Booming Voice and Improved Execute (which needs the Booming Voice points to open its row)
 // loses 1.5 at 180 sec.
-export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTalents.create({ talentsString: '20305213032515201-55050000001' }), {
+// 2026-11-03, the November 2 notes' tree (Improved Tactical Mastery 3, Bloodthrill 2 points for 20%,
+// Two-Handed Weapon Specialization 6%, Reckless Swings): the 4 freed points and a third point of
+// Improved Heroic Strike (to open Two-Handed Weapon Specialization's row again) go to Reckless
+// Swings, Enrage 5/5 and Improved Bloodrage 2/2, for Booming Voice: 1050.6 to 1086.6 at 180 sec.
+export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTalents.create({ talentsString: '30303213032215201-050500050012-2' }), {
 	tooltip: 'Level 60 Arms talents from the talent search.',
 	group: 'Synthetic',
 });
 // The talent and rotation searches on a Dragonkin boss take Spearing Strike and Improved Bloodrage
-// for two points of Booming Voice and one of Improved Execute.
+// for two points of Booming Voice and one of Improved Execute. On the November 2 notes' tree
+// (2026-11-03) it is the Arms build with Spearing Strike for a point of Improved Bloodrage: 1129.7
+// at 180 sec on the Dragonkin boss.
 export const TalentsLevel60ArmsDragonkin = PresetUtils.makePresetTalents(
 	'Arms · vs Dragonkin',
-	SavedTalents.create({ talentsString: '20305213132515201-3505-2' }),
+	SavedTalents.create({ talentsString: '30303213132215201-050500050012-1' }),
 	{
 		tooltip: 'Level 60 Arms talents against a Giant or Dragonkin boss, with Spearing Strike.',
 		group: 'Synthetic',
@@ -258,7 +279,7 @@ export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60Fury, TalentsLevel60Fury2H, TalentsLevel60Arms, TalentsLevel60ArmsDragonkin],
 };
 
-export const DefaultTalents = TalentsLevel60Fury;
+export const DefaultTalents = TalentsLevel60Fury2H;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options Presets
@@ -367,7 +388,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	thorns: TristateEffect.TristateEffectImproved,
 	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 	trueshotAura: true,
-	salvation: true,
 });
 
 // Kings and Might. A Rage user has no use for Wisdom.
@@ -409,6 +429,12 @@ export const DefaultDebuffs = Debuffs.create({
 // Race re-pick (2026-10-27, standards 29 and 16, on the 10-26 racial pass with each race's own rotation
 // and gear): Arms, its Battle Shout duty and Arms (vs Dragonkin) are Undead, 900.9 at 180 sec against the
 // Orc's 898.7 on Arms (verify.py, 20000 iterations, seed 1); the Fury builds stay Orc.
+// Race re-pick (2026-11-03, the November 2 notes: Orc's Savage gone, Blood Fury 2 min, every race's
+// Classic base stats; on the re-searched talents and rotations, verify.py at 180 +- 20 sec, 20,000
+// iterations, seeds 1 / 1000003): Orc is the best race on every build again, Arms included (1094.0 /
+// 1094.1 against Undead's 1090.2 / 1091.0), and Night Elf the best Alliance race (Fury 1146.8 / 1146.0
+// against Orc's 1152.6 / 1151.9, two-hand Fury 1162.8 / 1162.9 against 1169.9 / 1170.8, Arms 1088.5 /
+// 1089.2). Tauren, whose Endurance lost its hit and crit damage, is last everywhere.
 export const OtherDefaults = {
 	distanceFromTarget: 5,
 	channelClipDelay: 50,
@@ -686,7 +712,7 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Arms', {
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60Arms,
 	encounter: EncounterLevel60Arms,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -699,7 +725,7 @@ export const PresetBuildLevel60ArmsShout = PresetUtils.makePresetBuild('Arms · 
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60ArmsShout,
 	encounter: EncounterLevel60ArmsBattleShoutDuty,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -712,7 +738,7 @@ export const PresetBuildLevel60ArmsSunder = PresetUtils.makePresetBuild('Arms ·
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60ArmsSunder,
 	encounter: EncounterLevel60ArmsSunderDuty,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -730,7 +756,7 @@ export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Arms
 	talents: TalentsLevel60ArmsDragonkin,
 	rotation: APLLevel60ArmsDragonkin,
 	encounter: EncounterLevel60Dragonkin,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
