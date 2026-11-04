@@ -1,0 +1,10 @@
+A=shaman_warden_max_survival.json B=G_wrist_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord        -7250    -7207    43.5   57.5      2.6       -4
+chromaggus       -6407    -6318    88.6   26.4      2.3       -9
+golemagg         -2236    -2205    31.4   13.3      2.0       -3
+magmadar         -1427    -1416    10.9   12.1      1.2       -1
+onyxia           -5009    -4964    44.7   27.6      3.6       -2
+ragnaros        -16829   -17110  -280.8  107.4      1.4       30
+vaelastrasz      -2083    -2096   -12.4   15.8      0.6        4
+scoring_mean                       34.5   12.2

@@ -5,10 +5,10 @@
     "players": [
      {
       "inFrontOfTarget": true,
-      "race": "RaceTauren",
+      "race": "RaceNightElf",
       "class": "ClassShaman",
       "level": 60,
-      "talentsString": "0535-050032303351012201-050002",
+      "talentsString": "0515-050032303551012201-050002",
       "equipment": {
        "items": [
         {
@@ -75,7 +75,7 @@
        ]
       },
       "consumes": {
-       "flask": "FlaskOfTheTitans",
+       "flask": "FlaskOfNaturalAccuracy",
        "food": "FoodSmokedDesertDumpling",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
