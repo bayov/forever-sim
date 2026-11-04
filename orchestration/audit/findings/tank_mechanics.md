@@ -109,6 +109,7 @@
 - evidence: 20177's proc mask is 0x202A8, which includes magic damage taken (tier 1). The sim reacts only to melee or ranged crits (sim/paladin/talents.go:233). Far under 1% at the settled 0.6% boss crit.
 - proposed fix: drop the ProcMaskMeleeOrRanged gate for the crit branch only.
 - needs: worker fix
+- fixed: 2026-11-04, e9751cc. 20177's tooltip: "being the victim of a non-periodic critical strike"; TestReckoning fails on the old gate.
 
 ### tank_mechanics-20261104-10: Tank class docs: wrong tier labels and stale rows
 - severity: low
@@ -117,6 +118,7 @@
 - evidence: in docs/tank_shaman.md, Earth Shock's ×2 threat rests on "wowsims/classic, vmangos". vmangos is never a source; wowsims/sod earth_shock.go:54 is a tier 2 source for the same 2. Rockbiter's white-hit threat is labeled tier 2, but 20871's designer note makes it tier 1. In docs/tank_druid.md, the white-hit Rage row is wrong (-7), and Swipe's 3% AP is tier 1 (post 4 notes, line 241), not tier 2. In orchestration/round_70753/paladin.md:114, Templar's Bulwark's dispel is "notes only", but 1311015 has DispelType 1 (Magic) in 70755+hf. In docs/tank_warrior.md, Call 3's framing is off (-4).
 - proposed fix: `ref/tank_mechanics/patches/shaman_01_docs_tiers.patch` and `warrior_revenge_ap_call_doc.patch`; the druid and paladin lines by hand.
 - needs: worker fix
+- fixed (paladin line only): 2026-11-04, 3f9c055. round_70753/paladin.md now says Templar's Bulwark's Magic is client data; docs/tank_paladin.md already had it as N, C.
 
 ### tank_mechanics-20261104-11: Tank mechanics with no test that fails when they break
 - severity: low (none known wrong except -6, -7, -8)
@@ -130,5 +132,7 @@
   - Engine: tank in front (-1); parry haste in a tank run; rolled crush vs the sheet; the block value formula; health invariance of a scoring run (-8); the cast-time no-avoidance rule (spell_outcome.go:673); tools/tankscore has no tests (OwnDebuffs, MakeTank, Score, PairedDiff); OutcomeEnemyMeleeSpecial under Forever's crit (only ClassicCrit is tested).
 - proposed fix: add the tests, with the ones for -1, -2 and -7 first.
 - needs: worker fix
+- fixed (paladin row only): 2026-11-04, 639590a. Deflection, Divine Strength (TestProtectionStatTalents), TestJudgementCooldownAndCost, TestImprovedSealsOnSealOfFury, TestConsecrationAndHolyStrikeCosts; each seen failing on a broken value.
 
 ## Resolved
+
