@@ -8,7 +8,7 @@
       "race": "RaceTauren",
       "class": "ClassShaman",
       "level": 60,
-      "talentsString": "05050002-050032113551012201-050002",
+      "talentsString": "05050003-050032113541012201-050002",
       "equipment": {
        "items": [
         {
@@ -157,7 +157,7 @@
            }
           }
          },
-         "notes": "The shield whenever it's down. Water Shield needs the Restoration talent."
+         "notes": "Lightning Shield whenever its orbs are gone: their threat beats the 370 mana."
         },
         {
          "action": {
@@ -186,29 +186,9 @@
         },
         {
          "action": {
-          "castSpell": {
-           "spellId": {
-            "itemId": 999216
-           }
-          }
-         },
-         "notes": "The defensive on-use trinket on cooldown, on a timer. Without it ignore the warning on this line."
-        },
-        {
-         "action": {
           "autocastOtherCooldowns": {}
          },
          "notes": "Rage of the Farseer, racials, trinkets on cooldown."
-        },
-        {
-         "action": {
-          "castSpell": {
-           "spellId": {
-            "spellId": 17364
-           }
-          }
-         },
-         "notes": "Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike."
         },
         {
          "action": {
@@ -219,6 +199,16 @@
           }
          },
          "notes": "Earth Shock: twice its damage in threat."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 17364
+           }
+          }
+         },
+         "notes": "Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike."
         }
        ]
       }
