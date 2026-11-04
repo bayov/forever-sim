@@ -465,7 +465,8 @@ seeds 1 and 1000001:
   to 4 at 35, 39 and 47, Healing Stream Totem 2 at 40, and never Healing Stream Totem 4 and 5.
   It keeps every Earth Shock rank at its level (14, 24 and 36), as we pinned them. The plan
   takes 79.93h with it (79.926h and 79.922h, ±0.007), 47 min faster than the legal old order
-  and 1 min faster than the old plan's illegal one.
+  and 1 min faster than the old plan's illegal one. The gear plan by the 2026-11-04 leveling
+  weights lowers that to 79.55h (79.551h on both seeds, ±0.007).
 
 The route: Thundering Strikes 5, Mental Dexterity 3, Improved Lightning Shield 2 at 18 and 19,
 Shamanistic Focus, Elemental Weapons 3, Improved Lightning Shield 3/3 at 24, Improved Ghost Wolf

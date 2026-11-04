@@ -53,7 +53,7 @@ hydrate)
 	if [ "$PWD" != "$T" ]; then  # a separate $DASH_DIR reads the inputs from this checkout
 		for f in req forever_tt_cache fortt_ids.json talent_ids.json asm_apls bin; do [ -e "$f" ] || ln -s "$T/$f" "$f"; done
 	fi
-	rm -rf out names weights mana rv asm abl probe probe_check data
+	rm -rf out names weights mana rv asm abl probe probe_check data vec
 	python3 $T/rawstore.py unpack
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
 	python3 $T/rawstore.py check "$@"

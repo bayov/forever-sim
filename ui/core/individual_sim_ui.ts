@@ -82,6 +82,8 @@ export interface OtherDefaults {
 	profession2?: Profession;
 	distanceFromTarget?: number;
 	channelClipDelay?: number;
+	// Whether the player stands in front of the target, where the boss parries and blocks: a tank's.
+	inFrontOfTarget?: boolean;
 }
 
 export interface RaidSimPreset<SpecType extends Spec> {
@@ -592,6 +594,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setProfession2(eventID, this.individualConfig.defaults.other?.profession2 || Profession.ProfessionUnknown);
 			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.other?.distanceFromTarget || 0);
 			this.player.setChannelClipDelay(eventID, this.individualConfig.defaults.other?.channelClipDelay || 0);
+			this.player.setInFrontOfTarget(eventID, this.individualConfig.defaults.other?.inFrontOfTarget || false);
 			this.player.setReactionTime(eventID, DEFAULT_REACTION_TIME_MS);
 			if (this.individualConfig.defaults.levelingPlan) this.player.setLevelingPlan(eventID, this.individualConfig.defaults.levelingPlan);
 

@@ -91,6 +91,14 @@ each file's `source`, `reports` and `warcraftLogs` say which kills.
   the tank, parry haste and Frenzy in. Both are taken back through the debuffs the bench puts on him
   (`tankbench -boss-stats`: attack power 805 to 601, −37 a swing, attack speed 0.833), so under them he
   swings as in the logs. That assumes the logged raids had about the bench's debuffs.
+- **Parry haste is off in these files** (`parryHaste: false`, 2026-11-04, tank_mechanics-20261104-3). The
+  fitted gap already holds the logged tanks' parry haste, so the sim's own on top counted it twice (+5% DTPS on
+  Chromaggus once the tank stood in front). The other choice, the boss's base gap with the sim's parry haste,
+  needs how often the boss parried the logged tanks, and the mined logs hold only the boss's swings at the
+  tank, not the tank's swings at him, so that base gap can't be fitted. The fitted gap with parry haste off
+  gives every tank the logs' mean gap. What it loses: a tank the boss parries more or less often than the
+  logged warriors doesn't swing him faster or slower. The bench's own default boss (no file) keeps Classic's
+  parry haste.
 - **The length** is the kills' median, except Onyxia and Ragnaros (the main tank's time on him a kill) and
   Vaelastrasz (his longest stretch on one tank, one tank's stint).
 - **The healing** is the healers with 5% or more of the main tank's healing in the median kill, the
@@ -430,6 +438,43 @@ share, APL conditions on health). A scoring run leaves those out.
 
 None for the objective. The weights of the presets get checked once the gear search runs on them (two
 presets landing on the same build means a weight moves).
+
+## Before and after the core tank fixes (2026-11-04)
+
+Branch `tank-fixes-core`. Three changes:
+- Every scored tank stands in front of the boss (tank_mechanics-20261104-1).
+- The encounter files keep the swing gap fitted from the logs, with parry haste off (-3).
+- Every tank carries Elixir of the Phalanx and Greater Fortitude (tank_fairness-20261104-1).
+
+Each row is a mean over the six scoring bosses, 1,000 iterations on tankbench, default seed. Before is master
+f62bfc74; after is `orchestration/audit/ref/tank_bench/summary.tsv`. The score is at the preset's own weight;
+the legacy warrior request is scored at Balanced. The last column is the Ragnaros score at the same weight.
+Talents and rotations are unchanged: the class workers re-search them next.
+
+| Preset | Score before → after | SafeDPS | DTPS | Healing needed | Ragnaros score |
+|---|---|---|---|---|---|
+| Warrior Max threat | 4708 → 3752 | 2614 → 2095 | 459 → 446 | 524 → 441 | 2889 → 2085 |
+| Warrior Balanced | 3795 → 3074 | 2474 → 2024 | 378 → 369 | 395 → 336 | −1384 → −1907 |
+| Warrior Max survival | 1488 → 1125 | 2474 → 2024 | 378 → 369 | 395 → 336 | −13903 → −13526 |
+| Paladin Max threat | 3036 → 2786 | 1643 → 1491 | 322 → 311 | 288 → 234 | 1009 → 775 |
+| Paladin Balanced | 2555 → 2411 | 1602 → 1452 | 303 → 292 | 257 → 202 | −2692 → −2606 |
+| Paladin Max survival | 1257 → 1422 | 1602 → 1452 | 303 → 292 | 257 → 202 | −13608 → −12747 |
+| Bear Max threat | 2905 → 2161 | 1715 → 1342 | 569 → 570 | 583 → 580 | 1127 → 360 |
+| Bear Balanced | 1855 → 1114 | 1714 → 1341 | 570 → 571 | 583 → 581 | −3233 → −3981 |
+| Bear Max survival | −844 → −1469 | 1598 → 1256 | 568 → 571 | 487 → 486 | −16487 → −17175 |
+| Warden Max threat | 2552 → 2175 | 1777 → 1523 | 823 → 801 | 1066 → 929 | 687 → 411 |
+| Warden Balanced | 501 → 414 | 1745 → 1495 | 816 → 794 | 1055 → 915 | −4310 → −3945 |
+| Warden Max survival | −5326 → −4571 | 1688 → 1449 | 782 → 762 | 1017 → 879 | −19134 → −17188 |
+| Warrior (legacy request) | −13 → 10 | 1327 → 1060 | 657 → 637 | 947 → 757 | −6008 → −4997 |
+
+**SafeDPS falls 9 to 22%** (paladin 9%, Warden 14%, warrior 18%, bear 22%) because the boss now dodges or parries part of the tank's attacks. The bear
+loses most: all of its threat is melee the boss can parry, and its Elixirs were already in. DTPS hardly moves.
+From the front the boss's parry haste would add damage, but the encounter files turn it off. Healing needed
+falls 15 to 20% for the three tanks that gained the two elixirs.
+
+The paladin passes the bear on Balanced, as tank_mechanics-20261104-1 predicted. Its lower damage taken is
+real Forever behaviour and the synthetic set's block value, not a bug (tank_fairness-20261104-2). At the
+Balanced weight, the bear's Max survival preset (1185) now beats its Balanced preset (1114).
 
 ## Findings so far
 

@@ -4,6 +4,7 @@
    {
     "players": [
      {
+      "inFrontOfTarget": true,
       "race": "RaceTauren",
       "class": "ClassShaman",
       "level": 60,
@@ -77,6 +78,8 @@
        "flask": "FlaskOfTheTitans",
        "food": "FoodSmokedDesertDumpling",
        "agilityElixir": "ElixirOfTheMongoose",
+       "armorElixir": "ElixirOfThePhalanx",
+       "healthElixir": "ElixirOfGreaterFortitude",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
        "defaultPotion": "MajorManaPotion",
