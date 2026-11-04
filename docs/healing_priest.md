@@ -284,7 +284,7 @@ at 95 s of its 115 s. With share 0.5 (OOM times at carried damage; "lasts" is pa
 | **`pwsgate=0.7 gate=0.85 fh=7` (shipped)** | **1.154** | **lasts (119 s)** | 169 s | 195 s |
 
 The shipped one is the best mean of the variants that last all 7 fights at their own lengths (Chromaggus by 4
-s). None lasts 300 s on Golemagg at carried damage: the best seen is 209 s, at 1.108 mean (Calls for the user).
+s; before the tank bench's change of the same day, see the 7 boss files below). None lasts 300 s on Golemagg at carried damage: the best seen is 209 s, at 1.108 mean (Calls for the user).
 
 Power Infusion (healer_fairness-20261104-3): the only way to it is 31 Discipline points, which leaves Holy 20,
 short of Spiritual Guidance, Spiritual Healing and Holy Binding; that's the Discipline build
@@ -376,39 +376,44 @@ Onyxia is the merge's other changes (Human Spirit), not the coefficients.
 ### The 7 boss files, 1,000 iterations
 
 `tools/healbench`, damage carried with no death, 1,000 iterations a sim, each boss at its own length, on
-master after the 2026-11-04 fixes (the shipped knobs above). Tank role for the two tank healers, raid role for
+master after the 2026-11-04 fixes (the shipped knobs above) and the tank bench's change that day (tanks face
+the boss: parries and blocks, parry haste). The tuning above ran before that change; re-checked after it, the
+shipped gates still beat the whole-heal gate (share 1.0) by +0.007 (Holy tank), +0.028 (Discipline tank) and
++0.019 (Holy raid) mean carry. Tank role for the two tank healers, raid role for
 the raid healer. "Damage carried" is the score; the other columns are at the file's own damage (x1.00), and an
 OOM time in brackets is a projection past the fight's end. The other healers' numbers are in
 `docs/healing_sim.md` (H3).
 
 | Boss | Healer | Damage carried | EHPS | Overheal | EH per mana | OOM at |
 |---|---|---|---|---|---|---|
-| Onyxia | Holy tank | 1.244 | 502 | 35.6% | 4.09 | (268 s) |
-| Onyxia | Discipline tank | 1.225 | 532 | 18.8% | 3.94 | (201 s) |
+| Onyxia | Holy tank | 1.379 | 492 | 35.6% | 4.09 | (284 s) |
+| Onyxia | Discipline tank | 1.378 | 515 | 19.8% | 3.90 | (205 s) |
 | Onyxia | Holy raid | 0.978 | 139 | 50.1% | 2.18 | (1657 s) |
-| Broodlord | Holy tank | 0.845 | 497 | 34.6% | 4.00 | (489 s) |
-| Broodlord | Discipline tank | 0.855 | 524 | 17.9% | 3.74 | (329 s) |
+| Broodlord | Holy tank | 0.930 | 521 | 34.8% | 3.95 | (408 s) |
+| Broodlord | Discipline tank | 0.971 | 539 | 17.9% | 3.72 | (305 s) |
 | Broodlord | Holy raid | 0.901 | 334 | 41.8% | 2.71 | (852 s) |
-| Chromaggus | Holy tank | 0.895 | 650 | 29.9% | 4.51 | (127 s) |
-| Chromaggus | Discipline tank | 0.828 | 596 | 16.0% | 4.49 | (119 s) |
+| Chromaggus | Holy tank | 0.955 | 651 | 30.3% | 4.48 | 124 s |
+| Chromaggus | Discipline tank | 0.866 | 619 | 16.9% | 4.48 | 101 s |
 | Chromaggus | Holy raid | 1.070 | 94 | 61.6% | 1.53 | (2903 s) |
-| Golemagg | Holy tank | 1.816 | 437 | 37.3% | 3.87 | (385 s) |
-| Golemagg | Discipline tank | 1.785 | 440 | 22.9% | 3.67 | (440 s) |
+| Golemagg | Holy tank | 1.969 | 421 | 37.4% | 3.83 | (410 s) |
+| Golemagg | Discipline tank | 1.991 | 427 | 23.6% | 3.62 | (444 s) |
 | Golemagg | Holy raid | 2.597 | 53 | 72.1% | 0.93 | (2666 s) |
-| Magmadar | Holy tank | 1.913 | 399 | 38.1% | 3.68 | (368 s) |
-| Magmadar | Discipline tank | 1.941 | 409 | 24.7% | 3.51 | (329 s) |
+| Magmadar | Holy tank | 2.104 | 389 | 38.2% | 3.66 | (402 s) |
+| Magmadar | Discipline tank | 2.101 | 395 | 25.0% | 3.49 | (330 s) |
 | Magmadar | Holy raid | 2.054 | 201 | 56.6% | 2.11 | (1644 s) |
-| Ragnaros | Holy tank | 0.531 | 329 | 27.6% | 4.68 | (711 s) |
-| Ragnaros | Discipline tank | 0.565 | 411 | 7.1% | 4.83 | (536 s) |
+| Ragnaros | Holy tank | 0.592 | 431 | 26.5% | 4.78 | (571 s) |
+| Ragnaros | Discipline tank | 0.596 | 485 | 6.7% | 4.89 | (482 s) |
 | Ragnaros | Holy raid | 1.308 | 312 | 54.9% | 2.33 | (1140 s) |
-| Vaelastrasz | Holy tank | 0.848 | 897 | 30.0% | 4.83 | (187 s) |
-| Vaelastrasz | Discipline tank | 0.877 | 929 | 10.3% | 5.08 | (124 s) |
+| Vaelastrasz | Holy tank | 0.906 | 930 | 30.1% | 4.85 | (154 s) |
+| Vaelastrasz | Discipline tank | 0.927 | 968 | 10.0% | 5.20 | (121 s) |
 | Vaelastrasz | Holy raid | 1.152 | 943 | 42.8% | 4.82 | (367 s) |
 
-Mean carry: Holy tank 1.156, Discipline tank 1.154, Holy raid 1.437. With Prayer of Mending no longer
+Mean carry: Holy tank 1.262, Discipline tank 1.261, Holy raid 1.437. With Prayer of Mending no longer
 bouncing between the tank and the priest (fillers in the tank bench), Holy and Discipline are level on the
-tank: Holy ahead on Onyxia, Chromaggus and Golemagg, Discipline on Broodlord, Magmadar, Ragnaros and
-Vaelastrasz.
+tank: Holy ahead on Onyxia, Chromaggus and Magmadar, Discipline on Broodlord, Golemagg, Ragnaros and
+Vaelastrasz. Both run out of mana in the longer Chromaggus kills at carried damage (OOM without brackets:
+Discipline at 101 s, Holy at 124 s, against a 115 s median); at 300 s Discipline runs out at 102 s on
+Chromaggus and 210 s on Golemagg.
 
 ### The audit's findings (2026-11-04)
 
@@ -417,8 +422,9 @@ Vaelastrasz.
   No preset wears it.
 - healer_rotations-20261104-1, fixed: the Holy rotations drop Power Infusion (untalented) and the raid healer
   drops its unreachable Prayer of Healing, Renew, Inner Focus and Greater Heal lines (The presets, above).
-- healer_rotations-20261104-2, fixed at the fights' own lengths: the Discipline tank healer's mana knobs (Tuning
-  of 2026-11-04); it still runs out at 300 s on Golemagg and Chromaggus (Calls for the user).
+- healer_rotations-20261104-2, not fixed: the Discipline tank healer's mana knobs (Tuning of 2026-11-04) made it
+  last every fight at its own length on the bench of that morning, but with tanks facing the boss it runs out
+  on Chromaggus again (101 s) and at 300 s on Chromaggus and Golemagg (Calls for the user).
 - healer_fairness-20261104-2, fixed: heal gates 0.8 (Holy tank), 0.5 (Discipline tank, Holy raid).
 - healer_fairness-20261104-3, fixed: the wand carries no stats; Power Infusion benched and not taken.
 - healer_mechanics-20261104-10, the priest's part and the two core fixes: tests in
@@ -472,9 +478,10 @@ Each has a default the sim uses now. Say the word and it changes.
     other healers' stat-less relics. Standards 1b gives a wand 21.3 points of its own, as the Shadow priest's
     and the mages' wands keep. Default: stat-less for the healer (worth 0.003 carry); say if the healers should
     instead all get 21.3 points in slot 16.
-16. **The Discipline tank healer can't last 300 s on Golemagg or Chromaggus at carried damage** (195 s and 169
-    s; healer_rotations-20261104-2). It lasts every fight at its own length. No knob tried reaches 300 s
-    without losing about 0.05 mean carry. Default: tuned to the fights' own lengths.
+16. **The Discipline tank healer runs out of mana at carried damage** on Chromaggus (101 s, in the longer
+    kills) and at 300 s on Golemagg (210 s) (healer_rotations-20261104-2). No mana knob tried reaches 300 s
+    without losing about 0.05 mean carry; carried damage is the most the healer survives, so a mana plan that
+    lasts there costs throughput everywhere else. Default: tuned for carry at the fights' own lengths.
 17. **The heal gate is lower than the old "missing the whole heal"**: 0.8 for the Holy tank, 0.5 for the
     Discipline tank and the Holy raid healer. Half a Flash Heal missing on the most hurt is a looser trigger than
     a player would use, but it's what carries most here. Default: as benched.
