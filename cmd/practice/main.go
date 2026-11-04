@@ -39,6 +39,8 @@ type server struct {
 	records []*record
 	assets  *assetStore // nil without a client or TACTTool
 	db2     *db2Tables  // nil without a client
+	// atlasIndex is the client's texture atlases by name, read on first use (atlas.go).
+	atlasIndex atlasIndex
 }
 
 func main() {
@@ -67,6 +69,8 @@ func main() {
 		} else {
 			s.db2 = newDB2Tables(s.home, info["Version"])
 			log.Printf("client build %s", info["Version"])
+			// The atlas index takes a few seconds to build, so the first frame that asks doesn't wait.
+			go s.atlases()
 		}
 		if assets, err := newAssetStore(s.home, *tact, client); err != nil {
 			log.Printf("no asset extraction: %v (units stay capsules)", err)
@@ -91,6 +95,7 @@ func (s *server) routes() http.Handler {
 	mux.HandleFunc("GET /api/character/{guid}", s.handleCharacter)
 	mux.HandleFunc("PUT /api/settings/{guid}", s.handleSaveSettings)
 	mux.HandleFunc("GET /api/spells", s.handleSpells)
+	mux.HandleFunc("GET /api/atlas", s.handleAtlas)
 	mux.HandleFunc("GET /api/icon/{kind}/{id}", s.handleIcon)
 	mux.HandleFunc("GET /api/tooltip/{kind}/{id}", s.handleTooltip)
 	mux.HandleFunc("GET /api/font/eui", s.handleFont)
