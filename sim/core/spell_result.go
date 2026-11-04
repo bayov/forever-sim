@@ -319,6 +319,7 @@ func (spell *Spell) ApplyPostOutcomeDamageModifiers(sim *Simulation, result *Spe
 	}
 	result.Damage += spell.TargetBonusDamageTakenAfterModifiers(attackTable)
 	result.Damage = max(0, result.Damage)
+	result.Target.absorbDamage(sim, spell, result)
 }
 
 // For spells that do no damage but still have a hit/miss check.
@@ -685,8 +686,10 @@ func (dot *Dot) SnapshotHeal(target *Unit, baseHealing float64, isRollover bool)
 			dot.SnapshotBaseDamage += dot.BonusCoefficient * dot.Spell.HealingPower(target)
 		}
 
-		attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex][dot.Spell.CastType]
-		dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable, true)
+		// A heal's multipliers, as a direct heal's and Snapshot's for a helpful dot: the school
+		// damage multipliers (Searing Light's Holy damage) and Power Infusion's damage part aren't
+		// healing.
+		dot.SnapshotAttackerMultiplier = dot.Spell.CasterHealingMultiplier()
 		dot.SnapshotAttackerMultiplier *= dot.DamageMultiplier
 
 		dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)

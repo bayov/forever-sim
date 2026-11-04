@@ -213,6 +213,12 @@ Each step is restartable: it skips work whose output already exists. To redo a b
 | tooltip fetch | `python3 whcache.py fortt_ids.json` | none. Fetches from `nether.wowhead.com/{forever,classic}/tooltip/<kind>/<id>`, only ids missing from the cache. | `forever_tt_cache/` | about 13 min cold (about 1,400 requests at 0.35 s); seconds when warm |
 | datasets | `python3 build_data.py` | none | `data/*.json`, `fortt_coverage.json` | about 10 s warm; about 1 min more when icons must be fetched |
 
+Every sim the steps run sets `simOptions.useLabeledRands` (`RNG` in `dashpaths.py`, since 2026-11-04): each kind of
+roll gets its own random stream, so two sims of the same seeds that differ in one setting still share every other
+roll. That makes the paired comparisons (race against race, racials off, assumptions, weights, ablation) need about 9x
+fewer fights for the same error, for about 24% more time per fight. It changed every published number by about its
+error, so data from before it and after it don't mix: the switch came with a full run.
+
 The runtimes above are from the runs that first measured them, before later changes to the scripts. `pipeline.sh run`
 and `resume` now measure every run: the binaries run through `timing_cli.py`, which logs each call's step, class, race,
 iterations, fight length, targets, CPU seconds and wall seconds to `timing/<start>.jsonl`, and the run ends with

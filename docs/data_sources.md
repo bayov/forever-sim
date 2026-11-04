@@ -226,6 +226,9 @@ report what the client says, so they rank with it when they show client data. Th
   `tools/database/foreverchanges/suffixes.py` (required levels), `orchestration/tools/`
   (`b30_data.py`, `bis_data.py`, `fit.py`, `primary.py`, `single.py`), bayovui's `bis.py`
   and `recipesources.py`.
+- **Delisted items:** `scrape.py` keeps an item wowhead stops listing, with the day in
+  `delisted`. On 2026-11-04 that was 320 items still in the client, 300 of them hidden, so
+  this file is our only copy of their stats.
 - **Refresh:** weekly, locally (never in the cloud routine). `stale.py` says when a scrape
   is older than 7 days.
 - **Note:** plain curl gets a 403 from www.wowhead.com. `tools/audit/consumables/src.py` and

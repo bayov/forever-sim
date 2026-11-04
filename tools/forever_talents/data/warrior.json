@@ -4,7 +4,7 @@
   "className": "Warrior",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-11-03T14:00:12Z",
+  "generatedAt": "2026-11-04T10:31:00Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -272,8 +272,8 @@
           "description": "A brutal attack that deals {0}% weapon damage. Deals an additional {1}% weapon damage against Giants, Dragonkin, and mounted targets. Mounted targets are dismounted.",
           "ranks": [
             [
-              40,
-              80
+              75,
+              75
             ]
           ],
           "ranksObserved": [
@@ -440,15 +440,15 @@
           "maxRank": 2,
           "icon": "ability_warrior_decisivestrike",
           "iconSource": "client",
-          "description": "Reduces the global cooldown and cast time of your Slam ability by {0} sec. In addition, Slam no longer interrupts or delays your melee swing and Slam's cooldown is reduced by {1} sec.",
+          "description": "Reduces the cooldown of your Slam ability by {0} sec, the cast time and global cooldown by {1} sec, and Slam no longer interrupts or delays your melee swing.",
           "ranks": [
             [
-              0.25,
-              2.5
+              2.5,
+              0.25
             ],
             [
-              0.5,
-              5
+              5,
+              0.5
             ]
           ],
           "ranksObserved": [
@@ -537,7 +537,7 @@
           "maxRank": 5,
           "icon": "spell_nature_purge",
           "iconSource": "client",
-          "description": "Increases the area of effect of your Shouts by {0}% and reduces their Rage cost by {1}%.",
+          "description": "Increases the area of effect of your Shouts by {0}% and reduces the Rage cost by of your Shouts and Howls by {1}%.",
           "ranks": [
             [
               10,
@@ -855,32 +855,12 @@
           "spellId": 23584
         },
         {
-          "id": "raging-blows",
-          "name": "Raging Blows",
-          "row": 3,
-          "col": 1,
-          "maxRank": 1,
-          "icon": "ability_whirlwind",
-          "iconSource": "client",
-          "description": "Reduces the Rage cost of your Cleave and Whirlwind abilities by {0}.",
-          "ranks": [
-            [
-              3
-            ]
-          ],
-          "ranksObserved": [
-            1
-          ],
-          "ranksSource": "client",
-          "spellId": 1310315
-        },
-        {
           "id": "reckless-swings",
           "name": "Reckless Swings",
           "row": 3,
-          "col": 2,
+          "col": 1,
           "maxRank": 1,
-          "icon": "inv_misc_questionmark",
+          "icon": "ability_warrior_bloodfrenzy",
           "iconSource": "client",
           "description": "Your next {0} melee attacks generate {1} additional Rage. Lasts {2} sec.",
           "ranks": [
@@ -894,7 +874,8 @@
             1
           ],
           "ranksSource": "client",
-          "cost": "25% of base health; Instant; 15 sec cooldown"
+          "cost": "25% base Health; Instant; 15 sec cooldown",
+          "spellId": 1329555
         },
         {
           "id": "improved-execute",
@@ -1026,10 +1007,36 @@
           "spellId": 20504
         },
         {
+          "id": "improved-whirlwind",
+          "name": "Improved Whirlwind",
+          "row": 5,
+          "col": 0,
+          "maxRank": 2,
+          "icon": "ability_whirlwind",
+          "iconSource": "client",
+          "description": "Reduces the cooldown of your Whirlwind ability by {0} sec and increases the damage it deals to the closest enemy by {1}%.",
+          "ranks": [
+            [
+              1,
+              15
+            ],
+            [
+              2,
+              30
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 1310315
+        },
+        {
           "id": "flurry",
           "name": "Flurry",
           "row": 5,
-          "col": 1,
+          "col": 2,
           "maxRank": 3,
           "icon": "ability_ghoulfrenzy",
           "iconSource": "client",
@@ -1055,31 +1062,6 @@
           ],
           "ranksSource": "client",
           "spellId": 12319
-        },
-        {
-          "id": "improved-whirlwind",
-          "name": "Improved Whirlwind",
-          "row": 5,
-          "col": 2,
-          "maxRank": 2,
-          "icon": "ability_whirlwind",
-          "iconSource": "client",
-          "description": "Reduces the cooldown of your Whirlwind ability by {0} sec and increases the damage it deals to the closest enemy by {1}%.",
-          "ranks": [
-            [
-              1,
-              15
-            ],
-            [
-              2,
-              30
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client"
         },
         {
           "id": "bloodthirst",
@@ -1645,6 +1627,6 @@
     }
   ],
   "notes": [
-    "wago.tools Trait, TalentTab, SkillLine and Spell tables of the WoW Forever beta client build 1.60.1.70753 (TraitTree 1117), generated by tools/forever_talents/import_db2.py. 10 notes-only changes from tools/forever_talents/notes/warrior.json laid over it."
+    "wago.tools Trait, TalentTab, SkillLine and Spell tables of the WoW Forever beta client build 1.60.1.70755+hf (TraitTree 1117), generated by tools/forever_talents/import_db2.py. That is build 1.60.1.70755 with the launch realms' server hotfix rows laid over it (wago.tools hotfixes, region 91, build 70755, through tools/sources/hotfixes.py). The server hotfix that changed this tree: push 113539 of 2026-11-04. The hand notes on 10 talents carried over from the hand-assembled files these replaced."
   ]
 }

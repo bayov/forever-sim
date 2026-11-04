@@ -8,19 +8,23 @@ import (
 
 // Reckless Swings, a new Fury talent: "15 second cooldown. Costs 25% of base health. Your next 4
 // melee attacks generate 5 additional Rage. Lasts 8 seconds." (development notes post 9,
-// 2026-11-02; client 70753 unchanged, it has no such spell yet, so the action id is a placeholder.)
-// Assumptions, until a client row or a log shows them:
-//   - The health cost is nothing for a DPS: it doesn't cost damage (the brief), so it isn't modelled.
-//   - It is off the global cooldown, like Bloodrage, the other warrior ability paid for in health.
-//   - The 4 attacks are landed melee swings, Heroic Strike and Cleave included (the melee auto
-//     attack proc type, as Unbridled Wrath's), each giving a flat 5 Rage that a crit doesn't double.
+// 2026-11-02). Hotfix push 113539 (2026-11-03) brings the spells: 1329555 is the cast and the buff
+// (talent definition 145966), 1329554 the Rage. From its rows:
+//   - 15 sec cooldown and a 1 sec global cooldown (SpellCooldowns 102442: StartRecoveryTime 1000,
+//     category 133). The sim had it off the GCD before the hotfix.
+//   - 8 sec, 4 charges, proc type 4 (the melee auto attack, as Flurry's and Unbridled Wrath's), so
+//     Heroic Strike and Cleave use a charge as they do for those (SpellAuraOptions 249144).
+//   - Each charge is a flat 5 Rage (1329554 effect 0, energize 50 tenths), which a crit doesn't double.
+//   - 25% of base health (SpellPower 315180). Nothing for a DPS, so it isn't modelled.
+//
+// Still an assumption: only landed swings use a charge (the hit mask is server side, not in the data).
 func (warrior *Warrior) registerRecklessSwingsCD() {
 	if !warrior.Talents.RecklessSwings {
 		return
 	}
 
-	actionID := core.ActionID{SpellID: 1399001}
-	rageMetrics := warrior.NewRageMetrics(actionID)
+	actionID := core.ActionID{SpellID: 1329555}
+	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 1329554})
 
 	warrior.RecklessSwingsAura = warrior.RegisterAura(core.Aura{
 		Label:     "Reckless Swings",
@@ -43,6 +47,9 @@ func (warrior *Warrior) registerRecklessSwingsCD() {
 		ActionID: actionID,
 		Flags:    core.SpellFlagAPL,
 		Cast: core.CastConfig{
+			DefaultCast: core.Cast{
+				GCD: time.Second,
+			},
 			CD: core.Cooldown{
 				Timer:    warrior.NewTimer(),
 				Duration: time.Second * 15,

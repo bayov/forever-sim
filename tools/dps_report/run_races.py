@@ -21,7 +21,7 @@ import json, os, subprocess, sys, tempfile, copy, math, threading
 from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from dashpaths import D, BIN, TREE  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
+from dashpaths import D, BIN, TREE, RNG  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
 CLI = os.path.join(BIN, 'wowsimcli_r')
 if not os.path.exists(CLI):  # any wowsimcli built with the DASH_RACIALS_OFF patch will do
     CLI = os.path.join(BIN, 'wowsimcli')
@@ -78,7 +78,7 @@ def sim(req, race, off=None, mob=None, bid=None, meta=None):
     pl['race'] = 'Race' + race
     if mob:
         req['encounter']['targets'][0]['mobType'] = mob
-    req['simOptions'] = {'iterations': ITERS, 'randomSeed': '1'}
+    req['simOptions'] = {'iterations': ITERS, 'randomSeed': '1', **RNG}
     env = dict(os.environ)
     env.pop('DASH_NAMES', None)
     if off:
