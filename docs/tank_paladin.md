@@ -12,6 +12,75 @@ writes the launch realms' October 30 hotfix into the tables; `tools/sources/wago
 and the in-game measurements its commits cite), then Classic. "Client" below means 70753's SpellEffect,
 SpellMisc, SpellLevels, SpellPower, SpellCooldowns and SpellDuration rows.
 
+## Realignment after the 70753 update (2026-11-04)
+
+The tank work paused on 2026-11-03 for the update to client 1.60.1.70753 and Blizzard's November 2 development
+notes (`orchestration/round_70753/`, standards 37 to 39). This audit had already been read against 70753's rows;
+the restart checked what came after it and what master's paladin round changed in the same code.
+
+- **Client 1.60.1.70755** (2026-11-03): every row of the tank's spells is 70753's (`wago.py` SpellEffect,
+  SpellMisc, SpellLevels, SpellPower, SpellCooldowns, SpellDuration, SpellAuraOptions, SpellCategories, Spell,
+  SpellName for Righteous Fury, every Seal of Fury rank, its hit and Judgement, the taunt, the four Holy Shield
+  ranks, Holy Strike, Templar's Bulwark, Divine Shield, Divine Protection, Forbearance, Redoubt, Reckoning, Iron
+  Creed, Shieldsworn, Shield Specialization, Sacred Duty, Steadfast Libram's aura, Judgement, Swift Judgement and
+  Lay on Hands: no difference). wowsims/forever's 041cd46 (2026-11-03) adds Holy Shield rank 4 from 70755 with the
+  values this sim has had since 2026-11-03 (221 a block, 8%, 240 mana, level 60).
+- **Server hotfixes since**: push 113483 is rogue only; push 113542, the paladin rows of the same second
+  (`round_70753/hotfix_113483_paladin.md`), is Vengeance's 5 stacks and Two-Handed Weapon Specialization's Holy
+  school, neither of which a shield tank reaches. No row for a tank spell.
+- **The notes' Protection lines**, against the sim (tiers: C client, N notes):
+
+| Note | Tier | Sim |
+|---|---|---|
+| Righteous Fury: 33% all threat, 90% more on Holy | N, C | right (`righteous_fury.go`, `TestRighteousFuryThreat`) |
+| Righteous Fury at level 10, free with The Quick and the Dead | N, C | n/a at level 60 |
+| Salvation, Mass Salvation, Revoke removed | N, C | SafeDPS's reference member makes 1 threat a point of damage (the orchestrator's `tank_score.go` and `tankbench -dps-threat`); no bench request carries Salvation |
+| Judgement of Fury 3 sec | N, C | right (the taunt, 20232, isn't modelled: a tank on top gains nothing) |
+| Reckoning performs its number of attacks by stacks; no stacks while sitting | N | right: the next swing spends every stored attack, up to 4 (`core.StoreExtraMHAttack`); sitting n/a |
+| Divine Intellect to Protection row 1; Toughness row 3; Anticipation row 4; Templar's Bulwark row 3; Holy Shield row 5 | N, C | the 10-30 trees the sim already reads (`client/paladin.json`); no talent string moved |
+| Sacred Duty row 2: 30 sec / 1 min off Divine Shield, Divine Protection and Templar's Bulwark, 5 / 10 sec off Forbearance, no Stamina | N, C | right (`TestTemplarsBulwark`) |
+| Improved Seal of Fury, One-Handed Weapon Specialization removed | N, C | right (not in the tree) |
+| Templar's Bulwark is a Magic effect and dispellable | N, **C**: 1311015's SpellCategories DispelType is 1 (Magic) in 70753 and 70755, 0 in 70707 (round 70753's `paladin.md` and foreverchanges.pro list it as notes-only; the client does carry it) | moves nothing: nothing in the sim dispels a tank's buff and no scoring encounter has a boss who dispels; the sim's auras have no dispel type to set |
+| Improved Righteous Fury 3 / 6 / 9% | N, C | right |
+| Shield Specialization 15 / 30% block value, 50 / 100% for 4% of max mana | N, C | right (its mana makes no threat) |
+| Swift Judgement unleashes the seal, its own cooldown | N, C | right (master's `swift_judgement.go`; it judges Seal of Fury too) |
+| Stoicism 10 / 20% off stun and charm | N, C | not simmed; worth nothing on the scoring bosses |
+| Iron Creed 3 points, 10 / 20 / 30% Holy Strike threat, 2 / 4 / 6% damage taken for 6 sec | N, C | right (any Holy Strike, as wowsims/forever measured) |
+| Shieldsworn | N, C | right (the tooltip names Holy Shield and Shield Specialization only, so a Shieldsworn Holy Strike rolls no Reckoning) |
+| Two-Handed Weapon Specialization's threat cut | N, C | n/a with a shield |
+| Talents lose the low-rank proc penalty; spells keep Forever's downranking penalty | N | master's `core/downrank.go` (b57f5cc0a). **Fixed here**: Seal of Fury's hit and Judgement of Fury, rank-less sub-spells, now carry their seal rank's learn level (`DownrankLevel`), as master's round did for Seal of Righteousness and Seal of Command; the top rank (58) loses nothing at 60. `TestSealOfFury` |
+
+**Master's paladin round against this work.** The automatic merge left `sim/paladin/` consistent: master
+changed `talents.go` (Vengeance, Two-Handed Weapon Specialization), `consecration.go`, `soc.go` and `sor.go`
+(the downranking penalty), none of which a shield tank's Seal of Fury, Holy Shield, Holy Strike, Templar's Bulwark
+or immunities read; nothing is applied twice or lost (every tank test passes). Two things the merge exposed:
+
+- `TestProtection`'s settings runs (blank gear, the UI's `basic_prot` rotation) had dropped by about half since
+  2026-11-03, not under 1% as this doc said: the rotation cast Holy Shield only while aura 20134 was up, the old
+  Redoubt id that this work corrected to 20128, so it never cast it. Both UI rotations now read 20128 and cast
+  Holy Shield rank 4; the suite is back within 0.5% of master's golden, except the unbuffed settings runs on
+  blank gear (-2% to -16%: rank 4 costs 240 mana to rank 3's 195).
+- `TestRaidForeverReportHashesStable`: the ten report paladin builds (Retribution, Shock Ret, Sub Holy and their
+  duties) moved on the tank branch (659cad198) against master's hashes, and nothing here moves them further. Their
+  DPS, TPS and every action's casts, damage and threat are identical to master's to the last digit; the result
+  only lists 12 more auras at zero uptime (Seal of Fury's ranks, Divine Shield and Protection, Templar's Bulwark,
+  Forbearance and so on, which the tank code registers for every paladin), and the hash covers the aura list. The
+  paladin lines of `sim/testdata/report_hashes.txt` are rewritten for that reason alone. (The ten warrior lines also
+  move on 659cad198, threat only, DPS identical; that is the warrior work's, not this.)
+- `TestRetribution`'s two lines for this set (AllItems, 365.2 to 341.3 and 354.6 to 330.1) were stale since the
+  70753 merge (bc2bfa009): master's round moved the Retribution baseline from 354.57 to 330.13 (its own
+  `RetributionSyntheticSpellPowerOn-UseTrinket` line, equal to this set's trinket line before and after), and the
+  merge took master's golden but kept the branch's values for lines master doesn't have. The set's own stats don't
+  move them (the same 341.3 / 330.1 with the old or the new rings and main hand).
+- The synthetic set's hit was the gear row's 3.2% (5.7% with Precision); the restart brief sizes it to the 8% cap
+  counting talents (standards 4), +29 at Balanced (Gear, below).
+
+**What the update moved** (Balanced, the mean of the six scoring encounters, the 2026-11-03 bench request: the
+synthetic set before the hit change, Tauren, the old rotation; tankbench, 1,000 iterations): **2085 before, 1133
+after**. The paladin's own rules moved it by -8 (2085 to 2077 with the old 0.7 reference, within the noise); the
+SafeDPS reference member's 1 threat a point of damage (Salvation gone) is the rest, -944: SafeDPS 1572 to 1101.
+Through rotopt's objective (the template's defaults, 2,000 iterations) it is 3348 to 2101.
+
 ## Rules audit
 
 ### Abilities
@@ -128,7 +197,8 @@ boss under Forever; each checks the mechanic against the same paladin without it
   two charges, many blocks inside 1.5 sec one.
 - `TestBlessingOfSanctuaryGone`.
 - `TestProtection` (the class suite) and `TestRetribution` moved: Iron Creed, Reckoning and Holy Shield's
-  shared cooldown move the prot suite's DPS by under 1%, and the new tank items join both suites' item runs.
+  shared cooldown move the prot suite's item runs by under 1%, and the new tank items join both suites' item
+  runs. (Its settings runs fell by half until the 2026-11-04 fix of the UI rotation's Redoubt id, above.)
 
 ## Rotation
 

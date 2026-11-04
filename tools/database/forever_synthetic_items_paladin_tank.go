@@ -27,16 +27,22 @@ import (
 //	waist    71   67.1 /  67.7   35.9 / 37.4
 //	legs     66   83.0 /  83.3   47.0 / 46.5
 //	feet     66   62.5 /  63.1   34.9 / 34.9
-//	finger   71   48.0 /  48.3   28.6 / 28.0
-//	finger2  71   48.5 /  48.3   29.0 / 28.0
+//	finger   71   48.0 /  48.3   28.7 / 28.0
+//	finger2  71   48.5 /  48.3   27.8 / 28.0
 //	main hand 71  37.0 /  36.8
 //	shield   71   58.9 /  58.9
 //
-// Set 841.8 of 844.1. Shares (gear_targets.md's targets in brackets): Stamina 32.2% (32.4), Strength
-// 17.1 (16.7), Agility 3.6 (3.5), Spirit 9.9 (10.0), spell power 1.1 (1.1), hit 3.2 (3.2), crit 3.1
+// Set 841.8 of 844.1. Shares (gear_targets.md's targets in brackets): Stamina 30.2% (32.4), Strength
+// 16.4 (16.7), Agility 3.6 (3.5), Spirit 9.9 (10.0), spell power 1.1 (1.1), hit 5.9 (3.2), crit 3.1
 // (3.1), Defense 19.4 (19.5; 109 Defense), block 3.0 (3.2; 5%), block value 7.2 (7.2; 152 with the
-// shield's own). No resistances, dodge or parry (standards 36). 27 hit rating is 2.7%, 5.7% with
-// Precision 3/3, under the 8% cap (standards 4).
+// shield's own). No resistances, dodge or parry (standards 36).
+//
+// Hit is sized to the 8% cap counting Precision 3/3 (standards 4, the tank workers' restart brief of
+// 2026-11-04): 50 hit rating is 5%, 8% with Precision. The row's 3.2% (27 rating, 5.7% with
+// Precision) was raised by 23 rating on the two rings and the main hand, out of their own Stamina
+// and Strength, so each keeps its budget. 2.3% hit against the same 23 points spread over the set's
+// other stats in its proportions: +29 at Balanced on the six scoring encounters (3,000 iterations,
+// client 70753).
 //
 // Armor is the Lawbringer / Battlegear of Might piece's of the slot (plate, item level 66), the
 // wrist's, waist's and cloak's as the retribution set has them, and Drillborer Disk's for the shield.
@@ -131,15 +137,15 @@ func init() {
 		tank(&proto.UIItem{
 			Id: 990711, Name: "Protection Paladin Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_14",
 			Type:      proto.ItemType_ItemTypeFinger,
-			Stats:     stats.Stats{stats.Stamina: 21, stats.Strength: 13, stats.Block: 1}.ToFloatArray(),
-			HitRating: 9,
+			Stats:     stats.Stats{stats.Stamina: 16, stats.Strength: 10, stats.Block: 1}.ToFloatArray(),
+			HitRating: 17,
 			Ilvl:      71,
 		}),
 		tank(&proto.UIItem{
 			Id: 990712, Name: "Protection Paladin Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_24",
 			Type:      proto.ItemType_ItemTypeFinger,
-			Stats:     stats.Stats{stats.Stamina: 23, stats.Strength: 2, stats.Defense: 7, stats.Block: 1}.ToFloatArray(),
-			HitRating: 8,
+			Stats:     stats.Stats{stats.Stamina: 15, stats.Strength: 2, stats.Defense: 7, stats.Block: 1}.ToFloatArray(),
+			HitRating: 16,
 			Ilvl:      71,
 		}),
 		// Main hand, item level 71: Brutality Blade's 51.6 damage a second at Mirah's Song's 1.8 sec
@@ -147,8 +153,8 @@ func init() {
 		tank(&proto.UIItem{
 			Id: 990713, Name: "Protection Paladin Synthetic Main Hand (Phase 1)", Icon: "inv_sword_36",
 			Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
-			Stats:           stats.Stats{stats.Strength: 9, stats.Stamina: 9, stats.Defense: 6}.ToFloatArray(),
-			HitRating:       10,
+			Stats:           stats.Stats{stats.Strength: 6, stats.Stamina: 5, stats.Defense: 6}.ToFloatArray(),
+			HitRating:       17,
 			WeaponDamageMin: 65, WeaponDamageMax: 121, WeaponSpeed: 1.8,
 			Ilvl: 71,
 		}),

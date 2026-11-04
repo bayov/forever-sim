@@ -97,6 +97,8 @@ func (paladin *Paladin) registerSealOfFury() {
 			DamageMultiplier: paladin.improvedSeals() * paladin.getWeaponSpecializationModifier() * core.TernaryFloat64(paladin.Ranged().ID == LibramOfLaw, 1.04, 1),
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,
+			// Forever's downranking penalty reads the seal rank's learn level (core/downrank.go).
+			DownrankLevel: int(rank.level),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				spell.CalcAndDealDamage(sim, target, sim.Roll(judgeMin, judgeMax), spell.OutcomeMeleeSpecialNoBlockDodgeParry)
@@ -114,6 +116,7 @@ func (paladin *Paladin) registerSealOfFury() {
 			DamageMultiplier: paladin.improvedSeals() * paladin.getWeaponSpecializationModifier(),
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.1,
+			DownrankLevel:    int(rank.level),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				result := spell.CalcAndDealDamage(sim, target, rank.damage, spell.OutcomeMeleeSpecialCritOnly)
