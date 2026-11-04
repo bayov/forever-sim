@@ -119,14 +119,85 @@ never read: it read 408521 alone.
 - **Healing Wave below level 20.** Classic's servers cut the coefficient of a spell learned below 20; no
   client field holds it and the sim applies it to no spell (Lightning Bolt neither). Leveling only.
 - **Chain Heal's Expected Healing** counts the first target only, as HealComm did. Bound ranks pick by it.
-- **A HoT's snapshot takes the damage multipliers** (`Dot.SnapshotHeal` in `sim/core/spell_result.go` uses
-  `AttackerDamageMultiplier`: `DamageDealtMultiplier` and the school's damage multiplier, not
-  `HealingDealtMultiplier`), where a direct heal takes `CasterHealingMultiplier`. Nothing a Restoration
-  shaman wears or gets moves one but not the other (Natural Alignment Crystal moves both by 20%), so no shaman
-  number moves. It's shared core, and Rejuvenation, Regrowth and Renew go through it: for the orchestrator.
+- **A HoT's snapshot took the damage multipliers** (`Dot.SnapshotHeal` used `AttackerDamageMultiplier`) where
+  a direct heal takes `CasterHealingMultiplier`. Fixed on master by the priest's session (it now takes
+  `CasterHealingMultiplier`); no shaman number moved, since nothing a Restoration shaman has moved one but not
+  the other.
 - **The Spiritcaller** (2109, the Restoration tier set: 5 pieces take 1 sec off Riptide's cooldown) has no
   stats in the client yet, and the synthetic set doesn't use it.
 - **Totem of Life and Totem of Flowing Water** (Naxxramas, standards 8a) aren't modelled.
+
+## Presets (round 70753)
+
+The bench (`tools/healbench`), one healer, each row at its own length; 500 iterations to screen and 1,000 for
+the finalists and the tables below. "Master" is origin/master 3d1cb9701 before this branch, which is H2's to the
+third decimal.
+
+**The bench drop after the 11-03 merge was the bench, not the sim.** The shared `scratchpad/healbench` binary
+was rebuilt at 09:32 from another healer's branch (same size and time as its builds), which has none of
+Riptide's ranks 2 and 3, so the requests' Riptide (1239243) never cast. Built from this branch into a folder of
+its own, nothing dropped, and master's own build gives H2's numbers (Onyxia tank 1.017, Golemagg raid 2.083,
+Vaelastrasz raid 1.199, Vaelastrasz tank 0.648).
+
+**Talents.** Improved Ghost Wolf left the tree's reach, so the 5 Enhancement points go to Ancestral Knowledge 5
+and the 3 left to Thundering Strikes 3 (1% heal crit a point; Guardian Totems and Improved Lightning Shield do
+nothing for a healer). Restoration is H2's.
+
+| Talents (1,000 iterations, carry) | Tank healer mean (9 rows) | Raid healer mean (8 rows) |
+|---|---|---|
+| `-005102`, Ancestral Healing / Healing Focus (H2's) | 0.955 | 1.126 |
+| **`-035`** (Thundering Strikes 3), tank with Ancestral Healing, raid with Healing Focus | **0.959** | **1.123** |
+| `-053` (Thundering Strikes 5) | 0.959 | 1.122 |
+| tank on Healing Focus / raid on Ancestral Healing | 0.918 | 1.094 |
+
+The raid healer's choice is within noise (0.003); `-035` is kept for both so the two presets differ only in
+Restoration.
+
+**The tank healer** gains two lines, the brief's gap check (bigger ranks, Riptide's 12 sec, Lesser Healing
+Wave, Nature's Swiftness):
+
+- Lesser Healing Wave 6 and 5 at the tank, bound, while mana is at least 50%, right after Riptide: more healing
+  a second than Healing Wave for a little more a mana. Floors: 0% 1.035 (runs dry at 300 sec: 0.879), 50% 1.065,
+  60% 1.059, 70% 1.051, 80% 1.029; rank 6 alone at 70% 1.038 (the 0.959 base had none).
+- Nature's Swiftness when the tank is under 50% health, before Riptide (the bound Healing Wave 10 follows it):
+  +0.011 alone, +0.005 with the Lesser Healing Wave lines (50% and 40%: within 0.004; 35%: -0.010).
+- Kept: Healing Wave ranks bound by what the tank misses (casting 10 at 75% of its heal: -0.008), Mana Tide at
+  its floor (20% and 50%: within 0.001), Water Shield whenever its globes are spent (below 60% mana only:
+  +0.003, but it loses both long Onyxia rows).
+
+**The raid healer** is H2's APL on the notes' Riptide. Mana Tide's and Water Shield's mana floors never bind on
+the bench (Mana Tide 50%, Water Shield below 40% or 80%: the same numbers to the third decimal; the fights end
+first), which is why the 11-03 threshold runs were all equal. Riptide on the tank instead of the most hurt
+(-0.007) and Lesser Healing Wave 6 at the most hurt above 70% mana (-0.013) lose.
+
+**Final, 1,000 iterations, carry** (this branch with the priest's and paladin's work merged; the priest and
+paladin columns are the coordinator's table from their branches):
+
+| Boss | Tank: master | **Tank: now** | Holy priest | Paladin | Raid: master | **Raid: now** |
+|---|---|---|---|---|---|---|
+| Magmadar | 1.536 | **1.798** | 2.089 | 1.645 | 1.605 | **1.540** |
+| Golemagg | 1.441 | **1.716** | 1.915 | 1.625 | 2.083 | **1.913** |
+| Ragnaros | 0.469 | **0.521** | 0.582 | 0.521 | 1.203 | **1.171** |
+| Onyxia | 1.017 | **1.141** | 1.230 | 1.081 | 0.692 | **0.678** |
+| Broodlord | 0.618 | **0.837** | 0.891 | 0.750 | 0.835 | **0.817** |
+| Vaelastrasz | 0.648 | **0.775** | 0.903 | 0.723 | 1.199 | **1.110** |
+| Chromaggus | 0.764 | **0.884** | 1.006 | 0.825 | 0.969 | **0.906** |
+| Onyxia 180 sec | 0.965 | **1.010** | | | | |
+| Onyxia 300 sec | 0.956 | **0.969** | | | | |
+| Raid profile | | | | | 0.880 | **0.847** |
+| Mean | 0.935 | **1.072** | | | 1.183 | **1.123** |
+
+**What the notes' Riptide costs**, against the same presets on the client's Riptide (11-03 runs): about -0.07 on
+the raid healer (1.196 to 1.123: no instant heal on the most hurt, half as often) and about -0.035 on the tank
+healer with H2's APL (0.990 to 0.955). The new tank lines more than make it up there; nothing does on the raid
+healer, so its drop from master is the notes' and stays.
+
+**The gap to the Holy priest on the tank is the class's.** The shaman now passes the paladin on every boss but
+Ragnaros (equal) and stays 0.06 to 0.29 below the priest. With Riptide a 12 sec HoT, its single target tools are
+Healing Wave and Lesser Healing Wave (2.5 and 1.5 sec, no reduction past Improved Healing Wave's) and one Nature's
+Swiftness; the priest has Flash Heal, Greater Heal, Renew, Power Word: Shield and Prayer of Mending on the tank
+as well. No rank, mana gate or cooldown use on the bench closes it: the best lines above are within 0.006 of
+each other.
 
 ## Tests
 
@@ -149,3 +220,18 @@ run against the old code, or with the mechanic taken out, and fail):
   `periodic_test.go` (Healing Stream), `mana_returns_test.go` (Mana Spring, Mana Tide, Water Shield),
   `mana_costs_test.go` (Totemic Focus), `mindfulness_test.go`, `natural_grace_test.go`,
   `natures_swiftness_test.go`.
+
+## Calls for the user
+
+1. **The notes' Riptide** (standards 37). Default: modelled under Forever (no instant heal, 12 sec, 147 / 180 /
+   231 mana). The client's instead: about +0.07 raid healer mean carry and +0.035 tank healer (H2's tank APL).
+2. **Riptide's Chain Heal bonus on the whole chain.** The client's effect is a dummy, and the tooltip's "your
+   Chain Heal casts directly on that target" says which casts, not which jumps. Default: the whole chain of a
+   Chain Heal cast at a target with our Riptide. The first
+   target only: the same tank numbers, the raid healer within 0.02 a row (e.g. Magmadar 1.621 against 1.639,
+   the raid profile 0.909 against 0.900, on the client's Riptide).
+3. **Tidal Totem on the tank healer.** Default: not in the preset's gear. With it: Golemagg +0.036, the other
+   rows within 0.005 (on the client's Riptide).
+4. **The raid healer's Enhancement points.** Default: `-035` (Thundering Strikes 3), as the tank healer. H2's
+   `-005102` (still legal, and what `sim/compsearch/presets.go` and `ui/raid_sim/data/table.json` give a raid
+   member): +0.003 mean, within noise.

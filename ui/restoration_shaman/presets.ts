@@ -59,23 +59,26 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // Mana Spring Totem back after it, and bind at most 4 ranks of a heal (the user's ruling), each cast
 // when what's missing covers its Expected Healing.
 //
-// The tank healer: Riptide on the tank whenever it's off, Healing Wave 10, 8 and 6 at the tank, and
-// Chain Heal 3, 2 and 1 at the most hurt when the tank is topped. Water Shield goes back up as soon as
-// its globes are spent: a tank healer is seldom hit, so its globes go on its heals' crits. Against the
-// bench's earlier rotation (the same heals, no mana tools; 1,000 iterations, one healer on the tank)
-// it carries the same in Onyxia's 35 sec (1.031), and 0.959 against 0.836 at 180 sec and 0.830
-// against 0.677 at 300, where the old one runs dry (178 and 185 sec).
+// The tank healer: Nature's Swiftness when the tank is under 50% health, Riptide on the tank whenever
+// it's off, Lesser Healing Wave 6 and 5 at the tank while mana is at least 50%, then Healing Wave 10,
+// 8 and 6 at the tank, and Chain Heal 3, 2 and 1 at the most hurt when the tank is topped. Water
+// Shield goes back up as soon as its globes are spent: a tank healer is seldom hit, so its globes go
+// on its heals' crits. Lesser Healing Wave heals more a second than Healing Wave for a little more a
+// mana, and the short fights end with mana to spare: on round 70753 (the notes' Riptide), 1.072
+// against 0.959 mean carry over the bench's nine rows (1,000 iterations, one healer on the tank),
+// 1.798 against 1.503 on Magmadar, 1.141 against 1.045 on Onyxia, 0.969 against 0.974 at 300 sec. The
+// mana floor at 50 to 70% and Nature's Swiftness at 35 to 50% are within 0.01 (docs/healing_shaman.md).
 export const APLTankHealer = PresetUtils.makePresetAPLRotation('Tank healer', TankHealerAPLJson, {
-	tooltip: 'Riptide and bound ranks of Healing Wave at the tank, Chain Heal at the most hurt, with Water Shield, Mana Spring and Mana Tide.',
+	tooltip: 'Riptide, Lesser Healing Wave above half mana and bound ranks of Healing Wave at the tank, Nature\'s Swiftness at half health, Chain Heal at the most hurt, with Water Shield, Mana Spring and Mana Tide.',
 	group: 'Healing sim',
 });
-// The raid healer: Riptide at the most hurt when it fits, then Chain Heal 3, 2 and 1 at the most
-// hurt, then Healing Wave 10 and 8 for one big hole. Raid damage spends Water Shield's globes fast,
-// and a recast every few hits costs the healing its global cooldowns, so it goes back up only below
-// 60% mana: 0.899 against 0.874 recasting at once on the bench's raid profile, 1.140 against 1.056 on
-// Vaelastrasz, 0.844 against 0.796 on Broodlord, and 0.865 against 0.843 at 300 sec. Against the old
-// rotation (Chain Heal only): 0.899 against 0.850 on the raid profile, 0.695 against 0.672 on Onyxia,
-// 1.140 against 1.066 on Vaelastrasz, 0.990 against 0.928 on Chromaggus (2 healers, 7 Frost mages).
+// The raid healer: Riptide at the most hurt whenever they have none, then Chain Heal 3, 2 and 1 at the
+// most hurt, then Healing Wave 10 and 8 for one big hole. Raid damage spends Water Shield's globes
+// fast, and a recast every few hits costs the healing its global cooldowns, so it goes back up only
+// below 60% mana. On round 70753 (the notes' Riptide: no instant heal) it carries 1.123 mean over the
+// bench's eight rows, against 1.183 on master before (1.196 with the client's three Riptide ranks);
+// Riptide kept on the tank (-0.007), Lesser Healing Wave at the most hurt above 70% mana (-0.013) and
+// other Water Shield or Mana Tide floors (no change: the fights end first) don't do better.
 export const APLRaidHealer = PresetUtils.makePresetAPLRotation('Raid healer', RaidHealerAPLJson, {
 	tooltip: 'Chain Heal and Riptide at the most hurt, Healing Wave for a big hole, with Water Shield, Mana Spring and Mana Tide.',
 	group: 'Healing sim',
