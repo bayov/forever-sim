@@ -3166,6 +3166,22 @@
       "ca0ca12",
       "18ec491"
      ]
+    },
+    {
+     "title": "Feral cat throws a Goblin Sapper Charge: explosives can be used in Cat and Bear Form",
+     "kind": "consumes",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "The client flags the sapper and the land mine as usable while shapeshifted, so the cat takes the sapper on cooldown.",
+     "commits": [
+      "e77fb29",
+      "22a7d79"
+     ]
     }
    ],
    "internal": [
@@ -3863,6 +3879,58 @@
     },
     {
      "commit": "d5aa54b",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "3d9a721",
+     "why": "rotopt hold knobs for tank-side values under a buff; the DPS warrior requests are unchanged (the probe cleared every warrior build)"
+    },
+    {
+     "commit": "7872f00",
+     "why": "beta level 30 gear lists only; no report request reads them"
+    },
+    {
+     "commit": "1975660",
+     "why": "rotopt hold knobs for tank-side values under a buff; the DPS warrior requests are unchanged (the probe cleared every warrior build)"
+    },
+    {
+     "commit": "443c547",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "9f2216b",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "5890f7c",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "05ca74d",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "4a3bcd2",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "c89e3bd",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "4745ce4",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "88d044d",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "df0f997",
+     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+    },
+    {
+     "commit": "464deda",
      "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
     }
    ],
