@@ -228,7 +228,7 @@ export const DefaultAPLs = [APLLevel60Fury2H];
 // Mastery 3, Reckless Swings, Improved Whirlwind): the search from the remapped build drops Booming
 // Voice and a point of Improved Berserker Rage for Reckless Swings, Improved Whirlwind 2/2 and Enrage
 // 5/5, and fills Arms' rows with Improved Charge and Improved Overpower: 1069.6 to 1153.4 at 180 sec.
-export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30313113002-0505300551120100321' }), {
+export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30313113002-050530055120100231' }), {
 	tooltip: 'Level 60 dual wield Fury talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -242,7 +242,7 @@ export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTal
 // but no move of its points scored better then. 2026-11-04: Unbridled Wrath 5/5 for Furious
 // Precision's 3 points, the spare one in Blood Craze: +2.8 / +3.4 / +1.9 at 120 / 180 / 300 sec,
 // ahead at every length on both seeds.
-export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30313113032-2505001501122100321' }), {
+export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30313113032-250500150122100231' }), {
 	tooltip: 'Level 60 two-hand Fury talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -258,7 +258,7 @@ export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', Sav
 // Two-Handed Weapon Specialization 6%, Reckless Swings): the 4 freed points and a third point of
 // Improved Heroic Strike (to open Two-Handed Weapon Specialization's row again) go to Reckless
 // Swings, Enrage 5/5 and Improved Bloodrage 2/2, for Booming Voice: 1050.6 to 1086.6 at 180 sec.
-export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTalents.create({ talentsString: '30303213032215201-050500050012-2' }), {
+export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTalents.create({ talentsString: '30303213032215201-05050005012-2' }), {
 	tooltip: 'Level 60 Arms talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -268,7 +268,7 @@ export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTal
 // at 180 sec on the Dragonkin boss.
 export const TalentsLevel60ArmsDragonkin = PresetUtils.makePresetTalents(
 	'Arms · vs Dragonkin',
-	SavedTalents.create({ talentsString: '30303213132215201-050500050012-1' }),
+	SavedTalents.create({ talentsString: '30303213132215201-05050005012-1' }),
 	{
 		tooltip: 'Level 60 Arms talents against a Giant or Dragonkin boss, with Spearing Strike.',
 		group: 'Synthetic',

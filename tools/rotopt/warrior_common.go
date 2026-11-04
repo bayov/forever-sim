@@ -29,7 +29,7 @@ var (
 	spearingStrike  = spellID(1310222)
 	// Reckless Swings, the Fury talent of the November 2 development notes. The client has no spell
 	// for it yet, so the sim gives it a placeholder id (sim/warrior/reckless_swings.go).
-	recklessSwings   = spellID(1399001)
+	recklessSwings   = spellID(1329555)
 	heroicStrikeNext = &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: 11567}, Tag: 1, Rank: 8}
 	potion           = &proto.ActionID{RawId: &proto.ActionID_OtherId{OtherId: proto.OtherAction_OtherActionPotion}}
 	// The synthetic on-use trinket (sim/warrior/forever_synthetic_trinkets.go): 20 sec, 2 min.

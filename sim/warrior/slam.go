@@ -17,9 +17,10 @@ func (warrior *Warrior) registerSlamSpell() {
 
 	// Forever gives Slam a 15 sec cooldown, and Improved Slam takes 2.5 sec a point off it
 	// (development notes post 9, 2026-11-02: "reduced to 15 seconds (was 18 seconds)", and
-	// Improved Slam's reduction "changed to 2.5/5 seconds (was 3.0/3.0)"). Client 70753 still has
-	// the old values (category cooldown 18000 on every rank, effect 3 of spell 12862 -3000 with no
-	// rank curve); the notes announce the change for launch, after that build.
+	// Improved Slam's reduction "changed to 2.5/5 seconds (was 3.0/3.0)"). Hotfix push 113539
+	// (2026-11-03) carries both: SpellCooldowns 18000 -> 15000 on every Slam rank, and spell 12862's
+	// SpellEffect 1339521 from -3000 flat to curve 128144, -2500 / -5000. Client 70755 still has the
+	// old values.
 	var cooldown core.Cooldown
 	if warrior.Env.IsForever() {
 		cooldown = core.Cooldown{

@@ -84,7 +84,7 @@
               "blessingOfKings":  true,
               "blessingOfMight":  "TristateEffectImproved"
             },
-            "talentsString":  "30303213032215201-050500050012-2",
+            "talentsString":  "30303213032215201-05050005012-2",
             "level":  60,
             "profession1":  "Engineering",
             "profession2":  "Alchemy",
@@ -490,7 +490,7 @@
                   "action":  {
                     "castSpell":  {
                       "spellId":  {
-                        "spellId":  1399001
+                        "spellId":  1329555
                       }
                     }
                   }
