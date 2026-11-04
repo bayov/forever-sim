@@ -31,7 +31,7 @@ DEFAULTS = {
     'talents': '53320015002101251-5-052330002',
     'race': 'RaceHuman',
     'libram': 272436,      # Libram of Economy; 279248 Libram of Infusion
-    'hl': '9,8,7',         # the Holy Light ranks bound, biggest first
+    'hl': '9,8',           # the Holy Light ranks bound, biggest first
     'fol': '6',            # the Flash of Light ranks bound
     'emergency': 0.35,     # Flash of Light (or Holy Shock) at the lowest health under this
     'shock_emergency': 0.5,  # Holy Shock at the lowest health under this (0 never)
@@ -45,9 +45,24 @@ DEFAULTS = {
     'hl_target': 'tank',   # where Holy Light goes: the tank, or the most hurt
     'shock_fill': 0,       # Holy Shock at the most hurt when it misses what Holy Shock heals
     'fit': 1.0,            # a rank goes out once what's missing is this share of what it heals
-    'mana_hl': 0.0,        # Holy Light only above this mana share (Flash of Light below it)
+    'mana_hl': 0.5,        # Holy Light only above this mana share (Flash of Light below it)
     'aura': 'NoPaladinAura',  # our own aura (ConcentrationAura: the party resists 35% of the pushback)
 }
+
+# What one role's preset sets over DEFAULTS (a --set still wins).
+ROLE_DEFAULTS = {
+    'tank': {},
+    'raid': {},
+}
+
+
+def knobs(role, sets):
+    k = dict(DEFAULTS, **ROLE_DEFAULTS[role])
+    for kv in sets:
+        key, v = kv.split('=', 1)
+        t = type(DEFAULTS[key])
+        k[key] = t(v) if t is not str else v
+    return k
 
 
 def const(v):
@@ -186,20 +201,16 @@ def main():
     ap.add_argument('--role', default='tank')
     ap.add_argument('--set', action='append', default=[])
     a = ap.parse_args()
-    k = dict(DEFAULTS)
-    for kv in a.set:
-        key, v = kv.split('=', 1)
-        t = type(DEFAULTS[key])
-        k[key] = t(v) if t is not str else v
     if a.out:
-        json.dump(request(k, a.role), open(a.out, 'w'), indent=2)
+        json.dump(request(knobs(a.role, a.set), a.role), open(a.out, 'w'), indent=2)
         return
     for role, name in (('tank', 'paladin_holy'), ('raid', 'paladin_holy_raid')):
+        k = knobs(role, a.set)
         json.dump(request(k, role), open(f'tools/healbench/req/{name}.json', 'w'), indent=2)
         os.makedirs('ui/holy_paladin/apls', exist_ok=True)
         apl = {'tank': 'tank_healer', 'raid': 'raid_healer'}[role]
         json.dump(rotation(k, role), open(f'ui/holy_paladin/apls/{apl}.apl.json', 'w'), indent=2)
-    gear = request(k, 'tank')['raid']['parties'][0]['players'][0]['equipment']
+    gear = request(knobs('tank', a.set), 'tank')['raid']['parties'][0]['players'][0]['equipment']
     json.dump(gear, open('ui/holy_paladin/gear_sets/level60_phase1_synthetic.gear.json', 'w'))
 
 

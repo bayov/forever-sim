@@ -192,27 +192,46 @@
           }
         },
         "condition": {
-          "cmp": {
-            "op": "OpGe",
-            "lhs": {
-              "healthMissing": {
-                "sourceUnit": {
-                  "type": "Tank",
-                  "index": 0
+          "and": {
+            "vals": [
+              {
+                "cmp": {
+                  "op": "OpGe",
+                  "lhs": {
+                    "healthMissing": {
+                      "sourceUnit": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    }
+                  },
+                  "rhs": {
+                    "spellExpectedHealing": {
+                      "spellId": {
+                        "spellId": 25292
+                      },
+                      "targetUnit": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "cmp": {
+                  "op": "OpGt",
+                  "lhs": {
+                    "currentManaPercent": {}
+                  },
+                  "rhs": {
+                    "const": {
+                      "val": "0.5"
+                    }
+                  }
                 }
               }
-            },
-            "rhs": {
-              "spellExpectedHealing": {
-                "spellId": {
-                  "spellId": 25292
-                },
-                "targetUnit": {
-                  "type": "Tank",
-                  "index": 0
-                }
-              }
-            }
+            ]
           }
         }
       },
@@ -230,69 +249,50 @@
           }
         },
         "condition": {
-          "cmp": {
-            "op": "OpGe",
-            "lhs": {
-              "healthMissing": {
-                "sourceUnit": {
-                  "type": "Tank",
-                  "index": 0
+          "and": {
+            "vals": [
+              {
+                "cmp": {
+                  "op": "OpGe",
+                  "lhs": {
+                    "healthMissing": {
+                      "sourceUnit": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    }
+                  },
+                  "rhs": {
+                    "spellExpectedHealing": {
+                      "spellId": {
+                        "spellId": 10329
+                      },
+                      "targetUnit": {
+                        "type": "Tank",
+                        "index": 0
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "cmp": {
+                  "op": "OpGt",
+                  "lhs": {
+                    "currentManaPercent": {}
+                  },
+                  "rhs": {
+                    "const": {
+                      "val": "0.5"
+                    }
+                  }
                 }
               }
-            },
-            "rhs": {
-              "spellExpectedHealing": {
-                "spellId": {
-                  "spellId": 10329
-                },
-                "targetUnit": {
-                  "type": "Tank",
-                  "index": 0
-                }
-              }
-            }
+            ]
           }
         }
       },
       "notes": "Holy Light rank 8, the biggest that what is missing covers."
-    },
-    {
-      "action": {
-        "castSpell": {
-          "spellId": {
-            "spellId": 10328
-          },
-          "target": {
-            "type": "Tank",
-            "index": 0
-          }
-        },
-        "condition": {
-          "cmp": {
-            "op": "OpGe",
-            "lhs": {
-              "healthMissing": {
-                "sourceUnit": {
-                  "type": "Tank",
-                  "index": 0
-                }
-              }
-            },
-            "rhs": {
-              "spellExpectedHealing": {
-                "spellId": {
-                  "spellId": 10328
-                },
-                "targetUnit": {
-                  "type": "Tank",
-                  "index": 0
-                }
-              }
-            }
-          }
-        }
-      },
-      "notes": "Holy Light rank 7, the biggest that what is missing covers."
     },
     {
       "action": {

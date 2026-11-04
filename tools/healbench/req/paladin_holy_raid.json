@@ -233,25 +233,44 @@
                       }
                     },
                     "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "MostHurt"
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "healthMissing": {
+                                  "sourceUnit": {
+                                    "type": "MostHurt"
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "spellExpectedHealing": {
+                                  "spellId": {
+                                    "spellId": 25292
+                                  },
+                                  "targetUnit": {
+                                    "type": "MostHurt"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.5"
+                                }
+                              }
                             }
                           }
-                        },
-                        "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 25292
-                            },
-                            "targetUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        }
+                        ]
                       }
                     }
                   },
@@ -268,64 +287,48 @@
                       }
                     },
                     "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "MostHurt"
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "healthMissing": {
+                                  "sourceUnit": {
+                                    "type": "MostHurt"
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "spellExpectedHealing": {
+                                  "spellId": {
+                                    "spellId": 10329
+                                  },
+                                  "targetUnit": {
+                                    "type": "MostHurt"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.5"
+                                }
+                              }
                             }
                           }
-                        },
-                        "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 10329
-                            },
-                            "targetUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        }
+                        ]
                       }
                     }
                   },
                   "notes": "Holy Light rank 8, the biggest that what is missing covers."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10328
-                      },
-                      "target": {
-                        "type": "MostHurt"
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        },
-                        "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 10328
-                            },
-                            "targetUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Holy Light rank 7, the biggest that what is missing covers."
                 },
                 {
                   "action": {

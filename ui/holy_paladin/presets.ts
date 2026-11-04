@@ -63,8 +63,8 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // what's missing covers its Expected Healing.
 //
 // The tank healer: Oath of Light on the tank (at -1.5 sec and whenever it's off: 400 more on its Holy
-// Lights, 115 on its Flashes), Divine Favor before a Holy Light 9 the tank misses, Holy Light 9, 8 and 7
-// at the tank, and Flash of Light 6 at the most hurt in between.
+// Lights, 115 on its Flashes), Divine Favor before a Holy Light 9 the tank misses, Holy Light 9 and 8 at
+// the tank while above 50% mana (Flash of Light below it), and Flash of Light 6 at the most hurt in between.
 export const APLTankHealer = PresetUtils.makePresetAPLRotation('Tank healer', TankHealerAPLJson, {
 	tooltip: 'Oath of Light on the tank, bound ranks of Holy Light at it with Divine Favor, Flash of Light and Holy Shock for the rest.',
 	group: 'Healing sim',
