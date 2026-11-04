@@ -35,6 +35,12 @@ part has the session's options). The mode comes from the encounter like the othe
   each rank, and the arrows move the row earlier or later. A point the tree doesn't allow yet
   (its row isn't open, or the talent it needs isn't full) shows red. Points after the plan's
   last level are dimmed, because we don't sim them.
+  The sim itself takes each level's talents as they are, so a route with a red point would sim
+  hours we can't play. Simulate doesn't run then, and the Overview names the first red point.
+  `tools/levelingplan` refuses it for `-level-requests` and `-training` (a search still runs,
+  since its routes keep the rules), and refuses a request whose talent trees aren't the repo's
+  `ui/core/talents/trees` (one saved before a tree change). `TestShippedRoutesKeepTheRules`
+  checks every shipped `ui/*/apls/leveling_plan*.json` route against today's trees.
 - **Respecs.** A build after the first is a respec at its level. There we put all the points
   back by its own order. A run also sims the respec's levels with the build we had, on the
   same sessions, and says how many hours the respec saves. We weigh that against the price
@@ -465,7 +471,8 @@ seeds 1 and 1000001:
   to 4 at 35, 39 and 47, Healing Stream Totem 2 at 40, and never Healing Stream Totem 4 and 5.
   It keeps every Earth Shock rank at its level (14, 24 and 36), as we pinned them. The plan
   takes 79.93h with it (79.926h and 79.922h, ±0.007), 47 min faster than the legal old order
-  and 1 min faster than the old plan's illegal one.
+  and 1 min faster than the old plan's illegal one. The gear plan by the 2026-11-04 leveling
+  weights lowers that to 79.55h (79.551h on both seeds, ±0.007).
 
 The route: Thundering Strikes 5, Mental Dexterity 3, Improved Lightning Shield 2 at 18 and 19,
 Shamanistic Focus, Elemental Weapons 3, Improved Lightning Shield 3/3 at 24, Improved Ghost Wolf

@@ -4,6 +4,7 @@
       {
         "players": [
           {
+            "inFrontOfTarget": true,
             "race": "RaceNightElf",
             "class": "ClassDruid",
             "level": 60,

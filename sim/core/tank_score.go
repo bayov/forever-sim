@@ -85,6 +85,13 @@ func (character *Character) setupTankScore(scoring *proto.TankScoring, healingMo
 	character.Unit.tankScore = ts
 }
 
+// readsNoHealth is whether the unit is scored by a tank score's replay, where nothing may read its
+// health: the score replays the iteration at other HPS, so a choice made on this run's health
+// wouldn't follow (docs/tank_sim.md).
+func (unit *Unit) readsNoHealth() bool {
+	return unit.tankScore != nil && unit.tankScore.replay
+}
+
 func (ts *tankScore) reset() {
 	ts.events = ts.events[:0]
 	ts.threat = 0
