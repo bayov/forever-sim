@@ -208,3 +208,4 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-04 13:40 | healer_rotations | pass 1 | master a1b1163d2 | findings | baseline = H3 table exactly; 15 variants none win; healer_rotations-20261104-1 (low) Holy priest dead lines
 2026-11-04 13:50 | healer_fairness | pass 1 | master c8f5858bd | findings | 4 new: tank bench lets Prayer of Mending bounce tank-priest (+0.085 Holy priest, high), heal-size gate holds back shaman/paladin/druid (medium), 2 low
 2026-11-04 14:07 | healer_rotations | pass 1 (redo) | master 1e9eb71f7 | findings | raid role redone after the raid damage fix; healer_rotations-20261104-2 (medium) Disc OOM on Chromaggus at 107 s; -1 (low) stands
+2026-11-04 16:18 | tank_gear | pass 2 | master b38ff16 | 1 new finding | after round 2: -1,-2,-4,-5,-6 closed; -3 reopened (paladin/Warden shields still 929, which the UI drops; Superior Deflection simmed for warrior only); -7 (low) cloak enchant unevaluated
