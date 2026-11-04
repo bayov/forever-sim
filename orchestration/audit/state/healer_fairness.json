@@ -1,1 +1,10 @@
-{"last": {"master": "36cd929a2"}}
+{
+ "last": {
+  "master": "c8f5858bd"
+ },
+ "last_pass_at": "2026-11-04T13:50:10Z",
+ "pass": 1,
+ "result": "findings",
+ "baseline": "c8f5858bd",
+ "note": "Pass 1 (forced, first after H3). Both roles benched on c8f5858bd (ref/healer_fairness/{tank,raid}_c8f5858.tsv); attribution of the Holy priest's tank lead on a1b1163d2. 4 findings: tank bench PoM ping-pong (high), heal-size gate (medium), priest wand/PI (low), logs lack per-class HPS (low)."
+}

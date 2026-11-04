@@ -206,3 +206,4 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-04 13:38 | tank_rotations | pass 1 | master f62bfc74bc | 8 new findings | first baseline ref/tank_bench/summary.tsv; bear Roar order +198, warrior Shield Wall 18s +46/+175, paladin Bulwark 13s (Broodlord), Warden shock order +62
 2026-11-04 13:39 | tank_mechanics | pass 1 | master f62bfc74b | 11 new findings | forced first pass: tanks simmed behind the boss (high), parry haste double-counted in encounters (high), Primal Bite misses notes' x2 threat (high)
 2026-11-04 13:40 | healer_rotations | pass 1 | master a1b1163d2 | findings | baseline = H3 table exactly; 15 variants none win; healer_rotations-20261104-1 (low) Holy priest dead lines
+2026-11-04 13:50 | healer_fairness | pass 1 | master c8f5858bd | findings | 4 new: tank bench lets Prayer of Mending bounce tank-priest (+0.085 Holy priest, high), heal-size gate holds back shaman/paladin/druid (medium), 2 low
