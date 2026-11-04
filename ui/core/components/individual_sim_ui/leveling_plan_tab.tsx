@@ -13,6 +13,7 @@ import {
 	planLevels,
 	rangeAt,
 	rotationAt,
+	routeProblem,
 	sortedBuilds,
 	talentsAt,
 	TalentShape,
@@ -417,6 +418,9 @@ export class LevelingPlanTab extends SimTab {
 	// Sims each level of the plan, then each respec's levels with the build we had before it.
 	async run(onProgress: (progress: ProgressMetrics) => void) {
 		const plan = this.player.getLevelingPlan();
+		// A route that breaks the tree's rules would sim fine and give hours we can't play.
+		// The Overview says why (renderRespecs).
+		if (routeProblem(plan, this.talents.shape)) return;
 		const builds = sortedBuilds(plan);
 		const jobs: Array<{ level: number; kept?: number }> = planLevels(plan).map(level => ({ level }));
 		const respecs = builds.slice(1).map((build, i) => ({ build: i + 1, level: build.level }));
@@ -604,6 +608,8 @@ export class LevelingPlanTab extends SimTab {
 			);
 		});
 		if (!run && plan.builds.length > 1) rows.push(<p className="leveling-plan-note">Simulate to see what each respec saves.</p>);
+		const problem = routeProblem(plan, this.talents.shape);
+		if (problem) rows.unshift(<p className="leveling-plan-respec leveling-plan-worse">{`Simulate won't run: ${problem}.`}</p>);
 		this.respecsElem.replaceChildren(...rows);
 	}
 

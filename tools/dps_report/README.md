@@ -290,6 +290,60 @@ All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.
 Side outputs: `fortt_coverage.json`, the count of tooltips by text source, for reporting. The page also expects every dataset
 under 8 MB; the largest are icons and treeart at about 1 MB.
 
+## Tanking and Healing
+
+The report's Tanking and Healing modes come from `tankheal.py`, not from `run_build.py`: tools/tankbench and
+tools/healbench print markdown tables, and `tankheal.py` keeps those outputs and parses them into datasets. Each
+dataset has `"mode": "tank"` or `"heal"` in `datasets.json`; the ones every mode reads (names, icons, icons_more,
+tooltips, talenttrees, treeart) have `"mode": "common"`, and no mode means DPS.
+
+What is simmed (the docs say how, `tankheal.py` does not choose):
+
+- Tanking: the 12 presets in `tools/tankbench/req/` (`warrior_protection.json` is the healbench's default tank, not a
+  preset), `tankbench -iters 1000 -encounter tools/encounters/<boss>.json` for each of the 7 bosses, the reqs' own seed
+  (`simOptions.randomSeed`). A score is the mean over the six scored bosses (Ragnaros is shown, not scored; docs/tank_sim.md),
+  weights max threat 1/3, balanced 1, max survival 3.
+- Healing: the presets in `tools/healbench/req/`, `-carry`, `-role tank` for the tank healer files and `-role raid` for
+  `_raid`, 1,000 iterations, each file at its own length, healbench's fixed seed 101, and the mean over the 7 boss files
+  (docs/healing_sim.md, the "Carry, 1,000 iterations" table and the shaman's "raid mean over these 7 files").
+- Races: every race the class can be (`CLASS_RACES` in run_build.py), as a copy of the req with the race changed, in
+  one extra bench call per boss (`--no-races` skips it).
+
+Commands (`DASH_DIR` as for the DPS steps; with no `$DASH_DIR` tree they read the repository itself):
+
+```sh
+pipeline.sh tankheal [tank|heal]   # = TANKHEAL_BIN=<bin dir> tankheal.py run: sims into $DASH_DIR/{tank,heal}/, run.json, .fresh
+tankheal.py run heal --resume      # a stopped run keeps the bench calls it finished (.progress.json, same commit)
+tankheal.py build                  # $DASH_DIR/{tank,heal}/ -> $DASH_DIR/data/{tank,heal}_*.json
+tankheal.py pack | unpack          # tools/dps_report/raw/bench/{tank,heal}.tgz <-> $DASH_DIR/{tank,heal}/
+tankheal.py fresh [--clear]        # the modes simmed since their last publish
+```
+
+The raw outputs are kept in the repository like the DPS ones (`raw/bench/<mode>.tgz`, deterministic tars), outside
+`raw/*.tgz` so `rawstore.py prune` never takes them for removed builds. The pipeline wires them in: `run` and `resume`
+sim both modes after the DPS builds (all of them when no DPS build is stale or `TANKHEAL=1`; `resume` skips a mode
+already marked fresh), `hydrate` unpacks and builds them, and `publish` builds them before `rawstore.py copy`, then for a
+fresh mode records its provenance (`stale.mjs --record-bench <modes> --iterations 1000`, into `provenance.json`'s
+`benches`), packs it and clears the mark. `stale.mjs` reports a stale mode separately from the DPS builds (`benches` in
+`--json`, so probe.py's ids are unchanged): its fingerprint covers the shared sim code, `sim/<class>/`, the encounters,
+the reqs' db items, tools/tankbench, tools/healbench, tools/tankscore and `tankheal.py`.
+
+Datasets per mode: `<mode>_builds`, `_bosses`, `_encounters`, `_races`, `_gear`, `_rotation`, `_setup` (the DPS shapes),
+`_tooltips` (rows the common tooltips lack), `_notes` (docs/tank_<class>.md or healing_<class>.md: preset notes and
+open calls), `_method` (docs/tank_sim.md or healing_sim.md), `_icons` and `_names` (what the common icons and names
+lack). Docs are converted by `md2html.py`, a small Markdown subset (no Markdown library is installed).
+
+Building the benches (they need the generated protos and the item db; the binaries go wherever `TANKHEAL_BIN` points):
+
+```sh
+PATH=$PATH:~/go/bin npx protoc -I=./proto --go_out=./sim/core ./proto/*.proto
+go build -tags=with_db -o $B/tankbench ./tools/tankbench
+go build -tags=with_db -o $B/healbench ./tools/healbench
+```
+
+A full run takes about half a minute for tanking and about 25 minutes for healing (most of it the raid files' race
+copies).
+
 ## Partial regenerations
 
 Every build's raw sim outputs live in `raw/<id>.tgz`, committed on master with the datasets and `provenance.json` they

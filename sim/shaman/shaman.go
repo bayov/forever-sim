@@ -180,6 +180,9 @@ const (
 type Shaman struct {
 	core.Character
 
+	// riptideCooldownCut comes off Riptide's cooldown (the Restoration Tier 1 5 piece).
+	riptideCooldownCut time.Duration
+
 	Talents *proto.ShamanTalents
 
 	// Spells

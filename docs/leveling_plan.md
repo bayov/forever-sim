@@ -35,6 +35,12 @@ part has the session's options). The mode comes from the encounter like the othe
   each rank, and the arrows move the row earlier or later. A point the tree doesn't allow yet
   (its row isn't open, or the talent it needs isn't full) shows red. Points after the plan's
   last level are dimmed, because we don't sim them.
+  The sim itself takes each level's talents as they are, so a route with a red point would sim
+  hours we can't play. Simulate doesn't run then, and the Overview names the first red point.
+  `tools/levelingplan` refuses it for `-level-requests` and `-training` (a search still runs,
+  since its routes keep the rules), and refuses a request whose talent trees aren't the repo's
+  `ui/core/talents/trees` (one saved before a tree change). `TestShippedRoutesKeepTheRules`
+  checks every shipped `ui/*/apls/leveling_plan*.json` route against today's trees.
 - **Respecs.** A build after the first is a respec at its level. There we put all the points
   back by its own order. A run also sims the respec's levels with the build we had, on the
   same sessions, and says how many hours the respec saves. We weigh that against the price

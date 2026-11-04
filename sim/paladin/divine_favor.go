@@ -64,8 +64,9 @@ func (paladin *Paladin) registerDivineFavor() {
 		ActionID: aura.ActionID,
 		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
 		ManaCost: core.ManaCostOptions{
-			BaseCost:   0.04,
-			Multiplier: paladin.benediction(),
+			// No Benediction: 20216's SpellClassOptions mask is empty, so Benediction's class mask
+			// (20101 e0 aura 108 misc 14) can't reach it, whatever the tooltip says.
+			BaseCost: 0.04,
 		},
 		Cast: core.CastConfig{
 			CD: cd,

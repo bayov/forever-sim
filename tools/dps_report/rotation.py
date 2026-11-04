@@ -234,8 +234,32 @@ class Humaniser:
         return re.sub(r'no (\w+) 1 on the boss or no \1 2 on the boss', r'fewer than 2 \1s out', when)
 
     # a value as a noun phrase
+    @staticmethod
+    def unit(u, default=None):
+        """a heal target or other unit, in words (healers and tanks pick their targets by role)"""
+        t = (u or {}).get('type')
+        return {'Tank': 'the tank', 'LowestHealth': 'the lowest ally', 'MostHurt': 'the most hurt ally',
+                'CurrentTarget': 'the boss', 'Self': 'you'}.get(t, default)
+
+    def on(self, a, key='targetUnit'):
+        """where a HoT or DoT sits: 'on the boss' unless the line names a friendly unit"""
+        u = self.unit(a.get(key))
+        return f'on {u}' if u and u != 'you' else 'on the boss'
+
     def noun(self, v):
         (t, a), = v.items()
+        if t == 'healthMissing':
+            return f"the health {self.unit(a.get('sourceUnit'), 'you')} is missing".replace('you is', 'you are')
+        if t == 'math' and a.get('op') == 'OpMul' and 'spellExpectedHealing' in a.get('lhs', {}) and 'const' in a.get('rhs', {}):
+            k = secs(a['rhs']['const'].get('val'))
+            if k is not None:
+                return f"{round(k * 100)}% of {self.noun(a['lhs'])}"
+        if t == 'spellExpectedHealing':
+            return f"what {self.sp(a.get('spellId'))} heals"
+        if t == 'totemRemainingTime':
+            return f"the {a.get('totemType', '').lower()} totem's time left".replace('the  totem', 'the totem')
+        if t == 'currentHealthPercent' and (a.get('sourceUnit') or {}).get('type') in ('Tank', 'LowestHealth', 'MostHurt'):
+            return f"{self.unit(a.get('sourceUnit'))}'s health"
         if t == 'const':
             return fmt_const(a.get('val'))
         if t == 'remainingTime':
@@ -336,7 +360,7 @@ class Humaniser:
         if t == 'auraIsKnown':
             return f"{self.talent(self.sp(a.get('auraId')))} talent taken"
         if t == 'dotIsActive':
-            return f"{self.sp(a.get('spellId'))} on the boss"
+            return f"{self.sp(a.get('spellId'))} {self.on(a)}"
         if t == 'spellIsReady':
             return f"{self.sp(a.get('spellId'))} is ready"
         if t == 'spellCanCast':
@@ -430,7 +454,7 @@ class Humaniser:
         if t == 'auraIsKnown':
             return f"{self.talent(self.sp(a.get('auraId')))} talent not taken"
         if t == 'dotIsActive':
-            return f"no {self.sp(a.get('spellId'))} on the boss"
+            return f"no {self.sp(a.get('spellId'))} {self.on(a)}"
         if t == 'spellIsReady':
             return f"{self.sp(a.get('spellId'))} is not ready"
         if t == 'spellCanCast':
@@ -480,6 +504,15 @@ class Humaniser:
             if m:
                 return m
         Rm = R.get('math', {})
+        if lt == 'healthMissing' and op in ('OpGe', 'OpGt'):  # "the tank is missing at least what Flash Heal heals"
+            who = self.unit(la.get('sourceUnit'), 'you')
+            return f"{who} {'are' if who == 'you' else 'is'} missing at least {self.noun(R)}"
+        if lt == 'currentHealthPercent' and c is not None and (la.get('sourceUnit') or {}).get('type') in ('Tank', 'LowestHealth', 'MostHurt'):
+            word = {'OpLt': 'under', 'OpLe': 'at or under', 'OpGt': 'over', 'OpGe': 'at or over'}.get(op, w)
+            pct = f'{round(cv * 100)}%' if cv is not None and cv <= 1 else c  # the APL gives health as a fraction
+            return f"{self.unit(la.get('sourceUnit'))} {word} {pct} health"
+        if lt == 'totemRemainingTime' and op in ('OpLe', 'OpLt') and cv == 0:
+            return f"no {la.get('totemType', '').lower()} totem down".replace('no  totem', 'no totem')
         if lt == 'remainingTime' and ('spellCastTime' in R or (Rm.get('op') == 'OpAdd' and 'spellCastTime' in Rm.get('lhs', {}) and 'const' in Rm.get('rhs', {}))):
             sc = R.get('spellCastTime') or Rm['lhs']['spellCastTime']
             plus = f" plus {fmt_const(Rm['rhs']['const']['val'])}" if Rm else ''
