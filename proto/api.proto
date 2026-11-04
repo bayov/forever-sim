@@ -555,6 +555,10 @@ message HealingFightMetrics {
 	double first_death_seconds_sum = 5;
 	// Seconds each player spent dead, added up over the players and fights.
 	double dead_player_seconds_sum = 6;
+	// Each fight's deaths, in seed order (fight i is the fight a one-fight run with seed + i sims): 1 when
+	// a tank died, 2 when someone else did, 3 for both, 0 for none. Two runs with the same seed pair up
+	// fight by fight (tools/healbench -vectors).
+	repeated int32 fight_deaths = 7;
 }
 
 message EncounterMetrics {

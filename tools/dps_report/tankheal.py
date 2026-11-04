@@ -5,6 +5,8 @@
                                                  the sims, into $DASH_DIR/tank and $DASH_DIR/heal (the benches' text,
                                                  log lines dropped, and run.json); marks the mode fresh for publish.
                                                  --resume keeps the bench calls a stopped run finished (.progress.json)
+  tankheal.py bins                               tankbench and healbench into the binaries directory, from HEAD with
+                                                 the racials switch patches (0002, 0006)
   tankheal.py build                              the tank_* and heal_* datasets into $DASH_DIR/data (unpacks the raw
                                                  packs first when $DASH_DIR/tank or heal is missing)
   tankheal.py pack                               $DASH_DIR/tank and heal into raw/bench/<mode>.tgz (deterministic)
@@ -26,11 +28,13 @@ Text: what players read (preset lines, notes, boss lines, Method, rotation rewor
 The binaries (tankbench, healbench) come from $TANKHEAL_BIN, else $DASH_BIN, else $DASH_DIR/bin, and run with the
 merged tree ($DASH_TREE, else this checkout when it has no w-dash) as their cwd; README.md has the build recipe.
 """
-import ast, glob, io, json, math, os, re, shutil, subprocess, sys, tarfile, tempfile, time
+import ast, glob, io, json, math, os, re, shutil, subprocess, sys, tarfile, tempfile, threading, time
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import dashpaths  # noqa: E402
+import adaptive  # noqa: E402
+import bench_races  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
 D = dashpaths.D
@@ -104,21 +108,62 @@ def bench(mode, args, files, out):
     return time.time() - t
 
 
-def race_files(mode, stems, tmp):
-    """A copy of each preset at every other race its class can be: <tmp>/<stem>@<Race>.json."""
-    cr, files = class_races(), {}
-    for s in stems:
+def bins():
+    """tankbench and healbench into BIN, built from this checkout's HEAD with the racials switch (patches 0002 and 0006:
+    DASH_RACIALS_OFF, scoped to the preset's class) in a throwaway worktree."""
+    tmp = tempfile.mkdtemp(prefix='benchbuild_')
+    git = lambda *a, **k: subprocess.run(['git', *a], cwd=ROOT, check=True, **k)  # noqa: E731
+    git('worktree', 'add', '--detach', tmp, 'HEAD', capture_output=True)
+    try:
+        for pat in ('0002', '0006'):
+            subprocess.run(['git', 'apply'] + glob.glob(os.path.join(HERE, 'patches', pat + '-*.patch')), cwd=tmp, check=True)
+        env = dict(os.environ, PATH=os.environ['PATH'] + ':' + os.path.expanduser('~/go/bin'))
+        subprocess.run(['npx', 'protoc', f'-I={tmp}/proto', f'--go_out={tmp}/sim/core'] + glob.glob(f'{tmp}/proto/*.proto'), cwd=ROOT, check=True, env=env)
+        os.makedirs(BIN, exist_ok=True)
+        for b in ('tankbench', 'healbench'):
+            subprocess.run(['go', 'build', '-tags=with_db', '-o', os.path.join(BIN, b), './tools/' + b], cwd=tmp, check=True, env=env)
+            print('built', os.path.join(BIN, b))
+    finally:
+        git('worktree', 'remove', '--force', tmp)
+
+
+def main_carries(out, stem):
+    """A healing preset's damage carried on each boss in the main run (the race sims' starting scales)."""
+    role = heal_role(stem)
+    return {b: heal_rows(open(os.path.join(out, f'{role}_{b}.txt')).read())[stem]['carry'] for b in BOSSES}
+
+
+def race_sims(mode, stems, out):
+    """Every race of each preset and its racials left out (bench_races.py), into <out>/races.jsonl; a preset already
+    there is kept (a resumed run)."""
+    from concurrent.futures import ThreadPoolExecutor
+    res = os.path.join(out, 'races.jsonl')
+    done = {json.loads(l)['build'] for l in open(res)} if os.path.exists(res) else set()
+    exe = os.path.join(BIN, 'tankbench' if mode == 'tank' else 'healbench')
+    B = bench_races.Bench(mode, exe, TREE, lambda s: req_path(mode, s), lambda b: os.path.join(TREE, 'tools/encounters', b + '.json'))
+    cr, lock = class_races(), threading.Lock()
+
+    def one(s):
         req = json.load(open(req_path(mode, s)))
         cls = player(req)['class'][5:]
-        for rc in cr[cls]:
-            if rc == race_of(req):
-                continue
-            r2 = json.loads(json.dumps(req))
-            player(r2)['race'] = 'Race' + rc
-            p = os.path.join(tmp, f'{s}@{rc}.json')
-            json.dump(r2, open(p, 'w'))
-            files.setdefault(heal_role(s) if mode == 'heal' else 'tank', []).append(p)
-    return files
+        t = time.time()
+        if mode == 'tank':
+            each = {b: (json.load(open(os.path.join(TREE, 'tools/encounters', b + '.json'))).get('healing') or {}).get('hpsEach') or 400 for b in SCORED}
+            w = WEIGHT[next(k for k in WEIGHT if s.endswith(k))]
+            rows = bench_races.preset(mode, B, s, cls, race_of(req), cr[cls], SCORED, w=w, each=each)
+        else:
+            start = {b: round(math.log(c) / math.log(bench_races.STEP)) for b, c in main_carries(out, s).items()}
+            rows = bench_races.preset(mode, B, s, cls, race_of(req), cr[cls], BOSSES, role=heal_role(s), start=start)
+        offs = [r for r in rows if r['variant'] != 'race']
+        if offs and all(r['same'] for r in offs) and any(r['variant'] == 'off' for r in offs):
+            sys.exit(f'{exe} ignores DASH_RACIALS_OFF: build it from a tree with patches 0002 and 0006 (README, Tanking and Healing)')
+        with lock:
+            with open(res, 'a') as fh:
+                for r in rows:
+                    fh.write(json.dumps(r, sort_keys=True) + '\n')
+        print(f'{mode} races {s}: {len(rows)} rows, {round(time.time() - t)} s', flush=True)
+    with ThreadPoolExecutor(2) as ex:
+        list(ex.map(one, [s for s in stems if s not in done]))
 
 
 def run(modes, races=True, resume=False):
@@ -131,7 +176,7 @@ def run(modes, races=True, resume=False):
             done = {}  # another commit's outputs, or a finished run: start over
         if not done:
             shutil.rmtree(out, ignore_errors=True)
-        os.makedirs(os.path.join(out, 'races'), exist_ok=True)
+        os.makedirs(out, exist_ok=True)
         stems = presets(mode)
         secs, t0 = dict(done.get('secs', {})), time.time() - done.get('seconds', 0)
 
@@ -139,8 +184,6 @@ def run(modes, races=True, resume=False):
             secs[k] = v
             json.dump({'commit': commit, 'secs': secs, 'seconds': round(time.time() - t0, 1)}, open(prog, 'w'))
         groups = {'tank': stems} if mode == 'tank' else {r: [s for s in stems if heal_role(s) == r] for r in ('tank', 'raid')}
-        tmp = tempfile.mkdtemp(prefix=f'{mode}_races_')
-        rgroups = race_files(mode, stems, tmp) if races else {}
         for boss in BOSSES:
             enc = ['-encounter', f'tools/encounters/{boss}.json', '-iters', str(ITERS)]
             for g, st in groups.items():
@@ -150,12 +193,13 @@ def run(modes, races=True, resume=False):
                 if name not in secs:
                     note(name, round(bench(mode, args, files, os.path.join(out, name + '.txt')), 1))
                     print(f'{mode} {name}: {secs[name]} s', flush=True)
-                k = 'races/' + name
-                if g in rgroups and k not in secs:
-                    note(k, round(bench(mode, args, rgroups[g], os.path.join(out, 'races', name + '.txt')), 1))
-                    print(f'{mode} {k}: {secs[k]} s ({len(rgroups[g])} race copies)', flush=True)
-        shutil.rmtree(tmp, ignore_errors=True)
+        if races:
+            t1 = time.time()
+            race_sims(mode, stems, out)
+            note('races', round(time.time() - t1, 1))
         info = {'iterations': ITERS, 'seed': 'the requests\' simOptions.randomSeed' if mode == 'tank' else HEAL_SEED,
+                'raceGoals': {k: v for k, v in bench_races.GOALS[mode].items()}, 'racePilot': [adaptive.RACE_PILOT, adaptive.PILOT],
+                'raceCeil': adaptive.CEIL if mode == 'tank' else adaptive.HEAL_CEIL,
                 'commit': commit, 'at': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()), 'seconds': round(time.time() - t0, 1),
                 'runSeconds': secs, 'races': races}
         json.dump(info, open(os.path.join(out, 'run.json'), 'w'), indent=1)
@@ -753,6 +797,8 @@ if __name__ == '__main__':
         run([a for a in args if a in MODES] or list(MODES), races='--no-races' not in args, resume='--resume' in args)
     elif cmd == 'build':
         build()
+    elif cmd == 'bins':
+        bins()
     elif cmd == 'pack':
         pack()
     elif cmd == 'unpack':

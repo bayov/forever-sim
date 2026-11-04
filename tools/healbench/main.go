@@ -33,6 +33,7 @@ import (
 	"math"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 
 	"github.com/wowsims/classic/sim"
@@ -58,6 +59,9 @@ type options struct {
 	fillers    int
 	iterations int
 	duration   float64
+	seed       int64
+	labeled    bool
+	allValues  bool
 }
 
 func main() {
@@ -76,10 +80,15 @@ func main() {
 	logOne := flag.Bool("log", false, "print one iteration's log of the first build instead")
 	stopCast := flag.Float64("stopcast", 0.5, "healers cancel a heal that would overheal by more than this share (0 never)")
 	reaction := flag.Float64("reaction", 0.3, "the healers' average reaction time in seconds, spread ±25% between them (0 sees at once)")
+	seed := flag.Int64("seed", 101, "the first fight's random seed (fight i is the fight a one-fight run with seed + i sims)")
+	labeled := flag.Bool("labeled", false, "give each kind of random roll its own stream (SimOptions.useLabeledRands), so two healers' fights stay alike past where they differ")
+	scales := flag.String("scales", "", "with -vectors: the damage scales to sim each healer at, comma separated, in place of the table")
+	vectors := flag.String("vectors", "", "append each healer's per-fight values at each of -scales to this file, one JSON line a scale: the deaths (1 a tank, 2 another, 3 both), HPS, useful HPS and mana left")
 	flag.Parse()
 	sim.RegisterAll()
 
-	o := options{stopCast: *stopCast, reaction: *reaction, role: *roleName, scale: *scale, healers: *healers, fillers: *fillers, iterations: *iterations, duration: *duration}
+	o := options{stopCast: *stopCast, reaction: *reaction, role: *roleName, scale: *scale, healers: *healers, fillers: *fillers, iterations: *iterations, duration: *duration,
+		seed: *seed, labeled: *labeled, allValues: *vectors != ""}
 	if o.role != "tank" && o.role != "raid" && o.role != "both" {
 		fail(fmt.Errorf("-role is tank, raid or both"))
 	}
@@ -128,6 +137,16 @@ func main() {
 	for _, path := range flag.Args() {
 		rsr := read(path)
 		b := bench{o: o, fight: fight, tank: tank, healer: firstPlayer(rsr), filler: filler, buffs: rsr.Raid.Buffs, debuffs: rsr.Raid.Debuffs}
+		if *vectors != "" {
+			for _, part := range strings.Split(*scales, ",") {
+				k, err := strconv.ParseFloat(strings.TrimSpace(part), 64)
+				if err != nil {
+					fail(fmt.Errorf("-scales: %w", err))
+				}
+				b.writeVectors(*vectors, path, k)
+			}
+			continue
+		}
 		if *logOne {
 			req := b.request(o.scale, false)
 			req.SimOptions.Iterations = 1
@@ -329,7 +348,7 @@ func (b *bench) request(scale float64, floor bool) *proto.RaidSimRequest {
 	return &proto.RaidSimRequest{
 		Raid:       raid,
 		Encounter:  encounter,
-		SimOptions: &proto.SimOptions{Iterations: int32(b.o.iterations), RandomSeed: 101},
+		SimOptions: &proto.SimOptions{Iterations: int32(b.o.iterations), RandomSeed: b.o.seed, UseLabeledRands: b.o.labeled, SaveAllValues: b.o.allValues},
 	}
 }
 
@@ -383,6 +402,47 @@ func (b *bench) run(scale float64, floor bool) result {
 		}
 	}
 	return r
+}
+
+// writeVectors appends a healer's per-fight values at a scale of the damage, in seed order, as one
+// JSON line: what tools/dps_report/tankheal.py pairs fight by fight between races and racials.
+func (b *bench) writeVectors(file, path string, scale float64) {
+	res := core.RunRaidSimConcurrent(b.request(scale, false))
+	if res.Error != nil {
+		fail(fmt.Errorf("%s", res.Error.Message))
+	}
+	hf := res.RaidMetrics.HealingFight
+	if hf == nil || len(hf.FightDeaths) != b.o.iterations {
+		fail(fmt.Errorf("%s: no per-fight deaths", path))
+	}
+	hps := make([]float64, b.o.iterations)
+	ehps := make([]float64, b.o.iterations)
+	manaEnd := make([]float64, b.o.iterations)
+	for pi, party := range res.RaidMetrics.Parties {
+		for si, m := range party.Players {
+			if b.slots[pi][si] != roleHealer {
+				continue
+			}
+			for i := range hps {
+				hps[i] += m.Hps.AllValues[i]
+				ehps[i] += m.Ehps.AllValues[i]
+				manaEnd[i] += m.ManaEnd.AllValues[i] / float64(b.o.healers)
+			}
+		}
+	}
+	line, err := json.Marshal(map[string]any{"build": strings.TrimSuffix(filepath.Base(path), ".json"), "scale": scale,
+		"deaths": hf.FightDeaths, "hps": hps, "ehps": ehps, "manaEnd": manaEnd})
+	if err != nil {
+		fail(err)
+	}
+	f, err := os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
+	if err != nil {
+		fail(err)
+	}
+	defer f.Close()
+	if _, err := f.Write(append(line, '\n')); err != nil {
+		fail(err)
+	}
 }
 
 // failure is how far over its lines a sim's deaths are: 1 is on the line.

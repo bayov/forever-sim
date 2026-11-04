@@ -19,6 +19,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"sort"
@@ -57,6 +58,9 @@ func main() {
 	healers := flag.Float64("healers", 0, "healers on the tank, in place of the encounter's (with -healer-hps and -heal-cast; -hps and -cadence win over them)")
 	healerHps := flag.Float64("healer-hps", 0, "each healer's healing per second on the tank, in place of the encounter's")
 	healCast := flag.Float64("heal-cast", 0, "seconds a healer's heal takes to cast, in place of the encounter's")
+	seed := flag.Int64("seed", 0, "the first fight's random seed, 0 keeps the request's (fight i is the fight a one-fight run with seed + i sims)")
+	labeled := flag.Bool("labeled", false, "give each kind of random roll its own stream (SimOptions.useLabeledRands), so two builds' fights stay alike past where they differ")
+	vectors := flag.String("vectors", "", "also append each build's per-fight values to this file, one JSON line a build: SafeDPS, the healing it lives through (-1: none), DTPS and TPS")
 	bossStats := flag.Bool("boss-stats", false, "print, as JSON, the boss's attack power, flat weapon damage and attack speed under each request's debuffs, and sim nothing (tools/encounters/from_logs.py reads it to turn a log's swings into the file's)")
 	flag.Parse()
 	sim.RegisterAll()
@@ -135,6 +139,15 @@ func main() {
 			fail(fmt.Errorf("%s: %w", path, err))
 		}
 		rsr.SimOptions.Iterations = int32(*iterations)
+		if *seed != 0 {
+			rsr.SimOptions.RandomSeed = *seed
+		}
+		if *labeled {
+			rsr.SimOptions.UseLabeledRands = true
+		}
+		if *vectors != "" {
+			rsr.SimOptions.SaveAllValues = true
+		}
 		if enc != nil {
 			// The fight is the file's. What it leaves unset of the request's own fight setup
 			// (the execute phases, the natural flask zone) carries over.
@@ -188,6 +201,9 @@ func main() {
 			fail(fmt.Errorf("%s: the boss didn't attack the tank", path))
 		}
 		took := tookShares(res.EncounterMetrics.Targets[0], m.UnitIndex)
+		if *vectors != "" {
+			writeVectors(*vectors, path, m, each)
+		}
 		objective := tankscore.Objective{ThreatMembers: *threatMembers, DpsSlot: *dpsSlot, HealerEach: each, Death: *deathTarget}
 		score := func(preset string) string {
 			objective.Weight = tankscore.Presets[preset]
@@ -238,6 +254,34 @@ func main() {
 	}
 	for _, line := range breakdown {
 		fmt.Println(line)
+	}
+}
+
+// writeVectors appends a build's per-fight values, in seed order, as one JSON line: what
+// tools/dps_report/tankheal.py pairs fight by fight between races and racials.
+func writeVectors(file, path string, m *proto.UnitMetrics, each float64) {
+	ts := m.GetTankScore()
+	surv := make([]float64, len(ts.GetSurviveHps()))
+	for i, v := range ts.GetSurviveHps() {
+		if math.IsInf(v, 1) {
+			v = -1
+		}
+		surv[i] = v
+	}
+	line, err := json.Marshal(map[string]any{
+		"build": strings.TrimSuffix(filepath.Base(path), ".json"), "healerEach": each,
+		"safeDps": ts.GetSafeDpsEach(), "surviveHps": surv, "dtps": m.Dtps.GetAllValues(), "tps": m.Threat.GetAllValues(),
+	})
+	if err != nil {
+		fail(err)
+	}
+	f, err := os.OpenFile(file, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
+	if err != nil {
+		fail(err)
+	}
+	defer f.Close()
+	if _, err := f.Write(append(line, '\n')); err != nil {
+		fail(err)
 	}
 }
 

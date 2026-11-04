@@ -8,6 +8,19 @@ labeled random streams (dashpaths.RNG) that is far smaller than two independent 
 it picks N = SAFETY x (sd / goal)^2 fights, rounded up to a whole number of pilots, up to CEIL, and tops every side up to N once:
 fights PILOT+1..N are a run with seed 1+PILOT, so the topped-up values are exactly a seed-1 run of N fights.
 
+The Tanking and Healing modes (bench_races.py) size their race and racial sims the same way, on their own scores, with
+BENCH_GOALS: the DPS goals put in each score's unit.
+  tank   the score is raid DPS already (2 x SafeDPS less the DPS of the healer slots the tank's healing needs), so the
+         goals are the DPS ones as they are: a race 0.35, a racial max(0.25, 10%), in score points. The score's paired
+         spread is about 250 to 300 points a fight (healing needed is a 95th percentile), so a race comparison stops at
+         CEIL fights (an error of about 1.5 points) and a racial at what 10% of its difference asks for.
+  heal   the score is the damage carried, a scale of the encounter's damage (about 1.15 for the typical preset), so the
+         goals keep the DPS goals' relative precision at the report's typical DPS: a race 0.35 / TYPICAL_DPS of
+         TYPICAL_CARRY, a racial max(0.25 / TYPICAL_DPS of TYPICAL_CARRY, 10%). The carry's paired spread is about 0.2 a
+         fight (whether a fight dies at a given scale), so those goals would need some 300k fights; healing sims stop at
+         HEAL_CEIL instead (an error of about 0.0025), the most the full run's time allows (about 1.3 ms a fight over
+         seven bosses and two lattice scales). The errors shown are the ones reached, and the report's ties use them.
+
 N is set from the paired sd, not from the error, so it comes out the same at a tenth of the fights (probe.py's runs).
 
 Goals (orchestration/followups.md, "DPS report luck goals"), one standard error of the difference the reader compares:
@@ -29,6 +42,14 @@ RACE_PILOT = int(os.environ.get('ADAPT_RACE_PILOT', 2000))
 CEIL = int(os.environ.get('ADAPT_MAX', 40000))
 SAFETY = 1.2
 GOALS = {'race': (0.35, 0.0), 'racial': (0.25, 0.10), 'asm': (0.25, 0.05)}  # (DPS floor, share of the difference)
+TYPICAL_DPS = 1047  # the median DPS of the report's generic-boss presets (2026-11-04)
+TYPICAL_CARRY = 1.15  # the median damage carried of the healing presets (2026-11-04)
+HEAL_CEIL = int(os.environ.get('ADAPT_HEAL_MAX', 6000))
+BENCH_GOALS = {
+    'tank': {'race': GOALS['race'], 'racial': GOALS['racial']},
+    'heal': {'race': (GOALS['race'][0] * TYPICAL_CARRY / TYPICAL_DPS, 0.0),
+             'racial': (GOALS['racial'][0] * TYPICAL_CARRY / TYPICAL_DPS, GOALS['racial'][1]), 'ceil': HEAL_CEIL},
+}
 
 
 def goal(kind, diff=0.0):
@@ -76,8 +97,10 @@ def clear(bid):
             os.remove(os.path.join(d, f))
 
 
-def values(bid, req, env, n, sim, have=None):
+def values(bid, req, env, n, sim, have=None, width=1):
     """Per-fight DPS of the first n fights of this sim (seed 1), from the stored vector topped up as needed.
+
+    width: values a fight (the benches keep several, fight by fight: tankheal.py); sim then returns width values a fight.
 
     sim(seed, count) runs `count` fights from `seed` and returns their DPS. `have` seeds the store with values a step
     already simmed (the first len(have) fights asked as `have[0]` fights: (asked, values)). Under probe_cli.py a sim
@@ -106,5 +129,6 @@ def values(bid, req, env, n, sim, have=None):
                 vals.tofile(fh)
             json.dump({'asked': asked, 'fights': len(vals)}, open(base + '.json', 'w'))
         # under probe_cli.py each run returned a fraction of what it asked; keep the share of fights n asks for
-        cut = len(vals) if asked <= n else max(1, round(len(vals) * n / asked))
-        return list(vals[:cut])
+        got = len(vals) // width
+        cut = got if asked <= n else max(1, round(got * n / asked))
+        return list(vals[:cut * width])

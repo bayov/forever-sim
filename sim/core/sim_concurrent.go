@@ -338,6 +338,7 @@ func (rsrc *raidSimResultCombiner) AddResult(result *proto.RaidSimResult, isLast
 		base.FightsOtherDeath += add.FightsOtherDeath
 		base.FirstDeathSecondsSum += add.FirstDeathSecondsSum
 		base.DeadPlayerSecondsSum += add.DeadPlayerSecondsSum
+		base.FightDeaths = append(base.FightDeaths, add.FightDeaths...)
 	}
 
 	for partyIdx, party := range result.RaidMetrics.Parties {

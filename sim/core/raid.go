@@ -432,6 +432,14 @@ func (raid *Raid) doneHealingFight(sim *Simulation) {
 	if otherDied {
 		m.FightsOtherDeath++
 	}
+	flags := int32(0)
+	if tankDied {
+		flags |= 1
+	}
+	if otherDied {
+		flags |= 2
+	}
+	m.FightDeaths = append(m.FightDeaths, flags)
 }
 
 func (raid *Raid) GetMetrics() *proto.RaidMetrics {
