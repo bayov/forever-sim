@@ -221,7 +221,7 @@ export const TalentsLoneWolf = PresetUtils.makePresetTalents('Lone Wolf', SavedT
 // Survivalist's Discipline, Deadly Aspects (Quick Strikes with Aspect of the Beast), Focused
 // Fire, Lethal Attacks and Careful Aim. Two searches from different starting builds ended
 // here.
-export const TalentsSurvival = PresetUtils.makePresetTalents('Survival', SavedTalents.create({ talentsString: '502-005005-500230230250122151' }), {
+export const TalentsSurvival = PresetUtils.makePresetTalents('Survival', SavedTalents.create({ talentsString: '502-0050051-500230230250022151' }), {
 	tooltip: 'Level 60 melee Survival 7/10/34 from the talent search.',
 	group: 'Synthetic',
 });

@@ -150,7 +150,7 @@ export const GearPresets = [
 	GearLevel60Phase1SyntheticCrusaderDutyHitMinus3,
 ];
 
-export const DefaultGear = GearLevel60Phase1Synthetic;
+export const DefaultGear = GearLevel60Phase1SyntheticHitMinus3;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -240,10 +240,10 @@ export const APLPresets = [
 	APLLevel60Undead,
 ];
 
-// The class default is Level 60 (sub Holy), the build highest at 180 sec since the regear round
-// (2026-10-23). On the hotfix trees it ties Ret twist (1038.1 against 1039.3 at 180 sec, within the
-// noise), so it stays; in round 70753 too (1091.2 against 1092.1 with Holy Strike first).
-export const DefaultAPL = APLLevel60SubHoly;
+// The class default is Ret twist on the set's hit-3 step (user ruling 2026-11-04): with the hit
+// trade it beats sub Holy at every length (+14.4 / +12.0 / +7.5 at 120 / 180 / 300 sec in round
+// 70753 phase 5). Sub Holy was the default from the regear round (2026-10-23) until then.
+export const DefaultAPL = APLLevel60;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent presets
@@ -322,7 +322,7 @@ export const TalentsLevel60SubHolyUndead = PresetUtils.makePresetTalents(
 
 export const TalentPresets = [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60ShockRet, TalentsLevel60SubHolyUndead];
 
-export const DefaultTalents = TalentsLevel60SubHoly;
+export const DefaultTalents = TalentsLevel60;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
