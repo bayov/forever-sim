@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 98,
   "race": "Gnome",
-  "talents": "050205203100211531-25-0535",
+  "talents": "050205203100311531-5551-003",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_arcane",
   "apl": "level60_arcane",
   "published": {
-    "dps": 937.5,
-    "source": "verify.py on this request after the standards 33 distances (2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 962.3,
+    "source": "verify on this request, 2026-11-03 (Fireball filler), 20,000 iterations, seed 1, 180 \u00b1 20 s"
   },
   "verify": {
-    "dps": 937.5,
-    "stderr": 0.28,
+    "dps": 962.3,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 \u00b1 20 s, 20,000 iterations, seed 1, 2026-11-03; not yet the DPS report's main run"
   },
-  "summary": "Arcane Power build that keeps 4 Arcane Blast stacks up, for 48% of Intellect as spell damage, and casts Arcane Wrath on cooldown with Accelerant. Frostbolt is the filler. It wears the Arcane gear with Gloves - Arcane Power.",
+  "summary": "Arcane Power build that keeps 4 Arcane Blast stacks up, for 48% of Intellect as spell damage, and casts Arcane Wrath on cooldown with Accelerant. Fireball is the filler (with Ignite), with extra Arcane Blasts on Clearcasting and while there is mana to spare. It wears the Arcane gear with Gloves - Arcane Power.",
   "keyTalents": [
     "Arcane Blast",
     "Arcane Wrath",
@@ -35,17 +35,21 @@
     "Arcane Power",
     "Presence of Mind",
     "Accelerant",
-    "Incineration"
+    "Incineration",
+    "Arcane Meditation",
+    "Ignite"
   ],
   "rotation": [
     "Pre-pull: Arcane Blast at -1.5s so it lands at the pull",
     "Presence of Mind for an instant Arcane Wrath whenever both are ready",
     "Arcane Power and Presence of Mind with the on-use trinket, unless the trinket won't be back in time. Other cooldowns on a free GCD. No mana gems.",
-    "Fire Blast when a Frostbolt would not land before the end (its cast plus 0.75s). No Arcane Explosion: it reaches 10 yd and Arcane stands at Fire Blast's 20",
+    "Fire Blast when a Fireball would not land before the end (its cast plus 0.85s, the flight from 20 yd). No Arcane Explosion: it reaches 10 yd and Arcane stands at Fire Blast's 20",
     "Arcane Missiles on a Missile Barrage proc, ahead of the Arcane Blasts",
     "Arcane Blast to 4 stacks. Each stack gives 12% of Intellect as spell damage, for 18s from the first.",
+    "Arcane Blast on Clearcasting: the free cast goes where four stacks make the cost five times the base",
     "Arcane Wrath on cooldown (3s cast with Accelerant)",
-    "Frostbolt as filler",
+    "Arcane Blast ahead of the filler while the mana is more than 75 a second of the fight left: mana the fight couldn't otherwise spend",
+    "Fireball as filler",
     "No Evocation",
     "Wand when nothing else can be cast (out of mana)"
   ],

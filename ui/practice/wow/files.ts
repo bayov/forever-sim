@@ -6,13 +6,19 @@ import { decodeBLP, Image } from './blp';
 
 const files = new Map<number, Promise<ArrayBuffer>>();
 
-// fileProgress counts the files asked for and the ones that came back, for the loading bar.
-export const fileProgress = { asked: 0, done: 0 };
+// fileProgress counts the files asked for and the ones that came back, for the loading bar. ids
+// lists the files in the order we first asked for them.
+export const fileProgress = { asked: 0, done: 0, ids: [] as number[] };
+
+export function hasFile(fdid: number): boolean {
+	return files.has(fdid);
+}
 
 export function file(fdid: number): Promise<ArrayBuffer> {
 	let p = files.get(fdid);
 	if (!p) {
 		fileProgress.asked++;
+		fileProgress.ids.push(fdid);
 		p = fetch(`/api/assets/${fdid}`)
 			.then(async r => {
 				if (!r.ok) {

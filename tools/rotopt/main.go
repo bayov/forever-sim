@@ -209,7 +209,31 @@ func main() {
 			}
 		}
 		healing := tankscore.Healing{Healers: 1, HpsEach: *tankHps, CastSeconds: 2}
-		if *tankEncounter != "" {
+		if paths := strings.Split(*tankEncounter, ","); len(paths) > 1 {
+			// Several encounters: the score is their mean, each at its own length and healing.
+			var labels []string
+			for i, path := range paths {
+				enc, err := tankscore.LoadEncounter(path)
+				if err != nil {
+					fmt.Fprintf(os.Stderr, "loading the tank encounter: %v\n", err)
+					os.Exit(2)
+				}
+				h := healing
+				if enc.Healing != nil {
+					h = *enc.Healing
+				}
+				tankSlots = append(tankSlots, tankSlot{enc: enc, healing: h, obj: &tankscore.Objective{Weight: w,
+					ThreatMembers: *tankThreatMembers, DpsSlot: *tankDpsSlot, HealerEach: h.HpsEach, Death: *tankDeath}})
+				labels = append(labels, strconv.Itoa(i))
+				if i == 0 {
+					tankscore.UseEncounter(setup.request, enc)
+					healing = h
+				}
+			}
+			*durs = strings.Join(labels, ",")
+			*combined = true
+			fmt.Printf("tank encounters (their index takes the fight length's place, scored as their mean): %s\n", *tankEncounter)
+		} else if *tankEncounter != "" {
 			enc, err := tankscore.LoadEncounter(*tankEncounter)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "loading the tank encounter: %v\n", err)

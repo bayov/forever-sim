@@ -12,8 +12,7 @@ buffs, debuffs and enchants that are:
 It's the per-class correctness side. The fairness auditor owns cross-class equality.
 
 Read the briefs first: `orchestration/auditors_common.md`, `orchestration/auditor_consumes.md` and
-`orchestration/standards.md`, on the coordination branch `claude/wow-forever-dps-presets-m9u15h` (they're on master
-too). Standards 1b, 8a, 18, 19, 20 and 23 are the ones this audit enforces most.
+`orchestration/standards.md`, on master. Standards 1b, 8a, 18, 19, 20 and 23 are the ones this audit enforces most.
 
 Hard rules:
 

@@ -69,9 +69,7 @@ func main() {
 		ShadowProtection: true,
 		Thorns:           improved,
 		TrueshotAura:     true,
-		// Salvation is a raid buff under Forever (client 70425), on in every level 60 DPS preset.
-		// It lowers threat by 30% and changes no damage.
-		Salvation: true,
+		// No Salvation: Forever removed it (2026-10-30 hotfix); it only lowered threat.
 	}
 	individualBuffs := &proto.IndividualBuffs{
 		BlessingOfKings:  true,

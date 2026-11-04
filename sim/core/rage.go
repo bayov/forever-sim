@@ -90,7 +90,7 @@ func foreverOneHandRateRage(weapon *Weapon, level int32) float64 {
 
 // foreverTwoHandRageFactor is 4.5 / 3.46 for a two-hander and 1 for a one-hander.
 func foreverTwoHandRageFactor(weapon *Weapon) float64 {
-	if weapon.NormalizedSwingSpeed >= foreverTwoHandNormalizedSpeed {
+	if weapon.RageAsTwoHand || weapon.NormalizedSwingSpeed >= foreverTwoHandNormalizedSpeed {
 		return ForeverNormalizedRageTwoHand / ForeverNormalizedRageOneHand
 	}
 	return 1

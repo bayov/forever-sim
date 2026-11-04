@@ -20,7 +20,7 @@ func TestOrcShamanNaturalGrace(t *testing.T) {
 		return enh
 	}
 	// Stormstrike, and Natural Grace 3/3.
-	plain, grace := start("-0000000000001"), start("-0000000000001-0003")
+	plain, grace := start("-000000000001"), start("-000000000001-0003")
 	spells := func(enh *EnhancementShaman) []*core.Spell {
 		return []*core.Spell{
 			topRank(t, "Lightning Bolt", enh.LightningBolt),

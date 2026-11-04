@@ -55,8 +55,9 @@ func (druid *Druid) ApplyTalents() {
 	// Natural Reaction: 1% dodge a point. Its Rage on a dodge is a bear's.
 	druid.AddStat(stats.Dodge, float64(druid.Talents.NaturalReaction)*core.DodgeRatingPerDodgeChance)
 	// Thick Hide: 1 base armor a level a point in the forms. The defense skill part is a
-	// tank's, and the form armor multipliers are left out.
-	if druid.Talents.ThickHide > 0 && druid.StartingForm.Matches(Cat|Bear|Moonkin) {
+	// tank's, and the form armor multipliers are left out. The bear's, scaled by its form, is
+	// in bear.go.
+	if druid.Talents.ThickHide > 0 && druid.StartingForm.Matches(Cat|Moonkin) {
 		druid.AddStat(stats.Armor, float64(druid.Talents.ThickHide)*float64(druid.Level))
 	}
 
@@ -316,7 +317,7 @@ func (druid *Druid) applySavageFury() {
 		return
 	}
 	druid.onInit("Savage Fury", func() {
-		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred} {
+		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.Maul, druid.SwipeBear} {
 			if spell != nil {
 				spell.ImpactDamageMultiplierAdditive += 0.05 * points
 			}
@@ -345,7 +346,8 @@ func (druid *Druid) applyNaturalInstinct() {
 	})
 }
 
-// Rend and Tear: 2% a point more damage from the melee abilities on a bleeding target. The
+// Rend and Tear: 2% a point more damage (3% under Forever, from the November 2 development notes; the
+// client's tree still says 2%, see tuning_70753.go) from the melee abilities on a bleeding target. The
 // effect is a dummy the server runs. The sim takes it as a multiplier on the hits of Claw,
 // Shred, Ravage, Rake and Ferocious Bite and on the Rake and Rip ticks, not on white hits, while our
 // Rake or Rip is up or the spec assumes another bleed on the target. The ticks are from a
@@ -357,8 +359,10 @@ func (druid *Druid) RendAndTearMultiplier(target *core.Unit) float64 {
 	}
 	bleeding := druid.AssumeBleedActive ||
 		(druid.Rake != nil && druid.Rake.Dot(target).IsActive()) ||
-		(druid.Rip != nil && druid.Rip.Dot(target).IsActive())
-	return core.TernaryFloat64(bleeding, 1+0.02*float64(druid.Talents.RendAndTear), 1)
+		(druid.Rip != nil && druid.Rip.Dot(target).IsActive()) ||
+		(druid.Lacerate != nil && druid.Lacerate.Dot(target).IsActive())
+	perPoint := core.TernaryFloat64(druid.Env.IsForever(), 0.03, 0.02)
+	return core.TernaryFloat64(bleeding, 1+perPoint*float64(druid.Talents.RendAndTear), 1)
 }
 
 // Blood Frenzy under Forever (16958): a crit from a combo point builder has a 50% chance a

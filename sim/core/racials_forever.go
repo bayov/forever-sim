@@ -13,14 +13,17 @@ import (
 // their weapon type until 70425, which dropped every weapon requirement: Human Ruthless gives
 // crit with any weapon.
 //
-// The racial pass of the development notes of 2026-10-26 (post 7) is server side: client
-// 1.60.1.70630 still has the old rows (Ruthless 2%, The Human Spirit 5%, Earth Fury, Savage,
-// Endurance's crit damage, Wind Blessed 3%, Read Leyline 100%) and no Artisan's Precision or
-// Command. The sim takes the notes' values.
+// The racial pass of the development notes of 2026-10-26 (post 7) and 2026-10-27 (post 8),
+// repeated in post 9 (2026-11-02), was server side until client 1.60.1.70753, which carries it:
+// Ruthless 1% (20597 aura 290), The Human Spirit 10% (20598 aura 137), Artisan's Precision in
+// Earth Fury's place (1259719, auras 54 and 55 at 1%), Endurance health only (20550), Wind Blessed
+// 2% (1259710), Energized 50% for 15 sec (1270842), Command for hunters (20576) and warlocks
+// (20575) and no Savage in the Orc's skill line, Blood Fury 2 min (SpellCooldowns 120000),
+// Berserking 15 sec (DurationIndex 8) and Touch of the Grave's 15 sec lockout
+// (ProcCategoryRecovery 15000). Every value below matches 70753.
 //
-// Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Berserking,
-// Elune's Light and the Human, Dwarf and Orc utilities 3 min. Blood Fury is 3 min in the client
-// since 70425, and 2 min again per the development notes of 2026-10-27 (post 8).
+// Cooldowns per the client: Eureka!, Blood Fury and the Undead and Gnome utilities 2 min,
+// Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
 
 func applyForeverRaceEffects(agent Agent) {
 	character := agent.GetCharacter()
@@ -31,7 +34,7 @@ func applyForeverRaceEffects(agent Agent) {
 		// called it Sword Specialization and gave 2% only with a sword or two-handed sword
 		// (SpellEquippedItems subclass mask 384); 70425 renamed it and dropped the weapon rule.
 		// Development notes 2026-10-26: "Ruthless now increases critical chance by 1% (was 2%)",
-		// "Human Spirit now increases Spirit by 10% (was 5%)".
+		// "Human Spirit now increases Spirit by 10% (was 5%)"; client 70753 has both.
 		character.MultiplyStat(stats.Spirit, 1.10)
 		character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
 		character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
@@ -108,15 +111,21 @@ func applyForeverRaceEffects(agent Agent) {
 	}
 }
 
-// Read Leyline (1259705): a 2 sec cast on a 2 min cooldown that triggers Energized (1270842),
+// Read Leyline (1259705): a 0.5 sec cast on a 2 min cooldown that triggers Energized (1270842),
 // more mana regeneration (aura 110, MOD_POWER_REGEN_PERCENT) and health regeneration (aura 88).
-// Development notes 2026-10-26: "Read Leyline now increases Mana and Health regeneration by 50%
-// (was 100%), with a 15-second duration"; client 70630 still reads 100% for 30 sec
-// (DurationIndex 9 since 70425). Used at a Ley Line it also grants Attuned for an hour, which
+// Client 1.60.1.70753 cut the cast from 2 sec to 0.5 (SpellMisc CastingTimeIndex 5 to 3) and
+// has the development notes' 50% for 15 sec ("Read Leyline now increases Mana and Health
+// regeneration by 50% (was 100%), with a 15-second duration", 2026-10-26; 70630 to 70707 read
+// 100% for 30 sec). Used at a Ley Line it also grants Attuned (1259691) for an hour, which
 // raises it to 100%; the sim fights away from Ley Lines, so it never gets that. Aura 110 is the
 // one Innervate and Evocation use, so it raises the Spirit part of the regen by half and leaves
 // mp5 alone, and it adds nothing inside the five second rule unless some of the Spirit regen
 // goes on while casting. The sim leaves it to the APL.
+//
+// "This ability cannot be used while Innervate is active, and will be replaced by Innervate as a
+// more powerful effect" (development notes 2026-11-02): it can't be cast under an Innervate, and
+// an Innervate landing ends Energized. The client has no aura restriction row for it, so this is
+// the notes' rule.
 func (character *Character) registerReadLeyline() {
 	energized := character.RegisterAura(Aura{
 		Label:    "Energized",
@@ -138,16 +147,27 @@ func (character *Character) registerReadLeyline() {
 		Cast: CastConfig{
 			DefaultCast: Cast{
 				GCD:      GCDDefault,
-				CastTime: time.Second * 2,
+				CastTime: time.Millisecond * 500,
 			},
 			CD: Cooldown{
 				Timer:    character.NewTimer(),
 				Duration: time.Minute * 2,
 			},
 		},
+		ExtraCastCondition: func(sim *Simulation, _ *Unit) bool {
+			return !character.HasActiveAuraWithTag(InnervateAuraTag)
+		},
 		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 			energized.Activate(sim)
 		},
+	})
+
+	character.Env.RegisterPostFinalizeEffect(func() {
+		for _, innervate := range character.GetAurasWithTag(InnervateAuraTag) {
+			innervate.ApplyOnGain(func(_ *Aura, sim *Simulation) {
+				energized.Deactivate(sim)
+			})
+		}
 	})
 }
 

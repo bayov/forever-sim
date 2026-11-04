@@ -64,8 +64,9 @@ func TestOrcShamanStormstrikeOutcomes(t *testing.T) {
 			if spent, want := mana-enh.CurrentMana(), .08*enh.BaseMana; math.Abs(spent-want) > 1e-9 {
 				t.Fatalf("a %s cost %.1f mana, want %.1f", o, spent, want)
 			}
-			if readyAt := enh.Stormstrike.CD.ReadyAt(); readyAt != sim.CurrentTime+8*time.Second {
-				t.Fatalf("after a %s the cooldown ends at %s, want %s", o, readyAt, sim.CurrentTime+8*time.Second)
+			// 6 sec since the November 2 development notes (8 before).
+			if readyAt := enh.Stormstrike.CD.ReadyAt(); readyAt != sim.CurrentTime+6*time.Second {
+				t.Fatalf("after a %s the cooldown ends at %s, want %s", o, readyAt, sim.CurrentTime+6*time.Second)
 			}
 			if mark.IsActive() != landed[o] {
 				t.Fatalf("a %s leaves the mark up: %t, want %t", o, mark.IsActive(), landed[o])

@@ -4,14 +4,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### client_update-20261103-1: Poised (rogue and druid, new in 70753) is missing: 10 Energy off the first ability at the pull
-- severity: low (estimated +0.1 to +0.3% DPS: 10 Energy once a fight, about a quarter of a builder in a 180 s fight; not measured, the sim has no Poised to toggle)
-- affects: every rogue request (Combat Swords/Daggers, Mutilate, Seal Fate, and the humanoid variants), druid Feral cat requests
-- found: 2026-11-03, master a0b306984d
-- evidence: client 1.60.1.70753 adds Poised for rogues (passive 1328825, level 18, class set 8) and druids (passive 1328829, level 32, class set 7): "While at maximum Energy, and out of combat, reduce the Energy cost of your next ability by 10." The buff (1328826 rogue, 1328827 druid): aura 107 misc 14 (flat power cost) bp −10, ProcCharges 1, DurationIndex 21 (until used). foreverchanges.pro "Build 1.60.1.70753" lists it as new. No `Poised` anywhere in `sim/`. Ledger rows ROG-U-01, DRU-U-15. Not in Blizzard's notes, and nothing is checkable in game until launch.
-- proposed fix: under Forever, give rogues (level 18+) and druids (level 32+) a one-charge Poised aura at the start of combat that takes 10 off the Energy cost of the next ability its class mask covers (EffectSpellClassMask: rogue 1328826 255727518 / 2099456 / 67108864, druid 1328827 8622080 / 536870912), gated on starting at max Energy; measure with `dps_beforeafter.sh` on the rogue and feral requests.
-- needs: worker fix
-
 ### client_update-20261030-2: Missile Barrage's "missiles fire every 0.5 sec" effect becomes a dummy in 70707
 - severity: low until verified (the sim's model matches the unchanged tooltip; if the server now fires the base 1 s ticks in a halved channel, arcane loses about half its Missile Barrage missiles)
 - affects: mage Arcane (and any build that casts Arcane Missiles on Missile Barrage)
@@ -29,18 +21,46 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: none until confirmed in game; if it is dead, drop it under Forever.
 - needs: verify (in game)
 
+## Resolved
+
+### client_update-20261103-3: Server hotfix push 113483 (2026-11-03 18:29Z, rogue tree and rogue spells) isn't in the ledger and is only partly read
+- severity: high (TASKS.md measures its Mutilate line alone at +1.8% DPS on the Mutilate preset, 883.07 -> 898.69; its poison lines are likely larger)
+- affects: rogue (every request; poisons, Mutilate, Shank, talent tree 1111)
+- found: 2026-11-03, master f23ea25d2
+- evidence: wago.tools/hotfixes (product wowf), search "enus 113483 ": 1418 rows, all region 91 (launch realms), build 70707, logged 2026-11-03 18:29Z. That is after pass 8's 17:52Z check. Rows read so far: TraitNodeXTraitNodeEntry 136304 deleted (node 110868 in tree 1111 -> entry 137866 -> definition 142620, Improved Distract 14084), new 139981 (node 113633 -> entry 141295) and 139983 (node 113635 -> entry 141297): two new rogue nodes, which are new in this push and absent from the 70755 tables; 20 TraitNodeGroupXTraitNode rows and 1 TraitNodeXTraitCond row deleted. TASKS.md:241 (the daily update) lists the push's SpellEffect lines: Instant Poison VI 175 -> 250, Deadly Poison V 180 -> 240, Deadly Poison IV 160 -> 240, Wound Poison 160 -> 240, Mind-numbing III 150 -> 225, Mutilate's flat bonus 33/48/67 -> 44/63/88, and Shank 1329283/1329549 with Flash of Steel 1329284 (-2500 ms, +15). The daily update said region 93; this pass sees the rows in region 91. Not read yet: the remaining SpellEffect/Trait rows. `hotfixes.py fetch 1.60.1.70707 SpellEffect TraitNodeEntry ... --refresh` was still running when the pass was stopped. Client 70755 is identical to 70753, so none of this is in the client tables.
+- proposed fix: finish `python3 tools/sources/hotfixes.py fetch 1.60.1.70707 SpellEffect TraitNodeEntry TraitNodeXTraitNodeEntry TraitDefinition TraitDefinitionEffectPoints SpellMisc SpellCooldowns SpellPower SpellAuraOptions SpellName --refresh`, then `hotfixes.py apply` and `import_db2.py 1.60.1.70707+hf rogue`. Give each changed spell a ledger row, then land the values under Forever: the poisons (find what the effect rows drive), Mutilate (in the forever-update PR), Shank's real spell IDs and Flash of Steel, and the two new tree nodes. Re-sim the rogue requests.
+- needs: worker fix
+- resolved: 2026-11-04, 316a600 and e9185b1: every row of push 113483 read (2836 rows over regions 91 and 93 and builds 70707 and 70755, identical copies; `orchestration/round_70753/hotfix_113483.md`), ledger ROG-HF-01 to 06. The rogue tree is imported from 1.60.1.70707+hf (notes/rogue.json retired; Improved Distract gone, Relentless Strikes and Dual Wield Specialization new nodes, nine columns and five arrows moved, talent strings remapped, Subtlety's Quick Getaway point to Dirty Tricks). Shank on its real IDs 1329283 / 1329549, always hits, procs no poison, weapon enchant or Hack and Slash; Mutilate 44 / 63 / 88 at 90%, level 30 rank gone; Venom's +20% chance on Deadly and Wound only. The poison rows are only charges (0 DPS); no poison damage or AP coefficient is in the push, so the notes' doubled AP shares stay notes-only. At 180 s: Combat Swords 963.5 -> 958.6, Seal Fate Swords 957.0 -> 940.4, Combat Daggers 946.7 -> 949.8, Seal Fate Daggers 920.7 -> 903.4, Subtlety 881.7 -> 881.3, Mutilate 866.1 -> 858.3 (the TASKS.md +1.8% Mutilate estimate is offset by Shank no longer proccing poisons).
+
+### client_update-20261103-2: Several round 70753 notes-only values are not gated under Forever (rogue, shaman, hunter, paladin), though standards 37 and rogue.md say they are
+- severity: low (0 DPS under Forever; changes only what a Classic-ruleset sim of these classes computes)
+- affects: rogue (most notes-only values), shaman (Enhancement and Elemental talents, the spell tables), hunter (Arcane Shot and Serpent Sting AP shares), paladin (Vengeance stacks)
+- found: 2026-11-03, master f5c99ad018
+- evidence: standards 37 says each notes-only value "is gated under Forever". Gated as required: druid (`tuning_70753.go` via `Env.IsForever()` in shred/claw/ravage/rip/rake/bite/starfire, Rend and Tear), warrior (Slam, Improved Tactical Mastery, 2H Spec, Bloodthrill, Flurry), warlock (Forever-only talents and spells), mage, paladin 2H Spec (`talents.go:300`), rogue poisons (`poisons.go:167,247`) and Poised. Not gated: rogue `sim/rogue/talents.go` Lethality 0.10 (:411), Relentless Strikes 4% a point a combo point (:71, Classic is 20% at 1 point), Seal Fate 33/66/100 (:164, Classic 20% a point), Aggression (:417), Coup de Grace (:423), Efficient Strikes (:429), Dual Wield Spec 25% (:41), Opportunity (:48); `mutilate.go:99` 0.9; `eviscerate.go:46` Flawless Execution 15; Shank registered for every ruleset (`rogue.go:150`, `shank.go` has no ruleset check); `ghostly_strike.go` 7 s; hunter `arcane_shot.go:19` 0.15 and `serpent_sting.go:22` 0.05 (round hunter.md says these files hold Forever values with no Classic branch); paladin `talents.go:333` Vengeance MaxStacks 5 (Classic's Vengeance is a different model already); shaman Lightning Overload (`lightning_overload.go:34`), Maelstrom 4 PPM (`talents.go:545`), Mental Dexterity (`talents.go:37`), Flurry (`talents.go` 1.06-1.30), Lightning Bolt / Chain Lightning / shock tables (shaman.md: "the fork keeps no Classic copy"). `orchestration/round_70753/rogue.md:137` states "All gated under Forever", which the code doesn't bear out. Several of these files already held ungated Forever beta values before the round (Lethality 0.04, Dual Wield 5%), so Classic was already off for them; Relentless Strikes and Seal Fate were Classic's values and change for Classic now. Every value matches the notes' text (checked line by line, all classes).
+- proposed fix: either (a) rule that a talent or spell whose file is Forever-only (the talent trees are Forever's) counts as gated, and fix the wording in standards 37 and rogue.md; or (b) wrap the listed values in `Env.IsForever()` with the old value as the Classic branch (rogue Relentless Strikes and Seal Fate first, as those were Classic's before the round). No Forever number moves either way.
+- needs: user ruling
+- resolved: 2026-11-03, 13c34f2: option (b), every listed value wrapped in `Env.IsForever()`; outside Forever Classic's value (rogue Lethality, Relentless Strikes, Seal Fate, Dual Wield Specialization, Aggression, Improved Eviscerate; hunter shots; paladin Vengeance as Classic's 3% for 8 sec; shaman Lightning Bolt, Chain Lightning, Flurry), or the client's pre-notes value where Classic has no such mechanic (Mutilate, Flawless Execution, Lightning Overload, Maelstrom Weapon, Mental Dexterity, Totemic Call); Shank, the Ghostly Strike opener and Hemorrhage on Garrote are Forever only. report_hashes.txt and every golden unchanged.
+
+### client_update-20261103-1: Poised (rogue and druid, new in 70753) is missing: 10 Energy off the first ability at the pull
+- severity: low (estimated +0.1 to +0.3% DPS: 10 Energy once a fight, about a quarter of a builder in a 180 s fight; not measured, the sim has no Poised to toggle)
+- affects: every rogue request (Combat Swords/Daggers, Mutilate, Seal Fate, and the humanoid variants), druid Feral cat requests
+- found: 2026-11-03, master a0b306984d
+- evidence: client 1.60.1.70753 adds Poised for rogues (passive 1328825, level 18, class set 8) and druids (passive 1328829, level 32, class set 7): "While at maximum Energy, and out of combat, reduce the Energy cost of your next ability by 10." The buff (1328826 rogue, 1328827 druid): aura 107 misc 14 (flat power cost) bp −10, ProcCharges 1, DurationIndex 21 (until used). foreverchanges.pro "Build 1.60.1.70753" lists it as new. No `Poised` anywhere in `sim/`. Ledger rows ROG-U-01, DRU-U-15. Not in Blizzard's notes, and nothing is checkable in game until launch.
+- proposed fix: under Forever, give rogues (level 18+) and druids (level 32+) a one-charge Poised aura at the start of combat that takes 10 off the Energy cost of the next ability its class mask covers (EffectSpellClassMask: rogue 1328826 255727518 / 2099456 / 67108864, druid 1328827 8622080 / 536870912), gated on starting at max Energy; measure with `dps_beforeafter.sh` on the rogue and feral requests.
+- needs: worker fix
+- resolved: 2026-11-03, 35408c0af (druid, `sim/druid/poised.go`, level 32+) and 31ff01f80 (rogue, `sim/rogue/poised.go`, level 18+, with Composure's 5 a rank), both under `Env.IsForever()`; client and notes agree on 10 Energy.
+
 ### client_update-20261027-3: Amplify Curse no longer amplifies Bane of Agony in 70630
 - severity: low (no preset or APL casts Amplify Curse)
 - affects: warlock (Amplify Curse users only)
 - found: 2026-10-27, master d3df924
 - evidence: 70630 SpellEffect 695823 (18288 effect 0, aura 108 +50% all effects) EffectSpellClassMask_0 33792 → 32768: Bane of Agony (mask 1024) dropped, Curse of Weakness (32768) kept; new effect 1365363 −20 on Curse of Exhaustion (the 10-16 FC hotfix, WL-U-HF1). Bane of Agony 980-11713 gain an effect 1 aura 271 with base 0 and its own mask, nothing fills it in the client. Sim: `sim/warlock/curses.go:74` still multiplies Bane of Agony's base damage by 1.5 under Amplify Curse. Ledger WL-U-17.
 - proposed fix: under Forever, don't let Amplify Curse touch Bane of Agony (or drop the option from the warlock APL actions).
-- needs: orchestrator fix
+- needs: none
 - 2026-10-27: the 70630 mask reading holds, but 18288's 70630 description and Wowhead's Forever tooltip still name Bane of Agony, and every Agony rank gains a base-0 aura 271 effect (w2) that its new debuff text multiplies by, so the +50% looks moved onto Agony as a server-filled value, not removed. The sim keeps +50% (no preset casts Amplify Curse). needs: user ruling.
 - 2026-10-27 (user): park it until a build takes Amplify Curse, then test in game (TASKS.md item of 2026-10-27). The sim keeps +50% of base meanwhile. needs: in-game test
 - 2026-10-30 (70707): every Bane of Agony rank gains a third effect (index 2, dummy aura 4), and the tooltip's amplify term moves from $w2 to $w3, so the client still expects Amplify Curse to touch Agony through a scripted effect. 18288's mask is unchanged. Ledger WL-U-18. Still parked.
-
-## Resolved
+- resolved: 2026-11-03, round 70753 (warlock): Blizzard's development notes of 2026-11-02, "Amplify Curse now correctly affects Curse of Exhaustion and Bane of Agony" (foreverchanges.pro: "Now really works on Curse of Exhaustion and Bane of Agony, as its tooltip says"). The sim keeps +50% of Bane of Agony's base damage (sim/warlock/curses.go; TestWarlockAmplifyCurseAgony), and the round's talent search tries Amplify Curse.
 
 ### client_update-20261030-3: Efficiency now discounts Strider Kick
 - severity: low (mana only; Survival builds with Efficiency)

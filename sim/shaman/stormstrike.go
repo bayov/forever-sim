@@ -13,7 +13,13 @@ import (
 //
 // Under Classic it keeps the 21% base mana cost, the 20 sec cooldown and the shared debuff
 // with two Nature charges.
+//
+// The November 2 development notes (post 9, for launch; not in client 1.60.1.70753) make it
+// 150% normalized weapon damage (was 100%) and cut the cooldown to 6 sec (was 8).
 const StormstrikeForeverBonus = 1.2
+
+// StormstrikeWeaponDamagePercent is the share of normalized weapon damage the strike deals.
+const StormstrikeWeaponDamagePercent = 1.5
 
 // StormstrikeSpeed is the speed Forever's Stormstrike multiplies AP / 14 by.
 //
@@ -61,7 +67,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	if forever {
 		// 8% of base mana since client 1.60.1.70425 (125 before).
 		manaCost = core.ManaCostOptions{BaseCost: .08}
-		cooldown = time.Second * 8
+		cooldown = time.Second * 6
 	}
 
 	shaman.Stormstrike = shaman.RegisterSpell(core.SpellConfig{
@@ -112,7 +118,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 // StormstrikeSpeed.
 func (shaman *Shaman) stormstrikeWeaponDamage(sim *core.Simulation, attackPower float64) float64 {
 	weapon := shaman.AutoAttacks.MH()
-	return weapon.BaseDamage(sim) + StormstrikeSpeed(weapon)*attackPower/weapon.AttackPowerPerDPS
+	return StormstrikeWeaponDamagePercent * (weapon.BaseDamage(sim) + StormstrikeSpeed(weapon)*attackPower/weapon.AttackPowerPerDPS)
 }
 
 // stormstrikeBonus returns the damage multiplier the shaman's Lightning Bolt, Chain Lightning

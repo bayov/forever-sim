@@ -13,14 +13,15 @@ import (
 )
 
 // The report assumptions the user ruled on 2026-10-15 (hunter_shot_ap_shares, hunter_raptor_31plus):
-// Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (the forever-hunter
-// wiki), and Raptor Strike rank 8 adds 96 (the client's 70 raised halfway to 123).
+// Arcane Shot took 10% of ranged attack power and Serpent Sting 3% a tick (the forever-hunter
+// wiki); Blizzard's 11-02 notes raise them to 15% and 5%. Raptor Strike rank 8 adds 96 (the
+// client's 70 raised halfway to 123).
 func TestHunterShotSharesAndRaptorStrike(t *testing.T) {
-	if arcaneShotRAPCoefficient != 0.10 {
-		t.Errorf("Arcane Shot takes %v of ranged attack power, want 0.10", arcaneShotRAPCoefficient)
+	if arcaneShotRAPCoefficient != 0.15 {
+		t.Errorf("Arcane Shot takes %v of ranged attack power, want 0.15", arcaneShotRAPCoefficient)
 	}
-	if serpentStingRAPPerTick != 0.03 {
-		t.Errorf("Serpent Sting takes %v of ranged attack power a tick, want 0.03", serpentStingRAPPerTick)
+	if serpentStingRAPPerTick != 0.05 {
+		t.Errorf("Serpent Sting takes %v of ranged attack power a tick, want 0.05", serpentStingRAPPerTick)
 	}
 	for rank, want := range map[int]float64{7: 55, 8: 96} {
 		if got := RaptorStrikeBaseDamage[rank]; got != want {

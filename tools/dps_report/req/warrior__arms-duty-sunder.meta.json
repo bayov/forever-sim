@@ -5,8 +5,8 @@
   "build": "Arms (Sunder duty)",
   "isDefault": false,
   "pr": 4,
-  "race": "Undead",
-  "talents": "20305213032515201-55050000001",
+  "race": "Orc",
+  "talents": "30303213032215201-050500050012-2",
   "treeNames": [
     "Arms",
     "Fury",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_sunder",
   "published": {
-    "dps": 970.4,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed for the knob re-search after the two-hand Rage crit fix)"
+    "dps": 1047.1,
+    "source": "round 70753 (the November 2 development notes), the Warrior worker's finals 2026-11-03: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 970.4,
-    "stderr": 0.47,
+    "dps": 1047.1,
+    "stderr": 0.49,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py on this request after the 2026-11-02 knob re-search, 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "the Warrior worker's final run of this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-03)"
   },
   "summary": "Keeps 5 Sunder Armor stacks on the boss for a raid with no warrior tank. The raid's Sunder Armor is off.",
   "keyTalents": [
@@ -34,7 +34,8 @@
     "Improved Slam",
     "Two-Handed Weapon Specialization",
     "Impale",
-    "Cruelty"
+    "Cruelty",
+    "Reckless Swings"
   ],
   "rotation": [
     "Pre-pull: Battle Stance, then Charge (15 Rage)",
@@ -42,7 +43,8 @@
     "With 25s left, if Recklessness is ready and Rage is under 25, swap to Berserker Stance. Swap back after Recklessness",
     "Recklessness in the last 25s. Racials on cooldown, but Elune's Light never during Recklessness or the 15s before it",
     "Mighty Rage Potion at the pull, the second in the last 15s. Bloodrage under 20 Rage",
-    "Slam at 20+ Rage outside execute (15s cooldown with Improved Slam), ahead of Mortal Strike",
+    "Reckless Swings on cooldown. It is off the GCD, and the next 4 swings give 5 more Rage each",
+    "Slam at 20+ Rage outside execute (10s cooldown with Improved Slam), ahead of Mortal Strike",
     "Mortal Strike on cooldown",
     "Overpower at 5+ Rage after a dodge or Bloodthrill",
     "Keep Rend up outside execute. Then Execute",

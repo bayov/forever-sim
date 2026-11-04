@@ -1,8 +1,9 @@
-# Results and spec strength: pass 72, master a0b306984d
+# Results audit, pass 76 (master fb584eafa, 2026-11-04)
 
-- Shared run (73 requests, 20k, seed 1): 72 of 73 within 0.15 of published; 0 moved more than 0.5 vs published builds.
-- Only exception: shaman__elemental-level60-mana-tide, 752.83 vs meta 753.2 (open finding results-20261102-1, unchanged).
-- Warlock re-sims (3fce3491c, 58a1c3593 Bane of Doom hold) and ranged hunters without Sapper: metas and builds.json agree with the run.
-- Drift check (regen.py at a0b306984d): identical to ref/results/drift_report.txt.
-- Mage, shaman Restoration, warrior Blood Craze, apl and proto changes: no published number moved.
-- Not run: unread_fields.py.
+Trigger: warrior Fury follow-up (7b4dc5d97), report hashes, presets.ts cleanups.
+
+- Shared run (68 builds, 20k, seed 1) vs metas: 62 exact within 0.15; only the six shaman metas lag (+199 to +277, open finding results-20261102-1).
+- Warrior: all six Fury metas match the run (fury 1152.97, fury-bs 1150.52, fury-sunder 1117.66, fury_2h 1173.28, 2h-bs 1168.75, 2h-sunder 1134.61). builds.json is still pre-follow-up for fury_2h and its two duties (-3.4, -3.4, -2.0), expected until the republish.
+- Drift (regen.py): no warrior drift; no new differences vs the reference (the diffs are earlier fixes: feral duty-ff explosive, rogue subtlety race, affliction_shadow_bolt rename).
+- presets.ts changes are one-line removals with no request change; no number moved.
+- Result: quiet, no new findings.

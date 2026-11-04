@@ -77,7 +77,7 @@ func testFrostbrandWeaponDamage(t *testing.T) {
 		damage float64
 	}{{30, 2, 54}, {36, 2, 72}, {46, 3, 117}, {56, 4, 159}, {60, 5, 169.2}}
 	for _, c := range cases {
-		sim, enh := weaponSim{level: c.level, talents: "-00000003", weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_FrostbrandWeapon, seconds: 10}.start()
+		sim, enh := weaponSim{level: c.level, talents: "-0000003", weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_FrostbrandWeapon, seconds: 10}.start()
 		sim.PrePull()
 		spell := enh.GetSpell(core.ActionID{SpellID: shaman.FrostbrandWeaponSpellId[c.rank]})
 		if spell == nil {

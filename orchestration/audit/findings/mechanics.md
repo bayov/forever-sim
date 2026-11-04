@@ -4,13 +4,16 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### mechanics-20261103-1: Read Leyline is a 0.5 sec cast on client 70753; the sim casts it in 2 sec
-- severity: low (no report request or preset casts it: `grep -c 1259705 tools/dps_report/req/*.json` is 0 everywhere, and the race tables show Read Leyline at 0.0 DPS; it would matter for a High Order build whose APL casts it, about 1.5 sec of casting saved every 2 min)
-- affects: Skyborne High Order (shared racial; rotopt `leylineMana` knob, tools/rotopt/racials.go and hunter_ranged.go comments)
-- found: 2026-11-03, master a0b306984
-- evidence: tier 1, client 1.60.1.70753: SpellMisc of 1259705 CastingTimeIndex 5 -> 3 (SpellCastTimes 5 = 2000 ms, 3 = 500 ms); 70707 had 5. Dev notes post 7 only says "Read Leyline: Now castable while moving". sim/core/racials_forever.go:141 `CastTime: time.Second * 2`. Not checked whether this rode in on a 70707 hotfix (the hotfix fetch was cut short this pass); either way the newest tier 1 value is 0.5 sec. Sure: high on the client value.
-- proposed fix: sim/core/racials_forever.go:141 `CastTime: time.Millisecond * 500`, update the comments at :111, tools/rotopt/racials.go:10 and tools/rotopt/hunter_ranged.go:33 ("a 0.5 sec cast"). No published number moves.
-- needs: orchestrator fix
+## Resolved
+
+### mechanics-20261103-2: The notes' tank threat values (Bear Form 115%, Defensive Stance 80%, Defiance 7/13/20%) are not in the sim
+- severity: low (threat only, 0 DPS; moves the tank sim's threat numbers, not the DPS report)
+- affects: druid (Feral tank), warrior (Protection / tank bench)
+- found: 2026-11-03, master f5c99ad01
+- evidence: dev notes post 9 (2026-11-02, tier 1): "Bear Form and Dire Bear Form: Threat bonus increased from 50% to 115%. This is to compensate for Blessing of Salvation being removed.", "Defensive Stance: Threat bonus increased from 30% to 80%.", "Defiance: Threat bonus increased to 7/13/20% from 5/10/15%." Client 70753 has none of them (21178 Bear Form (Passive2) e0 aura 10 bp 50), and no hotfix push up to 113557 carries them, so standards 37 says model the notes' values under Forever. The sim keeps the old ones: sim/druid/bear.go:52 `bearFormThreatMultiplier = 1.5`; sim/warrior/stances.go:110-112 `0.05*Defiance`, `1.3 * (1 + defiance)`. The round files list them as deferred to "tank sessions" (round_70753/druid.md:133, warrior.md:139), but neither the round README's phase 3 to-do nor TASKS.md has them, and they are not in the "Notes-only values" lists. Sure: high.
+- proposed fix: under `Env.IsForever()`: bear.go `bearFormThreatMultiplier = 2.15`; stances.go Defiance `[]float64{0, 0.07, 0.13, 0.20}[Talents.Defiance]` and Defensive Stance `1.8 * (1 + defiance)`; cite post 9 and "client 70753 unchanged" and add the three to round_70753/druid.md and warrior.md "Notes-only values". Re-run the tank goldens.
+- needs: worker fix
+- resolved: 2026-11-03, 0dcb0d8: Bear Form x2.15 (sim/druid/bear.go `bearFormThreatMultiplierNov2`), Defensive Stance x1.8 times Defiance 7/13/20% (sim/warrior/stances.go; the two A_MOD_THREAT auras multiply, x2.16 at 3/3 with a shield), under Forever; tests TestForeverBearFormThreat, TestForeverDefensiveStanceThreat; TestP1TankWarrior TPS x1.445, DPS and report hashes unchanged
 
 ### mechanics-20261031-1: Efficiency should discount Lacerate (its class bit is in the mask)
 - severity: low (mana only; no report build both takes Efficiency and casts Lacerate: Marksmanship / Lone Wolf have Efficiency 5 but no Lacerate in their APLs, Survival casts Lacerate 1299332 but has Efficiency 0). Not simmed: no published number moves.
@@ -19,6 +22,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: tier 1, clients 1.60.1.70425 / 70450 / 70630 / 70707: Efficiency 19416 e0 (aura 108 misc 14, -3% a rank) EffectSpellClassMask_1 = -2146955264 = 0x80081000. Lacerate's SpellClassOptions (24118 / 24119 / 24120 / 1299332, set 9) mask word 1 = 4096 = 0x1000, inside it; `AUDIT_DB=<70707> python3 tools/audit/mechanics/mask.py 19416` lists Lacerate. The sim leaves it out: sim/hunter/talents.go:59 "Lacerate is not in it", and sim/hunter/talents_test.go:48 TestEfficiencyClassMask wants Lacerate at 100 because it reads the mask as "0x80080000" (the 0x1000 bit dropped). Resourcefulness (440529, word 1 0x80000) rightly skips Lacerate. Sure: high (four builds, two tables agree).
 - proposed fix: add `SpellCode_HunterLacerate` to Efficiency's case list in sim/hunter/talents.go:63-67, fix the comment, and change the test's Lacerate row to 85 with the mask 0x80081000 (patch: $AUDIT_WORK/mechanics/efficiency_lacerate.patch, key hunk: `SpellCode_HunterSniperShot, SpellCode_HunterStriderKick, SpellCode_HunterLacerate:`).
 - needs: worker fix
+- resolved: 2026-11-03, c975a8297 (Lacerate added to Efficiency's case list, sim/hunter/talents.go:68)
 
 ### mechanics-20261027-2: Amplify Curse no longer boosts Bane of Agony on client 70630
 - severity: low (no preset takes Amplify Curse; rotopt's `amplifyCurse` knob defaults to 0)
@@ -26,11 +30,19 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - found: 2026-10-27, master d3df9247f
 - evidence: tier 1, client 1.60.1.70630: 18288 e0 (aura 108 misc 8, +50%) mask 33792 -> 32768, which covers Curse of Weakness only (`AUDIT_DB=<70630> python3 tools/audit/mechanics/mask.py 18288`; on 70532 it listed Bane of Agony too). A new e1 (aura 107 misc 8, -20) covers Curse of Exhaustion again. sim/warlock/curses.go:74-77 still multiplies Bane of Agony's base damage by 1.5 and spends the aura.
 - proposed fix: under Forever, Amplify Curse leaves Bane of Agony alone (drop the x1.5 and the deactivate in the Bane of Agony snapshot, or don't register the knob's cast), and update the forever-wiki talent text.
-- needs: worker fix
+- needs: none
 - 2026-10-27: the 70630 mask reading holds, but 18288's 70630 description and Wowhead's Forever tooltip still name Bane of Agony, and every Agony rank gains a base-0 aura 271 effect (w2) that its new debuff text multiplies by, so the +50% looks moved onto Agony as a server-filled value, not removed. The sim keeps +50% (no preset casts Amplify Curse). needs: user ruling.
 - 2026-10-27 (user): park it until a build takes Amplify Curse, then test in game (TASKS.md item of 2026-10-27). The sim keeps +50% of base meanwhile. needs: in-game test
+- resolved: 2026-11-03, round 70753 (warlock): Blizzard's development notes of 2026-11-02, "Amplify Curse now correctly affects Curse of Exhaustion and Bane of Agony" (foreverchanges.pro: "Now really works on Curse of Exhaustion and Bane of Agony, as its tooltip says"). The sim keeps +50% of Bane of Agony's base damage (sim/warlock/curses.go; TestWarlockAmplifyCurseAgony), and the round's talent search tries Amplify Curse.
 
-## Resolved
+### mechanics-20261103-1: Read Leyline is a 0.5 sec cast on client 70753; the sim casts it in 2 sec
+- severity: low (no report request or preset casts it: `grep -c 1259705 tools/dps_report/req/*.json` is 0 everywhere, and the race tables show Read Leyline at 0.0 DPS; it would matter for a High Order build whose APL casts it, about 1.5 sec of casting saved every 2 min)
+- affects: Skyborne High Order (shared racial; rotopt `leylineMana` knob, tools/rotopt/racials.go and hunter_ranged.go comments)
+- found: 2026-11-03, master a0b306984
+- evidence: tier 1, client 1.60.1.70753: SpellMisc of 1259705 CastingTimeIndex 5 -> 3 (SpellCastTimes 5 = 2000 ms, 3 = 500 ms); 70707 had 5. Dev notes post 7 only says "Read Leyline: Now castable while moving". sim/core/racials_forever.go:141 `CastTime: time.Second * 2`. Not checked whether this rode in on a 70707 hotfix (the hotfix fetch was cut short this pass); either way the newest tier 1 value is 0.5 sec. Sure: high on the client value.
+- proposed fix: sim/core/racials_forever.go:141 `CastTime: time.Millisecond * 500`, update the comments at :111, tools/rotopt/racials.go:10 and tools/rotopt/hunter_ranged.go:33 ("a 0.5 sec cast"). No published number moves.
+- needs: orchestrator fix
+- resolved: 2026-11-03, 60f857c94. Read Leyline casts in 0.5 sec, and per the 2026-11-02 notes it can't go under an Innervate, which ends Energized; the comments at tools/rotopt/racials.go and hunter_ranged.go updated. No published number moves.
 
 ### mechanics-20261101-1: Shadow presets stand at 25 yd but Mind Flay reaches 20 yd (24 with Shadow Reach 3/3); the sim casts it anyway
 - severity: low (no DPS effect measured: priest__shadow 948.73 DPS at 25, 24 and 20 yd, 20k iterations, same seed; the preset is just not playable as set)

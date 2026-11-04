@@ -67,6 +67,8 @@ type Druid struct {
 	Hurricane            []*DruidSpell
 	Innervate            *DruidSpell
 	InsectSwarm          []*DruidSpell
+	Lacerate             *DruidSpell
+	PrimalBite           *DruidSpell
 	Languish             *DruidSpell
 	Maul                 *DruidSpell
 	MaulQueueSpell       *DruidSpell
@@ -98,6 +100,7 @@ type Druid struct {
 	FaerieFireAuras          core.AuraArray
 	FrenziedRegenerationAura *core.Aura
 	FurorAura                *core.Aura
+	PoisedAura               *core.Aura
 	InsectSwarmAuras         core.AuraArray
 	MaulQueueAura            *core.Aura
 	MoonkinFormAura          *core.Aura
@@ -140,10 +143,6 @@ func (druid *Druid) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 		raidBuffs.LeaderOfThePack = true
 	}
 }
-
-// func (druid *Druid) TryMaul(sim *core.Simulation, mhSwingSpell *core.Spell) *core.Spell {
-// 	return druid.MaulReplaceMH(sim, mhSwingSpell)
-// }
 
 func (druid *Druid) RegisterSpell(formMask DruidForm, config core.SpellConfig) *DruidSpell {
 	prev := config.ExtraCastCondition
@@ -212,20 +211,20 @@ func (druid *Druid) RegisterFeralCatSpells() {
 		druid.registerRavageSpell()
 		druid.registerProwlSpell()
 	}
+	druid.registerPoised()
 }
 
-// TODO: Classic feral tank
+// RegisterFeralTankSpells is the Forever bear's (bear.go, bear_attacks.go).
 func (druid *Druid) RegisterFeralTankSpells() {
-	// druid.registerBarkskinCD()
-	// druid.registerBearFormSpell()
-	// druid.registerDemoralizingRoarSpell()
-	// druid.registerEnrageSpell()
-	// druid.registerFrenziedRegenerationCD()
-	// druid.registerMangleBearSpell()
-	// druid.registerMaulSpell()
-	// druid.registerRakeSpell()
-	// druid.registerRipSpell()
-	// druid.registerSwipeBearSpell()
+	druid.registerBearFormSpell()
+	druid.registerMaulSpell()
+	druid.registerSwipeBearSpell()
+	druid.registerDemoralizingRoarSpell()
+	druid.registerEnrageSpell()
+	druid.registerFrenziedRegenerationSpell()
+	druid.registerLacerateSpell()
+	druid.registerPrimalBiteSpell()
+	druid.applyBearTalentProcs()
 }
 
 func (druid *Druid) Reset(_ *core.Simulation) {

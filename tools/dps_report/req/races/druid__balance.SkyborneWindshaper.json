@@ -136,23 +136,6 @@
         "action": {
           "castSpell": {
             "spellId": {
-              "spellId": 9876
-            }
-          },
-          "condition": {
-            "auraIsActive": {
-              "auraId": {
-                "spellId": 16870
-              }
-            }
-          }
-        },
-        "notes": "A free Starfire on Clearcasting, which Wrath does not use up."
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
               "spellId": 9835
             }
           },
@@ -227,6 +210,16 @@
           }
         },
         "notes": "Starfire."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 9912
+            }
+          }
+        },
+        "notes": "Wrath when Starfire's mana is not there, rather than waiting for it."
       }
     ]
   },
@@ -238,5 +231,5 @@
     "seed": 1,
     "duration": 180
   },
-  "how": "The High Order rotation (rotopt -template druid_balance -race SkyborneHighOrder -durs 180 from the preset's knobs (innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=0): prepullTime 3 -> 2.5); Windshaper has the same Wind Blessed and no Read Leyline. Same rotation at the preset race (Tauren): -2.1 +- 0.3."
+  "how": "The High Order rotation (rotopt -template druid_balance -race SkyborneHighOrder -durs 180 from the preset's knobs (innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=0): prepullTime 3 -> 2.5); Windshaper has the same Wind Blessed and no Read Leyline. Same rotation at the preset race (Tauren): -2.1 +- 0.3; wrathFallback=1,clearcastStarfire=0 added 2026-11-03 (+0.9/+0.6/+2.4 at 120/180/300 s)"
 }

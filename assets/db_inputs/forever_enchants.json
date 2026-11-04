@@ -1,5 +1,5 @@
 {
-"meta": {"build": "1.60.1.70685", "fetched": "2026-10-30T08:24Z", "source": "client beta 1.60.1.70685 (wago.tools)", "tool": "tools/sources/enchants.py"},
+"meta": {"build": "1.60.1.70755", "fetched": "2026-11-03T18:41Z", "source": "client beta 1.60.1.70755 (wago.tools)", "tool": "tools/sources/enchants.py"},
 "enchants": {
 "2152": {"enchant": 15, "item": 2304, "name": "Stamina +$k2 and Armor +$k1", "stats": {"BonusArmor": 8, "Stamina": 1}},
 "2165": {"enchant": 8481, "item": 2313, "name": "Stamina +$k2 and Armor +$k1", "stats": {"BonusArmor": 16, "Stamina": 2}},
@@ -351,7 +351,7 @@
 "1248640": {"enchant": 2563, "name": "Strength +15", "stats": {"Strength": 15}},
 "1248645": {"enchant": 8213, "name": "Nature Damage +$k1", "stats": {"NaturePower": 20}},
 "1248661": {"enchant": 1901, "name": "Intellect +9", "stats": {"Intellect": 9}},
-"1248665": {"enchant": 8214, "name": "Defense +$k2", "stats": {"Defense": 9}},
+"1248665": {"enchant": 8214, "name": "Defense +$k1", "stats": {"Defense": 9}},
 "1248668": {"enchant": 8215, "name": "Strength +$k1", "stats": {"Strength": 25}},
 "1248757": {"enchant": 8216, "name": "Insight", "other": ["spell 1248758 aura 42"], "stats": {}},
 "1248760": {"enchant": 8721, "name": "Recovery", "other": ["spell 1248761 aura 42"], "stats": {}},
@@ -390,5 +390,6 @@
 "1306532": {"enchant": 8719, "item": 279258, "name": "Defense +$k1 and Stamina +$k2", "stats": {"Defense": 4, "Stamina": 10}},
 "1306546": {"enchant": 8720, "item": 279272, "name": "+2% Crit", "other": ["spell 1310308 aura 290"], "stats": {}},
 "1306907": {"enchant": 8719, "name": "Defense +$k1 and Stamina +$k2", "stats": {"Defense": 4, "Stamina": 10}},
-"1307050": {"enchant": 8720, "name": "+2% Crit", "other": ["spell 1310308 aura 290"], "stats": {}}
+"1307050": {"enchant": 8720, "name": "+2% Crit", "other": ["spell 1310308 aura 290"], "stats": {}},
+"1328948": {"enchant": 8737, "name": "Speed Increase", "other": ["spell 1328947 aura 31"], "stats": {}}
 }}

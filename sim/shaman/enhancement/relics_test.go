@@ -18,7 +18,7 @@ import (
 // Driftwood Icon has its own beta reading (TestOrcShamanDriftwoodIcon).
 func TestOrcShamanRelics(t *testing.T) {
 	// Lightning Overload 3/3, Stormstrike and Maelstrom Weapon 5/5.
-	const talents = "00000000000003-00000000000010005"
+	const talents = "00000000000003-00000000000100005"
 	relicSim := func(relic int32) (*core.Simulation, *EnhancementShaman) {
 		return weaponSim{level: 60, talents: talents, weapon: &proto.ItemSpec{Id: darkEdge}, relic: relic, seconds: 10}.start()
 	}
@@ -149,7 +149,8 @@ func TestOrcShamanRelics(t *testing.T) {
 			runSim(sim)
 			want := 0.0
 			if c.half {
-				want = .5 * 10 * enh.AutoAttacks.MH().SwingSpeed / 60
+				// 20 PPM at 5/5 since the November 2 notes (10 before).
+				want = .5 * 20 * enh.AutoAttacks.MH().SwingSpeed / 60
 			}
 			rate := float64(stacks) / bolts
 			if se := math.Sqrt(want * (1 - want) / bolts); math.Abs(rate-want) > 4*se+1e-9 {

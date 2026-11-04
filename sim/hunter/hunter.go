@@ -239,13 +239,14 @@ func (hunter *Hunter) Initialize() {
 	hunter.registerLacerateSpell()
 	hunter.registerVolleySpell()
 
-	// Forever gives Fire traps and Frost traps a cooldown each (client categories 411 and 412).
-	fireTraps := hunter.NewTimer()
-	frostTraps := hunter.NewTimer()
+	// Every trap shares one 30 sec cooldown under Forever: client 1.60.1.70753 moves Freezing and
+	// Frost Trap from their own category (2183) into the Fire traps' 411, renamed "Hunter Traps"
+	// (Blizzard's 11-02 notes). Before, Fire and Frost traps had a cooldown each.
+	traps := hunter.NewTimer()
 
-	hunter.registerExplosiveTrapSpell(fireTraps)
-	hunter.registerImmolationTrapSpell(fireTraps)
-	hunter.registerFreezingTrapSpell(frostTraps)
+	hunter.registerExplosiveTrapSpell(traps)
+	hunter.registerImmolationTrapSpell(traps)
+	hunter.registerFreezingTrapSpell(traps)
 
 	hunter.registerRapidFire()
 }

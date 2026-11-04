@@ -1825,15 +1825,15 @@ func ForeverFuriousHowlAura(unit *Unit, spellID int32, ap float64) *Aura {
 
 // Forever's Trueshot Aura is a Marksmanship talent with five ranks from level 25. It only
 // gives ranged attack power now, so a melee character gets nothing from it. The client (70338 to
-// 70658) gives 30 / 40 / 50 / 75 / 50; the launch realms' server hotfix of 2026-10-28
-// (foreverchanges.pro, read from the realms' hotfix cache, not in Blizzard's notes) lowers ranks 1-4
-// to 15 / 22 / 30 / 40, which puts rank 5's 50 (20906, level 60) on the curve. User ruling
-// 2026-10-28: take the hotfix and rank 5 at 50 (it replaces the 2026-10-15 ruling of 100).
+// 70658) gave 30 / 40 / 50 / 75 / 50, and the launch realms' server hotfix of 2026-10-28 lowered
+// ranks 1-4 to 15 / 22 / 30 / 40 (client 1.60.1.70753 has 15 / 22 / 30 / 40 / 50). The hotfix of
+// 2026-11-03 (foreverchanges.pro, read from the realms' hotfix cache; Blizzard's 11-02 notes give
+// the same values) raises them to 20 / 35 / 50 / 75 / 100, so rank 5 (20906, level 60) gives 100.
 // A hunter still keeps every rank learned and casts the strongest (standards 8a; bestLearnedRank).
-const ForeverTrueshotAuraRank5RAP = 50
+const ForeverTrueshotAuraRank5RAP = 100
 
 var foreverTrueshotAuraLevel = [...]int{0, 25, 32, 40, 50, 60}
-var foreverTrueshotAuraRAP = [...]float64{0, 15, 22, 30, 40, ForeverTrueshotAuraRank5RAP}
+var foreverTrueshotAuraRAP = [...]float64{0, 20, 35, 50, 75, ForeverTrueshotAuraRank5RAP}
 
 // bestLearnedRank is the strongest value among the ranks learned by level, for Forever spells
 // whose top rank gives less than a lower one. Players can cast any rank they have learned.

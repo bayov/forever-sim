@@ -10,6 +10,31 @@ Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. T
 
 Update 2026-10-12: every multi-rank talent below that is still in the tree was checked against the client's per-rank curves (TraitDefinitionEffectPoints and CurvePoint, build 1.60.1.70338) and the sim's per-rank values match them, so those are marked [ranks settled by the 70338 trait curves]. Talents marked [not in client 70338] are no longer in the tree; the current tree is in the "Beta client 1.60.1.70338" section.
 
+## Client 1.60.1.70753 and the November 2 development notes (2026-11-03)
+
+Client 70753 bakes the 2026-10-30 hotfix's tree into its own tables (the druid tree below is unchanged) and adds Poised. Blizzard's notes of 2 November (post 9) also raise the cat's and Balance's damage, but none of those values is in the client, Wowhead or a hotfix yet; under standards 37 the sim takes the notes' numbers (gated under Forever, `sim/druid/tuning_70753.go`). The ledger is `orchestration/round_70753/druid.md`.
+
+- **Poised** (passive 1328829, level 32; buff 1328827): at full Energy out of combat, the next Claw, Shred, Rake, Rip, Ferocious Bite, Ravage, Pounce or Cower costs 10 less (aura 107 misc 14 bp -10, one charge, no end). The sim gives one charge at the pull at full Energy (`sim/druid/poised.go`). The Level 60 opener is a Clearcast Ravage, which is free already and uses the charge up.
+- **Notes-only values:** Shred 200% weapon damage (client 155%), Claw 140% (110%), Ravage 435% (350%); Rip, Rake, Ferocious Bite and Pounce base points and attack power part ×1.25 (Bite's damage a point of extra Energy unchanged); Starfire base damage ×1.40; Rend and Tear 3% a point (2%; `tools/forever_talents/notes/druid.json` carries the tooltip).
+- Already in the sim from the hotfix: Ferocious Bite's new rank 1 at 24, Genesis and Naturalist 2% a point, Leader of the Pack and Moonkin Aura all crit and exclusive, Predatory Discipline, Shifting Power at 8 sec, Berserk gone, Heart of the Wild and Furor swapped, Reflection and Subtlety swapped.
+- Bear and healer lines (Lacerate as a talent, Primal Bite, Bear Form threat 115%, Bloom, Swiftmend, Wild Growth) are the tank and healer sims'.
+
+The presets, re-searched on 70753 with the round's race base stats (gear fixed, the generic boss, 180 ± 20 sec, 20,000 iterations, seed 1; seed 1000003 within 0.7). The talent searches (180 sec) and the knob searches (120, 180 and 300 sec together) kept every build's talents and rotation:
+
+| Build | Talents | 120 s | 180 s | 300 s | 180 s before |
+|---|---|---|---|---|---|
+| Feral (Night Elf) | `05002-53200032023012125001-05502` | 1142.4 | 1131.1 | 1116.8 | 942.5 |
+| Feral, Faerie Fire duty | the same | 1137.5 | 1127.8 | 1114.2 | 939.3 |
+| Balance (Night Elf) | `5232220115501351--505003` | 954.1 | 951.5 | 942.1 | 892.3 |
+| Balance, Faerie Fire duty | the same | 914.8 | 914.8 | 908.2 | 858.6 |
+| Balance Wrath (Night Elf) | `5502220115501351--505003` | 858.3 | 861.5 | 859.3 | 853.0 |
+| Balance Wrath, Faerie Fire duty | the same | 823.9 | 829.0 | 829.4 | 820.8 |
+
+- Feral gains 20% from the notes' cat values. Balance gains 6.6% from Starfire. The Wrath builds gain 1% (Starfire only on Clearcasting).
+- Balance's talent search moved two Moonglow points into Genesis: +4.0 at 180 sec, but out of mana at 300 sec (844.0 against 941.9). Its best rotation then scores 936.0 over the three lengths against the current 948.9, so Moonglow stays.
+- Races (180 sec, seeds 1 and 1000003): Night Elf is best for every build and is the best Alliance race (Feral 1131.1, Balance 951.0, Wrath 861.6). The best Horde race is Windshaper Skyborne (Feral 1113.2, Balance 949.3, Wrath 857.1), ahead of the Tauren (1105.4, 940.1, 852.0). High Order Skyborne equals Windshaper.
+- A wider rotation exploration the same day added three Feral lines: EZ-Thro Dark Bomb only right after a main hand swing at 60 Energy or less (its 1 sec cast restarts the swing timer), Rake at 5 combo points too, and Shadowmeld Ravage on Clearcasting at 5 combo points too. That is +8.2 / +8.0 / +7.6 at 120 / 180 / 300 sec (1139.0 at 180 sec), and the Faerie Fire duty build now takes the bomb as well (1134.1). For Balance it added Wrath when Starfire's mana is not there, rather than waiting for the mana, and dropped the Clearcasting Starfire line: +0.9 / +0.7 / +2.0 (952.2 at 180 sec; duty 915.5). No talent variant gained.
+
 ## Launch-realm hotfix to 1.60.1.70707 (2026-10-30)
 
 The launch realms' hotfix of 30 October reworked the druid tree on build 70707 without a new client (wago.tools hotfixes, product wowf, region 91, push 113283 and its neighbours, read through `tools/sources/hotfixes.py` into the cached `1.60.1.70707+hf` tables; [foreverchanges.pro](https://foreverchanges.pro/talents/druid) shows the same). `tools/forever_talents/client/druid.json` is that tree, and the sim follows it since 2026-11-01. It supersedes the sections below wherever they disagree; every druid talent string changed.
@@ -19,7 +44,7 @@ Feral Combat (20 talents):
 - Berserk (417141) and Improved Shifting Power (1322670) are out of the tree.
 - Shifting Power moves to row 7, third column, under Predatory Discipline, with an 8 sec cooldown (SpellCooldowns 1322605, 16000 -> 8000 ms). Still 40 Energy for 55% of base mana: the energize is effect 1's base points; the tooltip asks for `$s2` and shows "?", and foreverchanges.pro gives 40.
 - Predatory Discipline (new, row 4, third column, 1328613): "Your Ferocious Bite ability no longer converts extra Energy into damage, but still deals extra damage based on your excess Energy." Its one effect is a dummy aura with base points 20 that the server reads; the tooltip names no number. The sim reads it literally, as wowsims/forever does: the Bite deals its rank's damage a point of extra Energy as before (2.5 at 60) and spends only its 35 Energy (`sim/druid/ferocious_bite.go`, report assumption `druid_predatory_discipline`, one value).
-- Lacerate is a row 4 talent under Savage Fury (1328617; a new rank 1, 20 damage over 15 sec, and a trainer rank 2 at 34, the old ranks becoming 3 to 5). Bear only; the sim has no bear.
+- Lacerate is a row 4 talent under Savage Fury (1328617; a new rank 1, 20 damage over 15 sec, and a trainer rank 2 at 34, the old ranks becoming 3 to 5). Bear only; simmed since 2026-11-03 (below, The bear).
 - Primal Bite moves to row 7 under Leader of the Pack, 3 ranks at 40 / 50 / 60: plus 42 / 62 / 77 (was 26 / 38 / 59 / 77 from 25). Bear only.
 - Furor moves to Feral row 1 (third column) and Heart of the Wild to Restoration row 1, with their values. Predatory Strikes moves to row 4 column 1, Rend and Tear to row 6 column 1 (still under Predatory Strikes), Natural Reaction to row 6 column 4.
 - Leader of the Pack: 3% crit of every kind for the party or raid (see the Moonkin Form line below for the stacking).
@@ -546,3 +571,15 @@ Leap behind an enemy, Dazing them for 3 sec.
   - Cost: 550 Mana, 40 yd range, Instant, 6 sec cooldown
   - Heals the target and their party for 285 over 7 sec. Party members must be within 43 yards of target. The amount healed is applied quickly at first, and slows down as Wild Growth reaches its full duration.
   - Note: Replaced a missing zamimg file (ability_druid_wildgrowth) with the WotLK talent icon.
+
+## The bear (2026-11-03)
+
+The Feral tank is in the sim (`sim/druid/bear.go`, `bear_attacks.go`, `sim/druid/tank`), built from client 1.60.1.70707 with the launch realms' hotfixes and, where the client is silent, wowsims/forever's bear (fbcd9a3), whose measurements this repo cites elsewhere:
+
+- **Dire Bear Form** (9634, its passive 9635): armor from items +360%, health +600 and 32 a level from 40 (1,240 at 60), attack power +120 and 3 a level (180), threat x1.5 (Bear Form (Passive2) 21178, A_MOD_THREAT 50). It swings the weapon's DPS at 2.5 sec, 20% either side (SpellShapeshiftForm 8: 2500 ms, DamageVariance 0.4), with the weapon enchant's and stone's flat damage on top, and gets Rage at the two-hander's rate whatever the weapon (wowsims/forever's log: 11.25 Rage a 2.5 sec swing). Bear Form below 40 (1178: 180%, 20 + 18 a level, 30 + 3 a level).
+- **Maul** rank 7 (9881): the weapon's damage plus 128, 15 Rage, on the next swing. **Swipe** rank 5 (9908): 83 plus 3% of attack power (wowsims/forever's override) to up to 3 enemies, 20 Rage. **Demoralizing Roar** rank 5 (9898): 204 attack power for 30 sec, 10 Rage, 48 flat threat a target. **Enrage** (5229): 10 Rage and 2 a second for 10 sec, 1 min cooldown, 16% less armor from items while it lasts (the tooltip; 27% in Bear Form). **Frenzied Regeneration** (22842, Forever's only rank): up to 10 Rage a second into 1% of max health a point for 10 sec, 3 min cooldown.
+- **Lacerate** (talent, rank 5 1235827 at 58): 15 Rage, a bleed of 15 a stack every 3 sec for 15 sec, 5 stacks, and a hit of 10% of weapon damage for each stack already on. **Primal Bite** (talent, rank 4 1238073): 100% weapon damage plus 77, 20 Rage, 6 sec cooldown.
+- **Threat**: none of them states a threat effect, and the tooltips' "high amount of threat" isn't a number, so each threatens for its damage times the form's 1.5, as wowsims/forever has it. Classic's Maul and Swipe had 1.75 on top; a bear tank's log settles it.
+- **Talents**: Feral Instinct is 10% more Swipe damage a point (it was threat), Savage Fury 5% a point on Maul and Swipe too, Thick Hide 1 base armor a level a point plus 0.67 a point of Defense past five times the level, both scaled by the form, Heart of the Wild 4% Stamina a point in the bear forms, Natural Reaction 5 Rage at 20% a point on a dodge, Blood Frenzy 5 Rage at 50% a point on a crit, Feral Swiftness's dodge in the bear forms too, Rend and Tear on Lacerate's bleed.
+- The bench's bear (`tools/tankbench/req/druid_bear.json`) is a Tauren on the Feral cat's synthetic set (no bear set yet) with the raid sim's Feral tank talents, keeping its own Demoralizing Roar up (the bench drops the raid's Roar and Shout, docs/tank_sim.md), then Primal Bite, Lacerate to 5 stacks and Maul at 30 Rage.
+

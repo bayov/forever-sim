@@ -117,10 +117,10 @@ func (ws weaponSim) start() (*core.Simulation, *EnhancementShaman) {
 // mark and Curse of the Elements are other kinds, and they multiply with the talents and with
 // each other. Forever's Curse of the Elements adds 10% to every magic school at level 60.
 //
-// Call of Flame 3 is 15% on Flame Shock (the hit and the ticks), Searing and Magma Totem, Fire
-// Nova and Lava Burst (shaman_audit.md 8.5). Since client 1.60.1.70425 it also makes Flame Shock
-// last 3 sec (one tick) longer a point, so the bonus sim's last Flame Shock ticks 3 more times. Lava Burst's own 20% with Flame Shock on the target
-// is in both sims, and Call of Flame multiplies with it.
+// Call of Flame 3 is 15% on Flame Shock (the hit and the ticks), Searing and Magma Totem and Fire
+// Nova (shaman_audit.md 8.5; Lava Burst too until the November 2 notes removed it). Since client
+// 1.60.1.70425 it also makes Flame Shock last 3 sec (one tick) longer a point, so the bonus sim's
+// last Flame Shock ticks 3 more times.
 //
 // Concussion is 1% a point on Lightning Bolt, Chain Lightning and Earth Shock only, as the client
 // data says (shaman_audit.md 8.2). The Stormstrike mark is on the same three. So each of them on
@@ -130,11 +130,11 @@ func (ws weaponSim) start() (*core.Simulation, *EnhancementShaman) {
 // No bonus changes a roll, so both sims roll the same hits, crits and damage in the same order,
 // and the ratio of each spell's total damage is exactly its multiplier.
 func TestOrcShamanSpellDamageModifiers(t *testing.T) {
-	// Lava Burst and Stormstrike in both sims. The bonus sim adds Concussion 5, Call of Flame 3,
+	// Call of Thunder and Stormstrike in both sims. The bonus sim adds Concussion 5, Call of Flame 3,
 	// Improved Fire Nova 2 and Improved Lightning Shield 3.
 	const (
-		plainTalents = "0000000000001-0000000000001"
-		bonusTalents = "0500030020001-0000003000001"
+		plainTalents = "0000000000001-000000000001"
+		bonusTalents = "0500030020001-000003000001"
 	)
 	newSim := func(talents string, debuffs *proto.Debuffs) (*core.Simulation, *EnhancementShaman) {
 		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
@@ -164,7 +164,6 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 			{"Chain Lightning", topRank(t, "Chain Lightning", enh.ChainLightning), true},
 			{"Frost Shock", topRank(t, "Frost Shock", enh.FrostShock), false},
 			{"Flame Shock", topRank(t, "Flame Shock", enh.FlameShock), false},
-			{"Lava Burst", enh.LavaBurst, false},
 			{"Fire Nova", topRank(t, "Fire Nova", enh.FireNovaHits), false},
 			{"Searing Totem", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0), false},
 			{"Magma Totem", enh.GetSpell(core.ActionID{SpellID: shaman.MagmaTotemAoeSpellId[4]}), false},
@@ -208,7 +207,6 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 		{"Chain Lightning", 1.05 * 1.2 * 1.1, 0},
 		{"Frost Shock", 1.1, 0},
 		{"Flame Shock", 1.15 * 1.1, 1.15 * 1.1},
-		{"Lava Burst", 1.15 * 1.1, 0},
 		{"Fire Nova", 1.15 * 1.2 * 1.1, 0},
 		{"Searing Totem", 1.15 * 1.1, 0},
 		{"Magma Totem", 1.15 * 1.1, 0},

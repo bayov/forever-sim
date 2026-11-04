@@ -988,15 +988,17 @@ func (warlock *Warlock) applyFireAndBrimstone() {
 	})
 }
 
-// Shadow and Flame: a Conflagrate hit gives 2% Shadow damage a point for 20 sec, a Shadowburn
-// hit 2% Fire damage a point. Its 20% a point to keep Immolate is in getConflagrateConfig, the
+// Shadow and Flame: a Conflagrate hit gives 4% Shadow damage a point for 20 sec, a Shadowburn
+// hit 4% Fire damage a point. Blizzard's development notes of 2026-11-02 doubled it from 2% a
+// point; the client's trait curves (1.60.1.70753, effects 2 and 3 of 426316) still read 2 to 10,
+// so the change is server side. Its 20% a point to keep Immolate is in getConflagrateConfig, the
 // Soul Shard refund does nothing in the sim.
 func (warlock *Warlock) applyShadowAndFlame() {
 	if warlock.Talents.ShadowAndFlame == 0 {
 		return
 	}
 
-	multiplier := 1 + 0.02*float64(warlock.Talents.ShadowAndFlame)
+	multiplier := 1 + 0.04*float64(warlock.Talents.ShadowAndFlame)
 	schoolAura := func(spellID int32, label string, school stats.SchoolIndex) *core.Aura {
 		return warlock.RegisterAura(core.Aura{
 			Label:    label,

@@ -8,7 +8,8 @@ import (
 )
 
 // Hemorrhage no longer weakens the target for the whole raid, it makes the rogue's own
-// Rupture hit harder.
+// Rupture and Garrote hit harder. Garrote came with Blizzard's November 2 development notes;
+// client 16511 in 1.60.1.70753 still masks Rupture only (1048576).
 const HemorrhageRuptureMultiplier = 1.15
 
 func (rogue *Rogue) registerHemorrhageSpell() {
@@ -38,8 +39,9 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		// Cold Blood only names Sinister Strike, Backstab, Ambush, Eviscerate and Mutilate.
 		Flags: rogue.builderFlags() &^ SpellFlagColdBlooded,
 
+		// Efficient Strikes covers Hemorrhage too (November 2 development notes).
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   35.0,
+			Cost:   35 - rogue.hemorrhageEfficientStrikes(),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -58,7 +60,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
 			// Normalized weapon damage, the client's Hemorrhage (16511) uses effect 121 like Sinister Strike.
-			baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target)) * rogue.quietusMultiplier(sim)
+			baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target))
 
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 
@@ -75,4 +77,17 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 // Hemorrhage is optional, so the debuff has to be looked up defensively.
 func (rogue *Rogue) isHemorrhaging(target *core.Unit) bool {
 	return rogue.HemorrhageAuras != nil && rogue.HemorrhageAuras.Get(target).IsActive()
+}
+
+// The Rupture and Garrote damage multiplier from the rogue's Hemorrhage on the target.
+func (rogue *Rogue) hemorrhageMultiplier(target *core.Unit) float64 {
+	return core.TernaryFloat64(rogue.isHemorrhaging(target), HemorrhageRuptureMultiplier, 1)
+}
+
+// Garrote's share of Hemorrhage: Forever only, from the November 2 development notes (standards 37).
+func (rogue *Rogue) garroteHemorrhageMultiplier(target *core.Unit) float64 {
+	if !rogue.Env.IsForever() {
+		return 1
+	}
+	return rogue.hemorrhageMultiplier(target)
 }

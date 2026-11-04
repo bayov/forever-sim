@@ -117,6 +117,11 @@ func (s *server) routes() http.Handler {
 
 func logged(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		// The room poses the raid test's raiders in a worker, which writes their bones into memory
+		// shared with the page. Chrome shares memory only with a cross-origin isolated page. We ask
+		// for credentialless isolation, so the spell icons from wow.zamimg.com still load.
+		w.Header().Set("Cross-Origin-Opener-Policy", "same-origin")
+		w.Header().Set("Cross-Origin-Embedder-Policy", "credentialless")
 		if r.URL.Path == "/" {
 			http.Redirect(w, r, "/practice.html", http.StatusFound)
 			return

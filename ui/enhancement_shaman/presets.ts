@@ -200,6 +200,10 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // / +1.1 on the second seed set), Imp GW 901.3 / 887.8 / 867.9 (+1.0 / +0.9 / +1.0, and +0.1 / +0.3
 // / +0.6), paired at 20000 iterations. A talent search on it found no build ahead at every length:
 // Elemental Focus for Tidal Focus is +4.5 to +8.6 at 180 and 300 sec but 2.2 to 3.4 behind at 120.
+//
+// Round 70753 (the November 2 notes, Stormstrike every 6 sec): the bolt at 5 Maelstrom Weapon stacks no
+// longer waits for Earth Shock (earthShockBeforeBolt=0): +0.9 to +3.1 on Level 60 and +0.8 to +4.2 on
+// Imp GW at 120 / 180 / 300 sec, paired at 20000 iterations on two seed sets.
 export const APLOptimized = PresetUtils.makePresetAPLRotation('Enhancement', OptimizedAPLJSON, {
 	tooltip: "The optimizer's best level 60 rotation, with Windfury Totem for the group, Magma Totem and Fire Nova.",
 	group: 'Synthetic',
@@ -226,6 +230,10 @@ export const APLOptimized = PresetUtils.makePresetAPLRotation('Enhancement', Opt
 // Stormstrike, Earth Shock and the bolt, with Fire Nova last: 851.9 / 842.2 / 838.5 at 120 / 180 / 300
 // sec (+1.4 / +1.8 / +1.7, and +1.3 / +1.9 / +1.8 on the second seed set). It was within noise on Mana
 // Tide, which keeps its own order.
+//
+// Round 70753 (the November 2 notes): Flame Shock no longer goes ahead of Stormstrike
+// (flameShockFirst=0) and Magma Totem goes down 1.5 sec before the pull: +0.5 to +0.8 / 0 to +1.3 / +0.5
+// to +1.1 at 120 / 180 / 300 sec on the Water Shield build, paired at 20000 iterations on two seed sets.
 export const APLMagma = PresetUtils.makePresetAPLRotation('Enh Water Shield', MagmaAPLJSON, {
 	tooltip: 'The rotation for the Water Shield talents, with Magma Totem and no Clearcasting line.',
 	group: 'Synthetic',
@@ -349,8 +357,17 @@ export const DefaultAPL = APLOptimized;
 // Stormstrike pays off in longer fights). The knob search on the new talents kept the rotation. Level
 // 60 is 894.1 / 880.1 / 863.1 at 120 / 180 / 300 sec. Unpinned, the search drops Spirit Weapons (a
 // threat talent the sim doesn't score) for that second Improved Stormstrike point instead: +5.3 at 180.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', SavedTalents.create({ talentsString: '053503102-055030011005112251' }), {
-	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
+//
+// Round 70753 (the November 2 development notes: Stormstrike 150% and 6 sec, Maelstrom Weapon twice as
+// often, Mental Dexterity 150%, Flurry 30%, the shocks at Era's damage, Improved Ghost Wolf on row 4).
+// The search (Spirit Weapons pinned, knobs and talents alternated) moved Reverberation 5 to
+// Convection 3 and Tidal Focus 2: Earth Shock costs more mana per cast than its damage gives back
+// now that the shock cooldown no longer limits it, +10.8 / +11.3 at 180 sec on seeds 1 and 1000003,
+// paired at 20000 iterations. 443003102-055030110051012151-03 (Convection 4, Improved Stormstrike 1,
+// Tidal Focus 3) ties it: +2.5 at 120, -2 to -3 at 300 and the same mean. 1169.0 / 1159.2 / 1140.5
+// at 120 / 180 / 300 sec (892.8 / 883.0 / 866.7 before the round, on the same race base stats).
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', SavedTalents.create({ talentsString: '353003102-055030110051012251-02' }), {
+	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons, Concussion, Convection and Tidal Focus.',
 	group: 'Synthetic',
 });
 // The same search with Improved Ghost Wolf 2 pinned as well (-require
@@ -375,8 +392,14 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', Saved
 // Focus 1 to Improved Stormstrike 2: +1.0 / +1.9 at 180 sec, +4.9 / +3.9 at 300 and -2.8 / -2.9 at 120 on
 // two seed sets. 890.4 / 876.2 / 858.6 at 120 / 180 / 300 sec with the Optimized rotation, 3.9 behind
 // Level 60 at 180.
-export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', SavedTalents.create({ talentsString: '053503102-054032001005112251' }), {
-	tooltip: 'The Enhancement talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
+//
+// Round 70753: the November 2 notes moved Improved Ghost Wolf to row 4, so it needs 15 Enhancement
+// points above it and the old build (13) no longer trains. The search (both pinned) from Level 60's
+// build with the two points in it took Ancestral Knowledge 5, Elemental Weapons 1 and Shamanistic
+// Focus to open row 4, Improved Stormstrike 1, and Level 60's Convection 3 and Tidal Focus 1. 1162.2 /
+// 1149.7 / 1128.1 at 120 / 180 / 300 sec (889.0 / 878.8 / 862.1 before), 9.5 behind Level 60 at 180.
+export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', SavedTalents.create({ talentsString: '353003102-055030110051212151-01' }), {
+	tooltip: 'The Enhancement talents with Improved Ghost Wolf 2 (row 4 since the November 2 notes).',
 	group: 'Synthetic',
 });
 // The best build that takes Water Shield (-require spiritWeapons,waterShield), with the
@@ -412,9 +435,13 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', S
 // Knowledge: 803.7 / 795.3 / 793.3 at 120 / 180 / 300 sec (813.8 / 804.2 / 792.4 before), 3.6%
 // behind Level 60 at 180. Casting Water Shield, whose globes now also come from our spell crits,
 // is still 3 to 11 behind Lightning Shield on this build and on Mana Tide.
+//
+// Round 70753: the search (Water Shield and Spirit Weapons pinned) moved a Call of Flame point to
+// Elemental Devastation 2: 1118.9 / 1111.3 / 1108.1 at 120 / 180 / 300 sec (842.9 / 834.2 /
+// 830.4 before), 4.1% behind Level 60 at 180.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Enh Water Shield',
-	SavedTalents.create({ talentsString: '051003-054030021005112151-053020001' }),
+	SavedTalents.create({ talentsString: '052002-054030210051012151-053020001' }),
 	{ tooltip: 'Level 60 talents with 10 Restoration points for Water Shield.', group: 'Synthetic' },
 );
 // The best build that takes Water Shield and Mana Tide Totem (-require
@@ -438,15 +465,19 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // Under client 1.60.1.70425 the search (Mana Tide Totem and Spirit Weapons pinned) moved a point
 // from Improved Stormstrike to Concussion: 769.0 / 760.5 / 756.7 at 120 / 180 / 300 sec (790.3 /
 // 782.1 / 778.0 before, mostly the Fire Nova cut), 7.9% behind Level 60 at 180.
+//
+// Round 70753: the search found only moves inside the noise; the build stays, best on both seed sets
+// at 180 sec. 1065.1 / 1055.1 / 1046.7 at 120 / 180 / 300 sec (803.4 / 795.4 / 789.4 before), 9.0%
+// behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Enh Mana Tide',
-	SavedTalents.create({ talentsString: '03-055030031005112051-053051001001' }),
+	SavedTalents.create({ talentsString: '03-055030310051012051-053051001001' }),
 	{ tooltip: 'Level 60 talents with Water Shield and Mana Tide Totem.', group: 'Synthetic' },
 );
 
 // The talents the leveling optimizer ran with: level 30 with 5 extra talent points, with
 // Stormstrike, Spirit Weapons and Improved Ghost Wolf 2.
-export const TalentsLevel30Leveling = PresetUtils.makePresetTalents('Level 30 Leveling', SavedTalents.create({ talentsString: '-0540320010051122' }), {
+export const TalentsLevel30Leveling = PresetUtils.makePresetTalents('Level 30 Leveling', SavedTalents.create({ talentsString: '-0540300100512122' }), {
 	tooltip: 'Level 30 with 5 extra talent points, which the leveling optimizer ran with.',
 	group: 'Leveling',
 });
@@ -576,7 +607,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
-	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -919,7 +949,7 @@ export const EPLevel30Leveling = PresetUtils.makePresetEpWeights(
 	{ tooltip: 'Stat weights for a solo level 30 grinding mobs of its level, by mobs killed in a session.', group: 'Leveling' },
 );
 
-// Stat weights for the leveling gear plan (2026-11-02), by mobs killed in a 20 min session, in
+// Stat weights for the leveling gear plan (2026-11-03), by mobs killed in a 20 min session, in
 // attack power, every 5 levels from 5 to 59 (leveling_weights.json). The Leveling Gear tab judges
 // the items it finds by them, and blends two of them for the levels in between. BayovCore's
 // Upgrades reads the same file for its "Shaman leveling" weights below 60 (bayovui weights.py).
@@ -940,6 +970,12 @@ export const EPLevel30Leveling = PresetUtils.makePresetEpWeights(
 // mean of three rounds: the plan's gear by the old weights (levels 10 to 30 only, so the level 30
 // ones above it), then by the first round's, then by the mean of those two. Stamina is worth
 // something only where we still die, around 10 to 20 and at 40.
+//
+// 2026-11-03, client 70753's shaman tree (stronger shocks and Stormstrike, Improved Ghost Wolf
+// from 15 Enhancement points): one more round of the same probes, on the plan's gear by the
+// 11-02 weights, with the template's knobs as they were. Level 5 (no talents) and 10 measure as
+// before. From 25 we kill 11 to 16 more mobs a session, and Intellect, Spirit and MP5 are worth
+// more (MP5 7.1 against 2.7 at 30, Spirit 5.1 against 2.6 at 50).
 export const EPLevelingGearPlan = LevelingWeightsJSON.levels.map(({ level, weights: w }) =>
 	PresetUtils.makePresetEpWeights(
 		`Level ${level} Leveling Gear`,
@@ -1003,9 +1039,11 @@ export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	rotationLibrary: LevelingPlanAuditedJSON.rotationLibrary.map(preset => LevelingRotationPreset.fromJson(preset as any)),
 	rotations: LevelingPlanAuditedJSON.rotations.map(range => LevelingRotation.fromJson(range)),
 	rotationsNameTopRanks: true,
-	// Improved Ghost Wolf as early as its row opens (15 and 16), for walking to quests and grind
-	// spots, which the grinding sessions don't sim.
-	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 5, points: 2, level: 16 })],
+	// Improved Ghost Wolf as early as its row opens, for walking to quests and grind spots, which
+	// the grinding sessions don't sim. The November 2 development notes moved it from row 2 to row
+	// 4 (it was 15 and 16), so its two points now come at 25 and 26, after the 15th Enhancement
+	// point; the route keeps its other picks in their order.
+	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 12, points: 2, level: 26 })],
 	// When we train each rank, from tools/levelingplan -training: 115g earned by 40 and riding
 	// (90g after the Honored discount) at 43.
 	training: LevelingTrainingSettings.fromJson(LevelingTrainingJSON as any),

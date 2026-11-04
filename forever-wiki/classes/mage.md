@@ -8,6 +8,27 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Development notes of 2026-11-02 and client 1.60.1.70753
+
+Blizzard's November 2 notes (post 9) list the mage changes the 10-27 to 10-30 hotfixes already made, and client 70753 writes those into its tables (Arcane Blast 12% and +100%, Ice Lance 300% on Frozen, Winter's Chill 20%). The mage talent tree is the same as 70707's. New for the sim:
+
+- Ice Lance's 8 sec cooldown and category 19 (Fire Blast's) are on every rank now (SpellCooldowns 83266, 94686 to 94689; SpellCategories 148169, 173563 to 173566), as the sim already had it by ruling.
+- Missile Barrage is used up as the Arcane Missiles channel starts (it was at the end). The sim always did that.
+- An Arcane Missiles on Missile Barrage leaves Clearcasting up (`sim/mage/talents.go`; it used Clearcasting up before). An Arcane Missiles without Missile Barrage still uses it.
+- Arcane Missiles procs Clearcasting again. The sim's missiles always rolled Arcane Concentration (1 sec internal cooldown).
+- Ignite applies to Flamestrike's burn: its ticks are the area trigger's own direct damage spells (1279983 to 1279990, effect 2, no "can't crit" attribute), and their crits ignite now (`sim/mage/ignite.go`). No preset casts Flamestrike.
+- Talents lose their lower proc chance on low ranks, except Blizzard (Arcane Concentration, Frostbite, Fingers of Frost from a rank learned more than 12 levels below). The sim never modelled the penalty, so nothing moves. The only lower rank a preset casts, Frostfire's rank 2 Frostfire Bolt, is learned at 50, inside the 12 levels anyway.
+- Frost Blast is gone and Imbue Iceknife's visual changed: nothing to simulate.
+
+Presets after the round (2026-11-03; 20,000 iterations, seed 1, the report requests, 120 / 180 / 300 sec):
+
+- Arcane (Gnome): 981.3 / 953.9 / 936.8, from 944.9 / 937.5 / 930.6. The build ended its fights with about 5000 mana, so Arcane Blast now goes ahead of the Frostbolt filler while the mana is more than 75 a second of the fight left, and the talent search moved Ice Shards to Arcane Meditation 3 and Incineration 5 (`050205203100311531-55-0531`).
+- Arcane, exploratory search (2026-11-03): Arcane Blast also goes on Clearcasting, and Fireball replaces Frostbolt as the filler, with the Frost points in Ignite 5 and Flame Throwing 1 (`050205203100311531-5551-003`): 986.1 / 962.3 / 944.5 as a Gnome, +4.5 / +8.3 / +7.5. Seeds from Arcane + Frost and deep Arcane came back to the Frostbolt build; Frost with Arcane Blast, deep Frost (-45 at 300 sec, out of mana), deep Fire, Fire with Arcane Blast and Frostfire with an Arcane splash found nothing better than their presets.
+- Fire (Human): 1066.8 / 1057.9 / 1042.0. Scorch refreshes Fire Vulnerability with under 9 sec left (5 before), +1.4 / +0.6 / +1.5.
+- Frost (High Order): 944.5 / 944.7 / 937.7, unchanged. Incineration 5 for Arcane Meditation gains 2.6 at 120 and 180 sec but loses 6.4 at 300, so it stays out.
+- Frostfire (Human): 1052.4 / 1064.3 / 1041.8, unchanged; the talent and knob searches kept everything.
+- Races at 180 sec: every preset keeps its race. Best Horde race: Undead for Arcane (952.2) and Fire (1057.0), Troll for Frost (938.4) and Frostfire (1059.4). Fire's Gnome is 0.4 ahead of the Human, under the 0.5 a switch needs.
+
 ## Launch-realm hotfix to 1.60.1.70707 (2026-10-30)
 
 The launch realms' newest hotfix push for 70707 (wago.tools hotfixes, push 113486, region 91; foreverchanges.pro's "A hotfix to the October 30 build") takes back the 2026-10-20 Frost values below. Taken into the sim 2026-11-01, as server data:
