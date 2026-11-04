@@ -8,6 +8,7 @@ package sim
 
 import (
 	"math"
+	"strconv"
 	"testing"
 	"time"
 
@@ -110,7 +111,7 @@ var clientHealRanks = map[string][]clientRank{
 	},
 }
 
-// rankTable is the sim's rank table and spells of a heal.
+// rankTable is a rank of the sim's heal tables (sim/priest/healing.go).
 type rankTable interface {
 	SpellID() int32
 	Coefficient() float64
@@ -118,17 +119,16 @@ type rankTable interface {
 	At(level int32) (float64, float64)
 }
 
-func simHealRanks(hp *healing.HealingPriest) map[string]struct {
+type simHeal struct {
 	ranks  []rankTable
 	spells []*core.Spell
-} {
-	type entry = struct {
-		ranks  []rankTable
-		spells []*core.Spell
-	}
-	tables := map[string]entry{}
+}
+
+// simHealRanks is each heal's rank table and registered spells, by the heal's name.
+func simHealRanks(hp *healing.HealingPriest) map[string]simHeal {
+	tables := map[string]simHeal{}
 	add := func(name string, spells []*core.Spell, ranks ...rankTable) {
-		tables[name] = entry{ranks, spells}
+		tables[name] = simHeal{ranks, spells}
 	}
 	add("Lesser Heal", hp.LesserHeal, toTables(priest.LesserHealRanks)...)
 	add("Heal", hp.Heal, toTables(priest.HealRanks)...)
@@ -164,10 +164,7 @@ func TestHealingPriestRankTables(t *testing.T) {
 		}
 		for _, c := range client {
 			r := table.ranks[c.rank]
-			what := name + " " + string(rune('0'+c.rank))
-			if c.rank == 10 {
-				what = name + " 10"
-			}
+			what := name + " " + strconv.Itoa(c.rank)
 			if r.SpellID() != c.spellID {
 				t.Errorf("%s is spell %d, want %d", what, r.SpellID(), c.spellID)
 			}
@@ -590,7 +587,6 @@ func TestHealingPriestEraSetBonuses(t *testing.T) {
 // Vestments of Transcendence's 3 pieces: 15% of mana regen goes on while casting, on top of
 // Meditation's.
 func TestHealingPriestTranscendenceRegen(t *testing.T) {
-	t.Skip("sim bug: talents.go sets SpiritRegenRateCasting to Meditation's value, wiping the 3 piece's 0.15")
 	talents := priestTalents(map[string]int{"meditation": 3})
 	two := setPriest(t, talents, "Vestments of Transcendence", 999_520, 2, stats.Stats{})
 	three := setPriest(t, talents, "Vestments of Transcendence", 999_520, 3, stats.Stats{})

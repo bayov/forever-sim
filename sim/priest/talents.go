@@ -40,7 +40,7 @@ func (priest *Priest) ApplyTalents() {
 		})
 	}
 
-	priest.PseudoStats.SpiritRegenRateCasting = []float64{0.0, 0.17, 0.33, 0.5}[priest.Talents.Meditation]
+	priest.PseudoStats.SpiritRegenRateCasting += []float64{0.0, 0.17, 0.33, 0.5}[priest.Talents.Meditation]
 
 	// 2% Intellect a rank (70425; 3% in 70338).
 	if priest.Talents.MentalStrength > 0 {
