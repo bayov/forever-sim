@@ -3925,6 +3925,74 @@
     {
      "commit": "5e3c45f",
      "why": "The re-sim's own data commit: report data, the Survival report hashes (covered by the Survival line) and tank page wording."
+    },
+    {
+     "commit": "0facd94",
+     "why": "Leveling only: Enhancement leveling stat weights; no level 60 DPS preset moves."
+    },
+    {
+     "commit": "abc98a2",
+     "why": "Leveling only: a leveling Enhancement preset."
+    },
+    {
+     "commit": "a774463",
+     "why": "Leveling only: the leveling talent order."
+    },
+    {
+     "commit": "6a9dea8",
+     "why": "Tanking mode only: Warden tank presets."
+    },
+    {
+     "commit": "ad93b95",
+     "why": "Tanking mode only: Bear tank presets."
+    },
+    {
+     "commit": "b07bdf4",
+     "why": "Tanking mode only: Protection Paladin presets."
+    },
+    {
+     "commit": "a624264",
+     "why": "Tanking mode only: Warrior tank presets."
+    },
+    {
+     "commit": "df481a4",
+     "why": "Tanking mode only: the Warden trinket timing."
+    },
+    {
+     "commit": "71a107e",
+     "why": "Tanking mode only: Warden enchant, UI defaults and notes."
+    },
+    {
+     "commit": "0b901ff",
+     "why": "Tanking mode only: Bear comments and docs."
+    },
+    {
+     "commit": "e37867b",
+     "why": "Tanking mode only: Paladin tank enchant and UI presets."
+    },
+    {
+     "commit": "9eb6f93",
+     "why": "Tanking mode only: Warrior tank UI buffs."
+    },
+    {
+     "commit": "9e01b3e",
+     "why": "Tanking mode tools only: seeds and error bars."
+    },
+    {
+     "commit": "0950b22",
+     "why": "Tanking mode only: engine tests and scoring-run guards."
+    },
+    {
+     "commit": "f1a221b",
+     "why": "Test baselines and raid sim builds after the mana-gain threat change; threat only, no DPS moves (the DPS builds re-check as not stale)."
+    },
+    {
+     "commit": "9c20070",
+     "why": "A code comment."
+    },
+    {
+     "commit": "49f0218",
+     "why": "Mana-gain threat (threat only, read by the Tanking mode); no DPS moves."
     }
    ],
    "source": {
