@@ -1343,6 +1343,13 @@ rendering, not the sim.
     between them.
   - The 50 `frontFace` calls a frame come from the shadows: a solid part's shadow draws its back faces, a double
     sided one both, so the winding flips as the shadow pass goes from one to the other in the scene's order.
+- Tenth raid report (your PC, `?glcount=1`): about 185 FPS after the first 10s, 71% of frames at 4.2ms, 3.4ms of
+  script (animating 1.1ms, drawing 1.9ms), GPU 3.1ms, 256 draw calls, 1810 WebGL calls. A fight profile then showed
+  the particles' simulation as the biggest piece of what's left of the animating (about 0.4ms a frame), and Three
+  rebuilding every object's matrix each frame as a big piece of the drawing.
+  - An emitter whose color keys are all one color (most are) turns it to linear once a frame, instead of three powers
+    a particle.
+  - A model's mesh never moves on its root, so Three no longer rebuilds its matrix each frame (400 of them in a raid).
   - Headless (fight, 1920x1080): 127 to 144 FPS, drawing 4.8 to 4.1ms, 420 to 326 draw calls, 3040 to 2350 WebGL
     calls a frame (texture binds 528 to 423, vertex array binds 478 to 385, programs 276 to 210, matrix uniforms 271
     to 174).
