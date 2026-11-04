@@ -503,6 +503,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-RestorationSynthetic(Phase1)"
+ value: {
+  dps: 1492.27967
+  tps: 1100.64902
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Stormcaller'sGarb"
  value: {
   dps: 1540.57483
@@ -1203,6 +1210,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-RestorationSynthetic(Phase1)"
+ value: {
+  dps: 1549.911
+  tps: 1146.35267
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Stormcaller'sGarb"
  value: {
   dps: 1600.64767
@@ -1567,6 +1581,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-RestorationSynthetic(Phase1)"
+ value: {
+  dps: 1567.9645
+  tps: 1153.09863
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Stormcaller'sGarb"
  value: {
   dps: 1618.92867
@@ -1928,6 +1949,13 @@ dps_results: {
  value: {
   dps: 1484.4475
   tps: 1101.05134
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-RestorationSynthetic(Phase1)"
+ value: {
+  dps: 1595.2345
+  tps: 1173.20775
  }
 }
 dps_results: {

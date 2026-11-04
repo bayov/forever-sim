@@ -220,15 +220,15 @@ func TestForeverWardenTalents(t *testing.T) {
 			}, false, 36 - 30, 1e-9},
 		// 25% more armor from items only (16177: "Increases your armor value from items"), so the
 		// measure is the gain over the armor from items, plus 1 (1 for the base build, which gains none).
-		{"Ancestral Healing 3/3: a heal crit gives 25% armor from items", treeRestoration, ancestralHealing, 3,
+		{"Ancestral Healing 3/3: a heal crit gives 25% of all armor (aura 101, healer_mechanics-20261104-3)", treeRestoration, ancestralHealing, 3,
 			func(t *testing.T, sim *core.Simulation, w *WardenShaman) float64 {
-				before, fromItems := w.Armor(), w.EquipStats()[stats.Armor]
+				before := w.Armor()
 				heal := w.LesserHealingWave[len(w.LesserHealingWave)-1]
 				w.SetGCDTimer(sim, sim.CurrentTime)
 				heal.CalcAndDealHealing(sim, &w.Unit, 100, func(_ *core.Simulation, r *core.SpellResult, _ *core.AttackTable) {
 					r.Outcome = core.OutcomeCrit
 				})
-				return 1 + (w.Armor()-before)/fromItems
+				return w.Armor() / before
 			}, true, 1.25, 1e-6},
 	}
 	for _, c := range cases {
