@@ -1,52 +1,35 @@
-# Fairness pass 24 (2026-11-03, master a0b3069)
+# Fairness pass 28 (2026-11-04, master fb584ea)
 
-Result: quiet (no new finding). Full pass: sim/core, sim/mage, sim/warrior, warlock and hunter requests and standards.md changed.
+Result: quiet (no new finding). 23 watched files changed since f331f0c (14 commits), but no `sim/`, `proto/` or
+item database change. So the only builds that can move are the four Fury requests that 7b4dc5d97 changed. I re-swept
+the two Fury base builds (5k, seed 1, every race) on the loop's fb584ea CLI and tree. The baseline stays f331f0c
+(not a full sweep).
 
-## Why it ran
+## What changed
 
-Since 796495d (pass 23), 81 watched files: Ice Lance shares Fire Blast's category 19 cooldown and Fingers of Frost's
-buff id (d7541708d, user ruling 2026-11-02) with the four-mage re-sim (5445fc92a); the warlocks hold the second Bane of
-Doom so its tick lands in the 2 min cooldowns (58a1c3593, re-sim 3fce3491c); the ranged hunters drop the Goblin Sapper
-and Affliction is an Orc (b33ad307d); standards 26 records the Balance Subtlety ruling (wording only); Blood Craze for
-warriors (407f959a5); `sim/core` heal-rank cap, Expected Healing APL value, raid damage shares and tank score (healing
-and tank sims); the Restoration shaman spec.
+| Change | Commit | Effect on fairness |
+|---|---|---|
+| Fury DW rotation (Bloodthirst first, HS from 60, Hamstring from 20, Bloodrage under 50) | 7b4dc5d97 | Fury DW 1153.6 -> 1152.5 at 5k (noise; worker's 20k: +0.4) |
+| Fury 2H talents: Unbridled Wrath 5/5 for Furious Precision (2505001501...) | 7b4dc5d97 | Fury 2H 1170.7 -> 1172.3 at 5k (worker's 20k: +3.4) |
+| Standards 38 (Forever only), 39 (cast time / 3.5 s coefficient) | d9ba4a55c | rulings only; Chain Lightning 0.714 not in code yet (shaman brief ca22004a3) |
+| UI presets drop Salvation (`ui/*/presets.ts`) | fdb14acd0 | no request carries Salvation (grep), so no report number moves; threat only anyway |
+| report_hashes.txt | fb584eafa | test data |
 
 ## What I checked
 
-- Race sweep (`sweep.py`, 5k, seed 1) on the a0b3069 tree; `table.py` against the 796495d baseline. Table:
-  `orchestration/fairness_report.md` §1 and `ref/fairness/table_baseline.md` (baseline replaced).
-- Gear: `audit1b.py` 20 of 20 "5a PASS | 1b PASS".
-- Published against current: loop's 20k run, 0 of 73 moved more than 0.5 (`runs/vs_published.txt`). 5k gaps at most
-  Arcane +1.7, Frostfire +1.4, Fury 2H +1.3: noise. results-20261102-1 (mana-tide meta 0.4) is below my tolerance.
-- Movement, each traced to its own class's commit:
+- Gear: `audit1b.py` 19 of 19 "5a PASS | 1b PASS".
+- Shared 20k run (`runs/vs_published.txt`): 62 of 68 within 0.5. The six shamans (+199 to +277) are the stale metas in
+  results-20261102-1 (not filed again; confirmed: no shaman input changed this window).
+- Fury sweep (5k): DW Orc 1152.5 (published 1153.0, -0.5), Night Elf next at 1146.8; 2H Orc 1172.3 (published 1173.3,
+  -1.0), Night Elf next at 1166.1. Report race is the best race on both. Gaps within the ±1.5 noise.
+- Results overlap: results-20261102-1's 2026-11-04 update notes builds.json still has the pre-follow-up warrior numbers
+  (waiting on the republish). Independent confirmation: the 5k sweep matches the new metas, not builds.json.
 
-| Build | Before | Now | Move | Cause |
-|---|---|---|---|---|
-| Frostfire | 1076.2 | 1065.7 | -10.5 | Ice Lance on Fire Blast's cooldown (d7541708d) |
-| Destruction | 994.9 | 997.3 | +2.4 | Bane of Doom hold (58a1c3593) |
-| Affliction | 1013.7 | 1015.8 | +2.1 | Orc (b33ad307d) and the Doom hold |
-| Demonology | 1053.9 | 1055.6 | +1.7 | Doom hold |
-| Destruction Fire | 976.7 | 977.4 | +0.7 | Doom hold |
-| BM tallstrider / MM / LW / pet variants | | | -0.1 to -0.8 | no Sapper (b33ad307d) |
+## Ranking
 
-  Fire, Frost, Arcane and every other class: +0.0. The shared `sim/core` changes only touch healing rotations
-  (rank cap applies to ProcMaskSpellHealing casts), raid damage events with `Share` set or tank-only raids, and tank
-  score merging; Blood Craze heals only. None moved a DPS build.
-- Explosives after b33ad307d: the ranged hunters keep the EZ-Thro Dark Bomb at 12 / 25 yd; melee keep the Sapper; the
-  casters carry none (standards 11, "skip when it loses"). Even.
-- Ice Lance / Fire Blast shared cooldown is a mage-only client rule with a user ruling; not a fairness question.
-- Best race: report race is best everywhere except Fire (Gnome +1.5 at 5k, +0.7 at 20k last pass: noise).
-  fairness-20261101-2 (Affliction race) was already resolved by b33ad307d; confirmed Orc 1015.8 / Human 1013.9.
+Unchanged: Lone Wolf 1314.4, MM 1254.6, BM 1195.7, Fury 2H 1172.3, Enhancement 1159.9 (published 883.5, stale),
+Fury DW 1152.5, ... Smite 781.0 last. Top over bottom 1.68x. Full table: `orchestration/fairness_report.md` §1.
 
-## Ranking (5k sweep, report race)
+## Open items (carried)
 
-Lone Wolf 1090.4, MM 1065.8, Frostfire 1065.7, Fire 1056.4, Demonology 1055.6, BM 1045.9, Fury 2H 1045.7, Fury 1041.6,
-Ret 1039.2, Survival 1024.8, Affliction 1015.8, Arms 1008.7, Destruction 997.3, Destruction Fire 977.4, Shadow 948.7,
-Frost 943.6, Feral 942.4, Arcane 939.2, Balance 891.9, Enhancement 883.0, Combat Daggers 791.6, Combat Swords 782.1,
-Elemental 769.0, Smite 761.2, Seal Fate Daggers 752.9, Seal Fate Swords 747.3, Mutilate 743.6, Subtlety 733.3.
-Top over bottom 1.49x. Frostfire drops from 2nd to 3rd (0.1 under MM).
-
-## Open
-
-None of mine. The pass doc's long-standing open items (Ice Lance Low range, FTT stacking, boss partial resist, Rage k)
-are unchanged.
+- Next full sweep when `sim/` or the database changes (the shaman phase 4 port, Chain Lightning 0.714, will be one).

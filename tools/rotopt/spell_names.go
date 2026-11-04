@@ -159,7 +159,7 @@ var spellNames = map[int32]string{
 	408505:  "Maelstrom Weapon",
 	408510:  "Water Shield",
 	425336:  "Rage of the Farseer",
-	437009:  "Totemic Projection",
+	437009:  "Totemic Call",
 	1238299: "Lava Burst",
 	1238300: "Lava Burst",
 	1238931: "Improved Stormstrike",

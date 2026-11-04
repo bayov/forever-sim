@@ -88,9 +88,9 @@ func TestAssassinationMutilate(t *testing.T) {
 	}))
 }
 
-var CombatSwordsTalents = "00532310301-32003311201515231"
-var CombatDaggersTalents = "005323102-30230320201515231-002"
-var AssassinationMutilateTalents = "00530310551021051-302303202004"
+var CombatSwordsTalents = "00530320201-3200330112012321551"
+var CombatDaggersTalents = "00530320201-3200330112012321551"
+var AssassinationMutilateTalents = "00530320251451031-320303-005"
 
 var DefaultRogue = &proto.Player_Rogue{
 	Rogue: &proto.Rogue{

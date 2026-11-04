@@ -33,8 +33,11 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 			c.ruptureHold,
 		), "Rupture when it is not ticking and Slice and Dice does not need the points."+c.holdNotes))
 	}
+	items = append(items, cast(eviscerate, c.evisWhen, ""))
+	if c.shank != nil {
+		items = append(items, c.shank)
+	}
 	items = append(items,
-		cast(eviscerate, c.evisWhen, ""),
 		cast(sinisterStrike, builderWhen(k["ssAfterSwing"], k["ssEnergy"]), builderNotes("Sinister Strike", k["ssAfterSwing"], k["ssEnergy"])),
 	)
 	rot := rotation(items...)

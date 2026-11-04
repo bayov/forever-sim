@@ -15,7 +15,7 @@ import (
 // rest of the swing scales with the new speed. Neither effect touches cast speed.
 func TestOrcShamanHaste(t *testing.T) {
 	// Flurry 5/5 and Rage of the Farseer.
-	sim, enh := newShamanSim(newOrcShaman(60, "-000000000005000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 20)
+	sim, enh := newShamanSim(newOrcShaman(60, "-000000000050000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 20)
 	flurry := enh.GetAuraByID(core.ActionID{SpellID: 16257})
 	farseer := enh.GetAuraByID(core.ActionID{SpellID: 425336})
 	farseerSpell := enh.GetSpell(core.ActionID{SpellID: 425336})
@@ -48,11 +48,11 @@ func TestOrcShamanHaste(t *testing.T) {
 
 			flurry.Activate(sim)
 			flurry.SetStacks(sim, 3)
-			check("Flurry", 1.25)
+			check("Flurry", 1.30)
 			if !farseerSpell.Cast(sim, enh.CurrentTarget) {
 				t.Fatalf("Rage of the Farseer didn't cast")
 			}
-			check("Flurry and Rage of the Farseer", 1.25*1.3)
+			check("Flurry and Rage of the Farseer", 1.30*1.3)
 			flurry.Deactivate(sim)
 			check("Rage of the Farseer after Flurry drops", 1.3)
 			farseer.Deactivate(sim)

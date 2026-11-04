@@ -21,7 +21,7 @@ func init() {
 }
 
 func (mageFrost) Knobs() []Knob {
-	return append(append(append(append(mageCommonKnobs(), arcaneKnobs(0, 0)...), finisherKnobs(1)...), iceBarrierKnobs(2)...),
+	return append(append(append(append(append(mageCommonKnobs(), arcaneKnobs(0, 0)...), finisherKnobs(1)...), iceBarrierKnobs(2)...), blastSpendKnobs()...),
 		// Ice Lance while Fingers of Frost is up: 0 never, 1 every charge, 2 only the last
 		// charge (the first goes on a Frostbolt), 3 right after a Frostbolt completes (a charge
 		// is spent a spell batch after the cast, so the Frostbolt and the Ice Lance both read
@@ -61,6 +61,7 @@ func (mageFrost) Build(k Knobs) *proto.APLRotation {
 	}
 	items = append(items, iceBarrierLines(k)...)
 	items = append(items, arcaneBlastBuffLines(k, s, nil)...)
+	items = append(items, blastClearcastLines(k, s)...)
 	items = append(items, arcaneWrathLines(k, s)...)
 	if k["missileBarrage"] == 1 {
 		items = append(items, cast(s.arcaneMissiles, known(missileBarrage, auraIsActive(missileBarrage)), "Arcane Missiles on a Missile Barrage proc, free and twice as fast."))
@@ -69,6 +70,7 @@ func (mageFrost) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(s.fireBlast, ge(currentManaPercent(), num(k["fireBlastMana"]/100)), "Fire Blast on cooldown with the mana to spare."))
 	}
 	items = append(items, finisherLines(k, s.frostbolt, s.iceLance)...)
+	items = append(items, blastFillerLines(k, s)...)
 	items = append(items, cast(s.frostbolt, nil, "Frostbolt."))
 	items = append(items, wandLines(k)...)
 	rot := rotation(items...)

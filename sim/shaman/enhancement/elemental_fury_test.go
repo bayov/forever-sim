@@ -21,7 +21,7 @@ func TestOrcShamanElementalFury(t *testing.T) {
 	for _, points := range []int{0, 5} {
 		spellCrit := 1.5 + .1*float64(points)
 		// Elemental Fury points, Lava Burst and Stormstrike.
-		talents := fmt.Sprintf("00000000000010%d-0000000000001", points)
+		talents := fmt.Sprintf("00000000000010%d-000000000001", points)
 		check := func(enh *EnhancementShaman, name string, spell *core.Spell, want float64) {
 			if spell == nil {
 				t.Fatalf("Elemental Fury %d: no %s", points, name)
@@ -42,7 +42,6 @@ func TestOrcShamanElementalFury(t *testing.T) {
 			{"Earth Shock", topRank(t, "Earth Shock", enh.EarthShock)},
 			{"Flame Shock", topRank(t, "Flame Shock", enh.FlameShock)},
 			{"Frost Shock", topRank(t, "Frost Shock", enh.FrostShock)},
-			{"Lava Burst", enh.LavaBurst},
 			{"Fire Nova", topRank(t, "Fire Nova", enh.FireNovaHits)},
 			{"Searing Totem", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0)},
 			{"Magma Totem", enh.GetSpell(core.ActionID{SpellID: shaman.MagmaTotemAoeSpellId[4]})},

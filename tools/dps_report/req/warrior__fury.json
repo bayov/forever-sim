@@ -88,7 +88,7 @@
               "blessingOfKings":  true,
               "blessingOfMight":  "TristateEffectImproved"
             },
-            "talentsString":  "30305013002-25053005142010501",
+            "talentsString":  "30313113002-0505300551120100321",
             "level":  60,
             "profession1":  "Engineering",
             "profession2":  "Alchemy",
@@ -720,7 +720,7 @@
                         },
                         "rhs":  {
                           "const":  {
-                            "val":  "20"
+                            "val":  "50"
                           }
                         }
                       }
@@ -728,6 +728,16 @@
                     "castSpell":  {
                       "spellId":  {
                         "spellId":  2687
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes":  "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  1399001
                       }
                     }
                   }
@@ -800,6 +810,27 @@
                       "and":  {
                         "vals":  [
                           {
+                            "sequenceIsComplete":  {
+                              "sequenceName":  "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  23894,
+                        "rank":  4
+                      }
+                    }
+                  }
+                },
+                {
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
+                          {
                             "cmp":  {
                               "op":  "OpGe",
                               "lhs":  {
@@ -842,8 +873,8 @@
                     },
                     "castSpell":  {
                       "spellId":  {
-                        "spellId":  23894,
-                        "rank":  4
+                        "spellId":  20662,
+                        "rank":  5
                       }
                     }
                   }
@@ -854,34 +885,60 @@
                       "and":  {
                         "vals":  [
                           {
-                            "sequenceIsComplete":  {
-                              "sequenceName":  "sunder"
+                            "cmp":  {
+                              "op":  "OpGe",
+                              "lhs":  {
+                                "currentRage":  {}
+                              },
+                              "rhs":  {
+                                "const":  {
+                                  "val":  "60"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "and":  {
+                              "vals":  [
+                                {
+                                  "cmp":  {
+                                    "op":  "OpGe",
+                                    "lhs":  {
+                                      "spellTimeToReady":  {
+                                        "spellId":  {
+                                          "spellId":  23894,
+                                          "rank":  4
+                                        }
+                                      }
+                                    },
+                                    "rhs":  {
+                                      "const":  {
+                                        "val":  "1s"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp":  {
+                                    "op":  "OpGe",
+                                    "lhs":  {
+                                      "spellTimeToReady":  {
+                                        "spellId":  {
+                                          "spellId":  1680
+                                        }
+                                      }
+                                    },
+                                    "rhs":  {
+                                      "const":  {
+                                        "val":  "1s"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
                             }
                           }
                         ]
-                      }
-                    },
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  20662,
-                        "rank":  5
-                      }
-                    }
-                  }
-                },
-                {
-                  "action":  {
-                    "condition":  {
-                      "cmp":  {
-                        "op":  "OpGe",
-                        "lhs":  {
-                          "currentRage":  {}
-                        },
-                        "rhs":  {
-                          "const":  {
-                            "val":  "80"
-                          }
-                        }
                       }
                     },
                     "castSpell":  {
@@ -910,7 +967,7 @@
                                     },
                                     "rhs":  {
                                       "const":  {
-                                        "val":  "10"
+                                        "val":  "20"
                                       }
                                     }
                                   }
@@ -922,6 +979,47 @@
                                         "threshold":  "E20"
                                       }
                                     }
+                                  }
+                                },
+                                {
+                                  "and":  {
+                                    "vals":  [
+                                      {
+                                        "cmp":  {
+                                          "op":  "OpGe",
+                                          "lhs":  {
+                                            "spellTimeToReady":  {
+                                              "spellId":  {
+                                                "spellId":  23894,
+                                                "rank":  4
+                                              }
+                                            }
+                                          },
+                                          "rhs":  {
+                                            "const":  {
+                                              "val":  "1s"
+                                            }
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "cmp":  {
+                                          "op":  "OpGe",
+                                          "lhs":  {
+                                            "spellTimeToReady":  {
+                                              "spellId":  {
+                                                "spellId":  1680
+                                              }
+                                            }
+                                          },
+                                          "rhs":  {
+                                            "const":  {
+                                              "val":  "1s"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
                                   }
                                 }
                               ]
@@ -998,8 +1096,7 @@
       "thorns":  "TristateEffectImproved",
       "devotionAura":  "TristateEffectImproved",
       "retributionAura":  "TristateEffectImproved",
-      "totemWeaponBuff":  "TotemWeaponBuffWindfury",
-      "salvation":  true
+      "totemWeaponBuff":  "TotemWeaponBuffWindfury"
     },
     "debuffs":  {
       "judgementOfWisdom":  true,

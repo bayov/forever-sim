@@ -95,11 +95,15 @@ func (mage *Mage) getArcaneMissilesSpellConfig(rank int) core.SpellConfig {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			dot := spell.Dot(target)
-			// Missile Barrage halves the channel: the same missiles every 0.5 sec.
+			// Missile Barrage halves the channel: the same missiles every 0.5 sec. It is used up as
+			// the channel starts (development notes 2026-11-02: "now correctly consumed at the start
+			// of the Mage's Arcane Missiles channel").
 			dot.TickLength = tickLength
+			mage.arcaneMissilesOnBarrage = false
 			if mage.MissileBarrageAura != nil && mage.MissileBarrageAura.IsActive() {
 				dot.TickLength = tickLength / 2
 				mage.MissileBarrageAura.Deactivate(sim)
+				mage.arcaneMissilesOnBarrage = true
 			}
 			dot.Apply(sim)
 		},
@@ -123,7 +127,8 @@ func (mage *Mage) getArcaneMissilesTickSpell(rank int) *core.Spell {
 		Flags:        SpellFlagMage,
 		MissileSpeed: 20,
 
-		Rank: 1,
+		Rank:          1,
+		DownrankLevel: ArcaneMissilesLevel[rank],
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

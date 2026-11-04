@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "mm",
   "published": {
-    "dps": 1033.2,
-    "source": "verify.py on this request without the Goblin Sapper (consumables-20261101-1, 2026-11-02), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1220.9,
+    "source": "verify.py on this request (round 70753: the 2026-11-03 server hotfix's hunter values and the re-optimized rotation), 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1033.2,
-    "stderr": 0.25,
+    "dps": 1220.9,
+    "stderr": 0.29,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-02; not yet the DPS report's main run"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-03 (round 70753); not yet the DPS report's main run"
   },
   "summary": "Marksmanship with a Tallstrider instead of Lone Wolf. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
   "keyTalents": [
@@ -40,9 +40,9 @@
     "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
     "Rapid Fire, racials, potions and Demonic Rune on cooldown",
     "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
+    "Serpent Sting when it's down, first",
     "Arcane Shot on cooldown, before Aimed Shot, at any mana",
-    "Aimed Shot on the cooldown it shares with Multi-Shot while mana is at least 40%, Multi-Shot on it below that",
-    "Serpent Sting when it's down, after Aimed Shot or Multi-Shot",
+    "Aimed Shot on the cooldown it shares with Multi-Shot, at any mana",
     "Sniper Shot on cooldown while mana is at least 10 per second of fight left",
     "Melee weave between Auto Shots. Walk in for a main-hand swing with Raptor Strike queued, when the next Auto Shot is 1.2s or less away and no shot comes off cooldown. Only while mana is at least 25 per second of fight left",
     "The Tallstrider (1.0s) bites on cooldown, and keeps Dust Cloud (505 armor, 30s, 10 focus) on the boss while no Faerie Fire or Curse of Recklessness holds the minor armor slot. Auto Shot the whole fight"
@@ -64,19 +64,19 @@
     "The Tallstrider costs 40.2 DPS at 180s against the same build without it (1075.4 against 1115.7, 20,000 iterations, seed 1). The search weighs that against what the pet gives the raid.",
     "A Tallstrider has Bite, Dash and Dust Cloud and no Claw, so it does less damage than the cat. This request keeps the raid's Faerie Fire and Curse of Recklessness, so it never casts Dust Cloud: the number is the pet's cost. The raid sim switches them off when nobody gives them, and the pet then keeps Dust Cloud up itself.",
     "The Tallstrider keeps the cat's 1.0s swing (Faster Attack VII) and Cobra Reflexes. Its hits scale with the speed, so a slower one changes little.",
-    "Trueshot Aura's top rank gives 50 ranged attack power, from the launch realms' hotfix of 2026-10-28 (ranks 1 to 4: 15, 22, 30 and 40). Hunter's Mark gives 143 after a server hotfix (the client says 71).",
-    "Uses Aspect of the Hawk rank 6 (55 ranged attack power). The 2026-10-28 hotfix lowers ranks 1 to 5 to 15, 22, 30, 38 and 47.",
+    "Trueshot Aura's top rank gives 100 ranged attack power, from the launch realms' hotfix of 2026-11-03 (ranks 20, 35, 50, 75 and 100). Hunter's Mark gives 143 after a server hotfix (older clients said 71).",
+    "Uses Aspect of the Hawk rank 6 (110 ranged attack power), from the launch realms' hotfix of 2026-11-03 (the client still says 55).",
     "The pet gets 10% of the hunter's ranged attack power on top of its own 254, plus the hunter's crit and hit (from beta pet sheets).",
-    "Arcane Shot gets 10% of ranged attack power, and Serpent Sting 3% a tick. Beta logs fit 11% and 3.5%.",
+    "Arcane Shot gets 15% of ranged attack power, and Serpent Sting 5% a tick, from Blizzard's November 2 notes. No game data has them.",
     "Auto Shot keeps firing during casts. Moving cancels its 0.5s wind-up.",
     "Wildstalker Armor 4-piece and 5-piece bonuses aren't counted. They would add 13 DPS.",
     "Holds back Sniper Shot and the melee weave to save mana. It does 1006.9 DPS at 300s.",
     "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
     "Pet hits scale with attack speed, as seen on a level 17 pet. A 1.0s raptor would add about 2 DPS (Savage Rend), but none that fast is known.",
     "Uses a 2.5s bow with Rhok'delar's 44.0 weapon DPS. A 2.6s gun sims 0.3 to 1.0 DPS higher with a 15% ammo pouch, or 3.4 to 5.2 lower with Era's 14% pouch.",
-    "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (1.4 here).",
+    "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0 to 2.9 DPS at 180s (2.9 here).",
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing.",
-    "Improved Tracking 5/5 counts against the generic boss, unlike Murder or other creature-type talents: a hunter can track every raid boss type except Mechanical. It is worth 43.8 DPS (4.1%) here, which this build loses against a Mechanical boss."
+    "Improved Tracking 5/5 counts against the generic boss, unlike creature-type talents such as Beast Slaying: a hunter can track every raid boss type except Mechanical. It is worth 52.8 DPS (4.3%) here, which this build loses against a Mechanical boss."
   ],
   "notes": "Request: hunter__marksmanship with hunter.options.petType Tallstrider instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. No Goblin Sapper since 2026-11-02 (consumables-20261101-1): it reaches only 10 yd and the hunter stands at 12 or 25 yd, so it went off only when a weave happened to be under way at its cooldown, for 0.0 to 0.5 at 180 sec; the EZ-Thro Dark Bomb stays.",
   "pet": "Tallstrider",

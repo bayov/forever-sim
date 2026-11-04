@@ -40,9 +40,11 @@ func (rogue *Rogue) registerEviscerate() {
 		Flags:        rogue.finisherFlags() | SpellFlagColdBlooded,
 		MetricSplits: 6,
 
-		// Flawless Execution takes 10 off the cost.
+		// Flawless Execution takes 15 off the cost under Forever (November 2 development notes, was
+		// 10; client 1310711 in 1.60.1.70753 still says 10). Classic has no Flawless Execution;
+		// outside Forever it keeps the client's 10.
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   35 - core.TernaryFloat64(rogue.Talents.FlawlessExecution, 10, 0),
+			Cost:   35 - core.TernaryFloat64(rogue.Talents.FlawlessExecution, core.TernaryFloat64(rogue.Env.IsForever(), 15, 10), 0),
 			Refund: rogue.finisherMissRefund(),
 		},
 		Cast: core.CastConfig{
@@ -58,10 +60,10 @@ func (rogue *Rogue) registerEviscerate() {
 			return rogue.ComboPoints() > 0
 		},
 
-		// Improved Eviscerate and Aggression are both percent modifiers on the damage (aura 108),
-		// and the beta showed two of those multiply (Call of Flame and Improved Fire Nova).
-		DamageMultiplier: []float64{1, 1.07, 1.13, 1.20}[rogue.Talents.ImprovedEviscerate] *
-			[]float64{1, 1.02, 1.04, 1.06}[rogue.Talents.Aggression],
+		// Coup de Grace (Improved Eviscerate) and Aggression are both percent modifiers on the damage
+		// (aura 108), and the beta showed two of those multiply (Call of Flame and Improved Fire Nova).
+		DamageMultiplier: rogue.coupDeGraceMultiplier() *
+			rogue.aggressionMultiplier(),
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,
 

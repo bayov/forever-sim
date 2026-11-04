@@ -32,7 +32,6 @@ func TestOrcShamanEyeOfTheStorm(t *testing.T) {
 		}{
 			{"Lightning Bolt", enh.LightningBolt},
 			{"Chain Lightning", enh.ChainLightning},
-			{"Lava Burst", []*core.Spell{enh.LavaBurst}},
 		} {
 			for _, spell := range s.ranks {
 				if spell != nil && spell.PushbackReduction != chance {

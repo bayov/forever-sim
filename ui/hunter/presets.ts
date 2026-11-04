@@ -118,6 +118,11 @@ export const DefaultGear = GearLevel60Ranged;
 // +6.0 / +2.7 / -0.3 at 120 / 180 / 300 sec, Lone Wolf +7.6 / +2.6 / +0.2 (20000 iterations, seed 1;
 // seed 1000003 +6.5 / +3.0 / +0.1 and +7.5 / +2.9 / -0.2). Beast Mastery keeps Aimed Shot at any
 // mana; the other knobs held.
+// Round 70753 (2026-11-03, the 2026-11-03 server hotfix: Aimed Shot +350, Serpent Sting 675 and 5% a
+// tick, Sniper Shot +590): Marksmanship and Lone Wolf cast Aimed Shot at any mana again, and
+// Marksmanship casts Serpent Sting first again (+1.3 / +10.0 / +12.8 and Lone Wolf +1.8 / +10.0 /
+// +9.8 at 120 / 180 / 300 sec, 20000 iterations, seed 1). Beast Mastery weaves only when Arcane Shot
+// and the Aimed Shot cooldown stay down until it is back at range, with no slack (+1.3 / +1.6 / +2.0).
 // The ranged rotations melee weave from 12 yd: between Auto Shots the hunter walks in for a main hand
 // swing with Raptor Strike queued, when that holds the next Auto Shot back 1.2 sec or less and the
 // shot cooldowns stay down meanwhile (Beast Mastery +9.5 over standing at range). Marksmanship and
@@ -141,7 +146,7 @@ export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery'
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
 	tooltip:
-		'Arcane Shot, Aimed Shot above 40% mana (Multi-Shot below), Serpent Sting when down, and Sniper Shot while the mana lasts the fight, Rapid Fire on cooldown.' +
+		'Serpent Sting when down, Arcane Shot, Aimed Shot, and Sniper Shot while the mana lasts the fight, Rapid Fire on cooldown.' +
 		manaWeaveTooltip +
 		markTooltip,
 	group: 'Synthetic',
@@ -182,12 +187,17 @@ export const DefaultAPL = APLBeastMastery;
 //
 // Beast Mastery 31/20: Bestial Wrath, Frenzy 4, Ferocity, Unleashed Fury, Focused Fire and
 // Deadly Aspects, and Careful Aim, Lethal Attacks, Improved Arcane Shot 3, Improved Stings 2 and
-// Mortal Shots 5 in Marksmanship. The 2026-10-23 search (8% hit cap gear, 180 sec) moved the
+// Mortal Shots 5 in Marksmanship (Improved Arcane Shot 4 and Improved Stings 1 since round 70753). The 2026-10-23 search (8% hit cap gear, 180 sec) moved the
 // Trueshot Aura point to Mortal Shots (+12.2): the raid's Trueshot Aura already covers the hunter.
 // The searches drop Summon Hawk: for a point of Spirit Bond it is 11.8 behind at 180 sec.
 // The 2026-10-30 hotfix moved Pathfinding to row 3, so the filler point that opens row 3 is
 // Improved Aspect of the Monkey now, not Pathfinding (neither is simulated).
-export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5021201505021241-00520503005' }), {
+// Round 70753 (2026-11-03, after the 2026-11-03 server hotfix's Arcane Shot 280 and 15% of attack
+// power): the search moves an Improved Stings point to Improved Arcane Shot 4, +2.2 at 180 sec
+// (seed 1000003 +1.9, 20000 iterations), +0.8 at 120 and -2.3 at 300. Marksmanship, Lone Wolf and
+// Survival hold, and a Marksmanship / Survival hybrid for Lightning Reflexes' 15% (0/21/30) ends
+// 81 behind deep Marksmanship.
+export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5021201505021241-00510504005' }), {
 	tooltip: 'Level 60 Beast Mastery 31/20 from the talent search.',
 	group: 'Synthetic',
 });
@@ -357,7 +367,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
-	salvation: true,
 });
 
 // Survival melees, so its shaman drops Windfury Totem and Strength of Earth for the melee group,
@@ -476,6 +485,11 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Survival',
 // 180 sec (verify.py, 20000 iterations, seed 1): Beast Mastery 1146.1 against the Human's 1133.7,
 // Marksmanship 1132.4 against 1126.3, Survival 1024.9 against 1016.3, Lone Wolf 1118.9 against the
 // Windshaper's 1116.9.
+// Round 70753 (2026-11-03, after Classic's race base stats and the 2026-11-03 hotfix; verify.py, 180
+// sec, 20000 iterations, seeds 1 / 1000003): every preset keeps its race. Marksmanship Orc 1254.3 /
+// 1253.7 ties the Night Elf's 1254.3 / 1253.6; Lone Wolf Night Elf 1313.7 / 1313.4, both Skyborne
+// 1309.2 / 1308.6; Beast Mastery Orc 1195.6 / 1195.2, Night Elf 1189.6 / 1189.3; Survival Orc 1041.2 /
+// 1041.3, Night Elf 1034.0 / 1034.5. Tauren is last for all four.
 // With the Wildstalker Armor 4
 // and 5 piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class
 // does), Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
@@ -483,6 +497,9 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Survival',
 // standards 1b and its trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
+// Round 70753 (2026-11-03, the 2026-11-03 server hotfix's hunter values, the new talents and rotation):
+// 1197.3 / 1195.6 / 1176.3 at 120 / 180 / 300 sec on its Orc in the DPS report's request (each 20 sec
+// either way, 20000 iterations, seed 1), from 1049.7 / 1046.5 / 1033.3 before the round. Earlier:
 // 1146.5 / 1141.6 / 1128.3 at 120 / 180 / 300 sec (20000 iterations, seed 1; seed 1000003 1146.0 /
 // 1141.3 / 1128.2; 2026-10-25, Classic's crit per Agility at 60), the class's best at 180 sec, 2.2
 // ahead of Marksmanship: a Human, Mortal Shots 5 for Trueshot Aura, and Arcane Shot first with no mana
@@ -531,6 +548,8 @@ export const PresetBuildBeastMasteryTallstrider = PresetUtils.makePresetBuild('B
 	distanceFromTarget: DistanceBeastMastery,
 	options: TallstriderOptions,
 });
+// Round 70753 (2026-11-03): 1268.9 / 1254.3 / 1217.6 at 120 / 180 / 300 sec on its Orc in the DPS
+// report's request (each 20 sec either way, 20000 iterations, seed 1), from 1081.1 / 1066.3 / 1039.1.
 // 1081.8 / 1066.4 / 1039.1 at 120 / 180 / 300 sec on its Orc in the DPS report's request (each 20 sec
 // either way, 20000 iterations, seed 1; 2026-11-02, with Aimed Shot above 40% mana; 1075.8 / 1063.7 /
 // 1039.4 with Multi-Shot at any mana). Earlier, on a Human:
@@ -582,6 +601,9 @@ export const PresetBuildMarksmanshipTallstrider = PresetUtils.makePresetBuild('M
 	distanceFromTarget: DistanceMarksmanship,
 	options: TallstriderOptions,
 });
+// Round 70753 (2026-11-03): 1332.4 / 1313.7 / 1264.7 at 120 / 180 / 300 sec on its Night Elf in the
+// DPS report's request (each 20 sec either way, 20000 iterations, seed 1), from 1106.7 / 1089.9 /
+// 1055.5, the class's best at 180 sec.
 // 1107.6 / 1090.0 / 1055.5 at 120 / 180 / 300 sec on its Night Elf in the DPS report's request (each
 // 20 sec either way, 20000 iterations, seed 1; 2026-11-02, with Aimed Shot above 40% mana; 1100.0 /
 // 1087.4 / 1055.3 with Multi-Shot at any mana). Earlier:
@@ -605,6 +627,9 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Lone Wolf', {
 	distanceFromTarget: DistanceMarksmanship,
 	options: LoneWolfOptions,
 });
+// Round 70753 (2026-11-03): 1048.6 / 1041.2 / 1032.7 at 120 / 180 / 300 sec on its Orc in the DPS
+// report's request (each 20 sec either way, 20000 iterations, seed 1), from 1031.9 / 1024.6 / 1016.3:
+// only Lightning Reflexes' 15% and Serpent Sting's gain reach a melee hunter.
 // 1033.1 / 1025.2 / 1018.6 at 120 / 180 / 300 sec in the mksettings raid (Human, 20000 iterations,
 // seed 1; seed 1000003 1032.8 / 1025.2 / 1018.3; 2026-10-25, Classic's crit per Agility at 60; 1063.0 /
 // 1055.0 / 1047.8 with 22% more); its own Hunter's Mark cost 1.2 / 1.5 / 1.6 against the raid's. The

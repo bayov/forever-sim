@@ -22,7 +22,7 @@ import (
 // base * (1 - variance / 2) to base * (1 + variance / 2). Lightning Bolt's ranks read the same
 // way give the sim's Lightning Bolt table to the point. The spell power coefficients follow the
 // cast time (1.5 / 3.5 and so on), and Forever's downranking takes them down for a rank far
-// below our level (downrankCoefficient).
+// below our level (sim/core/downrank.go).
 type healRank struct {
 	spellID              int32
 	base, perLevel       float64
@@ -132,7 +132,7 @@ func (shaman *Shaman) newHealSpellConfig(r healRank, rank int, spellCode int32) 
 
 		DamageMultiplier: multiplier,
 		ThreatMultiplier: 1,
-		BonusCoefficient: shaman.downrankCoefficient(r.coefficient, int(r.learnLevel)),
+		BonusCoefficient: r.coefficient,
 		// Healing Focus: a chance for a hit not to push the heal back.
 		PushbackReduction: shaman.healingFocusChance(),
 

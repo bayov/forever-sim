@@ -53,9 +53,9 @@ func TestOrcShamanManaCostTalents(t *testing.T) {
 		{"no cost talents", "0000000000001", 1, 1, 1, 1},
 		{"Convection 2/5", "2000000000001", .96, .96, 1, 1},
 		{"Convection 5/5", "5000000000001", .9, .9, 1, 1},
-		{"Shamanistic Focus", "0000000000001-000000001", .55, 1, .55, 1},
+		{"Shamanistic Focus", "0000000000001-00000001", .55, 1, .55, 1},
 		{"Totemic Focus 5/5", "0000000000001--00005", 1, 1, 1, .75},
-		{"all three", "5000000000001-000000001-00005", .9 * .55, .9, .55, .75},
+		{"all three", "5000000000001-00000001-00005", .9 * .55, .9, .55, .75},
 	}
 	for _, c := range cases {
 		_, enh := newShamanSim(newOrcShaman(60, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
@@ -65,7 +65,6 @@ func TestOrcShamanManaCostTalents(t *testing.T) {
 			rankCost(t, "Frost Shock", enh.FrostShock, shaman.FrostShockManaCost[:], c.shock),
 			rankCost(t, "Lightning Bolt", enh.LightningBolt, shaman.LightningBoltManaCost[:], c.bolt),
 			rankCost(t, "Chain Lightning", enh.ChainLightning, shaman.ChainLightningManaCost[:], c.bolt),
-			rankCost(t, "Lava Burst", []*core.Spell{enh.LavaBurst}, shaman.LavaBurstManaCost, c.bolt),
 			rankCost(t, "Lightning Shield", enh.LightningShield, shaman.LightningShieldManaCost[:], c.shield),
 			rankCost(t, "Searing Totem", enh.SearingTotem, shaman.SearingTotemManaCost[:], c.totem),
 			rankCost(t, "Magma Totem", enh.MagmaTotem, shaman.MagmaTotemManaCost[:], c.totem),
@@ -111,9 +110,9 @@ func TestOrcShamanCostTalentsOnTheBeta(t *testing.T) {
 		name, talents        string
 		earth, flame, shield float64
 	}{
-		{"Shamanistic Focus", "-000000001", 145 * .55, 160 * .55, 125 * .55},
+		{"Shamanistic Focus", "-00000001", 145 * .55, 160 * .55, 125 * .55},
 		{"Convection 5", "5", 145 * .9, 160 * .9, 125},
-		{"both", "5-000000001", 145 * .9 * .55, 160 * .9 * .55, 125 * .55},
+		{"both", "5-00000001", 145 * .9 * .55, 160 * .9 * .55, 125 * .55},
 	} {
 		_, enh := newShamanSim(newOrcShaman(30, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
 		for _, check := range []struct {
@@ -329,7 +328,6 @@ func TestOrcShamanClearcasting(t *testing.T) {
 			rankCost(t, "Frost Shock", enh.FrostShock, shaman.FrostShockManaCost[:], 0),
 			rankCost(t, "Lightning Bolt", enh.LightningBolt, shaman.LightningBoltManaCost[:], 0),
 			rankCost(t, "Chain Lightning", enh.ChainLightning, shaman.ChainLightningManaCost[:], 0),
-			rankCost(t, "Lava Burst", []*core.Spell{enh.LavaBurst}, shaman.LavaBurstManaCost, 0),
 			rankCost(t, "Fire Nova", enh.FireNova, shaman.FireNovaManaCost[:], 0),
 			rankCost(t, "Lightning Shield", enh.LightningShield, shaman.LightningShieldManaCost[:], 1),
 			rankCost(t, "Searing Totem", enh.SearingTotem, shaman.SearingTotemManaCost[:], 1),

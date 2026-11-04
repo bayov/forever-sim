@@ -160,10 +160,12 @@ func (shaman *Shaman) registerTotemicRecallSpell() {
 	})
 }
 
-// Totemic Projection (437009, level 22) moves every totem we have down to where we stand, each
-// as far from us and in the same direction as when we dropped it.
-// 25% of base mana, 1 min cooldown, 1.5 sec global cooldown. Totemic Focus discounts it (its
-// mask covers it, shaman_audit.md 8.36). The totems keep their time left.
+// Totemic Call (437009, level 22; Totemic Projection before the November 2 development notes)
+// teleports every totem we have to our own location. 25% of base mana, 30 sec cooldown (1 min
+// before the notes), 1.5 sec global cooldown. Totemic Focus discounts it (its mask covers it,
+// shaman_audit.md 8.36). The totems keep their time left. Projection put each totem as far
+// from us and in the same direction as when we dropped it; the notes' "to the Shaman's own
+// location" puts them all on our spot. Client 1.60.1.70753 still has Projection's rows.
 func (shaman *Shaman) registerTotemicProjectionSpell() {
 	if shaman.Level < 22 {
 		return
@@ -182,9 +184,11 @@ func (shaman *Shaman) registerTotemicProjectionSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			// Classic has no Totemic Call or Projection; outside Forever it keeps the client's 1 min
+			// (standards 37: the notes' 30 sec is gated under Forever).
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
-				Duration: time.Minute,
+				Duration: core.TernaryDuration(shaman.Env.IsForever(), time.Second*30, time.Minute),
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, _ *core.Unit) bool {
@@ -192,11 +196,10 @@ func (shaman *Shaman) registerTotemicProjectionSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			// The totems keep their places around us.
 			here := sim.Encounter.LevelingPosition(sim)
 			for slot := range shaman.ActiveTotems {
 				if shaman.totemIsDown(sim, slot) {
-					shaman.setTotemPosition(sim, slot, shaman.ActiveTotems[slot], here.Add(shaman.totemOffsets[slot]))
+					shaman.setTotemPosition(sim, slot, shaman.ActiveTotems[slot], here)
 				}
 			}
 			shaman.checkTotemReach(sim)

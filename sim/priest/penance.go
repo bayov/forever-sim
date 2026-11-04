@@ -52,6 +52,8 @@ func (priest *Priest) registerPenanceRank(rank int, cdTimer *core.Timer) *core.S
 		Flags:        SpellFlagPriest | core.SpellFlagNoOnCastComplete,
 		MissileSpeed: 40,
 
+		DownrankLevel: PenanceLevel[rank],
+
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 		BonusCoefficient: 0.19,

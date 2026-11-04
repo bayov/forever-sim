@@ -230,6 +230,9 @@ report what the client says, so they rank with it when they show client data. Th
   is older than 7 days.
 - **Note:** plain curl gets a 403 from www.wowhead.com. `tools/audit/consumables/src.py` and
   `tools/audit/consumables/srcid.py` still try it, and phase 2 moves them onto `wowhead.py`.
+- **Leveling route:** `uv run tools/leveling_route/route.py` walks our RestedXP route and reads
+  each quest's rewards and XP from these pages (through `wowhead.py`'s cache), into
+  `ui/enhancement_shaman/leveling_route.json`. The leveling gear plan reads that file.
 
 ### nether.wowhead.com Forever tooltips (dataEnv 16)
 

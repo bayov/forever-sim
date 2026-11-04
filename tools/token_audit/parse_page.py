@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Append per-message usage from one saved list_events page (kinds=["assistant"]) to
-<data>/pages/<session>.jsonl, and print has_more / first_id for the next page.
+<data>/pages/<session>.jsonl, and print has_more / first_id for the next page, and the oldest event's time (stop paging once
+it is before the audit window).
 
 usage: parse_page.py <data_dir> <session_id> <saved_tool_result_file>
 
@@ -15,6 +16,7 @@ s = open(path).read()
 d = json.loads(s[s.index('{"ccr"'):s.rindex('}') + 1])['ccr']
 os.makedirs(f'{data}/pages', exist_ok=True)
 n = 0
+tss = []
 with open(f'{data}/pages/{sid}.jsonl', 'a') as f:
     for e in d.get('data', []):
         a = e.get('assistant')
@@ -36,4 +38,7 @@ with open(f'{data}/pages/{sid}.jsonl', 'a') as f:
                             'in': u.get('input_tokens', 0), 'cw': u.get('cache_creation_input_tokens', 0),
                             'cr': u.get('cache_read_input_tokens', 0), 'chars': chars}) + '\n')
         n += 1
-print(json.dumps({'rows': n, 'has_more': d.get('has_more'), 'first_id': d.get('first_id')}))
+        if e.get('created_at'):
+            tss.append(e['created_at'])
+print(json.dumps({'rows': n, 'oldest': min(tss) if tss else None, 'has_more': d.get('has_more'),
+                  'first_id': d.get('first_id')}))

@@ -4,7 +4,18 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+(none)
+
 ## Resolved
+
+### consumables-20261104-1: ui presets.ts still tick Salvation after mksettings and the requests dropped it
+- severity: low
+- affects: ui/{balance_druid,elemental_shaman,enhancement_shaman,feral_druid,hunter,mage,restoration_shaman,retribution_paladin,rogue,shadow_priest,warlock,warrior}/presets.ts (`salvation: true`); this pass doc's "Salvation on" standing check
+- found: 2026-11-04, master f331f0cff
+- evidence: 90e0bb01a removed Salvation from mksettings main.go and all req/*.json (Forever removed it in the 2026-10-30 hotfix; threat only, DPS identical per the commit). `git grep -n "salvation: true" origin/master -- ui/*/presets.ts` still hits 12 files, and sim/core/buffs.go:374 still models it. presets.ts and mksettings now disagree (no DPS effect; UI shows a removed buff ticked).
+- proposed fix: set salvation to false/remove it in the Level 60 RaidBuffs objects in presets.ts. Optionally remove the sim aura. Pass doc standing check updated to "Salvation off".
+- needs: orchestrator fix
+- resolved: 2026-11-04, fb584eafa. The `salvation: true` line is gone from all 12 Level 60 presets.ts RaidBuffs objects. The sim aura (buffs.go:374) stays, unused and harmless.
 
 ### consumables-20261101-1: Ranged hunters keep the Goblin Sapper Charge, worth +0.2 now, comments say +4.8
 - severity: low

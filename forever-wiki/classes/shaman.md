@@ -8,13 +8,55 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Round 70753: the November 2 development notes (2026-11-03)
+
+Client 1.60.1.70753 carries none of the shaman lines (its shaman spells and tree are 70707's), and no server hotfix
+has them, so the sim takes the notes' values (standards 37, `orchestration/round_70753/shaman.md` has the ledger and
+the notes-only list). Where the notes give a rule, the numbers come from the Era client (1.15.9).
+
+- Lightning Bolt ranks 4 to 10 at 0.78 of Era's base (rank 10 334 to 372 at 60, was 190 to 212; the x1.12 report
+  assumption is gone). Ranks 1 to 3 already deal more than that and keep the client's values.
+- Chain Lightning: 2.5 sec cast, the first target 1.45 times the comparable Lightning Bolt (rank 4 485 to 539), 2.25
+  times its mana (495). The notes give no coefficient, so it takes the standard one for a 2.5 sec cast, 0.714
+  (the client's is 0.571), and a hit is about 1.27 times a bolt's. The rotations still leave it out on one target:
+  mana, not damage, keeps it out (Level 60 Elemental -14 / -76 / -140 on cooldown at 120 / 180 / 300 sec, -2 to
+  -24 with the best mana floor; Mana Tide +3 at 120 sec on cooldown but -12 / -70 at 180 / 300).
+- Every shock at Era's base: Earth Shock 7 517 to 545, Flame Shock 6 292 plus 320 over 12 sec, Frost Shock 4 492 to
+  520 (the x1.08 on Earth Shock 7 is gone).
+- Lightning Overload 10 / 20 / 30%. Lava Burst is removed; Call of Thunder (5% crit for Lightning Bolt and Chain
+  Lightning) takes its square. Elemental Mastery is Lightning Mastery (Lightning Bolt 0.5 sec faster, Chain Lightning
+  without a cooldown) and needs Call of Thunder. Elemental Reach no longer touches Totemic Projection.
+- Stormstrike 150% normalized weapon damage, 6 sec cooldown. Maelstrom Weapon triggers twice as often (4 PPM a point
+  in the sim; the rate is server side). Mental Dexterity 50 / 100 / 150% of Intellect. Flurry 6 to 30%.
+- Improved Ghost Wolf moved from row 2 to row 4 (column 4 assumed): every Enhancement talent string changes, and the
+  Imp GW build needs 15 Enhancement points before it. The leveling route's two points move from 15 and 16 to 25 and 26.
+- Totemic Projection is Totemic Call: every totem to the shaman's spot, 30 sec cooldown.
+- The tree changes live in `tools/forever_talents/notes/shaman.json` until a client build has them.
+
+The presets after the round, 20000 iterations, 120 / 180 / 300 sec (master's requests on the same race base stats,
+then these):
+
+| Preset | Talents | 120 s | 180 s | 300 s |
+|---|---|---|---|---|
+| Elemental Level 60 (Windshaper Skyborne) | `5501331003001351-05500101-053` | 775.3 → 979.7 | 767.6 → 970.1 | 738.8 → 924.6 |
+| Elemental Mana Tide (Windshaper Skyborne) | `5501331003001351-04-053150001001` | 760.2 → 962.7 | 752.8 → 952.7 | 737.0 → 935.1 |
+| Enhancement Level 60 (Orc) | `353003102-055030110051012251-02` | 892.8 → 1169.0 | 883.0 → 1159.2 | 866.7 → 1140.5 |
+| Enhancement Imp GW (Orc) | `353003102-055030110051212151-01` | 889.0 → 1162.2 | 878.8 → 1149.7 | 862.1 → 1128.1 |
+| Enhancement Water Shield (Orc) | `052002-054030210051012151-053020001` | 842.9 → 1118.9 | 834.2 → 1111.3 | 830.4 → 1108.1 |
+| Enhancement Mana Tide (Orc) | `03-055030310051012051-053051001001` | 803.4 → 1065.1 | 795.4 → 1055.1 | 789.4 → 1046.7 |
+
+Races at 180 sec (each race's own rotation and gear): Elemental Windshaper Skyborne 970.1, Orc 965.0, Troll 962.4,
+Dwarf 961.4, Tauren 955.5; Enhancement Orc 1159.2, Windshaper Skyborne 1154.7, Troll 1150.8, Dwarf 1150.1, Tauren
+1144.0 (the other builds rank the same). Best overall and Horde: Windshaper Skyborne for Elemental, Orc for
+Enhancement; Alliance: Dwarf.
+
 ## Regear and rotation round (2026-10-23)
 
 The alignment round's sim (no melee hit suppression, Fire Nova's hits a proc that item procs, Judgement of Wisdom and Water Shield's crit trigger don't hear, Frost Shock binary under Forever, the natural flask zone in every Level 60 fight) and the presets redone on it:
 
 - Enhancement's set had 90 hit rating for Classic's 9% cap. The cap is 8% now, so the neck's 10 hit rating became 10 crit rating. Hit above 8% still feeds the spells (about 4 DPS a 1% at 180 sec), but 10 crit rating is worth 5.5. Elemental's 100 hit rating is still the 16% spell cap with Tidal Focus 5 and the 2 piece.
 - Forever's Totem of the Storm (Lightning Bolt can trigger Maelstrom Weapon at half the chance) now beats Burning Totem on Level 60 and Imp GW (+0.9 to +2.1 at every length). Mana Tide keeps Burning Totem.
-- Optimized drops the Earth Shock hold for the Stormstrike mark. Level 60 and Imp GW take Improved Stormstrike 2 for their Tidal Focus point (tuned at 180 sec). Elemental, Water Shield and Mana Tide keep their talents and rotations.
+- Optimized drops the Earth Shock hold for the Stormstrike mark in the regear round and takes it back (up to 1 sec) in round 70753 on the user's call: paired at 20000 iterations a wash on Level 60 and about +0.4 on Imp GW. Level 60 and Imp GW take Improved Stormstrike 2 for their Tidal Focus point (tuned at 180 sec). Elemental, Water Shield and Mana Tide keep their talents and rotations.
 - Elemental Mana Tide drinks the Major Mana Potion, Level 60 the Caustic Smog Potion.
 - 180 sec: Elemental 776.4 (Windshaper Skyborne), Elemental + Mana Tide 761.4, Enhancement 880.1 (Orc), Imp GW 876.2, Water Shield 831.6, Enhancement + Mana Tide 792.2. Details and race tables in sim-status.md.
 - Race re-pick (2026-10-27, orchestration/standards.md items 29 and 16): Enhancement Level 60 and Imp GW are Windshaper Skyborne (882.0 and 878.0 at 180 sec, 1.6 and 1.7 ahead of the Orc); Water Shield and Mana Tide stay Orc. Since the second re-pick that day (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 sec, Undead Touch of the Grave 15 sec) every Enhancement preset is Orc again: Level 60 884.2 and Imp GW 880.1 at 180 sec, 2.2 and 2.1 ahead of the Windshaper.
@@ -67,7 +109,7 @@ From wago.tools (build 1.60.1.70338, 2026-10-10, the newest so far), foreverchan
 ## Sim re-checks for the Level 60 presets (2026-10-13)
 
 - Forever mechanics, against client 70338 (wago.tools), wowhead Forever's tooltips (dataEnv 17), the Mage and Shaman deep dive and foreverchanges.pro's patch notes: the sim already had the imbue and totem buff rules (a main-hand Windfury or Flametongue Weapon turns off our own benefit from the totem of the same kind, and the weapon holds a totem buff, our imbue and an oil together), the totems, shocks, weapon rules and Lava Burst. With Windfury Totem kept for the group, Windfury Weapon is still the best imbue on the Level 60 build (813.0 at 3 min, Flametongue Weapon 811.3, Rockbiter 810.9, Frostbrand 786.0). wowhead's Lava Burst rank 3 tooltip (203 to 258, 54% with Flame Shock) is the level 68 value: the client's dummy is 20 with 4.2 a level from 60, so 20% at 60. Rage of the Farseer has been attack speed only since 70009 (`rage_of_the_farseer_test.go`). Maelstrom Weapon's talent aura (408498) has ProcChance 100 and no PPM row, so its rate (2 a minute a point) stays a guess.
-- Downranking: under Forever a rank keeps 1 - 5% for each level past its learn level + 17 of its spell power coefficient (Blizzard's 2026-10-01 development notes, the formula from foreverchanges.pro/downranking). Lightning Bolt and Chain Lightning take it (`downrank_test.go`), so the elemental low-mana fallback is rank 8 (learned at 44) now, not rank 7 (75% at 60).
+- Downranking: under Forever a rank keeps 1 - 5% for each level past its learn level + 17 of its spell power coefficient (Blizzard's 2026-10-01 development notes, the formula from foreverchanges.pro/downranking). The sim applies it to every ranked spell, heals and damage, shocks and totems included (`sim/core/downrank.go`, user ruling 2026-11-04; the 2026-10-10 beta log had the shocks at full coefficient, taken to predate a later fix). Lightning Bolt's penalty makes the elemental low-mana fallback rank 8 (learned at 44) now, not rank 7 (75% at 60).
 - Talent verification (every preset talent, from sim runs on the Level 60 and Level 30 builds): 108 entries over 32 talents, 92 verified, 4 Maelstrom Weapon entries partly (the proc rate), 12 utility or inert, no bugs. Not verifiable in the sim: Maelstrom Weapon's proc rate, Elemental Focus's trigger set, Water Shield and Improved Stormstrike's dodge and parry reset (inert at 0 hits), two dummy effects.
 
 ## Totems in the presets (standards 23, user ruling 2026-10-15)

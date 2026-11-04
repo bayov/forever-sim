@@ -11,13 +11,17 @@ import (
 )
 
 // The Mutilate preset's talents (tools/dps_report/req/rogue__mutilate.json).
-const mutilatePresetTalents = "0053031033150103-302303202015-002"
+const mutilatePresetTalents = "00530320251451031-320303-005"
 
 func newMutilateRogueSim(t *testing.T, seconds float64) (*core.Simulation, *DpsRogue) {
 	return newMutilateRogueSimWith(t, seconds, 18816) // Perdition's Blade, a dagger
 }
 
 func newMutilateRogueSimWith(t *testing.T, seconds float64, offHandID int32) (*core.Simulation, *DpsRogue) {
+	return newMutilateRogueSimTalents(t, seconds, offHandID, mutilatePresetTalents)
+}
+
+func newMutilateRogueSimTalents(t *testing.T, seconds float64, offHandID int32, talents string) (*core.Simulation, *DpsRogue) {
 	items := make([]*proto.ItemSpec, proto.ItemSlot_ItemSlotOffHand+1)
 	for i := range items {
 		items[i] = &proto.ItemSpec{}
@@ -28,7 +32,7 @@ func newMutilateRogueSimWith(t *testing.T, seconds float64, offHandID int32) (*c
 		Race:          proto.Race_RaceHuman,
 		Class:         proto.Class_ClassRogue,
 		Level:         60,
-		TalentsString: mutilatePresetTalents,
+		TalentsString: talents,
 		Equipment:     &proto.EquipmentSpec{Items: items},
 		Rotation:      &proto.APLRotation{},
 		Spec:          DefaultRogue,
@@ -52,7 +56,8 @@ func newMutilateRogueSimWith(t *testing.T, seconds float64, offHandID int32) (*c
 // critting, Seal Fate's chance per Mutilate is its own chance, not 1-(1-p)².
 func TestForeverSealFateOncePerMutilate(t *testing.T) {
 	const casts = 3000
-	sim, rogue := newMutilateRogueSim(t, casts+10)
+	// Seal Fate 1/3 (33%), the preset's talents otherwise.
+	sim, rogue := newMutilateRogueSimTalents(t, casts+10, 18816, "00530320251451011-320303-005")
 	rogue.AddStatDynamic(sim, stats.MeleeCrit, 200*core.CritRatingPerCritChance)
 	rogue.AddStatDynamic(sim, stats.MeleeHit, 20*core.MeleeHitRatingPerHitChance)
 	target := rogue.CurrentTarget
@@ -79,7 +84,7 @@ func TestForeverSealFateOncePerMutilate(t *testing.T) {
 	for !sim.Step() {
 	}
 
-	p := 0.2 * float64(rogue.Talents.SealFate)
+	p := []float64{0, 0.33, 0.66, 1}[rogue.Talents.SealFate]
 	rate := float64(extra) / float64(landed)
 	// 3000 Bernoulli trials: the standard error is under 0.01.
 	if math.Abs(rate-p) > 0.03 {
