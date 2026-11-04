@@ -329,9 +329,18 @@ fresh mode records its provenance (`stale.mjs --record-bench <modes> --iteration
 the reqs' db items, tools/tankbench, tools/healbench, tools/tankscore and `tankheal.py`.
 
 Datasets per mode: `<mode>_builds`, `_bosses`, `_encounters`, `_races`, `_gear`, `_rotation`, `_setup` (the DPS shapes),
-`_tooltips` (rows the common tooltips lack), `_notes` (docs/tank_<class>.md or healing_<class>.md: preset notes and
-open calls), `_method` (docs/tank_sim.md or healing_sim.md), `_icons` and `_names` (what the common icons and names
-lack). Docs are converted by `md2html.py`, a small Markdown subset (no Markdown library is installed).
+`_tooltips` (rows the common tooltips lack), `_notes`, `_method`, `_icons` and `_names` (what the common icons and names
+lack).
+
+The words players read come from `tankheal_text/tank.md` and `heal.md`, written for players, never from the docs
+(docs/tank_*.md and healing_*.md are the developers' record and the facts behind the text). Each file has a summary
+line per preset (`_builds` `summary`), the "Good to know" notes per class or preset (`_notes`), a line per boss
+(`_encounters` `notes`, the boss list in Method), the Method cards (`_method`; the exact formula only in the last card),
+and regex rewrites for the requests' rotation notes (`_rotation` `notes` and `why`). Their header comment has the
+format; a missing preset or boss stops the build. Markdown goes through `md2html.py`, a small subset (no Markdown
+library is installed). Then `tankheal.py`'s leak check reads every string the page can show and stops the build on a
+tool, file or process word (`LEAK`: tools/, docs/, file extensions, bench, rotopt, seed, iterations, template,
+request, APL, code spans, ...): reword the text file, don't widen `LEAK_SKIP`.
 
 Building the benches (they need the generated protos and the item db; the binaries go wherever `TANKHEAL_BIN` points):
 

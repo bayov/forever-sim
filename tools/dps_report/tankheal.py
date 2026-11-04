@@ -20,6 +20,8 @@ Healing: every request in tools/healbench/req, `healbench -carry -role tank|raid
 carried (docs/healing_sim.md "What a healer scores" and "The score in the bench"), its mean over the seven boss files
 (docs/healing_sim.md, H3: "The shaman's raid mean over these 7 files").
 Races: each preset again at every race its class can be (run_build.CLASS_RACES), the request's race changed.
+Text: what players read (preset lines, notes, boss lines, Method, rotation rewording) is written in tankheal_text/
+<mode>.md, not taken from the docs; the build stops when a string the page shows has a tool or file word (LEAK).
 
 The binaries (tankbench, healbench) come from $TANKHEAL_BIN, else $DASH_BIN, else $DASH_DIR/bin, and run with the
 merged tree ($DASH_TREE, else this checkout when it has no w-dash) as their cwd; README.md has the build recipe.
@@ -52,21 +54,7 @@ HEAL_SPEC = {'priest_holy': 'Holy', 'priest_discipline': 'Discipline', 'paladin_
              'shaman_restoration': 'Restoration'}
 ROLE_NAME = {'tank': 'Tank healer', 'raid': 'Raid healer'}
 CLASS_ORDER = ['Warrior', 'Paladin', 'Druid', 'Shaman', 'Priest']
-# one line a tank preset, from its class doc's Presets section (docs/tank_<class>.md)
-SUMMARY = {
-    'warrior__protection_max_threat': 'Improved Heroic Strike over Deflection; no Thunder Clap, Heroic Strike from 30 Rage, Revenge first.',
-    'warrior__protection_balanced': 'Deflection 5 and 31 Protection with Shield Slam; Shield Block whenever its buff is down, Thunder Clap kept up.',
-    'warrior__protection_max_survival': "Balanced's build and rotation: no talent or rotation change moved it past the noise.",
-    'paladin__protection_max_threat': "Improved Seals 5 in place of Anticipation and a point of Toughness; the template's rotation.",
-    'paladin__protection_balanced': 'Seal of Fury, Holy Shield first and before the pull, Consecration above 60% mana.',
-    'paladin__protection_max_survival': "Balanced's build and rotation: its own talent search found nothing better.",
-    'druid__bear_max_threat': 'Balanced with Maul from 20 Rage.',
-    'druid__bear_balanced': 'Lacerate to 5 stacks, Primal Bite on cooldown, Maul from 30 Rage, Barkskin as the filler; no Furor.',
-    'druid__bear_max_survival': 'Balanced with Frenzied Regeneration at 100 Rage and Enrage 3 s before the pull.',
-    'shaman__warden_max_threat': 'Elemental Weapons 3 over Shamanistic Focus, the attack power trinket and Mana Spring Totem.',
-    'shaman__warden_balanced': 'Tidal Focus 5 and Improved Reincarnation 2; Stoneskin, Lightning Shield and Earth Shock on cooldown.',
-    'shaman__warden_max_survival': "Balanced's talents and rotation with the armor on-use trinket on a timer.",
-}
+TEXT = os.path.join(HERE, 'tankheal_text')  # the page's written text, a file a mode (tank.md, heal.md)
 LOG_LINE = re.compile(r'^\d{4}/\d\d/\d\d \d\d:\d\d:\d\d ')
 
 
@@ -426,7 +414,7 @@ def tank_nm(H):
     return nm
 
 
-def rotation_rows(H, rot_mod, talents, bid, cls, req):
+def rotation_rows(H, rot_mod, talents, bid, cls, req, rules=()):
     pl = player(req)
     nm = tank_nm(H)
     Hm = rot_mod._humaniser(nm, cls, talents, pl.get('talentsString'))
@@ -440,77 +428,102 @@ def rotation_rows(H, rot_mod, talents, bid, cls, req):
             if pot:
                 r['name'] = words(pot)
                 r['icon'] = H['setup_icon']('defaultPotion', pot, 'Consumes')
-        r['notes'] = rot_mod.link_talents(H['_clean_note'](r['notes']), cls, talents, r['name'])
-        r['why'] = r['notes']  # the bench presets have no rotation_text.json lines: their APL notes are the why
+        r['notes'] = rot_mod.link_talents(reword(H['_clean_note'](r['notes']), rules), cls, talents, r['name'])
+        r['why'] = r['notes']  # the bench presets have no rotation_text.json lines: their own notes, reworded, are the why
     return rows, Hm.fallbacks
 
 
-# ---------------------------------------------------------------- doc text
+# ---------------------------------------------------------------- the page's text
 
-NEUTRAL = [(r"\bThe user's rulings\b", 'Rulings'), (r"\bthe user's rulings?\b", 'the rulings'), (r"\bthe user's\b", "the project's"),
-           (r'\bThe user:', 'The project:'), (r'\bthe user\b', 'the project'), (r'\bThe user\b', 'The project'),
-           (r'\s*Say the word and it changes\.', '')]
+def page_text(mode):
+    """tankheal_text/<mode>.md: {'Presets': {id: md}, 'Notes': [(head, md)], 'Bosses': {boss: md}, 'Method': [(title, md)],
+    'Rotation': [(regex, replacement)]}. The file's header comment says what each section holds."""
+    md = re.sub(r'<!--.*?-->', '', open(os.path.join(TEXT, mode + '.md')).read(), flags=re.S)
+    secs = {}
+    for sec in re.split(r'^# ', md, flags=re.M)[1:]:
+        name, _, body = sec.partition('\n')
+        if name.strip() == 'Rotation':
+            secs['Rotation'] = [(a, b.strip()) for a, b in re.findall(r'^from: (.*)\nto:(.*)$', body, re.M)]
+            continue
+        ents = []
+        for ent in re.split(r'^## ', body, flags=re.M)[1:]:
+            head, _, txt = ent.partition('\n')
+            ents.append((head.strip(), txt.strip()))
+        secs[name.strip()] = ents
+    for k in ('Presets', 'Bosses'):
+        secs[k] = dict(secs.get(k, []))
+    return secs
 
 
-def neutral(t):
-    for a, b in NEUTRAL:
-        t = re.sub(a, b, t)
+def reword(t, rules):
+    """A rotation note through the text file's Rotation rules, in order."""
+    for a, b in rules:
+        t = re.sub(a, b, t, flags=re.M) if t else t
     return t
 
 
-def doc(name):
-    return open(os.path.join(ROOT, 'docs', name)).read()
+def need(mode, what, have, want):
+    miss = [w for w in want if w not in have]
+    if miss:
+        sys.exit(f'tankheal_text/{mode}.md: no {what} entry for {", ".join(miss)}')
 
 
-def numbered_items(md):
-    """A section's top-level numbered list: [(title, markdown)], the title its bold lead."""
-    items, cur = [], None
-    for ln in md.split('\n'):
-        m = re.match(r'^\d+\.\s+(.*)$', ln)
-        if m:
-            cur = [m.group(1)]
-            items.append(cur)
-        elif cur is not None and (ln.startswith(' ') or not ln.strip()):
-            cur.append(ln.strip())
-        elif cur is not None:
-            cur = None
-    out = []
-    for it in items:
-        text = '\n'.join(it).strip()
-        t = re.match(r'^\*\*(.+?)\*\*', text)
-        title = re.sub(r'[.:]$', '', t.group(1)) if t else re.split(r'(?<=[.:])\s', text, 1)[0]
-        out.append((re.sub(r'`', '', title), text))
-    return out
-
-
-def notes_rows(md2html, cls, docname, preset_sections, preset_builds):
-    md = doc(docname)
-    secs = md2html.sections(md)
+def notes_rows(md2html, T, builds):
+    """The "Good to know" notes: each to every preset its heading names (a class: all of the class's presets)."""
     rows = []
-    for title, body in secs:
-        if any(title.startswith(p) for p in preset_sections):
-            rows.append({'build': None, 'class': cls, 'kind': 'preset', 'title': neutral(re.sub(r'\s*\(.*\)$', '', title)),
-                         'html': md2html.convert(neutral(body.strip())), 'builds': preset_builds})
-        elif title.startswith('Calls for the user'):
-            items = numbered_items(body)
-            if not items:
-                rows.append({'build': None, 'class': cls, 'kind': 'call', 'title': 'Open questions', 'html': md2html.convert(neutral(body.strip()))})
-            for t, txt in items:
-                rows.append({'build': None, 'class': cls, 'kind': 'call', 'title': neutral(t), 'html': md2html.convert(neutral(txt))})
+    for head, body in T['Notes']:
+        who, _, title = head.partition(':')
+        names = [w.strip() for w in who.split(',')]
+        ids = [b['id'] for b in builds if b['class'] in names or b['id'] in names]
+        bad = [n for n in names if not any(b['class'] == n or b['id'] == n for b in builds)]
+        if bad or not title.strip():
+            sys.exit(f'tankheal_text: note "{head}" names no preset or class: {bad or "(no title)"}')
+        for cls in dict.fromkeys(b['class'] for b in builds if b['id'] in ids):
+            rows.append({'build': None, 'class': cls, 'kind': 'note', 'title': title.strip(), 'html': md2html.convert(body),
+                         'builds': [i for i in ids if i.split('__')[0] == cls.lower()]})
     return rows
 
 
-def method_rows(md2html, docname, wanted):
-    secs = dict(md2html.sections(doc(docname)))
-    subs = dict(md2html.sections(doc(docname), 3))
-    rows = []
-    for i, (title, shown) in enumerate(wanted):
-        body = secs.get(title, subs.get(title))
-        if body is None:
-            print(f'WARNING {docname}: no section "{title}"')
-            continue
-        rows.append({'order': i, 'title': shown, 'html': md2html.convert(neutral(body.strip()))})
-    return rows
+def secs(n):
+    n = int(round(n or 0))
+    return f'{n} sec' if n < 60 else f'{n // 60} min {n % 60} sec' if n % 60 else f'{n // 60} min'
+
+
+def method_rows(md2html, mode, T, encs):
+    if mode == 'tank':
+        lst = '\n'.join(f"- **{e['name']}** ({secs(e['duration'])}): {T['Bosses'][e['boss']]}" for e in encs)
+    else:
+        lst = '\n'.join(f"- **{e['name']}** (tank {secs(e['tankDuration'])}, raid {secs(e['raidDuration'])}): {T['Bosses'][e['boss']]}" for e in encs)
+    return [{'order': i, 'title': t, 'html': md2html.convert(body.replace('{bosses}', lst))} for i, (t, body) in enumerate(T['Method'])]
+
+
+# The words that mean the page shows our tools, files or working notes instead of the game: the build stops on any.
+LEAK = re.compile(r'\btools/|\bdocs/|orchestration/|\.(?:json|go|md|py)\b|\brotopt\b|tankbench|healbench|\bbench|\bthe user\b|\bAPLs?\b|'
+                  r'cmangos|\biterations?\b|\bseeds?\b|\bknobs?\b|\btemplates?\b|\brequests?\b|<code>|`|scoring run|stand-in|'
+                  r'\bstandards? \d|\bclient \d{5}|\b[a-z]+_[a-z]+-\d{8}\b', re.I)
+LEAK_SKIP = {'icon', 'url', 'key', 'build', 'builds', 'id', 'talents', 'raceIcon', 'classIcon', 'specIcon', 'boss', 'preset', 'specKey',
+             'role', 'talentsString', 'bg', 'href'}
+
+
+def leak_check(mode, sets):
+    """Every string the page can show from the mode's datasets, against LEAK; the build exits with the hits."""
+    hits = []
+
+    def walk(v, where):
+        if isinstance(v, dict):
+            for k, x in v.items():
+                if k not in LEAK_SKIP:
+                    walk(x, f'{where}.{k}')
+        elif isinstance(v, list):
+            for i, x in enumerate(v):
+                walk(x, f'{where}[{i}]')
+        elif isinstance(v, str) and not v.startswith('data:'):
+            for m in LEAK.finditer(re.sub(r'<a [^>]*>', '', v)):
+                hits.append(f'{where}: "{m.group(0)}" in ...{v[max(0, m.start() - 50):m.end() + 50]}...')
+    for name, rows in sets.items():
+        walk(rows, name)
+    if hits:
+        sys.exit(f'{mode}: {len(hits)} internal words on the page (tankheal.py LEAK; fix the text in tankheal_text/{mode}.md):\n  ' + '\n  '.join(hits[:60]))
 
 
 # ---------------------------------------------------------------- build
@@ -557,6 +570,9 @@ def build():
         info = json.load(open(os.path.join(src, 'run.json')))
         stems = presets(mode)
         reqs = {s: json.load(open(req_path(mode, s))) for s in stems}
+        T = page_text(mode)
+        need(mode, 'Presets', T['Presets'], [bid_of(s) for s in stems])
+        need(mode, 'Bosses', T['Bosses'], BOSSES)
         builds, bosses, encs, races, gear, setup, rot = [], [], [], [], [], [], []
         outs_tt = []
         per = {}  # stem -> boss -> row
@@ -575,16 +591,14 @@ def build():
                 h = e.get('healing') or {}
                 encs.append({'boss': boss, 'name': e['name'], 'scored': boss in SCORED, 'order': bi, 'duration': e['encounter'].get('duration'),
                              'durationVariation': e['encounter'].get('durationVariation'), 'healers': h.get('healers'), 'healerHps': h.get('hpsEach'),
-                             'healCast': h.get('castSeconds'), 'notes': hd.get('notes'), 'standIn': hd.get('standIn'),
-                             'healingLine': hd.get('healingLine'), 'objective': hd.get('objective'), 'healingNotes': h.get('notes')})
+                             'healCast': h.get('castSeconds'), 'notes': T['Bosses'][boss]})
             else:
                 er = {'boss': boss, 'name': e['name'], 'scored': True, 'order': bi}
                 for role in ('tank', 'raid'):
                     txt = open(os.path.join(src, f'{role}_{boss}.txt')).read()
                     hd = heal_header(txt)
                     er[role + 'Duration'] = hd['duration']
-                    er['notes'] = hd['notes']
-                    er['setup'] = hd['setup']
+                    er['notes'] = T['Bosses'][boss]
                     for k, v in heal_rows(txt).items():
                         per.setdefault(k, {})[boss] = dict(v, duration=hd['duration'])
                     rp = os.path.join(src, 'races', f'{role}_{boss}.txt')
@@ -593,7 +607,7 @@ def build():
                             rper.setdefault(k, {})[boss] = v
                 rh = e.get('raidHealing') or {}
                 er.update({'raidHealers': rh.get('healers'), 'raidHealerClasses': rh.get('healerClasses'), 'raidHps': rh.get('raidHps'),
-                           'tankHealers': (e.get('healing') or {}).get('healers'), 'healingNotes': rh.get('notes')})
+                           'tankHealers': (e.get('healing') or {}).get('healers')})
                 encs.append(er)
 
         for s in stems:
@@ -616,7 +630,7 @@ def build():
                 agg['healingNone'] = sum(1 for r in sc if r['healingNone'])
                 seed = int(req.get('simOptions', {}).get('randomSeed', 0))
                 builds.append({'id': bid, 'class': cls, 'spec': spec, 'specKey': specKey, 'preset': preset, 'presetName': PRESET_NAME[preset],
-                               'weight': round(WEIGHT[preset], 4), 'label': label, **idn, 'summary': SUMMARY.get(bid, ''), **agg,
+                               'weight': round(WEIGHT[preset], 4), 'label': label, **idn, 'summary': ' '.join(T['Presets'][bid].split()), **agg,
                                'iterations': info['iterations'], 'seed': seed, 'bosses': len(sc)})
                 for b in BOSSES:
                     if b in rows:
@@ -629,7 +643,7 @@ def build():
                 agg['carry'] = round(sum(r['carry'] for r in sc) / len(sc), 4) if len(sc) == 7 else None
                 agg['oomInFight'] = sum(1 for r in sc if r['oomInFight'])
                 builds.append({'id': bid, 'class': cls, 'spec': spec, 'role': role, 'roleName': ROLE_NAME[role], 'label': f'{spec} {cls}',
-                               **idn, **agg, 'bosses': len(sc), 'iterations': info['iterations'], 'seed': HEAL_SEED})
+                               **idn, 'summary': ' '.join(T['Presets'][bid].split()), **agg, 'bosses': len(sc), 'iterations': info['iterations'], 'seed': HEAL_SEED})
                 for b in BOSSES:
                     if b in rows:
                         bosses.append({'build': bid, 'boss': b, 'role': role, **rows[b]})
@@ -660,7 +674,7 @@ def build():
             g, st = gear_setup(H, bid, req)
             gear += g
             setup += st
-            rr_, fb = rotation_rows(H, rot_mod, talents, bid, cls, req)
+            rr_, fb = rotation_rows(H, rot_mod, talents, bid, cls, req, T['Rotation'])
             rot += rr_
             fallbacks += fb
             outs_tt.append({'id': bid, 'meta': {'class': cls}, 'races': [{'race': rc} for rc in cr[cls]],
@@ -686,33 +700,12 @@ def build():
                                              os.path.join(TREE, 'ui/core/forever/racials.json'), H['SLOTS'])
         tt_rows = [r for r in tt_rows if r['key'] not in common_keys]
 
-        # notes and method
-        md2 = md2html
-        notes = []
-        for cls in CLASS_ORDER:
-            ids = [b['id'] for b in builds if b['class'] == cls]
-            if not ids:
-                continue
-            if mode == 'tank':
-                notes += notes_rows(md2, cls, f'tank_{cls.lower()}.md', ('Presets',), ids)
-            else:
-                pre = {'Priest': ('The presets',), 'Paladin': ('The rotations', 'The numbers'), 'Druid': ('Tuning and the presets',),
-                       'Shaman': ('Presets',)}[cls]
-                notes += notes_rows(md2, cls, f'healing_{cls.lower()}.md', pre, ids)
-        if mode == 'tank':
-            method = method_rows(md2, 'tank_sim.md', [("The user's rulings (2026-11-02)", 'Rulings'), ('Encounters', 'Encounters'),
-                                                       ('The bench', 'The bench'), ('The stand-in healer', 'The stand-in healer'),
-                                                       ('Scoring survival', 'Scoring survival'), ("The optimizer's objective", 'The score')])
-        else:
-            method = method_rows(md2, 'healing_sim.md', [('What a healer scores', 'The score'), ('The score in the bench (2026-11-02)', 'The bench and the roles'),
-                                                          ('What deals the damage', 'Damage'), ('Raid damage from the logs (2026-11-02)', 'Raid damage from the logs'),
-                                                          ('Who heals whom', 'Who heals whom'), ("The user's rulings (2026-11-02)", 'Rulings')])
-            method.append({'order': len(method), 'title': 'The mean', 'html': md2.convert(
-                f'A healer\'s score is its **damage carried** (`healbench -carry`), {info["iterations"]:,} iterations a sim at each boss file\'s own '
-                f'length, on the bench\'s seed ({HEAL_SEED}). Its mean is over the seven boss files, Ragnaros included, as the healing docs '
-                'average them; tank healers (one healer, the tank\'s damage, fails at 2% tank deaths) and raid healers (the raid\'s damage, '
-                'fails at 5% deaths) are ranked apart.')})
+        # notes and method: the written text (tankheal_text/<mode>.md)
+        notes = notes_rows(md2html, T, builds)
+        method = method_rows(md2html, mode, T, encs)
         p = 'tank_' if mode == 'tank' else 'heal_'
+        leak_check(mode, {p + 'builds': builds, p + 'bosses': bosses, p + 'encounters': encs, p + 'races': races, p + 'gear': gear,
+                          p + 'rotation': rot, p + 'setup': setup, p + 'tooltips': tt_rows, p + 'notes': notes, p + 'method': method})
         dump(p + 'builds', builds)
         dump(p + 'bosses', bosses)
         dump(p + 'encounters', encs)

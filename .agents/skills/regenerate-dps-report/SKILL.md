@@ -83,7 +83,10 @@ set `SIM_COMMIT=<rev>` if the sims didn't run at HEAD. `merge.mjs` is for hand r
 `TANKHEAL=1`; `publish` builds their datasets, and for a mode simmed since its last publish
 records its provenance and repacks `raw/bench/<mode>.tgz`. Their settings are the docs'
 (docs/tank_sim.md, docs/healing_sim.md): 1,000 iterations, the 7 boss encounters, the reqs'
-seeds (healbench: 101). Build `tankbench` and `healbench` with the binaries (README).
+seeds (healbench: 101). Build `tankbench` and `healbench` with the binaries (README). Their text
+(preset lines, notes, boss lines, Method) is written in `tools/dps_report/tankheal_text/{tank,heal}.md`,
+for players, not taken from the docs: a new preset or boss needs its entry there, and the build
+stops on a missing one or on a tool or file word in anything the page shows (`tankheal.py` LEAK).
 
 Settings come from `orchestration/standards.md`: 20,000+ iterations, the generic boss,
 120 / 180 / 300 s, binaries rebuilt after the last gear or DB change.

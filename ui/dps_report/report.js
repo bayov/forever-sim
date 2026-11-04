@@ -3509,23 +3509,39 @@ export function startReport(dash, events) {
 
   // ---------- Tanking and Healing ----------
   // Their pages (r-ranking, r-spec, r-races, r-method) are drawn from the open mode's datasets (curDs()). What differs
-  // between the two is here: what the picker at the top picks (a tank preset's weight, a healer's role), the score it
-  // gives, and the figures the Ranking can show instead. A figure marked low is better low.
+  // between the two is here: what the picker at the top picks (a tank's setup, a healer's role), the score it gives,
+  // and the figures the Ranking can show instead, each with the plain line that says what it is (the Ranking's note,
+  // the boss table's header tips). A figure marked low is better low. Every word here is for players: no tool names.
   const TANK_W = [['max_threat', 'Max threat', 'scoreMaxThreat', '⅓'], ['balanced', 'Balanced', 'scoreBalanced', '1'], ['max_survival', 'Max survival', 'scoreMaxSurvival', '3']];
   const ROLE = {
     tank: {
-      pickLabel: 'Weight', picks: TANK_W.map(([v, l]) => [v, l]), def: 'balanced', ownPick: (b) => b.preset,
+      pickLabel: 'Setup', picks: TANK_W.map(([v, l]) => [v, l]), def: 'balanced', ownPick: (b) => b.preset,
       scoreKey: (pick) => (TANK_W.find((w) => w[0] === pick) || TANK_W[1])[2],
-      metrics: [['score', 'Score'], ['safeDps', 'SafeDPS'], ['tps', 'TPS'], ['dtps', 'DTPS', 'low'], ['healingNeeded', 'Healing needed', 'low'], ['death', 'Deaths', 'low', '%']],
-      meanName: 'Six-boss mean', unit: '', what: 'tank',
-      note: 'Score, in raid DPS: 2 × SafeDPS (the DPS two players can do without passing the tank\'s threat) − w × 900 (one DPS slot) × the healing the tank needs ÷ one healer\'s HPS. w is ⅓ for Max threat, 1 for Balanced, 3 for Max survival. The mean over six bosses.',
+      metrics: [['score', 'Score'], ['safeDps', 'Safe DPS'], ['tps', 'TPS'], ['dtps', 'Damage taken', 'low'], ['healingNeeded', 'Healing needed', 'low'], ['death', 'Died', 'low', '%']],
+      meanName: 'Average of six bosses', unit: '', what: 'tank',
+      note: 'Higher is better. The score weighs how much DPS your raid can do behind this tank without pulling aggro against how much healing the tank needs to stay alive. Max threat counts aggro more, Max survival counts healing more, Balanced counts both the same.',
+      help: {
+        safeDps: 'Safe DPS: how much DPS a player can do behind this tank without ever pulling aggro. Higher is better.',
+        tps: 'TPS: the threat per second the tank makes. Higher is better.',
+        dtps: 'Damage taken: the damage the tank takes per second, after armor, dodges, parries and blocks. Lower is better.',
+        healingNeeded: 'Healing needed: the healing per second the tank needs to die in only 1 fight out of 20. Lower is better. "none" means no amount of healing is enough.',
+        death: 'Died: how often the tank dies with the healing real raids gave their tank on that boss. Lower is better.',
+      },
     },
     heal: {
       pickLabel: 'Role', picks: [['tank', 'Tank healer'], ['raid', 'Raid healer']], def: 'tank', ownPick: (b) => b.role,
       scoreKey: () => 'carry',
-      metrics: [['score', 'Carry'], ['hps', 'HPS'], ['ehps', 'EHPS'], ['overheal', 'Overheal', 'low', '%'], ['ehPerMana', 'EH per mana'], ['manaLeft', 'Mana left'], ['deaths', 'Deaths', 'low', '%']],
-      meanName: 'Mean of the bosses', unit: '×', what: 'healer',
-      note: 'Carry: the most damage the healer keeps up with, as a multiple of the boss\'s own, before a death comes in over 2% of fights (a tank healer, on the tank) or 5% (a raid healer, on the raid). The mean over the bosses.',
+      metrics: [['score', 'Score'], ['hps', 'HPS'], ['ehps', 'Useful HPS'], ['overheal', 'Overheal', 'low', '%'], ['ehPerMana', 'Healing per mana'], ['manaLeft', 'Mana left'], ['deaths', 'Deaths', 'low', '%']],
+      meanName: 'Average of seven bosses', unit: '×', what: 'healer',
+      note: 'Higher is better. We turn the boss\'s damage up until the healer can\'t keep everyone alive. 1.20× means it kept up with 20% more damage than real raids took.',
+      help: {
+        hps: 'HPS: all the healing done per second, overhealing included. These figures are at the boss\'s normal damage.',
+        ehps: 'Useful HPS: the healing per second that wasn\'t overhealing. Higher is better.',
+        overheal: 'Overheal: the share of the healing that landed on someone already full. Lower is better.',
+        ehPerMana: 'Healing per mana: useful healing for each point of mana spent. Higher is better.',
+        manaLeft: 'Mana left: the mana the healer has at the end of the fight.',
+        deaths: 'Deaths: how often the tank (tank healer) or anyone in the group (raid healer) dies at the boss\'s normal damage. Lower is better.',
+      },
     },
   };
   const curRole = () => ROLE[st.mode];
@@ -3537,7 +3553,6 @@ export function startReport(dash, events) {
     if (!R.picks.some((p) => p[0] === o.pick)) o.pick = R.def;
     if (!R.metrics.some((m) => m[0] === o.metric)) o.metric = 'score';
     o.boss = o.boss || 'mean';
-    o.only = o.only === 'own' ? 'own' : 'all';
     return o;
   };
   const mval = (r, m, pick) => (!r ? null : m === 'score' ? r[curRole().scoreKey(pick)] : m === 'deaths' ? (pick === 'raid' ? r.otherDied : r.tankDied) : r[m]);
@@ -3550,8 +3565,8 @@ export function startReport(dash, events) {
   const ownScore = (b) => [mval(b, 'score', curRole().ownPick(b)), mse(b, 'score', curRole().ownPick(b))];
   const facIco = (f) => (iconMap() ? iconImg(f === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon', 'fv-ico') : null);
 
-  // Notes and method sections are HTML from our own markdown converter (tools/dps_report/md2html.py). We still copy
-  // only the plain tags across, and only web links.
+  // Notes and method sections are HTML the build converts from the report's own written text. We still copy only the
+  // plain tags across, and only web links.
   const SAFE_TAGS = new Set(['P', 'UL', 'OL', 'LI', 'B', 'STRONG', 'I', 'EM', 'CODE', 'PRE', 'A', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD', 'BR', 'H4', 'H5', 'H6', 'BLOCKQUOTE']);
   const safeHtml = (html) => {
     const copy = (n) => {
@@ -3620,23 +3635,19 @@ export function startReport(dash, events) {
     $('#r-pick').setAttribute('aria-label', R.pickLabel);
     roleSeg($('#r-metric'), 'metric', R.metrics.map(([v, l]) => [v, l]), 'score');
     const pickName = R.picks.find((p) => p[0] === o.pick)[1];
-    $('#r-only-bar').hidden = st.mode !== 'tank';
-    // its second button names the weight, so it's rebuilt when the weight changes
-    if ($('#r-only').dataset.lbl !== pickName) { $('#r-only').dataset.lbl = pickName; $('#r-only').dataset.built = ''; }
-    if (st.mode === 'tank') roleSeg($('#r-only'), 'only', [['all', 'All'], ['own', `${pickName} only`]], 'all');
     bossPicker($('#r-boss'), o.boss, (v) => { mst().boss = v; persist(); render(); });
     const [, mlabel, low, munit] = R.metrics.find((m) => m[0] === o.metric);
     const unit = o.metric === 'score' ? R.unit : munit || '';
     const enc0 = roleEncs().find((e) => e.boss === o.boss);
-    $('#r-rank-title').textContent = `${o.metric === 'score' ? (st.mode === 'tank' ? `Score at ${pickName}` : `Carry as ${pickName.toLowerCase()}`) : mlabel}${o.boss === 'mean' ? '' : ` · ${enc0?.name || o.boss}`}`;
+    $('#r-rank-title').textContent = `${pickName} · ${o.metric === 'score' ? 'Score' : mlabel}${o.boss === 'mean' ? '' : ` · ${enc0?.name || o.boss}`}`;
     const note = $('#r-score-note');
     const how = el('a', { href: '#' + st.mode + '/method', text: 'How it\'s scored ›' });
     how.addEventListener('click', (e) => { e.preventDefault(); showTab('method'); });
-    note.replaceChildren(R.note, enc0 && enc0.scored === false ? ` ${enc0.name} is shown, not scored.` : '', ' ', how);
+    note.replaceChildren(o.metric === 'score' ? R.note : R.help[o.metric], enc0 && enc0.scored === false ? ` ${enc0.name} is shown, not scored.` : '', ' ', how);
     if (!waitOr(host, [D.builds, ...(o.boss === 'mean' ? [] : [D.bosses])])) return;
     let builds = roleBuilds();
-    if (st.mode === 'heal') builds = builds.filter((b) => b.role === o.pick);
-    else if (o.only === 'own') builds = builds.filter((b) => b.preset === o.pick);
+    // one row a spec: the setup or role picked at the top (the Specs page shows the others)
+    builds = builds.filter((b) => R.ownPick(b) === o.pick);
     const rows = builds.map((b) => {
       const r = o.boss === 'mean' ? b : roleBossRow(b.id, o.boss);
       return { id: b.id, label: `${b.label} (${roleName(b)})`, v: mval(r, o.metric, o.pick), se: mse(r, o.metric, o.pick), color: ccol(b.class),
@@ -3649,8 +3660,8 @@ export function startReport(dash, events) {
     const top = rows.find((x) => x.v != null);
     $('#r-tiles').replaceChildren(
       tile(o.metric === 'score' ? `Top ${R.what}` : `Top for ${mlabel}`, top ? top.label : '—', top ? `${fmtV(top.v, unit)} ${o.metric === 'score' ? '' : mlabel}` : null, D.builds, null, null),
-      tile('Presets', String(roleBuilds().length), `${new Set(roleBuilds().map((b) => b.class)).size} classes`, D.builds, null, null),
-      tile('Bosses', String(roleEncs().filter((e) => e.scored !== false).length || '—'), roleEncs().some((e) => e.scored === false) ? `+ ${roleEncs().filter((e) => e.scored === false).map((e) => e.name).join(', ')}, not scored` : 'in the mean', D.encounters || D.builds, null, null));
+      tile('Specs', String(builds.length), `${new Set(builds.map((b) => b.class)).size} classes`, D.builds, null, null),
+      tile('Bosses', String(roleEncs().filter((e) => e.scored !== false).length || '—'), roleEncs().some((e) => e.scored === false) ? `+ ${roleEncs().filter((e) => e.scored === false).map((e) => e.name).join(', ')}, not scored` : 'in the score', D.encounters || D.builds, null, null));
   };
 
   // the open mode's preset picker, grouped by class
@@ -3697,19 +3708,19 @@ export function startReport(dash, events) {
     $('#rs-summary').textContent = b.summary || '';
     $('#rs-summary').hidden = !b.summary;
     const [sv, sse] = ownScore(b), peers = builds.filter((x) => R.ownPick(x) === R.ownPick(b));
-    const se = (v) => (v != null ? `± ${fmtV(v)} error` : null);
+    const se = (v) => (v != null ? `± ${fmtV(v)}` : null);
     $('#rs-tiles').replaceChildren(...(st.mode === 'tank' ? [
-      tile('Score', fmtV(sv), el('span', {}, `at ${roleName(b)} (w ${TANK_W.find((w) => w[0] === b.preset)?.[3] ?? b.weight})`, sse != null ? ` · ± ${fmtV(sse)}` : ''), D.builds, R.scoreKey(b.preset), W),
-      tile('Rank', b.rank != null ? String(b.rank) : '—', `of ${peers.length} ${roleName(b)} presets`, D.builds, 'rank', W),
-      tile('SafeDPS', fmtV(b.safeDps), se(b.safeDpsSe), D.builds, 'safeDps', W),
-      tile('Healing needed', fmtV(b.healingNeeded), b.healingNone ? `HPS · no healing saves it on ${b.healingNone} boss${b.healingNone > 1 ? 'es' : ''}` : 'HPS', D.builds, 'healingNeeded', W),
-      tile('DTPS', fmtV(b.dtps), 'damage taken per second', D.builds, 'dtps', W),
+      tile('Score', fmtV(sv), el('span', {}, `at ${roleName(b)}`, sse != null ? ` · ± ${fmtV(sse)}` : ''), D.builds, R.scoreKey(b.preset), W),
+      tile('Rank', b.rank != null ? String(b.rank) : '—', `of ${peers.length} tanks at ${roleName(b)}`, D.builds, 'rank', W),
+      tile('Safe DPS', fmtV(b.safeDps), 'DPS behind this tank without pulling aggro', D.builds, 'safeDps', W),
+      tile('Healing needed', fmtV(b.healingNeeded), b.healingNone ? `HPS · no healing is enough on ${b.healingNone} boss${b.healingNone > 1 ? 'es' : ''}` : 'healing per second to stay alive', D.builds, 'healingNeeded', W),
+      tile('Damage taken', fmtV(b.dtps), 'per second', D.builds, 'dtps', W),
     ] : [
-      tile('Carry', fmtV(sv, '×'), `as ${roleName(b).toLowerCase()}`, D.builds, 'carry', W),
+      tile('Score', fmtV(sv, '×'), `as ${roleName(b).toLowerCase()}`, D.builds, 'carry', W),
       tile('Rank', b.rank != null ? String(b.rank) : '—', `of ${peers.length} ${roleName(b).toLowerCase()}s`, D.builds, 'rank', W),
-      tile('HPS', fmtV(b.hps), null, D.builds, 'hps', W),
-      tile('EHPS', fmtV(b.ehps), 'effective', D.builds, 'ehps', W),
-      tile('Mana left', fmtV(b.manaLeft), null, D.builds, 'manaLeft', W),
+      tile('HPS', fmtV(b.hps), 'overhealing included', D.builds, 'hps', W),
+      tile('Useful HPS', fmtV(b.ehps), 'overhealing left out', D.builds, 'ehps', W),
+      tile('Mana left', fmtV(b.manaLeft), 'at the end of the fight', D.builds, 'manaLeft', W),
     ]));
     for (const h of ['#rs-head', '#rs-tiles']) $(h).dataset.build = b.id;
     const safe = (fn, host) => { try { fn(); } catch (err) { console.error(err); if (host) { fail(host); host.dataset.build = b.id; } } };
@@ -3737,38 +3748,40 @@ export function startReport(dash, events) {
       if (Math.abs(dx) > 60 && Math.abs(dy) < 45) (dx < 0 ? $('#rs-next') : $('#rs-prev')).click();
     }, { passive: true });
   }
-  // the preset on each boss, the mean last
+  // the preset on each boss, the average last; a header's tip says what it is (ROLE help)
   const ROLE_COLS = {
-    tank: [['score', 'Score'], ['safeDps', 'SafeDPS'], ['tps', 'TPS'], ['dtps', 'DTPS'], ['healingNeeded', 'Healing needed'], ['death', 'Death %', '%'], ['biggestHit', 'Biggest hit'], ['tmi', 'TMI']],
-    heal: [['score', 'Carry', '×'], ['hps', 'HPS'], ['ehps', 'EHPS'], ['overheal', 'Overheal %', '%'], ['ehPerMana', 'EH per mana'], ['manaLeft', 'Mana left'], ['tankDied', 'Tank died %', '%'], ['otherDied', 'Other died %', '%']],
+    tank: [['score', 'Score'], ['safeDps', 'Safe DPS'], ['tps', 'TPS'], ['dtps', 'Damage taken'], ['healingNeeded', 'Healing needed'], ['death', 'Died %', '%'], ['biggestHit', 'Biggest hit']],
+    heal: [['score', 'Score', '×'], ['hps', 'HPS'], ['ehps', 'Useful HPS'], ['overheal', 'Overheal %', '%'], ['ehPerMana', 'Healing per mana'], ['manaLeft', 'Mana left'], ['tankDied', 'Tank died %', '%'], ['otherDied', 'Others died %', '%']],
+  };
+  const COL_HELP = {
+    score: 'The score on this boss. Higher is better.', biggestHit: 'The biggest single hit the tank took.',
+    tankDied: 'How often the tank dies at the boss\'s normal damage.', otherDied: 'How often someone other than the tank dies at the boss\'s normal damage.',
   };
   const drawRoleBosses = (b) => {
     const D = curDs(), table = $('#rs-bosstab'), pick = curRole().ownPick(b);
     const cols = ROLE_COLS[st.mode];
-    $('#rs-boss-note').textContent = st.mode === 'tank' ? `Score at ${roleName(b)}. Healing needed is in HPS; "none" where no healing saves the tank.` : `As ${roleName(b).toLowerCase()}.`;
+    $('#rs-boss-note').textContent = st.mode === 'tank' ? `Score at ${roleName(b)}. Healing needed is in healing per second; "none" means no amount of healing keeps the tank alive. Hover a boss or a heading for more.` : `As ${roleName(b).toLowerCase()}. The score turns the boss's damage up; everything else is at its normal damage. Hover a boss or a heading for more.`;
     if (!specWait(table.querySelector('tbody'), [D.bosses, D.encounters].filter(Boolean), b)) return;
-    table.querySelector('thead tr').replaceChildren(el('th', { class: 'first', text: 'Boss' }), ...cols.map(([, l]) => el('th', { class: 'n', text: l })));
+    table.querySelector('thead tr').replaceChildren(el('th', { class: 'first', text: 'Boss' }), ...cols.map(([k, l]) => el('th', { class: 'n', text: l, title: COL_HELP[k] || curRole().help[k] || '' })));
     const cell = (r, [k, , unit]) => {
       const v = mval(r, k, pick), sev = k === 'score' || k === 'safeDps' || k === 'healingNeeded' ? mse(r, k, pick) : null;
       return el('td', { class: 'n' }, v == null ? (k === 'healingNeeded' || k === 'score' ? 'none' : '—') : fmtV(v, unit), sev != null && v != null ? el('small', { class: 'fv-se', text: ` ±${fmtV(sev)}` }) : null);
     };
     const rows = roleEncs().map((e) => {
       const r = roleBossRow(b.id, e.boss);
-      return el('tr', { class: e.scored === false ? 'fv-off' : '' }, el('td', { class: 'first' }, e.name, e.scored === false ? el('small', { class: 'fv-muted', text: ' not scored' }) : null), ...cols.map((c) => cell(r, c)));
+      return el('tr', { class: e.scored === false ? 'fv-off' : '' }, el('td', { class: 'first', title: e.notes || '' }, e.name, e.scored === false ? el('small', { class: 'fv-muted', text: ' not scored' }) : null), ...cols.map((c) => cell(r, c)));
     });
     rows.push(el('tr', { class: 'fv-total' }, el('td', { class: 'first', text: curRole().meanName }), ...cols.map((c) => cell(b, c))));
     table.querySelector('tbody').replaceChildren(...rows);
   };
-  // the class's notes: the preset's own (or its class's presets'), then the calls the user is asked to make
+  // "Good to know": the notes on the preset, or on its class
   const drawRoleNotes = (b) => {
     const D = curDs(), host = $('#rs-notes');
     if (!specWait(host, [D.notes], b)) return;
     const mine = (r) => r.class === b.class && (r.build ? r.build === b.id : Array.isArray(r.builds) ? r.builds.includes(b.id) : true);
     const ns = rowsOf(D.notes).filter(mine);
     const sec = (r) => el('section', { class: 'fv-note-sec' }, el('h6', { class: 'fv-note-title', text: r.title }), safeHtml(r.html));
-    const notes = ns.filter((r) => r.kind !== 'call'), calls = ns.filter((r) => r.kind === 'call');
-    host.replaceChildren(...notes.map(sec), ...(calls.length ? [el('h5', { class: 'fv-calls', text: 'Open calls' }), ...calls.map(sec)] : []),
-      ...(ns.length ? [] : [el('p', { class: 'fv-note', text: 'None.' })]));
+    host.replaceChildren(...ns.map(sec), ...(ns.length ? [] : [el('p', { class: 'fv-note', text: 'Nothing special.' })]));
   };
 
   const drawRoleRaces = () => {
@@ -3779,14 +3792,14 @@ export function startReport(dash, events) {
     rolePicker($('#r-race-isel'), builds, b.id, (v) => { mst().build = v; persist(); render(); });
     const pick = R.ownPick(b), unit = R.unit;
     $('#r-race-title').textContent = `${b.label} · ${roleName(b)} by race`;
-    $('#r-race-note').textContent = st.mode === 'tank' ? `Score at ${roleName(b)}, the mean over six bosses, on each race the class can be. The preset's own race is marked.` : `Carry as ${roleName(b).toLowerCase()}, on each race the class can be. The preset's own race is marked.`;
+    $('#r-race-note').textContent = st.mode === 'tank' ? `The score at ${roleName(b)}, averaged over six bosses, for each race the class can play. The race the setup uses is marked.` : `The score as ${roleName(b).toLowerCase()}, averaged over seven bosses, for each race the class can play. The race the setup uses is marked.`;
     const rows = rowsOf(D.raceRows).filter((r) => r.build === b.id).map((r) => ({
       id: r.race, label: r.race, v: mval(r, 'score', pick), se: mse(r, 'score', pick), color: ccol(b.class), mine: !!r.isPreset,
       icon: tt(raceIco(r.raceIcon), `r:${r.race}:${b.class}`, false, b.id), name: [el('b', { text: r.race }), r.isPreset ? el('span', { class: 'fv-badge', text: 'preset' }) : null].filter(Boolean),
-      sub: st.mode === 'tank' ? [facIco(r.faction), el('em', { text: `SafeDPS ${fmtV(r.safeDps)} · healing ${fmtV(r.healingNeeded)} HPS` })] : [facIco(r.faction), el('em', { text: `HPS ${fmtV(r.hps)}` })],
+      sub: st.mode === 'tank' ? [facIco(r.faction), el('em', { text: `Safe DPS ${fmtV(r.safeDps)} · needs ${fmtV(r.healingNeeded)} healing per second` })] : [facIco(r.faction), el('em', { text: `HPS ${fmtV(r.hps)}` })],
     }));
     if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No races simmed for this preset.' })); return; }
-    roleList(host, byValue(rows, false), st.mode === 'tank' ? 'score' : 'carry', unit);
+    roleList(host, byValue(rows, false), 'score', unit);
   };
 
   const drawRoleMethod = () => {
