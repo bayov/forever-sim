@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "f5c99ad018aa44b195c5530f40c44cccb92d52cf"
+  "master": "6b480b06046c3a8680fa86a7e979754e055410b1"
  },
- "last_pass_at": "2026-11-03T18:25:00Z",
- "pass": 49,
+ "last_pass_at": "2026-11-04T13:05:19Z",
+ "pass": 53,
  "result": "quiet",
- "note": "Pass 49: full audit of round 70753 (not quiet by the diff rule), no findings. Seeded from the long-running auditor session at the move to the audit loop.",
+ "note": "Pass 53: rogue hotfix 113483 and warrior hotfix 113539 APL/sim changes checked; Shank gate, Reckless Swings rage gate and Elemental CL under Elemental Mastery screened on two seed sets, all at or below noise or losing. Baseline refreshed. No findings.",
  "client_build": "1.60.1.70753",
- "checked_at": "2026-11-03T06:44:50Z",
- "baseline": "baseline_f5c99ad_3000it_seed424242.tsv"
+ "checked_at": "2026-11-04T06:58:15Z",
+ "baseline": "baseline_6b480b0_3000it_seed424242.tsv"
 }

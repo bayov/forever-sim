@@ -175,3 +175,38 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-03 18:29 | mechanics | pass 61 | master f5c99ad018 | 1 new finding | round 70753 phase 3 (forced): notes' tank threat values (Bear 115%, Def Stance 80%, Defiance) not in the sim (low, 0 DPS)
 2026-11-03 18:29 | fairness | pass 25 | master f5c99ad018 | quiet | round 70753 phase 3 (forced): every move matches its round file; top/bottom 1.73x; race picks hold
 2026-11-03 18:29 | client_update | pass 8 | master f5c99ad018 | 1 new finding | round 70753 phase 3 (forced): no build after 70753; several notes-only values ungated under Forever (low, needs ruling)
+2026-11-03 19:03 | consumables | pass 68 | master f23ea25d2 | quiet | Warlock Affliction/Imp-sacrifice diff touches no consumes; client 70755 has no consumable changes
+2026-11-03 19:03 | mechanics | pass 62 | master f23ea25d2 | quiet | Imp sacrifice (Burning Shadow 15%) matches client; 70755 tables identical to 70753
+2026-11-03 19:03 | client_update | pass 9 | master f23ea25d2 | 1 new finding | build 70755 technical only; server hotfix push 113483 changes rogue talent tree (high), rest of push unverified
+2026-11-03 19:03 | results | pass 74 | master f23ea25d2 | quiet | all 68 requests within 0.15 of published except known stale shaman metas; results-20261103-1 resolved
+2026-11-03 19:03 | rotations | pass 50 | master f23ea25d2 | quiet | Wrack Affliction and Earth Shock wait hold; 5 warlock variants all lose 2-22 DPS
+2026-11-03 19:03 | fairness | pass 26 | master f23ea25d2 | quiet | every report race still best; Subtlety Night Elf fix confirmed
+2026-11-04 01:07 | results | pass 75 | master f331f0cff | 0 new findings | 68 builds match published within 0.15; six shaman metas stale (update on results-20261102-1)
+2026-11-04 01:07 | rotations | pass 51 | master f331f0cff | quiet | Feral/Balance/Ret rotation changes confirmed (+7.7..8.1 feral, +0.4..0.6 balance); no Forever DPS moved by sim code
+2026-11-04 01:07 | gear | pass 54 | master f331f0cff | quiet | only enchants meta stamp changed (build 70755)
+2026-11-04 01:07 | consumables | pass 69 | master f331f0cff | 1 new findings | presets.ts still has salvation:true after mksettings dropped it (consumables-20261104-1, low)
+2026-11-04 01:07 | mechanics | pass 63 | master f331f0cff | quiet | Salvation removal and tank threat values match dev notes post 9
+2026-11-04 01:07 | fairness | pass 27 | master f331f0cff | quiet | all 43 builds re-swept, report race best everywhere, top/bottom 1.68x
+2026-11-04 UTC | results | pass 76 | master fb584eafa | quiet | 68 sims match metas within 0.15 except six stale shaman metas (results-20261102-1)
+2026-11-04 UTC | rotations | pass 52 | master fb584eafa | quiet | 7 one-line Fury APL variants, none beat the new level60_fury
+2026-11-04 UTC | gear | pass 55 | master fb584eafa | quiet | only standards.md 38/39 changed, no gear rule
+2026-11-04 UTC | consumables | pass 70 | master fb584eafa | quiet | Salvation dropped from all 12 presets, resolved consumables-20261104-1
+2026-11-04 UTC | mechanics | pass 64 | master fb584eafa | quiet | no sim code changed; dev notes post 9 Swiftmend edit needs no sim change
+2026-11-04 UTC | fairness | pass 28 | master fb584eafa | quiet | Fury rebuilt per race, Orc best, gear check 19/19
+2026-11-04 13:12 | results | pass 77 | master 6b480b0604 | 1 new finding | results-20261104-1: five rogue metas' published DPS lag hotfix 113483
+2026-11-04 13:12 | rotations | pass 53 | master 6b480b0604 | quiet | rogue/warrior hotfix rotations hold; baseline refreshed
+2026-11-04 13:12 | gear | pass 56 | master 6b480b0604 | quiet | new healer sets pass
+2026-11-04 13:12 | consumables | pass 71 | master 6b480b0604 | quiet | no consumable value changes
+2026-11-04 13:12 | mechanics | pass 65 | master 6b480b0604 | quiet | downrank ruling settled; Power Infusion healing verified
+2026-11-04 13:12 | fairness | pass 29 | master 6b480b0604 | quiet | only warrior/rogue moved, from hotfixes
+2026-11-04 UTC | healer_gear | pass 1 | master a1b1163d2 | quiet | forced first pass: 4 healer sets within 1b budget/shape and row shares, relics modelled; Wowhead cache empty so rows not re-derived from pages
+2026-11-04 13:35 | healer_mechanics | pass 1 | master a1b1163d2 | findings | first pass, 4 healers + engine vs 70755: raid damage share floor (high), Swiftmend consumes HoT (high), Ancestral Fortitude armor (medium), 7 low
+2026-11-04 13:32 | tank_gear | pass 1 | master f62bfc74b | 6 new findings | forced first pass: all pieces in budget/shape bar bear chest -1.3%; paladin Stamina share out; warrior trinket A/B missing; enchant values stale
+2026-11-04 13:34 | tank_fairness | pass 1 | master f62bfc74bc | 5 new findings | forced first pass: bear alone has Phalanx/Fortitude (high); paladin half the damage taken, Warden 2-3x healing, Balanced=Max survival for pal/war, legacy warrior req
+2026-11-04 13:38 | tank_rotations | pass 1 | master f62bfc74bc | 8 new findings | first baseline ref/tank_bench/summary.tsv; bear Roar order +198, warrior Shield Wall 18s +46/+175, paladin Bulwark 13s (Broodlord), Warden shock order +62
+2026-11-04 13:39 | tank_mechanics | pass 1 | master f62bfc74b | 11 new findings | forced first pass: tanks simmed behind the boss (high), parry haste double-counted in encounters (high), Primal Bite misses notes' x2 threat (high)
+2026-11-04 13:40 | healer_rotations | pass 1 | master a1b1163d2 | findings | baseline = H3 table exactly; 15 variants none win; healer_rotations-20261104-1 (low) Holy priest dead lines
+2026-11-04 13:50 | healer_fairness | pass 1 | master c8f5858bd | findings | 4 new: tank bench lets Prayer of Mending bounce tank-priest (+0.085 Holy priest, high), heal-size gate holds back shaman/paladin/druid (medium), 2 low
+2026-11-04 14:07 | healer_rotations | pass 1 (redo) | master 1e9eb71f7 | findings | raid role redone after the raid damage fix; healer_rotations-20261104-2 (medium) Disc OOM on Chromaggus at 107 s; -1 (low) stands
+2026-11-04 16:18 | tank_gear | pass 2 | master b38ff16 | 1 new finding | after round 2: -1,-2,-4,-5,-6 closed; -3 reopened (paladin/Warden shields still 929, which the UI drops; Superior Deflection simmed for warrior only); -7 (low) cloak enchant unevaluated
+2026-11-04 16:30 | tank_fairness | pass 2 | master b38ff16 | 4 new findings | round 2 holds (12 own-weight means reproduce, each preset wins its weight); closed -1,-3,-4; new -6 UI buffs/professions (medium), -7 Warden MT flask (medium), -8 uneven search (low), -9 stale notes (low); report tank data predates round 2

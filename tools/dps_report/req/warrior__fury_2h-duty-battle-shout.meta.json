@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 4,
   "race": "Orc",
-  "talents": "30313113032-2503300501122100321",
+  "talents": "30313113032-350500150122100231",
   "treeNames": [
     "Arms",
     "Fury",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h_battle_shout",
   "published": {
-    "dps": 1165.4,
-    "source": "round 70753 (the November 2 development notes), the Warrior worker's finals 2026-11-03: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1147.6,
+    "source": "the hotfix 113539 re-tune (round 70753, 2026-11-04): wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1165.4,
+    "dps": 1147.6,
     "stderr": 0.52,
     "iters": 20000,
     "ok": true,
-    "note": "the Warrior worker's final run of this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-03)"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-04, after hotfix 113539)"
   },
   "summary": "Keeps Battle Shout up for its party. The raid's Battle Shout is off.",
   "keyTalents": [
@@ -33,6 +33,7 @@
     "Two-Handed Weapon Specialization",
     "Cruelty",
     "Impale",
+    "Unbridled Wrath",
     "Enrage",
     "Reckless Swings",
     "Improved Whirlwind"
@@ -44,9 +45,9 @@
     "Death Wish in the last 36s, Recklessness in the last 30s",
     "Blood Fury and Berserking in the last 30s. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Mighty Rage Potion in the last 20s, and at the pull too when a second one fits",
     "Bloodrage under 20 Rage. Berserker Rage under 10 (Improved Berserker Rage)",
-    "Reckless Swings on cooldown. It is off the GCD, and the next 4 swings give 5 more Rage each",
     "Bloodthirst, then Slam at 60+ Rage right after a main-hand swing, then Whirlwind at 25+ Rage",
     "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
+    "Reckless Swings under 20 Rage, only when no strike is ready, since it takes a 1s GCD. The next 4 swings give 5 more Rage each",
     "Heroic Strike at 90+ Rage, outside execute",
     "Hamstring as filler at 10+ Rage"
   ],
@@ -73,7 +74,7 @@
     "Saving Death Wish for the last 36s adds 17.4 DPS at 180s and 28.4 at 120s.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_arms -apl level60_fury_2h_battle_shout -talents 30313113032-2503300501122100321 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Uses the Fury class options (Berserker Stance) as the preset build does; the preset's DefaultConsumes keep an off-hand stone, which has no effect without an off hand. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.",
+  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_arms -apl level60_fury_2h_battle_shout -talents 30313113032-250500150122100231 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Uses the Fury class options (Berserker Stance) as the preset build does; the preset's DefaultConsumes keep an off-hand stone, which has no effect without an off hand. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.",
   "duty": "Battle Shout",
   "baseBuild": "warrior__fury_2h"
 }

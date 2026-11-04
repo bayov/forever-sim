@@ -226,10 +226,16 @@ report what the client says, so they rank with it when they show client data. Th
   `tools/database/foreverchanges/suffixes.py` (required levels), `orchestration/tools/`
   (`b30_data.py`, `bis_data.py`, `fit.py`, `primary.py`, `single.py`), bayovui's `bis.py`
   and `recipesources.py`.
+- **Delisted items:** `scrape.py` keeps an item wowhead stops listing, with the day in
+  `delisted`. On 2026-11-04 that was 320 items still in the client, 300 of them hidden, so
+  this file is our only copy of their stats.
 - **Refresh:** weekly, locally (never in the cloud routine). `stale.py` says when a scrape
   is older than 7 days.
 - **Note:** plain curl gets a 403 from www.wowhead.com. `tools/audit/consumables/src.py` and
   `tools/audit/consumables/srcid.py` still try it, and phase 2 moves them onto `wowhead.py`.
+- **Leveling route:** `uv run tools/leveling_route/route.py` walks our RestedXP route and reads
+  each quest's rewards and XP from these pages (through `wowhead.py`'s cache), into
+  `ui/enhancement_shaman/leveling_route.json`. The leveling gear plan reads that file.
 
 ### nether.wowhead.com Forever tooltips (dataEnv 16)
 

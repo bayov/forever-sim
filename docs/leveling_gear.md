@@ -38,6 +38,13 @@ We don't take the best item for each level. While leveling we gear up as we go:
   levels. A ring or a trinket replaces the weaker of the two, and a two-hander also takes the
   off hand.
 - **Start.** Level 1 starts in a white chest, legs and boots, with a white weapon.
+- **One-hand + shield.** A plan can level with a one-hander and a shield from level 1
+  (`LevelingPlanSettings.one_hand_and_shield`). We start with a white shield too, and the plan
+  takes no two-handers and nothing held in the off hand. Shields come from the weapon finds, the
+  route's quests and boss loot like any other weapon. White ones are one more plain weapon kind,
+  with armor and block value at 90% of a green shield's, by a line through zero fit to the greens
+  up to item level 30. Items are judged by the "Leveling Gear Plan Shield" stat weights, which
+  also price block and block value. The Gear part's switch shows once a spec has those weights.
 
 The stat weights come from the leveling sim, by mobs killed in a session. The enhancement shaman
 has them every 5 levels from 5 to 59 (the "Leveling Gear Plan" presets, from
@@ -49,7 +56,19 @@ reads the same file for its leveling weights below 60, and blends them by level 
 Hit is the larger of +1% and -1%. From 40 the plan's gear is at the hit cap, so +1% adds
 nothing, but an item that takes 1% away still costs 10 to 15 attack power. The 2026-11-02 run
 (three rounds, as below) found crit going from 1.3 attack power at level 5 to about 28 at 59,
-and Spirit rising after 40, since it shortens the rests.
+and Spirit rising after 40, since it shortens the rests. On client 70753's shaman tree we
+measured one more round (2026-11-03) on the plan's gear by those weights, with Intellect, Spirit
+and MP5 worth more and crit about 30 at 59.
+
+The 2026-11-04 run is three rounds on the 70755 plan (10000 sessions a probe, about 20 minutes a
+round). Round 1 took the plan's gear by the 2026-11-03 weights, round 2 the gear by round 1's
+weights, round 3 the gear by the mean of the two. The moves against the file before it: crit at
+59 is 30.5 (29.6 before), hit at 25 is 18.3 (15.8), Spell Power at 25 is 3.4 (1.7), and
+Intellect is lower at 20 to 40 (1.5 against 2.6 at 20, 1.7 against 2.5 at 40). MP5 is lower from
+20 (4.9 against 7.1 at 30, 5.9 against 8.3 at 50), and so is Spirit at 50 (3.7 against 5.1). The
+rounds disagree most on Spirit and MP5 at 50 to 59 (Spirit 1.6 to 5.0 at 55, MP5 1.9 to 8.2),
+and on Stamina at 25 and 40, so treat those as rough. With these weights the plan's gear takes
+79.551h (seeds 1 and 1000001, 2000 sessions a level), 0.37h less than 79.926h before.
 
 Stamina, Intellect and MP5 move with the gear, because they decide how often we die. At level
 20, +10 Stamina was worth 2.29 a point on gear with little Intellect (0.19 deaths a session)

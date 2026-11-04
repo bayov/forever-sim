@@ -93,6 +93,9 @@ func MakeTank(request *proto.RaidSimRequest, healing *proto.HealingModel, scorin
 		target.TankIndex = 0
 	}
 	tank := request.Raid.Parties[0].Players[0]
+	// The tank faces the boss: the boss parries and blocks its attacks (and its parries haste the
+	// boss's swing), which a player behind it never sees.
+	tank.InFrontOfTarget = true
 	tank.HealingModel = googleProto.Clone(healing).(*proto.HealingModel)
 	// An HPS of 0 asks the engine for its presim healer.
 	tank.HealingModel.Hps = max(tank.HealingModel.Hps, 1e-9)
@@ -117,6 +120,11 @@ func OwnDebuffs(request *proto.RaidSimRequest) {
 		debuffs.ThunderClap = proto.TristateEffect_TristateEffectMissing
 		debuffs.DemoralizingShout = proto.TristateEffect_TristateEffectMissing
 		debuffs.DemoralizingRoar = proto.TristateEffect_TristateEffectMissing
+		// The warrior tank's Sunder Armor ramp is this warrior's own Sunders: its rotation builds
+		// and keeps the stacks, paying their Rage and GCDs. Other warriors' pull Sunders stay.
+		if ramp := debuffs.SunderRamp; ramp != nil {
+			ramp.Tank = false
+		}
 	case *proto.Player_FeralTankDruid:
 		// A bear keeps Demoralizing Roar up, and the raid's Shout goes with it (they don't stack).
 		debuffs.DemoralizingShout = proto.TristateEffect_TristateEffectMissing

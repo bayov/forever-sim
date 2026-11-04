@@ -139,8 +139,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // Ret twist: Unsealed Wrath. Seal of Command stays up; once it has stored 2 copies, Seal of
 // Righteousness goes up for the swing that spends them all (and stores one of its own), and Seal of
 // Command goes back once it has. When the mana won't cover 30 a second of the fight left, the swap
-// waits for all 3 copies, since each swap costs a seal. Consecration first down to 20% mana, Holy
-// Strike on cooldown.
+// waits for all 3 copies, since each swap costs a seal. Consecration first down to 20% mana, then
+// Holy Strike on cooldown ahead of Judgement and the seal lines (since round 70753: +1.2 / +1.2 / +0.4
+// at 120 / 180 / 300 sec, +2.4 / +1.3 / +1.9 on seed 1000003).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Ret twist', Level60APLJSON, {
 	tooltip:
 		'Level 60 rotation: Seal of Command, swapped to Seal of Righteousness for the swing that spends its Unsealed Wrath copies, Consecration, Judgement and Holy Strike on cooldown.',
@@ -155,7 +156,9 @@ export const APLLevel60ShockRet = PresetUtils.makePresetAPLRotation('Ret Shock',
 	group: 'Synthetic',
 });
 // Ret sub-Holy: the twist rotation, swapping on 2 copies at any mana (its Reverence and Divine
-// Intellect keep it in mana; the twist's mana rule loses 2.3 at 300 sec here).
+// Intellect keep it in mana; the twist's mana rule loses 2.3 at 300 sec here), Holy Strike ahead of
+// Judgement and the seal lines (since round 70753: +1.0 / +1.4 / +1.5, +2.5 / +2.2 / +2.5 on seed
+// 1000003). The duty rotations keep it after them (the Crusader duty loses 4.0 at 180 sec).
 export const APLLevel60SubHoly = PresetUtils.makePresetAPLRotation('Ret sub-Holy', Level60SubHolyAPLJSON, {
 	tooltip: 'Level 60 sub Holy rotation: the twist rotation, swapping seals once Seal of Command has stored 2 Unsealed Wrath copies.',
 	group: 'Synthetic',
@@ -212,8 +215,7 @@ export const APLPresets = [
 
 // The class default is Level 60 (sub Holy), the build highest at 180 sec since the regear round
 // (2026-10-23). On the hotfix trees it ties Ret twist (1038.1 against 1039.3 at 180 sec, within the
-// noise), so it stays; in round 70753 too (1089.8 against 1090.9, seed 1000003 1089.3 against
-// 1090.1).
+// noise), so it stays; in round 70753 too (1091.2 against 1092.1 with Holy Strike first).
 export const DefaultAPL = APLLevel60SubHoly;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -246,8 +248,8 @@ export const DefaultAPL = APLLevel60SubHoly;
 // race base stats fix. The talent searches at 180 sec (Pursuit of Justice pinned, Holy Shock too on
 // Ret Shock) kept every build's talents, and the knob searches every rotation but vs Undead's.
 // Undead, 20000 iterations, seed 1, 120 / 180 / 300 sec, before -> after:
-// - Ret twist: 1043.4 / 1039.3 / 1028.9 -> 1094.3 / 1090.9 / 1079.9.
-// - Ret sub-Holy: 1042.3 / 1038.1 / 1031.7 -> 1092.3 / 1089.8 / 1084.3.
+// - Ret twist: 1043.4 / 1039.3 / 1028.9 -> 1095.5 / 1092.1 / 1080.3 (with Holy Strike first).
+// - Ret sub-Holy: 1042.3 / 1038.1 / 1031.7 -> 1093.3 / 1091.2 / 1085.8 (with Holy Strike first).
 // - Ret Shock: 983.0 / 974.9 / 968.5 -> 1037.5 / 1030.2 / 1025.5.
 // - Ret sub-Holy vs Undead: 1153.9 / 1151.4 / 1145.1 -> 1222.9 / 1221.4 / 1214.0.
 // Undead stays the best race on each (Human 2.3 to 5.1 behind at 180 sec on both seed sets, Dwarf
@@ -385,7 +387,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	thorns: TristateEffect.TristateEffectImproved,
 	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 	trueshotAura: true,
-	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({

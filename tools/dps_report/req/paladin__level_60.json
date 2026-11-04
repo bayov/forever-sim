@@ -249,6 +249,16 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 10333
+                      }
+                    }
+                  },
+                  "notes": "Holy Strike on cooldown."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 20271
                       }
                     },
@@ -455,16 +465,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10333
-                      }
-                    }
-                  },
-                  "notes": "Holy Strike on cooldown."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 10314
                       }
                     }
@@ -512,8 +512,7 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury",
-      "salvation": true
+      "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
       "judgementOfWisdom": true,

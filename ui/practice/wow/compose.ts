@@ -37,11 +37,24 @@ export function compose(c: Composite): Promise<THREE.Texture> {
 	const key = JSON.stringify(c);
 	let p = composed.get(key);
 	if (!p) {
-		p = paint(c);
+		p = paint(c).then(t => {
+			t.userData.key = key;
+			return t;
+		});
 		composed.set(key, p);
 		p.catch(() => composed.delete(key));
 	}
-	return p;
+	// refs counts the units given the texture, so the crowd knows when it holds every one of them.
+	return p.then(t => {
+		t.userData.refs = (t.userData.refs ?? 0) + 1;
+		return t;
+	});
+}
+
+// forget drops a painted skin from the shared ones, once the crowd took its picture (and let go
+// of it), so a unit asking for it later gets a new one.
+export function forget(t: THREE.Texture) {
+	composed.delete(t.userData.key);
 }
 
 async function paint(c: Composite): Promise<THREE.Texture> {
@@ -100,6 +113,8 @@ async function paint(c: Composite): Promise<THREE.Texture> {
 	});
 	const t = new THREE.DataTexture(out, c.width, c.height, THREE.RGBAFormat);
 	t.colorSpace = THREE.SRGBColorSpace;
+	// The crowd (crowd.ts) puts painted skins in a texture array.
+	t.userData.composed = true;
 	t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
 	t.magFilter = THREE.LinearFilter;
 	t.minFilter = THREE.LinearMipmapLinearFilter;
@@ -109,6 +124,9 @@ async function paint(c: Composite): Promise<THREE.Texture> {
 	// Once the texture is on the GPU we let go of our copy. Each unit's skin and armor makes its
 	// own, so in a raid of 40 they were over half a gigabyte of the page's memory.
 	t.onUpdate = () => {
+		// A copy that wraps another way (model.ts setTexture) shares the picture and goes to the
+		// GPU on its own, so then we keep it.
+		if (t.userData.rewrapped) return;
 		(t.image as { data: Uint8ClampedArray | null }).data = null;
 	};
 	return t;

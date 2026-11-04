@@ -10,11 +10,11 @@ import (
 
 // The Forever trees of client 1.60.1.70707 with the launch realms' October 30 hotfix (wago.tools
 // hotfixes, region 91, build 70707: the cached pseudo-version 1.60.1.70707+hf, see
-// tools/sources/hotfixes.py). Talents the sim does not read: Spiritual Focus, Unyielding Faith,
-// Infusion of Light, Illumination, Light's Vigil (heals only since the hotfix), Oath of Light,
-// Boundless Light, Holy Power (crit healing only since the hotfix), Guardian's Favor, Improved
-// Hammer of Justice, Templar's Bulwark, Stoicism, Pursuit of Justice, Eye for an Eye, Turn Evil
-// and Repentance. Healing Light only touches heals.
+// tools/sources/hotfixes.py). The healing talents (Spiritual Focus, Healing Light, Divine Favor,
+// Illumination, Infusion of Light, Oath of Light, Boundless Light, Holy Power and Light's Vigil) are
+// in healing.go, holy_talents.go, divine_favor.go and lights_vigil.go. Talents the sim does not
+// read: Unyielding Faith, Guardian's Favor, Improved Hammer of Justice, Templar's Bulwark, Stoicism,
+// Pursuit of Justice, Eye for an Eye, Turn Evil and Repentance.
 func (paladin *Paladin) ApplyTalents() {
 	paladin.AddStat(stats.MeleeHit, float64(paladin.Talents.Precision)*core.MeleeHitRatingPerHitChance)
 	// Forever's Precision gives spell hit too (client 1.60.1.70338, spell 20189: auras 54
@@ -75,7 +75,7 @@ func (paladin *Paladin) improvedSeals() float64 {
 
 // Holy Power gives no damage crit since the October 30 hotfix: spell 5923 in 1.60.1.70707+hf is
 // aura 50 (critical healing amount) with the Holy school, "Increases the critical strike healing
-// bonus of your Holy spells by 10 to 50%". The sim does not model the paladin's heals. Before the
+// bonus of your Holy spells by 10 to 50%" (holyPowerCritBonus, healing.go). Before the
 // hotfix it was a crit modifier on a list of the paladin's spells (3% a point for Holy Shock and
 // Holy Strike, 1% for the rest); holyPowerCrit stays as the hook those spells read, at 0.
 func (paladin *Paladin) holyPowerCrit() float64 {
@@ -146,7 +146,7 @@ func (paladin *Paladin) applyRedoubt() {
 
 	paladin.redoubtAura = paladin.RegisterAura(core.Aura{
 		Label:     "Redoubt",
-		ActionID:  core.ActionID{SpellID: 20134},
+		ActionID:  core.ActionID{SpellID: 20128}, // the block aura, 10 sec or 5 blocks (20134 is no client spell)
 		Duration:  time.Second * 10,
 		MaxStacks: 5,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -189,6 +189,9 @@ func (paladin *Paladin) applyReckoning() {
 	procID := core.ActionID{SpellID: 20178} // Reckoning Proc ID
 	critChance := 0.2 * float64(paladin.Talents.Reckoning)
 	blockChance := 0.08 * float64(paladin.Talents.Reckoning)
+	// "Cannot occur from Blocks more than once every 1.5 sec" (20177, ProcCategoryRecovery 1500):
+	// the cooldown is the blocks'. A crit taken gives its charge whenever it comes, as
+	// wowsims/forever's talents_protection.go has it.
 	icd := core.Cooldown{
 		Timer:    paladin.NewTimer(),
 		Duration: time.Millisecond * 1500,
@@ -209,11 +212,12 @@ func (paladin *Paladin) applyReckoning() {
 			aura.Activate(sim)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) || !icd.IsReady(sim) {
-				return
-			}
-			if result.DidCrit() && sim.Proc(critChance, "Reckoning") ||
-				result.DidBlock() && sim.Proc(blockChance, "Reckoning") {
+			// 20177's proc flags 0x202A8 take melee and ranged hits and harmful magic spells (tier 1),
+			// and its tooltip says "being the victim of a non-periodic critical strike": a spell's
+			// crit counts too. Only a melee or ranged hit can be blocked.
+			if result.DidCrit() && sim.Proc(critChance, "Reckoning") {
+				paladin.AutoAttacks.StoreExtraMHAttack(sim, 1, procID, spell.ActionID)
+			} else if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) && result.DidBlock() && icd.IsReady(sim) && sim.Proc(blockChance, "Reckoning") {
 				icd.Use(sim)
 				paladin.AutoAttacks.StoreExtraMHAttack(sim, 1, procID, spell.ActionID)
 			}
@@ -231,6 +235,9 @@ func (paladin *Paladin) applyShieldSpecializationMana() {
 
 	actionID := core.ActionID{SpellID: 20150}
 	manaMetrics := paladin.NewManaMetrics(actionID)
+	// The mana spell (1310925) has Attributes_1 0x400, no threat, so its mana makes none (Forever's
+	// mana gains make half a threat a mana otherwise, core/mana.go).
+	manaMetrics.NoThreat = true
 	procChance := 0.5 * float64(paladin.Talents.ShieldSpecialization)
 	icd := core.Cooldown{
 		Timer:    paladin.NewTimer(),
@@ -269,12 +276,14 @@ func (paladin *Paladin) applyShieldSpecializationMana() {
 // too (wowsims/forever d35afca4da measured Seal and Judgement of Righteousness gaining from it;
 // report assumption pal_2h_spec_holy).
 //
-// Notes-only value (round 70753): the November 2 development notes change it "to increase both
-// Holy and Physical damage by 2/4/6%". Client 1.60.1.70753 is unchanged (20111 effect 0 is still
-// aura 79 misc 1) and no server hotfix row carries it, so under Forever the sim follows the notes
-// (orchestrator's rule of 2026-11-03, orchestration/round_70753/README.md): the Holy school takes
-// it as a whole, Consecration, Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock included, and
-// the melee-rolled Holy spells no longer take it a second time from their own multiplier.
+// Server hotfix push 113542 (wago.tools hotfixes, region 91, build 70707, 2026-11-03 18:29Z, logged
+// with the rogue push 113483; 1.60.1.70707+hf) makes it "Physical and Holy": SpellEffect 697263
+// (20111 effect 0, aura 79) school mask 1 -> 3, base points 2 a rank unchanged, and the Spell 20111
+// tooltip "Increases the Physical and Holy damage you deal by $s1%". This is the November 2
+// development notes' line, which the sim had taken as a notes-only value in round 70753; client
+// 1.60.1.70755 still has misc 1. Under Forever the Holy school takes it as a whole, Consecration,
+// Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock included, and the melee-rolled Holy spells
+// no longer take it a second time from their own multiplier.
 func (paladin *Paladin) twoHandedSpecializationMultiplier() float64 {
 	if paladin.MainHand().HandType == proto.HandType_HandTypeTwoHand {
 		return 1 + 0.02*float64(paladin.Talents.TwoHandedWeaponSpecialization)
@@ -309,15 +318,20 @@ func (paladin *Paladin) applyWeaponSpecialization() {
 // stacks, for 30 sec. Classic was a flat 3% per point for 8 sec.
 //
 // The 2026-09-24 beta build cut it from 5 stacks to 3 and made only non-periodic crits
-// count. Notes-only value (round 70753): the November 2 development notes put it back to
-// "stacking up to 5 times (Was stacking up to 3 times)". Client 1.60.1.70753 still has 3 (20050
-// SpellAuraOptions CumulativeAura) and no server hotfix row changes it, so the sim follows the
-// notes (orchestrator's rule of 2026-11-03, orchestration/round_70753/README.md).
+// count. Server hotfix push 113542 (region 91, build 70707, 2026-11-03 18:29Z; 1.60.1.70707+hf)
+// puts it back to 5: SpellAuraOptions 247421 (20050) CumulativeAura 3 -> 5, duration and proc
+// chance unchanged, so the talent tooltip ("$20050u times") reads 5. That is the November 2
+// development notes' line, which the sim had taken as a notes-only value in round 70753; client
+// 1.60.1.70755 still has 3.
 //
 // The hit callback below never sees a periodic tick (those go to the periodic callback), so
 // the non-periodic rule needs nothing here.
 func (paladin *Paladin) applyVengeance() {
 	if paladin.Talents.Vengeance == 0 {
+		return
+	}
+	if !paladin.Env.IsForever() {
+		paladin.applyClassicVengeance()
 		return
 	}
 
@@ -347,6 +361,39 @@ func (paladin *Paladin) applyVengeance() {
 			if result.DidCrit() {
 				procAura.Activate(sim)
 				procAura.AddStack(sim)
+			}
+		},
+	})
+}
+
+// Classic's Vengeance: 3% Physical and Holy damage a point for 8 sec after a crit, no stacks. The
+// Forever model above (5 stacks, hotfix push 113542) is gated under Forever.
+func (paladin *Paladin) applyClassicVengeance() {
+	vengeanceMultiplier := 1 + 0.03*float64(paladin.Talents.Vengeance)
+
+	procAura := paladin.RegisterAura(core.Aura{
+		Label:    "Vengeance Proc",
+		ActionID: core.ActionID{SpellID: 20059},
+		Duration: time.Second * 8,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= vengeanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= vengeanceMultiplier
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] /= vengeanceMultiplier
+			aura.Unit.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] /= vengeanceMultiplier
+		},
+	})
+
+	paladin.RegisterAura(core.Aura{
+		Label:    "Vengeance",
+		Duration: core.NeverExpires,
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Activate(sim)
+		},
+		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() {
+				procAura.Activate(sim)
 			}
 		},
 	})

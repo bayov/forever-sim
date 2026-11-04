@@ -84,7 +84,7 @@
               "blessingOfKings":  true,
               "blessingOfMight":  "TristateEffectImproved"
             },
-            "talentsString":  "30313113032-2503300501122100321",
+            "talentsString":  "30313113032-350500150122100231",
             "level":  60,
             "profession1":  "Engineering",
             "profession2":  "Alchemy",
@@ -612,16 +612,6 @@
                   }
                 },
                 {
-                  "notes":  "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
-                  "action":  {
-                    "castSpell":  {
-                      "spellId":  {
-                        "spellId":  1399001
-                      }
-                    }
-                  }
-                },
-                {
                   "notes":  "Berserker Rage for its Rage (Improved Berserker Rage). It needs Berserker Stance.",
                   "action":  {
                     "condition":  {
@@ -812,6 +802,40 @@
                   }
                 },
                 {
+                  "notes":  "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
+                          {
+                            "cmp":  {
+                              "op":  "OpLt",
+                              "lhs":  {
+                                "currentRage":  {}
+                              },
+                              "rhs":  {
+                                "const":  {
+                                  "val":  "20"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "sequenceIsComplete":  {
+                              "sequenceName":  "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  1329555
+                      }
+                    }
+                  }
+                },
+                {
                   "action":  {
                     "condition":  {
                       "and":  {
@@ -955,8 +979,7 @@
       "thorns":  "TristateEffectImproved",
       "devotionAura":  "TristateEffectImproved",
       "retributionAura":  "TristateEffectImproved",
-      "totemWeaponBuff":  "TotemWeaponBuffWindfury",
-      "salvation":  true
+      "totemWeaponBuff":  "TotemWeaponBuffWindfury"
     },
     "debuffs":  {
       "judgementOfWisdom":  true,

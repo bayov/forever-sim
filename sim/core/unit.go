@@ -156,6 +156,9 @@ type Unit struct {
 	AttackTables                []map[proto.CastType]*AttackTable
 	DynamicDamageTakenModifiers []DynamicDamageTakenModifier
 
+	// The shields up on us, oldest first (absorb.go).
+	absorbs []*Absorb
+
 	GCD *Timer
 
 	// Used for applying the effect of a hardcast spell when casting finishes.
@@ -332,6 +335,11 @@ func (unit *Unit) processDynamicBonus(sim *Simulation, bonus stats.Stats) {
 	}
 	if bonus[stats.SpellHaste] != 0 {
 		unit.updateCastSpeed()
+	}
+	// Losing max health (Last Stand ending) takes current health down with it, so the excess
+	// neither soaks damage nor books a negative heal (healer_mechanics-20261104-8).
+	if bonus[stats.Health] < 0 && unit.currentHealth > unit.MaxHealth() {
+		unit.currentHealth = unit.MaxHealth()
 	}
 
 	for _, pet := range unit.DynamicStatsPets {
@@ -557,6 +565,7 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	unit.Hardcast.Expires = startingCDTime
 	unit.ChanneledDot = nil
 	unit.channelHoldsFSR = false
+	unit.absorbs = unit.absorbs[:0]
 	unit.Metrics.reset()
 	if unit.tankScore != nil {
 		unit.tankScore.reset()

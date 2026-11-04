@@ -35,10 +35,11 @@ func (rogue *Rogue) ApplyTalents() {
 	rogue.applyRiposte()
 }
 
-// dwsMultiplier returns the offhand damage multiplier: 25/50% under the November 2 development
-// notes (was 5 ranks at 5%; client 13715 unchanged in 1.60.1.70753).
+// dwsMultiplier returns the offhand damage multiplier: 25/50% under Forever, from the November 2
+// development notes (was 5 ranks at 5%; client 13715 unchanged in 1.60.1.70753). Classic's is 10% a
+// rank (standards 37: notes-only values are gated under Forever).
 func (rogue *Rogue) dwsMultiplier() float64 {
-	return 1 + 0.25*float64(rogue.Talents.DualWieldSpecialization)
+	return 1 + core.TernaryFloat64(rogue.Env.IsForever(), 0.25, 0.10)*float64(rogue.Talents.DualWieldSpecialization)
 }
 
 // opportunityMultiplier is Backstab, Garrote, Ambush and Mutilate's: 4% a rank, 5 ranks under the
@@ -62,13 +63,17 @@ func (rogue *Rogue) applyRuthlessness() {
 	})
 }
 
-// Relentless Strikes is 5 ranks of 4% a combo point under the November 2 development notes (was one
-// rank of 20%; client 14179 unchanged in 1.60.1.70753).
+// Relentless Strikes is 5 ranks of 4% a combo point under Forever, from the November 2 development
+// notes (was one rank of 20%; client 14179 unchanged in 1.60.1.70753). Classic keeps its one rank of
+// 20% a combo point.
 func (rogue *Rogue) applyRelentlessStrikes() {
 	if rogue.Talents.RelentlessStrikes == 0 {
 		return
 	}
-	chancePerPoint := 0.04 * float64(rogue.Talents.RelentlessStrikes)
+	chancePerPoint := 0.2
+	if rogue.Env.IsForever() {
+		chancePerPoint = 0.04 * float64(rogue.Talents.RelentlessStrikes)
+	}
 
 	cpMetrics := rogue.NewEnergyMetrics(core.ActionID{SpellID: 14179})
 	rogue.OnComboPointsSpent(func(sim *core.Simulation, spell *core.Spell, comboPoints int32) {
@@ -159,9 +164,12 @@ func (rogue *Rogue) applySealFate() {
 		return
 	}
 
-	// 33/66/100% under the November 2 development notes (was 5 ranks at 20%; client 14186
-	// unchanged in 1.60.1.70753).
-	procChance := []float64{0, 0.33, 0.66, 1}[rogue.Talents.SealFate]
+	// 33/66/100% under Forever, from the November 2 development notes (was 5 ranks at 20%; client
+	// 14186 unchanged in 1.60.1.70753). Classic keeps 20% a rank.
+	procChance := 0.2 * float64(rogue.Talents.SealFate)
+	if rogue.Env.IsForever() {
+		procChance = []float64{0, 0.33, 0.66, 1}[rogue.Talents.SealFate]
+	}
 	cpMetrics := rogue.NewComboPointMetrics(core.ActionID{SpellID: 14195})
 
 	icd := core.Cooldown{
@@ -405,26 +413,40 @@ func (rogue *Rogue) registerAdrenalineRushCD() {
 	})
 }
 
-// Lethality is 2 ranks of 10% under the November 2 development notes (was 5 ranks of 4%; client
-// 14128 unchanged in 1.60.1.70753).
+// Lethality is 2 ranks of 10% under Forever, from the November 2 development notes (was 5 ranks of
+// 4%; client 14128 unchanged in 1.60.1.70753). Classic's is 6% a rank.
 func (rogue *Rogue) lethality() float64 {
-	return 0.10 * float64(rogue.Talents.Lethality)
+	return core.TernaryFloat64(rogue.Env.IsForever(), 0.10, 0.06) * float64(rogue.Talents.Lethality)
 }
 
 // Aggression raises Sinister Strike and Eviscerate by 5/10/15% under Forever (November 2
 // development notes; was 2/4/6% and Backstab too, as client 18427 in 1.60.1.70753 still has it).
+// Classic's is 2/4/6% on Sinister Strike and Eviscerate.
 func (rogue *Rogue) aggressionMultiplier() float64 {
+	if !rogue.Env.IsForever() {
+		return []float64{1, 1.02, 1.04, 1.06}[rogue.Talents.Aggression]
+	}
 	return []float64{1, 1.05, 1.10, 1.15}[rogue.Talents.Aggression]
 }
 
 // Coup de Grace (Improved Eviscerate) raises Eviscerate, and Death Mark's damage and storage rate,
-// by 7/13/20% (November 2 development notes).
+// by 7/13/20% under Forever (November 2 development notes). Classic's Improved Eviscerate is
+// 5/10/15%.
 func (rogue *Rogue) coupDeGraceMultiplier() float64 {
+	if !rogue.Env.IsForever() {
+		return []float64{1, 1.05, 1.10, 1.15}[rogue.Talents.CoupDeGrace]
+	}
 	return []float64{1, 1.07, 1.13, 1.20}[rogue.Talents.CoupDeGrace]
 }
 
-// Efficient Strikes (Improved Sinister Strike) takes 3/5 Energy off Sinister Strike and, under the
-// November 2 development notes, Hemorrhage.
+// Efficient Strikes (Improved Sinister Strike) takes 3/5 Energy off Sinister Strike and, under
+// Forever (November 2 development notes), Hemorrhage.
 func (rogue *Rogue) efficientStrikes() float64 {
 	return []float64{0, 3, 5}[rogue.Talents.EfficientStrikes]
+}
+
+// hemorrhageEfficientStrikes is Efficient Strikes' Energy off Hemorrhage: Forever only, as
+// Classic's Improved Sinister Strike covers Sinister Strike alone.
+func (rogue *Rogue) hemorrhageEfficientStrikes() float64 {
+	return core.TernaryFloat64(rogue.Env.IsForever(), rogue.efficientStrikes(), 0)
 }

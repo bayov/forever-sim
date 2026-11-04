@@ -1,17 +1,17 @@
 {
  "last": {
-  "master": "f5c99ad018aa44b195c5530f40c44cccb92d52cf"
+  "master": "6b480b06046c3a8680fa86a7e979754e055410b1"
  },
- "last_pass_at": "2026-11-03T18:06:21Z",
- "pass": 61,
- "result": "findings",
- "note": "Pass 61: 9da90fcde..f5c99ad01 (round 70753). Shared commits hold (potions can't crit, TSA 100, Read Leyline, Classic base stats). Notes-only values of all nine classes match post 9; rogue/warrior/shaman notes trees match. New: tank threat notes values missing (mechanics-20261103-2, low). Resolved mechanics-20261031-1.",
- "client_build": "1.60.1.70753",
- "checked_at": "2026-11-03T18:06:21Z",
+ "last_pass_at": "2026-11-04T12:52:33Z",
+ "pass": 65,
+ "result": "quiet",
+ "note": "Pass 65: fb584eafa..6b480b060. Downranking in sim/core for every ranked spell (user ruling 11-04, settled in verdicts; L60 max ranks, no DPS move). Power Infusion +20% healing verified on 70755. Absorb pipeline healing-only. Hotfix pushes to 113605: no spell mechanics.",
+ "client_build": "1.60.1.70755",
+ "checked_at": "2026-11-04T12:52:33Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/9",
   "date": "2026-11-03T03:20:33Z",
-  "edited": "2026-11-03T03:20:33Z",
+  "edited": "2026-11-04T02:12:27Z",
   "post1_edited": "2026-11-03T03:20:46Z"
  },
  "hotfixes_seen": {
@@ -22,8 +22,8 @@
    "70630",
    "70707"
   ],
-  "newest_push": 113557,
+  "newest_push": 113605,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-03T18:06:21Z"
+ "blue_tracker_seen": "2026-11-03T21:41:36Z"
 }

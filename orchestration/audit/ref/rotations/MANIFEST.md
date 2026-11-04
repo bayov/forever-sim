@@ -1,13 +1,14 @@
 # Rotation audit: reference files
 
-- `baseline_f5c99ad_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  f5c99ad01 (pass 49, round 70753: client 1.60.1.70753 and the 2026-11-02 dev notes, every class reworked).
-  Against a0b3069 every class but priest and mage moved by tens to hundreds of DPS (warrior +76..+127, rogue
-  +122..+209, shaman +201..+275, hunter +16..+224); the six rogue "-humanoid" presets are gone and
-  `warlock__affliction_wrack` is new. Attribute those moves to the round files (`orchestration/round_70753/`).
+- `baseline_6b480b0_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  6b480b060 (pass 53). Against the previous f331f0c baseline only rogue and warrior rows moved, both from server
+  hotfixes (rogue req files only remapped, warrior ones re-tuned): rogue 113483 (316a600ac: Shank no longer procs poisons or enchants, Mutilate
+  flat bonus; Seal Fate Daggers -17.8, Seal Fate Swords -16.0, Mutilate -8.2, Combat Swords -4.1, Combat Daggers
+  +2.2) and warrior 113539 (7cd399e88 + e07adf11b: Raging Blows out, Reckless Swings on a 1 s GCD; -6.6 to -26.7,
+  Dragonkin +6.0). The downranking (b57f5cc0a) and Chain Lightning 0.714 (280fd26e2) changes moved no row.
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at f5c99ad01 (`/tmp/audit-cache/cli/f5c99ad018aa/wowsimcli`).
+  - The CLI was the audit loop's shared build at 6b480b060 (`/tmp/audit-cache/cli/6b480b06046c/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

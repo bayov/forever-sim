@@ -192,6 +192,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWardenShaman, {
 			...Presets.GearPresets[Phase.Phase2],
 			...Presets.GearPresets[Phase.Phase1],
 		],
+		// Preset builds that the user can quickly select.
+		builds: [Presets.PresetBuildLevel60Balanced, Presets.PresetBuildLevel60MaxThreat, Presets.PresetBuildLevel60MaxSurvival],
 	},
 
 	autoRotation: (): APLRotation => {

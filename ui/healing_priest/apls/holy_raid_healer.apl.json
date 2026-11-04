@@ -1,0 +1,173 @@
+{
+  "type": "TypeAPL",
+  "priorityList": [
+    {
+      "action": {
+        "autocastOtherCooldowns": {}
+      },
+      "notes": "Trinkets, potions and Demonic Rune."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10917
+          },
+          "target": {
+            "type": "LowestHealth"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpLt",
+            "lhs": {
+              "currentHealthPercent": {
+                "sourceUnit": {
+                  "type": "LowestHealth"
+                }
+              }
+            },
+            "rhs": {
+              "const": {
+                "val": "0.35"
+              }
+            }
+          }
+        }
+      },
+      "notes": "Someone in my assignment is under 35% health: the fast heal."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10901
+          },
+          "target": {
+            "type": "LowestHealth"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpLt",
+            "lhs": {
+              "currentHealthPercent": {
+                "sourceUnit": {
+                  "type": "LowestHealth"
+                }
+              }
+            },
+            "rhs": {
+              "const": {
+                "val": "0.6"
+              }
+            }
+          }
+        }
+      },
+      "notes": "Power Word: Shield on whoever drops under 60% health, for the next hit."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 1240827
+          },
+          "target": {
+            "type": "MostHurt"
+          }
+        }
+      },
+      "notes": "Prayer of Mending at the most hurt whenever it is ready."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 10917
+          },
+          "target": {
+            "type": "MostHurt"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            },
+            "rhs": {
+              "math": {
+                "op": "OpMul",
+                "lhs": {
+                  "spellExpectedHealing": {
+                    "spellId": {
+                      "spellId": 10917
+                    },
+                    "targetUnit": {
+                      "type": "MostHurt"
+                    }
+                  }
+                },
+                "rhs": {
+                  "const": {
+                    "val": "0.5"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "notes": "Flash Heal 7, 4 at the most hurt: each rank, biggest first, once what is missing covers 50% of its Expected Healing."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 9474
+          },
+          "target": {
+            "type": "MostHurt"
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpGe",
+            "lhs": {
+              "healthMissing": {
+                "sourceUnit": {
+                  "type": "MostHurt"
+                }
+              }
+            },
+            "rhs": {
+              "math": {
+                "op": "OpMul",
+                "lhs": {
+                  "spellExpectedHealing": {
+                    "spellId": {
+                      "spellId": 9474
+                    },
+                    "targetUnit": {
+                      "type": "MostHurt"
+                    }
+                  }
+                },
+                "rhs": {
+                  "const": {
+                    "val": "0.5"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  ]
+}

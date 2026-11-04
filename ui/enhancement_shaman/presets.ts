@@ -607,7 +607,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
-	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -950,7 +949,7 @@ export const EPLevel30Leveling = PresetUtils.makePresetEpWeights(
 	{ tooltip: 'Stat weights for a solo level 30 grinding mobs of its level, by mobs killed in a session.', group: 'Leveling' },
 );
 
-// Stat weights for the leveling gear plan (2026-11-02), by mobs killed in a 20 min session, in
+// Stat weights for the leveling gear plan (2026-11-03), by mobs killed in a 20 min session, in
 // attack power, every 5 levels from 5 to 59 (leveling_weights.json). The Leveling Gear tab judges
 // the items it finds by them, and blends two of them for the levels in between. BayovCore's
 // Upgrades reads the same file for its "Shaman leveling" weights below 60 (bayovui weights.py).
@@ -971,6 +970,12 @@ export const EPLevel30Leveling = PresetUtils.makePresetEpWeights(
 // mean of three rounds: the plan's gear by the old weights (levels 10 to 30 only, so the level 30
 // ones above it), then by the first round's, then by the mean of those two. Stamina is worth
 // something only where we still die, around 10 to 20 and at 40.
+//
+// 2026-11-03, client 70753's shaman tree (stronger shocks and Stormstrike, Improved Ghost Wolf
+// from 15 Enhancement points): one more round of the same probes, on the plan's gear by the
+// 11-02 weights, with the template's knobs as they were. Level 5 (no talents) and 10 measure as
+// before. From 25 we kill 11 to 16 more mobs a session, and Intellect, Spirit and MP5 are worth
+// more (MP5 7.1 against 2.7 at 30, Spirit 5.1 against 2.6 at 50).
 export const EPLevelingGearPlan = LevelingWeightsJSON.levels.map(({ level, weights: w }) =>
 	PresetUtils.makePresetEpWeights(
 		`Level ${level} Leveling Gear`,
@@ -1013,20 +1018,17 @@ export const EPPresets = [EPLevel30Leveling, ...EPLevelingGearPlan];
 // grind up to 59, and 60 is where we stop.
 //
 // The talents and rotations come from the 2026-10-19 audit of the searched plan
-// (docs/leveling_plan.md, The audit): agents read sessions at each level band, wrote new
-// rules into the rotations and tried other talent routes, and we kept what held on two seeds.
-// It takes 102h 8m, against 107h 5m for the search's plan. The route, as reordered on
-// 2026-11-01 to stay in one tree for longer: Thundering Strikes, Improved Ghost Wolf at 15 and
-// 16 (required, for walking), Mental Dexterity, Shamanistic Focus, Elemental Weapons, Improved
-// Lightning Shield and Stormstrike at 25 (Improved Lightning Shield 3/3 at 27), Flurry 2,
-// Improved Stormstrike, Spirit Weapons and Mental Quickness, then Restoration at 35 to 42
-// (Tidal Focus and Mindfulness), Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48,
-// Convection and Call of Flame at 49 to 56, and Anticipation at 57 to 59. The rotations are
-// "Audited 10" and so on, one range for each level that changed something, all on Rockbiter
-// Weapon.
+// (docs/leveling_plan.md, The audit), searched again on 2026-11-04 for client 70755's shaman
+// changes. The route: Thundering Strikes, Mental Dexterity, Improved Lightning Shield 2,
+// Shamanistic Focus, Elemental Weapons, Improved Lightning Shield 3/3 at 24, Stormstrike at 25,
+// Improved Ghost Wolf at 26 and 27 (required, for walking), Flurry 2, Improved Stormstrike and
+// Spirit Weapons, then Restoration at 33 to 40 (Tidal Focus and Mindfulness), Mental Quickness
+// at 41 and 42, Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48, Anticipation 3, Flurry
+// 5/5 at 51 to 53, Convection 3 and Guardian Totems 2. The rotations are the audit's
+// "Audited 10" and so on, with the rotation search's "Searched 1", "Searched 20" and so on at 1
+// to 4, 20 to 26 and 40 to 46, where they were faster. All of them on Rockbiter Weapon.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
-	// From level 1, where levels 1 to 9 play the first range's rotation with the spells we have
-	// by then, and no talents.
+	// From level 1, with no talents before 10.
 	fromLevel: 1,
 	toLevel: 60,
 	bonusTalentPoints: 0,
@@ -1034,11 +1036,20 @@ export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	rotationLibrary: LevelingPlanAuditedJSON.rotationLibrary.map(preset => LevelingRotationPreset.fromJson(preset as any)),
 	rotations: LevelingPlanAuditedJSON.rotations.map(range => LevelingRotation.fromJson(range)),
 	rotationsNameTopRanks: true,
-	// Improved Ghost Wolf as early as its row opens, for walking to quests and grind spots, which
+	// Improved Ghost Wolf soon after its row opens, for walking to quests and grind spots, which
 	// the grinding sessions don't sim. The November 2 development notes moved it from row 2 to row
-	// 4 (it was 15 and 16), so its two points now come at 25 and 26, after the 15th Enhancement
-	// point; the route keeps its other picks in their order.
-	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 12, points: 2, level: 26 })],
+	// 4 (it was 15 and 16), so it can't come before 25, after the 15th Enhancement point.
+	//
+	// It may come after Stormstrike (user, 2026-11-04), so we want it by 27. The route takes
+	// Stormstrike at 25 and Improved Ghost Wolf at 26 and 27, which is 0.36h faster than Improved
+	// Ghost Wolf at 25 and 26.
+	//
+	// Spirit Weapons by 31, where the route has had it since the audit. The sim gives it nothing
+	// (it lowers threat), but we always take it.
+	requiredTalents: [
+		LevelingTalentRequirement.create({ tree: 1, talent: 12, points: 2, level: 27 }),
+		LevelingTalentRequirement.create({ tree: 1, talent: 13, points: 1, level: 31 }),
+	],
 	// When we train each rank, from tools/levelingplan -training: 115g earned by 40 and riding
 	// (90g after the Honored discount) at 43.
 	training: LevelingTrainingSettings.fromJson(LevelingTrainingJSON as any),

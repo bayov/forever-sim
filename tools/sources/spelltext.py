@@ -58,7 +58,7 @@ LEVEL_NOTE = 'Values shown at level %d.'
 BONUS_NOTE = 'Excludes spell power, attack power and other bonuses.'
 
 # PowerType in SpellPower. Rage is stored in tenths.
-POWER = {0: 'Mana', 1: 'Rage', 2: 'Focus', 3: 'Energy', 4: 'Combo Points', 5: 'Runes', 6: 'Runic Power'}
+POWER = {-2: 'Health', 0: 'Mana', 1: 'Rage', 2: 'Focus', 3: 'Energy', 4: 'Combo Points', 5: 'Runes', 6: 'Runic Power'}
 
 # SpellMisc attribute bits we read.
 ATTR0_PASSIVE = 0x40

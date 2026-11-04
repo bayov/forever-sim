@@ -17,11 +17,11 @@ import (
 // It hits our target and jumps to the next 2, each jump dealing 70% of the one before. So with
 // 4 targets the first three take 100%, 70% and 49% of a roll and the fourth nothing. Each hit
 // rolls its own damage and hit. A Stormstrike mark on the second target goes to the jump that
-// hits it, which then deals 84%. Rank 4 deals 484.75 to 539.04 at level 60 with no spell power (the November 2 notes),
+// hits it, which then deals 84%. Rank 4 deals 494.13 to 552.27 at level 60 with no spell power (hotfix push 113380),
 // so the four ranges don't overlap. The targets are at our level, and we take all our spell
 // crit away.
 //
-// The 2.5 sec cast (November 2 notes; 2 sec before) lands all three hits at its end, and the
+// The 2.5 sec cast (hotfix push 113341; 2 sec before) lands all three hits at its end, and the
 // 6 sec cooldown starts there.
 func TestOrcShamanChainLightningJumps(t *testing.T) {
 	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
@@ -91,8 +91,8 @@ func TestOrcShamanChainLightningJumps(t *testing.T) {
 					t.Fatalf("Chain Lightning didn't roll on target %d", j+1)
 				case h.damage == 0:
 					misses++
-				case h.damage < 484.75*share-1e-6 || h.damage > 539.04*share+1e-6:
-					t.Fatalf("target %d took %.2f, want %.0f%% of 484.75 to 539.04", j+1, h.damage, 100*share)
+				case h.damage < 494.13*share-1e-6 || h.damage > 552.27*share+1e-6:
+					t.Fatalf("target %d took %.2f, want %.0f%% of 494.13 to 552.27", j+1, h.damage, 100*share)
 				}
 			}
 		}

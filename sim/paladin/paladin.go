@@ -32,6 +32,15 @@ const (
 	SpellCode_PaladinHammerOfWrath
 	SpellCode_PaladinHolyStrike
 	SpellCode_PaladinSealOfRighteousnessProc
+	SpellCode_PaladinSealOfFuryProc
+	SpellCode_PaladinJudgementOfFury
+
+	SpellCode_PaladinHolyLight
+	SpellCode_PaladinFlashOfLight
+	SpellCode_PaladinHolyShockHeal
+	SpellCode_PaladinLightsVigil
+	SpellCode_PaladinLightsVigilHeal
+	SpellCode_PaladinOathOfLight
 )
 
 type SealJudgeCode uint8
@@ -59,6 +68,7 @@ type Paladin struct {
 	aurasSoC     []*core.Aura
 	aurasSotC    []*core.Aura
 	aurasSoW     []*core.Aura
+	aurasSoF     []*core.Aura
 
 	currentJudgement *core.Spell
 	// The seal spell whose aura is up, for Sanctified Judgement's refund of its cost.
@@ -68,6 +78,7 @@ type Paladin struct {
 	spellsJoC        []*core.Spell
 	spellsJotC       []*core.Spell
 	spellsJoW        []*core.Spell
+	spellsJoF        []*core.Spell
 
 	// Seal of Wisdom is registered only for a rotation that names it (sow.go).
 	usesSealOfWisdom       bool
@@ -76,14 +87,19 @@ type Paladin struct {
 	// Active abilities and shared cooldowns that are externally manipulated.
 	exorcism       []*core.Spell
 	judgement      *core.Spell
-	holyShieldAura [3]*core.Aura
-	holyShieldProc [3]*core.Spell
+	holyShieldAura [4]*core.Aura
+	holyShieldProc [4]*core.Spell
 	redoubtAura    *core.Aura
 	holyWrath      []*core.Spell
 
 	// highest rank seal spell if available
 	sealOfRighteousness *core.Spell
 	sealOfCommand       *core.Spell
+	sealOfFury          *core.Spell
+
+	// Seal of Fury's absorb (seal_of_fury.go) and Templar's Bulwark's (templars_bulwark.go).
+	sealOfFuryShield      *core.Absorb
+	templarsBulwarkShield *core.Absorb
 
 	// Consecration's mark on the first four enemies in it, which takes its extra damage and
 	// Consecrated Ground's bonus.
@@ -104,6 +120,23 @@ type Paladin struct {
 	judgementOfTheCrusaderBonus float64
 	// Time taken off Forbearance by Justice Battleplate's 5-piece bonus.
 	forbearanceReduction time.Duration
+
+	// The heals by rank, nil where the paladin doesn't know the rank (healing.go).
+	HolyLight    []*core.Spell
+	FlashOfLight []*core.Spell
+
+	// Illumination's mana on a heal's crit (holy_talents.go), a no-op without the talent, and the
+	// base cost of the heals whose cost is their cast spell's (Holy Shock's heal).
+	illuminate           func(sim *core.Simulation, baseCost float64)
+	illuminationBaseCost map[*core.Spell]float64
+	// What Infusion of Light takes off the next Holy Light while its buff is up.
+	infusionReduction time.Duration
+	// Our Oath of Light on each player, nil without the talent.
+	oathAuras core.AuraArray
+	// Our Light's Vigil on each player, the rank each was cast at, and the rank's heal.
+	vigilMarks core.AuraArray
+	vigilRank  []int
+	vigilHeals []*core.Spell
 }
 
 // Implemented by each Paladin spec.
@@ -137,20 +170,27 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerSealOfCommand()
 	paladin.registerSealOfTheCrusader()
 	paladin.registerSealOfWisdom()
+	if paladin.Env.IsForever() {
+		paladin.registerSealOfFury()
+	}
 
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoR)
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoC)
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJotC)
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoW)
+	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoF)
 
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoR)
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoC)
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSotC)
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoW)
+	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoF)
 
 	// Active abilities
 	paladin.registerForbearance()
 	paladin.registerConsecration()
+	paladin.registerHealingSpells()
+	paladin.applyHealingTalents()
 	paladin.registerHolyShock()
 	paladin.registerLightsVigil()
 	paladin.registerExorcism()
@@ -158,6 +198,8 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerHammerOfWrath()
 	paladin.registerHolyWrath()
 	paladin.registerHolyShield()
+	paladin.registerTemplarsBulwark()
+	paladin.registerDivineShieldAndProtection()
 	paladin.registerBlessingOfSanctuary()
 	paladin.registerLayOnHands()
 	paladin.registerHolyStrike()
@@ -177,9 +219,11 @@ func (paladin *Paladin) Reset(_ *core.Simulation) {
 // maybe need to add stat dependencies
 func NewPaladin(character *core.Character, options *proto.Player, paladinOptions *proto.PaladinOptions) *Paladin {
 	paladin := &Paladin{
-		Character: *character,
-		Talents:   &proto.PaladinTalents{},
-		Options:   paladinOptions,
+		Character:            *character,
+		Talents:              &proto.PaladinTalents{},
+		Options:              paladinOptions,
+		illuminate:           func(*core.Simulation, float64) {},
+		illuminationBaseCost: map[*core.Spell]float64{},
 	}
 	paladin.FillTalents(paladin.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	paladin.usesSealOfWisdom = core.RotationReferencesSpell(options.GetRotation(), SealOfWisdomSpellId[1:]...)
@@ -238,6 +282,11 @@ func (paladin *Paladin) getPrimarySealSpell(primarySeal proto.PaladinSeal) *core
 	case proto.PaladinSeal_Command:
 		return paladin.sealOfCommand
 	case proto.PaladinSeal_Righteousness:
+		return paladin.sealOfRighteousness
+	case proto.PaladinSeal_Fury:
+		if paladin.sealOfFury != nil {
+			return paladin.sealOfFury
+		}
 		return paladin.sealOfRighteousness
 	default:
 		return paladin.sealOfRighteousness

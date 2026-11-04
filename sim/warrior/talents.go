@@ -61,7 +61,7 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 	// Under Forever it raises all Physical damage while a two-hander is equipped, Rend, Deep
 	// Wounds and Thunder Clap included (client 70425, spell 12163: A_MOD_DAMAGE_PERCENT_DONE on
 	// school 1, equip class two-handers), by 2/4/6% (development notes post 9, 2026-11-02: "was
-	// 1/2/3%"; client 70753 still has the 1% curve).
+	// 1/2/3%"; hotfix push 113539, curve 83308 2/4/6; client 70755 still has the 1% curve).
 	if warrior.Env.IsForever() {
 		multiplier = 1 + 0.02*float64(min(warrior.Talents.TwoHandedWeaponSpecialization, 3))
 		warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= multiplier
@@ -171,7 +171,7 @@ func (warrior *Warrior) registerWeaponmasterExtraAttack(procMask core.ProcMask, 
 
 // Bloodthrill hands out Overpower charges off the back of Rend instead of waiting for a dodge.
 // 10% a point, 2 points (development notes post 9, 2026-11-02: "a 10/20% chance (was a 5-point
-// talent granting a 4/8/12/16/20% chance)"; client 70753 still has 4% a point) from main hand white swings, extra attacks included,
+// talent granting a 4/8/12/16/20% chance)"; hotfix push 113539, curve 109366 10/20; client 70755 still has 4% a point) from main hand white swings, extra attacks included,
 // and the on-next-swing Heroic Strike and Cleave. The row's proc types also name melee abilities,
 // but in game the instant specials never proc it (wowsims/forever 788f62ce0f, combat logs:
 // Hamstring 0/99, Overpower 0/9, Execute 0/7, off hand 0/200, Thunder Clap 0/13).
@@ -224,6 +224,7 @@ func (warrior *Warrior) applyUnbridledWrath() {
 	rageGain := 1.0
 
 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12964})
+	forever := warrior.Env.IsForever()
 
 	warrior.RegisterAura(core.Aura{
 		Label:    "Unbridled Wrath",
@@ -236,6 +237,12 @@ func (warrior *Warrior) applyUnbridledWrath() {
 				return
 			}
 
+			// Under Forever only auto attacks (12322's ProcTypeMask 4, DONE_MELEE_AUTO_ATTACK, as
+			// wowsims/forever reads it): a Heroic Strike or Cleave takes the swing's place but is a
+			// melee special, so it doesn't proc it.
+			if forever && spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
+				return
+			}
 			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && sim.RandomFloat("Unbrided Wrath") < procChance {
 				warrior.AddRage(sim, rageGain, rageMetrics)
 			}
@@ -353,7 +360,8 @@ func (warrior *Warrior) makeFlurryAura(points int32) *core.Aura {
 	spellID := []int32{12319, 12971, 12972, 12973, 12974}[points-1]
 	attackSpeed := []float64{1.05, 1.1, 1.15, 1.2, 1.25}[points-1]
 	// Forever's Flurry has 3 points for 10/20/30% (development notes post 9, 2026-11-02: "was 5
-	// points granting 5/10/15/20/25%"; client 70753 still has the 5 point curve).
+	// points granting 5/10/15/20/25%"; hotfix push 113539, curve 83289 10/20/30; client 70755 still has the
+	// 5 point curve).
 	if warrior.Env.IsForever() {
 		points = min(points, 3)
 		spellID = []int32{12319, 12971, 12972}[points-1]
@@ -420,7 +428,9 @@ func (warrior *Warrior) applyBloodCraze() {
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagHelpful,
 
 		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
+		// The November 2 development notes: "The Blood Craze and Gore Drinker talents no longer
+		// generate threat when restoring Health to the Warrior." (client 70753 unchanged, standards 37.)
+		ThreatMultiplier: core.TernaryFloat64(forever, 0, 1),
 
 		Hot: core.DotConfig{
 			Aura:          core.Aura{Label: "Blood Craze"},

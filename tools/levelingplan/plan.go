@@ -210,27 +210,37 @@ func countsToTalentsString(counts [][]int) string {
 // Whether each pick of a route keeps the tree's rules when we come to it: it has a rank left,
 // its row is open and the talent it needs is full.
 func pickProblems(route []pick, shape *proto.LevelingTalentShape) []bool {
+	reasons := pickReasons(route, shape)
+	problems := make([]bool, len(route))
+	for i, reason := range reasons {
+		problems[i] = reason != ""
+	}
+	return problems
+}
+
+// Why each pick of a route breaks the tree's rules when we come to it, or "" when it doesn't.
+func pickReasons(route []pick, shape *proto.LevelingTalentShape) []string {
 	counts := emptyCounts(shape)
 	treePoints := make([]int, len(shape.Trees))
-	problems := make([]bool, len(route))
+	reasons := make([]string, len(route))
 	for i, p := range route {
 		if p.tree >= len(shape.Trees) || p.talent >= len(shape.Trees[p.tree].Talents) {
-			problems[i] = true
+			reasons[i] = "it isn't in the tree"
 			continue
 		}
 		config := shape.Trees[p.tree].Talents[p.talent]
 		switch {
 		case counts[p.tree][p.talent] >= int(config.MaxPoints):
-			problems[i] = true
+			reasons[i] = "it already has all its ranks"
 		case treePoints[p.tree] < int(config.Row*shape.PointsPerRow):
-			problems[i] = true
+			reasons[i] = "its row isn't open yet"
 		case config.Prereq >= 0 && counts[p.tree][config.Prereq] < int(shape.Trees[p.tree].Talents[config.Prereq].MaxPoints):
-			problems[i] = true
+			reasons[i] = "the talent it needs isn't full yet"
 		}
 		counts[p.tree][p.talent]++
 		treePoints[p.tree]++
 	}
-	return problems
+	return reasons
 }
 
 func treeValid(route []pick, shape *proto.LevelingTalentShape) bool {

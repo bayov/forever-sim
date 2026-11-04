@@ -222,6 +222,18 @@ var ItemSetRetributionSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Bonuses: justiceBattlegearBonuses,
 })
 
+// ItemSetProtectionSyntheticPhase1 is the set of the synthetic Phase 1 Protection paladin items
+// (tools/database/forever_synthetic_items_paladin_tank.go): its head and chest carry Justice
+// Battleplate's 2-piece bonus, +7 Defense (1300949).
+var ItemSetProtectionSyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name: "Protection Paladin Synthetic (Phase 1)",
+	Bonuses: map[int32]core.ApplyEffect{
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Defense, 7)
+		},
+	},
+})
+
 // Forever's Tier 1 paladin sets, by the client's set IDs (ItemSetSpell, as wowsims/forever registers
 // them in item_sets.go). Their 18 pieces carry the set ID and armor only. Each set's 3-piece bonus is a
 // utility cooldown the sim does not cast: Hammer of Justice (2106), Blessing of Protection (2107) and
@@ -236,33 +248,42 @@ var ItemSetJusticeBattlegear = core.NewItemSet(core.ItemSet{
 
 // https://www.wowhead.com/forever/item-set=2107/justice-armor
 var ItemSetJusticeArmor = core.NewItemSet(core.ItemSet{
-	ID:   2107,
-	Name: "Justice Armor",
-	Bonuses: core.RulesetSetBonuses(nil, map[int32]core.ApplyEffect{
-		// 1300948: +10 Spirit.
-		2: func(agent core.Agent) {
-			agent.GetCharacter().AddStat(stats.Spirit, 10)
-		},
-		// Reduces the cooldown of your Blessing of Protection by 30 sec.
-		3: func(agent core.Agent) {
-			// Nothing to do
-		},
-		// 1301080: increases healing done by up to 26 and damage done by up to 9 for all magical
-		// spells and effects.
-		4: func(agent core.Agent) {
-			agent.GetCharacter().AddStats(stats.Stats{stats.HealingPower: 26, stats.SpellDamage: 9})
-		},
-		// 1301694: reduces the cooldown of your Holy Shock by 1 sec.
-		5: func(agent core.Agent) {
-			paladin := agent.(PaladinAgent).GetPaladin()
-			paladin.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.SpellCode == SpellCode_PaladinHolyShock {
-					spell.CD.Duration -= time.Second
-				}
-			})
-		},
-	}),
+	ID:      2107,
+	Name:    "Justice Armor",
+	Bonuses: core.RulesetSetBonuses(nil, justiceArmorBonuses),
 })
+
+// ItemSetHolySyntheticPhase1 is the set of the synthetic Phase 1 Holy paladin items
+// (tools/database/forever_synthetic_items_paladin_holy.go), with the Justice Armor bonuses.
+var ItemSetHolySyntheticPhase1 = core.NewItemSet(core.ItemSet{
+	Name:    "Holy Synthetic (Phase 1)",
+	Bonuses: justiceArmorBonuses,
+})
+
+var justiceArmorBonuses = map[int32]core.ApplyEffect{
+	// 1300948: +10 Spirit.
+	2: func(agent core.Agent) {
+		agent.GetCharacter().AddStat(stats.Spirit, 10)
+	},
+	// Reduces the cooldown of your Blessing of Protection by 30 sec.
+	3: func(agent core.Agent) {
+		// Nothing to do
+	},
+	// 1301080: increases healing done by up to 26 and damage done by up to 9 for all magical
+	// spells and effects.
+	4: func(agent core.Agent) {
+		agent.GetCharacter().AddStats(stats.Stats{stats.HealingPower: 26, stats.SpellDamage: 9})
+	},
+	// 1301694: reduces the cooldown of your Holy Shock by 1 sec.
+	5: func(agent core.Agent) {
+		paladin := agent.(PaladinAgent).GetPaladin()
+		paladin.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_PaladinHolyShock {
+				spell.CD.Duration -= time.Second
+			}
+		})
+	},
+}
 
 // https://www.wowhead.com/forever/item-set=2108/justice-battleplate
 var ItemSetJusticeBattleplate = core.NewItemSet(core.ItemSet{

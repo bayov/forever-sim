@@ -68,6 +68,34 @@ level 60 BiS sets for any healer. The healing sim's healers (docs/healing_sim.md
 | Set | Lists | Sta | Int | Spi | SP | Healing | Crit | MP5 | top stat / non-Sta |
 |---|---|---|---|---|---|---|---|---|---|
 | Restoration shaman | 2 | 10.8 | 17.5 | 10.0 | 22.2 | 27.1 | 7.0 | 5.4 | Healing 30% |
+| Healing priest (Holy and Discipline) | 2 | 12.1 | 15.3 | 10.0 | 27.5 | 21.1 | 5.9 | 8.1 | SP 31% |
+| Holy paladin | 1 | 14.7 | 18.7 | 10.0 | 21.9 | 26.8 | 2.8 | 5.1 | Healing 31% |
+| Restoration druid | 2 | 14.8 | 18.7 | 10.0 | 17.5 | 35.2 | 1.0 | 2.8 | Healing 41% |
+
+- **Healing priest** (2026-11-04, the priest healer worker): Wowhead's two WoW Forever priest guides (Holy and
+Discipline) have every slot table empty ("filled in once more items are discovered at max level") and a gear
+planner of placeholder items, so the row averages the Classic healing priest pre-raid list (Sta 12.8, Int 15.4,
+Spi 13.0, SP 14.8, healing 32.3, MP5 11.7; `orchestration/tools/healers/priest_healing_mix.py`) with the Forever
+Restoration shaman list above (the one Forever healer list with items), Spirit at 10% (standards 5). One set for
+both specs: the lists don't split Holy from Discipline. Set: `tools/database/forever_synthetic_items_priest_healing.go`
+(990501 to 990514; `priest_healing_synth.py`).
+- **Holy paladin** (2026-11-03, docs/healing_paladin.md): the WoW Forever Holy paladin guide
+  (www.wowhead.com/forever/guide/classes/paladin/holy/bis-gear) lists no item yet (every slot "will be filled
+  in once more items are discovered at max level"; its gear planner link holds obfuscated beta item IDs no
+  item in our database has), so the row is the Classic pre-raid Holy paladin list's alone
+  (www.wowhead.com/classic/guide/paladin-healing-pre-raid-best-in-slot-bis-gear-wow-classic: each slot's first
+  Best, the main hand and held off-hand, two rings, no trinkets or libram). It prices at Sta 14.7, Int 18.2,
+  Spi 12.1, SP 2.3, healing 45.0, crit 2.7, MP5 5.0: Era's items carry healing alone, where Forever's carry
+  spell power. So its healing power (47.3 of the 100) is split between spell power and healing as the
+  Restoration shaman row splits its (45 to 55), Spirit is 10% (standards 5), Stamina the list's own, and the
+  rest in its proportions. The Forever guide's advice ("heavy healing power and intellect items ... a good
+  amount of spirit") agrees. Scripts: orchestration/tools/healers/paladin_holy_mix.py and paladin_holy_synth.py;
+  the set is tools/database/forever_synthetic_items_paladin_holy.go.
+- **Restoration druid** (2026-11-04, docs/healing_druid.md): the row takes the same rule from the two cached druid
+  lists: the Forever Restoration druid Phase 1 guide and the Classic Restoration druid pre-raid guide, first pick
+  a slot, the staff path (`orchestration/tools/healers/druid_restoration_mix.py`, lists' average Sta 14.8, Int
+  17.4, Spi 14.7, SP 16.2, healing 32.7, hit 0.7, crit 0.9, MP5 2.6; `druid_restoration_synth.py` the target). The
+  set is ids 990401 to 990413 in `tools/database/forever_synthetic_items_druid_restoration.go`.
 
 ## Tanks (2026-11-03)
 

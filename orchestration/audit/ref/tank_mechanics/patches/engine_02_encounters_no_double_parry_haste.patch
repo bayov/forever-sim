@@ -1,0 +1,84 @@
+diff -u -r a/tools/encounters/broodlord.json b/tools/encounters/broodlord.json
+--- a/tools/encounters/broodlord.json	2026-11-04 13:37:13.144632864 +0000
++++ b/tools/encounters/broodlord.json	2026-11-04 13:37:13.147551921 +0000
+@@ -42,7 +42,7 @@
+     "name": "Broodlord Lashlayer",
+     "level": 63,
+     "mobType": "MobTypeUnknown",
+-    "parryHaste": true,
++    "parryHaste": false,
+     "stats": [
+      0,
+      0,
+diff -u -r a/tools/encounters/chromaggus.json b/tools/encounters/chromaggus.json
+--- a/tools/encounters/chromaggus.json	2026-11-04 13:37:13.149546028 +0000
++++ b/tools/encounters/chromaggus.json	2026-11-04 13:37:13.149737077 +0000
+@@ -41,7 +41,7 @@
+     "name": "Chromaggus",
+     "level": 63,
+     "mobType": "MobTypeUnknown",
+-    "parryHaste": true,
++    "parryHaste": false,
+     "stats": [
+      0,
+      0,
+diff -u -r a/tools/encounters/golemagg.json b/tools/encounters/golemagg.json
+--- a/tools/encounters/golemagg.json	2026-11-04 13:37:13.154622219 +0000
++++ b/tools/encounters/golemagg.json	2026-11-04 13:37:13.157328527 +0000
+@@ -48,7 +48,7 @@
+     "name": "Golemagg the Incinerator",
+     "level": 63,
+     "mobType": "MobTypeUnknown",
+-    "parryHaste": true,
++    "parryHaste": false,
+     "stats": [
+      0,
+      0,
+diff -u -r a/tools/encounters/magmadar.json b/tools/encounters/magmadar.json
+--- a/tools/encounters/magmadar.json	2026-11-04 13:37:13.160484032 +0000
++++ b/tools/encounters/magmadar.json	2026-11-04 13:37:13.163039706 +0000
+@@ -50,7 +50,7 @@
+     "name": "Magmadar",
+     "level": 63,
+     "mobType": "MobTypeUnknown",
+-    "parryHaste": true,
++    "parryHaste": false,
+     "stats": [
+      0,
+      0,
+diff -u -r a/tools/encounters/onyxia.json b/tools/encounters/onyxia.json
+--- a/tools/encounters/onyxia.json	2026-11-04 13:37:13.165358402 +0000
++++ b/tools/encounters/onyxia.json	2026-11-04 13:37:13.165737078 +0000
+@@ -41,7 +41,7 @@
+     "name": "Onyxia",
+     "level": 63,
+     "mobType": "MobTypeUnknown",
+-    "parryHaste": true,
++    "parryHaste": false,
+     "stats": [
+      0,
+      0,
+diff -u -r a/tools/encounters/ragnaros.json b/tools/encounters/ragnaros.json
+--- a/tools/encounters/ragnaros.json	2026-11-04 13:37:13.170462234 +0000
++++ b/tools/encounters/ragnaros.json	2026-11-04 13:37:13.172722252 +0000
+@@ -47,7 +47,7 @@
+     "name": "Ragnaros",
+     "level": 63,
+     "mobType": "MobTypeUnknown",
+-    "parryHaste": true,
++    "parryHaste": false,
+     "stats": [
+      0,
+      0,
+diff -u -r a/tools/encounters/vaelastrasz.json b/tools/encounters/vaelastrasz.json
+--- a/tools/encounters/vaelastrasz.json	2026-11-04 13:37:13.175163152 +0000
++++ b/tools/encounters/vaelastrasz.json	2026-11-04 13:37:13.177601292 +0000
+@@ -47,7 +47,7 @@
+     "name": "Vaelastrasz the Corrupt",
+     "level": 63,
+     "mobType": "MobTypeUnknown",
+-    "parryHaste": true,
++    "parryHaste": false,
+     "stats": [
+      0,
+      0,

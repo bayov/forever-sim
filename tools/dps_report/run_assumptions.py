@@ -7,8 +7,10 @@ sim/core/assumptions.go). With no DASH_ASSUME it is bit-identical to the plain b
 Per build an assumption touches, seed 1, the build's request (req/<id>.json) otherwise:
   base      no knob set: 180 s at 20k iterations, 120 and 300 s at 5k
   single    one assumption at one non-default setting, the same three runs
-  grid      builds with 3 or fewer assumptions: every combination of two or more non-default settings, 180 s at 20k
-  check     builds with more: 12 random combinations, 180 s at 20k, to measure the multiplicative combination's error
+  grid      builds with 3 or fewer assumptions: every combination of two or more non-default settings, 180 s
+  check     builds with more: 12 random combinations, 180 s, to measure the multiplicative combination's error
+Every 180 s run but the base sims at the fights the assumption luck goal needs (adaptive.py: a 1k pilot, then up to
+40k), paired with the base's fights: its DPS is the base's plus the paired difference, and pse that difference's error.
 A setting with the ice_lance edit runs the preset rotation and one with Ice Lance on every Fingers of Frost charge, and keeps
 the better (no setting uses it now: the Frost and Frostfire presets cast Ice Lance themselves). A setting with the
 no_ice_lance edit (Ice Lance at The Burning Crusade's 1/7, where it may not pay) runs the preset rotation and the build's rotation that never
@@ -29,8 +31,9 @@ import copy, itertools, json, math, os, random, subprocess, sys, tempfile, threa
 from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from dashpaths import D, BIN, TREE  # noqa: E402
+from dashpaths import D, BIN, TREE, RNG  # noqa: E402
 from assumptions_def import A  # noqa: E402
+import adaptive  # noqa: E402
 
 CLI = os.path.join(BIN, 'wowsimcli_assume')
 if not os.path.exists(CLI):  # any wowsimcli built with the DASH_ASSUME patch will do
@@ -100,7 +103,7 @@ def request(bid, combo, rot):
 def run(req, env, iters, secs):
     req = copy.deepcopy(req)
     req['encounter']['duration'] = secs
-    req['simOptions'] = {'iterations': iters, 'randomSeed': '1'}
+    req['simOptions'] = {'iterations': iters, 'randomSeed': '1', **RNG}
     e = dict(os.environ)
     e.pop('DASH_NAMES', None)
     e.pop('DASH_RACIALS_OFF', None)
@@ -117,6 +120,52 @@ def run(req, env, iters, secs):
         raise RuntimeError(r['error']['message'][:300])
     p = r['raidMetrics']['parties'][0]['players'][0]['dps']
     return round(p['avg'], 3), round(p['stdev'] / math.sqrt(iters), 3)
+
+
+def fights(req, env, seed, count):
+    """Per-fight DPS of `count` fights from `seed`."""
+    req = copy.deepcopy(req)
+    req['simOptions'] = {'iterations': count, 'randomSeed': str(seed), 'saveAllValues': True, **RNG}
+    e = dict(os.environ)
+    for k in ('DASH_NAMES', 'DASH_RACIALS_OFF', 'DASH_ASSUME'):
+        e.pop(k, None)
+    if env:
+        e['DASH_ASSUME'] = ','.join(f'{k}={v}' for k, v in env.items())
+    with tempfile.TemporaryDirectory() as d:
+        i, o = os.path.join(d, 'i.json'), os.path.join(d, 'o.json')
+        json.dump(req, open(i, 'w'))
+        subprocess.run([CLI, 'sim', '--infile', i, '--outfile', o], check=True, capture_output=True, cwd=TREE, env=e)
+        r = json.load(open(o))
+    if r.get('error'):
+        raise RuntimeError(r['error']['message'][:300])
+    return r['raidMetrics']['parties'][0]['players'][0]['dps'].get('allValues', [])
+
+
+def at180(bid, req, env, kind):
+    """A 180 s row against the build's base, at the fights the assumption luck goal needs (adaptive.py): the base is the
+    main run's 20k fights, a setting a pilot of PILOT fights of both, then both topped up to N from the pilot's paired
+    spread. Its DPS is the base's plus the paired difference; pse is the difference's error."""
+    def at(r):
+        r = copy.deepcopy(r)
+        r['encounter']['duration'] = 180
+        return r
+    req, (breq, benv) = at(req), request(bid, (), 'preset')
+    breq = at(breq)
+
+    def vec(r, e, n):
+        return adaptive.values(bid, r, e, n, lambda s, c: fights(r, e, s, c))
+
+    vb = vec(breq, benv, 20000)  # the main run's fights (run_build.py stores them under the same request)
+    ref, ref_se = adaptive.mean(vb), adaptive.sd(vb) / math.sqrt(len(vb))
+    if kind == 'base':
+        return {'iters': 20000, 'dps': round(ref, 3), 'se': round(ref_se, 3)}
+    vb, vs = vec(breq, benv, adaptive.PILOT), vec(req, env, adaptive.PILOT)
+    d, spread, _ = adaptive.paired(vb, vs)
+    n = adaptive.fights(spread, adaptive.goal('asm', d), adaptive.PILOT)
+    if n > adaptive.PILOT:
+        vb, vs = vec(breq, benv, n), vec(req, env, n)
+    d, _, pse = adaptive.paired(vb, vs)
+    return {'iters': n, 'dps': round(ref + d, 3), 'se': round(math.hypot(ref_se, pse), 3), 'pse': round(pse, 3)}
 
 
 def keys_for(bid):
@@ -201,13 +250,17 @@ def main(ids):
         b, combo, kind, secs, iters, rot = j
         req, env = request(b, combo, rot)
         try:
-            dps, se = run(req, env, iters, secs)
+            if secs == 180:
+                row = at180(b, req, env, kind)
+            else:
+                dps, se = run(req, env, iters, secs)
+                row = {'iters': iters, 'dps': dps, 'se': se}
         except Exception as e:  # noqa: BLE001
             print('FAIL', b, combo_str(combo), secs, rot, str(e)[:200], flush=True)
             return
         with lock:
             with open(RES, 'a') as fh:
-                fh.write(json.dumps({'build': b, 'combo': combo_str(combo), 'kind': kind, 'secs': secs, 'iters': iters, 'rot': rot, 'dps': dps, 'se': se}) + '\n')
+                fh.write(json.dumps({'build': b, 'combo': combo_str(combo), 'kind': kind, 'secs': secs, 'rot': rot, **row}) + '\n')
             n[0] += 1
             if n[0] % 50 == 0:
                 print(n[0], 'done', flush=True)
@@ -222,7 +275,7 @@ def identical(ids, iters=1000):
     bad = 0
     for bid in ids:
         req = json.load(open(os.path.join(D, 'req', bid + '.json')))
-        req['simOptions'] = {'iterations': iters, 'randomSeed': '1'}
+        req['simOptions'] = {'iterations': iters, 'randomSeed': '1', **RNG}
         outs = []
         for cli in (os.environ.get('PLAIN_CLI') or os.path.join(BIN, 'wowsimcli'), CLI):
             with tempfile.TemporaryDirectory() as d:

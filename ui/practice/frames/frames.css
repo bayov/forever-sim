@@ -1,0 +1,525 @@
+/* The Blizzard frames (frames/panels.ts). Sizes are UI units: the layer is zoomed to the room's
+   UI scale. Hover is :hover for the real cursor and .v-hover for the room's own (pointer.ts). */
+
+.bz-layer {
+	position: fixed;
+	z-index: 5;
+	left: 0;
+	top: 0;
+	pointer-events: none;
+	font-family: 'Friz Quadrata', 'Palatino Linotype', serif;
+	font-size: 12px;
+	text-shadow: none;
+	user-select: none;
+}
+.bz-frame {
+	position: absolute;
+	pointer-events: auto;
+}
+.bz-frame * {
+	box-sizing: border-box;
+}
+.bz-tex {
+	position: absolute;
+	background-repeat: no-repeat;
+	pointer-events: none;
+}
+
+/* Fonts (FrameXML's Fonts.xml). */
+.bz-text {
+	white-space: nowrap;
+	line-height: 1.15;
+	pointer-events: none;
+}
+.GameFontNormal,
+.GameFontHighlight,
+.GameFontDisable,
+.GameFontGreen,
+.GameFontRed,
+.GameFontBlack {
+	font: 12px 'Friz Quadrata', serif;
+	text-shadow: 1px 1px 0 #000;
+}
+.GameFontNormalSmall,
+.GameFontHighlightSmall,
+.GameFontDisableSmall,
+.SubSpellFont {
+	font: 10px 'Friz Quadrata', serif;
+	text-shadow: 1px 1px 0 #000;
+}
+.GameFontNormalLarge {
+	font: 16px 'Friz Quadrata', serif;
+	text-shadow: 1px 1px 0 #000;
+}
+.GameFontNormal,
+.GameFontNormalSmall,
+.GameFontNormalLarge {
+	color: #ffd200;
+}
+.GameFontHighlight,
+.GameFontHighlightSmall {
+	color: #fff;
+}
+.GameFontDisable,
+.GameFontDisableSmall {
+	color: #808080;
+}
+.GameFontGreen {
+	color: #19ff19;
+}
+.GameFontRed {
+	color: #ff1919;
+}
+.GameFontBlack {
+	color: #000;
+	text-shadow: none;
+}
+.SubSpellFont {
+	color: #593300;
+	text-shadow: none;
+}
+.NumberFontNormal,
+.NumberFontNormalSmall {
+	font: 14px 'Arial Narrow WoW', 'Arial Narrow', sans-serif;
+	color: #fff;
+	text-shadow:
+		-1px 0 #000,
+		1px 0 #000,
+		0 -1px #000,
+		0 1px #000;
+}
+.NumberFontNormalSmall {
+	font-size: 12px;
+}
+.ChatFontNormal {
+	font: 14px 'Arial Narrow WoW', 'Arial Narrow', sans-serif;
+	text-shadow: 1px 1px 0 #000;
+}
+
+/* UIPanelButtonTemplate. */
+.bz-button {
+	position: absolute;
+	border-style: solid;
+	border-width: 0 12px;
+	border-image: var(--bz-btn-up) 0 12 fill / 0 12px stretch;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+}
+.bz-button.pushed {
+	border-image-source: var(--bz-btn-down);
+}
+.bz-button.disabled {
+	border-image-source: var(--bz-btn-disabled);
+	cursor: default;
+}
+.bz-button::after {
+	content: '';
+	position: absolute;
+	inset: 0 -12px;
+	border-style: solid;
+	border-width: 0 12px;
+	border-image: var(--bz-btn-highlight) 0 12 fill / 0 12px stretch;
+	opacity: 0;
+	pointer-events: none;
+}
+.bz-button:not(.disabled):hover::after,
+.bz-button:not(.disabled).v-hover::after {
+	opacity: 1;
+}
+.bz-button-text {
+	font: 12px 'Friz Quadrata', serif;
+	color: #ffd200;
+	text-shadow: 1px 1px 0 #000;
+	white-space: nowrap;
+	pointer-events: none;
+	position: relative;
+	z-index: 1;
+}
+.bz-button:hover .bz-button-text,
+.bz-button.v-hover .bz-button-text {
+	color: #fff;
+}
+.bz-button.pushed .bz-button-text {
+	transform: translate(1px, 1px);
+}
+.bz-button.disabled .bz-button-text {
+	color: #808080;
+}
+
+/* UIPanelCloseButton. */
+.bz-close {
+	position: absolute;
+	background: var(--bz-close-up) 0 0 / 100% 100%;
+	cursor: pointer;
+}
+.bz-close.pushed {
+	background-image: var(--bz-close-down);
+}
+.bz-close:hover::after,
+.bz-close.v-hover::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--bz-close-highlight) 0 0 / 100% 100%;
+	pointer-events: none;
+}
+
+/* CharacterFrameTabButtonTemplate: 20 wide ends and a stretched middle. The selected tab uses
+   the taller active art, raised a little so it joins the panel above. */
+.bz-tab {
+	position: absolute;
+	height: 32px;
+	cursor: pointer;
+}
+.bz-tab-l,
+.bz-tab-m,
+.bz-tab-r {
+	position: absolute;
+	top: 0;
+	height: 32px;
+	background-image: var(--bz-tab-inactive);
+	background-size: 128px 32px;
+	pointer-events: none;
+}
+.bz-tab-l {
+	left: 0;
+	width: 20px;
+	background-position: 0 0;
+}
+.bz-tab-m {
+	left: 20px;
+	right: 20px;
+	/* 50% lines the texture's x 20 up with our left edge at any width. */
+	background-position: 50% 0;
+	background-size: calc((100%) * 128 / 88) 32px;
+}
+.bz-tab-r {
+	right: 0;
+	width: 20px;
+	background-position: -108px 0;
+}
+.bz-tab.selected .bz-tab-l,
+.bz-tab.selected .bz-tab-m,
+.bz-tab.selected .bz-tab-r {
+	top: -3px;
+	height: 35px;
+	background-image: var(--bz-tab-active);
+	background-size: 128px 64px;
+}
+.bz-tab.selected .bz-tab-m {
+	background-size: calc((100%) * 128 / 88) 64px;
+}
+.bz-tab-text {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 9px;
+	text-align: center;
+	font: 10px 'Friz Quadrata', serif;
+	color: #ffd200;
+	text-shadow: 1px 1px 0 #000;
+	white-space: nowrap;
+	pointer-events: none;
+}
+.bz-tab.selected .bz-tab-text {
+	top: 5px;
+	color: #fff;
+}
+.bz-tab:not(.selected):hover::after,
+.bz-tab:not(.selected).v-hover::after {
+	content: '';
+	position: absolute;
+	left: 10px;
+	right: 10px;
+	top: 6px;
+	height: 26px;
+	background: var(--bz-tab-highlight) center / 100% 100%;
+	pointer-events: none;
+}
+
+/* OptionsCheckButtonTemplate. */
+.bz-check {
+	position: absolute;
+	height: 26px;
+	cursor: pointer;
+}
+.bz-check-box {
+	position: absolute;
+	left: 0;
+	top: 0;
+	width: 26px;
+	height: 26px;
+	background: var(--bz-check-up) 0 0 / 100% 100%;
+}
+.bz-check.pushed .bz-check-box {
+	background-image: var(--bz-check-down);
+}
+.bz-check.checked .bz-check-box::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--bz-check-check) 0 0 / 100% 100%;
+}
+.bz-check:hover .bz-check-box::after,
+.bz-check.v-hover .bz-check-box::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--bz-check-highlight) 0 0 / 100% 100%;
+}
+.bz-check-label {
+	position: absolute;
+	left: 26px;
+	top: 7px;
+	font-size: 12px;
+}
+
+/* OptionsSliderTemplate. */
+.bz-slider {
+	position: absolute;
+	cursor: pointer;
+	border-style: solid;
+	border-width: 3px 6px;
+	border-image: var(--bz-slider-border) 8 / 8px 8px round;
+	background: var(--bz-slider-bg) center / 100% 100%;
+	background-clip: padding-box;
+}
+.bz-slider-title {
+	position: absolute;
+	left: -20px;
+	right: -20px;
+	bottom: 100%;
+	margin-bottom: 3px;
+}
+.bz-slider-low,
+.bz-slider-high {
+	position: absolute;
+	top: 100%;
+	margin-top: 3px;
+}
+.bz-slider-low {
+	left: -4px;
+}
+.bz-slider-high {
+	right: -4px;
+}
+.bz-slider-thumb {
+	position: absolute;
+	top: 50%;
+	width: 32px;
+	height: 32px;
+	margin: -16px 0 0 -16px;
+	background: var(--bz-slider-thumb) 0 0 / 100% 100%;
+	pointer-events: none;
+}
+
+/* The game's dropdowns as a select. */
+.bz-select {
+	position: absolute;
+	height: 22px;
+	padding: 0 6px;
+	font: 12px 'Friz Quadrata', serif;
+	color: #fff;
+	background: rgba(0, 0, 0, 0.75);
+	border: 1px solid #6a5a3a;
+	border-radius: 3px;
+	box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.8);
+	outline: none;
+	cursor: pointer;
+}
+
+/* The dialog box backdrop (GameMenuFrame, the options): the border with the dark background
+   tiled inside it, and its header. */
+.bz-dialog {
+	position: absolute;
+	inset: 0;
+	border: 32px solid transparent;
+	border-image: var(--bz-dialog-border) 32 / 32px round;
+	pointer-events: none;
+}
+.bz-dialog::before {
+	content: '';
+	position: absolute;
+	inset: -21px;
+	background: var(--bz-dialog-bg) 0 0 / 32px 32px repeat;
+	z-index: -1;
+}
+.bz-dialog-header {
+	position: absolute;
+	top: -12px;
+	left: 50%;
+	width: 256px;
+	height: 64px;
+	margin-left: -128px;
+	background: var(--bz-dialog-header) 0 0 / 100% 100%;
+	pointer-events: none;
+}
+.bz-dialog-header .bz-text {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: 14px;
+	text-align: center;
+}
+
+/* UIPanelScrollFrameTemplate. */
+.bz-scroll {
+	position: absolute;
+}
+.bz-scroll-view {
+	position: absolute;
+	inset: 0;
+	overflow: hidden;
+}
+.bz-scroll-content {
+	position: relative;
+}
+.bz-scrollbar {
+	position: absolute;
+	left: calc(100% + 6px);
+	top: 0;
+	bottom: 0;
+	width: 16px;
+}
+.bz-scroll-btn {
+	position: absolute;
+	left: 0;
+	width: 16px;
+	height: 16px;
+	background-size: 28px 28px;
+	background-position: -6px -6px;
+	cursor: pointer;
+}
+.bz-scroll-btn.up {
+	top: -16px;
+	background-image: var(--bz-scroll-up);
+}
+.bz-scroll-btn.down {
+	bottom: -16px;
+	background-image: var(--bz-scroll-down);
+}
+.bz-scroll-btn.up.pushed {
+	background-image: var(--bz-scroll-up-down);
+}
+.bz-scroll-btn.down.pushed {
+	background-image: var(--bz-scroll-down-down);
+}
+.bz-scroll-btn.up.disabled {
+	background-image: var(--bz-scroll-up-disabled);
+}
+.bz-scroll-btn.down.disabled {
+	background-image: var(--bz-scroll-down-disabled);
+}
+.bz-scroll-btn:not(.disabled):hover::after,
+.bz-scroll-btn:not(.disabled).v-hover::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--bz-scroll-highlight) -6px -6px / 28px 28px;
+}
+.bz-scroll-track {
+	position: absolute;
+	inset: 0;
+}
+.bz-scroll-knob {
+	position: absolute;
+	left: 0;
+	width: 16px;
+	height: 24px;
+	background: var(--bz-scroll-knob) -8px -4px / 32px 32px;
+	cursor: pointer;
+}
+
+/* ItemButtonTemplate: the icon, the slot frame around it (64 wide for a 37 button), the
+   quality border tinted from the white icon frame, the count and the highlight. */
+.bz-item {
+	position: absolute;
+	width: 37px;
+	height: 37px;
+}
+.bz-item-icon {
+	position: absolute;
+	inset: 0;
+	background-size: 100% 100%;
+}
+.bz-item.framed::before {
+	content: '';
+	position: absolute;
+	left: -13.5px;
+	top: -13.5px;
+	width: 64px;
+	height: 64px;
+	background: var(--bz-slot) 0 0 / 100% 100%;
+	pointer-events: none;
+	z-index: 1;
+}
+.bz-item.framed:not(.filled)::before {
+	opacity: 0.6;
+}
+.bz-item-border {
+	position: absolute;
+	inset: 0;
+	display: none;
+	background: var(--q, #fff);
+	-webkit-mask: var(--bz-icon-border) 0 0 / 100% 100%;
+	mask: var(--bz-icon-border) 0 0 / 100% 100%;
+	pointer-events: none;
+	z-index: 2;
+}
+.bz-item-count {
+	position: absolute;
+	right: 3px;
+	bottom: 1px;
+	z-index: 3;
+}
+.bz-item:hover::after,
+.bz-item.v-hover::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--bz-slot-highlight) 0 0 / 100% 100%;
+	pointer-events: none;
+	z-index: 4;
+}
+
+/* The Options frame: the category list and the page, each a box with the tooltip border. */
+.bz-options .bz-dialog::before {
+	background-image: var(--bz-dialog-bg-dark);
+}
+.bz-options-list,
+.bz-options-page {
+	position: absolute;
+	border: 16px solid transparent;
+	border-image: var(--bz-tooltip-border) 16 / 16px round;
+}
+.bz-options-list::before,
+.bz-options-page::before {
+	content: '';
+	position: absolute;
+	inset: -12px;
+	background: rgba(0, 0, 0, 0.35);
+	z-index: -1;
+}
+.bz-options-list > *,
+.bz-options-page > * {
+	margin: -16px 0 0 -16px;
+}
+.bz-options-cat {
+	cursor: pointer;
+}
+.bz-options-cat.selected::before,
+.bz-options-cat:hover::before,
+.bz-options-cat.v-hover::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--bz-title-highlight) 0 0 / 100% 100%;
+	mix-blend-mode: screen;
+	opacity: 0.7;
+}
+.bz-options-cat:not(.selected):hover::before,
+.bz-options-cat:not(.selected).v-hover::before {
+	opacity: 0.35;
+}

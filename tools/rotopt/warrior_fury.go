@@ -89,6 +89,9 @@ func (warriorFury) Build(k Knobs) *proto.APLRotation {
 	if k["fillerGap"] > 0 {
 		gap = and(ge(spellTimeToReady(bloodthirst), seconds(k["fillerGap"])), ge(spellTimeToReady(whirlwind), seconds(k["fillerGap"])))
 	}
+	if k["rsLate"] == 1 {
+		items = append(items, recklessSwingsLine(k)...)
+	}
 	hs := heroicStrikeLine(k)
 	if gap != nil {
 		hs.Action.Condition = and(hs.Action.Condition, gap)

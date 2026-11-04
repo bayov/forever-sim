@@ -9,8 +9,14 @@ func (warrior *Warrior) registerHeroicStrikeSpell(realismICD *core.Cooldown) {
 	aq := warrior.Env.IncludeAQRanks()
 	flatDamageBonus := core.TernaryFloat64(aq, 157, 138)
 	spellID := core.TernaryInt32(aq, 25286, 11567)
-	// No known equation
+	// No known equation under Classic.
 	threat := core.TernaryFloat64(aq, 173, 145)
+	// Under Forever its flat threat is 2.54 a spell level, 142.2 for rank 8 (level 56):
+	// wowsims/forever's threat capture of ranks 3 and 4 read the damage + 40.6 at level 16 and + 61
+	// at level 24, times the stance (spell_overrides.go, 2026-10-07). The client states none.
+	if warrior.Env.IsForever() {
+		threat = 2.54 * core.TernaryFloat64(aq, 60, 56)
+	}
 
 	warrior.HeroicStrike = warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID},
@@ -52,9 +58,17 @@ func (warrior *Warrior) registerCleaveSpell(realismICD *core.Cooldown) {
 	flatDamageBonus := 50.0
 	spellID := int32(20569)
 	threat := 100.0
+	// Under Forever 1.53 a spell level, 91.8 for rank 5 (level 60): wowsims/forever's threat
+	// capture of rank 2 read about 46 beyond its damage at level 30 on one target
+	// (spell_overrides.go, 2026-10-07).
+	if warrior.Env.IsForever() {
+		threat = 1.53 * 60
+	}
 
-	// Improved Cleave is gone from the Forever tree, and Raging Blows takes 3 Rage off Cleave.
-	rageCost := 20 - core.TernaryFloat64(warrior.Talents.RagingBlows, 3, 0)
+	// Improved Cleave is gone from the Forever tree. Raging Blows, which took 3 Rage off Cleave and
+	// Whirlwind, is gone too: hotfix push 113539 (2026-11-03) turns its spell 1310315 into Improved
+	// Whirlwind and drops the cost effect.
+	rageCost := 20.0
 
 	results := make([]*core.SpellResult, min(int32(2), warrior.Env.GetNumTargets()))
 

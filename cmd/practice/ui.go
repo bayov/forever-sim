@@ -51,6 +51,10 @@ func (c *wowClient) ellesmereUI(account string) map[string]any {
 		"customColors":    profile["customColors"],
 		"fonts":           profile["fonts"],
 	}
+	// The chat window's spot and size, for the room's chat frame.
+	if chat := luaTable(addons, "EllesmereUIChat", "chat"); chat != nil {
+		out["chat"] = map[string]any{"position": chat["chatPosition"], "size": chat["chatSize"]}
+	}
 	if dm := luaTable(addons, "EllesmereUIDamageMeters", "dm"); dm != nil {
 		out["damageMeter"] = map[string]any{
 			"window":       luaTable(dm, "windows", "1"),
@@ -61,14 +65,36 @@ func (c *wowClient) ellesmereUI(account string) map[string]any {
 	return out
 }
 
-// handleFont serves EllesmereUI's font from the client, so the HUD's text looks like the game's.
+// handleFont serves the HUD's font from the client: Avant Garde from SharedMedia_MyMedia when any
+// of the install's game folders has it, else EllesmereUI's Avant Garde Naowh from the Forever
+// folder.
 func (s *server) handleFont(w http.ResponseWriter, r *http.Request) {
 	if s.client == nil {
 		http.NotFound(w, r)
 		return
 	}
 	w.Header().Set("Cache-Control", "max-age=86400")
-	http.ServeFile(w, r, filepath.Join(s.client.forever, "Interface", "AddOns", "EllesmereUI", "media", "fonts", "Avant Garde Naowh.ttf"))
+	http.ServeFile(w, r, s.client.fontPath())
+}
+
+// fontPath is the font handleFont serves. We look in the Forever folder first, then in the other
+// game folders, since SharedMedia_MyMedia may only be installed for Classic Era or Anniversary.
+func (c *wowClient) fontPath() string {
+	shared := filepath.Join("Interface", "AddOns", "SharedMedia_MyMedia", "font", "Avant Garde.ttf")
+	dirs := []string{c.forever}
+	if entries, err := os.ReadDir(c.dataRoot); err == nil {
+		for _, e := range entries {
+			if p := filepath.Join(c.dataRoot, e.Name()); e.IsDir() && strings.HasPrefix(e.Name(), "_") && p != c.forever {
+				dirs = append(dirs, p)
+			}
+		}
+	}
+	for _, d := range dirs {
+		if _, err := os.Stat(filepath.Join(d, shared)); err == nil {
+			return filepath.Join(d, shared)
+		}
+	}
+	return filepath.Join(c.forever, "Interface", "AddOns", "EllesmereUI", "media", "fonts", "Avant Garde Naowh.ttf")
 }
 
 // noteBinds reads the "## Keybinds" block of notes/<class>-keybinds-forever.md in the WoW folder:

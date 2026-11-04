@@ -22,6 +22,14 @@ const fill = { color: new Float64Array(3), alpha: new Float64Array(1), size: new
 // renderer compiles their shader. In the fight an empty emitter isn't drawn at all.
 export const particleOptions = { drawEmpty: false };
 
+// drawOrder is where each kind of see-through thing draws, as its render order: the units'
+// own see-through parts first (0), then the raid test's boss, its raiders' gear and bodies, the
+// spell effects, the particles and the ribbons. The perf recorder times each (scene.ts).
+export const drawOrder = { boss: 0.3, gear: 1, effects: 2, particles: 10, ribbons: 11 };
+
+// The particles the batches drew in the last frame, for the perf recorder.
+export const drawn = { particles: 0 };
+
 // Every particle and ribbon batch, which fillBatches fills before each frame draws.
 const live = new Set<{ fill(): void }>();
 
@@ -30,6 +38,7 @@ const live = new Set<{ fill(): void }>();
 // batch draws, the GPU would get the new list of triangles over the last frame's points, and a
 // ribbon's triangles would reach across to another ribbon's points.
 export function fillBatches() {
+	drawn.particles = 0;
 	for (const b of live) b.fill();
 }
 
@@ -57,6 +66,8 @@ attribute vec2 iSize;
 attribute vec4 iColor;
 attribute vec4 iUv;
 attribute float iRot;
+attribute float iLayer;
+varying float vLayer;
 uniform float uFlat;
 varying vec2 vUv;
 varying vec2 vQuad;
@@ -70,16 +81,27 @@ void main() {
 		mv = viewMatrix * vec4(iPos + vec3(corner.x, 0.0, corner.y), 1.0);
 	} else {
 		mv = viewMatrix * vec4(iPos, 1.0);
-		mv.xy += corner;
+		// A puff right at the camera would cover the screen, blended over and over. We keep it to
+		// about 40% of the screen's height (at the room's 70 degree view), which a particle only
+		// reaches when it's a few of its sizes from the camera.
+		float cap = 0.6 * max(-mv.z, 0.0);
+		float big = max(abs(iSize.x), abs(iSize.y));
+		mv.xy += big > cap ? corner * (cap / big) : corner;
 	}
 	gl_Position = projectionMatrix * mv;
 	vUv = vec2(mix(iUv.x, iUv.z, uv.x), mix(iUv.w, iUv.y, uv.y));
 	vQuad = uv;
 	vColor = iColor;
+	vLayer = iLayer;
 }`;
 
 const fragmentShader = /* glsl */ `
+#ifdef PARTICLE_ARRAY
+uniform highp sampler2DArray maps;
+varying float vLayer;
+#else
 uniform sampler2D map;
+#endif
 uniform float alphaTest;
 uniform float uByColor;
 uniform float uSoft;
@@ -87,7 +109,11 @@ varying vec2 vUv;
 varying vec2 vQuad;
 varying vec4 vColor;
 void main() {
+#ifdef PARTICLE_ARRAY
+	vec4 c = texture(maps, vec3(vUv, vLayer)) * vColor;
+#else
 	vec4 c = texture2D(map, vUv) * vColor;
+#endif
 	// A texture with no see-through part (a cloud tile) would draw a square. It fades out toward
 	// the quad's edge instead, into a round puff.
 	if (uSoft > 0.5) c.a *= 1.0 - smoothstep(0.35, 1.0, length(vQuad * 2.0 - 1.0));
@@ -128,14 +154,18 @@ function srgbToLinear(c: number): number {
 	return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
 }
 
-// The particle data a quad needs, by attribute, with how many numbers each takes.
+// The particle data a quad needs, one particle after the other, STRIDE numbers each: by attribute,
+// where it starts and how many numbers it takes. Interleaved, a batch's particles go to the GPU in
+// one upload (on Windows each upload is a copy of its own on the GPU).
 const layout = [
-	['iPos', 3],
-	['iSize', 2],
-	['iColor', 4],
-	['iUv', 4],
-	['iRot', 1],
+	['iPos', 0, 3],
+	['iSize', 3, 2],
+	['iColor', 5, 4],
+	['iUv', 9, 4],
+	['iRot', 13, 1],
+	['iLayer', 14, 1],
 ] as const;
+const STRIDE = 15;
 
 // A batch draws the particles of every emitter that looks the same (the same texture, blend and
 // facing) in one draw call. In the raid test 20 casters each had a few emitters on their hands,
@@ -145,7 +175,7 @@ const layout = [
 class Batch {
 	readonly mesh: THREE.Mesh;
 	private readonly geometry = new THREE.InstancedBufferGeometry();
-	private attrs: THREE.InstancedBufferAttribute[] = [];
+	private buffer!: THREE.InstancedInterleavedBuffer;
 	private capacity = 0;
 	readonly members = new Set<Emitter>();
 	// How many particles the members have in all.
@@ -161,7 +191,7 @@ class Batch {
 		g.instanceCount = 0;
 		this.mesh = new THREE.Mesh(g, material);
 		this.mesh.frustumCulled = false;
-		this.mesh.renderOrder = 10;
+		this.mesh.renderOrder = drawOrder.particles;
 		this.mesh.visible = false;
 		addBatch(this);
 		world.add(this.mesh);
@@ -169,12 +199,9 @@ class Batch {
 
 	private grow(n: number) {
 		this.capacity = n;
-		this.attrs = layout.map(([name, size]) => {
-			const a = new THREE.InstancedBufferAttribute(new Float32Array(n * size), size);
-			a.setUsage(THREE.DynamicDrawUsage);
-			this.geometry.setAttribute(name, a);
-			return a;
-		});
+		this.buffer = new THREE.InstancedInterleavedBuffer(new Float32Array(n * STRIDE), STRIDE);
+		this.buffer.setUsage(THREE.DynamicDrawUsage);
+		for (const [name, offset, size] of layout) this.geometry.setAttribute(name, new THREE.InterleavedBufferAttribute(this.buffer, size, offset));
 		// Three keeps the most copies a geometry's attributes hold from its first draw, and draws no
 		// more than that.
 		(this.geometry as { _maxInstanceCount?: number })._maxInstanceCount = undefined;
@@ -199,24 +226,80 @@ class Batch {
 			this.grow(n);
 		}
 		let at = 0;
+		const to = this.buffer.array as Float32Array;
 		for (const m of this.members) {
 			const n = m.count;
 			if (n === 0) continue;
-			for (let k = 0; k < layout.length; k++) {
-				const size = layout[k][1];
-				(this.attrs[k].array as Float32Array).set(m.data[k].subarray(0, n * size), at * size);
-			}
+			// A plain loop: a subarray is a new object each time.
+			const from = m.data;
+			const o = at * STRIDE;
+			for (let j = 0; j < n * STRIDE; j++) to[o + j] = from[j];
 			at += n;
 		}
 		this.geometry.instanceCount = at;
+		drawn.particles += at;
 		this.mesh.visible = at > 0 || particleOptions.drawEmpty;
 		if (at === 0) return;
-		for (const a of this.attrs) {
-			a.clearUpdateRanges();
-			a.addUpdateRange(0, at * a.itemSize);
-			a.needsUpdate = true;
-		}
+		this.buffer.clearUpdateRanges();
+		this.buffer.addUpdateRange(0, at * STRIDE);
+		this.buffer.needsUpdate = true;
 	}
+}
+
+// The arrays of additive particles' textures, by size. Off with ?particlearrays=0.
+type TextureArray = { width: number; height: number; layers: Map<THREE.Texture, number>; capacity: number; data: Uint8Array; texture: THREE.DataArrayTexture; uniform: { value: THREE.DataArrayTexture }; uploaded: boolean };
+const particleArrays = { on: typeof location === 'undefined' || new URLSearchParams(location.search).get('particlearrays') !== '0', bySize: new Map<string, TextureArray>() };
+
+// arrayFor gives the array for a particle texture's size, or undefined for one that wouldn't
+// sample the same from an array.
+function arrayFor(t: THREE.Texture): TextureArray | undefined {
+	const image = t.image as { width: number; height: number; data?: ArrayLike<number> | null };
+	if (!(t as THREE.DataTexture).isDataTexture || !image?.data || image.data.length !== image.width * image.height * 4) return undefined;
+	if (t.format !== THREE.RGBAFormat || t.type !== THREE.UnsignedByteType || t.colorSpace !== THREE.SRGBColorSpace || t.flipY) return undefined;
+	if (t.wrapS !== THREE.ClampToEdgeWrapping || t.wrapT !== THREE.ClampToEdgeWrapping) return undefined;
+	if (t.magFilter !== THREE.LinearFilter || t.minFilter !== THREE.LinearMipmapLinearFilter || !t.generateMipmaps || t.anisotropy !== 4) return undefined;
+	const key = `${image.width}x${image.height}`;
+	let a = particleArrays.bySize.get(key);
+	if (!a) {
+		a = { width: image.width, height: image.height, layers: new Map(), capacity: 0, data: new Uint8Array(0), texture: undefined!, uniform: { value: null! }, uploaded: false };
+		growArray(a, 4);
+		particleArrays.bySize.set(key, a);
+	}
+	return a;
+}
+
+// layerIn gives a texture its layer in an array, copying its picture in the first time.
+function layerIn(a: TextureArray, t: THREE.Texture): number {
+	const known = a.layers.get(t);
+	if (known !== undefined) return known;
+	if (a.layers.size === a.capacity) growArray(a, a.capacity * 2);
+	const layer = a.layers.size;
+	a.layers.set(t, layer);
+	a.data.set((t.image as { data: ArrayLike<number> }).data, layer * a.width * a.height * 4);
+	if (a.uploaded) a.texture.addLayerUpdate(layer);
+	a.texture.needsUpdate = true;
+	return layer;
+}
+
+// growArray makes room for more layers, with the same sampling as a particle texture's.
+function growArray(a: TextureArray, capacity: number) {
+	const data = new Uint8Array(a.width * a.height * 4 * capacity);
+	data.set(a.data);
+	a.data = data;
+	a.capacity = capacity;
+	a.texture?.dispose();
+	const t = new THREE.DataArrayTexture(data, a.width, a.height, capacity);
+	t.colorSpace = THREE.SRGBColorSpace;
+	t.wrapS = t.wrapT = THREE.ClampToEdgeWrapping;
+	t.magFilter = THREE.LinearFilter;
+	t.minFilter = THREE.LinearMipmapLinearFilter;
+	t.generateMipmaps = true;
+	t.anisotropy = 4;
+	t.needsUpdate = true;
+	a.uploaded = false;
+	t.onUpdate = () => (a.uploaded = true);
+	a.texture = t;
+	a.uniform.value = t;
 }
 
 // The batches of each world (the scene), by how their particles look.
@@ -227,8 +310,12 @@ class Emitter {
 	// Where the emitter is: it follows its bone.
 	private readonly anchor: THREE.Object3D;
 	private carry = 0;
-	// The particles' data by attribute (layout), which the batch draws.
-	readonly data = layout.map(([, size]) => new Float32Array(maxParticles * size));
+	// The particles' data (layout), which the batch draws.
+	readonly data = new Float32Array(maxParticles * STRIDE);
+	// The emitter's texture's layer in its batch's array (0 for a batch of one texture).
+	private layer = 0;
+	// The particles' color in linear when every color key is the same (else undefined).
+	private readonly steadyColor?: Float64Array;
 	count = 0;
 	private batch?: Batch;
 	// Particles that keep to the emitter (flag 0x10) live in its space, the others in the world's.
@@ -250,6 +337,9 @@ class Emitter {
 		// Flag 0x10 keeps the particles with the emitter. Without it they stay where they were born.
 		this.local = (e.flags & 0x10) !== 0;
 		this.alphaKeys = e.alphas.map(a => [a]);
+		const first = e.colors[0] ?? [255, 255, 255];
+		if (e.colors.every(c => c.length === first.length && c.every((v, k) => v === first[k])))
+			this.steadyColor = Float64Array.of(srgbToLinear(first[0] ?? 255), srgbToLinear(first[1] ?? 255), srgbToLinear(first[2] ?? 255));
 		this.cellKeys = e.headCells.map(c => [c]);
 
 		const material = new THREE.ShaderMaterial({
@@ -302,12 +392,25 @@ class Emitter {
 					const soft = e.blend !== 0 && e.blend !== 3 && opaque(t);
 					material.uniforms.map.value = t;
 					material.uniforms.uSoft.value = soft ? 1 : 0;
-					const key = `${t.id}:${e.blend}:${e.flags & 0x1000}:${soft}`;
+					// Particles that add their light (blends 1 and 4) come out the same in any order, so
+					// the ones of a blend and facing draw together whatever their texture, from an array
+					// of their textures by size. The others draw by texture.
+					const array = (e.blend === 1 || e.blend === 4) && particleArrays.on ? arrayFor(t) : undefined;
+					this.layer = array ? layerIn(array, t) : 0;
+					const key = array ? `array${array.width}x${array.height}:${e.blend}:${e.flags & 0x1000}:${soft}` : `${t.id}:${e.blend}:${e.flags & 0x1000}:${soft}`;
 					let byKey = batches.get(world);
 					if (!byKey) batches.set(world, (byKey = new Map()));
 					let batch = byKey.get(key);
-					if (!batch) byKey.set(key, (batch = new Batch(world, material)));
-					else material.dispose();
+					if (!batch) {
+						if (array) {
+							material.defines = { PARTICLE_ARRAY: '' };
+							material.uniforms.maps = array.uniform;
+						}
+						byKey.set(key, (batch = new Batch(world, material)));
+						// Merged, the additive particles can't keep their place among the other particle
+						// batches, so they all draw after them (light added over smoke).
+						if (array) batch.mesh.renderOrder = drawOrder.particles + 0.2;
+					} else material.dispose();
 					batch.members.add(this);
 					this.batch = batch;
 					this.ready = true;
@@ -417,28 +520,41 @@ class Emitter {
 		// Fill the instance data.
 		const n = this.particles.length;
 		const { color, alpha, size, cellOut, tmp } = fill;
-		const [pos, sizes, colors, uvs, rots] = this.data;
+		const d = this.data;
 		color.fill(255);
 		alpha[0] = 1;
 		size[0] = size[1] = 1;
 		cellOut[0] = 0;
+		// An emitter whose color keys are all one color (most are) turns it to linear once.
+		const steady = this.steadyColor;
+		let w = 0;
 		for (let i = 0; i < n; i++) {
 			const p = this.particles[i];
 			const t = p.age / p.life;
-			overLife(this.e.colors, this.e.colorTimes, t, color);
+			if (!steady) overLife(this.e.colors, this.e.colorTimes, t, color);
 			overLife(this.alphaKeys, this.e.alphaTimes, t, alpha);
 			overLife(this.e.scales, this.e.scaleTimes, t, size);
+			// A particle faded all the way out (most fade in at birth and out at death) draws nothing
+			// in any blend mode, so it isn't sent.
+			if (alpha[0] < 1 / 255) continue;
 			tmp.copy(p.pos);
 			if (this.local) tmp.add(this.origin);
-			pos[i * 3] = tmp.x;
-			pos[i * 3 + 1] = tmp.y;
-			pos[i * 3 + 2] = tmp.z;
-			sizes[i * 2] = size[0] * 2 * scale;
-			sizes[i * 2 + 1] = size[1] * 2 * scale;
-			colors[i * 4] = srgbToLinear(color[0]);
-			colors[i * 4 + 1] = srgbToLinear(color[1]);
-			colors[i * 4 + 2] = srgbToLinear(color[2]);
-			colors[i * 4 + 3] = Math.max(0, Math.min(1, alpha[0]));
+			const o = w++ * STRIDE;
+			d[o] = tmp.x;
+			d[o + 1] = tmp.y;
+			d[o + 2] = tmp.z;
+			d[o + 3] = size[0] * 2 * scale;
+			d[o + 4] = size[1] * 2 * scale;
+			if (steady) {
+				d[o + 5] = steady[0];
+				d[o + 6] = steady[1];
+				d[o + 7] = steady[2];
+			} else {
+				d[o + 5] = srgbToLinear(color[0]);
+				d[o + 6] = srgbToLinear(color[1]);
+				d[o + 7] = srgbToLinear(color[2]);
+			}
+			d[o + 8] = Math.max(0, Math.min(1, alpha[0]));
 			let cell = p.tile;
 			if (cell < 0) {
 				cell = this.cellKeys.length ? Math.round(overLife(this.cellKeys, this.e.cellTimes, t, cellOut)[0]) : 0;
@@ -447,15 +563,26 @@ class Emitter {
 			const rows = this.e.tileRows;
 			const col = cell % cols;
 			const row = Math.floor(cell / cols) % rows;
-			uvs[i * 4] = col / cols;
-			uvs[i * 4 + 1] = row / rows;
-			uvs[i * 4 + 2] = (col + 1) / cols;
-			uvs[i * 4 + 3] = (row + 1) / rows;
-			rots[i] = p.angle + p.spin * p.age;
+			d[o + 9] = col / cols;
+			d[o + 10] = row / rows;
+			d[o + 11] = (col + 1) / cols;
+			d[o + 12] = (row + 1) / rows;
+			d[o + 13] = p.angle + p.spin * p.age;
+			d[o + 14] = this.layer;
 		}
 		const was = this.count;
-		this.count = n;
-		this.batch?.changed(was, n);
+		this.count = w;
+		this.batch?.changed(was, w);
+	}
+
+	// reset lets the particles go and starts over, for a model used again (model.ts recycle).
+	reset() {
+		for (const p of this.particles) freeParticles.push(p);
+		this.particles.length = 0;
+		this.carry = 0;
+		const was = this.count;
+		this.count = 0;
+		this.batch?.changed(was, 0);
 	}
 
 	dispose() {
@@ -480,6 +607,11 @@ export class Particles {
 
 	update(dt: number) {
 		for (const e of this.emitters) e.update(dt, this.emitting);
+	}
+
+	reset() {
+		this.emitting = true;
+		for (const e of this.emitters) e.reset();
 	}
 
 	dispose() {

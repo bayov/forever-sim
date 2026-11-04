@@ -130,6 +130,88 @@
 	}
 }
 
+/* ---------- the report's modes: DPS, Tanking, Healing ---------- */
+// A pill of three before the tabs on a wide screen, and over them on a phone, where the header grows a row for it. The
+// open mode is filled gold, like the open tab's line.
+.fv-nav {
+	display: flex;
+	align-items: center;
+	gap: var(--spacer-3);
+	min-width: 0;
+	flex: 1;
+
+	.sim-tabs {
+		align-self: stretch;
+	}
+}
+
+.fv-modes {
+	display: inline-flex;
+	flex-shrink: 0;
+	padding: 2px;
+	border: 1px solid var(--line-color);
+	border-radius: 999px;
+	background: rgba(0, 0, 0, 0.25);
+
+	&[hidden] {
+		display: none;
+	}
+}
+
+.fv-mode {
+	padding: 0.22rem 0.75rem;
+	border-radius: 999px;
+	font-size: 0.78rem;
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	line-height: 1.2;
+	color: var(--header-link-color);
+	text-decoration: none;
+	white-space: nowrap;
+	transition:
+		color 0.15s ease-in-out,
+		background-color 0.15s ease-in-out;
+
+	&:hover {
+		color: $ivory;
+	}
+
+	&.active {
+		color: #17130a;
+		background: var(--gold);
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--fv-gold);
+		outline-offset: 2px;
+	}
+}
+
+@include media-breakpoint-down(lg) {
+	.dps-report-sim-ui:has(.fv-modes:not([hidden])) {
+		--sim-header-height: 5.4rem;
+	}
+
+	.fv-nav {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0;
+
+		.sim-tabs {
+			flex: 1;
+		}
+	}
+
+	.fv-modes {
+		align-self: flex-start;
+		margin-top: 0.45rem;
+	}
+
+	.fv-mode {
+		padding: 0.2rem 0.85rem;
+	}
+}
+
 /* ---------- tabs: the sim UI's header tabs ---------- */
 .fv-tab:focus-visible,
 .fv button:focus-visible,
@@ -388,7 +470,7 @@ ol.fv-list li::marker {
 	grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
-#sp-tiles {
+:is(#sp-tiles, #rs-tiles) {
 	grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
@@ -397,7 +479,7 @@ ol.fv-list li::marker {
 		grid-template-columns: repeat(4, minmax(0, 1fr));
 	}
 
-	#sp-tiles {
+	:is(#sp-tiles, #rs-tiles) {
 		grid-template-columns: repeat(6, minmax(0, 1fr));
 	}
 }
@@ -455,7 +537,7 @@ ol.fv-list li::marker {
 	overflow-wrap: anywhere;
 }
 
-#sp-tiles .fv-tile .v {
+:is(#sp-tiles, #rs-tiles) .fv-tile .v {
 	font-size: 1.2rem;
 }
 
@@ -508,6 +590,13 @@ ol.fv-list li::marker {
 .fv-row.top .fv-row-pos {
 	color: var(--fv-gold);
 	font-weight: 700;
+}
+
+// A row tied with the row above: its ≈ sits under the place number.
+.fv-row-pos .fv-tie {
+	display: block;
+	line-height: 1;
+	font-size: 0.95rem;
 }
 
 .fv-row > .fv-ico,
@@ -801,6 +890,23 @@ ol.fv-list li::marker {
 
 .fv td.neg {
 	color: var(--color-bad);
+}
+
+// A gap within the sim's luck (report.js, isTie): the ≈ mark, muted, in the accent so it reads as a note on the number.
+.fv-tie {
+	color: var(--fv-gold);
+	font-weight: 700;
+	cursor: help;
+}
+
+// Compare's B vs A that's within luck: no up or down colour.
+.fv td.fv-cmp-tied {
+	color: var(--color-fg-muted);
+}
+
+// The tie under a Specs tile's line, on its own line.
+.fv-tile-tie {
+	display: block;
 }
 
 .fv tr.clk:hover td,
@@ -1418,30 +1524,30 @@ ol.fv-list li::marker {
 /* ---------- talents ---------- */
 // The trees are the sim UI's talent picker (core/talents/_talents_picker.scss). Here they only show a preset, so
 // every tree is shown at once and none dims like the picker's carousel does on phones.
-#sp-tal .talents-picker-root {
+:is(#sp-tal, #rs-tal) .talents-picker-root {
 	width: 100%;
 }
 
-#sp-tal #talents-carousel {
+:is(#sp-tal, #rs-tal) #talents-carousel {
 	margin: 0;
 	overflow-x: auto;
 	justify-content: safe center;
 }
 
-#sp-tal .carousel-item {
+:is(#sp-tal, #rs-tal) .carousel-item {
 	opacity: 1;
 }
 
-#sp-tal .talent-picker-root {
+:is(#sp-tal, #rs-tal) .talent-picker-root {
 	cursor: help;
 }
 
 @include media-breakpoint-down(lg) {
-	#sp-tal .carousel-inner {
+	:is(#sp-tal, #rs-tal) .carousel-inner {
 		transform: none;
 	}
 
-	#sp-tal .talent-tree-picker-root {
+	:is(#sp-tal, #rs-tal) .talent-tree-picker-root {
 		min-width: calc(var(--talent-icon-size) * 1.4 * 4 + 1rem);
 	}
 }
@@ -1558,8 +1664,8 @@ ol.fv-list li::marker {
 }
 
 // The Rotation card's lines and pre-pull casts only show a tooltip, so no hand cursor for them.
-#sp-rotation [data-tt-tap]:not(a),
-#sp-prepull [data-tt-tap]:not(a) {
+:is(#sp-rotation, #rs-rotation) [data-tt-tap]:not(a),
+:is(#sp-prepull, #rs-prepull) [data-tt-tap]:not(a) {
 	cursor: default;
 }
 
@@ -1754,7 +1860,7 @@ div.tt-embed:not(.fv-tt) {
 	max-width: 100%;
 }
 
-#sp-gear-card .fv-scroll > table,
+:is(#sp-gear-card, #rs-gear-card) .fv-scroll > table,
 #sp-abiltab-card .fv-scroll > table {
 	width: max-content;
 	min-width: 100%;
@@ -2630,14 +2736,14 @@ div.tt-embed:not(.fv-tt) {
 }
 
 // the card's note: one line on how the sim reads the list, then a legend of the marks
-#sp-rot-note {
+:is(#sp-rot-note, #rs-rot-note) {
 	display: flex;
 	flex-wrap: wrap;
 	align-items: center;
 	gap: 0.3rem 1rem;
 }
 
-#sp-rot-note > span:first-child {
+:is(#sp-rot-note, #rs-rot-note) > span:first-child {
 	flex-basis: 100%;
 }
 
@@ -2749,21 +2855,21 @@ div.tt-embed:not(.fv-tt) {
 	}
 }
 
-#sp-gear .item-picker-root {
+:is(#sp-gear, #rs-gear) .item-picker-root {
 	cursor: help;
 	min-width: 0;
 }
 
-#sp-gear .item-picker-labels-container {
+:is(#sp-gear, #rs-gear) .item-picker-labels-container {
 	min-width: 0;
 }
 
-#sp-gear .item-picker-name,
-#sp-gear .item-picker-enchant {
+:is(#sp-gear, #rs-gear) .item-picker-name,
+:is(#sp-gear, #rs-gear) .item-picker-enchant {
 	overflow-wrap: anywhere;
 }
 
-#sp-gear .fv-slot-empty {
+:is(#sp-gear, #rs-gear) .fv-slot-empty {
 	cursor: default;
 	opacity: 0.7;
 }
@@ -3290,6 +3396,10 @@ div.tt-embed:not(.fv-tt) {
 	border-radius: 999px;
 	color: var(--fv-gold);
 	background: var(--fv-gold-soft);
+}
+
+.fv-asm-est .fv-asm-badge {
+	margin-right: 0.35rem;
 }
 
 .fv-asm-tools {
@@ -4648,4 +4758,126 @@ dialog.fv-about-modal {
 		font-style: normal;
 		color: var(--color-fg-muted);
 	}
+}
+
+/* ---------- Tanking and Healing pages ---------- */
+// The paper doll is the sim UI's gear pane, as on the DPS Specs page.
+#rs-gear-tab {
+	@extend #gear-tab;
+}
+
+// A score can be below 0 (Max survival, for a tank that needs a lot of healing): a line marks 0.
+.fv-track-neg {
+	background: linear-gradient(
+		to right,
+		transparent calc(var(--zero) - 0.5px),
+		var(--line-color-strong) calc(var(--zero) - 0.5px),
+		var(--line-color-strong) calc(var(--zero) + 0.5px),
+		transparent calc(var(--zero) + 0.5px)
+	);
+}
+
+// the preset's own race on Races
+.fv-row.mine .fv-row-name b {
+	color: var(--fv-gold);
+}
+
+.fv-badge {
+	display: inline-block;
+	padding: 0.05rem 0.45rem;
+	border: 1px solid var(--color-border-line);
+	border-radius: 999px;
+	font-size: var(--cds-font-size-caption);
+	font-weight: 600;
+	line-height: 1.3;
+	color: var(--color-fg-muted);
+	vertical-align: middle;
+}
+
+.fv-row-name .fv-badge {
+	margin-left: 0.35rem;
+	font-size: 0.65rem;
+}
+
+#rs-bosstab {
+	.fv-se,
+	.fv-muted {
+		color: var(--color-fg-muted);
+		font-weight: 400;
+	}
+
+	tr.fv-off td {
+		color: var(--color-fg-muted);
+	}
+
+	tr.fv-total td {
+		font-weight: 600;
+		border-top: 1px solid var(--line-color-strong);
+	}
+}
+
+// The notes and the method: our markdown, as HTML.
+.fv-md {
+	max-width: 75ch;
+
+	ul,
+	ol {
+		margin: 0;
+		padding-left: 1.2rem;
+		display: grid;
+		gap: 0.3rem;
+	}
+
+	h4,
+	h5,
+	h6 {
+		margin: var(--cds-gap-sm) 0 0;
+		font-size: var(--cds-font-size-body);
+		font-weight: 600;
+	}
+
+	code {
+		font-size: 0.85em;
+		overflow-wrap: anywhere;
+	}
+
+	.fv-scroll {
+		margin: 0.2rem 0;
+	}
+}
+
+#rs-notes {
+	max-width: none;
+	gap: var(--cds-gap-md);
+}
+
+.fv-note-sec {
+	display: grid;
+	gap: var(--cds-gap-xs);
+}
+
+.fv-note-title {
+	margin: 0;
+	color: var(--fv-gold);
+	font-weight: 600;
+}
+
+#r-method-cards {
+	display: grid;
+	gap: var(--block-spacer);
+}
+
+#r-score-note a {
+	white-space: nowrap;
+}
+
+// The role ranking's toolbar: its one grid column stays the card's width, so a row of metrics too long for a phone
+// scrolls inside its control instead of pushing past the card.
+#r-rank-card .fv-toolbar {
+	grid-template-columns: minmax(0, 1fr);
+}
+
+#r-rank-card .fv-ctl {
+	flex-wrap: nowrap;
+	min-width: 0;
 }

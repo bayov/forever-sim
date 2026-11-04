@@ -33,14 +33,14 @@ Sources, all read-only:
 | Priest | 2 | `priest_sf_tick_crit` and `priest_smite8_tuning` (one value each, resolved 2026-10-25) |
 | Warlock | 6 | `lock_pet_scaling` and `lock_demon_melee` (one value each, resolved 2026-10-23), `lock_bod_coef` (one value, resolved 2026-10-25), `lock_incinerate_bonus` (one value, kept for reference), `lock_pet_crit` (one value), `lock_stone_with_oil` |
 | Paladin | 4 | `pal_2h_spec_holy` (one value, resolved 2026-10-23), `pal_31plus_ranks` (one value, resolved 2026-10-25), `pal_soc_wf`, `pal_soc_ppm` |
-| Warrior | 6 (+ shared) | `warr_rage_k` (one value, flat, resolved 2026-10-25), `warr_uw_queued` (one value, 2026-11-02), `warr_rage_oh` (one value, 0.5: user ruling 2026-10-16), `warr_rend_ap` and `warr_dt_rage_k` (one value each, resolved 2026-10-25), `warr_dt_rage_mods` (one value, resolved 2026-10-23) (+ `wf_totem_offhand`, `land_mine_swing`, `natural_flask_zone`, `bleed_tick_crit` for Arms, `flurry_batch` for Fury); `warr_crit_rage` settled 2026-10-16 |
+| Warrior | 7 (+ shared) | `warr_rage_k` (one value, flat, resolved 2026-10-25), `warr_uw_queued` (one value, 2026-11-02), `warr_rs_landed` (one value, user ruling 2026-11-04), `warr_rage_oh` (one value, 0.5: user ruling 2026-10-16), `warr_rend_ap` and `warr_dt_rage_k` (one value each, resolved 2026-10-25), `warr_dt_rage_mods` (one value, resolved 2026-10-23) (+ `wf_totem_offhand`, `land_mine_swing`, `natural_flask_zone`, `bleed_tick_crit` for Arms, `flurry_batch` for Fury); `warr_crit_rage` settled 2026-10-16 |
 | Hunter | 7 (+ shared) | `hunter_pet_scaling` (one value, resolved 2026-10-23), `hunter_pet_speed` (one value, settled 2026-10-25), `hunter_cobra_damage`, `hunter_crit_per_agi` and `hunter_raptor_31plus` (one value each, resolved 2026-10-25), `hunter_tsa_hm_rank` (one value since 2026-10-28), `hunter_trap_ap` (one value, resolved 2026-10-23) (+ `wf_totem_offhand` for Survival, `land_mine_swing`, `natural_flask_zone`) |
 | Mage | 5 | `mage_ice_lance_coef` (Low 1/7 since 2026-10-25), `mage_frostbolt10` and `mage_cone_of_cold` (one value each, resolved 2026-10-25), `mage_imbue_scrolls`, `mage_am_missile_barrage` (one value, 2026-10-27) |
-| Shaman | 4 | `sham_ftt_stack` (one value), `sham_mw_ppm`, `sham_lb_31plus` and `sham_es7_tuning` (one value each, resolved 2026-10-25) |
+| Shaman | 2 | `sham_ftt_stack` (one value), `sham_mw_ppm` (`sham_lb_31plus` and `sham_es7_tuning` retired 2026-11-03: the November 2 notes retune both spells) |
 | Druid | 4 | `druid_ooc_rate` (one value, kept for reference; its rule checked against wowsims/forever 2026-10-23), `druid_rip_31plus`, `druid_wrath8_tuning` (one value, resolved 2026-10-25), `druid_predatory_discipline` (one value, added 2026-11-01) |
 | Rogue | 0 (+ shared) | `wf_totem_offhand`, `land_mine_swing`, `natural_flask_zone`, `bleed_tick_crit` (Subtlety) |
 
-That makes 57 assumptions in `assumptions_def.py`, none pending, 47 of them one-value reference rows (`flurry_batch`, `warr_uw_queued` and `wf_totem_nodamage` added as one value by the user's rulings of 2026-11-02, `mage_am_missile_barrage` collapsed to "No proc" by the user's ruling of 2026-10-27, `hunter_tsa_hm_rank` to rank 5 at 50 by the ruling of 2026-10-28). The user's rulings of 2026-10-25 collapsed 16 rows to one value: 14 to the sim's value (`priest_sf_tick_crit`, `priest_smite8_tuning`, `lock_bod_coef`, `pal_31plus_ranks`, `warr_rend_ap`, `hunter_cobra_damage`, `hunter_raptor_31plus`, `mage_frostbolt10`, `mage_cone_of_cold`, `sham_lb_31plus`, `sham_es7_tuning`, `bleed_tick_crit`, `warr_dt_rage_k`, `druid_wrath8_tuning`) and two to a new one the sim now uses (`warr_rage_k` flat, `hunter_crit_per_agi` Classic's at 60), and changed the settings of `hunter_tsa_hm_rank` (Trueshot Aura only) and `mage_ice_lance_coef` (Low 1/7); each section says why. The rows that still vary are `pal_soc_wf`, `pal_soc_ppm`, `mage_ice_lance_coef`, `mage_imbue_scrolls`, `sham_mw_ppm`, `raid_hits`, `natural_flask_zone`, `lock_stone_with_oil` and `druid_rip_31plus`. Earlier (2026-10-23: the six that were pending got their knobs on 2026-10-16; the alignment round with wowsims/forever resolved `lock_pet_scaling`, `lock_demon_melee`, `hunter_pet_scaling`, `hunter_trap_ap`, `pal_2h_spec_holy` and `warr_dt_rage_mods` to one value each, wired `mage_cone_of_cold`, and added `hunter_cobra_damage`, `natural_flask_zone` and the one-value `land_mine_swing`; see orchestration/alignment_round_2026-10-23.md) (PR #54 removed `pal_sor_sp_double`, `pal_sor_sp_speed` and `pal_consecration_coef`, and the assumptions audit, orchestration/assumptions_audit.md, removed `flat_bonus_inside_pct`, `druid_shred_flat` and `warr_crit_rage`, all settled 2026-10-16). The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 55 assumptions in `assumptions_def.py` since round 70753 (2026-11-04: `warr_rs_landed` added as one value; 2026-11-03: `druid_rip_31plus`, `sham_lb_31plus` and `sham_es7_tuning` retired, the November 2 notes set those spells), none pending, 46 of them one-value reference rows (`flurry_batch`, `warr_uw_queued` and `wf_totem_nodamage` added as one value by the user's rulings of 2026-11-02, `mage_am_missile_barrage` collapsed to "No proc" by the user's ruling of 2026-10-27, `hunter_tsa_hm_rank` to rank 5 at 50 by the ruling of 2026-10-28). The user's rulings of 2026-10-25 collapsed 16 rows to one value: 14 to the sim's value (`priest_sf_tick_crit`, `priest_smite8_tuning`, `lock_bod_coef`, `pal_31plus_ranks`, `warr_rend_ap`, `hunter_cobra_damage`, `hunter_raptor_31plus`, `mage_frostbolt10`, `mage_cone_of_cold`, `sham_lb_31plus`, `sham_es7_tuning`, `bleed_tick_crit`, `warr_dt_rage_k`, `druid_wrath8_tuning`) and two to a new one the sim now uses (`warr_rage_k` flat, `hunter_crit_per_agi` Classic's at 60), and changed the settings of `hunter_tsa_hm_rank` (Trueshot Aura only) and `mage_ice_lance_coef` (Low 1/7); each section says why. The rows that still vary are `pal_soc_wf`, `pal_soc_ppm`, `mage_ice_lance_coef`, `mage_imbue_scrolls`, `sham_mw_ppm`, `raid_hits`, `natural_flask_zone`, `lock_stone_with_oil` and `druid_rip_31plus`. Earlier (2026-10-23: the six that were pending got their knobs on 2026-10-16; the alignment round with wowsims/forever resolved `lock_pet_scaling`, `lock_demon_melee`, `hunter_pet_scaling`, `hunter_trap_ap`, `pal_2h_spec_holy` and `warr_dt_rage_mods` to one value each, wired `mage_cone_of_cold`, and added `hunter_cobra_damage`, `natural_flask_zone` and the one-value `land_mine_swing`; see orchestration/alignment_round_2026-10-23.md) (PR #54 removed `pal_sor_sp_double`, `pal_sor_sp_speed` and `pal_consecration_coef`, and the assumptions audit, orchestration/assumptions_audit.md, removed `flat_bonus_inside_pct`, `druid_shred_flat` and `warr_crit_rage`, all settled 2026-10-16). The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
@@ -54,7 +54,7 @@ That makes 57 assumptions in `assumptions_def.py`, none pending, 47 of them one-
    - Pet speed: the beta's fast pets hit as hard as a 2.0 sec pet. The presets treat that as a bug and use Classic's speed-scaled hit (user ruling 2026-10-15, PR #22); the beta's rule would add 6.1% to Beast Mastery and 3.2% to Marksmanship (assumption sims, 180 s).
    - Pet scaling: Season of Discovery's 22% scaling instead of the measured 10% would add 41 / 23 / 18 to Beast Mastery / Marksmanship / Survival (PR).
 
-Close behind: `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×1.12, assumption sims; one value, ×1.12, since 2026-10-25).
+Close behind, until round 70753: `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×1.12, assumption sims; one value, ×1.12, since 2026-10-25; retired 2026-11-03, the notes retune Lightning Bolt).
 
 ---
 
@@ -240,13 +240,17 @@ Close behind: `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `pal_2h_spec_holy` | Two-Handed Weapon Spec on Holy seal damage | twist, sub Holy, Shock | yes (one value, resolved 2026-10-23) | = Expected | yes | = Expected | none left (one value) |
+| `pal_2h_spec_holy` | Two-Handed Weapon Spec on Holy damage | twist, sub Holy, Shock | yes, all Holy damage (one value; the November 2 notes, 2026-11-03) | = Expected | yes | = Expected | none left (one value) |
 | `pal_31plus_ranks` | Holy Strike and Consecration 31+ ranks | twist, sub Holy, Shock | client (one value, resolved 2026-10-25) | = Expected | client | = Expected | none left (one value; the ≤30 trend last measured −1.0 to −1.5%) |
 | `pal_unsealed_wrath` | How Unsealed Wrath's stored seals fire | twist, sub Holy, sub Holy vs Undead | the hotfix data read literally (one value, 2026-11-01) | = Expected | literal | = Expected | not measured (one value) |
 
 Retribution was also affected by `flat_bonus_inside_pct`, settled 2026-10-16 (Holy Strike; +3.6 to +4.2% at its Low, assumption sims). `pal_soc_wf` (Seal of Command and its Unsealed Wrath copies procing Windfury Totem, Twist of Light's Echo of Command before the October 30 hotfix) and `pal_soc_ppm` are rows too (see `pal_soc_ppm` below). Patch 0004's `pal_soc_wf` knob did nothing from 2026-10-16 to 2026-10-23 (the check in `CreateExtraAttackAuraCommon` had been lost in a rebase); it is back, and its Low measures −12.8 (−1.4%) on the old twist request (3,000 iterations, seed 1, 180 s).
 
-### `pal_2h_spec_holy`: Two-Handed Weapon Specialization on Holy seal damage (resolved 2026-10-23, one value)
+### `pal_2h_spec_holy`: Two-Handed Weapon Specialization on Holy damage (resolved 2026-10-23, one value; widened 2026-11-03)
+
+- **Hotfix 113542 (2026-11-03, cited 2026-11-04):** the launch realms' hotfix sets spell 20111 effect 0's school mask to Physical and Holy (was Physical) and its tooltip to "Physical and Holy damage", so the value below is no longer notes-only; nothing in the sim moves.
+
+- **Round 70753 (2026-11-03):** the November 2 development notes make Two-Handed Weapon Specialization raise all Holy damage with a two-handed weapon, so Exorcism, Consecration, Holy Shock, Holy Wrath and Hammer of Wrath join the seals, judgements and Holy Strike. Client 70753 still has spell 20111 as Physical only; the sim takes the notes' value (standards 37, a notes-only value in `orchestration/round_70753/paladin.md`). The row's one value now reads "All Holy damage".
 
 - **Resolved 2026-10-23 (one value):** wowsims/forever d35afca4da states that in game One- and Two-Handed Weapon Specialization "also raise Seal and Judgement of Righteousness, Seal and Judgement of Fury and Holy Strike: all Holy, all melee defense", and the magic-defense Holy spells (Exorcism, Consecration, Holy Wrath) stay out. Our 9b7228699b follows it for Judgement of Righteousness. That is the sim's Expected, so the client-mask Low is dropped and its knob is out of patch 0004. The history below is kept for reference.
 
@@ -298,6 +302,7 @@ Retribution was also affected by `flat_bonus_inside_pct`, settled 2026-10-16 (Ho
 |---|---|---|---|---|---|---|---|
 | `warr_rage_k` | How normalised Rage grows with level | Fury, Fury two-hand, Arms, Arms vs Dragonkin | flat k (×1 at 60) (one value, resolved 2026-10-25, standards 21) | = Expected | flat | = Expected | none left (one value; the warrior goldens lost 5.2 to 9.1% going from the midpoint to flat) |
 | `warr_uw_queued` | A queued Heroic Strike or Cleave procs Unbridled Wrath | all four | yes (one value, user ruling 2026-11-02) | = Expected | procs | = Expected | none left (one value; plain swings only, wowsims/forever's rule, measured under 1 DPS) |
+| `warr_rs_landed` | Only landed white swings use a Reckless Swings charge | all four | yes (one value, user ruling 2026-11-04) | = Expected | landed only | = Expected | none left (one value; misses using a charge for no Rage measured −2.6 ± 0.3 on Fury, 0 on Fury 2H and Arms) |
 | `warr_rend_ap` | Rend's attack power share | Arms, Arms vs Dragonkin | 2% of attack power a tick (one value, resolved 2026-10-25) | = Expected | 2% a tick | = Expected | none left (one value; none / 5% last measured −2.2 to −2.4% / +3.4 to +3.5%) |
 | `warr_dt_rage_k` | Rage from a hit taken (the 2.5 factor) | all four | 2.5 (melee fit) (one value, resolved 2026-10-25) | = Expected | 2.5 | = Expected | none left (one value; 3.0 last measured 0 to +0.2%) |
 | `warr_dt_rage_mods` | Our damage taken modifiers in that Rage | all four | none (one value, resolved 2026-10-23) | = Expected | none | = Expected | none left (one value) |
@@ -335,6 +340,14 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
 - **Why uncertain:** no Forever log shows it. wowsims/forever counts only plain white swings. The difference measured under 1 DPS on Arms, Fury and Fury two-hand (20,000 iterations).
 - **Settings:** Expected only, "procs". **Knob:** none (one value).
 
+### `warr_rs_landed`: only landed white swings use a Reckless Swings charge (one value, added 2026-11-04)
+
+- **Ruling (2026-11-04):** a single-value assumption, from the warrior hotfix 113539 session (orchestration/round_70753/hotfix_113539_warrior.md).
+- **Sim now:** each of the 4 charges is used by a white melee swing that lands, which gives 5 Rage (sim/warrior/reckless_swings.go).
+- **Source:** hotfix push 113539 gives Reckless Swings (1329555) 4 charges and proc type 4, the melee auto attack, as for Flurry and Unbridled Wrath. The hit mask, which says whether a miss, dodge or parry triggers it, is server side.
+- **Why uncertain:** no Forever log shows it. The other reading, where a swing that doesn't land uses a charge and gives no Rage, measured −2.58 ± 0.27 DPS on dual-wield Fury, −0.005 ± 0.05 on Fury 2H and −0.06 ± 0.04 on Arms (180 s, 20,000 iterations, paired, labeled random streams, 2026-11-04).
+- **Settings:** Expected only, "landed swings only". **Knob:** none (one value).
+
 ### `warr_rend_ap`: Rend's attack power share (resolved 2026-10-25, one value)
 
 - **Resolved 2026-10-25 (one value, user ruling 2026-10-25):** 2% of attack power a tick, the sim's value, which wowsims/forever 1172f1c745 measured on rank 2 (level 13 and 14 logs, 7 + 0.02 × attack power a tick). The none and 5% settings (last measured −2.2 to −2.4% and +3.4 to +3.5%) are dropped. The knob `warr_rend_ap` stays in patch 0004. The history below is kept for reference.
@@ -359,7 +372,7 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
 | `hunter_pet_scaling` | Pet scaling from the hunter | BM, MM, SV | 10% RAP + 1:1 hit (17/8 as spell hit) (one value, resolved 2026-10-23) | = Expected | 10% RAP + hit | = Expected | none left (one value) |
 | `hunter_pet_speed` | Pet hits normalized to a 2.0 sec pet | BM, MM | no: Classic, the hit scales with speed | = Expected | Classic | the beta's same hit | High +6.1% BM, +3.2% MM (assumption sims, 180 s, before the 2026-10-23 pet changes) |
 | `hunter_cobra_damage` | Cobra Reflexes' damage cut | BM, MM, SV | hits shrink with the 30% faster swing (one value, resolved 2026-10-25) | = Expected | shrink with speed | = Expected | none left (one value; TBC's 15% cut last measured +0.8 to +1.4%) |
-| `hunter_tsa_hm_rank` | Trueshot Aura's top rank at 60 (one value since 2026-10-28: the launch-realm hotfix) | LW, MM, BM | 50 (rank 5, on the hotfixed curve) | = Expected | 50 | = Expected | Low to measure (the old Mid, 75 / 98, was −1.3 to −1.8%, 2026-10-25) |
+| `hunter_tsa_hm_rank` | Trueshot Aura's top rank at 60 (one value since 2026-10-28: the launch-realm hotfix) | LW, MM, BM | 100 (rank 5, hotfix 113534 of 2026-11-03) | = Expected | 100 | = Expected | Low to measure (the old Mid, 75 / 98, was −1.3 to −1.8%, 2026-10-25) |
 | `hunter_crit_per_agi` | Crit per Agility at 60 | all four | Classic's at 60, Forever's table by level (one value, resolved 2026-10-25) | = Expected | Classic's | = Expected | none left (one value; the hunter goldens lost 1.5 to 3.3% going from ×1.22) |
 | `hunter_raptor_31plus` | Raptor Strike 31+ flat bonuses | Survival | 96 at rank 8 (one value, resolved 2026-10-25) | = Expected | 96 | = Expected | none left (one value; 70 / 123 last measured −0.5% / +0.5%) |
 | `hunter_trap_ap` | Fire traps' attack power share | Survival | 10% of ranged attack power over a trap (one value, resolved 2026-10-23) | = Expected | 10% over the trap | = Expected | none left (one value) |
@@ -415,6 +428,8 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Resolved 2026-10-23 (one value):** wowsims/forever 3993d79540 gives both Fire traps 10% of ranged attack power over their ticks and Explosive Trap's hit 10% more, their reading of Blizzard's 15 October notes ("The Hunter's Fire traps now correctly scale with Attack Power"); our 22eb80d0a4 adds the Explosive Trap half. That is the Expected 2% a tick, and Low is ruled out by the notes, so the row keeps one value. It is a reading, not a log: their commit cites none. The knob `hunter_trap_ap` stays in patch 0004 (one line) so a setting can come back without a rebase. Beta: an Immolation Trap's ticks at a known attack power.
 
 ### `hunter_tsa_hm_rank`: Trueshot Aura's top rank at level 60 (Hunter's Mark settled 2026-10-25; one value since 2026-10-28)
+
+- **Round 70753 (2026-11-03):** the launch realms' hotfix 113534 of 2026-11-03 carries the November 2 notes' hunter lines: Trueshot Aura 20 / 35 / 50 / 75 / 100 and Aspect of the Hawk rank 6 110 (client 70753 still 15 / 22 / 30 / 40 / 50 and 55). The sim gives rank 5 100 (`foreverTrueshotAuraRAP`, sim/core/buffs.go), and the row's one value is **Rank 5 at 100**.
 
 - **Changed 2026-10-28 (user ruling 2026-10-28, "Adopt both"):** the launch realms' server hotfix of 2026-10-28 (foreverchanges.pro, read from the realms' hotfix cache; not in Blizzard's notes, client 70658 or Wowhead yet) lowers Trueshot Aura ranks 1-4 to 15 / 22 / 30 / 40, which puts the client's rank 5 (50) on the curve, and Aspect of the Hawk ranks 1-5 to 15 / 22 / 30 / 38 / 47, which makes rank 6 (55) the best. The sim now gives rank 5 50 and casts Hawk rank 6 at 55 (`ForeverTrueshotAuraRank5RAP`, sim/hunter/aspects.go), and the row is one value, **Rank 5 at 50**: a reference row. This replaces the 2026-10-15 ruling of 100. Measured before the change (180 s, 20k, paired): Trueshot Aura at 50 −0.94% BM, −1.28% LW, −1.12% MM; Hawk rank 6 −0.66% to −0.90% (findings client_update-20261028-1 and -2, ledger HUN-HF-01 and -02). The knob `hunter_tsa60` stays in patch 0004 for a setting to come back without a rebase.
 
@@ -551,11 +566,13 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `sham_mw_ppm` | Maelstrom Weapon procs a minute (5/5) | all four Enhancement builds | 10 PPM | 5 | 10 | 20 | est. Low −3%, High +5% |
-| `sham_lb_31plus` | Lightning Bolt 31+ ranks | Elemental, Elemental Mana Tide, Enhancement | ×1.12 (one value, resolved 2026-10-25) | = Expected | ×1.12 | = Expected | none left (one value; ×1.00 / ×1.38 last measured −0.2 to −1.9% / +0.5 to +4.2%) |
-| `sham_es7_tuning` | Earth Shock VII tuning | all four Enhancement builds, both Elemental builds | ×1.08 (one value, resolved 2026-10-25) | = Expected | ×1.08 | = Expected | none left (one value; ×1.00 / ×1.16 last measured 0 to −0.5% / 0 to +0.5%) |
+| `sham_mw_ppm` | Maelstrom Weapon procs a minute (5/5) | all four Enhancement builds | 20 PPM (2026-11-03) | 10 | 20 | 30 | to measure (round 70753) |
+| `sham_lb_31plus` (retired 2026-11-03) | Lightning Bolt 31+ ranks | Elemental, Elemental Mana Tide, Enhancement | ×1.12 (one value, resolved 2026-10-25) | = Expected | ×1.12 | = Expected | none left (one value; ×1.00 / ×1.38 last measured −0.2 to −1.9% / +0.5 to +4.2%) |
+| `sham_es7_tuning` (retired 2026-11-03) | Earth Shock VII tuning | all four Enhancement builds, both Elemental builds | ×1.08 (one value, resolved 2026-10-25) | = Expected | ×1.08 | = Expected | none left (one value; ×1.00 / ×1.16 last measured 0 to −0.5% / 0 to +0.5%) |
 
 ### `sham_mw_ppm`: Maelstrom Weapon's proc rate
+
+- **Round 70753 (2026-11-03):** the November 2 notes double Maelstrom Weapon's chance to trigger (spell 408498 still has no rate, so it stays server side). The sim now gives 4 a minute a point, 20 at 5/5, and the settings move to Low 10 (SoD's, the sim's before the notes), Expected 20, High 30. The text below is the history.
 
 - **Builds:** Enhancement Level 60, Imp GW, Water Shield, Mana Tide (all 5/5). Lightning Bolt goes out only at 5 stacks and is about 7% of the damage.
 - **Sim now:** 2 procs a minute a point, 10 PPM at 5/5, on any landed melee hit. `sim/shaman/talents.go:497-499` (TODO: "The tooltip has no proc rate, beta testing will have to measure it").
@@ -569,7 +586,9 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Sensitivity (assumption sims, 180 s):** Low −2.9 to −3.2%, High +2.5 to +3.1%.
 - **Knob:** `sim/shaman/talents.go:499`. Change `2*float64(...)` to `Assume("sham_mw_ppm", 10)/5*float64(...)`.
 
-### `sham_lb_31plus`: Lightning Bolt's level 31+ ranks (resolved 2026-10-25, one value)
+### `sham_lb_31plus`: Lightning Bolt's level 31+ ranks (resolved 2026-10-25, one value; retired 2026-11-03)
+
+- **Retired 2026-11-03 (round 70753):** the November 2 notes put Lightning Bolt ranks 4 to 10 at 0.78 of Era's base, so the sim's rank 10 scale is 1.0 and the row and its patch 0004 knob are gone.
 
 - **Resolved 2026-10-25 (one value, user ruling 2026-10-25):** ×1.12, the sim's value; ×1.00 and ×1.38 (last measured −0.2 to −1.9% and +0.5 to +4.2%) are dropped. The knob `sham_lb_31plus` stays in patch 0004. The history below is kept for reference.
 
@@ -587,7 +606,9 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Sensitivity (assumption sims, 180 s, against ×1.12):** Elemental Low −1.9%, High +4.1%; Enhancement Low −0.2 to −0.3%, High +0.5 to +0.6%. Elemental stays in the bottom third either way.
 - **Knob:** `core.Assume("sham_lb_31plus", LightningBoltRank10DamageScale)` in `LightningBoltBaseDamageAt` (patch 0004).
 
-### `sham_es7_tuning`: Earth Shock VII (resolved 2026-10-25, one value)
+### `sham_es7_tuning`: Earth Shock VII (resolved 2026-10-25, one value; retired 2026-11-03)
+
+- **Retired 2026-11-03 (round 70753):** the November 2 notes make the shocks Era's, so the sim's rank 7 scale is 1.0 and the row and its patch 0004 knob are gone.
 
 - **Resolved 2026-10-25 (one value, user ruling 2026-10-25):** ×1.08, the sim's value; ×1.00 and ×1.16 (last measured 0 to −0.5% and 0 to +0.5%) are dropped. The knob `sham_es7_tuning` stays in patch 0004. The history below is kept for reference.
 
@@ -776,7 +797,7 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 - **Decimation's damage part** (was `lock_decimation`, removed, user ruling 2026-10-15). The sim keeps the tooltip's 3% a point under 35% health (`sim/warlock/talents.go`); the client's effect holds 0, which measured −1.08% on Demonology in the last assumption sims. Since 2026-10-23 it is a factor on the two spells' hits from the moment the fight reaches 35% (the SPELLMOD_DAMAGE row wowsims/forever reads, 3 / 6% in the 70338 trait curve), the same numbers as the target-side multiplier it was.
 - **Settings dropped in the same review** (user ruling 2026-10-15): Ice Lance's 0.143 (WotLK; the client's 0 came back as Low in a later ruling the same day; 0.143, The Burning Crusade's 1/7 that wowsims/forever uses, replaced the 0 as Low on 2026-10-25), the demon's "Nothing" and "SoD plus crit" scaling, Incinerate's "base damage only", and Omen of Clarity's 6% a spell and 3.5 PPM. `lock_incinerate_bonus` and `druid_ooc_rate` stay as one-value reference rows.
 - **Shadow Oil and Frost Oil proc damage** (was `oil_proc_damage`, removed, user ruling 2026-10-15). The sim keeps Forever's tooltip damage (Shadow Oil 63 to 71, Frost Oil 39 to 43; `sim/core/consumes.go`). Era's ranges, which the server formula with the spells' unchanged SpellLevel would give, measured −0.06 to −0.08% on the Retribution and Enhancement builds.
-- **Arcane Shot and Serpent Sting attack power shares** (was `hunter_shot_ap_shares`, removed, user ruling 2026-10-15). The sim uses the forever-hunter wiki's 10% and 3% a tick (`sim/hunter/arcane_shot.go`, `serpent_sting.go`; PR #22). The combat-log fit's 11% / 3.5% is within the fit's ±10%.
+- **Arcane Shot and Serpent Sting attack power shares** (was `hunter_shot_ap_shares`, removed, user ruling 2026-10-15). Since round 70753 (2026-11-03) the sim uses the November 2 notes' 15% and 5% a tick (`sim/hunter/arcane_shot.go`, `serpent_sting.go`): no client or hotfix row shows the shares, which are server side, so they are notes-only values (`orchestration/round_70753/hunter.md`). Before that, the forever-hunter wiki's 10% and 3% a tick (PR #22); the combat-log fit's 11% / 3.5% was within the fit's ±10%.
 - **Settings dropped in the same pass** (user ruling 2026-10-15): Consecration's "split parts" 10.55% and Maelstrom Weapon's 20 PPM (replaced by 15 PPM).
 - **The encounter itself** (level 63, 3731 armor, Humanoid). This moves every spec, but it is an encounter setting, not a spec assumption.
 
@@ -784,10 +805,10 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 
 These entries have only two sensible settings (High = Expected): either the evidence gives two readings and nothing beyond them, or the higher value is the sim's own.
 - Two settings, a Low and Expected: `pal_soc_wf`, `mage_ice_lance_coef`, `mage_imbue_scrolls`, `lock_stone_with_oil`, `natural_flask_zone`. `druid_rip_31plus` has no Low (the client is Expected) and two above.
-- One value (reference rows): `wf_totem_offhand`, `warr_rage_oh`, `lock_incinerate_bonus`, `lock_pet_crit`, `sham_ftt_stack`, `druid_ooc_rate`, `level_partial_resist`, `land_mine_swing`, the six resolved 2026-10-23 (`lock_pet_scaling`, `lock_demon_melee`, `hunter_pet_scaling`, `hunter_trap_ap`, `pal_2h_spec_holy`, `warr_dt_rage_mods`), `hunter_pet_speed` (settled 2026-10-25), and the 16 resolved by the user's rulings of 2026-10-25: `priest_sf_tick_crit`, `priest_smite8_tuning`, `lock_bod_coef`, `pal_31plus_ranks`, `warr_rage_k` (flat), `warr_rend_ap`, `warr_dt_rage_k`, `hunter_cobra_damage`, `hunter_crit_per_agi` (Classic's at 60), `hunter_raptor_31plus`, `mage_frostbolt10`, `mage_cone_of_cold`, `sham_lb_31plus`, `sham_es7_tuning`, `bleed_tick_crit`, `druid_wrath8_tuning`.
+- One value (reference rows): `wf_totem_offhand`, `warr_rage_oh`, `lock_incinerate_bonus`, `lock_pet_crit`, `sham_ftt_stack`, `druid_ooc_rate`, `level_partial_resist`, `land_mine_swing`, the six resolved 2026-10-23 (`lock_pet_scaling`, `lock_demon_melee`, `hunter_pet_scaling`, `hunter_trap_ap`, `pal_2h_spec_holy`, `warr_dt_rage_mods`), `hunter_pet_speed` (settled 2026-10-25), and the 16 resolved by the user's rulings of 2026-10-25: `priest_sf_tick_crit`, `priest_smite8_tuning`, `lock_bod_coef`, `pal_31plus_ranks`, `warr_rage_k` (flat), `warr_rend_ap`, `warr_dt_rage_k`, `hunter_cobra_damage`, `hunter_crit_per_agi` (Classic's at 60), `hunter_raptor_31plus`, `mage_frostbolt10`, `mage_cone_of_cold`, `sham_lb_31plus` and `sham_es7_tuning` (both retired 2026-11-03), `bleed_tick_crit`, `druid_wrath8_tuning`.
 
 Weakly grounded values:
-- `sham_mw_ppm` Low (5 PPM): no analogue below 10.
+- `sham_mw_ppm` Low (5 PPM) until 2026-11-03: no analogue below 10. Since then Low is SoD's 10.
 - The halfway values of the rank-tuning entries (`priest_smite8_tuning`, `hunter_raptor_31plus`, `mage_frostbolt10`, `sham_es7_tuning`, `druid_wrath8_tuning`): a judgement between "client as is" and "held at the ≤30 ratio", kept as their one value by the user's ruling of 2026-10-25.
 
 No sensible range at all: Rip and Ferocious Bite attack power, and the untested 31-point capstones (listed above).

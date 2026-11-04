@@ -107,10 +107,11 @@ func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetr
 	}
 }
 
-// gainMakesThreat says whether mana from this source makes threat. Regeneration doesn't, and Vampiric
-// Touch's mana threat is the priest's.
+// gainMakesThreat says whether mana from this source makes threat. Regeneration doesn't, a source
+// marked NoThreat (a spell with the no threat attribute) doesn't, and Vampiric Touch's mana threat
+// is the priest's.
 func (mb *manaBar) gainMakesThreat(metrics *ResourceMetrics) bool {
-	if mb.manaGainSpell == nil {
+	if mb.manaGainSpell == nil || metrics.NoThreat {
 		return false
 	}
 	return !metrics.ActionID.SameActionIgnoreTag(ActionID{OtherID: proto.OtherAction_OtherActionManaRegen}) &&

@@ -90,6 +90,9 @@ func (warriorArms) Build(k Knobs) *proto.APLRotation {
 	if k["executeFirst"] == 0 {
 		items = append(items, cast(execute, nil, ""))
 	}
+	if k["rsLate"] == 1 {
+		items = append(items, recklessSwingsLine(k)...)
+	}
 	items = append(items, heroicStrikeLine(k))
 	if k["hamstringRage"] > 0 {
 		items = append(items, cast(hamstring, and(ge(currentRage(), num(k["hamstringRage"])), not(executePhase())), "For the procs."))

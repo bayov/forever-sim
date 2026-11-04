@@ -1,7 +1,8 @@
 // Spell and item icons, from Wowhead's tooltip service like the class sims use. The names are
 // cached in localStorage, so a second visit needs no requests.
 
-const cacheKey = 'practice.icons.v1';
+// v2: v1 kept question marks for the Synthetic items, which now have icons.
+const cacheKey = 'practice.icons.v2';
 let cache: Record<string, string> = {};
 try {
 	cache = JSON.parse(localStorage.getItem(cacheKey) ?? '{}');
@@ -31,8 +32,11 @@ export function iconName(kind: 'spell' | 'item', id: number): Promise<string> {
 	let p = pending.get(key);
 	if (!p) {
 		p = fetchIcon(kind, id).then(name => {
-			cache[key] = name;
-			save();
+			// The question mark isn't kept, so an icon the server learns later shows next visit.
+			if (name !== fallbackIcon) {
+				cache[key] = name;
+				save();
+			}
 			return name;
 		});
 		pending.set(key, p);

@@ -349,6 +349,13 @@ func TestHealingFightRaidDamageShare(t *testing.T) {
 	if r := some / all; r < 0.35 || r > 0.40 {
 		t.Errorf("a 0.375 share hit %.3f as often as hitting everyone (%.0f of %.0f)", r, some, all)
 	}
+	// A share under one player: 0.1 of 4 hits one player 40% of the casts and nobody otherwise, a tenth
+	// of hitting everyone (it used to hit one player every cast, a quarter).
+	tiny := googleProto.Clone(every).(*proto.RaidDamageEvent)
+	tiny.Share = 0.1
+	if r := hits(runRaid(t, healingRaid(t, 0, 0, 4, tiny))) / all; r < 0.08 || r > 0.12 {
+		t.Errorf("a 0.1 share of 4 players hit %.3f as often as hitting everyone", r)
+	}
 }
 
 // The Restoration shaman's tank healer preset (tools/healbench's request) in a 5 minute fight: it

@@ -97,7 +97,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRestorationShaman, {
 			defaultName: 'Restoration',
 			iconUrl: getSpecIcon(Class.ClassShaman, 2),
 
-			talents: Presets.DefaultTalents.data,
+			talents: Presets.TalentsRestoration.data,
 			specOptions: Presets.DefaultOptions,
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {

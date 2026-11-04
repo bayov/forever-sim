@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """run_races.py: race scenario sims for the dashboard's Races tab.
 
-For every preset and every race its class can be (180 s, 10k iterations, seed 1, the preset's
-settings otherwise), on top of the race sweep run_build.py already did:
+For every preset and every race its class can be (180 s, seed 1, the preset's settings otherwise), on top of the race
+sweep run_build.py already did, each against the race's sweep fights at the fights the racial luck goal needs
+(adaptive.py: a 1k pilot, then up to 40k; a row's pse is its paired error against the race):
   off            the race's base stats only: every racial left out (DASH_RACIALS_OFF=all)
   off:<part>     one racial part left out, for races with more than one part that can count
   beast / elemental   the same fight against that creature type (presets fight the generic boss)
@@ -21,16 +22,16 @@ import json, os, subprocess, sys, tempfile, copy, math, threading
 from concurrent.futures import ThreadPoolExecutor
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from dashpaths import D, BIN, TREE  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
+from dashpaths import D, BIN, TREE, RNG  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
 CLI = os.path.join(BIN, 'wowsimcli_r')
 if not os.path.exists(CLI):  # any wowsimcli built with the DASH_RACIALS_OFF patch will do
     CLI = os.path.join(BIN, 'wowsimcli')
 RES = os.path.join(D, 'rv', 'results.jsonl')
 os.makedirs(os.path.dirname(RES), exist_ok=True)
-ITERS = 10000
 sys.path.insert(0, D)
 from run_build import CLASS_RACES  # noqa: E402
 import race_override  # noqa: E402
+import adaptive  # noqa: E402
 
 
 # Racial parts that can change DPS, by race.
@@ -68,30 +69,56 @@ def gear_on(race, off):
     return not off or (off != 'all' and GEAR_PART.get(race) not in off.split(','))
 
 
-def sim(req, race, off=None, mob=None, bid=None, meta=None):
+def scenario_req(req, race, off=None, mob=None, bid=None, meta=None):
     if bid:
         ov = race_override.load(bid, race, meta)
         if ov and ov.get('bonusStats') and race not in GEAR_PART:
             raise RuntimeError(f'{bid} {race}: a gear override, and no GEAR_PART says which racial it is tuned around')
     req, _ = race_override.apply(req, bid, race, meta, gear=gear_on(race, off)) if bid else (copy.deepcopy(req), None)
-    pl = player(req)
-    pl['race'] = 'Race' + race
+    player(req)['race'] = 'Race' + race
     if mob:
         req['encounter']['targets'][0]['mobType'] = mob
-    req['simOptions'] = {'iterations': ITERS, 'randomSeed': '1'}
-    env = dict(os.environ)
-    env.pop('DASH_NAMES', None)
-    if off:
-        env['DASH_RACIALS_OFF'] = off
+    return req, ({'DASH_RACIALS_OFF': off} if off else {})
+
+
+def fights(req, env, seed, count):
+    """Per-fight DPS of `count` fights from `seed`."""
+    req = copy.deepcopy(req)
+    req['simOptions'] = {'iterations': count, 'randomSeed': str(seed), 'saveAllValues': True, **RNG}
+    e = dict(os.environ)
+    e.pop('DASH_NAMES', None)
+    e.pop('DASH_RACIALS_OFF', None)
+    e.update(env)
     with tempfile.TemporaryDirectory() as d:
         i, o = os.path.join(d, 'i.json'), os.path.join(d, 'o.json')
         json.dump(req, open(i, 'w'))
-        subprocess.run([CLI, 'sim', '--infile', i, '--outfile', o], check=True, capture_output=True, cwd=TREE, env=env)
+        subprocess.run([CLI, 'sim', '--infile', i, '--outfile', o], check=True, capture_output=True, cwd=TREE, env=e)
         r = json.load(open(o))
     if r.get('error'):
         raise RuntimeError(r['error']['message'][:500])
-    p = r['raidMetrics']['parties'][0]['players'][0]['dps']
-    return round(p['avg'], 3), round(p['stdev'] / math.sqrt(ITERS), 3)
+    return r['raidMetrics']['parties'][0]['players'][0]['dps'].get('allValues', [])
+
+
+def sim(req, race, off=None, mob=None, bid=None, meta=None):
+    """A scenario against the race's sweep, at the fights the racial luck goal needs (adaptive.py): a pilot of PILOT fights
+    of both, then both topped up to N from the pilot's paired spread. The DPS is the sweep's plus the paired difference
+    (so a scenario that changes nothing is the sweep's DPS exactly); pse is the difference's error."""
+    sreq, env = scenario_req(req, race, off, mob, bid, meta)
+    breq = race_override.apply(req, bid, race, meta)[0]  # the sweep's request (run_build.py's race_sweep)
+
+    def both(n):
+        return (adaptive.values(bid, breq, None, n, lambda s, c: fights(breq, {}, s, c)),
+                adaptive.values(bid, sreq, env, n, lambda s, c: fights(sreq, env, s, c)))
+
+    vb, vs = both(adaptive.PILOT)
+    d, spread, _ = adaptive.paired(vb, vs)
+    n = adaptive.fights(spread, adaptive.goal('racial', d), adaptive.PILOT)
+    if n > adaptive.PILOT:
+        vb, vs = both(n)
+    d, _, pse = adaptive.paired(vb, vs)
+    base = sweep_result(bid, race) or (adaptive.mean(vb), adaptive.sd(vb) / math.sqrt(len(vb)))
+    return {'dps': round(base[0] + d, 3), 'se': round(math.hypot(base[1], pse), 3), 'pse': round(pse, 3), 'iters': n,
+            'same': all(x == y for x, y in zip(vb, vs))}
 
 
 def sweep_result(bid, race):
@@ -106,7 +133,7 @@ def sweep_result(bid, race):
     r = next((r for r in o.get('races', []) if r['race'] == race), None)
     if r and r.get('override') != race_override.summary(race_override.load(bid, race)):
         return None  # simmed with another race override than the current one
-    return (round(r['dps'], 3), round(r['se'], 3)) if r else None
+    return (round(r['dps'], 3), round(r['se'], 3), r.get('iters')) if r else None
 
 
 def tasks(bid):
@@ -122,7 +149,7 @@ def tasks(bid):
         for t, mob in {**TARGETS, **CLASS_TARGETS.get(cls, {})}.items():
             same = None if ALL_TARGETS or race in TARGET_RACES[t] else sweep_result(bid, race)
             if same:
-                yield (bid, race, t), lambda same=same: same
+                yield (bid, race, t), lambda same=same: {'dps': same[0], 'se': same[1], 'pse': 0.0, 'iters': same[2], 'same': True}
             else:
                 yield (bid, race, t), lambda race=race, mob=mob: sim(req, race, mob=mob, bid=bid, meta=meta)
 
@@ -141,13 +168,13 @@ def main(ids):
     def go(kf):
         (b, race, v), f = kf
         try:
-            dps, se = f()
+            row = f()
         except Exception as e:
             print('FAIL', b, race, v, str(e)[:300], flush=True)
             return
         with lock:
             with open(RES, 'a') as fh:
-                fh.write(json.dumps({'build': b, 'race': race, 'variant': v, 'dps': dps, 'se': se, 'iters': ITERS}) + '\n')
+                fh.write(json.dumps({'build': b, 'race': race, 'variant': v, **row}) + '\n')
             n[0] += 1
             if n[0] % 50 == 0:
                 print(n[0], 'done', flush=True)

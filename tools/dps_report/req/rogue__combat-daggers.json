@@ -1094,7 +1094,7 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1399248
+                        "spellId": 1329549
                       }
                     }
                   }
@@ -1143,8 +1143,7 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury",
-      "salvation": true
+      "totemWeaponBuff": "TotemWeaponBuffWindfury"
     },
     "debuffs": {
       "judgementOfWisdom": true,

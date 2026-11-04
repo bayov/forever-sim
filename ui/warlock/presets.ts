@@ -426,7 +426,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	retributionAura: TristateEffect.TristateEffectImproved,
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
-	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({

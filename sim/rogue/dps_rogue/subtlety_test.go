@@ -11,7 +11,7 @@ import (
 // newSubtletyRogueSim starts a Forever sim of a level 60 rogue with 21 Subtlety points
 // (Premeditation and Preparation) and an empty rotation.
 func newSubtletyRogueSim() (*core.Simulation, *DpsRogue) {
-	return newRogueSim("--005020331321001")
+	return newRogueSim("--005203031321001")
 }
 
 // newRogueSim starts a Forever sim of a level 60 rogue with the talents and an empty

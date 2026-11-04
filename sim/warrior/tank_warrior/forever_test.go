@@ -369,3 +369,21 @@ func TestForeverTankScore(t *testing.T) {
 		t.Errorf("each iteration's SafeDPS averages %.3f, the distribution says %.3f", got, want)
 	}
 }
+
+// TestForeverDefensiveStanceThreat checks the November 2 development notes' Defensive Stance 80%
+// (was 30%) and Defiance 7/13/20% (was 5/10/15%) threat bonuses, which multiply (two A_MOD_THREAT
+// auras, 7376 and 12792; clients 70753 and 70755 unchanged, standards 37): x1.8 without Defiance,
+// x1.8 x 1.2 = x2.16 with Defiance 3/3 and a shield.
+func TestForeverDefensiveStanceThreat(t *testing.T) {
+	for talents, want := range map[string]float64{"35--": 1.8, P1Talents: 1.8 * 1.2} {
+		sim, war := newForeverTank(t, talents)
+		for _, stance := range []*core.Aura{war.BattleStanceAura, war.DefensiveStanceAura, war.BerserkerStanceAura} {
+			stance.Deactivate(sim)
+		}
+		base := war.PseudoStats.ThreatMultiplier
+		war.DefensiveStanceAura.Activate(sim)
+		if got := war.PseudoStats.ThreatMultiplier / base; math.Abs(got-want) > 1e-9 {
+			t.Errorf("talents %q: Defensive Stance threat x%.4f, want x%.4f", talents, got, want)
+		}
+	}
+}

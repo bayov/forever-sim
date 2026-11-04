@@ -12,7 +12,7 @@
 # them, only the one sanity sim does.
 #
 #   go run --tags=with_db ./tools/rotopt/mksettings -spec fury -gear level60_phase1_synthetic_fury \
-#       -apl level60_fury -talents 30313113002-0505300551120100321 -race Human -duration 180 -out fury.json
+#       -apl level60_fury -talents 30313113002-050530055120100231-1 -race Human -duration 180 -out fury.json
 #   tools/rotopt/warrior_presets.sh fury.json
 #
 # mineSync=0 since 2026-10-24: the presets take no Goblin Land Mine (standards 11, explosives only
@@ -63,6 +63,31 @@
 # Arms on Sunder duty keeps Mortal Strike first with Slam after a swing (the move loses 2.0 at 120
 # sec on seed 1000003).
 #
+# 2026-11-04 (follow-up, each change kept only where it won at 120, 160, 180, 200 and 300 sec on seeds
+# 1 and 1000003 at 20,000 iterations): two-hand Fury and its duty presets take Unbridled Wrath 5 (was
+# 3) for Furious Precision's 3 points, which do nothing with a two-hander, and the spare point in Blood
+# Craze (30313113032-250500150122100231): +2.8 / +3.4 / +1.9 at 120 / 180 / 300 sec (seed 1000003
+# +2.3 / +1.4 / +1.5); Sunder duty +2.0 / +1.5 and Battle Shout duty +3.4 / +2.1 at 180 sec. Dual
+# wield Fury (not its duty presets) puts Bloodthirst ahead of Whirlwind (wwFirst=0), queues Heroic
+# Strike from 60 Rage (was 80) and Hamstrings from 20 (was 10), both only when Bloodthirst and
+# Whirlwind are 1 sec away or more (fillerGap=1), and Bloodrages under 50 (was 20): +2.0 / +0.4 / +3.9 at 120 / 180 /
+# 300 sec (seed 1000003 +0.9 / +1.2 / +3.0), +1.2 / +3.5 at 160 / 200 sec.
+#
+# 2026-11-04 (hotfix push 113539: Raging Blows gone, so Cleave 20 and Whirlwind 25 Rage; Reckless
+# Swings on a 1 sec GCD; the Fury tree 18 talents), the talent search at 180 sec and the knob search
+# (-combined 120,180,300) alternated on the report requests, each change kept only where it won at
+# 120, 160, 180, 200 and 300 sec on seeds 1 and 1000003 at 20,000 iterations. Every build casts
+# Reckless Swings below its main strikes, just ahead of Heroic Strike (rsLate=1, new), so its GCD
+# only goes when no strike is ready: Fury +5.7, two-hand Fury (with the knob below) +16.7, Arms +10.2,
+# Dragonkin +13.3 at 180 sec. Two-hand Fury, its duties, Arms and its Battle Shout duty cast it only
+# under 20 Rage (recklessSwingsRage=20): Arms +2.0 at 180 sec over rsLate=1 alone; Arms on Sunder
+# duty and Dragonkin keep it on cooldown (20 loses there). Talents: the remapped Fury presets had a
+# point unspent. Dual wield Fury puts it in Improved Bloodrage (30313113002-050530055120100231-1,
+# +1.3 at 180 sec); two-hand Fury's remapped string left Bloodthirst one point short of its row (29),
+# so it is not legal, and no point in reach adds damage there: Booming Voice 3/5 for the Battle
+# Shout duty's shout (30313113032-350500150122100231). Arms and Dragonkin keep theirs, Reckless
+# Swings included (no move of its point gains once it waits for the strikes).
+#
 # The searches: tools/rotopt -talent-search and the knob search, one after the other until
 # neither moved, from these talents and knobs.
 set -e
@@ -76,39 +101,39 @@ gen() {
 		-eval -confirm-iters 100 -out ui/warrior/apls -name "$name" -talents "$talents" -knobs "$knobs" >/dev/null
 	echo "wrote ui/warrior/apls/$name.apl.json ($knobs)"
 }
-gen warrior_fury level60_fury 30313113002-0505300551120100321 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=1,hsRage=80,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=1,wwRage=25
+gen warrior_fury level60_fury 30313113002-050530055120100231-1 \
+	battleShout=0,berserkerRageRage=0,bloodrageRage=50,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=1,hamstringRage=20,hsExecute=1,hsRage=60,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,rsLate=1,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury on Sunder Armor duty (docs/raid_sim.md, Sunder upkeep): 5 stacks from the pull,
 # refreshed in their last 3 sec, for a raid with no warrior tank (its request has no raid Sunder Armor).
-gen warrior_fury level60_fury_sunder 30313113002-0505300551120100321 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=1,hsRage=70,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,slamAfterSwing=0,slamRage=0,spearDance=0,sunderDuty=1,trinketAt=30,wwBtGap=0,wwFirst=0,wwRage=25
+gen warrior_fury level60_fury_sunder 30313113002-050530055120100231-1 \
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=1,hsRage=70,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,rsLate=1,slamAfterSwing=0,slamRage=0,spearDance=0,sunderDuty=1,trinketAt=30,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury on Battle Shout duty (standards 23): shouts before the pull and refreshes it.
-gen warrior_fury level60_fury_battle_shout 30313113002-0505300551120100321 \
-	battleShout=1,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=1,hsRage=80,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=1,wwRage=25
-gen warrior_fury level60_fury_2h 30313113032-2503300501122100321 \
-	battleShout=0,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=100,recklessness=2,slamAfterSwing=1,slamRage=60,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
+gen warrior_fury level60_fury_battle_shout 30313113002-050530055120100231-1 \
+	battleShout=1,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=1,hsRage=80,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessSwingsRage=100,recklessness=3,rsLate=1,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=30,wwBtGap=0,wwFirst=1,wwRage=25
+gen warrior_fury level60_fury_2h 30313113032-350500150122100231 \
+	battleShout=0,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=20,recklessness=2,rsLate=1,slamAfterSwing=1,slamRage=60,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury_2h on Sunder Armor duty (docs/raid_sim.md, Sunder upkeep): 5 stacks from the pull,
 # refreshed in their last 3 sec, for a raid with no warrior tank (its request has no raid Sunder Armor).
-gen warrior_fury level60_fury_2h_sunder 30313113032-2503300501122100321 \
-	battleShout=0,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=1,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=100,recklessness=2,slamAfterSwing=1,slamRage=60,spearDance=0,sunderDuty=1,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
+gen warrior_fury level60_fury_2h_sunder 30313113032-350500150122100231 \
+	battleShout=0,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=1,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=20,recklessness=2,rsLate=1,slamAfterSwing=1,slamRage=60,spearDance=0,sunderDuty=1,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury_2h on Battle Shout duty (standards 23): shouts before the pull and refreshes it. The duty
 # search takes Bloodrage below 20 Rage (+1.6 at 180 sec), since the pull's Bloodrage goes before the shout.
-gen warrior_fury level60_fury_2h_battle_shout 30313113032-2503300501122100321 \
-	battleShout=1,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=100,recklessness=2,slamAfterSwing=1,slamRage=60,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
-gen warrior_arms level60_arms 30303213032215201-050500050012-2 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25
+gen warrior_fury level60_fury_2h_battle_shout 30313113032-350500150122100231 \
+	battleShout=1,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=20,recklessness=2,rsLate=1,slamAfterSwing=1,slamRage=60,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
+gen warrior_arms level60_arms 30303213032215201-05050005012-2 \
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=20,recklessness=2,rsLate=1,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25
 # level60_arms on Sunder Armor duty (docs/raid_sim.md, Sunder upkeep): 5 stacks from the pull,
 # refreshed in their last 3 sec, for a raid with no warrior tank (its request has no raid Sunder Armor).
 # Its own search (2026-11-02) puts Slam ahead of Mortal Strike (msFirst=0): with the duty's Sunders
 # taking GCDs, Slam's 15 sec cooldown loses more to a wait than Mortal Strike's 6 sec. +2.1 / +2.3 / +1.6
 # at 120 / 180 / 300 sec (seed 1000003 +3.0 / +2.7 / +1.5); on the base build it is not 2 standard errors.
-gen warrior_arms level60_arms_sunder 30303213032215201-050500050012-2 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rend=1,slamAfterSwing=1,slamRage=20,spearingRage=0,stance=1,sunderDuty=1,trinketAt=0,wwRage=25
+gen warrior_arms level60_arms_sunder 30303213032215201-05050005012-2 \
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rsLate=1,rend=1,slamAfterSwing=1,slamRage=20,spearingRage=0,stance=1,sunderDuty=1,trinketAt=0,wwRage=25
 # level60_arms on Battle Shout duty (standards 23): shouts before the pull and refreshes it.
-gen warrior_arms level60_arms_battle_shout 30303213032215201-050500050012-2 \
-	battleShout=1,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25
+gen warrior_arms level60_arms_battle_shout 30303213032215201-05050005012-2 \
+	battleShout=1,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=20,recklessness=2,rsLate=1,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25
 # Arms against a Giant or Dragonkin boss (Onyxia), where Spearing Strike does 80% more weapon damage:
 # the talent and knob searches on a Dragonkin boss take Spearing Strike and Improved Bloodrage for two
 # points of Booming Voice and one of Improved Execute.
-gen warrior_arms level60_arms_dragonkin 30303213132215201-050500050012-1 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=15,stance=1,trinketAt=0,wwRage=25
+gen warrior_arms level60_arms_dragonkin 30303213132215201-05050005012-1 \
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rsLate=1,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=15,stance=1,trinketAt=0,wwRage=25

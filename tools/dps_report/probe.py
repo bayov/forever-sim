@@ -132,7 +132,7 @@ def probe_one(bid, base, pbin):
     env = dict(os.environ, DASH_DIR=work, DASH_BIN=pbin, PROBE_REAL_BIN=BIN, PROBE_LOG=logp, PAR='1', ABL_MERGE='1',
                FIGHTS=str(SETTINGS['fights']), PROBE_SCALE=str(SETTINGS['scale']), PROBE_MIN=str(SETTINGS['min']),
                DASH_SPLITS=str(SETTINGS['splits']))
-    for k in ('ITERS', 'MAX_ITERS', 'SEED', 'WEIGHTS_FORCE', 'ASM_REUSE_OUT', 'RACES_ALL_TARGETS'):
+    for k in ('ITERS', 'MAX_ITERS', 'SEED', 'WEIGHTS_FORCE', 'ASM_REUSE_OUT', 'RACES_ALL_TARGETS', 'ADAPT_PILOT', 'ADAPT_RACE_PILOT', 'ADAPT_MAX'):
         env.pop(k, None)  # the probe runs each step with its defaults, as pipeline.sh does
     failed = {}
     for step, cmd in steps(bid):

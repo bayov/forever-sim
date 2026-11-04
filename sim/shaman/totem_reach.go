@@ -184,9 +184,11 @@ func (shaman *Shaman) registerTotemicProjectionSpell() {
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
 			},
+			// Classic has no Totemic Call or Projection; outside Forever it keeps the client's 1 min
+			// (standards 37: the notes' 30 sec is gated under Forever).
 			CD: core.Cooldown{
 				Timer:    shaman.NewTimer(),
-				Duration: time.Second * 30,
+				Duration: core.TernaryDuration(shaman.Env.IsForever(), time.Second*30, time.Minute),
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, _ *core.Unit) bool {

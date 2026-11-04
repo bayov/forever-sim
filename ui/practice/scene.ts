@@ -6,8 +6,9 @@
 
 import * as THREE from 'three';
 import { newTextures } from './wow/files';
-import { fillBatches, particleOptions } from './wow/particles';
-import { Crowd } from './wow/crowd';
+import { drawOrder, fillBatches, particleOptions } from './wow/particles';
+import { Crowd, SHADOW_LAYER } from './wow/crowd';
+import { poseClient } from './wow/poseClient';
 import type { Model } from './wow/model';
 
 export type CameraState = { yaw: number; pitch: number; distance: number };
@@ -44,6 +45,39 @@ export const graphicsPresets: Record<'low' | 'medium' | 'high', Graphics> = {
 	high: { preset: 'high', renderScale: 1, shadows: 'high', maxHeight: 1440 },
 };
 
+// opaqueOrder sorts the solid things to draw: by group and render order as Three does, then by
+// shader, texture and vertices, then front to back.
+type RenderItem = { id: number; groupOrder: number; renderOrder: number; material: THREE.Material; geometry: THREE.BufferGeometry; z: number };
+const shaderIds = new Map<string, number>();
+const shaderOf = new WeakMap<THREE.Material, number>();
+function shaderId(m: THREE.Material): number {
+	let id = shaderOf.get(m);
+	if (id === undefined) {
+		const map = (m as THREE.MeshBasicMaterial).map;
+		const key = [m.type, m.customProgramCacheKey(), JSON.stringify(m.defines ?? {}), !!map, m.alphaTest > 0, m.vertexColors, m.side, (m as THREE.MeshBasicMaterial).fog].join('|');
+		id = shaderIds.get(key);
+		if (id === undefined) shaderIds.set(key, (id = shaderIds.size + 1));
+		shaderOf.set(m, id);
+	}
+	return id;
+}
+function opaqueOrder(a: RenderItem, b: RenderItem): number {
+	if (a.groupOrder !== b.groupOrder) return a.groupOrder - b.groupOrder;
+	if (a.renderOrder !== b.renderOrder) return a.renderOrder - b.renderOrder;
+	const sa = shaderId(a.material);
+	const sb = shaderId(b.material);
+	if (sa !== sb) return sa - sb;
+	const ta = (a.material as THREE.MeshBasicMaterial).map?.id ?? 0;
+	const tb = (b.material as THREE.MeshBasicMaterial).map?.id ?? 0;
+	if (ta !== tb) return ta - tb;
+	if (a.geometry.id !== b.geometry.id) return a.geometry.id - b.geometry.id;
+	const ma = (a.material as unknown as { id: number }).id;
+	const mb = (b.material as unknown as { id: number }).id;
+	if (ma !== mb) return ma - mb;
+	if (a.z !== b.z) return a.z - b.z;
+	return a.id - b.id;
+}
+
 export class Room {
 	readonly renderer: THREE.WebGLRenderer;
 	private readonly sun: THREE.DirectionalLight;
@@ -71,6 +105,10 @@ export class Room {
 	private graphics?: Graphics;
 	// The units drawn together (the raid test's raiders).
 	readonly crowd: Crowd;
+	crowdTotems = false;
+	// onPass hears each pass of drawing the scene start, for the performance recorder to time it
+	// on the GPU: the shadows, then the solid things, then the see-through things and effects.
+	onPass?: (pass: 'upload' | 'shadow' | 'opaque' | 'transparent' | 'boss' | 'gear' | 'effects' | 'particles' | 'ribbons') => void;
 
 	constructor(
 		readonly canvas: HTMLCanvasElement,
@@ -83,6 +121,12 @@ export class Room {
 		this.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', desynchronized: true } as THREE.WebGLRendererParameters);
 		this.renderer.setPixelRatio(window.devicePixelRatio);
 		this.renderer.shadowMap.enabled = true;
+		// The solid things draw grouped by shader, then texture, then vertices, so the renderer
+		// switches each as rarely as it can (Three's own order goes by material, and every copy of a
+		// model has its own materials). Solid things hide what's behind them whatever the order.
+		// Where two solid surfaces lie at exactly one depth (an armor layer on the body), the one
+		// drawn last shows, so a few such pixels can come out the other way. Off with ?sortsolid=0.
+		if (new URLSearchParams(location.search).get('sortsolid') !== '0') this.renderer.setOpaqueSort(opaqueOrder as unknown as (a: unknown, b: unknown) => number);
 		this.scene.background = new THREE.Color(0x87a7c4);
 		this.scene.fog = new THREE.Fog(0x87a7c4, 60, 160);
 		this.camera = new THREE.PerspectiveCamera(70, 1, 0.1, 500);
@@ -106,9 +150,55 @@ export class Room {
 		// The renderer has placed the scene's objects for the frame by now, and hasn't drawn the
 		// shadows yet.
 		this.scene.onBeforeRender = (_r, _s, camera) => {
+			// The crowd's shadow batches draw only in the shadows: the camera sees their layer from
+			// when the shadows start (below) to when the picture starts (the solid marker).
+			camera.layers.disable(SHADOW_LAYER);
+			// The crowd's poses for the next frame go to the pose worker now, while this one draws.
+			poseClient.flush();
 			this.crowd.prepare(camera);
 			fillBatches();
+			this.onPass?.('upload');
 		};
+		// The shadows start when the renderer switches to the shadow map, which we hear just before.
+		// A GPU timer started there (or once the shadow map was bound) lost the whole WebGL context
+		// in headless Chrome on WSL (Mesa's D3D12 driver), so we split the uploads from the shadows
+		// only on Chrome's own Direct3D 11.
+		const gl = this.renderer.getContext();
+		const info = gl.getExtension('WEBGL_debug_renderer_info');
+		const splitShadows = /Direct3D11/.test(String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : '')) && !location.search.includes('noshadowtimer');
+		const setRenderTarget = this.renderer.setRenderTarget.bind(this.renderer);
+		this.renderer.setRenderTarget = (target, face, level) => {
+			if (target && target === this.sun.shadow.map) {
+				this.camera.layers.enable(SHADOW_LAYER);
+				if (splitShadows) this.onPass?.('shadow');
+			}
+			setRenderTarget(target, face, level);
+		};
+		// Markers that draw nothing tell when the solid things start, when the see-through things
+		// start (first in their lists), and when each kind of see-through thing starts (just before
+		// its render order, drawOrder).
+		const markers = [
+			['opaque', -1e9],
+			['transparent', -1e9],
+			['boss', drawOrder.boss - 0.1],
+			['gear', drawOrder.gear - 0.5],
+			['effects', drawOrder.effects - 0.5],
+			['particles', drawOrder.particles - 0.5],
+			['ribbons', drawOrder.ribbons - 0.5],
+		] as const;
+		for (const [pass, order] of markers) {
+			const g = new THREE.BufferGeometry();
+			g.setAttribute('position', new THREE.BufferAttribute(new Float32Array(9), 3));
+			g.setDrawRange(0, 0);
+			const marker = new THREE.Mesh(g, new THREE.MeshBasicMaterial({ transparent: pass !== 'opaque', depthWrite: false }));
+			marker.frustumCulled = false;
+			marker.renderOrder = order;
+			marker.onBeforeRender = () => {
+				this.camera.layers.disable(SHADOW_LAYER);
+				this.onPass?.(pass);
+			};
+			this.scene.add(marker);
+		}
 
 		const ground = new THREE.Mesh(new THREE.CircleGeometry(120, 64), new THREE.MeshStandardMaterial({ color: 0x5f7d3f, roughness: 1 }));
 		ground.rotation.x = -Math.PI / 2;
@@ -207,6 +297,9 @@ export class Room {
 					pole.visible = false;
 					group.add(m.root);
 					m.enableParticles(this.scene);
+					// In the raid test the totems draw in the crowd too, since their few parts each took a
+					// draw call and another for the shadows.
+					if (this.crowdTotems) this.crowd.add([m]);
 					// It rises out of the ground (Birth), then stands.
 					if (m.has(127)) m.play(127, { loop: false, fade: 0, restart: true });
 					this.totemModels.set(t.element, m);

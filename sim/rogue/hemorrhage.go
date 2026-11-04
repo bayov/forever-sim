@@ -41,7 +41,7 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 
 		// Efficient Strikes covers Hemorrhage too (November 2 development notes).
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   35 - rogue.efficientStrikes(),
+			Cost:   35 - rogue.hemorrhageEfficientStrikes(),
 			Refund: 0.8,
 		},
 		Cast: core.CastConfig{
@@ -82,4 +82,12 @@ func (rogue *Rogue) isHemorrhaging(target *core.Unit) bool {
 // The Rupture and Garrote damage multiplier from the rogue's Hemorrhage on the target.
 func (rogue *Rogue) hemorrhageMultiplier(target *core.Unit) float64 {
 	return core.TernaryFloat64(rogue.isHemorrhaging(target), HemorrhageRuptureMultiplier, 1)
+}
+
+// Garrote's share of Hemorrhage: Forever only, from the November 2 development notes (standards 37).
+func (rogue *Rogue) garroteHemorrhageMultiplier(target *core.Unit) float64 {
+	if !rogue.Env.IsForever() {
+		return 1
+	}
+	return rogue.hemorrhageMultiplier(target)
 }

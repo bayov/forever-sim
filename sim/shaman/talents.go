@@ -33,8 +33,13 @@ func (shaman *Shaman) ApplyTalents() {
 
 	if shaman.Talents.MentalDexterity > 0 {
 		// 50 / 100 / 150% of Intellect since the November 2 development notes (33 / 67 / 100% in
-		// the beta client, 1.60.1.70753 included).
-		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, []float64{0, .5, 1, 1.5}[shaman.Talents.MentalDexterity])
+		// the beta client, 1.60.1.70753 included). Classic has no Mental Dexterity; outside Forever
+		// it keeps the client's values (standards 37).
+		ratio := []float64{0, .5, 1, 1.5}[shaman.Talents.MentalDexterity]
+		if !shaman.Env.IsForever() {
+			ratio = []float64{0, 1.0 / 3, 2.0 / 3, 1}[shaman.Talents.MentalDexterity]
+		}
+		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, ratio)
 	}
 
 	if shaman.Talents.MentalQuickness > 0 {
@@ -54,12 +59,17 @@ func (shaman *Shaman) ApplyTalents() {
 		shaman.PseudoStats.CanParry = true
 
 		// Rockbiter is the tanking imbue, so the threat modifier flips depending on which imbue is up.
-		// Enhancement picks its imbue in the class settings, the other specs in the consumes.
+		// Enhancement and the Warden pick their imbue in the class settings, the other specs in the
+		// consumes.
+		//
+		// The client (70753, 16268) cuts all threat by 30% (effect 1) and adds 86 to the threat
+		// effect of Rockbiter Weapon's passive (16313 effect 2, 0 on its own), so under Rockbiter
+		// it's 0.7 x 1.86 = 1.302, the tooltip's 30% more (docs/tank_shaman.md).
+		threat := spiritWeaponsThreatMultiplier(false)
 		if shaman.Consumes.MainHandImbue == proto.WeaponImbue_RockbiterWeapon || shaman.ShamanImbue == proto.WeaponImbue_RockbiterWeapon {
-			shaman.PseudoStats.ThreatMultiplier *= 1.30
-		} else {
-			shaman.PseudoStats.ThreatMultiplier *= 0.70
+			threat = spiritWeaponsThreatMultiplier(true)
 		}
+		shaman.PseudoStats.ThreatMultiplier *= threat
 	}
 
 	// Restoration Talents
@@ -107,6 +117,15 @@ func (shaman *Shaman) ApplyTalents() {
 			}
 		})
 	}
+}
+
+// spiritWeaponsThreatMultiplier is Spirit Weapons' threat multiplier, with Rockbiter Weapon on the
+// main hand or without it.
+func spiritWeaponsThreatMultiplier(rockbiter bool) float64 {
+	if rockbiter {
+		return 0.7 * 1.86
+	}
+	return 0.7
 }
 
 func (shaman *Shaman) applyConcussion() {
@@ -172,18 +191,6 @@ func (shaman *Shaman) shamanisticFocusFactor() float64 {
 }
 
 // 0.17 / 0.33 / 0.50 sec per the beta client.
-// downrankCoefficient is what a rank keeps of its spell power coefficient under Forever:
-// Blizzard's 2026-10-01 development notes say ranks far below the caster's level get less
-// from spell power, and https://foreverchanges.pro/downranking measures 5% less for each
-// level the caster is past the rank's learn level + 17, down to nothing (the priest
-// branch's downrankCoefficient). Lightning Bolt rank 7 (10391, learned at 38) keeps 75% at 60.
-func (shaman *Shaman) downrankCoefficient(coefficient float64, learnLevel int) float64 {
-	if shaman.Env == nil || !shaman.Env.IsForever() {
-		return coefficient
-	}
-	return coefficient * max(0, min(1, 1-0.05*float64(int(shaman.Level)-17-learnLevel)))
-}
-
 func (shaman *Shaman) elementalAlacrityReduction() time.Duration {
 	return []time.Duration{0, 170, 330, 500}[shaman.Talents.ElementalAlacrity] * time.Millisecond
 }
@@ -436,8 +443,12 @@ func (shaman *Shaman) makeFlurryAura(points int32) *core.Aura {
 	}
 
 	// 6 / 12 / 18 / 24 / 30% since the November 2 development notes (5 to 25% in the beta
-	// client, 1.60.1.70753 included).
+	// client, 1.60.1.70753 included). Classic's are 10 / 15 / 20 / 25 / 30% (standards 37:
+	// notes-only values are gated under Forever).
 	attackSpeed := []float64{1.06, 1.12, 1.18, 1.24, 1.30}[points-1]
+	if !shaman.Env.IsForever() {
+		attackSpeed = []float64{1.10, 1.15, 1.20, 1.25, 1.30}[points-1]
+	}
 
 	// The buff lasts 15 sec when we don't use up its 3 charges.
 	//
@@ -542,7 +553,10 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 
 	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
 	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
-	ppmm := shaman.AutoAttacks.NewPPMManager(4*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
+	// Classic has no Maelstrom Weapon; outside Forever it keeps the sim's 2 PPM a point from before
+	// the notes (standards 37).
+	ppmPerPoint := core.TernaryFloat64(shaman.Env.IsForever(), 4, 2)
+	ppmm := shaman.AutoAttacks.NewPPMManager(ppmPerPoint*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
 
 	castTimeReductionPerStack := .04 * float64(shaman.Talents.MaelstromWeapon)
 	costReductionPerStack := 4 * shaman.Talents.MaelstromWeapon
@@ -756,8 +770,12 @@ func (shaman *Shaman) healingFocusChance() float64 {
 }
 
 // applyAncestralHealing: after a crit from one of our heals, its target has 8, 17 or 25% more
-// armor for 15 sec (70338 curve for 16176, "Increases your target's armor"). The buff is one
-// spell, so another shaman's on the same player is the same buff, refreshed.
+// armor for 15 sec (curve 85318 for 16176). The buff 16177 is aura 101 (MOD_RESISTANCE_PCT) on
+// armor, the priest's Inspiration (14893) aura, which raises all armor; the "from items" talents
+// (Toughness 12299, 20143) are aura 142. 16177's tooltip says "from items", the talent's (16176)
+// "Increases your target's armor value": the sim follows the aura (healer_mechanics-20261104-3;
+// 2026-11-03 to 11-04 it raised armor from items only). The buff is one spell, so another
+// shaman's on the same player is the same buff, refreshed.
 func (shaman *Shaman) applyAncestralHealing() {
 	if shaman.Talents.AncestralHealing == 0 {
 		return
@@ -765,6 +783,9 @@ func (shaman *Shaman) applyAncestralHealing() {
 	armorMultiplier := 1 + []float64{0, .08, .17, .25}[shaman.Talents.AncestralHealing]
 
 	buffs := shaman.NewRaidAuraArray(func(target *core.Unit) *core.Aura {
+		if shaman.Env.Raid.GetPlayerFromUnit(target) == nil {
+			return nil
+		}
 		return target.GetOrRegisterAura(core.Aura{
 			Label: "Ancestral Fortitude",
 			// One buff spell for every rank in Forever (16177, 8% that the talent's curve scales).

@@ -230,6 +230,8 @@ export interface LevelingGearInputs {
 	seed: number;
 	pins: Array<LevelingGearPinInput>;
 	route?: LevelingGearRoute;
+	// We wear a one-hander and a shield all the way: no two-handers, nothing held in the off hand.
+	oneHandAndShield?: boolean;
 	// The stat weights we judge items by at a level.
 	weightsAt: (level: number) => Stats;
 	// A zone's name, for the dungeons.
@@ -251,11 +253,13 @@ export function planLevelingGear(inputs: LevelingGearInputs): LevelingGearPlan {
 	const levels: Array<LevelingGearLevel> = [];
 	const dungeonRuns = planDungeonRuns(inputs, pool);
 
-	// We start in white chest, legs and boots, with a white weapon.
+	// We start in white chest, legs and boots, with a white weapon, and a white shield if we level
+	// with one.
 	for (const slot of [ItemSlot.ItemSlotChest, ItemSlot.ItemSlotLegs, ItemSlot.ItemSlotFeet, ItemSlot.ItemSlotMainHand]) {
 		const item = pool.plainItem(SLOT_TYPE[slot], 1, 1, () => 0);
 		if (item) gear[slot] = { item, source: 'start', since: 1 };
 	}
+	if (inputs.oneHandAndShield) gear[ItemSlot.ItemSlotOffHand] = { item: pool.plainShield(1), source: 'start', since: 1 };
 
 	for (let level = 1; level <= maxLevel; level++) {
 		const weights = inputs.weightsAt(level);
@@ -501,7 +505,10 @@ class ItemPool {
 		const restriction = item.factionRestriction;
 		if (restriction == FactionRestriction.ALLIANCE_ONLY && this.inputs.faction == Faction.Horde) return false;
 		if (restriction == FactionRestriction.HORDE_ONLY && this.inputs.faction == Faction.Alliance) return false;
-		if (item.type == ItemType.ItemTypeWeapon) return this.canWield(item.weaponType, item.handType == HandType.HandTypeTwoHand);
+		if (item.type == ItemType.ItemTypeWeapon) {
+			if (this.inputs.oneHandAndShield && item.weaponType == WeaponType.WeaponTypeOffHand) return false;
+			return this.canWield(item.weaponType, item.handType == HandType.HandTypeTwoHand);
+		}
 		if (item.type == ItemType.ItemTypeRanged) return this.inputs.classRules.rangedWeaponTypes.includes(item.rangedWeaponType);
 		return true;
 	}
@@ -512,6 +519,7 @@ class ItemPool {
 	}
 
 	private canWield(weaponType: WeaponType, twoHand: boolean): boolean {
+		if (twoHand && this.inputs.oneHandAndShield) return false;
 		return this.inputs.classRules.weaponTypes.some(wt => wt.weaponType == weaponType && (!twoHand || wt.canUseTwoHand));
 	}
 
@@ -561,13 +569,22 @@ class ItemPool {
 		if (type == ItemType.ItemTypeWeapon) {
 			const kinds = PLAIN_WEAPONS.filter(([weaponType, twoHand]) => this.canWield(weaponType, twoHand));
 			if (kinds.length == 0) return undefined;
-			const [weaponType, twoHand] = kinds[Math.floor(rand() * kinds.length)];
+			// A shield is one more kind of white item we can come across, if we level with one.
+			const kind = Math.floor(rand() * (kinds.length + (this.inputs.oneHandAndShield ? 1 : 0)));
+			if (kind == kinds.length) return this.plainShield(ilvl);
+			const [weaponType, twoHand] = kinds[kind];
 			item = this.plain.weapon(weaponType, twoHand, ilvl);
 		} else {
 			const armorType = type == ItemType.ItemTypeBack ? ArmorType.ArmorTypeCloth : this.inputs.classRules.maxArmorTypeAt(level);
 			item = this.plain.armor(type, armorType, ilvl);
 		}
 		if (item) this.usedPlain.set(item.id, item);
+		return item;
+	}
+
+	plainShield(ilvl: number): Item {
+		const item = this.plain.shield(ilvl);
+		this.usedPlain.set(item.id, item);
 		return item;
 	}
 
@@ -601,10 +618,14 @@ const PLAIN_ARMOR_TYPES = [
 	ItemType.ItemTypeFeet,
 ];
 const PLAIN_MAX_ILVL = 65;
+const PLAIN_SHIELD_FIT_MAX_ILVL = 30;
 
 // PlainItems are the white items the plan makes up, since the item database has none: armor
-// with no stats, and weapons. Their armor and weapon DPS go with item level, at 90% of a green
-// piece's armor and 85% of a green weapon's DPS. The green lines are fit to the database. Each
+// with no stats, weapons and shields. Their armor and weapon DPS go with item level, at 90% of a
+// green piece's armor and 85% of a green weapon's DPS. The green lines are fit to the database.
+// A shield's armor and block value are at 90% of a green shield's too, by a line through zero
+// fit to the greens up to item level 30. White shields only matter at low levels, and a line
+// over all the greens goes below zero there, because armor grows faster on high level shields. Each
 // one wears the icon of the lowest level green of its kind, like a leather vest's or a
 // two-handed mace's.
 //
@@ -613,13 +634,23 @@ const PLAIN_MAX_ILVL = 65;
 export class PlainItems {
 	private readonly armorFit = new Map<string, [number, number]>();
 	private readonly weaponFit = new Map<string, [number, number]>();
+	private readonly shieldArmorPerIlvl: number;
+	private readonly shieldBlockValuePerIlvl: number;
 	private readonly icons = new Map<string, Item>();
 
 	constructor(items: Array<Item>) {
 		const weaponSamples = new Map<string, Array<[number, number]>>();
 		const armorSamples = new Map<string, Array<[number, number]>>();
+		let shieldIlvlSquares = 0;
+		let shieldArmor = 0;
+		let shieldBlockValue = 0;
 		for (const item of items) {
 			if (item.quality != ItemQuality.ItemQualityUncommon) continue;
+			if (item.weaponType == WeaponType.WeaponTypeShield && item.ilvl <= PLAIN_SHIELD_FIT_MAX_ILVL) {
+				shieldIlvlSquares += item.ilvl * item.ilvl;
+				shieldArmor += item.ilvl * item.stats[Stat.StatArmor];
+				shieldBlockValue += item.ilvl * item.stats[Stat.StatBlockValue];
+			}
 			const twoHand = item.handType == HandType.HandTypeTwoHand;
 			if (item.weaponSpeed > 0) push(weaponSamples, String(twoHand), [item.ilvl, getWeaponDPS(item)]);
 			else if (item.stats[Stat.StatArmor] > 0) push(armorSamples, `${item.type}/${item.armorType}`, [item.ilvl, item.stats[Stat.StatArmor]]);
@@ -629,6 +660,8 @@ export class PlainItems {
 		}
 		armorSamples.forEach((samples, key) => this.armorFit.set(key, lineFit(samples)));
 		weaponSamples.forEach((samples, key) => this.weaponFit.set(key, lineFit(samples)));
+		this.shieldArmorPerIlvl = shieldIlvlSquares > 0 ? shieldArmor / shieldIlvlSquares : 0;
+		this.shieldBlockValuePerIlvl = shieldIlvlSquares > 0 ? shieldBlockValue / shieldIlvlSquares : 0;
 	}
 
 	armor(type: ItemType, armorType: ArmorType, ilvl: number): Item | undefined {
@@ -661,6 +694,16 @@ export class PlainItems {
 		return item;
 	}
 
+	shield(ilvl: number): Item {
+		const item = madeUpItem(plainId(ItemType.ItemTypeWeapon, WeaponType.WeaponTypeShield * 10, ilvl), 'Plain Shield', ItemType.ItemTypeWeapon, ilvl);
+		item.weaponType = WeaponType.WeaponTypeShield;
+		item.handType = HandType.HandTypeOffHand;
+		item.stats[Stat.StatArmor] = Math.max(1, Math.round(0.9 * this.shieldArmorPerIlvl * ilvl));
+		item.stats[Stat.StatBlockValue] = Math.max(1, Math.round(0.9 * this.shieldBlockValuePerIlvl * ilvl));
+		item.icon = this.icons.get(`w/${WeaponType.WeaponTypeShield}/false`)?.icon ?? item.icon;
+		return item;
+	}
+
 	// Every plain item, for the database.
 	all(): Array<Item> {
 		const out: Array<Item> = [];
@@ -672,6 +715,7 @@ export class PlainItems {
 				}
 			}
 			for (const [weaponType, twoHand] of PLAIN_WEAPONS) out.push(this.weapon(weaponType, twoHand, ilvl));
+			out.push(this.shield(ilvl));
 		}
 		return out;
 	}

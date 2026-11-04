@@ -12,10 +12,16 @@ One source, two outputs:
   Per-build rows carry `build`, the preset id `<class>__<preset>` (`id` in `builds.json`).
 - `tools/dps_report/raw/<id>.tgz`: each build's raw sim outputs, committed with its
   datasets.
+- The Tanking and Healing modes: `<mode>_*.json` datasets (`"mode"` in datasets.json),
+  raw bench outputs in `tools/dps_report/raw/bench/{tank,heal}.tgz` (README "Tanking and
+  Healing").
 - Output 1: the sim UI at `/forever/dps_report/`.
-- Output 2: `make dps-report-artifact` writes `dist/dps_report.html`, deployed to
-  https://forever-dps.pages.dev (Cloudflare Pages project `forever-dps`). Never publish the
-  report as a Claude artifact.
+- Output 2: `make dps-report-artifact` writes the site, `dist/dps_report_site/` (the page in
+  `index.html`, one data file per mode, `data/{dps,tank,heal,common}.<hash>.json`, and one per
+  preset's sample fights in `data/events/`, each fetched when the page first needs it), and the
+  same report as one self-contained file, `dist/dps_report.html`. `make dps-report-deploy`
+  uploads the site directory to https://forever-dps.pages.dev (Cloudflare Pages project
+  `forever-dps`) and checks every file live. Never publish the report as a Claude artifact.
 
 Work on a local branch, never directly on `master`.
 
@@ -37,6 +43,11 @@ and removed presets. A stale build *may* have moved; the probe says whether it d
 - **Text, tooltips or `build_data.py` only:** no sims.
 - **A false positive** that plainly can't feed the build, with no binaries for a probe:
   `stale.mjs --record <ids> --by hand`, reason in the commit message. Prefer the probe.
+
+It also lists stale Tanking and Healing modes in a second block (`benches` in `--json`):
+their fingerprint covers the shared sim code, the classes' code, the encounters and the
+benches. A stale mode re-sims whole (`pipeline.sh tankheal tank`, about 30 s;
+`pipeline.sh tankheal heal`, about 35 min); there is no probe for it.
 
 Tell the user the scope in one line before long runs.
 
@@ -68,6 +79,15 @@ A stopped run finishes with `pipeline.sh resume <ids>`. `publish` writes every o
 (datasets, Changes data, sample fights, provenance, raw packs, removed presets dropped);
 set `SIM_COMMIT=<rev>` if the sims didn't run at HEAD. `merge.mjs` is for hand repairs only.
 
+`run` and `resume` also sim the Tanking and Healing modes when nothing DPS is stale or with
+`TANKHEAL=1`; `publish` builds their datasets, and for a mode simmed since its last publish
+records its provenance and repacks `raw/bench/<mode>.tgz`. Their settings are the docs'
+(docs/tank_sim.md, docs/healing_sim.md): 1,000 iterations, the 7 boss encounters, the reqs'
+seeds (healbench: 101). Build `tankbench` and `healbench` with the binaries (README). Their text
+(preset lines, notes, boss lines, Method) is written in `tools/dps_report/tankheal_text/{tank,heal}.md`,
+for players, not taken from the docs: a new preset or boss needs its entry there, and the build
+stops on a missing one or on a tool or file word in anything the page shows (`tankheal.py` LEAK).
+
 Settings come from `orchestration/standards.md`: 20,000+ iterations, the generic boss,
 120 / 180 / 300 s, binaries rebuilt after the last gear or DB change.
 
@@ -91,11 +111,16 @@ what it writes (`tools/dps_report/changes/`, the two datasets, `datasets.json`).
 
 ## 3. Check both outputs
 
-- `make dps-report-artifact`. It fails over 25 MiB (Cloudflare's per-file limit).
-- Open `dist/dps_report.html` in Playwright with `executablePath: '/opt/pw-browsers/chromium'`,
-  wrapped in `<!doctype html><html><head><meta charset="utf-8"></head><body>...</body></html>`
-  and with the session's proxy so d3 loads from cdnjs. Click through Ranking, Races, Specs,
-  Compare, Changes and Method at phone and desktop width; look for console errors.
+- `make dps-report-artifact`. It fails when any file is over 25 MiB (Cloudflare's per-file
+  limit). Its last line lists the site's files and size; a mode whose datasets are missing has
+  no `data/<mode>.*.json` and is left out of the page's mode bar.
+- Serve `dist/dps_report_site/` (`python3 -m http.server -d dist/dps_report_site`) and open it
+  in Playwright with `executablePath: '/opt/pw-browsers/chromium'` and the session's proxy so
+  d3 loads from cdnjs. In each mode (DPS, `#tank`, `#heal`) click through its tabs at phone and
+  desktop width; look for console errors, and check in the network log that a mode fetches only
+  its own data file and `common`.
+- Open `dist/dps_report.html` the same way (it holds the whole page, so a `file://` URL or any
+  static server works) and spot-check one page per mode.
 - Page changed: also check `npx vite serve` at `/forever/dps_report/`.
 - Run `go run -tags=with_db ./tools/raid_sim_data` and commit `ui/raid_sim/data/` with the
   report. Then `go run -tags=with_db ./tools/compsearch -stale` lists comp searches whose

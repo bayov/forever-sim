@@ -112,8 +112,8 @@ func (druid *Druid) applyImprovedWrath() {
 	})
 }
 
-// Genesis: 2% a point more periodic damage from Moonfire, Insect Swarm, Rake and Rip (and
-// healing over time, which the sim does not use). 1% a point before the launch realms'
+// Genesis: 2% a point more periodic damage from Moonfire, Insect Swarm, Rake and Rip (its healing
+// over time and on Swiftmend is genesisHealingMultiplier in healing.go). 1% a point before the launch realms'
 // 2026-10-30 hotfix doubled its TraitDefinitionEffectPoints curves (85325, 97153; wago.tools
 // hotfixes, region 91, build 70707).
 func (druid *Druid) applyGenesis() {
@@ -221,7 +221,8 @@ func (druid *Druid) applyNaturesGrace() {
 		ActionID: core.ActionID{SpellID: 16886},
 		Duration: time.Second * 3,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
-			affectedSpells = druid.damageSpells()
+			// The global cooldown cut's class mask (16886) names the heals too.
+			affectedSpells = append(druid.damageSpells(), druid.healSpells()...)
 		},
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			druid.MultiplyCastSpeed(1.1)
@@ -237,26 +238,36 @@ func (druid *Druid) applyNaturesGrace() {
 		},
 	})
 
+	onCrit := func(sim *core.Simulation, spell *core.Spell) {
+		if !sim.IsForever() {
+			// Spells with travel times have their own implementation because the proc occurs as the cast finishes
+			if spell.MissileSpeed == 0 {
+				druid.NaturesGraceProcAura.Activate(sim)
+			}
+			return
+		}
+		core.StartDelayedAction(sim, core.DelayedActionOptions{
+			DoAt:     sim.CurrentTime + core.SpellBatchWindow,
+			Priority: core.ActionPriorityDOT,
+			OnAction: func(sim *core.Simulation) {
+				druid.NaturesGraceProcAura.Activate(sim)
+			},
+		})
+	}
+
 	core.MakePermanent(druid.RegisterAura(core.Aura{
 		Label: "Natures Grace",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) || !result.DidCrit() {
-				return
+			if spell.ProcMask.Matches(core.ProcMaskSpellDamage) && result.DidCrit() {
+				onCrit(sim, spell)
 			}
-			if !sim.IsForever() {
-				// Spells with travel times have their own implementation because the proc occurs as the cast finishes
-				if spell.MissileSpeed == 0 {
-					druid.NaturesGraceProcAura.Activate(sim)
-				}
-				return
+		},
+		// Its proc flags take in helpful spells too (16880: 0x4000 and 0x10000), so a heal's crit
+		// grants it. A HoT's tick is periodic and doesn't.
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell.ProcMask.Matches(core.ProcMaskSpellHealing) && result.DidCrit() {
+				onCrit(sim, spell)
 			}
-			core.StartDelayedAction(sim, core.DelayedActionOptions{
-				DoAt:     sim.CurrentTime + core.SpellBatchWindow,
-				Priority: core.ActionPriorityDOT,
-				OnAction: func(sim *core.Simulation) {
-					druid.NaturesGraceProcAura.Activate(sim)
-				},
-			})
 		},
 	}))
 }
@@ -331,14 +342,16 @@ func (druid *Druid) applySavageFury() {
 // Natural Instinct: 10% a point more crit damage bonus on the melee abilities (its healing
 // part does nothing here). The modifier's class mask (1223242, word 0 0x839800) takes in Ravage
 // (0x10000), and Rip through the bit it shares with Ferocious Bite (0x800000), so Rip's ticks,
-// which crit under Forever, get it too.
+// which crit under Forever, get it too. The bear's attacks too: Maul and Swipe (0x800), and in word
+// 1 (0x540) Primal Bite (0x40) and Lacerate (0x100).
 func (druid *Druid) applyNaturalInstinct() {
 	points := float64(druid.Talents.NaturalInstinct)
 	if points == 0 {
 		return
 	}
 	druid.onInit("Natural Instinct", func() {
-		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.Ravage, druid.FerociousBite, druid.Rip} {
+		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.Ravage, druid.FerociousBite, druid.Rip,
+			druid.Maul, druid.SwipeBear, druid.PrimalBite, druid.Lacerate} {
 			if spell != nil {
 				spell.CritDamageBonus += 0.1 * points
 			}
@@ -510,6 +523,18 @@ func (druid *Druid) applyOmenOfClarity() {
 				if inMoonkin() {
 					icd.Timer.Set(sim.CurrentTime + icd.Duration/2)
 				}
+				druid.ClearcastingAura.Activate(sim)
+			}
+		},
+		// Its proc flags take in helpful spells (16864: 0x4000), and Clearcasting's class mask names the
+		// heals, so a heal rolls at the same rate over its cast time when it's cast (a HoT has no hit
+		// of its own to roll on).
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if !spell.ProcMask.Matches(core.ProcMaskSpellHealing) || !spell.Flags.Matches(SpellFlagOmen) || !icd.IsReady(sim) {
+				return
+			}
+			if sim.Proc(2*max(spell.DefaultCast.CastTime, core.GCDDefault).Seconds()/60, "Omen of Clarity") {
+				icd.Use(sim)
 				druid.ClearcastingAura.Activate(sim)
 			}
 		},

@@ -1,1 +1,9 @@
-{"last": {"master": "3e90308"}}
+{
+ "last": {
+  "master": "f62bfc74bc1e5a31232ee37c3ecf14a9a594b46e"
+ },
+ "last_pass_at": "2026-11-04T13:38:09Z",
+ "pass": 1,
+ "result": "findings",
+ "baseline": "ref/tank_bench/summary.tsv"
+}

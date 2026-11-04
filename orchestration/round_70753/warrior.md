@@ -29,25 +29,26 @@ Whirlwind are guessed; the notes give rows). Fury's tree is 19 talents (proto fi
 
 | Build | Old 120 / 180 / 300 | New 120 / 180 / 300 | Talents | Race |
 |---|---|---|---|---|
-| Fury (dual wield) | 1079.5 / 1041.5 / 1017.9 | 1194.2 / 1152.6 / 1124.8 | `30313113002-0505300551120100321` | Orc (Orc) |
+| Fury (dual wield) | 1079.5 / 1041.5 / 1017.9 | 1196.2 / 1153.0 / 1128.7 | `30313113002-0505300551120100321` | Orc (Orc) |
 | Fury Sunder duty | 1044.6 / 1012.5 / 991.4 | 1156.5 / 1117.7 / 1095.4 | same | Orc |
 | Fury Battle Shout duty | 1076.0 / 1039.5 / 1015.7 | 1193.2 / 1150.5 / 1123.2 | same | Orc |
-| **Fury 2H (new class default)** | 1085.2 / 1044.4 / 1009.4 | 1211.7 / 1169.9 / 1133.4 | `30313113032-2503300501122100321` | Orc (Orc) |
-| Fury 2H Sunder duty | 1044.9 / 1009.0 / 980.5 | 1173.5 / 1132.6 / 1101.9 | same | Orc |
-| Fury 2H Battle Shout duty | 1083.0 / 1041.3 / 1007.7 | 1210.5 / 1165.4 / 1131.5 | same | Orc |
+| **Fury 2H (new class default)** | 1085.2 / 1044.4 / 1009.4 | 1214.5 / 1173.3 / 1135.3 | `30313113032-2505001501122100321` | Orc (Orc) |
+| Fury 2H Sunder duty | 1044.9 / 1009.0 / 980.5 | 1175.0 / 1134.6 / 1104.4 | same | Orc |
+| Fury 2H Battle Shout duty | 1083.0 / 1041.3 / 1007.7 | 1213.9 / 1168.8 / 1133.8 | same | Orc |
 | Arms | 1022.9 / 1008.7 / 987.0 | 1111.7 / 1097.7 / 1070.6 | `30303213032215201-050500050012-2` | Orc (was Undead) |
 | Arms Sunder duty | 978.5 / 970.4 / 955.2 | 1055.0 / 1047.1 / 1027.5 | same | Orc (was Undead) |
 | Arms Battle Shout duty | 1022.2 / 1004.9 / 984.1 | 1111.0 / 1094.0 / 1068.3 | same | Orc (was Undead) |
 | Arms vs Dragonkin | 1066.0 / 1050.3 / 1028.8 | 1157.5 / 1142.2 / 1114.2 | `30303213132215201-050500050012-1` | Orc (was Undead) |
 
 Old numbers: the deployed report (`ui/dps_report/data/builds.json`, 2026-11-02; its 120 / 300 at 5,000 iterations).
-The request metas carry the new 180 as `published` and `verify`.
+The request metas carry the new 180 as `published` and `verify`. Fury (dual wield) and the three Fury 2H rows are the
+2026-11-04 follow-up's (below).
 
 Talents (180 sec talent search on the synthetic sets, then the knob search, alternated until neither moved):
 - Fury: Booming Voice and a point of Improved Berserker Rage out; Reckless Swings, Improved Whirlwind 2/2, Enrage 5/5 in.
 - Fury 2H: Flurry's 3 points left Bloodthirst short of its row, so the start takes Reckless Swings and Improved
   Whirlwind; the search moves 2 points of Unbridled Wrath to Enrage 5/5. Furious Precision 3 is dead with a
-  two-hander, but no move of its points scored better.
+  two-hander; on 2026-11-04 its points go to Unbridled Wrath 5/5, the spare one to Blood Craze (follow-up below).
 - Arms: the 5 freed points and a third point of Improved Heroic Strike (to reopen Two-Handed Weapon Specialization's row)
   go to Reckless Swings, Enrage 5/5 and Improved Bloodrage 2/2, for Booming Voice. Dragonkin: Spearing Strike for a
   point of Improved Bloodrage.
@@ -112,6 +113,15 @@ All 10 races (seeds 1 / 1000003; Dwarf with its race gear override). Undead is s
   (Heroic Strike included) are my reading; with a GCD it would still be cast on cooldown. A client row settles it.
 - Commit trailers use this session's own Claude-Session line, not the brief's (which names the orchestrator's session).
 
+### 2026-11-04 follow-up
+
+- Fury 2H and its two duty presets: `30313113032-2505001501122100321` (Unbridled Wrath 3 -> 5, Furious Precision 3 -> 0,
+  Blood Craze +1). Seeds 1 / 1000003: +2.8 / +2.3 at 120, +2.9 / +1.8 at 160, +3.4 / +1.4 at 180, +2.7 / +1.8 at 200,
+  +1.9 / +1.5 at 300 sec; Sunder duty +2.0 / +1.5 and Battle Shout duty +3.4 / +2.1 at 180 sec.
+- Fury (dual wield) only, not its duty presets: wwFirst=0, hsRage=60, hamstringRage=20, fillerGap=1, bloodrageRage=50.
+  Seeds 1 / 1000003: +2.0 / +0.9 at 120, +1.2 / +2.3 at 160, +0.4 / +1.2 at 180, +3.5 / +4.1 at 200, +3.9 / +3.0 at 300.
+- Two-hand Fury stays the class default (1173.3 against 1153.0 at 180 sec).
+
 ## Phase A: research and mechanics
 
 ### Sources checked (2026-11-03)
@@ -136,7 +146,7 @@ All 10 races (seeds 1 / 1000003; Dwarf with its race gear override). Undead is s
 | Note line | Tier and evidence | Sim status before | Fix |
 |---|---|---|---|
 | Victory Rush tooltip fixed | notes | n/a (not in a DPS rotation; needs a killing blow) | none |
-| Defensive Stance threat 30% → 80% | notes | n/a | tank/healer sessions (tanking) |
+| Defensive Stance threat 30% → 80% | notes; client 70753 still 30 (7376 e2 aura 10), 70755 too | wrong (x1.3) | **fixed** (mechanics-20261103-2): x1.8 under Forever, `sim/warrior/stances.go`; `TestForeverDefensiveStanceThreat`. TestP1TankWarrior TPS x1.445 (with Defiance), DPS unchanged |
 | Slam cooldown 15 sec (was 18) | notes; client 70753 still 18000 | wrong (18 sec) | `sim/warrior/slam.go`: 15 sec under Forever. Test `TestForeverWarriorSpellValues` |
 | Arms: Improved Tactical Mastery 3 points, 5/10/15 Rage (was 5 points of 3) | notes; client 70753 still 3 a point (12295) | wrong (3 a point) | `sim/warrior/stances.go`: 5 a point, points capped at 3 (old 5 point strings keep 15). Test `TestForeverWarriorImprovedTacticalMastery`. Tree max rank: Phase B (A1's remap) |
 | Arms: Two-Handed Weapon Specialization 2/4/6% (was 1/2/3%) | notes; client 70753 still 1% curve | wrong (1% a point) | `sim/warrior/talents.go`: 2% a point under Forever. Test `TestForeverWarriorTwoHandedSpecialization` |
@@ -152,7 +162,7 @@ All 10 races (seeds 1 / 1000003; Dwarf with its race gear override). Undead is s
 | Fury: Flurry 3 points, 10/20/30% for 3 swings (was 5 points of 5%) | notes; client 70753 still the 5 point tree | wrong | `talents.go` `makeFlurryAura`: 10% a point, capped at 3, under Forever. Tests `TestForeverWarriorFlurrySpeed`, `TestForeverWarriorDeepWoundsAndFlurry`. Tree: Phase B |
 | Fury: new talent Improved Whirlwind (row 6, 2 points, -1/2 sec Whirlwind cd, +15/30% to the closest enemy) | notes (24431 in the client is the old row) | missing | Phase B: needs the talent field. Plan: cooldown 10 − points sec; +15% a point on the main and off hand hits on the first target only |
 | Fury: Bloodthirst needs Death Wish | notes | tree only | Phase B (tree) |
-| Protection: Defiance 7/13/20% | notes | n/a | tank/healer sessions (tanking) |
+| Protection: Defiance 7/13/20% | notes; client 70753 still 5/10/15 (12792 bp 15), 70755 too | wrong (5% a point) | **fixed** (mechanics-20261103-2): 7/13/20% under Forever, multiplying the stance (two A_MOD_THREAT auras): x1.8 x 1.2 = x2.16 at 3/3 with a shield (was x1.495); `TestForeverDefensiveStanceThreat` |
 | Talents lose the low-rank proc penalty | notes | n/a (no warrior talent has one) | A2 (shared part) |
 | Races: Dwarf Artisan's Precision, Human Ruthless 1% / Spirit 10%, Orc Savage removed and Blood Fury 2 min, Skyborne Wind-Blessed 2%, Tauren Endurance, Troll Berserking 15 sec, Undead Touch of the Grave 15 sec | notes (10-26 racial pass), client 70753 | landed (ledger 70753 section, `sim/core/racials_forever.go`) | none; Phase B race sweep |
 | Bug fix: race base stats (Tauren warrior +5 Str over Human) | notes | A2 | A2; Phase B race sweep |
@@ -160,6 +170,18 @@ All 10 races (seeds 1 / 1000003; Dwarf with its race gear override). Undead is s
 | Bug fix: roots from procs get diminishing returns (Improved Hamstring) | notes | n/a (bosses) | none |
 
 ### Notes-only values
+
+**2026-11-04, hotfix push 113539** (`hotfix_113539_warrior.md`): the launch realms' hotfix carries every line below
+except the two threat values, so they are hotfix values now and drop off this list: Slam 15 sec (SpellCooldowns),
+Improved Slam 2.5 / 5 sec (curve 128144), Two-Handed Weapon Specialization 2/4/6% (curve 83308), Improved Tactical
+Mastery 5/10/15 (curve 83313), Bloodthrill 10/20% (curve 109366), Flurry 10/20/30% with no Death Wish prerequisite
+(curve 83289, tree edges), Reckless Swings (real spells 1329555 / 1329554: 15 sec, 8 sec, 4 charges, flat 5 Rage, 25% of
+base health, **on a 1 sec GCD**), Improved Whirlwind (spell 1310315, curves 128139 and 128138, the former Raging Blows
+row) and the tree moves (tree 1117 imported from 1.60.1.70755+hf; `notes/warrior.json` removed). The hotfix also
+removes Raging Blows (3 Rage off Cleave and Whirlwind) and sets Spearing Strike to 75% plus 75% on Giants and Dragonkin.
+Still notes-only: Defensive Stance threat 80% and Defiance 7/13/20% (not in the push).
+
+The original list, kept for the record:
 
 Per the orchestrator's provisional source rule (round README, a32a20024): modelled from the notes under Forever,
 citing the notes and "client 70753 unchanged". For the warrior, client 70753 carries none of the class's lines, talent
@@ -174,6 +196,8 @@ reworks included (no Trait rows for tree 1117, no Reckless Swings spell), and th
 - Reckless Swings (15 sec, next 4 swings +5 Rage, 8 sec; no client spell, placeholder id 1399001) and Improved
   Whirlwind (1 / 2 sec, +15 / 30% on the closest enemy). Tests `TestForeverWarriorRecklessSwings`,
   `TestForeverWarriorImprovedWhirlwind`.
+- Defensive Stance threat 80% (client 30%) and Defiance 7/13/20% (client 5/10/15%), multiplied: x2.16 at Defiance 3/3
+  with a shield (`sim/warrior/stances.go`, test `TestForeverDefensiveStanceThreat`; mechanics-20261103-2).
 - The tree moves: Enrage row 3, Gore Drinker row 5 under Blood Craze, Bloodthirst under Death Wish
   (`tools/forever_talents/notes/warrior.json`).
 

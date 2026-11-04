@@ -11,7 +11,7 @@
             <div class="sim-title-texts">
               <div class="sim-title-current d-flex flex-column">
                 <span class="sim-link-label text-white">WoWSims - Forever</span>
-                <span class="sim-link-title">DPS Report</span>
+                <span class="sim-link-title" id="fv-title">DPS Report</span>
                 <span class="launch-status-label text-brand">Level 60 presets</span>
               </div>
               <div class="sim-title-back d-flex flex-column" id="home-back">
@@ -21,14 +21,18 @@
             </div>
           </div>
         </a>
-        <ul class="sim-tabs nav nav-tabs" role="tablist" aria-label="Pages">
-          <li class="nav-item" role="presentation"><a class="nav-link fv-tab active" role="tab" href="#ranking" data-tab="ranking" aria-selected="true">Ranking</a></li>
-          <li class="nav-item" role="presentation"><a class="nav-link fv-tab" role="tab" href="#spec" data-tab="spec" aria-selected="false">Specs</a></li>
-          <li class="nav-item" role="presentation"><a class="nav-link fv-tab" role="tab" href="#races" data-tab="races" aria-selected="false">Races</a></li>
-          <li class="nav-item" role="presentation"><a class="nav-link fv-tab" role="tab" href="#compare" data-tab="compare" aria-selected="false">Compare</a></li>
-          <li class="nav-item" role="presentation"><a class="nav-link fv-tab" role="tab" href="#changes" data-tab="changes" aria-selected="false">Changes</a></li>
-          <li class="nav-item" role="presentation"><a class="nav-link fv-tab" role="tab" href="#method" data-tab="method" aria-selected="false">Method</a></li>
-        </ul>
+        <!-- The report's modes (DPS, Tanking, Healing) over the open mode's tabs; report.js fills both. -->
+        <nav class="fv-nav">
+          <div class="fv-modes" id="fv-modes" role="tablist" aria-label="Report" hidden></div>
+          <ul class="sim-tabs nav nav-tabs" id="fv-tabs" role="tablist" aria-label="Pages">
+            <li class="nav-item" role="presentation"><a class="nav-link fv-tab active" role="tab" href="#ranking" data-tab="ranking" aria-selected="true">Ranking</a></li>
+            <li class="nav-item" role="presentation"><a class="nav-link fv-tab" role="tab" href="#spec" data-tab="spec" aria-selected="false">Specs</a></li>
+            <li class="nav-item" role="presentation"><a class="nav-link fv-tab" role="tab" href="#races" data-tab="races" aria-selected="false">Races</a></li>
+            <li class="nav-item" role="presentation"><a class="nav-link fv-tab" role="tab" href="#compare" data-tab="compare" aria-selected="false">Compare</a></li>
+            <li class="nav-item" role="presentation"><a class="nav-link fv-tab" role="tab" href="#changes" data-tab="changes" aria-selected="false">Changes</a></li>
+            <li class="nav-item" role="presentation"><a class="nav-link fv-tab" role="tab" href="#method" data-tab="method" aria-selected="false">Method</a></li>
+          </ul>
+        </nav>
       </div>
     </header>
     <main class="sim-main tab-content fv" id="fv">
@@ -47,6 +51,7 @@
       <div class="content-block-header fv-asm-head"><h6 class="content-block-title">Assumptions</h6><span class="fv-asm-badge" id="asm-badge" hidden>Custom assumptions</span>
         <span class="fv-asm-tools"><button class="fv-chip fv-chip-action" id="asm-reset" hidden>Reset</button></span></div>
       <p class="fv-note">Values Forever hasn't confirmed yet, biggest effect first. Click a column to use its value everywhere.</p>
+      <p class="fv-note fv-asm-est" id="asm-est" hidden></p>
       <div id="asm-list" data-source="assumptions assumption_dps"></div>
     </div>
 
@@ -137,7 +142,7 @@
       <p class="fv-swipe">Swipe for the next preset</p>
     </div>
     <div class="fv-tiles" id="sp-tiles"></div>
-    <p class="fv-note" id="sp-asm" hidden>Mean DPS and rank use your changed assumptions. The rest uses the defaults.</p>
+    <p class="fv-note" id="sp-asm" hidden>Mean DPS and rank use your changed assumptions. The rest uses the defaults.<span id="sp-asm-est" hidden> Your settings weren't simmed together for this preset, so they're estimated from the single settings.</span></p>
     <nav class="fv-jump" id="sp-jump-bar" aria-label="Jump to a section">
       <span class="fv-jump-title">Sections <span class="fv-jump-chev">›</span></span>
       <ul class="nav fv-jump-tabs" id="sp-jump"></ul>
@@ -168,12 +173,12 @@
       <div class="fv-about-body" id="about-races" data-title="How races are compared" hidden>
         <p><b>How.</b> The preset is simmed as every race its class can be, <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights each at 180s. Gear, talents, rotation, consumes and random rolls stay the same. The racials are Forever's, from its client. The preset plays the best race.</p>
         <p><b>Own rotation or gear.</b> A race that clearly does better with its own rotation or gear is simmed with it. Its row gets a tag, and the Rotation card shows each change and why.</p>
-        <p><b>Why trust it.</b> Only the race changes, and every race gets the same random fights. So the gaps come from the race, not from luck.</p>
+        <p><b>Why trust it.</b> Only the race changes, and every race starts from the same random rolls. Once the race changes a hit or a cast, the fights drift apart, so some luck is left. Each preset sims as many fights as it takes to pin the gap between two races down to about a third of a DPS (up to 40,000), so races within about 0.7 DPS of each other are marked as tied (≈).</p>
         <p><b>Limits.</b></p>
         <ul>
           <li>Every race keeps the preset's talents. A race that would play a bit differently, but not clearly better, may come out a little low.</li>
           <li>Only damage on a boss that stands still counts. Utility racials, like Stoneform, Will of the Forsaken, Escape Artist and threat drops, count as nothing.</li>
-          <li>Races within 1 or 2 DPS of each other are tied.</li>
+          <li>A race marked ≈ is within the sim's luck of the race above it. Its place could go either way.</li>
         </ul>
       </div>
       <div class="fv-toolbar">
@@ -204,7 +209,7 @@
         <div class="content-block-header"><h6 class="content-block-title">DPS distribution</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-fights">How are fights simmed?</button></div>
         <div class="fv-about-body" id="about-fights" data-title="How fights are simmed" hidden>
           <p><b>How.</b> <span data-source="builds" data-field="iters" data-row="0">—</span> fights of <span data-source="builds" data-field="fightSecs" data-row="0">—</span>s (± <span data-source="builds" data-field="fightVar" data-row="0">—</span>s) against a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss with <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor and no creature type. A full raid's buffs and debuffs are up. Every preset gets the same random rolls. The boss hits each player for 1,500 twice a minute, which pushes back casts and gives Rage.</p>
-          <p><b>Why trust it.</b> With this many fights, the mean is accurate to about half a DPS, so the ranking order isn't luck. Every preset was checked to be simmed the same way. The sim's spells were checked against Forever's client data.</p>
+          <p><b>Why trust it.</b> With this many fights, each mean is accurate to about half a DPS. Presets within about 1 DPS of each other are marked as tied (≈), since their order could be luck. Every preset was checked to be simmed the same way. The sim's spells were checked against Forever's client data.</p>
           <p><b>Limits.</b> The boss stands still all fight. There's no movement, adds, target switching or phases. Real fights come out lower and vary more.</p>
         </div>
         <p class="fv-note" id="sp-dist-note">Every fight, in 5 DPS bins.</p>
@@ -426,6 +431,88 @@
       <div class="content-block-header"><h6 class="content-block-title">Caveats</h6></div>
       <div id="method-caveats" data-source="notes builds"></div>
     </div>
+  </section>
+
+  <!-- TANKING AND HEALING: one set of pages, drawn by report.js for the open mode (renderRole) -->
+  <section class="tab-pane fv-page" id="r-ranking" data-page="r-ranking" hidden>
+    <div class="fv-tiles" id="r-tiles"></div>
+    <div class="content-block fv-card" id="r-rank-card">
+      <div class="content-block-header"><h6 class="content-block-title" id="r-rank-title">Ranking</h6></div>
+      <div class="fv-toolbar fv-rank-tb">
+        <div class="fv-controls fv-ctl-row">
+          <div class="fv-ctl"><span class="fv-label fv-rowlabel" id="r-pick-label">Setup</span><div class="fv-seg" id="r-pick" role="group" aria-label="Setup"></div></div>
+          <div class="fv-ctl"><span class="fv-label fv-rowlabel">Boss</span><div id="r-boss" data-label="Boss"></div></div>
+        </div>
+        <div class="fv-ctl"><span class="fv-label fv-rowlabel">Show</span><div class="fv-seg" id="r-metric" role="group" aria-label="Show"></div></div>
+      </div>
+      <p class="fv-note" id="r-score-note"></p>
+      <div class="fv-rank" id="r-rank"></div>
+    </div>
+  </section>
+
+  <section class="tab-pane fv-page" id="r-spec" data-page="r-spec" hidden>
+    <div class="fv-picker">
+      <button class="fv-btn" id="rs-prev" aria-label="Previous preset">‹</button>
+      <div id="rs-isel" data-label="Preset"></div>
+      <button class="fv-btn" id="rs-next" aria-label="Next preset">›</button>
+    </div>
+    <div class="fv-spechead" id="rs-head">
+      <div class="art" id="rs-art"></div>
+      <div class="fv-spec-top"><span id="rs-specicon"></span><h2><span class="fv-dot" id="rs-dot"></span><span id="rs-title">—</span></h2></div>
+      <div class="fv-meta" id="rs-meta"></div>
+      <p class="fv-take" id="rs-summary"></p>
+    </div>
+    <div class="fv-tiles" id="rs-tiles"></div>
+
+    <div class="content-block fv-card" id="rs-boss-card">
+      <div class="content-block-header"><h6 class="content-block-title">By boss</h6></div>
+      <p class="fv-note" id="rs-boss-note"></p>
+      <div class="fv-scroll"><table id="rs-bosstab"><thead><tr></tr></thead><tbody></tbody></table></div>
+    </div>
+
+    <div class="content-block fv-card" id="rs-tal-card">
+      <div class="content-block-header"><h6 class="content-block-title">Talents</h6></div>
+      <div class="fv-toolbar"><div class="fv-seg" id="rs-tal-seg" role="group" aria-label="Talent tree"></div></div>
+      <div class="fv-trees" id="rs-tal"></div>
+    </div>
+
+    <div class="content-block fv-card" id="rs-rot-card">
+      <div class="content-block-header"><h6 class="content-block-title">Rotation</h6></div>
+      <div class="fv-toolbar" hidden><div class="fv-controls"><div class="fv-seg fv-rot-seg" id="rs-rot-race" role="group" aria-label="Rotation for which race"></div></div></div>
+      <p class="fv-note" id="rs-rot-note">The sim casts the first line it can, top to bottom.</p>
+      <div class="fv-prepull" id="rs-prepull"></div>
+      <ol class="fv-prio" id="rs-rotation"></ol>
+    </div>
+
+    <div class="content-block fv-card" id="rs-gear-card">
+      <div class="content-block-header"><h6 class="content-block-title">Gear</h6></div>
+      <p class="fv-note">Made-up gear at Phase 1 item levels.</p>
+      <div class="fv-gearwrap"><div id="rs-gear-tab"><div class="gear-picker-root" id="rs-gear"></div></div></div>
+    </div>
+
+    <div class="content-block fv-card" id="rs-setup-card">
+      <div class="content-block-header"><h6 class="content-block-title">Consumes and buffs</h6></div>
+      <div class="fv-toolbar"><div class="fv-controls"><button class="fv-chip" id="rs-setup-hide" aria-pressed="false">Hide inactive</button></div></div>
+      <div class="fv-setup" id="rs-setup"></div>
+    </div>
+
+    <div class="content-block fv-card" id="rs-notes-card">
+      <div class="content-block-header"><h6 class="content-block-title">Good to know</h6></div>
+      <div class="fv-prose" id="rs-notes"></div>
+    </div>
+  </section>
+
+  <section class="tab-pane fv-page" id="r-races" data-page="r-races" hidden>
+    <div class="content-block fv-card" id="r-race-card">
+      <div class="content-block-header"><h6 class="content-block-title" id="r-race-title">By race</h6></div>
+      <div class="fv-toolbar"><div class="fv-controls"><span class="fv-label fv-rowlabel">Preset</span><div id="r-race-isel" data-label="Preset"></div></div></div>
+      <p class="fv-note" id="r-race-note"></p>
+      <div class="fv-rank" id="r-race"></div>
+    </div>
+  </section>
+
+  <section class="tab-pane fv-page" id="r-method" data-page="r-method" hidden>
+    <div id="r-method-cards"></div>
   </section>
     </main>
     <!-- The note behind a Specs card's "How ...?" button (.fv-about-btn), opened by report.js. -->

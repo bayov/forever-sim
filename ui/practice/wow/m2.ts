@@ -132,6 +132,13 @@ export class Track {
 		const slot = this.globalSeq !== 0xffff || this.times.length === 1 ? 0 : seq;
 		const cached = this.keys[slot];
 		if (cached !== undefined) return cached;
+		return this.read(slot, source);
+	}
+
+	// read reads a slot's keys the first time they're asked for. It's apart from get so get stays
+	// small enough for Chrome to inline: called as one big function, each of the raid's 30000 key
+	// lookups a frame made 20 bytes of garbage.
+	private read(slot: number, source: DataView | undefined): Keys | null {
 		const t = this.times[slot];
 		const v = this.values[slot];
 		if (!source || !t || !v || t.n === 0 || v.n === 0) {
@@ -232,7 +239,12 @@ export class Track {
 // write (about 30KB per character a frame).
 export type Vec = { [i: number]: number; readonly length: number };
 
-export function sample(keys: Keys, width: number, time: number, out: Vec, interpolation: number) {
+// sampleTime is the time sample samples at. A decimal passed as an argument gets boxed when the
+// call isn't inlined, and the raid sampled 30000 tracks a frame.
+export const sampleTime = new Float64Array(1);
+
+export function sample(keys: Keys, width: number, out: Vec, interpolation: number) {
+	const time = sampleTime[0];
 	const { times, values } = keys;
 	const n = times.length;
 	if (n === 1 || time <= times[0]) {

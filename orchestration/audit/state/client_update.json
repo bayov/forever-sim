@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "f5c99ad018aa44b195c5530f40c44cccb92d52cf"
+  "master": "41aa10700c899ef1f05663176c0ba82edaff334d"
  },
- "last_pass_at": "2026-11-03T17:59:09Z",
- "client_build": "1.60.1.70753",
+ "last_pass_at": "2026-11-03T19:03:09Z",
+ "client_build": "1.60.1.70755",
  "result": "findings",
- "note": "Round 70753 phase 3: no build after 70753, no dev-notes post after /9, no hotfix after 11-03. 11-03 hunter hotfix all landed; every notes-only value matches post 9; trees from notes JSON match. New: 20261103-2 (ungated notes-only values). Poised resolved.",
- "pass": 8,
- "checked_at": "2026-11-03T17:52:00Z"
+ "note": "70755 is client-identical to 70753 (all 39 tables). No dev-notes post after /9. New server hotfix push 113483 (region 91, build-70707 rows, 2026-11-03 18:29Z, 1418 rows) not yet read in full: finding 20261103-3.",
+ "pass": 9,
+ "checked_at": "2026-11-04T13:12:31Z"
 }

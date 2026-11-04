@@ -16,6 +16,10 @@ import (
 // client 1.60.1.70425 (their masks gained its bit, word 3 0x800000).
 var SniperShotBonus = [4]float64{0, 320, 450, 590}
 
+// Classic has no Sniper Shot; outside Forever it keeps client 1.60.1.70753's bonus (standards 37:
+// the hotfix value is gated under Forever).
+var preHotfixSniperShotBonus = [4]float64{0, 160, 225, 295}
+
 func (hunter *Hunter) registerSniperShotSpell() {
 	if !hunter.Talents.SniperShot {
 		return
@@ -29,6 +33,9 @@ func (hunter *Hunter) registerSniperShotSpell() {
 	}
 	spellID := [4]int32{0, 1310687, 1310785, 1310786}[rank]
 	flatBonus := SniperShotBonus[rank]
+	if !hunter.Env.IsForever() {
+		flatBonus = preHotfixSniperShotBonus[rank]
+	}
 
 	hunter.SniperShot = hunter.RegisterSpell(core.SpellConfig{
 		SpellCode:     SpellCode_HunterSniperShot,

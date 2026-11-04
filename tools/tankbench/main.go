@@ -49,7 +49,7 @@ func main() {
 	bisect := flag.Bool("bisect", false, "also find healing needed and the death floor by bisection over whole sims (about 10 more sims a build), to check the replay's")
 	deathTarget := flag.Float64("death", 0.05, "the chance of death healing needed aims at (the user's ruling for tanks: 5%)")
 	dpsStart := flag.Float64("dps-start", 2, "SafeDPS: seconds after the pull the reference DPS member starts")
-	dpsThreat := flag.Float64("dps-threat", 0.7, "SafeDPS: the reference DPS member's threat a point of damage (0.7 under Salvation)")
+	dpsThreat := flag.Float64("dps-threat", 1, "SafeDPS: the reference DPS member's threat a point of damage (1: Forever removed Salvation, which was 0.7)")
 	threatMembers := flag.Float64("threat-members", 2, "the objective: raid members close to the tank's threat, whose DPS a point of SafeDPS frees")
 	dpsSlot := flag.Float64("dps-slot", 900, "the objective: a raid DPS member's DPS, what a healer slot costs")
 	healerEach := flag.Float64("healer-each", 0, "the objective: one healer's HPS on the tank, 0 for the encounter's (or 400 without one)")
@@ -165,6 +165,9 @@ func main() {
 		}
 		tankscore.OwnDebuffs(rsr)
 		tank := rsr.Raid.Parties[0].Players[0]
+		// The tank faces the boss: the boss parries and blocks its attacks, and its parries haste the
+		// boss's swing.
+		tank.InFrontOfTarget = true
 		tank.TankScoring = &proto.TankScoring{DpsStart: *dpsStart, ThreatPerDamage: *dpsThreat}
 		tank.HealingModel = &proto.HealingModel{
 			Hps:              noPresim(*hps),

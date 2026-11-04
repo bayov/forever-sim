@@ -14,8 +14,8 @@ overhealing is booked, a healing fight tracks every player's health and kills, t
 events and tank swaps, and the shaman heals others. `tools/healbench` sims a healer in a raid against made-up
 profiles and the seven boss files, whose raid damage now comes from Warcraft Logs ([Raid damage from the
 logs](#raid-damage-from-the-logs-2026-11-02)). H2, the Restoration shaman, is registered with a tank healer
-and a raid healer rotation ([H2](#h2-the-restoration-shaman-2026-11-02)) and its own synthetic set. Next is
-H3, the other healers.
+and a raid healer rotation ([H2](#h2-the-restoration-shaman-2026-11-02)) and its own synthetic set. H3, the
+priest, paladin and druid healers and the shaman's update to the November 2 notes, is in ([H3](#h3-the-other-healers-2026-11-04)).
 
 ## The user's rulings (2026-11-02)
 
@@ -527,6 +527,65 @@ file's tank time, the raid role at the logs' median kill, 2 healers and 7 Frost 
 - The talents are the bench's (31 Restoration to Riptide, Ancestral Knowledge, Mental Dexterity and
   Shamanistic Focus), not searched: `tools/rotopt` scores DPS.
 - The UI presets (builds, rotations, talents, consumes, a raid sim preset) are in; the spec stays unlaunched.
+
+## H3: the other healers (2026-11-04)
+
+One worker a class (brief `orchestration/brief_healers.md`), each with its own doc: [healing_priest.md](healing_priest.md),
+[healing_paladin.md](healing_paladin.md), [healing_druid.md](healing_druid.md) and, for the shaman's audit and
+tests, [healing_shaman.md](healing_shaman.md). Each audited every heal and healing talent against client 70753
+and the November 2 notes (standards 37: a notes-only value is gated under Forever and listed in the class's
+`orchestration/round_70753/<class>.md`), has a test per heal and talent, a synthetic set on the Healers rows of
+`orchestration/gear_targets.md` (ids 990301-990314 paladin, 990401-990413 druid, 990501-990514 priest), a tank healer and a raid
+healer preset (the priest a Discipline tank healer too) and healbench requests. The UI pages stay unlaunched.
+
+- **Priest** (`sim/priest/healing`): Binding Heal removed and Holy Binding in its slot, a Power Word: Shield is
+  replaced only by an equal or higher rank (both notes-only). The **absorb pipeline** is in core
+  (`sim/core/absorb.go`): a shield takes its share off a hit as the last step of
+  `ApplyPostOutcomeDamageModifiers`, so the tank score and everything after see the post-absorb hit; what it
+  absorbs is its caster's effective healing, what it never uses healing and overheal (Open decisions 2, the
+  default). Power Infusion boosts healing, and a HoT's snapshot takes the healing multipliers, not the damage
+  ones.
+- **Holy paladin** (`sim/paladin/holy`): every Holy healing line of the notes is in client 70753 (Oath of
+  Light, Boundless Light, Holy Power on crit healing, Light's Vigil friendly only, Divine Precision 2). Both
+  presets cast Holy Light 9 and 8 only above 50% mana.
+- **Restoration druid** (`sim/druid/restoration`): every druid line of the notes is in client 70753 (Bloom,
+  Wild Growth's 3 s cast and Naturalist, Swiftmend on our own HoT, Gift of the Earthmother gone, Reflection and
+  Subtlety swapped). Innervate on oneself follows the Read Leyline rule. Its one core change, `GetAPLDot` reading
+  a HoT on the APL's heal target (`HealthUnit()`), moves the shaman's raid preset by 0.000 on all 7 files.
+- **Restoration shaman**: Riptide on the notes (no instant heal, 12 s, 147/180/231 mana; notes-only, the client
+  still has the old one), three ranks; the talents on the new tree (`-035-...`); the tank healer adds Lesser
+  Healing Wave 6 and 5 above 50% mana and Nature's Swiftness under 50% health (tank mean carry 0.935 to
+  1.072); the raid healer loses about 0.07 to the notes' Riptide (1.183 to 1.123).
+- **Downranking** is the engine's for every heal now (b57f5cc0a, the user's ruling). On the presets it moved
+  nothing: the ranks they cast keep full value at 60 (priest, paladin and shaman measured; the druid's raid
+  preset 0, its tank preset tuned with the rule binds ranks the rule favours, up to +0.075 against the same
+  rotation at full coefficients).
+
+Carry, 1,000 iterations, each file at its own length (tools/healbench), all nine presets on one build of master
+43a70ec18. This is the re-bench after the 2026-11-04 audit fixes (Swiftmend keeps its HoT, the paladin, shaman,
+druid and priest heal gate retunes, Vestments of Conviction on Prayer of Mending, the priest's Meditation fix,
+with the raid damage share, school crit on direct heals and the health clamp under them) and the tank bench's
+change of that day (tanks face the boss: parries, blocks, parry haste):
+
+| Boss | Tank: shaman | Holy priest | Disc priest | Paladin | Druid | Raid: shaman | Holy priest | Paladin | Druid |
+|---|---|---|---|---|---|---|---|---|---|
+| Onyxia | 1.346 | 1.379 | 1.378 | 1.257 | 1.327 | 0.919 | 0.978 | 0.984 | 0.997 |
+| Broodlord | 0.974 | 0.930 | 0.971 | 0.895 | 0.875 | 0.902 | 0.901 | 0.905 | 0.920 |
+| Chromaggus | 0.969 | 0.955 | 0.866 | 0.911 | 1.029 | 1.090 | 1.070 | 1.081 | 1.109 |
+| Golemagg | 1.915 | 1.969 | 1.991 | 1.911 | 1.904 | 2.662 | 2.597 | 2.699 | 2.660 |
+| Magmadar | 2.019 | 2.104 | 2.101 | 1.875 | 2.030 | 1.809 | 2.054 | 1.918 | 2.002 |
+| Ragnaros | 0.577 | 0.592 | 0.596 | 0.572 | 0.627 | 1.235 | 1.308 | 1.301 | 1.270 |
+| Vaelastrasz | 0.894 | 0.906 | 0.927 | 0.812 | 0.852 | 1.152 | 1.152 | 1.002 | 1.102 |
+| Mean | 1.242 | 1.262 | 1.261 | 1.176 | 1.235 | 1.396 | 1.437 | 1.413 | 1.437 |
+
+Before these fixes (the shaman's and druid's columns then on master 41aa10700) the table's tank means were
+1.096, 1.231, 1.152, 1.024 and 1.045 and its raid means 1.162, 1.236, 1.189 and 1.207, in the same order. The
+raid columns match the class docs' to the third decimal. The shaman's, paladin's and druid's tank columns are
+0.10 to 0.13 above their docs' (1.134, 1.043, 1.140), which were benched before the tank bench's change; the
+priest's were benched after it and match. The tank healers are now within 0.09 of each other: Holy and
+Discipline lead the mean by 0.02, the shaman is ahead of both on Broodlord and Chromaggus and the druid on
+Chromaggus and Ragnaros, and the paladin is last on the mean, by 0.06. On the raid the Holy priest and the druid
+tie and the shaman (no instant heal on the notes' Riptide) is last.
 
 ## Milestones
 

@@ -41,6 +41,9 @@ none of the warlock damage lines, so these are notes-only values, standards 37):
 - Wrack: 0.286 spell damage a tick (was 0.143), base 36 + 2.5 a level above 40 (86 at 60). Enables the new Affliction
   Wrack preset; no other preset takes Wrack.
 - Shadow and Flame: 4% a point (was 2%). Destruction +65.9 DPS at 180 s, Destruction fire +19.6.
+- 2026-11-04: hotfix push 113527 (logged 2026-11-03) carries both values (Wrack: SpellEffect 1349556 of 1316697, 36 base,
+  2.5 a level, 0.286; Shadow and Flame: curves 111671 and 111672, 4/8/12/16/20), so they are hotfix values now, not
+  notes-only. No DPS moves.
 - Demons: 2 health a point of the warlock's Stamina (was 7.5). No DPS effect.
 - Already in the sim and now tested: Spellstone Shadow only, Bane of Agony's live ticks, Amplify Curse +50% on Agony's base
   (findings client_update-20261027-3 and mechanics-20261027-2 resolved), Orc Command +5% on the demons (A2's racials).
@@ -173,7 +176,7 @@ since 70753 (foreverchanges.pro, 2026-11-03) has no Warlock lines.
 - Wrack: 86 a second at 60 (36 + 2.5 a level above 40) and 0.286 spell damage a tick. Client 70753 unchanged (36, 0.143).
 - Shadow and Flame: 4% a point. Client 70753 unchanged (trait curves 2 to 10).
 - Demons' health: 2 a point of the warlock's Stamina. The client has no value (416189's points are 0); was 7.5 from beta
-  pet sheets.
+  pet sheets, which it stays outside Forever (`pet.go`, gated under `Env.IsForever()`).
 - Amplify Curse on Bane of Agony: +50% of the base. The client's mask leaves Agony out, but Agony's dummy effect carries
   it; the sim already did this.
 

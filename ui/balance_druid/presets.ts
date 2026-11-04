@@ -242,7 +242,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
-	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -374,6 +373,11 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('F
 // Alliance), Windshaper Skyborne 949.3 / 950.3 (best Horde), High Order Skyborne the same, Tauren
 // 940.1 / 941.0; the Wrath build Night Elf 861.6 / 861.7, the Skyborne 857.1 / 856.8, Tauren 852.0 /
 // 852.5.
+// A wider exploration the same day added Wrath after the Starfire lines, cast when Starfire's mana
+// is not there instead of waiting for it, and with it dropped the Clearcasting Starfire line:
+// +0.9 / +0.7 / +2.0 at 120 / 180 / 300 sec (+0.9 / +0.5 / +1.7 on seed 1000003), 952.2 at 180
+// sec, the duty build 915.5; the Skyborne rotations take it too (+0.9 / +0.6 / +2.4). Mana budgets
+// for the Starfire filler or the dots, Genesis, Reflection and Heart of the Wild builds all lost.
 export const PresetBuildLevel60 =PresetUtils.makePresetBuild('Balance', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Balance rotation, in a 3 minute raid fight.',

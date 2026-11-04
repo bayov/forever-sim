@@ -1,0 +1,27 @@
+--- a/sim/shaman/rockbiter_weapon.go	2026-11-04 13:24:57.821693367 +0000
++++ b/sim/shaman/rockbiter_weapon.go	2026-11-04 13:34:50.250591251 +0000
+@@ -63,11 +63,8 @@
+ 		if !spell.ProcMask.Matches(procMask) || spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
+ 			return
+ 		}
+-		if spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+-			spell.FlatThreatBonus += bonusThreat * shaman.AutoAttacks.MH().SwingSpeed
+-		} else {
+-			spell.FlatThreatBonus += bonusThreat * shaman.AutoAttacks.OH().SwingSpeed
+-		}
++		// ONLY IF an in-game check shows Stormstrike gets the flat points (wowsims/sod's reading).
++		spell.FlatThreatBonus += bonusThreat
+ 	})
+ 
+ 	aura := shaman.RegisterAura(core.Aura{
+--- a/sim/shaman/warden/forever_test.go	2026-11-04 13:24:57.825693367 +0000
++++ b/sim/shaman/warden/forever_test.go	2026-11-04 13:34:50.250780771 +0000
+@@ -260,7 +260,7 @@
+ 	near(t, "Deathbringer's speed", speed, 2.9, 1e-9)
+ 	white := w.AutoAttacks.MHAuto()
+ 	near(t, "a white hit's threat for 100 damage", white.ThreatFromDamage(core.OutcomeHit, 100), (100+72*speed)*1.302, 1e-6)
+-	near(t, "Stormstrike's threat for 100 damage", w.Stormstrike.ThreatFromDamage(core.OutcomeHit, 100), (100+72*speed)*1.302, 1e-6)
++	near(t, "Stormstrike's threat for 100 damage", w.Stormstrike.ThreatFromDamage(core.OutcomeHit, 100), (100+72)*1.302, 1e-6)
+ 	near(t, "a dodged white swing's threat", white.ThreatFromDamage(core.OutcomeDodge, 0), 0, 1e-9)
+ 	// Earth Shock makes twice its damage in threat (Classic's, the client's "high amount of threat").
+ 	near(t, "Earth Shock's threat for 100 damage", w.EarthShock[7].ThreatFromDamage(core.OutcomeHit, 100), 200*1.302, 1e-6)

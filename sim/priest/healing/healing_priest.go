@@ -1,3 +1,7 @@
+// Package healing is the Holy and Discipline priest of the healing sim (docs/healing_priest.md,
+// H3). Its heals, shields and healing talents are the priest's (sim/priest/healing.go,
+// healing_talents.go); this agent is a caster that doesn't melee and heals what its rotation aims
+// at.
 package healing
 
 import (
@@ -32,33 +36,22 @@ type HealingPriest struct {
 func NewHealingPriest(character *core.Character, options *proto.Player) *HealingPriest {
 	healingOptions := options.GetHealingPriest()
 
-	basePriest := priest.New(character, options.TalentsString)
-	hpriest := &HealingPriest{
-		Priest:  basePriest,
-		Options: healingOptions.Options,
+	// A healer stands back and casts: no auto attacks.
+	return &HealingPriest{
+		Priest:  priest.New(character, options.TalentsString),
+		Options: healingOptions.GetOptions(),
 	}
-
-	return hpriest
 }
 
 func (hpriest *HealingPriest) GetPriest() *priest.Priest {
 	return hpriest.Priest
 }
 
-func (hpriest *HealingPriest) GetMainTarget() *core.Unit {
-	target := hpriest.Env.Raid.GetFirstTargetDummy()
-	if target == nil {
-		return &hpriest.Unit
-	} else {
-		return &target.Unit
-	}
-}
-
 func (hpriest *HealingPriest) Initialize() {
-	hpriest.CurrentTarget = hpriest.GetMainTarget()
 	hpriest.Priest.Initialize()
 	hpriest.Priest.RegisterHealingSpells()
 }
 
-func (hpriest *HealingPriest) Reset(sim *core.Simulation) {
+func (hpriest *HealingPriest) Reset(_ *core.Simulation) {
+	hpriest.Priest.ResetHealing()
 }

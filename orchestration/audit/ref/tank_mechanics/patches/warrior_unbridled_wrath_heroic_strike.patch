@@ -1,0 +1,23 @@
+--- a/sim/warrior/talents.go	2026-11-04 13:36:29.446675950 +0000
++++ b/sim/warrior/talents.go	2026-11-04 13:36:29.467371401 +0000
+@@ -224,6 +224,7 @@
+ 	rageGain := 1.0
+ 
+ 	rageMetrics := warrior.NewRageMetrics(core.ActionID{SpellID: 12964})
++	forever := warrior.Env.IsForever()
+ 
+ 	warrior.RegisterAura(core.Aura{
+ 		Label:    "Unbridled Wrath",
+@@ -236,6 +237,12 @@
+ 				return
+ 			}
+ 
++			// Under Forever only auto attacks (12322's ProcTypeMask 4, DONE_MELEE_AUTO_ATTACK, as
++			// wowsims/forever reads it): a Heroic Strike or Cleave takes the swing's place but is a
++			// melee special, so it doesn't proc it.
++			if forever && spell.ProcMask.Matches(core.ProcMaskMeleeSpecial) {
++				return
++			}
+ 			if spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) && sim.RandomFloat("Unbrided Wrath") < procChance {
+ 				warrior.AddRage(sim, rageGain, rageMetrics)
+ 			}

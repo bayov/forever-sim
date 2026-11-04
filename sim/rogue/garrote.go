@@ -55,14 +55,14 @@ func (rogue *Rogue) registerGarrote() {
 			NumberOfTicks: core.TernaryInt32(rogue.Talents.BloodSplatter, 9, 6),
 			TickLength:    time.Second * 3,
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				damage := (baseDamage + dot.Spell.MeleeAttackPower(target)*0.03) * rogue.hemorrhageMultiplier(target)
+				damage := (baseDamage + dot.Spell.MeleeAttackPower(target)*0.03) * rogue.garroteHemorrhageMultiplier(target)
 				dot.Snapshot(target, damage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				// Under Forever each tick reads attack power and the damage modifiers when it lands
 				// (wowsims/forever 36cfc58328, "Periodic damage does not snapshot in Forever").
 				if sim.IsForever() {
-					damage := (baseDamage + dot.Spell.MeleeAttackPower(target)*0.03) * rogue.hemorrhageMultiplier(target)
+					damage := (baseDamage + dot.Spell.MeleeAttackPower(target)*0.03) * rogue.garroteHemorrhageMultiplier(target)
 					dot.Spell.CalcAndDealPeriodicDamage(sim, target, damage, dot.OutcomeTick)
 					return
 				}

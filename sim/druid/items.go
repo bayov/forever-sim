@@ -20,8 +20,11 @@ const (
 	SwarmingIdol = 272430
 
 	IdolOfTheDream = 220606
-	TalonsOfWrath  = 249441
-	MysticMushroom = 249396
+
+	EnragedIdol          = 272428
+	IdolOfTheUrsineTwins = 279251
+	TalonsOfWrath        = 249441
+	MysticMushroom       = 249396
 )
 
 func init() {
@@ -98,10 +101,23 @@ func init() {
 		character.MultiplyStat(stats.Spirit, 1.05)
 	})
 
-	// https://www.wowhead.com/classic/item=23198/idol-of-brutality
-	// Equip: Reduces the rage cost of Maul and Swipe by 3.
-	core.NewItemEffect(IdolOfBrutality, func(agent core.Agent) {
-		// Implemented in maul.go and swipe.go
+	// Idol of Brutality. Equip: Reduces the Rage cost of Maul and Swipe by 2 (28855 under Forever, a
+	// flat cost modifier of -20 tenths on their shared class mask 0x800; 1.12's tooltip said 3).
+	// Read in bear_attacks.go and swipe.go (brutalityRage).
+	core.NewItemEffect(IdolOfBrutality, func(agent core.Agent) {})
+
+	// Enraged Idol, Forever. Equip: Your Enrage ability generates an additional 10 Rage over its
+	// duration (1291060: +10 tenths on Enrage's effect 0, its 1 sec tick, so 3 Rage a tick).
+	core.NewItemEffect(EnragedIdol, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		druid.enrageTickBonus += 1
+	})
+
+	// Idol of the Ursine Twins, Forever. Equip: Your Lacerate hits have a 10% chance to reset the
+	// cooldown on Primal Bite (1306483, ProcChance 10, on a landed melee ability). In bear_attacks.go.
+	core.NewItemEffect(IdolOfTheUrsineTwins, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		druid.ursineTwins = true
 	})
 
 	// https://www.wowhead.com/classic/item=19340/rune-of-metamorphosis

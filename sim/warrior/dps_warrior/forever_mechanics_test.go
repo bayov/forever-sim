@@ -207,8 +207,9 @@ func TestForeverWarriorDamageTakenRage(t *testing.T) {
 // TestForeverWarriorSpellValues checks the Forever client values (1.60.1.70338) that are easy to get
 // wrong: Slam's cooldown and the talent Rage discounts.
 func TestForeverWarriorSpellValues(t *testing.T) {
-	// Improved Slam 2/2 and Improved Execute 2/2, Booming Voice 5/5 and Raging Blows.
-	_, war := newForeverWarrior(t, "000000000000002-500000000102")
+	// Improved Slam 2/2 and Improved Execute 2/2, Booming Voice 5/5. Raging Blows is gone (hotfix push
+	// 113539), so Whirlwind and Cleave keep their full cost.
+	_, war := newForeverWarrior(t, "000000000000002-50000000002")
 	// 15 sec less 2.5 sec a point of Improved Slam (development notes post 9, 2026-11-02).
 	if got := war.Slam.CD.Duration; got != 10*time.Second {
 		t.Errorf("Slam with Improved Slam 2/2 has a %s cooldown, want 10s", got)
@@ -219,8 +220,8 @@ func TestForeverWarriorSpellValues(t *testing.T) {
 		want  float64
 	}{
 		{"Execute", war.Execute, 10},
-		{"Whirlwind", war.Whirlwind, 22},
-		{"Cleave", war.Cleave, 17},
+		{"Whirlwind", war.Whirlwind, 25},
+		{"Cleave", war.Cleave, 20},
 		{"Battle Shout", war.BattleShout, 7.5},
 	}
 	for _, c := range costs {
@@ -243,7 +244,7 @@ func TestForeverWarriorSpellValues(t *testing.T) {
 // after Improved Execute's discount, not 80% of the base cost (wowsims/forever's RageCost
 // refunds Refund * CurCast.Cost).
 func TestForeverWarriorRefundsPaidRage(t *testing.T) {
-	sim, war := newForeverWarrior(t, "000000000000002-500000000102")
+	sim, war := newForeverWarrior(t, "000000000000002-50000000002")
 	execute := war.Execute.Spell
 	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
 	execute.CurCast.Cost = execute.Cost.GetCurrentCost()
@@ -256,7 +257,7 @@ func TestForeverWarriorRefundsPaidRage(t *testing.T) {
 // TestForeverWarriorDeepWoundsAndFlurry checks two client 70338 values: Deep Wounds' damage spell
 // (412613) cannot crit, so its ticks never do, and the Flurry buff (12966) lasts 15 sec.
 func TestForeverWarriorDeepWoundsAndFlurry(t *testing.T) {
-	_, war := newForeverWarrior(t, "30303013002-2505300151021100301-2")
+	_, war := newForeverWarrior(t, "30303013002-250530015021100031-2")
 	if war.DeepWounds == nil {
 		t.Fatal("the talents should give Deep Wounds")
 	}
@@ -477,7 +478,8 @@ func landedRange(sim *core.Simulation, spell *core.Spell, target *core.Unit, n i
 }
 
 // TestForeverWarriorProtectionValues checks the Protection rows under Forever (client 70425):
-// Revenge rank 5 rolls 97 to 145 plus 28% of attack power (11601; wowsims/forever 3a6c7df46e),
+// Revenge rank 5 rolls 97 to 145 plus 25% of attack power (11601; the 70707 tooltip as wowsims/forever
+// d7a38ae, to verify by a level 60 Revenge log after 70707: user ruling 2026-11-04, standards 40),
 // Shield Slam 625 to 685 plus the block value once and no attack power (23925), Thunder Clap 103
 // plus 7% of attack power (11581; 1172f1c745), Demoralizing Shout lasts 45 sec (11556), and
 // Bastion raises Physical damage only (16538).
@@ -510,7 +512,7 @@ func TestForeverWarriorProtectionValues(t *testing.T) {
 			t.Errorf("%s at %.0f attack power hits for %.1f to %.1f, want %.1f to %.1f", name, ap, gotLow, gotHigh, wantLow, wantHigh)
 		}
 	}
-	check("Revenge", war.Revenge.Spell, 97, 145, 0.28)
+	check("Revenge", war.Revenge.Spell, 97, 145, 0.25)
 	check("Shield Slam", war.ShieldSlam.Spell, 625+war.BlockValue(), 685+war.BlockValue(), 0)
 	check("Thunder Clap", war.ThunderClap.Spell, 103, 103, 0.07)
 

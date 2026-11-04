@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 883.5,
-    "source": "DPS report 2026-11-02 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1159.4,
+    "source": "DPS report 2026-11-04 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
     "dps": 883.5,

@@ -367,7 +367,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
-	salvation: true,
 });
 
 // Survival melees, so its shaman drops Windfury Totem and Strength of Earth for the melee group,

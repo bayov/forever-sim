@@ -22,8 +22,8 @@ Worker: Paladin (Retribution DPS specs). Brief: `briefs/paladin.md`. Status: **l
 
 | Build | Talents | Before | After |
 |---|---|---|---|
-| Ret twist (`paladin__level_60`) | `050050002-503-05233101201301351` (kept) | 1043.4 / 1039.3 / 1028.9 | 1094.3 / 1090.9 / 1079.9 |
-| Ret sub-Holy (class default) | `0512500022-3-05233101201301351` (kept) | 1042.3 / 1038.1 / 1031.7 | 1092.3 / 1089.8 / 1084.3 |
+| Ret twist (`paladin__level_60`) | `050050002-503-05233101201301351` (kept) | 1043.4 / 1039.3 / 1028.9 | 1095.5 / 1092.1 / 1080.3 |
+| Ret sub-Holy (class default) | `0512500022-3-05233101201301351` (kept) | 1042.3 / 1038.1 / 1031.7 | 1093.3 / 1091.2 / 1085.8 |
 | Ret Shock | `05125210220021--0523310120130133` (kept) | 983.0 / 974.9 / 968.5 | 1037.5 / 1030.2 / 1025.5 |
 | Ret sub-Holy vs Undead | `0502520022-2-05233101201301351` (kept) | 1153.9 / 1151.4 / 1145.1 | 1222.9 / 1221.4 / 1214.0 |
 | Ret twist, Crusader duty | twist | – / 1033.3 / – | 1078.0 / 1082.9 / 1075.9 |
@@ -33,7 +33,8 @@ Worker: Paladin (Retribution DPS specs). Brief: `briefs/paladin.md`. Status: **l
 | Ret Shock, Crusader duty | Shock | – / 974.4 / – | 1024.5 / 1029.2 / 1027.9 |
 | Ret Shock, Wisdom duty | Shock | – / 965.2 / – | 1015.5 / 1020.0 / 1018.7 |
 
-The default stays Ret sub-Holy: it ties twist at 180 sec (1089.8 against 1090.9; seed 1000003 1089.3 against 1090.1).
+Twist and sub-Holy include the exploration's Holy Strike first (below). The default stays Ret sub-Holy: it ties twist
+at 180 sec (1091.2 against 1092.1).
 
 **Races** (each race's own rotation and gear, standards 29; 180 sec, seed 1 / seed 1000003):
 
@@ -69,6 +70,23 @@ eight rotations: only vs Undead moved (above); the rest kept every knob.
   re-checked before the finals: no row for 20050 or 20111 (the 70753 rows logged since are region 95 copies of push
   113139 and push 113557's creature spells).
 
+**Exploration after landing** (2026-11-03, the user's request): talent searches at 180 sec (Pursuit of Justice pinned)
+from five other starting builds, and the knob search's near misses re-tested at 20,000 iterations on two seed sets.
+
+| Starting build | Ended at | 180 s |
+|---|---|---|
+| 20 Holy / 31 Ret (`05125010222--05233101201301351`) | the Ret sub-Holy talents | 1089.4 |
+| Ret Shock with Champion of the Light 5 for Consecrated Ground (`05125210220001--0523310120130135`) | the Ret Shock talents | 1030.0 |
+| Twist with Swift Judgement (`04-5032212001-05233101201301351`) | itself | 1028.7 (-64; out of mana at 167 sec) |
+| 0 / 20 / 31 with Swift Judgement (`-5032212041-05233101201301351`) | the Swift Judgement build above | 1028.7 |
+| Consecrated Ground, no Holy Shock or Unsealed Wrath (`05125210220020--0523310120130134`) | `0512521022001--0523110122130135` | 942.0 |
+
+No new build. Holy Strike ahead of Judgement and the seal lines (`holyStrikeFirst=1`), 120 / 180 / 300 sec, seed 1 and
+seed 1000003: twist +1.2 / +1.2 / +0.4 and +2.4 / +1.3 / +1.9, sub-Holy +1.0 / +1.4 / +1.5 and +2.5 / +2.2 / +2.5:
+**shipped** on those two. Crusader duty -5.4 / -4.0 / -1.5 and -5.5 / -3.7 / -0.9; Wisdom duty +0.3 to +1.1, Ret Shock
++0.3 to +0.5, vs Undead +0.5 to +1.3 (under 1 at 180 sec): kept off. The race table above predates it; a rotation
+change of about 1 DPS doesn't touch the 2.3+ race margins.
+
 **Open questions and shared changes:**
 
 - No shared code changed (only `sim/paladin/` and the paladin files). `sim/testdata/report_hashes.txt` is rewritten for the
@@ -93,8 +111,9 @@ Sources checked (2026-11-03):
   113139 on 70707). foreverchanges.pro/patch-notes has a 2026-11-03 hotfix, but its rows are hunter only (Aspect of the
   Hawk, Trueshot Aura, Aimed Shot, Arcane Shot, Serpent Sting, Sniper Shot, Lightning Reflexes).
 - foreverchanges.pro's own list of the notes' lines (its 2026-11-03 "Blizzard's notes" entry) lists for the paladin only
-  the three lines the client doesn't have: Templar's Bulwark magic, Two-Handed Weapon Specialization on Holy, Vengeance 5
-  stacks. Everything else in the paladin section was already in the 10-30 launch-realm hotfix (1.60.1.70707+hf), which
+  the three lines it took for notes-only: Templar's Bulwark magic, Two-Handed Weapon Specialization on Holy, Vengeance 5
+  stacks. (Corrected 2026-11-04, tank_mechanics-20261104-10: Templar's Bulwark is not notes-only. 1311015 carries
+  DispelType 1, Magic, in clients 70753 and 70755+hf, so it is client data.) Everything else in the paladin section was already in the 10-30 launch-realm hotfix (1.60.1.70707+hf), which
   70753 writes into the client tables (update_ledger.md, the 70753 paragraph).
 
 Tiers: H = server hotfix, C = client 70753, N = dev notes, FC = foreverchanges.pro.
@@ -146,11 +165,16 @@ carries takes the notes' number, gated under Forever) puts them in.
 
 ## Notes-only values
 
+**2026-11-04:** both values below are now hotfix values: push 113542 (logged 2026-11-03) sets 20050's CumulativeAura to 5
+and 20111 effect 0's school mask to Physical and Holy (`hotfix_113483_paladin.md`). No DPS moves; the text below is the
+original record.
+
 Modelled from the notes, gated under Forever; client 1.60.1.70753 unchanged and no hotfix row (re-check wago.tools'
 hotfix log for 20050 and 20111 before the Phase B finals; if a row lands, it wins).
 
 1. **Vengeance stacks up to 5 times** (was 3). Notes: "Vengeance changed to stacking up to 5 times (Was stacking up to 3
-   times)". Client 20050 SpellAuraOptions CumulativeAura 3. `sim/paladin/talents.go` `applyVengeance` (MaxStacks 5).
+   times)". Client 20050 SpellAuraOptions CumulativeAura 3. `sim/paladin/talents.go` `applyVengeance` (MaxStacks 5),
+   Forever only; outside Forever `applyClassicVengeance` gives Classic's 3% a point for 8 sec, no stacks.
 2. **Two-Handed Weapon Specialization raises Holy and Physical damage by 2 / 4 / 6%.** Notes: "changed to increase both
    Holy and Physical damage by 2/4/6% (Was just Physical damage)". Client 20111 effect 0 aura 79 misc 1 (Physical).
    Under Forever the Holy school takes the multiplier (Consecration, Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock
@@ -183,8 +207,8 @@ Strike, so they still get it once.
 ## Questions for the orchestrator
 
 1. **Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy (notes vs client).** Settled by the user's ruling
-   (standards 37, 2026-11-03): modelled from the notes, see "Notes-only values". The only other notes-only paladin line,
-   Templar's Bulwark as a Magic effect, is tank-only (tank session).
+   (standards 37, 2026-11-03): modelled from the notes, see "Notes-only values". Templar's Bulwark as a Magic effect,
+   which this list called notes-only, is in the client (1311015 DispelType 1 in 70753 and 70755+hf; tank_mechanics-20261104-10).
 2. **Salvation in the shared raid.** Salvation is gone from the game, but mksettings `main.go:74` and every Level 60
    request still set `raid.buffs.salvation: true` (sim/core/buffs.go:374 gives it under Forever). Threat only, 0 DPS.
    The orchestrator drops it from mksettings and every request in one shared change in phase 3; left alone here.

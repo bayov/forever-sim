@@ -74,6 +74,9 @@ func (druidBalance) Knobs() []Knob {
 		{Name: "faerieFire", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "ffRefresh", Default: 1.5, Min: 0, Max: 4, Step: 0.5},
 		{Name: "ffPos", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Wrath after the Starfire lines, for when Starfire's mana is not there: without it the
+		// druid waits for the mana, 0/1.
+		{Name: "wrathFallback", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Skyborne High Order: Read Leyline below this much mana (racials.go), 0 never.
 		readLeylineKnob(),
 	}
@@ -159,6 +162,9 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 		items = append(items,
 			cast(starfire, ready, "Starfire once Eclipse has enough charges, or a Wrath that will give them is on its way."),
 			cast(wrath, nil, "Wrath for Eclipse charges."))
+	}
+	if k["wrathFallback"] == 1 && k["filler"] != 1 {
+		items = append(items, cast(wrath, nil, "Wrath when Starfire's mana is not there, rather than waiting for it."))
 	}
 	rot := rotation(items...)
 	switch k["prepull"] {

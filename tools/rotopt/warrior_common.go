@@ -27,9 +27,9 @@ var (
 	rend            = spellIDRank(11574, 7)
 	hamstring       = spellIDRank(7373, 3)
 	spearingStrike  = spellID(1310222)
-	// Reckless Swings, the Fury talent of the November 2 development notes. The client has no spell
-	// for it yet, so the sim gives it a placeholder id (sim/warrior/reckless_swings.go).
-	recklessSwings   = spellID(1399001)
+	// Reckless Swings, the Fury talent of the November 2 development notes; spell 1329555 since
+	// hotfix push 113539 (sim/warrior/reckless_swings.go).
+	recklessSwings   = spellID(1329555)
 	heroicStrikeNext = &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: 11567}, Tag: 1, Rank: 8}
 	potion           = &proto.ActionID{RawId: &proto.ActionID_OtherId{OtherId: proto.OtherAction_OtherActionPotion}}
 	// The synthetic on-use trinket (sim/warrior/forever_synthetic_trinkets.go): 20 sec, 2 min.
@@ -78,9 +78,15 @@ func warriorKnobs() []Knob {
 		{Name: "recklessAt", Default: 15, Min: 10, Max: 30, Step: 5},
 		// Bloodrage below this much Rage.
 		{Name: "bloodrageRage", Default: 70, Min: 0, Max: 100, Step: 10},
-		// Reckless Swings (15 sec, off the GCD: the next 4 swings give 5 more Rage each) below this
-		// much Rage, 0 never. 100 is on cooldown.
+		// Reckless Swings (15 sec, a 1 sec GCD since hotfix push 113539: the next 4 swings give 5 more
+		// Rage each) below this much Rage, 0 never. 100 is on cooldown.
 		{Name: "recklessSwingsRage", Default: 100, Min: 0, Max: 100, Step: 10},
+		// Where Reckless Swings goes: 0 with the cooldowns, ahead of the main strikes; 1 below them,
+		// just ahead of Heroic Strike, so its GCD only goes when no strike is ready.
+		{Name: "rsLate", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Heroic Strike above this much Rage while Reckless Swings is up (its swing gives 5 Rage
+		// back too), when that is below hsRage. 0 the same as hsRage.
+		{Name: "rsHsRage", Default: 0, Min: 0, Max: 90, Step: 10},
 		// Berserker Rage below this much Rage (it only gives Rage with the talent), 0 never.
 		{Name: "berserkerRageRage", Default: 70, Min: 0, Max: 100, Step: 10},
 		// Heroic Strike on the next swing above this much Rage, and 0/1 to keep queueing it in the
@@ -190,13 +196,8 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	items = append(items,
 		cast(bloodrage, lt(currentRage(), num(k["bloodrageRage"])), ""),
 	)
-	if k["recklessSwingsRage"] > 0 {
-		var below value
-		if k["recklessSwingsRage"] < 100 {
-			below = lt(currentRage(), num(k["recklessSwingsRage"]))
-		}
-		items = append(items, cast(recklessSwings, below,
-			"Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line."))
+	if k["rsLate"] == 0 {
+		items = append(items, recklessSwingsLine(k)...)
 	}
 	if k["berserkerRageRage"] > 0 {
 		items = append(items, cast(berserkerRage, lt(currentRage(), num(k["berserkerRageRage"])),
@@ -217,6 +218,21 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Sapper and trinkets."))
 	return items
+}
+
+// recklessSwingsLine casts Reckless Swings below recklessSwingsRage (100 on cooldown); none at 0.
+// warriorCooldowns puts it with the cooldowns (rsLate=0), the templates below their main strikes
+// (rsLate=1).
+func recklessSwingsLine(k Knobs) []*proto.APLListItem {
+	if k["recklessSwingsRage"] <= 0 {
+		return nil
+	}
+	var below value
+	if k["recklessSwingsRage"] < 100 {
+		below = lt(currentRage(), num(k["recklessSwingsRage"]))
+	}
+	return []*proto.APLListItem{cast(recklessSwings, below,
+		"Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.")}
 }
 
 // lastDeathWish is true when no Death Wish fits after the one that is up or about to go: the
@@ -282,7 +298,7 @@ func sequenceIsComplete(name string) value {
 }
 
 // warriorGCDSpells are the spells the templates cast that take the GCD (or, the Land Mine, a cast).
-var warriorGCDSpells = []*proto.ActionID{battleShout, deathWish, recklessness, berserkerRage, bloodthirst,
+var warriorGCDSpells = []*proto.ActionID{battleShout, deathWish, recklessness, recklessSwings, berserkerRage, bloodthirst,
 	mortalStrike, whirlwind, slam, execute, overpower, rend, hamstring, spearingStrike, warriorLandMine}
 
 // warriorOpener puts the Sunder Armor sequence ahead of the first spell on the GCD and makes
@@ -369,6 +385,9 @@ func potionLine(k Knobs, hold func(*proto.ActionID, bool) value) *proto.APLListI
 // heroicStrikeLine queues Heroic Strike with Rage to spare.
 func heroicStrikeLine(k Knobs) *proto.APLListItem {
 	when := ge(currentRage(), num(k["hsRage"]))
+	if k["rsHsRage"] > 0 && k["rsHsRage"] < k["hsRage"] {
+		when = or(when, and(auraIsActive(recklessSwings), ge(currentRage(), num(k["rsHsRage"]))))
+	}
 	if k["hsExecute"] == 0 {
 		when = and(when, not(executePhase()))
 	}

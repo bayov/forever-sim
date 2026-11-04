@@ -1,0 +1,134 @@
+/* The talent frame (frames/talents.ts). */
+
+/* The frame takes the mouse only over its art (TalentFrame's HitRectInsets) and its tabs. */
+.bz-frame.bz-talent {
+	pointer-events: none;
+}
+.bz-talent-hit,
+.bz-talent .bz-tab,
+.bz-talent .bz-close,
+.bz-talent-scroll {
+	pointer-events: auto;
+}
+.bz-talent .bz-portrait {
+	border-radius: 50%;
+	overflow: hidden;
+}
+.bz-talent .bz-white {
+	color: #fff;
+}
+
+/* UIPanelScrollFrameTemplate's bar sits 16 inside the frame's top and bottom, with the arrow
+   buttons in that margin. */
+.bz-talent-scroll .bz-scrollbar {
+	top: 16px;
+	bottom: 16px;
+}
+
+.bz-tal-layer {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+/* TalentButtonTemplate: the tinted slot, the icon, the rank border and rank at its bottom right,
+   and the square highlight. */
+.bz-tal-btn {
+	position: absolute;
+	width: 37px;
+	height: 37px;
+	pointer-events: auto;
+}
+.bz-tal-slot {
+	position: absolute;
+	left: -13.5px;
+	top: -12.5px;
+	width: 64px;
+	height: 64px;
+	background: var(--bz-tal-slot-green) 0 0 / 100% 100%;
+	pointer-events: none;
+}
+.bz-tal-btn.gold .bz-tal-slot {
+	background-image: var(--bz-tal-slot-gold);
+}
+.bz-tal-btn.gray .bz-tal-slot,
+.bz-tal-btn.off .bz-tal-slot {
+	background-image: var(--bz-tal-slot-gray);
+}
+.bz-tal-icon {
+	position: absolute;
+	inset: 0;
+	background-size: 100% 100%;
+	pointer-events: none;
+}
+.bz-tal-btn.gray .bz-tal-icon,
+.bz-tal-btn.off .bz-tal-icon {
+	filter: grayscale(1);
+}
+.bz-tal-rank-border {
+	position: absolute;
+	left: 21px;
+	top: 21px;
+	width: 32px;
+	height: 32px;
+	background: var(--bz-tal-rank) 0 0 / 100% 100%;
+	pointer-events: none;
+}
+.bz-tal-btn.gray .bz-tal-rank-border {
+	background-image: var(--bz-tal-rank-gray);
+}
+.bz-tal-rank {
+	position: absolute;
+	left: 22px;
+	top: 21px;
+	width: 32px;
+	height: 32px;
+	line-height: 32px;
+	text-align: center;
+}
+.bz-tal-btn.green .bz-tal-rank {
+	color: #19ff19;
+}
+.bz-tal-btn.gray .bz-tal-rank {
+	color: #808080;
+}
+.bz-tal-btn.off .bz-tal-rank,
+.bz-tal-btn.off .bz-tal-rank-border {
+	display: none;
+}
+.bz-tal-btn:hover::after,
+.bz-tal-btn.v-hover::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	background: var(--bz-slot-highlight) 0 0 / 100% 100%;
+	pointer-events: none;
+}
+
+.bz-tal-branch,
+.bz-tal-arrow {
+	position: absolute;
+	width: 32px;
+	height: 32px;
+	background-repeat: no-repeat;
+	pointer-events: none;
+}
+.bz-tal-branch {
+	background-image: var(--bz-tal-branches);
+}
+.bz-tal-arrow {
+	background-image: var(--bz-tal-arrows);
+}
+
+/* The talent tooltip's line colors: the title's classes say which lines are white (wN) or red
+   (rN), by their place in the tooltip. The rest are gold. */
+.tooltip .tt-title.w2 ~ .tt-line:nth-child(2),
+.tooltip .tt-title.w5 ~ .tt-line:nth-child(5),
+.tooltip .tt-title.w6 ~ .tt-line:nth-child(6),
+.tooltip .tt-title.w7 ~ .tt-line:nth-child(7) {
+	color: #fff;
+}
+.tooltip .tt-title.r3 ~ .tt-line:nth-child(3),
+.tooltip .tt-title.r4 ~ .tt-line:nth-child(4) {
+	color: #ff2020;
+}

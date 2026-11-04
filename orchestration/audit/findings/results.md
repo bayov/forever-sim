@@ -4,21 +4,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### results-20261103-2: hunter notes-only shares (Arcane Shot 0.15, Serpent Sting 5% a tick) and the hotfix shot tables are not gated under Forever
-- severity: low (no report number affected; only a non-Forever hunter sim would see them)
-- affects: hunter (all builds, only when Env is not Forever)
-- found: 2026-11-03, master f5c99ad018
-- evidence: sim/hunter/arcane_shot.go:19 `arcaneShotRAPCoefficient = 0.15` and sim/hunter/serpent_sting.go:22,77 `serpentStingRAPPerTick = 0.05` are plain constants; the dot tick even has an `if sim.IsForever()` right after (line 78), so the file does have Forever/Classic branches. The druid (sim/druid/tuning_70753.go, Forever-gated), rogue poisons (poisons.go:167,247 `TernaryFloat64(IsForever...)`) and paladin notes-only values are gated as standards 37 asks. orchestration/round_70753/hunter.md:126 says the hunter files are Forever-only (Aimed Shot's 166 was already ungated), so this may be accepted; sure of the code, not of the intent.
-- proposed fix: either gate the two shares (and say so in hunter.md) or record in hunter.md that sim/hunter is Forever-only by design and drop the Classic branches.
-- needs: worker fix
-
-### results-20261103-1: rogue__subtlety meta has race "Night Elf" (every other meta uses the enum name, "NightElf")
-- severity: low (request and published number are right; the DPS report race table and regen.py are affected)
-- affects: tools/dps_report/req/rogue__subtlety.meta.json:8 (rogue Subtlety)
-- found: 2026-11-03, master f5c99ad018
-- evidence: `python3 tools/audit/results/regen.py` prints `rogue__subtlety MKSETTINGS FAIL: unknown race "Night Elf"` (mksettings takes the proto name). With `-race NightElf` and the meta's other arguments the regenerated request equals the committed one (0 diffs), so no drift. tools/dps_report/build_data.py:402,412 compare `r['race'] == m['race']` (race-sweep rows use "NightElf"), so the Subtlety race table's `isPreset` flag is likely never set for Night Elf; faction falls to Alliance, which is right. Introduced in 25fc79c83.
-- proposed fix: set the meta's `race` to `NightElf`.
+### results-20261104-1: five rogue metas' published.dps lag the hotfix re-sim (up to 17.3 DPS)
+- severity: low (builds.json, from e9185b1aa, matches my 20k seed-1 run on all five; only the metas lag)
+- affects: tools/dps_report/req/rogue__{seal-fate-daggers,seal-fate-swords,mutilate,combat-swords,combat-daggers}.meta.json; runreq.sh and verify.py flag them OFF
+- found: 2026-11-04, master 6b480b060
+- evidence: shared run vs meta: seal-fate-daggers 903.4 vs 920.7, seal-fate-swords 940.4 vs 957.0, mutilate 858.4 vs 866.1, combat-swords 958.6 vs 963.5, combat-daggers 949.9 vs 946.6. The moves come from 316a600ac (hotfix 113483: Mutilate 44/63/88, Shank, Venom, tree); rogue__subtlety's meta was set (881.7 vs 881.3), the other five were not.
+- proposed fix: set the five metas' published.dps and source from builds.json.
 - needs: orchestrator fix
+
+## Resolved
 
 ### results-20261102-1: shaman__elemental-level60-mana-tide meta published.dps is 0.4 off (753.2 vs 752.8)
 - severity: low (builds.json 752.8 matches my 20k seed-1 run 752.83; only the meta lags)
@@ -27,10 +21,19 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: shared run /tmp/audit-work/runs/master/summary.tsv: 752.83 vs meta 753.2; the other 72 metas are within 0.15. Likely the meta was set before the last mana-tide re-search; sure of the numbers, not of the cause.
 - proposed fix: set the meta's published.dps to 752.8 and its source from builds.json.
 - update 2026-11-03, master f5c99ad018: the shaman worker left all six shaman metas at the 2026-11-02 values on purpose ("meta.published is left for the report run", round_70753/shaman.md:172). Run 970.1, 952.7, 1149.8, 1159.2, 1055.1, 1111.3 match the worker's finals; the metas still say 768.5, 753.2, 879.3, 883.5, 795.8, 834.8. Supersedes the 0.4 gap above; expect it to clear with the regeneration.
+- update 2026-11-04, master f331f0cff: unchanged. Shared run (68 builds, 20k, seed 1) matches builds.json on all 68 within 0.15; only the six shaman metas still carry the 2026-11-02 values (+199 to +277 DPS gap in meta vs run).
+- update 2026-11-04, master fb584eafa: unchanged for the shaman metas. The warrior Fury follow-up (7b4dc5d97) set its six metas to the run (all within 0.15); builds.json still has the pre-follow-up warrior numbers (fury_2h 1169.9 vs run 1173.3, fury_2h-duty-bs 1165.4 vs 1168.8, fury_2h-duty-sunder 1132.6 vs 1134.6), waiting on the republish.
 - needs: orchestrator fix
+- resolved: 2026-11-04, 6b480b060 (shaman metas now match the run; builds.json caught up with the Fury follow-up)
 
-
-## Resolved
+### results-20261103-2: hunter notes-only shares (Arcane Shot 0.15, Serpent Sting 5% a tick) and the hotfix shot tables are not gated under Forever
+- severity: low (no report number affected; only a non-Forever hunter sim would see them)
+- affects: hunter (all builds, only when Env is not Forever)
+- found: 2026-11-03, master f5c99ad018
+- evidence: sim/hunter/arcane_shot.go:19 `arcaneShotRAPCoefficient = 0.15` and sim/hunter/serpent_sting.go:22,77 `serpentStingRAPPerTick = 0.05` are plain constants; the dot tick even has an `if sim.IsForever()` right after (line 78), so the file does have Forever/Classic branches. The druid (sim/druid/tuning_70753.go, Forever-gated), rogue poisons (poisons.go:167,247 `TernaryFloat64(IsForever...)`) and paladin notes-only values are gated as standards 37 asks. orchestration/round_70753/hunter.md:126 says the hunter files are Forever-only (Aimed Shot's 166 was already ungated), so this may be accepted; sure of the code, not of the intent.
+- proposed fix: either gate the two shares (and say so in hunter.md) or record in hunter.md that sim/hunter is Forever-only by design and drop the Classic branches.
+- needs: worker fix
+- resolved: 2026-11-03, 13c34f2: both shares gated under `Env.IsForever()` (outside Forever Classic's 0), and the hotfix shot tables too (Classic's Arcane Shot, Serpent Sting and Aimed Shot ranks; Sniper Shot, not in Classic, the client's 160 / 225 / 295); hunter.md says so. No Forever number moves.
 
 ### results-20261101-1: 62 of 77 metas' published.dps are stale after the 2026-11-01 re-sims (38fb06ea9, 11de3318a)
 - severity: low (no published number is wrong: builds.json matches my 20k seed-1 run on all 77 within 0.1)
@@ -70,4 +73,13 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-10-28, master 224b8a4e0: still 34 of 58 after the racial-audit deploy.
 - needs: orchestrator fix
 - resolved: 2026-10-28, every req/*.meta.json published.dps set from the 2026-10-28 full re-sim's builds.json.
+
+### results-20261103-1: rogue__subtlety meta has race "Night Elf" (every other meta uses the enum name, "NightElf")
+- severity: low (request and published number are right; the DPS report race table and regen.py are affected)
+- affects: tools/dps_report/req/rogue__subtlety.meta.json:8 (rogue Subtlety)
+- found: 2026-11-03, master f5c99ad018
+- evidence: `python3 tools/audit/results/regen.py` prints `rogue__subtlety MKSETTINGS FAIL: unknown race "Night Elf"` (mksettings takes the proto name). With `-race NightElf` and the meta's other arguments the regenerated request equals the committed one (0 diffs), so no drift. tools/dps_report/build_data.py:402,412 compare `r['race'] == m['race']` (race-sweep rows use "NightElf"), so the Subtlety race table's `isPreset` flag is likely never set for Night Elf; faction falls to Alliance, which is right. Introduced in 25fc79c83.
+- proposed fix: set the meta's `race` to `NightElf`.
+- needs: orchestrator fix
+- resolved: 2026-11-03, 5b766ca2b (meta race NightElf; regen.py now reports 0 diffs for rogue__subtlety)
 

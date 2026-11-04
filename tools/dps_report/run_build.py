@@ -2,19 +2,21 @@
 """run_build.py <id> : sims one build's request ($DASH_DIR/req/<id>.json) and writes $DASH_DIR/out/<id>.json.
 
 Main run: 180 s, 20k iterations, seed 1, all values saved (distribution), first iteration logged.
-Race sweep: every race the class can be, 10k iterations, seed 1, each other race with its own rotation and gear where
-req/races/<id>.<Race>.json gives them (race_override.py, standards 29).
+Race sweep: every race the class can be, seed 1, each other race with its own rotation and gear where
+req/races/<id>.<Race>.json gives them (race_override.py, standards 29), at the fights the race luck goal needs
+(adaptive.py: a 2k pilot, then up to 40k).
 Fight lengths: 60/120/180/300/480 s, 5k iterations, preset race.
 Sample fights: of seeds 1..30, the ones nearest the 10th, 50th and 90th percentile, logged and parsed into a compact timeline.
 
 Iteration i of a run with seed 1 is the fight a one-iteration run with seed 1+i would sim (the sim reseeds every
-iteration), so the main run's saved values already hold the 30 seeds' DPS and the preset race's 10k sweep run
-(its first 10,000 values). Neither is simmed again.
+iteration), so the main run's saved values already hold the 30 seeds' DPS and the preset race's sweep fights.
+Neither is simmed again.
 """
 import json, os, re, subprocess, sys, tempfile, copy, math
 
-from dashpaths import D, BIN, TREE  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
+from dashpaths import D, BIN, TREE, RNG  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
 import race_override
+import adaptive
 CLI = os.path.join(BIN, 'wowsimcli')
 STATS = os.path.join(BIN, 'dashstats')
 
@@ -39,7 +41,7 @@ def run(req, iters, seed, debug=False, save_all=False, race=None, duration=None,
         req['raid']['parties'][0]['players'][0]['race'] = 'Race' + race
     if duration:
         req['encounter']['duration'] = duration
-    req['simOptions'] = {'iterations': iters, 'randomSeed': str(seed)}
+    req['simOptions'] = {'iterations': iters, 'randomSeed': str(seed), **RNG}
     if debug:
         req['simOptions']['debugFirstIteration'] = True
     if save_all:
@@ -227,6 +229,7 @@ def main(bid):
         os.remove(names)
     out = {'id': bid, 'meta': meta}
     race = meta['race']
+    adaptive.clear(bid)  # this build's per-fight vectors, from its last sims
 
     r = run(req, 20000, 1, save_all=True, names=names)
     p = r['raidMetrics']['parties'][0]['players'][0]
@@ -269,22 +272,7 @@ def main(bid):
     out['samples'] = [parse_log(text, dur) | {'seed': seed, 'dps': dps_s, 'label': label, 'pct': int(q)}
                       for (label, q, dps_s, seed), (text, dur) in zip(picked, logs)]
 
-    races = []
-    for rc in CLASS_RACES[meta['class']]:
-        if req['raid']['parties'][0]['players'][0]['race'] == 'Race' + rc and len(allv) >= 10000:
-            v = allv[:10000]  # the same 10k fights a seed 1 run of the preset race sims
-            m = sum(v) / len(v)
-            dps_r, sd = m, math.sqrt(max(0.0, sum(x * x for x in v) / len(v) - m * m))
-            ov = None
-        else:
-            req_r, ov = race_override.apply(req, bid, rc, meta)
-            pp = run(req_r, 10000, 1)['raidMetrics']['parties'][0]['players'][0]
-            dps_r, sd = pp['dps']['avg'], pp['dps']['stdev']
-        row = {'race': rc, 'faction': 'Horde' if rc in HORDE else 'Alliance', 'dps': dps_r, 'se': sd / 100}
-        if ov:
-            row['override'] = race_override.summary(ov)
-        races.append(row)
-    out['races'] = races
+    out['races'] = race_sweep(req, bid, meta, allv, out['main'])
 
     lengths = []
     for L in LENGTHS:
@@ -304,6 +292,40 @@ def main(bid):
     os.makedirs(os.path.join(D, 'out'), exist_ok=True)
     json.dump(out, open(os.path.join(D, 'out', bid + '.json'), 'w'), separators=(',', ':'))
     print(f"{bid}: {out['main']['dps']:.1f} (published {meta['published']['dps']})")
+
+
+def race_sweep(req, bid, meta, allv, main):
+    """Every race the class can be, at the fights the race goal needs (adaptive.py): a pilot of RACE_PILOT fights per
+    race, then every race topped up to the N the widest paired spread between races next to each other in DPS asks for.
+    The preset race's fights are the main run's (fight i is seed 1+i). Each race's DPS is the main run's mean plus the
+    race's paired difference to the preset race over the N fights, so the preset race's row is the build's DPS and the
+    difference between two races is their paired difference; `pse` holds its error against every other race."""
+    reqs = {rc: race_override.apply(req, bid, rc, meta) for rc in CLASS_RACES[meta['class']]}
+    preset = next(rc for rc in reqs if 'Race' + rc == req['raid']['parties'][0]['players'][0]['race'])
+
+    def fights(rc, n):
+        r = reqs[rc][0]
+        have = (20000, allv) if rc == preset and r == req else None
+        return adaptive.values(bid, r, None, n, lambda seed, cnt: run(r, cnt, seed, save_all=True)['raidMetrics']['parties'][0]['players'][0]['dps'].get('allValues', []), have)
+
+    goal = adaptive.goal('race')
+    pilot = {rc: fights(rc, adaptive.RACE_PILOT) for rc in reqs}
+    order = sorted(reqs, key=lambda rc: -adaptive.mean(pilot[rc]))
+    spread = max([adaptive.paired(pilot[a], pilot[b])[1] for a, b in zip(order, order[1:])] or [0.0])
+    n = adaptive.fights(spread, goal, adaptive.RACE_PILOT)
+    vec = {rc: fights(rc, n) for rc in reqs}
+    races = []
+    for rc, (_, ov) in reqs.items():
+        d, _, pse = adaptive.paired(vec[preset], vec[rc])
+        row = {'race': rc, 'faction': 'Horde' if rc in HORDE else 'Alliance', 'dps': main['dps'] + d, 'se': math.hypot(main['se'], pse), 'iters': n,
+               'pse': {o: round(adaptive.paired(vec[rc], vec[o])[2], 3) for o in reqs if o != rc}}
+        if ov:
+            row['override'] = race_override.summary(ov)
+        races.append(row)
+    final = sorted(races, key=lambda x: -x['dps'])
+    miss = [f"{a['race']}-{b['race']} {a['pse'][b['race']]:.2f}" for a, b in zip(final, final[1:]) if a['pse'][b['race']] > goal]
+    print(f'{bid}: races at {n} fights (pilot spread {spread:.1f})' + (f'; over the {goal} DPS goal: {", ".join(miss)}' if miss else ''), flush=True)
+    return races
 
 
 def resample(bid):

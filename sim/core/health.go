@@ -135,6 +135,18 @@ const (
 )
 
 func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
+	hb.removeHealth(sim, amount, true)
+}
+
+// PayHealthCost takes a cost the unit pays in its own health (a warrior's Bloodrage or Reckless
+// Swings). It counts as damage taken for the tank score, since a healer has to put it back, but not
+// for TMI, which measures the boss's damage spikes. DTPS, which only counts damage dealt by spells,
+// never sees it either.
+func (hb *healthBar) PayHealthCost(sim *Simulation, amount float64) {
+	hb.removeHealth(sim, amount, false)
+}
+
+func (hb *healthBar) removeHealth(sim *Simulation, amount float64, tmi bool) {
 	if amount < 0 {
 		panic("Trying to remove negative health!")
 	}
@@ -152,7 +164,7 @@ func (hb *healthBar) RemoveHealth(sim *Simulation, amount float64) {
 	}
 
 	// TMI calculations need timestamps and Max HP information for each damage taken event
-	if hb.unit.Metrics.isTanking {
+	if tmi && hb.unit.Metrics.isTanking {
 		entry := tmiListItem{
 			Timestamp:      sim.CurrentTime,
 			WeightedDamage: amount / hb.MaxHealth(),

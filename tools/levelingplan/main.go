@@ -108,6 +108,7 @@ func searchFile(db *proto.UIDatabase, in, out string) error {
 	if err != nil {
 		return err
 	}
+	warnRoute(p)
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer cancel()
 	var last time.Time
@@ -142,6 +143,9 @@ func writeLevelRequests(db *proto.UIDatabase, in, dir string) error {
 	}
 	p, err := newPlanner(req, db)
 	if err != nil {
+		return err
+	}
+	if err := routeProblem(p.plan, p.shape); err != nil {
 		return err
 	}
 	if err := os.MkdirAll(dir, 0o755); err != nil {
@@ -234,6 +238,7 @@ func searchHandler(db *proto.UIDatabase, keep string) http.HandlerFunc {
 			send(&proto.LevelingPlanSearchUpdate{Update: &proto.LevelingPlanSearchUpdate_Result{Result: &proto.LevelingPlanSearchResult{Error: err.Error()}}})
 			return
 		}
+		warnRoute(p)
 		log.Printf("searching levels %d to %d, %d sessions a sim", req.Plan.FromLevel, req.Plan.ToLevel, req.Sessions)
 		var last time.Time
 		result := runSearch(r.Context(), req, p, func(update *proto.LevelingPlanSearchProgress) {
@@ -256,4 +261,13 @@ func summary(result *proto.LevelingPlanSearchResult) string {
 		text += fmt.Sprintf(", plan's talents with the rotations found %.2fh (±%.2fh), %d passes", result.RotationOnlyHours, result.RotationOnlyNoise, result.Passes)
 	}
 	return text
+}
+
+// warnRoute logs when the plan we search from breaks the tree's rules. The search still runs:
+// its routes keep the rules, so it's a way to fix such a plan, but the plan's own hours in the
+// result aren't ones we could play.
+func warnRoute(p *planner) {
+	if err := routeProblem(p.plan, p.shape); err != nil {
+		log.Printf("%v. The plan's own hours aren't playable, the search's routes keep the rules", err)
+	}
 }

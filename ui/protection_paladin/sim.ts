@@ -159,7 +159,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 	playerIconInputs: [
 		ProtectionPaladinInputs.PrimarySealSelection,
 		ProtectionPaladinInputs.RighteousFuryToggle,
-		ProtectionPaladinInputs.BlessingSelection,
+		// Blessing of Sanctuary is gone under Forever (no client row), so its input is left out.
 		ProtectionPaladinInputs.AuraSelection,
 	],
 	// Buff and Debuff inputs to include/exclude, overriding the EP-based defaults.
@@ -185,11 +185,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecProtectionPaladin, {
 	},
 
 	presets: {
-		rotations: [...Presets.APLPresets[Phase.Phase4]],
+		rotations: [...Presets.APLPresets[Phase.Phase1], ...Presets.APLPresets[Phase.Phase4]],
 		// Preset talents that the user can quickly select.
-		talents: [...Presets.TalentPresets[Phase.Phase5], ...Presets.TalentPresets[Phase.Phase4]],
+		talents: [...Presets.TalentPresets[Phase.Phase1], ...Presets.TalentPresets[Phase.Phase5], ...Presets.TalentPresets[Phase.Phase4]],
 		// Preset gear configurations that the user can quickly select.
-		gear: [Presets.DefaultGear],
+		gear: [...Presets.GearPresets[Phase.Phase1]],
+		// Preset builds that the user can quickly select.
+		builds: [Presets.PresetBuildLevel60Balanced, Presets.PresetBuildLevel60MaxThreat, Presets.PresetBuildLevel60MaxSurvival],
 	},
 
 	autoRotation: player => {

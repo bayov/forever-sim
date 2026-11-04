@@ -17,21 +17,24 @@ var ChainLightningSpellId = [ChainLightningRanks + 1]int32{0, 421, 930, 2860, 10
 // low ranks close to full coefficients instead of the 1.12 penalty for spells learned
 // below level 20.
 //
-// The November 2 development notes (post 9, for launch; not in client 1.60.1.70753) set the
-// first target's damage to "approximately 145% of comparable rank Lightning Bolt base damage",
-// the mana cost to about 225% of its mana and the cast to 2.5 sec. We take the comparable rank
-// to be the newest Lightning Bolt at Chain Lightning's learn level (ranks 6, 7, 8 and 10 at 32,
-// 40, 48 and 56), at the new Lightning Bolt damage: 1.45 times its range at that level and
-// 1.45 times its growth per level. Rank 4 hits for 485 to 539 at 60 (was 119 to 133).
-var ChainLightningBaseDamage = [ChainLightningRanks + 1][]float64{{0}, {203.01, 227.90}, {270.21, 301.88}, {338.27, 376.72}, {484.75, 539.04}}
-var ChainLightningScaling = [ChainLightningRanks + 1]core.RankScaling{{}, {37, 1.70}, {45, 1.93}, {53, 2.15}, {60, 2.71}}
-var ChainLightningSpellCoef = [ChainLightningRanks + 1]float64{0, 0.571, 0.571, 0.517, 0.571}
+// Hotfix push 113380 (region 91, build 1.60.1.70755, 2026-11-04; https://wago.tools/db2/SpellEffect,
+// hotfixes) sets every rank's base points, growth per level and coefficient for launch, after the
+// November 2 development notes ("approximately 145% of comparable rank Lightning Bolt base
+// damage"): rank 4 hits for 494 to 552 at 60 (base 510 at 56, 3.3 a level; was 119 to 133), and
+// every rank takes 0.714 (was 0.571, and 0.517 for rank 3). Push 113341 sets the cast to 2.5 sec
+// (SpellMisc cast time 19; 2 sec before).
+var ChainLightningBaseDamage = [ChainLightningRanks + 1][]float64{{0}, {207.85, 236.15}, {338.24, 379.76}, {416.18, 466.82}, {494.13, 552.27}}
+var ChainLightningScaling = [ChainLightningRanks + 1]core.RankScaling{{}, {37, 1.4}, {45, 2.2}, {53, 2.7}, {60, 3.3}}
+var ChainLightningSpellCoef = [ChainLightningRanks + 1]float64{0, 0.714, 0.714, 0.714, 0.714}
 
 // Client 1.60.1.70425 cut every rank by about 35% (225 / 305 / 390 / 485 before, 145 / 200 / 250 /
-// 315 after). The November 2 notes make it about 225% of the comparable Lightning Bolt's mana
-// (110, 135, 160 and 220).
-var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 248, 304, 360, 495}
+// 315 after). Hotfix push 113282 (region 91, build 70755; SpellPower) sets 245 / 360 / 425 / 495.
+var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 245, 360, 425, 495}
 var ChainLightningLevel = [ChainLightningRanks + 1]int{0, 32, 40, 48, 56}
+
+// Outside Forever, Classic's damage at each rank's cap and its mana. The cast is 2.5 sec in both.
+var classicChainLightningBaseDamage = [ChainLightningRanks + 1][]float64{{0}, {200, 227}, {288, 323}, {383, 430}, {505, 564}}
+var classicChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 280, 380, 490, 605}
 
 func (shaman *Shaman) registerChainLightningSpell() {
 	shaman.ChainLightning = make([]*core.Spell, ChainLightningRanks+1)
@@ -55,12 +58,17 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	spellId := ChainLightningSpellId[rank]
 	baseDamageLow := ChainLightningScaling[rank].At(ChainLightningBaseDamage[rank][0], shaman.Level)
 	baseDamageHigh := ChainLightningScaling[rank].At(ChainLightningBaseDamage[rank][1], shaman.Level)
-	spellCoeff := shaman.downrankCoefficient(ChainLightningSpellCoef[rank], ChainLightningLevel[rank])
+	spellCoeff := ChainLightningSpellCoef[rank]
 	manaCost := ChainLightningManaCost[rank]
 	level := ChainLightningLevel[rank]
+	if !shaman.Env.IsForever() {
+		baseDamageLow = classicChainLightningBaseDamage[rank][0]
+		baseDamageHigh = classicChainLightningBaseDamage[rank][1]
+		manaCost = classicChainLightningManaCost[rank]
+	}
 
 	cooldown := time.Second * 6
-	// 2.5 sec since the November 2 notes (2 sec before, Classic's 2.5).
+	// 2.5 sec since hotfix push 113341 (2 sec before, Classic's 2.5).
 	castTime := time.Millisecond * 2500
 
 	shaman.ChainLightningBounceCoefficient = .70 // 30% reduction per bounce

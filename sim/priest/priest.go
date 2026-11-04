@@ -30,6 +30,12 @@ const (
 	SpellCode_PriestChastise
 	SpellCode_PriestPenance
 	SpellCode_PriestShadowguard
+	SpellCode_PriestLesserHeal
+	SpellCode_PriestPrayerOfHealing
+	SpellCode_PriestHolyNova
+	SpellCode_PriestRenew
+	SpellCode_PriestPowerWordShield
+	SpellCode_PriestPrayerOfMending
 )
 
 type Priest struct {
@@ -39,21 +45,22 @@ type Priest struct {
 	Latency float64
 
 	Chastise          []*core.Spell
-	CircleOfHealing   *core.Spell
 	DarkSacrifice     *core.Spell
 	DevouringPlague   []*core.Spell
-	EmpoweredRenew    *core.Spell
 	FlashHeal         []*core.Spell
 	GreaterHeal       []*core.Spell
+	Heal              []*core.Spell
 	HolyFire          []*core.Spell
+	HolyNova          []*core.Spell
 	InnerFocus        *core.Spell
+	LesserHeal        []*core.Spell
 	MindBlast         []*core.Spell
 	MindFlay          []*core.Spell
 	Penance           []*core.Spell
 	PowerInfusion     *core.Spell
 	PowerWordShield   []*core.Spell
 	PrayerOfHealing   []*core.Spell
-	PrayerOfMending   *core.Spell
+	PrayerOfMending   []*core.Spell
 	Renew             []*core.Spell
 	Shadowform        *core.Spell
 	ShadowWeavingProc *core.Spell
@@ -74,9 +81,18 @@ type Priest struct {
 
 	ShadowWeavingAuras   core.AuraArray
 	VampiricEmbraceAuras core.AuraArray
-	WeakenedSouls        core.AuraArray
 
-	ProcPrayerOfMending core.ApplySpellResults
+	// The healing priest's (healing.go, healing_talents.go).
+	WeakenedSouls          core.AuraArray
+	InspirationAuras       core.AuraArray
+	PowerWordShieldAbsorbs core.AbsorbArray
+	powerWordShieldAbsorbs []func(*core.Unit) float64
+	DivineAegisAbsorbs     core.AbsorbArray
+	divineAegisSpell       *core.Spell
+	holyBinding            *core.Spell
+	lastHealCode           int32
+	litanyMetrics          *core.ResourceMetrics
+	prayerOfMendingReset   func()
 }
 
 func (priest *Priest) GetCharacter() *core.Character {
@@ -116,12 +132,12 @@ func (priest *Priest) Initialize() {
 	priest.registerPowerInfusionCD()
 }
 
-func (priest *Priest) RegisterHealingSpells() {
-	// priest.registerFlashHealSpell()
-	// priest.registerGreaterHealSpell()
-	// priest.registerPowerWordShieldSpell()
-	// priest.registerPrayerOfHealingSpell()
-	// priest.registerRenewSpell()
+// ResetHealing clears the heals' state between iterations.
+func (priest *Priest) ResetHealing() {
+	priest.lastHealCode = SpellCode_PriestNone
+	if priest.prayerOfMendingReset != nil {
+		priest.prayerOfMendingReset()
+	}
 }
 
 func New(character *core.Character, talents string) *Priest {
@@ -148,18 +164,4 @@ func New(character *core.Character, talents string) *Priest {
 // Agent is a generic way to access underlying priest on any of the agents.
 type PriestAgent interface {
 	GetPriest() *Priest
-}
-
-// downrankCoefficient is a rank's spell power coefficient under Forever's downranking penalty.
-// Blizzard's beta development notes (2026-10-01, us.forums.blizzard.com/en/wow/t/2360696/4):
-// "spells cast using spell ranks vastly below your current level receive less benefit from your
-// Spell Damage and Spell Healing". The size is foreverchanges.pro/downranking's measured
-// formula (beta heals up to level 30, assumed for damage spells and level 60): the rank keeps
-// 1 - 5% for each level it is learned more than 17 levels below the caster, at least 0.
-// Classic keeps its own rules.
-func (priest *Priest) downrankCoefficient(coefficient float64, learnLevel int) float64 {
-	if priest.Env == nil || !priest.Env.IsForever() {
-		return coefficient
-	}
-	return coefficient * max(0, min(1, 1-0.05*float64(int(priest.Level)-17-learnLevel)))
 }

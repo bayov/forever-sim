@@ -4,7 +4,7 @@ An entry whose removal leaves the DPS bit-identical has no effect in the sim. Wr
 import json, os, re, subprocess, sys, copy, glob
 from concurrent.futures import ThreadPoolExecutor
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from dashpaths import D, BIN, TREE  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
+from dashpaths import D, BIN, TREE, RNG  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
 SIM = os.path.join(BIN, 'wowsimcli')
 ITERS, SEED = int(os.environ.get('ITERS', 300)), os.environ.get('SEED', '11')
 os.makedirs(os.path.join(D, 'abl', 'tmp'), exist_ok=True)
@@ -16,7 +16,7 @@ def words(k):
 
 def run(req, tag):
     req = copy.deepcopy(req)
-    req['simOptions'] = {'iterations': ITERS, 'randomSeed': SEED}
+    req['simOptions'] = {'iterations': ITERS, 'randomSeed': SEED, **RNG}
     i, o = os.path.join(D, 'abl', 'tmp', tag + '.i.json'), os.path.join(D, 'abl', 'tmp', tag + '.o.json')
     json.dump(req, open(i, 'w'))
     subprocess.run([SIM, 'sim', '--infile', i, '--outfile', o], capture_output=True, cwd=TREE)

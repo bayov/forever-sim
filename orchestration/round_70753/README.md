@@ -44,6 +44,13 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - forever-wiki/sim-status.md still has the old warrior strings (warrior worker); check every class's rows there.
 - ui/enhancement_shaman/leveling_weights.json (the XP/h parts for Enhancement levels 5-59 and the no-spec shaman) was
   measured on 11-02, before this round: measure it again (leveling-opt), then bayovui's weights.py (phase 3b's report).
+  Done 2026-11-03 (phase 3 fix, item 4): measured again on the new tree, template knobs unchanged; levels 5 and 10 as
+  before, 11 to 16 more mobs a session from 25. Still to do: bayovui's weights.py, from the wow repo.
+- compsearch TestReportRaid flakes on shaman__enhancement-imp-gw: about 6 DPS less in the 20-player raid than alone
+  (-6.0 against an allowed +-5.9 at 4000 iterations on master before 7df92bc; at the test's 1000 iterations it passes or
+  fails as other builds reshuffle the random numbers). Found by the paladin follow-up; a shaman or compsearch fix.
+  Phase 4 (shaman_phase4.md): noise, -0.4 ± 0.6 over 23,000 iterations; the hunters (+2 to +3) and Demonology (-3.2)
+  sit further off in the raid. Tolerance kept.
 - Two-hand Fury is now the highest warrior build at 180 s, so the warrior worker moved the class default (isDefault and
   the ui defaults) to it. Listed as a question for the user in round_70753/warrior.md.
 
@@ -55,6 +62,29 @@ already removed Salvation, Mass Salvation and Blessing of Light). Left for phase
 - Gnome Intellect offset +3 (level 1 offset; the 1.12 level 60 rows' +5 to +9 read as Expansive Mind baked in).
 - Human Spirit below 60: the 1.12 rows may already include the old 5%, and the sim applies the new 10% on top
   (leveling only, older than this round).
-- Assumptions (B9): shaman: drop `sham_lb_31plus` and `sham_es7_tuning` (now 1.0), move `sham_mw_ppm` to 20, Chain Lightning coefficient unannounced (kept 0.571); reword `pal_2h_spec_holy` (Two-Handed Weapon Specialization now covers all Holy damage; paladin worker); collapse `mage_ice_lance_cd` to one value (client 70753 gives every Ice Lance rank the cooldown;
+- Assumptions (B9): shaman: drop `sham_lb_31plus` and `sham_es7_tuning` (now 1.0), move `sham_mw_ppm` to 20, Chain Lightning coefficient 0.714 (standards 39, user ruling 2026-11-04; was kept at 0.571); reword `pal_2h_spec_holy` (Two-Handed Weapon Specialization now covers all Holy damage; paladin worker); collapse `mage_ice_lance_cd` to one value (client 70753 gives every Ice Lance rank the cooldown;
   mage worker); `hunter_tsa_hm_rank` says Trueshot Aura 50, now 100 by hotfix 113534 (hunter worker).
 - `tools/audit/gear/lin2.py` failed on the healer and tank tables of gear_targets.md: fixed (it skips rows that are not stat targets).
+
+## User rulings, 2026-11-04
+
+- Rogue: Mutilate and Seal Fate stay separate presets (Mutilate, Seal Fate Swords, Seal Fate Daggers); the
+  Assassination default is not switched to Seal Fate.
+- Chain Lightning's coefficient is the standard one for its 2.5 s cast, 0.714 (standards 39).
+- The sim is Forever only (standards 38): fix.md's Classic questions (a) and (b) are moot, and Classic gating is no
+  longer a finding.
+
+## Phase 4 (2026-11-04)
+
+- Rogue hotfix 113483: master 9ff134b0b, deployed (`hotfix_113483.md`). Open for the user: Shank's no-proc model (it
+  procs only Venom and Boot Knife) is a reading of the hotfix's attribute flags; a log check or a ruling settles it.
+- Follow-ups (brief `briefs/phase4_followups.md`): the db.bin missing synthetic item 998001, warlock compsearch
+  TestDropsAreUnread, the paladin rows of push 113483, stale.mjs calling every build stale, the warrior Fury note.
+  Done 2026-11-04: 998001 is in db.bin and the hash test passes (the failure came from an old pipeline tree); the
+  warlock drop table predated the Wrack build (Fortitude and the first aid kit now read); compsearch's solo hunters
+  keep another hunter's Hunter's Mark (MM +2.3, SV +3.1 were real); Demonology -2 next to a Shadow priest is real,
+  cause unfound (cast vs given Dark Inspiration?). Paladin rows are push 113542 (Vengeance 5 stacks, Holy 2H Spec),
+  already modelled: citations only, no DPS (`hotfix_113483_paladin.md`). stale.mjs was right: 4 Fury builds simmed
+  before 7b4dc5d's requests, re-simmed (Fury 1152.6 -> 1153.0, 2H Fury 1169.9 -> 1173.3 at 180 s); the other 64 cleared
+  by probe. Open: warrior push 113539 (Raging Blows out, Spearing Strike 75/75, Slam, Sweeping Strikes, Deep Wounds,
+  Concussion Blow) is not in the sim; `pal_2h_spec_holy` and the paladin wiki still call those values notes-only.
