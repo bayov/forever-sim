@@ -30,6 +30,7 @@ import Level60MaxSurvivalAPLJson from './apls/level60_max_survival.apl.json';
 import Level60MaxThreatAPLJson from './apls/level60_max_threat.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticMaxThreatGear from './gear_sets/level60_phase1_synthetic_max_threat.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -42,9 +43,15 @@ import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gea
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Level60Phase1SyntheticGear);
+// Max threat's set: the same items, Greater Agility (+7) on the boots for Greater Stamina (+7). It won at w = 1/3 on
+// two disjoint seeds and tied at the other weights (docs/tank_paladin.md, round 3).
+export const GearLevel60SyntheticMaxThreat = PresetUtils.makePresetGear(
+	'Level 60 Phase 1 (Synthetic, Max threat)',
+	Level60Phase1SyntheticMaxThreatGear,
+);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Synthetic, GearBlank],
+	[Phase.Phase1]: [GearLevel60Synthetic, GearLevel60SyntheticMaxThreat, GearBlank],
 };
 
 export const DefaultGear = GearBlank;
@@ -123,7 +130,7 @@ const Level60TankOptions = { primarySeal: PaladinSeal.Fury, righteousFury: true,
 
 export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
 	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md).',
-	gear: GearLevel60Synthetic,
+	gear: GearLevel60SyntheticMaxThreat,
 	talents: TalentsLevel60MaxThreat,
 	rotation: APLLevel60MaxThreat,
 	race: Race.RaceUndead,
