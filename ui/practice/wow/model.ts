@@ -378,6 +378,8 @@ export class Model {
 						.catch(e => console.warn(`texture for ${m2.name}`, e)),
 				);
 			}
+			// The crowd (crowd.ts) reads the second texture and the mixing from here.
+			material.userData.wow = uniforms;
 			material.onBeforeCompile = shader => {
 				Object.assign(shader.uniforms, uniforms);
 				shader.vertexShader = shader.vertexShader
@@ -599,6 +601,22 @@ export class Model {
 	}
 
 	// placeSocket puts a socket where its bone is now: the bone's place times T(offset).
+	// steady says a track keeps one value (every component `value`) in every animation the model
+	// has loaded, which are all it plays. A transparency of 1 or a white color that's animated in
+	// name only (one key, or keys that don't change) is steady.
+	steady(track: Track, value: number): boolean {
+		for (let seq = 0; seq < Math.max(1, track.times.length); seq++) {
+			if (!track.times[seq]?.n) continue;
+			const slotSeq = track.globalSeq !== 0xffff ? 0 : seq;
+			const source = track.globalSeq !== 0xffff || track.times.length === 1 || this.m2.inline(slotSeq) ? this.m2.data : this.ready.get(slotSeq);
+			if (!source) continue;
+			const keys = track.get(slotSeq, source);
+			if (!keys) continue;
+			for (let i = 0; i < keys.values.length; i++) if (Math.abs(keys.values[i] - value) > 1e-6) return false;
+		}
+		return true;
+	}
+
 	// placeSockets puts the sockets where their bones are now (the pose worker calls it when a new
 	// pose comes in).
 	placeSockets() {
