@@ -10,11 +10,13 @@ proto race name without "Race": Dwarf, NightElf, SkyborneHighOrder, ...):
    "equipment": {"items": [...the gear set file's items...]},                         optional
    "note": "one line for the Races tab",
    "gain": {"dps": .., "se": .., "iterations": 20000, "seed": 1, "duration": 180},
-   "how": "how it was made"}
+   "how": "how it was made",
+   "gearNote", "gearHow", "gearGain": the gear's note, how and gain where race_gear.py added gear     optional
+                                      to a file that holds the race's rotation (UPDATED 2026-11-04, phase 5)}
 
 `rotation` replaces the player's rotation and `bonusStats` is added to the player's bonus stats (on top of the gear).
 `equipment` replaces the player's equipment: a whole gear set, `gearSet` naming its file (ui/<spec>/gear_sets/, a hit-trade
-step of the preset's set, race_gear.py). The file holds the equipment itself, so the sims and the staleness hashes read
+step of the preset's set, race_gear.py: lower for a race over the hit cap, higher for one under it). The file holds the equipment itself, so the sims and the staleness hashes read
 the override alone. Both `bonusStats` and `equipment` count as the race's gear.
 A duty or encounter variant (a build with `baseBuild`) without a file of its own takes its base build's, but only the
 parts that fit it: the rotation when the variant's rotation is the base's, the bonus stats or equipment when its gear is the base's
@@ -93,8 +95,11 @@ def text(ov):
 
 
 def note(ov):
-    """What the report says about a race's own setup: race_text.json's note, else the override file's."""
-    return text(ov).get('note') or (ov or {}).get('note', '')
+    """What the report says about a race's own setup: race_text.json's note, else the override file's, then the
+    gear's note where the file holds both a rotation and gear (gearNote)."""
+    n = text(ov).get('note') or (ov or {}).get('note', '')
+    g = (ov or {}).get('gearNote', '')
+    return (n.rstrip('.') + '. ' + g[:1].upper() + g[1:]) if n and g else (n or g)
 
 
 def own_path(bid, race):
@@ -131,7 +136,8 @@ def load(bid, race, meta=None):
             if k in ov:
                 dropped.append(k)
                 del ov[k]
-        ov.pop('gearSet', None)
+        for k in ('gearSet', 'gearNote', 'gearHow', 'gearGain'):
+            ov.pop(k, None)
     if dropped:
         ov['dropped'] = dropped
     return ov if ('rotation' in ov or 'bonusStats' in ov or 'equipment' in ov) else None
@@ -168,6 +174,8 @@ def summary(ov):
     s = {'note': ov.get('note', ''), 'file': ov['file'], 'rotation': 'rotation' in ov, 'bonusStats': ov.get('bonusStats') or {}}
     if ov.get('gearSet'):
         s['gearSet'] = ov['gearSet']
+    if ov.get('gearNote'):
+        s['gearNote'] = ov['gearNote']
     if ov.get('from'):
         s['from'] = ov['from']
     if ov.get('dropped'):

@@ -186,11 +186,16 @@ read those and the staleness checks hash them, so rewording them would make the 
 needs a `note` and a `why` for each line it changes; `build_data.py` warns about a changed line with no `why`. `stale.mjs` and the packs' fingerprints
 hash a build's override files (its base build's too), so adding, changing or deleting one makes the build stale.
 
-`race_gear.py [ids] [--write]` makes the Dwarf's gear files: for every build a Dwarf can be, the Dwarf's hit (dashstats'
-final sheet, plus a priest's school talent) against its standards 4 cap (16% spell for casters, 8% yellow for melee and
-hunters), the excess (at most 1%, at most the gear's own hit) re-spent over the set's other non-Stamina, non-Spirit stats
-in its own shares at the 1b prices, then a paired 20k sim with and without. `--write` writes the files that gain 2 SE;
-every build's numbers go to `$DASH_DIR/race_gear.json`.
+`race_gear.py [ids] [--write] [--to-cap]` makes each race's gear files (standards 29): for every build and every race it
+runs at other than the preset's, the race's hit (dashstats' final sheet, plus a priest's school talent) against the
+target (the standards 4 cap, 16% spell for casters and 8% yellow for melee and hunters, or the preset race's own hit
+where the preset carries more; `--to-cap`: the cap). Where the set has hit-trade steps the race wears the step that
+lands it on the target, in either direction: a lower step (a race over it) is kept after a paired 20k sim where it gains
+2 SE, a higher step (a race under it) by the rule. Without steps, the Dwarf alone re-spends its excess (at most 1%, at
+most the gear's own hit) as bonus stats over the set's other non-Stamina, non-Spirit stats at the 1b prices, simmed the
+same way. `--write` writes the kept ones (merging the gear into a file that holds the race's rotation) and removes the
+gear of earlier runs that no longer apply; every build and race's numbers go to `$DASH_DIR/race_gear.json`. Run it with
+`DASH_TREE` and `DASH_BIN` pointing at the tree and binaries built from it.
 
 ## Sim steps
 
