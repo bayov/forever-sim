@@ -1322,6 +1322,17 @@ rendering, not the sim.
     and 1.3MB a frame, against 250 and 1.6MB). The room now shows "Software graphics · restart Chrome" when the
     WebGL renderer is a software one (not in test runs: `navigator.webdriver` or `?bench`), and the report's
     `gpuInfo.software` says so.
+- Ninth raid report (your PC, RTX 5090, `?glcount=1`): about 172 FPS in the fight (frames 64% at 4.2ms, 36% at
+  8.3ms), 3.7ms of script (animating 1.2ms, drawing 2.2ms), GPU 3.7ms, 330 draw calls, 2330 WebGL calls a frame, and a
+  garbage collection every 190ms (more than before).
+  - The garbage was the call counter's own: each counted call spread its arguments into an array, 2300 a frame. The
+    counters are plain functions now, and the upload counter too. The pose worker's requests also go through
+    shared memory, so a frame sends it a small message instead of a copy of every request.
+  - Particles that add their light (blends 1 and 4) draw together across textures, from texture arrays by size (the
+    same sampling as their own textures), each particle with its texture's layer. Added light comes out the same in
+    any order, but merged they can't keep their place among the other particle batches, so they draw after them
+    (light over smoke): the one change to the look, where added light overlaps smoke. `?particlearrays=0` turns it
+    off. Headless: 334 to 292 draw calls, 2410 to 2160 WebGL calls a frame.
   - Headless (fight, 1920x1080): 127 to 144 FPS, drawing 4.8 to 4.1ms, 420 to 326 draw calls, 3040 to 2350 WebGL
     calls a frame (texture binds 528 to 423, vertex array binds 478 to 385, programs 276 to 210, matrix uniforms 271
     to 174).
