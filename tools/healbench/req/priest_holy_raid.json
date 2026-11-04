@@ -130,41 +130,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10060
-                      },
-                      "target": {
-                        "type": "Self"
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        },
-                        "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 25316
-                            },
-                            "targetUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Power Infusion on myself when the raid is hurt."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 10901
                       },
                       "target": {
@@ -225,19 +190,29 @@
                           }
                         },
                         "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 10917
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 10917
+                                },
+                                "targetUnit": {
+                                  "type": "MostHurt"
+                                }
+                              }
                             },
-                            "targetUnit": {
-                              "type": "MostHurt"
+                            "rhs": {
+                              "const": {
+                                "val": "0.5"
+                              }
                             }
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Flash Heal 7, 4 at the most hurt: each rank, biggest first, once what is missing covers its Expected Healing."
+                  "notes": "Flash Heal 7, 4 at the most hurt: each rank, biggest first, once what is missing covers 50% of its Expected Healing."
                 },
                 {
                   "action": {
@@ -260,81 +235,12 @@
                           }
                         },
                         "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 9474
-                            },
-                            "targetUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 25316
-                      },
-                      "target": {
-                        "type": "MostHurt"
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        },
-                        "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 25316
-                            },
-                            "targetUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Prayer of Healing 5 at the most hurt: each rank, biggest first, once what is missing covers its Expected Healing."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 25315
-                      },
-                      "target": {
-                        "type": "MostHurt"
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        },
-                        "rhs": {
                           "math": {
                             "op": "OpMul",
                             "lhs": {
                               "spellExpectedHealing": {
                                 "spellId": {
-                                  "spellId": 25315
+                                  "spellId": 9474
                                 },
                                 "targetUnit": {
                                   "type": "MostHurt"
@@ -343,110 +249,8 @@
                             },
                             "rhs": {
                               "const": {
-                                "val": "0.6"
+                                "val": "0.5"
                               }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Renew at the most hurt once what is missing covers 60% of its Expected Healing."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 14751
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        },
-                        "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 25314
-                            },
-                            "targetUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Inner Focus right before a big heal: free, and 25% more crit."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 25314
-                      },
-                      "target": {
-                        "type": "MostHurt"
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        },
-                        "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 25314
-                            },
-                            "targetUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Greater Heal 5, 2 at the most hurt: each rank, biggest first, once what is missing covers its Expected Healing."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10963
-                      },
-                      "target": {
-                        "type": "MostHurt"
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "MostHurt"
-                            }
-                          }
-                        },
-                        "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 10963
-                            },
-                            "targetUnit": {
-                              "type": "MostHurt"
                             }
                           }
                         }

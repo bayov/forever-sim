@@ -14,19 +14,20 @@ var EarthShockSpellId = [EarthShockRanks + 1]int32{0, 8042, 8044, 8045, 8046, 10
 // low ranks close to full coefficients instead of the 1.12 penalty for spells learned
 // below level 20. Forever's downranking penalty applies (sim/core/downrank.go).
 //
-// The November 2 development notes (post 9, for launch; not in client 1.60.1.70753) revert every
-// shock's base damage to Classic Era's: the 1.15.9 client's base points, die and growth per
-// level below. The spell power coefficients, costs and cooldowns stay Forever's.
+// Hotfix push 113380 (region 91, build 1.60.1.70755, 2026-11-04; https://wago.tools/db2/SpellEffect,
+// hotfixes) sets every rank's base points and growth per level for launch, close to Classic Era's
+// as the November 2 development notes said. The spell power coefficients, variances, costs and
+// cooldowns stay the client's.
 // Rank 7 is 517 to 545 (was 293 to 309).
-var EarthShockBaseDamage = [EarthShockRanks + 1][]float64{{0}, {19.5, 21.5}, {35.5, 37.5}, {65, 69}, {126, 134}, {235, 249}, {372, 394}, {517, 545}}
-var EarthShockScaling = [EarthShockRanks + 1]core.RankScaling{{}, {9, 0.5}, {13, 0.7}, {19, 1}, {29, 1.4}, {41, 2}, {53, 2.6}, {60, 3.1}}
+var EarthShockBaseDamage = [EarthShockRanks + 1][]float64{{0}, {21.25, 23.75}, {38.30, 40.70}, {69.19, 73.81}, {131.09, 139.91}, {241.00, 256.00}, {379.38, 402.62}, {517, 545}}
+var EarthShockScaling = [EarthShockRanks + 1]core.RankScaling{{}, {9, 0.5}, {13, 0.7}, {19, 0.9}, {29, 1.1}, {41, 1.3}, {53, 1.6}, {60, 3.4}}
 var EarthShockSpellCoef = [EarthShockRanks + 1]float64{0, 0.386, 0.386, 0.386, 0.386, 0.386, 0.386, 0.386}
 var EarthShockManaCost = [EarthShockRanks + 1]float64{0, 30, 50, 85, 145, 240, 345, 450}
 var EarthShockLevel = [EarthShockRanks + 1]int{0, 4, 8, 14, 24, 36, 48, 60}
 
 // Report assumption sham_es7_tuning (user ruling 2026-10-15) took rank 7's base damage x1.08,
 // as the ranks from level 36 kept 0.55 to 0.57 of Era's, as if not retuned yet. The November 2
-// notes put every rank back at Era's (above), so the scale is 1.
+// notes and hotfix push 113380 put every rank back near Era's (above), so the scale is 1.
 const EarthShockRank7DamageScale = 1.0
 
 func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {

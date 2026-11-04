@@ -250,8 +250,8 @@ func healSimWithArmor(t *testing.T, level int32, talents string, critBonus float
 	return sim, enh
 }
 
-// TestOrcShamanAncestralHealing: a heal crit gives us 25% more armor from items for 15 sec with
-// 3 points (16177: "Increases your armor value from items"). Our Agility's armor stays as it is.
+// TestOrcShamanAncestralHealing: a heal crit gives us 25% more armor for 15 sec with 3 points,
+// our Agility's armor too: 16177 is aura 101 on armor, as Inspiration (healer_mechanics-20261104-3).
 func TestOrcShamanAncestralHealing(t *testing.T) {
 	sim, enh := healSimWithArmor(t, 60, restoAncestralHealing, 200)
 	buff := enh.GetAura("Ancestral Fortitude")
@@ -270,8 +270,8 @@ func TestOrcShamanAncestralHealing(t *testing.T) {
 		if !buff.IsActive() {
 			t.Fatal("no Ancestral Fortitude after a crit heal")
 		}
-		if got, want := enh.Armor(), armor+0.25*2000; math.Abs(got-want) > 0.01 {
-			t.Errorf("armor %.1f with the buff, want %.1f (all of our armor x1.25 would be %.1f)", got, want, armor*1.25)
+		if got, want := enh.Armor(), armor*1.25; math.Abs(got-want) > 0.01 {
+			t.Errorf("armor %.1f with the buff, want %.1f (armor from items only would be %.1f)", got, want, armor+0.25*2000)
 		}
 	})
 	at(sim, 18, func(sim *core.Simulation) {

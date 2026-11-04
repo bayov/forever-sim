@@ -15,9 +15,9 @@ import (
 // The bench's talents with Healing Focus's 3 points in Ancestral Healing.
 const restoAncestralHealingTalents = "-035-5530503015513151"
 
-// Ancestral Healing 3: a crit from the shaman's heal on the tank gives the tank 25% more armor from
-// items (Ancestral Fortitude, 16177), not 25% more of all its armor (its Agility's, Devotion Aura's),
-// and it goes again 15 sec later.
+// Ancestral Healing 3: a crit from the shaman's heal on the tank gives the tank 25% more of all its
+// armor (Ancestral Fortitude, 16177, aura 101 as Inspiration), its Agility's and buffs' too, not
+// only its armor from items (healer_mechanics-20261104-3), and it goes again 15 sec later.
 func TestHealingFightShamanAncestralFortitude(t *testing.T) {
 	rsr := healingRaid(t, 1, 1, 0)
 	rsr.Raid.Parties[0].Players[1].TalentsString = restoAncestralHealingTalents
@@ -39,10 +39,10 @@ func TestHealingFightShamanAncestralFortitude(t *testing.T) {
 		if buff.IsActive() && !gained {
 			gained = true
 			// Its own buffs may change its armor by now (Shield Block doesn't), so read the
-			// buff's part: armor from items, 25% more.
-			if got, want := tank.Armor()-armor, 0.25*itemArmor; math.Abs(got-want) > 1 {
-				t.Errorf("Ancestral Fortitude added %.0f armor, want %.0f (25%% of %.0f from items; all armor would be %.0f)",
-					got, want, itemArmor, 0.25*armor)
+			// buff's part: all armor, 25% more.
+			if got, want := tank.Armor()-armor, 0.25*armor; math.Abs(got-want) > 1 {
+				t.Errorf("Ancestral Fortitude added %.0f armor, want %.0f (25%% of all %.0f; from items only would be %.0f)",
+					got, want, armor, 0.25*itemArmor)
 			}
 		}
 		if gained && !buff.IsActive() {

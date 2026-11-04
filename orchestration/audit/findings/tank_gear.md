@@ -9,6 +9,7 @@
 - evidence: `python3 tools/audit/tank_gear/paladin.py`. Linear shares without trinkets: Sta 30.2 against 32.4 (tolerance 1.5), so it is 0.7 points out. The hit raise from 3.2 to 5.9 (50 rating plus Precision 3/3 = 8%, standards 4) was paid partly from ring and main-hand Stamina (tools/database/forever_synthetic_items_paladin_tank.go:22-38). gear_targets.md's hit-adjusted rule and standards 29 take extra hit from the other non-Stamina, non-Spirit stats, not from Stamina. The file comment prints "30.2 (32.4)" without flagging it. Every piece is within 1% linear and 6% norm. Confidence about 85%.
 - proposed fix: move about 19 weighted points (6 at minimum) into Stamina from Defense (+0.9 over its hit-adjusted target) and block value (+0.4 over), for example on shoulder (BV 37) and wrist (BV 25). Keep each piece in budget. The TPS or survival effect is probably under 1% (estimated, not simmed).
 - needs: worker fix
+- fixed: 2026-11-04, e9751cc. Stamina 30.2% -> 32.6% (32.4 ±1.5): head, chest, legs Defense -2, shoulder block value -10, ring and hands Strength -2 / -3, back Agility -2, all into Stamina; every piece within 1% linear and 5% norm (`python3 tools/audit/tank_gear/paladin.py`).
 
 ### tank_gear-20261104-2: Protection warrior wears the DPS on-use AP trinket with no recorded A/B against the armor trinket
 - severity: medium

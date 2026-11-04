@@ -210,6 +210,36 @@ Fury leaves no debuff, and the raid's Judgements are other paladins'.
 
 ## Presets (step 6)
 
+**Round 2 (2026-11-04, tank-paladin, on the engine of 5668ea5: the tank faces the boss, the logs' swing gap with
+parryHaste off, health-blind survival cooldowns, Elixir of the Phalanx and Greater Fortitude on every tank).**
+Before the searches: Reckoning takes spell crits (tank_mechanics-20261104-9), the trinket line is first
+(tank_rotations-20261104-6), the set's Stamina share is back at its row (tank_gear-20261104-1). rotopt on the six
+scoring encounters, 1,000 iterations a candidate and 3,000 to confirm, `-freeze bulwarkAt` at 10 (below):
+
+- **Talents.** The talent search at each weight from its preset's string found only mana tie-breaks that score
+  lower at 3,000: Max threat `05004-25300102413001531-50231` 2775.5 against the start's 2782.0, Balanced
+  `02-25300102513501531-50232` 2384.5 against 2387.2, Max survival `01-25300102513501531-50233` 1326.9 against
+  1336.9. The strings stay.
+- **Rotation.** The knob search kept every default at all three weights; the APLs rotopt wrote are the
+  committed ones.
+- **Races** (3,000 iterations, the preset's build): Undead / Night Elf / Human / Dwarf, Max threat 2782.0 /
+  2784.4 / 2681.8 / 2662.5 (Night Elf +2.4, inside the noise of about 3: a tie, Undead kept), Balanced 2387.2 /
+  2353.0 / 2227.7 / 2209.0, Max survival 1336.9 / 1223.0 / 1017.6 / 997.3.
+- **Templar's Bulwark at 13 sec** (tank_rotations-20261104-3; the knob now steps by 1 sec). Paired, 3,000, 13 s
+  minus 10 s: on the five scoring bosses without Broodlord -1.1 ± 1.1 (Max threat), -6.2 ± 3.0 (Balanced),
+  -18.5 ± 9.0 (Max survival); with Broodlord +16.5 ± 1.4 / +49.3 ± 3.9 / +147.9 ± 11.7. Broodlord alone is +105
+  / +327 / +980 (13 s covers his first Mortal Strike, Knock Away and Blast Wave, timers his file calls probably
+  wrong), Vaelastrasz -24 / -66 / -199, Onyxia +9 / +26 / +79. So 10 s stays: a call (below).
+- **Max survival is Balanced's build** (tank_fairness-20261104-4): searched at w = 3 on its own, it lands on the
+  same talents, rotation and race. The two presets are the same; Max survival keeps its own name and files.
+- **What the round moved** (Balanced unless it says otherwise): the trinket first +14 at every weight (the
+  audit's paired 3,000); the Stamina rebalance -12 / -27 / -72 (Max threat / Balanced / Max survival; the old
+  set emulated with rotopt's `-bonus Stamina=-20,Defense=6,BlockValue=10,Strength=5,Agility=2`, 3,000, same
+  seed): less block value at the paladin's ×1.6 costs more than 20 Stamina buys. Reckoning's spell crits are
+  under 1% of a point.
+
+The first round, for its history:
+
 rotopt (`-template paladin_tank`) on the six scoring encounters, the settings of
 `tools/tankbench/req/paladin_protection_balanced.json` (the synthetic set and its enchants, Steadfast Libram,
 Seal of Fury, Devotion Aura, Righteous Fury, Engineering and Blacksmithing), 600 iterations a candidate, 3,000
@@ -270,43 +300,45 @@ at 3,000 within 10 of their old scores (Human Balanced 2432.0 to 2422.5, Undead 
 ## Numbers (step 7)
 
 `tools/tankbench -iters 1000 -encounter tools/encounters/<e>.json` for the three requests on all seven
-Anniversary encounters. Healing needed is at 5% deaths, in HPS; the three scores are the objective at w = 1/3, 1
-and 3; the mean is over the six scoring encounters (Ragnaros is reported, not scored).
+Anniversary encounters (round 2, 2026-11-04; the rows of `orchestration/audit/ref/tank_bench/summary.tsv`).
+Healing needed is at 5% deaths, in HPS; the three scores are the objective at w = 1/3, 1 and 3; the mean is over
+the six scoring encounters (Ragnaros is reported, not scored).
 
 | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|---|---|
-| Max threat | 1,466 | 648 | 1,643 | 322 | 288 | **3,036** | 2,535 | 1,031 |
-| Balanced | 1,430 | 633 | 1,602 | 303 | 257 | 2,988 | **2,555** | 1,257 |
-| Max survival | 1,430 | 633 | 1,602 | 303 | 257 | 2,988 | 2,555 | **1,257** |
+| Max threat | 1,345 | 589 | 1,494 | 320 | 238 | **2,785** | 2,380 | 1,164 |
+| Balanced | 1,313 | 576 | 1,457 | 301 | 208 | 2,742 | **2,398** | 1,363 |
+| Max survival | 1,313 | 576 | 1,457 | 301 | 208 | 2,742 | 2,398 | **1,363** |
 
-Per encounter (Max survival is the Balanced request with its own name, so its rows equal Balanced's and are left out):
+Before round 2 (the master bench of 23b2ec2, the same requests before this round's changes): 2,786 / 2,411 /
+1,422 at each preset's own weight.
+
+Per encounter (Max survival is Balanced's build, so its rows equal Balanced's and are left out):
 
 | Encounter | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Magmadar | Max threat | 1447 | 640 | 1594 | 162 | 52 | 0.0% | 3127 | 3007 | 2647 |
-| Magmadar | Balanced | 1413 | 626 | 1557 | 146 | 28 | 0.0% | 3082 | 3016 | 2820 |
-| Golemagg | Max threat | 1430 | 633 | 1572 | 198 | 107 | 0.0% | 3020 | 2771 | 2024 |
-| Golemagg | Balanced | 1395 | 618 | 1531 | 182 | 80 | 0.0% | 2968 | 2783 | 2225 |
-| Onyxia | Max threat | 1525 | 677 | 1712 | 179 | 69 | 0.0% | 3305 | 3067 | 2351 |
-| Onyxia | Balanced | 1492 | 662 | 1673 | 164 | 43 | 0.0% | 3273 | 3126 | 2685 |
-| Broodlord | Max threat | 1447 | 641 | 1610 | 323 | 477 | 0.0% | 2743 | 1788 | -1077 |
-| Broodlord | Balanced | 1411 | 625 | 1571 | 304 | 415 | 0.0% | 2728 | 1898 | -592 |
-| Vaelastrasz | Max threat | 1530 | 673 | 1839 | 645 | 514 | 0.0% | 3461 | 3029 | 1732 |
-| Vaelastrasz | Balanced | 1488 | 656 | 1783 | 622 | 497 | 0.0% | 3358 | 2941 | 1689 |
-| Chromaggus | Max threat | 1415 | 626 | 1533 | 425 | 511 | 0.0% | 2560 | 1548 | -1490 |
-| Chromaggus | Balanced | 1380 | 611 | 1496 | 401 | 480 | 0.0% | 2517 | 1566 | -1285 |
-| Ragnaros | Max threat | 1298 | 579 | 1419 | 957 | 1738 | 0.1% | 1009 | -2650 | -13627 |
-| Ragnaros | Balanced | 1266 | 565 | 1383 | 938 | 1728 | 0.0% | 947 | -2692 | -13608 |
+| Magmadar | Max threat | 1331 | 584 | 1453 | 163 | 30 | 0.0% | 2872 | 2802 | 2594 |
+| Magmadar | Balanced | 1296 | 569 | 1414 | 150 | 14 | 0.0% | 2811 | 2777 | 2676 |
+| Golemagg | Max threat | 1304 | 572 | 1420 | 201 | 84 | 0.0% | 2743 | 2549 | 1966 |
+| Golemagg | Balanced | 1276 | 560 | 1388 | 186 | 62 | 0.0% | 2705 | 2561 | 2128 |
+| Onyxia | Max threat | 1399 | 614 | 1557 | 178 | 34 | 0.0% | 3056 | 2939 | 2586 |
+| Onyxia | Balanced | 1366 | 600 | 1524 | 165 | 13 | 0.0% | 3025 | 2979 | 2842 |
+| Broodlord | Max threat | 1327 | 581 | 1460 | 321 | 364 | 0.0% | 2555 | 1828 | -356 |
+| Broodlord | Balanced | 1294 | 567 | 1422 | 302 | 307 | 0.0% | 2538 | 1924 | 83 |
+| Vaelastrasz | Max threat | 1413 | 618 | 1682 | 626 | 435 | 0.0% | 3182 | 2816 | 1720 |
+| Vaelastrasz | Balanced | 1380 | 604 | 1638 | 604 | 403 | 0.0% | 3107 | 2769 | 1753 |
+| Chromaggus | Max threat | 1294 | 567 | 1390 | 429 | 484 | 0.0% | 2302 | 1344 | -1529 |
+| Chromaggus | Balanced | 1267 | 556 | 1358 | 400 | 451 | 0.0% | 2269 | 1376 | -1302 |
+| Ragnaros | Max threat | 1172 | 518 | 1270 | 953 | 1609 | 0.0% | 847 | -2540 | -12700 |
+| Ragnaros | Balanced | 1142 | 506 | 1235 | 948 | 1626 | 0.0% | 759 | -2665 | -12936 |
 
-Max threat buys 41 SafeDPS (36 TPS) for 31 more healing needed: Improved Seals over Anticipation's 20 Defense.
-The death floor is 0% on the six and 0.0 to 0.1% on Ragnaros, where the tank dies in 5% of the fights at the
-healer numbers (no fire resistance modelled).
+Max threat buys 37 SafeDPS (32 TPS) for 30 more healing needed: Improved Seals over Anticipation's 20 Defense.
 
 **Next to the other tanks** (Balanced preset, mean of the six, 1,000 iterations, from their docs on this branch):
 
 | Tank | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|
-| Protection paladin | 1,602 | 303 | 257 | 2,988 | 2,555 | 1,257 |
+| Protection paladin (round 2) | 1,457 | 301 | 208 | 2,742 | 2,398 | 1,363 |
 | Feral tank (`docs/tank_druid.md`) | 1,714 | 570 | 582 | 2,904 | 1,855 | -1,292 |
 | Warden shaman (`docs/tank_shaman.md`) | 1,745 | 816 | 1,055 | 2,493 | 501 | -5,475 |
 | Protection warrior | no committed numbers yet | | | | | |
@@ -330,10 +362,11 @@ encounters, unless it says otherwise).
    Forbearance with them, so casting either would cost it.
 3. **Pursuit of Justice** (movement speed). **Default: not taken**; the score has no movement, so it is worth 0 in
    every preset. A call only if movement matters on a fight the bench doesn't model.
-4. **Hit to the cap out of Stamina and Strength.** The restart brief sized the synthetic set's hit to the 8% cap
-   counting Precision (standards 4), paid for out of the row's Stamina and Strength. **Default: the cap**, +29 at
-   Balanced over the gear row's 3.2% (2026-11-04, the realignment's measurement). The alternative is the row as
-   written: 29 lower, more Stamina, less threat.
+4. **Hit to the cap, and the Stamina it no longer takes.** The synthetic set's hit is sized to the 8% cap counting
+   Precision (standards 4), +29 at Balanced over the row's 3.2%. Round 2 moved what pays for it from Stamina to
+   the other stats (tank_gear-20261104-1, gear_targets.md's hit-adjusted rule): Stamina 32.6% against the row's
+   32.4. **Default: the row**, which costs 12 / 27 / 72 (Max threat / Balanced / Max survival) against the old
+   set: block value at the paladin's ×1.6 is worth more to the score than Stamina.
 5. **Templar's Bulwark is Magic** (dispellable). The client carries it since 70753 (SpellCategories DispelType 1
    on 1311015; round 70753's `paladin.md` and foreverchanges.pro list it as notes-only). **Default: as the client
    says, and it moves nothing**: no scoring boss dispels, and the sim's auras have no dispel type to set. The
@@ -345,3 +378,21 @@ encounters, unless it says otherwise).
    Max survival perhaps Tauren's 5% health) may be the pick: Undead's base stats are below Human's but for Spirit.
    Not measured with a smaller drain (it needs a sim change to the shared racial). An in-game log
    of the drain's amount would settle it.
+7. **Templar's Bulwark at 13 sec instead of 10** (tank_rotations-20261104-3). 13 s wins on all six scoring bosses
+   (+16.5 ± 1.4 / +49.3 ± 3.9 / +147.9 ± 11.7, Max threat / Balanced / Max survival, paired, 3,000) but loses
+   on the five without Broodlord (-1.1 ± 1.1 / -6.2 ± 3.0 / -18.5 ± 9.0). **Default: 10 s**, since the gain
+   is Broodlord's first-ability timers, which his file calls probably wrong. Take 13 s if those timers are
+   confirmed (a log of the pull).
+8. **Templar's Bulwark on a timer every pull** (the core worker, tank_fairness-20261104-2 (b)). It absorbs 100%
+   of max health for 8 sec once a fight, worth about 38 DTPS on a 53 sec encounter (Magmadar / Golemagg: +38 /
+   +31 DTPS with it off). **Default: in**, at 10 s. The alternative: a scored preset keeps no emergency button
+   on a timer (the line removed); the presets would lose that much.
+9. **Block value's price for the paladin** (tank_fairness-20261104-2 (a)). Standards 36 prices block value at 0.4
+   a point for every tank; the paladin gets ×1.6 from it (Shield Specialization and Steadfast), so its set
+   carries 72 more points than the warrior's for the same budget (+32 / +30 DTPS on Magmadar / Golemagg). The set
+   follows its row (6.7% against 6.8% hit-adjusted). **Default: as standards 36 has it.** The alternative, a
+   class price of 0.64, would move about 50 points of block value into the other stats.
+10. **Steadfast Libram's +30 block value** (tank_fairness-20261104-2 (c)). It rests on the in-game capture of the
+    item (BayovCore ItemsSeen, client 70450, `assets/db_inputs/forever_seen_in_game.json:79`); Wowhead lists no
+    stats for it and nothing newer exists. **Default: +30.** A look at its tooltip on the current build would
+    confirm it (+14 / +13 DTPS on Magmadar / Golemagg with it off).

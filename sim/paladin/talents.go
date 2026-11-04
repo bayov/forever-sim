@@ -212,12 +212,12 @@ func (paladin *Paladin) applyReckoning() {
 			aura.Activate(sim)
 		},
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) {
-				return
-			}
+			// 20177's proc flags 0x202A8 take melee and ranged hits and harmful magic spells (tier 1),
+			// and its tooltip says "being the victim of a non-periodic critical strike": a spell's
+			// crit counts too. Only a melee or ranged hit can be blocked.
 			if result.DidCrit() && sim.Proc(critChance, "Reckoning") {
 				paladin.AutoAttacks.StoreExtraMHAttack(sim, 1, procID, spell.ActionID)
-			} else if result.DidBlock() && icd.IsReady(sim) && sim.Proc(blockChance, "Reckoning") {
+			} else if spell.ProcMask.Matches(core.ProcMaskMeleeOrRanged) && result.DidBlock() && icd.IsReady(sim) && sim.Proc(blockChance, "Reckoning") {
 				icd.Use(sim)
 				paladin.AutoAttacks.StoreExtraMHAttack(sim, 1, procID, spell.ActionID)
 			}

@@ -361,7 +361,8 @@ func TestRighteousFuryThreat(t *testing.T) {
 // TestProtectionStatTalents checks the talents that move the tank sheet: Anticipation 4 Defense a
 // rank, Toughness 2% armor from items a rank, Redoubt's 6% block a rank for 10 sec or 5 blocks,
 // Shield Specialization's 15% block value a rank, Precision's 1% hit a rank, Divine Intellect's 2%
-// Intellect a rank.
+// Intellect a rank, Divine Strength's 2% Strength a rank (20262, trait curve 2 to 10%,
+// forever-wiki/classes/paladin.md) and Deflection's 1% parry a rank (20060, docs/tank_paladin.md).
 func TestProtectionStatTalents(t *testing.T) {
 	_, base := protSim(t, "", nil)
 	sheet := func(pal *ProtectionPaladin) *proto.TankSheet {
@@ -415,6 +416,80 @@ func TestProtectionStatTalents(t *testing.T) {
 
 	_, di := protSim(t, "-5", nil)
 	near(t, "Divine Intellect 5/5", di.GetStat(stats.Intellect)/base.GetStat(stats.Intellect), 1.1, 1e-2)
+
+	// Strength is a whole number on the sheet (114 x 1.1 = 125.4 shows 125), so within a point.
+	_, ds := protSim(t, "05", nil)
+	near(t, "Divine Strength 5/5", ds.GetStat(stats.Strength), 1.1*base.GetStat(stats.Strength), 1)
+	_, ds2 := protSim(t, "02", nil)
+	near(t, "Divine Strength 2/5", ds2.GetStat(stats.Strength), 1.04*base.GetStat(stats.Strength), 1)
+
+	_, deflection := protSim(t, "--5", nil)
+	near(t, "Deflection 5/5 parry", deflection.GetStat(stats.Parry)-base.GetStat(stats.Parry), 5*core.ParryRatingPerParryChance, 1e-9)
+	near(t, "Deflection 5/5 parry on the sheet", sheet(deflection).Parry-sheet(base).Parry, 0.05, 1e-9)
+}
+
+// TestJudgementCooldownAndCost checks Judgement (20271): 6% of base mana (90.72 of a level 60
+// paladin's 1512) on a 10 sec cooldown (client, docs/tank_paladin.md's Abilities), and Improved
+// Judgement taking 1 sec a rank off that cooldown (25956 / 25957, the trait's -1 / -2 sec,
+// forever-wiki/classes/paladin.md and docs/tank_paladin.md's Talents).
+func TestJudgementCooldownAndCost(t *testing.T) {
+	_, pal := protSim(t, "", nil)
+	jud := spell(t, pal, 20271)
+	near(t, "Judgement's cost", jud.Cost.GetCurrentCost(), 0.06*pal.BaseMana, 1e-6)
+	near(t, "Judgement's cost at 60", jud.Cost.GetCurrentCost(), 90.72, 1e-6)
+	if jud.CD.Duration != 10*time.Second {
+		t.Errorf("Judgement's cooldown is %s, want 10s", jud.CD.Duration)
+	}
+	for _, c := range []struct {
+		talents string
+		want    time.Duration
+	}{{"--001", 9 * time.Second}, {"--002", 8 * time.Second}} {
+		_, ij := protSim(t, c.talents, nil)
+		if got := spell(t, ij, 20271).CD.Duration; got != c.want {
+			t.Errorf("Judgement's cooldown with Improved Judgement %s is %s, want %s", c.talents, got, c.want)
+		}
+	}
+}
+
+// TestImprovedSealsOnSealOfFury checks that Improved Seals (20224: 3% a rank of 5 since the October
+// 30 hotfix, talents.go) raises both Seal of Fury's hit (20418) and Judgement of Fury (20414): its
+// class mask names both (seal_of_fury.go).
+func TestImprovedSealsOnSealOfFury(t *testing.T) {
+	_, base := protSim(t, "", nil)
+	for _, c := range []struct {
+		talents string
+		want    float64
+	}{{"00002", 1.06}, {"00005", 1.15}} {
+		_, pal := protSim(t, c.talents, nil)
+		for _, id := range []int32{20418, 20414} {
+			got := spell(t, pal, id).DamageMultiplier / spell(t, base, id).DamageMultiplier
+			near(t, "Improved Seals "+c.talents+" on "+map[int32]string{20418: "Seal of Fury's hit", 20414: "Judgement of Fury"}[id], got, c.want, 1e-9)
+		}
+	}
+}
+
+// TestConsecrationAndHolyStrikeCosts checks Consecration rank 5 (20924): 565 mana, an 8 sec
+// cooldown, 8 ticks a second apart; and Holy Strike rank 8 (10333): 20 mana on a 10 sec cooldown
+// (client, docs/tank_paladin.md's Abilities).
+func TestConsecrationAndHolyStrikeCosts(t *testing.T) {
+	_, pal := protSim(t, "", nil)
+	cons := spell(t, pal, 20924)
+	if got := cons.Cost.GetCurrentCost(); got != 565 {
+		t.Errorf("Consecration rank 5 costs %.0f, want 565", got)
+	}
+	if cons.CD.Duration != 8*time.Second {
+		t.Errorf("Consecration's cooldown is %s, want 8s", cons.CD.Duration)
+	}
+	if dot := cons.AOEDot(); dot.NumberOfTicks != 8 || dot.TickLength != time.Second {
+		t.Errorf("Consecration ticks %d times every %s, want 8 every 1s", dot.NumberOfTicks, dot.TickLength)
+	}
+	hs := spell(t, pal, 10333)
+	if got := hs.Cost.GetCurrentCost(); got != 20 {
+		t.Errorf("Holy Strike rank 8 costs %.0f, want 20", got)
+	}
+	if hs.CD.Duration != 10*time.Second {
+		t.Errorf("Holy Strike's cooldown is %s, want 10s", hs.CD.Duration)
+	}
 }
 
 // TestShieldSpecializationMakesNoThreat checks that Shield Specialization's mana (1310925, the no
@@ -501,6 +576,32 @@ func TestReckoning(t *testing.T) {
 		n++
 	}
 	near(t, "Reckoning 5/5 block chance", float64(charges)/float64(n), 0.4, 0.03)
+
+	// A spell's crit counts too (20177's proc flags 0x202A8 take harmful magic spells; "the
+	// victim of a non-periodic critical strike"), a melee crit as before, and a magic spell
+	// can't give a block's charge.
+	magic := *swing
+	magic.ProcMask = core.ProcMaskSpellDamage
+	for _, c := range []struct {
+		name    string
+		spell   *core.Spell
+		outcome core.HitOutcome
+		want    bool
+	}{
+		{"melee crit", swing, core.OutcomeCrit, true},
+		{"spell crit", &magic, core.OutcomeCrit, true},
+		{"spell hit", &magic, core.OutcomeHit, false},
+		{"spell block", &magic, core.OutcomeBlock, false},
+	} {
+		stored.SetStacks(sim, 0)
+		sim.CurrentTime += 2 * time.Second
+		r := c.spell.NewResult(&pal.Unit)
+		r.Outcome = c.outcome
+		trigger.OnSpellHitTaken(trigger, sim, c.spell, r)
+		if got := stored.GetStacks() > 0; got != c.want {
+			t.Errorf("Reckoning 5/5 on a %s: charge %v, want %v", c.name, got, c.want)
+		}
+	}
 }
 
 // TestBlessingOfSanctuaryGone checks that Forever has no Blessing of Sanctuary (no client row).

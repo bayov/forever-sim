@@ -17,30 +17,34 @@ import (
 // block value and Defense included, its base armor free). Linear total and target, 1.7-norm and
 // target:
 //
-//	head     66   83.0 /  83.3   47.5 / 46.5
+//	head     66   83.0 /  83.3   48.1 / 46.5
 //	neck     71   48.5 /  48.3   28.1 / 28.0
-//	shoulder 66   62.8 /  63.1   35.6 / 34.9
-//	back     71   48.0 /  48.3   27.6 / 28.0
-//	chest    66   83.0 /  83.3   47.5 / 46.5
+//	shoulder 66   62.8 /  63.1   36.3 / 34.9
+//	back     71   48.0 /  48.3   28.0 / 28.0
+//	chest    66   83.0 /  83.3   48.1 / 46.5
 //	wrist    71   48.0 /  48.3   27.5 / 28.0
-//	hands    66   63.5 /  63.1   33.2 / 34.9
+//	hands    66   63.5 /  63.1   33.7 / 34.9
 //	waist    71   67.1 /  67.7   35.9 / 37.4
-//	legs     66   83.0 /  83.3   47.0 / 46.5
+//	legs     66   83.0 /  83.3   47.7 / 46.5
 //	feet     66   62.5 /  63.1   34.9 / 34.9
-//	finger   71   48.0 /  48.3   28.7 / 28.0
+//	finger   71   48.0 /  48.3   29.2 / 28.0
 //	finger2  71   48.5 /  48.3   27.8 / 28.0
 //	main hand 71  37.0 /  36.8
 //	shield   71   58.9 /  58.9
 //
-// Set 841.8 of 844.1. Shares (gear_targets.md's targets in brackets): Stamina 30.2% (32.4), Strength
-// 16.4 (16.7), Agility 3.6 (3.5), Spirit 9.9 (10.0), spell power 1.1 (1.1), hit 5.9 (3.2), crit 3.1
-// (3.1), Defense 19.4 (19.5; 109 Defense), block 3.0 (3.2; 5%), block value 7.2 (7.2; 152 with the
-// shield's own). No resistances, dodge or parry (standards 36).
+// Set 841.8 of 844.1. Shares (gear_targets.md's targets in brackets, hit-adjusted after the slash):
+// Stamina 32.6% (32.4), Strength 15.9 (16.7 / 15.9), Agility 3.3 (3.5 / 3.3), Spirit 10.0 (10.0), spell
+// power 1.1 (1.1 / 1.0), hit 5.9 (3.2 / 5.9), crit 3.1 (3.1 / 2.9), Defense 18.4 (19.5 / 18.6; 103
+// Defense), block 3.0 (3.2 / 3.0; 5%), block value 6.7 (7.2 / 6.8; 142 with the shield's own). No
+// resistances, dodge or parry (standards 36). `python3 tools/audit/tank_gear/paladin.py` prints them.
 //
 // Hit is sized to the 8% cap counting Precision 3/3 (standards 4, the tank workers' restart brief of
 // 2026-11-04): 50 hit rating is 5%, 8% with Precision. The row's 3.2% (27 rating, 5.7% with
-// Precision) was raised by 23 rating on the two rings and the main hand, out of their own Stamina
-// and Strength, so each keeps its budget. 2.3% hit against the same 23 points spread over the set's
+// Precision) was raised by 23 rating on the two rings and the main hand, and the share it takes
+// comes out of the other non-Stamina, non-Spirit stats in their row proportions (gear_targets.md's
+// hit-adjusted rule, standards 29): tank_gear-20261104-1 found it paid from Stamina (30.2%), so 20
+// points went back to Stamina from Defense (head, chest, legs -2 each), block value (shoulder -10),
+// Strength (ring and hands -2, -3) and Agility (back -2). 2.3% hit against the same 23 points spread over the set's
 // other stats in its proportions: +29 at Balanced on the six scoring encounters (3,000 iterations,
 // client 70753).
 //
@@ -75,7 +79,7 @@ func init() {
 		tank(&proto.UIItem{
 			Id: 990701, Name: "Protection Paladin Synthetic Head (Phase 1)", Icon: "inv_helmet_05",
 			Type: proto.ItemType_ItemTypeHead, ArmorType: plate,
-			Stats: stats.Stats{stats.Stamina: 27, stats.Strength: 17, stats.Defense: 12, stats.Spirit: 21, stats.Armor: 608}.ToFloatArray(),
+			Stats: stats.Stats{stats.Stamina: 30, stats.Strength: 17, stats.Defense: 10, stats.Spirit: 21, stats.Armor: 608}.ToFloatArray(),
 			Ilvl:  66, SetName: set,
 		}),
 		tank(&proto.UIItem{
@@ -87,19 +91,19 @@ func init() {
 		tank(&proto.UIItem{
 			Id: 990703, Name: "Protection Paladin Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_20",
 			Type: proto.ItemType_ItemTypeShoulder, ArmorType: plate,
-			Stats: stats.Stats{stats.Stamina: 18, stats.Strength: 15, stats.Defense: 10, stats.BlockValue: 37, stats.Armor: 562}.ToFloatArray(),
+			Stats: stats.Stats{stats.Stamina: 22, stats.Strength: 15, stats.Defense: 10, stats.BlockValue: 27, stats.Armor: 562}.ToFloatArray(),
 			Ilvl:  66,
 		}),
 		tank(&proto.UIItem{
 			Id: 990704, Name: "Protection Paladin Synthetic Back (Phase 1)", Icon: "inv_misc_cape_14",
 			Type: proto.ItemType_ItemTypeBack, ArmorType: proto.ArmorType_ArmorTypeCloth,
-			Stats: stats.Stats{stats.Stamina: 16, stats.Agility: 12, stats.Defense: 8, stats.Spirit: 8, stats.Armor: 58}.ToFloatArray(),
+			Stats: stats.Stats{stats.Stamina: 18, stats.Agility: 10, stats.Defense: 8, stats.Spirit: 8, stats.Armor: 58}.ToFloatArray(),
 			Ilvl:  71,
 		}),
 		tank(&proto.UIItem{
 			Id: 990705, Name: "Protection Paladin Synthetic Chest (Phase 1)", Icon: "inv_chest_plate03",
 			Type: proto.ItemType_ItemTypeChest, ArmorType: plate,
-			Stats: stats.Stats{stats.Stamina: 27, stats.Strength: 17, stats.Defense: 12, stats.Spirit: 21, stats.Armor: 749}.ToFloatArray(),
+			Stats: stats.Stats{stats.Stamina: 30, stats.Strength: 17, stats.Defense: 10, stats.Spirit: 21, stats.Armor: 749}.ToFloatArray(),
 			Ilvl:  66, SetName: set,
 		}),
 		tank(&proto.UIItem{
@@ -111,7 +115,7 @@ func init() {
 		tank(&proto.UIItem{
 			Id: 990707, Name: "Protection Paladin Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_29",
 			Type: proto.ItemType_ItemTypeHands, ArmorType: plate,
-			Stats:      stats.Stats{stats.Stamina: 17, stats.Strength: 14, stats.Agility: 10, stats.SpellPower: 11, stats.Armor: 468}.ToFloatArray(),
+			Stats:      stats.Stats{stats.Stamina: 20, stats.Strength: 11, stats.Agility: 10, stats.SpellPower: 11, stats.Armor: 468}.ToFloatArray(),
 			CritRating: 13,
 			Ilvl:       66,
 		}),
@@ -125,7 +129,7 @@ func init() {
 		tank(&proto.UIItem{
 			Id: 990709, Name: "Protection Paladin Synthetic Legs (Phase 1)", Icon: "inv_pants_04",
 			Type: proto.ItemType_ItemTypeLegs, ArmorType: plate,
-			Stats: stats.Stats{stats.Stamina: 24, stats.Strength: 18, stats.Defense: 12, stats.Spirit: 23, stats.Armor: 655}.ToFloatArray(),
+			Stats: stats.Stats{stats.Stamina: 27, stats.Strength: 18, stats.Defense: 10, stats.Spirit: 23, stats.Armor: 655}.ToFloatArray(),
 			Ilvl:  66,
 		}),
 		tank(&proto.UIItem{
@@ -137,7 +141,7 @@ func init() {
 		tank(&proto.UIItem{
 			Id: 990711, Name: "Protection Paladin Synthetic Finger (Phase 1)", Icon: "inv_jewelry_ring_14",
 			Type:      proto.ItemType_ItemTypeFinger,
-			Stats:     stats.Stats{stats.Stamina: 16, stats.Strength: 10, stats.Block: 1}.ToFloatArray(),
+			Stats:     stats.Stats{stats.Stamina: 18, stats.Strength: 8, stats.Block: 1}.ToFloatArray(),
 			HitRating: 17,
 			Ilvl:      71,
 		}),

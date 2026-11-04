@@ -52,13 +52,13 @@
       },
       "rhs": {
        "const": {
-        "val": "0.5"
+        "val": "0.6"
        }
       }
      }
     }
    },
-   "notes": "Swiftmend whoever in my assignment is under 50% health and has my HoT."
+   "notes": "Swiftmend whoever in my assignment is under 60% health and has my HoT."
   },
   {
    "action": {
@@ -82,13 +82,13 @@
       },
       "rhs": {
        "const": {
-        "val": "0.5"
+        "val": "0.6"
        }
       }
      }
     }
    },
-   "notes": "Regrowth at whoever is under 50%: the fast heal."
+   "notes": "Regrowth at whoever is under 60%: the fast heal."
   },
   {
    "action": {
@@ -211,12 +211,22 @@
        }
       },
       "rhs": {
-       "spellExpectedHealing": {
-        "spellId": {
-         "spellId": 18562
+       "math": {
+        "op": "OpMul",
+        "lhs": {
+         "spellExpectedHealing": {
+          "spellId": {
+           "spellId": 18562
+          },
+          "targetUnit": {
+           "type": "MostHurt"
+          }
+         }
         },
-        "targetUnit": {
-         "type": "MostHurt"
+        "rhs": {
+         "const": {
+          "val": "0.6"
+         }
         }
        }
       }

@@ -34,6 +34,7 @@
   - (b) Bulwark (100% of max health, 8 sec) is on a timer every pull of a 53 to 56 sec encounter, where it absorbs about 2070. A user ruling on whether a timed emergency button belongs in a scored preset.
   - (c) Confirm the Libram's +30 in game.
 - needs: tank_gear (a), user ruling (b)
+- paladin worker, 2026-11-04 (tank-paladin): (a) the set follows standards 36 at its own Tanks row (block value 6.7% against 6.8 hit-adjusted, 142 points with the shield's own after tank_gear-20261104-1); 36 prices block value at 0.4 for every tank and says nothing per class, so pricing it at the paladin's ×1.6 is a user ruling (docs/tank_paladin.md, Calls). (b) is in the same Calls. (c) Steadfast Libram's +30 block value rests on the in-game item capture (BayovCore ItemsSeen, client 70450, assets/db_inputs/forever_seen_in_game.json:79), the top tier for an item's stats; Wowhead lists no stats for it and no capture after 70753 exists, so a recheck in game on the current build is a call.
 
 ### tank_fairness-20261104-3: Warden shaman needs 2 to 3 times the others' healing: Defense 346, 6% blocked, 15% crushed
 - severity: medium (the Warden is last at every weight on every boss; whether that is intended is the question)
@@ -52,6 +53,7 @@
 - proposed fix: search the paladin and warrior at the Max survival weight (w = 3) for talents/rotation that differ, or rule that the weights don't separate them and ship two presets; re-search the bear's Balanced preset.
 - needs: worker fix (or user ruling on dropping a preset)
 - fixed (bear part): 2026-11-04, f0ff977 (Balanced re-searched; each bear preset now wins its own weight: Balanced beats Max survival by 89 ± 9 at w=1 and Max threat by 110 ± 9; no two are equal)
+- paladin, 2026-11-04 (tank-paladin): re-searched at w = 3 on the new engine (talents, knobs, race); Max survival's best is still Balanced's build, and its note says so. Not forced apart.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low

@@ -50,9 +50,16 @@ import (
 //	Finger II    45.8   46.2 (+0.9%)  28.3 /  28.0 (+0.7%)  5 Sta, 11 Spi, 24 SP, 4 MP5
 //	Staff       193.4  193.2 (-0.1%)                          28 Sta, 28 Int, 34 Spi, 38 SP, 27 Heal, 32 Crit, 11 MP5
 
+// Forever's Tier 1 Restoration shaman set (Molten Core; 1300960, 1301059, 1301093 and 1301713 in the
+// client) goes on the head and chest, so only its 2 piece bonus (+10 Spirit) is live (standards 6). Its 3
+// piece widens the friendly totems' radius, its 4 piece is 26 healing, its 5 piece 1 sec off Riptide's
+// cooldown (sim/shaman/item_sets_pve.go).
+
 func init() {
 	ForeverSyntheticItems = append(ForeverSyntheticItems, restorationShamanSyntheticItems...)
 }
+
+const restorationShamanSetName = "Restoration Synthetic (Phase 1)"
 
 var restorationShamanSyntheticItems = []*proto.UIItem{
 	// Head, item level 66.
@@ -62,6 +69,7 @@ var restorationShamanSyntheticItems = []*proto.UIItem{
 		Stats:      stats.Stats{stats.Stamina: 14, stats.Intellect: 20, stats.HealingPower: 63, stats.Armor: 343}.ToFloatArray(),
 		CritRating: 18,
 		Ilvl:       66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		SetName:        restorationShamanSetName,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
 	// Neck, item level 71.
@@ -94,6 +102,7 @@ var restorationShamanSyntheticItems = []*proto.UIItem{
 		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats: stats.Stats{stats.Stamina: 14, stats.Intellect: 20, stats.Spirit: 19, stats.HealingPower: 60, stats.Armor: 422}.ToFloatArray(),
 		Ilvl:  66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		SetName:        restorationShamanSetName,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
 	// Wrist, item level 71.
