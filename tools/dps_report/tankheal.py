@@ -348,7 +348,7 @@ def gear_setup(H, bid, req):
             continue
         info = H['item_names'].get(it['id'], {})
         gear.append({'build': bid, 'slot': H['SLOTS'][i], 'item': info.get('name', 'Item %d' % it['id']), 'ilvl': info.get('ilvl'),
-                     'enchant': H['enchant_names'].get(it.get('enchant'), '') if it.get('enchant') else '', 'itemId': it['id'],
+                     'enchant': H['enchant_name'](it.get('enchant'), i, it['id']), 'itemId': it['id'],
                      'icon': info.get('icon'), 'quality': H['QUALITY'].get(info.get('quality'), 'common')})
     for cat, obj in (('Consumes', pl.get('consumes', {})), ('Self buffs', pl.get('buffs', {})), ('Raid buffs', req['raid'].get('buffs', {})),
                      ('Party buffs', req['raid']['parties'][0].get('buffs', {})), ('Debuffs', req['raid'].get('debuffs', {}))):
@@ -698,7 +698,7 @@ def build():
         # tooltips the common dataset lacks
         abil = [{'build': r['build'], 'key': r['key']} for r in rot if r['key']]
         tt_rows, _miss, _rep = tt_mod.build(TREE, {k: v for k, v in H['names'].items()}, gear, setup, outs_tt, abil, [], {}, builds, H['item_names'],
-                                             {e['effectId']: e for e in H['db']['enchants']}, H['TREE_JSON'],
+                                             H['enchant_for'], H['TREE_JSON'],
                                              os.path.join(TREE, 'ui/core/forever/racials.json'), H['SLOTS'])
         tt_rows = [r for r in tt_rows if r['key'] not in common_keys]
 
