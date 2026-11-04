@@ -7,7 +7,7 @@
       "race": "RaceTauren",
       "class": "ClassShaman",
       "level": 60,
-      "talentsString": "35050013-0502333135510102",
+      "talentsString": "05050002-050032113551012201-050002",
       "equipment": {
        "items": [
         {
@@ -180,16 +180,6 @@
           }
          },
          "notes": "The earth totem whenever it's down."
-        },
-        {
-         "action": {
-          "castSpell": {
-           "spellId": {
-            "itemId": 999216
-           }
-          }
-         },
-         "notes": "The defensive on-use trinket on cooldown, on a timer. Without it ignore the warning on this line."
         },
         {
          "action": {

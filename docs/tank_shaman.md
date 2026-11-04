@@ -11,6 +11,132 @@ is audited against client 70753 (the October 30 hotfix's build) and tested, it w
 standards 36, and it has a rotopt template (`tools/rotopt/shaman_tank.go`) and three presets
 (`tools/tankbench/req/shaman_warden_*.json`, `ui/warden_shaman`).
 
+## Presets (2026-11-04)
+
+Three presets on the six scoring encounters (Magmadar, Golemagg, Onyxia, Broodlord, Vaelastrasz, Chromaggus), by
+the tank objective at w = 1/3, 1 and 3 (`docs/tank_sim.md`): `tools/tankbench/req/shaman_warden_<preset>.json`,
+`ui/warden_shaman/apls/level60_<preset>.apl.json`, the synthetic set (`gear_sets/phase1_synthetic_tank.gear.json`,
+and `phase1_synthetic_tank_armor_trinket.gear.json` for Max survival) and three builds in `presets.ts`. The spec
+page's launch state is unchanged (blank gear, the default APL, the Level 60 talents).
+
+| Preset | Talents | On-use trinket | Rotation (knobs off the template's defaults) | Race |
+|---|---|---|---|---|
+| Max threat | `05050001-050032303551012201-050002` | attack power (990015) | Mana Spring Totem (`waterTotem=1`) | Tauren |
+| Balanced | `05050002-050032113551012201-050002` | attack power (990015) | the defaults | Tauren |
+| Max survival | `05050002-050032113551012201-050002` | armor (999216, on a timer) | the defaults, `armorTrinket=1` | Tauren |
+
+**Talents.** Candidate builds scored at Balanced (1,500 iterations) put the realigned Level 60 build at -472 (+/-
+1,392: its Broodlord death floor sits at 4.3%, next to the 5% line) and build B at 495 (+/- 23). B moves 10 points
+out of Convection 3, Elemental Focus, a point of Elemental Warding, Guardian Totems 2, a point of Improved
+Lightning Shield and 2 of Elemental Weapons into Restoration's Tidal Focus 5 (5% melee and spell hit, cheaper
+heals) and Improved Reincarnation 2 (4% health), plus Mental Quickness 2 and Rage of the Farseer. The 4% health
+is what Broodlord wants (floor 4.3% to 0.7%). Talent searches from B (`rotopt -talent-search -require
+spiritWeapons`, 600 to 1,000 iterations a candidate, 3,000 to confirm):
+- Balanced: no move past the paired noise (best +20 +/- 34), so B stays.
+- Max survival: only mana tie-breaks (-5,460 against B's -5,409 at 3,000), so B stays.
+- Max threat: Elemental Weapons 3 for Shamanistic Focus and a point of Elemental Warding, 2,526 against B's
+  2,482 at 3,000 (+44, noise 12). The same build at Balanced is a tie (466 against 463) with half the time to
+  out of mana (113 s against 206 s), and at Max survival worse (-5,533 against -5,409), so it stays Max threat's.
+
+**Knobs** (600 iterations, 3,000 to confirm): the template's defaults are best at Balanced and Max survival
+(Stoneskin, Lightning Shield, Earth Shock on cooldown, no fire or water totem, no self heal); at Max threat Mana
+Spring Totem (+8). No Healing Stream Totem or health-blind Lesser Healing Wave won at any weight.
+
+**Races** (build B, 1,000 iterations, Max threat / Balanced / Max survival): Tauren 2,501 / 515 / -5,312 (600 iterations, Max survival with the armor
+trinket); Orc 2,441 / 123 / -6,830; Troll 2,423 / 117 / -6,802; Dwarf 2,342 / 10 / -6,987; Skyborne Windshaper
+2,325 / -76 / -7,279 (the High Order has the same base stats). Tauren's 5% health keeps Broodlord's death floor
+lowest; with B's 4% health the other races are past 5% no longer, but well behind. Tauren at every weight.
+
+**Hit** (B, 3,000 iterations): the set's 5.5% gear hit plus Tidal Focus is 10.5%, over the 8% melee cap; gear hit
+counts for spells in Forever (`unifyEquipHitAndCrit`), so it still helps Earth Shock. Moving the hit over 8% to
+crit (budget neutral) loses at every weight: Max threat 2,392 against 2,476, Balanced 359 against 463, Max
+survival -5,738 against -5,575. The set keeps the row's hit (standards 4: the mix that sims best).
+
+**On-use trinket** (B, 3,000 iterations): the armor one (999216) against the attack power one (990015): Max threat
+2,395 against 2,476, Balanced 444 against 463, Max survival -5,409 against -5,575. So Max survival wears the armor
+trinket and the other two the attack power one.
+
+**What the update moved** (Balanced, the mean of the six, 1,000 iterations): -1,170 before it (commit f9cc1ecaf,
+the 0.7 reference member; Broodlord -10,482 at a 4.5% death floor), -618 after the remap on the same build (TPS
+1,066 to 1,416 from Earth Shock's base and Stormstrike's 6 s; SafeDPS about 110 lower from the 1.0 reference
+member), 501 with the Balanced preset.
+
+### Numbers (1,000 iterations, all seven encounters)
+
+`tankbench -iters 1000` on each encounter. Healing needed is at 5% deaths, in HPS; the three scores are the
+objective at w = 1/3, 1 and 3. The mean is over the six scoring encounters (Ragnaros is reported, not scored).
+
+**Max threat** (`shaman_warden_max_threat.json`)
+
+| Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|---|---|
+| Magmadar | 1606 | 1741 | 541 | 503 | 0.0% | 2897 | 1726 | -1786 |
+| Golemagg | 1571 | 1704 | 594 | 587 | 0.0% | 2726 | 1361 | -2732 |
+| Onyxia | 1713 | 1873 | 669 | 653 | 0.0% | 2620 | 367 | -6392 |
+| Broodlord | 1650 | 1793 | 781 | 1722 | 0.6% | 1864 | -1580 | -11913 |
+| Vaelastrasz | 1692 | 1949 | 1410 | 1762 | 0.0% | 3157 | 1677 | -2765 |
+| Chromaggus | 1480 | 1604 | 941 | 1171 | 0.0% | 2049 | -269 | -7224 |
+| Ragnaros | 1493 | 1615 | 1406 | 2415 | 0.5% | 687 | -4397 | -19649 |
+| Mean of the six | 1619 | 1777 | 823 | 1066 | 0.1% | 2552 | 547 | -5469 |
+
+**Balanced** (`shaman_warden_balanced.json`)
+
+| Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|---|---|
+| Magmadar | 1563 | 1694 | 539 | 497 | 0.0% | 2809 | 1654 | -1813 |
+| Golemagg | 1541 | 1667 | 589 | 580 | 0.0% | 2659 | 1310 | -2739 |
+| Onyxia | 1658 | 1824 | 668 | 650 | 0.0% | 2528 | 287 | -6436 |
+| Broodlord | 1596 | 1743 | 779 | 1737 | 0.7% | 1749 | -1725 | -12149 |
+| Vaelastrasz | 1665 | 1921 | 1381 | 1704 | 0.0% | 3125 | 1693 | -2604 |
+| Chromaggus | 1513 | 1619 | 937 | 1161 | 0.0% | 2088 | -211 | -7107 |
+| Ragnaros | 1457 | 1571 | 1366 | 2360 | 0.2% | 658 | -4310 | -19214 |
+| Mean of the six | 1589 | 1745 | 816 | 1055 | 0.1% | 2493 | 501 | -5475 |
+
+**Max survival** (`shaman_warden_max_survival.json`)
+
+| Encounter | TPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|---|---|
+| Magmadar | 1530 | 1644 | 518 | 475 | 0.0% | 2736 | 1632 | -1682 |
+| Golemagg | 1511 | 1619 | 567 | 554 | 0.0% | 2595 | 1307 | -2555 |
+| Onyxia | 1607 | 1757 | 633 | 623 | 0.0% | 2440 | 294 | -6146 |
+| Broodlord | 1555 | 1684 | 748 | 1729 | 0.7% | 1640 | -1819 | -12194 |
+| Vaelastrasz | 1590 | 1838 | 1311 | 1567 | 0.0% | 3017 | 1700 | -2251 |
+| Chromaggus | 1494 | 1587 | 915 | 1156 | 0.0% | 2030 | -259 | -7126 |
+| Ragnaros | 1433 | 1534 | 1356 | 2343 | 0.2% | 600 | -4333 | -19134 |
+| Mean of the six | 1548 | 1688 | 782 | 1017 | 0.1% | 2410 | 476 | -5326 |
+
+The other tanks' current requests (`warrior_protection.json`, `paladin_protection_valor.json`, `druid_bear.json`
+on this branch, before their own searches land), the same binary, means of the six:
+
+| Tank | TPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|---|---|
+| Warden, Max threat | 1,619 | 1,777 | 823 | 1,066 | 0.1% | 2,552 | 547 | -5,469 |
+| Warden, Balanced | 1,589 | 1,745 | 816 | 1,055 | 0.1% | 2,493 | 501 | -5,475 |
+| Warden, Max survival | 1,548 | 1,688 | 782 | 1,017 | 0.1% | 2,410 | 476 | -5,326 |
+| Protection warrior | 1,589 | 1,327 | 657 | 947 | 0.4% | 1,765 | -13 | -5,349 |
+| Protection paladin | 900 | 962 | 658 | 848 | 0.1% | 1,138 | -436 | -5,158 |
+| Feral tank | 1,405 | 1,224 | 710 | 892 | 0.1% | 1,618 | -39 | -5,010 |
+
+The Warden takes the most damage (above) but has the most SafeDPS: its threat comes at the pull (Earth Shock at
+twice its damage with a full mana bar, Stormstrike, the prepull totems), so the reference member's worst moment,
+which comes in the first seconds, is better than the warrior's, whose rage starts at zero (SafeDPS 1.10 x TPS
+against the warrior's 0.84). That lead rests on Earth Shock's threat multiplier (call (a)).
+
+## Calls for the user
+
+- **(a) Earth Shock's threat multiplier.** Default 2 (Classic's, vmangos; the tooltip says "causes a high amount of
+  threat"; no Forever source gives a number). wowsims/forever uses 1. Measured on the Balanced preset (1,000
+  iterations, means of the six): at 1, TPS 1,589 to 1,399, SafeDPS 1,745 to 1,526, scores 2,493 / 501 / -5,475 to
+  2,056 / 63 / -5,913. A /combatlog threat check in game would settle it.
+- **(b) The defensive on-use trinket.** Default: the synthetic 1,665 armor for 20 s every 2 min (999216) in Max
+  survival, as the defensive counterpart of the Enhancement set's attack power trinket at the same item level. The
+  alternative, the attack power trinket everywhere, costs Max survival 166 (-5,575 against -5,409).
+- **(c) The class gap.** The Warden needs about 11% more healing than the warrior (1,055 against 947), from its
+  missing plate, active block and damage reduction (above). Default: leave it, it's the class as the client and
+  the notes have it. Nothing in the sim to change unless Forever adds a mitigation talent.
+- **(d) Hit above the melee cap.** Default: the set keeps the row's 5.5% gear hit (10.5% with Tidal Focus), since
+  gear hit counts for spells in Forever. Moving the hit past 8% into crit loses 104 at Balanced (above).
+
 ## Why the Warden takes more damage than the other tanks (2026-11-04)
 
 The preliminary bench before the update put the Warden far behind the other tanks on survival. On the realigned sim,
