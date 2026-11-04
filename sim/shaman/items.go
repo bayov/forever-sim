@@ -17,8 +17,10 @@ const (
 	PolishedDriftwoodIcon    = 249398
 	TotemOfChargedFlames     = 263412
 	FirestormTotem           = 263436
+	TidalTotem               = 272431
 	ForeverTotemOfTheStorm   = 272432
 	BurningTotem             = 272433
+	TotemOfUrgency           = 279249
 	RageOfTheStorm           = 280604
 	LightningsGrasp          = 280607
 )
@@ -170,6 +172,30 @@ func init() {
 	// Enchanters make it (Enchanting, Forever).
 	core.NewItemEffect(PolishedDriftwoodIcon, func(agent core.Agent) {
 		agent.(ShamanAgent).GetShaman().PseudoStats.SpiritRegenRateCasting += .08
+	})
+
+	// Tidal Totem (272431, a level 60 drop): "Reduces the Mana cost of your Healing Wave ability by
+	// 5%." Client 1.60.1.70753, spell 1291076: a 5% cost modifier (aura 108) on Healing Wave's mask
+	// (0x40), a factor like Tidal Focus's.
+	core.NewItemEffect(TidalTotem, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		shaman.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_ShamanHealingWave && spell.Cost != nil {
+				spell.Cost.Factor *= 0.95
+			}
+		})
+	})
+
+	// Totem of Urgency (279249, crafted): "Increases the critical strike chance of your Lesser
+	// Healing Wave spell by 4%." Client 1.60.1.70753, spell 1306448: +4% crit (aura 107) on Lesser
+	// Healing Wave's mask (0x80).
+	core.NewItemEffect(TotemOfUrgency, func(agent core.Agent) {
+		shaman := agent.(ShamanAgent).GetShaman()
+		shaman.OnSpellRegistered(func(spell *core.Spell) {
+			if spell.SpellCode == SpellCode_ShamanLesserHealingWave {
+				spell.BonusCritRating += 4 * core.SpellCritRatingPerCritChance
+			}
+		})
 	})
 
 	// https://www.wowhead.com/forever/item=280604/rage-of-the-storm

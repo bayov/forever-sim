@@ -756,8 +756,11 @@ func (shaman *Shaman) healingFocusChance() float64 {
 }
 
 // applyAncestralHealing: after a crit from one of our heals, its target has 8, 17 or 25% more
-// armor for 15 sec (70338 curve for 16176, "Increases your target's armor"). The buff is one
-// spell, so another shaman's on the same player is the same buff, refreshed.
+// armor from items for 15 sec (curve 85318 for 16176). The buff (16177, aura 101 on armor) reads
+// "Increases your armor value from items", so Agility's armor and armor buffs don't grow, as with
+// the paladin's Toughness (ApplyEquipScaling). Until 2026-11-03 the sim raised all of the
+// target's armor. The buff is one spell, so another shaman's on the same player is the same buff,
+// refreshed.
 func (shaman *Shaman) applyAncestralHealing() {
 	if shaman.Talents.AncestralHealing == 0 {
 		return
@@ -765,16 +768,21 @@ func (shaman *Shaman) applyAncestralHealing() {
 	armorMultiplier := 1 + []float64{0, .08, .17, .25}[shaman.Talents.AncestralHealing]
 
 	buffs := shaman.NewRaidAuraArray(func(target *core.Unit) *core.Aura {
+		agent := shaman.Env.Raid.GetPlayerFromUnit(target)
+		if agent == nil {
+			return nil
+		}
+		char := agent.GetCharacter()
 		return target.GetOrRegisterAura(core.Aura{
 			Label: "Ancestral Fortitude",
 			// One buff spell for every rank in Forever (16177, 8% that the talent's curve scales).
 			ActionID: core.ActionID{SpellID: 16177},
 			Duration: time.Second * 15,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.ArmorMultiplier *= armorMultiplier
+				char.ApplyDynamicEquipScaling(sim, stats.Armor, armorMultiplier)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				aura.Unit.PseudoStats.ArmorMultiplier /= armorMultiplier
+				char.RemoveDynamicEquipScaling(sim, stats.Armor, armorMultiplier)
 			},
 		})
 	})
