@@ -208,8 +208,139 @@ Consecration above a mana floor, Templar's Bulwark on a timer, mana floors for e
 health. The paladin keeps none of the raid's debuffs itself (`tankscore.OwnDebuffs` unchanged): Judgement of
 Fury leaves no debuff, and the raid's Judgements are other paladins'.
 
-PRESETS_PLACEHOLDER
+## Presets (step 6)
+
+rotopt (`-template paladin_tank`) on the six scoring encounters, the settings of
+`tools/tankbench/req/paladin_protection_balanced.json` (the synthetic set and its enchants, Steadfast Libram,
+Seal of Fury, Devotion Aura, Righteous Fury, Engineering and Blacksmithing), 600 iterations a candidate, 3,000
+to confirm, and 20,000 paired iterations where the confirms were inside the noise. Everything below is on the
+merged code (the healer merge and `claude/clever-galileo-qim1ee`, 2026-11-04); the pre-merge bests re-evaluated
+at 3,000 within 10 of their old scores (Human Balanced 2432.0 to 2422.5, Undead 2544.2 to 2543.7).
+
+| Preset | Weight | Race | Talents | Rotation | Request, APL |
+|---|---|---|---|---|---|
+| Max threat | 1/3 | Undead | `05005-25300102413001531-5023` | the template's defaults | `paladin_protection_max_threat.json`, `level60_max_threat.apl.json` |
+| Balanced (default) | 1 | Undead | `04-25300102513501531-5023` | the template's defaults | `paladin_protection_balanced.json`, `level60_balanced.apl.json` |
+| Max survival | 3 | Undead | `04-25300102513501531-5023` | the template's defaults | `paladin_protection_max_survival.json`, `level60_max_survival.apl.json` |
+
+- **Talents.** Balanced's search (from the pre-merge best, Undead) took three rounds to
+  `03-15310102513501531-50231` (Divine Strength 5 to 4, Anticipation back, Sanctified Judgement +1, Divine
+  Intellect -1, Guardian's Favor +1), each step inside its own noise; at 20,000 paired iterations it is 2538.0
+  against the start's 2544.5, so the start stays. Max survival's search went to `03-25300102513501531-50231`:
+  1228.7 against the start's 1232.4 at 20,000, so it keeps Balanced's string. Max threat's search from
+  `05005-25300102413001531-5023` (Improved Seals 5, no Anticipation, one less Toughness) found nothing in a
+  round: 3034.2, against 2981.3 for Balanced's string at that weight; Balanced's string scores 2544.5 at w = 1 to
+  its 2535.3, and 1230.9 at w = 3 to its 1039.1.
+- **Rotation.** The knob search at each weight kept every default (`seal=1` Fury, `resealWindow=0`,
+  `holyShieldMana=0`, `holyShieldFirst=1`, `prepullHolyShield=1`, `holyStrikeMana=0`, `judgementMana=0`,
+  `swiftJudgement=1`, `consecrationMana=60`, `consecrationFirst=0`, `bulwarkAt=10`); no alternative beats it by
+  more than its noise (the closest, Max threat's `bulwarkAt=20`, +2.8 against a noise of 4.2). The three APLs are
+  the same rotation today; each keeps its own file for the next search.
+- **Races** (3,000 iterations, the preset's string; Max threat's top two at 20,000):
+
+| Race | Max threat | Balanced | Max survival |
+|---|---|---|---|
+| **Undead** | **3034.2** | **2543.7** | **1230.9** |
+| Night Elf | 3031.1 | 2524.5 | 1170.5 |
+| Troll | 2981.6 | 2451.4 | 1028.7 |
+| Orc | 2972.8 | 2444.6 | 1010.9 |
+| Tauren | 2944.6 | 2447.3 | 1112.3 |
+| Human | 2948.6 | 2422.5 | 998.0 |
+| Gnome | 2937.8 | 2413.9 | 994.4 |
+| Dwarf | 2928.6 | 2404.1 | 979.5 |
+| Skyborne (either) | 2951.3 | 2417.3 | - |
+
+  **Why Undead leads, per encounter** (Balanced, 3,000 iterations, Human / Dwarf / Undead): Magmadar 2867 / 2844
+  / 3000, Golemagg 2643 / 2617 / 2764, Onyxia 2931 / 2924 / 3093, Broodlord 1817 / 1802 / 1889, Vaelastrasz 2812 /
+  2793 / 2935, Chromaggus 1467 / 1446 / 1582. It leads on every encounter by about the same, fear or no fear, so
+  it is not Will of the Forsaken (the scoring fights leave Panic and Bellowing Roar out anyway). It is Forever's
+  Touch of the Grave (`sim/core/racials_forever.go`): every ability rolls 20% to drain up to 5% of max health, at
+  most once every 15 sec, as Shadow damage that heals the tank. Against Human it is +26 to +47 SafeDPS a fight (the
+  drain's damage at Righteous Fury's threat) and 3 to 23 less healing needed. The drain is modelled at its cap
+  ("up to" isn't published), so this is the racial's upper bound: a call (below). Undead's 10 Shadow resistance
+  and its base stats (below Human's but for Spirit) don't explain it. Night Elf is second, a tie at Max threat
+  (3.1 apart, paired noise about 1.7).
+- **The UI**: `ui/protection_paladin/presets.ts` and `sim.ts` carry the synthetic gear (`GearLevel60Synthetic`),
+  the three APLs, the two talent strings and three builds (`makePresetBuild` with the race, the professions and
+  `{primarySeal: Fury, righteousFury: true, aura: DevotionAura}`), Balanced first. The page's defaults (its
+  launch state) are as they were. `npx tsc --noEmit -p .` is clean for `ui/protection_paladin`.
+- `paladin_protection_valor.json` (the old Valor bench request) is removed; nothing read it.
+  `TestForeverProtTankScore` reads the new Balanced request and passes as it is.
+
+## Numbers (step 7)
+
+`tools/tankbench -iters 1000 -encounter tools/encounters/<e>.json` for the three requests on all seven
+Anniversary encounters. Healing needed is at 5% deaths, in HPS; the three scores are the objective at w = 1/3, 1
+and 3; the mean is over the six scoring encounters (Ragnaros is reported, not scored).
+
+| Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|---|---|
+| Max threat | 1,466 | 648 | 1,643 | 322 | 288 | **3,036** | 2,535 | 1,031 |
+| Balanced | 1,430 | 633 | 1,602 | 303 | 257 | 2,988 | **2,555** | 1,257 |
+| Max survival | 1,430 | 633 | 1,602 | 303 | 257 | 2,988 | 2,555 | **1,257** |
+
+Per encounter (Max survival is the Balanced request with its own name, so its rows equal Balanced's and are left out):
+
+| Encounter | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Death floor | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Magmadar | Max threat | 1447 | 640 | 1594 | 162 | 52 | 0.0% | 3127 | 3007 | 2647 |
+| Magmadar | Balanced | 1413 | 626 | 1557 | 146 | 28 | 0.0% | 3082 | 3016 | 2820 |
+| Golemagg | Max threat | 1430 | 633 | 1572 | 198 | 107 | 0.0% | 3020 | 2771 | 2024 |
+| Golemagg | Balanced | 1395 | 618 | 1531 | 182 | 80 | 0.0% | 2968 | 2783 | 2225 |
+| Onyxia | Max threat | 1525 | 677 | 1712 | 179 | 69 | 0.0% | 3305 | 3067 | 2351 |
+| Onyxia | Balanced | 1492 | 662 | 1673 | 164 | 43 | 0.0% | 3273 | 3126 | 2685 |
+| Broodlord | Max threat | 1447 | 641 | 1610 | 323 | 477 | 0.0% | 2743 | 1788 | -1077 |
+| Broodlord | Balanced | 1411 | 625 | 1571 | 304 | 415 | 0.0% | 2728 | 1898 | -592 |
+| Vaelastrasz | Max threat | 1530 | 673 | 1839 | 645 | 514 | 0.0% | 3461 | 3029 | 1732 |
+| Vaelastrasz | Balanced | 1488 | 656 | 1783 | 622 | 497 | 0.0% | 3358 | 2941 | 1689 |
+| Chromaggus | Max threat | 1415 | 626 | 1533 | 425 | 511 | 0.0% | 2560 | 1548 | -1490 |
+| Chromaggus | Balanced | 1380 | 611 | 1496 | 401 | 480 | 0.0% | 2517 | 1566 | -1285 |
+| Ragnaros | Max threat | 1298 | 579 | 1419 | 957 | 1738 | 0.1% | 1009 | -2650 | -13627 |
+| Ragnaros | Balanced | 1266 | 565 | 1383 | 938 | 1728 | 0.0% | 947 | -2692 | -13608 |
+
+Max threat buys 41 SafeDPS (36 TPS) for 31 more healing needed: Improved Seals over Anticipation's 20 Defense.
+The death floor is 0% on the six and 0.0 to 0.1% on Ragnaros, where the tank dies in 5% of the fights at the
+healer numbers (no fire resistance modelled).
+
+**Next to the other tanks** (Balanced preset, mean of the six, 1,000 iterations, from their docs on this branch):
+
+| Tank | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
+|---|---|---|---|---|---|---|
+| Protection paladin | 1,602 | 303 | 257 | 2,988 | 2,555 | 1,257 |
+| Feral tank (`docs/tank_druid.md`) | 1,714 | 570 | 582 | 2,904 | 1,855 | -1,292 |
+| Warden shaman (`docs/tank_shaman.md`) | 1,745 | 816 | 1,055 | 2,493 | 501 | -5,475 |
+| Protection warrior | no committed numbers yet | | | | | |
 
 ## Calls for the user
 
-CALLS_PLACEHOLDER
+Each with the default this work uses and what the alternatives measure (Balanced, the mean of the six scoring
+encounters, unless it says otherwise).
+
+1. **Seal of Fury's effect 0 and Judgement of Fury's effect 2.** The client gives both a dummy effect of 1607 +
+   42 a level with 9% / 18% of spell power, and no tooltip says what it does. **Default: not read** (the seal's
+   35 Holy a hit, its absorb and the Judgement's damage are what the tooltips name, and what wowsims/forever
+   models). Not measured: no source says whether it is damage, an absorb cap or a server-side script, so there is
+   nothing to model. If it is damage it would be the seal's largest part; an in-game log of a Judgement of Fury
+   would settle it.
+2. **The immunities out of scoring.** Divine Shield, Divine Protection and Lay on Hands are built, tested and in
+   the UI, but no preset casts them: an immune or pacified tank keeps no threat and the boss turns to someone
+   else, which the tank score doesn't model (it has one tank), and Lay on Hands reacts to health. **Default:
+   out.** Templar's Bulwark stays in on a timer (`bulwarkAt=10`, worth 280 to 320 at Balanced), and it shares
+   Forbearance with them, so casting either would cost it.
+3. **Pursuit of Justice** (movement speed). **Default: not taken**; the score has no movement, so it is worth 0 in
+   every preset. A call only if movement matters on a fight the bench doesn't model.
+4. **Hit to the cap out of Stamina and Strength.** The restart brief sized the synthetic set's hit to the 8% cap
+   counting Precision (standards 4), paid for out of the row's Stamina and Strength. **Default: the cap**, +29 at
+   Balanced over the gear row's 3.2% (2026-11-04, the realignment's measurement). The alternative is the row as
+   written: 29 lower, more Stamina, less threat.
+5. **Templar's Bulwark is Magic** (dispellable). The client carries it since 70753 (SpellCategories DispelType 1
+   on 1311015; round 70753's `paladin.md` and foreverchanges.pro list it as notes-only). **Default: as the client
+   says, and it moves nothing**: no scoring boss dispels, and the sim's auras have no dispel type to set. The
+   round file's note could be corrected to "client and notes".
+6. **Undead over Human and Dwarf.** Undead leads at every weight, through Touch of the Grave modelled at its cap
+   (5% of max health every 15 sec at the most, "up to" with no published amount; Presets, above). **Default:
+   Undead** (+121 over Human at Balanced, +140 over Dwarf, +19 over Night Elf; +86 / +105 / +3 at Max threat;
+   +233 / +251 / +60 at Max survival). If the drain is well under its cap the lead shrinks, and Night Elf (at
+   Max survival perhaps Tauren's 5% health) may be the pick: Undead's base stats are below Human's but for Spirit.
+   Not measured with a smaller drain (it needs a sim change to the shared racial). An in-game log
+   of the drain's amount would settle it.

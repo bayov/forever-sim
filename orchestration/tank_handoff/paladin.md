@@ -1,5 +1,9 @@
 # Protection paladin tank: handoff (2026-11-04, stopped mid step 6)
 
+**Finished on branch `tank-paladin` (2026-11-04, its own cloud session):** step 6 (talent, knob and race searches on
+the merged code), the three requests, APLs and UI presets, step 7, the doc's Presets, Numbers and Calls sections.
+The report hashes move by the paladin's 12 zero-uptime auras only. The "Left" list below is the history.
+
 Branch `worktree-agent-a7e349827790bf934`. The brief is `orchestration/brief_tanks.md`, "Restart after the 70753
 update (T2, 2026-11-04)". The doc is `docs/tank_paladin.md`; its sections up to Rotation are current, and
 `PRESETS_PLACEHOLDER` and `CALLS_PLACEHOLDER` are still to be written.
