@@ -62,9 +62,10 @@ func (warriorTank) Knobs() []Knob {
 		// The Mighty Rage Potion: 0 never, 1 at the pull, 2 below potionRage Rage.
 		{Name: "potion", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "potionRage", Default: 20, Min: 10, Max: 40, Step: 10},
-		// Shield Wall on a timer: 0 never, 1 at the pull, 2 in the last wallAt seconds.
+		// Shield Wall on a timer: 0 never, 1 at the pull, 2 in the last wallAt seconds (a 2 s grid:
+		// the last 16 to 18 s beat 12 at Balanced and Max survival, tank_rotations-20261104-2).
 		{Name: "shieldWall", Default: 0, Min: 0, Max: 2, Step: 1},
-		{Name: "wallAt", Default: 12, Min: 12, Max: 60, Step: 12},
+		{Name: "wallAt", Default: 12, Min: 6, Max: 60, Step: 2},
 		// The on-use trinket (the synthetic set's armor one or the DPS set's attack power one): 0 on
 		// cooldown, else held for the last trinketAt seconds when the wait costs no use.
 		{Name: "trinketAt", Default: 0, Min: 0, Max: 40, Step: 10},
@@ -173,7 +174,7 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 	if k["sunderRage"] > 0 {
 		items = append(items, cast(sunderArmor, ge(currentRage(), num(k["sunderRage"])), "Sunder Armor as the filler, for its threat."))
 	}
-	items = append(items, cast(defensiveStance, not(auraIsActive(defensiveStance)), ""))
+	items = append(items, cast(defensiveStance, not(auraIsActive(defensiveStance)), "Defensive Stance kept up: the tank's stance."))
 
 	rot := rotation(items...)
 	opener := int(k["opener"])
