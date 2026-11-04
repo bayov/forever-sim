@@ -16,6 +16,7 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
+	SapperExplosive,
 	Stat,
 	StrengthBuff,
 	SunderRamp,
@@ -133,7 +134,9 @@ export const DefaultRotation = DruidRotation.create({
 // Mongoose (45 over Greater Agility), Juju Power and Might (ahead of Giants and Winterfall Firewater), Smoked
 // Desert Dumpling (ahead of Dirge's Stamina chops at Max threat and Balanced, and of Grilled Squid),
 // Dragonbreath Chili, a Dense Weightstone on the mace, and the Mighty Rage Potion at the pull (Greater
-// Stoneshield, a defensive potion, loses 470 to 620).
+// Stoneshield, a defensive potion, loses 470 to 620). Round 4: the Goblin Sapper Charge (Engineering; usable
+// in Bear Form, tank_mechanics-15) gains 180 to 300; every filler explosive (Goblin Land Mine, EZ-Thro Dark
+// Bomb or Thorium Grenade) loses 4 to 18 after it, so there is none.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	armorElixir: ArmorElixir.ElixirOfThePhalanx,
@@ -144,6 +147,7 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodSmokedDesertDumpling,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
 	mainHandImbue: WeaponImbue.DenseWeightstone,
+	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.JujuPower,
 });
 
