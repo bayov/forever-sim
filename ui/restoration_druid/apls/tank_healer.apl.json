@@ -52,13 +52,13 @@
       },
       "rhs": {
        "const": {
-        "val": "0.4"
+        "val": "0.85"
        }
       }
      }
     }
    },
-   "notes": "Swiftmend whoever in my assignment is under 40% health and has my HoT."
+   "notes": "Swiftmend whoever in my assignment is under 85% health and has my HoT."
   },
   {
    "action": {
@@ -82,13 +82,13 @@
       },
       "rhs": {
        "const": {
-        "val": "0.4"
+        "val": "0.85"
        }
       }
      }
     }
    },
-   "notes": "Regrowth at whoever is under 40%: the fast heal."
+   "notes": "Regrowth at whoever is under 85%: the fast heal."
   },
   {
    "action": {
@@ -160,13 +160,23 @@
           }
          },
          "rhs": {
-          "spellExpectedHealing": {
-           "spellId": {
-            "spellId": 9858
+          "math": {
+           "op": "OpMul",
+           "lhs": {
+            "spellExpectedHealing": {
+             "spellId": {
+              "spellId": 9858
+             },
+             "targetUnit": {
+              "type": "Tank",
+              "index": 0
+             }
+            }
            },
-           "targetUnit": {
-            "type": "Tank",
-            "index": 0
+           "rhs": {
+            "const": {
+             "val": "0.7"
+            }
            }
           }
          }
@@ -254,7 +264,7 @@
         },
         "rhs": {
          "const": {
-          "val": "0.9"
+          "val": "0.8"
          }
         }
        }
@@ -262,7 +272,7 @@
      }
     }
    },
-   "notes": "Healing Touch rank 11 at the tank, the biggest that what it misses covers (90% of the heal)."
+   "notes": "Healing Touch rank 11 at the tank, the biggest that what it misses covers (80% of the heal)."
   },
   {
    "action": {
@@ -302,7 +312,7 @@
         },
         "rhs": {
          "const": {
-          "val": "0.9"
+          "val": "0.8"
          }
         }
        }
@@ -310,7 +320,7 @@
      }
     }
    },
-   "notes": "Healing Touch rank 8 at the tank, the biggest that what it misses covers (90% of the heal)."
+   "notes": "Healing Touch rank 8 at the tank, the biggest that what it misses covers (80% of the heal)."
   },
   {
    "action": {
@@ -350,7 +360,7 @@
         },
         "rhs": {
          "const": {
-          "val": "0.9"
+          "val": "0.8"
          }
         }
        }
@@ -358,7 +368,7 @@
      }
     }
    },
-   "notes": "Healing Touch rank 6 at the tank, the biggest that what it misses covers (90% of the heal)."
+   "notes": "Healing Touch rank 6 at the tank, the biggest that what it misses covers (80% of the heal)."
   },
   {
    "action": {

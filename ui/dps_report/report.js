@@ -180,9 +180,11 @@ export function startReport(dash, events) {
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
   // "Duty" is off by default; it's showDuty rather than the old duty, which every earlier visit saved as on
-  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', setupHide: false, enc: false, showDuty: false, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chVar: false, chSim: false }, saved);
+  const st = Object.assign({ mode: 'dps', mt: {}, tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', setupHide: false, enc: false, showDuty: false, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chVar: false, chSim: false }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   st.chUp = null; // nor an older update: the Changes tab opens on the newest unless a link names one
+  st.mode = 'dps'; // nor another mode: an address without one is DPS's, as it always was
+  if (!st.mt || typeof st.mt !== 'object') st.mt = {};
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
 
   // ---------- tooltip pieces ----------
@@ -399,7 +401,11 @@ export function startReport(dash, events) {
     if (!byKeyCache.has(r)) byKeyCache.set(r, new Map(r.map((x) => [String(x[key]), x])));
     return byKeyCache.get(r);
   };
-  const ttRow = (key) => { const m = byKey('tooltips'); return m ? m.get(key) || m.get(key.replace(/t-?\d+$/, '')) || null : null; };
+  const ttFind = (m, key) => (m ? m.get(key) || m.get(key.replace(/t-?\d+$/, '')) || null : null);
+  // a Tanking or Healing page looks in its own tooltips (tank_tooltips) first
+  const ttRow = (key) => { const own = curDs().tips; return (own && ttFind(byKey(own), key)) || ttFind(byKey('tooltips'), key); };
+  // a spell or item's name and icon, the same way (tank_names first)
+  const nameRow = (key) => { const own = curDs().names; return (own && byKey(own)?.get(key)) || byKey('names')?.get(key); };
   const arr = (v) => (Array.isArray(v) ? v : []);
   // wowhead page for a real spell or item: Forever's database where it knows the id, else Classic's (labelled), as the sim UI links them
   const whLink = (path, dom) => {
@@ -415,14 +421,14 @@ export function startReport(dash, events) {
   const nums = (rows) => rows.filter(Boolean).map(([a, b]) => ['n', a, b]);
 
   const spellSpec = (key, b, aura) => {
-    const bl = (rowsOf('builds') || []).find((x) => x.id === b);
-    const r = (bl && byKey('tooltips')?.get(`${key}:${bl.class}`)) || ttRow(key), n = byKey('names')?.get(key);
+    const bl = curBuild(b), dps = st.mode === 'dps';
+    const r = (bl && ttRow(`${key}:${bl.class}`)) || ttRow(key), n = nameRow(key);
     const spec = {
       title: String(r?.title ?? n?.name ?? key), icon: r?.icon || n?.icon,
       color: r?.kind === 'item' ? QCOL[r.quality] || QCOL.common : GOLD,
       sub: r?.sub != null ? String(r.sub) : n?.rank ? `Rank ${n.rank}` : '', lines: arr(r?.lines), nums: [], link: rowLink(r),
     };
-    const ab = (rowsOf('abilities') || []).find((a) => a.build === b && a.key === key);
+    const ab = dps ? (rowsOf('abilities') || []).find((a) => a.build === b && a.key === key) : null;
     if (ab) {
       spec.nums.push(...nums([
         ab.dps > 0 ? ['DPS', `${f1(ab.dps)} (${f1(ab.share)}% of total)`] : null,
@@ -433,7 +439,7 @@ export function startReport(dash, events) {
         ab.ticks > 0 && ab.avgTick > 0 ? ['Average tick', `${f0(ab.avgTick)} × ${f1(ab.ticks)}`] : null,
       ]));
     }
-    const au = (rowsOf('auras') || []).filter((a) => a.build === b && a.key === key);
+    const au = dps ? (rowsOf('auras') || []).filter((a) => a.build === b && a.key === key) : [];
     for (const a of au) {
       spec.nums.push(...nums([[a.owner === 'Self' ? 'Uptime' : 'Uptime on the boss', `${f1(a.uptime)}%`], a.procs > 0 ? ['Applied per fight', f1(a.procs)] : null]));
     }
@@ -443,14 +449,15 @@ export function startReport(dash, events) {
   };
 
   const gearSpec = (slot, b) => {
-    const g = (rowsOf('gear') || []).find((x) => x.build === b && x.slot === slot);
+    const gear = rowsOf(curDs().gear) || [];
+    const g = gear.find((x) => x.build === b && x.slot === slot);
     if (!g) return null;
     const r = ttRow('i' + g.itemId);
     const lines = [...arr(r?.lines)];
     const ench = ttRow(`ench:${b}:${slot}`);
     if (ench || g.enchant) lines.push(['g', `Enchanted: ${ench?.title || g.enchant}`], ...arr(ench?.lines).map((l) => ['g', l[1]]));
     if (r?.set) {
-      const have = (rowsOf('gear') || []).filter((x) => x.build === b && ttRow('i' + x.itemId)?.set === r.set).length;
+      const have = gear.filter((x) => x.build === b && ttRow('i' + x.itemId)?.set === r.set).length;
       lines.push(['s'], ['y', `${r.set} (${have}/${r.setSize ?? have})`],
         ...arr(r.setBonuses).map(([n, t]) => [have >= n ? 'g' : 'm', `(${n}) Set: ${t}`]));
     }
@@ -459,14 +466,15 @@ export function startReport(dash, events) {
 
   const setupSpec = (text, b) => {
     const r = ttRow('setup:' + text);
-    const s = (rowsOf('setup') || []).find((x) => x.item === text && (!b || x.build === b)) || (rowsOf('setup') || []).find((x) => x.item === text);
+    const setup = (curDs().setup && rowsOf(curDs().setup)) || [];
+    const s = setup.find((x) => x.item === text && (!b || x.build === b)) || setup.find((x) => x.item === text);
     const why = s && s.active === false && s.why ? 'No effect: ' + s.why : s?.note ? String(s.note) : '';
     return { title: String(r?.title ?? text), icon: s?.icon || r?.icon, color: r?.kind === 'item' ? QCOL[r.quality] || QCOL.common : GOLD, sub: String(r?.sub ?? s?.category ?? ''), lines: arr(r?.lines), why, link: rowLink(r) };
   };
 
   const talentSpec = (cls, tree, idx, b) => {
     const t = (rowsOf('talenttrees') || []).find((x) => x.class === cls && +x.tree === +tree && +x.idx === +idx);
-    const bl = (rowsOf('builds') || []).find((x) => x.id === b);
+    const bl = curBuild(b);
     if (!t) return null;
     const p = bl ? +((String(bl.talents).split('-')[t.tree] || '')[t.idx] || 0) : 0;
     const lines = [['m', `Rank ${p}/${t.maxPoints}`]];
@@ -478,7 +486,7 @@ export function startReport(dash, events) {
 
   const raceSpec = (race, cls, b) => {
     const r = (cls && ttRow(`race:${race}:${cls}`)) || ttRow(`race:${race}`);
-    const rr = (rowsOf('races') || []).find((x) => x.race === race && (!b || x.build === b));
+    const rr = st.mode === 'dps' ? (rowsOf('races') || []).find((x) => x.race === race && (!b || x.build === b)) : null;
     const spec = { title: race, icon: rr?.raceIcon, color: HORDE.has(race) ? '#ff5a4a' : '#5aa2ff', sub: String(r?.sub ?? (HORDE.has(race) ? 'Horde' : 'Alliance')), lines: arr(r?.lines), nums: [] };
     if (b && rr && rr.build === b) {
       spec.numsHead = (rowsOf('builds') || []).find((x) => x.id === b)?.label;
@@ -492,6 +500,10 @@ export function startReport(dash, events) {
   };
 
   const classSpec = (cls) => {
+    if (st.mode !== 'dps') {
+      const bs = (rowsOf(curDs().builds) || []).filter((x) => x.class === cls);
+      return { title: cls, icon: 'classicon_' + cls.toLowerCase(), color: CCOL[cls] || '#fff', sub: `${bs.length} preset${bs.length === 1 ? '' : 's'} · ${curMode().label}`, lines: bs.map((x) => ['2', roleName(x), x.race]) };
+    }
     const bs = (visB() || []).filter((x) => x.class === cls).sort((x, y) => y.dps - x.dps);
     return {
       title: cls, icon: 'classicon_' + cls.toLowerCase(), color: CCOL[cls] || '#fff', sub: `${bs.length} preset${bs.length === 1 ? '' : 's'} · DPS`,
@@ -514,7 +526,7 @@ export function startReport(dash, events) {
         : [['+1 point', `${fmt('.3f')(w.dpsPer)} DPS`], ['Error', `± ${fmt('.3f')(w.sePer)} DPS`]]) };
   };
 
-  const ttSpec = (node) => specFor(node.getAttribute('data-tt') || '', node.closest('[data-tt-b]')?.getAttribute('data-tt-b') || st.build, node);
+  const ttSpec = (node) => specFor(node.getAttribute('data-tt') || '', node.closest('[data-tt-b]')?.getAttribute('data-tt-b') || curBuildId(), node);
   // The game tooltip for a data-tt ref like "k:s10314" or "tal:Rogue:0:4", for preset b.
   const specFor = (v, b, node = null) => {
     const i = v.indexOf(':');
@@ -665,25 +677,94 @@ export function startReport(dash, events) {
     }, true);
   }
 
-  // ---------- tabs ----------
-  const pages = ['ranking', 'spec', 'races', 'compare', 'changes', 'method'];
+  // ---------- modes and tabs ----------
+  // The report's top level: DPS (the default), Tanking and Healing, each with its own tabs. A mode shows when
+  // datasets.json has datasets for it ("mode": tank or heal; none means DPS), and each of its tabs when the dataset the
+  // tab draws from is there. Raid can be one more entry here.
+  //
+  // DPS has the pages it always had, and the addresses it always had: #ranking, #spec, #<preset>, #changes/<update>.
+  // Tanking and Healing share one set of pages (r-ranking, r-spec, r-races, r-method), drawn for the open mode, and
+  // their addresses start with the mode: #tank (its Ranking), #tank/<tab>, #tank/<preset> (that preset's Specs page).
+  const MODES = [
+    { id: 'dps', label: 'DPS', title: 'DPS Report', tabs: [['ranking', 'Ranking'], ['spec', 'Specs'], ['races', 'Races'], ['compare', 'Compare'], ['changes', 'Changes'], ['method', 'Method']] },
+    { id: 'tank', label: 'Tanking', title: 'Tanking Report', tabs: [['ranking', 'Ranking', 'tank_builds'], ['spec', 'Specs', 'tank_builds'], ['races', 'Races', 'tank_races'], ['method', 'Method', 'tank_method']] },
+    { id: 'heal', label: 'Healing', title: 'Healing Report', tabs: [['ranking', 'Ranking', 'heal_builds'], ['spec', 'Specs', 'heal_builds'], ['races', 'Races', 'heal_races'], ['method', 'Method', 'heal_method']] },
+  ];
+  const dsMode = (id) => dash.manifest[id]?.mode || 'dps';
+  const modeTabs = (m) => m.tabs.filter(([, , need]) => !need || need in dash.manifest);
+  const modes = MODES.filter((m) => Object.keys(dash.manifest).some((id) => dsMode(id) === m.id) && modeTabs(m).length);
+  const modeOf = (id) => modes.find((m) => m.id === id);
+  const curMode = () => modeOf(st.mode) || modes[0];
+  // each mode's last tab and preset; DPS keeps its own in st.tab and st.build, as it always did
+  const mst = (id = st.mode) => (st.mt[id] = st.mt[id] || { tab: 'ranking', build: null });
+  const curTab = () => (st.mode === 'dps' ? st.tab : mst().tab);
+  const pageOf = (mode, tab) => (mode === 'dps' ? tab : 'r-' + tab);
+  // the preset the open mode's Specs page shows, its row, and any preset's row in the open mode
+  const curBuildId = () => (st.mode === 'dps' ? st.build : mst().build);
+  const curBuild = (id) => (rowsOf(curDs().builds) || []).find((x) => x.id === id);
   // a view's name in the address: its tab, the preset on the spec page, or the update a link opened on Changes
-  const linkName = (tab) => (tab === 'spec' && st.build ? st.build : tab === 'changes' && st.chUp && chUpdate() ? 'changes/' + chUpdate().id : tab);
+  const linkName = (tab) => {
+    if (st.mode !== 'dps') {
+      const b = tab === 'spec' ? mst().build || (rowsOf(curDs().builds) ? roleSpecId() : null) : null;
+      return st.mode + (b ? '/' + b : tab === 'ranking' ? '' : '/' + tab);
+    }
+    return tab === 'spec' && st.build ? st.build : tab === 'changes' && st.chUp && chUpdate() ? 'changes/' + chUpdate().id : tab;
+  };
+  // The mode bar and the open mode's tabs. They're rebuilt when the mode changes; the layout's tabs are DPS's.
+  let navMode = null;
+  const drawNav = () => {
+    const m = curMode();
+    const bar = $('#fv-modes');
+    bar.hidden = modes.length < 2;
+    if (!bar.childElementCount) {
+      bar.replaceChildren(...modes.map((x) => {
+        const a = el('a', { class: 'fv-mode', href: '#' + (x.id === 'dps' ? '' : x.id), 'data-mode': x.id, role: 'tab', text: x.label });
+        a.addEventListener('click', (e) => { e.preventDefault(); setMode(x.id); });
+        return a;
+      }));
+    }
+    bar.querySelectorAll('.fv-mode').forEach((a) => { const on = a.dataset.mode === m.id; a.classList.toggle('active', on); a.setAttribute('aria-selected', String(on)); });
+    $('#fv-title').textContent = m.title;
+    if (navMode !== m.id) {
+      navMode = m.id;
+      $('#fv-tabs').replaceChildren(...modeTabs(m).map(([tab, label]) => {
+        const a = el('a', { class: 'nav-link fv-tab', role: 'tab', href: '#' + (m.id === 'dps' ? tab : m.id + (tab === 'ranking' ? '' : '/' + tab)), 'data-tab': tab, 'aria-selected': 'false', text: label });
+        a.addEventListener('click', (e) => { e.preventDefault(); showTab(tab); });
+        return el('li', { class: 'nav-item', role: 'presentation' }, a);
+      }));
+    }
+    const tab = curTab();
+    document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); b.classList.toggle('active', b.dataset.tab === tab); });
+  };
+  const showPage = () => {
+    const pid = pageOf(st.mode, curTab());
+    document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== pid; p.classList.toggle('active', p.dataset.page === pid); });
+  };
+  let shownPage = null;
   // link: the view becomes a new history entry (the scroll it leaves kept on the old one); false leaves the address
   const showTab = (tab, link = true) => {
-    const changed = st.tab !== tab, y = $('.sim-ui').scrollTop; // before the tab button scrolls into view
-    st.tab = tab; persist();
-    if (changed) { const pg = document.getElementById(tab); pg.classList.remove('in'); void pg.offsetWidth; pg.classList.add('in'); }
-    document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); b.classList.toggle('active', b.dataset.tab === tab); });
-    document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== tab; p.classList.toggle('active', p.dataset.page === tab); });
+    const pid = pageOf(st.mode, tab), changed = shownPage !== pid, y = $('.sim-ui').scrollTop; // before the tab button scrolls into view
+    if (st.mode === 'dps') st.tab = tab; else mst().tab = tab;
+    persist();
+    shownPage = pid;
+    if (changed) { const pg = document.getElementById(pid); pg.classList.remove('in'); void pg.offsetWidth; pg.classList.add('in'); }
+    drawNav();
+    showPage();
     // on a phone the header scrolls sideways: bring the open tab into view
     document.querySelector('.fv-tab.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
     if (link) dash.setLink(linkName(tab), true, y);
     hideTip(); hideTT();
     render();
   };
-  document.querySelectorAll('.fv-tab').forEach((b) => b.addEventListener('click', (e) => { e.preventDefault(); showTab(b.dataset.tab); }));
+  // A mode opens on the tab it was last on.
+  const setMode = (id) => {
+    if (!modeOf(id) || id === st.mode) return;
+    st.mode = id;
+    showTab(curTab());
+    $('.sim-ui').scrollTo({ top: 0 });
+  };
   const openSpec = (id) => {
+    if (st.mode !== 'dps') { openRoleSpec(id); return; }
     id = dutyBase(id);
     const swap = st.tab === 'spec' && st.build !== id;
     st.build = id; st.sample = 0; persist(); showTab('spec'); $('.sim-ui').scrollTo({ top: 0 });
@@ -1809,7 +1890,9 @@ export function startReport(dash, events) {
     const r = rowsOf('icons');
     if (!r) return null;
     const more = wantMore ? rowsOf('icons_more') : null;
-    if (iconCache.src !== r || iconCache.more !== more) iconCache = { src: r, more, m: new Map([...r, ...(more || [])].map((x) => [x.icon, x.url])) };
+    // a Tanking or Healing page's own icons (tank_icons) too
+    const own = curDs().icons ? rowsOf(curDs().icons) : null;
+    if (iconCache.src !== r || iconCache.more !== more || iconCache.own !== own) iconCache = { src: r, more, own, m: new Map([...r, ...(more || []), ...(own || [])].map((x) => [x.icon, x.url])) };
     return iconCache.m;
   };
   const iconImg = (name, cls = 'fv-ico') => {
@@ -1822,15 +1905,24 @@ export function startReport(dash, events) {
   const specIco = (b, size = 'md') => ringed(b.specIcon, `fv-ico ${size} ring`, ccol(b.class));
   const raceIco = (icon) => (icon ? iconImg(icon, 'fv-ico') : null);
   const svgIcon = (sel, name, x, y, sz) => { const m = iconMap(); const u = m && (m.get(name) || null); if (u) sel.append('image').attr('href', u).attr('x', x).attr('y', y).attr('width', sz).attr('height', sz); };
-  const keyIcon = (key) => { const n = rowsOf('names'); if (!n) return null; const r = n.find((x) => x.key === key); return r?.icon ? iconImg(r.icon) : null; };
+  const keyIcon = (key) => { const r = nameRow(key); return r?.icon ? iconImg(r.icon) : null; };
 
   // ---------- talents ----------
-  // The preset the talents show, for redrawing them when the card's width changes.
-  let talB = null;
-  const drawTalents = (b) => {
-    const host = $('#sp-tal');
-    host.setAttribute('data-source', 'talenttrees builds icons treeart');
-    if (!specWait(host, ['talenttrees'], b, [$('#sp-tal-seg')])) return;
+  // The datasets and elements a Specs card draws from: the DPS report's here, a Tanking or Healing mode's in roleDs.
+  const DPS_DS = { el: '#sp-', builds: 'builds', gear: 'gear', rotation: 'rotation', race_rotation: 'race_rotation', races: 'races', setup: 'setup', tips: null };
+  // A Tanking or Healing mode's: its own datasets (tank_gear, ...), each null when datasets.json doesn't list it. Its
+  // rotations have no per-race versions, and its races dataset is a score per race (raceRows), not the DPS one.
+  const roleDs = (m) => {
+    const has = (x) => (`${m}_${x}` in dash.manifest ? `${m}_${x}` : null);
+    return { el: '#rs-', builds: has('builds'), gear: has('gear'), rotation: has('rotation'), race_rotation: null, races: null, setup: has('setup'), tips: has('tooltips'),
+      icons: has('icons'), names: has('names'), bosses: has('bosses'), encounters: has('encounters'), raceRows: has('races'), notes: has('notes'), method: has('method') };
+  };
+  const ROLE_DS = { tank: roleDs('tank'), heal: roleDs('heal') };
+  const curDs = () => ROLE_DS[st.mode] || DPS_DS;
+  const drawTalents = (b, D = DPS_DS) => {
+    const host = $(D.el + 'tal'), segEl = $(D.el + 'tal-seg');
+    host.setAttribute('data-source', `talenttrees ${D.builds} icons treeart`);
+    if (!specWait(host, ['talenttrees'], b, [segEl])) return;
     iconMap();
     const all = rowsOf('talenttrees').filter((t) => t.class === b.class);
     const parts = String(b.talents).split('-');
@@ -1839,19 +1931,19 @@ export function startReport(dash, events) {
     // On a narrow screen the trees don't fit side by side, and the tree picker shows one at a time, the one with the
     // most points first. When all three fit, they all show and the picker hides.
     if (st.talBuild !== b.id || st.talTree == null) { st.talTree = String(trees.reduce((x, y) => (y.spent > x.spent ? y : x)).ti); st.talBuild = b.id; }
-    $('#sp-tal-seg').replaceChildren(...[...trees.map((t) => [String(t.ti), `${t.name} ${t.spent}`]), ['all', 'All three']].map(([v, lbl]) => {
+    segEl.replaceChildren(...[...trees.map((t) => [String(t.ti), `${t.name} ${t.spent}`]), ['all', 'All three']].map(([v, lbl]) => {
       const bt = el('button', { 'aria-pressed': String(st.talTree === v), text: lbl });
-      bt.addEventListener('click', () => { st.talTree = v; drawTalents(b); });
+      bt.addEventListener('click', () => { st.talTree = v; drawTalents(b, D); });
       return bt;
     }));
     // We redraw when the card's width changes, in case the trees fit now or no longer do. The Specs tab is hidden
-    // until we open it, and then its width changes from 0 too.
-    talB = b;
-    const card = $('#sp-tal-card');
+    // until we open it, and then its width changes from 0 too. The card keeps the preset it shows for that.
+    const card = $(D.el + 'tal-card');
+    card._tal = [b, D];
     if (!card.dataset.fitWatch) {
       card.dataset.fitWatch = '1';
       let w = card.clientWidth;
-      new ResizeObserver(() => { if (card.clientWidth !== w) { w = card.clientWidth; if (talB && st.tab === 'spec') { try { drawTalents(talB); } catch (e) { console.error(e); } } } }).observe(card);
+      new ResizeObserver(() => { if (card.clientWidth !== w) { w = card.clientWidth; if (card._tal && card.offsetParent) { try { drawTalents(...card._tal); } catch (e) { console.error(e); } } } }).observe(card);
     }
     const arrow = (pr, pc, r, c, active) => {
       // Placed like TalentReqArrow in the sim UI: it starts on the parent's cell and its length is in cells.
@@ -1905,7 +1997,7 @@ export function startReport(dash, events) {
     paint(trees);
     const car = host.querySelector('#talents-carousel');
     const fits = !car.clientWidth || car.scrollWidth <= car.clientWidth + 1;
-    $('#sp-tal-seg').closest('.fv-toolbar').hidden = fits;
+    segEl.closest('.fv-toolbar').hidden = fits;
     if (!fits && st.talTree !== 'all') paint(trees.filter((t) => String(t.ti) === st.talTree));
   };
 
@@ -2191,17 +2283,17 @@ export function startReport(dash, events) {
     const m = /^\[\[((?:tal|k):[^|\]]+)\|([^\]]+)\]\]$/.exec(part);
     if (!m) return part;
     if (m[1].startsWith('k:')) {
-      const n = byKey('names')?.get(m[1].slice(2));
+      const n = nameRow(m[1].slice(2));
       return tt(el('span', { class: 'fv-tal' }, n?.icon ? iconImg(n.icon, 'fv-ico') : null, m[2]), m[1], true, b);
     }
     const [, cls, tree, idx] = m[1].split(':');
     const t = (rowsOf('talenttrees') || []).find((x) => x.class === cls && +x.tree === +tree && +x.idx === +idx);
     return tt(el('span', { class: 'fv-tal' }, t ? iconImg(t.icon, 'fv-ico') : null, m[2]), m[1], true, b);
   });
-  const rotRows = (bid) => (rowsOf('rotation') || []).filter((r) => r.build === bid);
+  const rotRows = (bid, D = curDs()) => (rowsOf(D.rotation) || []).filter((r) => r.build === bid);
   // A race that plays its own rotation on a preset (race_override.py): its lines, each lined up with the preset's (diff:
   // same, changed, added or removed; base: the preset line's order).
-  const raceRotRows = (bid, race) => (rowsOf('race_rotation') || []).filter((r) => r.build === bid && (!race || r.forRace === race));
+  const raceRotRows = (bid, race, D = curDs()) => (D.race_rotation ? rowsOf(D.race_rotation) || [] : []).filter((r) => r.build === bid && (!race || r.forRace === race));
   const rotSpec = (section, order, b, race) => {
     const r = (race ? raceRotRows(b, race) : rotRows(b)).find((x) => x.section === section && String(x.order) === String(order));
     if (!r) return null;
@@ -2218,7 +2310,7 @@ export function startReport(dash, events) {
       !shown && r.extra ? ['t', r.extra] : null,
       !shown && r.notes ? ['m', plainWhen(r.notes)] : null,
       was ? ['m', section === 'prepull' ? `The preset casts it at ${fmtT(+was.at)}.` : `The preset’s line: ${plainWhen(was.when) || 'when ready'}.`] : null,
-      r.why && (!shown || r.diff === 'changed' || r.diff === 'added') ? ['t', r.why] : null,
+      r.why && r.why !== r.notes && (!shown || r.diff === 'changed' || r.diff === 'added') ? ['t', plainWhen(r.why)] : null,
     ].filter(Boolean);
     return { ...base, icon: base.icon || r.icon, title: String(r.key && !/^oOther/.test(r.key) ? base.title : r.name), lines: [...lines, ...(base.lines && base.lines.length ? [['s'], ...base.lines] : [])] };
   };
@@ -2229,20 +2321,22 @@ export function startReport(dash, events) {
   // rotation unless it has its own (race_rotation); either way only its own racials fire. "All races" is the preset's
   // rotation with every racial line tagged with its race, and each race's own changes, with why, under the line they
   // change.
-  const drawRotation = (b) => {
-    const host = $('#sp-rotation'), pre = $('#sp-prepull'), pick = $('#sp-rot-race');
-    if (!specWait(host, ['rotation', 'race_rotation', 'races', 'talenttrees'], b, [pre])) return;
-    const rows = rotRows(b.id);
-    const races = (rowsOf('races') || []).filter((r) => r.build === b.id);
+  // A Tanking or Healing preset (D without races) shows only its own rotation, with no race picker.
+  const drawRotation = (b, D = DPS_DS) => {
+    const host = $(D.el + 'rotation'), pre = $(D.el + 'prepull'), pick = $(D.el + 'rot-race');
+    if (!specWait(host, [D.rotation, D.race_rotation, D.races, 'talenttrees'].filter(Boolean), b, [pre])) return;
+    const rows = rotRows(b.id, D);
+    const races = (D.races ? rowsOf(D.races) || [] : []).filter((r) => r.build === b.id);
     const list = [...races.filter((r) => r.race === b.race), ...races.filter((r) => r.race !== b.race)];
     const icoOf = new Map(list.map((r) => [r.race, r.raceIcon]));
-    const own = d3.group(raceRotRows(b.id), (r) => r.forRace);
-    if (st.rotRace !== 'All' && !icoOf.has(st.rotRace)) st.rotRace = 'All';
-    const view = st.rotRace;
+    const own = d3.group(raceRotRows(b.id, null, D), (r) => r.forRace);
+    // (a page with no race rotations leaves the DPS page's pick alone)
+    if (D.races && st.rotRace !== 'All' && !icoOf.has(st.rotRace)) st.rotRace = 'All';
+    const view = D.races ? st.rotRace : 'All';
     // The picker shows each race's icon: a gold ring on the preset's race, an orange dot on a race with its own
     // rotation. Its race tooltip names it.
     if (pick.dataset.build !== b.id) { pick.dataset.built = ''; pick.dataset.build = b.id; }
-    seg(pick, 'rotRace', [['All', 'All races'], ...list.map((r) => [r.race, own.has(r.race) ? el('i', { class: 'fv-rot-own' }) : null, raceIco(r.raceIcon)])], () => drawRotation(b));
+    seg(pick, 'rotRace', [['All', 'All races'], ...list.map((r) => [r.race, own.has(r.race) ? el('i', { class: 'fv-rot-own' }) : null, raceIco(r.raceIcon)])], () => drawRotation(b, D));
     for (const btn of pick.querySelectorAll('button')) {
       const race = btn.dataset.v;
       if (race === 'All') continue;
@@ -2251,9 +2345,10 @@ export function startReport(dash, events) {
       tt(btn, `r:${race}:${b.class}`, false, b.id);
     }
     pick.hidden = list.length < 2;
+    pick.closest('.fv-toolbar').hidden = !D.races;
 
     const W = (r) => (r.forRace ? `build=${enc(b.id)}&forRace=${enc(r.forRace)}&section=${r.section}&order=${r.order ?? ''}&base=${r.base ?? ''}` : `build=${enc(b.id)}&section=${r.section}&order=${r.order}`);
-    const SRC = (r) => (r.forRace ? 'race_rotation' : 'rotation');
+    const SRC = (r) => (r.forRace ? D.race_rotation : D.rotation);
     const ttKey = (r) => (r.forRace && r.diff !== 'removed' ? `rot:${r.section}:${r.order}:${r.forRace}` : `rot:${r.section}:${r.forRace ? r.base : r.order}`);
     const ico = (r, cls) => (r.icon ? iconImg(r.icon, cls) : el('span', { class: cls + ' fv-noico', text: { move: '➜', auto: '⟳', wait: '⏸', sequence: '»' }[r.kind] || String(r.name).slice(0, 2) }));
     // races as a tag: their icons and names
@@ -2276,10 +2371,11 @@ export function startReport(dash, events) {
         why === 'race' ? el('span', { class: 'wh', text: raceFold(run) })
           : el('span', { class: 'wh' }, 'Off in this preset', ...offWhy(run[0], b.id))));
     // a why that asks its own question ("Why swap at 2…? Because…") shows the question in bold, in place of a label
+    // (none where it only repeats the line's note, as the Tanking and Healing rows' do)
     const whyLine = (r) => {
-      if (!r.why) return null;
+      if (!r.why || r.why === r.notes) return null;
       const q = /^(Why\b[^?]*\?)\s*(.*)$/s.exec(r.why);
-      return el('span', { class: 'fv-why' }, ...(q ? [el('b', { text: q[1] }), ' ' + q[2]] : [el('b', { text: 'Why: ' }), r.why]));
+      return el('span', { class: 'fv-why' }, ...(q ? [el('b', { text: q[1] }), ' ', ...richWhen(q[2], b.id)] : [el('b', { text: 'Why: ' }), ...richWhen(r.why, b.id)]));
     };
     // one priority line as a card: number, icon, name and tags, condition, note, casts, and any lines under it.
     // sameRace: a tag already names the line's race (a racial a race adds for itself), so it needs no "only" tag.
@@ -2367,7 +2463,7 @@ export function startReport(dash, events) {
         }
         addCards(r.order);
       }
-      note = [el('span', { class: 'fv-lg' }, raceIco(icoOf.get(b.race)), `${b.race} is the preset’s race. The cast counts are for it.`),
+      note = !D.races ? [] : [el('span', { class: 'fv-lg' }, raceIco(icoOf.get(b.race)), `${b.race} is the preset’s race. The cast counts are for it.`),
         own.size ? el('span', { class: 'fv-lg' }, el('i', { class: 'fv-rot-own fv-lg-dot' }), 'Plays its own version. Its changes show under the lines they change.') : null,
         el('span', { class: 'fv-lg' }, el('span', { class: 'kd race' }, 'Race only'), 'A racial. Only that race casts it.')];
     } else {
@@ -2411,7 +2507,7 @@ export function startReport(dash, events) {
     }
     pre.dataset.build = b.id;
     host.replaceChildren(...(items.length ? items : [el('li', { class: 'fv-note', text: 'No rotation recorded.' })]));
-    $('#sp-rot-note').replaceChildren(el('span', {}, 'The sim casts the first line it can, top to bottom.'), ...note.filter(Boolean));
+    $(D.el + 'rot-note').replaceChildren(el('span', {}, 'The sim casts the first line it can, top to bottom.'), ...note.filter(Boolean));
   };
 
   // ---------- gear (paper doll, as the sim UI's gear picker) ----------
@@ -2419,10 +2515,10 @@ export function startReport(dash, events) {
   // The sim UI's gear picker (gear_picker.tsx) and character sheet (character_stats.tsx) markup, read only.
   const GEAR_LEFT = ['Head', 'Neck', 'Shoulders', 'Back', 'Chest', 'Wrist', 'Main hand', 'Off hand', 'Ranged'];
   const GEAR_RIGHT = ['Hands', 'Waist', 'Legs', 'Feet', 'Ring 1', 'Ring 2', 'Trinket 1', 'Trinket 2'];
-  const drawGear = (b) => {
-    const host = $('#sp-gear');
-    if (!specWait(host, ['gear'], b)) return;
-    const gear = rowsOf('gear').filter((g) => g.build === b.id);
+  const drawGear = (b, D = DPS_DS) => {
+    const host = $(D.el + 'gear');
+    if (!specWait(host, [D.gear], b)) return;
+    const gear = rowsOf(D.gear).filter((g) => g.build === b.id);
     const by = new Map(gear.map((g) => [g.slot, g]));
     const twoHand = (g) => /Two-Hand|Staff|Polearm/i.test(arr(ttRow('i' + g.itemId)?.lines).map((l) => l[1]).join(' '));
     const sets = d3.rollup(gear, (v) => v.length, (g) => ttRow('i' + g.itemId)?.set || null);
@@ -2446,11 +2542,11 @@ export function startReport(dash, events) {
       const synth = /Synthetic/.test(g.item) && /^Trinket/.test(name);
       return tt(el('div', { class: 'item-picker-root', 'data-key': `${enc(b.id)},${enc(name)}` },
         el('div', { class: 'item-picker-icon-wrapper' },
-          g.ilvl ? mark(el('span', { class: 'item-picker-ilvl', text: String(g.ilvl) }), 'gear', 'ilvl', W) : null,
+          g.ilvl ? mark(el('span', { class: 'item-picker-ilvl', text: String(g.ilvl) }), D.gear, 'ilvl', W) : null,
           iconEl(iconUrl(g.icon) || iconUrl('slot_' + SLOT_ICON[name]))),
         el('div', { class: 'item-picker-labels-container' },
-          mark(el('a', { class: `item-picker-name item-quality-${q}`, role: 'button', text: g.item.replace(/ \(Phase 1\)$/, '') }), 'gear', 'item', W),
-          g.enchant ? mark(el('a', { class: 'item-picker-enchant', role: 'button', text: g.enchant }), 'gear', 'enchant', W) : null,
+          mark(el('a', { class: `item-picker-name item-quality-${q}`, role: 'button', text: g.item.replace(/ \(Phase 1\)$/, '') }), D.gear, 'item', W),
+          g.enchant ? mark(el('a', { class: 'item-picker-enchant', role: 'button', text: g.enchant }), D.gear, 'enchant', W) : null,
           set || use || synth ? el('span', { class: 'fv-gear-tags' }, set ? el('em', { class: 'set', text: `Set ${sets.get(set)}/${r.setSize ?? sets.get(set)}` }) : null, synth ? el('em', { text: use ? 'On use' : 'Stat trinket' }) : use ? el('em', { text: 'On use' }) : null) : null)),
       'g:' + name);
     };
@@ -2528,12 +2624,12 @@ export function startReport(dash, events) {
     const hit = BUFF_SUB.find(([re]) => re.test(s.item));
     return hit ? [hit[1], hit[2]] : [g === 'Self buffs' ? 'Raid Buffs' : 'Party Buffs', 'Other'];
   };
-  const drawSetup = (b) => {
-    const host = $('#sp-setup');
-    const bossEl = $('#sp-boss');
-    bossEl.replaceChildren(el('b', { text: 'Boss: ' }), mark(el('span', { text: b.bossText || 'Level 63 boss' }), 'builds', 'bossText', 'id=' + enc(b.id)), isEnc(b) ? ' (advantaged)' : '');
-    if (!specWait(host, ['setup'], b)) return;
-    const rows = rowsOf('setup').filter((s) => s.build === b.id).map((s) => ({ s, p: setupPlace(s) }));
+  const drawSetup = (b, D = DPS_DS) => {
+    const host = $(D.el + 'setup');
+    const bossEl = $(D.el + 'boss');
+    if (bossEl) bossEl.replaceChildren(el('b', { text: 'Boss: ' }), mark(el('span', { text: b.bossText || 'Level 63 boss' }), 'builds', 'bossText', 'id=' + enc(b.id)), isEnc(b) ? ' (advantaged)' : '');
+    if (!specWait(host, [D.setup], b)) return;
+    const rows = rowsOf(D.setup).filter((s) => s.build === b.id).map((s) => ({ s, p: setupPlace(s) }));
     const sections = d3.groups(rows, (x) => x.p[0]).sort((p, q) => SETUP_SECTIONS.indexOf(p[0]) - SETUP_SECTIONS.indexOf(q[0]));
     const pick = (s) => {
       const off = s.active === false;
@@ -2563,7 +2659,7 @@ export function startReport(dash, events) {
           el('div', { class: 'fv-picks' }, ...ys.sort((p, q) => (p.s.active === false) - (q.s.active === false) || (p.s.slotOrder || 0) - (q.s.slotOrder || 0)).map((y) => pick(y.s)))))));
     }));
     host.classList.toggle('hide-off', !!st.setupHide);
-    $('#sp-setup-hide').setAttribute('aria-pressed', String(!!st.setupHide));
+    $(D.el + 'setup-hide').setAttribute('aria-pressed', String(!!st.setupHide));
   };
 
   const drawTables = (b) => {
@@ -2593,7 +2689,7 @@ export function startReport(dash, events) {
     }
     return { src, list: tlCache.list };
   };
-  const nameColor = (k) => { const n = byKey('names')?.get(k); return n && n.color ? n.color : null; };
+  const nameColor = (k) => { const n = nameRow(k); return n && n.color ? n.color : null; };
   const fmtT = (t) => `${t < 0 ? '−' : ''}${Math.abs(t).toFixed(1)}s`;
 
   // The events view of the preset's sample fights. Its Typical, Unlucky and Lucky iterations are st.sample 0, 1 and
@@ -3411,16 +3507,332 @@ export function startReport(dash, events) {
   };
   $('#rank-upd').addEventListener('click', (e) => { e.preventDefault(); st.chUp = $('#rank-upd').dataset.id || null; showTab('changes'); });
 
+  // ---------- Tanking and Healing ----------
+  // Their pages (r-ranking, r-spec, r-races, r-method) are drawn from the open mode's datasets (curDs()). What differs
+  // between the two is here: what the picker at the top picks (a tank preset's weight, a healer's role), the score it
+  // gives, and the figures the Ranking can show instead. A figure marked low is better low.
+  const TANK_W = [['max_threat', 'Max threat', 'scoreMaxThreat', '⅓'], ['balanced', 'Balanced', 'scoreBalanced', '1'], ['max_survival', 'Max survival', 'scoreMaxSurvival', '3']];
+  const ROLE = {
+    tank: {
+      pickLabel: 'Weight', picks: TANK_W.map(([v, l]) => [v, l]), def: 'balanced', ownPick: (b) => b.preset,
+      scoreKey: (pick) => (TANK_W.find((w) => w[0] === pick) || TANK_W[1])[2],
+      metrics: [['score', 'Score'], ['safeDps', 'SafeDPS'], ['tps', 'TPS'], ['dtps', 'DTPS', 'low'], ['healingNeeded', 'Healing needed', 'low'], ['death', 'Deaths', 'low', '%']],
+      meanName: 'Six-boss mean', unit: '', what: 'tank',
+      note: 'Score, in raid DPS: 2 × SafeDPS (the DPS two players can do without passing the tank\'s threat) − w × 900 (one DPS slot) × the healing the tank needs ÷ one healer\'s HPS. w is ⅓ for Max threat, 1 for Balanced, 3 for Max survival. The mean over six bosses.',
+    },
+    heal: {
+      pickLabel: 'Role', picks: [['tank', 'Tank healer'], ['raid', 'Raid healer']], def: 'tank', ownPick: (b) => b.role,
+      scoreKey: () => 'carry',
+      metrics: [['score', 'Carry'], ['hps', 'HPS'], ['ehps', 'EHPS'], ['overheal', 'Overheal', 'low', '%'], ['ehPerMana', 'EH per mana'], ['manaLeft', 'Mana left'], ['deaths', 'Deaths', 'low', '%']],
+      meanName: 'Mean of the bosses', unit: '×', what: 'healer',
+      note: 'Carry: the most damage the healer keeps up with, as a multiple of the boss\'s own, before a death comes in over 2% of fights (a tank healer, on the tank) or 5% (a raid healer, on the raid). The mean over the bosses.',
+    },
+  };
+  const curRole = () => ROLE[st.mode];
+  // a preset's preset name (Max threat, ...) or role (Tank healer)
+  const roleName = (b) => b.presetName || b.roleName || '';
+  // the open mode's picks: the weight or role, the figure, the boss and which presets; each mode keeps its own
+  const rsel = () => {
+    const R = curRole(), o = mst();
+    if (!R.picks.some((p) => p[0] === o.pick)) o.pick = R.def;
+    if (!R.metrics.some((m) => m[0] === o.metric)) o.metric = 'score';
+    o.boss = o.boss || 'mean';
+    o.only = o.only === 'own' ? 'own' : 'all';
+    return o;
+  };
+  const mval = (r, m, pick) => (!r ? null : m === 'score' ? r[curRole().scoreKey(pick)] : m === 'deaths' ? (pick === 'raid' ? r.otherDied : r.tankDied) : r[m]);
+  const mse = (r, m, pick) => (!r ? null : m === 'score' ? r[curRole().scoreKey(pick) + 'Se'] : r[m + 'Se']);
+  const fmtV = (v, unit = '') => (v == null || Number.isNaN(+v) ? '—' : unit === '×' ? f2(v) + '×' : unit === '%' ? f1(v) + '%' : Math.abs(v) >= 100 ? f0(v) : f1(v));
+  const roleBuilds = () => rowsOf(curDs().builds) || [];
+  const roleBossRow = (bid, boss) => (rowsOf(curDs().bosses) || []).find((r) => r.build === bid && r.boss === boss);
+  const roleEncs = () => [...(rowsOf(curDs().encounters) || [])].sort((a, b) => a.order - b.order);
+  // A preset's own score: its weight's, or its role's.
+  const ownScore = (b) => [mval(b, 'score', curRole().ownPick(b)), mse(b, 'score', curRole().ownPick(b))];
+  const facIco = (f) => (iconMap() ? iconImg(f === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon', 'fv-ico') : null);
+
+  // Notes and method sections are HTML from our own markdown converter (tools/dps_report/md2html.py). We still copy
+  // only the plain tags across, and only web links.
+  const SAFE_TAGS = new Set(['P', 'UL', 'OL', 'LI', 'B', 'STRONG', 'I', 'EM', 'CODE', 'PRE', 'A', 'TABLE', 'THEAD', 'TBODY', 'TR', 'TH', 'TD', 'BR', 'H4', 'H5', 'H6', 'BLOCKQUOTE']);
+  const safeHtml = (html) => {
+    const copy = (n) => {
+      if (n.nodeType === 3) return document.createTextNode(n.nodeValue);
+      if (n.nodeType !== 1) return null;
+      const kids = [...n.childNodes].map(copy).filter(Boolean);
+      if (!SAFE_TAGS.has(n.tagName)) { const f = document.createDocumentFragment(); f.append(...kids); return f; }
+      const out = document.createElement(n.tagName.toLowerCase());
+      if (n.tagName === 'A') {
+        const h = n.getAttribute('href') || '';
+        if (/^https?:\/\//.test(h)) Object.assign(out, { href: h, target: '_blank', rel: 'noopener' });
+        else { const f = document.createDocumentFragment(); f.append(...kids); return f; }
+      }
+      out.append(...kids);
+      return n.tagName === 'TABLE' ? el('div', { class: 'fv-scroll' }, out) : out;
+    };
+    const body = new DOMParser().parseFromString(`<!doctype html><body>${String(html || '')}`, 'text/html').body;
+    return el('div', { class: 'fv-prose fv-md' }, ...[...body.childNodes].map(copy).filter(Boolean));
+  };
+
+  // a bar from 0 to v on a scale from lo to hi (a score can be below 0)
+  const barTrack = (v, lo, hi, color) => {
+    const X = (x) => (100 * (x - lo)) / (hi - lo || 1);
+    const t = el('div', { class: 'fv-track' + (lo < 0 ? ' fv-track-neg' : '') });
+    if (lo < 0) t.style.setProperty('--zero', X(0) + '%');
+    if (v != null) t.append(el('span', { class: 'fv-bar', style: `left:${X(Math.min(0, v))}%;width:${X(Math.max(0, v)) - X(Math.min(0, v))}%;background:${color}` }));
+    return t;
+  };
+  // A ranked list of presets (or races): rows of { b, v, se, name, sub, pos, id, click }, best first, rows with no
+  // value last. A row within the sim's luck of the one above it gets the ≈.
+  const roleList = (host, rows, metric, unit) => {
+    const vs = rows.map((x) => x.v).filter((v) => v != null);
+    const lo = Math.min(0, ...vs), hi = Math.max(0, ...vs);
+    host.replaceChildren(...rows.map((x, i) => {
+      const p = rows[i - 1];
+      const tie = i > 0 && x.se != null && p.se != null && isTie(x.v, x.se, p.v, p.se) ? tieText(p.label, x.v, x.se, p.v, p.se, metric) : null;
+      const row = el('button', { class: 'fv-row' + (i === 0 && rows.length > 1 ? ' top' : '') + (tie ? ' tied' : '') + (x.mine ? ' mine' : ''), 'data-id': x.id, type: 'button',
+        'aria-label': `${x.label}, ${fmtV(x.v, unit)} ${metric}${tie ? `. ${tie}` : ''}` },
+      el('span', { class: 'fv-row-pos' }, String(i + 1), tie ? tieMark(tie) : null),
+      x.icon || el('span', { class: 'fv-dot', style: `background:${x.color}` }),
+      el('span', { class: 'fv-row-main' }, el('span', { class: 'fv-row-name' }, ...x.name), el('span', { class: 'fv-row-sub' }, ...x.sub.filter(Boolean))),
+      el('span', { class: 'fv-row-end' }, el('span', { class: 'fv-row-val', text: x.v == null ? 'none' : fmtV(x.v, unit) }), el('span', { class: 'fv-row-gap', text: x.se != null && x.v != null ? `± ${fmtV(x.se, unit === '%' ? '' : unit)}` : x.gap || '' })),
+      barTrack(x.v, lo, hi, x.color));
+      if (x.click) row.addEventListener('click', (e) => { e.stopPropagation(); x.click(); });
+      return row;
+    }));
+  };
+  const byValue = (rows, low) => rows.sort((a, b) => (a.v == null) - (b.v == null) || (low ? a.v - b.v : b.v - a.v));
+  // the boss picker: the mean first, then each boss in the order of the raid, the ones out of the mean marked
+  const bossPicker = (host, value, onPick) => {
+    const items = [{ value: 'mean', text: curRole().meanName }, ...roleEncs().map((e) => ({ value: e.boss, text: e.name, end: e.scored === false ? 'not scored' : '' }))];
+    iconSelect(host, items, items.some((i) => i.value === value) ? value : 'mean', onPick);
+  };
+  // a fresh set of buttons when the mode changes, since the picks they set belong to the mode
+  const roleSeg = (host, name, opts, def) => {
+    if (host.dataset.mode !== st.mode) { host.dataset.mode = st.mode; host.dataset.built = ''; }
+    const key = `r_${name}_${st.mode}`;
+    st[key] = mst()[name] ?? def;
+    seg(host, key, opts, (v) => { mst()[name] = v; persist(); render(); });
+  };
+
+  const drawRoleRank = () => {
+    const R = curRole(), D = curDs(), o = rsel(), host = $('#r-rank');
+    roleSeg($('#r-pick'), 'pick', R.picks, R.def);
+    $('#r-pick-label').textContent = R.pickLabel;
+    $('#r-pick').setAttribute('aria-label', R.pickLabel);
+    roleSeg($('#r-metric'), 'metric', R.metrics.map(([v, l]) => [v, l]), 'score');
+    const pickName = R.picks.find((p) => p[0] === o.pick)[1];
+    $('#r-only-bar').hidden = st.mode !== 'tank';
+    // its second button names the weight, so it's rebuilt when the weight changes
+    if ($('#r-only').dataset.lbl !== pickName) { $('#r-only').dataset.lbl = pickName; $('#r-only').dataset.built = ''; }
+    if (st.mode === 'tank') roleSeg($('#r-only'), 'only', [['all', 'All'], ['own', `${pickName} only`]], 'all');
+    bossPicker($('#r-boss'), o.boss, (v) => { mst().boss = v; persist(); render(); });
+    const [, mlabel, low, munit] = R.metrics.find((m) => m[0] === o.metric);
+    const unit = o.metric === 'score' ? R.unit : munit || '';
+    const enc0 = roleEncs().find((e) => e.boss === o.boss);
+    $('#r-rank-title').textContent = `${o.metric === 'score' ? (st.mode === 'tank' ? `Score at ${pickName}` : `Carry as ${pickName.toLowerCase()}`) : mlabel}${o.boss === 'mean' ? '' : ` · ${enc0?.name || o.boss}`}`;
+    const note = $('#r-score-note');
+    const how = el('a', { href: '#' + st.mode + '/method', text: 'How it\'s scored ›' });
+    how.addEventListener('click', (e) => { e.preventDefault(); showTab('method'); });
+    note.replaceChildren(R.note, enc0 && enc0.scored === false ? ` ${enc0.name} is shown, not scored.` : '', ' ', how);
+    if (!waitOr(host, [D.builds, ...(o.boss === 'mean' ? [] : [D.bosses])])) return;
+    let builds = roleBuilds();
+    if (st.mode === 'heal') builds = builds.filter((b) => b.role === o.pick);
+    else if (o.only === 'own') builds = builds.filter((b) => b.preset === o.pick);
+    const rows = builds.map((b) => {
+      const r = o.boss === 'mean' ? b : roleBossRow(b.id, o.boss);
+      return { id: b.id, label: `${b.label} (${roleName(b)})`, v: mval(r, o.metric, o.pick), se: mse(r, o.metric, o.pick), color: ccol(b.class),
+        icon: specIco(b), name: [el('b', { text: b.label }), el('span', { text: '· ' + roleName(b) })],
+        sub: [tt(raceIco(b.raceIcon), `r:${b.race}:${b.class}`, false, b.id), el('em', { text: b.race }), facIco(b.faction)],
+        gap: r && o.metric === 'healingNeeded' && r.healingNeeded == null ? 'no healing saves it' : '', click: () => openSpec(b.id) };
+    });
+    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No preset here.' })); return; }
+    roleList(host, byValue(rows, !!low), mlabel, unit);
+    const top = rows.find((x) => x.v != null);
+    $('#r-tiles').replaceChildren(
+      tile(o.metric === 'score' ? `Top ${R.what}` : `Top for ${mlabel}`, top ? top.label : '—', top ? `${fmtV(top.v, unit)} ${o.metric === 'score' ? '' : mlabel}` : null, D.builds, null, null),
+      tile('Presets', String(roleBuilds().length), `${new Set(roleBuilds().map((b) => b.class)).size} classes`, D.builds, null, null),
+      tile('Bosses', String(roleEncs().filter((e) => e.scored !== false).length || '—'), roleEncs().some((e) => e.scored === false) ? `+ ${roleEncs().filter((e) => e.scored === false).map((e) => e.name).join(', ')}, not scored` : 'in the mean', D.encounters || D.builds, null, null));
+  };
+
+  // the open mode's preset picker, grouped by class
+  const rolePicker = (host, builds, value, onPick) => {
+    const items = CLASSES.flatMap((c) => {
+      const bs = builds.filter((b) => b.class === c);
+      return bs.length ? [{ header: c, color: ccol(c) }, ...bs.map((b) => ({ value: b.id, text: `${b.spec} · ${roleName(b)}`, label: `${b.label} · ${roleName(b)}`, icon: () => specIco(b, ''), end: fmtV(ownScore(b)[0], curRole().unit) }))] : [];
+    });
+    iconSelect(host, items, value, onPick, (it) => it.label);
+  };
+  const roleSpecId = () => {
+    const builds = roleBuilds(), o = mst();
+    if (!builds.some((b) => b.id === o.build)) o.build = (builds.find((b) => b.preset === 'balanced') || builds[0])?.id || null;
+    return o.build;
+  };
+  const drawRoleSpec = () => {
+    const R = curRole(), D = curDs();
+    if (!waitOr($('#rs-head'), [D.builds])) return;
+    const builds = roleBuilds();
+    const b = builds.find((x) => x.id === roleSpecId());
+    if (!b) return;
+    // a #tank/spec link, now that its preset is known, names it, in the same history entry
+    if (location.hash === `#${st.mode}/spec`) dash.setLink(linkName('spec'));
+    const W = 'id=' + enc(b.id);
+    rolePicker($('#rs-isel'), builds, b.id, (v) => openSpec(v));
+    const i = builds.indexOf(b);
+    $('#rs-prev').onclick = () => openSpec(builds[(i - 1 + builds.length) % builds.length].id);
+    $('#rs-next').onclick = () => openSpec(builds[(i + 1) % builds.length].id);
+    $('#rs-dot').style.background = ccol(b.class);
+    $('#rs-dot').hidden = !!iconMap();
+    $('#rs-specicon').replaceChildren(...(iconMap() ? [ringed(b.specIcon + ':l', 'fv-ico lg', ccol(b.class)) || specIco(b, 'lg')] : []));
+    const arts = rowsOf('treeart');
+    if (arts) {
+      const parts = String(b.talents).split('-').map((p) => [...p].reduce((a, c) => a + (+c || 0), 0));
+      const art = arts.find((a) => a.class === b.class && +a.tree === parts.indexOf(Math.max(...parts)));
+      $('#rs-art').style.backgroundImage = art && art.bg ? `url("${art.bg}")` : '';
+    }
+    $('#rs-title').textContent = b.label;
+    $('#rs-meta').replaceChildren(
+      tt(el('span', {}, ringed('classicon_' + b.class.toLowerCase(), 'fv-ico ring', ccol(b.class)), ` ${b.spec}`), 'c:' + b.class),
+      el('span', { class: 'fv-badge', text: roleName(b) }),
+      tt(el('span', {}, raceIco(b.raceIcon), ` ${b.race} `, facIco(b.faction)), `r:${b.race}:${b.class}`, true, b.id),
+      el('span', { text: b.treePoints }));
+    $('#rs-summary').textContent = b.summary || '';
+    $('#rs-summary').hidden = !b.summary;
+    const [sv, sse] = ownScore(b), peers = builds.filter((x) => R.ownPick(x) === R.ownPick(b));
+    const se = (v) => (v != null ? `± ${fmtV(v)} error` : null);
+    $('#rs-tiles').replaceChildren(...(st.mode === 'tank' ? [
+      tile('Score', fmtV(sv), el('span', {}, `at ${roleName(b)} (w ${TANK_W.find((w) => w[0] === b.preset)?.[3] ?? b.weight})`, sse != null ? ` · ± ${fmtV(sse)}` : ''), D.builds, R.scoreKey(b.preset), W),
+      tile('Rank', b.rank != null ? String(b.rank) : '—', `of ${peers.length} ${roleName(b)} presets`, D.builds, 'rank', W),
+      tile('SafeDPS', fmtV(b.safeDps), se(b.safeDpsSe), D.builds, 'safeDps', W),
+      tile('Healing needed', fmtV(b.healingNeeded), b.healingNone ? `HPS · no healing saves it on ${b.healingNone} boss${b.healingNone > 1 ? 'es' : ''}` : 'HPS', D.builds, 'healingNeeded', W),
+      tile('DTPS', fmtV(b.dtps), 'damage taken per second', D.builds, 'dtps', W),
+    ] : [
+      tile('Carry', fmtV(sv, '×'), `as ${roleName(b).toLowerCase()}`, D.builds, 'carry', W),
+      tile('Rank', b.rank != null ? String(b.rank) : '—', `of ${peers.length} ${roleName(b).toLowerCase()}s`, D.builds, 'rank', W),
+      tile('HPS', fmtV(b.hps), null, D.builds, 'hps', W),
+      tile('EHPS', fmtV(b.ehps), 'effective', D.builds, 'ehps', W),
+      tile('Mana left', fmtV(b.manaLeft), null, D.builds, 'manaLeft', W),
+    ]));
+    for (const h of ['#rs-head', '#rs-tiles']) $(h).dataset.build = b.id;
+    const safe = (fn, host) => { try { fn(); } catch (err) { console.error(err); if (host) { fail(host); host.dataset.build = b.id; } } };
+    safe(() => drawRoleBosses(b), $('#rs-bosstab'));
+    safe(() => drawTalents(b, D), $('#rs-tal'));
+    $('#rs-rot-card').hidden = !D.rotation;
+    if (D.rotation) safe(() => drawRotation(b, D), $('#rs-rotation'));
+    $('#rs-gear-card').hidden = !D.gear;
+    if (D.gear) safe(() => drawGear(b, D), $('#rs-gear'));
+    $('#rs-setup-card').hidden = !D.setup;
+    if (D.setup) safe(() => drawSetup(b, D), $('#rs-setup'));
+    $('#rs-notes-card').hidden = !D.notes;
+    if (D.notes) safe(() => drawRoleNotes(b), $('#rs-notes'));
+  };
+  $('#rs-setup-hide').addEventListener('click', (e) => { e.stopPropagation(); st.setupHide = !st.setupHide; persist(); $('#rs-setup').classList.toggle('hide-off', st.setupHide); e.currentTarget.setAttribute('aria-pressed', String(st.setupHide)); });
+  // The swipe on the banner, as on the DPS Specs page.
+  {
+    let sx = null, sy = null;
+    const head = $('#rs-head');
+    head.addEventListener('touchstart', (e) => { const t = e.touches[0]; sx = t.clientX; sy = t.clientY; }, { passive: true });
+    head.addEventListener('touchend', (e) => {
+      if (sx == null) return;
+      const t = e.changedTouches[0], dx = t.clientX - sx, dy = t.clientY - sy;
+      sx = null;
+      if (Math.abs(dx) > 60 && Math.abs(dy) < 45) (dx < 0 ? $('#rs-next') : $('#rs-prev')).click();
+    }, { passive: true });
+  }
+  // the preset on each boss, the mean last
+  const ROLE_COLS = {
+    tank: [['score', 'Score'], ['safeDps', 'SafeDPS'], ['tps', 'TPS'], ['dtps', 'DTPS'], ['healingNeeded', 'Healing needed'], ['death', 'Death %', '%'], ['biggestHit', 'Biggest hit'], ['tmi', 'TMI']],
+    heal: [['score', 'Carry', '×'], ['hps', 'HPS'], ['ehps', 'EHPS'], ['overheal', 'Overheal %', '%'], ['ehPerMana', 'EH per mana'], ['manaLeft', 'Mana left'], ['tankDied', 'Tank died %', '%'], ['otherDied', 'Other died %', '%']],
+  };
+  const drawRoleBosses = (b) => {
+    const D = curDs(), table = $('#rs-bosstab'), pick = curRole().ownPick(b);
+    const cols = ROLE_COLS[st.mode];
+    $('#rs-boss-note').textContent = st.mode === 'tank' ? `Score at ${roleName(b)}. Healing needed is in HPS; "none" where no healing saves the tank.` : `As ${roleName(b).toLowerCase()}.`;
+    if (!specWait(table.querySelector('tbody'), [D.bosses, D.encounters].filter(Boolean), b)) return;
+    table.querySelector('thead tr').replaceChildren(el('th', { class: 'first', text: 'Boss' }), ...cols.map(([, l]) => el('th', { class: 'n', text: l })));
+    const cell = (r, [k, , unit]) => {
+      const v = mval(r, k, pick), sev = k === 'score' || k === 'safeDps' || k === 'healingNeeded' ? mse(r, k, pick) : null;
+      return el('td', { class: 'n' }, v == null ? (k === 'healingNeeded' || k === 'score' ? 'none' : '—') : fmtV(v, unit), sev != null && v != null ? el('small', { class: 'fv-se', text: ` ±${fmtV(sev)}` }) : null);
+    };
+    const rows = roleEncs().map((e) => {
+      const r = roleBossRow(b.id, e.boss);
+      return el('tr', { class: e.scored === false ? 'fv-off' : '' }, el('td', { class: 'first' }, e.name, e.scored === false ? el('small', { class: 'fv-muted', text: ' not scored' }) : null), ...cols.map((c) => cell(r, c)));
+    });
+    rows.push(el('tr', { class: 'fv-total' }, el('td', { class: 'first', text: curRole().meanName }), ...cols.map((c) => cell(b, c))));
+    table.querySelector('tbody').replaceChildren(...rows);
+  };
+  // the class's notes: the preset's own (or its class's presets'), then the calls the user is asked to make
+  const drawRoleNotes = (b) => {
+    const D = curDs(), host = $('#rs-notes');
+    if (!specWait(host, [D.notes], b)) return;
+    const mine = (r) => r.class === b.class && (r.build ? r.build === b.id : Array.isArray(r.builds) ? r.builds.includes(b.id) : true);
+    const ns = rowsOf(D.notes).filter(mine);
+    const sec = (r) => el('section', { class: 'fv-note-sec' }, el('h6', { class: 'fv-note-title', text: r.title }), safeHtml(r.html));
+    const notes = ns.filter((r) => r.kind !== 'call'), calls = ns.filter((r) => r.kind === 'call');
+    host.replaceChildren(...notes.map(sec), ...(calls.length ? [el('h5', { class: 'fv-calls', text: 'Open calls' }), ...calls.map(sec)] : []),
+      ...(ns.length ? [] : [el('p', { class: 'fv-note', text: 'None.' })]));
+  };
+
+  const drawRoleRaces = () => {
+    const R = curRole(), D = curDs(), host = $('#r-race');
+    if (!waitOr(host, [D.builds, D.raceRows])) return;
+    const builds = roleBuilds(), b = builds.find((x) => x.id === roleSpecId());
+    if (!b) return;
+    rolePicker($('#r-race-isel'), builds, b.id, (v) => { mst().build = v; persist(); render(); });
+    const pick = R.ownPick(b), unit = R.unit;
+    $('#r-race-title').textContent = `${b.label} · ${roleName(b)} by race`;
+    $('#r-race-note').textContent = st.mode === 'tank' ? `Score at ${roleName(b)}, the mean over six bosses, on each race the class can be. The preset's own race is marked.` : `Carry as ${roleName(b).toLowerCase()}, on each race the class can be. The preset's own race is marked.`;
+    const rows = rowsOf(D.raceRows).filter((r) => r.build === b.id).map((r) => ({
+      id: r.race, label: r.race, v: mval(r, 'score', pick), se: mse(r, 'score', pick), color: ccol(b.class), mine: !!r.isPreset,
+      icon: tt(raceIco(r.raceIcon), `r:${r.race}:${b.class}`, false, b.id), name: [el('b', { text: r.race }), r.isPreset ? el('span', { class: 'fv-badge', text: 'preset' }) : null].filter(Boolean),
+      sub: st.mode === 'tank' ? [facIco(r.faction), el('em', { text: `SafeDPS ${fmtV(r.safeDps)} · healing ${fmtV(r.healingNeeded)} HPS` })] : [facIco(r.faction), el('em', { text: `HPS ${fmtV(r.hps)}` })],
+    }));
+    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No races simmed for this preset.' })); return; }
+    roleList(host, byValue(rows, false), st.mode === 'tank' ? 'score' : 'carry', unit);
+  };
+
+  const drawRoleMethod = () => {
+    const D = curDs(), host = $('#r-method-cards');
+    if (!waitOr(host, [D.method])) return;
+    const rows = [...rowsOf(D.method)].sort((a, b) => a.order - b.order);
+    if (host.dataset.sig === D.method) return;
+    host.dataset.sig = D.method;
+    host.replaceChildren(...rows.map((r) => el('div', { class: 'content-block fv-card' },
+      el('div', { class: 'content-block-header' }, el('h6', { class: 'content-block-title', text: r.title })), safeHtml(r.html))));
+  };
+  const openRoleSpec = (id) => {
+    const swap = mst().tab === 'spec' && mst().build !== id;
+    mst().build = id; persist(); showTab('spec'); $('.sim-ui').scrollTo({ top: 0 });
+    if (swap) for (const n of [$('#rs-head'), $('#rs-tiles')]) { n.classList.remove('fv-swap'); void n.offsetWidth; n.classList.add('fv-swap'); }
+  };
+  function renderRole() {
+    const D = curDs();
+    if (!later && statusOf(D.builds) === 'ok') (window.requestIdleCallback || setTimeout)(loadLater);
+    if (ttNode && !ttNode.isConnected) hideTT();
+    const tab = mst().tab;
+    try {
+      if (tab === 'ranking') drawRoleRank();
+      else if (tab === 'spec') drawRoleSpec();
+      else if (tab === 'races') drawRoleRaces();
+      else if (tab === 'method') drawRoleMethod();
+    } catch (err) { console.error(err); throw err; }
+  }
+
   // ---------- render ----------
   // What the first view doesn't need waits until it is drawn: tooltips, more icons and the tree art behind the
   // header. Then it loads while the reader looks at the page, so it's there by the first hover or tab change.
-  let later = false;
+  // Each mode loads only its own datasets and the common ones: Tanking never loads DPS's changes, nor DPS Tanking's
+  // tooltips.
+  const laterDone = new Set();
   const loadLater = () => {
-    if (later) return;
-    later = wantMore = true;
-    for (const id of ['tooltips', 'icons_more', 'treeart', 'changes']) dash.data(id);
+    if (laterDone.has(st.mode)) return;
+    laterDone.add(st.mode);
+    wantMore = true;
+    const own = st.mode === 'dps' ? ['changes'] : [curDs().tips];
+    for (const id of ['tooltips', 'icons_more', 'treeart', ...own]) if (id && id in dash.manifest) dash.data(id);
   };
+  let later = false;
   function render() {
+    later = laterDone.has(st.mode);
+    if (st.mode !== 'dps') { renderRole(); return; }
     asmOn = asmSel().length > 0 && asmReady();
     asmOverview();
     fillStatic();
@@ -3439,23 +3851,34 @@ export function startReport(dash, events) {
     } catch (err) { console.error(err); throw err; }
   }
 
-  // deep links: a tab name or a preset id
+  // deep links: a tab name or a preset id (DPS), or a mode with a tab or a preset (#tank, #tank/races, #tank/<preset>)
+  const PRESET_ID = /^[a-z]+__[\w-]+$/;
   const readLink = (h) => {
-    if (pages.includes(h)) st.tab = h;
+    const m = /^([a-z]+)(?:\/(.*))?$/.exec(h);
+    if (m && m[1] !== 'dps' && m[1] !== 'changes' && modeOf(m[1])) {
+      const tabs = modeTabs(modeOf(m[1])).map((t) => t[0]), rest = m[2] || '';
+      st.mode = m[1];
+      if (PRESET_ID.test(rest)) Object.assign(mst(), { build: rest, tab: tabs.includes('spec') ? 'spec' : tabs[0] });
+      else mst().tab = tabs.includes(rest) ? rest : tabs[0];
+      return true;
+    }
+    if (modeTabs(MODES[0]).some((t) => t[0] === h)) st.tab = h;
     else if (h.startsWith('changes/')) { st.tab = 'changes'; try { st.chUp = decodeURIComponent(h.slice(8)); } catch { st.chUp = null; } }
-    else if (/^[a-z]+__[\w-]+$/.test(h)) { st.build = h; st.tab = 'spec'; }
+    else if (PRESET_ID.test(h)) { st.build = h; st.tab = 'spec'; }
     else return false;
+    st.mode = 'dps';
     return true;
   };
   const h = location.hash.slice(1);
   if (!readLink(h)) dash.setLink(linkName(st.tab)); // the first entry names its view too, so Back can return to it
   // Back and Forward: open the view the entry names, where it was scrolled to (the top for one never left)
   dash.onLink((name, y) => {
-    if (!readLink(name)) st.tab = 'ranking';
-    showTab(st.tab, false);
+    if (!readLink(name)) { st.mode = 'dps'; st.tab = 'ranking'; }
+    showTab(curTab(), false);
     $('.sim-ui').scrollTo({ top: y || 0 });
   });
-  document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === st.tab)); b.classList.toggle('active', b.dataset.tab === st.tab); });
-  document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== st.tab; p.classList.toggle('active', p.dataset.page === st.tab); });
+  shownPage = pageOf(st.mode, curTab());
+  drawNav();
+  showPage();
   dash.onData(render);
 }

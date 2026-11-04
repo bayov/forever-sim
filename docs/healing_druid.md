@@ -11,7 +11,8 @@ Rejuvenation, Swiftmend, Tranquility, Wild Growth and Bloom were missing, and th
   has `SpellConfig.ExpectedHealing` for heals in flight and bound ranks.
 - **The agent** is `sim/druid/restoration` (registered in `sim/register_all.go`): a druid in caster form with no
   auto attacks, Innervate on itself unless its options name someone else.
-- **Tests**: `sim/raid_healing_druid_test.go` and `sim/raid_healing_druid_talents_test.go`, a test per heal and
+- **Tests**: `sim/raid_healing_druid_test.go`, `sim/raid_healing_druid_talents_test.go` and
+  `sim/raid_healing_druid_more_test.go` (plus `sim/druid/healing_ranks_test.go`, every rank against the client), a test per heal and
   per healing talent on small healing fights, most of them reading one iteration's debug log (each heal's base,
   healing power and caster multiplier, each cast's cost and cast time).
 - **Gear**: the Restoration druid synthetic set (`tools/database/forever_synthetic_items_druid_restoration.go`,
@@ -63,8 +64,8 @@ cooldown, so neither wastes the other.
 | 11 | 25297 | 60 | 2139 to 2525 (2332, +7.3 a level to 65, ±8.3%) | 840 | 3.5 s | 1.0 | missing |
 | 10 | 9889 | 56 | 1786 to 2107 (1946) | 755 | 3.5 s | 1.0 | missing |
 | 9 | 9888 | 50 | 1415 to 1676 (1546) | 630 | 3.5 s | 1.0 | missing |
-| 8 | 9758 | 44 | 1100 to 1311 (1205) | 520 | 3.5 s | 1.0 | missing |
-| 7 to 1 | 8903 … 5185 | 38 … 1 | 921 … 45 | 425 … 25 | 3.5 … 1.5 s | 1.0 … 0.429 | missing |
+| 8 | 9758 | 44 | 1095 to 1303 (1199) | 520 | 3.5 s | 1.0 | missing |
+| 7 to 1 | 8903 … 5185 | 38 … 1 | 921 … 47 | 425 … 25 | 3.5 … 1.5 s | 1.0 … 0.429 | missing |
 
 Forever's Healing Touch is below 1.12's (rank 11 2267 to 2677). Downranking: 5% of the coefficient a level past
 the rank's learn level plus 17, from the engine (`sim/core/downrank.go`, every ranked spell, heals included: user
@@ -76,9 +77,9 @@ the same way on their ticks (Rejuvenation rank 6 55%, Regrowth rank 4 35%); `Tes
 | Rank | Learned | Direct heal at 60 | HoT | Mana | Cast | Coefficients | Sim before |
 |---|---|---|---|---|---|---|---|
 | 9 | 60 | 965 to 1077 (1021 ±5.5%) | 142 every 3 s, 7 ticks (994) | 525 | 2 s | 0.286 direct, 0.071 a tick | missing |
-| 8 | 54 | 815 to 911 | 113 × 7 | 445 | 2 s | same | missing |
-| 7 | 48 | 659 to 738 | 88 × 7 | 370 | 2 s | same | missing |
-| 6 to 1 | 42 … 12 | 527 … 92 | 68 … 13 × 7 | 305 … 70 | 2 s | same | missing |
+| 8 | 54 | 800 to 894 | 113 × 7 | 445 | 2 s | same | missing |
+| 7 | 48 | 633 to 710 | 88 × 7 | 370 | 2 s | same | missing |
+| 6 to 1 | 42 … 12 | 527 … 96 | 68 … 13 × 7 | 305 … 70 | 2 s | same | missing |
 
 Forever made Regrowth much cheaper than 1.12 (rank 9 880 mana there) and its HoT smaller (152 a tick). The
 Season of Discovery rows (436937 and on, 1.12's values) aren't trained in Forever (no SkillLineAbility row).
@@ -101,8 +102,8 @@ Ahn'Qiraj book; SkillLineAbility has it with AcquireMethod 0).
 | Rank | Learned | Tick on each party member | Ticks | Mana | Cooldown | Coefficient a tick | Sim before |
 |---|---|---|---|---|---|---|---|
 | 4 | 60 | 285 (+1 a level to 66) | 5, every 2 s, channeled (10 s) | 925 | 5 min | 0.067 | missing |
-| 3 | 50 | 205 | 5 | 695 | 5 min | 0.067 | missing |
-| 2 | 40 | 136 | 5 | 505 | 5 min | 0.067 | missing |
+| 3 | 50 | 201 | 5 | 695 | 5 min | 0.067 | missing |
+| 2 | 40 | 133 | 5 | 505 | 5 min | 0.067 | missing |
 | 1 | 30 | 91 | 5 | 375 | 5 min | 0.067 | missing |
 
 An area aura on the caster's party (effect 35). 1.12's rank 4 was 294 a tick for 1375 mana.
@@ -128,6 +129,7 @@ less each tick, the last 6% under), which keeps the total. That's a call for the
 | Cooldown | 15 s (Idol of Swiftness and the Tier 1 5 piece 3 s each off) | same | missing |
 | Heal | "an amount equal to the full duration of the periodic effect of the consumed spell" | every tick of the HoT (Nature's Splendor's too) at its snapshot (base and healing power), with Swiftmend's own modifiers | missing |
 | Which HoT | not in the client | the one with the least time left (1.12 and later) | |
+| Takes the HoT | no: "Redesigned to not consume the Rejuvenation or Regrowth effect on the target" (news 24301515; development notes post 9, 2026-11-04); client 70755's tooltip still says "consumed", and the notes win (standards 37) | the HoT stays and ticks on, and still Blooms when it ends (gated under Forever) | consumed it (healer_mechanics-20261104-2) |
 
 Gift of Nature and Genesis name Swiftmend in their class masks (Gift of Nature's first effect, Genesis's second, an
 all-of-the-spell modifier), so the sim gives Swiftmend those and not the HoT's own (Improved Rejuvenation, the
@@ -137,7 +139,7 @@ periodic ones). That's a call below.
 
 An expiring Rejuvenation or Regrowth heals its target for 100% of our Spirit (50% if dispelled, which doesn't
 come up). The heal (1328622) has no class mask, so no healing talent reaches it. The sim heals at the HoT's last
-tick, not when it's recast, consumed by Swiftmend or ends with its target. It can crit (no "can't crit" bit).
+tick, not when it's recast or ends with its target. Swiftmend no longer takes it, so a HoT Swiftmend read still Blooms. It can crit (no "can't crit" bit).
 
 ### Nature's Swiftness (17116)
 
@@ -193,12 +195,13 @@ effect is on the presets where it was measured.
 
 1. **Wild Growth's shape.** Default: Wrath of the Lich King's front-loaded ticks (+6% to −6%, the same total).
    The alternative is 7 even ticks. It only moves overhealing.
-2. **Swiftmend's heal.** Default: every tick of the consumed HoT including Nature's Splendor's (5 Rejuvenation
+2. **Swiftmend's heal.** Default: every tick of the HoT it reads (which it no longer consumes) including Nature's Splendor's (5 Rejuvenation
    ticks, 9 Regrowth ticks), at the HoT's snapshot base and healing power, with Swiftmend's own modifiers (Gift of
    Nature, Genesis) in place of the HoT's. Alternatives: 1.12's fixed 12 sec of Rejuvenation or 18 of Regrowth (4
    and 6 ticks), and/or the HoT's own modifiers carried over (Improved Rejuvenation's 15% on a consumed
    Rejuvenation).
-3. **Which HoT Swiftmend takes** with both up: the one with less time left (1.12 and later). Untested in Forever.
+3. **Which HoT Swiftmend reads** with both up: the one with less time left (1.12 and later;
+   `TestDruidSwiftmendPicksLeastTimeLeft`). Untested in Forever. Now that the HoT stays, the pick only sets the size of the heal.
 4. **Improved Regrowth on the HoT's ticks.** Default: yes, the 50% crit is the spell's, and Forever's HoT ticks
    crit on the spell's crit chance (every druid HoT has the "periodic can crit" bit). The alternative is the direct
    heal only.
@@ -214,6 +217,61 @@ effect is on the presets where it was measured.
 9. **The raid sim's Restoration druid placeholder** (`sim/compsearch/presets.go`) keeps its old talents; whether
    it takes the bench's build is the raid sim's (H6).
 10. **Launching the spec page** (`ui/core/launched_sims.ts`) is the user's call; it stays unlaunched.
+11. **Swiftmend keeps the HoT** (healer_mechanics-20261104-2). Default: the notes' "does not consume" (news
+    24301515 and development notes post 9), though client 70755's tooltip still says "consumed"; standards 37 puts
+    the notes first. If a later client or a log shows the HoT taken, `hot.Cancel` comes back under Forever.
+12. **The tank preset's 85% line.** The best tank preset now casts Swiftmend and then Regrowth at the tank
+    whenever it is under 85% health, so Regrowth is close to its main heal and Healing Touch fills behind it.
+    That's what the bench rewards (+0.07 mean carry over the 40% line); a player would call it a Regrowth-heavy
+    tank rotation rather than an emergency line. Default: ship it.
+
+## The healer audit fixes (2026-11-04)
+
+From the healer auditors' first pass (`orchestration/audit/findings/healer_*.md`), on master after the
+orchestrator's engine fixes (raid damage share, school crit on direct heals, health clamp, the tank role's idle
+fillers), which moved every number below:
+
+- **healer_mechanics-20261104-2, fixed**: Swiftmend no longer consumes the Rejuvenation or Regrowth it reads
+  under Forever (news 24301515; development notes post 9). The HoT ticks on and still Blooms. `TestDruidSwiftmend`
+  now fails if the HoT is taken (every Rejuvenation must run its 5 ticks and tick after each Swiftmend).
+  With the HoT surviving, both rotations still want Swiftmend where it was (the emergency line first, then
+  Swiftmend at the tank when the hole covers it); a lower gate on the tank's Swiftmend line loses (0.6x -0.003,
+  0.3x -0.023 mean carry), a higher one is level (1.3x -0.002 to +0.002); the raid healer's gains from 0.6x.
+- **healer_mechanics-20261104-9, fixed**: the rank tables above had Healing Touch 8, Regrowth 7 and 8 and
+  Tranquility 2 and 3 grown past their max level; corrected to the client's (70755). The Genesis comment in
+  `sim/druid/talents.go` and the mechanics verdict that said the sim has no Swiftmend are corrected.
+- **healer_mechanics-20261104-10, druid part fixed**: new tests `sim/druid/healing_ranks_test.go` (every rank of
+  every heal against client 70755: ranges at 60, ticks, mana, cast times, coefficients) and
+  `sim/raid_healing_druid_more_test.go` (Swiftmend on Regrowth with Nature's Splendor's 9 ticks; the least-time-left
+  pick both ways; Gift of Nature and Genesis on Swiftmend; the Tier 1 set's 2, 4 and 5 pieces; Gift of Nature on
+  Tranquility and Wild Growth, Genesis on Wild Growth and not Tranquility; Nature's Splendor's 2 Regrowth ticks;
+  Rejuvenation and Tranquility tick crits and Improved Regrowth on Regrowth's ticks; Nature's Swiftness on
+  Regrowth and not Wild Growth; Moonglow leaving heal costs alone; Bloom on Regrowth). Still untested from that
+  list: Improved Tranquility's threat cut, Innervate's exact regen, Bloom crit.
+- **healer_fairness-20261104-2, fixed for the druid**: the tank preset's Healing Touch gate goes from 0.9x to 0.8x
+  of the heal's Expected Healing (0.6x, 0.7x, 0.75x, 0.85x and 1.0x all lower), its Regrowth gate from 1.0x to
+  0.7x, and its emergency line (Swiftmend, then Regrowth, at the tank) from 40% to 85% health. The line was the
+  big lever once the HoT survives Swiftmend: 40% 1.087, 50% 1.097, 60% 1.108, 80% 1.130, 85% 1.140, 90% 1.132,
+  95% 1.116 (with the 0.8x / 0.7x gates). The raid preset: emergency line 50% → 60% and Swiftmend's gate 1.0x →
+  0.6x at the most hurt (70% loses on Vaelastrasz).
+
+Healbench, 1,000 iterations, all seven boss files, default carry and fight length, built from this branch
+(`healers/fix-druid`) on master 0606686d3, carry:
+
+| Boss file | Tank, old preset | Tank, new | Raid, old preset | Raid, new |
+|---|---|---|---|---|
+| Magmadar | 1.731 | 1.867 | 1.922 | 2.002 |
+| Golemagg | 1.644 | 1.812 | 2.660 | 2.660 |
+| Ragnaros | 0.534 | 0.574 | 1.289 | 1.270 |
+| Onyxia | 1.183 | 1.195 | 0.984 | 0.997 |
+| Broodlord | 0.756 | 0.793 | 0.909 | 0.920 |
+| Vaelastrasz | 0.742 | 0.793 | 1.099 | 1.102 |
+| Chromaggus | 0.893 | 0.946 | 1.113 | 1.109 |
+| Mean | 1.069 | 1.140 | 1.425 | 1.437 |
+
+"Old preset" is the shipped rotation on this branch's sim (Swiftmend no longer consuming); both sides leave
+5,900 to 6,300 mana at the end on Onyxia, so neither is mana bound. The tables below are from before these fixes
+and the engine's, and are kept for the record.
 
 ## Tuning and the presets
 
@@ -222,7 +280,8 @@ effect is on the presets where it was measured.
 `05302001--5053025153113051`, Windshaper Skyborne, the synthetic set. Carry on `tools/healbench`, screened at 400 to
 500 iterations, the finalists and the table at 1,000, on master with client 70753 and the November 2 notes.
 
-- **Tank healer** (`apls/tank_healer.apl.json`, `req/druid_restoration.json`: `ht=11,8,6 low=0.4 ht_scale=0.9`):
+- **Tank healer** (`apls/tank_healer.apl.json`, `req/druid_restoration.json`: now `ht=11,8,6 ht_scale=0.8 rg_scale=0.7
+  low=0.85`, see above; the round below shipped `ht=11,8,6 low=0.4 ht_scale=0.9`):
   - Healing Touch bound at ranks 11, 8 and 6 beats 11, 10, 9 on every file (Onyxia 1.165 against 1.094,
     Vaelastrasz 0.695 against 0.617, 500 iterations) and 11, 8, 7 or 11, 8, 6, 5 (500: 1.159 and 1.147 on Onyxia).
   - The emergency line at 40% and Healing Touch at 90% of its heal against the 35% line at the full heal, at
@@ -235,7 +294,8 @@ effect is on the presets where it was measured.
     sec), all 51 in Restoration -0.08 on Onyxia, 46 with Genesis -0.06. Races: Night Elf and Tauren within 0.01
     of the Windshaper, the High Order the same as it (its Read Leyline never goes up, since Innervate is never
     on cooldown at 60% mana; the generator's `leyline` knob is there for a build that is mana bound).
-- **Raid healer** (`apls/raid_healer.apl.json`, `req/druid_restoration_raid.json`: `rj_scale=0.2 low=0.5`):
+- **Raid healer** (`apls/raid_healer.apl.json`, `req/druid_restoration_raid.json`: now `rj_scale=0.2 low=0.6
+  sm_scale=0.6`, see above; the round below shipped `rj_scale=0.2 low=0.5`):
   - Rejuvenation at the most hurt once it misses 20% of the HoT, with a 50% emergency line, against 30% and 35%,
     at 1,000: ahead on every file (Onyxia 0.711 / 0.679, Chromaggus 0.953 / 0.887, Ragnaros 1.240 / 1.181,
     Magmadar 1.605 / 1.456, Golemagg 2.021 / 1.877).
