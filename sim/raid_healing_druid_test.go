@@ -351,7 +351,7 @@ func TestDruidTranquility(t *testing.T) {
 	}
 }
 
-// Swiftmend can only be cast at a target with our Rejuvenation or Regrowth, consumes it, and heals its
+// Swiftmend can only be cast at a target with our Rejuvenation or Regrowth, leaves it on, and heals its
 // whole HoT: every tick it would heal (Nature's Splendor's too) at its snapshot, before the HoT's own
 // modifiers. 20% of base mana, 15 sec cooldown.
 func TestDruidSwiftmend(t *testing.T) {
@@ -378,16 +378,20 @@ func TestDruidSwiftmend(t *testing.T) {
 	if c := l.casts[smID][0]; c.cost < 200 || c.cost > 300 {
 		t.Errorf("Swiftmend cost %.1f, want 20%% of base mana", c.cost)
 	}
-	// Each Swiftmend took its Rejuvenation: Rejuvenation, cast whenever it's off, goes out again on the
-	// next global cooldown.
+	// Swiftmend leaves its Rejuvenation on (Forever; news 24301515, healer_mechanics-20261104-2): the
+	// HoT ticks on after each Swiftmend, and every Rejuvenation runs all 5 of its ticks.
+	ticks := l.ticks(rjTop)
 	for _, s := range l.casts[smID] {
-		recast := false
-		for _, r := range l.casts[rjTop] {
-			recast = recast || (r.at > s.at && r.at <= s.at+1.6)
+		ticked := false
+		for _, h := range ticks {
+			ticked = ticked || (h.at > s.at && h.at <= s.at+3.01)
 		}
-		if !recast {
-			t.Errorf("no Rejuvenation after the Swiftmend at %.1f: it left the HoT on", s.at)
+		if !ticked {
+			t.Errorf("no Rejuvenation tick after the Swiftmend at %.1f: it took the HoT", s.at)
 		}
+	}
+	if casts := len(l.casts[rjTop]); len(ticks) < 5*(casts-1) {
+		t.Errorf("%d Rejuvenation ticks from %d casts with Swiftmend, want 5 a cast", len(ticks), casts)
 	}
 
 	// With no HoT on the tank, no Swiftmend.

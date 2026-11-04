@@ -311,7 +311,7 @@ func applyHot(ranks []*DruidSpell, spell *core.Spell, target *core.Unit, sim *co
 }
 
 // bloomOnLastTick heals with Bloom when a Rejuvenation or Regrowth expires on its own, after its last
-// tick: not when it's recast, consumed by Swiftmend or ends with its target.
+// tick: not when it's recast, consumed by Swiftmend (outside Forever) or ends with its target.
 func (druid *Druid) bloomOnLastTick(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 	if druid.Bloom != nil && dot.TickCount >= dot.NumberOfTicks {
 		druid.Bloom.Cast(sim, target)
@@ -636,7 +636,7 @@ func (druid *Druid) wildGrowthTimer() *core.Timer {
 	return druid.wildGrowthCD
 }
 
-// swiftmendHot is the Rejuvenation or Regrowth of ours on target Swiftmend consumes: the one with the
+// swiftmendHot is the Rejuvenation or Regrowth of ours on target Swiftmend reads: the one with the
 // least time left (the 1.12 and later rule; the client leaves it to the server).
 func (druid *Druid) swiftmendHot(target *core.Unit) *core.Dot {
 	var best *core.Dot
@@ -653,7 +653,10 @@ func (druid *Druid) swiftmendHot(target *core.Unit) *core.Dot {
 // Swiftmend heals "for an amount equal to the full duration of the periodic effect of the consumed
 // spell" (the Forever tooltip): the HoT's tick as it snapshot (its base and healing power) times all
 // its ticks, Nature's Splendor's too, with Swiftmend's own modifiers (Gift of Nature and Genesis name it
-// in their class masks) in place of the HoT's.
+// in their class masks) in place of the HoT's. Under Forever it no longer consumes the HoT: "Redesigned
+// to not consume the Rejuvenation or Regrowth effect on the target" (news 24301515; dev notes post 9,
+// 2026-11-04), so the HoT ticks on and still Blooms when it ends. Client 70755's tooltip still says
+// "consumed"; the notes win (standards 37). Outside Forever it is consumed, as in 1.12.
 func (druid *Druid) registerSwiftmendSpell() {
 	if !druid.Talents.Swiftmend {
 		return
@@ -692,7 +695,9 @@ func (druid *Druid) registerSwiftmendSpell() {
 				return
 			}
 			heal := hot.SnapshotBaseDamage * float64(hot.NumberOfTicks)
-			hot.Cancel(sim)
+			if !druid.Env.IsForever() {
+				hot.Cancel(sim)
+			}
 			spell.CalcAndDealHealing(sim, target, heal, spell.OutcomeHealingCrit)
 		},
 		ExpectedHealing: func(target *core.Unit) float64 {
