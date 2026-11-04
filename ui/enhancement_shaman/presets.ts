@@ -1060,8 +1060,8 @@ export const EPPresets = [EPLevel30Leveling, ...EPLevelingGearPlan];
 // Shamanistic Focus, Elemental Weapons, Improved Lightning Shield 3/3 at 24, Stormstrike at 25,
 // Improved Ghost Wolf at 26 and 27 (required, for walking), Flurry 2, Improved Stormstrike and
 // Spirit Weapons, then Restoration at 33 to 40 (Tidal Focus and Mindfulness), Mental Quickness
-// at 41 and 42, Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48, Anticipation 3, Flurry
-// 5/5 at 51 to 53, Convection 3 and Guardian Totems 2. The rotations are the audit's
+// at 41 and 42, Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48, Anticipation 3 at 49
+// to 51, Flurry 5/5 at 52 to 54 and Convection 5 at 55 to 59. The rotations are the audit's
 // "Audited 10" and so on, with the rotation search's "Searched 1", "Searched 20" and so on at 1
 // to 4, 20 to 26 and 40 to 46, where they were faster. All of them on Rockbiter Weapon.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
