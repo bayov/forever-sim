@@ -1,0 +1,10 @@
+A=druid_bear_max_threat.json B=zanza_lung_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3093     3106    12.5    1.0      0.0      -13
+chromaggus        2665     2672     7.4    0.5      0.0       -7
+golemagg          3104     3110     6.0    0.4      0.0       -5
+magmadar          3175     3182     6.6    0.3      0.0       -6
+onyxia            3036     3050    13.9    0.6      0.0       -8
+ragnaros          1179     1248    68.3    7.4      0.0      -65
+vaelastrasz       3656     3668    11.5    0.7      0.0      -27
+scoring_mean                        9.6    0.3

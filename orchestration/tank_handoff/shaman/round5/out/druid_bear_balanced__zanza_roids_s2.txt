@@ -1,0 +1,10 @@
+A=druid_bear_balanced.json B=zanza_roids_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2124     2176    51.6    0.1     25.8        0
+chromaggus        1174     1225    50.9    0.1     25.5        0
+golemagg          2343     2395    51.2    0.1     25.6        0
+magmadar          2468     2520    51.4    0.1     25.7        0
+onyxia            1906     1958    52.1    0.1     26.1        0
+ragnaros         -3130    -3079    51.5    0.1     25.7        0
+vaelastrasz       2687     2740    53.2    0.2     26.6        0
+scoring_mean                       51.7    0.1

@@ -1,0 +1,10 @@
+A=druid_bear_balanced.json B=stout_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2114     2113    -0.7    0.1     -0.3        0
+chromaggus        1154     1154    -0.4    0.1     -0.2        0
+golemagg          2348     2348    -0.2    0.2     -0.1        0
+magmadar          2478     2477    -0.5    0.1     -0.3        0
+onyxia            1917     1916    -0.6    0.1     -0.3        0
+ragnaros         -3135    -3136    -0.4    0.1     -0.2        0
+vaelastrasz       2743     2742    -0.5    0.1     -0.3        0
+scoring_mean                       -0.5    0.0

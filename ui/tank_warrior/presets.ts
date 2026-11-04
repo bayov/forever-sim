@@ -108,11 +108,11 @@ export const TalentsP1Prot = PresetUtils.makePresetTalents('Protection', SavedTa
 // The talent searches' builds (docs/tank_warrior.md, Presets), on the six scoring encounters.
 // Balanced and Max survival (both searches end on the same talents): Deflection 5; Cruelty, Unbridled Wrath and Enrage 5/5; Protection 31 with Shield Slam, no Last Stand or Vanguard.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60 Protection', SavedTalents.create({ talentsString: '05-05050005-250530020310001351' }));
-// Max threat: Deflection 4, Blood Craze 1, Anticipation 3, Improved Sunder Armor 3 (Improved Heroic Strike went once
-// Unbridled Wrath stopped proccing on Heroic Strike).
+// Max threat: Deflection 5, no Blood Craze (round 5, on the full raid consumables), Anticipation 3, Improved Sunder
+// Armor 3 (Improved Heroic Strike went once Unbridled Wrath stopped proccing on Heroic Strike).
 export const TalentsLevel60MaxThreat = PresetUtils.makePresetTalents(
 	'Level 60 Protection (Max threat)',
-	SavedTalents.create({ talentsString: '04-05050015-250330020330001351' }),
+	SavedTalents.create({ talentsString: '05-05050005-250330020330001351' }),
 );
 export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60MaxThreat, TalentsP1Prot],
@@ -303,7 +303,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation, Dirge\'s chops and the Greater Stoneshield Potion, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
+	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation (but Sunder Armor as filler from 30 Rage, not 25), Dirge\'s chops and the Greater Stoneshield Potion, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,

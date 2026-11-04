@@ -227,9 +227,8 @@ Agility, 125 Strength, 105 Defense, 3% hit (after tank_gear-20261104-4: the ches
   then blocked every explosive in a form. The client allows the Goblin Sapper Charge and the Goblin Land Mine
   in Bear and Dire Bear Form (their spells lack NOT_SHAPESHIFTED; tank_mechanics-15), so they are re-run
   under Consumables, round 4. Dense Dynamite, Solid Dynamite and the Iron and Thorium Grenades carry the flag
-  and still can't be used in a form. Three Phase 1 consumables no tank
-  request carries would gain (call 10): a Blasted Lands buff (Ground Scorpok Assay +42 / +53 / +112, R.O.I.D.S.
-  +52 / +50 / +47, Lung Juice Cocktail +9 / +36 / +127) and Rumsey Rum Black Label (+6 / +21 / +75).
+  and still can't be used in a form. The Blasted Lands buffs and Rumsey Rum
+  Black Label, left out then, are round 5's.
 - **Consumables, round 4** (2026-11-04, branch bear-explosives on 22a7d79; abtest, 10,000 iterations on
   seeds 1 and 2, the six-boss mean at each preset's own weight, Max threat / Balanced / Max survival). The bear
   already has Engineering (with Blacksmithing), so the sapper displaces nothing. **The Goblin Sapper Charge
@@ -240,6 +239,34 @@ Agility, 125 Strength, 105 Defense, 3% hit (after tank_gear-20261104-4: the ches
   Dark Bomb the same to 0.1, the EZ-Thro Thorium Grenade -5.0 / -5.1 / -18.0 (seed 2 -4.6 / -9.9 / -15.1).
   A filler is thrown about 2.4 times a fight for about 1,375 damage, which doesn't pay for the GCDs it takes.
   So every preset takes the sapper and no filler.
+- **Consumables, round 5** (2026-11-04, branch warden-r5 on tank-fixes4; the full raid treatment, standards 11:
+  the natural flasks are legitimate in a Level 60 zone, `naturalFlaskZone` on in every request, and the tanks
+  now take the Zanza slot and the rum as the DPS presets do; the old call 10, which left them out for every tank,
+  is gone with that ruling). abtest, 10,000 iterations on seeds 1 / 2, the six-boss mean at each preset's own
+  weight, Max threat / Balanced / Max survival, B minus A. Raw output: `orchestration/tank_handoff/shaman/round5/`
+  (`out/` the single slots, `out3/` and `out4/` the combinations, `out5/` before and after).
+  - **Flask**: the Flask of Natural Precision (+5% expertise) over Natural Accuracy: +287.3 +- 2.9 / +264.7 +-
+    5.4 / +214.9 +- 15.1 (seed 2 +284.3 +- 2.8 / +265.7 +- 5.2 / +206.4 +- 13.9). Natural Aggression -212 /
+    -176 / -122 (seed 2 -207 / -176 / -167) and Natural Swiftness -235 / -203 / -176 lose.
+  - **Zanza slot** (one of Spirit of Zanza, Swiftness of Zanza, Sheen of Zanza or a Blasted Lands buff), alone
+    over none: Spirit +18 / +72 / +240, R.O.I.D.S. +53.5 / +52 / +49, Ground Scorpok Assay +48 / +69 / +152 (seed
+    2 +46 / +65 / +105), Lung Juice Cocktail +10 / +37 / +123; Cerebral Cortex Compound, Gizzard Gum, Sheen and
+    Swiftness about 0 (-0.3 to +0.7). In the combination, against each preset's pick: Max threat takes **R.O.I.D.S.** (Spirit
+    -41.4 +- 0.3, Scorpok -8.3 +- 1.3, Lung -49.7); Balanced **Spirit of Zanza** (Scorpok -1.3 +- 3.1 / +0.2 +-
+    3.4, a tie that keeps Spirit; R.O.I.D.S. -12, Lung -33); Max survival **Spirit** (Scorpok -93 / -89, Lung
+    -110, R.O.I.D.S. -178).
+  - **Rumsey Rum Black Label** +5.9 +- 0.2 / +22.5 +- 0.8 / +76.4 +- 2.5 (seed 2 +6.1 / +23.8 / +72.5); Kreeg's
+    Stout Beatdown -0.5.
+  - **Greater Stoneshield Potion, re-run.** Round 3's -618 / -550 / -471 was unfair: `autocastOtherCooldowns`
+    never drinks a defensive potion in a tank score (`HpPercentForDefensives` is 0), so the variant lost the
+    Mighty Rage Potion and drank nothing. With an explicit potion action before the autocast line ("Greater
+    Stoneshield Potion on cooldown") on top of the rest of round 5: -222.7 +- 3.8 / -90.2 +- 5.4 / **+200.6 +-
+    12.5** (seed 2 -214.2 / -78.7 / +215.0 +- 13.0). Max survival takes it (and its APL the potion line); the
+    other two keep the Mighty Rage Potion.
+  - **Before and after** (round 4's request against round 5's, paired): Max threat 3,121.5 → 3,473.7 (+352.1 +-
+    3.0; seed 2 3,117.7 → 3,466.7, +349.1 +- 2.9), Balanced 2,125.7 → 2,481.2 (+355.7 +- 5.2; seed 2 2,117.0 →
+    2,474.5, +357.5 +- 5.5), Max survival -500.7 → 221.5 (+722.1 +- 12.7; seed 2 -477.2 → 238.5, +715.9 +-
+    14.0).
 
 ## Presets (round 3, 2026-11-04: unmultiplied mana-gain threat, disjoint seeds)
 
@@ -259,6 +286,10 @@ indexes the abtest files; `rotopt/` the knob and talent searches; `tankbench/` t
 - **Balanced**: the rotation holds (Roar refreshed under 5 sec looked +5.7 at 3,000 on seed 1 and was -1.6 +- 5.4
   and -1.4 +- 4.9 on seeds 2 and 3). Superior Deflection on the wrist.
 - **Max survival**: the rotation holds. Superior Deflection on the wrist, Dirge's chops for the Dumpling.
+- **Every preset, round 5**: the Flask of Natural Precision and Rumsey Rum Black Label; R.O.I.D.S. at Max threat,
+  Spirit of Zanza at Balanced and Max survival; the Greater Stoneshield Potion (with its APL's potion action) at
+  Max survival (Gear, Consumables, round 5: +352 / +356 / +722 on seed 1, +349 / +358 / +716 on seed 2). The
+  tankbench table below is round 5's.
 - **Every preset, round 4**: the Goblin Sapper Charge and no filler explosive (Consumables, round 4: +292 / +295 /
   +184 on seed 1, +299 / +288 / +227 on seed 2). The tables below are round 3's builds with it; the
   before-and-after table is without it.
@@ -288,16 +319,18 @@ indexes the abtest files; `rotopt/` the knob and talent searches; `tankbench/` t
   | w=1 | -127.3 +- 9.4 | **own** | -91.9 +- 9.0 |
   | w=3 | -920.1 +- 26.3 | -125.8 +- 26.5 | **own** |
 
-### Tankbench (round 3, with round 4's Goblin Sapper Charge)
+### Tankbench (round 5: round 3's builds, round 4's sapper, round 5's consumables)
 
 `tools/tankbench`, 1,000 iterations, all seven encounters (`orchestration/audit/ref/tank_bench/summary.tsv`).
 Mean of the six scoring encounters:
 
 | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Score at its own weight |
 |---|---|---|---|---|---|---|
-| Max threat | 1,733 | 665 | 1,851 | 611 | 630 | **3,132.0** |
-| Balanced | 1,657 | 634 | 1,752 | 586 | 498 | **2,125.3** |
-| Max survival | 1,498 | 565 | 1,623 | 585 | 463 | **-515.7** |
+| Max threat | 1,874 | 720 | 2,024 | 610 | 614 | **3,491.8** |
+| Balanced | 1,759 | 674 | 1,883 | 584 | 456 | **2,498.5** |
+| Max survival | 1,528 | 583 | 1,649 | 544 | 372 | **237.5** |
+
+Round 4 (before round 5's consumables): 3,132.0 / 2,125.3 / -515.7.
 
 The bear's DPS is about 635 at Balanced with the sapper (610 without), down from about 755 in round 1: the white hits' flat 11.25 Rage is less
 than Classic's Rage from damage gave at this gear, and the boss parries and blocks (round 2). Per encounter:
@@ -400,9 +433,6 @@ Each with the default the sim uses now.
    pull). Its armor cut lands mid-fight under a Rage threshold. Default: as the search found.
 9. **Max survival's race**: the Tauren ties the Night Elf (round 3: -19.8 +- 11.3 at 10,000 on a disjoint seed;
    round 2: -1.8 +- 11.8). Default: Night Elf, as the other two presets.
-10. **Consumables no tank carries.** A Blasted Lands buff (Phase 1 quest items, standards 8) would add to every
-   preset: Ground Scorpok Assay +42 / +53 / +112, R.O.I.D.S. +52 / +50 / +47, Lung Juice Cocktail +9 / +36 / +127
-   (Max threat / Balanced / Max survival, 3,000), and Rumsey Rum Black Label +6 / +21 / +75. The DPS presets
-   take Blasted Lands buffs (standards 11, the full raid treatment); none of the four tank requests does, so
-   the bear's presets leave them out to stay comparable with the other tanks. Default: none, for every tank
-   alike; taking them is a call for all four at once.
+10. *(Removed 2026-11-04.)* It left the Blasted Lands buffs and the rum out of every tank request. The standards
+   item 11 ruling of 2026-11-04 gives the tanks the full raid treatment (natural flasks included), so the bear takes
+   them (Gear, Consumables, round 5).

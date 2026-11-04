@@ -72,7 +72,7 @@
               ]
             },
             "consumes": {
-              "flask": "FlaskOfNaturalAccuracy",
+              "flask": "FlaskOfNaturalPrecision",
               "food": "FoodSmokedDesertDumpling",
               "agilityElixir": "ElixirOfTheMongoose",
               "armorElixir": "ElixirOfThePhalanx",
@@ -82,7 +82,9 @@
               "mainHandImbue": "DenseWeightstone",
               "defaultPotion": "MightyRagePotion",
               "dragonBreathChili": true,
-              "sapperExplosive": "SapperGoblinSapper"
+              "sapperExplosive": "SapperGoblinSapper",
+              "alcohol": "AlcoholRumseyRumBlackLabel",
+              "zanzaBuff": "ROIDS"
             },
             "feralTankDruid": {
               "options": {

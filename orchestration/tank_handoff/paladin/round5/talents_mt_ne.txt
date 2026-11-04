@@ -1,0 +1,31 @@
+tank encounters (their index takes the fight length's place, scored as their mean): tools/encounters/magmadar.json,tools/encounters/golemagg.json,tools/encounters/onyxia.json,tools/encounters/broodlord.json,tools/encounters/vaelastrasz.json,tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 0.3333333333333333 x 900 x healing needed at 5% deaths / 258, in raid DPS
+start 05005-25300102413001531-5023: 3280.2(7.4) mana 2507(5) tto 363s
+  divineIntellect-1 sacredDuty+1: 3280.3(7.4) mana 2446(5) tto 347s (+0.1, noise 0.4)
+  divineIntellect-1 guardiansFavor+1: 3280.3(7.4) mana 2446(5) tto 347s (+0.1, noise 0.4)
+  divineIntellect-2 sacredDuty+2: 3279.7(7.4) mana 2407(5) tto 337s (-0.4, noise 0.6)
+  divineIntellect-2 guardiansFavor+2: 3279.7(7.4) mana 2407(5) tto 337s (-0.5, noise 0.6)
+  toughness-1 anticipation+1: 3276.6(7.4) mana 2503(5) tto 364s (-3.6, noise 3.1)
+  divineIntellect+1 toughness-1: 3275.6(7.5) mana 2566(5) tto 380s (-4.6, noise 0.7)
+  sacredDuty+1 toughness-1: 3275.3(7.6) mana 2507(5) tto 363s (-4.9, noise 0.4)
+  guardiansFavor+1 toughness-1: 3275.3(7.6) mana 2507(5) tto 363s (-4.9, noise 0.4)
+  refined at 3000 iterations, current 3281.5(4.3) mana 2509(3) tto 363s
+  divineIntellect-1 guardiansFavor+1: 3281.5(4.3) mana 2450(3) tto 347s (+0.1, noise 0.2)
+  divineIntellect-1 sacredDuty+1: 3281.5(4.3) mana 2450(3) tto 347s (+0.1, noise 0.2)
+  divineIntellect-2 sacredDuty+2: 3281.2(4.3) mana 2411(3) tto 337s (-0.3, noise 0.3)
+  divineIntellect-2 guardiansFavor+2: 3281.2(4.3) mana 2411(3) tto 337s (-0.3, noise 0.4)
+  toughness-1 anticipation+1: 3279.6(4.3) mana 2505(3) tto 363s (-1.8, noise 1.6)
+  sacredDuty+1 toughness-1: 3276.8(4.3) mana 2509(3) tto 363s (-4.7, noise 0.3)
+  guardiansFavor+1 toughness-1: 3276.8(4.3) mana 2509(3) tto 363s (-4.7, noise 0.3)
+  divineIntellect+1 toughness-1: 3276.8(4.3) mana 2568(3) tto 381s (-4.7, noise 0.4)
+  deflection-5 benediction+5: 3238.7(4.3) mana 2826(2) tto 758s (-42.8, noise 3.2)
+  holyConduit+1 conviction-1: 3231.7(4.2) mana 2871(2) tto 842s (-49.7, noise 0.7)
+  improvedSeals-3 sanctifiedJudgement+3: 3230.5(4.2) mana 2865(2) tto 870s (-51.0, noise 0.3)
+  holyConduit+1 improvedJudgement-1: 3224.3(4.2) mana 2884(2) tto 873s (-57.1, noise 3.3)
+  holyConduit+2 improvedJudgement-2: 3179.0(4.2) mana 3065(1) tto 1454s (-102.4, noise 3.3)
+  holyConduit+2 conviction-2: 3178.4(4.1) mana 3057(1) tto 1404s (-103.0, noise 0.9)
+  improvedSeals-5 benediction+5: 3172.2(4.2) mana 2826(2) tto 758s (-109.2, noise 0.3)
+  conviction-3 sanctifiedJudgement+3: 3151.7(4.1) mana 2864(2) tto 870s (-129.7, noise 1.1)
+[0 1 2 3 4 5]s: 3281.5(4.3) mana 2509(3) tto 363s
+  talents 05005-25300102413001531-5023
+  sim runs 1236

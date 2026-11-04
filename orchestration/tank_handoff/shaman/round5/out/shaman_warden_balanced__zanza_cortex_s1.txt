@@ -1,0 +1,10 @@
+A=shaman_warden_balanced.json B=zanza_cortex_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord           35       62    27.1    5.9     13.9        0
+chromaggus        -303     -248    55.0    7.0     28.1        0
+golemagg          1392     1420    28.9    2.7     14.3       -0
+magmadar          1688     1717    28.9    2.0     14.0       -0
+onyxia             746      775    29.0    3.4     14.5       -0
+ragnaros         -3545    -3508    37.0   20.0     18.5        0
+vaelastrasz       2105     2137    32.0    0.2     16.0        0
+scoring_mean                       33.5    1.7

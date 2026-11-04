@@ -1,0 +1,10 @@
+A=shaman_warden_max_threat.json B=ap_firewater_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2111     2109    -2.2    0.0     -1.1        0
+chromaggus        1801     1799    -2.1    0.0     -1.1        0
+golemagg          2675     2673    -2.1    0.0     -1.1        0
+magmadar          2825     2822    -2.2    0.0     -1.1        0
+onyxia            2631     2629    -2.4    0.0     -1.2        0
+ragnaros           341      339    -2.0    0.0     -1.0        0
+vaelastrasz       3458     3456    -2.5    0.0     -1.2        0
+scoring_mean                       -2.2    0.0

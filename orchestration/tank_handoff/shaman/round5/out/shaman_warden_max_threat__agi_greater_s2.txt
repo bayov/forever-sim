@@ -1,0 +1,10 @@
+A=shaman_warden_max_threat.json B=agi_greater_max_threat.json preset=max_threat iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2088     2038   -49.9    7.1    -23.8        2
+chromaggus        1806     1755   -51.4    3.2    -23.1        5
+golemagg          2669     2619   -50.2    2.3    -24.8        1
+magmadar          2822     2771   -51.4    2.2    -24.2        3
+onyxia            2634     2587   -47.7    3.1    -24.0       -0
+ragnaros           311      263   -48.5   19.8    -21.9        5
+vaelastrasz       3460     3408   -52.5    2.6    -27.3       -5
+scoring_mean                      -50.5    1.5

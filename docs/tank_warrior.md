@@ -294,7 +294,29 @@ Own-weight six-boss mean, 10,000 iterations, before (the first pass's requests) 
 At 1,000 iterations (`summary.tsv` rows: `round4/summary_warrior_rows.tsv`): 4,644.5 / 3,867.3 / 2,138.7. The UI
 presets carry the same: `ui/tank_warrior/presets.ts` (Max threat its own consumables and encounter preset, for
 R.O.I.D.S.) and the sapper action in `ui/tank_warrior/apls/level60_*.apl.json`, which are the requests' rotations. As
-in the first pass, talents and knobs were not re-searched on the new consumables.
+in the first pass, talents and knobs were not re-searched on the new consumables; round 5 (next) did.
+
+### Round 5: talents and knobs on the full raid set (2026-11-04, tank-fixes6)
+
+Round 3's search on round 4's requests: `rotopt -template warrior_tank -tank <preset>` on the six scoring bosses at the
+preset's own weight, talents then knobs (1,000 a candidate, 3,000 to confirm), again until neither moved, and every
+candidate at 10,000 on seeds 1 and 2 (`abtest -preset <p> -seed N`, paired, disjoint seeds). The template now writes
+round 4's Goblin Sapper Charge line after the trinkets, so its APLs are the UI's byte for byte. Two changes beat twice
+their error on both seeds:
+
+| Preset | Change | 10,000, seed 1 | 10,000, seed 2 |
+|---|---|---|---|
+| Max threat | Talents `05-05050005-250330020330001351`: Deflection 5 instead of Blood Craze 1 | 4,636.8 → **4,644.8** (+8.1 ± 2.3) | 4,645.5 → **4,653.0** (+7.4 ± 2.2) |
+| Balanced | Sunder Armor as the filler from 25 Rage instead of 30 (`sunderRage=25`) | 3,851.5 → **3,856.0** (+4.2 ± 1.0) | 3,850.5 → **3,854.3** (+4.0 ± 1.1) |
+| Max survival | none | 2,141.2 | 2,140.0 |
+
+Not adopted (10,000, seed 1 / seed 2, against the round 4 request): Max survival's Sunder filler at 25 (+7.1 ± 2.5 /
++4.6 ± 2.8: under twice its error on seed 2), Max threat's talents with Shield Wall at 12 s (+5.6 / +3.0 ± 2.4, below
+the talents alone), Max threat's talents at Balanced (-0.6 / +1.1 ± 3.8; with Sunder at 25 +1.8 / +2.9) and at Max
+survival (-10.1 / -22.3 ± 8). The knob searches moved nothing else; Balanced's second talent search (with Sunder at 25)
+kept its talents. At 1,000 iterations (`tankbench`, default seed) the presets bench **4,651.7 / 3,880.3 / 2,138.7**
+(Max survival unchanged). Raw output, scripts and the A/B index: `orchestration/tank_handoff/warrior/round5/`
+(`README.txt`, `ab_summary.txt`).
 
 ## Presets (2026-11-04, round 2; round 3 on top)
 
@@ -359,19 +381,20 @@ knob searches alternated until neither moved. Raw output: `orchestration/tank_ha
 
 | Preset | Talents | Knobs that differ from Balanced | Gear | Race | Consumables beyond the shared set (round 4) | Score at own weight (tankbench, 1,000) |
 |---|---|---|---|---|---|---|
-| Max threat (w = 1/3) | `04-05050015-250330020330001351`: Deflection 4, Blood Craze 1, Anticipation 3, Improved Sunder Armor 3 | `tc=0` (no Thunder Clap), `hsRage=30`, `revengeFirst=1`, `sunderRage=15`, `wallAt=13` (round 3; was 12) | attack power on-use (991018) | Undead | R.O.I.D.S., Desert Dumpling, Mighty Rage Potion | 3,700.2 (round 3); 4,644.5 (round 4, full raid set) |
-| Balanced (w = 1, default) | `05-05050005-250530020310001351`: Deflection 5; Cruelty, Unbridled Wrath, Enrage 5/5; Protection 31 with Shield Slam, Improved Sunder Armor 1, no Last Stand or Vanguard | (the base) | attack power on-use (991018) | Undead | Spirit of Zanza, Desert Dumpling, Mighty Rage Potion | 3,008.5; 3,867.3 (round 4) |
-| Max survival (w = 3) | Balanced's (its own search ends there) | `trinketAt=35` (the armor trinket held for the last 35 s) | armor on-use (990617), `level60_phase1_synthetic_armor_trinket.gear.json` | Undead | Spirit of Zanza, Dirge's chops, Greater Stoneshield Potion | 1,205.0; 2,138.7 (round 4) |
+| Max threat (w = 1/3) | `05-05050005-250330020330001351` (round 5; was `04-05050015-...`, Deflection 4 and Blood Craze 1): Deflection 5, Anticipation 3, Improved Sunder Armor 3 | `tc=0` (no Thunder Clap), `hsRage=30`, `revengeFirst=1`, `sunderRage=15`, `wallAt=13` (round 3; was 12) | attack power on-use (991018) | Undead | R.O.I.D.S., Desert Dumpling, Mighty Rage Potion | 3,700.2 (round 3); 4,644.5 (round 4, full raid set); **4,651.7** (round 5) |
+| Balanced (w = 1, default) | `05-05050005-250530020310001351`: Deflection 5; Cruelty, Unbridled Wrath, Enrage 5/5; Protection 31 with Shield Slam, Improved Sunder Armor 1, no Last Stand or Vanguard | (the base; `sunderRage=25` from round 5) | attack power on-use (991018) | Undead | Spirit of Zanza, Desert Dumpling, Mighty Rage Potion | 3,008.5; 3,867.3 (round 4); **3,880.3** (round 5) |
+| Max survival (w = 3) | Balanced's (its own search ends there) | `trinketAt=35` (the armor trinket held for the last 35 s); `sunderRage=30` (round 5: Balanced moved to 25) | armor on-use (990617), `level60_phase1_synthetic_armor_trinket.gear.json` | Undead | Spirit of Zanza, Dirge's chops, Greater Stoneshield Potion | 1,205.0; 2,138.7 (round 4 and 5) |
 
 All three wear Superior Deflection (Defense +9) on the wrists, Enchant Shield - Greater Stamina (spell 20017, +9 Stamina, enchant 1886, the id the bracer's Superior Stamina shares) on the shield.
 
 Balanced's knobs: `shieldBlock=1` (whenever its buff is down), `sbRage=0`, `demo=0`, `tc=1`, `tcRefresh=2`,
-`debuffsFirst=0`, `revengeFirst=0`, `sunderUp=1`, `sunderRage=30`, `hsRage=50`, `bloodrageRage=30`, `opener=0`,
+`debuffsFirst=0`, `revengeFirst=0`, `sunderUp=1`, `sunderRage=25` (30 before round 5), `hsRage=50`, `bloodrageRage=30`, `opener=0`,
 `chargeFrom=0`, `potion=1`, `shieldWall=2`, `wallAt=17` (Shield Wall in the last 17 s), `trinketAt=0`,
 `recklessSwingsRage=0`, `slamRage=0`.
 
 **Shared builds** (tank_fairness-20261104-4): Balanced and Max survival end on the same talents, race and knobs; they
-differ only in the trinket (and so `trinketAt`). The searches found nothing else that moves Max survival past its noise,
+differ only in the trinket (and so `trinketAt`), and since round 5 in the Sunder filler (25 Rage at Balanced, 30 at Max
+survival, where 25 stayed under twice its error on one seed). The searches found nothing else that moves Max survival past its noise,
 and nothing is forced apart.
 
 **What moved Max threat**: with Unbridled Wrath off Heroic Strike, Improved Heroic Strike's 3 points went to Deflection

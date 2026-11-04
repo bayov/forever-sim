@@ -78,6 +78,7 @@ func (warriorTank) Knobs() []Knob {
 
 var (
 	tankBulwarkTrinket = itemID(990617)
+	tankSapper         = itemID(10646)
 )
 
 // heldForLast holds an on-use cooldown for the last at seconds of the fight unless the wait costs a
@@ -126,6 +127,8 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(potion, lt(currentRage(), num(k["potionRage"])), "Mighty Rage Potion when short of Rage."))
 	}
 	items = append(items, tankTrinketLines(k)...)
+	// The presets' Goblin Sapper Charge (standards 11, round 4): right after the trinkets, once a fight.
+	items = append(items, cast(tankSapper, nil, "Goblin Sapper Charge on cooldown (once a fight): its threat at the pull (docs/tank_warrior.md, Round 4 consumables)."))
 	switch k["shieldWall"] {
 	case 1:
 		items = append(items, cast(shieldWall, nil, "Shield Wall at the pull (on a timer: the score can't follow health)."))

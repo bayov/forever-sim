@@ -144,10 +144,7 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	case 1:
 		items = append(items, cast(deathWish, nil, "Without the talent ignore the warning on this line."))
 	case 2:
-		items = append(items, cast(deathWish, or(
-			le(remainingTime(), seconds(k["dwEnd"])),
-			gt(spellUsesLostByDelay(deathWish, sub(remainingTime(), seconds(k["dwEnd"])), deathWishDuration), num(0)),
-		), "Without the talent ignore the warning on this line."))
+		items = append(items, cast(deathWish, heldForLast(deathWish, k["dwEnd"], 30), "Without the talent ignore the warning on this line."))
 	}
 	switch k["recklessness"] {
 	case 1:
@@ -174,10 +171,7 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	racial := k["racialHoldForDw"] == 1
 	racialHold := func(spell *proto.ActionID) value {
 		if k["racialHoldForDw"] == 2 {
-			return or(
-				le(remainingTime(), seconds(k["racialAt"])),
-				gt(spellUsesLostByDelay(spell, sub(remainingTime(), seconds(k["racialAt"])), seconds(15)), num(0)),
-			)
+			return heldForLast(spell, k["racialAt"], 15)
 		}
 		return hold(spell, racial)
 	}
@@ -188,10 +182,7 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 		potionLine(k, hold),
 	)
 	if k["trinketAt"] > 0 {
-		items = append(items, cast(battleTrinket, or(
-			le(remainingTime(), seconds(k["trinketAt"])),
-			gt(spellUsesLostByDelay(battleTrinket, sub(remainingTime(), seconds(k["trinketAt"])), seconds(15)), num(0)),
-		), ""))
+		items = append(items, cast(battleTrinket, heldForLast(battleTrinket, k["trinketAt"], 15), ""))
 	}
 	items = append(items,
 		cast(bloodrage, lt(currentRage(), num(k["bloodrageRage"])), ""),
@@ -370,10 +361,7 @@ func warriorChargePrepull(stance *proto.ActionID) []*proto.APLPrepullAction {
 // potionAt seconds, in each case only when the wait costs no use.
 func potionLine(k Knobs, hold func(*proto.ActionID, bool) value) *proto.APLListItem {
 	if k["potionHoldForDw"] == 2 {
-		when := or(
-			le(remainingTime(), seconds(k["potionAt"])),
-			gt(spellUsesLostByDelay(potion, sub(remainingTime(), seconds(k["potionAt"])), seconds(15)), num(0)),
-		)
+		when := heldForLast(potion, k["potionAt"], 15)
 		if k["potionPull"] == 1 {
 			when = or(le(warriorCurrentTime(), seconds(3)), when)
 		}

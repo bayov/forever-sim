@@ -1,0 +1,10 @@
+A=cur_balanced.json B=tal_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3574     3553   -21.3   15.6     13.4       16
+chromaggus        2913     2909    -4.3    7.4     13.6       11
+golemagg          4030     4047    17.1    6.8     14.5        3
+magmadar          4187     4199    11.7    5.8     14.7        5
+onyxia            3947     3946    -1.5   10.2     10.3        4
+ragnaros          -844     -929   -84.6   38.4      8.5       32
+vaelastrasz       4458     4453    -5.0    3.7     -0.3        3
+scoring_mean                       -0.6    3.7

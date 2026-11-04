@@ -1,0 +1,6 @@
+ok  	github.com/wowsims/classic/sim/paladin/protection	12.302s
+ok  	github.com/wowsims/classic/tools/tankbench	(cached)
+ok  	github.com/wowsims/classic/tools/tankscore	(cached)
+ok  	github.com/wowsims/classic/tools/rotopt	(cached)
+go exit 0
+tsc exit 0

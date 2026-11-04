@@ -75,16 +75,23 @@
        ]
       },
       "consumes": {
-       "flask": "FlaskOfNaturalAccuracy",
+       "flask": "FlaskOfNaturalPrecision",
        "food": "FoodDirgesKickChimaerokChops",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
        "healthElixir": "ElixirOfGreaterFortitude",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
-       "defaultPotion": "MajorManaPotion",
+       "defaultPotion": "GreaterStoneshieldPotion",
        "dragonBreathChili": true,
-       "sapperExplosive": "SapperGoblinSapper"
+       "sapperExplosive": "SapperGoblinSapper",
+       "alcohol": "AlcoholRumseyRumBlackLabel",
+       "spellPowerBuff": "GreaterArcaneElixir",
+       "naturePowerBuff": "ElixirOfNaturePower",
+       "intellectElixir": "ElixirOfGreaterIntellect",
+       "zanzaBuff": "GroundScorpokAssay",
+       "defaultConjured": "ConjuredDemonicRune",
+       "manaRegenElixir": "MagebloodPotion"
       },
       "wardenShaman": {
        "options": {
@@ -212,6 +219,16 @@
           }
          },
          "notes": "The earth totem whenever it's down."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "otherId": "OtherActionPotion"
+           }
+          }
+         },
+         "notes": "Greater Stoneshield Potion on cooldown."
         },
         {
          "action": {
