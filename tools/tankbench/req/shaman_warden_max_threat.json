@@ -76,14 +76,15 @@
       },
       "consumes": {
        "flask": "FlaskOfNaturalAccuracy",
-       "food": "FoodSmokedDesertDumpling",
+       "food": "FoodDirgesKickChimaerokChops",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
        "healthElixir": "ElixirOfGreaterFortitude",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
        "defaultPotion": "MajorManaPotion",
-       "dragonBreathChili": true
+       "dragonBreathChili": true,
+       "sapperExplosive": "SapperGoblinSapper"
       },
       "wardenShaman": {
        "options": {
@@ -112,7 +113,7 @@
          },
          "doAtValue": {
           "const": {
-           "val": "-4.5s"
+           "val": "-6s"
           }
          }
         },
@@ -121,6 +122,20 @@
           "castSpell": {
            "spellId": {
             "spellId": 10408
+           }
+          }
+         },
+         "doAtValue": {
+          "const": {
+           "val": "-4.5s"
+          }
+         }
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10438
            }
           }
          },
@@ -223,6 +238,105 @@
           }
          },
          "notes": "Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10438
+           }
+          },
+          "condition": {
+           "and": {
+            "vals": [
+             {
+              "cmp": {
+               "lhs": {
+                "totemRemainingTime": {
+                 "totemType": "Fire"
+                }
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "0s"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpGe",
+               "rhs": {
+                "const": {
+                 "val": "10s"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "60s"
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "The fire totem whenever it's down in the last 60 sec: earlier its mana is Earth Shock's."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 408345
+           }
+          },
+          "condition": {
+           "and": {
+            "vals": [
+             {
+              "cmp": {
+               "lhs": {
+                "currentManaPercent": {}
+               },
+               "op": "OpGe",
+               "rhs": {
+                "const": {
+                 "val": "0.4"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "60s"
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "Fire Nova around the fire totem in the last 60 sec: our own threat, with mana we'd otherwise end on."
         },
         {
          "action": {
