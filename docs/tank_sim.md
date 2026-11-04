@@ -467,7 +467,7 @@ Talents and rotations are unchanged: the class workers re-search them next.
 | Warden Max survival | −5326 → −4571 | 1688 → 1449 | 782 → 762 | 1017 → 879 | −19134 → −17188 |
 | Warrior (legacy request) | −13 → 10 | 1327 → 1060 | 657 → 637 | 947 → 757 | −6008 → −4997 |
 
-**SafeDPS falls 13 to 22%** because the boss now dodges or parries part of the tank's attacks. The bear
+**SafeDPS falls 9 to 22%** (paladin 9%, Warden 14%, warrior 18%, bear 22%) because the boss now dodges or parries part of the tank's attacks. The bear
 loses most: all of its threat is melee the boss can parry, and its Elixirs were already in. DTPS hardly moves.
 From the front the boss's parry haste would add damage, but the encounter files turn it off. Healing needed
 falls 15 to 20% for the three tanks that gained the two elixirs.
