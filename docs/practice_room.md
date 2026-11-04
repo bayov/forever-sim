@@ -1317,6 +1317,11 @@ rendering, not the sim.
   - Pixel check, one frozen frame (lineup and the fight's view), merge on, off, and on again: the same, apart from a
     few hundred pixels of effects glows that also differ between two frames with the merge on.
   - `?glcount=1` counts every WebGL call by kind (`glCallsAvg` in the report).
+  - Two reports at 5 FPS turned out to be Chrome drawing in software ("Microsoft Basic Render Driver") after an
+    NVIDIA driver update, not the merge. Headless, the merge's steady frames upload less than without it (120 calls
+    and 1.3MB a frame, against 250 and 1.6MB). The room now shows "Software graphics · restart Chrome" when the
+    WebGL renderer is a software one (not in test runs: `navigator.webdriver` or `?bench`), and the report's
+    `gpuInfo.software` says so.
   - Headless (fight, 1920x1080): 127 to 144 FPS, drawing 4.8 to 4.1ms, 420 to 326 draw calls, 3040 to 2350 WebGL
     calls a frame (texture binds 528 to 423, vertex array binds 478 to 385, programs 276 to 210, matrix uniforms 271
     to 174).

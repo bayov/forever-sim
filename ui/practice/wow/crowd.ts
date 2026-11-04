@@ -214,9 +214,8 @@ export class Crowd {
 	private shadowDirty = false;
 	private shadowBuilt = 0;
 	private readonly mergedDepth = this.makeMergedDepth();
-	// The merged picture (see Picture): its meshes, one per kind of part. Off until we know what
-	// made a raid run at 5 FPS on Windows with it; on with ?mergepicture=1.
-	mergePicture = new URLSearchParams(location.search).get('mergepicture') === '1';
+	// The merged picture (see Picture): its meshes, one per kind of part. Off with ?mergepicture=0.
+	mergePicture = new URLSearchParams(location.search).get('mergepicture') !== '0';
 	private pictures: THREE.Mesh[] = [];
 	private pictureDirty = false;
 	private pictureBuilt = 0;

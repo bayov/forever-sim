@@ -333,6 +333,7 @@ export class Perf {
 				canvas: [gl.drawingBufferWidth, gl.drawingBufferHeight],
 				antialias: gl.getContextAttributes()?.antialias,
 				samples: gl.getParameter(gl.SAMPLES),
+				software: softwareRenderer(String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER))),
 			},
 			slowest: slow,
 			notes: this.notes,
@@ -351,6 +352,11 @@ export class Perf {
 		this.glCalls.clear();
 		this.startedAt = performance.now();
 	}
+}
+
+// softwareRenderer says a WebGL renderer's name is one that draws without the graphics card.
+export function softwareRenderer(name: string): boolean {
+	return /Basic Render Driver|SwiftShader|llvmpipe|softpipe|Software/i.test(name);
 }
 
 function round(x: number): number {
