@@ -45,8 +45,8 @@ import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic
 
 // The level 60 Phase 1 tank set, synthetic items not in the game (tools/database/
 // forever_synthetic_items_druid_tank.go has the budget math): standards 36's bear row (physical
-// archetype, 729 weighted points with the feral two-hander), 256 Stamina, 164 Agility, 122 Strength,
-// 105 Defense and 3% hit (8% with the flask). The trinkets are the tank stat trinket (23 Defense, 1%
+// archetype, about 730 weighted points with the feral two-hander), 254 Stamina, 164 Agility, 125
+// Strength, 105 Defense and 3% hit (8% with the flask). The trinkets are the tank stat trinket (23 Defense, 1%
 // dodge) and the cat's on-use Strength trinket, which the tank objective scores far over the defensive
 // armor one (its opening threat). Idol of the Ursine Twins (Lacerate resets Primal Bite 10% of the
 // time) is ahead of Idol of Brutality and Enraged Idol. Enchants: Agility on the head and legs (Lesser
@@ -101,7 +101,8 @@ export const DefaultTalents = TalentsBear;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-// The bear starts the pull with no Rage; its rotation shifts before the pull for Furor's.
+// The bear starts the pull with no Rage (the requests' startingRage 0); its rotation shifts into Dire
+// Bear Form 1.5 sec before the pull (the presets take no Furor, which scores nothing for it).
 export const DefaultOptions = DruidOptions.create({
 	innervateTarget: UnitReference.create(),
 	startingRage: 0,

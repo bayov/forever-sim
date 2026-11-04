@@ -195,7 +195,10 @@ Agility, 125 Strength, 105 Defense, 3% hit (after tank_gear-20261104-4: the ches
   Greater Agility), Greater Agility on the boots (+12 over Greater Stamina), Agility on the back (+8 over
   Superior Defense), Greater Stats on the chest (+13 over Major Health), Agility on the neck (+3 over
   Strength), Superior Stamina on the wrist (a tie with Superior Strength, so the tank one), +25 Agility on
-  the weapon.
+  the weapon. Enchant ids, the same in the gear set and the three requests and each found for its slot in
+  `assets/database/db.json` (checked 2026-11-04): head and legs 1508, neck 1249059, back 1219587, chest
+  1891, wrist 1886, gloves 1248640, boots 1887, weapon 2646. A bear has no shield, so the dead shield 929
+  (tank_gear-20261104-3) never reached it.
 - **Consumables**: the Flask of Natural Accuracy, Elixir of the Phalanx (+112), Elixir of Greater Fortitude
   (+46), the Mongoose (taking it out costs 124), Juju Power and Might, Smoked Desert Dumpling (Dirge's
   Stamina chops -5, Grilled Squid -15), Dragonbreath Chili (+28), a Dense Weightstone (the mace's stone; the

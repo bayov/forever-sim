@@ -8,8 +8,11 @@ import (
 
 // The bear's attacks under Forever (bear.go has the sources). None of them states a threat effect
 // in the client, and their tooltips' "high amount of threat" (Lacerate, Primal Bite) isn't a number
-// anywhere, so each threatens for its damage times the form's 1.5, as wowsims/forever has it.
-// Classic's Maul and Swipe had 1.75 on top; that's the first thing a log of a bear tank settles.
+// anywhere, so each threatens for its damage times the form's threat multiplier (bear.go's
+// formThreatMultiplier: under Forever the November 2 notes' x2.15, 21178's x1.5 outside it), as
+// wowsims/forever has it. Primal Bite alone takes the notes' "roughly doubled" as x2 on top
+// (primalBiteThreatNotes below). Classic's Maul and Swipe had 1.75 on top; that's the first thing a
+// log of a bear tank settles.
 
 // Maul ranks: level and the flat damage on top of the weapon's (client 9881 rank 7 at 58: 128).
 var maulRanks = []struct {
