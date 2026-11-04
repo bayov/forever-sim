@@ -1,0 +1,10 @@
+A=warrior_protection_balanced.json B=pot_great_rage_balanced.json preset=balanced iters=3000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         3182     2979  -203.1   36.1    -76.1       17
+chromaggus        2709     2603  -106.0   10.1    -55.7       -2
+golemagg          3828     3703  -125.1   12.2    -68.6       -3
+magmadar          3992     3822  -170.0   12.1    -78.3        4
+onyxia            3658     3456  -202.0   21.0    -98.7        1
+ragnaros         -1492    -1480    12.0   90.9    -64.9      -45
+vaelastrasz       4018     3807  -210.5   10.4   -101.0        7
+scoring_mean                     -169.5    7.9

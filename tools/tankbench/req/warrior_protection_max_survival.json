@@ -528,15 +528,15 @@
               ]
             },
             "consumes": {
-              "flask": "FlaskOfTheTitans",
-              "food": "FoodSmokedDesertDumpling",
+              "flask": "FlaskOfNaturalPrecision",
+              "food": "FoodDirgesKickChimaerokChops",
               "agilityElixir": "ElixirOfTheMongoose",
               "armorElixir": "ElixirOfThePhalanx",
               "healthElixir": "ElixirOfGreaterFortitude",
               "strengthBuff": "JujuPower",
               "attackPowerBuff": "JujuMight",
-              "mainHandImbue": "DenseSharpeningStone",
-              "defaultPotion": "MightyRagePotion",
+              "mainHandImbue": "ElementalSharpeningStone",
+              "defaultPotion": "GreaterStoneshieldPotion",
               "dragonBreathChili": true
             },
             "buffs": {

@@ -6,21 +6,27 @@ import {
 	AttackPowerBuff,
 	Consumes,
 	Debuffs,
+	Encounter,
 	Flask,
 	Food,
+	HealingModel,
 	HealthElixir,
 	IndividualBuffs,
+	MobType,
 	Potions,
 	Profession,
 	Race,
 	RaidBuffs,
+	Stat,
 	StrengthBuff,
-	SunderRamp,
 	TotemWeaponBuff,
 	TristateEffect,
+	UnitReference,
+	UnitReference_Type,
 	WeaponImbue,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
+import { Stats } from '../core/proto_utils/stats.js';
 import { TankWarrior_Options as TankWarriorOptions, WarriorShout, WarriorStance } from '../core/proto/warrior.js';
 import APLNoReckJSON from './apls/dps_no_reck.apl.json';
 import APLReckJSON from './apls/dps_reck.apl.json';
@@ -111,37 +117,13 @@ export const TalentPresets = {
 
 export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 
-export const PresetBuildTanky = PresetUtils.makePresetBuild('Tanky', { gear: GearP0BISSwordBoard, talents: TalentsP1Prot, rotation: APLProtection });
-
-// The three Level 60 tank presets (the user's ruling: threat against survival as weights, Balanced the default).
-export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
-	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Its own talents, no Thunder Clap, Shield Wall in the last 13 sec.',
-	gear: GearLevel60Synthetic,
-	talents: TalentsLevel60MaxThreat,
-	rotation: APLLevel60MaxThreat,
-	race: Race.RaceUndead,
-});
-export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
-	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md). Shield Wall in the last 17 sec.',
-	gear: GearLevel60Synthetic,
-	talents: TalentsLevel60,
-	rotation: APLLevel60Balanced,
-	race: Race.RaceUndead,
-});
-export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
-	gear: GearLevel60SyntheticArmorTrinket,
-	talents: TalentsLevel60,
-	rotation: APLLevel60MaxSurvival,
-	race: Race.RaceUndead,
-});
-
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options Presets
 ///////////////////////////////////////////////////////////////////////////
 
 export const DefaultOptions = TankWarriorOptions.create({
-	queueDelay: 250,
+	// The bench's: none (the requests carry no queueDelay). 250 cost 2% at Max threat (tank_fairness-20261104-11).
+	queueDelay: 0,
 	startingRage: 0,
 	shout: WarriorShout.WarriorShoutBattle,
 	stance: WarriorStance.WarriorStanceDefensive,
@@ -156,11 +138,21 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
 	food: Food.FoodSmokedDesertDumpling,
-	flask: Flask.FlaskOfTheTitans,
+	// Round 4 (docs/tank_warrior.md, Round 4 consumables): the Flask of Natural Precision, +5% expertise in the
+	// Natural flasks' zones (the encounter's naturalFlaskZone), beats the Titans by 380 to 660.
+	flask: Flask.FlaskOfNaturalPrecision,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
-	// The stone goes on the main hand: a shield can't hold one.
-	mainHandImbue: WeaponImbue.DenseSharpeningStone,
+	// The stone goes on the main hand: a shield can't hold one. The Elemental stone beats the Dense by 14 to 21.
+	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
 	strengthBuff: StrengthBuff.JujuPower,
+});
+
+// Max survival eats Dirge's Kickin' Chimaerok Chops (+41 to +46 over the Dumpling) and drinks the Greater
+// Stoneshield Potion for the Mighty Rage Potion (+83 to +92) at weight 3.
+export const MaxSurvivalConsumes = Consumes.create({
+	...DefaultConsumes,
+	food: Food.FoodDirgesKickChimaerokChops,
+	defaultPotion: Potions.GreaterStoneshieldPotion,
 });
 
 // The raid's buffs and the boss's debuffs are the tank bench's (tools/tankbench/req/warrior_protection_*.json), so the
@@ -191,20 +183,18 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfMight: TristateEffect.TristateEffectImproved,
 });
 
+// Not Thunder Clap, Demoralizing Shout/Roar or the tank Sunder ramp: tankscore.OwnDebuffs strips them for the warrior
+// because its own rotation keeps them up (tools/tankscore/tankscore.go), so the bench never has them.
 export const DefaultDebuffs = Debuffs.create({
 	curseOfElements: true,
 	curseOfRecklessness: true,
 	curseOfWeakness: TristateEffect.TristateEffectImproved,
-	demoralizingRoar: TristateEffect.TristateEffectImproved,
-	demoralizingShout: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
 	insectSwarm: true,
 	judgementOfLight: true,
 	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
 	judgementOfWisdom: true,
 	scorpidSting: true,
-	sunderRamp: SunderRamp.create({ tank: true }),
-	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
 export const OtherDefaults = {
@@ -215,3 +205,81 @@ export const OtherDefaults = {
 	profession2: Profession.Blacksmithing,
 	race: Race.RaceUndead,
 };
+
+// The tank bench's boss (docs/tank_sim.md, The bench): the shared Level 60 boss (level 63, 805 attack power, a 2.0
+// sec swing) on the warrior, with the stand-in healer at 600 HPS every 2 sec (1 to 3), a 3 minute fight, in a
+// zone where the Natural flasks work. The presets were searched on the Anniversary encounters (tools/encounters),
+// which the UI doesn't load; this is the bench's own default fight.
+export const EncounterLevel60Tank = PresetUtils.makePresetEncounter(
+	'Generic boss, tanking',
+	Encounter.create({
+		duration: 180,
+		durationVariation: 20,
+		...PresetUtils.LEVEL_60_ZONE,
+		targets: [
+			{
+				id: 213336,
+				name: 'Level 60',
+				level: 63,
+				mobType: MobType.MobTypeUnknown,
+				stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+				minBaseDamage: 3000,
+				damageSpread: 0.3333,
+				swingSpeed: 2,
+				parryHaste: true,
+			},
+		],
+	}),
+	{
+		tanks: [UnitReference.create({ type: UnitReference_Type.Player, index: 0 })],
+		healingModel: HealingModel.create({ hps: 600, cadenceSeconds: 2, cadenceVariation: 1 }),
+		raidBuffs: DefaultRaidBuffs,
+		debuffs: DefaultDebuffs,
+		buffs: DefaultIndividualBuffs,
+		consumes: DefaultConsumes,
+		inFrontOfTarget: true,
+	},
+);
+
+// The same fight with Max survival's consumables.
+export const EncounterLevel60TankMaxSurvival = PresetUtils.makePresetEncounter('Generic boss, tanking (Max survival)', EncounterLevel60Tank.encounter, {
+	tanks: EncounterLevel60Tank.tanks,
+	healingModel: EncounterLevel60Tank.healingModel,
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: MaxSurvivalConsumes,
+	inFrontOfTarget: true,
+});
+
+///////////////////////////////////////////////////////////////////////////
+//                                 Builds
+///////////////////////////////////////////////////////////////////////////
+
+export const PresetBuildTanky = PresetUtils.makePresetBuild('Tanky', { gear: GearP0BISSwordBoard, talents: TalentsP1Prot, rotation: APLProtection });
+
+// The three Level 60 tank presets (the user's ruling: threat against survival as weights, Balanced the default).
+export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
+	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Its own talents, no Thunder Clap, Shield Wall in the last 13 sec.',
+	gear: GearLevel60Synthetic,
+	talents: TalentsLevel60MaxThreat,
+	rotation: APLLevel60MaxThreat,
+	encounter: EncounterLevel60Tank,
+	race: Race.RaceUndead,
+});
+export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
+	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md). Shield Wall in the last 17 sec.',
+	gear: GearLevel60Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLLevel60Balanced,
+	encounter: EncounterLevel60Tank,
+	race: Race.RaceUndead,
+});
+export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
+	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation, Dirge\'s chops and the Greater Stoneshield Potion, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
+	gear: GearLevel60SyntheticArmorTrinket,
+	talents: TalentsLevel60,
+	rotation: APLLevel60MaxSurvival,
+	encounter: EncounterLevel60TankMaxSurvival,
+	race: Race.RaceUndead,
+});

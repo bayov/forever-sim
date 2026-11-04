@@ -1,0 +1,563 @@
+{
+ "raid": {
+  "parties": [
+   {
+    "players": [
+     {
+      "inFrontOfTarget": true,
+      "race": "RaceUndead",
+      "class": "ClassWarrior",
+      "talentsString": "05-05050005-250530020310001351",
+      "equipment": {
+       "items": [
+        {
+         "id": 990601,
+         "enchant": 1503
+        },
+        {
+         "id": 990602,
+         "enchant": 1249019
+        },
+        {
+         "id": 990603
+        },
+        {
+         "id": 990604,
+         "enchant": 1219587
+        },
+        {
+         "id": 990605,
+         "enchant": 1891
+        },
+        {
+         "id": 990606,
+         "enchant": 1248665
+        },
+        {
+         "id": 990607,
+         "enchant": 1248640
+        },
+        {
+         "id": 990608
+        },
+        {
+         "id": 990609,
+         "enchant": 1503
+        },
+        {
+         "id": 990610,
+         "enchant": 929
+        },
+        {
+         "id": 990611
+        },
+        {
+         "id": 990612
+        },
+        {
+         "id": 990616
+        },
+        {
+         "id": 991018
+        },
+        {
+         "id": 990614,
+         "enchant": 1900
+        },
+        {
+         "id": 990615,
+         "enchant": 1886
+        },
+        {
+         "id": 990613
+        }
+       ]
+      },
+      "rotation": {
+       "type": "TypeAPL",
+       "prepullActions": [
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 71
+           }
+          }
+         },
+         "doAtValue": {
+          "const": {
+           "val": "-1s"
+          }
+         }
+        }
+       ],
+       "priorityList": [
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 2687
+           }
+          },
+          "condition": {
+           "cmp": {
+            "lhs": {
+             "currentRage": {}
+            },
+            "op": "OpLt",
+            "rhs": {
+             "const": {
+              "val": "30"
+             }
+            }
+           }
+          }
+         },
+         "notes": "Bloodrage for Rage (20% of base health)."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "otherId": "OtherActionPotion"
+           }
+          }
+         },
+         "notes": "Mighty Rage Potion at the pull."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "itemId": 990617
+           }
+          }
+         },
+         "notes": "The on-use trinket. Ignore the warning on the trinket that isn't worn."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "itemId": 991018
+           }
+          }
+         },
+         "notes": "The on-use trinket. Ignore the warning on the trinket that isn't worn."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 871
+           }
+          },
+          "condition": {
+           "cmp": {
+            "lhs": {
+             "remainingTime": {}
+            },
+            "op": "OpLe",
+            "rhs": {
+             "const": {
+              "val": "17s"
+             }
+            }
+           }
+          }
+         },
+         "notes": "Shield Wall for the end of the fight."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 2565
+           }
+          },
+          "condition": {
+           "not": {
+            "val": {
+             "auraIsActive": {
+              "auraId": {
+               "spellId": 2565
+              }
+             }
+            }
+           }
+          }
+         },
+         "notes": "Shield Block: 2 blocks over 7 sec on a 5 sec cooldown."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "rank": 4,
+            "spellId": 23925
+           }
+          }
+         },
+         "notes": "Shield Slam on cooldown."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "rank": 5,
+            "spellId": 11601
+           }
+          }
+         },
+         "notes": "Revenge after a block, dodge or parry."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "rank": 6,
+            "spellId": 11581
+           }
+          },
+          "condition": {
+           "and": {
+            "vals": [
+             {
+              "cmp": {
+               "lhs": {
+                "auraRemainingTime": {
+                 "auraId": {
+                  "rank": 6,
+                  "spellId": 11581
+                 },
+                 "sourceUnit": {
+                  "type": "CurrentTarget"
+                 }
+                }
+               },
+               "op": "OpLt",
+               "rhs": {
+                "const": {
+                 "val": "2s"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpGt",
+               "rhs": {
+                "auraRemainingTime": {
+                 "auraId": {
+                  "rank": 6,
+                  "spellId": 11581
+                 },
+                 "sourceUnit": {
+                  "type": "CurrentTarget"
+                 }
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "Thunder Clap kept up: the tank applies its own slow."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 11597
+           }
+          },
+          "condition": {
+           "and": {
+            "vals": [
+             {
+              "or": {
+               "vals": [
+                {
+                 "cmp": {
+                  "lhs": {
+                   "auraNumStacks": {
+                    "auraId": {
+                     "spellId": 11597
+                    },
+                    "sourceUnit": {
+                     "type": "CurrentTarget"
+                    }
+                   }
+                  },
+                  "op": "OpLt",
+                  "rhs": {
+                   "const": {
+                    "val": "5"
+                   }
+                  }
+                 }
+                },
+                {
+                 "cmp": {
+                  "lhs": {
+                   "auraRemainingTime": {
+                    "auraId": {
+                     "spellId": 11597
+                    },
+                    "sourceUnit": {
+                     "type": "CurrentTarget"
+                    }
+                   }
+                  },
+                  "op": "OpLt",
+                  "rhs": {
+                   "const": {
+                    "val": "3s"
+                   }
+                  }
+                 }
+                }
+               ]
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpGt",
+               "rhs": {
+                "auraRemainingTime": {
+                 "auraId": {
+                  "spellId": 11597
+                 },
+                 "sourceUnit": {
+                  "type": "CurrentTarget"
+                 }
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "Sunder Armor to 5 stacks, refreshed in its last 3 sec."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "rank": 8,
+            "spellId": 11567,
+            "tag": 1
+           }
+          },
+          "condition": {
+           "cmp": {
+            "lhs": {
+             "currentRage": {}
+            },
+            "op": "OpGe",
+            "rhs": {
+             "const": {
+              "val": "50"
+             }
+            }
+           }
+          }
+         },
+         "notes": "Heroic Strike with Rage to spare."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 11597
+           }
+          },
+          "condition": {
+           "cmp": {
+            "lhs": {
+             "currentRage": {}
+            },
+            "op": "OpGe",
+            "rhs": {
+             "const": {
+              "val": "30"
+             }
+            }
+           }
+          }
+         },
+         "notes": "Sunder Armor as the filler, for its threat."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 71
+           }
+          },
+          "condition": {
+           "not": {
+            "val": {
+             "auraIsActive": {
+              "auraId": {
+               "spellId": 71
+              }
+             }
+            }
+           }
+          }
+         },
+         "notes": "Defensive Stance kept up: the tank's stance."
+        }
+       ]
+      },
+      "consumes": {
+       "flask": "FlaskOfNaturalPrecision",
+       "food": "FoodSmokedDesertDumpling",
+       "agilityElixir": "ElixirOfTheMongoose",
+       "armorElixir": "ElixirOfThePhalanx",
+       "healthElixir": "ElixirOfGreaterFortitude",
+       "strengthBuff": "JujuPower",
+       "attackPowerBuff": "JujuMight",
+       "mainHandImbue": "ElementalSharpeningStone",
+       "defaultPotion": "MightyRagePotion",
+       "dragonBreathChili": true
+      },
+      "buffs": {
+       "blessingOfKings": true,
+       "blessingOfMight": "TristateEffectImproved"
+      },
+      "tankWarrior": {
+       "options": {
+        "shout": "WarriorShoutBattle",
+        "stance": "WarriorStanceDefensive"
+       }
+      },
+      "level": 60,
+      "reactionTimeMs": 200,
+      "distanceFromTarget": 5,
+      "profession1": "Engineering",
+      "profession2": "Blacksmithing"
+     }
+    ],
+    "buffs": {}
+   }
+  ],
+  "buffs": {
+   "giftOfTheWild": "TristateEffectImproved",
+   "powerWordFortitude": "TristateEffectImproved",
+   "bloodPact": "TristateEffectImproved",
+   "strengthOfEarthTotem": "TristateEffectRegular",
+   "graceOfAirTotem": "TristateEffectRegular",
+   "arcaneBrilliance": true,
+   "divineSpirit": true,
+   "battleShout": "TristateEffectImproved",
+   "trueshotAura": true,
+   "leaderOfThePack": true,
+   "moonkinAura": true,
+   "shadowProtection": true,
+   "frostResistanceAura": true,
+   "fireResistanceAura": true,
+   "thorns": "TristateEffectImproved",
+   "devotionAura": "TristateEffectImproved",
+   "retributionAura": "TristateEffectImproved",
+   "totemWeaponBuff": "TotemWeaponBuffWindfury"
+  },
+  "debuffs": {
+   "judgementOfWisdom": true,
+   "judgementOfLight": true,
+   "judgementOfTheCrusader": "TristateEffectImproved",
+   "faerieFire": true,
+   "curseOfElements": true,
+   "sunderRamp": {
+    "tank": true
+   },
+   "curseOfWeakness": "TristateEffectImproved",
+   "curseOfRecklessness": true,
+   "demoralizingRoar": "TristateEffectImproved",
+   "demoralizingShout": "TristateEffectImproved",
+   "thunderClap": "TristateEffectImproved",
+   "insectSwarm": true,
+   "scorpidSting": true
+  }
+ },
+ "encounter": {
+  "duration": 180,
+  "durationVariation": 20,
+  "executeProportion20": 0.2,
+  "executeProportion25": 0.25,
+  "executeProportion35": 0.35,
+  "targets": [
+   {
+    "id": 213336,
+    "name": "Level 60",
+    "level": 63,
+    "stats": [
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     805,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     3731,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     127393,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0,
+     0
+    ],
+    "minBaseDamage": 3000,
+    "damageSpread": 0.3333,
+    "swingSpeed": 2,
+    "parryHaste": true
+   }
+  ],
+  "raidDamageHitsPerMinute": 2,
+  "raidDamagePerHit": 1500,
+  "naturalFlaskZone": true
+ },
+ "simOptions": {
+  "iterations": 1000,
+  "randomSeed": "1"
+ }
+}
