@@ -95,6 +95,7 @@ def melee_from(m, st):
     base = (lo / dd - st['flatDamage']) / k
     spread = (hi / dd - st['flatDamage']) / base - k
     # The mean gap between swings while he's on the tank (parry haste in), back through Thunder Clap.
+    # Parry haste is in it, so the files keep parryHaste false (docs/tank_sim.md, tank_mechanics-20261104-3).
     swings = sum(v for k2, v in m['swings'].items())
     gap = m['tanking_seconds'] / swings
     return round(base, 1), round(spread, 4), round(gap * st['attackSpeed'], 2), lo, hi, gap

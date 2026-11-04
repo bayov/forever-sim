@@ -2,14 +2,10 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
-	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
-	Conjured,
 	Consumes,
 	Debuffs,
-	Explosive,
-	FirePowerBuff,
 	Flask,
 	Food,
 	HealthElixir,
@@ -22,7 +18,6 @@ import {
 	StrengthBuff,
 	TristateEffect,
 	WeaponImbue,
-	ZanzaBuff,
 } from '../core/proto/common.js';
 import { Blessings, PaladinAura, PaladinOptions as ProtectionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -164,24 +159,19 @@ export const DefaultOptions = ProtectionPaladinOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
+	// The tank bench's consumables (tools/tankbench/req/paladin_protection_*.json): every tank takes the same
+	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec.
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
-	healthElixir: HealthElixir.ElixirOfFortitude,
-	armorElixir: ArmorElixir.ElixirOfSuperiorDefense,
-	defaultPotion: Potions.GreaterStoneshieldPotion,
+	armorElixir: ArmorElixir.ElixirOfThePhalanx,
+	attackPowerBuff: AttackPowerBuff.JujuMight,
+	defaultPotion: Potions.MajorManaPotion,
 	dragonBreathChili: true,
-	food: Food.FoodTenderWolfSteak,
+	food: Food.FoodSmokedDesertDumpling,
 	flask: Flask.FlaskOfTheTitans,
-	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
-	fillerExplosive: Explosive.ExplosiveDenseDynamite,
-	//mainHandImbue: WeaponImbue.WildStrikes,
-	//offHandImbue: WeaponImbue.MagnificentTrollshine,
-
+	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
+	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,
-	zanzaBuff: ZanzaBuff.ROIDS,
-	attackPowerBuff: AttackPowerBuff.JujuMight,
-	defaultConjured: Conjured.ConjuredDemonicRune,
-	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -213,6 +203,8 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const OtherDefaults = {
+	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
+	inFrontOfTarget: true,
 	distanceFromTarget: 5, // Max melee range
 	profession1: Profession.Blacksmithing,
 	profession2: Profession.Engineering,

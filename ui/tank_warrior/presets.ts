@@ -2,7 +2,6 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
-	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
 	Consumes,
@@ -18,7 +17,6 @@ import {
 	StrengthBuff,
 	TristateEffect,
 	WeaponImbue,
-	ZanzaBuff,
 } from '../core/proto/common.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { TankWarrior_Options as TankWarriorOptions, WarriorShout, WarriorStance } from '../core/proto/warrior.js';
@@ -136,20 +134,19 @@ export const DefaultOptions = TankWarriorOptions.create({
 });
 
 export const DefaultConsumes = Consumes.create({
+	// The tank bench's consumables (tools/tankbench/req/warrior_protection_*.json): every tank takes the same
+	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec.
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
-	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
-	armorElixir: ArmorElixir.ElixirOfSuperiorDefense,
+	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
 	food: Food.FoodSmokedDesertDumpling,
 	flask: Flask.FlaskOfTheTitans,
-	healthElixir: HealthElixir.ElixirOfFortitude,
-	// The stone goes on the main hand: a shield can't hold one, and under Forever Elemental Sharpening
-	// Stone crits only the hand it is on (da4f2018a7).
-	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
+	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
+	// The stone goes on the main hand: a shield can't hold one.
+	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	strengthBuff: StrengthBuff.JujuPower,
-	zanzaBuff: ZanzaBuff.ROIDS,
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -186,6 +183,8 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 export const OtherDefaults = {
+	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
+	inFrontOfTarget: true,
 	profession1: Profession.Blacksmithing,
 	profession2: Profession.Enchanting,
 	race: Race.RaceHuman,
