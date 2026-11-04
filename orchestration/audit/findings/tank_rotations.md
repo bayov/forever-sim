@@ -34,6 +34,7 @@
 - evidence: tools/tankbench/req/shaman_warden_balanced.json trinket slot (990015) and the autocast line (:189; ui/warden_shaman/apls/level60_balanced.apl.json:10). B = 999216 in slot 14, held as in finding 9. Paired, 3k: +95.6 ± 7.3 (Broodlord +372, Onyxia +136, Golemagg +22, Vaelastrasz +18, Chromaggus +14, Magmadar +11; Ragnaros -8 ± 24); without Broodlord about +36, still a win. 1k: hold 25 s +95, 35 s +72. At Max threat the same swap loses -26.3 ± 3.8, so leave Max threat. Sure: medium-high. This is a rotation and gear choice, not the class gap ruled on in standards 40.
 - proposed fix: with finding 9's knob, let rotopt choose the armor trinket at Balanced and re-search. Repro: `abtest -iters 3000 $P/A_shaman_warden_balanced.json $P/sb_armt30.json`.
 - needs: worker fix
+- fixed: 2026-11-04, 6a9dea8. Balanced wears 999216 held for the last 25 s: +98.5 ± 7.3 against 990015 on cooldown (round 2 build); on the final build 990015 loses -112.3 ± 8.1; 25 s over 30 s at 10k seeds 4 and 5 (+16.6 ± 4.2, +8.9 ± 3.2). Max threat keeps 990015 (-12.2 ± 4.2 held). Docs 6c73945.
 
 ### tank_rotations-20261104-9: Warden Max survival fires its armor trinket on the pull; held for the last 25-30 s it gains about 330
 - severity: high (+7.5% of a -4357 score)
@@ -42,6 +43,7 @@
 - evidence: armor trinket 999216 is used by autocastOtherCooldowns, "trinkets on cooldown" (tools/tankbench/req/shaman_warden_max_survival.json:189, ui/warden_shaman/apls/level60_max_survival.apl.json:10); the template has no hold knob (tools/rotopt/shaman_tank.go:64, :149, :154), though the warrior's got `trinketAt` in round 2. B = an explicit top line for 999216 with the warrior's hold condition, (remainingTime <= 30s) or spellUsesLostByDelay(remainingTime - 30s, minTimeLeft 20s) > 0. Paired, 3k: +328.5 ± 17.0 (Broodlord +1459, Onyxia +284, Chromaggus +125, Golemagg +53, Magmadar +51, Vaelastrasz 0; Ragnaros +78 ± 63); without Broodlord about +92, still a win. Hold scan at 1k: 25 s +350, 30 s +334, 35 s +273, 40 s +186, 45 s +71. Sure: high.
 - proposed fix: a `trinketAt` knob in shaman_tank.go like warrior_tank.go's, and a re-search of all three Warden presets (30 s for Max survival). Repro: `abtest -iters 3000 $P/A_shaman_warden_max_survival.json $P/ss_trg30.json`.
 - needs: worker fix
+- fixed: 2026-11-04, df481a4 (template knob `trinketAt`) and 6a9dea8 (searched: Max survival holds 999216 for the last 25 s, +344.3 ± 15.3 against autocast; 25 s over 30 s at 10k seeds 4 and 5, +29.5 ± 10.2 and +33.2 ± 11.0; docs 6c73945).
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)

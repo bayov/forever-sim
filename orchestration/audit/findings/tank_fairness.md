@@ -9,6 +9,7 @@
 - evidence: ui/protection_paladin/presets.ts:140-147: the Max survival tooltip doesn't say it is Balanced's build, though the requests are byte-identical. ui/warden_shaman/presets.ts:120-130: nothing says Balanced and Max survival are within paired error (docs/tank_shaman.md says so). docs/tank_sim.md:8-14 'Where it stands (2026-11-03)' still has warrior and paladin on pre-raid plate and the Warden 'next'. At about line 450 it says 'class workers re-search them next', with no round-2 table. At about 478 'Bear Max survival (1185) now beats Balanced (1114)' was fixed in f0ff977. At about 561-565 the bear has 'Maul at 30 Rage' and 'not in its rotation yet: Enrage, Frenzied Regeneration'. orchestration/audit/ref/tank_bench/summary.tsv's header says master 23b2ec2, but its rows are round 2's (they match this pass's 3000-iteration run within noise on all 104 rows). docs/tank_paladin.md's Max survival 1363.3 is 1336.7 ± 13.7 at 3000 iterations (Balanced's file at w=3).
 - proposed fix: one line in each tooltip; refresh docs/tank_sim.md's status and bear sections; update the summary.tsv header and the paladin Max survival number.
 - needs: worker fix
+- fixed (Warden part): 2026-11-04, 71a107e (preset tooltips) and 6c73945 (docs/tank_shaman.md numbers and builds are round 3's).
 
 ### tank_fairness-20261104-8: Round 2 searched the four tanks unevenly
 - severity: low (no measured loss yet, but the search coverage differs)
@@ -17,6 +18,7 @@
 - evidence: from the round-2 sections of docs/tank_*.md. The warrior re-searched all 9 races at 3 weights, A/B'd armor against AP trinket at 3 weights, and A/B'd wrist Superior Deflection (Defense +9) against Stamina, taking Deflection. The Warden's races and trinket A/B were not re-run on the new engine (docs/tank_shaman.md:65, 'Not re-run this round'). The engine change moved the autocast trinket, so the round-1 picks are unverified. The paladin ran no gear, trinket, enchant or libram A/B in round 2, and its wrist, boots and shield enchants have no Deflection or Defense check like the warrior's. The bear's doc says 'enchants and consumables were not re-checked'. Only the warrior committed raw search output (orchestration/tank_handoff/warrior/round2/); the other three can't be re-audited from files. Tauren led the Warden's round-1 race search by a wide margin, so a race change is unlikely.
 - proposed fix: Warden race at 3000 iterations and its trinket A/B on the current engine. Paladin and Warden wrist Superior Deflection against Stamina, and shield and boots enchant A/B, at the three weights. Bear enchant re-check. Commit each class's search summary next to the warrior's.
 - needs: worker fix
+- fixed (Warden part): 2026-11-04, 6a9dea8. Races re-run at 3k on the new engine at all three weights (Night Elf +104 / +111 against Tauren at Max threat / Balanced, Undead at Max survival, calls (f) and (g) in docs/tank_shaman.md), trinket A/B at all three, wrist, cloak and shield A/Bs; raw output in orchestration/tank_handoff/shaman/round3/ (ab_summary.txt).
 
 ### tank_fairness-20261104-7: Warden Max threat takes Titans where Natural Accuracy wins at its weight
 - severity: medium (+30 at w=1/3, 1.3% of the preset's score)
@@ -25,6 +27,7 @@
 - evidence: pass 1's fix -1 asked for the flask to be re-picked at the Max threat weight; every class still uses one flask on all three presets. tankbench, 3000 iterations, seed 1, six-boss mean at w=1/3, *_max_threat.json with flask FlaskOfNaturalAccuracy (each mean ± about 4 to 6): Warden 2319.2 against 2288.8 (+30.4); warrior 3673.8 against 3696.8 (-23.0, Titans right); paladin 2781.8 against 2781.8 (0). Variant requests were in $AUDIT_WORK/tank_fairness/var/ (scratch).
 - proposed fix: FlaskOfNaturalAccuracy on shaman_warden_max_threat.json and its UI preset, then re-bench.
 - needs: worker fix
+- fixed: 2026-11-04, 6a9dea8. Max threat takes Flask of Natural Accuracy (request and UI): +31.1 ± 3.8 on the round 2 build; Titans on the final build -24.5 ± 5.0.
 
 ### tank_fairness-20261104-6: The paladin and Warden UI presets load without Kings and Might; the warrior and Warden UIs use other professions than their benches
 - severity: medium (a user loading these presets in the sim gets a weaker tank than the bench ranks; it doesn't move tankbench)
@@ -33,6 +36,7 @@
 - evidence: every tankbench request has individual buffs blessingOfKings plus improved blessingOfMight, and the Warden's also has improved Wisdom; all have Engineering + Blacksmithing. ui/protection_paladin/presets.ts:177-178: DefaultIndividualBuffs has only improved Blessing of Wisdom (no Kings, no Might). ui/warden_shaman/presets.ts:170-178: no blessings at all. The warrior and bear UIs have Kings + improved Might. Professions: ui/tank_warrior/presets.ts:198-199 Blacksmithing + Enchanting and ui/warden_shaman/presets.ts:192-193 Alchemy + Enchanting, while the paladin and bear match the requests. Improved Wisdom on the paladin is worth nothing (Balanced six-boss mean 2385.8 with it against 2387.3 without, 3000 iterations), so the requests are right and the UI is off.
 - proposed fix: set each UI's DefaultIndividualBuffs and professions to its request's (Kings + improved Might; plus improved Wisdom for the Warden; Engineering + Blacksmithing).
 - needs: worker fix
+- fixed (Warden part): 2026-11-04, 71a107e (ui/warden_shaman/presets.ts loads the requests' raid buffs, Kings and improved Might and Wisdom, debuffs, Engineering + Blacksmithing) and 6a9dea8 (each build loads its request's flask, race and gear set).
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)

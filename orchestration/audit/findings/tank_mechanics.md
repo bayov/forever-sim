@@ -27,6 +27,7 @@
 - proposed fix: cite push 113380 as tier 1 in the shaman rows and comment; reword the bear comment; "Greater Stamina (+9, enchant 1886)" and drop "no preset yet"; "N, C" at paladin.md:138.
 - needs: worker fix
 - fixed: 2026-11-04, 49f0218 (stormstrike.go and tank_shaman.md rows cite hotfix push 113380 as tier 1; bear_attacks.go comment; tank_warrior.md shield enchant; forever_enchants.go; round_70753/paladin.md:138).
+- fixed (Warden part): 2026-11-04, 71a107e on tank-shaman-3 (the same stormstrike.go and doc citations), merged with 49f0218 in 6c73945.
 
 ### tank_mechanics-20261104-14: Scoring-run guards with latent holes, and SoD encounters still double parry haste
 - severity: low (latent; no preset or scored encounter hits them today)
