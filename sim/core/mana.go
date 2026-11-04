@@ -123,7 +123,8 @@ func (mb *manaBar) gainMakesThreat(metrics *ResourceMetrics) bool {
 // iteration (doneIteration).
 //
 // To verify (standards 40): no threat multiplier. Classic leaves resource-gain threat from mana
-// unmultiplied, and nothing measures mana under Forever. The Rage rule (foreverRageGainThreat)
+// unmultiplied, as does wowsims/forever (its mana.go books gain*ThreatPerManaGained with no
+// multiplier), and nothing measures mana under Forever. The Rage rule (foreverRageGainThreat)
 // multiplies, from wowsims/forever's in-game Rage measurements, but those say nothing about mana.
 // Keep it unmultiplied unless a Forever log (a bear's or paladin's threat on a Judgement of Wisdom
 // mana gain) shows otherwise.
