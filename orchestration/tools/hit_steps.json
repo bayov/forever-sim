@@ -68,6 +68,13 @@
   ]
  },
  "ret": {
+  "init": [
+   "item.RequiredLevel = 60",
+   "item.Phase = 1",
+   "item.Quality = proto.ItemQuality_ItemQualityEpic",
+   "item.Expansion = proto.Expansion_ExpansionVanilla",
+   "item.ClassAllowlist = []proto.Class{proto.Class_ClassPaladin}"
+  ],
   "file": "forever_synthetic_items_paladin.go",
   "gear": "ui/retribution_paladin/gear_sets/level60_phase1_synthetic",
   "stat": [
@@ -93,6 +100,13 @@
   ]
  },
  "ret_undead": {
+  "init": [
+   "item.RequiredLevel = 60",
+   "item.Phase = 1",
+   "item.Quality = proto.ItemQuality_ItemQualityEpic",
+   "item.Expansion = proto.Expansion_ExpansionVanilla",
+   "item.ClassAllowlist = []proto.Class{proto.Class_ClassPaladin}"
+  ],
   "file": "forever_synthetic_items_paladin.go",
   "gear": "ui/retribution_paladin/gear_sets/level60_phase1_synthetic_undead",
   "stat": [
@@ -118,6 +132,13 @@
   ]
  },
  "ret_crusader_duty": {
+  "init": [
+   "item.RequiredLevel = 60",
+   "item.Phase = 1",
+   "item.Quality = proto.ItemQuality_ItemQualityEpic",
+   "item.Expansion = proto.Expansion_ExpansionVanilla",
+   "item.ClassAllowlist = []proto.Class{proto.Class_ClassPaladin}"
+  ],
   "file": "forever_synthetic_items_paladin.go",
   "gear": "ui/retribution_paladin/gear_sets/level60_phase1_synthetic_crusader_duty",
   "stat": [

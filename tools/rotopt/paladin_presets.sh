@@ -41,6 +41,9 @@ gen() {
 # +2.4 / +1.3 / +1.9 (seed 1000003), sub Holy +1.0 / +1.4 / +1.5 and +2.5 / +2.2 / +2.5. The others keep
 # it off: the Crusader duty loses (-5.4 / -4.0 / -1.5), the Wisdom duty, Ret Shock and vs Undead gain
 # under 1 at 180 sec (+0.3 to +1.3).
+# Round 70753 phase 5 (2026-11-04, hit trade): twist keeps its talents and knobs on the set's hit-3 step
+# (Precision 3 put it 3% over the 8% melee cap; 30 hit rating re-spent on crit): +12.2 / +11.1 / +13.0 at
+# 120 / 180 / 300 sec, its Crusader and Wisdom duties +11 to +12 (orchestration/round_70753/hit_trade/paladin.md).
 gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistThriftRate=30,twistBack=1,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0,holyStrikeFirst=1" -level 60
 # Sub Holy (level60_sub_holy): the knob search kept the twist knobs. It has the mana (Reverence,
 # Divine Intellect) to swap on 2 copies at any length: the mana rule loses 2.3 at 300 sec there.

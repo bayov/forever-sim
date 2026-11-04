@@ -258,7 +258,12 @@ def build(spec, cfg, used):
             os.remove(os.path.join(d, f))
     var = 'hitSteps' + re.sub(r'[^A-Za-z0-9]', '', spec.title())
     block = '\n'.join([BEGIN % spec,
-                       'func init() {', '\tForeverSyntheticItems = append(ForeverSyntheticItems, %s...)' % var, '}', '',
+                       'func init() {'] +
+                      # "init": Go statements on each step item, for a file whose base items get fields from a wrapper
+                      # (the ret items' quality, level and class come from retribution()), which the copies miss
+                      (['\tfor _, item := range %s {' % var] + ['\t\t' + l for l in SPECS[spec]['init']] + ['\t}']
+                       if SPECS[spec].get('init') else []) +
+                      ['\tForeverSyntheticItems = append(ForeverSyntheticItems, %s...)' % var, '}', '',
                        'var %s = []*proto.UIItem{' % var] + literals + ['}', END % spec, ''])
     src = src.rstrip('\n') + '\n\n' + block
     open(path, 'w').write(src)

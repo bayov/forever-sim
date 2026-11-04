@@ -267,6 +267,13 @@ var hitStepsRet = []*proto.UIItem{
 
 // BEGIN hit-trade steps: ret_undead (orchestration/tools/hit_steps.py, do not edit by hand)
 func init() {
+	for _, item := range hitStepsRetUndead {
+		item.RequiredLevel = 60
+		item.Phase = 1
+		item.Quality = proto.ItemQuality_ItemQualityEpic
+		item.Expansion = proto.Expansion_ExpansionVanilla
+		item.ClassAllowlist = []proto.Class{proto.Class_ClassPaladin}
+	}
 	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRetUndead...)
 }
 
@@ -276,6 +283,13 @@ var hitStepsRetUndead = []*proto.UIItem{}
 
 // BEGIN hit-trade steps: ret_crusader_duty (orchestration/tools/hit_steps.py, do not edit by hand)
 func init() {
+	for _, item := range hitStepsRetCrusaderDuty {
+		item.RequiredLevel = 60
+		item.Phase = 1
+		item.Quality = proto.ItemQuality_ItemQualityEpic
+		item.Expansion = proto.Expansion_ExpansionVanilla
+		item.ClassAllowlist = []proto.Class{proto.Class_ClassPaladin}
+	}
 	ForeverSyntheticItems = append(ForeverSyntheticItems, hitStepsRetCrusaderDuty...)
 }
 
