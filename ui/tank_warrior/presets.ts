@@ -15,6 +15,8 @@ import {
 	Race,
 	RaidBuffs,
 	StrengthBuff,
+	SunderRamp,
+	TotemWeaponBuff,
 	TristateEffect,
 	WeaponImbue,
 } from '../core/proto/common.js';
@@ -159,43 +161,55 @@ export const DefaultConsumes = Consumes.create({
 	strengthBuff: StrengthBuff.JujuPower,
 });
 
+// The raid's buffs and the boss's debuffs are the tank bench's (tools/tankbench/req/warrior_protection_*.json), so the
+// UI presets load what the bench scores (tank_fairness-20261104-6).
 export const DefaultRaidBuffs = RaidBuffs.create({
+	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
-	devotionAura: TristateEffect.TristateEffectRegular,
+	bloodPact: TristateEffect.TristateEffectImproved,
+	devotionAura: TristateEffect.TristateEffectImproved,
+	divineSpirit: true,
 	fireResistanceAura: true,
-	fireResistanceTotem: true,
+	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
-	graceOfAirTotem: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
+	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
-	strengthOfEarthTotem: TristateEffect.TristateEffectImproved,
-	stoneskinTotem: TristateEffect.TristateEffectRegular,
+	retributionAura: TristateEffect.TristateEffectImproved,
+	shadowProtection: true,
+	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
+	thorns: TristateEffect.TristateEffectImproved,
+	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
+	trueshotAura: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
 	blessingOfKings: true,
 	blessingOfMight: TristateEffect.TristateEffectImproved,
-	fengusFerocity: false,
-	moldarsMoxie: false,
-	rallyingCryOfTheDragonslayer: false,
-	songflowerSerenade: false,
-	spiritOfZandalar: false,
-	warchiefsBlessing: false,
 });
 
 export const DefaultDebuffs = Debuffs.create({
+	curseOfElements: true,
 	curseOfRecklessness: true,
-	exposeArmor: TristateEffect.TristateEffectImproved,
+	curseOfWeakness: TristateEffect.TristateEffectImproved,
+	demoralizingRoar: TristateEffect.TristateEffectImproved,
+	demoralizingShout: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
-	giftOfArthas: true,
 	insectSwarm: true,
-	sunderArmor: true,
+	judgementOfLight: true,
+	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
+	judgementOfWisdom: true,
+	scorpidSting: true,
+	sunderRamp: SunderRamp.create({ tank: true }),
+	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
 export const OtherDefaults = {
 	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
 	inFrontOfTarget: true,
-	profession1: Profession.Blacksmithing,
-	profession2: Profession.Enchanting,
-	race: Race.RaceHuman,
+	// The bench's professions and race (tank_fairness-20261104-6).
+	profession1: Profession.Engineering,
+	profession2: Profession.Blacksmithing,
+	race: Race.RaceUndead,
 };

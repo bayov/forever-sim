@@ -92,8 +92,8 @@ var ForeverEnchants = []*proto.UIEnchant{
 	// Client enchant 7656. Launch availability unconfirmed, so no preset uses it.
 	foreverEnchant(1248599, "Enchant Bracer - Superior Agility", proto.ItemType_ItemTypeWrist),
 	// Client enchant 8214, Defense +9, from a vendor formula (tank_gear-20261104-3) whose mapping to
-	// this spell is unverified. In the database so the tanks can sim it against Superior Stamina;
-	// no preset uses it yet.
+	// this spell is unverified. The warrior tank presets wear it (it beat Superior Stamina in their A/B,
+	// docs/tank_warrior.md); other tanks sim it against Superior Stamina.
 	foreverEnchant(1248665, "Enchant Bracer - Superior Deflection", proto.ItemType_ItemTypeWrist),
 
 	// Gloves.
