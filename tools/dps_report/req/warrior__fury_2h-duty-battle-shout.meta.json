@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 4,
   "race": "Orc",
-  "talents": "30313113032-250500150122100231",
+  "talents": "30313113032-350500150122100231",
   "treeNames": [
     "Arms",
     "Fury",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h_battle_shout",
   "published": {
-    "dps": 1168.8,
-    "source": "the 2026-11-04 Warrior follow-up (round 70753): wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1147.6,
+    "source": "the hotfix 113539 re-tune (round 70753, 2026-11-04): wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1168.8,
+    "dps": 1147.6,
     "stderr": 0.52,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py on this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-04)"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-04, after hotfix 113539)"
   },
   "summary": "Keeps Battle Shout up for its party. The raid's Battle Shout is off.",
   "keyTalents": [
@@ -45,9 +45,9 @@
     "Death Wish in the last 36s, Recklessness in the last 30s",
     "Blood Fury and Berserking in the last 30s. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Mighty Rage Potion in the last 20s, and at the pull too when a second one fits",
     "Bloodrage under 20 Rage. Berserker Rage under 10 (Improved Berserker Rage)",
-    "Reckless Swings on cooldown. It is off the GCD, and the next 4 swings give 5 more Rage each",
     "Bloodthirst, then Slam at 60+ Rage right after a main-hand swing, then Whirlwind at 25+ Rage",
     "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
+    "Reckless Swings under 20 Rage, only when no strike is ready, since it takes a 1s GCD. The next 4 swings give 5 more Rage each",
     "Heroic Strike at 90+ Rage, outside execute",
     "Hamstring as filler at 10+ Rage"
   ],

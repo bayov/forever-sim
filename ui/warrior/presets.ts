@@ -228,7 +228,9 @@ export const DefaultAPLs = [APLLevel60Fury2H];
 // Mastery 3, Reckless Swings, Improved Whirlwind): the search from the remapped build drops Booming
 // Voice and a point of Improved Berserker Rage for Reckless Swings, Improved Whirlwind 2/2 and Enrage
 // 5/5, and fills Arms' rows with Improved Charge and Improved Overpower: 1069.6 to 1153.4 at 180 sec.
-export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30313113002-050530055120100231' }), {
+// 2026-11-04, hotfix push 113539 (Raging Blows gone): its point goes to Improved Bloodrage, +1.3 at
+// 180 sec in the talent search (tools/rotopt/warrior_presets.sh).
+export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30313113002-050530055120100231-1' }), {
 	tooltip: 'Level 60 dual wield Fury talents from the talent search.',
 	group: 'Synthetic',
 });
@@ -241,8 +243,10 @@ export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTal
 // Wrath to Enrage 5/5: 1163.9 to 1170.1 at 180 sec. Furious Precision does nothing with a two-hander,
 // but no move of its points scored better then. 2026-11-04: Unbridled Wrath 5/5 for Furious
 // Precision's 3 points, the spare one in Blood Craze: +2.8 / +3.4 / +1.9 at 120 / 180 / 300 sec,
-// ahead at every length on both seeds.
-export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30313113032-250500150122100231' }), {
+// ahead at every length on both seeds. 2026-11-04, hotfix push 113539 (Raging Blows gone): without
+// its point Bloodthirst's row was a point short, and no talent in reach adds damage, so the point goes
+// to Booming Voice 3/5 for the Battle Shout duty's shout.
+export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30313113032-350500150122100231' }), {
 	tooltip: 'Level 60 two-hand Fury talents from the talent search.',
 	group: 'Synthetic',
 });

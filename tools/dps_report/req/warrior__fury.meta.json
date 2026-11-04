@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 4,
   "race": "Orc",
-  "talents": "30313113002-050530055120100231",
+  "talents": "30313113002-050530055120100231-1",
   "treeNames": [
     "Arms",
     "Fury",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury",
   "published": {
-    "dps": 1153.0,
-    "source": "the 2026-11-04 Warrior follow-up (round 70753): wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1136.0,
+    "source": "the hotfix 113539 re-tune (round 70753, 2026-11-04): wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1153.0,
-    "stderr": 0.44,
+    "dps": 1136.0,
+    "stderr": 0.43,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py on this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-04)"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-04, after hotfix 113539)"
   },
   "summary": "Dual-wield Fury with a 2.8s sword and a 2.9s axe. Saves Death Wish and Recklessness for the end of the fight.",
   "keyTalents": [
@@ -45,9 +45,9 @@
     "Save Death Wish for the last 33s when that doesn't lose a use. Recklessness goes with the last Death Wish, and the trinket 1 GCD later. In fights with 2 Death Wishes, the first goes at the pull without Recklessness",
     "Blood Fury and Berserking with Death Wish. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Trinket on cooldown, with its last use saved for the last 30s. Mighty Rage Potion in the last 20s, and at the pull too when a second one fits",
     "Bloodrage under 50 Rage",
-    "Reckless Swings on cooldown. It is off the GCD, and the next 4 swings give 5 more Rage each",
     "Bloodthirst, then Whirlwind at 25+ Rage",
     "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
+    "Reckless Swings on cooldown, but only when no strike is ready, since it takes a 1s GCD. The next 4 swings give 5 more Rage each",
     "Heroic Strike at 60+ Rage, during execute too, only when Bloodthirst and Whirlwind are 1s or more away",
     "Hamstring as filler at 20+ Rage when Bloodthirst and Whirlwind are 1s or more away (it procs Windfury Totem and Flurry)"
   ],

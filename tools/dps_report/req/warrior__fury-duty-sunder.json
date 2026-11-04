@@ -88,7 +88,7 @@
               "blessingOfKings": true,
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "30313113002-050530055120100231",
+            "talentsString": "30313113002-050530055120100231-1",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
@@ -818,16 +818,6 @@
                   }
                 },
                 {
-                  "notes": "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1329555
-                      }
-                    }
-                  }
-                },
-                {
                   "notes": "Recklessness with the fight's last Death Wish.",
                   "action": {
                     "condition": {
@@ -960,6 +950,27 @@
                       "spellId": {
                         "spellId": 20662,
                         "rank": 5
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1329555
                       }
                     }
                   }

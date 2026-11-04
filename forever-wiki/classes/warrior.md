@@ -36,6 +36,15 @@ spell. The sim takes the notes' values (standards 37), gated under Forever, and 
   Strike from 60 Rage and Hamstrings from 20, both only when Bloodthirst and Whirlwind are 1 sec away or more, and
   Bloodrages under 50: 1196.2 / 1153.0 / 1128.7 (+2.0 / +0.4 / +3.9). Each won at 120, 160, 180, 200 and 300 sec on
   both seed sets at 20,000 iterations.
+- Hotfix push 113539 (2026-11-04; `orchestration/round_70753/hotfix_113539_warrior.md`): Raging Blows is gone (Cleave 20,
+  Whirlwind 25 Rage), Reckless Swings (spell 1329555) takes a 1 sec GCD, Spearing Strike is 75% weapon damage plus 75%
+  on Giants and Dragonkin. Every preset now casts Reckless Swings below its main strikes, just ahead of Heroic Strike,
+  so its GCD only goes when no strike is ready; two-hand Fury and Arms (and their duties but Arms' Sunder duty) only
+  under 20 Rage. Dual wield Fury puts Raging Blows' point in Improved Bloodrage (`30313113002-050530055120100231-1`);
+  two-hand Fury's remapped string left Bloodthirst a point short of its row, and no point in reach adds damage, so it
+  goes to Booming Voice (`30313113032-350500150122100231`). Arms keeps its talents, Reckless Swings included. At 120 /
+  180 / 300 sec (Orc, 20,000 iterations, seed 1): Fury 1179.5 / 1136.0 / 1111.6, two-hand Fury 1192.5 / 1151.0 /
+  1117.1, Arms 1101.0 / 1088.0 / 1062.3, Arms vs Dragonkin 1160.8 / 1147.0 / 1120.6. Orc stays best on all three.
 
 ## Beta client 1.60.1.70338 (2026-10-12)
 

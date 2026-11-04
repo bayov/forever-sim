@@ -571,16 +571,6 @@
                   }
                 },
                 {
-                  "notes": "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1329555
-                      }
-                    }
-                  }
-                },
-                {
                   "notes": "Sapper and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
@@ -778,6 +768,27 @@
                       "spellId": {
                         "spellId": 20662,
                         "rank": 5
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Reckless Swings for the Rage of the next 4 swings. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "sequenceIsComplete": {
+                              "sequenceName": "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1329555
                       }
                     }
                   }

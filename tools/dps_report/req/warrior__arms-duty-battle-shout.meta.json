@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 1094.0,
-    "source": "round 70753 (the November 2 development notes), the Warrior worker's finals 2026-11-03: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1084.4,
+    "source": "the hotfix 113539 re-tune (round 70753, 2026-11-04): wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1094.0,
+    "dps": 1084.4,
     "stderr": 0.49,
     "iters": 20000,
     "ok": true,
-    "note": "the Warrior worker's final run of this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-03)"
+    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-04, after hotfix 113539)"
   },
   "summary": "Keeps Battle Shout up for its party. The raid's Battle Shout is off.",
   "keyTalents": [
@@ -44,11 +44,11 @@
     "With 25s left, if Recklessness is ready and Rage is under 25, swap to Berserker Stance. Swap back after Recklessness",
     "Recklessness in the last 25s. Racials on cooldown, but Elune's Light never during Recklessness or the 15s before it",
     "Mighty Rage Potion at the pull, the second in the last 15s. Bloodrage under 20 Rage",
-    "Reckless Swings on cooldown. It is off the GCD, and the next 4 swings give 5 more Rage each",
     "Slam at 20+ Rage outside execute, ahead of Mortal Strike (10s cooldown with Improved Slam)",
     "Mortal Strike on cooldown",
     "Overpower at 5+ Rage after a dodge or Bloodthrill",
     "Keep Rend up outside execute. Then Execute",
+    "Reckless Swings under 20 Rage, only when no strike is ready, since it takes a 1s GCD. The next 4 swings give 5 more Rage each",
     "Heroic Strike at 90+ Rage and Hamstring filler at 10+, both outside execute"
   ],
   "consumes": [
