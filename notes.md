@@ -46,6 +46,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
   * Chain Lightning's "comparable rank" Lightning Bolt: the sim takes the newest bolt at Chain Lightning's learn level (ranks 6, 7, 8 and 10 at 32, 40, 48 and 56). Only rank 4 matters at 60, and both are learned at 56.
   * Improved Ghost Wolf's column on row 4 (the notes give the row only; the sim puts it in column 4, the free square) and Lightning Mastery needing Call of Thunder in Lava Burst's place. Neither moves DPS; the column decides the talent string's order only if another talent goes on row 4.
   * Totemic Call puts every totem on the shaman's own spot (the notes: "teleports the Shaman's totems to the Shaman's own location"), where Totemic Projection kept each totem's offset. Leveling only.
+* To Verify in-game: what a talent spell's later ranks cost at the trainer (2026-11-04, client 70755). Blizzard says training every spell costs about 206 to 207g per class, a little less for classes that pay other training costs (warlock grimoires), and that ranks at the same level cost about the same. Wowhead's shaman ranks add up to 202.6g without Lava Burst. Wowhead gives talent spell ranks 5% of the price: Mana Tide Totem 2 at 38 costs 11s there, against 1.10g for the level's other ranks. If talent spell ranks lost that 5% price, the shaman total is about 214g. Check Mana Tide Totem 2's price at a trainer in game. The Enhancement leveling plan buys no talent spell ranks, so its training schedule doesn't depend on it.
 
 ## All classes
 
