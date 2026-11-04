@@ -22,6 +22,7 @@
   - Paladin: orchestration/round_70753/paladin.md:138 still says "(Templar's Bulwark magic: N only)", against :115, :210 and docs/tank_paladin.md:43 (N, C; 1311015 DispelType 1).
 - proposed fix: cite push 113380 as tier 1 in the shaman rows and comment; reword the bear comment; "Greater Stamina (+9, enchant 1886)" and drop "no preset yet"; "N, C" at paladin.md:138.
 - needs: worker fix
+- fixed (bear part): 2026-11-04, 0b901ff: sim/druid/bear_attacks.go now names the form's multiplier (x2.15 under Forever) and Primal Bite's x2.
 
 ### tank_mechanics-20261104-14: Scoring-run guards with latent holes, and SoD encounters still double parry haste
 - severity: low (latent; no preset or scored encounter hits them today)
