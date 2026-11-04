@@ -1280,6 +1280,34 @@ rendering, not the sim.
     and a pooled one is out of the scene. The raid draws about 3600 particles, most on the casters' hands and their
     bolts' trails (a Fireball's trail is 200).
   - Headless: effects 0.87 to 0.71ms, gear 0.30 to 0.19ms, particles 0.25 to 0.18ms.
+- Seventh raid report (your PC): about 125 FPS, 5.8ms of script (animating 2.5ms, drawing 2.9ms), GPU 4.5ms (shadows
+  1.1, solid 1.4, effects 0.95, gear 0.36, particles 0.30, ribbons 0.31), 400 draw calls. Solo holds 239 FPS.
+- The pose worker (`wow/pose.ts`, `wow/poseWorker.ts`, `wow/poseClient.ts`): the raid test's crowd (raiders, their
+  gear and the effects in the crowd) poses off the page's thread. Posing is one class (`Poser`) that both the page
+  (your character, the boss, and everything when the page can't share memory) and the worker run. A model keeps its
+  animation state (what plays, its times and fades, its events) and asks for its pose each update. Once a frame the
+  page sends the worker every model's latest request, and the worker writes each model's bone matrices into memory
+  shared with the page, in one of two sets: the page reads the other, and they swap when the frame's poses are done.
+  So the crowd's poses are a frame behind, and what hangs off their bones moves when the new pose comes in. Your
+  character still poses itself, with no lag.
+  - Shared memory needs a cross-origin isolated page, so the practice server sends `Cross-Origin-Opener-Policy:
+    same-origin` and `Cross-Origin-Embedder-Policy: credentialless` (credentialless, so the icons from wow.zamimg.com
+    still load). Without them (an old server) the crowd poses on the page as before. `?poseworker=0` turns it off.
+  - The crowd copies a skeleton into the bone texture only when its pose changed (a far raider poses now and then,
+    still gear once), and the bone texture goes up only when one did.
+  - Headless (WSL GPU, fight, 1920x1080): animating 2.8 to 1.6ms, but drawing 4.1 to 5.5ms, so about even. Drawing
+    here is bound by the GPU process translating to Direct3D 12, so the time saved shows up as waiting.
+  - A copy of a painted texture that wraps another way (`setTexture`) shares the picture, which the original let go of
+    once on the GPU, so the copy went up empty. The original now keeps it.
+- The merged shadow (`wow/crowd.ts`): the raiders' solid shadows (bodies and gear) are one mesh, drawn in one call per
+  side. Each vertex has its bones in the bone texture and its raider's place in the world in a places texture, so
+  moving raiders need no rebuild; it's rebuilt when raiders join. A body's hidden submeshes are left out when it's
+  built. Parts cut by their texture's alpha (hair) and the effects' shadows still draw on their own. Shadow draw
+  calls went from 128 to 83. `?mergeshadows=0` turns it off. Headless: 112 to 123 FPS, and 88 to 115 on a slow run.
+- Not done: merging the crowd's picture draws (65 bodies, 130 gear, 90 see-through). The gear's textures differ in
+  size and wrapping, so they'd need texture arrays by size and wrap (and a second set for the combiner's second
+  texture), one vertex buffer for all gear, and the copies' data read by draw in the shader (WEBGL_multi_draw has no
+  base instance). See-through layers can't merge without changing their order.
 - Flat particles and see-through layers that don't write depth draw slightly in front of what's at their depth. The
   Barrens ground is at the same height as Fire Nova's ring, and hid it.
 - The sim sends every spell you and your pets have (`ShownSpells`), so the effects of procs outside the toolkit
