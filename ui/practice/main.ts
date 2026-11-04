@@ -26,7 +26,8 @@ import { CameraOptions, Mover } from './controls';
 import { iconName, iconUrl, meleeIcon, setIcon } from './icons';
 import { css, HudLayout, pack, place, readLayout, Rect } from './layout';
 import { AuraState, Batch, ClockState, FromWorker, HitEvent, Input, PlayerState, Settings, simTimeAt, Summary, TargetState, ToolkitSpell, ToWorker, wallNow } from './protocol';
-import { Perf } from './perf';
+import { Perf, softwareRenderer } from './perf';
+import { drawn } from './wow/particles';
 import { Graphics, graphicsPresets, Room } from './scene';
 import { loadCursors } from './cursors';
 import { Pointer } from './pointer';
@@ -34,7 +35,7 @@ import { RaidTest, raidSpells } from './raid';
 import { auraColor, avoidColor, CombatText, schoolColor } from './sct';
 import { Tooltip, TooltipContent, tooltipInfo } from './tooltip';
 import { Effects, MeleeSounds } from './wow/effects';
-import { decodeHooks, fileProgress } from './wow/files';
+import { decodeHooks, file, fileProgress, hasFile, prefetch } from './wow/files';
 import { find, setStyle, setText } from './dom';
 import { Model } from './wow/model';
 import { Terrain } from './wow/terrain';
@@ -294,6 +295,8 @@ class PracticeRoom {
 		this.room.setGraphics(this.graphics);
 		this.perf = new Perf(this.room.renderer);
 		this.room.onPass = pass => this.perf?.gpuPass(pass);
+		this.warnSoftwareGraphics();
+		this.perf.particles = () => drawn.particles;
 		this.pointer = new Pointer(this.root);
 		// A model built mid fight (a spell's effect) can cost a frame.
 		Model.onLoad = (fdid, ms) => !this.loadingModels && this.perf?.note('model', performance.now(), ms, String(fdid));
@@ -337,17 +340,64 @@ class PracticeRoom {
 		this.root.append(screen);
 		const text = screen.querySelector('.loading-text') as HTMLElement;
 		const fill = screen.querySelector('.loading-bar > div') as HTMLElement;
+		const raidSize = Number(new URLSearchParams(location.search).get('raid') ?? 0);
+		// We only learn which textures a model needs once the model itself has come back, so the
+		// number of files to load grows from about 300 to 1300 while we load. So we remember which
+		// files the last load of this same room asked for. We ask for them all right away, which
+		// shows the real total from the start and doesn't wait on the models to name them.
+		const setupKey = `${raidSize}|${JSON.stringify(this.loaded.look ?? {})}|${(this.loaded.rotationSpells ?? []).join(',')}|${this.loaded.name}`;
+		const last = loadHistory(setupKey);
+		const remembered = (last?.ids ?? []).filter(id => !hasFile(id));
+		// The time line of the last load, for the bar's percent and the time left. It's only good
+		// when this load fetches the same files, not when you come back to the room in the same page.
+		const pace = last?.ms && last.curve && remembered.length === last.ids.length ? last : undefined;
+		const startIds = fileProgress.ids.length;
 		const startAsked = fileProgress.asked;
 		const startDone = fileProgress.done;
+		const started = performance.now();
+		if (remembered.length > 0) {
+			prefetch(remembered).then(() => {
+				for (const id of remembered) file(id).catch(() => undefined);
+			});
+		}
+		// When the files were done, as files came back, to remember this load's pace.
+		const samples: [number, number][] = [];
+		let filesDoneAt = 0;
 		let shown = 0;
 		const tick = () => {
 			if (!screen.isConnected) return;
-			const asked = fileProgress.asked - startAsked;
+			const now = performance.now() - started;
+			const asked = Math.max(fileProgress.asked - startAsked, remembered.length);
 			const done = fileProgress.done - startDone;
-			// The total grows as models name their textures, so the bar never runs backwards.
-			shown = Math.max(shown, asked > 0 ? done / asked : 0);
+			if (done > (samples.at(-1)?.[0] ?? 0)) samples.push([done, now]);
+			// More files may still be asked for after this, until the last model has named its textures.
+			if (done < asked) filesDoneAt = 0;
+			else if (!filesDoneAt) filesDoneAt = now;
+			let p: number;
+			let left: number | undefined;
+			if (pace) {
+				// Where the last load was at this many files, and how much faster or slower we are now.
+				const at = paceAt(pace.curve!, done / Math.max(1, asked));
+				if (filesDoneAt) {
+					const warm = pace.ms! - pace.curve!.at(-1)!;
+					p = (pace.curve!.at(-1)! + (now - filesDoneAt)) / pace.ms!;
+					left = Math.max(0, warm - (now - filesDoneAt));
+				} else {
+					const speed = at > 1000 ? now / at : 1;
+					p = at / pace.ms!;
+					left = (pace.ms! - at) * speed;
+				}
+			} else {
+				// The first load of this room: the total still grows, and we leave the last tenth for
+				// getting the shaders ready.
+				p = asked > 0 ? (0.9 * done) / asked : 0;
+			}
+			shown = Math.max(shown, Math.min(0.99, p));
 			fill.style.width = `${(shown * 100).toFixed(1)}%`;
-			text.textContent = `Loading · ${done}/${asked} files`;
+			// The first load of a room can't know its percent, so it shows only the files.
+			const parts = ['Loading', ...(pace ? [`${Math.floor(shown * 100)}%`] : []), `${done}/${asked} files`, `${Math.floor(now / 1000)}s`];
+			if (left !== undefined) parts.push(left < 1000 ? 'almost done' : `${Math.ceil(left / 1000)}s left`);
+			text.textContent = parts.join(' · ');
 			requestAnimationFrame(tick);
 		};
 		tick();
@@ -360,7 +410,6 @@ class PracticeRoom {
 		const jobs: Promise<unknown>[] = [loadCursors(this.root)];
 		// Models we draw once while loading, so their shaders and textures are ready for the fight.
 		const warm: Model[] = [];
-		const raidSize = Number(new URLSearchParams(location.search).get('raid') ?? 0);
 
 		// The ground is a flat spot in the northern Barrens (Kalimdor's WDT), with trees around it and
 		// no buildings near.
@@ -503,6 +552,10 @@ class PracticeRoom {
 		);
 		await Promise.all(jobs);
 		await this.room.warmUp(warm, !!effects.crowd).catch(e => console.warn('warm up', e));
+		saveHistory(setupKey, fileProgress.ids.slice(startIds), {
+			ms: performance.now() - started,
+			curve: paceCurve(samples, fileProgress.done - startDone, samples.at(-1)?.[1] ?? 0),
+		});
 		screen.remove();
 		this.loadingModels = false;
 	}
@@ -1173,6 +1226,21 @@ class PracticeRoom {
 		if (document.pointerLockElement) document.exitPointerLock();
 		void this.sounds?.listener.context.close().catch(() => {});
 		this.room.renderer.dispose();
+	}
+
+	// warnSoftwareGraphics shows a line when Chrome draws without the graphics card (it falls back
+	// to software after a driver update, and a raid then runs at 5 FPS). Not in test runs.
+	private warnSoftwareGraphics() {
+		const gl = this.room.renderer.getContext();
+		const info = gl.getExtension('WEBGL_debug_renderer_info');
+		const name = String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+		if (!softwareRenderer(name) || navigator.webdriver || new URLSearchParams(location.search).has('bench')) return;
+		const line = document.createElement('div');
+		line.className = 'software-graphics';
+		line.textContent = 'Software graphics · restart Chrome';
+		line.title = name;
+		Object.assign(line.style, { position: 'fixed', top: '40px', left: '50%', transform: 'translateX(-50%)', padding: '4px 10px', background: 'rgba(120, 20, 20, 0.85)', color: '#fff', font: '13px sans-serif', borderRadius: '4px', zIndex: '1000', pointerEvents: 'none' });
+		this.root.append(line);
 	}
 
 	// savePerf sends the fight's performance report to the practice server
@@ -2293,6 +2361,59 @@ function fmtLeft(ms: number): string {
 	if (s >= 3600) return `${Math.floor(s / 3600)}h`;
 	if (s >= 60) return `${Math.floor(s / 60)}m`;
 	return s < 10 ? s.toFixed(1) : String(Math.floor(s));
+}
+
+// What each room setup's last load looked like (see loadModels), for the last few setups: the files
+// it asked for, how long it took, and its pace. curve[k] is when the files were k/20 done, and the
+// last one is when they were all done, before the shaders got ready.
+type LoadHistory = { setup: string; ids: number[]; ms?: number; curve?: number[] };
+const historyKey = 'practice.loadFiles';
+const historySetups = 8;
+const paceSteps = 20;
+
+function loadHistory(setup: string): LoadHistory | undefined {
+	try {
+		const all = JSON.parse(localStorage.getItem(historyKey) ?? '[]') as LoadHistory[];
+		return all.find(e => e.setup === setup);
+	} catch {
+		return undefined;
+	}
+}
+
+function saveHistory(setup: string, ids: number[], pace: { ms: number; curve: number[] }) {
+	if (ids.length === 0) return;
+	try {
+		const all = JSON.parse(localStorage.getItem(historyKey) ?? '[]') as LoadHistory[];
+		const old = all.find(e => e.setup === setup);
+		// A load that found most files already in the page (you came back to the room) only adds
+		// to the list, and its pace isn't a real load's.
+		const kept = [...new Set([...(old?.ids ?? []), ...ids])];
+		const fresh = ids.length >= kept.length;
+		const entry: LoadHistory = fresh ? { setup, ids: kept, ...pace } : { ...old, setup, ids: kept };
+		const rest = all.filter(e => e.setup !== setup).slice(0, historySetups - 1);
+		localStorage.setItem(historyKey, JSON.stringify([entry, ...rest]));
+	} catch {
+		// No storage (a private window): the bar's total grows as before.
+	}
+}
+
+// paceCurve turns a load's (files done, ms) samples into the times it was k/20 done.
+function paceCurve(samples: [number, number][], total: number, filesMs: number): number[] {
+	const curve = [0];
+	let i = 0;
+	for (let k = 1; k < paceSteps; k++) {
+		while (i < samples.length && samples[i][0] < (k / paceSteps) * total) i++;
+		curve.push(Math.round(samples[i]?.[1] ?? filesMs));
+	}
+	curve.push(Math.round(filesMs));
+	return curve;
+}
+
+// paceAt is when the last load was at fraction f of its files.
+function paceAt(curve: number[], f: number): number {
+	const x = Math.max(0, Math.min(1, f)) * paceSteps;
+	const k = Math.min(paceSteps - 1, Math.floor(x));
+	return curve[k] + (curve[k + 1] - curve[k]) * (x - k);
 }
 
 async function enterRoom(loaded: Loaded, guid: string, character: CharacterData) {

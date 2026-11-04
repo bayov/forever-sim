@@ -55,6 +55,7 @@ func (shaman *Shaman) newFrostbrandImbueSpell() *core.Spell {
 		DamageMultiplier: []float64{1, 1.05, 1.1, 1.15}[shaman.Talents.ElementalWeapons],
 		ThreatMultiplier: 1,
 		BonusCoefficient: 0.1,
+		DownrankLevel:    int(FrostbrandWeaponLevel[rank]),
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)

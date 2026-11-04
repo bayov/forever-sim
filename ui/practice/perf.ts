@@ -5,7 +5,7 @@
 // Things that often cause a hitch get noted with their time: a model or shader that loads mid
 // fight, a long task, Chrome's long animation frames with the scripts that ran in them, and drops
 // in the JS heap (a garbage collection). We also time the GPU's work on drawing the scene by pass
-// (the shadows, the solid things, and the see-through things with the effects), when the browser
+// (the uploads, the shadows, the solid things, and the see-through things with the effects), when the browser
 // lets us (EXT_disjoint_timer_query_webgl2). When the fight ends, the report goes to the practice
 // server, which keeps it in ~/forever-practice/perf/.
 
@@ -17,9 +17,13 @@ export type Part = (typeof parts)[number];
 
 // The passes of drawing the scene that we time on the GPU, in the order they run.
 //
-// 'shadow' also holds what comes before the shadows: the renderer sends the frame's changed
-// vertices to the GPU and clears the picture.
-export const passes = ['shadow', 'opaque', 'transparent'] as const;
+// 'upload' is what comes before the shadows: the renderer sends the frame's changed vertices and
+// textures to the GPU.
+//
+// The see-through things come in kinds (drawOrder, wow/particles.ts): 'transparent' is the units'
+// own see-through parts, then the raid test's boss, its raiders' gear and bodies, the spell
+// effects, the particles and the ribbons.
+export const passes = ['upload', 'shadow', 'opaque', 'transparent', 'boss', 'gear', 'effects', 'particles', 'ribbons'] as const;
 export type Pass = (typeof passes)[number];
 
 // One frame: when it started, the time since the frame before, the time of each part, and the
@@ -30,6 +34,11 @@ type Frame = {
 	cpu: number;
 	parts: number[];
 	calls: number;
+	// How many particles the frame drew.
+	particles: number;
+	// The frame's uploads to the GPU: how many calls, and how many kilobytes.
+	uploads: number;
+	uploadKb: number;
 	tris: number;
 	// The GPU's time for drawing the scene, in all and by pass. It comes in a few frames later, so
 	// it stays -1 when a result never came (or the browser can't time the GPU).
@@ -68,7 +77,39 @@ export class Perf {
 	// The passes timed in the frame so far, which go out with the frame at its end.
 	private framePasses: { query: WebGLQuery; pass: number }[] = [];
 
+	// particles counts the particles drawn in the frame (set by the room).
+	particles?: () => number;
+	private uploads = 0;
+	private uploadBytes = 0;
+	// The WebGL calls by kind since the recording started (with ?glcount=1), and over how many frames.
+	private glCalls = new Map<string, number>();
+
 	constructor(readonly renderer: THREE.WebGLRenderer) {
+		// We count the uploads to the GPU (buffers and textures), each with its size.
+		const gl = renderer.getContext() as WebGL2RenderingContext;
+		// With ?glcount=1 we count every WebGL call by kind (it costs a little time each), since
+		// Chrome's GPU process takes time for each command we send, not only each draw.
+		if (new URLSearchParams(location.search).get('glcount') === '1') {
+			const own = gl as unknown as Record<string, unknown>;
+			for (const name of Object.getOwnPropertyNames(WebGL2RenderingContext.prototype)) {
+				const d = Object.getOwnPropertyDescriptor(WebGL2RenderingContext.prototype, name);
+				if (!d || typeof d.value !== 'function' || name === 'constructor') continue;
+				const f = (d.value as (...a: unknown[]) => unknown).bind(gl);
+				const before = own[name] !== d.value ? (own[name] as (...a: unknown[]) => unknown) : f;
+				own[name] = (...a: unknown[]) => {
+					this.glCalls.set(name, (this.glCalls.get(name) ?? 0) + 1);
+					return before(...a);
+				};
+			}
+		}
+		for (const name of ['bufferSubData', 'bufferData', 'texSubImage2D', 'texImage2D', 'texSubImage3D', 'texImage3D'] as const) {
+			const f = (gl[name] as (...a: unknown[]) => void).bind(gl);
+			(gl as unknown as Record<string, unknown>)[name] = (...a: unknown[]) => {
+				this.uploads++;
+				for (const x of a) if (ArrayBuffer.isView(x)) this.uploadBytes += x.byteLength;
+				return f(...a);
+			};
+		}
 		// When the GPU drops the page's drawing (a lost context), the queries out are gone, and the
 		// timer is found again once it's back.
 		const canvas = renderer.domElement;
@@ -212,6 +253,9 @@ export class Perf {
 			cpu: round(performance.now() - c.start),
 			parts: c.parts.map(round),
 			calls: info.render.calls,
+			uploads: this.uploads,
+			particles: this.particles?.() ?? 0,
+			uploadKb: round(this.uploadBytes / 1024),
 			tris: info.render.triangles,
 			gpu: -1,
 			gpuPasses: passes.map(() => 0),
@@ -222,6 +266,8 @@ export class Perf {
 			heapMb: heap === undefined ? undefined : round(heap / 1048576),
 		};
 		this.lastT = c.t;
+		this.uploads = 0;
+		this.uploadBytes = 0;
 		frame.gpuOut = this.framePasses.length;
 		this.frameNo++;
 		for (const p of this.framePasses) this.queries.push({ ...p, frame, at: this.frameNo });
@@ -276,20 +322,24 @@ export class Perf {
 				'100ms': gaps.filter(g => g > 100).length,
 			},
 			partsAvgMs: { ...Object.fromEntries(parts.map((p, i) => [p, round(partSums[i])])), gpu },
-			// The GPU's time by pass, on average.
+			// The GPU's time by pass, and the uploads to it a frame, on average.
 			gpuPassesAvgMs: gpuPasses,
+			// The WebGL calls a frame by kind, with ?glcount=1.
+			glCallsAvg: this.glCalls.size ? Object.fromEntries([...this.glCalls].sort((a, b) => b[1] - a[1]).slice(0, 25).map(([k, v]) => [k, round(v / Math.max(1, frames.length))])) : undefined,
+			uploadsAvg: { calls: round(frames.reduce((a, f) => a + f.uploads, 0) / Math.max(1, frames.length)), kb: round(frames.reduce((a, f) => a + f.uploadKb, 0) / Math.max(1, frames.length)) },
 			gpuInfo: {
 				renderer: info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER),
 				vendor: info ? gl.getParameter(info.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR),
 				canvas: [gl.drawingBufferWidth, gl.drawingBufferHeight],
 				antialias: gl.getContextAttributes()?.antialias,
 				samples: gl.getParameter(gl.SAMPLES),
+				software: softwareRenderer(String(info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER))),
 			},
 			slowest: slow,
 			notes: this.notes,
 			// Every frame, as [time, gap, cpu, ...parts, calls, triangles, heap MB, GPU ms].
-			frames: frames.map(f => [f.t, f.gap, f.cpu, ...f.parts, f.calls, f.tris, f.heapMb ?? 0, f.gpu, ...(f.gpu >= 0 ? f.gpuPasses : passes.map(() => -1))]),
-			frameColumns: ['t', 'gap', 'cpu', ...parts, 'calls', 'tris', 'heapMb', 'gpu', ...passes.map(p => `gpu_${p}`)],
+			frames: frames.map(f => [f.t, f.gap, f.cpu, ...f.parts, f.calls, f.tris, f.heapMb ?? 0, f.uploads, f.uploadKb, f.particles, f.gpu, ...(f.gpu >= 0 ? f.gpuPasses : passes.map(() => -1))]),
+			frameColumns: ['t', 'gap', 'cpu', ...parts, 'calls', 'tris', 'heapMb', 'uploads', 'uploadKb', 'particles', 'gpu', ...passes.map(p => `gpu_${p}`)],
 			...extra,
 		};
 	}
@@ -299,8 +349,14 @@ export class Perf {
 		this.frames = [];
 		this.notes = [];
 		this.lastT = 0;
+		this.glCalls.clear();
 		this.startedAt = performance.now();
 	}
+}
+
+// softwareRenderer says a WebGL renderer's name is one that draws without the graphics card.
+export function softwareRenderer(name: string): boolean {
+	return /Basic Render Driver|SwiftShader|llvmpipe|softpipe|Software/i.test(name);
 }
 
 function round(x: number): number {

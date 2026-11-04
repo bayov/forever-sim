@@ -11,6 +11,7 @@ import * as THREE from 'three';
 import { toThree } from './scene';
 import type { Crowd } from './wow/crowd';
 import type { Effects } from './wow/effects';
+import { drawOrder } from './wow/particles';
 import { Anim } from './wow/model';
 import { Appearance, UnitView } from './wow/unit';
 
@@ -223,6 +224,9 @@ export class RaidTest {
 
 	// load builds the raid: count people in all, so count - 1 others besides you.
 	async load(count: number, getJSON: <T>(url: string) => Promise<T>) {
+		// With 20 or more, helms, shoulders and cloaks cast no shadow (their shadows mostly fall in
+		// the body's), which saves a shadow draw call each.
+		if (count >= 20) for (const slot of [1, 3, 15]) this.crowd?.noShadowSlots.add(slot);
 		const roles: Role[] = [];
 		const others = Math.max(0, count - 1);
 		const plan: [Role, number][] = [
@@ -262,6 +266,7 @@ export class RaidTest {
 			this.scene.add(view.group);
 			view.group.position.copy(toThree(boss[0], boss[1]));
 			view.group.rotation.y = bossFacing;
+			for (const m of view.models) m.mesh.renderOrder = drawOrder.boss;
 			this.boss = view;
 		});
 

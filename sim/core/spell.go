@@ -28,6 +28,11 @@ type SpellConfig struct {
 	MetricSplits  int
 	Rank          int
 	RequiredLevel int
+	// Forever's downranking penalty (downrank.go): Downrank sets the spell's kind (read from the
+	// ProcMask by default) or exempts it, and DownrankLevel gives a rank-less sub-spell (a tick,
+	// a totem's attack, an imbue's proc) the learn level of the rank it belongs to.
+	Downrank      DownrankKind
+	DownrankLevel int
 
 	ManaCost   ManaCostOptions
 	EnergyCost EnergyCostOptions
@@ -226,6 +231,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 	if config.PeriodicDamageMultiplierAdditive == 0 {
 		config.PeriodicDamageMultiplierAdditive = 1
 	}
+
+	unit.applyDownrank(&config)
 
 	// Default CastSlot to mainhand
 	if config.CastType == proto.CastType_CastTypeUnknown {

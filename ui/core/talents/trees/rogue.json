@@ -198,7 +198,7 @@
           "colIdx": 1
         },
         "spellIds": [
-          0
+          1329256
         ],
         "maxPoints": 1,
         "name": "Blood Splatter",
@@ -209,7 +209,7 @@
             9
           ]
         ],
-        "icon": "ability_rogue_bloodsplatter"
+        "icon": "ability_rogue_rupture"
       },
       {
         "fieldName": "lethality",
@@ -351,7 +351,7 @@
         ],
         "maxPoints": 5,
         "name": "Relentless Strikes",
-        "description": "Your finishing moves have a {0}% chance per combo point to restore {1} Energy.",
+        "description": "Your finishing moves have a {0}% chance per Combo Point to restore {1} Energy.",
         "ranks": [
           [
             4,
@@ -387,7 +387,7 @@
         ],
         "maxPoints": 1,
         "name": "Venom",
-        "description": "Your Shank ability increases the damage of your Poisons by {0}% and your chance to apply Poisons by {1}% for {2} sec.",
+        "description": "Causes your Shank ability to increase your Poison damage by {0}% and your chance to apply Poisons by {1}% for {2} sec.",
         "ranks": [
           [
             30,
@@ -437,7 +437,7 @@
         ],
         "maxPoints": 3,
         "name": "Seal Fate",
-        "description": "Your critical strikes from abilities that add combo points have a {0}% chance to add an additional combo point.",
+        "description": "Your critical strikes from abilities that add Combo Points have a {0}% chance to add an additional Combo Point.",
         "ranks": [
           [
             33
@@ -457,15 +457,20 @@
           "rowIdx": 6,
           "colIdx": 1
         },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
         "spellIds": [
           1310707
         ],
         "maxPoints": 1,
         "name": "Mutilate",
-        "description": "Instantly attacks with both weapons for {0}% weapon damage plus an additional amount with each weapon. Damage is increased by {1}% against Poisoned targets. Awards {2} combo points.",
+        "description": "Instantly attacks with both weapons for {0}% weapon damage plus an additional {1} with each weapon. Damage increased by {2}% against Poisoned targets. Awards {3} Combo Points.",
         "ranks": [
           [
             90,
+            40,
             20,
             2
           ]
@@ -732,11 +737,11 @@
         "fieldName": "composure",
         "location": {
           "rowIdx": 2,
-          "colIdx": 2
+          "colIdx": 3
         },
         "spellIds": [
-          0,
-          0
+          1329265,
+          1329265
         ],
         "maxPoints": 2,
         "name": "Composure",
@@ -749,7 +754,7 @@
             10
           ]
         ],
-        "icon": "ability_rogue_quickrecovery"
+        "icon": "ability_rogue_fleetfooted"
       },
       {
         "fieldName": "improvedKick",
@@ -797,10 +802,37 @@
         "icon": "inv_sword_35"
       },
       {
-        "fieldName": "aggression",
+        "fieldName": "weaponExpertise",
         "location": {
           "rowIdx": 3,
           "colIdx": 2
+        },
+        "prereqLocation": {
+          "rowIdx": 1,
+          "colIdx": 2
+        },
+        "spellIds": [
+          30919,
+          30920
+        ],
+        "maxPoints": 2,
+        "name": "Weapon Expertise",
+        "description": "Reduces the chance for your attacks to be Dodged or Parried by {0}%.",
+        "ranks": [
+          [
+            1
+          ],
+          [
+            2
+          ]
+        ],
+        "icon": "spell_holy_blessingofstrength"
+      },
+      {
+        "fieldName": "aggression",
+        "location": {
+          "rowIdx": 3,
+          "colIdx": 3
         },
         "spellIds": [
           18427,
@@ -824,37 +856,10 @@
         "icon": "ability_racial_avatar"
       },
       {
-        "fieldName": "weaponExpertise",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 3
-        },
-        "spellIds": [
-          30919,
-          30920
-        ],
-        "maxPoints": 2,
-        "name": "Weapon Expertise",
-        "description": "Reduces the chance for your attacks to be Dodged or Parried by {0}%.",
-        "ranks": [
-          [
-            1
-          ],
-          [
-            2
-          ]
-        ],
-        "icon": "spell_holy_blessingofstrength"
-      },
-      {
         "fieldName": "dualWieldSpecialization",
         "location": {
           "rowIdx": 4,
           "colIdx": 0
-        },
-        "prereqLocation": {
-          "rowIdx": 1,
-          "colIdx": 2
         },
         "spellIds": [
           13715,
@@ -945,14 +950,14 @@
         "fieldName": "flashOfSteel",
         "location": {
           "rowIdx": 5,
-          "colIdx": 1
+          "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1329284,
+          1329284,
+          1329284,
+          1329284,
+          1329284
         ],
         "maxPoints": 5,
         "name": "Flash of Steel",
@@ -979,12 +984,16 @@
             2
           ]
         ],
-        "icon": "ability_rogue_focusedattacks"
+        "icon": "ability_rogue_restlessblades"
       },
       {
         "fieldName": "adrenalineRush",
         "location": {
           "rowIdx": 6,
+          "colIdx": 1
+        },
+        "prereqLocation": {
+          "rowIdx": 4,
           "colIdx": 1
         },
         "spellIds": [
@@ -1020,7 +1029,7 @@
         ],
         "maxPoints": 3,
         "name": "Setup",
-        "description": "Gives you a {0}% chance to add a combo point to your target after dodging their attack or fully resisting one of their spells.",
+        "description": "Gives you a {0}% chance to add a Combo Point to your target after Dodging their attack or fully resisting one of their spells.",
         "ranks": [
           [
             15
@@ -1101,43 +1110,10 @@
         "icon": "ability_warrior_warcry"
       },
       {
-        "fieldName": "camouflage",
-        "location": {
-          "rowIdx": 1,
-          "colIdx": 0
-        },
-        "spellIds": [
-          13975,
-          14062,
-          14063,
-          14064,
-          14065
-        ],
-        "maxPoints": 3,
-        "name": "Camouflage",
-        "description": "Increases your speed while stealthed by {0}% and reduces the cooldown of your Stealth ability by {1} sec.",
-        "ranks": [
-          [
-            5,
-            2
-          ],
-          [
-            10,
-            4
-          ],
-          [
-            15,
-            6
-          ]
-        ],
-        "icon": "ability_stealth",
-        "notSimulated": true
-      },
-      {
         "fieldName": "dirtyDeeds",
         "location": {
           "rowIdx": 1,
-          "colIdx": 1
+          "colIdx": 0
         },
         "spellIds": [
           14082,
@@ -1157,34 +1133,43 @@
         "icon": "spell_shadow_summonsuccubus"
       },
       {
-        "fieldName": "dirtyTricks",
+        "fieldName": "camouflage",
         "location": {
           "rowIdx": 1,
-          "colIdx": 2
+          "colIdx": 1
         },
         "spellIds": [
-          14082,
-          14083
+          13975,
+          14062,
+          14063,
+          14064,
+          14065
         ],
-        "maxPoints": 2,
-        "name": "Dirty Tricks",
-        "description": "Reduces the Energy cost of your Sap and Blind abilities by {0}%.",
+        "maxPoints": 3,
+        "name": "Camouflage",
+        "description": "Reduces your speed penalty from your Stealth ability by {0}% and reduces its cooldown by {1} sec.",
         "ranks": [
           [
-            25
+            5,
+            2
           ],
           [
-            50
+            10,
+            4
+          ],
+          [
+            15,
+            6
           ]
         ],
-        "icon": "ability_sap",
+        "icon": "ability_stealth",
         "notSimulated": true
       },
       {
         "fieldName": "improvedAmbush",
         "location": {
           "rowIdx": 1,
-          "colIdx": 3
+          "colIdx": 2
         },
         "spellIds": [
           14079,
@@ -1206,6 +1191,30 @@
           ]
         ],
         "icon": "ability_rogue_ambush"
+      },
+      {
+        "fieldName": "dirtyTricks",
+        "location": {
+          "rowIdx": 1,
+          "colIdx": 3
+        },
+        "spellIds": [
+          14082,
+          14083
+        ],
+        "maxPoints": 2,
+        "name": "Dirty Tricks",
+        "description": "Reduces the Energy cost of your Sap and Blind abilities by {0}%.",
+        "ranks": [
+          [
+            25
+          ],
+          [
+            50
+          ]
+        ],
+        "icon": "ability_sap",
+        "notSimulated": true
       },
       {
         "fieldName": "initiative",
@@ -1318,12 +1327,13 @@
         ],
         "maxPoints": 1,
         "name": "Ghostly Strike",
-        "description": "A strike that deals {0}% ({1}% if a Dagger is equipped in your Main Hand) weapon damage and increases your chance to dodge by {2}% for {3} sec. Awards {4} combo point.",
+        "description": "A strike that deals {0}% ({1}% if a Dagger is equipped in your Main Hand) weapon damage, increases your chance to dodge by {2}% for {3} sec, and causes your next Ambush or Garrote cast within {4} sec to not require Stealth. Awards {5} combo point.",
         "ranks": [
           [
             125,
             180,
             15,
+            7,
             7,
             1
           ]
@@ -1336,13 +1346,17 @@
           "rowIdx": 3,
           "colIdx": 3
         },
+        "prereqLocation": {
+          "rowIdx": 1,
+          "colIdx": 3
+        },
         "spellIds": [
-          0,
-          0
+          1310728,
+          1310728
         ],
         "maxPoints": 2,
         "name": "Quick Getaway",
-        "description": "Increases the maximum number of targets you may have Sapped by {0}, and increases your movement speed by {1}% for {2} sec after sapping a target.",
+        "description": "Increases the maximum number of targets you may have Sapped by {0}, and increases your movement speed by {1}% for {2} sec after Sapping a target.",
         "ranks": [
           [
             1,
@@ -1355,7 +1369,7 @@
             3
           ]
         ],
-        "icon": "ability_rogue_fleetfooted",
+        "icon": "ability_rogue_blackjack",
         "notSimulated": true
       },
       {
@@ -1414,7 +1428,7 @@
         ],
         "maxPoints": 1,
         "name": "Hemorrhage",
-        "description": "An instant strike that deals {0}% weapon damage ({1}% if a Dagger is equipped) and causes the target to take {2}% increased Rupture and Garrote damage from the Rogue. Lasts {3} sec. Awards {4} combo point.",
+        "description": "An instant strike that deals {0}% weapon damage ({1}% if a Dagger is equipped) and causes the target to take {2}% increased Rupture and Garrote damage from the Rogue. Lasts {3} sec. Awards {4} Combo Point.",
         "ranks": [
           [
             100,
@@ -1430,18 +1444,18 @@
         "fieldName": "bootKnife",
         "location": {
           "rowIdx": 5,
-          "colIdx": 1
+          "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          1329286,
+          1329286,
+          1329286,
+          1329286,
+          1329286
         ],
         "maxPoints": 5,
         "name": "Boot Knife",
-        "description": "Gives your Shank ability a {0}% chance to add {1} combo points to the target.",
+        "description": "Grants your Shank ability a {0}% chance to add {1} Combo Points to the target.",
         "ranks": [
           [
             20,
@@ -1464,7 +1478,7 @@
             2
           ]
         ],
-        "icon": "inv_throwingknife_02"
+        "icon": "inv_sword_32"
       },
       {
         "fieldName": "deathMark",
@@ -1472,21 +1486,32 @@
           "rowIdx": 6,
           "colIdx": 1
         },
+        "prereqLocation": {
+          "rowIdx": 4,
+          "colIdx": 1
+        },
         "spellIds": [
-          0
+          1316709
         ],
         "maxPoints": 1,
         "name": "Death Mark",
-        "description": "Finishing move that marks the target, storing a portion of the damage dealt by your attacks per combo point. Garrote and Rupture damage is stored at twice the rate. After {0} sec, the stored damage is dealt, up to a maximum increased by Attack Power and critical strike chance. {1} Energy, {2} yd range, {3} sec cooldown. Curse.",
+        "description": "Finishing move that marks the target, storing a portion of the damage dealt by your attacks per Combo Point. Garrote and Rupture damage is stored at twice the rate. After {0} sec, the stored damage is dealt, up to a maximum increased by Attack Power and Critical Strike chance: {1} point: {2}% stored, ? damage cap {3} points: {4}% stored, ? damage cap {5} points: {6}% stored, ? damage cap {7} points: {8}% stored, ? damage cap {9} points: {10}% stored, ? damage cap",
         "ranks": [
           [
             6,
-            25,
-            20,
-            10
+            1,
+            12,
+            2,
+            24,
+            3,
+            36,
+            4,
+            48,
+            5,
+            60
           ]
         ],
-        "icon": "ability_rogue_slaughterfromtheshadows"
+        "icon": "ability_creature_cursed_02"
       }
     ]
   }

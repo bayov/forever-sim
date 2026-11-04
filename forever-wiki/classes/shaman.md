@@ -17,8 +17,10 @@ the notes-only list). Where the notes give a rule, the numbers come from the Era
 - Lightning Bolt ranks 4 to 10 at 0.78 of Era's base (rank 10 334 to 372 at 60, was 190 to 212; the x1.12 report
   assumption is gone). Ranks 1 to 3 already deal more than that and keep the client's values.
 - Chain Lightning: 2.5 sec cast, the first target 1.45 times the comparable Lightning Bolt (rank 4 485 to 539), 2.25
-  times its mana (495). Its coefficient stays the client's 0.571 (the 2 sec cast's), so a hit is only about 1.09
-  times a bolt's and the rotations still leave it out (-27 to -80 at every length, every mana floor tried).
+  times its mana (495). The notes give no coefficient, so it takes the standard one for a 2.5 sec cast, 0.714
+  (the client's is 0.571), and a hit is about 1.27 times a bolt's. The rotations still leave it out on one target:
+  mana, not damage, keeps it out (Level 60 Elemental -14 / -76 / -140 on cooldown at 120 / 180 / 300 sec, -2 to
+  -24 with the best mana floor; Mana Tide +3 at 120 sec on cooldown but -12 / -70 at 180 / 300).
 - Every shock at Era's base: Earth Shock 7 517 to 545, Flame Shock 6 292 plus 320 over 12 sec, Frost Shock 4 492 to
   520 (the x1.08 on Earth Shock 7 is gone).
 - Lightning Overload 10 / 20 / 30%. Lava Burst is removed; Call of Thunder (5% crit for Lightning Bolt and Chain
@@ -107,7 +109,7 @@ From wago.tools (build 1.60.1.70338, 2026-10-10, the newest so far), foreverchan
 ## Sim re-checks for the Level 60 presets (2026-10-13)
 
 - Forever mechanics, against client 70338 (wago.tools), wowhead Forever's tooltips (dataEnv 17), the Mage and Shaman deep dive and foreverchanges.pro's patch notes: the sim already had the imbue and totem buff rules (a main-hand Windfury or Flametongue Weapon turns off our own benefit from the totem of the same kind, and the weapon holds a totem buff, our imbue and an oil together), the totems, shocks, weapon rules and Lava Burst. With Windfury Totem kept for the group, Windfury Weapon is still the best imbue on the Level 60 build (813.0 at 3 min, Flametongue Weapon 811.3, Rockbiter 810.9, Frostbrand 786.0). wowhead's Lava Burst rank 3 tooltip (203 to 258, 54% with Flame Shock) is the level 68 value: the client's dummy is 20 with 4.2 a level from 60, so 20% at 60. Rage of the Farseer has been attack speed only since 70009 (`rage_of_the_farseer_test.go`). Maelstrom Weapon's talent aura (408498) has ProcChance 100 and no PPM row, so its rate (2 a minute a point) stays a guess.
-- Downranking: under Forever a rank keeps 1 - 5% for each level past its learn level + 17 of its spell power coefficient (Blizzard's 2026-10-01 development notes, the formula from foreverchanges.pro/downranking). Lightning Bolt and Chain Lightning take it (`downrank_test.go`), so the elemental low-mana fallback is rank 8 (learned at 44) now, not rank 7 (75% at 60).
+- Downranking: under Forever a rank keeps 1 - 5% for each level past its learn level + 17 of its spell power coefficient (Blizzard's 2026-10-01 development notes, the formula from foreverchanges.pro/downranking). The sim applies it to every ranked spell, heals and damage, shocks and totems included (`sim/core/downrank.go`, user ruling 2026-11-04; the 2026-10-10 beta log had the shocks at full coefficient, taken to predate a later fix). Lightning Bolt's penalty makes the elemental low-mana fallback rank 8 (learned at 44) now, not rank 7 (75% at 60).
 - Talent verification (every preset talent, from sim runs on the Level 60 and Level 30 builds): 108 entries over 32 talents, 92 verified, 4 Maelstrom Weapon entries partly (the proc rate), 12 utility or inert, no bugs. Not verifiable in the sim: Maelstrom Weapon's proc rate, Elemental Focus's trigger set, Water Shield and Improved Stormstrike's dodge and parry reset (inert at 0 hits), two dummy effects.
 
 ## Totems in the presets (standards 23, user ruling 2026-10-15)

@@ -94,6 +94,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			ThreatMultiplier: 1,
 
 			BonusCoefficient: core.TernaryFloat64(paladin.Env.IsForever(), 0.429, rank.judge.coeff), // client 70425 (0.5 in 70338)
+			DownrankLevel:    int(rank.level),
 			BonusCritRating:  paladin.holyPowerCrit(),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -167,6 +168,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			ThreatMultiplier: 1,
 
 			BonusCoefficient: coeff,
+			DownrankLevel:    int(rank.level),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := damage

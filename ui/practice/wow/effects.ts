@@ -120,7 +120,20 @@ function kits(sounds: KitSound[] | undefined): KitSound[][] {
 
 // An effect model on a unit. A one-shot ends when its animation does. One that holds runs its
 // hold until it's stopped, then its decay.
-type Live = { model: Model; km: KitModel; hold: boolean; until: number; stopped: boolean; ending?: boolean; fadeUntil?: number };
+// behind is the time the effect's animation hasn't caught up on yet (see updateEvery).
+type Live = { model: Model; km: KitModel; hold: boolean; until: number; stopped: boolean; ending?: boolean; fadeUntil?: number; behind?: number };
+
+// updateEvery is how often an effect animates, by its distance from the camera, like the raid
+// test's raiders: past 40 yards 30 times a second, past 20 yards 60, and near you every frame.
+// In the raid test 150 effects played at once, most on the casters' hands 20 to 30 yards away.
+function updateEvery(m: Model): number {
+	const camera = Model.camera;
+	if (!camera) return 0;
+	const e = m.root.matrixWorld.elements;
+	const c = camera.matrixWorld.elements;
+	const d2 = (e[12] - c[12]) ** 2 + (e[13] - c[13]) ** 2 + (e[14] - c[14]) ** 2;
+	return d2 > 1600 ? 1 / 30 : d2 > 400 ? 1 / 60 : 0;
+}
 
 const missileStep = new THREE.Vector3();
 const noseFirst = new THREE.Vector3(1, 0, 0);
@@ -515,7 +528,11 @@ export class Effects {
 				this.live.splice(i, 1);
 				continue;
 			}
-			m.update(dt);
+			l.behind = (l.behind ?? 0) + dt;
+			if (l.behind >= updateEvery(m)) {
+				m.update(l.behind);
+				l.behind = 0;
+			}
 		}
 		for (let i = this.missiles.length - 1; i >= 0; i--) {
 			const m = this.missiles[i];

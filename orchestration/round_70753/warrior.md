@@ -29,25 +29,26 @@ Whirlwind are guessed; the notes give rows). Fury's tree is 19 talents (proto fi
 
 | Build | Old 120 / 180 / 300 | New 120 / 180 / 300 | Talents | Race |
 |---|---|---|---|---|
-| Fury (dual wield) | 1079.5 / 1041.5 / 1017.9 | 1194.2 / 1152.6 / 1124.8 | `30313113002-0505300551120100321` | Orc (Orc) |
+| Fury (dual wield) | 1079.5 / 1041.5 / 1017.9 | 1196.2 / 1153.0 / 1128.7 | `30313113002-0505300551120100321` | Orc (Orc) |
 | Fury Sunder duty | 1044.6 / 1012.5 / 991.4 | 1156.5 / 1117.7 / 1095.4 | same | Orc |
 | Fury Battle Shout duty | 1076.0 / 1039.5 / 1015.7 | 1193.2 / 1150.5 / 1123.2 | same | Orc |
-| **Fury 2H (new class default)** | 1085.2 / 1044.4 / 1009.4 | 1211.7 / 1169.9 / 1133.4 | `30313113032-2503300501122100321` | Orc (Orc) |
-| Fury 2H Sunder duty | 1044.9 / 1009.0 / 980.5 | 1173.5 / 1132.6 / 1101.9 | same | Orc |
-| Fury 2H Battle Shout duty | 1083.0 / 1041.3 / 1007.7 | 1210.5 / 1165.4 / 1131.5 | same | Orc |
+| **Fury 2H (new class default)** | 1085.2 / 1044.4 / 1009.4 | 1214.5 / 1173.3 / 1135.3 | `30313113032-2505001501122100321` | Orc (Orc) |
+| Fury 2H Sunder duty | 1044.9 / 1009.0 / 980.5 | 1175.0 / 1134.6 / 1104.4 | same | Orc |
+| Fury 2H Battle Shout duty | 1083.0 / 1041.3 / 1007.7 | 1213.9 / 1168.8 / 1133.8 | same | Orc |
 | Arms | 1022.9 / 1008.7 / 987.0 | 1111.7 / 1097.7 / 1070.6 | `30303213032215201-050500050012-2` | Orc (was Undead) |
 | Arms Sunder duty | 978.5 / 970.4 / 955.2 | 1055.0 / 1047.1 / 1027.5 | same | Orc (was Undead) |
 | Arms Battle Shout duty | 1022.2 / 1004.9 / 984.1 | 1111.0 / 1094.0 / 1068.3 | same | Orc (was Undead) |
 | Arms vs Dragonkin | 1066.0 / 1050.3 / 1028.8 | 1157.5 / 1142.2 / 1114.2 | `30303213132215201-050500050012-1` | Orc (was Undead) |
 
 Old numbers: the deployed report (`ui/dps_report/data/builds.json`, 2026-11-02; its 120 / 300 at 5,000 iterations).
-The request metas carry the new 180 as `published` and `verify`.
+The request metas carry the new 180 as `published` and `verify`. Fury (dual wield) and the three Fury 2H rows are the
+2026-11-04 follow-up's (below).
 
 Talents (180 sec talent search on the synthetic sets, then the knob search, alternated until neither moved):
 - Fury: Booming Voice and a point of Improved Berserker Rage out; Reckless Swings, Improved Whirlwind 2/2, Enrage 5/5 in.
 - Fury 2H: Flurry's 3 points left Bloodthirst short of its row, so the start takes Reckless Swings and Improved
   Whirlwind; the search moves 2 points of Unbridled Wrath to Enrage 5/5. Furious Precision 3 is dead with a
-  two-hander, but no move of its points scored better.
+  two-hander; on 2026-11-04 its points go to Unbridled Wrath 5/5, the spare one to Blood Craze (follow-up below).
 - Arms: the 5 freed points and a third point of Improved Heroic Strike (to reopen Two-Handed Weapon Specialization's row)
   go to Reckless Swings, Enrage 5/5 and Improved Bloodrage 2/2, for Booming Voice. Dragonkin: Spearing Strike for a
   point of Improved Bloodrage.
@@ -111,6 +112,15 @@ All 10 races (seeds 1 / 1000003; Dwarf with its race gear override). Undead is s
 - Question: Reckless Swings' GCD and which attacks count are not in the notes. Off the GCD and landed swings
   (Heroic Strike included) are my reading; with a GCD it would still be cast on cooldown. A client row settles it.
 - Commit trailers use this session's own Claude-Session line, not the brief's (which names the orchestrator's session).
+
+### 2026-11-04 follow-up
+
+- Fury 2H and its two duty presets: `30313113032-2505001501122100321` (Unbridled Wrath 3 -> 5, Furious Precision 3 -> 0,
+  Blood Craze +1). Seeds 1 / 1000003: +2.8 / +2.3 at 120, +2.9 / +1.8 at 160, +3.4 / +1.4 at 180, +2.7 / +1.8 at 200,
+  +1.9 / +1.5 at 300 sec; Sunder duty +2.0 / +1.5 and Battle Shout duty +3.4 / +2.1 at 180 sec.
+- Fury (dual wield) only, not its duty presets: wwFirst=0, hsRage=60, hamstringRage=20, fillerGap=1, bloodrageRage=50.
+  Seeds 1 / 1000003: +2.0 / +0.9 at 120, +1.2 / +2.3 at 160, +0.4 / +1.2 at 180, +3.5 / +4.1 at 200, +3.9 / +3.0 at 300.
+- Two-hand Fury stays the class default (1173.3 against 1153.0 at 180 sec).
 
 ## Phase A: research and mechanics
 

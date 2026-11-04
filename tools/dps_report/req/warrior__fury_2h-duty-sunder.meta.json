@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 4,
   "race": "Orc",
-  "talents": "30313113032-2503300501122100321",
+  "talents": "30313113032-2505001501122100321",
   "treeNames": [
     "Arms",
     "Fury",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h_sunder",
   "published": {
-    "dps": 1132.6,
-    "source": "round 70753 (the November 2 development notes), the Warrior worker's finals 2026-11-03: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1134.6,
+    "source": "the 2026-11-04 Warrior follow-up (round 70753): wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
   },
   "verify": {
-    "dps": 1132.6,
+    "dps": 1134.6,
     "stderr": 0.51,
     "iters": 20000,
     "ok": true,
-    "note": "the Warrior worker's final run of this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-03)"
+    "note": "verify.py on this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-04)"
   },
   "summary": "Keeps 5 Sunder Armor stacks on the boss for a raid with no warrior tank. The raid's Sunder Armor is off.",
   "keyTalents": [
@@ -33,6 +33,7 @@
     "Two-Handed Weapon Specialization",
     "Cruelty",
     "Impale",
+    "Unbridled Wrath",
     "Enrage",
     "Reckless Swings",
     "Improved Whirlwind"

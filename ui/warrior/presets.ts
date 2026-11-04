@@ -119,7 +119,10 @@ export const DefaultGear = GearLevel60Phase1SyntheticArms;
 // (+2.4 / +1.3 at 120 sec on seeds 1 / 1000003, identical at 180 and 300). The Sapper goes on cooldown with the other
 // cooldowns (no Goblin Land Mine since 2026-10-24, see the consumables below). Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
 // no use. It is 1031.1 (Human) where the old Classic rotation (dps_reck.apl.json) is 981.2. Slam on its 18 sec
-// cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
+// cooldown and holding the fillers for Bloodthirst and Whirlwind both lost then. 2026-11-04, on the
+// November 2 notes' tree: Bloodthirst ahead of Whirlwind, Heroic Strike from 60 Rage and Hamstring
+// from 20, both only when Bloodthirst and Whirlwind are 1 sec away or more, Bloodrage under 50: +2.0 / +0.4
+// / +3.9 at 120 / 180 / 300 sec, ahead at every length on both seeds (the duty presets keep theirs).
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Fury', Level60FuryAPLJSON, { group: 'Synthetic' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
 // Heroic Strike from 90 Rage, Hamstring from 10 (20 until 2026-10-30, +3.1 at 180 sec), Bloodrage under 20, Berserker Rage under 10 for its
@@ -236,8 +239,10 @@ export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTal
 // 2026-11-03, the November 2 notes' tree: Flurry's 3 points left Bloodthirst short of its row, so the
 // start takes Reckless Swings and Improved Whirlwind 2/2; the search then moves 2 points of Unbridled
 // Wrath to Enrage 5/5: 1163.9 to 1170.1 at 180 sec. Furious Precision does nothing with a two-hander,
-// but no move of its points scored better.
-export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30313113032-2503300501122100321' }), {
+// but no move of its points scored better then. 2026-11-04: Unbridled Wrath 5/5 for Furious
+// Precision's 3 points, the spare one in Blood Craze: +2.8 / +3.4 / +1.9 at 120 / 180 / 300 sec,
+// ahead at every length on both seeds.
+export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30313113032-2505001501122100321' }), {
 	tooltip: 'Level 60 two-hand Fury talents from the talent search.',
 	group: 'Synthetic',
 });

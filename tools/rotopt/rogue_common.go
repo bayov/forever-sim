@@ -33,7 +33,7 @@ var (
 	sapper       = itemID(10646)
 	landMine     = itemID(4395)
 	// Shank has no client spell yet; the sim's ID (sim/rogue/shank.go).
-	shank = spellID(1399248)
+	shank = spellID(1329549)
 )
 
 // The 15 second buffs are only worth a cast when the fight lasts that long after it.

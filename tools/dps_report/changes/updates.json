@@ -2333,11 +2333,13 @@
       "warrior__fury_2h-duty-battle-shout",
       "warrior__fury_2h-duty-sunder"
      ],
-     "note": "At 180 s: Fury 1041.5 to 1152.6, two-hand Fury 1044.4 to 1169.9, Arms 1008.7 to 1097.7, Arms vs Dragonkin 1050.3 to 1142.2.",
+     "note": "At 180 s: Fury 1041.5 to 1153.0, two-hand Fury 1044.4 to 1173.3, Arms 1008.7 to 1097.7, Arms vs Dragonkin 1050.3 to 1142.2.",
      "commits": [
       "00792ad",
       "62e3a0f",
-      "5051206"
+      "5051206",
+      "7b4dc5d",
+      "fb584ea"
      ]
     },
     {
@@ -2929,7 +2931,9 @@
      },
      "note": "Salvation, Mass Salvation and Revoke were removed from the game. Salvation only lowered threat, so no preset's damage moves.",
      "commits": [
-      "90e0bb0"
+      "90e0bb0",
+      "f331f0c",
+      "fdb14ac"
      ]
     },
     {
@@ -2976,6 +2980,42 @@
      "note": "+1.2 and +1.4 at 180 s. The duty builds and the vs Undead build keep their rotation.",
      "commits": [
       "e799dcc"
+     ]
+    },
+    {
+     "title": "Chain Lightning's spell power coefficient is now 0.714, the standard one for its new 2.5 sec cast",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "Chain Lightning still stays out of the single-target rotations, so no shaman number moves.",
+     "commits": [
+      "280fd26"
+     ]
+    },
+    {
+     "title": "Rogue server hotfix: Shank always hits and no longer procs poisons or weapon effects, Mutilate's flat damage raised to 44 / 63 / 88, Venom's extra poison chance covers only Deadly and Wound Poison, talent tree layout updated",
+     "kind": "game",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-daggers",
+      "rogue__combat-swords",
+      "rogue__mutilate",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords",
+      "rogue__subtlety"
+     ],
+     "source": {
+      "label": "wago.tools: WoW Forever server hotfixes (push 113483)",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113483"
+     },
+     "note": "Improved Distract is gone and several talents moved column; Quick Getaway now needs Dirty Tricks, so Subtlety's point moves there. The poisons' charges went up too, which moves no number. At 180 s: Combat Swords 963.5 to 958.6, Seal Fate Swords 957.0 to 940.4, Combat Daggers 946.7 to 949.8, Seal Fate Daggers 920.7 to 903.4, Subtlety 881.7 to 881.3, Mutilate 866.1 to 858.3.",
+     "commits": [
+      "316a600",
+      "e9185b1"
      ]
     }
    ],
@@ -3107,6 +3147,53 @@
     {
      "commit": "b00dccd",
      "why": "a warrior rotation search knob, off by default; no preset's rotation changes"
+    },
+    {
+     "commit": "7189f0b",
+     "why": "docs only: why Chain Lightning at 0.714 stays out of the single-target rotations"
+    },
+    {
+     "commit": "f3c17a2",
+     "why": "test goldens for the Chain Lightning coefficient; no preset casts it on one target, and the re-sim of the six shaman builds came out unchanged"
+    },
+    {
+     "commit": "f6ca172",
+     "why": "Enhancement shaman leveling weights; no report build reads them"
+    },
+    {
+     "commit": "13c34f2",
+     "why": "Classic-ruleset branches for notes-only and hotfix-only values; every Forever number, report hash and golden unchanged"
+    },
+    {
+     "commit": "8f304b2",
+     "why": "Forever's downranking penalty moved into sim/core with the same scope; every report number unchanged"    },
+    {
+     "commit": "a4fc1d7",
+     "why": "report data for the shaman re-sim after Chain Lightning 0.714; no preset's number moved"
+    },
+    {
+     "commit": "f6e868b",
+     "why": "warlock ledger and findings (docs); Amplify Curse is not in any report build"
+    },
+    {
+     "commit": "0c0b4e8",
+     "why": "a merge of master into a work branch; no new change of its own"
+    },
+    {
+     "commit": "f6a98ac",
+     "why": "paladin talent tooltips and hotfix citations for Vengeance and Holy Two-Handed Weapon Specialization, which the existing lines already cover; the probe clears every paladin build"
+    },
+    {
+     "commit": "5be8bb6",
+     "why": "comp search test and drop list only; no report request changes"
+    },
+    {
+     "commit": "45111f0",
+     "why": "comp search test and drop list only; no report request changes"
+    },
+    {
+     "commit": "b57f5cc",
+     "why": "the downranking penalty now covers every lower-rank spell; every report build casts top ranks, and the probe clears all of them"
     }
    ],
    "source": {

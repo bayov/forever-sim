@@ -38,8 +38,8 @@ message RogueTalents {
 	int32 composure = 27;
 	int32 improved_kick = 28;
 	bool flawless_execution = 29;
-	int32 aggression = 30;
-	int32 weapon_expertise = 31;
+	int32 weapon_expertise = 30;
+	int32 aggression = 31;
 	int32 dual_wield_specialization = 32;
 	bool blade_flurry = 33;
 	int32 hack_and_slash = 34;
@@ -50,10 +50,10 @@ message RogueTalents {
 	int32 setup = 37;
 	int32 master_of_deception = 38;
 	int32 opportunity = 39;
-	int32 camouflage = 40;
-	int32 dirty_deeds = 41;
-	int32 dirty_tricks = 42;
-	int32 improved_ambush = 43;
+	int32 dirty_deeds = 40;
+	int32 camouflage = 41;
+	int32 improved_ambush = 42;
+	int32 dirty_tricks = 43;
 	int32 initiative = 44;
 	bool premeditation = 45;
 	int32 serrated_blades = 46;

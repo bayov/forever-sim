@@ -15,7 +15,7 @@ import * as THREE from 'three';
 import { texture } from './files';
 import type { RibbonEmitter } from './m2';
 import type { Model } from './model';
-import { addBatch, particleOptions } from './particles';
+import { addBatch, drawOrder, particleOptions } from './particles';
 
 // The most edges one ribbon keeps, whatever its rate and lifetime say.
 const maxEdges = 256;
@@ -45,12 +45,15 @@ void main() {
 	#include <colorspace_fragment>
 }`;
 
-// The strip data a point needs, by attribute, with how many numbers each takes.
+// The strip data a point needs, one point after the other, STRIDE numbers each: by attribute,
+// where it starts and how many numbers it takes. Interleaved, a batch's points go to the GPU in
+// one upload.
 const layout = [
-	['position', 3],
-	['uv', 2],
-	['color', 4],
+	['position', 0, 3],
+	['uv', 3, 2],
+	['color', 5, 4],
 ] as const;
+const STRIDE = 9;
 
 // A batch draws every ribbon that looks the same (the same texture and blend) in one draw call,
 // like the particles' batches (particles.ts). The ribbons fill their own points, and the batch
@@ -58,7 +61,7 @@ const layout = [
 class Batch {
 	readonly mesh: THREE.Mesh;
 	private readonly geometry = new THREE.BufferGeometry();
-	private attrs: THREE.BufferAttribute[] = [];
+	private buffer!: THREE.InterleavedBuffer;
 	private index!: THREE.BufferAttribute;
 	private capacity = 0;
 	readonly members = new Set<Ribbon>();
@@ -70,7 +73,7 @@ class Batch {
 		this.geometry.setDrawRange(0, 0);
 		this.mesh = new THREE.Mesh(this.geometry, material);
 		this.mesh.frustumCulled = false;
-		this.mesh.renderOrder = 10;
+		this.mesh.renderOrder = drawOrder.ribbons;
 		this.mesh.visible = false;
 		addBatch(this);
 		world.add(this.mesh);
@@ -78,12 +81,9 @@ class Batch {
 
 	private grow(n: number) {
 		this.capacity = n;
-		this.attrs = layout.map(([name, size]) => {
-			const a = new THREE.BufferAttribute(new Float32Array(n * size), size);
-			a.setUsage(THREE.DynamicDrawUsage);
-			this.geometry.setAttribute(name, a);
-			return a;
-		});
+		this.buffer = new THREE.InterleavedBuffer(new Float32Array(n * STRIDE), STRIDE);
+		this.buffer.setUsage(THREE.DynamicDrawUsage);
+		for (const [name, offset, size] of layout) this.geometry.setAttribute(name, new THREE.InterleavedBufferAttribute(this.buffer, size, offset));
 		// Each point after a ribbon's first closes a quad of two triangles.
 		this.index = new THREE.BufferAttribute(new Uint32Array(n * 3), 1);
 		this.index.setUsage(THREE.DynamicDrawUsage);
@@ -113,14 +113,11 @@ class Batch {
 			// n edges make 2n points.
 			const points = r.count * 2;
 			if (r.count < 2) continue;
-			for (let k = 0; k < layout.length; k++) {
-				const size = layout[k][1];
-				// A plain loop: a subarray is a new object each time.
-				const from = r.data[k];
-				const to = this.attrs[k].array;
-				const o = at * size;
-				for (let j = 0; j < points * size; j++) to[o + j] = from[j];
-			}
+			// A plain loop: a subarray is a new object each time.
+			const from = r.data;
+			const to = this.buffer.array as Float32Array;
+			const o = at * STRIDE;
+			for (let j = 0; j < points * STRIDE; j++) to[o + j] = from[j];
 			for (let i = 0; i < r.count - 1; i++) {
 				const a = at + i * 2;
 				index[tris++] = a;
@@ -135,11 +132,9 @@ class Batch {
 		this.geometry.setDrawRange(0, tris);
 		this.mesh.visible = tris > 0 || particleOptions.drawEmpty;
 		if (tris === 0) return;
-		for (const a of this.attrs) {
-			a.clearUpdateRanges();
-			a.addUpdateRange(0, at * a.itemSize);
-			a.needsUpdate = true;
-		}
+		this.buffer.clearUpdateRanges();
+		this.buffer.addUpdateRange(0, at * STRIDE);
+		this.buffer.needsUpdate = true;
 		this.index.clearUpdateRanges();
 		this.index.addUpdateRange(0, tris);
 		this.index.needsUpdate = true;
@@ -154,8 +149,12 @@ class Ribbon {
 	private readonly anchor: THREE.Object3D;
 	private readonly edges: Edge[] = [];
 	private carry = 0;
-	// The strip's points by attribute (layout), which the batch draws.
-	readonly data = layout.map(([, size]) => new Float32Array((maxEdges + 1) * 2 * size));
+	// The strip's points (layout), which the batch draws.
+	readonly data = new Float32Array((maxEdges + 1) * 2 * STRIDE);
+	// The head (where the ribbon is now), as an edge for put.
+	private readonly head: Edge = { top: new THREE.Vector3(), bottom: new THREE.Vector3(), fall: 0, age: 0, r: 1, g: 1, b: 1, a: 1 };
+	// put's life and cell size, in a Float64Array so they aren't boxed on each call.
+	private readonly strip = new Float64Array(3);
 	// How many edges the strip has now.
 	count = 0;
 	private batch?: Batch;
@@ -297,10 +296,23 @@ class Ribbon {
 		const cellU = 1 / cols;
 		const cellV = 1 / rows;
 		let n = 0;
-		if (shown) n = this.put(n, this.top, this.bottom, 0, life, cellU, cellV, this.tint.r, this.tint.g, this.tint.b, alpha);
+		this.strip[0] = life;
+		this.strip[1] = cellU;
+		this.strip[2] = cellV;
+		if (shown) {
+			const h = this.head;
+			h.top.copy(this.top);
+			h.bottom.copy(this.bottom);
+			h.age = 0;
+			h.r = this.tint.r;
+			h.g = this.tint.g;
+			h.b = this.tint.b;
+			h.a = alpha;
+			n = this.put(n, h);
+		}
 		for (const edge of this.edges) {
 			if (n > maxEdges) break;
-			n = this.put(n, edge.top, edge.bottom, edge.age, life, cellU, cellV, edge.r, edge.g, edge.b, edge.a);
+			n = this.put(n, edge);
 		}
 		// n edges make n - 1 quads. A ribbon with one edge has nothing to draw.
 		const was = this.count;
@@ -309,27 +321,27 @@ class Ribbon {
 	}
 
 	// put writes edge n's two points, and gives the next edge's number.
-	private put(n: number, top: THREE.Vector3, bottom: THREE.Vector3, age: number, life: number, cellU: number, cellV: number, r: number, g: number, b: number, a: number): number {
-		const [pos, uv, color] = this.data;
-		const u = (Math.min(age, life) / life) * cellU;
-		const fade = a * (1 - age / life);
-		const p = n * 6;
-		pos[p] = top.x;
-		pos[p + 1] = top.y;
-		pos[p + 2] = top.z;
-		pos[p + 3] = bottom.x;
-		pos[p + 4] = bottom.y;
-		pos[p + 5] = bottom.z;
-		const t = n * 4;
-		uv[t] = u;
-		uv[t + 1] = 0;
-		uv[t + 2] = u;
-		uv[t + 3] = cellV;
-		const c = n * 8;
-		color[c] = color[c + 4] = r;
-		color[c + 1] = color[c + 5] = g;
-		color[c + 2] = color[c + 6] = b;
-		color[c + 3] = color[c + 7] = fade;
+	private put(n: number, edge: Edge): number {
+		const d = this.data;
+		const life = this.strip[0];
+		const u = (Math.min(edge.age, life) / life) * this.strip[1];
+		const fade = edge.a * (1 - edge.age / life);
+		const o = n * 2 * STRIDE;
+		const { top, bottom } = edge;
+		d[o] = top.x;
+		d[o + 1] = top.y;
+		d[o + 2] = top.z;
+		d[o + STRIDE] = bottom.x;
+		d[o + STRIDE + 1] = bottom.y;
+		d[o + STRIDE + 2] = bottom.z;
+		d[o + 3] = u;
+		d[o + 4] = 0;
+		d[o + STRIDE + 3] = u;
+		d[o + STRIDE + 4] = this.strip[2];
+		d[o + 5] = d[o + STRIDE + 5] = edge.r;
+		d[o + 6] = d[o + STRIDE + 6] = edge.g;
+		d[o + 7] = d[o + STRIDE + 7] = edge.b;
+		d[o + 8] = d[o + STRIDE + 8] = fade;
 		return n + 1;
 	}
 
