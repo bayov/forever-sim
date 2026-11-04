@@ -12,6 +12,10 @@ healer carries 5 to 21% more than the Restoration shaman's preset on every boss 
 level on five files and behind on Magmadar and Vaelastrasz. The UI spec page stays unlaunched (the user's
 call).
 
+A healing paladin never bubbles the tank (standards 40, user ruling 2026-11-04: it costs the tank its threat):
+no preset or bench request casts Blessing of Protection, Divine Intervention, Divine Shield or Divine
+Protection (`sim/paladin/holy/no_bubble_test.go`).
+
 ## The rules audit
 
 Sources, best first ([data_sources.md](data_sources.md)): tier 1 the client tables on wago.tools, build
