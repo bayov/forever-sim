@@ -130,41 +130,6 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10060
-                      },
-                      "target": {
-                        "type": "Self"
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "healthMissing": {
-                            "sourceUnit": {
-                              "type": "Tank"
-                            }
-                          }
-                        },
-                        "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 25314
-                            },
-                            "targetUnit": {
-                              "type": "Tank"
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "notes": "Power Infusion on myself when a big heal is due: 20% more healing for 15 sec."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 1240827
                       },
                       "target": {
@@ -238,12 +203,22 @@
                                 }
                               },
                               "rhs": {
-                                "spellExpectedHealing": {
-                                  "spellId": {
-                                    "spellId": 10917
+                                "math": {
+                                  "op": "OpMul",
+                                  "lhs": {
+                                    "spellExpectedHealing": {
+                                      "spellId": {
+                                        "spellId": 10917
+                                      },
+                                      "targetUnit": {
+                                        "type": "Tank"
+                                      }
+                                    }
                                   },
-                                  "targetUnit": {
-                                    "type": "Tank"
+                                  "rhs": {
+                                    "const": {
+                                      "val": "0.8"
+                                    }
                                   }
                                 }
                               }
@@ -292,12 +267,22 @@
                                 }
                               },
                               "rhs": {
-                                "spellExpectedHealing": {
-                                  "spellId": {
-                                    "spellId": 9474
+                                "math": {
+                                  "op": "OpMul",
+                                  "lhs": {
+                                    "spellExpectedHealing": {
+                                      "spellId": {
+                                        "spellId": 9474
+                                      },
+                                      "targetUnit": {
+                                        "type": "Tank"
+                                      }
+                                    }
                                   },
-                                  "targetUnit": {
-                                    "type": "Tank"
+                                  "rhs": {
+                                    "const": {
+                                      "val": "0.8"
+                                    }
                                   }
                                 }
                               }
@@ -326,12 +311,22 @@
                           }
                         },
                         "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 25314
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 25314
+                                },
+                                "targetUnit": {
+                                  "type": "Tank"
+                                }
+                              }
                             },
-                            "targetUnit": {
-                              "type": "Tank"
+                            "rhs": {
+                              "const": {
+                                "val": "0.8"
+                              }
                             }
                           }
                         }
@@ -361,19 +356,29 @@
                           }
                         },
                         "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 25314
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 25314
+                                },
+                                "targetUnit": {
+                                  "type": "Tank"
+                                }
+                              }
                             },
-                            "targetUnit": {
-                              "type": "Tank"
+                            "rhs": {
+                              "const": {
+                                "val": "0.8"
+                              }
                             }
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Greater Heal 5, 4, 2 at the tank: each rank, biggest first, once what is missing covers its Expected Healing."
+                  "notes": "Greater Heal 5, 4, 2 at the tank: each rank, biggest first, once what is missing covers 80% of its Expected Healing."
                 },
                 {
                   "action": {
@@ -396,12 +401,22 @@
                           }
                         },
                         "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 10965
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 10965
+                                },
+                                "targetUnit": {
+                                  "type": "Tank"
+                                }
+                              }
                             },
-                            "targetUnit": {
-                              "type": "Tank"
+                            "rhs": {
+                              "const": {
+                                "val": "0.8"
+                              }
                             }
                           }
                         }
@@ -430,12 +445,22 @@
                           }
                         },
                         "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 10963
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 10963
+                                },
+                                "targetUnit": {
+                                  "type": "Tank"
+                                }
+                              }
                             },
-                            "targetUnit": {
-                              "type": "Tank"
+                            "rhs": {
+                              "const": {
+                                "val": "0.8"
+                              }
                             }
                           }
                         }
@@ -464,19 +489,29 @@
                           }
                         },
                         "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 10917
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 10917
+                                },
+                                "targetUnit": {
+                                  "type": "Tank"
+                                }
+                              }
                             },
-                            "targetUnit": {
-                              "type": "Tank"
+                            "rhs": {
+                              "const": {
+                                "val": "0.8"
+                              }
                             }
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Flash Heal 7, 4 at the tank: each rank, biggest first, once what is missing covers its Expected Healing."
+                  "notes": "Flash Heal 7, 4 at the tank: each rank, biggest first, once what is missing covers 80% of its Expected Healing."
                 },
                 {
                   "action": {
@@ -499,12 +534,22 @@
                           }
                         },
                         "rhs": {
-                          "spellExpectedHealing": {
-                            "spellId": {
-                              "spellId": 9474
+                          "math": {
+                            "op": "OpMul",
+                            "lhs": {
+                              "spellExpectedHealing": {
+                                "spellId": {
+                                  "spellId": 9474
+                                },
+                                "targetUnit": {
+                                  "type": "Tank"
+                                }
+                              }
                             },
-                            "targetUnit": {
-                              "type": "Tank"
+                            "rhs": {
+                              "const": {
+                                "val": "0.8"
+                              }
                             }
                           }
                         }

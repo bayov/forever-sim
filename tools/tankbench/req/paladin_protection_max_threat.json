@@ -108,6 +108,12 @@
        "priorityList": [
         {
          "action": {
+          "autocastOtherCooldowns": {}
+         },
+         "notes": "Trinkets on cooldown from the pull, off the global cooldown."
+        },
+        {
+         "action": {
           "castSpell": {
            "spellId": {
             "spellId": 1311015
@@ -232,12 +238,6 @@
           }
          },
          "notes": "Consecration with the mana to spare."
-        },
-        {
-         "action": {
-          "autocastOtherCooldowns": {}
-         },
-         "notes": "Racials and trinkets on a free GCD."
         }
        ]
       },

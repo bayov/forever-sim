@@ -44,8 +44,9 @@ func (paladinTank) Knobs() []Knob {
 		{Name: "consecrationMana", Default: 60, Min: 0, Max: 100, Step: 20},
 		{Name: "consecrationFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Templar's Bulwark on cooldown from bulwarkAt seconds into the fight (a timer, no health
-		// read): below 0 never.
-		{Name: "bulwarkAt", Default: 10, Min: -10, Max: 60, Step: 10},
+		// read): below 0 never. Searched to the second (tank_rotations-20261104-3: a 10 sec grid
+		// missed 13).
+		{Name: "bulwarkAt", Default: 10, Min: -1, Max: 30, Step: 1},
 	}
 }
 
@@ -76,7 +77,9 @@ func (paladinTank) Build(k Knobs) *proto.APLRotation {
 	consecration := rankID(paladin.ConsecrationLevel[:], paladin.ConsecrationSpellId[:])
 	bulwark := spellID(paladin.TemplarsBulwarkSpellId)
 
-	var items []*proto.APLListItem
+	// The on-use trinket is off the global cooldown, so it goes first: behind the GCD lines it only
+	// waited (tank_rotations-20261104-6).
+	items := []*proto.APLListItem{autocastOtherCooldowns(nil, "Trinkets on cooldown from the pull, off the global cooldown.")}
 	if k["bulwarkAt"] >= 0 {
 		items = append(items, cast(bulwark, ge(currentTime(), seconds(k["bulwarkAt"])),
 			fmt.Sprintf("Templar's Bulwark on cooldown from %d sec in, on a timer (a scoring run reads no health). Off the global cooldown. Without the talent ignore the warning on this line.", int(k["bulwarkAt"]))))
@@ -114,7 +117,6 @@ func (paladinTank) Build(k Knobs) *proto.APLRotation {
 	if consecrationLine != nil && k["consecrationFirst"] == 0 {
 		items = append(items, consecrationLine)
 	}
-	items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on a free GCD."))
 
 	rot := rotation(items...)
 	rot.PrepullActions = append(rot.PrepullActions, prepull(seal, 3))

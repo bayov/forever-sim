@@ -17,7 +17,8 @@ import (
 // (L = 1.125 * ilvl + 2.0, f 1.053 / 1.026 / 0.995), at item level 66 for the head, shoulders, chest,
 // hands, legs and feet and 71 for the neck, back, wrist, waist and rings, and passes the shape check (its
 // 1.7-norm within 6% of slot mod * (0.661 * ilvl + 2.92)). The staff gets Forever's caster weapon rate,
-// 2.21 * L(76) = 193.4, and carries what the armor leaves of each stat; the wand 0.26 * L(71) = 21.3. The
+// 2.21 * L(76) = 193.4, and carries what the armor leaves of each stat; the wand (21.3 by
+// standards 1b) carries nothing here, as the other healers' slot 16 relics. The
 // armor values are the Shadow set's cloth.
 //
 // The mix is the healing priest row of orchestration/gear_targets.md (Healers): Wowhead's two WoW Forever
@@ -37,7 +38,7 @@ import (
 //	MP5           32    8.3%    8.1 +- 3
 //
 // Per piece (target, weighted linear total, 1.7-norm value / shape target, stats). The armor comes to 708.8,
-// the staff to 194.0 and the wand to 21.4:
+// the staff to 194.0 and the wand to 0 (stat-less, like the other healers' relics):
 //
 //	Head         80.3   80.4 (+0.1%)  45.6 /  46.5 (-2.0%)  4 Sta, 14 Int, 36 SP, 41 Heal, 13 Crit
 //	Neck         45.8   45.7 (-0.3%)  27.6 /  28.0 (-1.7%)  10 Sta, 12 Spi, 42 Heal, 2 MP5
@@ -52,7 +53,7 @@ import (
 //	Finger       45.8   46.1 (+0.5%)  27.7 /  28.0 (-1.2%)  10 Int, 22 SP, 27 Heal, 5 Crit
 //	Finger II    45.8   45.7 (-0.3%)  27.6 /  28.0 (-1.7%)  10 Sta, 12 Spi, 42 Heal, 2 MP5
 //	Staff       193.4  194.0 (+0.3%)                          35 Sta, 30 Int, 27 Spi, 12 SP, 53 Heal, 27 Crit, 17 MP5
-//	Wand         21.3   21.4 (+0.2%)                          6 Int, 10 SP, 15 Heal
+//	Wand            -      0                                   no stats (healer_fairness-20261104-3)
 
 func init() {
 	ForeverSyntheticItems = append(ForeverSyntheticItems, healingPriestSyntheticItems...)
@@ -169,11 +170,13 @@ var healingPriestSyntheticItems = []*proto.UIItem{
 		Ilvl: 76, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
 	},
-	// Wand, item level 71, with Wand of Eternal Light's (57, 22254) damage, speed and school.
+	// Wand, item level 71, with Wand of Eternal Light's (57, 22254) damage, speed and school. It carries
+	// no stats (healer_fairness-20261104-3): the shaman, paladin and druid healers' slot 16 is a stat-less
+	// relic, so a budgeted wand (6 Int, 10 SP, 15 Heal, 21.4 weighted) put the priest 2.4% over the
+	// healers' 902 budget. A healer's wand does nothing for it either way.
 	{
 		Id: 990514, Name: "Holy Synthetic Wand (Phase 1)", Icon: "inv_wand_07",
 		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeWand,
-		Stats:           stats.Stats{stats.Intellect: 6, stats.SpellPower: 10, stats.HealingPower: 15}.ToFloatArray(),
 		SpellSchool:     proto.SpellSchool_SpellSchoolHoly,
 		WeaponDamageMin: 58, WeaponDamageMax: 109, WeaponSpeed: 1.5,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,

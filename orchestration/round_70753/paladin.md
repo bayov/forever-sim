@@ -111,8 +111,9 @@ Sources checked (2026-11-03):
   113139 on 70707). foreverchanges.pro/patch-notes has a 2026-11-03 hotfix, but its rows are hunter only (Aspect of the
   Hawk, Trueshot Aura, Aimed Shot, Arcane Shot, Serpent Sting, Sniper Shot, Lightning Reflexes).
 - foreverchanges.pro's own list of the notes' lines (its 2026-11-03 "Blizzard's notes" entry) lists for the paladin only
-  the three lines the client doesn't have: Templar's Bulwark magic, Two-Handed Weapon Specialization on Holy, Vengeance 5
-  stacks. Everything else in the paladin section was already in the 10-30 launch-realm hotfix (1.60.1.70707+hf), which
+  the three lines it took for notes-only: Templar's Bulwark magic, Two-Handed Weapon Specialization on Holy, Vengeance 5
+  stacks. (Corrected 2026-11-04, tank_mechanics-20261104-10: Templar's Bulwark is not notes-only. 1311015 carries
+  DispelType 1, Magic, in clients 70753 and 70755+hf, so it is client data.) Everything else in the paladin section was already in the 10-30 launch-realm hotfix (1.60.1.70707+hf), which
   70753 writes into the client tables (update_ledger.md, the 70753 paragraph).
 
 Tiers: H = server hotfix, C = client 70753, N = dev notes, FC = foreverchanges.pro.
@@ -206,8 +207,8 @@ Strike, so they still get it once.
 ## Questions for the orchestrator
 
 1. **Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy (notes vs client).** Settled by the user's ruling
-   (standards 37, 2026-11-03): modelled from the notes, see "Notes-only values". The only other notes-only paladin line,
-   Templar's Bulwark as a Magic effect, is tank-only (tank session).
+   (standards 37, 2026-11-03): modelled from the notes, see "Notes-only values". Templar's Bulwark as a Magic effect,
+   which this list called notes-only, is in the client (1311015 DispelType 1 in 70753 and 70755+hf; tank_mechanics-20261104-10).
 2. **Salvation in the shared raid.** Salvation is gone from the game, but mksettings `main.go:74` and every Level 60
    request still set `raid.buffs.salvation: true` (sim/core/buffs.go:374 gives it under Forever). Threat only, 0 DPS.
    The orchestrator drops it from mksettings and every request in one shared change in phase 3; left alone here.

@@ -111,6 +111,7 @@
 - evidence: 20177's proc mask is 0x202A8, which includes magic damage taken (tier 1). The sim reacts only to melee or ranged crits (sim/paladin/talents.go:233). Far under 1% at the settled 0.6% boss crit.
 - proposed fix: drop the ProcMaskMeleeOrRanged gate for the crit branch only.
 - needs: worker fix
+- fixed: 2026-11-04, e9751cc. 20177's tooltip: "being the victim of a non-periodic critical strike"; TestReckoning fails on the old gate.
 
 ### tank_mechanics-20261104-10: Tank class docs: wrong tier labels and stale rows
 - severity: low
@@ -120,6 +121,7 @@
 - proposed fix: `ref/tank_mechanics/patches/shaman_01_docs_tiers.patch` and `warrior_revenge_ap_call_doc.patch`; the druid and paladin lines by hand.
 - needs: worker fix
 - fixed (warrior row, Call 3): 2026-11-04, 53709995e. Shaman, druid and paladin rows are their workers'.
+- fixed (paladin line only): 2026-11-04, 3f9c055. round_70753/paladin.md now says Templar's Bulwark's Magic is client data; docs/tank_paladin.md already had it as N, C.
 
 ### tank_mechanics-20261104-11: Tank mechanics with no test that fails when they break
 - severity: low (none known wrong except -6, -7, -8)
@@ -134,5 +136,7 @@
 - proposed fix: add the tests, with the ones for -1, -2 and -7 first.
 - needs: worker fix
 - fixed (warrior list): 2026-11-04, 9173d087a: sim/warrior/tank_warrior/talents_test.go (Unbridled Wrath, Enrage, Blood Craze, Heroic Strike +138, Shield Block charges on real blocks). Other classes and engine: their workers'.
+- fixed (paladin row only): 2026-11-04, 639590a. Deflection, Divine Strength (TestProtectionStatTalents), TestJudgementCooldownAndCost, TestImprovedSealsOnSealOfFury, TestConsecrationAndHolyStrikeCosts; each seen failing on a broken value.
 
 ## Resolved
+

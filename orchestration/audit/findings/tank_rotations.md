@@ -26,6 +26,7 @@
 - evidence: the Bulwark line's const `10s` (ui/protection_paladin/apls/level60_*.apl.json:8); `bulwarkAt` Step 10 (tools/rotopt/paladin_tank.go:48). Paired, 3k: 13 s gives Balanced +73.3 ± 5.0 (+2.9%), Max survival +219.9 ± 14.9 (+17%), Max threat +23.1 ± 1.5; 12 s gives +19.5 / +58.5 / +5.6, 14 s +47.7 (Balanced), 15 s -52.9. Almost all of the gain is Broodlord (+437 at Balanced): 13 s covers his first Mortal Strike, Knock Away and Blast Wave (tools/encounters/broodlord.json firstAt 25±5, 22.5±6.5, 20±7.5, timers the file calls "probably wrong" vmangos values). Vaelastrasz -62, Ragnaros -20 to -61.
 - proposed fix: the knob gets Step 1–2 and a re-search. Adopt 13 s only if Broodlord's first-ability timers are trusted; otherwise keep 10 s and fix the timers first. Reproduce B: `tools/audit/tank_rotations/mk_paladin.py A.json B.json bulwark_13s`.
 - needs: user ruling
+- left open: 2026-11-04 (tank-paladin, e9751cc). bulwarkAt now steps by 1 sec, and rotopt holds it at 10 (`-freeze bulwarkAt`). Paired, 3,000 iterations, 13 s minus 10 s: on the five scoring bosses without Broodlord Max threat -1.1 ± 1.1, Balanced -6.2 ± 3.0, Max survival -18.5 ± 9.0 (Vaelastrasz -24 / -66 / -199, Onyxia +9 / +26 / +79); with Broodlord +16.5 ± 1.4 / +49.3 ± 3.9 / +147.9 ± 11.7 (Broodlord +105 / +327 / +980). 13 s wins only on Broodlord's suspect timers, so 10 s stays. The user's call (docs/tank_paladin.md, Calls): 13 s if Broodlord's timers are trusted, and Bulwark on a timer every pull at all.
 
 ### tank_rotations-20261104-4: Warden's Stormstrike sits above Earth Shock, which makes more threat per GCD
 - severity: high (Max threat); medium elsewhere
@@ -50,6 +51,7 @@
 - evidence: `autocastOtherCooldowns` is the last line (ui/protection_paladin/apls/level60_*.apl.json:15, tools/rotopt/paladin_tank.go:117), noted "on a free GCD", but trinket 990716 (+165 Str, 20 s) is off the GCD, so the line only delays it. Moved to the top, paired, 3k: Balanced +13.9 ± 0.6 (+0.5%), Max threat +14.1 ± 0.2, Max survival +13.4 ± 1.8 (+1.1%); mostly Vaelastrasz (+44). Ragnaros -2 to -21.
 - proposed fix: move the line to the top, with the note "Trinkets on cooldown from the pull, off the global cooldown." Reproduce: `tools/audit/tank_rotations/mk_paladin.py A.json B.json autocast_top`.
 - needs: worker fix
+- fixed: 2026-11-04, 86b9631 (the presets; rotopt's template in e9751cc).
 
 ### tank_rotations-20261104-7: Warrior Max threat's Sunder filler at 30 Rage is a little high
 - severity: low
