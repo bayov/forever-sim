@@ -1,0 +1,29 @@
+tank encounters (their index takes the fight length's place, scored as their mean): tools/encounters/magmadar.json,tools/encounters/golemagg.json,tools/encounters/onyxia.json,tools/encounters/broodlord.json,tools/encounters/vaelastrasz.json,tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 1 x 900 x healing needed at 5% deaths / 258, in raid DPS
+start bulwarkAt=10 consecrationFirst=0 consecrationMana=60 holyShieldFirst=1 holyShieldMana=0 holyStrikeMana=0 judgementMana=0 prepullHolyShield=1 resealWindow=0 seal=1 swiftJudgement=1: 2835.0(11.9) mana 2482(5) tto 366s
+  seal=2: 2749.0(11.5) mana 2482(5) tto 366s (-86.0, noise 2.7)
+  resealWindow=10: 2833.4(12.0) mana 2474(5) tto 356s (-1.6, noise 3.1)
+  resealWindow=20: 2837.3(12.0) mana 2530(5) tto 411s (+2.3, noise 3.1)
+  resealWindow=30: 2840.6(12.2) mana 2527(5) tto 409s (+5.6, noise 3.3)
+  holyShieldMana=20: 2835.0(11.9) mana 2482(5) tto 366s (+0.0, noise 0.0)
+  holyShieldMana=40: 2835.0(11.9) mana 2482(5) tto 366s (-0.0, noise 0.0)
+  holyShieldMana=60: 2824.3(12.8) mana 2494(5) tto 367s (-10.7, noise 3.4)
+  holyShieldFirst=0: 2812.5(11.4) mana 2551(5) tto 424s (-22.5, noise 7.3)
+  prepullHolyShield=0: 2725.3(11.7) mana 2506(5) tto 391s (-109.7, noise 11.4)
+  holyStrikeMana=20: 2835.0(11.9) mana 2482(5) tto 366s (+0.0, noise 0.0)
+  holyStrikeMana=40: 2835.0(11.9) mana 2482(5) tto 366s (-0.0, noise 0.3)
+  judgementMana=20: 2835.0(11.9) mana 2482(5) tto 366s (+0.0, noise 0.0)
+  judgementMana=40: 2835.0(11.9) mana 2482(5) tto 366s (-0.0, noise 0.0)
+  judgementMana=60: 2828.4(12.7) mana 2484(5) tto 362s (-6.6, noise 3.3)
+  swiftJudgement=0: 2747.3(11.6) mana 2456(5) tto 344s (-87.7, noise 11.4)
+  consecrationMana=0: 2834.7(12.1) mana 2489(5) tto 383s (-0.3, noise 1.6)
+  consecrationMana=20: 2834.7(12.1) mana 2489(5) tto 383s (-0.3, noise 1.6)
+  consecrationMana=40: 2834.7(12.1) mana 2488(5) tto 382s (-0.3, noise 1.6)
+  consecrationMana=80: 2832.5(13.3) mana 2613(4) tto 426s (-2.5, noise 5.9)
+  consecrationMana=100: 2551.5(12.3) mana 3200(1) tto 2650s (-283.5, noise 12.1)
+  consecrationFirst=1: 2727.2(10.9) mana 2346(5) tto 270s (-107.8, noise 11.4)
+[0 1 2 3 4 5]s: 2825.6(6.5) mana 2478(3) tto 358s
+  start 2825.6(6.5) mana 2478(3) tto 358s
+  best  bulwarkAt=10 consecrationFirst=0 consecrationMana=60 holyShieldFirst=1 holyShieldMana=0 holyStrikeMana=0 judgementMana=0 prepullHolyShield=1 resealWindow=0 seal=1 swiftJudgement=1
+  sim runs 132
+  wrote orchestration/tank_handoff/paladin/round5/aplout/balanced/level60_balanced.apl.json

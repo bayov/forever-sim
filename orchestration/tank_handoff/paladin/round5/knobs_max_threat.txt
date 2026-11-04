@@ -1,0 +1,51 @@
+tank encounters (their index takes the fight length's place, scored as their mean): tools/encounters/magmadar.json,tools/encounters/golemagg.json,tools/encounters/onyxia.json,tools/encounters/broodlord.json,tools/encounters/vaelastrasz.json,tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 0.3333333333333333 x 900 x healing needed at 5% deaths / 258, in raid DPS
+start bulwarkAt=10 consecrationFirst=0 consecrationMana=60 holyShieldFirst=1 holyShieldMana=0 holyStrikeMana=0 judgementMana=0 prepullHolyShield=1 resealWindow=0 seal=1 swiftJudgement=1: 3247.5(7.3) mana 2473(5) tto 361s
+  seal=2: 3204.0(7.2) mana 2473(5) tto 361s (-43.5, noise 1.2)
+  resealWindow=10: 3245.8(7.3) mana 2473(5) tto 359s (-1.8, noise 1.3)
+  resealWindow=20: 3247.7(7.3) mana 2526(5) tto 414s (+0.1, noise 1.2)
+  resealWindow=30: 3249.4(7.3) mana 2528(5) tto 413s (+1.8, noise 1.4)
+  holyShieldMana=20: 3247.5(7.3) mana 2473(5) tto 361s (+0.0, noise 0.0)
+  holyShieldMana=40: 3247.5(7.3) mana 2473(5) tto 361s (+0.0, noise 0.0)
+  holyShieldMana=60: 3241.5(7.3) mana 2489(5) tto 365s (-6.0, noise 1.3)
+  holyShieldFirst=0: 3231.6(7.2) mana 2544(5) tto 420s (-15.9, noise 3.2)
+  prepullHolyShield=0: 3140.1(6.8) mana 2509(5) tto 385s (-107.4, noise 6.8)
+  holyStrikeMana=20: 3247.5(7.3) mana 2473(5) tto 361s (+0.0, noise 0.0)
+  holyStrikeMana=40: 3247.6(7.3) mana 2473(5) tto 361s (+0.1, noise 0.2)
+  judgementMana=20: 3247.5(7.3) mana 2473(5) tto 361s (+0.0, noise 0.0)
+  judgementMana=40: 3247.5(7.3) mana 2473(5) tto 361s (-0.0, noise 0.1)
+  judgementMana=60: 3244.2(7.4) mana 2478(5) tto 363s (-3.3, noise 1.2)
+  swiftJudgement=0: 3147.3(6.8) mana 2452(5) tto 345s (-100.2, noise 6.8)
+  consecrationMana=0: 3249.1(7.3) mana 2483(5) tto 378s (+1.6, noise 0.5)
+  consecrationMana=20: 3249.1(7.3) mana 2483(5) tto 378s (+1.6, noise 0.5)
+  consecrationMana=40: 3249.1(7.3) mana 2483(5) tto 379s (+1.5, noise 0.5)
+  consecrationMana=80: 3243.7(7.3) mana 2611(4) tto 419s (-3.8, noise 2.4)
+  consecrationMana=100: 2955.3(7.1) mana 3202(1) tto 2646s (-292.2, noise 6.4)
+round 1: consecrationMana=0, now 3249.1(7.3) mana 2483(5) tto 378s
+  consecrationFirst=1: 3151.0(7.2) mana 2354(6) tto 294s (-98.1, noise 6.9)
+  seal=2: 3205.0(7.2) mana 2483(5) tto 378s (-44.1, noise 1.2)
+  resealWindow=10: 3247.4(7.3) mana 2474(5) tto 370s (-1.7, noise 1.3)
+  resealWindow=20: 3248.5(7.3) mana 2534(5) tto 431s (-0.6, noise 1.2)
+  resealWindow=30: 3250.0(7.3) mana 2531(5) tto 423s (+0.9, noise 1.4)
+  holyShieldMana=20: 3249.1(7.3) mana 2483(5) tto 378s (+0.0, noise 0.0)
+  holyShieldMana=40: 3249.0(7.3) mana 2482(5) tto 378s (-0.1, noise 0.1)
+  holyShieldMana=60: 3237.9(7.5) mana 2486(5) tto 372s (-11.2, noise 1.5)
+  holyShieldFirst=0: 3232.4(7.2) mana 2546(5) tto 430s (-16.7, noise 3.2)
+  prepullHolyShield=0: 3140.7(6.9) mana 2511(5) tto 398s (-108.4, noise 6.9)
+  holyStrikeMana=20: 3249.1(7.3) mana 2483(5) tto 378s (+0.0, noise 0.0)
+  holyStrikeMana=40: 3248.1(7.3) mana 2484(5) tto 379s (-1.0, noise 0.4)
+  judgementMana=20: 3249.1(7.3) mana 2483(5) tto 378s (+0.0, noise 0.0)
+  judgementMana=40: 3248.8(7.3) mana 2480(5) tto 376s (-0.3, noise 0.3)
+  judgementMana=60: 3242.7(7.4) mana 2478(5) tto 372s (-6.4, noise 1.2)
+  swiftJudgement=0: 3148.0(6.8) mana 2468(5) tto 374s (-101.1, noise 6.8)
+  consecrationMana=20: 3249.1(7.3) mana 2483(5) tto 378s (+0.0, noise 0.0)
+  consecrationMana=40: 3249.1(7.3) mana 2483(5) tto 379s (-0.0, noise 0.0)
+  consecrationMana=60: 3247.5(7.3) mana 2473(5) tto 361s (-1.6, noise 0.5)
+  consecrationMana=80: 3243.7(7.3) mana 2611(4) tto 419s (-5.4, noise 2.4)
+  consecrationMana=100: 2955.3(7.1) mana 3202(1) tto 2646s (-293.8, noise 6.4)
+  consecrationFirst=1: 3151.0(7.2) mana 2354(6) tto 294s (-98.1, noise 6.9)
+[0 1 2 3 4 5]s: 3248.3(4.2) mana 2483(3) tto 373s
+  start 3247.1(4.2) mana 2472(3) tto 354s
+  best  bulwarkAt=10 consecrationFirst=0 consecrationMana=0 holyShieldFirst=1 holyShieldMana=0 holyStrikeMana=0 judgementMana=0 prepullHolyShield=1 resealWindow=0 seal=1 swiftJudgement=1
+  sim runs 222
+  wrote orchestration/tank_handoff/paladin/round5/aplout/max_threat/level60_max_threat.apl.json

@@ -1,0 +1,87 @@
+s1_base_vs_boots1887_balanced_10000.txt    six    10.8 ±  1.9 * | five (no Broodlord)    12.8 ±  1.7 | brood     0.5 | vael     8.0 ± 2.8
+s1_base_vs_boots1887_max_survival_10000.txt six    17.1 ±  4.9 * | five (no Broodlord)    18.0 ±  4.2 | brood    12.7 | vael     6.0 ± 6.7
+s1_base_vs_mtbuild_balanced_10000.txt      six    30.9 ±  3.1 * | five (no Broodlord)    44.1 ±  2.7 | brood   -34.6 | vael    97.3 ± 6.6
+s1_base_vs_mtbuild_balanced_3000.txt       six    24.0 ±  5.5 * | five (no Broodlord)    39.6 ±  4.9 | brood   -53.9 | vael    87.2 ± 11.9
+s1_base_vs_mtbuild_max_survival_10000.txt  six  -128.1 ±  8.7 * | five (no Broodlord)  -101.2 ±  7.1 | brood  -262.6 | vael     3.5 ± 12.6
+s1_base_vs_mttal_balanced_10000.txt        six    20.2 ±  3.3 * | five (no Broodlord)    35.6 ±  2.8 | brood   -57.1 | vael    91.9 ± 6.4
+s1_base_vs_mttal_max_survival_10000.txt    six  -136.8 ±  9.1 * | five (no Broodlord)  -113.4 ±  7.3 | brood  -253.6 | vael     4.0 ± 13.0
+s1_base_vs_mtz_balanced_10000.txt          six    17.1 ±  2.4 * | five (no Broodlord)    36.9 ±  2.1 | brood   -81.7 | vael    59.0 ± 4.0
+s1_before_vs_f_balanced_10000.txt          six    30.9 ±  3.1 * | five (no Broodlord)    44.1 ±  2.7 | brood   -34.6 | vael    97.3 ± 6.6
+s1_before_vs_f_max_survival_10000.txt      six    17.1 ±  4.9 * | five (no Broodlord)    18.0 ±  4.2 | brood    12.7 | vael     6.0 ± 6.7
+s1_before_vs_f_max_threat_10000.txt        six     1.0 ±  0.2 * | five (no Broodlord)     1.2 ±  0.2 | brood     0.1 | vael    -0.0 ± 0.0
+s1_f_vs_fboots904_max_threat_3000.txt      six    -2.9 ±  0.8 * | five (no Broodlord)    -2.7 ±  0.8 | brood    -4.1 | vael    -4.0 ± 1.5
+s1_f_vs_fboots929_max_threat_3000.txt      six    -4.4 ±  1.4 * | five (no Broodlord)    -5.7 ±  1.4 | brood     2.0 | vael    -3.3 ± 3.3
+s1_f_vs_fcloakDef_max_threat_3000.txt      six    -3.2 ±  1.2 * | five (no Broodlord)    -4.1 ±  1.2 | brood     1.5 | vael    -5.2 ± 2.6
+s1_f_vs_fshSta_max_threat_3000.txt         six   -27.7 ±  1.9 * | five (no Broodlord)   -27.6 ±  1.8 | brood   -27.9 | vael   -23.4 ± 4.2
+s1_f_vs_fwristSta_max_threat_3000.txt      six    -9.5 ±  2.2 * | five (no Broodlord)    -9.2 ±  2.2 | brood   -10.9 | vael    -3.0 ± 5.4
+s1_n_vs_nboots904_balanced_3000.txt        six    -4.6 ±  1.8 * | five (no Broodlord)    -3.6 ±  1.8 | brood    -9.4 | vael    -5.0 ± 4.1
+s1_n_vs_nboots904_max_survival_3000.txt    six   -12.8 ±  6.7   | five (no Broodlord)    -8.0 ±  4.5 | brood   -37.3 | vael    -7.2 ± 8.2
+s1_n_vs_nboots904_max_threat_3000.txt      six    -2.2 ±  1.1 * | five (no Broodlord)    -2.1 ±  1.0 | brood    -2.6 | vael    -0.1 ± 1.9
+s1_n_vs_nboots929_balanced_3000.txt        six    -6.9 ±  3.4 * | five (no Broodlord)    -5.0 ±  3.2 | brood   -16.0 | vael    -7.9 ± 7.2
+s1_n_vs_nboots929_max_survival_3000.txt    six   -30.8 ± 10.0 * | five (no Broodlord)   -22.7 ±  7.7 | brood   -71.2 | vael    -5.2 ± 14.2
+s1_n_vs_nboots929_max_threat_3000.txt      six    -5.4 ±  1.5 * | five (no Broodlord)    -4.2 ±  1.5 | brood   -11.0 | vael     1.0 ± 2.9
+s1_n_vs_ncloakDef_balanced_3000.txt        six    -3.5 ±  2.9   | five (no Broodlord)    -2.7 ±  2.7 | brood    -7.6 | vael    -8.1 ± 5.9
+s1_n_vs_ncloakDef_max_survival_3000.txt    six   -25.9 ±  9.1 * | five (no Broodlord)   -12.8 ±  6.6 | brood   -91.4 | vael    -1.5 ± 11.1
+s1_n_vs_ncloakDef_max_threat_3000.txt      six    -4.1 ±  1.4 * | five (no Broodlord)    -3.3 ±  1.3 | brood    -8.0 | vael    -0.9 ± 2.6
+s1_n_vs_ncons0_max_threat_10000.txt        six     1.0 ±  0.2 * | five (no Broodlord)     1.2 ±  0.2 | brood     0.1 | vael    -0.0 ± 0.0
+s1_n_vs_ncons80_max_survival_10000.txt     six     4.0 ±  3.5   | five (no Broodlord)     0.9 ±  2.8 | brood    19.6 | vael   -11.1 ± 5.6
+s1_n_vs_nnightElf_balanced_10000.txt       six     3.0 ±  3.9   | five (no Broodlord)    -3.3 ±  3.6 | brood    34.9 | vael   135.6 ± 11.7
+s1_n_vs_nnightElf_balanced_3000.txt        six     5.8 ±  7.0   | five (no Broodlord)     1.6 ±  6.6 | brood    27.0 | vael   130.5 ± 20.0
+s1_n_vs_nnightElf_max_survival_3000.txt    six  -151.2 ± 17.8 * | five (no Broodlord)  -172.1 ± 14.1 | brood   -47.1 | vael    35.2 ± 35.0
+s1_n_vs_nnightElf_max_threat_10000.txt     six    35.7 ±  2.3 * | five (no Broodlord)    34.7 ±  2.4 | brood    40.4 | vael   151.2 ± 8.4
+s1_n_vs_nnightElf_max_threat_3000.txt      six    34.4 ±  4.1 * | five (no Broodlord)    35.1 ±  4.2 | brood    30.5 | vael   140.1 ± 14.9
+s1_n_vs_nrDwarf_balanced_3000.txt          six  -152.5 ±  6.9 * | five (no Broodlord)  -156.0 ±  6.6 | brood  -135.3 | vael  -138.4 ± 20.2
+s1_n_vs_nrDwarf_max_survival_3000.txt      six  -365.1 ± 18.9 * | five (no Broodlord)  -375.7 ± 12.8 | brood  -312.2 | vael  -201.1 ± 34.4
+s1_n_vs_nrDwarf_max_threat_3000.txt        six  -100.6 ±  4.0 * | five (no Broodlord)  -100.1 ±  4.2 | brood  -102.8 | vael  -115.9 ± 14.4
+s1_n_vs_nrGnome_balanced_3000.txt          six  -125.4 ±  6.9 * | five (no Broodlord)  -131.7 ±  6.4 | brood   -93.9 | vael   -82.9 ± 20.3
+s1_n_vs_nrGnome_max_survival_3000.txt      six  -317.5 ± 19.1 * | five (no Broodlord)  -324.1 ± 12.5 | brood  -284.6 | vael  -165.7 ± 35.5
+s1_n_vs_nrGnome_max_threat_3000.txt        six   -79.7 ±  4.0 * | five (no Broodlord)   -78.3 ±  4.2 | brood   -86.7 | vael   -66.4 ± 14.3
+s1_n_vs_nrHuman_balanced_3000.txt          six  -127.7 ±  6.9 * | five (no Broodlord)  -132.1 ±  6.5 | brood  -105.7 | vael  -106.9 ± 20.1
+s1_n_vs_nrHuman_max_survival_3000.txt      six  -333.0 ± 18.2 * | five (no Broodlord)  -337.4 ± 12.6 | brood  -311.3 | vael  -198.9 ± 35.2
+s1_n_vs_nrHuman_max_threat_3000.txt        six   -78.0 ±  4.0 * | five (no Broodlord)   -77.8 ±  4.2 | brood   -79.2 | vael   -95.8 ± 14.0
+s1_n_vs_nrOrc_balanced_3000.txt            six   -88.5 ±  6.9 * | five (no Broodlord)   -91.8 ±  6.5 | brood   -72.1 | vael    -5.4 ± 20.0
+s1_n_vs_nrOrc_max_survival_3000.txt        six  -310.3 ± 17.6 * | five (no Broodlord)  -318.1 ± 12.7 | brood  -271.4 | vael  -113.6 ± 36.3
+s1_n_vs_nrOrc_max_threat_3000.txt          six   -39.2 ±  4.1 * | five (no Broodlord)   -38.5 ±  4.3 | brood   -42.6 | vael     6.8 ± 14.7
+s1_n_vs_nrSkyborneHighOrder_balanced_3000.txt six  -124.6 ±  7.0 * | five (no Broodlord)  -138.5 ±  6.5 | brood   -54.7 | vael  -131.3 ± 19.6
+s1_n_vs_nrSkyborneHighOrder_max_survival_3000.txt six  -329.5 ± 18.0 * | five (no Broodlord)  -321.4 ± 13.8 | brood  -370.1 | vael  -206.2 ± 37.1
+s1_n_vs_nrSkyborneHighOrder_max_threat_3000.txt six   -80.3 ±  3.9 * | five (no Broodlord)   -85.2 ±  4.1 | brood   -55.6 | vael  -110.2 ± 13.3
+s1_n_vs_nrTroll_balanced_3000.txt          six  -100.9 ±  6.6 * | five (no Broodlord)  -111.6 ±  6.4 | brood   -47.6 | vael   -64.2 ± 19.7
+s1_n_vs_nrTroll_max_survival_3000.txt      six  -308.3 ± 17.2 * | five (no Broodlord)  -298.1 ± 13.2 | brood  -359.6 | vael  -132.3 ± 36.7
+s1_n_vs_nrTroll_max_threat_3000.txt        six   -51.5 ±  3.9 * | five (no Broodlord)   -54.4 ±  4.1 | brood   -37.2 | vael   -28.2 ± 14.2
+s1_n_vs_nreseal30_balanced_10000.txt       six     2.5 ±  1.1 * | five (no Broodlord)     3.0 ±  1.3 | brood     0.1 | vael     0.0 ± 0.0
+s1_n_vs_nreseal30_max_survival_10000.txt   six     0.0 ±  2.5   | five (no Broodlord)     0.0 ±  3.0 | brood     0.1 | vael     0.0 ± 0.0
+s1_n_vs_nshArmor_balanced_3000.txt         six   -39.1 ±  4.1 * | five (no Broodlord)   -38.7 ±  3.9 | brood   -41.4 | vael   -40.0 ± 9.5
+s1_n_vs_nshArmor_max_survival_3000.txt     six  -129.2 ± 13.1 * | five (no Broodlord)  -109.5 ± 10.8 | brood  -227.3 | vael   -58.5 ± 21.9
+s1_n_vs_nshArmor_max_threat_3000.txt       six   -28.7 ±  2.0 * | five (no Broodlord)   -27.1 ±  1.9 | brood   -36.9 | vael   -23.4 ± 4.0
+s1_n_vs_nshSpirit_balanced_3000.txt        six   -42.1 ±  4.1 * | five (no Broodlord)   -41.0 ±  3.9 | brood   -47.2 | vael   -41.3 ± 9.5
+s1_n_vs_nshSpirit_max_survival_3000.txt    six  -137.7 ± 13.2 * | five (no Broodlord)  -115.6 ± 10.9 | brood  -248.2 | vael   -60.9 ± 22.0
+s1_n_vs_nshSpirit_max_threat_3000.txt      six   -29.7 ±  2.0 * | five (no Broodlord)   -27.9 ±  1.9 | brood   -38.4 | vael   -24.0 ± 4.0
+s1_n_vs_nshSta_balanced_3000.txt           six   -31.2 ±  4.0 * | five (no Broodlord)   -31.7 ±  3.9 | brood   -28.9 | vael   -28.7 ± 9.3
+s1_n_vs_nshSta_max_survival_3000.txt       six  -106.9 ± 13.2 * | five (no Broodlord)   -88.0 ± 10.7 | brood  -201.2 | vael   -30.3 ± 22.7
+s1_n_vs_nshSta_max_threat_3000.txt         six   -24.7 ±  2.0 * | five (no Broodlord)   -23.7 ±  1.9 | brood   -29.5 | vael   -18.5 ± 4.0
+s1_n_vs_ntauren_balanced_3000.txt          six  -105.9 ±  7.1 * | five (no Broodlord)  -120.0 ±  6.6 | brood   -35.6 | vael   -79.2 ± 20.4
+s1_n_vs_ntauren_max_survival_3000.txt      six  -252.3 ± 17.4 * | five (no Broodlord)  -278.8 ± 12.8 | brood  -120.1 | vael  -102.5 ± 35.0
+s1_n_vs_ntauren_max_threat_3000.txt        six   -88.9 ±  4.1 * | five (no Broodlord)   -91.5 ±  4.2 | brood   -76.1 | vael   -99.6 ± 14.0
+s1_n_vs_ntb_balanced_10000.txt             six   -18.9 ±  4.1 * | five (no Broodlord)   -18.8 ±  3.6 | brood   -19.5 | vael   -20.2 ± 10.8
+s1_n_vs_ntb_max_survival_10000.txt         six   -14.5 ±  9.7   | five (no Broodlord)    -7.6 ±  7.9 | brood   -49.4 | vael   -26.2 ± 16.7
+s1_n_vs_nwristSta_balanced_3000.txt        six   -18.7 ±  4.5 * | five (no Broodlord)   -14.7 ±  4.3 | brood   -38.8 | vael   -11.2 ± 10.3
+s1_n_vs_nwristSta_max_survival_3000.txt    six   -81.8 ± 13.6 * | five (no Broodlord)   -70.9 ± 11.2 | brood  -136.4 | vael    -4.3 ± 24.4
+s1_n_vs_nwristSta_max_threat_3000.txt      six    -7.1 ±  2.2 * | five (no Broodlord)    -5.0 ±  2.2 | brood   -17.5 | vael     1.7 ± 4.8
+s2_base_vs_boots1887_balanced_10000.txt    six    12.3 ±  2.0 * | five (no Broodlord)     9.7 ±  1.6 | brood    25.2 | vael     7.5 ± 3.0
+s2_base_vs_boots1887_max_survival_10000.txt six    16.3 ±  5.5 * | five (no Broodlord)     6.1 ±  4.2 | brood    67.5 | vael    -1.2 ± 6.6
+s2_base_vs_mtbuild_balanced_10000.txt      six    32.0 ±  3.1 * | five (no Broodlord)    39.6 ±  2.7 | brood    -5.9 | vael    94.9 ± 5.6
+s2_base_vs_mtbuild_max_survival_10000.txt  six  -134.0 ±  9.0 * | five (no Broodlord)  -119.3 ±  6.6 | brood  -207.5 | vael    10.3 ± 13.1
+s2_base_vs_mttal_balanced_10000.txt        six    27.4 ±  3.1 * | five (no Broodlord)    32.7 ±  2.7 | brood     1.4 | vael    91.7 ± 5.8
+s2_base_vs_mttal_max_survival_10000.txt    six  -146.1 ±  9.2 * | five (no Broodlord)  -131.1 ±  6.7 | brood  -221.1 | vael     7.9 ± 14.3
+s2_base_vs_mtz_balanced_10000.txt          six    17.9 ±  2.6 * | five (no Broodlord)    38.2 ±  2.1 | brood   -83.8 | vael    58.4 ± 4.3
+s2_before_vs_f_balanced_10000.txt          six    32.0 ±  3.1 * | five (no Broodlord)    39.6 ±  2.7 | brood    -5.9 | vael    94.9 ± 5.6
+s2_before_vs_f_max_survival_10000.txt      six    16.3 ±  5.5 * | five (no Broodlord)     6.1 ±  4.2 | brood    67.5 | vael    -1.2 ± 6.6
+s2_before_vs_f_max_threat_10000.txt        six     0.7 ±  0.2 * | five (no Broodlord)     0.8 ±  0.2 | brood    -0.2 | vael    -0.0 ± 0.0
+s2_n_vs_ncons0_max_threat_10000.txt        six     0.7 ±  0.2 * | five (no Broodlord)     0.8 ±  0.2 | brood    -0.2 | vael    -0.0 ± 0.0
+s2_n_vs_ncons80_max_survival_10000.txt     six    -3.3 ±  3.9   | five (no Broodlord)     0.7 ±  2.8 | brood   -23.3 | vael    -4.0 ± 4.8
+s2_n_vs_nnightElf_balanced_10000.txt       six     5.8 ±  4.0   | five (no Broodlord)     1.4 ±  3.6 | brood    27.9 | vael   143.0 ± 10.8
+s2_n_vs_nnightElf_max_threat_10000.txt     six    34.0 ±  2.3 * | five (no Broodlord)    33.3 ±  2.4 | brood    37.2 | vael   147.2 ± 8.1
+s2_n_vs_nreseal30_balanced_10000.txt       six    -0.0 ±  1.1   | five (no Broodlord)    -0.0 ±  1.3 | brood     0.0 | vael     0.0 ± 0.0
+s2_n_vs_nreseal30_max_survival_10000.txt   six     4.8 ±  2.7   | five (no Broodlord)     5.7 ±  3.3 | brood     0.1 | vael     0.0 ± 0.0
+s2_n_vs_ntb_balanced_10000.txt             six   -15.9 ±  3.7 * | five (no Broodlord)   -15.3 ±  3.7 | brood   -18.5 | vael   -27.0 ± 10.5
+s2_n_vs_ntb_max_survival_10000.txt         six   -14.1 ± 10.6   | five (no Broodlord)    -8.8 ±  7.4 | brood   -40.8 | vael   -24.2 ± 18.0

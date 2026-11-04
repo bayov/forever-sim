@@ -1,0 +1,17 @@
+{
+    "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":20423}}},"doAtValue":{"const":{"val":"-3s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":1239570}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+    ],
+    "priorityList": [
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Trinkets on cooldown from the pull, off the global cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":1311015}},"condition":{"cmp":{"lhs":{"currentTime":{}},"op":"OpGe","rhs":{"const":{"val":"10s"}}}}},"notes":"Templar's Bulwark on cooldown from 10 sec in, on a timer (a scoring run reads no health). Off the global cooldown. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":20423}},"condition":{"cmp":{"lhs":{"currentSealRemainingTime":{}},"op":"OpLt","rhs":{"const":{"val":"3s"}}}}},"notes":"Seal of Fury again when it has less than 3.0 sec left."},
+        {"action":{"castSpell":{"spellId":{"spellId":1310994}},"condition":{"auraIsActive":{"auraId":{"spellId":20423}}}},"notes":"Swift Judgement on cooldown, off the global cooldown. Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":20423}}}]}}},"notes":"Judgement on cooldown, off the global cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":1239570}}},"notes":"Holy Shield on cooldown: 30% block for 10 sec or 4 blocks, its damage at 1.2 times the threat."},
+        {"action":{"castSpell":{"spellId":{"spellId":10333}}},"notes":"Holy Strike on cooldown: Iron Creed's threat and damage cut, and with Shieldsworn Holy Shield's damage."},
+        {"action":{"castSpell":{"spellId":{"spellId":20924}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.6"}}}}},"notes":"Consecration with the mana to spare."}
+    ]
+}

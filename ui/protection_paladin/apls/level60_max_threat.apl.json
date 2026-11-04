@@ -12,6 +12,6 @@
         {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":20423}}}]}}},"notes":"Judgement on cooldown, off the global cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":1239570}}},"notes":"Holy Shield on cooldown: 30% block for 10 sec or 4 blocks, its damage at 1.2 times the threat."},
         {"action":{"castSpell":{"spellId":{"spellId":10333}}},"notes":"Holy Strike on cooldown: Iron Creed's threat and damage cut, and with Shieldsworn Holy Shield's damage."},
-        {"action":{"castSpell":{"spellId":{"spellId":20924}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.6"}}}}},"notes":"Consecration with the mana to spare."}
+        {"action":{"castSpell":{"spellId":{"spellId":20924}}},"notes":"Consecration with the mana to spare."}
     ]
 }
