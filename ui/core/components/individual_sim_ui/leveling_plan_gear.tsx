@@ -145,6 +145,21 @@ export class LevelingGearSection {
 				},
 			});
 		}
+		if (this.shieldWeightPresets().length) {
+			new BooleanPicker<Player<Spec>>(planBlock.bodyElement, this.player, {
+				id: 'leveling-gear-shield',
+				label: 'One-hand + shield',
+				labelTooltip: 'No two-handers. Items are judged by the shield stat weights.',
+				inline: true,
+				changedEvent: player => player.levelingPlanChangeEmitter,
+				getValue: player => player.getLevelingPlan().oneHandAndShield,
+				setValue: (eventID, player, newValue) => {
+					const plan = player.getLevelingPlan();
+					plan.oneHandAndShield = newValue;
+					player.setLevelingPlan(eventID, plan);
+				},
+			});
+		}
 		reroll.value!.addEventListener('click', () => {
 			const plan = this.player.getLevelingGearPlan();
 			plan.seed = Math.floor(Math.random() * 1_000_000) + 1;
@@ -266,6 +281,13 @@ export class LevelingGearSection {
 			TypedEvent.onAny([this.player.levelingGearPlanChangeEmitter, this.player.raceChangeEmitter, this.player.epWeightsChangeEmitter]).on(() =>
 				this.rebuild(),
 			);
+			// The plan also changes with its talents and rotations, and only the shield changes the gear.
+			let oneHandAndShield = this.player.getLevelingPlan().oneHandAndShield;
+			this.player.levelingPlanChangeEmitter.on(() => {
+				if (this.player.getLevelingPlan().oneHandAndShield == oneHandAndShield) return;
+				oneHandAndShield = !oneHandAndShield;
+				this.rebuild();
+			});
 		});
 	}
 
@@ -289,14 +311,20 @@ export class LevelingGearSection {
 
 	// The spec's stat weights presets for the plan by their level, lowest first.
 	//
-	// They're the "Leveling Gear Plan" presets, measured on the plan's own gear. A spec without
-	// them falls back to its "Leveling" presets.
+	// They're the "Leveling Gear Plan" presets, measured on the plan's own gear, or the "Leveling
+	// Gear Plan Shield" ones when we level with a shield. A spec without them falls back to its
+	// "Leveling" presets.
 	weightPresets(): Array<{ level: number; weights: Stats }> {
 		const presets = this.simUI.individualConfig.presets.epWeights ?? [];
-		const planPresets = presets.filter(preset => preset.group == 'Leveling Gear Plan');
+		const shield = this.player.getLevelingPlan().oneHandAndShield;
+		const planPresets = shield ? this.shieldWeightPresets() : presets.filter(preset => preset.group == 'Leveling Gear Plan');
 		return (planPresets.length ? planPresets : presets.filter(preset => preset.group == 'Leveling'))
 			.map(preset => ({ level: Number(/Level (\d+)/.exec(preset.name)?.[1] ?? 60), weights: preset.epWeights }))
 			.sort((a, b) => a.level - b.level);
+	}
+
+	private shieldWeightPresets() {
+		return (this.simUI.individualConfig.presets.epWeights ?? []).filter(preset => preset.group == 'Leveling Gear Plan Shield');
 	}
 
 	// The stat weights the plan judges items by at a level.
@@ -359,6 +387,7 @@ export class LevelingGearSection {
 			seed: this.player.getLevelingGearPlan().seed,
 			pins,
 			route: this.gearRoute(db),
+			oneHandAndShield: this.player.getLevelingPlan().oneHandAndShield,
 			weightsAt: level => this.weightsAt(level),
 			zoneName: zoneId => db.getZone(zoneId)?.name,
 		});

@@ -164,6 +164,10 @@ carries takes the notes' number, gated under Forever) puts them in.
 
 ## Notes-only values
 
+**2026-11-04:** both values below are now hotfix values: push 113542 (logged 2026-11-03) sets 20050's CumulativeAura to 5
+and 20111 effect 0's school mask to Physical and Holy (`hotfix_113483_paladin.md`). No DPS moves; the text below is the
+original record.
+
 Modelled from the notes, gated under Forever; client 1.60.1.70753 unchanged and no hotfix row (re-check wago.tools'
 hotfix log for 20050 and 20111 before the Phase B finals; if a row lands, it wins).
 

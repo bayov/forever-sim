@@ -30,6 +30,7 @@ import { Perf, softwareRenderer } from './perf';
 import { drawn } from './wow/particles';
 import { Graphics, graphicsPresets, Room } from './scene';
 import { loadCursors } from './cursors';
+import { dressLoading, dressSetup, musicOn, playSound, preloadSounds, setMusic, startMusic, stopMusic, uiSounds } from './glue';
 import { Pointer } from './pointer';
 import { RaidTest, raidSpells } from './raid';
 import { auraColor, avoidColor, CombatText, schoolColor } from './sct';
@@ -120,11 +121,17 @@ async function getJSON<T>(url: string, init?: RequestInit): Promise<T> {
 // ---- Setup ----
 
 async function showSetup(error?: string) {
-	app.replaceChildren();
+	// The page looks like the game's login screen: the loading art dimmed behind, the logo, and
+	// the build in a dialog frame.
+	const screen = el('div', { class: 'glue-screen' });
 	const panel = el('div', { class: 'setup' });
-	app.append(panel);
+	screen.append(el('div', { class: 'glue-logo' }), panel);
 	panel.append(el('h1', {}, 'Practice Room'));
 	if (error) panel.append(el('div', { class: 'setup-error' }, error));
+	preloadSounds();
+	startMusic();
+	// We wait a moment for the glue textures, so the page doesn't show its plain look first.
+	const dressed = dressSetup(screen);
 
 	const presets = await getJSON<string[]>('/api/presets').catch(() => [] as string[]);
 	const records = await getJSON<RecordSummary[]>('/api/records').catch(() => [] as RecordSummary[]);
@@ -141,6 +148,7 @@ async function showSetup(error?: string) {
 	recordSelect.append(el('option', { value: 'default' }, 'No record (default keys)'));
 	for (const r of records) recordSelect.append(el('option', { value: r.guid }, `${r.name} · ${r.realm} · ${r.race} ${r.class} ${r.level}`));
 	recordSelect.value = last.record ?? (records[0]?.guid || 'default');
+	presetSelect.onchange = recordSelect.onchange = () => playSound(uiSounds.click);
 
 	panel.append(
 		el('label', {}, 'Build', presetSelect),
@@ -149,8 +157,19 @@ async function showSetup(error?: string) {
 	);
 	const start = el('button', { id: 'enter', class: 'primary' }, 'Enter room');
 	panel.append(start);
+	const musicButton = el('button', { class: 'glue-panel music' });
+	const showMusic = () => (musicButton.textContent = musicOn() ? 'Music On' : 'Music Off');
+	showMusic();
+	musicButton.onclick = () => {
+		playSound(uiSounds.glueButton);
+		setMusic(!musicOn());
+		showMusic();
+	};
+	screen.append(el('div', { class: 'glue-corner' }, musicButton));
 	start.onclick = async () => {
 		start.disabled = true;
+		playSound(uiSounds.enterWorld);
+		stopMusic();
 		try {
 			const text = presetSelect.value ? await (await fetch(`/api/presets/${presetSelect.value}`)).text() : textarea.value;
 			localStorage.setItem('practice.setup', JSON.stringify({ preset: presetSelect.value, text: textarea.value, record: recordSelect.value }));
@@ -161,6 +180,8 @@ async function showSetup(error?: string) {
 			showSetup(String(e));
 		}
 	};
+	await Promise.race([dressed, new Promise(r => setTimeout(r, 2000))]);
+	app.replaceChildren(screen);
 }
 
 // ---- The room ----
@@ -338,6 +359,8 @@ class PracticeRoom {
 		screen.className = 'loading';
 		screen.innerHTML = '<div class="loading-box"><div class="loading-text">Loading</div><div class="loading-bar"><div></div></div></div>';
 		this.root.append(screen);
+		// The loading art and bar come first, so they show before anything else loads.
+		await dressLoading(screen);
 		const text = screen.querySelector('.loading-text') as HTMLElement;
 		const fill = screen.querySelector('.loading-bar > div') as HTMLElement;
 		const raidSize = Number(new URLSearchParams(location.search).get('raid') ?? 0);
@@ -1189,12 +1212,37 @@ class PracticeRoom {
 			this.renderBars();
 		};
 		q('.book').onclick = () => q('.spellbook').classList.toggle('hidden');
+		this.bindSounds();
 		this.renderFightSettings();
 		this.hud.addEventListener('mousemove', e => {
 			const c = q('.cursor-icon');
 			c.style.left = `${e.clientX + 8}px`;
 			c.style.top = `${e.clientY + 8}px`;
 		});
+	}
+
+	// bindSounds plays the game's interface sounds: a click for buttons, dropdowns and checkboxes,
+	// and the menu and spellbook sounds when those open and close (by a button, a key or Esc).
+	bindSounds() {
+		const panels = new Set(['settings-toggle', 'book', 'edit-bars']);
+		this.hud.addEventListener('click', e => {
+			const b = (e.target as Element).closest?.('button');
+			if (b && ![...b.classList].some(c => panels.has(c))) playSound(uiSounds.click);
+		});
+		this.hud.addEventListener('change', e => {
+			if ((e.target as Element).matches?.('select, input[type=checkbox]')) playSound(uiSounds.click);
+		});
+		const watch = (selector: string, open: number, close: number) => {
+			const panel = this.hud.querySelector(selector) as HTMLElement;
+			let shown = !panel.classList.contains('hidden');
+			new MutationObserver(() => {
+				const now = !panel.classList.contains('hidden');
+				if (now !== shown) playSound(now ? open : close);
+				shown = now;
+			}).observe(panel, { attributes: true, attributeFilter: ['class'] });
+		};
+		watch('.fight-settings', uiSounds.menuOpen, uiSounds.menuClose);
+		watch('.spellbook', uiSounds.spellbookOpen, uiSounds.spellbookClose);
 	}
 
 	// toggleFullscreen goes full screen and locks your bound keys and Esc. Only then does Chrome

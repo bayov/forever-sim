@@ -238,8 +238,8 @@
         "description": "A brutal attack that deals {0}% weapon damage. Deals an additional {1}% weapon damage against Giants, Dragonkin, and mounted targets. Mounted targets are dismounted.",
         "ranks": [
           [
-            40,
-            80
+            75,
+            75
           ]
         ],
         "icon": "inv_spear_01"
@@ -402,15 +402,15 @@
         ],
         "maxPoints": 2,
         "name": "Improved Slam",
-        "description": "Reduces the global cooldown and cast time of your Slam ability by {0} sec. In addition, Slam no longer interrupts or delays your melee swing and Slam's cooldown is reduced by {1} sec.",
+        "description": "Reduces the cooldown of your Slam ability by {0} sec, the cast time and global cooldown by {1} sec, and Slam no longer interrupts or delays your melee swing.",
         "ranks": [
           [
-            0.25,
-            2.5
+            2.5,
+            0.25
           ],
           [
-            0.5,
-            5
+            5,
+            0.5
           ]
         ],
         "icon": "ability_warrior_decisivestrike"
@@ -492,7 +492,7 @@
         ],
         "maxPoints": 5,
         "name": "Booming Voice",
-        "description": "Increases the area of effect of your Shouts by {0}% and reduces their Rage cost by {1}%.",
+        "description": "Increases the area of effect of your Shouts by {0}% and reduces the Rage cost by of your Shouts and Howls by {1}%.",
         "ranks": [
           [
             10,
@@ -795,32 +795,13 @@
         "icon": "ability_dualwield"
       },
       {
-        "fieldName": "ragingBlows",
+        "fieldName": "recklessSwings",
         "location": {
           "rowIdx": 3,
           "colIdx": 1
         },
         "spellIds": [
-          1310315
-        ],
-        "maxPoints": 1,
-        "name": "Raging Blows",
-        "description": "Reduces the Rage cost of your Cleave and Whirlwind abilities by {0}.",
-        "ranks": [
-          [
-            3
-          ]
-        ],
-        "icon": "ability_whirlwind"
-      },
-      {
-        "fieldName": "recklessSwings",
-        "location": {
-          "rowIdx": 3,
-          "colIdx": 2
-        },
-        "spellIds": [
-          0
+          1329555
         ],
         "maxPoints": 1,
         "name": "Reckless Swings",
@@ -832,8 +813,7 @@
             8
           ]
         ],
-        "icon": "inv_misc_questionmark",
-        "notSimulated": true
+        "icon": "ability_warrior_bloodfrenzy"
       },
       {
         "fieldName": "improvedExecute",
@@ -959,10 +939,35 @@
         "notSimulated": true
       },
       {
+        "fieldName": "improvedWhirlwind",
+        "location": {
+          "rowIdx": 5,
+          "colIdx": 0
+        },
+        "spellIds": [
+          1310315,
+          1310315
+        ],
+        "maxPoints": 2,
+        "name": "Improved Whirlwind",
+        "description": "Reduces the cooldown of your Whirlwind ability by {0} sec and increases the damage it deals to the closest enemy by {1}%.",
+        "ranks": [
+          [
+            1,
+            15
+          ],
+          [
+            2,
+            30
+          ]
+        ],
+        "icon": "ability_whirlwind"
+      },
+      {
         "fieldName": "flurry",
         "location": {
           "rowIdx": 5,
-          "colIdx": 1
+          "colIdx": 2
         },
         "spellIds": [
           12319,
@@ -989,32 +994,6 @@
           ]
         ],
         "icon": "ability_ghoulfrenzy"
-      },
-      {
-        "fieldName": "improvedWhirlwind",
-        "location": {
-          "rowIdx": 5,
-          "colIdx": 2
-        },
-        "spellIds": [
-          0,
-          0
-        ],
-        "maxPoints": 2,
-        "name": "Improved Whirlwind",
-        "description": "Reduces the cooldown of your Whirlwind ability by {0} sec and increases the damage it deals to the closest enemy by {1}%.",
-        "ranks": [
-          [
-            1,
-            15
-          ],
-          [
-            2,
-            30
-          ]
-        ],
-        "icon": "ability_whirlwind",
-        "notSimulated": true
       },
       {
         "fieldName": "bloodthirst",
