@@ -20,6 +20,7 @@
 import * as THREE from 'three';
 import { forget } from './compose';
 import { skins, type Model } from './model';
+import { drawOrder } from './particles';
 
 // The bone texture is this many texels wide: four texels to a bone, so 256 bones a row.
 const WIDTH = 1024;
@@ -119,6 +120,8 @@ type Batch = {
 	// and only when a copy changed.
 	data: THREE.InstancedInterleavedBuffer;
 	masked: boolean;
+	// Whether a copy with no alpha draws nothing (its blending goes by the alpha), so we leave it out.
+	clearAtZero: boolean;
 	count: number;
 	// The count the GPU has, and whether the data changed since.
 	sent: number;
@@ -230,6 +233,10 @@ export class Crowd {
 			// follows them. A hidden mesh would hide those too, so it goes on a layer no camera
 			// looks at.
 			mesh.layers.set(31);
+			// The parts draw by kind among the see-through things (for the perf recorder): a raider's
+			// body and gear, or a spell effect.
+			const order = body || model.slot !== undefined ? drawOrder.gear : drawOrder.effects;
+			for (const p of parts) if (p.batch.users === 0) p.batch.mesh.renderOrder = order;
 			const shadows = body ? body.shadows : this.shadowsOf(model, mats);
 			const entry: Entry = { model, mesh, skeleton, parts, mask: body?.mask, shadows: [...shadows] };
 			for (const b of entry.shadows) this.grow(b);
@@ -661,7 +668,10 @@ export class Crowd {
 		mesh.customDepthMaterial = depth;
 		mesh.visible = false;
 		this.group.add(mesh);
-		return { mesh, geometry, material, data, masked: !!sub, count: 0, sent: 0, dirty: true, users: 0, castShadow: solid };
+		const m = material;
+		const clearAtZero =
+			m.alphaTest > 0 || m.blending === THREE.NormalBlending || (m.blending === THREE.CustomBlending && (m.blendSrc === THREE.SrcAlphaFactor || m.premultipliedAlpha));
+		return { mesh, geometry, material, data, masked: !!sub, clearAtZero, count: 0, sent: 0, dirty: true, users: 0, castShadow: solid };
 	}
 
 	// copyData gives a batch's geometry a buffer for n copies, with the attributes that read it.
@@ -749,6 +759,9 @@ export class Crowd {
 				one[3] = color ? color.g : 1;
 				one[4] = color ? color.b : 1;
 				one[5] = source.opacity;
+				// A see-through layer faded all the way out (a flash between its flashes) still cost
+				// its pixels. In the raid test a fifth of the see-through copies were.
+				if (b.clearAtZero && source.transparent && source.opacity < 1 / 255) continue;
 				put(b);
 				// A part that fades turns see-through, and stays so (model.ts updateColors).
 				if (source.transparent && !b.material.transparent) {

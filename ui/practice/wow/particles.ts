@@ -22,6 +22,14 @@ const fill = { color: new Float64Array(3), alpha: new Float64Array(1), size: new
 // renderer compiles their shader. In the fight an empty emitter isn't drawn at all.
 export const particleOptions = { drawEmpty: false };
 
+// drawOrder is where each kind of see-through thing draws, as its render order: the units'
+// own see-through parts first (0), then the raid test's boss, its raiders' gear and bodies, the
+// spell effects, the particles and the ribbons. The perf recorder times each (scene.ts).
+export const drawOrder = { boss: 0.3, gear: 1, effects: 2, particles: 10, ribbons: 11 };
+
+// The particles the batches drew in the last frame, for the perf recorder.
+export const drawn = { particles: 0 };
+
 // Every particle and ribbon batch, which fillBatches fills before each frame draws.
 const live = new Set<{ fill(): void }>();
 
@@ -30,6 +38,7 @@ const live = new Set<{ fill(): void }>();
 // batch draws, the GPU would get the new list of triangles over the last frame's points, and a
 // ribbon's triangles would reach across to another ribbon's points.
 export function fillBatches() {
+	drawn.particles = 0;
 	for (const b of live) b.fill();
 }
 
@@ -169,7 +178,7 @@ class Batch {
 		g.instanceCount = 0;
 		this.mesh = new THREE.Mesh(g, material);
 		this.mesh.frustumCulled = false;
-		this.mesh.renderOrder = 10;
+		this.mesh.renderOrder = drawOrder.particles;
 		this.mesh.visible = false;
 		addBatch(this);
 		world.add(this.mesh);
@@ -215,6 +224,7 @@ class Batch {
 			at += n;
 		}
 		this.geometry.instanceCount = at;
+		drawn.particles += at;
 		this.mesh.visible = at > 0 || particleOptions.drawEmpty;
 		if (at === 0) return;
 		this.buffer.clearUpdateRanges();
@@ -426,15 +436,19 @@ class Emitter {
 		alpha[0] = 1;
 		size[0] = size[1] = 1;
 		cellOut[0] = 0;
+		let w = 0;
 		for (let i = 0; i < n; i++) {
 			const p = this.particles[i];
 			const t = p.age / p.life;
 			overLife(this.e.colors, this.e.colorTimes, t, color);
 			overLife(this.alphaKeys, this.e.alphaTimes, t, alpha);
 			overLife(this.e.scales, this.e.scaleTimes, t, size);
+			// A particle faded all the way out (most fade in at birth and out at death) draws nothing
+			// in any blend mode, so it isn't sent.
+			if (alpha[0] < 1 / 255) continue;
 			tmp.copy(p.pos);
 			if (this.local) tmp.add(this.origin);
-			const o = i * STRIDE;
+			const o = w++ * STRIDE;
 			d[o] = tmp.x;
 			d[o + 1] = tmp.y;
 			d[o + 2] = tmp.z;
@@ -459,8 +473,8 @@ class Emitter {
 			d[o + 13] = p.angle + p.spin * p.age;
 		}
 		const was = this.count;
-		this.count = n;
-		this.batch?.changed(was, n);
+		this.count = w;
+		this.batch?.changed(was, w);
 	}
 
 	// reset lets the particles go and starts over, for a model used again (model.ts recycle).
