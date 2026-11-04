@@ -187,8 +187,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-ShadowSynthetic(Phase1)"
  value: {
-  dps: 1194.13833
-  tps: 854.10234
+  dps: 1196.21117
+  tps: 855.3851
   dtps: 1.8365
  }
 }

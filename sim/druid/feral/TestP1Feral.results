@@ -99,8 +99,8 @@ stat_weights_results: {
 dps_results: {
  key: "TestP1Feral-Phase1-AllItems-BalanceSynthetic(Phase1)"
  value: {
-  dps: 1484.75967
-  tps: 1068.78418
+  dps: 1484.6385
+  tps: 1068.69822
  }
 }
 dps_results: {

@@ -211,8 +211,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-WarlockSynthetic(Phase1)"
  value: {
-  dps: 1289.50117
-  tps: 1047.58733
+  dps: 1290.64
+  tps: 1048.49859
   hps: 0.32783
  }
 }
