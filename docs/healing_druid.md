@@ -307,26 +307,30 @@ and the engine's, and are kept for the record.
 
 ### Against the Restoration shaman (1,000 iterations, carry)
 
-On master 41aa10700 (the shaman's new Riptide: three ranks, no instant heal, 12 sec cooldown), each healer's
-request from `tools/healbench/req`, one healbench built from this branch:
+On master 43a70ec18, the re-bench after the 2026-11-04 audit fixes and the tank bench's change of that day
+(tanks face the boss), each healer's request from `tools/healbench/req`, one healbench for both (the 7 files'
+rows are healing_sim.md's H3 table):
 
 | Boss file | Tank: druid | Tank: shaman | Raid: druid | Raid: shaman |
 |---|---|---|---|---|
-| Magmadar | 1.699 | 1.798 | 1.605 | 1.540 |
-| Golemagg | 1.648 | 1.716 | 2.021 | 1.913 |
-| Ragnaros | 0.517 | 0.521 | 1.240 | 1.171 |
-| Onyxia | 1.165 | 1.141 | 0.711 | 0.678 |
-| Broodlord | 0.731 | 0.837 | 0.828 | 0.817 |
-| Vaelastrasz | 0.688 | 0.775 | 1.092 | 1.110 |
-| Chromaggus | 0.870 | 0.884 | 0.953 | 0.906 |
-| Onyxia, 180 sec | 1.087 | 1.010 | 0.637 | 0.599 |
-| Onyxia, 300 sec | 1.063 | 0.969 | 0.548 | 0.531 |
+| Magmadar | 2.030 | 2.019 | 2.002 | 1.809 |
+| Golemagg | 1.904 | 1.915 | 2.660 | 2.662 |
+| Ragnaros | 0.627 | 0.577 | 1.270 | 1.235 |
+| Onyxia | 1.327 | 1.346 | 0.997 | 0.919 |
+| Broodlord | 0.875 | 0.974 | 0.920 | 0.902 |
+| Vaelastrasz | 0.852 | 0.894 | 1.102 | 1.152 |
+| Chromaggus | 1.029 | 0.969 | 1.109 | 1.090 |
+| Mean, 7 files | 1.235 | 1.242 | 1.437 | 1.396 |
+| Onyxia, 180 sec | 1.228 | 1.138 | 0.865 | 0.825 |
+| Onyxia, 300 sec | 1.017 | 0.980 | 0.785 | 0.738 |
 
-The druid raid healer is ahead on every file but Vaelastrasz (-0.018), by up to 0.108 (Golemagg). On the tank
-side the shaman's new Riptide put it ahead on the short fights (Broodlord +0.106, Magmadar +0.099, Vaelastrasz
-+0.087); the druid stays ahead on Onyxia and on the long fights (+0.077 and +0.094 at 180 and 300 sec). Before the shaman's change (master 3d1cb9701) the druid
-was ahead on every tank row (shaman Onyxia 1.017, Broodlord 0.618, Vaelastrasz 0.648, Chromaggus 0.764) and
-behind on four raid rows.
+The druid raid healer is ahead on every file but Vaelastrasz (-0.050) and Golemagg (-0.002, level), by up to
+0.193 (Magmadar), and on both long Onyxia rows. The tank healers are level on the mean (-0.007): the shaman is
+ahead on Broodlord (+0.099), Vaelastrasz (+0.042) and Onyxia (+0.019), the druid on Chromaggus (+0.060), Ragnaros
+(+0.050) and the long fights (+0.090 and +0.037 at 180 and 300 sec). The druid's own tank numbers above (1.140)
+are from before the tank bench's change. On master 41aa10700, before the fixes, the shaman's new Riptide had put
+it ahead on the short tank fights (Broodlord +0.106, Magmadar +0.099); before that change (master 3d1cb9701) the
+druid was ahead on every tank row and behind on four raid rows.
 
 ### Downranking on the presets
 
