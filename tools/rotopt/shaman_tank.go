@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/shaman"
 )
@@ -62,6 +64,9 @@ func (shamanTank) Knobs() []Knob {
 		// 1 uses the synthetic defensive on-use trinket (1,665 armor for 20 sec every 2 min) on cooldown. A
 		// defensive cooldown isn't autocast (that reads health), so it has its own line.
 		{Name: "armorTrinket", Default: 1, Min: 0, Max: 1, Step: 1},
+		// With armorTrinket 1: 0 uses it on cooldown, else holds it for the last trinketAt seconds when the
+		// wait costs no use (tank_rotations-20261104-9, as the warrior's trinketAt).
+		{Name: "trinketAt", Default: 0, Min: 0, Max: 60, Step: 5},
 		// 1 puts the totems and the shield down before the pull, 0 after it.
 		{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
 		// No new fire or water totem with less than this long to go.
@@ -147,8 +152,17 @@ func (shamanTank) Build(k Knobs) *proto.APLRotation {
 	}
 
 	if k["armorTrinket"] == 1 {
-		items = append(items, cast(itemID(shaman.WardenSyntheticOnUseTrinket), nil,
-			"The defensive on-use trinket on cooldown, on a timer. Without it ignore the warning on this line."))
+		trinket := itemID(shaman.WardenSyntheticOnUseTrinket)
+		var when value
+		note := "The defensive on-use trinket on cooldown, on a timer. Without it ignore the warning on this line."
+		if k["trinketAt"] > 0 {
+			note = fmt.Sprintf("The defensive on-use trinket, held for the last %d sec unless the wait costs a use. Without it ignore the warning on this line.", int(k["trinketAt"]))
+			when = or(
+				le(remainingTime(), seconds(k["trinketAt"])),
+				gt(spellUsesLostByDelay(trinket, sub(remainingTime(), seconds(k["trinketAt"])), seconds(20)), num(0)),
+			)
+		}
+		items = append(items, cast(trinket, when, note))
 	}
 	items = append(items,
 		autocastOtherCooldowns(nil, "Rage of the Farseer, racials, trinkets on cooldown."),
