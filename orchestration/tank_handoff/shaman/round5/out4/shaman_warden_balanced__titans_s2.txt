@@ -1,0 +1,10 @@
+A=shaman_warden_balanced.json B=titans_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         1339     1183  -156.5   20.9   -158.2      -53
+chromaggus         553      297  -256.3    8.3   -149.0      -14
+golemagg          2076     1803  -273.0    7.8   -149.1       -7
+magmadar          2347     2075  -272.3    7.0   -155.7      -11
+onyxia            1597     1366  -231.2   11.4   -163.9      -19
+ragnaros         -2824    -2839   -15.2   47.8   -142.4      -85
+vaelastrasz       2792     2474  -318.1   11.2   -175.6      -26
+scoring_mean                     -251.2    4.9

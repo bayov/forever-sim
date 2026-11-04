@@ -1,6 +1,7 @@
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
+	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
 	Consumes,
@@ -25,6 +26,7 @@ import {
 	UnitReference,
 	UnitReference_Type,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common.js';
 import { FeralTankDruid_Options as DruidOptions, FeralTankDruid_Rotation as DruidRotation } from '../core/proto/druid.js';
 import { SavedTalents } from '../core/proto/ui.js';
@@ -127,33 +129,45 @@ export const DefaultRotation = DruidRotation.create({
 	lacerateTime: 4.0,
 });
 
-// Forever launch Phase 1 consumables (nothing from a raid), each the best of its slot for the tank
-// objective, re-checked in round 3 at each preset's weight (docs/tank_druid.md): the Flask of Natural
-// Accuracy (5% hit and 60 Stamina in Hyjal and the Barrow Deeps, standards 11; 125 to 300 ahead of the Flask
-// of the Titans), Elixir of the Phalanx (400 health, 500 armor), Elixir of Greater Fortitude, Elixir of the
-// Mongoose (45 over Greater Agility), Juju Power and Might (ahead of Giants and Winterfall Firewater), Smoked
-// Desert Dumpling (ahead of Dirge's Stamina chops at Max threat and Balanced, and of Grilled Squid),
-// Dragonbreath Chili, a Dense Weightstone on the mace, and the Mighty Rage Potion at the pull (Greater
-// Stoneshield, a defensive potion, loses 470 to 620). Round 4: the Goblin Sapper Charge (Engineering; usable
-// in Bear Form, tank_mechanics-15) gains 180 to 300; every filler explosive (Goblin Land Mine, EZ-Thro Dark
-// Bomb or Thorium Grenade) loses 4 to 18 after it, so there is none.
+// Forever launch Phase 1 consumables, raid buffs included (standards 11), each the best of its slot for the tank
+// objective at each preset's weight (docs/tank_druid.md): the Flask of Natural Precision (+5% expertise in Hyjal and
+// the Barrow Deeps, standards 11; round 5: 205 to 290 over the Flask of Natural Accuracy, which beat the Titans by 125
+// to 300), Elixir of the Phalanx (400 health, 500 armor), Elixir of Greater Fortitude, Elixir of the Mongoose (45
+// over Greater Agility), Juju Power and Might (ahead of Giants and Winterfall Firewater), Smoked Desert Dumpling
+// (ahead of Dirge's Stamina chops at Max threat and Balanced, and of Grilled Squid), Dragonbreath Chili, a Dense
+// Weightstone on the mace, and the Mighty Rage Potion at the pull. Round 4: the Goblin Sapper Charge (Engineering;
+// usable in Bear Form, tank_mechanics-15) gains 180 to 300; every filler explosive (Goblin Land Mine, EZ-Thro Dark
+// Bomb or Thorium Grenade) loses 4 to 18 after it, so there is none. Round 5 (Consumables, round 5): Rumsey Rum
+// Black Label (+6 to +76) and Spirit of Zanza at Balanced and Max survival (R.O.I.D.S. at Max threat; the Blasted
+// Lands buffs share the Zanza slot).
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
+	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
 	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
-	flask: Flask.FlaskOfNaturalAccuracy,
+	flask: Flask.FlaskOfNaturalPrecision,
 	food: Food.FoodSmokedDesertDumpling,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
 	mainHandImbue: WeaponImbue.DenseWeightstone,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.JujuPower,
+	zanzaBuff: ZanzaBuff.SpiritOfZanza,
 });
 
-// Max survival eats Dirge's Kickin' Chimaerok Chops (25 Stamina): +80 to +90 over the Dumpling at weight 3.
+// Max threat takes R.O.I.D.S. for Spirit of Zanza (+41).
+export const MaxThreatConsumes = Consumes.create({
+	...DefaultConsumes,
+	zanzaBuff: ZanzaBuff.ROIDS,
+});
+
+// Max survival eats Dirge's Kickin' Chimaerok Chops (25 Stamina): +80 to +90 over the Dumpling at weight 3. Round 5: the
+// Greater Stoneshield Potion with its APL's potion action (+200 over the Mighty Rage Potion; autocast never drinks a
+// defensive potion, so round 3's -470 to -620 was the Rage potion's loss alone).
 export const MaxSurvivalConsumes = Consumes.create({
 	...DefaultConsumes,
+	defaultPotion: Potions.GreaterStoneshieldPotion,
 	food: Food.FoodDirgesKickChimaerokChops,
 });
 
@@ -248,7 +262,18 @@ export const EncounterLevel60Tank = PresetUtils.makePresetEncounter(
 	},
 );
 
-// The same fight with Max survival's consumables (Dirge's chops for the Dumpling).
+// The same fight with Max threat's consumables (R.O.I.D.S. for Spirit of Zanza).
+export const EncounterLevel60TankMaxThreat = PresetUtils.makePresetEncounter('Generic boss, tanking (Max threat)', EncounterLevel60Tank.encounter, {
+	tanks: EncounterLevel60Tank.tanks,
+	healingModel: EncounterLevel60Tank.healingModel,
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: MaxThreatConsumes,
+	inFrontOfTarget: true,
+});
+
+// The same fight with Max survival's consumables (Dirge's chops for the Dumpling, the Greater Stoneshield Potion).
 export const EncounterLevel60TankMaxSurvival = PresetUtils.makePresetEncounter('Generic boss, tanking (Max survival)', EncounterLevel60Tank.encounter, {
 	tanks: EncounterLevel60Tank.tanks,
 	healingModel: EncounterLevel60Tank.healingModel,
@@ -263,11 +288,11 @@ export const EncounterLevel60TankMaxSurvival = PresetUtils.makePresetEncounter('
 // Night Elf (the best race at Max threat and Balanced: Elune's Light; at Max survival the Tauren is 20 +- 11
 // behind, a tie), on the synthetic set (Max threat with its own enchants).
 export const PresetBuildMaxThreat = PresetUtils.makePresetBuild('Max threat', {
-	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Strength enchants on the head, legs, wrist and weapon; Enrage under 70 Rage.',
+	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Strength enchants on the head, legs, wrist and weapon; Enrage under 70 Rage; R.O.I.D.S. for Spirit of Zanza.',
 	gear: GearLevel60Phase1SyntheticMaxThreat,
 	talents: TalentsBear,
 	rotation: APLMaxThreat,
-	encounter: EncounterLevel60Tank,
+	encounter: EncounterLevel60TankMaxThreat,
 	race: Race.RaceNightElf,
 });
 export const PresetBuildBalanced = PresetUtils.makePresetBuild('Balanced', {
@@ -279,7 +304,7 @@ export const PresetBuildBalanced = PresetUtils.makePresetBuild('Balanced', {
 	race: Race.RaceNightElf,
 });
 export const PresetBuildMaxSurvival = PresetUtils.makePresetBuild('Max survival', {
-	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear and talents, Dirge's chops for the Dumpling.",
+	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear and talents, Dirge's chops for the Dumpling, the Greater Stoneshield Potion on cooldown.",
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsBear,
 	rotation: APLMaxSurvival,

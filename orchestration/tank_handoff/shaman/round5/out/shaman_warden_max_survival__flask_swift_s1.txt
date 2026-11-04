@@ -1,0 +1,10 @@
+A=shaman_warden_max_survival.json B=flask_swift_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord        -6432    -7235  -803.1   77.3     28.0       95
+chromaggus       -6272    -6334   -62.5   28.3     22.1       12
+golemagg         -2023    -2097   -74.1   21.9     27.1       12
+magmadar         -1240    -1278   -37.6   17.4     24.3        8
+onyxia           -4640    -4887  -247.7   39.3     26.0       19
+ragnaros        -16142   -17067  -925.6  215.6     21.2      102
+vaelastrasz      -1712    -1876  -163.5   27.7     25.0       56
+scoring_mean                     -231.4   16.6

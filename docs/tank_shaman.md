@@ -11,7 +11,7 @@ is audited against client 70753 (the October 30 hotfix's build) and tested, it w
 standards 36, and it has a rotopt template (`tools/rotopt/shaman_tank.go`) and three presets
 (`tools/tankbench/req/shaman_warden_*.json`, `ui/warden_shaman`), re-optimized in tank round 3 and extended in round 4 (Presets).
 
-## Presets (re-optimized 2026-11-04, tank round 3; round 4 the same day)
+## Presets (re-optimized 2026-11-04, tank round 3; rounds 4 and 5 the same day)
 
 Three presets on the six scoring encounters (Magmadar, Golemagg, Onyxia, Broodlord, Vaelastrasz, Chromaggus), by
 the tank objective at w = 1/3, 1 and 3 (`docs/tank_sim.md`): `tools/tankbench/req/shaman_warden_<preset>.json`,
@@ -31,9 +31,17 @@ they had no blessings and Alchemy + Enchanting before), and each build loads its
 
 | Preset | Race | Talents | On-use trinket (knobs) | Flask | Wrist / cloak / shield | Six-boss mean, own weight |
 |---|---|---|---|---|---|---|
-| Max threat | Night Elf | `0515-050032303551012201-050002` | attack power (990015) on cooldown (`armorTrinket=0`, `waterTotem=1`: Mana Spring Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Natural Accuracy | 1886 / 1889 / 1886 | 2,588.2 +/- 10.5 |
-| Balanced | Night Elf | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=1`, `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Titans | 1248665 / 1889 / 1886 | 944.3 +/- 17.5 |
-| Max survival | Undead | `05050003-050230113541012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Titans | 1248665 / 1889 / 1886 | -3,718.0 +/- 54.0 |
+| Max threat | Night Elf | `0515-050032303551012201-050002` | attack power (990015) on cooldown (`armorTrinket=0`, `waterTotem=1`: Mana Spring Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Natural Precision | 1886 / 1889 / 1886 | 3,169.8 |
+| Balanced | Night Elf | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=1`, `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Natural Precision | 1248665 / 1889 / 1886 | 1,786.0 |
+| Max survival | Undead | `05050003-050230113541012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Natural Precision | 1248665 / 1889 / 1886 | -1,988.2 |
+
+The six-boss means are round 5's (tankbench, 1,000 iterations, seed 1; round 4's were 2,588.2 +/- 10.5, 944.3 +/-
+17.5 and -3,718.0 +/- 54.0). Round 5's consumables (Round 5 below), at every preset: the Flask of Natural Precision,
+Greater Arcane Elixir, Elixir of Nature Power, Elixir of Greater Intellect, the Demonic Rune, Rumsey Rum Black Label
+and the Greater Stoneshield Potion, drunk by an explicit potion action just before `autocastOtherCooldowns`; Ground
+Scorpok Assay at Max threat and Spirit of Zanza at Balanced and Max survival; the Mageblood Potion at Max threat and
+Balanced. Rockbiter stays on the weapon (a stone or oil is the same temporary enchant). The UI's three builds load
+the same consumables and the bench encounter.
 
 Enchants: 1886 on the wrists is Superior Stamina (+9), 1248665 Superior Deflection (Defense +9); 1889 on the back is
 Superior Defense (+70 armor); 1886 on the shield is Enchant Shield - Greater Stamina (+9). All three keep the template's
@@ -50,11 +58,11 @@ and 2, all lose at Balanced and Max survival, so 25 stays (Round 4 below).
 `orchestration/audit/ref/tank_bench/summary.tsv`; "before" is round 2's build on the round 3 engine, "round 3" the
 round 3 build before round 4's fire totem, Mana Spring, sapper and food):
 
-| Preset | Before | Round 3 | After (round 4) |
-|---|---|---|---|
-| Max threat | 2,276.0 +/- 7.9 | 2,430.0 +/- 10.4 | 2,588.2 +/- 10.5 |
-| Balanced | 534.3 +/- 15.2 | 767.2 +/- 18.0 | 944.3 +/- 17.5 |
-| Max survival | -4,356.7 +/- 46.9 | -3,970.8 +/- 47.7 | -3,718.0 +/- 54.0 |
+| Preset | Before | Round 3 | Round 4 | After (round 5) |
+|---|---|---|---|---|
+| Max threat | 2,276.0 +/- 7.9 | 2,430.0 +/- 10.4 | 2,588.2 +/- 10.5 | 3,169.8 |
+| Balanced | 534.3 +/- 15.2 | 767.2 +/- 18.0 | 944.3 +/- 17.5 | 1,786.0 |
+| Max survival | -4,356.7 +/- 46.9 | -3,970.8 +/- 47.7 | -3,718.0 +/- 54.0 | -1,988.2 |
 
 Round 3's build against round 4's at 10,000 iterations (errors x1.25 for the shared seed, `docs/tank_sim.md` Seeds),
 seed 1 / seed 2: Max threat 2,415.8 +/- 4.2 / 2,420.0 +/- 4.4 to 2,583.5 +/- 3.2 / 2,579.8 +/- 3.6; Balanced 732.2
@@ -63,6 +71,43 @@ seed 1 / seed 2: Max threat 2,415.8 +/- 4.2 / 2,420.0 +/- 4.4 to 2,583.5 +/- 3.2
 
 Paired, round 3's final request against round 2's (3,000 iterations, seed 1): Max threat +151.6 +/- 6.4, Balanced
 +225.7 +/- 11.9, Max survival +388.7 +/- 30.0.
+
+### Round 5: consumables (2026-11-04)
+
+The standards item 11 ruling of 2026-11-04: natural flasks are legitimate (`naturalFlaskZone` is on in every request's
+encounter and in the UI's), and the tanks get the full raid treatment, the Zanza slot, the Blasted Lands buffs and
+the rum included, with the sapper and professions kept (tank_fairness-20261104-10). Paired `abtest`, the six-boss
+mean at the preset's own weight, B minus A, 10,000 iterations at seeds 1 / 2, Max threat / Balanced / Max survival;
+adopted only what wins on both seeds. Raw output: `orchestration/tank_handoff/shaman/round5/` (`out/` one slot at a
+time against round 4's request, `out3/` and `out4/` the combinations, `out5/` before and after; `summ.py` lists them).
+
+- **Flask** (round 4: Natural Accuracy at Max threat, Titans at the other two). The Flask of Natural Precision: +255.7
+  +/- 3.4 / +203.8 +/- 7.0 / +32.6 +/- 19.3 (seed 2 +261.3 / +218.4 / -17.3 +/- 20.3, a tie alone at Max survival
+  that wins in the combination, +68 +/- 15 / +43 +/- 15). Every other flask loses: Titans -38 at Max threat, Natural
+  Accuracy -22 / -174 at Balanced and Max survival (seed 2 -21 / -222), Supreme Power, Distilled Wisdom, Chromatic
+  Resistance, Natural Aggression and Natural Swiftness all below.
+- **Spell elixirs**, each +26 to +35 on both seeds at every weight: Greater Arcane Elixir, Elixir of Nature Power,
+  Elixir of Greater Intellect. Greater Firepower 0.
+- **Demonic Rune**: +43.4 +/- 3.1 / +50.6 +/- 6.8 (seed 2 +53.8 / +54.3); at Max survival +33 / -13 alone, +46 / +55
+  in the combination. Adopted at all three.
+- **Zanza slot**, alone over none: Spirit of Zanza +50.6 / +105.6 / +344.1 (seed 2 +55 / +114.5 / +320.7), Ground
+  Scorpok Assay +77.5 / +166 at Balanced and Max survival, Lung Juice Cocktail +54 / +172, R.O.I.D.S. +24, Cerebral
+  Cortex Compound +26 to +35, Gizzard Gum, Sheen and Swiftness of Zanza 0. In the combination Scorpok beats Spirit at
+  Max threat (+15.5 / +15.6); Spirit stays at the other two.
+- **Rumsey Rum Black Label** +15 / +33.7 / +102.4 (seed 2 +17 / +33.4 / +101.6); Kreeg's Stout Beatdown -5.
+- **Greater Stoneshield Potion.** `autocastOtherCooldowns` never drinks a defensive potion in a tank score
+  (`HpPercentForDefensives` is 0), so a potion swap alone changes nothing past losing the old one (-104 / -84 at
+  Balanced). With an explicit potion action ("Greater Stoneshield Potion on cooldown") before the autocast line, on
+  the combination: +95 / +329 / +1,056 (seed 2 +93 / +323 / +1,050). The three APLs carry the line.
+- **Mageblood Potion** (the mana-regen slot) after the rest: +3.4 +/- 1.2 / +5.3 (seed 2 +3.0 +/- 1.2 / +6.0) at Max
+  threat and Balanced, adopted; not at Max survival (the rune is the pick there).
+- **Losers**: a Dense Weightstone, an elemental stone or a wizard or mana oil in place of Rockbiter -1,800 to -2,000;
+  Greater Agility -50; Superior Defense -55 to -290; Fortitude Forever -21 to -120; Giants -5; Winterfall Firewater
+  -2; no chili -9 to -41; Major Troll's Blood 0.
+- **Before and after** (round 4's request against round 5's, paired, 10,000): Max threat 2,583.5 -> 3,167.7 (+584.3
+  +/- 3.1; seed 2 2,579.8 -> 3,170.2, +590.2 +/- 3.4), Balanced 943.8 -> 1,790.7 (+846.8 +/- 6.0; seed 2 937.7 ->
+  1,790.0, +852.3 +/- 5.7), Max survival -3,719.8 -> -1,999.5 (+1,720.2 +/- 15.4; seed 2 -3,682.7 -> -1,992.8,
+  +1,689.9 +/- 15.1).
 
 ### Round 4 A/Bs (2026-11-04)
 

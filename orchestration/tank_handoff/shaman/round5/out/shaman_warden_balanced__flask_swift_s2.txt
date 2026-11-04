@@ -1,0 +1,10 @@
+A=shaman_warden_balanced.json B=flask_swift_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord           31     -172  -202.8   28.2     31.1       88
+chromaggus        -313     -319    -6.5   10.2     28.1       21
+golemagg          1369     1399    30.6    7.9     30.8        9
+magmadar          1692     1709    16.8    7.4     29.0       12
+onyxia             759      715   -44.6   16.3     31.2       21
+ragnaros         -3526    -3830  -303.7   65.7     31.5      116
+vaelastrasz       2088     2107    18.6   13.3     35.2       41
+scoring_mean                      -31.3    6.4

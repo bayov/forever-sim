@@ -2,27 +2,41 @@ import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
+	Alcohol,
 	ArmorElixir,
 	AttackPowerBuff,
+	Conjured,
 	Consumes,
 	Debuffs,
+	Encounter,
 	Flask,
 	Food,
+	HealingModel,
 	HealthElixir,
 	IndividualBuffs,
+	IntellectElixir,
+	ManaRegenElixir,
+	MobType,
+	NaturePowerBuff,
 	Potions,
 	Profession,
 	Race,
 	RaidBuffs,
 	SapperExplosive,
+	SpellPowerBuff,
+	Stat,
 	StrengthBuff,
 	SunderRamp,
 	TotemWeaponBuff,
 	TristateEffect,
+	UnitReference,
+	UnitReference_Type,
 	WeaponImbue,
+	ZanzaBuff,
 } from '../core/proto/common.js';
 import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
 import { SavedTalents } from '../core/proto/ui.js';
+import { Stats } from '../core/proto_utils/stats.js';
 import DefaultAPLJSON from './apls/default.apl.json';
 import Level60BalancedAPLJSON from './apls/level60_balanced.apl.json';
 import Level60MaxSurvivalAPLJSON from './apls/level60_max_survival.apl.json';
@@ -54,7 +68,8 @@ export const GearPresets = {
 	[Phase.Phase6]: [],
 };
 
-export const DefaultGear = GearBlank;
+// The default is the Balanced tank build's (docs/tank_shaman.md, Presets), as the tank warrior's.
+export const DefaultGear = GearLevel60SyntheticArmorTrinket;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -75,7 +90,7 @@ export const APLPresets = {
 	[Phase.Phase6]: [],
 };
 
-export const DefaultAPL = APLPresets[Phase.Phase1][0];
+export const DefaultAPL = APLLevel60Balanced;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -105,7 +120,7 @@ export const TalentPresets = {
 	[Phase.Phase6]: [],
 };
 
-export const DefaultTalents = TalentPresets[Phase.Phase1][0];
+export const DefaultTalents = TalentsLevel60Tank;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -116,21 +131,36 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 	syncType: ShamanSyncType.Auto,
 });
 
-export const DefaultConsumes = Consumes.create({
-	// The tank bench's consumables (tools/tankbench/req/shaman_warden_*.json): every tank takes the same
-	// armor and health elixirs (tank_fairness-20261104-1), the flask per spec. Dirge's Kickin' Chimaerok Chops and the
-	// Goblin Sapper Charge (Engineering, autocast; no filler explosive) won at all three weights (docs/tank_shaman.md, Round 4).
+// The tank bench's consumables (tools/tankbench/req/shaman_warden_*.json), searched per preset with the full raid
+// treatment (orchestration/standards.md item 11; docs/tank_shaman.md, Round 5). Every tank takes the same armor and
+// health elixirs (tank_fairness-20261104-1). Rockbiter Weapon stays on the main hand: a stone or oil in its place loses
+// about 1,900. The Greater Stoneshield Potion goes with the APLs' potion action (autocast never drinks a defensive
+// potion). Balanced is the default.
+export const BalancedConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
+	alcohol: Alcohol.AlcoholRumseyRumBlackLabel,
 	armorElixir: ArmorElixir.ElixirOfThePhalanx,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
-	defaultPotion: Potions.MajorManaPotion,
+	defaultConjured: Conjured.ConjuredDemonicRune,
+	defaultPotion: Potions.GreaterStoneshieldPotion,
 	dragonBreathChili: true,
-	flask: Flask.FlaskOfTheTitans,
+	flask: Flask.FlaskOfNaturalPrecision,
 	food: Food.FoodDirgesKickChimaerokChops,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
+	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
+	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
+	naturePowerBuff: NaturePowerBuff.ElixirOfNaturePower,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
+	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,
+	zanzaBuff: ZanzaBuff.SpiritOfZanza,
 });
+// Max threat takes the Ground Scorpok Assay for Spirit of Zanza.
+export const MaxThreatConsumes = Consumes.create({ ...BalancedConsumes, zanzaBuff: ZanzaBuff.GroundScorpokAssay });
+// Max survival leaves out the Mageblood Potion (a tie there).
+export const MaxSurvivalConsumes = Consumes.create({ ...BalancedConsumes, manaRegenElixir: ManaRegenElixir.ManaRegenElixirUnknown });
+
+export const DefaultConsumes = BalancedConsumes;
 
 // The raid, blessings and debuffs of the tank bench's requests (tools/tankbench/req/shaman_warden_*.json, the same
 // in all three), so a preset loads the setup it was scored with (tank_fairness-20261104-6).
@@ -184,46 +214,78 @@ export const OtherDefaults = {
 	// The bench's professions (Engineering + Blacksmithing, as every tank's request).
 	profession1: Profession.Engineering,
 	profession2: Profession.Blacksmithing,
+	// Balanced's race (the default build).
+	race: Race.RaceNightElf,
 };
 
-// The bench's buffs and consumables for the builds to load (tank_fairness-20261104-6): Max threat takes Flask of
-// Natural Accuracy (tank_fairness-20261104-7), Balanced and Max survival the Flask of the Titans.
-export const MaxThreatConsumes = Consumes.create({ ...DefaultConsumes, flask: Flask.FlaskOfNaturalAccuracy });
-const encounterOptions = { raidBuffs: DefaultRaidBuffs, buffs: DefaultIndividualBuffs, debuffs: DefaultDebuffs };
-export const EncounterDefault = PresetUtils.makePresetEncounter('Level 60 tank bench', undefined, { ...encounterOptions, consumes: DefaultConsumes });
-export const EncounterMaxThreat = PresetUtils.makePresetEncounter('Level 60 tank bench (Max threat)', undefined, {
-	...encounterOptions,
-	consumes: MaxThreatConsumes,
-});
+// The tank bench's boss (docs/tank_sim.md, The bench; tools/tankbench/req/shaman_warden_*.json): the shared Level 60
+// boss (level 63, 805 attack power, a 2.0 sec swing) on the Warden, with the stand-in healer at 600 HPS every 2 sec
+// (1 to 3), a 3 minute fight, in a zone where the Natural flasks work. The presets were searched on the Anniversary
+// encounters (tools/encounters), which the UI doesn't load; this is the bench's own default fight, as the tank
+// warrior's and the paladin's.
+const benchEncounter = (name: string, consumes: Consumes) =>
+	PresetUtils.makePresetEncounter(
+		name,
+		Encounter.create({
+			duration: 180,
+			durationVariation: 20,
+			...PresetUtils.LEVEL_60_ZONE,
+			targets: [
+				{
+					id: 213336,
+					name: 'Level 60',
+					level: 63,
+					mobType: MobType.MobTypeUnknown,
+					stats: new Stats().withStat(Stat.StatAttackPower, 805).withStat(Stat.StatArmor, 3731).withStat(Stat.StatHealth, 127393).asArray(),
+					minBaseDamage: 3000,
+					damageSpread: 0.3333,
+					swingSpeed: 2,
+					parryHaste: true,
+				},
+			],
+		}),
+		{
+			tanks: [UnitReference.create({ type: UnitReference_Type.Player, index: 0 })],
+			healingModel: HealingModel.create({ hps: 600, cadenceSeconds: 2, cadenceVariation: 1 }),
+			raidBuffs: DefaultRaidBuffs,
+			debuffs: DefaultDebuffs,
+			buffs: DefaultIndividualBuffs,
+			consumes,
+			inFrontOfTarget: true,
+		},
+	);
+export const EncounterLevel60Tank = benchEncounter('Generic boss, tanking', BalancedConsumes);
+export const EncounterLevel60TankMaxThreat = benchEncounter('Generic boss, tanking (Max threat)', MaxThreatConsumes);
+export const EncounterLevel60TankMaxSurvival = benchEncounter('Generic boss, tanking (Max survival)', MaxSurvivalConsumes);
 
 // The three Level 60 tank presets (threat against survival as weights, Balanced the default; docs/tank_sim.md).
 export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
 	tooltip:
-		"Scored with survival weighed at 1/3 (docs/tank_sim.md). Night Elf (Elune's Light), Flask of Natural Accuracy, Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the attack power trinket on cooldown.",
+		"Scored with survival weighed at 1/3 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the attack power trinket on cooldown. Round 5 consumables: Natural Precision, Ground Scorpok Assay, Greater Stoneshield Potion on cooldown.",
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60TankMaxThreat,
 	rotation: APLLevel60MaxThreat,
-	encounter: EncounterMaxThreat,
+	encounter: EncounterLevel60TankMaxThreat,
 	race: Race.RaceNightElf,
 	professions: [Profession.Engineering, Profession.Blacksmithing],
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
 	tooltip:
-		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists.",
+		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Round 5 consumables: Natural Precision, Spirit of Zanza, Greater Stoneshield Potion on cooldown.",
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60Tank,
 	rotation: APLLevel60Balanced,
-	encounter: EncounterDefault,
+	encounter: EncounterLevel60Tank,
 	race: Race.RaceNightElf,
 	professions: [Profession.Engineering, Profession.Blacksmithing],
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
 	tooltip:
-		'Scored with survival weighed at 3 (docs/tank_sim.md). Undead (Touch of the Grave), Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists.',
+		'Scored with survival weighed at 3 (docs/tank_sim.md). Undead (Touch of the Grave), Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Round 5 consumables: Natural Precision, Spirit of Zanza, Greater Stoneshield Potion on cooldown, no Mageblood.',
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60TankMaxSurvival,
 	rotation: APLLevel60MaxSurvival,
-	encounter: EncounterDefault,
+	encounter: EncounterLevel60TankMaxSurvival,
 	race: Race.RaceUndead,
 	professions: [Profession.Engineering, Profession.Blacksmithing],
 });

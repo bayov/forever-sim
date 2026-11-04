@@ -1,0 +1,10 @@
+A=shaman_warden_balanced.json B=sp_arcane_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord           31       65    33.6    0.1     16.8        0
+chromaggus        -313     -288    25.1    0.0     12.6        0
+golemagg          1369     1401    31.7    0.0     15.9        0
+magmadar          1692     1724    31.8    0.0     15.9        0
+onyxia             759      793    33.9    0.1     17.0        0
+ragnaros         -3526    -3497    29.7    0.0     14.8        0
+vaelastrasz       2088     2129    40.4    0.1     20.2        0
+scoring_mean                       32.8    0.0

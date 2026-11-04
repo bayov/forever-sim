@@ -1,0 +1,10 @@
+A=shaman_warden_max_survival.json B=zanza_scorpok_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord        -6432    -6183   248.8   59.8     18.1      -24
+chromaggus       -6272    -6099   172.6   25.9     17.3      -15
+golemagg         -2023    -1886   136.9   15.9     18.3      -10
+magmadar         -1240    -1099   141.1   12.6     16.5      -10
+onyxia           -4640    -4391   248.7   29.1     17.2      -14
+ragnaros        -16142   -16021   120.9  116.8     15.2      -10
+vaelastrasz      -1712    -1664    48.1   14.1     16.0       -4
+scoring_mean                      166.0   12.6

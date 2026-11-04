@@ -1,0 +1,11 @@
+Healing: 6 healers on the tank at 285 HPS each, 2.9 s heals (818 a heal).
+Encounter: Ragnaros. Elemental Fire is a proc on his landed hits, blocked ones too (proc aura 20563, client data), at the logs' rate: on the Anniversary realms about 3 in 4 of his swings, in Season of Discovery's Normal far fewer. Its DoT is 8 ticks of 600, restarted by the next hit. Fire resistance from gear and buffs takes its share. Wrath of Ragnaros (every 25 to 30 s, 1,000 Fire and a knockback that wipes threat, so a second tank picks him up) and the submerge phase are left out: one tank's stint between knockbacks is what's scored.
+Stand-in healer: 1710 HPS every 0.48 ± 0.24 s. TMI over 6 s windows. 1000 iterations.
+
+Objective: 2 x SafeDPS - w x 900 x healing needed at 5% deaths / 285, in raid DPS (Max threat w = 1/3, Balanced 1, Max survival 3).
+
+| Build | Max threat | Balanced | Max survival | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS | TMI | Death | Health | EH | Biggest hit | Armor | Def | No crit at | Miss | Dodge | Parry | Block | Crit | Crush | Crush gap | Took: avoid | block | crit | crush |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+2026/11/04 21:54:57 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 21:54:58 All 4 sims finished successfully.
+| druid_bear_max_survival | 1144 ± 36 | -2677 ± 101 | -14139 ± 302 | 1527 ± 6 | 1815 ± 32 (1.40x DTPS) | 0.0% | 1431 | 550 | 1292 | 101 | 8.0% | 11483 | 31765 | 1508 (7.6 to kill) | 10165 (63.9%) | 437 | 315 | 11.9% | 39.2% | 0.0% | 0.0% | 0.0% | 15.0% | 48.9% | 51.3% | 0.0% | 0.0% | 14.8% |
