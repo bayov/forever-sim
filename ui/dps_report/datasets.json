@@ -251,7 +251,7 @@
   "title": "Game tooltip text",
   "description": "Tooltip text for the spells, items, enchants, consumes, races and stat weights on the page: wowhead's WoW Forever database first (with a link to its page), the Forever client's talent text and the Forever wiki where it has nothing, Classic's text only as a marked last resort, the sim's own numbers where they differ, the item database for the synthetic gear, and the Forever racials.",
   "updated": {
-   "at": "2026-11-04T09:15:09.661Z",
+   "at": "2026-11-04T09:51:48.996Z",
    "by": "Claude (forever-sim)"
   }
  },

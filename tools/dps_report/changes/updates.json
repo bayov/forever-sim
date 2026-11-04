@@ -3190,6 +3190,10 @@
     {
      "commit": "45111f0",
      "why": "comp search test and drop list only; no report request changes"
+    },
+    {
+     "commit": "b57f5cc",
+     "why": "the downranking penalty now covers every lower-rank spell; every report build casts top ranks, and the probe clears all of them"
     }
    ],
    "source": {
