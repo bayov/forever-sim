@@ -501,6 +501,32 @@ func TestReckoning(t *testing.T) {
 		n++
 	}
 	near(t, "Reckoning 5/5 block chance", float64(charges)/float64(n), 0.4, 0.03)
+
+	// A spell's crit counts too (20177's proc flags 0x202A8 take harmful magic spells; "the
+	// victim of a non-periodic critical strike"), a melee crit as before, and a magic spell
+	// can't give a block's charge.
+	magic := *swing
+	magic.ProcMask = core.ProcMaskSpellDamage
+	for _, c := range []struct {
+		name    string
+		spell   *core.Spell
+		outcome core.HitOutcome
+		want    bool
+	}{
+		{"melee crit", swing, core.OutcomeCrit, true},
+		{"spell crit", &magic, core.OutcomeCrit, true},
+		{"spell hit", &magic, core.OutcomeHit, false},
+		{"spell block", &magic, core.OutcomeBlock, false},
+	} {
+		stored.SetStacks(sim, 0)
+		sim.CurrentTime += 2 * time.Second
+		r := c.spell.NewResult(&pal.Unit)
+		r.Outcome = c.outcome
+		trigger.OnSpellHitTaken(trigger, sim, c.spell, r)
+		if got := stored.GetStacks() > 0; got != c.want {
+			t.Errorf("Reckoning 5/5 on a %s: charge %v, want %v", c.name, got, c.want)
+		}
+	}
 }
 
 // TestBlessingOfSanctuaryGone checks that Forever has no Blessing of Sanctuary (no client row).
