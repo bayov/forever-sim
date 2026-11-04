@@ -242,7 +242,9 @@ Ragnaros (equal) and stays 0.06 to 0.29 below the priest. With Riptide a 12 sec 
 Healing Wave and Lesser Healing Wave (2.5 and 1.5 sec, no reduction past Improved Healing Wave's) and one Nature's
 Swiftness; the priest has Flash Heal, Greater Heal, Renew, Power Word: Shield and Prayer of Mending on the tank
 as well. No rank, mana gate or cooldown use on the bench closes it: the best lines above are within 0.006 of
-each other.
+each other. On the re-bench after the 2026-11-04 fixes and the tank bench's change (tanks face the boss;
+healing_sim.md, H3) the gap is 0.020 on the mean (1.242 against 1.262), the shaman ahead on Broodlord and
+Chromaggus; the paladin (1.176) is behind it on every file.
 
 ## Tests
 
