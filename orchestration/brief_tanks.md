@@ -193,3 +193,19 @@ test output to a file and read only what you need; a subagent (one level, never 
 
 Report as before, plus a line on what the update moved for your tank (before and after, Balanced, the mean of the
 six scoring encounters).
+
+## One cloud session a tank (T3, 2026-11-04)
+
+The user moved each tank to its own cloud session and container (this one's 4 cores ran four searches and four
+test suites at once). Each session starts on its branch `tank-<class>` (warrior, paladin, druid, shaman), which holds
+its local worker's work so far and `orchestration/tank_handoff/<class>.md` (where it stopped). These rules replace the
+brief's "Your worktree, your branch" rule:
+
+- Work on `tank-<class>`, commit there and **push it** (`git push -u origin tank-<class>`) after every commit, so
+  nothing is lost when the container goes. Never push master or any other branch; the orchestrator merges.
+- Merge `origin/master` now and then, and `origin/claude/clever-galileo-qim1ee` (the orchestrator's branch) when
+  the orchestrator says it has something for you.
+- You have the container to yourself: run searches with all its cores, but keep the context small (long output to
+  a file).
+- When you're done (or truly blocked), send your report with the Claude Code Remote `send_message` tool to the tank
+  orchestrator, session `session_01TXnjyP5nUQs8zySrhUvYoi`, and end your turn.
