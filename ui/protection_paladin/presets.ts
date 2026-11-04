@@ -16,10 +16,12 @@ import {
 	RaidBuffs,
 	SpellPowerBuff,
 	StrengthBuff,
+	SunderRamp,
+	TotemWeaponBuff,
 	TristateEffect,
 	WeaponImbue,
 } from '../core/proto/common.js';
-import { Blessings, PaladinAura, PaladinOptions as ProtectionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
+import { PaladinAura, PaladinOptions as ProtectionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import APLBasicProtectionJson from './apls/basic_prot.apl.json';
 import APLP5ProtJson from './apls/p5prot.apl.json';
@@ -138,7 +140,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 	options: Level60TankOptions,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md).',
+	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's build: the search at this weight lands on the same one.",
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,
@@ -152,9 +154,9 @@ export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 
 ///////////////////////////////////////////////////////////////////////////
 
 export const DefaultOptions = ProtectionPaladinOptions.create({
-	aura: PaladinAura.RetributionAura,
-	primarySeal: PaladinSeal.Righteousness,
-	personalBlessing: Blessings.BlessingOfSanctuary,
+	// The tank presets' options (the bench's): Seal of Fury, Righteous Fury, Devotion Aura.
+	aura: PaladinAura.DevotionAura,
+	primarySeal: PaladinSeal.Fury,
 	righteousFury: true,
 });
 
@@ -174,8 +176,11 @@ export const DefaultConsumes = Consumes.create({
 	strengthBuff: StrengthBuff.JujuPower,
 });
 
+// The tank bench's buffs and debuffs (tools/tankbench/req/paladin_protection_*.json; tank_fairness-20261104-6):
+// loading a preset gives the build the bench ranks.
 export const DefaultIndividualBuffs = IndividualBuffs.create({
-	blessingOfWisdom: TristateEffect.TristateEffectImproved,
+	blessingOfKings: true,
+	blessingOfMight: TristateEffect.TristateEffectImproved,
 	fengusFerocity: false,
 	moldarsMoxie: false,
 	rallyingCryOfTheDragonslayer: false,
@@ -185,27 +190,46 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 });
 
 export const DefaultRaidBuffs = RaidBuffs.create({
-	powerWordFortitude: TristateEffect.TristateEffectImproved,
-	arcaneBrilliance: true,
-	battleShout: TristateEffect.TristateEffectImproved,
-	divineSpirit: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	powerWordFortitude: TristateEffect.TristateEffectImproved,
+	bloodPact: TristateEffect.TristateEffectImproved,
+	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
+	arcaneBrilliance: true,
+	divineSpirit: true,
+	battleShout: TristateEffect.TristateEffectImproved,
+	trueshotAura: true,
+	leaderOfThePack: true,
+	moonkinAura: true,
+	shadowProtection: true,
+	frostResistanceAura: true,
+	fireResistanceAura: true,
+	thorns: TristateEffect.TristateEffectImproved,
+	devotionAura: TristateEffect.TristateEffectImproved,
+	retributionAura: TristateEffect.TristateEffectImproved,
+	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 });
 
 export const DefaultDebuffs = Debuffs.create({
-	curseOfRecklessness: true,
-	faerieFire: true,
-	giftOfArthas: true,
-	exposeArmor: TristateEffect.TristateEffectImproved,
 	judgementOfWisdom: true,
+	judgementOfLight: true,
 	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
-	improvedScorch: true,
+	faerieFire: true,
+	curseOfElements: true,
+	sunderRamp: SunderRamp.create({ tank: true }),
+	curseOfWeakness: TristateEffect.TristateEffectImproved,
+	curseOfRecklessness: true,
+	demoralizingRoar: TristateEffect.TristateEffectImproved,
+	demoralizingShout: TristateEffect.TristateEffectImproved,
+	thunderClap: TristateEffect.TristateEffectImproved,
+	insectSwarm: true,
+	scorpidSting: true,
 });
 
 export const OtherDefaults = {
 	// A tank faces the boss: the boss parries and blocks its attacks, and its parries haste the boss's swing.
 	inFrontOfTarget: true,
 	distanceFromTarget: 5, // Max melee range
-	profession1: Profession.Blacksmithing,
-	profession2: Profession.Engineering,
+	profession1: Profession.Engineering,
+	profession2: Profession.Blacksmithing,
 };

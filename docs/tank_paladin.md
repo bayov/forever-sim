@@ -307,8 +307,8 @@ the six scoring encounters (Ragnaros is reported, not scored).
 | Preset | TPS | DPS | SafeDPS | DTPS | Healing needed | Max threat | Balanced | Max survival |
 |---|---|---|---|---|---|---|---|---|
 | Max threat | 1,345 | 589 | 1,494 | 320 | 238 | **2,785** | 2,380 | 1,164 |
-| Balanced | 1,313 | 576 | 1,457 | 301 | 208 | 2,742 | **2,398** | 1,363 |
-| Max survival | 1,313 | 576 | 1,457 | 301 | 208 | 2,742 | 2,398 | **1,363** |
+| Balanced | 1,313 | 576 | 1,457 | 301 | 208 | 2,742 | **2,398** | 1,337 |
+| Max survival | 1,313 | 576 | 1,457 | 301 | 208 | 2,742 | 2,398 | **1,337** |
 
 Before round 2 (the master bench of 23b2ec2, the same requests before this round's changes): 2,786 / 2,411 /
 1,422 at each preset's own weight.
