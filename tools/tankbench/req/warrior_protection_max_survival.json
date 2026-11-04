@@ -31,7 +31,7 @@
                 },
                 {
                   "id": 990606,
-                  "enchant": 1886
+                  "enchant": 1248665
                 },
                 {
                   "id": 990607,
@@ -58,7 +58,7 @@
                   "id": 990616
                 },
                 {
-                  "id": 991018
+                  "id": 990617
                 },
                 {
                   "id": 990614,
@@ -131,9 +131,63 @@
                       "spellId": {
                         "itemId": 990617
                       }
+                    },
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "const": {
+                                  "val": "35s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "delay": {
+                                    "math": {
+                                      "lhs": {
+                                        "remainingTime": {}
+                                      },
+                                      "op": "OpSub",
+                                      "rhs": {
+                                        "const": {
+                                          "val": "35s"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "20s"
+                                    }
+                                  },
+                                  "spellId": {
+                                    "itemId": 990617
+                                  }
+                                }
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
                     }
                   },
-                  "notes": "The on-use trinket. Ignore the warning on the trinket that isn't worn."
+                  "notes": "The on-use trinket, held for the last 35 sec unless the wait costs a use. Ignore the warning on the trinket that isn't worn."
                 },
                 {
                   "action": {
@@ -141,9 +195,63 @@
                       "spellId": {
                         "itemId": 991018
                       }
+                    },
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "op": "OpLe",
+                              "rhs": {
+                                "const": {
+                                  "val": "35s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "delay": {
+                                    "math": {
+                                      "lhs": {
+                                        "remainingTime": {}
+                                      },
+                                      "op": "OpSub",
+                                      "rhs": {
+                                        "const": {
+                                          "val": "35s"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "20s"
+                                    }
+                                  },
+                                  "spellId": {
+                                    "itemId": 991018
+                                  }
+                                }
+                              },
+                              "op": "OpGt",
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
                     }
                   },
-                  "notes": "The on-use trinket. Ignore the warning on the trinket that isn't worn."
+                  "notes": "The on-use trinket, held for the last 35 sec unless the wait costs a use. Ignore the warning on the trinket that isn't worn."
                 },
                 {
                   "action": {
@@ -160,7 +268,7 @@
                         "op": "OpLe",
                         "rhs": {
                           "const": {
-                            "val": "12s"
+                            "val": "17s"
                           }
                         }
                       }

@@ -7,7 +7,7 @@
             "inFrontOfTarget": true,
             "race": "RaceUndead",
             "class": "ClassWarrior",
-            "talentsString": "3-05050015-250430020330001351",
+            "talentsString": "04-05050015-250330020330001351",
             "equipment": {
               "items": [
                 {
@@ -31,7 +31,7 @@
                 },
                 {
                   "id": 990606,
-                  "enchant": 1886
+                  "enchant": 1248665
                 },
                 {
                   "id": 990607,
@@ -331,7 +331,7 @@
                         "op": "OpGe",
                         "rhs": {
                           "const": {
-                            "val": "30"
+                            "val": "15"
                           }
                         }
                       }

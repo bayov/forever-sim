@@ -55,8 +55,9 @@ import (
 // The trinkets (standards 36): the tank trinket is 1b's stat trinket of tank stats in the row's
 // proportions, Defense and block value (24 Defense, 25 block value: 46.0 weighted linear, 1.7-norm
 // 38.3 against 36.8); the second is a defensive on-use of 1b's average value at 0.1 a point of bonus
-// armor, 1,665 armor for 20 sec every 2 min (sim/warrior/forever_synthetic_trinkets.go), which the tank
-// objective picks over the DPS set's attack power on-use or not (docs/tank_warrior.md, Gear).
+// armor, 1,665 armor for 20 sec every 2 min (sim/warrior/forever_synthetic_trinkets.go). Max survival
+// wears it (held for the last 35 sec); Max threat and Balanced wear the DPS set's attack power on-use
+// (991018), which scores higher there (docs/tank_warrior.md, Gear A/Bs).
 func init() {
 	ForeverSyntheticItems = append(ForeverSyntheticItems, foreverSyntheticWarriorTankItems...)
 }
