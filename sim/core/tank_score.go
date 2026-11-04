@@ -69,7 +69,9 @@ func (character *Character) setupTankScore(scoring *proto.TankScoring, healingMo
 		ts.dpsStart = 2
 	}
 	if ts.threatPerDamage == 0 {
-		ts.threatPerDamage = 0.7
+		// 1 threat a point of damage: Forever removed Blessing of Salvation (the October 30 hotfix,
+		// and the November 2 notes), which was 0.7.
+		ts.threatPerDamage = 1
 	}
 	if ts.pullRatio == 0 {
 		ts.pullRatio = MeleePullRatio

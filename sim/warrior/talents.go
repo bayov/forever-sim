@@ -420,7 +420,9 @@ func (warrior *Warrior) applyBloodCraze() {
 		Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagHelpful,
 
 		DamageMultiplier: 1,
-		ThreatMultiplier: 1,
+		// The November 2 development notes: "The Blood Craze and Gore Drinker talents no longer
+		// generate threat when restoring Health to the Warrior." (client 70753 unchanged, standards 37.)
+		ThreatMultiplier: core.TernaryFloat64(forever, 0, 1),
 
 		Hot: core.DotConfig{
 			Aura:          core.Aura{Label: "Blood Craze"},

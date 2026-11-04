@@ -372,8 +372,8 @@ user as proposed the same day, and built.
 - **The engine** (`sim/core/tank_score.go`): a player with `tank_scoring` (`proto/common.proto`) and the
   stand-in healer records each iteration's damage taken and heals, and at its end replays them to find the
   least stand-in HPS the iteration lives through (+Inf when none does). It also follows the tank's threat on
-  the boss for SafeDPS: the reference member starts 2 s after the pull, makes 0.7 threat a point of damage
-  (Salvation) and pulls at 110%, all settable. Both land in `UnitMetrics.tank_score`, and
+  the boss for SafeDPS: the reference member starts 2 s after the pull, makes 1 threat a point of damage
+  (Forever removed Salvation, which made it 0.7) and pulls at 110%, all settable. Both land in `UnitMetrics.tank_score`, and
   `core.TankScoreSummary` turns the list into healing needed at a death share, its standard error (from the
   order statistics) and the death floor. A test checks that the replay agrees with the run itself: the
   iterations the run died in are exactly those whose least HPS is over the healer's.

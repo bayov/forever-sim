@@ -143,3 +143,53 @@ standard:
 When you're done (or truly blocked), reply with: your branch and last commit, what you fixed and built (a line
 each), the presets' numbers, the shared files you touched, and your calls for the user. Under 40 lines; the
 details are in your doc.
+
+## Restart after the 70753 update (T2, 2026-11-04)
+
+The tank work paused on 2026-11-03 for the wow-update session, which brought the sim to client 1.60.1.70753 and
+Blizzard's November 2 development notes. That's on master and merged into `claude/clever-galileo-qim1ee`, with
+every worker's earlier work. Start a fresh worktree from that branch; your old `worktree-agent-*` branch is
+already in it. Steps 1 to 5 were done before the update (see `orchestration/handoff_tanks.md`), so your work now:
+
+**A. Realign to the update.** Read `orchestration/round_70753/README.md`, your class's round file
+(`orchestration/round_70753/<class>.md`, and `hotfix_113483.md`), the notes in full
+(`orchestration/audit/ref/client_update/sources/devnotes_post9_2026-11-02.txt`) and standards 37 to 39: a notes
+value the client and hotfixes don't carry is modelled as the notes say, gated under Forever and listed as
+notes-only; the sim is Forever only, so Classic gating is no longer a finding. Then redo your audit table in
+`docs/tank_<class>.md` against the new rows and the notes, and fix what moved. The merge was automatic in your
+class files: check nothing is applied twice or lost where master's class round and your work touched the same
+mechanic (run your tests; read the diffs of `sim/<class>/` between your old branch and this one).
+
+- **Every tank:** SafeDPS's reference member now makes 1 threat a point of damage (Salvation is gone, it was 0.7):
+  the orchestrator changed the default in `sim/core/tank_score.go` and `tankbench -dps-threat`. Hit: size it to
+  the cap counting talents (standards 4).
+- **Warrior:** master's warrior round built the reworked tree from the notes (`tools/forever_talents/notes/warrior.json`,
+  commit b47131474: Improved Tactical Mastery 3, Bloodthrill 2, Flurry 3, Gore Drinker to row 5, Reckless Swings,
+  Improved Whirlwind). Remap every talent string in your files (your requests, APLs, presets, the template's).
+  Defensive Stance 80% and Defiance 7/13/20% are on master (`sim/warrior/stances.go`); Blood Craze's heal no longer
+  makes threat (done by the orchestrator); check Gore Drinker's the same. Slam's cooldown and Reckless Swings for
+  the tank rotation.
+- **Paladin:** the Protection rework is master's (Holy Shield row 5, Shieldsworn, Iron Creed 3 points, Swift
+  Judgement unleashing the Seal, Sacred Duty, Shield Specialization, Stoicism, Improved Righteous Fury 3/6/9%),
+  Righteous Fury 33% all threat and 90% Holy (`sim/paladin/righteous_fury.go`). Reconcile your Seal of Fury, Holy
+  Shield, Holy Strike, Templar's Bulwark and immunities with master's paladin code. The phase 4 follow-ups session
+  is still landing push 113483's paladin rows (Oath of Light, Vengeance, Two-Handed Weapon Specialization) on master;
+  `git fetch origin` and merge `origin/master` once it lands.
+- **Druid:** Bear and Dire Bear Form +115% threat (`bearFormThreatMultiplierNov2` = 2.15 in `sim/druid/bear.go`),
+  Lacerate a talent, Primal Bite and Shifting Power in row 7, Rend and Tear 3/6/9/12/15% (`notes/druid.json`).
+  The bear's threat changes most of any tank: check your rotation's Maul and Swipe thresholds still make sense.
+- **Shaman:** the tree rework (`notes/shaman.json`, 206ebef70 and f0bb9d4: Lava Burst to Call of Thunder, Lightning
+  Mastery, Improved Ghost Wolf to row 4), and the DPS worker remapped the Warden preset's string and moved the
+  TestWardenShaman golden. Your build, tests, bench request and template predate it: remap them.
+
+**B. Steps 6 and 7** of the brief, on the realigned sim.
+
+**Item database:** two other sessions are rebuilding `assets/database/db.bin`. Keep your gear in its source file;
+regenerate the database locally to test (`go run ./tools/database/gen_db -outDir=assets -gen=db`, then the same
+with `-tags=with_db`), but don't commit `assets/database/db.*`; the orchestrator rebuilds it after the merge.
+
+**Context:** keep your own context small (forever-sim's `CLAUDE.md`, "Keep the context small"): send long sim and
+test output to a file and read only what you need; a subagent (one level, never more) may run a long search.
+
+Report as before, plus a line on what the update moved for your tank (before and after, Balanced, the mean of the
+six scoring encounters).
