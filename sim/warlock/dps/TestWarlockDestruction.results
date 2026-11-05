@@ -211,9 +211,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-WarlockSynthetic(Phase1)"
  value: {
-  dps: 1360.38683
-  tps: 1071.34152
-  hps: 3.1565
+  dps: 1374.0745
+  tps: 1081.77573
+  hps: 2.978
  }
 }
 dps_results: {

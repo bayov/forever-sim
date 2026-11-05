@@ -76,7 +76,7 @@ var BeastMasteryTalents = "5021201505021241-00510504005"
 var BeastMasteryHawkTalents = "5021201505111241-00510504005"
 var MarksmanshipTalents = "502-0053551501503051-5"
 var LoneWolfTalents = "5-0053552511503051-5"
-var SurvivalTalents = "502-005005-500230230250122151"
+var SurvivalTalents = "502-0050051-500230230250022151"
 
 // The level 60 consumes from ui/hunter/presets.ts.
 var RangedConsumes = core.ConsumesCombo{

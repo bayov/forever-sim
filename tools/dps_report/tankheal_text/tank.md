@@ -206,5 +206,5 @@ to: your dodges and parries
 from: : the tank applies its own slow\.
 to: : apply your own slow.
 
-from: \s*\(docs/tank_warrior\.md, Round 4 consumables\)
+from: \s*\(docs/[^)]*\)
 to:

@@ -3,7 +3,7 @@
   "class": "Paladin",
   "spec": "Retribution",
   "build": "Level 60 (twist)",
-  "isDefault": false,
+  "isDefault": true,
   "pr": 100,
   "race": "Undead",
   "talents": "050050002-503-05233101201301351",

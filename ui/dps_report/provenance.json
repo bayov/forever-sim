@@ -2,14 +2,14 @@
 	"note": "2026-10-25 regeneration: all 64 builds re-simmed locally on claude/keen-brown-o2g32n at e8a8b50d55 (the wowsims/forever alignment round and the class workers' regenerated presets), in a scratch tree with tools/dps_report/patches 0001 to 0004 applied and the binaries built with -tags=with_db; 20,000 iterations for the main runs. Then the Mark duty ruling (2026-10-25): the 7 hunter builds were re-simmed at 5429f41856 (every hunter keeps up its own Hunter's Mark, the four -duty-mark builds are gone); the other 53 are re-recorded there unchanged, since that commit's tools/rotopt changes touch only the hunter templates and specs (mksettings writes their requests byte for byte as before) and their data came out identical.",
 	"builds": {
 		"rogue__combat-daggers": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.501Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.904Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -35,14 +35,14 @@
 			}
 		},
 		"rogue__combat-swords": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.520Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.922Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -68,14 +68,14 @@
 			}
 		},
 		"rogue__seal-fate-daggers": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:33.260Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.947Z",
 			"iterations": 20000,
-			"by": "sim",
-			"simCommit": "1d505dd729324eb48424da826919e7e2c3bd5654",
+			"by": "probe",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -102,14 +102,14 @@
 			}
 		},
 		"rogue__mutilate": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.532Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.934Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -136,14 +136,14 @@
 			}
 		},
 		"rogue__seal-fate-swords": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.545Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.962Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -171,14 +171,14 @@
 			}
 		},
 		"rogue__subtlety": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:33.275Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.976Z",
 			"iterations": 20000,
-			"by": "sim",
-			"simCommit": "1d505dd729324eb48424da826919e7e2c3bd5654",
+			"by": "probe",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -204,14 +204,14 @@
 			}
 		},
 		"hunter__lone-wolf": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.204Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.562Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -238,14 +238,14 @@
 			}
 		},
 		"hunter__marksmanship": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.215Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.575Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -272,14 +272,14 @@
 			}
 		},
 		"hunter__beast-mastery": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.165Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.517Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -306,14 +306,14 @@
 			}
 		},
 		"hunter__survival": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.252Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.617Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -333,21 +333,21 @@
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "33cf59cf168adf2eb5f780fe416eb8264e6b09287d07790fda27f04b45ea443a",
-				"tools/dps_report/req/hunter__survival.json": "35c5939d5fb533ef6a46d08c505528a0747ca7bc90904be7453c50f7ee586dc5",
+				"tools/dps_report/req/hunter__survival.json": "b5d022d3ae590bbab9a5f08238f6f7bc2322ba853d544199d67b4b647ac2c7ba",
 				"tools/dps_report/req/hunter__survival.meta.json (sim fields)": "0672586846b75753fe9f9be5f02dcd5902cbf6551a1b3baedac0ab47ed34c255",
 				"tools/dps_report/req/races/hunter__survival.Dwarf.json": "82a824f1d8528e9d93d9e1dbf0a6b3dbf8ded246",
 				"assets/database (the entries it wears)": "dbed433dfd7ce93b126929a2b5a1cf586afd8e6f27976c8d58699089c8da75c5"
 			}
 		},
 		"paladin__level_60_sub_holy_undead": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.443Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.863Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -375,14 +375,14 @@
 			}
 		},
 		"paladin__level_60": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.327Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.721Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -409,14 +409,14 @@
 			}
 		},
 		"paladin__level_60_sub_holy": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.403Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.821Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -443,14 +443,14 @@
 			}
 		},
 		"shaman__enhancement-level60": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.603Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.023Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -477,14 +477,14 @@
 			}
 		},
 		"shaman__enhancement-imp-gw": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.589Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.008Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -511,14 +511,14 @@
 			}
 		},
 		"shaman__enhancement-water-shield": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.628Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.053Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -544,14 +544,14 @@
 			}
 		},
 		"shaman__enhancement-mana-tide": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.616Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.039Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -577,14 +577,14 @@
 			}
 		},
 		"shaman__elemental-level60": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.559Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.990Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -612,14 +612,14 @@
 			}
 		},
 		"shaman__elemental-level60-mana-tide": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.576Z",
+			"commit": "5c2c66160118a492e5dc480b3ef5e9bff26d3f36",
+			"recordedAt": "2026-11-04T22:47:59.957Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"by": "sim",
+			"simCommit": "5c2c66160118a492e5dc480b3ef5e9bff26d3f36",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -647,14 +647,14 @@
 			}
 		},
 		"druid__balance": {
-			"commit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
-			"recordedAt": "2026-11-05T00:05:44.630Z",
+			"commit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
+			"recordedAt": "2026-11-04T23:50:35.948Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
+			"simCommit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -682,14 +682,14 @@
 			}
 		},
 		"druid__balance-wrath": {
-			"commit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
-			"recordedAt": "2026-11-05T00:05:44.644Z",
+			"commit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
+			"recordedAt": "2026-11-04T23:50:36.659Z",
 			"iterations": 20000,
-			"by": "sim",
-			"simCommit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
+			"by": "probe",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -715,14 +715,14 @@
 			}
 		},
 		"druid__feral-cat": {
-			"commit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
-			"recordedAt": "2026-11-05T00:05:44.395Z",
+			"commit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
+			"recordedAt": "2026-11-04T23:50:35.699Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
+			"simCommit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -748,14 +748,14 @@
 			}
 		},
 		"mage__frostfire": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.315Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.706Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -784,14 +784,14 @@
 			}
 		},
 		"mage__fire": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.291Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.678Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -818,14 +818,14 @@
 			}
 		},
 		"mage__arcane": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.276Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.661Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -852,14 +852,14 @@
 			}
 		},
 		"mage__frost": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.303Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.693Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -887,14 +887,14 @@
 			}
 		},
 		"warlock__demonology": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.695Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.132Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -921,14 +921,14 @@
 			}
 		},
 		"warlock__destruction": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.732Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.172Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -955,14 +955,14 @@
 			}
 		},
 		"warlock__affliction": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.640Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.068Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -988,14 +988,14 @@
 			}
 		},
 		"warlock__destruction_fire": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.769Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.222Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1022,14 +1022,14 @@
 			}
 		},
 		"priest__shadow": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.456Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.876Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1056,14 +1056,14 @@
 			}
 		},
 		"priest__shadow-holy": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.474Z",
+			"commit": "5c2c66160118a492e5dc480b3ef5e9bff26d3f36",
+			"recordedAt": "2026-11-04T22:47:59.937Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"by": "sim",
+			"simCommit": "5c2c66160118a492e5dc480b3ef5e9bff26d3f36",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1090,14 +1090,14 @@
 			}
 		},
 		"priest__smite": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.486Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.892Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1128,14 +1128,14 @@
 			}
 		},
 		"warrior__fury": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.864Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.331Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1161,14 +1161,14 @@
 			}
 		},
 		"warrior__fury_2h": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.899Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.358Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1195,14 +1195,14 @@
 			}
 		},
 		"warrior__arms": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.805Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.269Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1229,14 +1229,14 @@
 			}
 		},
 		"warrior__arms_dragonkin": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.848Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.315Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1264,14 +1264,14 @@
 			}
 		},
 		"warrior__fury-duty-battle-shout": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.876Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.344Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1298,14 +1298,14 @@
 			}
 		},
 		"warrior__arms-duty-battle-shout": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.821Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.289Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1333,14 +1333,14 @@
 			}
 		},
 		"warrior__fury_2h-duty-battle-shout": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.911Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.371Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1368,14 +1368,14 @@
 			}
 		},
 		"paladin__level_60_sub_holy-duty-crusader": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.415Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.835Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1403,14 +1403,14 @@
 			}
 		},
 		"druid__balance-duty-ff": {
-			"commit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
-			"recordedAt": "2026-11-05T00:05:44.667Z",
+			"commit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
+			"recordedAt": "2026-11-04T23:50:35.964Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
+			"simCommit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1441,14 +1441,14 @@
 			}
 		},
 		"druid__balance-wrath-duty-ff": {
-			"commit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
-			"recordedAt": "2026-11-05T00:05:44.656Z",
+			"commit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
+			"recordedAt": "2026-11-04T23:50:35.980Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
+			"simCommit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1475,14 +1475,14 @@
 			}
 		},
 		"druid__feral-cat-duty-ff": {
-			"commit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
-			"recordedAt": "2026-11-05T00:05:44.611Z",
+			"commit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
+			"recordedAt": "2026-11-04T23:50:35.926Z",
 			"iterations": 20000,
 			"by": "sim",
-			"simCommit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
+			"simCommit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1509,14 +1509,14 @@
 			}
 		},
 		"warlock__demonology-duty-curse": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.707Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.145Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1545,14 +1545,14 @@
 			}
 		},
 		"warlock__destruction-duty-curse": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.743Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.186Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1581,14 +1581,14 @@
 			}
 		},
 		"warlock__affliction-duty-curse": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.657Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.089Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1615,14 +1615,14 @@
 			}
 		},
 		"warlock__destruction_fire-duty-curse": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.781Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.238Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1651,14 +1651,14 @@
 			}
 		},
 		"paladin__level_60_shock_ret": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.367Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.776Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1685,14 +1685,14 @@
 			}
 		},
 		"paladin__level_60-duty-crusader": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.343Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.742Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1720,14 +1720,14 @@
 			}
 		},
 		"paladin__level_60_shock_ret-duty-crusader": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.379Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.791Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1755,14 +1755,14 @@
 			}
 		},
 		"paladin__level_60-duty-wisdom": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.355Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.759Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1790,14 +1790,14 @@
 			}
 		},
 		"paladin__level_60_sub_holy-duty-wisdom": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.429Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.850Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1825,14 +1825,14 @@
 			}
 		},
 		"paladin__level_60_shock_ret-duty-wisdom": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.391Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.807Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1860,14 +1860,14 @@
 			}
 		},
 		"warrior__arms-duty-sunder": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.834Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.302Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1895,14 +1895,14 @@
 			}
 		},
 		"warrior__fury-duty-sunder": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.887Z",
+			"commit": "5c2c66160118a492e5dc480b3ef5e9bff26d3f36",
+			"recordedAt": "2026-11-04T22:47:59.975Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"by": "sim",
+			"simCommit": "5c2c66160118a492e5dc480b3ef5e9bff26d3f36",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1929,14 +1929,14 @@
 			}
 		},
 		"warrior__fury_2h-duty-sunder": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.923Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.384Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1964,14 +1964,14 @@
 			}
 		},
 		"warlock__affliction-duty-recklessness": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.669Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.105Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -1998,14 +1998,14 @@
 			}
 		},
 		"warlock__demonology-duty-recklessness": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.720Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.158Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2033,14 +2033,14 @@
 			}
 		},
 		"warlock__destruction-duty-recklessness": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.757Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.201Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2068,14 +2068,14 @@
 			}
 		},
 		"warlock__destruction_fire-duty-recklessness": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.793Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.253Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2103,14 +2103,14 @@
 			}
 		},
 		"hunter__beast-mastery-tallstrider": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.180Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.534Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2138,14 +2138,14 @@
 			}
 		},
 		"hunter__beast-mastery-wolf": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.191Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.547Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2173,14 +2173,14 @@
 			}
 		},
 		"hunter__marksmanship-tallstrider": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.227Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.590Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2208,14 +2208,14 @@
 			}
 		},
 		"hunter__marksmanship-wolf": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.240Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.603Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2243,14 +2243,14 @@
 			}
 		},
 		"hunter__survival-tallstrider": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.263Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.632Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2270,22 +2270,22 @@
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "33cf59cf168adf2eb5f780fe416eb8264e6b09287d07790fda27f04b45ea443a",
-				"tools/dps_report/req/hunter__survival-tallstrider.json": "2c7198d7f06be4b53392636ec49b0cea442305c38ab5a6fbe7da29315eb79003",
+				"tools/dps_report/req/hunter__survival-tallstrider.json": "153abff5b3dc48bedeacf0699df2c477f1256cb439089002071d0103f5534cdd",
 				"tools/dps_report/req/hunter__survival-tallstrider.meta.json (sim fields)": "1c4f84aba54b07790bfa9cf614dac7afa54ae90b2a14965142be1092ea76a1fd",
-				"tools/dps_report/req/hunter__survival.json": "35c5939d5fb533ef6a46d08c505528a0747ca7bc90904be7453c50f7ee586dc5",
+				"tools/dps_report/req/hunter__survival.json": "b5d022d3ae590bbab9a5f08238f6f7bc2322ba853d544199d67b4b647ac2c7ba",
 				"tools/dps_report/req/races/hunter__survival.Dwarf.json": "82a824f1d8528e9d93d9e1dbf0a6b3dbf8ded246",
 				"assets/database (the entries it wears)": "dbed433dfd7ce93b126929a2b5a1cf586afd8e6f27976c8d58699089c8da75c5"
 			}
 		},
 		"hunter__survival-wolf": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:33.240Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:06.647Z",
 			"iterations": 20000,
-			"by": "sim",
-			"simCommit": "1d505dd729324eb48424da826919e7e2c3bd5654",
+			"by": "probe",
+			"simCommit": "5e3c45fccc0f7b851e9ee49102052b2f6dfb650e",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2305,22 +2305,22 @@
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "33cf59cf168adf2eb5f780fe416eb8264e6b09287d07790fda27f04b45ea443a",
-				"tools/dps_report/req/hunter__survival-wolf.json": "454f32565e146ec226c52f6ca4effd3f8e300d129bbb26867cf15569831d1950",
+				"tools/dps_report/req/hunter__survival-wolf.json": "11180ce822b8c5f42d4b816b5d5f80dfb46a6fd2e3e170b921a263733c4334ce",
 				"tools/dps_report/req/hunter__survival-wolf.meta.json (sim fields)": "e1281e691b68e37d7387fa30c6c5c7de8394ea2231b3d2d496152af0d79fea6e",
-				"tools/dps_report/req/hunter__survival.json": "35c5939d5fb533ef6a46d08c505528a0747ca7bc90904be7453c50f7ee586dc5",
+				"tools/dps_report/req/hunter__survival.json": "b5d022d3ae590bbab9a5f08238f6f7bc2322ba853d544199d67b4b647ac2c7ba",
 				"tools/dps_report/req/races/hunter__survival.Dwarf.json": "82a824f1d8528e9d93d9e1dbf0a6b3dbf8ded246",
 				"assets/database (the entries it wears)": "dbed433dfd7ce93b126929a2b5a1cf586afd8e6f27976c8d58699089c8da75c5"
 			}
 		},
 		"warlock__affliction_shadow_bolt": {
-			"commit": "1d505dd729324eb48424da826919e7e2c3bd5654",
-			"recordedAt": "2026-11-04T23:17:34.681Z",
+			"commit": "2f09372d8461f7c276913dfa3be76dea3a0d4509",
+			"recordedAt": "2026-11-04T22:49:07.118Z",
 			"iterations": 20000,
 			"by": "probe",
-			"simCommit": "9883bd54f332c1a4d98e8c6441f877b91d6acd75",
+			"simCommit": "1923846dd6c19a5a40f445627117792c9aeef152",
 			"format": 2,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2349,12 +2349,12 @@
 	},
 	"benches": {
 		"tank": {
-			"commit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
-			"recordedAt": "2026-11-05T00:05:44.791Z",
+			"commit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
+			"recordedAt": "2026-11-04T23:50:36.109Z",
 			"iterations": 1000,
 			"format": 1,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2362,7 +2362,7 @@
 				"go.mod": "c9816d3d9714776ca295cf4b5378c12faacf4e0f892e17fc139fb38d724a9b08",
 				"go.sum": "5bf8cc59f57eb456a689c038bfce5ff51e1a3b4210d4e25b88ad5ab3d706a05e",
 				"tools/tankscore": "100d8e1f8a105fa8667a94e1e13e046ec2d1f61f77c8e7e6deaed00b8df89ddf",
-				"tools/dps_report/tankheal.py": "4dfa3518d5c22a4af57223eff449b1bc63e815dc43356ca6a550fcbe78751345",
+				"tools/dps_report/tankheal.py": "85c170e5d1b74a10f5709a1ab03bf6f729d96b8a2874bd633d0d82a5a8029157",
 				"tools/tankbench": "9c646b8c135b1b90c566e01316df32fcbec983852f98a7fce0843e5b73e9f836",
 				"sim/warrior": "eeeeac1e3d5e6abfe28e71840aa5d4d2555a7df4e335e57f35960d1fceb9df30",
 				"sim/paladin": "9ec492736c5b3cf07b273904b1a041ea4962166921e5cee6c786da5f7ad886c5",
@@ -2380,12 +2380,12 @@
 			}
 		},
 		"heal": {
-			"commit": "a443c6c34f56c231e8aa96822588fe1f0ff50bd9",
-			"recordedAt": "2026-11-05T00:05:45.038Z",
+			"commit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
+			"recordedAt": "2026-11-04T23:50:36.400Z",
 			"iterations": 1000,
 			"format": 1,
 			"inputs": {
-				"sim/core": "b6acfac9d1bd917b663c477c6b4c05866a40e2e386ed040a1475f9dd61cf1d1b",
+				"sim/core": "b9752c4b2a89384ce3ef10330be07de9b916ded54778cd83574bef571e3a4609",
 				"sim/common": "f85341c6344ac13fc7405a6054b4c48740599270b96e39e2f080b9a0916c51f0",
 				"sim/encounters": "06888e75dc9bff67a5565179ae58340a78a60411cc5951597f9bba62312c4f3e",
 				"sim/lib": "f402f486c4f9935c138b492e2693f6cc7699b3923560666d1d2152a6905da7df",
@@ -2393,7 +2393,7 @@
 				"go.mod": "c9816d3d9714776ca295cf4b5378c12faacf4e0f892e17fc139fb38d724a9b08",
 				"go.sum": "5bf8cc59f57eb456a689c038bfce5ff51e1a3b4210d4e25b88ad5ab3d706a05e",
 				"tools/tankscore": "100d8e1f8a105fa8667a94e1e13e046ec2d1f61f77c8e7e6deaed00b8df89ddf",
-				"tools/dps_report/tankheal.py": "4dfa3518d5c22a4af57223eff449b1bc63e815dc43356ca6a550fcbe78751345",
+				"tools/dps_report/tankheal.py": "85c170e5d1b74a10f5709a1ab03bf6f729d96b8a2874bd633d0d82a5a8029157",
 				"tools/healbench": "0a65dbf639832faf68eb081294953ee734676e24dd1992b4a0d220c5c0e2183b",
 				"tools/tankbench/req/warrior_protection.json": "19fb53f38809d226448bef94c9c8c9b94556cb9194c7cd13b3accefb18acf28c",
 				"tools/dps_report/req/mage__frost.json": "178ede9885d0a7138615c49529fb19b675fb6b5b3e565587d32674696d4cc214",

@@ -3,7 +3,7 @@
   "class": "Paladin",
   "spec": "Retribution",
   "build": "Level 60 (sub Holy)",
-  "isDefault": true,
+  "isDefault": false,
   "pr": 100,
   "race": "Undead",
   "talents": "0512500022-3-05233101201301351",

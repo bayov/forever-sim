@@ -2756,13 +2756,22 @@
      "classes": [
       "Shaman"
      ],
-     "note": "Launch realm hotfixes set every rank's damage, replacing the sim's reading of the development notes. Lightning Bolt rank 10 deals 342 to 381 at 60 (the notes' 78% of the original gave 334 to 372), and ranks 1 to 3 a little more. Chain Lightning rank 4 deals 494 to 552 to its first target (485 to 539 from the notes' 145% of Lightning Bolt) and its ranks cost 245 / 360 / 425 / 495 mana. The top shock ranks barely move; lower ranks deal a few percent more.",
+     "note": "Launch realm hotfixes set every rank's damage, replacing the sim's reading of the development notes. Lightning Bolt rank 10 deals 342 to 381 at 60 (the notes' 78% of the original gave 334 to 372), and ranks 1 to 3 a little more. Chain Lightning rank 4 deals 494 to 552 to its first target (485 to 539 from the notes' 145% of Lightning Bolt) and its ranks cost 245 / 360 / 425 / 495 mana. The top shock ranks barely move; lower ranks deal a few percent more. At 180 s: Elemental 970.1 to 976.9, Elemental with Mana Tide 952.7 to 959.6; the Enhancement builds gain about 1 (their shocks).",
      "source": {
       "label": "wago.tools, launch realm hotfixes",
       "url": "https://wago.tools/hotfixes?product=wowf&search=113380"
      },
      "commits": [
-      "87922bb"
+      "87922bb",
+      "e24abed"
+     ],
+     "builds": [
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-imp-gw"
      ]
     },
     {
@@ -3034,142 +3043,274 @@
      ]
     },
     {
-     "title": "Warrior hotfix: Raging Blows removed, Reckless Swings on a 1 sec global cooldown, Spearing Strike 75% (plus 75% against Giants and Dragonkin)",
+     "title": "Presets regeared to the hit that sims best: specs with hit from talents trade the gear hit they no longer need for other stats, dual wielders carry extra hit for their white swings",
+     "kind": "gear",
+     "classes": [
+      "Druid",
+      "Mage",
+      "Paladin",
+      "Rogue",
+      "Shaman",
+      "Warlock",
+      "Warrior"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff",
+      "mage__arcane",
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "rogue__combat-daggers",
+      "rogue__combat-swords",
+      "rogue__mutilate",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords",
+      "rogue__subtlety",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield",
+      "warlock__destruction_fire",
+      "warlock__destruction_fire-duty-curse",
+      "warlock__destruction_fire-duty-recklessness",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder"
+     ],
+     "note": "Each step swaps 1% hit rating for other stats at the same item budget, and each preset keeps the step that sims best. Feral cat takes Nature's Reach 2 in place of Natural Shapeshifter and drops 4% hit from its gear (+26 at 180 s); the Retribution builds with Precision drop 3% (+11 to +12); Arcane mage drops 1% (+7); Enhancement drops 3 or 4% with a point or two moved, such as Tidal Focus 3 (+5 to +7); Fire Destruction drops 1% for Suppression 4 and Aftermath 5 (+1). Rogues carry 2 or 3% more hit (+4 to +6) and dual-wield Fury 2% more (+2 to +3).",
+     "commits": [
+      "657a628",
+      "1bac596",
+      "aed188a",
+      "a6c243f",
+      "74cc2b8",
+      "3e4796f",
+      "3f4d44d",
+      "64d6082",
+      "035f88b",
+      "c8a7b4a",
+      "cd3f44c",
+      "31c10b6",
+      "aa4551a",
+      "5adc9dd",
+      "3232e08"
+     ]
+    },
+    {
+     "title": "Dwarves trade Artisan's Precision's spare hit through the same gear steps",
+     "kind": "race",
+     "races": [
+      "Dwarf"
+     ],
+     "parts": [
+      "precision"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__lone-wolf",
+      "hunter__marksmanship",
+      "hunter__survival",
+      "paladin__level_60",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_sub_holy",
+      "priest__shadow",
+      "priest__shadow-holy",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords",
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60",
+      "warrior__arms",
+      "warrior__fury_2h"
+     ],
+     "note": "On presets that sit on the hit cap, a Dwarf wears the gear one step lower in hit, real item stats in place of the bonus stats it got before; Seal Fate rogues take a step less of their extra hit. Every other race keeps the preset's hit, so only the Dwarf's gear changes. Worth about 1 to 8 DPS on the presets it applies to.",
+     "commits": [
+      "18f431e",
+      "9522f40",
+      "812a42a"
+     ]
+    },
+    {
+     "title": "Warrior server hotfix: Spearing Strike deals 75% weapon damage (was 40%) and 150% against Giants and Dragonkin (was 120%), Raging Blows replaced by Improved Whirlwind, Reckless Swings on a 1 sec global cooldown",
      "kind": "game",
      "classes": [
       "Warrior"
      ],
-     "note": "Fury loses the Raging Blows point and takes it in Improved Bloodrage (dual wield) or Booming Voice (two-hand). Reckless Swings now waits for the main strikes: every preset casts it just ahead of Heroic Strike, and two-hand Fury and Arms only under 20 Rage.",
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
      "source": {
-      "label": "wago.tools, launch realm hotfixes",
+      "label": "wago.tools: WoW Forever server hotfixes (push 113539)",
       "url": "https://wago.tools/hotfixes?product=wowf&search=113539"
      },
+     "note": "Cleave and Whirlwind lose Raging Blows' 3 Rage discount, and its point is free. Reckless Swings costs 25% of base health, which moves no preset's damage. Slam's 15 sec cooldown, Improved Slam, Flurry, Two-Handed Weapon Specialization, Improved Tactical Mastery and Bloodthrill take the values the development notes gave. The talent tree layout changed, so every warrior talent string changed. At 180 s on the old rotations: Fury 1153.0 to 1127.9, two-hand Fury 1173.3 to 1134.3, Arms 1097.7 to 1075.8, Arms vs Dragonkin 1142.2 to 1133.7.",
      "commits": [
       "7cd399e",
       "d26a4ed",
       "d8522c3",
+      "d8dbb87"
+     ]
+    },
+    {
+     "title": "Warriors cast Reckless Swings below the main strikes now that it takes a global cooldown; dual-wield Fury puts the freed point in Improved Bloodrage, two-hand Fury in Booming Voice",
+     "kind": "rotation",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "Two-hand Fury, its duty builds, Arms and Arms with Battle Shout cast it only under 20 Rage. Orc stays the best race on every warrior build. At 180 s, with the hotfix above: Fury 1136.0, two-hand Fury 1151.0, Arms 1088.0, Arms vs Dragonkin 1147.0.",
+     "commits": [
       "e07adf1",
       "1974c4a"
      ]
     },
     {
-     "title": "Unbridled Wrath triggers on auto attacks only, not Heroic Strike or Cleave",
+     "title": "Unbridled Wrath procs only on white swings, not on Heroic Strike or Cleave",
      "kind": "sim",
      "classes": [
       "Warrior"
      ],
-     "note": "Fury and Arms lose Rage and damage they were getting from Unbridled Wrath procs on Heroic Strike and Cleave. Fury down 1.4 to 2.2% at 180 s, Arms 1% or less.",
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "source": "https://wago.tools/db2/SpellAuraOptions?build=1.60.1.70753&filter[SpellID]=exact:12322",
+     "note": "Its proc type is the melee auto attack. A queued Heroic Strike or Cleave takes the swing's place but is a special attack, so it no longer gives Unbridled Wrath's Rage. A little less Rage for every warrior preset.",
      "commits": [
       "9173d08",
       "b13bddf"
      ]
     },
     {
-     "title": "Bloodrage and Reckless Swings cost health only on a tank",
-     "kind": "sim",
-     "classes": [
-      "Warrior"
-     ],
-     "note": "The sim heals no DPS player, so the costs ran a DPS warrior's health to 0 and Berserker Rage fired as a survival cooldown. DPS warriors now pay nothing; tanks still do.",
-     "commits": [
-      "20ad1aa"
-     ]
-    },
-    {
-     "title": "New assumption: a swing that doesn't land uses no Reckless Swings charge",
-     "kind": "method",
-     "classes": [
-      "Warrior"
-     ],
-     "moves": false,
-     "note": "Whether a miss, dodge or parry uses one of the four charges is decided server side. The other reading costs dual-wield Fury about 2.6 DPS and Fury 2H and Arms nothing.",
-     "commits": [
-      "72c7d15"
-     ]
-    },
-    {
-     "title": "Meditation adds to casting Mana regeneration instead of replacing it",
-     "kind": "sim",
-     "classes": [
-      "Priest"
-     ],
-     "note": "It wiped the Vestments of Transcendence 3-piece bonus; Shadow priests are within 0.3 DPS of before.",
-     "commits": [
-      "859bdef"
-     ]
-    },
-    {
-     "title": "Divine Favor and Oath of Light get no Benediction discount; Libram of Holy Alacrity from the client",
+     "title": "Divine Favor costs its full 4% of base mana; Benediction doesn't lower it",
      "kind": "sim",
      "classes": [
       "Paladin"
      ],
-     "note": "Benediction's spell mask doesn't reach either spell, so Divine Favor costs its full 4% of base mana.",
+     "builds": [
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom"
+     ],
+     "source": "https://wago.tools/db2/SpellPower?build=1.60.1.70753&filter[SpellID]=exact:20216",
+     "note": "Ret Shock casts it. Divine Favor carries no class flags, so Benediction's cost cut can't reach it. A fraction of a DPS.",
      "commits": [
+      "fa66465",
+      "620ff0f",
       "d64804b",
       "c07c772"
      ]
     },
     {
-     "title": "Gear re-spent on each spec's hit steps: rogues, dual-wield Fury, Enhancement, Retribution twist, Feral cat, Arcane and Destruction fire",
-     "kind": "gear",
-     "classes": [
-      "Rogue",
-      "Warrior",
-      "Shaman",
-      "Paladin",
-      "Druid",
-      "Mage",
-      "Warlock"
-     ],
-     "note": "Where a talent or racial gives hit, the set wears the step that puts hit just at the cap instead of past it, and the spare points go to other stats. Feral cat up 2.3%, twist Retribution up 1%. Every other race wears the step that puts its own hit at the cap, up or down.",
-     "commits": [
-      "31c10b6",
-      "aa4551a",
-      "cd3f44c",
-      "3e4796f",
-      "3f4d44d",
-      "74cc2b8",
-      "c8a7b4a",
-      "812a42a",
-      "18f431e",
-      "9522f40",
-      "657a628",
-      "64d6082",
-      "035f88b",
-      "a6c243f",
-      "5adc9dd",
-      "3232e08"
-     ]
-    },
-    {
-     "title": "Mana gained is no longer multiplied when it makes threat",
-     "kind": "game",
-     "classes": [
-      "Warrior",
-      "Paladin",
-      "Druid",
-      "Shaman"
-     ],
-     "moves": false,
-     "note": "The sim now counts threat from mana gains without the class's threat multiplier, as the wowsims Forever sim does (not yet confirmed in game), so threat per second is lower for classes that gain mana in combat. Damage per second is unchanged.",
-     "commits": [
-      "49f0218",
-      "9c20070"
-     ]
-    },
-    {
-     "title": "Comparisons are simmed to a luck goal, with a random stream for each kind of roll",
+     "title": "Every preset re-simmed with a separate random stream for each kind of roll",
      "kind": "method",
-     "note": "Race, racial and assumption rows run extra fights until the difference with the row they are compared to is within a set error, and two sims that differ in one setting share every other roll. Every number moves by about its error; the race and assumption rows carry far less noise.",
+     "note": "Two sims that differ in one setting now share every other roll, so race, racial and assumption comparisons are about three times as precise for the same number of fights. Every number moves by about its error.",
      "commits": [
-      "ca0ca12",
+      "ca0ca12"
+     ]
+    },
+    {
+     "title": "Race, racial and assumption comparisons sim as many fights as they need for a set precision",
+     "kind": "method",
+     "moves": false,
+     "note": "Each comparison sims a first batch, measures how much it varies against what it is compared with, and tops both sides up to the fights it needs, up to 40,000: 0.35 DPS between two races, about 10% of a racial's or a target type's worth, about 5% of an assumption's effect. Race ties use that precision. The presets' own numbers don't change.",
+     "commits": [
       "18ec491"
      ]
     },
     {
-     "title": "Feral cat throws a Goblin Sapper Charge: explosives can be used in Cat and Bear Form",
-     "kind": "consumes",
+     "title": "New warrior assumption shown: only white swings that land use a Reckless Swings charge",
+     "kind": "method",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "moves": false,
+     "source": {
+      "label": "wago.tools: WoW Forever server hotfixes (push 113539)",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113539"
+     },
+     "note": "The game data says white swings use its 4 charges, but whether a miss, dodge or parry uses one is decided by the server. If it did, dual-wield Fury would lose about 2.6 DPS; the two-handed builds miss too rarely to lose any.",
+     "commits": [
+      "72c7d15"
+     ]
+    },
+    {
+     "title": "Ret twist is the paladin's default build, in place of sub-Holy",
+     "kind": "method",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60_sub_holy"
+     ],
+     "moves": false,
+     "note": "With its gear trading hit for other stats it is now the paladin's highest build at every fight length.",
+     "commits": [
+      "b682e47"
+     ]
+    },
+    {
+     "title": "Survival hunter takes Rapid Killing in place of a point of Resourcefulness",
+     "kind": "talents",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__survival",
+      "hunter__survival-wolf",
+      "hunter__survival-tallstrider"
+     ],
+     "note": "One more Rapid Fire in a 5 minute fight; no change at 2 and 3 minutes.",
+     "commits": [
+      "b682e47",
+      "9660fff"
+     ]
+    },
+    {
+     "title": "Feral cats use the Goblin Sapper Charge",
+     "kind": "sim",
      "classes": [
       "Druid"
      ],
@@ -3177,14 +3318,14 @@
       "druid__feral-cat",
       "druid__feral-cat-duty-ff"
      ],
-     "note": "The client flags the sapper and the land mine as usable while shapeshifted, so the cat takes the sapper on cooldown.",
+     "note": "Goblin Sapper Charge and Goblin Land Mine work in Cat and Bear Form (the game's own item data allows them in a form), so the Feral cat presets now take the sapper.",
      "commits": [
       "e77fb29",
       "22a7d79"
      ]
     },
     {
-     "title": "Hotfix: Ferocious Bite's extra-Energy damage raised to 0.7 / 1.2 / 1.8 / 2.5 / 3.1 / 3.3 a point (was 0.6 / 1.0 / 1.5 / 2.0 / 2.5 / 2.7)",
+     "title": "Ferocious Bite gains more from extra Energy",
      "kind": "game",
      "classes": [
       "Druid"
@@ -3193,11 +3334,7 @@
       "druid__feral-cat",
       "druid__feral-cat-duty-ff"
      ],
-     "note": "One rank per Ferocious Bite rank 1 to 6. Feral cat is up 0.1 DPS at 180 s.",
-     "source": {
-      "label": "wago.tools, launch realm hotfixes",
-      "url": "https://wago.tools/hotfixes?product=wowf&search=113403"
-     },
+     "note": "Hotfix 113403 raised Ferocious Bite's damage per point of extra Energy on every rank (top rank 2.7 to 3.3).",
      "commits": [
       "ff56f8d"
      ]
@@ -3381,576 +3518,572 @@
      "why": "the downranking penalty now covers every lower-rank spell; every report build casts top ranks, and the probe clears all of them"
     },
     {
-     "commit": "9883bd5",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "0facd94",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
-    },
-    {
-     "commit": "abc98a2",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
-    },
-    {
-     "commit": "6a9dea8",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "ad93b95",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "b07bdf4",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "a624264",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "f1a221b",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "0950b22",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "a774463",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
-    },
-    {
-     "commit": "df481a4",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "71a107e",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "9e01b3e",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "0b901ff",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "e37867b",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "9eb6f93",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "8d0b618",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
-    },
-    {
-     "commit": "f0b9bee",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
-    },
-    {
      "commit": "f0ff977",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "9a4b75f",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "5d9a3aa",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "7ca2afc",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "dd4b82a",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "53ced51",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "af78f8a",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "a7d9b57",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "d9e0016",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "86b9631",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "bc8e547",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "599e09a",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "318fc7e",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "e24abed",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "61db5cc",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "c588675",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "1593a82",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "fdca8cf",
-     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
-    },
-    {
-     "commit": "d10eaea",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "639590a",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "5370999",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "324d648",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "952a7a4",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "e9751cc",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "bde6912",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "f2736ef",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
-    },
-    {
-     "commit": "0b15937",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "c19fd77",
-     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
-    },
-    {
-     "commit": "3f8d901",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "9ebec49",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "86b5f2f",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "8fa852a",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "55d72f6",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "dda14db",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "c938028",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "4648ff4",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "982f5a6",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "0aed939",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "6c9daed",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "87f2880",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "b2c16f6",
-     "why": "tank, healer or tooling work that no DPS report request reaches; the full re-sim shows the DPS builds unmoved by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "f62bfc7",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "8946f01",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
-    },
-    {
-     "commit": "a68b203",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "d8dbb87",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "d2996ce",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "66ab8ad",
-     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
-    },
-    {
-     "commit": "f61fc00",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "049c493",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "d764d29",
-     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "fed250c",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "75695f7",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
-    },
-    {
-     "commit": "e4768f2",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "f15379f",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "bd00cd0",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "43ff80f",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "71fb81a",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "e5e5a4b",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "3fac80a",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "b73b6bd",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "df62a44",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "49e5502",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "e69b029",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "993314e",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
-    },
-    {
-     "commit": "e7c51e4",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "7714244",
-     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
-    },
-    {
-     "commit": "ce06045",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "97c9692",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "bf0ea76",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "556bf41",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "617ea86",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "c9220cd",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "68e977b",
-     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "3013df6",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "620ff0f",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "adefe98",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "fa128f0",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "0d96069",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "659cad1",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "7d662a8",
-     "why": "item database regenerated for synthetic tank or healer sets; no report request wears them"
-    },
-    {
-     "commit": "aed188a",
-     "why": "tank, healer or tooling work that no DPS report request reaches; the full re-sim shows the DPS builds unmoved by it"
-    },
-    {
-     "commit": "1bac596",
-     "why": "tank, healer or tooling work that no DPS report request reaches; the full re-sim shows the DPS builds unmoved by it"
-    },
-    {
-     "commit": "4bd813a",
-     "why": "leveling plan, practice room, item scrape or random suffixes only; no report request reads it"
-    },
-    {
-     "commit": "b718f62",
-     "why": "a merge of master into a work branch; no new change of its own"
-    },
-    {
-     "commit": "b87b4a1",
-     "why": "a merge of master into a work branch; no new change of its own"
-    },
-    {
-     "commit": "095e140",
-     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
-    },
-    {
-     "commit": "2b2a495",
-     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
-    },
-    {
-     "commit": "8609a44",
-     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
-    },
-    {
-     "commit": "28a0c35",
-     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
-    },
-    {
-     "commit": "8c29a5a",
-     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
-    },
-    {
-     "commit": "f163816",
-     "why": "unfinished tank or healing work saved at a pause; its finished commits are listed on their own"
-    },
-    {
-     "commit": "191565b",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "03e7e70",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "0e27653",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "739a1d7",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
-    },
-    {
-     "commit": "4a0ed31",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "48409c0",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "72b236b",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "8e1e899",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "8ce437c",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "fa66465",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "f9cc1ec",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "99619da",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "2446d22",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "928138a",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "3c2e87c",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
-    },
-    {
-     "commit": "506cc83",
-     "why": "healer work (Healing mode only); no DPS report request reaches it"
-    },
-    {
-     "commit": "c2999dd",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "25be25d",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "5c09e7b",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "74b7a7e",
-     "why": "tests, goldens, hashes, formatting or docs only; no report request changes"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
      "commit": "d5aa54b",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
-     "commit": "3d9a721",
-     "why": "rotopt hold knobs for tank-side values under a buff; the DPS warrior requests are unchanged (the probe cleared every warrior build)"
+     "commit": "03e7e70",
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
-     "commit": "7872f00",
-     "why": "beta level 30 gear lists only; no report request reads them"
+     "commit": "4a0ed31",
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
-     "commit": "1975660",
-     "why": "rotopt hold knobs for tank-side values under a buff; the DPS warrior requests are unchanged (the probe cleared every warrior build)"
+     "commit": "8ce437c",
+     "why": "tank mode only (Protection warrior, Protection paladin, Feral bear, Warden shaman); no DPS preset reaches it and the report hashes don't move"
     },
     {
-     "commit": "443c547",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "commit": "d10eaea",
+     "why": "tank enchants: the shield's Greater Stamina, Deflection and Superior Deflection; no DPS preset wears them"
     },
     {
-     "commit": "9f2216b",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "commit": "fdca8cf",
+     "why": "tank enchants: the shield's Greater Stamina, Deflection and Superior Deflection; no DPS preset wears them"
     },
     {
-     "commit": "5890f7c",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "commit": "095e140",
+     "why": "the item database rebuilt with the tank synthetic sets; no DPS preset wears them"
+    },
+    {
+     "commit": "2b2a495",
+     "why": "tank work paused mid-way (WIP), finished in the later tank commits; tank mode only"
+    },
+    {
+     "commit": "8609a44",
+     "why": "tank work paused mid-way (WIP), finished in the later tank commits; tank mode only"
+    },
+    {
+     "commit": "28a0c35",
+     "why": "tank work paused mid-way (WIP), finished in the later tank commits; tank mode only"
+    },
+    {
+     "commit": "8c29a5a",
+     "why": "tank work paused mid-way (WIP), finished in the later tank commits; tank mode only"
+    },
+    {
+     "commit": "20ad1aa",
+     "why": "Bloodrage's and Reckless Swings' health costs apply to tanks only; DPS warrior numbers unchanged (the report hashes move by threat and zero-uptime tank auras only)"
+    },
+    {
+     "commit": "bf0ea76",
+     "why": "Protection paladin work; the Ret report hashes move only by zero-uptime tank auras, DPS unchanged"
+    },
+    {
+     "commit": "e4768f2",
+     "why": "test goldens only (TPS and the tank set's rows; no DPS change)"
+    },
+    {
+     "commit": "739a1d7",
+     "why": "test goldens only (TPS and the tank set's rows; no DPS change)"
+    },
+    {
+     "commit": "a7d9b57",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "bc8e547",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "324d648",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "0b15937",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "c19fd77",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "3f8d901",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "9ebec49",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "86b5f2f",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "8fa852a",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "55d72f6",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "dda14db",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "c938028",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "4648ff4",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "982f5a6",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "a68b203",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "d2996ce",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "f61fc00",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "e5e5a4b",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "f15379f",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "e7c51e4",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "ce06045",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "97c9692",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "556bf41",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "c9220cd",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "f163816",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "191565b",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "0e27653",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "48409c0",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "8e1e899",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "506cc83",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "c2999dd",
+     "why": "healer mode only (healing priest, Holy paladin, Restoration druid and shaman); no DPS preset reaches it and the report hashes don't move"
+    },
+    {
+     "commit": "66ab8ad",
+     "why": "the item database rebuilt with a healer synthetic set; no DPS preset wears it"
+    },
+    {
+     "commit": "7714244",
+     "why": "the item database rebuilt with a healer synthetic set; no DPS preset wears it"
+    },
+    {
+     "commit": "fa128f0",
+     "why": "healing priest engine work; Smite and Shadow + Holy report hashes move with no DPS or log change (a healing stat line only)"
+    },
+    {
+     "commit": "72b236b",
+     "why": "healing priest engine work; Smite and Shadow + Holy report hashes move with no DPS or log change (a healing stat line only)"
+    },
+    {
+     "commit": "859bdef",
+     "why": "Meditation adds to casting regen rather than overwriting it; it only changed a set bonus (Vestments of Transcendence) no report build wears, report hashes unchanged"
+    },
+    {
+     "commit": "0aed939",
+     "why": "direct heals take the school's crit bonus, health follows max health down; the commit's own check: report hashes and class goldens don't move"
+    },
+    {
+     "commit": "b2c16f6",
+     "why": "raid damage shares under one player in healbench's small raids; report hashes unchanged"
+    },
+    {
+     "commit": "8d0b618",
+     "why": "leveling plan or leveling gear only; no report build reads it"
+    },
+    {
+     "commit": "f2736ef",
+     "why": "leveling plan or leveling gear only; no report build reads it"
+    },
+    {
+     "commit": "8946f01",
+     "why": "leveling plan or leveling gear only; no report build reads it"
+    },
+    {
+     "commit": "75695f7",
+     "why": "leveling plan or leveling gear only; no report build reads it"
+    },
+    {
+     "commit": "f0b9bee",
+     "why": "the practice room's character sheet; no report build uses it"
+    },
+    {
+     "commit": "993314e",
+     "why": "item database refresh (Wowhead items for 70755, random suffixes, merges); the presets wear synthetic sets and the report hashes don't move"
+    },
+    {
+     "commit": "bd00cd0",
+     "why": "item database refresh (Wowhead items for 70755, random suffixes, merges); the presets wear synthetic sets and the report hashes don't move"
+    },
+    {
+     "commit": "7d662a8",
+     "why": "item database refresh (Wowhead items for 70755, random suffixes, merges); the presets wear synthetic sets and the report hashes don't move"
+    },
+    {
+     "commit": "d764d29",
+     "why": "item database refresh (Wowhead items for 70755, random suffixes, merges); the presets wear synthetic sets and the report hashes don't move"
+    },
+    {
+     "commit": "53ced51",
+     "why": "test goldens only"
+    },
+    {
+     "commit": "599e09a",
+     "why": "test goldens only"
+    },
+    {
+     "commit": "68e977b",
+     "why": "test goldens only"
+    },
+    {
+     "commit": "2a76db4",
+     "why": "the Fury Sunder duty's rotation description on the page only; its sim request is unchanged"
+    },
+    {
+     "commit": "aa7cd24",
+     "why": "Test goldens only: the item set tests leave the hit-trade step items out; no preset moves."
+    },
+    {
+     "commit": "5e3c45f",
+     "why": "The re-sim's own data commit: report data, the Survival report hashes (covered by the Survival line) and tank page wording."
+    },
+    {
+     "commit": "0facd94",
+     "why": "Leveling only: Enhancement leveling stat weights; no level 60 DPS preset moves."
+    },
+    {
+     "commit": "abc98a2",
+     "why": "Leveling only: a leveling Enhancement preset."
+    },
+    {
+     "commit": "a774463",
+     "why": "Leveling only: the leveling talent order."
+    },
+    {
+     "commit": "6a9dea8",
+     "why": "Tanking mode only: Warden tank presets."
+    },
+    {
+     "commit": "ad93b95",
+     "why": "Tanking mode only: Bear tank presets."
+    },
+    {
+     "commit": "b07bdf4",
+     "why": "Tanking mode only: Protection Paladin presets."
+    },
+    {
+     "commit": "a624264",
+     "why": "Tanking mode only: Warrior tank presets."
+    },
+    {
+     "commit": "df481a4",
+     "why": "Tanking mode only: the Warden trinket timing."
+    },
+    {
+     "commit": "71a107e",
+     "why": "Tanking mode only: Warden enchant, UI defaults and notes."
+    },
+    {
+     "commit": "0b901ff",
+     "why": "Tanking mode only: Bear comments and docs."
+    },
+    {
+     "commit": "e37867b",
+     "why": "Tanking mode only: Paladin tank enchant and UI presets."
+    },
+    {
+     "commit": "9eb6f93",
+     "why": "Tanking mode only: Warrior tank UI buffs."
+    },
+    {
+     "commit": "9e01b3e",
+     "why": "Tanking mode tools only: seeds and error bars."
+    },
+    {
+     "commit": "0950b22",
+     "why": "Tanking mode only: engine tests and scoring-run guards."
+    },
+    {
+     "commit": "f1a221b",
+     "why": "Test baselines and raid sim builds after the mana-gain threat change; threat only, no DPS moves (the DPS builds re-check as not stale)."
+    },
+    {
+     "commit": "9c20070",
+     "why": "A code comment."
+    },
+    {
+     "commit": "49f0218",
+     "why": "Mana-gain threat (threat only, read by the Tanking mode); no DPS moves."
+    },
+    {
+     "commit": "c9973fb",
+     "why": "Test goldens only: the item set tests master added or changed leave the hit-trade step items out; no preset moves."
+    },
+    {
+     "commit": "1923846",
+     "why": "The raid comp search cache only (which raid buffs each build ignores); no report number moves."
     },
     {
      "commit": "05ca74d",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "Tanking mode only: Paladin tank consumables."
     },
     {
      "commit": "4a3bcd2",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "Tanking mode only: Warrior tank consumables."
     },
     {
      "commit": "c89e3bd",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "Tanking mode only: Paladin tank consumable search and UI."
     },
     {
      "commit": "4745ce4",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "Tanking mode only: Warden tank rotation and consumables."
     },
     {
      "commit": "88d044d",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "Tanking mode only: Warrior tank consumable search and UI."
     },
     {
      "commit": "df0f997",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "Tanking mode only: Bear tank presets."
     },
     {
      "commit": "464deda",
-     "why": "tank work (Tanking mode only, threat and survival); the DPS builds are unchanged by it"
+     "why": "Tanking and Healing modes only: armor trinkets and threat in replays; the DPS builds re-check unchanged."
+    },
+    {
+     "commit": "3d9a721",
+     "why": "Optimizer test only; no preset moves."
+    },
+    {
+     "commit": "7872f00",
+     "why": "Leveling only: level 30 gear lists removed."
+    },
+    {
+     "commit": "1975660",
+     "why": "Rotation optimizer only (warrior cooldown holds while searching); the published warrior rotations don't move."
+    },
+    {
+     "commit": "443c547",
+     "why": "Tanking mode only: Warden and Bear consumables."
+    },
+    {
+     "commit": "9f2216b",
+     "why": "Tanking mode only: Paladin tank presets."
+    },
+    {
+     "commit": "5890f7c",
+     "why": "Tanking mode only: Warrior tank presets."
     }
    ],
    "source": {
