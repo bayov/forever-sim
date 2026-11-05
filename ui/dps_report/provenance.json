@@ -2349,8 +2349,8 @@
 	},
 	"benches": {
 		"tank": {
-			"commit": "054fe41db035e6469e3f8dcd1c81c8bc305a4cfa",
-			"recordedAt": "2026-11-05T02:13:20.929Z",
+			"commit": "5d0933c3e5aae0115e9fbcf68e48150cf154f73d",
+			"recordedAt": "2026-11-05T02:13:39.976Z",
 			"iterations": 1000,
 			"format": 2,
 			"inputs": {
@@ -2384,8 +2384,8 @@
 			}
 		},
 		"heal": {
-			"commit": "054fe41db035e6469e3f8dcd1c81c8bc305a4cfa",
-			"recordedAt": "2026-11-05T02:13:21.182Z",
+			"commit": "5d0933c3e5aae0115e9fbcf68e48150cf154f73d",
+			"recordedAt": "2026-11-05T02:13:40.244Z",
 			"iterations": 1000,
 			"format": 2,
 			"inputs": {
