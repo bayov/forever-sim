@@ -230,3 +230,18 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-04 19:33 | fairness | pass 30 | master 0facd9428 | quiet | report race best in every build; stale published numbers confirmed (results -1,-2)
 2026-11-04 19:33 | healer_fairness | pass 2 | master 0facd9428 | 1 new finding | -5 (high) Holy paladin raid preset Holy Light 9/8 and Divine Favor lines cost 0.025 carry
 2026-11-04 19:33 | healer_rotations | pass 2 | master 0facd9428 | 1 new finding | -3 (low) shaman tank LHW5 never casts; -2 Disc mana still open
+2026-11-05 01:33 | gear | pass 58 | master a079415316 | quiet | tank gear sets only (paladin boots enchant, Warden enchants); all legal
+2026-11-05 01:33 | consumables | pass 73 | master a079415316 | 1 new finding | consumables-20261105-1 (low) mksettings spec_feral lacks Goblin Sapper Charge
+2026-11-05 01:33 | healer_gear | pass 3 | master a079415316 | quiet | only standards.md changed; no healer rule touched
+2026-11-05 01:33 | tank_gear | pass 4 | master a079415316 | quiet | paladin set recomputed, within tolerances
+2026-11-05 01:33 | healer_mechanics | pass 3 | master a079415316 | quiet | heal-threat change is tank-score replay only
+2026-11-05 01:33 | tank_mechanics | pass 4 | master a079415316 | quiet | new consumables and talents match client spell data
+2026-11-05 01:33 | healer_fairness | pass 3 | master a079415316 | quiet | all 63 bench rows identical to baseline
+2026-11-05 01:33 | healer_rotations | pass 3 | master a079415316 | quiet | baseline identical; -2 and -3 still open
+2026-11-05 01:33 | tank_rotations | pass 4 | master a079415316 | quiet | 91 rows match round-5 ref; 36 A/Bs no winner
+2026-11-05 01:33 | tank_fairness | pass 4 | master a079415316 | 1 new finding | tank_fairness-20261105-1 (high) paladin never drinks its potion in tank score
+2026-11-05 01:33 | client_update | pass 10 | master a079415316 | 1 new finding | client_update-20261105-1 (low) feral Rip/Rake/Bite flat x1.25 vs client rank values; build 70790
+2026-11-05 01:33 | results | pass 79 | master a079415316 | 1 new finding | results-20261105-1 (low) mksettings feral loses sapper (-3.6 DPS on regen)
+2026-11-05 01:33 | rotations | pass 55 | master a079415316 | 1 new finding | rotations-20261105-1 (low) feral 5-CP Ferocious Bite gate 45 -> 65 energy
+2026-11-05 01:33 | mechanics | pass 67 | master a079415316 | quiet | Bite energy scaling and explosive form rule match client 70790
+2026-11-05 01:33 | fairness | pass 31 | master a079415316 | quiet | audit1b all PASS; only feral (+4.1) and survival (-0.8) moved

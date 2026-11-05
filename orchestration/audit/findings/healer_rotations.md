@@ -18,6 +18,9 @@
 - tried (paired seeds): Power Word: Shield mana gate 0.9 (was 0.5): Chromaggus +0.021 at 4,000 it (0.825 -> 0.846), still OOM at 107 s; mean of the 7 files +0.008 (Vael +0.022, Golemagg -0.009); 300 s Golemagg/Ragnaros +0.005/+0.019. Gate 0.7: Chromaggus +0.008 at 4,000 it, mean +0.005. Flash Heal first gate 0.9 or no Flash Heal first: mean -0.008 / -0.012, OOM unchanged. Renew gated on 60% missing: mean -0.065.
 - proposed fix: none of these stops the OOM, so this needs a worker to find a cheaper tank pattern for Disc on long, heavy tank fights (for example a lower Flash Heal rank under a mana line, or fewer Renews below 50% mana). The shield gate 0.9 is the best one-line change measured (+0.021 Chromaggus, +0.008 mean) and could go in meanwhile.
 - update 2026-11-04, master 0facd9428: a7d9b57ef (Flash Heal 7 only, mana gate 0.85, shield gate 0.7) meant to fix this, but on master it still runs dry. Chromaggus at its own length: carry 0.866, 365 mana left, OOM at 101 s (1,000 it). Golemagg at 300 s: OOM at 210 s (500 it). The old APL from 1e9eb71f7 on today's bench gives 0.854, also OOM at 99 s, so the re-tune didn't move it. The bench's tank changes since then (the tank faces the boss; idle fillers in the tank role) raised the carry scale, so more damage has to be healed. The Holy tank healer now ends Chromaggus with only 677 mana left (it had 3,058) and Golemagg 300 s with 1,043. The variants (shield gate 0.9, emergency Flash Heal at 35%) were cut off by the wrap-up and are not measured.
+- update 2026-11-05, master a07941531: unchanged on master (Chromaggus 0.866, 365 mana, OOM 101 s, 1,000 it).
+  Paired 1,000 it: shield gate 0.9 (line 3, was 0.7) Chromaggus 0.889 / 428 mana / OOM 107 s, Golemagg 1.984
+  (-0.007); Renew only at 40% mana or more: Chromaggus 0.865, OOM 103 s, Golemagg unchanged. Neither stops the OOM.
 - needs: worker fix
 
 ## Resolved

@@ -4,12 +4,21 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### results-20261105-1: mksettings -spec feral lacks the Goblin Sapper Charge the committed feral requests carry (drift, -3.6 DPS)
+- severity: low (no published number is wrong; regenerating the request by the README would lose 3.6 DPS)
+- affects: druid__feral-cat, druid__feral-cat-duty-ff (tools/rotopt/mksettings/spec_feral.go)
+- found: 2026-11-05, master a079415316
+- evidence: drift report vs reference differs only here: `.consumes.sapperExplosive: committed=SapperGoblinSapper regen=<absent>`. The meta note says the sapper was added by hand on 2026-11-04 (+3.1 at 180 s). Paired 20k seed 1: committed 1169.5 (shared run), regen 1165.9 (`/tmp/audit-work/results/drift/druid__feral-cat.regen.json`). spec_enh.go:43 and spec_ret.go:44 set the sapper; spec_feral.go does not. Sure of the numbers.
+- proposed fix: set SapperExplosive: SapperGoblinSapper in spec_feral.go (and refresh ref/results/drift_report.txt).
+- needs: orchestrator fix
+
 ### results-20261104-2: 33 metas / builds.json lag the phase 5 hit-trade regears (feral +26, Ret +11, Fury builds.json -16 to -25)
 - severity: low (no sim error; the requests moved, the published numbers have not been re-simmed yet)
 - affects: druid feral-cat (+2), paladin level_60 (+3), mage arcane, rogue (6), shaman (6), warlock destruction_fire (3), warrior arms/fury (builds.json only)
 - found: 2026-11-04, master 0facd9428
 - evidence: shared run (68 builds, 20k, seed 1) vs meta published.dps: feral-cat 1164.9 vs 1139.0 and duty-ff 1160.1 vs 1134.1 (74cc2b8e3 regear, hit-4); paladin level_60 1103.2 vs 1092.1, duty-crusader +11.8, duty-wisdom +10.7 (3f4d44d4a, Ret twist regear onto hit-3); mage arcane +7.6 (74cc2b8e3); shaman elemental/enh +6.5 to +7.4 (87922bb77 hotfix 113380 LB/CL/shock, 3e4796fe7 regear); rogues -12 to +7.9 (31c10b61c, aa4551a04 regear onto hit steps, on top of results-20261104-1); warlock destruction_fire +0.8 to +1.1 (c8a7b4ac3, talents 242, the meta note says +1.1 at 180 s, matches). Warrior: metas match the run (cd3f44cf2, <=1.6), builds.json is 6.6 to 25 higher than the run (arms, fury, fury_2h families), waiting on the republish. Shock Ret duties are within 0.3. Drift report equals the reference; no new drift.
-- proposed fix: re-sim and republish the report (metas and builds.json) for these builds.
+- update 2026-11-05, master a079415316: builds.json now matches the shared run on all 68 (<=1.3, noise; warrior and feral caught up, feral-cat 1168.8 vs run 1169.5). The metas still lag in the same places: feral-cat +30.5 / duty-ff +30.2 (1139.0, 1134.1 vs 1169.5, 1164.3), paladin level_60 +11.1 / crusader +11.8 / wisdom +10.7, rogue seal-fate-swords -12.0 / daggers -11.6, combat-daggers +7.9, subtlety +3.9, mutilate -2.5, mage arcane +7.6, shaman six +6.5 to +7.4 and enh-imp-gw +1.4, warrior <=1.6, warlock destruction_fire +0.8 to +1.1. 28 of 68 metas off by more than 0.5. Only the metas are left.
+- proposed fix: set the metas' published.dps and source from builds.json / the run (builds.json already carries the numbers).
 - needs: orchestrator fix
 
 ### results-20261104-1: five rogue metas' published.dps lag the hotfix re-sim (up to 17.3 DPS)

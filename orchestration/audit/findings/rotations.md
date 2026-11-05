@@ -4,6 +4,25 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### rotations-20261105-1: Feral cat: Ferocious Bite energy gate 45 -> 65, now that extra Energy hits harder (hotfix 113403)
+- severity: low (+1.9 DPS at 180 s, 0.16%; +1.1 on the FF duty)
+- affects: druid__feral-cat, druid__feral-cat-duty-ff (ui/feral_druid/apls/level60.apl.json:10, level60_ff.apl.json:11)
+- found: 2026-11-05, master a07941531
+- evidence: ff56f8ddc (`sim/druid/ferocious_bite.go`, hotfix push 113403) raised rank 6's damage per extra
+  Energy 2.7 -> 3.3. The 5-CP Ferocious Bite line still fires at `{"cmp":{"lhs":{"currentEnergy":{}},"op":"OpGe","rhs":{"const":{"val":"45"}}}}`.
+  Paired `ab.py` (20k it, 8 blocks, shared CLI a0794153163a), B-A at 120/180/300 s:
+  | gate | S0 1e6 | S0 2e8 | pooled |
+  |---|---|---|---|
+  | 35 | -2.61 / -2.92 / -3.41 | - | - |
+  | 55 | +1.25 / +1.18 / +2.10 | +1.40 / +1.22 / +1.92 | +1.33 / +1.20 / +2.01 |
+  | 65 | +1.63 / +1.86 / +3.28 | +1.80 / +1.96 / +3.12 | +1.72 / +1.91 / +3.20 |
+  | 75 | -0.42 / +0.19 / +1.85 | - | - |
+  | 65, FF duty | +0.70 / +0.89 / +2.06 | +1.18 / +1.33 / +2.06 | +0.94 / +1.11 / +2.06 |
+  Baseline at 180 s: 1169.1 (feral-cat), 1164.5 (duty-ff). Gains at every length on both sets; 65 is the peak of
+  the measured grid (SE about 0.2-0.4 a set).
+- proposed fix: in both APLs (and the two req rotations), the 5-CP Ferocious Bite line's `"val":"45"` -> `"val":"65"`.
+- needs: orchestrator fix
+
 ## Resolved
 
 ### rotations-20261101-1: Frost mage: a fourth Arcane Blast stack above 70% mana, now that a stack costs 100% (was 175%)

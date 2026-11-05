@@ -1,9 +1,18 @@
-# Healer fairness pass 2 (2026-11-04, master 0facd9428)
+# Healer fairness pass 3 (2026-11-05, master a079415316)
 
-Result: findings (1 new, high). Resolved: -1 (tank bench raid, 7b6623f27), -2 (heal gates, 324d64834, 0b15937a8,
-a7d9b57ef, bc8e5473b), -3 (stat-less wand, dda14db65). Still open: -4 (no healing by class in the boss files).
-Due because 53 watched files changed: healbench (tank role keeps idle fillers; tanks now face the boss), all 9
-healer requests re-tuned.
+Result: quiet. No new findings, none resolved. Still open: -5 (high, paladin raid preset's Holy Light lines; the
+preset is unchanged) and -4 (low, no healing by class in the boss files).
+Due because 3 watched files changed (orchestration/standards.md, sim/core/spell_result.go, sim/druid/ferocious_bite.go).
+What changed since dc303b02 that a healer could feel: healing threat on a tank in a score replay takes the whole heal
+(spell_result.go; threat only), BonusArmor on-use trinkets become survival cooldowns (major_cooldown.go), explosives
+usable in form (consumes.go; druids in form only), standards 40's tank consumables (tanks, not healbench requests).
+tools/healbench and the 9 requests are unchanged. TestHoly/TestDisc goldens moved (+0.3 to +0.6 HPS on the
+AllItems rows only, likely the BonusArmor trinket change); the identical bench below shows no healbench request feels it.
+
+Re-bench to confirm: all 9 requests in their own role on all 7 files at 1,000 iterations, built from a079415316.
+All 63 rows are byte-identical to pass 2's `ref/healer_fairness/bench_0facd94.tsv` (every column, not only carry),
+so the tables below, the ranking and pass 2's conclusions stand. Sections 1 and 3 were not re-done: no request,
+preset or healbench code changed.
 
 ## 1. Same terms (the 9 requests)
 
@@ -12,7 +21,7 @@ Engineering + Alchemy. Differences, all as in pass 1 and fine: race (Human pries
 shaman/druid), paladin's off-hand 990314 and Libram, weapon enchants, mana cooldowns by class. Slot 16 is now
 stat-less for all four (990514 has no stats). healbench overrides reaction (0.3 s ±25%), stopcast 0.5, assignment.
 
-## 2. The numbers (healbench -carry, 1,000 iterations, each file at its own length, built from 0facd9428)
+## 2. The numbers (healbench -carry, 1,000 iterations, each file at its own length; 0facd9428 and a079415316 give the same rows)
 
 Tank role:
 
@@ -79,11 +88,12 @@ classes' presets didn't change role logic. Not re-run: raid presets in the tank 
 
 ## Reproduce
 
-- Build: worktree of 0facd9428; `PATH=$PATH:~/go/bin protoc -I=./proto --go_out=./sim/core ./proto/*.proto &&
+- Build: master a079415316 (or 0facd9428: same rows); `PATH=$PATH:~/go/bin protoc -I=./proto --go_out=./sim/core ./proto/*.proto &&
   go build --tags=with_db -o healbench ./tools/healbench`
 - Per cell, from the worktree: `healbench -encounter tools/encounters/<boss>.json -role <tank|raid> -carry -iters 1000
   tools/healbench/req/<req>.json`; tank role for the 5 non-raid requests, raid role for the 4 `_raid` ones.
-- Rows (all columns, plus the paladin variants): `ref/healer_fairness/bench_0facd94.tsv`.
+- Rows (all columns, plus the paladin variants): `ref/healer_fairness/bench_0facd94.tsv` (pass 3 reproduced the
+  63 shipped rows exactly; no new baseline written).
 
 ## Open items for the next pass
 

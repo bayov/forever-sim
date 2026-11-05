@@ -1,7 +1,7 @@
 # Fairness between healers
 
 The healer_fairness auditor keeps this current (`orchestration/audit/passes/healer_fairness.md`). It holds the
-healer ranking in each role, its reasons and the open questions. Last pass: 2, 2026-11-04, master 0facd9428.
+healer ranking in each role, its reasons and the open questions. Last pass: 3, 2026-11-05, master a079415316 (numbers unchanged since 0facd9428).
 Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 `orchestration/audit/findings/healer_fairness.md`.
 

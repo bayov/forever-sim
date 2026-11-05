@@ -1,142 +1,136 @@
-# tank_fairness pass 3: 2026-11-04, master dc303b0
+# tank_fairness pass 4: 2026-11-05, master a079415
 
-Forced by hand after round 3: the engine fix fd9538c (mana-gain threat unmultiplied, disjoint tank seeds) and the four
-class workers' fixes for pass 2's findings, with re-optimized presets.
+Due: 33 watched files changed since dc303b0: tank rounds 4 and 5 (full raid consumables under standards 40's new
+sentence, talents and knobs re-searched on them), the Warden UI's encounter, the DPS Report re-sim at 877bcec8c.
 Raw table: `ref/tank_fairness/summary.tsv` (72 rows: 12 preset requests × 6 scoring bosses, seed 1, scores at all three weights).
 
 ## How
 
-- `go build -tags=with_db -o tankbench ./tools/tankbench` (protoc-gen-go needs `PATH=$PATH:/root/go/bin`), then per boss
-  `tankbench -iters 3000 -encounter tools/encounters/<boss>.json tools/tankbench/req/*_{max_threat,balanced,max_survival}.json`,
-  seed 1 and again on seed 7. Six-boss mean error = sqrt(Σerr²)/6.
-- Same terms: all 12 requests flattened and compared by script, with gear, talents and rotation set aside. UI presets
-  compared slot by slot (gear, enchants, talents, APL JSON, race, buffs, debuffs, consumables, professions, options).
-- Equal care: orchestration/tank_round3/*.md, orchestration/tank_handoff/<class>/round3/, and the round-3 sections of docs/tank_*.md.
-- Variants (scratch requests): the flask swapped on all 12 presets, Dirge's Kickin' Chimaerok Chops on the warrior, paladin and
-  Warden, and warrior queueDelay 250.
+- `go build -tags=with_db -o $AUDIT_WORK/tank_fairness/tankbench ./tools/tankbench`, then `tools/audit/tank_fairness/run.sh`
+  (every boss file but Ragnaros, 3,000 iterations, seeds 1 and 7) and `summ.py s1 x`. Six-boss mean error = sqrt(Σerr²)/6.
+- Same terms: `tools/audit/tank_fairness/terms.py` flattens all 12 requests (gear, talents, rotation set aside) and prints what differs.
+- Variants (scratch, `$AUDIT_WORK/tank_fairness/var/`): each paladin preset with the Greater Stoneshield Potion and an explicit
+  potion action, with the Demonic Rune, with the Mageblood Potion and with the Elixir of Greater Intellect; seeds 1 and 2.
+- UI: consumable enums per presets.ts against the requests; the Warden's sim.ts defaults. DPS Report: tank_builds.json's
+  talents, races and scores against the requests and this run.
 
-## Own-weight six-boss means (3000 iterations, seed 1 ± error [seed 7]) against round 3's claims
+## Own-weight six-boss means (3,000 iterations, seed 1 ± error [seed 7])
 
 | preset | warrior | paladin | bear | Warden |
 |---|---|---|---|---|
-| Max threat (w 1/3) | 3700.0 ± 5.8 [3694.7] (3695.6) | 2800.7 ± 3.1 [2796.8] (2793.7) | 2844.5 ± 5.9 [2821.3] (2842.5) | 2421.8 ± 6.5 [2409.7] (2430.0) |
-| Balanced (w 1) | 3012.3 ± 7.7 [2991.3] (3010.6) | 2418.3 ± 5.5 [2405.3] (2415.0) | 1849.0 ± 9.1 [1829.0] (1851.8) | 748.2 ± 9.7 [723.3] (767.2) |
-| Max survival (w 3) | 1204.2 ± 15.3 [1166.7] (1202.1) | 1449.0 ± 14.9 [1409.7] (1445.2) | -655.5 ± 22.0 [-718.8] (-633.8) | -3996.3 ± 22.1 [-3986.0] (-3970.8) |
+| Max threat (w 1/3) | 4649.8 ± 5.0 [4647.5] | 3248.5 ± 3.2 [3240.7] | 3490.8 ± 5.1 [3469.7] | 3168.7 ± 4.2 [3164.8] |
+| Balanced (w 1) | 3867.3 ± 7.0 [3841.5] | 2825.7 ± 5.2 [2824.5] | 2500.3 ± 7.5 [2472.0] | 1794.0 ± 6.2 [1776.8] |
+| Max survival (w 3) | 2150.7 ± 13.6 [2144.5] | 1921.8 ± 14.3 [1888.7] | 232.5 ± 11.1 [214.3] | -1993.7 ± 17.5 [-2000.3] |
 
-- Every claim reproduces within 2× error on seed 1.
-- The Warden's Balanced is soft: it was a 1,000-iteration figure, and seed 7 is 44 under it. This is noted under finding -9.
-- Seed-to-seed spread at w=3 reaches about 40, more than the quoted errors.
+All within about 2× error of the DPS Report's tank_builds.json (re-simmed at 877bcec8c, 1,000 iterations); its talents
+and races match all 12 requests. Pass 3's open item (the report still on round 2) is closed.
+
+Since pass 3, own weight: warrior +950 / +855 / +947, paladin +448 / +408 / +473, bear +646 / +651 / +888,
+Warden +747 / +1046 / +2003. Max survival's order flips: warrior first, paladin second (finding -20261105-1 flips it back).
 
 ## Does each preset win its own weight (rows: preset; columns: w = 1/3, 1, 3)
 
 | | 1/3 | 1 | 3 |
 |---|---|---|---|
-| warrior MT / Bal / MS | **3700** / 3622 / 3423 | 2905 / **3012** / 2868 | 519 / 1182 / **1204** |
-| paladin MT / Bal=MS | **2801** / 2742 | **2430** / 2418 | 1320 / **1449** |
-| bear MT / Bal / MS | **2845** / 2742 / 2581 | 1729 / **1849** / 1772 | -1617 / -828 / **-656** |
-| Warden MT / Bal / MS | **2422** / 2350 / 2247 | 531 / **748** / 686 | -5144 / -4057 / **-3996** |
+| warrior MT / Bal / MS | **4650** / 4466 / 3903 | 3813 / **3867** / 3465 | 1303 / 2073 / **2151** |
+| paladin MT / Bal / MS | **3249** / 3240 / 3077 | 2819 / **2826** / 2789 | 1531 / 1582 / **1922** |
+| bear MT / Bal / MS | **3491** / 3349 / 2964 | 2365 / **2500** / 2281 | -1012 / -44 / **233** |
+| Warden MT / Bal / MS | **3169** / 3077 / 2956 | 1704 / **1794** / 1718 | -2690 / -2055 / **-1994** |
 
-Within noise:
-- the warrior's Max survival over Balanced at w=3 (+22 ± 24);
-- the Warden's Max survival over Balanced at w=3 (+60 ± 35);
-- at w=1 the paladin's Max threat edges out Balanced (+11.8 ± 7.9, 1.5×).
-
-The paladin's Max threat and Balanced differ only in talents and one enchant; its Balanced and Max survival are byte-identical. Finding -4 allowed this kind of tie and it was documented, so it isn't re-raised.
+Every preset wins its own weight on both seeds. The paladin's Max threat and Balanced are one build since round 5
+(talents and gear the same; only Spirit of Zanza against Scorpok and the rotation knobs differ). They tie at their
+weights: +8.3 ± 4.5 at 1/3 (seed 7 +3.0) and +6.7 ± 7.8 at 1. This is documented as the paladin's call 14
+(docs/tank_paladin.md:582-584), a measured result, so it isn't raised. The paladin's Max survival is its own build again.
+The warrior's and Warden's Max survival now beat Balanced at w=3 beyond the noise (+78 ± 22, +61 ± 24).
 
 ## Same terms
 
-All 12 requests are equal on:
-- level 60, 200 ms reaction, 5 yd, in front;
-- Kings and improved Might;
-- Engineering and Blacksmithing;
-- all 18 raid buffs and 13 debuffs (the tank's own debuffs stripped by `tankscore.OwnDebuffs`);
-- the encounter and sim options;
-- no Salvation.
+All 12 requests are equal on these:
+- level, reaction time, distance, position;
+- professions;
+- all raid buffs and debuffs, with the tank's own stripped;
+- encounter and options, no Salvation;
+- Mongoose, Phalanx, Greater Fortitude, both Jujus;
+- Dragonbreath Chili, Rumsey Rum, the Goblin Sapper.
 
-The accepted differences hold:
-- races are each spec's best (the Warden's now differ by preset: Night Elf, Night Elf, Undead);
-- mana users take Major Mana Potion;
-- Wisdom is on the Warden only;
-- the bear's weightstone and the Warden's Rockbiter;
-- the paladin's Greater Arcane Elixir.
+What differs is per-class picks, each A/B'd in round 4 or 5:
+- **Flask:** Natural Precision everywhere except paladin Max threat and Balanced, which take Supreme Power.
+- **Food:**
+  - Dirge's chops on every Max survival and on all three Warden presets.
+  - Nightfin Soup on paladin Max threat and Balanced.
+  - Dumpling elsewhere.
+- **Zanza slot:**
+  - R.O.I.D.S. on warrior and bear Max threat.
+  - Scorpok on paladin and Warden Max threat.
+  - Spirit of Zanza elsewhere.
+- **Potion:**
+  - Mighty Rage on warrior and bear Max threat and Balanced.
+  - Greater Stoneshield, with a potion action, on warrior and bear Max survival and all three Warden presets.
+  - **Major Mana Potion on all three paladin presets**, with no potion action (below).
+- **Mana consumables:** Greater Arcane on the paladin and Warden; the Warden alone takes the Demonic Rune, Greater Intellect, Nature Power and Mageblood (not at Max survival).
+- **Weapon:** Elemental stone on the warrior and paladin, Dense weightstone on the bear, Rockbiter on the Warden.
+- **Race:** Undead for the warrior and paladin, Night Elf for the bear, Night Elf / Night Elf / Undead for the Warden.
+- **Wisdom:** the Warden only, as before.
 
-New since pass 2, and A/B'd:
-- The bear takes Flask of Natural Accuracy on all three presets (Titans -309 at Max threat). The Warden's Max threat takes it too.
-- Every other preset keeps Titans, and each swap measured here confirms its current flask (-24 to -270 on two seeds, paladin Max threat -6.5 ± 4.3).
-- The bear's Max survival eats Dirge's chops. No other tank was tried on it, and it gains for the paladin and Warden: finding -10.
-- Enchants differ by class, each A/B'd: the paladin takes Lesser Block on the shield (its call 11) and the Warden Superior Defense on the cloak.
+The one unequal term: `autocastOtherCooldowns` never drinks a defensive potion in a tank score. The other three tanks
+found this and added an explicit potion action. The paladin's search tried the Stoneshield without one, and read 0.0 ± 0.0 as "never drinks one".
 
-Open question 4 from pass 2 is answered: rotopt goes through `tankscore.MakeTank` (tools/rotopt/run.go:211, main.go:274), which calls `OwnDebuffs`.
+Paladin variants, own weight, seed 1 / seed 2:
 
-## Spread at Balanced (per boss, vs the mean of the other three)
+| variant | Max threat | Balanced | Max survival |
+|---|---|---|---|
+| Greater Stoneshield + potion action | +57.8 / +58.8 | +171.6 / +174.6 | +309.2 / +318.2 |
+| Demonic Rune | +1.7 / +1.6 | +3.0 / +3.3 | +2.2 / -1.2 |
+| Mageblood | -0.8 / -0.7 | -0.9 / +0.1 | -1.3 / -0.7 |
+| Greater Intellect | +0.5 / +1.0 | +2.0 / +2.0 | +2.5 / -1.0 |
+
+The Stoneshield result is finding -20261105-1 (high). It takes the paladin's Max survival to 2,231 against the warrior's
+2,151. The mana consumables are noise: the paladin isn't mana-bound, so leaving them out is fair.
+
+## Spread at Balanced (seed 1, per boss, against the mean of the other three)
 
 | boss | warrior | paladin | bear | Warden |
 |---|---|---|---|---|
-| Magmadar | 3438 (+56%) | 2813 (+17%) | 2239 (-14%) | 1560 (-45%) |
-| Golemagg | 3263 (+64%) | 2590 (+17%) | 2111 (-11%) | 1274 (-52%) |
-| Onyxia | 3155 (+81%) | 2978 (+65%) | 1706 (-24%) | 558 (-79%) |
-| Broodlord | 2678 (+127%) | 1928 (+35%) | 1872 (+29%) | -262 (-112%) |
-| Vaelastrasz | 3435 (+53%) | 2764 (+12%) | 2220 (-16%) | 1734 (-38%) |
-| Chromaggus | 2105 (+214%) | 1437 (+61%) | 946 (-10%) | -375 (-125%) |
+| Magmadar | 4200 (+51%) | 3208 (+3%) | 2808 (-14%) | 2342 (-31%) |
+| Golemagg | 4041 (+58%) | 2961 (+1%) | 2666 (-12%) | 2070 (-36%) |
+| Onyxia | 3990 (+65%) | 3369 (+28%) | 2289 (-23%) | 1616 (-50%) |
+| Broodlord | 3588 (+75%) | 2221 (-11%) | 2557 (+7%) | 1370 (-51%) |
+| Vaelastrasz | 4463 (+42%) | 3433 (-1%) | 3195 (-10%) | 2796 (-24%) |
+| Chromaggus | 2922 (+130%) | 1762 (+6%) | 1487 (-15%) | 570 (-72%) |
 
 | Balanced, six-boss mean | warrior | paladin | bear | Warden |
 |---|---|---|---|---|
-| TPS | 1895 | 1306 | 1610 | 1441 |
-| DTPS | 366 | 288 | 570 | 730 |
-| Healing needed | 323 | 197 | 488 | 853 |
+| TPS | 2200 | 1534 | 1760 | 1648 |
+| DTPS | 376 | 314 | 584 | 676 |
+| Healing needed | 317 | 245 | 457 | 692 |
 
-Explanations, all unchanged from pass 2:
-- **Warrior threat (+22% to +41% TPS):** Revenge, Heroic Strike and Shield Slam, all sourced.
-- **Paladin damage taken (healing needed -45% to -99%):** finding -2. The mechanics are checked; three user calls remain.
-- **Warden healing need (+83% to +236%):** a class gap by ruling (standards 40).
-- **Paladin TPS (about 21% under the others):** still unexplained (open question below).
+The full raid set narrowed the gaps (the Warden's healing need was +236% over the others at worst in pass 3; now +100% on the mean).
 
-The logs disagree as before: the Anniversary main tanks are warriors (druids on four bosses), with no paladin or shaman.
+Explanations:
+- **Warrior score (+42% to +130%) and TPS (+34% over the others' mean):** Revenge, Heroic Strike and Shield Slam, all sourced. Taken as real.
+- **Paladin healing needed (lowest; -50% against the others' mean):** finding -2. The mechanics are checked; three user calls remain.
+  - With the Stoneshield, it would drop to 188.
+- **Paladin TPS (-18% under the others' mean):** still unexplained; open question in fairness_tanks.md.
+- **Warden (last everywhere):** a class gap by ruling (standards 40).
 
-## Equal care (round 3)
-
-| | warrior | paladin | bear | Warden |
-|---|---|---|---|---|
-| search / confirm | 1k / 3k | 1k / 3k | 1k / 3k | 3k A/Bs on the round-2 search |
-| final numbers | 10k, seeds 1 and 2 | 10k, seed 1 | 3k (UI: 1k) | 1k |
-| races × 3 weights | yes | yes | yes | yes |
-| talents, APL knobs | yes | yes (Bulwark frozen) | yes | yes |
-| enchants A/B'd | cloak, wrist, shield | wrist, cloak, boots, shield | 8+ slots | wrist, cloak, shield |
-| consumables A/B'd | none | none | all, each weight | Max threat flask only |
-| raw output committed | yes | yes | yes | yes |
-
-The uneven part that matters is consumables, and it is measured in finding -10.
-
-No class's choices rest only on 1,000-iteration runs. The Warden's headline scores do, and they are slightly high (finding -9).
+The Anniversary logs are unchanged: warrior main tanks, druids on four bosses, no paladin or shaman. The sim ranks the
+paladin second at Balanced and (once fixed) first at Max survival, which the logs don't show. The likely reasons are
+finding -2's calls and the population.
 
 ## UI = bench
 
-Script-checked for all 12 presets: gear, enchants, talents, APL JSON, race, professions, individual and raid buffs, and consumables match their requests.
-
-Finding -6 is closed. One exception remains, the warrior:
-- queueDelay is 250 in the UI and 0 on the bench, which is -75 at Max threat;
-- its UI debuffs keep Thunder Clap, the Shouts and the tank Sunder ramp that the bench strips.
-
-Both are finding -11.
-
-Two small things, not findings:
-- The bear's Max survival food comes from its encounter preset, not its build.
-- The paladin and Warden UIs default to a non-tank build until a build is chosen.
-
-## DPS Report, Tanking mode
-
-- **Data:** the regen had not landed on master at dc303b0. The last tank data, 4feee54c2 (17:13Z), predates every round-3 preset commit (17:54 to 18:20). tank_builds.json still holds:
-  - the Warden's round-2 races and talents, at 2292 / 548 / -4357 against round 3's 2430 / 767 / -3971;
-  - the paladin's old Balanced wrist and 1363.3 Max survival;
-  - the Warden's Max threat on Titans.
-
-  This is recorded here, not as a finding, because a regen session is deploying it now. The next pass checks tank_builds.json against the requests.
-- **Code:** tankheal.py and report.js treat all four tanks alike: the same 7 boss files, 1,000 iterations, weights 1/3, 1 and 3, six scored bosses, and no per-class case.
+The consumable enums in each presets.ts are the requests' set. Finding -11 is closed:
+- the Warden's sim.ts now loads the bench encounter and Night Elf;
+- its default gear, APL and talents are the tank build.
 
 ## Findings
 
-- **Closed:** -6 (UI buffs and professions), -7 (the Warden's Max threat flask holds, Titans -24.7 / -32.7), -8 (round 3 searched all four with raw output; what's left is -10).
-- **Still open:** -2 (paladin damage taken; user calls), -5 (legacy warrior file; the healing session's call), -9 (partly fixed; the tank_bench/summary.tsv header, docs/tank_sim.md status, paladin call 11, warrior doc line 199 and the Warden's 1k Balanced figure remain).
-- **New:**
-  - -10 (high): consumables were searched for the bear only; Dirge's chops gain +62 on paladin Max survival, +42 on Warden Balanced and +157 on Warden Max survival.
-  - -11 (medium): the warrior UI's queueDelay 250 and bench-stripped debuffs.
+- **New:** -20261105-1 (high): the paladin never drinks its potion. Greater Stoneshield with a potion action gains
+  +58 / +172 / +309 at Max threat / Balanced / Max survival.
+- **Resolved:**
+  - -11: the Warden UI's default encounter.
+  - -10: every tank searched every consumable slot.
+  - -9: the last stale figure is now only a round-3 column.
+- **Still open:**
+  - -2: the paladin's damage taken; waits on the user's calls.
+  - -5: the legacy warrior file; the healing session's call.

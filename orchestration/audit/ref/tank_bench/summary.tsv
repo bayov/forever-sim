@@ -1,4 +1,4 @@
-# Rows per class from that class's latest round (2026-11-04: warrior and paladin round 5, bear and Warden round 5 from tank-fixes4), each rebenched on its own branch: 1000 iterations, default seed. tankbench -iters 1000 -encounter tools/encounters/<boss>.json tools/tankbench/req/<request>.json
+# master a07941531, 1000 iterations, default seed, date 2026-11-05 (tank_rotations pass 4; every row equals the round-5 ref the workers committed). tankbench -iters 1000 -encounter tools/encounters/<boss>.json tools/tankbench/req/<request>.json
 # weight = the request name's preset (Max threat 1/3, Balanced 1, Max survival 3); score = tankbench's column at that weight, raid DPS; * = legacy request, Balanced assumed. scoring_mean = mean of the 6 bosses without ragnaros; "none" = no healing saves it.
 request	boss	weight	score	score_err	safe_dps	tps	dtps	healing_needed	death_floor	tmi	death_pct	biggest_hit	dps
 druid_bear_balanced	broodlord	1	2539.0	32.0	1855.0	1745.0	487.0	391.0	0.0	41.0	0.0	1807.0	670.0

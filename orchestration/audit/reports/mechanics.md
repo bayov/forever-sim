@@ -1,43 +1,28 @@
-# Mechanics pass 66 (2026-11-04, master 0facd9428)
+# Mechanics pass 67 (2026-11-05, master a07941531)
 
-One new finding (low): mechanics-20261104-1.
+Quiet: no new finding. One open finding updated (mechanics-20261104-1, Energy part fixed).
 
 ## Range
 
-6b480b060..0facd9428 (70 watched files). Shared-engine commits (sim/core, no mksettings change):
+dc303b026..a07941531 (9 watched files). Commits on sim / mksettings:
 
 | Commit | What | Mechanics check |
 |---|---|---|
-| 49f02184c, 9c20070c9 (mana.go) | Mana-gain threat under Forever no longer multiplied by the threat multiplier; NoThreat sources make none | Marked "to verify" (standards 40). Classic and wowsims/forever leave it unmultiplied; no Forever source. Tank threat only. Added to verdicts' open items. |
-| 659cad198 (tank_score.go) | Tank score threat per damage 0.7 -> 1 | Salvation removed (verdicts row, post 9, tier 1). Consistent. |
-| 0aed93989 (spell_result.go, unit.go) | Direct heal crit takes the school crit bonus; losing max health clamps current health | Healing only; same rule HoT ticks used. No DPS path. |
-| b2c16f671 (raid_damage.go) | A fractional raid-damage share can hit nobody | Raid-damage model, not a game mechanic; the Level 60 presets' 2 hits a minute at full share are unchanged. |
-| 87f28803b, 318fc7efb, 0950b2242 (health.go, major_cooldown.go, apl_values_resources.go, racials.go, apl_helpers.go) | Health costs (Bloodrage, Reckless Swings) out of TMI; tank-score replay reads no health (survival cooldowns, health APL values, Berserking at 10%) | Replay-only scoring guards. Berserking outside the replay unchanged (10% to 30% by health). |
-| Class commits (shaman 113380, warrior Revenge / Unbridled Wrath, paladin, priest, druid, warden) | Class scope | Ported hotfix values; class auditors and the client update ledger. |
+| ff56f8ddc (sim/druid/ferocious_bite.go) | Forever damage a point of extra Energy 0.7 / 1.2 / 1.8 / 2.5 / 3.1 / 3.3 (hotfix push 113403) | Matches 70790 SpellEffect #1 bp 70 / 120 / 180 / 250 / 310 / 330 for 1328618 / 22568 / 22827 / 22828 / 22829 / 31018 (tier 1). Updated mechanics-20261104-1; base and per combo point parts still on the 1.25 scale. |
+| 22a7d7913 (consumes.go, character.go) | Sapper, Land Mine, EZ-Thro bombs usable in a form; dynamite, grenades, Holy Hand Grenade leave it | 70790 SpellMisc Attributes_0: 13241, 4100, 1269334, 1269330 = 0x0; 12419, 23063, 4068, 19769, 1317268 = 0x10000 (NOT_SHAPESHIFTED). Matches. New verdicts row. Only potions keep their own canUseItemsInForm path. |
+| 464deda7b (major_cooldown.go, spell_result.go) | BonusArmor on-use trinkets are survival cooldowns; heal threat in a tank-score replay takes the whole heal | Tank scoring and cooldown classification; no DPS mechanic. |
+| aa7cd24dc | Test-only set filter | n/a |
 
 ## Getting current
 
 | Source | Result |
 |---|---|
-| Client build | **1.60.1.70790** new (probe). 23 of 34 mechanics tables differ from 70755. |
-| 70790 content | Bake of hotfix pushes since 70707 (shaman, warrior, rogue, paladin, hunter, Riptide) plus the November 2 druid values, new in the client. Shared: Trueshot Aura 20/35/50/75/100 matches the sim; no racial, raid debuff, consumable or enchant change (SpellItemEnchantment: rogue poison charges only). CurvePoint (+756 rows) and Trait tables: talent-tree data (rogue/warrior/paladin hotfix trees). |
-| Dev notes thread | 9 posts; post 9 last edited 2026-11-04T02:12:27Z (seen). Nothing new. |
-| Blue tracker | One post since 11-03 21:41: Kaivax "World of Warcraft: Forever Launch Time" (2026-11-04T18:13Z), no mechanics. |
-| Daily update | No forever-update merges; TASKS.md / update_ledger.md only via branch merges. |
-| Hotfix pushes | `hotfixes.py pushes` printed nothing this pass; 70790 supersedes the pushes through 113605 seen last pass. |
-
-## Spot checks of 70790 class deltas against the sim
-
-| Spell | Client 70790 | Sim |
-|---|---|---|
-| Chain Lightning | 0.714, CastingTimeIndex 19 | 0.714, 2.5 s (hotfix 113341) — matches |
-| Slam | 15 s category cooldown, Improved Slam -5000 | 15 s minus 2.5 s a point — matches |
-| Earth Shock r7 | 531 | 531 — matches |
-| Shred / Claw / Ravage | 200 / 140 / 435 | matches |
-| Ferocious Bite r6 | 102, 181 a CP, 3.3 an Energy | 102.5, 183.75, 2.7 — finding |
-| Starfire r7 | 533, 3.4 a level | 533.4, 3.36 — finding (tiny) |
-| Rogue poisons | charges 250 / 240 (no damage change) | charges not modelled; no DPS |
+| Client build | 1.60.1.70790 still newest (`wago.py latest --probe 300`). |
+| Dev notes thread | Post 10 (Kaivax, 2026-11-04T19:35:16Z) and post 9 edit (19:35:27Z): a User Interface and Accessibility section only (swing timer fade, bags, nameplates, keybinds). No mechanics. |
+| Blue tracker | Linxy newest 2026-11-03, Aggrend 2026-10-22; Kaivax/Gnedi/Brenoch activity not public via user_actions. Beta discussion category: nothing blue in the newest topics. |
+| Daily update | forever-update/2026-11-04 merged (33dc144a1); TASKS.md afdf88334 (hotfix pushes 113282/113403 follow-ups, Endless consumables, 70755 item cache). 113403's Ferocious Bite part landed in ff56f8ddc. |
+| Hotfix pushes | wago.tools logs about 2,400+ SpellMisc rows for build 70790 (region 91). `hotfixes.py fetch 1.60.1.70790 SpellEffect SpellMisc` ran an hour without finishing SpellMisc and was stopped. Open item: finish the fetch (resumable cache) and run `pushes` / `check` for shared rows next pass. Likely another attribute bake like 70753's, unverified. |
 
 ## Conclusions
 
-No shared mechanic moved against tier 1 data. Every shared verdict holds on 70790. The client update auditor should read 70790 in full for class rows (the notes-only gates of every class can now be checked against the client).
+No shared mechanic moved against tier 1 data. The explosives-in-form rule now follows the client flag. Open item: the 70790 hotfix rows (above).
