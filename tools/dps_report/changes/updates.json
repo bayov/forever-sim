@@ -3338,6 +3338,15 @@
      "commits": [
       "ff56f8d"
      ]
+    },
+    {
+     "title": "Gear tables name the right enchant when two slots' enchants share an effect",
+     "kind": "sim",
+     "note": "A bracer with Superior Stamina showed as Shield - Greater Stamina, and Greater Agility gloves as boots. Labels only; the sims always used the right stats.",
+     "moves": false,
+     "commits": [
+      "9883bd5"
+     ]
     }
    ],
    "internal": [
@@ -4084,6 +4093,18 @@
     {
      "commit": "5890f7c",
      "why": "Tanking mode only: Warrior tank presets."
+    },
+    {
+     "commit": "4bd813a",
+     "why": "practice room only; no report request reads it"
+    },
+    {
+     "commit": "b718f62",
+     "why": "merge commit; its changes are covered by their own commits"
+    },
+    {
+     "commit": "b87b4a1",
+     "why": "merge commit; its changes are covered by their own commits"
     }
    ],
    "source": {
