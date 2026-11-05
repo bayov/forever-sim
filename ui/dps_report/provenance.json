@@ -2349,8 +2349,8 @@
 	},
 	"benches": {
 		"tank": {
-			"commit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
-			"recordedAt": "2026-11-04T23:50:36.109Z",
+			"commit": "04e92524387724893f22314191abb508b7b4d6a9",
+			"recordedAt": "2026-11-05T00:10:43.988Z",
 			"iterations": 1000,
 			"format": 1,
 			"inputs": {
@@ -2362,7 +2362,7 @@
 				"go.mod": "c9816d3d9714776ca295cf4b5378c12faacf4e0f892e17fc139fb38d724a9b08",
 				"go.sum": "5bf8cc59f57eb456a689c038bfce5ff51e1a3b4210d4e25b88ad5ab3d706a05e",
 				"tools/tankscore": "100d8e1f8a105fa8667a94e1e13e046ec2d1f61f77c8e7e6deaed00b8df89ddf",
-				"tools/dps_report/tankheal.py": "85c170e5d1b74a10f5709a1ab03bf6f729d96b8a2874bd633d0d82a5a8029157",
+				"tools/dps_report/tankheal.py": "4dfa3518d5c22a4af57223eff449b1bc63e815dc43356ca6a550fcbe78751345",
 				"tools/tankbench": "9c646b8c135b1b90c566e01316df32fcbec983852f98a7fce0843e5b73e9f836",
 				"sim/warrior": "eeeeac1e3d5e6abfe28e71840aa5d4d2555a7df4e335e57f35960d1fceb9df30",
 				"sim/paladin": "9ec492736c5b3cf07b273904b1a041ea4962166921e5cee6c786da5f7ad886c5",
@@ -2380,8 +2380,8 @@
 			}
 		},
 		"heal": {
-			"commit": "eb10b0dc0323a6bdd8dcedd13ce14ee249379bf8",
-			"recordedAt": "2026-11-04T23:50:36.400Z",
+			"commit": "04e92524387724893f22314191abb508b7b4d6a9",
+			"recordedAt": "2026-11-05T00:10:44.214Z",
 			"iterations": 1000,
 			"format": 1,
 			"inputs": {
@@ -2393,7 +2393,7 @@
 				"go.mod": "c9816d3d9714776ca295cf4b5378c12faacf4e0f892e17fc139fb38d724a9b08",
 				"go.sum": "5bf8cc59f57eb456a689c038bfce5ff51e1a3b4210d4e25b88ad5ab3d706a05e",
 				"tools/tankscore": "100d8e1f8a105fa8667a94e1e13e046ec2d1f61f77c8e7e6deaed00b8df89ddf",
-				"tools/dps_report/tankheal.py": "85c170e5d1b74a10f5709a1ab03bf6f729d96b8a2874bd633d0d82a5a8029157",
+				"tools/dps_report/tankheal.py": "4dfa3518d5c22a4af57223eff449b1bc63e815dc43356ca6a550fcbe78751345",
 				"tools/healbench": "0a65dbf639832faf68eb081294953ee734676e24dd1992b4a0d220c5c0e2183b",
 				"tools/tankbench/req/warrior_protection.json": "19fb53f38809d226448bef94c9c8c9b94556cb9194c7cd13b3accefb18acf28c",
 				"tools/dps_report/req/mage__frost.json": "178ede9885d0a7138615c49529fb19b675fb6b5b3e565587d32674696d4cc214",
