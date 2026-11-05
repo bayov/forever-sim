@@ -1,0 +1,10 @@
+A=druid_bear_max_survival.json B=spirit_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord           -7       -7     0.0    0.0      0.0        0
+chromaggus       -2941    -2941     0.0    0.0      0.0        0
+golemagg           878      878     0.0    0.0      0.0        0
+magmadar          1367     1367     0.0    0.0      0.0        0
+onyxia            -134     -134     0.0    0.0      0.0        0
+ragnaros        -14434   -14434     0.0    0.0      0.0        0
+vaelastrasz        979      979     0.0    0.0      0.0        0
+scoring_mean                        0.0    0.0

@@ -59,7 +59,31 @@ def race_name(r):
 # ---- name sources ----
 db = json.load(open(os.path.join(TREE, 'assets/database/db.json')))
 item_names = {i['id']: i for i in db['items']}
-enchant_names = {e['effectId']: e['name'] for e in db['enchants']}
+_ench_by_effect = defaultdict(list)
+for _e in db['enchants']:
+    _ench_by_effect[_e['effectId']].append(_e)
+# the gear slot's item type (proto ItemType), by the index in SLOTS
+SLOT_ITEM_TYPE = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 11, 12, 12, 13, 13, 14]
+
+
+def enchant_for(eid, slot_i, item_id=None):
+    """The enchant record for an effect id on a gear slot: several enchants share an effect id across slots
+    (1886 is both Bracer - Superior Stamina and Shield - Greater Stamina), so pick by the slot's item type,
+    and between a weapon and a shield enchant by whether the item is a shield."""
+    cands = _ench_by_effect.get(eid) or []
+    if len(cands) > 1 and slot_i is not None and slot_i < len(SLOT_ITEM_TYPE):
+        cands = [e for e in cands if e.get('type') == SLOT_ITEM_TYPE[slot_i]] or cands
+        if len(cands) > 1:
+            shield = (item_names.get(item_id) or {}).get('weaponType') == 7
+            cands = [e for e in cands if ('Shield' in e['name']) == shield] or cands
+    return cands[0] if cands else None
+
+
+def enchant_name(eid, slot_i, item_id=None):
+    e = enchant_for(eid, slot_i, item_id) if eid else None
+    return e['name'] if e else ''
+
+
 spell_icons = {s['id']: s for s in db['spellIcons']}
 # Forever spells the sim keys by a borrowed or renamed Classic/SoD spell id: show Forever's name and icon
 FOREVER_SPELL = {425336: ('Rage of the Farseer', 'spell_nature_bloodlust'), 11713: ('Bane of Agony', None), 603: ('Bane of Doom', None),
@@ -513,7 +537,7 @@ for o in outs:
             continue
         info = item_names.get(it['id'], {})
         gear.append({'build': bid, 'slot': SLOTS[i], 'item': info.get('name', 'Item %d' % it['id']), 'ilvl': info.get('ilvl'),
-                     'enchant': enchant_names.get(it.get('enchant'), '') if it.get('enchant') else '', 'itemId': it['id'],
+                     'enchant': enchant_name(it.get('enchant'), i, it['id']), 'itemId': it['id'],
                      'icon': info.get('icon'), 'quality': QUALITY.get(info.get('quality'), 'common')})
 
     def words(k):
@@ -743,7 +767,7 @@ sys.path.insert(0, D)
 import tooltips
 import whcache
 tt_rows, tt_missing, tt_report = tooltips.build(TREE, names, gear, setup, [o for o in outs if not o['meta'].get('duty') and not o['meta'].get('pet')], abilities, auras, timelines, builds, item_names,
-                                                {e['effectId']: e for e in db['enchants']}, TREE_JSON, os.path.join(TREE, 'ui/core/forever/racials.json'), SLOTS)
+                                                enchant_for, TREE_JSON, os.path.join(TREE, 'ui/core/forever/racials.json'), SLOTS)
 dump('tooltips', tt_rows)
 print('tooltips without text:', tt_missing)
 

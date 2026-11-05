@@ -1,0 +1,10 @@
+A=druid_bear_balanced.json B=stoneshield_balanced.json preset=balanced iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         2531     2520   -11.4   13.8   -100.1      -63
+chromaggus        1485     1609   124.1   10.4    -58.9      -81
+golemagg          2650     2542  -107.5    9.8    -64.9       -6
+magmadar          2766     2663  -103.2    8.7    -66.5       -9
+onyxia            2321     2089  -232.5   16.6   -101.5        6
+ragnaros         -2455    -2516   -61.1   48.4    -81.7      -32
+vaelastrasz       3094     2953  -141.5   18.1   -145.1     -118
+scoring_mean                      -78.7    5.5

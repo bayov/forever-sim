@@ -1,0 +1,11 @@
+Healing: 8 healers on the tank at 258 HPS each, 3.1 s heals (789 a heal).
+Encounter: Magmadar. Frenzy (+150% attack speed for 8 s) is in the logs' swing rate, as much of it as the raids let through. Magma Spit (a Fire DoT on attackers), Panic (fear) and Lava Bomb are left out. Lava Breath's timer is assumed (the script triggers it with Frenzy in cmangos).
+Stand-in healer: 2064 HPS every 0.38 ± 0.19 s. TMI over 6 s windows. 1000 iterations.
+
+Objective: 2 x SafeDPS - w x 900 x healing needed at 5% deaths / 258, in raid DPS (Max threat w = 1/3, Balanced 1, Max survival 3).
+
+| Build | Max threat | Balanced | Max survival | SafeDPS | Healing needed | Death floor | TPS | DPS | DTPS | TMI | Death | Health | EH | Biggest hit | Armor | Def | No crit at | Miss | Dodge | Parry | Block | Crit | Crush | Crush gap | Took: avoid | block | crit | crush |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+2026/11/04 21:54:53 Running 1000 iterations on 4 concurrent sims.
+2026/11/04 21:54:54 All 4 sims finished successfully.
+| shaman_warden_max_threat | 3289 ± 12 | 2397 ± 17 | -279 ± 40 | 1867 ± 5 | 384 ± 4 (0.85x DTPS) | 0.0% | 1679 | 959 | 454 | 35 | 0.0% | 9287 | 21206 | 1604 (5.8 to kill) | 7386 (56.2%) | 346 | 315 | 8.2% | 21.5% | 6.2% | 6.2% | 0.0% | 15.0% | 57.8% | 36.0% | 6.2% | 0.0% | 15.1% |

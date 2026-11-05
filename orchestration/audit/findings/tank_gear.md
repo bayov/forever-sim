@@ -2,6 +2,8 @@
 
 ## Open
 
+## Resolved
+
 ### tank_gear-20261104-8: DPS Report names enchants by effect id alone, so shared ids show another slot's enchant
 - severity: low
 - affects: DPS Report gear tables: Tanking (all wrists with 1886, paladin and Warden shields with 929 in the current data) and the DPS mode (4 Hands rows)
@@ -9,8 +11,7 @@
 - evidence: tools/dps_report/build_data.py:62 builds `enchant_names = {e['effectId']: e['name'] ...}`, so the last db.json entry for an effect id wins; tools/dps_report/build_data.py:516 and tools/dps_report/tankheal.py:351 look names up by id only. db.json has 1886 as Bracer Superior Stamina and Shield Greater Stamina, 929 as Bracer and Boots Greater Stamina, 1887 as Gloves and Boots Greater Agility. ui/dps_report/data/tank_gear.json: 9 Wrist rows read "Enchant Shield - Greater Stamina", 6 Off hand rows "Enchant Boots - Greater Stamina"; data/gear.json: 4 Hands rows "Enchant Boots - Greater Agility". Labels only; the sims use the right stats. After the round-3 regen the paladin Max threat boots (1887) and the Warden Max threat wrist and every shield 1886 still hit it.
 - proposed fix: pick the name by (effectId, slot): among the db.json enchants with that effect id, take the one whose type (or enchantType for shields and 2H) matches the item's slot, as the UI's lookupItemSpec does (ui/core/proto_utils/database.ts).
 - needs: orchestrator fix
-
-## Resolved
+- fixed: 2026-11-04, 9883bd54f. build_data.py's enchant_for / enchant_name pick the db.json enchant by effect id and the slot's item type (a shield enchant on a weapon slot only for a shield); the gear rows (build_data.py, tankheal.py) and the enchant tooltips (tooltips.py, now one per enchant record) use it. After the regen no Wrist, Hands or Feet row names another slot's enchant.
 
 ### tank_gear-20261104-7: Cloak enchant differs across tanks with no A/B: three wear Agility +5 where the Warden wears Superior Defense
 - severity: low

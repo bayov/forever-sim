@@ -1,0 +1,10 @@
+A=druid_bear_max_survival.json B=zanza_lung_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord         -665     -519   145.8   13.9      0.0      -16
+chromaggus       -3352    -3280    71.5    4.3      0.0       -8
+golemagg           475      558    82.4    3.5      0.0       -8
+magmadar           982     1060    78.2    3.8      0.0       -7
+onyxia            -859     -645   213.7   10.7      0.0      -14
+ragnaros        -15898   -15396   501.9   35.1      0.0      -53
+vaelastrasz        415      562   147.1    6.9      0.0      -39
+scoring_mean                      123.1    3.3

@@ -13,6 +13,10 @@ type FerociousBiteRankInfo struct {
 	dmgRange     float64
 	dmgPerCombo  float64
 	dmgPerEnergy float64
+	// foreverDmgPerEnergy is Forever's damage a point of extra Energy since the launch realms'
+	// server hotfix push 113403 (wago.tools hotfixes, region 91, build 70755, first seen
+	// 2026-11-04): SpellEffect effect 1 of every rank, about 20 to 24% over the client's.
+	foreverDmgPerEnergy float64
 	// foreverOnly is a rank only Forever has.
 	foreverOnly bool
 }
@@ -23,53 +27,59 @@ var ferociousBiteRanks = []FerociousBiteRankInfo{
 	// combo point, up to 129 to 139 with 5, its tooltip), and 0.6 damage a point of extra Energy
 	// (effect 1, 60 / 100). The old ranks became ranks 2 to 6, their rows unchanged.
 	{
-		id:           1328618,
-		level:        24,
-		dmgBase:      9.0,
-		dmgRange:     10.0,
-		dmgPerCombo:  24.0,
-		dmgPerEnergy: 0.6,
-		foreverOnly:  true,
+		id:                  1328618,
+		level:               24,
+		dmgBase:             9.0,
+		dmgRange:            10.0,
+		dmgPerCombo:         24.0,
+		dmgPerEnergy:        0.6,
+		foreverDmgPerEnergy: 0.7,
+		foreverOnly:         true,
 	},
 	{
-		id:           22568,
-		level:        32,
-		dmgBase:      14.0,
-		dmgRange:     16.0,
-		dmgPerCombo:  36.0,
-		dmgPerEnergy: 1.0,
+		id:                  22568,
+		level:               32,
+		dmgBase:             14.0,
+		dmgRange:            16.0,
+		dmgPerCombo:         36.0,
+		dmgPerEnergy:        1.0,
+		foreverDmgPerEnergy: 1.2,
 	},
 	{
-		id:           22827,
-		level:        40,
-		dmgBase:      20.0,
-		dmgRange:     24.0,
-		dmgPerCombo:  59.0,
-		dmgPerEnergy: 1.5,
+		id:                  22827,
+		level:               40,
+		dmgBase:             20.0,
+		dmgRange:            24.0,
+		dmgPerCombo:         59.0,
+		dmgPerEnergy:        1.5,
+		foreverDmgPerEnergy: 1.8,
 	},
 	{
-		id:           22828,
-		level:        48,
-		dmgBase:      30.0,
-		dmgRange:     40.0,
-		dmgPerCombo:  92.0,
-		dmgPerEnergy: 2.0,
+		id:                  22828,
+		level:               48,
+		dmgBase:             30.0,
+		dmgRange:            40.0,
+		dmgPerCombo:         92.0,
+		dmgPerEnergy:        2.0,
+		foreverDmgPerEnergy: 2.5,
 	},
 	{
-		id:           22829,
-		level:        56,
-		dmgBase:      45.0,
-		dmgRange:     50.0,
-		dmgPerCombo:  128.0,
-		dmgPerEnergy: 2.5,
+		id:                  22829,
+		level:               56,
+		dmgBase:             45.0,
+		dmgRange:            50.0,
+		dmgPerCombo:         128.0,
+		dmgPerEnergy:        2.5,
+		foreverDmgPerEnergy: 3.1,
 	},
 	{
-		id:           31018,
-		level:        60,
-		dmgBase:      52.0,
-		dmgRange:     60.0,
-		dmgPerCombo:  147.0,
-		dmgPerEnergy: 2.7,
+		id:                  31018,
+		level:               60,
+		dmgBase:             52.0,
+		dmgRange:            60.0,
+		dmgPerCombo:         147.0,
+		dmgPerEnergy:        2.7,
+		foreverDmgPerEnergy: 3.3,
 	},
 }
 
@@ -111,8 +121,9 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 	keepsExtraEnergy := druid.Talents.PredatoryDiscipline
 
 	// The November 2 development notes raise the base points and the attack power part by about
-	// 25% (tuning_70753.go); the damage a point of extra Energy stays.
+	// 25% (tuning_70753.go). The damage a point of extra Energy comes from hotfix push 113403.
 	scale := core.TernaryFloat64(druid.Env.IsForever(), nov2BleedScale, 1)
+	dmgPerEnergy := core.TernaryFloat64(druid.Env.IsForever(), rank.foreverDmgPerEnergy, rank.dmgPerEnergy)
 
 	return core.SpellConfig{
 		SpellCode:   SpellCode_DruidFerociousBite,
@@ -147,7 +158,7 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 			baseDamage := scale*(rank.dmgBase+rank.dmgRange*sim.RandomFloat("Ferocious Bite")+
 				rank.dmgPerCombo*comboPoints+
 				attackPower*0.03*comboPoints) +
-				rank.dmgPerEnergy*excessEnergy
+				dmgPerEnergy*excessEnergy
 
 			rendAndTear := druid.RendAndTearMultiplier(target)
 			spell.DamageMultiplier *= rendAndTear

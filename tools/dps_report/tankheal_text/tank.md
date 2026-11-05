@@ -208,3 +208,6 @@ to: your dodges and parries
 
 from: : the tank applies its own slow\.
 to: : apply your own slow.
+
+from: \s*\(docs/[^)]*\)
+to:

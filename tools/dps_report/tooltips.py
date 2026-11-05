@@ -850,11 +850,16 @@ def build(tree, names, gear, setup, outs, abilities, auras, timelines, builds, i
         rows = [r for r in rows if r['key'] != row['key']] + [row]
 
     # ---- enchants on the gear ----
-    ench_text = {}
-    for eid in sorted({it['enchant'] for o in outs for it in o['setup']['equipment'] if it and it.get('enchant')}):
-        e = enchants.get(eid)
-        if not e:
-            continue
+    # enchants(effect id, slot index, item id) -> the enchant record: one effect id can be several enchants, one per slot
+    # (1886 is Bracer - Superior Stamina and Shield - Greater Stamina), so each is keyed by its own spell
+    ench_text, slot_ench = {}, {}
+    for o in outs:
+        for i, it in enumerate(o['setup']['equipment'][:len(slots)]):
+            if it and it.get('id') and it.get('enchant'):
+                e = enchants(it['enchant'], i, it['id'])
+                if e:
+                    slot_ench[(o['id'], i)] = e
+    for e in sorted({(e.get('spellId'), e['name']): e for e in slot_ench.values()}.values(), key=lambda e: (e['effectId'], e['name'])):
         white, green = stat_lines(e.get('stats'))
         lines = [['g', l[1]] for l in white] + [['g', t] for t in green]
         esrc = 'db' if lines else None
@@ -876,14 +881,15 @@ def build(tree, names, gear, setup, outs, abilities, auras, timelines, builds, i
                     if desc:
                         lines, esrc = [['g', d[1]] for d in desc], sr
                         break
-        ench_text[eid] = (e['name'], lines, esrc, e)
+        ench_text[(e.get('spellId'), e['name'])] = (e['name'], lines, esrc, e)
         if not lines:
             missing.append('enchant ' + e['name'])
     # one row per enchanted gear slot (ench:<build>:<slot>): several enchants share a name, like the three Lesser Arcanum of Voracity
     for o in outs:
         for i, it in enumerate(o['setup']['equipment'][:len(slots)]):
-            if it and it.get('id') and it.get('enchant') in ench_text:
-                nm, ls, esrc, e = ench_text[it['enchant']]
+            e = slot_ench.get((o['id'], i))
+            if e and (e.get('spellId'), e['name']) in ench_text:
+                nm, ls, esrc, e = ench_text[(e.get('spellId'), e['name'])]
                 er = {'key': f"ench:{o['id']}:{slots[i]}", 'kind': 'enchant', 'title': nm, 'sub': '', 'icon': None, 'lines': ls, 'src': esrc}
                 if e.get('itemId') and fwh('item', e['itemId']):
                     set_link(er, 'item', e['itemId'])

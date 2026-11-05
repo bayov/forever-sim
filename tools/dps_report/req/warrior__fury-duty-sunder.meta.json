@@ -45,10 +45,10 @@
     "Save Death Wish for the last 33s when that doesn't lose a use. Recklessness goes with the last Death Wish, and the trinket 1 GCD later. In fights with 2 Death Wishes, the first goes at the pull without Recklessness",
     "Blood Fury and Berserking with Death Wish. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Trinket on cooldown, with its last use saved for the last 30s. Mighty Rage Potion in the last 20s, and at the pull too when a second one fits",
     "Bloodrage under 20 Rage",
-    "Whirlwind at 25+ Rage, then Bloodthirst",
+    "Bloodthirst, then Whirlwind at 25+ Rage",
     "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
     "Reckless Swings on cooldown, but only when no strike is ready, since it takes a 1s GCD. The next 4 swings give 5 more Rage each",
-    "Heroic Strike at 80+ Rage, during execute too",
+    "Heroic Strike at 70+ Rage, during execute too",
     "Hamstring as filler at 10+ Rage (it procs Windfury Totem and Flurry)"
   ],
   "consumes": [

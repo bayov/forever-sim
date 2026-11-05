@@ -86,7 +86,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWardenShaman, {
 	displayPseudoStats: [PseudoStat.PseudoStatMeleeSpeedMultiplier],
 
 	defaults: {
-		race: Race.RaceTroll,
+		// Balanced's race (the default build).
+		race: Race.RaceNightElf,
 		// Default equipped gear.
 		gear: Presets.DefaultGear.gear,
 		// Default EP weights for sorting gear in the gear picker.
@@ -136,6 +137,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWardenShaman, {
 		partyBuffs: PartyBuffs.create({}),
 		individualBuffs: Presets.DefaultIndividualBuffs,
 		debuffs: Presets.DefaultDebuffs,
+		encounter: Presets.EncounterLevel60Tank.encounter,
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.

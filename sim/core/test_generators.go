@@ -2,6 +2,7 @@ package core
 
 import (
 	"fmt"
+	"regexp"
 	"slices"
 	"strings"
 
@@ -279,6 +280,18 @@ func (filter *ItemFilter) FindAllSets() []*ItemSet {
 	return filteredSets
 }
 
+// hitTradeStepName is the name marker orchestration/tools/hit_steps.py gives every hit-trade step
+// item: the base piece's name with ", hit -10)" (or " (hit +20)" when it has no parenthesis) added.
+var hitTradeStepName = regexp.MustCompile(`[ (]hit [+-]\d+\)$`)
+
+// IsHitTradeStepItem reports whether item is a hit-trade step piece (a copy of a synthetic set
+// piece with hit rating moved into another stat). The steps keep the base set's name so the gear
+// sets that wear them keep their set bonus, but the AllItems set tests leave them out: they test
+// the set as it is, one piece per slot.
+func IsHitTradeStepItem(item Item) bool {
+	return hitTradeStepName.MatchString(item.Name)
+}
+
 type ItemsTestGenerator struct {
 	// Fields describing the base API request.
 	Player     *proto.Player
@@ -334,6 +347,9 @@ func (generator *ItemsTestGenerator) GetTest(testIdx int) (string, *proto.Comput
 	} else if testIdx < len(generator.items)+len(generator.sets) {
 		testSet := generator.sets[testIdx-len(generator.items)]
 		for _, setItem := range testSet.Items() {
+			if IsHitTradeStepItem(setItem) {
+				continue
+			}
 			equipment.EquipItem(setItem)
 		}
 		label = strings.ReplaceAll(testSet.Name, " ", "")
