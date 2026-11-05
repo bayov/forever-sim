@@ -356,7 +356,7 @@
   "title": "Tanking by race",
   "description": "Per tanking preset and every race the class can be: the six-boss mean scores, safe DPS, healing needed, DTPS and TPS, the preset's own race flagged, and the paired error of each race's gap to every other race (pse). The races share their fights, so their gaps are measured against each other; the preset's race carries the main run's numbers and the others are moved by the same amount.",
   "updated": {
-   "at": "2026-11-04T23:50:35.619Z",
+   "at": "2026-11-05T02:08:33.445Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -365,7 +365,7 @@
   "title": "Tanking by race: racial parts",
   "description": "Per tanking preset and race: its base stats (every racial left out) and what each racial part adds to the preset's own score, with the part's paired error. The parts add up to the race's score.",
   "updated": {
-   "at": "2026-11-05T01:27:00.702Z",
+   "at": "2026-11-05T02:08:33.445Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -401,7 +401,7 @@
   "title": "Tanking tooltips",
   "description": "Item and spell tooltips the tanking pages show that the common tooltips dataset lacks, same row shape.",
   "updated": {
-   "at": "2026-11-05T00:11:59.273Z",
+   "at": "2026-11-05T02:08:33.445Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -437,7 +437,7 @@
   "title": "Tanking names",
   "description": "Names, ranks, icons and colors of the spells and items the tanking pages show that the common names dataset lacks.",
   "updated": {
-   "at": "2026-11-04T20:39:04.479Z",
+   "at": "2026-11-05T02:08:33.445Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"
@@ -518,7 +518,7 @@
   "title": "Healing tooltips",
   "description": "Item and spell tooltips the healing pages show that the common tooltips dataset lacks, same row shape.",
   "updated": {
-   "at": "2026-11-04T20:39:04.479Z",
+   "at": "2026-11-05T02:08:33.445Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
@@ -563,7 +563,7 @@
   "title": "Healing names",
   "description": "Names, ranks, icons and colors of the spells and items the healing pages show that the common names dataset lacks.",
   "updated": {
-   "at": "2026-11-04T20:39:04.479Z",
+   "at": "2026-11-05T02:08:33.445Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "heal"
