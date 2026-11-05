@@ -245,3 +245,10 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-05 01:33 | rotations | pass 55 | master a079415316 | 1 new finding | rotations-20261105-1 (low) feral 5-CP Ferocious Bite gate 45 -> 65 energy
 2026-11-05 01:33 | mechanics | pass 67 | master a079415316 | quiet | Bite energy scaling and explosive form rule match client 70790
 2026-11-05 01:33 | fairness | pass 31 | master a079415316 | quiet | audit1b all PASS; only feral (+4.1) and survival (-0.8) moved
+2026-11-05 07:02 | mechanics | pass 68 | master bba052f750 | quiet | only FightDeaths metrics change in raid.go/sim_concurrent.go; client still 70790
+2026-11-05 07:02 | healer_mechanics | pass 4 | master bba052f750 | quiet | healbench flags and FightDeaths reporting only; no healing rule changed
+2026-11-05 07:02 | healer_rotations | pass 4 | master bba052f750 | quiet | all 63 baseline rows match ref
+2026-11-05 07:02 | healer_fairness | pass 4 | master bba052f750 | quiet | all 63 rows match bench_0facd94 byte for byte
+2026-11-05 07:02 | tank_mechanics | pass 5 | master bba052f750 | quiet | tankbench flags are opt-in tooling only
+2026-11-05 07:02 | tank_rotations | pass 5 | master bba052f750 | quiet | all 91 baseline rows match pass 4
+2026-11-05 07:02 | tank_fairness | pass 5 | master bba052f750 | 1 new finding | tank_fairness-20261105-2 (high) Warden presets use races a Forever shaman can't be

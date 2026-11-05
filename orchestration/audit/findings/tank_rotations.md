@@ -12,6 +12,7 @@
 - round 3 (warrior, user call kept): 2026-11-04, a624264, new engine, 10k paired at w = 3, 990617 held 35 s minus 991018 on the pull: +12.8 ± 5.4 (seed 1), +15.9 ± 4.8 (seed 2); Broodlord +437 / +433, Onyxia +51 / +65, Magmadar -76 / -72, Golemagg -57 / -49, Chromaggus -101 / -106, Vaelastrasz -178 / -176; without Broodlord -72.0 ± 3.3 / -67.6 ± 3.7. Max survival keeps the armor trinket; listed as call 7 in docs/tank_warrior.md next to paladin Bulwark (-3). Left open: user call.
 - pass 3: still open (user call 7, docs/tank_warrior.md). Hold 30 s against 35 s, 3k seed 11: -29.6 ± 5.7, so if the trinket stays it stays at 35 s.
 - pass 4: still open (user call); a07941531 keeps 990617 held 35 s; not re-tested.
+- pass 5: still open (user call); bba052f75 unchanged; not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -24,6 +25,7 @@
 - pass 2: still open (user ruling). Bulwark 13 s vs 10 s without Broodlord: -3.6 mean over 5 disjoint 3k seeds (-0.1 to -9.4), -4.4 / -4.2 at 10k, so 10 s holds there; the sign rests on Vaelastrasz (-55) against Onyxia (+23) and Magmadar (+11), i.e. on the encounter set, not on noise. Finding 11 below is the warrior's version of the same Broodlord question.
 - pass 3: still open (user ruling, docs/tank_paladin.md call 7); not re-tested.
 - pass 4: still open (user ruling); a07941531 keeps 10 s at all three presets; not re-tested.
+- pass 5: still open (user ruling); bba052f75 unchanged; not re-tested.
 
 ## Resolved
 

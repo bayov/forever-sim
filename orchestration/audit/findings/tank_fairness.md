@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
+- severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
+- affects: Warden shaman, all three presets (tools/tankbench/req/shaman_warden_{max_threat,balanced}.json RaceNightElf, shaman_warden_max_survival.json RaceUndead; ui/warden_shaman/sim.ts:90 RaceNightElf; docs/tank_shaman.md:34-36 and calls (f), (g))
+- found: 2026-11-05, master bba052f
+- evidence: the client's CharBaseInfo (tier: client data, via tools/sources/racials.py into ui/core/forever/racials.json) gives no Night Elf or Undead shaman: Elune's Light 1259799 and Shadowmeld list Warrior, Hunter, Rogue, Priest, Druid; Will of the Forsaken lists Warrior, Mage, Rogue, Priest, Warlock, Paladin. tools/dps_report/run_build.py:31 has Shaman = Dwarf, Orc, Tauren, Troll, Skyborne Windshaper, so the DPS Report's race table (ui/dps_report/data/tank_races.json, re-simmed at c46062a with the new paired tankbench flags) has no preset row for any Warden build (isPreset false on all 15 rows), while the other three tanks' preset races top their tables. Size, from round 3's own race A/B (docs/tank_shaman.md:177-182, against Tauren, 3k): Night Elf +104.2 / +111.3, Orc +27.8 / -3.5, Troll +38.2 / +2.3 at Max threat / Balanced; Undead +43 ± 11 pooled at Max survival. The race table on master agrees on the legal order: Orc 3098 at Max threat, Orc 1698 / Troll 1692 at Balanced, Tauren -2132 at Max survival. Estimated from those, not re-measured paired against Night Elf; sure of the illegality, the sizes to about ±15.
+- proposed fix: re-pick each Warden preset's race among Dwarf, Orc, Tauren, Troll and Skyborne Windshaper by its own objective (on the race table: Orc at Max threat and Balanced, Tauren at Max survival; Troll is within error of Orc at Balanced), in the requests, ui/warden_shaman/sim.ts and docs/tank_shaman.md; re-tune talents only if the race's racial touches the rotation (standards 29). A guard would stop it recurring: tankbench or the request check failing on a race outside CharBaseInfo's list for the class.
+- needs: worker fix
+
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
 - affects: Protection paladin, all three presets

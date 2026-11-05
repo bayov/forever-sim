@@ -1,44 +1,37 @@
-# Healer rotations pass 3 (quiet: no new findings; -2 and -3 still open)
+# Healer rotations pass 4 (quiet: no new findings; -2 and -3 still open)
 
-- Master: a07941531 (`last.master` was dc303b026). Audited 2026-11-05.
-- Bench: `tools/healbench` built from this checkout. Healbench's default seed, `-carry`, 1,000 iterations, each
-  request on each of the 7 boss files at the file's own length in its role. Script:
-  `tools/audit/healer_rotations/baseline.sh <healbench> <out.tsv> [iters]` (pass 2 described it but it was not in
-  the repo; rewritten this pass; a full run takes about 30 minutes).
+- Master: bba052f75 (`last.master` was a07941531). Audited 2026-11-05.
+- Bench: `tools/healbench` built from this checkout. Healbench's default seed (101), `-carry`, 1,000 iterations,
+  each request on each of the 7 boss files at the file's own length in its role. Script:
+  `tools/audit/healer_rotations/baseline.sh [out.tsv] [iters]` (reads `$AUDIT_WORK/healbench`, 2 benches at once,
+  about 14 minutes). It was missing again (the pass 3 copy was never committed); rewritten this pass. The run's
+  commit must include `tools/audit/healer_rotations/`, or the next pass rewrites it a third time.
 
 ## What changed
 
-- No healer APL, healbench request, `tools/encounters/*.json` or `tools/healbench/main.go` changed.
-- Engine: `sim/core/spell_result.go` (a heal on a tank in a score's replay makes threat from the whole heal,
-  tank_mechanics-20261104-16): threat only, not read by the healer score. `sim/druid/ferocious_bite.go`
-  (hotfix 113403): cat damage only. `sim/core/consumes.go` (explosives usable in form), `major_cooldown.go`
-  (BonusArmor on-use trinkets become survival cooldowns), `character.go` (comment): none touches a healer's
-  heals, mana or cooldowns. TestDisc/TestHoly hps moved by under 0.3%, from the shared test raid, not the bench.
+- `tools/healbench/main.go` (the watched file): new flags `-seed` (default 101, the old hard-coded seed),
+  `-labeled` (default off), `-scales`/`-vectors` (per-fight values for `tools/dps_report/tankheal.py`'s race
+  pairing). With the defaults the request is the same as before: `RandomSeed: 101`, `UseLabeledRands: false`;
+  `SaveAllValues` only with `-vectors`. The table and carry paths are untouched.
+- Engine: `sim/core/raid.go` appends per-fight death flags to the healing-fight metrics,
+  `sim/core/sim_concurrent.go` merges them. Bookkeeping only; nothing reads it in the sim.
+- No healer APL, healbench request or `tools/encounters/*.json` changed.
 
 ## The baseline
 
-All 63 rows (9 requests x 7 bosses) are identical to `ref/healer_bench/summary.tsv` from pass 2: carry, EHPS,
-overheal, EH per mana, mana left and OOM time match to the printed digit. The table in pass 2's report still
-stands (for example Disc Chromaggus 0.866 / 365 mana / OOM 101 s; Holy priest Chromaggus 0.955 / 677).
-`ref/healer_bench/summary.tsv` rewritten from this run (no diff). The mana side at 180 / 300 s was not re-run:
-with no APL or heal change and an identical boss-length baseline, it cannot have moved.
-
-## Changes tried (paired seeds, 1,000 it, tank role)
-
-| Disc variant | Chromaggus (115 s) carry / mana / OOM | Golemagg (56 s) carry / mana |
-|---|---|---|
-| master | 0.866 / 365 / 101 s | 1.991 / 6234 |
-| Power Word: Shield mana gate 0.9 (line 3, was 0.7) | 0.889 / 428 / 107 s | 1.984 / 6139 |
-| Renew only at 40% mana or more (line 5) | 0.865 / 435 / 103 s | 1.991 / 6234 |
-
-The shield gate 0.9 again gives about +0.02 on Chromaggus and -0.007 on Golemagg, and still runs dry; the
-Renew gate does nothing. Both added under -2. Neither fixes the OOM, so -2 still needs a worker.
+All 63 rows (9 requests x 7 bosses) are byte-identical to `ref/healer_bench/summary.tsv` (diff empty): carry,
+EHPS, overheal, EH per mana, mana left, OOM time, deaths and death floor. So the new flags' defaults keep the
+bench exactly as it was. `ref/healer_bench/summary.tsv` left as is (no change). The mana side at 180 / 300 s was
+not re-run: with no APL, heal or mana change and an identical boss-length baseline, it cannot have moved.
 
 ## Rotation lines
 
-No line changed since pass 2, so pass 2's line review holds: -3 (shaman Lesser Healing Wave 5 dead line) is
-still open as filed; -2 is still open.
+No line changed since pass 2, so its line review holds. Open: -2 (Discipline tank healer OOM on Chromaggus at
+101 s, carry 0.866 / 365 mana, unchanged) and -3 (shaman tank healer's Lesser Healing Wave 5 dead line). No new
+variants tried; pass 3's (shield gate 0.9, Renew mana gate) stand.
 
 ## Open items for the next pass
 
 - Emergency Flash Heal at 35% for Disc (not run). The Holy priest's Chromaggus mana (677 left).
+- `-labeled` could tighten paired A/B comparisons (rolls stay aligned past where two rotations differ); worth
+  trying for sub-0.02 carry questions instead of 4,000 iterations, once checked against the default seed path.

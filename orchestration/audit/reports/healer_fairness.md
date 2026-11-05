@@ -1,18 +1,19 @@
-# Healer fairness pass 3 (2026-11-05, master a079415316)
+# Healer fairness pass 4 (2026-11-05, master bba052f75)
 
 Result: quiet. No new findings, none resolved. Still open: -5 (high, paladin raid preset's Holy Light lines; the
 preset is unchanged) and -4 (low, no healing by class in the boss files).
-Due because 3 watched files changed (orchestration/standards.md, sim/core/spell_result.go, sim/druid/ferocious_bite.go).
-What changed since dc303b02 that a healer could feel: healing threat on a tank in a score replay takes the whole heal
-(spell_result.go; threat only), BonusArmor on-use trinkets become survival cooldowns (major_cooldown.go), explosives
-usable in form (consumes.go; druids in form only), standards 40's tank consumables (tanks, not healbench requests).
-tools/healbench and the 9 requests are unchanged. TestHoly/TestDisc goldens moved (+0.3 to +0.6 HPS on the
-AllItems rows only, likely the BonusArmor trinket change); the identical bench below shows no healbench request feels it.
+Due because 1 watched file changed (tools/healbench/main.go). What changed since a079415316: healbench gains
+`-seed` (default 101, the old hard-coded seed), `-labeled` (default off) and `-vectors`/`-scales` (per-fight deaths,
+HPS, EHPS and mana left as JSON lines, for tools/dps_report/tankheal.py's paired race sims); the sim records each
+fight's deaths (`HealingFightMetrics.fight_deaths`, sim/core/raid.go, sim_concurrent.go), an append only. With the
+defaults the request healbench builds is the same as before, so no healer number should move.
 
-Re-bench to confirm: all 9 requests in their own role on all 7 files at 1,000 iterations, built from a079415316.
-All 63 rows are byte-identical to pass 2's `ref/healer_fairness/bench_0facd94.tsv` (every column, not only carry),
-so the tables below, the ranking and pass 2's conclusions stand. Sections 1 and 3 were not re-done: no request,
-preset or healbench code changed.
+Re-bench to confirm: all 9 requests in their own role on all 7 files at 1,000 iterations, healbench built from
+bba052f75. All 63 rows are byte-identical to `ref/healer_fairness/bench_0facd94.tsv` (every column), so the tables
+below, the ranking and pass 2's conclusions stand. Sections 1 and 3 were not re-done: no request or preset changed,
+and the healbench change touches no default.
+
+Pass 3 (a079415316) for the record: also 63 identical rows.
 
 ## 1. Same terms (the 9 requests)
 

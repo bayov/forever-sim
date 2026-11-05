@@ -1,16 +1,16 @@
 {
  "last": {
-  "master": "a0794153163a6a856bf086cce1773bc6946267db"
+  "master": "bba052f7503828dc430b7755f43c542cdd5e4c2e"
  },
- "last_pass_at": "2026-11-05T00:50:13Z",
- "pass": 3,
+ "last_pass_at": "2026-11-05T06:46:25Z",
+ "pass": 4,
  "result": "quiet",
- "note": "Pass 3: dc303b0..a079415 touches no heal, healing talent or healing-engine rule (spell_result.go heal threat skips health only in a tank-score replay; ferocious_bite.go is feral damage). Client still 70790. Dev notes post 10 (2026-11-04 19:35, UI section added to post 9): no healer content. Findings 10, 11 still open.",
+ "note": "Pass 4: a079415..bba052f changes tools/healbench/main.go (-seed, -labeled, -scales/-vectors per-fight output for race pairing) and sim/core raid.go/sim_concurrent.go (HealingFight.FightDeaths per-fight flags, appended in the same order as AllValues). Tooling and metrics only, no heal, talent or healing-engine rule. Client still 70790. Findings 10, 11 still open.",
  "client_build": "1.60.1.70790",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
   "edited": "2026-11-04T19:35:27Z"
  },
- "checked_at": "2026-11-05T01:33:13Z"
+ "checked_at": "2026-11-05T07:02:30Z"
 }

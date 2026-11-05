@@ -1,7 +1,7 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-05, pass 4, master a079415 (after tank rounds 4
+preset weight, its reasons, and the open questions. Last pass: 2026-11-05, pass 5, master bba052f (tankbench's new paired-fight flags, no preset change; numbers are pass 4's at a079415, after tank rounds 4
 and 5, the full raid consumables) (orchestration/audit/reports/tank_fairness.md; table in orchestration/audit/ref/tank_fairness/summary.tsv).
 
 ## Ranking (tankbench 3000 iterations, seed 1, six-boss mean, each spec's matching preset)
@@ -39,6 +39,10 @@ tie at their weights (its call 14).
 - The paladin never drinks its potion. `autocastOtherCooldowns` drinks no defensive potion in a tank score, and the
   paladin's round 4 A/B ran the Stoneshield without the explicit potion action the other three tanks use. The Stoneshield
   with the action gains +58 / +172 / +309 at the paladin's three weights (finding -20261105-1).
+- The Warden plays races a Forever shaman can't be: Night Elf at Max threat and Balanced, Undead at Max survival
+  (client CharBaseInfo: shaman is Dwarf, Orc, Tauren, Troll or Skyborne Windshaper). Night Elf's Elune's Light is
+  worth about +76 / +109 over the best legal race (Orc), Undead about +43 over Tauren (finding -20261105-2). The
+  Warden is last at every weight either way; its legal scores are lower by about 2.4% / 6% / 2%.
 - Everything else matches: all four tanks have searched every slot of the full raid set (standards 40). The mana
   consumables the Warden takes (Demonic Rune, Mageblood, Greater Intellect) are noise for the paladin.
 

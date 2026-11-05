@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "a0794153163a6a856bf086cce1773bc6946267db"
+  "master": "bba052f7503828dc430b7755f43c542cdd5e4c2e"
  },
- "last_pass_at": "2026-11-05T01:15:25Z",
- "pass": 3,
+ "last_pass_at": "2026-11-05T07:02:11Z",
+ "pass": 4,
  "result": "quiet",
  "baseline": "0facd9428",
- "note": "Pass 3: both roles re-benched on a079415316 (9 requests x 7 files, 1,000 it): all 63 rows byte-identical to ref/healer_fairness/bench_0facd94.tsv. Master's changes (healing threat on a replay tank, BonusArmor trinkets as survival cooldowns, explosives in form, tank consumables) move no healer number. Open: -4 (low), -5 (high, paladin raid preset unchanged).",
+ "note": "Pass 4: healbench gained -seed/-labeled/-vectors (defaults unchanged) and per-fight deaths in the sim; both roles re-benched on bba052f75 (9 requests x 7 files, 1,000 it): all 63 rows byte-identical to ref/healer_fairness/bench_0facd94.tsv. Open: -4 (low), -5 (high, paladin raid preset unchanged).",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-05T01:33:13Z"
+ "checked_at": "2026-11-05T07:02:30Z"
 }

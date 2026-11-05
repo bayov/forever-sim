@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "a0794153163a6a856bf086cce1773bc6946267db"
+  "master": "bba052f7503828dc430b7755f43c542cdd5e4c2e"
  },
- "last_pass_at": "2026-11-05T01:35:00Z",
- "pass": 3,
+ "last_pass_at": "2026-11-05T07:02:00Z",
+ "pass": 4,
  "result": "quiet",
- "note": "Pass 3 on a07941531. No healer APL/request/encounter/healbench change; engine changes (heal threat in score replay, Ferocious Bite, explosives in form, BonusArmor trinkets) don't touch the healer bench. All 63 baseline rows identical to pass 2. Disc variants: shield gate 0.9 +0.023 Chromaggus, -0.007 Golemagg, still OOM; Renew at 40% mana no effect. -2 and -3 still open. Rewrote tools/audit/healer_rotations/baseline.sh (was missing).",
+ "note": "Pass 4 on bba052f75. Only healbench change: new -seed (default 101)/-labeled/-vectors flags; defaults keep the request identical. Engine: per-fight death flags (bookkeeping). All 63 baseline rows byte-identical to ref. -2 and -3 still open. Rewrote tools/audit/healer_rotations/baseline.sh again (pass 3 copy never committed).",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-05T01:33:13Z"
+ "checked_at": "2026-11-05T07:02:30Z"
 }

@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "a0794153163a6a856bf086cce1773bc6946267db"
+  "master": "bba052f7503828dc430b7755f43c542cdd5e4c2e"
  },
- "last_pass_at": "2026-11-05T01:32:47Z",
- "pass": 67,
+ "last_pass_at": "2026-11-05T06:46:37Z",
+ "pass": 68,
  "result": "quiet",
- "note": "Pass 67: dc303b026..a07941531. Ferocious Bite Energy part (ff56f8ddc) matches 70790; explosives-in-form flags (22a7d7913) match 70790 SpellMisc. mechanics-20261104-1 updated, still open. Open item: 70790 hotfix rows (~2400 SpellMisc) not fully fetched.",
+ "note": "Pass 68: a07941531..bba052f75. Only shared-engine commit cb4065412 adds per-fight death flags to healing metrics (raid.go, sim_concurrent.go): metrics only, no mechanic change. Client still 70790; dev-notes thread unchanged since post 10; newest blue posts (Aggrend 11-05 transports/population) not mechanics. Open item from pass 67 (70790 hotfix rows) still open.",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-05T01:33:13Z",
+ "checked_at": "2026-11-05T07:02:30Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -25,5 +25,5 @@
   "newest_push": 113605,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-04T18:13:53Z"
+ "blue_tracker_seen": "2026-11-05T06:39:29Z"
 }

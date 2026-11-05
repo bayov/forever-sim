@@ -1,30 +1,37 @@
-# Healer mechanics: pass 3 (2026-11-05 UTC, master a079415316, client 1.60.1.70790)
+# Healer mechanics: pass 4 (2026-11-05 UTC, master bba052f750, client 1.60.1.70790)
 
-Quiet pass. Due because two watched files changed on master since pass 2 (dc303b026).
+Quiet pass. Due because a watched file (tools/healbench/main.go) changed on master since pass 3 (a079415316).
 
 ## Get current
 
 | Source | Seen | Healer content |
 |---|---|---|
-| wago.tools latest build | 1.60.1.70790 (same as pass 2) | none new |
-| Dev notes thread 2360696 | post 10 (2026-11-04 19:35Z) and post 9 edit (19:35Z) | post 10 says it added a "User Interface and Accessibility" section to post 9 (swing timer, bags, nameplates, spellbook, PvP scoreboard, keybinds): no healing mechanic |
-| update_ledger.md, tools/sources | no change in range | none |
+| wago.tools latest build | 1.60.1.70790 (same as pass 3) | none new |
+| Dev notes thread 2360696 | not re-fetched (pass 3 read post 10 at 01:33Z today) | none |
+| update_ledger.md | only the audit-loop commit 5fc045ccb (70790 entry, already read) | none |
 
-## What changed on master (watched paths)
+## What changed on master
 
 | File | Commit | Healer effect | Verdict |
 |---|---|---|---|
-| sim/core/spell_result.go (healingThreat) | 464deda7b | a heal on a tank in a tank-score replay makes threat from the whole heal, not effective healing, since the replay's health is the stand-in healer's (tank_mechanics-20261104-16). `readsNoHealth()` is `tankScore != nil && replay` (tank_score.go:93), so healing fights and healer presets are untouched | OK, tank-sim design; row added to verdicts Engine table |
-| sim/druid/ferocious_bite.go | ff56f8ddc | feral damage per extra Energy (hotfix 113403); no heal, HoT, mana or Restoration path | out of scope |
+| tools/healbench/main.go | cb4065412, bba052f75 | new flags: `-seed` (default 101, same as the old hard-coded seed), `-labeled` (UseLabeledRands), `-scales` + `-vectors` (appends per-fight deaths, HPS, useful HPS, mean healer mana left per scale, for tools/dps_report/tankheal.py race pairing). Healers are picked by `b.slots` as in `run`; HPS and EHPS summed over healers, mana averaged | OK, bench tooling; default runs unchanged |
+| sim/core/raid.go (doneHealingFight) | cb4065412 | appends a per-fight flag (1 tank died, 2 other died) to `HealingFight.FightDeaths`; counters unchanged | OK, metrics only |
+| sim/core/sim_concurrent.go | cb4065412 | concatenates `FightDeaths` in AddResult order, the same order as each DistributionMetrics.AllValues (line 148), so deaths and HPS vectors stay aligned per fight | OK |
 
-Priest goldens (TestDisc hps 111.86 -> 112.17, TestHoly 205.71 -> 206.32) moved with the goldens' item-set change
-(aa7cd24dc, c9973fb7f: hit-trade step items left out of AllItems), not a healing rule. No healer spell file changed.
+No heal rank, healing talent, set bonus or healing-engine rule changed, so steps 3 and 4 had nothing new to check.
+The verdicts in `ref/healer_mechanics/verdicts.md` stand unchanged.
 
-## Open findings re-checked
+## Tests
 
-- healer_mechanics-20261104-11 (Riptide mana 147/180/231 vs client 150/180/230): still open, `sim/shaman/healing.go:117,130-132` unchanged.
-- healer_mechanics-20261104-10 (untested mechanics): no new healer or engine healing tests in range; still open.
+No new heal or engine test needed for this range. `FightDeaths` has no test of its own; it is reporting
+for the race tables, and its counts are cross-checkable against FightsTankDeath/FightsOtherDeath. Not a new
+finding (covered in spirit by healer_mechanics-20261104-10).
 
-## Findings
+## Open findings
 
-None new.
+- healer_mechanics-20261104-11 (Riptide's mana): still open.
+- healer_mechanics-20261104-10 (untested heals, talents, engine paths): still open.
+
+## New findings
+
+None.
