@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "0facd9428f4200a86348e23009f1dc6e90871b3d"
+  "master": "a0794153163a6a856bf086cce1773bc6946267db"
  },
- "last_pass_at": "2026-11-04T19:00:00Z",
- "pass": 54,
- "result": "quiet",
- "note": "Pass 54: 335 commits; no DPS APL logic change (23 tank/healer APLs). Moves attributed to regears (feral, ret, rogue, arcane, enh, destro, fury), shaman hotfix 113380 and warrior Unbridled Wrath / Reckless Swings changes. Arms Dragonkin HS 100 screened on two seed sets: loses. Baseline refreshed. No findings.",
+ "last_pass_at": "2026-11-05T01:05:54Z",
+ "pass": 55,
+ "result": "findings",
+ "note": "Pass 55: 86 commits; no DPS APL logic change (8 tank APLs). Feral moves from FB hotfix 113403 and Goblin Sapper in Cat Form; Survival pet presets -1.5 from talent change (noise-level). Finding rotations-20261105-1: FB energy gate 45->65 (+1.9 at 180 s). Baseline refreshed.",
  "client_build": "1.60.1.70753",
- "checked_at": "2026-11-04T06:58:15Z",
- "baseline": "baseline_0facd94_3000it_seed424242.tsv"
+ "checked_at": "2026-11-05T01:33:13Z",
+ "baseline": "baseline_a079415_3000it_seed424242.tsv"
 }

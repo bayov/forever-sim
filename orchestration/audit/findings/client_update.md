@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### client_update-20261105-1: Feral bleeds and Ferocious Bite use a flat x1.25 where client 70790 now has exact rank values
+- severity: low (estimate, not measured: Bite at 5 combo points loses about 14 of its base damage, about 1% of a Bite and 0.1-0.2% of feral cat DPS; Rake ticks 0.5 lower; Rip within 0.3)
+- affects: druid feral cat (every cat request)
+- found: 2026-11-05, master a079415316
+- evidence: 70790 SpellEffect rows (`db2diff.py 70755 70790`): Ferocious Bite 31018 effect 0 base 82 -> 102, per combo point 147 -> 181 (x1.231, the sim 147 x 1.25 = 183.75); 22829 70 -> 87, 128 -> 160; 22828 50 -> 62, 92 -> 115; 22827 32 -> 40, 59 -> 74; Rake 9904 61 -> 76 and 34 -> 42 a tick (the sim 76.25 and 42.5); Rip 9896 15 -> 19, 25.5 -> 31.9 (the sim 18.75, 31.875). Bite's energy effect (330 at rank 6) already matches `foreverDmgPerEnergy` 3.3. No BonusCoefficientFromAP changes in any row, so the x1.25 on the attack power parts stays notes-only. Sim: `sim/druid/tuning_70753.go` (`nov2BleedScale`), `ferocious_bite.go:125`, `rake.go:46`, `rip.go:52`. Ledger DRU-U-16.
+- proposed fix: under Forever, give each rank table its 70790 values (base points, per combo point, Rake initial and tick, Rip base and per point) and keep `nov2BleedScale` only on the AP terms; size with `dps_beforeafter.sh` on the feral cat requests.
+- needs: worker fix
+
 ### client_update-20261030-2: Missile Barrage's "missiles fire every 0.5 sec" effect becomes a dummy in 70707
 - severity: low until verified (the sim's model matches the unchanged tooltip; if the server now fires the base 1 s ticks in a halved channel, arcane loses about half its Missile Barrage missiles)
 - affects: mage Arcane (and any build that casts Arcane Missiles on Missile Barrage)

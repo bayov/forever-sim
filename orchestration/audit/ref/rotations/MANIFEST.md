@@ -1,13 +1,12 @@
 # Rotation audit: reference files
 
-- `baseline_0facd94_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  0facd9428 (pass 54). Against the previous 6b480b0 baseline: Feral cat +26 (Nature's Reach 2, hit-4 step), Ret
-  +10 to +12 (hit-3 step), rogues +5 to +8 (hit+2/+3 steps), Arcane +7 (hit-1, Master of Elements 1),
-  Elemental +7 (hotfix 113380), Enhancement +7.5 to +9 (talents, hit steps, hotfix), warriors -2.9 to +1.3
-  (Unbridled Wrath on autos only, Reckless Swings on landed swings, Fury hit+2), Destruction fire +0.8.
+- `baseline_a079415_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  a07941531 (pass 55). Against the previous 0facd94 baseline: Feral cat +3.3 and its FF duty +5.3 (Ferocious
+  Bite hotfix 113403, Goblin Sapper in Cat Form), Survival wolf -1.6 and tallstrider -1.4 (talent change);
+  everything else under 0.05.
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at 0facd9428 (`/tmp/audit-cache/cli/0facd9428f42/wowsimcli`).
+  - The CLI was the audit loop's shared build at a07941531 (`/tmp/audit-cache/cli/a0794153163a/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

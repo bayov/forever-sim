@@ -46,12 +46,12 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 | Hunter | 93 | 52 | 2 | 8 | 1 | 1 | 3 | 3 | 22 | 1 info |
 | Rogue | 69 | 39 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
-| Shaman | 103 | 58 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
+| Shaman | 104 | 59 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
 | Mage | 66 | 17 | 9 | 9 | 0 | 1 | 5 | 7 | 18 | 0 |
 | Warlock | 90 | 47 | 4 | 0 | 0 | 3 | 3 | 1 | 31 | 1 covered by another row |
-| Druid | 70 | 32 | 0 | 2 | 2 | 2 | 2 | 0 | 30 | 0 |
+| Druid | 71 | 32 | 0 | 2 | 3 | 2 | 2 | 0 | 30 | 0 |
 | Shared (races, mechanics, items) | 70 | 26 | 1 | 2 | 3 | 2 | 3 | 9 | 24 | 0 |
-| **Total** | **765** | **380** | **47** | **31** | **8** | **19** | **21** | **33** | **222** | **4** |
+| **Total** | **767** | **381** | **47** | **31** | **9** | **19** | **21** | **33** | **222** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -274,6 +274,17 @@ The **2026-11-03 hotfix** to 70753 (foreverchanges.pro, launch-realm cache, not 
 ## Build 1.60.1.70755 (first seen 2026-11-03)
 
 70755: client-identical to 70753. All 39 tables in wago.py's `client_update` set are identical (`table_summary.py 70753 70755`), with no added rows. foreverchanges.pro: "A technical build: its game data is the same as the 2026-11-02 build's". No class, racial, talent, enchant or item change in the client. Dev notes: no post after /9. A new **server hotfix, push 113483** (wago.tools/hotfixes, region 91, build-70707 rows, logged 2026-11-03 18:29Z) changes the rogue tree: Improved Distract's node entry is removed and two new nodes, 113633 and 113635, are added. Its poison, Mutilate and Shank SpellEffect rows are listed in TASKS.md:241. It is not read in full yet and has no rows here; see finding client_update-20261103-3. No rows added.
+
+## Build 1.60.1.70790 (first seen 2026-11-04, the launch client)
+
+70790 is the launch client (foreverchanges.pro: "It writes the November 3 hotfixes into the client files ... Items did not change"). `table_summary.py 70755 70790`: 219 spells changed (druid 41, hunter 39, rogue 61, shaman 43, warrior 18, mage 4 text only, paladin 2, priest 1, warlock 1, 9 unclassed DNT/NPC), trait trees 1111 (rogue) and 1117 (warrior), five poison enchants' charges; ItemEffect, ChrRaces, SpellCastTimes, SpellDuration and SpellInterrupts identical; ItemSparse changed only on six keys and quest pages (bag family, max count). Dev notes: the thread's slug still reads "Updated November 2" (the JSON was rate-limited on 2026-11-05).
+
+Checked against the sim and matching, so no rows: every hunter line (HUN-HF-03..10: Aimed Shot 40-350, Arcane Shot 25-280, Aspect of the Hawk 20-110, Serpent Sting 3-135 a tick, Sniper Shot 320/450/590, Trueshot Aura 20-100); the rogue rework of push 113483 (ROG-HF-01..06: Shank, Mutilate 90% and 44/63/88, Venom, Flash of Steel, Boot Knife, Composure, Blood Splatter, Ghostly Strike, Flawless Execution 15, Aggression without Backstab, Hemorrhage, Efficient Strikes, Coup de Grace, poison charges, tree 1111); paladin Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy (PAL-HF-01/02); shaman push 113380 (Lightning Bolt, Chain Lightning 0.714 and 207-552, Earth Shock 531 + 3.4, Flame Shock 292 + 80 a tick, Frost Shock 506, Stormstrike 150% and 6 sec, Call of Thunder 5%, Chain Lightning mana 245-495; Riptide and Totemic Call n/a); warrior push 113539 and the notes (Slam 15 sec, Improved Slam 2.5 sec a point, Improved Whirlwind, Reckless Swings, Spearing Strike 75%, Booming Voice on Howls); warlock Wrack 0.286 and 2.5 a level; Shred 200%, Claw 140%, Ravage 435%, Starfire about 40% (rank 7 533, the sim 533.4). Cosmetic or n/a: Lacerating Strikes attribute (aura never bounces), Sap and Death Mark ranges, Baron Rivendare's Soul Drain, Death Pact, the DNT hunter pet scaling backup and Hide Mist spells, text-only mage and rogue tooltips.
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| DRU-U-16 | client 70790 (notes P9 "about 25%") | Rip, Rake, Ferocious Bite and Pounce ranks get exact new base points, not a flat x1.25: Ferocious Bite rank 6 (31018) 82 -> 102 base, 147 -> 181 a combo point (x1.231); rank 5 (22829) 70 -> 87, 128 -> 160; Rake 9904 61 -> 76, 34 -> 42 a tick (x1.235); Rip 9896 15 -> 19, 25.5 -> 31.9; Pounce Bleed 9007/9824/9826 x1.24-1.27 (the sim has no Pounce). No AP coefficient is in any row | **yes** (feral cat) | SpellEffect 705079, 699984, 687442/3, 688085 | partial | `sim/druid/tuning_70753.go` `nov2BleedScale` 1.25 on every rank: Bite rank 6 is 183.75 a point (client 181), Rake tick 42.5 (42), Rip 18.75 base (19). Finding client_update-20261105-1 |
+| SHA-HF-01 | FC 2026-11-04 hotfix; wago push 113341 | Chain Lightning cast: foreverchanges says the November 4 hotfix makes it "2 sec instead of 2.5 sec". Client 70790 has CastingTimeIndex 19 (2.5 sec, was 5 = 2 sec) on all four ranks, push 113341 sends 19 to 70755 and 70790 clients through 2026-11-04 23:43Z (and 5 only to 70753 and older), and the November 2 notes say "increased to 2.5 seconds" | **yes** (elemental AoE) | SpellMisc 314274, 314381, 316208, 322672 | landed (2.5 sec) | `sim/shaman/chain_lightning.go:72`. FC's line contradicts the raw rows; a combat log settles it |
 
 ## Per-class ledgers
 

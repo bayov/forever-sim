@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "dc303b02610f2af14685bb439fe43817ff9ccb1f"
+  "master": "a0794153163a6a856bf086cce1773bc6946267db"
  },
- "last_pass_at": "2026-11-04T19:35:00Z",
- "pass": 2,
- "result": "findings",
- "note": "Pass 2 on 0facd9428. All 9 healer APLs/requests were re-tuned, and the bench's tank side changed (tank faces the boss; idle fillers in the tank role; Onyxia parryHaste off). Tank rows +0.04..+0.34 from the bench (old APLs on the new bench reproduce them). Holy priest Chromaggus -0.047 from the idle fillers (Prayer of Mending fix, healer_fairness-1). -1 resolved (dda14db65). -2 still open (Disc OOM Chromaggus 101 s). New -3 low (shaman LHW 5 dead line). Disc one-line variants were not run (cut off at wrap-up).",
+ "last_pass_at": "2026-11-05T01:35:00Z",
+ "pass": 3,
+ "result": "quiet",
+ "note": "Pass 3 on a07941531. No healer APL/request/encounter/healbench change; engine changes (heal threat in score replay, Ferocious Bite, explosives in form, BonusArmor trinkets) don't touch the healer bench. All 63 baseline rows identical to pass 2. Disc variants: shield gate 0.9 +0.023 Chromaggus, -0.007 Golemagg, still OOM; Renew at 40% mana no effect. -2 and -3 still open. Rewrote tools/audit/healer_rotations/baseline.sh (was missing).",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-04T19:33:35Z"
+ "checked_at": "2026-11-05T01:33:13Z"
 }

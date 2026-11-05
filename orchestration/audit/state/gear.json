@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "0facd9428f4200a86348e23009f1dc6e90871b3d"
+  "master": "a0794153163a6a856bf086cce1773bc6946267db"
  },
- "last_pass_at": "2026-11-04T14:00:00Z",
- "pass": 57,
+ "last_pass_at": "2026-11-05T00:00:00Z",
+ "pass": 58,
  "result": "quiet",
- "note": "Pass 57: hit-trade steps (hit+N/-N sets, standards 4/29) checked: base sets, trinkets and weapons clean; step sets drift in stat mix by design (Int/SP up to ~3.5 points at the extreme steps).",
+ "note": "Pass 58: changes were tank sets only (standards 40 consumables text; paladin boots Greater Agility; Warden shield/wrist enchants). All enchants legal, no budget change. No DPS level60 set changed.",
  "client_build": "1.60.1.70755",
- "checked_at": "2026-11-04T13:12:31Z"
+ "checked_at": "2026-11-05T01:33:13Z"
 }

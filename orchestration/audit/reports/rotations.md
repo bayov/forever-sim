@@ -1,46 +1,46 @@
-# Rotations pass 54 (no findings)
+# Rotations pass 55 (1 finding)
 
-- Master: 0facd9428 (from 6b480b060, 335 commits), audited 2026-11-04. Client 1.60.1.70753 plus server hotfix
-  push 113380 (shaman).
-- Not quiet: sim `.go` changed (shaman, warrior, druid, paladin, priest, core). APL logic changed in 23 files,
-  all tank or healer rotations (feral tank, Protection paladin, tank warrior, Warden, healers), out of this
-  pass's DPS scope. No Level 60 DPS APL changed in logic.
-- Regression baseline refreshed: `ref/rotations/baseline_0facd94_3000it_seed424242.tsv` (rows that moved are in
-  `ref/rotations/MANIFEST.md`).
+- Master: a07941531 (from 0facd9428, 86 commits), audited 2026-11-05. Client 1.60.1.70753 plus server hotfix
+  push 113403 (Ferocious Bite).
+- Not quiet: sim `.go` changed (`sim/druid/ferocious_bite.go`, `sim/core/consumes.go` explosives in form,
+  `major_cooldown.go` BonusArmor trinkets as survival CDs, `spell_result.go` heal threat in replays,
+  `character.go` comment). APL logic changed in 8 files, all tank rotations (feral tank, Protection paladin,
+  tank warrior, Warden), out of scope. No Level 60 DPS APL changed in logic.
+- Req changes: feral cat and its FF duty take the Goblin Sapper Charge (e77fb293b); Survival (3 presets)
+  talents 502-005005-... -> 502-0050051-500230230250022151 (9660fffa8); meta/notes edits otherwise.
+- Regression baseline refreshed: `ref/rotations/baseline_a079415_3000it_seed424242.tsv`.
 
-## What moved (baseline, 3k it, seed 424242, vs 6b480b0)
+## What moved (baseline, 3k it, seed 424242, vs 0facd94)
 
 | Builds | Move | Cause |
 |---|---|---|
-| Feral cat, its FF duty | +26 | 74cc2b8e3: Natural Shapeshifter 2 -> Nature's Reach 2, hit-4 gear step. No powershift line, mana ends ~1600, no OOM. |
-| Ret (level_60 and duties) | +10 to +12 | 3f4d44d4a: hit-3 gear step. Shock Ret unchanged. |
-| Rogue (six) | +5 to +8 | 31c10b61c: hit+2/+3 gear steps. |
-| Arcane | +7 | 74cc2b8e3: hit-1 step, Flame Throwing 1 -> Master of Elements 1. Mana ends ~1600, 0.7 s OOM. |
-| Elemental, its Mana Tide | +7 | 87922bb77: hotfix 113380 (Lightning Bolt +2%, shocks, Chain Lightning ranks and mana). Near-uniform; LB/CL/shock order unaffected. |
-| Enhancement Level 60, Water Shield, Mana Tide | +7.5 to +9 | 3e4796fe7: Improved Stormstrike 2 -> 1 / Tidal Focus 3, hit-3/-4 steps, plus hotfix shocks. Earth Shock gate keys on Stormstrike's time to ready, so it follows the talent. |
-| Warrior | -2.9 to +1.3 | 9173d087a (Unbridled Wrath on autos only), 72c7d150f (Reckless Swings charges on landed swings), cd3f44cf2 (Fury DW hit+2). |
-| Destruction fire | +0.8 | c8a7b4ac3: hit+1 step. |
+| Feral cat FF duty / feral cat | +5.3 / +3.3 | ff56f8ddc hotfix 113403 (FB extra-Energy damage +20-24%), e77fb293b Goblin Sapper in Cat Form. |
+| Survival wolf / tallstrider / plain | -1.6 / -1.4 / +0.2 | 9660fffa8 talents (Rapid Killing for Resourcefulness). Within 3k-it noise for a talent change (RNG stream shifts); not A/B'd, since ab.py varies only the APL. |
 
-`talent_check.py` passes every req (51 points, rows valid). `dead_lines.py` on the shared run shows no new dead
-lines on the moved builds (only race, mana gem and talent-less lines, inert by design).
+Every other row moved under 0.05 DPS. The `vs_published.txt` moves on rogue, Ret, shaman and arcane predate
+this pass's range (pass 54 attributed them).
 
-## Screens (`ab.py`, 20k it, 8 blocks, shared CLI 0facd9428f42)
+## Screens (`ab.py`, 20k it, 8 blocks, shared CLI a0794153163a)
 
-| Preset | Variant | S0 | 120 | 180 | 300 |
+Feral cat, 5-CP Ferocious Bite energy gate (now 45), B-A at 120/180/300:
+
+| Preset | Gate | S0 | 120 | 180 | 300 |
 |---|---|---|---|---|---|
-| warrior arms_dragonkin (180 s base 1145.8) | Heroic Strike at >= 100 Rage (was 90), after Unbridled Wrath stopped proccing from HS | 1e6 | +1.03 ±0.84 | -0.63 ±0.65 | -0.47 ±0.32 |
-| | | 2e8 | -0.25 ±0.72 | -1.52 ±0.61 | -1.67 ±0.54 |
-| | | pooled | +0.39 | -1.08 | -1.07 |
+| feral-cat | 35 | 1e6 | -2.61 | -2.92 | -3.41 |
+| feral-cat | 55 | 1e6 | +1.25 | +1.18 | +2.10 |
+| feral-cat | 55 | 2e8 | +1.40 | +1.22 | +1.92 |
+| feral-cat | 65 | 1e6 | +1.63 | +1.86 | +3.28 |
+| feral-cat | 65 | 2e8 | +1.80 | +1.96 | +3.12 |
+| feral-cat | 75 | 1e6 | -0.42 | +0.19 | +1.85 |
+| feral-cat-duty-ff | 65 | 1e6 | +0.70 | +0.89 | +2.06 |
+| feral-cat-duty-ff | 65 | 2e8 | +1.18 | +1.33 | +2.06 |
 
-The 90 Rage gate holds.
+Gate 65 -> finding rotations-20261105-1.
 
 ## Optional
 
-None new. The pass 26 optional list (see `passes/rotations.md`) stands.
+- None new. Pass 26's optional list in `passes/rotations.md` still stands.
 
 ## Open items
 
-- Feral and Enhancement were regeared onto new talents without APL re-screens here; the workers' own paired
-  searches (`orchestration/round_70753/hit_trade/`) cover them and no line went dead.
-- Machine load was ~18 on 4 cores during this pass, so only the one screen above was run.
-- The rest of `passes/rotations.md` "Open items" is unchanged.
+- Survival pet presets' -1.5 after the talent change was not measured paired (needs a talent A/B, not an APL one).

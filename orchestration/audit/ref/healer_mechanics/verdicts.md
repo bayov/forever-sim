@@ -1,7 +1,7 @@
-# Healer mechanics audit: verdicts (as of 2026-11-04 UTC, master 0facd9428, client 1.60.1.70790)
+# Healer mechanics audit: verdicts (as of 2026-11-05 UTC, master a079415316, client 1.60.1.70790)
 
 Tier: 1 = Forever client (wago.tools) or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never vmangos.
-Pass 2 (2026-11-04, 0facd9428): findings 1-9 fixed on master and re-checked; 70790 touches only Riptide among
+Pass 3 (2026-11-05, a079415316): no healer spell or engine change; heal threat row added. Pass 2 (2026-11-04, 0facd9428): findings 1-9 fixed on master and re-checked; 70790 touches only Riptide among
 healer spells. Pass 1 checked every heal rank and healing talent of the four healers and the engine. A row marked match holds on
 70755; re-check it when a newer build or Blizzard post touches the spell. Open rulings stay in each
 `docs/healing_<class>.md` "Calls for the user"; open findings in `../../findings/healer_mechanics.md`.
@@ -187,6 +187,7 @@ healer spells. Pass 1 checked every heal rank and healing talent of the four hea
 | Heals in flight (HealComm) and reaction time | design (healing_sim.md, What healers see) | heal_comm.go:20-44, health.go:52-72 | OK as designed |
 | Cancelling: stop unpaid, cooldown reset, GCD held to cast start + 1.5 s, no five-second rule | game: mana paid at cast end (tier 3) | heal_comm.go:53-80, gcd.go:109-131, cast.go:347-360 (cost at completion) | OK |
 | Overheal booking: part above missing; target without health bar all effective | design | spell_result.go:700-704, health.go:88-96 | OK |
+| Heal threat: 0.5 per point of effective healing x spell and healer threat mods; whole heal on a unit with no health bar or a tank in a tank-score replay | Classic (tier 3); replay case is tank-sim design (tank_mechanics-20261104-16) | spell_result.go:137-152 (464deda7b) | OK (replay branch never hit in healing fights: tankScore nil) |
 | Absorbs: all schools | client 10901 aura 69 misc 127; Divine Aegis 431624 misc 127 (tier 1) | absorb.go:120-137 (no school check) | OK |
 | Absorbs: after armor, resists, damage-taken mods, the outcome; before health, procs, Rage | game (absorbed damage is not damage taken; tier 3) | spell_result.go:315-323 | OK |
 | Absorbs: order among shields (oldest first), after Ice Barrier-like dynamic absorbs | game: aura order; not sourced | absorb.go:124, spell_result.go:317-322 | OK enough (only matters with two absorbs on one unit) |

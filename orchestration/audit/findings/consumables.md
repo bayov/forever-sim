@@ -4,7 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-(none)
+### consumables-20261105-1: Feral mksettings consumes lack the Goblin Sapper Charge the preset and requests now carry
+- severity: low
+- affects: tools/rotopt/mksettings/spec_feral.go (consumes func, lines 20-33); ui/feral_druid/presets.ts (DefaultConsumes)
+- found: 2026-11-05, master a07941531
+- evidence: a07941531 adds `sapperExplosive: SapperGoblinSapper` to the feral DefaultConsumes (works in form, sim/core/consumes.go explosivesUsableInForm; +3.1 at 180 sec per the preset comment, not re-measured here) and tools/dps_report/req/druid__feral-cat*.json carry it, but spec_feral.go has no SapperExplosive and its comment still says the cat "can use no explosives". A rotopt/mksettings regeneration would drop the Sapper.
+- proposed fix: add `SapperExplosive: proto.SapperExplosive_SapperGoblinSapper` and fix the comment.
+- needs: orchestrator fix
+
 
 ## Resolved
 

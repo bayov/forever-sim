@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "41aa10700c899ef1f05663176c0ba82edaff334d"
+  "master": "a0794153163a6a856bf086cce1773bc6946267db"
  },
- "last_pass_at": "2026-11-03T19:03:09Z",
- "client_build": "1.60.1.70755",
+ "last_pass_at": "2026-11-05T00:57:00Z",
+ "client_build": "1.60.1.70790",
  "result": "findings",
- "note": "70755 is client-identical to 70753 (all 39 tables). No dev-notes post after /9. New server hotfix push 113483 (region 91, build-70707 rows, 2026-11-03 18:29Z, 1418 rows) not yet read in full: finding 20261103-3.",
- "pass": 9,
- "checked_at": "2026-11-04T13:12:31Z"
+ "note": "70790 (launch client) writes the 11-03 hotfixes into the client; all landed. Chain Lightning 2.5 s per push 113341 rows despite FC saying 2 s. Finding 20261105-1 (feral exact rank values, low).",
+ "pass": 10,
+ "checked_at": "2026-11-05T01:33:13Z"
 }
