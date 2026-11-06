@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "64d0c5a8b8f8e337c6e996cbf96706424edfa2eb"
+  "master": "699fb7344f38e165ec096b1f080126be86a681c9"
  },
  "last_pass_at": "2026-11-05T06:46:37Z",
  "pass": 68,
  "result": "quiet",
  "note": "Pass 68: a07941531..bba052f75. Only shared-engine commit cb4065412 adds per-fight death flags to healing metrics (raid.go, sim_concurrent.go): metrics only, no mechanic change. Client still 70790; dev-notes thread unchanged since post 10; newest blue posts (Aggrend 11-05 transports/population) not mechanics. Open item from pass 67 (70790 hotfix rows) still open.",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-05T18:48:33Z",
+ "checked_at": "2026-11-06T00:44:04Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
