@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "4d8be928c8cc906b9d2a1b13278731990c05778b"
+  "master": "d272a147161bdf40b1edbfe2fb883fea4c82ec46"
  },
  "last_pass_at": "2026-11-05T07:02:00Z",
  "pass": 4,
@@ -8,5 +8,5 @@
  "note": "Pass 4 on bba052f75. Only healbench change: new -seed (default 101)/-labeled/-vectors flags; defaults keep the request identical. Engine: per-fight death flags (bookkeeping). All 63 baseline rows byte-identical to ref. -2 and -3 still open. Rewrote tools/audit/healer_rotations/baseline.sh again (pass 3 copy never committed).",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-06T06:44:15Z"
+ "checked_at": "2026-11-06T12:45:43Z"
 }
