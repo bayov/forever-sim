@@ -183,6 +183,7 @@ const (
 	GraverobbersShovel       = 273817
 	EverlookDeliveryBot      = 274760
 	DullSawblade             = 285292
+	BladewhispersNamesake    = 287072
 )
 
 func init() {
@@ -939,6 +940,10 @@ func init() {
 	// Equip: +9 Attack Power Vs Humanoids. Forever build 70009 gave the Deadmines thrown
 	// weapon this in place of a point of Agility.
 	core.NewMobTypeAttackPowerEffect(DullSawblade, []proto.MobType{proto.MobType_MobTypeHumanoid}, 9)
+
+	// https://foreverchanges.pro/item/287072
+	// Equip: +8 Attack Power Vs Humanoids. A Forever thrown weapon, revealed 2026-11-05.
+	core.NewMobTypeAttackPowerEffect(BladewhispersNamesake, []proto.MobType{proto.MobType_MobTypeHumanoid}, 8)
 
 	// https://www.wowhead.com/classic/item=19353/drake-talon-cleaver
 	// Chance on hit: Delivers a fatal wound for 240 damage.
