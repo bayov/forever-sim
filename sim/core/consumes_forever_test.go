@@ -253,7 +253,7 @@ func newForeverConsumeSim(t *testing.T, consumes *proto.Consumes, encounter *pro
 	return sim, sim.Raid.Parties[0].Players[0].GetCharacter()
 }
 
-// The natural flasks give 60 Stamina anywhere, and their bonus only in a natural flask zone
+// The natural flasks give 30 Stamina anywhere (client 1.60.1.70862), and their bonus only in a natural flask zone
 // (spells 1293740 to 1293743).
 func TestForeverNaturalFlasks(t *testing.T) {
 	_, plain := newForeverConsumeSim(t, &proto.Consumes{}, &proto.Encounter{NaturalFlaskZone: true}, 1, proto.Profession_ProfessionUnknown)
@@ -263,17 +263,17 @@ func TestForeverNaturalFlasks(t *testing.T) {
 		want  stats.Stats
 		haste float64
 	}{
-		{proto.Flask_FlaskOfNaturalAccuracy, stats.Stats{stats.MeleeHit: 5 * MeleeHitRatingPerHitChance, stats.SpellHit: 5 * SpellHitRatingPerHitChance}, 1},
-		{proto.Flask_FlaskOfNaturalAggression, stats.Stats{stats.MeleeCrit: 4 * CritRatingPerCritChance, stats.SpellCrit: 4 * SpellCritRatingPerCritChance}, 1},
-		{proto.Flask_FlaskOfNaturalPrecision, stats.Stats{stats.Expertise: 5 * ExpertiseRatingPerExpertiseChance}, 1},
-		{proto.Flask_FlaskOfNaturalSwiftness, stats.Stats{}, 1.05},
+		{proto.Flask_FlaskOfNaturalAccuracy, stats.Stats{stats.MeleeHit: 2 * MeleeHitRatingPerHitChance, stats.SpellHit: 2 * SpellHitRatingPerHitChance}, 1},
+		{proto.Flask_FlaskOfNaturalAggression, stats.Stats{stats.MeleeCrit: 2 * CritRatingPerCritChance, stats.SpellCrit: 2 * SpellCritRatingPerCritChance}, 1},
+		{proto.Flask_FlaskOfNaturalPrecision, stats.Stats{stats.Expertise: 2 * ExpertiseRatingPerExpertiseChance}, 1},
+		{proto.Flask_FlaskOfNaturalSwiftness, stats.Stats{}, 1.02},
 	}
 	for _, c := range cases {
 		for _, zone := range []bool{true, false} {
 			_, character := newForeverConsumeSim(t, &proto.Consumes{Flask: c.flask}, &proto.Encounter{NaturalFlaskZone: zone}, 1, proto.Profession_ProfessionUnknown)
 			gained := character.GetStats().Subtract(base)
-			if gained[stats.Stamina] < 60 {
-				t.Errorf("%s (zone %v): %.1f Stamina, want at least 60", c.flask, zone, gained[stats.Stamina])
+			if gained[stats.Stamina] < 30 {
+				t.Errorf("%s (zone %v): %.1f Stamina, want at least 30", c.flask, zone, gained[stats.Stamina])
 			}
 			want, haste := c.want, c.haste
 			if !zone {
