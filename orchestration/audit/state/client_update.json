@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "c67d9e014398c6537adcd9d3244af68316529712"
+  "master": "12aa2796fcc67602d15bfb572fc8483697d9ddd0"
  },
- "last_pass_at": "2026-11-05T00:57:00Z",
- "client_build": "1.60.1.70790",
- "result": "findings",
- "note": "70790 (launch client) writes the 11-03 hotfixes into the client; all landed. Chain Lightning 2.5 s per push 113341 rows despite FC saying 2 s. Finding 20261105-1 (feral exact rank values, low).",
- "pass": 10,
- "checked_at": "2026-11-07T00:44:25Z"
+ "last_pass_at": "2026-11-07T06:57:19Z",
+ "client_build": "1.60.1.70862",
+ "result": "quiet",
+ "note": "70862 writes the 11-06 hotfix into the client. Only DPS change: Natural flasks 60->30 Stamina, zone bonus ->2% (SHR-U-19, missing; measured -1.5% to -3.9%), already filed as mechanics-20261107-1 / consumables-20261107-1, so no new finding here. Orc Command warlock effect, Arcane Blast 18 s, Soul Siphon/Wrack: landed.",
+ "pass": 11,
+ "checked_at": "2026-11-07T06:57:34Z"
 }

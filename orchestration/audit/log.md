@@ -252,3 +252,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-05 07:02 | tank_mechanics | pass 5 | master bba052f750 | quiet | tankbench flags are opt-in tooling only
 2026-11-05 07:02 | tank_rotations | pass 5 | master bba052f750 | quiet | all 91 baseline rows match pass 4
 2026-11-05 07:02 | tank_fairness | pass 5 | master bba052f750 | 1 new finding | tank_fairness-20261105-2 (high) Warden presets use races a Forever shaman can't be
+2026-11-07 06:57 | consumables | pass 74 | master 12aa2796f | 1 new findings | 70862 halves Natural flasks (60->30 Stamina, zone 5/4/5/5->2); sim still old
+2026-11-07 06:57 | mechanics | pass 69 | master 12aa2796f | 1 new findings | same flask change measured: 28 presets lose 1.9-4.5% DPS
+2026-11-07 06:57 | client_update | pass 11 | master 12aa2796f | quiet | 70862 ledger section added; flask change already filed
+2026-11-07 06:57 | healer_mechanics | pass 5 | master 12aa2796f | quiet | Bloom heal target change matches sim
+2026-11-07 06:57 | tank_mechanics | pass 6 | master 12aa2796f | 1 new findings | stance/bear threat now match sim; stale comments/docs

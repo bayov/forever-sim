@@ -1,35 +1,38 @@
-# Healer mechanics: pass 4 (2026-11-05 UTC, master bba052f750, client 1.60.1.70790)
+# Healer mechanics: pass 5 (2026-11-07 UTC, master 12aa2796fc, client 1.60.1.70862)
 
-Quiet pass. Due because a watched file (tools/healbench/main.go) changed on master since pass 3 (a079415316).
+Quiet pass. Due because the client moved 1.60.1.70790 -> 1.60.1.70862; no watched file changed on master.
 
 ## Get current
 
 | Source | Seen | Healer content |
 |---|---|---|
-| wago.tools latest build | 1.60.1.70790 (same as pass 3) | none new |
-| Dev notes thread 2360696 | not re-fetched (pass 3 read post 10 at 01:33Z today) | none |
-| update_ledger.md | only the audit-loop commit 5fc045ccb (70790 entry, already read) | none |
+| wago.tools latest build | 1.60.1.70862 (new) | Bloom heal target only, below |
+| Dev notes thread 2360696 | re-fetched 2026-11-07; still 10 posts, last post 10 (2026-11-04T19:35Z) | none new |
+| update_ledger.md | no 70862 entry yet | none |
+| master c67d9e014..12aa2796f | item fold-in (12aa2796f) and an audit-loop commit | no heal, talent or engine file |
 
-## What changed on master
+## Client diff 70790 -> 70862 (`python3 tools/sources/wago.py diff 1.60.1.70790 1.60.1.70862 --set mechanics`)
 
-| File | Commit | Healer effect | Verdict |
-|---|---|---|---|
-| tools/healbench/main.go | cb4065412, bba052f75 | new flags: `-seed` (default 101, same as the old hard-coded seed), `-labeled` (UseLabeledRands), `-scales` + `-vectors` (appends per-fight deaths, HPS, useful HPS, mean healer mana left per scale, for tools/dps_report/tankheal.py race pairing). Healers are picked by `b.slots` as in `run`; HPS and EHPS summed over healers, mana averaged | OK, bench tooling; default runs unchanged |
-| sim/core/raid.go (doneHealingFight) | cb4065412 | appends a per-fight flag (1 tank died, 2 other died) to `HealingFight.FightDeaths`; counters unchanged | OK, metrics only |
-| sim/core/sim_concurrent.go | cb4065412 | concatenates `FightDeaths` in AddResult order, the same order as each DistributionMetrics.AllValues (line 148), so deaths and HPS vectors stay aligned per fight | OK |
+Changed rows are boss/NPC spells (Hogger set: Ground Slam, Warstomp, Cleave, Meathook, Bloodlust), Defensive Stance,
+Bear Form passive, flasks, Adventurer's Tent, Kidney Shot/Gouge levels, tooltip text (Thorns, Ravage) and items.
+New rows on existing spells (SpellEffect 9, SpellPower 0, SpellAuraOptions 0, others 0) and removed rows (Study,
+Impaled, Bloodlust, Warstomp, Cleave cost, Soulstone aura options) touch no healer spell.
 
-No heal rank, healing talent, set bonus or healing-engine rule changed, so steps 3 and 4 had nothing new to check.
-The verdicts in `ref/healer_mechanics/verdicts.md` stand unchanged.
+| Spell | Client 70790 | Client 70862 | Sim | Verdict | Tier |
+|---|---|---|---|---|---|
+| Bloom heal 1328622 (SpellEffect 1367728) | HEAL, ImplicitTarget 1 (caster) | ImplicitTarget 21 (target ally) | heals the expiring HoT's target (`sim/druid/healing.go:313-318,735`) | match, the client now agrees | 1 |
+| Riptide mana (SpellPower 304804/310863/310864) | 150/180/230 | unchanged | 147/180/231 | finding 11 stands | 1 |
+
+Steps 3-4: nothing else in the healers' spells, talents or the engine changed, so the verdicts in
+`ref/healer_mechanics/verdicts.md` stand (Bloom row and header updated).
 
 ## Tests
 
-No new heal or engine test needed for this range. `FightDeaths` has no test of its own; it is reporting
-for the race tables, and its counts are cross-checkable against FightsTankDeath/FightsOtherDeath. Not a new
-finding (covered in spirit by healer_mechanics-20261104-10).
+No new mechanic, so no new test gap. `TestDruidBloom` covers the heal on the target.
 
 ## Open findings
 
-- healer_mechanics-20261104-11 (Riptide's mana): still open.
+- healer_mechanics-20261104-11 (Riptide's mana): still open, re-checked on 70862.
 - healer_mechanics-20261104-10 (untested heals, talents, engine paths): still open.
 
 ## New findings

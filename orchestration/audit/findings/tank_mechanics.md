@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_mechanics-20261107-1: Client 70862 now carries the notes' tank threat; sim comments and class docs still say the client disagrees
+- severity: low (labels only; the sim already uses the new values, no DPS or score moves)
+- affects: Protection warrior, Feral tank (bear); docs/tank_warrior.md, docs/tank_druid.md, sim/warrior/stances.go, sim/druid/bear.go
+- found: 2026-11-07, master 12aa2796f
+- evidence: `wago.py diff 1.60.1.70790+hf 1.60.1.70862+hf --by-spell`: 7376 Defensive Stance Passive #2 (aura 10 A_MOD_THREAT, misc 127) bp 30 -> 80; 21178 Bear Form (Passive2) #0 (aura 10, misc 127) bp 50 -> 115 (tier 1, client 70862). The sim's x1.8 (sim/warrior/stances.go:117) and x2.15 (sim/druid/bear.go:58) now match the client. Stale text: stances.go:109-114 ("7376 (30%)", "Clients 70753 and 70755 unchanged"), bear.go:50-57 ("50 in the hotfixed client", "21178 bp 50"), docs/tank_druid.md:22, :55, :418 ("21178 still says 50", "notes-only"), docs/tank_warrior.md:31 ("client 70753 and 70755 still 30%"). Defiance 12792 is still bp 15 in 70862, so its 7/13/20% stays notes-only.
+- proposed fix: relabel both rows "client 70862 (tier 1)" and drop the "client still says" wording; keep Defiance's notes-only label. bearFormThreatMultiplier (1.5) stays for non-Forever envs.
+- needs: worker fix
+
 ## Resolved
 
 ### tank_mechanics-20261104-15: Goblin Sapper Charge and Goblin Land Mine are blocked in a form; the client allows them

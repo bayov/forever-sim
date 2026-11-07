@@ -1,26 +1,19 @@
-# tank_mechanics pass 5 (2026-11-05, master bba052f75, client 1.60.1.70790+hf)
+# tank_mechanics pass 6 (2026-11-07, master 12aa2796f, client 1.60.1.70862+hf)
 
-Due on one watched file: tools/tankbench/main.go (cb4065412, "Tank and heal races: paired per-fight sims"). Result: quiet.
+Due on a new client build, 1.60.1.70790 -> 1.60.1.70862. Result: findings (one, low).
 
-**Getting current:** wago's latest is still 1.60.1.70790 (no new build). The update_ledger change in range is the audit loop's own commit. Blizzard's development notes thread was not re-read this pass (pass 4 hit the forum's 422 rate limit); `dev_notes_seen` stays at post 9 (2026-11-04T02:12:27Z), and the next full pass should check it.
+**Getting current:** wago's latest is 1.60.1.70862. Blizzard's development notes thread (t/2360696) has a new post 10 (2026-11-04T19:35Z): it only says a UI section was added to post 9, and post 9's edit at 19:35 is that UI section (swing timer, bags, nameplates). Nothing for tanks. The repo range c67d9e014..12aa2796f is an audit-loop commit and an items fold-in; no tank ability, talent or engine file changed.
 
-**What changed:** tankbench gained three flags for tools/dps_report/bench_races.py, all tooling:
+**Client diff** (`wago.py diff 1.60.1.70790+hf 1.60.1.70862+hf --by-spell`, 441 spell rows; nearly all new creature spells and flight-path dummies). Player tank rows that changed:
 
-| Flag | What it does | Mechanic touched |
-|---|---|---|
-| `-first-seed` | sets SimOptions.RandomSeed raw, in place of `tankscore.Seed(-seed)` | none |
-| `-labeled` | SimOptions.UseLabeledRands (one random stream per roll kind) | none: same rolls, different stream layout |
-| `-vectors` | SaveAllValues; appends one JSON line a build with per-fight SafeDPS, survive HPS (+Inf as -1), DTPS, TPS | none |
+| Spell | Field | 70790 | 70862 | Sim | Verdict | Tier |
+|---|---|---|---|---|---|---|
+| 7376 Defensive Stance Passive | #2 A_MOD_THREAT (misc 127) | 30 | 80 | x1.8 under Forever (stances.go:117) | match, now client | 1 |
+| 21178 Bear Form (Passive2) | #0 A_MOD_THREAT (misc 127) | 50 | 115 | x2.15 under Forever (bear.go:58) | match, now client | 1 |
+| 12792 Defiance r3 | #0 A_MOD_THREAT | 15 | 15 | 20% (notes) | unchanged, stays notes-only | notes |
 
-The other engine edits in range (sim/core/raid.go, sim_concurrent.go, proto FightDeaths) are the healing fight's per-fight death flags; no tank path reads them. No tank ability, talent or engine file changed.
+Not tank: 57596 Mangle! (creature spell, not in the sim), 20575 Command (Orc pet racial), 48198 Righteous Fire (targeting), The Quick and the Dead 126231x (attribute flags only; the notes' "Righteous Fury made free" is server side), Soulstone aura-option rows removed.
 
-**Checks (warrior_protection request, 20 fights):**
+**Engine:** no engine commit in range; the changed rows touch no attack-table, armor, block or Rage data. No sim run needed: both changed values were already in the sim.
 
-| Check | Result |
-|---|---|
-| `-vectors` lengths equal fights for every series | 20/20/20/20 |
-| `-vectors` means match the printed table (TPS) | 1329.8 vs 1330 |
-| `-first-seed 1000 -iters 3` fight 3 equals `-first-seed 1002 -iters 1` | DTPS 499.08, TPS 1357.77, survive 486.23 in both |
-| `-labeled` keeps the outcome distribution (different stream) | DTPS 485.5 vs 467.2, TPS 1335.3 vs 1329.8 at 20 fights, within noise |
-
-No new findings. Verdicts in `ref/tank_mechanics/verdicts.md` unchanged.
+**New finding:** tank_mechanics-20261107-1 (low): sim comments and class docs still say the client disagrees with the 80% / 115% threat values.

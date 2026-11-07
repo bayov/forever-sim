@@ -1,17 +1,17 @@
 {
  "last": {
-  "master": "c67d9e014398c6537adcd9d3244af68316529712"
+  "master": "12aa2796fcc67602d15bfb572fc8483697d9ddd0"
  },
- "last_pass_at": "2026-11-05T06:47:26Z",
- "pass": 5,
- "result": "quiet",
- "client_build": "1.60.1.70790",
- "checked_at": "2026-11-07T00:44:25Z",
+ "last_pass_at": "2026-11-07T06:52:00Z",
+ "pass": 6,
+ "result": "findings",
+ "client_build": "1.60.1.70862",
+ "checked_at": "2026-11-07T06:57:34Z",
  "dev_notes_seen": {
-  "url": "https://us.forums.blizzard.com/en/wow/t/2360696/9",
-  "date": "2026-11-03T03:20:33Z",
-  "edited": "2026-11-04T02:12:27Z",
+  "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
+  "date": "2026-11-04T19:35:16Z",
+  "edited": "2026-11-04T19:35:27Z",
   "post1_edited": "2026-11-03T03:20:46Z"
  },
- "note": "Pass 5 (bba052f75): only tools/tankbench/main.go changed (-first-seed, -labeled, -vectors for bench_races.py); tooling, no tank mechanic touched. Flags checked by a warrior run; quiet. Client build unchanged; dev notes not re-read."
+ "note": "Pass 6 (12aa2796f): client 70862 bakes in Defensive Stance 80% and Bear Form 115% threat (sim already used them); Defiance still 15 in client. Dev notes post 10 is UI only. One low finding (stale labels)."
 }

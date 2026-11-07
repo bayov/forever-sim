@@ -41,17 +41,17 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 
 | Class / system | Rows | Landed | In flight | Missing | Partial | Wrong | Not simulated on purpose | Ambiguous | n/a | Other |
 |---|---|---|---|---|---|---|---|---|---|---|
-| Warrior | 83 | 52 | 0 | 2 | 0 | 2 | 0 | 4 | 23 | 0 |
+| Warrior | 84 | 52 | 0 | 2 | 0 | 2 | 0 | 4 | 24 | 0 |
 | Paladin | 66 | 37 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
 | Hunter | 93 | 52 | 2 | 8 | 1 | 1 | 3 | 3 | 22 | 1 info |
 | Rogue | 69 | 39 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
 | Shaman | 104 | 59 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
-| Mage | 66 | 17 | 9 | 9 | 0 | 1 | 5 | 7 | 18 | 0 |
-| Warlock | 90 | 47 | 4 | 0 | 0 | 3 | 3 | 1 | 31 | 1 covered by another row |
-| Druid | 71 | 32 | 0 | 2 | 3 | 2 | 2 | 0 | 30 | 0 |
-| Shared (races, mechanics, items) | 70 | 26 | 1 | 2 | 3 | 2 | 3 | 9 | 24 | 0 |
-| **Total** | **767** | **381** | **47** | **31** | **9** | **19** | **21** | **33** | **222** | **4** |
+| Mage | 67 | 18 | 9 | 9 | 0 | 1 | 5 | 7 | 18 | 0 |
+| Warlock | 91 | 48 | 4 | 0 | 0 | 3 | 3 | 1 | 31 | 1 covered by another row |
+| Druid | 72 | 32 | 0 | 2 | 3 | 2 | 2 | 0 | 31 | 0 |
+| Shared (races, mechanics, items) | 72 | 27 | 1 | 3 | 3 | 2 | 3 | 9 | 24 | 0 |
+| **Total** | **773** | **384** | **47** | **32** | **9** | **19** | **21** | **33** | **224** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -285,6 +285,21 @@ Checked against the sim and matching, so no rows: every hunter line (HUN-HF-03..
 |---|---|---|---|---|---|---|
 | DRU-U-16 | client 70790 (notes P9 "about 25%") | Rip, Rake, Ferocious Bite and Pounce ranks get exact new base points, not a flat x1.25: Ferocious Bite rank 6 (31018) 82 -> 102 base, 147 -> 181 a combo point (x1.231); rank 5 (22829) 70 -> 87, 128 -> 160; Rake 9904 61 -> 76, 34 -> 42 a tick (x1.235); Rip 9896 15 -> 19, 25.5 -> 31.9; Pounce Bleed 9007/9824/9826 x1.24-1.27 (the sim has no Pounce). No AP coefficient is in any row | **yes** (feral cat) | SpellEffect 705079, 699984, 687442/3, 688085 | partial | `sim/druid/tuning_70753.go` `nov2BleedScale` 1.25 on every rank: Bite rank 6 is 183.75 a point (client 181), Rake tick 42.5 (42), Rip 18.75 base (19). Finding client_update-20261105-1 |
 | SHA-HF-01 | FC 2026-11-04 hotfix; wago push 113341 | Chain Lightning cast: foreverchanges says the November 4 hotfix makes it "2 sec instead of 2.5 sec". Client 70790 has CastingTimeIndex 19 (2.5 sec, was 5 = 2 sec) on all four ranks, push 113341 sends 19 to 70755 and 70790 clients through 2026-11-04 23:43Z (and 5 only to 70753 and older), and the November 2 notes say "increased to 2.5 seconds" | **yes** (elemental AoE) | SpellMisc 314274, 314381, 316208, 322672 | landed (2.5 sec) | `sim/shaman/chain_lightning.go:72`. FC's line contradicts the raw rows; a combat log settles it |
+
+## Build 1.60.1.70862 (first seen 2026-11-07)
+
+70862 writes the 2026-11-06 hotfix and some earlier server changes into the client. `table_summary.py 70790 70862`: 461 spells changed, nearly all added NPC, dungeon and cosmetic spells (395 new Spell rows: Drowned City and Deathless Marrow DNT spells, mage portals, "Endless" elixirs and scrolls, 17 new low-level items such as Thunderfury and Sulfuras copies at ilvl 35-45 and required level 1). ChrRaces, SpellCastTimes, SpellDuration, trait trees and every player damage spell are identical; ItemSparse changes only flags, recipe quality and six ilvl 10 -> 30 level-1 copies; one enchant added (8726 Luminarian's Binding, a quest arcanum). foreverchanges.pro: "Not in Blizzard's notes, found in the game", seven items read differently, and "The Hyjal flasks' 30 Stamina and 2% were already on their item pages from the server's hotfixes: the client now says so too." Its 2026-11-06 hotfix (Blizzard's notes) is tooltips and fixes; its 2026-11-06 "Announced for November 10" list (pet durability, Wrack versus the affliction DoTs, Enhancement Strength) is not live and gets no rows yet. Dev notes thread not re-fetched (rate-limited last pass; the hotfix lines come through foreverchanges).
+
+Text and cosmetic only, no rows: Bear Form, Ravage, Thorns, Great Stamina, Shank and Reckless Swings tooltips; Pounce and Ravage barred under Shadowmeld (SpellAuraRestrictions 20580, PvP); The Quick and the Dead attribute bits on every class (Cooldown Manager); Bloom target fix (healing); Use Soulstone proc rows removed; Adventurer's Tent; rogue Gouge and Kidney Shot level rows on 1324xxx variants not in the sim.
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| SHR-U-19 | client 70862; FC 11-07 (server hotfix earlier, date not given) | Flasks of Natural Accuracy, Aggression, Precision and Swiftness (1293740-1293743): Stamina 60 -> 30, zone bonus (the dummy effect 1) 5 / 4 / 5 / 5 -> 2 for all four | **yes** (28 presets: warrior, rogue, hunter, feral cat; all run with `naturalFlaskZone` on) | SpellEffect 1314691/2, 1314695/6, 1314699/700, 1314703/4 bp 60 -> 30 and 5/4/5/5 -> 2 | missing | `sim/core/consumes.go` `applyNaturalFlask` still 60 and 5% hit / 4% crit / 5% expertise / 1.05 speed. Measured with a scratch build (180 s, 20k iterations, seeds 1 and 1000003): feral cat -1.5%, MM -1.8%, survival -3.2%, combat daggers -1.9%, mutilate -2.0%, arms -1.7%, fury -3.9%. Already filed as mechanics-20261107-1 and consumables-20261107-1; standards item 11 flask choices may move |
+| SHR-U-20 | client 70862; FC 11-06 hotfix "Orc: Command no longer raises some warlock pet abilities too much" | Orc Command, warlock version (20575): effect 1 (aura 108, +5% to Firebolt and Lash of Pain, mask 0x3000) 5 -> 0. Effect 0, the 5% pet damage, and the hunter version 20576 are unchanged | yes (7 orc warlock presets, all Succubus) | SpellEffect 697943 bp 5 -> 0 | landed | `sim/core/racials_forever.go:70-80` gives every non-guardian pet 5% and never had the second 5% |
+| MAGE-HF-01 | FC 11-06 hotfix | Arcane Blast's effect lasts its full 18 sec (it ended early) | yes (arcane) | server fix; the spell rows are unchanged | landed | `sim/mage/arcane_blast.go:31` `ArcaneBlastDuration` 18 s |
+| WL-HF-01 | FC 11-06 hotfix | Soul Siphon no longer makes Wrack raise its own damage | yes (affliction) | server fix; no client row changed | landed | `sim/warlock/talents.go:317` counts Corruption, the bane, Siphon Life and the curse, never Wrack itself |
+| DRU-U-17 | client 70862 | Bear Form (Passive2) 21178 effect 0 (aura 10, threat) 50 -> 115 | n/a (threat) | SpellEffect 700189 | n/a | tanking |
+| WAR-U-15 | client 70862 (FC 11-04 hotfix, Defensive Stance threat) | Defensive Stance Passive 7376 effect 2 (aura 10, threat) 30 -> 80 | n/a (threat) | SpellEffect 686475 | n/a | tanking; the 11-04 hotfix row is already landed |
 
 ## Per-class ledgers
 

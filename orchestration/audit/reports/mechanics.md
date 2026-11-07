@@ -1,28 +1,52 @@
-# Mechanics pass 67 (2026-11-05, master a07941531)
+# Mechanics pass 69 (2026-11-07, master 12aa2796f)
 
-Quiet: no new finding. One open finding updated (mechanics-20261104-1, Energy part fixed).
+One new finding: mechanics-20261107-1 (high), the natural flasks on client 70862.
 
 ## Range
 
-dc303b026..a07941531 (9 watched files). Commits on sim / mksettings:
-
-| Commit | What | Mechanics check |
-|---|---|---|
-| ff56f8ddc (sim/druid/ferocious_bite.go) | Forever damage a point of extra Energy 0.7 / 1.2 / 1.8 / 2.5 / 3.1 / 3.3 (hotfix push 113403) | Matches 70790 SpellEffect #1 bp 70 / 120 / 180 / 250 / 310 / 330 for 1328618 / 22568 / 22827 / 22828 / 22829 / 31018 (tier 1). Updated mechanics-20261104-1; base and per combo point parts still on the 1.25 scale. |
-| 22a7d7913 (consumes.go, character.go) | Sapper, Land Mine, EZ-Thro bombs usable in a form; dynamite, grenades, Holy Hand Grenade leave it | 70790 SpellMisc Attributes_0: 13241, 4100, 1269334, 1269330 = 0x0; 12419, 23063, 4068, 19769, 1317268 = 0x10000 (NOT_SHAPESHIFTED). Matches. New verdicts row. Only potions keep their own canUseItemsInForm path. |
-| 464deda7b (major_cooldown.go, spell_result.go) | BonusArmor on-use trinkets are survival cooldowns; heal threat in a tank-score replay takes the whole heal | Tank scoring and cooldown classification; no DPS mechanic. |
-| aa7cd24dc | Test-only set filter | n/a |
+c67d9e014..12aa2796f: two commits (an audit-state commit and an item-database fold-in). No commit on sim or mksettings.
 
 ## Getting current
 
 | Source | Result |
 |---|---|
-| Client build | 1.60.1.70790 still newest (`wago.py latest --probe 300`). |
-| Dev notes thread | Post 10 (Kaivax, 2026-11-04T19:35:16Z) and post 9 edit (19:35:27Z): a User Interface and Accessibility section only (swing timer fade, bags, nameplates, keybinds). No mechanics. |
-| Blue tracker | Linxy newest 2026-11-03, Aggrend 2026-10-22; Kaivax/Gnedi/Brenoch activity not public via user_actions. Beta discussion category: nothing blue in the newest topics. |
-| Daily update | forever-update/2026-11-04 merged (33dc144a1); TASKS.md afdf88334 (hotfix pushes 113282/113403 follow-ups, Endless consumables, 70755 item cache). 113403's Ferocious Bite part landed in ff56f8ddc. |
-| Hotfix pushes | wago.tools logs about 2,400+ SpellMisc rows for build 70790 (region 91). `hotfixes.py fetch 1.60.1.70790 SpellEffect SpellMisc` ran an hour without finishing SpellMisc and was stopped. Open item: finish the fetch (resumable cache) and run `pushes` / `check` for shared rows next pass. Likely another attribute bake like 70753's, unverified. |
+| Client build | 1.60.1.70790 -> 1.60.1.70862. `wago.py diff --by-spell`: 441 lines, 24 changed rows apart from new or NPC spells. |
+| Dev notes thread | Still 10 posts; post 10 2026-11-04T19:35:16Z, post 9 edited 19:35:27Z, post 1 03:20:46Z. Nothing new. |
+| Blue tracker | Newest: Linxy 2026-11-07T01:07Z (Midnight hotfixes) and 11-06 (Venomous Abyss raid tuning): retail, not Forever. Aggrend 11-05 (zeppelins). |
+| Daily update | No TASKS.md, ledger or forever-update merge since the last pass. |
+
+## 70862 shared rows
+
+| Spell | Change | Sim |
+|---|---|---|
+| Flasks of Natural Accuracy / Aggression / Precision / Swiftness (1293740-1293743) | Stamina 60 -> 30; zone bonus 5 / 4 / 5 / 5 -> 2 / 2 / 2 / 2 | Still 60 and 5/4/5/5: mechanics-20261107-1 |
+| Defensive Stance Passive (7376) #2 | 30 -> 80 (80% threat) | Matches (x1.8) |
+| Bear Form (Passive2) (21178) #0 | 50 -> 115 | Matches (x2.15) |
+| Command, warlock (20575) #1 aura 108 mask 0x3000 | 5 -> 0 | Not modelled; now 0. #0 pet damage 5% holds |
+| SpellItemEnchantment | adds 8726 Luminarian's Binding (dummy 1314330) | n/a |
+| ItemEffect | 231823 Makeshift Stickin' Spear cooldown 5 -> 15 s; 232058 5 s | Not in the sim |
+
+Everything else: NPC spells (Hateful Strike, Cleave, Shadow Bolt Volley, Meathook, Righteous Fire, Mangle!), new spells, Use Soulstone aura options removed, The Quick and the Dead attributes, NPC Kidney Shot / Gouge levels. CurvePoint: 36 diff lines, left to the talents auditor.
+
+## Natural flask effect (measured)
+
+Shared CLI 12aa2796fcc6, 20k iterations, seed 1, paired against `runs/master`; requests given bonusStats of −30 Stamina and −3 hit / −2 crit / −3 expertise (`$AUDIT_WORK/mechanics/flask/mk.py`).
+
+| Preset (flask) | Master | 70862 values | Change |
+|---|---|---|---|
+| rogue combat-daggers (Accuracy) | 954.5 | 911.4 | −4.5% |
+| warrior fury_2h (Precision) | 1150.8 | 1103.6 | −4.1% |
+| warrior fury (Precision) | 1137.1 | 1092.5 | −3.9% |
+| warrior arms (Aggression) | 1088.3 | 1049.6 | −3.6% |
+| hunter marksmanship (Aggression) | 1254.3 | 1210.3 | −3.5% |
+| hunter beast-mastery (Aggression) | 1195.6 | 1153.8 | −3.5% |
+| hunter lone-wolf | 1313.7 | 1268.2 | −3.5% |
+| hunter survival (Precision) | 1040.6 | 1007.0 | −3.2% |
+| druid feral-cat (Aggression) | 1169.5 | 1133.5 | −3.1% |
+| rogue subtlety / seal-fate / mutilate / combat-swords (Precision) | | | −1.9% to −2.2% |
+
+Casters, Balance, Elemental, Retribution and Enhancement drink Flask of Supreme Power and don't move. The physical specs fall 2 to 4.5% against the casters, so the ranking moves.
 
 ## Conclusions
 
-No shared mechanic moved against tier 1 data. The explosives-in-form rule now follows the client flag. Open item: the 70790 hotfix rows (above).
+Fix the natural flasks (mechanics-20261107-1), then re-search each preset's flask. Every other shared verdict holds on 70862. Open item from pass 67 (the 70790 hotfix rows fetch) is still open; 70862 bakes in whatever of them landed.

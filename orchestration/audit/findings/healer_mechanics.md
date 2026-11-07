@@ -18,6 +18,8 @@
   `healing_talents_test.go:105`), and close shaman call 1 (the client now agrees with the notes). DPS/HPS
   effect is negligible (1 mana a cast at 60); not measured.
 - needs: worker fix
+- update 2026-11-07 (master 12aa2796f, client 70862): SpellPower 304804/310863/310864 still 150/180/230; the sim still
+  computes 147/180/231 (`sim/shaman/healing.go:117,132`). Still open.
 
 ### healer_mechanics-20261104-10: many heal ranks, healing talents and engine paths have no test that fails when they break
 - severity: low (none found wrong apart from the findings above)

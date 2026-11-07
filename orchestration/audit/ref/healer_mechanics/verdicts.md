@@ -1,7 +1,7 @@
-# Healer mechanics audit: verdicts (as of 2026-11-05 UTC, master a079415316, client 1.60.1.70790)
+# Healer mechanics audit: verdicts (as of 2026-11-07 UTC, master 12aa2796fc, client 1.60.1.70862)
 
 Tier: 1 = Forever client (wago.tools) or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never vmangos.
-Pass 3 (2026-11-05, a079415316): no healer spell or engine change; heal threat row added. Pass 2 (2026-11-04, 0facd9428): findings 1-9 fixed on master and re-checked; 70790 touches only Riptide among
+Pass 5 (2026-11-07, 12aa2796fc): client 70862 touches only Bloom (1328622 heal now targets the ally, was the caster) among healer spells; Riptide rows unchanged. Pass 3 (2026-11-05, a079415316): no healer spell or engine change; heal threat row added. Pass 2 (2026-11-04, 0facd9428): findings 1-9 fixed on master and re-checked; 70790 touches only Riptide among
 healer spells. Pass 1 checked every heal rank and healing talent of the four healers and the engine. A row marked match holds on
 70755; re-check it when a newer build or Blizzard post touches the spell. Open rulings stay in each
 `docs/healing_<class>.md` "Calls for the user"; open findings in `../../findings/healer_mechanics.md`.
@@ -105,7 +105,7 @@ healer spells. Pass 1 checked every heal rank and healing talent of the four hea
 | Swiftmend keeps the HoT | news 24301515 ("Redesigned to not consume the Rejuvenation or Regrowth effect"); dev notes post 9, 11-04 edit | healing.go:698 cancels only outside Forever (bc8e5473b); tests in sim/raid_healing_druid*_test.go | match | 1 |
 | Swiftmend which HoT | not in data | least time left | not in data (doc call 3) | - |
 | Wild Growth r1-3 | bp 40/60/97, rppl 1/1.3/1.6, 3 s cast, 6 s CD, 7x1 s, coef 0.033, 550/755/1050, 5 targets | same | match (shape = doc call 1) | 1 |
-| Bloom 1328621/1328622 | 100% Spirit (50% dispel), heal has no mask | same | match | 1 |
+| Bloom 1328621/1328622 | 100% Spirit (50% dispel), heal has no mask; 70862: heal ImplicitTarget 1 (caster) -> 21 (target ally) | same; heals the HoT's target | match (70862) | 1 |
 | HoT / Tranquility tick crits | Attributes_8 0x200 on Rejuv, Regrowth, Tranq, WG | ticks roll crit (ruleset.go canCrit) | match | 1 |
 | Nature's Swiftness 17116 | aura 108 misc 10 -100%; mask: HT, Regrowth, Wrath, Roots, Hibernate, Rebirth, Soothe, Nourish, Starsurge; CD 180 s, GCD 0 | HT, Regrowth, Wrath (the cast ones); off GCD; 3 min | match | 1 |
 | Innervate 29166 | aura 110 bp 400 (power regen %), aura 134 bp 100 (regen while casting); 20 s; CD 360 s; 5% base mana | SpiritRegenMultiplier += 4, ForceFullSpiritRegen; 20 s; 6 min; 5% (buffs.go:1455, innervate.go) | match | 1 |
