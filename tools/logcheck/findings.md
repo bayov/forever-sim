@@ -16,7 +16,7 @@ sections 2 and 6 have the format).
 - **Windows**: all. Error: `~/forever-logs/history/Player-6940-0038ED1A.jsonl:194: json: cannot unmarshal array into Go struct field historyRecord.gear of type map[string]jsontext.Value`. The record is dated 2026-11-05 02:49:32. Its `gear` is `[null,null,null,{...Primitive Mantle...},...]`.
 - **What we think**: the addon saves the gear as a Lua table. When the low slots are empty (a new character), the table has no string keys and serializes as an array with nulls, not an object. `historyRecord.Gear` in `tools/logcheck/history.go` is a `map[string]json.RawMessage`, so it rejects the array.
 - **Next step**: let `Gear` take both shapes (decode an array into slot keys "1".."n", skipping nulls), or make the addon always write an object. Then rerun `-audit`.
-- **Status**: open, first seen 2026-11-06, last updated 2026-11-07 (still fails on the 2026-11-07 01:10 archive copy).
+- **Status**: open, first seen 2026-11-06, last updated 2026-11-08 (still fails on the 2026-11-08 01:10 archive copy, same record at line 194).
 
 ## Watching
 
