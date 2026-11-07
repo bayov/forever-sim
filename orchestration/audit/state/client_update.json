@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "19d270d0397c6c758bdba940297fcdea14585a86"
+  "master": "c67d9e014398c6537adcd9d3244af68316529712"
  },
  "last_pass_at": "2026-11-05T00:57:00Z",
  "client_build": "1.60.1.70790",
  "result": "findings",
  "note": "70790 (launch client) writes the 11-03 hotfixes into the client; all landed. Chain Lightning 2.5 s per push 113341 rows despite FC saying 2 s. Finding 20261105-1 (feral exact rank values, low).",
  "pass": 10,
- "checked_at": "2026-11-06T18:44:23Z"
+ "checked_at": "2026-11-07T00:44:25Z"
 }
