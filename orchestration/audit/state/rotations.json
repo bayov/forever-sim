@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "44bd2a900f24fab2f51a0d344940e33953bc691c"
+  "master": "f3ea02674622c4e8555647d76e0abb68a0f8e059"
  },
  "last_pass_at": "2026-11-05T01:05:54Z",
  "pass": 55,
  "result": "findings",
  "note": "Pass 55: 86 commits; no DPS APL logic change (8 tank APLs). Feral moves from FB hotfix 113403 and Goblin Sapper in Cat Form; Survival pet presets -1.5 from talent change (noise-level). Finding rotations-20261105-1: FB energy gate 45->65 (+1.9 at 180 s). Baseline refreshed.",
  "client_build": "1.60.1.70753",
- "checked_at": "2026-11-07T12:44:50Z",
+ "checked_at": "2026-11-07T18:48:20Z",
  "baseline": "baseline_a079415_3000it_seed424242.tsv"
 }

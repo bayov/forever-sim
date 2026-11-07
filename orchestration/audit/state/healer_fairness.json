@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "44bd2a900f24fab2f51a0d344940e33953bc691c"
+  "master": "f3ea02674622c4e8555647d76e0abb68a0f8e059"
  },
  "last_pass_at": "2026-11-05T07:02:11Z",
  "pass": 4,
@@ -8,5 +8,5 @@
  "baseline": "0facd9428",
  "note": "Pass 4: healbench gained -seed/-labeled/-vectors (defaults unchanged) and per-fight deaths in the sim; both roles re-benched on bba052f75 (9 requests x 7 files, 1,000 it): all 63 rows byte-identical to ref/healer_fairness/bench_0facd94.tsv. Open: -4 (low), -5 (high, paladin raid preset unchanged).",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-07T12:44:50Z"
+ "checked_at": "2026-11-07T18:48:20Z"
 }
