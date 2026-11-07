@@ -127,9 +127,11 @@ func runAudit(archive, flavor, onlyLog string, iterations int, redo bool) error 
 	if ledger, err = fixLedgerChars(archive, ledgerPath, ledger); err != nil {
 		return err
 	}
+	// A window whose last run failed (a table that didn't download, a crash) runs again, so a
+	// passing error doesn't leave it out of the ledger for good. The newest entry for a window wins.
 	done := map[string]bool{}
 	for _, entry := range ledger {
-		done[entry.key()] = true
+		done[entry.key()] = entry.Error == ""
 	}
 
 	exports, err := loadExports(archive)

@@ -10,14 +10,6 @@ sections 2 and 6 have the format).
 
 ## logcheck issues
 
-### Audit stops on a history record whose gear is a JSON array
-
-- **Flag**: none. The whole `-audit` run exits before any window runs, so nothing new gets checked.
-- **Windows**: all. Error: `~/forever-logs/history/Player-6940-0038ED1A.jsonl:194: json: cannot unmarshal array into Go struct field historyRecord.gear of type map[string]jsontext.Value`. The record is dated 2026-11-05 02:49:32. Its `gear` is `[null,null,null,{...Primitive Mantle...},...]`.
-- **What we think**: the addon saves the gear as a Lua table. When the low slots are empty (a new character), the table has no string keys and serializes as an array with nulls, not an object. `historyRecord.Gear` in `tools/logcheck/history.go` is a `map[string]json.RawMessage`, so it rejects the array.
-- **Next step**: let `Gear` take both shapes (decode an array into slot keys "1".."n", skipping nulls), or make the addon always write an object. Then rerun `-audit`.
-- **Status**: open, first seen 2026-11-06, last updated 2026-11-08 (still fails on the 2026-11-08 01:10 archive copy, same record at line 194).
-
 ## Watching
 
 ### Sheet Attack power and Dodge a bit high at level 6
@@ -30,6 +22,14 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-10-18, last updated 2026-10-18.
 
 ## Done
+
+### Audit stops on a history record whose gear is a JSON array
+
+- **Flag**: none. The whole `-audit` run exits before any window runs, so nothing new gets checked.
+- **Windows**: all. Error: `~/forever-logs/history/Player-6940-0038ED1A.jsonl:194: json: cannot unmarshal array into Go struct field historyRecord.gear of type map[string]jsontext.Value`. The record is dated 2026-11-05 02:49:32. Its `gear` is `[null,null,null,{...Primitive Mantle...},...]`.
+- **What we think**: the addon saves the gear as a Lua table. When the low slots are empty (a new character), the table has no string keys and serializes as an array with nulls, not an object. `historyRecord.Gear` in `tools/logcheck/history.go` is a `map[string]json.RawMessage`, so it rejects the array.
+- **Next step**: let `Gear` take both shapes (decode an array into slot keys "1".."n", skipping nulls), or make the addon always write an object. Then rerun `-audit`.
+- **Done**: 2026-11-08. `historyGear` in `tools/logcheck/history.go` now takes both shapes (an array becomes slots "1".."n", nulls skipped). The audit then ran, but 4 windows failed with `SpellItemEnchantment.csv: EOF`, because parallel windows downloaded the same wago table and one read it half written. `download` in `tools/logcheck/wago.go` now writes a temporary file and renames it, and `-audit` reruns a window whose last run failed (`tools/logcheck/audit.go`).
 
 ### Low level gear missing from the sim's database
 

@@ -179,7 +179,25 @@ func download(url, path string) error {
 	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
 		return err
 	}
-	return os.WriteFile(path, body, 0o644)
+	// The audit runs several windows at once, and each may download the same table. So we
+	// write to a temporary file and rename it into place. Another window then sees either no
+	// file (and downloads its own copy) or the whole file, never a half-written one.
+	tmp, err := os.CreateTemp(filepath.Dir(path), filepath.Base(path)+".*.tmp")
+	if err != nil {
+		return err
+	}
+	defer os.Remove(tmp.Name())
+	if _, err := tmp.Write(body); err != nil {
+		tmp.Close()
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		return err
+	}
+	if err := os.Chmod(tmp.Name(), 0o644); err != nil {
+		return err
+	}
+	return os.Rename(tmp.Name(), path)
 }
 
 // newestBuild is the highest build number under dir that has the table.

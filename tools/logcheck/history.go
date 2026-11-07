@@ -31,12 +31,40 @@ type historyRecord struct {
 	Date    string                     `json:"date"`
 	When    json.RawMessage            `json:"when"`
 	Who     map[string]any             `json:"who"`
-	Gear    map[string]json.RawMessage `json:"gear"`
+	Gear    historyGear                `json:"gear"`
 	Skills  []map[string]any           `json:"skills"`
 	Imbues  json.RawMessage            `json:"imbues"`
 	Talents map[string]any             `json:"talents"`
 	Level   *int                       `json:"level"`
 	Stats   string                     `json:"stats"`
+}
+
+// historyGear is a record's gear by slot number, as a string ("1" to "19").
+//
+// The addon saves gear as a Lua table, and the archive writes it out as JSON. Most records
+// come out as an object keyed by slot. But when slots 1 to n are all set (or only the low
+// slots are empty, like a new character with no head or neck item), the Lua table has no
+// string keys and comes out as an array, with null for each empty slot. We take both.
+type historyGear map[string]json.RawMessage
+
+func (g *historyGear) UnmarshalJSON(data []byte) error {
+	var obj map[string]json.RawMessage
+	if err := json.Unmarshal(data, &obj); err == nil {
+		*g = obj
+		return nil
+	}
+	var list []json.RawMessage
+	if err := json.Unmarshal(data, &list); err != nil {
+		return err
+	}
+	*g = historyGear{}
+	for i, item := range list {
+		if len(item) == 0 || string(item) == "null" {
+			continue
+		}
+		(*g)[strconv.Itoa(i+1)] = item
+	}
+	return nil
 }
 
 // loadHistory rebuilds an export for each history record in dir. A character's records before
