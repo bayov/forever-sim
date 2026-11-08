@@ -291,7 +291,7 @@ wording instead.
 - [ ] 2026-11-07 — Add the 12 items revealed Nov 6-7 that Wowhead Forever has no tooltip for yet (foreverchanges.pro hidden-items; its item pages refused the cloud session) [source: foreverchanges]
   - 284079 High Clerist's Seal (ilvl 65 finger), 284091 Scarlet Forgemaster's Bindings (ilvl 64 wrist), 270124 Warpwood Bracers, 270125 Satyrhide Armbands, 270127 Incanter's Pantaloons, 287015 Supreme Smasher, 274654 Sandfury Guillotine, 275003 Worgbinder's Treads, 287008 Ogre Magi's Mantle, 287011 Guise of Battle, 279863 Black Horn Necklace, 279857 Kroog's Backscratcher.
   - https://foreverchanges.pro/item/284079 and https://foreverchanges.pro/item/284091 first.
-  - 2026-11-08 (daily update): Wowhead has all 12 now; the forever-update/2026-11-08 PR adds them. Tick this when it merges. Their effects: 287015 Supreme Smasher 1.5% expertise (entered as Expertise 1.5), 284091 +33 AP vs Undead, 279863 Black Horn Necklace's effect doubles in Strongholds/Cities, 270124 Warpwood Bracers 9 hp5 (not entered).
+  - 2026-11-08 (daily update): Wowhead has all 12 now. 10 were already on master from BayovCore with the same stats; PR #124 adds 284079 High Clerist's Seal and Supreme Smasher's expertise. Tick this when #124 merges. Their effects: 287015 Supreme Smasher 1.5% expertise (entered as Expertise 1.5), 284091 +33 AP vs Undead, 279863 Black Horn Necklace's effect doubles in Strongholds/Cities, 270124 Warpwood Bracers 9 hp5 (not entered).
 - [ ] 2026-11-07 — Watch the November 10 hotfix: Enhancement shaman's Strength to become its strongest stat, Wrack versus the affliction DoTs, hunter pet and Voidwalker durability (Blizzard, announced Nov 6, no numbers yet) [source: blizzard]
   - When the values land (server hotfix rows on wago.tools or foreverchanges.pro's "A hotfix to the <date> build"), re-sim the Enhancement presets and stat weights first.
 - [ ] 2026-11-08 — Model the effects of the items revealed Nov 7-8 that the daily PR added with plain stats only (foreverchanges.pro hidden-items, Wowhead Forever tooltips) [source: foreverchanges]
@@ -307,3 +307,7 @@ wording instead.
   - 280071 Flamebreak Talisman (still hidden): SpellEffect 1348471 Agility 50 → 33, cooldown 180 s → 300 s.
   - Also in pushes 113764–113791: Fear Ward 6346 made Shadowform-only on Nov 7 ~22:17 UTC and reverted (net: castable in Shadowform), Unsealed Wrath 1310735 needs a weapon, Frost Nova radius slot move, Cultivation 20552 gets a 15 min cooldown. None affects the sim.
   - https://wago.tools/hotfixes?product=wowf , https://wago.tools/db2/ItemEffect?build=1.60.1.70862
+- [ ] 2026-11-08 — Fix the four tests that fail on master itself (found by the daily update's full test run for PR #124) [source: blizzard]
+  - TestRaidForeverReportHashesStable: shaman enhancement-imp-gw, -level60, -mana-tide and -water-shield hashes move, probably from commit 5a870ecc (Stormstrike); confirm, then rewrite with RAID_FOREVER_HASHES=testdata/report_hashes.txt.
+  - TestProtection and TestRetribution, AllItems-SanctifiedOrb-20512: Prot 265.79 → 270.05, Ret 330.13 → 335.05 DPS. TestCombatSinisterStrike Average-Default 884.19 → 881.59 DPS (Agility 573 → 564). Find the commit, check the move is intended, then make update-tests.
+  - sim/compsearch needs about 708 s, past go test's default 10 min in a full run.
