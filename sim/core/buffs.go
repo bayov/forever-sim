@@ -2153,11 +2153,17 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 // edited its description to "Each main hand hit has a 20% chance", and the user ruled for main
 // hand only (2026-10-16; report assumption wf_totem_offhand, one value). The extra swing is a
 // main hand one.
+//
+// Under Forever only white main hand swings proc it (the user's ruling, 2026-11-08, for now).
+// Our live logs of Nov 5-8 have 882 totem procs, and none of them came from about 2,770
+// Stormstrikes that landed with the totem up, where a 20% chance would give about 550. Each
+// proc that looked like a Stormstrike one had a white swing land 0 to 100 ms before it. We
+// haven't checked on-next-swing attacks like Heroic Strike, which this also leaves out.
 func WindfuryTotemBuffAura(character *Character, rank int32, label string, actionID ActionID) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	buffLabel := strings.Replace(strings.TrimSuffix(label, " Raid"), "Windfury Totem", "Windfury Attack", 1)
 	blocked := func() bool { return mainHandHasImbue(character, windfuryWeaponEnchantIds) }
-	procMask := ProcMaskMeleeMH
+	procMask := Ternary(character.Env.IsForever(), ProcMaskMeleeMHAuto, ProcMaskMeleeMH)
 	aura := CreateExtraAttackAuraCommon(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, blocked, procMask)
 	if character.Env.IsForever() {
 		// The attack power lasts 1 sec under Forever.

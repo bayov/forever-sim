@@ -183,8 +183,8 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 722.04933
-  tps: 1281.19936
+  dps: 701.7405
+  tps: 1248.63724
  }
 }
 dps_results: {

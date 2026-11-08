@@ -20,9 +20,11 @@ const (
 // TestOrcShamanImbueProcs checks which of our attacks trigger the weapon imbues and the
 // weapon totems.
 //
-// Windfury Weapon, Windfury Totem, Flametongue Weapon and Frostbrand all need a landed main
-// hand melee hit, white or yellow, and a blocked hit counts as landed. Flametongue Totem needs
-// a landed white swing, so Stormstrike and Windfury Weapon's attacks never proc it. Misses,
+// Windfury Weapon, Flametongue Weapon and Frostbrand all need a landed main hand melee hit,
+// white or yellow, and a blocked hit counts as landed. Flametongue Totem and Windfury Totem
+// need a landed white swing, so Stormstrike never procs them (Windfury Totem since the user's
+// ruling of 2026-11-08, see WindfuryTotemBuffAura), and Windfury Weapon's attacks never proc
+// Flametongue Totem. Misses,
 // dodges, parries, spells, totem attacks, Lightning Shield orbs and the Flametongue and
 // Frostbrand damage never trigger them. Flametongue Weapon blocks Flametongue Totem, and a
 // Windfury proc's two attacks can't proc Windfury again, because of its 1.5 sec cooldown.
@@ -49,7 +51,7 @@ func TestOrcShamanImbueProcs(t *testing.T) {
 			"Frostbrand Imbue", []string{frostbrand}, []string{frostbrand}},
 		// Windfury Totem needs level 32.
 		{"Flametongue Weapon and Windfury Totem", 60, darkEdge, proto.WeaponImbue_FlametongueWeapon, proto.TotemWeaponBuff_TotemWeaponBuffWindfury,
-			"Flametongue Imbue", []string{flametongueWeapon, windfuryTotem}, []string{flametongueWeapon, windfuryTotem}},
+			"Flametongue Imbue", []string{flametongueWeapon, windfuryTotem}, []string{flametongueWeapon}},
 	}
 	for _, setup := range setups {
 		t.Run(setup.name, func(t *testing.T) {

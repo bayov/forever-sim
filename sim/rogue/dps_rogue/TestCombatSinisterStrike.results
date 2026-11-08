@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestCombatSinisterStrike-Phase5-StatWeights-Default"
  value: {
-  weights: 0.33405
-  weights: 0.59418
+  weights: 0.32397
+  weights: 0.57859
   weights: 0
   weights: 0
   weights: 0
@@ -67,9 +67,9 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.33405
-  weights: 15.52987
-  weights: 2.09365
+  weights: 0.32397
+  weights: 13.96423
+  weights: 2.07243
   weights: 0
   weights: 0
   weights: 0
@@ -99,134 +99,134 @@ stat_weights_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-BloodfangArmor"
  value: {
-  dps: 953.16667
-  tps: 676.74888
+  dps: 923.84967
+  tps: 655.93272
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-BonescytheArmor"
  value: {
-  dps: 1069.443
-  tps: 741.49341
+  dps: 1038.935
+  tps: 719.69808
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Champion'sGuard"
  value: {
-  dps: 898.7125
-  tps: 638.08218
+  dps: 861.6705
+  tps: 611.78865
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Champion'sVestments"
  value: {
-  dps: 814.48433
-  tps: 578.28107
+  dps: 791.03033
+  tps: 561.62862
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Champion'sVestments-522"
  value: {
-  dps: 813.931
-  tps: 577.8877
+  dps: 788.51767
+  tps: 559.84778
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
-  dps: 931.958
-  tps: 661.68093
+  dps: 901.33217
+  tps: 639.94668
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-DaggersSynthetic(Phase1)"
  value: {
-  dps: 931.82417
-  tps: 661.5859
+  dps: 901.21467
+  tps: 639.86321
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 927.72333
-  tps: 658.67775
+  dps: 899.493
+  tps: 638.6354
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Deathdealer'sEmbrace"
  value: {
-  dps: 971.8015
-  tps: 689.97249
+  dps: 933.56917
+  tps: 662.828
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-EmblemsofVeiledShadows"
  value: {
-  dps: 891.61683
-  tps: 633.04246
+  dps: 865.64517
+  tps: 614.60787
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 827.585
-  tps: 587.57813
+  dps: 802.1755
+  tps: 569.54625
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-GrimstitchArmor"
  value: {
-  dps: 768
-  tps: 545.27884
+  dps: 750.539
+  tps: 532.8807
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-LieutenantCommander'sGuard"
  value: {
-  dps: 898.7125
-  tps: 638.08218
+  dps: 861.6705
+  tps: 611.78865
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-LieutenantCommander'sVestments"
  value: {
-  dps: 813.931
-  tps: 577.8877
+  dps: 788.51767
+  tps: 559.84778
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Madcap'sOutfit"
  value: {
-  dps: 885.97217
-  tps: 629.03281
+  dps: 858.784
+  tps: 609.73583
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-NightslayerArmor"
  value: {
-  dps: 889.51817
-  tps: 631.55251
+  dps: 866.06517
+  tps: 614.90704
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-RogueSyntheticOn-UseTrinket(Phase1)-994202"
  value: {
-  dps: 911.0645
-  tps: 646.85259
+  dps: 884.46917
+  tps: 627.97501
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 827.585
-  tps: 587.57813
+  dps: 802.1755
+  tps: 569.54625
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Average-Default"
  value: {
-  dps: 881.5943
-  tps: 625.93173
+  dps: 856.28264
+  tps: 607.96065
  }
 }
 dps_results: {
@@ -610,7 +610,7 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 681.44933
-  tps: 483.82253
+  dps: 664.98167
+  tps: 472.1377
  }
 }
