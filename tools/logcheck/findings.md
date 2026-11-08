@@ -91,14 +91,15 @@ sections 2 and 6 have the format).
 - **Next step**: see if it comes back at other levels. If it does, check the AP rounding and the dodge per Agility by level.
 - **Status**: open, first seen 2026-10-18, last updated 2026-11-09 (steady at level 43 to 44, so the dodge per Agility by level is worth a check).
 
-### Spell hits a fraction of a point above the sim at level 44
+### Spell hits a point or so off the sim at level 44
 
 - **Flag**: `Flame Shock (10447): amount` (NEW), and `Lightning Shield (26369): raw` at mob levels 42 to 45.
 - **Windows**:
   - `WoWCombatLog-110826_085019.txt 00:51:26-01:10:15` (level 44): Flame Shock's direct hit is 179 raw on all 8, and its amount rounded up on 4 of 8. The sim's hit is 179.050, so it expects 0.9 round ups, and the log puts the hit at 179.40 to 179.90. Lightning Shield is 126 raw on all 6 hits, but the sim's 125.967 floors to 125.
   - `01:15:02-01:23:24`: Lightning Shield 126 to 128 raw in 38 hits against the sim's 125 to 127. Blessing of Kings was up there, so that window only counts weakly.
-- **What we think**: the sim's spell hits sit 0.03 to 0.85 below the game's, about 0.1 to 4 spell power. The export's sheet shows Nature power within 0.7 of the sim. So it's either a fraction of spell power the sim leaves out, or the game rounding the hit (or the spell power bonus) up where the sim's raw is floored (`toWhole` in `tools/logcheck`). It moves damage by under 0.5%.
-- **Next step**: see if it repeats at other levels and with no buffs. If it does, compare the sim's spell power against the sheet's to the decimal, and check whether round to nearest instead of floor clears the Lightning Shield row on old windows.
+  - `01:26:45-01:36:47` and `01:37:51-01:42:21` (level 44, the character changed at 01:26): now the sim is the higher one. Lightning Shield logs 126.0 to 126.8 avg in 63 hits against the sim's 127.1 to 127.2 (127.2 to 128.9 before floor), and Earth Shock 268.8 in 17 hits against 270.0. The sheet still shows Nature power within 0.7 of the sim.
+- **What we think**: the sim's spell hits sit 0.03 to 0.85 below the game's, about 0.1 to 4 spell power. The export's sheet shows Nature power within 0.7 of the sim. So it's either a fraction of spell power the sim leaves out, or the game rounding the hit (or the spell power bonus) up where the sim's raw is floored (`toWhole` in `tools/logcheck`). It moves damage by under 0.5%. The sign flipped when the character changed at 01:26, so a gear or talent spell power difference fits better than rounding.
+- **Next step**: diff the sim's character against the 01:26 export (what changed, and which item or talent the sim counts for 2 to 4 spell power the game doesn't). Then see if it repeats at other levels and with no buffs. If it does, compare the sim's spell power against the sheet's to the decimal, and check whether round to nearest instead of floor clears the Lightning Shield row on old windows.
 - **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
 
 ## Done
