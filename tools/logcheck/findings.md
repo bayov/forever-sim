@@ -22,14 +22,6 @@ sections 2 and 6 have the format).
 - **Next step**: refresh the enchants from the client (`/update-sources`), or fix the two by hand.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
-### Orc shaman base stats a point or two off
-
-- **Flag**: `sheet` (Strength +1 to 2, Agility -1 to 2, Intellect -1 to 2 at most levels).
-- **Windows**: Nov 5-8, most windows, small residue left after the buffs.
-- **What we think**: Forever's Orc shaman base rows differ from the sim's 1.12 rows (`sim/core/base_stats.go`). It may also explain the level 6 "Watching" finding.
-- **Next step**: read the base rows from a few unbuffed sheets at different levels and compare row by row.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
-
 ## Collect more data
 
 ### Dungeon mobs take about 2 less spell damage per hit
@@ -88,6 +80,14 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-10-18, last updated 2026-10-18.
 
 ## Done
+
+### Orc shaman base stats a point or two off
+
+- **Flag**: `sheet` (Strength +1 to 2, Agility -1 to 2, Intellect -1 to 2 at most levels).
+- **Windows**: Nov 5-8, most windows, small residue left after the buffs.
+- **What we think**: Forever's Orc shaman base rows differ from the sim's 1.12 rows (`sim/core/base_stats.go`). It may also explain the level 6 "Watching" finding.
+- **Next step**: read the base rows from a few unbuffed sheets at different levels and compare row by row.
+- **Done**: 2026-11-08. The sheet rows for levels 2 to 43 are now in `FOREVER_ATTRIBUTES` (`tools/gen_level_base_stats.py`), and `sim/core/base_stats_levels_auto_gen.go` is regenerated from it. `TestForeverRaceBaseAttributes` pins levels 3, 15, 30 and 43. Levels 44 to 60 stay on 1.12 until we have sheets there. The gap grows with level, so level 60 may be about Str +3, Agi -2 to -3 and Int -2 off.
 
 ### Spell damage rolls round to nearest, the sim rolled evenly
 
