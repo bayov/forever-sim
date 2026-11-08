@@ -56,9 +56,10 @@ sections 2 and 6 have the format).
 - **Windows**: e.g. 07:42:29 on Nov 5: Stamina -6 (Stamina scroll +4, Rock Skin +2), AP -28.5 (Blessing of Might +25, Well Fed), crit -1.9 (Camp Benefits, whose chair part is +2% crit and isn't in the buff list). Devotion Aura or the Armor scroll explain Armor -150 to -194, Blessing of Kings the big Nov 7 stat gaps. The AP gap explains the white damage gap (AP/14 x 3.3 = +6.7 expected, +6.5 seen), and Stormstrike's formula holds once the AP from white hits is used.
 - **Window** `WoWCombatLog-110826_085019.txt 21:00:57-21:17:14` (levels 36 to 43, Mograine's Might): the sheet runs the other way, AP +424 in the sim, because the export was taken in Ghost Wolf (buffs: Well-Rested, Ghost Wolf). The fight still shows the usual gap: Melee raw 386.4 in 31 hits vs the sim's 365.6 at level 41, Stormstrike 581.1 in 15 hits vs 559.9, Flame Shock rank 4 ticks 47 vs 46.3 and direct 179 vs 178. So a sheet taken in a form says nothing about the fight, and the AP for damage rows should come from the window's white hits.
 - **Window** `WoWCombatLog-110826_085019.txt 21:17:30-21:34:39` (levels 39 to 41, level 43, Mograine's Might at 209-210 of 215): the export at 21:22:50 had Blessing of Kings, Well Fed, Stoneskin and Windfury Totem up. The sheet is Strength +16, Stamina +12, Intellect +10, Spirit +12 and AP +46 over the sim, which Kings (10%) and Well Fed explain. Melee raw 378.8 in 32 hits vs the sim's 363.1 at level 40, Stormstrike 594.2 in 19 vs 564.0, and the spell rows 1 over (Flame Shock 179 vs 178, Lightning Shield 126 vs 125, about the sheet's 2.4 extra Nature power). Blood Fury shows in the logged AP (1478 to 1626). One glance in 28 swings at level 41 (sim 0%) fits the skill going 209 to 210 in the window, at the edge of the glance threshold.
+- **Windows** `WoWCombatLog-110826_085019.txt 23:58:01-00:02:56`, `00:06:11-00:09:28` and `00:14:26-00:16:53` (Nov 8-9, level 43 to 44, mobs 40 to 44): the sheet is AP +65 to +71 over the sim with Camp Benefits, Well Fed and Veteran Adventurer's Loyal Companion up. Melee raw runs 374.6 to 389.9 against the sim's 357 to 361, and Stormstrike 585.3 to 599.0 against 553.6 to 559.7, the usual AP gap.
 - **What we think**: history records carry `buffs` and the sheet check now lists them, but logcheck doesn't add their stats to the sim. Other players' Blessing of Might mid-window also moves AP (244 to 271 in 06:37).
 - **Next step**: add the stats of the buffs up at export time to the sim's character (a table of the common ones), or compare the sheet against the sim plus those buffs, and take the AP for damage rows from the window's white hits.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-08 (hourly run, 21:17 window).
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-09 (hourly run, Nov 9 windows).
 
 ### BayovCore cuts the gear list short
 
@@ -68,6 +69,14 @@ sections 2 and 6 have the format).
 - **Next step**: fix `isArray` in the addon so it always writes an object.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
+### Evades counted as outcomes the sim never rolls
+
+- **Flag**: `Melee: evade`, `Stormstrike (17364): evade`, `Earth Shock (10412): evade` (NEW), mob level 42.
+- **Windows**: `WoWCombatLog-110826_085019.txt 23:58:01-00:02:56`: Melee 2 of 23, Stormstrike 1 of 11 and Earth Shock 1 of 9 evaded. The sim gives 0%.
+- **What we think**: a mob that leashes back or resets evades everything for a moment. That's the fight, not a combat table outcome, and the sim's target never evades. logcheck counts the evades as attempts against the mob's level.
+- **Next step**: have logcheck drop EVADE lines (or the attacks on a mob while it evades) before it builds the outcome rows, in `tools/logcheck`. Until then, read an evade flag as a leash.
+- **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
+
 ## Watching
 
 ### Sheet Attack power and Dodge a bit high at level 6
@@ -76,9 +85,10 @@ sections 2 and 6 have the format).
 - **Windows**:
   - `WoWCombatLog-101626_165126.txt 23:45:55-23:59:16` (`Player-4620-01872808`, level 6). The sheet has AP 97 and Dodge 4.43%, but the sim has 97.5 and 4.55%. Every other sheet row matches, Armor 170 included.
   - `WoWCombatLog-110826_085019.txt 22:42:40-23:22:34` (`Player-6940-0038ED1A`, level 43, the first window on the new Orc shaman base stats). The sim is again a bit high: Attack power +1.50, Dodge % +0.36, Nature power +0.30. The export was taken in Ghost Wolf with Well-Rested, which shouldn't move these. Only 29 swings and no damage row flagged.
+  - The three Nov 8-9 windows after it (`23:58:01`, `00:06:11`, `00:14:26`, level 43 to 44) show the same Dodge % +0.28 to +0.32 and Nature power +0.30 in the sim, so the dodge gap is steady, not noise.
 - **What we think**: the sim's own base stats at low level, not logcheck. The half point of AP may be the game rounding AP down. The dodge may be the Agility to dodge ratio at level 6 (`sim/core/base_stats.go`). The AP moves Melee raw damage by about 0.1, and our dodge doesn't touch our damage rows.
 - **Next step**: see if it comes back at other levels. If it does, check the AP rounding and the dodge per Agility by level.
-- **Status**: open, first seen 2026-10-18, last updated 2026-11-08 (it came back at level 43, so the dodge per Agility by level is worth a check).
+- **Status**: open, first seen 2026-10-18, last updated 2026-11-09 (steady at level 43 to 44, so the dodge per Agility by level is worth a check).
 
 ## Done
 
