@@ -6,9 +6,65 @@ sections 2 and 6 have the format).
 
 ## Fix in the sim
 
+### Fire Nova rank 1 keeps its full coefficient at 36 to 39
+
+- **Flag**: `Fire Nova (408423): raw`, mob levels 26 to 42, 4 windows.
+- **Windows**: `WoWCombatLog-110726_203718.txt 21:55:17` (level 36 to 39, 38 spell power): log 40.2 avg in 56 hits, sim 37.3. Every window from level 26 to 42 has the log at about 40.0.
+- **What we think**: full coefficient gives 35.0 + 0.143 x 38 = 40.4, the log. The sim's downranking penalty (`sim/core/downrank.go`, rank learned at 12, so 50% at 39) gives 37.7, the sim. This is the newer low rank log the "Forever's downranking penalty" Need to Verify item asked for, and it says no penalty at a 27 level gap. Windows at levels 18 to 25 have the log about 1.5 below the sim (33.0 vs 34.5), cause unknown.
+- **Next step**: the user's ruling on the penalty (drop it, or shrink it). The reduced proc chance part isn't modelled either way.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+
+### Spell damage rolls round to nearest, the sim floors
+
+- **Flag**: `Attack (3606/6350/6351): raw` (Searing Totem), about 0.5 low in the sim. Probably part of other spell raw rows too.
+- **Windows**: Nov 5-8, pooled. 3606 (9 to 11): 9 / 10 / 11 on 216 / 411 / 212 bolts. 6350 and 6351 show the same half-weight ends. Earth Shock rank 4 reaches 156 against a 146.5-155.4 range.
+- **What we think**: the game rounds the roll to the nearest point, the sim rolls `sim.Roll` and floors. New Need to Verify item under "All classes".
+- **Next step**: the user's go to round spell rolls to nearest (a core change, every class). A beta read of 200+ hits of one rank would settle it.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+
+### Two Forever enchants changed under the same ID
+
+- **Flag**: `sheet` (Stamina -2, Health -15 from level 12 on).
+- **Windows**: every Nov 5-8 window from level 12.
+- **What we think**: enchant 41 went from +5 Health to +2 Stamina and 66 from +1 to +3 Stamina in the Forever client. The sim's `db.json` still has the old values. logcheck now takes the client's stats when they differ, so the audit no longer shows it, but the sim's own gear does.
+- **Next step**: refresh the enchants from the client (`/update-sources`), or fix the two by hand.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+
+### Orc shaman base stats a point or two off
+
+- **Flag**: `sheet` (Strength +1 to 2, Agility -1 to 2, Intellect -1 to 2 at most levels).
+- **Windows**: Nov 5-8, most windows, small residue left after the buffs.
+- **What we think**: Forever's Orc shaman base rows differ from the sim's 1.12 rows (`sim/core/base_stats.go`). It may also explain the level 6 "Watching" finding.
+- **Next step**: read the base rows from a few unbuffed sheets at different levels and compare row by row.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+
 ## Collect more data
 
+### Dungeon mobs take about 2 less spell damage per hit
+
+- **Flag**: `Flame Shock (8050/8053/10447)` ticks and direct `raw`, `Lightning Shield (26365..26369): raw`, `Earth Shock (8045): raw`, only in dungeon windows.
+- **Windows**: Nov 5-8 dungeon runs (Wailing Caverns, Shadowfang Keep, Razorfen Kraul, Gnomeregan): Flame Shock rank 2 ticks 12 to 10, rank 4 ticks 26 to 24, direct 54 to 52 and 101 to 99, orbs 24 to 22-23. Open world mobs of the same level, same hour: full damage.
+- **What we think**: a dungeon mob trait, not our spell power. New Need to Verify item under "All classes".
+- **Next step**: Flame Shock a dungeon trash mob and an open world mob of the same level, 30 ticks each.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+
 ## logcheck issues
+
+### Buffs at export time make the sheet higher than the sim
+
+- **Flag**: `sheet` (29 of 29 windows), `Melee: raw` (22), `Stormstrike (17364): raw` (11), small spell raw rows like Flame Shock rank 4 +1.
+- **Windows**: e.g. 07:42:29 on Nov 5: Stamina -6 (Stamina scroll +4, Rock Skin +2), AP -28.5 (Blessing of Might +25, Well Fed), crit -1.9 (Camp Benefits, whose chair part is +2% crit and isn't in the buff list). Devotion Aura or the Armor scroll explain Armor -150 to -194, Blessing of Kings the big Nov 7 stat gaps. The AP gap explains the white damage gap (AP/14 x 3.3 = +6.7 expected, +6.5 seen), and Stormstrike's formula holds once the AP from white hits is used.
+- **What we think**: history records carry `buffs` and the sheet check now lists them, but logcheck doesn't add their stats to the sim. Other players' Blessing of Might mid-window also moves AP (244 to 271 in 06:37).
+- **Next step**: add the stats of the buffs up at export time to the sim's character (a table of the common ones), or compare the sheet against the sim plus those buffs, and take the AP for damage rows from the window's white hits.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+
+### BayovCore cuts the gear list short
+
+- **Flag**: none now (logcheck works around it).
+- **Windows**: history records 194, 198 and 234 (Nov 5) lost the gloves, cloak and main hand; fourteen Nov 7 logins lost the relic (slot 18).
+- **What we think**: `isArray` in BayovCore's `Modules/Export.lua` writes the gear table as a list cut at the first gap. `historyGear` in `tools/logcheck/history.go` now keeps the slots a login's list dropped.
+- **Next step**: fix `isArray` in the addon so it always writes an object.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
 ## Watching
 
@@ -22,6 +78,25 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-10-18, last updated 2026-10-18.
 
 ## Done
+
+### Flametongue Attack never fired in the sim
+
+- **Flag**: `Flametongue Attack (10444/29469/29470): never` and `procs`.
+- **Done**: 2026-11-08. The sim keys the imbue proc under Flametongue Weapon's rank, the log under Flametongue Attack. `nameAliases` in `tools/logcheck/report.go` now pairs them. After `-redo` the never and procs rows are gone, a raw row is left in 3 windows (the AP and spell power gap above).
+
+### Earth Shock raw about 20% high in the sim
+
+- **Flag**: `Earth Shock (8045/8046/10412): raw`.
+- **Done**: 2026-11-08. The game leaves the Stormstrike mark out of the log's raw field (amount over raw is 1.004 with no Stormstrike before it, 1.202 right after one), but the sim put it in the spell's multiplier. `applyStormstrike` in `sim/shaman/stormstrike.go` now adds the mark after the damage calc for Earth Shock, Lightning Bolt and Chain Lightning, with the same damage and threat (shaman tests unchanged). After `-redo` Earth Shock 10412 went from 6 windows to 1 and 8046 cleared.
+
+### Wrong character from history and items
+
+- **Flag**: `sheet`, `Melee: raw` (31 vs 3.0 in `110526_011432 02:53:44`, the sim swung unarmed).
+- **Done**: 2026-11-08. logcheck keeps gear slots a history list dropped (`historyGear`), uses the client's enchant stats when the sim's differ, adds Forever random suffixes from the item link's bonus IDs (`ItemBonus`, `RandPropPoints`), and falls back to the export's main-hand imbue when the log has no imbue proc (Rockbiter: AP gap -103.5 to -10.5 in 10:49 Nov 5).
+
+### Rotation and fight differences
+
+- **Done**: 2026-11-08. Into `known.json`: Searing Totem `procs` (the sim's player barely melees) and Earthbind `never` / `procs` (we drop it by hand), plus the Oct 21 Earth Shock 8042 and Lightning Bolt 403 `raw` rows (the log predates hotfix 113380, and the old rank 1 values fit it exactly). Single absorbs, partial resists, immunes (Nature-immune mobs) and evades are noise.
 
 ### Audit stops on a history record whose gear is a JSON array
 

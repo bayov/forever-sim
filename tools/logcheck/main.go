@@ -269,9 +269,24 @@ func setImbue(char *character, all []*event, cl *combatLog, ex *export, tables *
 			}
 		}
 	}
+	// Rockbiter has no procs, so when it was cast in an earlier log file the window can't tell.
+	// Then we take the main hand's imbue from the export. The client names it by rank
+	// ("Rockbiter 3"), and no spell's enchant effect points at it, so we go by that name.
+	if main, ok := ex.Imbues["main"]; ok && imbue == 0 {
+		enchant := tables.enchants[main.Enchant].name
+		if word, _, _ := strings.Cut(enchant, " "); !strings.Contains(enchant, "Totem") {
+			if value, ok := imbueFromName(word + " Weapon"); ok {
+				imbue, name = value, enchant+" on the main hand in the export"
+			}
+		}
+	}
 	if enh := char.player.GetEnhancementShaman(); enh != nil && imbue != 0 {
 		enh.Options.ShamanImbue = imbue
-		char.notes = append(char.notes, "shaman imbue from the log: "+name)
+		from := "from the log: "
+		if strings.HasSuffix(name, "in the export") {
+			from = "from the export: "
+		}
+		char.notes = append(char.notes, "shaman imbue "+from+strings.TrimSuffix(name, " in the export"))
 	}
 	if len(during) > 1 {
 		char.notes = append(char.notes, "imbues changed in the window ("+strings.Join(during, ", ")+"), the sim keeps the last one for all of it")

@@ -7,7 +7,9 @@ import (
 	"os"
 	"path/filepath"
 	"slices"
+	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -54,6 +56,9 @@ type export struct {
 		} `json:"talents"`
 	} `json:"talents"`
 	Stats map[string]json.RawMessage `json:"stats"`
+	// Buffs are the buffs that were up when the sheet was read, as spell IDs (or names for a
+	// buff without one). Only history records have them, since 2026-11-05.
+	Buffs json.RawMessage `json:"buffs"`
 
 	path string
 	time time.Time
@@ -74,6 +79,25 @@ type exportItem struct {
 	Enchant int32  `json:"enchant"`
 	Suffix  int32  `json:"suffix"`
 	Name    string `json:"name"`
+	Link    string `json:"item"`
+}
+
+// bonusLists are the item bonus list IDs in the item link
+// (item:id:enchant:gem1:gem2:gem3:gem4:suffix:unique:level:spec:modifiers:context:count:bonus...).
+// Forever puts an item's random suffix here and leaves the suffix field empty.
+func (it exportItem) bonusLists() []int32 {
+	parts := strings.Split(it.Link, ":")
+	if len(parts) < 14 {
+		return nil
+	}
+	n, _ := strconv.Atoi(parts[13])
+	var lists []int32
+	for i := 14; i < 14+n && i < len(parts); i++ {
+		if id, err := strconv.Atoi(parts[i]); err == nil {
+			lists = append(lists, int32(id))
+		}
+	}
+	return lists
 }
 
 func loadExport(path string) (*export, error) {
@@ -367,10 +391,25 @@ func (c *character) equip(ex *export, tables *clientTables) {
 		}
 		spec := &proto.ItemSpec{Id: gear.ID, RandomSuffix: gear.Suffix}
 		if gear.Enchant != 0 {
-			if enchant, ok := findEnchant(gear.Enchant, item, tables); ok {
+			enchant, ok := findEnchant(gear.Enchant, item, tables)
+			if client, pure := tables.enchantStats(gear.Enchant); ok && pure && client != core.EnchantsByEffectID[enchant].Stats {
+				// Forever changed some old enchants and kept their ID: 41 was +5 Health and
+				// is +2 Stamina now, 66 was +1 Stamina and is +3. The sim's database still
+				// has the old ones, so we take the client's.
+				ok = false
+			}
+			if ok {
 				spec.Enchant = enchant
 			} else {
 				c.addClientEnchant(gear.Enchant, gear.Name, tables)
+			}
+		}
+		if lists := gear.bonusLists(); len(lists) > 0 {
+			if added, ok := tables.bonusStats(item, lists); !ok {
+				c.notes = append(c.notes, fmt.Sprintf("the random suffix of %s (bonus lists %v) has stats we can't place, left off", gear.Name, lists))
+			} else if added != (stats.Stats{}) {
+				c.addBonusStats(added)
+				c.notes = append(c.notes, fmt.Sprintf("%s: random suffix from the client's bonus list, %s", gear.Name, statList(added)))
 			}
 		}
 		items[slot] = spec
@@ -403,11 +442,33 @@ func (c *character) addClientEnchant(id int32, itemName string, tables *clientTa
 		c.notes = append(c.notes, fmt.Sprintf("enchant %d on %s is in neither the sim's database nor the client's, left off", id, itemName))
 		return
 	}
-	var added stats.Stats
-	var parts []string
+	added, pure := tables.enchantStats(id)
+	if !pure {
+		c.notes = append(c.notes, fmt.Sprintf("enchant %d on %s (%s) does more than add stats, left off", id, itemName, enchant.name))
+		return
+	}
+	c.addBonusStats(added)
+	c.notes = append(c.notes, fmt.Sprintf("enchant %d on %s (%s) taken from the client data as %s", id, itemName, enchant.name, statList(added)))
+}
+
+// enchantStats is what the client's enchant adds, when all it does is add stats: directly
+// (type 4 a resistance or armor, 5 a stat) or through an equip spell (type 3) that only has
+// stat auras.
+func (t *clientTables) enchantStats(id int32) (added stats.Stats, pure bool) {
+	enchant, ok := t.enchants[id]
+	if !ok {
+		return added, false
+	}
 	for _, effect := range enchant.effects {
 		var stat stats.Stat
 		switch effect.kind {
+		case 3:
+			spell, ok := t.equipStats[effect.arg]
+			if !ok {
+				return added, false
+			}
+			added = added.Add(spell)
+			continue
 		case 4:
 			stat, ok = enchantResistances[effect.arg]
 		case 5:
@@ -416,19 +477,31 @@ func (c *character) addClientEnchant(id int32, itemName string, tables *clientTa
 			ok = false
 		}
 		if !ok {
-			c.notes = append(c.notes, fmt.Sprintf("enchant %d on %s (%s) does more than add stats, left off", id, itemName, enchant.name))
-			return
+			return added, false
 		}
 		added[stat] += float64(effect.amount)
-		parts = append(parts, fmt.Sprintf("+%d %s", effect.amount, stat.StatName()))
 	}
+	return added, true
+}
+
+func (c *character) addBonusStats(added stats.Stats) {
 	if c.player.BonusStats == nil {
 		c.player.BonusStats = &proto.UnitStats{Stats: make([]float64, stats.Len)}
 	}
 	for i, v := range added {
 		c.player.BonusStats.Stats[i] += v
 	}
-	c.notes = append(c.notes, fmt.Sprintf("enchant %d on %s isn't in the sim's database, added from the client data as %s", id, itemName, strings.Join(parts, ", ")))
+}
+
+// statList reads like "+2 Stamina, +1 Agility".
+func statList(s stats.Stats) string {
+	var parts []string
+	for i, v := range s {
+		if v != 0 {
+			parts = append(parts, fmt.Sprintf("%+g %s", v, stats.Stat(i).StatName()))
+		}
+	}
+	return strings.Join(parts, ", ")
 }
 
 func itemSlot(item core.Item, items []*proto.ItemSpec) (proto.ItemSlot, bool) {
@@ -506,6 +579,39 @@ type dbEnchant struct {
 }
 
 var enchantsCache []dbEnchant
+
+var (
+	itemLevelsOnce sync.Once
+	itemLevels     map[int32]dbItem
+)
+
+// dbItem is an item's level and quality in assets/database/db.json, which the sim's item table
+// doesn't keep. A random suffix's stats depend on both.
+type dbItem struct {
+	ID      int32 `json:"id"`
+	Ilvl    int32 `json:"ilvl"`
+	Quality int32 `json:"quality"`
+}
+
+func dbItemLevels() map[int32]dbItem {
+	itemLevelsOnce.Do(func() {
+		itemLevels = map[int32]dbItem{}
+		var db struct {
+			Items []dbItem `json:"items"`
+		}
+		data, err := os.ReadFile(filepath.Join(repoRoot, "assets/database/db.json"))
+		if err == nil {
+			err = json.Unmarshal(data, &db)
+		}
+		if err != nil {
+			fmt.Fprintln(os.Stderr, "reading the item levels:", err)
+		}
+		for _, item := range db.Items {
+			itemLevels[item.ID] = item
+		}
+	})
+	return itemLevels
+}
 
 func dbEnchants() []dbEnchant {
 	if enchantsCache != nil {

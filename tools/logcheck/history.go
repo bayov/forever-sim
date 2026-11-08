@@ -27,42 +27,54 @@ const historySettle = 5 * time.Second
 // complete up to then. We still rebuild an export for it, the same as the one before. The sheet ("stats") and the full talent list ("ref") are
 // ids into <key>.blobs.json, because the addon stores each distinct one once.
 type historyRecord struct {
-	Kind    string                     `json:"kind"`
-	Date    string                     `json:"date"`
-	When    json.RawMessage            `json:"when"`
-	Who     map[string]any             `json:"who"`
-	Gear    historyGear                `json:"gear"`
-	Skills  []map[string]any           `json:"skills"`
-	Imbues  json.RawMessage            `json:"imbues"`
-	Talents map[string]any             `json:"talents"`
-	Level   *int                       `json:"level"`
-	Stats   string                     `json:"stats"`
+	Kind    string           `json:"kind"`
+	Date    string           `json:"date"`
+	When    json.RawMessage  `json:"when"`
+	Who     map[string]any   `json:"who"`
+	Gear    historyGear      `json:"gear"`
+	Skills  []map[string]any `json:"skills"`
+	Imbues  json.RawMessage  `json:"imbues"`
+	Talents map[string]any   `json:"talents"`
+	Level   *int             `json:"level"`
+	Stats   string           `json:"stats"`
+	Buffs   json.RawMessage  `json:"buffs"`
 }
 
 // historyGear is a record's gear by slot number, as a string ("1" to "19").
 //
-// The addon saves gear as a Lua table, and the archive writes it out as JSON. Most records
-// come out as an object keyed by slot. But when slots 1 to n are all set (or only the low
-// slots are empty, like a new character with no head or neck item), the Lua table has no
-// string keys and comes out as an array, with null for each empty slot. We take both.
-type historyGear map[string]json.RawMessage
+// The addon saves gear as a Lua table, and its JSON encoder (isArray in BayovCore's
+// Modules/Export.lua) writes a table as a list when its entry count equals #t. Most records
+// come out as an object keyed by slot. But a table with holes can pass that test too: with the
+// shoulders to the boots (slots 4 to 8) and the gloves, cloak and main hand (10, 15 and 16) on,
+// there are 8 entries and #t can be 8. Then the list holds slots 1 to 8, with null for each
+// empty one, and the slots past the hole are lost. Each null in the list stands for one slot
+// past its end that the encoder dropped, so we keep that count in dropped.
+type historyGear struct {
+	slots map[string]json.RawMessage
+	// listLen is the list's length when the record had a list, else 0.
+	listLen int
+	// dropped is how many filled slots past listLen the encoder left out.
+	dropped int
+}
 
 func (g *historyGear) UnmarshalJSON(data []byte) error {
 	var obj map[string]json.RawMessage
 	if err := json.Unmarshal(data, &obj); err == nil {
-		*g = obj
+		g.slots = obj
 		return nil
 	}
 	var list []json.RawMessage
 	if err := json.Unmarshal(data, &list); err != nil {
 		return err
 	}
-	*g = historyGear{}
+	g.slots = map[string]json.RawMessage{}
+	g.listLen = len(list)
 	for i, item := range list {
 		if len(item) == 0 || string(item) == "null" {
+			g.dropped++
 			continue
 		}
-		(*g)[strconv.Itoa(i+1)] = item
+		g.slots[strconv.Itoa(i+1)] = item
 	}
 	return nil
 }
@@ -116,9 +128,20 @@ func replayHistory(path string) ([]*export, error) {
 		}
 		if whole {
 			state = map[string]any{"when": rec.When, "who": rec.Who, "imbues": rec.Imbues, "skills": rec.Skills}
+			before := gear
 			gear = map[int]json.RawMessage{}
+			// A login whose gear list lost slots past its end (see historyGear) still wears
+			// what we last knew in those slots. On 2026-11-05 a login dropped the gloves, cloak
+			// and staff, and the sim swung unarmed for half an hour.
+			if rec.Gear.dropped > 0 {
+				for slot, item := range before {
+					if slot > rec.Gear.listLen {
+						gear[slot] = item
+					}
+				}
+			}
 		}
-		for slot, item := range rec.Gear {
+		for slot, item := range rec.Gear.slots {
 			n, err := strconv.Atoi(slot)
 			if err != nil {
 				return nil, fmt.Errorf("%s:%d: gear slot %q", path, line, slot)
@@ -148,6 +171,8 @@ func replayHistory(path string) ([]*export, error) {
 		}
 		if rec.Stats != "" {
 			state["stats"] = blobs[rec.Stats]
+			// The buffs go with the sheet they were read with.
+			state["buffs"] = rec.Buffs
 		}
 
 		// The export's time is its when.date, so each rebuilt export takes the record's.

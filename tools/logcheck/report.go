@@ -143,14 +143,44 @@ func (r *report) sheet() {
 		}
 		fmt.Printf("  %-14s %8.2f %8.2f %+8.2f%s\n", row.name, want, row.sim, diff, mark)
 	}
+	buffs := r.exportBuffs()
+	if len(buffs) > 0 {
+		fmt.Printf("  Buffs up with the sheet: %s\n", strings.Join(buffs, ", "))
+	}
 	if len(off) > 0 {
 		// Every damage row depends on these stats, so a gap here explains damage flags
 		// below before any sim formula does.
 		what := fmt.Sprintf("the sim's character differs from the sheet (%s). A buff up at export time explains a sheet that's higher, anything else is a gap in the sim's character that moves the damage rows", strings.Join(off, ", "))
+		if len(buffs) > 0 {
+			what += fmt.Sprintf(". Buffs up with the sheet: %s", strings.Join(buffs, ", "))
+		}
 		fmt.Printf("  WARNING: %s.\n", what)
 		r.flagged = append(r.flagged, finding{Kind: "sheet", What: what})
 	}
 	fmt.Println()
+}
+
+// exportBuffs names the buffs the history record says were up with the sheet. Camp Benefits
+// doesn't say which camp items it holds, and its Camp Chair adds 2% crit to melee and spells.
+func (r *report) exportBuffs() []string {
+	var ids []any
+	if json.Unmarshal(r.ex.Buffs, &ids) != nil {
+		return nil
+	}
+	var names []string
+	for _, id := range ids {
+		n, ok := id.(float64)
+		if !ok {
+			names = append(names, fmt.Sprint(id))
+			continue
+		}
+		name := r.tables.spellNames[int32(n)]
+		if name == "" {
+			name = "spell"
+		}
+		names = append(names, fmt.Sprintf("%s (%d)", name, int32(n)))
+	}
+	return names
 }
 
 // exportChanges warns when the character changed during the window in a way the sim can't
@@ -380,6 +410,8 @@ func (r *report) logName(id int32) string {
 // thing under another ID.
 var nameAliases = map[string]string{
 	"Flametongue Totem Proc": "Flametongue Attack",
+	// The sim keys the imbue's proc under the imbue's rank (Flametongue Weapon 8024 and up).
+	"Flametongue Weapon": "Flametongue Attack",
 }
 
 // matchByName files the sim's results under the log's spell when the two use different IDs

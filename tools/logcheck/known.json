@@ -1,1 +1,42 @@
-[]
+[
+  {
+    "kind": "procs",
+    "ability": "Attack (3606)",
+    "why": "Searing Totem bolts per 100 white swings depends on the rotation, not a mechanic. The sim's player casts and barely melees (2 swings a run against 224 totem bolts), while we melee all the time."
+  },
+  {
+    "kind": "procs",
+    "ability": "Attack (6350)",
+    "why": "Searing Totem bolts per 100 white swings depends on the rotation, not a mechanic. The sim's player casts and barely melees (2 swings a run against 224 totem bolts), while we melee all the time."
+  },
+  {
+    "kind": "procs",
+    "ability": "Attack (6351)",
+    "why": "Searing Totem bolts per 100 white swings depends on the rotation, not a mechanic. The sim's player casts and barely melees (2 swings a run against 224 totem bolts), while we melee all the time."
+  },
+  {
+    "kind": "procs",
+    "ability": "Attack (6352)",
+    "why": "Searing Totem bolts per 100 white swings depends on the rotation, not a mechanic. The sim's player casts and barely melees (2 swings a run against 224 totem bolts), while we melee all the time."
+  },
+  {
+    "kind": "never",
+    "ability": "Earthbind (3600)",
+    "why": "Our Earthbind Totem, dropped by hand to slow mobs. The sim's rotation never drops one."
+  },
+  {
+    "kind": "procs",
+    "ability": "Earthbind (3600)",
+    "why": "Our Earthbind Totem, dropped by hand to slow mobs. The sim's rotation never drops one."
+  },
+  {
+    "kind": "raw",
+    "ability": "Earth Shock (8042)",
+    "why": "Oct 21 log, from before hotfix 113380 (2026-11-04) changed rank 1. The old values fit the log exactly (ES 18.0-20.0, LB 14.39-16.61), and the sim has the new ones."
+  },
+  {
+    "kind": "raw",
+    "ability": "Lightning Bolt (403)",
+    "why": "Oct 21 log, from before hotfix 113380 (2026-11-04) changed rank 1. The old values fit the log exactly (ES 18.0-20.0, LB 14.39-16.61), and the sim has the new ones."
+  }
+]
