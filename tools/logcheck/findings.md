@@ -36,8 +36,24 @@ sections 2 and 6 have the format).
 
 - **Flag**: `Flame Shock (8050/8053/10447)` ticks and direct `raw`, `Lightning Shield (26365..26369): raw`, `Earth Shock (8045): raw`, only in dungeon windows.
 - **Windows**: Nov 5-8 dungeon runs (Wailing Caverns, Shadowfang Keep, Razorfen Kraul, Gnomeregan): Flame Shock rank 2 ticks 12 to 10, rank 4 ticks 26 to 24, direct 54 to 52 and 101 to 99, orbs 24 to 22-23. Open world mobs of the same level, same hour: full damage.
-- **What we think**: a dungeon mob trait, not our spell power. New Need to Verify item under "All classes".
-- **Next step**: Flame Shock a dungeon trash mob and an open world mob of the same level, 30 ticks each.
+- **What we think**: a per-mob trait, not per dungeon or time. 54 of 135 even-level dungeon mobs, 0 of 144 odd-level dungeon mobs and 5 of 739 world mobs. Same sheet spell power and auras. Guess: a hidden per-mob resistance. See the Need to Verify item under "All classes".
+- **Next step**: check the unfiltered logs for those mob GUIDs. Then Flame Shock a dungeon trash mob and an open world mob of the same level, 30 ticks each.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+
+### Maelstrom Weapon proc rate looks near 100% at 1/5
+
+- **Flag**: `Maelstrom Weapon` procs and stacks (the sim's 4 PPM a point gives 22.6% a hit at 1/5 with a 3.39 sec weapon).
+- **Windows**: Nov 8 from 20:35, rank 1/5. A stack on 130 of 133 landed white swings and 70 of 70 Stormstrikes. Misses, dodges and parries 1 of 14.
+- **What we think**: the client's ProcChance is 100 (spell 408498) and the server may not add a PPM at all. The report assumption `sham_mw_ppm` (10, 20 or 30 PPM at 5/5) doesn't cover a rate this high. The cast time cut per stack is untested because no Lightning Bolt was cast with stacks up.
+- **Next step**: the user's ruling (2026-11-08) is to wait for more data at higher ranks, then revisit. Also cast Lightning Bolt with stacks up.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+
+### Earth Shock is never partly resisted once it lands
+
+- **Flag**: `Earth Shock (8045/8046/10412)`: `resisted` on landed hits.
+- **Windows**: Nov 5-8 on Nature-resistant mobs. Earth Shock had 77 whole hits, 0 partial and 31 RESIST, while Lightning Shield orbs on the same mobs were partly resisted 60 of 63. Druid of the Fang alone: 57 whole, 0 partial, 27 RESIST, orbs 31 of 31 partial.
+- **What we think**: the sim gives a landed binary spell a partial roll (`sim/core/spell_resistances.go`, `sim/shaman/earth_shock.go`). The October beta serpents (6 landed, all partial) disagree, so live may have changed.
+- **Next step**: the user's ruling (2026-11-08) is to keep monitoring. Count Earth Shock partials on resistant mobs in each new log.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
 ## logcheck issues
