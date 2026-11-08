@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "412bcdb5efaac300cf468db5fd6c4a6ecc5d663d"
+  "master": "32494de2715caabc9d81dcb6da418dd4e603a957"
  },
  "last_pass_at": "2026-11-07T06:55:18Z",
  "pass": 69,
  "result": "findings",
  "note": "Pass 69: c67d9e014..12aa2796f, no sim commits. Client 70790 -> 70862: natural flasks 30 Stamina and 2% zone bonus (mechanics-20261107-1, high, -1.9% to -4.5% on 28 presets); Defensive Stance 80 / Bear Form 115 threat now in client and match; Command 20575 #1 5->0 (unmodelled). Dev notes unchanged since post 10; newest blue posts retail. Open item from pass 67 (70790 hotfix rows) still open.",
  "client_build": "1.60.1.70862",
- "checked_at": "2026-11-08T00:44:33Z",
+ "checked_at": "2026-11-08T06:44:27Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
