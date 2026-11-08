@@ -44,11 +44,12 @@ sections 2 and 6 have the format).
 
 ### Buffs at export time make the sheet higher than the sim
 
-- **Flag**: `sheet` (29 of 29 windows), `Melee: raw` (22), `Stormstrike (17364): raw` (11), small spell raw rows like Flame Shock rank 4 +1.
+- **Flag**: `sheet` (31 of 31 windows), `Melee: raw` (24), `Stormstrike (17364): raw` (13), small spell raw rows like Flame Shock rank 4 +1.
 - **Windows**: e.g. 07:42:29 on Nov 5: Stamina -6 (Stamina scroll +4, Rock Skin +2), AP -28.5 (Blessing of Might +25, Well Fed), crit -1.9 (Camp Benefits, whose chair part is +2% crit and isn't in the buff list). Devotion Aura or the Armor scroll explain Armor -150 to -194, Blessing of Kings the big Nov 7 stat gaps. The AP gap explains the white damage gap (AP/14 x 3.3 = +6.7 expected, +6.5 seen), and Stormstrike's formula holds once the AP from white hits is used.
+- **Window** `WoWCombatLog-110826_085019.txt 21:00:57-21:17:14` (levels 36 to 43, Mograine's Might): the sheet runs the other way, AP +424 in the sim, because the export was taken in Ghost Wolf (buffs: Well-Rested, Ghost Wolf). The fight still shows the usual gap: Melee raw 386.4 in 31 hits vs the sim's 365.6 at level 41, Stormstrike 581.1 in 15 hits vs 559.9, Flame Shock rank 4 ticks 47 vs 46.3 and direct 179 vs 178. So a sheet taken in a form says nothing about the fight, and the AP for damage rows should come from the window's white hits.
 - **What we think**: history records carry `buffs` and the sheet check now lists them, but logcheck doesn't add their stats to the sim. Other players' Blessing of Might mid-window also moves AP (244 to 271 in 06:37).
 - **Next step**: add the stats of the buffs up at export time to the sim's character (a table of the common ones), or compare the sheet against the sim plus those buffs, and take the AP for damage rows from the window's white hits.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-08 (hourly run, Ghost Wolf window).
 
 ### BayovCore cuts the gear list short
 
