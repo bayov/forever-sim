@@ -35,7 +35,7 @@
 # left off, and a run within a week only fetches what's new. A recipe wowhead lists
 # with no source at all has nothing on its page either, so we don't open those.
 # wowhead.py also says how we get past wowhead's bot check.
-import datetime, json, os, sys, time
+import datetime, json, os, re, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from wowhead import Wowhead, listview, listview_items, listview_spells, mapper
@@ -60,6 +60,9 @@ SPELL_PROFESSIONS = {
 }
 # A world drop is on hundreds of mobs. We keep the ones it drops from most often.
 TOP_DROPS = 12
+# The standings an item's tooltip can ask for, 0 hated to 7 exalted, the way the
+# client's ItemSparse MinReputation counts them.
+STANDINGS = ['Hated', 'Hostile', 'Unfriendly', 'Neutral', 'Friendly', 'Honored', 'Revered', 'Exalted']
 
 
 def pct(row):
@@ -81,6 +84,14 @@ def item_sources(html, npcs, objects, quests):
     def npc(r):
         return keep_npc(npcs, r)
     out = {}
+    # A pattern sold for Merchant's Favor asks for a standing with the vendor's
+    # faction, and only the tooltip says which: "Requires Friendly with this
+    # faction." The client's ItemSparse has no MinReputation for these, and
+    # the cost doesn't tell it either (some 120 Favor patterns ask Friendly,
+    # some Honored).
+    m = re.search(r'Requires (%s) with this faction' % '|'.join(STANDINGS), html)
+    if m:
+        out['standing'] = STANDINGS.index(m.group(1))
     sold = listview(html, 'sold-by')
     if sold:
         out['vendors'] = [{'id': npc(r), 'stock': r.get('stock'), 'cost': r.get('cost')} for r in sold]
