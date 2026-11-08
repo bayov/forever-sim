@@ -350,8 +350,18 @@ func (sim *Simulation) RandomExpFloat(label string) float64 {
 
 // Shorthand for commonly-used RNG behavior.
 // Returns a random number between min and max.
+// Roll gives a damage or healing roll from min to max, rounded to the nearest whole point.
+//
+// The game rolls whole points. In the Nov 5-8 logs, Searing Totem rank 1 (9 to 11) hit 9 / 10
+// / 11 on 216 / 411 / 212 bolts with no spell power or modifier on it. That's a quarter, a half
+// and a quarter, which is what rounding an even roll to the nearest point gives (a whole roll
+// of 9, 10 or 11 would give a third each). Ranks 6350 to 6352 show the same half weight ends.
+// The spell power bonus and the multipliers come after, on top of the whole roll.
+//
+// For a range with whole ends the average stays the same, so this only changes how much each
+// hit varies. A probability roll from 0 to 1 must use RandomFloat instead.
 func (sim *Simulation) Roll(min float64, max float64) float64 {
-	return sim.RollWithLabel(min, max, "Damage Roll")
+	return math.Round(sim.RollWithLabel(min, max, "Damage Roll"))
 }
 func (sim *Simulation) RollWithLabel(min float64, max float64, label string) float64 {
 	return min + (max-min)*sim.RandomFloat(label)

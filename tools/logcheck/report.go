@@ -43,6 +43,9 @@ type report struct {
 // power the sim gives Flame Shock ticks 21.7, Flametongue Totem's attack 8.8 and Flame Shock's
 // direct hit 64.3, and the log has raw 21, 8 and 64 on every hit.
 //
+// A spell's roll is whole before that (sim.Roll rounds it, as the game does), so a rolled hit
+// shows its roll plus the whole part of its spell power bonus.
+//
 // The amount the mob takes is rounded up with a chance equal to the fraction (9 on 79% of the
 // 8.8 hits), so on average it's the unrounded hit, like the sim's damage.
 func (r *report) toWhole(v float64) float64 {

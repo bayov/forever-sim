@@ -600,7 +600,7 @@ func init() {
 			SpellFlagsExclude: core.SpellFlagSuppressWeaponProcs,
 			PPM:               1,
 			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-				spellIdx := int32(sim.Roll(0, 6))
+				spellIdx := int32(sim.RandomFloat("Damage Roll") * 6)
 				castableSpells[spellIdx].Cast(sim, result.Target)
 			},
 		})

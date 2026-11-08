@@ -91,8 +91,9 @@ func TestOrcShamanChainLightningJumps(t *testing.T) {
 					t.Fatalf("Chain Lightning didn't roll on target %d", j+1)
 				case h.damage == 0:
 					misses++
-				case h.damage < 494.13*share-1e-6 || h.damage > 552.27*share+1e-6:
-					t.Fatalf("target %d took %.2f, want %.0f%% of 494.13 to 552.27", j+1, h.damage, 100*share)
+				// The game rolls whole points (core.Simulation.Roll): 494 to 552.
+				case h.damage < 494*share-1e-6 || h.damage > 552*share+1e-6:
+					t.Fatalf("target %d took %.2f, want %.0f%% of 494 to 552", j+1, h.damage, 100*share)
 				}
 			}
 		}

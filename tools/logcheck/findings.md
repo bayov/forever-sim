@@ -14,14 +14,6 @@ sections 2 and 6 have the format).
 - **Next step**: the user's ruling on the penalty (drop it, or shrink it). The reduced proc chance part isn't modelled either way.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
-### Spell damage rolls round to nearest, the sim floors
-
-- **Flag**: `Attack (3606/6350/6351): raw` (Searing Totem), about 0.5 low in the sim. Probably part of other spell raw rows too.
-- **Windows**: Nov 5-8, pooled. 3606 (9 to 11): 9 / 10 / 11 on 216 / 411 / 212 bolts. 6350 and 6351 show the same half-weight ends. Earth Shock rank 4 reaches 156 against a 146.5-155.4 range.
-- **What we think**: the game rounds the roll to the nearest point, the sim rolls `sim.Roll` and floors. New Need to Verify item under "All classes".
-- **Next step**: the user's go to round spell rolls to nearest (a core change, every class). A beta read of 200+ hits of one rank would settle it.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
-
 ### Two Forever enchants changed under the same ID
 
 - **Flag**: `sheet` (Stamina -2, Health -15 from level 12 on).
@@ -78,6 +70,11 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-10-18, last updated 2026-10-18.
 
 ## Done
+
+### Spell damage rolls round to nearest, the sim rolled evenly
+
+- **Flag**: `Attack (3606/6350/6351): raw` (Searing Totem), about 0.5 low in the sim.
+- **Done**: 2026-11-08 (in the working copy, goldens still to update). The engine never floored: the floor is logcheck's `toWhole`, which matches the log's raw field for steady hits (8.8 shows 8). The game rolls whole points: 3606 (9 to 11) hit 9 / 10 / 11 on 193 / 370 / 203 bolts, and amount equals raw on those, so nothing fractional rides on the roll. 6350 and 6352 show the same half weight ends. `sim.Roll` now rounds its roll to the nearest point, and the spell power bonus comes on top, so logcheck's floor gives the game's raw. Averages stay the same for whole ranges (goldens move by under 0.4%). After `-redo` the 3606 raw flags went from 36 to 5 and 6350 from 39 to 18. What's left is the dungeon mobs (Wailing Caverns, see "Dungeon mobs take about 2 less") and 6351 about 3 high (separate). Melee is unchanged (its own random source): our white swings at one attack power don't form a flat range, so their ends tell nothing.
 
 ### Flametongue Attack never fired in the sim
 

@@ -146,7 +146,7 @@ func (unit *Unit) applySpellPushback() {
 				// that hits us has nothing to do with it.
 				hc := aura.Unit.Hardcast
 				hcSpell := aura.Unit.GetSpell(hc.ActionID)
-				if sim.Roll(0, 1.0) <= hcSpell.PushbackReduction {
+				if sim.RandomFloat("Damage Roll") <= hcSpell.PushbackReduction {
 					return
 				}
 				pushback := DurationFromSeconds(max(0.2, hc.Pushback))
@@ -184,7 +184,7 @@ func (unit *Unit) applySpellPushback() {
 			if dot == nil || !dot.IsActive() || spell.Unit == aura.Unit || (aura.Unit.wand != nil && dot.Spell == aura.Unit.wand.Shoot) {
 				return
 			}
-			if sim.Roll(0, 1.0) <= dot.Spell.PushbackReduction {
+			if sim.RandomFloat("Damage Roll") <= dot.Spell.PushbackReduction {
 				return
 			}
 			if dot != channel || dot.StartedAt() != channelStart {

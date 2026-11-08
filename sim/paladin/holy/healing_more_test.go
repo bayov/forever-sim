@@ -170,8 +170,11 @@ func TestLowerHealRanks(t *testing.T) {
 			if math.Abs(low-c.low) > 0.06+tol || math.Abs(high-c.high) > 0.06+tol {
 				t.Fatalf("%s: the doc's columns give %.2f to %.2f, its At 60 %.1f to %.1f", c.name, low, high, c.low, c.high)
 			}
-			low, high, tol = c.low, c.high, 0.06+tol
 		}
+		// The game rolls the heal in whole points (core.Simulation.Roll), so the range's ends round.
+		// We round the columns' value, since the doc's "At 60" is only to one place (Holy Light 1's
+		// 50.5 is 50.497).
+		low, high = math.Round(low), math.Round(high)
 		sim, pal, units := newHolySim(t, holyOpts{talents: talentHolyShock})
 		noCrit(sim, pal, 0)
 		noHealingPower(sim, pal, 0)
@@ -183,7 +186,7 @@ func TestLowerHealRanks(t *testing.T) {
 		if c.id == 10329 {
 			// Learned at 54, within 17 levels of 60: the whole 0.714.
 			noHealingPower(sim, pal, 500)
-			checkSpan(t, c.name+" at 500 healing", sim, s, s, units[1], c.low+0.714*500, c.high+0.714*500, tol)
+			checkSpan(t, c.name+" at 500 healing", sim, s, s, units[1], low+0.714*500, high+0.714*500, tol)
 		}
 	}
 }
@@ -205,9 +208,12 @@ func TestHolyShockRanks(t *testing.T) {
 		noCrit(sim, pal, 0)
 		noHealingPower(sim, pal, 0)
 		hs, heal := spell(t, pal, c.cast), spell(t, pal, c.heal)
-		checkSpan(t, heal.ActionID.String(), sim, hs, heal, units[1], c.low, c.high, 0.06)
+		// The game rolls the base heal in whole points (core.Simulation.Roll), so its ends round, and
+		// the healing power goes on top.
+		low, high := math.Round(c.low), math.Round(c.high)
+		checkSpan(t, heal.ActionID.String(), sim, hs, heal, units[1], low, high, 0.06)
 		noHealingPower(sim, pal, 500)
-		checkSpan(t, heal.ActionID.String()+" at 500 healing", sim, hs, heal, units[1], c.low+c.coef*500, c.high+c.coef*500, 0.06)
+		checkSpan(t, heal.ActionID.String()+" at 500 healing", sim, hs, heal, units[1], low+c.coef*500, high+c.coef*500, 0.06)
 		hs.CD.Reset()
 		if mana, _ := castAt(t, sim, pal, hs, units[1]); math.Abs(mana-c.mana) > 0.01 {
 			t.Errorf("Holy Shock %d cost %.2f, want %.0f", c.cast, mana, c.mana)
@@ -232,6 +238,8 @@ func TestLightsVigilRanks(t *testing.T) {
 	noCrit(sim, pal, 0)
 	noHealingPower(sim, pal, 0)
 	low, high := docAt60(487, 1.5, 50, 59, 0.0562)
+	// The game rolls the heal in whole points (core.Simulation.Roll): 486 to 515.
+	low, high = math.Round(low), math.Round(high)
 	vigil, hs, heal := spell(t, pal, 1311590), spell(t, pal, 20930), spell(t, pal, 1311591)
 	lo, hi := math.Inf(1), math.Inf(-1)
 	for range 200 {

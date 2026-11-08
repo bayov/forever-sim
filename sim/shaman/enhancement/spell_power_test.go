@@ -108,18 +108,20 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 		betaLow, betaHigh  float64
 		betaTick, wantTick float64
 	}
+	// The game rolls the base damage in whole points (core.Simulation.Roll), and the spell power
+	// goes on top. So Earth Shock, Fire Nova and Frost Shock span a whole number of points.
 	cases := []rollCase{
 		{"Lightning Shield rank 3", topRank(t, "Lightning Shield orb", enh.LightningShieldProcs), 64.30, 64.30, 64, 64, 0, 0},
-		{"Earth Shock rank 4", topRank(t, "Earth Shock", enh.EarthShock), 166.22, 175.03, 0, 0, 0, 0},
-		{"Earth Shock rank 1", enh.EarthShock[1], 56.38, 58.87, 0, 0, 0, 0},
+		{"Earth Shock rank 4", topRank(t, "Earth Shock", enh.EarthShock), 166.13, 175.13, 0, 0, 0, 0},
+		{"Earth Shock rank 1", enh.EarthShock[1], 56.13, 59.13, 0, 0, 0, 0},
 		{"Flame Shock rank 1", flameShock[0], 48.47, 48.47, 0, 0, 16, 16.1},
 		{"Flame Shock rank 3", flameShock[1], 116.87, 116.87, 0, 0, 0, 33.1},
 		{"Searing Totem rank 3", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0), 20.55, 26.55, 20, 26, 0, 0},
 		// Client 1.60.1.70425 cut Fire Nova (the beta's 70338 log showed 124 to 135 raw for rank 2,
 		// which the sim's 122.41 to 136.53 covered), and no log of the new values exists yet.
-		{"Fire Nova rank 2", topRank(t, "Fire Nova", enh.FireNovaHits), 67.29, 74.73, 0, 0, 0, 0},
+		{"Fire Nova rank 2", topRank(t, "Fire Nova", enh.FireNovaHits), 67.01, 75.01, 0, 0, 0, 0},
 	}
-	frostShock := rollCase{"Frost Shock rank 1", topRank(t, "Frost Shock", enh.FrostShock), 118.08, 124.75, 0, 0, 0, 0}
+	frostShock := rollCase{"Frost Shock rank 1", topRank(t, "Frost Shock", enh.FrostShock), 117.91, 124.91, 0, 0, 0, 0}
 	if shield.Rank != 3 || flameShock[1].Rank != 3 || cases[1].spell.Rank != 4 || topRank(t, "Fire Nova", enh.FireNova).Rank != 2 || cases[6].spell != enh.FireNovaHits[2] || frostShock.spell.Rank != 1 {
 		t.Fatalf("the level 30 ranks changed")
 	}

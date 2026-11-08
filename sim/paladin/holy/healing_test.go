@@ -189,16 +189,19 @@ func TestHealAmounts(t *testing.T) {
 	pal.AddStatDynamic(sim, stats.HealingPower, 500-pal.GetStat(stats.HealingPower)-pal.GetStat(stats.SpellPower))
 	hp := 500.0
 	target := units[1]
+	// The game rolls the base heal in whole points (core.Simulation.Roll), so each base range's
+	// ends are rounded before the healing power goes on top.
+	r := math.Round
 	for _, c := range []struct {
 		id        int32
 		low, high float64
 	}{
-		{25292, 1495.36 + 0.714*hp, 1664.64 + 0.714*hp},
+		{25292, r(1495.36) + 0.714*hp, r(1664.64) + 0.714*hp},
 		// Learned at 38: 75% of its coefficient at 60.
-		{3472, 665 * (1 - 0.11096075922/2), 665 * (1 + 0.11096075922/2)},
-		{19943, 308.2*(1-0.11019284278/2) + 0.429*hp, 308.2*(1+0.11019284278/2) + 0.429*hp},
+		{3472, r(665 * (1 - 0.11096075922/2)), r(665 * (1 + 0.11096075922/2))},
+		{19943, r(308.2*(1-0.11019284278/2)) + 0.429*hp, r(308.2*(1+0.11019284278/2)) + 0.429*hp},
 		// Holy Shock rank 4's heal, at an ally.
-		{20930, 307.37 + 0.429*hp, 332.63 + 0.429*hp},
+		{20930, r(307.37) + 0.429*hp, r(332.63) + 0.429*hp},
 	} {
 		s := spell(t, pal, c.id)
 		if c.id == 3472 {

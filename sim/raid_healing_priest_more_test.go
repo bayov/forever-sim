@@ -212,6 +212,8 @@ func TestHealingPriestHealVariance(t *testing.T) {
 			{"Holy Nova", hp.HolyNova[6], 6},
 		} {
 			lowBase, highBase := clientHealRanks[c.name][c.rank-1].at(60)
+			// The game rolls the base heal in whole points (core.Simulation.Roll).
+			lowBase, highBase = math.Round(lowBase), math.Round(highBase)
 			low, high := c.spell.ExpectedHealing(tank, lowBase), c.spell.ExpectedHealing(tank, highBase)
 			m := &c.spell.SpellMetrics[tank.UnitIndex]
 			least, most := math.Inf(1), math.Inf(-1)
