@@ -133,6 +133,23 @@ func (shaman *Shaman) stormstrikeBonus(target *core.Unit) float64 {
 	return StormstrikeForeverBonus
 }
 
+// applyStormstrike raises a result's damage by our Stormstrike mark on the target.
+//
+// We add the mark after the damage calc, not through the spell's DamageMultiplier, because the
+// game leaves it out of the log's raw damage field. An Earth Shock right after a Stormstrike
+// logs the same raw as one without, and only its amount is 20% higher (Nov 5-8 logs: amount
+// over raw is 1.004 with no Stormstrike before it and 1.202 right after one). So the mark works
+// like a modifier on the target, and the result's PreOutcomeDamage stays the raw the log shows.
+// The damage dealt and the threat are the same either way, so we redo the threat here.
+func (shaman *Shaman) applyStormstrike(spell *core.Spell, target *core.Unit, result *core.SpellResult) {
+	bonus := shaman.stormstrikeBonus(target)
+	if bonus == 1 {
+		return
+	}
+	result.Damage *= bonus
+	result.Threat = spell.ThreatFromDamage(result.Outcome, result.Damage)
+}
+
 // spendStormstrike uses the mark on the target up once the spell's result is in. Since client
 // 1.60.1.70425 a spell that misses leaves it (the 15 October development notes: "Stormstrike's
 // debuff is no longer consumed if the spell does not land").
