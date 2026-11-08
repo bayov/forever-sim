@@ -11,7 +11,8 @@ import (
 // the correct amount of base stats. For example, Tauren Warriors now start with the correct +5
 // strength relative to Human Warriors (was incorrectly +2)", development notes 2026-11-02). Below
 // 60 that is 1.12's rows (player_levelstats), and the rows the sim builds for pairs 1.12 doesn't
-// have (Undead paladin, Skyborne) and the Orc shaman's level 30 sheet follow from them.
+// have (Undead paladin, Skyborne) follow from them. The Orc shaman has its own rows at levels 2 to 43,
+// from the character sheet BayovCore saved in the live logs of Nov 5-8 2026.
 func TestForeverRaceBaseAttributes(t *testing.T) {
 	cases := []struct {
 		race  proto.Race
@@ -27,8 +28,14 @@ func TestForeverRaceBaseAttributes(t *testing.T) {
 		{proto.Race_RaceTroll, proto.Class_ClassPriest, 1, [5]float64{21, 22, 21, 18, 24}},
 		// The Human paladin's row and the Undead's warrior gap to the Human.
 		{proto.Race_RaceUndead, proto.Class_ClassPaladin, 1, [5]float64{21, 18, 23, 18, 26}},
-		// The Orc shaman's level 30 sheet without the old Orc shift.
+		// The Orc shaman's sheet. Level 3 has 1 more Strength than 1.12, level 15 has 1 more Strength and 1
+		// less Intellect, and level 43 has 2 more Strength, 2 less Agility and 1 less Intellect.
+		{proto.Race_RaceOrc, proto.Class_ClassShaman, 3, [5]float64{26, 18, 25, 20, 27}},
+		{proto.Race_RaceOrc, proto.Class_ClassShaman, 15, [5]float64{36, 23, 36, 29, 39}},
 		{proto.Race_RaceOrc, proto.Class_ClassShaman, 30, [5]float64{51, 30, 52, 44, 56}},
+		{proto.Race_RaceOrc, proto.Class_ClassShaman, 43, [5]float64{66, 37, 70, 60, 74}},
+		// We have no sheet past 43 yet, so level 44 stays on 1.12's row.
+		{proto.Race_RaceOrc, proto.Class_ClassShaman, 44, [5]float64{66, 40, 71, 63, 76}},
 		// The Skyborne keep their sheets' offset: the Human's row less 1 Strength and Stamina and 1 more
 		// Agility and Intellect, with no Human Spirit.
 		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassWarrior, 1, [5]float64{22, 21, 21, 21, 20}},

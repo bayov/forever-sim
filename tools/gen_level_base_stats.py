@@ -51,14 +51,60 @@ levelstats[(5, 8)][1] = (s, a, st, sp, i)
 # small offset (our naked level 1 sheets of 2026-10-10 and wowsims/forever 6296e8546d); that
 # shift is gone.
 #
-# The Forever shaman's own rows (the Lua UnitStat values of a naked character with no talents,
-# 2026-10-07): it gains 2 more Strength, 1 less Agility and 1 less Intellect from level 1 to 30
-# than 1.12's. The level 30 sheet was an Orc with the old Orc shift (0, 0, -1, 2, -3), taken off
-# here, so this is the Classic Orc row plus the shaman's own gain. The other levels stay on the
-# 1.12 rows until we see them.
+# The Forever Orc shaman's own rows at levels 2 to 43.
+#
+# These are the base values the in-game character sheet shows (UnitStat's base, with no gear,
+# buffs or talents counted), which BayovCore saved for every level we played through in the
+# live logs of Nov 5-8 2026. Stamina and Spirit match 1.12 at every level. Strength runs a point
+# or two above 1.12, and Agility and Intellect a point or two below, and the gap grows slowly
+# with level. Levels 2, 4, 6, 7 and 11 happen to round to 1.12's row.
+#
+# We have no sheet for level 1 or for levels 44 to 60, so those stay on 1.12's rows. Level 60
+# doesn't read this table at all (it uses ClassBaseStats in base_stats.go).
 FOREVER_ATTRIBUTES = {
     (2, 7): {  # Orc shaman
+        2: (25, 17, 24, 19, 26),
+        3: (26, 18, 25, 20, 27),
+        4: (26, 18, 26, 20, 28),
+        5: (27, 18, 26, 21, 29),
+        6: (28, 19, 27, 22, 30),
+        7: (29, 19, 28, 23, 31),
+        8: (30, 20, 29, 23, 31),
+        9: (30, 20, 30, 24, 32),
+        10: (31, 20, 31, 25, 33),
+        11: (32, 21, 32, 26, 34),
+        12: (33, 21, 33, 27, 35),
+        13: (34, 22, 34, 28, 36),
+        14: (35, 22, 35, 29, 37),
+        15: (36, 23, 36, 29, 39),
+        16: (37, 23, 37, 30, 40),
+        17: (37, 23, 38, 31, 41),
+        18: (38, 24, 39, 32, 42),
+        19: (39, 24, 40, 33, 43),
+        20: (40, 25, 41, 34, 44),
+        21: (41, 25, 42, 35, 45),
+        22: (42, 26, 43, 36, 46),
+        23: (43, 26, 44, 37, 47),
+        24: (44, 27, 45, 38, 49),
+        25: (45, 27, 47, 39, 50),
+        26: (46, 28, 48, 40, 51),
+        27: (47, 28, 49, 41, 52),
+        28: (48, 29, 50, 42, 53),
+        29: (50, 29, 51, 43, 55),
         30: (51, 30, 52, 44, 56),
+        31: (52, 30, 54, 45, 57),
+        32: (53, 31, 55, 46, 59),
+        33: (54, 31, 56, 48, 60),
+        34: (55, 32, 57, 49, 61),
+        35: (56, 32, 59, 50, 63),
+        36: (58, 33, 60, 51, 64),
+        37: (59, 34, 61, 52, 65),
+        38: (60, 34, 63, 53, 67),
+        39: (61, 35, 64, 55, 68),
+        40: (62, 35, 65, 56, 70),
+        41: (64, 36, 67, 57, 71),
+        42: (65, 37, 68, 58, 73),
+        43: (66, 37, 70, 60, 74),
     },
 }
 for (race, cls), levels in FOREVER_ATTRIBUTES.items():
