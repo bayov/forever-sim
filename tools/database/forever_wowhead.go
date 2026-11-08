@@ -128,6 +128,9 @@ var foreverWowheadRatings = []string{"hastertng", "dodgertng", "parryrtng", "blo
 // two-handed axes, 91 two-handed maces, 96 daggers, and Dwarven Tree Chopper only has
 // expertise (type 37). But jsonequip carries none of it, so without this table an item
 // keeps its Classic skill. An entry with no skills takes the skill off.
+//
+// Items that aren't in Wowhead's listing but have a line in forever_seen_in_game.json
+// (hidden items revealed later) take their entry there too (ReadForeverSeenInGame).
 var foreverWeaponSkills = map[int32]map[proto.WeaponSkill]float64{
 	2907:  {},                                               // Dwarven Tree Chopper, Classic +2 two-handed axes.
 	4548:  {proto.WeaponSkill_WeaponSkillTwoHandedMaces: 1}, // Servomechanic Sledgehammer, Classic +7.
@@ -136,6 +139,10 @@ var foreverWeaponSkills = map[int32]map[proto.WeaponSkill]float64{
 	16007: {},                                               // Flawless Arcanite Rifle, Classic +4 guns.
 	21126: {proto.WeaponSkill_WeaponSkillDaggers: 3},        // Death's Sting, the same as Classic.
 	23577: {proto.WeaponSkill_WeaponSkillSwords: 6},         // The Hungering Cold, the same as Classic.
+	// Edgemaster's Handguards, Classic +7 each. Revealed Nov 7-8 (foreverchanges.pro
+	// hidden-items tooltip, Wowhead Forever tooltip dataEnv 16 agrees).
+	14551:  {proto.WeaponSkill_WeaponSkillAxes: 1, proto.WeaponSkill_WeaponSkillDaggers: 1, proto.WeaponSkill_WeaponSkillSwords: 1},
+	286619: {proto.WeaponSkill_WeaponSkillUnarmed: 1}, // Big Basher's Belt, +1 fist weapons. Revealed Nov 7-8.
 }
 
 // foreverWeaponSkillSlice turns an entry of foreverWeaponSkills into the item's list of

@@ -77,6 +77,11 @@ func ReadForeverSeenInGame(path string, have map[int32]*proto.UIItem) []*proto.U
 			HitRating: e.HitRating, CritRating: e.CritRating,
 			Ilvl: e.Ilvl, RequiredLevel: e.RequiredLevel, Quality: proto.ItemQuality(e.Quality),
 		}
+		// The game shows weapon skill as a stat, but the file doesn't carry it, so an
+		// item's Forever skill comes from foreverWeaponSkills (or it keeps Classic's).
+		if skills, ok := foreverWeaponSkills[int32(id)]; ok {
+			item.WeaponSkills = foreverWeaponSkillSlice(skills)
+		}
 		old, known := have[int32(id)]
 		// MergeItem takes no faction restriction to mean none, and the game doesn't
 		// tell us an item's faction. So an item keeps the one it has (Ring of Scorn
