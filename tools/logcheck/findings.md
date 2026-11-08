@@ -57,6 +57,7 @@ sections 2 and 6 have the format).
 - **Window** `WoWCombatLog-110826_085019.txt 21:00:57-21:17:14` (levels 36 to 43, Mograine's Might): the sheet runs the other way, AP +424 in the sim, because the export was taken in Ghost Wolf (buffs: Well-Rested, Ghost Wolf). The fight still shows the usual gap: Melee raw 386.4 in 31 hits vs the sim's 365.6 at level 41, Stormstrike 581.1 in 15 hits vs 559.9, Flame Shock rank 4 ticks 47 vs 46.3 and direct 179 vs 178. So a sheet taken in a form says nothing about the fight, and the AP for damage rows should come from the window's white hits.
 - **Window** `WoWCombatLog-110826_085019.txt 21:17:30-21:34:39` (levels 39 to 41, level 43, Mograine's Might at 209-210 of 215): the export at 21:22:50 had Blessing of Kings, Well Fed, Stoneskin and Windfury Totem up. The sheet is Strength +16, Stamina +12, Intellect +10, Spirit +12 and AP +46 over the sim, which Kings (10%) and Well Fed explain. Melee raw 378.8 in 32 hits vs the sim's 363.1 at level 40, Stormstrike 594.2 in 19 vs 564.0, and the spell rows 1 over (Flame Shock 179 vs 178, Lightning Shield 126 vs 125, about the sheet's 2.4 extra Nature power). Blood Fury shows in the logged AP (1478 to 1626). One glance in 28 swings at level 41 (sim 0%) fits the skill going 209 to 210 in the window, at the edge of the glance threshold.
 - **Windows** `WoWCombatLog-110826_085019.txt 23:58:01-00:02:56`, `00:06:11-00:09:28` and `00:14:26-00:16:53` (Nov 8-9, level 43 to 44, mobs 40 to 44): the sheet is AP +65 to +71 over the sim with Camp Benefits, Well Fed and Veteran Adventurer's Loyal Companion up. Melee raw runs 374.6 to 389.9 against the sim's 357 to 361, and Stormstrike 585.3 to 599.0 against 553.6 to 559.7, the usual AP gap.
+- **Windows** `WoWCombatLog-110826_085019.txt 00:51:26-01:10:15` and `01:15:02-01:23:24` (Nov 9, level 44, mobs 40 to 45): the first had Camp Benefits and Well Fed (AP +71.5 on the sheet), and the second had another shaman's Strength of Earth and Windfury Totem plus Blessing of Kings (Strength +18, AP +51.5). Melee raw runs 373.9 to 390.7 against the sim's 359 to 370, and Stormstrike 569.1 to 610.8 against 553.0 to 583.3.
 - **What we think**: history records carry `buffs` and the sheet check now lists them, but logcheck doesn't add their stats to the sim. Other players' Blessing of Might mid-window also moves AP (244 to 271 in 06:37).
 - **Next step**: add the stats of the buffs up at export time to the sim's character (a table of the common ones), or compare the sheet against the sim plus those buffs, and take the AP for damage rows from the window's white hits.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-09 (hourly run, Nov 9 windows).
@@ -89,6 +90,16 @@ sections 2 and 6 have the format).
 - **What we think**: the sim's own base stats at low level, not logcheck. The half point of AP may be the game rounding AP down. The dodge may be the Agility to dodge ratio at level 6 (`sim/core/base_stats.go`). The AP moves Melee raw damage by about 0.1, and our dodge doesn't touch our damage rows.
 - **Next step**: see if it comes back at other levels. If it does, check the AP rounding and the dodge per Agility by level.
 - **Status**: open, first seen 2026-10-18, last updated 2026-11-09 (steady at level 43 to 44, so the dodge per Agility by level is worth a check).
+
+### Spell hits a fraction of a point above the sim at level 44
+
+- **Flag**: `Flame Shock (10447): amount` (NEW), and `Lightning Shield (26369): raw` at mob levels 42 to 45.
+- **Windows**:
+  - `WoWCombatLog-110826_085019.txt 00:51:26-01:10:15` (level 44): Flame Shock's direct hit is 179 raw on all 8, and its amount rounded up on 4 of 8. The sim's hit is 179.050, so it expects 0.9 round ups, and the log puts the hit at 179.40 to 179.90. Lightning Shield is 126 raw on all 6 hits, but the sim's 125.967 floors to 125.
+  - `01:15:02-01:23:24`: Lightning Shield 126 to 128 raw in 38 hits against the sim's 125 to 127. Blessing of Kings was up there, so that window only counts weakly.
+- **What we think**: the sim's spell hits sit 0.03 to 0.85 below the game's, about 0.1 to 4 spell power. The export's sheet shows Nature power within 0.7 of the sim. So it's either a fraction of spell power the sim leaves out, or the game rounding the hit (or the spell power bonus) up where the sim's raw is floored (`toWhole` in `tools/logcheck`). It moves damage by under 0.5%.
+- **Next step**: see if it repeats at other levels and with no buffs. If it does, compare the sim's spell power against the sheet's to the decimal, and check whether round to nearest instead of floor clears the Lightning Shield row on old windows.
+- **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
 
 ## Done
 
