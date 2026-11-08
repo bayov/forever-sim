@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 // setActiveAirTotem puts the totem in the air slot and swaps in its buff, on us and on the
@@ -67,8 +66,8 @@ func (shaman *Shaman) newWindfuryTotemSpellConfig(rank int) core.SpellConfig {
 
 	// The totem's buff takes the totem slot of the shaman's own weapon, so it works next to
 	// Rockbiter, Flametongue or Frostbrand Weapon and an oil or stone. It does not work next
-	// to Flametongue Totem's buff. Windfury Weapon on the main hand turns it off, and then it
-	// leaves the slot to Flametongue Totem.
+	// to Flametongue Totem's buff: the one placed last takes hold. Windfury Weapon on the main
+	// hand turns it off, but it still takes the slot.
 	var buffAura *core.Aura
 	if shaman.HasMHWeapon() {
 		buffAura = core.CastWindfuryTotemBuffAura(&shaman.Character, int32(rank))
@@ -88,9 +87,9 @@ func (shaman *Shaman) newWindfuryTotemSpellConfig(rank int) core.SpellConfig {
 		Duration: time.Minute * 5, // Forever totems last 5 min, Classic 2
 		OnGain: func(_ *core.Aura, sim *core.Simulation) {
 			if buffAura != nil {
-				shaman.setTotemWeaponBuff(sim, buffAura, proto.WeaponImbue_WindfuryWeapon)
+				shaman.setTotemWeaponBuff(sim, buffAura)
 			}
-			receivers.holdWeapon(sim, shaman, true)
+			receivers.holdWeapon(sim, shaman)
 		},
 		OnExpire: func(_ *core.Aura, sim *core.Simulation) {
 			if buffAura != nil {

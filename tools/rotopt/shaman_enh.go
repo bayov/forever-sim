@@ -52,8 +52,8 @@ func (shamanEnh) Knobs() []Knob {
 		{Name: "strengthOfEarth", Default: 1, Min: 0, Max: 1, Step: 1},
 		// 0 none, 1 Grace of Air, 2 Windfury Totem. Windfury Weapon on the main hand turns
 		// Windfury Totem's buff off for the shaman. It shares the weapon's totem slot with
-		// Flametongue Totem's, and the one placed last holds it. A buff our own imbue turns
-		// off leaves the slot to the other one. The raid buffs already give Grace of Air when
+		// Flametongue Totem's, and the one placed last holds it, for us and the group, even
+		// when our imbue turns it off for us. The raid buffs already give Grace of Air when
 		// a second shaman is set.
 		{Name: "airTotem", Default: 1, Min: 0, Max: 2, Step: 1},
 		// 0 none, 1 Mana Spring Totem (from level 26).

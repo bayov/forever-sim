@@ -82,29 +82,25 @@ func (shaman *Shaman) getImbueProcMask(imbue proto.WeaponImbue) core.ProcMask {
 }
 
 // setTotemWeaponBuff gives the weapon's totem slot to the buff of the totem the shaman
-// just placed. The weapon holds one totem buff, so it takes over from the other totem's
-// buff and from another shaman's totem in the raid buffs (core.HoldTotemWeaponBuff).
+// just placed. The weapon holds one totem buff, the last placed, so it takes over from the
+// other totem's buff and from another shaman's totem in the raid buffs
+// (core.HoldTotemWeaponBuff).
 //
-// sameKindImbue is the imbue that turns this totem's buff off for us (Windfury Weapon for
-// Windfury Totem). When our main hand has it, the buff does nothing for us and it doesn't
-// take the slot either. That is the raid setup where we keep Windfury Totem down for the
-// group and Flametongue Totem down for ourselves, next to our own Windfury Weapon.
-func (shaman *Shaman) setTotemWeaponBuff(sim *core.Simulation, aura *core.Aura, sameKindImbue proto.WeaponImbue) {
-	shaman.noteWeaponTotem(aura, sameKindImbue, true)
-	if shaman.getImbueProcMask(sameKindImbue) != core.ProcMaskUnknown {
-		return
-	}
-	shaman.HoldTotemWeaponBuff(sim, aura, &shaman.Unit, sameKindImbue == proto.WeaponImbue_WindfuryWeapon)
+// It takes the slot even when our imbue turns it off for us (Windfury Weapon for Windfury
+// Totem), and then it does nothing for us. So Windfury Totem for the group, next to our own
+// Windfury Weapon, leaves us no Flametongue Totem (the user saw them replace each other on
+// the beta, 2026-11-08).
+func (shaman *Shaman) setTotemWeaponBuff(sim *core.Simulation, aura *core.Aura) {
+	shaman.HoldTotemWeaponBuff(sim, aura, &shaman.Unit)
 }
 
 // clearTotemWeaponBuff takes the buff off when its totem goes down.
 //
 // When it held the slot, the buff of our other weapon totem takes it back if that totem
-// still stands. Say we put down Windfury Totem and then Flametongue Totem with Rockbiter on,
-// and a Searing Totem takes Flametongue's place. Windfury Totem's buff comes back for the
-// rest of its 5 min. Without one, another shaman's totem buff from the raid buffs comes back.
+// still stands. Say we put down Windfury Totem and then Flametongue Totem, and a Searing
+// Totem takes Flametongue's place. Windfury Totem's buff comes back for the rest of its
+// 5 min. Without one, another shaman's totem buff from the raid buffs comes back.
 func (shaman *Shaman) clearTotemWeaponBuff(sim *core.Simulation, aura *core.Aura) {
-	shaman.noteWeaponTotem(aura, proto.WeaponImbue_WeaponImbueUnknown, false)
 	shaman.ReleaseTotemWeaponBuff(sim, aura, &shaman.Unit)
 }
 

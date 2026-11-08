@@ -76,7 +76,7 @@
     "Open: whether Stormstrike can trigger Elemental Focus. If it can, Enhancement gets more Clearcasting procs than shown.",
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
     "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259. Stormstrike (150%, 6s), Maelstrom Weapon, Mental Dexterity, Flurry and the shocks take the November 2 notes' values. Client 1.60.1.70753 doesn't carry them yet.",
-    "Assumed: another shaman's Flametongue Totem stacks with this shaman's Windfury Weapon. It adds 18 to 19 DPS at 180s and isn't tested in game yet.",
+    "No Flametongue Totem: it and Windfury Totem replace each other on the beta (2026-11-08), and the group needs Windfury Totem. Until the next resim the numbers still have another shaman's Flametongue Totem (18 to 19 DPS at 180s).",
     "The relic is Burning Totem, on its own gear set. Totem of the Storm is 0.1 to 1.5 DPS behind here."
   ],
   "notes": "mksettings -spec enh -gear level60_phase1_synthetic_burning_totem -apl mana_tide -talents 03-055030031005112051-053051001001 -race Orc -duration 180 -level 60 (standards 23: every shaman drops its own party totems; the raid's only totems are a second shaman's Grace of Air and Flametongue Totem, standards 25, the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md"

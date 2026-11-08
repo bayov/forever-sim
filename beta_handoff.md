@@ -411,6 +411,12 @@ Every other item is settled, parked or assumed. Also watch Healing Stream crits 
   up (`racials_forever.go`), +0.5 to +1.1 DPS on the Level 30 preset. Stormstrike gets it
   too, unchecked (item 4).
 
+- [x] Windfury Totem and Flametongue Totem together. Settled 2026-11-08 by the user on the
+  beta: they don't stack, and the one placed last takes hold. The sim changed the same day
+  (the weapon's totem slot holds the last one placed), and the presets lost the raid's
+  Flametongue Totem. Open: whether a totem buff our imbue turns off still pushes the other one
+  out (notes.md, Shaman).
+
 ## Recheck with every new log
 
 The user wants the settled answers checked again as more data comes in, now and after

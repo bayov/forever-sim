@@ -70,13 +70,12 @@ func (receivers *totemBuffReceivers) release(sim *core.Simulation, shaman *Shama
 	}
 }
 
-// holdWeapon gives each receiver our weapon totem's buff, unless their imbue blocks it
-// (core.Character.HoldTotemWeaponBuff picks which weapon totem a receiver takes).
-func (receivers *totemBuffReceivers) holdWeapon(sim *core.Simulation, shaman *Shaman, windfury bool) {
+// holdWeapon gives each receiver our weapon totem's buff. It takes the weapon's totem slot from
+// the other weapon totem's buff, even when the receiver's imbue turns it off
+// (core.Character.HoldTotemWeaponBuff).
+func (receivers *totemBuffReceivers) holdWeapon(sim *core.Simulation, shaman *Shaman) {
 	for _, receiver := range *receivers {
-		if !receiver.char.TotemWeaponBuffBlocked(windfury) {
-			receiver.char.HoldTotemWeaponBuff(sim, receiver.aura, &shaman.Unit, windfury)
-		}
+		receiver.char.HoldTotemWeaponBuff(sim, receiver.aura, &shaman.Unit)
 	}
 }
 

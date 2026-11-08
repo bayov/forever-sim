@@ -14,8 +14,8 @@ import (
 // Each imbue does its work through its aura (the Windfury, Flametongue and Frostbrand procs), so
 // a swap turns exactly one of them on. Rockbiter's attack power is added to the weapon's stats
 // when the character is built, so we move it with a dynamic stat instead. The main hand's
-// TempEnchant is what the totem weapon buffs read on every hit, and our own standing weapon
-// totem picks its buff again, as it does when it goes down.
+// TempEnchant is what the totem weapon buffs read on every hit, so a swap turns a totem buff
+// of the same kind off or back on without moving it in the weapon's totem slot.
 
 // ImbueCastTag tags the imbue casts, apart from the imbues' proc spells, which share their ids.
 const ImbueCastTag = 99
@@ -41,9 +41,6 @@ type imbueSwaps struct {
 
 	active  proto.WeaponImbue
 	initial proto.WeaponImbue
-
-	// Our own weapon totems standing, with the imbue that turns their buff off for us.
-	weaponTotems map[*core.Aura]proto.WeaponImbue
 }
 
 // EnableImbueSwaps registers every imbue and a cast for each, so any of them can go on the main
@@ -53,10 +50,9 @@ func (shaman *Shaman) EnableImbueSwaps() {
 		return
 	}
 	swaps := &imbueSwaps{
-		auras:        map[proto.WeaponImbue]*core.Aura{},
-		enchants:     map[proto.WeaponImbue]int32{},
-		spells:       map[proto.WeaponImbue]int32{},
-		weaponTotems: map[*core.Aura]proto.WeaponImbue{},
+		auras:    map[proto.WeaponImbue]*core.Aura{},
+		enchants: map[proto.WeaponImbue]int32{},
+		spells:   map[proto.WeaponImbue]int32{},
 	}
 	shaman.imbueSwaps = swaps
 
@@ -158,7 +154,6 @@ func (shaman *Shaman) ResetImbueSwaps(sim *core.Simulation) {
 		return
 	}
 	swaps.rockbiterDelta = 0
-	clear(swaps.weaponTotems)
 	swaps.active = proto.WeaponImbue_WeaponImbueUnknown
 	shaman.SwapMainHandImbue(sim, swaps.initial)
 }
@@ -196,26 +191,4 @@ func (shaman *Shaman) SwapMainHandImbue(sim *core.Simulation, imbue proto.Weapon
 		swaps.rockbiterDelta = want
 	}
 	swaps.active = imbue
-
-	// Our own weapon totems pick their buff again: a same kind imbue turns the totem's buff off
-	// for us, and any other lets it back on.
-	for aura, sameKind := range swaps.weaponTotems {
-		if shaman.getImbueProcMask(sameKind) != core.ProcMaskUnknown {
-			shaman.ReleaseTotemWeaponBuff(sim, aura, &shaman.Unit)
-		} else {
-			shaman.HoldTotemWeaponBuff(sim, aura, &shaman.Unit, sameKind == proto.WeaponImbue_WindfuryWeapon)
-		}
-	}
-}
-
-// noteWeaponTotem keeps track of our standing weapon totems, for imbue swaps.
-func (shaman *Shaman) noteWeaponTotem(aura *core.Aura, sameKindImbue proto.WeaponImbue, standing bool) {
-	if shaman.imbueSwaps == nil {
-		return
-	}
-	if standing {
-		shaman.imbueSwaps.weaponTotems[aura] = sameKindImbue
-	} else {
-		delete(shaman.imbueSwaps.weaponTotems, aura)
-	}
 }

@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 const SearingTotemRanks = 6
@@ -344,8 +343,8 @@ func (shaman *Shaman) newFireNovaHitSpellConfig(rank int) core.SpellConfig {
 //
 // Its buff takes the totem slot of the weapon, so it works next to Windfury, Rockbiter or
 // Frostbrand Weapon and an oil or stone. Flametongue Weapon on the main hand turns it off.
-// It does not work next to the shaman's own Windfury Totem or another shaman's totem buff,
-// see core/totem_weapon_buffs.go.
+// It does not work next to a Windfury Totem buff, ours or another shaman's: the one placed
+// last takes hold, for the whole group (beta, 2026-11-08). See core/totem_weapon_buffs.go.
 const FlametongueTotemRanks = core.FlametongueTotemRanks
 
 var FlametongueTotemSpellId = core.FlametongueTotemSpellId
@@ -388,8 +387,8 @@ func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig 
 		Aura: core.Aura{
 			Label: fmt.Sprintf("Flametongue Totem (Rank %d) Totem", rank),
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				shaman.setTotemWeaponBuff(sim, buffAura, proto.WeaponImbue_FlametongueWeapon)
-				receivers.holdWeapon(sim, shaman, false)
+				shaman.setTotemWeaponBuff(sim, buffAura)
+				receivers.holdWeapon(sim, shaman)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				shaman.clearTotemWeaponBuff(sim, buffAura)
@@ -405,7 +404,7 @@ func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig 
 		spell.AOEDot().Apply(sim)
 		shaman.setTotemReach(FireTotem,
 			func(sim *core.Simulation) {
-				shaman.setTotemWeaponBuff(sim, buffAura, proto.WeaponImbue_FlametongueWeapon)
+				shaman.setTotemWeaponBuff(sim, buffAura)
 			},
 			func(sim *core.Simulation) {
 				shaman.clearTotemWeaponBuff(sim, buffAura)

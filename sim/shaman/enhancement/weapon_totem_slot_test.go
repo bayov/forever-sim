@@ -11,11 +11,11 @@ import (
 // 7.18).
 //
 // The weapon holds one Windfury or Flametongue Totem buff, next to its permanent enchant, our
-// imbue and an oil or stone. Windfury Weapon on the main hand turns Windfury Totem off for us,
-// from our totem or another shaman's, as its tooltip says. Then our own Windfury Totem doesn't
-// take the slot. Without it, the last weapon totem we put down holds the slot. When it goes,
-// our other weapon totem takes the slot back if it still stands, and else another shaman's
-// totem from the raid buffs.
+// imbue and an oil or stone. The last weapon totem placed holds the slot (the user saw the two
+// totems replace each other on the beta, 2026-11-08). Windfury Weapon on the main hand turns
+// Windfury Totem off for us, from our totem or another shaman's, as its tooltip says, but our
+// Windfury Totem still takes the slot. When the totem in the slot goes, our other weapon totem
+// takes the slot back if it still stands, and else another shaman's totem from the raid buffs.
 func TestOrcShamanWeaponTotemSlot(t *testing.T) {
 	const (
 		ownWindfury    = "Windfury Totem (Rank 3)"
@@ -52,8 +52,7 @@ func TestOrcShamanWeaponTotemSlot(t *testing.T) {
 		procs := 0
 		at(sim, 1, func(sim *core.Simulation) {
 			place(sim, enh, topRank(t, "Windfury Totem", enh.WindfuryTotem))
-			blocked := imbue == proto.WeaponImbue_WindfuryWeapon
-			holds(sim, enh, "our Windfury Totem", map[string]bool{ownWindfury: !blocked, raidWindfury: blocked})
+			holds(sim, enh, "our Windfury Totem", map[string]bool{ownWindfury: true, raidWindfury: false})
 		})
 		for i := range 100 {
 			at(sim, 2+2*float64(i), func(sim *core.Simulation) {
@@ -97,6 +96,19 @@ func TestOrcShamanWeaponTotemSlot(t *testing.T) {
 		holds(sim, enh, "our Searing Totem", map[string]bool{ownWindfury: true, ownFlametongue: false})
 		place(sim, enh, topRank(t, "Grace of Air Totem", enh.GraceOfAirTotem))
 		holds(sim, enh, "our Grace of Air Totem", map[string]bool{ownWindfury: false, ownFlametongue: false})
+	})
+	runSim(sim)
+
+	// With Windfury Weapon on, our Windfury Totem for the group still takes the slot from our
+	// Flametongue Totem, and gives us nothing. Flametongue Totem put down again takes it back.
+	sim, enh = start(proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone)
+	at(sim, 1, func(sim *core.Simulation) {
+		place(sim, enh, topRank(t, "Flametongue Totem", enh.FlametongueTotem))
+		holds(sim, enh, "our Flametongue Totem", map[string]bool{ownFlametongue: true})
+		place(sim, enh, topRank(t, "Windfury Totem", enh.WindfuryTotem))
+		holds(sim, enh, "our Windfury Totem", map[string]bool{ownWindfury: true, ownFlametongue: false})
+		place(sim, enh, topRank(t, "Flametongue Totem", enh.FlametongueTotem))
+		holds(sim, enh, "our Flametongue Totem again", map[string]bool{ownWindfury: false, ownFlametongue: true})
 	})
 	runSim(sim)
 }

@@ -25,7 +25,7 @@
     "ok": true,
     "note": "the DPS report's main run of this request (ui/dps_report/data/builds.json, deployed 2026-11-02), 180 ± 20 s, 20,000 iterations, seed 1"
   },
-  "summary": "Two-hand axe Enhancement built on Stormstrike and Maelstrom Weapon. It drops Windfury Totem for its group, plus Magma Totem. Another shaman's Flametongue Totem works on top of its Windfury Weapon.",
+  "summary": "Two-hand axe Enhancement built on Stormstrike and Maelstrom Weapon. It drops Windfury Totem for its group, plus Magma Totem.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -79,7 +79,7 @@
     "Stormstrike (150%, 6s), Maelstrom Weapon, Mental Dexterity, Flurry and the shocks take the November 2 notes' values. Client 1.60.1.70753 doesn't carry them yet.",
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
     "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259.",
-    "Assumed: another shaman's Flametongue Totem stacks with this shaman's Windfury Weapon. It adds 18 to 19 DPS at 180s and isn't tested in game yet.",
+    "No Flametongue Totem: it and Windfury Totem replace each other on the beta (2026-11-08), and the group needs Windfury Totem. Until the next resim the numbers still have another shaman's Flametongue Totem (18 to 19 DPS at 180s).",
     "Convection 3 and Tidal Focus 2 in place of Reverberation 5 since the November 2 notes, +11 at 180s. Convection 4, Improved Stormstrike 1 and Tidal Focus 3 ties it (+2.5 at 120s, -2 to -3 at 300s).",
     "The relic is Totem of the Storm, 0.9 to 2.1 DPS ahead of Burning Totem at every fight length. It lets Lightning Bolt trigger Maelstrom Weapon at half the chance."
   ],

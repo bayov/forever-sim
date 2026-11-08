@@ -1806,9 +1806,11 @@ below) and one Go call, `RunComp`, which resolves a comp into a `RaidSimRequest`
     resolver gives every held aura to everyone.
   - Every receiver of a raid-wide shout adds its threat, so a shout makes far more threat than the old
     party shout.
-  - A receiver of both weapon totems takes the one it dropped itself, then another shaman's Windfury over
-    Flametongue, then the last dropped (the resolver gives Enhancement Flametongue and the others
-    Windfury anyway).
+  - A receiver of both weapon totems takes the last one dropped (the user saw them replace each other on
+    the beta, 2026-11-08), even when its imbue turns that one off. Until then it took the one it dropped
+    itself, then another shaman's Windfury over Flametongue. The resolver still gives Enhancement
+    Flametongue and the others Windfury, which the beta result rules out: to fix with the next drops
+    table.
   - Identical totems from different shamans share one aura on each receiver, and each totem keeps it up
     until that totem ends, so the buff stays while a second totem stands.
 - **The builds:** the duty builds and pet variants in [Assignments](#assignments) and

@@ -99,287 +99,287 @@ stat_weights_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 410.554
-  tps: 699.94604
+  dps: 410.55517
+  tps: 699.93136
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Champion'sStormcaller"
  value: {
-  dps: 434.18517
-  tps: 736.20003
+  dps: 434.186
+  tps: 736.18862
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Champion'sThunderfist"
  value: {
-  dps: 402.41983
-  tps: 697.74081
+  dps: 402.41367
+  tps: 697.72822
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Champion'sWartide"
  value: {
-  dps: 392.41383
-  tps: 679.66691
+  dps: 392.41117
+  tps: 679.65213
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-ElementalSynthetic(Phase1)"
  value: {
-  dps: 400.70183
-  tps: 699.29473
+  dps: 400.70067
+  tps: 699.28376
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 368.371
-  tps: 642.94272
+  dps: 368.37733
+  tps: 642.92887
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 399.07283
-  tps: 692.82305
+  dps: 399.064
+  tps: 692.80885
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 373.72233
-  tps: 646.55832
+  dps: 373.72983
+  tps: 646.54447
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 368.371
-  tps: 642.94272
+  dps: 368.37733
+  tps: 642.92887
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 430.432
-  tps: 728.22773
+  dps: 430.427
+  tps: 728.21507
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 417.9235
-  tps: 721.86282
+  dps: 417.9215
+  tps: 721.84986
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-FieldMarshal'sWartide"
  value: {
-  dps: 404.6275
-  tps: 698.17937
+  dps: 404.626
+  tps: 698.16659
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 722.05433
-  tps: 1281.21018
+  dps: 722.04933
+  tps: 1281.19936
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 410.554
-  tps: 699.94604
+  dps: 410.55517
+  tps: 699.93136
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 402.41983
-  tps: 697.74081
+  dps: 402.41367
+  tps: 697.72822
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 392.41383
-  tps: 679.66691
+  dps: 392.41117
+  tps: 679.65213
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-RestorationSynthetic(Phase1)"
  value: {
-  dps: 379.805
-  tps: 655.70647
+  dps: 379.80433
+  tps: 655.6923
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 454.78183
-  tps: 773.0677
+  dps: 454.78317
+  tps: 773.05379
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-TheEarthfury"
  value: {
-  dps: 417.178
-  tps: 707.05737
+  dps: 417.17317
+  tps: 707.04461
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-TheEarthshatterer"
  value: {
-  dps: 425.376
-  tps: 714.26548
+  dps: 425.38383
+  tps: 714.25135
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-TheFiveThunders"
  value: {
-  dps: 443.42417
-  tps: 751.92668
+  dps: 443.42267
+  tps: 751.91401
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-TheTenStorms"
  value: {
-  dps: 437.8455
-  tps: 745.0967
+  dps: 437.83833
+  tps: 745.08321
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-WardenSynthetic(Phase1)"
  value: {
-  dps: 397.76367
-  tps: 684.26207
+  dps: 397.76133
+  tps: 684.25038
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-WardenSyntheticOn-UseTrinket(Phase1)-999216"
  value: {
-  dps: 364.17767
-  tps: 634.12822
+  dps: 364.18517
+  tps: 634.11437
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 430.432
-  tps: 728.22773
+  dps: 430.427
+  tps: 728.21507
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 417.9235
-  tps: 721.86282
+  dps: 417.9215
+  tps: 721.84986
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Warlord'sWartide"
  value: {
-  dps: 404.6275
-  tps: 698.17937
+  dps: 404.626
+  tps: 698.16659
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Average-Default"
  value: {
-  dps: 365.87627
-  tps: 637.43178
+  dps: 365.87614
+  tps: 637.43069
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 203.32617
-  tps: 406.44462
+  dps: 203.33683
+  tps: 406.45054
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 187.917
-  tps: 384.73462
+  dps: 187.92083
+  tps: 384.74191
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 198.66917
-  tps: 407.38006
+  dps: 198.68583
+  tps: 407.38066
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 73.1905
-  tps: 130.90402
+  dps: 73.18967
+  tps: 130.90468
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 62.7145
-  tps: 117.63181
+  dps: 62.71017
+  tps: 117.62651
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 83.37
-  tps: 169.85066
+  dps: 83.3675
+  tps: 169.83636
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 202.66467
-  tps: 405.88912
+  dps: 202.66933
+  tps: 405.885
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 187.35917
-  tps: 384.59125
+  dps: 187.36083
+  tps: 384.59343
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 197.31083
-  tps: 405.60804
+  dps: 197.3275
+  tps: 405.60864
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 72.50533
-  tps: 129.45896
+  dps: 72.50467
+  tps: 129.46127
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 61.28383
-  tps: 114.16916
+  dps: 61.28317
+  tps: 114.16778
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 82.88417
-  tps: 169.21353
+  dps: 82.88167
+  tps: 169.19923
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 328.679
-  tps: 587.60165
+  dps: 328.6825
+  tps: 587.59991
  }
 }

@@ -28,7 +28,6 @@ import {
 	Stat,
 	StrengthBuff,
 	SunderRamp,
-	TotemWeaponBuff,
 	TristateEffect,
 	UnitReference,
 	UnitReference_Type,
@@ -624,11 +623,10 @@ export const DefaultConsumes = Consumes.create({
 // Air every melee group gets (the user's ruling 2026-10-16, "both totems": client
 // 1.60.1.70425 lets it stack with Windfury Totem and makes both raid-wide).
 //
-// That second shaman's fire slot holds Flametongue Totem (the user's ruling 2026-10-16: "Let's
-// assume it works, that it doesn't interfere with other melee getting Windfury Totem, and that
-// shamans with their WF imbue get FTT on top"). Our own Windfury Weapon turns our own Windfury
-// Totem's buff off for us, so the weapon's totem slot holds the raid's Flametongue Totem; the
-// other melee keep Windfury Totem.
+// No Flametongue Totem from that second shaman. From 2026-10-16 we had one on our weapon, next
+// to the group's Windfury Totem, but the user saw on the beta (2026-11-08) that the two totems
+// replace each other, the one placed last taking hold for the whole group. The group needs
+// Windfury Totem, so a raid shaman can't have Flametongue Totem.
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -639,7 +637,6 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
 	graceOfAirTotem: TristateEffect.TristateEffectRegular,
-	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffFlametongue,
 	leaderOfThePack: true,
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,

@@ -647,11 +647,11 @@ func TestRaidForeverCastFuriousHowl(t *testing.T) {
 	runSteps(sim)
 }
 
-// The weapon totem per receiver: a receiver takes one of Windfury and Flametongue Totem.
-// Windfury Totem does nothing for the Enhancement shaman's Windfury Weapon, so that one takes
-// Flametongue. Everyone else (a rogue, and a mage it does nothing for) takes Windfury,
-// whichever came down last, and an Elemental shaman its own. When Windfury Totem goes, the
-// rogue takes Flametongue.
+// The weapon totem per receiver: a receiver takes one of Windfury and Flametongue Totem, the
+// last one placed (the user saw them replace each other on the beta, 2026-11-08). That goes for
+// everyone: a rogue, a mage it does nothing for, the Elemental shaman who dropped Windfury and
+// the Enhancement shaman whose Windfury Weapon turns Windfury Totem off. When Windfury Totem
+// goes, everyone takes Flametongue.
 func TestRaidForeverWeaponTotems(t *testing.T) {
 	const windfury, flametongue = "Windfury Totem (Rank 3)", "Flametongue Totem (Rank 4)"
 	for _, windfuryFirst := range []bool{true, false} {
@@ -677,17 +677,22 @@ func TestRaidForeverWeaponTotems(t *testing.T) {
 			}
 		}
 		raidAt(sim, 1, func(sim *core.Simulation) { castFree(sim, totems[0]) })
+		last := flametongue
+		if !windfuryFirst {
+			last = windfury
+		}
 		raidAt(sim, 2, func(sim *core.Simulation) {
 			castFree(sim, totems[1])
-			holds("both totems", &rogue.Unit, windfury)
-			holds("both totems", &member(sim, 2, 1).Unit, windfury)
-			holds("both totems", &enh.Unit, flametongue)
-			holds("both totems", &ele.Unit, windfury)
+			holds("both totems", &rogue.Unit, last)
+			holds("both totems", &member(sim, 2, 1).Unit, last)
+			holds("both totems", &enh.Unit, last)
+			holds("both totems", &ele.Unit, last)
 		})
 		raidAt(sim, 3, func(sim *core.Simulation) {
 			castFree(sim, topRank(t, ele.GraceOfAirTotem))
 			holds("Flametongue left", &rogue.Unit, flametongue)
 			holds("Flametongue left", &ele.Unit, flametongue)
+			holds("Flametongue left", &enh.Unit, flametongue)
 		})
 		runSteps(sim)
 	}

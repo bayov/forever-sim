@@ -111,6 +111,11 @@ Give each the brief in `tools/audit/rotations/brief.txt`, with its "What changed
   container; rebuild from the req by setting race Night Elf and re-adding the Elune's Light lines from git
   history before e64360398.
 - **Elemental Mastery:** holding it was never tested; it's on autocast, fired with the trinket.
+- **Enhancement imbue with Windfury Totem (2026-11-08):** Windfury and Flametongue Totem don't stack
+  on the beta (the last placed takes hold), so the presets lost the raid's Flametongue Totem. Our
+  Windfury Weapon still turns off the group's Windfury Totem for us. Try Flametongue Weapon (the
+  imbue) with Windfury Totem in place of Windfury Weapon, on every Enhancement build (standards 40
+  sims both pairings). The shaman rotations weren't re-searched after the change.
 - **Warlock duty-curse presets:** Life Tap, Doom and DoT variants weren't screened separately; the base
   results should carry over.
 - **Optional (under the bar), offered to the class workers before they were retired:**
