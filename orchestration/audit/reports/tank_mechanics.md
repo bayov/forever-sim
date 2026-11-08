@@ -1,19 +1,22 @@
-# tank_mechanics pass 6 (2026-11-07, master 12aa2796f, client 1.60.1.70862+hf)
+# tank_mechanics pass 7 (2026-11-08, master 9ba00c2dc, client 1.60.1.70862+hf)
 
-Due on a new client build, 1.60.1.70790 -> 1.60.1.70862. Result: findings (one, low).
+Due on 11 watched shaman files changed (73d5bfa9e..9ba00c2dc). Result: findings (one, low).
 
-**Getting current:** wago's latest is 1.60.1.70862. Blizzard's development notes thread (t/2360696) has a new post 10 (2026-11-04T19:35Z): it only says a UI section was added to post 9, and post 9's edit at 19:35 is that UI section (swing timer, bags, nameplates). Nothing for tanks. The repo range c67d9e014..12aa2796f is an audit-loop commit and an items fold-in; no tank ability, talent or engine file changed.
+**Getting current:** wago's latest is still 1.60.1.70862 (pass 6 covered it); the loop checked the dev notes today (state `checked_at`). No ledger entries in range.
 
-**Client diff** (`wago.py diff 1.60.1.70790+hf 1.60.1.70862+hf --by-spell`, 441 spell rows; nearly all new creature spells and flight-path dummies). Player tank rows that changed:
+**What changed** (4 commits touching sim/shaman; read the hunks plus the helpers they call):
 
-| Spell | Field | 70790 | 70862 | Sim | Verdict | Tier |
-|---|---|---|---|---|---|---|
-| 7376 Defensive Stance Passive | #2 A_MOD_THREAT (misc 127) | 30 | 80 | x1.8 under Forever (stances.go:117) | match, now client | 1 |
-| 21178 Bear Form (Passive2) | #0 A_MOD_THREAT (misc 127) | 50 | 115 | x2.15 under Forever (bear.go:58) | match, now client | 1 |
-| 12792 Defiance r3 | #0 A_MOD_THREAT | 15 | 15 | 20% (notes) | unchanged, stays notes-only | notes |
+| Commit | Change | Tank effect | Verdict | Tier |
+|---|---|---|---|---|
+| 5a870eccc | Stormstrike mark applied after CalcDamage (`applyStormstrike`, stormstrike.go:144), threat redone via ThreatFromDamage | Warden shocks: same damage and threat (multiplicative, same formula as spell_result.go:428) | match | 1 (live logs) |
+| 2a60326a1 | `sim.Roll` rounds to whole points; pushback rolls moved to RandomFloat | No tank proc/probability uses sim.Roll (grep of core, warrior, druid, paladin, shaman); Dragonbreath Chili 61-69 fine | match | 1 (live logs) |
+| 0193721bc | Downranking penalty on heals only | Warden shock ranks keep full coefficients | settled ruling | user 2026-11-08 |
+| 9ba00c2dc | Windfury/Flametongue Totem share one weapon slot, last placed wins | Warden presets: Rockbiter + raid Windfury Totem, own Searing/Fire Nova/Mana Spring; no Flametongue Totem | not affected | beta (user) |
 
-Not tank: 57596 Mangle! (creature spell, not in the sim), 20575 Command (Orc pet racial), 48198 Righteous Fire (targeting), The Quick and the Dead 126231x (attribute flags only; the notes' "Righteous Fury made free" is server side), Soulstone aura-option rows removed.
+Golden deltas (TestWardenShaman, TestProtection): dps/tps move under 0.01, consistent with rounding only.
 
-**Engine:** no engine commit in range; the changed rows touch no attack-table, armor, block or Rage data. No sim run needed: both changed values were already in the sim.
+**Engine:** sim/core changes in range are cast.go (RNG label), downrank.go (scope), sim.go (Roll rounding), totem_weapon_buffs.go (slot). None touches the attack table, armor, block, Rage, threat stances/forms, the tank sheet or the score replay.
 
-**New finding:** tank_mechanics-20261107-1 (low): sim comments and class docs still say the client disagrees with the 80% / 115% threat values.
+**Tests:** Stormstrike's own threat is pinned (warden/forever_test.go:263-271, :402); a shock under the mark is not. New finding tank_mechanics-20261108-1 (low).
+
+**Still open:** tank_mechanics-20261107-1 (stale 30%/50% labels in stances.go:110, bear.go:57, docs/tank_druid.md:22/:55) not yet fixed.

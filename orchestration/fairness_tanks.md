@@ -1,8 +1,7 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-05, pass 5, master bba052f (tankbench's new paired-fight flags, no preset change; numbers are pass 4's at a079415, after tank rounds 4
-and 5, the full raid consumables) (orchestration/audit/reports/tank_fairness.md; table in orchestration/audit/ref/tank_fairness/summary.tsv).
+preset weight, its reasons, and the open questions. Last pass: 2026-11-08, pass 6, master 9ba00c2 (shaman totem/imbue, whole-point spell rolls, heal-only downrank penalty; all 12 presets re-simmed against 73d5bfa, every six-boss mean within 0.2, so the numbers below stand) (orchestration/audit/reports/tank_fairness.md; table in orchestration/audit/ref/tank_fairness/summary.tsv).
 
 ## Ranking (tankbench 3000 iterations, seed 1, six-boss mean, each spec's matching preset)
 

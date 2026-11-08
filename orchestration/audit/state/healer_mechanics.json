@@ -1,16 +1,16 @@
 {
  "last": {
-  "master": "73d5bfa9e1bfd5d889cef6b07f0e03b3064285e4"
+  "master": "9ba00c2dc47371bb0b48ccd53b2da1bd35e13eaf"
  },
- "last_pass_at": "2026-11-07T06:50:08Z",
- "pass": 5,
+ "last_pass_at": "2026-11-08T18:56:00Z",
+ "pass": 6,
  "result": "quiet",
- "note": "Pass 5: client 70790 -> 70862. Only healer row changed: Bloom heal 1328622 effect ImplicitTarget 1 -> 21 (heals the target ally, not the caster), which the sim already does. Riptide SpellPower still 150/180/230. No watched path changed on master c67d9e0..12aa279. Dev notes: no post after #10. Findings 10, 11 still open.",
+ "note": "Pass 6: 11 shaman files changed. Downrank scope now heals only (0193721bc): all heal configs carry ProcMaskSpellHealing so heals unaffected. Whole-point rolls (2a60326a1) apply to heals; no probability Roll in heal paths. Weapon totem swap not healer. Client 70862, dev notes still 10 posts. Findings 10, 11 open.",
  "client_build": "1.60.1.70862",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
   "edited": "2026-11-04T19:35:27Z"
  },
- "checked_at": "2026-11-08T12:44:38Z"
+ "checked_at": "2026-11-08T19:21:16Z"
 }

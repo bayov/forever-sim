@@ -21,6 +21,7 @@
 - update 2026-11-05, master a07941531: unchanged on master (Chromaggus 0.866, 365 mana, OOM 101 s, 1,000 it).
   Paired 1,000 it: shield gate 0.9 (line 3, was 0.7) Chromaggus 0.889 / 428 mana / OOM 107 s, Golemagg 1.984
   (-0.007); Renew only at 40% mana or more: Chromaggus 0.865, OOM 103 s, Golemagg unchanged. Neither stops the OOM.
+- update 2026-11-08, master 9ba00c2dc: unchanged (Chromaggus 0.866, 364 mana, OOM 101 s, 1,000 it).
 - needs: worker fix
 
 ## Resolved

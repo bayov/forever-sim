@@ -1,52 +1,32 @@
-# Mechanics pass 69 (2026-11-07, master 12aa2796f)
+# Mechanics pass 70 (2026-11-08, master 9ba00c2dc)
 
-One new finding: mechanics-20261107-1 (high), the natural flasks on client 70862.
+No new finding. Both open findings (mechanics-20261107-1 natural flasks, mechanics-20261104-1 druid scales) still open: no commit touched them.
 
 ## Range
 
-c67d9e014..12aa2796f: two commits (an audit-state commit and an item-database fold-in). No commit on sim or mksettings.
+73d5bfa9e..9ba00c2dc: four sim commits.
+
+| Commit | Change | Verdict |
+|---|---|---|
+| 5a870eccc | Stormstrike mark applied after the damage calc so raw matches the log | Damage and threat unchanged; no mechanic moved |
+| 2a60326a1 | `sim.Roll` rounds damage / heal rolls to whole points; three probability callers (cast pushback x2, an item's spell pick) moved to RandomFloat | Tier 1 (live logs, Searing Totem 1/4 1/2 1/4). No `sim.Roll` probability use left (grep of 105 calls). Fractional-end callers (hunter pet variance, item_sets_pve 67.5-82.5) shift < 0.5 per hit. Verdict added |
+| 0193721bc | Downranking penalty heals only | User ruling 2026-11-08 on live logs (tier 1). Verdict row replaced |
+| 9ba00c2dc | Windfury and Flametongue Totems: the last placed holds the weapon slot for everyone; Enhancement presets / mksettings / 4 report requests drop the raid Flametongue Totem | User observation on the beta; matches the exclusive verdict. Imbue-blocked buff still taking the slot is an assumption (notes.md). Report not resimmed (results auditor's) |
 
 ## Getting current
 
 | Source | Result |
 |---|---|
-| Client build | 1.60.1.70790 -> 1.60.1.70862. `wago.py diff --by-spell`: 441 lines, 24 changed rows apart from new or NPC spells. |
+| Client build | 1.60.1.70862, unchanged (gate). |
 | Dev notes thread | Still 10 posts; post 10 2026-11-04T19:35:16Z, post 9 edited 19:35:27Z, post 1 03:20:46Z. Nothing new. |
-| Blue tracker | Newest: Linxy 2026-11-07T01:07Z (Midnight hotfixes) and 11-06 (Venomous Abyss raid tuning): retail, not Forever. Aggrend 11-05 (zeppelins). |
-| Daily update | No TASKS.md, ledger or forever-update merge since the last pass. |
+| Blue tracker | Kaivax 2026-11-07T01:07:59Z, "WoW: Forever Hotfixes - November 6, 2026" (t/2403040, post 4). Missed last pass by 13 s. |
+| Daily update | 9fcbbccd2 TASKS.md: item effects Nov 7-8, push 113769 trinket cooldowns, 70862 diff notes. Item work, not shared mechanics. |
 
-## 70862 shared rows
+## November 6 hotfixes, shared or sim-relevant lines
 
-| Spell | Change | Sim |
-|---|---|---|
-| Flasks of Natural Accuracy / Aggression / Precision / Swiftness (1293740-1293743) | Stamina 60 -> 30; zone bonus 5 / 4 / 5 / 5 -> 2 / 2 / 2 / 2 | Still 60 and 5/4/5/5: mechanics-20261107-1 |
-| Defensive Stance Passive (7376) #2 | 30 -> 80 (80% threat) | Matches (x1.8) |
-| Bear Form (Passive2) (21178) #0 | 50 -> 115 | Matches (x2.15) |
-| Command, warlock (20575) #1 aura 108 mask 0x3000 | 5 -> 0 | Not modelled; now 0. #0 pet damage 5% holds |
-| SpellItemEnchantment | adds 8726 Luminarian's Binding (dummy 1314330) | n/a |
-| ItemEffect | 231823 Makeshift Stickin' Spear cooldown 5 -> 15 s; 232058 5 s | Not in the sim |
-
-Everything else: NPC spells (Hateful Strike, Cleave, Shadow Bolt Volley, Meathook, Righteous Fire, Mangle!), new spells, Use Soulstone aura options removed, The Quick and the Dead attributes, NPC Kidney Shot / Gouge levels. CurvePoint: 36 diff lines, left to the talents auditor.
-
-## Natural flask effect (measured)
-
-Shared CLI 12aa2796fcc6, 20k iterations, seed 1, paired against `runs/master`; requests given bonusStats of −30 Stamina and −3 hit / −2 crit / −3 expertise (`$AUDIT_WORK/mechanics/flask/mk.py`).
-
-| Preset (flask) | Master | 70862 values | Change |
-|---|---|---|---|
-| rogue combat-daggers (Accuracy) | 954.5 | 911.4 | −4.5% |
-| warrior fury_2h (Precision) | 1150.8 | 1103.6 | −4.1% |
-| warrior fury (Precision) | 1137.1 | 1092.5 | −3.9% |
-| warrior arms (Aggression) | 1088.3 | 1049.6 | −3.6% |
-| hunter marksmanship (Aggression) | 1254.3 | 1210.3 | −3.5% |
-| hunter beast-mastery (Aggression) | 1195.6 | 1153.8 | −3.5% |
-| hunter lone-wolf | 1313.7 | 1268.2 | −3.5% |
-| hunter survival (Precision) | 1040.6 | 1007.0 | −3.2% |
-| druid feral-cat (Aggression) | 1169.5 | 1133.5 | −3.1% |
-| rogue subtlety / seal-fate / mutilate / combat-swords (Precision) | | | −1.9% to −2.2% |
-
-Casters, Balance, Elemental, Retribution and Enhancement drink Flask of Supreme Power and don't move. The physical specs fall 2 to 4.5% against the casters, so the ranking moves.
-
-## Conclusions
-
-Fix the natural flasks (mechanics-20261107-1), then re-search each preset's flask. Every other shared verdict holds on 70862. Open item from pass 67 (the 70790 hotfix rows fetch) is still open; 70862 bakes in whatever of them landed.
+| Line | Sim |
+|---|---|
+| Orc: "some Warlock pet abilities were benefitting too much from the Orc Command racial ability" | Matches 70862's Command 20575 #1 5 -> 0, never modelled; the sim's 5% pet damage (#0) holds. Nothing to do |
+| Searing Dagger "only activated by spells that have a damaging component" | Item not in the sim |
+| Mage Arcane Blast duration 18 s; Warlock Soul Siphon no longer boosts Wrack; Voidwalker health +40 | Class items, left to the class auditors |
+| Druid Bear Form / Ravage tooltip fixes ("no change made to damage done") | Nothing to do |

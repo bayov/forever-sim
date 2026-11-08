@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "73d5bfa9e1bfd5d889cef6b07f0e03b3064285e4"
+  "master": "9ba00c2dc47371bb0b48ccd53b2da1bd35e13eaf"
  },
- "last_pass_at": "2026-11-05T01:05:54Z",
- "pass": 55,
+ "last_pass_at": "2026-11-08T19:05:00Z",
+ "pass": 56,
  "result": "findings",
- "note": "Pass 55: 86 commits; no DPS APL logic change (8 tank APLs). Feral moves from FB hotfix 113403 and Goblin Sapper in Cat Form; Survival pet presets -1.5 from talent change (noise-level). Finding rotations-20261105-1: FB energy gate 45->65 (+1.9 at 180 s). Baseline refreshed.",
+ "note": "Pass 56: 4 sim commits (whole-point rolls, heals-only downranking, SS mark, WF/FT totem exclusivity); no APL logic change. Only Enhancement moved (-20, no raid FT Totem). Finding rotations-20261108-1: Flametongue Weapon with own WF Totem on Mana Tide (+5.6) and Water Shield (+3.4); Level 60 and Imp GW keep WF Weapon.",
  "client_build": "1.60.1.70753",
- "checked_at": "2026-11-08T12:44:38Z",
- "baseline": "baseline_a079415_3000it_seed424242.tsv"
+ "checked_at": "2026-11-08T19:21:16Z",
+ "baseline": "baseline_9ba00c2_3000it_seed424242.tsv"
 }

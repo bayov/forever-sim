@@ -1,46 +1,57 @@
-# Rotations pass 55 (1 finding)
+# Rotations pass 56 (1 finding)
 
-- Master: a07941531 (from 0facd9428, 86 commits), audited 2026-11-05. Client 1.60.1.70753 plus server hotfix
-  push 113403 (Ferocious Bite).
-- Not quiet: sim `.go` changed (`sim/druid/ferocious_bite.go`, `sim/core/consumes.go` explosives in form,
-  `major_cooldown.go` BonusArmor trinkets as survival CDs, `spell_result.go` heal threat in replays,
-  `character.go` comment). APL logic changed in 8 files, all tank rotations (feral tank, Protection paladin,
-  tank warrior, Warden), out of scope. No Level 60 DPS APL changed in logic.
-- Req changes: feral cat and its FF duty take the Goblin Sapper Charge (e77fb293b); Survival (3 presets)
-  talents 502-005005-... -> 502-0050051-500230230250022151 (9660fffa8); meta/notes edits otherwise.
-- Regression baseline refreshed: `ref/rotations/baseline_a079415_3000it_seed424242.tsv`.
+- Master: 9ba00c2dc (from 73d5bfa9e, 4 commits in the watched paths), audited 2026-11-08. Client 1.60.1.70862
+  per the gate (state had 70753; no req or APL change came with it in this range).
+- Not quiet: non-test sim `.go` changed that the presets reach:
+  - 2a60326a1: spell damage and healing roll in whole points (`sim/core/sim.go`, `cast.go`, `item_effects.go`).
+  - 0193721bc: Forever's downranking penalty hits heals only (user ruling 2026-11-08); damage ranks keep the full
+    coefficient (`sim/core/downrank.go`, shaman shocks and Lightning Bolt).
+  - 5a870eccc: Stormstrike mark applied after the damage calc (log raw only; damage unchanged).
+  - 9ba00c2dc: Windfury and Flametongue Totem replace each other (`sim/core/totem_weapon_buffs.go`); the four
+    Enhancement reqs and presets drop the raid's Flametongue Totem.
+- `apl_logic_diff.py 73d5bfa9e 9ba00c2dc`: 0 APL files touched.
+- Regression baseline refreshed: `ref/rotations/baseline_9ba00c2_3000it_seed424242.tsv`.
 
-## What moved (baseline, 3k it, seed 424242, vs 0facd94)
+## What moved (baseline, 3k it, seed 424242, vs a079415)
 
 | Builds | Move | Cause |
 |---|---|---|
-| Feral cat FF duty / feral cat | +5.3 / +3.3 | ff56f8ddc hotfix 113403 (FB extra-Energy damage +20-24%), e77fb293b Goblin Sapper in Cat Form. |
-| Survival wolf / tallstrider / plain | -1.6 / -1.4 / +0.2 | 9660fffa8 talents (Rapid Killing for Resourcefulness). Within 3k-it noise for a talent change (RNG stream shifts); not A/B'd, since ab.py varies only the APL. |
+| Enhancement mana-tide / imp-gw / level60 / water-shield | -22.1 / -20.2 / -19.8 / -19.6 | 9ba00c2dc: no raid Flametongue Totem (req change). |
 
-Every other row moved under 0.05 DPS. The `vs_published.txt` moves on rogue, Ret, shaman and arcane predate
-this pass's range (pass 54 attributed them).
+Every other row moved under 0.5 DPS: the whole-point rolls and heals-only downranking don't move any DPS
+preset measurably (no Level 60 DPS rotation casts a damage rank learned below 43).
 
-## Screens (`ab.py`, 20k it, 8 blocks, shared CLI a0794153163a)
+## Screens (`ab_req.py`, 20k it, 8 blocks, shared CLI 9ba00c2dc473)
 
-Feral cat, 5-CP Ferocious Bite energy gate (now 45), B-A at 120/180/300:
+Open item from the pass doc: Flametongue Weapon (imbue) with our own Windfury Totem, in place of Windfury
+Weapon, on every Enhancement build. Only `shamanImbue` changes; rotations as on master. Pooled B-A over
+S0 = 1e6 and 2e8 at 120 / 180 / 300 s:
 
-| Preset | Gate | S0 | 120 | 180 | 300 |
-|---|---|---|---|---|---|
-| feral-cat | 35 | 1e6 | -2.61 | -2.92 | -3.41 |
-| feral-cat | 55 | 1e6 | +1.25 | +1.18 | +2.10 |
-| feral-cat | 55 | 2e8 | +1.40 | +1.22 | +1.92 |
-| feral-cat | 65 | 1e6 | +1.63 | +1.86 | +3.28 |
-| feral-cat | 65 | 2e8 | +1.80 | +1.96 | +3.12 |
-| feral-cat | 75 | 1e6 | -0.42 | +0.19 | +1.85 |
-| feral-cat-duty-ff | 65 | 1e6 | +0.70 | +0.89 | +2.06 |
-| feral-cat-duty-ff | 65 | 2e8 | +1.18 | +1.33 | +2.06 |
+| Preset | 120 | 180 | 300 | Verdict |
+|---|---|---|---|---|
+| mana-tide | +5.87 | +5.61 | +3.11 | finding rotations-20261108-1 |
+| water-shield | +3.79 | +3.43 | +1.50 | finding rotations-20261108-1 |
+| level60 | +0.68 | -1.06 | -3.93 | keep Windfury Weapon |
+| imp-gw | +2.19 | +0.59 | -2.92 | fight-length trade-off; keep |
 
-Gate 65 -> finding rotations-20261105-1.
+Per-set numbers are in the finding. The two builds that gain are the ones with less melee weight (Mana Tide
+gives up Windfury-boosting talents' share, Water Shield runs on mana); plausibly Flametongue Weapon's flat
+spell hits plus Windfury Totem's procs beat Windfury Weapon there. Not traced further.
+
+New helper: `tools/audit/rotations/ab_req.py`, a paired A/B of two whole request files (for imbue, consume or
+option screens, which `ab.py` can't vary).
+
+## Open findings
+
+- rotations-20261105-1 (Feral Ferocious Bite gate 45 -> 65): still open; master's level60.apl.json:10 has 45.
+- rotations-20261108-1: new, above.
 
 ## Optional
 
-- None new. Pass 26's optional list in `passes/rotations.md` still stands.
+None this pass.
 
-## Open items
+## Left for later
 
-- Survival pet presets' -1.5 after the talent change was not measured paired (needs a talent A/B, not an APL one).
+- Re-search the Enhancement rotations under the new totem rules (and under Flametongue Weapon for Mana Tide and
+  Water Shield); this pass doesn't use rotopt.
+- Elemental Mastery hold, Balance Night Elf, warlock duty-curse variants: unchanged from the pass doc.

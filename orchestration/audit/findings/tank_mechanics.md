@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_mechanics-20261108-1: No test pins a Warden shock's threat under the Stormstrike mark, now computed by hand
+- severity: low (the code is right today; untested, not wrong)
+- affects: Warden shaman (Earth Shock, Flame Shock, Frost Shock, Lightning Bolt, Chain Lightning under Stormstrike)
+- found: 2026-11-08, master 9ba00c2dc
+- evidence: 5a870eccc moves the mark out of DamageMultiplier into `applyStormstrike` (sim/shaman/stormstrike.go:144-151), which scales `result.Damage` after CalcDamage and redoes `result.Threat = spell.ThreatFromDamage(...)` itself. Read: correct, since ThreatFromDamage (sim/core/spell_result.go:100) is what CalcDamage uses at :428 and keeps Earth Shock's ThreatMultiplier and the Spirit Weapons / Rockbiter PseudoStats multiplier; Warden golden tps moved under 0.01 (TestWardenShaman.results). But the Warden threat tests (sim/shaman/warden/forever_test.go:263-271, :402) check only Stormstrike's own hit; nothing fails if a later edit drops the threat line, and Earth Shock under the mark would then generate threat for 1/1.2 of its damage (Earth Shock is the Warden's main threat spell). Sure of the read, not measured.
+- proposed fix: a Warden test that casts Stormstrike then Earth Shock on a target and checks the shock's TotalHitThreat == damage x Earth Shock ThreatMultiplier x PseudoStats.ThreatMultiplier (and 1.2x a no-mark shock's damage).
+- needs: worker fix
+
 ### tank_mechanics-20261107-1: Client 70862 now carries the notes' tank threat; sim comments and class docs still say the client disagrees
 - severity: low (labels only; the sim already uses the new values, no DPS or score moves)
 - affects: Protection warrior, Feral tank (bear); docs/tank_warrior.md, docs/tank_druid.md, sim/warrior/stances.go, sim/druid/bear.go

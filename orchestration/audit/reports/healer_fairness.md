@@ -1,19 +1,19 @@
-# Healer fairness pass 4 (2026-11-05, master bba052f75)
+# Healer fairness pass 5 (2026-11-08, master 9ba00c2dc)
 
 Result: quiet. No new findings, none resolved. Still open: -5 (high, paladin raid preset's Holy Light lines; the
 preset is unchanged) and -4 (low, no healing by class in the boss files).
-Due because 1 watched file changed (tools/healbench/main.go). What changed since a079415316: healbench gains
-`-seed` (default 101, the old hard-coded seed), `-labeled` (default off) and `-vectors`/`-scales` (per-fight deaths,
-HPS, EHPS and mana left as JSON lines, for tools/dps_report/tankheal.py's paired race sims); the sim records each
-fight's deaths (`HealingFightMetrics.fight_deaths`, sim/core/raid.go, sim_concurrent.go), an append only. With the
-defaults the request healbench builds is the same as before, so no healer number should move.
+Due because 12 watched files changed (sim/shaman/*, standards.md). What changed since 73d5bfa9e1 that can reach a
+healer: 2a60326a1 rounds every damage and heal roll to whole points (all healers alike); 0193721bc narrows Forever's
+downranking penalty to heals only (heals keep it, so no healer spell moves); 9ba00c2dc makes Windfury and
+Flametongue Totem replace each other and drops Flametongue Totem from the Enhancement presets (standards 25, 40).
+No healer request carries `totemWeaponBuff` or Flametongue, and no file under tools/healbench or tools/encounters
+changed, so section 1 stands as is.
 
-Re-bench to confirm: all 9 requests in their own role on all 7 files at 1,000 iterations, healbench built from
-bba052f75. All 63 rows are byte-identical to `ref/healer_fairness/bench_0facd94.tsv` (every column), so the tables
-below, the ranking and pass 2's conclusions stand. Sections 1 and 3 were not re-done: no request or preset changed,
-and the healbench change touches no default.
-
-Pass 3 (a079415316) for the record: also 63 identical rows.
+Re-bench: all 9 requests in their own role on all 7 files at 1,000 iterations, healbench built from 9ba00c2dc.
+40 of 63 rows differ from `ref/healer_fairness/bench_0facd94.tsv`, all from the whole-point rolls: carry by at most
+0.002 in any cell, HPS by at most 0.2% (raid Broodlord shaman). Means: the raid shaman 1.396 -> 1.395, every other
+column the same to 3 places; ranking unchanged. New rows: `ref/healer_fairness/bench_9ba00c2.tsv`. The tables below
+are pass 2's; cells that moved are within 0.002 (Magmadar raid priest 2.054 -> 2.052, the largest).
 
 ## 1. Same terms (the 9 requests)
 
@@ -55,7 +55,7 @@ Raid role:
 | Magmadar | 1.809 | 2.054 | 1.918 | 2.002 |
 | Ragnaros | 1.235 | 1.308 | 1.301 | 1.270 |
 | Vaelastrasz | 1.152 | 1.152 | 1.002 | 1.102 |
-| **Mean** | **1.396** | **1.437** | **1.413** | **1.437** |
+| **Mean** | **1.396** (1.395 on 9ba00c2dc) | **1.437** | **1.413** | **1.437** |
 
 Pass 1: 1.373 / 1.414 / 1.413 / 1.413. The shaman is still about 3% behind (last on 3 files, -12% to the priest
 on Magmadar). Nobody OOMs. Overheal: druid 45-78%, priest 42-72%, shaman 22-73%, paladin 17-23%.
@@ -89,12 +89,13 @@ classes' presets didn't change role logic. Not re-run: raid presets in the tank 
 
 ## Reproduce
 
-- Build: master a079415316 (or 0facd9428: same rows); `PATH=$PATH:~/go/bin protoc -I=./proto --go_out=./sim/core ./proto/*.proto &&
+- Build: master 9ba00c2dc; `PATH=$PATH:~/go/bin protoc -I=./proto --go_out=./sim/core ./proto/*.proto &&
   go build --tags=with_db -o healbench ./tools/healbench`
 - Per cell, from the worktree: `healbench -encounter tools/encounters/<boss>.json -role <tank|raid> -carry -iters 1000
   tools/healbench/req/<req>.json`; tank role for the 5 non-raid requests, raid role for the 4 `_raid` ones.
-- Rows (all columns, plus the paladin variants): `ref/healer_fairness/bench_0facd94.tsv` (pass 3 reproduced the
-  63 shipped rows exactly; no new baseline written).
+- Rows: `ref/healer_fairness/bench_9ba00c2.tsv` (the 63 shipped rows, this pass); the paladin variants of finding
+  -5 stay in `ref/healer_fairness/bench_0facd94.tsv`. The bench takes about 40 min on 4 shared cores: run it in the
+  background.
 
 ## Open items for the next pass
 

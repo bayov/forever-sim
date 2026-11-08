@@ -1,12 +1,12 @@
 # Rotation audit: reference files
 
-- `baseline_a079415_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  a07941531 (pass 55). Against the previous 0facd94 baseline: Feral cat +3.3 and its FF duty +5.3 (Ferocious
-  Bite hotfix 113403, Goblin Sapper in Cat Form), Survival wolf -1.6 and tallstrider -1.4 (talent change);
-  everything else under 0.05.
+- `baseline_9ba00c2_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  9ba00c2dc (pass 56). Against the previous a079415 baseline: the four Enhancement builds -19.6 to -22.1
+  (9ba00c2dc: Windfury and Flametongue Totem replace each other, the presets lose the raid's Flametongue
+  Totem); everything else under 0.5 (whole-point damage rolls 2a60326a1, heals-only downranking 0193721bc).
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at a07941531 (`/tmp/audit-cache/cli/a0794153163a/wowsimcli`).
+  - The CLI was the audit loop's shared build at 9ba00c2dc (`/tmp/audit-cache/cli/9ba00c2dc473/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

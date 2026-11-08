@@ -1,39 +1,36 @@
-# Healer mechanics: pass 5 (2026-11-07 UTC, master 12aa2796fc, client 1.60.1.70862)
+# Healer mechanics: pass 6 (2026-11-08 UTC, master 9ba00c2dc4, client 1.60.1.70862)
 
-Quiet pass. Due because the client moved 1.60.1.70790 -> 1.60.1.70862; no watched file changed on master.
+Quiet pass. Due because 11 watched files changed on master (all `sim/shaman/*`), 73d5bfa9e1..9ba00c2dc4.
 
 ## Get current
 
 | Source | Seen | Healer content |
 |---|---|---|
-| wago.tools latest build | 1.60.1.70862 (new) | Bloom heal target only, below |
-| Dev notes thread 2360696 | re-fetched 2026-11-07; still 10 posts, last post 10 (2026-11-04T19:35Z) | none new |
-| update_ledger.md | no 70862 entry yet | none |
-| master c67d9e014..12aa2796f | item fold-in (12aa2796f) and an audit-loop commit | no heal, talent or engine file |
+| wago.tools latest build | 1.60.1.70862 (unchanged) | none new |
+| Dev notes thread 2360696 | re-fetched 2026-11-08; still 10 posts, last 2026-11-04T19:35Z | none new |
+| update_ledger.md | no change since pass 5 | none |
 
-## Client diff 70790 -> 70862 (`python3 tools/sources/wago.py diff 1.60.1.70790 1.60.1.70862 --set mechanics`)
+## What changed (4 commits on the watched paths)
 
-Changed rows are boss/NPC spells (Hogger set: Ground Slam, Warstomp, Cleave, Meathook, Bloodlust), Defensive Stance,
-Bear Form passive, flasks, Adventurer's Tent, Kidney Shot/Gouge levels, tooltip text (Thorns, Ravage) and items.
-New rows on existing spells (SpellEffect 9, SpellPower 0, SpellAuraOptions 0, others 0) and removed rows (Study,
-Impaled, Bloodlust, Warstomp, Cleave cost, Soulstone aura options) touch no healer spell.
-
-| Spell | Client 70790 | Client 70862 | Sim | Verdict | Tier |
-|---|---|---|---|---|---|
-| Bloom heal 1328622 (SpellEffect 1367728) | HEAL, ImplicitTarget 1 (caster) | ImplicitTarget 21 (target ally) | heals the expiring HoT's target (`sim/druid/healing.go:313-318,735`) | match, the client now agrees | 1 |
-| Riptide mana (SpellPower 304804/310863/310864) | 150/180/230 | unchanged | 147/180/231 | finding 11 stands | 1 |
-
-Steps 3-4: nothing else in the healers' spells, talents or the engine changed, so the verdicts in
-`ref/healer_mechanics/verdicts.md` stand (Bloom row and header updated).
+| Commit | Change | Healer effect |
+|---|---|---|
+| 0193721bc | `ForeverDownrankScope` = heals only (user ruling 2026-11-08); damage ranks keep full coefficient | none: every heal config (priest, shaman incl. Healing Stream Totem, druid, paladin incl. Holy Shock heal and Penance heal bolts) has `ProcMaskSpellHealing`, so `DownrankAuto` still reads them as heals and they keep the penalty. Holy Shock damage and Penance damage bolts left it, as ruled. Docs `healing_*.md` updated in the same commit. |
+| 2a60326a1 | `sim.Roll` rounds to the nearest whole point | heals roll whole points too (all heal base rolls use `sim.Roll`); the average holds for whole ends. Evidence is damage logs only; heals assumed alike (verdict row added). Probability rolls moved to `RandomFloat`; no heal or raid-damage path used `Roll(0,1)` (`raid_damage.go` uses `RollWithLabel`, unrounded, fine for boss damage). |
+| 5a870eccc | Stormstrike mark after the damage calc | none (Enhancement) |
+| 9ba00c2dc | Windfury and Flametongue Totem replace each other in the weapon totem slot | none: weapon totems only; water totems and `totem_receivers.go` party reach for Mana Spring/Healing Stream unchanged |
 
 ## Tests
 
-No new mechanic, so no new test gap. `TestDruidBloom` covers the heal on the target.
+`go test -tags=with_db` on `sim/core` (Downrank, Heal, Absorb, RaidDamage), `sim/paladin/holy`, `sim/priest/...`,
+`sim/druid/...`, `sim/shaman/...` and `sim/` (Heal, Raid, Totem, Mana, Rank, Swiftmend, Riptide, Bloom, Shield): all pass.
+`TestDownrank` covers "auto reads a heal from its ProcMask" and "auto damage is out of a heals-only scope";
+`TestDruidDownrankedHeals` and `TestHealingPriestRanks` hold the heal side. (Without `-tags=with_db` several heal tests
+panic on missing items; that's the build tag, not a bug.)
 
 ## Open findings
 
-- healer_mechanics-20261104-11 (Riptide's mana): still open, re-checked on 70862.
-- healer_mechanics-20261104-10 (untested heals, talents, engine paths): still open.
+- healer_mechanics-20261104-11 (Riptide's mana 147/180/231 vs client 150/180/230): still open, `sim/shaman/healing.go` unchanged.
+- healer_mechanics-20261104-10 (untested heals, talents, engine paths): still open; no new gap from this change.
 
 ## New findings
 

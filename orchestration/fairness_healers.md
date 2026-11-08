@@ -1,7 +1,7 @@
 # Fairness between healers
 
 The healer_fairness auditor keeps this current (`orchestration/audit/passes/healer_fairness.md`). It holds the
-healer ranking in each role, its reasons and the open questions. Last pass: 3, 2026-11-05, master a079415316 (numbers unchanged since 0facd9428).
+healer ranking in each role, its reasons and the open questions. Last pass: 5, 2026-11-08, master 9ba00c2dc (whole-point rolls moved cells by at most 0.002; the raid shaman 1.395).
 Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 `orchestration/audit/findings/healer_fairness.md`.
 
@@ -10,7 +10,7 @@ Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 | Role | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
 | Tank healer | Holy priest 1.262 | Discipline priest 1.261 | Shaman 1.242 | Druid 1.235 | Paladin 1.176 |
-| Raid healer | Holy priest 1.437 | Druid 1.437 | Paladin 1.413 | Shaman 1.396 | |
+| Raid healer | Holy priest 1.437 | Druid 1.437 | Paladin 1.413 | Shaman 1.395 | |
 
 ## Why
 

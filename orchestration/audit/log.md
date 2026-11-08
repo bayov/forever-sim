@@ -257,3 +257,17 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-07 06:57 | client_update | pass 11 | master 12aa2796f | quiet | 70862 ledger section added; flask change already filed
 2026-11-07 06:57 | healer_mechanics | pass 5 | master 12aa2796f | quiet | Bloom heal target change matches sim
 2026-11-07 06:57 | tank_mechanics | pass 6 | master 12aa2796f | 1 new findings | stance/bear threat now match sim; stale comments/docs
+2026-11-08 19:21 | results | pass 80 | master 9ba00c2dc | quiet | 4 Enhancement builds stale after Flametongue Totem rule; noted under results-20261104-2
+2026-11-08 19:21 | rotations | pass 56 | master 9ba00c2dc | 1 new findings | Flametongue Weapon + own Windfury Totem beats Windfury Weapon on Mana Tide/Water Shield builds
+2026-11-08 19:21 | gear | pass 59 | master 9ba00c2dc | quiet | only standards 25/40 changed, no gear rule
+2026-11-08 19:21 | consumables | pass 75 | master 9ba00c2dc | quiet | Enhancement totem change consistent; two older findings still open
+2026-11-08 19:21 | mechanics | pass 70 | master 9ba00c2dc | quiet | 4 sim commits agree with logs/rulings
+2026-11-08 19:21 | fairness | pass 32 | master 9ba00c2dc | quiet | only Enhancement moved (-18 to -21), bisected to 9ba00c2dc
+2026-11-08 19:21 | healer_mechanics | pass 6 | master 9ba00c2dc | quiet | heals-only downranking and whole-point rolls ok
+2026-11-08 19:21 | healer_rotations | pass 5 | master 9ba00c2dc | quiet | all 63 rows within noise
+2026-11-08 19:21 | healer_gear | pass 4 | master 9ba00c2dc | quiet | no healer gear change
+2026-11-08 19:21 | healer_fairness | pass 5 | master 9ba00c2dc | quiet | rolls moved rows <=0.2%, ranking same
+2026-11-08 19:21 | tank_mechanics | pass 7 | master 9ba00c2dc | 1 new findings | no test for Warden shock threat under Stormstrike mark (low)
+2026-11-08 19:21 | tank_rotations | pass 6 | master 9ba00c2dc | quiet | 96/104 rows identical, rest within error
+2026-11-08 19:21 | tank_gear | pass 5 | master 9ba00c2dc | quiet | no tank gear change
+2026-11-08 19:21 | tank_fairness | pass 6 | master 9ba00c2dc | quiet | no six-boss mean moved >0.2

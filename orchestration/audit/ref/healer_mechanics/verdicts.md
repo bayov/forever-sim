@@ -1,7 +1,7 @@
-# Healer mechanics audit: verdicts (as of 2026-11-07 UTC, master 12aa2796fc, client 1.60.1.70862)
+# Healer mechanics audit: verdicts (as of 2026-11-08 UTC, master 9ba00c2dc4, client 1.60.1.70862)
 
 Tier: 1 = Forever client (wago.tools) or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never vmangos.
-Pass 5 (2026-11-07, 12aa2796fc): client 70862 touches only Bloom (1328622 heal now targets the ally, was the caster) among healer spells; Riptide rows unchanged. Pass 3 (2026-11-05, a079415316): no healer spell or engine change; heal threat row added. Pass 2 (2026-11-04, 0facd9428): findings 1-9 fixed on master and re-checked; 70790 touches only Riptide among
+Pass 6 (2026-11-08, 9ba00c2dc4): downranking scope narrowed to heals only (0193721bc; every heal config carries ProcMaskSpellHealing, so no heal left it) and rolls round to whole points (2a60326a1); no healer row changed. Pass 5 (2026-11-07, 12aa2796fc): client 70862 touches only Bloom (1328622 heal now targets the ally, was the caster) among healer spells; Riptide rows unchanged. Pass 3 (2026-11-05, a079415316): no healer spell or engine change; heal threat row added. Pass 2 (2026-11-04, 0facd9428): findings 1-9 fixed on master and re-checked; 70790 touches only Riptide among
 healer spells. Pass 1 checked every heal rank and healing talent of the four healers and the engine. A row marked match holds on
 70755; re-check it when a newer build or Blizzard post touches the spell. Open rulings stay in each
 `docs/healing_<class>.md` "Calls for the user"; open findings in `../../findings/healer_mechanics.md`.
@@ -127,7 +127,7 @@ healer spells. Pass 1 checked every heal rank and healing talent of the four hea
 | Forever T1 Resto set 1300943/1301006/1301077/1301250 | +10 Spi; Barkskin -10 s; +26 heal/+9 dmg; Swiftmend -3 s | same (HP 17 + SP 9) | match | 1 |
 | Idol of Swiftness 1306488 | Swiftmend -3 s | same | match | 1 |
 | Stormrage 5/8, Cenarion 8 | (Era sets; not in the 70755 ItemSparse export) | "Nothing to do" | not modeled (likely moot) | 3 |
-| Downranking | ranks' SpellLevel/MaxLevel | engine rule (user ruling 2026-11-04) | ruling, not audited | - |
+| Downranking | ranks' SpellLevel/MaxLevel | engine rule, heals only (user ruling 2026-11-08) | ruling, not audited | - |
 | Doc tables, lower ranks | formula above | doc now 1095-1303, 800-894, 633-710, Tranq from the client | match (fixed) | 1 |
 
 ## Holy and Discipline priest
@@ -146,7 +146,7 @@ healer spells. Pass 1 checked every heal rank and healing talent of the four hea
 | PW:S replace by >= rank | no client field (notes 2026-11-02) | ExtraCastCondition | match (notes) | 1 (notes) |
 | Prayer of Mending r1-3 (401859/1240826/1240827) | dummy bp 172/298/413, coef .429, charges eff#1 = 5, aura 401877 30 s, category CD 10 s, mana 210/305/390; heal 401863 | identical; 5 heals, 30 s per hop, 10 s CD, triggers on damage or non-periodic heal taken | match | 1 |
 | Penance heal bolts (402289/1240723/1240724/1316991) | bp 126/200/268/425, rppl .87/.98/1.27/0, coef .19, cast mana 150/220/270/385, CD 12 s | identical (penance.go:31-33) | match | 1 |
-| Downranking | engine (sim/core/downrank.go), user ruling | heals set Rank/RequiredLevel; PoM and Penance heals DownrankLevel | not re-audited (engine) | - |
+| Downranking | engine (sim/core/downrank.go), user ruling 2026-11-08 (heals only) | heals set Rank/RequiredLevel; PoM and Penance heals DownrankLevel | not re-audited (engine) | - |
 | Spiritual Healing 14898 | 3/7/10%; eff0 mask: LH,Heal,GH,FH,PoH,HN heal 23455,PoM cast 401859,Penance heal bolts; eff1 (DOT) Renew; not PW:S | all healCodes x mult, not PW:S | match (see A1 for PoM) | 1 |
 | Improved Renew 14908 | 5/10/15%, DOT mod, Renew | x(1+.05r) Renew | match | 1 |
 | Holy Specialization 14889 | +1%/r crit; mask: all heals incl. Renew, HN heal, PoM cast, Penance bolts, Smite, HF; not PW:S | same set | match (see A1) | 1 |
@@ -205,5 +205,6 @@ healer spells. Pass 1 checked every heal rank and healing talent of the four hea
 | Raid damage: physical through armor (attacker 63: armor/(armor+400+85*63)), magic through Forever resists, DoT ticks a tenth of resistance, no armor on physical ticks | shared verdicts; Classic armor formula (tier 3) | raid_damage.go:40-57, spell_resistances.go:43-57, 108-114, 187-209 | OK |
 | Raid damage: who and how many | encounter files: `share` = the logs' share of the non-tanks a cast hits, rate fitted on share x non-tanks (tools/encounters/raid_from_logs.py:66-79) | raid_damage.go:188-200: share x N < 1 hits one player that often, nobody otherwise (b2c16f671) | match (no engine test) |
 | Raid damage DoT ticks can crit (dot.canCrit under Forever) | n/a | raid_damage.go:107 | harmless: bosses have no SpellCrit stat, so 0% |
+| Heal roll in whole points (low to high, rounded to nearest; average unchanged for whole ends) | Nov 5-8 live logs, damage (Searing Totem 9/10/11 at 1/4, 1/2, 1/4); heals assumed alike | sim.go Roll (2a60326a1); every heal's base roll goes through sim.Roll | OK (heals not seen in a log yet) |
 | Spell pushback on a healer hit while casting: 1.0, 0.8 ... 0.2 s | source is cmangos code (cast.go:97-107), not tier 1-3 | cast.go:108-200 | source gap, not a finding (verdicts only checks "not past its start") |
 

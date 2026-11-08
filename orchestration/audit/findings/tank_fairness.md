@@ -9,6 +9,7 @@
 - evidence: the client's CharBaseInfo (tier: client data, via tools/sources/racials.py into ui/core/forever/racials.json) gives no Night Elf or Undead shaman: Elune's Light 1259799 and Shadowmeld list Warrior, Hunter, Rogue, Priest, Druid; Will of the Forsaken lists Warrior, Mage, Rogue, Priest, Warlock, Paladin. tools/dps_report/run_build.py:31 has Shaman = Dwarf, Orc, Tauren, Troll, Skyborne Windshaper, so the DPS Report's race table (ui/dps_report/data/tank_races.json, re-simmed at c46062a with the new paired tankbench flags) has no preset row for any Warden build (isPreset false on all 15 rows), while the other three tanks' preset races top their tables. Size, from round 3's own race A/B (docs/tank_shaman.md:177-182, against Tauren, 3k): Night Elf +104.2 / +111.3, Orc +27.8 / -3.5, Troll +38.2 / +2.3 at Max threat / Balanced; Undead +43 ± 11 pooled at Max survival. The race table on master agrees on the legal order: Orc 3098 at Max threat, Orc 1698 / Troll 1692 at Balanced, Tauren -2132 at Max survival. Estimated from those, not re-measured paired against Night Elf; sure of the illegality, the sizes to about ±15.
 - proposed fix: re-pick each Warden preset's race among Dwarf, Orc, Tauren, Troll and Skyborne Windshaper by its own objective (on the race table: Orc at Max threat and Balanced, Tauren at Max survival; Troll is within error of Orc at Balanced), in the requests, ui/warden_shaman/sim.ts and docs/tank_shaman.md; re-tune talents only if the race's racial touches the rotation (standards 29). A guard would stop it recurring: tankbench or the request check failing on a race outside CharBaseInfo's list for the class.
 - needs: worker fix
+- pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -17,6 +18,7 @@
 - evidence: the warrior, bear and Warden take the Greater Stoneshield Potion through an explicit potion action ahead of `autocastOtherCooldowns`, since `autocastOtherCooldowns` never drinks a defensive potion in a tank score (docs/tank_shaman.md:98-100, docs/tank_druid.md:260-261). The paladin's round 4 search ran the Stoneshield with no such action and got 0.0 ± 0.0 at every weight (docs/tank_paladin.md:301, orchestration/tank_handoff/paladin/round4/ab_summary.txt:162-164), so it was never measured; all three paladin requests keep the Major Mana Potion and their APL has no potion action. Measured here, tankbench 3,000 iterations, six-boss mean, each preset at its own weight, defaultPotion GreaterStoneshieldPotion plus `{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}}}` inserted before the autocast line, seed 1 / seed 2: Max threat +57.8 / +58.8 (± 4.5), Balanced +171.6 / +174.6 (± 7.3), Max survival +309.2 / +318.2 (± 18.6); DTPS 296 → 266 at Max survival, TPS unchanged. Max survival goes 1,921.8 → 2,231.0 against the warrior's 2,150.7. The mana consumables the Warden took were noise for the paladin (Demonic Rune, Mageblood, Greater Intellect: -1.5 to +3.5, both seeds). Sure of the gain; the exact size moves once the worker re-tunes around it.
 - proposed fix: paladin worker: the potion action plus Greater Stoneshield on all three presets (confirm at 10,000 on two seeds, then re-check the talents and knobs it may move, e.g. Max survival against Balanced), then the UI, docs/tank_paladin.md and the DPS Report Tanking data.
 - needs: worker fix
+- pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -46,6 +48,7 @@
 - needs: user ruling (a), (b), (c)
 - pass 4 (2026-11-05, master a079415): unchanged in kind; Balanced healing needed paladin 245 against 317 / 457 / 692 (warrior, bear, Warden). Still waits on the user.
 - pass 3 (2026-11-04, master dc303b0): unchanged; Balanced healing needed paladin 197 against 323 / 488 / 853 (warrior, bear, Warden), -45% to -99% on every boss, score +29% over the others' mean. Waits on the user's calls.
+- pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low
@@ -58,6 +61,7 @@
 - pass 2 (2026-11-04, master b38ff16): unchanged; tools/dps_report/tankheal.py excludes it (NOT_PRESETS). Still the healing session's call.
 - pass 3 (2026-11-04, master dc303b0): unchanged; still the healing session's call.
 - pass 4 (2026-11-05, master a079415): unchanged (the file is still in tools/tankbench/req/).
+- pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 
 ## Resolved
 

@@ -1,6 +1,5 @@
-# healer_gear pass 3 (2026-11-05T00:49:18Z, master a079415316)
+# healer_gear report, pass 4, master 9ba00c2dc4
 
-Changed since dc303b0 on the watched paths: only orchestration/standards.md, ruling 40 (tank consumables, same full
-raid set as DPS; Onyxia natural flask setting). No change to the healer synthetic items, gear sets, gear_targets.md
-or orchestration/tools/healers. Ruling 40 is about tanks and touches no healer rule (1b, 5, 5a, 35).
-Result: quiet. Piece, set and row tables from pass 2 stand; not recomputed since no input changed.
+Trigger: orchestration/standards.md changed since 73d5bfa9e1 (items 25 and 40: Enhancement totem pairing, no raid Flametongue Totem since 2026-11-08).
+Neither item touches healer gear, the 1b/5/5a/35 rules, or the healer rows. No change to tools/database healer synthetic items, ui/*/gear_sets or orchestration/gear_targets.md since the last pass (git diff --stat empty).
+Per-piece recompute skipped as inputs are unchanged; pass 3 result stands. Result: quiet, no findings.

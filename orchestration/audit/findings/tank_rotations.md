@@ -13,6 +13,7 @@
 - pass 3: still open (user call 7, docs/tank_warrior.md). Hold 30 s against 35 s, 3k seed 11: -29.6 ± 5.7, so if the trinket stays it stays at 35 s.
 - pass 4: still open (user call); a07941531 keeps 990617 held 35 s; not re-tested.
 - pass 5: still open (user call); bba052f75 unchanged; not re-tested.
+- pass 6: still open (user call); 9ba00c2dc unchanged; not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -26,6 +27,7 @@
 - pass 3: still open (user ruling, docs/tank_paladin.md call 7); not re-tested.
 - pass 4: still open (user ruling); a07941531 keeps 10 s at all three presets; not re-tested.
 - pass 5: still open (user ruling); bba052f75 unchanged; not re-tested.
+- pass 6: still open (user ruling); 9ba00c2dc unchanged; not re-tested.
 
 ## Resolved
 

@@ -4,6 +4,33 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### rotations-20261108-1: Enhancement Mana Tide and Water Shield: Flametongue Weapon beats Windfury Weapon now that our own Windfury Totem is the group's weapon totem
+- severity: medium (+5.6 DPS at 180 s on Mana Tide, 0.54%; +3.4 on Water Shield, 0.31%)
+- affects: shaman__enhancement-mana-tide, shaman__enhancement-water-shield. Not Level 60 or Imp GW (see evidence).
+- found: 2026-11-08, master 9ba00c2dc
+- evidence: since 9ba00c2dc the presets have no raid Flametongue Totem, and our Windfury Weapon still turns off
+  the Windfury Totem we drop ourselves. Variant B sets only
+  `"enhancementShaman":{"options":{"shamanImbue":"FlametongueWeapon"}}` (req line
+  `"shamanImbue": "WindfuryWeapon"`, mana-tide.json:748, water-shield.json:714; ui/enhancement_shaman/presets.ts:565
+  `PresetBuildOptions`, shared by all four builds). A quick 2k-it check confirms B gets Flametongue Weapon hits
+  (16342) and Windfury Totem attacks (tag 3). Paired `tools/audit/rotations/ab_req.py` (20k it, 8 blocks, shared CLI
+  9ba00c2dc473), B-A at 120 / 180 / 300 s:
+  | preset | S0 1e6 | S0 2e8 | pooled | A at 180 |
+  |---|---|---|---|---|
+  | mana-tide | +5.69 / +5.60 / +3.05 | +6.05 / +5.61 / +3.17 | **+5.87 / +5.61 / +3.11** | 1041.9 |
+  | water-shield | +3.73 / +3.45 / +1.22 | +3.84 / +3.40 / +1.77 | **+3.79 / +3.43 / +1.50** | 1098.3 |
+  | level60 | -0.45 / -1.23 / -4.15 | +1.80 / -0.88 / -3.71 | +0.68 / -1.06 / -3.93 | 1147.1 |
+  | imp-gw | +2.32 / +1.52 / -2.70 | +2.06 / -0.35 / -3.13 | +2.19 / +0.59 / -2.92 | 1131.4 |
+  SE 0.3-1.0 a set. Mana Tide and Water Shield gain at every length on both sets; Level 60 loses, Imp GW is a
+  fight-length trade-off (not a finding). Rotations unchanged (not re-searched under Flametongue Weapon).
+  Reproduce: `jq '.raid.parties[0].players[0].enhancementShaman.options.shamanImbue="FlametongueWeapon"' req > B.json;
+  ab_req.py CLI req B.json --s0 1000000` (and 200000000).
+- proposed fix: Mana Tide and Water Shield builds take `shamanImbue: WeaponImbue.FlametongueWeapon` (presets.ts:
+  a per-build options object in place of `PresetBuildOptions` for those two; their two req files; mksettings
+  `spec_enh.go:61` if it builds them). Level 60 and Imp GW keep Windfury Weapon. Also worth a rotopt re-search of
+  the two under Flametongue Weapon (orchestrator's call; this pass doesn't search).
+- needs: orchestrator fix
+
 ### rotations-20261105-1: Feral cat: Ferocious Bite energy gate 45 -> 65, now that extra Energy hits harder (hotfix 113403)
 - severity: low (+1.9 DPS at 180 s, 0.16%; +1.1 on the FF duty)
 - affects: druid__feral-cat, druid__feral-cat-duty-ff (ui/feral_druid/apls/level60.apl.json:10, level60_ff.apl.json:11)
