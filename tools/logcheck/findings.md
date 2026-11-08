@@ -75,9 +75,10 @@ sections 2 and 6 have the format).
 - **Flag**: `sheet` (Attack power +0.50, Dodge % +0.12).
 - **Windows**:
   - `WoWCombatLog-101626_165126.txt 23:45:55-23:59:16` (`Player-4620-01872808`, level 6). The sheet has AP 97 and Dodge 4.43%, but the sim has 97.5 and 4.55%. Every other sheet row matches, Armor 170 included.
+  - `WoWCombatLog-110826_085019.txt 22:42:40-23:22:34` (`Player-6940-0038ED1A`, level 43, the first window on the new Orc shaman base stats). The sim is again a bit high: Attack power +1.50, Dodge % +0.36, Nature power +0.30. The export was taken in Ghost Wolf with Well-Rested, which shouldn't move these. Only 29 swings and no damage row flagged.
 - **What we think**: the sim's own base stats at low level, not logcheck. The half point of AP may be the game rounding AP down. The dodge may be the Agility to dodge ratio at level 6 (`sim/core/base_stats.go`). The AP moves Melee raw damage by about 0.1, and our dodge doesn't touch our damage rows.
 - **Next step**: see if it comes back at other levels. If it does, check the AP rounding and the dodge per Agility by level.
-- **Status**: open, first seen 2026-10-18, last updated 2026-10-18.
+- **Status**: open, first seen 2026-10-18, last updated 2026-11-08 (it came back at level 43, so the dodge per Agility by level is worth a check).
 
 ## Done
 
