@@ -78,9 +78,10 @@ func TestOrcShamanSpellPower(t *testing.T) {
 // 1.7% for Searing Totem and 21.4% for Fire Nova (SoD's damage spell 408424, which the log
 // names). The log's raw field drops the fraction, so each raw number the beta showed must be
 // the whole part of a hit the sim can roll. The log also shows rank 1 of Earth Shock and
-// Flame Shock at their full coefficient, where Forever's downranking penalty keeps 55% and 85%.
-// The user rules (2026-11-04) that the log predates a beta fix that put damage spells under the
-// penalty, so this test checks the log with the penalty on heals only, as it was then.
+// Flame Shock at their full coefficient, where Forever's downranking penalty would keep 55% and
+// 85%. Our live logs of Nov 5-8 say the same for Lightning Bolt and Fire Nova rank 1, so the
+// penalty is on heals only (user ruling, 2026-11-08). This test pins that scope, so it keeps
+// checking the log if the default ever takes damage again.
 //
 // One rank 1 Earth Shock hit raw 57, 0.23 over the sim's top of 56.77. We leave that one hit
 // out.

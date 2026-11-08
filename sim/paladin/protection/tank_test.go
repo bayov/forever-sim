@@ -217,12 +217,24 @@ func TestSealOfFury(t *testing.T) {
 		t.Errorf("Judgement under Seal of Fury didn't cast Judgement of Fury")
 	}
 
-	// Forever's downranking penalty: the top rank (58) keeps its coefficients at 60, and rank 4
-	// (34; its hit 20415, its judgement 20411) keeps 1 - 5% x (60 - 17 - 34) = 55% of them.
+	// Forever's downranking penalty hits heals only (user ruling, 2026-11-08), so every rank of
+	// the seal keeps its full coefficients.
 	near(t, "rank 7 hit's coefficient", proc.BonusCoefficient, 0.1, 1e-9)
 	near(t, "Judgement of Fury rank 7's coefficient", judgement.BonusCoefficient, 0.429, 1e-9)
-	near(t, "rank 4 hit's coefficient", spell(t, pal, 20415).BonusCoefficient, 0.1*0.55, 1e-9)
-	near(t, "Judgement of Fury rank 4's coefficient", spell(t, pal, 20411).BonusCoefficient, 0.429*0.55, 1e-9)
+	near(t, "rank 4 hit's coefficient", spell(t, pal, 20415).BonusCoefficient, 0.1, 1e-9)
+	near(t, "Judgement of Fury rank 4's coefficient", spell(t, pal, 20411).BonusCoefficient, 0.429, 1e-9)
+
+	// When the penalty takes damage spells too, the seal's hit and judgement are rank-less
+	// sub-spells that still carry their seal rank's learn level. The top rank (58) keeps its
+	// coefficients at 60, and rank 4 (34: its hit 20415, its judgement 20411) keeps
+	// 1 - 5% x (60 - 17 - 34) = 55% of them.
+	defer func(scope core.DownrankKind) { core.ForeverDownrankScope = scope }(core.ForeverDownrankScope)
+	core.ForeverDownrankScope = core.DownrankHeal | core.DownrankDamage
+	_, dr := protSim(t, "", nil)
+	near(t, "rank 7 hit's coefficient with damage downranked", spell(t, dr, 20418).BonusCoefficient, 0.1, 1e-9)
+	near(t, "Judgement of Fury rank 7's coefficient with damage downranked", spell(t, dr, 20414).BonusCoefficient, 0.429, 1e-9)
+	near(t, "rank 4 hit's coefficient with damage downranked", spell(t, dr, 20415).BonusCoefficient, 0.1*0.55, 1e-9)
+	near(t, "Judgement of Fury rank 4's coefficient with damage downranked", spell(t, dr, 20411).BonusCoefficient, 0.429*0.55, 1e-9)
 }
 
 // TestSealOfFuryNeedsShield checks that without a shield the seal's hit gives no absorb.

@@ -14,7 +14,7 @@ var FlameShockSpellId = [FlameShockRanks + 1]int32{0, 8050, 8052, 8053, 10447, 1
 // Direct damage at each rank's cap, its growth per level up to there, and the spell power
 // coefficients, from the Forever client data that https://foreverchanges.pro reads
 // (downrank calculator). The DoT does not grow with level. Forever's downranking penalty
-// applies (sim/core/downrank.go).
+// (sim/core/downrank.go) is on heals only, so every rank keeps its full coefficients.
 //
 // Hotfix push 113380 (region 91, build 1.60.1.70755, 2026-11-04; https://wago.tools/db2/SpellEffect,
 // hotfixes) sets every rank's direct base points, growth per level and DoT for launch, close to

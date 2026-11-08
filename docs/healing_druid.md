@@ -68,8 +68,8 @@ cooldown, so neither wastes the other.
 | 7 to 1 | 8903 … 5185 | 38 … 1 | 921 … 47 | 425 … 25 | 3.5 … 1.5 s | 1.0 … 0.429 | missing |
 
 Forever's Healing Touch is below 1.12's (rank 11 2267 to 2677). Downranking: 5% of the coefficient a level past
-the rank's learn level plus 17, from the engine (`sim/core/downrank.go`, every ranked spell, heals included: user
-ruling 2026-11-04), so ranks 8 to 11 keep all of it at 60, rank 7 75%, rank 6 45%, rank 4 none. The HoTs take it
+the rank's learn level plus 17, from the engine (`sim/core/downrank.go`, every ranked heal: user
+ruling 2026-11-08, damage is out), so ranks 8 to 11 keep all of it at 60, rank 7 75%, rank 6 45%, rank 4 none. The HoTs take it
 the same way on their ticks (Rejuvenation rank 6 55%, Regrowth rank 4 35%); `TestDruidDownrankedHeals`.
 
 ### Regrowth (Nature, 9858 at 60)
@@ -212,7 +212,7 @@ effect is on the presets where it was measured.
    time, the 1.12 melee rate the Balance druid's spells use too), when it's cast. The client leaves the chance to
    the server.
 7. **Bloom can crit** (the heal has no "can't crit" bit). Default yes.
-8. **Downranking** is no longer a call: the engine applies it to every ranked spell (user ruling 2026-11-04,
+8. **Downranking** is no longer a call: the engine applies it to every ranked heal (user ruling 2026-11-08,
    `sim/core/downrank.go`). What it moved on the presets is under "Downranking on the presets" below.
 9. **The raid sim's Restoration druid placeholder** (`sim/compsearch/presets.go`) keeps its old talents; whether
    it takes the bench's build is the raid sim's (H6).

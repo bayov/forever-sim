@@ -8,10 +8,12 @@ package core
 // beta heals at level 30 and below: a rank keeps 1 - 5% for each level the caster is more than
 // 17 levels past the rank's learn level, clamped to [0, 1]. Classic keeps its own rules.
 //
-// It applies to every ranked spell, heals and damage alike (user ruling, 2026-11-04). The
-// 2026-10-10 beta log (TestOrcShamanSpellPowerBeta) has Earth Shock and Flame Shock rank 1 at
-// full coefficient at level 30, but that log is taken to predate a later beta fix. See notes.md,
-// "Forever's downranking penalty".
+// It applies to heals only for now (user ruling, 2026-11-08). Our live logs of Nov 5-8 have
+// damage ranks at their full coefficient where the rule keeps little or nothing: Lightning Bolt
+// rank 1 at levels 33 to 41 (32 hits that follow the sheet's spell power) and Fire Nova rank 1 at
+// 36 to 39. The 2026-10-10 beta log (TestOrcShamanSpellPowerBeta) said the same for Earth Shock
+// and Flame Shock rank 1 at level 30. The heal measurements stand. See notes.md, "Forever's
+// downranking penalty".
 
 // DownrankKind is how a spell sits in the penalty's scope. The zero value, DownrankAuto, reads
 // the kind from the spell: a heal if its ProcMask has ProcMaskSpellHealing, else damage.
@@ -26,8 +28,8 @@ const (
 	DownrankExempt DownrankKind = 1 << 7
 )
 
-// ForeverDownrankScope is the kinds the penalty hits under Forever: heals and damage.
-var ForeverDownrankScope = DownrankHeal | DownrankDamage
+// ForeverDownrankScope is the kinds the penalty hits under Forever: heals only for now.
+var ForeverDownrankScope = DownrankHeal
 
 // DownrankFactor is what a rank learned at learnLevel keeps of its spell power coefficient
 // when cast at casterLevel.

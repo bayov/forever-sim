@@ -145,11 +145,24 @@ func TestInnerFocusCost(t *testing.T) {
 	}
 }
 
-// TestDownrankCoefficient checks Forever's downranking penalty at level 60: a rank keeps its
-// full spell power coefficient up to 17 levels below the caster and loses 5% of it for each
-// level past that (Smite rank 7 at 46 keeps it, rank 6 at 38 keeps 75%, rank 4 at 22 nothing).
+// TestDownrankCoefficient checks Forever's downranking penalty on Smite at level 60.
+//
+// The penalty hits heals only (user ruling, 2026-11-08), so every Smite rank keeps its full
+// spell power coefficient. When the scope takes damage too, a rank keeps its full coefficient
+// up to 17 levels below the caster and loses 5% of it for each level past that (Smite rank 7 at
+// 46 keeps it, rank 6 at 38 keeps 75%, rank 4 at 22 nothing).
 func TestDownrankCoefficient(t *testing.T) {
 	_, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
+	for rank := 4; rank <= 8; rank++ {
+		got := sp.Smite[rank].BonusCoefficient
+		if want := priest.SmiteSpellCoef[rank]; math.Abs(got-want) > 1e-9 {
+			t.Errorf("Smite rank %d coefficient %.4f, want the full %.4f", rank, got, want)
+		}
+	}
+
+	defer func(scope core.DownrankKind) { core.ForeverDownrankScope = scope }(core.ForeverDownrankScope)
+	core.ForeverDownrankScope = core.DownrankHeal | core.DownrankDamage
+	_, sp = newShadowPriestSim(t, "00503523103--50052101231302051")
 	checks := []struct {
 		rank int
 		want float64
@@ -163,7 +176,7 @@ func TestDownrankCoefficient(t *testing.T) {
 	for _, c := range checks {
 		got := sp.Smite[c.rank].BonusCoefficient
 		if math.Abs(got-c.want) > 1e-9 {
-			t.Errorf("Smite rank %d coefficient %.4f, want %.4f", c.rank, got, c.want)
+			t.Errorf("Smite rank %d coefficient with damage downranked %.4f, want %.4f", c.rank, got, c.want)
 		}
 	}
 }

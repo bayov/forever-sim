@@ -46,7 +46,7 @@ for the healing talents are done again here against `sim/shaman/healing.go` and 
 5. **Two Restoration relics** are in (`sim/shaman/items.go`): Tidal Totem (272431, Pix Xizzix, Healing
    Wave 5% cheaper, 1291076) and Totem of Urgency (279249, crafted, Lesser Healing Wave +4% crit, 1306448).
    Both are Phase 1 and allowed by standards 8a.
-6. **Downranking is sim/core's** (master 8f304b240 and b57f5cc0a, round 70753): every ranked spell takes
+6. **Downranking is sim/core's** (master 8f304b240 and b57f5cc0a, round 70753): every ranked heal (and until 2026-11-08 every damage rank) takes
    `core.DownrankFactor` from its `Rank` and `RequiredLevel` (or `DownrankLevel`), so the shaman's own
    `downrankCoefficient` is gone and Riptide's ranks take the engine's, with the same 5% a level past learn
    level + 17. What it moved here: nothing at 60. Healing Stream Totem is in the penalty now (rank 5 is

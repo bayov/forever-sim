@@ -309,8 +309,9 @@ func TestMageAreaCoefficientsAndCombustion(t *testing.T) {
 		if spell == nil {
 			continue
 		}
-		// Forever's downranking penalty (sim/core/downrank.go) cuts the low ranks at 60.
-		want := 0.032 * core.DownrankFactor(mage.Level, spell.RequiredLevel)
+		// Forever's downranking penalty (sim/core/downrank.go) hits heals only, so every rank
+		// keeps the full coefficient.
+		want := 0.032
 		if got := spell.AOEDot().BonusCoefficient; math.Abs(got-want) > 1e-9 {
 			t.Errorf("Flamestrike rank %d DoT coefficient %v, want %v", rank, got, want)
 		}
@@ -328,8 +329,9 @@ func TestMageRankTuning(t *testing.T) {
 		if spell == nil {
 			continue
 		}
-		// Forever's downranking penalty (sim/core/downrank.go) cuts the low ranks at 60.
-		want := 0.429 * core.DownrankFactor(mage.Level, spell.RequiredLevel)
+		// Forever's downranking penalty (sim/core/downrank.go) hits heals only, so every rank
+		// keeps the full coefficient.
+		want := 0.429
 		if got := spell.BonusCoefficient; math.Abs(got-want) > 1e-9 {
 			t.Errorf("Ice Lance rank %d coefficient %v, want %v", rank, got, want)
 		}

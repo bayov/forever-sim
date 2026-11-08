@@ -23,16 +23,16 @@ func TestDownrank(t *testing.T) {
 		scope      DownrankKind
 		wantFactor float64
 	}{
-		{"17 levels past the learn level keeps it all", forever, 60, 43, 1, DownrankDamage, ForeverDownrankScope, 1},
-		{"18 levels past keeps 0.95", forever, 60, 42, 1, DownrankDamage, ForeverDownrankScope, .95},
-		{"Lightning Bolt rank 7 at 60 keeps 0.75", forever, 60, 38, 7, DownrankDamage, ForeverDownrankScope, .75},
+		{"17 levels past the learn level keeps it all", forever, 60, 43, 1, DownrankDamage, DownrankHeal | DownrankDamage, 1},
+		{"18 levels past keeps 0.95", forever, 60, 42, 1, DownrankDamage, DownrankHeal | DownrankDamage, .95},
+		{"Lightning Bolt rank 7 at 60 keeps 0.75", forever, 60, 38, 7, DownrankDamage, DownrankHeal | DownrankDamage, .75},
 		{"37 levels past is clamped at 0", forever, 60, 23, 1, DownrankHeal, ForeverDownrankScope, 0},
 		{"far past stays at 0", forever, 60, 1, 1, DownrankHeal, ForeverDownrankScope, 0},
 		{"a rank above the cap keeps it all", forever, 30, 30, 1, DownrankHeal, ForeverDownrankScope, 1},
 		{"Classic keeps its coefficient", classic, 60, 1, 1, DownrankDamage, ForeverDownrankScope, 1},
 		{"an exempt spell keeps it", forever, 60, 1, 1, DownrankExempt, ForeverDownrankScope, 1},
 		{"a spell without a RequiredLevel keeps it", forever, 60, 0, 1, DownrankAuto, ForeverDownrankScope, 1},
-		{"a rank-less sub-spell takes its DownrankLevel", forever, 60, -38, 0, DownrankAuto, ForeverDownrankScope, .75},
+		{"a rank-less sub-spell takes its DownrankLevel", forever, 60, -38, 0, DownrankAuto, DownrankHeal | DownrankDamage, .75},
 		{"auto reads a heal from its ProcMask", forever, 60, 38, 1, DownrankAuto, DownrankHeal, .75},
 		{"auto reads anything else as damage", forever, 60, 38, 1, DownrankAuto, DownrankDamage, .75},
 		{"auto damage is out of a heals-only scope", forever, 60, 38, 2, DownrankAuto, DownrankHeal, 1},
@@ -82,8 +82,9 @@ func TestDownrank(t *testing.T) {
 		t.Errorf("physical coefficient = %v, want 1", physical.BonusCoefficient)
 	}
 
-	// Heals and damage alike (user ruling, 2026-11-04).
-	if saved != DownrankHeal|DownrankDamage {
-		t.Errorf("ForeverDownrankScope = %v, want heals and damage", saved)
+	// Heals only for now (user ruling, 2026-11-08): our live logs have damage ranks at full
+	// coefficient.
+	if saved != DownrankHeal {
+		t.Errorf("ForeverDownrankScope = %v, want heals only", saved)
 	}
 }

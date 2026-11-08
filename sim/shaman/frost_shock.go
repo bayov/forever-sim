@@ -12,7 +12,8 @@ var FrostShockSpellId = [FrostShockRanks + 1]int32{0, 8056, 8058, 10472, 10473}
 // coefficient, from the Forever client data that https://foreverchanges.pro reads
 // (downrank calculator). Forever cut most rank damage well below 1.12, and it gave the
 // low ranks close to full coefficients instead of the 1.12 penalty for spells learned
-// below level 20. Forever's downranking penalty applies (sim/core/downrank.go).
+// below level 20. Forever's downranking penalty (sim/core/downrank.go) is on heals only, so
+// every rank keeps its full coefficient.
 //
 // Hotfix push 113380 (region 91, build 1.60.1.70755, 2026-11-04; https://wago.tools/db2/SpellEffect,
 // hotfixes) sets every rank's base points and growth per level for launch, close to Classic Era's

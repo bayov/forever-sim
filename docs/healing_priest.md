@@ -8,7 +8,7 @@ its shields go through the absorb pipeline in `sim/core/absorb.go` (below), and 
 
 Client: 1.60.1.70753 (the November 2 build, which carries the October 30 launch-realm hotfix), with
 Blizzard's development notes post 9 (2026-11-02) and the round's rulings (`orchestration/round_70753/`,
-standards 37 to 39). Downranking is sim/core's (`sim/core/downrank.go`, every ranked spell under Forever).
+standards 37 to 39). Downranking is sim/core's (`sim/core/downrank.go`, every ranked heal under Forever: damage is out since 2026-11-08).
 
 ## The rules audit
 
@@ -138,7 +138,7 @@ Other heal rules (client 70753 unless said):
 | Prayer of Healing: its target's party | deep dive 2026-09-30, ImplicitTarget 132/31 | `partyOf(target)` |
 | Holy Nova: heals the priest's party (the damage part is not simulated) | client 23455 etc. | `partyOf(priest)` |
 | Binding Heal removed | notes ("Binding Heal removed."); client 70753 still has its rows in SkillLineAbility | gone: no rank registered. Test in `TestHealingPriestRanks` |
-| Downranking: a rank keeps 1 - 5% a level past 17 of its coefficient | sim/core/downrank.go (user ruling 2026-11-04: every ranked spell) | each heal sets `Rank`/`RequiredLevel`; Prayer of Mending's heal and Penance's heal bolts their rank's `DownrankLevel`. Test in `TestHealingPriestRanks` |
+| Downranking: a rank keeps 1 - 5% a level past 17 of its coefficient | sim/core/downrank.go (user ruling 2026-11-08: heals only) | each heal sets `Rank`/`RequiredLevel`; Prayer of Mending's heal and Penance's heal bolts their rank's `DownrankLevel`. Test in `TestHealingPriestRanks` |
 | Power Infusion: 20% more healing as well as damage | client 10060 auras 79 and 136 | `core.PowerInfusionAura` also multiplies `HealingDealtMultiplier` (sim/core/buffs.go) |
 
 ### Healing talents

@@ -15,8 +15,9 @@ var LightningBoltSpellId = [LightningBoltRanks + 1]int32{0, 403, 529, 548, 915, 
 // (downrank calculator). Forever cut most rank damage well below 1.12, and it gave the
 // low ranks close to full coefficients instead of the 1.12 penalty for spells learned
 // below level 20. The 2026-09-24 beta build raised ranks 3 and 4 (35 and 50 at the learn
-// level before, 45 and 56 now) so every rank is an upgrade over the one before. Under Forever
-// a rank far below our level takes the downranking penalty (sim/core/downrank.go).
+// level before, 45 and 56 now) so every rank is an upgrade over the one before. Forever's
+// downranking penalty (sim/core/downrank.go) is on heals only: our live logs have rank 1 at
+// levels 33 to 41 at its full coefficient.
 //
 // The 2026-10-08 beta build (1.60.1.70291) set ranks 1 to 5 again, so they grow more
 // evenly into rank 6. Rank 5, the top rank at level 30, went from 75.5 to 84.5 on average
