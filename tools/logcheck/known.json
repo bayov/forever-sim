@@ -38,5 +38,20 @@
     "kind": "raw",
     "ability": "Lightning Bolt (403)",
     "why": "Oct 21 log, from before hotfix 113380 (2026-11-04) changed rank 1. The old values fit the log exactly (ES 18.0-20.0, LB 14.39-16.61), and the sim has the new ones."
+  },
+  {
+    "kind": "partial",
+    "ability": "Attack (6352)",
+    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker."
+  },
+  {
+    "kind": "partial",
+    "ability": "Lightning Shield (26369)",
+    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker."
+  },
+  {
+    "kind": "partial",
+    "ability": "Flame Shock (10447) ticks",
+    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker."
   }
 ]

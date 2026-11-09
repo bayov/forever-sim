@@ -6,6 +6,22 @@ sections 2 and 6 have the format).
 
 ## Fix in the sim
 
+### Maelstrom Weapon gives a stack on every landed melee hit
+
+- **Flag**: none (logcheck doesn't count the buff). Measured from the logs, ranks 1 to 5.
+- **Windows**: Nov 8 20:35 to Nov 9 23:30 (1/5 from Nov 8 20:35, 2/5 from Nov 9 12:20, 3/5 from 15:19, 4/5 from 18:51, 5/5 from 21:49). A stack on 2756 of 2760 landed white swings, 1553 of 1555 Stormstrikes and 428 of 430 Windfury extra swings, the same at every rank. Misses, dodges and parries 0 of 421.
+- **What we think**: the server gives a stack on every landed melee hit (client 408498 has ProcChance 100). The rank only sets the cast time cut. The sim's 4 PPM a point (`sim/shaman/talents.go` 556-603) gives 22.6%, 45%, 68% and 90% a hit at ranks 1 to 4 with a 3.39 sec weapon, and under 100% at 5/5 with a weapon faster than 3 sec. Lightning Bolt at 5 stacks matches the sim's 4% per rank per stack (0.91, 0.61, 0.31 sec and instant at 2/5 to 5/5). The rest matches too: 5 stacks, 30 sec from the last stack, all used by Lightning Bolt at cast end, none from spells, no cooldown. Need to Verify item "Maelstrom Weapon proc rate" in notes.md.
+- **Next step**: the user's go to make it a 100% proc on landed melee hits (white, Stormstrike, Windfury), then rerun the shaman presets and the leveling plan, and drop the `sham_mw_ppm` report assumption. Totem of the Storm's Lightning Bolt trigger (half the melee chance) would become 50% a bolt.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-09.
+
+### Flametongue Weapon rank 5 hits about 7 less than the sim
+
+- **Flag**: `Flametongue Attack (10444): raw`, every Nov 9 window with rank 5 (mob levels 40 to 46).
+- **Windows**: `WoWCombatLog-110926_151906.txt 22:54:03-23:10:55` and `23:11:05-23:26:03` (character level 47, Mograine's Might, 3.4 sec): log 74.0 to 74.6 raw against the sim's 81.1 to 81.5 (81.8 before floor). Level 43 Uldaman mobs show 72, the dungeon mob trait below.
+- **What we think**: rank 5 takes a flat cut like ranks 2 and 3 (2 and 5). The sim keeps the client's points for ranks 4 to 6 (`FlametongueWeaponCut` in `sim/shaman/flametongue_weapon.go` 26-32). The gap is 7.1 to 8 raw, so 6.9 to 7.4 before Elemental Weapons' 1.15. Only one weapon speed so far, so flat versus speed scaled isn't settled. shaman_audit.md 7.3 has ranks 2 and 3.
+- **Next step**: the user's go to set `FlametongueWeaponCut[5]` to 7. Then check on another weapon speed (Stinging Viper 2.8) and at rank 4 (level 36) and 6 (level 56).
+- **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
+
 ### Fire Nova rank 1 keeps its full coefficient at 36 to 39
 
 - **Flag**: `Fire Nova (408423): raw`, mob levels 26 to 42, 4 windows.
@@ -29,16 +45,17 @@ sections 2 and 6 have the format).
 - **Flag**: `Flame Shock (8050/8053/10447)` ticks and direct `raw`, `Lightning Shield (26365..26369): raw`, `Earth Shock (8045): raw`, only in dungeon windows.
 - **Windows**: Nov 5-8 dungeon runs (Wailing Caverns, Shadowfang Keep, Razorfen Kraul, Gnomeregan): Flame Shock rank 2 ticks 12 to 10, rank 4 ticks 26 to 24, direct 54 to 52 and 101 to 99, orbs 24 to 22-23. Open world mobs of the same level, same hour: full damage.
 - **What we think**: a per-mob trait, not per dungeon or time. 54 of 135 even-level dungeon mobs, 0 of 144 odd-level dungeon mobs and 5 of 739 world mobs. Same sheet spell power and auras. Guess: a hidden per-mob resistance. See the Need to Verify item under "All classes".
+- **Window** `WoWCombatLog-110926_151906.txt 23:11:05-23:26:03` (Uldaman): every level 43 mob (Stonevault Brawler and Geomancer, Earthen Rocksmasher and Sculptor, Deadly Cleft Scorpid, Shadowforge Archaeologist and Darkcaster) takes 2 less: Magma Totem 51 to 52 (157 hits) vs 53 to 54, Flametongue Attack 72 vs 74, Fire Nova 189.8 vs 191 to 192. Level 42 and 44 mobs hit by the same Magma tick take full damage. So odd-level dungeon mobs have it too.
 - **Next step**: check the unfiltered logs for those mob GUIDs. Then Flame Shock a dungeon trash mob and an open world mob of the same level, 30 ticks each.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
-### Maelstrom Weapon proc rate looks near 100% at 1/5
+### Maelstrom Weapon cut at 4 stacks may not be linear
 
-- **Flag**: `Maelstrom Weapon` procs and stacks (the sim's 4 PPM a point gives 22.6% a hit at 1/5 with a 3.39 sec weapon).
-- **Windows**: Nov 8 from 20:35, rank 1/5. A stack on 130 of 133 landed white swings and 70 of 70 Stormstrikes. Misses, dodges and parries 1 of 14.
-- **What we think**: the client's ProcChance is 100 (spell 408498) and the server may not add a PPM at all. The report assumption `sham_mw_ppm` (10, 20 or 30 PPM at 5/5) doesn't cover a rate this high. The cast time cut per stack is untested because no Lightning Bolt was cast with stacks up.
-- **Next step**: the user's ruling (2026-11-08) is to wait for more data at higher ranks, then revisit. Also cast Lightning Bolt with stacks up.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+- **Flag**: none (from the cast times, not logcheck).
+- **Windows**: Nov 9 21:49 to 23:30 at 5/5: Lightning Bolt at 4 stacks took 0.52 sec avg in 13 casts (0.43 to 0.71, most 0.50 to 0.51). The sim gives 0.30 (80% off). At 4/5 with 4 stacks 0.48 (4 casts) vs the sim's 0.54, at 3/5 0.82 (2) vs 0.78.
+- **What we think**: 5 stacks fit the sim exactly, but 4 stacks at 5/5 cut 67%, not 80%. Maybe the stack count at cast start is off by one in our reading, or the cut isn't linear in stacks. It matters little since we cast at 5 stacks.
+- **Next step**: count more 2 to 4 stack casts in new logs before changing anything (`mw/cast.py` in the scratch dir did it, worth moving into `tools/combat_log/`).
+- **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
 
 ### Earth Shock is never partly resisted once it lands
 
@@ -58,6 +75,7 @@ sections 2 and 6 have the format).
 - **Window** `WoWCombatLog-110826_085019.txt 21:17:30-21:34:39` (levels 39 to 41, level 43, Mograine's Might at 209-210 of 215): the export at 21:22:50 had Blessing of Kings, Well Fed, Stoneskin and Windfury Totem up. The sheet is Strength +16, Stamina +12, Intellect +10, Spirit +12 and AP +46 over the sim, which Kings (10%) and Well Fed explain. Melee raw 378.8 in 32 hits vs the sim's 363.1 at level 40, Stormstrike 594.2 in 19 vs 564.0, and the spell rows 1 over (Flame Shock 179 vs 178, Lightning Shield 126 vs 125, about the sheet's 2.4 extra Nature power). Blood Fury shows in the logged AP (1478 to 1626). One glance in 28 swings at level 41 (sim 0%) fits the skill going 209 to 210 in the window, at the edge of the glance threshold.
 - **Windows** `WoWCombatLog-110826_085019.txt 23:58:01-00:02:56`, `00:06:11-00:09:28` and `00:14:26-00:16:53` (Nov 8-9, level 43 to 44, mobs 40 to 44): the sheet is AP +65 to +71 over the sim with Camp Benefits, Well Fed and Veteran Adventurer's Loyal Companion up. Melee raw runs 374.6 to 389.9 against the sim's 357 to 361, and Stormstrike 585.3 to 599.0 against 553.6 to 559.7, the usual AP gap.
 - **Windows** `WoWCombatLog-110826_085019.txt 00:51:26-01:10:15` and `01:15:02-01:23:24` (Nov 9, level 44, mobs 40 to 45): the first had Camp Benefits and Well Fed (AP +71.5 on the sheet), and the second had another shaman's Strength of Earth and Windfury Totem plus Blessing of Kings (Strength +18, AP +51.5). Melee raw runs 373.9 to 390.7 against the sim's 359 to 370, and Stormstrike 569.1 to 610.8 against 553.0 to 583.3.
+- **Window** `WoWCombatLog-110926_151906.txt 23:11:05-23:26:03`: Lightning Bolt 286.5 to 289.3 raw against the sim's 282. Mark of the Wild, Blessing of Kings, Fortitude and Divine Spirit give 23 Intellect, which Mental Quickness 2/2 turns into 6.9 spell power (sheet Nature power 59.0 vs 52.7), so +4.9 a bolt. Before the buffs at 23:11 the bolts were 284.3. Lightning Shield, Earth Shock, Magma Totem and Fire Nova move the same way.
 - **What we think**: history records carry `buffs` and the sheet check now lists them, but logcheck doesn't add their stats to the sim. Other players' Blessing of Might mid-window also moves AP (244 to 271 in 06:37).
 - **Next step**: add the stats of the buffs up at export time to the sim's character (a table of the common ones), or compare the sheet against the sim plus those buffs, and take the AP for damage rows from the window's white hits.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-09 (hourly run, Nov 9 windows).
@@ -103,6 +121,19 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
 
 ## Done
+
+### Audit stops on a login record read before the character loaded
+
+- **Done**: 2026-11-09. BayovCore wrote a login at Nov 9 17:49 with no gear, an empty skill table as `{}` and a talents error. `replayHistory` in `tools/logcheck/history.go` now skips such a login and reads `{}` as no skills.
+
+### Windows mixed two imbues
+
+- **Flag**: `Flametongue Attack (10444): procs` (log 35 to 60 per 100 landed white swings, the sim 143 to 155).
+- **Done**: 2026-11-09. Window 22:09-23:10 held 45 min of Rockbiter Weapon, then Flametongue Weapon, and the sim used Flametongue for all of it. `imbueCuts` in `tools/logcheck/audit.go` now ends a window when we cast another imbue or rank. On Flametongue alone the log gives 152 of 167 landed swings and 66 of 69 Stormstrikes, which fits the sim. The per 100 white swings row counts Stormstrike procs too, on both sides.
+
+### Partial resists on resistant mobs
+
+- **Done**: 2026-11-09. Searing Totem bolts (6352) and Flame Shock ticks on Fire-resistant whelps and dragonkin, Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker. Into `known.json` as `partial`, since the sim's mob has no resistances.
 
 ### Orc shaman base stats a point or two off
 
