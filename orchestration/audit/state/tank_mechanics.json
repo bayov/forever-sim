@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "803ab00ea5be3873d8c93d1b6a44f7cdad034629"
+  "master": "29ef4e7dddd120a0b6450b6f2b491ebfa96f417d"
  },
  "last_pass_at": "2026-11-08T18:52:00Z",
  "pass": 7,
  "result": "findings",
  "client_build": "1.60.1.70862",
- "checked_at": "2026-11-09T06:45:03Z",
+ "checked_at": "2026-11-09T12:45:50Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

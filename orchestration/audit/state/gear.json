@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "803ab00ea5be3873d8c93d1b6a44f7cdad034629"
+  "master": "29ef4e7dddd120a0b6450b6f2b491ebfa96f417d"
  },
  "last_pass_at": "2026-11-08T18:49:33Z",
  "pass": 59,
  "result": "quiet",
  "note": "Pass 59: only standards.md changed (items 25 and 40: no Flametongue Totem in raids, Enhancement presets drop totemWeaponBuff). Not gear rules; no synthetic item, level60 gear set, enchant or trinket file changed.",
  "client_build": "1.60.1.70755",
- "checked_at": "2026-11-09T06:45:03Z"
+ "checked_at": "2026-11-09T12:45:50Z"
 }
