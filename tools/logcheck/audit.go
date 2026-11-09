@@ -355,6 +355,7 @@ func planLog(path string, exports []*export) ([]auditWindow, []string, error) {
 		}
 		slices.SortStableFunc(history, func(a, b *export) int { return a.time.Compare(b.time) })
 		cuts := append(historyCuts(history), itemLevelCuts(cl, history)...)
+		cuts = append(cuts, imbueCuts(cl)...)
 		fights := cl.fights()
 		for i := 1; i < len(fights); i++ {
 			if gap := fights[i].start.Sub(fights[i-1].end); gap > auditBreak {
@@ -438,6 +439,31 @@ func itemLevelCuts(cl *combatLog, history []*export) []cut {
 			}
 		}
 		lastTime, lastLevel = e.t, level
+	}
+	return cuts
+}
+
+// imbueCuts are the times we cast a different weapon imbue (or another rank of it) than the
+// one we cast last in the log.
+//
+// The export doesn't see a shaman's imbue under Forever, and the sim keeps one imbue for the
+// whole window (setImbue). On 2026-11-09 a window held 45 minutes of Rockbiter Weapon and then
+// 16 of Flametongue Weapon, and the sim gave Flametongue procs for all of it.
+func imbueCuts(cl *combatLog) []cut {
+	var cuts []cut
+	last, lastID := "", ""
+	for _, e := range cl.events {
+		if e.kind != "SPELL_CAST_SUCCESS" || e.srcGUID != cl.me {
+			continue
+		}
+		if _, ok := imbueFromName(e.spell); !ok {
+			continue
+		}
+		id := fmt.Sprint(e.spellID)
+		if lastID != "" && id != lastID {
+			cuts = append(cuts, cut{e.t, e.t, fmt.Sprintf("%s to %s", last, e.spell)})
+		}
+		last, lastID = e.spell, id
 	}
 	return cuts
 }
