@@ -17,10 +17,10 @@ sections 2 and 6 have the format).
 ### Flametongue Weapon rank 5 hits about 7 less than the sim
 
 - **Flag**: `Flametongue Attack (10444): raw`, every Nov 9 window with rank 5 (mob levels 40 to 46).
-- **Windows**: `WoWCombatLog-110926_151906.txt 22:54:03-23:10:55` and `23:11:05-23:26:03` (character level 47, Mograine's Might, 3.4 sec): log 74.0 to 74.6 raw against the sim's 81.1 to 81.5 (81.8 before floor). Level 43 Uldaman mobs show 72, the dungeon mob trait below.
+- **Windows**: `WoWCombatLog-110926_151906.txt 22:54:03-23:10:55` and `23:11:05-23:26:03` (character level 47, Mograine's Might, 3.4 sec): log 74.0 to 74.6 raw against the sim's 81.1 to 81.5 (81.8 before floor). Level 43 Uldaman mobs show 72, the dungeon mob trait below. `23:51:48-23:55:38`: 74.0 in 36 hits at mob levels 44 and 45, and 73.2 in 30 at 47, against the sim's 81.0 to 81.3.
 - **What we think**: rank 5 takes a flat cut like ranks 2 and 3 (2 and 5). The sim keeps the client's points for ranks 4 to 6 (`FlametongueWeaponCut` in `sim/shaman/flametongue_weapon.go` 26-32). The gap is 7.1 to 8 raw, so 6.9 to 7.4 before Elemental Weapons' 1.15. Only one weapon speed so far, so flat versus speed scaled isn't settled. shaman_audit.md 7.3 has ranks 2 and 3.
 - **Next step**: the user's go to set `FlametongueWeaponCut[5]` to 7. Then check on another weapon speed (Stinging Viper 2.8) and at rank 4 (level 36) and 6 (level 56).
-- **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
+- **Status**: open, first seen 2026-11-09, last updated 2026-11-10 (hourly run).
 
 ### Fire Nova rank 1 keeps its full coefficient at 36 to 39
 
@@ -46,6 +46,7 @@ sections 2 and 6 have the format).
 - **Windows**: Nov 5-8 dungeon runs (Wailing Caverns, Shadowfang Keep, Razorfen Kraul, Gnomeregan): Flame Shock rank 2 ticks 12 to 10, rank 4 ticks 26 to 24, direct 54 to 52 and 101 to 99, orbs 24 to 22-23. Open world mobs of the same level, same hour: full damage.
 - **What we think**: a per-mob trait, not per dungeon or time. 54 of 135 even-level dungeon mobs, 0 of 144 odd-level dungeon mobs and 5 of 739 world mobs. Same sheet spell power and auras. Guess: a hidden per-mob resistance. See the Need to Verify item under "All classes".
 - **Window** `WoWCombatLog-110926_151906.txt 23:11:05-23:26:03` (Uldaman): every level 43 mob (Stonevault Brawler and Geomancer, Earthen Rocksmasher and Sculptor, Deadly Cleft Scorpid, Shadowforge Archaeologist and Darkcaster) takes 2 less: Magma Totem 51 to 52 (157 hits) vs 53 to 54, Flametongue Attack 72 vs 74, Fire Nova 189.8 vs 191 to 192. Level 42 and 44 mobs hit by the same Magma tick take full damage. So odd-level dungeon mobs have it too.
+- **Window** `WoWCombatLog-110926_151906.txt 23:51:48-23:55:38`: level 47 mobs take about 1 less than level 44 and 45 in the same window: Magma Totem 52 (15 hits) vs the sim's 53, Flame Shock ticks 46.3 vs 47, Flametongue Attack 73.2 vs 74.0. Smaller than 2, so maybe only some of them have it.
 - **Next step**: check the unfiltered logs for those mob GUIDs. Then Flame Shock a dungeon trash mob and an open world mob of the same level, 30 ticks each.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
@@ -67,6 +68,14 @@ sections 2 and 6 have the format).
 
 ## logcheck issues
 
+### An imbue cut leaves the next imbue's cast inside the window
+
+- **Flag**: `Flametongue Attack (10444): never`, `Melee: raw` and `Stormstrike (17364): raw` with the sim far above the log, mob levels 39 and 44.
+- **Windows**: `WoWCombatLog-110926_151906.txt 23:46:48-23:50:55` ends at "Flametongue Weapon to Rockbiter Weapon". The sim played it with Rockbiter: Flametongue never fired (log 140 to 146 per 100 landed swings), Melee raw 301.0 to 321.2 in the log vs the sim's 406.8 to 420.2, Stormstrike 482.7 vs 646.0, sheet AP +441 in the sim.
+- **What we think**: `imbueCuts` in `tools/logcheck/audit.go` (added 2026-11-09) ends the window at the new imbue's cast. The window's end rounds up to the next whole second, so `setImbue` in `tools/logcheck/main.go` still sees that cast and gives the sim the new imbue for the whole window. Since the cuts went in, every log with an imbue change was split again, so this run also reran 19 older windows (Oct 11 to Nov 8). Their flags are the ones we've already looked at, apart from the two under "Watching".
+- **Next step**: end the window a second before the cast (cut from `e.t` minus a second), or have `setImbue` skip casts in the window's last second. Then `-redo` the windows that end at an imbue change.
+- **Status**: open, first seen 2026-11-10, last updated 2026-11-10.
+
 ### Buffs at export time make the sheet higher than the sim
 
 - **Flag**: `sheet` (31 of 31 windows), `Melee: raw` (24), `Stormstrike (17364): raw` (13), small spell raw rows like Flame Shock rank 4 +1.
@@ -75,7 +84,7 @@ sections 2 and 6 have the format).
 - **Window** `WoWCombatLog-110826_085019.txt 21:17:30-21:34:39` (levels 39 to 41, level 43, Mograine's Might at 209-210 of 215): the export at 21:22:50 had Blessing of Kings, Well Fed, Stoneskin and Windfury Totem up. The sheet is Strength +16, Stamina +12, Intellect +10, Spirit +12 and AP +46 over the sim, which Kings (10%) and Well Fed explain. Melee raw 378.8 in 32 hits vs the sim's 363.1 at level 40, Stormstrike 594.2 in 19 vs 564.0, and the spell rows 1 over (Flame Shock 179 vs 178, Lightning Shield 126 vs 125, about the sheet's 2.4 extra Nature power). Blood Fury shows in the logged AP (1478 to 1626). One glance in 28 swings at level 41 (sim 0%) fits the skill going 209 to 210 in the window, at the edge of the glance threshold.
 - **Windows** `WoWCombatLog-110826_085019.txt 23:58:01-00:02:56`, `00:06:11-00:09:28` and `00:14:26-00:16:53` (Nov 8-9, level 43 to 44, mobs 40 to 44): the sheet is AP +65 to +71 over the sim with Camp Benefits, Well Fed and Veteran Adventurer's Loyal Companion up. Melee raw runs 374.6 to 389.9 against the sim's 357 to 361, and Stormstrike 585.3 to 599.0 against 553.6 to 559.7, the usual AP gap.
 - **Windows** `WoWCombatLog-110826_085019.txt 00:51:26-01:10:15` and `01:15:02-01:23:24` (Nov 9, level 44, mobs 40 to 45): the first had Camp Benefits and Well Fed (AP +71.5 on the sheet), and the second had another shaman's Strength of Earth and Windfury Totem plus Blessing of Kings (Strength +18, AP +51.5). Melee raw runs 373.9 to 390.7 against the sim's 359 to 370, and Stormstrike 569.1 to 610.8 against 553.0 to 583.3.
-- **Window** `WoWCombatLog-110926_151906.txt 23:11:05-23:26:03`: Lightning Bolt 286.5 to 289.3 raw against the sim's 282. Mark of the Wild, Blessing of Kings, Fortitude and Divine Spirit give 23 Intellect, which Mental Quickness 2/2 turns into 6.9 spell power (sheet Nature power 59.0 vs 52.7), so +4.9 a bolt. Before the buffs at 23:11 the bolts were 284.3. Lightning Shield, Earth Shock, Magma Totem and Fire Nova move the same way.
+- **Window** `WoWCombatLog-110926_151906.txt 23:11:05-23:26:03`: Lightning Bolt 286.5 to 289.3 raw against the sim's 282. Mark of the Wild, Blessing of Kings, Fortitude and Divine Spirit give 23 Intellect, which Mental Quickness 2/2 turns into 6.9 spell power (sheet Nature power 59.0 vs 52.7), so +4.9 a bolt. Before the buffs at 23:11 the bolts were 284.3. `23:51:48-23:55:38` (same buffs): Lightning Bolt 292.0 in 5 hits vs 281.6. Lightning Shield, Earth Shock, Magma Totem and Fire Nova move the same way.
 - **What we think**: history records carry `buffs` and the sheet check now lists them, but logcheck doesn't add their stats to the sim. Other players' Blessing of Might mid-window also moves AP (244 to 271 in 06:37).
 - **Next step**: add the stats of the buffs up at export time to the sim's character (a table of the common ones), or compare the sheet against the sim plus those buffs, and take the AP for damage rows from the window's white hits.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-09 (hourly run, Nov 9 windows).
@@ -97,6 +106,22 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
 
 ## Watching
+
+### Searing Totem crits high at level 37 once
+
+- **Flag**: `Attack (6352): crit` (NEW), mob level 37.
+- **Windows**: `WoWCombatLog-110826_085019.txt 18:22:24-18:57:33`: 26 of 133 (19.5%) vs the sim's 9.7%.
+- **What we think**: noise. Across all of Nov 8 and 9 our Searing Totem bolts crit 290 of 2623 (11.1%) and rank 3 (6351) 76 of 663 (11.5%). The sim gives 9.7% to 10.9%, which is about 1.8 standard deviations from 11.1%.
+- **Next step**: none unless it shows again.
+- **Status**: open, first seen 2026-11-10, last updated 2026-11-10.
+
+### Flametongue Attack rounds up at level 29
+
+- **Flag**: `Flametongue Attack (10444): amount` (NEW), mob level 29.
+- **Windows**: `WoWCombatLog-110626_104707.txt 01:30:50-01:36:08` (Nov 7): rounded up on 3 of 4, the sim's hit of 34.040 expects 0.2. The log puts the hit at 34.77 to 35.00.
+- **What we think**: 4 hits only, from a window the imbue cuts split again. It fits a bit of spell power the sim lacks (a buff), like "Spell hits a point or so off the sim".
+- **Next step**: none unless it shows again.
+- **Status**: open, first seen 2026-11-10, last updated 2026-11-10.
 
 ### Sheet Attack power and Dodge a bit high at level 6
 
