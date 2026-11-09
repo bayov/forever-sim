@@ -4,6 +4,16 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261109-1: Windfury Totem's white-swing-only rule lets Heroic Strike and Cleave proc it but not Raptor Strike
+- severity: high (Survival +24.9 DPS, +2.6%, if Raptor Strike gets the same treatment as Heroic Strike; it passes Arms in the ranking)
+- affects: hunter survival (3 builds); warrior arms / fury / fury_2h (the other way); the comment on the rule
+- found: 2026-11-09, master 66a243cf8
+- evidence: 0ce9dbf40 sets the totem's proc mask to ProcMaskMeleeMHAuto under Forever (sim/core/buffs.go:2166). Heroic Strike and Cleave carry `ProcMaskMeleeMHSpecial | ProcMaskMeleeMHAuto` (sim/warrior/heroic_strike_cleave.go:25, :79), so they still proc the totem. Raptor Strike, also an on-next-swing attack, deals its damage through a hit spell with `ProcMaskMeleeMHSpecial` only (sim/hunter/raptor_strike.go:85), so it no longer procs. The commit comment says the rule "leaves out" on-next-swing attacks like Heroic Strike, but the code leaves them in for warriors and out for hunters. Neither case was checked in logs. Measured with an env-gated scratch hack, request as published, 5000 iterations, seed 1:
+  - Raptor Strike hit also procs (adds MHAuto to its mask): survival 945.7 -> 970.5 (+24.9), survival-wolf 919.3 -> 944.1 (+24.8), survival-tallstrider 911.3 -> 936.8 (+25.5).
+  - Heroic Strike / Cleave don't proc (skip MHSpecial in the totem's handler): arms 887.6 -> 882.9 (-4.8), fury 1038.1 -> 1021.5 (-16.6), fury_2h 961.8 -> 958.3 (-3.5).
+- proposed fix: treat every on-next-swing attack the same way. Option A, all of them proc (give the Raptor Strike hit the MHAuto bit, or make the totem accept a queued-swing flag): Survival +25. Option B, none proc: Fury -16.6, Fury 2H -3.5, Arms -4.8. Either way fix the comment in buffs.go. A log check of Heroic Strike with the totem up decides between them. results-20261109-1 already covers the re-sim and the Stormstrike-to-all-specials question.
+- needs: user ruling (A or B), then orchestrator fix
+
 ## Resolved
 
 ### fairness-20261101-2: Affliction's report race Human is 1.4 under Orc

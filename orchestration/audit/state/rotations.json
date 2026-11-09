@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "9ba00c2dc47371bb0b48ccd53b2da1bd35e13eaf"
+  "master": "66a243cf8a641c460d42271b8125ec683b763a23"
  },
- "last_pass_at": "2026-11-08T19:05:00Z",
- "pass": 56,
+ "last_pass_at": "2026-11-09T01:20:00Z",
+ "pass": 57,
  "result": "findings",
- "note": "Pass 56: 4 sim commits (whole-point rolls, heals-only downranking, SS mark, WF/FT totem exclusivity); no APL logic change. Only Enhancement moved (-20, no raid FT Totem). Finding rotations-20261108-1: Flametongue Weapon with own WF Totem on Mana Tide (+5.6) and Water Shield (+3.4); Level 60 and Imp GW keep WF Weapon.",
+ "note": "Pass 57: 0ce9dbf40 WF Totem procs on white MH swings only (Forever). Warriors -100..-199, Survival -95, Ret -58..-95, rogues -20..-50, feral -28; Enh 0. New rotations-20261109-1: drop Arms/Fury 2H HS 90 line (+3.5 at 180 s). 20261108-1 withdrawn (FT Weapon now -28/-32).",
  "client_build": "1.60.1.70753",
- "checked_at": "2026-11-08T19:21:16Z",
- "baseline": "baseline_9ba00c2_3000it_seed424242.tsv"
+ "checked_at": "2026-11-09T01:05:11Z",
+ "baseline": "baseline_66a243c_3000it_seed424242.tsv"
 }

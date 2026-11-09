@@ -4,6 +4,50 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### rotations-20261109-1: Arms and Fury 2H: drop the Heroic Strike rage-dump line now that only white swings proc Windfury Totem
+- severity: low (+3.5 DPS at 180 s on Arms, 0.39%; +3.5 on Fury 2H, 0.36%)
+- affects: warrior__arms (+ -duty-battle-shout, -duty-sunder, _dragonkin), warrior__fury_2h (+ its two duty builds). Not Fury DW.
+- found: 2026-11-09, master 66a243cf8
+- evidence: 0ce9dbf40 (`sim/core/buffs.go:2166`, user ruling 2026-11-08) makes Windfury Totem proc from
+  `ProcMaskMeleeMHAuto` only under Forever, so a queued Heroic Strike now also costs that swing's 20% totem
+  chance. Arms WF Totem attacks fell 27.6 -> 9.2 a fight (2k it, 180 s) and Arms lost 199 DPS, Fury 2H 189
+  (baseline diff, all from this commit). The line is `{"castSpell":{"spellId":{"rank":8,"spellId":11567,"tag":1}},
+  "condition":{... currentRage OpGe "90", not isExecutePhase E20}}` at `ui/warrior/apls/level60_arms.apl.json:24`
+  (also `_battle_shout:27`, `_dragonkin:25`, `_sunder:25`, `level60_fury_2h.apl.json:25`, `_battle_shout:28`,
+  `_sunder:26`); req rotation index 16 in warrior__arms.json and warrior__fury_2h.json. Variant B deletes it.
+  Paired `ab.py` (20k it, 8 blocks, CLI 66a243cf8a64), B-A at 120 / 180 / 300 s:
+  | preset | S0 1e6 | S0 2e8 | pooled | A at 180 |
+  |---|---|---|---|---|
+  | arms | +2.36 / +3.48 / +2.83 | +2.18 / +3.49 / +2.09 | **+2.27 / +3.49 / +2.46** | 887.5 |
+  | fury_2h | +2.19 / +2.88 / +1.58 | +1.43 / +4.13 / +2.12 | **+1.81 / +3.51 / +1.85** | 962.5 |
+  SE 0.25-0.66 a set. Raising the gate to 100 gains less (Arms pooled +1.0 / +1.4 / +0.9, Fury 2H +0.9 / +1.3 / +1.5).
+  Fury DW keeps its 60 gate: 80 loses 2.8 and 50 loses 1.7 at 180 s (set 1). Duty and Dragonkin builds were not
+  run separately; they share the line, so the gain should carry over (estimate).
+- proposed fix: delete the 90-rage Heroic Strike line from the seven Arms and Fury 2H APLs and their req rotations.
+  If 0ce9dbf40's ruling is reversed (the commit says Heroic Strike wasn't checked in the logs), restore it.
+- needs: orchestrator fix
+
+### rotations-20261105-1: Feral cat: Ferocious Bite energy gate 45 -> 65, now that extra Energy hits harder (hotfix 113403)
+- severity: low (+1.9 DPS at 180 s, 0.16%; +1.1 on the FF duty)
+- affects: druid__feral-cat, druid__feral-cat-duty-ff (ui/feral_druid/apls/level60.apl.json:10, level60_ff.apl.json:11)
+- found: 2026-11-05, master a07941531
+- evidence: ff56f8ddc (`sim/druid/ferocious_bite.go`, hotfix push 113403) raised rank 6's damage per extra
+  Energy 2.7 -> 3.3. The 5-CP Ferocious Bite line still fires at `{"cmp":{"lhs":{"currentEnergy":{}},"op":"OpGe","rhs":{"const":{"val":"45"}}}}`.
+  Paired `ab.py` (20k it, 8 blocks, shared CLI a0794153163a), B-A at 120/180/300 s:
+  | gate | S0 1e6 | S0 2e8 | pooled |
+  |---|---|---|---|
+  | 35 | -2.61 / -2.92 / -3.41 | - | - |
+  | 55 | +1.25 / +1.18 / +2.10 | +1.40 / +1.22 / +1.92 | +1.33 / +1.20 / +2.01 |
+  | 65 | +1.63 / +1.86 / +3.28 | +1.80 / +1.96 / +3.12 | +1.72 / +1.91 / +3.20 |
+  | 75 | -0.42 / +0.19 / +1.85 | - | - |
+  | 65, FF duty | +0.70 / +0.89 / +2.06 | +1.18 / +1.33 / +2.06 | +0.94 / +1.11 / +2.06 |
+  Baseline at 180 s: 1169.1 (feral-cat), 1164.5 (duty-ff). Gains at every length on both sets; 65 is the peak of
+  the measured grid (SE about 0.2-0.4 a set).
+- proposed fix: in both APLs (and the two req rotations), the 5-CP Ferocious Bite line's `"val":"45"` -> `"val":"65"`.
+- needs: orchestrator fix
+
+## Resolved
+
 ### rotations-20261108-1: Enhancement Mana Tide and Water Shield: Flametongue Weapon beats Windfury Weapon now that our own Windfury Totem is the group's weapon totem
 - severity: medium (+5.6 DPS at 180 s on Mana Tide, 0.54%; +3.4 on Water Shield, 0.31%)
 - affects: shaman__enhancement-mana-tide, shaman__enhancement-water-shield. Not Level 60 or Imp GW (see evidence).
@@ -31,26 +75,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
   the two under Flametongue Weapon (orchestrator's call; this pass doesn't search).
 - needs: orchestrator fix
 
-### rotations-20261105-1: Feral cat: Ferocious Bite energy gate 45 -> 65, now that extra Energy hits harder (hotfix 113403)
-- severity: low (+1.9 DPS at 180 s, 0.16%; +1.1 on the FF duty)
-- affects: druid__feral-cat, druid__feral-cat-duty-ff (ui/feral_druid/apls/level60.apl.json:10, level60_ff.apl.json:11)
-- found: 2026-11-05, master a07941531
-- evidence: ff56f8ddc (`sim/druid/ferocious_bite.go`, hotfix push 113403) raised rank 6's damage per extra
-  Energy 2.7 -> 3.3. The 5-CP Ferocious Bite line still fires at `{"cmp":{"lhs":{"currentEnergy":{}},"op":"OpGe","rhs":{"const":{"val":"45"}}}}`.
-  Paired `ab.py` (20k it, 8 blocks, shared CLI a0794153163a), B-A at 120/180/300 s:
-  | gate | S0 1e6 | S0 2e8 | pooled |
-  |---|---|---|---|
-  | 35 | -2.61 / -2.92 / -3.41 | - | - |
-  | 55 | +1.25 / +1.18 / +2.10 | +1.40 / +1.22 / +1.92 | +1.33 / +1.20 / +2.01 |
-  | 65 | +1.63 / +1.86 / +3.28 | +1.80 / +1.96 / +3.12 | +1.72 / +1.91 / +3.20 |
-  | 75 | -0.42 / +0.19 / +1.85 | - | - |
-  | 65, FF duty | +0.70 / +0.89 / +2.06 | +1.18 / +1.33 / +2.06 | +0.94 / +1.11 / +2.06 |
-  Baseline at 180 s: 1169.1 (feral-cat), 1164.5 (duty-ff). Gains at every length on both sets; 65 is the peak of
-  the measured grid (SE about 0.2-0.4 a set).
-- proposed fix: in both APLs (and the two req rotations), the 5-CP Ferocious Bite line's `"val":"45"` -> `"val":"65"`.
-- needs: orchestrator fix
-
-## Resolved
+- resolved: 2026-11-09, 0ce9dbf40 (withdrawn, not applied: with Windfury Totem procs from white swings only, Flametongue Weapon now loses 28.4 on Mana Tide and 32.2 on Water Shield at 180 s, pooled over both seed sets; the presets keep Windfury Weapon)
 
 ### rotations-20261101-1: Frost mage: a fourth Arcane Blast stack above 70% mana, now that a stack costs 100% (was 175%)
 - severity: low (+1.8 DPS at 180 s, 0.2%)

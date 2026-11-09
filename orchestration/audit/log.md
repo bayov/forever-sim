@@ -271,3 +271,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-08 19:21 | tank_rotations | pass 6 | master 9ba00c2dc | quiet | 96/104 rows identical, rest within error
 2026-11-08 19:21 | tank_gear | pass 5 | master 9ba00c2dc | quiet | no tank gear change
 2026-11-08 19:21 | tank_fairness | pass 6 | master 9ba00c2dc | quiet | no six-boss mean moved >0.2
+2026-11-09 01:05 | results | pass 81 | master 66a243cf8 | 1 new finding | results-20261109-1 (high): Windfury white-swing-only rule cut 41 of 68 builds
+2026-11-09 01:05 | rotations | pass 57 | master 66a243cf8 | 1 new finding | rotations-20261109-1 (low) drop 90-rage Heroic Strike line on Arms/Fury 2H; 20261108-1 withdrawn
+2026-11-09 01:05 | consumables | pass 76 | master 66a243cf8 | quiet | no new findings; 2 older open
+2026-11-09 01:05 | mechanics | pass 71 | master 66a243cf8 | quiet | Windfury white-only matches user ruling; HS/Cleave untested
+2026-11-09 01:05 | fairness | pass 33 | master 66a243cf8 | 1 new finding | fairness-20261109-1 (high): HS/Cleave still proc totem, Raptor Strike doesn't

@@ -1,41 +1,47 @@
-# Fairness pass 32 (2026-11-08, master 9ba00c2)
+# Fairness pass 33 (2026-11-09, master 66a243c)
 
-Result: quiet (no new finding; the Enhancement staleness is already open as results-20261104-2, the imbue pairing as rotations-20261108-1). 27 watched files changed since 73d5bfa: `sim/core` (whole-point damage
-rolls 2a60326a1, downranking on heals only 0193721bc, Windfury / Flametongue Totem replace each other 9ba00c2dc),
-the shaman Stormstrike mark (5a870eccc), standards 25 and 40, the four Enhancement requests and presets. Full pass:
-`audit1b.py`, a full 5k race sweep on the loop's 9ba00c2 CLI and tree, a 20k bisect of the Enhancement move and the
-other imbue pairing. New baseline: 9ba00c2.
+Result: findings (1 new: fairness-20261109-1). Watched files changed since 9ba00c2: `sim/core/buffs.go`
+(Windfury Totem white-swing-only, 0ce9dbf40), `sim/core/base_stats_levels_auto_gen.go` (Orc shaman levels 2-43,
+3b0983bc6, leveling only, no level 60 row changed), the item database (8051c4322), test results and report hashes.
+Full pass: `audit1b.py`, a full 5k race sweep on the loop's 66a243c CLI and tree, a bisect of the Feral move, and two
+measured options for the on-next-swing asymmetry. New baseline: 66a243c.
 
 ## What changed
 
 | Change | Commit | Effect on fairness |
 |---|---|---|
-| Stormstrike mark after the damage calc | 5a870eccc | none on the report requests (Enhancement 1166.7 before and after, 20k) |
-| Spell damage rolls in whole points (`sim.Roll` rounds); probability rolls moved to `RandomFloat` | 2a60326a1 | variance only; no build's average moves. I checked every non-damage `sim.Roll` use: none is a 0-to-1 probability any more |
-| Forever downranking penalty on heals only (user ruling 2026-11-08) | 0193721bc | no DPS build moves (no report rotation casts a damage rank learned 18+ levels below 60) |
-| Windfury and Flametongue Totem replace each other; Enhancement loses the raid's Flametongue Totem (standards 25) | 9ba00c2dc | Enhancement -20.0 (20k), -20.7 (5k sweep); the other melee keep Windfury Totem and never had Flametongue Totem, so the raid stays symmetric |
+| Windfury Totem procs from white MH swings only under Forever (user ruling 2026-11-08, "for now") | 0ce9dbf40 | every raid-totem melee build drops: Arms -200.3, Fury 2H -189.0, Fury DW -97.6, Survival -94.6, Ret -94.2, Feral -27.0, rogues -19.6 to -46.5. Enhancement (own imbue) and all casters / ranged unchanged |
+| Orc shaman base attributes, levels 2-43 | 3b0983bc6 | none at level 60 |
+| Item database fold-in (331 added, 2 changed) | 8051c4322 | none: every non-melee build identical to 0.1; audit1b 19/19 PASS |
 
 ## What I checked
 
 - Gear: `audit1b.py` 19 of 19 "5a PASS | 1b PASS".
-- Movement against the a079415 baseline: only the four Enhancement builds moved (-20.7, -19.4, -19.8, -18.0 at 5k).
-  Everything else identical to 0.1. Bisect at 20k on the old level60 request: 73d5bfa / 5a870ec / 0193721 all 1166.7,
-  9ba00c2 1146.7. Nothing shared leaked.
-- Best race: unchanged everywhere; Orc stays best for Enhancement (Dwarf 1138.3 best Alliance). Seal Fate Swords'
-  Undead is 0.2 under Night Elf (noise).
-- Published against current: Enhancement now -11.6 to -16.7 under its published numbers and 3.0 under Fury (two-hand)
-  at 5k (4.1 at 20k), so the published ranking has the order wrong (Enhancement 5th published, 6th now). Independent confirmation of the 2026-11-08 update under results-20261104-2, with the rank flip and the bisect above; not filed again. The other ten rows off by
-  more than 1.5 are the same as pass 31 (Feral +30.6, Ret +11.0, SF Swords -11.9, SF Daggers -11.6, Arcane +7.9,
-  Combat Daggers +7.9, Elemental +7.3, Subtlety +4.0, Mutilate -2.7): still open as results-20261104-1/-2 and
-  results-20261105-1; independent confirmation, not filed again. A 20k run of those seven on the 73d5bfa CLI gives the
-  same numbers to 0.01, so none of this range's commits touches them.
-- Standards 40, the other pairing: Flametongue Weapon with the group's Windfury Totem, unregeared, 20k: level60 1146.1
-  (-0.6), imp-gw 1131.7 (-0.5). A tie on Windfury-weighted gear for these two; rotations-20261108-1 finds Flametongue Weapon ahead on Mana Tide (+5.6) and Water Shield (+3.4). Re-sim the four after that is settled.
+- Movement against the 9ba00c2 baseline: only melee builds that take the raid's Windfury Totem moved. Feral bisected
+  (5k, seed 1): c1b90a5 1169.6, 0ce9dbf 1142.6, 66a243c 1142.6. So Feral's -27.0 is also 0ce9dbf40. Correction to
+  results-20261109-1, which lists feral as "not from this commit": its published 1139.0 only looked close because it
+  was already 30.6 behind. Nothing shared leaked beyond that commit.
+- Published against current: independent confirmation of results-20261109-1 (same numbers to ±1 at 5k). The report now
+  has the order wrong for 15 specs: Fury 2H published 5th, sims 16th; Arms 9th -> 24th; Fury DW 7th -> 10th;
+  Ret 8th -> 12th; Survival 14th -> 19th. Feral's old +30.6 gap closes to +3.6. Elemental +7.3, Arcane +7.9 and
+  Enhancement -11.6 are unchanged and still open under results-20261104-1/-2.
+- Best race: the report race is best everywhere except Arms (Undead 888.2 vs Orc 887.6, +0.6, noise).
+- On-next-swing attacks under the new rule (fairness-20261109-1): Heroic Strike / Cleave carry
+  `MHSpecial | MHAuto` and still proc the totem. The Raptor Strike hit is `MHSpecial` only, so it no longer does.
+  The commit comment says Heroic Strike is "left out", which the code does not do. Measured with an env-gated scratch
+  hack (5k, seed 1): Raptor Strike procs -> Survival +24.9 / wolf +24.8 / tallstrider +25.5; Heroic Strike and Cleave
+  don't proc -> Fury -16.6, Fury 2H -3.5, Arms -4.8.
 
-## Pass doc notes for the next pass
+## Ranking now (report race, 5k)
 
-- The "Settled" bullet on the melee raid ("The second shaman's fire slot is Flametongue Totem") and the open item
-  `sham_ftt_stack` are superseded by standards 25 as of 2026-11-08: no raid shaman has Flametongue Totem.
-- `table.py` needs `AUDIT_TREE` exported in the same shell (it raises KeyError otherwise).
+Lone Wolf 1314.4, MM 1254.6, BM 1195.7, Enhancement 1147.8, Feral 1142.6, Frostfire 1065.7, Destruction 1063.2,
+Fire 1058.2, Demonology 1055.3, Fury DW 1038.1, Affliction 1034.2, Ret 1008.9, Destruction Fire 997.9, Elemental 977.4,
+Arcane 970.2, Fury 2H 961.8, Balance 952.1, Shadow 948.6, Survival 945.7, Frost 943.6, Combat Daggers 933.3,
+Combat Swords 918.0, SF Swords 899.7, Arms 887.6, SF Daggers 887.6, Subtlety 858.1, Mutilate 843.8, Smite 781.0.
+Top over bottom 1.68x. Full table: `orchestration/audit/ref/fairness/table_baseline.md`.
 
-Top over bottom: 1.68x (Lone Wolf 1314.4 / Smite 781.0).
+## Open for the next pass
+
+- After the re-sim of results-20261109-1, check that published matches current for all 15 moved specs.
+- The rule rests on Stormstrike alone. Whether Mortal Strike, Sinister Strike, Crusader Strike or Shred procs the
+  totem in game is the open question under results-20261109-1. Heroic Strike vs Raptor Strike is fairness-20261109-1.

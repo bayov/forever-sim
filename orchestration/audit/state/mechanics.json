@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "9ba00c2dc47371bb0b48ccd53b2da1bd35e13eaf"
+  "master": "66a243cf8a641c460d42271b8125ec683b763a23"
  },
- "last_pass_at": "2026-11-08T18:51:01Z",
- "pass": 70,
+ "last_pass_at": "2026-11-09T00:49:39Z",
+ "pass": 71,
  "result": "quiet",
- "note": "Pass 70: 73d5bfa9e..9ba00c2dc, 4 sim commits (whole-point rolls, heals-only downranking ruling, WF/FT Totem last-placed, Stormstrike mark order): no finding, verdicts updated. Client 70862 unchanged. Dev notes unchanged since post 10. Blue: Forever hotfixes Nov 6 (t/2403040/4) read; Orc Command line matches unmodelled 20575 #1.",
+ "note": "Pass 71: 9ba00c2dc..66a243cf8, 2 sim commits (WF Totem white MH swings only under Forever, user ruling; Orc shaman base stats 2-43, leveling only): no finding, verdicts updated (HS/on-next-swing open item). Client 70862 unchanged. Dev notes unchanged since post 10. Blue: Nov 8 dungeon XP +50% (t/2406595), not combat.",
  "client_build": "1.60.1.70862",
- "checked_at": "2026-11-08T19:21:16Z",
+ "checked_at": "2026-11-09T01:05:11Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -25,5 +25,5 @@
   "newest_push": 113605,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-07T01:07:59Z"
+ "blue_tracker_seen": "2026-11-08T19:47:33Z"
 }
