@@ -547,16 +547,27 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		return
 	}
 
-	// The November 2 development notes double the chance to trigger, from the 2 PPM per point
-	// below (report assumption sham_mw_ppm, 10 PPM at 5/5) to 4, 20 PPM at 5/5. The client leaves
-	// the rate to the server (408498 has a 100% ProcChance and no PPM row in 1.60.1.70753).
-
-	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
-	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
-	// Classic has no Maelstrom Weapon; outside Forever it keeps the sim's 2 PPM a point from before
-	// the notes (standards 37).
-	ppmPerPoint := core.TernaryFloat64(shaman.Env.IsForever(), 4, 2)
-	ppmm := shaman.AutoAttacks.NewPPMManager(ppmPerPoint*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
+	// Under Forever every landed melee hit gives a stack, at every rank, and the rank only sets
+	// how much each stack takes off Lightning Bolt.
+	//
+	// Our logs from 2026-11-08 and 2026-11-09 have every rank from 1/5 to 5/5. A stack came on
+	// 2756 of 2760 landed white swings, 1553 of 1555 Stormstrikes and 428 of 430 Windfury extra
+	// swings, and the same at each rank. Misses, dodges and parries gave none of 421. The client
+	// agrees (408498 has a 100% ProcChance and no PPM row). We used 4 PPM a point before, from
+	// the November 2 notes doubling SoD's rate, which gave only 22.6% a hit at 1/5 with a 3.4 sec
+	// weapon.
+	//
+	// Classic has no Maelstrom Weapon. Outside Forever it keeps the sim's 2 PPM a point (standards
+	// 37).
+	everyHit := shaman.Env.IsForever()
+	ppmm := shaman.AutoAttacks.NewPPMManager(2*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
+	// meleeChance is a main hand white swing's chance to give a stack.
+	meleeChance := func() float64 {
+		if everyHit {
+			return 1
+		}
+		return ppmm.Chance(core.ProcMaskMeleeMHAuto)
+	}
 
 	castTimeReductionPerStack := .04 * float64(shaman.Talents.MaelstromWeapon)
 	costReductionPerStack := 4 * shaman.Talents.MaelstromWeapon
@@ -590,10 +601,16 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 			if !result.Landed() {
 				return
 			}
-			procced := ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon")
+			var procced bool
+			if everyHit {
+				procced = spell.ProcMask.Matches(core.ProcMaskMelee)
+			} else {
+				procced = ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon")
+			}
 			if spell.SpellCode == SpellCode_ShamanLightningBolt && spell.ProcMask.Matches(core.ProcMaskSpellDamage) && shaman.lightningBoltTriggersMaelstrom {
-				// We take the main hand swing chance, so the bolt procs half as often as a white hit would.
-				procced = sim.RandomFloat("Maelstrom Weapon") < 0.5*ppmm.Chance(core.ProcMaskMeleeMHAuto)
+				// We take the main hand swing chance, so the bolt procs half as often as a white
+				// hit would (50% a bolt under Forever).
+				procced = sim.RandomFloat("Maelstrom Weapon") < 0.5*meleeChance()
 			}
 			if procced {
 				shaman.MaelstromWeaponAura.Activate(sim)

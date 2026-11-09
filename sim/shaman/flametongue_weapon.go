@@ -27,9 +27,13 @@ var FlametongueWeaponScaling = [FlametongueWeaponRanks + 1]core.RankScaling{{}, 
 // On the beta at level 30, rank 3 hits 5.0 below the client's points on every weapon we tried
 // (Rage of the Storm at 3.3 speed hit 33.3 for our 38.3 in 230 hits), rank 2 about 2 below
 // and rank 1 not at all. No database or server core has this, so it's likely a Forever server
-// change, and Classic keeps the full points. We haven't seen ranks 4 to 6 yet, so they keep
-// the client's points until a check at 36 or above (shaman_audit.md 7.3).
-var FlametongueWeaponCut = [FlametongueWeaponRanks + 1]float64{0, 0, 2, 5, 0, 0, 0}
+// change, and Classic keeps the full points (shaman_audit.md 7.3).
+//
+// Rank 5 hits about 7 below at level 47, from our log of 2026-11-09 on Mograine's Might (3.4
+// speed): 74 raw in about 140 hits, where the full points give 81. That's the only weapon speed
+// we have for it, so we don't know yet whether its cut is flat like rank 3's. We haven't seen
+// ranks 4 and 6, so they keep the client's points.
+var FlametongueWeaponCut = [FlametongueWeaponRanks + 1]float64{0, 0, 2, 5, 0, 7, 0}
 
 func (shaman *Shaman) flametongueRank() int {
 	return core.HighestKnownRank(&shaman.Character, FlametongueWeaponLevel[:], FlametongueWeaponSpellId[:])

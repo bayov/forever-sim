@@ -166,6 +166,9 @@ func TestOrcShamanMaelstromWeaponCost(t *testing.T) {
 
 	at(sim, 0.5, func(sim *core.Simulation) {
 		enh.SpendMana(sim, enh.MaxMana()-1000, enh.GetManaNotCastingMetrics())
+		// Every landed swing gives a stack under Forever, so we stop swinging and set the
+		// stacks by hand.
+		enh.AutoAttacks.CancelAutoSwing(sim)
 	})
 	at(sim, 1, func(sim *core.Simulation) {
 		for stacks := 1; stacks <= 5; stacks++ {

@@ -149,8 +149,8 @@ func TestOrcShamanRelics(t *testing.T) {
 			runSim(sim)
 			want := 0.0
 			if c.half {
-				// 20 PPM at 5/5 since the November 2 notes (10 before).
-				want = .5 * 20 * enh.AutoAttacks.MH().SwingSpeed / 60
+				// Under Forever every landed melee hit gives a stack, so a bolt gives one half the time.
+				want = .5
 			}
 			rate := float64(stacks) / bolts
 			if se := math.Sqrt(want * (1 - want) / bolts); math.Abs(rate-want) > 4*se+1e-9 {

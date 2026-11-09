@@ -17,6 +17,12 @@ import (
 // Each stack takes 4% a point off the next Lightning Bolt's cast time and cost, as the client
 // says (408498), so 20% a stack at 5/5. The stacks last 30 sec (408505). We set 1 to 5 stacks at
 // level 60 for each rank, then stop our swings, give one stack at 1 sec and want it gone between 30.9 and 31.1.
+//
+// Every landed melee hit gives a stack at every rank, and a miss gives none. Our logs from
+// 2026-11-08 and 2026-11-09 had every rank: 2756 of 2760 landed white swings, 1553 of 1555
+// Stormstrikes and 428 of 430 Windfury extra swings gave one. At 32 sec we land 20 white hits
+// and want a stack from each, then 20 misses and want none. TestOrcShamanTalentProcs covers
+// Stormstrike and Windfury.
 func TestOrcShamanMaelstromWeaponRanks(t *testing.T) {
 	for points := 1; points <= 5; points++ {
 		// Maelstrom Weapon is the seventeenth Enhancement talent.
@@ -57,6 +63,26 @@ func TestOrcShamanMaelstromWeaponRanks(t *testing.T) {
 		at(sim, 31.1, func(sim *core.Simulation) {
 			if mw.IsActive() {
 				t.Errorf("Maelstrom Weapon %d: the stack lasted past 30 sec", points)
+			}
+		})
+		at(sim, 32, func(sim *core.Simulation) {
+			for _, c := range []struct {
+				name    string
+				spell   *core.Spell
+				outcome core.HitOutcome
+				want    bool
+			}{
+				{"white hit", enh.AutoAttacks.MHAuto(), core.OutcomeHit, true},
+				{"white miss", enh.AutoAttacks.MHAuto(), core.OutcomeMiss, false},
+			} {
+				for range 20 {
+					mw.Deactivate(sim)
+					c.spell.CalcAndDealDamage(sim, enh.CurrentTarget, 100, forcedOutcome(c.outcome))
+					if got := mw.IsActive() && mw.GetStacks() == 1; got != c.want {
+						t.Errorf("Maelstrom Weapon %d: a %s gave a stack: %t, want %t", points, c.name, got, c.want)
+						break
+					}
+				}
 			}
 		})
 		runSim(sim)
