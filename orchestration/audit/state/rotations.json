@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "66a243cf8a641c460d42271b8125ec683b763a23"
+  "master": "803ab00ea5be3873d8c93d1b6a44f7cdad034629"
  },
  "last_pass_at": "2026-11-09T01:20:00Z",
  "pass": 57,
  "result": "findings",
  "note": "Pass 57: 0ce9dbf40 WF Totem procs on white MH swings only (Forever). Warriors -100..-199, Survival -95, Ret -58..-95, rogues -20..-50, feral -28; Enh 0. New rotations-20261109-1: drop Arms/Fury 2H HS 90 line (+3.5 at 180 s). 20261108-1 withdrawn (FT Weapon now -28/-32).",
  "client_build": "1.60.1.70753",
- "checked_at": "2026-11-09T01:05:11Z",
+ "checked_at": "2026-11-09T06:45:03Z",
  "baseline": "baseline_66a243c_3000it_seed424242.tsv"
 }
