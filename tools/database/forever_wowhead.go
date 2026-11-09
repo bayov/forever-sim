@@ -129,13 +129,14 @@ var foreverWowheadRatings = []string{"hastertng", "dodgertng", "parryrtng", "blo
 // expertise (type 37). But jsonequip carries none of it, so without this table an item
 // keeps its Classic skill. An entry with no skills takes the skill off.
 var foreverWeaponSkills = map[int32]map[proto.WeaponSkill]float64{
-	2907:  {},                                               // Dwarven Tree Chopper, Classic +2 two-handed axes.
-	4548:  {proto.WeaponSkill_WeaponSkillTwoHandedMaces: 1}, // Servomechanic Sledgehammer, Classic +7.
-	12062: {proto.WeaponSkill_WeaponSkillDaggers: 1},        // Skilled Fighting Blade, Classic +4.
-	12775: {proto.WeaponSkill_WeaponSkillTwoHandedAxes: 2},  // Huge Thorium Battleaxe, Classic +10.
-	16007: {},                                               // Flawless Arcanite Rifle, Classic +4 guns.
-	21126: {proto.WeaponSkill_WeaponSkillDaggers: 3},        // Death's Sting, the same as Classic.
-	23577: {proto.WeaponSkill_WeaponSkillSwords: 6},         // The Hungering Cold, the same as Classic.
+	2907:   {},                                               // Dwarven Tree Chopper, Classic +2 two-handed axes.
+	4548:   {proto.WeaponSkill_WeaponSkillTwoHandedMaces: 1}, // Servomechanic Sledgehammer, Classic +7.
+	12062:  {proto.WeaponSkill_WeaponSkillDaggers: 1},        // Skilled Fighting Blade, Classic +4.
+	12775:  {proto.WeaponSkill_WeaponSkillTwoHandedAxes: 2},  // Huge Thorium Battleaxe, Classic +10.
+	16007:  {},                                               // Flawless Arcanite Rifle, Classic +4 guns.
+	21126:  {proto.WeaponSkill_WeaponSkillDaggers: 3},        // Death's Sting, the same as Classic.
+	23577:  {proto.WeaponSkill_WeaponSkillSwords: 6},         // The Hungering Cold, the same as Classic.
+	280068: {proto.WeaponSkill_WeaponSkillUnarmed: 1},        // Bloody Claws of Attack, +1 fist weapons. Revealed Nov 8-9 (Wowhead Forever tooltip).
 }
 
 // foreverWeaponSkillSlice turns an entry of foreverWeaponSkills into the item's list of
