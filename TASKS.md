@@ -305,9 +305,20 @@ wording instead.
   - ItemEffect cooldowns: 272437 Adaptive Combat Assistant (1291097 Damage Sigmoid) 90 s → 300 s; 272438 Weakness Analyzer (1291101) 90 s → 360 s; 272439 Serenity Field (1291103) 90 s → 360 s.
   - ItemSparse StatPercentEditor: 272437 expertise 7143 → 3928 (rating about 20 → 11); 272438 spell power 7857 → 6428 (about 22 → 18); 272439 healing/damage 15000/5000 → 7500/2500 (about 28/14 → 14/7). Confirm the rounded values on a Wowhead Forever tooltip, then edit `assets/db_inputs/forever_wowhead_items.json` (lines ~10223-10225) or add seen-in-game lines. No preset uses them.
   - 280071 Flamebreak Talisman (still hidden): SpellEffect 1348471 Agility 50 → 33, cooldown 180 s → 300 s.
+  - 2026-11-09 (daily update): Flamebreak Talisman is revealed and its Wowhead Forever tooltip confirms the hotfix: "+33 Agility for 30 sec, +33 more if an elemental is nearby (5 Min Cooldown)", +17 Fire Resistance. PR forever-update/2026-11-09 adds it with the resistance only.
   - Also in pushes 113764–113791: Fear Ward 6346 made Shadowform-only on Nov 7 ~22:17 UTC and reverted (net: castable in Shadowform), Unsealed Wrath 1310735 needs a weapon, Frost Nova radius slot move, Cultivation 20552 gets a 15 min cooldown. None affects the sim.
   - https://wago.tools/hotfixes?product=wowf , https://wago.tools/db2/ItemEffect?build=1.60.1.70862
 - [ ] 2026-11-08 — Fix the four tests that fail on master itself (found by the daily update's full test run for PR #124) [source: blizzard]
   - TestRaidForeverReportHashesStable: shaman enhancement-imp-gw, -level60, -mana-tide and -water-shield hashes move, probably from commit 5a870ecc (Stormstrike); confirm, then rewrite with RAID_FOREVER_HASHES=testdata/report_hashes.txt.
   - TestProtection and TestRetribution, AllItems-SanctifiedOrb-20512: Prot 265.79 → 270.05, Ret 330.13 → 335.05 DPS. TestCombatSinisterStrike Average-Default 884.19 → 881.59 DPS (Agility 573 → 564). Find the commit, check the move is intended, then make update-tests.
   - sim/compsearch needs about 708 s, past go test's default 10 min in a full run.
+- [ ] 2026-11-09 — Model the effects of the items revealed Nov 8-9 that the daily PR added with plain stats only (foreverchanges.pro hidden-items, Wowhead Forever tooltips) [source: foreverchanges]
+  - AP vs creature type (`core.NewMobTypeAttackPowerEffect` in `sim/common/item_effects.go`): 276398 Scarlet Malice +15 vs Undead, 286613 King Mosh's Tooth +15 vs Beasts.
+  - 280071 Flamebreak Talisman Use: +33 Agility for 30 sec, +33 more near an elemental, 5 min cooldown (an on-use stat trinket; the elemental half needs a rule for the target type).
+  - 280068 Bloody Claws of Attack +1 Fist Weapons: the `foreverWeaponSkills` entry only reaches seen-in-game items once PR #124's `forever_seen.go` hook is on master; check the skill lands after it merges.
+  - 280067 Blackmaw Chain Belt 1% dodge left out (no dodge field in the seen-items file). 20133 Skyfury Gauntlets (Classes: Shaman) shows no required level.
+  - `assets/database/hidden_items.json` still lists 280018, 280031, 280045, 280061, 280067, 280068, 280071, 280072, 276398 and 286613 as hidden: rerun dbcache.py then hidden.py locally once the client cache has their rows.
+  - https://foreverchanges.pro/item/280071 , /276398 , /286613 , /280068 , /20133 (item pages answer a Cloudflare challenge from the cloud).
+- [ ] 2026-11-09 — Read wago.tools hotfix push 113814 (4 SpellEffect rows at 17:24 UTC Nov 9, on build 70862) before the Nov 10 class tuning lands [source: wago build 70862]
+  - SpellEffect record IDs 1297148, 1297195, 1297208, 1297522; the hotfix list shows no data column, so diff them against https://wago.tools/db2/SpellEffect?build=1.60.1.70862 to see which spells and values moved.
+  - Also 21 SpellEffect rows tagged build 69587 at 16:47 UTC, probably re-pushes. https://wago.tools/hotfixes?product=wowf
