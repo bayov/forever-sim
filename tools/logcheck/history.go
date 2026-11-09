@@ -32,12 +32,33 @@ type historyRecord struct {
 	When    json.RawMessage  `json:"when"`
 	Who     map[string]any   `json:"who"`
 	Gear    historyGear      `json:"gear"`
-	Skills  []map[string]any `json:"skills"`
+	Skills  historySkills    `json:"skills"`
 	Imbues  json.RawMessage  `json:"imbues"`
 	Talents map[string]any   `json:"talents"`
 	Level   *int             `json:"level"`
 	Stats   string           `json:"stats"`
 	Buffs   json.RawMessage  `json:"buffs"`
+	Errors  map[string]any   `json:"errors"`
+}
+
+// historySkills is a record's skill lines.
+//
+// The addon's JSON encoder writes an empty Lua table as {}, not [], so an empty skill list
+// comes as an object.
+type historySkills []map[string]any
+
+func (s *historySkills) UnmarshalJSON(data []byte) error {
+	var obj map[string]any
+	if err := json.Unmarshal(data, &obj); err == nil && len(obj) == 0 {
+		*s = nil
+		return nil
+	}
+	var list []map[string]any
+	if err := json.Unmarshal(data, &list); err != nil {
+		return err
+	}
+	*s = list
+	return nil
 }
 
 // historyGear is a record's gear by slot number, as a string ("1" to "19").
@@ -119,6 +140,13 @@ func replayHistory(path string) ([]*export, error) {
 		if err := json.Unmarshal(scanner.Bytes(), &rec); err != nil {
 			return nil, fmt.Errorf("%s:%d: %w", path, line, err)
 		}
+		// A login the addon read before the game loaded the character holds no gear, no
+		// skills and an error for the talents. The change record right after it holds the
+		// gear again, so we keep the character we had and skip this one. That happened on
+		// 2026-11-09 17:49.
+		if rec.Kind == "login" && len(rec.Errors) > 0 && len(rec.Gear.slots) == 0 {
+			continue
+		}
 		whole := rec.Kind == "login" || rec.Kind == "mark"
 		if !whole && state == nil {
 			continue
@@ -127,7 +155,7 @@ func replayHistory(path string) ([]*export, error) {
 			logins++
 		}
 		if whole {
-			state = map[string]any{"when": rec.When, "who": rec.Who, "imbues": rec.Imbues, "skills": rec.Skills}
+			state = map[string]any{"when": rec.When, "who": rec.Who, "imbues": rec.Imbues, "skills": []map[string]any(rec.Skills)}
 			before := gear
 			gear = map[int]json.RawMessage{}
 			// A login whose gear list lost slots past its end (see historyGear) still wears
