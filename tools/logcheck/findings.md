@@ -6,22 +6,6 @@ sections 2 and 6 have the format).
 
 ## Fix in the sim
 
-### Maelstrom Weapon gives a stack on every landed melee hit
-
-- **Flag**: none (logcheck doesn't count the buff). Measured from the logs, ranks 1 to 5.
-- **Windows**: Nov 8 20:35 to Nov 9 23:30 (1/5 from Nov 8 20:35, 2/5 from Nov 9 12:20, 3/5 from 15:19, 4/5 from 18:51, 5/5 from 21:49). A stack on 2756 of 2760 landed white swings, 1553 of 1555 Stormstrikes and 428 of 430 Windfury extra swings, the same at every rank. Misses, dodges and parries 0 of 421.
-- **What we think**: the server gives a stack on every landed melee hit (client 408498 has ProcChance 100). The rank only sets the cast time cut. The sim's 4 PPM a point (`sim/shaman/talents.go` 556-603) gives 22.6%, 45%, 68% and 90% a hit at ranks 1 to 4 with a 3.39 sec weapon, and under 100% at 5/5 with a weapon faster than 3 sec. Lightning Bolt at 5 stacks matches the sim's 4% per rank per stack (0.91, 0.61, 0.31 sec and instant at 2/5 to 5/5). The rest matches too: 5 stacks, 30 sec from the last stack, all used by Lightning Bolt at cast end, none from spells, no cooldown. Need to Verify item "Maelstrom Weapon proc rate" in notes.md.
-- **Next step**: the user's go to make it a 100% proc on landed melee hits (white, Stormstrike, Windfury), then rerun the shaman presets and the leveling plan, and drop the `sham_mw_ppm` report assumption. Totem of the Storm's Lightning Bolt trigger (half the melee chance) would become 50% a bolt.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-09.
-
-### Flametongue Weapon rank 5 hits about 7 less than the sim
-
-- **Flag**: `Flametongue Attack (10444): raw`, every Nov 9 window with rank 5 (mob levels 40 to 46).
-- **Windows**: `WoWCombatLog-110926_151906.txt 22:54:03-23:10:55` and `23:11:05-23:26:03` (character level 47, Mograine's Might, 3.4 sec): log 74.0 to 74.6 raw against the sim's 81.1 to 81.5 (81.8 before floor). Level 43 Uldaman mobs show 72, the dungeon mob trait below. `23:51:48-23:55:38`: 74.0 in 36 hits at mob levels 44 and 45, and 73.2 in 30 at 47, against the sim's 81.0 to 81.3.
-- **What we think**: rank 5 takes a flat cut like ranks 2 and 3 (2 and 5). The sim keeps the client's points for ranks 4 to 6 (`FlametongueWeaponCut` in `sim/shaman/flametongue_weapon.go` 26-32). The gap is 7.1 to 8 raw, so 6.9 to 7.4 before Elemental Weapons' 1.15. Only one weapon speed so far, so flat versus speed scaled isn't settled. shaman_audit.md 7.3 has ranks 2 and 3.
-- **Next step**: the user's go to set `FlametongueWeaponCut[5]` to 7. Then check on another weapon speed (Stinging Viper 2.8) and at rank 4 (level 36) and 6 (level 56).
-- **Status**: open, first seen 2026-11-09, last updated 2026-11-10 (hourly run).
-
 ### Fire Nova rank 1 keeps its full coefficient at 36 to 39
 
 - **Flag**: `Fire Nova (408423): raw`, mob levels 26 to 42, 4 windows.
@@ -67,14 +51,6 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
 ## logcheck issues
-
-### An imbue cut leaves the next imbue's cast inside the window
-
-- **Flag**: `Flametongue Attack (10444): never`, `Melee: raw` and `Stormstrike (17364): raw` with the sim far above the log, mob levels 39 and 44.
-- **Windows**: `WoWCombatLog-110926_151906.txt 23:46:48-23:50:55` ends at "Flametongue Weapon to Rockbiter Weapon". The sim played it with Rockbiter: Flametongue never fired (log 140 to 146 per 100 landed swings), Melee raw 301.0 to 321.2 in the log vs the sim's 406.8 to 420.2, Stormstrike 482.7 vs 646.0, sheet AP +441 in the sim.
-- **What we think**: `imbueCuts` in `tools/logcheck/audit.go` (added 2026-11-09) ends the window at the new imbue's cast. The window's end rounds up to the next whole second, so `setImbue` in `tools/logcheck/main.go` still sees that cast and gives the sim the new imbue for the whole window. Since the cuts went in, every log with an imbue change was split again, so this run also reran 19 older windows (Oct 11 to Nov 8). Their flags are the ones we've already looked at, apart from the two under "Watching".
-- **Next step**: end the window a second before the cast (cut from `e.t` minus a second), or have `setImbue` skip casts in the window's last second. Then `-redo` the windows that end at an imbue change.
-- **Status**: open, first seen 2026-11-10, last updated 2026-11-10.
 
 ### Buffs at export time make the sheet higher than the sim
 
@@ -146,6 +122,18 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
 
 ## Done
+
+### Maelstrom Weapon gives a stack on every landed melee hit
+
+- **Done**: 2026-11-10 (the user's go). Our Nov 8-9 logs at every rank gave a stack on 2756 of 2760 landed white swings, 1553 of 1555 Stormstrikes and 428 of 430 Windfury swings, none on 421 misses. `applyMaelstromWeapon` in `sim/shaman/talents.go` now does that under Forever (it was 4 PPM a point), Totem of the Storm gives 50% a bolt, and the `sham_mw_ppm` report assumption is one value. The swing timer already matched: an instant bolt leaves it alone, a bolt with a cast time starts it over.
+
+### Flametongue Weapon rank 5 hits about 7 less than the sim
+
+- **Done**: 2026-11-10 (the user's go). `FlametongueWeaponCut[5]` is 7 (`sim/shaman/flametongue_weapon.go`). The Nov 9 23:46 window now has the sim at 73.8 against the log's 74.0 to 74.4, and the party buffs explain the rest. Still to check on another weapon speed (Stinging Viper 2.8) and at ranks 4 and 6.
+
+### An imbue cut left the next imbue's cast inside the window
+
+- **Done**: 2026-11-10. `imbueCuts` in `tools/logcheck/audit.go` ends the window a second before the cast. The Nov 9 23:46-23:50 window now runs with Flametongue.
 
 ### Audit stops on a login record read before the character loaded
 

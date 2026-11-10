@@ -461,7 +461,10 @@ func imbueCuts(cl *combatLog) []cut {
 		}
 		id := fmt.Sprint(e.spellID)
 		if lastID != "" && id != lastID {
-			cuts = append(cuts, cut{e.t, e.t, fmt.Sprintf("%s to %s", last, e.spell)})
+			// The window before ends a second early. Its end rounds up to the next whole
+			// second, and setImbue takes the last imbue cast up to that end, so a cut right at
+			// the cast gave the window before it the new imbue (Nov 9 23:46).
+			cuts = append(cuts, cut{e.t.Add(-time.Second), e.t, fmt.Sprintf("%s to %s", last, e.spell)})
 		}
 		last, lastID = e.spell, id
 	}
