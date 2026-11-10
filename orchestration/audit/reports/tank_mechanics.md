@@ -1,18 +1,19 @@
-# tank_mechanics pass 8 (2026-11-10, master ca5e35c3f, client 1.60.1.70862+hf)
+# tank_mechanics pass 9 (2026-11-10, master da272241e, client 1.60.1.70888+hf)
 
-Due on 2 watched shaman files changed (91ad19535..ca5e35c3f). Result: quiet.
+Due on the client build 1.60.1.70862 -> 1.60.1.70888; no watched file changed (ca5e35c3f..da272241e). Result: quiet.
 
-**Getting current:** wago's latest is still 1.60.1.70862 (pass 6 covered it); dev notes checked by the loop today (state `checked_at`). No ledger entries in range.
+**Getting current:** wago's latest is 1.60.1.70888. Blizzard's Nov 9 and Nov 10 hotfixes (read from TASKS.md's daily update, da272241e): hunter Arcane Shot / Summon Hawk / Great Stamina, mage Arcane Concentration, Lightning Overload, Nature's Swiftness, Natural Instinct on Pounce, Deathless Marrow NPC nerfs. None touches a tank ability, talent or the tank engine. No ledger entries in range.
 
-**What changed:** one commit on the watched paths, bcc5d6cd4.
+**Client diff** (`wago.py diff 1.60.1.70862+hf 1.60.1.70888+hf --by-spell`, 22 spells):
 
-| Change | Tank effect | Verdict |
+| Row | Tank effect | Verdict |
 |---|---|---|
-| Maelstrom Weapon (talents.go `applyMaelstromWeapon`): under Forever every landed melee hit gives a stack; Lightning Bolt 50% with Totem of the Storm | None: Enhancement talent 17 is 0 in all four Warden presets (ui/warden_shaman/presets.ts:99-111) | n/a for tanks (Enhancement's mechanics auditor owns it; logs, tier 1) |
-| Flametongue Weapon rank 5 cut 7 (flametongue_weapon.go) | None: Warden presets and test imbue Rockbiter (presets.ts:130, warden_test.go:57) | n/a for tanks |
+| 1223242 Natural Instinct #0 mask word 3 0 -> 136 (Pounce Bleed 9007 0x80, Lacerate 414647 0x8) | 414647 is a Lacerate with only a weapon-damage-percent effect (31), triggered by no client spell: likely the server's Lacerate hit. The sim gives NI's +10%/point crit damage to the whole Lacerate spell already (sim/druid/talents.go `applyNaturalInstinct`, TestBearTalentDamage); ticks use OutcomeTick. Client now agrees with the sim. | right (tier 1) |
+| 9005/9823/9827 Pounce, 414924 Feral Charge (Cat) attributes | cat only; no bear preset uses them | n/a |
+| Frost Nova radius, Frost Trap, Cultivation, Escape Rope, Teach Summon Felsteed, Flamebreak Talisman, NPC spells (Bloodbolt, Charge 1283073, Fireball, Poison Shock) | none for tanks (Charge 1283073 is an NPC spell) | n/a |
 
-Other commits in range: 04bdcdb9e (enchants 41 Minor Health, 66 Minor Stamina to client values; no level 60 tank preset uses them), item folds, logcheck tooling. No change in sim/core, sim/warrior, sim/paladin, sim/druid, sim/shaman/warden or tools/tankbench; TestWardenShaman.results unchanged.
+**What changed in code:** 2e320521f (Chief's Enforcer proc, sim/common), c2baee417 (logcheck), da272241e (TASKS.md). Nothing in sim/core tank files, sim/warrior, sim/paladin, sim/druid, sim/shaman or tools/tankbench/tankscore.
 
 **Engine and tests:** untouched this range; pass 7's checks stand.
 
-**Open findings:** 20261107-1 (threat labels) and 20261108-1 (Stormstrike-mark shock threat test) remain open; neither file touched.
+**Open findings:** 20261107-1 (threat labels: docs/tank_druid.md:22 and :418 still say 21178 reads 50) and 20261108-1 (no Stormstrike-mark shock threat test in sim/shaman/warden/forever_test.go) remain open.

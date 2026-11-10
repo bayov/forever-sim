@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "ca5e35c3f219524dc00e69edf5c9741eac3c0b0c"
+  "master": "da272241e5bf4bacef59dc91f542b69b36d0c0d5"
  },
- "last_pass_at": "2026-11-10T12:48:09Z",
- "pass": 72,
+ "last_pass_at": "2026-11-10T18:51:24Z",
+ "pass": 73,
  "result": "quiet",
- "note": "Pass 72: 91ad19535..ca5e35c3f, 1 sim commit (bcc5d6cd4 shaman MW every melee hit under Forever, FT rank 5 cut 7): class-side, log- and client-backed, no finding; verdicts MW open item settled. Client 70862 unchanged. Dev notes unchanged since post 10. Blue: Nov 9 hotfixes (t/2403040 post 5) class-only (Arcane Concentration, Lightning Overload, Natural Instinct), no shared mechanic.",
- "client_build": "1.60.1.70862",
- "checked_at": "2026-11-10T13:18:42Z",
+ "note": "Pass 73: ca5e35c3f..da272241e, 1 sim commit (2e320521f The Chief's Enforcer Farraki Enforcement 1294339, 294 Physical, 1.14 PPM from the Nov 10 log; client has no PPM row): item-level, log-backed, no finding. Client 70862 -> 70888: no shared mechanic moved (SpellItemEnchantment, TraitDefinitionEffectPoints same; CurvePoint only new identity curves); engineering trinkets 272437-9 on-use cd 90 s -> 300/360 s and Flamebreak Talisman 280071 Agi 50->33, cd 300 s: none modeled or in presets. Dev notes unchanged since post 10; blue tracker nothing past Nov 9 hotfixes post 5.",
+ "client_build": "1.60.1.70888",
+ "checked_at": "2026-11-10T18:56:18Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

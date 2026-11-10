@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "ca5e35c3f219524dc00e69edf5c9741eac3c0b0c"
+  "master": "da272241e5bf4bacef59dc91f542b69b36d0c0d5"
  },
  "last_pass_at": "2026-11-10T12:50:00Z",
  "pass": 6,
@@ -8,5 +8,5 @@
  "baseline": "9ba00c2dc",
  "note": "Pass 6: bcc5d6cd4 (Flametongue rank 5 cut, Maelstrom Weapon every hit) reaches no healer: shaman requests use Brilliant Mana Oil and no Maelstrom talent. Spot check shaman tank/raid on Broodlord and Vaelastrasz, 1,000 it: identical to bench_9ba00c2.tsv. Baseline unchanged. Open: -4 (low), -5 (high, paladin raid preset unchanged).",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-10T13:18:42Z"
+ "checked_at": "2026-11-10T18:56:18Z"
 }

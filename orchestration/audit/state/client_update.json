@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "ca5e35c3f219524dc00e69edf5c9741eac3c0b0c"
+  "master": "da272241e5bf4bacef59dc91f542b69b36d0c0d5"
  },
- "last_pass_at": "2026-11-07T06:57:19Z",
- "client_build": "1.60.1.70862",
- "result": "quiet",
- "note": "70862 writes the 11-06 hotfix into the client. Only DPS change: Natural flasks 60->30 Stamina, zone bonus ->2% (SHR-U-19, missing; measured -1.5% to -3.9%), already filed as mechanics-20261107-1 / consumables-20261107-1, so no new finding here. Orc Command warlock effect, Arcane Blast 18 s, Soul Siphon/Wrack: landed.",
- "pass": 11,
- "checked_at": "2026-11-10T13:18:42Z"
+ "last_pass_at": "2026-11-10T18:55:57Z",
+ "client_build": "1.60.1.70888",
+ "result": "findings",
+ "note": "70888 carries the 11-09 hotfixes. Arcane Concentration split across Arcane Missiles (server, -0.73% arcane, client_update-20261110-1); ilvl 65 trinket stat cuts + Flamebreak Talisman (client_update-20261110-2, low). Lightning Overload, Flamestrike Clearcasting: landed. Arcane Shot/Summon Hawk 11% base mana: ~1 mana, no finding. November 10 class tuning not in 70888.",
+ "pass": 12,
+ "checked_at": "2026-11-10T18:56:18Z"
 }

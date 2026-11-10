@@ -43,15 +43,15 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 |---|---|---|---|---|---|---|---|---|---|---|
 | Warrior | 84 | 52 | 0 | 2 | 0 | 2 | 0 | 4 | 24 | 0 |
 | Paladin | 66 | 37 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
-| Hunter | 93 | 52 | 2 | 8 | 1 | 1 | 3 | 3 | 22 | 1 info |
+| Hunter | 96 | 52 | 2 | 8 | 1 | 3 | 3 | 3 | 23 | 1 info |
 | Rogue | 69 | 39 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
-| Shaman | 104 | 59 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
-| Mage | 67 | 18 | 9 | 9 | 0 | 1 | 5 | 7 | 18 | 0 |
+| Shaman | 105 | 60 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
+| Mage | 69 | 19 | 9 | 9 | 0 | 2 | 5 | 7 | 18 | 0 |
 | Warlock | 91 | 48 | 4 | 0 | 0 | 3 | 3 | 1 | 31 | 1 covered by another row |
-| Druid | 72 | 32 | 0 | 2 | 3 | 2 | 2 | 0 | 31 | 0 |
-| Shared (races, mechanics, items) | 72 | 27 | 1 | 3 | 3 | 2 | 3 | 9 | 24 | 0 |
-| **Total** | **773** | **384** | **47** | **32** | **9** | **19** | **21** | **33** | **224** | **4** |
+| Druid | 74 | 32 | 0 | 2 | 3 | 2 | 2 | 0 | 33 | 0 |
+| Shared (races, mechanics, items) | 74 | 27 | 1 | 3 | 3 | 3 | 4 | 9 | 24 | 0 |
+| **Total** | **783** | **386** | **47** | **32** | **9** | **23** | **22** | **33** | **227** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -300,6 +300,25 @@ Text and cosmetic only, no rows: Bear Form, Ravage, Thorns, Great Stamina, Shank
 | WL-HF-01 | FC 11-06 hotfix | Soul Siphon no longer makes Wrack raise its own damage | yes (affliction) | server fix; no client row changed | landed | `sim/warlock/talents.go:317` counts Corruption, the bane, Siphon Life and the curse, never Wrack itself |
 | DRU-U-17 | client 70862 | Bear Form (Passive2) 21178 effect 0 (aura 10, threat) 50 -> 115 | n/a (threat) | SpellEffect 700189 | n/a | tanking |
 | WAR-U-15 | client 70862 (FC 11-04 hotfix, Defensive Stance threat) | Defensive Stance Passive 7376 effect 2 (aura 10, threat) 30 -> 80 | n/a (threat) | SpellEffect 686475 | n/a | tanking; the 11-04 hotfix row is already landed |
+
+## Build 1.60.1.70888 (first seen 2026-11-10)
+
+70888 writes Blizzard's November 9 hotfixes (forum thread 2403040, post 5) into the client. `table_summary.py 70862 70888`: 27 spells changed, ItemSparse 16 changed and 1 added, ItemEffect 4 changed; ChrRaces, SpellPower, SpellAuraOptions, SpellItemEnchantment, trait trees, SpellCastTimes and SpellDuration identical; no player damage spell row changed. foreverchanges.pro: "The client of November 10. It holds the server's hotfixes of November 7 to 9, and one change players see: Fear Ward can now be cast in Shadowform. Blizzard's class tuning announced for November 10 is not in it." It also reads a server hotfix to this client (first seen 16:51 UTC 11-10, no Blizzard notes), rows HUN-HF-02/03 below.
+
+Text, cosmetic or out of scope, no rows: Swiftmend tooltip; Seals tooltip; Feral Charge (Cat) and Pounce attribute bits (combat entry, debuff display); Frost Nova and Frost Trap radius / trigger fixes; Fear Ward in Shadowform; Escape Rope; Teach Summon Felsteed (riding skill); Unsealed Wrath 1310735 gets a SpellEquippedItems row (weapon class 2; paladins always wield one); Cultivation 20552 cooldown moved to its category and 1312643 gets a GCD (gathering racial, not simulated); Deathless Marrow NPC spells (Bloodbolt, Fireball 20 -> 15, Charge 20 -> 10, Poison Shock 750 -> 75); quest-item party flags, Berdun's Trusty Rifle (ilvl 48), potion descriptions. Blizzard's 11-09 lines with no client row and nothing in the sim: Consecration after a despawn, Power Infusion persisting on allies (the sim's external buff already lasts), Gloves of Holy Might (ilvl 42), Nifty Stopwatch's shared cooldown, Incinerate for non-Destruction, dungeon XP and loot.
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| MAGE-HF-02 | Blizzard 11-09 hotfix (post 5) | Arcane Concentration's chance "now correctly splits across the cast and every bolt (was granting 10% on cast and per bolt)" | **yes** (mage__arcane; every mage preset takes the talent, only arcane casts Arcane Missiles) | server fix; no client row changed | wrong | `sim/mage/talents.go:290-302` rolls the full 10% on every Arcane Missiles missile (1 s ICD). Scratch build with 2% a missile: arcane -7.1 DPS (-0.73%), frostfire 0. Finding client_update-20261110-1 |
+| MAGE-HF-03 | Blizzard 11-09 hotfix | Flamestrike's ground ticks no longer consume Clearcasting | minor (no preset casts Flamestrike) | server fix | landed | `talents.go:256` Clearcasting ends in OnCastComplete; ticks never call it |
+| SHA-HF-01 | Blizzard 11-09 hotfix | Lightning Overload "now deals the correct amount of damage for Lightning Bolt" | yes (elemental) | the overload row 408477 (rank 10) has bp 98 + 0.6/level, coef 0.357: half of Lightning Bolt 15208's coefficient but well under half its 353 + 2.1/level; no row changed | landed (probably) | `sim/shaman/lightning_overload.go:27` copies the bolt at x0.5. The fix most likely makes the server do the same; a combat log would settle it (log-audit) |
+| DRU-U-18 | client 70888; Blizzard 11-09 "Natural Instinct was not applying correctly to Lacerate or Pounce" | Natural Instinct 1223242 effect 0 mask word 3 0 -> 136 (Lacerate's bleed 414647, bit 8; Pounce Bleed, bit 128, whose ranks 9007/9824/9826 get SpellClassOptions rows) | n/a (bear and stealth opener; no DPS request casts either) | SpellEffect 1211036 | n/a | `sim/druid/talents.go:353` already gives Lacerate the bonus; Pounce is not simulated |
+| SHR-U-21 | client 70888 | Adaptive Combat Assistant 272437 (expertise 7143 -> 3928), Weakness Analyzer 272438 (spell power 7857 -> 6428), Serenity Field 272439 (spell power and healing halved): ilvl 65 trinkets; their use effects' cooldowns 90 s -> 300 / 360 / 360 s (ItemEffect 232251-3) | minor (no request wears them) | ItemSparse StatPercentEditor; `assets/database/db.json` still has 2 expertise, 18 spell power, 7 / 14 | wrong (stale db) | regenerate from the 70888 client (`update-sources`); use effects not simulated. Finding client_update-20261110-2 |
+| SHR-U-22 | client 70888 | Flamebreak Talisman 280071 (ilvl 61): use effect 1315878 stat 50 -> 33, cooldown 3 -> 5 min | minor (no request wears it) | SpellEffect 1348471, SpellCooldowns 101402, ItemEffect 236650 | not simulated (use effect absent) | the db's passive 17 is unchanged. Finding client_update-20261110-2 |
+| HUN-HF-02 | FC 11-10 hotfix to 70888 (server) | Arcane Shot costs 11% of base mana at every rank (about 189 at 60) instead of 25-190 by rank | yes (hunters) | server hotfix | wrong by about 1 mana | `sim/hunter/arcane_shot.go:36` rank 8 190; below noise at 60, no finding |
+| HUN-HF-03 | FC 11-10 hotfix to 70888 (server) | Summon Hawk costs 11% of base mana (about 189 at 60) instead of 80-190 by rank | minor | server hotfix | wrong by about 1 mana | `sim/hunter/summon_hawk.go:131` rank 4 190; no finding |
+| HUN-HF-04 | FC 11-10 hotfix to 70888 (server) | Great Stamina raises the pet's health (30 to 400) instead of Stamina (3 to 40) | n/a (pet survival) | server hotfix | n/a | |
+| DRU-HF-01 | FC 11-10 hotfix to 70888 (server) | Nature's Swiftness works on Wild Growth | n/a (healing) | server hotfix | n/a | |
 
 ## Per-class ledgers
 

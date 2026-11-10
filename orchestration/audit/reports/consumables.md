@@ -1,9 +1,13 @@
-# Consumables pass 77, master ca5e35c3f
+# Consumables pass 78, master da272241e5
 
-Moved: forever_enchants.go (enchants 41, 66 re-valued), assumptions_def.py (sham_mw_ppm now one value, every hit).
-No newer wago build (70862). Class branches show no useful ahead state.
+Moved: sim/common/item_effects.go (new The Chief's Enforcer 9477 weapon proc, 1.14 PPM, 294 physical, from the user's log),
+sim/common/itemhelpers/weaponprocs.go (WeaponProc.NoSelfProc). Neither is a consumable, buff or enchant.
+No preset, gear set or mksettings file references item 9477 (git grep).
 
-Findings: consumables-20261110-1 (low, enchant 41 name). Open from before: 20261107-1 (Natural flasks halved), 20261105-1.
+Client 70862 -> 70888: builddiff.py reports 0 consumable spell changes, 0 of 56 Forever enchants changed.
+scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty; totem counts as ruled.
+Count note: minor-armor exclusive effects in debuffs.go is now 3 (expect 2): ForeverDustCloudAura (debuffs.go:1167)
+shares the slot with Faerie Fire and CoR by design (client 70532). Not a finding; the expected count is stale.
+Class branches show no useful ahead state (stale copies).
 
-Verified: ench.py 41 = Stamina +2, 66 = Stamina +3, matching forever_enchants.go. sham_mw_ppm change agrees with notes.md (100% chance, spell 408498). scan.sh clean above counts.
-Count note: minor-armor exclusive effects is 3 (was 2): Forever Dust Cloud aura joins Faerie Fire and CoR; not checked whether a preset uses it.
+Open items unchanged: 4 open findings in findings/consumables.md (Natural flask halving is the high one, awaiting a ruling).

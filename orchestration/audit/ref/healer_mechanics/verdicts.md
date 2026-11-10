@@ -1,7 +1,7 @@
-# Healer mechanics audit: verdicts (as of 2026-11-08 UTC, master 9ba00c2dc4, client 1.60.1.70862)
+# Healer mechanics audit: verdicts (as of 2026-11-10 UTC, master da272241e5, client 1.60.1.70888)
 
 Tier: 1 = Forever client (wago.tools) or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never vmangos.
-Pass 6 (2026-11-08, 9ba00c2dc4): downranking scope narrowed to heals only (0193721bc; every heal config carries ProcMaskSpellHealing, so no heal left it) and rolls round to whole points (2a60326a1); no healer row changed. Pass 5 (2026-11-07, 12aa2796fc): client 70862 touches only Bloom (1328622 heal now targets the ally, was the caster) among healer spells; Riptide rows unchanged. Pass 3 (2026-11-05, a079415316): no healer spell or engine change; heal threat row added. Pass 2 (2026-11-04, 0facd9428): findings 1-9 fixed on master and re-checked; 70790 touches only Riptide among
+Pass 8 (2026-11-10, da272241e5): client 70888 touches among healer rows only the Swiftmend 18562 tooltip ("consumed" dropped, now agrees with the Swiftmend row) and Natural Instinct's crit-damage mask (word 3 +0x88, Pounce; healing part 1361117 unchanged); Nov 10 hotfix gives Nature's Swiftness Wild Growth (reopens that row, finding 12). Pass 6 (2026-11-08, 9ba00c2dc4): downranking scope narrowed to heals only (0193721bc; every heal config carries ProcMaskSpellHealing, so no heal left it) and rolls round to whole points (2a60326a1); no healer row changed. Pass 5 (2026-11-07, 12aa2796fc): client 70862 touches only Bloom (1328622 heal now targets the ally, was the caster) among healer spells; Riptide rows unchanged. Pass 3 (2026-11-05, a079415316): no healer spell or engine change; heal threat row added. Pass 2 (2026-11-04, 0facd9428): findings 1-9 fixed on master and re-checked; 70790 touches only Riptide among
 healer spells. Pass 1 checked every heal rank and healing talent of the four healers and the engine. A row marked match holds on
 70755; re-check it when a newer build or Blizzard post touches the spell. Open rulings stay in each
 `docs/healing_<class>.md` "Calls for the user"; open findings in `../../findings/healer_mechanics.md`.
@@ -13,7 +13,7 @@ healer spells. Pass 1 checked every heal rank and healing talent of the four hea
 - Riptide under Forever: no instant heal, 12 s. Client 70790 now agrees (effect 0 HEAL -> DUMMY base 0, category
   recovery 12000, mana 150/180/230); the sim's notes-scaled mana 147/180/231 is off by 3 and 1 (healer_mechanics-20261104-11).
 - Swiftmend: news 24301515 and dev notes post 9 (2026-11-04 edit) say it no longer consumes the HoT; the 18562
-  tooltip still says "consumed". Tier 1 notes win; fixed on master bc8e5473b (Forever keeps the HoT).
+  tooltip still said "consumed" until client 70888 dropped it (Blizzard Nov 6 notes: tooltip fix). Fixed on master bc8e5473b (Forever keeps the HoT).
 
 ## Restoration shaman
 
@@ -107,7 +107,7 @@ healer spells. Pass 1 checked every heal rank and healing talent of the four hea
 | Wild Growth r1-3 | bp 40/60/97, rppl 1/1.3/1.6, 3 s cast, 6 s CD, 7x1 s, coef 0.033, 550/755/1050, 5 targets | same | match (shape = doc call 1) | 1 |
 | Bloom 1328621/1328622 | 100% Spirit (50% dispel), heal has no mask; 70862: heal ImplicitTarget 1 (caster) -> 21 (target ally) | same; heals the HoT's target | match (70862) | 1 |
 | HoT / Tranquility tick crits | Attributes_8 0x200 on Rejuv, Regrowth, Tranq, WG | ticks roll crit (ruleset.go canCrit) | match | 1 |
-| Nature's Swiftness 17116 | aura 108 misc 10 -100%; mask: HT, Regrowth, Wrath, Roots, Hibernate, Rebirth, Soothe, Nourish, Starsurge; CD 180 s, GCD 0 | HT, Regrowth, Wrath (the cast ones); off GCD; 3 min | match | 1 |
+| Nature's Swiftness 17116 | aura 108 misc 10 -100%; mask: HT, Regrowth, Wrath, Roots, Hibernate, Rebirth, Soothe, Nourish, Starsurge; CD 180 s, GCD 0. Nov 10 hotfix (client cache, via foreverchanges.pro; not in wago 70888 tables): also Wild Growth | HT, Regrowth, Wrath (the cast ones); off GCD; 3 min; not Wild Growth | mismatch since the Nov 10 hotfix (finding 12) | 1 |
 | Innervate 29166 | aura 110 bp 400 (power regen %), aura 134 bp 100 (regen while casting); 20 s; CD 360 s; 5% base mana | SpiritRegenMultiplier += 4, ForceFullSpiritRegen; 20 s; 6 min; 5% (buffs.go:1455, innervate.go) | match | 1 |
 | Gift of Nature 17104 | #0 misc 0 (all) 2%/pt: HT, Regrowth, Swiftmend, Tranq; #1 misc 22 (periodic): Regrowth, Rejuv, WG | DamageMultiplier on HT/RG/Tranq/SM; periodic on Rejuv/WG; Regrowth HoT once | match (Tranq = doc call 5) | 1 |
 | Improved Rejuvenation 17111 | misc 22 5%/pt (15%), Rejuvenation | Rejuv periodic x1.15 | match | 1 |

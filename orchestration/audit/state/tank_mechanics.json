@@ -1,17 +1,17 @@
 {
  "last": {
-  "master": "ca5e35c3f219524dc00e69edf5c9741eac3c0b0c"
+  "master": "da272241e5bf4bacef59dc91f542b69b36d0c0d5"
  },
- "last_pass_at": "2026-11-10T12:47:33Z",
- "pass": 8,
+ "last_pass_at": "2026-11-10T18:51:46Z",
+ "pass": 9,
  "result": "quiet",
- "client_build": "1.60.1.70862",
- "checked_at": "2026-11-10T13:18:42Z",
+ "client_build": "1.60.1.70888",
+ "checked_at": "2026-11-10T18:56:18Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
   "edited": "2026-11-04T19:35:27Z",
   "post1_edited": "2026-11-03T03:20:46Z"
  },
- "note": "Pass 8 (ca5e35c3f): bcc5d6cd4 Maelstrom Weapon every hit and Flametongue r5 cut; no Warden preset takes Maelstrom Weapon or Flametongue, golden unchanged. Quiet. 20261107-1 and 20261108-1 still open."
+ "note": "Pass 9 (da272241e): client 70862 -> 70888. Only tank-adjacent row: Natural Instinct 1223242 mask word 3 0 -> 0x88 (Pounce Bleed 9007, orphan Lacerate 414647 effect 31); the sim already gives NI to the whole Lacerate spell, so client now agrees. No watched-path code change. Quiet. 20261107-1 and 20261108-1 still open."
 }

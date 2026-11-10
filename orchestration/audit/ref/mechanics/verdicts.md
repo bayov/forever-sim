@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-11-10 UTC, master ca5e35c3f, client 1.60.1.70862)
+# Mechanics audit: verdicts and settled items (as of 2026-11-10 UTC, master da272241e, client 1.60.1.70888)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 

@@ -1,27 +1,45 @@
-# Healer mechanics: pass 7 (2026-11-10 UTC, master ca5e35c3f, client 1.60.1.70862)
+# Healer mechanics: pass 8 (2026-11-10 UTC, master da272241e5, client 1.60.1.70888)
 
-Quiet pass. Due because 2 watched files changed on master, 91ad19535..ca5e35c3f, both in one commit
-(bcc5d6cd4, "Maelstrom Weapon stacks on every melee hit, Flametongue rank 5 cut").
+Due for the client build 1.60.1.70862 -> 1.60.1.70888. No watched code changed on master
+(ca5e35c3f..da272241e5 touches item procs, logcheck and audit docs only). One new finding.
 
 ## Get current
 
-- Newest client build on wago.tools: 1.60.1.70862, same as pass 6. No table re-check needed.
-- `orchestration/update_ledger.md`: no change since pass 6 (last touched 2026-11-07).
-- Dev notes: last checked 2026-11-10T06:46Z (`dev_notes_seen` unchanged, 10 posts).
+- wago.tools newest build 1.60.1.70888; `wago.py diff --set mechanics 70862 70888` (the `--by-spell` mode crashes:
+  KeyError 'SpellID' on a table without it, `tools/sources/wago.py:297`).
+- `orchestration/update_ledger.md`: unchanged since 2026-11-08.
+- Blizzard Nov 9 hotfix post (news 24315281): druid lines are Feral Charge and (Nov 6) Bloom, Swiftmend tooltip; nothing
+  healer-numeric. foreverchanges.pro Nov 10 client hotfix: Nature's Swiftness now reaches Wild Growth (finding 12).
 
-## What changed
+## Client 70862 -> 70888, healer rows
 
-| File | Change | Healer reach | Verdict |
-|---|---|---|---|
-| `sim/shaman/talents.go` (`applyMaelstromWeapon`) | Under Forever every landed melee hit gives a stack (was 4 PPM a point); bolt trigger now 50% under Forever | The aura's `OnStacksChange` only edits `shaman.LightningBolt` cast time and cost; no heal is in its reach. No healer preset takes Maelstrom Weapon (only `ui/enhancement_shaman/presets.ts`). | Not a healer mechanic; nothing to check |
-| `sim/shaman/flametongue_weapon.go` | Rank 5 cut of 7 points (log tier 1-ish, Forever server observation) | Melee weapon imbue damage only | Not a healer mechanic |
+| Row | Change | Sim | Verdict | Tier |
+|---|---|---|---|---|
+| Swiftmend 18562 tooltip | "of the consumed spell" dropped | keeps the HoT under Forever (bc8e5473b) | match, now client agrees too | 1 |
+| Natural Instinct 1223242 eff 0 (1211036) | crit-damage mask word 3 0 -> 0x88 (Pounce) | healing part 1361117 (12/25% Int) unchanged | healer part match; feral part is mechanics' | 1 |
+| Fear Ward 39554 | castable in Shadowform | not a heal | n/a | 1 |
+| Serenity Field 272439 (trinket, ilvl 65) | stat 41 15000 -> 7500, use CD 90 -> 360 s | not in the sim or any healer gear set | n/a (gear auditors) | 1 |
+| Nature's Swiftness 17116 | wago mask unchanged; Nov 10 hotfix adds Wild Growth | HT, Regrowth, Wrath only | mismatch, finding 12 | 1 (hotfix cache, via foreverchanges.pro) |
+
+No other heal, healing talent, HoT, cost, cast time or cooldown row of the four healers changed
+(SpellPower, SpellCastTimes, SpellDuration, SpellLevels: 0 changes).
+
+## Measured (finding 12)
+
+`tools/healbench`, 1000 iterations, seed 101, patched `affected` in `registerNaturesSwiftnessCD` to take Wild Growth:
+
+| Request | Carry before | after | HPS | Mana left |
+|---|---|---|---|---|
+| druid_restoration_raid, -role raid | 0.866 | 0.875 (+1.0%) | 2518 -> 2527 | 948 -> 865 |
+| druid_restoration, -role tank | 1.354 | 1.354 | 845 -> 845 | same |
 
 ## Open findings
 
-- 11 (Riptide cost): still open. `sim/shaman/healing.go:117,132` at ca5e35c3f still scales by
-  `RiptideNotesManaScale` 0.6, giving 147/180/231 against the client's 150/180/230.
+- 12 (new, medium): Nature's Swiftness misses Wild Growth since the Nov 10 hotfix.
+- 11 (Riptide cost): still open, `sim/shaman/healing.go:117,132` scales by 0.6 (147/180/231 vs 150/180/230).
 - 10 (untested heal paths): unchanged.
 
-## New findings
+## Notes for the next pass
 
-None.
+- healbench needs `protoc --go_out=./sim/core ./proto/*.proto` in a fresh tree; setup.sh installs protoc but doesn't run it.
+- Confirm finding 12 against wago once a build carries the 17116 mask change.

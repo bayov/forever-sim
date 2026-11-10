@@ -1,16 +1,16 @@
 {
  "last": {
-  "master": "ca5e35c3f219524dc00e69edf5c9741eac3c0b0c"
+  "master": "da272241e5bf4bacef59dc91f542b69b36d0c0d5"
  },
- "last_pass_at": "2026-11-10T12:47:07Z",
- "pass": 7,
- "result": "quiet",
- "note": "Pass 7: 2 shaman files (bcc5d6cd4). Maelstrom Weapon every-hit stacks only touch Lightning Bolt (no heal in the aura); Flametongue rank 5 cut is melee only; no healer preset takes MW. Client 70862, ledger unchanged. Findings 10, 11 open (Riptide still 147/231).",
- "client_build": "1.60.1.70862",
+ "last_pass_at": "2026-11-10T18:56:00Z",
+ "pass": 8,
+ "result": "findings",
+ "note": "Pass 8: client 70888 (no watched code change). Healer rows: Swiftmend tooltip, Natural Instinct feral mask only. New finding 12 (medium): Nov 10 hotfix gives Nature's Swiftness Wild Growth, sim doesn't (+1.0% druid raid carry). Findings 10, 11 open.",
+ "client_build": "1.60.1.70888",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
   "edited": "2026-11-04T19:35:27Z"
  },
- "checked_at": "2026-11-10T13:18:42Z"
+ "checked_at": "2026-11-10T18:56:18Z"
 }

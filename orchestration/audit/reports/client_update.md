@@ -1,42 +1,36 @@
-# Client updates: pass 11 (2026-11-07, master 12aa2796fc)
+# Client updates: pass 12 (2026-11-10, master da272241e5)
 
 ## Sources
 
 | Source | Result |
 |---|---|
-| wago.tools (`wago.py latest --probe 300`) | 1.60.1.70862 (was 70790) |
-| `table_summary.py 70790 70862` | 461 spells changed, 395 of them added (NPC, dungeon, portals, "Endless" consumables); SpellEffect 37 changed; ItemSparse 22 changed (flags, recipe quality, ilvl 10 -> 30 level-1 copies); 1 enchant added (quest arcanum); ChrRaces, trait trees, SpellCastTimes, SpellDuration identical |
-| foreverchanges.pro | 70862 "Not in Blizzard's notes": 7 items; "The Hyjal flasks' 30 Stamina and 2% were already on their item pages from the server's hotfixes". 11-06 hotfix: tooltips, Bloom, Arcane Blast 18 s, Soul Siphon/Wrack, Voidwalker health, Orc Command. 11-06 "Announced for November 10" (pets, Wrack vs DoTs, Enhancement Strength): not live, no rows yet |
-| Dev notes thread 2360696 | not re-fetched (the hotfix lines come through foreverchanges) |
+| wago.tools (`wago.py latest --probe 300`) | 1.60.1.70888 (was 70862) |
+| `table_summary.py 70862 70888` | Spell 2, SpellEffect 14 changed + 2 added, SpellMisc 4, SpellCooldowns 2 (+1/-1), SpellClassOptions +3, ItemSparse 16 changed + 1 added, ItemEffect 4; ChrRaces, SpellPower, SpellAuraOptions, SpellItemEnchantment, trait trees identical; no player damage spell row changed |
+| Blizzard hotfixes thread 2403040 | post 5 (2026-11-10 04:23 UTC): the November 9 hotfixes; 70888 carries their client side |
+| foreverchanges.pro | 70888 "holds the server's hotfixes of November 7 to 9" + Fear Ward in Shadowform; November 10 class tuning not in it. Server hotfix to 70888 (16:51 UTC 11-10): Arcane Shot and Summon Hawk cost 11% base mana, Great Stamina gives pet health, Nature's Swiftness on Wild Growth |
+| Dev notes thread 2360696 | not re-fetched (forum rate limit hit once this pass; the hotfix thread covers the build) |
 
 ## DPS-relevant changes and sim status
 
 | Row | Change | Sim status |
 |---|---|---|
-| SHR-U-19 | Natural flasks (1293740-1293743): Stamina 60 -> 30, zone bonus 5/4/5/5 -> 2 | **missing**: `sim/core/consumes.go` applyNaturalFlask still 60 and 5%/4%/5%/1.05. Already filed today as mechanics-20261107-1 and consumables-20261107-1, so no duplicate finding here |
-| SHR-U-20 | Orc Command warlock 20575 effect 1 (+5% Firebolt / Lash of Pain) -> 0 | landed (the sim never had it) |
-| MAGE-HF-01 | Arcane Blast lasts its full 18 s (server fix) | landed (`arcane_blast.go:31`) |
-| WL-HF-01 | Soul Siphon no longer counts Wrack for Wrack's own damage (server fix) | landed (sim never counted Wrack) |
-| DRU-U-17, WAR-U-15 | Bear Form and Defensive Stance threat 50 -> 115, 30 -> 80 | n/a (threat) |
+| MAGE-HF-02 | Arcane Concentration chance split across the Arcane Missiles channel (11-09 hotfix) | **wrong**: full 10% per missile. Scratch build: mage__arcane -0.73%. Finding client_update-20261110-1 |
+| MAGE-HF-03 | Flamestrike ticks no longer use Clearcasting | landed |
+| SHA-HF-01 | Lightning Overload deals the correct Lightning Bolt damage | landed (probably; the sim already uses half the bolt) |
+| SHR-U-21/22 | ilvl 65 trinkets 272437-9 stat cuts and longer use cooldowns; Flamebreak Talisman use 50 -> 33, 3 -> 5 min | stale db / use effects not simulated; no request wears them. Finding client_update-20261110-2 (low) |
+| HUN-HF-02/03 | Arcane Shot, Summon Hawk cost 11% base mana (about 189 at 60 vs 190) | wrong by about 1 mana; below noise, no finding |
+| DRU-U-18 | Natural Instinct mask takes Lacerate's bleed and Pounce Bleed | n/a (no DPS request uses either) |
 
-Measured cost of SHR-U-19 (scratch before/after build, 180 s, 20k iterations, seeds 1 and 1000003; both seeds agree within 0.05%):
+Measured (180 s, 20k iterations, `dps_beforeafter.sh`, master CLI vs master + chance/5 on missile ticks):
 
-| Request | Flask | Before | After | Delta |
+| Request | Seed | Before | After | Delta |
 |---|---|---|---|---|
-| druid__feral-cat | Aggression | 1168.78 | 1150.99 | -1.52% |
-| hunter__marksmanship | Aggression | 1253.96 | 1231.99 | -1.75% |
-| hunter__survival | Precision | 1040.08 | 1006.62 | -3.22% |
-| rogue__combat-daggers | Accuracy | 954.64 | 936.22 | -1.93% |
-| rogue__mutilate | Precision | 863.36 | 846.50 | -1.95% |
-| warrior__arms | Aggression | 1087.13 | 1068.42 | -1.72% |
-| warrior__fury | Precision | 1136.41 | 1092.76 | -3.84% |
-
-The scratch edit: Stamina 30, hit 2/2, crit 2/2, expertise 2, speeds 1.02. With the bonus at 2%, standards item 11's flask choice per spec should be rechecked (Supreme Power or Titans may now win for some).
+| mage__arcane | 1 | 969.28 | 962.07 | -7.21 (-0.74%) |
+| mage__arcane | 1000003 | 969.26 | 962.25 | -7.01 (-0.72%) |
+| mage__frostfire | 1 | 1064.26 | 1064.26 | 0 |
 
 ## Ledger
 
-Added `## Build 1.60.1.70862 (first seen 2026-11-07)` with rows SHR-U-19, SHR-U-20, MAGE-HF-01, WL-HF-01, DRU-U-17, WAR-U-15; Summary 767 -> 773 rows. For the orchestrator: `.agents/skills/dps-report/state.json` `foreverClientBuild` -> 1.60.1.70862.
+Added `## Build 1.60.1.70888 (first seen 2026-11-10)` to `orchestration/update_ledger.md` with 10 rows (MAGE-HF-02/03, SHA-HF-01, DRU-U-18, SHR-U-21/22, HUN-HF-02/03/04, DRU-HF-01) and updated the Summary counts (773 -> 783).
 
-## Open findings
-
-client_update-20261105-1 (feral exact rank values) still open: `nov2BleedScale` is still on Bite, Rake and Rip.
+For the orchestrator: set `.agents/skills/dps-report/state.json` `foreverClientBuild` to 1.60.1.70888. The class tuning Blizzard announced for November 10 (pets, Wrack versus the DoTs, Enhancement Strength) is not in 70888; the next build or hotfix should carry it.

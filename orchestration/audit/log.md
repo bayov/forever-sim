@@ -288,3 +288,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-10 13:18 | tank_mechanics | pass 8 | master ca5e35c3f | quiet | no tank code changed
 2026-11-10 13:18 | tank_rotations | pass 7 | master ca5e35c3f | 1 new finding | tank_rotations-20261110-1 (high): Maul no longer procs Windfury Totem, Heroic Strike does; bear -12%
 2026-11-10 13:18 | tank_fairness | pass 7 | master ca5e35c3f | quiet | 4 open findings unchanged
+2026-11-10 18:56 | consumables | pass 78 | master da272241e | quiet | Chief's Enforcer proc not in any preset; 0 consumable changes in 70888
+2026-11-10 18:56 | mechanics | pass 73 | master da272241e | quiet | one item proc commit, no preset uses it; no shared mechanic moved
+2026-11-10 18:56 | client_update | pass 12 | master da272241e | 2 new findings | client_update-20261110-1 (medium): Arcane Concentration chance split across Arcane Missiles channel; -2 (low): ilvl 65 trinkets stale in db
+2026-11-10 18:56 | healer_mechanics | pass 8 | master da272241e | 1 new finding | healer_mechanics-20261110-12 (medium): Nature's Swiftness should make Wild Growth instant
+2026-11-10 18:56 | tank_mechanics | pass 9 | master da272241e | quiet | 70888 touches no tank mechanics
