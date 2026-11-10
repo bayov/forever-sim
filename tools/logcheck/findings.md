@@ -6,22 +6,6 @@ sections 2 and 6 have the format).
 
 ## Fix in the sim
 
-### Fire Nova rank 1 keeps its full coefficient at 36 to 39
-
-- **Flag**: `Fire Nova (408423): raw`, mob levels 26 to 42, 4 windows.
-- **Windows**: `WoWCombatLog-110726_203718.txt 21:55:17` (level 36 to 39, 38 spell power): log 40.2 avg in 56 hits, sim 37.3. Every window from level 26 to 42 has the log at about 40.0.
-- **What we think**: full coefficient gives 35.0 + 0.143 x 38 = 40.4, the log. The sim's downranking penalty (`sim/core/downrank.go`, rank learned at 12, so 50% at 39) gives 37.7, the sim. This is the newer low rank log the "Forever's downranking penalty" Need to Verify item asked for, and it says no penalty at a 27 level gap. Windows at levels 18 to 25 have the log about 1.5 below the sim (33.0 vs 34.5), cause unknown.
-- **Next step**: the user's ruling on the penalty (drop it, or shrink it). The reduced proc chance part isn't modelled either way.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
-
-### Two Forever enchants changed under the same ID
-
-- **Flag**: `sheet` (Stamina -2, Health -15 from level 12 on).
-- **Windows**: every Nov 5-8 window from level 12.
-- **What we think**: enchant 41 went from +5 Health to +2 Stamina and 66 from +1 to +3 Stamina in the Forever client. The sim's `db.json` still has the old values. logcheck now takes the client's stats when they differ, so the audit no longer shows it, but the sim's own gear does.
-- **Next step**: refresh the enchants from the client (`/update-sources`), or fix the two by hand.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
-
 ## Collect more data
 
 ### Dungeon mobs take about 2 less spell damage per hit
@@ -53,26 +37,13 @@ sections 2 and 6 have the format).
 
 ## logcheck issues
 
-### The first imbue cast in a log doesn't end the window
+### Melee and Stormstrike now run higher in the sim than in the log
 
-- **Flag**: `Flametongue Attack (10444): never` and `procs`, `Melee: raw` and `Stormstrike (17364): raw` with the sim above the log, mob levels 44 and 45.
-- **Windows**: `WoWCombatLog-111026_075640.txt 08:26:21-08:48:02` (Nov 10): Flametongue Weapon was still on from the Nov 9 session, and we cast Rockbiter Weapon at 08:37:49. The sim played the whole window with Rockbiter: Flametongue never fired (log 39 to 64 per 100 landed swings), Melee raw 349.5 to 382.7 in the log vs the sim's 411.5 to 412.9, Stormstrike 570.8 to 575.7 vs 627.7 to 633.6, sheet AP +495 in the sim.
-- **What we think**: `imbueCuts` in `tools/logcheck/audit.go` only cuts between two imbue casts in the same log, because it doesn't know the imbue before the first one. But Flametongue and Windfury show by their procs (`imbueProcs`, which `setImbue` already reads).
-- **Next step**: in `imbueCuts`, take the imbue before the first cast from the procs before it (`imbueProcs`), and cut there too when it differs. Then `-redo` this log.
+- **Flag**: `Melee: raw` (157 windows with the sim above the log) and `Stormstrike (17364): raw` (71), after logcheck began adding export-time buffs (2026-11-10 redo).
+- **Windows**: e.g. `WoWCombatLog-111026_075640.txt 08:37:49-08:48:02` (Rockbiter) runs the other way: Melee 419 to 427 in the log vs the sim's 410, Stormstrike 661 vs 629 to 637.
+- **What we think**: a buff from the export that `windowBuffs` (`tools/logcheck/buffs.go`) gives for the whole window may have faded during the fight (Well Fed most likely). Or Rockbiter's AP is off. Blood Fury and Razorhide aren't read at all, and the `sheet` flag still fires on 176 of 422 windows (about +0.4% dodge in the sim, the old Str -2 / Agi +2 / Int +2 offset, and an imbue at export time that differs from the window's).
+- **Next step**: split the windows by whether Well Fed was up at the fight, and compare Rockbiter windows with Flametongue ones.
 - **Status**: open, first seen 2026-11-10, last updated 2026-11-10.
-
-### Buffs at export time make the sheet higher than the sim
-
-- **Flag**: `sheet` (31 of 31 windows), `Melee: raw` (24), `Stormstrike (17364): raw` (13), small spell raw rows like Flame Shock rank 4 +1.
-- **Windows**: e.g. 07:42:29 on Nov 5: Stamina -6 (Stamina scroll +4, Rock Skin +2), AP -28.5 (Blessing of Might +25, Well Fed), crit -1.9 (Camp Benefits, whose chair part is +2% crit and isn't in the buff list). Devotion Aura or the Armor scroll explain Armor -150 to -194, Blessing of Kings the big Nov 7 stat gaps. The AP gap explains the white damage gap (AP/14 x 3.3 = +6.7 expected, +6.5 seen), and Stormstrike's formula holds once the AP from white hits is used.
-- **Window** `WoWCombatLog-110826_085019.txt 21:00:57-21:17:14` (levels 36 to 43, Mograine's Might): the sheet runs the other way, AP +424 in the sim, because the export was taken in Ghost Wolf (buffs: Well-Rested, Ghost Wolf). The fight still shows the usual gap: Melee raw 386.4 in 31 hits vs the sim's 365.6 at level 41, Stormstrike 581.1 in 15 hits vs 559.9, Flame Shock rank 4 ticks 47 vs 46.3 and direct 179 vs 178. So a sheet taken in a form says nothing about the fight, and the AP for damage rows should come from the window's white hits.
-- **Window** `WoWCombatLog-110826_085019.txt 21:17:30-21:34:39` (levels 39 to 41, level 43, Mograine's Might at 209-210 of 215): the export at 21:22:50 had Blessing of Kings, Well Fed, Stoneskin and Windfury Totem up. The sheet is Strength +16, Stamina +12, Intellect +10, Spirit +12 and AP +46 over the sim, which Kings (10%) and Well Fed explain. Melee raw 378.8 in 32 hits vs the sim's 363.1 at level 40, Stormstrike 594.2 in 19 vs 564.0, and the spell rows 1 over (Flame Shock 179 vs 178, Lightning Shield 126 vs 125, about the sheet's 2.4 extra Nature power). Blood Fury shows in the logged AP (1478 to 1626). One glance in 28 swings at level 41 (sim 0%) fits the skill going 209 to 210 in the window, at the edge of the glance threshold.
-- **Windows** `WoWCombatLog-110826_085019.txt 23:58:01-00:02:56`, `00:06:11-00:09:28` and `00:14:26-00:16:53` (Nov 8-9, level 43 to 44, mobs 40 to 44): the sheet is AP +65 to +71 over the sim with Camp Benefits, Well Fed and Veteran Adventurer's Loyal Companion up. Melee raw runs 374.6 to 389.9 against the sim's 357 to 361, and Stormstrike 585.3 to 599.0 against 553.6 to 559.7, the usual AP gap.
-- **Windows** `WoWCombatLog-110826_085019.txt 00:51:26-01:10:15` and `01:15:02-01:23:24` (Nov 9, level 44, mobs 40 to 45): the first had Camp Benefits and Well Fed (AP +71.5 on the sheet), and the second had another shaman's Strength of Earth and Windfury Totem plus Blessing of Kings (Strength +18, AP +51.5). Melee raw runs 373.9 to 390.7 against the sim's 359 to 370, and Stormstrike 569.1 to 610.8 against 553.0 to 583.3.
-- **Window** `WoWCombatLog-110926_151906.txt 23:11:05-23:26:03`: Lightning Bolt 286.5 to 289.3 raw against the sim's 282. Mark of the Wild, Blessing of Kings, Fortitude and Divine Spirit give 23 Intellect, which Mental Quickness 2/2 turns into 6.9 spell power (sheet Nature power 59.0 vs 52.7), so +4.9 a bolt. Before the buffs at 23:11 the bolts were 284.3. `23:51:48-23:55:38` (same buffs): Lightning Bolt 292.0 in 5 hits vs 281.6. Lightning Shield, Earth Shock, Magma Totem and Fire Nova move the same way.
-- **What we think**: history records carry `buffs` and the sheet check now lists them, but logcheck doesn't add their stats to the sim. Other players' Blessing of Might mid-window also moves AP (244 to 271 in 06:37).
-- **Next step**: add the stats of the buffs up at export time to the sim's character (a table of the common ones), or compare the sheet against the sim plus those buffs, and take the AP for damage rows from the window's white hits.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-09 (hourly run, Nov 9 windows).
 
 ### BayovCore cuts the gear list short
 
@@ -81,15 +52,6 @@ sections 2 and 6 have the format).
 - **What we think**: `isArray` in BayovCore's `Modules/Export.lua` writes the gear table as a list cut at the first gap. `historyGear` in `tools/logcheck/history.go` now keeps the slots a login's list dropped.
 - **Next step**: fix `isArray` in the addon so it always writes an object.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
-
-### Evades counted as outcomes the sim never rolls
-
-- **Flag**: `Melee: evade`, `Stormstrike (17364): evade`, `Earth Shock (10412): evade` (NEW), mob level 42.
-- **Windows**: `WoWCombatLog-110826_085019.txt 23:58:01-00:02:56`: Melee 2 of 23, Stormstrike 1 of 11 and Earth Shock 1 of 9 evaded. The sim gives 0%.
-- **What we think**: a mob that leashes back or resets evades everything for a moment. That's the fight, not a combat table outcome, and the sim's target never evades. logcheck counts the evades as attempts against the mob's level.
-- **Window** `WoWCombatLog-111026_075640.txt 08:26:21-08:48:02` (Nov 10): Melee 4 of 112 and Stormstrike 1 of 45 evaded at mob level 45.
-- **Next step**: have logcheck drop EVADE lines (or the attacks on a mob while it evades) before it builds the outcome rows, in `tools/logcheck`. Until then, read an evade flag as a leash.
-- **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
 
 ## Watching
 
@@ -132,6 +94,26 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
 
 ## Done
+
+### Fire Nova rank 1 keeps its full coefficient
+
+- **Done**: 2026-11-10. The sim has given the downranking penalty to heals only since 2026-11-08 (`sim/core/downrank.go`), and the "Forever's downranking penalty" Need to Verify item tracks the heal side. The redo has the log at 40.2, 40.2 and 40.5 against the sim's 40.0 at levels 36, 37 and 39. Level 38 (dungeon, 37.6) and levels 33 to 35 (38.8 to 39.4 vs 40.0 to 40.1) still run a little under the sim.
+
+### Two Forever enchants changed under the same ID
+
+- **Done**: 2026-11-10 (04bdcdb9). `tools/database/forever_enchants.go` takes the client's stats for enchants 41 (+2 Stamina, was +5 Health) and 66 (+3 Stamina, was +1), and keeps their IDs.
+
+### Buffs at export time make the sheet higher than the sim
+
+- **Done**: 2026-11-10 (490e230b). `tools/logcheck/buffs.go` adds the buffs up at export time from the client's spell rows (Well Fed and the Loyal Companion by hand, the Camp Chair's 2% crit only when the sheet shows it). Others' buffs follow the log's applies and removes during the fight. A sheet read in a form isn't flagged. Ledger: `sheet` 227 of 399 windows to 176 of 422, `Melee: raw` 557 to 274, `Stormstrike: raw` 335 to 191. What's left is in "Melee and Stormstrike now run higher in the sim than in the log".
+
+### Evades counted as outcomes the sim never rolls
+
+- **Done**: 2026-11-10 (490e230b). `tallyLog` in `tools/logcheck/main.go` drops EVADE outcomes. `evade` flags went from 20 to 0.
+
+### The first imbue cast in a log doesn't end the window
+
+- **Done**: 2026-11-10 (490e230b). `imbueCuts` in `tools/logcheck/audit.go` reads the imbue before the first cast from its procs. Nov 10 is now 08:26-08:37:49 (Flametongue) and 08:37:49-08:48 (Rockbiter), and the Flametongue never/procs flags are gone.
 
 ### Maelstrom Weapon gives a stack on every landed melee hit
 
