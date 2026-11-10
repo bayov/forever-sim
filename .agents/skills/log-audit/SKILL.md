@@ -1,6 +1,6 @@
 ---
 name: log-audit
-description: Audit the sim against the user's WoW Forever combat logs and BayovCore history, now and then hourly. Use on /log-audit (or "/log-audit stop"), "audit the logs", "check my new logs", after a play session, or when asked whether the sim still matches the game.
+description: Audit the sim against the user's WoW Forever combat logs and BayovCore history, and hourly or daily only when asked. Use on /log-audit (or "/log-audit hourly", "/log-audit daily", "/log-audit stop"), "audit the logs", "check my new logs", after a play session, or when asked whether the sim still matches the game.
 ---
 
 # Audit the sim against our combat logs
@@ -13,12 +13,13 @@ Run everything from `/home/bayov/projects/forever-sim`.
 
 ## Modes
 
-- **`/log-audit`**: run the audit, go through the findings with the user (sections 1 to 4),
-  then start the hourly runs (section 5) unless already scheduled.
-- **`/log-audit hourly`** (the scheduled prompt): section 6. Changes only
+- **`/log-audit`**: run the audit and go through the findings with the user (sections 1 to 4).
+  Don't schedule anything.
+- **`/log-audit hourly`**: like `/log-audit`, then schedule unattended runs every hour
+  (section 5). Only when the user asks for hourly runs.
+- **`/log-audit daily`**: the same, but daily (cron like `13 9 * * *`), replacing any hourly job.
+- **`/log-audit unattended`** (the scheduled prompt): section 6. Changes only
   `tools/logcheck/findings.md`.
-- **`/log-audit daily`**: like `/log-audit`, but schedule the unattended runs daily (cron like
-  `13 9 * * *`, still prompt `/log-audit hourly`), replacing any hourly job.
 - **`/log-audit stop`**: delete the job (CronList, then CronDelete) and say so.
 
 ## 1. Run the audit
@@ -109,29 +110,32 @@ no new windows though the user played.
   counts and log window. Mark it "Beta" when testable at the beta's level cap.
 - **`beta_handoff.md` "Recheck with every new log"**: when a settled answer breaks, tell the
   user and update its line.
-- **`tools/logcheck/findings.md`**: what's still open (format in section 6).
+- **`tools/logcheck/findings.md`**: what's still open (format below).
 - Commit what changed with `/cm`, without asking.
 
 ## 4. Tell the user
 
-Briefly: what the hourly runs found since we last looked and what we did about each; windows
+Briefly: what any unattended runs found since we last looked and what we did about each; windows
 checked, skipped as too small, and waiting; each new or unexplained flag with our verdict and
 what we did or propose; any sim change that needs their go.
 
 Publish a written report for others as an artifact only when asked.
 
-## 5. Start the hourly runs
+Remind the user to run `/log-audit` at least once a week: BayovCore keeps only 7 days of
+history in game and the archive (`history.py`, run by the audit) is the only full copy, so
+older records are lost without a run.
 
-Call CronList. When no job has the prompt `/log-audit hourly`, create one with CronCreate:
-recurring, prompt `/log-audit hourly`, at a minute other than 0 or 30 (like `17 * * * *`).
-Tell the user the next run time (from CronCreate), that the runs stop when this session
-closes, and that a recurring job expires after 7 days. Tell them to start `/log-audit` again
-within the week: BayovCore keeps only 7 days of history in game and the archive
-(`history.py`) is the only full copy, so older records are lost without a run.
+## 5. Schedule unattended runs (only when asked)
 
-## 6. An hourly run
+Only for `/log-audit hourly` or `/log-audit daily`, or when the user asks for scheduled runs.
+Call CronList. When no job has the prompt `/log-audit unattended`, create one with CronCreate:
+recurring, prompt `/log-audit unattended`, at a minute other than 0 or 30 (like `17 * * * *`
+hourly, `13 9 * * *` daily). Tell the user the next run time (from CronCreate), that the runs
+stop when this session closes, and that a recurring job expires after 7 days.
 
-The user may be away and other sessions share the working copy. So an hourly run:
+## 6. An unattended run
+
+The user may be away and other sessions share the working copy. So an unattended run:
 
 - doesn't change the sim, logcheck, `known.json`, `notes.md` or `beta_handoff.md`
 - writes and commits only `tools/logcheck/findings.md`:
@@ -173,5 +177,5 @@ Each finding is a `###` heading with a short name, then:
   how many swings or casts, against what), or the logcheck fix.
 - **Status**: `open`, the date first seen and the date of the last update.
 
-Never remove a finding in an hourly run; only `/log-audit` with the user moves one to "Done".
+Never remove a finding in an unattended run; only `/log-audit` with the user moves one to "Done".
 End with a few lines: the windows run, and each finding added or updated.
