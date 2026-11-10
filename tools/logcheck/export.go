@@ -67,6 +67,9 @@ type export struct {
 	// change or logout.
 	history bool
 	kind    string
+	// buffLog is every buff record of the history file this export came from, or nil for a
+	// pasted export.
+	buffLog *buffTimeline
 	// session is the history file and the login a history record belongs to.
 	session string
 	// guid is the character's GUID: the export's own when it has one, or else the one the logs

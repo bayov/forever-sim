@@ -184,21 +184,118 @@ type buffStep struct {
 	ids []int32
 }
 
-// windowBuffs follows the buffs with stats that others put on us, from the log's start to the
-// window's end. It returns the set at the window's start and the set after each change in it.
+// buffSpan is a time a buff was up, from `from` up to `to`.
+type buffSpan struct{ from, to time.Time }
+
+// timelineSpans reads BayovCore's buff records up to `to` and returns the times each buff was up.
+// The records count from the first full one, and that record's time is `from`. ok is false when
+// there's no full record by `to`, which is every window from before 2026-11-10.
 //
-// Our own buffs and totems are left out, because the replay casts them. The log misses some
-// removals: on Nov 8 Blessing of Kings went on at 09:48 and again at 10:06 with no removal in
-// between. So a buff also ends when its duration from the last apply runs out. A buff whose
-// first line in the log is its removal was up before the log started. A death takes them all off.
+// A buff that runs out ends when its time left says, even when we never got a record of it
+// going. That covers a buff that ran out in combat, while the game hid our buffs from the addon.
+// A buff we lost while they were hidden ends when we saw it gone, unless it ran out before that.
+// A buff we gained while they were hidden started when its duration minus its time left says.
+// A buff that lasts until it's removed has no duration, so then we only know it was up by the
+// record's time.
+func timelineSpans(records []buffRecord, to time.Time) (spans map[int32][]buffSpan, from time.Time, ok bool) {
+	type up struct{ since, ends time.Time }
+	spans = map[int32][]buffSpan{}
+	ups := map[int32]*up{}
+	end := func(id int32, at time.Time) {
+		b := ups[id]
+		if !b.ends.IsZero() && b.ends.Before(at) {
+			at = b.ends
+		}
+		if at.After(b.since) {
+			spans[id] = append(spans[id], buffSpan{b.since, at})
+		}
+		delete(ups, id)
+	}
+	for _, r := range records {
+		if r.t.After(to) {
+			break
+		}
+		if !ok {
+			if !r.full {
+				continue
+			}
+			ok, from = true, r.t
+		}
+		// The earliest the changes in this record can have happened.
+		earliest := r.t.Add(-r.hidden)
+		if r.full {
+			listed := map[int32]bool{}
+			for _, g := range r.gained {
+				listed[g.id] = true
+			}
+			for id := range ups {
+				if !listed[id] {
+					end(id, r.t)
+				}
+			}
+		}
+		for _, id := range r.lost {
+			if ups[id] != nil {
+				end(id, r.t)
+			}
+		}
+		for _, g := range r.gained {
+			since, ends := r.t, time.Time{}
+			if g.dur > 0 {
+				ends = r.t.Add(g.left)
+				since = ends.Add(-g.dur)
+				// A full record lists buffs we had before it, so only a change record says
+				// how early its buffs can have come.
+				if !r.full && since.Before(earliest) {
+					since = earliest
+				}
+				if since.After(r.t) {
+					since = r.t
+				}
+			}
+			if b := ups[g.id]; b != nil {
+				// Still up, with a new time left. But a buff that ran out before this one
+				// came is two spans.
+				if b.ends.IsZero() || !b.ends.Before(since) {
+					b.ends = ends
+					continue
+				}
+				end(g.id, b.ends)
+			}
+			ups[g.id] = &up{since, ends}
+		}
+	}
+	for id := range ups {
+		end(id, to.Add(time.Hour))
+	}
+	return spans, from, ok
+}
+
+// windowBuffs follows the buffs with stats that others put on us, and the ones we don't cast
+// ourselves (like Well Fed), from the log's start to the window's end. It returns the set at
+// the window's start and the set after each change in it.
 //
-// Some buffs never show in the log (Well Fed, a totem's aura). Those come from the export: when
-// the export has one, we take it as up for the whole window. That's a guess, because the export
-// was read at one moment, but it's the only thing that knows about them.
+// Our own buffs and totems are left out, because the replay casts them.
+//
+// A buff the log shows going on and off us is followed in the log, because the log has its
+// exact times even in combat. The log misses some removals: on Nov 8 Blessing of Kings went on at
+// 09:48 and again at 10:06 with no removal in between. So a buff also ends when its duration
+// from the last apply runs out. A buff whose first line in the log is its removal was up before
+// the log started.
+//
+// Some buffs never show in the log (Well Fed, a totem's aura). Since 2026-11-10 BayovCore
+// records each buff we gain or lose (timelineSpans), and from its first full record on, that
+// says when those buffs were up. Before that, all we have is the export. When it lists such a
+// buff, we take it as up for the whole window. That's a guess, because the export was read at
+// one moment. Neither the history's sheets nor the pasted exports say how long a buff had left,
+// so the guess can't end it when it ran out.
+//
+// A death takes off every buff we follow in the log or in the addon's records.
 func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables) []buffStep {
 	ours := map[string]bool{cl.me: true}
 	var ourCasts []string
 	logged := map[int32]bool{}
+	var deaths []time.Time
 	for _, e := range all {
 		if e.kind == "SPELL_SUMMON" && e.srcGUID == cl.me {
 			ours[e.dstGUID] = true
@@ -209,22 +306,50 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables) 
 		if e.dstGUID == cl.me && strings.HasPrefix(e.kind, "SPELL_AURA_") {
 			logged[e.spellID] = true
 		}
+		if e.kind == "UNIT_DIED" && e.dstGUID == cl.me && !e.t.After(cl.to) {
+			deaths = append(deaths, e.t)
+		}
+	}
+	// The buffs we take from the export or the addon. Our own totem's aura (Strength of Earth
+	// from Strength of Earth Totem) doesn't show in the log either, and the replay has it already.
+	unlogged := func(id int32) bool {
+		if logged[id] || !tables.hasBuffStats(id) {
+			return false
+		}
+		name := tables.spellNames[id]
+		return !slices.ContainsFunc(ourCasts, func(cast string) bool { return name != "" && strings.HasPrefix(cast, name) })
 	}
 
-	type span struct{ from, to time.Time }
-	spans := map[int32][]span{}
+	spans := map[int32][]buffSpan{}
 	forever := cl.to.Add(time.Hour)
-	for _, id := range buffIDs(ex.Buffs) {
-		if logged[id] || !tables.hasBuffStats(id) {
+	var timeline []buffRecord
+	if ex.buffLog != nil {
+		timeline = ex.buffLog.records
+	}
+	fromAddon, covered, ok := timelineSpans(timeline, cl.to)
+	guessUntil := forever
+	if ok {
+		guessUntil = covered
+	}
+	if guessUntil.After(all[0].t) {
+		for _, id := range buffIDs(ex.Buffs) {
+			if unlogged(id) {
+				spans[id] = []buffSpan{{all[0].t, guessUntil}}
+			}
+		}
+	}
+	for id, list := range fromAddon {
+		if !unlogged(id) {
 			continue
 		}
-		// Our own totem's aura (Strength of Earth from Strength of Earth Totem) doesn't show
-		// either, and the replay has it already.
-		name := tables.spellNames[id]
-		if slices.ContainsFunc(ourCasts, func(cast string) bool { return name != "" && strings.HasPrefix(cast, name) }) {
-			continue
+		for _, s := range list {
+			for _, d := range deaths {
+				if s.from.Before(d) && d.Before(s.to) {
+					s.to = d
+				}
+			}
+			spans[id] = append(spans[id], s)
 		}
-		spans[id] = []span{{all[0].t, forever}}
 	}
 
 	type state struct {
@@ -242,7 +367,7 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables) 
 		if end := ends(id, st); end.Before(t) {
 			t = end
 		}
-		spans[id] = append(spans[id], span{st.since, t})
+		spans[id] = append(spans[id], buffSpan{st.since, t})
 		st.on = false
 	}
 	for _, e := range all {
@@ -274,7 +399,7 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables) 
 			if d := tables.buffDurations[id]; d > 0 && e.t.Add(-d).After(from) {
 				from = e.t.Add(-d)
 			}
-			spans[id] = append(spans[id], span{from, e.t})
+			spans[id] = append(spans[id], buffSpan{from, e.t})
 		case e.kind == "SPELL_AURA_REMOVED":
 		default:
 			if st.on && ends(id, st).Before(e.t) {
@@ -297,7 +422,7 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables) 
 	at := func(t time.Time) []int32 {
 		var ids []int32
 		for id, list := range spans {
-			if slices.ContainsFunc(list, func(s span) bool { return !t.Before(s.from) && t.Before(s.to) }) {
+			if slices.ContainsFunc(list, func(s buffSpan) bool { return !t.Before(s.from) && t.Before(s.to) }) {
 				ids = append(ids, id)
 			}
 		}

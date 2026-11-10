@@ -26,19 +26,79 @@ const historySettle = 5 * time.Second
 // logout and /reload, just before WoW saves the history, so its time says the history is
 // complete up to then. We still rebuild an export for it, the same as the one before. The sheet ("stats") and the full talent list ("ref") are
 // ids into <key>.blobs.json, because the addon stores each distinct one once.
+//
+// A "buffs" record (since 2026-11-10) holds the buffs we gained and lost at a moment. It makes
+// no export. We keep it in the history file's buff timeline (buffTimeline) instead.
 type historyRecord struct {
-	Kind    string           `json:"kind"`
-	Date    string           `json:"date"`
-	When    json.RawMessage  `json:"when"`
-	Who     map[string]any   `json:"who"`
-	Gear    historyGear      `json:"gear"`
-	Skills  historySkills    `json:"skills"`
-	Imbues  json.RawMessage  `json:"imbues"`
-	Talents map[string]any   `json:"talents"`
-	Level   *int             `json:"level"`
-	Stats   string           `json:"stats"`
-	Buffs   json.RawMessage  `json:"buffs"`
-	Errors  map[string]any   `json:"errors"`
+	Kind    string          `json:"kind"`
+	Date    string          `json:"date"`
+	When    json.RawMessage `json:"when"`
+	Who     map[string]any  `json:"who"`
+	Gear    historyGear     `json:"gear"`
+	Skills  historySkills   `json:"skills"`
+	Imbues  json.RawMessage `json:"imbues"`
+	Talents map[string]any  `json:"talents"`
+	Level   *int            `json:"level"`
+	Stats   string          `json:"stats"`
+	Buffs   json.RawMessage `json:"buffs"`
+	Errors  map[string]any  `json:"errors"`
+
+	// The "buffs" record's fields.
+	Ms     *int    `json:"ms"`
+	Full   bool    `json:"full"`
+	Hidden float64 `json:"hidden"`
+	Gained []struct {
+		ID   int32   `json:"id"`
+		Dur  float64 `json:"dur"`
+		Left float64 `json:"left"`
+	} `json:"gained"`
+	Lost []int32 `json:"lost"`
+}
+
+// buffTimeline is every "buffs" record of one history file, in time order.
+type buffTimeline struct {
+	records []buffRecord
+}
+
+// buffRecord is what one "buffs" record says. BayovCore's Modules/Export.lua (its "Buffs"
+// part) writes them.
+//
+// A full record lists every buff we had, so a buff that isn't in it isn't up. The addon writes
+// one after each login, reload and snapshot. Any other record lists only what changed.
+//
+// In combat the game hides our buffs from addons. So a record after combat says what changed
+// while they were hidden, and hidden says for how long before t that was.
+type buffRecord struct {
+	t      time.Time
+	full   bool
+	hidden time.Duration
+	gained []buffGain
+	lost   []int32
+}
+
+// buffGain is one buff in a record's gained list. dur is its full duration and left the time it
+// had left at the record's time. Both are 0 for a buff that lasts until it's removed.
+type buffGain struct {
+	id        int32
+	dur, left time.Duration
+}
+
+func seconds(s float64) time.Duration { return time.Duration(s * float64(time.Second)) }
+
+func (tl *buffTimeline) add(rec historyRecord) error {
+	t, err := time.Parse(stampFormat, rec.Date)
+	if err != nil {
+		return err
+	}
+	if rec.Ms != nil {
+		t = t.Add(time.Duration(*rec.Ms) * time.Millisecond)
+	}
+	r := buffRecord{t: t, full: rec.Full, hidden: seconds(rec.Hidden), lost: rec.Lost}
+	for _, g := range rec.Gained {
+		r.gained = append(r.gained, buffGain{id: g.ID, dur: seconds(g.Dur), left: seconds(g.Left)})
+	}
+	tl.records = append(tl.records, r)
+	return nil
 }
 
 // historySkills is a record's skill lines.
@@ -130,6 +190,7 @@ func replayHistory(path string) ([]*export, error) {
 
 	// The character as of the last record, in the export's own shape.
 	var state map[string]any
+	timeline := &buffTimeline{}
 	gear := map[int]json.RawMessage{}
 	var exports []*export
 	logins := 0
@@ -139,6 +200,12 @@ func replayHistory(path string) ([]*export, error) {
 		var rec historyRecord
 		if err := json.Unmarshal(scanner.Bytes(), &rec); err != nil {
 			return nil, fmt.Errorf("%s:%d: %w", path, line, err)
+		}
+		if rec.Kind == "buffs" {
+			if err := timeline.add(rec); err != nil {
+				return nil, fmt.Errorf("%s:%d: %w", path, line, err)
+			}
+			continue
 		}
 		// A login the addon read before the game loaded the character holds no gear, no
 		// skills and an error for the talents. The change record right after it holds the
@@ -233,6 +300,7 @@ func replayHistory(path string) ([]*export, error) {
 			return nil, err
 		}
 		ex.history = true
+		ex.buffLog = timeline
 		ex.kind = rec.Kind
 		ex.session = fmt.Sprintf("%s#%d", path, logins)
 		exports = append(exports, ex)

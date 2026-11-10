@@ -6,6 +6,10 @@ records the character's setup as it changes: a full snapshot at login, then each
 talent change, level up and skill up, and the sheet after a change. Each record is a compact JSON
 string. Sheets and talent lists are stored once and records point at them by id.
 
+Since 2026-11-10 it also records each buff we gain or lose, as "buffs" records in a list of their
+own (char.buffs), so they don't push the gear records out of the addon's cap. We put them in the
+same <key>.jsonl as the rest, and logcheck tells them apart by their kind.
+
 Since 2026-10-22 the history is in its own addon's saved variables, BayovExportHistory.lua
 (BayovExportHistoryDB.chars), so it isn't part of BayovCore's own file. Before that it was in
 BayovCore.lua (BayovCoreDB.modules.export.chars), and a client the addon isn't deployed to still
@@ -172,7 +176,7 @@ def merge(archive, key, char):
     seen = set(lines)
 
     new = []
-    for r in char.get('records') or []:
+    for r in (char.get('records') or []) + (char.get('buffs') or []):
         j = r.get('j') if isinstance(r, dict) else None
         if not j or j in seen:
             continue
@@ -201,11 +205,15 @@ def merge(archive, key, char):
             json.dump(blobs, f, separators=(',', ':'), sort_keys=True)
         os.replace(tmp, blobs_path)
     if new:
-        # Records come in time order within one file, but two accounts or a late flush can
-        # interleave, so we sort the whole file by time. The sort is stable, so records from
-        # the same second keep the order the addon wrote them in.
+        # Records come in time order within one file, but two accounts, a late flush or the
+        # buff records' own list can interleave, so we sort the whole file by time. A buff record
+        # has its milliseconds in "ms". The sort is stable, so records from the same moment keep
+        # the order the addon wrote them in.
+        def when(j):
+            r = json.loads(j)
+            return r.get('t', 0) + (r.get('ms') or 0) / 1000
         both = lines + new
-        both.sort(key=lambda j: json.loads(j).get('t', 0))
+        both.sort(key=when)
         tmp = records_path + '.tmp'
         with open(tmp, 'w', encoding='utf-8') as f:
             f.write('\n'.join(both) + '\n')
