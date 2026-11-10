@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "c2f8ef392ae05c19f8b53d4b8f3fa93e76be94b9"
+  "master": "242bbee394de428b8c4e8ab6804168ef4d608297"
  },
  "last_pass_at": "2026-11-09T00:49:39Z",
  "pass": 71,
  "result": "quiet",
  "note": "Pass 71: 9ba00c2dc..66a243cf8, 2 sim commits (WF Totem white MH swings only under Forever, user ruling; Orc shaman base stats 2-43, leveling only): no finding, verdicts updated (HS/on-next-swing open item). Client 70862 unchanged. Dev notes unchanged since post 10. Blue: Nov 8 dungeon XP +50% (t/2406595), not combat.",
  "client_build": "1.60.1.70862",
- "checked_at": "2026-11-09T18:44:56Z",
+ "checked_at": "2026-11-10T00:48:22Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
