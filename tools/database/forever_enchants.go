@@ -72,10 +72,14 @@ var ForeverEnchants = []*proto.UIEnchant{
 	foreverEnchant(13419, "Enchant Cloak - Minor Agility", proto.ItemType_ItemTypeBack),
 	foreverEnchant(1219587, "Enchant Cloak - Agility", proto.ItemType_ItemTypeBack),
 
-	// Chest. Superior Stamina (Enchanting 220) was Superior Health (+50 health) in Classic.
+	// Chest. Minor Health (enchant 41) gives +2 Stamina now, not +5 health. Superior Stamina (Enchanting 220) was Superior Health (+50 health) in Classic.
 	foreverEnchant(13858, "Enchant Chest - Superior Stamina", proto.ItemType_ItemTypeChest),
+	foreverKeepEffect(41, 7420, "Enchant Chest - Minor Health", proto.ItemType_ItemTypeChest),
 
-	// Bracer.
+	// Bracer. Minor Health (enchant 41) gives +2 Stamina now, not +5 health, and Minor Stamina
+	// (enchant 66) +3 Stamina, not +1.
+	foreverKeepEffect(41, 7418, "Enchant Bracer - Minor Health", proto.ItemType_ItemTypeWrist),
+	foreverKeepEffect(66, 7457, "Enchant Bracer - Minor Stamina", proto.ItemType_ItemTypeWrist),
 	foreverEnchant(7779, "Enchant Bracer - Minor Agility", proto.ItemType_ItemTypeWrist),
 	foreverEnchant(7782, "Enchant Bracer - Minor Strength", proto.ItemType_ItemTypeWrist),
 	foreverEnchant(1248458, "Enchant Bracer - Minor Intellect", proto.ItemType_ItemTypeWrist),
@@ -103,7 +107,8 @@ var ForeverEnchants = []*proto.UIEnchant{
 	foreverEnchant(1213626, "Enchant Gloves - Arcane Power", proto.ItemType_ItemTypeHands),
 	foreverEnchant(1248645, "Enchant Gloves - Natural Power", proto.ItemType_ItemTypeHands),
 
-	// Boots.
+	// Boots. Minor Stamina (enchant 66) is +3 Stamina now, not +1.
+	foreverKeepEffect(66, 7863, "Enchant Boots - Minor Stamina", proto.ItemType_ItemTypeFeet),
 	foreverEnchant(7867, "Enchant Boots - Minor Agility", proto.ItemType_ItemTypeFeet),
 	foreverEnchant(13637, "Enchant Boots - Lesser Agility", proto.ItemType_ItemTypeFeet),
 
@@ -134,6 +139,14 @@ var ForeverEnchants = []*proto.UIEnchant{
 
 func foreverEnchant(spellID int32, name string, itemType proto.ItemType) *proto.UIEnchant {
 	return &proto.UIEnchant{EffectId: spellID, SpellId: spellID, Name: name, Quality: proto.ItemQuality_ItemQualityCommon, Type: itemType}
+}
+
+// foreverKeepEffect is for an enchant that keeps its Classic effect ID although Forever changed
+// what it gives, so the presets and imports that name the effect ID still find it.
+func foreverKeepEffect(effectID int32, spellID int32, name string, itemType proto.ItemType) *proto.UIEnchant {
+	enchant := foreverEnchant(spellID, name, itemType)
+	enchant.EffectId = effectID
+	return enchant
 }
 
 func foreverTwoHand(spellID int32, name string) *proto.UIEnchant {
