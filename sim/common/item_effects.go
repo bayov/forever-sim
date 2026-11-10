@@ -37,6 +37,7 @@ const (
 	TheJackhammer             = 9423
 	PendulumOfDoom            = 9425
 	ManualCrowdPummeler       = 9449
+	TheChiefsEnforcer         = 9477
 	BloodletterScalpel        = 9511
 	TheHandOfAntusul          = 9639
 	GryphonRidersStormhammer  = 9651
@@ -2544,6 +2545,29 @@ func init() {
 		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18086, DmgMin: 150},
 		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 1300753, DmgMin: 140},
 		0, core.DefenseTypeMagic)
+
+	// https://www.wowhead.com/forever/item=9477/the-chiefs-enforcer
+	// Forever: Chance on hit: Farraki Enforcement (1294339) deals 294 Physical damage and stuns for
+	// 1.5 sec. Trolls take twice the damage and twice the stun.
+	//
+	// The client states no rate for it, so the rate comes from the user's Nov 10 log. In the 2.4
+	// hours the history shows it in the main hand, 69 procs came from 1071 landed melee hits, which
+	// is 6.4% a hit (95% interval 5.1% to 8.1%). That is 1.14 PPM at the staff's 3.4 speed. Fixed
+	// chance and PPM look the same with only one weapon speed, and 1 PPM (5.7%) fits the log too.
+	// White swings, Stormstrike and Windfury Totem's extra swings all proc it, at the same rate
+	// within the noise. None of the 285 misses, dodges and parries did.
+	//
+	// The proc rolls its own melee table. 13 of the 69 were dodged, parried or missed, and 6 of the
+	// 56 that landed were crits. Armor takes the same share off it as off Stormstrike on the same
+	// mob. It never procced off its own hit. At 6.4% we'd expect about 3.6 of the 56 landed procs
+	// to chain into another one, and there were none.
+	//
+	// The stun is not simulated. The sim's target has no notion of a Troll, so we always deal the
+	// 294 and never the 588 trolls take.
+	itemhelpers.CreateWeaponCoHProcByRuleset(TheChiefsEnforcer, "The Chief's Enforcer", core.SpellSchoolPhysical,
+		itemhelpers.WeaponProc{},
+		itemhelpers.WeaponProc{PPM: 1.14, SpellID: 1294339, DmgMin: 294, NoSelfProc: true},
+		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=13401/the-cruel-hand-of-timmy
 	// Chance on hit: Lowers all attributes of target by 15 for 1 min.

@@ -16,13 +16,15 @@ func CreateWeaponProcDamage(itemId int32, itemName string, ppm float64, spellId 
 }
 
 // WeaponProc is a damage proc's rate, spell and damage, DmgMin to DmgMin + DmgRange. A non-zero
-// ExecuteMultiplier multiplies the damage on a target below 25% health.
+// ExecuteMultiplier multiplies the damage on a target below 25% health. With NoSelfProc, the
+// proc's own melee hit can't trigger it again.
 type WeaponProc struct {
 	PPM               float64
 	SpellID           int32
 	DmgMin            float64
 	DmgRange          float64
 	ExecuteMultiplier float64
+	NoSelfProc        bool
 }
 
 // Creates a "Chance on Hit" weapon proc whose damage the Forever client changed: classic and
@@ -120,6 +122,9 @@ func createWeaponProcDamage(itemId int32, itemName string, school core.SpellScho
 			},
 			OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				if spell.Flags.Matches(spellFlagExclude) { // This check is needed because it doesn't use aura_helpers ApplyProcTriggerCallback
+					return
+				}
+				if proc.NoSelfProc && spell == procSpell {
 					return
 				}
 				if result.Landed() && ppmm.Proc(sim, spell.ProcMask, aura.Label) {

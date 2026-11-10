@@ -283,7 +283,7 @@ func TestForeverElementalSharpeningStoneHand(t *testing.T) {
 func nearly(a, b float64) bool { return a-b < 1e-6 && b-a < 1e-6 }
 
 // Chance-on-hit damage only the Forever client gives these weapons (wowsims/forever's store and
-// db.json). Classic has no proc spell for them.
+// db.json). Classic has no proc spell for them. The Chief's Enforcer's rate comes from a log instead.
 func TestForeverOnlyWeaponProcDamage(t *testing.T) {
 	for _, c := range []struct {
 		name     string
@@ -294,6 +294,7 @@ func TestForeverOnlyWeaponProcDamage(t *testing.T) {
 		{"Doombringer", 13053, 18211, 161, 301},
 		{"Witchfury", 13051, 18214, 150, 150},
 		{"Grim Reaper", 13054, 14126, 130, 130},
+		{"The Chief's Enforcer", 9477, 1294339, 294, 294},
 	} {
 		sim, war := newWarriorWithMainHand(t, proto.Ruleset_RulesetForever, c.item)
 		spell := war.GetSpell(core.ActionID{SpellID: c.spellID})
@@ -301,7 +302,8 @@ func TestForeverOnlyWeaponProcDamage(t *testing.T) {
 			t.Errorf("Forever %s: no proc spell %d", c.name, c.spellID)
 			continue
 		}
-		// Grim Reaper's Wound is physical: take the boss's armor off for the range.
+		// Grim Reaper's Wound and the Enforcer's Farraki Enforcement are physical. We take the boss's
+		// armor off for the range.
 		war.CurrentTarget.AddStatDynamic(sim, stats.Armor, -war.CurrentTarget.GetStat(stats.Armor))
 		lo, hi := procRange(sim, war, spell, 2000)
 		if lo < c.min-1e-6 || hi > c.max+1e-6 || lo > c.min+0.02*(c.max-c.min)+1e-6 || hi < c.max-0.02*(c.max-c.min)-1e-6 {
