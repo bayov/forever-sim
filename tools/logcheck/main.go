@@ -180,9 +180,14 @@ func main() {
 	r.weaponSkills(*fullSkill)
 	r.exportChanges(exportsAround(exports, ex, from, to))
 	r.logNotes()
+	steps := windowBuffs(all, cl, ex, tables)
+	r.windowBuffs(steps)
 
 	logTallies := tallyLog(cl)
 	for _, p := range plans(cl) {
+		for _, step := range steps {
+			p.buffs = append(p.buffs, timedStats{at: step.at, stats: tables.buffTotal(step.ids, char.unbuffed, char.campChair)})
+		}
 		simTallies, stats := replay(char.player, p, *iterations)
 		r.level(p, logTallies, simTallies, stats)
 	}
@@ -339,6 +344,12 @@ func tallyLog(cl *combatLog) *tallies {
 		}
 		d, isDamage := e.damage()
 		outcome := logOutcome(e, d, isDamage)
+		// A mob that leashes back or resets evades everything we throw at it for a moment.
+		// That's the fight, not the combat table, and the sim's mob never evades. So we leave
+		// those attacks out (Nov 8 at 23:58: 2 of 23 swings evaded at level 42).
+		if outcome == "evade" {
+			continue
+		}
 		physical := key.spell == 0 || (isDamage && d.school == 1) || (!isDamage && len(e.f) > 11 && e.f[11] == "0x1")
 		share := 0.0
 		if isDamage && d.resisted > 0 {

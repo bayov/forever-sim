@@ -2,13 +2,17 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"maps"
 	"math"
 	"path/filepath"
 	"slices"
 	"strconv"
 	"strings"
 	"time"
+
+	googleproto "google.golang.org/protobuf/proto"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -75,18 +79,38 @@ func (r *report) header() {
 	fmt.Println()
 }
 
-// sheet compares the export's character sheet with the sim's stats for the same character.
-// The sheet has whatever buffs were up when the user exported, and the sim has none.
-func (r *report) sheet() {
+// sheetStats are the sim's stats for our character with extra stats on top.
+func (r *report) sheetStats(extra stats.Stats) (stats.Stats, error) {
+	c := &character{player: googleproto.Clone(r.char.player).(*proto.Player)}
+	// Under Forever the sim takes bonus stats like gear, whose crit goes on melee and spells
+	// alike. A buff's crit is with everything too, so it goes in once.
+	extra[stats.SpellCrit] = 0
+	c.addBonusStats(extra)
 	result := core.ComputeStats(&proto.ComputeStatsRequest{
-		Raid:    core.SinglePlayerRaidProto(r.char.player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Raid:    core.SinglePlayerRaidProto(c.player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 		Ruleset: proto.Ruleset_RulesetForever,
 	})
 	if result.ErrorResult != "" {
-		fmt.Println("Sheet check failed:", result.ErrorResult)
+		return stats.Stats{}, errors.New(result.ErrorResult)
+	}
+	return stats.FromFloatArray(result.RaidStats.Parties[0].Players[0].FinalStats.Stats), nil
+}
+
+// sheet compares the export's character sheet with the sim's stats for the same character,
+// with the buffs that were up when BayovCore read the sheet (buffs.go).
+func (r *report) sheet() {
+	base, err := r.sheetStats(stats.Stats{})
+	if err != nil {
+		fmt.Println("Sheet check failed:", err)
 		return
 	}
-	s := stats.FromFloatArray(result.RaidStats.Parties[0].Players[0].FinalStats.Stats)
+	r.char.unbuffed = base
+	ids := buffIDs(r.ex.Buffs)
+	s, err := r.sheetStats(r.tables.buffTotal(ids, base, false))
+	if err != nil {
+		fmt.Println("Sheet check failed:", err)
+		return
+	}
 
 	sheet := func(path ...string) (float64, bool) {
 		var value any
@@ -111,7 +135,23 @@ func (r *report) sheet() {
 		return base + pos + neg, ok
 	}
 
-	fmt.Println("Sheet check (the export's sheet has the buffs that were up, the sim has none)")
+	form := ""
+	for _, id := range ids {
+		if r.tables.isForm(id) {
+			form = r.tables.spellNames[id]
+		}
+	}
+	// The Camp Chair shows as 2% more crit on the sheet than the sim has (buffs.go).
+	if crit, ok := sheet("crit"); ok && form == "" && slices.Contains(ids, campBenefits) &&
+		crit-(s[stats.MeleeCrit]-0.04*r.mainHandSkillGap()) >= 0.75*campChairCrit {
+		r.char.campChair = true
+		if s, err = r.sheetStats(r.tables.buffTotal(ids, base, true)); err != nil {
+			fmt.Println("Sheet check failed:", err)
+			return
+		}
+	}
+
+	fmt.Println("Sheet check (the export's sheet against the sim with the buffs up at export time)")
 	fmt.Printf("  %-14s %8s %8s %8s\n", "", "sheet", "sim", "diff")
 	var off []string
 	rows := []struct {
@@ -146,16 +186,22 @@ func (r *report) sheet() {
 		}
 		fmt.Printf("  %-14s %8.2f %8.2f %+8.2f%s\n", row.name, want, row.sim, diff, mark)
 	}
-	buffs := r.exportBuffs()
-	if len(buffs) > 0 {
-		fmt.Printf("  Buffs up with the sheet: %s\n", strings.Join(buffs, ", "))
+	added, left := r.exportBuffs(ids)
+	if len(added) > 0 {
+		fmt.Printf("  Buffs up with the sheet, in the sim: %s\n", strings.Join(added, ", "))
 	}
-	if len(off) > 0 {
+	if len(left) > 0 {
+		fmt.Printf("  Buffs up with the sheet, no stats in the sim: %s\n", strings.Join(left, ", "))
+	}
+	if form != "" {
+		// A form changes the sheet in ways the sim doesn't follow, so a gap says nothing.
+		fmt.Printf("  The sheet was read in %s, so we don't check it.\n", form)
+	} else if len(off) > 0 {
 		// Every damage row depends on these stats, so a gap here explains damage flags
 		// below before any sim formula does.
-		what := fmt.Sprintf("the sim's character differs from the sheet (%s). A buff up at export time explains a sheet that's higher, anything else is a gap in the sim's character that moves the damage rows", strings.Join(off, ", "))
-		if len(buffs) > 0 {
-			what += fmt.Sprintf(". Buffs up with the sheet: %s", strings.Join(buffs, ", "))
+		what := fmt.Sprintf("the sim's character with the buffs up at export time differs from the sheet (%s). It's a gap in the sim's character or a buff we don't know, and it moves the damage rows", strings.Join(off, ", "))
+		if len(left) > 0 {
+			what += fmt.Sprintf(". Buffs with no stats in the sim: %s", strings.Join(left, ", "))
 		}
 		fmt.Printf("  WARNING: %s.\n", what)
 		r.flagged = append(r.flagged, finding{Kind: "sheet", What: what})
@@ -163,27 +209,50 @@ func (r *report) sheet() {
 	fmt.Println()
 }
 
-// exportBuffs names the buffs the history record says were up with the sheet. Camp Benefits
-// doesn't say which camp items it holds, and its Camp Chair adds 2% crit to melee and spells.
-func (r *report) exportBuffs() []string {
-	var ids []any
-	if json.Unmarshal(r.ex.Buffs, &ids) != nil {
-		return nil
-	}
-	var names []string
+// exportBuffs names the buffs the history record says were up with the sheet: the ones whose
+// stats the sim got, and the rest.
+func (r *report) exportBuffs(ids []int32) (added, left []string) {
 	for _, id := range ids {
-		n, ok := id.(float64)
-		if !ok {
-			names = append(names, fmt.Sprint(id))
-			continue
-		}
-		name := r.tables.spellNames[int32(n)]
+		name := r.tables.spellNames[id]
 		if name == "" {
 			name = "spell"
 		}
-		names = append(names, fmt.Sprintf("%s (%d)", name, int32(n)))
+		label := fmt.Sprintf("%s (%d)", name, id)
+		switch {
+		case id == campBenefits && r.char.campChair:
+			added = append(added, label+" with the Camp Chair")
+		case id == campBenefits:
+			left = append(left, label+" without the Camp Chair")
+		case r.tables.hasBuffStats(id):
+			added = append(added, label)
+		default:
+			left = append(left, label)
+		}
 	}
-	return names
+	return added, left
+}
+
+// windowBuffs says which buffs from others the sim gives us in the window, and for how long.
+func (r *report) windowBuffs(steps []buffStep) {
+	up := map[int32]time.Duration{}
+	window := r.cl.to.Sub(r.cl.from)
+	for i, step := range steps {
+		end := window
+		if i+1 < len(steps) {
+			end = steps[i+1].at
+		}
+		for _, id := range step.ids {
+			up[id] += end - step.at
+		}
+	}
+	if len(up) == 0 {
+		return
+	}
+	var names []string
+	for _, id := range slices.Sorted(maps.Keys(up)) {
+		names = append(names, fmt.Sprintf("%s (%d) %.0f%%", r.tables.spellNames[id], id, 100*up[id].Seconds()/window.Seconds()))
+	}
+	fmt.Printf("Buffs from others the sim gives us in the window, with the share of it they were up: %s\n\n", strings.Join(names, ", "))
 }
 
 // exportChanges warns when the character changed during the window in a way the sim can't
@@ -373,7 +442,7 @@ func (r *report) logNotes() {
 			names = append(names, fmt.Sprintf("%s x%d", name, n))
 		}
 		slices.Sort(names)
-		fmt.Printf("Buffs from other players, which the sim doesn't have: %s\n", strings.Join(names, ", "))
+		fmt.Printf("Buffs from other players: %s\n", strings.Join(names, ", "))
 	}
 	fmt.Println()
 }

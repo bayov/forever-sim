@@ -9,6 +9,7 @@ import (
 	"os"
 	"path/filepath"
 	"strconv"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -34,6 +35,11 @@ type clientTables struct {
 	// Some Forever enchants give their stats through such a spell (enchant 41, "Stamina +2",
 	// casts Inferior Stamina, 7419).
 	equipStats map[int32]stats.Stats
+	// buffEffects holds the stat auras of each spell, for the buffs on us (buffs.go).
+	buffEffects map[int32][]buffEffect
+	// buffDurations holds how long each of those buffs lasts, 0 for one that lasts until it's
+	// removed (a paladin aura).
+	buffDurations map[int32]time.Duration
 	// bonusShares holds the stat shares of each item bonus list, by its ID. Forever gives an
 	// item its random suffix ("of the Falcon") as a bonus list in the item link.
 	bonusShares map[int32][]statShare
@@ -142,11 +148,62 @@ func loadClientTables(dir, build string) (*clientTables, error) {
 		delete(tables.equipStats, spell)
 	}
 
+	// The stat auras of every buff (buffs.go). An aura on ourselves (6) or a party or raid
+	// aura (35 and 65, like a totem's or a paladin aura's).
+	tables.buffEffects = map[int32][]buffEffect{}
+	for _, row := range effects.rows {
+		if effect := row.get("Effect"); effect != "6" && effect != "35" && effect != "65" {
+			continue
+		}
+		aura := row.int("EffectAura")
+		if !buffAuras[aura] {
+			continue
+		}
+		amount, _ := strconv.ParseFloat(row.get("EffectBasePointsF"), 64)
+		spell := row.int("SpellID")
+		tables.buffEffects[spell] = append(tables.buffEffects[spell], buffEffect{aura: aura, misc: row.int("EffectMiscValue_0"), amount: amount})
+	}
+	if err := tables.loadBuffDurations(dir); err != nil {
+		// Without them a buff whose removal the log missed stays on to the window's end.
+		fmt.Fprintln(os.Stderr, "buff durations:", err)
+	}
+
 	if err := tables.loadItemBonuses(dir); err != nil {
 		// Without them the random suffixes are left off, and the report says so.
 		fmt.Fprintln(os.Stderr, "item bonuses:", err)
 	}
 	return tables, nil
+}
+
+// loadBuffDurations reads SpellMisc and SpellDuration for the buffs in buffEffects and
+// buffOverrides.
+func (t *clientTables) loadBuffDurations(dir string) error {
+	build := t.build
+	durations, err := wagoTable(dir, &build, "SpellDuration")
+	if err != nil {
+		return err
+	}
+	byIndex := map[int32]time.Duration{}
+	for _, row := range durations.rows {
+		if ms := row.int("Duration"); ms > 0 {
+			byIndex[row.int("ID")] = time.Duration(ms) * time.Millisecond
+		}
+	}
+	misc, err := wagoTable(dir, &build, "SpellMisc")
+	if err != nil {
+		return err
+	}
+	t.buffDurations = map[int32]time.Duration{}
+	for _, row := range misc.rows {
+		spell := row.int("SpellID")
+		_, override := buffOverrides[spell]
+		if _, ok := t.buffEffects[spell]; ok || override || spell == campBenefits {
+			if d, ok := byIndex[row.int("DurationIndex")]; ok {
+				t.buffDurations[spell] = d
+			}
+		}
+	}
+	return nil
 }
 
 // loadItemBonuses reads ItemBonus and RandPropPoints. They go on their own copy of

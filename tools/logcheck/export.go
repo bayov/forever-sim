@@ -305,6 +305,10 @@ func exportChanges(a, b *export) ([]string, map[string]skillChange) {
 type character struct {
 	player *proto.Player
 	notes  []string
+	// unbuffed is the sim's stats with no buffs, which a percent buff goes on (buffs.go).
+	unbuffed stats.Stats
+	// campChair says the export's sheet shows the Camp Chair's crit with Camp Benefits up.
+	campChair bool
 }
 
 // buildPlayer turns the export into a sim player with no buffs, no consumes and no rotation.

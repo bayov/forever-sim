@@ -11,6 +11,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // replayCast is one of our casts from the log, to repeat in the sim at the same time.
@@ -35,6 +36,14 @@ type plan struct {
 	// hitsPerMinute is how often mobs hit us during these fights, spread over the whole sim.
 	// It sets off our Lightning Shield the way the mobs did.
 	hitsPerMinute float64
+	// buffs are the stats of others' buffs on us (buffs.go), from each time on.
+	buffs []timedStats
+}
+
+// timedStats are stats from a time in the window on.
+type timedStats struct {
+	at    time.Duration
+	stats stats.Stats
 }
 
 // replayStats counts what happened to the replayed casts in all iterations.
@@ -206,6 +215,18 @@ func replayOnce(base *proto.Player, p *plan, seed int64) (*tallies, *replayStats
 	for _, w := range p.windows {
 		at(max(w[0], 2*time.Millisecond), func(sim *core.Simulation) { char.AutoAttacks.EnableAutoSwing(sim) })
 		at(w[1], func(sim *core.Simulation) { char.AutoAttacks.CancelAutoSwing(sim) })
+	}
+
+	// Others' buffs go on and off at the log's times. The first one waits for combat start
+	// at 1 ms, like everything else here.
+	had := timedStats{}.stats
+	for _, b := range p.buffs {
+		if b.at > p.duration {
+			break
+		}
+		change := b.stats.Subtract(had)
+		had = b.stats
+		at(max(b.at, time.Millisecond), func(sim *core.Simulation) { char.AddStatsDynamic(sim, change) })
 	}
 
 	for _, c := range p.casts {

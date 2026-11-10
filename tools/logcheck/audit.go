@@ -39,6 +39,8 @@ import (
 	"sync"
 	"syscall"
 	"time"
+
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 const (
@@ -449,17 +451,33 @@ func itemLevelCuts(cl *combatLog, history []*export) []cut {
 // The export doesn't see a shaman's imbue under Forever, and the sim keeps one imbue for the
 // whole window (setImbue). On 2026-11-09 a window held 45 minutes of Rockbiter Weapon and then
 // 16 of Flametongue Weapon, and the sim gave Flametongue procs for all of it.
+//
+// The imbue before the first cast in the log can be from an earlier session, since it lasts 30
+// minutes and survives a relog. Flametongue and Windfury show by their procs, so we take it from
+// the procs before the first cast, and cut there too when the cast is another imbue. On Nov 10
+// Flametongue was still on from the night before, and we cast Rockbiter at 08:37:49.
 func imbueCuts(cl *combatLog) []cut {
 	var cuts []cut
 	last, lastID := "", ""
+	var procs proto.WeaponImbue
+	procName := ""
 	for _, e := range cl.events {
+		if lastID == "" && e.srcGUID == cl.me && isAttack(e.kind) {
+			if value, ok := imbueProcs[e.spellID]; ok {
+				procs, procName = value, e.spell
+			}
+		}
 		if e.kind != "SPELL_CAST_SUCCESS" || e.srcGUID != cl.me {
 			continue
 		}
-		if _, ok := imbueFromName(e.spell); !ok {
+		imbue, ok := imbueFromName(e.spell)
+		if !ok {
 			continue
 		}
 		id := fmt.Sprint(e.spellID)
+		if lastID == "" && procs != 0 && procs != imbue {
+			cuts = append(cuts, cut{e.t.Add(-time.Second), e.t, fmt.Sprintf("%s procs to %s", procName, e.spell)})
+		}
 		if lastID != "" && id != lastID {
 			// The window before ends a second early. Its end rounds up to the next whole
 			// second, and setImbue takes the last imbue cast up to that end, so a cut right at
