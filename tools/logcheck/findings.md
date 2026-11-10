@@ -52,6 +52,14 @@ sections 2 and 6 have the format).
 
 ## logcheck issues
 
+### The first imbue cast in a log doesn't end the window
+
+- **Flag**: `Flametongue Attack (10444): never` and `procs`, `Melee: raw` and `Stormstrike (17364): raw` with the sim above the log, mob levels 44 and 45.
+- **Windows**: `WoWCombatLog-111026_075640.txt 08:26:21-08:48:02` (Nov 10): Flametongue Weapon was still on from the Nov 9 session, and we cast Rockbiter Weapon at 08:37:49. The sim played the whole window with Rockbiter: Flametongue never fired (log 39 to 64 per 100 landed swings), Melee raw 349.5 to 382.7 in the log vs the sim's 411.5 to 412.9, Stormstrike 570.8 to 575.7 vs 627.7 to 633.6, sheet AP +495 in the sim.
+- **What we think**: `imbueCuts` in `tools/logcheck/audit.go` only cuts between two imbue casts in the same log, because it doesn't know the imbue before the first one. But Flametongue and Windfury show by their procs (`imbueProcs`, which `setImbue` already reads).
+- **Next step**: in `imbueCuts`, take the imbue before the first cast from the procs before it (`imbueProcs`), and cut there too when it differs. Then `-redo` this log.
+- **Status**: open, first seen 2026-11-10, last updated 2026-11-10.
+
 ### Buffs at export time make the sheet higher than the sim
 
 - **Flag**: `sheet` (31 of 31 windows), `Melee: raw` (24), `Stormstrike (17364): raw` (13), small spell raw rows like Flame Shock rank 4 +1.
@@ -78,6 +86,7 @@ sections 2 and 6 have the format).
 - **Flag**: `Melee: evade`, `Stormstrike (17364): evade`, `Earth Shock (10412): evade` (NEW), mob level 42.
 - **Windows**: `WoWCombatLog-110826_085019.txt 23:58:01-00:02:56`: Melee 2 of 23, Stormstrike 1 of 11 and Earth Shock 1 of 9 evaded. The sim gives 0%.
 - **What we think**: a mob that leashes back or resets evades everything for a moment. That's the fight, not a combat table outcome, and the sim's target never evades. logcheck counts the evades as attempts against the mob's level.
+- **Window** `WoWCombatLog-111026_075640.txt 08:26:21-08:48:02` (Nov 10): Melee 4 of 112 and Stormstrike 1 of 45 evaded at mob level 45.
 - **Next step**: have logcheck drop EVADE lines (or the attacks on a mob while it evades) before it builds the outcome rows, in `tools/logcheck`. Until then, read an evade flag as a leash.
 - **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
 
