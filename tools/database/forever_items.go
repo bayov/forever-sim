@@ -878,4 +878,45 @@ var ForeverItems = []*proto.UIItem{
 		WeaponDamageMin: 89, WeaponDamageMax: 134, WeaponSpeed: 3.00,
 		Ilvl: 42, RequiredLevel: 37, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
 	},
+	// Revealed November 9 to 10 (https://foreverchanges.pro/hidden-items), with the stats
+	// from the page and the wowhead Forever tooltips, which agree. No source is known yet.
+	// Expertise and hit are typed as the tooltips print them: 10 expertise rating is 1.0%
+	// less chance to be dodged or parried (Expertise 1, as forever_wowhead.go converts it),
+	// 15 hit rating is 1.5% hit. Spearfisher's Waders' 10 dodge rating (0.8%) has no
+	// conversion in the sim and is left out, like the wowhead listing drops it, and so is
+	// its +8 Fishing. Sayaad Charm's use (charm a humanoid) is not in the sim.
+	{
+		Id: 287033, Name: "Furbolg Berserker's Boots", Icon: "inv_boots_chain_08",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats: stats.Stats{stats.Armor: 417, stats.Strength: 18, stats.Spirit: 9, stats.Expertise: 1}.ToFloatArray(),
+		Ilvl:  58, RequiredLevel: 53, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 280084, Name: "Furbolg Rib Protector", Icon: "inv_chest_leather_06",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats:     stats.Stats{stats.Armor: 338, stats.Agility: 20, stats.Stamina: 15}.ToFloatArray(),
+		HitRating: 15,
+		Ilvl:      57, RequiredLevel: 52, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		BindOnPickup: true,
+	},
+	{
+		Id: 287031, Name: "Spearfisher's Waders", Icon: "inv_pants_06",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats: stats.Stats{stats.Armor: 301, stats.Agility: 17, stats.Intellect: 19}.ToFloatArray(),
+		Ilvl:  58, RequiredLevel: 53, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 276456, Name: "Plague Defiled Buckler", Icon: "inv_shield_09",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeShield, HandType: proto.HandType_HandTypeOffHand,
+		Stats: stats.Stats{stats.Armor: 2057, stats.BlockValue: 38, stats.Stamina: 8, stats.NatureResistance: 10, stats.SpellPower: 13}.ToFloatArray(),
+		Ilvl:  60, RequiredLevel: 55, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		BindOnPickup: true,
+	},
+	{
+		Id: 284231, Name: "Sayaad Charm", Icon: "spell_shadow_charm",
+		Type:  proto.ItemType_ItemTypeTrinket,
+		Stats: stats.Stats{stats.ShadowResistance: 20}.ToFloatArray(),
+		Ilvl:  63, RequiredLevel: 58, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		Unique: true, BindOnPickup: true,
+	},
 }
