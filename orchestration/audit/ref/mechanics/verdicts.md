@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-11-09 UTC, master 66a243cf8, client 1.60.1.70862)
+# Mechanics audit: verdicts and settled items (as of 2026-11-10 UTC, master ca5e35c3f, client 1.60.1.70862)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -91,6 +91,6 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 - Troll Shadowguard deals the triggered row's 96 (28382); the buff row 19312 states 116 and triggers the dummy 28376. Up to about 0.7 DPS on Troll Shadow; priest docs list it as unknown.
 - Berserker Rage's extra Rage from spell hits (sim/warrior/berserker_rage.go) still uses Classic's attacker-level conversion under Forever. No Level 60 preset casts it.
 - Normal mob health above level 35 is extrapolated; since 2026-10-23 it no longer feeds damage-taken Rage (the formula uses the attacker's level only), only leveling.
-- Class-side open assumptions (owned by the class workers): Paladin 2H Weapon Specialization on seal procs, Seal of Righteousness stored base points, Maelstrom Weapon proc rate, Omen of Clarity chance, Arcane Blast's bonus on Arcane Missiles.
+- Class-side open assumptions (owned by the class workers): Paladin 2H Weapon Specialization on seal procs, Seal of Righteousness stored base points, Omen of Clarity chance, Arcane Blast's bonus on Arcane Missiles. Settled: Maelstrom Weapon gives a stack on every landed melee hit at every rank under Forever (beta logs 2026-11-08/09, 2756 of 2760 white swings, tier 1; 408498 proc=100 and no PPM row in 70862; sim bcc5d6cd4, pass 72). Flametongue Weapon rank 5 is 7 below its client points at 47 (one log, one weapon speed; class-side, bcc5d6cd4).
 - Kang the Decapitator (2291) Rend proc 17153: 100 every 3 sec for 15 sec, physical bleed, verified on 70707 (`sp.py 17153`: dur 15000, eff 6 aura 3 bp 100 per 3000); 1 PPM assumed (no rate in the client). Pass 55, tier 1.
 - Swiftmend (pass 64): post 9's 2026-11-04T02:12Z edit adds "This ability does not consume the Rejuvenation or Regrowth effect on the target" (tier 1). Correction (healer_mechanics-20261104-2/-9): the sim has Swiftmend (`sim/druid/healing.go`); it consumed the HoT until the druid worker gated the cancel off under Forever.

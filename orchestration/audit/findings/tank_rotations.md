@@ -2,6 +2,24 @@
 
 ## Open
 
+### tank_rotations-20261110-1: Windfury Totem's white-swing-only rule drops Maul but keeps Heroic Strike, cutting bear SafeDPS 12%
+- severity: high (bear SafeDPS -12% at every weight; warrior -5%, warden -3%, paladin -2%)
+- affects: every tank request (all raid-buff `TotemWeaponBuffWindfury`); most of all druid_bear_*
+- found: 2026-11-10, master ca5e35c3f
+- evidence: 0ce9dbf40 (`sim/core/buffs.go`, user ruling 2026-11-08 "for now") procs the totem under Forever only on
+  `ProcMaskMeleeMHAuto`. Heroic Strike's mask is `MHSpecial | MHAuto` (`sim/warrior/heroic_strike_cleave.go:25`),
+  so it still procs; Maul's is `MHSpecial` only (`sim/druid/bear_attacks.go:43`), so it no longer does. Both are
+  on-next-swing attacks, and the commit says these weren't checked. Pass 6 benched 9ba00c2dc, before 0ce9dbf40, so
+  it missed this. Scoring means, pass 6 -> now (1,000 its, default seed; score_err 15-60 per boss):
+  bear Balanced score 2499 -> 2007, SafeDPS 1883 -> 1650; Max threat 3492 -> 2954 (2024 -> 1758); Max survival
+  238 -> -298 (1649 -> 1460). Warrior Balanced 3880 -> 3637 (SafeDPS 2386 -> 2272); warden Balanced 1786 -> 1682;
+  paladin Balanced 2835 -> 2753. The other sim changes in range don't explain it: the Maelstrom/Flametongue commit
+  bcc5d6cd4 leaves all 21 Warden rows identical (built at its parent d7bb9ab80), and the orc base stats are levels 2-43.
+- proposed fix: rule on on-next-swing attacks: either Maul procs the totem like Heroic Strike (restores most of the
+  bear's 12%), or neither does (warrior loses more). A Forever log of a bear or a Heroic Strike warrior under the
+  totem would settle it. Sure of the asymmetry and the numbers; not of which way the game goes.
+- needs: user ruling
+
 ### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
 - severity: medium
 - affects: Protection warrior Max survival

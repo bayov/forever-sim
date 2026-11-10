@@ -1,7 +1,7 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-08, pass 6, master 9ba00c2 (shaman totem/imbue, whole-point spell rolls, heal-only downrank penalty; all 12 presets re-simmed against 73d5bfa, every six-boss mean within 0.2, so the numbers below stand) (orchestration/audit/reports/tank_fairness.md; table in orchestration/audit/ref/tank_fairness/summary.tsv).
+preset weight, its reasons, and the open questions. Last pass: 2026-11-10, pass 7, master ca5e35c (shaman Maelstrom Weapon and Flametongue Weapon rank 5 only; no Warden preset takes either, so not re-simmed). Numbers from pass 6, master 9ba00c2 (shaman totem/imbue, whole-point spell rolls, heal-only downrank penalty; all 12 presets re-simmed against 73d5bfa, every six-boss mean within 0.2, so the numbers below stand) (orchestration/audit/reports/tank_fairness.md; table in orchestration/audit/ref/tank_fairness/summary.tsv).
 
 ## Ranking (tankbench 3000 iterations, seed 1, six-boss mean, each spec's matching preset)
 

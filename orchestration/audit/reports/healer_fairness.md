@@ -1,19 +1,21 @@
-# Healer fairness pass 5 (2026-11-08, master 9ba00c2dc)
+# Healer fairness pass 6 (2026-11-10, master ca5e35c3f)
 
 Result: quiet. No new findings, none resolved. Still open: -5 (high, paladin raid preset's Holy Light lines; the
 preset is unchanged) and -4 (low, no healing by class in the boss files).
-Due because 12 watched files changed (sim/shaman/*, standards.md). What changed since 73d5bfa9e1 that can reach a
-healer: 2a60326a1 rounds every damage and heal roll to whole points (all healers alike); 0193721bc narrows Forever's
-downranking penalty to heals only (heals keep it, so no healer spell moves); 9ba00c2dc makes Windfury and
-Flametongue Totem replace each other and drops Flametongue Totem from the Enhancement presets (standards 25, 40).
-No healer request carries `totemWeaponBuff` or Flametongue, and no file under tools/healbench or tools/encounters
-changed, so section 1 stands as is.
+Due because 2 watched files changed, both in bcc5d6cd4: sim/shaman/flametongue_weapon.go (Forever cut of 7 on
+Flametongue Weapon rank 5) and sim/shaman/talents.go (Maelstrom Weapon stacks on every landed melee hit under
+Forever). Neither reaches a healer: both shaman requests imbue Brilliant Mana Oil (no Flametongue, and rank 6 at 60
+keeps its cut of 0), their talents (-035-5530503015513151 / -035-5530500315513151) have no Maelstrom Weapon, and
+healers don't melee. tools/healbench/req, tools/healbench and tools/encounters are unchanged since 91ad19535, so
+section 1 and the other classes' rows stand.
 
-Re-bench: all 9 requests in their own role on all 7 files at 1,000 iterations, healbench built from 9ba00c2dc.
-40 of 63 rows differ from `ref/healer_fairness/bench_0facd94.tsv`, all from the whole-point rolls: carry by at most
-0.002 in any cell, HPS by at most 0.2% (raid Broodlord shaman). Means: the raid shaman 1.396 -> 1.395, every other
-column the same to 3 places; ranking unchanged. New rows: `ref/healer_fairness/bench_9ba00c2.tsv`. The tables below
-are pass 2's; cells that moved are within 0.002 (Magmadar raid priest 2.054 -> 2.052, the largest).
+Spot check, healbench built from ca5e35c3f, 1,000 iterations, paired seeds: shaman_restoration (tank) and
+shaman_restoration_raid (raid) on Broodlord and Vaelastrasz match `ref/healer_fairness/bench_9ba00c2.tsv` exactly in
+every column (carry 0.974 / 0.894 tank, 0.902 / 1.152 raid). Not re-run: the other 59 cells (no input reaching them
+changed). Baseline stays bench_9ba00c2.tsv; the tables below are pass 2's with pass 5's note on moved cells.
+
+Pass 5 (master 9ba00c2dc): whole-point rolls moved carry by at most 0.002 a cell, the raid shaman mean 1.396 -> 1.395,
+ranking unchanged.
 
 ## 1. Same terms (the 9 requests)
 

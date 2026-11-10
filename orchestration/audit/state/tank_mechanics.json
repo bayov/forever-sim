@@ -1,17 +1,17 @@
 {
  "last": {
-  "master": "91ad195358bd60d7f85c7d8811075eb6e12cc567"
+  "master": "ca5e35c3f219524dc00e69edf5c9741eac3c0b0c"
  },
- "last_pass_at": "2026-11-08T18:52:00Z",
- "pass": 7,
- "result": "findings",
+ "last_pass_at": "2026-11-10T12:47:33Z",
+ "pass": 8,
+ "result": "quiet",
  "client_build": "1.60.1.70862",
- "checked_at": "2026-11-10T06:46:08Z",
+ "checked_at": "2026-11-10T13:18:42Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
   "edited": "2026-11-04T19:35:27Z",
   "post1_edited": "2026-11-03T03:20:46Z"
  },
- "note": "Pass 7 (9ba00c2dc): shaman range only (Stormstrike mark after calc, whole-point rolls, heals-only downranking, weapon totem slot). Warden unaffected beyond rounding; one low test-gap finding. 20261107-1 still open."
+ "note": "Pass 8 (ca5e35c3f): bcc5d6cd4 Maelstrom Weapon every hit and Flametongue r5 cut; no Warden preset takes Maelstrom Weapon or Flametongue, golden unchanged. Quiet. 20261107-1 and 20261108-1 still open."
 }

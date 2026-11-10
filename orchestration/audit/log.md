@@ -276,3 +276,15 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-09 01:05 | consumables | pass 76 | master 66a243cf8 | quiet | no new findings; 2 older open
 2026-11-09 01:05 | mechanics | pass 71 | master 66a243cf8 | quiet | Windfury white-only matches user ruling; HS/Cleave untested
 2026-11-09 01:05 | fairness | pass 33 | master 66a243cf8 | 1 new finding | fairness-20261109-1 (high): HS/Cleave still proc totem, Raptor Strike doesn't
+2026-11-10 13:18 | results | pass 82 | master ca5e35c3f | quiet | only 3 Enhancement builds moved (<=0.2%) from Maelstrom Weapon; open findings unchanged
+2026-11-10 13:18 | rotations | pass 58 | master ca5e35c3f | quiet | Lightning Bolt 5-stack gate holds under every-hit Maelstrom Weapon
+2026-11-10 13:18 | gear | pass 60 | master ca5e35c3f | quiet | enchants 41/66 change; no gear set uses them
+2026-11-10 13:18 | consumables | pass 77 | master ca5e35c3f | 1 new finding | consumables-20261110-1 (low): Minor Health/Stamina enchant naming vs client
+2026-11-10 13:18 | mechanics | pass 72 | master ca5e35c3f | quiet | Maelstrom Weapon every-hit settled in verdicts
+2026-11-10 13:18 | fairness | pass 34 | master ca5e35c3f | quiet | only Enhancement moved; fairness-20261109-1 still awaits ruling
+2026-11-10 13:18 | healer_mechanics | pass 7 | master ca5e35c3f | quiet | shaman changes reach no healer
+2026-11-10 13:18 | healer_rotations | pass 6 | master ca5e35c3f | quiet | 63-row baseline identical
+2026-11-10 13:18 | healer_fairness | pass 6 | master ca5e35c3f | quiet | Resto shaman cells match baseline
+2026-11-10 13:18 | tank_mechanics | pass 8 | master ca5e35c3f | quiet | no tank code changed
+2026-11-10 13:18 | tank_rotations | pass 7 | master ca5e35c3f | 1 new finding | tank_rotations-20261110-1 (high): Maul no longer procs Windfury Totem, Heroic Strike does; bear -12%
+2026-11-10 13:18 | tank_fairness | pass 7 | master ca5e35c3f | quiet | 4 open findings unchanged

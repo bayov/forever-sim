@@ -1,22 +1,18 @@
-# tank_mechanics pass 7 (2026-11-08, master 9ba00c2dc, client 1.60.1.70862+hf)
+# tank_mechanics pass 8 (2026-11-10, master ca5e35c3f, client 1.60.1.70862+hf)
 
-Due on 11 watched shaman files changed (73d5bfa9e..9ba00c2dc). Result: findings (one, low).
+Due on 2 watched shaman files changed (91ad19535..ca5e35c3f). Result: quiet.
 
-**Getting current:** wago's latest is still 1.60.1.70862 (pass 6 covered it); the loop checked the dev notes today (state `checked_at`). No ledger entries in range.
+**Getting current:** wago's latest is still 1.60.1.70862 (pass 6 covered it); dev notes checked by the loop today (state `checked_at`). No ledger entries in range.
 
-**What changed** (4 commits touching sim/shaman; read the hunks plus the helpers they call):
+**What changed:** one commit on the watched paths, bcc5d6cd4.
 
-| Commit | Change | Tank effect | Verdict | Tier |
-|---|---|---|---|---|
-| 5a870eccc | Stormstrike mark applied after CalcDamage (`applyStormstrike`, stormstrike.go:144), threat redone via ThreatFromDamage | Warden shocks: same damage and threat (multiplicative, same formula as spell_result.go:428) | match | 1 (live logs) |
-| 2a60326a1 | `sim.Roll` rounds to whole points; pushback rolls moved to RandomFloat | No tank proc/probability uses sim.Roll (grep of core, warrior, druid, paladin, shaman); Dragonbreath Chili 61-69 fine | match | 1 (live logs) |
-| 0193721bc | Downranking penalty on heals only | Warden shock ranks keep full coefficients | settled ruling | user 2026-11-08 |
-| 9ba00c2dc | Windfury/Flametongue Totem share one weapon slot, last placed wins | Warden presets: Rockbiter + raid Windfury Totem, own Searing/Fire Nova/Mana Spring; no Flametongue Totem | not affected | beta (user) |
+| Change | Tank effect | Verdict |
+|---|---|---|
+| Maelstrom Weapon (talents.go `applyMaelstromWeapon`): under Forever every landed melee hit gives a stack; Lightning Bolt 50% with Totem of the Storm | None: Enhancement talent 17 is 0 in all four Warden presets (ui/warden_shaman/presets.ts:99-111) | n/a for tanks (Enhancement's mechanics auditor owns it; logs, tier 1) |
+| Flametongue Weapon rank 5 cut 7 (flametongue_weapon.go) | None: Warden presets and test imbue Rockbiter (presets.ts:130, warden_test.go:57) | n/a for tanks |
 
-Golden deltas (TestWardenShaman, TestProtection): dps/tps move under 0.01, consistent with rounding only.
+Other commits in range: 04bdcdb9e (enchants 41 Minor Health, 66 Minor Stamina to client values; no level 60 tank preset uses them), item folds, logcheck tooling. No change in sim/core, sim/warrior, sim/paladin, sim/druid, sim/shaman/warden or tools/tankbench; TestWardenShaman.results unchanged.
 
-**Engine:** sim/core changes in range are cast.go (RNG label), downrank.go (scope), sim.go (Roll rounding), totem_weapon_buffs.go (slot). None touches the attack table, armor, block, Rage, threat stances/forms, the tank sheet or the score replay.
+**Engine and tests:** untouched this range; pass 7's checks stand.
 
-**Tests:** Stormstrike's own threat is pinned (warden/forever_test.go:263-271, :402); a shock under the mark is not. New finding tank_mechanics-20261108-1 (low).
-
-**Still open:** tank_mechanics-20261107-1 (stale 30%/50% labels in stances.go:110, bear.go:57, docs/tank_druid.md:22/:55) not yet fixed.
+**Open findings:** 20261107-1 (threat labels) and 20261108-1 (Stormstrike-mark shock threat test) remain open; neither file touched.

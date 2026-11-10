@@ -10,6 +10,7 @@
 - proposed fix: re-pick each Warden preset's race among Dwarf, Orc, Tauren, Troll and Skyborne Windshaper by its own objective (on the race table: Orc at Max threat and Balanced, Tauren at Max survival; Troll is within error of Orc at Balanced), in the requests, ui/warden_shaman/sim.ts and docs/tank_shaman.md; re-tune talents only if the race's racial touches the rotation (standards 29). A guard would stop it recurring: tankbench or the request check failing on a race outside CharBaseInfo's list for the class.
 - needs: worker fix
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
+- pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -19,6 +20,7 @@
 - proposed fix: paladin worker: the potion action plus Greater Stoneshield on all three presets (confirm at 10,000 on two seeds, then re-check the talents and knobs it may move, e.g. Max survival against Balanced), then the UI, docs/tank_paladin.md and the DPS Report Tanking data.
 - needs: worker fix
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
+- pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -49,6 +51,7 @@
 - pass 4 (2026-11-05, master a079415): unchanged in kind; Balanced healing needed paladin 245 against 317 / 457 / 692 (warrior, bear, Warden). Still waits on the user.
 - pass 3 (2026-11-04, master dc303b0): unchanged; Balanced healing needed paladin 197 against 323 / 488 / 853 (warrior, bear, Warden), -45% to -99% on every boss, score +29% over the others' mean. Waits on the user's calls.
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
+- pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low
@@ -62,6 +65,7 @@
 - pass 3 (2026-11-04, master dc303b0): unchanged; still the healing session's call.
 - pass 4 (2026-11-05, master a079415): unchanged (the file is still in tools/tankbench/req/).
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
+- pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 
 ## Resolved
 

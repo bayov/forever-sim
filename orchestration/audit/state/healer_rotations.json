@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "91ad195358bd60d7f85c7d8811075eb6e12cc567"
+  "master": "ca5e35c3f219524dc00e69edf5c9741eac3c0b0c"
  },
- "last_pass_at": "2026-11-08T19:19:14Z",
- "pass": 5,
+ "last_pass_at": "2026-11-10T13:20:00Z",
+ "pass": 6,
  "result": "quiet",
- "note": "Pass 5 on 9ba00c2dc. Changes: sim.Roll rounds to whole points (heals and boss hits), downrank penalty heals only (no healer damage spell matters), shaman WF/FT totem slot (not in healer requests). All 63 rows within 0.002 carry, 5 mana, 1 EHPS of ref; ref refreshed. -2 and -3 still open. baseline.sh rewritten a third time: commit tools/audit/healer_rotations/.",
+ "note": "Pass 6 on ca5e35c3f. Changes: Enhancement-only (Maelstrom Weapon every hit, Flametongue rank 5 cut) and enchants 41/66; none in healer requests. All 63 rows byte-identical to ref. -2 and -3 still open. baseline.sh rewritten a fourth time: commit tools/audit/healer_rotations/.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-10T06:46:08Z"
+ "checked_at": "2026-11-10T13:18:42Z"
 }

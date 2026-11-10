@@ -1,16 +1,16 @@
 {
  "last": {
-  "master": "91ad195358bd60d7f85c7d8811075eb6e12cc567"
+  "master": "ca5e35c3f219524dc00e69edf5c9741eac3c0b0c"
  },
- "last_pass_at": "2026-11-08T18:56:00Z",
- "pass": 6,
+ "last_pass_at": "2026-11-10T12:47:07Z",
+ "pass": 7,
  "result": "quiet",
- "note": "Pass 6: 11 shaman files changed. Downrank scope now heals only (0193721bc): all heal configs carry ProcMaskSpellHealing so heals unaffected. Whole-point rolls (2a60326a1) apply to heals; no probability Roll in heal paths. Weapon totem swap not healer. Client 70862, dev notes still 10 posts. Findings 10, 11 open.",
+ "note": "Pass 7: 2 shaman files (bcc5d6cd4). Maelstrom Weapon every-hit stacks only touch Lightning Bolt (no heal in the aura); Flametongue rank 5 cut is melee only; no healer preset takes MW. Client 70862, ledger unchanged. Findings 10, 11 open (Riptide still 147/231).",
  "client_build": "1.60.1.70862",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
   "edited": "2026-11-04T19:35:27Z"
  },
- "checked_at": "2026-11-10T06:46:08Z"
+ "checked_at": "2026-11-10T13:18:42Z"
 }

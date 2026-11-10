@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### consumables-20261110-1: Chest/bracer enchant 41 is named "Minor Health" but the client calls spells 7420/7418 "Inferior Stamina"
+- severity: low
+- affects: tools/database/forever_enchants.go (lines 77, 81); tools/database/enchant_overrides.go:97,120 still carry the old +5 Health stats for effect 41
+- found: 2026-11-10, master ca5e35c3f
+- evidence: ench.py on client 70862: ENCH 41 = Stamina +2 (spells 7420 chest, 7418 bracer "Inferior Stamina", items 273459/273458); ENCH 66 = Stamina +3 (7863, 7457 Minor Stamina). The new foreverKeepEffect entries match the values; only the display name differs, and the old Health 5 overrides may shadow them depending on merge order (not checked in the built db). No preset uses them.
+- proposed fix: rename to "Inferior Stamina"; confirm the generated db shows +2 Stamina, not +5 Health.
+- needs: orchestrator fix
+
 ### consumables-20261107-1: Client 70862 halves the four Natural flasks (Stamina 60 to 30, zone bonus 4-5 to 2); sim still models 60 and 4-5
 - severity: high (estimate, not measured: every warrior, rogue, hunter and cat preset uses a Natural flask; the zone bonus is 5% hit/expertise/haste or 4% crit, now 2 in the client data)
 - affects: sim/core/consumes.go applyNaturalFlask (lines 82-115) and sim/core/consumes_forever_test.go:266-269; presets using FlaskOfNatural*: warrior (Precision, Aggression), rogue (Precision, Accuracy), hunter (Aggression, Precision), feral_druid (Aggression); mksettings spec_warrior/rogue60/rogue_combat/hunter/feral; dps_report requests

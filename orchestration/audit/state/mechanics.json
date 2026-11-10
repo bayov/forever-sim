@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "91ad195358bd60d7f85c7d8811075eb6e12cc567"
+  "master": "ca5e35c3f219524dc00e69edf5c9741eac3c0b0c"
  },
- "last_pass_at": "2026-11-09T00:49:39Z",
- "pass": 71,
+ "last_pass_at": "2026-11-10T12:48:09Z",
+ "pass": 72,
  "result": "quiet",
- "note": "Pass 71: 9ba00c2dc..66a243cf8, 2 sim commits (WF Totem white MH swings only under Forever, user ruling; Orc shaman base stats 2-43, leveling only): no finding, verdicts updated (HS/on-next-swing open item). Client 70862 unchanged. Dev notes unchanged since post 10. Blue: Nov 8 dungeon XP +50% (t/2406595), not combat.",
+ "note": "Pass 72: 91ad19535..ca5e35c3f, 1 sim commit (bcc5d6cd4 shaman MW every melee hit under Forever, FT rank 5 cut 7): class-side, log- and client-backed, no finding; verdicts MW open item settled. Client 70862 unchanged. Dev notes unchanged since post 10. Blue: Nov 9 hotfixes (t/2403040 post 5) class-only (Arcane Concentration, Lightning Overload, Natural Instinct), no shared mechanic.",
  "client_build": "1.60.1.70862",
- "checked_at": "2026-11-10T06:46:08Z",
+ "checked_at": "2026-11-10T13:18:42Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -25,5 +25,5 @@
   "newest_push": 113605,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-08T19:47:33Z"
+ "blue_tracker_seen": "2026-11-10T04:23:46Z"
 }

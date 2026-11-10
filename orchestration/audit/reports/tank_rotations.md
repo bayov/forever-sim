@@ -1,53 +1,57 @@
-# tank_rotations: pass 6 (2026-11-08, master 9ba00c2dc)
+# tank_rotations: pass 7 (2026-11-10, master ca5e35c3f)
 
-Due on 11 watched files changed since bba052f75 (all `sim/shaman/*`). The range (8 commits) also touches the
-engine: whole-point spell damage rolls (2a60326a1, `sim/core/sim.go`, `cast.go`), Forever's downranking penalty on
-heals only (0193721bc, `sim/core/downrank.go`), Windfury and Flametongue Totem sharing the weapon's totem slot
-(9ba00c2dc, `sim/core/totem_weapon_buffs.go`, shaman totems and imbues), and the Stormstrike mark after the damage
-calc (5a870eccc). No tank APL, tankbench request, rotopt tank template, encounter file, `tools/tankbench/main.go`
-or `tools/tankscore` changed.
+Due on sim/shaman/flametongue_weapon.go and talents.go (bcc5d6cd4: Maelstrom Weapon stacks on every melee hit under
+Forever, Flametongue rank 5 cut by 7). No tank APL, request, rotopt template, encounter file, tankbench or tankscore
+changed. The Warden requests use Rockbiter and cast no Lightning Bolt; a tankbench built at bcc5d6cd4's parent
+(d7bb9ab80) gives all 21 Warden rows identical to master, so that commit reaches no tank.
 
-The totem slot change can't reach the tank benches: all 13 requests raid-buff `TotemWeaponBuffWindfury` only,
-none Flametongue Totem.
+Pass 6 benched 9ba00c2dc but recorded 91ad19535, so it never benched 0ce9dbf40 (Windfury Totem procs only from white
+main hand swings under Forever, user ruling 2026-11-08 "for now"). That change moves every tank row here: see
+finding tank_rotations-20261110-1. The orc shaman base stats (3b0983bc6) are levels 2-43 only.
 
-## Baseline (ref/tank_bench/summary.tsv, header now 9ba00c2dc)
-Every request on every boss (13 x 7 = 91 rows), 1,000 iterations, default seed. 96 of 104 summary rows (incl.
-scoring means) equal pass 5 to the decimal; the other 8 move by 1 point (score, SafeDPS or TPS), far inside their
-errors (score_err 31 to 59): the whole-point rolls reshuffle a few spell hits. All Warden shaman rows are unchanged.
+## Baseline (ref/tank_bench/summary.tsv, header now ca5e35c3f)
+Every request on every boss (13 x 7 = 91 rows), 1,000 iterations, default seed. Scoring means, pass 6 in brackets:
 
-| request | w | score | SafeDPS | DTPS | healing needed | death floor |
+| request | w | score (pass 6) | SafeDPS (pass 6) | DTPS | healing needed | death floor |
 |---|---|---|---|---|---|---|
-| druid_bear_balanced | 1 | 2498 | 1883 | 584 | 456 | 0.0 |
-| druid_bear_max_survival | 3 | 238 | 1649 | 544 | 372 | 0.0 |
-| druid_bear_max_threat | 0.333 | 3492 | 2024 | 610 | 614 | 0.0 |
-| paladin_protection_balanced | 1 | 2835 | 1724 | 314 | 241 | 0.0 |
-| paladin_protection_max_survival | 3 | 1910 | 1611 | 295 | 180 | 0.0 |
-| paladin_protection_max_threat | 0.333 | 3249 | 1731 | 305 | 254 | 0.0 |
-| shaman_warden_balanced | 1 | 1786 | 1857 | 677 | 694 | 0.0 |
-| shaman_warden_max_survival | 3 | -1988 | 1788 | 686 | 674 | 0.0 |
-| shaman_warden_max_threat | 0.333 | 3170 | 1949 | 721 | 795 | 0.0 |
-| warrior_protection | 1* | -14 | 1048 | 637 | 757 | 0.0 |
-| warrior_protection_balanced | 1 | 3880 | 2386 | 376 | 315 | 0.0 |
-| warrior_protection_max_survival | 3 | 2138 | 2059 | 336 | 240 | 0.0 |
-| warrior_protection_max_threat | 0.333 | 4652 | 2535 | 415 | 427 | 0.0 |
+| druid_bear_balanced | 1 | 2006 (2498) | 1650 (1883) | 584 | 462 | 0.0 |
+| druid_bear_max_survival | 3 | -298 (238) | 1460 (1649) | 544 | 387 | 0.0 |
+| druid_bear_max_threat | 0.333 | 2954 (3492) | 1758 (2024) | 612 | 624 | 0.0 |
+| paladin_protection_balanced | 1 | 2753 (2835) | 1688 (1724) | 314 | 245 | 0.0 |
+| paladin_protection_max_survival | 3 | 1763 (1910) | 1572 (1611) | 298 | 186 | 0.0 |
+| paladin_protection_max_threat | 0.333 | 3172 (3249) | 1694 (1731) | 306 | 256 | 0.0 |
+| shaman_warden_balanced | 1 | 1682 (1786) | 1805 (1857) | 675 | 691 | 0.0 |
+| shaman_warden_max_survival | 3 | -2031 (-1988) | 1741 (1788) | 686 | 666 | 0.0 |
+| shaman_warden_max_threat | 0.333 | 3055 (3170) | 1894 (1949) | 718 | 796 | 0.0 |
+| warrior_protection | 1* | -47 (-14) | 1032 (1048) | 636 | 756 | 0.0 |
+| warrior_protection_balanced | 1 | 3637 (3880) | 2272 (2386) | 377 | 319 | 0.0 |
+| warrior_protection_max_survival | 3 | 1966 (2138) | 1975 (2059) | 336 | 241 | 0.0 |
+| warrior_protection_max_threat | 0.333 | 4375 (4652) | 2396 (2535) | 415 | 426 | 0.0 |
 
-Rows that moved (pass 5 -> pass 6): druid_bear_max_survival onyxia score -315 -> -314; paladin_protection_max_threat
-ragnaros score 993 -> 994; warrior_protection_balanced vaelastrasz SafeDPS 2533 -> 2532; warrior_protection_max_survival
-golemagg TPS 2004 -> 2003, magmadar score 3248 -> 3247 and SafeDPS 2035 -> 2036 (plus the three scoring means).
+Ragnaros moves the same way (bear Balanced SafeDPS 1796 -> 1559, warrior Balanced 2310 -> 2203).
+
+## Why they moved
+Under Forever the totem's proc mask is `ProcMaskMeleeMHAuto` (`sim/core/buffs.go`). Maul is `MHSpecial` only
+(`sim/druid/bear_attacks.go:43`), so it lost its totem procs: bear SafeDPS -12% at every weight. Heroic Strike is
+`MHSpecial | MHAuto` (`sim/warrior/heroic_strike_cleave.go:25`) and keeps them; warriors lose only the yellow-hit
+procs (Shield Slam, Revenge, Sunder): -5%. Warden loses Stormstrike's procs (-3%), paladin its special hits (-2%).
+The bear/warrior asymmetry between two on-next-swing attacks is the finding; the commit says these weren't checked.
 
 ## Rotation lines
-No rotation, request or template changed since pass 4, which probed 36 one-line A/Bs (3,000 iterations, paired)
-on these APLs; the engine moved no row by more than a point, so nothing there can have flipped. Not re-probed.
+No rotation, request or template changed since pass 4's 36 one-line A/Bs. The totem rule cuts every tank's melee
+threat about evenly within a class, so no line's order should flip; with Maul now worth less, a bear's Rage
+might go further on Swipe or Savage Bite, but that waits for the ruling. Not re-probed.
 
 ## Open findings
-- 3 (paladin Bulwark 13 s) and 11 (warrior Max survival armor trinket held 35 s): user calls, unchanged on
-  master; not re-tested.
+- 20261110-1 (Windfury Totem and on-next-swing attacks): new, user ruling.
+- 3 (paladin Bulwark 13 s) and 11 (warrior Max survival armor trinket 35 s): user calls, unchanged; not re-tested.
 
 ## Notes for the next pass
-- `tools/audit/tank_rotations/bench_summary.py` reads `/tmp/audit-work/tank_rotations/base/` (hardcoded) and writes
-  the ref directly with a stale header line; fix the header by hand after running it. Export `AUDIT_WORK` in every
-  shell (the env from `source tools/audit/setup.sh` doesn't carry across tool calls), and generate the Go protos
-  (`protoc -I=./proto --go_out=./sim/core ./proto/*.proto`) before `go build`.
+- `tools/audit/tank_rotations/bench_summary.py` now takes the header as its first argument and still reads
+  `/tmp/audit-work/tank_rotations/base/`. Export `AUDIT_WORK` in every shell. For an older tankbench, add a
+  worktree under `$AUDIT_WORK`, copy `sim/core/proto/*.go` from the main tree (when `proto/` is unchanged), build there.
+- Bench the commit you record as `last.master`.
 
 ## Conclusion
-Quiet. No new findings.
+One new finding (high): Windfury Totem's white-swing-only rule takes 12% off the bear's SafeDPS through Maul while
+Heroic Strike keeps its procs.

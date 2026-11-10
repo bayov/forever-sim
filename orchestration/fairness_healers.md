@@ -1,7 +1,7 @@
 # Fairness between healers
 
 The healer_fairness auditor keeps this current (`orchestration/audit/passes/healer_fairness.md`). It holds the
-healer ranking in each role, its reasons and the open questions. Last pass: 5, 2026-11-08, master 9ba00c2dc (whole-point rolls moved cells by at most 0.002; the raid shaman 1.395).
+healer ranking in each role, its reasons and the open questions. Last pass: 6, 2026-11-10, master ca5e35c3f (the Flametongue rank 5 cut and every-hit Maelstrom Weapon reach no healer; shaman spot check identical). Pass 5, master 9ba00c2dc: whole-point rolls moved cells by at most 0.002; the raid shaman 1.395.
 Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 `orchestration/audit/findings/healer_fairness.md`.
 

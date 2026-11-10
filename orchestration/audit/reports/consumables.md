@@ -1,13 +1,9 @@
-# Consumables pass 76 (master 66a243cf8, client 1.60.1.70862, unchanged)
+# Consumables pass 77, master ca5e35c3f
 
-Findings: none new. Open: consumables-20261107-1 (Natural flasks halved in the client; sim still models 60 Stamina and 4-5 bonuses) and consumables-20261105-1 (feral mksettings lacks the Sapper).
+Moved: forever_enchants.go (enchants 41, 66 re-valued), assumptions_def.py (sham_mw_ppm now one value, every hit).
+No newer wago build (70862). Class branches show no useful ahead state.
 
-Verified since 9ba00c2dc
-- Moved audited files: sim/core/buffs.go and tools/dps_report/assumptions_def.py only.
-- buffs.go: under Forever the Windfury Totem buff procs from white main hand swings only (ProcMaskMeleeMHAuto), user ruling 2026-11-08, backed by the Nov 5-8 logs (882 procs, none from ~2,770 Stormstrikes). Raid totem presets (melee keep Windfury Totem, Enhancement Grace of Air only) are unchanged and agree between presets.ts and mksettings. No number changed.
-- assumptions_def.py: removed level_partial_resist and sham_ftt_stack; no dangling references in tools/dps_report, ui or standards.md.
-- scan.sh on master: every section above "== counts" empty. Minor-armor exclusive-effect grep counts 3 (pattern also hits the category variable; no debuff change on master).
-- wago: no build newer than 1.60.1.70862. Class and consumes branches listed as ahead are stale diverged copies (gotcha 1); not audited.
-- Pass doc note (not edited): the Enhancement standing check still mentions Flametongue Totem rank 4; Enhancement now gets Grace of Air only.
+Findings: consumables-20261110-1 (low, enchant 41 name). Open from before: 20261107-1 (Natural flasks halved), 20261105-1.
 
-No sims run.
+Verified: ench.py 41 = Stamina +2, 66 = Stamina +3, matching forever_enchants.go. sham_mw_ppm change agrees with notes.md (100% chance, spell 408498). scan.sh clean above counts.
+Count note: minor-armor exclusive effects is 3 (was 2): Forever Dust Cloud aura joins Faerie Fire and CoR; not checked whether a preset uses it.
