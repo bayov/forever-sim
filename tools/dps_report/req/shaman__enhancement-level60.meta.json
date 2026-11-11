@@ -6,7 +6,7 @@
   "isDefault": true,
   "pr": 7,
   "race": "Orc",
-  "talents": "353003102-055030110051012151-03",
+  "talents": "053303102-055030110051012151-03",
   "treeNames": [
     "Elemental",
     "Enhancement",
@@ -36,7 +36,8 @@
     "Elemental Focus",
     "Shamanistic Focus",
     "Thundering Strikes",
-    "Improved Stormstrike"
+    "Improved Stormstrike",
+    "Reverberation"
   ],
   "rotation": [
     "Pre-pull: Strength of Earth IV at -6s, Windfury Totem at -5s, Mana Spring at -4s, Lightning Shield at -3s, Magma Totem at -1.5s. The totems last the fight, except the last few seconds of a 300s one.",
@@ -47,9 +48,9 @@
     "Stormstrike on cooldown",
     "Fire Nova while Clearcasting is up",
     "Flame Shock when its DoT is down",
-    "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Earth Shock otherwise",
-    "Fire Nova while mana is above 12 per second of fight left",
+    "Lightning Bolt at 5 Maelstrom Weapon stacks",
+    "Fire Nova while mana is above 16 per second of fight left",
     "Lightning Shield when it is down and nothing else is ready. Its orbs fire at the boss when the shaman takes a hit, about 2 a minute."
   ],
   "consumes": [
@@ -73,15 +74,16 @@
     "Goblin Sapper Charge"
   ],
   "caveats": [
-    "Assumed: Maelstrom Weapon procs 4 times a minute per point. The November 2 notes doubled its chance, over the old guess of 2. The rate is server side.",
+    "Maelstrom Weapon procs 6 to 10 times a minute by rank (10 at 5/5, scaled by the main hand's speed) and takes 20% off a spell's cast time and mana per stack, Blizzard's 2026-11-10 hotfix post. No server row carries it yet.",
     "No Ahn'Qiraj book ranks, so Strength of Earth stops at rank IV and Battle Shout at VI. The books would add about 7.7 DPS.",
     "Only one 2% crit elixir. Stacking Mongoose, Grizzly and Owl would add about 36 DPS.",
-    "Stormstrike (150%, 6s), Maelstrom Weapon, Mental Dexterity, Flurry and the shocks take the November 2 notes' values. Client 1.60.1.70753 doesn't carry them yet.",
+    "Stormstrike (100% weapon damage, 8s) and Mental Dexterity (100% of Intellect as attack power at 3/3) take Blizzard's 2026-11-10 hotfix values; Flurry and the shocks the November 2 notes'. No server row carries them yet.",
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
     "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259.",
-    "No Flametongue Totem: it and Windfury Totem replace each other on the beta (2026-11-08), and the group needs Windfury Totem. Until the next resim the numbers still have another shaman's Flametongue Totem (18 to 19 DPS at 180s).",
-    "Convection 3 and Tidal Focus 2 in place of Reverberation 5 since the November 2 notes, +11 at 180s. Convection 4, Improved Stormstrike 1 and Tidal Focus 3 ties it (+2.5 at 120s, -2 to -3 at 300s).",
-    "The relic is Totem of the Storm, 0.9 to 2.1 DPS ahead of Burning Totem at every fight length. It lets Lightning Bolt trigger Maelstrom Weapon at half the chance."
+    "No Flametongue Totem: it and Windfury Totem replace each other on the beta (2026-11-08), and the group needs Windfury Totem.",
+    "Reverberation 3 in place of Convection 3 since the 2026-11-10 hotfixes (+15 to +19 DPS with the rotation changes): Earth Shock comes round more often, and the mana is still enough.",
+    "The relic is Totem of the Storm, 0.9 to 2.1 DPS ahead of Burning Totem at every fight length. It lets Lightning Bolt trigger Maelstrom Weapon at half the chance.",
+    "Windfury Weapon and the shaman's own Windfury Totem both proc since the 2026-11-10 hotfixes (each with its own chance and cooldown, an assumption). Windfury Weapon with Windfury Totem and Magma Totem beats Flametongue Weapon by 93 to 100 DPS at 180s (Rockbiter and Frostbrand by more), and Flametongue Totem in Windfury Totem's place by 110 to 120."
   ],
   "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself). Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md"
 }

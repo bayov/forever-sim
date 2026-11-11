@@ -187,8 +187,11 @@ export const DefaultGear = GearLevel60Phase1SyntheticHitMinus3;
 // on cooldown, with Blood Fury and Berserking waiting for it when that costs them no use.
 //
 // The air totem is Windfury Totem, because in a raid the shaman puts it down for the
-// melee in the group. The shaman gets nothing from it, because Windfury Weapon on the main
-// hand turns off the totem's buff for the shaman (see sim/core/totem_weapon_buffs.go). The
+// melee in the group. Since Blizzard's 2026-11-10 hotfixes it also procs for the shaman next
+// to its own Windfury Weapon (before, Windfury Weapon turned the totem's buff off for the
+// shaman). Re-searched after the hotfixes, Windfury Weapon with its own Windfury Totem and
+// Magma Totem still wins: Flametongue Weapon is 93 to 100 DPS behind at 180 sec and
+// Flametongue Totem in Windfury Totem's place 110 to 120. The older note follows. The
 // fire totem is Flametongue Totem, for the shaman alone. A weapon holds only one totem
 // buff, so the group keeps Windfury Totem's, but the shaman's weapon has room for
 // Flametongue Totem's. Fire Nova goes on cooldown after the shocks while the shaman has
@@ -399,8 +402,14 @@ export const DefaultAPL = APLOptimized;
 // from 10 to 11, so the build wears the hit-3 step (353003102-055030110051012151-03, was
 // 353003102-055030110051012251-02): 1176.9 / 1165.3 / 1144.1 at 120 / 180 / 300 sec (1169.1 / 1159.4 / 1140.5
 // before), +7.8 / +5.9 / +3.6, paired at 20000 iterations.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', SavedTalents.create({ talentsString: '353003102-055030110051012151-03' }), {
-	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons, Concussion, Convection and Tidal Focus.',
+// Blizzard's 2026-11-10 hotfixes (Stormstrike 100% and 8 sec, Mental Dexterity 100%, Maelstrom Weapon by PPM, Windfury
+// Weapon and Windfury Totem together): the search (Spirit Weapons pinned, 120 / 180 / 300 sec) moved Convection 3 to
+// Reverberation 3, with the Optimized rotation's new knobs: 1041.3 / 1030.6 / 1013.9 at 120 / 180 / 300 sec (1020.1 /
+// 1011.6 / 998.9 with the old talents and rotation on the new rules), +15.0 to +21.2 on seeds 1 and 1000003, paired at
+// 20000 iterations. Reverberation 5 with Tidal Focus 1 on the hit-1 step (053503102-055030110051012151-01) is +1.7 to
+// +4.4 at 120 and 180 sec but -0.3 to +0.7 at 300, so it is not kept.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', SavedTalents.create({ talentsString: '053303102-055030110051012151-03' }), {
+	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons, Concussion, Reverberation and Tidal Focus.',
 	group: 'Synthetic',
 });
 // The same search with Improved Ghost Wolf 2 pinned as well (-require
@@ -431,7 +440,10 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', Saved
 // build with the two points in it took Ancestral Knowledge 5, Elemental Weapons 1 and Shamanistic
 // Focus to open row 4, Improved Stormstrike 1, and Level 60's Convection 3 and Tidal Focus 1. 1162.2 /
 // 1149.7 / 1128.1 at 120 / 180 / 300 sec (889.0 / 878.8 / 862.1 before), 9.5 behind Level 60 at 180.
-export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', SavedTalents.create({ talentsString: '353003102-055030110051212151-01' }), {
+// Blizzard's 2026-11-10 hotfixes: the same move as Level 60, Convection 3 to Reverberation 3, with the Optimized
+// rotation's new knobs: 1026.8 / 1016.1 / 999.2 at 120 / 180 / 300 sec (1006.2 / 997.7 / 984.2 before on the new rules),
+// +14.7 to +22.2 on two seed sets, 14.5 behind Level 60 at 180.
+export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', SavedTalents.create({ talentsString: '053303102-055030110051212151-01' }), {
 	tooltip: 'The Enhancement talents with Improved Ghost Wolf 2 (row 4 since the November 2 notes).',
 	group: 'Synthetic',
 });
@@ -475,9 +487,12 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', S
 // Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/shaman.md): one point moved inside
 // the Enhancement tree (052002-055030110051012151-053020001, a mana tie-break) and the build wears the hit-4 step:
 // 1125.3 / 1117.4 / 1113.4 at 120 / 180 / 300 sec (1118.9 / 1111.3 / 1108.1 before), +6.4 / +6.1 / +5.3.
+// Blizzard's 2026-11-10 hotfixes: the search moved an Elemental Devastation point back to Call of Flame (3): 984.8 /
+// 976.3 / 972.3 at 120 / 180 / 300 sec (981.7 / 973.8 / 970.0 before on the new rules), +1.3 to +3.1 on two seed sets.
+// The Magma rotation and the hit-4 step stay (hit-3 ties, hit-5 is -0.1 to -0.6).
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Enh Water Shield',
-	SavedTalents.create({ talentsString: '052002-055030110051012151-053020001' }),
+	SavedTalents.create({ talentsString: '051003-055030110051012151-053020001' }),
 	{ tooltip: 'Level 60 talents with 10 Restoration points for Water Shield.', group: 'Synthetic' },
 );
 // The best build that takes Water Shield and Mana Tide Totem (-require
@@ -508,6 +523,8 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // Round 70753 phase 5 (2026-11-04, hit trade, orchestration/round_70753/hit_trade/shaman.md): new talents
 // (03-055030210051012151-053111031001, partly mana tie-break moves) on the Burning Totem set's hit-4 step:
 // 1068.6 / 1060.3 / 1055.2 at 120 / 180 / 300 sec (1065.1 / 1055.1 / 1046.7 before), +3.5 / +5.2 / +8.5.
+// Blizzard's 2026-11-10 hotfixes: the search found nothing better; the Mana Tide rotation changed (see
+// tools/rotopt/shaman_presets.sh): 939.5 / 930.3 / 925.1 at 120 / 180 / 300 sec (936.7 / 928.4 / 923.1 before).
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Enh Mana Tide',
 	SavedTalents.create({ talentsString: '03-055030210051012151-053111031001' }),

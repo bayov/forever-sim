@@ -53,8 +53,8 @@ func init() {
 			player.Class = proto.Class_ClassShaman
 			// The shaman drops its melee party's totems itself (standards 23: no totem duty, every
 			// shaman puts its own down, like a warrior's Sunder): Strength of Earth, Windfury Totem
-			// and Mana Spring, in the rotation's prepull actions. Its own Windfury Weapon turns
-			// Windfury Totem's buff off for itself. The totem is for the party.
+			// and Mana Spring, in the rotation's prepull actions. Since the 2026-11-10 hotfixes
+			// Windfury Totem procs for the shaman too, next to its own Windfury Weapon.
 			player.Spec = &proto.Player_EnhancementShaman{EnhancementShaman: &proto.EnhancementShaman{
 				Options: &proto.EnhancementShaman_Options{
 					SyncType:    proto.ShamanSyncType_Auto,

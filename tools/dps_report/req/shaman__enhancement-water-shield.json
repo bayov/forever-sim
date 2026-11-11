@@ -93,7 +93,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "052002-055030110051012151-053020001",
+            "talentsString": "051003-055030110051012151-053020001",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -213,7 +213,7 @@
                   }
                 },
                 {
-                  "notes": "Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman.",
+                  "notes": "Windfury Totem whenever it is down.",
                   "action": {
                     "condition": {
                       "and": {

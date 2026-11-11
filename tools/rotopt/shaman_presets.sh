@@ -32,9 +32,8 @@ gen() {
 	mv "ui/enhancement_shaman/apls/${name}_300s.apl.json" "ui/enhancement_shaman/apls/$name.apl.json"
 	echo "wrote ui/enhancement_shaman/apls/$name.apl.json ($knobs $*)"
 }
-# Windfury Totem for the group, Flametongue Totem for the shaman (Windfury Weapon turns
-# Windfury Totem's buff off for the shaman, and leaves the weapon's totem slot to
-# Flametongue Totem), Fire Nova after the shocks above 20% mana and Mana Spring Totem:
+# Windfury Totem for the group (since the 2026-11-10 hotfixes it also procs for the shaman beside its own
+# Windfury Weapon; before, Windfury Weapon turned the totem's buff off for the shaman), Fire Nova after the shocks above 20% mana and Mana Spring Totem:
 # 839.2 at 180 sec on 2026-10-07, where Searing Totem was 792.0. Fire Nova is a spell with
 # its own cooldown under Forever.
 #
@@ -85,7 +84,13 @@ gen() {
 # Mana Tide moved to new talents and a hit step (hit-3, hit-4, and hit-4 on the Burning Totem set; settings files in
 # tools/dps_report/req), same knobs: +7.8 / +5.9 / +3.6, +6.4 / +6.1 / +5.3 and +3.5 / +5.2 / +8.5 at 120 / 180 / 300 sec.
 # Imp GW and both Elemental builds are unchanged.
-gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=1,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=0" -level 60
+# Round 70753 re-search after the November 10 hotfixes (Stormstrike back to 8 sec, Mental Dexterity 100%, Windfury Totem
+# procs beside Windfury Weapon): the bolt waits for Earth Shock again (earthShockBeforeBolt=1), Earth Shock no longer
+# holds for the mark (earthShockHold=0) and Fire Nova's mana budget is 16/sec (was 12). With the new talents
+# (Reverberation 3 for Convection 3) Level 60 is +21.2 / +19.0 / +15.0 and +20.6 / +18.5 / +14.9, Imp GW +20.6 / +18.4 /
+# +15.0 and +22.2 / +19.5 / +14.7 at 120 / 180 / 300 sec on seeds 1 / 1000003, 20000 iterations.
+# fireNovaManaPerSec=16 alone is 0.0 at 120 and +0.3 to +1.5 at 180 / 300.
+gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=0,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=16,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=1" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.
@@ -118,7 +123,10 @@ gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNova
 # On the Water Shield build that was +1.7 at 180 sec and even at 300, so magma keeps it after.
 # Fire Nova after the shocks (fireNova=2) on the Mana Tide build since the raid's Flametongue Totem:
 # +0.7 to +2.5 / +1.1 to +2.2 / +1.1 to +1.8 on two seed sets.
-gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=2,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
+# Round 70753 re-search after the November 10 hotfixes: Flame Shock ahead of Stormstrike (flameShockFirst=2), the bolt
+# after Earth Shock (earthShockBeforeBolt=1) and no Earth Shock hold for the DoT's end (earthShockFlameShockLeft=0):
+# +2.8 / +1.9 / +2.0 and +2.7 / +2.4 / +2.0 at 120 / 180 / 300 sec on seeds 1 / 1000003, 20000 iterations.
+gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=2,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=0,flameShockFirst=2,earthShockBeforeBolt=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
 
 # The elemental presets in ui/elemental_shaman/apls, from the shaman_ele template. Mana Spring and
 # Searing Totem, Flame Shock when its DoT is down, Lightning Bolt, a lower rank once the mana would not

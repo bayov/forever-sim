@@ -42,10 +42,10 @@
     "Mana Tide Totem at 20% mana or less. Mana Spring waits until it ends.",
     "Magma Totem when it is down, with at least 2s left",
     "Rage of the Farseer with the on-use trinket, Blood Fury with them, then the other cooldowns",
-    "Stormstrike on cooldown",
-    "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Flame Shock when its DoT is down",
-    "Earth Shock while Flame Shock has more than 1s left",
+    "Stormstrike on cooldown",
+    "Earth Shock otherwise",
+    "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Fire Nova above 20% mana (after the shocks)",
     "Lightning Shield when it is down and nothing else is ready. Its orbs fire at the boss when the shaman takes a hit, about 2 a minute."
   ],
@@ -72,12 +72,13 @@
   "caveats": [
     "Mana Tide Totem adds only about 0.1 DPS to the shaman itself.",
     "Water Shield goes unused, because Lightning Shield does more.",
-    "Assumed: Maelstrom Weapon procs 4 times a minute per point. The November 2 notes doubled its chance, over the old guess of 2. The rate is server side.",
+    "Maelstrom Weapon procs 6 to 10 times a minute by rank (10 at 5/5, scaled by the main hand's speed) and takes 20% off a spell's cast time and mana per stack, Blizzard's 2026-11-10 hotfix post. No server row carries it yet.",
     "Open: whether Stormstrike can trigger Elemental Focus. If it can, Enhancement gets more Clearcasting procs than shown.",
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
-    "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259. Stormstrike (150%, 6s), Maelstrom Weapon, Mental Dexterity, Flurry and the shocks take the November 2 notes' values. Client 1.60.1.70753 doesn't carry them yet.",
-    "No Flametongue Totem: it and Windfury Totem replace each other on the beta (2026-11-08), and the group needs Windfury Totem. Until the next resim the numbers still have another shaman's Flametongue Totem (18 to 19 DPS at 180s).",
-    "The relic is Burning Totem, on its own gear set. Totem of the Storm is 0.1 to 1.5 DPS behind here."
+    "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259. Stormstrike (100% weapon damage, 8s) and Mental Dexterity (100% of Intellect as attack power at 3/3) take Blizzard's 2026-11-10 hotfix values; Flurry and the shocks the November 2 notes'. No server row carries them yet.",
+    "No Flametongue Totem: it and Windfury Totem replace each other on the beta (2026-11-08), and the group needs Windfury Totem.",
+    "The relic is Burning Totem, on its own gear set. Totem of the Storm is 0.1 to 1.5 DPS behind here.",
+    "Windfury Weapon and the shaman's own Windfury Totem both proc since the 2026-11-10 hotfixes (each with its own chance and cooldown, an assumption). Windfury Weapon with Windfury Totem and Magma Totem beats Flametongue Weapon by 93 to 100 DPS at 180s (Rockbiter and Frostbrand by more), and Flametongue Totem in Windfury Totem's place by 110 to 120."
   ],
   "notes": "mksettings -spec enh -gear level60_phase1_synthetic_burning_totem -apl mana_tide -talents 03-055030031005112051-053051001001 -race Orc -duration 180 -level 60 (standards 23: every shaman drops its own party totems; the raid's only totems are a second shaman's Grace of Air and Flametongue Totem, standards 25, the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. phase 5 hit trade: new talents and the hit-N step, see hit_trade/shaman.md"
 }
