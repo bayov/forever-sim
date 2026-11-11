@@ -543,6 +543,7 @@ Leap behind an enemy, Dazing them for 3 sec.
   - Requires: Naturalist (5/5)
   - Cost: Instant, 3 min cooldown
   - When activated, your next Nature spell becomes an instant cast spell.
+  - Since the hotfixes of November 10 it also makes Wild Growth instant (hotfix push 113885, SpellEffect 695239's class mask). The sim's Nature's Swiftness takes Healing Touch, Regrowth, Wrath and Wild Growth.
 - **Living Spirit** (3 ranks, column 2) [NEW] [ranks settled by the 70338 trait curves]
   - Rank 1: Increases your Spirit by 5%.
   - Rank 2: Rank 2 values not yet captured from footage.

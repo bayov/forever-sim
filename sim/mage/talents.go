@@ -275,11 +275,25 @@ func (mage *Mage) applyArcaneConcentration() {
 		},
 	})
 
-	// The Forever client gives the talent a 1 sec internal cooldown, so the five missiles of one
-	// Arcane Missiles can't each roll it.
+	// The Forever client gives the talent a 1 sec internal cooldown (SpellAuraOptions 124202,
+	// ProcCategoryRecovery 1000), so the five missiles of one Arcane Missiles can't each roll it.
 	icd := core.Cooldown{
 		Timer:    mage.NewTimer(),
 		Duration: time.Second,
+	}
+
+	// Blizzard hotfixes of 2026-11-09: "Arcane Concentration's activation chance now correctly
+	// splits across the cast and every bolt (was granting 10% on cast and per bolt)." Under Forever
+	// an Arcane Missiles channel rolls the talent's chance once in all: the cast and each missile
+	// roll an even share of it (1/6 each at five missiles). Elsewhere each missile rolls the full
+	// chance and the cast none.
+	forever := mage.Env.IsForever()
+	missileChance := procChance
+	roll := func(sim *core.Simulation, chance float64) {
+		if icd.IsReady(sim) && sim.Proc(chance, "Arcane Concentration") {
+			icd.Use(sim)
+			mage.ClearcastingAura.Activate(sim)
+		}
 	}
 
 	mage.RegisterAura(core.Aura{
@@ -288,18 +302,25 @@ func (mage *Mage) applyArcaneConcentration() {
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
+		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+			if !forever || spell.SpellCode != SpellCode_MageArcaneMissiles {
+				return
+			}
+			missileChance = procChance / float64(ArcaneMissilesCastTime[spell.Rank]+1)
+			roll(sim, missileChance)
+		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !result.Landed() || !spell.Flags.Matches(SpellFlagMage) || spell.SpellCode == SpellCode_MageArcaneMissiles {
 				return
 			}
-			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) || !icd.IsReady(sim) {
+			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
 				return
 			}
-
-			if sim.Proc(procChance, "Arcane Concentration") {
-				icd.Use(sim)
-				mage.ClearcastingAura.Activate(sim)
+			chance := procChance
+			if forever && spell.SpellCode == SpellCode_MageArcaneMissilesTick {
+				chance = missileChance
 			}
+			roll(sim, chance)
 		},
 	})
 }

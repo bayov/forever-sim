@@ -192,16 +192,21 @@ func TestDruidHotTickCrits(t *testing.T) {
 	}
 }
 
-// Nature's Swiftness makes the next Regrowth instant too, and Wild Growth neither takes it nor gets
-// faster.
+// Nature's Swiftness makes the next Regrowth instant too, and Wild Growth since hotfix push 113885:
+// a Wild Growth cast first takes it, and the Regrowths after it are 2 sec.
 func TestDruidNaturesSwiftnessOnRegrowth(t *testing.T) {
 	l := runDruidLog(t, druidRaid(t, map[string]int{"naturesSwiftness": 1, "wildGrowth": 1}, 0,
 		castAt(nsID, "", ""), castAt(wgTop, "Tank", `{"not":{"val":`+after("1s")+`}}`), castAt(rgTop, "Tank", "")))
 	wg, rg := l.casts[wgTop], l.casts[rgTop]
-	if len(wg) != 1 || wg[0].castTime != 3 {
-		t.Errorf("Wild Growth casts %v, want one of 3 sec", wg)
+	if len(wg) != 1 || wg[0].castTime != 0 {
+		t.Errorf("Wild Growth casts %v, want one instant", wg)
 	}
-	if len(rg) < 2 || rg[0].castTime != 0 || rg[1].castTime != 2 {
+	if len(rg) < 2 || rg[0].castTime != 2 || rg[1].castTime != 2 {
+		t.Errorf("Regrowth casts %v, want 2 sec ones after Wild Growth took Nature's Swiftness", rg[:min(2, len(rg))])
+	}
+
+	l = runDruidLog(t, druidRaid(t, map[string]int{"naturesSwiftness": 1}, 0, castAt(nsID, "", ""), castAt(rgTop, "Tank", "")))
+	if rg := l.casts[rgTop]; len(rg) < 2 || rg[0].castTime != 0 || rg[1].castTime != 2 {
 		t.Errorf("Regrowth casts %v, want the first instant and the next 2 sec", rg[:min(2, len(rg))])
 	}
 }

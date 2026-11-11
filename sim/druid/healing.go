@@ -749,8 +749,14 @@ func (druid *Druid) registerNaturesSwiftnessCD() {
 	cdTimer := druid.NewTimer()
 	cd := 3 * time.Minute
 
+	// Hotfix push 113885 (SpellEffect 695239's class mask) adds Wild Growth: "Nature's Swiftness
+	// now also makes Wild Growth instant" (Blizzard hotfixes of 2026-11-10).
 	affected := func(spell *core.Spell) bool {
-		return spell.SpellCode == SpellCode_DruidHealingTouch || spell.SpellCode == SpellCode_DruidRegrowth || spell.SpellCode == SpellCode_DruidWrath
+		switch spell.SpellCode {
+		case SpellCode_DruidHealingTouch, SpellCode_DruidRegrowth, SpellCode_DruidWrath, SpellCode_DruidWildGrowth:
+			return true
+		}
+		return false
 	}
 	var affectedSpells []*core.Spell
 	druid.NaturesSwiftnessAura = druid.RegisterAura(core.Aura{

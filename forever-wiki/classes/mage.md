@@ -16,6 +16,8 @@ Blizzard's November 2 notes (post 9) list the mage changes the 10-27 to 10-30 ho
 - Missile Barrage is used up as the Arcane Missiles channel starts (it was at the end). The sim always did that.
 - An Arcane Missiles on Missile Barrage leaves Clearcasting up (`sim/mage/talents.go`; it used Clearcasting up before). An Arcane Missiles without Missile Barrage still uses it.
 - Arcane Missiles procs Clearcasting again. The sim's missiles always rolled Arcane Concentration (1 sec internal cooldown).
+- Since the hotfixes of November 9, Arcane Concentration's chance is split across the Arcane Missiles cast and its missiles (it was the full chance on the cast and on every missile). The sim rolls a sixth of it on the cast and on each of the five missiles, so about 10% of channels give Clearcasting. Arcane loses about 7 DPS, Fire about 4.
+- Flamestrike's burn doesn't use up Clearcasting (same hotfixes). The sim never did.
 - Ignite applies to Flamestrike's burn: its ticks are the area trigger's own direct damage spells (1279983 to 1279990, effect 2, no "can't crit" attribute), and their crits ignite now (`sim/mage/ignite.go`). No preset casts Flamestrike.
 - Talents lose their lower proc chance on low ranks, except Blizzard (Arcane Concentration, Frostbite, Fingers of Frost from a rank learned more than 12 levels below). The sim never modelled the penalty, so nothing moves. The only lower rank a preset casts, Frostfire's rank 2 Frostfire Bolt, is learned at 50, inside the 12 levels anyway.
 - Frost Blast is gone and Imbue Iceknife's visual changed: nothing to simulate.
@@ -149,7 +151,7 @@ Talents (client ranks where the BlizzCon data guessed):
 - Arcane Focus and Elemental Precision are 1% hit per rank to 5% (Elemental Precision is 3 ranks of 2% since the 2026-10-20 hotfix). Arcane Impact is 2 / 4 / 6% crit on all Arcane spells. Arcane Subtlety is 8 / 15 resistance. Magic Absorption is 5 / 10 resistance.
 - Arcane Meditation is 17 / 33 / 50% casting regen (Classic 5 / 10 / 15%). Arcane Resilience is 25 / 50% of Intellect as armor.
 - Arcane Mind is 2% Intellect and 20% Arcane crit damage bonus per rank (Classic gave max mana). Arcane Instability is 1% damage and 1% crit per rank on every spell.
-- Arcane Concentration has a 1 sec internal cooldown in the client (11213), so one Arcane Missiles can't roll it five times.
+- Arcane Concentration has a 1 sec internal cooldown in the client (11213), so one Arcane Missiles can't roll it five times. Since November 9 a channel's cast and missiles share the talent's chance.
 - Improved Channeling (new) is 20% Arcane Missiles and 14% Arcane Blast pushback protection per rank. Arcane Geometry (new) is 3 / 6 yds of Arcane range.
 - Arcane Blast (talent, then trainer ranks at 30, 40, 50 and 60): 364 to 424 at 60 with a 71.4% coefficient, 2.5 sec, 15% of base mana. Each cast is a stack (8 sec, 4 stacks) worth 10% more damage on the mage's other spells and 175% more mana on Arcane Blast. Any other damage spell ends them.
 - Missile Barrage (new): Arcane Blast 40%, Fireball, Frostbolt and Frostfire Bolt 20%, to make the next Arcane Missiles within 15 sec free and twice as fast.
