@@ -34,6 +34,7 @@ type buffEffect struct {
 
 // buffAuras are the aura types we read from the client. The misc value says which stat.
 var buffAuras = map[int32]bool{
+	13:  true, // spell damage, misc is a school mask (Stolen Power)
 	22:  true, // resistances, misc is a school mask where 1 is armor
 	29:  true, // a stat (0 to 4), or all five (-1)
 	34:  true, // max health
@@ -46,6 +47,19 @@ var buffAuras = map[int32]bool{
 }
 
 var primaryStats = [5]stats.Stat{stats.Strength, stats.Agility, stats.Stamina, stats.Intellect, stats.Spirit}
+
+// allMagic is the school mask of every magic school, which the sim keeps as SpellPower.
+const allMagic = 126
+
+// schoolPowerBits are aura 13's school mask bits, when it isn't every magic school.
+var schoolPowerBits = map[int32]stats.Stat{
+	2:  stats.HolyPower,
+	4:  stats.FirePower,
+	8:  stats.NaturePower,
+	16: stats.FrostPower,
+	32: stats.ShadowPower,
+	64: stats.ArcanePower,
+}
 
 // resistanceBits are aura 22's school mask bits after armor's.
 var resistanceBits = map[int32]stats.Stat{
@@ -131,6 +145,16 @@ func (t *clientTables) buffTotal(ids []int32, base stats.Stats, chair bool) stat
 				primary(e.misc, func(i int) { multiplier[i] *= 1 + e.amount/100 })
 			case 99:
 				total[stats.AttackPower] += e.amount
+			case 13:
+				if e.misc&allMagic == allMagic {
+					total[stats.SpellPower] += e.amount
+					break
+				}
+				for bit, stat := range schoolPowerBits {
+					if e.misc&bit != 0 {
+						total[stat] += e.amount
+					}
+				}
 			case 34:
 				total[stats.Health] += e.amount
 			case 674:

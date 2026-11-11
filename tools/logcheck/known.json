@@ -42,16 +42,41 @@
   {
     "kind": "partial",
     "ability": "Attack (6352)",
-    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker."
+    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker. Nov 10: Lightning Bolt on Nature-resistant Maraudon plants and oozes (Noxxion, Razorlash, Vile Larva), Magma Totem on Sprite Darters."
   },
   {
     "kind": "partial",
     "ability": "Lightning Shield (26369)",
-    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker."
+    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker. Nov 10: Lightning Bolt on Nature-resistant Maraudon plants and oozes (Noxxion, Razorlash, Vile Larva), Magma Totem on Sprite Darters."
   },
   {
     "kind": "partial",
     "ability": "Flame Shock (10447) ticks",
-    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker."
+    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker. Nov 10: Lightning Bolt on Nature-resistant Maraudon plants and oozes (Noxxion, Razorlash, Vile Larva), Magma Totem on Sprite Darters."
+  },
+  {
+    "kind": "immune",
+    "ability": "Lightning Shield (26369)",
+    "why": "Nature-immune mobs, and the sim's mob has none. Nov 10 Maraudon: earth elementals and oozes (Shadowshard Rumbler and Smasher, Rock Worm and Borer, Noxious Slime, Creeping Sludge, Vile Larva, Theradrim Shardling) took nothing on 5% to 62% of hits. Earlier: Thundering Boulderkin."
+  },
+  {
+    "kind": "immune",
+    "ability": "Earth Shock (10412)",
+    "why": "Nature-immune mobs, and the sim's mob has none. Nov 10 Maraudon: earth elementals and oozes (Shadowshard Rumbler and Smasher, Rock Worm and Borer, Noxious Slime, Creeping Sludge, Vile Larva, Theradrim Shardling) took nothing on 5% to 62% of hits. Earlier: Thundering Boulderkin."
+  },
+  {
+    "kind": "immune",
+    "ability": "Lightning Bolt (10392)",
+    "why": "Nature-immune mobs, and the sim's mob has none. Nov 10 Maraudon: earth elementals and oozes (Shadowshard Rumbler and Smasher, Rock Worm and Borer, Noxious Slime, Creeping Sludge, Vile Larva, Theradrim Shardling) took nothing on 5% to 62% of hits. Earlier: Thundering Boulderkin."
+  },
+  {
+    "kind": "partial",
+    "ability": "Lightning Bolt (10392)",
+    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker. Nov 10: Lightning Bolt on Nature-resistant Maraudon plants and oozes (Noxxion, Razorlash, Vile Larva), Magma Totem on Sprite Darters."
+  },
+  {
+    "kind": "partial",
+    "ability": "Magma Totem (10580)",
+    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker. Nov 10: Lightning Bolt on Nature-resistant Maraudon plants and oozes (Noxxion, Razorlash, Vile Larva), Magma Totem on Sprite Darters."
   }
 ]

@@ -15,8 +15,9 @@ sections 2 and 6 have the format).
 - **What we think**: a per-mob trait, not per dungeon or time. 54 of 135 even-level dungeon mobs, 0 of 144 odd-level dungeon mobs and 5 of 739 world mobs. Same sheet spell power and auras. Guess: a hidden per-mob resistance. See the Need to Verify item under "All classes".
 - **Window** `WoWCombatLog-110926_151906.txt 23:11:05-23:26:03` (Uldaman): every level 43 mob (Stonevault Brawler and Geomancer, Earthen Rocksmasher and Sculptor, Deadly Cleft Scorpid, Shadowforge Archaeologist and Darkcaster) takes 2 less: Magma Totem 51 to 52 (157 hits) vs 53 to 54, Flametongue Attack 72 vs 74, Fire Nova 189.8 vs 191 to 192. Level 42 and 44 mobs hit by the same Magma tick take full damage. So odd-level dungeon mobs have it too.
 - **Window** `WoWCombatLog-110926_151906.txt 23:51:48-23:55:38`: level 47 mobs take about 1 less than level 44 and 45 in the same window: Magma Totem 52 (15 hits) vs the sim's 53, Flame Shock ticks 46.3 vs 47, Flametongue Attack 73.2 vs 74.0. Smaller than 2, so maybe only some of them have it.
+- **Window** `WoWCombatLog-111026_075640.txt 20:06:50` and `21:02:11` (Maraudon, 2908 and 2748 attacks): odd-level mobs take 2 less again. Magma Totem 51 vs the sim's 53 (323 hits), Flametongue Attack 78 to 79 vs 80 at levels 45 and 47, Flame Shock ticks 44.7 to 45 vs 46, Farraki Enforcement 292 vs 294 (13 hits). On those mobs Lightning Shield equals the sim, because the +2 of "Spell hits run about 6 spell power above the sim" cancels it.
 - **Next step**: check the unfiltered logs for those mob GUIDs. Then Flame Shock a dungeon trash mob and an open world mob of the same level, 30 ticks each.
-- **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
+- **Status**: open, first seen 2026-11-08, last updated 2026-11-11.
 
 ### Maelstrom Weapon cut at 4 stacks may not be linear
 
@@ -35,15 +36,34 @@ sections 2 and 6 have the format).
 - **Next step**: the user's ruling (2026-11-08) is to keep monitoring. Count Earth Shock partials on resistant mobs in each new log.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
+### Spell hits run about 6 spell power above the sim at levels 44 to 51
+
+- **Flag**: `Lightning Shield (26369): raw` (26 windows), `Earth Shock (10412): raw`, `Lightning Bolt (10392): raw`, `Flame Shock (10447) ticks: raw`, mob levels 40 to 51.
+- **Windows**:
+  - Nov 9, `WoWCombatLog-110826_085019.txt 00:51:26` to `01:42:21` (level 44): first seen, 0.03 to 0.85 off either way, the sign flipped when the character changed at 01:26.
+  - Nov 10-11, `WoWCombatLog-111026_075640.txt` 14:13 to 00:50 (levels 46 to 51, 17 windows): the log is steadily higher. Lightning Shield +2.0 (124 vs 122, 134.8 vs 132.4), Earth Shock +3 to +5, Lightning Bolt +4 to +8, Flame Shock ticks +1. Same at every mob level and with either two-hander.
+- **What we think**: the gap grows with each spell's coefficient, so it's spell power, about 5 to 6, not a rounding. The sheet's Nature power is within +1 to +2 of the sim's (the sim a bit higher), so the sheet doesn't show it. Candidates: Blood Fury's 10% spell power counted differently (`sim/core/racials_forever.go`), a hidden buff, or spell base damage that rises with our level within a rank (the sim's `RankScaling`).
+- **Next step**: split the log's hits by Blood Fury up or down. Then compare Lightning Shield raw at two character levels on the same rank with no buffs.
+- **Status**: open, first seen 2026-11-09, last updated 2026-11-11.
+
+### Farraki Enforcement hit for 588 until Nov 10 17:30
+
+- **Flag**: `Farraki Enforcement (1294339): raw` (NEW), level 50.
+- **Windows**: `WoWCombatLog-111026_075640.txt 16:52:12`: 588 on 4 hits vs the sim's 294. Across the log, about 100 of 108 procs from 11:38 to 17:30 hit 588 (not crits), then from 17:43 on always 294 (292 on the Maraudon -2 mobs).
+- **What we think**: The Chief's Enforcer's proc (`sim/common/item_effects.go`, 294 Physical, 1.14 PPM) matches the log after 17:43. The doubling before that may be a buff, or a server fix in the 17:30 to 17:43 gap. Not a sim gap unless 588 comes back.
+- **Next step**: did anything change in game around 17:30 to 17:43 (a relog, a buff that fell off)? Watch the next logs for 588.
+- **Status**: open, first seen 2026-11-11, last updated 2026-11-11.
+
 ## logcheck issues
 
-### Melee and Stormstrike now run higher in the sim than in the log
+### Melee and Stormstrike raw a few percent off the log, either way
 
 - **Flag**: `Melee: raw` (157 windows with the sim above the log) and `Stormstrike (17364): raw` (71), after logcheck began adding export-time buffs (2026-11-10 redo).
 - **Windows**: e.g. `WoWCombatLog-111026_075640.txt 08:37:49-08:48:02` (Rockbiter) runs the other way: Melee 419 to 427 in the log vs the sim's 410, Stormstrike 661 vs 629 to 637.
 - **What we think**: a buff from the export that `windowBuffs` (`tools/logcheck/buffs.go`) gives for the whole window may have faded during the fight (Well Fed most likely). Or Rockbiter's AP is off. Blood Fury and Razorhide aren't read at all, and the `sheet` flag still fires on 176 of 422 windows (about +0.4% dodge in the sim, the old Str -2 / Agi +2 / Int +2 offset, and an imbue at export time that differs from the window's).
-- **Next step**: split the windows by whether Well Fed was up at the fight, and compare Rockbiter windows with Flametongue ones.
-- **Status**: open, first seen 2026-11-10, last updated 2026-11-10.
+- **Nov 10-11** (`WoWCombatLog-111026_075640.txt` 14:13 to 00:19, two-handers): the log is the higher one. Stormstrike +2% to +5% in 11 windows (Maraudon +4.7% on 170 hits, +3.3% on 114), Melee +2% to +5% in 9 (a few levels at 0%). Same with Mograine's Might and The Chief's Enforcer. Blood Fury isn't it: the sim has Forever's +10% (`sim/core/racials_forever.go`) and the replay casts it.
+- **Next step**: split the windows by whether Well Fed was up at the fight, and compare Rockbiter windows with Flametongue ones. Check whether the Nov 10 gap is the same as the spell gap ("Spell hits run about 6 spell power above the sim"), a few percent of something the sheet doesn't show.
+- **Status**: open, first seen 2026-11-10, last updated 2026-11-11.
 
 ### BayovCore cuts the gear list short
 
@@ -82,18 +102,19 @@ sections 2 and 6 have the format).
 - **Next step**: see if it comes back at other levels. If it does, check the AP rounding and the dodge per Agility by level.
 - **Status**: open, first seen 2026-10-18, last updated 2026-11-09 (steady at level 43 to 44, so the dodge per Agility by level is worth a check).
 
-### Spell hits a point or so off the sim at level 44
-
-- **Flag**: `Flame Shock (10447): amount` (NEW), and `Lightning Shield (26369): raw` at mob levels 42 to 45.
-- **Windows**:
-  - `WoWCombatLog-110826_085019.txt 00:51:26-01:10:15` (level 44): Flame Shock's direct hit is 179 raw on all 8, and its amount rounded up on 4 of 8. The sim's hit is 179.050, so it expects 0.9 round ups, and the log puts the hit at 179.40 to 179.90. Lightning Shield is 126 raw on all 6 hits, but the sim's 125.967 floors to 125.
-  - `01:15:02-01:23:24`: Lightning Shield 126 to 128 raw in 38 hits against the sim's 125 to 127. Blessing of Kings was up there, so that window only counts weakly.
-  - `01:26:45-01:36:47` and `01:37:51-01:42:21` (level 44, the character changed at 01:26): now the sim is the higher one. Lightning Shield logs 126.0 to 126.8 avg in 63 hits against the sim's 127.1 to 127.2 (127.2 to 128.9 before floor), and Earth Shock 268.8 in 17 hits against 270.0. The sheet still shows Nature power within 0.7 of the sim.
-- **What we think**: the sim's spell hits sit 0.03 to 0.85 below the game's, about 0.1 to 4 spell power. The export's sheet shows Nature power within 0.7 of the sim. So it's either a fraction of spell power the sim leaves out, or the game rounding the hit (or the spell power bonus) up where the sim's raw is floored (`toWhole` in `tools/logcheck`). It moves damage by under 0.5%. The sign flipped when the character changed at 01:26, so a gear or talent spell power difference fits better than rounding.
-- **Next step**: diff the sim's character against the 01:26 export (what changed, and which item or talent the sim counts for 2 to 4 spell power the game doesn't). Then see if it repeats at other levels and with no buffs. If it does, compare the sim's spell power against the sheet's to the decimal, and check whether round to nearest instead of floor clears the Lightning Shield row on old windows.
-- **Status**: open, first seen 2026-11-09, last updated 2026-11-09.
-
 ## Done
+
+### Stolen Power's spell power left out of the sim's character
+
+- **Done**: 2026-11-11. Stolen Power (1318002, +16 spell damage to all schools) was up at export time in the Nov 10 22:28 to 00:50 windows, and the sheet's Nature power was 14 to 15 above the sim. `buffAuras` in `tools/logcheck/buffs.go` now reads aura 13 (spell damage by school mask). After `-redo`: Nature power +1 to +2 (the usual), Lightning Shield 134.0 vs 134.5 at 22:28.
+
+### Maraudon Nature immunes and partial resists
+
+- **Done**: 2026-11-11. Into `known.json`: `immune` for Lightning Shield (26369), Earth Shock (10412) and Lightning Bolt (10392) (earth elementals and oozes, 5% to 62% of hits), and `partial` for Lightning Bolt (10392) (Noxxion, Razorlash, Vile Larva) and Magma Totem (10580) (Sprite Darters).
+
+### Glances far past the 40% cap with a new two-hander
+
+- **Done**: 2026-11-11. Staves at 202, 214 and 225 of 245 glanced 80% to 87% (61 of 72 swings, levels 46 to 50) where the sim gives 40% to 41%. Added to the Need to Verify item on big skill gaps (`notes.md`, glancing keeps rising past the 40% cap). Leveling only.
 
 ### Fire Nova rank 1 keeps its full coefficient
 
