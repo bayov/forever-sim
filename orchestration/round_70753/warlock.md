@@ -174,11 +174,27 @@ carries is modelled at the notes' value under Forever, citing the notes and "cli
 since 70753 (foreverchanges.pro, 2026-11-03) has no Warlock lines.
 
 - Wrack: 86 a second at 60 (36 + 2.5 a level above 40) and 0.286 spell damage a tick. Client 70753 unchanged (36, 0.143).
+  Superseded by hotfix 113766 (below).
 - Shadow and Flame: 4% a point. Client 70753 unchanged (trait curves 2 to 10).
 - Demons' health: 2 a point of the warlock's Stamina. The client has no value (416189's points are 0); was 7.5 from beta
   pet sheets, which it stays outside Forever (`pet.go`, gated under `Env.IsForever()`).
 - Amplify Curse on Bane of Agony: +50% of the base. The client's mask leaves Agony out, but Agony's dummy effect carries
   it; the sim already did this.
+
+Hotfix 113766 (2026-11-10, build 1.60.1.70888, round_notes_2026-11-11) replaced the Wrack line above: the sim takes the
+server row (SpellEffect 1349556: 25.2 + 1.75 a level, 60.2 a second at 60, 0.2002 a tick). Notes-only since then:
+
+- Wrack's tick speed-up: Corruption, Siphon Life and Bane of Agony tick 100% faster while Wrack channels, for the same
+  total duration. The rows give no timing, so the model is ours (`talents.go` `applyWrack`, `Dot.SetTickPeriod`): the
+  tick timer runs at half period while Wrack channels and keeps its progress when the channel starts or ends (also when
+  it is cut short); a spell applied or refreshed mid-channel starts fast; no partial tick when a spell runs out; Wrack's
+  own ticks are not sped. Bane of Agony steps every 4 ticks and stays at 150% past its 12th (wall-time thirds instead:
+  about -11 DPS for Affliction). A combat log would confirm. Tests: `sim/warlock/dps/notes_70888_test.go`.
+- Soul Siphon counts only Corruption, Siphon Life and Bane of Agony (4/8/12% each, cap 36%). No row; a log or server row
+  would confirm.
+- Imp Firebolt ranks 2 to 4: the notes announce the low-rank change with numbers only for rank 1 (hotfix 681913: 6 +
+  0.3 a level, variance 0.333, modelled). Ranks 2 to 4 keep the client's values until SpellEffect rows for 7799 / 7800 /
+  7801 appear. Level 60 (rank 7) is unaffected.
 
 Wrack and Shadow and Flame apply under Forever only in effect: both are Forever's talents and exist in no other ruleset.
 
