@@ -80,38 +80,42 @@ func applyFlaskConsumes(character *Character, consumes *proto.Consumes) {
 }
 
 // Forever's Flasks of Natural Accuracy, Aggression, Precision and Swiftness (items 274273 to
-// 274276, spells 1293740 to 1293743) give 60 Stamina anywhere. Their second effect, an A_DUMMY,
+// 274276, spells 1293740 to 1293743) give 30 Stamina anywhere. Their second effect, an A_DUMMY,
 // is the bonus the tooltip grants in Mount Hyjal, Hyjal Summit and the Barrow Deeps, and the
 // auras after it name what that bonus is (wowsims/forever's consumables_natural_flasks.go):
-//   - Accuracy: 5% melee and ranged hit (A_MOD_HIT_CHANCE) and 5% spell hit.
-//   - Aggression: 4% crit (A_MOD_CRIT_PCT), melee, ranged and spell.
-//   - Precision: 5% expertise (A_MOD_EXPERTISE), 5% off the target's dodge and parry.
-//   - Swiftness: 5% melee and ranged attack speed (A_MOD_MELEE_RANGED_HASTE_2) and 5% casting
+//   - Accuracy: 2% melee and ranged hit (A_MOD_HIT_CHANCE) and 2% spell hit.
+//   - Aggression: 2% crit (A_MOD_CRIT_PCT), melee, ranged and spell.
+//   - Precision: 2% expertise (A_MOD_EXPERTISE), 2% off the target's dodge and parry.
+//   - Swiftness: 2% melee and ranged attack speed (A_MOD_MELEE_RANGED_HASTE_2) and 2% casting
 //     speed (A_MOD_CASTING_SPEED_NOT_STACK).
+//
+// Client 1.60.1.70862 halved them (a server hotfix before it): effect 0's Stamina 60 -> 30 and
+// effect 1's zone bonus 5 / 4 / 5 / 5 -> 2 for all four (SpellEffect 1314691/2, 1314695/6,
+// 1314699/700, 1314703/4).
 //
 // The zone bonus applies only when the encounter says the fight is in one of those zones.
 func applyNaturalFlask(character *Character, flask proto.Flask) {
-	character.AddStat(stats.Stamina, 60)
+	character.AddStat(stats.Stamina, 30)
 	if !character.Env.Encounter.NaturalFlaskZone {
 		return
 	}
 	switch flask {
 	case proto.Flask_FlaskOfNaturalAccuracy:
 		character.AddStats(stats.Stats{
-			stats.MeleeHit: 5 * MeleeHitRatingPerHitChance,
-			stats.SpellHit: 5 * SpellHitRatingPerHitChance,
+			stats.MeleeHit: 2 * MeleeHitRatingPerHitChance,
+			stats.SpellHit: 2 * SpellHitRatingPerHitChance,
 		})
 	case proto.Flask_FlaskOfNaturalAggression:
 		character.AddStats(stats.Stats{
-			stats.MeleeCrit: 4 * CritRatingPerCritChance,
-			stats.SpellCrit: 4 * SpellCritRatingPerCritChance,
+			stats.MeleeCrit: 2 * CritRatingPerCritChance,
+			stats.SpellCrit: 2 * SpellCritRatingPerCritChance,
 		})
 	case proto.Flask_FlaskOfNaturalPrecision:
-		character.AddStat(stats.Expertise, 5*ExpertiseRatingPerExpertiseChance)
+		character.AddStat(stats.Expertise, 2*ExpertiseRatingPerExpertiseChance)
 	case proto.Flask_FlaskOfNaturalSwiftness:
-		character.PseudoStats.MeleeSpeedMultiplier *= 1.05
-		character.PseudoStats.RangedSpeedMultiplier *= 1.05
-		character.PseudoStats.CastSpeedMultiplier *= 1.05
+		character.PseudoStats.MeleeSpeedMultiplier *= 1.02
+		character.PseudoStats.RangedSpeedMultiplier *= 1.02
+		character.PseudoStats.CastSpeedMultiplier *= 1.02
 	}
 }
 
