@@ -8,6 +8,41 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Blizzard's November 10 hotfixes (2026-11-11)
+
+[Blizzard's hotfixes of November 10](https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026)
+([Class Tuning Incoming](https://us.forums.blizzard.com/en/wow/t/2404092)). No server row carries these yet, so the sim
+takes the announced values:
+
+- Stormstrike deals 100% weapon damage (was 150%) and has an 8 sec cooldown (was 6).
+- Mental Dexterity gives 33 / 66 / 100% of Intellect as attack power (was 50 / 100 / 150%).
+- Maelstrom Weapon procs 6 / 7 / 8 / 9 / 10 times a minute by rank, a chance per swing by main-hand speed (about 60% at
+  3.6 speed at 5/5), in place of a stack on every landed melee hit, and each stack takes 20% off cast time and mana at
+  every rank.
+- Weapon imbues and weapon totems work together: Windfury Weapon and Windfury Totem can both proc for the shaman, and so
+  can Flametongue Weapon and Flametongue Totem. The post doesn't say whether the two Windfury procs share a cooldown; the
+  sim gives each its own (Weapon 20% with 1.5 sec on any main-hand hit, Totem 20% on white swings).
+- Rage of the Storm: 16 Strength, 102 to 154 at 3.60 speed (leveling only).
+
+Elemental doesn't move. The talent and rotation search moved Convection to Reverberation on Level 60 and Imp GW, an
+Elemental Devastation point to Call of Flame on Water Shield, and the Mana Tide rotation; every build keeps Windfury
+Weapon with its own Windfury Totem (Flametongue Weapon is about 95 behind at 180 sec, Flametongue Totem in Windfury
+Totem's place about 115). The DPS Report, 20000 iterations, seed 1, 120 / 180 / 300 sec (180 sec before → after):
+
+| Preset | Talents | 120 s | 180 s | 300 s | 180 s before |
+|---|---|---|---|---|---|
+| Enhancement Level 60 (Orc) | `053303102-055030110051012151-03` | 1041.8 | 1030.6 | 1014.1 | 1159.4 |
+| Enhancement Imp GW (Orc) | `053303102-055030110051212151-01` | 1027.5 | 1016.2 | 999.7 | 1149.8 |
+| Enhancement Water Shield (Orc) | `051003-055030110051012151-053020001` | 986.2 | 976.3 | 972.8 | 1111.3 |
+| Enhancement Mana Tide (Orc) | `03-055030210051012151-053111031001` | 939.2 | 930.0 | 925.8 | 1055.1 |
+| Elemental Level 60 (Windshaper Skyborne) | `5501331003001351-05500101-053` | 986.7 | 976.9 | 930.9 | 970.1 |
+| Elemental Mana Tide (Windshaper Skyborne) | `5501331003001351-04-053150001001` | 969.0 | 959.6 | 941.1 | 952.7 |
+
+The Elemental builds move only by hotfix push 113380 (Lightning Bolt, Chain Lightning and shock damage), published
+with these. Races at 180 sec: Enhancement Orc 1030.6, Windshaper Skyborne 1029.5, Troll 1024.9, Dwarf 1022.8, Tauren
+1017.1; Elemental Windshaper Skyborne 976.9, Orc 971.4, Troll 968.8, Dwarf 967.8, Tauren 962.0. Improved Ghost Wolf's
+Dwarf wears the hit-1 step (+1.6); Level 60's Dwarf no longer gains from a lower step.
+
 ## Round 70753: the November 2 development notes (2026-11-03)
 
 Client 1.60.1.70753 carries none of the shaman lines (its shaman spells and tree are 70707's), and no server hotfix

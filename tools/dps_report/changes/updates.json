@@ -2256,7 +2256,7 @@
    "title": "Build 1.60.1.70753 and the November 2 development notes: class damage raised across the game",
    "date": "2026-11-02",
    "baselineData": "2fd3f2cb28bcb4188a0da137145b0fa35cb66582",
-   "endData": null,
+   "endData": "c61845d5ccb97b5829a43325d9d4bd1462bbadad",
    "lines": [
     {
      "title": "Dragonfire Potion and Caustic Smog Potion can't crit",
@@ -4110,6 +4110,231 @@
    "source": {
     "label": "Blizzard: WoW Forever Beta Development Notes, updated November 2",
     "url": "https://us.forums.blizzard.com/en/wow/t/wow-forever-beta-development-notes-%E2%80%93-updated-november-2/2360696/9"
+   }
+  },
+  {
+   "id": "2026-11-10-hotfixes",
+   "type": "game",
+   "title": "November 10 hotfixes: Enhancement shaman tuning",
+   "date": "2026-11-10",
+   "baselineData": "c61845d5ccb97b5829a43325d9d4bd1462bbadad",
+   "endData": null,
+   "lines": [
+    {
+     "title": "Stormstrike deals 100% weapon damage (was 150%) and has an 8 sec cooldown (was 6)",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "No server data carries it yet, so the sim takes the announced values.",
+     "source": {
+      "label": "Blizzard: Class Tuning Incoming, November 10",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2404092"
+     },
+     "commits": [
+      "cb65108"
+     ]
+    },
+    {
+     "title": "Mental Dexterity gives 33 / 66 / 100% of Intellect as attack power (was 50 / 100 / 150%)",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "Every Enhancement build takes 3/3, so Intellect is worth a third less to it.",
+     "source": {
+      "label": "Blizzard: Class Tuning Incoming, November 10",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2404092"
+     },
+     "commits": [
+      "cb65108"
+     ]
+    },
+    {
+     "title": "Maelstrom Weapon procs 6 / 7 / 8 / 9 / 10 times a minute by rank, and every stack takes 20% off cast time and mana at every rank",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "A chance per swing by main-hand speed: about 60% a landed hit with a 3.6 speed weapon at 5/5. Before it, every landed melee hit gave a stack, as our combat logs of November 8 and 9 showed, and the sim did that. No server data carries the new rate yet.",
+     "source": {
+      "label": "Blizzard: Class Tuning Incoming, November 10",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2404092"
+     },
+     "commits": [
+      "cb65108",
+      "bcc5d6c"
+     ]
+    },
+    {
+     "title": "Weapon imbues and weapon totems work together: Windfury Weapon and Windfury Totem can both proc",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "Before, Windfury Weapon on the main hand turned off the shaman's own benefit from Windfury Totem, and Flametongue Weapon the same for Flametongue Totem. Blizzard doesn't say whether the two Windfury procs share a cooldown, so each keeps its own (an assumption on the Assumptions tab). Every Enhancement build now gets both from its own Windfury Totem.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "commits": [
+      "cb65108"
+     ]
+    },
+    {
+     "title": "Windfury Totem and Flametongue Totem replace each other: the last one placed takes hold",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "A weapon holds one totem buff, so the Enhancement builds no longer get the raid's Flametongue Totem next to their own Windfury Totem.",
+     "commits": [
+      "9ba00c2"
+     ]
+    },
+    {
+     "title": "Stormstrike's mark lands after Stormstrike's own damage",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "So Stormstrike doesn't raise its own damage, which matches our combat logs.",
+     "commits": [
+      "5a870ec"
+     ]
+    },
+    {
+     "title": "Spell damage rolls in whole points, as the game does",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "A fraction of a point at most; only the shaman builds are re-simmed with it so far.",
+     "moves": false,
+     "commits": [
+      "2a60326"
+     ]
+    },
+    {
+     "title": "Enhancement talents and rotations re-searched",
+     "kind": "talents",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "Level 60 and Improved Ghost Wolf move Convection to Reverberation, Water Shield moves an Elemental Devastation point to Call of Flame, and the Mana Tide rotation changes. Every build keeps Windfury Weapon with its own Windfury Totem: Flametongue Weapon is 93 to 100 behind at 180 s, Flametongue Totem in Windfury Totem's place 110 to 120. With the hotfixes above, every Enhancement build is down 131 to 142 at 180 s, from first among the shaman builds to below Elemental Level 60 on Mana Tide.",
+     "commits": [
+      "54a15ba"
+     ]
+    },
+    {
+     "title": "Dwarf gear for the new Enhancement builds",
+     "kind": "race",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60"
+     ],
+     "races": [
+      "Dwarf"
+     ],
+     "note": "The Dwarf's extra 1% hit is traded for other stats only where that still gains: on Improved Ghost Wolf (+1.6 at 180 s), no longer on Level 60.",
+     "commits": [
+      "836960d"
+     ]
+    },
+    {
+     "title": "Minor Health and Minor Stamina enchants take the Forever client values",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-level60",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-mana-tide"
+     ],
+     "note": "Minor Health is +2 Stamina (was +5 health) and Minor Stamina +3 Stamina (was +1). No damage moves.",
+     "source": {
+      "label": "wago.tools, SpellItemEnchantment",
+      "url": "https://wago.tools/db2/SpellItemEnchantment?filter[ID]=41"
+     },
+     "moves": false,
+     "commits": [
+      "04bdcdb"
+     ]
+    },
+    {
+     "title": "Rage of the Storm: 16 Strength, 102 to 154 damage at 3.60 speed",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "note": "A leveling weapon; no level 60 preset wears it.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "moves": false,
+     "commits": [
+      "eb6c042"
+     ]
+    }
+   ],
+   "internal": [],
+   "source": {
+    "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+    "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
    }
   }
  ]

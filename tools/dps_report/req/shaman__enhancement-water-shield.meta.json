@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_hit-4",
   "apl": "magma",
   "published": {
-    "dps": 1111.3,
-    "source": "DPS report 2026-11-04 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 976.3,
+    "source": "DPS report 2026-11-11 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
     "dps": 834.8,

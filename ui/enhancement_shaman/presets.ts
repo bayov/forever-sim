@@ -407,7 +407,8 @@ export const DefaultAPL = APLOptimized;
 // Reverberation 3, with the Optimized rotation's new knobs: 1041.3 / 1030.6 / 1013.9 at 120 / 180 / 300 sec (1020.1 /
 // 1011.6 / 998.9 with the old talents and rotation on the new rules), +15.0 to +21.2 on seeds 1 and 1000003, paired at
 // 20000 iterations. Reverberation 5 with Tidal Focus 1 on the hit-1 step (053503102-055030110051012151-01) is +1.7 to
-// +4.4 at 120 and 180 sec but -0.3 to +0.7 at 300, so it is not kept.
+// +4.4 at 120 and 180 sec but -0.3 to +0.7 at 300, so it is not kept. DPS report (2026-11-11): 1041.8 / 1030.6 / 1014.1,
+// from 1159.4 at 180 sec before the hotfixes.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', SavedTalents.create({ talentsString: '053303102-055030110051012151-03' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons, Concussion, Reverberation and Tidal Focus.',
 	group: 'Synthetic',
@@ -442,7 +443,8 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Enhancement', Saved
 // 1149.7 / 1128.1 at 120 / 180 / 300 sec (889.0 / 878.8 / 862.1 before), 9.5 behind Level 60 at 180.
 // Blizzard's 2026-11-10 hotfixes: the same move as Level 60, Convection 3 to Reverberation 3, with the Optimized
 // rotation's new knobs: 1026.8 / 1016.1 / 999.2 at 120 / 180 / 300 sec (1006.2 / 997.7 / 984.2 before on the new rules),
-// +14.7 to +22.2 on two seed sets, 14.5 behind Level 60 at 180.
+// +14.7 to +22.2 on two seed sets, 14.5 behind Level 60 at 180. DPS report (2026-11-11): 1027.5 / 1016.2 / 999.7, from
+// 1149.8 at 180 sec before the hotfixes.
 export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', SavedTalents.create({ talentsString: '053303102-055030110051212151-01' }), {
 	tooltip: 'The Enhancement talents with Improved Ghost Wolf 2 (row 4 since the November 2 notes).',
 	group: 'Synthetic',
@@ -489,7 +491,8 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Enh Imp GW', S
 // 1125.3 / 1117.4 / 1113.4 at 120 / 180 / 300 sec (1118.9 / 1111.3 / 1108.1 before), +6.4 / +6.1 / +5.3.
 // Blizzard's 2026-11-10 hotfixes: the search moved an Elemental Devastation point back to Call of Flame (3): 984.8 /
 // 976.3 / 972.3 at 120 / 180 / 300 sec (981.7 / 973.8 / 970.0 before on the new rules), +1.3 to +3.1 on two seed sets.
-// The Magma rotation and the hit-4 step stay (hit-3 ties, hit-5 is -0.1 to -0.6).
+// The Magma rotation and the hit-4 step stay (hit-3 ties, hit-5 is -0.1 to -0.6). DPS report (2026-11-11): 986.2 /
+// 976.3 / 972.8, from 1111.3 at 180 sec before the hotfixes.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Enh Water Shield',
 	SavedTalents.create({ talentsString: '051003-055030110051012151-053020001' }),
@@ -525,6 +528,7 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // 1068.6 / 1060.3 / 1055.2 at 120 / 180 / 300 sec (1065.1 / 1055.1 / 1046.7 before), +3.5 / +5.2 / +8.5.
 // Blizzard's 2026-11-10 hotfixes: the search found nothing better; the Mana Tide rotation changed (see
 // tools/rotopt/shaman_presets.sh): 939.5 / 930.3 / 925.1 at 120 / 180 / 300 sec (936.7 / 928.4 / 923.1 before).
+// DPS report (2026-11-11): 939.2 / 930.0 / 925.8, from 1055.1 at 180 sec before the hotfixes.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Enh Mana Tide',
 	SavedTalents.create({ talentsString: '03-055030210051012151-053111031001' }),

@@ -148,6 +148,8 @@ export const DefaultAPL = APLLevel60;
 // and Elemental Mastery is Lightning Mastery. The talent search found nothing better. With Lightning
 // Bolt at 0.78 of Era's damage, Lightning Overload 30% and the shocks at Era's, 979.7 / 970.1 / 924.6
 // at 120 / 180 / 300 sec (775.3 / 767.6 / 738.8 before, on the same race base stats).
+// Hotfix push 113380 (Lightning Bolt, Chain Lightning and shock damage by rank): 986.7 / 976.9 / 930.9.
+// Blizzard's 2026-11-10 hotfixes don't move it (DPS report, 2026-11-11).
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Elemental', SavedTalents.create({ talentsString: '5501331003001351-05500101-053' }), {
 	tooltip: 'Level 60 talents from the talent search: Lightning Mastery, Call of Thunder, Eye of the Storm, Thundering Strikes and Tidal Focus.',
 	group: 'Synthetic',
@@ -164,6 +166,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Elemental', SavedTa
 // Round 70753: the search with Mana Tide Totem pinned kept the build (Call of Thunder in Lava Burst's
 // square): 962.7 / 952.7 / 935.1 at 120 / 180 / 300 sec (760.2 / 752.8 / 737.0 before), 1.8% behind
 // Level 60 at 180. Unpinned it drops Mana Tide Totem for the Level 60 build's points.
+// Hotfix push 113380: 969.0 / 959.6 / 941.1 (DPS report, 2026-11-11; the 2026-11-10 hotfixes don't move it).
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Elemental Mana Tide',
 	SavedTalents.create({ talentsString: '5501331003001351-04-053150001001' }),

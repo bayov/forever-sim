@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_burning_totem_hit-4",
   "apl": "mana_tide",
   "published": {
-    "dps": 1055.1,
-    "source": "DPS report 2026-11-04 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 930.0,
+    "source": "DPS report 2026-11-11 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
     "dps": 795.8,
