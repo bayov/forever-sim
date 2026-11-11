@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "da272241e5bf4bacef59dc91f542b69b36d0c0d5"
+  "master": "9eef440fb2dc9321c76716e627c972c262590623"
  },
  "last_pass_at": "2026-11-10T18:51:24Z",
  "pass": 73,
  "result": "quiet",
  "note": "Pass 73: ca5e35c3f..da272241e, 1 sim commit (2e320521f The Chief's Enforcer Farraki Enforcement 1294339, 294 Physical, 1.14 PPM from the Nov 10 log; client has no PPM row): item-level, log-backed, no finding. Client 70862 -> 70888: no shared mechanic moved (SpellItemEnchantment, TraitDefinitionEffectPoints same; CurvePoint only new identity curves); engineering trinkets 272437-9 on-use cd 90 s -> 300/360 s and Flamebreak Talisman 280071 Agi 50->33, cd 300 s: none modeled or in presets. Dev notes unchanged since post 10; blue tracker nothing past Nov 9 hotfixes post 5.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-10T18:56:18Z",
+ "checked_at": "2026-11-11T00:48:25Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
