@@ -78,6 +78,8 @@ func main() {
 	gearMaxIlvl := flag.Int("gear-max-ilvl", 0, "highest item level the gear search considers, 0 for all (78 keeps to Phase 1 power: Molten Core, Onyxia, no legendary)")
 	gearHitOnly := flag.Bool("gear-hit-only", false, "gear search: only items with melee or spell hit, or weapon skill, for a quick look at what hit is worth against a higher level enemy")
 	gearSynthetic := flag.Bool("gear-synthetic", false, "gear search: also consider the made up Phase 1 items (ids from 990000, tools/database/forever_synthetic_items.go)")
+	gearMinIlvl := flag.Int("gear-min-ilvl", 0, "gear search: lowest item level, 0 for all (at level 60, items under about 50 can't compete and their random suffix rolls make the search hours long)")
+	gearNoRaids := flag.Bool("gear-no-raids", false, "gear search: leave out items that only drop from raid bosses or world bosses (Forever before its raids open, see noRaidDrops in gear.go)")
 	gearPhase := flag.Int("gear-phase", 0, "highest raid phase the gear search considers (1 MC, 2 DM, 3 BWL, 4 ZG, 5 AQ, 6 Naxx), 0 for all")
 	dbPath := flag.String("db", "assets/database/db.json", "UI item database for the gear search")
 	itemLevelsPath := flag.String("item-levels", "assets/db_inputs/wago_db2_items.csv,assets/db_inputs/forever_client_items.csv", "wago item exports, comma separated with the later winning, for which items need a PvP rank")
@@ -364,7 +366,7 @@ func main() {
 				excludeEnchants = append(excludeEnchants, int32(v))
 			}
 		}
-		pool, err := loadGearPool(*dbPath, *itemLevelsPath, *foreverItemsPath, setup.player(), level, proto.ItemQuality(*gearQuality), int32(*gearPhase), int32(*gearMaxIlvl), exclude, *gearHitOnly, *gearSynthetic)
+		pool, err := loadGearPool(*dbPath, *itemLevelsPath, *foreverItemsPath, setup.player(), level, proto.ItemQuality(*gearQuality), int32(*gearPhase), int32(*gearMinIlvl), int32(*gearMaxIlvl), exclude, *gearHitOnly, *gearSynthetic, *gearNoRaids)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "loading items: %v\n", err)
 			os.Exit(2)

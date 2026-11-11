@@ -196,7 +196,7 @@ func loadUnsourcedItems(path string) (map[int32]bool, error) {
 var foreverPvpRankName = regexp.MustCompile(`^(Premier )?(Private|Scout|Corporal|Grunt|Sergeant|Senior Sergeant|Master Sergeant|First Sergeant|Sergeant Major|Stone Guard|Knight|Blood Guard|Knight-Lieutenant|Legionnaire|Knight-Captain|Centurion|Knight-Champion|Champion|Lieutenant Commander|Lieutenant General|Commander|General|Marshal|Warlord|Field Marshal|High Warlord|Grand Marshal)'s `)
 
 // Every option for every slot the player can use at their level.
-func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase, maxIlvl int32, exclude []int32, hitOnly, synthetic bool) ([][]gearOption, error) {
+func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase, minIlvl, maxIlvl int32, exclude []int32, hitOnly, synthetic, noRaids bool) ([][]gearOption, error) {
 	data, err := os.ReadFile(dbPath)
 	if err != nil {
 		return nil, err
@@ -274,6 +274,9 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 		if maxIlvl > 0 && item.Ilvl > maxIlvl {
 			continue
 		}
+		if item.Ilvl < minIlvl {
+			continue
+		}
 		// The client carries Season of Discovery's items, with sources, but Forever does
 		// not use them (the item level 98 Scarlet Enclave sets came up in a level 60 search).
 		if isSodItem(item.Id) {
@@ -284,6 +287,9 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 			continue
 		}
 		if contains(exclude, item.Id) {
+			continue
+		}
+		if noRaids && raidOnly(item) {
 			continue
 		}
 		// A few items have no level of their own (Olmann Sewar, the engineering goggles),

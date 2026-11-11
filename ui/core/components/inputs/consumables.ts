@@ -300,7 +300,7 @@ export const FLASKS_CONFIG: ConsumableStatOption<Flask>[] = [
 	{ config: FlaskOfDistilledWisdom, stats: [Stat.StatIntellect] },
 	{ config: FlaskOfSupremePower, stats: [Stat.StatMP5, Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: FlaskOfChromaticResistance, stats: [] },
-	// 60 Stamina, and their bonus when the encounter is in a natural flask zone (Hyjal, the Barrow Deeps).
+	// 30 Stamina (client 1.60.1.70862), and their bonus when the encounter is in a natural flask zone (Hyjal, the Barrow Deeps).
 	{ config: consumable(274273, Flask.FlaskOfNaturalAccuracy), stats: [] },
 	{ config: consumable(274274, Flask.FlaskOfNaturalAggression), stats: [] },
 	{ config: consumable(274275, Flask.FlaskOfNaturalPrecision), stats: [] },
