@@ -4331,7 +4331,20 @@
      ]
     }
    ],
-   "internal": [],
+   "internal": [
+    {
+     "commit": "f8a37c8",
+     "why": "the report's own data for this update"
+    },
+    {
+     "commit": "5dffd22",
+     "why": "test expectations only"
+    },
+    {
+     "commit": "b415b7c",
+     "why": "stat weights in the sim UI and the optimizer's weights; no build's gear or rotation changes"
+    }
+   ],
    "source": {
     "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
     "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
