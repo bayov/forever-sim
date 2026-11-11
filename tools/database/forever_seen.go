@@ -19,8 +19,9 @@ import (
 // the sync skill) writes the ones whose stats differ from our database, or that it lacks,
 // into the file. Entries with "by": "hand" are the ones we typed in before, from
 // foreverchanges.pro and our own tooltips, or for an item a Blizzard hotfix changed before
-// the Wowhead listing caught up (Rage of the Storm, hotfixes of 2026-11-10 and wago.tools push
-// 113886). gen_db merges them after the Wowhead listing, so they win.
+// the Wowhead listing caught up (Earthen Silk Slippers, hotfixes of 2026-11-10 and wago.tools
+// push 113944). Drop such an entry once the listing has the change. gen_db merges them after
+// the Wowhead listing, so they win.
 //
 // An item the database already has takes only the fields the entry gives, and its type
 // too when the entry has an inventoryType. An item it doesn't have yet needs that slot and

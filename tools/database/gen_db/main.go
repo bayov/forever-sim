@@ -416,8 +416,19 @@ func AttachWandSchools(db *database.WowDatabase, wagoItems map[int32]database.Wa
 		}
 		if wagoItem, ok := wagoItems[item.Id]; ok && wagoItem.HasDamageType {
 			item.SpellSchool = database.DamageTypeSchool(wagoItem.DamageType)
+		} else if school, ok := foreverWandSchools[item.Id]; ok {
+			item.SpellSchool = school
 		}
 	}
+}
+
+// The schools of Forever wands that neither ItemSparse has (the server still hides their row)
+// and whose school changed after Wowhead and BayovCore read them. ItemSparse wins once it has
+// the item.
+var foreverWandSchools = map[int32]proto.SpellSchool{
+	// Sparklance Wand: "now does Arcane damage (was Nature damage)", Blizzard's hotfixes of
+	// 2026-11-10 and foreverchanges.pro. Its ItemSparse row is still hidden at 1.60.1.70888.
+	280031: proto.SpellSchool_SpellSchoolArcane,
 }
 
 // Filters out entities which shouldn't be included in the sim.

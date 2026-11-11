@@ -14215,7 +14215,7 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 221318,Azshara Leycryst,50,8196,0,0,0
 221319,Blackrock Leycryst,50,8196,0,0,0
 221320,Hinterlands Leycryst,50,8196,0,0,0
-221324,Brittle Key,1,24580,0,0,0
+221324,Brittle Key,1,28676,0,0,0
 221325,EZ-Splode Blasting Charge,40,28676,0,0,0
 221326,Sacred Stag Heart,1,8192,0,0,0
 221336,Schematic: Goblin Mining Helmet,38,24580,0,0,0
@@ -21610,16 +21610,34 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 288892,,,,,2146,
 288893,,,,,2146,
 288894,,,,,2146,
-288896,Superior Healing Potion,10,24580,0,0,0
-288897,Superior Mana Potion,10,24580,0,0,0
-288898,Swiftness Potion,10,24580,0,0,0
-288900,Earthshaker,10,24580,0,0,0
-288926,Choker of the Fire Lord,10,24580,0,0,0
-288927,Quick Strike Ring,10,24580,0,0,0
-288928,Heavy Dark Iron Ring,10,24580,0,0,0
-288929,Band of Sulfuras,10,24580,0,0,0
-288930,Cauterizing Band,10,24580,0,0,0
-288931,Ring of Spell Power,10,24580,0,0,0
+288896,Superior Healing Potion,30,24580,0,0,0
+288897,Superior Mana Potion,30,24580,0,0,0
+288898,Swiftness Potion,30,24580,0,0,0
+288900,Earthshaker,30,24580,0,0,0
+288926,Choker of the Fire Lord,30,24580,0,0,0
+288927,Quick Strike Ring,30,24580,0,0,0
+288928,Heavy Dark Iron Ring,30,24580,0,0,0
+288929,Band of Sulfuras,30,24580,0,0,0
+288930,Cauterizing Band,30,24580,0,0,0
+288931,Ring of Spell Power,30,24580,0,0,0
+289081,Noggenfogger Elixir,30,24580,0,0,0
+289082,Elixir of Endless Intellect,30,24580,0,0,0
+289083,Elixir of Endless Power,30,24580,0,0,0
+289084,Elixir of Endless Healing,30,24580,0,0,0
+289086,Elixir of Endless Rapidity,30,24580,0,0,0
+289087,Elixir of Endless Opportunity,30,24580,0,0,0
+289088,Scroll of Endless Fortitude,30,24580,0,0,0
+289292,Hammer of Bestial Fury,35,24580,0,0,0
+289294,"Thunderfury, Blessed Blade of the Windseeker",45,28676,0,0,0
+289295,"Sulfuras, Hand of Ragnaros",45,28676,0,0,0
+289296,Benediction,40,24580,0,0,0
+289297,Anathema,40,24580,0,0,0
+289303,"Rhok'delar, Longbow of the Ancient Keepers",40,24580,0,0,0
+289321,Elixir of Endless Mana,30,24580,0,0,0
+289329,Elixir of Endless Growth,30,24580,0,0,0
+289330,Scroll of Endless Speed,30,24580,0,0,0
+289334,Elixir of Endless Experience,30,24580,0,0,0
 289439,Pouch of Violet Dust,1,24580,0,0,0
 289559,Enchant Boots - Speed,1,8192,0,0,0
 289560,Formula: Enchant Boots - Speed,50,24576,0,0,0
+290333,Berdun's Trusty Rifle,48,8196,0,0,0
