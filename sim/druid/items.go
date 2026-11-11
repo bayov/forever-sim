@@ -31,13 +31,17 @@ func init() {
 	core.AddEffectsToTest = false
 
 	// https://www.wowhead.com/classic/item=22397/idol-of-ferocity
-	// Equip: Reduces the energy cost of Claw and Rake by 3.
+	// Equip: Reduces the energy cost of Claw and Rake by 2 under Forever (3 in Classic). Its equip
+	// spell 27851 is a flat cost modifier of -2 in client 1.60.1.70888 (SpellEffect 704563), and
+	// hotfix push 113860 keeps -2: it only drops an unused word-1 bit from the class mask, and
+	// Claw and Rake stay on word 0's 0x1000.
 	core.NewItemEffect(IdolOfFerocity, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
+		reduction := core.TernaryInt32(druid.Env.IsForever(), 2, 3)
 
 		druid.OnSpellRegistered(func(spell *core.Spell) {
 			if spell.SpellCode == SpellCode_DruidRake || spell.SpellCode == SpellCode_DruidClaw {
-				spell.Cost.FlatModifier -= 3
+				spell.Cost.FlatModifier -= reduction
 			}
 		})
 	})
