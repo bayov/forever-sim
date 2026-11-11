@@ -147,16 +147,16 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-DevilsaurEye-19991"
  value: {
-  dps: 1491.1215
-  tps: 1328.54023
+  dps: 1496.61983
+  tps: 1333.83262
   dtps: 2.35817
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-DevilsaurTooth-19992"
  value: {
-  dps: 1464.02183
-  tps: 1301.79522
+  dps: 1469.343
+  tps: 1306.4092
   dtps: 2.3955
  }
 }
