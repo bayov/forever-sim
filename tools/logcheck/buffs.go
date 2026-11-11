@@ -93,10 +93,61 @@ var buffOverrides = map[int32]stats.Stats{
 // Chair (2% crit with everything). But the chair isn't at every camp: on Nov 8 the sheets with
 // Camp Benefits had 2% more crit than the sim, and on Nov 9 most had none. So we count the chair
 // only when the export's sheet shows its crit, and then for every Camp Benefits in the window.
+//
+// Other players' items count too: anyone who sits at the fire gets every item's buff. On Nov 10
+// at level 47 the sheets with Camp Benefits had +9 to every stat and +229 armor (211 and 18 from
+// Agility), which is the Enchanted Lute's row for levels 40 to 49. We count the Lute the same way
+// as the chair, from the sheet. It does nothing with Mark of the Wild up.
 const (
 	campBenefits  = 1229741
 	campChairCrit = 2.0
 )
+
+// campItems are the camp items the export's sheet shows (report.sheet).
+type campItems struct {
+	chair, lute bool
+	level       int32
+}
+
+// luteBuff is the Enchanted Lute's buff at a level: armor, all stats and all resistances, from
+// the client (bindonforever.com/camping and endgametools.com, builds 70862 and 70888).
+func luteBuff(level int32) stats.Stats {
+	rows := []struct {
+		from                   int32
+		armor, all, resistance float64
+	}{
+		{60, 308, 13, 22},
+		{50, 260, 12, 16},
+		{40, 211, 9, 12},
+		{30, 163, 7, 6},
+		{20, 114, 4, 0},
+		{10, 71, 2, 0},
+		{1, 28, 0, 0},
+	}
+	var s stats.Stats
+	for _, row := range rows {
+		if level >= row.from {
+			s[stats.BonusArmor] = row.armor
+			for _, stat := range primaryStats {
+				s[stat] = row.all
+			}
+			for _, stat := range resistanceBits {
+				s[stat] = row.resistance
+			}
+			break
+		}
+	}
+	return s
+}
+
+// hasMarkOfTheWild says one of the buffs is Mark or Gift of the Wild, which the Lute doesn't
+// stack with.
+func (t *clientTables) hasMarkOfTheWild(ids []int32) bool {
+	return slices.ContainsFunc(ids, func(id int32) bool {
+		name := t.spellNames[id]
+		return strings.HasPrefix(name, "Mark of the Wild") || strings.HasPrefix(name, "Gift of the Wild")
+	})
+}
 
 // isForm says the buff is a form like Ghost Wolf. A sheet read in a form says nothing about
 // the fight: on Nov 8 at 21:00 Ghost Wolf took 424 attack power off the sheet.
@@ -118,7 +169,7 @@ func (t *clientTables) hasBuffStats(id int32) bool {
 // buffTotal is what the buffs add to base, the sim's stats without buffs. The crit auras (290)
 // don't add up: the game keeps the biggest one. A percent goes on the stat with the other buffs
 // in it, and the game shows whole stats, so we round it.
-func (t *clientTables) buffTotal(ids []int32, base stats.Stats, chair bool) stats.Stats {
+func (t *clientTables) buffTotal(ids []int32, base stats.Stats, camp campItems) stats.Stats {
 	var total stats.Stats
 	multiplier := [5]float64{1, 1, 1, 1, 1}
 	crit := 0.0
@@ -134,8 +185,11 @@ func (t *clientTables) buffTotal(ids []int32, base stats.Stats, chair bool) stat
 			total = total.Add(s)
 			continue
 		}
-		if id == campBenefits && chair {
+		if id == campBenefits && camp.chair {
 			crit = max(crit, campChairCrit)
+		}
+		if id == campBenefits && camp.lute && !t.hasMarkOfTheWild(ids) {
+			total = total.Add(luteBuff(camp.level))
 		}
 		for _, e := range t.buffEffects[id] {
 			switch e.aura {

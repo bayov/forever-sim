@@ -106,7 +106,7 @@ func (r *report) sheet() {
 	}
 	r.char.unbuffed = base
 	ids := buffIDs(r.ex.Buffs)
-	s, err := r.sheetStats(r.tables.buffTotal(ids, base, false))
+	s, err := r.sheetStats(r.tables.buffTotal(ids, base, r.char.camp))
 	if err != nil {
 		fmt.Println("Sheet check failed:", err)
 		return
@@ -144,8 +144,20 @@ func (r *report) sheet() {
 	// The Camp Chair shows as 2% more crit on the sheet than the sim has (buffs.go).
 	if crit, ok := sheet("crit"); ok && form == "" && slices.Contains(ids, campBenefits) &&
 		crit-(s[stats.MeleeCrit]-0.04*r.mainHandSkillGap()) >= 0.75*campChairCrit {
-		r.char.campChair = true
-		if s, err = r.sheetStats(r.tables.buffTotal(ids, base, true)); err != nil {
+		r.char.camp.chair = true
+	}
+	// The Enchanted Lute shows as its amount more on every stat (buffs.go). Agility and Stamina
+	// are the two rows other camp items don't touch.
+	lute := luteBuff(r.ex.Who.Level)[stats.Agility]
+	if agility, ok := sheet("agility", "effective"); ok && lute > 0 && slices.Contains(ids, campBenefits) &&
+		!r.tables.hasMarkOfTheWild(ids) && agility-s[stats.Agility] >= 0.75*lute {
+		if stamina, ok := sheet("stamina", "effective"); ok && stamina-s[stats.Stamina] >= 0.75*lute {
+			r.char.camp.lute = true
+		}
+	}
+	if r.char.camp.chair || r.char.camp.lute {
+		r.char.camp.level = r.ex.Who.Level
+		if s, err = r.sheetStats(r.tables.buffTotal(ids, base, r.char.camp)); err != nil {
 			fmt.Println("Sheet check failed:", err)
 			return
 		}
@@ -219,10 +231,19 @@ func (r *report) exportBuffs(ids []int32) (added, left []string) {
 		}
 		label := fmt.Sprintf("%s (%d)", name, id)
 		switch {
-		case id == campBenefits && r.char.campChair:
-			added = append(added, label+" with the Camp Chair")
 		case id == campBenefits:
-			left = append(left, label+" without the Camp Chair")
+			var with []string
+			if r.char.camp.chair {
+				with = append(with, "Camp Chair")
+			}
+			if r.char.camp.lute {
+				with = append(with, "Enchanted Lute")
+			}
+			if len(with) == 0 {
+				left = append(left, label+" with no camp item we know")
+			} else {
+				added = append(added, label+" with the "+strings.Join(with, " and "))
+			}
 		case r.tables.hasBuffStats(id):
 			added = append(added, label)
 		default:

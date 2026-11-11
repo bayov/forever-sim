@@ -38,12 +38,12 @@ sections 2 and 6 have the format).
 
 ## logcheck issues
 
-### Camp Benefits stats left out of the sim's character
+### Melee and Stormstrike a few percent high in the Nov 10 morning
 
-- **Flag**: `Melee: raw`, `Stormstrike (17364): raw` (log 2% to 4% above the sim), and `sheet`.
-- **Windows**: `WoWCombatLog-111026_075640.txt` 08:26 to 12:20 (level 47). In the 08:49 window the base attack power is 1149 in the log against the sim's 1114. Those 35 attack power predict +2.1% Melee and +2.2% Stormstrike, and the window shows +1.9% and +2.2%.
-- **What we think**: the sheets show the camp giving +9 to every stat and +229 armor at level 47. History records 2458 and 2463 have the same gear and differ only in the camp and Well Fed. But a level 30 pair on Nov 6 showed +0, so the bonus depends on the camp (or its upgrades). `buffs.go` gives Camp Benefits (1229741) only the chair's crit, and the client has no stats for it.
-- **Next step**: learn what each camp gives (which camp items or upgrades were placed on Nov 10 morning vs Nov 6). Then add it the way the chair's crit is added: from the sheet when it shows the camp's bonus.
+- **Flag**: `Stormstrike (17364): raw` and `Melee: raw`, mob levels 43 to 49.
+- **Windows**: `WoWCombatLog-111026_075640.txt` 08:26 to 12:32. After the Enchanted Lute fix (see Done) the sheet matches, but Stormstrike still runs +2% to +4% in the log in some windows (09:27: 660.8 vs 638.1 in 19 hits, 652.2 vs 633.2 in 17) and Melee up to +4% (12:20: 441.4 vs 421.2 in 9).
+- **What we think**: the Lute (and its 9 Strength and Agility) may have been up during fights where logcheck's Camp Benefits stretches don't reach, or another camp item came and went. Smaller than before, and few hits.
+- **Next step**: watch new logs, now with the elixir and Lute fixes. Dig only if it recurs.
 - **Status**: open, first seen 2026-11-10, last updated 2026-11-11.
 
 ### BayovCore cuts the gear list short
@@ -84,6 +84,10 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-10-18, last updated 2026-11-09 (steady at level 43 to 44, so the dodge per Agility by level is worth a check).
 
 ## Done
+
+### Camp items from other players and the Enchanted Lute
+
+- **Done**: 2026-11-11. Every item at the campfire buffs everyone sitting there, other players' items too, and Camp Benefits (1229741) doesn't say which items. The Nov 10 morning sheets at level 47 had +9 to every stat and +229 armor, which is the Enchanted Lute's row for levels 40 to 49 (211 armor, 9 stats, 12 resistances; bindonforever.com/camping). `buffs.go` now adds the Lute (`luteBuff`, by level, not with Mark of the Wild) when the export's sheet shows it, the way it adds the Camp Chair's crit. 5 windows found it, and their sheet gaps went back to the usual few points. The other items (First Aid Kit, Fish Bowl, Sharpening Wheel, Incense Candle, Faction Banner, Lodestone, Mana Well) aren't read yet.
 
 ### Our own elixirs and scrolls were left out of the replay
 
