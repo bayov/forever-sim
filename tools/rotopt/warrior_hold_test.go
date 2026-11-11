@@ -71,7 +71,9 @@ func TestWarriorDpsHoldUnderBuff(t *testing.T) {
 		uses := warriorAuraGains(t, k, c.aura)
 		ok := len(uses) == len(c.want)
 		for i := 0; ok && i < len(uses); i++ {
-			ok = uses[i] >= c.want[i]-1.5 && uses[i] <= c.want[i]+1.5
+			// A use may wait a little for Rage (Death Wish's 10): white swings alone feed Windfury
+			// Totem under Forever, so dwEnd=15 lands about 2 sec late. Early is the bug this guards.
+			ok = uses[i] >= c.want[i]-1.5 && uses[i] <= c.want[i]+3
 		}
 		if !ok {
 			t.Errorf("%s=%v: %s gained at %v, want about %v", c.knob, c.value, c.aura, uses, c.want)
