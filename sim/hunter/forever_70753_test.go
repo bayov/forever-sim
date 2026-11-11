@@ -4,9 +4,24 @@ import (
 	"math"
 	"testing"
 
+	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
+
+// TestForeverHotfix20261110Costs checks Arcane Shot and Summon Hawk at 11% of base mana (server
+// hotfix 113892 of 2026-11-10, SpellPower rows for every rank of both): 189.2 at 60 (1720 base mana).
+func TestForeverHotfix20261110Costs(t *testing.T) {
+	_, hunter := newHunterSim(t, BeastMasteryHawkTalents, &proto.Debuffs{})
+	for _, spell := range []*core.Spell{hunter.ArcaneShot, hunter.SummonHawk} {
+		if spell == nil || spell.Cost == nil {
+			t.Fatalf("missing spell or cost")
+		}
+		if got, want := spell.Cost.BaseCost, 0.11*hunter.BaseMana; math.Abs(got-want) > 1e-9 || math.Abs(want-189.2) > 1e-9 {
+			t.Errorf("%v base cost %v, want %v (11%% of %v base mana)", spell.ActionID, got, want, hunter.BaseMana)
+		}
+	}
+}
 
 // TestForeverHotfix20261103Damage checks the shots' damage after the launch realms' server hotfix
 // of 2026-11-03 (push 113534 on client 1.60.1.70707, wago.tools' hotfix log; foreverchanges.pro;

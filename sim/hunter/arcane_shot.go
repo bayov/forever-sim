@@ -15,7 +15,9 @@ import (
 // one (about 0.11 in ElliotWood/Forever's fit, 10% on the forever-hunter wiki, the sim's 10% by
 // report assumption hunter_shot_ap_shares, user ruling 2026-10-15). Blizzard's 11-02 notes and
 // foreverchanges.pro's reading of them give it as "raised from 0.1 to 0.15", so it is 15% now.
-// The 6 sec cooldown is shared with Summon Hawk (client category 1173).
+// The 6 sec cooldown is shared with Summon Hawk (client category 1173). Every rank costs 11% of
+// base mana (server hotfix 113892 of 2026-11-10, SpellPower rows for 3044 and 14281-14287; the
+// client had 25 to 190 by rank).
 const arcaneShotRAPCoefficient = 0.15
 
 var ArcaneShotBaseDamage = [9]float64{0, 25, 35, 50, 85, 120, 175, 220, 280}
@@ -33,7 +35,6 @@ func (hunter *Hunter) getArcaneShotConfig(rank int, timer *core.Timer) core.Spel
 		baseDamage = classicArcaneShotBaseDamage[rank]
 		rapCoefficient = 0
 	}
-	manaCost := [9]float64{0, 25, 35, 50, 80, 105, 135, 160, 190}[rank]
 	level := [9]int{0, 6, 12, 20, 28, 36, 44, 52, 60}[rank]
 
 	return core.SpellConfig{
@@ -49,7 +50,7 @@ func (hunter *Hunter) getArcaneShotConfig(rank int, timer *core.Timer) core.Spel
 		MissileSpeed:  40,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: manaCost,
+			BaseCost: 0.11,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

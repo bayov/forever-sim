@@ -11,7 +11,8 @@ import (
 
 // Summon Hawk, the 16 point Beast Mastery talent (beta client 1293241 and 1293525 to 1293527, build
 // 1.60.1.70338). The dive bomb deals 32/47/85/108 by rank plus 5% of ranged attack power, costs
-// 80/105/135/190 mana and shares Arcane Shot's 6 sec cooldown. It leaves a hawk that attacks the
+// 11% of base mana at every rank (server hotfix 113892 of 2026-11-10, SpellPower rows such as 313567;
+// the client had 80/105/135/190) and shares Arcane Shot's 6 sec cooldown. It leaves a hawk that attacks the
 // target for 18 sec (1293248), at most 2 at once (the spell's third effect), so a third replaces the
 // one with the least time left. The dive bomb carries the client's always-hit attribute. Unleashed
 // Fury and Ferocity name Summon Hawk in their class masks, so the dive bomb deals 3% more a rank of
@@ -128,7 +129,6 @@ func (hunter *Hunter) registerSummonHawkSpell(timer *core.Timer) {
 	rank := summonHawkRank(hunter.Level)
 	spellID := [5]int32{0, 1293241, 1293525, 1293526, 1293527}[rank]
 	baseDamage := [5]float64{0, 32, 47, 85, 108}[rank]
-	manaCost := [5]float64{0, 80, 105, 135, 190}[rank]
 	unleashedFury := 1 + 0.03*float64(hunter.Talents.UnleashedFury)
 
 	// Each hawk's time out is a dot on the hunter, which the rotations read (Summon Hawk while
@@ -172,7 +172,7 @@ func (hunter *Hunter) registerSummonHawkSpell(timer *core.Timer) {
 		RequiredLevel: 25,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: manaCost,
+			BaseCost: 0.11,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
