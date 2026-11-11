@@ -69,19 +69,12 @@ var Effects = []*Effect{
 		write: func(w *buffWriter) { w.rb.StrengthOfEarthTotem = regular }},
 	{Gift: GiftGoA, Name: "Grace of Air", Label: "Grace of Air Totem", Icon: "spell_nature_invisibilitytotem",
 		write: func(w *buffWriter) { w.rb.GraceOfAirTotem = regular }},
-	// A receiver takes one weapon totem: Flametongue when its spec wants it, else Windfury.
+	// A receiver takes Windfury Totem. Flametongue Totem is the shaman's to weigh, never given: since
+	// Blizzard's hotfixes of 2026-11-10 a weapon imbue no longer turns a weapon totem off, so Windfury
+	// Totem beats it for every melee, Enhancement with its own Windfury Weapon included.
 	{Gift: GiftWF, Name: "Windfury Totem", Icon: "spell_nature_windfury",
-		write: func(w *buffWriter) {
-			if !w.spec.FlametongueTotem {
-				w.rb.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
-			}
-		}},
-	{Gift: GiftFT, Name: "Flametongue Totem", Icon: "spell_nature_guardianward",
-		write: func(w *buffWriter) {
-			if w.spec.FlametongueTotem {
-				w.rb.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffFlametongue
-			}
-		}},
+		write: func(w *buffWriter) { w.rb.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury }},
+	{Gift: GiftFT, Name: "Flametongue Totem", Icon: "spell_nature_guardianward"},
 	// The tank's Sunder ramp also counts the other warriors' pull Sunders, so Seat.Write writes it.
 	{Gift: GiftSunderTank, Name: "Sunder upkeep", Label: "Sunder Armor", Icon: "ability_warrior_sunder", Debuff: true},
 	{Gift: GiftMinorArmor, Name: "Minor armor slot", Label: "Faerie Fire or Curse of Recklessness", Icon: "spell_nature_faeriefire", Debuff: true,
@@ -128,9 +121,6 @@ type SpecRow struct {
 	Melee      bool
 	Caster     bool // Power Infusion's magic damage is for it
 	Mana       bool
-	// FlametongueTotem is whether it takes Flametongue Totem rather than Windfury (Windfury Weapon makes
-	// Windfury Totem useless to it).
-	FlametongueTotem bool
 }
 
 var Specs = []*SpecRow{
@@ -140,7 +130,7 @@ var Specs = []*SpecRow{
 	{Spec: proto.Spec_SpecRogue, Class: proto.Class_ClassRogue, Melee: true},
 	{Spec: proto.Spec_SpecShadowPriest, Class: proto.Class_ClassPriest, Gives: GiftPoS | GiftFort, Caster: true, Mana: true},
 	{Spec: proto.Spec_SpecEnhancementShaman, Class: proto.Class_ClassShaman, Gives: GiftSoE | GiftWF, Casts: GiftSoE | GiftWF,
-		Package: true, Melee: true, Mana: true, FlametongueTotem: true},
+		Package: true, Melee: true, Mana: true},
 	{Spec: proto.Spec_SpecElementalShaman, Class: proto.Class_ClassShaman, Package: true, Caster: true, Mana: true},
 	{Spec: proto.Spec_SpecMage, Class: proto.Class_ClassMage, Gives: GiftAB, Caster: true, Mana: true},
 	{Spec: proto.Spec_SpecWarlock, Class: proto.Class_ClassWarlock, Caster: true, Mana: true},

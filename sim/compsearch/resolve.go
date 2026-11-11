@@ -702,16 +702,16 @@ func resolutionRecords(up, cast Gift, phs, dps []*member, blessings map[proto.Cl
 		recs = append(recs, &proto.CompBuffRecord{Effect: packageName(pk), Provider: fmt.Sprintf("%s (party %d)", pkgGiver[p], p+1), Scope: "party", Receivers: int32(n), Given: true})
 	}
 	var misses []string
-	// Someone takes Flametongue Totem, and someone melee takes Windfury Totem.
-	ft, melee := false, false
+	// Someone melee takes Windfury Totem. Nobody is given Flametongue Totem (effects' Windfury Totem
+	// row), so it is never missed.
+	melee := false
 	for _, m := range dps {
-		ft = ft || specOfPlayer(m.player).FlametongueTotem
 		melee = melee || isMelee(m)
 	}
 	for _, g := range modelRoles {
 		// A slot another effect fills, or an effect nobody here could use, isn't missed.
 		if up.Has(g) || (g == GiftFuriousHowl && up.Has(GiftBattleShout)) || (g == GiftBattleShout && up.Has(GiftFuriousHowl)) ||
-			(g == GiftFT && !ft) || (g == GiftWF && !melee) {
+			g == GiftFT || (g == GiftWF && !melee) {
 			continue
 		}
 		misses = append(misses, "nobody gives "+GiftName(g))

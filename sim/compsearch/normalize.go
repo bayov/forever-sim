@@ -53,8 +53,8 @@ var Fields = []Field{
 	{"battle_shout", func(r *proto.RaidSimRequest) { rb(r).BattleShout = missing }, func(r *proto.RaidSimRequest) { rb(r).BattleShout = reg }},
 	{"strength_of_earth_totem", func(r *proto.RaidSimRequest) { rb(r).StrengthOfEarthTotem = missing }, func(r *proto.RaidSimRequest) { rb(r).StrengthOfEarthTotem = reg }},
 	{"grace_of_air_totem", func(r *proto.RaidSimRequest) { rb(r).GraceOfAirTotem = missing }, func(r *proto.RaidSimRequest) { rb(r).GraceOfAirTotem = reg }},
-	// The weapon totem is one field with two values: each is dropped on its own, so a build that can't
-	// read Windfury Totem (Enhancement, with Windfury Weapon) keeps its Flametongue.
+	// The weapon totem is one field with two values: each is dropped on its own, so a build given
+	// Flametongue keeps it when Windfury is dropped.
 	{"totem_weapon_windfury", func(r *proto.RaidSimRequest) {
 		if rb(r).TotemWeaponBuff == proto.TotemWeaponBuff_TotemWeaponBuffWindfury {
 			rb(r).TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffNone

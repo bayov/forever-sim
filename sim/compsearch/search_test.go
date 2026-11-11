@@ -216,8 +216,8 @@ func TestSeatWrite(t *testing.T) {
 		s.Write(req, b)
 		return req
 	}
-	// One weapon totem per receiver: Flametongue for Enhancement, Windfury for the others.
-	if got := write(enh).Raid.Buffs.TotemWeaponBuff; got != proto.TotemWeaponBuff_TotemWeaponBuffFlametongue {
+	// Windfury Totem for every receiver but Enhancement, which casts its own; Flametongue for nobody.
+	if got := write(enh).Raid.Buffs.TotemWeaponBuff; got != proto.TotemWeaponBuff_TotemWeaponBuffNone {
 		t.Errorf("Enhancement's weapon totem: %v", got)
 	}
 	if got := write(fury).Raid.Buffs.TotemWeaponBuff; got != proto.TotemWeaponBuff_TotemWeaponBuffWindfury {

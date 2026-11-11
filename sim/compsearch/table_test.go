@@ -77,8 +77,8 @@ func TestSpecRows(t *testing.T) {
 		if blesses(b) != (b.Class == proto.Class_ClassPaladin) || dropsTotems(b) != (b.Class == proto.Class_ClassShaman) {
 			t.Errorf("%s: blesses %v, drops totems %v", b.ID, blesses(b), dropsTotems(b))
 		}
-		if s.PullSunder != (b.Class == proto.Class_ClassWarrior) || s.FlametongueTotem != (b.Spec == "Enhancement") {
-			t.Errorf("%s: pull Sunder %v, Flametongue %v", b.ID, s.PullSunder, s.FlametongueTotem)
+		if s.PullSunder != (b.Class == proto.Class_ClassWarrior) {
+			t.Errorf("%s: pull Sunder %v", b.ID, s.PullSunder)
 		}
 	}
 }
