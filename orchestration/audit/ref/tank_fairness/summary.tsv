@@ -1,74 +1,86 @@
-# tank_fairness pass 4, master a079415316, 2026-11-05: tankbench -iters 3000 -seed 1 -encounter tools/encounters/<boss>.json tools/tankbench/req/*_{max_threat,balanced,max_survival}.json, six scoring bosses (Ragnaros not run)
-request	boss	weight_own	score_at_1/3	score_at_1	score_at_3	tps	dtps	healing_needed	death_pct
-druid_bear_balanced	broodlord	1	3346 ± 12	2557 ± 19	189 ± 47	1751	488	395 ± 5	0.0%
-druid_bear_balanced	chromaggus	1	2835 ± 8	1487 ± 13	-2557 ± 33	1701	605	681 ± 4	0.0%
-druid_bear_balanced	golemagg	1	3290 ± 9	2666 ± 11	794 ± 23	1698	381	268 ± 2	0.0%
-druid_bear_balanced	magmadar	1	3367 ± 10	2808 ± 12	1133 ± 27	1711	355	240 ± 2	0.0%
-druid_bear_balanced	onyxia	1	3341 ± 13	2289 ± 24	-866 ± 63	1790	481	305 ± 4	0.0%
-druid_bear_balanced	vaelastrasz	1	3912 ± 19	3195 ± 26	1045 ± 62	1910	1195	853 ± 16	0.0%
-druid_bear_max_survival	broodlord	3	2972 ± 10	2385 ± 13	623 ± 28	1514	448	294 ± 3	0.0%
-druid_bear_max_survival	chromaggus	3	2386 ± 7	1211 ± 11	-2315 ± 28	1413	552	594 ± 3	0.0%
-druid_bear_max_survival	golemagg	3	2907 ± 8	2457 ± 11	1108 ± 22	1462	346	193 ± 2	0.0%
-druid_bear_max_survival	magmadar	3	2950 ± 8	2510 ± 10	1191 ± 21	1473	321	189 ± 2	0.0%
-druid_bear_max_survival	onyxia	3	2990 ± 11	2161 ± 16	-327 ± 36	1568	445	240 ± 2	0.0%
-druid_bear_max_survival	vaelastrasz	3	3577 ± 17	2962 ± 18	1115 ± 26	1746	1157	733 ± 5	0.0%
-druid_bear_max_threat	broodlord	1/3	3466 ± 12	2355 ± 17	-978 ± 40	1872	519	556 ± 4	0.0%
-druid_bear_max_threat	chromaggus	1/3	3007 ± 8	1539 ± 12	-2867 ± 31	1785	639	742 ± 3	0.0%
-druid_bear_max_threat	golemagg	1/3	3422 ± 9	2556 ± 11	-43 ± 21	1807	405	373 ± 2	0.0%
-druid_bear_max_threat	magmadar	1/3	3521 ± 10	2766 ± 12	500 ± 24	1809	374	325 ± 2	0.0%
-druid_bear_max_threat	onyxia	1/3	3421 ± 13	1973 ± 18	-2369 ± 43	1918	498	420 ± 3	0.0%
-druid_bear_max_threat	vaelastrasz	1/3	4108 ± 19	3002 ± 21	-317 ± 34	2053	1239	1316 ± 8	0.0%
-paladin_protection_balanced	broodlord	1	2987 ± 8	2221 ± 17	-77 ± 48	1514	313	383 ± 5	0.0%
-paladin_protection_balanced	chromaggus	1	2691 ± 4	1762 ± 8	-1023 ± 23	1456	406	469 ± 3	0.0%
-paladin_protection_balanced	golemagg	1	3153 ± 5	2961 ± 8	2382 ± 21	1481	190	83 ± 2	0.0%
-paladin_protection_balanced	magmadar	1	3278 ± 5	3208 ± 7	2999 ± 14	1507	156	30 ± 1	0.0%
-paladin_protection_balanced	onyxia	1	3507 ± 7	3369 ± 14	2954 ± 38	1591	177	40 ± 2	0.0%
-paladin_protection_balanced	vaelastrasz	1	3825 ± 14	3433 ± 18	2255 ± 39	1656	645	467 ± 10	0.0%
-paladin_protection_max_survival	broodlord	3	2882 ± 9	2356 ± 23	778 ± 68	1407	294	263 ± 8	0.0%
-paladin_protection_max_survival	chromaggus	3	2558 ± 4	1752 ± 7	-668 ± 20	1360	381	407 ± 2	0.0%
-paladin_protection_max_survival	golemagg	3	3004 ± 4	2907 ± 6	2617 ± 15	1385	177	42 ± 1	0.0%
-paladin_protection_max_survival	magmadar	3	3099 ± 4	3099 ± 4	3099 ± 4	1403	143	0 ± 0	0.0%
-paladin_protection_max_survival	onyxia	3	3345 ± 6	3343 ± 11	3336 ± 30	1486	167	1 ± 2	0.0%
-paladin_protection_max_survival	vaelastrasz	3	3576 ± 11	3275 ± 15	2369 ± 34	1538	614	359 ± 9	0.0%
-paladin_protection_max_threat	broodlord	1/3	2985 ± 9	2188 ± 22	-201 ± 63	1519	302	398 ± 7	0.0%
-paladin_protection_max_threat	chromaggus	1/3	2711 ± 4	1796 ± 8	-950 ± 21	1465	390	462 ± 2	0.0%
-paladin_protection_max_threat	golemagg	1/3	3175 ± 5	2989 ± 9	2433 ± 24	1490	181	80 ± 2	0.0%
-paladin_protection_max_threat	magmadar	1/3	3285 ± 5	3212 ± 8	2992 ± 19	1511	148	32 ± 2	0.0%
-paladin_protection_max_threat	onyxia	1/3	3508 ± 8	3331 ± 15	2799 ± 42	1601	170	51 ± 3	0.0%
-paladin_protection_max_threat	vaelastrasz	1/3	3827 ± 13	3398 ± 17	2112 ± 33	1665	642	510 ± 8	0.0%
-shaman_warden_balanced	broodlord	1	2938 ± 10	1370 ± 22	-3336 ± 63	1664	623	784 ± 7	0.0%
-shaman_warden_balanced	chromaggus	1	2310 ± 6	570 ± 12	-4649 ± 33	1445	759	879 ± 4	0.0%
-shaman_warden_balanced	golemagg	1	3032 ± 6	2070 ± 9	-817 ± 21	1588	476	414 ± 2	0.0%
-shaman_warden_balanced	magmadar	1	3166 ± 6	2342 ± 9	-131 ± 23	1615	435	354 ± 2	0.0%
-shaman_warden_balanced	onyxia	1	3143 ± 9	1616 ± 17	-2965 ± 44	1733	551	443 ± 3	0.0%
-shaman_warden_balanced	vaelastrasz	1	3872 ± 14	2796 ± 18	-433 ± 41	1840	1214	1281 ± 10	0.0%
-shaman_warden_max_survival	broodlord	3	2809 ± 10	1290 ± 25	-3269 ± 72	1609	631	760 ± 8	0.0%
-shaman_warden_max_survival	chromaggus	3	2389 ± 5	688 ± 10	-4416 ± 29	1501	772	859 ± 3	0.0%
-shaman_warden_max_survival	golemagg	3	2941 ± 6	2025 ± 10	-723 ± 27	1548	484	394 ± 2	0.0%
-shaman_warden_max_survival	magmadar	3	3060 ± 6	2282 ± 9	-50 ± 22	1568	442	334 ± 2	0.0%
-shaman_warden_max_survival	onyxia	3	2982 ± 9	1532 ± 16	-2816 ± 44	1661	555	420 ± 3	0.0%
-shaman_warden_max_survival	vaelastrasz	3	3554 ± 12	2493 ± 18	-688 ± 43	1719	1226	1262 ± 11	0.0%
-shaman_warden_max_threat	broodlord	1/3	2939 ± 12	989 ± 27	-4859 ± 79	1743	659	975 ± 9	0.1%
-shaman_warden_max_threat	chromaggus	1/3	2357 ± 6	524 ± 13	-4974 ± 36	1484	783	925 ± 4	0.0%
-shaman_warden_max_threat	golemagg	1/3	3155 ± 7	2123 ± 9	-973 ± 21	1654	495	444 ± 2	0.0%
-shaman_warden_max_threat	magmadar	1/3	3304 ± 7	2412 ± 10	-264 ± 24	1686	453	384 ± 2	0.0%
-shaman_warden_max_threat	onyxia	1/3	3229 ± 11	1437 ± 23	-3938 ± 65	1824	591	520 ± 4	0.0%
-shaman_warden_max_threat	vaelastrasz	1/3	4028 ± 15	2738 ± 21	-1134 ± 49	1950	1334	1536 ± 13	0.0%
-warrior_protection_balanced	broodlord	1	4346 ± 12	3588 ± 25	1315 ± 71	2193	340	379 ± 8	0.0%
-warrior_protection_balanced	chromaggus	1	4074 ± 8	2922 ± 13	-534 ± 32	2217	490	582 ± 3	0.0%
-warrior_protection_balanced	golemagg	1	4457 ± 9	4041 ± 13	2792 ± 33	2174	269	179 ± 3	0.0%
-warrior_protection_balanced	magmadar	1	4503 ± 9	4200 ± 10	3291 ± 18	2159	241	130 ± 1	0.0%
-warrior_protection_balanced	onyxia	1	4560 ± 12	3990 ± 19	2280 ± 50	2234	299	165 ± 3	0.0%
-warrior_protection_balanced	vaelastrasz	1	4854 ± 16	4463 ± 18	3292 ± 31	2220	614	465 ± 7	0.0%
-warrior_protection_max_survival	broodlord	3	3812 ± 10	3339 ± 15	1920 ± 38	1986	294	236 ± 4	0.0%
-warrior_protection_max_survival	chromaggus	3	3712 ± 8	2738 ± 10	-184 ± 22	2111	432	492 ± 2	0.0%
-warrior_protection_max_survival	golemagg	3	3938 ± 9	3656 ± 11	2808 ± 21	2006	231	121 ± 2	0.0%
-warrior_protection_max_survival	magmadar	3	3972 ± 9	3787 ± 11	3232 ± 22	1987	208	79 ± 2	0.0%
-warrior_protection_max_survival	onyxia	3	3921 ± 11	3537 ± 20	2385 ± 53	2003	262	111 ± 3	0.0%
-warrior_protection_max_survival	vaelastrasz	3	4064 ± 13	3734 ± 16	2743 ± 31	1895	579	393 ± 8	0.0%
-warrior_protection_max_threat	broodlord	1/3	4513 ± 14	3409 ± 32	96 ± 91	2319	390	552 ± 10	0.0%
-warrior_protection_max_threat	chromaggus	1/3	4179 ± 8	2709 ± 13	-1701 ± 34	2327	578	742 ± 4	0.0%
-warrior_protection_max_threat	golemagg	1/3	4633 ± 10	3983 ± 14	2033 ± 32	2293	318	279 ± 3	0.0%
-warrior_protection_max_threat	magmadar	1/3	4711 ± 9	4192 ± 13	2638 ± 30	2285	287	223 ± 3	0.0%
-warrior_protection_max_threat	onyxia	1/3	4752 ± 13	3912 ± 24	1392 ± 63	2352	331	244 ± 4	0.0%
-warrior_protection_max_threat	vaelastrasz	1/3	5111 ± 17	4673 ± 18	3360 ± 28	2319	582	521 ± 6	0.0%
+# tank_fairness pass 8, master 707ae92cc5, 2026-11-11: tankbench (go build -tags with_db ./tools/tankbench) -iters 3000 -seed 1 -encounter tools/encounters/<boss>.json tools/tankbench/req/<request>.json, six scoring bosses; score at the request's own weight (Max threat 1/3, Balanced 1, Max survival 3). Summarize with tools/audit/tank_fairness/summary.py.
+request	boss	score	score_err	tps	dtps	healing_needed
+druid_bear_balanced	broodlord	1774.0	21.0	1418.0	492.0	416.0
+druid_bear_balanced	chromaggus	761.0	11.0	1370.0	606.0	690.0
+druid_bear_balanced	golemagg	1926.0	10.0	1381.0	382.0	285.0
+druid_bear_balanced	magmadar	2028.0	11.0	1384.0	356.0	261.0
+druid_bear_balanced	onyxia	1489.0	19.0	1458.0	483.0	317.0
+druid_bear_balanced	vaelastrasz	2325.0	24.0	1537.0	1205.0	872.0
+druid_bear_balanced	scoring_mean	1717.2		1424.7	587.3	473.5
+druid_bear_max_survival	broodlord	-95.0	34.0	1255.0	446.0	307.0
+druid_bear_max_survival	chromaggus	-2878.0	19.0	1181.0	550.0	598.0
+druid_bear_max_survival	golemagg	357.0	17.0	1225.0	347.0	213.0
+druid_bear_max_survival	magmadar	400.0	19.0	1226.0	323.0	210.0
+druid_bear_max_survival	onyxia	-1427.0	41.0	1295.0	444.0	271.0
+druid_bear_max_survival	vaelastrasz	172.0	31.0	1412.0	1155.0	774.0
+druid_bear_max_survival	scoring_mean	-578.5		1265.7	544.2	395.5
+druid_bear_max_threat	broodlord	2631.0	11.0	1504.0	517.0	585.0
+druid_bear_max_threat	chromaggus	2239.0	7.0	1433.0	640.0	754.0
+druid_bear_max_threat	golemagg	2668.0	8.0	1457.0	404.0	378.0
+druid_bear_max_threat	magmadar	2729.0	8.0	1461.0	376.0	331.0
+druid_bear_max_threat	onyxia	2570.0	12.0	1544.0	500.0	434.0
+druid_bear_max_threat	vaelastrasz	3143.0	16.0	1644.0	1237.0	1355.0
+druid_bear_max_threat	scoring_mean	2663.3		1507.2	612.3	639.5
+paladin_protection_balanced	broodlord	2140.0	21.0	1479.0	313.0	385.0
+paladin_protection_balanced	chromaggus	1713.0	7.0	1426.0	407.0	464.0
+paladin_protection_balanced	golemagg	2904.0	7.0	1452.0	190.0	82.0
+paladin_protection_balanced	magmadar	3135.0	7.0	1471.0	155.0	30.0
+paladin_protection_balanced	onyxia	3298.0	17.0	1564.0	177.0	42.0
+paladin_protection_balanced	vaelastrasz	3318.0	16.0	1609.0	643.0	466.0
+paladin_protection_balanced	scoring_mean	2751.3		1500.2	314.2	244.8
+paladin_protection_max_survival	broodlord	219.0	57.0	1324.0	297.0	304.0
+paladin_protection_max_survival	chromaggus	-981.0	21.0	1274.0	383.0	420.0
+paladin_protection_max_survival	golemagg	2301.0	15.0	1293.0	178.0	52.0
+paladin_protection_max_survival	magmadar	2846.0	15.0	1315.0	145.0	5.0
+paladin_protection_max_survival	onyxia	2976.0	34.0	1397.0	168.0	11.0
+paladin_protection_max_survival	vaelastrasz	1993.0	27.0	1431.0	617.0	389.0
+paladin_protection_max_survival	scoring_mean	1559.0		1339.0	298.0	196.8
+paladin_protection_max_threat	broodlord	2893.0	10.0	1485.0	302.0	416.0
+paladin_protection_max_threat	chromaggus	2647.0	4.0	1434.0	393.0	461.0
+paladin_protection_max_threat	golemagg	3103.0	5.0	1457.0	181.0	79.0
+paladin_protection_max_threat	magmadar	3212.0	5.0	1475.0	148.0	32.0
+paladin_protection_max_threat	onyxia	3431.0	8.0	1568.0	170.0	53.0
+paladin_protection_max_threat	vaelastrasz	3710.0	13.0	1620.0	641.0	518.0
+paladin_protection_max_threat	scoring_mean	3166.0		1506.5	305.8	259.8
+shaman_warden_balanced	broodlord	626.0	19.0	1396.0	620.0	833.0
+shaman_warden_balanced	chromaggus	-47.0	11.0	1179.0	760.0	890.0
+shaman_warden_balanced	golemagg	1481.0	9.0	1330.0	474.0	419.0
+shaman_warden_balanced	magmadar	1734.0	7.0	1347.0	435.0	359.0
+shaman_warden_balanced	onyxia	912.0	18.0	1454.0	551.0	457.0
+shaman_warden_balanced	vaelastrasz	2096.0	19.0	1572.0	1209.0	1322.0
+shaman_warden_balanced	scoring_mean	1133.7		1379.7	674.8	713.3
+shaman_warden_max_survival	broodlord	-4267.0	85.0	1356.0	632.0	809.0
+shaman_warden_max_survival	chromaggus	-5115.0	26.0	1246.0	772.0	875.0
+shaman_warden_max_survival	golemagg	-1330.0	34.0	1301.0	482.0	400.0
+shaman_warden_max_survival	magmadar	-661.0	19.0	1313.0	441.0	339.0
+shaman_warden_max_survival	onyxia	-3627.0	63.0	1400.0	556.0	435.0
+shaman_warden_max_survival	vaelastrasz	-1446.0	48.0	1471.0	1227.0	1304.0
+shaman_warden_max_survival	scoring_mean	-2741.0		1347.8	685.0	693.7
+shaman_warden_max_threat	broodlord	2226.0	11.0	1458.0	658.0	1048.0
+shaman_warden_max_threat	chromaggus	1734.0	6.0	1207.0	783.0	937.0
+shaman_warden_max_threat	golemagg	2531.0	6.0	1378.0	494.0	451.0
+shaman_warden_max_threat	magmadar	2664.0	6.0	1401.0	454.0	390.0
+shaman_warden_max_threat	onyxia	2531.0	10.0	1526.0	591.0	533.0
+shaman_warden_max_threat	vaelastrasz	3304.0	14.0	1663.0	1328.0	1592.0
+shaman_warden_max_threat	scoring_mean	2498.3		1438.8	718.0	825.2
+warrior_protection_balanced	broodlord	2855.0	25.0	1944.0	342.0	433.0
+warrior_protection_balanced	chromaggus	2302.0	11.0	1958.0	490.0	593.0
+warrior_protection_balanced	golemagg	3428.0	12.0	1924.0	270.0	191.0
+warrior_protection_balanced	magmadar	3600.0	11.0	1915.0	242.0	142.0
+warrior_protection_balanced	onyxia	3322.0	19.0	1981.0	300.0	182.0
+warrior_protection_balanced	vaelastrasz	3909.0	18.0	1981.0	617.0	483.0
+warrior_protection_balanced	scoring_mean	3236.0		1950.5	376.8	337.3
+warrior_protection_max_survival	broodlord	1327.0	43.0	1767.0	294.0	249.0
+warrior_protection_max_survival	chromaggus	-805.0	28.0	1869.0	431.0	502.0
+warrior_protection_max_survival	golemagg	2293.0	23.0	1783.0	231.0	124.0
+warrior_protection_max_survival	magmadar	2650.0	19.0	1765.0	208.0	88.0
+warrior_protection_max_survival	onyxia	1719.0	59.0	1775.0	261.0	123.0
+warrior_protection_max_survival	vaelastrasz	2197.0	33.0	1697.0	580.0	422.0
+warrior_protection_max_survival	scoring_mean	1563.5		1776.0	334.2	251.3
+warrior_protection_max_threat	broodlord	3783.0	14.0	2032.0	391.0	615.0
+warrior_protection_max_threat	chromaggus	3476.0	9.0	2021.0	579.0	748.0
+warrior_protection_max_threat	golemagg	3989.0	10.0	2019.0	320.0	287.0
+warrior_protection_max_threat	magmadar	4061.0	10.0	2014.0	287.0	229.0
+warrior_protection_max_threat	onyxia	4068.0	13.0	2069.0	328.0	256.0
+warrior_protection_max_threat	vaelastrasz	4441.0	17.0	2034.0	581.0	530.0
+warrior_protection_max_threat	scoring_mean	3969.7		2031.5	414.3	444.2

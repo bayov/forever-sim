@@ -1,16 +1,15 @@
 {
  "last": {
-  "master": "27d0d59d67c3b6b68431b80b79a33316760ac913"
+  "master": "707ae92cc50bc393c26c0e4b7249ee9acbd02dbb"
  },
- "last_pass_at": "2026-11-10T18:56:00Z",
- "pass": 8,
+ "last_pass_at": "2026-11-11T19:04:03Z",
+ "pass": 9,
  "result": "findings",
- "note": "Pass 8: client 70888 (no watched code change). Healer rows: Swiftmend tooltip, Natural Instinct feral mask only. New finding 12 (medium): Nov 10 hotfix gives Nature's Swiftness Wild Growth, sim doesn't (+1.0% druid raid carry). Findings 10, 11 open.",
+ "note": "Pass 9: Nature's Swiftness takes Wild Growth (9628e85b6, finding 12 resolved); dot CleanUp change keeps HoT last ticks. New finding 13 (low): priest suites fail the stale AllItems-IronweaveBattlesuit golden. Findings 10, 11 open.",
  "client_build": "1.60.1.70888",
  "dev_notes_seen": {
-  "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
-  "date": "2026-11-04T19:35:16Z",
-  "edited": "2026-11-04T19:35:27Z"
+  "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026",
+  "date": "2026-11-10"
  },
- "checked_at": "2026-11-11T12:44:53Z"
+ "checked_at": "2026-11-11T19:42:24Z"
 }

@@ -1,28 +1,25 @@
-# Results audit, pass 82 (master ca5e35c3f)
+# Results audit, pass 83, master 707ae92cc (client 1.60.1.70888)
 
-Changed since 91ad19535: sim commit bcc5d6cd4 (Shaman: Maelstrom Weapon stacks on every landed melee hit under Forever,
-Totem of the Storm 50% a bolt, Flametongue Weapon rank 5 cut by 7), 04bdcdb9e (enchants 41 and 66 take the client values:
-Minor Health +2 Stamina, Minor Stamina +3 Stamina), a778e524b (db fold-in of items seen in game). No request, preset,
-mksettings, builds.json or meta changed.
+Shared run: 68 requests, 20k, seed 1, CLI 707ae92cc50b. Previous audited master 27d0d59d6.
 
-Method: shared run (68 builds, 20k, seed 1, CLI ca5e35c3f) against a fresh run of all 68 on a 91ad19535 binary, same
-settings (`run_reqs.py`), then the enhancement builds on a bcc5d6cd4 binary to split the commits.
+## What was checked
+- Run vs metas (`vs_published.txt`): 45 of 68 off by more than 0.5. Run vs builds.json: 43 of 68 off by more than 1.5.
+- Drift (mksettings vs committed requests): only the open feral Goblin Sapper difference (results-20261105-1); no new drift.
+- Unread request fields: none printed.
+- Paired 20k seed-1 sims on binaries 27d0d59d6, 1516752ac, ca07df649, 032692409 and its parent, f20d5938a and its parent, a34d22451, 333643570.
 
-| Build | 91ad19535 | bcc5d6cd4 | ca5e35c3f | move |
-|---|---|---|---|---|
-| shaman enhancement-imp-gw | 1132.22 | 1129.85 | 1129.85 | -2.4 (-0.21%) |
-| shaman enhancement-water-shield | 1099.62 | 1097.28 | 1097.28 | -2.3 (-0.21%) |
-| shaman enhancement-level60 | 1146.67 | 1145.64 | 1145.64 | -1.0 (-0.09%) |
-| shaman enhancement-mana-tide | 1042.00 | 1042.12 | 1042.12 | +0.1 |
+## Moves, with causes
+| Build(s) | Meta / ref | Run | Cause |
+|---|---|---|---|
+| Warrior arms/fury families | 1088 / 1136 / 1151 | 872 / 999 / 926 | Windfury white-swing rule (open finding results-20261109-1), plus flask |
+| Hunter survival | 1041 | 917 | rule (-96) and flask (-28) |
+| Paladin Ret, Sub Holy, Shock | 1103 / 1091 / 1030 | 1010 / 999 / 971 | rule (Shock Ret -59 from the rule alone) |
+| 28 natural-flask presets | n/a | -17 to -45 | 032692409: Stamina 60 -> 30, zone bonus 5 -> 2 (client 70862). Feral 1169.5 -> 1151.5, BM 1195.6 -> 1174.6, Arms 1088.3 -> 1069.0, Fury 1137.1 -> 1092.5, Subtlety 885.6 -> 866.4 |
+| Affliction (3) | 1034.1 | 1070.8 | hotfix 113766: 1022.7 -> 1077.1; f20d5938a (no dot tick after expiry) -> 1070.8 |
+| Enhancement (4), Elemental (2) | now match | 1016 to 1031 | re-simmed in f8a37c8e8 and c61845d5c |
+| Mage Arcane/Fire, Frost, Frostfire, Balance, Smite, Shadow | | unchanged | Arcane/Fire gaps (-6.6/-4.3) predate 27d0d59d6 |
 
-The other 64 builds moved 0.5 or less (`compare_runs.py`: 3 of 68 moved).
+Shaman Enhancement (1016 to 1031) now sits below Ret and Arms-class builds; the Stormstrike/imbue/totem tuning (cb651085c) and the Windfury rule explain it, and the report's own why notes were re-simmed.
 
-Attribution: the whole Enhancement move is bcc5d6cd4; 04bdcdb9e and a778e524b give identical DPS (the enchant change is
-Stamina only, so the four moved report hashes carry no DPS). At 5/5 the old 20 PPM already gave a main hand white swing
-on a 3.x speed weapon more than 100%, so "every hit" changes little for white swings (not broken down further), and the bolt rule is
-0.5 x 1 either way; a 1 to 2.4 DPS change (part of it a changed random stream) is in line with that. Level 60 uses
-Flametongue rank 6, which keeps its points, so the rank 5 cut does not reach the report. Explained; no finding.
-
-Not re-run: regen drift and unread_fields (no request, mksettings or proto change in this range). Published vs run is
-unchanged from pass 81 (`/tmp/audit-work/runs/vs_published.txt`, 41 of 68 off by more than 0.5, all from
-results-20261109-1 and the meta lag in 20261104-1/-2). Ranking unchanged. Open findings unchanged.
+## Conclusion
+No new finding. Everything off is either the known Windfury rule (needs ruling) or waiting on the full re-sim and republish that brief 1516752ac asks for. Appended evidence to results-20261109-1 and results-20261104-2. The reference files were not replaced: the run is not a baseline until the re-sim lands.

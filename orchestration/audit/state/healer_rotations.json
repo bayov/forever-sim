@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "27d0d59d67c3b6b68431b80b79a33316760ac913"
+  "master": "707ae92cc50bc393c26c0e4b7249ee9acbd02dbb"
  },
- "last_pass_at": "2026-11-10T13:20:00Z",
- "pass": 6,
- "result": "quiet",
- "note": "Pass 6 on ca5e35c3f. Changes: Enhancement-only (Maelstrom Weapon every hit, Flametongue rank 5 cut) and enchants 41/66; none in healer requests. All 63 rows byte-identical to ref. -2 and -3 still open. baseline.sh rewritten a fourth time: commit tools/audit/healer_rotations/.",
+ "last_pass_at": "2026-11-11T19:40:00Z",
+ "pass": 7,
+ "result": "findings",
+ "note": "Pass 7 on 707ae92cc. 9628e85b6 (Nature's Swiftness also makes Wild Growth instant) drops the Resto druid raid healer by 0.046 mean carry (Magmadar -0.184): autocast NS is now eaten by Wild Growth instead of the emergency Regrowth. New finding -20261111-1 (an explicit NS line recovers it). Other 56 rows unchanged. -2, -3 still open. baseline.sh committed this time at tools/audit/healer_rotations/.",
  "baseline": "ref/healer_bench/summary.tsv",
- "client_build": "1.60.1.70790",
- "checked_at": "2026-11-11T12:44:53Z"
+ "client_build": "1.60.1.70888",
+ "checked_at": "2026-11-11T19:42:24Z"
 }

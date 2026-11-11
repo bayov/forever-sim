@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "27d0d59d67c3b6b68431b80b79a33316760ac913"
+  "master": "707ae92cc50bc393c26c0e4b7249ee9acbd02dbb"
  },
- "last_pass_at": "2026-11-10T18:51:24Z",
- "pass": 73,
+ "last_pass_at": "2026-11-11T19:38:27Z",
+ "pass": 74,
  "result": "quiet",
- "note": "Pass 73: ca5e35c3f..da272241e, 1 sim commit (2e320521f The Chief's Enforcer Farraki Enforcement 1294339, 294 Physical, 1.14 PPM from the Nov 10 log; client has no PPM row): item-level, log-backed, no finding. Client 70862 -> 70888: no shared mechanic moved (SpellItemEnchantment, TraitDefinitionEffectPoints same; CurvePoint only new identity curves); engineering trinkets 272437-9 on-use cd 90 s -> 300/360 s and Flamebreak Talisman 280071 Agi 50->33, cd 300 s: none modeled or in presets. Dev notes unchanged since post 10; blue tracker nothing past Nov 9 hotfixes post 5.",
+ "note": "Pass 74: 27d0d59d67..707ae92cc5, 15 sim commits. Shared: 032692409 natural flasks 30 Sta / 2% (resolves mechanics-20261107-1); cb651085c/eb6c042a4 imbues + weapon totems together per Nov 10 hotfixes t/2403040 post 6 (tier 1), separate WF icds = assumption wf_weapon_totem_icd, client 70888 shows no shared category; f20d5938a dot ghost-tick engine fix, OK. Dev notes unchanged (post 10). 70888 hotfix row fetch not finished (too slow), next pass: check pushes newer than 113605 via wago.tools search, newest first.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-11T12:44:53Z",
+ "checked_at": "2026-11-11T19:42:24Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -25,5 +25,10 @@
   "newest_push": 113605,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-10T04:23:46Z"
+ "blue_tracker_seen": "2026-11-11T03:27:33Z",
+ "hotfix_post_seen": {
+  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/6",
+  "date": "2026-11-11T03:27:33Z",
+  "post1_edited": "2026-11-11T03:27:26Z"
+ }
 }

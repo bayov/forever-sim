@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_rotations-20261111-1: Warden presets weren't re-optimized after the Nov 10 shaman tuning, which alone cut their SafeDPS about 10%
+- severity: medium (gain unmeasured; the loss it may recover is large)
+- affects: shaman_warden_* (all three)
+- found: 2026-11-11, master 707ae92cc
+- evidence: cb651085c (Stormstrike 150% -> 100% and 6 s -> 8 s, Mental Dexterity 50/100/150% -> 33/66/100% of Intellect as AP, Maelstrom Weapon to (5+rank) PPM) moved every Warden row: with the flask nerf reverted (worktree build), warden Balanced Onyxia SafeDPS 1899 -> 1716, Magmadar 1734 -> 1560; with it, scoring-mean SafeDPS 1805 -> 1557 and score 1682 -> 1125. Enhancement was re-optimized after this tuning (54a15ba24); the Warden's talents (05050003-050032203451012201-050002) and APLs weren't. The rotation lines I tried still hold (paired, 1k, Balanced, B minus preset): Stormstrike above Earth Shock -39.9 ± 16.0, no Stormstrike -527 ± 16.5, fire totem and Fire Nova window 60 s -> 90 s -1.8 ± 5.5, -> all fight -12.3 ± 6.3, -> 40 s -8.5 ± 12.9, Fire Nova mana floor 40% -> 20% -4.4 ± 5.6, -> 60% -13.5 ± 8.5. Talents (Mental Dexterity's points now buy a third less) are untested.
+- proposed fix: re-run rotopt's warden templates (talents and timers) at the three weights on master.
+- needs: worker fix
+
 ### tank_rotations-20261110-1: Windfury Totem's white-swing-only rule drops Maul but keeps Heroic Strike, cutting bear SafeDPS 12%
 - severity: high (bear SafeDPS -12% at every weight; warrior -5%, warden -3%, paladin -2%)
 - affects: every tank request (all raid-buff `TotemWeaponBuffWindfury`); most of all druid_bear_*
@@ -19,6 +27,7 @@
   bear's 12%), or neither does (warrior loses more). A Forever log of a bear or a Heroic Strike warrior under the
   totem would settle it. Sure of the asymmetry and the numbers; not of which way the game goes.
 - needs: user ruling
+- pass 8: still open (user ruling); master 707ae92cc keeps `ProcMaskMeleeMHAuto` (sim/core/buffs.go WindfuryTotemBuffAura); the Nov 10 imbue + totem change doesn't touch it. Not re-tested.
 
 ### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
 - severity: medium
@@ -32,6 +41,7 @@
 - pass 4: still open (user call); a07941531 keeps 990617 held 35 s; not re-tested.
 - pass 5: still open (user call); bba052f75 unchanged; not re-tested.
 - pass 6: still open (user call); 9ba00c2dc unchanged; not re-tested.
+- pass 8: still open (user call); 707ae92cc unchanged; not re-tested. Finding 20261111-1 (Titans over Natural Precision at Max survival, +39.5 ± 16.2) is a separate lever.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -46,6 +56,7 @@
 - pass 4: still open (user ruling); a07941531 keeps 10 s at all three presets; not re-tested.
 - pass 5: still open (user ruling); bba052f75 unchanged; not re-tested.
 - pass 6: still open (user ruling); 9ba00c2dc unchanged; not re-tested.
+- pass 8: still open (user ruling); 707ae92cc unchanged; not re-tested.
 
 ## Resolved
 

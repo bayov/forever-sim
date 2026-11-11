@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_fairness-20261111-1: Since client 70862 halved the Natural flasks, Flask of the Titans beats them in every Max survival preset (and the Warden's Balanced)
+- severity: high (Max survival +44 to +256 for all four tanks; it moves the paladin from a tie with the warrior to first at w=3)
+- affects: every tank preset on a FlaskOfNatural* flask: warrior, bear and Warden (all three presets each) and paladin Max survival (tools/tankbench/req/*.json `"flask"`, the matching ui presets and DPS Report Tanking data); the paladin's Max threat and Balanced already take Flask of Supreme Power
+- found: 2026-11-11, master 707ae92cc5
+- evidence: 032692409 (merged in ca07df649) set the Natural flasks to 30 Stamina and a 2% zone bonus (was 60 and 4-5%); the tank presets were tuned before it. Paired A/B, tankbench -labeled, 3,000 iterations, six-boss mean, each request at its own weight, the request against a copy with `"flask": "FlaskOfTheTitans"`, seed 1 / seed 2: warrior Max survival +46.7 / +44.0 (1580 -> 1627), bear Max survival +131.6 / +131.5, paladin Max survival +145.7 / +112.3 (1578 -> 1724, ahead of the warrior), Warden Max survival +256.0 / +245.8, Warden Balanced +17.9 / +19.7. Titans loses at Max threat (warrior -190, bear -159, Warden -65, seed 1) and at Balanced for the warrior (-116) and bear (-68): the TPS from Precision's expertise still pays there. With Titans on every tank, the Natural flasks' drop since pass 6 (warrior Max threat on Magmadar 4450 -> 4061, old and new binary) is the whole change for the warrior and bear (identical scores with Titans on ca5e35c and on 707ae92, Magmadar). Sure of the sign and order; other flasks (Distilled Wisdom for the paladin, Supreme Power) not tried. Reproduce: sed the flask in a copy of the request, then `tankbench -iters 3000 -seed 1 -labeled -encounter tools/encounters/<boss>.json <request> <copy>`; summary with tools/audit/tank_fairness/summary.py.
+- proposed fix: each tank worker re-picks the flask per preset by its own objective (Titans at Max survival for all four and at Warden Balanced on this evidence; keep the Natural flask where it still wins), confirms at 10,000 on two seeds, re-checks gear or talents the flask's hit/expertise touched, then the UI presets, docs/tank_*.md and the DPS Report Tanking data.
+- needs: worker fix
+
 ### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
 - severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
 - affects: Warden shaman, all three presets (tools/tankbench/req/shaman_warden_{max_threat,balanced}.json RaceNightElf, shaman_warden_max_survival.json RaceUndead; ui/warden_shaman/sim.ts:90 RaceNightElf; docs/tank_shaman.md:34-36 and calls (f), (g))
@@ -11,6 +19,7 @@
 - needs: worker fix
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
+- pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -21,6 +30,7 @@
 - needs: worker fix
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
+- pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -52,6 +62,7 @@
 - pass 3 (2026-11-04, master dc303b0): unchanged; Balanced healing needed paladin 197 against 323 / 488 / 853 (warrior, bear, Warden), -45% to -99% on every boss, score +29% over the others' mean. Waits on the user's calls.
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
+- pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low
@@ -66,6 +77,7 @@
 - pass 4 (2026-11-05, master a079415): unchanged (the file is still in tools/tankbench/req/).
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
+- pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 
 ## Resolved
 

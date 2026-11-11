@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "27d0d59d67c3b6b68431b80b79a33316760ac913"
+  "master": "707ae92cc50bc393c26c0e4b7249ee9acbd02dbb"
  },
- "last_pass_at": "2026-11-10T13:11:07Z",
- "pass": 58,
+ "last_pass_at": "2026-11-11T19:22:07Z",
+ "pass": 59,
  "result": "quiet",
- "note": "Pass 58: bcc5d6cd4 Maelstrom Weapon stacks on every landed melee hit (Forever), FT rank 5 cut (level 47, not L60). Enh baseline -2.6..+1.4, rest unchanged. LB gate 5 holds (4: -29, 3: -72), LB above FS +0.3, above SS -2.4. No new findings; 20261105-1 and 20261109-1 still open, not landed.",
- "client_build": "1.60.1.70753",
- "checked_at": "2026-11-11T12:44:53Z",
- "baseline": "baseline_ca5e35c_3000it_seed424242.tsv"
+ "note": "Pass 59: Enh Nov 10 tuning (-113..-123), Affliction 113766 rotation (+34..+37), flasks (-16..-38). Enh + raid WF Totem +0.2 (own totem already procs with WF Weapon), FT Weapon + WF Totem -106; Affliction Wrack/Corruption variants and hunter Arcane Shot mana gate lose. No new findings; 20261105-1 and 20261109-1 still open.",
+ "client_build": "1.60.1.70888",
+ "checked_at": "2026-11-11T19:42:24Z",
+ "baseline": "baseline_707ae92_3000it_seed424242.tsv"
 }

@@ -1,21 +1,24 @@
-# Healer fairness pass 6 (2026-11-10, master ca5e35c3f)
+# Healer fairness pass 7 (2026-11-11, master 707ae92cc5)
 
-Result: quiet. No new findings, none resolved. Still open: -5 (high, paladin raid preset's Holy Light lines; the
-preset is unchanged) and -4 (low, no healing by class in the boss files).
-Due because 2 watched files changed, both in bcc5d6cd4: sim/shaman/flametongue_weapon.go (Forever cut of 7 on
-Flametongue Weapon rank 5) and sim/shaman/talents.go (Maelstrom Weapon stacks on every landed melee hit under
-Forever). Neither reaches a healer: both shaman requests imbue Brilliant Mana Oil (no Flametongue, and rank 6 at 60
-keeps its cut of 0), their talents (-035-5530503015513151 / -035-5530500315513151) have no Maelstrom Weapon, and
-healers don't melee. tools/healbench/req, tools/healbench and tools/encounters are unchanged since 91ad19535, so
-section 1 and the other classes' rows stand.
+Result: findings. New: healer_fairness-20261111-1 (high): the druid raid preset now spends Nature's Swiftness on
+Wild Growth, raid carry 1.437 -> 1.391, first to last. Still open: -5 (high, paladin raid preset) and -4 (low).
+Due because 10 watched files changed (59 commits since 27d0d59d6). What reaches a healer:
+- 9628e85b6 sim/druid/healing.go: Nature's Swiftness also makes Wild Growth instant (hotfix 113885). The raid preset
+  autocasts NS and ranks Wild Growth above Healing Touch, so NS goes on Wild Growth. Measured below.
+- f20d5938a sim/core/dot.go: no late tick after a dot's aura ran out (Wrack). HoT presets unchanged (spot cells identical).
+- Not reaching healers: shaman Nov 10 tuning (Stormstrike, Maelstrom, imbue + weapon totem; healers use Brilliant
+  Mana Oil, no melee), Idol of Ferocity (feral), standards.md 25 amendment (melee totems). tools/healbench, req and
+  encounters unchanged, so section 1 stands.
 
-Spot check, healbench built from ca5e35c3f, 1,000 iterations, paired seeds: shaman_restoration (tank) and
-shaman_restoration_raid (raid) on Broodlord and Vaelastrasz match `ref/healer_fairness/bench_9ba00c2.tsv` exactly in
-every column (carry 0.974 / 0.894 tank, 0.902 / 1.152 raid). Not re-run: the other 59 cells (no input reaching them
-changed). Baseline stays bench_9ba00c2.tsv; the tables below are pass 2's with pass 5's note on moved cells.
-
-Pass 5 (master 9ba00c2dc): whole-point rolls moved carry by at most 0.002 a cell, the raid shaman mean 1.396 -> 1.395,
-ranking unchanged.
+Spot check, healbench built from 707ae92cc5, 1,000 iterations: identical to bench_9ba00c2.tsv for druid_restoration
+(tank: Broodlord 0.875, Vaelastrasz 0.852), priest_holy (tank Broodlord 0.930), priest_holy_raid (Vaelastrasz 1.152),
+shaman_restoration (tank Chromaggus 0.969). druid_restoration_raid moved on all 7 files
+(`ref/healer_fairness/druid_raid_707ae92.tsv`): Onyxia 0.997 -> 0.943, Broodlord 0.920 -> 0.906, Chromaggus 1.109 ->
+1.092, Golemagg 2.660 -> 2.658, Magmadar 2.002 -> 1.818, Ragnaros 1.270 -> 1.240, Vaelastrasz 1.102 -> 1.079; mean
+1.391. A build with only 9628e85b6's healing.go hunk reverted gives the baseline exactly (Magmadar 2.002, Onyxia
+0.997), so the drop is that change through the preset's NS use. Raid order now: Holy 1.437, paladin 1.413, shaman
+1.395, druid 1.391. Not re-run: the other paladin, Disc and raid shaman cells (no input reaching them changed).
+The tables below are pass 2's; the raid druid column is superseded by the numbers above.
 
 ## 1. Same terms (the 9 requests)
 
@@ -100,6 +103,8 @@ classes' presets didn't change role logic. Not re-run: raid presets in the tank 
   background.
 
 ## Open items for the next pass
+
+- Re-bench the druid raid column after finding 20261111-1's fix (expect about 1.437).
 
 - Re-bench the raid column after finding -5's re-tune.
 - Disc tank Chromaggus OOM at carry (healer_rotations-20261104-2): check after its fix.

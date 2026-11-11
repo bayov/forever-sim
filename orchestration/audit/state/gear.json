@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "27d0d59d67c3b6b68431b80b79a33316760ac913"
+  "master": "707ae92cc50bc393c26c0e4b7249ee9acbd02dbb"
  },
- "last_pass_at": "2026-11-10T12:47:00Z",
- "pass": 60,
+ "last_pass_at": "2026-11-11T19:43:00Z",
+ "pass": 61,
  "result": "quiet",
- "note": "Pass 60: only forever_enchants.go changed (04bdcdb9e: Minor Health 41 and Minor Stamina 66 take Forever values via foreverKeepEffect). No level60 set uses enchant 41 or 66; no synthetic item, set or trinket file changed.",
- "client_build": "1.60.1.70755",
- "checked_at": "2026-11-11T12:44:53Z"
+ "note": "Pass 61: no synthetic item, set or trinket file changed. Standards 25 amended (imbue plus weapon totem, not a gear rule). forever_enchants.go adds Bracer/Boots Lesser Spirit (+4); forever_items.go adds 5 hidden items (276456, 280084, 284231, 287031, 287033); none appears in a level60 set. sim/druid/items.go Idol of Ferocity is a relic effect.",
+ "client_build": "1.60.1.70888",
+ "checked_at": "2026-11-11T19:42:24Z"
 }

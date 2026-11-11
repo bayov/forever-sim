@@ -4,15 +4,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### mechanics-20261107-1: Client 70862 cuts the natural flasks to 30 Stamina and a 2% zone bonus; the sim still gives 60 and 5% / 4% / 5% / 5%
-- severity: high (−1.9% to −4.5% DPS on all 28 Level 60 presets that drink a natural flask, measured)
-- affects: shared consumables (sim/core/consumes.go applyNaturalFlask); warrior, rogue, hunter, feral presets; standards item 11 flask choices
-- found: 2026-11-07, master 12aa2796f, client 1.60.1.70862 (tier 1)
-- evidence: 70862 SpellEffect for 1293740 / 1293741 / 1293742 / 1293743: #0 aura 29 misc 2 (Stamina) bp 60 -> 30; #1 aura 4 (the zone bonus the tooltip reads as `$s2%`) bp 5 / 4 / 5 / 5 -> 2 / 2 / 2 / 2. Tooltips unchanged ("Increases your Stamina by $s1 ... you also gain $s2% Hit Chance / Critical Strike Chance / reduced chance to be dodged or parried / Haste"), so the in-game text now reads 30 and 2%. `python3 -I tools/sources/wago.py diff 1.60.1.70790 1.60.1.70862 --by-spell`. The sim (`consumes.go:82-124`) adds 60 Stamina and 5 hit / 4 crit / 5 expertise / 5% haste. Measured with the shared CLI (12aa2796fcc6), 20k iterations, seed 1, paired against `$AUDIT_WORK/runs/master`, by giving each request bonusStats of −30 Stamina and −3 hit / −2 crit / −3 expertise (`$AUDIT_WORK/mechanics/flask/mk.py`): Combat Daggers (Accuracy) −43.1 (−4.5%); Fury 2H −47.2 (−4.1%), Fury −44.6 (−3.9%) (Precision); Arms −38.8 (−3.6%), Marksmanship −44.0 (−3.5%), Beast Mastery −41.8 (−3.5%), Lone Wolf −45.6 (−3.5%), feral cat −36.0 (−3.1%) (Aggression); Survival −33.6 (−3.2%) and the other rogues −1.9% to −2.2% (Precision). Duty variants move the same.
-- proposed fix: in `applyNaturalFlask` take 30 Stamina and 2 for every zone bonus (hit 2 / 2, crit 2 / 2, expertise 2, speed 1.02); update the consumes.go comment, `consumes_forever_test.go`, standards item 11's numbers and re-run the flask search per preset (the choice among the four natural flasks, and natural against the old flasks, may change).
-- same change as consumables-20261107-1 (filed in the same run); this finding adds the per-preset measurement. Fix once.
-- needs: orchestrator fix
-
 ### mechanics-20261104-1: Client 70790 carries the November 2 druid values; the sim's "about 25% / 40%" scales differ from them, Ferocious Bite's Energy part most
 - severity: low (estimated, not measured: under 0.5% on the cat presets, under 0.1% on Balance)
 - affects: druid (Feral cat presets, Balance)
@@ -23,6 +14,16 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-11-05 (pass 67, master a07941531): the Energy part is fixed. ff56f8ddc takes 0.7 / 1.2 / 1.8 / 2.5 / 3.1 / 3.3 a point of extra Energy under Forever (`ferocious_bite.go` foreverDmgPerEnergy), which matches 70790 SpellEffect #1 of 1328618 / 22568 / 22827 / 22828 / 22829 / 31018 (bp 70 / 120 / 180 / 250 / 310 / 330, tier 1). Still open: the base and per combo point parts (sim 1.25 x 147 = 183.75 against 181 at r6, and the other ranks), Starfire's growth a level (3.36 against 3.4) and the stale "None of it is in the client" comment in `tuning_70753.go`.
 
 ## Resolved
+
+### mechanics-20261107-1: Client 70862 cuts the natural flasks to 30 Stamina and a 2% zone bonus; the sim still gives 60 and 5% / 4% / 5% / 5%
+- severity: high (−1.9% to −4.5% DPS on all 28 Level 60 presets that drink a natural flask, measured)
+- affects: shared consumables (sim/core/consumes.go applyNaturalFlask); warrior, rogue, hunter, feral presets; standards item 11 flask choices
+- found: 2026-11-07, master 12aa2796f, client 1.60.1.70862 (tier 1)
+- evidence: 70862 SpellEffect for 1293740 / 1293741 / 1293742 / 1293743: #0 aura 29 misc 2 (Stamina) bp 60 -> 30; #1 aura 4 (the zone bonus the tooltip reads as `$s2%`) bp 5 / 4 / 5 / 5 -> 2 / 2 / 2 / 2. Tooltips unchanged ("Increases your Stamina by $s1 ... you also gain $s2% Hit Chance / Critical Strike Chance / reduced chance to be dodged or parried / Haste"), so the in-game text now reads 30 and 2%. `python3 -I tools/sources/wago.py diff 1.60.1.70790 1.60.1.70862 --by-spell`. The sim (`consumes.go:82-124`) adds 60 Stamina and 5 hit / 4 crit / 5 expertise / 5% haste. Measured with the shared CLI (12aa2796fcc6), 20k iterations, seed 1, paired against `$AUDIT_WORK/runs/master`, by giving each request bonusStats of −30 Stamina and −3 hit / −2 crit / −3 expertise (`$AUDIT_WORK/mechanics/flask/mk.py`): Combat Daggers (Accuracy) −43.1 (−4.5%); Fury 2H −47.2 (−4.1%), Fury −44.6 (−3.9%) (Precision); Arms −38.8 (−3.6%), Marksmanship −44.0 (−3.5%), Beast Mastery −41.8 (−3.5%), Lone Wolf −45.6 (−3.5%), feral cat −36.0 (−3.1%) (Aggression); Survival −33.6 (−3.2%) and the other rogues −1.9% to −2.2% (Precision). Duty variants move the same.
+- proposed fix: in `applyNaturalFlask` take 30 Stamina and 2 for every zone bonus (hit 2 / 2, crit 2 / 2, expertise 2, speed 1.02); update the consumes.go comment, `consumes_forever_test.go`, standards item 11's numbers and re-run the flask search per preset (the choice among the four natural flasks, and natural against the old flasks, may change).
+- same change as consumables-20261107-1 (filed in the same run); this finding adds the per-preset measurement. Fix once.
+- needs: orchestrator fix
+- resolved: 2026-11-11, 032692409 (merged by ca07df649): applyNaturalFlask gives 30 Stamina and 2 / 2 / 2 / 1.02 zone bonuses, matching 70862 (and 70888) SpellEffect.
 
 ### mechanics-20261103-2: The notes' tank threat values (Bear Form 115%, Defensive Stance 80%, Defiance 7/13/20%) are not in the sim
 - severity: low (threat only, 0 DPS; moves the tank sim's threat numbers, not the DPS report)

@@ -12,14 +12,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: rename to "Inferior Stamina"; confirm the generated db shows +2 Stamina, not +5 Health.
 - needs: orchestrator fix
 
-### consumables-20261107-1: Client 70862 halves the four Natural flasks (Stamina 60 to 30, zone bonus 4-5 to 2); sim still models 60 and 4-5
-- severity: high (estimate, not measured: every warrior, rogue, hunter and cat preset uses a Natural flask; the zone bonus is 5% hit/expertise/haste or 4% crit, now 2 in the client data)
-- affects: sim/core/consumes.go applyNaturalFlask (lines 82-115) and sim/core/consumes_forever_test.go:266-269; presets using FlaskOfNatural*: warrior (Precision, Aggression), rogue (Precision, Accuracy), hunter (Aggression, Precision), feral_druid (Aggression); mksettings spec_warrior/rogue60/rogue_combat/hunter/feral; dps_report requests
-- found: 2026-11-07, master 12aa2796f
-- evidence: `builddiff.py 1.60.1.70790 1.60.1.70862`: spells 1293740-1293743 (items 274273-274276) effect 0 (A_MOD_STAT Stamina) 60 -> 30, effect 1 (the A_DUMMY zone bonus) 5/4/5/5 -> 2/2/2/2 (Accuracy/Aggression/Precision/Swiftness). Auras after it unchanged. Whether the 2 reads as 2% (hit, crit, expertise, haste) is inferred from the old 5 = 5% mapping; no tooltip checked (wowhead not queried). Not sim-measured.
-- proposed fix: user/orchestrator to rule on the new values, then set Stamina 30 and the bonuses to 2 (Aggression 2% crit, Accuracy 2% hit, Precision 2 expertise, Swiftness 2% haste), update the test and flask comments in presets; re-sim and re-pick flasks (Distilled Wisdom, Titans, Supreme Power may now beat a Natural flask for some specs); the hunter/cat NO_ZONE_FLASK logic stays.
-- needs: orchestrator fix
-
 ### consumables-20261105-1: Feral mksettings consumes lack the Goblin Sapper Charge the preset and requests now carry
 - severity: low
 - affects: tools/rotopt/mksettings/spec_feral.go (consumes func, lines 20-33); ui/feral_druid/presets.ts (DefaultConsumes)
@@ -30,6 +22,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 
 ## Resolved
+
+### consumables-20261107-1: Client 70862 halves the four Natural flasks (Stamina 60 to 30, zone bonus 4-5 to 2); sim still models 60 and 4-5
+- severity: high (estimate, not measured: every warrior, rogue, hunter and cat preset uses a Natural flask; the zone bonus is 5% hit/expertise/haste or 4% crit, now 2 in the client data)
+- affects: sim/core/consumes.go applyNaturalFlask (lines 82-115) and sim/core/consumes_forever_test.go:266-269; presets using FlaskOfNatural*: warrior (Precision, Aggression), rogue (Precision, Accuracy), hunter (Aggression, Precision), feral_druid (Aggression); mksettings spec_warrior/rogue60/rogue_combat/hunter/feral; dps_report requests
+- found: 2026-11-07, master 12aa2796f
+- evidence: `builddiff.py 1.60.1.70790 1.60.1.70862`: spells 1293740-1293743 (items 274273-274276) effect 0 (A_MOD_STAT Stamina) 60 -> 30, effect 1 (the A_DUMMY zone bonus) 5/4/5/5 -> 2/2/2/2 (Accuracy/Aggression/Precision/Swiftness). Auras after it unchanged. Whether the 2 reads as 2% (hit, crit, expertise, haste) is inferred from the old 5 = 5% mapping; no tooltip checked (wowhead not queried). Not sim-measured.
+- proposed fix: user/orchestrator to rule on the new values, then set Stamina 30 and the bonuses to 2 (Aggression 2% crit, Accuracy 2% hit, Precision 2 expertise, Swiftness 2% haste), update the test and flask comments in presets; re-sim and re-pick flasks (Distilled Wisdom, Titans, Supreme Power may now beat a Natural flask for some specs); the hunter/cat NO_ZONE_FLASK logic stays.
+- needs: orchestrator fix
+- resolved: 2026-11-11, 032692409 (applyNaturalFlask 30 Stamina, 2% bonuses, test updated)
 
 ### consumables-20261104-1: ui presets.ts still tick Salvation after mksettings and the requests dropped it
 - severity: low

@@ -1,9 +1,11 @@
 # Rotation audit: reference files
 
-- `baseline_9ba00c2_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  9ba00c2dc (pass 56). Against the previous a079415 baseline: the four Enhancement builds -19.6 to -22.1
-  (9ba00c2dc: Windfury and Flametongue Totem replace each other, the presets lose the raid's Flametongue
-  Totem); everything else under 0.5 (whole-point damage rolls 2a60326a1, heals-only downranking 0193721bc).
+- `baseline_707ae92_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  707ae92cc (pass 59). Against the previous ca5e35c baseline: Enhancement -113 to -123 (Nov 10 shaman tuning
+  cb651085c and re-optimized builds 54a15ba24), Affliction +34 to +37 (hotfix 113766 rotation 5607180c7,
+  ghost-tick fix f20d5938a), natural-flask presets (warrior, rogue, hunter, Feral) -16 to -28 (70862 flasks
+  032692409; Fury -37, SV -27 also take item and hunter mana changes), Arcane -8 (Arcane Concentration split),
+  Fire -4; the rest under 0.5.
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
   - The CLI was the audit loop's shared build at 9ba00c2dc (`/tmp/audit-cache/cli/9ba00c2dc473/wowsimcli`).

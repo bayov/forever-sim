@@ -2,22 +2,19 @@
 
 ## Open
 
-### healer_mechanics-20261110-12: Nature's Swiftness doesn't reach Wild Growth; the Nov 10 hotfix makes Wild Growth instant under it
-- severity: medium (Restoration druid raid carry +1.0% with the fix; tank carry unchanged)
-- affects: Restoration druid (presets take both talents: `ui/restoration_druid/presets.ts:87`, string `05302001--5053025153113051`)
-- found: 2026-11-10, master da272241e5
-- evidence: foreverchanges.pro "A hotfix to the November 10 client" (first seen 16:51 UTC, launch realms' hotfix cache):
-  "Nature's Swiftness now also works on Wild Growth, which it makes an instant cast instead of 3 sec". Tier 1 data (client
-  hotfix cache) at second hand; wago's 70888 tables don't carry it yet (17116 effect 695239 mask unchanged), Blizzard's
-  Nov 9 post doesn't mention it. TASKS.md (da272241e) lists it too. Sim: `sim/druid/healing.go` `registerNaturesSwiftnessCD`,
-  `affected` takes only Healing Touch, Regrowth, Wrath; the comment says "Wild Growth isn't one".
-  Measured with the patch below, `tools/healbench` 1000 iterations paired seeds (seed 101): `-role raid -carry
-  tools/healbench/req/druid_restoration_raid.json` carry 0.866 -> 0.875 (HPS 2518 -> 2527, mana left 948 -> 865);
-  `-role tank -carry tools/healbench/req/druid_restoration.json` 1.354 -> 1.354.
-- proposed fix: add `|| spell.SpellCode == SpellCode_DruidWildGrowth` to `affected` (patch kept at
-  `/tmp/audit-work/healer_mechanics/ns_wild_growth.patch`, one line), fix the comment, add a test that Wild Growth
-  under Nature's Swiftness casts in 0 s and spends the buff. Confirm against wago once a build carries the mask.
-- needs: worker fix
+### healer_mechanics-20261111-13: Holy and Discipline priest suites fail on master: the AllItems-IronweaveBattlesuit golden is stale
+- severity: low (test hygiene; no healer mechanic shown wrong)
+- affects: Holy and Discipline priest test suites (also Shadow priest and Mage, same row)
+- found: 2026-11-11, master 707ae92cc5
+- evidence: `go test -tags=with_db ./sim/priest/healing/` fails only `Phase1-AllItems-IronweaveBattlesuit`: Holy HPS 249.986 ->
+  252.680, Disc HPS 109.002 -> 109.557 (TPS, DTPS too); `./sim/priest/shadow/` DPS 941.581 -> 983.555 and `./sim/mage/`
+  945.088 -> 999.375 on the same row; every other row of those suites passes. The eight Ironweave items and
+  `ItemSetIronweaveBattlesuit` are unchanged since 27d0d59d6, so the move comes from something else since then (item, enchant or
+  consumable data: c4e7fbab3, ca07df649, b1291e61a, `sim/core/consumes.go`); not bisected (a worktree at 27d0d59d6 fails setup
+  without generated protos). A red suite hides the next real healer regression.
+- proposed fix: find the commit that moved the row (bisect `go test -tags=with_db ./sim/mage/ -run TestP1Mage`), confirm the
+  move is intended, then `make update-tests` for the four suites.
+- needs: orchestrator fix
 
 ### healer_mechanics-20261104-11: Riptide's Forever mana is 0.6 x the old client cost; client 70790 now gives 150/180/230
 - severity: low (rank 3, the one the level 60 presets cast, is 1 mana dear at 231 vs 230; rank 1 is 3 mana cheap)
@@ -60,6 +57,24 @@
   cancelled heals, or two absorbs on one unit.
 
 ## Resolved
+
+### healer_mechanics-20261110-12: Nature's Swiftness doesn't reach Wild Growth; the Nov 10 hotfix makes Wild Growth instant under it
+- severity: medium (Restoration druid raid carry +1.0% with the fix; tank carry unchanged)
+- affects: Restoration druid (presets take both talents: `ui/restoration_druid/presets.ts:87`, string `05302001--5053025153113051`)
+- found: 2026-11-10, master da272241e5
+- evidence: foreverchanges.pro "A hotfix to the November 10 client" (first seen 16:51 UTC, launch realms' hotfix cache):
+  "Nature's Swiftness now also works on Wild Growth, which it makes an instant cast instead of 3 sec". Tier 1 data (client
+  hotfix cache) at second hand; wago's 70888 tables don't carry it yet (17116 effect 695239 mask unchanged), Blizzard's
+  Nov 9 post doesn't mention it. TASKS.md (da272241e) lists it too. Sim: `sim/druid/healing.go` `registerNaturesSwiftnessCD`,
+  `affected` takes only Healing Touch, Regrowth, Wrath; the comment says "Wild Growth isn't one".
+  Measured with the patch below, `tools/healbench` 1000 iterations paired seeds (seed 101): `-role raid -carry
+  tools/healbench/req/druid_restoration_raid.json` carry 0.866 -> 0.875 (HPS 2518 -> 2527, mana left 948 -> 865);
+  `-role tank -carry tools/healbench/req/druid_restoration.json` 1.354 -> 1.354.
+- proposed fix: add `|| spell.SpellCode == SpellCode_DruidWildGrowth` to `affected` (patch kept at
+  `/tmp/audit-work/healer_mechanics/ns_wild_growth.patch`, one line), fix the comment, add a test that Wild Growth
+  under Nature's Swiftness casts in 0 s and spends the buff. Confirm against wago once a build carries the mask.
+- needs: worker fix
+- resolved: 2026-11-11, 9628e85b6 (Wild Growth in `affected`; `TestDruidNaturesSwiftnessOnRegrowth` now checks an instant Wild Growth takes the buff)
 
 ### healer_mechanics-20261104-1: a raid damage event's share is rounded up to one target, so small-share abilities hit far too often
 - severity: high (moves the raid carry by 3 to 30% and flips the shaman / priest order on Chromaggus)

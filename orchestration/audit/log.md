@@ -293,3 +293,17 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-10 18:56 | client_update | pass 12 | master da272241e | 2 new findings | client_update-20261110-1 (medium): Arcane Concentration chance split across Arcane Missiles channel; -2 (low): ilvl 65 trinkets stale in db
 2026-11-10 18:56 | healer_mechanics | pass 8 | master da272241e | 1 new finding | healer_mechanics-20261110-12 (medium): Nature's Swiftness should make Wild Growth instant
 2026-11-10 18:56 | tank_mechanics | pass 9 | master da272241e | quiet | 70888 touches no tank mechanics
+2026-11-11 19:43 | results | pass 83 | master 707ae92cc | quiet | 45 builds moved, all traced (Windfury white-swing, natural flask nerf, Affliction hotfix); no new findings
+2026-11-11 19:43 | rotations | pass 59 | master 707ae92cc | quiet | Enh imbue+totem settled; baseline refreshed to 707ae92
+2026-11-11 19:43 | gear | pass 61 | master 707ae92cc | quiet | no gear-relevant change
+2026-11-11 19:43 | consumables | pass 79 | master 707ae92cc | quiet | natural flask fix verified; consumables-20261107-1 resolved
+2026-11-11 19:43 | mechanics | pass 74 | master 707ae92cc | quiet | imbue+totem assumption noted; hotfix data fetch for 70888 not completed
+2026-11-11 19:43 | fairness | pass 35 | master 707ae92cc | quiet | all moves traced to commits; baseline refreshed
+2026-11-11 19:43 | healer_mechanics | pass 9 | master 707ae92cc | 1 new finding | healer_mechanics-20261111-13 (low): stale Ironweave golden fails priest/mage suites
+2026-11-11 19:43 | healer_rotations | pass 7 | master 707ae92cc | 1 new finding | healer_rotations-20261111-1 (high): druid raid loses carry; Nature's Swiftness now goes to Wild Growth
+2026-11-11 19:43 | healer_gear | pass 5 | master 707ae92cc | quiet | nothing gear-relevant changed
+2026-11-11 19:43 | healer_fairness | pass 7 | master 707ae92cc | 1 new finding | healer_fairness-20261111-1 (high): druid raid preset fell from tied first to last
+2026-11-11 19:43 | tank_mechanics | pass 10 | master 707ae92cc | 1 new finding | tank_mechanics-20261111-1 (low): docs/tank_shaman.md stale Stormstrike/Mental Dexterity
+2026-11-11 19:43 | tank_rotations | pass 8 | master 707ae92cc | 1 new finding | tank_rotations-20261111-1 (medium): Warden talents not re-tuned after Nov 10
+2026-11-11 19:43 | tank_gear | pass 6 | master 707ae92cc | quiet | all pieces within tolerance
+2026-11-11 19:43 | tank_fairness | pass 8 | master 707ae92cc | 1 new finding | tank_fairness-20261111-1 (high): Flask of the Titans beats Natural flask at Max survival

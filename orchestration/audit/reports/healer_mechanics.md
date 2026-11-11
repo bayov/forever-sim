@@ -1,45 +1,43 @@
-# Healer mechanics: pass 8 (2026-11-10 UTC, master da272241e5, client 1.60.1.70888)
+# Healer mechanics: pass 9 (2026-11-11 UTC, master 707ae92cc5, client 1.60.1.70888)
 
-Due for the client build 1.60.1.70862 -> 1.60.1.70888. No watched code changed on master
-(ca5e35c3f..da272241e5 touches item procs, logcheck and audit docs only). One new finding.
+Due for 9 watched files changed on master (27d0d59d6..707ae92cc5). Client build unchanged (70888). One finding resolved,
+one new (low).
 
 ## Get current
 
-- wago.tools newest build 1.60.1.70888; `wago.py diff --set mechanics 70862 70888` (the `--by-spell` mode crashes:
-  KeyError 'SpellID' on a table without it, `tools/sources/wago.py:297`).
-- `orchestration/update_ledger.md`: unchanged since 2026-11-08.
-- Blizzard Nov 9 hotfix post (news 24315281): druid lines are Feral Charge and (Nov 6) Bloom, Swiftmend tooltip; nothing
-  healer-numeric. foreverchanges.pro Nov 10 client hotfix: Nature's Swiftness now reaches Wild Growth (finding 12).
+- wago.tools newest build still 1.60.1.70888 (gate.json); no new client rows to check.
+- Blizzard's hotfix post (news 24315281, now "November 10"), healer lines, tier 1:
+  | Line | Sim | Verdict |
+  |---|---|---|
+  | Nov 10 Druid: Nature's Swiftness also makes Wild Growth instant | `sim/druid/healing.go:752-760` takes Wild Growth (9628e85b6) | match; finding 12 resolved |
+  | Nov 10 Priest: Revelation no longer activated by Vampiric Embrace healing | `sim/common/enchant_effects.go:289` procs only on ProcMaskSpellDamage direct casts; heals never reach it | match |
+  | Nov 10 Holy: Holy Nova unlearned when untalented | talents gate the spell | n/a |
+  | Nov 10 Enchanting: Lesser Spirit (boots, bracer) give their stated Spirit | server fix; sim takes the stated values | match (gear auditors' area) |
+  | Nov 6 Druid: Bloom heals; Swiftmend tooltip | already covered in pass 8 | match |
+- `orchestration/update_ledger.md`: no healer row since pass 8 (DRU-HF-01 is the Nature's Swiftness line).
+- Shaman Nov 10 tuning (Stormstrike, Mental Dexterity, Maelstrom Weapon, imbue + weapon totem): no Restoration heal, healing
+  talent or mana effect; the totem comment changes (`air_totems.go`, `fire_totems.go`, `shaman.go`, `totem_receivers.go`) are
+  weapon buffs only.
 
-## Client 70862 -> 70888, healer rows
+## Changed code read in full
 
-| Row | Change | Sim | Verdict | Tier |
-|---|---|---|---|---|
-| Swiftmend 18562 tooltip | "of the consumed spell" dropped | keeps the HoT under Forever (bc8e5473b) | match, now client agrees too | 1 |
-| Natural Instinct 1223242 eff 0 (1211036) | crit-damage mask word 3 0 -> 0x88 (Pounce) | healing part 1361117 (12/25% Int) unchanged | healer part match; feral part is mechanics' | 1 |
-| Fear Ward 39554 | castable in Shadowform | not a heal | n/a | 1 |
-| Serenity Field 272439 (trinket, ilvl 65) | stat 41 15000 -> 7500, use CD 90 -> 360 s | not in the sim or any healer gear set | n/a (gear auditors) | 1 |
-| Nature's Swiftness 17116 | wago mask unchanged; Nov 10 hotfix adds Wild Growth | HT, Regrowth, Wrath only | mismatch, finding 12 | 1 (hotfix cache, via foreverchanges.pro) |
+| File | Change | Healer effect | Verdict |
+|---|---|---|---|
+| `sim/druid/healing.go` registerNaturesSwiftnessCD | Wild Growth joins `affected` | instant Wild Growth, spends the buff | match, tier 1 |
+| `sim/core/dot.go` + `aura.go` endedAt | CleanUp ticks only if the aura is active or the tick is at or before its end; new `SetTickPeriod` (Wrack only) | HoT last tick at expiry still lands (NextActionAt == endedAt); Swiftmend/cancel ends early as before; refreshes keep the aura active | match; druid, paladin, priest and raid healing tests pass |
+| `sim/druid/items.go` | Idol of Ferocity -2 energy | feral only | n/a |
+| `sim/shaman/talents.go` | Mental Dexterity, Maelstrom Weapon | enhancement only | n/a (mechanics) |
 
-No other heal, healing talent, HoT, cost, cast time or cooldown row of the four healers changed
-(SpellPower, SpellCastTimes, SpellDuration, SpellLevels: 0 changes).
+## Tests
 
-## Measured (finding 12)
+`go test -tags=with_db` on `./sim/druid/... ./sim/paladin/... ./sim/core/ ./sim/` (healing filters) and
+`./sim/shaman/enhancement/` healing tests: all pass. `TestDruidNaturesSwiftnessOnRegrowth` now fails if Wild Growth
+leaves Nature's Swiftness. `./sim/priest/healing/` fails one row, `Phase1-AllItems-IronweaveBattlesuit` (Holy HPS 249.986 ->
+252.680, Disc 109.002 -> 109.557), as do Shadow priest and Mage on the same row: a stale golden whose cause wasn't bisected
+(finding 13). Note: without `-tags=with_db` these packages panic on missing items; always pass it.
 
-`tools/healbench`, 1000 iterations, seed 101, patched `affected` in `registerNaturesSwiftnessCD` to take Wild Growth:
+## Findings
 
-| Request | Carry before | after | HPS | Mana left |
-|---|---|---|---|---|
-| druid_restoration_raid, -role raid | 0.866 | 0.875 (+1.0%) | 2518 -> 2527 | 948 -> 865 |
-| druid_restoration, -role tank | 1.354 | 1.354 | 845 -> 845 | same |
-
-## Open findings
-
-- 12 (new, medium): Nature's Swiftness misses Wild Growth since the Nov 10 hotfix.
-- 11 (Riptide cost): still open, `sim/shaman/healing.go:117,132` scales by 0.6 (147/180/231 vs 150/180/230).
-- 10 (untested heal paths): unchanged.
-
-## Notes for the next pass
-
-- healbench needs `protoc --go_out=./sim/core ./proto/*.proto` in a fresh tree; setup.sh installs protoc but doesn't run it.
-- Confirm finding 12 against wago once a build carries the 17116 mask change.
+- New: healer_mechanics-20261111-13 (low): priest suites red on the Ironweave AllItems golden.
+- Resolved: 12 (Nature's Swiftness on Wild Growth), 9628e85b6.
+- Still open: 11 (Riptide cost 147/180/231 vs client 150/180/230), 10 (untested paths).
