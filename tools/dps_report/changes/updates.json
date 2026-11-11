@@ -4115,7 +4115,7 @@
   {
    "id": "2026-11-10-hotfixes",
    "type": "game",
-   "title": "November 10 hotfixes: Enhancement shaman tuning",
+   "title": "November 10 hotfixes: class tuning",
    "date": "2026-11-10",
    "baselineData": "c61845d5ccb97b5829a43325d9d4bd1462bbadad",
    "endData": null,
@@ -4327,7 +4327,236 @@
      },
      "moves": false,
      "commits": [
-      "eb6c042"
+      "eb6c042",
+      "d2cee3a"
+     ]
+    },
+    {
+     "title": "Wrack deals 30% less damage and no longer increases your damage over time effects; while you channel it, Corruption, Siphon Life and Bane of Agony tick twice as fast",
+     "kind": "game",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness"
+     ],
+     "note": "The damage over time effects keep their total duration, so they tick more often.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "commits": [
+      "546d0dc"
+     ]
+    },
+    {
+     "title": "Soul Siphon counts only Corruption, Siphon Life and Bane of Agony",
+     "kind": "game",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "commits": [
+      "546d0dc"
+     ]
+    },
+    {
+     "title": "Affliction keeps Bane of Agony up instead of Bane of Doom, recasts Corruption just before it falls off, and channels Wrack whenever nothing else is due",
+     "kind": "sim",
+     "classes": [
+      "Warlock"
+     ],
+     "builds": [
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness"
+     ],
+     "commits": [
+      "5607180"
+     ]
+    },
+    {
+     "title": "Imp Firebolt rank 1 deals 6 to 8 damage",
+     "kind": "game",
+     "classes": [
+      "Warlock"
+     ],
+     "note": "A leveling rank; no level 60 build changes.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "moves": false,
+     "commits": [
+      "99c8ce2"
+     ]
+    },
+    {
+     "title": "Arcane Shot and Summon Hawk cost 11% of base mana at every rank",
+     "kind": "game",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-wolf",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__marksmanship",
+      "hunter__marksmanship-wolf",
+      "hunter__marksmanship-tallstrider",
+      "hunter__lone-wolf"
+     ],
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "commits": [
+      "30e67a5"
+     ]
+    },
+    {
+     "title": "The hawk from Summon Hawk deals about 80% more melee damage",
+     "kind": "game",
+     "classes": [
+      "Hunter"
+     ],
+     "note": "No server data carries it yet, so the sim takes the announced value. The hawk still trails Arcane Shot on the cooldown they share, so no build takes it.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "moves": false,
+     "commits": [
+      "6feec70"
+     ]
+    },
+    {
+     "title": "Arcane Concentration's chance is shared across the Arcane Missiles cast and its missiles, about 10% a channel in all",
+     "kind": "game",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__arcane",
+      "mage__fire"
+     ],
+     "note": "Before, every missile rolled the full chance. Blizzard's wording allows another reading; the sim takes the split one.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "commits": [
+      "5bfae11"
+     ]
+    },
+    {
+     "title": "Nature's Swiftness also makes Wild Growth instant",
+     "kind": "game",
+     "classes": [
+      "Druid"
+     ],
+     "note": "Healing only; no damage build changes.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "moves": false,
+     "commits": [
+      "9628e85"
+     ]
+    },
+    {
+     "title": "Idol of Ferocity takes 2 energy off Claw and Rake (was 3)",
+     "kind": "game",
+     "classes": [
+      "Druid"
+     ],
+     "note": "No build wears it.",
+     "source": {
+      "label": "wago.tools, SpellEffect",
+      "url": "https://wago.tools/db2/SpellEffect?filter[SpellID]=27851"
+     },
+     "moves": false,
+     "commits": [
+      "3336435"
+     ]
+    },
+    {
+     "title": "Sweeping Strikes no longer uses a charge on a hit with no second target",
+     "kind": "game",
+     "classes": [
+      "Warrior"
+     ],
+     "note": "Only fights with more than one target change.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "moves": false,
+     "commits": [
+      "a34d224"
+     ]
+    },
+    {
+     "title": "Sparklance Wand deals Arcane damage",
+     "kind": "game",
+     "note": "No build uses it.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "moves": false,
+     "commits": [
+      "dc78d78"
+     ]
+    },
+    {
+     "title": "Earthen Silk Slippers give +17 healing and +6 spell damage (was +18 spell power)",
+     "kind": "game",
+     "note": "No build wears them.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "moves": false,
+     "commits": [
+      "d2cee3a"
+     ]
+    },
+    {
+     "title": "Enchant Bracer and Boots - Lesser Spirit give +4 Spirit (was resistance to all schools)",
+     "kind": "game",
+     "note": "No build uses them.",
+     "source": {
+      "label": "Blizzard: WoW Forever Hotfixes, November 10, 2026",
+      "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026"
+     },
+     "moves": false,
+     "commits": [
+      "c4e7fba"
+     ]
+    },
+    {
+     "title": "Item data refreshed from Wowhead's Forever listing; Blackhand's Breadth gives 1% crit (was 2%)",
+     "kind": "game",
+     "note": "No report build wears the changed items.",
+     "source": {
+      "label": "Wowhead (Forever)",
+      "url": "https://www.wowhead.com/"
+     },
+     "moves": false,
+     "commits": [
+      "5d9ece7"
      ]
     }
    ],
@@ -4343,6 +4572,22 @@
     {
      "commit": "b415b7c",
      "why": "stat weights in the sim UI and the optimizer's weights; no build's gear or rotation changes"
+    },
+    {
+     "commit": "0df5a14",
+     "why": "test expectations only"
+    },
+    {
+     "commit": "4a935cb",
+     "why": "test expectations only"
+    },
+    {
+     "commit": "0aad0e6",
+     "why": "test expectations only"
+    },
+    {
+     "commit": "e9ebe1c",
+     "why": "test expectations only"
     }
    ],
    "source": {
