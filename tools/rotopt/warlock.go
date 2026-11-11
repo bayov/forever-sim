@@ -105,8 +105,10 @@ func (warlockRotation) Knobs() []Knob {
 		// Searing Pain if it still lands.
 		{Name: "endInstants", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Wrack (the Affliction capstone): 0 never, 1 while Corruption and the bane are both up, 2
-		// only while Corruption and Bane of Agony are up (its 10% counts on those two).
-		{Name: "wrack", Default: 0, Min: 0, Max: 2, Step: 1},
+		// only while Corruption and Bane of Agony are up (it speeds up Corruption, Siphon Life and
+		// Agony, not Doom, since hotfix 113766), 3 while Corruption, Siphon Life and the bane are up
+		// (Soul Siphon counts all three), 4 whenever nothing above it is due.
+		{Name: "wrack", Default: 0, Min: 0, Max: 4, Step: 1},
 		// The filler: 1 Shadow Bolt, 2 Incinerate while Immolate is up and Shadow Bolt
 		// otherwise, 3 Searing Pain, 4 Drain Life, 5 Drain Soul.
 		{Name: "filler", Default: 1, Min: 1, Max: 5, Step: 1},
@@ -225,6 +227,10 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(lockWrack, and(dotIsActive(lockCorruption), or(dotIsActive(lockBaneOfAgony), dotIsActive(lockBaneOfDoom))), "Wrack while Corruption and the bane are up."))
 	case 2:
 		items = append(items, cast(lockWrack, and(dotIsActive(lockCorruption), dotIsActive(lockBaneOfAgony)), "Wrack while Corruption and Bane of Agony are up."))
+	case 3:
+		items = append(items, cast(lockWrack, and(dotIsActive(lockCorruption), dotIsActive(lockSiphonLife), or(dotIsActive(lockBaneOfAgony), dotIsActive(lockBaneOfDoom))), "Wrack while Corruption, Siphon Life and the bane are up."))
+	case 4:
+		items = append(items, cast(lockWrack, nil, "Wrack whenever nothing above it is due."))
 	}
 	if k["lifeTapEnd"] == 1 {
 		items = append(items, cast(lockLifeTap, and(lt(remainingTime(), seconds(3)), lt(currentManaPercent(), num(0.5))), "Life Tap at the very end is free."))

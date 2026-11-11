@@ -144,11 +144,13 @@ export const RotationLevel60Destruction = PresetUtils.makePresetAPLRotation('Des
 	group: 'Synthetic',
 	tooltip: 'The Level 60 rotation with Conflagrate, for the Destruction talents.',
 });
-// Affliction (Wrack, since round 70753): Corruption, the bane and Siphon Life kept up, Wrack
-// channelled while Corruption and the bane are up (its 10% counts on those two), Shadow Bolt between.
+// Affliction (Wrack, since round 70753): Corruption, Bane of Agony and Siphon Life kept up, Wrack
+// channelled whenever nothing else is due. Since hotfix 113766 (2026-11-10) the three tick twice as
+// fast while Wrack channels, so Bane of Agony replaces Bane of Doom (whose one tick it doesn't speed
+// up) and Corruption is recast 2.5 sec before it runs out: 956.2 to 1077.1 at 180 sec (rotopt).
 export const RotationLevel60Affliction = PresetUtils.makePresetAPLRotation('Affliction', Level60AfflictionAPL, {
 	group: 'Synthetic',
-	tooltip: 'The Level 60 rotation for the Affliction talents: Wrack channelled while Corruption and the bane are up.',
+	tooltip: 'The Level 60 rotation for the Affliction talents: Corruption, Bane of Agony and Siphon Life kept up, Wrack channelled whenever nothing else is due.',
 });
 export const RotationLevel60AfflictionShadowBolt = PresetUtils.makePresetAPLRotation('Affliction Shadow Bolt', Level60AfflictionShadowBoltAPL, {
 	group: 'Synthetic',
@@ -285,6 +287,10 @@ export const TalentsLevel60Destruction = PresetUtils.makePresetTalents('Destruct
 // for Shadow Bolt Affliction; the same Wrack build with the Succubus out was 33 behind at 180 sec, which
 // it replaced. Amplify Curse in place of Fel Concentration is even (1000.4 against 999.9 on the
 // Succubus build); with the Imp sacrificed, Shadow Bolt Affliction drops to 934.0.
+// After hotfix 113766 (2026-11-10: Wrack 30% less, Corruption, Siphon Life and Bane of Agony tick
+// twice as fast under it, Soul Siphon on those three) the talent search at 180 sec on the new
+// rotation moved nothing and Undead stays: 1075.5 / 1076.9 / 1064.0 at 120 / 180 / 300 sec (20,000
+// iterations), against 1015.1 for Shadow Bolt Affliction at 180. Without Wrack cast it is 815.
 export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 	'Affliction',
 	SavedTalents.create({ talentsString: '05500021035001351-0050003201-005004' }),
