@@ -468,6 +468,7 @@ func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations
 			proto.Stat_StatIntellect, proto.Stat_StatSpellPower, proto.Stat_StatHolyPower,
 			proto.Stat_StatSpellCrit, proto.Stat_StatSpellHit, proto.Stat_StatMP5, proto.Stat_StatSpirit,
 			proto.Stat_StatArmor, proto.Stat_StatFirePower, proto.Stat_StatNaturePower,
+			proto.Stat_StatSpellPenetration,
 		},
 		PseudoStatsToWeigh: []proto.PseudoStat{proto.PseudoStat_PseudoStatMainHandDps, proto.PseudoStat_PseudoStatOffHandDps},
 		EpReferenceStat:    proto.Stat_StatAttackPower,
@@ -477,7 +478,7 @@ func (s *setup) statWeights(rot *proto.APLRotation, duration float64, iterations
 	}
 	stderr := 1 / math.Sqrt(float64(iterations))
 	var sb strings.Builder
-	names := []string{"Agility", "Strength", "AttackPower", "MeleeCrit", "MeleeHit", "Stamina", "Intellect", "SpellPower", "HolyPower", "SpellCrit", "SpellHit", "MP5", "Spirit", "Armor", "FirePower", "NaturePower"}
+	names := []string{"Agility", "Strength", "AttackPower", "MeleeCrit", "MeleeHit", "Stamina", "Intellect", "SpellPower", "HolyPower", "SpellCrit", "SpellHit", "MP5", "Spirit", "Armor", "FirePower", "NaturePower", "SpellPenetration"}
 	for _, name := range names {
 		i := proto.Stat_value["Stat"+name]
 		fmt.Fprintf(&sb, "%-12s %6.3f dps  %6.2f ap (±%.2f)\n", name, res.Dps.Weights.Stats[i], res.Dps.EpValues.Stats[i], res.Dps.EpValuesStdev.Stats[i]*stderr)
