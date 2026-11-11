@@ -136,6 +136,33 @@ func (dot *Dot) RescheduleNextTick(sim *Simulation) {
 	sim.AddPendingAction(dot.tickAction)
 }
 
+// SetTickPeriod changes how often a running dot ticks without changing when it ends. The share of
+// the current tick that has passed is kept: half way to the next tick stays half way, at the new
+// speed. Ticks still due when the aura runs out are lost. Wrack's speed-up uses it (sim/warlock).
+func (dot *Dot) SetTickPeriod(sim *Simulation, period time.Duration) {
+	if period == dot.tickPeriod {
+		return
+	}
+	if !dot.IsActive() || dot.tickAction == nil {
+		dot.tickPeriod = period
+		return
+	}
+
+	remaining := max(0, dot.tickAction.NextActionAt-sim.CurrentTime)
+	scaled := time.Duration(float64(remaining) * float64(period) / float64(dot.tickPeriod))
+	dot.tickPeriod = period
+
+	oldTickAction := dot.tickAction
+	dot.tickAction = nil      // prevent tickAction.CleanUp() from adding an extra tick
+	oldTickAction.Cancel(sim) // remove old PA ticker
+
+	periodicOptions := dot.basePeriodicOptions()
+	periodicOptions.Period = period
+	dot.tickAction = NewPeriodicAction(sim, periodicOptions)
+	dot.tickAction.NextActionAt = sim.CurrentTime + scaled
+	sim.AddPendingAction(dot.tickAction)
+}
+
 func (dot *Dot) Apply(sim *Simulation) {
 	dot.TakeSnapshot(sim, false)
 

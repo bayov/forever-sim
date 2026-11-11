@@ -8,6 +8,14 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled: 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Hotfix 113766 (November 10, build 1.60.1.70888)
+
+- Wrack: 30% less damage. Server hotfix 113766, SpellEffect 1349556: 25.2 a second plus 1.75 a level above 40 (60.2 at 60, was 86) and a 0.2002 coefficient (was 0.286).
+- Wrack no longer makes Corruption and Bane of Agony deal 10% more. While it is channelled, the warlock's Corruption, Siphon Life and Bane of Agony on the target tick 100% faster (SpellEffect 1349557, aura 4 value 100) and still last their full duration, so they get extra ticks. How the sim times it, from the developers' note ("the time it skips is kept after Wrack's channel ends or is interrupted"): the tick timer runs at double speed exactly while the channel is up, and keeps its progress when the channel ends, early or not; a spell cast or refreshed mid-channel starts at the fast speed; progress towards a tick the spell doesn't reach before it runs out is lost (no partial tick); Wrack's own ticks are unchanged. Bane of Agony still steps up every 4 ticks and stays at 150% past its 12th. These are our reading until a combat log shows them.
+- Soul Siphon: 4 / 8 / 12% for each of Corruption, Siphon Life and Bane of Agony on the target, up to 36% (it counted the curse and any bane before).
+- Imp Firebolt rank 1: 6 to 8 at level 5 (SpellEffect 681913: base 6, variance 0.333, 0.3 a level). The notes raise ranks 2 to 4 too, with no numbers and no server row: they keep the client's.
+- Affliction keeps its talents and Undead, and its rotation swaps Bane of Doom for Bane of Agony, recasts Corruption 2.5 sec early and channels Wrack whenever nothing else is due: 1075.5 / 1076.9 / 1064.0 at 120 / 180 / 300 sec (was 1004.7 / 1034.4 / 1032.2; 956.2 at 180 on the old rotation). It passes Destruction (1062.8) at 180 sec.
+
 ## Development notes of November 2 (client 1.60.1.70753, round 70753)
 
 The Warlock lines of Blizzard's notes of 2026-11-02 (post 9) and how the sim takes them (orchestration/round_70753/warlock.md has the ledger):

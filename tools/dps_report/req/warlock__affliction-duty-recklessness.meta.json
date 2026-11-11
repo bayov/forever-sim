@@ -41,15 +41,14 @@
     "Racials on cooldown, except Troll Berserking",
     "Life Tap below 5% mana or when the filler costs more than the mana left",
     "Curse of Recklessness right after the opener, recast before it drops (2 min). It takes 505 armor in the minor armor slot, so the raid's Faerie Fire and Curse of Recklessness are off. The raid's Curse of the Elements stays on",
-    "Bane of Doom with more than 60s left, so it lands before the end",
-    "Bane of Agony while Bane of Doom is on cooldown or would not land",
-    "Corruption when it is down (more than 9s left)",
+    "Bane of Agony when it is down, with more than 12s left (no Bane of Doom: Wrack speeds up Agony's ticks, not Doom's one tick)",
+    "Corruption when it is down or has less than 2.5s left, with more than 3s left",
     "Immolate when it is down or ends within its cast time, with more than 15s left",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
     "Troll Berserking right before a Shadow Bolt, so the haste goes on cast spells, not instants",
     "Siphon Life when it is down",
-    "Wrack while Corruption and the bane are both up",
-    "Shadow Bolt as the filler (instant on Nightfall procs)"
+    "Wrack whenever nothing above it is due: while it channels, Corruption, Siphon Life and Bane of Agony tick twice as fast",
+    "Shadow Bolt as the filler (in practice only the pre-pull cast: Wrack takes every free GCD)"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -67,7 +66,8 @@
     "Major Spellstone (weapon imbue)"
   ],
   "caveats": [
-    "Wrack's 86 a second and 0.286 coefficient are the development notes' values; client 1.60.1.70753 still has 36 and 0.143 (notes-only, standards 37).",
+    "Wrack's numbers are server hotfix 113766's (60.2 a second at 60, 0.2002 coefficient). How its 100% faster ticks time against the damage over time spells is our reading of the developers' note (the tick timer runs twice as fast while Wrack channels and keeps its progress after; no partial tick when a spell runs out); a log would confirm it.",
+    "Bane of Agony steps up every 4 ticks and stays at 150% past its 12th tick (the extra ticks Wrack gives). If its steps instead followed the 8 s thirds of its duration, this build would lose about 11 DPS.",
     "The duty costs 14.7 DPS at 180s against the same build without it (1003.4 against 1018.1, 20,000 iterations, seed 1). The curse only takes armor, which helps only a demon's melee, so the warlock pays its GCDs and mana for the raid.",
     "Bane of Doom's coefficient is 4.0 (Era has 1.0). At 2.0, Shadow Bolt builds would lose about 4%. At 1.0, about 6%.",
     "No Ahn'Qiraj book ranks, so Shadow Bolt stops at rank IX, Immolate at VII and Corruption at VI. The books would add 7 to 13 DPS.",

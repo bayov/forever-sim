@@ -12,40 +12,7 @@ import (
 
 // The Warlock lines of Blizzard's development notes of 2026-11-02 (client 1.60.1.70753).
 
-// TestWarlockWrack70753 checks Wrack at 60: 86 base damage a second (36 at 40, 2.5 more a level) and
-// 0.286 of spell damage a tick, twice the client's 0.143. Spell damage is added after the first cast
-// to read both off the snapshot.
-func TestWarlockWrack70753(t *testing.T) {
-	sim, lock := newWarlockSim(t, "00000000000000001", &proto.WarlockOptions{})
-	target := lock.CurrentTarget
-	snapshot := func() float64 {
-		dot := lock.Wrack.Dot(target)
-		if !dot.IsActive() {
-			t.Fatalf("at %s: Wrack not up", sim.CurrentTime)
-		}
-		return dot.SnapshotBaseDamage - 0.286*lock.Wrack.GetBonusDamage(target)
-	}
-
-	at(sim, 0.5, func(sim *core.Simulation) {
-		lock.AddStatDynamic(sim, stats.SpellHit, 20*core.SpellHitRatingPerHitChance)
-		castNow(t, sim, lock, lock.Wrack)
-	})
-	at(sim, 1, func(sim *core.Simulation) {
-		if got := snapshot(); math.Abs(got-86) > 1e-6 {
-			t.Errorf("Wrack's base tick at 60: %.3f, want 86", got)
-		}
-	})
-	at(sim, 8, func(sim *core.Simulation) {
-		lock.AddStatDynamic(sim, stats.ShadowPower, 300)
-		castNow(t, sim, lock, lock.Wrack)
-	})
-	at(sim, 8.5, func(sim *core.Simulation) {
-		if got := snapshot(); math.Abs(got-86) > 1e-6 {
-			t.Errorf("Wrack's tick at +300 Shadow damage less 0.286 of it: %.3f, want 86", got)
-		}
-	})
-	runSim(sim)
-}
+// Wrack's damage is checked at hotfix 113766's numbers in notes_70888_test.go.
 
 // TestWarlockShadowAndFlame70753 checks Shadow and Flame 5/5: a Conflagrate that lands gives 20%
 // Shadow damage (4% a point, was 2%).

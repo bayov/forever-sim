@@ -38,3 +38,17 @@ func TestWarlockRanksAtSixty(t *testing.T) {
 		}
 	}
 }
+
+// TestImpFireboltRankOne checks Imp Firebolt rank 1 after hotfix 113766 (SpellEffect 681913: base
+// 6, variance 0.333, 0.3 a level): 5 to 7 at level 1 and 6 to 8.4 at 5, its top level.
+func TestImpFireboltRankOne(t *testing.T) {
+	for _, c := range []struct {
+		level     int32
+		low, high float64
+	}{{1, 5.00, 7.00}, {5, 6.00, 8.40}, {60, 6.00, 8.40}} {
+		low, high := impFireboltRanks[1].rangeAt(c.level)
+		if math.Abs(low-c.low) > 0.01 || math.Abs(high-c.high) > 0.01 {
+			t.Errorf("Imp Firebolt rank 1 at %d: got %.2f to %.2f, want %.2f to %.2f", c.level, low, high, c.low, c.high)
+		}
+	}
+}

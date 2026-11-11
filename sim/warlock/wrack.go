@@ -7,18 +7,18 @@ import (
 )
 
 // Wrack is the Affliction capstone (1316697, Forever's own spell): a 6 sec channel of Shadow
-// damage every second, 200 mana, and while it is on the target the warlock's Corruption and Bane
-// of Agony deal 10% more (its second effect, aura 271 on class mask 0x402). The client has no
-// ranks above the one the talent teaches.
+// damage every second, 200 mana. While it is channelled on the target, the warlock's Corruption,
+// Siphon Life and Bane of Agony there tick twice as fast (its second effect, SpellEffect 1349557,
+// aura 4 value 100 since hotfix 113766; see applyWrack). The client has no ranks above the one the
+// talent teaches.
 //
-// The client (1.60.1.70753, the same as 70707) still has 36 a second and a 14.3% coefficient a
-// tick. Blizzard's development notes of 2026-11-02 double the coefficient to 28.6% a tick (0.286 a
-// second) and make the base grow 2.5 a level, 36 at 40 to 86 at 60 (foreverchanges.pro reads it
-// the same way). The sim takes the notes: the change is server side, like most of that round's.
+// Server hotfix 113766 (build 1.60.1.70888, 2026-11-10, "Wrack damage reduced by 30%") sets
+// SpellEffect 1349556 to base 25.2 a second, 1.75 more a level from 40 (60.2 at 60), and a 0.2002
+// coefficient a second: the 2026-11-02 notes' 36 + 2.5 a level and 0.286, times 0.7.
 const (
-	wrackBaseDamage     = 36.0
-	wrackDamagePerLevel = 2.5
-	wrackCoefficient    = 0.286
+	wrackBaseDamage     = 25.2
+	wrackDamagePerLevel = 1.75
+	wrackCoefficient    = 0.2002
 )
 
 func wrackTickDamage(level int32) float64 {

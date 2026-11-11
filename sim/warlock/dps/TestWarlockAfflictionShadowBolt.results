@@ -163,9 +163,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAfflictionShadowBolt-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 926.005
-  tps: 731.10222
-  hps: 1.96967
+  dps: 978.11433
+  tps: 771.57417
+  hps: 2.373
  }
 }
 dps_results: {

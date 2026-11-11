@@ -163,9 +163,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 946.69167
-  tps: 733.63922
-  hps: 1.13633
+  dps: 1014.0165
+  tps: 786.31478
+  hps: 2.88517
  }
 }
 dps_results: {

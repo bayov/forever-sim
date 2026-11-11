@@ -78,14 +78,15 @@ func (warlock *Warlock) getBaneOfAgonyBaseConfig(rank int) core.SpellConfig {
 
 				// The bane starts at half its average tick, the spell power part is not
 				// ramped. Every 4 ticks the base damage is added again, so the last 4 ticks
-				// do 150% of it.
+				// do 150% of it. Ticks past the 12th (Wrack's faster ticks, see applyWrack)
+				// stay at 150%.
 				snapshotBaseDmgNoBonus = baseDmg * 0.5
 
 				dot.Snapshot(target, snapshotBaseDmgNoBonus, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
-				if dot.TickCount%4 == 0 {
+				if dot.TickCount%4 == 0 && dot.TickCount < 12 {
 					dot.SnapshotBaseDamage += snapshotBaseDmgNoBonus
 				}
 			},

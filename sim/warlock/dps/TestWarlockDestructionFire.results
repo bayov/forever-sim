@@ -163,9 +163,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 856.30683
-  tps: 736.96431
-  hps: 2.31517
+  dps: 905.62883
+  tps: 776.3649
+  hps: 2.22567
  }
 }
 dps_results: {
