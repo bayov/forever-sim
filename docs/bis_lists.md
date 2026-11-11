@@ -96,9 +96,15 @@ negative loss when it is within the search's noise of the pick.
 fight with mksettings and runs the search with `-gear-rank-out`. It takes a while (the script
 says how long), because the level 30 pools are big. A new spec is a few more lines there.
 
-## No lists until release
+`tools/rotopt/bis_phase0.sh` writes the level 60 Phase 0 Enhancement list
+(`ui/enhancement_shaman/bis/level60_phase0.bis.json`). It runs the DPS Report's default
+Enhancement build from a real pre-raid set, with `-gear-no-raids` and `-gear-phase 2`, so only
+what Forever has before its raids open can come up (`tools/rotopt/phase0.go`).
+
+## Before release
 
 Level 30 was the beta's level cap, so the first lists (Enhancement and Elemental) used it as
 endgame: mksettings' level 30 boss for 120 sec, with every item a level 30 can wear. We removed
 them on 2026-11-05 (user), because BayovCore showed their picks to leveling characters at every
-level. Once Forever is out, we write the lists again at level 60 with Forever's real item data.
+level. Forever came out on 2026-11-04, and the first level 60 list is the Phase 0 Enhancement one
+(2026-11-11).
