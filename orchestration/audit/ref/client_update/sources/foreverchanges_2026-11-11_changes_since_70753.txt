@@ -1,0 +1,38 @@
+Source: https://foreverchanges.pro/changes, fetched 2026-11-11 ~10:45Z; the page payload's history entries for builds after 70753 (70790, 70862, 70888) and hotfix-tagged ones.
+builds: [('70888', '2026-11-10'), ('70862', '2026-11-07'), ('70753', '2026-11-02'), ('70707', '2026-10-30'), ('70685', '2026-10-28'), ('70658', '2026-10-28')]
+
+## calc-paladin-protection-holy-shield | build 70753 2026-11-02 | kind change
+  note: Its rank 4, 221 damage per block, is now trained at level 60 for 240 Mana with a 10 sec cooldown. The hotfix gave it no level, cost or cooldown.
+  before: null
+
+## warlock-wrack | build 70888 2026-11-10 | kind change
+  note: No longer makes the target take 10% more damage from your other Shadow damage over time effects. Instead, while you channel it, your Siphon Life, Corruption and Bane of Agony on the target deal their damage 100% faster. Its own damage is 30% lower: 60 instead of 86 every second.
+  before: {"rank_texts": {"1": "Tears the target apart from within, inflicting 86 Shadow damage every 1 sec and increasing the damage they take from your other Shadow damage over time effects by 10% for 6 sec."}}
+
+## calc-hunter-beast-mastery-summon-hawk | build 70888 2026-11-10 | kind nerf
+  note: Costs 11% of base mana at every rank instead of 80 Mana at rank 1 up to 190 Mana at rank 4. The cost now follows your level, not the rank: about 85 at level 30 instead of 80 for rank 1, and about 189 at level 60 instead of 190 for rank 4.
+  before: null
+
+## calc-druid-restoration-swiftmend | build 70862 2026-11-07 | kind change
+  note: Its tooltip no longer says it consumes the effect: it heals for the full duration of the periodic effect, where it said the periodic effect of the consumed spell. Blizzard’s notes of November 6 list this as a tooltip fix.
+  before: {"rank_texts": {"1": "Instantly heals a target with your active Rejuvenation or Regrowth effect for an amount equal to the full duration of the periodic effect of the consumed spell."}}
+
+## spellbook-hunter-arcane-shot | build 70888 2026-11-10 | kind nerf
+  note: Costs 11% of base mana at every rank instead of 25 Mana at rank 1 up to 190 Mana at rank 8. The cost now follows your level, not the rank: about 85 at level 30 instead of 80 for rank 4, and about 189 at level 60 instead of 190 for rank 8. Lower ranks no longer cost less.
+  before: {"rank_texts": ["1,2,3,4,5,6,7,8", "# Mana, # yd range, # sec cooldown. An instant shot that causes # Arcane damage. Requires Ranged Weapon", ["25/35/50/80/105/135/160/190", "35", "6", "25/35/50/85/120/175/220/280"]]}
+
+## priest-fear-ward | build 70888 2026-11-10 | kind change
+  note: It can now be cast in Shadowform, the one form it could not be cast in before. It still lasts 3 min, with a 3 min cooldown.
+  before: null
+
+## calc-warlock-affliction-soul-siphon | build 70888 2026-11-10 | kind change
+  note: Now counts only your Corruption, Siphon Life and Bane of Agony on the target, instead of all your other Affliction effects.
+  before: {"rank_texts": ["1,2,3", "Increases the damage done or health drained by your Drain Life, Drain Soul, and Wrack spells by #% per each of your other Affliction effects active on the target, up to a maximum increase of #%.", ["4/8/12", "12/24/36"]]}
+
+## warlock-bane-of-havoc | build 70888 2026-11-10 | kind nerf
+  note: Now triggers the 1.5 sec global cooldown.
+  before: null
+
+## calc-druid-restoration-nature-s-swiftness | build 70888 2026-11-10 | kind buff
+  note: Now also works on Wild Growth, which it makes an instant cast instead of 3 sec.
+  before: null

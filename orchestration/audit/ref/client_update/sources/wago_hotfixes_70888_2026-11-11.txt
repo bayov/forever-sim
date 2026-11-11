@@ -1,0 +1,57 @@
+wago.tools/hotfixes, product wowf, build 1.60.1.70888. Read 2026-11-11 about 10:30Z.
+How: the page's data-page props.hotfixes, searched by substring ("70888 spell", "<spell id>]",
+"<record id>"). Rows repeat many times; deduplicated on (push, table, record, region).
+Newest client build is still 1.60.1.70888 (tools/sources/wago.py latest --probe 300).
+Region 91 = launch realms, 93 = other region. Rows from push 113817 on were seen in region 93 only
+in the "70888 spell" listing; the shaman records below were checked in both 91 and 93.
+
+== Shaman: the Nov 10 notes are NOT in the server data yet ==
+SpellEffect 1368308 (Stormstrike 17364 weapon damage)  EffectBasePoints 150   last push 113380
+SpellCooldowns 55241 (Stormstrike 17364)               RecoveryTime 6000 ms   last push 113380
+Mental Dexterity 415140                                no row after 113380
+Maelstrom Weapon 408498: SpellAuraOptions 223898      ProcChance 100, no PPM  last push 113380
+Maelstrom Weapon 408498                                push 113871: CooldownSetSpell row only
+                                                       (Cooldown Manager tracking, no tuning)
+(Rechecked 2026-11-11 11:01Z: all four records still last at push 113380 / 93879.)
+
+== Pushes on 70888, checked one by one ==
+113766  Wrack 1316697: SpellEffect 1349556 base 36 -> 25.2, coefficient 0.286 -> 0.2002,
+        per level 2.5 -> 1.75 (all x0.7; 86 -> 60.2 at 60). SpellEffect 1349557 is now aura 4,
+        value 100 (the periodic effects tick 100% faster while channelled).
+113766  Imp Firebolt 3110: SpellEffect 681913 base 6, variance 0.333, per level 0.3.
+113769  Engineering trinkets, Flamebreak Talisman (already open in TASKS.md).
+113805  Lightning Overload: SpellEffect 1072626-1072630 rewritten. For 408477 (copy of Lightning
+        Bolt rank 10): base 176.5, RealPointsPerLevel 1.05, variance 0.113. That is half of
+        Lightning Bolt rank 10 after its hotfix (353 + 2.1 a level, 361.4 at 60): 180.7 at 60.
+113814  Deathless Marrow NPC spells (already in TASKS.md).
+113817  Spell 1330836 "Dummy" (NPC/script).
+113820  Flare gun / letter summons 21100, 22190, 1330841, 1330842 (no player effect).
+113833  Gloves of Holy Might: Spell 1325229 and 1330855 with an aura, a SpellEquippedItems row
+        and SpellPower 315227 ("Gloves of Holy Might now work as intended", Nov 9).
+113837  185 frFR SpellName/Spell text rows (localization only).
+113844  SpellItemEnchantment 8203 "Spirit +$k1" (Enchant Lesser Spirit fix), SpellTotems 19608.
+113846  SpellAuraOptions 248634 for spell 1324323: 100%, 15 sec ICD.
+113853  Feral Charge (Cat) 414924 SpellMisc.
+113854  Natural Instinct 1211036 now covers Pounce bleed 9007/9824/9826 (SpellClassOptions
+        85383-85385).
+113860  Claw/Rake cost spell 27851: SpellEffect 704563.
+113863  SpellEffect 1343948 for spell 1312870 (base 75, 0.25).
+113864  SpellEffect 691204 for Frost Trap Aura 13810 (2 sec periodic).
+113871  Maelstrom Weapon 408498 CooldownSetSpell (Cooldown Manager).
+113885  Nature's Swiftness 17116: SpellAuraOptions 129480, SpellEffect 695239 class mask now
+        includes Wild Growth.
+113886  Rage of the Storm 280604 ItemSparse (regions 91 and 93): stats [4 Strength, 7 Stamina]
+        (was Intellect), speed 3600 ms (was 3200), ilvl 40. The item change IS shipped.
+113891  SpellMisc 844953 for spell 1297594.
+113892  SpellPower: Arcane Shot 3044, 14281-14287 and Summon Hawk 1293241 ranks at 11% of base
+        mana (24 rows, e.g. 313567).
+113944  Earthen Silk Slippers 254013 ItemSparse (91 and 93): stat types [41 healing done,
+        42 spell damage done, 6 Spirit], allocations 15100/5455/6364. Shipped.
+113922  Spell 436278 (visual, interrupt rows).
+113928  Spells 1331270-1331273, unreleased (status 3) with cooldowns.
+113825/113827/113828/113851/113866/113870/113878/113880/113884/113938: SpellScript,
+        SpellScriptText, SpellCategory and SpellClassOptions rows with no tuning numbers.
+
+Not found in any push after 113814: Soul Siphon (Nov 10 rule change), Stormstrike, Mental
+Dexterity, Maelstrom Weapon tuning, weapon imbue/totem stacking, Hawk melee damage. Soul Siphon, the imbue/totem stacking and the Hawk damage may live in server scripts or
+creature data the hotfix rows don't show.

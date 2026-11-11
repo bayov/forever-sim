@@ -1,0 +1,14 @@
+Source: https://us.forums.blizzard.com/en/wow/t/2360696 post 10 (Kaivax, 2026-11-04T19:35Z), the post after devnotes_post9_2026-11-02.txt; fetched 2026-11-11 as the crawler HTML. UI only.
+
+===== post 10 Kaivax 2026-11-04T19:35:16Z
+We’ve added this section to the previous post.
+User Interface and Accessibility
+- Swing Timer bar will no longer fade out due to distance until the swing finishes.
+- When combined bag is enabled, the background art of the inventory slots are updated to show which bag the slot is from.
+- Fixed an issue where Nameplates did not display Elite enemy status.
+- Debuff icons on the Nameplate can now be clicked through.
+- Spellbook and Talents frame now opens at the same height as other panels.
+- Combat mode for the Spellbook frame has been reduced in size.
+- PvP scoreboard display has been updated.
+- Killing a player while at Honor cap will no longer show honor gained in floating text or chat messages.
+- While in keybinds menu, hovering over an action bar keybind will now highlight the button on the action bar.

@@ -1,0 +1,414 @@
+Source: https://foreverchanges.pro/patch-notes, fetched 2026-11-11 ~10:45Z (site shows build 1.60.1.70888), page text from 'Latest balance changes' on: the Nov 10 hotfix, the 70888 build, the Nov 9/8/7 hotfixes, 70862 and older.
+
+Latest balance changes
+November 10, 2026
+- 1 other changes
+- 0 new items
+- 4 changed items
+Topics
+- Auction House and mail
+- Enemies and NPCs
+- Items
+- Professions
+- Quests
+- World
+- Bug fixes
+- Dungeons
+- Player versus Player
+- General
+- Pets
+- Warlock
+- Shaman
+- Classes
+- Races
+- PvP
+- Interface
+- Legacy
+Classes
+- Warrior
+- Paladin
+- Hunter
+- Rogue
+- Priest
+- Shaman
+- Mage
+- Warlock
+- Druid
+Races
+- Human
+- Orc
+- Dwarf
+- Night Elf
+- Undead
+- Tauren
+- Gnome
+- Troll
+- Skyborne
+Each link opens the newest update that has that section.
+Blue posts
+- Nov 11Re: WoW: Forever Hotfixes - November 10, 2026KaivaxNovember 10, 2026. Auction House. With realm restarts: Adjusted the minimum deposit amount to 1 copper (was 1 silver). Fixed a bug causing unread mail to incorrectly read as from ‘Stormwind Auction House’ for all players. Fixed a bug that…KaivaxCommunity ManagerNovember 10, 2026. Auction House. With realm restarts: Adjusted the minimum deposit amount to 1 copper (was 1 silver). Fixed a bug causing unread mail to incorrectly read as from ‘Stormwind Auction House’ for all players. Fixed a bug that…Read it on the official forums124 posts
+- 
+## November 10, 2026Hotfix
+From Blizzard’s notes:
+## Auction House and mail
+- BuffsThe minimum auction deposit is 1 copper (was 1 silver), with the realm restarts.
+- ChangesUnread mail no longer shows as from the Stormwind Auction House for every player.
+- ChangesMail that arrived in about 2 minutes now takes the intended 60 minutes.
+## Enemies and NPCs
+- NerfsShatterspear Trolls no longer give experience when killed.
+- ChangesInnkeepers answer better when you ask about the dungeons you can explore.
+## Items
+- NerfsSpectral Essence can no longer be sold to a vendor (was 1g 65s 80c).
+- NerfsVendors pay less for some Bind on Pickup armor from Leatherworking, Tailoring and Blacksmithing, made to be crafted once for yourself.
+- ChangesRage of the Storm now gives +16 Strength instead of +12 Intellect, and hits for 102 to 154 at 3.60 speed instead of 91 to 137 at 3.20. Its damage per second stays 35.6.
+- ChangesEarthen Silk Slippers now give +17 Healing instead of +18 Spell Power.
+- ChangesAll racial vendor mounts are now Bind on Pickup.
+- ChangesSparklance Wand deals Arcane damage (was Nature).
+## Professions
+- BuffsBlacksmithing: Coarse Grinding Stone gives skill-ups up to 90 (was 75).
+- BuffsCooking: the Journeyman Campfire Kit needs Cooking 90 to place, as its recipe does (was 140).
+- BuffsEnchanting: Enchant Boots - Lesser Spirit and Enchant Bracer - Lesser Spirit give the Spirit they state (they gave resistance to all schools).
+- BuffsEngineering: Swiftstrike Shot and Swiftfeather Arrow are no longer Bind on Pickup. They come with the raids.
+- NerfsAlchemy: Minor Arcane Elixir sells for 5 copper (was 25 copper).
+- ChangesAlchemy: Recipe: Elixir of Greater Firepower is now called Recipe: Elixir of Holy Power, and the elixir’s aura is now called Holy Power.
+- ChangesEnchanting: Arcane Salvager is crafted with the Runed Golden Rod (was Runed Truesilver Rod), and its disenchanting bonus now works for lower-level enchanters.
+- ChangesEngineering: Iron Grenade’s vendor price is 1 silver 25 copper (was 5 silver).
+- ChangesFishing: Fishing Racks no longer sometimes fail to give lures to eligible players. Blizzard knows of other Fishing Rack issues, such as “There is no loot”.
+## Quests
+- BuffsMost quests of level 48 and higher now also reward gold. Quests that already reward valuable items, repeatable quests and quick or trivial ones are left out. It arrived at about 01:38 UTC on November 11, when 711 quests changed on the server. The game shows the new amounts when you open a quest, so the site’s quest pages still show the old ones.
+- BuffsRiverglades: many more Glade Vipers for “Poison Tips”.
+- BuffsDuskwood: more Nightbane Vile Fangs and Nightbane Tainted Ones for “Worgen in the Woods”.
+- ChangesThe last “Call of Water” quests play out properly every time.
+- ChangesSovik offers “Chief Engineer Scooty” after you pick his gossip option.
+- ChangesSeveral issues with “Helping Hands” are fixed.
+- ChangesZephras Isle: “Camping 101: Herbalism” completes in Shen’dar Village instead of Valanaar.
+- ChangesThe Broken Frond of Celastrus, dropped by Celastrus the Bitter, drops for every eligible member of the party.
+- ChangesFeralas: “Rescue OOX-22/FE!” can be started again.
+- ChangesMurloc Tideskimmers drop Saltwater Murloc Eyes for “A Taste of the Sea”.
+## World
+- ChangesSeveral causes of being sent to the wrong graveyard after dying are fixed.
+- ChangesPyrewood Village’s villagers spawn around dawn and dusk again.
+## Bug fixes
+- ChangesShamans who lost a totem in the server crash of November 9 get it back in their bags, since a fix Blizzard deployed to all regions at about 01:10 UTC on November 11. If you are in game, make room in your bags, then log out and back in.
+## Druid
+- BuffsOmen of Clarity can activate again after you swap specializations.
+## Hunter
+- BuffsBeast Mastery: the Hawk’s melee damage is about 80% higher.
+- NerfsPets have 115% of their normal health. A bug had given them 150%.
+## Paladin
+- ChangesRedoubt can now be tracked in the Cooldown Manager.
+## Priest
+- ChangesThe Revelation enchant no longer activates from Vampiric Embrace’s healing.
+- ChangesHoly: Holy Nova is now unlearned when you take the talent back.
+## Shaman
+- BuffsWeapon imbues and weapon totems now work at the same time: Windfury Weapon and Windfury Totem can both activate on your attacks.
+- NerfsEnhancement: Stormstrike deals 100% weapon damage (was 150%), and its cooldown is 8 sec (was 6 sec).
+- NerfsEnhancement: Mental Dexterity turns 33/66/100% of your Intellect into attack power (was 50/100/150%).
+- ChangesMaelstrom Weapon can now be tracked in the Cooldown Manager.
+- ChangesEnhancement: Maelstrom Weapon takes 20% off the cast time and mana cost per application at every rank (was 4/8/12/16/20%), and activates 6/7/8/9/10 times per minute by rank (was 20 at every rank). Its tooltip shows your chance per swing from your main-hand weapon’s speed: 60% with 5 points and a 3.6 speed weapon, 33% with a 2.0 speed weapon.
+## Warlock
+- BuffsThe Imp, Voidwalker, Succubus and Incubus have about 15% more base health.
+- ChangesThe Succubus’s whip sound no longer plays much too often.
+## Warrior
+- BuffsArms: Sweeping Strikes no longer loses charges when it hits no second target.
+Hunter
+## General
+- ChangesGreat Stamina: Now raises your pet’s health by 30 at rank 1 up to 400 at rank 10, instead of its Stamina by 3 up to 40.
+## Beast Mastery
+- NerfsSummon Hawk: Costs 11% of base mana at every rank instead of 80 Mana at rank 1 up to 190 Mana at rank 4. The cost now follows your level, not the rank: about 85 at level 30 instead of 80 for rank 1, and about 189 at level 60 instead of 190 for rank 4.
+## Marksmanship
+- NerfsArcane Shot: Costs 11% of base mana at every rank instead of 25 Mana at rank 1 up to 190 Mana at rank 8. The cost now follows your level, not the rank: about 85 at level 30 instead of 80 for rank 4, and about 189 at level 60 instead of 190 for rank 8. Lower ranks no longer cost less.Warlock
+## General
+- BuffsFirebolt: The Imp’s Firebolt deals more damage at ranks 1 to 4: 6 to 8 instead of 4 to 5 at rank 1, up to 18 to 22 instead of 18 to 19 at rank 4.
+## Affliction
+- ChangesWrack: No longer makes the target take 10% more damage from your other Shadow damage over time effects. Instead, while you channel it, your Siphon Life, Corruption and Bane of Agony on the target deal their damage 100% faster. Its own damage is 30% lower: 60 instead of 86 every second.
+- ChangesSoul Siphon: Now counts only your Corruption, Siphon Life and Bane of Agony on the target, instead of all your other Affliction effects.
+## Destruction
+- NerfsBane of Havoc: Now triggers the 1.5 sec global cooldown.Druid
+## Restoration
+- BuffsNature's Swiftness: Now also works on Wild Growth, which it makes an instant cast instead of 3 sec.
+- 
+## November 10, 2026Build 1.60.1.70888Current build
+The client of November 10. It holds the server's hotfixes of November 7 to 9, and one change players see: Fear Ward can now be cast in Shadowform. Blizzard's class tuning announced for November 10 is not in it.
+## Priest
+## Holy
+- ChangesFear Ward: It can now be cast in Shadowform, the one form it could not be cast in before. It still lasts 3 min, with a 3 min cooldown.Items4 changed items
+## Changed weapons and armor
+- 
+Rage of the Storm
+- 
+Earthen Silk Slippers
+## Changed consumables and other items
+- 
+Goliath's Wristguards
+- 
+Journeyman Campfire Kit
+119 other items only change their sell price. 2 other items only reword their tooltip, with the same numbers.
+- 
+## November 9, 2026Hotfix
+From Blizzard’s notes:
+## Dungeons
+- BuffsEvery enemy killed in a dungeon gives 50% more experience. This is the November 8 hotfix below.
+- ChangesAlcaz Prison: Zarla Ober drops loot.
+- ChangesBlackfathom Deeps: you can always release after dying.
+- ChangesBlackrock Depths: the throne room doors open again after a wipe on Emperor Thaurissan, and Heart of the Mountain can be looted more than once.
+- ChangesThe Drowned City: its creatures no longer deal about 30% more damage than intended.
+- ChangesDeathless Marrow: its creatures have 25% less health, the Deathless Sorcerer’s Fireball deals 25% less damage, the Deathless Watcher’s Charge deals 50% less, and the Deathless Guardian casts Shield Slam about half as often.
+- ChangesThe Shaper’s Terrace: Vitrix, Snowtalon and Cinder drop loot and higher-level skinning materials, and Cinder appears after you use the Archival Panel.
+- ChangesStratholme: you can no longer mount inside.
+## Enemies and NPCs
+- ChangesSilverpine Forest: Ivar the Foul no longer respawns more slowly than intended.
+- ChangesTeldrassil: Ferocitas the Dream Eater respawns sooner.
+- ChangesUn’Goro Crater: Young Diemetradons are level 51 to 52, not 58.
+- ChangesZephras: Malduko Cloudcrush respawns a little more slowly.
+## Items
+- ChangesPouch of Violet Dust gives the extra hour of Camp Benefits it should.
+- ChangesWaylaid Crates and Craftsman’s Writs drop inside dungeons again.
+- ChangesBerdun’s Trusty Rifle no longer has random stats and is not Bind on Equip.
+- ChangesNifty Stopwatch no longer shares a cooldown with Dash, Blink, Sprint and other movement abilities.
+- ChangesZephrali Greatstaff and Fallen Dragon’s Scepter sit the right way round on your back.
+- ChangesGloves of Holy Might work as intended.
+## Player versus Player
+- ChangesWarsong Gulch: an invisible wall no longer blocks the roof of the Alliance base.
+## Quests
+- ChangesThe quest items of “The Monster Surfaces”, “Croaky’s Head” and “Elmpaw’s Head” go to everyone in the party.
+- Changes“The Deathstalkers”: mistreating Astor Hadren angers him, so you can fight him.
+- Changes“Jom-jom’s Escape”: Jom-jom carries on with his escape.
+- Changes“Ever After”: the door after the quest teleports you.
+- Changes“Unwelcome Guests”: Terry Longdrink can be killed.
+- Changes“Find Bingles” is filed under Loch Modan, not Ironforge.
+- Changes“A Quick Grocery Run”: everyone can read Skonk’s list.
+- Changes“Lonebrow’s Journal”: Henrig Lonebrow’s Journal respawns faster and has moved a little down the road, by a similar skeleton.
+- Changes“A Recipe for Death”: you can loot Berard’s Journal from Berard’s Bookshelf.
+- Changes“Fetch ‘n’ Fletch” can be completed.
+- ChangesRogue: “Mission: Possible not Probable” can be restarted.
+- ChangesJezap Jinglesprocket gives you the “Bloodmaster’s Ring”.
+- Changes“Feathers in Flight”: players below level 60 can loot the Hyjal Owl Nests.
+## World
+- ChangesFewer players share the zones that were most crowded, and fewer still on the PvP ruleset.
+- ChangesThe flight path from Camp Taurajo to Thunder Bluff no longer goes through objects.
+## Druid
+- BuffsNatural Instinct now applies to Lacerate and Pounce.
+- ChangesThe Cooldown Manager no longer shows Berserk, and shows Lacerate once you learn it.
+- ChangesIdol of Ferocity no longer lists Mangle among the abilities it makes cheaper.
+- ChangesFeral Charge (Cat) puts you in combat right away.
+- ChangesPounce’s stun shows in the enemy’s debuffs while it lasts.
+## Hunter
+- ChangesVulgara the Insatiable and the Shrieklings of Zephras belong to the right pet families.
+- ChangesTargeting an enemy no longer sometimes pulls it from very far away.
+## Mage
+- BuffsFlamestrike’s ticks on the ground no longer use up Clearcasting.
+- NerfsArcane Concentration’s chance is now split across the cast and every bolt. It gave 10% on the cast and 10% on each bolt.
+## Paladin
+- BuffsConsecration no longer stops dealing its increased damage after targets inside it despawned.
+- ChangesThe Cooldown Manager shows Seals correctly.
+## Priest
+- BuffsCasting Fear Ward no longer breaks Shadowform.
+- BuffsPower Infusion stays on the allies you cast it on.
+## Shaman
+- ChangesLightning Mastery has a new visual effect.
+- ChangesLightning Overload deals the right damage for Lightning Bolt.
+- ChangesImproved Ghost Wolf holds the Night Watchman’s Torch in its mouth.
+## Warlock
+- NerfsIncinerate is no longer available outside Destruction.
+- ChangesCompleting “Summon Felsteed” teaches the riding skill. If you completed it before the hotfix, summoning the Felsteed once teaches Apprentice Riding, and you can ride other mounts too.
+## Warrior
+- ChangesThe Cooldown Manager shows only Thunder Clap’s cooldown, not its duration on the target.
+## Tauren
+- BuffsCultivation goes on cooldown only once its cast completes.
+Druid
+## Restoration
+- ChangesSwiftmend: Its tooltip no longer says it consumes the effect: it heals for the full duration of the periodic effect, where it said the periodic effect of the consumed spell. Blizzard’s notes of November 6 list this as a tooltip fix.
+- 
+## November 8, 2026Hotfix
+Blizzard’s hotfix of November 8, live from about 19:05 UTC: enemies in dungeons give 50% more experience when you kill them. Blizzard’s notes
+- 
+## November 7, 2026Hotfix
+A hotfix to the November 7 client, first seen at about 22:17 UTC on November 7 in the cache the launch realms send. It made Fear Ward castable in Shadowform only, and Blizzard reverted that right away.
+- 
+## November 7, 2026Build 1.60.1.70862
+The November 7 client, read from its files: Blizzard has posted no notes for it. The Adventurer’s Tent is a rested tent again, Rock on Stick and Bigger Rock on Bigger Stick read their bleed, four quest items get a Use line, and the client now holds five of the new dungeons with their encounters. The rest catches up with the server’s hotfixes the site already shows, among them Gore Drinker, Bear Form, Ravage and the Hyjal flasks.
+Hunter
+- ChangesGreat Stamina: Its tooltip at ranks 9 and 10 says Health increased by 32 and 40 instead of Stamina. The spell still raises your pet’s Stamina, as ranks 1 to 8 say.Not in Blizzard’s notes, found in the game.Items7 changed items
+Seven items read differently. The Adventurer’s Tent is a rested tent again: by a campfire, you and your party members sitting nearby build Rested experience up to 20% of a level, with a 1 hr cooldown, instead of a miniature tent for 15 min. Rock on Stick’s bleed now reads 7 Physical damage every 2 sec for 20 sec (the client left its numbers out), and Bigger Rock on Bigger Stick gains the same bleed at 14 damage every 2 sec. Four quest items get a Use line: the Ancient Hilt, the Befouled Water Globe, the Fractured Insignia and the SI:7 Disguise Kit. The Hyjal flasks’ 30 Stamina and 2% were already on their item pages from the server’s hotfixes: the client now says so too.
+## Changed weapons and armor
+- 
+Bigger Rock on Bigger Stick
+- 
+Rock on Stick
+## Changed consumables and other items
+- 
+Ancient Hilt
+- 
+Befouled Water Globe
+- 
+Fractured Insignia
+- 
+Adventurer's Tent
+- 
+SI:7 Disguise Kit
+- 
+## November 6, 2026Announced for November 10
+From Blizzard’s notes:
+## General
+- The hotfixes are planned for Tuesday, November 10. Blizzard may find more issues over the weekend, and plans class balance changes on later Tuesdays when needed.
+## Pets
+- Hunter pets and warlock Voidwalkers are to tank about as well as in Classic Era: Blizzard finds them less durable than intended and will adjust their stats.
+## Warlock
+- Affliction: Siphon Life, Corruption and Bane of Agony are to stay worth casting next to Wrack, which beats them today when channeled on its own. Affliction’s total damage stays the same.
+## Shaman
+- Enhancement: Strength is to be the shaman’s strongest stat, ahead of Intellect and Spell Power, so that mage and warlock gear stops being the best. Its best items are to carry Strength or Attack Power with some Intellect or Spell Power.
+- Blizzard’s advice for Enhancement shamans who are leveling: collect Strength and Attack Power gear from now on.
+- 
+## November 6, 2026Hotfix
+From Blizzard’s notes:
+## Classes
+- The Quick and the Dead, a legacy talent, now always works: it sometimes did not.
+- The Cooldown Manager shows the right duration of crowd control spells at all times, even when diminishing returns or a reduction like the orc’s stun resistance shortens them.
+- Druid: Bloom heals its target as it should.
+- Druid: Bear Form’s tooltip gave the wrong Health bonus. Only the tooltip was wrong: the bonus itself was right.
+- Druid: Ravage’s tooltip showed the wrong damage and is corrected. The damage it deals did not change.
+- Druid: Swiftmend’s tooltip no longer says it consumes the effect.
+- Mage: you no longer learn a Research spell that goes away when you log in again. It should not exist: you get only Study, after its quest.
+- Mage: Arcane Blast’s effect lasts its full 18 sec.
+- Rogue: Shank’s tooltip shows Rank 1 and Rank 2.
+- Rogue: with Boot Knife talented, Shank’s tooltip shows the right number of Combo Points it grants.
+- Warlock: the Voidwalker has about 40 more base health at every level.
+- Warlock: the Soul Siphon talent no longer makes Wrack raise its own damage.
+- Warrior: Reckless Swings’ tooltip now says it activates Gore Drinker.
+## Dungeons
+- Maraudon: Zaetar's Spirit appears again after you defeat Princess Theradras.
+- Blackmaw Hold and The Drowned City: some creatures no longer leave combat by mistake.
+- The Drowned City: its instance portal takes you inside.
+## Enemies and NPCs
+- Dun Morogh: the troggs in Gol'Bolar Quarry no longer respawn too quickly.
+- Durotar: Ridgeshade Lurkers drop loot.
+- Riverglades: Krek the Noxious drops the right loot.
+- Swamp of Sorrows: Pelluk always spawns.
+- Teldrassil: Lasher Sproutlings, Blooming Lashers and Wrathvine are no longer immune to Nature damage.
+## Items
+- Searing Dagger now triggers only from spells that deal damage.
+## Professions
+- Leatherworking: the Tanning Rack needs 125 skill instead of 140, so it no longer stands in the way of the patterns that need 125. Its skill-ups come 15 points earlier to match. The site still reads 140 from the client.
+## Quests
+- Vorsha the Lasher no longer lashes everyone in the zone.
+- The Sleeper Has Awakened: Kerlonian Evershade falls asleep less often, and you start with the Horn of Awakening to wake him.
+- Rough Wolf Pelts is abandoned by itself when you unlearn Skinning.
+- Rediscovering the Light: you can always heal the NPCs.
+- Ammo for Rumbleshot: you see the loot even when you open it right after another player.
+- Riverglades: the quest items some enemies drop are shared with your party.
+- Never Saddle on Quality: more spawns, and more of its quest items drop.
+- Ruins of Lordaeron: the Abominable Head from The Baron offers Unending Torment to the Horde at level 15 instead of 16.
+- The Damp Note drops more often.
+## Races
+- Night Elf: Shadowmeld no longer lets druids use Ravage and Pounce.
+- Orc: Command no longer raises some warlock pet abilities too much.
+## World
+- You see other players and their targets better from far away.
+- Thunder Bluff: the Barbershop is no longer darker than intended.
+Warrior
+## Fury
+- ChangesGore Drinker: Its tooltip now lists Reckless Swings among the abilities that trigger it. Blizzard’s notes call it a tooltip fix: Reckless Swings already triggered it.Druid
+## Feral Combat
+- ChangesRavage: Now reads 435% weapon damage plus 42, 62, 78 and 98 by rank, instead of plus 147, 217, 273 and 343.
+- ChangesBear Form: Its tooltip says Health by 560 instead of 180, as in Classic.
+- 
+## November 5, 2026Hotfix
+From Blizzard’s notes:
+## Enemies and NPCs
+- Yarrog Baneshadow in Durotar no longer respawns more slowly than intended.
+- Lotheluum Starbreeze on Zephras Isle now trains druids.
+- Some murlocs in Dustwallow Marsh no longer respawn too quickly.
+- Pelluk in Swamp of Sorrows now always spawns.
+## Items
+- The trade supply vendors on Zephras Isle now sell the apprentice tradeskill bags.
+- Mild Spices sell to vendors for 1 copper each, down from 2 copper.
+## PvP
+- Plainsrunning no longer stacks, also during a battleground’s preparation phase, and carrying a flag in a battleground cancels its stacks.
+## Quests
+- “The Sisterhood of Elune” no longer has incorrect text.
+- Deathstalker Erland respawns much more quickly for “Escorting Erland”.
+- 
+## November 4, 2026Hotfix
+Try these changes in the talent tree: Warrior.
+A hotfix to the launch client, first seen on November 4 in the cache the launch realms send. It brings in two lines of Blizzard’s launch notes that the client files do not carry: Defiance and Defensive Stance now read as the notes say. Chain Lightning keeps the client’s 2.5 sec cast: the launch realms do not send the 2 sec of the notes.
+Warrior
+## Protection
+- BuffsDefiance: Increases threat in Defensive Stance by 7, 13 and 20% by rank while a shield is equipped, instead of 5, 10 and 15%.
+- BuffsDefensive Stance: Increases all threat generated by 80% instead of 30%.
+- 
+## November 4, 2026Build 1.60.1.70790
+The launch client, out on November 4. It writes the November 3 hotfixes into the client files: the class changes of Blizzard’s launch notes now read from the client in every language. Items did not change.
+Load more
+- 1
+- 2
+- 3
+- 4
+- 5Older updates
+The beta dates and how players got in are on the Beta page.
+## Classes
+- Warrior
+- Paladin
+- Hunter
+- Rogue
+- Priest
+- Shaman
+- Mage
+- Warlock
+- Druid
+## Character
+- Talent calculator
+- Spellbook
+- Legacy perks
+- Races
+- Professions
+- Downrank calculator
+- Tier list maker
+## Gear
+- BiS list
+- Items
+- Hidden items
+- Transmog
+- Transmog viewer
+- Wish lists
+## World
+- World map
+- Dungeons
+- Quests
+- Dungeon quests
+- Rare spawns
+- Library books
+## Guides
+- Name reservation
+- Tanning Rack
+- PvP ranks
+- Downranking
+- Booty Bay Bruiser's Buckshot
+- Scarlet Banner
+- $100,000 duel tournament
+- Level 30
+- Druid Cat Form quest
+- Addons
+- Savory Whimsyfin Delight
+- Druid snake form
+- Battle mage
+- Cozy Sleeping Bag
+- Merchant's Favor
+- Hunter pets
+- Buffs and nerfs by class
+## Beta
+- Patch notes
+- Changes vs Classic
+- Beta and launch dates
+- Server status
+## Language
+- English
+- Français
+- Deutsch
+- Español
+- 繁體中文
+- 简体中文
+- РусскийMissing language?
+ForeverChanges is an unofficial fan site, not affiliated with or endorsed by Blizzard Entertainment. World of Warcraft and Warcraft are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Game content and images © Blizzard Entertainment, Inc.
+DiscordTell me what to improveAbout the dataPrivacyTermsLegal notice
+
