@@ -282,8 +282,11 @@ func (dot *Dot) basePeriodicOptions() PeriodicActionOptions {
 		},
 		CleanUp: func(sim *Simulation) {
 			// In certain cases, the last tick and the dot aura expiration can happen in
-			// different orders, so we might need to apply the last tick.
-			if dot.tickAction != nil && dot.tickAction.NextActionAt == sim.CurrentTime {
+			// different orders, so we might need to apply the last tick. Not a tick due after
+			// the aura ran out (Wrack's SetTickPeriod, or a refresh, moved it off the end): auras expire lazily, at
+			// the next pending action, which can be that very tick.
+			if dot.tickAction != nil && dot.tickAction.NextActionAt == sim.CurrentTime &&
+				(dot.Aura.IsActive() || dot.tickAction.NextActionAt <= dot.Aura.endedAt) {
 				if dot.lastTickTime != sim.CurrentTime {
 					dot.TickCount++
 					dot.TickOnce(sim)

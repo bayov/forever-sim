@@ -64,6 +64,7 @@ type Aura struct {
 	startTime time.Duration // Time at which the aura was applied.
 	expires   time.Duration // Time at which aura will be removed.
 	fadeTime  time.Duration // Time at which the aura was actually removed.
+	endedAt   time.Duration // When the aura ran out or was removed: fadeTime, or its expiry if it expired lazily, later.
 
 	// When a proc gave us the aura and the stacks procs gave it since, so a rotation sees
 	// them only after its reaction time. See SeenActive and SeenStacks.
@@ -792,6 +793,7 @@ func (aura *Aura) Deactivate(sim *Simulation) {
 		sim.CurrentTime = oldTime
 	}
 
+	aura.endedAt = min(sim.CurrentTime, aura.expires)
 	aura.expires = 0
 	aura.fadeTime = sim.CurrentTime
 	if aura.activeIndex != Inactive {
