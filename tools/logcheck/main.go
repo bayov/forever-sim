@@ -180,7 +180,7 @@ func main() {
 	r.weaponSkills(*fullSkill)
 	r.exportChanges(exportsAround(exports, ex, from, to))
 	r.logNotes()
-	steps := windowBuffs(all, cl, ex, tables)
+	steps := windowBuffs(all, cl, ex, tables, simSpellIDs(char.player))
 	r.windowBuffs(steps)
 
 	logTallies := tallyLog(cl)

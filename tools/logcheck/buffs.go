@@ -299,7 +299,11 @@ func timelineSpans(records []buffRecord, to time.Time) (spans map[int32][]buffSp
 // ourselves (like Well Fed), from the log's start to the window's end. It returns the set at
 // the window's start and the set after each change in it.
 //
-// Our own buffs and totems are left out, because the replay casts them.
+// Our own buffs and totems are left out when the replay casts them (simSpells, by the aura's
+// spell ID). The ones it can't cast, like a Greater Intellect elixir or a Scroll of Intellect,
+// are followed in the log like others' buffs. Until 2026-11-11 we left those out too, and the
+// replay had 8 spell power less than the log whenever the elixir was up (25 Intellect through
+// Mental Quickness).
 //
 // A buff the log shows going on and off us is followed in the log, because the log has its
 // exact times even in combat. The log misses some removals: on Nov 8 Blessing of Kings went on at
@@ -315,7 +319,7 @@ func timelineSpans(records []buffRecord, to time.Time) (spans map[int32][]buffSp
 // so the guess can't end it when it ran out.
 //
 // A death takes off every buff we follow in the log or in the addon's records.
-func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables) []buffStep {
+func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables, simSpells map[int32]bool) []buffStep {
 	ours := map[string]bool{cl.me: true}
 	var ourCasts []string
 	logged := map[int32]bool{}
@@ -406,7 +410,7 @@ func windowBuffs(all []*event, cl *combatLog, ex *export, tables *clientTables) 
 			}
 			continue
 		}
-		if e.dstGUID != cl.me || !strings.HasPrefix(e.kind, "SPELL_AURA_") || ours[e.srcGUID] || !tables.hasBuffStats(e.spellID) {
+		if e.dstGUID != cl.me || !strings.HasPrefix(e.kind, "SPELL_AURA_") || (ours[e.srcGUID] && (e.srcGUID != cl.me || simSpells[e.spellID])) || !tables.hasBuffStats(e.spellID) {
 			continue
 		}
 		id := e.spellID

@@ -21,7 +21,7 @@ func TestWindowBuffsTimeline(t *testing.T) {
 	cl := &combatLog{me: me, from: at(0), to: at(120)}
 	tables := &clientTables{spellNames: map[int32]string{wellFed: "Well Fed"}}
 	steps := func(ex *export) []buffStep {
-		return windowBuffs(all, cl, ex, tables)
+		return windowBuffs(all, cl, ex, tables, map[int32]bool{})
 	}
 	want := func(name string, got []buffStep, want ...buffStep) {
 		t.Helper()

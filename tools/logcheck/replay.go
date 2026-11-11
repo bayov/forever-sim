@@ -271,6 +271,25 @@ func replayOnce(base *proto.Player, p *plan, seed int64) (*tallies, *replayStats
 }
 
 // findSpell finds the sim's spell for a log spell ID, any tag.
+// simSpellIDs are the spells the replay can cast for this player. A buff we put on ourselves
+// with one of them comes from the replay. Any other (an elixir, a scroll) has to come from the
+// log, like others' buffs (buffs.go).
+func simSpellIDs(base *proto.Player) map[int32]bool {
+	installHook()
+	player := googleproto.Clone(base).(*proto.Player)
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 1, Targets: []*proto.Target{{Level: 60, Stats: make([]float64, len(core.DefaultTargetProtoLvl60.Stats)), TankIndex: -1}}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, Iterations: 1},
+	}, simsignals.CreateSignals())
+	value, _ := recorders.LoadAndDelete(sim.Environment)
+	ids := map[int32]bool{}
+	for _, spell := range value.(*recorder).char.Spellbook {
+		ids[spell.ActionID.SpellID] = true
+	}
+	return ids
+}
+
 func findSpell(char *core.Character, id int32) *core.Spell {
 	for _, spell := range char.Spellbook {
 		if spell.ActionID.SpellID == id {

@@ -78,5 +78,10 @@
     "kind": "partial",
     "ability": "Magma Totem (10580)",
     "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker. Nov 10: Lightning Bolt on Nature-resistant Maraudon plants and oozes (Noxxion, Razorlash, Vile Larva), Magma Totem on Sprite Darters."
+  },
+  {
+    "kind": "raw",
+    "ability": "Farraki Enforcement (1294339)",
+    "why": "Trolls take double (588) per The Chief's Enforcer's tooltip, and the sim's mob is never a troll (sim/common/item_effects.go). Nov 10: 588 on Zul'Farrak and other trolls until 17:30, then 294 on non-trolls. The Maraudon 292 rows are the dungeon -2 finding."
   }
 ]

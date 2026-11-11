@@ -12,10 +12,10 @@ sections 2 and 6 have the format).
 
 - **Flag**: `Flame Shock (8050/8053/10447)` ticks and direct `raw`, `Lightning Shield (26365..26369): raw`, `Earth Shock (8045): raw`, only in dungeon windows.
 - **Windows**: Nov 5-8 dungeon runs (Wailing Caverns, Shadowfang Keep, Razorfen Kraul, Gnomeregan): Flame Shock rank 2 ticks 12 to 10, rank 4 ticks 26 to 24, direct 54 to 52 and 101 to 99, orbs 24 to 22-23. Open world mobs of the same level, same hour: full damage.
-- **What we think**: a per-mob trait, not per dungeon or time. 54 of 135 even-level dungeon mobs, 0 of 144 odd-level dungeon mobs and 5 of 739 world mobs. Same sheet spell power and auras. Guess: a hidden per-mob resistance. See the Need to Verify item under "All classes".
+- **What we think**: a per-mob trait, not per dungeon or time. 54 of 135 even-level dungeon mobs, 0 of 144 odd-level dungeon mobs and 5 of 739 world mobs. Same sheet spell power and auras. Guess: a hidden per-mob resistance (but see Maraudon below: a flat 2 off Physical too). See the Need to Verify item under "All classes".
 - **Window** `WoWCombatLog-110926_151906.txt 23:11:05-23:26:03` (Uldaman): every level 43 mob (Stonevault Brawler and Geomancer, Earthen Rocksmasher and Sculptor, Deadly Cleft Scorpid, Shadowforge Archaeologist and Darkcaster) takes 2 less: Magma Totem 51 to 52 (157 hits) vs 53 to 54, Flametongue Attack 72 vs 74, Fire Nova 189.8 vs 191 to 192. Level 42 and 44 mobs hit by the same Magma tick take full damage. So odd-level dungeon mobs have it too.
 - **Window** `WoWCombatLog-110926_151906.txt 23:51:48-23:55:38`: level 47 mobs take about 1 less than level 44 and 45 in the same window: Magma Totem 52 (15 hits) vs the sim's 53, Flame Shock ticks 46.3 vs 47, Flametongue Attack 73.2 vs 74.0. Smaller than 2, so maybe only some of them have it.
-- **Window** `WoWCombatLog-111026_075640.txt 20:06:50` and `21:02:11` (Maraudon, 2908 and 2748 attacks): odd-level mobs take 2 less again. Magma Totem 51 vs the sim's 53 (323 hits), Flametongue Attack 78 to 79 vs 80 at levels 45 and 47, Flame Shock ticks 44.7 to 45 vs 46, Farraki Enforcement 292 vs 294 (13 hits). On those mobs Lightning Shield equals the sim, because the +2 of "Spell hits run about 6 spell power above the sim" cancels it.
+- **Window** `WoWCombatLog-111026_075640.txt 20:06:50` and `21:02:11` (Maraudon, 2908 and 2748 attacks): odd-level mobs take 2 less again. Magma Totem 51 vs the sim's 53 (323 hits), Flametongue Attack 78 to 79 vs 80 at levels 45 and 47, Flame Shock ticks 44.7 to 45 vs 46, Farraki Enforcement 292 vs 294 (13 hits). On those mobs Lightning Shield equals the sim, because the +2 of "Spell hits run about 6 spell power above the sim" cancels it. Farraki Enforcement is Physical, and 2 off 294 is the same 2 as off Magma Totem's 53, so it looks like a flat 2 less damage taken on every school, not a resistance (a resistance would take a share, and none off Physical).
 - **Next step**: check the unfiltered logs for those mob GUIDs. Then Flame Shock a dungeon trash mob and an open world mob of the same level, 30 ticks each.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-11.
 
@@ -36,33 +36,14 @@ sections 2 and 6 have the format).
 - **Next step**: the user's ruling (2026-11-08) is to keep monitoring. Count Earth Shock partials on resistant mobs in each new log.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
-### Spell hits run about 6 spell power above the sim at levels 44 to 51
-
-- **Flag**: `Lightning Shield (26369): raw` (26 windows), `Earth Shock (10412): raw`, `Lightning Bolt (10392): raw`, `Flame Shock (10447) ticks: raw`, mob levels 40 to 51.
-- **Windows**:
-  - Nov 9, `WoWCombatLog-110826_085019.txt 00:51:26` to `01:42:21` (level 44): first seen, 0.03 to 0.85 off either way, the sign flipped when the character changed at 01:26.
-  - Nov 10-11, `WoWCombatLog-111026_075640.txt` 14:13 to 00:50 (levels 46 to 51, 17 windows): the log is steadily higher. Lightning Shield +2.0 (124 vs 122, 134.8 vs 132.4), Earth Shock +3 to +5, Lightning Bolt +4 to +8, Flame Shock ticks +1. Same at every mob level and with either two-hander.
-- **What we think**: the gap grows with each spell's coefficient, so it's spell power, about 5 to 6, not a rounding. The sheet's Nature power is within +1 to +2 of the sim's (the sim a bit higher), so the sheet doesn't show it. Candidates: Blood Fury's 10% spell power counted differently (`sim/core/racials_forever.go`), a hidden buff, or spell base damage that rises with our level within a rank (the sim's `RankScaling`).
-- **Next step**: split the log's hits by Blood Fury up or down. Then compare Lightning Shield raw at two character levels on the same rank with no buffs.
-- **Status**: open, first seen 2026-11-09, last updated 2026-11-11.
-
-### Farraki Enforcement hit for 588 until Nov 10 17:30
-
-- **Flag**: `Farraki Enforcement (1294339): raw` (NEW), level 50.
-- **Windows**: `WoWCombatLog-111026_075640.txt 16:52:12`: 588 on 4 hits vs the sim's 294. Across the log, about 100 of 108 procs from 11:38 to 17:30 hit 588 (not crits), then from 17:43 on always 294 (292 on the Maraudon -2 mobs).
-- **What we think**: The Chief's Enforcer's proc (`sim/common/item_effects.go`, 294 Physical, 1.14 PPM) matches the log after 17:43. The doubling before that may be a buff, or a server fix in the 17:30 to 17:43 gap. Not a sim gap unless 588 comes back.
-- **Next step**: did anything change in game around 17:30 to 17:43 (a relog, a buff that fell off)? Watch the next logs for 588.
-- **Status**: open, first seen 2026-11-11, last updated 2026-11-11.
-
 ## logcheck issues
 
-### Melee and Stormstrike raw a few percent off the log, either way
+### Camp Benefits stats left out of the sim's character
 
-- **Flag**: `Melee: raw` (157 windows with the sim above the log) and `Stormstrike (17364): raw` (71), after logcheck began adding export-time buffs (2026-11-10 redo).
-- **Windows**: e.g. `WoWCombatLog-111026_075640.txt 08:37:49-08:48:02` (Rockbiter) runs the other way: Melee 419 to 427 in the log vs the sim's 410, Stormstrike 661 vs 629 to 637.
-- **What we think**: a buff from the export that `windowBuffs` (`tools/logcheck/buffs.go`) gives for the whole window may have faded during the fight (Well Fed most likely). Or Rockbiter's AP is off. Blood Fury and Razorhide aren't read at all, and the `sheet` flag still fires on 176 of 422 windows (about +0.4% dodge in the sim, the old Str -2 / Agi +2 / Int +2 offset, and an imbue at export time that differs from the window's).
-- **Nov 10-11** (`WoWCombatLog-111026_075640.txt` 14:13 to 00:19, two-handers): the log is the higher one. Stormstrike +2% to +5% in 11 windows (Maraudon +4.7% on 170 hits, +3.3% on 114), Melee +2% to +5% in 9 (a few levels at 0%). Same with Mograine's Might and The Chief's Enforcer. Blood Fury isn't it: the sim has Forever's +10% (`sim/core/racials_forever.go`) and the replay casts it.
-- **Next step**: split the windows by whether Well Fed was up at the fight, and compare Rockbiter windows with Flametongue ones. Check whether the Nov 10 gap is the same as the spell gap ("Spell hits run about 6 spell power above the sim"), a few percent of something the sheet doesn't show.
+- **Flag**: `Melee: raw`, `Stormstrike (17364): raw` (log 2% to 4% above the sim), and `sheet`.
+- **Windows**: `WoWCombatLog-111026_075640.txt` 08:26 to 12:20 (level 47). In the 08:49 window the base attack power is 1149 in the log against the sim's 1114. Those 35 attack power predict +2.1% Melee and +2.2% Stormstrike, and the window shows +1.9% and +2.2%.
+- **What we think**: the sheets show the camp giving +9 to every stat and +229 armor at level 47. History records 2458 and 2463 have the same gear and differ only in the camp and Well Fed. But a level 30 pair on Nov 6 showed +0, so the bonus depends on the camp (or its upgrades). `buffs.go` gives Camp Benefits (1229741) only the chair's crit, and the client has no stats for it.
+- **Next step**: learn what each camp gives (which camp items or upgrades were placed on Nov 10 morning vs Nov 6). Then add it the way the chair's crit is added: from the sheet when it shows the camp's bonus.
 - **Status**: open, first seen 2026-11-10, last updated 2026-11-11.
 
 ### BayovCore cuts the gear list short
@@ -103,6 +84,14 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-10-18, last updated 2026-11-09 (steady at level 43 to 44, so the dodge per Agility by level is worth a check).
 
 ## Done
+
+### Our own elixirs and scrolls were left out of the replay
+
+- **Done**: 2026-11-11. `windowBuffs` in `tools/logcheck/buffs.go` skipped every buff we put on ourselves, on the idea that the replay casts it. It can't cast elixirs or scrolls, so whenever Greater Intellect (11396) was up the replay lacked 25 Intellect: about 8 spell power through Mental Quickness and 42 attack power through Mental Dexterity. That was the whole "spell hits run about 6 spell power above the sim" gap (Lightning Shield +5.8 spell power over 399 hits with the elixir, -0.1 over 614 without) and most of the Nov 10 Melee and Stormstrike gap (Maraudon +2.5% and +4.3% to -0.5% and +1.0%). A Scroll of Intellect (8098) gave the rest. Now a buff of ours is skipped only when the sim has its spell (`simSpellIDs` in `replay.go`). On the Nov 10 log, raw flags fell from 50 to 28 for Lightning Shield, 39 to 19 for Stormstrike and 27 to 15 for Melee. Blood Fury, level scaling and coefficients were ruled out, and the coefficients match the client.
+
+### Farraki Enforcement hit for 588 until Nov 10 17:30
+
+- **Done**: 2026-11-11. Trolls take double, as the tooltip says (and the comment in `sim/common/item_effects.go`). The 588s were Zul'Farrak and other troll mobs, the 294s after 17:43 were not. Into `known.json` as `raw`, since the sim's mob is never a troll.
 
 ### Stolen Power's spell power left out of the sim's character
 
