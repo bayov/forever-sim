@@ -31,6 +31,12 @@ const hawkDuration = time.Second * 18
 // talent at 60, where the level 30 logs read 5.0.
 const hawkLogUnleashedFury = 1.15
 
+// Blizzard's hotfix post of 2026-11-10 raises the hawk's melee damage "by about 80%". No server row
+// carries it (it is creature data or a server script; wago hotfixes through push 113944 show none), so
+// the sim takes the announced 80% on top of the log fit above (standards 37, notes-only). Logs after
+// 2026-11-10 should show a swing of about 1.8 times the line above at the same ranged attack power.
+const hawkMeleeDamageHotfix20261110 = 1.8
+
 var hawkSwingAverage = 0.0815 * creatureAutoAttackDps60 * 2.5 / hawkLogUnleashedFury
 
 // A hawk swings on arrival and every 2.5 sec after at its owner's ranged speed, the quiver, Quick
@@ -102,6 +108,7 @@ func (hunter *Hunter) newHawks() []*HawkPet {
 		})
 
 		hawk.PseudoStats.DamageDealtMultiplier *= 1 + 0.03*float64(hunter.Talents.UnleashedFury)
+		hawk.PseudoStats.DamageDealtMultiplier *= hawkMeleeDamageHotfix20261110
 		hawk.AddStat(stats.MeleeCrit, 2*float64(hunter.Talents.Ferocity)*core.CritRatingPerCritChance)
 
 		inherited := 1.0

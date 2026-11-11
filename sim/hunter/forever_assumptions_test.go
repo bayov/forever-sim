@@ -461,7 +461,8 @@ func TestForeverHunterCritPerAgility(t *testing.T) {
 // Summon Hawk's hawk, wowsims/forever's log fit (81651da664, b89878e6f9, 0fc13fcb30): a 2.5 sec swing
 // of 0.0815 of the creature dps over the swing before Unleashed Fury, a third either side, on 80% of
 // the hunter's ranged attack power at 112 × 1.15 a point of dps; half the hunter's crit plus
-// Ferocity whole, its hit; Unleashed Fury and the hunter's damage done at the summon. It swings on
+// Ferocity whole, its hit; Unleashed Fury, the announced +80% melee damage of 2026-11-10 (notes-only)
+// and the hunter's damage done at the summon. It swings on
 // arrival and follows the hunter's ranged speed but not its attack speed, and a third hawk replaces
 // the one with the least time left.
 func TestSummonHawkHawks(t *testing.T) {
@@ -501,8 +502,8 @@ func TestSummonHawkHawks(t *testing.T) {
 	if got, want := hawk1.GetStat(stats.MeleeHit), hunter.GetStat(stats.MeleeHit); got != want {
 		t.Errorf("hawk hit %.4f, want the hunter's %.4f", got, want)
 	}
-	if got, want := hawk1.PseudoStats.DamageDealtMultiplier, 1.15*hunter.PseudoStats.DamageDealtMultiplier; math.Abs(got-want) > 1e-9 {
-		t.Errorf("hawk damage multiplier %.4f, want Unleashed Fury times the hunter's, %.4f", got, want)
+	if got, want := hawk1.PseudoStats.DamageDealtMultiplier, 1.15*1.8*hunter.PseudoStats.DamageDealtMultiplier; math.Abs(got-want) > 1e-9 {
+		t.Errorf("hawk damage multiplier %.4f, want Unleashed Fury times the 2026-11-10 +80%% times the hunter's, %.4f", got, want)
 	}
 	if hawk1.AutoAttacks.MainhandSwingAt() > sim.CurrentTime {
 		t.Errorf("the hawk first swings at %v, want on arrival at %v", hawk1.AutoAttacks.MainhandSwingAt(), sim.CurrentTime)
@@ -558,8 +559,8 @@ func TestSummonHawkHawks(t *testing.T) {
 		if got := hawk.SwingSpeed(); math.Abs(got-1) > 1e-9 {
 			t.Errorf("hawk %d keeps speed %.4f once gone, want 1", i+1, got)
 		}
-		if got := hawk.PseudoStats.DamageDealtMultiplier; math.Abs(got-1.15) > 1e-9 {
-			t.Errorf("hawk %d keeps damage multiplier %.4f once gone, want Unleashed Fury's 1.15", i+1, got)
+		if got := hawk.PseudoStats.DamageDealtMultiplier; math.Abs(got-1.15*1.8) > 1e-9 {
+			t.Errorf("hawk %d keeps damage multiplier %.4f once gone, want Unleashed Fury's 1.15 times 1.8", i+1, got)
 		}
 	}
 }
