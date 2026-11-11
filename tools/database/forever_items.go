@@ -919,4 +919,14 @@ var ForeverItems = []*proto.UIItem{
 		Ilvl:  63, RequiredLevel: 58, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
 		Unique: true, BindOnPickup: true,
 	},
+	// Soulwoven Drape, revealed in the hotfix data of November 10 to 11 (foreverchanges.pro hidden
+	// items, source unknown). The tooltip's "healing by up to 20 and damage by up to 7" is
+	// SpellPower 7 plus HealingPower 13, as forever_wowhead.go's spellStats splits it.
+	{
+		Id: 276072, Name: "Soulwoven Drape", Icon: "inv_misc_cape_20",
+		Type:  proto.ItemType_ItemTypeBack,
+		Stats: stats.Stats{stats.Armor: 43, stats.Stamina: 8, stats.Spirit: 12, stats.SpellPower: 7, stats.HealingPower: 13}.ToFloatArray(),
+		Ilvl:  61, RequiredLevel: 56, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		BindOnPickup: true,
+	},
 }
