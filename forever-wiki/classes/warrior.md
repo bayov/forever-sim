@@ -276,6 +276,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
   - Cost: 30 Rage, Instant, 30 sec cooldown
   - Your next 5 melee attacks strike an additional nearby opponent.
   - Note: lasts 20 sec (client row 12292, DurationMs 20000; Wowhead's Forever buff tooltip "20 seconds remaining"), Era 10. The sim since 2026-10-23.
+  - Since the hotfixes of November 10 a hit with no second target to strike keeps the charge. The sim uses a charge only on a hit it copies.
 - **Weaponmaster** (5 ranks, column 3) [NEW] [ranks set by the client 70338 trait curves, see above]
   - Rank 1: Gives your melee weapon attacks a benefit depending on the weapon. Axe/Polearm: Increases your critical strike chance by 1%. Mace/Staff: Your attacks ignore 3% of your target's armor. Sword: Your successful melee attacks have a 1% chance to trigger an extra attack on the target.
   - Note: Filled the question-mark placeholder with the WotLK Weapon Mastery icon.

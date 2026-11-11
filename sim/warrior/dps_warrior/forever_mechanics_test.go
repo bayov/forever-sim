@@ -572,6 +572,33 @@ func TestForeverWarriorSweepingStrikesCopiesFinalDamage(t *testing.T) {
 	}
 }
 
+// TestForeverWarriorSweepingStrikesKeepsCharges checks that a hit with no second target to copy to
+// leaves Sweeping Strikes' charges (Blizzard hotfixes of 2026-11-10), and that a copy uses one.
+func TestForeverWarriorSweepingStrikesKeepsCharges(t *testing.T) {
+	for _, targets := range []int{1, 2} {
+		sim, war := newForeverWarriorTargets(t, "00000000000010000", 991016, 0, targets)
+		war.AutoAttacks.CancelAutoSwing(sim)
+		ss := war.GetAura("Sweeping Strikes")
+		ss.Activate(sim)
+		first := sim.Encounter.TargetUnits[0]
+		slam := war.Slam.Spell
+		for i := 0; i < 3; i++ {
+			slam.ApplyEffects(sim, first, slam)
+		}
+		landed := int32(slam.SpellMetrics[first.UnitIndex].Hits + slam.SpellMetrics[first.UnitIndex].Crits)
+		if landed == 0 {
+			t.Fatalf("%d targets: no Slam landed", targets)
+		}
+		want := int32(5)
+		if targets > 1 {
+			want -= landed
+		}
+		if got := ss.GetStacks(); got != want {
+			t.Errorf("%d targets: Sweeping Strikes has %d charges after %d landed hits, want %d", targets, got, landed, want)
+		}
+	}
+}
+
 // TestForeverWarriorRageGainThreat checks the Forever rage threat the owner measured in game
 // (wowsims/forever 913a5bcf69, 6067c8469d): 5 threat a Rage, times the threat multiplier when the
 // Rage comes, split between the targets in combat; none from Charge, from hits dealt or taken, or
