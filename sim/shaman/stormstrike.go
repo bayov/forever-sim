@@ -18,10 +18,15 @@ import (
 // 100%) and cut the cooldown to 6 sec (was 8). Client 1.60.1.70753 had neither; hotfix push 113380
 // (wago.tools/hotfixes, region 91) puts both in client data: SpellEffect 1368308 and
 // SpellCooldowns 55241 (tier 1).
+//
+// Blizzard's class tuning of 2026-11-10 (hotfix article and Kaivax's "Class Tuning Incoming -
+// November 10") takes it back to 100% weapon damage and an 8 sec cooldown. No server row carries
+// that yet (SpellEffect 1368308 still 150, SpellCooldowns 55241 still 6000 ms at push 113380;
+// client 1.60.1.70888 unchanged), so these are notes-only values (standards 37).
 const StormstrikeForeverBonus = 1.2
 
 // StormstrikeWeaponDamagePercent is the share of normalized weapon damage the strike deals.
-const StormstrikeWeaponDamagePercent = 1.5
+const StormstrikeWeaponDamagePercent = 1.0
 
 // StormstrikeSpeed is the speed Forever's Stormstrike multiplies AP / 14 by.
 //
@@ -67,9 +72,10 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	manaCost := core.ManaCostOptions{BaseCost: .21}
 	cooldown := time.Second * 20
 	if forever {
-		// 8% of base mana since client 1.60.1.70425 (125 before).
+		// 8% of base mana since client 1.60.1.70425 (125 before). 8 sec since the 2026-11-10
+		// class tuning (6 sec from push 113380 until then).
 		manaCost = core.ManaCostOptions{BaseCost: .08}
-		cooldown = time.Second * 6
+		cooldown = time.Second * 8
 	}
 
 	shaman.Stormstrike = shaman.RegisterSpell(core.SpellConfig{

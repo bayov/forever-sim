@@ -86,10 +86,9 @@ func (shaman *Shaman) getImbueProcMask(imbue proto.WeaponImbue) core.ProcMask {
 // other totem's buff and from another shaman's totem in the raid buffs
 // (core.HoldTotemWeaponBuff).
 //
-// It takes the slot even when our imbue turns it off for us (Windfury Weapon for Windfury
-// Totem), and then it does nothing for us. So Windfury Totem for the group, next to our own
-// Windfury Weapon, leaves us no Flametongue Totem (the user saw them replace each other on
-// the beta, 2026-11-08).
+// So Windfury Totem and Flametongue Totem replace each other (the user saw that on the beta,
+// 2026-11-08). Since Blizzard's 2026-11-10 hotfixes either one works next to our own imbue,
+// Windfury Totem next to Windfury Weapon included.
 func (shaman *Shaman) setTotemWeaponBuff(sim *core.Simulation, aura *core.Aura) {
 	shaman.HoldTotemWeaponBuff(sim, aura, &shaman.Unit)
 }

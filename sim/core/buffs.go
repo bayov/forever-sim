@@ -2142,7 +2142,10 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 }
 
 // WindfuryTotemBuffAura is the Windfury Totem buff at the given rank. It is not active on
-// its own, and Windfury Weapon on the main hand turns it off, see totem_weapon_buffs.go.
+// its own. Since Blizzard's 2026-11-10 hotfixes it works next to Windfury Weapon on the main
+// hand ("Weapon imbues and Weapon totems can now be used at the same time"): both can proc.
+// Each keeps its own chance and internal cooldown, since the post says nothing of a shared one
+// (report assumption wf_weapon_totem_icd).
 // It reports its metrics under actionID (none when empty: a shaman's own totem reports its
 // party aura instead, see air_totems.go). Each proc's 1 sec attack power buff is "Windfury
 // Attack" (with the label's rank), so it doesn't read as the totem's uptime. The label
@@ -2162,9 +2165,8 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 func WindfuryTotemBuffAura(character *Character, rank int32, label string, actionID ActionID) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	buffLabel := strings.Replace(strings.TrimSuffix(label, " Raid"), "Windfury Totem", "Windfury Attack", 1)
-	blocked := func() bool { return mainHandHasImbue(character, windfuryWeaponEnchantIds) }
 	procMask := Ternary(character.Env.IsForever(), ProcMaskMeleeMHAuto, ProcMaskMeleeMH)
-	aura := CreateExtraAttackAuraCommon(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, blocked, procMask)
+	aura := CreateExtraAttackAuraCommon(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, nil, procMask)
 	if character.Env.IsForever() {
 		// The attack power lasts 1 sec under Forever.
 		//

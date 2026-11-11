@@ -48,7 +48,7 @@ type Character struct {
 	talents protoreflect.Message
 
 	// The weapon buff from another shaman's Windfury or Flametongue Totem, nil without
-	// one. A shaman turns it off while their own totem's buff takes the slot.
+	// one. A shaman's own totem's buff takes the slot from it.
 	RaidTotemWeaponBuff *Aura
 	// The main hand's totem slot under cast weapon totems (totem_weapon_buffs.go).
 	totemWeaponSlot

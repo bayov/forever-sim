@@ -41,19 +41,6 @@ var FlametongueTotemLevel = [FlametongueTotemRanks + 1]int{0, 28, 38, 48, 58}
 
 var WindfuryTotemLevel = [WindfuryRanks + 1]int{0, 32, 42, 52}
 
-// The temporary enchants of every Windfury Weapon and Flametongue Weapon rank, the same
-// as WindfuryWeaponEnchantId and FlametongueWeaponEnchantId in the shaman package.
-var windfuryWeaponEnchantIds = []int32{283, 284, 525, 1669}
-var flametongueWeaponEnchantIds = []int32{5, 4, 3, 523, 1665, 1666}
-
-// mainHandHasImbue tells whether the main hand carries one of these imbues right now. We
-// look at it on every hit instead of once, because the shaman's imbue goes on the weapon
-// after the raid buffs are applied, and an item swap can change it.
-func mainHandHasImbue(character *Character, enchantIds []int32) bool {
-	mh := character.MainHand()
-	return mh != nil && slices.Contains(enchantIds, mh.TempEnchant)
-}
-
 // FlametongueTotemBuffAura gives our landed white swings extra Fire damage, by weapon speed.
 //
 // Under Forever only white swings proc it, extra swings included. The Forever client
@@ -108,7 +95,7 @@ func FlametongueTotemBuffAura(character *Character, rank int, label string, tag 
 		ActionID: ActionID{SpellID: FlametongueTotemSpellId[rank]},
 		Duration: NeverExpires,
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(procMask) || mainHandHasImbue(character, flametongueWeaponEnchantIds) {
+			if !result.Landed() || !spell.ProcMask.Matches(procMask) {
 				return
 			}
 			weaponSpeed = character.MainHand().SwingSpeed

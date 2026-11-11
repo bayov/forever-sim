@@ -71,8 +71,7 @@ func (receivers *totemBuffReceivers) release(sim *core.Simulation, shaman *Shama
 }
 
 // holdWeapon gives each receiver our weapon totem's buff. It takes the weapon's totem slot from
-// the other weapon totem's buff, even when the receiver's imbue turns it off
-// (core.Character.HoldTotemWeaponBuff).
+// the other weapon totem's buff (core.Character.HoldTotemWeaponBuff).
 func (receivers *totemBuffReceivers) holdWeapon(sim *core.Simulation, shaman *Shaman) {
 	for _, receiver := range *receivers {
 		receiver.char.HoldTotemWeaponBuff(sim, receiver.aura, &shaman.Unit)

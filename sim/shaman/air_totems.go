@@ -66,8 +66,8 @@ func (shaman *Shaman) newWindfuryTotemSpellConfig(rank int) core.SpellConfig {
 
 	// The totem's buff takes the totem slot of the shaman's own weapon, so it works next to
 	// Rockbiter, Flametongue or Frostbrand Weapon and an oil or stone. It does not work next
-	// to Flametongue Totem's buff: the one placed last takes hold. Windfury Weapon on the main
-	// hand turns it off, but it still takes the slot.
+	// to Flametongue Totem's buff: the one placed last takes hold. Since Blizzard's 2026-11-10
+	// hotfixes it also works next to Windfury Weapon, and both can proc.
 	var buffAura *core.Aura
 	if shaman.HasMHWeapon() {
 		buffAura = core.CastWindfuryTotemBuffAura(&shaman.Character, int32(rank))

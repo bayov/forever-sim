@@ -342,7 +342,8 @@ func (shaman *Shaman) newFireNovaHitSpellConfig(rank int) core.SpellConfig {
 // last 5 min.
 //
 // Its buff takes the totem slot of the weapon, so it works next to Windfury, Rockbiter or
-// Frostbrand Weapon and an oil or stone. Flametongue Weapon on the main hand turns it off.
+// Frostbrand Weapon and an oil or stone, and since Blizzard's 2026-11-10 hotfixes next to
+// Flametongue Weapon too.
 // It does not work next to a Windfury Totem buff, ours or another shaman's: the one placed
 // last takes hold, for the whole group (beta, 2026-11-08). See core/totem_weapon_buffs.go.
 const FlametongueTotemRanks = core.FlametongueTotemRanks

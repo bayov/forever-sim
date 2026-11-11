@@ -114,9 +114,10 @@ rank's base points and growth per level, and Chain Lightning's 0.714 coefficient
 | Value | Sim | Client 1.60.1.70753 |
 |---|---|---|
 | Lightning Overload | 10 / 20 / 30% | 408438 3 / 7 / 10% |
-| Maelstrom Weapon | 4 PPM a point (doubled from the sim's 2; the rate is server side either way) | 408498 ProcChance 100, no PPM row |
-| Stormstrike | 150% normalized weapon damage, 6 s | 17364 100%, 8 s |
-| Mental Dexterity | 50 / 100 / 150% | 415140 33 / 67 / 100% |
+| Maelstrom Weapon (Blizzard's class tuning of 2026-11-10; replaces the every-hit rule from the Nov 8-9 logs, bcc5d6cd4) | 6 / 7 / 8 / 9 / 10 PPM by rank on the main hand's speed; 20% cast time and mana a stack at every rank | 408498 ProcChance 100, no PPM row; SpellAuraOptions 223898 ProcChance 100 at push 113380. Confirmed by: a PPM row or ProcChance change for 223898 / 408498, or post-Nov-10 logs giving about 60% a landed white swing at 3.6 speed, 5/5 |
+| Stormstrike (2026-11-10 tuning; push 113380 had 150% / 6 s) | 100% normalized weapon damage, 8 s | 17364 100%, 8 s; SpellEffect 1368308 150 and SpellCooldowns 55241 6000 ms at push 113380. Confirmed by: a row setting 1368308 back to 100 and 55241 to 8000, or post-Nov-10 Stormstrike hits fitting 100% |
+| Mental Dexterity (2026-11-10 tuning; was the Nov 2 notes' 50 / 100 / 150%) | 33 / 66 / 100% | 415140 33 / 67 / 100% (no row since push 93879). Confirmed by: a 415140 row, or the character sheet's AP at 3/3 |
+| Windfury Weapon + Windfury Totem, Flametongue Weapon + Flametongue Totem (2026-11-10, listed as live) | both work and both proc; each Windfury proc keeps its own chance and internal cooldown (assumption `wf_weapon_totem_icd`) | server-side, no row. Confirmed by: post-Nov-10 logs with both "Windfury Weapon" and "Windfury Attack" procs on one shaman |
 | Flurry | 6 / 12 / 18 / 24 / 30% | 5 to 25% |
 | Totemic Call | 30 s, totems to the shaman's spot | 437009 Totemic Projection, 1 min |
 | Riptide (healing session, `docs/healing_shaman.md`) | no instant heal (ticks only), 12 s cooldown, mana 147 / 180 / 231 (the client's × 0.6, the notes' "about 40%" less, rounded to whole mana) | 408521 / 1239242 / 1239243: 480 / 612 / 841 at once, 6 s, 245 / 300 / 385 |

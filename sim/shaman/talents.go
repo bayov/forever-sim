@@ -32,13 +32,11 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	if shaman.Talents.MentalDexterity > 0 {
-		// 50 / 100 / 150% of Intellect since the November 2 development notes (33 / 67 / 100% in
-		// the beta client, 1.60.1.70753 included). Classic has no Mental Dexterity; outside Forever
-		// it keeps the client's values (standards 37).
-		ratio := []float64{0, .5, 1, 1.5}[shaman.Talents.MentalDexterity]
-		if !shaman.Env.IsForever() {
-			ratio = []float64{0, 1.0 / 3, 2.0 / 3, 1}[shaman.Talents.MentalDexterity]
-		}
+		// 33 / 66 / 100% of Intellect since Blizzard's class tuning of 2026-11-10 (was 50 / 100 /
+		// 150% from the November 2 development notes). No server row for 415140 carries it yet,
+		// so it is a notes-only value (standards 37). The beta client had 33 / 67 / 100%; we take
+		// the post's 66.
+		ratio := []float64{0, .33, .66, 1}[shaman.Talents.MentalDexterity]
 		shaman.AddStatDependency(stats.Intellect, stats.AttackPower, ratio)
 	}
 
@@ -547,30 +545,32 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 		return
 	}
 
-	// Under Forever every landed melee hit gives a stack, at every rank, and the rank only sets
-	// how much each stack takes off Lightning Bolt.
+	// Under Forever it procs 6 / 7 / 8 / 9 / 10 times a minute by rank, and each stack takes 20% off
+	// Lightning Bolt's cast time and mana at every rank (Blizzard's class tuning of 2026-11-10).
+	// The tooltip's example: 60% a swing with a 3.6 speed main hand at 5/5, 33% at 2.0, which is
+	// the usual PPM by main hand speed. No server row carries it yet (SpellAuraOptions 223898
+	// still ProcChance 100 with no PPM row at push 113380), so these are notes-only values
+	// (standards 37).
 	//
-	// Our logs from 2026-11-08 and 2026-11-09 have every rank from 1/5 to 5/5. A stack came on
-	// 2756 of 2760 landed white swings, 1553 of 1555 Stormstrikes and 428 of 430 Windfury extra
-	// swings, and the same at each rank. Misses, dodges and parries gave none of 421. The client
-	// agrees (408498 has a 100% ProcChance and no PPM row). We used 4 PPM a point before, from
-	// the November 2 notes doubling SoD's rate, which gave only 22.6% a hit at 1/5 with a 3.4 sec
-	// weapon.
+	// Before that every landed melee hit gave a stack (our logs of 2026-11-08 and 09: 2756 of
+	// 2760 white swings, bcc5d6cd4), and each stack took 4% a rank. Misses, dodges and parries
+	// gave none, and still roll nothing here.
 	//
-	// Classic has no Maelstrom Weapon. Outside Forever it keeps the sim's 2 PPM a point (standards
-	// 37).
-	everyHit := shaman.Env.IsForever()
-	ppmm := shaman.AutoAttacks.NewPPMManager(2*float64(shaman.Talents.MaelstromWeapon), core.ProcMaskMelee)
+	// Classic has no Maelstrom Weapon. Outside Forever it keeps the sim's 2 PPM a point.
+	points := float64(shaman.Talents.MaelstromWeapon)
+	ppm := 2 * points
+	castTimeReductionPerStack := .04 * points
+	costReductionPerStack := int32(4 * points)
+	if shaman.Env.IsForever() {
+		ppm = 5 + points
+		castTimeReductionPerStack = .2
+		costReductionPerStack = 20
+	}
+	ppmm := shaman.AutoAttacks.NewPPMManager(ppm, core.ProcMaskMelee)
 	// meleeChance is a main hand white swing's chance to give a stack.
 	meleeChance := func() float64 {
-		if everyHit {
-			return 1
-		}
 		return ppmm.Chance(core.ProcMaskMeleeMHAuto)
 	}
-
-	castTimeReductionPerStack := .04 * float64(shaman.Talents.MaelstromWeapon)
-	costReductionPerStack := 4 * shaman.Talents.MaelstromWeapon
 
 	shaman.MaelstromWeaponAura = shaman.RegisterAura(core.Aura{
 		Label:     "Maelstrom Weapon",
@@ -601,15 +601,10 @@ func (shaman *Shaman) applyMaelstromWeapon() {
 			if !result.Landed() {
 				return
 			}
-			var procced bool
-			if everyHit {
-				procced = spell.ProcMask.Matches(core.ProcMaskMelee)
-			} else {
-				procced = ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon")
-			}
+			procced := ppmm.Proc(sim, spell.ProcMask, "Maelstrom Weapon")
 			if spell.SpellCode == SpellCode_ShamanLightningBolt && spell.ProcMask.Matches(core.ProcMaskSpellDamage) && shaman.lightningBoltTriggersMaelstrom {
 				// We take the main hand swing chance, so the bolt procs half as often as a white
-				// hit would (50% a bolt under Forever).
+				// hit would.
 				procced = sim.RandomFloat("Maelstrom Weapon") < 0.5*meleeChance()
 			}
 			if procced {
