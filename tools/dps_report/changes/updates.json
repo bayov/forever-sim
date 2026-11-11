@@ -4570,6 +4570,160 @@
      "commits": [
       "f20d593"
      ]
+    },
+    {
+     "title": "Windfury Totem procs only from white main hand swings, not from special attacks",
+     "kind": "sim",
+     "classes": [
+      "Warrior",
+      "Rogue",
+      "Paladin",
+      "Hunter",
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf",
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead",
+      "rogue__combat-daggers",
+      "rogue__combat-swords",
+      "rogue__mutilate",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords",
+      "rogue__subtlety",
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "Our combat logs show hundreds of totem procs and none from Stormstrike, where a 20% chance would give about 550. Whether attacks that replace a swing (Heroic Strike, Cleave, Raptor Strike) can roll it isn't tested yet; the sim says no. Warriors lose about 100 to 200 DPS, Survival and Retribution about 60 to 95, rogues and Feral 20 to 50.",
+     "commits": [
+      "0ce9dbf"
+     ]
+    },
+    {
+     "title": "Natural flasks give 30 Stamina (was 60), and their zone bonus is 2% (was 4 or 5%)",
+     "kind": "game",
+     "classes": [
+      "Warrior",
+      "Rogue",
+      "Hunter",
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff",
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__lone-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf",
+      "rogue__combat-daggers",
+      "rogue__combat-swords",
+      "rogue__mutilate",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords",
+      "rogue__subtlety",
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "The report's fights take place in the flasks' zones, so the Aggression flask's crit drops from 4% to 2%. Physical builds lose about 15 to 40 DPS.",
+     "source": {
+      "label": "wago.tools, SpellEffect",
+      "url": "https://wago.tools/db2/SpellEffect?filter[SpellID]=1293741"
+     },
+     "commits": [
+      "0326924",
+      "fc065aa"
+     ]
+    },
+    {
+     "title": "The Chief's Enforcer's Farraki Enforcement proc, at the rate seen in our logs",
+     "kind": "game",
+     "note": "No build wears it.",
+     "moves": false,
+     "commits": [
+      "2e32052"
+     ]
+    },
+    {
+     "title": "Item data: items seen in game and newly revealed on Forever",
+     "kind": "game",
+     "note": "Hundreds of items added or corrected, among them Edgemaster's Handguards, Shriveled Heart and the Royal Seals of Eldre'Thalas. No report build wears a changed item.",
+     "source": {
+      "label": "Wowhead (Forever)",
+      "url": "https://www.wowhead.com/"
+     },
+     "moves": false,
+     "commits": [
+      "b1291e6",
+      "a1a3173",
+      "d584c91",
+      "ec67824",
+      "d00acdc",
+      "831cc90",
+      "9fec289",
+      "49931e4",
+      "2eca7be",
+      "a778e52",
+      "4aae529",
+      "8051c43",
+      "0fcd019",
+      "12aa279",
+      "64d0c5a"
+     ]
+    },
+    {
+     "title": "Downranked damage spells deal their full damage; the low-rank penalty applies to heals only",
+     "kind": "sim",
+     "note": "Our logs show low-rank Lightning Bolt and Fire Nova at their full coefficient. No damage preset downranks.",
+     "moves": false,
+     "commits": [
+      "0193721"
+     ]
+    },
+    {
+     "title": "Orc shaman base attributes at levels 2 to 43 from the character sheet",
+     "kind": "game",
+     "classes": [
+      "Shaman"
+     ],
+     "note": "Leveling only; level 60 is unchanged.",
+     "moves": false,
+     "commits": [
+      "3b0983b"
+     ]
     }
    ],
    "internal": [
@@ -4599,6 +4753,18 @@
     },
     {
      "commit": "e9ebe1c",
+     "why": "test expectations only"
+    },
+    {
+     "commit": "fb41592",
+     "why": "a pre-raid Enhancement gear list and rotation search rules; no report preset changes"
+    },
+    {
+     "commit": "6bdc320",
+     "why": "a test tolerance only"
+    },
+    {
+     "commit": "3335001",
      "why": "test expectations only"
     }
    ],
