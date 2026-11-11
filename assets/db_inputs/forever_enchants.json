@@ -1,5 +1,5 @@
 {
-"meta": {"build": "1.60.1.70755", "fetched": "2026-11-03T18:41Z", "source": "client beta 1.60.1.70755 (wago.tools)", "tool": "tools/sources/enchants.py"},
+"meta": {"build": "1.60.1.70888+hf", "fetched": "2026-11-11T15:23Z", "source": "client beta 1.60.1.70888+hf (wago.tools)", "tool": "tools/sources/enchants.py"},
 "enchants": {
 "2152": {"enchant": 15, "item": 2304, "name": "Stamina +$k2 and Armor +$k1", "stats": {"BonusArmor": 8, "Stamina": 1}},
 "2165": {"enchant": 8481, "item": 2313, "name": "Stamina +$k2 and Armor +$k1", "stats": {"BonusArmor": 16, "Stamina": 2}},
@@ -40,7 +40,7 @@
 "7788": {"damage": 1, "enchant": 250, "name": "Weapon Damage +1", "stats": {}},
 "7793": {"enchant": 723, "name": "Intellect +$k1", "stats": {"Intellect": 5}},
 "7857": {"enchant": 254, "name": "Stamina +4", "stats": {"Stamina": 4}},
-"7859": {"enchant": 8203, "name": "Spirit +$k1", "other": ["item stat 124"], "stats": {}},
+"7859": {"enchant": 8203, "name": "Spirit +$k1", "stats": {"Spirit": 4}},
 "7861": {"enchant": 256, "name": "+10 Fire Resistance", "stats": {"FireResistance": 10}},
 "7863": {"enchant": 66, "name": "Stamina +3", "stats": {"Stamina": 3}},
 "7867": {"enchant": 247, "name": "Agility +3", "stats": {"Agility": 3}},
@@ -87,7 +87,7 @@
 "13659": {"enchant": 851, "name": "Spirit +5", "stats": {"Spirit": 5}},
 "13661": {"enchant": 856, "name": "Strength +5", "stats": {"Strength": 5}},
 "13663": {"enchant": 857, "name": "Intellect +6", "stats": {"Intellect": 6}},
-"13687": {"enchant": 8203, "name": "Spirit +$k1", "other": ["item stat 124"], "stats": {}},
+"13687": {"enchant": 8203, "name": "Spirit +$k1", "stats": {"Spirit": 4}},
 "13689": {"enchant": 863, "name": "Blocking +2%", "other": ["spell 13690 aura 51"], "stats": {}},
 "13693": {"damage": 3, "enchant": 943, "name": "Weapon Damage +3", "stats": {}},
 "13695": {"damage": 6, "enchant": 8205, "name": "Weapon Damage +$k1", "stats": {}},
@@ -391,5 +391,6 @@
 "1306546": {"enchant": 8720, "item": 279272, "name": "+2% Crit", "other": ["spell 1310308 aura 290"], "stats": {}},
 "1306907": {"enchant": 8719, "name": "Defense +$k1 and Stamina +$k2", "stats": {"Defense": 4, "Stamina": 10}},
 "1307050": {"enchant": 8720, "name": "+2% Crit", "other": ["spell 1310308 aura 290"], "stats": {}},
+"1314331": {"enchant": 8726, "name": "Luminarian's Binding", "other": ["spell 1314330 aura 4"], "stats": {}},
 "1328948": {"enchant": 8737, "name": "Speed Increase", "other": ["spell 1328947 aura 31"], "stats": {}}
 }}

@@ -86,6 +86,9 @@ var ForeverEnchants = []*proto.UIEnchant{
 	foreverEnchant(1248459, "Enchant Bracer - Minor Healing Power", proto.ItemType_ItemTypeWrist),
 	foreverEnchant(1248460, "Enchant Bracer - Lesser Agility", proto.ItemType_ItemTypeWrist),
 	foreverEnchant(13536, "Enchant Bracer - Lesser Strength", proto.ItemType_ItemTypeWrist),
+	// Bracer and boots Lesser Spirit point at enchant 8203, +4 Spirit, since hotfix 113844 (2026-11-10;
+	// it gave resistance to all schools before). Classic's was +3 (enchant 255).
+	foreverEnchant(7859, "Enchant Bracer - Lesser Spirit", proto.ItemType_ItemTypeWrist),
 	// Client 1.60.1.70425 points 13622 at enchant 8734, +3 (enchant 723, +5, through 70338).
 	foreverEnchant(13622, "Enchant Bracer - Lesser Intellect", proto.ItemType_ItemTypeWrist),
 	foreverEnchant(13661, "Enchant Bracer - Strength", proto.ItemType_ItemTypeWrist),
@@ -111,6 +114,7 @@ var ForeverEnchants = []*proto.UIEnchant{
 	foreverKeepEffect(66, 7863, "Enchant Boots - Minor Stamina", proto.ItemType_ItemTypeFeet),
 	foreverEnchant(7867, "Enchant Boots - Minor Agility", proto.ItemType_ItemTypeFeet),
 	foreverEnchant(13637, "Enchant Boots - Lesser Agility", proto.ItemType_ItemTypeFeet),
+	foreverEnchant(13687, "Enchant Boots - Lesser Spirit", proto.ItemType_ItemTypeFeet),
 
 	// Weapon. Winter's Might went from +7 to +15 Frost spell damage.
 	foreverEnchant(21931, "Enchant Weapon - Winter's Might", proto.ItemType_ItemTypeWeapon),
