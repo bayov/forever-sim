@@ -358,8 +358,7 @@
             5
           ]
         ],
-        "icon": "spell_nature_callstorm",
-        "notSimulated": true
+        "icon": "spell_nature_callstorm"
       },
       {
         "fieldName": "lightningOverload",
@@ -449,8 +448,7 @@
             15
           ]
         ],
-        "icon": "spell_nature_wispheal",
-        "notSimulated": true
+        "icon": "spell_nature_wispheal"
       }
     ]
   },
@@ -595,13 +593,13 @@
         "description": "Increases your Attack Power by an amount equal to {0}% of your Intellect.",
         "ranks": [
           [
-            50
+            33
+          ],
+          [
+            66
           ],
           [
             100
-          ],
-          [
-            150
           ]
         ],
         "icon": "spell_nature_mentalquickness"
@@ -806,7 +804,7 @@
         "description": "Instantly strike for {0}% normalized weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by {1}% for {2} sec.",
         "ranks": [
           [
-            150,
+            100,
             20,
             12
           ]
@@ -928,29 +926,34 @@
         ],
         "maxPoints": 5,
         "name": "Maelstrom Weapon",
-        "description": "When you deal damage with a melee attack, you have a chance to reduce the cast time and Mana cost of your next Lightning Bolt spell by {0}%. Stacks up to {1} times. Lasts {2} sec.",
+        "description": "When you deal melee damage, you have a chance ({0} procs per minute, based on your main hand weapon speed) to reduce the cast time and Mana cost of your next Lightning Bolt spell by {1}%. Stacks up to {2} times. Lasts {3} sec.",
         "ranks": [
           [
-            4,
+            6,
+            20,
+            5,
+            30
+          ],
+          [
+            7,
+            20,
             5,
             30
           ],
           [
             8,
+            20,
             5,
             30
           ],
           [
-            12,
+            9,
+            20,
             5,
             30
           ],
           [
-            16,
-            5,
-            30
-          ],
-          [
+            10,
             20,
             5,
             30

@@ -77,12 +77,12 @@
    "name": "Mental Dexterity",
    "fields": {
     "desc": {
-     "1": "Increases your Attack Power by an amount equal to 50% of your Intellect.",
-     "2": "Increases your Attack Power by an amount equal to 100% of your Intellect.",
-     "3": "Increases your Attack Power by an amount equal to 150% of your Intellect."
+     "1": "Increases your Attack Power by an amount equal to 33% of your Intellect.",
+     "2": "Increases your Attack Power by an amount equal to 66% of your Intellect.",
+     "3": "Increases your Attack Power by an amount equal to 100% of your Intellect."
     }
    },
-   "source": "development notes 2026-11-02 (post 9): 50/100/150% (was 33/67/100%)"
+   "source": "Blizzard class tuning 2026-11-10 (hotfix article 24315281): 33/66/100% (the Nov 2 notes had 50/100/150%)"
   },
   {
    "tree": "Enhancement",
@@ -105,11 +105,26 @@
    "name": "Stormstrike",
    "fields": {
     "desc": {
-     "1": "Instantly strike for 150% normalized weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec."
+     "1": "Instantly strike for 100% normalized weapon damage and increase the damage you deal to the target with your next Lightning Bolt, Chain Lightning, or Earth Shock spell by 20% for 12 sec."
     },
-    "cost": "8% base Mana; Melee Range; Instant; 6 sec cooldown"
+    "cost": "8% base Mana; Melee Range; Instant; 8 sec cooldown"
    },
-   "source": "development notes 2026-11-02 (post 9): 150% normalized weapon damage (was 100%), 6 sec cooldown (was 8)"
+   "source": "Blizzard class tuning 2026-11-10 (hotfix article 24315281): 100% normalized weapon damage, 8 sec cooldown (the Nov 2 notes had 150%, 6 sec)"
+  },
+  {
+   "tree": "Enhancement",
+   "op": "set",
+   "name": "Maelstrom Weapon",
+   "fields": {
+    "desc": {
+     "1": "When you deal melee damage, you have a chance (6 procs per minute, based on your main hand weapon speed) to reduce the cast time and Mana cost of your next Lightning Bolt spell by 20%. Stacks up to 5 times. Lasts 30 sec.",
+     "2": "When you deal melee damage, you have a chance (7 procs per minute, based on your main hand weapon speed) to reduce the cast time and Mana cost of your next Lightning Bolt spell by 20%. Stacks up to 5 times. Lasts 30 sec.",
+     "3": "When you deal melee damage, you have a chance (8 procs per minute, based on your main hand weapon speed) to reduce the cast time and Mana cost of your next Lightning Bolt spell by 20%. Stacks up to 5 times. Lasts 30 sec.",
+     "4": "When you deal melee damage, you have a chance (9 procs per minute, based on your main hand weapon speed) to reduce the cast time and Mana cost of your next Lightning Bolt spell by 20%. Stacks up to 5 times. Lasts 30 sec.",
+     "5": "When you deal melee damage, you have a chance (10 procs per minute, based on your main hand weapon speed) to reduce the cast time and Mana cost of your next Lightning Bolt spell by 20%. Stacks up to 5 times. Lasts 30 sec."
+    }
+   },
+   "source": "Blizzard class tuning 2026-11-10 (hotfix article 24315281): 20% a stack at every rank, (5 + rank) procs per minute on main hand speed"
   }
  ]
 }
