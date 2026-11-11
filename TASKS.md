@@ -343,3 +343,12 @@ wording instead.
   - hidden_items.json still marks PR #126's 5 new items "partial" and its 6 Classic items "classic": rerun dbcache.py and hidden.py after it merges. Check bayovui's seen_items.py sync keeps hand-added forever_seen_in_game.json lines ("by" other than Bayov).
   - Gear-search suggestions (not applied): 280084 Furbolg Rib Protector and 287031 for Enhancement shaman 52-59; 287033 Furbolg Berserker's Boots for Ret/warrior 53-59; 280029 Cinderedge Crescent as Enh/rogue offhand.
   - https://foreverchanges.pro/item/287031 , /284231 , /287033 , /280084
+- [ ] 2026-11-11 — Finish the items revealed Nov 10-11 (foreverchanges.pro hidden-items group "November 10 to 11"; PR #127 adds 276072 Soulwoven Drape) [source: foreverchanges]
+  - 287043 Predaceous Band: +18 AP vs Beasts not modeled (db.json has Stamina 14 only); add with `core.NewMobTypeAttackPowerEffect` like the Nov 9 item's 276398 / 286613. +2% movement speed in Forest and Grassland: no sim effect.
+  - 13353 Book of the Dead: Use (summon a Skeleton for 1 min, 15 min cooldown) not modeled. 12590 Felstriker and 13505 Runeblade of Baron Rivendare came back with Classic's stats, so only their "classic" flags change.
+  - Stale flags: hidden_items.json marks 287043, 287044, 287045 "wowhead" and 12590, 13505 "classic"; db.json carries hiddenStats on 287038, 287039, 281599 and about 20 others (a plain gen_db on b1291e61 removes them, which PR #127 left out to stay one item). Rerun dbcache.py and hidden.py locally, then gen_db.
+  - https://foreverchanges.pro/item/287043 , /13353 , /276072 (item pages answer 403 from the cloud)
+- [ ] 2026-11-11 — Check two Nov 10 class hotfixes against the sim (Blizzard hotfixes Nov 10) [source: blizzard]
+  - Hunter pets now have 115% of normal health (a bug gave 150%). Check the pet health multiplier in sim/hunter (only matters if a preset models pet deaths).
+  - Already settled on master, no action: Windfury Weapon and Windfury Totem both proc (sim/shaman/air_totems.go), Hawk melee +80% (sim/hunter, forever_assumptions_test.go), Revelation never procs from heals (sim/common/enchant_effects.go), Rage of the Storm 280604 stats (Nov 11 Wowhead scrape).
+  - https://us.forums.blizzard.com/en/wow/t/wow-forever-hotfixes-november-10-2026/2403040/6
