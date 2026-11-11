@@ -81,9 +81,9 @@ changed, not the "both totems" ruling.
 
 | Build | Before | After |
 |---|---|---|
-| Warlock Affliction | 1034.4 | 1076.9 (956.2 with the old rotation) |
-| Warlock Affliction, duty curse | 1025.1 | 1066.6 (947.9 old rotation) |
-| Warlock Affliction, duty Recklessness | 1019.7 | 1057.3 (943.3 old rotation) |
+| Warlock Affliction | 1034.4 | 1076.9 (956.2 with the old rotation); **1070.5** after the dot fix below |
+| Warlock Affliction, duty curse | 1025.1 | 1066.6 (947.9 old rotation); **1061.4** after the fix |
+| Warlock Affliction, duty Recklessness | 1019.7 | 1057.3 (943.3 old rotation); **1051.5** after the fix |
 | Hunter Beast Mastery | 1195.39 | 1195.40 |
 | Hunter BM wolf | 1150.41 | 1150.43 |
 | Hunter BM tallstrider | 1136.91 | 1136.92 |
@@ -95,7 +95,19 @@ changed, not the "both totems" ruling.
 | Mage Fire | 1057.33 | 1052.82 |
 
 Affliction at 120 / 180 / 300 s: 1004.7 / 1034.4 / 1032.2 -> 1075.5 / 1076.9 / 1064.0. `report_hashes.txt` moved
-for exactly these 12 builds (0df5a14); the item pull moved none.
+for exactly these 12 builds (0df5a14); the item pull moved none. The dot fix (f20d593) then moved the three
+Affliction builds again and the six rogue builds by -0.2 to +0.3. The "after the fix" numbers are 1,000 iterations
+(the fix worker's run of the report requests); the knob gains above were measured before the fix.
+
+## Sim fix found by the full suite: a dot tick after the dot ran out (f20d593)
+
+compsearch `TestReportRaid` failed: Affliction did 6.1 +- 0.3 DPS less in the 20 raid than alone (10,000 iterations).
+Cause: auras expire lazily, at the next pending action, and a dot's CleanUp fired its pending tick whenever it was due
+"now". Wrack's faster ticks move Corruption, Siphon Life and Bane of Agony ticks off the dot's end, so when the solo
+sim's next action was that tick, it landed after the fade ("Corruption faded at 122.10", tick at 122.15). In a raid,
+other players' events processed the expiry on time. `sim/core/aura.go` records `endedAt`; `sim/core/dot.go` CleanUp
+ticks only if the tick was due by then. Raid gap after: +0.2 +- 0.3. Rogues moved slightly from the same ghost tick on
+Deadly Poison after a refresh moved its expiry off the tick grid.
 
 ## Re-optimized builds
 
@@ -115,7 +127,10 @@ for exactly these 12 builds (0df5a14); the item pull moved none.
 Baseline (dbafa63): hunter, mage, priest/healing, priest/shadow, rogue/dps_rogue, warlock/dps and warrior/dps_warrior
 failed from older expected results (the shaman round's list). This round regenerated hunter and warlock/dps, which
 now pass. tools/rotopt `TestWarriorDpsHoldUnderBuff` fails on master's db too (wants Enrage about 165, gets 167.05).
-Full suite after landing: see the end of this file.
+Full suite after landing (`go test --tags=with_db $(go list ./sim/... | grep -v /sim/web)`): mage, priest/healing,
+priest/shadow, rogue/dps_rogue and warrior/dps_warrior fail as on the baseline (TestP1Mage, TestDisc, TestHoly,
+TestP1Shadow, TestCombatSinisterStrike, TestCombatDaggers, TestAssassinationMutilate, TestP1DPSWarrior). compsearch's
+TestReportRaid failed on Affliction, fixed by f20d593. sim/web can't build here (binary_dist missing).
 
 ## Needs a user ruling
 

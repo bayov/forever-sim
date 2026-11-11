@@ -4558,6 +4558,18 @@
      "commits": [
       "5d9ece7"
      ]
+    },
+    {
+     "title": "Sim fix: a damage over time effect no longer ticks once more after it has run out",
+     "kind": "sim",
+     "classes": [
+      "Warlock",
+      "Rogue"
+     ],
+     "note": "It happened when Wrack's faster ticks or a Deadly Poison refresh moved the last tick past the effect's end. Affliction loses about 6 DPS; rogues move by under 0.5.",
+     "commits": [
+      "f20d593"
+     ]
     }
    ],
    "internal": [
