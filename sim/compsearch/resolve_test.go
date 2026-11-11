@@ -81,7 +81,9 @@ func TestResolve(t *testing.T) {
 	if res.Request.Raid.Parties[0].Buffs.ManaTideTotems != 1 || res.Request.Raid.Parties[1].Buffs.ManaTideTotems != 0 {
 		t.Errorf("Mana Tide should reach only the shaman's party")
 	}
-	// Flametongue goes to Enhancement, whose Windfury Weapon makes Windfury Totem useless to it.
+	// Flametongue goes to Enhancement. That was because its Windfury Weapon turned Windfury Totem
+	// off for it, which Blizzard's hotfixes of 2026-11-10 undid; the resolver still gives it
+	// Flametongue.
 	if enh.RaidBuffs.TotemWeaponBuff != proto.TotemWeaponBuff_TotemWeaponBuffFlametongue {
 		t.Errorf("Enhancement's weapon totem: %v", enh.RaidBuffs.TotemWeaponBuff)
 	}

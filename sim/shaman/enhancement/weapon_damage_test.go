@@ -15,8 +15,9 @@ import (
 // speed. Stormstrike uses a fixed speed for the weapon type there (3.6 for a two-hander, 2.7
 // for a one-hander and 1.8 for a dagger), not the weapon's own. Superior Impact adds 9 to the
 // two-hander's damage, and a flat "+N damage" effect like Zandalarian Hero Medallion adds to
-// every hit. Windfury adds its 333 AP at level 60. Stormstrike deals 150% of that weapon damage
-// since the November 2 development notes (the flat bonus stays 1x).
+// every hit. Windfury adds its 333 AP at level 60. Stormstrike deals 100% of that weapon damage
+// since Blizzard's class tuning hotfixes of 2026-11-10 ("Stormstrike damage reduced to 100% weapon
+// damage (was 150%)"; 150% from the November 2 development notes until then).
 //
 // The target has no armor, so a normal hit (not a crit or a glancing blow) deals just that.
 // We check that every normal hit is in its range, and that the rolls reach both ends of it.
@@ -79,7 +80,7 @@ func testWeaponDamage(t *testing.T, item *proto.ItemSpec, weaponMin, weaponMax, 
 	}{
 		{name: "white hit", spell: enh.AutoAttacks.MHAuto(), speed: speed, mult: 1},
 		{name: "Windfury", spell: enh.WindfuryWeaponMH, speed: speed, extraAP: windfuryAP, mult: 1},
-		{name: "Stormstrike", spell: enh.Stormstrike, speed: stormstrikeSpeed, mult: 1.5},
+		{name: "Stormstrike", spell: enh.Stormstrike, speed: stormstrikeSpeed, mult: 1},
 	}
 	for i := range attacks {
 		attacks[i].min, attacks[i].max = 1, 0

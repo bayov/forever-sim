@@ -650,8 +650,8 @@ func TestRaidForeverCastFuriousHowl(t *testing.T) {
 // The weapon totem per receiver: a receiver takes one of Windfury and Flametongue Totem, the
 // last one placed (the user saw them replace each other on the beta, 2026-11-08). That goes for
 // everyone: a rogue, a mage it does nothing for, the Elemental shaman who dropped Windfury and
-// the Enhancement shaman whose Windfury Weapon turns Windfury Totem off. When Windfury Totem
-// goes, everyone takes Flametongue.
+// the Enhancement shaman with Windfury Weapon (since Blizzard's hotfixes of 2026-11-10 it gets
+// both procs). When Windfury Totem goes, everyone takes Flametongue.
 func TestRaidForeverWeaponTotems(t *testing.T) {
 	const windfury, flametongue = "Windfury Totem (Rank 3)", "Flametongue Totem (Rank 4)"
 	for _, windfuryFirst := range []bool{true, false} {

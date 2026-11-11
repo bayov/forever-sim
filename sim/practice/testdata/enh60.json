@@ -212,7 +212,7 @@
                   }
                 },
                 {
-                  "notes": "Windfury Weapon turns its buff off for the shaman.",
+                  "notes": "Since Blizzard's hotfixes of 2026-11-10 its buff procs next to Windfury Weapon for the shaman too.",
                   "action": {
                     "condition": {
                       "and": {

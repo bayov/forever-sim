@@ -12,10 +12,12 @@ import (
 //
 // The weapon holds one Windfury or Flametongue Totem buff, next to its permanent enchant, our
 // imbue and an oil or stone. The last weapon totem placed holds the slot (the user saw the two
-// totems replace each other on the beta, 2026-11-08). Windfury Weapon on the main hand turns
-// Windfury Totem off for us, from our totem or another shaman's, as its tooltip says, but our
-// Windfury Totem still takes the slot. When the totem in the slot goes, our other weapon totem
-// takes the slot back if it still stands, and else another shaman's totem from the raid buffs.
+// totems replace each other on the beta, 2026-11-08). Since Blizzard's class tuning hotfixes of
+// 2026-11-10 ("Weapon imbues and Weapon totems can now be used at the same time") Windfury Totem
+// procs next to Windfury Weapon on the main hand too, as often as next to Rockbiter: 20% of 100
+// landed white hits 2 sec apart, so about 20 (we want 5 to 40). Before it Windfury Weapon turned
+// the totem off. When the totem in the slot goes, our other weapon totem takes the slot back if
+// it still stands, and else another shaman's totem from the raid buffs.
 func TestOrcShamanWeaponTotemSlot(t *testing.T) {
 	const (
 		ownWindfury    = "Windfury Totem (Rank 3)"
@@ -65,11 +67,10 @@ func TestOrcShamanWeaponTotemSlot(t *testing.T) {
 		runSim(sim)
 		return procs
 	}
-	if procs := windfuryTotemProcs(proto.WeaponImbue_WindfuryWeapon); procs != 0 {
-		t.Errorf("Windfury Totem procced %d times with Windfury Weapon on the main hand", procs)
-	}
-	if procs := windfuryTotemProcs(proto.WeaponImbue_RockbiterWeapon); procs < 5 {
-		t.Errorf("Windfury Totem procced %d times in 100 hits with Rockbiter, want about 20", procs)
+	for _, imbue := range []proto.WeaponImbue{proto.WeaponImbue_WindfuryWeapon, proto.WeaponImbue_RockbiterWeapon} {
+		if procs := windfuryTotemProcs(imbue); procs < 5 || procs > 40 {
+			t.Errorf("Windfury Totem procced %d times in 100 hits with %s, want about 20", procs, imbue)
+		}
 	}
 
 	// Our Flametongue Totem takes the slot from another shaman's Windfury Totem, and gives it
@@ -99,8 +100,8 @@ func TestOrcShamanWeaponTotemSlot(t *testing.T) {
 	})
 	runSim(sim)
 
-	// With Windfury Weapon on, our Windfury Totem for the group still takes the slot from our
-	// Flametongue Totem, and gives us nothing. Flametongue Totem put down again takes it back.
+	// With Windfury Weapon on, our Windfury Totem takes the slot from our Flametongue Totem, and
+	// Flametongue Totem put down again takes it back.
 	sim, enh = start(proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone)
 	at(sim, 1, func(sim *core.Simulation) {
 		place(sim, enh, topRank(t, "Flametongue Totem", enh.FlametongueTotem))

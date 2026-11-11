@@ -55,7 +55,8 @@ func TestOrcShamanElementalFury(t *testing.T) {
 			t.Errorf("Elemental Fury %d: Stormstrike crits for %.2f times a hit, want 2", points, meleeCrit)
 		}
 
-		// Flametongue Weapon would keep Flametongue Totem off the weapon.
+		// Frostbrand Weapon next to Flametongue Totem, so we check both. Flametongue Weapon turned the
+		// totem off until Blizzard's hotfixes of 2026-11-10.
 		_, enh = weaponSim{level: 60, talents: talents, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_FrostbrandWeapon, totem: proto.TotemWeaponBuff_TotemWeaponBuffFlametongue, seconds: 10}.start()
 		check(enh, "Frostbrand Weapon", lastSpell(enh, shaman.FrostbrandWeaponSpellId[:], 0), spellCrit)
 		check(enh, "Flametongue Totem", lastSpell(enh, core.FlametongueTotemProcSpellId[:], 0), 1.5)

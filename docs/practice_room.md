@@ -365,14 +365,13 @@ spellbook shows all of it. Each spell falls in one of three kinds:
    - At build time it registers the three imbues the settings didn't pick (`Register*Imbue`). Registering the picked
      one again would panic (`aura.go:485`).
    - After each `Reset` it turns off every imbue aura but the active one.
-   - On a swap it sets the main hand's `TempEnchant` to the new imbue's enchant, which the core reads on every hit to
-     decide whether an imbue blocks a totem's weapon buff (`totem_weapon_buffs.go:46`). It sets `ShamanImbue` and the
-     imbue's proc mask.
+   - On a swap it sets the main hand's `TempEnchant` to the new imbue's enchant, sets `ShamanImbue` and the imbue's
+     proc mask. (Until Blizzard's hotfixes of 2026-11-10 the core read `TempEnchant` on every hit to let Windfury
+     Weapon turn Windfury Totem's buff off, and Flametongue Weapon Flametongue Totem's; now both work together.)
    - Rockbiter's attack power is added to the weapon's stats when the character is built (`rockbiter_weapon.go:92`),
      so it can't be turned off later. The hook moves it onto Rockbiter's aura as a dynamic stat.
-   - After a swap it makes each of your weapon totems still standing pick its buff again. Without that, swapping to
-     Windfury Weapon under your own Windfury Totem would leave the raid's Flametongue Totem buff off, and swapping
-     away would never bring the totem's buff up (`shaman.go:92`, `totem_weapon_buffs.go:204`).
+   - After a swap it makes each of your weapon totems still standing pick its buff again (`shaman.go:92`,
+     `totem_weapon_buffs.go`), so the last weapon totem placed keeps the slot.
 
    You enter the room with the settings' imbue up. Casting an imbue, at any time, replaces it with the game's GCD,
    mana cost and cast. Imbues go on the main hand, the only hand the sim models for shaman imbues (`shaman.go:78`).

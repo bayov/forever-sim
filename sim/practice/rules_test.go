@@ -650,27 +650,28 @@ func TestImbueSwaps(t *testing.T) {
 		t.Fatalf("attack power %.0f after swapping away from Rockbiter, %.0f before", got, ap)
 	}
 
-	// Our own Windfury Totem under Windfury Weapon: its buff stays off, and the raid's
-	// Flametongue Totem buff stays on. Swapping to Flametongue Weapon turns it around.
+	// Our own Windfury Totem takes the weapon's totem slot from the raid's Flametongue Totem (the
+	// last weapon totem placed holds it, the beta 2026-11-08), and its buff is up under Windfury
+	// Weapon too, since Blizzard's hotfixes of 2026-11-10 let an imbue and a weapon totem work
+	// together. Swapping the imbue leaves the slot as it is.
+	ownWindfuryTotem := func(after string) {
+		t.Helper()
+		if wfTotem := activeAura(r, "Windfury Totem"); wfTotem == nil || strings.Contains(wfTotem.Label, "Raid") {
+			t.Fatalf("our Windfury Totem's buff isn't up %s", after)
+		}
+		if activeAura(r, "Flametongue Totem Raid") != nil {
+			t.Fatalf("the raid's Flametongue Totem buff is up next to our Windfury Totem's %s", after)
+		}
+	}
 	d.wait(2 * time.Second)
 	d.mustCast(windfuryTotem)
-	if activeAura(r, "Flametongue Totem Raid") == nil {
-		t.Fatal("the raid's Flametongue Totem buff went with Windfury Weapon on")
-	}
+	ownWindfuryTotem("with Windfury Weapon on")
 	d.wait(2 * time.Second)
 	d.mustCast(imbueSpell(proto.WeaponImbue_FlametongueWeapon))
-	wfTotem := activeAura(r, "Windfury Totem")
-	if wfTotem == nil || strings.Contains(wfTotem.Label, "Raid") {
-		t.Fatal("our Windfury Totem's buff didn't come up after swapping to Flametongue Weapon")
-	}
-	if activeAura(r, "Flametongue Totem Raid") != nil {
-		t.Fatal("the raid's Flametongue Totem buff stayed next to our Windfury Totem's")
-	}
+	ownWindfuryTotem("after swapping to Flametongue Weapon")
 	d.wait(2 * time.Second)
 	d.mustCast(imbueSpell(proto.WeaponImbue_WindfuryWeapon))
-	if activeAura(r, "Flametongue Totem Raid") == nil {
-		t.Fatal("the raid's Flametongue Totem buff didn't come back with Windfury Weapon")
-	}
+	ownWindfuryTotem("after swapping back to Windfury Weapon")
 
 	// During the fight too.
 	d.wait(2 * time.Second)

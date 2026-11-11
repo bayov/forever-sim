@@ -22,15 +22,16 @@ func TestOrcShamanFrostbrandWeapon(t *testing.T) {
 	t.Run("damage", testFrostbrandWeaponDamage)
 }
 
-// We swing for 2 hours at a level 32 target with Rage of the Storm (3.2 speed, 48% a hit) and
-// Bloody Brass Knuckles (1.6 speed, 24% a hit). Each one's rate is then within 4 standard errors
-// (4.7% and 2.8%) of its chance, unless the sim is off. A flat chance would fail one of them.
+// We swing for 2 hours at a level 32 target with Rage of the Storm (3.6 speed since Blizzard's
+// hotfixes of 2026-11-10, 54% a hit) and Bloody Brass Knuckles (1.6 speed, 24% a hit). Each one's
+// rate is then within 4 standard errors (4.8% and 2.8%) of its chance, unless the sim is off. A
+// flat chance would fail one of them.
 func testFrostbrandWeaponProcs(t *testing.T) {
 	weapons := []struct {
 		name  string
 		id    int32
 		speed float64
-	}{{"Rage of the Storm", 280604, 3.2}, {"Bloody Brass Knuckles", 7683, 1.6}}
+	}{{"Rage of the Storm", 280604, 3.6}, {"Bloody Brass Knuckles", 7683, 1.6}}
 	for _, w := range weapons {
 		sim, enh := weaponSim{level: 30, weapon: &proto.ItemSpec{Id: w.id}, imbue: proto.WeaponImbue_FrostbrandWeapon, seconds: 7200}.start()
 		sim.PrePull()

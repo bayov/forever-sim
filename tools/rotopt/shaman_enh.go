@@ -50,11 +50,10 @@ var (
 func (shamanEnh) Knobs() []Knob {
 	return []Knob{
 		{Name: "strengthOfEarth", Default: 1, Min: 0, Max: 1, Step: 1},
-		// 0 none, 1 Grace of Air, 2 Windfury Totem. Windfury Weapon on the main hand turns
-		// Windfury Totem's buff off for the shaman. It shares the weapon's totem slot with
-		// Flametongue Totem's, and the one placed last holds it, for us and the group, even
-		// when our imbue turns it off for us. The raid buffs already give Grace of Air when
-		// a second shaman is set.
+		// 0 none, 1 Grace of Air, 2 Windfury Totem. Since Blizzard's 2026-11-10 hotfixes it
+		// works next to our own Windfury Weapon, and both can proc. It shares the weapon's
+		// totem slot with Flametongue Totem's, and the one placed last holds it, for us and the
+		// group. The raid buffs already give Grace of Air when a second shaman is set.
 		{Name: "airTotem", Default: 1, Min: 0, Max: 2, Step: 1},
 		// 0 none, 1 Mana Spring Totem (from level 26).
 		{Name: "waterTotem", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -180,7 +179,7 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	case 1:
 		totem(graceOfAir, graceOfAir, "Grace of Air Totem whenever it is down.")
 	case 2:
-		totem(windfuryTotem, windfuryTotemAura, "Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman.")
+		totem(windfuryTotem, windfuryTotemAura, "Windfury Totem whenever it is down.")
 	}
 	if k["manaTideMana"] > 0 {
 		items = append(items, cast(manaTideTotem, le(currentManaPercent(), num(k["manaTideMana"]/100)),
@@ -214,7 +213,7 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	case 2:
 		fireTotem(magmaTotem, "Magma Totem whenever it is down, unless the fight is about to end.")
 	case 3:
-		fireTotem(flametongueTotem, "Flametongue Totem whenever it is down. Flametongue Weapon turns its buff off for the shaman.")
+		fireTotem(flametongueTotem, "Flametongue Totem whenever it is down.")
 	}
 
 	holdFor := func(spell *proto.ActionID, anchor *proto.ActionID, hold bool) value {

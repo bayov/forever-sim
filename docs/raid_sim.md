@@ -1807,7 +1807,8 @@ below) and one Go call, `RunComp`, which resolves a comp into a `RaidSimRequest`
   - Every receiver of a raid-wide shout adds its threat, so a shout makes far more threat than the old
     party shout.
   - A receiver of both weapon totems takes the last one dropped (the user saw them replace each other on
-    the beta, 2026-11-08), even when its imbue turns that one off. Until then it took the one it dropped
+    the beta, 2026-11-08), whatever its imbue (since Blizzard's hotfixes of 2026-11-10 no imbue turns a
+    totem buff off: Windfury Weapon and Windfury Totem both proc). Until then it took the one it dropped
     itself, then another shaman's Windfury over Flametongue. The resolver still gives Enhancement
     Flametongue and the others Windfury, which the beta result rules out: to fix with the next drops
     table.

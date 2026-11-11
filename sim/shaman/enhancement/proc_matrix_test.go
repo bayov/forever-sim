@@ -26,8 +26,12 @@ const (
 // ruling of 2026-11-08, see WindfuryTotemBuffAura), and Windfury Weapon's attacks never proc
 // Flametongue Totem. Misses,
 // dodges, parries, spells, totem attacks, Lightning Shield orbs and the Flametongue and
-// Frostbrand damage never trigger them. Flametongue Weapon blocks Flametongue Totem, and a
-// Windfury proc's two attacks can't proc Windfury again, because of its 1.5 sec cooldown.
+// Frostbrand damage never trigger them. A Windfury proc's two attacks can't proc Windfury
+// again, because of its 1.5 sec cooldown.
+//
+// Since Blizzard's class tuning hotfixes of 2026-11-10 ("Weapon imbues and Weapon totems can now
+// be used at the same time", "a chance to activate both") Flametongue Weapon no longer turns
+// Flametongue Totem off, nor Windfury Weapon Windfury Totem: a white hit procs both of each pair.
 //
 // We force each outcome and roll each attack 60 times, 2 sec apart so that the cooldowns are
 // always ready. A proc that can trigger shows up in 60 rolls (Windfury's 20% misses all 60
@@ -46,12 +50,14 @@ func TestOrcShamanImbueProcs(t *testing.T) {
 		{"Windfury Weapon and Flametongue Totem", 30, whirlwind, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffFlametongue,
 			"Windfury Imbue", []string{windfuryWeapon, flametongueTotem}, []string{windfuryWeapon}},
 		{"Flametongue Weapon and Flametongue Totem", 30, whirlwind, proto.WeaponImbue_FlametongueWeapon, proto.TotemWeaponBuff_TotemWeaponBuffFlametongue,
-			"Flametongue Imbue", []string{flametongueWeapon}, []string{flametongueWeapon}},
+			"Flametongue Imbue", []string{flametongueWeapon, flametongueTotem}, []string{flametongueWeapon}},
 		{"Frostbrand", 30, whirlwind, proto.WeaponImbue_FrostbrandWeapon, proto.TotemWeaponBuff_TotemWeaponBuffNone,
 			"Frostbrand Imbue", []string{frostbrand}, []string{frostbrand}},
 		// Windfury Totem needs level 32.
 		{"Flametongue Weapon and Windfury Totem", 60, darkEdge, proto.WeaponImbue_FlametongueWeapon, proto.TotemWeaponBuff_TotemWeaponBuffWindfury,
 			"Flametongue Imbue", []string{flametongueWeapon, windfuryTotem}, []string{flametongueWeapon}},
+		{"Windfury Weapon and Windfury Totem", 60, darkEdge, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffWindfury,
+			"Windfury Imbue", []string{windfuryWeapon, windfuryTotem}, []string{windfuryWeapon}},
 	}
 	for _, setup := range setups {
 		t.Run(setup.name, func(t *testing.T) {

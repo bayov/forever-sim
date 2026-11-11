@@ -174,9 +174,9 @@ func TestForeverWardenTalents(t *testing.T) {
 			}, true, 1 / (0.9 * 0.9 * 0.9), 1e-9},
 		{"Elemental Weapons 3/3: Rockbiter's 653 attack power 20% more", treeEnhancement, elementalWeapons, 0,
 			stat(stats.AttackPower), false, -653 * 0.2, 0.01},
-		{"Mental Dexterity 3/3: attack power from 150% of Intellect (the November 2 notes)", treeEnhancement, mentalDexterity, 0,
+		{"Mental Dexterity 3/3: attack power from 100% of Intellect (Blizzard's 2026-11-10 hotfixes, was 150%)", treeEnhancement, mentalDexterity, 0,
 			func(_ *testing.T, _ *core.Simulation, w *WardenShaman) float64 {
-				return w.GetStat(stats.AttackPower) - []float64{0, .5, 1, 1.5}[w.Talents.MentalDexterity]*w.GetStat(stats.Intellect)
+				return w.GetStat(stats.AttackPower) - []float64{0, .33, .66, 1}[w.Talents.MentalDexterity]*w.GetStat(stats.Intellect)
 			}, false, 0, 0.01},
 		{"Mental Quickness 2/2: spell power from 30% of Intellect", treeEnhancement, mentalQuickness, 2,
 			func(_ *testing.T, _ *core.Simulation, w *WardenShaman) float64 {
@@ -276,7 +276,8 @@ func TestForeverWardenRockbiterThreat(t *testing.T) {
 
 // TestForeverWardenAbilities checks the tank abilities' client rows (70753): Earth Shock rank 7 (10414,
 // 450 mana, the shocks' 6 sec shared cooldown less Reverberation, the 1.5 sec GCD), Stormstrike (17364,
-// 8% of base mana; 6 sec by the November 2 notes, the client's 8 sec before), Lightning Shield rank 7 (10432, 370 mana, 3 orbs, 10 min, an orb at most
+// 8% of base mana; 8 sec since Blizzard's class tuning hotfixes of 2026-11-10, 6 sec by the November 2
+// notes until then), Lightning Shield rank 7 (10432, 370 mana, 3 orbs, 10 min, an orb at most
 // every 3.5 sec at whoever hits us), and Stoneskin Totem rank 6 (10408, 210 mana, 5 min, 30 off each
 // physical hit before armor, 36 with Guardian Totems 2/2).
 func TestForeverWardenAbilities(t *testing.T) {
@@ -296,8 +297,8 @@ func TestForeverWardenAbilities(t *testing.T) {
 	}
 
 	castNow(t, sim, w, w.Stormstrike)
-	if got := w.Stormstrike.CD.TimeToReady(sim); got != 6*time.Second {
-		t.Errorf("Stormstrike is ready in %s, want 6s (the November 2 notes)", got)
+	if got := w.Stormstrike.CD.TimeToReady(sim); got != 8*time.Second {
+		t.Errorf("Stormstrike is ready in %s, want 8s (Blizzard's 2026-11-10 hotfixes)", got)
 	}
 	near(t, "Stormstrike's cost", w.Stormstrike.Cost.GetCurrentCost(), 0.08*w.BaseMana, 1e-9)
 

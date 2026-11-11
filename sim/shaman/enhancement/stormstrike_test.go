@@ -64,9 +64,10 @@ func TestOrcShamanStormstrikeOutcomes(t *testing.T) {
 			if spent, want := mana-enh.CurrentMana(), .08*enh.BaseMana; math.Abs(spent-want) > 1e-9 {
 				t.Fatalf("a %s cost %.1f mana, want %.1f", o, spent, want)
 			}
-			// 6 sec since the November 2 development notes (8 before).
-			if readyAt := enh.Stormstrike.CD.ReadyAt(); readyAt != sim.CurrentTime+6*time.Second {
-				t.Fatalf("after a %s the cooldown ends at %s, want %s", o, readyAt, sim.CurrentTime+6*time.Second)
+			// 8 sec since Blizzard's class tuning hotfixes of 2026-11-10 ("cooldown increased to 8
+			// seconds (was 6 seconds)"); 6 sec from the November 2 development notes until then.
+			if readyAt := enh.Stormstrike.CD.ReadyAt(); readyAt != sim.CurrentTime+8*time.Second {
+				t.Fatalf("after a %s the cooldown ends at %s, want %s", o, readyAt, sim.CurrentTime+8*time.Second)
 			}
 			if mark.IsActive() != landed[o] {
 				t.Fatalf("a %s leaves the mark up: %t, want %t", o, mark.IsActive(), landed[o])

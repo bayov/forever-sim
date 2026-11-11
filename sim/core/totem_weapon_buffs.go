@@ -13,18 +13,17 @@ import (
 //   - the shaman's own imbue (Windfury, Rockbiter, Flametongue or Frostbrand Weapon),
 //   - an oil or a stone.
 //
-// They work together, except that the shaman's imbue turns off the totem buff of the same
-// kind. Windfury Weapon's tooltip says "When applied to main hand, disables any benefit
-// you personally receive from Windfury Totem", and Flametongue Weapon says the same about
-// Flametongue Totem. So Windfury Weapon works next to Flametongue Totem, and Flametongue
-// or Rockbiter Weapon next to Windfury Totem, but Windfury Weapon with Windfury Totem only
-// gives the weapon's procs.
+// They work together. Until Blizzard's hotfixes of 2026-11-10 the shaman's imbue turned off
+// the totem buff of the same kind (Windfury Weapon's tooltip: "When applied to main hand,
+// disables any benefit you personally receive from Windfury Totem", and Flametongue Weapon the
+// same about Flametongue Totem). Since then "Weapon imbues and Weapon totems can now be used at
+// the same time", so Windfury Weapon with Windfury Totem gives both procs, each with its own
+// chance and cooldown (report assumption wf_weapon_totem_icd), and Flametongue Weapon with
+// Flametongue Totem both hits.
 //
 // Windfury Totem and Flametongue Totem don't stack: the one placed last takes hold (the user
 // saw it on the beta, 2026-11-08). That holds for everyone in reach, so a group that gets
-// Windfury Totem can't also have Flametongue Totem. It holds for a shaman whose imbue turns
-// the last one off too: we take it that the buff still lands and does nothing (an assumption,
-// see notes.md).
+// Windfury Totem can't also have Flametongue Totem, whatever their imbues.
 //
 // This file has the totem buffs. The raid buffs give them for another shaman's totem, and
 // the shaman package uses the same auras for the shaman's own totems.
@@ -176,8 +175,7 @@ func (slot *totemWeaponSlot) standingIndex(aura *Aura) int {
 
 // HoldTotemWeaponBuff is the buff of caster's weapon totem coming up on us, placed or put
 // down again. It takes the slot from the buff that held it, since the last weapon totem placed
-// takes hold. A buff our imbue turns off takes it too, and does nothing
-// for us then (both totem buff auras check the imbue on every hit).
+// takes hold, whatever our imbue.
 func (character *Character) HoldTotemWeaponBuff(sim *Simulation, aura *Aura, caster *Unit) {
 	slot := &character.totemWeaponSlot
 	standing := standingTotemWeaponBuff{aura: aura}

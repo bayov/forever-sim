@@ -149,8 +149,14 @@ func TestOrcShamanRelics(t *testing.T) {
 			runSim(sim)
 			want := 0.0
 			if c.half {
-				// Under Forever every landed melee hit gives a stack, so a bolt gives one half the time.
-				want = .5
+				// Since Blizzard's class tuning hotfixes of 2026-11-10 a white swing gives a stack
+				// at (5 + rank) PPM by main hand speed (10 PPM at 5/5), so a bolt rolls half of
+				// that: 0.5 * 10 * 3.5 / 60 = 29.2% with Dark Edge of Insanity. It was 50% when
+				// every landed melee hit gave a stack.
+				if speed := enh.MainHand().SwingSpeed; speed != 3.5 {
+					t.Fatalf("the main hand swings every %.2f sec, want 3.5", speed)
+				}
+				want = .5 * 10 * 3.5 / 60
 			}
 			rate := float64(stacks) / bolts
 			if se := math.Sqrt(want * (1 - want) / bolts); math.Abs(rate-want) > 4*se+1e-9 {

@@ -13,16 +13,18 @@ import (
 // TestOrcShamanMentalDexterity checks the attack power Mental Dexterity gives (shaman_audit.md
 // 8.21).
 //
-// 1, 2 and 3 points give attack power equal to 50, 100 and 150% of our Intellect since the
-// November 2 development notes (33, 67 and 100% in the client, 415140). It follows Intellect we
-// gain mid-fight. On the beta 3 more Intellect gave 3 more attack power at 3/3 (at 100%).
+// 1, 2 and 3 points give attack power equal to 33, 66 and 100% of our Intellect since Blizzard's
+// class tuning hotfixes of 2026-11-10 ("Intellect to Attack Power conversion ratio reduced to
+// 33/66/100% (was 50/100/150%)"). The client's 415140 has 33, 67 and 100%; we take the post's 66.
+// It follows Intellect we gain mid-fight: 10 Intellect gives 10 attack power at 3/3. On the beta
+// 3 more Intellect gave 3 more attack power at 3/3 (at 100%).
 func TestOrcShamanMentalDexterity(t *testing.T) {
 	ap := func(points int) (*core.Simulation, *EnhancementShaman) {
 		// Mental Dexterity is the fifth Enhancement talent.
 		return newShamanSim(newOrcShaman(30, fmt.Sprintf("-0000%d", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 2)
 	}
 	_, none := ap(0)
-	for points, share := range []float64{0, .5, 1, 1.5} {
+	for points, share := range []float64{0, .33, .66, 1} {
 		sim, enh := ap(points)
 		if enh.Talents.MentalDexterity != int32(points) {
 			t.Fatalf("got Mental Dexterity %d, want %d", enh.Talents.MentalDexterity, points)
@@ -37,8 +39,8 @@ func TestOrcShamanMentalDexterity(t *testing.T) {
 		at(sim, 1, func(sim *core.Simulation) {
 			before := enh.GetStat(stats.AttackPower)
 			enh.AddStatDynamic(sim, stats.Intellect, 10)
-			if got := enh.GetStat(stats.AttackPower) - before; math.Abs(got-15) > 1e-9 {
-				t.Errorf("10 Intellect mid-fight gave %.2f attack power at 3/3, want 15", got)
+			if got := enh.GetStat(stats.AttackPower) - before; math.Abs(got-10) > 1e-9 {
+				t.Errorf("10 Intellect mid-fight gave %.2f attack power at 3/3, want 10", got)
 			}
 		})
 		runSim(sim)
