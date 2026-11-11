@@ -295,51 +295,97 @@ func (warlock *Warlock) applyShadowMastery() {
 	})
 }
 
-// Wrack makes Corruption and Bane of Agony deal 10% more while it is channelled on the target.
+// Wrack (hotfix 113766, SpellEffect 1349557: aura 4, value 100): while it is channelled on the
+// target, the warlock's Corruption, Siphon Life and Bane of Agony there tick 100% faster, and each
+// still lasts its full duration ("Wrack speeds up how often your periodic effects deal damage, not
+// how long they last"), so they get extra ticks. The developers' note sets the timing: "the time it
+// skips is kept after Wrack's channel ends or is interrupted. ... if you channel Wrack for 1 second
+// during a 3-second Corruption tick, Corruption advances 2 seconds instead of 1, so its next tick
+// lands 1 second later instead of 2."
+//
+// Our model (to check against a log):
+//   - The tick timer runs at double speed for exactly as long as Wrack's channel aura is up, from
+//     the cast to the last tick, an early stop or interruption, a clip or a pushback that shortens
+//     it. The share of the current tick that has passed is kept at each change (Dot.SetTickPeriod).
+//   - A dot cast or refreshed on the target mid-channel starts at the fast speed. A refresh starts
+//     a new tick timer, as it does without Wrack.
+//   - The dot still ends at its usual time. Progress towards a tick it has not reached then is lost
+//     (no partial tick), so a short overlap gains a tick only when it carries one over the line.
+//   - Wrack's own ticks are unaffected, and the ticks deal their usual damage.
+//   - Bane of Agony's damage still steps up every 4 ticks but stops at the last step (150%); ticks
+//     past its 12th stay there.
 func (warlock *Warlock) applyWrack() {
 	if !warlock.Talents.Wrack {
 		return
 	}
 
-	warlock.targetDamageModifiers = append(warlock.targetDamageModifiers, func(spell *core.Spell, target *core.Unit) float64 {
-		if (spell.SpellCode == SpellCode_WarlockCorruption || spell.SpellCode == SpellCode_WarlockBaneOfAgony) && warlock.wrackActive(target) {
-			return 1.1
+	var sped []*core.Spell
+	setSpeed := func(sim *core.Simulation, dot *core.Dot, fast bool) {
+		if fast {
+			dot.SetTickPeriod(sim, dot.TickLength/2)
+		} else {
+			dot.SetTickPeriod(sim, dot.TickLength)
 		}
-		return 1
+	}
+
+	warlock.onSpellCodes([]int32{SpellCode_WarlockCorruption, SpellCode_WarlockSiphonLife, SpellCode_WarlockBaneOfAgony}, func(spell *core.Spell) {
+		sped = append(sped, spell)
+		for _, dot := range spell.Dots() {
+			if dot == nil {
+				continue
+			}
+			dot.ApplyOnGain(func(aura *core.Aura, sim *core.Simulation) {
+				if warlock.wrackActive(aura.Unit) {
+					setSpeed(sim, dot, true)
+				}
+			})
+		}
+	})
+
+	warlock.onSpellCodes([]int32{SpellCode_WarlockWrack}, func(wrack *core.Spell) {
+		for _, wrackDot := range wrack.Dots() {
+			if wrackDot == nil {
+				continue
+			}
+			for _, fast := range []bool{true, false} {
+				onChange := func(aura *core.Aura, sim *core.Simulation) {
+					for _, spell := range sped {
+						if dot := spell.Dot(aura.Unit); dot != nil && dot.IsActive() {
+							setSpeed(sim, dot, fast)
+						}
+					}
+				}
+				if fast {
+					wrackDot.ApplyOnGain(onChange)
+				} else {
+					wrackDot.ApplyOnExpire(onChange)
+				}
+			}
+		}
 	})
 }
 
-// soulSiphonMultiplier is Soul Siphon on the drains: 4% a point for each of the warlock's
-// other Affliction effects on the target, up to 3 of them. We count Corruption, the bane,
-// Siphon Life and the curse. The client leaves the count to the server, so which effects
-// count is our reading of the tooltip. It is a dummy row, not a percent modifier, and we multiply
-// it with the drains' other bonuses.
+// soulSiphonMultiplier is Soul Siphon on Drain Life, Drain Soul and Wrack: 4% a point for each of
+// the warlock's Corruption, Siphon Life and Bane of Agony on the target, up to 36% at 3/3 (the
+// 2026-11-10 notes: "per each of your Corruption, Siphon Life, and Bane of Agony spells active on
+// the target", was any Affliction spell). The client leaves the count to the server. It is a dummy
+// row, not a percent modifier, and we multiply it with the drains' other bonuses.
 func (warlock *Warlock) soulSiphonMultiplier(target *core.Unit) float64 {
 	if warlock.Talents.SoulSiphon == 0 {
 		return 1
 	}
 
 	effects := 0
-	for _, spell := range warlock.Corruption {
-		if spell.Dot(target).IsActive() {
-			effects++
-			break
+	for _, spells := range [][]*core.Spell{warlock.Corruption, warlock.SiphonLife, warlock.BaneOfAgony} {
+		for _, spell := range spells {
+			if spell.Dot(target).IsActive() {
+				effects++
+				break
+			}
 		}
-	}
-	if aura := warlock.ActiveBaneAura.Get(target); aura != nil && aura.IsActive() {
-		effects++
-	}
-	for _, spell := range warlock.SiphonLife {
-		if spell.Dot(target).IsActive() {
-			effects++
-			break
-		}
-	}
-	if aura := warlock.ActiveCurseAura.Get(target); aura != nil && aura.IsActive() {
-		effects++
 	}
 
-	return 1 + 0.04*float64(warlock.Talents.SoulSiphon)*float64(min(effects, 3))
+	return 1 + 0.04*float64(warlock.Talents.SoulSiphon)*float64(effects)
 }
 
 ///////////////////////////////////////////////////////////////////////////
