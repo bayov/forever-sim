@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "9eef440fb2dc9321c76716e627c972c262590623"
+  "master": "e1a0edacc7c764a6a7ef1421a928db0f4774939f"
  },
  "last_pass_at": "2026-11-10T13:11:07Z",
  "pass": 58,
  "result": "quiet",
  "note": "Pass 58: bcc5d6cd4 Maelstrom Weapon stacks on every landed melee hit (Forever), FT rank 5 cut (level 47, not L60). Enh baseline -2.6..+1.4, rest unchanged. LB gate 5 holds (4: -29, 3: -72), LB above FS +0.3, above SS -2.4. No new findings; 20261105-1 and 20261109-1 still open, not landed.",
  "client_build": "1.60.1.70753",
- "checked_at": "2026-11-11T00:48:25Z",
+ "checked_at": "2026-11-11T06:44:48Z",
  "baseline": "baseline_ca5e35c_3000it_seed424242.tsv"
 }
