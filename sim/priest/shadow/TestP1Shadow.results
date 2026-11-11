@@ -163,9 +163,9 @@ dps_results: {
 dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 941.58083
-  tps: 677.2778
-  dtps: 2.009
+  dps: 983.55467
+  tps: 706.86732
+  dtps: 2.02283
  }
 }
 dps_results: {

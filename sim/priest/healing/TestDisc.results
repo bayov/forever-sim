@@ -114,9 +114,9 @@ dps_results: {
 dps_results: {
  key: "TestDisc-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  tps: 50.57158
-  dtps: 111.53933
-  hps: 109.00233
+  tps: 50.84177
+  dtps: 111.524
+  hps: 109.55695
  }
 }
 dps_results: {
