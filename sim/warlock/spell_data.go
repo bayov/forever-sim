@@ -153,9 +153,12 @@ var lifeTapRanks = []spellRank{
 	{SpellID: 11689, Level: 56, MaxLevel: 66, Base: 420, PerLevel: 1, Variance: 0, Coef: 0, Cost: 0, CastMs: 0},
 }
 
+// Imp Firebolt rank 1 takes server hotfix 113766 (build 1.60.1.70888, SpellEffect 681913: base 6,
+// variance 0.333, 0.3 a level; 6 to 8 at its top level 5, was 4 to 5). The 2026-11-10 notes raise
+// ranks 2 to 4 too, with no numbers and no server row yet: they keep the client's.
 var impFireboltRanks = []spellRank{
 	{},
-	{SpellID: 3110, Level: 1, MaxLevel: 5, Base: 4, PerLevel: 0.1, Variance: 0.2857, Coef: 0.164, Cost: 10, CastMs: 2000},
+	{SpellID: 3110, Level: 1, MaxLevel: 5, Base: 6, PerLevel: 0.3, Variance: 0.333, Coef: 0.164, Cost: 10, CastMs: 2000},
 	{SpellID: 7799, Level: 8, MaxLevel: 13, Base: 7, PerLevel: 0.2, Variance: 0.1538, Coef: 0.314, Cost: 20, CastMs: 2000},
 	{SpellID: 7800, Level: 18, MaxLevel: 23, Base: 12, PerLevel: 0.3, Variance: 0.1667, Coef: 0.529, Cost: 35, CastMs: 2000},
 	{SpellID: 7801, Level: 28, MaxLevel: 33, Base: 17, PerLevel: 0.3, Variance: 0.1143, Coef: 0.571, Cost: 50, CastMs: 2000},
