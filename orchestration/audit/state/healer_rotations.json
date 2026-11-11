@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "e1a0edacc7c764a6a7ef1421a928db0f4774939f"
+  "master": "27d0d59d67c3b6b68431b80b79a33316760ac913"
  },
  "last_pass_at": "2026-11-10T13:20:00Z",
  "pass": 6,
@@ -8,5 +8,5 @@
  "note": "Pass 6 on ca5e35c3f. Changes: Enhancement-only (Maelstrom Weapon every hit, Flametongue rank 5 cut) and enchants 41/66; none in healer requests. All 63 rows byte-identical to ref. -2 and -3 still open. baseline.sh rewritten a fourth time: commit tools/audit/healer_rotations/.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-11T06:44:48Z"
+ "checked_at": "2026-11-11T12:44:53Z"
 }

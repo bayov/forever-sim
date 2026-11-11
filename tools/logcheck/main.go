@@ -186,7 +186,7 @@ func main() {
 	logTallies := tallyLog(cl)
 	for _, p := range plans(cl) {
 		for _, step := range steps {
-			p.buffs = append(p.buffs, timedStats{at: step.at, stats: tables.buffTotal(step.ids, char.unbuffed, char.campChair)})
+			p.buffs = append(p.buffs, timedStats{at: step.at, stats: tables.buffTotal(step.ids, char.unbuffed, char.camp)})
 		}
 		simTallies, stats := replay(char.player, p, *iterations)
 		r.level(p, logTallies, simTallies, stats)
