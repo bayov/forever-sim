@@ -963,8 +963,14 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=14576/ebon-hilt-of-marduk
 	// Chance on hit: Corrupts the target, causing 210 damage over 3 sec.
+	// Forever (revealed Nov 11-12, 1.60.1.70888): the same spell 18656 deals 84 over 9 sec,
+	// 28 every 3 sec (SpellEffect base points 28, period 3000 ms).
 	// TODO: Proc rate assumed and needs testing
 	itemhelpers.CreateWeaponProcSpell(EbonHiltOfMarduk, "Ebon Hilt of Marduk", 1.0, func(character *core.Character) *core.Spell {
+		tickLength, tickDamage := time.Second, 70.0
+		if character.Env.IsForever() {
+			tickLength, tickDamage = 3*time.Second, 28.0
+		}
 		return character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 18656},
 			SpellSchool: core.SpellSchoolShadow,
@@ -976,11 +982,11 @@ func init() {
 				Aura: core.Aura{
 					Label: "Corruption (Ebon Hilt of Marduk)",
 				},
-				TickLength:    time.Second,
+				TickLength:    tickLength,
 				NumberOfTicks: 3,
 
 				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-					dot.Snapshot(target, 70, isRollover)
+					dot.Snapshot(target, tickDamage, isRollover)
 				},
 
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {

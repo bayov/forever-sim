@@ -1,6 +1,6 @@
 {
-"meta": {"build": "1.60.1.70685", "fetched": "2026-11-12T06:10Z", "source": "client beta 1.60.1.70685 Item and ItemSparse tables, and our client cache of 2026-10-30T08:30Z, and the reveals BayovCore saw in game", "tool": "tools/sources/hidden.py"},
-"counts": {"hidden": 6582, "hiddenGear": 1355, "inSimWithClassicStats": 723, "inSimPartly": 93, "inSimFromWowhead": 1, "foreverNotInSim": 536, "revealedNotInSim": 2, "revealedGear": 5957},
+"meta": {"build": "1.60.1.70685", "fetched": "2026-11-12T21:36Z", "source": "client beta 1.60.1.70685 Item and ItemSparse tables, and our client cache of 2026-10-30T08:30Z, and the reveals BayovCore saw in game", "tool": "tools/sources/hidden.py"},
+"counts": {"hidden": 6582, "hiddenGear": 1355, "inSimWithClassicStats": 723, "inSimPartly": 94, "inSimFromWowhead": 1, "foreverNotInSim": 535, "revealedNotInSim": 2, "revealedGear": 5957},
 "items": {
 "913": {"name": "Huge Ogre Sword", "simStats": "classic", "slot": "two-hand", "sources": [], "state": "hidden"},
 "1216": {"name": "Frost Bracers", "simStats": "classic", "slot": "wrist", "sources": [], "state": "hidden"},
@@ -808,7 +808,7 @@
 "275987": {"slot": "two-hand", "sources": [], "state": "hidden"},
 "275990": {"slot": "two-hand", "sources": [], "state": "hidden"},
 "276072": {"slot": "back", "sources": [], "state": "hidden"},
-"276073": {"slot": "finger", "sources": [], "state": "hidden"},
+"276073": {"name": "Band of the Damned", "simStats": "partial", "slot": "finger", "sources": [], "state": "hidden"},
 "276209": {"slot": "waist", "sources": [], "state": "hidden"},
 "276210": {"slot": "shoulder", "sources": [], "state": "hidden"},
 "276211": {"slot": "legs", "sources": [], "state": "hidden"},
