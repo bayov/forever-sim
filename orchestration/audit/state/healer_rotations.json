@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "a0b4d3be9859f76f9365c0cb672ec57ef8e6423e"
+  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
  },
- "last_pass_at": "2026-11-12T07:30:00Z",
- "pass": 8,
+ "last_pass_at": "2026-11-12T19:05:27Z",
+ "pass": 9,
  "result": "quiet",
- "note": "Pass 8 on cb0d928fd. Gate: sim/druid/talents.go (comment), sim/priest/priest.go (Shadow TalentTreeSizes 18->17, never read), sim/shaman/talents.go (ImprovedFireNova renamed TrialByFire). All 63 baseline rows byte-identical to ref. -1, -2, -3 still open. baseline.sh rewritten again at tools/audit/healer_rotations/ (was missing).",
+ "note": "Pass 9 on 8306f1d52. Gate: sim/druid/rake.go (Rake hit AP, never cast by healers); also core pet melee-speed inheritance (hunter pets). All 63 baseline rows byte-identical to ref. -1,-2,-3 still open. baseline.sh restored from origin/tankheal 8f3f74f3f, which carries an unmerged by-hand pass 9.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T13:28:36Z"
+ "checked_at": "2026-11-12T19:08:25Z"
 }

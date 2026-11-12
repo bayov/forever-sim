@@ -4,7 +4,71 @@ From the fairness auditor. The question this answers: is every DPS spec simmed u
 
 Method: each class's shipped Level 60 build (gear, talents, APL), built with mksettings and run with wowsimcli. I read code and logs and did not use rotopt. Measurements change one input at a time against the same seed. Two switches existed only in my local worktrees and were never pushed: one turns weapon racials off, one skips set-bonus tiers.
 
-## 1. Cross-spec table (master a0b4d3b: Windfury Totem rolls on main hand abilities whose client spell needs a main hand weapon or comes on the next swing (a0b4d3be9, logs of Nov 6-11, standards 17 amended); Venom's +20% reaches Instant Poison (e2322baa1); defaults switched to each class's best 180 s build (7462c17c8); full re-sweep 2026-11-12)
+## 1. Cross-spec table (master 8306f1d: hunter pet swings at its owner's melee speed and autocast passes an ability short of focus (368b2e181, wowsims/forever logs, user go 2026-11-12); Rake's direct hit adds 6.5% of attack power (c380bbaef, user ruling 2026-11-12); full re-sweep 2026-11-12)
+
+5000 iterations, seed 1, preset rotation and gear at every race, on the 8306f1d requests and the loop's 8306f1d CLI. "Before" is the a0b4d3b table. "Report's published" is the req meta's published.dps; ui/dps_report/data/builds.json matches current within 1.5 on all 68 builds.
+
+| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (a0b4d3b) |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Lone Wolf (hunter) | Night Elf | 1291.8 | Windshaper 1286.7 / Night Elf | Night Elf (1291.8) | 1313.7 | -21.9 | 1291.8 (+0.0%) |
+| 2 | Marksmanship | Night Elf | 1235.0 | Orc 1234.7 / Night Elf | Orc (1234.7) | 1254.3 | -19.6 | 1233.0 (+0.2%) |
+| 3 | Beast Mastery | Orc | 1182.0 | Orc / Night Elf 1176.2 | Orc (1182.0) | 1195.6 | -13.6 | 1174.7 (+0.6%) |
+| 4 | Feral | Night Elf | 1153.8 | Windshaper 1136.2 / Night Elf | Night Elf (1153.8) | 1139.0 | +14.8 | 1124.4 (+2.6%) |
+| 5 | Affliction | Undead | 1071.1 | Undead / Human 1067.5 | Undead (1071.1) | 1034.1 | +37.0 | 1071.1 (+0.0%) |
+| 6 | Frostfire | Human | 1065.7 | Undead 1058.3 / Human | Human (1065.7) | 1064.3 | +1.4 | 1065.7 (+0.0%) |
+| 7 | Destruction | Orc | 1063.2 | Orc / Human 1060.8 | Orc (1063.2) | 1063.4 | -0.2 | 1063.2 (+0.0%) |
+| 8 | Demonology | Orc | 1055.3 | Orc / Human 1051.7 | Orc (1055.3) | 1053.9 | +1.4 | 1055.3 (+0.0%) |
+| 9 | Fire | Gnome | 1054.2 | Undead 1051.1 / Gnome | Human (1053.8) | 1057.9 | -4.1 | 1054.2 (+0.0%) |
+| 10 | Fury (dual wield) | Orc | 1050.2 | Orc / High Order 1044.7 | Orc (1050.2) | 1136.0 | -85.8 | 1050.2 (+0.0%) |
+| 11 | Arms | Orc | 1041.7 | Orc / Night Elf 1039.4 | Orc (1041.7) | 1088.0 | -46.3 | 1041.7 (+0.0%) |
+| 12 | Fury (two-hand) | Orc | 1032.0 | Orc / Night Elf 1025.1 | Orc (1032.0) | 1151.0 | -119.0 | 1032.0 (+0.0%) |
+| 13 | Enhancement | Orc | 1030.7 | Orc / Dwarf 1024.2 | Orc (1030.7) | 1030.6 | +0.1 | 1030.7 (+0.0%) |
+| 14 | Survival | Orc | 1013.9 | Orc / High Order 1006.5 | Orc (1013.9) | 1041.2 | -27.3 | 987.8 (+2.6%) |
+| 15 | Retribution | Undead | 1008.9 | Undead / Human 1005.5 | Undead (1008.9) | 1092.1 | -83.2 | 1008.9 (+0.0%) |
+| 16 | Destruction Fire | Undead | 997.9 | Undead / Human 993.3 | Undead (997.9) | 996.7 | +1.2 | 997.9 (+0.0%) |
+| 17 | Elemental | Windshaper | 977.4 | Windshaper / Dwarf 963.1 | Windshaper (977.4) | 976.9 | +0.5 | 977.4 (+0.0%) |
+| 18 | Arcane | Gnome | 963.6 | Undead 959.5 / Gnome | Gnome (963.6) | 962.3 | +1.3 | 963.6 (+0.0%) |
+| 19 | Balance | Night Elf | 952.1 | Tauren 940.9 / Night Elf | Night Elf (952.1) | 952.2 | -0.1 | 952.1 (+0.0%) |
+| 20 | Shadow | Undead | 948.6 | Undead / Human 945.4 | Undead (948.6) | 948.7 | -0.1 | 948.6 (+0.0%) |
+| 21 | Rogue Combat Swords | Undead | 946.1 | Undead / Gnome 943.3 | Undead (946.1) | 963.5 | -17.4 | 946.1 (+0.0%) |
+| 22 | Frost | High Order | 943.6 | Undead 939.1 / High Order | High Order (943.6) | 944.7 | -1.1 | 943.6 (+0.0%) |
+| 23 | Rogue Seal Fate Swords | Undead | 938.7 | Undead / Night Elf 937.6 | Undead (938.7) | 957.0 | -18.3 | 938.7 (+0.0%) |
+| 24 | Rogue Combat Daggers | Gnome | 936.6 | Undead 936.0 / Gnome | Undead (936.0) | 946.6 | -10.6 | 936.6 (+0.0%) |
+| 25 | Rogue Seal Fate Daggers | Undead | 904.4 | Undead / Gnome 901.0 | Undead (904.4) | 920.7 | -16.3 | 904.4 (+0.0%) |
+| 26 | Rogue Mutilate | Undead | 865.7 | Undead / Gnome 862.4 | Undead (865.7) | 866.1 | -0.4 | 865.7 (+0.0%) |
+| 27 | Rogue Subtlety | Night Elf | 863.6 | Undead 860.6 / Night Elf | Night Elf (863.6) | 881.7 | -18.1 | 863.6 (+0.0%) |
+| 28 | Smite | Undead | 781.0 | Undead / Gnome 756.6 | Undead (781.0) | 781.0 | +0.0 | 781.0 (+0.0%) |
+
+| Variant | Best race | DPS | Report's published (at its race) | Before |
+|---|---|---|---|---|
+| druid__balance-wrath | Night Elf | 862.2 | 861.5 (at Night Elf 862.2) | 862.2 |
+| hunter__beast-mastery-tallstrider | Orc | 1126.8 | 1136.9 (at Orc 1126.8) | 1117.0 |
+| hunter__beast-mastery-wolf | Orc | 1141.8 | 1150.5 (at Orc 1141.8) | 1130.4 |
+| hunter__marksmanship-tallstrider | Night Elf | 1205.1 | 1220.9 (at Orc 1203.6) | 1201.2 |
+| hunter__marksmanship-wolf | Night Elf | 1211.3 | 1228.3 (at Orc 1210.3) | 1207.3 |
+| hunter__survival-tallstrider | Orc | 981.1 | 1007.4 (at Orc 981.1) | 954.6 |
+| hunter__survival-wolf | Orc | 990.4 | 1014.5 (at Orc 990.4) | 961.4 |
+| paladin__level_60_shock_ret | Undead | 971.4 | 1030.2 (at Undead 971.4) | 971.4 |
+| paladin__level_60_sub_holy | Undead | 999.1 | 1091.2 (at Undead 999.1) | 999.1 |
+| priest__shadow-holy | Undead | 906.8 | 906.6 (at Undead 906.8) | 906.8 |
+| shaman__elemental-level60-mana-tide | Windshaper | 960.0 | 959.6 (at Windshaper 960.0) | 960.0 |
+| shaman__enhancement-imp-gw | Orc | 1017.3 | 1016.2 (at Orc 1017.3) | 1017.3 |
+| shaman__enhancement-mana-tide | Orc | 931.1 | 930.0 (at Orc 931.1) | 931.1 |
+| shaman__enhancement-water-shield | Orc | 977.0 | 976.3 (at Orc 977.0) | 977.0 |
+| warlock__affliction_shadow_bolt | Orc | 1015.8 | 1015.6 (at Orc 1015.8) | 1015.8 |
+
+
+Top over bottom: 1.65x
+
+- Pass 37 (8306f1d, 2026-11-12, full re-sweep). Only hunters with a pet and Feral moved, all attributed:
+  - Hunter pet on the owner's melee speed plus autocast (368b2e181): Survival +26.1 (16th -> 14th, past Ret and Destruction Fire), BM +7.3, MM +2.0; variants +3.9 to +29.0. Lone Wolf identical. The core change is a hunter-only flag; warlock demons unchanged.
+  - Rake's hit at 0.065 AP (c380bbaef): Feral +29.4 (+2.6%), still 4th.
+- Published: builds.json is current (re-sims bff0169e4, 2b62e304a). 45 metas' published.dps still lag (Fury 2H -119, Ret -82, Affliction +37 ...); results-20261104-2 covers it, not refiled.
+- Best race: report race best within noise (MM Night Elf +0.3, Combat Daggers Gnome +0.6, Fire Gnome +0.4; MM pet variants Night Elf +1.0 / +1.5 over their Orc). fairness-20261112-1 confirmed at 20k: Combat Swords 946.4 over default Daggers 936.2. Gear: audit1b.py 19/19 PASS. Top over bottom 1.65x.
+
+<details><summary>Previous §1 (a0b4d3b, 2026-11-12)</summary>
+
+### 1 (superseded 2026-11-12, 8306f1d) Cross-spec table (master a0b4d3b: Windfury Totem rolls on main hand abilities whose client spell needs a main hand weapon or comes on the next swing (a0b4d3be9, logs of Nov 6-11, standards 17 amended); Venom's +20% reaches Instant Poison (e2322baa1); defaults switched to each class's best 180 s build (7462c17c8); full re-sweep 2026-11-12)
 
 5000 iterations, seed 1, preset rotation and gear at every race, on the a0b4d3b requests and the loop's a0b4d3b CLI. "Before" is the 707ae92 table.
 
@@ -65,6 +129,8 @@ Top over bottom: 1.65x
   - Priest tree size, shaman Trial by Fire rename, druid comment: no move (Shadow, Smite, Elemental, Enhancement, Feral identical).
 - Published against current: the 19 builds of results-20261112-1 (warriors, rogues, Survival) plus the older stale metas (hunters -21, Feral -14.6, Affliction +37.0, Ret -83.2, Fire -4.1). Independent confirmation, not refiled.
 - Best race: the report race is best everywhere within noise (Combat Daggers Gnome +0.6, Fire Gnome +0.4, MM Night Elf +0.3). Gear: audit1b.py 19/19 PASS. Top over bottom 1.65x.
+
+</details>
 
 <details><summary>Previous §1 (707ae92, 2026-11-11)</summary>
 

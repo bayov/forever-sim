@@ -1,39 +1,24 @@
-# Mechanics pass 76 (2026-11-12, master a0b4d3be98)
+# Mechanics pass 77 (2026-11-12, master 8306f1d52)
 
-Quiet: no new findings. One open finding updated (mechanics-20261112-1: the warrior / rogue / Survival part
-is settled by a0b4d3be9; Holy Strike alone is left, now low).
+Quiet: no new findings. Open findings mechanics-20261112-1/-2/-3 and 20261104-1 stay open (PR #128, the
+Judgement / Unsealed Wrath / Holy Strike work, is not on master yet).
 
 ## Range
-cb0d928fd6..a0b4d3be98: two sim commits, one TASKS log note (d6ffc5601), the 2026-11-12 rulings (e89962738).
+a0b4d3be98..8306f1d52: three sim commits, one TASKS.md note (8306f1d52). No forever-update merges.
 
 | commit | what | verdict |
 |---|---|---|
-| e2322baa1 | Rogue: Venom's +20% poison chance reaches Instant Poison | Correct. Hotfix 113483 row 1310703 eff2 mask0 268558336 = 0x10000000 Wound + 0x10000 Deadly + 0x8000 + 0x4000 + 0x2000; client 70888 SpellClassOptions gives Instant Poison VI (11340) and 11335 mask0 8192 = 0x2000. Tier 1. |
-| a0b4d3be9 | Windfury Totem under Forever rolls on white MH swings plus MH specials whose spell has Attributes_3 0x400 or Attributes_0 0x4 (generated list from 70425) | Correct for every ability with log data (tools/logcheck/findings.md: HS 21/109, Cleave 64/308, SS 178/1610, Sunder, Revenge, Execute, Raptor, Mongoose, Wing Clip roll; Stormstrike 0/4467, BT, WW, Claw, Swipe, Rake never). See below. |
+| 368b2e181 | Hunter pet swings at owner's melee and attack speed (not ranged); autocast passes an ability short of focus | User's go 2026-11-12, from wowsims/forever d729b13992 / 8223020463 log reads. Core change checked: `Pet.FollowsOwnerMeleeSpeed` multiplies the pet by the owner's MeleeSpeedMultiplier at Enable and by each later `MultiplyMeleeSpeed` / `MultiplyAttackSpeed`; Disable removes the pet from `DynamicMeleeSpeedPets` and divides back `inheritedMeleeSpeed`. `MultiplyRangedSpeed` does not reach it (Quick Shots excluded, as the log says). Only `sim/hunter/pet.go:225` sets the flag, so no other pet moves. Owner haste rating is not inherited (no Level 60 hunter gear has it). Correct. |
+| c380bbaef | Rake's direct hit adds 0.065 AP under Forever, outside the Nov 2 scale | User ruling 2026-11-12. Client 70888 `sp.py 1822`: eff 2 bp 27 apcoef 0, eff 6 bp 20 per 3000 apcoef 0, so the AP share is server-side like the tick's 0.055; the value rests on the 70862 log fit (0.0648, 26/26 hits). Not a finding. |
+| f878f6079 | mksettings: leveling target is a generic boss two levels up (1.12 warrior elite armor) except at 20 and 30 | Leveling only; `lowLevelTarget` is used only below 60. No Level 60 or shared raid effect. |
 
-## Windfury Totem check
-- Regenerated the flag set from 70888 SpellMisc (`$AUDIT_WORK/mechanics/wfset.py`): 317 spells vs the
-  committed 313. Added: NPC Strike 1283076, Cleave 1283413/1327248/1327716/1328013, Head Smash 1291712.
-  Removed: 1310706/1310707 (deleted Mutilate rank). No player ability changes; regeneration not needed.
-- Cross-checked every action in the 69 shared runs (`$AUDIT_WORK/mechanics/acts.py`): flagged and used:
-  Hamstring, Ambush, Rupture, Backstab, Sinister Strike, Eviscerate, Heroic Strike, Rend, Sunder, Slam,
-  Raptor Strike, Wing Clip, Mongoose Bite, Hemorrhage, Execute (cast 20662), Mortal Strike, Mutilate (MH half;
-  OH half is ProcMaskMeleeOHSpecial), Spearing Strike. Not flagged: Whirlwind, Bloodthirst, Overpower,
-  Stormstrike, Holy Strike, Shred, Rake, Ravage, Ferocious Bite, Lacerate, Shank, Judgements.
-- No log sample yet for Rupture, Backstab, Ambush, Hemorrhage, Mutilate, Slam, Mortal Strike, Overpower, Shred,
-  Ferocious Bite: they follow the client-flag rule, which fits every sampled ability. Not a finding.
-- Holy Strike: still excluded; Nov 11 hotfix reads as it now activating the totem. Kept under mechanics-20261112-1.
-- Note: Heroic Strike and Raptor Strike carry ProcMaskMeleeMHAuto too, so they matched the old white-only gate
-  already; the change mainly adds Cleave, Sinister Strike, Eviscerate, Sunder, Execute and the other specials.
-- `tools/sources/wf_totem_procs.py` defaults to ~/forever-logs/wago (absent on cloud machines); pass the wago
-  cache folder explicitly. Nit, not filed.
+## Getting current
+- Client: 1.60.1.70888 is still the newest (gate `client_build`).
+- Blizzard: dev notes t/2360696 last post 10 (2026-11-04T19:35Z, already seen); hotfix thread t/2403040 last
+  post 8 (2026-11-12T00:48Z, already seen). Blue tracker not re-scanned beyond these threads.
+- TASKS.md 8306f1d52 adds Nov 11 follow-ups: Judgement as ranged (already mechanics-20261112-3), Hunter Volley
+  no longer activating procs and Rend and Tear on Pounce (class work, owned by the class workers), and items
+  revealed Nov 11-12 (data work). Nothing new on a shared mechanic.
 
-## Get current
-- Client: newest 1.60 build is still 1.60.1.70888 (`wago.py latest --probe 300`).
-- Dev notes t/2360696: unchanged, post 10 (2026-11-04) newest.
-- Hotfix thread t/2403040: unchanged since post 8 (2026-11-12 00:48); post 1 edit 00:47:36 as before.
-- Blue tracker: newest is the Nov 11 hotfix post 8; nothing newer.
-
-## Open findings
-mechanics-20261112-3 (Judgement ranged), -2 (Unsealed Wrath echoes), -1 (Holy Strike, now low), 20261104-1
-(druid scales): no commit touched them.
+## Verdicts
+Added rows for the hunter pet melee speed, the Rake hit AP share and the leveling target to `ref/mechanics/verdicts.md`.

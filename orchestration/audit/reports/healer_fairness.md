@@ -1,17 +1,15 @@
-# Healer fairness pass 9 (2026-11-12, master a0b4d3be98)
+# Healer fairness pass 10 (2026-11-12, master 8306f1d52)
 
 Result: quiet. No new finding. Still open: -20261111-1 (high, druid raid NS on Wild Growth), -5 (high, paladin raid
-preset), -4 (low). Due because standards.md changed (cb0d928fd6..a0b4d3be98): standard 17 now has Windfury Totem roll
-on main hand abilities (Heroic Strike, Sinister Strike, ...) as well as white swings under Forever. The code side
-(sim/core/buffs.go, windfury_totem_procs_forever.go) only changes which melee main hand spells roll the totem; no
-healer request has Windfury Totem and healers don't melee, so nothing reaches them.
+preset), -4 (low). Due because sim/druid/rake.go changed (a0b4d3be98..8306f1d52, c380bbaef): under Forever, Rake's
+direct hit now adds 6.5% of attack power. Rake is a cat form ability; no healer request or Restoration druid rotation
+casts it, so nothing reaches the healers.
 - tools/healbench, req, encounters and healer presets unchanged, so section 1 stands.
 
-Spot check, healbench built from a0b4d3be98, 1,000 iterations, -carry: identical to bench_9ba00c2.tsv in HPS and carry
-for priest_holy (tank Broodlord 800, 0.930), priest_discipline (tank Broodlord 656, 0.971), shaman_restoration (tank
-Broodlord 662, 0.974), priest_holy_raid (raid Onyxia 280, 0.978), shaman_restoration_raid (raid Onyxia 267, 0.920).
-Rankings as in pass 7: raid Holy 1.437, paladin 1.413, shaman 1.395, druid 1.391 (druid column from
-`ref/healer_fairness/druid_raid_707ae92.tsv`). The tables below are pass 2's.
+Spot check, healbench built from 8306f1d52, 1,000 iterations, -carry: identical in HPS and carry to the baselines for
+druid_restoration (tank Broodlord 765, 0.875; bench_9ba00c2.tsv), druid_restoration_raid (raid Onyxia 577, 0.943;
+druid_raid_707ae92.tsv), shaman_restoration (tank Broodlord 662, 0.974). Rankings as in pass 7: raid Holy 1.437,
+paladin 1.413, shaman 1.395, druid 1.391. The tables below are pass 2's.
 
 ## 1. Same terms (the 9 requests)
 

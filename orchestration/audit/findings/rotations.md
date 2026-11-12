@@ -74,6 +74,12 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
   | 65, FF duty | +0.70 / +0.89 / +2.06 | +1.18 / +1.33 / +2.06 | +0.94 / +1.11 / +2.06 |
   Baseline at 180 s: 1169.1 (feral-cat), 1164.5 (duty-ff). Gains at every length on both sets; 65 is the peak of
   the measured grid (SE about 0.2-0.4 a set).
+- update 2026-11-12 (pass 61, master 8306f1d52): c380bbaef gives Rake's direct hit 6.5% of attack power (feral +29.3
+  at 180 s in the baseline). The gate is still 45 on master and 65 now gains more. Same variant, 20k it, 8 blocks,
+  CLI 8306f1d52875, B-A at 120 / 180 / 300 s:
+  feral-cat: set 1 +2.07 / +2.97 / +4.81, set 2 +2.17 / +2.50 / +4.36, **pooled +2.12 / +2.74 / +4.59** (A 1153.1 at 180).
+  duty-ff: set 1 +1.83 / +2.19 / +3.99, set 2 +1.77 / +1.79 / +3.76, **pooled +1.80 / +1.99 / +3.88** (A 1148.3).
+  Gate 75 (set 1): +0.28 / +1.28 / +4.16, so 65 stays the pick. Severity stays low (0.24%).
 - proposed fix: in both APLs (and the two req rotations), the 5-CP Ferocious Bite line's `"val":"45"` -> `"val":"65"`.
 - needs: orchestrator fix
 

@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "a0b4d3be9859f76f9365c0cb672ec57ef8e6423e"
+  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
  },
- "last_pass_at": "2026-11-12T06:54:22Z",
- "pass": 10,
+ "last_pass_at": "2026-11-12T18:49:51Z",
+ "pass": 11,
  "result": "quiet",
- "note": "Pass 10: tooltip-only commit cb0d928fd, no healer mechanic change. Finding 13 resolved (3335001a5); finding 11 updated (Riptide tooltip now prints 147, client 150). Findings 10, 11 open.",
+ "note": "Pass 11: rake.go (c380bbaef, feral Rake hit AP 0.065) and hunter pet melee speed (368b2e181) only; no heal, healing talent or healing engine change. Client 1.60.1.70888 unchanged. Findings 10, 11 open.",
  "client_build": "1.60.1.70888",
  "dev_notes_seen": {
   "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026",
   "date": "2026-11-10"
  },
- "checked_at": "2026-11-12T13:28:36Z"
+ "checked_at": "2026-11-12T19:08:25Z"
 }
