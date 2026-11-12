@@ -35,6 +35,12 @@ func retSimGear(t *testing.T, talents string, items map[proto.ItemSlot]int32, n 
 // retSimOptions is retSimGear with the paladin's options (Righteous Fury, say).
 func retSimOptions(t *testing.T, talents string, items map[proto.ItemSlot]int32, n int, mobType proto.MobType, options *proto.PaladinOptions) (*core.Simulation, *RetributionPaladin) {
 	t.Helper()
+	return retSimRaidBuffs(t, talents, items, n, mobType, options, &proto.RaidBuffs{})
+}
+
+// retSimRaidBuffs is retSimOptions with the raid's buffs.
+func retSimRaidBuffs(t *testing.T, talents string, items map[proto.ItemSlot]int32, n int, mobType proto.MobType, options *proto.PaladinOptions, raidBuffs *proto.RaidBuffs) (*core.Simulation, *RetributionPaladin) {
+	t.Helper()
 	player := &proto.Player{
 		Race:          proto.Race_RaceHuman,
 		Class:         proto.Class_ClassPaladin,
@@ -58,7 +64,7 @@ func retSimOptions(t *testing.T, talents string, items map[proto.ItemSlot]int32,
 		targets = append(targets, target)
 	}
 	sim := core.NewSim(&proto.RaidSimRequest{
-		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, raidBuffs, &proto.Debuffs{}),
 		Encounter:  &proto.Encounter{Duration: 60, Targets: targets},
 		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
 	}, simsignals.CreateSignals())
