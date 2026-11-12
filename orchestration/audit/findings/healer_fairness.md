@@ -2,6 +2,25 @@
 
 ## Open
 
+### healer_fairness-20261112-1: the Holy priest raid preset keeps Inspiration, dead in the raid role, instead of Twilight Focus; every other raid preset takes its pushback talent
+- severity: high (+0.021 mean raid carry, 1.5%; widens the Holy priest's raid lead from +0.026 to +0.047)
+- affects: Holy priest raid healer (`tools/healbench/req/priest_holy_raid.json`, the ui preset it comes from); the tank preset is right
+- found: 2026-11-12, master 4fb90c298
+- evidence: both Holy presets use `00500503113-03505103030121531` (Inspiration 3/3, Twilight Focus 0/3). Inspiration
+  (+25% armor after a heal crit) only matters on a tank, and the raid role has none; Twilight Focus (70% chance not to
+  lose cast time when damaged) is the priest's pushback talent, the one the shaman raid preset takes (Healing Focus 3
+  for Ancestral Healing 3), the paladin (Spiritual Focus 5) and the druid (Nature's Focus 5). One-point swap
+  `00500503113-33505100030121531` (Twilight Focus 3, Inspiration 0; row gates unchanged), healbench -role raid -carry,
+  1,000 it, paired seeds: seed 101 1.440 -> 1.461 (Vaelastrasz 1.125 -> 1.262, the rest -0.017 to +0.012), seed 202
+  1.449 -> 1.469 (Vaelastrasz 1.123 -> 1.263). The same swap in the tank role costs 0.073 (1.278 -> 1.205), so only the
+  raid preset should change. Counter-check: the shaman raid preset with Ancestral Healing back for Healing Focus loses
+  0.039 (Vaelastrasz -0.156), so pushback is what Vaelastrasz's raid-wide fire damage rewards. Rows in
+  `ref/healer_fairness/screen_4fb90c2.tsv` (holy_raid_TF, sham_raid_AH, holy_tank_TF); helper
+  `tools/audit/healer_fairness/screen.sh`. Sure (two seeds, one file carries it, the mechanism is clear).
+- proposed fix: give the Holy priest raid preset `00500503113-33505100030121531` (ui preset and req), keep the tank
+  preset's string; re-bench the raid column.
+- needs: worker fix
+
 ### healer_fairness-20261104-5: the Holy paladin raid preset's Holy Light lines cost it 0.025 carry; a Flash of Light raid paladin is first, not third
 - severity: high (+0.025 mean raid carry, 1.8%; the paladin goes from 1.413, third, to 1.438, level with the Holy priest and druid at 1.437)
 - affects: Holy paladin raid healer (tools/healbench/req/paladin_holy_raid.json and the ui preset it comes from)
@@ -22,6 +41,11 @@
   of Light 6 at the most hurt at 0.7x (as the tank preset's); the healer_rotations auditor can search the best. Then
   re-bench H3's raid column.
 - needs: worker fix
+- 2026-11-12, master 4fb90c298, still open on the new consumables: the tank preset's APL in the raid role with the raid
+  preset's Lesser Mana Oil 1.424 against the raid preset's 1.400 (+0.024, 1,000 it, seed 101; Onyxia +0.033,
+  Broodlord +0.011, Chromaggus +0.044, Golemagg +0.016, Magmadar +0.019, Ragnaros -0.031, Vaelastrasz +0.076); the
+  raid preset with its Holy Light 9/8 and Divine Favor lines dropped 1.403 (+0.003). A Flash of Light raid paladin
+  would be second (1.424), ahead of the druid's 1.414.
 
 ### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
 - severity: low (blocks a check; moves no number)

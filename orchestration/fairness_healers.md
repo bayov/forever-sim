@@ -1,7 +1,7 @@
 # Fairness between healers
 
 The healer_fairness auditor keeps this current (`orchestration/audit/passes/healer_fairness.md`). It holds the
-healer ranking in each role, its reasons and the open questions. Last pass: 8, 2026-11-12, master cb0d928fd6: quiet (priest Shadow tree size and shaman Trial by Fire rename reach no healer preset; spot cells identical). Pass 7, 2026-11-11, master 707ae92cc5 (Nature's Swiftness on Wild Growth drops the raid druid to last, healer_fairness-20261111-1; other spot cells identical). Pass 6, master ca5e35c3f: shaman changes reach no healer. Pass 5, master 9ba00c2dc: whole-point rolls moved cells by at most 0.002; the raid shaman 1.395.
+healer ranking in each role, its reasons and the open questions. Last pass: 9, 2026-11-12, master 4fb90c298: 1 new finding (the Holy priest raid preset keeps Inspiration, dead without a tank, instead of Twilight Focus: +0.021 raid carry, healer_fairness-20261112-1); the table below re-benched and confirmed, a talent screen of each class's likeliest swaps found no other gain. Pass 8, 2026-11-12, master cb0d928fd6: quiet (priest Shadow tree size and shaman Trial by Fire rename reach no healer preset; spot cells identical). Pass 7, 2026-11-11, master 707ae92cc5 (Nature's Swiftness on Wild Growth drops the raid druid to last, healer_fairness-20261111-1; other spot cells identical). Pass 6, master ca5e35c3f: shaman changes reach no healer. Pass 5, master 9ba00c2dc: whole-point rolls moved cells by at most 0.002; the raid shaman 1.395.
 Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 `orchestration/audit/findings/healer_fairness.md`.
 
@@ -11,6 +11,10 @@ Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 |---|---|---|---|---|---|
 | Tank healer | Holy priest 1.278 | Discipline priest 1.272 | Druid 1.269 (1.242 with NS at 60%) | Shaman 1.257 | Paladin 1.152 |
 | Raid healer | Holy priest 1.440 | Druid 1.414 | Shaman 1.412 (1.392 with NS autocast) | Paladin 1.400 | |
+
+Re-benched on 4fb90c298 (pass 9, `orchestration/audit/ref/healer_bench/summary.tsv`): every mean as below. With
+Twilight Focus for Inspiration (finding -20261112-1) the Holy raid priest carries 1.461; with the tank preset's APL
+the raid paladin 1.424, second (finding -5).
 
 2026-11-12, on the new consumables (Consumables in `docs/healing_sim.md`), seed 101, after the healer_rotations
 fixes of that day (druid tank NS at 45%, shaman raid NS held for an instant Healing Wave under 65%, the shaman
@@ -38,6 +42,10 @@ druid 1.273, Holy 1.262, Discipline 1.261, shaman 1.242, paladin 1.176; raid dru
 - **Not the cause:**
   - Gear: all four sets at the same 902 weighted budget; slot 16 is stat-less for all.
   - Race: each class has its best legal race; the shaman's other races are within 0.002.
+  - Talents (pass 9 screen, own role, 1,000 it): the shaman's Healing Focus (raid) and Ancestral Healing (tank)
+    picks are right by 0.039 and 0.085, the druid's Nature's Splendor over Heart of the Wild 5 by 0.011 / 0.016. The
+    Holy raid priest is the one raid preset without its pushback talent (Twilight Focus; the shaman, paladin and
+    druid take Healing Focus, Spiritual Focus, Nature's Focus): -0.021, all of it Vaelastrasz (+0.137 with it).
   - Buffs, debuffs, encounter: identical in all 9 requests. Consumables: the same tier and slots in all 9, each
     preset's food and oil its own best by its objective (2026-11-12, healer_gear-20261112-1 to -3; Greater
     Cleric's Elixir, Supreme Power everywhere; Wicked Smoothie for the druid, Runn Tum Tuber Surprise for the
@@ -55,6 +63,7 @@ files keep no healing by class, so the sim's order can't be checked against the 
 ## Open questions
 
 1. (Closed 2026-11-12: the shaman raid preset now holds Nature's Swiftness, +0.020 carry, healer_rotations-20261112-2.)
-2. The paladin raid preset's re-tune (finding -5): drop or gate Holy Light, Flash of Light 6 at 0.7x.
-3. HPS by healer class in the boss files (finding -4), to check the order against the logs.
-4. The classes' "Calls for the user" lists (`docs/healing_{priest,paladin,druid,shaman}.md`) are open rulings.
+2. The paladin raid preset's re-tune (finding -5): its tank preset's APL gives +0.024 in the raid role (pass 9); dropping Holy Light alone only +0.003.
+3. The Holy priest raid preset's talents (finding -20261112-1): Twilight Focus 3 for Inspiration 3.
+4. HPS by healer class in the boss files (finding -4), to check the order against the logs.
+5. The classes' "Calls for the user" lists (`docs/healing_{priest,paladin,druid,shaman}.md`) are open rulings.
