@@ -919,4 +919,13 @@ var ForeverItems = []*proto.UIItem{
 		Ilvl:  63, RequiredLevel: 58, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
 		Unique: true, BindOnPickup: true,
 	},
+	// Revealed November 12 (https://foreverchanges.pro/item/276073), stats as the wowhead Forever
+	// tooltip prints them. No source is known yet.
+	{
+		Id: 276073, Name: "Band of the Damned", Icon: "inv_jewelry_ring_17",
+		Type:  proto.ItemType_ItemTypeFinger,
+		Stats: stats.Stats{stats.Intellect: 11, stats.Spirit: 6, stats.SpellPower: 15}.ToFloatArray(),
+		Ilvl:  61, RequiredLevel: 56, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		Unique: true, BindOnPickup: true,
+	},
 }
