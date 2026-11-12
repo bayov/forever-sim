@@ -89,12 +89,11 @@ negative loss when it is within the search's noise of the pick.
   suffix), `dps` and `loss`. `bis` marks the picks. `unsourced` marks an item wowhead knows no
   way of getting yet, worth a look by hand. `with` is the item in the other hand: on a one hand
   main hand the off hand it was scored with, on an off hand the main hand.
-- `avail` and `note` come from checking by hand what the game has open, added after the search.
-  `avail` is `grind` (open but slow), `doubtful` (we don't know of a way yet) or `out` (not
-  before the raids), and an entry we can get now has none. `note` says why, or what's still in
-  the way. The Phase 0 list got them on 2026-11-12 from the content check, which also added
-  items past the search's top 10 (up to 25 a slot, 30 for rings and trinkets). A rerun of
-  `bis_phase0.sh` writes the file again without them.
+- `avail` and `note` come from checking by hand what the game has open
+  (`tools/rotopt/phase0_content.json`, 2026-11-12). `avail` is `grind` (open but slow) or
+  `doubtful` (we don't know of a way yet), and an entry we can get now has none. `note` says
+  why, or what's still in the way. `bis_phase0.sh` leaves out every item the check marks `out`
+  (not before the raids) and copies `avail` and `note` onto the entries after the search.
 
 ## Regenerating
 
@@ -105,7 +104,8 @@ says how long), because the level 30 pools are big. A new spec is a few more lin
 `tools/rotopt/bis_phase0.sh` writes the level 60 Phase 0 Enhancement list
 (`ui/enhancement_shaman/bis/level60_phase0.bis.json`). It runs the DPS Report's default
 Enhancement build from a real pre-raid set, with `-gear-no-raids` and `-gear-phase 2`, so only
-what Forever has before its raids open can come up (`tools/rotopt/phase0.go`).
+what Forever has before its raids open can come up (`tools/rotopt/phase0.go`). It also leaves
+out the items `tools/rotopt/phase0_content.json` marks `out`, and keeps 25 items a slot.
 
 ## Before release
 
