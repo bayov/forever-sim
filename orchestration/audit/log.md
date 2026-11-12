@@ -315,3 +315,4 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-12 07:02 | tank_rotations | pass 9 | master cb0d928fd | quiet | Onyxia spot check identical to pass 8
 2026-11-12 07:02 | tank_fairness | pass 9 | master cb0d928fd | quiet | 84 rows identical to pass 8
 2026-11-12 08:27 | tank_mechanics | pass 12 | master 55cd92b09 | findings | 2 new: 20261112-1 Judgement of Fury still melee (low, -8/-9), 20261112-2 WF-on-yellow option b moves warrior/bear/Warden +3 to +21% (high, user ruling)
+2026-11-12 08:40 | healer_mechanics | pass 11 | master 55cd92b09 | 1 new finding | healer_mechanics-20261112-14 (low): Current Health % of Lowest Health/Most Hurt reads true health, pick reads seen health (no measured effect)
