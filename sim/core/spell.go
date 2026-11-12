@@ -106,6 +106,13 @@ type Spell struct {
 	// Controls which effects can proc from this spell.
 	ProcMask ProcMask
 
+	// ClientMainHand is whether the spell's client SpellMisc row says it requires a main hand
+	// weapon (Attributes_3 0x400) or is on next swing (Attributes_0 0x4). RegisterSpell reads
+	// it off the ActionID's spell (ClientMainHandSpell). Under Forever these melee abilities
+	// roll Windfury Totem (WindfuryTotemBuffAura). An ability whose ActionID isn't its client
+	// cast, or whose logs disagree with its flag, sets it after registering.
+	ClientMainHand bool
+
 	// Flags
 	Flags SpellFlag
 
@@ -269,6 +276,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		ProcMask:     config.ProcMask,
 		Flags:        config.Flags,
 		CastType:     config.CastType,
+
+		ClientMainHand: ClientMainHandSpell(config.ActionID.SpellID),
 		MissileSpeed: config.MissileSpeed,
 		MaxRange:     config.MaxRange,
 

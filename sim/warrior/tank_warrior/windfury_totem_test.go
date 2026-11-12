@@ -51,24 +51,35 @@ func windfuryProcs(sim *core.Simulation, war *warrior.Warrior, spell *core.Spell
 	return procs
 }
 
-// TestForeverWindfuryTotemWhiteSwingsOnly checks standards 17 (user ruling 2026-11-12): under
-// Forever only white main hand swings roll Windfury Totem, so Heroic Strike and Cleave, whose
-// masks carry the white swing's bit, never proc it. Classic keeps every main hand hit. White swings
-// still proc it (sim/shaman/enhancement/proc_matrix_test.go).
-func TestForeverWindfuryTotemWhiteSwingsOnly(t *testing.T) {
+// TestForeverWindfuryTotemMainHandAbilities checks standards 17 (user ruling 2026-11-12, the
+// log audit in tools/logcheck/findings.md): under Forever the warrior abilities whose client spell
+// requires a main hand weapon or is on next swing (Heroic Strike, Cleave, Sunder Armor, Revenge,
+// Execute, Rend) roll Windfury Totem at 20%, and Whirlwind, whose spell isn't flagged, never does.
+// Classic keeps every main hand hit. White swings still proc it
+// (sim/shaman/enhancement/proc_matrix_test.go); sim/windfury_totem_rule_test.go pins the whole
+// log list.
+func TestForeverWindfuryTotemMainHandAbilities(t *testing.T) {
 	const n = 400
 	sim, war := newWindfuryTank(t, proto.Ruleset_RulesetForever)
 	if war.RaidTotemWeaponBuff == nil || war.GetAura("Windfury Attack") == nil {
 		t.Fatal("no Windfury Totem on the Forever warrior")
 	}
-	for _, s := range []*warrior.WarriorSpell{war.HeroicStrike, war.Cleave} {
-		if got := windfuryProcs(sim, war, s.Spell, n); got != 0 {
-			t.Errorf("Forever %s procs Windfury Totem %d times in %d, want never", s.ActionID, got, n)
+	for _, s := range []*warrior.WarriorSpell{war.HeroicStrike, war.Cleave, war.SunderArmor, war.Revenge, war.Execute, war.Rend} {
+		if s == nil {
+			t.Fatal("a warrior ability isn't registered")
 		}
+		if got := windfuryProcs(sim, war, s.Spell, n); got < n/10 || got > n/3 {
+			t.Errorf("Forever %s procs Windfury Totem %d times in %d, want about a fifth", s.ActionID, got, n)
+		}
+	}
+	if got := windfuryProcs(sim, war, war.Whirlwind.Spell, n); got != 0 {
+		t.Errorf("Forever Whirlwind procs Windfury Totem %d times in %d, want never", got, n)
 	}
 
 	era, eraWar := newWindfuryTank(t, proto.Ruleset_RulesetClassic)
-	if got := windfuryProcs(era, eraWar, eraWar.HeroicStrike.Spell, n); got < n/10 {
-		t.Errorf("Classic Heroic Strike procs Windfury Totem %d times in %d, want about a fifth", got, n)
+	for _, s := range []*warrior.WarriorSpell{eraWar.HeroicStrike, eraWar.Whirlwind} {
+		if got := windfuryProcs(era, eraWar, s.Spell, n); got < n/10 {
+			t.Errorf("Classic %s procs Windfury Totem %d times in %d, want about a fifth", s.ActionID, got, n)
+		}
 	}
 }
