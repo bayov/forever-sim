@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (paladin *Paladin) registerJudgement() {
@@ -72,4 +73,23 @@ func (paladin *Paladin) sanctifiedJudgementBase(sim *core.Simulation) float64 {
 	baseCost := max(0, cost.BaseCost+float64(cost.FlatModifier))
 	percent := float64(paladin.GetSchoolCostModifier(seal)) / 100 * float64(cost.Multiplier) / 100 * cost.Factor
 	return baseCost * (2 - percent)
+}
+
+// rangedJudgement makes a judgement's damage spell a ranged attack under Forever. Blizzard's
+// hotfixes of November 11 (t/2403040 post 8): "Judgement changed to now be considered a Ranged
+// Attack. This means it no longer counts as a Melee attack for the purposes of item and effect
+// procs and uses the Paladin's Ranged Hit chance." So the hit is a ranged special: listeners keyed
+// on melee (weapon and equip procs, Seal of Wisdom, Judgement of Wisdom and Light) no longer see
+// it, those keyed on melee or ranged still do, and it rolls on the ranged attack table, whose
+// weapon skill is the base for the level (a libram is no ranged weapon, so a Human's sword and
+// mace skill doesn't reach it) and which a weapon-only crit (Elemental Sharpening Stone) doesn't
+// reach. The hotfix names no other change, so it still has No Active Defense (never dodged,
+// parried or blocked), keeps its damage, threat and the weapon specializations.
+func (paladin *Paladin) rangedJudgement(config *core.SpellConfig) {
+	if !paladin.Env.IsForever() {
+		return
+	}
+	config.DefenseType = core.DefenseTypeRanged
+	config.ProcMask = core.ProcMaskRangedSpecial
+	config.CastType = proto.CastType_CastTypeRanged
 }

@@ -237,6 +237,41 @@ func TestSealOfFury(t *testing.T) {
 	near(t, "Judgement of Fury rank 4's coefficient with damage downranked", spell(t, dr, 20411).BonusCoefficient, 0.429*0.55, 1e-9)
 }
 
+// TestJudgementOfFuryRanged checks Judgement of Fury (20414) after the November 11 hotfixes'
+// "Judgement changed to now be considered a Ranged Attack" (t/2403040 post 8): a ranged special
+// that melee-keyed procs miss, rolled on the ranged attack table, and still the seal hit's threat
+// a point of damage (Righteous Fury on Holy, no threat of its own).
+func TestJudgementOfFuryRanged(t *testing.T) {
+	sim, pal := protSim(t, "", nil)
+	judgement := spell(t, pal, 20414)
+	if judgement.ProcMask != core.ProcMaskRangedSpecial || judgement.ProcMask.Matches(core.ProcMaskMelee) ||
+		judgement.CastType != proto.CastType_CastTypeRanged || judgement.DefenseType != core.DefenseTypeRanged {
+		t.Fatalf("Judgement of Fury proc mask %v, cast type %v, defense %v, want a ranged special",
+			judgement.ProcMask, judgement.CastType, judgement.DefenseType)
+	}
+
+	tables := pal.AttackTables[pal.CurrentTarget.UnitIndex]
+	ranged, mh := tables[proto.CastType_CastTypeRanged], tables[proto.CastType_CastTypeMainHand]
+	metrics := &judgement.SpellMetrics[pal.CurrentTarget.UnitIndex]
+	ranged.BaseMissChance, mh.BaseMissChance = 2, -1
+	for range 20 {
+		judgement.ApplyEffects(sim, pal.CurrentTarget, judgement)
+	}
+	if metrics.Misses != 20 {
+		t.Errorf("Judgement of Fury missed %d of 20 with the ranged table always missing, want 20", metrics.Misses)
+	}
+	ranged.BaseMissChance, mh.BaseMissChance = -1, 2
+	before := *metrics
+	for range 20 {
+		judgement.ApplyEffects(sim, pal.CurrentTarget, judgement)
+	}
+	if metrics.Misses != before.Misses {
+		t.Errorf("Judgement of Fury missed %d of 20 with only the main hand table always missing, want 0", metrics.Misses-before.Misses)
+	}
+	dealt := metrics.TotalDamage - before.TotalDamage
+	near(t, "Judgement of Fury threat a point", (metrics.TotalThreat-before.TotalThreat)/dealt, 1.9*1.33, 1e-6)
+}
+
 // TestSealOfFuryNeedsShield checks that without a shield the seal's hit gives no absorb.
 func TestSealOfFuryNeedsShield(t *testing.T) {
 	sim, pal := protSim(t, "", nil, arcaniteReaper)
