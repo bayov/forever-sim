@@ -36,6 +36,15 @@
 
 ## Resolved
 
+### tank_mechanics-20261112-1: Judgement of Fury, every Protection paladin preset's judgement, is still a melee special after the Nov 11 "Judgement is a Ranged Attack" hotfix
+- severity: low (measured -1 to -12 objective, about 0.3%)
+- affects: Protection paladin (Level 60 Max threat, Balanced, Max survival)
+- found: 2026-11-12, master 55cd92b09
+- evidence: same hotfix as mechanics-20261112-3 (t/2403040 post 8, tier 1), which names only Command and Righteousness; the tank presets judge Seal of Fury (20271 and Swift Judgement 1310994 with Seal of Fury 20423), whose damage spell is `sim/paladin/seal_of_fury.go:97-114` (DefenseType melee, ProcMaskMeleeMHSpecial, OutcomeMeleeSpecialNoBlockDodgeParry). With only its proc mask made ProcMaskRangedSpecial (`$AUDIT_WORK/tank_mechanics/jof_ranged_procmask.patch`), tankbench 3,000 iterations, seed 1, paired: Max threat 2602 -> 2594 (TPS 1304 -> 1301), Balanced 2134 -> 2125, Max survival 1019 -> 1018. Not measured: the ranged hit roll (Precision 20189 is A_MOD_HIT_CHANCE, aura 54, which covers ranged too, so hit should not move) and whether a ranged Judgement can be dodged (unstated).
+- proposed fix: fold Judgement of Fury into mechanics-20261112-3's fix (ProcMaskRangedSpecial and a ranged outcome for the judgement damage spell), and re-score the paladin presets.
+- needs: worker fix
+- fixed: 2026-11-12, branch worktree-agent-aa37e74856d3a4fa3, with mechanics-20261112-3 (see there): Judgement of Fury (20414 and lower ranks) is a ranged special on the ranged attack table, still never dodged, parried or blocked (the hotfix names no such change), threat unchanged (TestJudgementOfFuryRanged pins 1.9 x 1.33 a point). docs/tank_paladin.md's Seal of Fury row says so. tankbench, 3,000 iterations, seed 1, paired, objective at each preset's own weight: Max threat 2602 -> 2594 (TPS 1304 -> 1301, SafeDPS 1401 -> 1398), Balanced 2134 -> 2125 (TPS 1275 -> 1273), Max survival 1019 -> 1018 (TPS 1221 -> 1218). The same as the proc mask alone: the ranged roll moves nothing for these builds (no melee weapon skill bonus, no weapon-only crit).
+
 ### tank_mechanics-20261111-1: docs/tank_shaman.md still gives the Warden Stormstrike 150% / 6 s and Mental Dexterity 50 / 100 / 150%
 - severity: low (labels only; the sim and its tests already use the Nov 10 values)
 - affects: Warden shaman; docs/tank_shaman.md
