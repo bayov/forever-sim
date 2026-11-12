@@ -19,6 +19,19 @@ The main-hand Windfury rule gave the warrior +392 / +320 / +189 (Sunder Armor an
 51, but the paladin's potion action (finding -20261105-1, +402) and its agility enchants (-20261112-2, +78) would each
 put the paladin back ahead.
 
+Enchants and the bear's race (findings -20261112-2, -3, fixed 2026-11-12): every tank preset re-picked its head, legs,
+neck, wrist, gloves, chest, back and boots enchants by its own objective. New scores (tankbench 10,000 iterations, seed 1,
+six-boss mean, own weight):
+
+| weight | order (best first) | scores |
+|---|---|---|
+| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4220 / 3257 / 2788 / 2549 |
+| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3429 / 2821 / 1863 / 1211 |
+| Max survival (w 3) | Paladin, Warrior, Bear, Warden | 1798 / 1764 / 224 / -2314 |
+
+The paladin retakes Max survival by 34 (Gloves Holy Power, Voracity Agility, Necklace Agility: +75 / +77); its potion
+action (finding -20261105-1) is still open.
+
 TPS (Balanced): warrior 2052, paladin 1506, bear 1483, Warden 1345. Healing needed (Balanced): paladin 241, warrior 340,
 bear 464, Warden 665.
 
@@ -52,11 +65,11 @@ at its three weights (most of it the Titans at Max survival).
 - The Warden plays races a Forever shaman can't be: Night Elf at Max threat and Balanced, Undead at Max survival
   (client CharBaseInfo: shaman is Dwarf, Orc, Tauren, Troll or Skyborne Windshaper). Going legal costs about -60 (Troll
   or Orc) / -80 (Troll) / -158 (Tauren) (finding -20261105-2). The Warden is last at every weight either way.
-- Enchants (finding -20261112-2): head / legs Lesser Arcanum of Voracity (Agility, or Strength for the warrior's
-  threat), Necklace Agility and Gloves Greater Agility beat the current picks on the paladin (Max survival +78 / +62,
-  Balanced +26), the Warden (+16 to +52), the warrior (+6 to +21) and the bear's Max survival (+14 to +24).
-- Race (finding -20261112-3): the bear's Max survival plays Night Elf; Tauren is +32 / +12 since its re-tune.
 - Raid-only consumables: settled 2026-11-12 (user ruling, option a): no tank uses a raid-only stone, oil or elixir.
+- Enchants and the bear's Max survival race: settled 2026-11-12 (findings -20261112-2, -3). Every preset carries the
+  best legal Phase 1 enchant per slot for its own weight (10,000 iterations, seeds 1 and 2, paired): paladin +75 / +53 /
+  +76 (Holy Power gloves, Voracity Agility, a spell power neck at Max threat and Balanced), Warden +20 / +28 / +87,
+  warrior +21 / +9 / +14, bear Max survival +19 (gloves) and +21 (Tauren).
 - Checked and equal: the paladin has no Blessing of Wisdom (every other mana spec does), but Wisdom gains it nothing
   (-1 to -8, noise). Everything else matches: all four tanks have searched every slot of the full raid set
   (standards 40); the Warden's other mana consumables (Demonic Rune, Greater Intellect) are noise for the paladin.
@@ -68,7 +81,7 @@ at its three weights (most of it the Titans at Max survival).
    the question is mostly moot.
 3. Answered 2026-11-12: the Warden was re-tuned for the Nov 10 shaman notes (talents, Searing / Fire Nova, Healing
    Stream at Max survival and Balanced); +37 / +50 / +356 since pass 9.
-4. Enchants and the bear's Max survival race (findings -20261112-2, -3; worker fixes).
+4. Answered 2026-11-12: enchants and the bear's Max survival race (findings -20261112-2, -3) fixed by the tank worker.
 
 Answered:
 - rotopt strips the tank's own debuffs through `tankscore.MakeTank` → `OwnDebuffs` (tools/rotopt/run.go:211), as tankbench does.

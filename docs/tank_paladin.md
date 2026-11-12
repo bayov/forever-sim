@@ -235,6 +235,24 @@ set is gone): wrist Superior Deflection 1248665, shield Lesser Block 863, cloak 
 1887. Consumables as round 4 left them (below); Max threat and Balanced now differ in the Zanza slot and Max threat's
 Consecration condition only.
 
+**Enchants per weight (2026-11-12, tank_fairness-20261112-2).** Every legal Phase 1 enchant screened slot by slot at
+3,000 iterations (seeds 1 and 2), then the winners paired at 10,000 on seeds 1 and 2 against the old set (six-boss
+mean, own weight). Each weight now has its own UI gear set: Balanced `level60_phase1_synthetic.gear.json`, Max threat
+`..._max_threat.gear.json`, Max survival `..._max_survival.gear.json`.
+
+| | head, legs | neck | wrist | gloves | chest | gain at 10,000 (seed 1 / 2) |
+|---|---|---|---|---|---|---|
+| was (all three) | Voracity Stamina 1507 | Strength 1249019 | Superior Deflection 1248665 | Superior Strength 1248640 | Greater Stats 1891 | |
+| Max threat | Voracity Agility 1508 | Spell Power 1249057 | Greater Spellpower 1220624 | Holy Power 1213622 | Mystic Rugged Armor Kit 1254966 | +70.5 / +71.2, then the kit +4.3 / +3.8 |
+| Balanced | Voracity Agility 1508 | Spell Power 1249057 | Superior Deflection | Holy Power 1213622 | Greater Stats | +53.5 / +53.3 |
+| Max survival | Voracity Agility 1508 | Agility 1249059 | Superior Deflection | Holy Power 1213622 | Greater Stats | +75.2 / +76.7 |
+
+Gloves Holy Power (+20 holy damage, a non-raid formula, standards 7) is the biggest single slot at every weight (+26 to
++28, TPS +11); the finding's Greater Agility gloves tie it at Max survival on seed 1 and lose on seed 2 (gH − gA: −3.1 /
++14.5 / −1.3 / +8.7 on seeds 1 to 4), and give up 30 at the other two weights. Balanced's neck: Spell Power over Agility by
++2.7 / +2.5 (paired, in the full set). A rescreen of every slot on the new sets (3,000, seed 1) found nothing else over +3
+but the kit at Max threat.
+
 **Round 3 (2026-11-04, tank-paladin-3, on master a096b3e: mana-gain threat without the threat multiplier,
 tank_mechanics-20261104-12; disjoint tank-tool seeds, tank_rotations-20261104-13).** The same search as round 2
 (rotopt on the six scoring encounters, 1,000 iterations a candidate, 3,000 to confirm, `-freeze bulwarkAt` at

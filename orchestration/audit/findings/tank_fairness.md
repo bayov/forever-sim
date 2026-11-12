@@ -2,35 +2,6 @@
 
 ## Open
 
-### tank_fairness-20261112-3: Bear Max survival plays Night Elf; Tauren scores higher since the bear re-tune
-- severity: medium (+32 / +12 on a score of about 190, the bear's own preset only; no rank moves)
-- affects: Feral tank druid, Max survival (tools/tankbench/req/druid_bear_max_survival.json RaceNightElf, ui/feral_tank_druid presets)
-- found: 2026-11-12, master 4fb90c298
-- evidence: the race table (ui/dps_report/data/tank_races.json, dc363151e) predates the Windfury rule and the bear re-tune (Frenzied Regeneration at 80 Rage, Swipe filler, new talents, ca7c42400). Paired tankbench, six-boss mean at w=3, the request with race swapped: 3,000 iterations seed 1 / 2: Tauren +21.7 / +41.2, Skyborne (either half) -157 / -150; 10,000 iterations seed 1 / 2: Tauren +32.2 / +12.3 (184 -> 216 at seed 1; TPS -34, healing needed -16). Night Elf still wins Max threat (Tauren -150 / -143) and Balanced (-114 / -110). Sure of the sign (four runs), not of the size (±10 to 15).
-- proposed fix: bear worker: Max survival to Tauren (confirm with bench_races.py on the race table), re-check its talents and FR threshold on the new race, then the UI preset and docs/tank_druid.md.
-- needs: worker fix
-
-### tank_fairness-20261112-2: Agility enchants beat the head, legs, neck and glove picks on three tanks (paladin Max survival +78 / +62, which puts it back ahead of the warrior)
-- severity: high (moves the Max survival ranking: paladin 1,723 -> 1,801 against the warrior's 1,750 -> 1,764 with its own fix)
-- affects: paladin Balanced and Max survival, Warden all three, warrior all three, bear Max survival (equipment enchants in tools/tankbench/req/*.json and the ui presets)
-- found: 2026-11-12, master 4fb90c298
-- evidence: each slot swapped alone (3,000 iterations, seed 1, then seed 2), then the winners together (10,000 iterations, seed 1 / 2, paired, six-boss mean at the preset's own weight). Enchant ids: Lesser Arcanum of Voracity Agility 1508 / Strength 1506 on head and legs, Enchant Necklace - Agility 1249059, Gloves Greater Agility 1887.
-  - Paladin Max survival: head + legs 1507 -> 1508, neck 1249019 -> 1249059, gloves 1248640 -> 1887: **+78.3 / +62.2** (DTPS -11).
-  - Paladin Balanced: same four: **+26.0 / +24.7**.
-  - Warden Max survival: gloves -> 1887, neck -> 1249059 (chest Major Health 1892 was +13 / +2 alone): **+45.5 / +52.2**.
-  - Warden Balanced: head + legs 1507 -> 1508, gloves -> 1887, neck -> 1249059: **+31.8 / +23.5**.
-  - Warden Max threat: head + legs -> 1508, neck -> 1249059: **+18.7 / +15.7**.
-  - Warrior Max threat: head + legs Lesser Arcanum of Constitution 1503 -> 1506: **+20.5 / +20.7** (TPS +17).
-  - Warrior Balanced: the same: +6.0 / +5.8.
-  - Warrior Max survival: neck 1249019 -> 1249059: **+13.8 / +13.2** (adding head + legs 1508 is +27 / +7: noise).
-  - Bear Max survival: gloves 1248640 -> 1887: +14.3 / +23.7.
-  - Nothing found for paladin Max threat, bear Max threat and Balanced (every single swap within ±3).
-  Probable cause: the Windfury rule and the re-tunes changed the stat weights after the 2026-11-12 tank_gear pass, which tried boots, wrists and cloak but not these slots on every preset. Reproduce: tools/audit/tank_fairness/variants.py, bench.sh, paired.py (the requests are in $AUDIT_WORK/tank_fairness/p11/req3 for the combinations).
-- proposed fix: each tank worker takes the listed enchants (confirm each slot at 10,000 on two seeds, since a few single swaps sit at +2 to +8), then the UI presets, docs/tank_*.md and the DPS Report Tanking data. A tank_gear pass could add head / legs / neck / gloves to its per-preset enchant screen.
-- needs: worker fix
-- pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
-- pass 10 (2026-11-12, master a0b4d3b): not fixed. Since Windfury Totem rolls on Revenge, Sunder and Heroic Strike (standard 17), the warrior's Titans gain at Max survival fell from +47 to +1 (1758.3 ±12.8 against 1757.3, seed 1, 3000, six bosses), and the warrior (1757) is ahead of the paladin even with Titans (1724), so the severity note's 'paladin to first' no longer holds. Bear, paladin and Warden parts not re-measured (paladin and Warden scores unchanged).
-
 ### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
 - severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
 - affects: Warden shaman, all three presets (tools/tankbench/req/shaman_warden_{max_threat,balanced}.json RaceNightElf, shaman_warden_max_survival.json RaceUndead; ui/warden_shaman/sim.ts:90 RaceNightElf; docs/tank_shaman.md:34-36 and calls (f), (g))
@@ -114,6 +85,35 @@
 
 ## Resolved
 
+### tank_fairness-20261112-2: Agility enchants beat the head, legs, neck and glove picks on three tanks (paladin Max survival +78 / +62, which puts it back ahead of the warrior)
+- severity: high (moves the Max survival ranking: paladin 1,723 -> 1,801 against the warrior's 1,750 -> 1,764 with its own fix)
+- affects: paladin Balanced and Max survival, Warden all three, warrior all three, bear Max survival (equipment enchants in tools/tankbench/req/*.json and the ui presets)
+- found: 2026-11-12, master 4fb90c298
+- evidence: each slot swapped alone (3,000 iterations, seed 1, then seed 2), then the winners together (10,000 iterations, seed 1 / 2, paired, six-boss mean at the preset's own weight). Enchant ids: Lesser Arcanum of Voracity Agility 1508 / Strength 1506 on head and legs, Enchant Necklace - Agility 1249059, Gloves Greater Agility 1887.
+  - Paladin Max survival: head + legs 1507 -> 1508, neck 1249019 -> 1249059, gloves 1248640 -> 1887: **+78.3 / +62.2** (DTPS -11).
+  - Paladin Balanced: same four: **+26.0 / +24.7**.
+  - Warden Max survival: gloves -> 1887, neck -> 1249059 (chest Major Health 1892 was +13 / +2 alone): **+45.5 / +52.2**.
+  - Warden Balanced: head + legs 1507 -> 1508, gloves -> 1887, neck -> 1249059: **+31.8 / +23.5**.
+  - Warden Max threat: head + legs -> 1508, neck -> 1249059: **+18.7 / +15.7**.
+  - Warrior Max threat: head + legs Lesser Arcanum of Constitution 1503 -> 1506: **+20.5 / +20.7** (TPS +17).
+  - Warrior Balanced: the same: +6.0 / +5.8.
+  - Warrior Max survival: neck 1249019 -> 1249059: **+13.8 / +13.2** (adding head + legs 1508 is +27 / +7: noise).
+  - Bear Max survival: gloves 1248640 -> 1887: +14.3 / +23.7.
+  - Nothing found for paladin Max threat, bear Max threat and Balanced (every single swap within ±3).
+  Probable cause: the Windfury rule and the re-tunes changed the stat weights after the 2026-11-12 tank_gear pass, which tried boots, wrists and cloak but not these slots on every preset. Reproduce: tools/audit/tank_fairness/variants.py, bench.sh, paired.py (the requests are in $AUDIT_WORK/tank_fairness/p11/req3 for the combinations).
+- proposed fix: each tank worker takes the listed enchants (confirm each slot at 10,000 on two seeds, since a few single swaps sit at +2 to +8), then the UI presets, docs/tank_*.md and the DPS Report Tanking data. A tank_gear pass could add head / legs / neck / gloves to its per-preset enchant screen.
+- needs: worker fix
+- fixed: 2026-11-12, branch worktree-agent-a05485c6d399df84b. Every legal Phase 1 enchant per slot on all 12 tank presets (head / legs: Voracity Str/Agi/Sta, Constitution, Tenacity, plus Int / Rumination for the mana tanks; neck Str/Agi/Spell Power; back Agility / Superior Defense; chest Greater Stats, Major Health, Superior Stamina, Rugged / Forceful / Mystic Rugged kits; wrist Superior Str/Sta/Deflection, Greater Spellpower; gloves Superior Strength, Greater Agility, Holy / Natural Power; boots Greater Agility / Stamina; shield and 2H weapon), screened slot by slot at 3,000 on seeds 1 and 2, the winners and their combinations paired at 10,000 on seeds 1 and 2, then every slot rescreened on the new sets (3,000, seed 1) and anything over +3 re-confirmed at 10,000. Adopted (old -> new, 10,000, seed 1 / 2, own weight, combined set against the old one): paladin Max threat head + legs 1508, neck Spell Power 1249057, wrist Greater Spellpower 1220624, gloves Holy Power 1213622, chest Mystic Rugged Armor Kit 1254966: **+74.8 / +75.0**; Balanced 1508, 1249057, 1213622: **+53.5 / +53.3**; Max survival 1508, neck Agility 1249059, 1213622: **+75.2 / +76.7** (the finding's Greater Agility gloves: -3.1 / +14.5 / -1.3 / +8.7 behind Holy Power on seeds 1 to 4). Warden Max threat 1508, 1249059, gloves Natural Power 1248645: **+21.7 / +18.5**; Balanced 1508, 1249059, gloves 1887: **+31.8 / +23.5**; Max survival head + legs Lesser Arcanum of Tenacity 1504, 1249059, 1887: **+82.5 / +91.2**. Warrior Max threat head + legs 1506: **+20.5 / +20.7**; Balanced 1508 (over 1506's +6.0 / +5.8): **+8.2 / +10.5**; Max survival neck 1249059: **+13.8 / +13.2** (head + legs 1508 on top: +13.2 / -6.4 / +6.5 / -2.5 on seeds 1 to 4, not taken). Bear Max survival gloves 1887: **+14.3 / +23.7**; bear Max threat and Balanced: nothing over +3. Not held at 10,000: Warden Max survival boots 1887 / cloak Agility on the new set (+12.5 / +1.8, +5.8 / 0.0), Warrior Balanced neck Agility (+1.2 / +1.0). UI: own gear sets for paladin Max threat and Max survival (ui/protection_paladin/gear_sets/level60_phase1_synthetic_{max_threat,max_survival}.gear.json), warrior Balanced (ui/tank_warrior/gear_sets/level60_phase1_synthetic_balanced.gear.json, now the default) and bear Max survival (ui/feral_tank_druid/gear_sets/level60_phase1_synthetic_max_survival.gear.json); every UI set matches its request's enchants. Docs: docs/tank_{paladin,warrior,druid,shaman}.md, orchestration/fairness_tanks.md. New scores (10,000, seed 1, own weight): Max threat warrior 4,220.0, paladin 3,256.5, bear 2,788.0, Warden 2,549.0; Balanced 3,428.8, 2,820.8, 1,863.0, 1,211.2; Max survival paladin 1,798.3, warrior 1,764.3, bear 223.7, Warden -2,313.5 (the paladin retakes Max survival by 34). The DPS Report Tanking data is not regenerated here.
+
+### tank_fairness-20261112-3: Bear Max survival plays Night Elf; Tauren scores higher since the bear re-tune
+- severity: medium (+32 / +12 on a score of about 190, the bear's own preset only; no rank moves)
+- affects: Feral tank druid, Max survival (tools/tankbench/req/druid_bear_max_survival.json RaceNightElf, ui/feral_tank_druid presets)
+- found: 2026-11-12, master 4fb90c298
+- evidence: the race table (ui/dps_report/data/tank_races.json, dc363151e) predates the Windfury rule and the bear re-tune (Frenzied Regeneration at 80 Rage, Swipe filler, new talents, ca7c42400). Paired tankbench, six-boss mean at w=3, the request with race swapped: 3,000 iterations seed 1 / 2: Tauren +21.7 / +41.2, Skyborne (either half) -157 / -150; 10,000 iterations seed 1 / 2: Tauren +32.2 / +12.3 (184 -> 216 at seed 1; TPS -34, healing needed -16). Night Elf still wins Max threat (Tauren -150 / -143) and Balanced (-114 / -110). Sure of the sign (four runs), not of the size (±10 to 15).
+- proposed fix: bear worker: Max survival to Tauren (confirm with bench_races.py on the race table), re-check its talents and FR threshold on the new race, then the UI preset and docs/tank_druid.md.
+- needs: worker fix
+- fixed: 2026-11-12, branch worktree-agent-a05485c6d399df84b. tools/tankbench/req/druid_bear_max_survival.json and ui/feral_tank_druid/presets.ts Max survival RaceNightElf -> RaceTauren. On the final enchant set (gloves 1887), paired 10,000, Tauren against Night Elf: +25.5 / +0.1 / +17.8 / +42.0 on seeds 1 to 4 (mean +21.4; TPS -33); with the gloves, against the old request: +39.8 / +23.8, 183.8 -> 223.7 at seed 1. On the Tauren, every enchant slot (3,000, seeds 1 / 2: best Constitution head -2.8 / +7.8), Frenzied Regeneration at 60 / 70 / 90 / 100 Rage (-102 to -739), Enrage, Swipe and Maul thresholds and the Mighty Rage Potion all hold; talents not re-searched (Endurance changes no rotation choice, standards 29). Max threat and Balanced stay Night Elf. No other preset's choice moves. Docs: docs/tank_druid.md (new section and call 9), orchestration/fairness_tanks.md.
+
 ### tank_fairness-20261112-1: The warrior keeps the raid-only Elemental Sharpening Stone that the paladin and bear gave up (+20 at each weight)
 - severity: medium (about 0.6% of the warrior's Balanced score; no ranking moves)
 - affects: Protection warrior, all three presets (tools/tankbench/req/warrior_protection_{max_threat,balanced,max_survival}.json mainHandImbue ElementalSharpeningStone, ui/tank_warrior/presets.ts); also the Warden's Mageblood Potion at Max threat and Balanced (shaman_warden_{max_threat,balanced}.json manaRegenElixir), which measures as noise
@@ -131,6 +131,7 @@
 - proposed fix: each tank worker re-picks the flask per preset by its own objective (Titans at Max survival for all four and at Warden Balanced on this evidence; keep the Natural flask where it still wins), confirms at 10,000 on two seeds, re-checks gear or talents the flask's hit/expertise touched, then the UI presets, docs/tank_*.md and the DPS Report Tanking data.
 - needs: worker fix
 - fixed: 2026-11-12, branch worktree-agent-abff4050d09a62836. Every tank preset's flask re-picked by its own objective (each other flask at 3,000 seed 1, winners at 10,000 seeds 1 / 2, paired): warrior Max survival Titans +46.5 ± 7.8 / +41.8 ± 7.8; bear Max survival Titans +115.9 ± 7.8 / +111.6 ± 7.6; paladin Max survival Supreme Power +145.6 ± 7.9 / +151.5 ± 8.7 (Titans 13.0 / 10.2 behind it); Warden Balanced Titans +13.5 ± 4.4 / +19.0 ± 4.3, Max survival Titans +254.6 ± 12.1 / +230.3 ± 12.6. Natural Precision holds at every Max threat and Balanced elsewhere (Supreme ties at Warden Max threat, -3.8 / -3.5 ± 2.6). Food, Zanza, elixirs, potions and runes re-screened on every changed preset: nothing else moves. Weapon slot under the same rule for every tank: the paladin's three presets take the Wizard Oil for the Elemental Sharpening Stone (raid-only, rule 8a) and gain +18.9 / +19.8 / +20.2 (seed 1, ± 0.2 to 1.0). Whole requests, old -> new, 10,000 seed 1, own weight: warrior MS 1,561.5 -> 1,608.2; bear MS -594.3 -> -478.3; paladin MT 3,168.8 -> 3,188.0, Bal 2,755.3 -> 2,775.2, MS 1,564.8 -> 1,730.7; Warden MT 2,495.2 -> 2,514.7, Bal 1,133.3 -> 1,146.8, MS -2,738.0 -> -2,396.0. No rank moves at any weight (paladin first at Max survival, now by 122 instead of 3). Left for a user ruling: the warrior's Elemental Sharpening Stone and the Warden's Mageblood Potion are raid-only sources the consumables pass rules out for phase 1 DPS specs (bear Elemental stone +21 and paladin Brilliant Wizard Oil +52 not adopted for that reason). The DPS Report Tanking data is not regenerated here.
+- pass 10 (2026-11-12, master a0b4d3b): not fixed. Since Windfury Totem rolls on Revenge, Sunder and Heroic Strike (standard 17), the warrior's Titans gain at Max survival fell from +47 to +1 (1758.3 ±12.8 against 1757.3, seed 1, 3000, six bosses), and the warrior (1757) is ahead of the paladin even with Titans (1724), so the severity note's 'paladin to first' no longer holds. Bear, paladin and Warden parts not re-measured (paladin and Warden scores unchanged).
 
 ### tank_fairness-20261104-11: The warrior UI plays a different rotation and debuff set than its bench
 - severity: medium (-75 at Max threat, about 2%, for a user loading the preset; tankbench unaffected)

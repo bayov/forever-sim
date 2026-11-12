@@ -5,7 +5,7 @@
         "players": [
           {
             "inFrontOfTarget": true,
-            "race": "RaceNightElf",
+            "race": "RaceTauren",
             "class": "ClassDruid",
             "level": 60,
             "talentsString": "-5023133202310212551-055",
@@ -36,7 +36,7 @@
                 },
                 {
                   "id": 990807,
-                  "enchant": 1248640
+                  "enchant": 1887
                 },
                 {
                   "id": 990808

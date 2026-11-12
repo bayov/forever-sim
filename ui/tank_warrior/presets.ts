@@ -39,6 +39,7 @@ import Level60MaxThreatAPLJSON from './apls/level60_max_threat.apl.json';
 import ProtectionAPLJSON from './apls/protection.apl.json';
 import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticArmorTrinketGear from './gear_sets/level60_phase1_synthetic_armor_trinket.gear.json';
+import Level60Phase1SyntheticBalancedGear from './gear_sets/level60_phase1_synthetic_balanced.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
 import P0BISSwordBoardGear from './gear_sets/p0.bis_sword_board.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
@@ -58,21 +59,26 @@ export const GearP0BISSwordBoard = PresetUtils.makePresetGear('Pre-BiS (Sword an
 // Superior Deflection (Defense +9) on the wrists and Agility +5 on the cloak: they beat Superior Stamina and Superior Defense
 // at every weight or tie (docs/tank_warrior.md, Round 3 gear A/Bs). Greater Agility on the boots at all three weights, and
 // Superior Strength on the wrists at Max threat and Balanced (tank_gear-20261112-1, -2; the armor trinket set keeps Deflection).
-// Max threat and Balanced wear it: the attack power on-use beats the armor one by 210 and 180 (round 3).
+// Max threat wears it, with Lesser Arcanum of Voracity Strength on the head and legs (tank_fairness-20261112-2: +20.5 / +20.7
+// over Constitution at 10,000 iterations, seeds 1 / 2). The attack power on-use beats the armor one by 210 and 180 (round 3).
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Level60Phase1SyntheticGear);
+// The same set with Lesser Arcanum of Voracity Agility on the head and legs: Balanced's (+8.2 / +10.5 over Constitution,
+// ahead of Strength's +6.0 / +5.8; tank_fairness-20261112-2).
+export const GearLevel60SyntheticBalanced = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic, Balanced)', Level60Phase1SyntheticBalancedGear);
 // The same set with the armor on-use trinket (990617) in place of the attack power one: Max survival's, where it
 // wins by 13 to 16 ± 5 when held for the last 35 sec (round 3, two seeds): all of it on Broodlord; without Broodlord the attack
-// power trinket would win by about 70 (tank_rotations-20261104-11, a call for the user).
+// power trinket would win by about 70 (tank_rotations-20261104-11, a call for the user). Necklace Agility in place of
+// Strength (+13.8 / +13.2, tank_fairness-20261112-2).
 export const GearLevel60SyntheticArmorTrinket = PresetUtils.makePresetGear(
 	'Level 60 Phase 1 (Synthetic, armor trinket)',
 	Level60Phase1SyntheticArmorTrinketGear,
 );
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Synthetic, GearLevel60SyntheticArmorTrinket, GearP0BISSwordBoard, GearP0BIS, GearP1BIS],
+	[Phase.Phase1]: [GearLevel60Synthetic, GearLevel60SyntheticBalanced, GearLevel60SyntheticArmorTrinket, GearP0BISSwordBoard, GearP0BIS, GearP1BIS],
 };
 
-export const DefaultGear = GearLevel60Synthetic;
+export const DefaultGear = GearLevel60SyntheticBalanced;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -300,7 +306,7 @@ export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
 	tooltip: 'Scored with survival weighed at 1 (docs/tank_sim.md). Shield Wall in the last 17 sec.',
-	gear: GearLevel60Synthetic,
+	gear: GearLevel60SyntheticBalanced,
 	talents: TalentsLevel60,
 	rotation: APLLevel60Balanced,
 	encounter: EncounterLevel60Tank,
