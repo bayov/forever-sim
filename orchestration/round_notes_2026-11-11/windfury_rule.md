@@ -8,19 +8,30 @@ no other ability, seal proc, Judgement, poison, item proc, off-hand swing, Auto 
 main hand hit. Standards 17; replaces the white-swings-only rule (0ce9dbf40, 2026-11-08) and the "nothing whose spell is
 also a special attack" gate of earlier today.
 
-## What the sim does
+## Dropped for master's rule (merge of 2026-11-12)
 
-- `tools/gen_main_hand_spells.py` writes `sim/core/client_main_hand_spells_auto_gen.go`: the 317 spells of client
-  1.60.1.70888+hf whose SpellMisc row has either flag.
-- `RegisterSpell` sets `Spell.ClientMainHand` from the ActionID's spell. An ability whose ActionID isn't its client cast,
-  or whose logs ever contradict its flag, sets the field itself (none needs to today).
-- `RollsForeverWindfuryTotem` (`sim/core/buffs.go`): a white main hand swing that isn't an extra swing (the new
-  `WeaponAttack.extraSwing`, set while extra attacks swing), or a main hand melee hit with `ClientMainHand`.
-- Tests: `sim/windfury_totem_rule_test.go` pins the log list on both sides, on every spell the 68 report requests and
-  13 tank requests register under Forever (white main hand swings roll; off-hand swings and Auto Shot don't), plus the
-  client flags of Ghostly Strike, Kidney Shot, Shield Slam and Cheap Shot, which no build registers.
-  `sim/warrior/tank_warrior/windfury_totem_test.go` lands Heroic Strike, Cleave, Sunder Armor, Revenge, Execute and Rend
-  (about a fifth proc), Whirlwind (never), and Classic's Heroic Strike and Whirlwind (a fifth).
+tankheal had its own implementation of this ruling (2a0208136, 88bf7f732: `tools/gen_main_hand_spells.py`,
+`sim/core/client_main_hand_spells_auto_gen.go`, `Spell.ClientMainHand`, `RollsForeverWindfuryTotem`, a
+`WeaponAttack.extraSwing` marker and `sim/windfury_totem_rule_test.go`). The user's own version reached master first,
+a0b4d3be9: `sim/core/windfury_totem_procs_forever.go` (made by `tools/sources/wf_totem_procs.py`),
+`windfuryTotemRollsOnForever` in `sim/core/buffs.go`, with its test `windfury_totem_procs_forever_test.go`. The merge
+(branch mergemaster) keeps master's and removes ours; `sim/warrior/tank_warrior/windfury_totem_test.go` still passes
+under master's rule and stays. The tables below were measured on our implementation.
+
+Two known disagreements between the two, each measured with a temporary patch on the merged code (not shipped;
+`tools/dps_report/req`, 20,000 iterations, seeds 1 and 1000003, paired, 180 sec):
+
+- (a) Mutilate's main hand hits 1310706 and 1310707 are in master's list, built from client 1.60.1.70425; ours, built
+  from 1.60.1.70888+hf, doesn't have them. No effect: the sim's level 60 Mutilate is 1241584 (`sim/rogue/mutilate.go`;
+  1310707 and its halves are the deleted level 30 rank), so taking them out moves no build (rogue__mutilate 864.9
+  either way, every rogue build identical).
+- (b) Under master, extra swings (sword specialization, Hand of Justice, Thrash, Windfury's own extra attack) roll the
+  totem; ours meant to block them. Windfury's own extra swing lands 10 ms after the proc (the white hit's
+  `SpellBatchWindow`), inside the 100 ms cooldown, so it never rolls under either rule. Blocking the rest moves only
+  Combat Swords, -2.75 / -2.92 (946.1 / 946.6 under master), and Subtlety -0.11 / -0.13; every warrior, Survival,
+  Enhancement, Ret and cat build is identical. Our marker never worked: it was set only while the swing was cast,
+  and the white hit lands 10 ms later, so tankheal's numbers already matched master's here (hence "leaving out extra
+  swings moved no build" below). The measurement carried the flag on the hit itself.
 
 ## Every melee ability against the flag
 
@@ -35,7 +46,7 @@ every melee spell the report and tank requests register under Forever, plus the 
 
 ## Before and after
 
-Before = tankheal HEAD 0af274ed6, after = the change. Paired: same seed (1), 3,000 iterations.
+On our implementation (now dropped). Before = tankheal HEAD 0af274ed6, after = the change. Paired: same seed (1), 3,000 iterations.
 
 ## Tank presets (tankbench, 3,000 iterations, seed 1, paired; mean over the 7 encounters in tools/encounters)
 
@@ -104,3 +115,35 @@ and healers don't melee.
 | rogue__seal-fate-daggers | 883.1 | 905.2 | +22.1 | +2.5% |
 | rogue__combat-daggers | 915.1 | 935.4 | +20.3 | +2.2% |
 | rogue__mutilate | 846.3 | 866.0 | +19.7 | +2.3% |
+
+## Re-tunes re-checked on master's rule (merge of 2026-11-12)
+
+Every pick made on our rule still wins on master's, so none was reverted.
+
+DPS (`tools/dps_report/req`, 20,000 iterations, seeds 1 / 1000003, paired, new minus old):
+
+| Pick | 120 sec | 180 sec | 300 sec |
+|---|---|---|---|
+| Fury on Battle Shout duty: fillerGap=1, rsHsRage=60 (was fillerGap=0, Heroic Strike at 80 only) | +4.7 / +5.2 | +5.5 / +5.3 | +6.6 / +7.1 |
+| Survival: Wing Clip with no mana floor (was 50%), survival / wolf / tallstrider | +0.1 each | +1.0 / +1.0 / +0.9 to +1.0 | +3.4 to +4.0 |
+| Rogue Combat default: Swords over Daggers (master's isDefault) | 976.9 vs 961.8 | 946.1 vs 936.1 / 946.6 vs 936.4 | 920.0 vs 912.8 |
+
+Tanks (tankbench, 10,000 iterations, seeds 1 / 2, six scoring bosses, paired; the old value against the pick, at the
+preset's own weight, so negative means the pick wins):
+
+| Preset | Old value | Seed 1 | Seed 2 |
+|---|---|---|---|
+| Warrior Max survival | Shield Wall in the last 17 s (pick: 13 s) | -20.2 | -24.3 |
+| Warrior Max survival | boots 929 (pick: 1887) | -7.3 | -6.5 |
+| Warrior Max survival | neck 1249019 (pick: 1249059) | -13.8 | -13.2 |
+| Warrior Balanced | boots 929 | -7.3 | -4.0 |
+| Warrior Balanced | wrist 1248665 (pick: 1885) | -2.0 | -3.5 |
+| Warrior Balanced | head and legs 1503 (pick: 1508) | -8.2 | -10.5 |
+| Warrior Max threat | boots 929 | -4.5 | -4.3 |
+| Warrior Max threat | wrist 1248665 | -10.0 | -12.5 |
+| Warrior Max threat | head and legs 1503 (pick: 1506) | -20.5 | -20.7 |
+| Warden Max threat | fire totem and Fire Nova only in the last 60 s (pick: all fight) | -4.3 | -3.2 |
+| Bear Max survival | Maul at 10 Rage (pick: 40) | -181.5 | -168.8 |
+
+Elemental Sharpening Stone still beats the Dense stone by +14 to +24 on all three warrior presets, as it did; the
+Dense stone stays by the raid-only consumables ruling (tank_fairness-20261112-1).
