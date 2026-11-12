@@ -273,6 +273,12 @@ fillers), which moved every number below:
   left; tank 1.273 against 1.272. Heart of the Wild 5 for Moonglow, Nature's Splendor and Subtlety (Genesis 5,
   Nature's Majesty 2, Improved Tranquility 1) loses on the screen (raid 1.453 against 1.464, tank 1.267 against
   1.282), as does Heart of the Wild 3 for Subtlety and Nature's Swiftness (raid 1.390).
+- **The tank healer's Nature's Swiftness at 45% (healer_rotations-20261112-1)**: 65b5d49cf made Current Health % of
+  Lowest Health read the health the healer has seen, and the 60% picked above (on true health) fell behind. Tank
+  role, own lengths, 1,000 iterations, mean carry of the 7 files, seeds 101 / 202: 40% 1.267 / 1.268, **45% 1.269 /
+  1.271**, 50% 1.258 / 1.268, 60% 1.242 / 1.244 (+0.027 for 45%, every file up on both seeds); at 180 / 300 s
+  (Onyxia, Golemagg, Chromaggus, seed 101) 1.150 / 0.946 against 1.145 / 0.940. Shipped: 45%. The raid healer's
+  45% still beats 35% and 55%.
 
 Healbench, 1,000 iterations, all seven boss files, default carry and fight length, built from this branch
 (`healers/fix-druid`) on master 0606686d3, carry:
@@ -303,7 +309,7 @@ Windshaper Skyborne, the synthetic set. Carry on `tools/healbench`, screened at 
 500 iterations, the finalists and the table at 1,000, on master with client 70753 and the November 2 notes.
 
 - **Tank healer** (`apls/tank_healer.apl.json`, `req/druid_restoration.json`: now `ht=11,8,6 ht_scale=0.8 rg_scale=0.7
-  low=0.85 ns_on=ht ns_at=0.6`, see above and the Nature's Swiftness round; the round below shipped `ht=11,8,6 low=0.4 ht_scale=0.9`):
+  low=0.85 ns_on=ht ns_at=0.45`, see above and the Nature's Swiftness round; the round below shipped `ht=11,8,6 low=0.4 ht_scale=0.9`):
   - Healing Touch bound at ranks 11, 8 and 6 beats 11, 10, 9 on every file (Onyxia 1.165 against 1.094,
     Vaelastrasz 0.695 against 0.617, 500 iterations) and 11, 8, 7 or 11, 8, 6, 5 (500: 1.159 and 1.147 on Onyxia).
   - The emergency line at 40% and Healing Touch at 90% of its heal against the 35% line at the full heal, at

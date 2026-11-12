@@ -49,13 +49,13 @@
       },
       "rhs": {
        "const": {
-        "val": "0.6"
+        "val": "0.45"
        }
       }
      }
     }
    },
-   "notes": "Nature's Swiftness when someone in my assignment is under 60% health..."
+   "notes": "Nature's Swiftness when someone in my assignment is under 45% health..."
   },
   {
    "action": {

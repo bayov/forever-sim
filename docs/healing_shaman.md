@@ -204,7 +204,9 @@ Restoration.
 Wave, Nature's Swiftness):
 
 - Lesser Healing Wave 6 and 5 at the tank, bound, while mana is at least 50%, right after Riptide: more healing
-  a second than Healing Wave for a little more a mana. Floors: 0% 1.035 (runs dry at 300 sec: 0.879), 50% 1.065,
+  a second than Healing Wave for a little more a mana. (Rank 5 had rank 6's condition and never fired; it's dropped,
+  healer_rotations-20261104-3: tank mean carry 1.257 with or without it, seed 101, 1,000 iterations; rank 5 in the
+  35-50% or 40-50% mana band 1.254 / 1.253.) Floors: 0% 1.035 (runs dry at 300 sec: 0.879), 50% 1.065,
   60% 1.059, 70% 1.051, 80% 1.029; rank 6 alone at 70% 1.038 (the 0.959 base had none).
 - Nature's Swiftness when the tank is under 50% health, before Riptide (the bound Healing Wave 10 follows it):
   +0.011 alone, +0.005 with the Lesser Healing Wave lines (50% and 40%: within 0.004; 35%: -0.010).

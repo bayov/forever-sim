@@ -14,26 +14,6 @@
 - proposed fix: add the two lines above with T=0.55 (Healing Wave 10, the big rank, as the druid's Healing Touch), and say in the note that NS waits for an emergency.
 - needs: worker fix
 
-### healer_rotations-20261112-1: Restoration druid tank healer's Nature's Swiftness threshold (60%) is too high since health values read seen health; 45% carries +0.027
-- severity: high (+2.2% mean carry; every boss file up)
-- affects: Restoration druid tank healer (`ui/restoration_druid/apls/tank_healer.apl.json` line 2, `tools/healbench/req/druid_restoration.json`, `orchestration/tools/healers/druid_restoration_apl.py`). The raid healer's 45% is still best.
-- found: 2026-11-12, master 3065ba744 (tankheal)
-- evidence: e05135ad3 picked 60% (Lowest Health) on true health; 65b5d49cf then made Current Health % of Lowest Health read the health the healer has seen. Bisect on the pre-consumables request: Magmadar 2.102 (3fc5898c9) -> 2.003 (65b5d49cf), unchanged since. Paired, 1,000 it, seed 101, own lengths, `-role tank`, carry (Onyxia / Broodlord / Chromaggus / Golemagg / Magmadar / Ragnaros / Vaelastrasz, mean):
-  - master 60%: 1.386 / 0.873 / 1.010 / 1.864 / 2.004 / 0.629 / 0.927, 1.242
-  - 45%: 1.403 / 0.893 / 1.023 / 1.951 / 2.045 / 0.634 / 0.932, 1.269 (+0.027, 7 of 7 up)
-  - 35%: 1.268; 40%: 1.267; 50%: 1.258; 70%: 1.224
-  Raid healer (45%): 35% 1.400, 55% 1.406 against 1.414, so it stays. Sure: a plateau from 35 to 50%, all above 60%.
-- proposed fix: Nature's Swiftness on the tank healer at Lowest Health under 45% (was 60%), in the APL, the request, the generator and `docs/healing_druid.md`.
-- needs: worker fix
-
-### healer_rotations-20261104-3: Restoration shaman tank healer's Lesser Healing Wave 5 line never fires (same mana gate as rank 6 just above it)
-- severity: low (no carry to gain; a dead line in a shipped preset)
-- affects: Restoration shaman tank healer (`ui/restoration_shaman/apls/tank_healer.apl.json` line 9, `tools/healbench/req/shaman_restoration.json`)
-- found: 2026-11-04, master 0facd9428
-- evidence: since the re-tune 324d64834, line 8 casts Lesser Healing Wave 6 (10468) on the tank whenever mana >= 50%, and line 9 casts rank 5 (10467) on exactly the same condition. Rank 6 is always affordable at 50% mana, so rank 5 can never be reached. Logged iterations (`healbench -role tank -encounter tools/encounters/{golemagg,chromaggus}.json -dur 300 -scale 1.5 -log`) show 10467 cast 0 times, against 10468 at 45 / 18 casts. Sure: the conditions are identical.
-- proposed fix: drop line 9, or give rank 5 its own condition (for example a smaller tank deficit, or the 50-70% mana band) and measure it. No carry change is expected from dropping it.
-- needs: worker fix
-
 ### healer_rotations-20261104-2: Discipline tank healer runs out of mana on Chromaggus at the fight's own length (107 of 115 s), and on Golemagg at 300 s
 - severity: medium (a mana failure at a judged length; the preset already trails the Holy tank healer there, 0.818 vs 1.002)
 - affects: Discipline priest tank healer (`ui/healing_priest/apls/discipline_tank_healer.apl.json`, `tools/healbench/req/priest_discipline.json`)
@@ -50,9 +30,47 @@
 - update 2026-11-11, master 707ae92cc: unchanged (same row, byte-identical).
 - update 2026-11-12, master cb0d928fd: unchanged (same row, byte-identical).
 - update 2026-11-12, master 3065ba744: still dry on Chromaggus (carry 0.871, 341 mana left, OOM at 101 s, 1,000 it) with the new consumables.
+- update 2026-11-12 (worker, on tankheal): re-screened on the new consumables, tank role, own lengths, 1,000 it,
+  mean carry, seeds 101 / 202 (master 1.272 / 1.267): shield gate 0.9 1.278 / 1.268, 0.8 1.270 / 1.266, 1.0
+  1.249 / 1.250; Renew 9 1.270, Renew 8 1.258; Greater Heal at 70% 1.265; emergency 40% 1.264; Flash Heal first
+  over 95% 1.249; Flash Heal 5 below 30% / 50% mana 1.273 / 1.274; gate 0.9 + Renew 9 1.273 / 1.272; gate 0.9 +
+  Flash Heal 5 below 50% mana 1.277 / 1.276 (best, +0.005 / +0.009, Chromaggus 0.880 / 0.882, out at 106 s); all
+  three 1.268 / 1.265. The best loses at 180 / 300 s (Golemagg, Chromaggus, Ragnaros, seed 101): 0.738 / 0.591
+  against 0.750 / 0.612 (it lasts longer, Golemagg 237 s against 210 s, but carries less), so none is adopted.
+  None lasts Chromaggus at carried damage. Not tried: Inner Focus or potion timing (both through
+  `autocastOtherCooldowns`/the Greater Heal line). `rots.py` has the `fhlow` / `fhlowgate` knobs for the Flash
+  Heal variant. The OOM looks like the Discipline kit's cost on a mana-starved fight, not a rotation line:
+  Distilled Wisdom wins Chromaggus by 0.075 (`docs/healing_sim.md`, Consumables) but loses the mean.
 - needs: worker fix
 
 ## Resolved
+
+### healer_rotations-20261112-1: Restoration druid tank healer's Nature's Swiftness threshold (60%) is too high since health values read seen health; 45% carries +0.027
+- severity: high (+2.2% mean carry; every boss file up)
+- affects: Restoration druid tank healer (`ui/restoration_druid/apls/tank_healer.apl.json` line 2, `tools/healbench/req/druid_restoration.json`, `orchestration/tools/healers/druid_restoration_apl.py`). The raid healer's 45% is still best.
+- found: 2026-11-12, master 3065ba744 (tankheal)
+- evidence: e05135ad3 picked 60% (Lowest Health) on true health; 65b5d49cf then made Current Health % of Lowest Health read the health the healer has seen. Bisect on the pre-consumables request: Magmadar 2.102 (3fc5898c9) -> 2.003 (65b5d49cf), unchanged since. Paired, 1,000 it, seed 101, own lengths, `-role tank`, carry (Onyxia / Broodlord / Chromaggus / Golemagg / Magmadar / Ragnaros / Vaelastrasz, mean):
+  - master 60%: 1.386 / 0.873 / 1.010 / 1.864 / 2.004 / 0.629 / 0.927, 1.242
+  - 45%: 1.403 / 0.893 / 1.023 / 1.951 / 2.045 / 0.634 / 0.932, 1.269 (+0.027, 7 of 7 up)
+  - 35%: 1.268; 40%: 1.267; 50%: 1.258; 70%: 1.224
+  Raid healer (45%): 35% 1.400, 55% 1.406 against 1.414, so it stays. Sure: a plateau from 35 to 50%, all above 60%.
+- proposed fix: Nature's Swiftness on the tank healer at Lowest Health under 45% (was 60%), in the APL, the request, the generator and `docs/healing_druid.md`.
+- needs: worker fix
+- resolved: 2026-11-12, the tank healer's Nature's Swiftness at 45% (APL, request, `docs/healing_druid.md`; the
+  generator's `ns_at=0.45`). Tank role, own lengths, 1,000 it, mean carry, seeds 101 / 202: 40% 1.267 / 1.268, 45%
+  1.269 / 1.271, 50% 1.258 / 1.268, 60% 1.242 / 1.244 (+0.027 / +0.027, every file up on both seeds); 180 / 300 s
+  (Onyxia, Golemagg, Chromaggus, seed 101) 1.150 / 0.946 against 1.145 / 0.940.
+
+### healer_rotations-20261104-3: Restoration shaman tank healer's Lesser Healing Wave 5 line never fires (same mana gate as rank 6 just above it)
+- severity: low (no carry to gain; a dead line in a shipped preset)
+- affects: Restoration shaman tank healer (`ui/restoration_shaman/apls/tank_healer.apl.json` line 9, `tools/healbench/req/shaman_restoration.json`)
+- found: 2026-11-04, master 0facd9428
+- evidence: since the re-tune 324d64834, line 8 casts Lesser Healing Wave 6 (10468) on the tank whenever mana >= 50%, and line 9 casts rank 5 (10467) on exactly the same condition. Rank 6 is always affordable at 50% mana, so rank 5 can never be reached. Logged iterations (`healbench -role tank -encounter tools/encounters/{golemagg,chromaggus}.json -dur 300 -scale 1.5 -log`) show 10467 cast 0 times, against 10468 at 45 / 18 casts. Sure: the conditions are identical.
+- proposed fix: drop line 9, or give rank 5 its own condition (for example a smaller tank deficit, or the 50-70% mana band) and measure it. No carry change is expected from dropping it.
+- needs: worker fix
+- resolved: 2026-11-12, line 9 (rank 5) dropped from the APL and the request, line 8's note says rank 6 only.
+  Tank role, own lengths, 1,000 it, seed 101: 1.2571 with or without it (byte-identical rows); rank 5 on its own
+  35-50% or 40-50% mana band 1.254 / 1.253, so it isn't kept.
 
 ### healer_rotations-20261111-1: Restoration druid raid healer loses its emergency Nature's Swiftness Regrowth to Wild Growth since NS also makes Wild Growth instant (-0.046 mean carry, Magmadar -0.184)
 - severity: high (Magmadar 2.002 -> 1.818 carry, about 9%; every boss file down)

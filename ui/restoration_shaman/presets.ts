@@ -60,7 +60,7 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // when what's missing covers its Expected Healing.
 //
 // The tank healer: Nature's Swiftness when the tank is under 50% health, Riptide on the tank whenever
-// it's off, Lesser Healing Wave 6 and 5 at the tank while mana is at least 50%, then Healing Wave 10,
+// it's off, Lesser Healing Wave 6 at the tank while mana is at least 50%, then Healing Wave 10,
 // 8 and 6 at the tank, and Chain Heal 3, 2 and 1 at the most hurt when the tank is topped. Water
 // Shield goes back up as soon as its globes are spent: a tank healer is seldom hit, so its globes go
 // on its heals' crits. Lesser Healing Wave heals more a second than Healing Wave for a little more a
