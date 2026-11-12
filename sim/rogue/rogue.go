@@ -83,7 +83,7 @@ type Rogue struct {
 	WoundPoison      *core.Spell
 
 	additivePoisonBonusChance float64
-	venomPoisonChance         float64 // Venom: Deadly and Wound Poison only (venom.go)
+	venomPoisonChance         float64 // Venom: Instant, Deadly and Wound Poison (venom.go)
 
 	AdrenalineRushAura      *core.Aura
 	BladeFlurryAura         *core.Aura

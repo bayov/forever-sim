@@ -36,7 +36,7 @@ const (
 )
 
 func (rogue *Rogue) GetInstantPoisonProcChance() float64 {
-	return 0.2 + rogue.improvedPoisons() + rogue.additivePoisonBonusChance
+	return 0.2 + rogue.improvedPoisons() + rogue.additivePoisonBonusChance + rogue.venomPoisonChance
 }
 
 func (rogue *Rogue) GetDeadlyPoisonProcChance() float64 {
