@@ -61,6 +61,9 @@ func ApplyProcTriggerCallback(unit *Unit, aura *Aura, config ProcTrigger) {
 
 	handler := config.Handler
 	callback := func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+		if spell.Flags.Matches(SpellFlagNoProcs) {
+			return
+		}
 		if config.SpellFlags != SpellFlagNone && !spell.Flags.Matches(config.SpellFlags) {
 			return
 		}
@@ -112,6 +115,9 @@ func ApplyProcTriggerCallback(unit *Unit, aura *Aura, config ProcTrigger) {
 	}
 	if config.Callback.Matches(CallbackOnCastComplete) {
 		aura.OnCastComplete = func(aura *Aura, sim *Simulation, spell *Spell) {
+			if spell.Flags.Matches(SpellFlagNoProcs) {
+				return
+			}
 			if config.SpellFlags != SpellFlagNone && !spell.Flags.Matches(config.SpellFlags) {
 				return
 			}

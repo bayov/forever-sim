@@ -22,6 +22,10 @@ func (hunter *Hunter) registerVolleySpell() {
 // harder: 70/91/112 a second by rank (Classic 50/65/80), from the spells it fires each tick
 // (1279721, 1279719 and 1279715). Each tick is a ranged attack that can crit, so Mortal Shots and
 // Barrage count. The spell power coefficient is Classic's, a hunter has no spell power.
+// Volley activates no procs (Blizzard hotfix 2026-11-11), its cast or its ticks: before it, Touch
+// of the Grave (CallbackOnCastComplete, ProcMaskDirect) could go off on the cast. It keeps
+// ProcMaskRangedSpecial, which Ranged Weapon Specialization reads. Moving cancels the channel
+// (movement.go), as the hotfix says.
 func (hunter *Hunter) getVolleyConfig(rank int) core.SpellConfig {
 	spellId := [4]int32{0, 1510, 14294, 14295}[rank]
 	baseDamage := [4]float64{0, 70, 91, 112}[rank]
@@ -34,7 +38,7 @@ func (hunter *Hunter) getVolleyConfig(rank int) core.SpellConfig {
 		SpellSchool: core.SpellSchoolArcane,
 		DefenseType: core.DefenseTypeRanged,
 		ProcMask:    core.ProcMaskRangedSpecial,
-		Flags:       core.SpellFlagChanneled | core.SpellFlagAPL,
+		Flags:       core.SpellFlagChanneled | core.SpellFlagAPL | core.SpellFlagNoProcs,
 
 		RequiredLevel: level,
 		Rank:          rank,
