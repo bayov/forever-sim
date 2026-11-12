@@ -4833,6 +4833,192 @@
      "commits": [
       "368b2e1"
      ]
+    },
+    {
+     "title": "Judgement is a ranged attack: it rolls on the ranged attack table, and melee procs no longer see it",
+     "kind": "game",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "note": "From the November 11 hotfixes: Judgement of Command, Righteousness and Fury now roll as ranged attacks, so effects that trigger on melee hits no longer fire from them. Threat is unchanged. Retribution builds lose 0.5 to 0.7%; Protection paladins move too (see the Tanking tab).",
+     "commits": [
+      "f1c07e1"
+     ]
+    },
+    {
+     "title": "Survival uses Wing Clip on every free global cooldown, with no mana floor",
+     "kind": "rotation",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf"
+     ],
+     "note": "Wing Clip rolls Windfury Totem, so it is worth casting even at low mana. Survival gains about 1 DPS at 3 minutes and more in longer fights.",
+     "commits": [
+      "8f5de1c"
+     ]
+    },
+    {
+     "title": "Fury on Battle Shout duty fills gaps closer to Bloodthirst and Whirlwind and uses Heroic Strike from 60 Rage during Reckless Swings",
+     "kind": "rotation",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__fury-duty-battle-shout"
+     ],
+     "note": "Heroic Strike and Hamstring wait until Bloodthirst and Whirlwind are at least 1 sec away. Worth about 5 DPS.",
+     "commits": [
+      "8f5de1c"
+     ]
+    },
+    {
+     "title": "Combat Swords is the Rogue's default build again",
+     "kind": "method",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-swords",
+      "rogue__combat-daggers"
+     ],
+     "moves": false,
+     "note": "With Windfury Totem on main hand attacks it is the Rogue's highest build at 3 minutes, ahead of Combat Daggers. No number moves; only the build a Rogue opens on.",
+     "commits": [
+      "8f5de1c"
+     ]
+    },
+    {
+     "title": "Tanking: every tank's enchants re-picked slot by slot",
+     "kind": "gear",
+     "classes": [
+      "Warrior",
+      "Paladin",
+      "Druid",
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "Each tank preset takes the best Phase 1 enchant for each slot at its own goal: Greater Agility boots for the Warrior and Warden, Strength wrists for the Warrior, an Agility cloak for the Warden, and for the Paladin Agility, Holy Power gloves, spell power wrists and a spell power or Agility neck. The Protection Paladin is now 1st at Max survival (1811 against the Warrior's 1776), and gains about 95 at Max threat and 85 at Balanced. No damage preset changes.",
+     "commits": [
+      "a6a8305",
+      "814decc"
+     ]
+    },
+    {
+     "title": "Tanking: flasks and consumables re-picked for each tank's goal, raid-only consumables left out",
+     "kind": "consumes",
+     "classes": [
+      "Warrior",
+      "Paladin",
+      "Druid",
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "Flask of the Titans at Max survival for the Warrior, Bear and Warden (and Warden Balanced), Flask of Supreme Power for the Paladin at Max survival, Wizard Oil for the Paladin. The Warrior's Dense Sharpening Stone and the Warden's Greater Mageblood Elixir come out, since a tank can't count on them outside a raid. No damage preset changes.",
+     "commits": [
+      "ee4a3df",
+      "09a2f47"
+     ]
+    },
+    {
+     "title": "Tanking: the Bear at Max survival is a Tauren with Feral Instinct and leans on Frenzied Regeneration",
+     "kind": "race",
+     "classes": [
+      "Druid"
+     ],
+     "moves": false,
+     "note": "Tauren replaces Night Elf. Frenzied Regeneration and Swipe at 80 Rage, Barkskin from 20 sec in at Max threat. The Bear's Max survival score goes from -297 to 262. No damage preset changes.",
+     "commits": [
+      "a6a8305",
+      "ca7c424",
+      "67ad7c6"
+     ]
+    },
+    {
+     "title": "Tanking: Warden totems re-tuned, and the Warrior keeps Shield Wall for the last 13 sec at Max survival",
+     "kind": "rotation",
+     "classes": [
+      "Shaman",
+      "Warrior"
+     ],
+     "moves": false,
+     "note": "The Warden at Max threat keeps Searing Totem and Fire Nova up all fight on new talents; Balanced and Max survival drop Healing Stream Totem. The Warden scores 2562 at Max threat (was 2,496) and 1224 at Balanced (was 1,125). No damage preset changes.",
+     "commits": [
+      "ee4a3df",
+      "67ad7c6"
+     ]
+    },
+    {
+     "title": "Healing: Restoration Druids cast Nature's Swiftness on its own, and take Heart of the Wild",
+     "kind": "talents",
+     "classes": [
+      "Druid"
+     ],
+     "moves": false,
+     "note": "Nature's Swiftness now also makes Wild Growth instant, so the Druid saves it for an instant Regrowth when someone drops under 45% (raid) or an instant Healing Touch when the tank drops under 45% (tank). Subtlety's points go to Heart of the Wild. Raid carry 1.391 to 1.414, tank carry 1.235 to 1.269. No damage preset changes.",
+     "commits": [
+      "e05135a",
+      "8fd5ddc"
+     ]
+    },
+    {
+     "title": "Healing: the Holy Priest raid healer takes Twilight Focus, the Holy Paladin raid healer leads with Flash of Light",
+     "kind": "talents",
+     "classes": [
+      "Priest",
+      "Paladin"
+     ],
+     "moves": false,
+     "note": "The raid Holy Priest moves Inspiration's 3 points to Twilight Focus; the tank healer keeps Inspiration. The raid Holy Paladin drops the top Holy Light ranks and Divine Favor for Flash of Light on the most hurt. Carry: Holy Priest 1.437 to 1.461, Holy Paladin 1.413 to 1.430. No damage preset changes.",
+     "commits": [
+      "7b8a41f"
+     ]
+    },
+    {
+     "title": "Healing: the Restoration Shaman raid healer saves Nature's Swiftness for an instant Healing Wave",
+     "kind": "rotation",
+     "classes": [
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "Used when someone in the group drops under 65%. Raid carry 1.395 to 1.412. No damage preset changes.",
+     "commits": [
+      "e0e351f",
+      "8fd5ddc"
+     ]
+    },
+    {
+     "title": "Healing: every healer takes Greater Cleric's Elixir, Phase 1 food and an oil it can buy",
+     "kind": "consumes",
+     "moves": false,
+     "note": "Greater Cleric's Elixir replaces Greater Arcane Elixir, whose spell damage heals nothing. Food is Wicked Smoothie for the Druid and Runn Tum Tuber Surprise for the rest; oils are Wizard Oil, or Lesser Mana Oil for the raid and Holy tank Paladin. Flask of Supreme Power stays. No damage preset changes.",
+     "commits": [
+      "ea25e50"
+     ]
+    },
+    {
+     "title": "Healers' Most Hurt and Lowest Health checks read the health the healer has seen",
+     "kind": "sim",
+     "moves": false,
+     "note": "Current Health checks now read the same delayed health the healer picks its target by, and count a target as full when nobody is left to heal. It moves healer results a little. No damage preset changes.",
+     "commits": [
+      "65b5d49"
+     ]
     }
    ],
    "internal": [
@@ -4887,6 +5073,34 @@
     {
      "commit": "228e612",
      "why": "the report's own sim patch, rebased with no change to what it does"
+    },
+    {
+     "commit": "2a02081",
+     "why": "our own Windfury Totem rule, replaced by the published one before it shipped"
+    },
+    {
+     "commit": "88bf7f7",
+     "why": "test expectations and notes for that replaced rule"
+    },
+    {
+     "commit": "a3b4b4d",
+     "why": "the pre-raid Enhancement gear list; no report preset changes"
+    },
+    {
+     "commit": "ae9005c",
+     "why": "the pre-raid Enhancement gear list; no report preset changes"
+    },
+    {
+     "commit": "f878f60",
+     "why": "the leveling tools' target; no report request reads it"
+    },
+    {
+     "commit": "4d8cb46",
+     "why": "the raid comp search's drop list; no report preset changes"
+    },
+    {
+     "commit": "e899627",
+     "why": "notes and test expectations only"
     }
    ],
    "source": {
