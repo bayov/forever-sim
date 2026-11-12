@@ -288,6 +288,16 @@ at 95 s of its 115 s. With share 0.5 (OOM times at carried damage; "lasts" is pa
 The shipped one is the best mean of the variants that last all 7 fights at their own lengths (Chromaggus by 4
 s; before the tank bench's change of the same day, see the 7 boss files below). None lasts 300 s on Golemagg at carried damage: the best seen is 209 s, at 1.108 mean (Calls for the user).
 
+Re-screened 2026-11-12 on the new consumables (healer_rotations-20261104-2; tank role, own lengths, 1,000
+iterations, mean carry of the 7 files, seeds 101 / 202; the shipped one 1.272 / 1.267, Chromaggus 0.871 with
+341 mana left, out at 101 s): shield gate 0.9 1.278 / 1.268 (Chromaggus 0.894, out at 107 s); 0.8 1.270 / 1.266;
+1.0 1.249 / 1.250; Renew 9 1.270, Renew 8 1.258; Greater Heal at 70% of its heal 1.265; emergency line 40% 1.264;
+Flash Heal first over 95% 1.249; Flash Heal 5 below 30% / 50% mana (`fhlow=5 fhlowgate=0.3|0.5`) 1.273 / 1.274;
+gate 0.9 with Renew 9 1.273 / 1.272; gate 0.9 with Flash Heal 5 below 50% 1.277 / 1.276; all three 1.268 / 1.265.
+The best, gate 0.9 with Flash Heal 5 below 50% (+0.005 / +0.009), loses the long fights (Golemagg, Chromaggus,
+Ragnaros at 180 / 300 s, seed 101: 0.738 / 0.591 against 0.750 / 0.612; it lasts longer, 237 s against 210 s on
+Golemagg, but heals less), so nothing ships, and none of them lasts Chromaggus at carried damage.
+
 Power Infusion (healer_fairness-20261104-3): the only way to it is 31 Discipline points, which leaves Holy 20,
 short of Spiritual Guidance, Spiritual Healing and Holy Binding; that's the Discipline build
 `005005031330011531-0350510303`. On the Holy rotations with `pi=1` it carries 1.116 on the tank (Holy build

@@ -96,7 +96,19 @@ def disc_tank(knobs):
                               f'Flash Heal first while mana is over {gate:.0%}: more healing a second, if less a mana.' if r == fh[0] else ''))
     items.append(inner_focus(knobs, GH[gh[0]], TANK, k(knobs, 'ghshare', share)))
     items += bound(GH, gh, TANK, k(knobs, 'ghshare', share))
-    items += bound(FH, fh, TANK, share)
+    fhlow = k(knobs, 'fhlow', [])
+    if fhlow:
+        # The Flash Heal ranks `fh` only while mana is at least `fhlowgate`; the cheaper ranks `fhlow` below it
+        # (healer_rotations-20261104-2).
+        lg = k(knobs, 'fhlowgate', 0.5)
+        for i, r in enumerate(fh):
+            items.append(cast(FH[r], TANK, AND(cmp('OpGe', mana_pct(), const(lg)), covers(FH[r], TANK, share)),
+                              f'Flash Heal {r} at the tank while mana is at least {lg:.0%}, once what is missing covers {share:.0%} of its Expected Healing.' if i == 0 else None))
+        for i, r in enumerate(fhlow):
+            items.append(cast(FH[r], TANK, covers(FH[r], TANK, share),
+                              f'Flash Heal {r} below that: less healing, and less mana a heal.' if i == 0 else None))
+    else:
+        items += bound(FH, fh, TANK, share)
     return rotation(items)
 
 def holy_raid(knobs):

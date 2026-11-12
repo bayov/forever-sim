@@ -59,7 +59,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // The tank healer: Rejuvenation on the tank whenever it's off, Regrowth on it when its HoT is off and the hole
 // covers 70% of the heal, Swiftmend at it, Healing Touch 11, 8 and 6 at 80% of the heal, then Rejuvenation at the
 // most hurt of the rest. The emergency line is 85%. 1,000 iterations on the seven boss files, carry (2026-11-04,
-// docs/healing_druid.md): mean 1.140 against 1.069 for the 40% line and 90% Healing Touch.
+// docs/healing_druid.md): mean 1.140 against 1.069 for the 40% line and 90% Healing Touch. Nature's Swiftness
+// waits for someone in the assignment under 45% for an instant Healing Touch 11 (60% before 2026-11-12: 1.242 ->
+// 1.269 mean carry, every boss file up, since health values read the health the healer has seen).
 export const APLTankHealer = PresetUtils.makePresetAPLRotation('Tank healer', TankHealerAPLJson, {
 	tooltip: 'Rejuvenation and Regrowth on the tank, Swiftmend and bound ranks of Healing Touch at it, with Innervate on yourself.',
 	group: 'Healing sim',

@@ -35,7 +35,54 @@
       "action": {
         "autocastOtherCooldowns": {}
       },
-      "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness."
+      "notes": "Racials, trinkets, potions and Demonic Rune (Nature's Swiftness has its own line)."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 16188
+          }
+        },
+        "condition": {
+          "cmp": {
+            "op": "OpLt",
+            "lhs": {
+              "currentHealthPercent": {
+                "sourceUnit": {
+                  "type": "LowestHealth"
+                }
+              }
+            },
+            "rhs": {
+              "const": {
+                "val": "0.65"
+              }
+            }
+          }
+        }
+      },
+      "notes": "Nature's Swiftness, held for an emergency: someone in my assignment is under 65% health..."
+    },
+    {
+      "action": {
+        "castSpell": {
+          "spellId": {
+            "spellId": 25357
+          },
+          "target": {
+            "type": "LowestHealth"
+          }
+        },
+        "condition": {
+          "auraIsActive": {
+            "auraId": {
+              "spellId": 16188
+            }
+          }
+        }
+      },
+      "notes": "...and an instant Healing Wave rank 10 at them."
     },
     {
       "action": {
