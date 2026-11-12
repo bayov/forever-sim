@@ -9,7 +9,42 @@ Shield for threat, Stoneskin Totem and Guardian Totems for mitigation. The tank 
 parries with Spirit Weapons, and Rockbiter's and Spirit Weapons' threat are on), every tank ability and talent
 is audited against client 70753 (the October 30 hotfix's build) and tested, it wears a synthetic tank set by
 standards 36, and it has a rotopt template (`tools/rotopt/shaman_tank.go`) and three presets
-(`tools/tankbench/req/shaman_warden_*.json`, `ui/warden_shaman`), re-optimized in tank round 3 and extended in round 4 (Presets).
+(`tools/tankbench/req/shaman_warden_*.json`, `ui/warden_shaman`), re-optimized in tank round 3 and extended in round 4 (Presets),
+and re-tuned on 2026-11-12 after the Nov 10 shaman notes and the Natural flask cut (next section).
+
+## Re-tuned after the Nov 10 shaman notes and the flask cut (2026-11-12)
+
+Findings tank_rotations-20261111-1 and tank_fairness-20261111-1. The Nov 10 notes (Stormstrike 100% and 8 s, Mental
+Dexterity 33 / 66 / 100%, Maelstrom Weapon at 5 + rank PPM, imbues and totems stacking) cut the Warden's SafeDPS about
+10%, and client 70862 halved the Natural flasks. The same search as round 3 on the round 5 requests: `rotopt -template
+shaman_tank -tank <preset>` on the six scoring bosses, talents (`-talent-search -require spiritWeapons`) then knobs,
+1,000 a candidate and 3,000 to confirm, flasks and the weapon imbue screened at 3,000; every adopted change confirmed
+paired at 10,000 on seeds 1 and 2 (`abtest`). The template gained a `potion` knob (the Greater Stoneshield line the
+presets already had), so its APLs are the presets' byte for byte.
+
+| Preset | Change | 10,000, seed 1 | 10,000, seed 2 |
+|---|---|---|---|
+| Max threat | Talents `05350002-050032313251012201-05` (Elemental Devastation +2, Elemental Warding +2, Shamanistic Focus; Toughness -3, Improved Reincarnation -2) | +15.1 ± 2.6 | +18.6 ± 2.6 |
+| Max threat | Searing Totem and Fire Nova all fight (`fireLast=0`), on the new talents | +4.6 ± 0.8 | +3.9 ± 0.7 |
+| Balanced | Flask of the Titans for Natural Precision | +13.5 ± 4.4 | +19.0 ± 4.3 |
+| Max survival | Flask of the Titans for Natural Precision | +254.6 ± 12.1 | +230.3 ± 12.6 |
+| Max survival | Healing Stream Totem (`waterTotem=2`), with the Titans | +87.1 ± 12.0 | +106.7 ± 13.8 |
+
+Whole request, old against new (10,000, own weight, six-boss mean, seed 1 / seed 2): Max threat 2,495.2 → **2,514.7**
+/ 2,496.5 → **2,519.0** (+19.7 ± 2.6 / +22.5 ± 2.6); Balanced 1,133.3 → **1,146.8** / 1,127.3 → **1,146.3**; Max
+survival -2,738.0 → **-2,396.0** / -2,736.7 → **-2,399.7** (+341.7 ± 12.3 / +337.0 ± 13.3). The Warden stays fourth
+at every weight.
+
+Not adopted: Balanced's talent search found Elemental Devastation +1 for Reverberation (`05140003-...`, +20 at 3,000
+under the Titans), which ties at 10,000 (-1.8 / -4.3 under Precision, -2.0 / 0.0 under the Titans); Max survival's two
+talent searches (Precision and Titans) found nothing; Balanced's knob search moved nothing. The Flask of Supreme Power
+ties or loses at Max threat (+1.4 ± 4.2 at 3,000 on the old build, -3.8 / -3.5 ± 2.6 at 10,000 on the new one) and
+loses at Balanced (-23) and Max survival (-165); the Titans lose at Max threat (-65); Distilled Wisdom, the Chromatic
+Resistance flask and the other Natural flasks lose 59 to 300. Windfury and Flametongue Weapon for Rockbiter lose 1,500
+to 1,700 at every weight. Re-screened on the final builds (3,000, seed 1), dropping each of Greater Arcane, Nature
+Power, Greater Intellect, the Demonic Rune and the rum, adding or dropping the Mageblood, other Zanza buffs and foods:
+every current pick holds (the closest, Mageblood at Max survival +7.9 ± 11.2, and Nightfin Soup at Max threat -0.3 ±
+1.4).
 
 ## Presets (re-optimized 2026-11-04, tank round 3; rounds 4 and 5 the same day)
 
@@ -31,11 +66,12 @@ they had no blessings and Alchemy + Enchanting before), and each build loads its
 
 | Preset | Race | Talents | On-use trinket (knobs) | Flask | Wrist / cloak / shield | Six-boss mean, own weight |
 |---|---|---|---|---|---|---|
-| Max threat | Night Elf | `0515-050032303551012201-050002` | attack power (990015) on cooldown (`armorTrinket=0`, `waterTotem=1`: Mana Spring Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Natural Precision | 1886 / 1889 / 1886 | 3,169.8 |
-| Balanced | Night Elf | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=1`, `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Natural Precision | 1248665 / 1889 / 1886 | 1,786.0 |
-| Max survival | Undead | `05050003-050230113541012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | Natural Precision | 1248665 / 1889 / 1886 | -1,988.2 |
+| Max threat | Night Elf | `05350002-050032313251012201-05` | attack power (990015) on cooldown (`armorTrinket=0`, `waterTotem=1`: Mana Spring Totem; `fireTotem=1`, `fireNova=1`, `fireLast=0`) | Natural Precision | 1886 / 1889 / 1886 | 2,514.7 |
+| Balanced | Night Elf | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=1`, `fireTotem=1`, `fireNova=1`, `fireLast=60`) | the Titans | 1248665 / 1889 / 1886 | 1,146.8 |
+| Max survival | Undead | `05050003-050230113541012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=2`: Healing Stream Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | the Titans | 1248665 / 1889 / 1886 | -2,396.0 |
 
-The six-boss means are round 5's (tankbench, 1,000 iterations, seed 1; round 4's were 2,588.2 +/- 10.5, 944.3 +/-
+The table is 2026-11-12's (talents, knobs, flasks and the six-boss means at 10,000 iterations, seed 1; previous
+section); the rest of this section is round 5's. The six-boss means were round 5's (tankbench, 1,000 iterations, seed 1; round 4's were 2,588.2 +/- 10.5, 944.3 +/-
 17.5 and -3,718.0 +/- 54.0). Round 5's consumables (Round 5 below), at every preset: the Flask of Natural Precision,
 Greater Arcane Elixir, Elixir of Nature Power, Elixir of Greater Intellect, the Demonic Rune, Rumsey Rum Black Label
 and the Greater Stoneshield Potion, drunk by an explicit potion action just before `autocastOtherCooldowns`; Ground
@@ -366,8 +402,10 @@ proc 20871, Spirit Weapons (16268), Lightning Shield, Stoneskin Totem, Anticipat
 Elemental Warding and the heals are as audited below. What moved for the Warden:
 
 - **Notes-only values the Warden uses** (the round's list, all under `IsForever()`): Earth Shock at Era's base
-  (517-545 at 60, threat 2 x damage: the biggest threat change), Stormstrike 150% and 6 s, Mental Dexterity
-  50 / 100 / 150%, Flurry 6 to 30%, Maelstrom Weapon 4 PPM a point, Lightning Bolt rank 10 at 334-372.
+  (517-545 at 60, threat 2 x damage: the biggest threat change), Flurry 6 to 30%, Lightning Bolt rank 10 at
+  334-372; then Stormstrike 150% and 6 s, Mental Dexterity 50 / 100 / 150% and Maelstrom Weapon 4 PPM a point,
+  which Blizzard's November 10 class tuning replaced (below): Stormstrike 100% and 8 s, Mental Dexterity
+  33 / 66 / 100%, Maelstrom Weapon (5 + rank) PPM (notes-only; client 70888 still has 150% and 6 s).
 - **The tree:** Improved Ghost Wolf moved to row 4 (after Stormstrike), so every Enhancement string moved: the Level
   60 build `35050013-0502303313551102` is `35050013-0502333135510102` (the same points). Remapped in the tests'
   base build and talent indices, the bench request and the UI preset (the DPS worker had done the preset).
@@ -379,8 +417,8 @@ Elemental Warding and the heals are as audited below. What moved for the Warden:
   mechanic applied twice or lost. Rockbiter's threat on Stormstrike (72 x speed) and Spirit Weapons' 1.302 are
   intact, master's round only scaled Stormstrike's damage. The Warden golden (`TestWardenShaman.results`) had been
   regenerated on master without the 1.302 (TPS 0.15% low) and without the synthetic set's two rows: regenerated.
-- **Tests:** `TestForeverWardenTalents` reads Mental Dexterity at 50 / 100 / 150% and the new talent indices,
-  `TestForeverWardenAbilities` Stormstrike's 6 s.
+- **Tests:** `TestForeverWardenTalents` reads Mental Dexterity at 33 / 66 / 100% (50 / 100 / 150% until the
+  November 10 tuning) and the new talent indices, `TestForeverWardenAbilities` Stormstrike's 8 s (6 s until then).
 
 ## Rules audit
 
@@ -401,7 +439,7 @@ beta measurement, (2) wowsims/forever's reading, (3) Classic's (wowsims/classic)
 | Shield block | Classic's: 5% base with a shield, Defense on top | 5% (less 0.6% vs a level 63), block value = the shield's + Strength / 20 - 1 | Classic, tier 3; no shaman shield on the beta (6.4) | right |
 | Earth Shock rank 7 (10414) | client 70753: 301 centre; **hotfix push 113380 (build 70755, 2026-11-04; SpellEffect 688559): Era's base, 531, 517-545 at 60**, as the November 2 notes said; 38.6% of spell power, 450 mana, 6 s shared shock cooldown (category 19), 1.5 s GCD, "Causes a high amount of threat" | 517-545 (master's shaman round, `earth_shock.go`; the x1.08 is 1.0 now); threat 2 x damage | damage: hotfix 113380, client data, tier 1; threat multiplier: 2, Season of Discovery's (wowsims/sod earth_shock.go `ThreatMultiplier = 2`), tier 2, and Classic's (wowsims/classic), tier 3; no vmangos; wowsims/forever gives 1 (no source); the tooltip says "high" | right, **call (a)** |
 | Flame Shock, Frost Shock | no threat text | threat 1 x damage | client text, tier 3 | right |
-| Stormstrike (17364) | client 70753: 100% weapon damage, 8 s; **hotfix push 113380 (build 70755; SpellEffect 1368308, SpellCooldowns 55241): 150% normalized weapon damage, 6 s**, as the notes said; 8% of base mana, +20% to the next Lightning Bolt, Chain Lightning or Earth Shock | 150%, 6 s (master's round, `stormstrike.go`; a flat "+N damage" stays 1 x); threat 1 x damage plus Rockbiter's 72 x speed (not scaled by the 150%) | hotfix 113380 (client data, tier 1), client, 7.7 | right |
+| Stormstrike (17364) | client 70753: 100% weapon damage, 8 s; **hotfix push 113380 (build 70755; SpellEffect 1368308, SpellCooldowns 55241): 150% normalized weapon damage, 6 s**, as the notes said; 8% of base mana, +20% to the next Lightning Bolt, Chain Lightning or Earth Shock; **Blizzard's November 10 class tuning (hotfix article 24315281): 100% weapon damage, 8 s** (no client row yet: client 70888 still 150 / 6000 ms) | 100%, 8 s (Nov 10 tuning, notes-only; `stormstrike.go`; a flat "+N damage" stays 1 x); threat 1 x damage plus Rockbiter's 72 x speed (not scaled by the weapon damage percent) | the Nov 10 notes, notes-only (standards 37); before them hotfix 113380 (client data, tier 1), client, 7.7 | right |
 | Lightning Shield rank 7 (10432, orb 26363) | 3 orbs of 178 + 26.7% of spell power, 370 mana, 10 min, one orb every 3.5 s (ProcCategoryRecovery) at whoever hits us | the same; orbs roll spell hit, never crit (beta, 7.15); threat 1 x damage | client and beta, tier 1 | right |
 | Stoneskin Totem rank 6 (10408, buff 10405) | -30 physical damage taken (aura 14), 210 mana, 5 min | -30 before armor, x1.1 / 1.2 with Guardian Totems; a crit or crushing blow doubles what's left | client; beta fit before armor (6.3, 7.29), tier 1 | right |
 | Strength of Earth Totem rank 4 (10442) | Strength (block value at Strength / 20) | the raid's (another shaman's, raid-wide since 70425) in the bench; ours a knob | the DPS audit, 7.21 | right |
@@ -422,9 +460,9 @@ beta measurement, (2) wowsims/forever's reading, (3) Classic's (wowsims/classic)
 | Improved Lightning Shield (16261) | orbs +5% a point | the same | right |
 | Shamanistic Focus (1223030) | shocks and Lightning Shield cost 45% less | the same, multiplied with Convection | right |
 | Thundering Strikes (16255) | 1% crit a point, melee and spells | the same | right |
-| Mental Dexterity, Mental Quickness | client: attack power from 33 / 67 / 100% of Intellect, **the notes: 50 / 100 / 150%** (notes-only); spell power from 15% a point | 50 / 100 / 150%; 15% a point | right |
-| Stormstrike, Improved Stormstrike (1223031) | at 2/2 every dodge or parry of ours resets Stormstrike; 50% regen while casting, 15 s | the same | right (beta, 8.32) |
-| Flurry, Maelstrom Weapon, Rage of the Farseer | DPS talents; the notes: Flurry 6 / 12 / 18 / 24 / 30%, Maelstrom Weapon's chance doubled (the sim's 4 PPM a point), Lightning Bolt's top rank +76%; Rage of the Farseer 30% attack speed for 25 s, 3 min | as master's shaman round (`round_70753/shaman.md`) | right |
+| Mental Dexterity, Mental Quickness | client: attack power from 33 / 67 / 100% of Intellect; the November 2 notes raised it to 50 / 100 / 150%, **the November 10 tuning set it to 33 / 66 / 100%** (notes-only); spell power from 15% a point | 33 / 66 / 100%; 15% a point | right |
+| Stormstrike, Improved Stormstrike (1223031) | at 2/2 every dodge or parry of ours resets Stormstrike (8 s cooldown since the Nov 10 tuning); 50% regen while casting, 15 s | the same | right (beta, 8.32) |
+| Flurry, Maelstrom Weapon, Rage of the Farseer | DPS talents; the notes: Flurry 6 / 12 / 18 / 24 / 30%, Lightning Bolt's top rank +76%; the Nov 10 tuning: Maelstrom Weapon (5 + rank) procs a minute on the main hand's speed, 20% a stack at every rank (was 4 PPM a point); Rage of the Farseer 30% attack speed for 25 s, 3 min | as master's shaman rounds (`round_70753/shaman.md`, `round_notes_2026-11-11/shaman.md`) | right |
 | Convection, Concussion, Reverberation | shock costs -2% a point; Earth Shock +1% a point; shock cooldown -0.2 s a point | the same | right |
 | Elemental Warding (28996) | -3 / 7 / 10% Fire, Frost and Nature damage taken | the same | right; worth something at Chromaggus, Onyxia, Ragnaros |
 | Elemental Devastation, Elemental Focus | spell crits give 3% melee crit a point for 10 s; Clearcasting | as the DPS audit | right |
@@ -464,7 +502,7 @@ its healers anyway, but a real Warden lives through some bursts the score counts
   none on a dodge, Earth Shock's 2 x damage, an orb's 1 x; 0.7 with Windfury Weapon and no Rockbiter threat;
   1 without Spirit Weapons.
 - `TestForeverWardenAbilities`: Earth Shock's 5 s cooldown with Reverberation 5/5, shared with Flame Shock, its
-  GCD; Stormstrike's 6 s (hotfix 113380) and 8% of base mana; Lightning Shield's 10 min, 3 orbs, 3.5 s apart, gone after the
+  GCD; Stormstrike's 8 s (the Nov 10 tuning; 6 s from hotfix 113380 before it) and 8% of base mana; Lightning Shield's 10 min, 3 orbs, 3.5 s apart, gone after the
   third; Stoneskin Totem's 210 mana, 5 min and 36 off a hit before armor.
 - `TestForeverWardenAvoidedHits` (tank round 2): a missed, dodged or parried swing fires no Lightning Shield orb (a
   blocked one or a hit does); a missed, dodged or parried Stormstrike carries none of Rockbiter's threat;

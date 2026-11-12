@@ -268,6 +268,13 @@ Agility, 125 Strength, 105 Defense, 3% hit (after tank_gear-20261104-4: the ches
     2,474.5, +357.5 +- 5.5), Max survival -500.7 → 221.5 (+722.1 +- 12.7; seed 2 -477.2 → 238.5, +715.9 +-
     14.0).
 
+## Flask after the Natural flask cut (2026-11-12)
+
+Client 70862 halved the Natural flasks (30 Stamina, a 2% zone bonus), so each preset's flask was re-picked by its own objective (tank_fairness-20261111-1): the request against copies with each other flask, 3,000 iterations at seed 1, the winners at 10,000 on seeds 1 and 2 (`abtest`, paired, six-boss mean at the preset's weight). Max survival takes the Flask of the Titans: +115.9 ± 7.8 / +111.6 ± 7.6, -594.3 → **-478.3** (seed 1).
+Max threat and Balanced keep their Natural flask. Food, Zanza and elixirs re-screened under the Titans: nothing else
+moves. Not adopted: the Elemental Sharpening Stone at Max survival (+20.9 ± 2.9 / +21.3 ± 3.0), since its source is
+raid-only (Molten Core plans), which the consumables pass rules out for launch phase 1.
+
 ## Presets (round 3, 2026-11-04: unmultiplied mana-gain threat, disjoint seeds)
 
 Round 3 re-searched the three presets on master 95bd28c's engine: mana-gain threat at 0.5 a mana with no threat

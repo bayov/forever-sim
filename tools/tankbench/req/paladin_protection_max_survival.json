@@ -242,12 +242,12 @@
        ]
       },
       "consumes": {
-       "flask": "FlaskOfNaturalPrecision",
+       "flask": "FlaskOfSupremePower",
        "food": "FoodDirgesKickChimaerokChops",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
        "healthElixir": "ElixirOfGreaterFortitude",
-       "mainHandImbue": "ElementalSharpeningStone",
+       "mainHandImbue": "WizardOil",
        "strengthBuff": "JujuPower",
        "attackPowerBuff": "JujuMight",
        "spellPowerBuff": "GreaterArcaneElixir",

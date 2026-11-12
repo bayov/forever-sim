@@ -155,7 +155,9 @@ export const BalancedConsumes = Consumes.create({
 	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodNightfinSoup,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
-	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
+	// Wizard Oil (24 spell power) beats the Elemental Sharpening Stone by 19 to 20 at every weight (10,000 iterations,
+	// seeds 1 and 2, tank_fairness-20261111-1).
+	mainHandImbue: WeaponImbue.WizardOil,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	strengthBuff: StrengthBuff.JujuPower,
@@ -168,11 +170,11 @@ export const MaxThreatConsumes = Consumes.create({
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
 
-// Max survival takes the Flask of Natural Precision (+5% expertise in the natural-flask zone) and Dirge's Kickin'
-// Chimaerok Chops (25 Stamina).
+// Max survival eats Dirge's Kickin' Chimaerok Chops (25 Stamina). Since client 70862 halved the Natural flasks, it
+// takes Balanced's Flask of Supreme Power for Natural Precision (+145.6 / +151.5, 10,000 iterations, seeds 1 / 2; the
+// Titans +132.7 / +141.3, 13.0 / 10.2 behind Supreme Power; tank_fairness-20261111-1).
 export const MaxSurvivalConsumes = Consumes.create({
 	...BalancedConsumes,
-	flask: Flask.FlaskOfNaturalPrecision,
 	food: Food.FoodDirgesKickChimaerokChops,
 });
 
@@ -288,7 +290,7 @@ export const EncounterLevel60TankMaxSurvival = bench_encounter('Generic boss, ta
 const Level60TankOptions = { primarySeal: PaladinSeal.Fury, righteousFury: true, aura: PaladinAura.DevotionAura };
 
 export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
-	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Consumables: Flask of Supreme Power, Nightfin Soup, Elemental Sharpening Stone (+319 over round 3).',
+	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Consumables: Flask of Supreme Power, Nightfin Soup, Wizard Oil.',
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60MaxThreat,
 	rotation: APLLevel60MaxThreat,
@@ -298,7 +300,7 @@ export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60
 	encounter: EncounterLevel60TankMaxThreat,
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
-	tooltip: "Scored with survival weighed at 1 (docs/tank_sim.md). Max threat's talents and gear on Undead (round 5). Consumables: Flask of Supreme Power, Nightfin Soup, Elemental Sharpening Stone (+198 over round 3).",
+	tooltip: "Scored with survival weighed at 1 (docs/tank_sim.md). Max threat's talents and gear on Undead (round 5). Consumables: Flask of Supreme Power, Nightfin Soup, Wizard Oil.",
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60MaxThreat,
 	rotation: APLLevel60Balanced,
@@ -308,7 +310,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 	encounter: EncounterLevel60Tank,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear and rotation on its own talents (Anticipation over Improved Seals); the consumables differ: Flask of Natural Precision, Dirge's Kickin' Chimaerok Chops, Elemental Sharpening Stone (+142 over round 3).",
+	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear and rotation on its own talents (Anticipation over Improved Seals); Dirge's Kickin' Chimaerok Chops for the soup (Flask of Supreme Power and Wizard Oil, as Balanced).",
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,

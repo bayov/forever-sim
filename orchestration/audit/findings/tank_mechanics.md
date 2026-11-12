@@ -2,14 +2,6 @@
 
 ## Open
 
-### tank_mechanics-20261111-1: docs/tank_shaman.md still gives the Warden Stormstrike 150% / 6 s and Mental Dexterity 50 / 100 / 150%
-- severity: low (labels only; the sim and its tests already use the Nov 10 values)
-- affects: Warden shaman; docs/tank_shaman.md
-- found: 2026-11-11, master 707ae92cc
-- evidence: cb651085c / eb6c042a4 take Blizzard's class tuning of 2026-11-10 (hotfix article 24315281, forum thread 2404092; tier 1 notes, notes-only: no server row yet, client 1.60.1.70888 still 150 / 6000 ms): sim/shaman/stormstrike.go:29 StormstrikeWeaponDamagePercent 1.0 and :78 8 s cooldown; sim/shaman/talents.go:39 Mental Dexterity .33/.66/1; sim/shaman/warden/forever_test.go:177-179 and :300-301 now test those. Warden golden tps fell about 3% (e.g. 699.9 -> 677.2, TestWardenShaman.results). The class doc's audit still says the old values: docs/tank_shaman.md:369-370 ("Stormstrike 150% and 6 s, Mental Dexterity 50 / 100 / 150%", "Maelstrom Weapon 4 PPM a point"), :382-383 (tests read 50 / 100 / 150% and 6 s), :404 (sim column "150%, 6 s"), :425 (sim "50 / 100 / 150%", notes 50 / 100 / 150%). Sure of the read.
-- proposed fix: update those rows to "100%, 8 s (Nov 10 tuning, notes-only; client 70888 still 150% / 6 s)" and "33 / 66 / 100% (Nov 10 tuning, notes-only)", and the Maelstrom line to 5 + rank PPM; the tests line to 33 / 66 / 100% and 8 s.
-- needs: worker fix
-
 ### tank_mechanics-20261108-1: No test pins a Warden shock's threat under the Stormstrike mark, now computed by hand
 - severity: low (the code is right today; untested, not wrong)
 - affects: Warden shaman (Earth Shock, Flame Shock, Frost Shock, Lightning Bolt, Chain Lightning under Stormstrike)
@@ -27,6 +19,15 @@
 - needs: worker fix
 
 ## Resolved
+
+### tank_mechanics-20261111-1: docs/tank_shaman.md still gives the Warden Stormstrike 150% / 6 s and Mental Dexterity 50 / 100 / 150%
+- severity: low (labels only; the sim and its tests already use the Nov 10 values)
+- affects: Warden shaman; docs/tank_shaman.md
+- found: 2026-11-11, master 707ae92cc
+- evidence: cb651085c / eb6c042a4 take Blizzard's class tuning of 2026-11-10 (hotfix article 24315281, forum thread 2404092; tier 1 notes, notes-only: no server row yet, client 1.60.1.70888 still 150 / 6000 ms): sim/shaman/stormstrike.go:29 StormstrikeWeaponDamagePercent 1.0 and :78 8 s cooldown; sim/shaman/talents.go:39 Mental Dexterity .33/.66/1; sim/shaman/warden/forever_test.go:177-179 and :300-301 now test those. Warden golden tps fell about 3% (e.g. 699.9 -> 677.2, TestWardenShaman.results). The class doc's audit still says the old values: docs/tank_shaman.md:369-370 ("Stormstrike 150% and 6 s, Mental Dexterity 50 / 100 / 150%", "Maelstrom Weapon 4 PPM a point"), :382-383 (tests read 50 / 100 / 150% and 6 s), :404 (sim column "150%, 6 s"), :425 (sim "50 / 100 / 150%", notes 50 / 100 / 150%). Sure of the read.
+- proposed fix: update those rows to "100%, 8 s (Nov 10 tuning, notes-only; client 70888 still 150% / 6 s)" and "33 / 66 / 100% (Nov 10 tuning, notes-only)", and the Maelstrom line to 5 + rank PPM; the tests line to 33 / 66 / 100% and 8 s.
+- needs: worker fix
+- fixed: 2026-11-12, branch worktree-agent-abff4050d09a62836. docs/tank_shaman.md: the realignment line, the tests line, the Abilities Stormstrike row and the Talents rows (Mental Dexterity, Stormstrike, Flurry / Maelstrom Weapon) now give 100% and 8 s, 33 / 66 / 100% and (5 + rank) PPM, labelled the Nov 10 tuning, notes-only, client 70888 still 150% / 6 s; the presets table carries the re-tuned builds. tools/rotopt/shaman_tank.go's shock-over-Stormstrike comment notes the cut.
 
 ### tank_mechanics-20261104-15: Goblin Sapper Charge and Goblin Land Mine are blocked in a form; the client allows them
 - severity: high (bear Max threat score +158 / +189, about +6-7%; Balanced +134 / +169; Max survival +63 / +110; SafeDPS +85 / +99)

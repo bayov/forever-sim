@@ -164,9 +164,12 @@ export const MaxThreatConsumes = Consumes.create({
 });
 
 // Max survival eats Dirge's Kickin' Chimaerok Chops (+41 to +46 over the Dumpling) and drinks the Greater
-// Stoneshield Potion for the Mighty Rage Potion (+83 to +92) at weight 3.
+// Stoneshield Potion for the Mighty Rage Potion (+83 to +92) at weight 3. Since client 70862 halved the Natural
+// flasks (30 Stamina), the Flask of the Titans wins here (+46.5 / +41.8, 10,000 iterations, seeds 1 / 2;
+// tank_fairness-20261111-1); Natural Precision still wins at Max threat and Balanced.
 export const MaxSurvivalConsumes = Consumes.create({
 	...DefaultConsumes,
+	flask: Flask.FlaskOfTheTitans,
 	food: Food.FoodDirgesKickChimaerokChops,
 	defaultPotion: Potions.GreaterStoneshieldPotion,
 });
@@ -303,7 +306,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation (but Sunder Armor as filler from 30 Rage, not 25), Dirge\'s chops and the Greater Stoneshield Potion, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
+	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation (but Sunder Armor as filler from 30 Rage, not 25), Dirge\'s chops, the Greater Stoneshield Potion and the Flask of the Titans, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,

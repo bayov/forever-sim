@@ -2,14 +2,6 @@
 
 ## Open
 
-### tank_rotations-20261111-1: Warden presets weren't re-optimized after the Nov 10 shaman tuning, which alone cut their SafeDPS about 10%
-- severity: medium (gain unmeasured; the loss it may recover is large)
-- affects: shaman_warden_* (all three)
-- found: 2026-11-11, master 707ae92cc
-- evidence: cb651085c (Stormstrike 150% -> 100% and 6 s -> 8 s, Mental Dexterity 50/100/150% -> 33/66/100% of Intellect as AP, Maelstrom Weapon to (5+rank) PPM) moved every Warden row: with the flask nerf reverted (worktree build), warden Balanced Onyxia SafeDPS 1899 -> 1716, Magmadar 1734 -> 1560; with it, scoring-mean SafeDPS 1805 -> 1557 and score 1682 -> 1125. Enhancement was re-optimized after this tuning (54a15ba24); the Warden's talents (05050003-050032203451012201-050002) and APLs weren't. The rotation lines I tried still hold (paired, 1k, Balanced, B minus preset): Stormstrike above Earth Shock -39.9 ± 16.0, no Stormstrike -527 ± 16.5, fire totem and Fire Nova window 60 s -> 90 s -1.8 ± 5.5, -> all fight -12.3 ± 6.3, -> 40 s -8.5 ± 12.9, Fire Nova mana floor 40% -> 20% -4.4 ± 5.6, -> 60% -13.5 ± 8.5. Talents (Mental Dexterity's points now buy a third less) are untested.
-- proposed fix: re-run rotopt's warden templates (talents and timers) at the three weights on master.
-- needs: worker fix
-
 ### tank_rotations-20261110-1: Windfury Totem's white-swing-only rule drops Maul but keeps Heroic Strike, cutting bear SafeDPS 12%
 - severity: high (bear SafeDPS -12% at every weight; warrior -5%, warden -3%, paladin -2%)
 - affects: every tank request (all raid-buff `TotemWeaponBuffWindfury`); most of all druid_bear_*
@@ -59,6 +51,15 @@
 - pass 8: still open (user ruling); 707ae92cc unchanged; not re-tested.
 
 ## Resolved
+
+### tank_rotations-20261111-1: Warden presets weren't re-optimized after the Nov 10 shaman tuning, which alone cut their SafeDPS about 10%
+- severity: medium (gain unmeasured; the loss it may recover is large)
+- affects: shaman_warden_* (all three)
+- found: 2026-11-11, master 707ae92cc
+- evidence: cb651085c (Stormstrike 150% -> 100% and 6 s -> 8 s, Mental Dexterity 50/100/150% -> 33/66/100% of Intellect as AP, Maelstrom Weapon to (5+rank) PPM) moved every Warden row: with the flask nerf reverted (worktree build), warden Balanced Onyxia SafeDPS 1899 -> 1716, Magmadar 1734 -> 1560; with it, scoring-mean SafeDPS 1805 -> 1557 and score 1682 -> 1125. Enhancement was re-optimized after this tuning (54a15ba24); the Warden's talents (05050003-050032203451012201-050002) and APLs weren't. The rotation lines I tried still hold (paired, 1k, Balanced, B minus preset): Stormstrike above Earth Shock -39.9 ± 16.0, no Stormstrike -527 ± 16.5, fire totem and Fire Nova window 60 s -> 90 s -1.8 ± 5.5, -> all fight -12.3 ± 6.3, -> 40 s -8.5 ± 12.9, Fire Nova mana floor 40% -> 20% -4.4 ± 5.6, -> 60% -13.5 ± 8.5. Talents (Mental Dexterity's points now buy a third less) are untested.
+- proposed fix: re-run rotopt's warden templates (talents and timers) at the three weights on master.
+- needs: worker fix
+- fixed: 2026-11-12, branch worktree-agent-abff4050d09a62836. rotopt's shaman_tank re-searched at all three weights (talents with spiritWeapons required, then knobs; a new `potion` knob reproduces the shipped APLs exactly), confirmed paired at 10,000 on seeds 1 / 2. Max threat: talents 05350002-050032313251012201-05 (Elemental Devastation +2, Elemental Warding +2, Shamanistic Focus; Toughness -3, Improved Reincarnation -2) +15.1 ± 2.6 / +18.6 ± 2.6, then Searing Totem and Fire Nova all fight (fireLast=0) +4.6 ± 0.8 / +3.9 ± 0.7; request 2,495.2 -> 2,514.7 / 2,496.5 -> 2,519.0. Balanced: the talent search's Elemental Devastation +1 for Reverberation ties at 10,000 (-1.8 / -4.3, under the Titans -2.0 / 0.0), knobs unchanged; only the flask moves (tank_fairness-20261111-1). Max survival: talents unchanged (two searches), Healing Stream Totem (waterTotem=2) +87.1 ± 12.0 / +106.7 ± 13.8 on top of the Titans. docs/tank_shaman.md (Re-tuned after the Nov 10 shaman notes).
 
 ### tank_rotations-20261104-14: Warden Max threat and Balanced leave Searing Totem and Fire Nova unused; both in the last 60 s gain about 2% and 8%
 - severity: high (Max threat +1.9%, Balanced +8%)
