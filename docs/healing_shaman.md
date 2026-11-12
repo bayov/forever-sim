@@ -174,6 +174,8 @@ under "Presets (round 70753)" below are from before them.
 
 ## Presets (round 70753)
 
+Consumables (2026-11-12): Greater Cleric's Elixir for the Greater Arcane Elixir, Runn Tum Tuber Surprise, the Wizard Oil (the Brilliant Mana Oil is a Zandalar formula), Flask of Supreme Power, in both roles; the rest as every healer (`docs/healing_sim.md`, Consumables).
+
 The bench (`tools/healbench`), one healer, each row at its own length; 500 iterations to screen and 1,000 for
 the finalists and the tables below. "Master" is origin/master 3d1cb9701 before this branch, which is H2's to the
 third decimal.

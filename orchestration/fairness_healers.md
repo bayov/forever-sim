@@ -32,7 +32,13 @@ Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 - **Not the cause:**
   - Gear: all four sets at the same 902 weighted budget; slot 16 is stat-less for all.
   - Race: each class has its best legal race; the shaman's other races are within 0.002.
-  - Consumables, buffs, debuffs, encounter: identical in all 9 requests.
+  - Buffs, debuffs, encounter: identical in all 9 requests. Consumables: the same tier and slots in all 9, each
+    preset's food and oil its own best by its objective (2026-11-12, healer_gear-20261112-1 to -3; Greater
+    Cleric's Elixir, Supreme Power everywhere; Wicked Smoothie for the druid, Runn Tum Tuber Surprise for the
+    rest; Wizard Oil, Lesser Mana Oil for the paladin raid and Holy tank presets; `docs/healing_sim.md`,
+    Consumables). Before and after, 1,000 iterations seed 101: tank druid 1.237 -> 1.242, shaman 1.248 -> 1.257,
+    paladin 1.149 -> 1.152, Holy 1.263 -> 1.278, Discipline 1.261 -> 1.272; raid druid 1.419 -> 1.414, shaman
+    1.389 -> 1.392, paladin 1.394 -> 1.400, Holy 1.440 -> 1.440; the order in each role unchanged.
   - Mana: only the Disc tank preset on Chromaggus runs out at carry.
 
 ## Against the logs
