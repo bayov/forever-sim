@@ -2,14 +2,6 @@
 
 ## Open
 
-### tank_mechanics-20261112-2: Yellow attacks proccing Windfury Totem (mechanics-20261112-1, option b) would move every non-paladin tank preset by 3 to 21%
-- severity: high (a user ruling's size on the tank scores; no sim is wrong until that ruling)
-- affects: Protection warrior, Feral tank (bear), Warden shaman (all presets take the raid Windfury Totem); not the Protection paladin (it casts no Holy Strike)
-- found: 2026-11-12, master 55cd92b09
-- evidence: the Nov 11 hotfix note (t/2403040 post 8, tier 1) read as "Holy Strike activates Windfury Totem" (mechanics-20261112-1). The tank presets use no Holy Strike, so option (a) leaves them alone; option (b) (`sim/core/buffs.go:2168` back to ProcMaskMeleeMH) reaches Heroic Strike, Revenge, Shield Slam, Sunder, Maul and Stormstrike. Measured with `$AUDIT_WORK/tank_mechanics/wf_yellow.patch`, tankbench 3,000 iterations, seed 1, paired, objective at each preset's own weight (TPS): warrior Max threat 3568 -> 3794 (+6.3%, TPS 1898 -> 2015), Balanced 2893 -> 3081 (+6.5%), Max survival 1271 -> 1392 (+9.5%); bear Max threat 2411 -> 2802 (+16%, TPS 1360 -> 1569), Balanced 1650 -> 2005 (+21%), Max survival -128 -> 69; Warden Max threat 2177 -> 2234 (+2.6%), Balanced 924 -> 983, Max survival -1310 -> -1270. The tank order (warrior, bear, Warden) holds, but the gaps move. The Warden part is against our Nov 5-8 live logs (0 procs from about 2,770 Stormstrikes, buffs.go:2160), so a fix along (b) should still exclude Stormstrike; on-next-swing attacks (Heroic Strike, Maul) are the untested part. Sure of the measurement; the reading of the note is mechanics' (medium-high).
-- proposed fix: none for tanks until the user rules on mechanics-20261112-1; if (b), re-score the tank presets and re-check their rotations (Heroic Strike and Maul gain the most). A warrior or bear log with the totem up would settle on-next-swing attacks.
-- needs: user ruling
-
 ### tank_mechanics-20261108-1: No test pins a Warden shock's threat under the Stormstrike mark, now computed by hand
 - severity: low (the code is right today; untested, not wrong)
 - affects: Warden shaman (Earth Shock, Flame Shock, Frost Shock, Lightning Bolt, Chain Lightning under Stormstrike)
@@ -27,6 +19,15 @@
 - needs: worker fix
 
 ## Resolved
+
+### tank_mechanics-20261112-2: Yellow attacks proccing Windfury Totem (mechanics-20261112-1, option b) would move every non-paladin tank preset by 3 to 21%
+- severity: high (a user ruling's size on the tank scores; no sim is wrong until that ruling)
+- affects: Protection warrior, Feral tank (bear), Warden shaman (all presets take the raid Windfury Totem); not the Protection paladin (it casts no Holy Strike)
+- found: 2026-11-12, master 55cd92b09
+- evidence: the Nov 11 hotfix note (t/2403040 post 8, tier 1) read as "Holy Strike activates Windfury Totem" (mechanics-20261112-1). The tank presets use no Holy Strike, so option (a) leaves them alone; option (b) (`sim/core/buffs.go:2168` back to ProcMaskMeleeMH) reaches Heroic Strike, Revenge, Shield Slam, Sunder, Maul and Stormstrike. Measured with `$AUDIT_WORK/tank_mechanics/wf_yellow.patch`, tankbench 3,000 iterations, seed 1, paired, objective at each preset's own weight (TPS): warrior Max threat 3568 -> 3794 (+6.3%, TPS 1898 -> 2015), Balanced 2893 -> 3081 (+6.5%), Max survival 1271 -> 1392 (+9.5%); bear Max threat 2411 -> 2802 (+16%, TPS 1360 -> 1569), Balanced 1650 -> 2005 (+21%), Max survival -128 -> 69; Warden Max threat 2177 -> 2234 (+2.6%), Balanced 924 -> 983, Max survival -1310 -> -1270. The tank order (warrior, bear, Warden) holds, but the gaps move. The Warden part is against our Nov 5-8 live logs (0 procs from about 2,770 Stormstrikes, buffs.go:2160), so a fix along (b) should still exclude Stormstrike; on-next-swing attacks (Heroic Strike, Maul) are the untested part. Sure of the measurement; the reading of the note is mechanics' (medium-high).
+- proposed fix: none for tanks until the user rules on mechanics-20261112-1; if (b), re-score the tank presets and re-check their rotations (Heroic Strike and Maul gain the most). A warrior or bear log with the totem up would settle on-next-swing attacks.
+- needs: user ruling
+- fixed: 2026-11-12 (user ruling from the log audit, standards 17 rewritten; branch worktree-agent-ae7f460fe1b8d87f1): neither option. The user's log audit of Nov 6-11 (tools/logcheck/findings.md, 4,737 procs on 93 players) answers it: under Forever the totem rolls on white main hand swings and on every melee ability whose client spell requires a main hand weapon (Attributes_3 0x400) or is on next swing (Attributes_0 0x4), so Heroic Strike, Cleave, Sunder Armor, Revenge, Execute and Maul do, and Stormstrike, Holy Strike, Shield Slam, Bloodthirst, Whirlwind, Claw and Swipe don't. The sim reads the flags from the client (`Spell.ClientMainHand`, `RollsForeverWindfuryTotem` in sim/core/buffs.go; test sim/windfury_totem_rule_test.go). Paired 3,000 iterations, seed 1, mean over the 7 encounters (orchestration/round_notes_2026-11-11/windfury_rule.md): warrior SafeDPS Max threat 2101 -> 2310 (+9.9%), Balanced 2020 -> 2187 (+8.3%), Max survival 1682 -> 1788 (+6.3%); bear Max threat 1605 -> 1662 (+3.6%), Balanced 1508 -> 1558 (+3.4%), Max survival 1212 -> 1247 (+2.9%); Warden (Stormstrike) and paladin unchanged. Smaller than option (b) above because Stormstrike, Shield Slam and the Warden stay out. The tank rotations may want re-checking for Heroic Strike and Maul under the new rule (tank_rotations pass).
 
 ### tank_mechanics-20261112-1: Judgement of Fury, every Protection paladin preset's judgement, is still a melee special after the Nov 11 "Judgement is a Ranged Attack" hotfix
 - severity: low (measured -1 to -12 objective, about 0.3%)
