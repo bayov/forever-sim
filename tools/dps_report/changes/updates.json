@@ -4572,7 +4572,7 @@
      ]
     },
     {
-     "title": "Windfury Totem procs only from white main hand swings, not from special attacks",
+     "title": "Windfury Totem procs from white main hand swings and from the main hand attacks that use the weapon, not from every special attack",
      "kind": "sim",
      "classes": [
       "Warrior",
@@ -4614,9 +4614,10 @@
       "warrior__fury_2h-duty-battle-shout",
       "warrior__fury_2h-duty-sunder"
      ],
-     "note": "Our combat logs show hundreds of totem procs and none from Stormstrike, where a 20% chance would give about 550. Whether attacks that replace a swing (Heroic Strike, Cleave, Raptor Strike) can roll it isn't tested yet; the sim says no. Warriors lose about 100 to 200 DPS, Survival and Retribution about 60 to 95, rogues and Feral 20 to 50.",
+     "note": "Our combat logs show thousands of totem procs. Heroic Strike, Cleave, Raptor Strike, Sunder Armor, Revenge, Execute and Sinister Strike roll it; Stormstrike (none in 4,467 hits), Holy Strike, Bloodthirst, Whirlwind and Feral attacks never do. Off-hand swings, seal procs and Judgements don't either.",
      "commits": [
-      "0ce9dbf"
+      "0ce9dbf",
+      "a0b4d3b"
      ]
     },
     {
@@ -4788,6 +4789,50 @@
      "commits": [
       "c380bba"
      ]
+    },
+    {
+     "title": "Hunter pets attack faster with their hunter's melee haste, such as Rapid Fire",
+     "kind": "sim",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf"
+     ],
+     "note": "In combat logs a pet swings 40% faster while its hunter's Rapid Fire is up, and its own Frenzy speeds it up on top of that. The hunter's ranged haste, such as Quick Shots, doesn't reach it. Pets gain about 2 to 10 DPS on Beast Mastery and Marksmanship and about 27 on Survival.",
+     "commits": [
+      "368b2e1"
+     ]
+    },
+    {
+     "title": "Hunter pets use the next ability on their bar when one is short of focus, instead of saving up for it",
+     "kind": "sim",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf"
+     ],
+     "note": "As autocast does in game. Worth about 3 pet DPS.",
+     "commits": [
+      "368b2e1"
+     ]
     }
    ],
    "internal": [
@@ -4838,6 +4883,10 @@
     {
      "commit": "836a1cd",
      "why": "a Wowhead scrape of new quests' givers and spawns for the leveling tools; no report request reads it"
+    },
+    {
+     "commit": "228e612",
+     "why": "the report's own sim patch, rebased with no change to what it does"
     }
    ],
    "source": {
