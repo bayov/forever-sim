@@ -260,6 +260,13 @@ type WeaponAttack struct {
 	extraAttacksPending int32 // extraAttacks prior to previous ones resolving for spell metrics
 	extraAttacksAura    *Aura
 
+	// The proc that gave each extra attack, in order: extraSourcesPending for extraAttacksPending
+	// and extraSources for the batch being cast. extraSource is the one being cast now (zero for
+	// a normal swing), which ExtraAttackSource reads.
+	extraSources        []ActionID
+	extraSourcesPending []ActionID
+	extraSource         ActionID
+
 	curSwingSpeed    float64
 	curSwingDuration time.Duration
 	heldByCast       bool // The swing came due during a cast that resets it and waits for the cast to end.
@@ -294,29 +301,32 @@ func (wa *WeaponAttack) castExtraAttacksStored(sim *Simulation) {
 		wa.extraAttacksAura.SetStacks(sim, 0)
 	}
 
-	wa.castExtraAttacks(sim, wa.extraAttacksStored, 0)
+	wa.castExtraAttacks(sim, wa.extraAttacksStored, 0, nil)
 	wa.extraAttacksStored = 0
 
 }
 
 func (wa *WeaponAttack) castExtraAttacksTriggered(sim *Simulation, moreAttacks bool) {
 	if moreAttacks {
-		wa.castExtraAttacks(sim, wa.extraAttacks, 0)
+		wa.castExtraAttacks(sim, wa.extraAttacks, 0, wa.extraSources)
 	} else {
-		wa.castExtraAttacks(sim, wa.extraAttacks, 1)
+		wa.castExtraAttacks(sim, wa.extraAttacks, 1, wa.extraSources)
 	}
 	wa.extraAttacks = 0
 }
 
-func (wa *WeaponAttack) castExtraAttacks(sim *Simulation, numExtraAttacks int32, startIndex int32) bool {
+// sources names the proc of each attack (nil for the stored ones, which keep no source).
+func (wa *WeaponAttack) castExtraAttacks(sim *Simulation, numExtraAttacks int32, startIndex int32, sources []ActionID) bool {
 	if numExtraAttacks > 0 {
 		// if startIndex==1, Ignore the first extra attack, that was used to speed up next attack
 		wa.spell.SetMetricsSplit(1)
 
 		for i := int32(startIndex); i < numExtraAttacks; i++ {
 			// use original attacks for subsequent extra Attacks
+			wa.extraSource = extraSourceAt(sources, i)
 			wa.spell.Cast(sim, wa.unit.CurrentTarget)
 		}
+		wa.extraSource = ActionID{}
 
 		return true
 	}
@@ -348,6 +358,7 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 		// Needs to happen before any attacks gets cast
 		wa.extraAttacks = wa.extraAttacksPending
 		wa.extraAttacksPending = 0
+		wa.extraSources, wa.extraSourcesPending = wa.extraSourcesPending, wa.extraSources[:0]
 		// Any further procs will be added to extraAttacksPending to be processed next batch
 	}
 
@@ -402,7 +413,11 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 		if sim.IsForever() && wa == &wa.unit.AutoAttacks.ranged {
 			wa.unit.AutoAttacks.meleeAttackOff = true
 		}
+		if isExtraAttack {
+			wa.extraSource = extraSourceAt(wa.extraSources, 0)
+		}
 		attackSpell.Cast(sim, wa.unit.CurrentTarget)
+		wa.extraSource = ActionID{}
 		wa.unit.swingSpellThroughCast = nil
 
 		moreAttacks := !isExtraAttack && wa.extraAttacksPending > 0 // True if above cast is a normal Auto attack that triggered an Extra Attack
@@ -440,6 +455,13 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 	}
 
 	return wa.swingAt
+}
+
+func extraSourceAt(sources []ActionID, i int32) ActionID {
+	if int(i) < len(sources) {
+		return sources[i]
+	}
+	return ActionID{}
 }
 
 func (wa *WeaponAttack) updateSwingDuration(curSwingSpeed float64) {
@@ -537,10 +559,16 @@ func (unit *Unit) EnableAutoAttacks(agent Agent, options AutoAttackOptions) {
 			baseDamage := autoInProgress.Unit.MHWeaponDamage(sim, autoInProgress.MeleeAttackPower(target))
 			result := autoInProgress.CalcDamage(sim, target, baseDamage, autoInProgress.OutcomeMeleeWhite)
 
+			// The hit lands a batch later, so it carries the extra attack's source with it.
+			mh := &autoInProgress.Unit.AutoAttacks.mh
+			source := mh.extraSource
 			StartDelayedAction(sim, DelayedActionOptions{
 				DoAt: sim.CurrentTime + SpellBatchWindow,
 				OnAction: func(s *Simulation) {
+					outer := mh.extraSource
+					mh.extraSource = source
 					autoInProgress.DealDamage(sim, result)
+					mh.extraSource = outer
 				},
 			})
 		},
@@ -647,6 +675,9 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	// Make sure extra attacks are reset
 	aa.mh.extraAttacks = 0
 	aa.mh.extraAttacksPending = 0
+	aa.mh.extraSources = aa.mh.extraSources[:0]
+	aa.mh.extraSourcesPending = aa.mh.extraSourcesPending[:0]
+	aa.mh.extraSource = ActionID{}
 	aa.mh.spell.SetMetricsSplit(0)
 
 	if aa.ranged.spell != nil {
@@ -898,6 +929,16 @@ func (aa *AutoAttacks) ExtraMHAttack(sim *Simulation, attacks int32, actionID Ac
 	aa.mh.spell.SetMetricsSplit(1)
 	sim.rescheduleWeaponAttack(aa.mh.swingAt)
 	aa.mh.extraAttacksPending += attacks
+	for i := int32(0); i < attacks; i++ {
+		aa.mh.extraSourcesPending = append(aa.mh.extraSourcesPending, actionID)
+	}
+}
+
+// ExtraAttackSource is the proc (the actionID given to ExtraMHAttack) whose main hand extra
+// attack is being cast or landing now (a white hit lands a batch after its cast). It is zero for a
+// normal swing and for a stored extra attack.
+func (aa *AutoAttacks) ExtraAttackSource() ActionID {
+	return aa.mh.extraSource
 }
 
 func (aa *AutoAttacks) StoreExtraMHAttack(sim *Simulation, attacks int32, actionID ActionID, triggerAction ActionID) {

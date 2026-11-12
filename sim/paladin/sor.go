@@ -103,19 +103,18 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			},
 		}
 		if paladin.Env.IsForever() {
-			// Forever's judgement is a melee attack (client 20286 and the lower ranks: DefenseType 2,
-			// No Active Defense), so it rolls melee hit and crit, crits for double and can't be
+			// Forever's judgement is a physical attack (client 20286 and the lower ranks: DefenseType
+			// 2, No Active Defense), so it rolls physical hit and crit, crits for double and can't be
 			// dodged, parried or blocked, and the weapon specializations reach it (wowsims/forever
 			// e10ca32c3d, d35afca4da: in game One- and Two-Handed Weapon Specialization raise Seal and
-			// Judgement of Righteousness). It is a main hand ability hit to the listeners, weapon procs
-			// included, as Judgement of Command is: the rows carry no Suppress Weapon Procs.
-			judgeConfig.DefenseType = core.DefenseTypeMelee
-			judgeConfig.ProcMask = core.ProcMaskMeleeMHSpecial
+			// Judgement of Righteousness). Since the November 11 hotfixes it is a ranged attack
+			// (judgementAsRangedAttack); the rows carry no Suppress Weapon Procs.
+			judgementAsRangedAttack(&judgeConfig)
 			judgeConfig.Flags = core.SpellFlagMeleeMetrics | core.SpellFlagBinary
 			judgeConfig.DamageMultiplier *= paladin.getWeaponSpecializationModifier()
 			judgeConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(minDamage, maxDamage)
-				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCritNoBlock)
 			}
 		}
 		judgeSpell := paladin.RegisterSpell(judgeConfig)

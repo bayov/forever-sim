@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -88,15 +89,16 @@ func TestConsecrationFirstFourTargets(t *testing.T) {
 }
 
 // TestJudgementOfRighteousnessMelee checks that Forever's Judgement of Righteousness (client
-// 20286, DefenseType 2) is a melee attack: it crits for double and Two-Handed Weapon
+// 20286, DefenseType 2) is a physical attack, a ranged one since the November 11 hotfixes (so
+// no melee procs hear it): it crits for double and Two-Handed Weapon
 // Specialization (3/3: 6%) reaches it, through the Holy school since server hotfix push 113542
 // (SpellEffect 697263 school mask 3: the specialization raises all Holy damage).
 func TestJudgementOfRighteousnessMelee(t *testing.T) {
 	_, with := retSim(t, "--000000000003", arcaniteReaper)
 	_, without := retSim(t, "", arcaniteReaper)
 	jor := with.GetSpell(core.ActionID{SpellID: 20286})
-	if jor.DefenseType != core.DefenseTypeMelee || jor.ProcMask != core.ProcMaskMeleeMHSpecial {
-		t.Fatalf("Judgement of Righteousness defense %v, proc mask %v, want melee and main hand special", jor.DefenseType, jor.ProcMask)
+	if jor.DefenseType != core.DefenseTypeRanged || jor.ProcMask != core.ProcMaskRangedSpecial || jor.CastType != proto.CastType_CastTypeRanged {
+		t.Fatalf("Judgement of Righteousness defense %v, proc mask %v, cast type %v, want ranged and ranged special", jor.DefenseType, jor.ProcMask, jor.CastType)
 	}
 	if got := jor.CritMultiplier(with.AttackTables[with.CurrentTarget.UnitIndex][jor.CastType]); got != 2 {
 		t.Errorf("Judgement of Righteousness crit multiplier = %.2f, want 2", got)

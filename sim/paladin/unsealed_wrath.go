@@ -23,6 +23,11 @@ import (
 // We read it literally (report assumption pal_unsealed_wrath):
 //   - Only the paladin's landed white swings (extra attacks included) store and spend copies, the
 //     proc type the talent has. Holy Strike and the other abilities do neither.
+//   - Windfury Totem's extra swings store none since Blizzard's November 11 hotfixes ("Unsealed
+//     Fury no longer generates echoes from Windfury Totem attacks", t/2403040 post 8; client 70888
+//     names the talent Unsealed Wrath and has no other Unsealed talent). The post says nothing of
+//     spending, so those swings still spend the other seals' stacks (report assumption
+//     pal_unsealed_wrath, open).
 //   - A landed swing first spends the stacks of every Echo whose seal is not the active one, if a
 //     seal is up ("with a different Seal"): one roll of that seal's own chance a stack, with the
 //     rank of the seal that stored the last copy. Then, if the active seal has an Echo, it stores a
@@ -77,7 +82,7 @@ func (paladin *Paladin) registerUnsealedWrath() {
 					apply(sim, result.Target)
 				}
 			}
-			if hasOwn {
+			if hasOwn && !paladin.AutoAttacks.IsWindfuryTotemAttack() {
 				paladin.echoApply[own.aura] = own.apply
 				own.aura.Activate(sim)
 				own.aura.AddStack(sim)
