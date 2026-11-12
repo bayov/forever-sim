@@ -2,6 +2,30 @@
 
 ## Open
 
+### healer_rotations-20261112-2: Restoration shaman raid healer spends Nature's Swiftness on cooldown; held for an emergency Healing Wave it carries +0.010 more
+- severity: medium (+0.7% mean carry on two seeds; under the 1% line)
+- affects: Restoration shaman raid healer (`ui/restoration_shaman/apls/raid_healer.apl.json`, `tools/healbench/req/shaman_restoration_raid.json`). Not the tank healer (it already holds NS for the tank under 50%; see below).
+- found: 2026-11-12, master 3065ba744 (tankheal)
+- evidence: the raid APL has no Nature's Swiftness (16188) line, so `autocastOtherCooldowns` (line 0) raises the buff at the pull and on every cooldown, and the next ordinary Chain Heal / Healing Wave takes it. Variant: insert as lines 1-2 `castSpell 16188` if Current Health % of Lowest Health < T, then `castSpell 25357` (Healing Wave 10) on Lowest Health if aura 16188 is active (the druid's pattern since e05135ad3). Paired, 1,000 it, own lengths, `-role raid`, mean carry of the 7 files (Onyxia / Broodlord / Chromaggus / Golemagg / Magmadar / Ragnaros / Vaelastrasz):
+  - master seed 101: 0.927 / 0.912 / 1.084 / 2.630 / 1.827 / 1.239 / 1.125, mean 1.392
+  - T=0.55 seed 101: 0.957 / 0.910 / 1.098 / 2.652 / 1.823 / 1.234 / 1.148, mean 1.403 (+0.011); seed 202: 1.3995 against 1.3894 (+0.010)
+  - T=0.45: +0.010 (seed 101), +0.006 (seed 202); T=0.35: -0.000; T=0.45 with Lesser Healing Wave 6 in place of Healing Wave 10: +0.000
+  Reproduce: `tools/audit/healer_rotations/baseline.sh`-style loop, or `healbench -role raid -encounter tools/encounters/<boss>.json -carry -iters 1000 [-seed 202] <request>`. Fairly sure of the sign (two seeds, 5 of 7 files up on each); the size is near the bench's resolution. Mana side (180 / 300 s) not measured: NS costs no mana and the swap changes one cast in 180 s.
+- proposed fix: add the two lines above with T=0.55 (Healing Wave 10, the big rank, as the druid's Healing Touch), and say in the note that NS waits for an emergency.
+- needs: worker fix
+
+### healer_rotations-20261112-1: Restoration druid tank healer's Nature's Swiftness threshold (60%) is too high since health values read seen health; 45% carries +0.027
+- severity: high (+2.2% mean carry; every boss file up)
+- affects: Restoration druid tank healer (`ui/restoration_druid/apls/tank_healer.apl.json` line 2, `tools/healbench/req/druid_restoration.json`, `orchestration/tools/healers/druid_restoration_apl.py`). The raid healer's 45% is still best.
+- found: 2026-11-12, master 3065ba744 (tankheal)
+- evidence: e05135ad3 picked 60% (Lowest Health) on true health; 65b5d49cf then made Current Health % of Lowest Health read the health the healer has seen. Bisect on the pre-consumables request: Magmadar 2.102 (3fc5898c9) -> 2.003 (65b5d49cf), unchanged since. Paired, 1,000 it, seed 101, own lengths, `-role tank`, carry (Onyxia / Broodlord / Chromaggus / Golemagg / Magmadar / Ragnaros / Vaelastrasz, mean):
+  - master 60%: 1.386 / 0.873 / 1.010 / 1.864 / 2.004 / 0.629 / 0.927, 1.242
+  - 45%: 1.403 / 0.893 / 1.023 / 1.951 / 2.045 / 0.634 / 0.932, 1.269 (+0.027, 7 of 7 up)
+  - 35%: 1.268; 40%: 1.267; 50%: 1.258; 70%: 1.224
+  Raid healer (45%): 35% 1.400, 55% 1.406 against 1.414, so it stays. Sure: a plateau from 35 to 50%, all above 60%.
+- proposed fix: Nature's Swiftness on the tank healer at Lowest Health under 45% (was 60%), in the APL, the request, the generator and `docs/healing_druid.md`.
+- needs: worker fix
+
 ### healer_rotations-20261104-3: Restoration shaman tank healer's Lesser Healing Wave 5 line never fires (same mana gate as rank 6 just above it)
 - severity: low (no carry to gain; a dead line in a shipped preset)
 - affects: Restoration shaman tank healer (`ui/restoration_shaman/apls/tank_healer.apl.json` line 9, `tools/healbench/req/shaman_restoration.json`)
@@ -25,6 +49,7 @@
 - update 2026-11-10, master ca5e35c3f: unchanged (same row, byte-identical).
 - update 2026-11-11, master 707ae92cc: unchanged (same row, byte-identical).
 - update 2026-11-12, master cb0d928fd: unchanged (same row, byte-identical).
+- update 2026-11-12, master 3065ba744: still dry on Chromaggus (carry 0.871, 341 mana left, OOM at 101 s, 1,000 it) with the new consumables.
 - needs: worker fix
 
 ## Resolved

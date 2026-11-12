@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "71994fca6e7a0bb2b3e46569ace823373c2a42e1"
+  "master": "3065ba744"
  },
- "last_pass_at": "2026-11-12T07:30:00Z",
- "pass": 8,
- "result": "quiet",
- "note": "Pass 8 on cb0d928fd. Gate: sim/druid/talents.go (comment), sim/priest/priest.go (Shadow TalentTreeSizes 18->17, never read), sim/shaman/talents.go (ImprovedFireNova renamed TrialByFire). All 63 baseline rows byte-identical to ref. -1, -2, -3 still open. baseline.sh rewritten again at tools/audit/healer_rotations/ (was missing).",
+ "last_pass_at": "2026-11-12T15:23:00Z",
+ "pass": 9,
+ "result": "findings",
+ "note": "Pass 9 by hand on tankheal 3065ba744 (druid re-tune, seen-health fix 65b5d49cf, healer consumables). New -1 druid tank NS 45% (+0.027), -2 shaman raid NS held (+0.010). Ref rewritten; raid rows' death floor not recorded.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
  "checked_at": "2026-11-12T07:02:57Z"
