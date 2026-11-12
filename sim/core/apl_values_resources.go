@@ -39,12 +39,16 @@ func (value *APLValueCurrentHealth) Type() proto.APLValueType {
 func (value *APLValueCurrentHealth) GetFloat(_ *Simulation) float64 {
 	unit := value.unit.HealthUnit()
 	if unit == nil {
+		if value.unit.healer != nil {
+			// Nobody of the healer's to heal (the whole assignment dead): reads full, not 0.
+			return value.unit.healer.MaxHealth()
+		}
 		return 0
 	}
 	if unit.readsNoHealth() {
 		return unit.MaxHealth()
 	}
-	return unit.CurrentHealth()
+	return value.unit.seenCurrentHealth(unit)
 }
 func (value *APLValueCurrentHealth) String() string {
 	return "Current Health"
@@ -78,10 +82,16 @@ func (value *APLValueCurrentHealthPercent) Type() proto.APLValueType {
 func (value *APLValueCurrentHealthPercent) GetFloat(_ *Simulation) float64 {
 	unit := value.unit.HealthUnit()
 	if unit == nil {
+		if value.unit.healer != nil {
+			return 1
+		}
 		return 0
 	}
 	if unit.readsNoHealth() {
 		return 1
+	}
+	if value.unit.healer != nil {
+		return value.unit.seenCurrentHealth(unit) / unit.MaxHealth()
 	}
 	return unit.CurrentHealthPercent()
 }
