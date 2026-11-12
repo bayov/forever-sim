@@ -54,6 +54,7 @@ done
 # --- ours ---
 (
   cd "$ROOT"
+  [ -e sim/core/proto/common.pb.go ] || protoc -I=./proto --go_out=./sim/core ./proto/*.proto  # a fresh clone has none
   go build -tags=with_db -o "$BIN/ours_cli" ./cmd/wowsimcli
   go build -tags=with_db -o "$BIN/ours_stats" ./tools/wsf_compare/ours_stats
 )
