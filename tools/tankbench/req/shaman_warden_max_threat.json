@@ -8,23 +8,23 @@
       "race": "RaceNightElf",
       "class": "ClassShaman",
       "level": 60,
-      "talentsString": "0515-050032303551012201-050002",
+      "talentsString": "05350002-050032313251012201-05",
       "equipment": {
        "items": [
         {
          "id": 999201,
-         "enchant": 1507
+         "enchant": 1508
         },
         {
          "id": 999202,
-         "enchant": 1249019
+         "enchant": 1249059
         },
         {
          "id": 999203
         },
         {
          "id": 999204,
-         "enchant": 1889
+         "enchant": 1219587
         },
         {
          "id": 999205,
@@ -32,22 +32,22 @@
         },
         {
          "id": 999206,
-         "enchant": 1886
+         "enchant": 1248665
         },
         {
          "id": 999207,
-         "enchant": 1248640
+         "enchant": 1248645
         },
         {
          "id": 999208
         },
         {
          "id": 999209,
-         "enchant": 1507
+         "enchant": 1508
         },
         {
          "id": 999210,
-         "enchant": 929
+         "enchant": 1887
         },
         {
          "id": 999211
@@ -91,7 +91,7 @@
        "intellectElixir": "ElixirOfGreaterIntellect",
        "zanzaBuff": "GroundScorpokAssay",
        "defaultConjured": "ConjuredDemonicRune",
-       "manaRegenElixir": "MagebloodPotion"
+       "manaRegenElixir": "GreaterMagebloodElixir"
       },
       "wardenShaman": {
        "options": {
@@ -293,25 +293,12 @@
                 }
                }
               }
-             },
-             {
-              "cmp": {
-               "lhs": {
-                "remainingTime": {}
-               },
-               "op": "OpLe",
-               "rhs": {
-                "const": {
-                 "val": "60s"
-                }
-               }
-              }
              }
             ]
            }
           }
          },
-         "notes": "The fire totem whenever it's down in the last 60 sec: earlier its mana is Earth Shock's."
+         "notes": "The fire totem whenever it's down."
         },
         {
          "action": {
@@ -321,39 +308,20 @@
            }
           },
           "condition": {
-           "and": {
-            "vals": [
-             {
-              "cmp": {
-               "lhs": {
-                "currentManaPercent": {}
-               },
-               "op": "OpGe",
-               "rhs": {
-                "const": {
-                 "val": "0.4"
-                }
-               }
-              }
-             },
-             {
-              "cmp": {
-               "lhs": {
-                "remainingTime": {}
-               },
-               "op": "OpLe",
-               "rhs": {
-                "const": {
-                 "val": "60s"
-                }
-               }
-              }
+           "cmp": {
+            "lhs": {
+             "currentManaPercent": {}
+            },
+            "op": "OpGe",
+            "rhs": {
+             "const": {
+              "val": "0.4"
              }
-            ]
+            }
            }
           }
          },
-         "notes": "Fire Nova around the fire totem in the last 60 sec: our own threat, with mana we'd otherwise end on."
+         "notes": "Fire Nova around the fire totem: our own threat."
         },
         {
          "action": {

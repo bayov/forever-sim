@@ -318,6 +318,68 @@ kept its talents. At 1,000 iterations (`tankbench`, default seed) the presets be
 (Max survival unchanged). Raw output, scripts and the A/B index: `orchestration/tank_handoff/warrior/round5/`
 (`README.txt`, `ab_summary.txt`).
 
+## Flask after the Natural flask cut (2026-11-12)
+
+Client 70862 halved the Natural flasks (30 Stamina, a 2% zone bonus), so each preset's flask was re-picked by its own objective (tank_fairness-20261111-1): the request against copies with each other flask, 3,000 iterations at seed 1, the winners at 10,000 on seeds 1 and 2 (`abtest`, paired, six-boss mean at the preset's weight). Max survival takes the Flask of the Titans: +46.5 ± 7.8 / +41.8 ± 7.8, 1,561.5 → **1,608.2** (seed 1).
+Max threat and Balanced keep Natural Precision (its expertise still pays there; every other flask loses). Food, Zanza
+and elixirs re-screened under the Titans: nothing else moves. The Elemental Sharpening Stone's source is raid-only
+(Molten Core plans), which rule 8a rules out for launch phase 1, so since 2026-11-12 (tank_fairness-20261112-1) the main
+hand carries the Dense Sharpening Stone, as every DPS preset and the paladin do. Paired, tankbench -labeled, 3,000
+iterations, six-boss mean, own weight: Dense over Solid Stone +3.0 / +3.0 / +2.9, over the Dense Weightstone +12.9 / +12.5 /
++11.6, and the Elemental ahead by 22.3 / 21.9 / 15.5 (Max threat / Balanced / Max survival), the cost of the rule.
+
+## Windfury fix and Max survival's Shield Wall (2026-11-12)
+
+**Windfury Totem** (standards 17, tank_rotations-20261110-1): under Forever only white main-hand swings proc it. The
+aura's mask was `ProcMaskMeleeMHAuto`, but Heroic Strike and Cleave carry the white swing's bit next to the special's
+(`MHSpecial|MHAuto`), so they still rolled it; the extra-attack aura now skips any spell whose mask also matches a
+special (`sim/core/buffs.go`, test `sim/warrior/tank_warrior/windfury_totem_test.go`; Classic unchanged). Paired at
+3,000 (seed 1, old minus new rule as a cost): Max threat -175.3 ± 5.9, Balanced -148.1 ± 9.5, Max survival -60.3 ±
+16.7, about 4 to 5% of Max threat's and Balanced's score. The Heroic Strike threshold (`hsRage`) was re-searched with
+every other knob on the fixed engine (below) and held.
+
+Knob searches from each preset on the fixed engine (3,000 a candidate, 10,000 to confirm, seeds 1 and 2):
+
+| Preset | Change | Seed 1 | Seed 2 | Taken |
+|---|---|---|---|---|
+| Max survival | Shield Wall in the last 13 s, not 17 (`wallAt=13`, tank_rotations-20261112-3) | **+25.2 ± 6.2** | **+20.4 ± 5.9** | yes |
+| Max survival | Thunder Clap refreshed under 6 s (`tcRefresh=6`) | +1.4 ± 5.4 | +4.9 ± 5.0 | no |
+| Balanced | `tcRefresh=6` (tank_rotations-20261112-4) | +1.2 ± 2.1 | +5.0 ± 2.1 | no: one seed |
+| Balanced | `wallAt=18` | +6.3 ± 2.2 | -1.5 ± 2.2 | no |
+| Balanced | `wallAt=18`, `tcRefresh=6` | +8.3 ± 2.8 | +3.0 ± 2.8 | no |
+| Max threat | Bloodrage at 70 Rage (`bloodrageRage=70`) | +0.9 ± 0.2 | +0.5 ± 0.3 | no: one seed |
+
+Max survival's 13 s wall, per boss (seed 1 / 2): Vaelastrasz +232.6 / +202.1, Broodlord +54.5 / +51.3, Onyxia -9.9 /
+-9.9, Chromaggus -12.2 / -20.8, Magmadar -47.9 / -41.6, Golemagg -65.9 / -58.5; Ragnaros (benched) -95.8 / -76.2. It's
+all Vaelastrasz, but unlike Broodlord's first-ability timers (call 7, and the paladin's Templar's Bulwark), Vaelastrasz's
+length (17 ± 8 s) is the median of logged stints, not vmangos script timers, so the gain is taken. A raid that doesn't
+trust that length keeps 17 s (call 8). The search from `wallAt=13` kept every other knob (10,000: 1,568.5).
+Six-boss means at 10,000, seed 1 (`abtest`): Max threat **3,801.7**, Balanced **3,103.5**, Max survival 1,543.3 →
+**1,568.7** (1,509.0 → 1,529.2 on seed 2). Talent searches at all three weights on the new knobs (1,000 a
+candidate, 3,000 to refine) kept the talents but for Balanced's Improved Thunder Clap 1 for Improved Sunder Armor 1
+(`05-05050005-250531020300001351`), which ties at 10,000 (0.0 ± 2.0 / -2.5 ± 2.1): talents unchanged.
+
+## Re-tuned on the main-hand Windfury rule (2026-11-12)
+
+Standards 17 changed again the same day (`orchestration/round_notes_2026-11-11/windfury_rule.md`): Windfury Totem
+rolls on white main-hand swings and on every ability whose client spell requires a main hand or is on next swing
+(Heroic Strike, Cleave, Sunder Armor, Revenge, Execute, Rend, ...), which moved the presets' SafeDPS by +105 to +209.
+Every threshold was tuned under the old rule, so each preset was re-searched on it: `rotopt -template warrior_tank
+-tank <preset>` on the six scoring bosses at its own weight, the knob search from the shipped knobs (1,000 a
+candidate, 3,000 to confirm), then the talent search on the knobs it found; the candidates that showed more than their
+error went to paired `abtest` at 3,000 (seed 1), and would have been taken only at 10,000 on seeds 1 and 2.
+
+- **Max threat**: knobs and talents hold. Heroic Strike at 30 Rage stays (20 -5.0, 40 -3.5 ± 4 to 5), Sunder Armor's
+  filler at 15 (10 +0.6 ± 1.5), Bloodrage at 30.
+- **Balanced**: knobs and talents hold (`hsRage=50`, `sunderRage=25`).
+- **Max survival**: knobs and talents hold. Near misses at 3,000, paired: Sunder filler at 20 Rage +3.8 ± 4.7, Thunder
+  Clap refreshed under 8 s +6.5 ± 10.7, Shield Block from 20 Rage +4.1 ± 11.2, Bloodrage under 20 +2.4 ± 2.2.
+
+Nothing changes. Six-boss means at the own weight, 10,000, seed 1 (`rotopt -eval`): Max threat **4,199.7**, Balanced
+**3,420.6**, Max survival **1,750.4** (the rule, not the re-tune, moved them from 3,801.7 / 3,103.5 / 1,568.7, with the
+Dense stone between). Max survival now leads the paladin's (1,723.0) at w = 3; the warrior leads at every weight.
+Raw output: `orchestration/tank_handoff/windfury_retune/`.
+
 ## Presets (2026-11-04, round 2; round 3 on top)
 
 **Round 3** (2026-11-04, after the second tank audit; master fd9538c: mana-gain threat unmultiplied, tank_mechanics
@@ -357,10 +419,9 @@ Paired, 10,000 iterations, B − A at each preset's weight, seeds 1 / 2 (/ 3 / 4
 | Armor trinket 990617 on the pull vs 991018 | -209.6 / -209.3 | -179.7 / -178.8 | (below) |
 | Armor trinket held for the last 35 s vs 991018 | -192.1 / -192.2 | -146.3 / -145.4 | (below) |
 
-Agility stays on the cloak (it wins or ties at every weight) and Superior Deflection on the wrists. The shield carries
+Agility stays on the cloak (it wins or ties at every weight). The wrists changed on 2026-11-12 (tank_gear-20261112-1, -2, paired at 10,000 on two seeds; the wrist's Balanced row on five): Superior Strength (1885) beats Superior Deflection at Max threat (+8.4 / +11.8, ± 1.7) and at Balanced (+8.2 / +2.2 / +3.6 / +5.3 / +6.7, mean +5.2 over five seeds), and Deflection keeps Max survival (-20.5 ± 9.6 at 3,000); Greater Agility (1887) beats Greater Stamina (929) on the boots at all three weights (Max threat +5.6 / +3.0, Balanced +4.5 / +3.6, Max survival +4.1 / +6.8). The shield carries
 1886 (+9) in all three requests and both gear sets; it beats Lesser Block (863, the paladin's pick) at every weight
-on seeds 1 and 2 (raw output in `orchestration/tank_handoff/warrior/round3b/`). (929 is only a bracer and boots enchant in the database; the boots
-keep it).
+on seeds 1 and 2 (raw output in `orchestration/tank_handoff/warrior/round3b/`). (929 was the boots' enchant until 2026-11-12, when 1887 replaced it, above.)
 
 **Max survival's armor trinket** (tank_rotations-20261104-11, a call): 990617 held for the last 35 s against Balanced's
 991018 on the pull, at w = 3: **+12.8 ± 5.4** (seed 1), **+15.9 ± 4.8** (seed 2). Per boss (seed 1 / 2): Broodlord
@@ -383,9 +444,18 @@ knob searches alternated until neither moved. Raw output: `orchestration/tank_ha
 |---|---|---|---|---|---|---|
 | Max threat (w = 1/3) | `05-05050005-250330020330001351` (round 5; was `04-05050015-...`, Deflection 4 and Blood Craze 1): Deflection 5, Anticipation 3, Improved Sunder Armor 3 | `tc=0` (no Thunder Clap), `hsRage=30`, `revengeFirst=1`, `sunderRage=15`, `wallAt=13` (round 3; was 12) | attack power on-use (991018) | Undead | R.O.I.D.S., Desert Dumpling, Mighty Rage Potion | 3,700.2 (round 3); 4,644.5 (round 4, full raid set); **4,651.7** (round 5) |
 | Balanced (w = 1, default) | `05-05050005-250530020310001351`: Deflection 5; Cruelty, Unbridled Wrath, Enrage 5/5; Protection 31 with Shield Slam, Improved Sunder Armor 1, no Last Stand or Vanguard | (the base; `sunderRage=25` from round 5) | attack power on-use (991018) | Undead | Spirit of Zanza, Desert Dumpling, Mighty Rage Potion | 3,008.5; 3,867.3 (round 4); **3,880.3** (round 5) |
-| Max survival (w = 3) | Balanced's (its own search ends there) | `trinketAt=35` (the armor trinket held for the last 35 s); `sunderRage=30` (round 5: Balanced moved to 25) | armor on-use (990617), `level60_phase1_synthetic_armor_trinket.gear.json` | Undead | Spirit of Zanza, Dirge's chops, Greater Stoneshield Potion | 1,205.0; 2,138.7 (round 4 and 5) |
+| Max survival (w = 3) | Balanced's (its own search ends there) | `trinketAt=35` (the armor trinket held for the last 35 s); `sunderRage=30` (round 5: Balanced moved to 25); `wallAt=13` (2026-11-12; was 17) | armor on-use (990617), `level60_phase1_synthetic_armor_trinket.gear.json` | Undead | Spirit of Zanza, Dirge's chops, Greater Stoneshield Potion | 1,205.0; 2,138.7 (round 4 and 5) |
 
-All three wear Superior Deflection (Defense +9) on the wrists, Enchant Shield - Greater Stamina (spell 20017, +9 Stamina, enchant 1886, the id the bracer's Superior Stamina shares) on the shield.
+Max survival wears Superior Deflection (Defense +9) on the wrists, Max threat and Balanced Superior Strength (1885); all three wear Greater Agility (1887) on the boots, Enchant Shield - Greater Stamina (spell 20017, +9 Stamina, enchant 1886, the id the bracer's Superior Stamina shares) on the shield.
+
+Head, legs and neck (2026-11-12, tank_fairness-20261112-2; every legal Phase 1 enchant screened slot by slot at 3,000
+on seeds 1 and 2, the winners paired at 10,000 on seeds 1 and 2, six-boss mean at the preset's weight): Max threat wears
+Lesser Arcanum of Voracity Strength (1506) on the head and legs over Lesser Arcanum of Constitution (1503), +20.5 / +20.7
+(TPS +17); Balanced Voracity Agility (1508), +8.2 / +10.5 (Strength is +6.0 / +5.8), in its own UI gear set
+(`level60_phase1_synthetic_balanced.gear.json`); Max survival Enchant Necklace - Agility (1249059) over Strength,
++13.8 / +13.2, and keeps Constitution (Voracity Agility on top of the necklace: +13.2 / -6.4 / +6.5 / -2.5 on seeds 1 to
+4, a tie). A rescreen of every slot on the new sets (3,000, seed 1) found nothing over +3 that held at 10,000 (Balanced's
+Agility necklace: +1.2 / +1.0).
 
 Balanced's knobs: `shieldBlock=1` (whenever its buff is down), `sbRage=0`, `demo=0`, `tc=1`, `tcRefresh=2`,
 `debuffsFirst=0`, `revengeFirst=0`, `sunderUp=1`, `sunderRage=25` (30 before round 5), `hsRage=50`, `bloodrageRage=30`, `opener=0`,
@@ -414,7 +484,7 @@ Paired, 3,000 iterations, against the last 12 s (the scoring mean; Vaelastrasz i
 | 18 s | -1.4 ± 4.0 (-115) | +15.3 ± 5.9 (-174) | +99.1 ± 14.9 (-330) |
 | 20 s | -17.9 ± 4.4 (-198) | -10.4 ± 6.6 (-346) | +34.9 ± 16.9 (-851) |
 
-Balanced and Max survival take 17 s, the best of the grid (round 3 kept it); rotopt's `wallAt` is now on a 1 s grid from 6 s and its knob
+Balanced and Max survival take 17 s, the best of the grid (round 3 kept it; Max survival moved to 13 s on 2026-11-12, above); rotopt's `wallAt` is now on a 1 s grid from 6 s and its knob
 search on the final builds kept 17 (16 and 18 within noise of it). Vaelastrasz (a 17 ± 8 s fight) loses at every wall
 time past 12, about as much at 17 s as at 16 s; the other five gain. Max threat kept 12 s in round 2 (nothing past it gained); round 3 moved it to 13 s (+4.6 / +3.5 on two seeds, 10,000).
 The finding's larger gains (+46, +175 at 18 s) were on master before the fixes; on this branch they are a third and a half
@@ -554,7 +624,9 @@ at w = 1, 3,008.5 against 2,877.8 and 2,869.7).
    991018 on the pull, all of it on Broodlord (+437); without Broodlord 991018 on the pull wins by about 70 (-72.0 ± 3.3
    / -67.6 ± 3.7). Default: the armor trinket, held (the current choice). If Broodlord's timers aren't trusted, Max
    survival takes 991018 on the pull and is Balanced's build outright.
-8. **Shield Wall at 17 s** costs Vaelastrasz (-112 Balanced, -163 Max survival) for gains on the other five; a raid that
-   weighs that fight more would keep 12 s.
+8. **Shield Wall timing**: Balanced's 17 s costs Vaelastrasz (-112) for gains on the other five; a raid that weighs
+   that fight more would keep 12 s. Max survival's 13 s (2026-11-12) is the reverse: +233 / +202 on Vaelastrasz, small
+   losses on four others. It rests on Vaelastrasz's logged length (17 ± 8 s); if that isn't trusted, Max survival goes
+   back to 17 s (-25.2 ± 6.2 / -20.4 ± 5.9).
 9. **Max survival's levers that read health** (Last Stand, Shield Wall on low health) can't be scored (brief step 2);
    they're in the UI for the player, not in the presets.

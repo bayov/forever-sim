@@ -5,6 +5,7 @@ import {
 	Debuffs,
 	Flask,
 	Food,
+	HealingPowerBuff,
 	IndividualBuffs,
 	IntellectElixir,
 	ManaRegenElixir,
@@ -12,7 +13,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SpellPowerBuff,
 	SpiritElixir,
 	SunderRamp,
 	TristateEffect,
@@ -60,7 +60,7 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // when what's missing covers its Expected Healing.
 //
 // The tank healer: Nature's Swiftness when the tank is under 50% health, Riptide on the tank whenever
-// it's off, Lesser Healing Wave 6 and 5 at the tank while mana is at least 50%, then Healing Wave 10,
+// it's off, Lesser Healing Wave 6 at the tank while mana is at least 50%, then Healing Wave 10,
 // 8 and 6 at the tank, and Chain Heal 3, 2 and 1 at the most hurt when the tank is topped. Water
 // Shield goes back up as soon as its globes are spent: a tank healer is seldom hit, so its globes go
 // on its heals' crits. Lesser Healing Wave heals more a second than Healing Wave for a little more a
@@ -78,9 +78,11 @@ export const APLTankHealer = PresetUtils.makePresetAPLRotation('Tank healer', Ta
 // below 60% mana. On round 70753 (the notes' Riptide: no instant heal) it carries 1.123 mean over the
 // bench's eight rows, against 1.183 on master before (1.196 with the client's three Riptide ranks);
 // Riptide kept on the tank (-0.007), Lesser Healing Wave at the most hurt above 70% mana (-0.013) and
-// other Water Shield or Mana Tide floors (no change: the fights end first) don't do better.
+// other Water Shield or Mana Tide floors (no change: the fights end first) don't do better. Nature's Swiftness
+// waits for someone in the assignment under 65% health and goes on an instant Healing Wave 10 at them (it was
+// autocast before 2026-11-12): 1.392 -> 1.412 mean carry over the seven boss files (docs/healing_shaman.md).
 export const APLRaidHealer = PresetUtils.makePresetAPLRotation('Raid healer', RaidHealerAPLJson, {
-	tooltip: 'Chain Heal and Riptide at the most hurt, Healing Wave for a big hole, with Water Shield, Mana Spring and Mana Tide.',
+	tooltip: 'Chain Heal and Riptide at the most hurt, Healing Wave for a big hole, Nature\'s Swiftness on an instant Healing Wave under 65% health, with Water Shield, Mana Spring and Mana Tide.',
 	group: 'Healing sim',
 });
 
@@ -127,16 +129,20 @@ export const DefaultTalents = TalentsRestorationTank;
 // No shaman imbue: the main hand carries a Brilliant Mana Oil.
 export const DefaultOptions = RestorationShamanOptions.create({});
 
-// The Elemental shaman's level 60 consumables, with a Brilliant Mana Oil and the Major Mana Potion.
+// Each healer preset takes the consumables that score best on its own bench objective (healbench damage carried,
+// mean of the 7 boss files in its role; docs/healing_sim.md, Consumables): Greater Cleric's Elixir (healing; the
+// Arcane Elixir's spell damage doesn't heal), Flask of Supreme Power, the phase 1 oils only (Brilliant Wizard and
+// Brilliant Mana Oil are Zandalar vendor formulas).
+// The shaman takes Runn Tum Tuber Surprise (15 Intellect) and the Wizard Oil in both roles.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodLobsterStew,
+	food: Food.FoodRunnTumTuberSurprise,
+	healingPowerBuff: HealingPowerBuff.GreaterClericsElixir,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
-	mainHandImbue: WeaponImbue.BrilliantManaOil,
+	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });

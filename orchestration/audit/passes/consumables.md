@@ -109,7 +109,7 @@ Then make variants with `python3 -I tools/audit/consumables/var.py base.json out
 ## Standing checks (what scan.sh and the review enforce)
 
 - **No raid-only sources** (rule 8a, launch Phase 1):
-  - Out: Brilliant Wizard Oil, Elemental Sharpening Stone (MC plans), Enchant Weapon - Spell Power 2504 (MC
+  - Out: Brilliant Wizard Oil and Brilliant Mana Oil (Zandalar vendor formulas), Elemental Sharpening Stone (MC plans), Enchant Weapon - Spell Power 2504 (MC
     formula), Arcanum of Focus 2544 (ZG), Mageblood Potion (Zandalar vendor), Talisman of Ephemeral Power (MC),
     Fire-toasted Bun (holiday item).
   - Allowed: Cerebral Cortex Compound (Blasted Lands quest); Elixir of Frost Power (holiday recipe, but the elixir

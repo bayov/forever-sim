@@ -5,6 +5,7 @@ import {
 	Debuffs,
 	Flask,
 	Food,
+	HealingPowerBuff,
 	IndividualBuffs,
 	IntellectElixir,
 	ManaRegenElixir,
@@ -12,7 +13,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SpellPowerBuff,
 	SpiritElixir,
 	SunderRamp,
 	TristateEffect,
@@ -59,7 +59,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // The tank healer: Rejuvenation on the tank whenever it's off, Regrowth on it when its HoT is off and the hole
 // covers 70% of the heal, Swiftmend at it, Healing Touch 11, 8 and 6 at 80% of the heal, then Rejuvenation at the
 // most hurt of the rest. The emergency line is 85%. 1,000 iterations on the seven boss files, carry (2026-11-04,
-// docs/healing_druid.md): mean 1.140 against 1.069 for the 40% line and 90% Healing Touch.
+// docs/healing_druid.md): mean 1.140 against 1.069 for the 40% line and 90% Healing Touch. Nature's Swiftness
+// waits for someone in the assignment under 45% for an instant Healing Touch 11 (60% before 2026-11-12: 1.242 ->
+// 1.269 mean carry, every boss file up, since health values read the health the healer has seen).
 export const APLTankHealer = PresetUtils.makePresetAPLRotation('Tank healer', TankHealerAPLJson, {
 	tooltip: 'Rejuvenation and Regrowth on the tank, Swiftmend and bound ranks of Healing Touch at it, with Innervate on yourself.',
 	group: 'Healing sim',
@@ -84,7 +86,7 @@ export const DefaultAPL = APLTankHealer;
 // Thicc Resto (51 points, 40 of them Restoration and Genesis, Moonglow, Nature's Majesty and Nature's Splendor
 // from Balance). On the tank healer at 500 iterations: Heart of the Wild for Nature's Focus is level (Onyxia
 // 1.177 against 1.172), 46 Restoration with 5 Genesis loses 0.06 on Onyxia, all 51 in Restoration 0.08.
-export const TalentsRestoration = PresetUtils.makePresetTalents('Restoration', SavedTalents.create({ talentsString: '05302001--5053025153113051' }), {
+export const TalentsRestoration = PresetUtils.makePresetTalents('Restoration', SavedTalents.create({ talentsString: '05302001--5253005153113051' }), {
 	tooltip: 'Wild Growth, Swiftmend, Bloom and Nature\'s Swiftness, with Genesis and Nature\'s Splendor from Balance.',
 	group: 'Healing sim',
 });
@@ -102,17 +104,20 @@ export const DefaultOptions = RestorationDruidOptions.create({
 	innervateTarget: UnitReference.create({ type: UnitType.Self }),
 });
 
-// The Restoration shaman's level 60 consumables (the Balance druid's with a Brilliant Mana Oil and the Major
-// Mana Potion).
+// Each healer preset takes the consumables that score best on its own bench objective (healbench damage carried,
+// mean of the 7 boss files in its role; docs/healing_sim.md, Consumables): Greater Cleric's Elixir (healing; the
+// Arcane Elixir's spell damage doesn't heal), Flask of Supreme Power, the phase 1 oils only (Brilliant Wizard and
+// Brilliant Mana Oil are Zandalar vendor formulas).
+// The druid takes the Wicked Smoothie (20 Spirit) and the Wizard Oil in both roles.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodLobsterStew,
+	food: Food.FoodWickedSmoothie,
+	healingPowerBuff: HealingPowerBuff.GreaterClericsElixir,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
-	mainHandImbue: WeaponImbue.BrilliantManaOil,
+	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });

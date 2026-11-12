@@ -94,12 +94,12 @@ func (paladin *Paladin) registerSealOfCommand() {
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(minDamage, maxDamage) * 0.5 // unless stunned
 
-				// Forever's judgement dummy (client 20968) and the damage spell it casts (20966) are
-				// both physical (DefenseType 2) with No Active Defense: one roll for hit and crit,
-				// never dodged, parried or blocked (wowsims/forever e10ca32c3d, 447d83b595), on the
-				// ranged table since the November 11 hotfixes (judgementAsRangedAttack).
+				// Forever's judgement dummy (client 20968) and the damage spell it casts (20966) have
+				// No Active Defense: one roll for hit and crit, never dodged, parried or blocked
+				// (wowsims/forever e10ca32c3d, 447d83b595). Since the November 11 hotfixes it is a
+				// ranged attack, so the roll is on the ranged table (rangedJudgement).
 				if sim.IsForever() {
-					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCritNoBlock)
+					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 					return
 				}
 
@@ -114,9 +114,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 				spell.CalcAndDealDamage(sim, target, baseDamage, outcomeApplier)
 			},
 		}
-		if paladin.Env.IsForever() {
-			judgementAsRangedAttack(&judgeConfig)
-		}
+		paladin.rangedJudgement(&judgeConfig)
 		judgeSpell := paladin.RegisterSpell(judgeConfig)
 
 		procSpell := paladin.RegisterSpell(core.SpellConfig{

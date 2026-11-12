@@ -88,7 +88,13 @@ def bound(spell, t, scale, notes):
 
 
 def build(role, k):
-    pl = [line({'autocastOtherCooldowns': {}}, notes='Racials, trinkets, potions, Demonic Rune and Nature\'s Swiftness.')]
+    ns_on = k.get('ns_on', 'auto')
+    if k.get('ns', '0') != '0':  # the older knob: an instant Healing Touch 11 under `ns`
+        ns_on, k['ns_at'] = 'ht', k['ns']
+    if ns_on == 'auto':
+        pl = [line({'autocastOtherCooldowns': {}}, notes='Racials, trinkets, potions, Demonic Rune and Nature\'s Swiftness.')]
+    else:
+        pl = [line({'autocastOtherCooldowns': {}}, notes='Racials, trinkets, potions and Demonic Rune (Nature\'s Swiftness has its own line).')]
     who = 'Tank' if role == 'tank' else 'MostHurt'
     pl.append(line(cast(INNERVATE), cmp('OpLe', mana(), const(k['innervate'])),
                    f'Innervate on ourselves at {int(100 * float(k["innervate"]))}% mana.'))
@@ -100,12 +106,16 @@ def build(role, k):
                        f'Read Leyline at {int(100 * float(k["leyline"]))}% mana while Innervate is on cooldown (High Order Skyborne).'))
     # Emergency: someone in the assignment low.
     low = float(k['low'])
-    if k.get('ns', '0') != '0':
-        ns_at = float(k['ns'])
+    if ns_on != 'auto':
+        # Nature's Swiftness when someone is under `ns_at` (default the emergency line), spent on the heal
+        # `ns_on` names: rg the emergency Regrowth, ht Healing Touch 11, wg Wild Growth on their party.
+        ns_at = float(k.get('ns_at', low))
+        ns_spell, ns_name = {'rg': (RG[9], 'Regrowth'), 'ht': (HT[11], 'Healing Touch rank 11'),
+                             'wg': (WG[3], 'Wild Growth')}[ns_on]
         pl.append(line(cast(NS), cmp('OpLt', hp('LowestHealth'), const(ns_at)),
                        f'Nature\'s Swiftness when someone in my assignment is under {int(100 * ns_at)}% health...'))
-        pl.append(line(cast(HT[11], 'LowestHealth'), {'auraIsActive': {'auraId': {'spellId': NS}}},
-                       '...and an instant Healing Touch rank 11 at them.'))
+        pl.append(line(cast(ns_spell, 'LowestHealth'), {'auraIsActive': {'auraId': {'spellId': NS}}},
+                       f'...and an instant {ns_name} at them.'))
     if k.get('swiftmend_low', '1') == '1':
         pl.append(line(cast(SWIFTMEND, 'LowestHealth'), cmp('OpLt', hp('LowestHealth'), const(low)),
                        f'Swiftmend whoever in my assignment is under {int(100 * low)}% health and has my HoT.'))

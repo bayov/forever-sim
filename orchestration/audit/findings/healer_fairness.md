@@ -2,23 +2,44 @@
 
 ## Open
 
-### healer_fairness-20261111-1: Nature's Swiftness now goes on Wild Growth in the druid raid preset; raid druid falls from first (1.437) to last (1.391)
-- severity: high (mean raid carry -0.046, -3.2%; the druid goes from level first to fourth, behind the shaman's 1.395)
-- affects: Restoration druid raid preset (`tools/healbench/req/druid_restoration_raid.json`); the tank preset is unchanged (identical rows on Broodlord and Vaelastrasz)
-- found: 2026-11-11, master 707ae92cc5
-- evidence: 9628e85b6 adds Wild Growth to Nature's Swiftness's spells (hotfix 113885, sim/druid/healing.go:756). The raid
-  preset fires NS from `autocastOtherCooldowns` (line 1 of its APL, "...and Nature's Swiftness"), and its Wild Growth line
-  (APL notes "Wild Growth at the most hurt") sits above the Healing Touch lines, so NS is now spent on a Wild Growth cast
-  instead of a Healing Touch. healbench -role raid -carry, 1,000 it, carry old (bench_9ba00c2.tsv) -> new: Onyxia 0.997 -> 0.943,
-  Broodlord 0.920 -> 0.906, Chromaggus 1.109 -> 1.092, Golemagg 2.660 -> 2.658, Magmadar 2.002 -> 1.818, Ragnaros 1.270 -> 1.240,
-  Vaelastrasz 1.102 -> 1.079; mean 1.437 -> 1.391. HPS rises (Magmadar 800 -> 903) but overheal too (74.7% -> 78.1%).
-  Attribution sure: healbench built from 707ae92cc5 with only that healing.go hunk reverted gives the baseline exactly
-  (Magmadar 2.002, Onyxia 0.997). Holy priest, shaman and the druid tank preset match the baseline (dot.go's change reaches no HoT here).
-- proposed fix: in the druid raid APL, take NS out of the autocast and cast it explicitly right before a Healing Touch line
-  (e.g. castSpell NS gated on the HT 11 condition), or gate Wild Growth on NS not being active. Re-bench the raid column
-  after; expect the druid back near 1.437. Whether NS on Wild Growth ever pays (instant party HoT on a spike) is the
-  healer_rotations pass's to measure.
-- needs: worker fix (healer_rotations)
+### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
+- severity: low (blocks a check; moves no number)
+- affects: the pass's step 2 for every healer
+- found: 2026-11-04, master c8f5858bd
+- evidence: `jq '.raidHealing' tools/encounters/<boss>.json` holds `healerClasses` (mean count a kill), `hpsEachHealer`
+  (one median for all healers, with overheal), `raidHps`, `hpsOnTanks`, `hpsOnOthers`, nothing by class
+  (`tools/encounters/raid_from_logs.py:144-158`); the mined `tools/encounters/logs/anniversary_*_raid.json` keep
+  the same. Composition over the 7 files: priest 5.11, shaman 3.00, paladin 1.69, druid 1.21 of 11.
+- proposed fix: have `wclcli.py raid` (tools/warcraftlogs/wclcli.py) keep effective HPS and tank share by healer
+  class (median per player), re-mine, and store it in `raidHealing.byClass`.
+- needs: orchestrator fix
+
+## Resolved
+
+### healer_fairness-20261112-1: the Holy priest raid preset keeps Inspiration, dead in the raid role, instead of Twilight Focus; every other raid preset takes its pushback talent
+- severity: high (+0.021 mean raid carry, 1.5%; widens the Holy priest's raid lead from +0.026 to +0.047)
+- affects: Holy priest raid healer (`tools/healbench/req/priest_holy_raid.json`, the ui preset it comes from); the tank preset is right
+- found: 2026-11-12, master 4fb90c298
+- evidence: both Holy presets use `00500503113-03505103030121531` (Inspiration 3/3, Twilight Focus 0/3). Inspiration
+  (+25% armor after a heal crit) only matters on a tank, and the raid role has none; Twilight Focus (70% chance not to
+  lose cast time when damaged) is the priest's pushback talent, the one the shaman raid preset takes (Healing Focus 3
+  for Ancestral Healing 3), the paladin (Spiritual Focus 5) and the druid (Nature's Focus 5). One-point swap
+  `00500503113-33505100030121531` (Twilight Focus 3, Inspiration 0; row gates unchanged), healbench -role raid -carry,
+  1,000 it, paired seeds: seed 101 1.440 -> 1.461 (Vaelastrasz 1.125 -> 1.262, the rest -0.017 to +0.012), seed 202
+  1.449 -> 1.469 (Vaelastrasz 1.123 -> 1.263). The same swap in the tank role costs 0.073 (1.278 -> 1.205), so only the
+  raid preset should change. Counter-check: the shaman raid preset with Ancestral Healing back for Healing Focus loses
+  0.039 (Vaelastrasz -0.156), so pushback is what Vaelastrasz's raid-wide fire damage rewards. Rows in
+  `ref/healer_fairness/screen_4fb90c2.tsv` (holy_raid_TF, sham_raid_AH, holy_tank_TF); helper
+  `tools/audit/healer_fairness/screen.sh`. Sure (two seeds, one file carries it, the mechanism is clear).
+- proposed fix: give the Holy priest raid preset `00500503113-33505100030121531` (ui preset and req), keep the tank
+  preset's string; re-bench the raid column.
+- needs: worker fix
+- resolved: 2026-11-12 (the Holy priest raid preset takes `00500503113-33505100030121531`: TalentsHolyRaid in
+  ui/healing_priest/presets.ts on the Holy raid healer build, tools/healbench/req/priest_holy_raid.json, the
+  priest_tuning `holy_raid` talents; the tank preset keeps Inspiration). Re-benched, 1,000 it, seed 101: raid mean
+  1.440 -> 1.461 (Onyxia 0.988, Broodlord 0.906, Chromaggus 1.065, Golemagg 2.607, Magmadar 2.062, Ragnaros 1.340,
+  Vaelastrasz 1.262), first; seed 202 1.449 -> 1.469 (the finding's pair). Rows in
+  `ref/healer_fairness/retune_25f65da_s101.tsv`.
 
 ### healer_fairness-20261104-5: the Holy paladin raid preset's Holy Light lines cost it 0.025 carry; a Flash of Light raid paladin is first, not third
 - severity: high (+0.025 mean raid carry, 1.8%; the paladin goes from 1.413, third, to 1.438, level with the Holy priest and druid at 1.437)
@@ -40,20 +61,47 @@
   of Light 6 at the most hurt at 0.7x (as the tank preset's); the healer_rotations auditor can search the best. Then
   re-bench H3's raid column.
 - needs: worker fix
+- 2026-11-12, master 4fb90c298, still open on the new consumables: the tank preset's APL in the raid role with the raid
+  preset's Lesser Mana Oil 1.424 against the raid preset's 1.400 (+0.024, 1,000 it, seed 101; Onyxia +0.033,
+  Broodlord +0.011, Chromaggus +0.044, Golemagg +0.016, Magmadar +0.019, Ragnaros -0.031, Vaelastrasz +0.076); the
+  raid preset with its Holy Light 9/8 and Divine Favor lines dropped 1.403 (+0.003). A Flash of Light raid paladin
+  would be second (1.424), ahead of the druid's 1.414.
+- resolved: 2026-11-12 (the raid preset is a Flash of Light healer: no Holy Light or Divine Favor line; Lay on
+  Hands under 10%, Holy Shock under 50%, Flash of Light 6 under 35%, Flash of Light 6 and 4 at the most hurt at
+  0.7x of their Expected Healing; ROLE_DEFAULTS raid in orchestration/tools/healers/paladin_holy_requests.py,
+  which now also reproduces the shipped requests: the tank's 0.7x gate and the raid's Lesser Mana Oil were
+  knobs it had lost). Healbench -role raid -carry, 1,000 it, 7 files: 1.400 -> 1.430 (seed 101), 1.402 -> 1.429
+  (seed 202); Flash of Light 6 alone at 0.7x 1.424 / 1.430, 6, 5 and 4 1.430 / 1.430 (a tie, the preset binds
+  two ranks); 13 other variants (gates 0.6/0.8x, ranks 6+5, 6+3, 4 alone, Holy Shock at 60/70% or as a filler,
+  Divine Favor under 35/50%, Concentration Aura, no Lay on Hands) at or below 1.425 (docs/healing_paladin.md,
+  Raid healer). Seed 101 by file: Onyxia +0.041, Broodlord +0.012, Chromaggus +0.059, Golemagg +0.018, Magmadar
+  +0.011, Ragnaros -0.007, Vaelastrasz +0.078. Onyxia at 300 s: 7,559 mana left at carry, no OOM. The raid
+  paladin is now second (1.430), behind the Holy priest (1.461), ahead of the druid (1.414) and shaman (1.412).
+  Rows in `ref/healer_fairness/retune_25f65da_s101.tsv` and `_s202.tsv`.
 
-### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
-- severity: low (blocks a check; moves no number)
-- affects: the pass's step 2 for every healer
-- found: 2026-11-04, master c8f5858bd
-- evidence: `jq '.raidHealing' tools/encounters/<boss>.json` holds `healerClasses` (mean count a kill), `hpsEachHealer`
-  (one median for all healers, with overheal), `raidHps`, `hpsOnTanks`, `hpsOnOthers`, nothing by class
-  (`tools/encounters/raid_from_logs.py:144-158`); the mined `tools/encounters/logs/anniversary_*_raid.json` keep
-  the same. Composition over the 7 files: priest 5.11, shaman 3.00, paladin 1.69, druid 1.21 of 11.
-- proposed fix: have `wclcli.py raid` (tools/warcraftlogs/wclcli.py) keep effective HPS and tank share by healer
-  class (median per player), re-mine, and store it in `raidHealing.byClass`.
-- needs: orchestrator fix
-
-## Resolved
+### healer_fairness-20261111-1: Nature's Swiftness now goes on Wild Growth in the druid raid preset; raid druid falls from first (1.437) to last (1.391)
+- severity: high (mean raid carry -0.046, -3.2%; the druid goes from level first to fourth, behind the shaman's 1.395)
+- affects: Restoration druid raid preset (`tools/healbench/req/druid_restoration_raid.json`); the tank preset is unchanged (identical rows on Broodlord and Vaelastrasz)
+- found: 2026-11-11, master 707ae92cc5
+- evidence: 9628e85b6 adds Wild Growth to Nature's Swiftness's spells (hotfix 113885, sim/druid/healing.go:756). The raid
+  preset fires NS from `autocastOtherCooldowns` (line 1 of its APL, "...and Nature's Swiftness"), and its Wild Growth line
+  (APL notes "Wild Growth at the most hurt") sits above the Healing Touch lines, so NS is now spent on a Wild Growth cast
+  instead of a Healing Touch. healbench -role raid -carry, 1,000 it, carry old (bench_9ba00c2.tsv) -> new: Onyxia 0.997 -> 0.943,
+  Broodlord 0.920 -> 0.906, Chromaggus 1.109 -> 1.092, Golemagg 2.660 -> 2.658, Magmadar 2.002 -> 1.818, Ragnaros 1.270 -> 1.240,
+  Vaelastrasz 1.102 -> 1.079; mean 1.437 -> 1.391. HPS rises (Magmadar 800 -> 903) but overheal too (74.7% -> 78.1%).
+  Attribution sure: healbench built from 707ae92cc5 with only that healing.go hunk reverted gives the baseline exactly
+  (Magmadar 2.002, Onyxia 0.997). Holy priest, shaman and the druid tank preset match the baseline (dot.go's change reaches no HoT here).
+- proposed fix: in the druid raid APL, take NS out of the autocast and cast it explicitly right before a Healing Touch line
+  (e.g. castSpell NS gated on the HT 11 condition), or gate Wild Growth on NS not being active. Re-bench the raid column
+  after; expect the druid back near 1.437. Whether NS on Wild Growth ever pays (instant party HoT on a spike) is the
+  healer_rotations pass's to measure.
+- needs: worker fix (healer_rotations)
+- resolved: 2026-11-12, e05135ad3 (NS on its own line in both druid presets: an instant Regrowth under 45% in the raid,
+  an instant Healing Touch 11 under 60% on the tank; Subtlety 2 -> Heart of the Wild 2). 1,000 it, own lengths: raid
+  1.391 -> 1.438 (first, level with the Holy priest's 1.437), tank 1.235 -> 1.273 (first, Holy priest 1.262). Other
+  healers' rows unchanged (no sim change outside a comment). The shaman raid preset still leaves its Nature's
+  Swiftness (16188) to the autocast, as the druid's did; whether a held NS pays there too is the healer_rotations
+  pass's to measure.
 
 ### healer_fairness-20261104-1: the tank-role bench has no raid, so Prayer of Mending ping-pongs between the tank and the priest
 - severity: high (Holy priest tank carry -0.085 mean, -0.177 on Magmadar, once fixed; the priest's lead over the shaman goes from +0.135 to +0.05)

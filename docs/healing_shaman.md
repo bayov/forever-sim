@@ -174,6 +174,8 @@ under "Presets (round 70753)" below are from before them.
 
 ## Presets (round 70753)
 
+Consumables (2026-11-12): Greater Cleric's Elixir for the Greater Arcane Elixir, Runn Tum Tuber Surprise, the Wizard Oil (the Brilliant Mana Oil is a Zandalar formula), Flask of Supreme Power, in both roles; the rest as every healer (`docs/healing_sim.md`, Consumables).
+
 The bench (`tools/healbench`), one healer, each row at its own length; 500 iterations to screen and 1,000 for
 the finalists and the tables below. "Master" is origin/master 3d1cb9701 before this branch, which is H2's to the
 third decimal.
@@ -202,7 +204,9 @@ Restoration.
 Wave, Nature's Swiftness):
 
 - Lesser Healing Wave 6 and 5 at the tank, bound, while mana is at least 50%, right after Riptide: more healing
-  a second than Healing Wave for a little more a mana. Floors: 0% 1.035 (runs dry at 300 sec: 0.879), 50% 1.065,
+  a second than Healing Wave for a little more a mana. (Rank 5 had rank 6's condition and never fired; it's dropped,
+  healer_rotations-20261104-3: tank mean carry 1.257 with or without it, seed 101, 1,000 iterations; rank 5 in the
+  35-50% or 40-50% mana band 1.254 / 1.253.) Floors: 0% 1.035 (runs dry at 300 sec: 0.879), 50% 1.065,
   60% 1.059, 70% 1.051, 80% 1.029; rank 6 alone at 70% 1.038 (the 0.959 base had none).
 - Nature's Swiftness when the tank is under 50% health, before Riptide (the bound Healing Wave 10 follows it):
   +0.011 alone, +0.005 with the Lesser Healing Wave lines (50% and 40%: within 0.004; 35%: -0.010).
@@ -214,6 +218,14 @@ Wave, Nature's Swiftness):
 the bench (Mana Tide 50%, Water Shield below 40% or 80%: the same numbers to the third decimal; the fights end
 first), which is why the 11-03 threshold runs were all equal. Riptide on the tank instead of the most hurt
 (-0.007) and Lesser Healing Wave 6 at the most hurt above 70% mana (-0.013) lose.
+
+**Nature's Swiftness on the raid healer (healer_rotations-20261112-2, 2026-11-12)**: the raid APL had no Nature's
+Swiftness line, so `autocastOtherCooldowns` raised it at the pull and on every cooldown and the next Chain Heal
+took it. It now has its own two lines after the autocast, as the tank healer and both druids: Nature's Swiftness
+when the lowest in the assignment is under 65% health, then an instant Healing Wave 10 at them. Raid role, own
+lengths, 1,000 iterations, mean carry of the 7 files, seed 101: autocast 1.392, 45% 1.402, 50% 1.411, 55% 1.403,
+60% 1.395, **65% 1.412**, 70% 1.406, 75% 1.390; seed 202: autocast 1.389, 50% 1.404, 55% 1.400, **65% 1.411**
+(+0.020 / +0.022). NS costs no mana, so the 180 / 300 s side is unchanged.
 
 **Final, 1,000 iterations, carry** (this branch with the priest's and paladin's work merged; the priest and
 paladin columns are the coordinator's table from their branches):

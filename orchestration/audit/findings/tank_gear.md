@@ -4,6 +4,30 @@
 
 ## Resolved
 
+### tank_gear-20261112-1: Warrior (all presets) and Warden (Max threat, Balanced) still wear Greater Stamina boots; Greater Agility (1887) scores higher
+- severity: low (+3 to +10 on scores of 1,100 to 3,200, under 0.4%)
+- affects: Protection warrior Max threat / Balanced / Max survival; Warden shaman Max threat / Balanced (paladin and bear already wear 1887 and 929 loses there)
+- found: 2026-11-12, master 55cd92b09
+- evidence: paired `abtest` (tools/audit/tank_rotations/abtest, built `-tags=with_db`), 10,000 iterations, six-boss scoring mean at the preset's weight, boots 929 -> 1887 on the request (tools/tankbench/req/*.json, item 990610 / 999210), seed 1 / seed 2: warrior Max threat +5.6 +/- 1.0 / +3.0 +/- 1.2, Balanced +4.5 +/- 1.8 / +3.6 +/- 1.9, Max survival +4.1 +/- 3.7 / +6.8 +/- 3.9; Warden Max threat +5.4 +/- 1.1 / +5.0 +/- 1.2, Balanced +9.0 +/- 2.1 / +10.0 +/- 2.1. Warden Max survival keeps 929 (-8.8 +/- 10.3 at 3,000). 1887 is live for boots in db.json and is the paladin/bear pick. docs/tank_warrior.md has no boots A/B (only "the boots keep it", line 370); docs/tank_shaman.md's boots A/B (line 259) was against vendor kits only, in tank round 3, before the Nov 10 changes.
+- proposed fix: boots 1887 on the warrior (all three requests and gear sets) and the Warden Max threat and Balanced sets; record in the class docs.
+- fixed: 2026-11-12. Boots 1887 on the warrior's three requests and two gear sets, and on the Warden's Max threat and Balanced requests and sets (Balanced now has its own UI set, `phase1_synthetic_tank_armor_trinket_balanced.gear.json`, since Max survival keeps 929); recorded in docs/tank_warrior.md and docs/tank_shaman.md.
+
+### tank_gear-20261112-2: Warrior Max threat (and probably Balanced) wrists: Superior Strength (1885) beats Superior Deflection (1248665)
+- severity: low
+- affects: Protection warrior Max threat, Balanced
+- found: 2026-11-12, master 55cd92b09
+- evidence: same method, 1248665 -> 1885 on wrist 990606-line item: Max threat +8.4 +/- 1.6 / +11.8 +/- 1.7 (10,000, seeds 1/2); Balanced +8.2 +/- 2.6 / +2.2 +/- 2.9 (10,000), +13.0 +/- 4.5 at 3,000; Max survival -20.5 +/- 9.6 (3,000), keeps 1248665. docs/tank_warrior.md says Superior Deflection stays at every weight (round 3, 2026-11-04) and records no Strength A/B for the warrior; the bear wears 1885 at Max threat for the same reason.
+- proposed fix: Max threat wrist 1885; Balanced marginal (mean +5.2, about 2 sigma), re-run at more seeds before switching.
+- fixed: 2026-11-12. Wrist 1885 on the warrior's Max threat and Balanced requests and on the shared `level60_phase1_synthetic.gear.json` (Max survival keeps 1248665). Balanced re-run at 10,000 on seeds 3, 4, 5: +3.6 / +5.3 / +6.7 (+/- 3.0 to 3.2), all five seeds positive, mean +5.2 (about 4 sigma pooled), so it switched too.
+
+### tank_gear-20261112-3: Warden Max threat: cloak Agility (1219587) and wrist Superior Deflection (1248665) now beat Superior Defense / Superior Stamina; Balanced cloak too
+- severity: low
+- affects: Warden shaman Max threat, Balanced
+- found: 2026-11-12, master 55cd92b09
+- evidence: after the Nov 12 retune (new Max threat talents, Titans at Balanced), paired 10,000, seeds 1/2: Max threat cloak 1889 -> 1219587 +3.9 +/- 1.0 / +3.3 +/- 1.1; Balanced cloak +4.2 +/- 1.8 / +4.2 +/- 2.0 (3,000 screen -10.1 +/- 8.9 at Max survival, keeps 1889). Max threat wrist 1886 -> 1248665 +4.4 +/- 1.5 / +5.8 +/- 1.5 (docs/tank_shaman.md line ~200: 1886 kept at -2.1 +/- 6.7 on the old build). Max survival unchanged (wrist/cloak/shield all keep). Shield 1886 still beats 863 at all three (-4.9 / -10.4 / -32.8).
+- proposed fix: Max threat: cloak 1219587, wrist 1248665; Balanced: cloak 1219587. Combined effect not simmed (gains probably add, about +8 to +10 at Max threat).
+- fixed: 2026-11-12. Warden Max threat cloak 1219587 and wrist 1248665, Balanced cloak 1219587, in the requests and UI sets; Max survival unchanged.
+
 ### tank_gear-20261104-8: DPS Report names enchants by effect id alone, so shared ids show another slot's enchant
 - severity: low
 - affects: DPS Report gear tables: Tanking (all wrists with 1886, paladin and Warden shields with 929 in the current data) and the DPS mode (4 Hands rows)

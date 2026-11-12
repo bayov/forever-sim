@@ -12,7 +12,7 @@
               "items": [
                 {
                   "id": 990601,
-                  "enchant": 1503
+                  "enchant": 1508
                 },
                 {
                   "id": 990602,
@@ -31,7 +31,7 @@
                 },
                 {
                   "id": 990606,
-                  "enchant": 1248665
+                  "enchant": 1885
                 },
                 {
                   "id": 990607,
@@ -42,11 +42,11 @@
                 },
                 {
                   "id": 990609,
-                  "enchant": 1503
+                  "enchant": 1508
                 },
                 {
                   "id": 990610,
-                  "enchant": 929
+                  "enchant": 1887
                 },
                 {
                   "id": 990611
@@ -437,7 +437,7 @@
               "healthElixir": "ElixirOfGreaterFortitude",
               "strengthBuff": "JujuPower",
               "attackPowerBuff": "JujuMight",
-              "mainHandImbue": "ElementalSharpeningStone",
+              "mainHandImbue": "DenseSharpeningStone",
               "defaultPotion": "MightyRagePotion",
               "dragonBreathChili": true,
               "zanzaBuff": "SpiritOfZanza",

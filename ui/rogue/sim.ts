@@ -80,8 +80,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			},
 		),
 
-		// Default consumes settings, the default build's (Combat Daggers drinks the Flask of Natural Accuracy).
-		consumes: Presets.P1CombatDaggersConsumes,
+		// Default consumes settings, the default build's (Combat Swords, since 2026-11-12).
+		consumes: Presets.P1CombatSwordsConsumes,
 		// Default talents.
 		talents: Presets.DefaultTalents.data,
 		// Default spec-specific settings.
@@ -125,8 +125,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		// Preset gear configurations that the user can quickly select.
 		gear: [...Presets.GearPresets[Phase.Phase2]],
 		builds: [
-			Presets.PresetBuildLevel60CombatDaggers,
 			Presets.PresetBuildLevel60CombatSwords,
+			Presets.PresetBuildLevel60CombatDaggers,
 			Presets.PresetBuildLevel60SealFateDaggers,
 			Presets.PresetBuildLevel60SealFateSwords,
 			Presets.PresetBuildLevel60Mutilate,
@@ -176,7 +176,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 
 			talents: Presets.DefaultTalentsCombat.data,
 			specOptions: Presets.DefaultOptions,
-			consumes: Presets.P1CombatDaggersConsumes,
+			consumes: Presets.P1CombatSwordsConsumes,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceSkyborneHighOrder,

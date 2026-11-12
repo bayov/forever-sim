@@ -68,15 +68,22 @@ func (druidTank) Knobs() []Knob {
 		{Name: "barkskin", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "barkskinAfter", Default: 0, Min: 0, Max: 30, Step: 5},
 		// Frenzied Regeneration on cooldown once the Rage is at frRage or more, 0 never.
-		{Name: "frRage", Default: 0, Min: 0, Max: 100, Step: 20},
+		// Step 10: 70 beat 60, 80 and 100 at Max survival (tank_rotations-20261112-1).
+		{Name: "frRage", Default: 0, Min: 0, Max: 100, Step: 10},
 		// The synthetic armor trinket (a defensive on-use, standards 36) on cooldown, 0/1: the autocast
 		// line leaves defensive cooldowns to a health threshold, which a scoring run can't read.
 		{Name: "armorTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
+		// 1 drinks the potion slot's potion (the Greater Stoneshield) on cooldown from its own line, above the
+		// autocast one: autocast never drinks a defensive potion in a tank score (tank_fairness-20261104-10).
+		{Name: "potion", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
 func (druidTank) Build(k Knobs) *proto.APLRotation {
 	var items []*proto.APLListItem
+	if k["potion"] == 1 {
+		items = append(items, cast(potion, nil, "Greater Stoneshield Potion on cooldown."))
+	}
 	items = append(items, autocastOtherCooldowns(nil, "Racials, trinkets and potions."))
 	if k["armorTrinket"] == 1 {
 		items = append(items, cast(itemID(druid.FeralTankSyntheticArmorTrinket), nil,

@@ -587,6 +587,65 @@ Discipline lead the mean by 0.02, the shaman is ahead of both on Broodlord and C
 Chromaggus and Ragnaros, and the paladin is last on the mean, by 0.06. On the raid the Holy priest and the druid
 tie and the shaman (no instant heal on the notes' Riptide) is last.
 
+## Consumables (2026-11-12)
+
+Every healer preset takes the consumables that score best on its own objective, the mean damage carried over
+the 7 boss files in its role (healbench `-carry`, paired seeds), under the rules every spec has (standards 8a,
+10, 11): phase 1 sources only, one +2% crit elixir, one elixir per slot (healer_gear-20261112-1 to -3).
+
+| Preset | Food | Oil | Flask |
+|---|---|---|---|
+| Restoration druid, tank and raid | Wicked Smoothie (20 Spirit) | Wizard Oil | Supreme Power |
+| Restoration shaman, tank and raid | Runn Tum Tuber Surprise (15 Intellect) | Wizard Oil | Supreme Power |
+| Holy paladin, tank / raid | Runn Tum Tuber Surprise | Wizard Oil / Lesser Mana Oil | Supreme Power |
+| Holy priest, tank / raid | Runn Tum Tuber Surprise | Lesser Mana Oil / Wizard Oil | Supreme Power |
+| Discipline priest (tank) | Runn Tum Tuber Surprise | Wizard Oil | Supreme Power |
+
+All of them keep Greater Mageblood (20 MP5), Greater Intellect (25), Sages (25 Spirit, the one crit elixir),
+Cerebral Cortex Compound, the Major Mana Potion and the Demonic Rune, and now take **Greater Cleric's Elixir**
+(+40 healing, Alchemy 195, a Forever faction vendor) where they had the Greater Arcane Elixir, whose spell damage
+heals nothing (`Spell.HealingPower` reads spell power and healing only). The sim gives each stat its own elixir
+slot and the client carries no battle / guardian categories, so Cleric's stacks with Mageblood, Intellect and
+Sages as the Arcane Elixir did. The UI gives the builds that differ from their class's default their own
+consumables (the paladin's raid healer, the Holy tank healer).
+
+- **Food**: Lobster Stew's 28 spell damage heals nothing either. Sage's Tea (+44 healing) would be best, but its
+  recipe (249884), and those of Sunny and Triage Tea, list no source on Wowhead's Forever pages (checked
+  2026-11-12), so they are out until one is known; Prehistoric Pulled Raptor (20 Intellect) the same. The legal
+  ones are within 0.5% of each other (tank, 1,000 iterations, against no food): Wicked Smoothie druid +0.24%,
+  Holy +0.18%, Discipline -0.15%; Runn Tum Tuber Surprise (Dire Maul) Holy +0.44%, Discipline +0.29%, druid +0.12%;
+  Root Tea (11 healing) +0.06% or less. Each class takes its best on the screen. Kreeg's Stout Beatdown
+  (+25 Spirit, -5 Intellect) is -0.30% to +0.17%, not taken.
+- **Oil**: Brilliant Mana Oil and Brilliant Wizard Oil are out: both formulas (20757, 20756) are sold only by
+  Rin'wosho, the Zandalar vendor, which the consumables pass rules out as raid-only, as with the Mageblood Potion.
+  Of the legal oils, Wizard Oil (Forever: 24 spell power and 24 healing) against Lesser Mana Oil (20 healing,
+  10 MP5), tank 2,000 and raid 1,000 iterations, seeds 101 / 202, Lesser Mana Oil's change: druid tank -0.15% /
+  -0.17%, raid 0.00% / -0.23%; shaman tank -0.37% / -0.40%, raid -0.31% / -0.28%; paladin tank -0.35% / -0.17%,
+  raid **+0.34% / +0.40%**; Holy tank **+0.15% / +0.10%**, raid +0.05% / -0.18%; Discipline -0.18% / -0.15%.
+  Before the ruling the Brilliant Wizard Oil beat the Brilliant Mana Oil by 0.3% to 1.7% except the Holy raid
+  healer (-0.4%).
+- **Flask**: Supreme Power (+150 spell power) against Distilled Wisdom (+2,000 mana). Distilled Wisdom loses the
+  mean everywhere: screen (tank 1,000, raid 500) druid -0.15% / -0.29%, shaman -2.36% / +0.12%, paladin -1.39% /
+  -1.21%, Holy -1.12% / -0.45%, Discipline -0.50%; the close ones again on the final consumables, seeds 101 / 202:
+  druid tank -0.46% / -0.49%, raid -0.08% / -0.40%; shaman raid -0.50% / -0.58%; Holy raid -0.09% / -0.55%;
+  Discipline -0.56% / -0.52%. It wins one fight: Chromaggus, the mana-starved one, by 0.075 carry for both priests
+  in the tank role, and Broodlord for Discipline (+0.02), but loses Golemagg and Magmadar by
+  0.04 to 0.07.
+- **Potion**: the Major Mana Potion. The Major Spellblasting Potion's 47 is spell damage, which heals nothing.
+
+Whole requests, before (Arcane Elixir, Lobster Stew, Brilliant Mana Oil) and after, 1,000 iterations, seed 101,
+mean carry of the 7 files: tank druid 1.237 → 1.242, shaman 1.248 → 1.257, paladin 1.149 → 1.152, Holy 1.263 →
+1.278, Discipline 1.261 → 1.272; raid druid 1.419 → 1.414 (the Brilliant Mana Oil's 15 MP5 lost to the phase 1
+ruling outweighs the rest), shaman 1.389 → 1.392, paladin 1.394 → 1.400, Holy 1.440 → 1.440. The ranking in
+each role is unchanged.
+
+Raid presets re-tuned 2026-11-12 (seed 101, same bench): the Holy priest takes Twilight Focus 3 for Inspiration 3,
+1.440 → 1.461 (healer_fairness-20261112-1), and the paladin drops Holy Light and Divine Favor for Flash of Light 6
+and 4 at 0.7x, 1.400 → 1.430 (healer_fairness-20261104-5; docs/healing_paladin.md). Raid order: Holy priest 1.461,
+paladin 1.430, druid 1.414, shaman 1.412. The tank presets are unchanged. Enchants: the presets' head (Lesser
+Arcanum of Voracity, Intellect), legs, chest and feet (Mystic Rugged Armor Kit) stay; Spirit or Rumination on the
+head, Voracity on the legs, Greater Stats on the chest and a kit on the bare hands moved no mean past 0.006.
+
 ## Milestones
 
 **H1: the groundwork** (engine, no healer spec). Done 2026-11-02, see above.

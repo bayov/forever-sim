@@ -13,11 +13,11 @@
        "items": [
         {
          "id": 999201,
-         "enchant": 1507
+         "enchant": 1504
         },
         {
          "id": 999202,
-         "enchant": 1249019
+         "enchant": 1249059
         },
         {
          "id": 999203
@@ -36,14 +36,14 @@
         },
         {
          "id": 999207,
-         "enchant": 1248640
+         "enchant": 1887
         },
         {
          "id": 999208
         },
         {
          "id": 999209,
-         "enchant": 1507
+         "enchant": 1504
         },
         {
          "id": 999210,
@@ -75,7 +75,7 @@
        ]
       },
       "consumes": {
-       "flask": "FlaskOfNaturalPrecision",
+       "flask": "FlaskOfTheTitans",
        "food": "FoodDirgesKickChimaerokChops",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
@@ -119,7 +119,7 @@
          },
          "doAtValue": {
           "const": {
-           "val": "-4.5s"
+           "val": "-6s"
           }
          }
         },
@@ -133,7 +133,7 @@
          },
          "doAtValue": {
           "const": {
-           "val": "-3s"
+           "val": "-4.5s"
           }
          }
         },
@@ -142,6 +142,20 @@
           "castSpell": {
            "spellId": {
             "spellId": 10438
+           }
+          }
+         },
+         "doAtValue": {
+          "const": {
+           "val": "-3s"
+          }
+         }
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10463
            }
           }
          },
@@ -403,6 +417,50 @@
           }
          },
          "notes": "Fire Nova around the fire totem in the last 60 sec: our own threat, with mana we'd otherwise end on."
+        },
+        {
+         "action": {
+          "castSpell": {
+           "spellId": {
+            "spellId": 10463
+           }
+          },
+          "condition": {
+           "and": {
+            "vals": [
+             {
+              "cmp": {
+               "lhs": {
+                "totemRemainingTime": {
+                 "totemType": "Water"
+                }
+               },
+               "op": "OpLe",
+               "rhs": {
+                "const": {
+                 "val": "0s"
+                }
+               }
+              }
+             },
+             {
+              "cmp": {
+               "lhs": {
+                "remainingTime": {}
+               },
+               "op": "OpGe",
+               "rhs": {
+                "const": {
+                 "val": "10s"
+                }
+               }
+              }
+             }
+            ]
+           }
+          }
+         },
+         "notes": "The water totem whenever it's down."
         }
        ]
       }

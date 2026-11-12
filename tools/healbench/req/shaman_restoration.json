@@ -69,10 +69,10 @@
             },
             "consumes": {
               "flask": "FlaskOfSupremePower",
-              "food": "FoodLobsterStew",
+              "food": "FoodRunnTumTuberSurprise",
               "manaRegenElixir": "GreaterMagebloodElixir",
-              "spellPowerBuff": "GreaterArcaneElixir",
-              "mainHandImbue": "BrilliantManaOil",
+              "healingPowerBuff": "GreaterClericsElixir",
+              "mainHandImbue": "WizardOil",
               "defaultPotion": "MajorManaPotion",
               "defaultConjured": "ConjuredDemonicRune",
               "zanzaBuff": "CerebralCortexCompound",
@@ -331,33 +331,7 @@
                       }
                     }
                   },
-                  "notes": "Lesser Healing Wave 6 and 5 at the tank while mana is at least 50%, whatever it misses: more healing a second than Healing Wave, if less a mana."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10467
-                      },
-                      "target": {
-                        "type": "Tank",
-                        "index": 0
-                      }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "currentManaPercent": {}
-                        },
-                        "rhs": {
-                          "const": {
-                            "val": "0.5"
-                          }
-                        }
-                      }
-                    }
-                  }
+                  "notes": "Lesser Healing Wave 6 at the tank while mana is at least 50%, whatever it misses: more healing a second than Healing Wave, if less a mana."
                 },
                 {
                   "action": {

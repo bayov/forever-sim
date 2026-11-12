@@ -1,9 +1,10 @@
 {
     "type": "TypeAPL",
     "prepullActions": [
-        {"action":{"castSpell":{"spellId":{"spellId":10432}}},"doAtValue":{"const":{"val":"-4.5s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":10408}}},"doAtValue":{"const":{"val":"-3s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":10438}}},"doAtValue":{"const":{"val":"-1.5s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":10432}}},"doAtValue":{"const":{"val":"-6s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":10408}}},"doAtValue":{"const":{"val":"-4.5s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":10438}}},"doAtValue":{"const":{"val":"-3s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":10463}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}}]}}},"notes":"Lightning Shield whenever its orbs are gone: their threat beats the 370 mana."},
@@ -14,6 +15,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":10414}}},"notes":"Earth Shock: twice its damage in threat."},
         {"action":{"castSpell":{"spellId":{"spellId":17364}}},"notes":"Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike."},
         {"action":{"castSpell":{"spellId":{"spellId":10438}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"totemRemainingTime":{"totemType":"Fire"}},"op":"OpLe","rhs":{"const":{"val":"0s"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"10s"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"60s"}}}}]}}},"notes":"The fire totem whenever it's down in the last 60 sec: earlier its mana is Earth Shock's."},
-        {"action":{"castSpell":{"spellId":{"spellId":408345}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.4"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"60s"}}}}]}}},"notes":"Fire Nova around the fire totem in the last 60 sec: our own threat, with mana we'd otherwise end on."}
+        {"action":{"castSpell":{"spellId":{"spellId":408345}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.4"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"60s"}}}}]}}},"notes":"Fire Nova around the fire totem in the last 60 sec: our own threat, with mana we'd otherwise end on."},
+        {"action":{"castSpell":{"spellId":{"spellId":10463}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"totemRemainingTime":{"totemType":"Water"}},"op":"OpLe","rhs":{"const":{"val":"0s"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"10s"}}}}]}}},"notes":"The water totem whenever it's down."}
     ]
 }

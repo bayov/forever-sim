@@ -47,28 +47,6 @@ func (paladin *Paladin) registerJudgement() {
 	})
 }
 
-// Forever's damaging judgements are ranged attacks since Blizzard's November 11 hotfixes
-// (t/2403040 post 8): "Judgement changed to now be considered a Ranged Attack. This means it no
-// longer counts as a Melee attack for the purposes of item and effect procs and uses the
-// Paladin's Ranged Hit chance." So Judgement of Righteousness, of Command and of Fury roll the
-// ranged table: its miss goes by the ranged slot's skill (a libram gives the level's full skill,
-// so main hand weapon skill doesn't count), with the same hit rating, Precision included (an
-// unscoped hit aura, see hammerOfWrathHitRating). They keep what the post doesn't touch: one
-// physical crit roll at double damage with the melee crit stat, Conviction and Holy Power, no
-// dodge, parry or block (No Active Defense), the weapon specializations' multiplier, and the
-// judgement's spell power. Their proc mask is a ranged ability's, so melee weapon procs, the
-// Crusader enchant, Windfury Totem, Seal of Wisdom's debuff and other melee-only effects no
-// longer hear them; effects on any ranged or any attack still do. Before the hotfix they rolled
-// the melee table as main hand abilities (sim since 2026-10-23, wowsims/forever e10ca32c3d).
-//
-// Open (the post doesn't say): whether the weapon specializations still reach them, and whether
-// Judgement of the Crusader and of Wisdom, which always land in the sim, now roll ranged hit too.
-func judgementAsRangedAttack(config *core.SpellConfig) {
-	config.DefenseType = core.DefenseTypeRanged
-	config.ProcMask = core.ProcMaskRangedSpecial
-	config.CastType = proto.CastType_CastTypeRanged
-}
-
 // Helper Function For casting Judgement.
 //
 // Under Forever a Judgement no longer consumes the seal, so the paladin judges every
@@ -95,4 +73,23 @@ func (paladin *Paladin) sanctifiedJudgementBase(sim *core.Simulation) float64 {
 	baseCost := max(0, cost.BaseCost+float64(cost.FlatModifier))
 	percent := float64(paladin.GetSchoolCostModifier(seal)) / 100 * float64(cost.Multiplier) / 100 * cost.Factor
 	return baseCost * (2 - percent)
+}
+
+// rangedJudgement makes a judgement's damage spell a ranged attack under Forever. Blizzard's
+// hotfixes of November 11 (t/2403040 post 8): "Judgement changed to now be considered a Ranged
+// Attack. This means it no longer counts as a Melee attack for the purposes of item and effect
+// procs and uses the Paladin's Ranged Hit chance." So the hit is a ranged special: listeners keyed
+// on melee (weapon and equip procs, Seal of Wisdom, Judgement of Wisdom and Light) no longer see
+// it, those keyed on melee or ranged still do, and it rolls on the ranged attack table, whose
+// weapon skill is the base for the level (a libram is no ranged weapon, so a Human's sword and
+// mace skill doesn't reach it) and which a weapon-only crit (Elemental Sharpening Stone) doesn't
+// reach. The hotfix names no other change, so it still has No Active Defense (never dodged,
+// parried or blocked), keeps its damage, threat and the weapon specializations.
+func (paladin *Paladin) rangedJudgement(config *core.SpellConfig) {
+	if !paladin.Env.IsForever() {
+		return
+	}
+	config.DefenseType = core.DefenseTypeRanged
+	config.ProcMask = core.ProcMaskRangedSpecial
+	config.CastType = proto.CastType_CastTypeRanged
 }

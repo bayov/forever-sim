@@ -13,18 +13,18 @@
        "items": [
         {
          "id": 999201,
-         "enchant": 1507
+         "enchant": 1508
         },
         {
          "id": 999202,
-         "enchant": 1249019
+         "enchant": 1249059
         },
         {
          "id": 999203
         },
         {
          "id": 999204,
-         "enchant": 1889
+         "enchant": 1219587
         },
         {
          "id": 999205,
@@ -36,18 +36,18 @@
         },
         {
          "id": 999207,
-         "enchant": 1248640
+         "enchant": 1887
         },
         {
          "id": 999208
         },
         {
          "id": 999209,
-         "enchant": 1507
+         "enchant": 1508
         },
         {
          "id": 999210,
-         "enchant": 929
+         "enchant": 1887
         },
         {
          "id": 999211
@@ -75,7 +75,7 @@
        ]
       },
       "consumes": {
-       "flask": "FlaskOfNaturalPrecision",
+       "flask": "FlaskOfTheTitans",
        "food": "FoodDirgesKickChimaerokChops",
        "agilityElixir": "ElixirOfTheMongoose",
        "armorElixir": "ElixirOfThePhalanx",
@@ -91,7 +91,7 @@
        "intellectElixir": "ElixirOfGreaterIntellect",
        "zanzaBuff": "SpiritOfZanza",
        "defaultConjured": "ConjuredDemonicRune",
-       "manaRegenElixir": "MagebloodPotion"
+       "manaRegenElixir": "GreaterMagebloodElixir"
       },
       "wardenShaman": {
        "options": {
@@ -156,7 +156,7 @@
          "action": {
           "castSpell": {
            "spellId": {
-            "spellId": 10497
+            "spellId": 10463
            }
           }
          },
@@ -423,7 +423,7 @@
          "action": {
           "castSpell": {
            "spellId": {
-            "spellId": 10497
+            "spellId": 10463
            }
           },
           "condition": {

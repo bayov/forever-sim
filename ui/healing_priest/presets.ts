@@ -5,6 +5,7 @@ import {
 	Debuffs,
 	Flask,
 	Food,
+	HealingPowerBuff,
 	IndividualBuffs,
 	IntellectElixir,
 	ManaRegenElixir,
@@ -12,7 +13,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SpellPowerBuff,
 	SpiritElixir,
 	SunderRamp,
 	TristateEffect,
@@ -97,12 +97,19 @@ export const TalentsHoly = PresetUtils.makePresetTalents('Holy', SavedTalents.cr
 	tooltip: 'Prayer of Mending, Spiritual Guidance and Healing, Holy Binding, Litany of Light, with Inner Focus and Meditation.',
 	group: 'Healing sim',
 });
+// The raid healer swaps Inspiration 3 (armor after a heal crit: for a tank, and the raid role has none) for Twilight
+// Focus 3 (no pushback 70% of the time), as every other raid healer takes its pushback talent: +0.021 mean raid carry
+// on two seeds, nearly all of it Vaelastrasz's raid-wide fire (healer_fairness-20261112-1).
+export const TalentsHolyRaid = PresetUtils.makePresetTalents('Holy raid', SavedTalents.create({ talentsString: '00500503113-33505100030121531' }), {
+	tooltip: 'The Holy talents with Twilight Focus in place of Inspiration, for the raid healer.',
+	group: 'Healing sim',
+});
 export const TalentsDiscipline = PresetUtils.makePresetTalents('Discipline', SavedTalents.create({ talentsString: '005005031330011531-0350510303' }), {
 	tooltip: 'Power Infusion, Divine Aegis, Renewed Hope, Penance and Soul Warding, with Inspiration and Improved Healing.',
 	group: 'Healing sim',
 });
 
-export const TalentPresets = [TalentsHoly, TalentsDiscipline];
+export const TalentPresets = [TalentsHoly, TalentsHolyRaid, TalentsDiscipline];
 
 export const DefaultTalents = TalentsHoly;
 
@@ -113,19 +120,27 @@ export const DefaultTalents = TalentsHoly;
 // The rotation casts Power Infusion (on the priest) and Inner Focus; Inner Fire isn't simulated.
 export const DefaultOptions = HealingPriestOptions.create({});
 
-// The Restoration shaman's level 60 consumables: a Brilliant Mana Oil and the Major Mana Potion.
+// Each healer preset takes the consumables that score best on its own bench objective (healbench damage carried,
+// mean of the 7 boss files in its role; docs/healing_sim.md, Consumables): Greater Cleric's Elixir (healing; the
+// Arcane Elixir's spell damage doesn't heal), Flask of Supreme Power, the phase 1 oils only (Brilliant Wizard and
+// Brilliant Mana Oil are Zandalar vendor formulas).
+// The priests take Runn Tum Tuber Surprise (15 Intellect); the Wizard Oil, but the Holy tank healer the Lesser Mana
+// Oil (HolyTankHealerConsumes).
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodLobsterStew,
+	food: Food.FoodRunnTumTuberSurprise,
+	healingPowerBuff: HealingPowerBuff.GreaterClericsElixir,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
-	mainHandImbue: WeaponImbue.BrilliantManaOil,
+	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
+export const HolyTankHealerConsumes = Consumes.create({ ...DefaultConsumes, mainHandImbue: WeaponImbue.LesserManaOil });
+const DefaultConsumables = PresetUtils.makePresetEncounter('Healer consumables', undefined, { consumes: DefaultConsumes });
+const HolyTankHealerConsumables = PresetUtils.makePresetEncounter('Holy tank healer consumables', undefined, { consumes: HolyTankHealerConsumes });
 
 // The shared level 60 raid buffs and debuffs, as the Restoration shaman's.
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -192,16 +207,18 @@ export const PresetBuildHolyTankHealer = PresetUtils.makePresetBuild('Holy tank 
 	gear: DefaultGear,
 	talents: TalentsHoly,
 	rotation: APLHolyTankHealer,
+	encounter: HolyTankHealerConsumables,
 });
 
 export const PresetBuildHolyRaidHealer = PresetUtils.makePresetBuild('Holy raid healer', {
 	group: 'Healing sim',
-	tooltip: 'Level 60 Human on the healing priest synthetic set, Holy talents, the Holy raid healer rotation.',
+	tooltip: 'Level 60 Human on the healing priest synthetic set, Holy raid talents (Twilight Focus), the Holy raid healer rotation.',
 	race: AllianceRace,
 	level: 60,
 	gear: DefaultGear,
-	talents: TalentsHoly,
+	talents: TalentsHolyRaid,
 	rotation: APLHolyRaidHealer,
+	encounter: DefaultConsumables,
 });
 
 export const PresetBuildDisciplineTankHealer = PresetUtils.makePresetBuild('Discipline tank healer', {
@@ -212,4 +229,5 @@ export const PresetBuildDisciplineTankHealer = PresetUtils.makePresetBuild('Disc
 	gear: DefaultGear,
 	talents: TalentsDiscipline,
 	rotation: APLDisciplineTankHealer,
+	encounter: DefaultConsumables,
 });

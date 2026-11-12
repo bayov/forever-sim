@@ -5,7 +5,6 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
-	"github.com/wowsims/classic/sim/core/proto"
 )
 
 // Seal of Fury is Forever's tanking seal, a trainer ability from level 10 (client 1.60.1.70753,
@@ -26,9 +25,9 @@ import (
 //     shield replaces the last one and lasts the seal's 30 sec (report assumption
 //     pal_seal_of_fury_shield).
 //   - Judgement of Fury (20414 at rank 7): 153 Holy plus 3.69 a level from 58 to 64, a 8.76%
-//     spread, 42.9% of spell power, a physical attack (on the ranged table since the November 11
-//     hotfixes): it rolls hit and crit, never dodged, parried or blocked, as Judgement of
-//     Righteousness does. Then the 3 sec taunt
+//     spread, 42.9% of spell power, a ranged attack since the November 11 hotfixes (rangedJudgement
+//     in judgement.go): it rolls ranged hit and crit, never dodged, parried or blocked, as
+//     Judgement of Righteousness does. Then the 3 sec taunt
 //     (20232), which the sim doesn't model: a taunt only matters to a tank that isn't on top.
 //   - Improved Seals reaches the hit and the judgement (its mask names both, as wowsims/forever's
 //     talents_holy.go has it); the seal costs what the other seals cost (Benediction).
@@ -96,14 +95,12 @@ func (paladin *Paladin) registerSealOfFury() {
 		judgeMin := judgeBase * (1 - rank.judge.variance/2)
 		judgeMax := judgeBase * (1 + rank.judge.variance/2)
 
-		// A ranged attack since the November 11 hotfixes (judgementAsRangedAttack).
-		judgeSpell := paladin.RegisterSpell(core.SpellConfig{
+		judgeConfig := core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: rank.judge.spellID},
 			SpellCode:   SpellCode_PaladinJudgementOfFury,
 			SpellSchool: core.SpellSchoolHoly,
-			DefenseType: core.DefenseTypeRanged,
-			ProcMask:    core.ProcMaskRangedSpecial,
-			CastType:    proto.CastType_CastTypeRanged,
+			DefenseType: core.DefenseTypeMelee,
+			ProcMask:    core.ProcMaskMeleeMHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagBinary,
 
 			// Libram of Law's 4% names Judgement of Fury too (items.go).
@@ -114,9 +111,12 @@ func (paladin *Paladin) registerSealOfFury() {
 			DownrankLevel: int(rank.level),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamage(sim, target, sim.Roll(judgeMin, judgeMax), spell.OutcomeRangedHitAndCritNoBlock)
+				spell.CalcAndDealDamage(sim, target, sim.Roll(judgeMin, judgeMax), spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 			},
-		})
+		}
+		// A ranged attack since the November 11 hotfixes; its threat is unchanged.
+		paladin.rangedJudgement(&judgeConfig)
+		judgeSpell := paladin.RegisterSpell(judgeConfig)
 
 		procSpell := paladin.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: rank.procID},

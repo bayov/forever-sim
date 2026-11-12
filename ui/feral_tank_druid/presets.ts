@@ -35,6 +35,7 @@ import BalancedAPLJSON from './apls/balanced.apl.json';
 import MaxSurvivalAPLJSON from './apls/max_survival.apl.json';
 import MaxThreatAPLJSON from './apls/max_threat.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticMaxSurvivalGearJSON from './gear_sets/level60_phase1_synthetic_max_survival.gear.json';
 import Level60Phase1SyntheticMaxThreatGearJSON from './gear_sets/level60_phase1_synthetic_max_threat.gear.json';
 
 // The Forever bear (docs/tank_druid.md has the audit, the searches and the numbers). Three presets along
@@ -56,10 +57,16 @@ import Level60Phase1SyntheticMaxThreatGearJSON from './gear_sets/level60_phase1_
 // time) is ahead of Idol of Brutality and Enraged Idol. Enchants (round 3, each A/B'd at the preset's weight,
 // docs/tank_druid.md): Agility on the head and legs (Lesser Arcanums of Voracity), the neck, back (ahead of
 // Superior Defense's 70 armor), boots and weapon, Greater Stats, Superior Deflection on the wrist (ahead of
-// Superior Stamina at Balanced and Max survival) and Superior Strength on the gloves. Balanced and Max survival
-// wear this set.
+// Superior Stamina at Balanced and Max survival) and Superior Strength on the gloves. Balanced wears this set.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Bear', Level60Phase1SyntheticGearJSON, {
-	tooltip: 'A guess at Phase 1 BiS for a bear under Forever, made of synthetic items that are not in the game. The Balanced and Max survival enchants.',
+	tooltip: 'A guess at Phase 1 BiS for a bear under Forever, made of synthetic items that are not in the game. The Balanced enchants.',
+	group: 'Synthetic',
+});
+
+// The same set with Gloves Greater Agility in place of Superior Strength: Max survival's (tank_fairness-20261112-2:
+// +14.3 / +23.7 at weight 3, 10,000 iterations, seeds 1 / 2).
+export const GearLevel60Phase1SyntheticMaxSurvival = PresetUtils.makePresetGear('Bear (Max survival)', Level60Phase1SyntheticMaxSurvivalGearJSON, {
+	tooltip: "The synthetic bear set with Max survival's Greater Agility on the gloves.",
 	group: 'Synthetic',
 });
 
@@ -71,7 +78,7 @@ export const GearLevel60Phase1SyntheticMaxThreat = PresetUtils.makePresetGear('B
 	group: 'Synthetic',
 });
 
-export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticMaxThreat];
+export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticMaxThreat, GearLevel60Phase1SyntheticMaxSurvival];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
@@ -84,8 +91,10 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // up just below that line (refreshed under 3 sec), use Barkskin on its timer from 15 sec in, in the filler's
 // place, shift into Dire Bear Form 1.5 sec before the pull and Enrage in the fight. Balanced: Lacerate as the
 // filler, Maul at 20 Rage, Enrage under 40 Rage and Frenzied Regeneration at 100 Rage. Max threat: Balanced
-// without Frenzied Regeneration and with Enrage under 70 Rage. Max survival: Balanced with Lacerate kept up but
-// not the filler and Maul at 10 Rage, so its Rage goes to Maul. No preset enrages before the pull any more
+// without Frenzied Regeneration, with Enrage under 70 Rage and Barkskin from 20 sec in (re-tuned on the Windfury
+// Totem rule of 2026-11-12, docs/tank_druid.md). Max survival: Balanced with Lacerate kept up but not the filler,
+// Maul at 40 Rage, Frenzied Regeneration at 80 Rage and Swipe as the filler at 80 Rage (Windfury re-tune), so FR
+// fires every cooldown. No preset enrages before the pull any more
 // (each weight's best build enrages in the fight).
 export const APLMaxThreat = PresetUtils.makePresetAPLRotation('Max threat', MaxThreatAPLJSON);
 export const APLBalanced = PresetUtils.makePresetAPLRotation('Balanced', BalancedAPLJSON);
@@ -106,8 +115,14 @@ export const DefaultAPL = APLBalanced;
 // nothing now (a hair under, at every weight), so its 2 points went to Brutal Impact (Bash, which the
 // scoring fights don't use); Feral Instinct's 2 are Swipe's, for packs.
 export const TalentsBear = PresetUtils.makePresetTalents('Bear', SavedTalents.create({ talentsString: '-5022233202310212551-055' }));
+// Max survival (Windfury re-tune, 2026-11-12): Swipe is its filler at 80 Rage, so Feral Instinct takes Brutal
+// Impact's second point (+2.4 at 10,000 on two seeds).
+export const TalentsBearMaxSurvival = PresetUtils.makePresetTalents(
+	'Bear (Max survival)',
+	SavedTalents.create({ talentsString: '-5023133202310212551-055' }),
+);
 
-export const TalentPresets = [TalentsBear];
+export const TalentPresets = [TalentsBear, TalentsBearMaxSurvival];
 
 export const DefaultTalents = TalentsBear;
 
@@ -164,9 +179,12 @@ export const MaxThreatConsumes = Consumes.create({
 
 // Max survival eats Dirge's Kickin' Chimaerok Chops (25 Stamina): +80 to +90 over the Dumpling at weight 3. Round 5: the
 // Greater Stoneshield Potion with its APL's potion action (+200 over the Mighty Rage Potion; autocast never drinks a
-// defensive potion, so round 3's -470 to -620 was the Rage potion's loss alone).
+// defensive potion, so round 3's -470 to -620 was the Rage potion's loss alone). Since client 70862 halved the
+// Natural flasks (30 Stamina), the Flask of the Titans wins here (+115.9 / +111.6, 10,000 iterations, seeds 1 / 2;
+// tank_fairness-20261111-1); Natural Precision still wins at Max threat and Balanced.
 export const MaxSurvivalConsumes = Consumes.create({
 	...DefaultConsumes,
+	flask: Flask.FlaskOfTheTitans,
 	defaultPotion: Potions.GreaterStoneshieldPotion,
 	food: Food.FoodDirgesKickChimaerokChops,
 });
@@ -285,8 +303,9 @@ export const EncounterLevel60TankMaxSurvival = PresetUtils.makePresetEncounter('
 });
 
 // The three presets (the user's ruling: threat against survival as weights, Balanced the default), each a
-// Night Elf (the best race at Max threat and Balanced: Elune's Light; at Max survival the Tauren is 20 +- 11
-// behind, a tie), on the synthetic set (Max threat with its own enchants).
+// Night Elf at Max threat and Balanced (Elune's Light), Tauren at Max survival (Endurance's 5% health: +25.5 / +0.1 /
+// +17.8 / +42.0 over Night Elf on seeds 1 to 4 at 10,000 iterations, a mean of +21; tank_fairness-20261112-3), on the
+// synthetic set (Max threat and Max survival with their own enchants).
 export const PresetBuildMaxThreat = PresetUtils.makePresetBuild('Max threat', {
 	tooltip: 'Scored with survival weighed at 1/3 (docs/tank_sim.md). Strength enchants on the head, legs, wrist and weapon; Enrage under 70 Rage; R.O.I.D.S. for Spirit of Zanza.',
 	gear: GearLevel60Phase1SyntheticMaxThreat,
@@ -304,10 +323,10 @@ export const PresetBuildBalanced = PresetUtils.makePresetBuild('Balanced', {
 	race: Race.RaceNightElf,
 });
 export const PresetBuildMaxSurvival = PresetUtils.makePresetBuild('Max survival', {
-	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear and talents, Dirge's chops for the Dumpling, the Greater Stoneshield Potion on cooldown.",
-	gear: GearLevel60Phase1Synthetic,
-	talents: TalentsBear,
+	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear with Greater Agility on the gloves, Feral Instinct 3 and Brutal Impact 1 (Swipe is its filler at 80 Rage), Dirge's chops for the Dumpling, the Greater Stoneshield Potion on cooldown, the Flask of the Titans.",
+	gear: GearLevel60Phase1SyntheticMaxSurvival,
+	talents: TalentsBearMaxSurvival,
 	rotation: APLMaxSurvival,
 	encounter: EncounterLevel60TankMaxSurvival,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 });

@@ -5,6 +5,7 @@ import {
 	Debuffs,
 	Flask,
 	Food,
+	HealingPowerBuff,
 	IndividualBuffs,
 	IntellectElixir,
 	ManaRegenElixir,
@@ -12,7 +13,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SpellPowerBuff,
 	SpiritElixir,
 	SunderRamp,
 	TristateEffect,
@@ -60,8 +60,7 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // Both rotations put the trinkets, Major Mana Potion and Demonic Rune out through Autocast Other
 // Cooldowns, cast Holy Shock at whoever in the assignment drops under 50% health and Flash of Light 6
 // under 35%, Lay on Hands under 10%, and bind at most 4 ranks of a heal (the user's ruling), each cast when
-// what's missing covers its Expected Healing (the tank healer: 70% of it, the healbench's best gate,
-// healer_fairness-20261104-2; the raid healer's 0.7x gain was within noise, so it stays at 100%).
+// what's missing covers 70% of its Expected Healing (healer_fairness-20261104-2 and -20261104-5).
 //
 // The tank healer: Oath of Light on the tank (at -1.5 sec and whenever it's off: 400 more on its Holy
 // Lights, 115 on its Flashes), Divine Favor before a Holy Light 9 the tank misses, Holy Light 9 and 8 at
@@ -70,9 +69,11 @@ export const APLTankHealer = PresetUtils.makePresetAPLRotation('Tank healer', Ta
 	tooltip: 'Oath of Light on the tank, bound ranks of Holy Light at it with Divine Favor, Flash of Light and Holy Shock for the rest.',
 	group: 'Healing sim',
 });
-// The raid healer: the same heals at the most hurt, with no Oath.
+// The raid healer: no Oath, Holy Light or Divine Favor; Flash of Light 6 and 4 at the most hurt, the biggest
+// that 70% of what's missing covers. Its old Holy Light 9 and 8 and Divine Favor lines cost it 0.028 mean raid
+// carry (1.400 -> 1.430 seed 101, 1.402 -> 1.429 seed 202; healer_fairness-20261104-5).
 export const APLRaidHealer = PresetUtils.makePresetAPLRotation('Raid healer', RaidHealerAPLJson, {
-	tooltip: 'Bound ranks of Holy Light at the most hurt with Divine Favor, Flash of Light and Holy Shock for the rest.',
+	tooltip: 'Flash of Light 6 and 4 at the most hurt, Holy Shock and Flash of Light when someone drops low, Lay on Hands to save a life.',
 	group: 'Healing sim',
 });
 
@@ -122,19 +123,27 @@ export const RaidSimConsumes = Consumes.create({
 	food: Food.FoodUnknown,
 });
 
-// The Restoration shaman's consumables: a Brilliant Mana Oil and the Major Mana Potion.
+// Each healer preset takes the consumables that score best on its own bench objective (healbench damage carried,
+// mean of the 7 boss files in its role; docs/healing_sim.md, Consumables): Greater Cleric's Elixir (healing; the
+// Arcane Elixir's spell damage doesn't heal), Flask of Supreme Power, the phase 1 oils only (Brilliant Wizard and
+// Brilliant Mana Oil are Zandalar vendor formulas).
+// The paladin takes Runn Tum Tuber Surprise (15 Intellect); the tank healer the Wizard Oil, the raid healer the
+// Lesser Mana Oil (RaidHealerConsumes).
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodLobsterStew,
+	food: Food.FoodRunnTumTuberSurprise,
+	healingPowerBuff: HealingPowerBuff.GreaterClericsElixir,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
-	mainHandImbue: WeaponImbue.BrilliantManaOil,
+	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
+export const RaidHealerConsumes = Consumes.create({ ...DefaultConsumes, mainHandImbue: WeaponImbue.LesserManaOil });
+const TankHealerConsumables = PresetUtils.makePresetEncounter('Tank healer consumables', undefined, { consumes: DefaultConsumes });
+const RaidHealerConsumables = PresetUtils.makePresetEncounter('Raid healer consumables', undefined, { consumes: RaidHealerConsumes });
 
 // The shared level 60 raid buffs and debuffs, as the Restoration shaman's.
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -196,6 +205,7 @@ export const PresetBuildTankHealer = PresetUtils.makePresetBuild('Tank healer', 
 	gear: DefaultGear,
 	talents: TalentsHoly,
 	rotation: APLTankHealer,
+	encounter: TankHealerConsumables,
 });
 
 export const PresetBuildRaidHealer = PresetUtils.makePresetBuild('Raid healer', {
@@ -206,4 +216,5 @@ export const PresetBuildRaidHealer = PresetUtils.makePresetBuild('Raid healer', 
 	gear: DefaultGear,
 	talents: TalentsHoly,
 	rotation: APLRaidHealer,
+	encounter: RaidHealerConsumables,
 });

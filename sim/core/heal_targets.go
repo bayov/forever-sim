@@ -77,6 +77,16 @@ func (ur UnitReference) HealthUnit() *Unit {
 	return ur.healer.fullHealTarget()
 }
 
+// seenCurrentHealth is the health a health value reads for unit, the one HealthUnit gave: for a
+// Most Hurt or Lowest Health reference, as its healer sees it (seenMissing, like the pick and
+// Health Missing); otherwise the real one.
+func (ur UnitReference) seenCurrentHealth(unit *Unit) float64 {
+	if ur.healer == nil {
+		return unit.CurrentHealth()
+	}
+	return unit.MaxHealth() - ur.healer.seenMissing(unit)
+}
+
 // MostHurtAmong is the living player in units missing the most health, leaving out skip, for a
 // heal that jumps (Chain Heal). Nil when nobody else is hurt.
 func MostHurtAmong(units []*Unit, skip ...*Unit) *Unit {

@@ -72,10 +72,10 @@
             },
             "consumes": {
               "flask": "FlaskOfSupremePower",
-              "food": "FoodLobsterStew",
+              "food": "FoodRunnTumTuberSurprise",
               "manaRegenElixir": "GreaterMagebloodElixir",
-              "spellPowerBuff": "GreaterArcaneElixir",
-              "mainHandImbue": "BrilliantManaOil",
+              "healingPowerBuff": "GreaterClericsElixir",
+              "mainHandImbue": "WizardOil",
               "defaultPotion": "MajorManaPotion",
               "defaultConjured": "ConjuredDemonicRune",
               "zanzaBuff": "CerebralCortexCompound",

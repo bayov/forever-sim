@@ -172,7 +172,8 @@ What round 1's searches found (round 2's changes are under "Presets"; the detail
 - **Lacerate is the filler** (to 5 stacks, refreshed under 4 sec, then cast whenever the GCD is free) and
   Primal Bite goes on cooldown; Maul at 30 Rage (20, and 10 at Max survival, in round 2). Swipe never beats
   Lacerate on one target. Frenzied Regeneration on a timer lost at every weight in round 1; at 100 Rage it
-  fires once, at the pull's Rage peak, and round 2's Balanced and Max survival keep it there.
+  fires once, at the pull's Rage peak, and round 2's Balanced keeps it there; Max survival takes it at 70 Rage
+  since 2026-11-12 (Max survival re-searched, below).
 - **Demoralizing Roar below Lacerate's keep-up line** (round 2, `roarAfterLacerate`): ahead of the attacks it
   took the pull's first GCD and 10 Rage, about +200 at every weight (tank_rotations-20261104-1).
 
@@ -267,6 +268,88 @@ Agility, 125 Strength, 105 Defense, 3% hit (after tank_gear-20261104-4: the ches
     3.0; seed 2 3,117.7 → 3,466.7, +349.1 +- 2.9), Balanced 2,125.7 → 2,481.2 (+355.7 +- 5.2; seed 2 2,117.0 →
     2,474.5, +357.5 +- 5.5), Max survival -500.7 → 221.5 (+722.1 +- 12.7; seed 2 -477.2 → 238.5, +715.9 +-
     14.0).
+
+## Max survival re-searched (2026-11-12, tank_rotations-20261112-1)
+
+The audit found Frenzied Regeneration at 100 Rage firing too rarely at Max survival: round 3 picked 100 on a 20 Rage
+grid before the FR tenth-tick fix. `frRage` now steps by 10, and the template has a `potion` knob (the Greater
+Stoneshield line the preset already had), so `rotopt -template druid_tank -tank max-survival` writes the shipped APL
+byte for byte (`frRage=70,maulRage=40,lacerate=1,enrage=2,enrageRage=40,prepullShift=1,barkskin=2,barkskinAfter=15,
+potion=1`, the rest at their defaults). The knob search from `frRage=70` (3,000 a candidate, 10,000 to confirm, six
+scoring bosses at w = 3) moved one more knob: Maul at 40 Rage instead of 10 (+98.6 at 3,000; 35 -5.5, 45 -44.2 from
+40), and kept FR at 70 (60 -258.7, 80 -4.8, 90 -129.6, 100 -332.5 from 70 with Maul at 40). Rage pooled for FR now
+also feeds a bigger Maul instead of being spent at 10. Paired against the old preset at 10,000 (`abtest`):
+
+| Change | Seed 1 | Seed 2 |
+|---|---|---|
+| FR at 70 Rage | +385.8 ± 9.8 | +366.0 ± 10.2 |
+| then Maul at 40 Rage | +89.2 ± 11.8 | +114.2 ± 12.3 |
+| both | **+474.9 ± 12.0** | **+480.2 ± 12.5** |
+
+Six-boss mean -478.3 → **-3.5** (seed 1). Per boss (seed 1 / 2): Onyxia +1697 / +1708, Magmadar +811 / +768,
+Golemagg +386 / +380, Vaelastrasz +215 / +225, Chromaggus -88 / -68, Broodlord -171 / -131; Ragnaros (benched) -378 /
+-38. The talent search on the new knobs (`-talent-search -require feralSwiftness`, 1,000 a candidate) kept
+`-5022233202310212551-055`. Balanced (FR at 100) and Max threat (no FR) were not touched: the audit's FR thresholds
+lost there.
+
+## Re-tuned on the main-hand Windfury rule (2026-11-12)
+
+Standards 17 changed again the same day (`orchestration/round_notes_2026-11-11/windfury_rule.md`): Windfury Totem
+rolls on white main-hand swings and on abilities whose client spell requires a main hand or is on next swing, Maul
+among them (Lacerate and Primal Bite don't), which moved the bear's SafeDPS by +35 to +57. Each preset was
+re-searched on it: `rotopt -template druid_tank -tank <preset>` on the six scoring bosses at its own weight, the knob
+search from the shipped knobs (1,000 a candidate, 3,000 to confirm), then `-talent-search -require feralSwiftness`
+on the knobs it found; candidates screened with paired `abtest` at 3,000 (seed 1), taken only at 10,000 on seeds 1
+and 2. Knob strings the template turns into the shipped APLs byte for byte:
+
+- Max threat: `barkskin=2,barkskinAfter=20,enrage=2,enrageRage=70,lacerate=2,maulRage=20,prepullShift=1`, the rest at
+  their defaults.
+- Balanced: unchanged (`barkskin=2,barkskinAfter=15,enrage=2,enrageRage=40,frRage=100,lacerate=2,maulRage=20,
+  prepullShift=1`).
+- Max survival: `frRage=80,maulRage=40,swipeRage=80,lacerate=1,enrage=2,enrageRage=40,prepullShift=1,barkskin=2,
+  barkskinAfter=15,potion=1`.
+
+| Preset | Change | Seed 1 | Seed 2 | Taken |
+|---|---|---|---|---|
+| Max threat | Barkskin from 20 sec in, not 15 (`barkskinAfter=20`) | **+6.9 ± 1.5** | **+4.8 ± 1.5** | yes |
+| Max threat | that and Roar refreshed under 2 sec | +6.9 ± 1.5 | +5.0 ± 1.5 | no: the Roar adds nothing |
+| Max survival | Frenzied Regeneration at 80 Rage, not 70 (`frRage=80`) | +101.9 ± 11.7 | +101.2 ± 11.5 | yes |
+| Max survival | then Swipe as the filler at 80 Rage (`swipeRage=80`), against FR 80 alone | **+28.9 ± 9.8** | **+23.6 ± 9.3** | yes |
+| Max survival | then Enrage under 50 Rage | -0.2 ± 1.2 | -1.4 ± 1.2 | no |
+| Max survival | then talents `-5023133202310212551-055` (Feral Instinct 3, Brutal Impact 1: Swipe's threat) | **+2.4 ± 0.0** | **+2.3 ± 0.0** | yes |
+| Max survival | all three taken, against the old preset | **+133.3 ± 12.6** | **+128.5 ± 13.3** | |
+
+Max survival per boss (seed 1 / 2): Broodlord +270 / +284, Golemagg +167 / +191, Vaelastrasz +141 / +148, Onyxia +122
+/ +40, Chromaggus +76 / +82, Magmadar +24 / +27; Ragnaros (benched) +96 / +306. With Maul now rolling Windfury, the
+Rage pooled for Frenzied Regeneration is worth more spent; FR at 80 fires a little later and Swipe at 80 spends the
+surplus. Screened and not taken (3,000, seed 1): Balanced's Roar refreshed under 7 sec (+4.1 ± 4.7), Enrage under 50
+Rage (+6.3 ± 5.4) and Lacerate refreshed under 9 sec (+2.9 ± 1.9); Max survival's Swipe alone (-3.0 ± 21.5).
+Balanced and Max threat kept their talents.
+
+Six-boss means at the own weight, 10,000, seed 1 (`rotopt -eval`): Max threat 2,781.0 → **2,788.2**, Balanced
+**1,862.8** (unchanged), Max survival 50.7 → **183.9**. The bear stays third at every weight, behind the warrior and
+the paladin (Max threat 4,199.7 / 3,181.6, Balanced 3,420.6 / 2,767.1, Max survival 1,750.4 / 1,723.0) and ahead of
+the Warden (2,527.5 / 1,179.4 / -2,396.1); the paladin and Warden presets roll no Windfury and don't move under the
+rule (`sim/windfury_totem_rule_test.go`). Raw output: `orchestration/tank_handoff/windfury_retune/`.
+
+## Flask after the Natural flask cut (2026-11-12)
+
+Client 70862 halved the Natural flasks (30 Stamina, a 2% zone bonus), so each preset's flask was re-picked by its own objective (tank_fairness-20261111-1): the request against copies with each other flask, 3,000 iterations at seed 1, the winners at 10,000 on seeds 1 and 2 (`abtest`, paired, six-boss mean at the preset's weight). Max survival takes the Flask of the Titans: +115.9 ± 7.8 / +111.6 ± 7.6, -594.3 → **-478.3** (seed 1).
+Max threat and Balanced keep their Natural flask. Food, Zanza and elixirs re-screened under the Titans: nothing else
+moves. Not adopted: the Elemental Sharpening Stone at Max survival (+20.9 ± 2.9 / +21.3 ± 3.0), since its source is
+raid-only (Molten Core plans), which the consumables pass rules out for launch phase 1.
+
+## Max survival: gloves and race (2026-11-12, tank_fairness-20261112-2, -3)
+
+Every legal Phase 1 enchant screened slot by slot on all three presets (3,000 iterations, seeds 1 and 2, six-boss mean at
+the preset's weight). Max threat and Balanced: nothing over +3, they keep their enchants. Max survival: Gloves Greater
+Agility (1887) over Superior Strength, +14.3 / +23.7 at 10,000 on seeds 1 / 2 (its own UI gear set, "Bear (Max
+survival)", `level60_phase1_synthetic_max_survival.gear.json`), and the Tauren over the Night Elf on that set: +25.5 /
++0.1 / +17.8 / +42.0 at 10,000 on seeds 1 to 4 (a mean of +21, TPS -33; Night Elf stays at Max threat and Balanced, where the
+Tauren lost 150 and 114 in the audit's pass 11). Together +39.8 / +23.8, 184 → **224** (seed 1, 10,000). On the Tauren every enchant
+slot (3,000, seeds 1 and 2: the best is Constitution on the head, -2.8 / +7.8), the Frenzied Regeneration threshold (70,
+90: -102, -412), Enrage (30, 50: ±1.5), Swipe (70, 90) and Maul (30, 50) thresholds hold; the talents were not re-searched,
+since Endurance (+5% health) changes no rotation choice.
 
 ## Presets (round 3, 2026-11-04: unmultiplied mana-gain threat, disjoint seeds)
 
@@ -432,7 +515,8 @@ Each with the default the sim uses now.
 8. **Enrage in the fight, not before the pull**, at every weight (the round-1 presets cast it before the
    pull). Its armor cut lands mid-fight under a Rage threshold. Default: as the search found.
 9. **Max survival's race**: the Tauren ties the Night Elf (round 3: -19.8 +- 11.3 at 10,000 on a disjoint seed;
-   round 2: -1.8 +- 11.8). Default: Night Elf, as the other two presets.
+   round 2: -1.8 +- 11.8). Since the 2026-11-12 re-tune the Tauren wins it (+21 over four seeds at 10,000,
+   tank_fairness-20261112-3). Default: Tauren at Max survival, Night Elf at the other two.
 10. *(Removed 2026-11-04.)* It left the Blasted Lands buffs and the rum out of every tank request. The standards
    item 11 ruling of 2026-11-04 gives the tanks the full raid treatment (natural flasks included), so the bear takes
    them (Gear, Consumables, round 5).

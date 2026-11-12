@@ -5,10 +5,10 @@
         "players": [
           {
             "inFrontOfTarget": true,
-            "race": "RaceNightElf",
+            "race": "RaceTauren",
             "class": "ClassDruid",
             "level": 60,
-            "talentsString": "-5022233202310212551-055",
+            "talentsString": "-5023133202310212551-055",
             "equipment": {
               "items": [
                 {
@@ -36,7 +36,7 @@
                 },
                 {
                   "id": 990807,
-                  "enchant": 1248640
+                  "enchant": 1887
                 },
                 {
                   "id": 990808
@@ -72,7 +72,7 @@
               ]
             },
             "consumes": {
-              "flask": "FlaskOfNaturalPrecision",
+              "flask": "FlaskOfTheTitans",
               "food": "FoodDirgesKickChimaerokChops",
               "agilityElixir": "ElixirOfTheMongoose",
               "armorElixir": "ElixirOfThePhalanx",
@@ -149,13 +149,13 @@
                         "op": "OpGe",
                         "rhs": {
                           "const": {
-                            "val": "100"
+                            "val": "80"
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Frenzied Regeneration at 100 Rage: it fires at the pull's Rage peak, about once a fight (a scoring run reads no health)."
+                  "notes": "Frenzied Regeneration on cooldown at 80 Rage or more (on a timer: a scoring run reads no health)."
                 },
                 {
                   "action": {
@@ -300,6 +300,29 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 9908
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "currentRage": {}
+                        },
+                        "op": "OpGe",
+                        "rhs": {
+                          "const": {
+                            "val": "80"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Swipe as the filler at 80 Rage or more."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 9881
                       }
                     },
@@ -311,13 +334,13 @@
                         "op": "OpGe",
                         "rhs": {
                           "const": {
-                            "val": "10"
+                            "val": "40"
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Maul queued at 10 Rage or more."
+                  "notes": "Maul queued at 40 Rage or more."
                 }
               ]
             }

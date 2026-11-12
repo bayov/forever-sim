@@ -1,0 +1,10 @@
+A=druid_fr80sw80_max_survival.json B=druid_best_max_survival.json preset=max_survival iters=10000
+boss            scoreA   scoreB    diff     se safeDiff needDiff
+broodlord          110      110     0.0    0.0      0.0        0
+chromaggus       -2855    -2855    -0.0    6.2      0.4        0
+golemagg          1001     1000    -0.9    2.8      0.1        0
+magmadar          1422     1422    -0.1    1.2      0.0        0
+onyxia             753      753     0.0    0.0      0.0        0
+ragnaros        -14524   -14524     0.2   19.6      0.1        0
+vaelastrasz        658      658     0.0    0.0      0.0        0
+scoring_mean                       -0.2    1.2

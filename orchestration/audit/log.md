@@ -314,6 +314,15 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-12 07:02 | tank_mechanics | pass 11 | master cb0d928fd | quiet | tooltip commit changes no tank behaviour
 2026-11-12 07:02 | tank_rotations | pass 9 | master cb0d928fd | quiet | Onyxia spot check identical to pass 8
 2026-11-12 07:02 | tank_fairness | pass 9 | master cb0d928fd | quiet | 84 rows identical to pass 8
+2026-11-12 08:27 | tank_mechanics | pass 12 | master 55cd92b09 | findings | 2 new: 20261112-1 Judgement of Fury still melee (low, -8/-9), 20261112-2 WF-on-yellow option b moves warrior/bear/Warden +3 to +21% (high, user ruling)
+2026-11-12 08:40 | healer_mechanics | pass 11 | master 55cd92b09 | 1 new finding | healer_mechanics-20261112-14 (low): Current Health % of Lowest Health/Most Hurt reads true health, pick reads seen health (no measured effect)
+2026-11-12 08:55 | tank_gear | pass 7 | master 55cd92b09 | findings | 3 new (low): 20261112-1 warrior+Warden boots 1887 over 929 (+3 to +10), -2 warrior MT wrist 1885 (+8/+12), -3 Warden MT wrist/cloak, Bal cloak (+4 to +6)
+2026-11-12 09:04 | healer_gear | pass 6 | master 55cd92b09 | findings | 3 findings: healer elixir/food heal nothing (+1-2% carry), wizard oil, priest flask
+2026-11-12 09:09 | tank_rotations | pass 10 | master 4da607cbc | findings | 4 new: 20261112-1 bear MS FR at 70 Rage (high, +361/+385), -2 Warden Bal Healing Stream (medium, +17/+29), -3 warrior MS Shield Wall 13 s (medium, +16/+22, Vaelastrasz), -4 warrior Bal tcRefresh 6 (low, +4/+6)
+2026-11-12 10:30 | tank_fairness | pass 10 | master 67ad7c6a4 | 1 new finding | 20261112-1 warrior keeps raid-only Elemental Sharpening Stone (medium, +20/+20/+13, user ruling); paladin potion now +58/+172/+402, Warden race -60/-80/-158 still open
+2026-11-12 15:23 | healer_rotations | pass 9 | master 3065ba744 | findings | 2 new: 20261112-1 druid tank NS at 45% not 60% after seen-health fix (high, +0.027 carry), -2 shaman raid NS held for emergency HW at 55% (medium, +0.010 two seeds); -2 Disc OOM and -3 still open
+2026-11-12 17:05 | tank_fairness | pass 11 | master 4fb90c298 | findings | 2 new: 20261112-2 agility enchants head/legs/neck/gloves (high, paladin MS +78/+62 flips Max survival back, Warden +16..+52, warrior +6..+21, bear MS +14..+24), -3 bear MS Tauren (medium, +32/+12); flasks all hold after Windfury rule; paladin potion +58/+172/+402 and Warden race still open
+2026-11-12 17:10 | healer_fairness | pass 9 | master 4fb90c298 | 1 new finding | 20261112-1 Holy priest raid keeps Inspiration not Twilight Focus (high, +0.021 carry, two seeds); -5 paladin raid APL still +0.024; healer bench baseline regenerated, ranks unchanged
 2026-11-12 13:28 | results | pass 84 | master a0b4d3be9 | 1 new finding | 19 builds stale after Windfury Totem change (high)
 2026-11-12 13:28 | rotations | pass 60 | master a0b4d3be9 | 1 new finding | Instant/Deadly poison swap for 4 rogue builds (high)
 2026-11-12 13:28 | gear | pass 62 | master a0b4d3be9 | quiet | only standards.md changed

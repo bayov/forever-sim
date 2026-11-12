@@ -207,7 +207,9 @@ or not (24.0% shielded against 65.3% without), so the score reads the shields on
 ## The presets
 
 Three builds, all on the healing priest synthetic set (990501 to 990514, the healing priest row of
-`orchestration/gear_targets.md`), the Restoration shaman's consumables, raid buffs and debuffs, and level 60.
+`orchestration/gear_targets.md`), the healers' consumables (Greater Cleric's Elixir, Runn Tum Tuber Surprise, Flask of Supreme Power; the Wizard Oil,
+but the Holy tank healer the Lesser Mana Oil; `docs/healing_sim.md`, Consumables, 2026-11-12), the Restoration
+shaman's raid buffs and debuffs, and level 60.
 The set's wand (990514, slot 16) carries no stats since 2026-11-04 (healer_fairness-20261104-3): it had 6
 Intellect, 10 spell power and 15 healing, 21.4 weighted points (the wand budget of standards 1b), on top of the
 902 the four healers' armor spends, while the shaman, paladin and druid fill slot 16 with a stat-less relic.
@@ -216,7 +218,7 @@ That put the priest 2.4% over the others; the stats were worth 0.003 carry.
 | Build | Talents | Rotation | Knobs (`priest_tuning/presets.sh`) |
 |---|---|---|---|
 | Holy tank healer (the default) | Holy `00500503113-03505103030121531` | `apls/holy_tank_healer.apl.json` | `pi=0 fhfirst=1 pws=0 fh=7,4 emergency=0.5 gate=0.7 share=0.8` |
-| Holy raid healer | Holy | `apls/holy_raid_healer.apl.json` | `pi=0 pws=0.6 order=fh fh=7,4 share=0.5` |
+| Holy raid healer | Holy raid `00500503113-33505100030121531` (Twilight Focus 3 for Inspiration 3) | `apls/holy_raid_healer.apl.json` | `pi=0 pws=0.6 order=fh fh=7,4 share=0.5` |
 | Discipline tank healer | Discipline `005005031330011531-0350510303` | `apls/discipline_tank_healer.apl.json` | `fhfirst=1 fh=7 emergency=0.5 gate=0.85 pwsgate=0.7 pwsneed=1.0 share=0.5` |
 
 The rotations are written by `orchestration/tools/healers/priest_tuning/rots.py` (run `presets.sh` from the repo
@@ -286,6 +288,16 @@ at 95 s of its 115 s. With share 0.5 (OOM times at carried damage; "lasts" is pa
 The shipped one is the best mean of the variants that last all 7 fights at their own lengths (Chromaggus by 4
 s; before the tank bench's change of the same day, see the 7 boss files below). None lasts 300 s on Golemagg at carried damage: the best seen is 209 s, at 1.108 mean (Calls for the user).
 
+Re-screened 2026-11-12 on the new consumables (healer_rotations-20261104-2; tank role, own lengths, 1,000
+iterations, mean carry of the 7 files, seeds 101 / 202; the shipped one 1.272 / 1.267, Chromaggus 0.871 with
+341 mana left, out at 101 s): shield gate 0.9 1.278 / 1.268 (Chromaggus 0.894, out at 107 s); 0.8 1.270 / 1.266;
+1.0 1.249 / 1.250; Renew 9 1.270, Renew 8 1.258; Greater Heal at 70% of its heal 1.265; emergency line 40% 1.264;
+Flash Heal first over 95% 1.249; Flash Heal 5 below 30% / 50% mana (`fhlow=5 fhlowgate=0.3|0.5`) 1.273 / 1.274;
+gate 0.9 with Renew 9 1.273 / 1.272; gate 0.9 with Flash Heal 5 below 50% 1.277 / 1.276; all three 1.268 / 1.265.
+The best, gate 0.9 with Flash Heal 5 below 50% (+0.005 / +0.009), loses the long fights (Golemagg, Chromaggus,
+Ragnaros at 180 / 300 s, seed 101: 0.738 / 0.591 against 0.750 / 0.612; it lasts longer, 237 s against 210 s on
+Golemagg, but heals less), so nothing ships, and none of them lasts Chromaggus at carried damage.
+
 Power Infusion (healer_fairness-20261104-3): the only way to it is 31 Discipline points, which leaves Holy 20,
 short of Spiritual Guidance, Spiritual Healing and Holy Binding; that's the Discipline build
 `005005031330011531-0350510303`. On the Holy rotations with `pi=1` it carries 1.116 on the tank (Holy build
@@ -346,7 +358,12 @@ rotation, against the Discipline build (Onyxia / Broodlord / Onyxia 300 s, 300 i
 
 (The shield there only at full mana or a Greater Heal missing, no Flash Heal first.) The hybrids move the
 numbers by a few hundredths either way; none reaches the Holy tank healer (1.234, 0.891, 0.961), so Holy is the
-default and Discipline the second preset. The strings need no remap for 70753 (`orchestration/talent_remap_70753.md`:
+default and Discipline the second preset. The raid healer takes Twilight Focus 3 for Inspiration 3
+(`00500503113-33505100030121531`): Inspiration's armor after a heal crit is for a tank, and the raid role has none,
+while Twilight Focus (70% chance to keep the cast time when hit) is the pushback talent every other raid healer
+takes. Healbench -role raid -carry, 1,000 iterations, 7 boss files: 1.440 -> 1.461 (seed 101), 1.449 -> 1.469
+(seed 202), nearly all of it Vaelastrasz (1.125 -> 1.262); on the tank the swap loses 0.073, so the tank healer
+keeps Inspiration (healer_fairness-20261112-1). The strings need no remap for 70753 (`orchestration/talent_remap_70753.md`:
 the priest's tree is the one the sim took as 70707+hf).
 
 ### Races

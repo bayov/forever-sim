@@ -9,5 +9,5 @@ DISC_TANK="fhfirst=1 fh=7 emergency=0.5 gate=0.85 pwsgate=0.7 pwsneed=1.0 share=
 (cd $P && python3 rots.py holy_raid ../../../../ui/healing_priest/apls/holy_raid_healer.apl.json $HOLY_RAID)
 (cd $P && python3 rots.py disc_tank ../../../../ui/healing_priest/apls/discipline_tank_healer.apl.json $DISC_TANK)
 python3 $P/mk.py tools/healbench/req/priest_holy.json holy_tank holy $HOLY_TANK
-python3 $P/mk.py tools/healbench/req/priest_holy_raid.json holy_raid holy $HOLY_RAID
+python3 $P/mk.py tools/healbench/req/priest_holy_raid.json holy_raid holy_raid $HOLY_RAID
 python3 $P/mk.py tools/healbench/req/priest_discipline.json disc_tank disc $DISC_TANK

@@ -71,6 +71,9 @@ func (shamanTank) Knobs() []Knob {
 		// With armorTrinket 1: 0 uses it on cooldown, else holds it for the last trinketAt seconds when the
 		// wait costs no use (tank_rotations-20261104-9, as the warrior's trinketAt).
 		{Name: "trinketAt", Default: 0, Min: 0, Max: 60, Step: 5},
+		// 1 drinks the potion slot's potion (the Greater Stoneshield) on cooldown from its own line, above the
+		// autocast one: autocast never drinks a defensive potion in a tank score (tank_fairness-20261104-10).
+		{Name: "potion", Default: 0, Min: 0, Max: 1, Step: 1},
 		// 1 puts the totems and the shield down before the pull, 0 after it.
 		{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
 		// No new fire or water totem with less than this long to go.
@@ -165,11 +168,15 @@ func (shamanTank) Build(k Knobs) *proto.APLRotation {
 		}
 		items = append(items, cast(trinket, when, note))
 	}
+	if k["potion"] == 1 {
+		items = append(items, cast(potion, nil, "Greater Stoneshield Potion on cooldown."))
+	}
 	items = append(items,
 		autocastOtherCooldowns(nil, "Rage of the Farseer, racials, trinkets on cooldown."),
 	)
 	// Stormstrike goes below the shock by default: Earth Shock makes about 2,225 threat a GCD against
-	// Stormstrike's 1,500, so when both are ready the shock goes first (tank_rotations-20261104-4).
+	// Stormstrike's 1,500 (less since the Nov 10 notes cut Stormstrike to 100% weapon damage), so when
+	// both are ready the shock goes first (tank_rotations-20261104-4).
 	ssItem := cast(stormstrike, nil, "Stormstrike on cooldown: our dodges and parries reset it with Improved Stormstrike.")
 	if k["shockFirst"] == 0 {
 		items = append(items, ssItem)

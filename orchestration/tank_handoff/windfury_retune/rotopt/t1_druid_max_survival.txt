@@ -1,0 +1,41 @@
+tank encounters (their index takes the fight length's place, scored as their mean): tools/encounters/magmadar.json,tools/encounters/golemagg.json,tools/encounters/onyxia.json,tools/encounters/broodlord.json,tools/encounters/vaelastrasz.json,tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 3 x 900 x healing needed at 5% deaths / 258, in raid DPS
+start -5022233202310212551-055: 221.6(44.5) mana 3687(0) tto 3474s
+  feralInstinct+1 brutalImpact-1: 223.9(44.5) mana 3687(0) tto 3474s (+2.3, noise 0.0)
+  genesis+2 brutalImpact-2: 221.6(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  genesis+1 brutalImpact-1: 221.6(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-1 naturesFocus+1: 221.6(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-1 predatoryDiscipline+1: 221.6(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-1 feralCharge+1: 221.6(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-2 giftOfNature+2: 221.6(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-2 naturesFocus+2: 221.6(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+round 1: feralInstinct+1 brutalImpact-1, now -5023133202310212551-055 223.9(44.5) mana 3687(0) tto 3474s
+  improvedWrath+1 brutalImpact-1: 223.9(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-1 bloom+1: 223.9(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-1 giftOfNature+1: 223.9(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-1 naturesFocus+1: 223.9(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-1 predatoryDiscipline+1: 223.9(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-1 feralCharge+1: 223.9(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  genesis+1 brutalImpact-1: 223.9(44.5) mana 3687(0) tto 3474s (+0.0, noise 0.0)
+  brutalImpact-1 reflection+1: 223.6(44.5) mana 3689(0) tto 3490s (-0.3, noise 0.0)
+  refined at 3000 iterations, current 186.8(22.5) mana 3688(0) tto 3471s
+  improvedWrath+1 brutalImpact-1: 186.8(22.5) mana 3688(0) tto 3471s (+0.0, noise 0.0)
+  genesis+1 brutalImpact-1: 186.8(22.5) mana 3688(0) tto 3471s (+0.0, noise 0.0)
+  brutalImpact-1 predatoryDiscipline+1: 186.8(22.5) mana 3688(0) tto 3471s (+0.0, noise 0.0)
+  brutalImpact-1 naturesFocus+1: 186.8(22.5) mana 3688(0) tto 3471s (+0.0, noise 0.0)
+  brutalImpact-1 feralCharge+1: 186.8(22.5) mana 3688(0) tto 3471s (+0.0, noise 0.0)
+  brutalImpact-1 giftOfNature+1: 186.8(22.5) mana 3688(0) tto 3471s (+0.0, noise 0.0)
+  brutalImpact-1 bloom+1: 186.8(22.5) mana 3688(0) tto 3471s (+0.0, noise 0.0)
+  brutalImpact-1 reflection+1: 186.6(22.5) mana 3689(0) tto 3488s (-0.3, noise 0.0)
+  feralInstinct-3 naturalShapeshifter+3: 177.5(22.5) mana 3693(0) tto 3568s (-9.3, noise 0.1)
+  naturalInstinct-2 naturalShapeshifter+2: 113.6(22.5) mana 3692(0) tto 3543s (-73.2, noise 0.4)
+  naturalist-3 naturalShapeshifter+3: 54.0(22.6) mana 3693(0) tto 3568s (-132.8, noise 7.5)
+  rendAndTear-3 naturalShapeshifter+3: 53.3(22.5) mana 3693(0) tto 3568s (-133.6, noise 0.4)
+  shreddingAttacks-3 naturalShapeshifter+3: 45.1(21.1) mana 3693(0) tto 3565s (-141.8, noise 22.0)
+  bloodFrenzy-2 naturalShapeshifter+2: -21.5(20.2) mana 3692(0) tto 3542s (-208.3, noise 20.6)
+  naturalReaction-3 naturalShapeshifter+3: -127.6(20.9) mana 3693(0) tto 3570s (-314.4, noise 22.2)
+  thickHide-3 naturalShapeshifter+3: -400.1(28.3) mana 3693(0) tto 3568s (-586.9, noise 11.3)
+[0 1 2 3 4 5]s: 186.8(22.5) mana 3688(0) tto 3471s
+  talents -5023133202310212551-055
+  sim runs 2358
+exit 0

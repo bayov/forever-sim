@@ -89,7 +89,7 @@ Through rotopt's objective (the template's defaults, 2,000 iterations) it is 334
 |---|---|---|---|---|
 | Righteous Fury (25780) | +33% all threat, +90% more on Holy (effects 4 and 0, each its own factor), 30 min, 30% of base mana | 1.33 x, Holy 1.9 x on top, on for the fight (option) | client | right |
 | Improved Righteous Fury's damage cut (Righteous Fury effect 1) | 0 base, the talent's 3% a rank | 3% a rank while Righteous Fury is on | client | right |
-| Seal of Fury (20423 at 58, 1311649 to 20422 below) | 200 mana, 30 sec; each white hit 35 Holy (20418) + 10% of spell power; with a shield an absorb of 50% of the hit; Judgement of Fury (20414): 153 + 3.69 a level to 64, 8.76% spread, 42.9% of spell power, melee table, then a 3 sec taunt (20232) | **missing** | client; wowsims/forever's seal_of_fury.go reads the same | **built** (`seal_of_fury.go`) |
+| Seal of Fury (20423 at 58, 1311649 to 20422 below) | 200 mana, 30 sec; each white hit 35 Holy (20418) + 10% of spell power; with a shield an absorb of 50% of the hit; Judgement of Fury (20414): 153 + 3.69 a level to 64, 8.76% spread, 42.9% of spell power, ranged table and a ranged special since the Nov 11 hotfixes (never dodged, parried or blocked), then a 3 sec taunt (20232) | **missing** | client; wowsims/forever's seal_of_fury.go reads the same | **built** (`seal_of_fury.go`) |
 | Seal of Fury's effect 0 / Judgement of Fury's effect 2 | a dummy of 1607 + 42 a level, 9% / 18% of spell power | - | client, no tooltip names it | not read, a call (below) |
 | Judgement of Fury's taunt (20232) | taunt, 3 sec | - | client | not modelled: a tank on top gains nothing from a taunt |
 | Seal of Righteousness (20293) | the DPS audit's | right | client, wowsims/forever | right; 97 behind Seal of Fury at Balanced (Valor set) |
@@ -208,6 +208,17 @@ Consecration above a mana floor, Templar's Bulwark on a timer, mana floors for e
 health. The paladin keeps none of the raid's debuffs itself (`tankscore.OwnDebuffs` unchanged): Judgement of
 Fury leaves no debuff, and the raid's Judgements are other paladins'.
 
+## Flask and weapon oil after the Natural flask cut (2026-11-12)
+
+Client 70862 halved the Natural flasks (30 Stamina, a 2% zone bonus), so each preset's flask was re-picked by its own objective (tank_fairness-20261111-1): the request against copies with each other flask, 3,000 iterations at seed 1, the winners at 10,000 on seeds 1 and 2 (`abtest`, paired, six-boss mean at the preset's weight). Max survival takes the Flask of Supreme Power for Natural Precision: +145.6 ± 7.9 / +151.5 ± 8.7 (the Titans
++132.7 / +141.3, and 13.0 ± 5.0 / 10.2 ± 5.8 behind Supreme head to head), 1,564.8 → **1,730.7** with the oil below
+(seed 1). Max threat and Balanced already took Supreme Power. All three presets swap the Elemental Sharpening Stone
+(raid-only source, Molten Core plans, which the consumables pass rules out for launch phase 1) for the Wizard Oil, which
+also scores more: Max threat +18.9 ± 0.2 / +18.9 ± 0.2, Balanced +19.8 ± 0.4 / +19.1 ± 0.4, Max survival +20.2 ± 1.0 /
++18.8 ± 1.0. Not adopted: the Brilliant Wizard Oil (+52 to +53), raid-only too. Food, Zanza and elixirs re-screened
+under the new flask: nothing else moves. Whole requests, old against new (10,000, seed 1): Max threat 3,168.8 →
+**3,188.0**, Balanced 2,755.3 → **2,775.2**.
+
 ## Presets (step 6)
 
 The presets now (round 5: Balanced on Max threat's talents and boots, Greater Agility boots at every preset, Max
@@ -223,6 +234,24 @@ Enchants since round 5, every preset, one shared UI gear set (`level60_phase1_sy
 set is gone): wrist Superior Deflection 1248665, shield Lesser Block 863, cloak Agility 1219587, boots Greater Agility
 1887. Consumables as round 4 left them (below); Max threat and Balanced now differ in the Zanza slot and Max threat's
 Consecration condition only.
+
+**Enchants per weight (2026-11-12, tank_fairness-20261112-2).** Every legal Phase 1 enchant screened slot by slot at
+3,000 iterations (seeds 1 and 2), then the winners paired at 10,000 on seeds 1 and 2 against the old set (six-boss
+mean, own weight). Each weight now has its own UI gear set: Balanced `level60_phase1_synthetic.gear.json`, Max threat
+`..._max_threat.gear.json`, Max survival `..._max_survival.gear.json`.
+
+| | head, legs | neck | wrist | gloves | chest | gain at 10,000 (seed 1 / 2) |
+|---|---|---|---|---|---|---|
+| was (all three) | Voracity Stamina 1507 | Strength 1249019 | Superior Deflection 1248665 | Superior Strength 1248640 | Greater Stats 1891 | |
+| Max threat | Voracity Agility 1508 | Spell Power 1249057 | Greater Spellpower 1220624 | Holy Power 1213622 | Mystic Rugged Armor Kit 1254966 | +70.5 / +71.2, then the kit +4.3 / +3.8 |
+| Balanced | Voracity Agility 1508 | Spell Power 1249057 | Superior Deflection | Holy Power 1213622 | Greater Stats | +53.5 / +53.3 |
+| Max survival | Voracity Agility 1508 | Agility 1249059 | Superior Deflection | Holy Power 1213622 | Greater Stats | +75.2 / +76.7 |
+
+Gloves Holy Power (+20 holy damage, a non-raid formula, standards 7) is the biggest single slot at every weight (+26 to
++28, TPS +11); the finding's Greater Agility gloves tie it at Max survival on seed 1 and lose on seed 2 (gH − gA: −3.1 /
++14.5 / −1.3 / +8.7 on seeds 1 to 4), and give up 30 at the other two weights. Balanced's neck: Spell Power over Agility by
++2.7 / +2.5 (paired, in the full set). A rescreen of every slot on the new sets (3,000, seed 1) found nothing else over +3
+but the kit at Max threat.
 
 **Round 3 (2026-11-04, tank-paladin-3, on master a096b3e: mana-gain threat without the threat multiplier,
 tank_mechanics-20261104-12; disjoint tank-tool seeds, tank_rotations-20261104-13).** The same search as round 2
