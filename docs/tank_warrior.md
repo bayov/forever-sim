@@ -365,10 +365,9 @@ Paired, 10,000 iterations, B − A at each preset's weight, seeds 1 / 2 (/ 3 / 4
 | Armor trinket 990617 on the pull vs 991018 | -209.6 / -209.3 | -179.7 / -178.8 | (below) |
 | Armor trinket held for the last 35 s vs 991018 | -192.1 / -192.2 | -146.3 / -145.4 | (below) |
 
-Agility stays on the cloak (it wins or ties at every weight) and Superior Deflection on the wrists. The shield carries
+Agility stays on the cloak (it wins or ties at every weight). The wrists changed on 2026-11-12 (tank_gear-20261112-1, -2, paired at 10,000 on two seeds; the wrist's Balanced row on five): Superior Strength (1885) beats Superior Deflection at Max threat (+8.4 / +11.8, ± 1.7) and at Balanced (+8.2 / +2.2 / +3.6 / +5.3 / +6.7, mean +5.2 over five seeds), and Deflection keeps Max survival (-20.5 ± 9.6 at 3,000); Greater Agility (1887) beats Greater Stamina (929) on the boots at all three weights (Max threat +5.6 / +3.0, Balanced +4.5 / +3.6, Max survival +4.1 / +6.8). The shield carries
 1886 (+9) in all three requests and both gear sets; it beats Lesser Block (863, the paladin's pick) at every weight
-on seeds 1 and 2 (raw output in `orchestration/tank_handoff/warrior/round3b/`). (929 is only a bracer and boots enchant in the database; the boots
-keep it).
+on seeds 1 and 2 (raw output in `orchestration/tank_handoff/warrior/round3b/`). (929 was the boots' enchant until 2026-11-12, when 1887 replaced it, above.)
 
 **Max survival's armor trinket** (tank_rotations-20261104-11, a call): 990617 held for the last 35 s against Balanced's
 991018 on the pull, at w = 3: **+12.8 ± 5.4** (seed 1), **+15.9 ± 4.8** (seed 2). Per boss (seed 1 / 2): Broodlord
@@ -393,7 +392,7 @@ knob searches alternated until neither moved. Raw output: `orchestration/tank_ha
 | Balanced (w = 1, default) | `05-05050005-250530020310001351`: Deflection 5; Cruelty, Unbridled Wrath, Enrage 5/5; Protection 31 with Shield Slam, Improved Sunder Armor 1, no Last Stand or Vanguard | (the base; `sunderRage=25` from round 5) | attack power on-use (991018) | Undead | Spirit of Zanza, Desert Dumpling, Mighty Rage Potion | 3,008.5; 3,867.3 (round 4); **3,880.3** (round 5) |
 | Max survival (w = 3) | Balanced's (its own search ends there) | `trinketAt=35` (the armor trinket held for the last 35 s); `sunderRage=30` (round 5: Balanced moved to 25) | armor on-use (990617), `level60_phase1_synthetic_armor_trinket.gear.json` | Undead | Spirit of Zanza, Dirge's chops, Greater Stoneshield Potion | 1,205.0; 2,138.7 (round 4 and 5) |
 
-All three wear Superior Deflection (Defense +9) on the wrists, Enchant Shield - Greater Stamina (spell 20017, +9 Stamina, enchant 1886, the id the bracer's Superior Stamina shares) on the shield.
+Max survival wears Superior Deflection (Defense +9) on the wrists, Max threat and Balanced Superior Strength (1885); all three wear Greater Agility (1887) on the boots, Enchant Shield - Greater Stamina (spell 20017, +9 Stamina, enchant 1886, the id the bracer's Superior Stamina shares) on the shield.
 
 Balanced's knobs: `shieldBlock=1` (whenever its buff is down), `sbRage=0`, `demo=0`, `tc=1`, `tcRefresh=2`,
 `debuffsFirst=0`, `revengeFirst=0`, `sunderUp=1`, `sunderRage=25` (30 before round 5), `hsRage=50`, `bloodrageRage=30`, `opener=0`,

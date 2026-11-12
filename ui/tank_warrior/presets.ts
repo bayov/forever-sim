@@ -56,7 +56,8 @@ export const GearP0BISSwordBoard = PresetUtils.makePresetGear('Pre-BiS (Sword an
 // The synthetic Level 60 Phase 1 Protection set (standards 36, tools/database/forever_synthetic_items_warrior_tank.go):
 // 106 Defense from the items, 110 block value, 239 Stamina, 8% hit (the cap), the tank stat trinket and the attack power on-use,
 // Superior Deflection (Defense +9) on the wrists and Agility +5 on the cloak: they beat Superior Stamina and Superior Defense
-// at every weight or tie (docs/tank_warrior.md, Round 3 gear A/Bs).
+// at every weight or tie (docs/tank_warrior.md, Round 3 gear A/Bs). Greater Agility on the boots at all three weights, and
+// Superior Strength on the wrists at Max threat and Balanced (tank_gear-20261112-1, -2; the armor trinket set keeps Deflection).
 // Max threat and Balanced wear it: the attack power on-use beats the armor one by 210 and 180 (round 3).
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Level60Phase1SyntheticGear);
 // The same set with the armor on-use trinket (990617) in place of the attack power one: Max survival's, where it
