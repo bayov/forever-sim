@@ -44,6 +44,7 @@ import Level60MaxThreatAPLJSON from './apls/level60_max_threat.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Phase1SyntheticTankGear from './gear_sets/phase1_synthetic_tank.gear.json';
 import Phase1SyntheticTankArmorTrinketGear from './gear_sets/phase1_synthetic_tank_armor_trinket.gear.json';
+import Phase1SyntheticTankArmorTrinketBalancedGear from './gear_sets/phase1_synthetic_tank_armor_trinket_balanced.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -54,13 +55,16 @@ import Phase1SyntheticTankArmorTrinketGear from './gear_sets/phase1_synthetic_ta
 ///////////////////////////////////////////////////////////////////////////
 
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
-// The synthetic Phase 1 tank set (docs/tank_shaman.md): Max threat's with the attack power on-use trinket and Superior
-// Stamina wrists, Balanced and Max survival's with the armor one and Superior Deflection wrists.
+// The synthetic Phase 1 tank set (docs/tank_shaman.md): Max threat's with the attack power on-use trinket, Balanced's and
+// Max survival's with the armor one. Max threat and Balanced wear Agility on the cloak and Greater Agility on the boots, Max
+// survival Superior Stamina and Greater Stamina (tank_gear-20261112-1, -3); the wrists are Superior Deflection.
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Phase1SyntheticTankGear);
 export const GearLevel60SyntheticArmorTrinket = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic, armor trinket)', Phase1SyntheticTankArmorTrinketGear);
 
+export const GearLevel60SyntheticArmorTrinketBalanced = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic, armor trinket, Balanced)', Phase1SyntheticTankArmorTrinketBalancedGear);
+
 export const GearPresets = {
-	[Phase.Phase1]: [GearBlank, GearLevel60Synthetic, GearLevel60SyntheticArmorTrinket],
+	[Phase.Phase1]: [GearBlank, GearLevel60Synthetic, GearLevel60SyntheticArmorTrinket, GearLevel60SyntheticArmorTrinketBalanced],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -69,7 +73,7 @@ export const GearPresets = {
 };
 
 // The default is the Balanced tank build's (docs/tank_shaman.md, Presets), as the tank warrior's.
-export const DefaultGear = GearLevel60SyntheticArmorTrinket;
+export const DefaultGear = GearLevel60SyntheticArmorTrinketBalanced;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -279,7 +283,7 @@ export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
 	tooltip:
 		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Consumables: Flask of the Titans, Spirit of Zanza, Greater Stoneshield Potion on cooldown.",
-	gear: GearLevel60SyntheticArmorTrinket,
+	gear: GearLevel60SyntheticArmorTrinketBalanced,
 	talents: TalentsLevel60Tank,
 	rotation: APLLevel60Balanced,
 	encounter: EncounterLevel60Tank,

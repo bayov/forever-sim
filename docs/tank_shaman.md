@@ -80,7 +80,12 @@ Balanced. Rockbiter stays on the weapon (a stone or oil is the same temporary en
 the same consumables and the bench encounter.
 
 Enchants: 1886 on the wrists is Superior Stamina (+9), 1248665 Superior Deflection (Defense +9); 1889 on the back is
-Superior Defense (+70 armor); 1886 on the shield is Enchant Shield - Greater Stamina (+9). All three keep the template's
+Superior Defense (+70 armor), 1219587 Agility; 1887 on the feet is Greater Agility, 929 Greater Stamina. Since 2026-11-12
+(tank_gear-20261112-1, -3; paired, 10,000, seeds 1 and 2) Max threat wears Superior Deflection wrists (+4.4 / +5.8, ± 1.5),
+Agility on the back (+3.9 / +3.3) and Greater Agility boots (+5.4 / +5.0); Balanced Agility on the back (+4.2 / +4.2) and
+Greater Agility boots (+9.0 / +10.0); Max survival keeps Superior Defense, Greater Stamina boots (-8.8 ± 10.3 at 3,000) and
+Superior Deflection wrists. Balanced's UI set is its own (`phase1_synthetic_tank_armor_trinket_balanced.gear.json`);
+1886 on the shield is Enchant Shield - Greater Stamina (+9). All three keep the template's
 other defaults (Stoneskin, Lightning Shield, Earth Shock on cooldown above Stormstrike with `shockFirst=1`, no self
 heal). Since round 4 all three put Searing Totem down before the pull and recast it, with Fire Nova at 40% mana or
 more, only in the fight's last 60 s (`fireLast=60`; Round 4 below), and all three eat Dirge's Kickin' Chimaerok Chops
@@ -528,10 +533,10 @@ rating, Defense 26, block value 50 (all on the shield). A 2.9 s one-hand axe at 
 0.72 x L(71) shield (2,681 armor, 50 block value, 8 Defense), the tank trinket (20 Defense, 40 block value), and
 an on-use trinket: the Enhancement set's 335 attack power (990015) or the Warden's 1,665 armor (999216), both 20 s
 every 2 min. Hands and legs carry The Spiritcaller's Rage (2 piece: 1% attack and casting speed). Enchants:
-Lesser Arcanum of Voracity (Stamina) on head and legs, Strength on the neck, Superior Defense on the back, Greater
-Stats on the chest, Superior Stamina (1886) on Max threat's wrists and Superior Deflection (1248665) on Balanced's
-and Max survival's (tank round 3), Superior Strength on the hands, Greater Stamina on the feet
-(929, +7; it beats the Rugged Armor Kits at Balanced and Max survival, Presets), Enchant Shield - Greater Stamina
+Lesser Arcanum of Voracity (Stamina) on head and legs, Strength on the neck, Superior Defense on the back (Agility,
+1219587, at Max threat and Balanced), Greater Stats on the chest, Superior Deflection (1248665) on the wrists (Max
+threat wore Superior Stamina, 1886, until 2026-11-12), Superior Strength on the hands, Greater Stamina on the feet
+(929, +7, Max survival's; Greater Agility, 1887, at Max threat and Balanced), Enchant Shield - Greater Stamina
 on the shield (enchant 1886, +9, spell 20017; tank round 3 moved it from 929, which is no longer a shield enchant in
 the DB, so the CLI gave +7 and the web UI loaded no enchant: tank_gear-20261104-3), Crusader on the weapon.
 
