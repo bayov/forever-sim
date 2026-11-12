@@ -4773,6 +4773,21 @@
      "commits": [
       "e2322baa1"
      ]
+    },
+    {
+     "title": "Rake's initial hit now adds 6.5% of attack power",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "A combat log shows Rake's initial hit growing with attack power; the sim had given it none. Feral builds that use Rake gain a little.",
+     "commits": [
+      "c380bba"
+     ]
     }
    ],
    "internal": [
