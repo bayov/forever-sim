@@ -60,8 +60,7 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // Both rotations put the trinkets, Major Mana Potion and Demonic Rune out through Autocast Other
 // Cooldowns, cast Holy Shock at whoever in the assignment drops under 50% health and Flash of Light 6
 // under 35%, Lay on Hands under 10%, and bind at most 4 ranks of a heal (the user's ruling), each cast when
-// what's missing covers its Expected Healing (the tank healer: 70% of it, the healbench's best gate,
-// healer_fairness-20261104-2; the raid healer's 0.7x gain was within noise, so it stays at 100%).
+// what's missing covers 70% of its Expected Healing (healer_fairness-20261104-2 and -20261104-5).
 //
 // The tank healer: Oath of Light on the tank (at -1.5 sec and whenever it's off: 400 more on its Holy
 // Lights, 115 on its Flashes), Divine Favor before a Holy Light 9 the tank misses, Holy Light 9 and 8 at
@@ -70,9 +69,11 @@ export const APLTankHealer = PresetUtils.makePresetAPLRotation('Tank healer', Ta
 	tooltip: 'Oath of Light on the tank, bound ranks of Holy Light at it with Divine Favor, Flash of Light and Holy Shock for the rest.',
 	group: 'Healing sim',
 });
-// The raid healer: the same heals at the most hurt, with no Oath.
+// The raid healer: no Oath, Holy Light or Divine Favor; Flash of Light 6 and 4 at the most hurt, the biggest
+// that 70% of what's missing covers. Its old Holy Light 9 and 8 and Divine Favor lines cost it 0.028 mean raid
+// carry (1.400 -> 1.430 seed 101, 1.402 -> 1.429 seed 202; healer_fairness-20261104-5).
 export const APLRaidHealer = PresetUtils.makePresetAPLRotation('Raid healer', RaidHealerAPLJson, {
-	tooltip: 'Bound ranks of Holy Light at the most hurt with Divine Favor, Flash of Light and Holy Shock for the rest.',
+	tooltip: 'Flash of Light 6 and 4 at the most hurt, Holy Shock and Flash of Light when someone drops low, Lay on Hands to save a life.',
 	group: 'Healing sim',
 });
 

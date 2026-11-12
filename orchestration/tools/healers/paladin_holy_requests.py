@@ -38,6 +38,7 @@ DEFAULTS = {
     'shock_tank': 0,       # Holy Shock at the tank when it misses its heal (1) or never (0)
     'oath': 1,             # keep Oath of Light on the tank
     'favor': 1,            # Divine Favor before a Holy Light that what's missing covers
+    'favor_low': 0.0,      # Divine Favor once the lowest health is under this (0 never), for the heal that follows
     'vigil': 0,            # Light's Vigil on ourselves and Holy Shock at it, for our party
     'vigil_missing': 1500,  # cast the Vigil once the most hurt misses this much
     'loh': 0.1,            # Lay on Hands at the lowest health under this (0 never)
@@ -47,12 +48,15 @@ DEFAULTS = {
     'fit': 1.0,            # a rank goes out once what's missing is this share of what it heals
     'mana_hl': 0.5,        # Holy Light only above this mana share (Flash of Light below it)
     'aura': 'NoPaladinAura',  # our own aura (ConcentrationAura: the party resists 35% of the pushback)
+    'oil': 'WizardOil',    # the main hand's oil (docs/healing_sim.md, consumables)
 }
 
 # What one role's preset sets over DEFAULTS (a --set still wins).
 ROLE_DEFAULTS = {
-    'tank': {},
-    'raid': {},
+    'tank': {'fit': 0.7},
+    # The raid healer: Flash of Light 6 and 4 at the most hurt at 0.7x, no Holy Light or Divine Favor
+    # (healer_fairness-20261104-5, docs/healing_paladin.md "Raid healer").
+    'raid': {'oil': 'LesserManaOil', 'hl': '', 'favor': 0, 'fit': 0.7, 'fol': '6,4'},
 }
 
 
@@ -135,6 +139,9 @@ def rotation(k, role):
     if k['oath'] and role == 'tank':
         prepull.append({'action': cast(OATH, TANK)['action'], 'doAtValue': const('-1.5s')})
         items.append(cast(OATH, TANK, NOT(aura_active(OATH, TANK)), 'Oath of Light on the tank whenever it is off.'))
+    if k['favor_low']:
+        items.append(cast(DIVINE_FAVOR, None, cmp('OpLt', health_pct(LOW), const(k['favor_low'])),
+                          f"Divine Favor once someone is under {k['favor_low']:.0%} health: the heal that follows crits."))
     if k['shock_emergency']:
         items.append(cast(HOLY_SHOCK, LOW, cmp('OpLt', health_pct(LOW), const(k['shock_emergency'])),
                           f"Holy Shock at whoever is under {k['shock_emergency']:.0%} health: an instant heal."))
@@ -180,7 +187,7 @@ def request(k, role):
         'race': k['race'],
         'class': 'ClassPaladin',
         'equipment': {'items': items},
-        'consumes': sham['consumes'],
+        'consumes': dict(sham['consumes'], mainHandImbue=k['oil']),
         'buffs': sham['buffs'],
         'talentsString': k['talents'],
         'level': 60,

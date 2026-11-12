@@ -97,12 +97,19 @@ export const TalentsHoly = PresetUtils.makePresetTalents('Holy', SavedTalents.cr
 	tooltip: 'Prayer of Mending, Spiritual Guidance and Healing, Holy Binding, Litany of Light, with Inner Focus and Meditation.',
 	group: 'Healing sim',
 });
+// The raid healer swaps Inspiration 3 (armor after a heal crit: for a tank, and the raid role has none) for Twilight
+// Focus 3 (no pushback 70% of the time), as every other raid healer takes its pushback talent: +0.021 mean raid carry
+// on two seeds, nearly all of it Vaelastrasz's raid-wide fire (healer_fairness-20261112-1).
+export const TalentsHolyRaid = PresetUtils.makePresetTalents('Holy raid', SavedTalents.create({ talentsString: '00500503113-33505100030121531' }), {
+	tooltip: 'The Holy talents with Twilight Focus in place of Inspiration, for the raid healer.',
+	group: 'Healing sim',
+});
 export const TalentsDiscipline = PresetUtils.makePresetTalents('Discipline', SavedTalents.create({ talentsString: '005005031330011531-0350510303' }), {
 	tooltip: 'Power Infusion, Divine Aegis, Renewed Hope, Penance and Soul Warding, with Inspiration and Improved Healing.',
 	group: 'Healing sim',
 });
 
-export const TalentPresets = [TalentsHoly, TalentsDiscipline];
+export const TalentPresets = [TalentsHoly, TalentsHolyRaid, TalentsDiscipline];
 
 export const DefaultTalents = TalentsHoly;
 
@@ -205,11 +212,11 @@ export const PresetBuildHolyTankHealer = PresetUtils.makePresetBuild('Holy tank 
 
 export const PresetBuildHolyRaidHealer = PresetUtils.makePresetBuild('Holy raid healer', {
 	group: 'Healing sim',
-	tooltip: 'Level 60 Human on the healing priest synthetic set, Holy talents, the Holy raid healer rotation.',
+	tooltip: 'Level 60 Human on the healing priest synthetic set, Holy raid talents (Twilight Focus), the Holy raid healer rotation.',
 	race: AllianceRace,
 	level: 60,
 	gear: DefaultGear,
-	talents: TalentsHoly,
+	talents: TalentsHolyRaid,
 	rotation: APLHolyRaidHealer,
 	encounter: DefaultConsumables,
 });

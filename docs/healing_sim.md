@@ -639,6 +639,13 @@ mean carry of the 7 files: tank druid 1.237 → 1.242, shaman 1.248 → 1.257, p
 ruling outweighs the rest), shaman 1.389 → 1.392, paladin 1.394 → 1.400, Holy 1.440 → 1.440. The ranking in
 each role is unchanged.
 
+Raid presets re-tuned 2026-11-12 (seed 101, same bench): the Holy priest takes Twilight Focus 3 for Inspiration 3,
+1.440 → 1.461 (healer_fairness-20261112-1), and the paladin drops Holy Light and Divine Favor for Flash of Light 6
+and 4 at 0.7x, 1.400 → 1.430 (healer_fairness-20261104-5; docs/healing_paladin.md). Raid order: Holy priest 1.461,
+paladin 1.430, druid 1.414, shaman 1.412. The tank presets are unchanged. Enchants: the presets' head (Lesser
+Arcanum of Voracity, Intellect), legs, chest and feet (Mystic Rugged Armor Kit) stay; Spirit or Rumination on the
+head, Voracity on the legs, Greater Stats on the chest and a kit on the bare hands moved no mean past 0.006.
+
 ## Milestones
 
 **H1: the groundwork** (engine, no healer spec). Done 2026-11-02, see above.

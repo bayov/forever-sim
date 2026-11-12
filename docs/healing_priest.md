@@ -218,7 +218,7 @@ That put the priest 2.4% over the others; the stats were worth 0.003 carry.
 | Build | Talents | Rotation | Knobs (`priest_tuning/presets.sh`) |
 |---|---|---|---|
 | Holy tank healer (the default) | Holy `00500503113-03505103030121531` | `apls/holy_tank_healer.apl.json` | `pi=0 fhfirst=1 pws=0 fh=7,4 emergency=0.5 gate=0.7 share=0.8` |
-| Holy raid healer | Holy | `apls/holy_raid_healer.apl.json` | `pi=0 pws=0.6 order=fh fh=7,4 share=0.5` |
+| Holy raid healer | Holy raid `00500503113-33505100030121531` (Twilight Focus 3 for Inspiration 3) | `apls/holy_raid_healer.apl.json` | `pi=0 pws=0.6 order=fh fh=7,4 share=0.5` |
 | Discipline tank healer | Discipline `005005031330011531-0350510303` | `apls/discipline_tank_healer.apl.json` | `fhfirst=1 fh=7 emergency=0.5 gate=0.85 pwsgate=0.7 pwsneed=1.0 share=0.5` |
 
 The rotations are written by `orchestration/tools/healers/priest_tuning/rots.py` (run `presets.sh` from the repo
@@ -358,7 +358,12 @@ rotation, against the Discipline build (Onyxia / Broodlord / Onyxia 300 s, 300 i
 
 (The shield there only at full mana or a Greater Heal missing, no Flash Heal first.) The hybrids move the
 numbers by a few hundredths either way; none reaches the Holy tank healer (1.234, 0.891, 0.961), so Holy is the
-default and Discipline the second preset. The strings need no remap for 70753 (`orchestration/talent_remap_70753.md`:
+default and Discipline the second preset. The raid healer takes Twilight Focus 3 for Inspiration 3
+(`00500503113-33505100030121531`): Inspiration's armor after a heal crit is for a tank, and the raid role has none,
+while Twilight Focus (70% chance to keep the cast time when hit) is the pushback talent every other raid healer
+takes. Healbench -role raid -carry, 1,000 iterations, 7 boss files: 1.440 -> 1.461 (seed 101), 1.449 -> 1.469
+(seed 202), nearly all of it Vaelastrasz (1.125 -> 1.262); on the tank the swap loses 0.073, so the tank healer
+keeps Inspiration (healer_fairness-20261112-1). The strings need no remap for 70753 (`orchestration/talent_remap_70753.md`:
 the priest's tree is the one the sim took as 70707+hf).
 
 ### Races

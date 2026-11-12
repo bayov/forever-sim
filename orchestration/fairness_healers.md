@@ -10,11 +10,15 @@ Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 | Role | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
 | Tank healer | Holy priest 1.278 | Discipline priest 1.272 | Druid 1.269 (1.242 with NS at 60%) | Shaman 1.257 | Paladin 1.152 |
-| Raid healer | Holy priest 1.440 | Druid 1.414 | Shaman 1.412 (1.392 with NS autocast) | Paladin 1.400 | |
+| Raid healer | Holy priest 1.461 | Paladin 1.430 | Druid 1.414 | Shaman 1.412 (1.392 with NS autocast) | |
 
-Re-benched on 4fb90c298 (pass 9, `orchestration/audit/ref/healer_bench/summary.tsv`): every mean as below. With
-Twilight Focus for Inspiration (finding -20261112-1) the Holy raid priest carries 1.461; with the tank preset's APL
-the raid paladin 1.424, second (finding -5).
+Re-benched on 4fb90c298 (pass 9, `orchestration/audit/ref/healer_bench/summary.tsv`); the two raid fixes of
+2026-11-12 on top (seed 101, `orchestration/audit/ref/healer_fairness/retune_25f65da_s101.tsv`): the Holy raid
+priest takes Twilight Focus for Inspiration, 1.440 -> 1.461 (finding -20261112-1), and the raid paladin is a Flash
+of Light healer (6 and 4 at 0.7x, no Holy Light or Divine Favor), 1.400 -> 1.430 (finding -5); both on two seeds.
+An enchant screen (head Lesser Arcanum of Voracity Spirit or Rumination for Intellect, legs Voracity Intellect for
+the Mystic Rugged Armor Kit, a kit on the bare hands, chest Greater Stats; Holy tank, shaman raid and paladin tank,
+seed 101) moved no mean by more than 0.006 either way, so the presets' enchants stay.
 
 2026-11-12, on the new consumables (Consumables in `docs/healing_sim.md`), seed 101, after the healer_rotations
 fixes of that day (druid tank NS at 45%, shaman raid NS held for an instant Healing Wave under 65%, the shaman
@@ -35,9 +39,10 @@ druid 1.273, Holy 1.262, Discipline 1.261, shaman 1.242, paladin 1.176; raid dru
   under 60%) and take Heart of the Wild 2 for Subtlety 2: raid 1.438, level first with the Holy priest; tank 1.273,
   first (+0.011). Both gains come from holding an emergency cooldown; the shaman's raid preset now holds its
   Nature's Swiftness too (2026-11-12, +0.020). Before 9628e85b6 the raid role was level but for the shaman (3% behind)
-  and the paladin's preset. The paladin's raid preset loses
-  0.025 to its own Holy Light lines; a Flash of Light raid paladin carries 1.438, level with the first two
-  (healer_fairness-20261104-5). The file decided the order (pass 6): the priest led Magmadar and Ragnaros, the
+  and the paladin's preset. The paladin's raid preset lost
+  0.03 to its own Holy Light lines; as a Flash of Light healer it is second, 1.430 (healer_fairness-20261104-5,
+  fixed 2026-11-12). The Holy priest's raid lead (+0.031 over the paladin) is Twilight Focus on Vaelastrasz's
+  raid-wide fire plus Prayer of Healing. The file decided the order (pass 6): the priest led Magmadar and Ragnaros, the
   druid Onyxia, Broodlord and Chromaggus, the paladin Golemagg.
 - **Not the cause:**
   - Gear: all four sets at the same 902 weighted budget; slot 16 is stat-less for all.
@@ -63,7 +68,7 @@ files keep no healing by class, so the sim's order can't be checked against the 
 ## Open questions
 
 1. (Closed 2026-11-12: the shaman raid preset now holds Nature's Swiftness, +0.020 carry, healer_rotations-20261112-2.)
-2. The paladin raid preset's re-tune (finding -5): its tank preset's APL gives +0.024 in the raid role (pass 9); dropping Holy Light alone only +0.003.
-3. The Holy priest raid preset's talents (finding -20261112-1): Twilight Focus 3 for Inspiration 3.
+2. (Closed 2026-11-12: the paladin raid preset is a Flash of Light healer, 1.400 -> 1.430, finding -5.)
+3. (Closed 2026-11-12: the Holy raid priest takes Twilight Focus 3 for Inspiration 3, 1.440 -> 1.461, finding -20261112-1.)
 4. HPS by healer class in the boss files (finding -4), to check the order against the logs.
 5. The classes' "Calls for the user" lists (`docs/healing_{priest,paladin,druid,shaman}.md`) are open rulings.

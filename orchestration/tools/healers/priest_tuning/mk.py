@@ -4,6 +4,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from rots import ROTS
 TALENTS = {
     'holy': '00500503113-03505103030121531',
+    'holy_raid': '00500503113-33505100030121531',  # Twilight Focus for Inspiration (healer_fairness-20261112-1)
     'disc': '005005031330011531-0350510303',
 }
 out, rot, talents = sys.argv[1], sys.argv[2], sys.argv[3]

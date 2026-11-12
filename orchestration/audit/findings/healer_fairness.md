@@ -2,6 +2,20 @@
 
 ## Open
 
+### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
+- severity: low (blocks a check; moves no number)
+- affects: the pass's step 2 for every healer
+- found: 2026-11-04, master c8f5858bd
+- evidence: `jq '.raidHealing' tools/encounters/<boss>.json` holds `healerClasses` (mean count a kill), `hpsEachHealer`
+  (one median for all healers, with overheal), `raidHps`, `hpsOnTanks`, `hpsOnOthers`, nothing by class
+  (`tools/encounters/raid_from_logs.py:144-158`); the mined `tools/encounters/logs/anniversary_*_raid.json` keep
+  the same. Composition over the 7 files: priest 5.11, shaman 3.00, paladin 1.69, druid 1.21 of 11.
+- proposed fix: have `wclcli.py raid` (tools/warcraftlogs/wclcli.py) keep effective HPS and tank share by healer
+  class (median per player), re-mine, and store it in `raidHealing.byClass`.
+- needs: orchestrator fix
+
+## Resolved
+
 ### healer_fairness-20261112-1: the Holy priest raid preset keeps Inspiration, dead in the raid role, instead of Twilight Focus; every other raid preset takes its pushback talent
 - severity: high (+0.021 mean raid carry, 1.5%; widens the Holy priest's raid lead from +0.026 to +0.047)
 - affects: Holy priest raid healer (`tools/healbench/req/priest_holy_raid.json`, the ui preset it comes from); the tank preset is right
@@ -20,6 +34,12 @@
 - proposed fix: give the Holy priest raid preset `00500503113-33505100030121531` (ui preset and req), keep the tank
   preset's string; re-bench the raid column.
 - needs: worker fix
+- resolved: 2026-11-12 (the Holy priest raid preset takes `00500503113-33505100030121531`: TalentsHolyRaid in
+  ui/healing_priest/presets.ts on the Holy raid healer build, tools/healbench/req/priest_holy_raid.json, the
+  priest_tuning `holy_raid` talents; the tank preset keeps Inspiration). Re-benched, 1,000 it, seed 101: raid mean
+  1.440 -> 1.461 (Onyxia 0.988, Broodlord 0.906, Chromaggus 1.065, Golemagg 2.607, Magmadar 2.062, Ragnaros 1.340,
+  Vaelastrasz 1.262), first; seed 202 1.449 -> 1.469 (the finding's pair). Rows in
+  `ref/healer_fairness/retune_25f65da_s101.tsv`.
 
 ### healer_fairness-20261104-5: the Holy paladin raid preset's Holy Light lines cost it 0.025 carry; a Flash of Light raid paladin is first, not third
 - severity: high (+0.025 mean raid carry, 1.8%; the paladin goes from 1.413, third, to 1.438, level with the Holy priest and druid at 1.437)
@@ -46,20 +66,18 @@
   Broodlord +0.011, Chromaggus +0.044, Golemagg +0.016, Magmadar +0.019, Ragnaros -0.031, Vaelastrasz +0.076); the
   raid preset with its Holy Light 9/8 and Divine Favor lines dropped 1.403 (+0.003). A Flash of Light raid paladin
   would be second (1.424), ahead of the druid's 1.414.
-
-### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
-- severity: low (blocks a check; moves no number)
-- affects: the pass's step 2 for every healer
-- found: 2026-11-04, master c8f5858bd
-- evidence: `jq '.raidHealing' tools/encounters/<boss>.json` holds `healerClasses` (mean count a kill), `hpsEachHealer`
-  (one median for all healers, with overheal), `raidHps`, `hpsOnTanks`, `hpsOnOthers`, nothing by class
-  (`tools/encounters/raid_from_logs.py:144-158`); the mined `tools/encounters/logs/anniversary_*_raid.json` keep
-  the same. Composition over the 7 files: priest 5.11, shaman 3.00, paladin 1.69, druid 1.21 of 11.
-- proposed fix: have `wclcli.py raid` (tools/warcraftlogs/wclcli.py) keep effective HPS and tank share by healer
-  class (median per player), re-mine, and store it in `raidHealing.byClass`.
-- needs: orchestrator fix
-
-## Resolved
+- resolved: 2026-11-12 (the raid preset is a Flash of Light healer: no Holy Light or Divine Favor line; Lay on
+  Hands under 10%, Holy Shock under 50%, Flash of Light 6 under 35%, Flash of Light 6 and 4 at the most hurt at
+  0.7x of their Expected Healing; ROLE_DEFAULTS raid in orchestration/tools/healers/paladin_holy_requests.py,
+  which now also reproduces the shipped requests: the tank's 0.7x gate and the raid's Lesser Mana Oil were
+  knobs it had lost). Healbench -role raid -carry, 1,000 it, 7 files: 1.400 -> 1.430 (seed 101), 1.402 -> 1.429
+  (seed 202); Flash of Light 6 alone at 0.7x 1.424 / 1.430, 6, 5 and 4 1.430 / 1.430 (a tie, the preset binds
+  two ranks); 13 other variants (gates 0.6/0.8x, ranks 6+5, 6+3, 4 alone, Holy Shock at 60/70% or as a filler,
+  Divine Favor under 35/50%, Concentration Aura, no Lay on Hands) at or below 1.425 (docs/healing_paladin.md,
+  Raid healer). Seed 101 by file: Onyxia +0.041, Broodlord +0.012, Chromaggus +0.059, Golemagg +0.018, Magmadar
+  +0.011, Ragnaros -0.007, Vaelastrasz +0.078. Onyxia at 300 s: 7,559 mana left at carry, no OOM. The raid
+  paladin is now second (1.430), behind the Holy priest (1.461), ahead of the druid (1.414) and shaman (1.412).
+  Rows in `ref/healer_fairness/retune_25f65da_s101.tsv` and `_s202.tsv`.
 
 ### healer_fairness-20261111-1: Nature's Swiftness now goes on Wild Growth in the druid raid preset; raid druid falls from first (1.437) to last (1.391)
 - severity: high (mean raid carry -0.046, -3.2%; the druid goes from level first to fourth, behind the shaman's 1.395)

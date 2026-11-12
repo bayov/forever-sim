@@ -8,7 +8,8 @@ rotation tuned on `tools/healbench`, and its numbers against the Restoration sha
 **Where it stands (2026-11-04):** registered (`sim/paladin/holy`), every heal and healing talent in and
 tested, re-checked against client 1.60.1.70753, the November 2 notes and the 11-03 hotfixes (no Holy
 change left to take), a synthetic set (990301-990314), two presets tuned on the merged build. Re-benched
-2026-11-04 after the engine fixes: tank healer mean carry 1.043, raid healer 1.413 over the 7 boss files
+2026-11-04 after the engine fixes: tank healer mean carry 1.043, raid healer 1.413 over the 7 boss files (2026-11-12: tank 1.152 on the moved
+bench, raid 1.430 as a Flash of Light healer, below)
 (the side-by-side with the other healers is H3 in healing_sim.md). The UI spec page stays unlaunched (the user's
 call).
 
@@ -294,6 +295,33 @@ Vigil against 0.815; Vaelastrasz 1.008 for the Vigil against 0.996). On the merg
 Both presets take Holy Light 9 and 8 and the 50% mana line (one set of knobs: it costs the raid healer
 nothing).
 
+**Re-tuned 2026-11-12 (healer_fairness-20261104-5): the raid healer is a Flash of Light healer.** With no tank
+in the raid role, the tank healer's Holy Light lines (target the tank) never fire, and its rotation in the raid
+role out-carried the raid preset, whose Holy Light 9 and 8 and Divine Favor at the most hurt are too slow and
+too big for the raid's spread damage. The raid preset now has no Holy Light or Divine Favor line: Lay on Hands
+under 10%, Holy Shock under 50%, Flash of Light 6 under 35%, then Flash of Light 6 and 4 at the most hurt, each
+once what's missing covers 70% of its Expected Healing. Healbench -role raid -carry, 1,000 iterations, 7 boss
+files, mean carry on seed 101 (seed 202 where run), the raid preset's consumables (Lesser Mana Oil):
+
+| Variant | Seed 101 | Seed 202 |
+|---|---|---|
+| The old raid preset (Holy Light 9 and 8, Divine Favor, Flash of Light 6 at 1.0x) | 1.400 | 1.402 |
+| No Holy Light or Divine Favor, Flash of Light 6 at 0.7x (the tank preset's lines) | 1.424 | 1.430 |
+| the same at 0.6x / 0.8x | 1.423 / 1.410 | |
+| **Flash of Light 6 and 4 at 0.7x (the preset)** | **1.430** | **1.429** |
+| Flash of Light 6, 5 and 4 / 6 and 5 / 6 and 3 / 4 alone | 1.430 / 1.422 / 1.417 / 1.392 | 1.430 / - / - / - |
+| Flash of Light 6 and 4 at 0.6x / 0.8x | 1.420 / 1.423 | |
+| and Holy Shock under 60% / 70% | 1.418 / 1.419 | |
+| and Holy Shock at the most hurt when it misses what Holy Shock heals (on 6 at 0.7x) | 1.404 | |
+| and no Holy Shock / no emergency Flash of Light / Flash of Light under 50% (on 6 at 0.7x) | 1.385 / 1.423 / 1.424 | |
+| and Divine Favor once someone is under 35% / 50% | 1.424 / 1.423 | |
+| and Concentration Aura (on 6 at 0.7x) / no Lay on Hands | 1.425 / 1.412 | |
+
+Flash of Light 6, 5 and 4 ties 6 and 4 on both seeds; the preset binds the two. Seed 101 by file, old ->
+new: Onyxia 0.977 -> 1.018, Broodlord 0.900 -> 0.912, Chromaggus 1.087 -> 1.146, Golemagg 2.684 -> 2.702,
+Magmadar 1.903 -> 1.914, Ragnaros 1.290 -> 1.283, Vaelastrasz 0.957 -> 1.035. Mana is no limit: Onyxia at
+300 s, 7,559 mana left at carry (7,330 before), carry 0.784 -> 0.799.
+
 ### Talents
 
 The preset build, `53320015002101251-5-052330002`: Holy 31 (Spiritual Focus 5, Divine Strength 3, Healing
@@ -351,7 +379,9 @@ effective healing a second; carry is the damage scale at the death line.
 
 - **Tank healer: mean carry 1.043** (1.028 at the old 1.0x gate). No deaths below the carry on any file;
   out of mana only past 398 s, so it is never mana-bound at its carry.
-- **Raid healer: mean carry 1.413.** Its floor on the others is 0 to 3.6%, none on the tanks.
+- **Raid healer: mean carry 1.413.** Its floor on the others is 0 to 3.6%, none on the tanks. (2026-11-12, after the
+  Flash of Light re-tune and the new consumables: 1.430, seed 101; the old rotation 1.400. The rows above are
+  the old rotation's.)
 
 ### The gate (healer_fairness-20261104-2)
 
