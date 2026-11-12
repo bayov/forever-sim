@@ -307,3 +307,10 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-11 19:43 | tank_rotations | pass 8 | master 707ae92cc | 1 new finding | tank_rotations-20261111-1 (medium): Warden talents not re-tuned after Nov 10
 2026-11-11 19:43 | tank_gear | pass 6 | master 707ae92cc | quiet | all pieces within tolerance
 2026-11-11 19:43 | tank_fairness | pass 8 | master 707ae92cc | 1 new finding | tank_fairness-20261111-1 (high): Flask of the Titans beats Natural flask at Max survival
+2026-11-12 07:02 | mechanics | pass 75 | master cb0d928fd | 3 new findings | mechanics-20261112-1 (medium, needs user ruling): Holy Strike likely procs Windfury Totem per Nov 11 hotfix; -2 (medium) Unsealed Wrath echoes from Windfury; -3 (low) Judgement now ranged
+2026-11-12 07:02 | healer_mechanics | pass 10 | master cb0d928fd | quiet | talent tooltip commit only; 20261111-13 resolved, 20261104-11 updated
+2026-11-12 07:02 | healer_rotations | pass 8 | master cb0d928fd | quiet | 63 rows identical to baseline
+2026-11-12 07:02 | healer_fairness | pass 8 | master cb0d928fd | quiet | 5 spot cells match baseline
+2026-11-12 07:02 | tank_mechanics | pass 11 | master cb0d928fd | quiet | tooltip commit changes no tank behaviour
+2026-11-12 07:02 | tank_rotations | pass 9 | master cb0d928fd | quiet | Onyxia spot check identical to pass 8
+2026-11-12 07:02 | tank_fairness | pass 9 | master cb0d928fd | quiet | 84 rows identical to pass 8

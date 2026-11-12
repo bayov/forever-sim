@@ -4,6 +4,30 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261112-3: Judgement is a ranged attack since the Nov 11 hotfixes; the sim's Judgements of Command and Righteousness are melee specials that roll melee procs
+- severity: low (estimated, not measured: Judgement is one hit every 8-10 sec; the loss is the equip and weapon procs it rolls, e.g. Crusader, and the melee-vs-ranged hit difference)
+- affects: paladin (Retribution, Protection builds that judge Command or Righteousness)
+- found: 2026-11-12, master cb0d928fd6
+- evidence: Blizzard hotfixes Nov 11 (t/2403040 post 8, Kaivax 2026-11-12 00:48 UTC, tier 1): "Judgement changed to now be considered a Ranged Attack. This means it no longer counts as a Melee attack for the purposes of item and effect procs and uses the Paladin's Ranged Hit chance." Sim: `sim/paladin/soc.go:121` Judgement of Command ProcMask MeleeMHSpecial|MeleeProc|MeleeDamageProc, crit via `OutcomeMeleeSpecialCritOnly` (`soc.go:112`); `sim/paladin/sor.go:113,118` Judgement of Righteousness ProcMaskMeleeMHSpecial and `OutcomeMeleeSpecialNoBlockDodgeParry`. Not checked yet whether 70888's SpellMisc/DefenseType on the judgement damage spells changed (the hotfix may be server-side only).
+- proposed fix: give the judgement damage spells ProcMaskRangedSpecial (or ProcMaskEmpty if no ranged procs apply) and a ranged hit roll (`OutcomeRangedHit...` with the paladin's ranged hit); measure on the Ret presets.
+- needs: worker fix
+
+### mechanics-20261112-2: Unsealed Wrath no longer takes echoes from Windfury Totem attacks (Nov 11 hotfixes); the sim lets every white swing, extra attacks included, store and spend them
+- severity: medium (estimated, not measured: Windfury Totem procs on about 20% of landed main hand swings, so roughly a sixth of the echo stores/spends come from its extra attacks; likely 0.5-2% on Retribution builds with the talent)
+- affects: paladin (Retribution builds with Unsealed Wrath)
+- found: 2026-11-12, master cb0d928fd6
+- evidence: t/2403040 post 8 (tier 1): "Retribution: With the fix to Windfury Totem activating from Holy Strike, we have changed Unsealed Fury. Unsealed Fury no longer generates echoes from Windfury Totem attacks." The client 70888 name is Unsealed Wrath (1310735, proc 100%); we read "Unsealed Fury" as that talent (medium confidence: no other Unsealed talent in 70888). Sim: `sim/paladin/unsealed_wrath.go:24-25` ("extra attacks included") and `:61` (any landed ProcMaskMeleeWhiteHit), and the WF totem extra attack comes through `ExtraMHAttackProc` with the Windfury action ID (`sim/core/buffs.go:2120`).
+- proposed fix: in the Unsealed Wrath OnSpellHitDealt, skip swings that are Windfury Totem extra attacks (tag them, e.g. a flag or the extra attack's action ID 8516/10608/10610 / the "Extra Attacks" source). Whether those swings still spend stacks is unstated ("generates echoes"): ask, or skip only the store.
+- needs: worker fix
+
+### mechanics-20261112-1: Nov 11 hotfixes say Holy Strike activates Windfury Totem; the sim lets only white main hand swings proc it under Forever
+- severity: medium (estimated, not measured, for Holy Strike alone: one attack per 10 sec next to about 0.3 white swings a second, so about 1 WF proc in 30 more on Ret; the same reading for Heroic Strike, Cleave and Raptor Strike is the -100 to -200 warrior / -96 Survival gap in TASKS.md, which is high)
+- affects: shared engine (Windfury Totem), paladin (Retribution); bears on warriors and Survival through standards 17
+- found: 2026-11-12, master cb0d928fd6
+- evidence: t/2403040 post 8 (tier 1): "With the fix to Windfury Totem activating from Holy Strike, we have changed Unsealed Fury. Unsealed Fury no longer generates echoes from Windfury Totem attacks." The compensating nerf only makes sense if Holy Strike now does activate it (medium-high confidence in that reading; the wording alone could mean the opposite). Sim: `sim/core/buffs.go:2168` `procMask := Ternary(character.Env.IsForever(), ProcMaskMeleeMHAuto, ProcMaskMeleeMH)`; Holy Strike is ProcMaskMeleeMHSpecial (`sim/paladin/holy_strike.go:82`), so it never procs. Standing user ruling 2026-11-12 (standards 17, TASKS.md): "for now only white hits proc it until we verify". This is new tier 1 evidence that at least one yellow attack procs it on Forever, and the hotfix calls that a fix, i.e. intended behaviour.
+- proposed fix: options for the user: (a) let Holy Strike proc it (add a per-spell allow, or switch the Forever mask back to ProcMaskMeleeMH with the old on-next-swing handling); (b) take it as evidence that yellow melee attacks in general proc it and drop the Forever white-only gate (`buffs.go:2168` back to ProcMaskMeleeMH); (c) keep the ruling until a log. Measure each on Ret and the warrior presets.
+- needs: user ruling
+
 ### mechanics-20261104-1: Client 70790 carries the November 2 druid values; the sim's "about 25% / 40%" scales differ from them, Ferocious Bite's Energy part most
 - severity: low (estimated, not measured: under 0.5% on the cat presets, under 0.1% on Balance)
 - affects: druid (Feral cat presets, Balance)

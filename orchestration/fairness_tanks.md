@@ -1,7 +1,8 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-11, pass 8, master 707ae92. All 12 presets were re-simmed. Since pass 6 the Natural flasks were
+preset weight, its reasons, and the open questions. Last pass: 2026-11-12, pass 9, master cb0d928: all 12 presets re-simmed, every score identical to pass 8 (the
+changes were a comment and the Trial by Fire field rename), so the ranking below stands. In pass 8 (master 707ae92), since pass 6 the Natural flasks were
 halved (client 70862) and Blizzard's Nov 10 shaman tuning cut Stormstrike and Mental Dexterity, and every score fell.
 The report has the details (orchestration/audit/reports/tank_fairness.md); the table is in
 orchestration/audit/ref/tank_fairness/summary.tsv.

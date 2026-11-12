@@ -2,20 +2,6 @@
 
 ## Open
 
-### healer_mechanics-20261111-13: Holy and Discipline priest suites fail on master: the AllItems-IronweaveBattlesuit golden is stale
-- severity: low (test hygiene; no healer mechanic shown wrong)
-- affects: Holy and Discipline priest test suites (also Shadow priest and Mage, same row)
-- found: 2026-11-11, master 707ae92cc5
-- evidence: `go test -tags=with_db ./sim/priest/healing/` fails only `Phase1-AllItems-IronweaveBattlesuit`: Holy HPS 249.986 ->
-  252.680, Disc HPS 109.002 -> 109.557 (TPS, DTPS too); `./sim/priest/shadow/` DPS 941.581 -> 983.555 and `./sim/mage/`
-  945.088 -> 999.375 on the same row; every other row of those suites passes. The eight Ironweave items and
-  `ItemSetIronweaveBattlesuit` are unchanged since 27d0d59d6, so the move comes from something else since then (item, enchant or
-  consumable data: c4e7fbab3, ca07df649, b1291e61a, `sim/core/consumes.go`); not bisected (a worktree at 27d0d59d6 fails setup
-  without generated protos). A red suite hides the next real healer regression.
-- proposed fix: find the commit that moved the row (bisect `go test -tags=with_db ./sim/mage/ -run TestP1Mage`), confirm the
-  move is intended, then `make update-tests` for the four suites.
-- needs: orchestrator fix
-
 ### healer_mechanics-20261104-11: Riptide's Forever mana is 0.6 x the old client cost; client 70790 now gives 150/180/230
 - severity: low (rank 3, the one the level 60 presets cast, is 1 mana dear at 231 vs 230; rank 1 is 3 mana cheap)
 - affects: Restoration shaman (all presets and leveling)
@@ -34,6 +20,9 @@
 - needs: worker fix
 - update 2026-11-07 (master 12aa2796f, client 70862): SpellPower 304804/310863/310864 still 150/180/230; the sim still
   computes 147/180/231 (`sim/shaman/healing.go:117,132`). Still open.
+- update 2026-11-12 (master cb0d928fd, client 70888): the new talent-tree overlay `tools/forever_talents/notes/shaman.json`
+  (cb0d928fd) now prints "147 Mana" on Riptide, citing the notes with "clients 70753 and 70755 unchanged"; client 70790+ has
+  150 for rank 1, so the tooltip carries the same gap. The fix should also set that overlay's cost to the client's. Still open.
 
 ### healer_mechanics-20261104-10: many heal ranks, healing talents and engine paths have no test that fails when they break
 - severity: low (none found wrong apart from the findings above)
@@ -57,6 +46,21 @@
   cancelled heals, or two absorbs on one unit.
 
 ## Resolved
+
+### healer_mechanics-20261111-13: Holy and Discipline priest suites fail on master: the AllItems-IronweaveBattlesuit golden is stale
+- severity: low (test hygiene; no healer mechanic shown wrong)
+- affects: Holy and Discipline priest test suites (also Shadow priest and Mage, same row)
+- found: 2026-11-11, master 707ae92cc5
+- evidence: `go test -tags=with_db ./sim/priest/healing/` fails only `Phase1-AllItems-IronweaveBattlesuit`: Holy HPS 249.986 ->
+  252.680, Disc HPS 109.002 -> 109.557 (TPS, DTPS too); `./sim/priest/shadow/` DPS 941.581 -> 983.555 and `./sim/mage/`
+  945.088 -> 999.375 on the same row; every other row of those suites passes. The eight Ironweave items and
+  `ItemSetIronweaveBattlesuit` are unchanged since 27d0d59d6, so the move comes from something else since then (item, enchant or
+  consumable data: c4e7fbab3, ca07df649, b1291e61a, `sim/core/consumes.go`); not bisected (a worktree at 27d0d59d6 fails setup
+  without generated protos). A red suite hides the next real healer regression.
+- proposed fix: find the commit that moved the row (bisect `go test -tags=with_db ./sim/mage/ -run TestP1Mage`), confirm the
+  move is intended, then `make update-tests` for the four suites.
+- needs: orchestrator fix
+- resolved: 2026-11-12, 3335001a5 (goldens regenerated; `go test -tags=with_db` of ./sim/priest/..., ./sim/mage/ pass at cb0d928fd)
 
 ### healer_mechanics-20261110-12: Nature's Swiftness doesn't reach Wild Growth; the Nov 10 hotfix makes Wild Growth instant under it
 - severity: medium (Restoration druid raid carry +1.0% with the fix; tank carry unchanged)
