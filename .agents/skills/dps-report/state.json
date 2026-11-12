@@ -52,7 +52,7 @@
   "source": "ui/dps_report/",
   "artifact": "retired 2026-10-25 (was https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR); the report is deployed to https://forever-dps.pages.dev",
   "artifactVersion": 6,
-  "publishedFrom": "master 4ec255f (Windfury Totem listed up all fight, its proc as Windfury Attack; warriors re-simmed for Execute cast counts, six tabs fit a phone header, Duty filter off by default; inline talent links on the text line; Back and Forward between tabs and presets; a preset's caveats as one plain list; Dwarf base stats on the preset's gear; deploy wraps the page in a doctype/head/body; Web Analytics beacon)",
+  "publishedFrom": "master 29a729ee3 (tank and healer preset re-tunes, ranged Judgement, the seen-health fix, Survival Wing Clip, Fury Battle Shout duty, Combat Swords rogue default)",
   "legacyDashboard": "deleted 2026-10-13"
  },
  "reportArtifact": {
@@ -63,19 +63,19 @@
   "note": "the last artifact publish; retired 2026-10-25, see reportSite"
  },
  "reportData": {
-  "commit": "71994fc on master (numbers as simmed 2026-11-11; 2026-11-12 changed isDefault only)",
-  "simmedAt": "2026-11-11: all 68 builds and both modes re-simmed (40 builds at 1516752, the 28 natural-flask builds and both modes at 707ae92; no sim input differs from dee45cd); provenance per build in ui/dps_report/provenance.json",
-  "date": "2026-11-11",
+  "commit": "29a729ee3 on master (data committed in e9a8857e7)",
+  "simmedAt": "2026-11-12 at e416f956f (tankheal merged with master): 19 builds re-simmed in full (the 3 Survival builds, Fury on Battle Shout duty, the 10 paladin builds, and the 3 probe audit builds plus 2 pet variants, unchanged), both Tanking and Healing modes; the other 49 builds recorded by probe; provenance per build in ui/dps_report/provenance.json",
+  "date": "2026-11-12",
   "builds": 68,
-  "rawPacks": "tools/dps_report/raw/ (68 packs)"
+  "rawPacks": "tools/dps_report/raw/ (68 packs, plus raw/bench/{tank,heal}.tgz)"
  },
  "reportSite": {
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "master 71994fc",
+  "publishedFrom": "master 29a729ee3",
   "date": "2026-11-12",
-  "deployId": "9ebbf9a8",
+  "deployId": "24284d79",
   "analytics": "Cloudflare Web Analytics enabled by the user 2026-10-28 (dashboard: Analytics & Logs > Web Analytics, site forever-dps.pages.dev); Pages injects the beacon, deploy_pages.py's live check strips it. The session token has no analytics read permission."
  },
  "changesTab": "Changes tab live 2026-10-28 (standards 30): tools/dps_report/changes/, live update 2026-11-10-hotfixes (game: Blizzard's November 10 hotfixes, Enhancement shaman tuning); 2026-11-02-build-70753 finished at c61845d with about 19 other sessions' commits uncovered"
