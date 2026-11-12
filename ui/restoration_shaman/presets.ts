@@ -78,9 +78,11 @@ export const APLTankHealer = PresetUtils.makePresetAPLRotation('Tank healer', Ta
 // below 60% mana. On round 70753 (the notes' Riptide: no instant heal) it carries 1.123 mean over the
 // bench's eight rows, against 1.183 on master before (1.196 with the client's three Riptide ranks);
 // Riptide kept on the tank (-0.007), Lesser Healing Wave at the most hurt above 70% mana (-0.013) and
-// other Water Shield or Mana Tide floors (no change: the fights end first) don't do better.
+// other Water Shield or Mana Tide floors (no change: the fights end first) don't do better. Nature's Swiftness
+// waits for someone in the assignment under 65% health and goes on an instant Healing Wave 10 at them (it was
+// autocast before 2026-11-12): 1.392 -> 1.412 mean carry over the seven boss files (docs/healing_shaman.md).
 export const APLRaidHealer = PresetUtils.makePresetAPLRotation('Raid healer', RaidHealerAPLJson, {
-	tooltip: 'Chain Heal and Riptide at the most hurt, Healing Wave for a big hole, with Water Shield, Mana Spring and Mana Tide.',
+	tooltip: 'Chain Heal and Riptide at the most hurt, Healing Wave for a big hole, Nature\'s Swiftness on an instant Healing Wave under 65% health, with Water Shield, Mana Spring and Mana Tide.',
 	group: 'Healing sim',
 });
 

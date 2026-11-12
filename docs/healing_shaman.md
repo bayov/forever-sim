@@ -219,6 +219,14 @@ the bench (Mana Tide 50%, Water Shield below 40% or 80%: the same numbers to the
 first), which is why the 11-03 threshold runs were all equal. Riptide on the tank instead of the most hurt
 (-0.007) and Lesser Healing Wave 6 at the most hurt above 70% mana (-0.013) lose.
 
+**Nature's Swiftness on the raid healer (healer_rotations-20261112-2, 2026-11-12)**: the raid APL had no Nature's
+Swiftness line, so `autocastOtherCooldowns` raised it at the pull and on every cooldown and the next Chain Heal
+took it. It now has its own two lines after the autocast, as the tank healer and both druids: Nature's Swiftness
+when the lowest in the assignment is under 65% health, then an instant Healing Wave 10 at them. Raid role, own
+lengths, 1,000 iterations, mean carry of the 7 files, seed 101: autocast 1.392, 45% 1.402, 50% 1.411, 55% 1.403,
+60% 1.395, **65% 1.412**, 70% 1.406, 75% 1.390; seed 202: autocast 1.389, 50% 1.404, 55% 1.400, **65% 1.411**
+(+0.020 / +0.022). NS costs no mana, so the 180 / 300 s side is unchanged.
+
 **Final, 1,000 iterations, carry** (this branch with the priest's and paladin's work merged; the priest and
 paladin columns are the coordinator's table from their branches):
 

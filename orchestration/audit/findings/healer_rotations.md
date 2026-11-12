@@ -2,18 +2,6 @@
 
 ## Open
 
-### healer_rotations-20261112-2: Restoration shaman raid healer spends Nature's Swiftness on cooldown; held for an emergency Healing Wave it carries +0.010 more
-- severity: medium (+0.7% mean carry on two seeds; under the 1% line)
-- affects: Restoration shaman raid healer (`ui/restoration_shaman/apls/raid_healer.apl.json`, `tools/healbench/req/shaman_restoration_raid.json`). Not the tank healer (it already holds NS for the tank under 50%; see below).
-- found: 2026-11-12, master 3065ba744 (tankheal)
-- evidence: the raid APL has no Nature's Swiftness (16188) line, so `autocastOtherCooldowns` (line 0) raises the buff at the pull and on every cooldown, and the next ordinary Chain Heal / Healing Wave takes it. Variant: insert as lines 1-2 `castSpell 16188` if Current Health % of Lowest Health < T, then `castSpell 25357` (Healing Wave 10) on Lowest Health if aura 16188 is active (the druid's pattern since e05135ad3). Paired, 1,000 it, own lengths, `-role raid`, mean carry of the 7 files (Onyxia / Broodlord / Chromaggus / Golemagg / Magmadar / Ragnaros / Vaelastrasz):
-  - master seed 101: 0.927 / 0.912 / 1.084 / 2.630 / 1.827 / 1.239 / 1.125, mean 1.392
-  - T=0.55 seed 101: 0.957 / 0.910 / 1.098 / 2.652 / 1.823 / 1.234 / 1.148, mean 1.403 (+0.011); seed 202: 1.3995 against 1.3894 (+0.010)
-  - T=0.45: +0.010 (seed 101), +0.006 (seed 202); T=0.35: -0.000; T=0.45 with Lesser Healing Wave 6 in place of Healing Wave 10: +0.000
-  Reproduce: `tools/audit/healer_rotations/baseline.sh`-style loop, or `healbench -role raid -encounter tools/encounters/<boss>.json -carry -iters 1000 [-seed 202] <request>`. Fairly sure of the sign (two seeds, 5 of 7 files up on each); the size is near the bench's resolution. Mana side (180 / 300 s) not measured: NS costs no mana and the swap changes one cast in 180 s.
-- proposed fix: add the two lines above with T=0.55 (Healing Wave 10, the big rank, as the druid's Healing Touch), and say in the note that NS waits for an emergency.
-- needs: worker fix
-
 ### healer_rotations-20261104-2: Discipline tank healer runs out of mana on Chromaggus at the fight's own length (107 of 115 s), and on Golemagg at 300 s
 - severity: medium (a mana failure at a judged length; the preset already trails the Holy tank healer there, 0.818 vs 1.002)
 - affects: Discipline priest tank healer (`ui/healing_priest/apls/discipline_tank_healer.apl.json`, `tools/healbench/req/priest_discipline.json`)
@@ -44,6 +32,22 @@
 - needs: worker fix
 
 ## Resolved
+
+### healer_rotations-20261112-2: Restoration shaman raid healer spends Nature's Swiftness on cooldown; held for an emergency Healing Wave it carries +0.010 more
+- severity: medium (+0.7% mean carry on two seeds; under the 1% line)
+- affects: Restoration shaman raid healer (`ui/restoration_shaman/apls/raid_healer.apl.json`, `tools/healbench/req/shaman_restoration_raid.json`). Not the tank healer (it already holds NS for the tank under 50%; see below).
+- found: 2026-11-12, master 3065ba744 (tankheal)
+- evidence: the raid APL has no Nature's Swiftness (16188) line, so `autocastOtherCooldowns` (line 0) raises the buff at the pull and on every cooldown, and the next ordinary Chain Heal / Healing Wave takes it. Variant: insert as lines 1-2 `castSpell 16188` if Current Health % of Lowest Health < T, then `castSpell 25357` (Healing Wave 10) on Lowest Health if aura 16188 is active (the druid's pattern since e05135ad3). Paired, 1,000 it, own lengths, `-role raid`, mean carry of the 7 files (Onyxia / Broodlord / Chromaggus / Golemagg / Magmadar / Ragnaros / Vaelastrasz):
+  - master seed 101: 0.927 / 0.912 / 1.084 / 2.630 / 1.827 / 1.239 / 1.125, mean 1.392
+  - T=0.55 seed 101: 0.957 / 0.910 / 1.098 / 2.652 / 1.823 / 1.234 / 1.148, mean 1.403 (+0.011); seed 202: 1.3995 against 1.3894 (+0.010)
+  - T=0.45: +0.010 (seed 101), +0.006 (seed 202); T=0.35: -0.000; T=0.45 with Lesser Healing Wave 6 in place of Healing Wave 10: +0.000
+  Reproduce: `tools/audit/healer_rotations/baseline.sh`-style loop, or `healbench -role raid -encounter tools/encounters/<boss>.json -carry -iters 1000 [-seed 202] <request>`. Fairly sure of the sign (two seeds, 5 of 7 files up on each); the size is near the bench's resolution. Mana side (180 / 300 s) not measured: NS costs no mana and the swap changes one cast in 180 s.
+- proposed fix: add the two lines above with T=0.55 (Healing Wave 10, the big rank, as the druid's Healing Touch), and say in the note that NS waits for an emergency.
+- needs: worker fix
+- resolved: 2026-11-12, Nature's Swiftness under 65% and an instant Healing Wave 10 at the lowest as lines 1-2 of the
+  raid APL and request (line 0's note no longer names NS; `docs/healing_shaman.md`). Raid role, own lengths, 1,000
+  it, mean carry, seed 101: autocast 1.392, 45% 1.402, 50% 1.411, 55% 1.403, 60% 1.395, 65% 1.412, 70% 1.406, 75%
+  1.390; seed 202: autocast 1.389, 50% 1.404, 55% 1.400, 65% 1.411 (+0.020 / +0.022 for 65%).
 
 ### healer_rotations-20261112-1: Restoration druid tank healer's Nature's Swiftness threshold (60%) is too high since health values read seen health; 45% carries +0.027
 - severity: high (+2.2% mean carry; every boss file up)
