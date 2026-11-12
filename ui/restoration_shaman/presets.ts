@@ -5,6 +5,7 @@ import {
 	Debuffs,
 	Flask,
 	Food,
+	HealingPowerBuff,
 	IndividualBuffs,
 	IntellectElixir,
 	ManaRegenElixir,
@@ -12,7 +13,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SpellPowerBuff,
 	SpiritElixir,
 	SunderRamp,
 	TristateEffect,
@@ -127,16 +127,20 @@ export const DefaultTalents = TalentsRestorationTank;
 // No shaman imbue: the main hand carries a Brilliant Mana Oil.
 export const DefaultOptions = RestorationShamanOptions.create({});
 
-// The Elemental shaman's level 60 consumables, with a Brilliant Mana Oil and the Major Mana Potion.
+// Each healer preset takes the consumables that score best on its own bench objective (healbench damage carried,
+// mean of the 7 boss files in its role; docs/healing_sim.md, Consumables): Greater Cleric's Elixir (healing; the
+// Arcane Elixir's spell damage doesn't heal), Flask of Supreme Power, the phase 1 oils only (Brilliant Wizard and
+// Brilliant Mana Oil are Zandalar vendor formulas).
+// The shaman takes Runn Tum Tuber Surprise (15 Intellect) and the Wizard Oil in both roles.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodLobsterStew,
+	food: Food.FoodRunnTumTuberSurprise,
+	healingPowerBuff: HealingPowerBuff.GreaterClericsElixir,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
-	mainHandImbue: WeaponImbue.BrilliantManaOil,
+	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });

@@ -23,6 +23,7 @@ p['restorationDruid'] = {'options': {'innervateTarget': {'type': 'Self'}}}
 p['rotation'] = json.load(open(apl_path))
 c = p['consumes']
 c.pop('mainHandImbue', None)
-c['mainHandImbue'] = 'BrilliantManaOil'
+c['mainHandImbue'] = 'WizardOil'
+c['food'] = 'FoodWickedSmoothie'  # the druid's best phase 1 food (docs/healing_sim.md, Consumables)
 json.dump(req, open(out, 'w'), indent=2)
 open(out, 'a').write('\n')

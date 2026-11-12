@@ -69,15 +69,15 @@
             },
             "consumes": {
               "flask": "FlaskOfSupremePower",
-              "food": "FoodLobsterStew",
+              "food": "FoodWickedSmoothie",
               "manaRegenElixir": "GreaterMagebloodElixir",
-              "spellPowerBuff": "GreaterArcaneElixir",
+              "healingPowerBuff": "GreaterClericsElixir",
               "defaultPotion": "MajorManaPotion",
               "defaultConjured": "ConjuredDemonicRune",
               "zanzaBuff": "CerebralCortexCompound",
               "intellectElixir": "ElixirOfGreaterIntellect",
               "spiritElixir": "ElixirOfSages",
-              "mainHandImbue": "BrilliantManaOil"
+              "mainHandImbue": "WizardOil"
             },
             "buffs": {
               "blessingOfKings": true,

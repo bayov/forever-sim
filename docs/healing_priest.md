@@ -207,7 +207,9 @@ or not (24.0% shielded against 65.3% without), so the score reads the shields on
 ## The presets
 
 Three builds, all on the healing priest synthetic set (990501 to 990514, the healing priest row of
-`orchestration/gear_targets.md`), the Restoration shaman's consumables, raid buffs and debuffs, and level 60.
+`orchestration/gear_targets.md`), the healers' consumables (Greater Cleric's Elixir, Runn Tum Tuber Surprise, Flask of Supreme Power; the Wizard Oil,
+but the Holy tank healer the Lesser Mana Oil; `docs/healing_sim.md`, Consumables, 2026-11-12), the Restoration
+shaman's raid buffs and debuffs, and level 60.
 The set's wand (990514, slot 16) carries no stats since 2026-11-04 (healer_fairness-20261104-3): it had 6
 Intellect, 10 spell power and 15 healing, 21.4 weighted points (the wand budget of standards 1b), on top of the
 902 the four healers' armor spends, while the shaman, paladin and druid fill slot 16 with a stat-less relic.

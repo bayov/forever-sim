@@ -294,6 +294,8 @@ and the engine's, and are kept for the record.
 
 ## Tuning and the presets
 
+Consumables (2026-11-12): Greater Cleric's Elixir for the Greater Arcane Elixir, the Wicked Smoothie, the Wizard Oil (the Brilliant Mana Oil is a Zandalar formula), Flask of Supreme Power, in both roles; the rest as every healer (`docs/healing_sim.md`, Consumables).
+
 `orchestration/tools/healers/druid_restoration_apl.py` writes the two rotations from knobs and
 `druid_restoration_req.py` the bench requests from the shaman's (the same raid, buffs and consumes): Thicc Resto
 `05302001--5253005153113051` (since the Nature's Swiftness round below; `05302001--5053025153113051` before),

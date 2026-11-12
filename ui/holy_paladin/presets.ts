@@ -5,6 +5,7 @@ import {
 	Debuffs,
 	Flask,
 	Food,
+	HealingPowerBuff,
 	IndividualBuffs,
 	IntellectElixir,
 	ManaRegenElixir,
@@ -12,7 +13,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SpellPowerBuff,
 	SpiritElixir,
 	SunderRamp,
 	TristateEffect,
@@ -122,19 +122,27 @@ export const RaidSimConsumes = Consumes.create({
 	food: Food.FoodUnknown,
 });
 
-// The Restoration shaman's consumables: a Brilliant Mana Oil and the Major Mana Potion.
+// Each healer preset takes the consumables that score best on its own bench objective (healbench damage carried,
+// mean of the 7 boss files in its role; docs/healing_sim.md, Consumables): Greater Cleric's Elixir (healing; the
+// Arcane Elixir's spell damage doesn't heal), Flask of Supreme Power, the phase 1 oils only (Brilliant Wizard and
+// Brilliant Mana Oil are Zandalar vendor formulas).
+// The paladin takes Runn Tum Tuber Surprise (15 Intellect); the tank healer the Wizard Oil, the raid healer the
+// Lesser Mana Oil (RaidHealerConsumes).
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodLobsterStew,
+	food: Food.FoodRunnTumTuberSurprise,
+	healingPowerBuff: HealingPowerBuff.GreaterClericsElixir,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
-	mainHandImbue: WeaponImbue.BrilliantManaOil,
+	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
+export const RaidHealerConsumes = Consumes.create({ ...DefaultConsumes, mainHandImbue: WeaponImbue.LesserManaOil });
+const TankHealerConsumables = PresetUtils.makePresetEncounter('Tank healer consumables', undefined, { consumes: DefaultConsumes });
+const RaidHealerConsumables = PresetUtils.makePresetEncounter('Raid healer consumables', undefined, { consumes: RaidHealerConsumes });
 
 // The shared level 60 raid buffs and debuffs, as the Restoration shaman's.
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -196,6 +204,7 @@ export const PresetBuildTankHealer = PresetUtils.makePresetBuild('Tank healer', 
 	gear: DefaultGear,
 	talents: TalentsHoly,
 	rotation: APLTankHealer,
+	encounter: TankHealerConsumables,
 });
 
 export const PresetBuildRaidHealer = PresetUtils.makePresetBuild('Raid healer', {
@@ -206,4 +215,5 @@ export const PresetBuildRaidHealer = PresetUtils.makePresetBuild('Raid healer', 
 	gear: DefaultGear,
 	talents: TalentsHoly,
 	rotation: APLRaidHealer,
+	encounter: RaidHealerConsumables,
 });

@@ -107,16 +107,16 @@ var HolyTalents = "00500503113-03505103030121531"
 var FullConsumes = core.ConsumesCombo{
 	Label: "Level60-Consumes",
 	Consumes: &proto.Consumes{
-		DefaultConjured: proto.Conjured_ConjuredDemonicRune,
-		DefaultPotion:   proto.Potions_MajorManaPotion,
-		Flask:           proto.Flask_FlaskOfSupremePower,
-		Food:            proto.Food_FoodLobsterStew,
-		IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
-		MainHandImbue:   proto.WeaponImbue_BrilliantManaOil,
-		ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
-		SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
-		SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
-		ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
+		DefaultConjured:  proto.Conjured_ConjuredDemonicRune,
+		DefaultPotion:    proto.Potions_MajorManaPotion,
+		Flask:            proto.Flask_FlaskOfSupremePower,
+		Food:             proto.Food_FoodRunnTumTuberSurprise,
+		HealingPowerBuff: proto.HealingPowerBuff_GreaterClericsElixir,
+		IntellectElixir:  proto.IntellectElixir_ElixirOfGreaterIntellect,
+		MainHandImbue:    proto.WeaponImbue_WizardOil,
+		ManaRegenElixir:  proto.ManaRegenElixir_GreaterMagebloodElixir,
+		SpiritElixir:     proto.SpiritElixir_ElixirOfSages,
+		ZanzaBuff:        proto.ZanzaBuff_CerebralCortexCompound,
 	},
 }
 

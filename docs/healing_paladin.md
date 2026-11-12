@@ -213,6 +213,8 @@ factors this branch had by hand, and those are 1.0 on every rank the presets cas
 
 ## The rotations (tuned on tools/healbench)
 
+Consumables (2026-11-12): Greater Cleric's Elixir for the Greater Arcane Elixir, Runn Tum Tuber Surprise, Flask of Supreme Power; the tank healer the Wizard Oil, the raid healer the Lesser Mana Oil (the Brilliant Mana Oil is a Zandalar formula); the rest as every healer (`docs/healing_sim.md`, Consumables).
+
 `orchestration/tools/healers/paladin_holy_requests.py` writes both presets from one set of knobs, and a
 variant with `--out FILE --set key=value`; each variant was benched against the default, 500 iterations, the
 `-carry` score (the damage carried at the death line), the bench's healer reaction time and cancelling. A

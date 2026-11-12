@@ -5,6 +5,7 @@ import {
 	Debuffs,
 	Flask,
 	Food,
+	HealingPowerBuff,
 	IndividualBuffs,
 	IntellectElixir,
 	ManaRegenElixir,
@@ -12,7 +13,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SpellPowerBuff,
 	SpiritElixir,
 	SunderRamp,
 	TristateEffect,
@@ -113,19 +113,27 @@ export const DefaultTalents = TalentsHoly;
 // The rotation casts Power Infusion (on the priest) and Inner Focus; Inner Fire isn't simulated.
 export const DefaultOptions = HealingPriestOptions.create({});
 
-// The Restoration shaman's level 60 consumables: a Brilliant Mana Oil and the Major Mana Potion.
+// Each healer preset takes the consumables that score best on its own bench objective (healbench damage carried,
+// mean of the 7 boss files in its role; docs/healing_sim.md, Consumables): Greater Cleric's Elixir (healing; the
+// Arcane Elixir's spell damage doesn't heal), Flask of Supreme Power, the phase 1 oils only (Brilliant Wizard and
+// Brilliant Mana Oil are Zandalar vendor formulas).
+// The priests take Runn Tum Tuber Surprise (15 Intellect); the Wizard Oil, but the Holy tank healer the Lesser Mana
+// Oil (HolyTankHealerConsumes).
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	flask: Flask.FlaskOfSupremePower,
-	food: Food.FoodLobsterStew,
+	food: Food.FoodRunnTumTuberSurprise,
+	healingPowerBuff: HealingPowerBuff.GreaterClericsElixir,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
-	mainHandImbue: WeaponImbue.BrilliantManaOil,
+	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
-	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
 });
+export const HolyTankHealerConsumes = Consumes.create({ ...DefaultConsumes, mainHandImbue: WeaponImbue.LesserManaOil });
+const DefaultConsumables = PresetUtils.makePresetEncounter('Healer consumables', undefined, { consumes: DefaultConsumes });
+const HolyTankHealerConsumables = PresetUtils.makePresetEncounter('Holy tank healer consumables', undefined, { consumes: HolyTankHealerConsumes });
 
 // The shared level 60 raid buffs and debuffs, as the Restoration shaman's.
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -192,6 +200,7 @@ export const PresetBuildHolyTankHealer = PresetUtils.makePresetBuild('Holy tank 
 	gear: DefaultGear,
 	talents: TalentsHoly,
 	rotation: APLHolyTankHealer,
+	encounter: HolyTankHealerConsumables,
 });
 
 export const PresetBuildHolyRaidHealer = PresetUtils.makePresetBuild('Holy raid healer', {
@@ -202,6 +211,7 @@ export const PresetBuildHolyRaidHealer = PresetUtils.makePresetBuild('Holy raid 
 	gear: DefaultGear,
 	talents: TalentsHoly,
 	rotation: APLHolyRaidHealer,
+	encounter: DefaultConsumables,
 });
 
 export const PresetBuildDisciplineTankHealer = PresetUtils.makePresetBuild('Discipline tank healer', {
@@ -212,4 +222,5 @@ export const PresetBuildDisciplineTankHealer = PresetUtils.makePresetBuild('Disc
 	gear: DefaultGear,
 	talents: TalentsDiscipline,
 	rotation: APLDisciplineTankHealer,
+	encounter: DefaultConsumables,
 });
