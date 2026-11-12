@@ -399,6 +399,10 @@ arrives as a hotfix, and the client keeps it in `Cache/ADB/enUS/DBCache.bin`.
   items it finds with `"by"` naming its source.
 - **Generator:** `gen_db -gen=db` (`ReadForeverSeenInGame` in `tools/database/forever_seen.go`)
   merges them after the Wowhead listing, so they win.
+- **Rulings:** Edgemaster's Handguards (14551) keep the in-game record, Armor only (b1291e6):
+  Wowhead Forever's 10 expertise rating (1% expertise) is not used (user ruling 2026-11-12:
+  "use my data, it's what forever changed it to be"). The file has no note field, so the
+  ruling lives here.
 
 ## Talents, racials and abilities: the client's spell tables
 

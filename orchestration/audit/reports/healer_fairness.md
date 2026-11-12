@@ -1,24 +1,19 @@
-# Healer fairness pass 7 (2026-11-11, master 707ae92cc5)
+# Healer fairness pass 8 (2026-11-12, master cb0d928fd6)
 
-Result: findings. New: healer_fairness-20261111-1 (high): the druid raid preset now spends Nature's Swiftness on
-Wild Growth, raid carry 1.437 -> 1.391, first to last. Still open: -5 (high, paladin raid preset) and -4 (low).
-Due because 10 watched files changed (59 commits since 27d0d59d6). What reaches a healer:
-- 9628e85b6 sim/druid/healing.go: Nature's Swiftness also makes Wild Growth instant (hotfix 113885). The raid preset
-  autocasts NS and ranks Wild Growth above Healing Touch, so NS goes on Wild Growth. Measured below.
-- f20d5938a sim/core/dot.go: no late tick after a dot's aura ran out (Wrack). HoT presets unchanged (spot cells identical).
-- Not reaching healers: shaman Nov 10 tuning (Stormstrike, Maelstrom, imbue + weapon totem; healers use Brilliant
-  Mana Oil, no melee), Idol of Ferocity (feral), standards.md 25 amendment (melee totems). tools/healbench, req and
-  encounters unchanged, so section 1 stands.
+Result: quiet. No new finding. Still open: -20261111-1 (high, druid raid NS on Wild Growth), -5 (high, paladin raid
+preset), -4 (low). Due because 3 watched files changed (33db32b..cb0d928fd6, 3 commits). What they do:
+- sim/druid/talents.go: comment only (Rend and Tear tooltip note).
+- sim/priest/priest.go: TalentTreeSizes Shadow 18 -> 17. The Holy and Disc talent strings have no Shadow tree part
+  (005005031330011531-0350510303, 00500503113-03505103030121531), so their parsing is unchanged.
+- sim/shaman/talents.go + proto: improved_fire_nova renamed trial_by_fire (same field 9). Both shaman healer strings
+  start with an empty Elemental tree, so nothing reaches them.
+- tools/healbench, req and encounters unchanged, so section 1 stands.
 
-Spot check, healbench built from 707ae92cc5, 1,000 iterations: identical to bench_9ba00c2.tsv for druid_restoration
-(tank: Broodlord 0.875, Vaelastrasz 0.852), priest_holy (tank Broodlord 0.930), priest_holy_raid (Vaelastrasz 1.152),
-shaman_restoration (tank Chromaggus 0.969). druid_restoration_raid moved on all 7 files
-(`ref/healer_fairness/druid_raid_707ae92.tsv`): Onyxia 0.997 -> 0.943, Broodlord 0.920 -> 0.906, Chromaggus 1.109 ->
-1.092, Golemagg 2.660 -> 2.658, Magmadar 2.002 -> 1.818, Ragnaros 1.270 -> 1.240, Vaelastrasz 1.102 -> 1.079; mean
-1.391. A build with only 9628e85b6's healing.go hunk reverted gives the baseline exactly (Magmadar 2.002, Onyxia
-0.997), so the drop is that change through the preset's NS use. Raid order now: Holy 1.437, paladin 1.413, shaman
-1.395, druid 1.391. Not re-run: the other paladin, Disc and raid shaman cells (no input reaching them changed).
-The tables below are pass 2's; the raid druid column is superseded by the numbers above.
+Spot check, healbench built from cb0d928fd6, 1,000 iterations, -carry: identical to bench_9ba00c2.tsv in HPS and carry
+for priest_holy (tank Broodlord 800, 0.930), priest_discipline (tank Broodlord 656, 0.971), shaman_restoration (tank
+Broodlord 662, 0.974), priest_holy_raid (raid Onyxia 280, 0.978), shaman_restoration_raid (raid Onyxia 267, 0.920).
+Rankings as in pass 7: raid Holy 1.437, paladin 1.413, shaman 1.395, druid 1.391 (druid column from
+`ref/healer_fairness/druid_raid_707ae92.tsv`). The tables below are pass 2's.
 
 ## 1. Same terms (the 9 requests)
 

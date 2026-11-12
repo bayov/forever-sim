@@ -138,14 +138,18 @@ TestReportRaid failed on Affliction, fixed by f20d593. sim/web can't build here 
    962.12, Fire 1052.82). Other reading: only the cast's extra roll was removed and each missile keeps the full 10%,
    which is the old sim (Arcane 969.28, Fire 1057.33). A variant, 10% split over the missiles only, gives Arcane 962.07
    (same as the model). A log settles it: about 10% of channels leave Clearcasting under the model, about 41% under the
-   other reading.
+   other reading. Ruled 2026-11-12: kept as modelled, to verify after the patch lands (TASKS.md).
 2. **Bane of Agony's ramp under Wrack's faster ticks.** Modelled: steps every 4 ticks, 150% past the 12th (Affliction
    1076.7 at 180 s, 10k iterations). Alternative: the ramp follows 8 s thirds of real time (1065.3, about -11).
+   Ruled 2026-11-12: kept as modelled, to verify after the patch lands (TASKS.md).
 3. **Warlock class default.** Affliction (1076.9) now beats Destruction (1062.8) at 180 s. Round 70753's precedent
-   makes the highest build the default; not changed.
+   makes the highest build the default; not changed. Ruled 2026-11-12: switch to the best build.
 4. **Sparklance Wand's spell stat.** The in-game sighting (BayovCore, 2026-11-09) has NaturePower 7; Wowhead lists +7
-   Arcane spell damage. The db keeps NaturePower 7. No build uses it.
+   Arcane spell damage. The db keeps NaturePower 7. No build uses it. Ruled 2026-11-12: kept as Arcane, to verify after
+   the patch lands (TASKS.md).
 5. **Edgemaster's Handguards.** Wowhead Forever lists 10 expertise rating (stored as 1% expertise), and the db also
-   keeps Classic's +7 weapon skills, so it may count both. Only the warrior phase 1 test gear set wears it.
+   keeps Classic's +7 weapon skills, so it may count both. Only the warrior phase 1 test gear set wears it. Ruled
+   2026-11-12: "use my data, it's what forever changed it to be". The in-game record stands (Armor only, b1291e6;
+   docs/data_sources.md) and TestP1DPSWarrior's golden is regenerated.
 6. **Survival hunter is stale in the report:** published 1041.2 / 1014.5 / 1007.4, but the requests sim 945.2 /
    918.9 / 911.3 on master, from an earlier change. The full-run session's re-sim will publish the new numbers.

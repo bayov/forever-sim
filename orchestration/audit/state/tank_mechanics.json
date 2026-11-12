@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "33db32b36857a53f3340ae8a0ae366e85a35ae0a"
+  "master": "71994fca6e7a0bb2b3e46569ace823373c2a42e1"
  },
- "last_pass_at": "2026-11-11T18:58:32Z",
- "pass": 10,
- "result": "findings",
+ "last_pass_at": "2026-11-12T06:54:12Z",
+ "pass": 11,
+ "result": "quiet",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T00:48:28Z",
+ "checked_at": "2026-11-12T07:02:57Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 10 (707ae92cc): Nov 10 class tuning. Warden Stormstrike 100%/8 s and Mental Dexterity 33/66/100 match the notes (notes-only, client 70888 unchanged); MW, imbue+totem, Sweeping Strikes, NS/Idol of Ferocity reach no tank preset. New low 20261111-1 (tank_shaman.md stale). 20261107-1 and 20261108-1 still open."
+ "note": "Pass 11 (cb0d928fd): tooltip commit only. Rend and Tear comment, Trial by Fire proto rename (field 9, no behaviour change); Defiance 7/13/20 and Thick Hide per-level tooltips match the sim. Quiet; 20261111-1, 20261108-1, 20261107-1 still open."
 }

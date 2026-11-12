@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "33db32b36857a53f3340ae8a0ae366e85a35ae0a"
+  "master": "cb0d928fd69e9bc71acbdcce680f28d622ba52ed"
  },
- "last_pass_at": "2026-11-11T19:10:00Z",
- "pass": 7,
- "result": "findings",
+ "last_pass_at": "2026-11-12T06:58:00Z",
+ "pass": 8,
+ "result": "quiet",
  "baseline": "9ba00c2dc",
- "note": "Pass 7: 9628e85b6 (NS also makes Wild Growth instant) drops the druid raid preset 1.437 -> 1.391 mean carry (all 7 files in ref/healer_fairness/druid_raid_707ae92.tsv; revert build confirms). Other spot cells identical to bench_9ba00c2.tsv. New: -20261111-1 (high). Open: -4, -5.",
+ "note": "Pass 8: watched changes (priest Shadow tree 18->17, shaman improved_fire_nova->trial_by_fire, druid comment) reach no healer preset; 5 spot cells identical to bench_9ba00c2.tsv. Open: -20261111-1, -5, -4.",
  "client_build": "1.60.1.70790",
  "checked_at": "2026-11-12T00:48:28Z"
 }

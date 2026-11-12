@@ -145,13 +145,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 
 	presets: {
 		builds: [
+			Presets.PresetBuildLoneWolf,
 			Presets.PresetBuildBeastMastery,
 			Presets.PresetBuildBeastMasteryWolf,
 			Presets.PresetBuildBeastMasteryTallstrider,
 			Presets.PresetBuildMarksmanship,
 			Presets.PresetBuildMarksmanshipWolf,
 			Presets.PresetBuildMarksmanshipTallstrider,
-			Presets.PresetBuildLoneWolf,
 			Presets.PresetBuildSurvival,
 			Presets.PresetBuildSurvivalWolf,
 			Presets.PresetBuildSurvivalTallstrider,

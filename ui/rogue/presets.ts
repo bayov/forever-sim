@@ -172,10 +172,12 @@ export const GearPresets = {
 	],
 };
 
-// Combat Swords is the class default since round 70753 (November 2 notes): with Aggression off Backstab and
-// Flash of Steel on Shank it leads Combat Daggers by 16.8 at 180 sec (963.5 against 946.7). Combat Daggers
-// was the default from 2026-10-23.
-export const DefaultGear = GearLevel60SyntheticSwordsHitPlus2;
+// Combat Daggers is the class default (user ruling 2026-11-12: each class defaults to its best 180 sec
+// build): 914.6 against Combat Swords' 899.7 in the deployed report. Combat Swords was the default from
+// round 70753 (November 2 notes: with Aggression off Backstab and Flash of Steel on Shank it led Combat
+// Daggers by 16.8 at 180 sec then, 963.5 against 946.7) until then, and Combat Daggers from 2026-10-23
+// before that.
+export const DefaultGear = GearLevel60SyntheticCombatDaggersHitPlus2;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets[]
@@ -245,8 +247,8 @@ export const APLPresets = {
 
 //Need to add main hand equip logic or talent/rotation logic to map to Auto APL
 export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
-	[0]: ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
-	[1]: ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+	[0]: ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
+	[1]: ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -328,10 +330,10 @@ export const TalentPresets = {
 };
 
 export const DefaultTalentsAssassin = TalentsLevel60Mutilate;
-export const DefaultTalentsCombat = TalentsLevel60CombatSwords;
+export const DefaultTalentsCombat = TalentsLevel60CombatDaggers;
 export const DefaultTalentsSubtlety = TalentsLevel60Subtlety;
 
-export const DefaultTalents = TalentsLevel60CombatSwords;
+export const DefaultTalents = TalentsLevel60CombatDaggers;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -529,7 +531,7 @@ export const EncounterLevel60CombatDaggers = level60Encounter('Combat Daggers', 
 // standards 37): Shank, Poised, the reworked tree and Death Mark, talents and rotation searched again,
 // races swept with each race's own rotation (A2's base stats in). 20000 iterations, seed 1 (seed 1000003
 // within 0.6), 120 / 180 / 300 sec, before (master 5eb381750) and after:
-//   Combat Swords       808.7 / 780.4 / 759.5  ->  995.0 / 963.5 / 937.0 Undead (the default)
+//   Combat Swords       808.7 / 780.4 / 759.5  ->  995.0 / 963.5 / 937.0 Undead (the default until 2026-11-12)
 //   Seal Fate Swords    757.4 / 745.5 / 735.0  ->  975.9 / 957.0 / 941.0 Undead
 //   Combat Daggers      814.1 / 789.6 / 769.6  ->  972.8 / 946.7 / 923.3 Undead
 //   Seal Fate Daggers   765.1 / 751.9 / 742.6  ->  936.9 / 920.7 / 906.4 Undead

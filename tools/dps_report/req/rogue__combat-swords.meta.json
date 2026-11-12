@@ -3,7 +3,7 @@
   "class": "Rogue",
   "spec": "Combat",
   "build": "Combat Swords",
-  "isDefault": true,
+  "isDefault": false,
   "pr": 9,
   "race": "Undead",
   "talents": "00530320201-3200330112012321551",

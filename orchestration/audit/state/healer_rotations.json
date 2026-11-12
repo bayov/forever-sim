@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "33db32b36857a53f3340ae8a0ae366e85a35ae0a"
+  "master": "71994fca6e7a0bb2b3e46569ace823373c2a42e1"
  },
- "last_pass_at": "2026-11-11T19:40:00Z",
- "pass": 7,
- "result": "findings",
- "note": "Pass 7 on 707ae92cc. 9628e85b6 (Nature's Swiftness also makes Wild Growth instant) drops the Resto druid raid healer by 0.046 mean carry (Magmadar -0.184): autocast NS is now eaten by Wild Growth instead of the emergency Regrowth. New finding -20261111-1 (an explicit NS line recovers it). Other 56 rows unchanged. -2, -3 still open. baseline.sh committed this time at tools/audit/healer_rotations/.",
+ "last_pass_at": "2026-11-12T07:30:00Z",
+ "pass": 8,
+ "result": "quiet",
+ "note": "Pass 8 on cb0d928fd. Gate: sim/druid/talents.go (comment), sim/priest/priest.go (Shadow TalentTreeSizes 18->17, never read), sim/shaman/talents.go (ImprovedFireNova renamed TrialByFire). All 63 baseline rows byte-identical to ref. -1, -2, -3 still open. baseline.sh rewritten again at tools/audit/healer_rotations/ (was missing).",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T00:48:28Z"
+ "checked_at": "2026-11-12T07:02:57Z"
 }

@@ -20,6 +20,9 @@
 - needs: worker fix
 - update 2026-11-07 (master 12aa2796f, client 70862): SpellPower 304804/310863/310864 still 150/180/230; the sim still
   computes 147/180/231 (`sim/shaman/healing.go:117,132`). Still open.
+- update 2026-11-12 (master cb0d928fd, client 70888): the new talent-tree overlay `tools/forever_talents/notes/shaman.json`
+  (cb0d928fd) now prints "147 Mana" on Riptide, citing the notes with "clients 70753 and 70755 unchanged"; client 70790+ has
+  150 for rank 1, so the tooltip carries the same gap. The fix should also set that overlay's cost to the client's. Still open.
 
 ### healer_mechanics-20261104-10: many heal ranks, healing talents and engine paths have no test that fails when they break
 - severity: low (none found wrong apart from the findings above)
@@ -57,7 +60,7 @@
 - proposed fix: find the commit that moved the row (bisect `go test -tags=with_db ./sim/mage/ -run TestP1Mage`), confirm the
   move is intended, then `make update-tests` for the four suites.
 - needs: orchestrator fix
-- resolved: 2026-11-12, cb0d928fd (no code change; a later full run regenerated the goldens, `go test --tags=with_db ./sim/priest/healing/` passes on current master)
+- resolved: 2026-11-12, 3335001a5 (goldens regenerated; `go test -tags=with_db` of ./sim/priest/..., ./sim/mage/ pass at cb0d928fd)
 
 ### healer_mechanics-20261110-12: Nature's Swiftness doesn't reach Wild Growth; the Nov 10 hotfix makes Wild Growth instant under it
 - severity: medium (Restoration druid raid carry +1.0% with the fix; tank carry unchanged)

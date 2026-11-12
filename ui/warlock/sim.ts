@@ -154,9 +154,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 	raidSimPresets: [
 		{
 			spec: Spec.SpecWarlock,
-			tooltip: 'Destruction DPS',
-			defaultName: 'Destruction',
-			iconUrl: getSpecIcon(Class.ClassWarlock, 2),
+			tooltip: 'Affliction DPS',
+			defaultName: 'Affliction',
+			iconUrl: getSpecIcon(Class.ClassWarlock, 0),
 
 			talents: Presets.DefaultTalents.data,
 			specOptions: Presets.DefaultOptions,

@@ -12,6 +12,7 @@
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
+- pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -23,6 +24,7 @@
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
+- pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -55,6 +57,7 @@
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
+- pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low
@@ -70,6 +73,7 @@
 - pass 6 (2026-11-08, master 9ba00c2): unchanged; not fixed on master.
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
+- pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 
 ## Resolved
 

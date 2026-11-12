@@ -3,7 +3,7 @@
   "class": "Warlock",
   "spec": "Affliction",
   "build": "Affliction",
-  "isDefault": false,
+  "isDefault": true,
   "pr": 104,
   "race": "Undead",
   "talents": "05500021035001351-0050003201-005004",

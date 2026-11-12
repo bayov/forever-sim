@@ -868,14 +868,12 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
-		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__arms-duty-sunder+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
-		"camp.first_aid_kit",
 		"camp.incense_candle",
 		"camp.mana_well",
 		"divine_spirit",
@@ -884,7 +882,6 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
-		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__arms_dragonkin": [

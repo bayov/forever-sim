@@ -3,7 +3,7 @@
   "class": "Hunter",
   "spec": "Beast Mastery",
   "build": "Beast Mastery",
-  "isDefault": true,
+  "isDefault": false,
   "pr": 5,
   "race": "Orc",
   "talents": "5021201505021241-00510504005",

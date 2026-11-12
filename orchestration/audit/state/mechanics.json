@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "33db32b36857a53f3340ae8a0ae366e85a35ae0a"
+  "master": "cb0d928fd69e9bc71acbdcce680f28d622ba52ed"
  },
- "last_pass_at": "2026-11-11T19:38:27Z",
- "pass": 74,
- "result": "quiet",
- "note": "Pass 74: 27d0d59d67..707ae92cc5, 15 sim commits. Shared: 032692409 natural flasks 30 Sta / 2% (resolves mechanics-20261107-1); cb651085c/eb6c042a4 imbues + weapon totems together per Nov 10 hotfixes t/2403040 post 6 (tier 1), separate WF icds = assumption wf_weapon_totem_icd, client 70888 shows no shared category; f20d5938a dot ghost-tick engine fix, OK. Dev notes unchanged (post 10). 70888 hotfix row fetch not finished (too slow), next pass: check pushes newer than 113605 via wago.tools search, newest first.",
+ "last_pass_at": "2026-11-12T06:52:53Z",
+ "pass": 75,
+ "result": "findings",
+ "note": "Pass 75: 33db32b368..cb0d928fd6, 1 sim commit (cb0d928fd talent tooltips, no mechanic change; priest last tree size never read). Nov 11 hotfixes (t/2403040 post 8): mechanics-20261112-1 Holy Strike procs WF totem (user ruling), -2 Unsealed Wrath no echoes from WF attacks, -3 Judgement ranged attack. Estimates, no sims. Hotfix row fetch for 70888+ still not done.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T00:48:28Z",
+ "checked_at": "2026-11-12T06:52:53Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -27,8 +27,9 @@
  },
  "blue_tracker_seen": "2026-11-11T03:27:33Z",
  "hotfix_post_seen": {
-  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/6",
-  "date": "2026-11-11T03:27:33Z",
-  "post1_edited": "2026-11-11T03:27:26Z"
+  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/8",
+  "date": "2026-11-12T00:48:47Z",
+  "post1_edited": "2026-11-12T00:47:36Z",
+  "post6_edited": "2026-11-12T00:46:56Z"
  }
 }

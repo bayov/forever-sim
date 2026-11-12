@@ -3,7 +3,7 @@
   "class": "Hunter",
   "spec": "Marksmanship",
   "build": "Lone Wolf",
-  "isDefault": false,
+  "isDefault": true,
   "pr": 5,
   "race": "NightElf",
   "talents": "5-0053552511503051-5",

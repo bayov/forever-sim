@@ -246,8 +246,8 @@ session_01TXnjyPE5JfDBjP3yqKyxXE has been idle since 2026-11-04, so the timing i
 
 ## Needs a ruling (picks left as master has them)
 
-1. Do Heroic Strike, Cleave, Raptor Strike and Maul roll Windfury Totem? This drives about -100 to -200 on warriors and -96 on Survival.
-2. Warrior default: Fury 2H (925.6) now trails Fury Dual Wield (998.9) by 73.
-3. Rogue default: Combat Swords (899.7) now trails Combat Daggers (914.6).
-4. Already open: the warlock default (Affliction 1070.8 beats Destruction 1062.8), Arcane Concentration's reading, Bane of Agony's ramp, the Windfury cooldowns.
-5. Edgemaster's Handguards' lost expertise (b1291e6) and the dps_warrior golden it breaks.
+1. Do Heroic Strike, Cleave, Raptor Strike and Maul roll Windfury Totem? This drives about -100 to -200 on warriors and -96 on Survival. Ruled 2026-11-12: "for now only white hits proc it until we verify"; the sim stays as 0ce9dbf has it (standards 17, TASKS.md).
+2. Warrior default: Fury 2H (925.6) now trails Fury Dual Wield (998.9) by 73. Ruled 2026-11-12: switch to the best build.
+3. Rogue default: Combat Swords (899.7) now trails Combat Daggers (914.6). Ruled 2026-11-12: switch to the best build.
+4. Already open: the warlock default (Affliction 1070.8 beats Destruction 1062.8), Arcane Concentration's reading, Bane of Agony's ramp, the Windfury cooldowns. Ruled 2026-11-12: the warlock default switches to the best build; Arcane Concentration, Bane of Agony's ramp and the Windfury cooldowns stay as modelled, to verify after the patch lands (TASKS.md).
+5. Edgemaster's Handguards' lost expertise (b1291e6) and the dps_warrior golden it breaks. Ruled 2026-11-12: "use my data, it's what forever changed it to be"; the in-game record stands (docs/data_sources.md) and the golden is regenerated.

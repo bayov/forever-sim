@@ -20,6 +20,7 @@
   totem would settle it. Sure of the asymmetry and the numbers; not of which way the game goes.
 - needs: user ruling
 - pass 8: still open (user ruling); master 707ae92cc keeps `ProcMaskMeleeMHAuto` (sim/core/buffs.go WindfuryTotemBuffAura); the Nov 10 imbue + totem change doesn't touch it. Not re-tested.
+- pass 9: still open (user ruling); cb0d928fd keeps `ProcMaskMeleeMHAuto`. Not re-tested.
 
 ### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
 - severity: medium
@@ -34,6 +35,7 @@
 - pass 5: still open (user call); bba052f75 unchanged; not re-tested.
 - pass 6: still open (user call); 9ba00c2dc unchanged; not re-tested.
 - pass 8: still open (user call); 707ae92cc unchanged; not re-tested. Finding 20261111-1 (Titans over Natural Precision at Max survival, +39.5 ± 16.2) is a separate lever.
+- pass 9: still open (user call); cb0d928fd unchanged; not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -49,6 +51,7 @@
 - pass 5: still open (user ruling); bba052f75 unchanged; not re-tested.
 - pass 6: still open (user ruling); 9ba00c2dc unchanged; not re-tested.
 - pass 8: still open (user ruling); 707ae92cc unchanged; not re-tested.
+- pass 9: still open (user ruling); cb0d928fd unchanged; not re-tested.
 
 ## Resolved
 
