@@ -1,18 +1,18 @@
 request	role	boss	length	carry	ehps	overheal	eh_per_mana	mana_left	oom_at	tank_died	other_died	death_floor
-druid_restoration	tank	onyxia	35 s	1.386	539	35.2%	5.12	6232	(318 s)	0.0%	0.0%	0.9% tank, 0.8% other
-druid_restoration	tank	broodlord	41 s	0.873	540	34.7%	4.46	6127	(464 s)	13.9%	13.9%	0.1% tank, 0.0% other
-druid_restoration	tank	chromaggus	115 s	1.010	724	29.5%	4.62	2282	(193 s)	1.5%	1.3%	0.0% tank, 0.0% other
-druid_restoration	tank	golemagg	56 s	1.864	450	39.5%	5.09	6319	(650 s)	0.0%	0.0%	0.0% tank, 0.0% other
-druid_restoration	tank	magmadar	53 s	2.004	416	40.6%	5.45	6495	(670 s)	0.0%	0.0%	0.0% tank, 0.0% other
-druid_restoration	tank	ragnaros	71 s	0.629	523	16.8%	5.00	5177	(535 s)	88.5%	86.5%	0.0% tank, 0.0% other
-druid_restoration	tank	vaelastrasz	17 s	0.927	991	25.5%	4.95	5960	(130 s)	9.9%	1.8%	0.1% tank, 0.0% other
-druid_restoration_raid	raid	onyxia	137 s	0.991	134	77.4%	1.75	6150	(1283 s)	0.0%	5.6%	not recorded
-druid_restoration_raid	raid	broodlord	44 s	0.924	341	67.0%	2.51	6688	(1480 s)	0.0%	11.3%	not recorded
-druid_restoration_raid	raid	chromaggus	115 s	1.094	88	79.5%	1.79	7131	(3006 s)	0.0%	1.7%	not recorded
-druid_restoration_raid	raid	golemagg	56 s	2.630	52	75.6%	1.91	7260	(3069 s)	0.0%	0.0%	not recorded
-druid_restoration_raid	raid	magmadar	54 s	1.829	203	75.6%	1.86	6702	(1423 s)	0.0%	0.0%	not recorded
-druid_restoration_raid	raid	ragnaros	97 s	1.278	309	79.2%	1.78	5418	(660 s)	0.0%	0.3%	not recorded
-druid_restoration_raid	raid	vaelastrasz	31 s	1.152	930	45.9%	3.70	6070	(352 s)	0.0%	2.8%	not recorded
+druid_restoration	tank	onyxia	35 s	1.403	542	32.8%	5.28	6273	(328 s)	0.0%	0.0%	1.3% tank, 1.2% other
+druid_restoration	tank	broodlord	41 s	0.893	547	32.3%	4.50	6141	(505 s)	12.0%	12.0%	0.1% tank, 0.0% other
+druid_restoration	tank	chromaggus	115 s	1.023	728	28.9%	4.65	2296	(197 s)	0.9%	0.9%	0.0% tank, 0.0% other
+druid_restoration	tank	golemagg	56 s	1.951	450	39.5%	5.09	6319	(650 s)	0.0%	0.0%	0.0% tank, 0.0% other
+druid_restoration	tank	magmadar	53 s	2.045	416	40.6%	5.45	6496	(670 s)	0.0%	0.0%	0.0% tank, 0.0% other
+druid_restoration	tank	ragnaros	71 s	0.634	554	15.2%	5.07	5054	(545 s)	86.9%	84.4%	0.0% tank, 0.0% other
+druid_restoration	tank	vaelastrasz	17 s	0.932	1012	22.5%	5.05	5917	(138 s)	6.8%	1.2%	0.0% tank, 0.0% other
+druid_restoration_raid	raid	onyxia	137 s	0.991	134	77.4%	1.75	6150	(1283 s)	0.0%	5.6%	0.0% tank, 2.1% other
+druid_restoration_raid	raid	broodlord	44 s	0.924	341	67.0%	2.51	6688	(1480 s)	0.0%	11.3%	0.0% tank, 2.8% other
+druid_restoration_raid	raid	chromaggus	115 s	1.094	88	79.5%	1.79	7131	(3006 s)	0.0%	1.7%	0.0% tank, 2.6% other
+druid_restoration_raid	raid	golemagg	56 s	2.630	52	75.6%	1.91	7260	(3069 s)	0.0%	0.0%	0.0% tank, 2.6% other
+druid_restoration_raid	raid	magmadar	54 s	1.829	203	75.6%	1.86	6702	(1423 s)	0.0%	0.0%	0.0% tank, 0.0% other
+druid_restoration_raid	raid	ragnaros	97 s	1.278	309	79.2%	1.78	5418	(660 s)	0.0%	0.3%	0.0% tank, 1.4% other
+druid_restoration_raid	raid	vaelastrasz	31 s	1.152	930	45.9%	3.70	6070	(352 s)	0.0%	2.8%	0.0% tank, 0.0% other
 paladin_holy	tank	onyxia	35 s	1.241	526	27.3%	6.06	7313	(409 s)	0.0%	0.0%	0.0% tank, 0.0% other
 paladin_holy	tank	broodlord	41 s	0.883	539	24.4%	4.44	6354	(476 s)	14.2%	13.9%	0.1% tank, 0.0% other
 paladin_holy	tank	chromaggus	115 s	0.908	681	20.2%	5.77	2871	(242 s)	17.3%	15.1%	0.0% tank, 0.0% other
@@ -20,13 +20,13 @@ paladin_holy	tank	golemagg	56 s	1.806	447	25.8%	6.45	7310	(680 s)	0.0%	0.0%	0.0%
 paladin_holy	tank	magmadar	53 s	1.867	411	27.4%	6.43	7371	(683 s)	0.0%	0.0%	0.0% tank, 0.0% other
 paladin_holy	tank	ragnaros	71 s	0.568	421	19.7%	4.63	5518	(823 s)	93.3%	90.8%	0.0% tank, 0.0% other
 paladin_holy	tank	vaelastrasz	17 s	0.789	795	23.7%	3.83	6524	(514 s)	36.1%	17.2%	0.0% tank, 0.0% other
-paladin_holy_raid	raid	onyxia	137 s	0.977	124	21.3%	5.01	7851	(3107 s)	0.0%	5.9%	not recorded
-paladin_holy_raid	raid	broodlord	44 s	0.900	315	20.7%	4.01	7664	(2294 s)	0.0%	9.6%	not recorded
-paladin_holy_raid	raid	chromaggus	115 s	1.087	82	21.7%	4.40	8109	(3469 s)	0.0%	2.6%	not recorded
-paladin_holy_raid	raid	golemagg	56 s	2.684	45	23.4%	6.21	8240	(3566 s)	0.0%	0.0%	not recorded
-paladin_holy_raid	raid	magmadar	54 s	1.903	179	17.8%	6.72	8157	(3131 s)	0.0%	0.0%	not recorded
-paladin_holy_raid	raid	ragnaros	97 s	1.290	290	20.3%	6.11	8032	(3057 s)	0.0%	0.3%	not recorded
-paladin_holy_raid	raid	vaelastrasz	31 s	0.957	707	19.3%	4.83	7203	(685 s)	0.0%	6.3%	not recorded
+paladin_holy_raid	raid	onyxia	137 s	0.977	124	21.3%	5.01	7851	(3107 s)	0.0%	5.9%	0.0% tank, 2.3% other
+paladin_holy_raid	raid	broodlord	44 s	0.900	315	20.7%	4.01	7664	(2294 s)	0.0%	9.6%	0.0% tank, 2.0% other
+paladin_holy_raid	raid	chromaggus	115 s	1.087	82	21.7%	4.40	8109	(3469 s)	0.0%	2.6%	0.0% tank, 2.3% other
+paladin_holy_raid	raid	golemagg	56 s	2.684	45	23.4%	6.21	8240	(3566 s)	0.0%	0.0%	0.0% tank, 3.1% other
+paladin_holy_raid	raid	magmadar	54 s	1.903	179	17.8%	6.72	8157	(3131 s)	0.0%	0.0%	0.0% tank, 0.0% other
+paladin_holy_raid	raid	ragnaros	97 s	1.290	290	20.3%	6.11	8032	(3057 s)	0.0%	0.3%	0.0% tank, 1.6% other
+paladin_holy_raid	raid	vaelastrasz	31 s	0.957	707	19.3%	4.83	7203	(685 s)	0.0%	6.3%	0.0% tank, 0.0% other
 priest_discipline	tank	onyxia	35 s	1.363	515	20.1%	3.90	6271	(198 s)	0.0%	0.0%	0.8% tank, 0.8% other
 priest_discipline	tank	broodlord	41 s	0.958	537	18.6%	3.70	6311	(291 s)	4.8%	4.8%	0.2% tank, 0.0% other
 priest_discipline	tank	chromaggus	115 s	0.871	622	16.9%	4.52	341	101 s	30.2%	23.6%	0.0% tank, 0.0% other
@@ -41,13 +41,13 @@ priest_holy	tank	golemagg	56 s	2.000	421	38.0%	3.85	6501	(420 s)	0.0%	0.0%	0.0% 
 priest_holy	tank	magmadar	53 s	2.154	388	38.2%	3.71	6645	(412 s)	0.0%	0.0%	0.0% tank, 0.0% other
 priest_holy	tank	ragnaros	71 s	0.600	436	28.3%	4.75	5391	(564 s)	90.8%	88.3%	0.0% tank, 0.0% other
 priest_holy	tank	vaelastrasz	17 s	0.910	934	30.3%	4.91	6755	(169 s)	11.3%	2.8%	0.0% tank, 0.0% other
-priest_holy_raid	raid	onyxia	137 s	0.978	139	50.3%	2.20	7030	(1660 s)	0.0%	6.2%	not recorded
-priest_holy_raid	raid	broodlord	44 s	0.923	336	41.9%	2.68	7077	(795 s)	0.0%	9.5%	not recorded
-priest_holy_raid	raid	chromaggus	115 s	1.066	93	61.9%	1.54	7587	(2872 s)	0.0%	1.8%	not recorded
-priest_holy_raid	raid	golemagg	56 s	2.608	53	72.5%	0.93	7717	(2651 s)	0.0%	0.0%	not recorded
-priest_holy_raid	raid	magmadar	54 s	2.054	201	57.2%	2.12	7406	(1595 s)	0.0%	0.0%	not recorded
-priest_holy_raid	raid	ragnaros	97 s	1.328	310	55.5%	2.33	6853	(1112 s)	0.0%	0.2%	not recorded
-priest_holy_raid	raid	vaelastrasz	31 s	1.125	947	43.4%	4.82	6869	(357 s)	0.0%	1.0%	not recorded
+priest_holy_raid	raid	onyxia	137 s	0.978	139	50.3%	2.20	7030	(1660 s)	0.0%	6.2%	0.0% tank, 2.8% other
+priest_holy_raid	raid	broodlord	44 s	0.923	336	41.9%	2.68	7077	(795 s)	0.0%	9.5%	0.0% tank, 3.9% other
+priest_holy_raid	raid	chromaggus	115 s	1.066	93	61.9%	1.54	7587	(2872 s)	0.0%	1.8%	0.0% tank, 2.9% other
+priest_holy_raid	raid	golemagg	56 s	2.608	53	72.5%	0.93	7717	(2651 s)	0.0%	0.0%	0.0% tank, 5.1% other
+priest_holy_raid	raid	magmadar	54 s	2.054	201	57.2%	2.12	7406	(1595 s)	0.0%	0.0%	0.0% tank, 0.4% other
+priest_holy_raid	raid	ragnaros	97 s	1.328	310	55.5%	2.33	6853	(1112 s)	0.0%	0.2%	0.0% tank, 2.4% other
+priest_holy_raid	raid	vaelastrasz	31 s	1.125	947	43.4%	4.82	6869	(357 s)	0.0%	1.0%	0.0% tank, 0.0% other
 shaman_restoration	tank	onyxia	35 s	1.340	498	18.9%	3.92	6805	(318 s)	0.0%	0.0%	0.3% tank, 0.3% other
 shaman_restoration	tank	broodlord	41 s	0.978	523	21.5%	3.56	6618	(368 s)	3.6%	3.6%	0.4% tank, 0.0% other
 shaman_restoration	tank	chromaggus	115 s	0.984	651	18.0%	4.44	2145	(173 s)	2.9%	2.8%	0.0% tank, 0.0% other
@@ -55,10 +55,10 @@ shaman_restoration	tank	golemagg	56 s	1.938	413	29.3%	3.51	6583	(466 s)	0.0%	0.0
 shaman_restoration	tank	magmadar	53 s	2.062	386	27.0%	3.62	6737	(473 s)	0.0%	0.0%	0.0% tank, 0.0% other
 shaman_restoration	tank	ragnaros	71 s	0.587	389	3.5%	4.70	6275	(848 s)	93.5%	92.8%	0.0% tank, 0.0% other
 shaman_restoration	tank	vaelastrasz	17 s	0.911	875	4.3%	4.47	6868	(188 s)	16.2%	1.4%	0.0% tank, 0.0% other
-shaman_restoration_raid	raid	onyxia	137 s	0.927	134	51.0%	3.14	7516	(2685 s)	0.0%	8.4%	not recorded
-shaman_restoration_raid	raid	broodlord	44 s	0.912	330	35.0%	4.16	7627	(2161 s)	0.0%	10.1%	not recorded
-shaman_restoration_raid	raid	chromaggus	115 s	1.084	88	62.8%	2.28	7840	(3466 s)	0.0%	1.4%	not recorded
-shaman_restoration_raid	raid	golemagg	56 s	2.630	57	73.0%	1.62	7885	(3401 s)	0.0%	0.0%	not recorded
-shaman_restoration_raid	raid	magmadar	54 s	1.827	199	52.6%	2.95	7731	(2606 s)	0.0%	0.0%	not recorded
-shaman_restoration_raid	raid	ragnaros	97 s	1.239	306	46.4%	3.69	7562	(2444 s)	0.0%	0.9%	not recorded
-shaman_restoration_raid	raid	vaelastrasz	31 s	1.125	831	22.7%	5.59	7135	(577 s)	0.0%	2.5%	not recorded
+shaman_restoration_raid	raid	onyxia	137 s	0.946	135	53.9%	3.05	7461	(2534 s)	0.0%	7.4%	0.0% tank, 1.9% other
+shaman_restoration_raid	raid	broodlord	44 s	0.885	334	42.1%	3.67	7535	(1795 s)	0.0%	11.8%	0.0% tank, 2.4% other
+shaman_restoration_raid	raid	chromaggus	115 s	1.115	93	62.9%	2.38	7832	(3431 s)	0.0%	1.0%	0.0% tank, 4.7% other
+shaman_restoration_raid	raid	golemagg	56 s	2.674	56	72.5%	1.66	7875	(3359 s)	0.0%	0.0%	0.0% tank, 2.7% other
+shaman_restoration_raid	raid	magmadar	54 s	1.887	196	58.3%	2.65	7645	(2363 s)	0.0%	0.0%	0.0% tank, 0.1% other
+shaman_restoration_raid	raid	ragnaros	97 s	1.236	305	49.6%	3.49	7525	(2341 s)	0.0%	0.5%	0.0% tank, 0.9% other
+shaman_restoration_raid	raid	vaelastrasz	31 s	1.138	834	29.5%	5.06	7024	(516 s)	0.0%	2.4%	0.0% tank, 0.0% other

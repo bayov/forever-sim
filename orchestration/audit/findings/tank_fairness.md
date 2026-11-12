@@ -2,6 +2,33 @@
 
 ## Open
 
+### tank_fairness-20261112-3: Bear Max survival plays Night Elf; Tauren scores higher since the bear re-tune
+- severity: medium (+32 / +12 on a score of about 190, the bear's own preset only; no rank moves)
+- affects: Feral tank druid, Max survival (tools/tankbench/req/druid_bear_max_survival.json RaceNightElf, ui/feral_tank_druid presets)
+- found: 2026-11-12, master 4fb90c298
+- evidence: the race table (ui/dps_report/data/tank_races.json, dc363151e) predates the Windfury rule and the bear re-tune (Frenzied Regeneration at 80 Rage, Swipe filler, new talents, ca7c42400). Paired tankbench, six-boss mean at w=3, the request with race swapped: 3,000 iterations seed 1 / 2: Tauren +21.7 / +41.2, Skyborne (either half) -157 / -150; 10,000 iterations seed 1 / 2: Tauren +32.2 / +12.3 (184 -> 216 at seed 1; TPS -34, healing needed -16). Night Elf still wins Max threat (Tauren -150 / -143) and Balanced (-114 / -110). Sure of the sign (four runs), not of the size (±10 to 15).
+- proposed fix: bear worker: Max survival to Tauren (confirm with bench_races.py on the race table), re-check its talents and FR threshold on the new race, then the UI preset and docs/tank_druid.md.
+- needs: worker fix
+
+### tank_fairness-20261112-2: Agility enchants beat the head, legs, neck and glove picks on three tanks (paladin Max survival +78 / +62, which puts it back ahead of the warrior)
+- severity: high (moves the Max survival ranking: paladin 1,723 -> 1,801 against the warrior's 1,750 -> 1,764 with its own fix)
+- affects: paladin Balanced and Max survival, Warden all three, warrior all three, bear Max survival (equipment enchants in tools/tankbench/req/*.json and the ui presets)
+- found: 2026-11-12, master 4fb90c298
+- evidence: each slot swapped alone (3,000 iterations, seed 1, then seed 2), then the winners together (10,000 iterations, seed 1 / 2, paired, six-boss mean at the preset's own weight). Enchant ids: Lesser Arcanum of Voracity Agility 1508 / Strength 1506 on head and legs, Enchant Necklace - Agility 1249059, Gloves Greater Agility 1887.
+  - Paladin Max survival: head + legs 1507 -> 1508, neck 1249019 -> 1249059, gloves 1248640 -> 1887: **+78.3 / +62.2** (DTPS -11).
+  - Paladin Balanced: same four: **+26.0 / +24.7**.
+  - Warden Max survival: gloves -> 1887, neck -> 1249059 (chest Major Health 1892 was +13 / +2 alone): **+45.5 / +52.2**.
+  - Warden Balanced: head + legs 1507 -> 1508, gloves -> 1887, neck -> 1249059: **+31.8 / +23.5**.
+  - Warden Max threat: head + legs -> 1508, neck -> 1249059: **+18.7 / +15.7**.
+  - Warrior Max threat: head + legs Lesser Arcanum of Constitution 1503 -> 1506: **+20.5 / +20.7** (TPS +17).
+  - Warrior Balanced: the same: +6.0 / +5.8.
+  - Warrior Max survival: neck 1249019 -> 1249059: **+13.8 / +13.2** (adding head + legs 1508 is +27 / +7: noise).
+  - Bear Max survival: gloves 1248640 -> 1887: +14.3 / +23.7.
+  - Nothing found for paladin Max threat, bear Max threat and Balanced (every single swap within ±3).
+  Probable cause: the Windfury rule and the re-tunes changed the stat weights after the 2026-11-12 tank_gear pass, which tried boots, wrists and cloak but not these slots on every preset. Reproduce: tools/audit/tank_fairness/variants.py, bench.sh, paired.py (the requests are in $AUDIT_WORK/tank_fairness/p11/req3 for the combinations).
+- proposed fix: each tank worker takes the listed enchants (confirm each slot at 10,000 on two seeds, since a few single swaps sit at +2 to +8), then the UI presets, docs/tank_*.md and the DPS Report Tanking data. A tank_gear pass could add head / legs / neck / gloves to its per-preset enchant screen.
+- needs: worker fix
+
 ### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
 - severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
 - affects: Warden shaman, all three presets (tools/tankbench/req/shaman_warden_{max_threat,balanced}.json RaceNightElf, shaman_warden_max_survival.json RaceUndead; ui/warden_shaman/sim.ts:90 RaceNightElf; docs/tank_shaman.md:34-36 and calls (f), (g))
@@ -14,6 +41,7 @@
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 - pass 10 (2026-11-12, master 67ad7c6a4): not fixed; requests still Night Elf / Night Elf / Undead. Re-measured after the Warden re-tune, paired 3,000 iterations, seed 1 / 2, against the preset race: Max threat Troll -56.7 / -62.0, Orc -59.7 / -63.2; Balanced Troll -84.3 / -71.3, Orc -87.2 / -91.2; Max survival Tauren -153.2 / -163.8 (the Undead edge grew from about 43). Legal scores: 2,475 / 1,100 / -2,550; the Warden stays last at every weight.
+- pass 11 (2026-11-12, master 4fb90c298): not fixed; still Night Elf / Night Elf / Undead. Paired 3,000 iterations, seed 1 / 2, against the preset race: Max threat Troll -58.8 / -67.3, Orc -59.3 / -69.2, Skyborne Windshaper -112.8 / -108.5; Balanced Troll -84.2 / -72.8, Orc -89.2 / -86.0, Tauren -90.8 / -92.5; Max survival Tauren -153.2 / -163.8, Troll -205 / -236. Best legal: Troll / Troll / Tauren. The Warden stays last at every weight.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -27,6 +55,7 @@
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 - pass 10 (2026-11-12, master 67ad7c6a4): not fixed; all three paladin requests still Major Mana Potion with no potion action. Re-measured on the new flask and Wizard Oil, Greater Stoneshield plus the potion action, 3,000 iterations, six-boss mean, seed 1 / 2: Max threat +60.7 / +57.5, Balanced +174.7 / +168.3, Max survival +408.8 / +394.7 (+24%, DTPS -30 at each weight). Max survival would go 1,711 to about 2,120 against the warrior's 1,573.
+- pass 11 (2026-11-12, master 4fb90c298): not fixed; all three requests still Major Mana Potion, no potion action. Re-measured, 3,000 iterations seed 1 / 2: Max threat +60.7 / +57.5, Balanced +174.7 / +168.3, Max survival +408.8 / +394.7. With the Windfury rule the warrior now leads Max survival (1,762 against 1,711, seed 1); the potion would put the paladin at about 2,120. TASKS.md and the round ledger (orchestration/round_notes_2026-11-11/ledger.md) have no entry for it; the paladin's docs still record the old 0.0 (docs/tank_paladin.md:312).
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -61,6 +90,7 @@
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 - pass 10 (2026-11-12, master 67ad7c6a4): unchanged in kind (Balanced healing needed paladin 241 against warrior 344, bear 474, Warden 665); still waits on the user's calls.
+- pass 11 (2026-11-12, master 4fb90c298): unchanged in kind (Balanced healing needed paladin 241 against warrior 340, bear 464, Warden 665); still waits on the user's calls (a), (b), (c).
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low
@@ -78,6 +108,7 @@
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 - pass 10 (2026-11-12, master 67ad7c6a4): unchanged; tools/tankbench/req/warrior_protection.json still present.
+- pass 11 (2026-11-12, master 4fb90c298): unchanged; tools/tankbench/req/warrior_protection.json still present.
 
 ## Resolved
 
