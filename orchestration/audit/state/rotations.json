@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "71994fca6e7a0bb2b3e46569ace823373c2a42e1"
+  "master": "a0b4d3be9859f76f9365c0cb672ec57ef8e6423e"
  },
- "last_pass_at": "2026-11-11T19:22:07Z",
- "pass": 59,
- "result": "quiet",
- "note": "Pass 59: Enh Nov 10 tuning (-113..-123), Affliction 113766 rotation (+34..+37), flasks (-16..-38). Enh + raid WF Totem +0.2 (own totem already procs with WF Weapon), FT Weapon + WF Totem -106; Affliction Wrack/Corruption variants and hunter Arcane Shot mana gate lose. No new findings; 20261105-1 and 20261109-1 still open.",
+ "last_pass_at": "2026-11-12T13:20:56Z",
+ "pass": 60,
+ "result": "findings",
+ "note": "Pass 60: Windfury Totem on main hand abilities (a0b4d3be9) + Venom Instant Poison (e2322baa1): Arms +170, Fury 2H +100, Fury +48..64, SV +70, rogues +22..58. New rotations-20261112-1 (rogue poison swap, +2.4..+16.3). 20261109-1 narrowed to Fury 2H (+2.0); Arms drop now loses 4.1. 20261105-1 still open.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T07:02:57Z",
- "baseline": "baseline_707ae92_3000it_seed424242.tsv"
+ "checked_at": "2026-11-12T13:28:36Z",
+ "baseline": "baseline_a0b4d3b_3000it_seed424242.tsv"
 }

@@ -1,14 +1,12 @@
 # Rotation audit: reference files
 
-- `baseline_707ae92_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  707ae92cc (pass 59). Against the previous ca5e35c baseline: Enhancement -113 to -123 (Nov 10 shaman tuning
-  cb651085c and re-optimized builds 54a15ba24), Affliction +34 to +37 (hotfix 113766 rotation 5607180c7,
-  ghost-tick fix f20d5938a), natural-flask presets (warrior, rogue, hunter, Feral) -16 to -28 (70862 flasks
-  032692409; Fury -37, SV -27 also take item and hunter mana changes), Arcane -8 (Arcane Concentration split),
-  Fire -4; the rest under 0.5.
+- `baseline_a0b4d3b_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  a0b4d3be9 (pass 60). Against the previous 707ae92 baseline (same req files): Arms +168 to +171, Fury 2H
+  +98 to +106, Fury DW +48 to +64, Survival +69 to +72 (Windfury Totem rolls on main hand abilities,
+  a0b4d3be9); rogues +22 to +58 (that, plus Venom reaching Instant Poison, e2322baa1); the rest under 1.
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at 9ba00c2dc (`/tmp/audit-cache/cli/9ba00c2dc473/wowsimcli`).
+  - The CLI was the audit loop's shared build at a0b4d3be9 (`/tmp/audit-cache/cli/a0b4d3be9859/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

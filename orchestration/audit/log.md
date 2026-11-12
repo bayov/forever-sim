@@ -314,3 +314,13 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-12 07:02 | tank_mechanics | pass 11 | master cb0d928fd | quiet | tooltip commit changes no tank behaviour
 2026-11-12 07:02 | tank_rotations | pass 9 | master cb0d928fd | quiet | Onyxia spot check identical to pass 8
 2026-11-12 07:02 | tank_fairness | pass 9 | master cb0d928fd | quiet | 84 rows identical to pass 8
+2026-11-12 13:28 | results | pass 84 | master a0b4d3be9 | 1 new finding | 19 builds stale after Windfury Totem change (high)
+2026-11-12 13:28 | rotations | pass 60 | master a0b4d3be9 | 1 new finding | Instant/Deadly poison swap for 4 rogue builds (high)
+2026-11-12 13:28 | gear | pass 62 | master a0b4d3be9 | quiet | only standards.md changed
+2026-11-12 13:28 | consumables | pass 80 | master a0b4d3be9 | quiet | no Consumes/Buffs/Debuffs object changed
+2026-11-12 13:28 | mechanics | pass 76 | master a0b4d3be9 | quiet | Venom and Windfury commits correct; finding dropped to low
+2026-11-12 13:28 | fairness | pass 36 | master a0b4d3be9 | 1 new finding | Combat Swords now beats Daggers (medium)
+2026-11-12 13:28 | healer_gear | pass 6 | master a0b4d3be9 | quiet | no healer gear change
+2026-11-12 13:28 | healer_fairness | pass 9 | master a0b4d3be9 | quiet | 5 spot cells match baseline
+2026-11-12 13:28 | tank_gear | pass 7 | master a0b4d3be9 | quiet | no tank gear change
+2026-11-12 13:28 | tank_fairness | pass 10 | master a0b4d3be9 | quiet | baseline refreshed; warrior/paladin tie gone

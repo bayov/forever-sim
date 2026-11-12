@@ -1,15 +1,13 @@
-# Healer fairness pass 8 (2026-11-12, master cb0d928fd6)
+# Healer fairness pass 9 (2026-11-12, master a0b4d3be98)
 
 Result: quiet. No new finding. Still open: -20261111-1 (high, druid raid NS on Wild Growth), -5 (high, paladin raid
-preset), -4 (low). Due because 3 watched files changed (33db32b..cb0d928fd6, 3 commits). What they do:
-- sim/druid/talents.go: comment only (Rend and Tear tooltip note).
-- sim/priest/priest.go: TalentTreeSizes Shadow 18 -> 17. The Holy and Disc talent strings have no Shadow tree part
-  (005005031330011531-0350510303, 00500503113-03505103030121531), so their parsing is unchanged.
-- sim/shaman/talents.go + proto: improved_fire_nova renamed trial_by_fire (same field 9). Both shaman healer strings
-  start with an empty Elemental tree, so nothing reaches them.
-- tools/healbench, req and encounters unchanged, so section 1 stands.
+preset), -4 (low). Due because standards.md changed (cb0d928fd6..a0b4d3be98): standard 17 now has Windfury Totem roll
+on main hand abilities (Heroic Strike, Sinister Strike, ...) as well as white swings under Forever. The code side
+(sim/core/buffs.go, windfury_totem_procs_forever.go) only changes which melee main hand spells roll the totem; no
+healer request has Windfury Totem and healers don't melee, so nothing reaches them.
+- tools/healbench, req, encounters and healer presets unchanged, so section 1 stands.
 
-Spot check, healbench built from cb0d928fd6, 1,000 iterations, -carry: identical to bench_9ba00c2.tsv in HPS and carry
+Spot check, healbench built from a0b4d3be98, 1,000 iterations, -carry: identical to bench_9ba00c2.tsv in HPS and carry
 for priest_holy (tank Broodlord 800, 0.930), priest_discipline (tank Broodlord 656, 0.971), shaman_restoration (tank
 Broodlord 662, 0.974), priest_holy_raid (raid Onyxia 280, 0.978), shaman_restoration_raid (raid Onyxia 267, 0.920).
 Rankings as in pass 7: raid Holy 1.437, paladin 1.413, shaman 1.395, druid 1.391 (druid column from

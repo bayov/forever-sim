@@ -1,5 +1,5 @@
-# healer_gear report, pass 5, master 707ae92cc5
+# healer_gear pass 6 (master a0b4d3be9)
 
-Trigger: orchestration/standards.md changed since 27d0d59d67 (item 25 amended 2026-11-11: weapon imbue and weapon totem now both work; Enhancement totem pairing).
-The amendment touches no healer gear, no 1b/5/5a/35 rule and no healer row. git diff --stat for tools/database forever_synthetic_items_*, ui/*/gear_sets, forever_wowhead_recipes.json and orchestration/gear_targets.md between the two commits is empty.
-Per-piece recompute skipped as inputs are unchanged; pass 3 result stands. Result: quiet, no findings.
+Quiet. Since 33db32b36 no healer synthetic item file, gear set, gear_targets.md or class items.go changed.
+The one watched change, orchestration/standards.md standard 17 (Windfury Totem procs on main hand abilities), does not touch healers' gear.
+orchestration/fairness_healers.md also changed (not a gear input of this pass). Piece, set and row tables from pass 5 stand; not recomputed.

@@ -4,8 +4,31 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### rotations-20261109-1: Arms and Fury 2H: drop the Heroic Strike rage-dump line now that only white swings proc Windfury Totem
-- severity: low (+3.5 DPS at 180 s on Arms, 0.39%; +3.5 on Fury 2H, 0.36%)
+### rotations-20261112-1: Dagger and Seal Fate rogues: Instant Poison on the main hand, Deadly Poison on the off hand
+- severity: high (Seal Fate Daggers +16.3 at 180 s, 1.8%; Mutilate +14.3, 1.65%; Seal Fate Swords +9.8, 1.05%; Subtlety +2.4, 0.28%)
+- affects: rogue__mutilate, rogue__seal-fate-daggers, rogue__seal-fate-swords, rogue__subtlety. Not the two Combat builds (swap loses 2.3-3.2).
+- found: 2026-11-12, master a0b4d3be9
+- evidence: every rogue req carries `"rogue":{"options":{"mainHandPoison":"DeadlyPoison","offHandPoison":"InstantPoison"}}`
+  (e.g. `tools/dps_report/req/rogue__mutilate.json:1101`), from the shared `ui/rogue/presets.ts:345-346`. B swaps the two.
+  Paired `ab.py --req-b` (20k it, 8 blocks, CLI a0b4d3be9859), B-A at 120 / 180 / 300 s:
+  | preset | S0 1e6 | S0 2e8 | pooled | A at 180 |
+  |---|---|---|---|---|
+  | mutilate | +14.91 / +14.47 / +14.13 | +15.02 / +14.18 / +13.77 | **+14.97 / +14.33 / +13.95** | 865.0 |
+  | seal-fate-daggers | +16.41 / +16.26 / +15.70 | +16.63 / +16.28 / +15.78 | **+16.52 / +16.27 / +15.74** | 903.6 |
+  | seal-fate-swords | +10.34 / +9.60 / +9.23 | +9.98 / +10.04 / +9.68 | **+10.16 / +9.82 / +9.46** | 939.0 |
+  | subtlety | +2.08 / +2.27 / +2.04 | +2.44 / +2.61 / +2.65 | **+2.26 / +2.44 / +2.35** | 862.6 |
+  | combat-daggers | -1.96 / -2.72 / -3.28 | -2.57 / -2.73 / -3.19 | -2.27 / -2.73 / -3.24 | 936.2 |
+  | combat-swords | -2.63 / -2.81 / -3.17 | - | - | - |
+  SE 0.2-0.7 a set. Instant Poison on both hands loses on every build (-13 to -20; Seal Fate Daggers -1.5).
+  Part of this predates the change: the old CLI (71994fca6) gives the swap +7.4 (Mutilate) and +6.3 (Seal Fate
+  Daggers) at 180 s, set 1. This master's Windfury Totem rolls on main hand abilities (a0b4d3be9) and Venom's
+  +20% reaching Instant Poison (e2322baa1) roughly double it. High confidence on the sign; numbers as measured.
+- proposed fix: give Mutilate, both Seal Fate builds and Subtlety their own options with `mainHandPoison: InstantPoison`,
+  `offHandPoison: DeadlyPoison` (presets.ts and the four req files); Combat keeps the current pairing.
+- needs: orchestrator fix
+
+### rotations-20261109-1: Fury 2H: drop the 90-rage Heroic Strike line (Arms no longer: Windfury Totem now rolls on Heroic Strike)
+- severity: low (now +2.0 DPS at 180 s on Fury 2H, 0.19%; was +3.5 on Arms and Fury 2H)
 - affects: warrior__arms (+ -duty-battle-shout, -duty-sunder, _dragonkin), warrior__fury_2h (+ its two duty builds). Not Fury DW.
 - found: 2026-11-09, master 66a243cf8
 - evidence: 0ce9dbf40 (`sim/core/buffs.go:2166`, user ruling 2026-11-08) makes Windfury Totem proc from
@@ -23,7 +46,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
   SE 0.25-0.66 a set. Raising the gate to 100 gains less (Arms pooled +1.0 / +1.4 / +0.9, Fury 2H +0.9 / +1.3 / +1.5).
   Fury DW keeps its 60 gate: 80 loses 2.8 and 50 loses 1.7 at 180 s (set 1). Duty and Dragonkin builds were not
   run separately; they share the line, so the gain should carry over (estimate).
-- proposed fix: delete the 90-rage Heroic Strike line from the seven Arms and Fury 2H APLs and their req rotations.
+- update 2026-11-12 (pass 60, master a0b4d3be9): a0b4d3be9 reverses the premise; Heroic Strike now rolls Windfury
+  Totem again. Re-measured, same variant (delete req rotation index 16), 20k it, both seed sets, B-A at 120 / 180 / 300 s:
+  Arms pooled -1.24 / -4.11 / -5.92 (A 1043.2 at 180): keep the line on Arms, Arms_dragonkin and the Arms duties.
+  Fury 2H pooled +0.86 / +1.98 / +0.40 (set 1 +0.78 / +1.78 / +0.15, set 2 +0.94 / +2.17 / +0.65; A 1033.2): still
+  just over the bar, no loss at any length. Lowering the gate loses on both (Arms 75 / 60 / 50: -5.1 / -19.4 / -31.5
+  at 180; Fury 2H -6.8 / -17.8 / -31.5). Fury DW's 60 gate holds (40 -7.6, 50 -3.2, 75 -0.4 at 180, pooled).
+- proposed fix (narrowed 2026-11-12): delete the line from the three Fury 2H APLs (`level60_fury_2h*.apl.json`) and
+  warrior__fury_2h's req rotation only; leave Arms as is.
+- original proposed fix: delete the 90-rage Heroic Strike line from the seven Arms and Fury 2H APLs and their req rotations.
   If 0ce9dbf40's ruling is reversed (the commit says Heroic Strike wasn't checked in the logs), restore it.
 - needs: orchestrator fix
 

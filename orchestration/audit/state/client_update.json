@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "71994fca6e7a0bb2b3e46569ace823373c2a42e1"
+  "master": "a0b4d3be9859f76f9365c0cb672ec57ef8e6423e"
  },
  "last_pass_at": "2026-11-10T18:55:57Z",
  "client_build": "1.60.1.70888",
  "result": "findings",
  "note": "70888 carries the 11-09 hotfixes. Arcane Concentration split across Arcane Missiles (server, -0.73% arcane, client_update-20261110-1); ilvl 65 trinket stat cuts + Flamebreak Talisman (client_update-20261110-2, low). Lightning Overload, Flamestrike Clearcasting: landed. Arcane Shot/Summon Hawk 11% base mana: ~1 mana, no finding. November 10 class tuning not in 70888.",
  "pass": 12,
- "checked_at": "2026-11-12T07:02:57Z"
+ "checked_at": "2026-11-12T13:28:36Z"
 }

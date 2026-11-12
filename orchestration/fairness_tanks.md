@@ -1,8 +1,9 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-12, pass 9, master cb0d928: all 12 presets re-simmed, every score identical to pass 8 (the
-changes were a comment and the Trial by Fire field rename), so the ranking below stands. In pass 8 (master 707ae92), since pass 6 the Natural flasks were
+preset weight, its reasons, and the open questions. Last pass: 2026-11-12, pass 10, master a0b4d3b: Windfury Totem now rolls on main hand abilities
+(standard 17), so the warrior (Revenge, Sunder, Heroic Strike) gains 5-6% TPS and the bear (Maul) about 4%; the paladin
+and Warden are unchanged. In pass 8 (master 707ae92), since pass 6 the Natural flasks were
 halved (client 70862) and Blizzard's Nov 10 shaman tuning cut Stormstrike and Mental Dexterity, and every score fell.
 The report has the details (orchestration/audit/reports/tank_fairness.md); the table is in
 orchestration/audit/ref/tank_fairness/summary.tsv.
@@ -11,23 +12,24 @@ orchestration/audit/ref/tank_fairness/summary.tsv.
 
 | weight | order (best first) | scores |
 |---|---|---|
-| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 3970 / 3166 / 2663 / 2498 |
-| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3236 / 2751 / 1717 / 1134 |
-| Max survival (w 3) | Warrior = Paladin, Bear, Warden | 1564 / 1559 / -579 / -2741 |
+| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4210 / 3166 / 2780 / 2498 |
+| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3439 / 2751 / 1865 / 1134 |
+| Max survival (w 3) | Warrior, Paladin, Bear, Warden | 1757 / 1559 / -278 / -2741 |
 
-The Max survival order is provisional. Flask of the Titans now beats the Natural flask there for every tank (+44 to
-+256, finding -20261111-1); with it the paladin is first (1724 against 1627). The paladin's Stoneshield potion action
-(finding -20261105-1) would widen that.
+The Max survival order is provisional. Flask of the Titans beats the Natural flask there for the paladin, bear and
+Warden (finding -20261111-1); for the warrior it now ties (+1). The paladin with Titans (1724) stays behind the
+warrior (1757); its Stoneshield potion action (finding -20261105-1, +309 at w=3) would put it first.
 
-TPS (Balanced): warrior 1950, paladin 1500, bear 1425, Warden 1380. Healing needed (Balanced): paladin 245, warrior 337,
-bear 474, Warden 713.
+TPS (Balanced): warrior 2046, paladin 1500, bear 1483, Warden 1380. Healing needed (Balanced): paladin 245, warrior 332,
+bear 464, Warden 713.
 
 Each preset wins its own weight (seed 1). The paladin's Max threat and Balanced share one build since round 5 and tie
 at their weights (its call 14).
 
 ## Why
 
-- **Warrior threat:** Forever's Revenge with Heroic Strike and Shield Slam. Sourced; taken as real.
+- **Warrior threat:** Forever's Revenge with Heroic Strike and Shield Slam, and since standard 17's 2026-11-12 mask
+  Windfury Totem on Revenge, Sunder and Heroic Strike. Sourced and ruled; taken as real.
 - **Paladin survival:** it has about the warrior's armor, avoidance and block share, but takes much less damage. Every
   effect is checked against Forever's sources: block value ×1.6 from Shield Specialization and Steadfast, Templar's
   Bulwark, Improved Righteous Fury, Iron Creed and the Steadfast Libram. Three calls are left for the user (finding -2):

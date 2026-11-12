@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "71994fca6e7a0bb2b3e46569ace823373c2a42e1"
+  "master": "a0b4d3be9859f76f9365c0cb672ec57ef8e6423e"
  },
  "last_pass_at": "2026-11-12T07:30:00Z",
  "pass": 8,
@@ -8,5 +8,5 @@
  "note": "Pass 8 on cb0d928fd. Gate: sim/druid/talents.go (comment), sim/priest/priest.go (Shadow TalentTreeSizes 18->17, never read), sim/shaman/talents.go (ImprovedFireNova renamed TrialByFire). All 63 baseline rows byte-identical to ref. -1, -2, -3 still open. baseline.sh rewritten again at tools/audit/healer_rotations/ (was missing).",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T07:02:57Z"
+ "checked_at": "2026-11-12T13:28:36Z"
 }

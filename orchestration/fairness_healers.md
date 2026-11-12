@@ -1,7 +1,7 @@
 # Fairness between healers
 
 The healer_fairness auditor keeps this current (`orchestration/audit/passes/healer_fairness.md`). It holds the
-healer ranking in each role, its reasons and the open questions. Last pass: 8, 2026-11-12, master cb0d928fd6: quiet (priest Shadow tree size and shaman Trial by Fire rename reach no healer preset; spot cells identical). Pass 7, 2026-11-11, master 707ae92cc5 (Nature's Swiftness on Wild Growth drops the raid druid to last, healer_fairness-20261111-1; other spot cells identical). Pass 6, master ca5e35c3f: shaman changes reach no healer. Pass 5, master 9ba00c2dc: whole-point rolls moved cells by at most 0.002; the raid shaman 1.395.
+healer ranking in each role, its reasons and the open questions. Last pass: 9, 2026-11-12, master a0b4d3be98: quiet (Windfury Totem on main hand abilities, standard 17, reaches no healer; spot cells identical). Pass 8, 2026-11-12, master cb0d928fd6: quiet (priest Shadow tree size and shaman Trial by Fire rename reach no healer preset; spot cells identical). Pass 7, 2026-11-11, master 707ae92cc5 (Nature's Swiftness on Wild Growth drops the raid druid to last, healer_fairness-20261111-1; other spot cells identical). Pass 6, master ca5e35c3f: shaman changes reach no healer. Pass 5, master 9ba00c2dc: whole-point rolls moved cells by at most 0.002; the raid shaman 1.395.
 Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 `orchestration/audit/findings/healer_fairness.md`.
 

@@ -4,14 +4,13 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### results-20261109-1: Windfury Totem white-swing-only rule (0ce9dbf40) cuts every raid-WF melee build 1.5% to 18.4%; 41 metas and builds.json stale
-- severity: high (moves DPS by far more than 1%, and shifts specs in the ranking: Arms 1088 to 888, Fury 2H 1151 to 961, Survival 1041 to 945, Ret 1103 to 1010)
-- affects: warrior (all 10 arms/fury families), hunter survival (3), paladin (9), rogue (6), shaman enh unchanged; mage, elemental, warlock, feral are not from this commit
-- found: 2026-11-09, master 66a243cf8
-- evidence: paired 20k seed 1, binary 9ba00c2dc vs 66a243cf8, same request: warrior__arms 1088.4 -> 888.0, hunter__survival 1040.6 -> 945.4, paladin__level_60 1103.2 -> 1009.7, rogue__combat-swords 964.3 -> 917.1, shaman__enhancement-level60 1146.7 -> 1146.7 (identical), mage__arcane identical. Only sim commit that touches it is 0ce9dbf40 (buffs.go:2166, procMask ProcMaskMeleeMH -> ProcMaskMeleeMHAuto under Forever; user ruling 2026-11-08, "for now", from 882 totem procs in live logs with none matching ~2,770 Stormstrikes). Full list: /tmp/audit-work/runs/vs_published.txt (41 of 68 moved >0.5). The commit was not re-simmed. Sure of the numbers. Not sure the rule is right for non-Stormstrike specials: the commit's own comment says Heroic Strike (on-next-swing) is unchecked, and Mortal Strike/Slam/Raptor Strike/Sinister Strike are inferred from Stormstrike alone, which is a large share of the 200 DPS Arms loses.
-- update 2026-11-11, master 707ae92cc: the shared 20k seed-1 run still shows the rule's full size, and the Enhancement re-sim (f8a37c8e8) has not changed the question: shaman metas now match the run (4 Enhancement builds 1016.1 to 1030.6, Elementals within 0.1). Warrior arms 1088.3 -> 871.8, fury 1137.1 -> 998.5, fury_2h 1150.8 -> 926.4, hunter survival 1041.2 -> 917.1 (of which -28 is the flask change below), paladin level_60 1103.2 -> 1009.7. Nothing new on whether the rule holds for non-Stormstrike specials; still needs the log check and the ruling. builds.json is not yet republished for these (v35 numbers).
-- proposed fix: (1) re-sim and republish all affected builds (metas + builds.json). (2) Ask the log audit to check a non-Stormstrike special (Mortal Strike or Sinister Strike with the totem up, no white swing within 100 ms) before this stands as a class-wide rule; list Heroic Strike as a separate case. (3) Note the ranking shift in the report.
-- needs: user ruling (keep or narrow the rule), then orchestrator fix (re-sim)
+### results-20261112-1: 19 builds (warriors 10, rogues 6, Survival 3) in builds.json lag a0b4d3be9 (Windfury Totem on main hand abilities), +18.7 to +171.6
+- severity: high (Arms +171.6 = +19.7%, Fury 2H +106.7; moves the ranking)
+- affects: warrior arms/fury/fury_2h families, rogue (6), hunter survival (3); paladin, other hunters, casters, shaman unchanged
+- found: 2026-11-12, master a0b4d3be9
+- evidence: shared 20k seed-1 run (/tmp/audit-work/runs/master/summary.tsv) vs ui/dps_report/data/builds.json: exactly these 19 differ by more than 1.5 (arms 871.2 -> 1042.8, arms_dragonkin 930.6 -> 1100.2, fury 998.9 -> 1051.3, fury_2h 925.6 -> 1032.4, survival 916.9 -> 987.2, combat-swords 899.7 -> 946.1, seal-fate-swords 895.8 -> 939.2, subtlety 839.7 -> 863.1); the other 49 are within 1.5. The commit message says it moves 19 report builds and does not re-sim them; builds.json was published at 71994fca6/f414e76bf under the white-swing-only rule. Sure of the numbers.
+- proposed fix: re-sim and republish the 19 builds (builds.json, metas, Changes tab). The metas lag too (45 of 68 off by more than 0.5; the 26 others are the old results-20261104-2 items).
+- needs: orchestrator fix
 
 ### results-20261105-1: mksettings -spec feral lacks the Goblin Sapper Charge the committed feral requests carry (drift, -3.6 DPS)
 - severity: low (no published number is wrong; regenerating the request by the README would lose 3.6 DPS)
@@ -41,6 +40,16 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: orchestrator fix
 
 ## Resolved
+
+### results-20261109-1: Windfury Totem white-swing-only rule (0ce9dbf40) cuts every raid-WF melee build 1.5% to 18.4%; 41 metas and builds.json stale
+- severity: high (moves DPS by far more than 1%, and shifts specs in the ranking: Arms 1088 to 888, Fury 2H 1151 to 961, Survival 1041 to 945, Ret 1103 to 1010)
+- affects: warrior (all 10 arms/fury families), hunter survival (3), paladin (9), rogue (6), shaman enh unchanged; mage, elemental, warlock, feral are not from this commit
+- found: 2026-11-09, master 66a243cf8
+- evidence: paired 20k seed 1, binary 9ba00c2dc vs 66a243cf8, same request: warrior__arms 1088.4 -> 888.0, hunter__survival 1040.6 -> 945.4, paladin__level_60 1103.2 -> 1009.7, rogue__combat-swords 964.3 -> 917.1, shaman__enhancement-level60 1146.7 -> 1146.7 (identical), mage__arcane identical. Only sim commit that touches it is 0ce9dbf40 (buffs.go:2166, procMask ProcMaskMeleeMH -> ProcMaskMeleeMHAuto under Forever; user ruling 2026-11-08, "for now", from 882 totem procs in live logs with none matching ~2,770 Stormstrikes). Full list: /tmp/audit-work/runs/vs_published.txt (41 of 68 moved >0.5). The commit was not re-simmed. Sure of the numbers. Not sure the rule is right for non-Stormstrike specials: the commit's own comment says Heroic Strike (on-next-swing) is unchecked, and Mortal Strike/Slam/Raptor Strike/Sinister Strike are inferred from Stormstrike alone, which is a large share of the 200 DPS Arms loses.
+- update 2026-11-11, master 707ae92cc: the shared 20k seed-1 run still shows the rule's full size, and the Enhancement re-sim (f8a37c8e8) has not changed the question: shaman metas now match the run (4 Enhancement builds 1016.1 to 1030.6, Elementals within 0.1). Warrior arms 1088.3 -> 871.8, fury 1137.1 -> 998.5, fury_2h 1150.8 -> 926.4, hunter survival 1041.2 -> 917.1 (of which -28 is the flask change below), paladin level_60 1103.2 -> 1009.7. Nothing new on whether the rule holds for non-Stormstrike specials; still needs the log check and the ruling. builds.json is not yet republished for these (v35 numbers).
+- proposed fix: (1) re-sim and republish all affected builds (metas + builds.json). (2) Ask the log audit to check a non-Stormstrike special (Mortal Strike or Sinister Strike with the totem up, no white swing within 100 ms) before this stands as a class-wide rule; list Heroic Strike as a separate case. (3) Note the ranking shift in the report.
+- needs: user ruling (keep or narrow the rule), then orchestrator fix (re-sim)
+- resolved: 2026-11-12, a0b4d3be9 (user go after the log audit of Nov 6-11, 4,737 procs: Windfury Totem rolls on main hand abilities, standards 17; the white-only rule was replaced). Run now matches the log-audit rule; republish tracked in results-20261112-1.
 
 ### results-20261102-1: shaman__elemental-level60-mana-tide meta published.dps is 0.4 off (753.2 vs 752.8)
 - severity: low (builds.json 752.8 matches my 20k seed-1 run 752.83; only the meta lags)

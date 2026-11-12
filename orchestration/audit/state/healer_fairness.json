@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "cb0d928fd69e9bc71acbdcce680f28d622ba52ed"
+  "master": "a0b4d3be9859f76f9365c0cb672ec57ef8e6423e"
  },
- "last_pass_at": "2026-11-12T06:58:00Z",
- "pass": 8,
+ "last_pass_at": "2026-11-12T12:55:00Z",
+ "pass": 9,
  "result": "quiet",
  "baseline": "9ba00c2dc",
- "note": "Pass 8: watched changes (priest Shadow tree 18->17, shaman improved_fire_nova->trial_by_fire, druid comment) reach no healer preset; 5 spot cells identical to bench_9ba00c2.tsv. Open: -20261111-1, -5, -4.",
+ "note": "Pass 9: standards 17 (Windfury Totem rolls on MH abilities) reaches no healer request; 5 spot cells identical to bench_9ba00c2.tsv. Open: -20261111-1, -5, -4.",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-12T00:48:28Z"
+ "checked_at": "2026-11-12T13:28:36Z"
 }

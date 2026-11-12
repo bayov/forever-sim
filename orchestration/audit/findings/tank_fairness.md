@@ -10,6 +10,7 @@
 - proposed fix: each tank worker re-picks the flask per preset by its own objective (Titans at Max survival for all four and at Warden Balanced on this evidence; keep the Natural flask where it still wins), confirms at 10,000 on two seeds, re-checks gear or talents the flask's hit/expertise touched, then the UI presets, docs/tank_*.md and the DPS Report Tanking data.
 - needs: worker fix
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
+- pass 10 (2026-11-12, master a0b4d3b): not fixed. Since Windfury Totem rolls on Revenge, Sunder and Heroic Strike (standard 17), the warrior's Titans gain at Max survival fell from +47 to +1 (1758.3 ±12.8 against 1757.3, seed 1, 3000, six bosses), and the warrior (1757) is ahead of the paladin even with Titans (1724), so the severity note's 'paladin to first' no longer holds. Bear, paladin and Warden parts not re-measured (paladin and Warden scores unchanged).
 
 ### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
 - severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
