@@ -35,7 +35,7 @@ func main() {
 	apl := flag.String("apl", "", "rotation name under ui/<spec>/apls")
 	talents := flag.String("talents", "", "talent string")
 	race := flag.String("race", "Human", "race name as in the proto enum, without the Race prefix")
-	level := flag.Int("level", 60, "player level, 60, 20 or 30")
+	level := flag.Int("level", 60, "player level: 60 for the raid, anything lower for a dungeon boss two levels up")
 	bonusTalents := flag.Int("bonus-talents", 0, "extra talent points beyond the level's, 5 for the Forever beta at level 20")
 	blessing := flag.String("blessing", "kings", "the ret paladin's own blessing below level 60: kings, might or wisdom")
 	targets := flag.Int("targets", 1, "number of enemies, copies of the level's target")
@@ -228,11 +228,20 @@ func main() {
 	}
 }
 
-// The boss a low level character fights: a dungeon boss two levels above them, with its
-// armor from the 1.12 creature data. Mutanus the Devourer (Wailing Caverns) up to level
-// 25, and Interrogator Vishas (Scarlet Monastery Graveyard) from level 30. Health only
-// sets when the execute phases start, so it is a round number. The melee damage is what
-// Lightning Shield, Retribution Aura and the paladin's Deflection see.
+// The boss a low level character fights: a dungeon boss two levels above them, soloed.
+//
+// At the two levels our leveling presets use, it is a real boss with its armor from the
+// 1.12 creature data: Mutanus the Devourer (Wailing Caverns, level 22) for a level 20
+// character, and Interrogator Vishas (Scarlet Monastery Graveyard, level 32) for level 30.
+// Below level 20 it stays Mutanus.
+//
+// At every other level we use a generic boss two levels up, because many levels have no
+// melee dungeon boss of their own. Its armor is what the 1.12 data gives a warrior class
+// elite of that level (bossArmor). Before this, every character from level 30 to 59 fought
+// Vishas, so a level 57 character never missed and its hit weighed nothing.
+//
+// Health only sets when the execute phases start, so it is a round number. The melee
+// damage is what Lightning Shield, Retribution Aura and the paladin's Deflection see.
 func lowLevelTarget(level int32) *proto.Target {
 	target := &proto.Target{
 		Id:      3654,
@@ -248,7 +257,9 @@ func lowLevelTarget(level int32) *proto.Target {
 		SwingSpeed:    2,
 		ParryHaste:    true,
 	}
-	if level >= 30 {
+	switch {
+	case level <= 20:
+	case level == 30:
 		target.Id = 3983
 		target.Name = "Interrogator Vishas"
 		target.Level = 32
@@ -257,8 +268,45 @@ func lowLevelTarget(level int32) *proto.Target {
 			stats.Health: 30000,
 		}.ToFloatArray()
 		target.MinBaseDamage = 52
+	default:
+		bossLevel := min(level+2, 61)
+		target.Id = 0
+		target.Name = fmt.Sprintf("Dungeon boss (level %d)", bossLevel)
+		target.Level = bossLevel
+		target.Stats = stats.Stats{
+			stats.Armor:  bossArmor[bossLevel],
+			stats.Health: float64(20000 + 1000*(bossLevel-22)),
+		}.ToFloatArray()
+		target.MinBaseDamage = bossMinDamage(bossLevel)
 	}
 	return target
+}
+
+// bossArmor is the armor of a warrior class elite at each level from 22 to 61, from the
+// cmangos 1.12 creature data (the most common value among dungeon elites of that one
+// level). Levels with no such elite (23, 31, 34 to 39, 41, 44 and 49) are filled in
+// between their neighbours. Paladin class bosses like Vishas have about 84% of it.
+var bossArmor = map[int32]float64{
+	22: 922, 23: 957, 24: 992, 25: 1026, 26: 1061, 27: 1097, 28: 1130, 29: 1165,
+	30: 1200, 31: 1234, 32: 1270, 33: 1304, 34: 1338, 35: 1373, 36: 1480, 37: 1593,
+	38: 1709, 39: 1834, 40: 1964, 41: 2105, 42: 2246, 43: 2397, 44: 2561, 45: 2725,
+	46: 2780, 47: 2835, 48: 2888, 49: 2944, 50: 2999, 51: 3052, 52: 3108, 53: 3163,
+	54: 3216, 55: 3271, 56: 3327, 57: 3380, 58: 3435, 59: 3489, 60: 3791, 61: 4091,
+}
+
+// bossMinDamage is the generic boss's lowest melee hit at a level. It goes in straight
+// lines between typical dungeon bosses' 1.12 damage, scaled by the same 1.25 that takes
+// Mutanus (32) and Vishas (42) to the 40 and 52 we use for them.
+func bossMinDamage(level int32) float64 {
+	points := [][2]float64{{22, 32}, {32, 45}, {40, 55}, {45, 75}, {52, 88}, {59, 100}, {61, 106}}
+	l := float64(level)
+	for i := 1; i < len(points); i++ {
+		a, b := points[i-1], points[i]
+		if l <= b[0] {
+			return 1.25 * (a[1] + (b[1]-a[1])*(l-a[0])/(b[0]-a[0]))
+		}
+	}
+	return 1.25 * points[len(points)-1][1]
 }
 
 // fitStonesToWeapons puts each hand's stone on a weapon it fits: a sharpening stone on an edged
