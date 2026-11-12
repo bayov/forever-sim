@@ -2,11 +2,11 @@
 	"note": "2026-10-25 regeneration: all 64 builds re-simmed locally on claude/keen-brown-o2g32n at e8a8b50d55 (the wowsims/forever alignment round and the class workers' regenerated presets), in a scratch tree with tools/dps_report/patches 0001 to 0004 applied and the binaries built with -tags=with_db; 20,000 iterations for the main runs. Then the Mark duty ruling (2026-10-25): the 7 hunter builds were re-simmed at 5429f41856 (every hunter keeps up its own Hunter's Mark, the four -duty-mark builds are gone); the other 53 are re-recorded there unchanged, since that commit's tools/rotopt changes touch only the hunter templates and specs (mksettings writes their requests byte for byte as before) and their data came out identical.",
 	"builds": {
 		"rogue__combat-daggers": {
-			"commit": "4d8cb46fa96908696e4719c01513e294ae80ebaf",
-			"recordedAt": "2026-11-12T06:45:35.562Z",
+			"commit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
+			"recordedAt": "2026-11-12T11:37:40.903Z",
 			"iterations": 20000,
-			"by": "hand",
-			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
+			"by": "sim",
+			"simCommit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
 			"format": 2,
 			"inputs": {
 				"sim/core": "c1cb123ed0eff8ebb107ce02bb8265d0f40ed86263d4755548694ee74f08c2a5",
@@ -28,18 +28,18 @@
 				"tools/dps_report/assumptions_def.py": "641dde069fdf33d88ca83668514d944f602336d2ec57c937c1a5a2f7df2246e8",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/rogue": "8928f784009e14e0497cbb328957161357bd90ce594a1e188d327d77645b60f1",
+				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
 				"tools/dps_report/req/rogue__combat-daggers.json": "bb4d59f3a9c0dfd740aba9c8dbee722d5209eb2b03dee30cd1e9372148ed4c5a",
 				"tools/dps_report/req/rogue__combat-daggers.meta.json (sim fields)": "a5157e8e7852f31e4347fae7797bb55514b758afde1c3c2cf822e386c2e5e929",
 				"assets/database (the entries it wears)": "e3fc1af1b97a7233565bb6037fb937e8188fb59cea80604f5137485db628aaf0"
 			}
 		},
 		"rogue__combat-swords": {
-			"commit": "4d8cb46fa96908696e4719c01513e294ae80ebaf",
-			"recordedAt": "2026-11-12T06:45:35.579Z",
+			"commit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
+			"recordedAt": "2026-11-12T11:37:41.120Z",
 			"iterations": 20000,
-			"by": "hand",
-			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
+			"by": "sim",
+			"simCommit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
 			"format": 2,
 			"inputs": {
 				"sim/core": "c1cb123ed0eff8ebb107ce02bb8265d0f40ed86263d4755548694ee74f08c2a5",
@@ -61,18 +61,18 @@
 				"tools/dps_report/assumptions_def.py": "641dde069fdf33d88ca83668514d944f602336d2ec57c937c1a5a2f7df2246e8",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/rogue": "8928f784009e14e0497cbb328957161357bd90ce594a1e188d327d77645b60f1",
+				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
 				"tools/dps_report/req/rogue__combat-swords.json": "982205dd82997f747a228b1d698f080da1e67097a18bec346c6f108af3f93c8b",
 				"tools/dps_report/req/rogue__combat-swords.meta.json (sim fields)": "a5157e8e7852f31e4347fae7797bb55514b758afde1c3c2cf822e386c2e5e929",
 				"assets/database (the entries it wears)": "1978a1992378adc799b5f2ff50c60b2663eb076bb025cbf0bf624d2e14560e24"
 			}
 		},
 		"rogue__seal-fate-daggers": {
-			"commit": "4d8cb46fa96908696e4719c01513e294ae80ebaf",
-			"recordedAt": "2026-11-12T06:45:35.603Z",
+			"commit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
+			"recordedAt": "2026-11-12T11:37:41.154Z",
 			"iterations": 20000,
-			"by": "hand",
-			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
+			"by": "sim",
+			"simCommit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
 			"format": 2,
 			"inputs": {
 				"sim/core": "c1cb123ed0eff8ebb107ce02bb8265d0f40ed86263d4755548694ee74f08c2a5",
@@ -94,7 +94,7 @@
 				"tools/dps_report/assumptions_def.py": "641dde069fdf33d88ca83668514d944f602336d2ec57c937c1a5a2f7df2246e8",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/rogue": "8928f784009e14e0497cbb328957161357bd90ce594a1e188d327d77645b60f1",
+				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
 				"tools/dps_report/req/rogue__seal-fate-daggers.json": "98f38109a5fc3d11c99aa2903396bcf671d9c5de527e50b7629ee4702772c091",
 				"tools/dps_report/req/rogue__seal-fate-daggers.meta.json (sim fields)": "d14ec9549955595337d7cc5454f9858e20cd98b47f430387d641340ef431fc39",
 				"tools/dps_report/req/races/rogue__seal-fate-daggers.Dwarf.json": "d489197829f69d843d94e7f73ff1ed65e24ac3b7",
@@ -102,11 +102,11 @@
 			}
 		},
 		"rogue__mutilate": {
-			"commit": "4d8cb46fa96908696e4719c01513e294ae80ebaf",
-			"recordedAt": "2026-11-12T06:45:35.592Z",
+			"commit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
+			"recordedAt": "2026-11-12T11:37:41.135Z",
 			"iterations": 20000,
-			"by": "hand",
-			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
+			"by": "sim",
+			"simCommit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
 			"format": 2,
 			"inputs": {
 				"sim/core": "c1cb123ed0eff8ebb107ce02bb8265d0f40ed86263d4755548694ee74f08c2a5",
@@ -128,7 +128,7 @@
 				"tools/dps_report/assumptions_def.py": "641dde069fdf33d88ca83668514d944f602336d2ec57c937c1a5a2f7df2246e8",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/rogue": "8928f784009e14e0497cbb328957161357bd90ce594a1e188d327d77645b60f1",
+				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
 				"tools/dps_report/req/rogue__mutilate.json": "50cfb1024ca7ddb7a4d4997c8a0fb6e6c3574237d1b9756f1fdc6c6152bde95f",
 				"tools/dps_report/req/rogue__mutilate.meta.json (sim fields)": "d14ec9549955595337d7cc5454f9858e20cd98b47f430387d641340ef431fc39",
 				"tools/dps_report/req/races/rogue__mutilate.Gnome.json": "d7b27bb135fe005634bca14b7e3dbbc340a953bc",
@@ -136,11 +136,11 @@
 			}
 		},
 		"rogue__seal-fate-swords": {
-			"commit": "4d8cb46fa96908696e4719c01513e294ae80ebaf",
-			"recordedAt": "2026-11-12T06:45:35.616Z",
+			"commit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
+			"recordedAt": "2026-11-12T11:37:41.167Z",
 			"iterations": 20000,
-			"by": "hand",
-			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
+			"by": "sim",
+			"simCommit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
 			"format": 2,
 			"inputs": {
 				"sim/core": "c1cb123ed0eff8ebb107ce02bb8265d0f40ed86263d4755548694ee74f08c2a5",
@@ -162,7 +162,7 @@
 				"tools/dps_report/assumptions_def.py": "641dde069fdf33d88ca83668514d944f602336d2ec57c937c1a5a2f7df2246e8",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/rogue": "8928f784009e14e0497cbb328957161357bd90ce594a1e188d327d77645b60f1",
+				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
 				"tools/dps_report/req/rogue__seal-fate-swords.json": "d830ad0eb7906a51497efce0887e46a278f08de3b39d5bc9e494229f1afa98e0",
 				"tools/dps_report/req/rogue__seal-fate-swords.meta.json (sim fields)": "d14ec9549955595337d7cc5454f9858e20cd98b47f430387d641340ef431fc39",
 				"tools/dps_report/req/races/rogue__seal-fate-swords.Dwarf.json": "4daf7b26ae275a9f98eb97fb255478769eb2e981",
@@ -171,11 +171,11 @@
 			}
 		},
 		"rogue__subtlety": {
-			"commit": "4d8cb46fa96908696e4719c01513e294ae80ebaf",
-			"recordedAt": "2026-11-12T06:45:35.629Z",
+			"commit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
+			"recordedAt": "2026-11-12T11:37:41.182Z",
 			"iterations": 20000,
-			"by": "hand",
-			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
+			"by": "sim",
+			"simCommit": "4e8b6e407283661e84b289ec96f7ab2fb8d28d96",
 			"format": 2,
 			"inputs": {
 				"sim/core": "c1cb123ed0eff8ebb107ce02bb8265d0f40ed86263d4755548694ee74f08c2a5",
@@ -197,7 +197,7 @@
 				"tools/dps_report/assumptions_def.py": "641dde069fdf33d88ca83668514d944f602336d2ec57c937c1a5a2f7df2246e8",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/rogue": "8928f784009e14e0497cbb328957161357bd90ce594a1e188d327d77645b60f1",
+				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
 				"tools/dps_report/req/rogue__subtlety.json": "c2a0fefdae5fa54dc65247c9a953e33059af9f45f106c35deb00f92a803a0cbe",
 				"tools/dps_report/req/rogue__subtlety.meta.json (sim fields)": "971995c4b74900dc14004b6a1ccea54395a21f5191a5fe18d36be642805e7e2b",
 				"assets/database (the entries it wears)": "1372193da12dac9d9ed7241b02453e861e9c780aec5032472fe7c4cc033c5b9c"
