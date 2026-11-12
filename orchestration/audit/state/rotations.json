@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "707ae92cc50bc393c26c0e4b7249ee9acbd02dbb"
+  "master": "33db32b36857a53f3340ae8a0ae366e85a35ae0a"
  },
  "last_pass_at": "2026-11-11T19:22:07Z",
  "pass": 59,
  "result": "quiet",
  "note": "Pass 59: Enh Nov 10 tuning (-113..-123), Affliction 113766 rotation (+34..+37), flasks (-16..-38). Enh + raid WF Totem +0.2 (own totem already procs with WF Weapon), FT Weapon + WF Totem -106; Affliction Wrack/Corruption variants and hunter Arcane Shot mana gate lose. No new findings; 20261105-1 and 20261109-1 still open.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-11T19:42:24Z",
+ "checked_at": "2026-11-12T00:48:28Z",
  "baseline": "baseline_707ae92_3000it_seed424242.tsv"
 }

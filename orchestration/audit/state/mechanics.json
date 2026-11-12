@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "707ae92cc50bc393c26c0e4b7249ee9acbd02dbb"
+  "master": "33db32b36857a53f3340ae8a0ae366e85a35ae0a"
  },
  "last_pass_at": "2026-11-11T19:38:27Z",
  "pass": 74,
  "result": "quiet",
  "note": "Pass 74: 27d0d59d67..707ae92cc5, 15 sim commits. Shared: 032692409 natural flasks 30 Sta / 2% (resolves mechanics-20261107-1); cb651085c/eb6c042a4 imbues + weapon totems together per Nov 10 hotfixes t/2403040 post 6 (tier 1), separate WF icds = assumption wf_weapon_totem_icd, client 70888 shows no shared category; f20d5938a dot ghost-tick engine fix, OK. Dev notes unchanged (post 10). 70888 hotfix row fetch not finished (too slow), next pass: check pushes newer than 113605 via wago.tools search, newest first.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-11T19:42:24Z",
+ "checked_at": "2026-11-12T00:48:28Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

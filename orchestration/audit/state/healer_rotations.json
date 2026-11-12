@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "707ae92cc50bc393c26c0e4b7249ee9acbd02dbb"
+  "master": "33db32b36857a53f3340ae8a0ae366e85a35ae0a"
  },
  "last_pass_at": "2026-11-11T19:40:00Z",
  "pass": 7,
@@ -8,5 +8,5 @@
  "note": "Pass 7 on 707ae92cc. 9628e85b6 (Nature's Swiftness also makes Wild Growth instant) drops the Resto druid raid healer by 0.046 mean carry (Magmadar -0.184): autocast NS is now eaten by Wild Growth instead of the emergency Regrowth. New finding -20261111-1 (an explicit NS line recovers it). Other 56 rows unchanged. -2, -3 still open. baseline.sh committed this time at tools/audit/healer_rotations/.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-11T19:42:24Z"
+ "checked_at": "2026-11-12T00:48:28Z"
 }
