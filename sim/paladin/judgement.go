@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 func (paladin *Paladin) registerJudgement() {
@@ -44,6 +45,28 @@ func (paladin *Paladin) registerJudgement() {
 			}
 		},
 	})
+}
+
+// Forever's damaging judgements are ranged attacks since Blizzard's November 11 hotfixes
+// (t/2403040 post 8): "Judgement changed to now be considered a Ranged Attack. This means it no
+// longer counts as a Melee attack for the purposes of item and effect procs and uses the
+// Paladin's Ranged Hit chance." So Judgement of Righteousness, of Command and of Fury roll the
+// ranged table: its miss goes by the ranged slot's skill (a libram gives the level's full skill,
+// so main hand weapon skill doesn't count), with the same hit rating, Precision included (an
+// unscoped hit aura, see hammerOfWrathHitRating). They keep what the post doesn't touch: one
+// physical crit roll at double damage with the melee crit stat, Conviction and Holy Power, no
+// dodge, parry or block (No Active Defense), the weapon specializations' multiplier, and the
+// judgement's spell power. Their proc mask is a ranged ability's, so melee weapon procs, the
+// Crusader enchant, Windfury Totem, Seal of Wisdom's debuff and other melee-only effects no
+// longer hear them; effects on any ranged or any attack still do. Before the hotfix they rolled
+// the melee table as main hand abilities (sim since 2026-10-23, wowsims/forever e10ca32c3d).
+//
+// Open (the post doesn't say): whether the weapon specializations still reach them, and whether
+// Judgement of the Crusader and of Wisdom, which always land in the sim, now roll ranged hit too.
+func judgementAsRangedAttack(config *core.SpellConfig) {
+	config.DefenseType = core.DefenseTypeRanged
+	config.ProcMask = core.ProcMaskRangedSpecial
+	config.CastType = proto.CastType_CastTypeRanged
 }
 
 // Helper Function For casting Judgement.

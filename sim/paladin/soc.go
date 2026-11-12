@@ -77,7 +77,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 		minDamage := rank.judge.minDamage + float64(min(paladin.Level, rank.scaleLevel)-rank.level)*rank.judge.scale
 		maxDamage := rank.judge.maxDamage + float64(min(paladin.Level, rank.scaleLevel)-rank.level)*rank.judge.scale
 
-		judgeSpell := paladin.RegisterSpell(core.SpellConfig{
+		judgeConfig := core.SpellConfig{
 			SpellCode:   SpellCode_PaladinJudgementOfCommand, // used in judgement.go
 			ActionID:    core.ActionID{SpellID: rank.judge.spellID},
 			SpellSchool: core.SpellSchoolHoly,
@@ -95,10 +95,11 @@ func (paladin *Paladin) registerSealOfCommand() {
 				baseDamage := sim.Roll(minDamage, maxDamage) * 0.5 // unless stunned
 
 				// Forever's judgement dummy (client 20968) and the damage spell it casts (20966) are
-				// both melee (DefenseType 2) with No Active Defense: one roll on the melee table for
-				// hit and crit, never dodged, parried or blocked (wowsims/forever e10ca32c3d, 447d83b595).
+				// both physical (DefenseType 2) with No Active Defense: one roll for hit and crit,
+				// never dodged, parried or blocked (wowsims/forever e10ca32c3d, 447d83b595), on the
+				// ranged table since the November 11 hotfixes (judgementAsRangedAttack).
 				if sim.IsForever() {
-					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeRangedHitAndCritNoBlock)
 					return
 				}
 
@@ -112,7 +113,11 @@ func (paladin *Paladin) registerSealOfCommand() {
 				outcomeApplier := core.Ternary(dummyJudgeLanded, spell.OutcomeMeleeSpecialCritOnly, spell.OutcomeAlwaysMiss)
 				spell.CalcAndDealDamage(sim, target, baseDamage, outcomeApplier)
 			},
-		})
+		}
+		if paladin.Env.IsForever() {
+			judgementAsRangedAttack(&judgeConfig)
+		}
+		judgeSpell := paladin.RegisterSpell(judgeConfig)
 
 		procSpell := paladin.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: rank.proc.spellID},

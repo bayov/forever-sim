@@ -325,3 +325,49 @@ func TestHotfix113542(t *testing.T) {
 		}
 	}
 }
+
+// TestUnsealedWrathWindfuryTotemStoresNone checks Blizzard's November 11 hotfix ("Unsealed Fury no
+// longer generates echoes from Windfury Totem attacks"): a landed Windfury Totem extra swing stores
+// no copy of the seal, while another proc's extra swing (Hand of Justice) still does.
+func TestUnsealedWrathWindfuryTotemStoresNone(t *testing.T) {
+	sim, ret := retSim(t, unsealedWrath, arcaniteReaper)
+	righteousness := ret.GetAura("Echo of Righteousness")
+	// Past the pull, between two normal swings.
+	for sim.CurrentTime < time.Second && !sim.Step() {
+	}
+
+	for _, c := range []struct {
+		source    int32
+		wantStore bool
+	}{
+		{core.WindfuryBuffSpellId[3], false},
+		{core.WindfuryBuffSpellId[1], false},
+		{15601, true}, // Hand of Justice
+	} {
+		landed := false
+		for tries := 0; !landed; tries++ {
+			if tries > 50 {
+				t.Fatalf("no lone extra swing from %d landed in 50 tries", c.source)
+			}
+			castByID(sim, ret, sealOfRighteousness9)
+			righteousness.Deactivate(sim)
+			start := sim.CurrentTime
+			ret.AutoAttacks.ExtraMHAttack(sim, 1, core.ActionID{SpellID: c.source}, core.ActionID{})
+			// The extra swings' metrics (split 1), which the call above switched to.
+			metrics := &ret.AutoAttacks.MHAuto().SpellMetrics[ret.CurrentTarget.UnitIndex]
+			before := *metrics
+			for sim.CurrentTime == start && !sim.Step() {
+			}
+			if ret.AutoAttacks.ExtraAttackSource().SpellID != 0 {
+				t.Fatalf("the extra attack's source is still set after the swing")
+			}
+			if metrics.Casts != before.Casts+1 {
+				t.Fatalf("%d extra swings, want 1", metrics.Casts-before.Casts)
+			}
+			landed = metrics.Misses == before.Misses && metrics.Dodges == before.Dodges && metrics.Parries == before.Parries
+			if landed && righteousness.IsActive() != c.wantStore {
+				t.Errorf("a landed extra swing from %d stored a copy: %v, want %v", c.source, righteousness.IsActive(), c.wantStore)
+			}
+		}
+	}
+}

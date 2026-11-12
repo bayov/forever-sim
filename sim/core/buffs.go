@@ -2137,6 +2137,20 @@ var (
 	WindfuryBuffBonusAP = [WindfuryRanks + 1]float64{0, 95, 179, 246}
 )
 
+// IsWindfuryTotemAttack says whether the extra attack being cast now came from Windfury Totem.
+func (aa *AutoAttacks) IsWindfuryTotemAttack() bool {
+	source := aa.ExtraAttackSource()
+	if source.SpellID == 0 {
+		return false
+	}
+	for _, id := range WindfuryBuffSpellId[1:] {
+		if source.SpellID == id {
+			return true
+		}
+	}
+	return false
+}
+
 func GetWindfuryAP(aura *Aura, rank int32) float64 {
 	return WindfuryBuffBonusAP[rank]
 }
