@@ -34,6 +34,10 @@ import (
 // hand next to it, and then we score every one hander next to that off hand. Each one hand
 // entry names the off hand it was scored with. The off hand list is then what we'd hold if
 // we went one hand, scored next to that one hander, and none of its entries is a pick.
+//
+// With -gear-rank-two-hand-only we skip the one hand setup. When the pick is a two hander,
+// the main hand list has only two handers and the off hand list is empty, since the off hand
+// stays empty while we wield a two hander. The Phase 0 list uses it.
 
 var (
 	gearRankOut  = flag.String("gear-rank-out", "", "gear search: once the search settles, rank every slot's options against the set and write the BiS list (docs/bis_lists.md) to this file")
@@ -41,6 +45,8 @@ var (
 	gearRankName = flag.String("gear-rank-name", "", "the -gear-rank-out list's label, e.g. \"Level 30\"")
 	gearRankSpec = flag.String("gear-rank-spec", "", "the -gear-rank-out list's spec, by its mksettings name (enh, ele, ...)")
 	gearRankSim  = flag.String("gear-rank-sim", "", "the forever-sim commit the -gear-rank-out list was simmed on, for the list's sim field")
+
+	gearRankTwoHandOnly = flag.Bool("gear-rank-two-hand-only", false, "gear search: when the -gear-rank-out main hand pick is a two hander, list only two handers in the main hand and leave the off hand list empty")
 )
 
 // One line of a slot's list, as the list file has it.
@@ -334,6 +340,9 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 		return [][]*proto.ItemSpec{withMainHand(o, nil)}
 	}, keep-len(picks), knobs)
 	mainList := append(picks, entriesOf(twoRanked, noOtherHand)...)
+	if *gearRankTwoHandOnly {
+		return mainList, nil
+	}
 	bare := s.rankGear(oneHanders, func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withMainHand(o, nil)}
 	}, 1, knobs)

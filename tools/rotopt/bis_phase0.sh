@@ -20,6 +20,11 @@
 #     that need a raid material.
 #   - -gear-phase 2: Classic phase 3 and later (Blackwing Lair, Zul'Gurub and Ahn'Qiraj era
 #     rewards, Dungeon Set 2). Dire Maul (phase 2) is open in Forever.
+#   - Classic patch 1.10's Dungeon Set 2 chain, which our item data puts in phase 1 or 2: what
+#     the bosses summoned with the Brazier of Beckoning and the Banner of Provocation drop
+#     (Sothos and Jarien, Lord Valthalak, Kormok, Isalien, Mor Grayhoof, Theldren), and the
+#     chain's quest rewards (Beads of Ogre Might from Falrin's Vendetta). They are "out" in
+#     phase0_content.json.
 #   - -gear-min-ilvl 50: nothing under item level 50 competes at 60, and the random suffix rolls
 #     of those greens make the pool three times as big.
 #   - Forever items with no source at item level 66 and up, likely Forever's raid loot:
@@ -28,6 +33,9 @@
 #   - Every item tools/rotopt/phase0_content.json marks "out". That file is the hand check of
 #     what the game has open (2026-11-12): "out" means not before the raids, "doubtful" means
 #     we don't know of a way yet, and "grind" means open but slow. Items not in it are open now.
+#
+# The pick is a two hander, so the main hand list has only two handers and the off hand list
+# is empty (-gear-rank-two-hand-only). We don't list a one hand setup next to it.
 #
 # Each slot keeps its 25 best items. After the search we copy `avail` and `note` from
 # phase0_content.json onto every entry of the list, so a rerun keeps them.
@@ -57,7 +65,7 @@ go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/en
 	-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
 	-gear-exclude "$exclude" \
 	-gear-screen-iters 100 -gear-screen-keep 20 \
-	-gear-rank-out "$out" -gear-rank-name "Phase 0" -gear-rank-keep 25 \
+	-gear-rank-out "$out" -gear-rank-name "Phase 0" -gear-rank-keep 25 -gear-rank-two-hand-only \
 	-gear-rank-spec enh -gear-rank-sim "$sim"
 
 # The content check's status on every entry.
