@@ -15,7 +15,7 @@ message ShamanTalents {
 	int32 call_of_flame = 6;
 	bool elemental_focus = 7;
 	int32 elemental_warding = 8;
-	int32 improved_fire_nova = 9;
+	int32 trial_by_fire = 9;
 	int32 eye_of_the_storm = 10;
 	bool earthbound = 11;
 	int32 elemental_reach = 12;

@@ -161,7 +161,7 @@
         ],
         "maxPoints": 5,
         "name": "Arcane Concentration",
-        "description": "Gives you a {0}% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by {1}%.",
+        "description": "Gives you a {0}% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by {1}%. Arcane Missiles rolls once per channel.",
         "ranks": [
           [
             2,
@@ -1216,7 +1216,8 @@
             10
           ]
         ],
-        "icon": "spell_frost_wisp"
+        "icon": "spell_frost_wisp",
+        "notSimulated": true
       },
       {
         "fieldName": "frostChanneling",

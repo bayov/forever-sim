@@ -33,16 +33,6 @@
       "at": "2026-09-13T00:00:00Z"
     },
     {
-      "talent": "soul-siphon",
-      "tree": "affliction",
-      "set": {
-        "description": "Increases the rate at which your Drain Life and Drain Soul deal damage by {0}%, but reduces your healing from Drain Life by {1}%."
-      },
-      "reason": "audit 2026-09-13: reader error (PCT); corrected against data/review/warlock/affliction/soul-siphon.png",
-      "by": "data-audit",
-      "at": "2026-09-13T00:00:00Z"
-    },
-    {
       "talent": "suppression",
       "tree": "affliction",
       "set": {

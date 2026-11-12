@@ -68,7 +68,9 @@ def simulated_talents(class_name):
 			if not name.endswith('.go') or name.startswith('_'):
 				continue
 			with open(os.path.join(root, name)) as f:
-				seen.update(re.findall(r'\b([A-Z][A-Za-z0-9_]*)\b', f.read()))
+				# A comment that names a talent ("Pathfinding in row 3") doesn't read it.
+				code = re.sub(r'//[^\n]*', '', f.read())
+				seen.update(re.findall(r'\b([A-Z][A-Za-z0-9_]*)\b', code))
 	return seen
 
 def sorted_talents(tree):

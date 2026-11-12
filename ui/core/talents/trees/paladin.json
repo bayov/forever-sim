@@ -281,7 +281,7 @@
         ],
         "maxPoints": 2,
         "name": "Divine Precision",
-        "description": "Increases your chance to hit with Holy spells by {0}%.",
+        "description": "Improves your chance to hit with Holy spells by {0}%, and reduces the duration of Silence effects on you by {1}%.",
         "ranks": [
           [
             4,
@@ -631,7 +631,7 @@
         ],
         "maxPoints": 2,
         "name": "Sacred Duty",
-        "description": "Increases your total Stamina by {0}% and reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by {1} sec.",
+        "description": "Reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by {0} sec, and reduces the duration of Forbearance by {1} sec.",
         "ranks": [
           [
             30,
@@ -663,8 +663,7 @@
             1
           ]
         ],
-        "icon": "ability_paladin_shieldofthetemplar",
-        "notSimulated": true
+        "icon": "ability_paladin_shieldofthetemplar"
       },
       {
         "fieldName": "improvedHammerOfJustice",
@@ -867,7 +866,8 @@
             20
           ]
         ],
-        "icon": "spell_holy_stoicism"
+        "icon": "spell_holy_stoicism",
+        "notSimulated": true
       },
       {
         "fieldName": "holyShield",
@@ -1377,7 +1377,8 @@
             6
           ]
         ],
-        "icon": "spell_holy_prayerofhealing"
+        "icon": "spell_holy_prayerofhealing",
+        "notSimulated": true
       },
       {
         "fieldName": "vengeance",

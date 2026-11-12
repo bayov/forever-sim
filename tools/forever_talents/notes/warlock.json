@@ -1,31 +1,44 @@
 {
-  "class": "warlock",
-  "entries": [
-    {
-      "tree": "Destruction",
-      "op": "set",
-      "name": "Shadow and Flame",
-      "fields": {
-        "desc": {
-          "1": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 4% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 4% for 20 sec. In addition, Conflagrate has a 20% chance not to consume Immolate, and Shadowburn has a 20% chance to instantly refund a Soul Shard.",
-          "2": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 8% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 8% for 20 sec. In addition, Conflagrate has a 40% chance not to consume Immolate, and Shadowburn has a 40% chance to instantly refund a Soul Shard.",
-          "3": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 12% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 12% for 20 sec. In addition, Conflagrate has a 60% chance not to consume Immolate, and Shadowburn has a 60% chance to instantly refund a Soul Shard.",
-          "4": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 16% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 16% for 20 sec. In addition, Conflagrate has a 80% chance not to consume Immolate, and Shadowburn has a 80% chance to instantly refund a Soul Shard.",
-          "5": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 20% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 20% for 20 sec. In addition, Conflagrate has a 100% chance not to consume Immolate, and Shadowburn has a 100% chance to instantly refund a Soul Shard."
-        }
-      },
-      "source": "development notes 2026-11-02 (post 9): Shadow and Flame's damage bonuses 4/8/12/16/20%, up from 2/4/6/8/10% (client 70753 still 2 to 10); confirmed by hotfix push 113527 (2026-11-03, curves 111671 and 111672: 4/8/12/16/20)"
-    },
-    {
-      "tree": "Affliction",
-      "op": "set",
-      "name": "Wrack",
-      "fields": {
-        "desc": {
-          "1": "Tears the target apart from within, inflicting 86 Shadow damage every 1 sec and increasing the damage they take from your other Shadow damage over time effects by 10% for 6 sec."
-        }
-      },
-      "source": "development notes 2026-11-02 (post 9): Wrack's base damage a second grows 2.5 a level, 36 to 86 at 60, and its spell damage coefficient doubles to 0.286 a second (client 70753 still 36); confirmed by hotfix push 113527 (2026-11-03, SpellEffect 1349556 of 1316697: 36 base, 2.5 a level, coefficient 0.286)"
+ "class": "warlock",
+ "entries": [
+  {
+   "tree": "Destruction",
+   "op": "set",
+   "name": "Shadow and Flame",
+   "fields": {
+    "desc": {
+     "1": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 4% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 4% for 20 sec. In addition, Conflagrate has a 20% chance not to consume Immolate, and Shadowburn has a 20% chance to instantly refund a Soul Shard.",
+     "2": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 8% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 8% for 20 sec. In addition, Conflagrate has a 40% chance not to consume Immolate, and Shadowburn has a 40% chance to instantly refund a Soul Shard.",
+     "3": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 12% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 12% for 20 sec. In addition, Conflagrate has a 60% chance not to consume Immolate, and Shadowburn has a 60% chance to instantly refund a Soul Shard.",
+     "4": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 16% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 16% for 20 sec. In addition, Conflagrate has a 80% chance not to consume Immolate, and Shadowburn has a 80% chance to instantly refund a Soul Shard.",
+     "5": "Hitting an enemy with Conflagrate increases all Shadow damage you deal by 20% for 20 sec, and hitting an enemy with Shadowburn increases all Fire damage you deal by 20% for 20 sec. In addition, Conflagrate has a 100% chance not to consume Immolate, and Shadowburn has a 100% chance to instantly refund a Soul Shard."
     }
-  ]
+   },
+   "source": "development notes 2026-11-02 (post 9): Shadow and Flame's damage bonuses 4/8/12/16/20%, up from 2/4/6/8/10% (client 70753 still 2 to 10); confirmed by hotfix push 113527 (2026-11-03, curves 111671 and 111672: 4/8/12/16/20)"
+  },
+  {
+   "tree": "Affliction",
+   "op": "set",
+   "name": "Wrack",
+   "fields": {
+    "desc": {
+     "1": "Tears the target apart from within, inflicting 60 Shadow damage every 1 sec for 6 sec. While Wrack is channeled, your Corruption, Siphon Life, and Bane of Agony on the target tick twice as fast, for the same total duration."
+    }
+   },
+   "source": "server hotfix push 113766 (build 70888, 2026-11-10): Wrack 25.2 a second plus 1.75 a level above 40 (60 at 60), coefficient 0.2002 (SpellEffect 1349556), and its +10% to your other Shadow DoTs replaced by Corruption, Siphon Life and Bane of Agony ticking at half their period while it channels (SpellEffect 1349557) (orchestration/round_notes_2026-11-11/classes.md WL1, WL2)"
+  },
+  {
+   "tree": "Affliction",
+   "op": "set",
+   "name": "Soul Siphon",
+   "fields": {
+    "desc": {
+     "1": "Increases the damage done or health drained by your Drain Life, Drain Soul, and Wrack spells by 4% for each of your Corruption, Siphon Life, and Bane of Agony spells active on the target, up to a maximum increase of 12%.",
+     "2": "Increases the damage done or health drained by your Drain Life, Drain Soul, and Wrack spells by 8% for each of your Corruption, Siphon Life, and Bane of Agony spells active on the target, up to a maximum increase of 24%.",
+     "3": "Increases the damage done or health drained by your Drain Life, Drain Soul, and Wrack spells by 12% for each of your Corruption, Siphon Life, and Bane of Agony spells active on the target, up to a maximum increase of 36%."
+    }
+   },
+   "source": "development notes 2026-11-10: Soul Siphon counts only your Corruption, Siphon Life and Bane of Agony on the target, 4% a point each, up to 36% at 3/3 (client 70755 says any other Affliction effect) (orchestration/round_notes_2026-11-11/classes.md WL3)"
+  }
+ ]
 }

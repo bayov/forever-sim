@@ -1,0 +1,20 @@
+{
+ "class": "mage",
+ "entries": [
+  {
+   "tree": "Arcane",
+   "op": "set",
+   "name": "Arcane Concentration",
+   "fields": {
+    "desc": {
+     "1": "Gives you a 2% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%. Arcane Missiles rolls once per channel.",
+     "2": "Gives you a 4% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%. Arcane Missiles rolls once per channel.",
+     "3": "Gives you a 6% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%. Arcane Missiles rolls once per channel.",
+     "4": "Gives you a 8% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%. Arcane Missiles rolls once per channel.",
+     "5": "Gives you a 10% chance of entering a Clearcasting state after any damage spell hits a target. The Clearcasting state reduces the mana cost of your next damage spell by 100%. Arcane Missiles rolls once per channel."
+    }
+   },
+   "source": "development notes (orchestration/round_notes_2026-11-11/classes.md M1): Arcane Missiles gets one Clearcasting chance per channel, not one per missile; client 70888 leaves the per-roll chance to the server"
+  }
+ ]
+}

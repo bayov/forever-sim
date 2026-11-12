@@ -404,7 +404,7 @@
         ],
         "maxPoints": 3,
         "name": "Soul Siphon",
-        "description": "Increases the rate at which your Drain Life and Drain Soul deal damage by {0}%, but reduces your healing from Drain Life by {1}%.",
+        "description": "Increases the damage done or health drained by your Drain Life, Drain Soul, and Wrack spells by {0}% for each of your Corruption, Siphon Life, and Bane of Agony spells active on the target, up to a maximum increase of {1}%.",
         "ranks": [
           [
             4,
@@ -471,12 +471,11 @@
         ],
         "maxPoints": 1,
         "name": "Wrack",
-        "description": "Tears the target apart from within, inflicting {0} Shadow damage every {1} sec and increasing the damage they take from your other Shadow damage over time effects by {2}% for {3} sec.",
+        "description": "Tears the target apart from within, inflicting {0} Shadow damage every {1} sec for {2} sec. While Wrack is channeled, your Corruption, Siphon Life, and Bane of Agony on the target tick twice as fast, for the same total duration.",
         "ranks": [
           [
-            86,
+            60,
             1,
-            10,
             6
           ]
         ],

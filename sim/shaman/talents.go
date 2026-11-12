@@ -204,15 +204,15 @@ func (shaman *Shaman) eyeOfTheStormChance() float64 {
 }
 
 func (shaman *Shaman) improvedFireNovaBonus() float64 {
-	return .1 * float64(shaman.Talents.ImprovedFireNova)
+	return .1 * float64(shaman.Talents.TrialByFire)
 }
 
 func (shaman *Shaman) improvedFireNovaCooldownReduction() time.Duration {
-	return time.Second * 2 * time.Duration(shaman.Talents.ImprovedFireNova)
+	return time.Second * 2 * time.Duration(shaman.Talents.TrialByFire)
 }
 
 func (shaman *Shaman) improvedFireNovaMagmaDuration() time.Duration {
-	return time.Second * 10 * time.Duration(shaman.Talents.ImprovedFireNova)
+	return time.Second * 10 * time.Duration(shaman.Talents.TrialByFire)
 }
 
 func (shaman *Shaman) applyElementalFocus() {

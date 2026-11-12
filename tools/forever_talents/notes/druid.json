@@ -15,6 +15,19 @@
     }
    },
    "source": "development notes 2026-11-02 (post 9): Rend and Tear damage bonus increased to 3/6/9/12/15% (was 2/4/6/8/10%); client 70753 unchanged"
+  },
+  {
+   "tree": "Feral Combat",
+   "op": "set",
+   "name": "Thick Hide",
+   "fields": {
+    "desc": {
+     "1": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 1 additional base Armor per level and another 0.67 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.",
+     "2": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 2 additional base Armor per level and another 1.33 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.",
+     "3": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain 3 additional base Armor per level and another 2.00 base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms."
+    }
+   },
+   "source": "client 70755 tooltip fix: the per-level armor reads 178/179/180 when filled, where the talent gives 1/2/3 a level (a level 30 druid measured 30/60/90 in Cat Form, wowsims/forever; sim/druid/bear.go)"
   }
  ]
 }

@@ -650,8 +650,7 @@
             30
           ]
         ],
-        "icon": "ability_druid_bash",
-        "notSimulated": true
+        "icon": "ability_druid_bash"
       },
       {
         "fieldName": "thickHide",
@@ -671,15 +670,15 @@
         "description": "While in Bear Form, Cat Form, Dire Bear Form, or Moonkin Form, you gain {0} additional base Armor per level and another {1} base Armor for each point of defense skill beyond five times your level. This amount can be further increased by multipliers from those forms.",
         "ranks": [
           [
-            178,
+            1,
             0.67
           ],
           [
-            179,
+            2,
             1.33
           ],
           [
-            180,
+            3,
             2
           ]
         ],
@@ -1301,8 +1300,7 @@
             10
           ]
         ],
-        "icon": "spell_nature_protectionformnature",
-        "notSimulated": true
+        "icon": "spell_nature_protectionformnature"
       },
       {
         "fieldName": "bloom",
@@ -1322,8 +1320,7 @@
             50
           ]
         ],
-        "icon": "inv_misc_herb_felblossom",
-        "notSimulated": true
+        "icon": "inv_misc_herb_felblossom"
       },
       {
         "fieldName": "tranquilSpirit",
@@ -1358,8 +1355,7 @@
             10
           ]
         ],
-        "icon": "spell_holy_elunesgrace",
-        "notSimulated": true
+        "icon": "spell_holy_elunesgrace"
       },
       {
         "fieldName": "improvedRejuvenation",
@@ -1386,8 +1382,7 @@
             15
           ]
         ],
-        "icon": "spell_nature_rejuvenation",
-        "notSimulated": true
+        "icon": "spell_nature_rejuvenation"
       },
       {
         "fieldName": "swiftmend",
@@ -1404,8 +1399,7 @@
         "ranks": [
           []
         ],
-        "icon": "inv_relics_idolofrejuvenation",
-        "notSimulated": true
+        "icon": "inv_relics_idolofrejuvenation"
       },
       {
         "fieldName": "naturesSwiftness",
@@ -1426,8 +1420,7 @@
         "ranks": [
           []
         ],
-        "icon": "spell_nature_ravenform",
-        "notSimulated": true
+        "icon": "spell_nature_ravenform"
       },
       {
         "fieldName": "livingSpirit",
@@ -1479,8 +1472,7 @@
             60
           ]
         ],
-        "icon": "spell_nature_tranquility",
-        "notSimulated": true
+        "icon": "spell_nature_tranquility"
       },
       {
         "fieldName": "improvedRegrowth",
@@ -1519,8 +1511,7 @@
             50
           ]
         ],
-        "icon": "spell_nature_resistnature",
-        "notSimulated": true
+        "icon": "spell_nature_resistnature"
       },
       {
         "fieldName": "wildGrowth",
@@ -1545,8 +1536,7 @@
             43.5
           ]
         ],
-        "icon": "ability_druid_flourish",
-        "notSimulated": true
+        "icon": "ability_druid_flourish"
       }
     ]
   }

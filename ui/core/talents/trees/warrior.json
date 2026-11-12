@@ -1315,13 +1315,13 @@
         "description": "Increases all threat generated in Defensive stance by an additional {0}% while a shield is equipped.",
         "ranks": [
           [
-            5
+            7
           ],
           [
-            10
+            13
           ],
           [
-            15
+            20
           ]
         ],
         "icon": "ability_warrior_innerrage"

@@ -802,7 +802,7 @@
         "ranks": [
           [
             45,
-            15
+            100
           ]
         ],
         "icon": "ability_trueshot"
@@ -893,13 +893,13 @@
         "description": "Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by {0}%.",
         "ranks": [
           [
-            3
-          ],
-          [
-            7
+            5
           ],
           [
             10
+          ],
+          [
+            15
           ]
         ],
         "icon": "ability_upgrademoonglaive"
@@ -975,10 +975,12 @@
         ],
         "maxPoints": 1,
         "name": "Sniper Shot",
-        "description": "A long-range shot that deals ranged damage plus {0} and increases the range of your next {1} Shots by {2} yards for {3} sec.",
+        "description": "A long-range shot that deals ranged damage plus {0} ({1} and {2} at lower ranks) and increases the range of your next {3} Shots by {4} yards for {5} sec.",
         "ranks": [
           [
-            160,
+            590,
+            320,
+            450,
             3,
             10,
             10
@@ -1471,19 +1473,19 @@
         "description": "Increases your Agility by {0}%.",
         "ranks": [
           [
-            2
-          ],
-          [
-            4
+            3
           ],
           [
             6
           ],
           [
-            8
+            9
           ],
           [
-            10
+            12
+          ],
+          [
+            15
           ]
         ],
         "icon": "spell_nature_invisibilty"

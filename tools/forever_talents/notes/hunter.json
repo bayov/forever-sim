@@ -1,0 +1,55 @@
+{
+ "class": "hunter",
+ "entries": [
+  {
+   "tree": "Survival",
+   "op": "set",
+   "name": "Lightning Reflexes",
+   "fields": {
+    "desc": {
+     "1": "Increases your Agility by 3%.",
+     "2": "Increases your Agility by 6%.",
+     "3": "Increases your Agility by 9%.",
+     "4": "Increases your Agility by 12%.",
+     "5": "Increases your Agility by 15%."
+    }
+   },
+   "source": "server hotfix push 113534 (launch realms, 2026-11-03): Lightning Reflexes 3/6/9/12/15% Agility (CurvePoint 109548); client 70755 still 2/4/6/8/10 (orchestration/round_70753/hunter.md)"
+  },
+  {
+   "tree": "Marksmanship",
+   "op": "set",
+   "name": "Barrage",
+   "fields": {
+    "desc": {
+     "1": "Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 5%.",
+     "2": "Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 10%.",
+     "3": "Increases the damage done by your Multi-Shot, Aimed Shot, and Volley abilities by 15%."
+    }
+   },
+   "source": "server hotfix push 113534 (launch realms, 2026-11-03): Barrage 5/10/15% (CurvePoint 82803); client 70755 still 3/7/10 (orchestration/round_70753/hunter.md)"
+  },
+  {
+   "tree": "Marksmanship",
+   "op": "set",
+   "name": "Sniper Shot",
+   "fields": {
+    "desc": {
+     "1": "A long-range shot that deals ranged damage plus 590 (320 and 450 at lower ranks) and increases the range of your next 3 Shots by 10 yards for 10 sec."
+    }
+   },
+   "source": "server hotfix push 113534 (launch realms, 2026-11-03): Sniper Shot bonus 320/450/590 by rank, learned at 40/48/58 (was 160/225/295, still so in client 70755) (orchestration/round_70753/hunter.md)"
+  },
+  {
+   "tree": "Marksmanship",
+   "op": "set",
+   "name": "Trueshot Aura",
+   "fields": {
+    "desc": {
+     "1": "Increases the Ranged Attack Power of party or raid members within 45 yds by 100."
+    }
+   },
+   "source": "server hotfix push 113534 (launch realms, 2026-11-03): Trueshot Aura 20/35/50/75/100 ranged attack power by rank, 100 at level 60 (client 70755 shows rank 1's 15) (orchestration/round_70753/hunter.md)"
+  }
+ ]
+}

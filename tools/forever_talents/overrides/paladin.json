@@ -13,32 +13,12 @@
       "at": "2026-09-13T00:00:00Z"
     },
     {
-      "talent": "divine-precision",
-      "tree": "holy",
-      "set": {
-        "description": "Increases your chance to hit with Holy spells by {0}%."
-      },
-      "reason": "audit 2026-09-13: reader error (PCT); corrected against data/review/paladin/holy/divine-precision.png",
-      "by": "data-audit",
-      "at": "2026-09-13T00:00:00Z"
-    },
-    {
       "talent": "guardians-favor",
       "tree": "protection",
       "set": {
         "description": "Reduces the cooldown of your Blessing of Protection by {0} min and increases the duration of your Blessing of Freedom by {1} sec."
       },
       "reason": "audit 2026-09-13: reader error (CAP-I); corrected against data/review/paladin/protection/guardians-favor.png",
-      "by": "data-audit",
-      "at": "2026-09-13T00:00:00Z"
-    },
-    {
-      "talent": "sacred-duty",
-      "tree": "protection",
-      "set": {
-        "description": "Increases your total Stamina by {0}% and reduces the cooldown of your Divine Shield, Divine Protection, and Templar's Bulwark spells by {1} sec."
-      },
-      "reason": "audit 2026-09-13: reader error (PUNCT); corrected against data/review/paladin/protection/sacred-duty.png",
       "by": "data-audit",
       "at": "2026-09-13T00:00:00Z"
     },

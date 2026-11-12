@@ -1,0 +1,18 @@
+{
+ "class": "warrior",
+ "entries": [
+  {
+   "tree": "Protection",
+   "op": "set",
+   "name": "Defiance",
+   "fields": {
+    "desc": {
+     "1": "Increases all threat generated in Defensive stance by an additional 7% while a shield is equipped.",
+     "2": "Increases all threat generated in Defensive stance by an additional 13% while a shield is equipped.",
+     "3": "Increases all threat generated in Defensive stance by an additional 20% while a shield is equipped."
+    }
+   },
+   "source": "development notes 2026-11-02 (post 9): Defiance 7/13/20% (was 5/10/15%); clients 70753 and 70755 still 5/10/15 (orchestration/round_70753/warrior.md)"
+  }
+ ]
+}

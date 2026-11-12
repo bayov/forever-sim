@@ -125,6 +125,29 @@
     }
    },
    "source": "Blizzard class tuning 2026-11-10 (hotfix article 24315281): 20% a stack at every rank, (5 + rank) procs per minute on main hand speed"
+  },
+  {
+   "tree": "Restoration",
+   "op": "set",
+   "name": "Riptide",
+   "fields": {
+    "desc": {
+     "1": "Heals a friendly target for 445 over 15 sec, and increases the effectiveness of your Chain Heal casts directly on that target by 25%."
+    },
+    "cost": "147 Mana; 40 yd range; Instant; 12 sec cooldown"
+   },
+   "source": "development notes 2026-11-02 (post 9): Riptide has no instant heal, a 12 sec cooldown (was 6) and about 40% less mana (245 x 0.6 = 147); clients 70753 and 70755 unchanged (orchestration/round_70753/shaman.md)"
+  },
+  {
+   "tree": "Restoration",
+   "op": "set",
+   "name": "Mana Tide Totem",
+   "fields": {
+    "desc": {
+     "1": "Summons a Mana Tide Totem with 5 health at the feet of the caster for 13 sec that restores 88 mana every 3 seconds to group members within 30 yards."
+    }
+   },
+   "source": "Forever client totem duration: every rank of Mana Tide Totem lasts 13 sec since client 70338 (Classic 12); the generated tooltip reads 12 (shaman_audit.md 7.1, core.ManaTideTotemDuration)"
   }
  ]
 }

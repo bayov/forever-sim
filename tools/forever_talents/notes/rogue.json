@@ -1,0 +1,16 @@
+{
+ "class": "rogue",
+ "entries": [
+  {
+   "tree": "Assassination",
+   "op": "set",
+   "name": "Mutilate",
+   "fields": {
+    "desc": {
+     "1": "Instantly attacks with both weapons for 90% weapon damage plus an additional 88 with each weapon. Damage increased by 20% against Poisoned targets. Awards 2 Combo Points."
+    }
+   },
+   "source": "server hotfix push 113483 (launch realms, 2026-11-03): Mutilate's flat bonus is 44/63/88 at levels 40/50/60; the client tooltip shows 40, this shows level 60's 88 (sim/rogue/mutilate.go)"
+  }
+ ]
+}

@@ -267,8 +267,7 @@
             20
           ]
         ],
-        "icon": "spell_fire_sealoffire",
-        "notSimulated": true
+        "icon": "spell_fire_sealoffire"
       },
       {
         "fieldName": "eyeOfTheStorm",
@@ -1352,7 +1351,7 @@
         "ranks": [
           [
             5,
-            12,
+            13,
             88,
             3,
             30
@@ -1456,11 +1455,9 @@
         ],
         "maxPoints": 1,
         "name": "Riptide",
-        "description": "Heals a friendly target for {0} to {1}, an additional {2} over {3} sec, and increases the effectiveness of your Chain Heal casts directly on that target by {4}%.",
+        "description": "Heals a friendly target for {0} over {1} sec, and increases the effectiveness of your Chain Heal casts directly on that target by {2}%.",
         "ranks": [
           [
-            486,
-            534,
             445,
             15,
             25

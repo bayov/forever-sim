@@ -419,8 +419,12 @@ def apply_notes(tree_json, cls, build):
 				report.append('notes: %s: %s is out of the client tree now, the "remove" entry can go' % (e['tree'], e['name']))
 				continue
 			tree['talents'].remove(t)
-			tree.setdefault('removed', []).append(
-				{'name': t['name'], 'max': t['max'], 'text': t['desc'][str(t['max'])], 'row': t['row'], 'build': 'notes: ' + e['source']})
+			# The removed list is carried over from the current file, so a talent this entry
+			# took out on an earlier run is in it already.
+			removed = tree.setdefault('removed', [])
+			if not any(r['name'] == t['name'] and r.get('build') == 'notes: ' + e['source'] for r in removed):
+				removed.append(
+					{'name': t['name'], 'max': t['max'], 'text': t['desc'][str(t['max'])], 'row': t['row'], 'build': 'notes: ' + e['source']})
 		elif op == 'set':
 			t = by_name.get(e['name'])
 			if t is None:
@@ -433,7 +437,11 @@ def apply_notes(tree_json, cls, build):
 				report.append('notes: %s: %s already reads so in the client, the "set" entry can go' % (e['tree'], e['name']))
 				continue
 			t.update(fields)
-			t.setdefault('tooltip', {}).setdefault('notes', []).append(e['source'])
+			# The hand notes are carried over from the current file, so this entry's source is
+			# among them already when an earlier run laid it over.
+			notes = t.setdefault('tooltip', {}).setdefault('notes', [])
+			if e['source'] not in notes:
+				notes.append(e['source'])
 			t['tooltip']['source'] = 'notes'
 		else:
 			raise SystemExit('%s: unknown op %r' % (path, op))

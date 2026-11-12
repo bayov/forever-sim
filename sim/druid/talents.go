@@ -360,7 +360,8 @@ func (druid *Druid) applyNaturalInstinct() {
 }
 
 // Rend and Tear: 2% a point more damage (3% under Forever, from the November 2 development notes; the
-// client's tree still says 2%, see tuning_70753.go) from the melee abilities on a bleeding target. The
+// client tables still have 2%, and the talent tree shows 3% through notes/druid.json, see
+// tuning_70753.go) from the melee abilities on a bleeding target. The
 // effect is a dummy the server runs. The sim takes it as a multiplier on the hits of Claw,
 // Shred, Ravage, Rake and Ferocious Bite and on the Rake and Rip ticks, not on white hits, while our
 // Rake or Rip is up or the spec assumes another bleed on the target. The ticks are from a
