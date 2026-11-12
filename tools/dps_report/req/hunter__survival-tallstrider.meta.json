@@ -45,7 +45,7 @@
     "Immolation Trap on cooldown at 30%+ mana",
     "Raptor Strike queued on the next swing when it's ready",
     "Lacerate when it's down, at 20%+ mana",
-    "Wing Clip on free GCDs at 50%+ mana, but not when an enabled Mongoose Bite is about ready",
+    "Wing Clip on every free GCD (it rolls Windfury Totem), but not when an enabled Mongoose Bite is about ready",
     "The Tallstrider (1.0s) bites on cooldown, and keeps Dust Cloud (505 armor, 30s, 10 focus) on the boss while no Faerie Fire or Curse of Recklessness holds the minor armor slot"
   ],
   "consumes": [

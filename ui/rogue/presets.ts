@@ -172,12 +172,12 @@ export const GearPresets = {
 	],
 };
 
-// Combat Daggers is the class default (user ruling 2026-11-12: each class defaults to its best 180 sec
-// build): 914.6 against Combat Swords' 899.7 in the deployed report. Combat Swords was the default from
-// round 70753 (November 2 notes: with Aggression off Backstab and Flash of Steel on Shank it led Combat
-// Daggers by 16.8 at 180 sec then, 963.5 against 946.7) until then, and Combat Daggers from 2026-10-23
-// before that.
-export const DefaultGear = GearLevel60SyntheticCombatDaggersHitPlus2;
+// Combat Swords is the class default (user ruling 2026-11-12: each class defaults to its best 180 sec
+// build): since Windfury Totem rolls on Sinister Strike (standards 17, 2026-11-11) it leads Combat Daggers
+// by 10.1 at 180 sec (946.4 against 936.3, 20000 iterations, seeds 1 and 1000003). Combat Daggers was the
+// default from the morning of 2026-11-12 (914.6 against 899.7 in the deployed report, before the rule),
+// Combat Swords from round 70753 (963.5 against 946.7 then) and Combat Daggers from 2026-10-23 before that.
+export const DefaultGear = GearLevel60SyntheticSwordsHitPlus2;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets[]
@@ -247,8 +247,8 @@ export const APLPresets = {
 
 //Need to add main hand equip logic or talent/rotation logic to map to Auto APL
 export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
-	[0]: ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
-	[1]: ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
+	[0]: ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
+	[1]: ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -330,10 +330,10 @@ export const TalentPresets = {
 };
 
 export const DefaultTalentsAssassin = TalentsLevel60Mutilate;
-export const DefaultTalentsCombat = TalentsLevel60CombatDaggers;
+export const DefaultTalentsCombat = TalentsLevel60CombatSwords;
 export const DefaultTalentsSubtlety = TalentsLevel60Subtlety;
 
-export const DefaultTalents = TalentsLevel60CombatDaggers;
+export const DefaultTalents = TalentsLevel60CombatSwords;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options

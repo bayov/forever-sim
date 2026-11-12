@@ -51,7 +51,7 @@ stat_weights_results: {
  key: "TestSurvival-Phase1-StatWeights-Default"
  value: {
   weights: 0
-  weights: 0.70247
+  weights: 0.70256
   weights: 0
   weights: 0
   weights: 0
@@ -67,9 +67,9 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.31537
-  weights: 15.67248
-  weights: 6.85013
+  weights: 0.31544
+  weights: 15.49291
+  weights: 6.85149
   weights: 0
   weights: 0
   weights: 0
@@ -291,9 +291,9 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Phase1-Average-Default"
  value: {
-  dps: 1492.35891
-  tps: 1328.64993
-  dtps: 2.93068
+  dps: 1492.48721
+  tps: 1328.78951
+  dtps: 2.93007
  }
 }
 dps_results: {
@@ -323,24 +323,24 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-LongMultiTarget"
  value: {
-  dps: 601.80317
-  tps: 481.86347
-  dtps: 3.29267
+  dps: 561.08317
+  tps: 441.75164
+  dtps: 3.11017
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-LongSingleTarget"
  value: {
-  dps: 513.06933
-  tps: 393.2801
-  dtps: 3.4305
+  dps: 475.72417
+  tps: 356.45292
+  dtps: 3.48983
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-ShortSingleTarget"
  value: {
-  dps: 679.16417
-  tps: 558.59146
+  dps: 644.34917
+  tps: 521.72915
   dtps: 9.5725
  }
 }
@@ -371,32 +371,32 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Phase1-Settings-Orc-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-LongMultiTarget"
  value: {
-  dps: 600.10833
-  tps: 475.78941
-  dtps: 2.91283
+  dps: 567.13083
+  tps: 442.58936
+  dtps: 3.26983
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-Orc-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-LongSingleTarget"
  value: {
-  dps: 517.1365
-  tps: 392.86911
-  dtps: 3.00933
+  dps: 481.51683
+  tps: 357.14002
+  dtps: 3.60567
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-Orc-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-ShortSingleTarget"
  value: {
-  dps: 673.54667
-  tps: 548.91317
+  dps: 632.68833
+  tps: 505.80228
   dtps: 9.40417
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1187.4545
-  tps: 1022.03374
-  dtps: 2.719
+  dps: 1190.8785
+  tps: 1025.73692
+  dtps: 2.693
  }
 }
