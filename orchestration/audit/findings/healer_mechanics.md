@@ -2,30 +2,6 @@
 
 ## Open
 
-### healer_mechanics-20261112-14: "Current Health %" of Lowest Health / Most Hurt reads true health while the pick reads seen health
-- severity: low (measured no effect on the bench: carry identical to 3 decimals on all 63 healer x boss pairs, 200
-  iterations, paired seeds; deaths and scares identical at x1.3 damage, 400 iterations, druid tank and raid, paladin and
-  shaman raid on Onyxia and Ragnaros)
-- affects: engine (every healer preset's emergency lines; most visible on the Restoration druid's new Nature's Swiftness line)
-- found: 2026-11-12, master 55cd92b09 (tankheal)
-- evidence: `pickHealTarget` (`sim/core/heal_targets.go:36-57`) picks from health seen a reaction time late less others'
-  heals in flight, and Health Missing reads the same (`apl_values_resources.go:155-163`); but Current Health % and Current
-  Health (`apl_values_resources.go:40-47,78-86`) read `HealthUnit().CurrentHealthPercent()`, the true health now. When the
-  healer sees nobody hurt yet, `HealthUnit` falls back to `fullHealTarget`, whose comment says health values then read a
-  full player's, yet they read that player's real health. Log (`healbench -role tank -encounter tools/encounters/onyxia.json
-  -scale 1.3 -log tools/healbench/req/druid_restoration.json`): at 15.00 the tank drops to 39% in one swing, Nature's
-  Swiftness fires (true 39% < 60%) but its instant Healing Touch line on Lowest Health has no target (not seen hurt yet), so
-  the druid casts Rejuvenation and spends NS on a Healing Touch 1.5 s later; with the patch NS waits to 16.50 and goes
-  straight into the instant Healing Touch. Second case: with the whole assignment dead `HealthUnit` is nil and the value
-  reads 0, so "under X%" lines fire (x1.6 Onyxia: NS spent on the dead tank, then 4 s of "No available actions"). Sure of the
-  mechanism; the score effect is below the bench's resolution.
-- proposed fix: health values of a Most Hurt / Lowest Health reference read full when its healer sees nobody hurt
-  (patch: `func (ur UnitReference) nobodyHurt() bool { return ur.healer != nil && ur.Get() == nil }` in heal_targets.go,
-  and `if unit.readsNoHealth() || value.unit.nobodyHurt()` return 1 / MaxHealth in both GetFloats); optionally read seen
-  health (`viewer.seenHealth`) in Current Health % so emergency lines take the reaction time like the pick. Add an engine
-  test: a Lowest Health under-60% line must not fire within the reaction time of the hit.
-- needs: orchestrator fix
-
 ### healer_mechanics-20261104-11: Riptide's Forever mana is 0.6 x the old client cost; client 70790 now gives 150/180/230
 - severity: low (rank 3, the one the level 60 presets cast, is 1 mana dear at 231 vs 230; rank 1 is 3 mana cheap)
 - affects: Restoration shaman (all presets and leveling)
@@ -70,6 +46,30 @@
   cancelled heals, or two absorbs on one unit.
 
 ## Resolved
+
+### healer_mechanics-20261112-14: "Current Health %" of Lowest Health / Most Hurt reads true health while the pick reads seen health
+- severity: low (measured no effect on the bench: carry identical to 3 decimals on all 63 healer x boss pairs, 200
+  iterations, paired seeds; deaths and scares identical at x1.3 damage, 400 iterations, druid tank and raid, paladin and
+  shaman raid on Onyxia and Ragnaros)
+- affects: engine (every healer preset's emergency lines; most visible on the Restoration druid's new Nature's Swiftness line)
+- found: 2026-11-12, master 55cd92b09 (tankheal)
+- evidence: `pickHealTarget` (`sim/core/heal_targets.go:36-57`) picks from health seen a reaction time late less others'
+  heals in flight, and Health Missing reads the same (`apl_values_resources.go:155-163`); but Current Health % and Current
+  Health (`apl_values_resources.go:40-47,78-86`) read `HealthUnit().CurrentHealthPercent()`, the true health now. When the
+  healer sees nobody hurt yet, `HealthUnit` falls back to `fullHealTarget`, whose comment says health values then read a
+  full player's, yet they read that player's real health. Log (`healbench -role tank -encounter tools/encounters/onyxia.json
+  -scale 1.3 -log tools/healbench/req/druid_restoration.json`): at 15.00 the tank drops to 39% in one swing, Nature's
+  Swiftness fires (true 39% < 60%) but its instant Healing Touch line on Lowest Health has no target (not seen hurt yet), so
+  the druid casts Rejuvenation and spends NS on a Healing Touch 1.5 s later; with the patch NS waits to 16.50 and goes
+  straight into the instant Healing Touch. Second case: with the whole assignment dead `HealthUnit` is nil and the value
+  reads 0, so "under X%" lines fire (x1.6 Onyxia: NS spent on the dead tank, then 4 s of "No available actions"). Sure of the
+  mechanism; the score effect is below the bench's resolution.
+- proposed fix: health values of a Most Hurt / Lowest Health reference read full when its healer sees nobody hurt
+  (patch: `func (ur UnitReference) nobodyHurt() bool { return ur.healer != nil && ur.Get() == nil }` in heal_targets.go,
+  and `if unit.readsNoHealth() || value.unit.nobodyHurt()` return 1 / MaxHealth in both GetFloats); optionally read seen
+  health (`viewer.seenHealth`) in Current Health % so emergency lines take the reaction time like the pick. Add an engine
+  test: a Lowest Health under-60% line must not fire within the reaction time of the hit.
+- resolved: 2026-11-12 (this branch): Current Health % / Current Health of Most Hurt / Lowest Health now read the healer's seen health (`UnitReference.seenCurrentHealth`: max less `seenMissing`, like the pick and Health Missing); with the whole assignment dead they read full (1 / the healer's max) instead of 0. Test `TestHealingFightHealthValuesSeen` (sim/healing_health_values_test.go). Healbench (Onyxia tank, 200 iters, paired): carry druid 1.387 -> 1.367, shaman 1.344 -> 1.325 (emergency lines now take the reaction time); HPS unchanged.
 
 ### healer_mechanics-20261111-13: Holy and Discipline priest suites fail on master: the AllItems-IronweaveBattlesuit golden is stale
 - severity: low (test hygiene; no healer mechanic shown wrong)
