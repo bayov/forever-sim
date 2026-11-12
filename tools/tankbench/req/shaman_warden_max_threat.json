@@ -91,7 +91,7 @@
        "intellectElixir": "ElixirOfGreaterIntellect",
        "zanzaBuff": "GroundScorpokAssay",
        "defaultConjured": "ConjuredDemonicRune",
-       "manaRegenElixir": "MagebloodPotion"
+       "manaRegenElixir": "GreaterMagebloodElixir"
       },
       "wardenShaman": {
        "options": {

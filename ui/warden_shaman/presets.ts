@@ -153,7 +153,7 @@ export const BalancedConsumes = Consumes.create({
 	food: Food.FoodDirgesKickChimaerokChops,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
-	manaRegenElixir: ManaRegenElixir.MagebloodPotion,
+	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	naturePowerBuff: NaturePowerBuff.ElixirOfNaturePower,
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
@@ -168,7 +168,7 @@ export const MaxThreatConsumes = Consumes.create({
 	flask: Flask.FlaskOfNaturalPrecision,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
-// Max survival leaves out the Mageblood Potion (a tie there).
+// Max survival leaves out the Greater Mageblood Elixir (a tie there). The Mageblood Potion is raid-only (tank_fairness-20261112-1).
 export const MaxSurvivalConsumes = Consumes.create({ ...BalancedConsumes, manaRegenElixir: ManaRegenElixir.ManaRegenElixirUnknown });
 
 export const DefaultConsumes = BalancedConsumes;

@@ -91,7 +91,7 @@
        "intellectElixir": "ElixirOfGreaterIntellect",
        "zanzaBuff": "SpiritOfZanza",
        "defaultConjured": "ConjuredDemonicRune",
-       "manaRegenElixir": "MagebloodPotion"
+       "manaRegenElixir": "GreaterMagebloodElixir"
       },
       "wardenShaman": {
        "options": {

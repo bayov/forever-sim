@@ -148,7 +148,7 @@ time against round 4's request, `out3/` and `out4/` the combinations, `out5/` be
   (`HpPercentForDefensives` is 0), so a potion swap alone changes nothing past losing the old one (-104 / -84 at
   Balanced). With an explicit potion action ("Greater Stoneshield Potion on cooldown") before the autocast line, on
   the combination: +95 / +329 / +1,056 (seed 2 +93 / +323 / +1,050). The three APLs carry the line.
-- **Mageblood Potion** (the mana-regen slot) after the rest: +3.4 +/- 1.2 / +5.3 (seed 2 +3.0 +/- 1.2 / +6.0) at Max
+- **Mageblood Potion** (the mana-regen slot; raid-only, so since 2026-11-12 the Greater Mageblood Elixir, which measures +3.0 at Balanced and -0.7 at Max threat over it, tank_fairness-20261112-1) after the rest: +3.4 +/- 1.2 / +5.3 (seed 2 +3.0 +/- 1.2 / +6.0) at Max
   threat and Balanced, adopted; not at Max survival (the rune is the pick there).
 - **Losers**: a Dense Weightstone, an elemental stone or a wizard or mana oil in place of Rockbiter -1,800 to -2,000;
   Greater Agility -50; Superior Defense -55 to -290; Fortitude Forever -21 to -120; Giants -5; Winterfall Firewater

@@ -322,9 +322,11 @@ kept its talents. At 1,000 iterations (`tankbench`, default seed) the presets be
 
 Client 70862 halved the Natural flasks (30 Stamina, a 2% zone bonus), so each preset's flask was re-picked by its own objective (tank_fairness-20261111-1): the request against copies with each other flask, 3,000 iterations at seed 1, the winners at 10,000 on seeds 1 and 2 (`abtest`, paired, six-boss mean at the preset's weight). Max survival takes the Flask of the Titans: +46.5 ± 7.8 / +41.8 ± 7.8, 1,561.5 → **1,608.2** (seed 1).
 Max threat and Balanced keep Natural Precision (its expertise still pays there; every other flask loses). Food, Zanza
-and elixirs re-screened under the Titans: nothing else moves. The Elemental Sharpening Stone stays on the main hand,
-but its source is raid-only (Molten Core plans), which the consumables pass rules out for launch phase 1 DPS specs, so
-it waits on a user ruling.
+and elixirs re-screened under the Titans: nothing else moves. The Elemental Sharpening Stone's source is raid-only
+(Molten Core plans), which rule 8a rules out for launch phase 1, so since 2026-11-12 (tank_fairness-20261112-1) the main
+hand carries the Dense Sharpening Stone, as every DPS preset and the paladin do. Paired, tankbench -labeled, 3,000
+iterations, six-boss mean, own weight: Dense over Solid Stone +3.0 / +3.0 / +2.9, over the Dense Weightstone +12.9 / +12.5 /
++11.6, and the Elemental ahead by 22.3 / 21.9 / 15.5 (Max threat / Balanced / Max survival), the cost of the rule.
 
 ## Windfury fix and Max survival's Shield Wall (2026-11-12)
 

@@ -146,8 +146,8 @@ export const DefaultConsumes = Consumes.create({
 	// Natural flasks' zones (the encounter's naturalFlaskZone), beats the Titans by 380 to 660.
 	flask: Flask.FlaskOfNaturalPrecision,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
-	// The stone goes on the main hand: a shield can't hold one. The Elemental stone beats the Dense by 14 to 21.
-	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
+	// The stone goes on the main hand: a shield can't hold one. The Dense Sharpening Stone is the best stone a phase-1 player can get (the Elemental is raid-only, tank_fairness-20261112-1); the Dense Weightstone is -12.
+	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	strengthBuff: StrengthBuff.JujuPower,
 	// Round 4's raid set (docs/tank_warrior.md, Round 4 consumables, the full raid set): Spirit of Zanza (+78 to +161 over
 	// none; Balanced and Max survival), Rumsey Rum Black Label (+11 to +48) and the Goblin Sapper Charge (Engineering;
