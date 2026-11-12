@@ -2,6 +2,22 @@
 
 ## Open
 
+### tank_mechanics-20261112-2: Yellow attacks proccing Windfury Totem (mechanics-20261112-1, option b) would move every non-paladin tank preset by 3 to 21%
+- severity: high (a user ruling's size on the tank scores; no sim is wrong until that ruling)
+- affects: Protection warrior, Feral tank (bear), Warden shaman (all presets take the raid Windfury Totem); not the Protection paladin (it casts no Holy Strike)
+- found: 2026-11-12, master 55cd92b09
+- evidence: the Nov 11 hotfix note (t/2403040 post 8, tier 1) read as "Holy Strike activates Windfury Totem" (mechanics-20261112-1). The tank presets use no Holy Strike, so option (a) leaves them alone; option (b) (`sim/core/buffs.go:2168` back to ProcMaskMeleeMH) reaches Heroic Strike, Revenge, Shield Slam, Sunder, Maul and Stormstrike. Measured with `$AUDIT_WORK/tank_mechanics/wf_yellow.patch`, tankbench 3,000 iterations, seed 1, paired, objective at each preset's own weight (TPS): warrior Max threat 3568 -> 3794 (+6.3%, TPS 1898 -> 2015), Balanced 2893 -> 3081 (+6.5%), Max survival 1271 -> 1392 (+9.5%); bear Max threat 2411 -> 2802 (+16%, TPS 1360 -> 1569), Balanced 1650 -> 2005 (+21%), Max survival -128 -> 69; Warden Max threat 2177 -> 2234 (+2.6%), Balanced 924 -> 983, Max survival -1310 -> -1270. The tank order (warrior, bear, Warden) holds, but the gaps move. The Warden part is against our Nov 5-8 live logs (0 procs from about 2,770 Stormstrikes, buffs.go:2160), so a fix along (b) should still exclude Stormstrike; on-next-swing attacks (Heroic Strike, Maul) are the untested part. Sure of the measurement; the reading of the note is mechanics' (medium-high).
+- proposed fix: none for tanks until the user rules on mechanics-20261112-1; if (b), re-score the tank presets and re-check their rotations (Heroic Strike and Maul gain the most). A warrior or bear log with the totem up would settle on-next-swing attacks.
+- needs: user ruling
+
+### tank_mechanics-20261112-1: Judgement of Fury, every Protection paladin preset's judgement, is still a melee special after the Nov 11 "Judgement is a Ranged Attack" hotfix
+- severity: low (measured -1 to -12 objective, about 0.3%)
+- affects: Protection paladin (Level 60 Max threat, Balanced, Max survival)
+- found: 2026-11-12, master 55cd92b09
+- evidence: same hotfix as mechanics-20261112-3 (t/2403040 post 8, tier 1), which names only Command and Righteousness; the tank presets judge Seal of Fury (20271 and Swift Judgement 1310994 with Seal of Fury 20423), whose damage spell is `sim/paladin/seal_of_fury.go:97-114` (DefenseType melee, ProcMaskMeleeMHSpecial, OutcomeMeleeSpecialNoBlockDodgeParry). With only its proc mask made ProcMaskRangedSpecial (`$AUDIT_WORK/tank_mechanics/jof_ranged_procmask.patch`), tankbench 3,000 iterations, seed 1, paired: Max threat 2602 -> 2594 (TPS 1304 -> 1301), Balanced 2134 -> 2125, Max survival 1019 -> 1018. Not measured: the ranged hit roll (Precision 20189 is A_MOD_HIT_CHANCE, aura 54, which covers ranged too, so hit should not move) and whether a ranged Judgement can be dodged (unstated).
+- proposed fix: fold Judgement of Fury into mechanics-20261112-3's fix (ProcMaskRangedSpecial and a ranged outcome for the judgement damage spell), and re-score the paladin presets.
+- needs: worker fix
+
 ### tank_mechanics-20261108-1: No test pins a Warden shock's threat under the Stormstrike mark, now computed by hand
 - severity: low (the code is right today; untested, not wrong)
 - affects: Warden shaman (Earth Shock, Flame Shock, Frost Shock, Lightning Bolt, Chain Lightning under Stormstrike)

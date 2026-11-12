@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "71994fca6e7a0bb2b3e46569ace823373c2a42e1"
+  "master": "55cd92b09"
  },
- "last_pass_at": "2026-11-12T06:54:12Z",
- "pass": 11,
- "result": "quiet",
+ "last_pass_at": "2026-11-12T08:27:00Z",
+ "pass": 12,
+ "result": "findings",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T07:02:57Z",
+ "checked_at": "2026-11-12T08:27:00Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 11 (cb0d928fd): tooltip commit only. Rend and Tear comment, Trial by Fire proto rename (field 9, no behaviour change); Defiance 7/13/20 and Thick Hide per-level tooltips match the sim. Quiet; 20261111-1, 20261108-1, 20261107-1 still open."
+ "note": "Pass 12 (55cd92b09, tankheal branch treated as master): forced re-audit after the tank fixes. New Warden picks (Shamanistic Focus, Elemental Devastation 3, Elemental Warding 2, Healing Stream Totem r5) and the re-picked flasks/oil match client 70888 (tier 1). New: 20261112-1 (Judgement of Fury still melee, low, -8/-9) and 20261112-2 (WF yellow procs, option b, +3 to +21% on warrior/bear/Warden, user ruling). 20261108-1 and 20261107-1 still open."
 }
