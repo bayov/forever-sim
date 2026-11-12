@@ -4701,7 +4701,8 @@
       "8051c43",
       "0fcd019",
       "12aa279",
-      "64d0c5a"
+      "64d0c5a",
+      "934c698"
      ]
     },
     {
@@ -4723,6 +4724,31 @@
      "moves": false,
      "commits": [
       "3b0983b"
+     ]
+    },
+    {
+     "title": "Each class's default build is now its highest at 3 minutes: dual wield Fury, Combat Daggers, Affliction and Lone Wolf",
+     "kind": "method",
+     "classes": [
+      "Warrior",
+      "Rogue",
+      "Warlock",
+      "Hunter"
+     ],
+     "builds": [
+      "warrior__fury",
+      "warrior__fury_2h",
+      "rogue__combat-daggers",
+      "rogue__combat-swords",
+      "warlock__affliction",
+      "warlock__destruction",
+      "hunter__lone-wolf",
+      "hunter__beast-mastery"
+     ],
+     "moves": false,
+     "note": "They take the place of two-hand Fury, Combat Swords, Destruction and Beast Mastery as the build each class page opens on. No number changes.",
+     "commits": [
+      "7462c17"
      ]
     }
    ],
@@ -4766,6 +4792,14 @@
     {
      "commit": "3335001",
      "why": "test expectations only"
+    },
+    {
+     "commit": "cb0d928",
+     "why": "talent tooltip text, a Shaman talent field renamed under the same number, and comments; no report request's result moves (stale.mjs flags every build only through the proto hash)"
+    },
+    {
+     "commit": "836a1cd",
+     "why": "a Wowhead scrape of new quests' givers and spawns for the leveling tools; no report request reads it"
     }
    ],
    "source": {
