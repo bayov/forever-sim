@@ -737,8 +737,8 @@ func (druid *Druid) registerBloomSpell() {
 	})
 }
 
-// Nature's Swiftness (17116): the next Healing Touch, Regrowth or Wrath is instant (the other Nature
-// spells its class mask names the sim doesn't cast; Wild Growth isn't one), off the global cooldown,
+// Nature's Swiftness (17116): the next Healing Touch, Regrowth, Wild Growth or Wrath is instant (the
+// other Nature spells its class mask names the sim doesn't cast), off the global cooldown,
 // 3 min cooldown from when the buff is used. A rotation that casts it controls it; one that doesn't
 // has it used with the other cooldowns, on the next of those casts.
 func (druid *Druid) registerNaturesSwiftnessCD() {

@@ -185,7 +185,7 @@ the sim's per-tree digit format:
 | Restoration shaman | 0/8/43, `-005102-5530500315513151` (`ui/restoration_shaman/presets.ts`) | one totem per element (earth, air, water, fire); Mana Spring with Restorative Totems (×1.25); Mana Tide to its party |
 | Discipline priest | 33/18/0, `005005231330011531-2310510303` (`ui/healing_priest/presets.ts`) | Fortitude, Prayer of Spirit, Power Infusion |
 | Holy priest | 19/32/0, `00510223123-03405103030121531` (`ui/healing_priest/presets.ts`) | Fortitude, Prayer of Spirit |
-| Restoration druid | 11/0/40, `05302001--5053025153113051` (`ui/restoration_druid/presets.ts`) | Gift of the Wild; Innervate; Faerie Fire as an assignment |
+| Restoration druid | 11/0/40, `05302001--5053025153113051` (`sim/compsearch/presets.go`; the healer presets in `ui/restoration_druid/presets.ts` have taken Heart of the Wild 2 for Subtlety 2 since 2026-11-12) | Gift of the Wild; Innervate; Faerie Fire as an assignment |
 
 **The druid presets follow the launch realms' 2026-10-30 hotfix trees** (2026-11-01). It moved most druid
 talents, so both strings changed with the same talents: the Feral tank's Berserk point went to Lacerate (a

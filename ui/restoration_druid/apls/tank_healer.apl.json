@@ -5,7 +5,7 @@
    "action": {
     "autocastOtherCooldowns": {}
    },
-   "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness."
+   "notes": "Racials, trinkets, potions and Demonic Rune (Nature's Swiftness has its own line)."
   },
   {
    "action": {
@@ -29,6 +29,53 @@
     }
    },
    "notes": "Innervate on ourselves at 35% mana."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 17116
+     }
+    },
+    "condition": {
+     "cmp": {
+      "op": "OpLt",
+      "lhs": {
+       "currentHealthPercent": {
+        "sourceUnit": {
+         "type": "LowestHealth"
+        }
+       }
+      },
+      "rhs": {
+       "const": {
+        "val": "0.6"
+       }
+      }
+     }
+    }
+   },
+   "notes": "Nature's Swiftness when someone in my assignment is under 60% health..."
+  },
+  {
+   "action": {
+    "castSpell": {
+     "spellId": {
+      "spellId": 25297
+     },
+     "target": {
+      "type": "LowestHealth"
+     }
+    },
+    "condition": {
+     "auraIsActive": {
+      "auraId": {
+       "spellId": 17116
+      }
+     }
+    }
+   },
+   "notes": "...and an instant Healing Touch rank 11 at them."
   },
   {
    "action": {
