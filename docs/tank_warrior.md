@@ -448,6 +448,15 @@ knob searches alternated until neither moved. Raw output: `orchestration/tank_ha
 
 Max survival wears Superior Deflection (Defense +9) on the wrists, Max threat and Balanced Superior Strength (1885); all three wear Greater Agility (1887) on the boots, Enchant Shield - Greater Stamina (spell 20017, +9 Stamina, enchant 1886, the id the bracer's Superior Stamina shares) on the shield.
 
+Head, legs and neck (2026-11-12, tank_fairness-20261112-2; every legal Phase 1 enchant screened slot by slot at 3,000
+on seeds 1 and 2, the winners paired at 10,000 on seeds 1 and 2, six-boss mean at the preset's weight): Max threat wears
+Lesser Arcanum of Voracity Strength (1506) on the head and legs over Lesser Arcanum of Constitution (1503), +20.5 / +20.7
+(TPS +17); Balanced Voracity Agility (1508), +8.2 / +10.5 (Strength is +6.0 / +5.8), in its own UI gear set
+(`level60_phase1_synthetic_balanced.gear.json`); Max survival Enchant Necklace - Agility (1249059) over Strength,
++13.8 / +13.2, and keeps Constitution (Voracity Agility on top of the necklace: +13.2 / -6.4 / +6.5 / -2.5 on seeds 1 to
+4, a tie). A rescreen of every slot on the new sets (3,000, seed 1) found nothing over +3 that held at 10,000 (Balanced's
+Agility necklace: +1.2 / +1.0).
+
 Balanced's knobs: `shieldBlock=1` (whenever its buff is down), `sbRage=0`, `demo=0`, `tc=1`, `tcRefresh=2`,
 `debuffsFirst=0`, `revengeFirst=0`, `sunderUp=1`, `sunderRage=25` (30 before round 5), `hsRage=50`, `bloodrageRage=30`, `opener=0`,
 `chargeFrom=0`, `potion=1`, `shieldWall=2`, `wallAt=17` (Shield Wall in the last 17 s), `trinketAt=0`,

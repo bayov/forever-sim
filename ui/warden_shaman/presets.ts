@@ -58,6 +58,10 @@ export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
 // The synthetic Phase 1 tank set (docs/tank_shaman.md): Max threat's with the attack power on-use trinket, Balanced's and
 // Max survival's with the armor one. Max threat and Balanced wear Agility on the cloak and Greater Agility on the boots, Max
 // survival Superior Stamina and Greater Stamina (tank_gear-20261112-1, -3); the wrists are Superior Deflection.
+// Head, legs, neck and gloves (tank_fairness-20261112-2, 10,000 iterations, seeds 1 / 2, against Voracity Stamina, Necklace
+// Strength and Gloves Superior Strength): every set wears Necklace Agility. Max threat: Voracity Agility, Gloves Natural
+// Power, +21.7 / +18.5. Balanced: Voracity Agility, Gloves Greater Agility, +31.8 / +23.5. Max survival: Lesser Arcanum of
+// Tenacity (+125 armor), Gloves Greater Agility, +82.5 / +91.2.
 export const GearLevel60Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic)', Phase1SyntheticTankGear);
 export const GearLevel60SyntheticArmorTrinket = PresetUtils.makePresetGear('Level 60 Phase 1 (Synthetic, armor trinket)', Phase1SyntheticTankArmorTrinketGear);
 
