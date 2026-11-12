@@ -2,6 +2,14 @@
 
 ## Open
 
+### tank_fairness-20261112-1: The warrior keeps the raid-only Elemental Sharpening Stone that the paladin and bear gave up (+20 at each weight)
+- severity: medium (about 0.6% of the warrior's Balanced score; no ranking moves)
+- affects: Protection warrior, all three presets (tools/tankbench/req/warrior_protection_{max_threat,balanced,max_survival}.json mainHandImbue ElementalSharpeningStone, ui/tank_warrior/presets.ts); also the Warden's Mageblood Potion at Max threat and Balanced (shaman_warden_{max_threat,balanced}.json manaRegenElixir), which measures as noise
+- found: 2026-11-12, master 67ad7c6a4
+- evidence: the consumables pass rules out raid-only sources for phase 1 (orchestration/audit/passes/consumables.md:111-113: "Out: Brilliant Wizard Oil, Elemental Sharpening Stone (MC plans) ... Mageblood Potion (Zandalar vendor)"). On 2026-11-12 the paladin swapped its Elemental stone for the Wizard Oil on that ground (docs/tank_paladin.md:214-218) and the bear declined it at Max survival (+21, docs/tank_druid.md:298-300), but the warrior kept it, "waits on a user ruling" (docs/tank_warrior.md:325-327), with no finding to carry the ruling. Measured here, tankbench 3,000 iterations, six-boss mean at each preset's own weight, seed 1 / seed 2, the stone against the next best (Dense Sharpening Stone; Dense Weightstone is a further -12): Max threat +21.3 / +20.2, Balanced +19.7 / +20.3, Max survival +11.2 / +14.3 (± about 5 / 8 / 12 unpaired). The Warden without Mageblood: Max threat -3.3 / +0.2, Balanced -5.3 / -3.7 (± 5 to 6), i.e. noise. Sure of the asymmetry and the sign; the sizes to about ± 5.
+- proposed fix: one rule for all four tanks, the user's call: (a) the raid-only rule binds the tanks: the warrior takes the Dense Sharpening Stone (-20 / -20 / -13) and the Warden drops Mageblood (about 0); or (b) it doesn't: the bear takes the Elemental stone at every preset (+21 at Max survival, measured by its worker) and the paladin the Brilliant Wizard Oil (+52 to +53, docs/tank_paladin.md:218).
+- needs: user ruling
+
 ### tank_fairness-20261105-2: The Warden presets play races a Forever shaman can't be (Night Elf, Undead)
 - severity: high (Night Elf's Elune's Light is worth about +76 at Max threat and +109 at Balanced over the best legal race, 2.4% and 6%; Undead about +43 at Max survival, 2%; the Warden stays last at every weight)
 - affects: Warden shaman, all three presets (tools/tankbench/req/shaman_warden_{max_threat,balanced}.json RaceNightElf, shaman_warden_max_survival.json RaceUndead; ui/warden_shaman/sim.ts:90 RaceNightElf; docs/tank_shaman.md:34-36 and calls (f), (g))
@@ -13,6 +21,7 @@
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
+- pass 10 (2026-11-12, master 67ad7c6a4): not fixed; requests still Night Elf / Night Elf / Undead. Re-measured after the Warden re-tune, paired 3,000 iterations, seed 1 / 2, against the preset race: Max threat Troll -56.7 / -62.0, Orc -59.7 / -63.2; Balanced Troll -84.3 / -71.3, Orc -87.2 / -91.2; Max survival Tauren -153.2 / -163.8 (the Undead edge grew from about 43). Legal scores: 2,475 / 1,100 / -2,550; the Warden stays last at every weight.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -25,6 +34,7 @@
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
+- pass 10 (2026-11-12, master 67ad7c6a4): not fixed; all three paladin requests still Major Mana Potion with no potion action. Re-measured on the new flask and Wizard Oil, Greater Stoneshield plus the potion action, 3,000 iterations, six-boss mean, seed 1 / 2: Max threat +60.7 / +57.5, Balanced +174.7 / +168.3, Max survival +408.8 / +394.7 (+24%, DTPS -30 at each weight). Max survival would go 1,711 to about 2,120 against the warrior's 1,573.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -58,6 +68,7 @@
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
+- pass 10 (2026-11-12, master 67ad7c6a4): unchanged in kind (Balanced healing needed paladin 241 against warrior 344, bear 474, Warden 665); still waits on the user's calls.
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low
@@ -74,6 +85,7 @@
 - pass 7 (2026-11-10, master ca5e35c): unchanged; not fixed on master.
 - pass 8 (2026-11-11, master 707ae92): unchanged; not fixed on master.
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
+- pass 10 (2026-11-12, master 67ad7c6a4): unchanged; tools/tankbench/req/warrior_protection.json still present.
 
 ## Resolved
 
