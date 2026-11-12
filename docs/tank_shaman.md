@@ -93,7 +93,16 @@ Superior Defense (+70 armor), 1219587 Agility; 1887 on the feet is Greater Agili
 Agility on the back (+3.9 / +3.3) and Greater Agility boots (+5.4 / +5.0); Balanced Agility on the back (+4.2 / +4.2) and
 Greater Agility boots (+9.0 / +10.0); Max survival keeps Superior Defense, Greater Stamina boots (-8.8 ± 10.3 at 3,000) and
 Superior Deflection wrists. Balanced's UI set is its own (`phase1_synthetic_tank_armor_trinket_balanced.gear.json`);
-1886 on the shield is Enchant Shield - Greater Stamina (+9). All three keep the template's
+1886 on the shield is Enchant Shield - Greater Stamina (+9). Head, legs, neck and gloves since 2026-11-12
+(tank_fairness-20261112-2; every legal Phase 1 enchant screened slot by slot at 3,000 on seeds 1 and 2, the winners
+paired at 10,000 on seeds 1 and 2 against Voracity Stamina 1507, Necklace Strength 1249019 and Gloves Superior Strength
+1248640): all three wear Enchant Necklace - Agility (1249059). Max threat: Voracity Agility (1508) on the head and legs and
+Gloves Natural Power (1248645, +20 nature damage), +21.7 / +18.5. Balanced: Voracity Agility and Gloves Greater Agility
+(1887), +31.8 / +23.5 (Lesser Arcanum of Tenacity on the head and legs instead: +30.0 / +22.7). Max survival: Lesser
+Arcanum of Tenacity (1504, +125 armor) on the head and legs and Gloves Greater Agility, +82.5 / +91.2 (Voracity Agility
+instead: +64.7 / +57.7; adding Major Health on the chest: -1.8 / -3.7). On that set, Greater Agility boots and the Agility
+cloak screened at +14.7 / +14.0 (3,000, seed 1) but did not hold at 10,000 (+12.5 / +1.8 and +5.8 / 0.0; both together
++1.5 / -15.3). All three keep the template's
 other defaults (Stoneskin, Lightning Shield, Earth Shock on cooldown above Stormstrike with `shockFirst=1`, no self
 heal). Since round 4 all three put Searing Totem down before the pull and recast it, with Fire Nova at 40% mana or
 more, only in the fight's last 60 s (`fireLast=60`; Round 4 below), and all three eat Dirge's Kickin' Chimaerok Chops
@@ -541,9 +550,12 @@ rating, Defense 26, block value 50 (all on the shield). A 2.9 s one-hand axe at 
 0.72 x L(71) shield (2,681 armor, 50 block value, 8 Defense), the tank trinket (20 Defense, 40 block value), and
 an on-use trinket: the Enhancement set's 335 attack power (990015) or the Warden's 1,665 armor (999216), both 20 s
 every 2 min. Hands and legs carry The Spiritcaller's Rage (2 piece: 1% attack and casting speed). Enchants:
-Lesser Arcanum of Voracity (Stamina) on head and legs, Strength on the neck, Superior Defense on the back (Agility,
+on head and legs Lesser Arcanum of Voracity Agility (Max threat, Balanced) or Tenacity (Max survival), Agility on the
+neck, Superior Defense on the back (Agility,
 1219587, at Max threat and Balanced), Greater Stats on the chest, Superior Deflection (1248665) on the wrists (Max
-threat wore Superior Stamina, 1886, until 2026-11-12), Superior Strength on the hands, Greater Stamina on the feet
+threat wore Superior Stamina, 1886, until 2026-11-12), Natural Power (Max threat) or Greater Agility on the hands
+(Voracity Stamina, Necklace Strength and Superior Strength gloves until 2026-11-12, tank_fairness-20261112-2), Greater
+Stamina on the feet
 (929, +7, Max survival's; Greater Agility, 1887, at Max threat and Balanced), Enchant Shield - Greater Stamina
 on the shield (enchant 1886, +9, spell 20017; tank round 3 moved it from 929, which is no longer a shield enchant in
 the DB, so the CLI gave +7 and the web UI loaded no enchant: tank_gear-20261104-3), Crusader on the weapon.

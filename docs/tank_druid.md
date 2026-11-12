@@ -339,6 +339,18 @@ Max threat and Balanced keep their Natural flask. Food, Zanza and elixirs re-scr
 moves. Not adopted: the Elemental Sharpening Stone at Max survival (+20.9 ± 2.9 / +21.3 ± 3.0), since its source is
 raid-only (Molten Core plans), which the consumables pass rules out for launch phase 1.
 
+## Max survival: gloves and race (2026-11-12, tank_fairness-20261112-2, -3)
+
+Every legal Phase 1 enchant screened slot by slot on all three presets (3,000 iterations, seeds 1 and 2, six-boss mean at
+the preset's weight). Max threat and Balanced: nothing over +3, they keep their enchants. Max survival: Gloves Greater
+Agility (1887) over Superior Strength, +14.3 / +23.7 at 10,000 on seeds 1 / 2 (its own UI gear set, "Bear (Max
+survival)", `level60_phase1_synthetic_max_survival.gear.json`), and the Tauren over the Night Elf on that set: +25.5 /
++0.1 / +17.8 / +42.0 at 10,000 on seeds 1 to 4 (a mean of +21, TPS -33; Night Elf stays at Max threat and Balanced, where the
+Tauren lost 150 and 114 in the audit's pass 11). Together +39.8 / +23.8, 184 → **224** (seed 1, 10,000). On the Tauren every enchant
+slot (3,000, seeds 1 and 2: the best is Constitution on the head, -2.8 / +7.8), the Frenzied Regeneration threshold (70,
+90: -102, -412), Enrage (30, 50: ±1.5), Swipe (70, 90) and Maul (30, 50) thresholds hold; the talents were not re-searched,
+since Endurance (+5% health) changes no rotation choice.
+
 ## Presets (round 3, 2026-11-04: unmultiplied mana-gain threat, disjoint seeds)
 
 Round 3 re-searched the three presets on master 95bd28c's engine: mana-gain threat at 0.5 a mana with no threat
@@ -503,7 +515,8 @@ Each with the default the sim uses now.
 8. **Enrage in the fight, not before the pull**, at every weight (the round-1 presets cast it before the
    pull). Its armor cut lands mid-fight under a Rage threshold. Default: as the search found.
 9. **Max survival's race**: the Tauren ties the Night Elf (round 3: -19.8 +- 11.3 at 10,000 on a disjoint seed;
-   round 2: -1.8 +- 11.8). Default: Night Elf, as the other two presets.
+   round 2: -1.8 +- 11.8). Since the 2026-11-12 re-tune the Tauren wins it (+21 over four seeds at 10,000,
+   tank_fairness-20261112-3). Default: Tauren at Max survival, Night Elf at the other two.
 10. *(Removed 2026-11-04.)* It left the Blasted Lands buffs and the rum out of every tank request. The standards
    item 11 ruling of 2026-11-04 gives the tanks the full raid treatment (natural flasks included), so the bear takes
    them (Gear, Consumables, round 5).
