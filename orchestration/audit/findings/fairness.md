@@ -11,6 +11,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: 7462c17c8 (user ruling 2026-11-12, "switch to best") set Combat Daggers as default because it was the best 180 s Combat build then (707ae92 sweep: Daggers 915.4, Swords 899.6). The next commit that moved rogues, a0b4d3be9 (Windfury Totem on main hand abilities) plus e2322baa1 (Venom on Instant Poison), lifted Swords +46.5 and Daggers +21.2. At master, report race Undead, 180 s requests: Swords 946.1 vs Daggers 936.1 (shared run `$AUDIT_WORK/runs/master`, and the 5k seed 1 sweep, 946.1 vs 936.0; noise about 1.5). Daggers' best race (Gnome 936.6) does not close it.
 - proposed fix: apply the ruling again on the current numbers: isDefault back to rogue__combat-swords, with its UI preset defaults and the wiki line, once results-20261112-1's re-sim confirms the order at 20k. Fury DW over 2H (1050.2 vs 1032.0), Affliction over Destruction (1071.1 vs 1063.2) and Lone Wolf over BM still hold.
 - needs: orchestrator fix
+- 2026-11-12, master 8306f1d52: still open after the re-sim (bff0169e4). builds.json at 20k: Combat Swords 946.4, Combat Daggers 936.2 (isDefault); 5k sweep 946.1 / 936.0. Order confirmed.
 
 ## Resolved
 

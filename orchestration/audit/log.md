@@ -333,3 +333,14 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-12 13:28 | healer_fairness | pass 9 | master a0b4d3be9 | quiet | 5 spot cells match baseline
 2026-11-12 13:28 | tank_gear | pass 7 | master a0b4d3be9 | quiet | no tank gear change
 2026-11-12 13:28 | tank_fairness | pass 10 | master a0b4d3be9 | quiet | baseline refreshed; warrior/paladin tie gone
+2026-11-12 19:08 | results | pass 85 | master 8306f1d52 | quiet | all 68 builds within 1.5 DPS; results-20261112-1 resolved, metas lag noted
+2026-11-12 19:08 | rotations | pass 61 | master 8306f1d52 | quiet | hunter pet and Rake moves traced; new baseline; feral FB gate finding grows
+2026-11-12 19:08 | consumables | pass 81 | master 8306f1d52 | quiet | only leveling target changed
+2026-11-12 19:08 | mechanics | pass 77 | master 8306f1d52 | quiet | pet speed and Rake rulings verified
+2026-11-12 19:08 | fairness | pass 37 | master 8306f1d52 | quiet | 19/19 gear check; new baseline
+2026-11-12 19:08 | healer_mechanics | pass 11 | master 8306f1d52 | quiet | Rake is cat-only
+2026-11-12 19:08 | healer_rotations | pass 9 | master 8306f1d52 | quiet | 63 rows identical to ref
+2026-11-12 19:08 | healer_fairness | pass 10 | master 8306f1d52 | quiet | 3 spot cells match
+2026-11-12 19:08 | tank_mechanics | pass 12 | master 8306f1d52 | quiet | Rake not used by bears
+2026-11-12 19:08 | tank_rotations | pass 10 | master 8306f1d52 | quiet | Windfury finding resolved; baseline refreshed
+2026-11-12 19:08 | tank_fairness | pass 11 | master 8306f1d52 | quiet | no tank change

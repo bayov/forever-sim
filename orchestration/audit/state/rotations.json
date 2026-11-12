@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "a0b4d3be9859f76f9365c0cb672ec57ef8e6423e"
+  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
  },
- "last_pass_at": "2026-11-12T13:20:56Z",
- "pass": 60,
- "result": "findings",
- "note": "Pass 60: Windfury Totem on main hand abilities (a0b4d3be9) + Venom Instant Poison (e2322baa1): Arms +170, Fury 2H +100, Fury +48..64, SV +70, rogues +22..58. New rotations-20261112-1 (rogue poison swap, +2.4..+16.3). 20261109-1 narrowed to Fury 2H (+2.0); Arms drop now loses 4.1. 20261105-1 still open.",
+ "last_pass_at": "2026-11-12T19:00:08Z",
+ "pass": 61,
+ "result": "quiet",
+ "note": "Pass 61: hunter pet follows owner melee speed (368b2e181; SV +25..28, BM +8..10, MM +1..5) and Rake hit 6.5% AP (c380bbaef; feral +29). No APL change. No new findings; 20261105-1 (feral FB gate 65) re-measured larger: +2.74 at 180 pooled. Rake 3s end gate optional (+0.3).",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T13:28:36Z",
- "baseline": "baseline_a0b4d3b_3000it_seed424242.tsv"
+ "checked_at": "2026-11-12T19:08:25Z",
+ "baseline": "baseline_8306f1d_3000it_seed424242.tsv"
 }

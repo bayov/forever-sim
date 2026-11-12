@@ -8,8 +8,19 @@ Findings 10 and 11 still open, unchanged.
 - wago.tools newest build still 1.60.1.70888; no new client rows.
 - Blizzard posts: news.blizzard.com returned 500/307 to the fetcher, so nothing newer than the Nov 10 hotfixes
   (`dev_notes_seen`) could be read this pass. `orchestration/update_ledger.md`: no entry since pass 10.
+# Healer mechanics, pass 11 (2026-11-12)
 
-## What changed
+Master 8306f1d52 against last pass a0b4d3be9. Result: quiet.
+
+## Get current
+
+| Source | Seen | Result |
+|---|---|---|
+| Newest client (wago.py latest) | 1.60.1.70888 | Same as pass 10, no verdict reopened |
+| Blizzard notes | Nov 10 hotfixes (already seen) | Nothing newer |
+| orchestration/update_ledger.md | no commits since a0b4d3be9 | Nothing new |
+
+## What changed (sim/, a0b4d3be9..8306f1d52)
 
 | File | Change | Healer effect | Verdict |
 |---|---|---|---|
@@ -42,3 +53,15 @@ Findings 10 and 11 still open, unchanged.
 `go test -tags=with_db ./sim -run TestDruid` (incl. `TestDruidNaturesSwiftnessOnRegrowth` with Wild Growth) and
 `./sim/druid/...`: all pass. No test drives the new NS line through the APL (emergency line -> instant heal); add one
 with finding 14's engine test (finding 10's list).
+| Commit | Files | Healer impact |
+|---|---|---|
+| c380bbaef Druid: Rake's direct hit adds 6.5% AP | sim/druid/rake.go, feral tests/results | None. Cat form melee ability; the Restoration druid presets never cast Rake, and the change is limited to Rake's hit base damage |
+| 368b2e181 Hunter pet melee speed | sim/core/pet.go, sim/core/unit.go, sim/hunter/* | None. Only pets with FollowsOwnerMeleeSpeed (the hunter pet); healers' pets (none) and health, heals, regen untouched |
+
+Steps 3 to 5 (spells, engine, tests): no heal, healing talent, set bonus or healing engine file changed, so
+the pass 10 tables and verdicts in ref/healer_mechanics/verdicts.md stand unchanged.
+
+## Findings
+
+No new findings. Open: healer_mechanics-20261104-11 (Riptide mana), healer_mechanics-20261104-10 (untested
+heal paths); neither touched by these commits.

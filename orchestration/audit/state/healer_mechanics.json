@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "55cd92b09"
+  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
  },
- "last_pass_at": "2026-11-12T08:40:00Z",
+ "last_pass_at": "2026-11-12T18:49:51Z",
  "pass": 11,
- "result": "findings",
- "note": "Pass 11 (forced, druid NS re-tune on tankheal 55cd92b09): NS line, HotW 2 and autocast exclusion verified; new low engine finding 14 (health % reads true health, no measured effect). Findings 10, 11, 14 open.",
+ "result": "quiet",
+ "note": "Pass 11: rake.go (c380bbaef, feral Rake hit AP 0.065) and hunter pet melee speed (368b2e181) only; no heal, healing talent or healing engine change. Client 1.60.1.70888 unchanged. Findings 10, 11 open.",
  "client_build": "1.60.1.70888",
  "dev_notes_seen": {
   "url": "https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026",
   "date": "2026-11-10"
  },
- "checked_at": "2026-11-12T08:40:00Z"
+ "checked_at": "2026-11-12T19:08:25Z"
 }

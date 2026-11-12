@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "3065ba744"
+  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
  },
- "last_pass_at": "2026-11-12T15:23:00Z",
+ "last_pass_at": "2026-11-12T19:05:27Z",
  "pass": 9,
- "result": "findings",
- "note": "Pass 9 by hand on tankheal 3065ba744 (druid re-tune, seen-health fix 65b5d49cf, healer consumables). New -1 druid tank NS 45% (+0.027), -2 shaman raid NS held (+0.010). Ref rewritten; raid rows' death floor not recorded.",
+ "result": "quiet",
+ "note": "Pass 9 on 8306f1d52. Gate: sim/druid/rake.go (Rake hit AP, never cast by healers); also core pet melee-speed inheritance (hunter pets). All 63 baseline rows byte-identical to ref. -1,-2,-3 still open. baseline.sh restored from origin/tankheal 8f3f74f3f, which carries an unmerged by-hand pass 9.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T13:28:36Z"
+ "checked_at": "2026-11-12T19:08:25Z"
 }

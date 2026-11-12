@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "4fb90c2988315c56076ddd5cae0592b520aa3c45"
+  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
  },
- "last_pass_at": "2026-11-12T17:05:00Z",
+ "last_pass_at": "2026-11-12T18:49:45Z",
  "pass": 11,
- "result": "findings",
+ "result": "quiet",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-12T13:28:36Z",
+ "checked_at": "2026-11-12T19:08:25Z",
  "baseline": "ref/tank_fairness/summary.tsv"
 }

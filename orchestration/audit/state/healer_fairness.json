@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "4fb90c2988315c56076ddd5cae0592b520aa3c45"
+  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
  },
- "last_pass_at": "2026-11-12T17:10:00Z",
- "pass": 9,
- "result": "findings",
- "baseline": "4fb90c298",
- "note": "Pass 9: forced re-audit after the healer changes of 2026-11-12. New -20261112-1 (Holy raid Twilight Focus for Inspiration, +0.021). -5 re-measured +0.024. Regenerated ref/healer_bench/summary.tsv. Open: -20261112-1, -5, -4.",
+ "last_pass_at": "2026-11-12T18:51:56Z",
+ "pass": 10,
+ "result": "quiet",
+ "baseline": "9ba00c2dc",
+ "note": "Pass 10: c380bbaef (Rake direct hit +6.5% AP, cat form only) reaches no healer; spot cells druid tank Broodlord 0.875, druid raid Onyxia 0.943, shaman tank Broodlord 0.974 identical to baselines. Open: -20261111-1, -5, -4.",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-12T13:28:36Z"
+ "checked_at": "2026-11-12T19:08:25Z"
 }

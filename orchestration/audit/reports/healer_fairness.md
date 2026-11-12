@@ -5,6 +5,18 @@ tank) instead of Twilight Focus; +0.021 mean raid carry with the swap. Still ope
 APL, now +0.024), -4 (low). Forced re-audit after the day's healer changes (druid NS holds and Heart of the Wild 2,
 shaman raid NS for Healing Wave under 65%, the seen-health engine fix, the new consumables). HEAD moved to a2d1dceaa
 during the pass with audit files only, so the numbers hold for it too.
+# Healer fairness pass 10 (2026-11-12, master 8306f1d52)
+
+Result: quiet. No new finding. Still open: -20261111-1 (high, druid raid NS on Wild Growth), -5 (high, paladin raid
+preset), -4 (low). Due because sim/druid/rake.go changed (a0b4d3be98..8306f1d52, c380bbaef): under Forever, Rake's
+direct hit now adds 6.5% of attack power. Rake is a cat form ability; no healer request or Restoration druid rotation
+casts it, so nothing reaches the healers.
+- tools/healbench, req, encounters and healer presets unchanged, so section 1 stands.
+
+Spot check, healbench built from 8306f1d52, 1,000 iterations, -carry: identical in HPS and carry to the baselines for
+druid_restoration (tank Broodlord 765, 0.875; bench_9ba00c2.tsv), druid_restoration_raid (raid Onyxia 577, 0.943;
+druid_raid_707ae92.tsv), shaman_restoration (tank Broodlord 662, 0.974). Rankings as in pass 7: raid Holy 1.437,
+paladin 1.413, shaman 1.395, druid 1.391. The tables below are pass 2's.
 
 ## 1. Same terms (the 9 requests)
 

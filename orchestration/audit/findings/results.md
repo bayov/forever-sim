@@ -4,14 +4,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### results-20261112-1: 19 builds (warriors 10, rogues 6, Survival 3) in builds.json lag a0b4d3be9 (Windfury Totem on main hand abilities), +18.7 to +171.6
-- severity: high (Arms +171.6 = +19.7%, Fury 2H +106.7; moves the ranking)
-- affects: warrior arms/fury/fury_2h families, rogue (6), hunter survival (3); paladin, other hunters, casters, shaman unchanged
-- found: 2026-11-12, master a0b4d3be9
-- evidence: shared 20k seed-1 run (/tmp/audit-work/runs/master/summary.tsv) vs ui/dps_report/data/builds.json: exactly these 19 differ by more than 1.5 (arms 871.2 -> 1042.8, arms_dragonkin 930.6 -> 1100.2, fury 998.9 -> 1051.3, fury_2h 925.6 -> 1032.4, survival 916.9 -> 987.2, combat-swords 899.7 -> 946.1, seal-fate-swords 895.8 -> 939.2, subtlety 839.7 -> 863.1); the other 49 are within 1.5. The commit message says it moves 19 report builds and does not re-sim them; builds.json was published at 71994fca6/f414e76bf under the white-swing-only rule. Sure of the numbers.
-- proposed fix: re-sim and republish the 19 builds (builds.json, metas, Changes tab). The metas lag too (45 of 68 off by more than 0.5; the 26 others are the old results-20261104-2 items).
-- needs: orchestrator fix
-
 ### results-20261105-1: mksettings -spec feral lacks the Goblin Sapper Charge the committed feral requests carry (drift, -3.6 DPS)
 - severity: low (no published number is wrong; regenerating the request by the README would lose 3.6 DPS)
 - affects: druid__feral-cat, druid__feral-cat-duty-ff (tools/rotopt/mksettings/spec_feral.go)
@@ -30,6 +22,8 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-11-11, master 707ae92cc: the shared run (68 builds) vs metas, after the Nov 5-11 merges, explains every move beyond the Windfury rule. Paired 20k seed 1 (binary before/after each commit, same request): (a) 032692409 natural flasks (Stamina 60 -> 30, zone bonus 5 -> 2, client 70862): the 28 natural-flask presets drop, feral-cat 1169.5 -> 1151.5, Beast Mastery 1195.6 -> 1174.6, Arms 1088.3 -> 1069.0, Fury 1137.1 -> 1092.5 (Precision flask, -3.9%), Subtlety 885.6 -> 866.4; (b) Warlock hotfix 113766 (546d0dcaa, 99c8ce2b1) Affliction 1022.7 -> 1077.1 (+5.3%), then f20d5938a (no dot tick after the aura ran out) -> 1070.8, so Affliction ends +3.5% over its meta (1034.1), duty runs +3.1 to +3.4%; Destruction (Fire) +0.1%; (c) hunter mana costs (30e67a529), the druid Idol of Ferocity (333643570) and the Arcane Concentration split (5bfae1163) do not move their builds (feral, hunters, Arcane and Fire mage identical on binaries 27d0d59d6 through f20d5938a); the Arcane (-6.6) and Fire (-4.3) gaps to builds.json predate 27d0d59d6 and are noise-level for a republish. So 45 of 68 metas are off by more than 0.5 and builds.json 43 of 68 by more than 1.5, all waiting on the full re-sim the brief (1516752ac) calls for; the sim is not wrong in any of them. Shaman metas are now current. Frost mage, Balance, Ret Shock, Shadow, Smite, Elemental, Frostfire: unchanged against builds.json.
 - proposed fix: set the metas' published.dps and source from builds.json / the run (builds.json already carries the numbers).
 - needs: orchestrator fix
+- update 2026-11-12, master 8306f1d52: builds.json is current (68 of 68 within 1.5 of the shared run). The metas still lag: 45 of 68 published.dps off by more than 0.5 (e.g. fury_2h -118.7, paladin level_60_sub_holy -92.1, level_60 -82.4, Ret Shock -59.3, arms -45.2, Affliction +36.7, Survival -27.1, feral-cat +14.5). The 2b62e304a/bff0169e4 re-sims updated builds.json only, so `runreq.sh` shows OFF for those until the metas are refreshed.
+
 
 ### results-20261104-1: five rogue metas' published.dps lag the hotfix re-sim (up to 17.3 DPS)
 - severity: low (builds.json, from e9185b1aa, matches my 20k seed-1 run on all five; only the metas lag)
@@ -40,6 +34,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: orchestrator fix
 
 ## Resolved
+
+### results-20261112-1: 19 builds (warriors 10, rogues 6, Survival 3) in builds.json lag a0b4d3be9 (Windfury Totem on main hand abilities), +18.7 to +171.6
+- severity: high (Arms +171.6 = +19.7%, Fury 2H +106.7; moves the ranking)
+- affects: warrior arms/fury/fury_2h families, rogue (6), hunter survival (3); paladin, other hunters, casters, shaman unchanged
+- found: 2026-11-12, master a0b4d3be9
+- evidence: shared 20k seed-1 run (/tmp/audit-work/runs/master/summary.tsv) vs ui/dps_report/data/builds.json: exactly these 19 differ by more than 1.5 (arms 871.2 -> 1042.8, arms_dragonkin 930.6 -> 1100.2, fury 998.9 -> 1051.3, fury_2h 925.6 -> 1032.4, survival 916.9 -> 987.2, combat-swords 899.7 -> 946.1, seal-fate-swords 895.8 -> 939.2, subtlety 839.7 -> 863.1); the other 49 are within 1.5. The commit message says it moves 19 report builds and does not re-sim them; builds.json was published at 71994fca6/f414e76bf under the white-swing-only rule. Sure of the numbers.
+- proposed fix: re-sim and republish the 19 builds (builds.json, metas, Changes tab). The metas lag too (45 of 68 off by more than 0.5; the 26 others are the old results-20261104-2 items).
+- needs: orchestrator fix
+- resolved: 2026-11-12, 2b62e304a and bff0169e4 (builds.json re-simmed; all 68 now within 1.5 of the run at 8306f1d52, 0 differ). The metas were not updated by the republish (see results-20261104-2).
 
 ### results-20261109-1: Windfury Totem white-swing-only rule (0ce9dbf40) cuts every raid-WF melee build 1.5% to 18.4%; 41 metas and builds.json stale
 - severity: high (moves DPS by far more than 1%, and shifts specs in the ranking: Arms 1088 to 888, Fury 2H 1151 to 961, Survival 1041 to 945, Ret 1103 to 1010)

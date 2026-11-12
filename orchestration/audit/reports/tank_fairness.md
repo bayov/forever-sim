@@ -1,4 +1,22 @@
 # tank_fairness pass 11: 2026-11-12, master 4fb90c298
+# tank_fairness pass 11: 2026-11-12, master 8306f1d
+
+Due: `sim/druid/rake.go` changed since a0b4d3b (c380bbaef: Forever Rake's direct hit adds 6.5% of attack power,
+outside the Nov 2 scale; user's ruling 2026-11-12). Quiet.
+
+## Why no re-sim
+
+- Rake is registered as a Cat form spell (`sim/druid/rake.go:45`, `RegisterSpell(Cat, ...)`); a bear can't cast it.
+- None of the three bear requests (`tools/tankbench/req/druid_bear_*.json`) casts Rake (no spell 1822/1823/1824/9904).
+- Other Rake uses in `sim/druid/talents.go` (Feral Aggression, Open Wounds, Blood Frenzy-style checks at 125, 331-337,
+  353, 375) read the Rake spell or its dot only when it exists or is active, never in a bear rotation.
+- No tank request, other watched file or standard changed in a0b4d3b..8306f1d.
+
+So the tank numbers, ranking and same-terms checks of pass 10 stand unchanged; `ref/tank_fairness/summary.tsv` kept.
+Open findings unchanged (20261111-1, 20261105-2, 20261105-1, 20261104-2, 20261104-5).
+
+
+### Pass 10 detail (master a0b4d3b)
 
 Due: by-hand pass after the tank changes since pass 10 (67ad7c6a4): the main-hand Windfury Totem rule (standards 17:
 white main hand swings plus main-hand-flagged and on-next-swing abilities roll it, 2a0208136), the presets re-tuned on
@@ -45,7 +63,7 @@ Warden 1345 / 673 / 665. The warrior's TPS is now 36% over the paladin's; that g
 Each preset leads its own weight; three distinct builds per spec (paladin Max threat and Balanced tie at Max threat, its
 call 14).
 
-## Same terms
+### Same terms
 
 Raid buffs, debuffs (party Windfury Totem for all), sim options, level, professions (Engineering + Blacksmithing),
 Kings + improved Might, Mongoose, Phalanx, Greater Fortitude, Juju Power / Might, chili, Sapper, Rumsey Rum: identical
@@ -54,6 +72,32 @@ on all twelve requests (checked by diff). Weapon slot now under one rule (no rai
 ## Flasks after the Windfury rule (seed 1, the best other flask against the preset's)
 
 | preset | flask | best other |
+### Re-sim
+
+`go build -tags with_db -o $AUDIT_WORK/tank_fairness/tankbench ./tools/tankbench`, then
+`tools/audit/tank_fairness/bench.sh <dir> 3000 1 tools/tankbench/req/<12 presets>` and `summary.py <dir> --tsv`.
+bench.sh and summary.py are now committed on master (pass 8/9 named them; they existed only on branch tankheal).
+
+Six-boss mean, seed 1, 3000 iterations, against pass 9:
+
+| preset | score | TPS | DTPS | healing needed |
+|---|---|---|---|---|
+| warrior Max threat | 3970 -> 4210 (+240 ±5.5) | +5.9% | -0.3 | +2.6 |
+| warrior Balanced | 3236 -> 3439 (+203 ±7.2) | +4.9% | -0.6 | -5.1 |
+| warrior Max survival | 1564 -> 1757 (+194 ±12.4) | +4.9% | -0.4 | -4.8 |
+| bear Max threat | 2663 -> 2780 (+117 ±4.6) | +4.2% | 0 | -2.8 |
+| bear Balanced | 1717 -> 1865 (+147 ±7.7) | +4.1% | 0 | -9.8 |
+| bear Max survival | -579 -> -278 (+300 ±13.0) | +4.3% | +1.1 | -20.3 |
+| paladin, Warden (all 6) | identical | identical | identical | identical |
+
+As expected from the mask: the warrior gains from Revenge, Sunder Armor and Heroic Strike, the bear from Maul. The
+paladin (Holy Strike, seal procs, Judgements) and the Warden (Stormstrike) roll it on white swings only, as before.
+The healing needed falls a little for the warrior and bear: with more threat the scorer lets them play more defensively.
+Largest single boss-row score change: 502.
+
+### Ranking (new baseline, ref/tank_fairness/summary.tsv)
+
+| weight | order | scores |
 |---|---|---|
 | warrior MT / Bal / MS | Natural Precision / Natural Precision / Titans | Titans -212 / Titans -125 / Natural Precision -34 |
 | bear MT / Bal / MS | Natural Precision / Natural Precision / Titans | Natural Accuracy -99 / Natural Accuracy -76 / Natural Precision -129 |
@@ -63,6 +107,7 @@ on all twelve requests (checked by diff). Weapon slot now under one rule (no rai
 Every flask holds. More threat did not move the warrior or bear to Titans at Balanced (-125, -82).
 
 ## Other consumables, enchants, races (3,000, seed 1, then seed 2 / 10,000 for the winners)
+### What a preset rewards
 
 | check | result |
 |---|---|
@@ -78,13 +123,14 @@ Every flask holds. More threat did not move the warrior or bear to Titans at Bal
 
 Talents and rotations are the tank_rotations pass's; the cross-weight table above shows no preset beaten at its own
 weight by another preset of its spec.
+### Flask (finding 20261111-1)
 
 ## Paladin potion question
 
 TASKS.md and the round ledger (orchestration/round_notes_2026-11-11/ledger.md) have no item for -20261105-1, and
 docs/tank_paladin.md:312 still records Greater Stoneshield at 0.0 (measured without a potion action). It needs a worker.
 
-## Findings
+### Findings
 
 - New: -20261112-2 (high) agility enchants on head / legs / neck / gloves, paladin MS +78 (flips Max survival back),
   Warden +16 to +52, warrior +6 to +21, bear MS +14 to +24. -20261112-3 (medium) bear Max survival Tauren +32 / +12.

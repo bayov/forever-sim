@@ -33,20 +33,3 @@ a hand-back or task notification wakes it. Don't poll them, since every wake re-
 whole context: a wake every 15 minutes for two days is about 200 turns. Schedule at most
 one fallback check-in, 60 minutes or more ahead, in case a worker hangs, and have it read
 `get_session` before any transcript.
-
-## Cloud sessions
-
-Most sessions run in the cloud on claude.ai/code. You're in one when `~/projects/forever-sim`
-doesn't exist. Push `master` as usual. The user sees your change in their dev server only
-once their local checkout (`~/projects/forever-sim`) has it, and the dev server reloads on
-its own then.
-
-For that, or anything else only the user's PC can do (their combat logs, the log audit, the
-World of Warcraft folder), message the local play session (`play-wow`) with your
-`send_message` tool. Send one message with everything the job needs, like "bring
-~/projects/forever-sim up to master", and say what you want back. A local agent does it and
-answers you with a message, so wait for it and don't poll. The play session runs only while
-the user plays. When nobody answers, tell the user what has to run on their PC.
-
-On the user's PC, start heavy work (sims, scrapes, big audits) as a cloud session with
-`claude --cloud "<task>"` rather than a local agent.

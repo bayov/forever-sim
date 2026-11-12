@@ -1,67 +1,48 @@
-# Rotations pass 60 (2026-11-12, master a0b4d3be9)
+# Rotations pass 61 (2026-11-12, master 8306f1d52)
 
-Last audited master 71994fca6. 13 commits; those that reach the raid presets:
+Last audited master a0b4d3be9. Two commits reach the raid presets:
 
 | commit | change | reaches raid presets |
 |---|---|---|
-| a0b4d3be9 | Windfury Totem rolls on main hand abilities under Forever (client flag list, `sim/core/windfury_totem_procs_forever.go`): Heroic Strike, Cleave, Sunder, Execute, Hamstring, Raptor Strike, Sinister Strike, Backstab, Mutilate... not Bloodthirst, Whirlwind, Stormstrike | yes (warriors, rogues, Survival) |
-| e2322baa1 | Venom's +20% poison chance reaches Instant Poison | yes (rogues with Venom) |
+| 368b2e181 | Hunter pet swings at its owner's melee and attack speed under Forever (`Pet.FollowsOwnerMeleeSpeed`, `sim/core/pet.go`); pet autocast passes an ability that is up but short of focus | yes (every hunter with a pet) |
+| c380bbaef | Rake's direct hit adds 6.5% of attack power, outside the Nov 2 scale (`sim/druid/rake.go`) | yes (feral) |
 
-`apl_logic_diff.py 71994fca6 a0b4d3be9`: 0 APL files. No req file changed.
+Other watched files (`tools/rotopt/*`, `sim/testdata/report_hashes.txt`) don't reach the presets.
+`apl_logic_diff.py a0b4d3be9 8306f1d52`: 0 APL files. No req file, preset or APL changed.
 
-## Baseline move (3000 it, seed 424242)
+## Baseline move (3000 it, seed 424242, CLI 8306f1d52875)
 
-`regress.py` old CLI 71994fca6 vs new a0b4d3be9 on the same req files; the new baseline
-(`ref/rotations/baseline_a0b4d3b_3000it_seed424242.tsv`) matches it:
+New baseline `ref/rotations/baseline_8306f1d_3000it_seed424242.tsv`; every other preset unchanged (|diff| < 0.05).
 
-| builds | DPS move |
-|---|---|
-| Arms (4 builds) | +168 to +171 |
-| Fury 2H (3) | +98 to +106 |
-| Fury DW (3) | +48 to +64 |
-| Survival (3) | +69 to +72 |
-| rogues (6) | +22 (Combat Daggers) to +58 (Seal Fate Swords) |
-| everything else | under 1 |
+| build | a0b4d3b | 8306f1d | move |
+|---|---|---|---|
+| druid__feral-cat | 1123.40 | 1152.74 | +29.34 |
+| druid__feral-cat-duty-ff | 1118.07 | 1147.41 | +29.34 |
+| hunter__survival / -tallstrider / -wolf | 986.8 / 956.2 / 961.8 | 1015.1 / 981.0 / 990.0 | +28.3 / +24.8 / +28.2 |
+| hunter__beast-mastery / -tallstrider / -wolf | 1174.9 / 1117.9 / 1131.1 | 1182.5 / 1127.4 / 1140.9 | +7.6 / +9.5 / +9.8 |
+| hunter__marksmanship / -tallstrider / -wolf | 1233.1 / 1200.0 / 1208.0 | 1234.0 / 1204.4 / 1212.7 | +0.9 / +4.5 / +4.7 |
+| hunter__lone-wolf | | | 0 (no pet) |
 
-`runs/vs_published.txt` compares against the published report, which predates the 2026-11-12 deploy
-inputs; it isn't a sim-change table (warriors read -45 to -119 there but +48 to +171 old vs new CLI).
+## A/B (paired, 20k it, 8 blocks, both seed sets)
 
-## Checks (paired `ab.py`, 20k it, 8 blocks, both seed sets unless noted; B-A pooled at 120 / 180 / 300 s)
+Feral cat (Rake hit now scales with AP):
 
-| preset | variant | result |
+| variant | 120 / 180 / 300 s pooled | verdict |
 |---|---|---|
-| Arms | drop 90-rage Heroic Strike (finding 20261109-1) | -1.2 / -4.1 / -5.9: now loses |
-| Arms | HS gate 75 / 60 / 50 | -5.1 / -19.4 / -31.5 at 180 |
-| Fury 2H | drop 90-rage Heroic Strike | +0.9 / +2.0 / +0.4: still gains (finding narrowed) |
-| Fury 2H | HS gate 75 / 60 / 50 | -6.8 / -17.8 / -31.5 at 180 |
-| Fury DW | HS gate 60 -> 40 / 50 / 75 | -7.6 / -3.2 / -0.4 at 180: 60 holds |
-| Survival | Raptor Strike above lines 5-6 | 0.00 (identical) |
-| Survival | Wing Clip mana gate 50% -> 30% | +0.1 / +0.9 / +3.6: optional |
-| rogues | MH Instant / OH Deadly (swap) | Mutilate +14.3, SF Daggers +16.3, SF Swords +9.8, Subtlety +2.4, Combat -2.7 / -2.8 at 180: **new finding** |
-| rogues | Instant on both hands | -13 to -20 (SF Daggers -1.5) at 180, set 1 |
+| Ferocious Bite 5-CP gate 45 -> 65 | +2.12 / +2.74 / +4.59 (duty-ff +1.80 / +1.99 / +3.88) | open finding rotations-20261105-1 grows (was +1.9); updated |
+| Ferocious Bite gate 75 (set 1) | +0.28 / +1.28 / +4.16 | worse than 65 |
+| Rake end-of-fight gate 6 s -> 3 s | +0.52 / +0.31 / +0.22 | optional, under the bar |
+| Rake end-of-fight gate removed (set 1) | -0.06 / -0.09 / -0.04 | no |
 
-Old-CLI check: the poison swap already gained +7.4 (Mutilate) and +6.3 (SF Daggers) at 180 s on 71994fca6;
-this master doubles it.
-
-## Findings
-
-- New: rotations-20261112-1 (high): Mutilate, both Seal Fate builds and Subtlety should carry Instant Poison
-  on the main hand and Deadly on the off hand.
-- Updated: rotations-20261109-1 narrowed to Fury 2H (+2.0 at 180); Arms keeps its Heroic Strike line.
-- Still open: rotations-20261105-1 (Feral Ferocious Bite gate), not landed.
+Hunters: the pet change is not a player-rotation lever (Rapid Fire already fires on cooldown and now hastes the
+pet as well). Not A/B-screened this pass; open item if a Rapid Fire hold/sync with pet cooldowns is wanted.
 
 ## Optional
 
-- Survival Wing Clip mana gate 0.5 -> 0.3: +0.1 / +0.9 / +3.6 at 120 / 180 / 300 s, both sets (SE under 0.15).
-  Under the bar at 180 s; a long-fight gain only.
+- Feral Rake end-of-fight gate 3 s (about +0.3 at 180 s).
+- Earlier optional list (pass doc) unchanged.
 
-## Tooling
+## Open findings
 
-- `tools/audit/rotations/ab.py` gained `--req-b OTHER.json`: B runs another req (settings A/B such as poisons
-  or imbues), with `- -` as the APLs.
-
-## Not done
-
-- Hamstring and Sunder Armor weaving for Windfury Totem on warriors (Arms already has a 10-rage Hamstring filler);
-  Fury DW Hamstring filler not tried.
-- Rogue poison swap not run on the duty variants (none exist for rogues) or on the second seed set for Combat Swords.
+None landed on master since pass 60 (no req/APL/preset diff): rotations-20261112-1 (rogue poison swap, high),
+rotations-20261109-1 (Fury 2H 90-rage HS, low), rotations-20261105-1 (feral FB gate 65, low, updated).
