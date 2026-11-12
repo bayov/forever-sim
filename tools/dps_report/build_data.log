@@ -3,7 +3,7 @@ races: 247 rows, 75 KB
 lengths: 340 rows, 28 KB
 abilities: 694 rows, 193 KB
 auras: 1213 rows, 175 KB
-hist: 2684 rows, 143 KB
+hist: 2682 rows, 142 KB
 stats: 671 rows, 55 KB
 gear: 632 rows, 120 KB
 setup: 1836 rows, 457 KB
@@ -29,7 +29,7 @@ WARNING rotation: 5 rotation_text.json why entries no line uses, e.g. {'builds':
 rotation conditions shown in compact form: []
 tooltips: 1095 rows, 445 KB
 tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit', "setup Sunder Ramp ({'pullSunders': 1, 'tank': True})", "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]
-talenttrees: 467 rows, 179 KB
+talenttrees: 467 rows, 180 KB
 wowhead coverage: {'item:forever': 71, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 250, 'spell:wiki': 11, 'spell:client': 14, 'item:db': 272, 'enchant:forever': 283, 'enchant:db': 66, 'setup:sim': 5, 'setup:forever': 34, 'setup:none': 3} {'forever': 307, 'other': 21} {'forever': 1344, 'none': 27}
 icons: 81 rows, 163 KB
 icons_more: 614 rows, 933 KB
@@ -38,7 +38,7 @@ names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark
 treeart: 27 rows, 1063 KB
 missing icons: []
 timeline_warrior: 12 rows, 36 KB
-timeline_rogue: 18 rows, 43 KB
+timeline_rogue: 18 rows, 44 KB
 timeline_hunter: 12 rows, 35 KB
 timeline_paladin: 12 rows, 44 KB
 timeline_shaman: 18 rows, 54 KB

@@ -4750,6 +4750,29 @@
      "commits": [
       "7462c17"
      ]
+    },
+    {
+     "title": "Venom's extra 20% chance to apply poisons now reaches Instant Poison as well as Deadly and Wound Poison",
+     "kind": "game",
+     "classes": [
+      "Rogue"
+     ],
+     "builds": [
+      "rogue__combat-daggers",
+      "rogue__combat-swords",
+      "rogue__mutilate",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords",
+      "rogue__subtlety"
+     ],
+     "source": {
+      "label": "wago.tools: WoW Forever server hotfixes (push 113483)",
+      "url": "https://wago.tools/hotfixes?product=wowf&search=113483"
+     },
+     "note": "The November 3 hotfix's chance row also names Instant Poison's spell group; the sim had left it out. Builds that use Venom (Seal Fate and Mutilate) gain a little.",
+     "commits": [
+      "e2322baa1"
+     ]
     }
    ],
    "internal": [
