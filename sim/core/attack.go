@@ -259,7 +259,6 @@ type WeaponAttack struct {
 	extraAttacksStored  int32 // extra attack that happen on next auto (e.g reckoning)
 	extraAttacksPending int32 // extraAttacks prior to previous ones resolving for spell metrics
 	extraAttacksAura    *Aura
-	extraSwing          bool // An extra attack is swinging now (RollsForeverWindfuryTotem).
 
 	curSwingSpeed    float64
 	curSwingDuration time.Duration
@@ -314,13 +313,10 @@ func (wa *WeaponAttack) castExtraAttacks(sim *Simulation, numExtraAttacks int32,
 		// if startIndex==1, Ignore the first extra attack, that was used to speed up next attack
 		wa.spell.SetMetricsSplit(1)
 
-		wasExtra := wa.extraSwing
-		wa.extraSwing = true
 		for i := int32(startIndex); i < numExtraAttacks; i++ {
 			// use original attacks for subsequent extra Attacks
 			wa.spell.Cast(sim, wa.unit.CurrentTarget)
 		}
-		wa.extraSwing = wasExtra
 
 		return true
 	}
@@ -406,9 +402,7 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 		if sim.IsForever() && wa == &wa.unit.AutoAttacks.ranged {
 			wa.unit.AutoAttacks.meleeAttackOff = true
 		}
-		wa.extraSwing = isExtraAttack
 		attackSpell.Cast(sim, wa.unit.CurrentTarget)
-		wa.extraSwing = false
 		wa.unit.swingSpellThroughCast = nil
 
 		moreAttacks := !isExtraAttack && wa.extraAttacksPending > 0 // True if above cast is a normal Auto attack that triggered an Extra Attack

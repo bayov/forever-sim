@@ -89,6 +89,12 @@ negative loss when it is within the search's noise of the pick.
   suffix), `dps` and `loss`. `bis` marks the picks. `unsourced` marks an item wowhead knows no
   way of getting yet, worth a look by hand. `with` is the item in the other hand: on a one hand
   main hand the off hand it was scored with, on an off hand the main hand.
+- `avail` and `note` come from checking by hand what the game has open, added after the search.
+  `avail` is `grind` (open but slow), `doubtful` (we don't know of a way yet) or `out` (not
+  before the raids), and an entry we can get now has none. `note` says why, or what's still in
+  the way. The Phase 0 list got them on 2026-11-12 from the content check, which also added
+  items past the search's top 10 (up to 25 a slot, 30 for rings and trinkets). A rerun of
+  `bis_phase0.sh` writes the file again without them.
 
 ## Regenerating
 

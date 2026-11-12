@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261112-1: Combat Daggers is now the rogue Combat default, but Combat Swords sims 10 DPS higher at master
+- severity: medium (the default build shown for Combat; no change to the cross-class ranking of the best rogue)
+- affects: rogue__combat-daggers / rogue__combat-swords metas (isDefault), ui/rogue presets and sim.ts default, forever-wiki rogue page
+- found: 2026-11-12, master a0b4d3be9
+- evidence: 7462c17c8 (user ruling 2026-11-12, "switch to best") set Combat Daggers as default because it was the best 180 s Combat build then (707ae92 sweep: Daggers 915.4, Swords 899.6). The next commit that moved rogues, a0b4d3be9 (Windfury Totem on main hand abilities) plus e2322baa1 (Venom on Instant Poison), lifted Swords +46.5 and Daggers +21.2. At master, report race Undead, 180 s requests: Swords 946.1 vs Daggers 936.1 (shared run `$AUDIT_WORK/runs/master`, and the 5k seed 1 sweep, 946.1 vs 936.0; noise about 1.5). Daggers' best race (Gnome 936.6) does not close it.
+- proposed fix: apply the ruling again on the current numbers: isDefault back to rogue__combat-swords, with its UI preset defaults and the wiki line, once results-20261112-1's re-sim confirms the order at 20k. Fury DW over 2H (1050.2 vs 1032.0), Affliction over Destruction (1071.1 vs 1063.2) and Lone Wolf over BM still hold.
+- needs: orchestrator fix
+
 ## Resolved
 
 ### fairness-20261109-1: Windfury Totem's white-swing-only rule lets Heroic Strike and Cleave proc it but not Raptor Strike
@@ -15,7 +23,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
   - Heroic Strike / Cleave don't proc (skip MHSpecial in the totem's handler): arms 887.6 -> 882.9 (-4.8), fury 1038.1 -> 1021.5 (-16.6), fury_2h 961.8 -> 958.3 (-3.5).
 - proposed fix: treat every on-next-swing attack the same way. Option A, all of them proc (give the Raptor Strike hit the MHAuto bit, or make the totem accept a queued-swing flag): Survival +25. Option B, none proc: Fury -16.6, Fury 2H -3.5, Arms -4.8. Either way fix the comment in buffs.go. A log check of Heroic Strike with the totem up decides between them. results-20261109-1 already covers the re-sim and the Stormstrike-to-all-specials question.
 - needs: user ruling (A or B), then orchestrator fix
-- fixed: 2026-11-12, branch worktree-agent-af802a02e4d97e8fc, option B (standards 17: no on-next-swing attack procs the totem). The extra-attack aura with a white-swings-only mask skips any spell whose mask matches `ProcMaskMeleeSpecial` (sim/core/buffs.go, comment fixed; test sim/warrior/tank_warrior/windfury_totem_test.go); Classic unchanged. Paired 3,000, seed 1, new minus old: arms -3.7 ± 1.2 (-0.4%), fury -15.0 (-1.5%), fury_2h -2.2, arms/fury/fury_2h duty and dragonkin variants -2.6 to -13.1; survival 0. No rank move. Report data not regenerated (results-20261109-1).
+- resolved: 2026-11-12, a0b4d3be9 (the totem rolls on main hand abilities by client flag: Heroic Strike, Cleave and Raptor Strike 2973/14260-14266 all roll it, by spell ID, so the Raptor Strike hit counts; Survival +70.8, Arms +171.0 at 5k on the full change)
 
 ### fairness-20261101-2: Affliction's report race Human is 1.4 under Orc
 - severity: low (0.14%, no rank change)
@@ -45,7 +53,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: user ruling
 - resolved: 2026-11-02, be5126ccd (user ruling, standards 34: "Own Demonology set"). Demonology wears level60_phase1_synthetic_demonology at its own target: 1045.5 -> 1052.7 at 180 s.
 
-
 ### fairness-20261101-3: Arcane's report race Gnome is 2.8 under Undead after the Arcane Blast hotfix
 - severity: low (0.3%, no rank change)
 - affects: mage__arcane
@@ -72,7 +79,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: rerun each class's race table at 120/180/300 sec (the racial pass changed every row), switch the presets above to their best race, regenerate the requests and re-publish. Read the rogue picks and the hunters' Night Elf / Orc split should be re-read from the new table, not from this list.
 - needs: orchestrator fix
 - resolved: 2026-10-28, master 5d27b0015 (race re-picks 86282541d, a22cb0295, b505cf238, eca80e9d9 / 67edf5d54, 466124303, 86d2ece1a / 621e2feb9, 12e348a85, 254a4d7d4, b57bd205c). Sweep with the standards 29 overrides: every report race is the best race; leftover gaps are ties (Fire Gnome +0.7, Affliction Orc +0.6, 20k paired seeds).
-
 
 ### fairness-20261025-1: Marksmanship's report race (Skyborne Windshaper) loses 2.5 DPS to the Human
 - severity: low (0.2%; Marksmanship stays #2 either way, 1170.2 Human vs 1167.6 Windshaper, Lone Wolf 1159)

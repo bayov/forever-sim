@@ -21,10 +21,10 @@ const (
 // weapon totems.
 //
 // Windfury Weapon, Flametongue Weapon and Frostbrand all need a landed main hand melee hit,
-// white or yellow, and a blocked hit counts as landed. Flametongue Totem and Windfury Totem
-// need a landed white swing, so Stormstrike never procs them (Windfury Totem since the user's
-// ruling of 2026-11-08, see WindfuryTotemBuffAura), and Windfury Weapon's attacks never proc
-// Flametongue Totem. Misses,
+// white or yellow, and a blocked hit counts as landed. Flametongue Totem needs a landed white
+// swing. Windfury Totem also takes abilities that need a main hand weapon in the client, which
+// Stormstrike doesn't (see WindfuryTotemBuffAura). So Stormstrike never procs either totem, and
+// Windfury Weapon's attacks never proc Flametongue Totem. Misses,
 // dodges, parries, spells, totem attacks, Lightning Shield orbs and the Flametongue and
 // Frostbrand damage never trigger them. A Windfury proc's two attacks can't proc Windfury
 // again, because of its 1.5 sec cooldown.

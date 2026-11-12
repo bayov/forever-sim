@@ -8,5 +8,5 @@
  "note": "Pass 9 by hand on tankheal 3065ba744 (druid re-tune, seen-health fix 65b5d49cf, healer consumables). New -1 druid tank NS 45% (+0.027), -2 shaman raid NS held (+0.010). Ref rewritten; raid rows' death floor not recorded.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T07:02:57Z"
+ "checked_at": "2026-11-12T13:28:36Z"
 }

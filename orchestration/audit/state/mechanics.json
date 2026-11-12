@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "cb0d928fd69e9bc71acbdcce680f28d622ba52ed"
+  "master": "a0b4d3be9859f76f9365c0cb672ec57ef8e6423e"
  },
- "last_pass_at": "2026-11-12T06:52:53Z",
- "pass": 75,
- "result": "findings",
- "note": "Pass 75: 33db32b368..cb0d928fd6, 1 sim commit (cb0d928fd talent tooltips, no mechanic change; priest last tree size never read). Nov 11 hotfixes (t/2403040 post 8): mechanics-20261112-1 Holy Strike procs WF totem (user ruling), -2 Unsealed Wrath no echoes from WF attacks, -3 Judgement ranged attack. Estimates, no sims. Hotfix row fetch for 70888+ still not done.",
+ "last_pass_at": "2026-11-12T12:53:40Z",
+ "pass": 76,
+ "result": "quiet",
+ "note": "Pass 76: cb0d928fd6..a0b4d3be98. e2322baa1 Venom +20% to Instant Poison verified (mask 0x2000). a0b4d3be9 WF totem on flagged MH specials verified vs 70888 flags and build actions; mechanics-20261112-1 narrowed to Holy Strike (low). No new Blizzard posts.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T06:52:53Z",
+ "checked_at": "2026-11-12T13:28:36Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

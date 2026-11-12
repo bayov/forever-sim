@@ -593,3 +593,85 @@ func TestForeverGivenFuriousHowlMatchesPet(t *testing.T) {
 		}
 	}
 }
+
+// Under Forever the pet swings at its owner's melee speed on top of its own (wowsims/forever
+// d729b13992, user ruling 2026-11-12): the owner's Rapid Fire speeds it up 40% while it lasts, its
+// own Frenzy multiplies with that, and the owner's ranged speed (Quick Shots) leaves it alone. Under
+// Classic the owner's speed doesn't reach it.
+func TestForeverPetSwingsAtItsOwnersMeleeSpeed(t *testing.T) {
+	sim, hunter := newHunterPetSim(t, proto.Hunter_Options_Two, proto.Ruleset_RulesetForever)
+	for sim.CurrentTime < time.Second && !sim.Step() {
+	}
+	pet := hunter.pet
+	swing := pet.AutoAttacks.MainhandSwingSpeed
+	near := func(got, want time.Duration) bool { return (got - want).Abs() <= time.Millisecond }
+
+	base := swing()
+	if !near(base, 2*time.Second) {
+		t.Fatalf("the pet swings every %v, want 2s", base)
+	}
+
+	// Quick Shots: 30% ranged attack speed.
+	hunter.MultiplyRangedSpeed(sim, 1.3)
+	if got := swing(); got != base {
+		t.Errorf("the owner's ranged speed moved the pet's swing from %v to %v", base, got)
+	}
+	hunter.MultiplyRangedSpeed(sim, 1/1.3)
+
+	hunter.RapidFireAura.Activate(sim)
+	if got, want := swing(), time.Duration(float64(base)/1.4); !near(got, want) {
+		t.Errorf("with the owner's Rapid Fire up the pet swings every %v, want %v", got, want)
+	}
+	pet.MultiplyAttackSpeed(sim, 1.3) // Frenzy
+	if got, want := swing(), time.Duration(float64(base)/1.4/1.3); !near(got, want) {
+		t.Errorf("with Rapid Fire and Frenzy the pet swings every %v, want %v", got, want)
+	}
+	pet.MultiplyAttackSpeed(sim, 1/1.3)
+
+	// Dismissed under Rapid Fire, the pet sheds the owner's speed, and comes back without it.
+	pet.Disable(sim)
+	if got := pet.PseudoStats.MeleeSpeedMultiplier; math.Abs(got-1) > 1e-9 {
+		t.Errorf("the dismissed pet keeps a melee speed of %v, want 1", got)
+	}
+	hunter.RapidFireAura.Deactivate(sim)
+	pet.Enable(sim, pet)
+	if got := pet.PseudoStats.MeleeSpeedMultiplier; math.Abs(got-1) > 1e-9 {
+		t.Errorf("after Rapid Fire the pet's melee speed is %v, want 1", got)
+	}
+	hunter.RapidFireAura.Activate(sim)
+	if got := pet.PseudoStats.MeleeSpeedMultiplier; math.Abs(got-1.4) > 1e-9 {
+		t.Errorf("the summoned pet's melee speed under Rapid Fire is %v, want 1.4", got)
+	}
+
+	sim, hunter = newHunterPetSim(t, proto.Hunter_Options_Two, proto.Ruleset_RulesetClassic)
+	for sim.CurrentTime < time.Second && !sim.Step() {
+	}
+	base = hunter.pet.AutoAttacks.MainhandSwingSpeed()
+	hunter.MultiplyMeleeSpeed(sim, 1.4)
+	if got := hunter.pet.AutoAttacks.MainhandSwingSpeed(); got != base {
+		t.Errorf("under Classic the owner's melee speed moved the pet's swing from %v to %v", base, got)
+	}
+}
+
+// Under Forever autocast never waits on an ability short of focus: it passes to the next one on the
+// bar (wowsims/forever 8223020463, user ruling 2026-11-12). The wolf at 40 focus can't pay Furious
+// Howl's 60 and bites for 35.
+func TestForeverPetAutocastPassesAnAbilityShortOfFocus(t *testing.T) {
+	sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: proto.Hunter_Options_Wolf, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 1)
+	pet := hunter.pet
+	howl, bite := foreverPetSpell(hunter, 24597), foreverPetSpell(hunter, 17261)
+	if howl == nil || bite == nil || pet.foreverActions[0].spell != howl {
+		t.Fatalf("the wolf's bar is not Furious Howl then Bite")
+	}
+	if pet.CurrentFocus() < 40 {
+		t.Fatalf("the wolf has %.0f focus, want 40 or more", pet.CurrentFocus())
+	}
+	pet.SpendFocus(sim, pet.CurrentFocus()-40, pet.NewFocusMetrics(core.ActionID{OtherID: proto.OtherAction_OtherActionNone}))
+	if !howl.IsReady(sim) || howl.CanCast(sim, pet.CurrentTarget) || !bite.CanCast(sim, pet.CurrentTarget) {
+		t.Fatalf("want Furious Howl ready but short of focus and Bite castable at 40 focus")
+	}
+	pet.foreverRotation(sim)
+	if bite.SpellMetrics[0].Casts != 1 || howl.SpellMetrics[0].Casts != 0 {
+		t.Errorf("at 40 focus the wolf cast Bite %d and Furious Howl %d times, want Bite once", bite.SpellMetrics[0].Casts, howl.SpellMetrics[0].Casts)
+	}
+}

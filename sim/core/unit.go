@@ -464,7 +464,7 @@ func (unit *Unit) MultiplyMeleeSpeed(sim *Simulation, amount float64) {
 	unit.PseudoStats.MeleeSpeedMultiplier *= amount
 
 	for _, pet := range unit.DynamicMeleeSpeedPets {
-		pet.dynamicMeleeSpeedInheritance(amount)
+		pet.dynamicMeleeSpeedInheritance(sim, amount)
 	}
 	unit.AutoAttacks.UpdateSwingTimers(sim)
 }
@@ -485,7 +485,7 @@ func (unit *Unit) MultiplyAttackSpeed(sim *Simulation, amount float64) {
 	unit.PseudoStats.AttackSpeedMultiplier *= amount
 
 	for _, pet := range unit.DynamicMeleeSpeedPets {
-		pet.dynamicMeleeSpeedInheritance(amount)
+		pet.dynamicMeleeSpeedInheritance(sim, amount)
 	}
 	unit.AutoAttacks.UpdateSwingTimers(sim)
 }

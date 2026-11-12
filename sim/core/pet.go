@@ -21,7 +21,7 @@ type OnPetEnable func(sim *Simulation)
 type OnPetDisable func(sim *Simulation)
 
 type PetStatInheritance func(ownerStats stats.Stats) stats.Stats
-type PetMeleeSpeedInheritance func(amount float64)
+type PetMeleeSpeedInheritance func(sim *Simulation, amount float64)
 
 // Pet is an extension of Character, for any entity created by a player that can
 // take actions on its own.
@@ -45,8 +45,14 @@ type Pet struct {
 	dynamicStatInheritance PetStatInheritance
 	inheritedStats         stats.Stats
 
-	// DK pets also inherit their owner's MeleeSpeed. This replace OwnerAttackSpeedChanged.
+	// Takes each change to its owner's melee and attack speed while it is out.
 	dynamicMeleeSpeedInheritance PetMeleeSpeedInheritance
+
+	// The pet swings at its owner's melee speed on top of its own while it is out (the hunter's pet
+	// under Forever): what changes the owner's melee or attack speed changes the pet's, its ranged
+	// speed does not. Set before the pet is first enabled.
+	FollowsOwnerMeleeSpeed bool
+	inheritedMeleeSpeed    float64
 
 	// The pet swings at its owner's ranged speed while it is out, without what the owner's attack
 	// speed effects add (the Summon Hawk hawks). Set at construction.
@@ -169,6 +175,9 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 		pet.dynamicRangedSpeedInheritance(sim, pet.Owner.PseudoStats.RangedSpeedMultiplier/pet.Owner.PseudoStats.AttackSpeedMultiplier)
 		pet.Owner.DynamicRangedSpeedPets = append(pet.Owner.DynamicRangedSpeedPets, pet)
 	}
+	if pet.FollowsOwnerMeleeSpeed {
+		pet.enableDynamicMeleeSpeed(sim)
+	}
 
 	// Call onEnable callbacks before enabling auto swing
 	// to not have to reorder PAs multiple times
@@ -232,12 +241,16 @@ func (pet *Pet) EnableDynamicStats(inheritance PetStatInheritance) {
 	pet.dynamicStatInheritance = inheritance
 }
 
-// Enables and possibly updates how the pet inherits its owner's melee speed. DK use only.
-func (pet *Pet) EnableDynamicMeleeSpeed(inheritance PetMeleeSpeedInheritance) {
-	if !slices.Contains(pet.Owner.DynamicMeleeSpeedPets, pet) {
-		pet.Owner.DynamicMeleeSpeedPets = append(pet.Owner.DynamicMeleeSpeedPets, pet)
+// Starts the pet on its owner's melee speed: the pet's melee speed is multiplied by the owner's
+// as it stands, and by each change to it after.
+func (pet *Pet) enableDynamicMeleeSpeed(sim *Simulation) {
+	pet.inheritedMeleeSpeed = 1
+	pet.dynamicMeleeSpeedInheritance = func(sim *Simulation, amount float64) {
+		pet.inheritedMeleeSpeed *= amount
+		pet.MultiplyMeleeSpeed(sim, amount)
 	}
-	pet.dynamicMeleeSpeedInheritance = inheritance
+	pet.dynamicMeleeSpeedInheritance(sim, pet.Owner.PseudoStats.MeleeSpeedMultiplier)
+	pet.Owner.DynamicMeleeSpeedPets = append(pet.Owner.DynamicMeleeSpeedPets, pet)
 }
 
 // Multiplies the pet's melee speed by a change in its owner's ranged speed.
@@ -268,6 +281,7 @@ func (pet *Pet) Disable(sim *Simulation) {
 		if idx := slices.Index(pet.Owner.DynamicMeleeSpeedPets, pet); idx != -1 {
 			pet.Owner.DynamicMeleeSpeedPets = removeBySwappingToBack(pet.Owner.DynamicMeleeSpeedPets, idx)
 		}
+		pet.dynamicMeleeSpeedInheritance(sim, 1/pet.inheritedMeleeSpeed)
 		pet.dynamicMeleeSpeedInheritance = nil
 	}
 

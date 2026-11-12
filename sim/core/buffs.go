@@ -2051,10 +2051,10 @@ func BattleSquawkAura(character *Unit, stackcount int32) *Aura {
 
 // CreateExtraAttackAuraCommon returns the aura that procs the extra attacks. It is not
 // active on its own: the caller makes it permanent or turns it on and off. While blocked
-// returns true the aura procs nothing (nil means never blocked). Only landed hits for which
-// rolls returns true roll for a proc. The aura reports its metrics under actionID (none when
+// returns true the aura procs nothing (nil means never blocked). Only landed hits that
+// match procMask roll for a proc. The aura reports its metrics under actionID (none when
 // empty), and each proc's short attack power buff is buffLabel, under buffActionID.
-func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffActionID ActionID, auraLabel string, buffLabel string, rank int32, getBonusAP func(aura *Aura, rank int32) float64, blocked func() bool, rolls func(spell *Spell) bool) *Aura {
+func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffActionID ActionID, auraLabel string, buffLabel string, rank int32, getBonusAP func(aura *Aura, rank int32) float64, blocked func() bool, rollsOn func(spell *Spell) bool) *Aura {
 	var bonusAP float64
 
 	apBuffAura := character.GetOrRegisterAura(Aura{
@@ -2100,7 +2100,7 @@ func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffAc
 				apBuffAura.RemoveStack(sim)
 			}
 
-			if !result.Landed() || !rolls(spell) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
+			if !result.Landed() || !rollsOn(spell) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
 				return
 			}
 			if blocked != nil && blocked() {
@@ -2137,22 +2137,6 @@ var (
 	WindfuryBuffBonusAP = [WindfuryRanks + 1]float64{0, 95, 179, 246}
 )
 
-// RollsForeverWindfuryTotem is whether a landed hit rolls Windfury Totem under Forever: a white
-// main hand swing that isn't an extra swing, or a main hand melee ability whose client spell
-// requires a main hand weapon or is on next swing (WindfuryTotemBuffAura).
-func RollsForeverWindfuryTotem(spell *Spell) bool {
-	if spell.ProcMask == ProcMaskMeleeMHAuto {
-		return !spell.Unit.AutoAttacks.mh.extraSwing
-	}
-	return spell.ClientMainHand && spell.ProcMask.Matches(ProcMaskMeleeMH)
-}
-
-// ClientMainHandSpell reports whether the client's SpellMisc row for the spell has
-// Attributes_3 0x400 (requires a main hand weapon) or Attributes_0 0x4 (on next swing).
-func ClientMainHandSpell(spellID int32) bool {
-	return clientMainHandSpells[spellID]
-}
-
 func GetWindfuryAP(aura *Aura, rank int32) float64 {
 	return WindfuryBuffBonusAP[rank]
 }
@@ -2173,24 +2157,22 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 // hand only (2026-10-16; report assumption wf_totem_offhand, one value). The extra swing is a
 // main hand one.
 //
-// Under Forever it rolls on white main hand swings and on the melee abilities whose client
-// spell requires a main hand weapon (Attributes_3 0x400) or is on next swing (Attributes_0
-// 0x4), Spell.ClientMainHand (user ruling 2026-11-12, standards 17). The user's log audit of
-// Nov 6-11 (tools/logcheck/findings.md, 4,737 procs on 93 players) found procs from Heroic
-// Strike, Cleave, Maul, Raptor Strike, Sunder Armor, Revenge, Execute, Rend, Sinister Strike,
-// Eviscerate, Wing Clip, Ghostly Strike, Kidney Shot and Mongoose Bite, all flagged, and none
-// from Stormstrike (0/4467), Holy Strike, Bloodthirst, Whirlwind, Shield Slam, Claw, Swipe,
-// Rake or Cheap Shot, none flagged, nor from seal procs, Judgements, poisons, item procs,
-// off-hand swings, Auto Shot or extra swings (0/3381). Every logged ability's flag agrees with
-// its logs. A hit that lands for no damage still rolls (wf_totem_nodamage).
+// Under Forever it rolls on white main hand swings and on the main hand abilities whose client
+// spell needs a main hand weapon or comes on the next swing (windfuryTotemRollsOnForever). The
+// user's go for it was 2026-11-12. Our live logs of Nov 6-11 have 4,737 totem procs on 93
+// players, and the client's flags fit every ability with enough data. Heroic Strike (21 of 109
+// landed, with no other hit just before), Cleave, Maul, Raptor Strike, Sunder Armor, Revenge,
+// Execute and Sinister Strike roll it. Stormstrike (0 of 4,467), Holy Strike (0 of 1,175),
+// Bloodthirst, Whirlwind, Shield Slam, Claw, Swipe and Rake never do, and none of these have
+// the flags. Nor do seal procs, Judgements or off-hand swings.
 func WindfuryTotemBuffAura(character *Character, rank int32, label string, actionID ActionID) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	buffLabel := strings.Replace(strings.TrimSuffix(label, " Raid"), "Windfury Totem", "Windfury Attack", 1)
-	rolls := func(spell *Spell) bool { return spell.ProcMask.Matches(ProcMaskMeleeMH) }
+	rollsOn := func(spell *Spell) bool { return spell.ProcMask.Matches(ProcMaskMeleeMH) }
 	if character.Env.IsForever() {
-		rolls = RollsForeverWindfuryTotem
+		rollsOn = windfuryTotemRollsOnForever
 	}
-	aura := CreateExtraAttackAuraCommon(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, nil, rolls)
+	aura := CreateExtraAttackAuraCommon(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, nil, rollsOn)
 	if character.Env.IsForever() {
 		// The attack power lasts 1 sec under Forever.
 		//
@@ -2206,6 +2188,15 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string, actio
 		buff.Icd.Duration = time.Millisecond * 100
 	}
 	return aura
+}
+
+// windfuryTotemRollsOnForever says whether a landed hit rolls Windfury Totem under Forever: a
+// white main hand swing, or a main hand ability whose spell is in windfuryTotemAbilityIds.
+func windfuryTotemRollsOnForever(spell *Spell) bool {
+	if spell.ProcMask.Matches(ProcMaskMeleeMHAuto) {
+		return true
+	}
+	return spell.ProcMask.Matches(ProcMaskMeleeMHSpecial) && windfuryTotemAbilityIds[spell.ActionID.SpellID]
 }
 
 ///////////////////////////////////////////////////////////////////////////

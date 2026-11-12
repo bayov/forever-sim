@@ -216,6 +216,14 @@ func (hp *HunterPet) foreverSwingSpeed() float64 {
 func (hp *HunterPet) applyForeverRules() {
 	hp.AutoAttacks.MH().SwingSpeed = hp.foreverSwingSpeed()
 
+	// The pet swings at its owner's melee and attack speed on top of its own: in wowsims/forever's
+	// Nov 8 combat log (d729b13992) a pet swings every 1.965 sec over its owner's 2% Wind Blessed,
+	// 1.40 sec with the owner's Rapid Fire up (+40% melee haste) and 1.08 sec with its own Frenzy as
+	// well, the two multiplied. The owner's ranged haste (Quick Shots) leaves it at 1.965 sec. The
+	// speed shortens the swing without shrinking the hit, which is set from the swing above. User
+	// ruling 2026-11-12.
+	hp.FollowsOwnerMeleeSpeed = true
+
 	// Every pet swings every 2.0 sec, and a passive the beast brings (Faster Attack I to VII, Slower
 	// Attack II and III) moves that to the beast's Classic speed. On the beta its hits stay the size
 	// of a 2.0 sec pet's, so a fast pet deals more damage (beta players, gathered on ForeverChanges'

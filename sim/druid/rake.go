@@ -26,8 +26,16 @@ var rakeSpells = []RakeRankInfo{
 // leaves it to the server; wowsims/forever fits 0.055 to testers' rank 1 ticks at 136, 162, 217
 // and 237 attack power ("Aus and Chalkie, Rake and swipe AP scaling tests, 2026-10-01", PR #149)
 // and gives ranks 2 to 4 the same. The tick reads the attack power when it lands, as theirs
-// does, and the initial hit has none.
+// does.
 const rakeTickAPCoefficient = 0.055
+
+// rakeHitAPCoefficient is the attack power share of a Forever Rake's direct hit, every rank, read
+// at the hit and outside the November 2 scale (the user's ruling, 2026-11-12). wowsims/forever
+// 0384d8f98c fits 0.0648 to a 1.60.1.70862 combat log of a Tauren druid at levels 22 to 25: rank
+// 1's hit read 45 on 26 of 26 hits at 221 attack power with Savage Fury 2/2, a weapon damage buff
+// didn't move it, and ranks 2 to 4 are taken to carry rank 1's share. Their older PR #149 tester
+// had the hit take none.
+const rakeHitAPCoefficient = 0.065
 
 func (druid *Druid) registerRakeSpell() {
 	// Add highest available rake rank for level.
@@ -48,6 +56,10 @@ func (druid *Druid) newRakeSpellConfig(rakeRank RakeRankInfo) core.SpellConfig {
 	baseDamageTick := scale * rakeRank.dotTickDamage
 	energyCost := 40 - float64(druid.Talents.Ferocity)
 	tickAPCoefficient := core.TernaryFloat64(druid.Env.IsForever(), scale*rakeTickAPCoefficient, 0)
+	hitAPCoefficient := core.TernaryFloat64(druid.Env.IsForever(), rakeHitAPCoefficient, 0)
+	hitBase := func(target *core.Unit, spell *core.Spell) float64 {
+		return baseDamageInitial + hitAPCoefficient*spell.MeleeAttackPower(target)
+	}
 	tickBase := func(target *core.Unit, spell *core.Spell) float64 {
 		return (baseDamageTick + tickAPCoefficient*spell.MeleeAttackPower(target)) * druid.RendAndTearMultiplier(target)
 	}
@@ -91,7 +103,7 @@ func (druid *Druid) newRakeSpellConfig(rakeRank RakeRankInfo) core.SpellConfig {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := baseDamageInitial
+			baseDamage := hitBase(target, spell)
 			rendAndTear := druid.RendAndTearMultiplier(target)
 			spell.DamageMultiplier *= rendAndTear
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
@@ -106,7 +118,7 @@ func (druid *Druid) newRakeSpellConfig(rakeRank RakeRankInfo) core.SpellConfig {
 		},
 
 		ExpectedInitialDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			baseDamage := baseDamageInitial
+			baseDamage := hitBase(target, spell)
 			initial := spell.CalcPeriodicDamage(sim, target, baseDamage, spell.OutcomeExpectedMagicAlwaysHit)
 
 			attackTable := spell.Unit.AttackTables[target.UnitIndex][spell.CastType]

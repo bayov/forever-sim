@@ -323,3 +323,13 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-12 15:23 | healer_rotations | pass 9 | master 3065ba744 | findings | 2 new: 20261112-1 druid tank NS at 45% not 60% after seen-health fix (high, +0.027 carry), -2 shaman raid NS held for emergency HW at 55% (medium, +0.010 two seeds); -2 Disc OOM and -3 still open
 2026-11-12 17:05 | tank_fairness | pass 11 | master 4fb90c298 | findings | 2 new: 20261112-2 agility enchants head/legs/neck/gloves (high, paladin MS +78/+62 flips Max survival back, Warden +16..+52, warrior +6..+21, bear MS +14..+24), -3 bear MS Tauren (medium, +32/+12); flasks all hold after Windfury rule; paladin potion +58/+172/+402 and Warden race still open
 2026-11-12 17:10 | healer_fairness | pass 9 | master 4fb90c298 | 1 new finding | 20261112-1 Holy priest raid keeps Inspiration not Twilight Focus (high, +0.021 carry, two seeds); -5 paladin raid APL still +0.024; healer bench baseline regenerated, ranks unchanged
+2026-11-12 13:28 | results | pass 84 | master a0b4d3be9 | 1 new finding | 19 builds stale after Windfury Totem change (high)
+2026-11-12 13:28 | rotations | pass 60 | master a0b4d3be9 | 1 new finding | Instant/Deadly poison swap for 4 rogue builds (high)
+2026-11-12 13:28 | gear | pass 62 | master a0b4d3be9 | quiet | only standards.md changed
+2026-11-12 13:28 | consumables | pass 80 | master a0b4d3be9 | quiet | no Consumes/Buffs/Debuffs object changed
+2026-11-12 13:28 | mechanics | pass 76 | master a0b4d3be9 | quiet | Venom and Windfury commits correct; finding dropped to low
+2026-11-12 13:28 | fairness | pass 36 | master a0b4d3be9 | 1 new finding | Combat Swords now beats Daggers (medium)
+2026-11-12 13:28 | healer_gear | pass 6 | master a0b4d3be9 | quiet | no healer gear change
+2026-11-12 13:28 | healer_fairness | pass 9 | master a0b4d3be9 | quiet | 5 spot cells match baseline
+2026-11-12 13:28 | tank_gear | pass 7 | master a0b4d3be9 | quiet | no tank gear change
+2026-11-12 13:28 | tank_fairness | pass 10 | master a0b4d3be9 | quiet | baseline refreshed; warrior/paladin tie gone

@@ -10,7 +10,8 @@ Gaps (theirs - ours) and how far the rows explain them:
 
 - **Hunter:** ranged builds -2.5 to +5.8, within the error once the pet rows cancel. Survival +65
   (and its pet variants): Windfury Totem's mask is 70 of it, then ours sits about 25 above theirs
-  (pet melee haste 27, about 10 of the player's unexplained: ours 3% more swings and casts).
+  (pet melee haste 27, about 10 of the player's unexplained: ours 3% more swings and casts). Pet melee
+  haste and autocast are both sims' since 2026-11-12 (Settled list), so the pet's 27 should close.
 - **Rogue:** Combat Daggers +7.9, Combat Swords +19.9, Mutilate +46.5, Seal Fate Daggers -4.4,
   Seal Fate Swords +40.1, Subtlety +12.7. With the Windfury mask, Venom, Shank and Thistle Tea rows,
   all within about 2 but Mutilate (+8 left), Seal Fate Swords (-8) and Seal Fate Daggers (-25 left:
@@ -44,7 +45,7 @@ assumption key), **Evidence** (ours on evidence), **Choice** (engine or fight, n
 
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
-| Which hits roll Windfury Totem | White main-hand swings (not extra swings) plus abilities whose client spell requires a main hand weapon (Attributes_3 0x400) or is on next swing (Attributes_0 0x4) (`sim/core/buffs.go` `RollsForeverWindfuryTotem`), landed hits with no damage too | White swings plus abilities flagged `SpellFlagRequiresMainHand` or `SpellFlagOnNextSwing` (`sim/core/buffs/drivers.go:~314`), landed hits with no damage too; they cite Seal of Command 0/117 | Same rule since 2026-11-12 (user ruling from our log audit, `tools/logcheck/findings.md`; standards 17). Ours had white swings only before (rulings of 2026-11-08 and 2026-11-12); the gap they gave (Arms 173, Fury 2H 109, Fury 62, Survival 70, Combat Swords 43) closed: ours moved Arms +175, Fury 2H +109, Fury +65, Survival +72, Combat Swords +46 (orchestration/round_notes_2026-11-11/windfury_rule.md). Replaces `wf_totem_nodamage` |
+| Which hits roll Windfury Totem | Matched since 2026-11-12: white main-hand swings plus abilities whose client spell needs a main hand weapon (Attributes_3 0x400) or comes on the next swing (Attributes_0 0x4), table in `sim/core/windfury_totem_procs_forever.go` | White swings plus abilities flagged `SpellFlagRequiresMainHand` or `SpellFlagOnNextSwing` (`sim/core/buffs/drivers.go:~314`), landed hits with no damage too | Our log audit of 2026-11-12 (`tools/logcheck/findings.md`) backs it: on-next-swing attacks, Sunder, Revenge, Execute, Sinister Strike, Eviscerate roll it, Stormstrike, Holy Strike, Bloodthirst, Whirlwind, Claw, Swipe never. User's go 2026-11-12. Left: they need damage dealt (`wf_totem_nodamage`) |
 | Raid damage taken | 2 hits a minute of 1,500 (standards 24) | None | Choice. `--no-raid-damage`. Rage: Arms 17.5, Fury 18.6, Fury 2H 19.5. Casters in their tables |
 | Off-GCD items (Thistle Tea, Cold Blood, Bloodrage) | Fire when the rotation says | Only at the next GCD check; Thistle Tea at energy <= 0 never fires | Choice. Thistle Tea for ours: Combat Swords 14.8, Subtlety 10.3, Seal Fate Daggers 7.3, Combat Daggers 6.7, Mutilate 5.8, Seal Fate Swords 4.8, Feral 16.2 (not remeasured). Cold Blood 1.0 a fight to 0.35, small |
 
@@ -52,8 +53,6 @@ assumption key), **Evidence** (ours on evidence), **Choice** (engine or fight, n
 
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
-| Pet melee haste from the owner | None (`Pet.EnableDynamicMeleeSpeed` unused; `orchestration/pet_buffs.md:249` lists it unknown) | Pet swings at the owner's melee speed: Rapid Fire, Quick Strikes, Wind Blessed; not ranged haste (`sim/hunter/pets.go:100`, d729b13992, from a Nov 8 log: 1.965 s, 1.40 with Rapid Fire, 1.08 with Frenzy) | Open, their log. Pet for theirs: Survival 24 to 27, BM cat 9 to 10.5 |
-| Pet autocast on a cooldown short of focus | Waits (`sim/hunter/pet_forever.go:185`, their old code) | Passes to the next ability (8223020463, Nov 12, logs) | Open, their log. BM Claw 66 / Bite 16.5 casts, theirs 86 / 2. For ours: pet 2.6 Survival, 3.2 BM |
 | Improved Tracking vs the generic boss | Counts the typeless boss as tracked (standards 19) | Only types a Track spell names | Choice. `--their-mob-type MobTypeGiant` aligns it. Survival 41 |
 | Cobra Reflexes | Hits shrink with the speed (`hunter_pet_speed`) | Same speed normalization since 8223020463 | Ruling. No preset trains it; not remeasured |
 | Hunter's buffs on the pet | Passed live | Not | Not remeasured. Their pet keeps inherited AP and health from the summon (8223020463) |
@@ -145,7 +144,6 @@ Shoot and the miss floor are in the Mage table.
 
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
-| Rake's direct hit | No attack power (`sim/druid/rake.go`, from their PR #149 tester) | 6.5% AP, as its tick (0384d8f98c: a 1.60.1.70862 log, rank 1 read 45 on 26 of 26 at 221 AP; ranks 2 to 4 assumed equal) | Open, their log, newer than our source. Feral 29.9 for theirs, 29.4 for ours when added |
 | Nov 2 bleed scale | Rake, Rip, Ferocious Bite, Pounce base and AP x1.25 (`nov2BleedScale`, `sim/druid/tuning_70753.go:20`) | Client values; the same log fits Rake's tick at 0.0652 AP against our 0.06875 | Ruling (Nov 2 notes, "about 25%"). Worth 98 on our Feral; near-equal ticks either way |
 | Eclipse charges | Granted when Wrath lands; a Starfire begun before keeps them (`sim/druid/talents.go:278-315`, notes.md:276, proc flag is a magic damage hit) | Granted at Wrath's cast; every Starfire spends one (`talents_balance.go:~165`, 7c70ac16e3) | Open: a log with a Wrath in flight. Balance 3.2 for theirs (Wrath 26.0 casts to 24.2) |
 | Raid damage taken | Pushes back Starfire and Wrath | None | Choice. Balance 4.9, Balance Wrath 4.1; Feral, Retribution 0 |
@@ -166,6 +164,11 @@ A gap on one of these is a regression.
 - Pet swing damage: (creature DPS - pet AP / 14) x 2 per 2.0 s swing. Level 60 unmeasured
   (notes.md To Verify).
 - Pet focus: 10 a second.
+- Pet melee haste: the pet swings at its owner's melee and attack speed (Rapid Fire, Quick Strikes,
+  Wind Blessed), times its own (Frenzy, Cobra Reflexes); ranged haste (Quick Shots) doesn't reach
+  it. Ours since 2026-11-12 (their d729b13992, Nov 8 log).
+- Pet autocast: an ability short of focus passes to the next one on the bar. Ours since 2026-11-12
+  (their 8223020463, Nov 12, logs).
 - Pet Aggression: dropped (no trainer teaches it).
 - Explosive reach 10 yd.
 - Windfury Totem ICD 100 ms, extra attacks don't reset the swing, Eviscerate 4% AP a combo point
@@ -177,6 +180,7 @@ A gap on one of these is a regression.
 - Lightning Overload's copies proc, but Judgement of Wisdom, Elemental Devastation and Water
   Shield don't hear them.
 - Faerie Fire in Cat Form: 1.0 s GCD, 6 s cooldown.
+- Rake's direct hit: 6.5% AP at every rank, read at the hit. Ours since 2026-11-12, outside the Nov 2 scale (their 0384d8f98c, 70862 log).
 - Dragonfire and Caustic Smog Potions: neither hit nor ticks crit.
 - Venom's +20% proc chance on Instant, Deadly and Wound Poison (ours since 2026-11-12).
 - Arcane Concentration split across an Arcane Missiles channel; Wrack and Soul Siphon (hotfix

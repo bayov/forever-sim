@@ -56,8 +56,8 @@ func windfuryProcs(sim *core.Simulation, war *warrior.Warrior, spell *core.Spell
 // requires a main hand weapon or is on next swing (Heroic Strike, Cleave, Sunder Armor, Revenge,
 // Execute, Rend) roll Windfury Totem at 20%, and Whirlwind, whose spell isn't flagged, never does.
 // Classic keeps every main hand hit. White swings still proc it
-// (sim/shaman/enhancement/proc_matrix_test.go); sim/windfury_totem_rule_test.go pins the whole
-// log list.
+// (sim/shaman/enhancement/proc_matrix_test.go); sim/core/windfury_totem_procs_forever_test.go
+// pins the log list.
 func TestForeverWindfuryTotemMainHandAbilities(t *testing.T) {
 	const n = 400
 	sim, war := newWindfuryTank(t, proto.Ruleset_RulesetForever)

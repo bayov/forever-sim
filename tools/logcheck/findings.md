@@ -6,6 +6,14 @@ sections 2 and 6 have the format).
 
 ## Fix in the sim
 
+### Stormstrike hits about 1.6x the sim since Nov 11 10:37
+
+- **Flag**: `Stormstrike (17364): raw`, mob levels 46 to 59 (114 flags, 49 windows of `WoWCombatLog-111126_095013.txt`, Nov 11 10:37 to Nov 12 07:41). `Melee: raw` stays close on most of them.
+- **Windows**: `111126_095013 10:37-10:54` log 544 to 552 vs the sim's 330 to 332 (36 and 21 hits, 1.65x, Staves). `11:02-11:22` 523 vs 337 (33 hits). `13:56-13:58` with Rockbiter 786 vs 503 (7 hits). `23:15-23:19` 814 vs 333 (2.44x), `03:08-03:16` 827 vs 335 (2.47x), both with Shadow Oil and sheet AP about 790 over the sim's. `05:25-05:42` 625 to 639 vs 376 (38 hits). Almost every window sits at 1.55 to 1.70x (Alcaz Willcrusher and The Chief's Enforcer, both two-handers). Only `07:38-07:41` (Rockbiter, level 59 boss) fits: 557.6 vs 523.9 (1.06x, 9 hits). The last window before Nov 11 10:37 with Stormstrike (`075640 00:10:31`, Rockbiter, client tables 70862) fit: 731.8 vs 725.0.
+- **What we think**: the sim's Stormstrike takes the 2026-11-10 class tuning (100% weapon damage, 8 sec cooldown, `StormstrikeWeaponDamagePercent` in `sim/shaman/stormstrike.go`), but its own comment says no server row carries it (`SpellEffect 1368308` still 150). 1.5x fits the windows at 1.55 to 1.70x, and Rockbiter windows with a matching sheet AP (13:56, 14:32 to 20:56) are 1.55 to 1.6x too, so the AP gap below isn't the cause. The one fitting window (07:38) could be the tuning going live, or a one-off (the sim's Rockbiter AP was 610 over the sheet's there). Touches the Stormstrike notes in `notes.md`.
+- **Next step**: needs the user's go. Under Forever, put Stormstrike's weapon damage back to 150% until the 07:38 fit shows up in the next logs (a Stormstrike with a two-hander and no Rockbiter, raw about 33% under the old 600). Check the cooldown the same way (cast gaps in the log, 6 or 8 sec).
+- **Status**: open, first seen 2026-11-12, updated 2026-11-12.
+
 ## Collect more data
 
 ### Dungeon mobs take about 2 less spell damage per hit
@@ -16,6 +24,7 @@ sections 2 and 6 have the format).
 - **Window** `WoWCombatLog-110926_151906.txt 23:11:05-23:26:03` (Uldaman): every level 43 mob (Stonevault Brawler and Geomancer, Earthen Rocksmasher and Sculptor, Deadly Cleft Scorpid, Shadowforge Archaeologist and Darkcaster) takes 2 less: Magma Totem 51 to 52 (157 hits) vs 53 to 54, Flametongue Attack 72 vs 74, Fire Nova 189.8 vs 191 to 192. Level 42 and 44 mobs hit by the same Magma tick take full damage. So odd-level dungeon mobs have it too.
 - **Window** `WoWCombatLog-110926_151906.txt 23:51:48-23:55:38`: level 47 mobs take about 1 less than level 44 and 45 in the same window: Magma Totem 52 (15 hits) vs the sim's 53, Flame Shock ticks 46.3 vs 47, Flametongue Attack 73.2 vs 74.0. Smaller than 2, so maybe only some of them have it.
 - **Window** `WoWCombatLog-111026_075640.txt 20:06:50` and `21:02:11` (Maraudon, 2908 and 2748 attacks): odd-level mobs take 2 less again. Magma Totem 51 vs the sim's 53 (323 hits), Flametongue Attack 78 to 79 vs 80 at levels 45 and 47, Flame Shock ticks 44.7 to 45 vs 46, Farraki Enforcement 292 vs 294 (13 hits). On those mobs Lightning Shield equals the sim, because the +2 of "Spell hits run about 6 spell power above the sim" cancels it. Farraki Enforcement is Physical, and 2 off 294 is the same 2 as off Magma Totem's 53, so it looks like a flat 2 less damage taken on every school, not a resistance (a resistance would take a share, and none off Physical).
+- **Window** `WoWCombatLog-111126_095013.txt` Nov 11 10:37 to Nov 12 07:17 (Nov 12 audit): the same 2 to 3 less turns up at levels 47 to 55 on spells, mostly in what looks like open world fights (10:37 to 11:48 has Overlord Mok'Morokk, a Dustwallow Marsh mob, zones not checked). Magma Totem 52.0 vs the sim's 54.0 in 13 windows (30 to 37 hits each), Lightning Shield (26370) 172 to 173 vs 174 to 176 in 24 windows, Flame Shock (10448) ticks 68 to 69 vs 70 to 71 in 6, Searing Totem (10435) 37.1 vs 40.0 and 38.2 vs 39.9 in 13, Flametongue Attack 84.8 to 85.1 vs 87.6 to 88.0, Lightning Bolt (15207) 342 to 345 vs 346 to 350 in 12, Earth Shock (10413) 411 to 415 vs 415 to 417 in 6. The sheet's Nature power was 0.6 to 1.5 over the sim's in those windows, which is too small for all of it. If a flat 2 off every hit holds at these levels, it isn't a dungeon trait.
 - **Next step**: check the unfiltered logs for those mob GUIDs. Then Flame Shock a dungeon trash mob and an open world mob of the same level, 30 ticks each.
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-11.
 
@@ -37,6 +46,22 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
 ## logcheck issues
+
+### Shadow Oil's Shadow Bolt isn't in the sim
+
+- **Flag**: `Shadow Bolt (350026): never` and `procs` (levels 48 to 59, 12 windows from `111126_095013 00:26-00:55` to `07:23-07:33`, 11 to 19 per 100 landed white swings).
+- **Windows**: every window with the note "shaman imbue from the log: Shadow Oil" (21 reports).
+- **What we think**: Shadow Oil is a weapon oil, and logcheck replays it as an imbue the sim doesn't have, so its proc never fires. Spell damage from it is small, so the other rows hold.
+- **Next step**: leave it out of the audit's imbue list, or add the oil's proc to the sim if we want the numbers. Add `Shadow Bolt (350026)` `never` and `procs` to `known.json` meanwhile (an unattended run doesn't touch it).
+- **Status**: open, first seen 2026-11-12, updated 2026-11-12.
+
+### Sheet Attack power far from the sim's on some exports
+
+- **Flag**: `sheet` (Attack power), and `Melee: raw` in the same windows.
+- **Windows**: `111126_095013`, sheet vs sim: `10:37-10:54` 1300 vs 610, `23:15-23:47` 1465 to 1508 vs 709 to 714, `00:26-01:04` 1476 vs 733, `03:08-03:43` 1412 to 1505 vs 647 to 720 (Shadow Oil and Flametongue, Ghost Wolf in the export's buffs on most). The other way: `19:21-19:31` sheet 732 vs sim 1337, `07:33-07:41` 869 to 988 vs 1479 to 1570 (Rockbiter, the sim adds its AP and the export doesn't have it). Logged AP in the fights is 1318 to 2311, over the sheet in most. `Melee: raw` 501 vs 317 in `23:15-23:19`, and 506 vs 318 in `03:08-03:16`, but 347 vs 334 in `10:37-10:54`.
+- **What we think**: an AP source in the sheet that `buffAuras` in `tools/logcheck/buffs.go` doesn't read (about 700 to 800 AP, up in some exports only), or the export reading the sheet before an AP aura applies. Not found. It skews the Melee rows in the windows listed, not the spells.
+- **Next step**: for the 23:15 and 03:08 exports, list the auras up on us from the log and the sheet's AP rows (`Export.lua`), then find the one that adds the 700 to 800.
+- **Status**: open, first seen 2026-11-12, updated 2026-11-12.
 
 ### Melee and Stormstrike a few percent high in the Nov 10 morning
 
@@ -83,6 +108,14 @@ sections 2 and 6 have the format).
 - **Next step**: see if it comes back at other levels. If it does, check the AP rounding and the dodge per Agility by level.
 - **Status**: open, first seen 2026-10-18, last updated 2026-11-09 (steady at level 43 to 44, so the dodge per Agility by level is worth a check).
 
+### Immunes, partial resists and odd mobs at levels 48 to 59
+
+- **Flag**: `immune` and `partial` on Lightning Bolt (15207), Fire Nova (408427, 408428), Magma Totem (10580), Searing Totem (10435), Lightning Shield (26370), Flame Shock (10448) ticks, Stormstrike, Melee. `never` on Cloud of Chained Essence (1300240) ticks and M73 Frag Grenade (13808). `procs` on Searing Totem (10435), `amount` on Lightning Shield (26370) and Magma Totem, `miss` on Earth Shock (10413) (3 of 8), `absorb` on Magma Totem.
+- **Windows**: `111126_095013` Nov 11 10:37 to Nov 12 07:41. Most are the same causes as the known entries: Nature-immune mobs (Lightning Bolt 5 of 5 at level 55 in `01:26-02:02`, Magma Totem 8 of 39 at level 54 in `07:20-07:22`), resistant mobs (Lightning Bolt partial 12 of 20 at 50 in `00:26-00:55`, Flametongue Attack 24 of 65 at level 56 in `07:04-07:17`), and the Searing Totem rank 10435 rotation gap, the same as ranks 6350 to 6352. Cloud of Chained Essence and the grenade are from mobs or others, not us.
+- **What we think**: noise or the same causes as the `known.json` entries, which don't have these ranks yet. One window each for `miss` and `amount`.
+- **Next step**: at the next `/log-audit` add `Attack (10435): procs` and the immune and partial rows above to `known.json` with the same reasons, if the user agrees.
+- **Status**: open, first seen 2026-11-12, updated 2026-11-12.
+
 ## Done
 
 ### Windfury Totem procs from main hand abilities, not only white swings
@@ -91,8 +124,7 @@ sections 2 and 6 have the format).
 - **Windows**: the 14 live logs of Nov 6-11 (`110626_104707` to `111126_095013`), 4,737 procs on 93 players (16 warriors, 13 rogues, 17 druids, 19 paladins, 13 hunters, 18 shamans). The beta logs have none. Procs where the ability was the only hit in the 150 ms before it, out of landed casts with the totem up: Cleave 64/308, Heroic Strike 21/109, Maul 32/174, Raptor Strike 16/127, Sunder Armor 57/428, Revenge 33/257, Execute 20/186, Rend 4/39, Sinister Strike 178/1610, Eviscerate 18/206, Wing Clip 6/37, Ghostly Strike 4/15, Kidney Shot 2/19, Mongoose Bite 3/32. Never: Stormstrike 0/4467, Holy Strike 0/1175, Bloodthirst 0/258, Whirlwind 0/292, Shield Slam 0/125, Claw 0/165, Swipe 0/1634, Rake 0/91, Cheap Shot 0/45, Judgements, seal and poison and item procs, off-hand swings (2% of 2,361, each with a main hand swing 80 ms later), Auto Shot 0/697, extra swings 0/3381. White main hand swings 979/6592 (14.9%) on one-weapon players.
 - **What we think**: the client decides it. The totem's aura (8515, 10609, 10612) has ProcChance 20 and ProcTypeMask 0x14 (white swings plus melee abilities) with no class mask. The abilities that proc it are exactly those whose spell has Attributes_3 0x400 (needs a main hand weapon) or Attributes_0 0x4 (on next swing). Execute's cast has the flag and its damage spell 20647 doesn't, so the cast counts. A landed hit with no damage counts (Sunder, Rend, Kidney Shot), as the sim already has it (`wf_totem_nodamage`). The sim's rule since 2026-11-08 (`WindfuryTotemBuffAura` in `sim/core/buffs.go`, `ProcMaskMeleeMHAuto` under Forever) leaves out every ability, so warriors, rogues, ferals and hunters get too few procs. The 14.9% white rate is under 20% because "totem up" is a guess (the buff isn't logged on others, so out-of-range time counts). The proc gap of 98 ms fits the 100 ms cooldown. Touches notes.md Shaman "Windfury Totem procs from white main hand swings only".
 - **Next step**: needs the user's go. Under Forever, let the totem roll on white main hand swings, on-next-swing attacks and main hand abilities whose client spell has Attributes_3 0x400, and not on Stormstrike, Holy Strike, Bloodthirst, Whirlwind, Shield Slam, Claw, Swipe, Rake, seal procs or Judgements. Then rerun the warrior, rogue and feral report builds. Scripts: `parse.py`, `core.py`, `report.py` in the 2026-11-12 session scratchpad `wf/` (not kept).
-- **Done**: 2026-11-12 (the user's go). Under Forever the totem rolls on white main hand swings and on melee abilities whose client spell has Attributes_3 0x400 or Attributes_0 0x4, read from the client by `tools/gen_main_hand_spells.py` (`Spell.ClientMainHand`, `RollsForeverWindfuryTotem` in `sim/core/buffs.go`), and never on extra swings; standards 17. Every ability above lands on its logged side by its flag. Test `sim/windfury_totem_rule_test.go`; the moves are in `orchestration/round_notes_2026-11-11/windfury_rule.md`.
-- **Status**: done, first seen 2026-11-12, updated 2026-11-12.
+- **Done**: 2026-11-12 (the user's go). `WindfuryTotemBuffAura` now rolls under Forever on white main hand swings and the abilities in `sim/core/windfury_totem_procs_forever.go` (313 client spells, made by `tools/sources/wf_totem_procs.py`). The sim's abilities match the logs one for one. 19 report builds moved (warriors, rogues, Survival).
 
 ### Camp items from other players and the Enchanted Lute
 

@@ -1,46 +1,39 @@
-# Fairness pass 35 (2026-11-11, master 707ae92)
+# Fairness pass 36 (2026-11-12, master a0b4d3b)
 
-Result: quiet (no new finding). Watched files changed since 27d0d59 (61, 40 for this auditor): standards 25 amended,
-`sim/core` (natural flasks, weapon imbue + weapon totem, dot expiry), shaman Nov 10 tuning and Enhancement re-optimization,
-warlock hotfix 113766, mage Arcane Concentration split, hunter mana costs and hawk, Idol of Ferocity, Sweeping Strikes,
-item database for client 70888. Full pass: `audit1b.py` and a full 5k race sweep on the loop's 707ae92 CLI and tree.
-New baseline: 707ae92.
+Result: findings (1 new, 1 resolved). Watched files changed since 33db32b (23): Windfury Totem on main hand abilities
+(a0b4d3be9, standards 17 text), Venom on Instant Poison (e2322baa1), defaults switched to each class's best 180 s build
+(7462c17c8), priest tree size, shaman Trial by Fire rename, druid comment, compsearch drops. Full pass: `audit1b.py` and a
+full 5k race sweep on the loop's a0b4d3b CLI and tree. New baseline: a0b4d3b.
 
 ## What changed
 
 | Change | Commit | Effect on fairness |
 |---|---|---|
-| Natural flasks: 30 Stamina, zone bonus 5/4/5/5 -> 2 (client 70862) | 032692409 | The 28 physical presets drop: hunters -21, Feral -18.2, Survival -28.7, rogues -16 to -19, Fury -38.4, Fury 2H -35.6, Arms -17.5. Ret and casters (Supreme Power) unchanged. A game change applied to every preset that carries the flask: fair |
-| Weapon imbue and weapon totem both work (Nov 10 hotfix), standards 25 amended | cb651085c, 02dee9e1d | Enhancement places its own Windfury Totem (10614) next to Windfury Weapon, so every melee spec has the totem. No asymmetry |
-| Shaman Nov 10 tuning, Enhancement re-optimized and re-simmed | cb651085c, 54a15ba24, f8a37c8e8 | Enhancement -116.8 (1147.5 -> 1030.7), 4th -> 10th; metas match (+0.1). Elemental unchanged |
-| Warlock hotfix 113766, Wrack; no dot tick after expiry | 546d0dcaa, 99c8ce2b1, f20d5938a | Affliction +36.9 (11th -> 5th); Destruction Fire +0.0 |
-| Arcane Concentration splits across a Missiles channel | 5bfae1163 | Arcane -6.6, Fire -4.0 (binaries fc065aae3 970.2 -> a34d22451 963.6, Arcane, 5k seed 1) |
-| Hunter mana costs, hawk; Idol of Ferocity; Sweeping Strikes charges; Bladewhisper's Namesake | 30e67a529, 6feec7094, 333643570, a34d22451, b1291e61a | No separate move beyond the flask in the swept builds |
+| Windfury Totem rolls on white MH swings and on MH abilities whose client spell needs a MH weapon or comes on the next swing (generated list, logs of Nov 6-11) | a0b4d3be9 | Arms +171.0 (24th -> 11th), Fury 2H +105.8, Fury +50.5, Survival +70.8, rogues part of +21 to +58. Enhancement, Feral, Ret unchanged (Stormstrike, Claw/Rake, Holy Strike never roll it in logs). Raptor Strike now rolls like Heroic Strike / Cleave: fairness-20261109-1 resolved |
+| Venom's +20% reaches Instant Poison | e2322baa1 | Rogues, with the totem: Combat Swords +46.5, SF Swords +57.6, Mutilate +38.1, SF Daggers +34.8, Subtlety +24.3, Combat Daggers +21.2 |
+| Defaults: best 180 s build per class | 7462c17c8 | Combat Daggers chosen over Swords on 707ae92 numbers; the two commits above flip the order (fairness-20261112-1). Fury DW, Affliction, Lone Wolf still hold |
+| Priest TalentTreeSizes, shaman Trial by Fire rename, druid comment | 33db32b..a0b4d3b | No move (Shadow, Smite, Elemental, Enhancement, Feral identical) |
 
 ## What I checked
 
 - Gear: `audit1b.py` 19 of 19 "5a PASS | 1b PASS".
-- Movement against the ca5e35c baseline: every moved build attributed above. Ret, Destruction, Demonology, Frostfire,
-  Frost, Balance, Shadow, Smite, Elemental identical. No shared change leaked.
-- Published against current: Affliction +37.0; the natural-flask presets -15 to -22 on top of the open Windfury Totem
-  gaps (Fury -136.3, Fury 2H -224.8, Arms -217.3, Survival -124.2, Ret -83.2, rogues -31 to -76); Fire -4.1.
-  All are stale metas waiting on the re-sim under results-20261109-1 (its 2026-11-11 update lists them). Independent
-  confirmation, not refiled. One correction to that update: Arcane -6.6 and Fire -4.3 do not predate 27d0d59; both
-  move on 5bfae1163 (27d0d59 1058.2 / 970.2 -> f20d5938a 1053.8 / 963.6, Fire / Arcane). Arcane's meta (962.3) already
-  carries it; Fire's (1057.9) does not.
-- Best race: the report race is best everywhere within noise (MM Night Elf +0.3, Fire Gnome +0.4, Arms Undead tie).
-- fairness-20261109-1 still open: the totem's proc mask (buffs.go) and Raptor Strike are unchanged.
+- Movement against the 707ae92 baseline: only warriors, Survival and rogues moved, all from a0b4d3be9 / e2322baa1. No leak.
+- The new rule is spell-ID based; Raptor Strike's hit spell (tag 1, SpellID 2973 / 14260-14266) is in the list, Mongoose
+  Bite and Wing Clip too. Even-handed across warrior, hunter and rogue on-swing / MH abilities.
+- Published against current: the 19 builds of results-20261112-1 (Fury -85.8, Fury 2H -119.0, Arms -46.3, Survival -53.4,
+  rogues -0.4 to -18.3) plus older stale metas (hunters about -21, Feral -14.6, Affliction +37.0, Ret -83.2, Fire -4.1).
+  Independent confirmation of the results auditor's findings, not refiled.
+- Best race: report race is best within noise everywhere (Combat Daggers Gnome +0.6, Fire Gnome +0.4, MM Night Elf +0.3).
 
 ## Ranking now (report race, 5k)
 
 Lone Wolf 1291.8, MM 1232.7, BM 1174.7, Feral 1124.4, Affliction 1071.1, Frostfire 1065.7, Destruction 1063.2,
-Demonology 1055.3, Fire 1053.8, Enhancement 1030.7, Ret 1008.9, Fury DW 999.7, Destruction Fire 997.9, Elemental 977.4,
-Arcane 963.6, Balance 952.1, Shadow 948.6, Frost 943.6, Fury 2H 926.2, Survival 917.0, Combat Daggers 915.4,
-Combat Swords 899.6, SF Swords 881.1, Arms 870.7, SF Daggers 869.6, Subtlety 839.3, Mutilate 827.6, Smite 781.0.
+Demonology 1055.3, Fire 1053.8, Fury DW 1050.2, Arms 1041.7, Fury 2H 1032.0, Enhancement 1030.7, Ret 1008.9,
+Destruction Fire 997.9, Survival 987.8, Elemental 977.4, Arcane 963.6, Balance 952.1, Shadow 948.6, Combat Swords 946.1,
+Frost 943.6, SF Swords 938.7, Combat Daggers 936.0, SF Daggers 904.4, Mutilate 865.7, Subtlety 863.6, Smite 781.0.
 Top over bottom 1.65x. Full table: `orchestration/audit/ref/fairness/table_baseline.md`.
 
 ## Open for the next pass
 
-- After the re-sim of results-20261109-1, check that published matches current for every moved spec (now 45 metas).
-- The ruling on fairness-20261109-1 (Option A: Survival +25; Option B: Fury -16.6, Fury 2H -3.5, Arms -4.8; measured
-  before the flask change, so re-measure when it is ruled).
+- After the re-sim of results-20261112-1, check published against current for the 19 moved builds and the older stale metas.
+- fairness-20261112-1: confirm the Combat Swords / Daggers order at 20k after the re-sim, and that the default follows it.

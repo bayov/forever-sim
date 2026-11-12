@@ -2,8 +2,8 @@ builds: 68 rows, 102 KB
 races: 247 rows, 75 KB
 lengths: 340 rows, 28 KB
 abilities: 694 rows, 193 KB
-auras: 1213 rows, 175 KB
-hist: 2682 rows, 142 KB
+auras: 1214 rows, 175 KB
+hist: 2750 rows, 146 KB
 stats: 671 rows, 55 KB
 gear: 632 rows, 120 KB
 setup: 1836 rows, 457 KB
@@ -37,9 +37,9 @@ names: 307 rows, 30 KB
 names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark', 'Curse of Elements', 'Dark Inspiration', 'Death Mark', 'Death Mark', 'Death Mark', 'Decimation', 'Decimation - Execute', 'Demonic Knowledge', 'Dragonfire Potion', 'Echo of Command', 'Echo of Righteousness', 'Eclipse', 'Frigid Power', 'Heating Up', 'Improved Stormstrike', 'Item 260817', 'Lacerating Strikes', 'Maelstrom Weapon', 'Major Frenzy Potion', 'Major Spellblasting Potion', 'Mana gain', 'Missile Barrage', 'Movement', 'Potion', 'Quick Strikes', 'Rage gain', 'Raid damage hit', 'Reckless Swings', 'Shadow Word Death', 'Shadow and Flame (Shadow)', 'Tenets of the Silver Hand', 'Unsealed Wrath']
 treeart: 27 rows, 1063 KB
 missing icons: []
-timeline_warrior: 12 rows, 36 KB
-timeline_rogue: 18 rows, 44 KB
-timeline_hunter: 12 rows, 35 KB
+timeline_warrior: 12 rows, 42 KB
+timeline_rogue: 18 rows, 48 KB
+timeline_hunter: 12 rows, 36 KB
 timeline_paladin: 12 rows, 44 KB
 timeline_shaman: 18 rows, 54 KB
 timeline_druid: 9 rows, 24 KB
