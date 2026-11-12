@@ -255,13 +255,13 @@
                         "op": "OpGt",
                         "rhs": {
                           "const": {
-                            "val": "15s"
+                            "val": "20s"
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Barkskin on cooldown from 15 sec in: 20% less Physical damage for 15 sec of each minute (on a timer: a scoring run reads no health)."
+                  "notes": "Barkskin on cooldown from 20 sec in: 20% less Physical damage for 15 sec of each minute (on a timer: a scoring run reads no health)."
                 },
                 {
                   "action": {

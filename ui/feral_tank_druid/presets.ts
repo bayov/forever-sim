@@ -84,9 +84,10 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // up just below that line (refreshed under 3 sec), use Barkskin on its timer from 15 sec in, in the filler's
 // place, shift into Dire Bear Form 1.5 sec before the pull and Enrage in the fight. Balanced: Lacerate as the
 // filler, Maul at 20 Rage, Enrage under 40 Rage and Frenzied Regeneration at 100 Rage. Max threat: Balanced
-// without Frenzied Regeneration and with Enrage under 70 Rage. Max survival: Balanced with Lacerate kept up but
-// not the filler, Maul at 40 Rage and Frenzied Regeneration at 70 Rage (tank_rotations-20261112-1), so it fires
-// every cooldown. No preset enrages before the pull any more
+// without Frenzied Regeneration, with Enrage under 70 Rage and Barkskin from 20 sec in (re-tuned on the Windfury
+// Totem rule of 2026-11-12, docs/tank_druid.md). Max survival: Balanced with Lacerate kept up but not the filler,
+// Maul at 40 Rage, Frenzied Regeneration at 80 Rage and Swipe as the filler at 80 Rage (Windfury re-tune), so FR
+// fires every cooldown. No preset enrages before the pull any more
 // (each weight's best build enrages in the fight).
 export const APLMaxThreat = PresetUtils.makePresetAPLRotation('Max threat', MaxThreatAPLJSON);
 export const APLBalanced = PresetUtils.makePresetAPLRotation('Balanced', BalancedAPLJSON);
@@ -107,8 +108,14 @@ export const DefaultAPL = APLBalanced;
 // nothing now (a hair under, at every weight), so its 2 points went to Brutal Impact (Bash, which the
 // scoring fights don't use); Feral Instinct's 2 are Swipe's, for packs.
 export const TalentsBear = PresetUtils.makePresetTalents('Bear', SavedTalents.create({ talentsString: '-5022233202310212551-055' }));
+// Max survival (Windfury re-tune, 2026-11-12): Swipe is its filler at 80 Rage, so Feral Instinct takes Brutal
+// Impact's second point (+2.4 at 10,000 on two seeds).
+export const TalentsBearMaxSurvival = PresetUtils.makePresetTalents(
+	'Bear (Max survival)',
+	SavedTalents.create({ talentsString: '-5023133202310212551-055' }),
+);
 
-export const TalentPresets = [TalentsBear];
+export const TalentPresets = [TalentsBear, TalentsBearMaxSurvival];
 
 export const DefaultTalents = TalentsBear;
 
@@ -308,9 +315,9 @@ export const PresetBuildBalanced = PresetUtils.makePresetBuild('Balanced', {
 	race: Race.RaceNightElf,
 });
 export const PresetBuildMaxSurvival = PresetUtils.makePresetBuild('Max survival', {
-	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear and talents, Dirge's chops for the Dumpling, the Greater Stoneshield Potion on cooldown, the Flask of the Titans.",
+	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear, Feral Instinct 3 and Brutal Impact 1 (Swipe is its filler at 80 Rage), Dirge's chops for the Dumpling, the Greater Stoneshield Potion on cooldown, the Flask of the Titans.",
 	gear: GearLevel60Phase1Synthetic,
-	talents: TalentsBear,
+	talents: TalentsBearMaxSurvival,
 	rotation: APLMaxSurvival,
 	encounter: EncounterLevel60TankMaxSurvival,
 	race: Race.RaceNightElf,

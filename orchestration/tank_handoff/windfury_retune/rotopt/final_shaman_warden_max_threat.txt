@@ -1,0 +1,6 @@
+tank encounters (their index takes the fight length's place, scored as their mean): tools/encounters/magmadar.json,tools/encounters/golemagg.json,tools/encounters/onyxia.json,tools/encounters/broodlord.json,tools/encounters/vaelastrasz.json,tools/encounters/chromaggus.json
+tank objective: 2 x SafeDPS - 0.3333333333333333 x 900 x healing needed at 5% deaths / 258, in raid DPS
+[0 1 2 3 4 5]s: 2527.5(2.8) mana 3889(2) tto 151s
+  start 2527.5(2.8) mana 3889(2) tto 151s
+  best  
+  sim runs 0

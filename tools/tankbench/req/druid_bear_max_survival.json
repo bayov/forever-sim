@@ -8,7 +8,7 @@
             "race": "RaceNightElf",
             "class": "ClassDruid",
             "level": 60,
-            "talentsString": "-5022233202310212551-055",
+            "talentsString": "-5023133202310212551-055",
             "equipment": {
               "items": [
                 {
@@ -149,13 +149,13 @@
                         "op": "OpGe",
                         "rhs": {
                           "const": {
-                            "val": "70"
+                            "val": "80"
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Frenzied Regeneration on cooldown at 70 Rage or more (on a timer: a scoring run reads no health)."
+                  "notes": "Frenzied Regeneration on cooldown at 80 Rage or more (on a timer: a scoring run reads no health)."
                 },
                 {
                   "action": {
@@ -295,6 +295,29 @@
                     }
                   },
                   "notes": "Barkskin on cooldown from 15 sec in: 20% less Physical damage for 15 sec of each minute (on a timer: a scoring run reads no health)."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9908
+                      }
+                    },
+                    "condition": {
+                      "cmp": {
+                        "lhs": {
+                          "currentRage": {}
+                        },
+                        "op": "OpGe",
+                        "rhs": {
+                          "const": {
+                            "val": "80"
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "notes": "Swipe as the filler at 80 Rage or more."
                 },
                 {
                   "action": {

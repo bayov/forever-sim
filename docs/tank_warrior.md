@@ -359,6 +359,27 @@ Six-boss means at 10,000, seed 1 (`abtest`): Max threat **3,801.7**, Balanced **
 candidate, 3,000 to refine) kept the talents but for Balanced's Improved Thunder Clap 1 for Improved Sunder Armor 1
 (`05-05050005-250531020300001351`), which ties at 10,000 (0.0 ± 2.0 / -2.5 ± 2.1): talents unchanged.
 
+## Re-tuned on the main-hand Windfury rule (2026-11-12)
+
+Standards 17 changed again the same day (`orchestration/round_notes_2026-11-11/windfury_rule.md`): Windfury Totem
+rolls on white main-hand swings and on every ability whose client spell requires a main hand or is on next swing
+(Heroic Strike, Cleave, Sunder Armor, Revenge, Execute, Rend, ...), which moved the presets' SafeDPS by +105 to +209.
+Every threshold was tuned under the old rule, so each preset was re-searched on it: `rotopt -template warrior_tank
+-tank <preset>` on the six scoring bosses at its own weight, the knob search from the shipped knobs (1,000 a
+candidate, 3,000 to confirm), then the talent search on the knobs it found; the candidates that showed more than their
+error went to paired `abtest` at 3,000 (seed 1), and would have been taken only at 10,000 on seeds 1 and 2.
+
+- **Max threat**: knobs and talents hold. Heroic Strike at 30 Rage stays (20 -5.0, 40 -3.5 ± 4 to 5), Sunder Armor's
+  filler at 15 (10 +0.6 ± 1.5), Bloodrage at 30.
+- **Balanced**: knobs and talents hold (`hsRage=50`, `sunderRage=25`).
+- **Max survival**: knobs and talents hold. Near misses at 3,000, paired: Sunder filler at 20 Rage +3.8 ± 4.7, Thunder
+  Clap refreshed under 8 s +6.5 ± 10.7, Shield Block from 20 Rage +4.1 ± 11.2, Bloodrage under 20 +2.4 ± 2.2.
+
+Nothing changes. Six-boss means at the own weight, 10,000, seed 1 (`rotopt -eval`): Max threat **4,199.7**, Balanced
+**3,420.6**, Max survival **1,750.4** (the rule, not the re-tune, moved them from 3,801.7 / 3,103.5 / 1,568.7, with the
+Dense stone between). Max survival now leads the paladin's (1,723.0) at w = 3; the warrior leads at every weight.
+Raw output: `orchestration/tank_handoff/windfury_retune/`.
+
 ## Presets (2026-11-04, round 2; round 3 on top)
 
 **Round 3** (2026-11-04, after the second tank audit; master fd9538c: mana-gain threat unmultiplied, tank_mechanics

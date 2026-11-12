@@ -292,6 +292,46 @@ Golemagg +386 / +380, Vaelastrasz +215 / +225, Chromaggus -88 / -68, Broodlord -
 `-5022233202310212551-055`. Balanced (FR at 100) and Max threat (no FR) were not touched: the audit's FR thresholds
 lost there.
 
+## Re-tuned on the main-hand Windfury rule (2026-11-12)
+
+Standards 17 changed again the same day (`orchestration/round_notes_2026-11-11/windfury_rule.md`): Windfury Totem
+rolls on white main-hand swings and on abilities whose client spell requires a main hand or is on next swing, Maul
+among them (Lacerate and Primal Bite don't), which moved the bear's SafeDPS by +35 to +57. Each preset was
+re-searched on it: `rotopt -template druid_tank -tank <preset>` on the six scoring bosses at its own weight, the knob
+search from the shipped knobs (1,000 a candidate, 3,000 to confirm), then `-talent-search -require feralSwiftness`
+on the knobs it found; candidates screened with paired `abtest` at 3,000 (seed 1), taken only at 10,000 on seeds 1
+and 2. Knob strings the template turns into the shipped APLs byte for byte:
+
+- Max threat: `barkskin=2,barkskinAfter=20,enrage=2,enrageRage=70,lacerate=2,maulRage=20,prepullShift=1`, the rest at
+  their defaults.
+- Balanced: unchanged (`barkskin=2,barkskinAfter=15,enrage=2,enrageRage=40,frRage=100,lacerate=2,maulRage=20,
+  prepullShift=1`).
+- Max survival: `frRage=80,maulRage=40,swipeRage=80,lacerate=1,enrage=2,enrageRage=40,prepullShift=1,barkskin=2,
+  barkskinAfter=15,potion=1`.
+
+| Preset | Change | Seed 1 | Seed 2 | Taken |
+|---|---|---|---|---|
+| Max threat | Barkskin from 20 sec in, not 15 (`barkskinAfter=20`) | **+6.9 ± 1.5** | **+4.8 ± 1.5** | yes |
+| Max threat | that and Roar refreshed under 2 sec | +6.9 ± 1.5 | +5.0 ± 1.5 | no: the Roar adds nothing |
+| Max survival | Frenzied Regeneration at 80 Rage, not 70 (`frRage=80`) | +101.9 ± 11.7 | +101.2 ± 11.5 | yes |
+| Max survival | then Swipe as the filler at 80 Rage (`swipeRage=80`), against FR 80 alone | **+28.9 ± 9.8** | **+23.6 ± 9.3** | yes |
+| Max survival | then Enrage under 50 Rage | -0.2 ± 1.2 | -1.4 ± 1.2 | no |
+| Max survival | then talents `-5023133202310212551-055` (Feral Instinct 3, Brutal Impact 1: Swipe's threat) | **+2.4 ± 0.0** | **+2.3 ± 0.0** | yes |
+| Max survival | all three taken, against the old preset | **+133.3 ± 12.6** | **+128.5 ± 13.3** | |
+
+Max survival per boss (seed 1 / 2): Broodlord +270 / +284, Golemagg +167 / +191, Vaelastrasz +141 / +148, Onyxia +122
+/ +40, Chromaggus +76 / +82, Magmadar +24 / +27; Ragnaros (benched) +96 / +306. With Maul now rolling Windfury, the
+Rage pooled for Frenzied Regeneration is worth more spent; FR at 80 fires a little later and Swipe at 80 spends the
+surplus. Screened and not taken (3,000, seed 1): Balanced's Roar refreshed under 7 sec (+4.1 ± 4.7), Enrage under 50
+Rage (+6.3 ± 5.4) and Lacerate refreshed under 9 sec (+2.9 ± 1.9); Max survival's Swipe alone (-3.0 ± 21.5).
+Balanced and Max threat kept their talents.
+
+Six-boss means at the own weight, 10,000, seed 1 (`rotopt -eval`): Max threat 2,781.0 → **2,788.2**, Balanced
+**1,862.8** (unchanged), Max survival 50.7 → **183.9**. The bear stays third at every weight, behind the warrior and
+the paladin (Max threat 4,199.7 / 3,181.6, Balanced 3,420.6 / 2,767.1, Max survival 1,750.4 / 1,723.0) and ahead of
+the Warden (2,527.5 / 1,179.4 / -2,396.1); the paladin and Warden presets roll no Windfury and don't move under the
+rule (`sim/windfury_totem_rule_test.go`). Raw output: `orchestration/tank_handoff/windfury_retune/`.
+
 ## Flask after the Natural flask cut (2026-11-12)
 
 Client 70862 halved the Natural flasks (30 Stamina, a 2% zone bonus), so each preset's flask was re-picked by its own objective (tank_fairness-20261111-1): the request against copies with each other flask, 3,000 iterations at seed 1, the winners at 10,000 on seeds 1 and 2 (`abtest`, paired, six-boss mean at the preset's weight). Max survival takes the Flask of the Titans: +115.9 ± 7.8 / +111.6 ± 7.6, -594.3 → **-478.3** (seed 1).
