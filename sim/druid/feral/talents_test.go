@@ -243,6 +243,36 @@ func TestCatRakeTickAttackPower(t *testing.T) {
 	}
 }
 
+// TestCatRakeHitAttackPower checks Rake's direct hit under Forever: 61 at the November 2 scale
+// plus 0.065 attack power read at the hit, which the scale leaves alone (the user's ruling,
+// 2026-11-12, on wowsims/forever 0384d8f98c's combat log fit).
+func TestCatRakeHitAttackPower(t *testing.T) {
+	sim, cat := newCatSim(t, "")
+	target := noCritsNoArmor(sim, cat)
+	cat.AddStatDynamic(sim, stats.MeleeHit, 100*core.MeleeHitRatingPerHitChance)
+	target.PseudoStats.DodgeReduction += 1
+	// The multiplier the hit carries, on a base of 1.
+	multiplier := cat.Rake.CalcDamage(sim, target, 1, cat.Rake.OutcomeAlwaysHit).Damage
+	hit := func() float64 {
+		metrics := &cat.Rake.SpellMetrics[target.UnitIndex]
+		before, hits := metrics.TotalDamage, metrics.Hits
+		cat.Rake.ApplyEffects(sim, target, cat.Rake.Spell)
+		if metrics.Hits != hits+1 {
+			t.Fatal("Rake's hit didn't land")
+		}
+		return metrics.TotalDamage - before
+	}
+	ap := cat.Rake.MeleeAttackPower(target)
+	low := hit()
+	if want := (1.25*61 + 0.065*ap) * multiplier; !nearDamage(low, want) {
+		t.Errorf("Rake hits for %.3f at %.0f attack power, want %.3f", low, ap, want)
+	}
+	cat.AddStatDynamic(sim, stats.AttackPower, 1000)
+	if got, want := hit()-low, 0.065*(cat.Rake.MeleeAttackPower(target)-ap)*multiplier; !nearDamage(got, want) {
+		t.Errorf("1000 attack power more raises Rake's hit by %.3f, want %.3f", got, want)
+	}
+}
+
 // TestCatRendAndTearBleeds checks that Rend and Tear 5/5 raises the Rake and Rip ticks by 15%
 // (a tester's table on wowsims/forever PR #149, at the November 2 development notes' 3% a point).
 func TestCatRendAndTearBleeds(t *testing.T) {
