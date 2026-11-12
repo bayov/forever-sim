@@ -28,3 +28,7 @@ low-rank proc penalty. Source tiers per standards 37.
   values ("This fix was also applied to High Order and Windshaper Skyborne base stats"); the sim keeps their
   2026-09-22 sheet offset (-1 Str, +1 Agi, -1 Sta, +1 Int) until a naked Skyborne sheet shows the new one.
 - Read Leyline's Innervate rule.
+- Sparklance Wand (280031) deals Arcane damage: Blizzard's hotfixes of 2026-11-10 ("now does Arcane damage (was
+  Nature damage)"); its ItemSparse row is hidden at 1.60.1.70888, so `foreverWandSchools` in
+  `tools/database/gen_db/main.go` sets the school. Kept until a log of its wand shots or its ItemSparse row checks it
+  (user ruling 2026-11-12, TASKS.md). No build uses it.

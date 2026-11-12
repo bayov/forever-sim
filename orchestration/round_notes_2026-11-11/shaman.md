@@ -65,6 +65,7 @@ build pairs an imbue with the same weapon totem, so no raid build was re-simmed 
 ## Needs a user ruling
 
 1. `wf_weapon_totem_icd`: separate cooldowns for the weapon's and the totem's Windfury procs is an assumption.
+   Ruled 2026-11-12: kept as modelled, to verify after the patch lands (TASKS.md).
 2. `orchestration/standards.md` 25 still records the old rule, that Windfury Weapon turns the totem off. Amend it?
 3. Other classes' 62 DPS builds are still the Nov 4 sims, though all have moved since, mostly from the Windfury Totem
    white-swing change (0ce9dbf; Arms 1088 -> 888). Tank and heal modes are stale too (about 15 min and 3 h). Re-sim them?

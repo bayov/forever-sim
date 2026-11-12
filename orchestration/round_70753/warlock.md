@@ -189,7 +189,9 @@ server row (SpellEffect 1349556: 25.2 + 1.75 a level, 60.2 a second at 60, 0.200
   tick timer runs at half period while Wrack channels and keeps its progress when the channel starts or ends (also when
   it is cut short); a spell applied or refreshed mid-channel starts fast; no partial tick when a spell runs out; Wrack's
   own ticks are not sped. Bane of Agony steps every 4 ticks and stays at 150% past its 12th (wall-time thirds instead:
-  about -11 DPS for Affliction). A combat log would confirm. Tests: `sim/warlock/dps/notes_70888_test.go`.
+  about -11 DPS for Affliction). A combat log would confirm: the tick size steps up after the 4th and 8th tick, or
+  after 8 s and 16 s. Kept as modelled until a log after the patch checks it (user ruling 2026-11-12, TASKS.md). Tests:
+  `sim/warlock/dps/notes_70888_test.go`.
 - Soul Siphon counts only Corruption, Siphon Life and Bane of Agony (4/8/12% each, cap 36%). No row; a log or server row
   would confirm.
 - Imp Firebolt ranks 2 to 4: the notes announce the low-rank change with numbers only for rank 1 (hotfix 681913: 6 +
