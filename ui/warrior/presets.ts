@@ -180,6 +180,8 @@ export const APLLevel60ArmsDragonkin = PresetUtils.makePresetAPLRotation('Arms �
 // Bloodrage for its Rage, 3 sec before the pull so its GCD is over by then) and again when 35 sec of it
 // are left, unless it lasts the fight. Forever's Battle Shout lasts 3 min, so only a fight over about
 // 177 sec refreshes it, at about 142 sec, before the execute phase.
+// Since Windfury Totem rolls on Heroic Strike (standards 17), Fury's duty keeps a GCD free for Bloodthirst
+// and Whirlwind and queues Heroic Strike from 60 Rage in Reckless Swings (+5.3 at 180 sec, 2026-11-12).
 export const APLLevel60FuryShout = PresetUtils.makePresetAPLRotation('Fury · Battle Shout duty', Level60FuryShoutAPLJSON, { group: 'Synthetic' });
 export const APLLevel60Fury2HShout = PresetUtils.makePresetAPLRotation('Fury 2H · Battle Shout duty', Level60Fury2HShoutAPLJSON, {
 	group: 'Synthetic',

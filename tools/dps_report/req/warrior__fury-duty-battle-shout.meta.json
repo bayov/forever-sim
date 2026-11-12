@@ -49,8 +49,8 @@
     "Whirlwind at 25+ Rage, then Bloodthirst",
     "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
     "Reckless Swings on cooldown, but only when no strike is ready, since it takes a 1s GCD. The next 4 swings give 5 more Rage each",
-    "Heroic Strike at 80+ Rage, during execute too",
-    "Hamstring as filler at 10+ Rage (it procs Windfury Totem and Flurry)"
+    "Heroic Strike at 80+ Rage, or 60+ during Reckless Swings, during execute too, only when Bloodthirst and Whirlwind are 1s or more away",
+    "Hamstring as filler at 10+ Rage when Bloodthirst and Whirlwind are 1s or more away (it procs Windfury Totem and Flurry)"
   ],
   "consumes": [
     "Flask of Natural Precision",

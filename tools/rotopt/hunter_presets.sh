@@ -120,7 +120,10 @@ gen hunter_ranged bm_turret "$bm"
 # abilities cheap), so its mana floors never bind: every floor from 0 to 60% for Lacerate and the
 # trap and 0 to 80% for Wing Clip sims the same to the cent, also at 20000 iterations with all
 # three at 0 (1031.9 / 1024.6 / 1016.3 at 120 / 180 / 300 sec, seed 1).
-sv="lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=50,wingClipHold=2,trapFirst=1"
+# Since Wing Clip rolls Windfury Totem (standards 17, 2026-11-11) the Wing Clip floor binds late in
+# long fights: wingClipMana 50 -> 0 is +0.9 / +1.0 at 180 sec and +3.6 / +3.7 at 300 sec on seeds 1 and
+# 1000003 (20000 iterations), about +0.1 at 120 sec, on all three Survival requests (2026-11-12).
+sv="lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=0,wingClipHold=2,trapFirst=1"
 gen hunter_sv sv "$sv"
 # No Scorpid Sting duty (standards 23, user ruling 2026-10-25): Scorpid Sting shares Insect Swarm's
 # 2% hit reduction slot, which Balance druids keep up for its own damage, so a hunter on it would give

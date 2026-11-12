@@ -163,7 +163,7 @@ export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWo
 // hunter_trap_ap), Raptor Strike, Lacerate kept up and Wing Clip in every free global cooldown,
 // held only for an opened Mongoose Bite (rotation audit pass 23: +3.5 to +3.8 over the old order
 // with a Strider Kick hold too). The Wing Clip filler was the knob search's one change (+31 at 180
-// sec): Survival runs out of global cooldowns long before it runs out of mana. It walks in 6 sec before the
+// sec), and since Wing Clip rolls Windfury Totem it has no mana floor (+1.0 at 180 sec, +3.6 at 300). It walks in 6 sec before the
 // pull, since the fight starts at range.
 export const APLSurvival = PresetUtils.makePresetAPLRotation('Survival', SurvivalAPL, {
 	tooltip: 'Melee: Mongoose Bite, Strider Kick, Immolation Trap, Raptor Strike, Lacerate, Wing Clip filler.' + markTooltip,
