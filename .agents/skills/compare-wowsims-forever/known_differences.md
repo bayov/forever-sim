@@ -144,7 +144,6 @@ Shoot and the miss floor are in the Mage table.
 
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
-| Rake's direct hit | No attack power (`sim/druid/rake.go`, from their PR #149 tester) | 6.5% AP, as its tick (0384d8f98c: a 1.60.1.70862 log, rank 1 read 45 on 26 of 26 at 221 AP; ranks 2 to 4 assumed equal) | Open, their log, newer than our source. Feral 29.9 for theirs, 29.4 for ours when added |
 | Nov 2 bleed scale | Rake, Rip, Ferocious Bite, Pounce base and AP x1.25 (`nov2BleedScale`, `sim/druid/tuning_70753.go:20`) | Client values; the same log fits Rake's tick at 0.0652 AP against our 0.06875 | Ruling (Nov 2 notes, "about 25%"). Worth 98 on our Feral; near-equal ticks either way |
 | Eclipse charges | Granted when Wrath lands; a Starfire begun before keeps them (`sim/druid/talents.go:278-315`, notes.md:276, proc flag is a magic damage hit) | Granted at Wrath's cast; every Starfire spends one (`talents_balance.go:~165`, 7c70ac16e3) | Open: a log with a Wrath in flight. Balance 3.2 for theirs (Wrath 26.0 casts to 24.2) |
 | Raid damage taken | Pushes back Starfire and Wrath | None | Choice. Balance 4.9, Balance Wrath 4.1; Feral, Retribution 0 |
@@ -181,6 +180,7 @@ A gap on one of these is a regression.
 - Lightning Overload's copies proc, but Judgement of Wisdom, Elemental Devastation and Water
   Shield don't hear them.
 - Faerie Fire in Cat Form: 1.0 s GCD, 6 s cooldown.
+- Rake's direct hit: 6.5% AP at every rank, read at the hit. Ours since 2026-11-12, outside the Nov 2 scale (their 0384d8f98c, 70862 log).
 - Dragonfire and Caustic Smog Potions: neither hit nor ticks crit.
 - Venom's +20% proc chance on Instant, Deadly and Wound Poison (ours since 2026-11-12).
 - Arcane Concentration split across an Arcane Missiles channel; Wrack and Soul Siphon (hotfix
