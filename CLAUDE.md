@@ -50,5 +50,15 @@ gives, and tell the user to approve the card in your session (once per session, 
 it). The play session runs only while the user plays. When nobody answers, tell the user what has to
 run on their PC.
 
+Skills were written for the user's PC, so read their steps this way in the cloud:
+
+- `~/projects/forever-sim` or a local clone: use your own checkout instead.
+- `~/.cache/wow-data` starts empty here, and the scripts download what they need into it. Allowed
+  hosts so far: wago.tools, www.wowhead.com and the Wowhead bot-check host.
+- A step in the World of Warcraft folder or `bayovui/` (like rebuilding BayovCore's data after a
+  scrape): push to bayov/wow when your session can reach it, and its main deploys on its own.
+  Otherwise ask the play session to land that part.
+- Combat logs and the log audit live only on the PC: ask the play session.
+
 On the user's PC, start heavy work (sims, scrapes, big audits) as a cloud session with `claude
 --cloud "<task>"` rather than a local agent.
