@@ -31,6 +31,9 @@ A few slots work differently:
   one hander, its `with` names it, and none of its entries is a pick. When the pick is a one
   hander, the off hand list is scored next to the main hand pick instead, and the off hand pick
   comes first.
+- With `-gear-rank-two-hand-only` we skip the one hand setup. When the pick is a two hander, the
+  main hand list has only two handers and the off hand list is empty, since the off hand stays
+  empty next to it. BayovCore shows that off hand as empty.
 
 Two things are left out. A random suffix item comes in several rolls of the same name ("of the
 Tiger" with more or less of each stat), so only the best roll of each name is listed. And an
@@ -105,7 +108,11 @@ says how long), because the level 30 pools are big. A new spec is a few more lin
 (`ui/enhancement_shaman/bis/level60_phase0.bis.json`). It runs the DPS Report's default
 Enhancement build from a real pre-raid set, with `-gear-no-raids` and `-gear-phase 2`, so only
 what Forever has before its raids open can come up (`tools/rotopt/phase0.go`). It also leaves
-out the items `tools/rotopt/phase0_content.json` marks `out`, and keeps 25 items a slot.
+out the items `tools/rotopt/phase0_content.json` marks `out`, and keeps 25 items a slot. Our
+item data puts Classic patch 1.10's Dungeon Set 2 chain in phase 1 or 2, so its summoned bosses'
+drops (Sothos and Jarien, Lord Valthalak, Kormok, Isalien, Mor Grayhoof, Theldren) and its quest
+rewards (Beads of Ogre Might) are `out` there by hand. The list keeps the off hand empty next to
+its two hander (`-gear-rank-two-hand-only`).
 
 ## Before release
 

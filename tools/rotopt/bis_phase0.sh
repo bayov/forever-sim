@@ -40,7 +40,7 @@
 # Each slot keeps its 25 best items. After the search we copy `avail` and `note` from
 # phase0_content.json onto every entry of the list, so a rerun keeps them.
 #
-# On 2026-11-12 the search took 16 min on 16 cores (two rounds, then the ranking of 25 a slot).
+# On 2026-11-12 the search took 18 min on 16 cores (two rounds, then the ranking of 25 a slot).
 set -e
 
 sim="$(jj log --no-graph -r @- -T 'commit_id.short()')$(jj log --no-graph -r @ -T 'if(empty, "", "+")')"
