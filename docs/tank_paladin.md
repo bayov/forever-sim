@@ -208,6 +208,17 @@ Consecration above a mana floor, Templar's Bulwark on a timer, mana floors for e
 health. The paladin keeps none of the raid's debuffs itself (`tankscore.OwnDebuffs` unchanged): Judgement of
 Fury leaves no debuff, and the raid's Judgements are other paladins'.
 
+## Flask and weapon oil after the Natural flask cut (2026-11-12)
+
+Client 70862 halved the Natural flasks (30 Stamina, a 2% zone bonus), so each preset's flask was re-picked by its own objective (tank_fairness-20261111-1): the request against copies with each other flask, 3,000 iterations at seed 1, the winners at 10,000 on seeds 1 and 2 (`abtest`, paired, six-boss mean at the preset's weight). Max survival takes the Flask of Supreme Power for Natural Precision: +145.6 ± 7.9 / +151.5 ± 8.7 (the Titans
++132.7 / +141.3, and 13.0 ± 5.0 / 10.2 ± 5.8 behind Supreme head to head), 1,564.8 → **1,730.7** with the oil below
+(seed 1). Max threat and Balanced already took Supreme Power. All three presets swap the Elemental Sharpening Stone
+(raid-only source, Molten Core plans, which the consumables pass rules out for launch phase 1) for the Wizard Oil, which
+also scores more: Max threat +18.9 ± 0.2 / +18.9 ± 0.2, Balanced +19.8 ± 0.4 / +19.1 ± 0.4, Max survival +20.2 ± 1.0 /
++18.8 ± 1.0. Not adopted: the Brilliant Wizard Oil (+52 to +53), raid-only too. Food, Zanza and elixirs re-screened
+under the new flask: nothing else moves. Whole requests, old against new (10,000, seed 1): Max threat 3,168.8 →
+**3,188.0**, Balanced 2,755.3 → **2,775.2**.
+
 ## Presets (step 6)
 
 The presets now (round 5: Balanced on Max threat's talents and boots, Greater Agility boots at every preset, Max

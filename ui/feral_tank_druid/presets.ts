@@ -164,9 +164,12 @@ export const MaxThreatConsumes = Consumes.create({
 
 // Max survival eats Dirge's Kickin' Chimaerok Chops (25 Stamina): +80 to +90 over the Dumpling at weight 3. Round 5: the
 // Greater Stoneshield Potion with its APL's potion action (+200 over the Mighty Rage Potion; autocast never drinks a
-// defensive potion, so round 3's -470 to -620 was the Rage potion's loss alone).
+// defensive potion, so round 3's -470 to -620 was the Rage potion's loss alone). Since client 70862 halved the
+// Natural flasks (30 Stamina), the Flask of the Titans wins here (+115.9 / +111.6, 10,000 iterations, seeds 1 / 2;
+// tank_fairness-20261111-1); Natural Precision still wins at Max threat and Balanced.
 export const MaxSurvivalConsumes = Consumes.create({
 	...DefaultConsumes,
+	flask: Flask.FlaskOfTheTitans,
 	defaultPotion: Potions.GreaterStoneshieldPotion,
 	food: Food.FoodDirgesKickChimaerokChops,
 });
@@ -304,7 +307,7 @@ export const PresetBuildBalanced = PresetUtils.makePresetBuild('Balanced', {
 	race: Race.RaceNightElf,
 });
 export const PresetBuildMaxSurvival = PresetUtils.makePresetBuild('Max survival', {
-	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear and talents, Dirge's chops for the Dumpling, the Greater Stoneshield Potion on cooldown.",
+	tooltip: "Scored with survival weighed at 3 (docs/tank_sim.md). Balanced's gear and talents, Dirge's chops for the Dumpling, the Greater Stoneshield Potion on cooldown, the Flask of the Titans.",
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsBear,
 	rotation: APLMaxSurvival,

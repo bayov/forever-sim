@@ -14,9 +14,11 @@ orchestration/audit/ref/tank_fairness/summary.tsv.
 | Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3236 / 2751 / 1717 / 1134 |
 | Max survival (w 3) | Warrior = Paladin, Bear, Warden | 1564 / 1559 / -579 / -2741 |
 
-The Max survival order is provisional. Flask of the Titans now beats the Natural flask there for every tank (+44 to
-+256, finding -20261111-1); with it the paladin is first (1724 against 1627). The paladin's Stoneshield potion action
-(finding -20261105-1) would widen that.
+Re-picked flasks and the Warden re-tune (2026-11-12, finding -20261111-1 fixed; 10,000 iterations, seed 1): Max
+threat 3969 / 3188 / 2661 / 2515, Balanced 3241 / 2775 / 1719 / 1147, Max survival paladin 1731, warrior 1608, bear
+-478, Warden -2396 (Titans at Max survival for the warrior, bear and Warden and at the Warden's Balanced, Supreme Power
+for the paladin, Wizard Oil on the paladin). The order is the same; the paladin now leads Max survival by 122. The
+paladin's Stoneshield potion action (finding -20261105-1) would widen that.
 
 TPS (Balanced): warrior 1950, paladin 1500, bear 1425, Warden 1380. Healing needed (Balanced): paladin 245, warrior 337,
 bear 474, Warden 713.
@@ -38,7 +40,8 @@ at their weights (its call 14).
 - **Bear:** most armor and health, no block. Third since the Natural flask cut, which took its Precision expertise and
   Stamina; the paladin, on Supreme Power at Max threat and Balanced, lost little.
 - **Warden's drop:** besides the flask, Blizzard's Nov 10 tuning (Stormstrike 100% and 8 sec, Mental Dexterity 33/66/100%)
-  cost it about 15% on Magmadar. That is real, but its talents and APL predate it and need a re-tune.
+  cost it about 15% on Magmadar. That is real; the 2026-11-12 re-tune of its talents and APLs won back +20 / +13 / +342
+at its three weights (most of it the Titans at Max survival).
 
 ## Unequal terms (open)
 
@@ -49,8 +52,10 @@ at their weights (its call 14).
   (client CharBaseInfo: shaman is Dwarf, Orc, Tauren, Troll or Skyborne Windshaper). Night Elf's Elune's Light is
   worth about +76 / +109 over the best legal race (Orc), Undead about +43 over Tauren (finding -20261105-2). The
   Warden is last at every weight either way; its legal scores are lower by about 2.4% / 6% / 2%.
-- The flasks: the presets were picked before the Natural flasks were halved. Flask of the Titans now wins every Max
-  survival preset and the Warden's Balanced (finding -20261111-1).
+- Raid-only consumables: the warrior's Elemental Sharpening Stone and the Warden's Mageblood Potion come from raid
+  sources the consumables pass rules out for phase 1 DPS specs (the paladin dropped its stone for the Wizard Oil on
+  2026-11-12; the bear's stone, +21 at Max survival, and the paladin's Brilliant Wizard Oil, +52, were not adopted).
+  A ruling on whether that rule binds the tanks too.
 - Everything else matches: all four tanks have searched every slot of the full raid set (standards 40). The mana
   consumables the Warden takes (Demonic Rune, Mageblood, Greater Intellect) are noise for the paladin.
 

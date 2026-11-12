@@ -99,8 +99,9 @@ export const DefaultAPL = APLLevel60Balanced;
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '35050013-0502333135510102' }));
 
 // The optimized tank builds (docs/tank_shaman.md, Presets), one a weight (round 3): Balanced takes Elemental Warding 3
-// and Toughness 4; Max survival Guardian Totems 2 for Improved Lightning Shield 2; Max threat Elemental Devastation 1
-// and Toughness 5.
+// and Toughness 4; Max survival Guardian Totems 2 for Improved Lightning Shield 2. Max threat was re-searched after the
+// Nov 10 shaman notes (2026-11-12): Elemental Devastation +2, Elemental Warding +2 and Shamanistic Focus for 3 points
+// of Toughness and 2 of Improved Reincarnation.
 export const TalentsLevel60Tank = PresetUtils.makePresetTalents('Level 60 Tank', SavedTalents.create({ talentsString: '05050003-050032203451012201-050002' }));
 export const TalentsLevel60TankMaxSurvival = PresetUtils.makePresetTalents(
 	'Level 60 Tank Max survival',
@@ -108,7 +109,7 @@ export const TalentsLevel60TankMaxSurvival = PresetUtils.makePresetTalents(
 );
 export const TalentsLevel60TankMaxThreat = PresetUtils.makePresetTalents(
 	'Level 60 Tank Max threat',
-	SavedTalents.create({ talentsString: '0515-050032303551012201-050002' }),
+	SavedTalents.create({ talentsString: '05350002-050032313251012201-05' }),
 );
 
 export const TalentPresets = {
@@ -144,7 +145,7 @@ export const BalancedConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.GreaterStoneshieldPotion,
 	dragonBreathChili: true,
-	flask: Flask.FlaskOfNaturalPrecision,
+	flask: Flask.FlaskOfTheTitans,
 	food: Food.FoodDirgesKickChimaerokChops,
 	healthElixir: HealthElixir.ElixirOfGreaterFortitude,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
@@ -155,8 +156,14 @@ export const BalancedConsumes = Consumes.create({
 	strengthBuff: StrengthBuff.JujuPower,
 	zanzaBuff: ZanzaBuff.SpiritOfZanza,
 });
-// Max threat takes the Ground Scorpok Assay for Spirit of Zanza.
-export const MaxThreatConsumes = Consumes.create({ ...BalancedConsumes, zanzaBuff: ZanzaBuff.GroundScorpokAssay });
+// Max threat takes the Flask of Natural Precision and the Ground Scorpok Assay for Spirit of Zanza. Balanced and Max
+// survival take the Flask of the Titans since the Nov 10 shaman notes (2026-11-12, 10,000 iterations, seeds 1 / 2:
+// Balanced +13.5 / +19.0, Max survival +254.6 / +230.3 over Natural Precision; Supreme Power loses at Max threat).
+export const MaxThreatConsumes = Consumes.create({
+	...BalancedConsumes,
+	flask: Flask.FlaskOfNaturalPrecision,
+	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
+});
 // Max survival leaves out the Mageblood Potion (a tie there).
 export const MaxSurvivalConsumes = Consumes.create({ ...BalancedConsumes, manaRegenElixir: ManaRegenElixir.ManaRegenElixirUnknown });
 
@@ -261,7 +268,7 @@ export const EncounterLevel60TankMaxSurvival = benchEncounter('Generic boss, tan
 // The three Level 60 tank presets (threat against survival as weights, Balanced the default; docs/tank_sim.md).
 export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60 Max threat', {
 	tooltip:
-		"Scored with survival weighed at 1/3 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the attack power trinket on cooldown. Round 5 consumables: Natural Precision, Ground Scorpok Assay, Greater Stoneshield Potion on cooldown.",
+		"Scored with survival weighed at 1/3 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova all fight, the attack power trinket on cooldown. Round 5 consumables: Natural Precision, Ground Scorpok Assay, Greater Stoneshield Potion on cooldown.",
 	gear: GearLevel60Synthetic,
 	talents: TalentsLevel60TankMaxThreat,
 	rotation: APLLevel60MaxThreat,
@@ -271,7 +278,7 @@ export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
 	tooltip:
-		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Round 5 consumables: Natural Precision, Spirit of Zanza, Greater Stoneshield Potion on cooldown.",
+		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Consumables: Flask of the Titans, Spirit of Zanza, Greater Stoneshield Potion on cooldown.",
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60Tank,
 	rotation: APLLevel60Balanced,
@@ -281,7 +288,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
 	tooltip:
-		'Scored with survival weighed at 3 (docs/tank_sim.md). Undead (Touch of the Grave), Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Round 5 consumables: Natural Precision, Spirit of Zanza, Greater Stoneshield Potion on cooldown, no Mageblood.',
+		'Scored with survival weighed at 3 (docs/tank_sim.md). Undead (Touch of the Grave), Healing Stream Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Consumables: Flask of the Titans, Spirit of Zanza, Greater Stoneshield Potion on cooldown, no Mageblood.',
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60TankMaxSurvival,
 	rotation: APLLevel60MaxSurvival,

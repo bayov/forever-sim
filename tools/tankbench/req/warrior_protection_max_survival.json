@@ -538,7 +538,7 @@
               ]
             },
             "consumes": {
-              "flask": "FlaskOfNaturalPrecision",
+              "flask": "FlaskOfTheTitans",
               "food": "FoodDirgesKickChimaerokChops",
               "agilityElixir": "ElixirOfTheMongoose",
               "armorElixir": "ElixirOfThePhalanx",
