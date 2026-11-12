@@ -265,6 +265,7 @@ type WeaponAttack struct {
 	// a normal swing), which ExtraAttackSource reads.
 	extraSources        []ActionID
 	extraSourcesPending []ActionID
+	extraSourcesStored  []ActionID // the proc of each stored attack (extraAttacksAura's stacks)
 	extraSource         ActionID
 
 	curSwingSpeed    float64
@@ -301,7 +302,17 @@ func (wa *WeaponAttack) castExtraAttacksStored(sim *Simulation) {
 		wa.extraAttacksAura.SetStacks(sim, 0)
 	}
 
-	wa.castExtraAttacks(sim, wa.extraAttacksStored, 0, nil)
+	// Each stored attack keeps its proc. One stored past what StoreExtraMHAttack saw (stacks set
+	// on the aura directly) gets the stored attacks' aura as its source.
+	var sources []ActionID
+	if wa.extraAttacksStored > 0 {
+		sources = append(sources, wa.extraSourcesStored[:min(len(wa.extraSourcesStored), int(wa.extraAttacksStored))]...)
+		for int32(len(sources)) < wa.extraAttacksStored {
+			sources = append(sources, storedExtraAttackSource)
+		}
+	}
+	wa.extraSourcesStored = wa.extraSourcesStored[:0]
+	wa.castExtraAttacks(sim, wa.extraAttacksStored, 0, sources)
 	wa.extraAttacksStored = 0
 
 }
@@ -315,7 +326,11 @@ func (wa *WeaponAttack) castExtraAttacksTriggered(sim *Simulation, moreAttacks b
 	wa.extraAttacks = 0
 }
 
-// sources names the proc of each attack (nil for the stored ones, which keep no source).
+// storedExtraAttackSource is the source of a stored extra attack whose proc isn't known: the
+// aura that keeps them.
+var storedExtraAttackSource = ActionID{SpellID: 21919}
+
+// sources names the proc of each attack.
 func (wa *WeaponAttack) castExtraAttacks(sim *Simulation, numExtraAttacks int32, startIndex int32, sources []ActionID) bool {
 	if numExtraAttacks > 0 {
 		// if startIndex==1, Ignore the first extra attack, that was used to speed up next attack
@@ -677,6 +692,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	aa.mh.extraAttacksPending = 0
 	aa.mh.extraSources = aa.mh.extraSources[:0]
 	aa.mh.extraSourcesPending = aa.mh.extraSourcesPending[:0]
+	aa.mh.extraSourcesStored = aa.mh.extraSourcesStored[:0]
 	aa.mh.extraSource = ActionID{}
 	aa.mh.spell.SetMetricsSplit(0)
 
@@ -936,9 +952,15 @@ func (aa *AutoAttacks) ExtraMHAttack(sim *Simulation, attacks int32, actionID Ac
 
 // ExtraAttackSource is the proc (the actionID given to ExtraMHAttack) whose main hand extra
 // attack is being cast or landing now (a white hit lands a batch after its cast). It is zero for a
-// normal swing and for a stored extra attack.
+// normal swing. A stored extra attack keeps the proc that stored it.
 func (aa *AutoAttacks) ExtraAttackSource() ActionID {
 	return aa.mh.extraSource
+}
+
+// IsExtraAttack says whether the main hand attack being cast or landing now is an extra attack,
+// from any proc (Windfury, Hand of Justice, Sword Specialization, Thrash, Reckoning, ...).
+func (aa *AutoAttacks) IsExtraAttack() bool {
+	return aa.mh.extraSource != ActionID{}
 }
 
 func (aa *AutoAttacks) StoreExtraMHAttack(sim *Simulation, attacks int32, actionID ActionID, triggerAction ActionID) {
@@ -964,6 +986,9 @@ func (aa *AutoAttacks) StoreExtraMHAttack(sim *Simulation, attacks int32, action
 	}
 
 	aa.mh.extraAttacksAura.AddStacks(sim, attacks)
+	for int32(len(aa.mh.extraSourcesStored)) < aa.mh.extraAttacksAura.GetStacks() {
+		aa.mh.extraSourcesStored = append(aa.mh.extraSourcesStored, actionID)
+	}
 
 	if sim.Log != nil {
 		aa.mh.unit.Log(sim, "stored %d extra main-hand attacks from %s triggered by %s, total is %d", attacks, actionID, triggerAction, aa.mh.extraAttacksStored)

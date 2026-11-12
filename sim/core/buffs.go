@@ -2178,13 +2178,17 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 // landed, with no other hit just before), Cleave, Maul, Raptor Strike, Sunder Armor, Revenge,
 // Execute and Sinister Strike roll it. Stormstrike (0 of 4,467), Holy Strike (0 of 1,175),
 // Bloodthirst, Whirlwind, Shield Slam, Claw, Swipe and Rake never do, and none of these have
-// the flags. Nor do seal procs, Judgements or off-hand swings.
+// the flags. Nor do seal procs, Judgements or off-hand swings. Nor does any extra attack (its own,
+// Hand of Justice, Sword Specialization, Thrash, Reckoning, or an ability that one of them
+// swings): the user's log audit (orchestration/standards.md item 17) found none roll it.
 func WindfuryTotemBuffAura(character *Character, rank int32, label string, actionID ActionID) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	buffLabel := strings.Replace(strings.TrimSuffix(label, " Raid"), "Windfury Totem", "Windfury Attack", 1)
 	rollsOn := func(spell *Spell) bool { return spell.ProcMask.Matches(ProcMaskMeleeMH) }
 	if character.Env.IsForever() {
-		rollsOn = windfuryTotemRollsOnForever
+		rollsOn = func(spell *Spell) bool {
+			return !character.AutoAttacks.IsExtraAttack() && windfuryTotemRollsOnForever(spell)
+		}
 	}
 	aura := CreateExtraAttackAuraCommon(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, nil, rollsOn)
 	if character.Env.IsForever() {
