@@ -4,6 +4,8 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+## Resolved
+
 ### fairness-20261109-1: Windfury Totem's white-swing-only rule lets Heroic Strike and Cleave proc it but not Raptor Strike
 - severity: high (Survival +24.9 DPS, +2.6%, if Raptor Strike gets the same treatment as Heroic Strike; it passes Arms in the ranking)
 - affects: hunter survival (3 builds); warrior arms / fury / fury_2h (the other way); the comment on the rule
@@ -13,8 +15,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
   - Heroic Strike / Cleave don't proc (skip MHSpecial in the totem's handler): arms 887.6 -> 882.9 (-4.8), fury 1038.1 -> 1021.5 (-16.6), fury_2h 961.8 -> 958.3 (-3.5).
 - proposed fix: treat every on-next-swing attack the same way. Option A, all of them proc (give the Raptor Strike hit the MHAuto bit, or make the totem accept a queued-swing flag): Survival +25. Option B, none proc: Fury -16.6, Fury 2H -3.5, Arms -4.8. Either way fix the comment in buffs.go. A log check of Heroic Strike with the totem up decides between them. results-20261109-1 already covers the re-sim and the Stormstrike-to-all-specials question.
 - needs: user ruling (A or B), then orchestrator fix
-
-## Resolved
+- fixed: 2026-11-12, branch worktree-agent-af802a02e4d97e8fc, option B (standards 17: no on-next-swing attack procs the totem). The extra-attack aura with a white-swings-only mask skips any spell whose mask matches `ProcMaskMeleeSpecial` (sim/core/buffs.go, comment fixed; test sim/warrior/tank_warrior/windfury_totem_test.go); Classic unchanged. Paired 3,000, seed 1, new minus old: arms -3.7 ± 1.2 (-0.4%), fury -15.0 (-1.5%), fury_2h -2.2, arms/fury/fury_2h duty and dragonkin variants -2.6 to -13.1; survival 0. No rank move. Report data not regenerated (results-20261109-1).
 
 ### fairness-20261101-2: Affliction's report race Human is 1.4 under Orc
 - severity: low (0.14%, no rank change)

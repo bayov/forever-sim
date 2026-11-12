@@ -278,7 +278,7 @@
                         "op": "OpLe",
                         "rhs": {
                           "const": {
-                            "val": "17s"
+                            "val": "13s"
                           }
                         }
                       }

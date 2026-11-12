@@ -46,6 +46,14 @@ Power, Greater Intellect, the Demonic Rune and the rum, adding or dropping the M
 every current pick holds (the closest, Mageblood at Max survival +7.9 ± 11.2, and Nightfin Soup at Max threat -0.3 ±
 1.4).
 
+**Balanced takes Healing Stream Totem** (tank_rotations-20261112-2, later the same day). With the Agility cloak and
+boots (tank_gear-20261112-1, -3) the knob search from Balanced's knobs moves `waterTotem` from 1 (Mana Spring) to 2
+(Healing Stream), the move Max survival made with the Titans. Paired at 10,000: +17.2 ± 4.9 (seed 1) / +28.8 ± 4.6
+(seed 2), 1,159.2 → **1,176.5** (seed 1, abtest's six-boss mean); every scoring boss gains but Chromaggus (-18 / -18;
+Magmadar +39 / +37, Golemagg +24 / +37, Onyxia +30 / +54, Broodlord +31 / +33, Vaelastrasz -2 / +31). Balanced's talent
+search on it (`-require spiritWeapons`, 1,000 a candidate) wandered on mana tie-breaks to `05140003-051031213351012201-050002`,
+which loses at 10,000 (-13.4 ± 4.8 / -15.0 ± 4.5), so the talents stay.
+
 ## Presets (re-optimized 2026-11-04, tank round 3; rounds 4 and 5 the same day)
 
 Three presets on the six scoring encounters (Magmadar, Golemagg, Onyxia, Broodlord, Vaelastrasz, Chromaggus), by
@@ -67,7 +75,7 @@ they had no blessings and Alchemy + Enchanting before), and each build loads its
 | Preset | Race | Talents | On-use trinket (knobs) | Flask | Wrist / cloak / shield | Six-boss mean, own weight |
 |---|---|---|---|---|---|---|
 | Max threat | Night Elf | `05350002-050032313251012201-05` | attack power (990015) on cooldown (`armorTrinket=0`, `waterTotem=1`: Mana Spring Totem; `fireTotem=1`, `fireNova=1`, `fireLast=0`) | Natural Precision | 1886 / 1889 / 1886 | 2,514.7 |
-| Balanced | Night Elf | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=1`, `fireTotem=1`, `fireNova=1`, `fireLast=60`) | the Titans | 1248665 / 1889 / 1886 | 1,146.8 |
+| Balanced | Night Elf | `05050003-050032203451012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=2`: Healing Stream Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | the Titans | 1248665 / 1219587 / 1886 | 1,176.5 |
 | Max survival | Undead | `05050003-050230113541012201-050002` | armor (999216), held for the last 25 s (`armorTrinket=1`, `trinketAt=25`; `waterTotem=2`: Healing Stream Totem; `fireTotem=1`, `fireNova=1`, `fireLast=60`) | the Titans | 1248665 / 1889 / 1886 | -2,396.0 |
 
 The table is 2026-11-12's (talents, knobs, flasks and the six-boss means at 10,000 iterations, seed 1; previous

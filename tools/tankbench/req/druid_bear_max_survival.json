@@ -149,13 +149,13 @@
                         "op": "OpGe",
                         "rhs": {
                           "const": {
-                            "val": "100"
+                            "val": "70"
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Frenzied Regeneration at 100 Rage: it fires at the pull's Rage peak, about once a fight (a scoring run reads no health)."
+                  "notes": "Frenzied Regeneration on cooldown at 70 Rage or more (on a timer: a scoring run reads no health)."
                 },
                 {
                   "action": {
@@ -311,13 +311,13 @@
                         "op": "OpGe",
                         "rhs": {
                           "const": {
-                            "val": "10"
+                            "val": "40"
                           }
                         }
                       }
                     }
                   },
-                  "notes": "Maul queued at 10 Rage or more."
+                  "notes": "Maul queued at 40 Rage or more."
                 }
               ]
             }

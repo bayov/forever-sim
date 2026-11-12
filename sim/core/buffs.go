@@ -2103,6 +2103,11 @@ func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffAc
 			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
 				return
 			}
+			// A white-swings-only mask also leaves out the on-next-swing attacks (Heroic Strike,
+			// Cleave, Raptor Strike), whose masks carry the white swing's bit next to the special's.
+			if procMask == ProcMaskMeleeMHAuto && spell.ProcMask.Matches(ProcMaskMeleeSpecial) {
+				return
+			}
 			if blocked != nil && blocked() {
 				return
 			}
@@ -2160,8 +2165,9 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 // Under Forever only white main hand swings proc it (the user's ruling, 2026-11-08, for now).
 // Our live logs of Nov 5-8 have 882 totem procs, and none of them came from about 2,770
 // Stormstrikes that landed with the totem up, where a 20% chance would give about 550. Each
-// proc that looked like a Stormstrike one had a white swing land 0 to 100 ms before it. We
-// haven't checked on-next-swing attacks like Heroic Strike, which this also leaves out.
+// proc that looked like a Stormstrike one had a white swing land 0 to 100 ms before it. The
+// on-next-swing attacks (Heroic Strike, Cleave, Raptor Strike, Maul) don't proc it either (user
+// ruling 2026-11-12, standards 17, until a log says otherwise).
 func WindfuryTotemBuffAura(character *Character, rank int32, label string, actionID ActionID) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	buffLabel := strings.Replace(strings.TrimSuffix(label, " Raid"), "Windfury Totem", "Windfury Attack", 1)

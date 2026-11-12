@@ -85,7 +85,8 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // place, shift into Dire Bear Form 1.5 sec before the pull and Enrage in the fight. Balanced: Lacerate as the
 // filler, Maul at 20 Rage, Enrage under 40 Rage and Frenzied Regeneration at 100 Rage. Max threat: Balanced
 // without Frenzied Regeneration and with Enrage under 70 Rage. Max survival: Balanced with Lacerate kept up but
-// not the filler and Maul at 10 Rage, so its Rage goes to Maul. No preset enrages before the pull any more
+// not the filler, Maul at 40 Rage and Frenzied Regeneration at 70 Rage (tank_rotations-20261112-1), so it fires
+// every cooldown. No preset enrages before the pull any more
 // (each weight's best build enrages in the fight).
 export const APLMaxThreat = PresetUtils.makePresetAPLRotation('Max threat', MaxThreatAPLJSON);
 export const APLBalanced = PresetUtils.makePresetAPLRotation('Balanced', BalancedAPLJSON);

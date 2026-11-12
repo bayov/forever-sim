@@ -172,7 +172,8 @@ What round 1's searches found (round 2's changes are under "Presets"; the detail
 - **Lacerate is the filler** (to 5 stacks, refreshed under 4 sec, then cast whenever the GCD is free) and
   Primal Bite goes on cooldown; Maul at 30 Rage (20, and 10 at Max survival, in round 2). Swipe never beats
   Lacerate on one target. Frenzied Regeneration on a timer lost at every weight in round 1; at 100 Rage it
-  fires once, at the pull's Rage peak, and round 2's Balanced and Max survival keep it there.
+  fires once, at the pull's Rage peak, and round 2's Balanced keeps it there; Max survival takes it at 70 Rage
+  since 2026-11-12 (Max survival re-searched, below).
 - **Demoralizing Roar below Lacerate's keep-up line** (round 2, `roarAfterLacerate`): ahead of the attacks it
   took the pull's first GCD and 10 Rage, about +200 at every weight (tank_rotations-20261104-1).
 
@@ -267,6 +268,29 @@ Agility, 125 Strength, 105 Defense, 3% hit (after tank_gear-20261104-4: the ches
     3.0; seed 2 3,117.7 → 3,466.7, +349.1 +- 2.9), Balanced 2,125.7 → 2,481.2 (+355.7 +- 5.2; seed 2 2,117.0 →
     2,474.5, +357.5 +- 5.5), Max survival -500.7 → 221.5 (+722.1 +- 12.7; seed 2 -477.2 → 238.5, +715.9 +-
     14.0).
+
+## Max survival re-searched (2026-11-12, tank_rotations-20261112-1)
+
+The audit found Frenzied Regeneration at 100 Rage firing too rarely at Max survival: round 3 picked 100 on a 20 Rage
+grid before the FR tenth-tick fix. `frRage` now steps by 10, and the template has a `potion` knob (the Greater
+Stoneshield line the preset already had), so `rotopt -template druid_tank -tank max-survival` writes the shipped APL
+byte for byte (`frRage=70,maulRage=40,lacerate=1,enrage=2,enrageRage=40,prepullShift=1,barkskin=2,barkskinAfter=15,
+potion=1`, the rest at their defaults). The knob search from `frRage=70` (3,000 a candidate, 10,000 to confirm, six
+scoring bosses at w = 3) moved one more knob: Maul at 40 Rage instead of 10 (+98.6 at 3,000; 35 -5.5, 45 -44.2 from
+40), and kept FR at 70 (60 -258.7, 80 -4.8, 90 -129.6, 100 -332.5 from 70 with Maul at 40). Rage pooled for FR now
+also feeds a bigger Maul instead of being spent at 10. Paired against the old preset at 10,000 (`abtest`):
+
+| Change | Seed 1 | Seed 2 |
+|---|---|---|
+| FR at 70 Rage | +385.8 ± 9.8 | +366.0 ± 10.2 |
+| then Maul at 40 Rage | +89.2 ± 11.8 | +114.2 ± 12.3 |
+| both | **+474.9 ± 12.0** | **+480.2 ± 12.5** |
+
+Six-boss mean -478.3 → **-3.5** (seed 1). Per boss (seed 1 / 2): Onyxia +1697 / +1708, Magmadar +811 / +768,
+Golemagg +386 / +380, Vaelastrasz +215 / +225, Chromaggus -88 / -68, Broodlord -171 / -131; Ragnaros (benched) -378 /
+-38. The talent search on the new knobs (`-talent-search -require feralSwiftness`, 1,000 a candidate) kept
+`-5022233202310212551-055`. Balanced (FR at 100) and Max threat (no FR) were not touched: the audit's FR thresholds
+lost there.
 
 ## Flask after the Natural flask cut (2026-11-12)
 

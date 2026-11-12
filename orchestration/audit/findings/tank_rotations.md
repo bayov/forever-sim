@@ -2,59 +2,6 @@
 
 ## Open
 
-### tank_rotations-20261112-1: Bear Max survival's Frenzied Regeneration at 100 Rage fires too rarely; 60 to 70 Rage gains about 380 at w = 3
-- severity: high (Max survival six-boss mean -469 -> about -85; Balanced and Max threat unaffected)
-- affects: Feral bear Max survival (tools/tankbench/req/druid_bear_max_survival.json priorityList[2], the matching UI APL)
-- found: 2026-11-12, master 4da607cbc
-- evidence: one-line A/B of the FR line's Rage threshold (`tools/audit/tank_rotations/mk_bear.py max_survival B.json "pl[2]['action']['condition']=rage('OpGe',70)"`, abtest paired, own weight w = 3, six scoring bosses). 1,000 its: 90 +143.5 +- 22.0, 80 +283.7 +- 24.0, 70 +404.4 +- 26.8, 60 +411.8 +- 35.8, 40 -44.8 +- 46.6, no FR -897.0. 3,000 its: 70 Rage +385.3 +- 18.2 (seed 1) / +361.1 +- 17.8 (seed 2); 60 Rage +393.0 +- 22.4 / +367.8 +- 25.6. Per boss at 70 (seed 1): Magmadar +492, Golemagg +357, Onyxia +1044, Broodlord +179, Vaelastrasz +269, Chromaggus -30; Ragnaros (benched) -459 +- 290. 60 Rage puts more on Onyxia and Magmadar and loses Broodlord (-45), so 70 is the even pick. Not from the Titans flask: on the request as it was at 71994fca6 (Natural Precision) 60 Rage gains +339.5 +- 39.3 too. Balanced keeps 100 (60: -130.9 +- 16.7, 80: -28.8 +- 14.0, 90: +12.2 +- 11.2 at 1,000) and Max threat keeps none (FR at 60: -149.4 +- 10.6). Rotopt's druid_tank `frRage` steps by 20, and round 3 picked 100 before the FR tenth-tick fix (docs/tank_druid.md:71), which is the likely reason it was missed. Sure: high.
-- proposed fix: Max survival's FR line at 70 Rage (`frRage=70`; give the knob Step 10), confirm at 10,000 on seeds 1 and 2, and re-run the Max survival knob search around it (Maul and Enrage thresholds were flat at 1,000: Maul 15 +13.4 +- 6.3, 20 +17.2 +- 11.3).
-- needs: worker fix
-
-### tank_rotations-20261112-2: Warden Balanced gains from Healing Stream Totem now that it wears the Agility cloak and boots
-- severity: medium (+17 to +29 on 1,146, 1.5 to 2.5%; no rank move, the Warden stays fourth)
-- affects: Warden shaman Balanced (tools/tankbench/req/shaman_warden_balanced.json, ui/warden_shaman/apls/level60_balanced.apl.json)
-- found: 2026-11-12, master 4da607cbc
-- evidence: rotopt `-template shaman_tank -tank balanced` knob search on the six scoring bosses from the preset's knobs (`armorTrinket=1,trinketAt=25,waterTotem=1,fireTotem=1,fireNova=1,fireLast=60,potion=1`; the written APL equals the request's): round 1 `waterTotem=2` 1152.5 -> 1177.8 at 3,000, then nothing else. Paired abtest at 10,000, Balanced, B = rotopt's APL: +17.2 +- 4.9 (seed 1), +28.8 +- 4.6 (seed 2); every scoring boss but Chromaggus (-18) gains (Magmadar +37 to +39, Golemagg +24 to +37, Onyxia +30 to +54, Broodlord +31 to +33). docs/tank_shaman.md says Balanced's knob search moved nothing on ee4a3df64; 814decce0's cloak 1219587 and boots 1887 came after it, the same move Max survival made (Healing Stream with the Titans).
-- proposed fix: Balanced takes `waterTotem=2` (Healing Stream Totem in Mana Spring's place); re-run Balanced's talent search on it.
-- needs: worker fix
-
-### tank_rotations-20261112-3: Warrior Max survival's Shield Wall in the last 13 s beats 17 s on the Titans, all of it on Vaelastrasz
-- severity: medium (+16 to +22 on 1,605, about 1%, from one boss)
-- affects: Protection warrior Max survival (tools/tankbench/req/warrior_protection_max_survival.json, wallAt)
-- found: 2026-11-12, master 4da607cbc
-- evidence: rotopt `-template warrior_tank -tank max-survival` knob search from the preset's knobs (Balanced's plus `trinketAt=35,sunderRage=30`; written APL equals the request's): `wallAt=13` +56.5 (noise 20.6) at 3,000, nothing after. Paired abtest at 10,000, w = 3: +21.9 +- 5.5 (seed 1), +16.5 +- 6.5 (seed 2). Per boss (seed 1 / 2): Vaelastrasz +215 / +224, Broodlord +52 / +32, Onyxia +2 / -28, Magmadar -64 / -56, Golemagg -58 / -68, Chromaggus -16 / -6; Ragnaros (benched) -167 / -95. Max threat already holds 13 s; Max survival kept 17 s through round 5 on Natural Precision, and the Titans' extra health came in with ee4a3df64. Sure of the numbers; the gain rests on Vaelastrasz's burning-adrenaline end, so a set without him would keep 17 s.
-- proposed fix: Max survival `wallAt=13`, or keep 17 s as a ruling that one boss shouldn't set it. Repro: `rotopt -template warrior_tank -settings tools/tankbench/req/warrior_protection_max_survival.json -tank max-survival -tank-encounter <six> -eval -knobs <preset knobs>,wallAt=13 -out <dir>`, then abtest.
-- needs: worker fix (or user ruling)
-
-### tank_rotations-20261112-4: Warrior Balanced's Thunder Clap refreshed under 6 s instead of 2 s, a small gain
-- severity: low (+4 to +6 on 3,240)
-- affects: Protection warrior Balanced (tcRefresh)
-- found: 2026-11-12, master 4da607cbc
-- evidence: rotopt knob search from Balanced's knobs (docs/tank_warrior.md:397): `tcRefresh=6` +17.6 (noise 6.8) at 3,000; paired abtest at 10,000: +5.8 +- 2.1 (seed 1), +4.3 +- 2.1 (seed 2), spread over Magmadar, Golemagg, Onyxia (+5 to +15). Likely from the Strength wrists (814decce0) adding Rage-free threat headroom; not checked.
-- proposed fix: `tcRefresh=6` at Balanced (and Max survival, which shares its knobs; not measured there).
-- needs: worker fix
-
-### tank_rotations-20261110-1: Windfury Totem's white-swing-only rule drops Maul but keeps Heroic Strike, cutting bear SafeDPS 12%
-- severity: high (bear SafeDPS -12% at every weight; warrior -5%, warden -3%, paladin -2%)
-- affects: every tank request (all raid-buff `TotemWeaponBuffWindfury`); most of all druid_bear_*
-- found: 2026-11-10, master ca5e35c3f
-- evidence: 0ce9dbf40 (`sim/core/buffs.go`, user ruling 2026-11-08 "for now") procs the totem under Forever only on
-  `ProcMaskMeleeMHAuto`. Heroic Strike's mask is `MHSpecial | MHAuto` (`sim/warrior/heroic_strike_cleave.go:25`),
-  so it still procs; Maul's is `MHSpecial` only (`sim/druid/bear_attacks.go:43`), so it no longer does. Both are
-  on-next-swing attacks, and the commit says these weren't checked. Pass 6 benched 9ba00c2dc, before 0ce9dbf40, so
-  it missed this. Scoring means, pass 6 -> now (1,000 its, default seed; score_err 15-60 per boss):
-  bear Balanced score 2499 -> 2007, SafeDPS 1883 -> 1650; Max threat 3492 -> 2954 (2024 -> 1758); Max survival
-  238 -> -298 (1649 -> 1460). Warrior Balanced 3880 -> 3637 (SafeDPS 2386 -> 2272); warden Balanced 1786 -> 1682;
-  paladin Balanced 2835 -> 2753. The other sim changes in range don't explain it: the Maelstrom/Flametongue commit
-  bcc5d6cd4 leaves all 21 Warden rows identical (built at its parent d7bb9ab80), and the orc base stats are levels 2-43.
-- proposed fix: rule on on-next-swing attacks: either Maul procs the totem like Heroic Strike (restores most of the
-  bear's 12%), or neither does (warrior loses more). A Forever log of a bear or a Heroic Strike warrior under the
-  totem would settle it. Sure of the asymmetry and the numbers; not of which way the game goes.
-- needs: user ruling
-- pass 8: still open (user ruling); master 707ae92cc keeps `ProcMaskMeleeMHAuto` (sim/core/buffs.go WindfuryTotemBuffAura); the Nov 10 imbue + totem change doesn't touch it. Not re-tested.
-- pass 9: still open (user ruling); cb0d928fd keeps `ProcMaskMeleeMHAuto`. Not re-tested.
-- pass 10 (4da607cbc): ruled 2026-11-12 (standards 17, e89962738): Heroic Strike, Cleave, Raptor Strike and Maul don't roll the totem until a log says otherwise. Maul already doesn't; Heroic Strike still does, since `spell.ProcMask.Matches(ProcMaskMeleeMHAuto)` (sim/core/buffs.go:2103) matches its `MHSpecial | MHAuto` mask (sim/warrior/heroic_strike_cleave.go:25, :79). The ruling's fix (an exact-mask or not-MHSpecial test) is an orchestrator fix now and will lower the warrior rows; tank_mechanics-20261112-2 and fairness-20261109-1 carry the measurements. Left open until the code matches the ruling.
-
 ### tank_rotations-20261104-11: Warrior Max survival's armor trinket held for the last 35 s wins only on Broodlord
 - severity: medium
 - affects: Protection warrior Max survival
@@ -89,6 +36,64 @@
 - pass 10: still open (user ruling); the knob searches at all three paladin presets (bulwarkAt frozen) kept every knob on 4da607cbc; not re-tested.
 
 ## Resolved
+
+### tank_rotations-20261112-1: Bear Max survival's Frenzied Regeneration at 100 Rage fires too rarely; 60 to 70 Rage gains about 380 at w = 3
+- severity: high (Max survival six-boss mean -469 -> about -85; Balanced and Max threat unaffected)
+- affects: Feral bear Max survival (tools/tankbench/req/druid_bear_max_survival.json priorityList[2], the matching UI APL)
+- found: 2026-11-12, master 4da607cbc
+- evidence: one-line A/B of the FR line's Rage threshold (`tools/audit/tank_rotations/mk_bear.py max_survival B.json "pl[2]['action']['condition']=rage('OpGe',70)"`, abtest paired, own weight w = 3, six scoring bosses). 1,000 its: 90 +143.5 +- 22.0, 80 +283.7 +- 24.0, 70 +404.4 +- 26.8, 60 +411.8 +- 35.8, 40 -44.8 +- 46.6, no FR -897.0. 3,000 its: 70 Rage +385.3 +- 18.2 (seed 1) / +361.1 +- 17.8 (seed 2); 60 Rage +393.0 +- 22.4 / +367.8 +- 25.6. Per boss at 70 (seed 1): Magmadar +492, Golemagg +357, Onyxia +1044, Broodlord +179, Vaelastrasz +269, Chromaggus -30; Ragnaros (benched) -459 +- 290. 60 Rage puts more on Onyxia and Magmadar and loses Broodlord (-45), so 70 is the even pick. Not from the Titans flask: on the request as it was at 71994fca6 (Natural Precision) 60 Rage gains +339.5 +- 39.3 too. Balanced keeps 100 (60: -130.9 +- 16.7, 80: -28.8 +- 14.0, 90: +12.2 +- 11.2 at 1,000) and Max threat keeps none (FR at 60: -149.4 +- 10.6). Rotopt's druid_tank `frRage` steps by 20, and round 3 picked 100 before the FR tenth-tick fix (docs/tank_druid.md:71), which is the likely reason it was missed. Sure: high.
+- proposed fix: Max survival's FR line at 70 Rage (`frRage=70`; give the knob Step 10), confirm at 10,000 on seeds 1 and 2, and re-run the Max survival knob search around it (Maul and Enrage thresholds were flat at 1,000: Maul 15 +13.4 +- 6.3, 20 +17.2 +- 11.3).
+- needs: worker fix
+- fixed: 2026-11-12, branch worktree-agent-af802a02e4d97e8fc. `frRage` steps by 10 and the template gained a `potion` knob, so rotopt reproduces the shipped APL; the knob search from FR at 70 moved Maul to 40 Rage and kept FR at 70 (60, 80, 90, 100 all lose). Paired at 10,000 vs the old preset (seed 1 / 2): FR 70 +385.8 ± 9.8 / +366.0 ± 10.2, both +474.9 ± 12.0 / +480.2 ± 12.5; six-boss mean -478.3 -> -3.5 (seed 1). Talents kept (talent search). Request, UI APL, docs/tank_druid.md (Max survival re-searched).
+
+### tank_rotations-20261112-2: Warden Balanced gains from Healing Stream Totem now that it wears the Agility cloak and boots
+- severity: medium (+17 to +29 on 1,146, 1.5 to 2.5%; no rank move, the Warden stays fourth)
+- affects: Warden shaman Balanced (tools/tankbench/req/shaman_warden_balanced.json, ui/warden_shaman/apls/level60_balanced.apl.json)
+- found: 2026-11-12, master 4da607cbc
+- evidence: rotopt `-template shaman_tank -tank balanced` knob search on the six scoring bosses from the preset's knobs (`armorTrinket=1,trinketAt=25,waterTotem=1,fireTotem=1,fireNova=1,fireLast=60,potion=1`; the written APL equals the request's): round 1 `waterTotem=2` 1152.5 -> 1177.8 at 3,000, then nothing else. Paired abtest at 10,000, Balanced, B = rotopt's APL: +17.2 +- 4.9 (seed 1), +28.8 +- 4.6 (seed 2); every scoring boss but Chromaggus (-18) gains (Magmadar +37 to +39, Golemagg +24 to +37, Onyxia +30 to +54, Broodlord +31 to +33). docs/tank_shaman.md says Balanced's knob search moved nothing on ee4a3df64; 814decce0's cloak 1219587 and boots 1887 came after it, the same move Max survival made (Healing Stream with the Titans).
+- proposed fix: Balanced takes `waterTotem=2` (Healing Stream Totem in Mana Spring's place); re-run Balanced's talent search on it.
+- needs: worker fix
+- fixed: 2026-11-12, branch worktree-agent-af802a02e4d97e8fc. Balanced takes Healing Stream Totem (prepull and priority list): +17.2 ± 4.9 / +28.8 ± 4.6 at 10,000, 1,159.2 -> 1,176.5 (seed 1). The talent search on it found 05140003-051031213351012201-050002, which loses at 10,000 (-13.4 ± 4.8 / -15.0 ± 4.5): talents kept. Request, UI APL and description, docs/tank_shaman.md.
+
+### tank_rotations-20261112-3: Warrior Max survival's Shield Wall in the last 13 s beats 17 s on the Titans, all of it on Vaelastrasz
+- severity: medium (+16 to +22 on 1,605, about 1%, from one boss)
+- affects: Protection warrior Max survival (tools/tankbench/req/warrior_protection_max_survival.json, wallAt)
+- found: 2026-11-12, master 4da607cbc
+- evidence: rotopt `-template warrior_tank -tank max-survival` knob search from the preset's knobs (Balanced's plus `trinketAt=35,sunderRage=30`; written APL equals the request's): `wallAt=13` +56.5 (noise 20.6) at 3,000, nothing after. Paired abtest at 10,000, w = 3: +21.9 +- 5.5 (seed 1), +16.5 +- 6.5 (seed 2). Per boss (seed 1 / 2): Vaelastrasz +215 / +224, Broodlord +52 / +32, Onyxia +2 / -28, Magmadar -64 / -56, Golemagg -58 / -68, Chromaggus -16 / -6; Ragnaros (benched) -167 / -95. Max threat already holds 13 s; Max survival kept 17 s through round 5 on Natural Precision, and the Titans' extra health came in with ee4a3df64. Sure of the numbers; the gain rests on Vaelastrasz's burning-adrenaline end, so a set without him would keep 17 s.
+- proposed fix: Max survival `wallAt=13`, or keep 17 s as a ruling that one boss shouldn't set it. Repro: `rotopt -template warrior_tank -settings tools/tankbench/req/warrior_protection_max_survival.json -tank max-survival -tank-encounter <six> -eval -knobs <preset knobs>,wallAt=13 -out <dir>`, then abtest.
+- needs: worker fix (or user ruling)
+- fixed: 2026-11-12, branch worktree-agent-af802a02e4d97e8fc. `wallAt=13` at Max survival, re-measured after the Windfury fix (20261110-1): +25.2 ± 6.2 / +20.4 ± 5.9 at 10,000, 1,543.3 -> 1,568.7 (seed 1). Per boss (seed 1 / 2): Vaelastrasz +232.6 / +202.1, Broodlord +54.5 / +51.3, Onyxia -9.9 / -9.9, Chromaggus -12.2 / -20.8, Magmadar -47.9 / -41.6, Golemagg -65.9 / -58.5; Ragnaros -95.8 / -76.2. Taken: Vaelastrasz's length (17 ± 8 s) is the median of logged stints, not the vmangos first-ability timers that make Broodlord's suspect. The knob search from 13 s kept the rest. Request, UI APL and tooltip, docs/tank_warrior.md (Windfury fix and Max survival's Shield Wall; call 8).
+
+### tank_rotations-20261112-4: Warrior Balanced's Thunder Clap refreshed under 6 s instead of 2 s, a small gain
+- severity: low (+4 to +6 on 3,240)
+- affects: Protection warrior Balanced (tcRefresh)
+- found: 2026-11-12, master 4da607cbc
+- evidence: rotopt knob search from Balanced's knobs (docs/tank_warrior.md:397): `tcRefresh=6` +17.6 (noise 6.8) at 3,000; paired abtest at 10,000: +5.8 +- 2.1 (seed 1), +4.3 +- 2.1 (seed 2), spread over Magmadar, Golemagg, Onyxia (+5 to +15). Likely from the Strength wrists (814decce0) adding Rage-free threat headroom; not checked.
+- proposed fix: `tcRefresh=6` at Balanced (and Max survival, which shares its knobs; not measured there).
+- needs: worker fix
+- closed (not adopted): 2026-11-12, branch worktree-agent-af802a02e4d97e8fc. After the Windfury fix (20261110-1) `tcRefresh=6` at Balanced is +1.2 ± 2.1 / +5.0 ± 2.1 at 10,000, under twice its error on seed 1; at Max survival +1.4 ± 5.4 / +4.9 ± 5.0. Balanced's knob search on the fixed engine found only `wallAt=18` (+6.3 ± 2.2 / -1.5 ± 2.2; with tcRefresh=6 +8.3 ± 2.8 / +3.0 ± 2.8), also not confirmed. Balanced keeps tcRefresh=2. docs/tank_warrior.md.
+
+### tank_rotations-20261110-1: Windfury Totem's white-swing-only rule drops Maul but keeps Heroic Strike, cutting bear SafeDPS 12%
+- severity: high (bear SafeDPS -12% at every weight; warrior -5%, warden -3%, paladin -2%)
+- affects: every tank request (all raid-buff `TotemWeaponBuffWindfury`); most of all druid_bear_*
+- found: 2026-11-10, master ca5e35c3f
+- evidence: 0ce9dbf40 (`sim/core/buffs.go`, user ruling 2026-11-08 "for now") procs the totem under Forever only on
+  `ProcMaskMeleeMHAuto`. Heroic Strike's mask is `MHSpecial | MHAuto` (`sim/warrior/heroic_strike_cleave.go:25`),
+  so it still procs; Maul's is `MHSpecial` only (`sim/druid/bear_attacks.go:43`), so it no longer does. Both are
+  on-next-swing attacks, and the commit says these weren't checked. Pass 6 benched 9ba00c2dc, before 0ce9dbf40, so
+  it missed this. Scoring means, pass 6 -> now (1,000 its, default seed; score_err 15-60 per boss):
+  bear Balanced score 2499 -> 2007, SafeDPS 1883 -> 1650; Max threat 3492 -> 2954 (2024 -> 1758); Max survival
+  238 -> -298 (1649 -> 1460). Warrior Balanced 3880 -> 3637 (SafeDPS 2386 -> 2272); warden Balanced 1786 -> 1682;
+  paladin Balanced 2835 -> 2753. The other sim changes in range don't explain it: the Maelstrom/Flametongue commit
+  bcc5d6cd4 leaves all 21 Warden rows identical (built at its parent d7bb9ab80), and the orc base stats are levels 2-43.
+- proposed fix: rule on on-next-swing attacks: either Maul procs the totem like Heroic Strike (restores most of the
+  bear's 12%), or neither does (warrior loses more). A Forever log of a bear or a Heroic Strike warrior under the
+  totem would settle it. Sure of the asymmetry and the numbers; not of which way the game goes.
+- needs: user ruling
+- pass 8: still open (user ruling); master 707ae92cc keeps `ProcMaskMeleeMHAuto` (sim/core/buffs.go WindfuryTotemBuffAura); the Nov 10 imbue + totem change doesn't touch it. Not re-tested.
+- pass 9: still open (user ruling); cb0d928fd keeps `ProcMaskMeleeMHAuto`. Not re-tested.
+- pass 10 (4da607cbc): ruled 2026-11-12 (standards 17, e89962738): Heroic Strike, Cleave, Raptor Strike and Maul don't roll the totem until a log says otherwise. Maul already doesn't; Heroic Strike still does, since `spell.ProcMask.Matches(ProcMaskMeleeMHAuto)` (sim/core/buffs.go:2103) matches its `MHSpecial | MHAuto` mask (sim/warrior/heroic_strike_cleave.go:25, :79). The ruling's fix (an exact-mask or not-MHSpecial test) is an orchestrator fix now and will lower the warrior rows; tank_mechanics-20261112-2 and fairness-20261109-1 carry the measurements. Left open until the code matches the ruling.
+- fixed: 2026-11-12, branch worktree-agent-af802a02e4d97e8fc. The extra-attack aura with a white-swings-only mask now also skips spells whose mask matches `ProcMaskMeleeSpecial`, so Heroic Strike and Cleave (`MHSpecial | MHAuto`) no longer roll the totem under Forever; Maul and the Raptor Strike hit were already `MHSpecial` only; Classic unchanged (sim/core/buffs.go; test sim/warrior/tank_warrior/windfury_totem_test.go, which fails on the old code). Paired 3,000, seed 1, new minus old: warrior tank Max threat -175.3 ± 5.9, Balanced -148.1 ± 9.5, Max survival -60.3 ± 16.7; arms -3.7 ± 1.2 (-0.4%), fury -15.0 (-1.5%), fury_2h -2.2, the duty and dragonkin variants -2.6 to -13.1; survival hunters and bear 0. Warrior DPS golden and report hashes updated. Knob searches on the fixed engine kept hsRage at every warrior weight.
 
 ### tank_rotations-20261111-1: Warden presets weren't re-optimized after the Nov 10 shaman tuning, which alone cut their SafeDPS about 10%
 - severity: medium (gain unmeasured; the loss it may recover is large)

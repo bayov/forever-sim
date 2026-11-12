@@ -307,7 +307,7 @@ export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 
 	race: Race.RaceUndead,
 });
 export const PresetBuildLevel60MaxSurvival = PresetUtils.makePresetBuild('Level 60 Max survival', {
-	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation (but Sunder Armor as filler from 30 Rage, not 25), Dirge\'s chops, the Greater Stoneshield Potion and the Flask of the Titans, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
+	tooltip: 'Scored with survival weighed at 3 (docs/tank_sim.md). Balanced\'s talents and rotation (but Sunder Armor as filler from 30 Rage, not 25, and Shield Wall in the last 13 sec, not 17), Dirge\'s chops, the Greater Stoneshield Potion and the Flask of the Titans, with the armor trinket held for the last 35 sec (it wins only on Broodlord, docs/tank_warrior.md).',
 	gear: GearLevel60SyntheticArmorTrinket,
 	talents: TalentsLevel60,
 	rotation: APLLevel60MaxSurvival,

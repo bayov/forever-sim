@@ -282,7 +282,7 @@ export const PresetBuildLevel60MaxThreat = PresetUtils.makePresetBuild('Level 60
 });
 export const PresetBuildLevel60Balanced = PresetUtils.makePresetBuild('Level 60 Balanced', {
 	tooltip:
-		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), Mana Spring Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Consumables: Flask of the Titans, Spirit of Zanza, Greater Stoneshield Potion on cooldown.",
+		"Scored with survival weighed at 1 (docs/tank_sim.md). Night Elf (Elune's Light), Healing Stream Totem, Searing Totem and Fire Nova in the last 60 sec, the armor trinket held for the last 25 sec, Superior Deflection on the wrists. Consumables: Flask of the Titans, Spirit of Zanza, Greater Stoneshield Potion on cooldown.",
 	gear: GearLevel60SyntheticArmorTrinketBalanced,
 	talents: TalentsLevel60Tank,
 	rotation: APLLevel60Balanced,
