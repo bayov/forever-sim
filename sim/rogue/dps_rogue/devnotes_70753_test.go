@@ -93,7 +93,8 @@ func TestForeverShank(t *testing.T) {
 }
 
 // Venom is a passive now: a Shank gives 30% more poison damage for 6 sec, and 20% more procs to Deadly
-// and Wound Poison but not Instant Poison (server hotfix push 113483, 1310703 effect 2's class mask).
+// Wound and Instant Poison (server hotfix push 113483, 1310703 effect 2's class mask 268558336 holds
+// Instant's bit 8192).
 func TestForeverVenomFromShank(t *testing.T) {
 	sim, rogue := newForeverRogueSim(t, "00000000000001", 18805, 18816, 1) // Venom only; Core Hound Tooth, Perdition's Blade
 	if rogue.VenomAura == nil {
@@ -111,8 +112,8 @@ func TestForeverVenomFromShank(t *testing.T) {
 	if got := rogue.GetDeadlyPoisonProcChance() - base; math.Abs(got-0.2) > 1e-9 {
 		t.Errorf("Venom adds %.2f to the poison chance, want 0.20", got)
 	}
-	if got := rogue.GetInstantPoisonProcChance() - baseInstant; got != 0 {
-		t.Errorf("Venom adds %.2f to Instant Poison's chance, want 0", got)
+	if got := rogue.GetInstantPoisonProcChance() - baseInstant; math.Abs(got-0.2) > 1e-9 {
+		t.Errorf("Venom adds %.2f to Instant Poison's chance, want 0.20", got)
 	}
 	if got := rogue.VenomAura.RemainingDuration(sim); got != 6*time.Second {
 		t.Errorf("Venom lasts %s, want 6s", got)
