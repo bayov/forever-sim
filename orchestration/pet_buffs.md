@@ -246,8 +246,11 @@ Pain. A log would answer it. The sim doesn't give it to the demon.
 2. Warlock Pet Scaling coefficients: what share of the warlock's spell power the Imp's Firebolt and
    the Succubus's Lash of Pain get, plus the demon's AP, hit and crit. A demon with its owner
    naked, then geared, is enough.
-3. Does the hunter pet inherit the hunter's hit, and by what coefficient? Does it inherit haste
-   (Rapid Fire, Quick Shots) or expertise?
+3. Does the hunter pet inherit the hunter's hit, and by what coefficient? Does it inherit
+   expertise? (Haste settled 2026-11-12 by the user's go on wowsims/forever's Nov 8 log: the pet
+   swings at its owner's melee and attack speed, Rapid Fire's +40% included, times its own; the
+   owner's ranged haste, Quick Shots, does not reach it. `FollowsOwnerMeleeSpeed` in
+   `sim/core/pet.go`.)
 4. Is the pet's AP 10% of the **higher** of the hunter's melee and ranged AP, as S7 says? This
    matters only if Battle Shout or Blessing of Might ever made melee AP the higher one.
 5. Do Mana Spring and Tranquil Air (unflagged) still reach a demon in the warlock's party? This

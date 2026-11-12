@@ -164,9 +164,9 @@ func (hp *HunterPet) addForeverAction(spell *core.Spell, wanted func(sim *core.S
 }
 
 // Under Forever the pet runs in first, casting its Charge or Dash (or Dive) on the way, and in melee
-// range casts the first ability it can, longest cooldown first. A cooldown that is up but short of
-// focus is waited for rather than spent on a filler, as wowsims/forever's ExecuteCustomRotation has
-// it.
+// range casts the first ability it can, longest cooldown first. Autocast never waits: an ability
+// short of focus passes to the next one on the bar, as autocast does in game (wowsims/forever
+// 8223020463, from combat logs; user ruling 2026-11-12).
 func (hp *HunterPet) foreverRotation(sim *core.Simulation) {
 	if hp.DistanceFromTarget > core.MaxMeleeAttackDistance {
 		hp.foreverCloseIn(sim)
@@ -180,9 +180,6 @@ func (hp *HunterPet) foreverRotation(sim *core.Simulation) {
 		}
 		if action.spell.CanCast(sim, target) {
 			action.spell.Cast(sim, target)
-			return
-		}
-		if action.spell.CD.Duration > 0 && action.spell.IsReady(sim) {
 			return
 		}
 	}
