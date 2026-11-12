@@ -3,7 +3,7 @@
   "class": "Warlock",
   "spec": "Destruction",
   "build": "Destruction",
-  "isDefault": true,
+  "isDefault": false,
   "pr": 103,
   "race": "Orc",
   "talents": "255000000351--055030500310035",

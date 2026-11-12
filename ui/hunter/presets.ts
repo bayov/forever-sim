@@ -97,6 +97,9 @@ export const GearPresets = {
 	[Phase.Phase1]: [GearLevel60Ranged, GearLevel60Survival],
 };
 
+// The class default is Lone Wolf (user ruling 2026-11-12: each class defaults to its best 180 sec
+// build), 1291.2 against Beast Mastery's 1174.8 in the deployed report. Beast Mastery was the default
+// until then. Both wear the ranged set.
 export const DefaultGear = GearLevel60Ranged;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -171,7 +174,7 @@ export const APLPresets = {
 	[Phase.Phase1]: [APLBeastMastery, APLMarksmanship, APLLoneWolf, APLSurvival],
 };
 
-export const DefaultAPL = APLBeastMastery;
+export const DefaultAPL = APLLoneWolf;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -230,7 +233,7 @@ export const TalentPresets = {
 	[Phase.Phase1]: [TalentsBeastMastery, TalentsMarksmanship, TalentsLoneWolf, TalentsSurvival],
 };
 
-export const DefaultTalents = TalentsBeastMastery;
+export const DefaultTalents = TalentsLoneWolf;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -254,7 +257,7 @@ export const DefaultTalents = TalentsBeastMastery;
 // -0.8 to +0.9 at 180 sec on Beast Mastery, Marksmanship and Survival (10000 iterations), so it stays. The ammo is Swiftfeather Arrow, Forever's
 // Engineering 300 arrow at 24.5 damage a second (+15 to +22 over Thorium Headed Arrow at range; the user
 // put it in the presets on 2026-10-23).
-export const DefaultOptions = HunterOptions.create({
+export const CatOptions = HunterOptions.create({
 	ammo: Ammo.SwiftfeatherArrow,
 	quiverBonus: Hunter_Options_QuiverBonus.Speed15,
 	petAttackSpeed: PetAttackSpeed.One,
@@ -264,20 +267,23 @@ export const DefaultOptions = HunterOptions.create({
 });
 
 export const LoneWolfOptions = HunterOptions.create({
-	...DefaultOptions,
+	...CatOptions,
 	petType: PetType.PetNone,
 });
+
+// The UI's default options are the default build's, Lone Wolf with no pet (user ruling 2026-11-12).
+export const DefaultOptions = LoneWolfOptions;
 
 // The pets a hunter brings for the raid in place of the cat: a wolf for Furious Howl, which stands in
 // for Battle Shout when no warrior shouts, and a Tallstrider for Dust Cloud, which fills the minor
 // armor slot when no druid or warlock does. Both have Bite and no Claw, so they do less damage than
 // the cat. The builds keep the full raid, so they show what the pet costs the hunter.
 export const WolfOptions = HunterOptions.create({
-	...DefaultOptions,
+	...CatOptions,
 	petType: PetType.Wolf,
 });
 export const TallstriderOptions = HunterOptions.create({
-	...DefaultOptions,
+	...CatOptions,
 	petType: PetType.Tallstrider,
 });
 
@@ -414,15 +420,15 @@ export const DefaultDebuffs = Debuffs.create({
 // the hunter's side at 12 yd (+3 to +4 at 120 + 180 + 300 sec against 25 yd, both seeds),
 // Marksmanship's gains are inside 2 standard errors (+0.3 to +1.7), so it starts at 25, and Lone
 // Wolf is the same from anywhere (2026-11-02, orchestration/caster_distance.md). The default is
-// Beast Mastery's.
+// Lone Wolf's, the default build's (user ruling 2026-11-12; Beast Mastery's 12 yd until then).
 export const DistanceBeastMastery = 12;
 export const DistanceMarksmanship = 25;
 export const OtherDefaults = {
-	distanceFromTarget: DistanceBeastMastery,
+	distanceFromTarget: DistanceMarksmanship,
 	channelClipDelay: 50,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceOrc,
+	race: Race.RaceNightElf,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -518,7 +524,7 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Beast Master
 	bonusTalentPoints: 0,
 	professions,
 	distanceFromTarget: DistanceBeastMastery,
-	options: DefaultOptions,
+	options: CatOptions,
 });
 export const PresetBuildBeastMasteryWolf = PresetUtils.makePresetBuild('Beast Mastery · Wolf', {
 	group: 'Synthetic',
@@ -571,7 +577,7 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Marksmanship
 	bonusTalentPoints: 0,
 	professions,
 	distanceFromTarget: DistanceMarksmanship,
-	options: DefaultOptions,
+	options: CatOptions,
 });
 export const PresetBuildMarksmanshipWolf = PresetUtils.makePresetBuild('Marksmanship · Wolf', {
 	group: 'Synthetic',
@@ -645,7 +651,7 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Survival', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions,
-	options: DefaultOptions,
+	options: CatOptions,
 });
 export const PresetBuildSurvivalWolf = PresetUtils.makePresetBuild('Survival · Wolf', {
 	group: 'Synthetic',

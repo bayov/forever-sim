@@ -106,8 +106,10 @@ export const GearPresets = [
 	GearLevel60Phase1SyntheticHitPlus1,
 ];
 
-// Destruction is the class default since round 70753 (the highest at 180 sec: 1063.4 against
-// Demonology's 1053.9, after Shadow and Flame doubled).
+// Affliction is the class default (user ruling 2026-11-12: each class defaults to its best 180 sec
+// build): 1070.8 against Destruction's 1062.8 in the deployed report, after hotfix 113766. Destruction
+// was the default from round 70753 (the highest at 180 sec then: 1063.4 against Demonology's 1053.9,
+// after Shadow and Flame doubled) until then. Both wear the shared set.
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
 ///////////////////////////////////////////////////////////////////////////
@@ -239,7 +241,7 @@ export const APLPresets = [
 	RotationLevel60DestructionFireDutyRecklessness,
 ];
 
-export const DefaultAPL = RotationLevel60Destruction;
+export const DefaultAPL = RotationLevel60Affliction;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -346,7 +348,7 @@ export const TalentPresets = [
 	TalentsLevel60DestructionFire,
 ];
 
-export const DefaultTalents = TalentsLevel60Destruction;
+export const DefaultTalents = TalentsLevel60Affliction;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -358,9 +360,11 @@ export const DefaultTalents = TalentsLevel60Destruction;
 // Imp; on Affliction 16.2 and 24.6. Since client 1.60.1.70630 Spellstone gives Shadow damage only:
 // on Destruction it and Firestone are even (1009.1 and 1009.5 at 180 sec, 20000 iterations,
 // 2026-10-27), on Affliction Spellstone is 4.3 ahead and on Demonology 6.9 (5000 iterations).
+// The UI's default options are the default build's (Affliction, user ruling 2026-11-12): the Imp
+// sacrificed and no demon out.
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
-	summon: Summon.Succubus,
+	summon: Summon.NoSummon,
 	sacrificedPet: Summon.Imp,
 	weaponImbue: WarlockWeaponImbue.Spellstone,
 });
@@ -488,7 +492,7 @@ export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	channelClipDelay: 50,
-	race: Race.RaceOrc,
+	race: Race.RaceUndead,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -563,8 +567,8 @@ export const EncounterLevel60RecklessnessDuty = level60Encounter(
 // Destruction fire to the Undead. At 180 sec (verify.py, 20000 iterations, seed 1): Demonology 1051.8
 // against the Human's 1050.2, Destruction 1001.5 against 1000.1, Destruction fire 986.4 against 981.9.
 // Affliction stayed Human (the Orc's 0.4 lead in the race sweep was a tie). The curse duty builds follow
-// their base. The UI's default race is the Orc, the race of the default build (Demonology), of
-// Destruction and of Affliction.
+// their base. The UI's default race was the Orc then, the race of the default build (Demonology), of
+// Destruction and of Affliction; since 2026-11-12 it is the Undead, the default build Affliction's.
 // Affliction moved to the Orc on 2026-11-02 (fairness-20261101-2): at 30 yd the Orc leads the Human by
 // 1.0 at 180 sec (20000 iterations, seed 1: Orc 1013.6, Human 1012.7, Undead 1010.8, Gnome 1009.9 with
 // its own gear, Troll 1006.6), and was ahead at 25 yd too. The Human stays the best Alliance race.
@@ -671,12 +675,12 @@ export const PresetBuildLevel60DestructionFireDutyRecklessness = recklessnessDut
 );
 
 export const PresetBuilds = [
-	PresetBuildLevel60Demonology,
-	PresetBuildLevel60DemonologyDutyCurse,
-	PresetBuildLevel60DemonologyDutyRecklessness,
 	PresetBuildLevel60Affliction,
 	PresetBuildLevel60AfflictionDutyCurse,
 	PresetBuildLevel60AfflictionDutyRecklessness,
+	PresetBuildLevel60Demonology,
+	PresetBuildLevel60DemonologyDutyCurse,
+	PresetBuildLevel60DemonologyDutyRecklessness,
 	PresetBuildLevel60AfflictionShadowBolt,
 	PresetBuildLevel60Destruction,
 	PresetBuildLevel60DestructionDutyCurse,
