@@ -84,7 +84,7 @@ export const DefaultAPL = APLTankHealer;
 // Thicc Resto (51 points, 40 of them Restoration and Genesis, Moonglow, Nature's Majesty and Nature's Splendor
 // from Balance). On the tank healer at 500 iterations: Heart of the Wild for Nature's Focus is level (Onyxia
 // 1.177 against 1.172), 46 Restoration with 5 Genesis loses 0.06 on Onyxia, all 51 in Restoration 0.08.
-export const TalentsRestoration = PresetUtils.makePresetTalents('Restoration', SavedTalents.create({ talentsString: '05302001--5053025153113051' }), {
+export const TalentsRestoration = PresetUtils.makePresetTalents('Restoration', SavedTalents.create({ talentsString: '05302001--5253005153113051' }), {
 	tooltip: 'Wild Growth, Swiftmend, Bloom and Nature\'s Swiftness, with Genesis and Nature\'s Splendor from Balance.',
 	group: 'Healing sim',
 });

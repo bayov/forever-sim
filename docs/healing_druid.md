@@ -143,7 +143,8 @@ tick, not when it's recast or ends with its target. Swiftmend no longer takes it
 
 ### Nature's Swiftness (17116)
 
-The next Healing Touch, Regrowth or Wrath (its class mask; Wild Growth isn't in it) is instant. 3 min cooldown,
+The next Healing Touch, Regrowth, Wild Growth or Wrath (its class mask; Wild Growth since hotfix push 113885 of
+2026-11-10) is instant. 3 min cooldown,
 from the buff's use; off the global cooldown. A rotation that casts it controls it; one that doesn't has it used
 with the other cooldowns.
 
@@ -246,7 +247,7 @@ fillers), which moved every number below:
   pick both ways; Gift of Nature and Genesis on Swiftmend; the Tier 1 set's 2, 4 and 5 pieces; Gift of Nature on
   Tranquility and Wild Growth, Genesis on Wild Growth and not Tranquility; Nature's Splendor's 2 Regrowth ticks;
   Rejuvenation and Tranquility tick crits and Improved Regrowth on Regrowth's ticks; Nature's Swiftness on
-  Regrowth and not Wild Growth; Moonglow leaving heal costs alone; Bloom on Regrowth). Still untested from that
+  Regrowth, and on Wild Growth since hotfix 113885; Moonglow leaving heal costs alone; Bloom on Regrowth). Still untested from that
   list: Improved Tranquility's threat cut, Innervate's exact regen, Bloom crit.
 - **healer_fairness-20261104-2, fixed for the druid**: the tank preset's Healing Touch gate goes from 0.9x to 0.8x
   of the heal's Expected Healing (0.6x, 0.7x, 0.75x, 0.85x and 1.0x all lower), its Regrowth gate from 1.0x to
@@ -254,6 +255,24 @@ fillers), which moved every number below:
   big lever once the HoT survives Swiftmend: 40% 1.087, 50% 1.097, 60% 1.108, 80% 1.130, 85% 1.140, 90% 1.132,
   95% 1.116 (with the 0.8x / 0.7x gates). The raid preset: emergency line 50% → 60% and Swiftmend's gate 1.0x →
   0.6x at the most hurt (70% loses on Vaelastrasz).
+- **Nature's Swiftness on Wild Growth (healer_rotations-20261111-1, healer_fairness-20261111-1)**: since hotfix
+  113885 Nature's Swiftness also makes Wild Growth instant, so the raid preset's autocast NS (raised at 0 s) went
+  on its first Wild Growth instead of the emergency Regrowth (mean raid carry 1.437 -> 1.391). Both presets now
+  cast NS on their own line (generator knobs `ns_on` = rg, ht or wg, the heal it is spent on, and `ns_at`, the
+  lowest health in the assignment that raises it; line 1's autocast no longer takes it). Healbench, own lengths,
+  paired seeds, 300 iterations a screen (raid mean carry): NS on the emergency Regrowth at 30 / 35 / 40 / 45 / 50 /
+  60% 1.453 / 1.465 / 1.465 / 1.461 / 1.472 / 1.448, on Healing Touch 11 at 35 / 40 / 45 / 60% 1.457 / 1.456 /
+  1.445 / 1.409, on Wild Growth at 45 / 60 / 80% 1.419 / 1.418 / 1.406, the autocast 1.409. At 1,000: Regrowth at
+  45% 1.438, 50% 1.437 (60%, the audit's variant, 1.439); at 180 / 300 s (Onyxia, Magmadar, Ragnaros) 45% beats
+  60%: 1.241 / 1.158 against 1.215 / 1.148 (autocast 1.193 / 1.096). Tank (300 screen, mean): an instant Healing
+  Touch 11 at 50 / 60 / 70 / 80% 1.275 / 1.282 / 1.281 / 1.253, Regrowth at 50 / 85% 1.270 / 1.247, Wild Growth at
+  50% 1.223, the autocast 1.230; at 1,000 HT at 60% 1.272 and 70% 1.265 against 1.235, and at 180 / 300 s (Onyxia,
+  Golemagg, Chromaggus) 1.264 / 1.016 against 1.252 / 1.008. Shipped: Regrowth at 45% (raid), Healing Touch 11 at
+  60% (tank). Talents: Subtlety's 2 points (threat only, which the bench doesn't score) go to Heart of the Wild
+  (4% Intellect): raid level at own lengths (1.438 both), +0.010 / +0.009 at 180 / 300 s with 160-240 more mana
+  left; tank 1.273 against 1.272. Heart of the Wild 5 for Moonglow, Nature's Splendor and Subtlety (Genesis 5,
+  Nature's Majesty 2, Improved Tranquility 1) loses on the screen (raid 1.453 against 1.464, tank 1.267 against
+  1.282), as does Heart of the Wild 3 for Subtlety and Nature's Swiftness (raid 1.390).
 
 Healbench, 1,000 iterations, all seven boss files, default carry and fight length, built from this branch
 (`healers/fix-druid`) on master 0606686d3, carry:
@@ -277,11 +296,12 @@ and the engine's, and are kept for the record.
 
 `orchestration/tools/healers/druid_restoration_apl.py` writes the two rotations from knobs and
 `druid_restoration_req.py` the bench requests from the shaman's (the same raid, buffs and consumes): Thicc Resto
-`05302001--5053025153113051`, Windshaper Skyborne, the synthetic set. Carry on `tools/healbench`, screened at 400 to
+`05302001--5253005153113051` (since the Nature's Swiftness round below; `05302001--5053025153113051` before),
+Windshaper Skyborne, the synthetic set. Carry on `tools/healbench`, screened at 400 to
 500 iterations, the finalists and the table at 1,000, on master with client 70753 and the November 2 notes.
 
 - **Tank healer** (`apls/tank_healer.apl.json`, `req/druid_restoration.json`: now `ht=11,8,6 ht_scale=0.8 rg_scale=0.7
-  low=0.85`, see above; the round below shipped `ht=11,8,6 low=0.4 ht_scale=0.9`):
+  low=0.85 ns_on=ht ns_at=0.6`, see above and the Nature's Swiftness round; the round below shipped `ht=11,8,6 low=0.4 ht_scale=0.9`):
   - Healing Touch bound at ranks 11, 8 and 6 beats 11, 10, 9 on every file (Onyxia 1.165 against 1.094,
     Vaelastrasz 0.695 against 0.617, 500 iterations) and 11, 8, 7 or 11, 8, 6, 5 (500: 1.159 and 1.147 on Onyxia).
   - The emergency line at 40% and Healing Touch at 90% of its heal against the 35% line at the full heal, at
@@ -295,7 +315,7 @@ and the engine's, and are kept for the record.
     of the Windshaper, the High Order the same as it (its Read Leyline never goes up, since Innervate is never
     on cooldown at 60% mana; the generator's `leyline` knob is there for a build that is mana bound).
 - **Raid healer** (`apls/raid_healer.apl.json`, `req/druid_restoration_raid.json`: now `rj_scale=0.2 low=0.6
-  sm_scale=0.6`, see above; the round below shipped `rj_scale=0.2 low=0.5`):
+  sm_scale=0.6 ns_on=rg ns_at=0.45`, see above and the Nature's Swiftness round; the round below shipped `rj_scale=0.2 low=0.5`):
   - Rejuvenation at the most hurt once it misses 20% of the HoT, with a 50% emergency line, against 30% and 35%,
     at 1,000: ahead on every file (Onyxia 0.711 / 0.679, Chromaggus 0.953 / 0.887, Ragnaros 1.240 / 1.181,
     Magmadar 1.605 / 1.456, Golemagg 2.021 / 1.877).

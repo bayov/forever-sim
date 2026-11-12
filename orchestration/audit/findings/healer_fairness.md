@@ -2,24 +2,6 @@
 
 ## Open
 
-### healer_fairness-20261111-1: Nature's Swiftness now goes on Wild Growth in the druid raid preset; raid druid falls from first (1.437) to last (1.391)
-- severity: high (mean raid carry -0.046, -3.2%; the druid goes from level first to fourth, behind the shaman's 1.395)
-- affects: Restoration druid raid preset (`tools/healbench/req/druid_restoration_raid.json`); the tank preset is unchanged (identical rows on Broodlord and Vaelastrasz)
-- found: 2026-11-11, master 707ae92cc5
-- evidence: 9628e85b6 adds Wild Growth to Nature's Swiftness's spells (hotfix 113885, sim/druid/healing.go:756). The raid
-  preset fires NS from `autocastOtherCooldowns` (line 1 of its APL, "...and Nature's Swiftness"), and its Wild Growth line
-  (APL notes "Wild Growth at the most hurt") sits above the Healing Touch lines, so NS is now spent on a Wild Growth cast
-  instead of a Healing Touch. healbench -role raid -carry, 1,000 it, carry old (bench_9ba00c2.tsv) -> new: Onyxia 0.997 -> 0.943,
-  Broodlord 0.920 -> 0.906, Chromaggus 1.109 -> 1.092, Golemagg 2.660 -> 2.658, Magmadar 2.002 -> 1.818, Ragnaros 1.270 -> 1.240,
-  Vaelastrasz 1.102 -> 1.079; mean 1.437 -> 1.391. HPS rises (Magmadar 800 -> 903) but overheal too (74.7% -> 78.1%).
-  Attribution sure: healbench built from 707ae92cc5 with only that healing.go hunk reverted gives the baseline exactly
-  (Magmadar 2.002, Onyxia 0.997). Holy priest, shaman and the druid tank preset match the baseline (dot.go's change reaches no HoT here).
-- proposed fix: in the druid raid APL, take NS out of the autocast and cast it explicitly right before a Healing Touch line
-  (e.g. castSpell NS gated on the HT 11 condition), or gate Wild Growth on NS not being active. Re-bench the raid column
-  after; expect the druid back near 1.437. Whether NS on Wild Growth ever pays (instant party HoT on a spike) is the
-  healer_rotations pass's to measure.
-- needs: worker fix (healer_rotations)
-
 ### healer_fairness-20261104-5: the Holy paladin raid preset's Holy Light lines cost it 0.025 carry; a Flash of Light raid paladin is first, not third
 - severity: high (+0.025 mean raid carry, 1.8%; the paladin goes from 1.413, third, to 1.438, level with the Holy priest and druid at 1.437)
 - affects: Holy paladin raid healer (tools/healbench/req/paladin_holy_raid.json and the ui preset it comes from)
@@ -54,6 +36,30 @@
 - needs: orchestrator fix
 
 ## Resolved
+
+### healer_fairness-20261111-1: Nature's Swiftness now goes on Wild Growth in the druid raid preset; raid druid falls from first (1.437) to last (1.391)
+- severity: high (mean raid carry -0.046, -3.2%; the druid goes from level first to fourth, behind the shaman's 1.395)
+- affects: Restoration druid raid preset (`tools/healbench/req/druid_restoration_raid.json`); the tank preset is unchanged (identical rows on Broodlord and Vaelastrasz)
+- found: 2026-11-11, master 707ae92cc5
+- evidence: 9628e85b6 adds Wild Growth to Nature's Swiftness's spells (hotfix 113885, sim/druid/healing.go:756). The raid
+  preset fires NS from `autocastOtherCooldowns` (line 1 of its APL, "...and Nature's Swiftness"), and its Wild Growth line
+  (APL notes "Wild Growth at the most hurt") sits above the Healing Touch lines, so NS is now spent on a Wild Growth cast
+  instead of a Healing Touch. healbench -role raid -carry, 1,000 it, carry old (bench_9ba00c2.tsv) -> new: Onyxia 0.997 -> 0.943,
+  Broodlord 0.920 -> 0.906, Chromaggus 1.109 -> 1.092, Golemagg 2.660 -> 2.658, Magmadar 2.002 -> 1.818, Ragnaros 1.270 -> 1.240,
+  Vaelastrasz 1.102 -> 1.079; mean 1.437 -> 1.391. HPS rises (Magmadar 800 -> 903) but overheal too (74.7% -> 78.1%).
+  Attribution sure: healbench built from 707ae92cc5 with only that healing.go hunk reverted gives the baseline exactly
+  (Magmadar 2.002, Onyxia 0.997). Holy priest, shaman and the druid tank preset match the baseline (dot.go's change reaches no HoT here).
+- proposed fix: in the druid raid APL, take NS out of the autocast and cast it explicitly right before a Healing Touch line
+  (e.g. castSpell NS gated on the HT 11 condition), or gate Wild Growth on NS not being active. Re-bench the raid column
+  after; expect the druid back near 1.437. Whether NS on Wild Growth ever pays (instant party HoT on a spike) is the
+  healer_rotations pass's to measure.
+- needs: worker fix (healer_rotations)
+- resolved: 2026-11-12, e05135ad3 (NS on its own line in both druid presets: an instant Regrowth under 45% in the raid,
+  an instant Healing Touch 11 under 60% on the tank; Subtlety 2 -> Heart of the Wild 2). 1,000 it, own lengths: raid
+  1.391 -> 1.438 (first, level with the Holy priest's 1.437), tank 1.235 -> 1.273 (first, Holy priest 1.262). Other
+  healers' rows unchanged (no sim change outside a comment). The shaman raid preset still leaves its Nature's
+  Swiftness (16188) to the autocast, as the druid's did; whether a held NS pays there too is the healer_rotations
+  pass's to measure.
 
 ### healer_fairness-20261104-1: the tank-role bench has no raid, so Prayer of Mending ping-pongs between the tank and the priest
 - severity: high (Holy priest tank carry -0.085 mean, -0.177 on Magmadar, once fixed; the priest's lead over the shaman goes from +0.135 to +0.05)
