@@ -2,15 +2,6 @@
 
 ## Open
 
-### healer_rotations-20261111-1: Restoration druid raid healer loses its emergency Nature's Swiftness Regrowth to Wild Growth since NS also makes Wild Growth instant (-0.046 mean carry, Magmadar -0.184)
-- severity: high (Magmadar 2.002 -> 1.818 carry, about 9%; every boss file down)
-- affects: Restoration druid raid healer (`ui/restoration_druid/apls/raid_healer.apl.json`, `tools/healbench/req/druid_restoration_raid.json`). Not the tank healer (no Wild Growth line, rows unchanged).
-- found: 2026-11-11, master 707ae92cc
-- evidence: 9628e85b6 adds Wild Growth to Nature's Swiftness's affected spells (`sim/druid/healing.go` ~752). The APL leaves NS to `autocastOtherCooldowns` (line 1), which raises the buff at 0 s; before, the buff stayed up until line 4's emergency Regrowth (lowest under 60%) used it. Now the first Wild Growth (line 5, an ordinary cast) uses it. One logged Magmadar iteration: old rule, an instant Regrowth (9858, 0 s); master, an instant Wild Growth (1238215, 0 s) and Regrowth cast at 1.96 s. Raid role, own lengths, 1,000 it, default seed, ref -> master: Onyxia 0.997 -> 0.943, Broodlord 0.920 -> 0.906, Chromaggus 1.109 -> 1.092, Golemagg 2.660 -> 2.658, Magmadar 2.002 -> 1.818, Ragnaros 1.270 -> 1.240, Vael 1.102 -> 1.079. Bisected with benches built at master with one file reverted: reverting `sim/druid/healing.go` to 9628e85b6^ gives back the ref rows exactly; reverting `sim/core/dot.go` (f20d5938a) changes nothing.
-- tried (paired, 1,000 it, master): (A) insert `castSpell 17116` with line 4's condition (lowest under 60%) just before line 4: 0.998 / 0.919 / 1.108 / 2.655 / 2.009 / 1.274 / 1.108, mean 1.439 against 1.391 (+0.048, same as before the hotfix). At 180 s: Magmadar 1.585 -> 1.660, Ragnaros 1.172 -> 1.191, Onyxia 0.823 -> 0.865. At 300 s: 1.467 -> 1.578, 1.059 -> 1.137, 0.762 -> 0.785, with no less mana left. It also runs unchanged on the old rule (same numbers to 0.003). (B) Wild Growth gated on NS not active: mean 1.406, Vael -0.095, worse than A. (C) NS line before Healing Touch 11 (line 9): mean 1.391, no gain (Wild Growth at line 5 still comes first).
-- proposed fix: variant A. Add `{"action":{"castSpell":{"spellId":{"spellId":17116}},"condition":<line 4's condition>},"notes":"Nature's Swiftness for the emergency Regrowth below."}` as the new line 4 of the raid healer APL and its request, and correct line 1's note. Aside: the comment above `registerNaturesSwiftnessCD` (`sim/druid/healing.go` ~740) still says "Wild Growth isn't one".
-- needs: worker fix
-
 ### healer_rotations-20261104-3: Restoration shaman tank healer's Lesser Healing Wave 5 line never fires (same mana gate as rank 6 just above it)
 - severity: low (no carry to gain; a dead line in a shipped preset)
 - affects: Restoration shaman tank healer (`ui/restoration_shaman/apls/tank_healer.apl.json` line 9, `tools/healbench/req/shaman_restoration.json`)
@@ -36,6 +27,22 @@
 - needs: worker fix
 
 ## Resolved
+
+### healer_rotations-20261111-1: Restoration druid raid healer loses its emergency Nature's Swiftness Regrowth to Wild Growth since NS also makes Wild Growth instant (-0.046 mean carry, Magmadar -0.184)
+- severity: high (Magmadar 2.002 -> 1.818 carry, about 9%; every boss file down)
+- affects: Restoration druid raid healer (`ui/restoration_druid/apls/raid_healer.apl.json`, `tools/healbench/req/druid_restoration_raid.json`). Not the tank healer (no Wild Growth line, rows unchanged).
+- found: 2026-11-11, master 707ae92cc
+- evidence: 9628e85b6 adds Wild Growth to Nature's Swiftness's affected spells (`sim/druid/healing.go` ~752). The APL leaves NS to `autocastOtherCooldowns` (line 1), which raises the buff at 0 s; before, the buff stayed up until line 4's emergency Regrowth (lowest under 60%) used it. Now the first Wild Growth (line 5, an ordinary cast) uses it. One logged Magmadar iteration: old rule, an instant Regrowth (9858, 0 s); master, an instant Wild Growth (1238215, 0 s) and Regrowth cast at 1.96 s. Raid role, own lengths, 1,000 it, default seed, ref -> master: Onyxia 0.997 -> 0.943, Broodlord 0.920 -> 0.906, Chromaggus 1.109 -> 1.092, Golemagg 2.660 -> 2.658, Magmadar 2.002 -> 1.818, Ragnaros 1.270 -> 1.240, Vael 1.102 -> 1.079. Bisected with benches built at master with one file reverted: reverting `sim/druid/healing.go` to 9628e85b6^ gives back the ref rows exactly; reverting `sim/core/dot.go` (f20d5938a) changes nothing.
+- tried (paired, 1,000 it, master): (A) insert `castSpell 17116` with line 4's condition (lowest under 60%) just before line 4: 0.998 / 0.919 / 1.108 / 2.655 / 2.009 / 1.274 / 1.108, mean 1.439 against 1.391 (+0.048, same as before the hotfix). At 180 s: Magmadar 1.585 -> 1.660, Ragnaros 1.172 -> 1.191, Onyxia 0.823 -> 0.865. At 300 s: 1.467 -> 1.578, 1.059 -> 1.137, 0.762 -> 0.785, with no less mana left. It also runs unchanged on the old rule (same numbers to 0.003). (B) Wild Growth gated on NS not active: mean 1.406, Vael -0.095, worse than A. (C) NS line before Healing Touch 11 (line 9): mean 1.391, no gain (Wild Growth at line 5 still comes first).
+- proposed fix: variant A. Add `{"action":{"castSpell":{"spellId":{"spellId":17116}},"condition":<line 4's condition>},"notes":"Nature's Swiftness for the emergency Regrowth below."}` as the new line 4 of the raid healer APL and its request, and correct line 1's note. Aside: the comment above `registerNaturesSwiftnessCD` (`sim/druid/healing.go` ~740) still says "Wild Growth isn't one".
+- needs: worker fix
+- resolved: 2026-11-12, e05135ad3 (both druid presets cast Nature's Swiftness on their own line; Subtlety 2 -> Heart of the
+  Wild 2). Raid: NS on an instant Regrowth when the lowest is under 45% (the audit's variant A, 60%, was level at own
+  lengths, 1.439 against 1.438, and lower at 180 / 300 s: Onyxia, Magmadar, Ragnaros 1.215 / 1.148 against 1.241 /
+  1.158). Healbench 1,000 it, own lengths: Onyxia 0.963, Broodlord 0.919, Chromaggus 1.108, Golemagg 2.653, Magmadar
+  2.053, Ragnaros 1.271, Vaelastrasz 1.097, mean 1.391 -> 1.438. Tank (re-tuned the same way): NS on an instant
+  Healing Touch 11 under 60%, 1.235 -> 1.273, and 180 / 300 s 1.252 / 1.008 -> 1.264 / 1.016. NS on Wild Growth (45,
+  60, 80%) loses everywhere. Screens and talents in `docs/healing_druid.md` (Nature's Swiftness on Wild Growth).
 
 ### healer_rotations-20261104-1: Holy priest presets carry lines that never fire (Power Infusion without the talent; the raid healer's Prayer of Healing, Renew, Greater Heal and Inner Focus behind Flash Heal 4)
 - severity: low (no carry to gain: every reorder tried loses)
