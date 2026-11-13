@@ -2214,8 +2214,16 @@ func windfuryTotemRollsOnForever(spell *Spell) bool {
 	if spell.ProcMask.Matches(ProcMaskMeleeMHAuto) {
 		return true
 	}
-	return spell.ProcMask.Matches(ProcMaskMeleeMHSpecial) && windfuryTotemAbilityIds[spell.ActionID.SpellID]
+	return spell.ProcMask.Matches(ProcMaskMeleeMHSpecial) &&
+		(windfuryTotemAbilityIds[spell.ActionID.SpellID] || windfuryWeaponAttackIds[spell.ActionID.SpellID])
 }
+
+// windfuryWeaponAttackIds are the sim's IDs for Windfury Weapon's attacks, one a rank.
+//
+// The client logs the attacks as 439440, which is in windfuryTotemAbilityIds, but the sim keys
+// them under the imbue's rank (8232 to 16362). In our Nov 13 log with both up, the imbue's
+// attacks proced the totem on 47 of 162 imbue procs, also when Stormstrike set off the imbue.
+var windfuryWeaponAttackIds = map[int32]bool{8232: true, 8235: true, 10486: true, 16362: true}
 
 ///////////////////////////////////////////////////////////////////////////
 //                            World Buffs
