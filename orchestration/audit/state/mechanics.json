@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "cad23ae1a904481efff8d10b581c393ecf1d7f94"
+  "master": "3a86d4a6bf60814bb28d3624c92072d9200337a7"
  },
- "last_pass_at": "2026-11-13T07:03:20Z",
- "pass": 79,
+ "last_pass_at": "2026-11-13T18:50:48Z",
+ "pass": 80,
  "result": "findings",
- "note": "Pass 79: 71562a8b0..97da1cca5. 33b13e310 Unsealed Wrath WF echo (resolves -2), a1a1a81bb no extra attack rolls WF, 2fcb6fe2a Volley no procs (70938 Attr4 0x800000 confirms). Client 70938: no shared deltas; overload rows now half parent (verified). New: mechanics-20261113-1 Imp Firebolt r2-4 (low, leveling). No new Blizzard posts.",
+ "note": "Pass 80: cad23ae1a..3a86d4a6b. 041bb0a90 Weakening Disease 15x7 (client OK), d22fe3e23 Frightskull 3.9 PPM (log), c7a99fa49 WF Weapon attacks roll WF Totem (hotfix post 6), 4c4790e3e FTW r6 -5.5 (log), 1743980e6 oil IDs 350026/350025. New: mechanics-20261113-2 Weakening Disease AP -92 vs sim Str -50 (low). Client 70938 still newest; no new Blizzard posts.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-13T12:45:39Z",
+ "checked_at": "2026-11-13T19:29:54Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

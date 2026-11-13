@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "cad23ae1a904481efff8d10b581c393ecf1d7f94"
+  "master": "3a86d4a6bf60814bb28d3624c92072d9200337a7"
  },
- "last_pass_at": "2026-11-13T06:57:27Z",
- "pass": 14,
+ "last_pass_at": "2026-11-13T18:49:22Z",
+ "pass": 15,
  "result": "quiet",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-13T12:45:39Z",
+ "checked_at": "2026-11-13T19:29:54Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 14 (97da1cca5c): no extra attack rolls Windfury Totem (a1a1a81bb, standards 17; Reckoning's stored swings included), extra attack sources tracked through stored and delayed hits. Client 70938 touches no tank spell (Consecration mark proc mask only). Blizzard forum rate-limited: notes since dev_notes_seen not re-read. Quiet; 20261108-1, 20261107-1 still open."
+ "note": "Pass 15 (3a86d4a6b): only change 4c4790e3e, Flametongue Weapon rank 6 cut 5.5 (shaman DPS log fit). No tank preset uses Flametongue Weapon (Warden imbues Rockbiter; FT already loses 1,500-1,700 there, the cut only widens it). Client still 70938. Forum notes not re-read. Quiet; 20261108-1, 20261107-1 still open."
 }

@@ -373,3 +373,14 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-13 07:19 | tank_rotations | pass 12 | master 97da1cca5 | quiet | paladin down 6-9 SafeDPS from hotfix; Seal of Fury stays
 2026-11-13 07:19 | tank_gear | pass 9 | master 97da1cca5 | quiet | no tank gear change
 2026-11-13 07:19 | tank_fairness | pass 13 | master 97da1cca5 | quiet | Max survival now paladin/warrior tie; evidence added to open -20261105-1
+2026-11-13 19:29 | results | pass 88 | master 3a86d4a6b | quiet | Enhancement +22 to +24 from Windfury Weapon rolling Windfury Totem; published stale until re-sim
+2026-11-13 19:29 | rotations | pass 64 | master 3a86d4a6b | quiet | only Enhancement moved (c7a99fa49); no APL change
+2026-11-13 19:29 | consumables | pass 84 | master 3a86d4a6b | quiet | oil IDs, Frightskull, Windfury rule consistent
+2026-11-13 19:29 | mechanics | pass 80 | master 3a86d4a6b | 1 new finding | Weakening Disease takes 50 Str, client takes 92 AP (low)
+2026-11-13 19:29 | fairness | pass 40 | master 3a86d4a6b | quiet | Enhancement 13th to 10th; gear check 19/19
+2026-11-13 19:29 | healer_mechanics | pass 14 | master 3a86d4a6b | quiet | Flametongue cut reaches no healer
+2026-11-13 19:29 | healer_rotations | pass 12 | master 3a86d4a6b | quiet | 63 baseline rows match
+2026-11-13 19:29 | healer_fairness | pass 13 | master 3a86d4a6b | quiet | 63 carry cells match
+2026-11-13 19:29 | tank_mechanics | pass 15 | master 3a86d4a6b | quiet | Flametongue cut misses Warden (Rockbiter)
+2026-11-13 19:29 | tank_rotations | pass 13 | master 3a86d4a6b | quiet | 104 rows match
+2026-11-13 19:29 | tank_fairness | pass 14 | master 3a86d4a6b | quiet | Warden presets match baseline

@@ -1,8 +1,13 @@
-# Consumables pass 83, master 97da1cca5
+# Consumables pass 84 (master 3a86d4a6b)
 
-No new findings.
+Moved since cad23ae1a: sim/common/item_effects.go, sim/core/buffs.go, sim/core/consumes.go (4 commits). No preset, mksettings, gear set or enchant file moved. wago latest 1.60 build is still 70938 (already audited).
 
-- Moved since 71562a8b0 (watched files): item_effects.go (Ebon Hilt of Marduk Forever tick 28 per 3 sec, no preset use), buffs.go (Windfury Totem no longer rolls on extra attacks, standards 17), assumptions_def.py (paladin hotfix assumptions), standards.md (item 17), ui/retribution_paladin/presets.ts (talent strings and comments only; no consumes change), ui/rogue/presets.ts (comment only).
-- New client build 1.60.1.70938 (was 70888). builddiff.py: one new drink, Morning Glory Dew (item 287964, no preset uses it); Bracer and Boots Lesser Spirit enchant 8203 now carries effect arg 6 where it carried 124, matching forever_enchants.go's +4 Spirit note (hotfix 113844); no preset uses either enchant. No other consumable or enchant changed.
-- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty. Totem counts match the rulings. Minor-armor count 3 against expected 2 is ForeverDustCloudAura (known, scan expectation stale).
-- Open items: the two low findings in findings/consumables.md are unchanged.
+| Commit | Change | Verdict |
+|---|---|---|
+| 1743980e6 | Forever Shadow Oil / Frost Oil proc spells keyed 350026 / 350025 (ID only, damage ranges untouched) | no value change |
+| d22fe3e23, 041bb0a90 | Frightskull Shaft 3.9 PPM, Weakening Disease 15 x 7 ticks under Forever (log-fitted, client base 15, 14 s) | no preset or gear set uses it; nothing to flag |
+| c7a99fa49 | Windfury Weapon attacks (8232..16362) roll Windfury Totem under Forever; MH special only | consistent with the main-hand-only ruling; DPS rulings for shaman/Enh belong to class audits |
+
+- scan.sh: banned, Revelation, trinket and crit-elixir sections empty. Totem counts match the rulings. Minor-armor count 3 vs 2 is ForeverDustCloudAura (known stale expectation).
+- Class branches: stale copies, none audited (gotcha 1).
+- No open items beyond the two low findings already in findings/consumables.md (not re-checked: both files unchanged).

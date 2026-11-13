@@ -1,51 +1,46 @@
-# Rotations pass 63 (2026-11-13, master 97da1cca5)
+# Rotations pass 64 (2026-11-13, master 3a86d4a6b)
 
-Last audited master 71562a8b0. What reaches the DPS raid presets:
+Last audited master cad23ae1a. What reaches the DPS raid presets:
 
 | commit | change | reaches DPS presets |
 |---|---|---|
-| a1a1a81bb | Windfury Totem: no extra attack (Windfury, HoJ, Sword Spec, Thrash, Reckoning) rolls it; stored extra attacks keep their source | yes (Combat Swords -3; warriors under 1) |
-| 33b13e310 / unsealed_wrath.go | Unsealed Wrath stores no echo from Windfury Totem swings (Nov 11 hotfix) | yes (Retribution -12 to -19 at fixed APL) |
-| ec8ab9b3d | Ret APLs re-tuned after the hotfixes: Seal of Righteousness held, twist back at 3 stored copies; Ret Shock on SoR, Holy Shock ahead of Holy Strike; Undead talents | yes (worker-measured, two seeds) |
-| 2fcb6fe2a | Volley activates no procs | hunters: no move over 1 |
-| 02cf6c40e | item effect 18656 retimed to 28 every 3 s under Forever | no preset move over 1 |
+| c7a99fa49 | Windfury Weapon's attacks (8232/8235/10486/16362) roll Windfury Totem under Forever | yes: every Enhancement build casts its own Windfury Totem with Windfury Weapon, +20 to +25 |
+| 4c4790e3e | Flametongue Weapon rank 6 cut by 5.5 under Forever | no preset uses the imbue (Enhancement is on Windfury Weapon) |
+| d22fe3e23 | Frightskull Shaft 3.9 PPM under Forever | no preset moved |
+| 1743980e6 | Shadow Oil / Frost Oil procs keyed 350026 / 350025 under Forever | ID only; no preset moved |
+| 041bb0a90 | Weakening Disease 15 over 14 s | no preset moved |
+| tools/rotopt, enhancement bis.json | Phase 0 BiS reruns | not in the req files yet |
 
-`apl_logic_diff.py 71562a8b0 origin/master`: 7 APL files, all Retribution, all from ec8ab9b3d.
-
-## Sim regression (`regress.py`, old CLI 71562a8 vs new CLI 97da1cc on the new req files, 3000 it, seed 424242)
-
-| build | old | new | diff |
-|---|---|---|---|
-| paladin__level_60 / -duty-crusader / -duty-wisdom | 1000.5 / 991.5 / 985.6 | 981.4 / 978.2 / 971.0 | -19.2 / -13.4 / -14.7 |
-| paladin__level_60_sub_holy / -crusader / -wisdom | 992.7 / 981.9 / 975.3 | 973.4 / 969.7 / 962.4 | -19.3 / -12.2 / -12.9 |
-| paladin__level_60_sub_holy_undead | 1127.5 | 1113.4 | -14.2 |
-| rogue__combat-swords | 946.6 | 943.6 | -3.0 |
-
-Everything else within 1 DPS (warriors included: the extra-attack gate barely touches them).
+`apl_logic_diff.py cad23ae1a 3a86d4a6b`: 0 APL files touched.
 
 ## Baseline move (3000 it, seed 424242)
 
-New baseline `ref/rotations/baseline_97da1cc_3000it_seed424242.tsv`. Against 71562a8: Ret twist and sub-Holy
-builds -18 to -22, vs Undead -12.5, Ret Shock +2.4 / Wisdom duty +3.5, Combat Swords -3.0; the rest under 1.
-This matches the sim regression plus the re-tune's gain.
+New baseline `ref/rotations/baseline_3a86d4a_3000it_seed424242.tsv` against 97da1cc (which was also cad23ae1a's state):
 
-## Re-tune spot check
+| build | old | new | diff |
+|---|---|---|---|
+| shaman__enhancement-level60 | 1030.8 | 1050.8 | +20.0 |
+| shaman__enhancement-imp-gw | 1017.3 | 1037.6 | +20.3 |
+| shaman__enhancement-mana-tide | 928.9 | 950.2 | +21.3 |
+| shaman__enhancement-water-shield | 975.0 | 999.6 | +24.6 |
 
-`ab.py` on paladin__level_60, new CLI, A = 71562a8's req rotation, B = master's, S0 = 2e8, 20k it:
-+2.09 ±0.50 / +1.89 ±0.22 / +3.98 ±0.24 at 120 / 180 / 300 s. The re-tune wins in every cell, as its
-commit says.
+The other 64 presets are unchanged to 0.05 DPS. No `regress.py` run was needed: only the Enhancement
+change reaches the presets, and it's attributed by the commit.
 
-## Conclusions
+## Open item: Flametongue Weapon imbue with Windfury Totem
 
-- No new findings. The sim moves are the Nov 11 hotfixes, and the worker re-tuned Retribution on top of
-  them (confirmed above).
-- Open findings, all still unapplied on master: 20261112-1 (rogue poisons), 20261109-1 (Fury 2H 90-rage
-  Heroic Strike line still at `level60_fury_2h.apl.json`), 20261105-1 (feral FB gate still 45). Their
-  presets moved under 1 DPS this pass (Combat Swords -3 is not one of 20261112-1's dagger builds), so
-  their measurements stand.
+Checked on shaman__enhancement-level60, req `shamanImbue` WindfuryWeapon -> FlametongueWeapon, 20k it, 8 blocks,
+S0 1e6, same seeds (two unpaired `ab.py` runs, one per req): 1064.9 / 1053.8 / 1037.2 vs 935.6 / 921.6 / 903.1
+at 120 / 180 / 300 s, so FT loses about 132 at 180 s. Both commits in this range favour Windfury Weapon further.
+Not a finding; the item can close for the level 60 builds. The Enhancement re-search in ada1d1e71's brief
+covers the APL itself after the change.
 
-## Open items
+## Open findings
 
-- Retribution sub-Holy and duty builds: only the twist build's re-tune was spot-checked.
-- Carried from the pass doc: Balance Night Elf vs Tauren, Elemental Mastery hold, Enhancement Flametongue
-  Weapon with Windfury Totem, warlock duty-curse screens.
+All three still unapplied on master: rotations-20261112-1 (rogue poisons; presets.ts still Deadly MH),
+rotations-20261109-1 (Fury 2H 90-rage Heroic Strike still at level60_fury_2h.apl.json), rotations-20261105-1
+(feral Ferocious Bite gate still 45).
+
+## Optional
+
+None new.

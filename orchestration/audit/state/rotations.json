@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "cad23ae1a904481efff8d10b581c393ecf1d7f94"
+  "master": "3a86d4a6bf60814bb28d3624c92072d9200337a7"
  },
- "last_pass_at": "2026-11-13T07:01:41Z",
- "pass": 63,
+ "last_pass_at": "2026-11-13T18:55:08Z",
+ "pass": 64,
  "result": "quiet",
- "note": "Pass 63: Unsealed Wrath no WF Totem echoes (Ret -12..-19), extra attacks don't roll WF Totem (Combat Swords -3); Ret re-tune ec8ab9b3d confirmed (+1.9 at 180 s). No new findings; 3 open findings still unapplied.",
+ "note": "Pass 64: Windfury Weapon attacks roll WF Totem (Enhancement +20 to +25), FT rank 6 cut, Frightskull 3.9 PPM, oil IDs: no preset other than Enhancement moved. FT imbue still loses ~132 at 180 s. No new findings; 3 open findings still unapplied.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-13T12:45:39Z",
- "baseline": "baseline_97da1cc_3000it_seed424242.tsv"
+ "checked_at": "2026-11-13T19:29:54Z",
+ "baseline": "baseline_3a86d4a_3000it_seed424242.tsv"
 }
