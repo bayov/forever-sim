@@ -3,7 +3,7 @@ races: 247 rows, 75 KB
 lengths: 340 rows, 28 KB
 abilities: 694 rows, 193 KB
 auras: 1214 rows, 175 KB
-hist: 2750 rows, 146 KB
+hist: 2718 rows, 144 KB
 stats: 671 rows, 55 KB
 gear: 632 rows, 120 KB
 setup: 1836 rows, 457 KB
@@ -14,18 +14,18 @@ race_breakdown: 1180 rows, 177 KB
 race_summary: 328 rows, 100 KB
 race_notes: 47 rows, 11 KB
 weights: 266 rows, 53 KB
-mana: 5044 rows, 390 KB
+mana: 5044 rows, 391 KB
 mana_summary: 52 rows, 16 KB
-assumptions: 54 rows, 59 KB
+assumptions: 58 rows, 63 KB
 WARNING assumptions: 1 texts name the project's process, e.g. 'Forever client 70753 (every Ice Lance rank: 8 sec cooldown, category 19). Client 70707 (spell 1312002). foreverchanges.pro. User rulings 2026-10-30 an'
 assumption_dps: 291 rows, 48 KB
 rotation: 655 rows, 209 KB
 race_rotation: 293 rows, 108 KB
 WARNING race_rotation: 5 changed lines with no why in race_text.json, e.g. priest__smite Gnome priority:s10934
-WARNING rotation: 8 rotation_text.json notes entries no line uses, e.g. Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab.
-WARNING rotation: 2 conditions read like code, with no wording in rotation_text.json, e.g. No Bane of Agony on the boss and over 60s of the fight left and (Warlock Synthetic Talisman (Phase 1) is ready within 59s or over 60s until the trinket is ready)
-WARNING rotation: 9 rotation_text.json entries no line uses, e.g. (any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 3s left and over 9s of the fight left)
-WARNING rotation: 5 rotation_text.json why entries no line uses, e.g. {'builds': ['shaman__enhancement-level60', 'shaman__enhancement-imp-gw'], 'key': 's408345', 'when': 'at 12 a second', 'why': 'Why keep 12 mana per second left? So the mana runs out just as the fight ends, whatever its length.'}
+WARNING rotation: 10 rotation_text.json notes entries no line uses, e.g. Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab.
+WARNING rotation: 3 conditions read like code, with no wording in rotation_text.json, e.g. No Bane of Agony on the boss and over 60s of the fight left and (Warlock Synthetic Talisman (Phase 1) is ready within 59s or over 60s until the trinket is ready)
+WARNING rotation: 13 rotation_text.json entries no line uses, e.g. (any combo points and Slice and Dice is not up and over 6s of the fight left) or (5+ combo points and Slice and Dice has under 3s left and over 9s of the fight left)
+WARNING rotation: 7 rotation_text.json why entries no line uses, e.g. {'builds': ['paladin__level_60'], 'key': 's20293', 'when': 'or 3 when the mana', 'why': "Why swap at 2 echoes instead of 3? Windfury's extra swing can waste an echo. When short on mana, waiting for 3 is worth it."}
 rotation conditions shown in compact form: []
 tooltips: 1095 rows, 445 KB
 tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit', "setup Sunder Ramp ({'pullSunders': 1, 'tank': True})", "setup Sunder Ramp ({'tank': True, 'pullSunders': 1})", "setup Sunder Ramp ({'tank': True})"]
@@ -38,9 +38,9 @@ names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark
 treeart: 27 rows, 1063 KB
 missing icons: []
 timeline_warrior: 12 rows, 42 KB
-timeline_rogue: 18 rows, 48 KB
+timeline_rogue: 18 rows, 49 KB
 timeline_hunter: 12 rows, 36 KB
-timeline_paladin: 12 rows, 44 KB
+timeline_paladin: 12 rows, 37 KB
 timeline_shaman: 18 rows, 54 KB
 timeline_druid: 9 rows, 24 KB
 timeline_mage: 12 rows, 39 KB

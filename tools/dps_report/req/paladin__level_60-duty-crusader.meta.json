@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_crusader_duty_hit-3",
   "apl": "level60_crusader_duty",
   "published": {
-    "dps": 1082.9,
-    "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
+    "dps": 978.3,
+    "source": "the DPS report's main run of this request after the November 11 hotfixes (Judgement as a ranged attack, Unsealed Wrath without Windfury Totem copies, no extra attack rolling Windfury Totem) and the re-tuned seal rotation (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
   },
   "verify": {
-    "dps": 1082.9,
-    "stderr": 0.43,
+    "dps": 978.3,
+    "stderr": 0.33,
     "iters": 20000,
     "ok": true,
-    "note": "simreq of this request, 180s, seed 1"
+    "note": "the report main run of this request (2026-11-13), 180 \u00b1 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Keeps Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [

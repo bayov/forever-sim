@@ -4854,7 +4854,8 @@
      ],
      "note": "From the November 11 hotfixes: Judgement of Command, Righteousness and Fury now roll as ranged attacks, so effects that trigger on melee hits no longer fire from them. Threat is unchanged. Retribution builds lose 0.5 to 0.7%; Protection paladins move too (see the Tanking tab).",
      "commits": [
-      "f1c07e1"
+      "f1c07e1",
+      "33b13e3"
      ]
     },
     {
@@ -5019,6 +5020,96 @@
      "commits": [
       "65b5d49"
      ]
+    },
+    {
+     "title": "Unsealed Wrath no longer stores copies from Windfury Totem's extra swings",
+     "kind": "game",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "note": "From the November 11 hotfixes. A totem swing still spends the copies the paladin's other seals stored, since the post doesn't say otherwise (an assumption on the Assumptions tab). Together with Judgement becoming a ranged attack, this is most of the Retribution twist builds' drop.",
+     "source": {
+      "label": "Blizzard: WoW Forever hotfixes, November 11, 2026",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2403040/8"
+     },
+     "commits": [
+      "33b13e3",
+      "a1a1a81"
+     ]
+    },
+    {
+     "title": "Extra attacks no longer roll Windfury Totem",
+     "kind": "sim",
+     "classes": [
+      "Rogue",
+      "Paladin"
+     ],
+     "builds": [
+      "rogue__combat-swords",
+      "rogue__subtlety"
+     ],
+     "note": "Windfury's own swings, Hand of Justice, Sword Specialization, Thrash Blade and Reckoning no longer get a Windfury Totem roll of their own, as our combat logs show. Combat Swords loses about 2.6 at 3 minutes; on the Tanking tab the Protection Paladin's scores drop (Balanced 2,838 to 2,809 for the Balanced build).",
+     "commits": [
+      "a1a1a81"
+     ]
+    },
+    {
+     "title": "Retribution rotations re-tuned after the Judgement hotfix: Seal of Righteousness stays up",
+     "kind": "rotation",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "note": "With Judgement a ranged attack, Judgement of Command lost its edge. The twist builds keep Seal of Righteousness up and swap to Seal of Command for the swing that spends its copies, back once Command has stored three. Ret Shock and its Wisdom duty keep Seal of Righteousness up and cast Holy Shock ahead of Holy Strike; the Wisdom duties put Holy Strike first. Sub Holy vs Undead trades a point of Reverence for a third point of Divine Intellect. With the November 11 hotfixes, the twist and sub Holy builds end 18 to 21 lower at 3 minutes, sub Holy vs Undead 11 lower, and Ret Shock 4 to 5 higher.",
+     "commits": [
+      "ec8ab9b"
+     ]
+    },
+    {
+     "title": "Volley no longer triggers procs",
+     "kind": "game",
+     "classes": [
+      "Hunter"
+     ],
+     "moves": false,
+     "note": "From the November 11 hotfixes. No Hunter preset's result moves.",
+     "source": {
+      "label": "Blizzard: WoW Forever hotfixes, November 11, 2026",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2403040/8"
+     },
+     "commits": [
+      "2fcb6fe"
+     ]
+    },
+    {
+     "title": "Item fixes: Skullsmoke Pants, Death Knight Sabatons, Gravetoll Gavel, Ebon Hilt of Marduk, and the November 11 wands",
+     "kind": "gear",
+     "moves": false,
+     "note": "Skullsmoke Pants have 15 Intellect and 14 crit rating, Death Knight Sabatons 11 spell power instead of Spirit, Gravetoll Gavel 84 healing, Ebon Hilt of Marduk's Corruption 84 over 9 sec. Touch of the Depths and Satyr's Touch take their new damage, and Band of the Damned is in. No preset wears them.",
+     "commits": [
+      "02cf6c4",
+      "d787a98",
+      "160148d"
+     ]
     }
    ],
    "internal": [
@@ -5101,6 +5192,14 @@
     {
      "commit": "e899627",
      "why": "notes and test expectations only"
+    },
+    {
+     "commit": "80ec3e4",
+     "why": "the pre-raid Enhancement gear list; no report preset changes"
+    },
+    {
+     "commit": "d7e9b15",
+     "why": "the pre-raid Enhancement gear list; no report preset changes"
     }
    ],
    "source": {

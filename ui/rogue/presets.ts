@@ -174,7 +174,8 @@ export const GearPresets = {
 
 // Combat Swords is the class default (user ruling 2026-11-12: each class defaults to its best 180 sec
 // build): since Windfury Totem rolls on Sinister Strike (standards 17, 2026-11-11) it leads Combat Daggers
-// by 10.1 at 180 sec (946.4 against 936.3, 20000 iterations, seeds 1 and 1000003). Combat Daggers was the
+// by 10.1 at 180 sec (946.4 against 936.3, 20000 iterations, seeds 1 and 1000003), and by 7.5 since no extra
+// attack (Sword Specialization included) rolls the totem (943.8 against 936.3, 2026-11-13). Combat Daggers was the
 // default from the morning of 2026-11-12 (914.6 against 899.7 in the deployed report, before the rule),
 // Combat Swords from round 70753 (963.5 against 946.7 then) and Combat Daggers from 2026-10-23 before that.
 export const DefaultGear = GearLevel60SyntheticSwordsHitPlus2;

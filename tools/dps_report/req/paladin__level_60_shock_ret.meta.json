@@ -14,8 +14,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_ret",
   "published": {
-    "dps": 1030.2,
-    "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
+    "dps": 969.3,
+    "source": "the DPS report's main run of this request after the November 11 hotfixes (Judgement as a ranged attack, Unsealed Wrath without Windfury Totem copies, no extra attack rolling Windfury Totem) and the re-tuned seal rotation (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
   },
   "summary": "Holy Shock with most points in Retribution, Seal of Righteousness up with no twisting.",
   "keyTalents": [
@@ -69,10 +69,10 @@
   ],
   "notes": "mksettings -spec ret -gear level60_phase1_synthetic -apl level60_shock_ret -talents 550030032011012--052150312012303 -race Undead; primarySeal set to Command to match the shipped preset's options. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh).",
   "verify": {
-    "dps": 1030.2,
-    "stderr": 0.35,
+    "dps": 969.3,
+    "stderr": 0.26,
     "iters": 20000,
     "ok": true,
-    "note": "simreq of this request, 180s, seed 1"
+    "note": "the report main run of this request (2026-11-13), 180 \u00b1 20 s, 20,000 iterations, seed 1"
   }
 }

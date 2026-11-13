@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_undead",
   "apl": "level60_undead",
   "published": {
-    "dps": 1221.4,
-    "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
+    "dps": 1113.8,
+    "source": "the DPS report's main run of this request after the November 11 hotfixes (Judgement as a ranged attack, Unsealed Wrath without Windfury Totem copies, no extra attack rolling Windfury Totem) and the re-tuned seal rotation (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
   },
   "verify": {
-    "dps": 1221.4,
-    "stderr": 0.43,
+    "dps": 1113.8,
+    "stderr": 0.33,
     "iters": 20000,
     "ok": true,
-    "note": "simreq of this request, 180s, seed 1"
+    "note": "the report main run of this request (2026-11-13), 180 \u00b1 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Ret sub-Holy with Exorcism, for an Undead or Demon boss.",
   "advantage": "Exorcism only works on Undead and Demons. Purifying Power 2 makes its cooldown a third shorter.",

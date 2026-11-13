@@ -14,8 +14,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_ret_wisdom_duty",
   "published": {
-    "dps": 1020.0,
-    "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
+    "dps": 961.2,
+    "source": "the DPS report's main run of this request after the November 11 hotfixes (Judgement as a ranged attack, Unsealed Wrath without Windfury Totem copies, no extra attack rolling Windfury Totem) and the re-tuned seal rotation (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
   },
   "summary": "Keeps Judgement of Wisdom on the boss for the raid: every attacker with mana gets 59 mana on half its hits.",
   "keyTalents": [
@@ -73,11 +73,11 @@
   ],
   "notes": "Request: paladin__level_60_shock_ret with raid debuff judgementOfWisdom removed and the level60_shock_ret_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_ret_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh).",
   "verify": {
-    "dps": 1020.0,
-    "stderr": 0.34,
+    "dps": 961.2,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "simreq of this request, 180s, seed 1"
+    "note": "the report main run of this request (2026-11-13), 180 \u00b1 20 s, 20,000 iterations, seed 1"
   },
   "duty": "Judgement of Wisdom",
   "baseBuild": "paladin__level_60_shock_ret"
