@@ -51,7 +51,7 @@ stat_weights_results: {
  key: "TestSurvival-Phase1-StatWeights-Default"
  value: {
   weights: 0
-  weights: 0.76459
+  weights: 0.74711
   weights: 0
   weights: 0
   weights: 0

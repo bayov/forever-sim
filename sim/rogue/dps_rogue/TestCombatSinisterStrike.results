@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestCombatSinisterStrike-Phase5-StatWeights-Default"
  value: {
-  weights: 0.33156
-  weights: 0.54709
+  weights: 0.43103
+  weights: 0.50065
   weights: 0
   weights: 0
   weights: 0

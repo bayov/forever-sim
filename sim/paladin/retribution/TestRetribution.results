@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestRetribution-Phase5-StatWeights-Default"
  value: {
-  weights: 0.3583
-  weights: 0.12899
+  weights: 0.33441
+  weights: 0.18994
   weights: 0
   weights: 0
   weights: 0

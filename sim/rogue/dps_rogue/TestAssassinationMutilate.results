@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestAssassinationMutilate-Phase5-StatWeights-Default"
  value: {
-  weights: 0.29064
-  weights: 0.53994
+  weights: 0.3633
+  weights: 0.45839
   weights: 0
   weights: 0
   weights: 0

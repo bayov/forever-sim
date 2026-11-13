@@ -50,7 +50,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestP1TankWarrior-Phase1-StatWeights-Default"
  value: {
-  weights: 0.55895
+  weights: 0.46579
   weights: 0
   weights: 0
   weights: 0

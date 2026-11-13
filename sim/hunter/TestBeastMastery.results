@@ -51,7 +51,7 @@ stat_weights_results: {
  key: "TestBeastMastery-Phase1-StatWeights-Default"
  value: {
   weights: 0
-  weights: 1.38434
+  weights: 1.11642
   weights: 0
   weights: 0
   weights: 0

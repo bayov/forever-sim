@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestCombatDaggers-Phase5-StatWeights-Default"
  value: {
-  weights: 0.32121
-  weights: 0.56551
+  weights: 0.40151
+  weights: 0.45859
   weights: 0
   weights: 0
   weights: 0

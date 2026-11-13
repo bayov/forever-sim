@@ -51,7 +51,7 @@ stat_weights_results: {
  key: "TestLoneWolf-Phase1-StatWeights-Default"
  value: {
   weights: 0
-  weights: 1.79835
+  weights: 1.48653
   weights: 0
   weights: 0
   weights: 0

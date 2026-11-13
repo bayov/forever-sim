@@ -51,7 +51,7 @@ stat_weights_results: {
  key: "TestBeastMasteryHawk-Phase1-StatWeights-Default"
  value: {
   weights: 0
-  weights: 1.32636
+  weights: 1.12849
   weights: 0
   weights: 0
   weights: 0

@@ -50,10 +50,10 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestProtection-Phase4-StatWeights-Default"
  value: {
-  weights: 0.17885
-  weights: 0.07421
+  weights: 0.2325
+  weights: 0.11785
   weights: 0
-  weights: 0.01084
+  weights: 0.00884
   weights: 0
   weights: 0.28348
   weights: 0

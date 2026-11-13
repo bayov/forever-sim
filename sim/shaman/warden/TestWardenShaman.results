@@ -50,7 +50,7 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestWardenShaman-Phase1-StatWeights-Default"
  value: {
-  weights: 0.36938
+  weights: 0.30782
   weights: 0
   weights: 0
   weights: 0

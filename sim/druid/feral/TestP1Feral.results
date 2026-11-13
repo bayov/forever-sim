@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestP1Feral-Phase1-StatWeights-Default"
  value: {
-  weights: 1.10295
-  weights: 1.36665
+  weights: 1.02942
+  weights: 1.12393
   weights: 0
   weights: 0
   weights: 0

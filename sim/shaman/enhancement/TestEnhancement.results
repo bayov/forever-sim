@@ -197,8 +197,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase1-StatWeights-Default"
  value: {
-  weights: 1.0033
-  weights: 0.65056
+  weights: 0.83609
+  weights: 0.51082
   weights: 0
   weights: 0
   weights: 0
@@ -246,8 +246,8 @@ stat_weights_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase2-StatWeights-Default"
  value: {
-  weights: 1.01742
-  weights: 0.87591
+  weights: 0.84785
+  weights: 0.65367
   weights: 0
   weights: 0
   weights: 0
@@ -295,8 +295,8 @@ stat_weights_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase3-StatWeights-Default"
  value: {
-  weights: 0.82597
-  weights: 0.62163
+  weights: 0.82774
+  weights: 0.64444
   weights: 0
   weights: 0
   weights: 0
@@ -344,8 +344,8 @@ stat_weights_results: {
 stat_weights_results: {
  key: "TestEnhancement-Phase5-StatWeights-Default"
  value: {
-  weights: 0.82366
-  weights: 0.50257
+  weights: 0.83441
+  weights: 0.51655
   weights: 0
   weights: 0
   weights: 0

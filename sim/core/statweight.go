@@ -174,6 +174,9 @@ func buildStatWeightRequests(swr *proto.StatWeightsRequest) *proto.StatWeightReq
 		if !isPercentStat(proto.Stat(s)) {
 			statMod *= flatStatScale
 		}
+		if isAttribute(proto.Stat(s)) {
+			statMod = max(statMod, attributeStatMod)
+		}
 		statModsHigh[stat] = statMod
 		statModsLow[stat] = -statMod
 	}
@@ -219,6 +222,24 @@ func buildStatWeightRequests(swr *proto.StatWeightsRequest) *proto.StatWeightReq
 // rests, which aren't linear. -40 Stamina starts deaths, and Stamina then comes out twice what
 // it is at -10.
 const levelingStatModScale = 10.0
+
+// attributeStatMod is the smallest step for Strength, Agility, Stamina, Intellect and Spirit.
+//
+// The game rounds each attribute down after its multipliers (the floor in
+// StatDependencyManager.ApplyStatDependencies), so a step of 1 can lose its share of a
+// multiplier. With Blessing of Kings up, +1 Strength is 1.1 Strength, which rounds back to +1,
+// and every attribute came out 10% low (Strength 2.00 AP for an Enhancement Shaman, where +20
+// Strength gives the same DPS as +44 AP). +10 is exactly +11 under Kings. Other multipliers,
+// like Fish Bowl's 8%, can still be off by a point, but that's a few percent of a 10 point step.
+const attributeStatMod = 10.0
+
+func isAttribute(s proto.Stat) bool {
+	switch s {
+	case proto.Stat_StatStrength, proto.Stat_StatAgility, proto.Stat_StatStamina, proto.Stat_StatIntellect, proto.Stat_StatSpirit:
+		return true
+	}
+	return false
+}
 
 // isPercentStat is a stat counted in percent, like crit, which a point of already moves a lot.
 func isPercentStat(s proto.Stat) bool {
