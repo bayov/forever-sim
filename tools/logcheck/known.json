@@ -185,13 +185,8 @@
     "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
   },
   {
-    "kind": "never",
-    "ability": "Shadow Bolt (350026)",
-    "why": "Shadow Oil's proc, which the sim doesn't have (findings.md \"Shadow Oil's Shadow Bolt isn't in the sim\"). Its damage is small, so the other rows hold."
-  },
-  {
     "kind": "procs",
-    "ability": "Shadow Bolt (350026)",
-    "why": "Shadow Oil's proc, which the sim doesn't have (findings.md \"Shadow Oil's Shadow Bolt isn't in the sim\"). Its damage is small, so the other rows hold."
+    "ability": "Weakening Disease (18633) ticks",
+    "why": "Ticks per 100 swings depend on how long mobs live, not on the proc rate. Dungeon trash dies inside the disease's 14 sec, and the sim's mob lives all fight. The proc rate itself (22% of landed hits, Nov 13) is in the sim as 3.9 PPM."
   }
 ]

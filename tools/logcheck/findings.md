@@ -6,22 +6,6 @@ sections 2 and 6 have the format).
 
 ## Fix in the sim
 
-### Windfury Weapon attacks proc Windfury Totem, the sim's don't
-
-- **Flag**: none (asked by the user, 2026-11-13). Levels 57 to 61, Frightskull Shaft.
-- **Windows**: `111326_101810` 12:34 to 14:57, Windfury Weapon and Windfury Totem up together. A totem proc landed 10 to 20 ms after an imbue attack on 47 of 162 imbue procs (29%), 13 of them on imbue procs from Stormstrike, which never procs the totem by itself.
-- **What we think**: the imbue's attack is client spell 439440, and it is in the totem's ability table (`sim/core/windfury_totem_procs_forever.go:45`). But the sim's imbue attack carries spell ID 10486 (`WindfuryWeaponSpellId`, `sim/shaman/windfury_weapon.go:35`), so `windfuryTotemRollsOnForever` (`sim/core/buffs.go:2213`) doesn't let it roll the totem. Everything else matches: separate cooldowns, the imbue's 20% / 1.5 sec, the totem's 20% / 100 ms, the totem's extra swing rolling the imbue (26 of 118), +246 and about +445 AP.
-- **Next step**: needs the user's go. Let the sim's imbue attack roll the totem under Forever (check it by 439440, or add the imbue's rank IDs to the table), then rerun the Enhancement report builds.
-- **Status**: open, first seen 2026-11-13, last updated 2026-11-13.
-
-### Weakening Disease procs about 8 times as often as the sim's
-
-- **Flag**: `Weakening Disease (18633) ticks: procs` and `raw`, levels 57 to 61 (Frightskull Shaft).
-- **Windows**: the unattended run first saw it (`111326_101810` 12:07 to 12:39, ticks 14 or 15 vs the sim's 8, 95 to 183 per 100 white swings vs 35 to 45). `111326_101810` 12:07 to 14:57: 259 procs (239 applied or refreshed, 20 resisted) in 37 min of melee. 21.8% of landed white swings (190/873) and 22.8% of Stormstrikes (61/268). Log ticks per 100 swings 112, the sim's 49.
-- **What we think**: the client has no rate (ProcChance 101, no PPM row), and the sim's 0.5 PPM is a guess (`sim/common/item_effects.go`, Frightskull Shaft). 22% with a 3.4 sec weapon is about 3.9 PPM. The tick of 15 every 2 sec for 14 sec is the client's and went into the sim on 2026-11-13 (it had 8 for 30 sec).
-- **Next step**: needs the user's go. Under Forever about 3.9 PPM (or a flat 22% on main hand hits; one weapon speed can't tell them apart).
-- **Status**: open, first seen 2026-11-13, last updated 2026-11-13.
-
 ### Stormstrike hits about 1.6x the sim from Nov 11 10:37 to Nov 13 04:59
 
 - **Flag**: `Stormstrike (17364): raw`, mob levels 46 to 59 (114 flags, 49 windows of `WoWCombatLog-111126_095013.txt`, Nov 11 10:37 to Nov 12 07:41). `Melee: raw` stays close on most of them.
@@ -32,15 +16,15 @@ sections 2 and 6 have the format).
 - **Next step**: nothing to change in the sim. Move it to Done at the next `/log-audit` if the user agrees, and recheck the cooldown (6 or 8 sec) from cast gaps in `111326_101810`.
 - **Status**: open, first seen 2026-11-12, updated 2026-11-13 (log now fits).
 
-### Flametongue Attack rank 6 (10444) hits 6 to 8 less than the sim
-
-- **Flag**: `Flametongue Attack (10444): raw`, mob levels 55 to 59 (about 21 windows).
-- **Windows**: `111226_132121` Nov 12 14:49 to 17:41: 95 vs 103.3 (5 hits), 94 vs 102.3 (19), 98 vs 106 (21), 101 vs 109 (29), 96.7 vs 105.5, 101 vs 109 (11). `111326_101810` Nov 13 11:45 to 12:32: 104 to 105 vs 111 (16, 13, 16, 7, 7 hits and more), 110 to 111 vs 117 at 12:07 to 12:32 (24, 24, 17 hits), 108.7 vs 117.2 at 12:32. Earlier `111126_095013` Nov 12 00:26 to 07:04 was 2 low at 85 vs 87, and 13 low at 04:01 to 07:04 (85 to 87 vs 99 to 100, a different weapon, not checked).
-- **What we think**: the same as rank 5's cut of 7 (see Done, "Flametongue Weapon rank 5 hits about 7 less"). `FlametongueWeaponCut` in `sim/shaman/flametongue_weapon.go` has 0 for rank 6 because we hadn't seen it, and the log's whole numbers (94 to 111, flat in a window) say the cut is about 6 to 8 here too. Which weapon and swing speed the windows used isn't checked (the hit comes from the weapon's swing speed).
-- **Next step**: needs the user's go. Set `FlametongueWeaponCut[6]` to about 7 under Forever, then `-redo` these windows and check the weapon speeds fit. Touches the "Flametongue Weapon" line in `notes.md` if it has one.
-- **Status**: open, first seen 2026-11-13, updated 2026-11-13.
-
 ## Collect more data
+
+### Shadow Oil's Shadow Bolt hits about 11 harder than the sim
+
+- **Flag**: `Shadow Bolt (350026): raw`, levels 57 to 60.
+- **Windows**: `111326_101810` (after the 2026-11-13 fix): 129.7 vs the sim's 118.6 (6 hits), 129.8 vs 118.6 (8), 128.9 vs 118.2 (10).
+- **What we think**: the sim gives 63 to 71 plus 0.56 of spell power (`shadowOilDamageRange` in `sim/core/consumes.go`), from client 70338 with scaling capped at level 17. The log's 122 to 140 needs about 11 more: a higher base, a bigger coefficient, or scaling past 17.
+- **Next step**: more hits, and read 350026's SpellEffect and SpellLevels in the latest client tables.
+- **Status**: open, first seen 2026-11-13, last updated 2026-11-13.
 
 ### Dungeon mobs take about 2 less spell damage per hit
 
@@ -74,15 +58,6 @@ sections 2 and 6 have the format).
 - **Status**: open, first seen 2026-11-08, last updated 2026-11-08.
 
 ## logcheck issues
-
-### Shadow Oil's Shadow Bolt isn't in the sim
-
-- **Flag**: `Shadow Bolt (350026): never` and `procs` (levels 48 to 59, 12 windows from `111126_095013 00:26-00:55` to `07:23-07:33`, 11 to 19 per 100 landed white swings).
-- **Windows**: every window with the note "shaman imbue from the log: Shadow Oil" (21 reports).
-- **What we think**: Shadow Oil is a weapon oil, and logcheck replays it as an imbue the sim doesn't have, so its proc never fires. Spell damage from it is small, so the other rows hold.
-- **Nov 13 update**: 20 more windows (`111226_132121` Nov 12 13:52 to 18:10 and `111326_101810` Nov 13 11:29 to 12:39) flag Shadow Bolt the same way, 9 to 20 per 100 landed swings. Two windows show the imbue pick itself is off. `120333`, `120612`, `120714`, `120939` (Nov 13 12:03 to 12:19) read "Shadow Oil", but the log has Flametongue Attack procs (114 to 150 per 100 swings) and the sim gives 0. `123930` (12:39 to 12:48) reads Shadow Oil while the log has `Windfury Weapon (439440)` procs (40 to 68 per 100 swings) and the sim gives 0. So the imbue can change between oils, Flametongue and Windfury inside a window without a cast logcheck sees, and the audit should not take Shadow Oil as the imbue when the log's procs say otherwise.
-- **Next step**: the imbue pick is fixed (2026-11-13, see Done, "Shadow Oil replaced Windfury Weapon in logcheck"), and `known.json` has `Shadow Bolt (350026)` `never` and `procs`. Left: add the oil's proc to the sim if we want the numbers.
-- **Status**: open, first seen 2026-11-12, updated 2026-11-13.
 
 ### Sheet Attack power far from the sim's on some exports
 
@@ -175,7 +150,19 @@ sections 2 and 6 have the format).
 
 ### Weakening Disease ticks for 15 under Forever
 
-- **Done**: 2026-11-13. Client values (15 every 2 sec for 14 sec) in the sim. The proc rate is open under "Fix in the sim".
+- **Done**: 2026-11-13. Client values (15 every 2 sec for 14 sec) in the sim. Then the rate (the user's go): 3.9 PPM under Forever (`sim/common/item_effects.go`, Frightskull Shaft), from 21.8% of landed white swings (190/873) and 22.8% of Stormstrikes (61/268) with the 3.4 sec shaft. It was a guessed 0.5. Ticks per 100 swings still flag both ways, because they depend on how long mobs live (`known.json`).
+
+### Windfury Weapon attacks proc Windfury Totem
+
+- **Done**: 2026-11-13 (the user's go). In the Nov 13 log the imbue's attacks proced the totem on 54 of 174 imbue procs (31%) when no totem proc came in the 150 ms before, and on 0 of 55 when one did (the totem's 100 ms cooldown). The sim keyed its imbue attacks under 8232 to 16362, not the log's 439440, so they never rolled the totem. `windfuryWeaponAttackIds` in `sim/core/buffs.go` lets them. The 100 ms cooldown and the extra swing rule already give the 0 of 55.
+
+### Flametongue Attack rank 6 hits about 5.5 less
+
+- **Done**: 2026-11-13 (the user's go). `FlametongueWeaponCut[6]` is 5.5 under Forever. With 7 the Nov 12 and 13 windows read 1.4 low on average, with 5.5 they sit within about 1 (dungeon mobs 2 to 3 lower, see "Dungeon mobs take about 2 less").
+
+### Shadow Oil's Shadow Bolt in the sim and logcheck
+
+- **Done**: 2026-11-13 (the user's go). The sim had the oil but keyed its proc under Classic's 1382, and logcheck never gave it to the sim because the export shows only the imbue as the main hand's temporary enchant. Now the sim keys it 350026 under Forever (Frost Oil 350025), and logcheck takes the last oil or stone cast when the export has none. Proc rate fits (13.8 vs 11.5 per 100 swings, p 0.68). The damage doesn't yet, see "Shadow Oil's Shadow Bolt hits about 11 harder".
 
 ### Windfury Totem procs from main hand abilities, not only white swings
 
