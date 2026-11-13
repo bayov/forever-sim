@@ -5079,7 +5079,7 @@
       "paladin__level_60_sub_holy-duty-wisdom",
       "paladin__level_60_sub_holy_undead"
      ],
-     "note": "With Judgement a ranged attack, Judgement of Command lost its edge. The twist builds keep Seal of Righteousness up and swap to Seal of Command for the swing that spends its copies, back once Command has stored three. Ret Shock and its Wisdom duty keep Seal of Righteousness up and cast Holy Shock ahead of Holy Strike; the Wisdom duties put Holy Strike first. Sub Holy vs Undead trades a point of Reverence for a third point of Divine Intellect. With the November 11 hotfixes, the twist and sub Holy builds end 18 to 21 lower at 3 minutes, sub Holy vs Undead 11 lower, and Ret Shock 4 to 5 higher.",
+     "note": "With Judgement a ranged attack, Judgement of Command lost its edge. The twist builds keep Seal of Righteousness up and swap to Seal of Command for the swing that spends its copies, back once Command has stored three. Ret Shock and its Wisdom duty keep Seal of Righteousness up and cast Holy Shock ahead of Holy Strike; the Wisdom duties put Holy Strike first. Sub Holy vs Undead trades a point of Reverence for a third point of Divine Intellect. Holy Strike first and the Undead talents are small gains (under 2.5) kept by the user's ruling of 2026-11-13. With the November 11 hotfixes, the twist and sub Holy builds end 18 to 21 lower at 3 minutes, sub Holy vs Undead 11 lower, and Ret Shock 4 to 5 higher.",
      "commits": [
       "ec8ab9b"
      ]
@@ -5113,6 +5113,14 @@
     }
    ],
    "internal": [
+    {
+     "commit": "f6b04b9",
+     "why": "the report's own data for this update (the re-sim of the lines above)"
+    },
+    {
+     "commit": "96d59ca",
+     "why": "test expectations only"
+    },
     {
      "commit": "f8a37c8",
      "why": "the report's own data for this update"
