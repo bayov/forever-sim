@@ -9,15 +9,15 @@
   "durations": [
     180
   ],
-  "dps": 942.44,
-  "made": "2026-11-12",
-  "sim": "80ec3e4ef349",
+  "dps": 971.02,
+  "made": "2026-11-13",
+  "sim": "d6f3f47b8a0d",
   "slots": {
     "head": [
       {
         "id": 252605,
         "name": "Black Dragonscale Helm",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
@@ -26,51 +26,57 @@
       {
         "id": 20134,
         "name": "Skyfury Helm",
-        "dps": 935.03,
-        "loss": 7.41,
+        "dps": 965.38,
+        "loss": 5.65,
         "avail": "doubtful",
         "note": "Quest · needs Pristine Black Diamond (Barov or Alterac Valley?)"
       },
       {
         "id": 12752,
         "name": "Cap of the Scarlet Savant",
-        "dps": 934.55,
-        "loss": 7.88,
+        "dps": 962.28,
+        "loss": 8.74,
         "avail": "doubtful",
         "note": "Not in Forever data · quest"
       },
       {
         "id": 252604,
         "name": "Blue Dragonscale Helm",
-        "dps": 931.28,
-        "loss": 11.16,
+        "dps": 960.77,
+        "loss": 10.25,
         "avail": "doubtful",
         "note": "Leatherworking craft · Sewing Machine · station blueprint not seen dropping yet"
       },
       {
         "id": 12587,
         "name": "Eye of Rend",
-        "dps": 930.35,
-        "loss": 12.08
+        "dps": 960.3,
+        "loss": 10.73
       },
       {
-        "id": 18807,
-        "name": "Helm of Latent Power",
-        "dps": 929.14,
-        "loss": 13.3
+        "id": 16667,
+        "name": "Coif of Elements",
+        "dps": 958.66,
+        "loss": 12.36
       },
       {
         "id": 16686,
         "name": "Magister's Crown",
-        "dps": 928.27,
-        "loss": 14.17
+        "dps": 958.38,
+        "loss": 12.64
+      },
+      {
+        "id": 18807,
+        "name": "Helm of Latent Power",
+        "dps": 958.29,
+        "loss": 12.73
       },
       {
         "id": 10261,
         "suffix": 978,
         "name": "Adventurer's Bandana of the Gorilla",
-        "dps": 928.22,
-        "loss": 14.22,
+        "dps": 957.92,
+        "loss": 13.1,
         "avail": "grind",
         "note": "Random world drop"
       },
@@ -78,188 +84,179 @@
         "id": 10272,
         "suffix": 978,
         "name": "Masterwork Circlet of the Gorilla",
-        "dps": 928.22,
-        "loss": 14.22,
+        "dps": 957.92,
+        "loss": 13.1,
         "unsourced": true
       },
       {
         "id": 15439,
         "suffix": 978,
         "name": "Supreme Crown of the Gorilla",
-        "dps": 928.22,
-        "loss": 14.22
+        "dps": 957.92,
+        "loss": 13.1
       },
       {
         "id": 15684,
         "suffix": 978,
         "name": "Triumphant Skullcap of the Gorilla",
-        "dps": 928.22,
-        "loss": 14.22,
+        "dps": 957.92,
+        "loss": 13.1,
         "unsourced": true
-      },
-      {
-        "id": 16667,
-        "name": "Coif of Elements",
-        "dps": 927.95,
-        "loss": 14.49
-      },
-      {
-        "id": 17715,
-        "name": "Eye of Theradras",
-        "dps": 927.73,
-        "loss": 14.7
-      },
-      {
-        "id": 18490,
-        "name": "Insightful Hood",
-        "dps": 927.61,
-        "loss": 14.83
       },
       {
         "id": 284086,
         "name": "Scarlet Executioner's Guise",
-        "dps": 927.47,
-        "loss": 14.97,
+        "dps": 957.17,
+        "loss": 13.86,
         "unsourced": true
+      },
+      {
+        "id": 18526,
+        "name": "Crown of the Ogre King",
+        "dps": 957.04,
+        "loss": 13.98
+      },
+      {
+        "id": 18490,
+        "name": "Insightful Hood",
+        "dps": 956.97,
+        "loss": 14.05
+      },
+      {
+        "id": 13390,
+        "name": "The Postmaster's Band",
+        "dps": 956.76,
+        "loss": 14.26
       },
       {
         "id": 15193,
         "suffix": 975,
         "name": "Grand Crown of the Gorilla",
-        "dps": 926.78,
-        "loss": 15.65,
+        "dps": 956.63,
+        "loss": 14.39,
         "unsourced": true
       },
       {
         "id": 15670,
         "suffix": 975,
         "name": "Magnificent Helmet of the Gorilla",
-        "dps": 926.78,
-        "loss": 15.65,
+        "dps": 956.63,
+        "loss": 14.39,
         "unsourced": true
       },
       {
         "id": 10160,
         "suffix": 975,
         "name": "Mercurial Circlet of the Gorilla",
-        "dps": 926.78,
-        "loss": 15.65,
+        "dps": 956.63,
+        "loss": 14.39,
         "unsourced": true
       },
       {
         "id": 10150,
         "suffix": 975,
         "name": "Mighty Helmet of the Gorilla",
-        "dps": 926.78,
-        "loss": 15.65,
+        "dps": 956.63,
+        "loss": 14.39,
         "unsourced": true
       },
       {
         "id": 10226,
         "suffix": 975,
         "name": "Nightshade Helmet of the Gorilla",
-        "dps": 926.78,
-        "loss": 15.65
+        "dps": 956.63,
+        "loss": 14.39
       },
       {
         "id": 18421,
         "name": "Backwood Helm",
-        "dps": 926.69,
-        "loss": 15.75
+        "dps": 956.23,
+        "loss": 14.79
       },
       {
-        "id": 18526,
-        "name": "Crown of the Ogre King",
-        "dps": 926.58,
-        "loss": 15.85
+        "id": 279253,
+        "name": "Outlaw's Collar",
+        "dps": 956.06,
+        "loss": 14.96
       },
       {
-        "id": 13404,
-        "name": "Mask of the Unforgiven",
-        "dps": 925.77,
-        "loss": 16.66
+        "id": 17715,
+        "name": "Eye of Theradras",
+        "dps": 956.02,
+        "loss": 15.01
       },
       {
-        "id": 10235,
-        "suffix": 972,
-        "name": "Engraved Helm of the Gorilla",
-        "dps": 925.68,
-        "loss": 16.76
-      },
-      {
-        "id": 15664,
-        "suffix": 972,
-        "name": "Impenetrable Helmet of the Gorilla",
-        "dps": 925.68,
-        "loss": 16.76,
-        "unsourced": true
+        "id": 16698,
+        "name": "Dreadmist Mask",
+        "dps": 955.97,
+        "loss": 15.06
       }
     ],
     "neck": [
       {
-        "id": 22403,
-        "name": "Nacreous Shell Necklace",
-        "dps": 942.44,
+        "id": 12103,
+        "name": "Star of Mystaria",
+        "dps": 971.02,
         "loss": 0,
         "bis": true
       },
       {
-        "id": 276740,
-        "name": "Sentimental Locket",
-        "dps": 939.03,
-        "loss": 3.4
+        "id": 22403,
+        "name": "Nacreous Shell Necklace",
+        "dps": 972.19,
+        "loss": -1.17
       },
       {
-        "id": 12103,
-        "name": "Star of Mystaria",
-        "dps": 938.99,
-        "loss": 3.45
+        "id": 276740,
+        "name": "Sentimental Locket",
+        "dps": 967.93,
+        "loss": 3.09
       },
       {
         "id": 275736,
         "name": "Horn of Ve'han",
-        "dps": 936.12,
-        "loss": 6.32,
+        "dps": 966.52,
+        "loss": 4.5,
         "avail": "doubtful",
         "note": "Quest: Work Well Done"
       },
       {
+        "id": 284097,
+        "name": "Everstaring Abomination Eye",
+        "dps": 965.69,
+        "loss": 5.33,
+        "unsourced": true
+      },
+      {
         "id": 14558,
         "name": "Lady Maye's Pendant",
-        "dps": 935.73,
-        "loss": 6.7,
+        "dps": 964.54,
+        "loss": 6.48,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Classic world drop · Forever source unknown"
       },
       {
-        "id": 284097,
-        "name": "Everstaring Abomination Eye",
-        "dps": 935.31,
-        "loss": 7.12,
-        "unsourced": true
+        "id": 15411,
+        "name": "Mark of Fordring",
+        "dps": 964.28,
+        "loss": 6.74
       },
       {
         "id": 1443,
         "name": "Jeweled Amulet of Cainwyn",
-        "dps": 933.22,
-        "loss": 9.22,
+        "dps": 962.33,
+        "loss": 8.69,
         "unsourced": true,
         "avail": "doubtful",
         "note": "No known source"
       },
       {
-        "id": 18317,
-        "name": "Tempest Talisman",
-        "dps": 933.21,
-        "loss": 9.23
-      },
-      {
         "id": 12048,
         "suffix": 953,
         "name": "Prismatic Pendant of the Gorilla",
-        "dps": 932.72,
-        "loss": 9.72,
+        "dps": 961.58,
+        "loss": 9.44,
         "unsourced": true,
         "avail": "grind",
         "note": "Random world drop"
@@ -267,309 +264,311 @@
       {
         "id": 287035,
         "name": "Demon Worshipper's Necklace",
-        "dps": 932.43,
-        "loss": 10.01,
+        "dps": 961.29,
+        "loss": 9.74,
         "unsourced": true,
         "avail": "doubtful",
         "note": "No known source"
       },
       {
-        "id": 12036,
-        "suffix": 951,
-        "name": "Granite Necklace of the Gorilla",
-        "dps": 932.3,
-        "loss": 10.13,
-        "unsourced": true,
-        "avail": "grind",
-        "note": "Random world drop"
-      },
-      {
-        "id": 12046,
-        "suffix": 951,
-        "name": "Jungle Necklace of the Gorilla",
-        "dps": 932.3,
-        "loss": 10.13,
-        "unsourced": true
-      },
-      {
-        "id": 12027,
-        "suffix": 951,
-        "name": "Vermilion Necklace of the Gorilla",
-        "dps": 932.3,
-        "loss": 10.13,
-        "unsourced": true
-      },
-      {
-        "id": 15856,
-        "name": "Archlight Talisman",
-        "dps": 931.55,
-        "loss": 10.89
-      },
-      {
         "id": 12048,
-        "suffix": 990403,
-        "name": "Prismatic Pendant of the Sorcerer",
-        "dps": 931.38,
-        "loss": 11.06,
+        "suffix": 698,
+        "name": "Prismatic Pendant of the Tiger",
+        "dps": 959.95,
+        "loss": 11.07,
         "unsourced": true,
         "avail": "grind",
         "note": "Random world drop"
+      },
+      {
+        "id": 11946,
+        "suffix": 947,
+        "name": "Fire Opal Necklace of the Gorilla",
+        "dps": 959.75,
+        "loss": 11.27
+      },
+      {
+        "id": 12034,
+        "suffix": 947,
+        "name": "Marble Necklace of the Gorilla",
+        "dps": 959.75,
+        "loss": 11.27
       },
       {
         "id": 12035,
-        "suffix": 948,
+        "suffix": 947,
         "name": "Obsidian Pendant of the Gorilla",
-        "dps": 931.37,
-        "loss": 11.07,
+        "dps": 959.75,
+        "loss": 11.27,
+        "unsourced": true,
+        "avail": "grind",
+        "note": "Random world drop"
+      },
+      {
+        "id": 12036,
+        "suffix": 696,
+        "name": "Granite Necklace of the Tiger",
+        "dps": 959.53,
+        "loss": 11.49,
+        "unsourced": true,
+        "avail": "grind",
+        "note": "Random world drop"
+      },
+      {
+        "id": 12027,
+        "suffix": 696,
+        "name": "Vermilion Necklace of the Tiger",
+        "dps": 959.53,
+        "loss": 11.49,
+        "unsourced": true
+      },
+      {
+        "id": 12044,
+        "suffix": 945,
+        "name": "Arctic Pendant of the Gorilla",
+        "dps": 959.33,
+        "loss": 11.69
+      },
+      {
+        "id": 12024,
+        "suffix": 945,
+        "name": "Vanadium Talisman of the Gorilla",
+        "dps": 959.33,
+        "loss": 11.69
+      },
+      {
+        "id": 12046,
+        "suffix": 695,
+        "name": "Jungle Necklace of the Tiger",
+        "dps": 959.3,
+        "loss": 11.73,
+        "unsourced": true
+      },
+      {
+        "id": 12046,
+        "suffix": 442,
+        "name": "Jungle Necklace of the Falcon",
+        "dps": 959.24,
+        "loss": 11.78,
+        "unsourced": true
+      },
+      {
+        "id": 12034,
+        "suffix": 693,
+        "name": "Marble Necklace of the Tiger",
+        "dps": 958.87,
+        "loss": 12.15
+      },
+      {
+        "id": 12035,
+        "suffix": 693,
+        "name": "Obsidian Pendant of the Tiger",
+        "dps": 958.87,
+        "loss": 12.15,
         "unsourced": true,
         "avail": "grind",
         "note": "Random world drop"
       },
       {
         "id": 12026,
-        "suffix": 948,
-        "name": "Quicksilver Pendant of the Gorilla",
-        "dps": 931.37,
-        "loss": 11.07
+        "suffix": 693,
+        "name": "Quicksilver Pendant of the Tiger",
+        "dps": 958.87,
+        "loss": 12.15
       },
       {
         "id": 12025,
-        "suffix": 948,
-        "name": "Selenium Chain of the Gorilla",
-        "dps": 931.37,
-        "loss": 11.07
+        "suffix": 693,
+        "name": "Selenium Chain of the Tiger",
+        "dps": 958.87,
+        "loss": 12.15
       },
       {
         "id": 12045,
-        "suffix": 948,
-        "name": "Swamp Pendant of the Gorilla",
-        "dps": 931.37,
-        "loss": 11.07,
+        "suffix": 693,
+        "name": "Swamp Pendant of the Tiger",
+        "dps": 958.87,
+        "loss": 12.15,
         "unsourced": true
-      },
-      {
-        "id": 12048,
-        "suffix": 308,
-        "name": "Prismatic Pendant of Strength",
-        "dps": 931.25,
-        "loss": 11.19,
-        "unsourced": true,
-        "avail": "grind",
-        "note": "Random world drop"
-      },
-      {
-        "id": 281636,
-        "name": "Museum Keeper's Chain",
-        "dps": 931.23,
-        "loss": 11.21,
-        "unsourced": true
-      },
-      {
-        "id": 11946,
-        "suffix": 947,
-        "name": "Fire Opal Necklace of the Gorilla",
-        "dps": 931.11,
-        "loss": 11.33
-      },
-      {
-        "id": 12034,
-        "suffix": 947,
-        "name": "Marble Necklace of the Gorilla",
-        "dps": 931.11,
-        "loss": 11.33
-      },
-      {
-        "id": 12048,
-        "suffix": 990397,
-        "name": "Prismatic Pendant of the Elder",
-        "dps": 930.81,
-        "loss": 11.63,
-        "unsourced": true,
-        "avail": "grind",
-        "note": "Random world drop"
-      },
-      {
-        "id": 19608,
-        "name": "Vision of Voodress",
-        "dps": 930.73,
-        "loss": 11.71
       }
     ],
     "shoulder": [
       {
         "id": 19050,
         "name": "Mantle of the Timbermaw",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
         "note": "BoE · Loom + Timbermaw Revered · station blueprint not seen dropping yet"
       },
       {
+        "id": 18720,
+        "name": "Shroud of the Nathrezim",
+        "dps": 969.95,
+        "loss": 1.07
+      },
+      {
         "id": 272958,
         "name": "Darkspear Shoulderguards",
-        "dps": 942.43,
-        "loss": 0.01,
+        "dps": 969.1,
+        "loss": 1.92,
         "avail": "grind",
         "note": "Darkspear Raiders rep"
       },
       {
         "id": 272103,
         "name": "Darkspear Shoulderpads",
-        "dps": 941.14,
-        "loss": 1.3,
+        "dps": 967.79,
+        "loss": 3.23,
         "avail": "grind",
         "note": "Darkspear Raiders rep"
       },
       {
         "id": 272104,
         "name": "Darkspear Shoulders",
-        "dps": 941.14,
-        "loss": 1.3,
+        "dps": 967.79,
+        "loss": 3.23,
         "avail": "grind",
         "note": "Darkspear Raiders rep"
       },
       {
-        "id": 18720,
-        "name": "Shroud of the Nathrezim",
-        "dps": 940.69,
-        "loss": 1.74
+        "id": 272106,
+        "name": "Darkspear Epaulets",
+        "dps": 966.98,
+        "loss": 4.04
       },
       {
-        "id": 13374,
-        "name": "Soulstealer Mantle",
-        "dps": 938.43,
-        "loss": 4.01
+        "id": 272105,
+        "name": "Darkspear Pauldrons",
+        "dps": 966.98,
+        "loss": 4.04
       },
       {
-        "id": 18681,
-        "name": "Burial Shawl",
-        "dps": 938.36,
-        "loss": 4.08
+        "id": 271956,
+        "name": "Theramore Epaulets",
+        "dps": 966.98,
+        "loss": 4.04
+      },
+      {
+        "id": 271955,
+        "name": "Theramore Pauldrons",
+        "dps": 966.98,
+        "loss": 4.04
       },
       {
         "id": 15067,
         "name": "Ironfeather Shoulders",
-        "dps": 937.79,
-        "loss": 4.64,
+        "dps": 966.43,
+        "loss": 4.59,
         "avail": "grind",
         "note": "Leatherworking craft"
       },
       {
+        "id": 13374,
+        "name": "Soulstealer Mantle",
+        "dps": 966.36,
+        "loss": 4.66
+      },
+      {
         "id": 13961,
         "name": "Halycon's Muzzle",
-        "dps": 937.79,
-        "loss": 4.65
+        "dps": 965.97,
+        "loss": 5.05
+      },
+      {
+        "id": 18681,
+        "name": "Burial Shawl",
+        "dps": 965.9,
+        "loss": 5.12
+      },
+      {
+        "id": 22412,
+        "name": "Thuzadin Mantle",
+        "dps": 965.63,
+        "loss": 5.4
+      },
+      {
+        "id": 13013,
+        "name": "Elder Wizard's Mantle",
+        "dps": 965.56,
+        "loss": 5.46
       },
       {
         "id": 10263,
         "suffix": 963,
         "name": "Adventurer's Shoulders of the Gorilla",
-        "dps": 937.34,
-        "loss": 5.09
+        "dps": 965.01,
+        "loss": 6.01
       },
       {
         "id": 10274,
         "suffix": 963,
         "name": "Masterwork Pauldrons of the Gorilla",
-        "dps": 937.34,
-        "loss": 5.09,
+        "dps": 965.01,
+        "loss": 6.01,
         "unsourced": true
       },
       {
         "id": 15441,
         "suffix": 963,
         "name": "Supreme Shoulders of the Gorilla",
-        "dps": 937.34,
-        "loss": 5.09,
+        "dps": 965.01,
+        "loss": 6.01,
         "unsourced": true
       },
       {
         "id": 15686,
         "suffix": 963,
         "name": "Triumphant Shoulder Pads of the Gorilla",
-        "dps": 937.34,
-        "loss": 5.09,
+        "dps": 965.01,
+        "loss": 6.01,
         "unsourced": true
-      },
-      {
-        "id": 272106,
-        "name": "Darkspear Epaulets",
-        "dps": 937.34,
-        "loss": 5.1
-      },
-      {
-        "id": 272105,
-        "name": "Darkspear Pauldrons",
-        "dps": 937.34,
-        "loss": 5.1
-      },
-      {
-        "id": 271956,
-        "name": "Theramore Epaulets",
-        "dps": 937.34,
-        "loss": 5.1
-      },
-      {
-        "id": 271955,
-        "name": "Theramore Pauldrons",
-        "dps": 937.34,
-        "loss": 5.1
-      },
-      {
-        "id": 16689,
-        "name": "Magister's Mantle",
-        "dps": 937.28,
-        "loss": 5.16
-      },
-      {
-        "id": 13013,
-        "name": "Elder Wizard's Mantle",
-        "dps": 936.99,
-        "loss": 5.45
-      },
-      {
-        "id": 22412,
-        "name": "Thuzadin Mantle",
-        "dps": 936.8,
-        "loss": 5.63
-      },
-      {
-        "id": 14503,
-        "name": "Death's Clutch",
-        "dps": 936.7,
-        "loss": 5.74
-      },
-      {
-        "id": 13257,
-        "name": "Demonic Runed Spaulders",
-        "dps": 936.51,
-        "loss": 5.93
-      },
-      {
-        "id": 11685,
-        "name": "Splinthide Shoulders",
-        "dps": 936.36,
-        "loss": 6.08
       },
       {
         "id": 17732,
         "name": "Rotgrip Mantle",
-        "dps": 936.16,
-        "loss": 6.28
+        "dps": 964.97,
+        "loss": 6.05
       },
       {
-        "id": 11722,
-        "name": "Dregmetal Spaulders",
-        "dps": 935.65,
-        "loss": 6.79
+        "id": 16689,
+        "name": "Magister's Mantle",
+        "dps": 964.73,
+        "loss": 6.29
+      },
+      {
+        "id": 11685,
+        "name": "Splinthide Shoulders",
+        "dps": 964.46,
+        "loss": 6.56
+      },
+      {
+        "id": 12927,
+        "name": "Truestrike Shoulders",
+        "dps": 964.22,
+        "loss": 6.81
+      },
+      {
+        "id": 275737,
+        "name": "Hermit's Pauldron",
+        "dps": 964.2,
+        "loss": 6.82,
+        "avail": "doubtful",
+        "note": "Quest: Work Well Done"
+      },
+      {
+        "id": 13257,
+        "name": "Demonic Runed Spaulders",
+        "dps": 964.17,
+        "loss": 6.85
       }
     ],
     "back": [
       {
         "id": 272411,
         "name": "Arcanoweave Cloak",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
@@ -578,16 +577,16 @@
       {
         "id": 272414,
         "name": "Howler's Furs",
-        "dps": 939.31,
-        "loss": 3.13,
+        "dps": 967.01,
+        "loss": 4.01,
         "avail": "doubtful",
         "note": "Pix Xizzix · 75 Reals, unverified · no Real source"
       },
       {
         "id": 3475,
         "name": "Cloak of Flames",
-        "dps": 933.4,
-        "loss": 9.04,
+        "dps": 961.04,
+        "loss": 9.98,
         "unsourced": true,
         "avail": "doubtful",
         "note": "No known source"
@@ -595,160 +594,159 @@
       {
         "id": 272415,
         "name": "Stalwart Cloak",
-        "dps": 933.4,
-        "loss": 9.04,
+        "dps": 961.04,
+        "loss": 9.98,
         "avail": "doubtful",
         "note": "Pix Xizzix · ? Reals · no Real source"
       },
       {
-        "id": 18496,
-        "name": "Heliotrope Cloak",
-        "dps": 933.24,
-        "loss": 9.19
+        "id": 284866,
+        "name": "Windserpent Scaled Cloak",
+        "dps": 960.88,
+        "loss": 10.14
+      },
+      {
+        "id": 13376,
+        "name": "Royal Tribunal Cloak",
+        "dps": 960.37,
+        "loss": 10.65
+      },
+      {
+        "id": 18734,
+        "name": "Pale Moon Cloak",
+        "dps": 959.34,
+        "loss": 11.68
+      },
+      {
+        "id": 13340,
+        "name": "Cape of the Black Baron",
+        "dps": 959.15,
+        "loss": 11.87
+      },
+      {
+        "id": 280045,
+        "name": "Regal Direhorn Drape",
+        "dps": 958.62,
+        "loss": 12.41,
+        "unsourced": true
       },
       {
         "id": 10258,
-        "suffix": 951,
-        "name": "Adventurer's Cape of the Gorilla",
-        "dps": 930.07,
-        "loss": 12.36,
+        "suffix": 696,
+        "name": "Adventurer's Cape of the Tiger",
+        "dps": 958.34,
+        "loss": 12.68,
         "avail": "grind",
         "note": "Random world drop"
       },
       {
         "id": 10249,
-        "suffix": 951,
-        "name": "Master's Cloak of the Gorilla",
-        "dps": 930.07,
-        "loss": 12.36
+        "suffix": 696,
+        "name": "Master's Cloak of the Tiger",
+        "dps": 958.34,
+        "loss": 12.68
       },
       {
         "id": 10267,
-        "suffix": 951,
-        "name": "Masterwork Cape of the Gorilla",
-        "dps": 930.07,
-        "loss": 12.36
+        "suffix": 696,
+        "name": "Masterwork Cape of the Tiger",
+        "dps": 958.34,
+        "loss": 12.68
       },
       {
         "id": 15437,
-        "suffix": 951,
-        "name": "Supreme Cape of the Gorilla",
-        "dps": 930.07,
-        "loss": 12.36
+        "suffix": 696,
+        "name": "Supreme Cape of the Tiger",
+        "dps": 958.34,
+        "loss": 12.68
       },
       {
-        "id": 18510,
-        "name": "Hide of the Wild",
-        "dps": 929.95,
-        "loss": 12.48
+        "id": 10258,
+        "suffix": 307,
+        "name": "Adventurer's Cape of Strength",
+        "dps": 958.13,
+        "loss": 12.89,
+        "avail": "grind",
+        "note": "Random world drop"
       },
       {
-        "id": 18389,
-        "name": "Cloak of the Cosmos",
-        "dps": 929.37,
-        "loss": 13.07
+        "id": 10249,
+        "suffix": 307,
+        "name": "Master's Cloak of Strength",
+        "dps": 958.13,
+        "loss": 12.89
       },
       {
-        "id": 275668,
-        "name": "Summit Drape",
-        "dps": 929.24,
-        "loss": 13.2,
-        "avail": "doubtful",
-        "note": "Quest: Summit Sentries"
+        "id": 10267,
+        "suffix": 307,
+        "name": "Masterwork Cape of Strength",
+        "dps": 958.13,
+        "loss": 12.89
+      },
+      {
+        "id": 15437,
+        "suffix": 307,
+        "name": "Supreme Cape of Strength",
+        "dps": 958.13,
+        "loss": 12.89
       },
       {
         "id": 14313,
-        "suffix": 948,
-        "name": "Celestial Cape of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3
+        "suffix": 693,
+        "name": "Celestial Cape of the Tiger",
+        "dps": 957.83,
+        "loss": 13.19
       },
       {
         "id": 10098,
-        "suffix": 948,
-        "name": "Councillor's Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3
+        "suffix": 693,
+        "name": "Councillor's Cloak of the Tiger",
+        "dps": 957.83,
+        "loss": 13.19
       },
       {
         "id": 10212,
-        "suffix": 948,
-        "name": "Elegant Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3
+        "suffix": 693,
+        "name": "Elegant Cloak of the Tiger",
+        "dps": 957.83,
+        "loss": 13.19
       },
       {
         "id": 10231,
-        "suffix": 948,
-        "name": "Engraved Cape of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3
+        "suffix": 693,
+        "name": "Engraved Cape of the Tiger",
+        "dps": 957.83,
+        "loss": 13.19
       },
       {
         "id": 14331,
-        "suffix": 948,
-        "name": "Eternal Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3
+        "suffix": 693,
+        "name": "Eternal Cloak of the Tiger",
+        "dps": 957.83,
+        "loss": 13.19
       },
       {
         "id": 15190,
-        "suffix": 948,
-        "name": "Grand Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3,
+        "suffix": 693,
+        "name": "Grand Cloak of the Tiger",
+        "dps": 957.83,
+        "loss": 13.19,
         "unsourced": true
       },
       {
         "id": 10138,
-        "suffix": 948,
-        "name": "High Councillor's Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3,
+        "suffix": 693,
+        "name": "High Councillor's Cloak of the Tiger",
+        "dps": 957.83,
+        "loss": 13.19,
         "unsourced": true
       },
       {
         "id": 15661,
-        "suffix": 948,
-        "name": "Impenetrable Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3,
-        "unsourced": true
-      },
-      {
-        "id": 15671,
-        "suffix": 948,
-        "name": "Magnificent Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3
-      },
-      {
-        "id": 10159,
-        "suffix": 948,
-        "name": "Mercurial Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3
-      },
-      {
-        "id": 10148,
-        "suffix": 948,
-        "name": "Mighty Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3
-      },
-      {
-        "id": 10224,
-        "suffix": 948,
-        "name": "Nightshade Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3
-      },
-      {
-        "id": 10120,
-        "suffix": 948,
-        "name": "Ornate Cloak of the Gorilla",
-        "dps": 929.14,
-        "loss": 13.3,
+        "suffix": 693,
+        "name": "Impenetrable Cloak of the Tiger",
+        "dps": 957.83,
+        "loss": 13.19,
         "unsourced": true
       }
     ],
@@ -756,61 +754,62 @@
       {
         "id": 252484,
         "name": "Timbermaw Tunic",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
         "note": "Pattern and Fel Leather have no source"
       },
       {
-        "id": 252483,
-        "name": "Dawn Armor",
-        "dps": 936.92,
-        "loss": 5.51
-      },
-      {
         "id": 11726,
         "name": "Savage Gladiator Chain",
-        "dps": 936.81,
-        "loss": 5.63
+        "dps": 966.02,
+        "loss": 5
+      },
+      {
+        "id": 252483,
+        "name": "Dawn Armor",
+        "dps": 965.36,
+        "loss": 5.66
+      },
+      {
+        "id": 12757,
+        "name": "Breastplate of Bloodthirst",
+        "dps": 964.08,
+        "loss": 6.94,
+        "avail": "doubtful",
+        "note": "Quest: Breastplate of Bloodthirst"
       },
       {
         "id": 18530,
         "name": "Ogre Forged Hauberk",
-        "dps": 935.21,
-        "loss": 7.22
+        "dps": 963.88,
+        "loss": 7.14
+      },
+      {
+        "id": 13944,
+        "name": "Tombstone Breastplate",
+        "dps": 963.65,
+        "loss": 7.37
       },
       {
         "id": 14536,
         "name": "Bonebrace Hauberk",
-        "dps": 933.4,
-        "loss": 9.03
+        "dps": 961.84,
+        "loss": 9.18
       },
       {
         "id": 22409,
         "name": "Tunic of the Crescent Moon",
-        "dps": 933.28,
-        "loss": 9.16
-      },
-      {
-        "id": 10784,
-        "suffix": 462,
-        "name": "Atal'ai Breastplate of the Falcon",
-        "dps": 932.95,
-        "loss": 9.49
-      },
-      {
-        "id": 13314,
-        "name": "Alanna's Embrace",
-        "dps": 932.56,
-        "loss": 9.87
+        "dps": 961.62,
+        "loss": 9.4
       },
       {
         "id": 10264,
         "suffix": 978,
         "name": "Adventurer's Tunic of the Gorilla",
-        "dps": 932.5,
-        "loss": 9.93,
+        "dps": 961.35,
+        "loss": 9.67,
         "avail": "grind",
         "note": "Random world drop"
       },
@@ -818,497 +817,469 @@
         "id": 10266,
         "suffix": 978,
         "name": "Masterwork Breastplate of the Gorilla",
-        "dps": 932.5,
-        "loss": 9.93
+        "dps": 961.35,
+        "loss": 9.67
       },
       {
         "id": 10157,
         "suffix": 978,
         "name": "Mercurial Breastplate of the Gorilla",
-        "dps": 932.5,
-        "loss": 9.93,
+        "dps": 961.35,
+        "loss": 9.67,
         "unsourced": true
       },
       {
         "id": 10151,
         "suffix": 978,
         "name": "Mighty Tunic of the Gorilla",
-        "dps": 932.5,
-        "loss": 9.93,
+        "dps": 961.35,
+        "loss": 9.67,
         "unsourced": true
       },
       {
         "id": 10220,
         "suffix": 978,
         "name": "Nightshade Tunic of the Gorilla",
-        "dps": 932.5,
-        "loss": 9.93,
+        "dps": 961.35,
+        "loss": 9.67,
         "unsourced": true
       },
       {
         "id": 15442,
         "suffix": 978,
         "name": "Supreme Breastplate of the Gorilla",
-        "dps": 932.5,
-        "loss": 9.93,
+        "dps": 961.35,
+        "loss": 9.67,
         "unsourced": true
       },
       {
         "id": 15680,
         "suffix": 978,
         "name": "Triumphant Chestpiece of the Gorilla",
-        "dps": 932.5,
-        "loss": 9.93,
+        "dps": 961.35,
+        "loss": 9.67,
         "unsourced": true
       },
       {
         "id": 13090,
         "name": "Breastplate of the Chosen",
-        "dps": 932.46,
-        "loss": 9.97,
+        "dps": 960.95,
+        "loss": 10.08,
         "unsourced": true,
         "avail": "doubtful",
         "note": "No known source"
       },
       {
-        "id": 16688,
-        "name": "Magister's Robes",
-        "dps": 931.3,
-        "loss": 11.14
-      },
-      {
         "id": 15195,
         "suffix": 975,
         "name": "Grand Breastplate of the Gorilla",
-        "dps": 931.2,
-        "loss": 11.23,
+        "dps": 960.7,
+        "loss": 10.32,
         "unsourced": true
       },
       {
         "id": 15660,
         "suffix": 975,
         "name": "Impenetrable Breastplate of the Gorilla",
-        "dps": 931.2,
-        "loss": 11.23,
+        "dps": 960.7,
+        "loss": 10.32,
         "unsourced": true
       },
       {
         "id": 15669,
         "suffix": 975,
         "name": "Magnificent Breastplate of the Gorilla",
-        "dps": 931.2,
-        "loss": 11.23,
+        "dps": 960.7,
+        "loss": 10.32,
         "unsourced": true
       },
       {
         "id": 15433,
         "suffix": 975,
         "name": "Peerless Armor of the Gorilla",
-        "dps": 931.2,
-        "loss": 11.23,
+        "dps": 960.7,
+        "loss": 10.32,
         "unsourced": true
       },
       {
-        "id": 18373,
-        "name": "Chestplate of Tranquility",
-        "dps": 931.11,
-        "loss": 11.33
+        "id": 10784,
+        "suffix": 464,
+        "name": "Atal'ai Breastplate of the Falcon",
+        "dps": 960.47,
+        "loss": 10.55
       },
       {
         "id": 10784,
         "suffix": 394,
         "name": "Atal'ai Breastplate of Intellect",
-        "dps": 931.06,
-        "loss": 11.38
+        "dps": 960.46,
+        "loss": 10.56
       },
       {
-        "id": 10230,
-        "suffix": 972,
-        "name": "Engraved Breastplate of the Gorilla",
-        "dps": 930.18,
-        "loss": 12.26
+        "id": 20479,
+        "name": "Spitfire Breastplate",
+        "dps": 960.31,
+        "loss": 10.71,
+        "avail": "doubtful",
+        "note": "Leatherworking craft · Sewing Machine · station blueprint not seen dropping yet"
       },
       {
-        "id": 15650,
-        "suffix": 972,
-        "name": "Merciless Surcoat of the Gorilla",
-        "dps": 930.18,
-        "loss": 12.26,
-        "unsourced": true
+        "id": 16688,
+        "name": "Magister's Robes",
+        "dps": 960.05,
+        "loss": 10.97
+      },
+      {
+        "id": 18373,
+        "name": "Chestplate of Tranquility",
+        "dps": 959.69,
+        "loss": 11.33
       }
     ],
     "wrist": [
       {
         "id": 16714,
         "name": "Wildheart Bracers",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "bis": true
       },
       {
         "id": 19582,
         "name": "Windtalker's Wristguards",
-        "dps": 943.15,
-        "loss": -0.71
-      },
-      {
-        "id": 19587,
-        "name": "Forest Stalker's Bracers",
-        "dps": 942.65,
-        "loss": -0.21,
-        "avail": "grind",
-        "note": "Warsong Gulch Exalted"
+        "dps": 972.34,
+        "loss": -1.32
       },
       {
         "id": 19595,
         "name": "Dryad's Wrist Bindings",
-        "dps": 942.24,
-        "loss": 0.19
+        "dps": 971.42,
+        "loss": -0.4
       },
       {
-        "id": 19583,
-        "name": "Windtalker's Wristguards",
-        "dps": 942.02,
-        "loss": 0.41,
+        "id": 19587,
+        "name": "Forest Stalker's Bracers",
+        "dps": 971.24,
+        "loss": -0.22,
         "avail": "grind",
         "note": "Warsong Gulch Exalted"
+      },
+      {
+        "id": 11962,
+        "name": "Manacle Cuffs",
+        "dps": 970.19,
+        "loss": 0.83
+      },
+      {
+        "id": 19589,
+        "name": "Forest Stalker's Bracers",
+        "dps": 969.77,
+        "loss": 1.25
       },
       {
         "id": 10256,
         "suffix": 951,
         "name": "Adventurer's Bracers of the Gorilla",
-        "dps": 941.66,
-        "loss": 0.78
+        "dps": 969.45,
+        "loss": 1.57
       },
       {
         "id": 10265,
         "suffix": 951,
         "name": "Masterwork Bracers of the Gorilla",
-        "dps": 941.66,
-        "loss": 0.78
+        "dps": 969.45,
+        "loss": 1.57
       },
       {
         "id": 10156,
         "suffix": 951,
         "name": "Mercurial Bracers of the Gorilla",
-        "dps": 941.66,
-        "loss": 0.78
+        "dps": 969.45,
+        "loss": 1.57
       },
       {
-        "id": 10147,
-        "suffix": 951,
-        "name": "Mighty Armsplints of the Gorilla",
-        "dps": 941.66,
-        "loss": 0.78
+        "id": 12626,
+        "name": "Funeral Cuffs",
+        "dps": 969.29,
+        "loss": 1.73
       },
       {
-        "id": 15436,
-        "suffix": 951,
-        "name": "Supreme Bracers of the Gorilla",
-        "dps": 941.66,
-        "loss": 0.78,
-        "unsourced": true
+        "id": 12546,
+        "name": "Aristocratic Cuffs",
+        "dps": 969.21,
+        "loss": 1.81
       },
       {
-        "id": 15679,
-        "suffix": 951,
-        "name": "Triumphant Bracers of the Gorilla",
-        "dps": 941.66,
-        "loss": 0.78,
-        "unsourced": true
+        "id": 13107,
+        "name": "Magiskull Cuffs",
+        "dps": 968.96,
+        "loss": 2.06
       },
       {
-        "id": 252572,
-        "name": "Skirmisher's Mail Bracers",
-        "dps": 941.65,
-        "loss": 0.78,
-        "avail": "grind",
-        "note": "Leatherworking (BoP) · 90 Merchant's Favor"
-      },
-      {
-        "id": 19596,
-        "name": "Dryad's Wrist Bindings",
-        "dps": 941.31,
-        "loss": 1.13,
-        "avail": "grind",
-        "note": "Warsong Gulch Exalted"
-      },
-      {
-        "id": 19589,
-        "name": "Forest Stalker's Bracers",
-        "dps": 940.96,
-        "loss": 1.48
-      },
-      {
-        "id": 17714,
-        "name": "Bracers of the Stone Princess",
-        "dps": 940.76,
-        "loss": 1.67
-      },
-      {
-        "id": 20481,
-        "name": "Spitfire Bracers",
-        "dps": 940.4,
-        "loss": 2.03,
-        "avail": "doubtful",
-        "note": "Leatherworking craft · Sewing Machine · station blueprint not seen dropping yet"
-      },
-      {
-        "id": 252539,
-        "name": "Prowler's Leather Bracers",
-        "dps": 940.39,
-        "loss": 2.05,
-        "avail": "grind",
-        "note": "Leatherworking craft"
-      },
-      {
-        "id": 270125,
-        "name": "Satyrhide Armbands",
-        "dps": 939.41,
-        "loss": 3.02
-      },
-      {
-        "id": 13135,
-        "name": "Lordly Armguards",
-        "dps": 939.26,
-        "loss": 3.17
+        "id": 18709,
+        "name": "Arena Wristguards",
+        "dps": 967.97,
+        "loss": 3.05
       },
       {
         "id": 10256,
-        "suffix": 443,
-        "name": "Adventurer's Bracers of the Falcon",
-        "dps": 938.75,
-        "loss": 3.69
+        "suffix": 383,
+        "name": "Adventurer's Bracers of Intellect",
+        "dps": 967.9,
+        "loss": 3.12
+      },
+      {
+        "id": 11764,
+        "suffix": 383,
+        "name": "Cinderhide Armsplints of Intellect",
+        "dps": 967.9,
+        "loss": 3.12
+      },
+      {
+        "id": 10800,
+        "suffix": 383,
+        "name": "Darkwater Bracers of Intellect",
+        "dps": 967.9,
+        "loss": 3.12
+      },
+      {
+        "id": 10213,
+        "suffix": 383,
+        "name": "Elegant Bracers of Intellect",
+        "dps": 967.9,
+        "loss": 3.12
+      },
+      {
+        "id": 14330,
+        "suffix": 383,
+        "name": "Eternal Bindings of Intellect",
+        "dps": 967.9,
+        "loss": 3.12
+      },
+      {
+        "id": 11766,
+        "suffix": 383,
+        "name": "Flameweave Cuffs of Intellect",
+        "dps": 967.9,
+        "loss": 3.12
+      },
+      {
+        "id": 10136,
+        "suffix": 383,
+        "name": "High Councillor's Bracers of Intellect",
+        "dps": 967.9,
+        "loss": 3.12
+      },
+      {
+        "id": 15668,
+        "suffix": 383,
+        "name": "Magnificent Bracers of Intellect",
+        "dps": 967.9,
+        "loss": 3.12,
+        "unsourced": true
+      },
+      {
+        "id": 10248,
+        "suffix": 383,
+        "name": "Master's Bracers of Intellect",
+        "dps": 967.9,
+        "loss": 3.12,
+        "unsourced": true
       },
       {
         "id": 10265,
-        "suffix": 443,
-        "name": "Masterwork Bracers of the Falcon",
-        "dps": 938.75,
-        "loss": 3.69
+        "suffix": 383,
+        "name": "Masterwork Bracers of Intellect",
+        "dps": 967.9,
+        "loss": 3.12
+      },
+      {
+        "id": 10156,
+        "suffix": 383,
+        "name": "Mercurial Bracers of Intellect",
+        "dps": 967.9,
+        "loss": 3.12
       },
       {
         "id": 10147,
-        "suffix": 443,
-        "name": "Mighty Armsplints of the Falcon",
-        "dps": 938.75,
-        "loss": 3.69
-      },
-      {
-        "id": 11765,
-        "suffix": 443,
-        "name": "Pyremail Wristguards of the Falcon",
-        "dps": 938.75,
-        "loss": 3.69
-      },
-      {
-        "id": 15436,
-        "suffix": 443,
-        "name": "Supreme Bracers of the Falcon",
-        "dps": 938.75,
-        "loss": 3.69,
-        "unsourced": true
-      },
-      {
-        "id": 15679,
-        "suffix": 443,
-        "name": "Triumphant Bracers of the Falcon",
-        "dps": 938.75,
-        "loss": 3.69,
-        "unsourced": true
+        "suffix": 383,
+        "name": "Mighty Armsplints of Intellect",
+        "dps": 967.9,
+        "loss": 3.12
       }
     ],
     "hands": [
       {
-        "id": 15063,
-        "name": "Devilsaur Gauntlets",
-        "dps": 942.44,
-        "loss": 0,
-        "bis": true
-      },
-      {
-        "id": 14615,
-        "name": "Bloodmail Gauntlets",
-        "dps": 946.45,
-        "loss": -4.01
-      },
-      {
         "id": 20133,
         "name": "Skyfury Gauntlets",
-        "dps": 945.18,
-        "loss": -2.75,
+        "dps": 971.02,
+        "loss": 0,
+        "bis": true,
         "avail": "doubtful",
         "note": "Wowhead ties it to Alliance quest 97169 · Horde 8258 reward unconfirmed"
       },
       {
+        "id": 21278,
+        "name": "Stormshroud Gloves",
+        "dps": 966.44,
+        "loss": 4.58,
+        "avail": "doubtful",
+        "note": "Leatherworking craft · Sewing Machine · station blueprint not seen dropping yet"
+      },
+      {
+        "id": 14615,
+        "name": "Bloodmail Gauntlets",
+        "dps": 965.52,
+        "loss": 5.5
+      },
+      {
+        "id": 16672,
+        "name": "Gauntlets of Elements",
+        "dps": 964.66,
+        "loss": 6.36
+      },
+      {
+        "id": 12632,
+        "name": "Storm Gauntlets",
+        "dps": 964.39,
+        "loss": 6.64,
+        "avail": "grind",
+        "note": "Leatherworking craft"
+      },
+      {
+        "id": 18349,
+        "name": "Gauntlets of Accuracy",
+        "dps": 964.2,
+        "loss": 6.82
+      },
+      {
+        "id": 18367,
+        "name": "Gordok's Gauntlets",
+        "dps": 964,
+        "loss": 7.02
+      },
+      {
+        "id": 13963,
+        "name": "Voone's Vice Grips",
+        "dps": 963.83,
+        "loss": 7.19
+      },
+      {
+        "id": 16705,
+        "name": "Dreadmist Wraps",
+        "dps": 963.82,
+        "loss": 7.21
+      },
+      {
+        "id": 18387,
+        "name": "Brightspark Gloves",
+        "dps": 963.19,
+        "loss": 7.84
+      },
+      {
+        "id": 18368,
+        "name": "Gordok's Gloves",
+        "dps": 962.78,
+        "loss": 8.24
+      },
+      {
         "id": 17007,
         "name": "Stonerender Gauntlets",
-        "dps": 945.16,
-        "loss": -2.72,
+        "dps": 962.69,
+        "loss": 8.33,
         "unsourced": true
+      },
+      {
+        "id": 272097,
+        "name": "Raider Handwraps",
+        "dps": 962.27,
+        "loss": 8.75,
+        "avail": "grind",
+        "note": "Darkspear Raiders Exalted · breaks Devilsaur set"
+      },
+      {
+        "id": 271945,
+        "name": "Theramore Handwraps",
+        "dps": 962.27,
+        "loss": 8.75
+      },
+      {
+        "id": 287018,
+        "name": "Compound Gloves",
+        "dps": 962.11,
+        "loss": 8.92,
+        "avail": "doubtful",
+        "note": "No known source"
       },
       {
         "id": 272101,
         "name": "Raider Handguards",
-        "dps": 944.88,
-        "loss": -2.44,
+        "dps": 961.77,
+        "loss": 9.25,
         "avail": "grind",
         "note": "Darkspear Raiders Exalted · breaks Devilsaur set"
+      },
+      {
+        "id": 271950,
+        "name": "Theramore Handguards",
+        "dps": 961.77,
+        "loss": 9.25
+      },
+      {
+        "id": 19049,
+        "name": "Timbermaw Brawlers",
+        "dps": 961.71,
+        "loss": 9.31
+      },
+      {
+        "id": 15063,
+        "name": "Devilsaur Gauntlets",
+        "dps": 961.67,
+        "loss": 9.35
+      },
+      {
+        "id": 272099,
+        "name": "Raider Gloves",
+        "dps": 961.21,
+        "loss": 9.81
+      },
+      {
+        "id": 271948,
+        "name": "Theramore Gloves",
+        "dps": 961.21,
+        "loss": 9.81
       },
       {
         "id": 13258,
         "suffix": 965,
         "name": "Slaghide Gauntlets of the Gorilla",
-        "dps": 944,
-        "loss": -1.57
+        "dps": 960.78,
+        "loss": 10.24
       },
       {
-        "id": 10260,
-        "suffix": 961,
-        "name": "Adventurer's Gloves of the Gorilla",
-        "dps": 943.17,
-        "loss": -0.73,
-        "unsourced": true
+        "id": 20480,
+        "name": "Spitfire Gauntlets",
+        "dps": 960.69,
+        "loss": 10.34
       },
       {
-        "id": 10268,
-        "suffix": 961,
-        "name": "Masterwork Gauntlets of the Gorilla",
-        "dps": 943.17,
-        "loss": -0.73,
-        "unsourced": true
+        "id": 279257,
+        "name": "Mourning Handguards",
+        "dps": 960.64,
+        "loss": 10.38
       },
       {
-        "id": 10161,
-        "suffix": 961,
-        "name": "Mercurial Gauntlets of the Gorilla",
-        "dps": 943.17,
-        "loss": -0.73,
-        "unsourced": true
-      },
-      {
-        "id": 10149,
-        "suffix": 961,
-        "name": "Mighty Gauntlets of the Gorilla",
-        "dps": 943.17,
-        "loss": -0.73
-      },
-      {
-        "id": 15438,
-        "suffix": 961,
-        "name": "Supreme Gloves of the Gorilla",
-        "dps": 943.17,
-        "loss": -0.73
-      },
-      {
-        "id": 15682,
-        "suffix": 961,
-        "name": "Triumphant Gauntlets of the Gorilla",
-        "dps": 943.17,
-        "loss": -0.73,
-        "unsourced": true
-      },
-      {
-        "id": 252586,
-        "name": "Skirmisher's Mail Gauntlets",
-        "dps": 942.81,
-        "loss": -0.37
-      },
-      {
-        "id": 10232,
-        "suffix": 960,
-        "name": "Engraved Gauntlets of the Gorilla",
-        "dps": 942.32,
-        "loss": 0.12
-      },
-      {
-        "id": 15192,
-        "suffix": 960,
-        "name": "Grand Gauntlets of the Gorilla",
-        "dps": 942.32,
-        "loss": 0.12,
-        "unsourced": true
-      },
-      {
-        "id": 15672,
-        "suffix": 960,
-        "name": "Magnificent Gauntlets of the Gorilla",
-        "dps": 942.32,
-        "loss": 0.12,
-        "unsourced": true
-      },
-      {
-        "id": 10225,
-        "suffix": 960,
-        "name": "Nightshade Gloves of the Gorilla",
-        "dps": 942.32,
-        "loss": 0.12
-      },
-      {
-        "id": 15429,
-        "suffix": 960,
-        "name": "Peerless Gloves of the Gorilla",
-        "dps": 942.32,
-        "loss": 0.12,
-        "unsourced": true
-      },
-      {
-        "id": 8298,
-        "name": "Traveler's Gloves",
-        "dps": 942.15,
-        "loss": 0.28,
-        "unsourced": true
-      },
-      {
-        "id": 15662,
-        "suffix": 957,
-        "name": "Impenetrable Gauntlets of the Gorilla",
-        "dps": 941.73,
-        "loss": 0.7
-      },
-      {
-        "id": 10121,
-        "suffix": 957,
-        "name": "Ornate Gauntlets of the Gorilla",
-        "dps": 941.73,
-        "loss": 0.7
-      },
-      {
-        "id": 10110,
-        "suffix": 957,
-        "name": "Wanderer's Gloves of the Gorilla",
-        "dps": 941.73,
-        "loss": 0.7
-      },
-      {
-        "id": 10196,
-        "suffix": 956,
-        "name": "Crusader's Gauntlets of the Gorilla",
-        "dps": 941.09,
-        "loss": 1.35,
-        "unsourced": true
-      },
-      {
-        "id": 15644,
-        "suffix": 956,
-        "name": "Ironhide Gauntlets of the Gorilla",
-        "dps": 941.09,
-        "loss": 1.35,
-        "unsourced": true
-      },
-      {
-        "id": 15393,
-        "suffix": 956,
-        "name": "Jadefire Gloves of the Gorilla",
-        "dps": 941.09,
-        "loss": 1.35
+        "id": 13957,
+        "name": "Gargoyle Slashers",
+        "dps": 960.4,
+        "loss": 10.62
       }
     ],
     "waist": [
       {
         "id": 18405,
         "name": "Belt of the Archmage",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
@@ -1317,557 +1288,560 @@
       {
         "id": 272399,
         "name": "Stormseeker's Girdle",
-        "dps": 937.83,
-        "loss": 4.6,
+        "dps": 966.12,
+        "loss": 4.91,
         "avail": "doubtful",
         "note": "Pix Xizzix · ? Reals · no Real source"
       },
       {
         "id": 18504,
         "name": "Girdle of Insight",
-        "dps": 937.31,
-        "loss": 5.13,
+        "dps": 965.88,
+        "loss": 5.14,
         "avail": "doubtful",
         "note": "LW · Sewing Machine · station blueprint not seen dropping yet"
       },
       {
         "id": 272410,
         "name": "Windseeker's Belt",
-        "dps": 936.83,
-        "loss": 5.6,
+        "dps": 965.65,
+        "loss": 5.37,
         "avail": "doubtful",
         "note": "Pix Xizzix · ? Reals · no Real source"
       },
       {
-        "id": 11662,
-        "name": "Ban'thok Sash",
-        "dps": 934.28,
-        "loss": 8.15
+        "id": 18393,
+        "name": "Warpwood Binding",
+        "dps": 963.39,
+        "loss": 7.63
+      },
+      {
+        "id": 280011,
+        "name": "Deeproar Cord",
+        "dps": 963.01,
+        "loss": 8.01,
+        "unsourced": true,
+        "avail": "doubtful",
+        "note": "Titanosaur? · no source in db"
       },
       {
         "id": 13956,
         "name": "Clutch of Andros",
-        "dps": 934.24,
-        "loss": 8.19
-      },
-      {
-        "id": 275741,
-        "name": "Ketharas' Linked Belt",
-        "dps": 933.92,
-        "loss": 8.52,
-        "avail": "doubtful",
-        "note": "Quest: Work Well Done"
+        "dps": 962.87,
+        "loss": 8.15
       },
       {
         "id": 12606,
         "name": "Crystallized Girdle",
-        "dps": 933.86,
-        "loss": 8.57
+        "dps": 962.85,
+        "loss": 8.17
       },
       {
         "id": 14465,
         "name": "Elunarian Belt",
-        "dps": 933.85,
-        "loss": 8.59,
+        "dps": 962.31,
+        "loss": 8.71,
         "unsourced": true,
         "avail": "doubtful",
         "note": "No known source"
       },
       {
-        "id": 22242,
-        "name": "Verek's Leash",
-        "dps": 933.83,
-        "loss": 8.61
+        "id": 14614,
+        "name": "Bloodmail Belt",
+        "dps": 962.3,
+        "loss": 8.72
+      },
+      {
+        "id": 275741,
+        "name": "Ketharas' Linked Belt",
+        "dps": 961.99,
+        "loss": 9.04,
+        "avail": "doubtful",
+        "note": "Quest: Work Well Done"
+      },
+      {
+        "id": 11662,
+        "name": "Ban'thok Sash",
+        "dps": 961.88,
+        "loss": 9.14
       },
       {
         "id": 10259,
         "suffix": 960,
         "name": "Adventurer's Belt of the Gorilla",
-        "dps": 933.75,
-        "loss": 8.69
+        "dps": 961.82,
+        "loss": 9.2
       },
       {
         "id": 13387,
         "suffix": 960,
         "name": "Foresight Girdle of the Gorilla",
-        "dps": 933.75,
-        "loss": 8.69
+        "dps": 961.82,
+        "loss": 9.2
       },
       {
         "id": 15673,
         "suffix": 960,
         "name": "Magnificent Belt of the Gorilla",
-        "dps": 933.75,
-        "loss": 8.69,
+        "dps": 961.82,
+        "loss": 9.2,
         "unsourced": true
       },
       {
         "id": 10269,
         "suffix": 960,
         "name": "Masterwork Girdle of the Gorilla",
-        "dps": 933.75,
-        "loss": 8.69,
+        "dps": 961.82,
+        "loss": 9.2,
         "unsourced": true
       },
       {
         "id": 10154,
         "suffix": 960,
         "name": "Mercurial Girdle of the Gorilla",
-        "dps": 933.75,
-        "loss": 8.69
+        "dps": 961.82,
+        "loss": 9.2
       },
       {
         "id": 10145,
         "suffix": 960,
         "name": "Mighty Girdle of the Gorilla",
-        "dps": 933.75,
-        "loss": 8.69
+        "dps": 961.82,
+        "loss": 9.2
       },
       {
         "id": 10221,
         "suffix": 960,
         "name": "Nightshade Girdle of the Gorilla",
-        "dps": 933.75,
-        "loss": 8.69
+        "dps": 961.82,
+        "loss": 9.2
       },
       {
         "id": 15434,
         "suffix": 960,
         "name": "Supreme Sash of the Gorilla",
-        "dps": 933.75,
-        "loss": 8.69
+        "dps": 961.82,
+        "loss": 9.2
       },
       {
         "id": 15683,
         "suffix": 960,
         "name": "Triumphant Girdle of the Gorilla",
-        "dps": 933.75,
-        "loss": 8.69,
+        "dps": 961.82,
+        "loss": 9.2,
         "unsourced": true
+      },
+      {
+        "id": 19044,
+        "name": "Might of the Timbermaw",
+        "dps": 961.41,
+        "loss": 9.62
       },
       {
         "id": 18391,
         "name": "Eyestalk Cord",
-        "dps": 933.48,
-        "loss": 8.95
-      },
-      {
-        "id": 282074,
-        "name": "Ogre Sorcerer Belt",
-        "dps": 932.89,
-        "loss": 9.55,
-        "unsourced": true
-      },
-      {
-        "id": 12466,
-        "name": "Dawnspire Cord",
-        "dps": 932.88,
-        "loss": 9.55
+        "dps": 961.3,
+        "loss": 9.72
       },
       {
         "id": 10233,
         "suffix": 957,
         "name": "Engraved Girdle of the Gorilla",
-        "dps": 932.6,
-        "loss": 9.83
+        "dps": 961.01,
+        "loss": 10.01
       },
       {
         "id": 15191,
         "suffix": 957,
         "name": "Grand Belt of the Gorilla",
-        "dps": 932.6,
-        "loss": 9.83,
-        "unsourced": true
-      },
-      {
-        "id": 15663,
-        "suffix": 957,
-        "name": "Impenetrable Belt of the Gorilla",
-        "dps": 932.6,
-        "loss": 9.83,
+        "dps": 961.01,
+        "loss": 10.01,
         "unsourced": true
       }
     ],
     "legs": [
       {
-        "id": 22673,
-        "name": "Outrider's Chain Leggings",
-        "dps": 942.44,
-        "loss": 0,
-        "bis": true,
-        "avail": "grind",
-        "note": "Warsong Gulch Exalted"
-      },
-      {
         "id": 252486,
         "name": "Ironfeather Leggings",
-        "dps": 940.52,
-        "loss": 1.92,
+        "dps": 971.02,
+        "loss": 0,
+        "bis": true,
         "avail": "doubtful",
         "note": "Leatherworking craft · Sewing Machine · station blueprint not seen dropping yet"
-      },
-      {
-        "id": 252606,
-        "name": "Pristine Scorpid Leggings",
-        "dps": 938.26,
-        "loss": 4.18,
-        "avail": "doubtful",
-        "note": "Leatherworking craft · Sewing Machine · station blueprint not seen dropping yet"
-      },
-      {
-        "id": 15062,
-        "name": "Devilsaur Leggings",
-        "dps": 937.99,
-        "loss": 4.45,
-        "avail": "doubtful",
-        "note": "LW + Tribal · ~0.7% pattern · Sewing Machine"
-      },
-      {
-        "id": 12963,
-        "name": "Blademaster Leggings",
-        "dps": 937.98,
-        "loss": 4.46
       },
       {
         "id": 22741,
         "name": "Outrider's Lizardhide Pants",
-        "dps": 937.44,
-        "loss": 5,
+        "dps": 970.47,
+        "loss": 0.55,
         "avail": "grind",
         "note": "Warsong Gulch Exalted"
+      },
+      {
+        "id": 252606,
+        "name": "Pristine Scorpid Leggings",
+        "dps": 968,
+        "loss": 3.02,
+        "avail": "doubtful",
+        "note": "Leatherworking craft · Sewing Machine · station blueprint not seen dropping yet"
       },
       {
         "id": 22676,
         "name": "Outrider's Mail Leggings",
-        "dps": 936.21,
-        "loss": 6.23,
+        "dps": 967.94,
+        "loss": 3.08,
         "avail": "grind",
         "note": "Warsong Gulch Exalted"
       },
       {
-        "id": 18736,
-        "name": "Plaguehound Leggings",
-        "dps": 934.37,
-        "loss": 8.07
-      },
-      {
-        "id": 16687,
-        "name": "Magister's Leggings",
-        "dps": 933.65,
-        "loss": 8.78
+        "id": 22673,
+        "name": "Outrider's Chain Leggings",
+        "dps": 963.69,
+        "loss": 7.33,
+        "avail": "grind",
+        "note": "Warsong Gulch Exalted"
       },
       {
         "id": 252603,
         "name": "Red Dragonscale Leggings",
-        "dps": 932.09,
-        "loss": 10.34
-      },
-      {
-        "id": 276746,
-        "name": "Defias Enforcer's Legguards",
-        "dps": 931.11,
-        "loss": 11.33,
-        "avail": "doubtful",
-        "note": "Blazeroar · zone unknown"
-      },
-      {
-        "id": 14612,
-        "name": "Bloodmail Legguards",
-        "dps": 928.88,
-        "loss": 13.56
-      },
-      {
-        "id": 10842,
-        "name": "Windscale Sarong",
-        "dps": 928.4,
-        "loss": 14.04
+        "dps": 963.55,
+        "loss": 7.47
       },
       {
         "id": 22747,
         "name": "Outrider's Silk Leggings",
-        "dps": 928.28,
-        "loss": 14.15
+        "dps": 961.23,
+        "loss": 9.79
       },
       {
         "id": 10262,
         "suffix": 978,
         "name": "Adventurer's Legguards of the Gorilla",
-        "dps": 928.12,
-        "loss": 14.32,
+        "dps": 960.29,
+        "loss": 10.73,
         "unsourced": true
       },
       {
         "id": 10273,
         "suffix": 978,
         "name": "Masterwork Legplates of the Gorilla",
-        "dps": 928.12,
-        "loss": 14.32,
+        "dps": 960.29,
+        "loss": 10.73,
         "unsourced": true
+      },
+      {
+        "id": 11823,
+        "name": "Luminary Kilt",
+        "dps": 960.25,
+        "loss": 10.77
+      },
+      {
+        "id": 14612,
+        "name": "Bloodmail Legguards",
+        "dps": 959.91,
+        "loss": 11.11
       },
       {
         "id": 15194,
         "suffix": 975,
         "name": "Grand Legguards of the Gorilla",
-        "dps": 927.47,
-        "loss": 14.97,
+        "dps": 959.17,
+        "loss": 11.85,
         "unsourced": true
       },
       {
         "id": 15676,
         "suffix": 975,
         "name": "Magnificent Leggings of the Gorilla",
-        "dps": 927.47,
-        "loss": 14.97,
+        "dps": 959.17,
+        "loss": 11.85,
         "unsourced": true
       },
       {
         "id": 10162,
         "suffix": 975,
         "name": "Mercurial Legguards of the Gorilla",
-        "dps": 927.47,
-        "loss": 14.97
+        "dps": 959.17,
+        "loss": 11.85
       },
       {
         "id": 10152,
         "suffix": 975,
         "name": "Mighty Leggings of the Gorilla",
-        "dps": 927.47,
-        "loss": 14.97,
+        "dps": 959.17,
+        "loss": 11.85,
         "unsourced": true
       },
       {
         "id": 10227,
         "suffix": 975,
         "name": "Nightshade Leggings of the Gorilla",
-        "dps": 927.47,
-        "loss": 14.97,
+        "dps": 959.17,
+        "loss": 11.85,
         "unsourced": true
       },
       {
         "id": 15440,
         "suffix": 975,
         "name": "Supreme Leggings of the Gorilla",
-        "dps": 927.47,
-        "loss": 14.97,
+        "dps": 959.17,
+        "loss": 11.85,
         "unsourced": true
       },
       {
         "id": 15685,
         "suffix": 975,
         "name": "Triumphant Legplates of the Gorilla",
-        "dps": 927.47,
-        "loss": 14.97,
+        "dps": 959.17,
+        "loss": 11.85,
         "unsourced": true
       },
       {
-        "id": 11823,
-        "name": "Luminary Kilt",
-        "dps": 926.58,
-        "loss": 15.85
+        "id": 15065,
+        "name": "Warbear Woolies",
+        "dps": 959.1,
+        "loss": 11.92
+      },
+      {
+        "id": 12756,
+        "name": "Leggings of Arcana",
+        "dps": 958.87,
+        "loss": 12.16,
+        "avail": "doubtful",
+        "note": "Quest: Leggings of Arcana"
+      },
+      {
+        "id": 15062,
+        "name": "Devilsaur Leggings",
+        "dps": 958.52,
+        "loss": 12.5,
+        "avail": "doubtful",
+        "note": "LW + Tribal · ~0.7% pattern · Sewing Machine"
       },
       {
         "id": 20295,
         "name": "Blue Dragonscale Leggings",
-        "dps": 926.18,
-        "loss": 16.26
+        "dps": 958.37,
+        "loss": 12.65
+      },
+      {
+        "id": 16719,
+        "name": "Wildheart Kilt",
+        "dps": 958.35,
+        "loss": 12.67
+      },
+      {
+        "id": 18378,
+        "name": "Silvermoon Leggings",
+        "dps": 958.09,
+        "loss": 12.93
+      },
+      {
+        "id": 22740,
+        "name": "Outrider's Leather Pants",
+        "dps": 957.94,
+        "loss": 13.08
       }
     ],
     "feet": [
       {
         "id": 14616,
         "name": "Bloodmail Boots",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "bis": true
       },
       {
         "id": 22231,
         "name": "Kayser's Boots of Precision",
-        "dps": 941.35,
-        "loss": 1.09
-      },
-      {
-        "id": 22240,
-        "name": "Greaves of Withering Despair",
-        "dps": 939.6,
-        "loss": 2.84
+        "dps": 969.8,
+        "loss": 1.22
       },
       {
         "id": 13967,
         "name": "Windreaver Greaves",
-        "dps": 937.59,
-        "loss": 4.85
+        "dps": 968.11,
+        "loss": 2.91
+      },
+      {
+        "id": 22240,
+        "name": "Greaves of Withering Despair",
+        "dps": 967.75,
+        "loss": 3.27
       },
       {
         "id": 10270,
-        "suffix": 963,
-        "name": "Masterwork Boots of the Gorilla",
-        "dps": 932.53,
-        "loss": 9.9
-      },
-      {
-        "id": 15678,
-        "suffix": 963,
-        "name": "Triumphant Sabatons of the Gorilla",
-        "dps": 932.53,
-        "loss": 9.9,
-        "unsourced": true
-      },
-      {
-        "id": 10257,
-        "suffix": 961,
-        "name": "Adventurer's Boots of the Gorilla",
-        "dps": 932.12,
-        "loss": 10.32,
-        "avail": "grind",
-        "note": "Random world drop"
-      },
-      {
-        "id": 10146,
-        "suffix": 961,
-        "name": "Mighty Boots of the Gorilla",
-        "dps": 932.12,
-        "loss": 10.32,
-        "unsourced": true
+        "suffix": 708,
+        "name": "Masterwork Boots of the Tiger",
+        "dps": 959.81,
+        "loss": 11.22
       },
       {
         "id": 15435,
-        "suffix": 961,
-        "name": "Supreme Shoes of the Gorilla",
-        "dps": 932.12,
-        "loss": 10.32,
-        "unsourced": true
-      },
-      {
-        "id": 10257,
-        "suffix": 453,
-        "name": "Adventurer's Boots of the Falcon",
-        "dps": 928.05,
-        "loss": 14.39,
-        "avail": "grind",
-        "note": "Random world drop"
-      },
-      {
-        "id": 14329,
-        "suffix": 453,
-        "name": "Eternal Boots of the Falcon",
-        "dps": 928.05,
-        "loss": 14.39,
-        "unsourced": true
-      },
-      {
-        "id": 10137,
-        "suffix": 453,
-        "name": "High Councillor's Boots of the Falcon",
-        "dps": 928.05,
-        "loss": 14.39
-      },
-      {
-        "id": 10247,
-        "suffix": 453,
-        "name": "Master's Boots of the Falcon",
-        "dps": 928.05,
-        "loss": 14.39
-      },
-      {
-        "id": 10270,
-        "suffix": 453,
-        "name": "Masterwork Boots of the Falcon",
-        "dps": 928.05,
-        "loss": 14.39
-      },
-      {
-        "id": 10155,
-        "suffix": 453,
-        "name": "Mercurial Greaves of the Falcon",
-        "dps": 928.05,
-        "loss": 14.39
-      },
-      {
-        "id": 10146,
-        "suffix": 453,
-        "name": "Mighty Boots of the Falcon",
-        "dps": 928.05,
-        "loss": 14.39,
-        "unsourced": true
-      },
-      {
-        "id": 15435,
-        "suffix": 453,
-        "name": "Supreme Shoes of the Falcon",
-        "dps": 928.05,
-        "loss": 14.39,
+        "suffix": 708,
+        "name": "Supreme Shoes of the Tiger",
+        "dps": 959.81,
+        "loss": 11.22,
         "unsourced": true
       },
       {
         "id": 15678,
-        "suffix": 453,
-        "name": "Triumphant Sabatons of the Falcon",
-        "dps": 928.05,
-        "loss": 14.39,
+        "suffix": 708,
+        "name": "Triumphant Sabatons of the Tiger",
+        "dps": 959.81,
+        "loss": 11.22,
         "unsourced": true
       },
       {
-        "id": 14310,
-        "suffix": 451,
-        "name": "Celestial Slippers of the Falcon",
-        "dps": 927.92,
-        "loss": 14.52,
-        "unsourced": true
+        "id": 275618,
+        "name": "Scalegut Treaders",
+        "dps": 959.53,
+        "loss": 11.49
       },
       {
-        "id": 10211,
-        "suffix": 451,
-        "name": "Elegant Boots of the Falcon",
-        "dps": 927.92,
-        "loss": 14.52
+        "id": 10257,
+        "suffix": 705,
+        "name": "Adventurer's Boots of the Tiger",
+        "dps": 959.3,
+        "loss": 11.72,
+        "avail": "grind",
+        "note": "Random world drop"
       },
       {
         "id": 10234,
-        "suffix": 451,
-        "name": "Engraved Boots of the Falcon",
-        "dps": 927.92,
-        "loss": 14.52,
+        "suffix": 705,
+        "name": "Engraved Boots of the Tiger",
+        "dps": 959.3,
+        "loss": 11.72,
         "unsourced": true,
         "avail": "grind",
         "note": "Random world drop"
       },
       {
         "id": 15189,
-        "suffix": 451,
-        "name": "Grand Boots of the Falcon",
-        "dps": 927.92,
-        "loss": 14.52,
+        "suffix": 705,
+        "name": "Grand Boots of the Tiger",
+        "dps": 959.3,
+        "loss": 11.72,
         "unsourced": true
       },
       {
         "id": 15658,
-        "suffix": 451,
-        "name": "Impenetrable Sabatons of the Falcon",
-        "dps": 927.92,
-        "loss": 14.52
+        "suffix": 705,
+        "name": "Impenetrable Sabatons of the Tiger",
+        "dps": 959.3,
+        "loss": 11.72
       },
       {
         "id": 15674,
-        "suffix": 451,
-        "name": "Magnificent Greaves of the Falcon",
-        "dps": 927.92,
-        "loss": 14.52,
+        "suffix": 705,
+        "name": "Magnificent Greaves of the Tiger",
+        "dps": 959.3,
+        "loss": 11.72,
+        "unsourced": true
+      },
+      {
+        "id": 10155,
+        "suffix": 705,
+        "name": "Mercurial Greaves of the Tiger",
+        "dps": 959.3,
+        "loss": 11.72
+      },
+      {
+        "id": 10146,
+        "suffix": 705,
+        "name": "Mighty Boots of the Tiger",
+        "dps": 959.3,
+        "loss": 11.72,
         "unsourced": true
       },
       {
         "id": 10222,
-        "suffix": 451,
-        "name": "Nightshade Boots of the Falcon",
-        "dps": 927.92,
-        "loss": 14.52
+        "suffix": 705,
+        "name": "Nightshade Boots of the Tiger",
+        "dps": 959.3,
+        "loss": 11.72
+      },
+      {
+        "id": 15426,
+        "suffix": 705,
+        "name": "Peerless Boots of the Tiger",
+        "dps": 959.3,
+        "loss": 11.72,
+        "unsourced": true
+      },
+      {
+        "id": 252578,
+        "name": "Skirmisher's Mail Sabatons",
+        "dps": 959.13,
+        "loss": 11.89
+      },
+      {
+        "id": 10270,
+        "suffix": 313,
+        "name": "Masterwork Boots of Strength",
+        "dps": 958.73,
+        "loss": 12.29
+      },
+      {
+        "id": 15435,
+        "suffix": 313,
+        "name": "Supreme Shoes of Strength",
+        "dps": 958.73,
+        "loss": 12.29,
+        "unsourced": true
+      },
+      {
+        "id": 15678,
+        "suffix": 313,
+        "name": "Triumphant Sabatons of Strength",
+        "dps": 958.73,
+        "loss": 12.29,
+        "unsourced": true
+      },
+      {
+        "id": 10119,
+        "suffix": 702,
+        "name": "Ornate Greaves of the Tiger",
+        "dps": 958.6,
+        "loss": 12.42
+      },
+      {
+        "id": 15181,
+        "suffix": 702,
+        "name": "Praetorian Boots of the Tiger",
+        "dps": 958.6,
+        "loss": 12.42,
+        "unsourced": true
+      },
+      {
+        "id": 10106,
+        "suffix": 702,
+        "name": "Wanderer's Boots of the Tiger",
+        "dps": 958.6,
+        "loss": 12.42
+      },
+      {
+        "id": 252468,
+        "name": "Prowler's Leather Boots",
+        "dps": 958.6,
+        "loss": 12.42
       }
     ],
     "finger": [
       {
+        "id": 19325,
+        "name": "Don Julio's Band",
+        "dps": 971.02,
+        "loss": 0,
+        "bis": true,
+        "avail": "grind",
+        "note": "Frostwolf Exalted · AV queue unconfirmed"
+      },
+      {
         "id": 275982,
         "name": "Warden's Signet of Brilliance",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "unsourced": true,
         "bis": true,
@@ -1875,73 +1849,112 @@
         "note": "Watchers Exalted · no rep source found yet"
       },
       {
-        "id": 19325,
-        "name": "Don Julio's Band",
-        "dps": 942.44,
-        "loss": 0,
-        "bis": true,
-        "avail": "grind",
-        "note": "Frostwolf Exalted · AV queue unconfirmed"
+        "id": 275977,
+        "name": "Watcher's Signet of Brilliance",
+        "dps": 970.37,
+        "loss": 0.65,
+        "unsourced": true,
+        "avail": "doubtful",
+        "note": "Watchers Revered · no rep source found yet"
+      },
+      {
+        "id": 260219,
+        "name": "Engraved Band",
+        "dps": 969.32,
+        "loss": 1.7
       },
       {
         "id": 275981,
         "name": "Warden's Signet of Ferocity",
-        "dps": 941.31,
-        "loss": 1.12,
+        "dps": 969.2,
+        "loss": 1.82,
         "unsourced": true
+      },
+      {
+        "id": 22433,
+        "name": "Don Mauricio's Band of Domination",
+        "dps": 969.06,
+        "loss": 1.96
       },
       {
         "id": 272406,
         "name": "Channeler's Ring",
-        "dps": 940.73,
-        "loss": 1.7
+        "dps": 968.98,
+        "loss": 2.04
+      },
+      {
+        "id": 13345,
+        "name": "Seal of Rivendare",
+        "dps": 968.57,
+        "loss": 2.45
+      },
+      {
+        "id": 275738,
+        "name": "Jereman's Bauble",
+        "dps": 968.16,
+        "loss": 2.87,
+        "avail": "doubtful",
+        "note": "Quest: Return to Jereman"
+      },
+      {
+        "id": 275969,
+        "name": "Initiate's Signet of Brilliance",
+        "dps": 968.08,
+        "loss": 2.95,
+        "unsourced": true
       },
       {
         "id": 11980,
         "suffix": 954,
         "name": "Opal Ring of the Gorilla",
-        "dps": 940.63,
-        "loss": 1.81,
+        "dps": 968.03,
+        "loss": 2.99,
         "unsourced": true,
         "avail": "grind",
         "note": "Random world drop"
       },
       {
-        "id": 13345,
-        "name": "Seal of Rivendare",
-        "dps": 940.42,
-        "loss": 2.01
+        "id": 13098,
+        "name": "Painweaver Band",
+        "dps": 968.02,
+        "loss": 3
       },
       {
-        "id": 275738,
-        "name": "Jereman's Bauble",
-        "dps": 940.35,
-        "loss": 2.09,
-        "avail": "doubtful",
-        "note": "Quest: Return to Jereman"
+        "id": 276073,
+        "name": "Band of the Damned",
+        "dps": 967.86,
+        "loss": 3.16
+      },
+      {
+        "id": 18314,
+        "name": "Ring of Demonic Guile",
+        "dps": 967.62,
+        "loss": 3.4
       },
       {
         "id": 12017,
         "suffix": 952,
         "name": "Prismatic Band of the Gorilla",
-        "dps": 940.21,
-        "loss": 2.22,
+        "dps": 967.61,
+        "loss": 3.41,
         "avail": "grind",
         "note": "Random world drop"
       },
       {
-        "id": 862,
-        "suffix": 214,
-        "name": "Runed Ring of Intellect",
-        "dps": 939.53,
-        "loss": 2.91
+        "id": 13001,
+        "name": "Maiden's Circle",
+        "dps": 967.15,
+        "loss": 3.87,
+        "unsourced": true,
+        "avail": "doubtful",
+        "note": "No known source"
       },
       {
         "id": 12005,
         "suffix": 951,
         "name": "Granite Ring of the Gorilla",
-        "dps": 939.38,
-        "loss": 3.06,
+        "dps": 966.97,
+        "loss": 4.06,
         "unsourced": true,
         "avail": "grind",
         "note": "Random world drop"
@@ -1950,287 +1963,199 @@
         "id": 12016,
         "suffix": 951,
         "name": "Jungle Ring of the Gorilla",
-        "dps": 939.38,
-        "loss": 3.06,
+        "dps": 966.97,
+        "loss": 4.06,
         "unsourced": true
       },
       {
         "id": 11979,
         "suffix": 951,
         "name": "Peridot Circle of the Gorilla",
-        "dps": 939.38,
-        "loss": 3.06,
+        "dps": 966.97,
+        "loss": 4.06,
         "unsourced": true
       },
       {
         "id": 11992,
         "suffix": 951,
         "name": "Vermilion Band of the Gorilla",
-        "dps": 939.38,
-        "loss": 3.06,
+        "dps": 966.97,
+        "loss": 4.06,
         "unsourced": true
       },
       {
         "id": 10795,
         "suffix": 950,
         "name": "Drakeclaw Band of the Gorilla",
-        "dps": 939.3,
-        "loss": 3.14
+        "dps": 966.78,
+        "loss": 4.24
       },
       {
         "id": 12004,
         "suffix": 950,
         "name": "Obsidian Band of the Gorilla",
-        "dps": 939.3,
-        "loss": 3.14,
+        "dps": 966.78,
+        "loss": 4.24,
         "unsourced": true
       },
       {
-        "id": 18314,
-        "name": "Ring of Demonic Guile",
-        "dps": 939.21,
-        "loss": 3.23
+        "id": 862,
+        "suffix": 214,
+        "name": "Runed Ring of Intellect",
+        "dps": 966.16,
+        "loss": 4.86
       },
       {
-        "id": 13001,
-        "name": "Maiden's Circle",
-        "dps": 939.17,
-        "loss": 3.26,
-        "unsourced": true,
-        "avail": "doubtful",
-        "note": "No known source"
+        "id": 11945,
+        "suffix": 947,
+        "name": "Dark Iron Ring of the Gorilla",
+        "dps": 966.11,
+        "loss": 4.91
       },
       {
-        "id": 12014,
-        "suffix": 948,
-        "name": "Arctic Ring of the Gorilla",
-        "dps": 938.88,
-        "loss": 3.56
-      },
-      {
-        "id": 11978,
-        "suffix": 948,
-        "name": "Jasper Link of the Gorilla",
-        "dps": 938.88,
-        "loss": 3.56,
-        "unsourced": true
-      },
-      {
-        "id": 11991,
-        "suffix": 948,
-        "name": "Quicksilver Ring of the Gorilla",
-        "dps": 938.88,
-        "loss": 3.56,
-        "unsourced": true
-      },
-      {
-        "id": 11990,
-        "suffix": 948,
-        "name": "Selenium Loop of the Gorilla",
-        "dps": 938.88,
-        "loss": 3.56,
-        "unsourced": true
-      },
-      {
-        "id": 11977,
-        "suffix": 948,
-        "name": "Serpentine Loop of the Gorilla",
-        "dps": 938.88,
-        "loss": 3.56
-      },
-      {
-        "id": 12015,
-        "suffix": 948,
-        "name": "Swamp Ring of the Gorilla",
-        "dps": 938.88,
-        "loss": 3.56,
-        "unsourced": true
-      },
-      {
-        "id": 17045,
-        "name": "Blood of the Martyr",
-        "dps": 938.65,
-        "loss": 3.79
-      },
-      {
-        "id": 19109,
-        "name": "Deep Rooted Ring",
-        "dps": 938.65,
-        "loss": 3.79,
+        "id": 12001,
+        "suffix": 944,
+        "name": "Onyx Ring of the Gorilla",
+        "dps": 965.79,
+        "loss": 5.23,
         "unsourced": true
       }
     ],
     "trinket": [
       {
+        "id": 11815,
+        "name": "Hand of Justice",
+        "dps": 971.02,
+        "loss": 0,
+        "bis": true
+      },
+      {
         "id": 272437,
         "name": "Adaptive Combat Assistant",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
         "note": "Pix Xizzix · 125 Reals, unverified · use not simmed"
       },
       {
-        "id": 11815,
-        "name": "Hand of Justice",
-        "dps": 942.44,
-        "loss": 0,
-        "bis": true
+        "id": 270225,
+        "name": "Jewel of the Guard Captain",
+        "dps": 970.01,
+        "loss": 1.01
       },
       {
         "id": 280065,
         "name": "Behemoth Bones",
-        "dps": 940.29,
-        "loss": 2.14,
+        "dps": 969.92,
+        "loss": 1.1,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Blackmaw Hold? · no source in db"
       },
       {
-        "id": 13965,
-        "name": "Blackhand's Breadth",
-        "dps": 940,
-        "loss": 2.44
-      },
-      {
-        "id": 13968,
-        "name": "Eye of the Beast",
-        "dps": 940,
-        "loss": 2.44
-      },
-      {
-        "id": 13213,
-        "name": "Smolderweb's Eye",
-        "dps": 939.51,
-        "loss": 2.93
-      },
-      {
         "id": 22268,
         "name": "Draconic Infused Emblem",
-        "dps": 939.48,
-        "loss": 2.96
+        "dps": 969.08,
+        "loss": 1.94
       },
       {
         "id": 18537,
         "name": "Counterattack Lodestone",
-        "dps": 939.46,
-        "loss": 2.98
-      },
-      {
-        "id": 270225,
-        "name": "Jewel of the Guard Captain",
-        "dps": 939.03,
-        "loss": 3.41
+        "dps": 969.07,
+        "loss": 1.95
       },
       {
         "id": 18471,
         "name": "Royal Seal of Eldre'Thalas",
-        "dps": 939,
-        "loss": 3.43
+        "dps": 968.61,
+        "loss": 2.41
       },
       {
         "id": 272438,
         "name": "Weakness Analyzer",
-        "dps": 939,
-        "loss": 3.43,
+        "dps": 968.61,
+        "loss": 2.41,
         "avail": "doubtful",
         "note": "Pix Xizzix · ? Reals · unique with ACA"
       },
       {
-        "id": 280060,
-        "name": "Lucky Shovelnose Tuft",
-        "dps": 938.12,
-        "loss": 4.31,
-        "avail": "doubtful",
-        "note": "Bonesnout the Unbroken · Blackmaw Hold · not in guides yet"
-      },
-      {
-        "id": 12930,
-        "name": "Briarwood Reed",
-        "dps": 938.04,
-        "loss": 4.4
-      },
-      {
         "id": 19120,
         "name": "Rune of the Guard Captain",
-        "dps": 937.95,
-        "loss": 4.49
+        "dps": 968.12,
+        "loss": 2.9
       },
       {
         "id": 280074,
         "name": "Scalding Flamehoof",
-        "dps": 937.8,
-        "loss": 4.64
+        "dps": 967.93,
+        "loss": 3.1
+      },
+      {
+        "id": 12930,
+        "name": "Briarwood Reed",
+        "dps": 967.63,
+        "loss": 3.39
       },
       {
         "id": 18370,
         "name": "Vigilance Charm",
-        "dps": 937.8,
-        "loss": 4.64
+        "dps": 967.38,
+        "loss": 3.64
+      },
+      {
+        "id": 280060,
+        "name": "Lucky Shovelnose Tuft",
+        "dps": 967.24,
+        "loss": 3.78,
+        "avail": "doubtful",
+        "note": "Bonesnout the Unbroken · Blackmaw Hold · not in guides yet"
       },
       {
         "id": 276337,
         "name": "Thaelemaches' Talisman",
-        "dps": 936.96,
-        "loss": 5.47,
+        "dps": 966.53,
+        "loss": 4.49,
         "avail": "doubtful",
         "note": "Quest: Blind Vengeance"
       },
       {
         "id": 276744,
         "name": "Zarla's Snack Pouch",
-        "dps": 936.75,
-        "loss": 5.68
+        "dps": 966.32,
+        "loss": 4.7
       },
       {
         "id": 286556,
         "name": "Winds of Tanaris",
-        "dps": 936.55,
-        "loss": 5.89,
+        "dps": 966.11,
+        "loss": 4.91,
         "unsourced": true
       },
       {
         "id": 272439,
         "name": "Serenity Field",
-        "dps": 935.47,
-        "loss": 6.97
+        "dps": 965.02,
+        "loss": 6.01
       },
       {
         "id": 13382,
         "name": "Cannonball Runner",
-        "dps": 935.42,
-        "loss": 7.01
+        "dps": 964.94,
+        "loss": 6.08
       },
       {
         "id": 11302,
         "name": "Uther's Strength",
-        "dps": 935.15,
-        "loss": 7.29
-      },
-      {
-        "id": 11832,
-        "name": "Burst of Knowledge",
-        "dps": 934.86,
-        "loss": 7.57
-      },
-      {
-        "id": 11819,
-        "name": "Second Wind",
-        "dps": 934.8,
-        "loss": 7.64
-      },
-      {
-        "id": 274760,
-        "name": "Everlook Delivery Bot",
-        "dps": 934.43,
-        "loss": 8
+        "dps": 964.69,
+        "loss": 6.33
       }
     ],
     "mainhand": [
       {
         "id": 19323,
         "name": "The Unstoppable Force",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "bis": true,
         "avail": "grind",
@@ -2239,30 +2164,30 @@
       {
         "id": 20696,
         "name": "Crystal Spiked Maul",
-        "dps": 938.56,
-        "loss": 3.88,
+        "dps": 968.46,
+        "loss": 2.56,
         "avail": "doubtful",
         "note": "No known source"
       },
       {
         "id": 18538,
         "name": "Treant's Bane",
-        "dps": 932.88,
-        "loss": 9.56
+        "dps": 959.36,
+        "loss": 11.66
       },
       {
         "id": 250617,
         "name": "Stormcarver",
-        "dps": 929.24,
-        "loss": 13.2,
+        "dps": 957.73,
+        "loss": 13.3,
         "avail": "doubtful",
         "note": "Blacksmithing · Master Forge · station blueprint not seen dropping yet"
       },
       {
         "id": 280056,
         "name": "Flameslash Crescent",
-        "dps": 928.13,
-        "loss": 14.31,
+        "dps": 957.3,
+        "loss": 13.72,
         "unsourced": true,
         "avail": "doubtful",
         "note": "Blackmaw Hold? · no source in db"
@@ -2270,89 +2195,109 @@
       {
         "id": 12784,
         "name": "Arcanite Reaper",
-        "dps": 927.76,
-        "loss": 14.68,
+        "dps": 956.56,
+        "loss": 14.46,
         "avail": "doubtful",
         "note": "Blacksmithing · Master Forge · station blueprint not seen dropping yet"
+      },
+      {
+        "id": 280018,
+        "name": "Hammer of Thundering Hooves",
+        "dps": 955.81,
+        "loss": 15.21
+      },
+      {
+        "id": 1263,
+        "name": "Brain Hacker",
+        "dps": 953.62,
+        "loss": 17.4,
+        "unsourced": true
       },
       {
         "id": 15267,
         "suffix": 990707,
         "name": "Brutehammer of Magic",
-        "dps": 926.91,
-        "loss": 15.52,
+        "dps": 952.69,
+        "loss": 18.33,
         "avail": "grind",
         "note": "Random world drop"
       },
       {
-        "id": 280018,
-        "name": "Hammer of Thundering Hooves",
-        "dps": 926.75,
-        "loss": 15.68
+        "id": 13372,
+        "name": "Slavedriver's Cane",
+        "dps": 951.18,
+        "loss": 19.84
       },
       {
-        "id": 1263,
-        "name": "Brain Hacker",
-        "dps": 925.55,
-        "loss": 16.88,
-        "unsourced": true
-      },
-      {
-        "id": 15267,
-        "suffix": 990704,
-        "name": "Brutehammer of the Elder",
-        "dps": 923.24,
-        "loss": 19.2,
-        "avail": "grind",
-        "note": "Random world drop"
+        "id": 12796,
+        "name": "Hammer of the Titans",
+        "dps": 950.27,
+        "loss": 20.75
       },
       {
         "id": 15267,
         "suffix": 990710,
         "name": "Brutehammer of the Sorcerer",
-        "dps": 922.94,
-        "loss": 19.49,
+        "dps": 950.01,
+        "loss": 21.01,
         "avail": "grind",
         "note": "Random world drop"
       },
       {
-        "id": 12796,
-        "name": "Hammer of the Titans",
-        "dps": 921.56,
-        "loss": 20.88
+        "id": 15267,
+        "suffix": 990704,
+        "name": "Brutehammer of the Elder",
+        "dps": 949.62,
+        "loss": 21.41,
+        "avail": "grind",
+        "note": "Random world drop"
       },
       {
-        "id": 13372,
-        "name": "Slavedriver's Cane",
-        "dps": 921.17,
-        "loss": 21.26
+        "id": 18420,
+        "name": "Bonecrusher",
+        "dps": 948.39,
+        "loss": 22.63
       },
       {
         "id": 15266,
         "suffix": 990701,
         "name": "Fierce Mauler of Magic",
-        "dps": 920.97,
-        "loss": 21.46,
+        "dps": 948.04,
+        "loss": 22.98,
         "unsourced": true
       },
       {
         "id": 287046,
         "name": "Pylon Poker",
-        "dps": 920.32,
-        "loss": 22.11
+        "dps": 947.54,
+        "loss": 23.48
       },
       {
-        "id": 18420,
-        "name": "Bonecrusher",
-        "dps": 920.23,
-        "loss": 22.2
+        "id": 11931,
+        "name": "Dreadforge Retaliator",
+        "dps": 946.6,
+        "loss": 24.42
+      },
+      {
+        "id": 13983,
+        "name": "Gravestone War Axe",
+        "dps": 945.82,
+        "loss": 25.2
+      },
+      {
+        "id": 15266,
+        "suffix": 990702,
+        "name": "Fierce Mauler of the Sorcerer",
+        "dps": 945.69,
+        "loss": 25.33,
+        "unsourced": true
       },
       {
         "id": 15267,
         "suffix": 990705,
         "name": "Brutehammer of Healing",
-        "dps": 919.91,
-        "loss": 22.52,
+        "dps": 945.6,
+        "loss": 25.42,
         "avail": "grind",
         "note": "Random world drop"
       },
@@ -2360,56 +2305,33 @@
         "id": 15266,
         "suffix": 990700,
         "name": "Fierce Mauler of the Elder",
-        "dps": 919.67,
-        "loss": 22.77,
+        "dps": 944.75,
+        "loss": 26.27,
         "unsourced": true
       },
       {
         "id": 13000,
         "name": "Staff of Hale Magefire",
-        "dps": 919.33,
-        "loss": 23.1
-      },
-      {
-        "id": 13983,
-        "name": "Gravestone War Axe",
-        "dps": 918.87,
-        "loss": 23.57
-      },
-      {
-        "id": 11931,
-        "name": "Dreadforge Retaliator",
-        "dps": 918.7,
-        "loss": 23.74
-      },
-      {
-        "id": 15266,
-        "suffix": 990702,
-        "name": "Fierce Mauler of the Sorcerer",
-        "dps": 918.54,
-        "loss": 23.89,
-        "unsourced": true
+        "dps": 944.24,
+        "loss": 26.78
       },
       {
         "id": 272079,
         "name": "Darkspear Raider's Reaper",
-        "dps": 918.09,
-        "loss": 24.34
+        "dps": 943.27,
+        "loss": 27.75
       },
       {
         "id": 271924,
         "name": "Rebels' Rugged Reaper",
-        "dps": 918.09,
-        "loss": 24.34
+        "dps": 943.27,
+        "loss": 27.75
       },
       {
-        "id": 15267,
-        "suffix": 990709,
-        "name": "Brutehammer of the Prophet",
-        "dps": 916.25,
-        "loss": 26.19,
-        "avail": "grind",
-        "note": "Random world drop"
+        "id": 13167,
+        "name": "Fist of Omokk",
+        "dps": 943.09,
+        "loss": 27.93
       }
     ],
     "offhand": [],
@@ -2417,7 +2339,7 @@
       {
         "id": 272432,
         "name": "Totem of the Storm",
-        "dps": 942.44,
+        "dps": 971.02,
         "loss": 0,
         "bis": true,
         "avail": "doubtful",
@@ -2426,8 +2348,8 @@
       {
         "id": 272433,
         "name": "Burning Totem",
-        "dps": 940.95,
-        "loss": 1.49,
+        "dps": 969.63,
+        "loss": 1.39,
         "avail": "doubtful",
         "note": "Pix Xizzix · ? Reals · no Real source"
       }
