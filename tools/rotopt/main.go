@@ -62,6 +62,7 @@ func main() {
 	professions := flag.String("professions", "", "override the player's two professions for the gear search, e.g. Engineering,Blacksmithing (bind on pickup crafted gear and goggles need them)")
 	gearScreenIters := flag.Int("gear-screen-iters", 0, "gear search: score every item of a slot at this many iterations first, and only the best -gear-screen-keep at -iters (0 scores all at -iters)")
 	gearScreenKeep := flag.Int("gear-screen-keep", 20, "gear search: how many items per slot survive the screen")
+	gearInclude := flag.String("gear-include", "", "item IDs the gear search keeps whatever -gear-phase and -gear-no-raids say, comma separated (the Darkmoon cards, open in Forever though our data puts them in phase 3)")
 	gearExclude := flag.String("gear-exclude", "", "item IDs the gear search leaves out, comma separated (Manual Crowd Pummeler and its three charges, say)")
 	minHealth := flag.Float64("min-health", 0, "gear search: the least health the set must have without buffs or consumes, for a PvP set")
 	minArmor := flag.Float64("min-armor", 0, "gear search: the least armor the set must have without buffs or consumes")
@@ -345,12 +346,16 @@ func main() {
 		if l := setup.player().Level; l > 0 {
 			level = l
 		}
-		var exclude []int32
-		for _, id := range strings.Split(*gearExclude, ",") {
-			if v, err := strconv.Atoi(id); err == nil {
-				exclude = append(exclude, int32(v))
+		ids := func(list string) []int32 {
+			var out []int32
+			for _, id := range strings.Split(list, ",") {
+				if v, err := strconv.Atoi(id); err == nil {
+					out = append(out, int32(v))
+				}
 			}
+			return out
 		}
+		exclude, include := ids(*gearExclude), ids(*gearInclude)
 		// An excluded item the player is wearing comes off first, or the search would
 		// keep it since nothing in the pool is compared against it.
 		if equipment := setup.player().Equipment; equipment != nil {
@@ -366,7 +371,7 @@ func main() {
 				excludeEnchants = append(excludeEnchants, int32(v))
 			}
 		}
-		pool, err := loadGearPool(*dbPath, *itemLevelsPath, *foreverItemsPath, setup.player(), level, proto.ItemQuality(*gearQuality), int32(*gearPhase), int32(*gearMinIlvl), int32(*gearMaxIlvl), exclude, *gearHitOnly, *gearSynthetic, *gearNoRaids)
+		pool, err := loadGearPool(*dbPath, *itemLevelsPath, *foreverItemsPath, setup.player(), level, proto.ItemQuality(*gearQuality), int32(*gearPhase), int32(*gearMinIlvl), int32(*gearMaxIlvl), exclude, include, *gearHitOnly, *gearSynthetic, *gearNoRaids)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "loading items: %v\n", err)
 			os.Exit(2)

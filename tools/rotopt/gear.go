@@ -44,6 +44,9 @@ type gearOption struct {
 	// reward with no other source (Silent Hunter from Call to Arms, say). The main and
 	// off hand never both hold it.
 	once bool
+	// suffixStats is what the random suffix adds, nil for an item without one. The BiS list
+	// uses it to drop the weaker rolls of a suffix (bestRolls).
+	suffixStats []float64
 }
 
 var gearSlotNames = []string{"head", "neck", "shoulder", "back", "chest", "wrist", "hands", "waist", "legs", "feet", "finger1", "finger2", "trinket1", "trinket2", "mainhand", "offhand", "ranged"}
@@ -196,7 +199,7 @@ func loadUnsourcedItems(path string) (map[int32]bool, error) {
 var foreverPvpRankName = regexp.MustCompile(`^(Premier )?(Private|Scout|Corporal|Grunt|Sergeant|Senior Sergeant|Master Sergeant|First Sergeant|Sergeant Major|Stone Guard|Knight|Blood Guard|Knight-Lieutenant|Legionnaire|Knight-Captain|Centurion|Knight-Champion|Champion|Lieutenant Commander|Lieutenant General|Commander|General|Marshal|Warlord|Field Marshal|High Warlord|Grand Marshal)'s `)
 
 // Every option for every slot the player can use at their level.
-func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase, minIlvl, maxIlvl int32, exclude []int32, hitOnly, synthetic, noRaids bool) ([][]gearOption, error) {
+func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, level int32, minQuality proto.ItemQuality, maxPhase, minIlvl, maxIlvl int32, exclude, include []int32, hitOnly, synthetic, noRaids bool) ([][]gearOption, error) {
 	data, err := os.ReadFile(dbPath)
 	if err != nil {
 		return nil, err
@@ -234,12 +237,13 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 			if hitOnly && !itemHit {
 				return
 			}
-			pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id}, item.Name, twoHand, unsourced, once})
+			pool[slot] = append(pool[slot], gearOption{spec: &proto.ItemSpec{Id: item.Id}, name: item.Name, twoHand: twoHand, unsourced: unsourced, once: once})
 			return
 		}
 		for _, id := range item.RandomSuffixOptions {
 			if s, ok := suffixes[id]; ok && usefulSuffix(class, s) && (!hitOnly || itemHit || hasHit(s.Stats)) {
-				pool[slot] = append(pool[slot], gearOption{&proto.ItemSpec{Id: item.Id, RandomSuffix: id}, item.Name + " " + s.Name, twoHand, unsourced, once})
+				pool[slot] = append(pool[slot], gearOption{spec: &proto.ItemSpec{Id: item.Id, RandomSuffix: id}, name: item.Name + " " + s.Name,
+					twoHand: twoHand, unsourced: unsourced, once: once, suffixStats: s.Stats})
 			}
 		}
 	}
@@ -265,8 +269,11 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 			continue
 		}
 		// The phase is the raid tier the item drops in (1 MC/Onyxia, 2 Dire Maul, 3 BWL,
-		// 4 ZG, 5 AQ, 6 Naxx), for a "phase 2 BiS" style search.
-		if maxPhase > 0 && item.Phase > maxPhase {
+		// 4 ZG, 5 AQ, 6 Naxx), for a "phase 2 BiS" style search. An included item is open
+		// whatever its phase says (the Darkmoon cards are phase 3 in our data, but Forever
+		// has the Darkmoon Faire from the start).
+		included := contains(include, item.Id)
+		if maxPhase > 0 && item.Phase > maxPhase && !included {
 			continue
 		}
 		// Forever's new items know no raid tier, so the item level is what keeps a
@@ -289,7 +296,7 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 		if contains(exclude, item.Id) {
 			continue
 		}
-		if noRaids && raidOnly(item) {
+		if noRaids && raidOnly(item) && !included {
 			continue
 		}
 		// A few items have no level of their own (Olmann Sewar, the engineering goggles),

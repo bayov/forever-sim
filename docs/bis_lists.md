@@ -14,9 +14,25 @@ in the user's WoW folder turns them into the addon's data.
 slot until a full round changes nothing. With `-gear-rank-out` it then ranks each slot
 (`tools/rotopt/bis.go`). Every item the pool offers for the slot goes into the set in place of
 the pick, with the rest of the set as it is and the slot's enchant carried over, and we record
-its DPS and what it loses against the set. Each slot is screened at `-gear-screen-iters` first
-and the best `-gear-screen-keep` are scored again at `-iters`, the same as the search does. We
-keep the best `-gear-rank-keep` (10 by default) per slot, the picks included.
+its DPS and what it loses against the set. We keep the best `-gear-rank-keep` (10 by default)
+per slot, the picks included.
+
+A slot can have hundreds of items, so we race them instead of scoring them all at `-iters`.
+First we drop the weaker rolls of each random suffix. Two rolls of an item with the same suffix
+name only differ in how much of each stat they give, so a roll with no more of any stat than
+another one can't do better. Then we score everything at `-gear-screen-iters`, then what is
+left at about the geometric mean of the two (447 for 100 and 2000), then the rest at `-iters`.
+Between two steps an item is dropped only when it is behind by more than `-confidence`
+standard errors of the gap: behind an empty slot, or behind the item one and a half times
+`-gear-rank-keep` down the list (counting each item and suffix name once). The runs share their
+seed, so the error of a gap is the paired one, from each iteration's DPS: a few points of a
+stat change little from one iteration to the next, while 2% crit moves every roll after it and
+pairs about as badly as two unrelated runs. An item that scores
+exactly what the empty slot scores is dropped too, since the runs share their seed and it
+changes nothing the sim sees. Before 2026-11-13 we kept a plain top 50 of the 100 iteration
+screen, which is several DPS off. Trinkets are within a few DPS of each other and of an empty
+slot, so the Phase 0 trinket list lost Blackhand's Breadth (7.7 DPS better than an empty slot)
+and came out with 19 of its 25 entries.
 
 A few slots work differently:
 
@@ -111,8 +127,10 @@ what Forever has before its raids open can come up (`tools/rotopt/phase0.go`). I
 out the items `tools/rotopt/phase0_content.json` marks `out`, and keeps 25 items a slot. Our
 item data puts Classic patch 1.10's Dungeon Set 2 chain in phase 1 or 2, so its summoned bosses'
 drops (Sothos and Jarien, Lord Valthalak, Kormok, Isalien, Mor Grayhoof, Theldren) and its quest
-rewards (Beads of Ogre Might) are `out` there by hand. The list keeps the off hand empty next to
-its two hander (`-gear-rank-two-hand-only`).
+rewards (Beads of Ogre Might) are `out` there by hand. The other way round, the items marked
+`include` there join whatever their phase (`-gear-include`): the four Darkmoon cards, which our
+data puts in phase 3, but Forever has the Darkmoon Faire open. The list keeps the off hand empty
+next to its two hander (`-gear-rank-two-hand-only`).
 
 ## Before release
 

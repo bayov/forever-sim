@@ -56,6 +56,10 @@ type searcher struct {
 	// search per set, where a minimum needs a search for every floor we try.
 	healthWeight, armorWeight float64
 
+	// saveValues asks each run for every iteration's DPS, so gainNoise can pair two results.
+	// The BiS ranking turns it on (rankGear).
+	saveValues bool
+
 	cache map[string]result
 	evals int
 }
@@ -85,11 +89,12 @@ func (s *searcher) prepare(knobs Knobs) *pendingScore {
 	rot := s.template.Build(knobs)
 	p := &pendingScore{knobs: knobs, cache: s.cache}
 	for _, d := range s.durations {
-		key := fmt.Sprintf("%s%s|%g|%s|%d", s.setup.talents, s.setup.hitKey(), d, knobs, s.iterations)
+		key := fmt.Sprintf("%s%s|%g|%s|%d|%t", s.setup.talents, s.setup.hitKey(), d, knobs, s.iterations, s.saveValues)
 		r, ok := s.cache[key]
 		var request *proto.RaidSimRequest
 		if !ok {
 			request = s.setup.runRequest(rot, d, s.iterations)
+			request.SimOptions.SaveAllValues = s.saveValues
 		}
 		p.keys = append(p.keys, key)
 		p.requests = append(p.requests, request)
@@ -177,6 +182,7 @@ func (s *searcher) combine(p *pendingScore) result {
 		r.stderr *= tankscore.SharedSeedSD
 	}
 	if len(s.durations) == 1 {
+		r.values = p.results[0].values
 		r.leveling = p.results[0].leveling
 		r.tank = p.results[0].tank
 	}

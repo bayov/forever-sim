@@ -34,13 +34,18 @@
 #     what the game has open (2026-11-12): "out" means not before the raids, "doubtful" means
 #     we don't know of a way yet, and "grind" means open but slow. Items not in it are open now.
 #
+# What it lets in anyway: the items phase0_content.json marks "include", whatever -gear-phase
+# and -gear-no-raids say (-gear-include). Those are the four Darkmoon cards (Heroism, Blue
+# Dragon, Maelstrom and Twisting Nether). Our item data puts them in phase 3, but Forever has
+# the Darkmoon Faire open, and the cards are the rewards of its decks.
+#
 # The pick is a two hander, so the main hand list has only two handers and the off hand list
 # is empty (-gear-rank-two-hand-only). We don't list a one hand setup next to it.
 #
 # Each slot keeps its 25 best items. After the search we copy `avail` and `note` from
 # phase0_content.json onto every entry of the list, so a rerun keeps them.
 #
-# On 2026-11-12 the search took 18 min on 16 cores (two rounds, then the ranking of 25 a slot).
+# On 2026-11-13 the whole script took 16 min on 16 cores (two rounds, then the ranking of 25 a slot).
 set -e
 
 sim="$(jj log --no-graph -r @- -T 'commit_id.short()')$(jj log --no-graph -r @ -T 'if(empty, "", "+")')"
@@ -51,6 +56,7 @@ req=tools/dps_report/req/shaman__enhancement-level60.json
 content=tools/rotopt/phase0_content.json
 out=ui/enhancement_shaman/bis/level60_phase0.bis.json
 exclude="275972,275973,275974,275975,276765,284716,$(jq -r '[to_entries[] | select(.value.avail == "out") | .key] | join(",")' "$content")"
+include="$(jq -r '[to_entries[] | select(.value.include) | .key] | join(",")' "$content")"
 jq '.raid.parties[0].players[0].rotation' "$req" >"$tmp/enh.apl.json"
 # Head, neck, shoulder, back, chest, wrist, hands, waist, legs, feet, two rings, two trinkets,
 # main hand, off hand and the relic, in the order of the equipment list. The report's enchant
@@ -63,7 +69,7 @@ jq '.raid.parties[0].players[0].equipment.items as $old
 
 go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/enh.json" -durs 180 -iters 2000 \
 	-gear-search -gear-no-raids -gear-phase 2 -gear-min-ilvl 50 \
-	-gear-exclude "$exclude" \
+	-gear-exclude "$exclude" -gear-include "$include" \
 	-gear-screen-iters 100 -gear-screen-keep 20 \
 	-gear-rank-out "$out" -gear-rank-name "Phase 0" -gear-rank-keep 25 -gear-rank-two-hand-only \
 	-gear-rank-spec enh -gear-rank-sim "$sim"
