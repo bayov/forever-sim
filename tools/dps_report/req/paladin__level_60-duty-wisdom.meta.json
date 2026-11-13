@@ -42,10 +42,10 @@
     "Judgement of Wisdom at the pull, for the duty. It lasts 40s and the paladin's melee hits refresh it, so one cast lasts the fight. Judge it again only if it drops",
     "Hammer of Wrath under 20% boss health, before Consecration",
     "Consecration on cooldown at 20%+ mana",
+    "Holy Strike on cooldown, ahead of Judgement and the seal lines",
     "Judgement on cooldown on whichever damage seal is up",
-    "Seal of Command whenever no damage seal is up",
-    "Unsealed Wrath: with Seal of Command up, once it has stored 2 copies, Seal of Righteousness, so the next swing spends them all (one Seal of Command roll each) and stores a Righteousness copy. Back to Seal of Command once that copy is stored",
-    "Holy Strike on cooldown",
+    "Seal of Righteousness whenever no damage seal is up",
+    "Unsealed Wrath: with Seal of Righteousness up, once it has stored all 3 copies, Seal of Command, so the next swing spends them all (one Righteousness hit each) and stores a Command copy. Back to Seal of Righteousness once Command has stored all 3, so that swing spends three Seal of Command rolls",
     "Exorcism on cooldown (only against Undead and Demons)",
     "Racials on free GCDs"
   ],

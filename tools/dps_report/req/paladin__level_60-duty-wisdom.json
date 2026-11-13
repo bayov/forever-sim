@@ -307,6 +307,16 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 10333
+                      }
+                    }
+                  },
+                  "notes": "Holy Strike on cooldown."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 20271
                       }
                     },
@@ -319,14 +329,14 @@
                                 {
                                   "auraIsActive": {
                                     "auraId": {
-                                      "spellId": 20920
+                                      "spellId": 20293
                                     }
                                   }
                                 },
                                 {
                                   "auraIsActive": {
                                     "auraId": {
-                                      "spellId": 20293
+                                      "spellId": 20920
                                     }
                                   }
                                 }
@@ -353,7 +363,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20920
+                        "spellId": 20293
                       }
                     },
                     "condition": {
@@ -367,14 +377,14 @@
                                     {
                                       "auraIsActive": {
                                         "auraId": {
-                                          "spellId": 20920
+                                          "spellId": 20293
                                         }
                                       }
                                     },
                                     {
                                       "auraIsActive": {
                                         "auraId": {
-                                          "spellId": 20293
+                                          "spellId": 20920
                                         }
                                       }
                                     }
@@ -397,47 +407,7 @@
                       }
                     }
                   },
-                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20293
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 20920
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "auraNumStacks": {
-                                  "auraId": {
-                                    "spellId": 1311703
-                                  }
-                                }
-                              },
-                              "op": "OpGe",
-                              "rhs": {
-                                "const": {
-                                  "val": "2"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "Unsealed Wrath: once the seal has stored 2 copies, the other damage seal, so the next swing spends them all."
+                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
                 },
                 {
                   "action": {
@@ -468,7 +438,7 @@
                               "op": "OpGe",
                               "rhs": {
                                 "const": {
-                                  "val": "1"
+                                  "val": "3"
                                 }
                               }
                             }
@@ -477,17 +447,47 @@
                       }
                     }
                   },
-                  "notes": "And back once the other seal has stored a copy, which the next swing spends."
+                  "notes": "Unsealed Wrath: once the seal has stored 3 copies, the other damage seal, so the next swing spends them all."
                 },
                 {
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10333
+                        "spellId": 20293
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 20920
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "auraNumStacks": {
+                                  "auraId": {
+                                    "spellId": 1311703
+                                  }
+                                }
+                              },
+                              "op": "OpGe",
+                              "rhs": {
+                                "const": {
+                                  "val": "3"
+                                }
+                              }
+                            }
+                          }
+                        ]
                       }
                     }
                   },
-                  "notes": "Holy Strike on cooldown."
+                  "notes": "And back once the other seal has stored 3 copies, which the next swing spends."
                 },
                 {
                   "action": {

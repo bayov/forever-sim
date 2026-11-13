@@ -17,7 +17,7 @@
     "dps": 1030.2,
     "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
   },
-  "summary": "Holy Shock with most points in Retribution, Seal of Command up with no twisting.",
+  "summary": "Holy Shock with most points in Retribution, Seal of Righteousness up with no twisting.",
   "keyTalents": [
     "Holy Shock",
     "Consecrated Ground",
@@ -30,14 +30,14 @@
   ],
   "rotation": [
     "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use; Goblin Sapper Charge on cooldown",
-    "Pre-pull: Seal of Command at -1.5s",
+    "Pre-pull: Seal of Righteousness at -1.5s",
     "Consecration on cooldown at any mana",
     "Judgement on cooldown",
-    "Seal of Command whenever it's down (no twisting)",
+    "Seal of Righteousness whenever it's down (no twisting)",
     "Hammer of Wrath under 20% boss health, before Holy Strike",
+    "Holy Shock on cooldown, ahead of Holy Strike",
     "Holy Strike on cooldown",
     "Exorcism on cooldown (only against Undead and Demons)",
-    "Holy Shock on cooldown",
     "Racials on free GCDs"
   ],
   "consumes": [

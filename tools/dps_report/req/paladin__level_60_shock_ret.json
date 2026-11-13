@@ -103,7 +103,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20920
+                        "spellId": 20293
                       }
                     }
                   },
@@ -235,7 +235,7 @@
                           {
                             "auraIsActive": {
                               "auraId": {
-                                "spellId": 20920
+                                "spellId": 20293
                               }
                             }
                           }
@@ -249,7 +249,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20920
+                        "spellId": 20293
                       }
                     },
                     "condition": {
@@ -260,7 +260,7 @@
                               "val": {
                                 "auraIsActive": {
                                   "auraId": {
-                                    "spellId": 20920
+                                    "spellId": 20293
                                   }
                                 }
                               }
@@ -270,7 +270,17 @@
                       }
                     }
                   },
-                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
+                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20930
+                      }
+                    }
+                  },
+                  "notes": "Holy Shock on cooldown. Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -301,16 +311,6 @@
                     }
                   },
                   "notes": "Exorcism on cooldown, only against Undead and Demons."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20930
-                      }
-                    }
-                  },
-                  "notes": "Holy Shock on cooldown. Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {

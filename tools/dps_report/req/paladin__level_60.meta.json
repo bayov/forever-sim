@@ -25,7 +25,7 @@
     "ok": true,
     "note": "simreq of this request, 180s, seed 1"
   },
-  "summary": "Retribution build that keeps Seal of Command up and swaps to Seal of Righteousness for the swing that spends its Unsealed Wrath copies.",
+  "summary": "Retribution build that keeps Seal of Righteousness up and swaps to Seal of Command and back to spend its Unsealed Wrath copies.",
   "keyTalents": [
     "Unsealed Wrath",
     "Seal of Command",
@@ -38,13 +38,13 @@
   ],
   "rotation": [
     "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use; Goblin Sapper Charge on cooldown",
-    "Pre-pull: Seal of Command at -1.5s",
+    "Pre-pull: Seal of Righteousness at -1.5s",
     "Hammer of Wrath under 20% boss health, before Consecration",
     "Consecration on cooldown at 20%+ mana",
     "Holy Strike on cooldown, ahead of Judgement and the seal lines",
     "Judgement on cooldown on whichever damage seal is up",
-    "Seal of Command whenever no damage seal is up",
-    "Unsealed Wrath: with Seal of Command up, once it has stored 2 copies, Seal of Righteousness, so the next swing spends them all (one Seal of Command roll each) and stores a Righteousness copy. Back to Seal of Command once that copy is stored. When the mana won't cover 30 a second of the fight left, wait for all 3 copies: each swap costs a seal",
+    "Seal of Righteousness whenever no damage seal is up",
+    "Unsealed Wrath: with Seal of Righteousness up, once it has stored 2 copies, Seal of Command, so the next swing spends them all (one Righteousness hit each) and stores a Command copy. Back to Seal of Righteousness once Command has stored all 3, so that swing spends three Seal of Command rolls. When the mana won't cover 30 a second of the fight left, wait for all 3 Righteousness copies too: each swap costs a seal",
     "Exorcism on cooldown (only against Undead and Demons)",
     "Racials on free GCDs"
   ],

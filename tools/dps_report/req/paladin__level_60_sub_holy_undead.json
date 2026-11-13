@@ -92,7 +92,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "0502520022-2-05233101201301351",
+            "talentsString": "0501520022-3-05233101201301351",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Blacksmithing",
@@ -103,7 +103,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20920
+                        "spellId": 20293
                       }
                     }
                   },
@@ -261,14 +261,14 @@
                                 {
                                   "auraIsActive": {
                                     "auraId": {
-                                      "spellId": 20920
+                                      "spellId": 20293
                                     }
                                   }
                                 },
                                 {
                                   "auraIsActive": {
                                     "auraId": {
-                                      "spellId": 20293
+                                      "spellId": 20920
                                     }
                                   }
                                 }
@@ -285,7 +285,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20920
+                        "spellId": 20293
                       }
                     },
                     "condition": {
@@ -299,14 +299,14 @@
                                     {
                                       "auraIsActive": {
                                         "auraId": {
-                                          "spellId": 20920
+                                          "spellId": 20293
                                         }
                                       }
                                     },
                                     {
                                       "auraIsActive": {
                                         "auraId": {
-                                          "spellId": 20293
+                                          "spellId": 20920
                                         }
                                       }
                                     }
@@ -319,7 +319,47 @@
                       }
                     }
                   },
-                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
+                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20920
+                      }
+                    },
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 20293
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "auraNumStacks": {
+                                  "auraId": {
+                                    "spellId": 1311704
+                                  }
+                                }
+                              },
+                              "op": "OpGe",
+                              "rhs": {
+                                "const": {
+                                  "val": "3"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "notes": "Unsealed Wrath: once the seal has stored 3 copies, the other damage seal, so the next swing spends them all."
                 },
                 {
                   "action": {
@@ -359,47 +399,7 @@
                       }
                     }
                   },
-                  "notes": "Unsealed Wrath: once the seal has stored 3 copies, the other damage seal, so the next swing spends them all."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20920
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 20293
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "auraNumStacks": {
-                                  "auraId": {
-                                    "spellId": 1311704
-                                  }
-                                }
-                              },
-                              "op": "OpGe",
-                              "rhs": {
-                                "const": {
-                                  "val": "1"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "And back once the other seal has stored a copy, which the next swing spends."
+                  "notes": "And back once the other seal has stored 3 copies, which the next swing spends."
                 },
                 {
                   "action": {

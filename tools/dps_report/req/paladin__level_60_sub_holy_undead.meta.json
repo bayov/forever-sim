@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 111,
   "race": "Undead",
-  "talents": "0502520022-2-05233101201301351",
+  "talents": "0501520022-3-05233101201301351",
   "treeNames": [
     "Holy",
     "Protection",
@@ -44,12 +44,12 @@
   ],
   "rotation": [
     "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use; Goblin Sapper Charge on cooldown",
-    "Pre-pull: Seal of Command at -1.5s",
+    "Pre-pull: Seal of Righteousness at -1.5s",
     "Hammer of Wrath under 20% boss health, before Consecration",
     "Consecration on cooldown at 20%+ mana",
     "Judgement on cooldown on whichever damage seal is up",
-    "Seal of Command whenever no damage seal is up",
-    "Unsealed Wrath: with Seal of Command up, once it has stored all 3 copies, Seal of Righteousness, so the next swing spends them all (one Seal of Command roll each) and stores a Righteousness copy. Back to Seal of Command once that copy is stored, keeping the mana for Exorcism",
+    "Seal of Righteousness whenever no damage seal is up",
+    "Unsealed Wrath: with Seal of Righteousness up, once it has stored all 3 copies, Seal of Command, so the next swing spends them all (one Righteousness hit each) and stores a Command copy. Back to Seal of Righteousness once Command has stored all 3, keeping the mana for Exorcism",
     "Holy Strike on cooldown",
     "Exorcism on cooldown (only against Undead and Demons)",
     "Racials on free GCDs"

@@ -274,7 +274,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20920
+                        "spellId": 20293
                       }
                     },
                     "condition": {
@@ -285,7 +285,7 @@
                               "val": {
                                 "auraIsActive": {
                                   "auraId": {
-                                    "spellId": 20920
+                                    "spellId": 20293
                                   }
                                 }
                               }
@@ -305,7 +305,7 @@
                       }
                     }
                   },
-                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
+                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
                 },
                 {
                   "action": {
@@ -330,7 +330,7 @@
                           {
                             "auraIsActive": {
                               "auraId": {
-                                "spellId": 20920
+                                "spellId": 20293
                               }
                             }
                           },

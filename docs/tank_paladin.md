@@ -219,6 +219,16 @@ also scores more: Max threat +18.9 ± 0.2 / +18.9 ± 0.2, Balanced +19.8 ± 0.4 
 under the new flask: nothing else moves. Whole requests, old against new (10,000, seed 1): Max threat 3,168.8 →
 **3,188.0**, Balanced 2,755.3 → **2,775.2**.
 
+## Judgements as ranged attacks (November 11 hotfix, 2026-11-12)
+
+Re-searched on the current requests with `rotopt -template paladin_tank` over the six bosses (1,000 iterations a
+candidate, 3,000 to confirm, Templar's Bulwark frozen at 10 sec, no Divine Shield): knobs and talents at each
+weight. Max threat (3,245.9 ± 4.2) and Balanced (2,804.5 ± 6.7) keep every knob and string. Seal of Righteousness
+loses heavily at all three weights. Max survival's knob search picked Consecration down to 80% mana (from 60%,
+1,775.7 → 1,784.0, noise 17), but paired `abtest` at 10,000 iterations does not separate it: six-boss +3.1 ± 5.5
+(seed 1) and +3.3 ± 5.5 (seed 2), and -4.2 ± 4.4 / -6.1 ± 4.1 without Broodlord, so it stays at 60%. Its talent
+search drifted on noise to a lower score (1,751.2 against 1,775.7 at the start). Nothing changes for the tank.
+
 ## Presets (step 6)
 
 The presets now (round 5: Balanced on Max threat's talents and boots, Greater Agility boots at every preset, Max
