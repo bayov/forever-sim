@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "97da1cca5c346e31e3896a31a769dd1c699705d6"
+  "master": "cad23ae1a904481efff8d10b581c393ecf1d7f94"
  },
  "last_pass_at": "2026-11-13T07:18:54Z",
  "pass": 11,
@@ -8,5 +8,5 @@
  "note": "Pass 11 on 97da1cca5. Only gate file sim/paladin/unsealed_wrath.go (Windfury echo rule, Ret melee only). Baseline 63 rows bit-identical to ref. -20261104-2 still open.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-13T07:19:19Z"
+ "checked_at": "2026-11-13T12:45:39Z"
 }
