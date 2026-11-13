@@ -273,6 +273,18 @@ var SpellIconoverrides = []*proto.IconData{
 	{Id: 11712, Name: "Bane of Agony", Icon: "spell_shadow_curseofsargeras", Rank: 5, HasBuff: true},
 	{Id: 11713, Name: "Bane of Agony", Icon: "spell_shadow_curseofsargeras", Rank: 6, HasBuff: true},
 	{Id: 603, Name: "Bane of Doom", Icon: "spell_shadow_auraofdarkness", HasBuff: true},
+	// Forever gave these spells new icons; the Classic tooltips keep the old ones. Icons from Wowhead's
+	// Forever tooltips (dataEnv 16), checked 2026-11-13. Only the icon is set, so the Classic name and rank stay.
+	{Id: 17364, Icon: "ability_shaman_stormstrike"},    // Stormstrike
+	{Id: 16166, Icon: "spell_nature_unrelentingstorm"}, // Lightning Mastery
+	{Id: 2944, Icon: "spell_shadow_devouringplague"},   // Devouring Plague
+	{Id: 19276, Icon: "spell_shadow_devouringplague"},
+	{Id: 19277, Icon: "spell_shadow_devouringplague"},
+	{Id: 19278, Icon: "spell_shadow_devouringplague"},
+	{Id: 19279, Icon: "spell_shadow_devouringplague"},
+	{Id: 19280, Icon: "spell_shadow_devouringplague"},
+	{Id: 9898, Icon: "ability_druid_demoralizingroar"}, // Demoralizing Roar
+	{Id: 16958, Icon: "ability_ghoulfrenzy"},           // Blood Frenzy
 }
 
 // Raid buffs / debuffs

@@ -87,7 +87,11 @@ def enchant_name(eid, slot_i, item_id=None):
 spell_icons = {s['id']: s for s in db['spellIcons']}
 # Forever spells the sim keys by a borrowed or renamed Classic/SoD spell id: show Forever's name and icon
 FOREVER_SPELL = {425336: ('Rage of the Farseer', 'spell_nature_bloodlust'), 11713: ('Bane of Agony', None), 603: ('Bane of Doom', None),
-                 462707: ('Cutthroat', 'classicon_rogue')}  # Cutthroat's proc, which the client names by id only (the talent's icon)
+                 462707: ('Cutthroat', 'classicon_rogue'),  # Cutthroat's proc, which the client names by id only (the talent's icon)
+                 # Forever's icons for spells the db doesn't carry (Wowhead's Forever tooltips, 2026-11-13); the db's own
+                 # are fixed in tools/database/overrides.go SpellIconoverrides
+                 30165: ('Elemental Devastation', 'spell_fire_elementaldevastation'), 1235827: ('Lacerate', 'ability_druid_lacerate'),
+                 1310726: ('Expose Prey', 'ability_hunter_swiftstrike'), 1329549: ('Shank', 'ability_theblackarrow')}
 for _id, (_nm, _ic) in FOREVER_SPELL.items():
     _s = dict(spell_icons.get(_id) or {'id': _id})
     _s['name'] = _nm
