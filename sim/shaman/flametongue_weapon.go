@@ -31,9 +31,13 @@ var FlametongueWeaponScaling = [FlametongueWeaponRanks + 1]core.RankScaling{{}, 
 //
 // Rank 5 hits about 7 below at level 47, from our log of 2026-11-09 on Mograine's Might (3.4
 // speed): 74 raw in about 140 hits, where the full points give 81. That's the only weapon speed
-// we have for it, so we don't know yet whether its cut is flat like rank 3's. We haven't seen
-// ranks 4 and 6, so they keep the client's points.
-var FlametongueWeaponCut = [FlametongueWeaponRanks + 1]float64{0, 0, 2, 5, 0, 7, 0}
+// we have for it, so we don't know yet whether its cut is flat like rank 3's.
+//
+// Rank 6 hits about 5.5 below, from our logs of Nov 12 and 13 at levels 55 to 60 (Alcaz
+// Willcrusher at 3.2 speed and Frightskull Shaft at 3.4). With no cut the sim gave 6 to 8 more
+// than the log, and with 7 it gave 1.4 less on average (about 15 windows). We haven't seen rank
+// 4, so it keeps the client's points.
+var FlametongueWeaponCut = [FlametongueWeaponRanks + 1]float64{0, 0, 2, 5, 0, 7, 5.5}
 
 func (shaman *Shaman) flametongueRank() int {
 	return core.HighestKnownRank(&shaman.Character, FlametongueWeaponLevel[:], FlametongueWeaponSpellId[:])
