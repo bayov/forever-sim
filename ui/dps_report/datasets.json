@@ -11,7 +11,7 @@
   "title": "Buff and debuff uptime",
   "description": "Per preset, the average share of the fight each aura is up on the player or the boss, and how often it is applied.",
   "updated": {
-   "at": "2026-11-13T01:00:22.114Z",
+   "at": "2026-11-13T01:35:32.075Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -52,7 +52,7 @@
   "title": "More icons",
   "description": "36 px spell, item and aura icons and the sim UI's empty gear-slot icons, as data URLs. They load after the Ranking tab is up.",
   "updated": {
-   "at": "2026-11-11T13:49:00.133Z",
+   "at": "2026-11-13T01:35:32.075Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "common"
@@ -85,7 +85,7 @@
   "title": "Spell and item names",
   "description": "Names, icons and an icon-derived colour for the spell, item and attack ids in the timelines, breakdowns and rotations.",
   "updated": {
-   "at": "2026-11-11T23:12:13.343Z",
+   "at": "2026-11-13T01:35:32.075Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "common"
@@ -142,7 +142,7 @@
   "title": "Rotation priority lists",
   "description": "Each preset's APL as simmed: pre-pull casts with their timing, then the priority list in order, each line's spell, a plain-English condition, the APL's own note, its exact condition and the spell's casts per fight.",
   "updated": {
-   "at": "2026-11-13T01:00:22.114Z",
+   "at": "2026-11-13T01:35:32.075Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -150,7 +150,7 @@
   "title": "Race rotations",
   "description": "The races that play their own rotation on a preset: each line lined up with the preset's (the same, changed, added or removed), with why it changed. No cast counts: the race sims record DPS only.",
   "updated": {
-   "at": "2026-11-04T07:09:43.444Z",
+   "at": "2026-11-13T01:35:32.075Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -255,7 +255,7 @@
   "title": "Game tooltip text",
   "description": "Tooltip text for the spells, items, enchants, consumes, races and stat weights on the page: wowhead's WoW Forever database first (with a link to its page), the Forever client's talent text and the Forever wiki where it has nothing, Classic's text only as a marked last resort, the sim's own numbers where they differ, the item database for the synthetic gear, and the Forever racials.",
   "updated": {
-   "at": "2026-11-12T17:51:05.492Z",
+   "at": "2026-11-13T01:35:32.075Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "common"
@@ -297,7 +297,7 @@
   "title": "Event view names",
   "description": "The name, icon and rank of every spell and item in the sample fights and of each preset's weapons, as the sim UI's database and wowhead name them. Made by tools/dps_report/events.py.",
   "updated": {
-   "at": "2026-11-12T17:51:05.492Z",
+   "at": "2026-11-13T01:35:32.075Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -305,7 +305,7 @@
   "title": "Event view icons",
   "description": "36 px icons, as data URLs, that the sample fights show and icons and icons_more lack. Made by tools/dps_report/events.py.",
   "updated": {
-   "at": "2026-11-11T13:49:00.133Z",
+   "at": "2026-11-13T01:35:32.075Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -383,7 +383,7 @@
   "title": "Tanking rotations",
   "description": "Per tanking preset, the APL's steps in the DPS rotation dataset's shape (no cast counts; the bench reports none), with each step's notes.",
   "updated": {
-   "at": "2026-11-12T22:49:20.673Z",
+   "at": "2026-11-13T01:35:32.075Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "tank"

@@ -20,7 +20,7 @@ assumptions: 58 rows, 63 KB
 WARNING assumptions: 1 texts name the project's process, e.g. 'Forever client 70753 (every Ice Lance rank: 8 sec cooldown, category 19). Client 70707 (spell 1312002). foreverchanges.pro. User rulings 2026-10-30 an'
 assumption_dps: 291 rows, 48 KB
 rotation: 655 rows, 209 KB
-race_rotation: 293 rows, 108 KB
+race_rotation: 293 rows, 109 KB
 WARNING race_rotation: 5 changed lines with no why in race_text.json, e.g. priest__smite Gnome priority:s10934
 WARNING rotation: 10 rotation_text.json notes entries no line uses, e.g. Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab.
 WARNING rotation: 3 conditions read like code, with no wording in rotation_text.json, e.g. No Bane of Agony on the boss and over 60s of the fight left and (Warlock Synthetic Talisman (Phase 1) is ready within 59s or over 60s until the trinket is ready)
@@ -32,7 +32,7 @@ tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)'
 talenttrees: 467 rows, 180 KB
 wowhead coverage: {'item:forever': 71, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 250, 'spell:wiki': 11, 'spell:client': 14, 'item:db': 272, 'enchant:forever': 283, 'enchant:db': 66, 'setup:sim': 5, 'setup:forever': 34, 'setup:none': 3} {'forever': 307, 'other': 21} {'forever': 1344, 'none': 27}
 icons: 81 rows, 163 KB
-icons_more: 614 rows, 933 KB
+icons_more: 614 rows, 934 KB
 names: 307 rows, 30 KB
 names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark', 'Curse of Elements', 'Dark Inspiration', 'Death Mark', 'Death Mark', 'Death Mark', 'Decimation', 'Decimation - Execute', 'Demonic Knowledge', 'Dragonfire Potion', 'Echo of Command', 'Echo of Righteousness', 'Eclipse', 'Frigid Power', 'Heating Up', 'Improved Stormstrike', 'Item 260817', 'Lacerating Strikes', 'Maelstrom Weapon', 'Major Frenzy Potion', 'Major Spellblasting Potion', 'Mana gain', 'Missile Barrage', 'Movement', 'Potion', 'Quick Strikes', 'Rage gain', 'Raid damage hit', 'Reckless Swings', 'Shadow Word Death', 'Shadow and Flame (Shadow)', 'Tenets of the Silver Hand', 'Unsealed Wrath']
 treeart: 27 rows, 1063 KB

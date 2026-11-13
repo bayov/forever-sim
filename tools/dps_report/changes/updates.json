@@ -5208,6 +5208,10 @@
     {
      "commit": "d7e9b15",
      "why": "the pre-raid Enhancement gear list; no report preset changes"
+    },
+    {
+     "commit": "be2a28d",
+     "why": "spell icons only (Forever's icons for 14 spells); no numbers change"
     }
    ],
    "source": {
