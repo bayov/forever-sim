@@ -301,7 +301,7 @@ func setImbue(char *character, all []*event, cl *combatLog, ex *export, tables *
 	for hand, temp := range ex.Imbues {
 		for _, spell := range tables.enchantSpells[temp.Enchant] {
 			value, ok := imbueFromName(tables.spellNames[spell])
-			if !ok {
+			if _, shaman := shamanImbueFromName(tables.spellNames[spell]); !ok || shaman {
 				continue
 			}
 			if hand == "off" {
@@ -310,6 +310,31 @@ func setImbue(char *character, all []*event, cl *combatLog, ex *export, tables *
 				char.player.Consumes.MainHandImbue = value
 			}
 			break
+		}
+	}
+
+	// A shaman's oil or stone sits on the weapon next to the imbue, but the export shows only
+	// one temporary enchant a weapon. On Nov 13 it showed Windfury 3 while Shadow Oil's Shadow
+	// Bolt kept proccing. So when the export gives the main hand no oil or stone, we take the
+	// last one we cast before the window ends. The oil lasted over an hour that day (cast at
+	// 12:39, still proccing at 13:50), so we don't look for it running out.
+	if char.player.Consumes.MainHandImbue == 0 && char.player.GetEnhancementShaman() != nil {
+		var oil proto.WeaponImbue
+		oilName := ""
+		for _, e := range all {
+			if e.kind != "SPELL_CAST_SUCCESS" || e.srcGUID != cl.me || e.t.After(cl.to) {
+				continue
+			}
+			if _, shaman := shamanImbueFromName(e.spell); shaman {
+				continue
+			}
+			if value, ok := imbueFromName(e.spell); ok {
+				oil, oilName = value, e.spell
+			}
+		}
+		if oil != 0 {
+			char.player.Consumes.MainHandImbue = oil
+			char.notes = append(char.notes, "main hand oil or stone from the log: "+oilName)
 		}
 	}
 }
