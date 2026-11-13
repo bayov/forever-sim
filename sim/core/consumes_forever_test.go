@@ -198,8 +198,8 @@ func TestForeverConsumeProcDamage(t *testing.T) {
 		ruleset  proto.Ruleset
 		min, max float64
 	}{
-		{"Shadow Oil", &proto.Consumes{MainHandImbue: proto.WeaponImbue_ShadowOil}, 1382, proto.Ruleset_RulesetForever, 63, 71},
-		{"Frost Oil", &proto.Consumes{MainHandImbue: proto.WeaponImbue_FrostOil}, 1191, proto.Ruleset_RulesetForever, 39, 43},
+		{"Shadow Oil", &proto.Consumes{MainHandImbue: proto.WeaponImbue_ShadowOil}, 350026, proto.Ruleset_RulesetForever, 63, 71},
+		{"Frost Oil", &proto.Consumes{MainHandImbue: proto.WeaponImbue_FrostOil}, 350025, proto.Ruleset_RulesetForever, 39, 43},
 		{"Dragonbreath Chili", &proto.Consumes{DragonBreathChili: true}, 15851, proto.Ruleset_RulesetForever, 61, 69},
 		{"Classic Shadow Oil", &proto.Consumes{MainHandImbue: proto.WeaponImbue_ShadowOil}, 1382, proto.Ruleset_RulesetClassic, 52, 61},
 		{"Classic Frost Oil", &proto.Consumes{MainHandImbue: proto.WeaponImbue_FrostOil}, 1191, proto.Ruleset_RulesetClassic, 33, 38},

@@ -387,8 +387,11 @@ func registerShadowOil(character *Character, isMh bool, icd Cooldown) {
 	procChance := 0.15
 	minDamage, maxDamage := shadowOilDamageRange(character.Env)
 
+	// Forever's oil casts its own Shadow Bolt (350026), and the log shows that ID. Frost Oil's
+	// Frostbolt is 350025 the same way.
+	spellID := Ternary(character.Env.IsForever(), int32(350026), int32(1382))
 	procSpell := character.GetOrRegisterSpell(SpellConfig{
-		ActionID:    ActionID{SpellID: 1382},
+		ActionID:    ActionID{SpellID: spellID},
 		SpellSchool: SpellSchoolShadow,
 		DefenseType: DefenseTypeMagic,
 		ProcMask:    ProcMaskEmpty,
@@ -439,7 +442,7 @@ func registerFrostOil(character *Character, isMh bool) {
 	minDamage, maxDamage := frostOilDamageRange(character.Env)
 
 	procSpell := character.GetOrRegisterSpell(SpellConfig{
-		ActionID:    ActionID{SpellID: 1191},
+		ActionID:    ActionID{SpellID: Ternary(character.Env.IsForever(), int32(350025), int32(1191))},
 		SpellSchool: SpellSchoolFrost,
 		DefenseType: DefenseTypeMagic,
 		ProcMask:    ProcMaskEmpty,
