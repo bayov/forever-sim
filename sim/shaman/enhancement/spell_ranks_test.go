@@ -133,7 +133,7 @@ func TestOrcShamanImbueDamage(t *testing.T) {
 		{"Flametongue rank 3 at 34", flametongue, 34, shaman.FlametongueWeaponSpellId[3], 1052.0 / 25, true, 5},
 		{"Flametongue rank 4 at 44", flametongue, 44, shaman.FlametongueWeaponSpellId[4], 1728.0 / 25, true, 0},
 		{"Flametongue rank 5 at 54", flametongue, 54, shaman.FlametongueWeaponSpellId[5], 2372.0 / 25, true, 7},
-		{"Flametongue rank 6 at 60", flametongue, 60, shaman.FlametongueWeaponSpellId[6], 2810.0 / 25, true, 0},
+		{"Flametongue rank 6 at 60", flametongue, 60, shaman.FlametongueWeaponSpellId[6], 2810.0 / 25, true, 5.5},
 		{"Frostbrand rank 1 at 20", frostbrand, 20, shaman.FrostbrandWeaponSpellId[1], 32, false, 0},
 		{"Frostbrand rank 1 at 26", frostbrand, 26, shaman.FrostbrandWeaponSpellId[1], 44.6, false, 0},
 		{"Frostbrand rank 1 at 27", frostbrand, 27, shaman.FrostbrandWeaponSpellId[1], 44.6, false, 0},

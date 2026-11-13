@@ -57,7 +57,7 @@ func TestOrcShamanImbueProcs(t *testing.T) {
 		{"Flametongue Weapon and Windfury Totem", 60, darkEdge, proto.WeaponImbue_FlametongueWeapon, proto.TotemWeaponBuff_TotemWeaponBuffWindfury,
 			"Flametongue Imbue", []string{flametongueWeapon, windfuryTotem}, []string{flametongueWeapon}},
 		{"Windfury Weapon and Windfury Totem", 60, darkEdge, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffWindfury,
-			"Windfury Imbue", []string{windfuryWeapon, windfuryTotem}, []string{windfuryWeapon}},
+			"Windfury Imbue", []string{windfuryWeapon, windfuryTotem}, []string{windfuryWeapon, windfuryTotem}},
 	}
 	for _, setup := range setups {
 		t.Run(setup.name, func(t *testing.T) {
@@ -118,7 +118,12 @@ func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, 
 	if enh.WindfuryWeaponMH != nil {
 		// Its attacks only come right after a proc, inside the cooldown. We check that with
 		// the white hits and Stormstrikes, which always bring both attacks and never more.
-		attacks = append(attacks, attack{"Windfury Weapon attack", enh.WindfuryWeaponMH, core.OutcomeHit, nil, windfuryWeapon})
+		// Under Forever they roll Windfury Totem when it is up (c7a99fa49).
+		var wfAttackProcs []string
+		if totem == proto.TotemWeaponBuff_TotemWeaponBuffWindfury {
+			wfAttackProcs = []string{windfuryTotem}
+		}
+		attacks = append(attacks, attack{"Windfury Weapon attack", enh.WindfuryWeaponMH, core.OutcomeHit, wfAttackProcs, windfuryWeapon})
 	}
 	sim, enh = weaponSim{level: level, weapon: &proto.ItemSpec{Id: weapon}, imbue: imbue, totem: totem, seconds: every * float64(rolls*len(attacks)+1)}.start()
 	sim.PrePull()
