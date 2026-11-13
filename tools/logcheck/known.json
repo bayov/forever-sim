@@ -83,5 +83,115 @@
     "kind": "raw",
     "ability": "Farraki Enforcement (1294339)",
     "why": "Trolls take double (588) per The Chief's Enforcer's tooltip, and the sim's mob is never a troll (sim/common/item_effects.go). Nov 10: 588 on Zul'Farrak and other trolls until 17:30, then 294 on non-trolls. The Maraudon 292 rows are the dungeon -2 finding."
+  },
+  {
+    "kind": "procs",
+    "ability": "Attack (10435)",
+    "why": "Searing Totem bolts per 100 white swings depends on the rotation, not a mechanic. The sim's player casts and barely melees (2 swings a run against 224 totem bolts), while we melee all the time."
+  },
+  {
+    "kind": "partial",
+    "ability": "Attack (10435)",
+    "why": "Mobs with real resistances, and the sim's mob has none. Nov 9: Searing Totem bolts and Flame Shock ticks partly resisted on Fire-resistant whelps and dragonkin (Searing Whelp and Hatchling, Firemane Scout, Sprite Darter), Lightning Shield orbs on Nature-resistant Woodpaw gnolls, Grimtotem Naturalist and Wandering Forest Walker. Nov 10: Lightning Bolt on Nature-resistant Maraudon plants and oozes (Noxxion, Razorlash, Vile Larva), Magma Totem on Sprite Darters."
+  },
+  {
+    "kind": "absorb",
+    "ability": "Attack (10435)",
+    "why": "Scholomance mobs shield themselves (Bone Armor 16431, Shadow Shield 12040, Darkmaster Gandling among them), and the sim's mob has none. Nov 13 windows."
+  },
+  {
+    "kind": "absorb",
+    "ability": "Magma Totem (10581)",
+    "why": "Scholomance mobs shield themselves (Bone Armor 16431, Shadow Shield 12040, Darkmaster Gandling among them), and the sim's mob has none. Nov 13 windows."
+  },
+  {
+    "kind": "absorb",
+    "ability": "Fire Nova (408428)",
+    "why": "Scholomance mobs shield themselves (Bone Armor 16431, Shadow Shield 12040, Darkmaster Gandling among them), and the sim's mob has none. Nov 13 windows."
+  },
+  {
+    "kind": "absorb",
+    "ability": "Weakening Disease (18633) ticks",
+    "why": "Scholomance mobs shield themselves (Bone Armor 16431, Shadow Shield 12040, Darkmaster Gandling among them), and the sim's mob has none. Nov 13 windows."
+  },
+  {
+    "kind": "absorb",
+    "ability": "Flame Shock (10448) ticks",
+    "why": "Scholomance mobs shield themselves (Bone Armor 16431, Shadow Shield 12040, Darkmaster Gandling among them), and the sim's mob has none. Nov 13 windows."
+  },
+  {
+    "kind": "absorb",
+    "ability": "Melee",
+    "why": "Scholomance mobs shield themselves (Bone Armor 16431, Shadow Shield 12040, Darkmaster Gandling among them), and the sim's mob has none. Nov 13 windows."
+  },
+  {
+    "kind": "absorb",
+    "ability": "Stormstrike (17364)",
+    "why": "Scholomance mobs shield themselves (Bone Armor 16431, Shadow Shield 12040, Darkmaster Gandling among them), and the sim's mob has none. Nov 13 windows."
+  },
+  {
+    "kind": "absorb",
+    "ability": "Earth Shock (10413)",
+    "why": "Scholomance mobs shield themselves (Bone Armor 16431, Shadow Shield 12040, Darkmaster Gandling among them), and the sim's mob has none. Nov 13 windows."
+  },
+  {
+    "kind": "immune",
+    "ability": "Magma Totem (10581)",
+    "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
+  },
+  {
+    "kind": "immune",
+    "ability": "Fire Nova (408428)",
+    "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
+  },
+  {
+    "kind": "immune",
+    "ability": "Lightning Bolt (15208)",
+    "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
+  },
+  {
+    "kind": "immune",
+    "ability": "Lightning Shield (26363)",
+    "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
+  },
+  {
+    "kind": "immune",
+    "ability": "Earth Shock (10413)",
+    "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
+  },
+  {
+    "kind": "immune",
+    "ability": "Flame Shock (10448)",
+    "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
+  },
+  {
+    "kind": "immune",
+    "ability": "Flame Shock (10448) ticks",
+    "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
+  },
+  {
+    "kind": "immune",
+    "ability": "Weakening Disease (18633) ticks",
+    "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
+  },
+  {
+    "kind": "immune",
+    "ability": "Stormstrike (17364)",
+    "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
+  },
+  {
+    "kind": "immune",
+    "ability": "Melee",
+    "why": "Risen Aberration in Scholomance is immune to our spells (Nov 13), and the sim's mob never is."
+  },
+  {
+    "kind": "never",
+    "ability": "Shadow Bolt (350026)",
+    "why": "Shadow Oil's proc, which the sim doesn't have (findings.md \"Shadow Oil's Shadow Bolt isn't in the sim\"). Its damage is small, so the other rows hold."
+  },
+  {
+    "kind": "procs",
+    "ability": "Shadow Bolt (350026)",
+    "why": "Shadow Oil's proc, which the sim doesn't have (findings.md \"Shadow Oil's Shadow Bolt isn't in the sim\"). Its damage is small, so the other rows hold."
   }
 ]
