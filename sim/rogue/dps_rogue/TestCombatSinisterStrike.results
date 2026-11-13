@@ -50,8 +50,8 @@ character_stats_results: {
 stat_weights_results: {
  key: "TestCombatSinisterStrike-Phase5-StatWeights-Default"
  value: {
-  weights: 0.33327
-  weights: 0.55054
+  weights: 0.33156
+  weights: 0.54709
   weights: 0
   weights: 0
   weights: 0
@@ -67,9 +67,9 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.33327
-  weights: 15.419
-  weights: 1.95617
+  weights: 0.33156
+  weights: 13.68534
+  weights: 2.07357
   weights: 0
   weights: 0
   weights: 0
@@ -99,134 +99,134 @@ stat_weights_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-BloodfangArmor"
  value: {
-  dps: 945.239
-  tps: 671.1166
+  dps: 941.22467
+  tps: 668.26191
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-BonescytheArmor"
  value: {
-  dps: 1063.6175
-  tps: 737.55596
+  dps: 1056.40667
+  tps: 732.40902
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Champion'sGuard"
  value: {
-  dps: 890.50783
-  tps: 632.25607
+  dps: 877.92617
+  tps: 623.32717
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Champion'sVestments"
  value: {
-  dps: 806.98667
-  tps: 572.95646
+  dps: 801.5435
+  tps: 569.09566
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Champion'sVestments-522"
  value: {
-  dps: 806.4565
-  tps: 572.5788
+  dps: 801.71117
+  tps: 569.20882
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
-  dps: 924.074
-  tps: 656.08866
+  dps: 918.214
+  tps: 651.93113
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-DaggersSynthetic(Phase1)"
  value: {
-  dps: 924.32433
-  tps: 656.26469
+  dps: 918.46767
+  tps: 652.1058
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 919.10467
-  tps: 652.56391
+  dps: 919.58983
+  tps: 652.90787
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Deathdealer'sEmbrace"
  value: {
-  dps: 963.6175
-  tps: 684.16705
+  dps: 951.2355
+  tps: 675.37616
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-EmblemsofVeiledShadows"
  value: {
-  dps: 887.60283
-  tps: 630.19962
+  dps: 879.5965
+  tps: 624.51712
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 821.00933
-  tps: 582.91174
+  dps: 816.5515
+  tps: 579.75455
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-GrimstitchArmor"
  value: {
-  dps: 760.82067
-  tps: 540.17585
+  dps: 762.59783
+  tps: 541.43899
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-LieutenantCommander'sGuard"
  value: {
-  dps: 890.50783
-  tps: 632.25607
+  dps: 877.92617
+  tps: 623.32717
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-LieutenantCommander'sVestments"
  value: {
-  dps: 806.4565
-  tps: 572.5788
+  dps: 801.71117
+  tps: 569.20882
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Madcap'sOutfit"
  value: {
-  dps: 880.932
-  tps: 625.45505
+  dps: 875.9085
+  tps: 621.88772
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-NightslayerArmor"
  value: {
-  dps: 883.1085
-  tps: 627.00498
+  dps: 879.23683
+  tps: 624.25538
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-RogueSyntheticOn-UseTrinket(Phase1)-994202"
  value: {
-  dps: 906.7285
-  tps: 643.77262
+  dps: 898.4255
+  tps: 637.87976
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 821.00933
-  tps: 582.91174
+  dps: 816.5515
+  tps: 579.75455
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Average-Default"
  value: {
-  dps: 874.03793
-  tps: 620.56695
+  dps: 869.95181
+  tps: 617.66571
  }
 }
 dps_results: {
@@ -610,7 +610,7 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 675.76317
-  tps: 479.78405
+  dps: 673.12433
+  tps: 477.91553
  }
 }
