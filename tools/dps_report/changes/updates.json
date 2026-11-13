@@ -5110,6 +5110,60 @@
       "d787a98",
       "160148d"
      ]
+    },
+    {
+     "title": "Windfury Weapon's extra attacks can trigger Windfury Totem",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield"
+     ],
+     "note": "Our combat logs show a Windfury Weapon attack rolling Windfury Totem, so the two can chain; the other extra attacks still don't roll it. With the Flametongue Weapon fix and the Water Shield and Imp GW re-tunes, the Enhancement presets end 22 to 25 higher at 3 minutes.",
+     "commits": [
+      "c7a99fa"
+     ]
+    },
+    {
+     "title": "Flametongue Weapon (rank 6) hits 5.5 less",
+     "kind": "sim",
+     "classes": [
+      "Shaman"
+     ],
+     "moves": false,
+     "note": "Our combat logs show each hit 5.5 lower. No preset uses it: Windfury Weapon stays about 120 to 135 ahead on the Enhancement presets.",
+     "commits": [
+      "4c4790e"
+     ]
+    },
+    {
+     "title": "Enhancement re-tuned after the Windfury change: Water Shield casts Flame Shock before Stormstrike, Imp GW wears less hit",
+     "kind": "rotation",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-water-shield",
+      "shaman__enhancement-imp-gw"
+     ],
+     "note": "The Water Shield build puts Flame Shock ahead of Stormstrike again (0.4 to 3 higher by fight length). Imp GW trades 1% of gear hit for other stats (1 to 3 higher), and its Dwarf trades 2%.",
+     "commits": [
+      "7858b83"
+     ]
+    },
+    {
+     "title": "Item fixes: Frightskull Shaft procs 3.9 times a minute, Weakening Disease ticks for 15 over 14 sec",
+     "kind": "gear",
+     "moves": false,
+     "note": "No preset wears them.",
+     "commits": [
+      "d22fe3e",
+      "041bb0a"
+     ]
     }
    ],
    "internal": [
@@ -5212,6 +5266,34 @@
     {
      "commit": "be2a28d",
      "why": "spell icons only (Forever's icons for 14 spells); no numbers change"
+    },
+    {
+     "commit": "1743980",
+     "why": "Shadow Oil's and Frost Oil's bolts keyed under Forever's own spell ids; no number moves and the ability rows still read Shadow Oil"
+    },
+    {
+     "commit": "0eb70e6",
+     "why": "the Enhancement Phase 0 BiS search tool; no report preset reads it"
+    },
+    {
+     "commit": "dea3519",
+     "why": "the Enhancement Phase 0 BiS list; no report preset reads it"
+    },
+    {
+     "commit": "3a86d4a",
+     "why": "the Enhancement Phase 0 BiS list; no report preset reads it"
+    },
+    {
+     "commit": "97da1cc",
+     "why": "items seen in game and reveals taken into the item database; no preset wears a changed item"
+    },
+    {
+     "commit": "72bc86a",
+     "why": "spell icons only; no numbers change"
+    },
+    {
+     "commit": "4ed0613",
+     "why": "Enhancement tests and goldens only"
     }
    ],
    "source": {
