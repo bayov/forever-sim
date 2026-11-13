@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
+  "master": "97da1cca5c346e31e3896a31a769dd1c699705d6"
  },
- "last_pass_at": "2026-11-13T00:50:00Z",
- "pass": 78,
- "result": "quiet",
- "note": "Pass 78: 8306f1d52..71562a8b0. f1c07e13a ranged Judgement (resolves mechanics-20261112-3, matches Nov 11 hotfix). 2a0208136 / 67ad7c6a4 core WF changes dropped in merge for a0b4d3be9 (no net core diff). 65b5d49cf healer APL seen-health, e05135ad3 NS comment: no mechanic issue. Hotfix thread post 9 (go-live note for Nov 10 shaman changes, already in sim). Unsealed Wrath (-2) still not on master (PR #128). Client 70888.",
- "client_build": "1.60.1.70888",
- "checked_at": "2026-11-13T01:18:32Z",
+ "last_pass_at": "2026-11-13T07:03:20Z",
+ "pass": 79,
+ "result": "findings",
+ "note": "Pass 79: 71562a8b0..97da1cca5. 33b13e310 Unsealed Wrath WF echo (resolves -2), a1a1a81bb no extra attack rolls WF, 2fcb6fe2a Volley no procs (70938 Attr4 0x800000 confirms). Client 70938: no shared deltas; overload rows now half parent (verified). New: mechanics-20261113-1 Imp Firebolt r2-4 (low, leveling). No new Blizzard posts.",
+ "client_build": "1.60.1.70938",
+ "checked_at": "2026-11-13T07:19:19Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -20,7 +20,8 @@
    "70450",
    "70532",
    "70630",
-   "70707"
+   "70707",
+   "70938"
   ],
   "newest_push": 113605,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"

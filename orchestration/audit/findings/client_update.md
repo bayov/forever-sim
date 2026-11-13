@@ -4,20 +4,13 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### client_update-20261110-1: Arcane Concentration still rolls its full 10% on every Arcane Missiles missile; the 11-09 hotfix splits it across the channel
-- severity: medium (measured -0.73% on mage__arcane, below 1%; other mage presets 0)
-- affects: mage Arcane (mage__arcane; any build casting Arcane Missiles with the talent)
-- found: 2026-11-10, master da272241e5
-- evidence: Blizzard hotfixes of November 9 (forum thread 2403040, post 5, Kaivax, tier: Blizzard notes): "Arcane Concentration's activation chance now correctly splits across the cast and every bolt (was granting 10% on cast and per bolt)." Server side; no client row changed in 70888. Sim: `sim/mage/talents.go:290-302` rolls `procChance` (2% a point) on every missile tick (`SpellCode_MageArcaneMissilesTick`) behind a 1 s ICD. Scratch build giving each missile 1/5 of the chance (about 10% a full channel), `dps_beforeafter.sh`, 180 s, 20k iterations: mage__arcane 969.28 -> 962.07 (-0.74%, seed 1), 969.26 -> 962.25 (-0.72%, seed 1000003); mage__frostfire 0. Ledger MAGE-HF-02. How the server splits it (per missile 1/5, or 1/6 counting the cast) is not stated; either gives about the same result.
-- proposed fix: under Forever, scale the chance on Arcane Missiles ticks to procChance / 5 (the total for a channel stays the talent's 10%); keep Classic as is. Check the next arcane log for Clearcasting per channel.
-- needs: worker fix
-
 ### client_update-20261110-2: Three ilvl 65 trinkets lose stats and Flamebreak Talisman's use weakens in 70888; the db still has the old values
 - severity: low (no request or preset wears them; only the gear search sees them)
 - affects: gear search (spell casters and expertise users); Adaptive Combat Assistant 272437, Weakness Analyzer 272438, Serenity Field 272439, Flamebreak Talisman 280071
 - found: 2026-11-10, master da272241e5
 - evidence: `items_diff.py 70862 70888`: StatPercentEditor 272437 expertise 7143 -> 3928, 272438 spell power 7857 -> 6428, 272439 15000/5000 -> 7500/2500; `assets/database/db.json` still has 2 expertise, 18 spell power, 7 SP / 14 healing (expect about 1, 15, 3-4 / 7). ItemEffect 232251-3 use cooldowns 90 s -> 300 / 360 / 360 s; Flamebreak's use 1315878 effect 1 (aura 29) 50 -> 33 and cooldown 180 -> 300 s (SpellEffect 1348471, SpellCooldowns 101402, ItemEffect 236650). None of the use effects is simulated (grep of `sim/` finds none of the IDs). Ledger SHR-U-21, SHR-U-22.
 - proposed fix: re-pull the client items for 70888 (`update-sources`) and regenerate the db; model the use effects only if a preset ever wears one.
+- update 2026-11-13 (pass 13, master 97da1cca5): partly fixed. `assets/database/db.json` now gives Adaptive Combat Assistant 1.1 expertise (the 70888 value), but Weakness Analyzer still 18 spell power (expect about 15) and Serenity Field still 7 SP / 14 healing (expect about 3-4 / 7). Client 70938 does not change these items again.
 - needs: orchestrator fix
 
 ### client_update-20261105-1: Feral bleeds and Ferocious Bite use a flat x1.25 where client 70790 now has exact rank values
@@ -46,6 +39,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: verify (in game)
 
 ## Resolved
+
+### client_update-20261110-1: Arcane Concentration still rolls its full 10% on every Arcane Missiles missile; the 11-09 hotfix splits it across the channel
+- severity: medium (measured -0.73% on mage__arcane, below 1%; other mage presets 0)
+- affects: mage Arcane (mage__arcane; any build casting Arcane Missiles with the talent)
+- found: 2026-11-10, master da272241e5
+- evidence: Blizzard hotfixes of November 9 (forum thread 2403040, post 5, Kaivax, tier: Blizzard notes): "Arcane Concentration's activation chance now correctly splits across the cast and every bolt (was granting 10% on cast and per bolt)." Server side; no client row changed in 70888. Sim: `sim/mage/talents.go:290-302` rolls `procChance` (2% a point) on every missile tick (`SpellCode_MageArcaneMissilesTick`) behind a 1 s ICD. Scratch build giving each missile 1/5 of the chance (about 10% a full channel), `dps_beforeafter.sh`, 180 s, 20k iterations: mage__arcane 969.28 -> 962.07 (-0.74%, seed 1), 969.26 -> 962.25 (-0.72%, seed 1000003); mage__frostfire 0. Ledger MAGE-HF-02. How the server splits it (per missile 1/5, or 1/6 counting the cast) is not stated; either gives about the same result.
+- proposed fix: under Forever, scale the chance on Arcane Missiles ticks to procChance / 5 (the total for a channel stays the talent's 10%); keep Classic as is. Check the next arcane log for Clearcasting per channel.
+- needs: worker fix
+- resolved: 2026-11-11, ad6884211 (`sim/mage/talents.go:284-320`: under Forever the cast and each missile roll procChance / (missiles + 1)). Seen by pass 13, 2026-11-13.
 
 ### client_update-20261103-3: Server hotfix push 113483 (2026-11-03 18:29Z, rogue tree and rogue spells) isn't in the ledger and is only partly read
 - severity: high (TASKS.md measures its Mutilate line alone at +1.8% DPS on the Mutilate preset, 883.07 -> 898.69; its poison lines are likely larger)

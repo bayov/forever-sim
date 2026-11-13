@@ -1,4 +1,4 @@
-# healer_gear pass 7, master 71562a8b03
+# healer_gear pass 8, master 97da1cca5c34
 
-Changed since 8306f1d52 on watched paths: only orchestration/tools/healers/* (6 files: druid APL/req, paladin requests, priest_tuning mk/presets/rots). These are rotation/request/tuning scripts (Divine Favor, Flash of Heal lines, Nature's Swiftness line notes).
-No change to tools/database synthetic items, ui/*/gear_sets, sim/*/items.go or the recipes input, so no piece, set or row inputs moved. No recompute done; previous pass (6) verdicts stand. No open findings; none new.
+Changed since 71562a8b03 on watched paths: only orchestration/standards.md, standard 17 (Windfury Totem: extra attacks do not roll it). Unrelated to healer gear (standards 1b, 5, 5a, 35 untouched).
+No change to tools/database synthetic items, ui/*/gear_sets, sim/*/items.go or the recipes input, so no piece, set or row inputs moved. No recompute; pass 6 verdicts stand. No open findings; none new.

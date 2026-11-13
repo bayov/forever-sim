@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
+  "master": "97da1cca5c346e31e3896a31a769dd1c699705d6"
  },
- "last_pass_at": "2026-11-13T00:49:26Z",
- "pass": 13,
+ "last_pass_at": "2026-11-13T06:57:27Z",
+ "pass": 14,
  "result": "quiet",
- "client_build": "1.60.1.70888",
- "checked_at": "2026-11-13T01:18:32Z",
+ "client_build": "1.60.1.70938",
+ "checked_at": "2026-11-13T07:19:19Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 13 (71562a8b03): Judgement ranged (f1c07e13a, Fury/Righteousness/Command; client 70888 still DefenseType 2, so notes-only tier 1), Windfury main-hand rule, bear Tauren + Feral Instinct 3/Brutal Impact 1 + Swipe/FR APL, Warden/paladin consumables, healer seen-health values (no tank APL reads health). Client unchanged. Quiet; 20261112-1/-2 and 20261111-1 verified resolved; 20261108-1, 20261107-1 still open."
+ "note": "Pass 14 (97da1cca5c): no extra attack rolls Windfury Totem (a1a1a81bb, standards 17; Reckoning's stored swings included), extra attack sources tracked through stored and delayed hits. Client 70938 touches no tank spell (Consecration mark proc mask only). Blizzard forum rate-limited: notes since dev_notes_seen not re-read. Quiet; 20261108-1, 20261107-1 still open."
 }

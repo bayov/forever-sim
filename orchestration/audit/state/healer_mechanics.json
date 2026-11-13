@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
+  "master": "97da1cca5c346e31e3896a31a769dd1c699705d6"
  },
- "last_pass_at": "2026-11-13T00:46:54Z",
- "pass": 12,
- "result": "quiet",
- "note": "Pass 12: heal_targets seen-health values (65b5d49cf, finding 14 already resolved), druid NS comment, paladin Judgement ranged (no Holy effect), healbench consumables/APL re-tunes only. Client 70888 unchanged; Nov 11 hotfix has no new healer mechanic. Findings 10, 11 open.",
- "client_build": "1.60.1.70888",
+ "last_pass_at": "2026-11-13T06:59:53Z",
+ "pass": 13,
+ "result": "findings",
+ "note": "Pass 13: client 70938 doubles Wild Growth coef 0.033->0.066 (finding 15, high, +1.9% druid raid carry); NS 17116 mask now carries Wild Growth (sim matches). unsealed_wrath.go Ret-only. Blizzard forum rate-limited, dev_notes_seen unchanged. Findings 10, 11, 15 open.",
+ "client_build": "1.60.1.70938",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-11"
  },
- "checked_at": "2026-11-13T01:18:32Z"
+ "checked_at": "2026-11-13T07:19:19Z"
 }

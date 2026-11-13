@@ -1,25 +1,24 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-13, pass 12, master 71562a8b0, after every tank
-preset re-picked its enchants by its own objective and the bear's Max survival went Tauren (a6a8305da). The report has
-the details (orchestration/audit/reports/tank_fairness.md); the table is in
-orchestration/audit/ref/tank_fairness/summary.tsv.
+preset weight, its reasons, and the open questions. Last pass: 2026-11-13, pass 13, master 97da1cca5, after the
+Nov 11 hotfixes for the paladin (Judgement rolls as a ranged attack, Unsealed Wrath stores no echo from Windfury Totem
+swings; 33b13e310) and the Windfury rule that no extra attack rolls Windfury (a1a1a81bb). The report has the details
+(orchestration/audit/reports/tank_fairness.md); the table is in orchestration/audit/ref/tank_fairness/summary.tsv.
 
 ## Ranking (tankbench 3000 iterations, seed 1, six-boss mean, each spec's matching preset)
 
 | weight | order (best first) | scores |
 |---|---|---|
-| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4223 / 3263 / 2789 / 2557 |
-| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3428 / 2832 / 1865 / 1219 |
-| Max survival (w 3) | Paladin, Warrior, Bear, Warden | 1803 / 1776 / 230 / -2312 |
+| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4223 / 3246 / 2789 / 2557 |
+| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3428 / 2804 / 1865 / 1219 |
+| Max survival (w 3) | Paladin = Warrior (tie), Bear, Warden | 1776 / 1776 / 230 / -2312 |
 
-Seed 2 gives the same order (Max survival paladin 1816 against the warrior's 1774). The enchants gave the paladin
-+76 / +58 / +92 (Holy Power gloves, Voracity Agility, a spell power or agility neck), the Warden +21 / +30 / +74, the
-warrior +21 / +3 / +14 and the bear +39 at Max survival (gloves and Tauren). So the paladin retakes Max survival by 27.
-Its potion action (finding -20261105-1, +368 at Max survival) is still open.
+The hotfixes cost the paladin 17 / 27 / 28 (seed 1); the other three tanks are unchanged to the point. Max survival is
+now a tie within the error (seed 1: paladin 1775.8 ± 13.6, warrior 1775.5 ± 12.8; seed 2: 1785.7 against 1773.8). The
+paladin's potion action (finding -20261105-1, about +368 at Max survival in pass 12) is still open and would decide it.
 
-TPS (Balanced): warrior 2057, paladin 1527, bear 1482, Warden 1351. Healing needed (Balanced): paladin 239, warrior 344,
+TPS (Balanced): warrior 2057, paladin 1519, bear 1482, Warden 1351. Healing needed (Balanced): paladin 245, warrior 344,
 bear 464, Warden 660.
 
 Each preset wins its own weight on both seeds, and the three builds are distinct for every spec. Every flask still wins

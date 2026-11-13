@@ -358,3 +358,18 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-13 01:18 | tank_rotations | pass 11 | master 71562a8b0 | quiet | baseline refreshed
 2026-11-13 01:18 | tank_gear | pass 8 | master 71562a8b0 | quiet | sets within tolerance
 2026-11-13 01:18 | tank_fairness | pass 12 | master 71562a8b0 | quiet | rankings stable on two seeds
+2026-11-13 07:19 | results | pass 87 | master 97da1cca5 | quiet | builds.json matches shared run; metas drift is open results-20261104-2
+2026-11-13 07:19 | rotations | pass 63 | master 97da1cca5 | quiet | Ret -12 to -19 from Unsealed Wrath/Windfury hotfix; baseline refreshed
+2026-11-13 07:19 | gear | pass 64 | master 97da1cca5 | quiet | no gear rule changed
+2026-11-13 07:19 | consumables | pass 83 | master 97da1cca5 | quiet | build 70938 changes no preset consumable
+2026-11-13 07:19 | mechanics | pass 79 | master 97da1cca5 | 1 new findings | Imp Firebolt ranks 2-4 changed in 70938 (low, leveling only)
+2026-11-13 07:19 | fairness | pass 39 | master 97da1cca5 | quiet | Ret -20.8 from known commits; top/bottom 1.65x
+2026-11-13 07:19 | client_update | pass 13 | master 97da1cca5 | quiet | build 70888->70938 ledger added; all DPS changes already in sim
+2026-11-13 07:19 | healer_mechanics | pass 13 | master 97da1cca5 | 1 new findings | Wild Growth coefficient doubled in 70938 (high)
+2026-11-13 07:19 | healer_rotations | pass 11 | master 97da1cca5 | quiet | 63 rows match baseline
+2026-11-13 07:19 | healer_gear | pass 8 | master 97da1cca5 | quiet | no healer gear change
+2026-11-13 07:19 | healer_fairness | pass 12 | master 97da1cca5 | quiet | 63 carry cells match baseline
+2026-11-13 07:19 | tank_mechanics | pass 14 | master 97da1cca5 | quiet | Windfury rule matches standards 17; forum rate-limited
+2026-11-13 07:19 | tank_rotations | pass 12 | master 97da1cca5 | quiet | paladin down 6-9 SafeDPS from hotfix; Seal of Fury stays
+2026-11-13 07:19 | tank_gear | pass 9 | master 97da1cca5 | quiet | no tank gear change
+2026-11-13 07:19 | tank_fairness | pass 13 | master 97da1cca5 | quiet | Max survival now paladin/warrior tie; evidence added to open -20261105-1

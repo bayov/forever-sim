@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
+  "master": "97da1cca5c346e31e3896a31a769dd1c699705d6"
  },
- "last_pass_at": "2026-11-13T01:18:13Z",
- "pass": 10,
+ "last_pass_at": "2026-11-13T07:18:54Z",
+ "pass": 11,
  "result": "quiet",
- "note": "Pass 10 on 71562a8b0. Tankheal merged: seen-health values, consumables, druid/shaman fixes (-20261111-1, -20261112-1/-2, -20261104-3 moved to Resolved), 7b8a41fcc paladin/priest raid re-tunes (only rows that moved; match commit). Paladin raid Divine Favor held under 50%/35%: -0.007/-0.009, keeps on cooldown. -20261104-2 (Disc OOM) still open. New helper ab.sh.",
+ "note": "Pass 11 on 97da1cca5. Only gate file sim/paladin/unsealed_wrath.go (Windfury echo rule, Ret melee only). Baseline 63 rows bit-identical to ref. -20261104-2 still open.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-13T01:18:32Z"
+ "checked_at": "2026-11-13T07:19:19Z"
 }

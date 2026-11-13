@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
+  "master": "97da1cca5c346e31e3896a31a769dd1c699705d6"
  },
- "last_pass_at": "2026-11-13T01:03:47Z",
- "pass": 62,
+ "last_pass_at": "2026-11-13T07:01:41Z",
+ "pass": 63,
  "result": "quiet",
- "note": "Pass 62: Judgement ranged (f1c07e13a) Ret -3..-6; worker re-tunes 8f5de1c87 (SV Wing Clip, Fury BS duty) as measured. No new findings; 3 open findings still unapplied.",
+ "note": "Pass 63: Unsealed Wrath no WF Totem echoes (Ret -12..-19), extra attacks don't roll WF Totem (Combat Swords -3); Ret re-tune ec8ab9b3d confirmed (+1.9 at 180 s). No new findings; 3 open findings still unapplied.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-13T01:18:32Z",
- "baseline": "baseline_71562a8_3000it_seed424242.tsv"
+ "checked_at": "2026-11-13T07:19:19Z",
+ "baseline": "baseline_97da1cc_3000it_seed424242.tsv"
 }

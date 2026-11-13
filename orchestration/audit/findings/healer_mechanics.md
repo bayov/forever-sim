@@ -2,6 +2,25 @@
 
 ## Open
 
+### healer_mechanics-20261113-15: Wild Growth's coefficient doubled in client 70938 (0.033 -> 0.066 a tick); the sim keeps 0.033
+- severity: high (Restoration druid raid carry 0.875 -> 0.892, +1.9%; the druid raid preset's main HoT)
+- affects: Restoration druid (raid preset `tools/healbench/req/druid_restoration_raid.json`, `ui/restoration_druid/apls/raid_healer.apl.json`; any build with the Wild Growth talent)
+- found: 2026-11-13, master 97da1cca5c
+- evidence: client 1.60.1.70938 (wago.tools, tier 1), `wago.py diff 1.60.1.70888 1.60.1.70938 --set mechanics`: SpellEffect
+  1072065 (408120 r1), 1235327 (1238214 r2), 1235329 (1238215 r3), effect 0 aura 8 periodic heal,
+  EffectBonusCoefficient 0.033 -> 0.066 (base points 40/60/97 and rppl 1/1.3/1.6 unchanged). Sim:
+  `sim/druid/healing.go:174` `WildGrowthTickCoefficient = 0.033` (comment line 163 too; `healing_ranks_test.go:87`
+  pins 0.033; `docs/healing_druid.md:115-117`). No Blizzard note seen for it (forum rate-limited this pass), so the
+  wording is unconfirmed, but the client row is tier 1 and the same diff carries the Nov 10 Nature's Swiftness ->
+  Wild Growth mask (17116 mask_1 +0x04000000), so this build takes in that hotfix batch. Sure: high on the data,
+  medium on whether the server already applies it.
+- measured: `healbench -role raid -carry tools/healbench/req/druid_restoration_raid.json`, master vs patch, paired
+  seeds, 1000 iterations a step: carry 0.875 -> 0.892, HPS 2583 -> 2696, EH per mana 3.65 -> 3.91, overheal 60.3% -> 61.8%.
+- proposed fix: `$AUDIT_WORK/healer_mechanics/wild_growth_coef.patch` (lost with the session; it is three lines):
+  `WildGrowthTickCoefficient = 0.066` in `sim/druid/healing.go:174`, the comment at :163, and the test pin at
+  `sim/druid/healing_ranks_test.go:87`; update `docs/healing_druid.md:115-117`. `go test ./sim/druid/` passes with it.
+- needs: worker fix
+
 ### healer_mechanics-20261104-11: Riptide's Forever mana is 0.6 x the old client cost; client 70790 now gives 150/180/230
 - severity: low (rank 3, the one the level 60 presets cast, is 1 mana dear at 231 vs 230; rank 1 is 3 mana cheap)
 - affects: Restoration shaman (all presets and leveling)

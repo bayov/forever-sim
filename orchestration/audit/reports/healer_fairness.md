@@ -1,12 +1,14 @@
-# Healer fairness pass 11 (2026-11-13, master 71562a8b0)
+# Healer fairness pass 12 (2026-11-13, master 97da1cca5)
 
-Result: quiet. No new finding. Still open: -20261104-4 (low; the boss files' `raidHealing.healerClasses`,
-`hpsEachHealer` and `healers` are still null, checked on onyxia.json). Due because master merged tankheal
-(8306f1d52..71562a8b0, 55 commits): the seen-health APL values (65b5d49cf, `sim/core/heal_targets.go`,
-`apl_values_resources.go`), the druid Nature's Swiftness lines and Heart of the Wild (e05135ad3), the shaman raid NS
-hold (e0e351f2f), the healer consumables (ea25e50df), the Twilight Focus raid priest and Flash of Light raid paladin
-(7b8a41fcc), and the Windfury Totem rule (no healer casts a melee ability). Pass 9 benched all of these by hand on
-tankheal; this pass confirms them on master.
+Result: quiet. No new finding. Still open: -20261104-4 (low; the boss files' `raidHealing` holds healer counts by
+class but no HPS by class, checked on all 7 files). Due because master changed `sim/paladin/unsealed_wrath.go`
+(Windfury Totem swings store no Unsealed Wrath echoes) and `orchestration/standards.md` item 17 (no extra attack
+rolls Windfury Totem; `sim/core/attack.go`, `buffs.go`). Both are melee rules; no healer preset melees.
+
+Check: healbench built from 97da1cca5 (`-tags with_db`, build_cli worktree), all 9 requests in their own role on
+the 7 boss files, seed 101, 1,000 iterations (`tools/audit/healer_fairness/screen.sh`): all 63 carry cells identical
+to `ref/healer_fairness/bench_71562a8.tsv`. `tools/healbench/req/` unchanged since 71562a8b0, so sections 1 and 3
+below still hold. The tables below are pass 11's, re-confirmed.
 
 ## 1. Same terms (the 9 requests)
 

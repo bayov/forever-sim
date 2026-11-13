@@ -1,9 +1,11 @@
 # Rotation audit: reference files
 
-- `baseline_a0b4d3b_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  a0b4d3be9 (pass 60). Against the previous 707ae92 baseline (same req files): Arms +168 to +171, Fury 2H
-  +98 to +106, Fury DW +48 to +64, Survival +69 to +72 (Windfury Totem rolls on main hand abilities,
-  a0b4d3be9); rogues +22 to +58 (that, plus Venom reaching Instant Poison, e2322baa1); the rest under 1.
+- `baseline_97da1cc_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  97da1cca5 (pass 63). Against the previous 71562a8 baseline: Retribution -12 to -22 (Unsealed Wrath stores
+  no echo from Windfury Totem swings, a1a1a81bb; partly offset by the Ret re-tune ec8ab9b3d), Ret Shock
+  +2.4 / +3.5, Combat Swords -3.0 (extra attacks no longer roll Windfury Totem); the rest under 1.
+  (The shared CLI was `/tmp/audit-cache/cli/97da1cca5c34/wowsimcli`; the notes below on how it was made
+  still hold.)
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
   - The CLI was the audit loop's shared build at a0b4d3be9 (`/tmp/audit-cache/cli/a0b4d3be9859/wowsimcli`).

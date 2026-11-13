@@ -25,6 +25,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-11-12, master 8306f1d52: builds.json is current (68 of 68 within 1.5 of the shared run). The metas still lag: 45 of 68 published.dps off by more than 0.5 (e.g. fury_2h -118.7, paladin level_60_sub_holy -92.1, level_60 -82.4, Ret Shock -59.3, arms -45.2, Affliction +36.7, Survival -27.1, feral-cat +14.5). The 2b62e304a/bff0169e4 re-sims updated builds.json only, so `runreq.sh` shows OFF for those until the metas are refreshed.
 
 - update 2026-11-13, master 71562a8b0: builds.json (e9a8857e7 republish) matches the shared run on 68 of 68 within 1.5. Metas still lag: 45 of 68 off by more than 0.5 (fury_2h -119, paladin sub_holy -97, level_60 -88, Ret Shock -66, arms -45, Affliction +37). The paladin moves (-6 to -9%) come from f1c07e13a (Judgement is a ranged attack, Nov 11 hotfix), re-simmed in full by e9a8857e7; fury/arms/rogue from the Windfury Totem main-hand rule (2a0208136).
+- update 2026-11-13, master 97da1cca5: f6b04b9e7 re-simmed the paladin metas (nine paladin metas now match the run); builds.json still 68 of 68 within 1.5 of the shared run. Metas off by more than 0.5: 39 of 68 (was 45), max 119 (fury_2h families, fury, arms, Affliction +37, Survival -26). Drift report: only the known feral sapper line (results-20261105-1).
 
 ### results-20261104-1: five rogue metas' published.dps lag the hotfix re-sim (up to 17.3 DPS)
 - severity: low (builds.json, from e9185b1aa, matches my 20k seed-1 run on all five; only the metas lag)

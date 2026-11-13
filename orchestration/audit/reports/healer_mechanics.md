@@ -1,28 +1,51 @@
-# Healer mechanics, pass 12 (2026-11-13)
+# Healer mechanics, pass 13 (2026-11-13)
 
-Master 71562a8b03 against last pass 8306f1d52. Client 1.60.1.70888. Result: quiet. Findings 10 and 11 still open.
+Master 97da1cca5c against last pass 71562a8b03. Client 1.60.1.70938. Result: findings (1 new, high). Findings 10 and 11 still open.
 
 ## Get current
 
 | Source | Seen | Result |
 |---|---|---|
-| Newest client (`wago.py latest`) | 1.60.1.70888 | Same as pass 11, no verdict reopened |
-| Blizzard notes | Nov 11 hotfixes / blue post (`ref/client_update/sources/blizzard_forum_blue_2026-11-11.txt`) | Healer lines: Nature's Swiftness takes Wild Growth (in sim since 9628e85b6), Revelation off Vampiric Embrace (pass 9), Power Infusion persists on allies, Shadowform/Fear Ward, Lesser Spirit enchants (pass 9). None changes a heal, healing talent or engine path the presets use |
-| `orchestration/update_ledger.md` | last entry build 70888 | Nothing new |
+| Newest client (`wago.py latest`) | 1.60.1.70938 (was 70888) | `wago.py diff 1.60.1.70888 1.60.1.70938 --set mechanics`: Wild Growth coefficient doubled (finding 15); Nature's Swiftness 17116 mask gains Wild Growth |
+| Blizzard notes | thread t/2403040 | not re-read: forum returned "performed this action too many times" (rate limit) twice. Next pass: look for a note on Wild Growth's coefficient |
+| `orchestration/update_ledger.md` | no 70938 entry yet | nothing to take |
 
-## What changed (watched paths, 8306f1d52..71562a8b03)
+## Client 70888 -> 70938, healer rows
+
+| Row | Change | Sim | Verdict | Tier |
+|---|---|---|---|---|
+| Wild Growth 408120 / 1238214 / 1238215 (SpellEffect 1072065, 1235327, 1235329) | EffectBonusCoefficient 0.033 -> 0.066 a tick; base/rppl/ticks unchanged | `sim/druid/healing.go:174` 0.033 | **mismatch** (finding 15) | 1 |
+| Nature's Swiftness 17116 (SpellEffect 695239) | mask_1 0x02000000 -> 0x06000000; 0x04000000 is Wild Growth's class bit (SpellClassOptions 408120 mask_1 67108864) | NS takes Wild Growth since 9628e85b6 | match (client now agrees with the Nov 10 hotfix) | 1 |
+| Divine Spirit / Prayer of Spirit class mask_1 +0x00400000 | new class bit (Reagent Economy 1273052 now reaches it) | reagent cost only | n/a | 1 |
+| Drink 1330734 (new, ItemEffect 238817) | new drink spell, 489 mana per tick aura 85 | consumables (healer_gear's domain) | n/a | 1 |
+| Holy Power 1310077 (renamed from Greater Firepower), Gloves of Holy Might, Poised, Call of Water | Holy damage, DPS or dummy rows | no healer path | n/a | 1 |
+
+No other heal rank (Healing Touch, Regrowth, Rejuvenation, Tranquility, Swiftmend, Bloom, Healing Wave, Lesser
+Healing Wave, Chain Heal, Riptide, Holy Light, Flash of Light, Holy Shock, Heal, Greater Heal, Flash Heal, Renew,
+Prayer of Healing, Power Word: Shield, Penance), healing talent row, cast time, cost, cooldown or duration changed.
+
+## Measured (finding 15)
+
+`healbench -role raid -carry tools/healbench/req/druid_restoration_raid.json`, master vs patch (coef 0.066), paired seeds, 1000 iterations a step:
+
+| Build | HPS | EH per mana | Overheal | Carry |
+|---|---|---|---|---|
+| master (0.033) | 2583 | 3.65 | 60.3% | 0.875 |
+| patch (0.066) | 2696 | 3.91 | 61.8% | 0.892 (+1.9%) |
+
+The druid tank preset casts no Wild Growth.
+
+## What changed (watched paths, 71562a8b03..97da1cca5c)
 
 | File / commit | Change | Healer effect | Verdict |
 |---|---|---|---|
-| `sim/core/heal_targets.go:80-88`, `apl_values_resources.go` (65b5d49cf) | Current Health / Current Health % of Most Hurt and Lowest Health read the healer's seen health; dead assignment reads full | closes finding 14; test `sim/healing_health_values_test.go` | OK (already resolved in findings) |
-| `sim/druid/healing.go:740` (e05135ad3) | NS comment names Wild Growth | comment only; mask code from 9628e85b6 matches the Nov 10 hotfix (tier 1) | OK |
-| `sim/paladin/judgement.go`, `seal_of_fury.go`, `soc.go`, `sor.go` (f1c07e13a) | Judgement damage spells are ranged specials under Forever (Nov 11 hotfix, tier 1) | none for Holy: healer presets don't judge for damage; raid Judgement of Wisdom / Light debuffs still proc from the raid's melee | OK (DPS/tank auditors own it) |
-| `tools/healbench/req/*.json` (ea25e50df, 8fd5ddcb9, e0e351f2f, 7b8a41fcc) | consumables (Greater Cleric's Elixir, food, Lesser Mana Oil), APL re-tunes (shaman NS -> instant Healing Wave, Holy priest Twilight Focus, paladin Flash of Light, druid NS at 45%) | rotation and consumables only; consumables belong to healer_gear (finding healer_gear-20261112-1 fixed) | OK |
+| `sim/paladin/unsealed_wrath.go` (33b13e310) | Windfury Totem swings store no Echo (Nov 11 hotfix) | Retribution talent; Holy presets don't take it | n/a (mechanics auditor) |
 
-No heal rank, healing talent row or engine path (health, targets, absorbs, HoTs, regen, raid damage) changed
-beyond the above. `sim/shaman/healing.go` unchanged, so finding 11 (Riptide 147/180/231 vs client 150/180/230)
-stands; finding 10 (untested paths) unchanged.
+## Tests
+
+`sim/druid/healing_ranks_test.go:87` pins the coefficient at 0.033, so the fix must change it; with the patch `go test ./sim/druid/` passes. Finding 10 unchanged.
 
 ## Open items
 
-- None blocking. Next pass: re-check finding 11 when `sim/shaman/healing.go` changes, and any new client build.
+- Blizzard notes not read this pass (rate limit): next pass, check the thread for the Wild Growth change.
+- Next pass: re-check finding 15 when `sim/druid/healing.go` changes; finding 11 when `sim/shaman/healing.go` changes.

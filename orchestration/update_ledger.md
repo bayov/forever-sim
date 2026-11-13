@@ -43,15 +43,15 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 |---|---|---|---|---|---|---|---|---|---|---|
 | Warrior | 84 | 52 | 0 | 2 | 0 | 2 | 0 | 4 | 24 | 0 |
 | Paladin | 66 | 37 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
-| Hunter | 96 | 52 | 2 | 8 | 1 | 3 | 3 | 3 | 23 | 1 info |
+| Hunter | 97 | 53 | 2 | 8 | 1 | 3 | 3 | 3 | 23 | 1 info |
 | Rogue | 69 | 39 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
-| Shaman | 105 | 60 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
+| Shaman | 111 | 65 | 12 | 4 | 0 | 2 | 2 | 2 | 24 | 0 |
 | Mage | 69 | 19 | 9 | 9 | 0 | 2 | 5 | 7 | 18 | 0 |
-| Warlock | 91 | 48 | 4 | 0 | 0 | 3 | 3 | 1 | 31 | 1 covered by another row |
-| Druid | 74 | 32 | 0 | 2 | 3 | 2 | 2 | 0 | 33 | 0 |
-| Shared (races, mechanics, items) | 74 | 27 | 1 | 3 | 3 | 3 | 4 | 9 | 24 | 0 |
-| **Total** | **783** | **386** | **47** | **32** | **9** | **23** | **22** | **33** | **227** | **4** |
+| Warlock | 95 | 50 | 4 | 0 | 0 | 3 | 3 | 1 | 33 | 1 covered by another row |
+| Druid | 76 | 33 | 0 | 2 | 3 | 2 | 2 | 0 | 34 | 0 |
+| Shared (races, mechanics, items) | 75 | 28 | 1 | 3 | 3 | 3 | 4 | 9 | 24 | 0 |
+| **Total** | **797** | **396** | **47** | **32** | **9** | **23** | **22** | **33** | **231** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -319,6 +319,29 @@ Text, cosmetic or out of scope, no rows: Swiftmend tooltip; Seals tooltip; Feral
 | HUN-HF-03 | FC 11-10 hotfix to 70888 (server) | Summon Hawk costs 11% of base mana (about 189 at 60) instead of 80-190 by rank | minor | server hotfix | wrong by about 1 mana | `sim/hunter/summon_hawk.go:131` rank 4 190; no finding |
 | HUN-HF-04 | FC 11-10 hotfix to 70888 (server) | Great Stamina raises the pet's health (30 to 400) instead of Stamina (3 to 40) | n/a (pet survival) | server hotfix | n/a | |
 | DRU-HF-01 | FC 11-10 hotfix to 70888 (server) | Nature's Swiftness works on Wild Growth | n/a (healing) | server hotfix | n/a | |
+
+## Build 1.60.1.70938 (first seen 2026-11-13)
+
+70938 writes the server hotfixes of November 10 and 11 into the client (foreverchanges.pro: "Blizzard has posted no notes for it ... no talent, class spell, racial or item reads differently" than the hotfixes already did). `table_summary.py 70888 70938`: 98 spells changed, ItemSparse 1,042 changed (811 only DmgVariance 0.2 -> 0 on armor, the rest Bonding and Flags_1 bits, bag sizes, companion texts), ItemEffect 6 changed and 3 added, one enchant (8203 Spirit, stat type 124 -> 6); ChrRaces, SpellCastTimes, SpellDuration and every trait table identical. Arcane Shot and Summon Hawk now read 11% of base mana in the client (HUN-HF-02/03), and Great Stamina's health rows (HUN-HF-04) and Nature's Swiftness on Wild Growth (DRU-HF-01) arrive too. Dev notes thread not re-fetched; foreverchanges carries Blizzard's 11-11 and 11-12 notes, read here.
+
+Text, cosmetic or out of scope, no rows: Wild Growth coefficient 0.033 -> 0.066 and interrupt flags (healing); Divine Spirit, Prayer of Spirit, Reagent Economy and The Quick and the Dead class masks (priest buffs, cooldown manager); Twilight Focus and Confounding Flash shapeshift rows; Frost Nova attribute bits; Consecration 1280353's mark no longer ends on a proc (Blizzard 11-09 "after targets despawned"; single target, nothing changes); Summon Arcane Elemental 1324323 gets a 15 s ICD (no item or enchant in the client uses it); Gloves of Holy Might (ilvl 42) proc moves to 1330855, 15%, 20 s ICD; four bags (bigger, one more cloth), Strike Gong cast time, Drink 1330734 (Morning Glory Dew), Flare, Summon Flare Gun, Dedicated Study's cooldown category, Eject Sneed; ItemEffect category 44 -> 2609 "Item - Speed Trinket" on Nifty Stopwatch (ilvl 50), Mirage Mirror (ilvl 40) and two unused rows (Blizzard 11-09 shared cooldown); Earthen Silk Slippers (ilvl 36) and Rage of the Storm (ilvl 40, 3.2 -> 3.6 speed). Blizzard 11-11 hotfix with no DPS effect: Riverglades NPC damage, Glimmering Mithril Insignia not mail-only, Bloody Claws of Attack +1 Fist skill, Seal and Rune of the Dawn collect Scourgestones, Item Restoration off.
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| WL-HF-02 | FC 11-10 hotfix (server hotfix 113766); client 70938 | Wrack: no more 10% damage taken from the warlock's other Shadow DoTs; while channelled, Siphon Life, Corruption and Bane of Agony tick 100% faster. Own damage x0.7 (60 instead of 86 a second at 60) | **yes** (affliction) | SpellEffect 1349556 bp 36 -> 25.2, 2.5 -> 1.75 a level, coef 0.286 -> 0.2002; 1349557 aura 271 -> 4, bp 10 -> 100, mask 1026 -> 0 | landed | `sim/warlock/wrack.go:15-21`, `talents.go:298-363` (applyWrack, double tick speed while channelling) |
+| WL-HF-03 | FC 11-10 hotfix; client 70938 (text only) | Soul Siphon counts only Corruption, Siphon Life and Bane of Agony on the target | yes (affliction) | Spell 17804 description; the count is server side | landed | `sim/warlock/talents.go:368-388` |
+| WL-HF-04 | FC 11-10 hotfix; client 70938 | Bane of Havoc triggers the 1.5 s GCD | n/a (two-target spell; not cast in a single-target report) | SpellCooldowns 102518 StartRecoveryTime 1500, SpellCategories 174286 GCD category 133 | n/a | not simulated as a spell |
+| WL-HF-05 | FC 11-10 hotfix; client 70938 | Imp Firebolt ranks 1-4 deal more (rank 1 6-8, rank 4 18-22) | n/a (leveling; level 60 Imps use rank 7) | SpellEffect 681913, 685570-2 | n/a | |
+| SHA-HF-02 | FC 11-10 hotfix "Lightning Overload deals the right damage for Lightning Bolt"; client 70938 | Lightning Overload copies now exactly half the parent: Lightning Bolt and Chain Lightning overload ranks rebased; Chain Lightning's overload coefficient 0.2855 -> 0.357 | **yes** (elemental) | `rank.py 70938`: 408477 bp 176.5 + 1.05/level (180.7 at 60, coef 0.357) = half of 15208 (361.4, 0.714); 408484 bp 255 + 1.65/level (261.6, 0.357) = half of 10605 (523.2, 0.714). Was 100.4 and 66.8 at 60 | landed | `sim/shaman/lightning_overload.go` copies the spell at x0.5; settles SHA-HF-01 |
+| SHA-HF-03 | FC 11-10 hotfix; client 70938 | Flametongue Totem rank 2 triggers its weapon proc | n/a (leveling; rank 4 at 60) | SpellEffect 687698 trigger 0 -> 8248 | n/a | |
+| SHA-HF-04 | Blizzard 11-12 hotfix (FC) | Stormstrike deals 100% weapon damage (was 150%), cooldown 8 s (was 6) | **yes** (enhancement) | server hotfix | landed | `sim/shaman/stormstrike.go:29` 1.0, `:78` 8 s under Forever |
+| SHA-HF-05 | Blizzard 11-12 hotfix (FC) | Mental Dexterity turns 33/66/100% of Intellect into attack power (was 50/100/150%) | **yes** (enhancement) | server hotfix | landed | `sim/shaman/talents.go:39` |
+| SHA-HF-06 | Blizzard 11-12 hotfix (FC) | Maelstrom Weapon 20% cast time and mana a stack at every rank, 6/7/8/9/10 PPM | **yes** (enhancement) | server hotfix | landed | `sim/shaman/talents.go:548-567` |
+| SHA-HF-07 | Blizzard 11-12 hotfix (FC) | Weapon imbues and weapon totems work at the same time (Windfury Weapon and Windfury Totem both proc) | **yes** (enhancement, Windfury Totem groups) | server hotfix | landed | `sim/core/buffs.go:2160` |
+| HUN-HF-05 | Blizzard 11-11 hotfix (FC); client 70938 | Volley activates no procs and stops when the hunter moves or uses an item | minor (no single-target preset casts Volley) | SpellMisc Attributes_4 +0x800000 (suppress weapon procs) on 1510/14294/14295 and 1279715/19/21; SpellInterrupts AuraInterruptFlags 0 -> 31756 | landed | `sim/hunter/volley.go:25-41` (2fcb6fe2a) |
+| DRU-U-19 | Blizzard 11-09 note; client 70938 | Idol of Ferocity (27851) no longer lists or discounts Mangle | yes (feral presets with the idol) | SpellEffect 704563 mask word 1 1024 -> 0 | landed | `sim/druid/items.go:38-46` only ever discounted Claw and Rake |
+| DRU-HF-02 | Blizzard 11-11 hotfix (FC) | Rend and Tear works on Pounce Bleed | n/a (Pounce not simulated) | server hotfix | n/a | |
+| SHR-U-23 | client 70938 (rogue and druid) | Poised (1328825 rogue, 1328829 druid) now triggers helper auras 1330741/1330746 and 1330763/1330765 (a dummy dropped on entering combat and a 0.5 s periodic check) instead of a bare dummy | yes (every rogue and cat preset) | SpellEffect 1368038 / 1368043 aura 4 -> 42, trigger 1330741 / 1330763; the 10 Energy effect is unchanged | landed | foreverchanges: nothing reads differently. The sim's 10 Energy off the first ability at the pull stands |
 
 ## Per-class ledgers
 

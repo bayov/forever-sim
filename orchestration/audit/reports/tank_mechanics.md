@@ -1,52 +1,46 @@
-# tank_mechanics pass 13 (2026-11-13, master 71562a8b03, client 1.60.1.70888+hf)
+# tank_mechanics pass 14 (2026-11-13, master 97da1cca5c, client 1.60.1.70938)
 
-Result: quiet. No new findings; three findings verified resolved.
+Result: quiet. No new findings; the two open findings stay open.
 
-**Getting current:** wago's latest is still 1.60.1.70888 (unchanged since pass 11). No Blizzard notes newer than the
-Nov 11 hotfixes, which pass 12 already read.
+**Getting current:** wago's latest moved 1.60.1.70888 -> 1.60.1.70938. Blizzard's forum (notes thread 2360696, hotfix
+threads 2403040 and 2404092) answered "too many times, try again later" all pass (other auditors fetching at once), so
+no notes newer than `dev_notes_seen` were read; the next pass should re-check them. update_ledger.md unchanged.
 
-**Changed since 8306f1d52 (watched paths):** sim/paladin/{judgement,seal_of_fury,soc,sor}.go (f1c07e13a, Judgement is a
-ranged attack), sim/druid/healing.go (Nature's Swiftness comment, Restoration only), sim/core/heal_targets.go and
-apl_values_resources.go (healer Most Hurt / Lowest Health read seen health), tools/tankbench/req/*.json (preset re-tunes).
+**Client 70888 -> 70938** (`tools/audit/client_update/table_summary.py`, then the new
+`tools/audit/tank_mechanics/spell_changes.py` for the per-spell rows):
 
-## Protection paladin
+| Spell | Change | Tank effect |
+|---|---|---|
+| 1280353 Consecration (mark) | SpellAuraOptions ProcChance 100 -> 101, ProcTypeMask 8 -> 0 | none: the sim's mark (sim/paladin/consecration.go:28) carries only Consecrated Ground's Holy bonus, no proc |
+| 8250 Flametongue Totem | EffectBasePoints 0 -> 8248 | none: no Warden preset places Flametongue |
+| 1328825/1328829 Poised (rogue, druid) | aura 4 -> 42 triggering new 1330741/1330763 | none for bear (Energy only) |
+| 408439.. Lightning Bolt, 408479.. Chain Lightning | base points / per level | not sim rows |
+| Wrack, Volley, Arcane Shot, Frost Nova, Divine Spirit, pet Great Stamina, camp items | various | not tank |
 
-| Item | Client 70888 | Sim | Verdict | Tier |
-|---|---|---|---|---|
-| Judgement of Fury 20414 (and lower ranks) | DefenseType 2, notes say ranged | ranged special, ranged table, NoBlockDodgeParry | right | 1 (notes; client row not updated) |
-| Judgement of Righteousness 20286 / Command 20966 | DefenseType 2 | same, via rangedJudgement | right | 1 (notes) |
-| Judgement threat | - | unchanged, 1.9 x 1.33 a point (TestJudgementOfFuryRanged) | right | as before |
-| Precision on the ranged roll | 20189 unscoped A_MOD_HIT_CHANCE | MeleeHit stat feeds PhysicalHitChance for ranged too | right | 1 |
-| Weapon skill on ranged table | - | base for level; presets are Undead, no racial lost | right | 3 |
-| Melee-keyed procs (JoW/JoL, weapon procs) | hotfix: no longer | ProcMaskRangedSpecial | right | 1 (notes) |
-| Windfury Totem | - | judgements not in windfuryTotemAbilityIds | right | logs |
+**Changed since 71562a8b03 (watched paths):** sim/core/attack.go and sim/paladin/unsealed_wrath.go (33b13e310 extra
+attack sources; a1a1a81bb no extra attack rolls Windfury Totem). Read in full.
 
-## Feral tank (bear)
+## Engine: extra attacks and Windfury Totem
 
-| Item | Client | Sim | Verdict | Tier |
-|---|---|---|---|---|
-| Tauren Endurance 20550 | aura 133, +5% | MultiplyStat(Health, 1.05) | right | 1 |
-| Feral Instinct 3 (Max survival) | 10% Swipe a point | swipe.go:53, tested | right | 1 |
-| Brutal Impact 1 | Bash only | bear.go:420 | right (no tank effect) | 1 |
-| Maul / Swipe / FR APL thresholds | - | rotation choice | tank_rotations' scope | - |
+| Check | Sim | Verdict, tier |
+|---|---|---|
+| No extra attack rolls Windfury Totem (standards 17) | buffs.go `rollsOn` = `!IsExtraAttack() && windfuryTotemRollsOnForever` | match, tier 1 (user's Nov 6-11 log audit) |
+| Source kept on a stored attack (Reckoning stores) | `extraSourcesStored`, falls back to 21919 | correct |
+| Source kept on the delayed white landing (batch later) | DealDamage restores `mh.extraSource` | correct |
+| Next-swing ability swung by an extra attack (Heroic Strike, Maul) | `swing()` sets extraSource before the replaced cast | does not roll, as standards 17 |
+| Every extra attack caller has a non-zero source | Reckoning 20178, Sword Spec 12815/13964, HoJ, Thrash 21919, WF itself | correct |
+| Reset clears sources | `AutoAttacks.reset` | correct |
 
-## Warden, warrior
+Every tank preset (warrior, paladin, bear, Warden) takes raid Windfury Totem, so the prot paladin's Reckoning swings now
+roll it no more. Unsealed Wrath: no tank preset takes it (pass 12).
 
-Consumable swaps only (Wizard Oil, Supreme Power, Titans, Greater Mageblood, Healing Stream r5 10463), all verified in
-pass 12's verdicts. Windfury rule: Heroic Strike, Sunder, Cleave, Maul roll; Shield Slam doesn't (list checked).
+## Tests
 
-## Engine
+`go test -tags=with_db ./sim/core/ ./sim/paladin/... ./sim/warrior/... ./sim/druid/... ./sim/shaman/...`: all ok.
+`TestWindfuryTotemExtraAttacksDontRoll` covers any non-zero source (Reckoning's path is the same; no Reckoning-named
+case, not a finding). tankbench builds.
 
-- Healer seen-health values: no tankbench req reads health (grep for currentHealth / lowestHealth / mostHurt: none),
-  so the tank score's replay is unaffected.
+## Open findings
 
-## Tests run (-tags=with_db)
-
-sim/paladin/protection (TestJudgementOfFuryRanged, TestSealOfFury*), sim/paladin/retribution (TestJudgementsAreRanged),
-sim/core Windfury, sim/warrior/tank_warrior Windfury: all pass. (Without with_db the retribution test panics on a missing
-item; build tag only, not a bug.)
-
-## Findings
-
-- Resolved: 20261112-1 (judgement ranged), 20261112-2 (Windfury rule), 20261111-1 (shaman doc).
-- Still open: 20261108-1 (Warden shock threat under Stormstrike untested), 20261107-1 (stale client labels).
+- 20261108-1 (Warden shock threat under the Stormstrike mark untested): still open, sim/shaman unchanged.
+- 20261107-1 (stale "client disagrees" threat labels): still open, stances.go:110 and bear.go:57 unchanged.

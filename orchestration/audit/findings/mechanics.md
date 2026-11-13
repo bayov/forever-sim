@@ -4,12 +4,12 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### mechanics-20261112-2: Unsealed Wrath no longer takes echoes from Windfury Totem attacks (Nov 11 hotfixes); the sim lets every white swing, extra attacks included, store and spend them
-- severity: medium (estimated, not measured: Windfury Totem procs on about 20% of landed main hand swings, so roughly a sixth of the echo stores/spends come from its extra attacks; likely 0.5-2% on Retribution builds with the talent)
-- affects: paladin (Retribution builds with Unsealed Wrath)
-- found: 2026-11-12, master cb0d928fd6
-- evidence: t/2403040 post 8 (tier 1): "Retribution: With the fix to Windfury Totem activating from Holy Strike, we have changed Unsealed Fury. Unsealed Fury no longer generates echoes from Windfury Totem attacks." The client 70888 name is Unsealed Wrath (1310735, proc 100%); we read "Unsealed Fury" as that talent (medium confidence: no other Unsealed talent in 70888). Sim: `sim/paladin/unsealed_wrath.go:24-25` ("extra attacks included") and `:61` (any landed ProcMaskMeleeWhiteHit), and the WF totem extra attack comes through `ExtraMHAttackProc` with the Windfury action ID (`sim/core/buffs.go:2120`).
-- proposed fix: in the Unsealed Wrath OnSpellHitDealt, skip swings that are Windfury Totem extra attacks (tag them, e.g. a flag or the extra attack's action ID 8516/10608/10610 / the "Extra Attacks" source). Whether those swings still spend stacks is unstated ("generates echoes"): ask, or skip only the store.
+### mechanics-20261113-1: Client 70938 changes Imp Firebolt ranks 2-4; the sim keeps the 70888 values
+- severity: low (leveling only: the Level 60 presets cast rank 7, 11763, which is unchanged; not measured)
+- affects: warlock (Imp, leveling builds at levels 8-37)
+- found: 2026-11-13, master 97da1cca5c, client 1.60.1.70938 (tier 1)
+- evidence: `python3 -I tools/sources/wago.py diff 1.60.1.70888 1.60.1.70938 --by-spell`, SpellEffect #0: 7799 base 7->11, per level 0.2->0.4, variance 0.1538->0.1818; 7800 12->15, 0.3->0.4, 0.1667->0.2353; 7801 17->18, 0.3->0.4, 0.1143->0.2222. Rank 1 (3110: 6, 0.3, 0.333) is now in the client and matches the sim (hotfix 113766). Sim: `sim/warlock/spell_data.go:162-164` still has the old values. No hotfix rows for 70938 on wago.tools in the spell tables yet. The client update ledger lists it (WL-HF-05, from the FC Nov 10 hotfix list) as n/a for the report; this finding is for the leveling sim.
+- proposed fix: in `impFireboltRanks` set rank 2 to Base 11, PerLevel 0.4, Variance 0.1818; rank 3 to 15, 0.4, 0.2353; rank 4 to 18, 0.4, 0.2222 under Forever, and extend `TestImpFireboltRankOne` to ranks 2-4.
 - needs: worker fix
 
 ### mechanics-20261112-1: Nov 11 hotfixes say Holy Strike activates Windfury Totem; the sim lets only white main hand swings proc it under Forever
@@ -31,6 +31,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-11-05 (pass 67, master a07941531): the Energy part is fixed. ff56f8ddc takes 0.7 / 1.2 / 1.8 / 2.5 / 3.1 / 3.3 a point of extra Energy under Forever (`ferocious_bite.go` foreverDmgPerEnergy), which matches 70790 SpellEffect #1 of 1328618 / 22568 / 22827 / 22828 / 22829 / 31018 (bp 70 / 120 / 180 / 250 / 310 / 330, tier 1). Still open: the base and per combo point parts (sim 1.25 x 147 = 183.75 against 181 at r6, and the other ranks), Starfire's growth a level (3.36 against 3.4) and the stale "None of it is in the client" comment in `tuning_70753.go`.
 
 ## Resolved
+
+### mechanics-20261112-2: Unsealed Wrath no longer takes echoes from Windfury Totem attacks (Nov 11 hotfixes); the sim lets every white swing, extra attacks included, store and spend them
+- severity: medium (estimated, not measured: Windfury Totem procs on about 20% of landed main hand swings, so roughly a sixth of the echo stores/spends come from its extra attacks; likely 0.5-2% on Retribution builds with the talent)
+- affects: paladin (Retribution builds with Unsealed Wrath)
+- found: 2026-11-12, master cb0d928fd6
+- evidence: t/2403040 post 8 (tier 1): "Retribution: With the fix to Windfury Totem activating from Holy Strike, we have changed Unsealed Fury. Unsealed Fury no longer generates echoes from Windfury Totem attacks." The client 70888 name is Unsealed Wrath (1310735, proc 100%); we read "Unsealed Fury" as that talent (medium confidence: no other Unsealed talent in 70888). Sim: `sim/paladin/unsealed_wrath.go:24-25` ("extra attacks included") and `:61` (any landed ProcMaskMeleeWhiteHit), and the WF totem extra attack comes through `ExtraMHAttackProc` with the Windfury action ID (`sim/core/buffs.go:2120`).
+- proposed fix: in the Unsealed Wrath OnSpellHitDealt, skip swings that are Windfury Totem extra attacks (tag them, e.g. a flag or the extra attack's action ID 8516/10608/10610 / the "Extra Attacks" source). Whether those swings still spend stacks is unstated ("generates echoes"): ask, or skip only the store.
+- needs: worker fix
+- resolved: 2026-11-13, 33b13e310 (merged e8089abc3; Windfury Totem swings store no echo, `unsealed_wrath.go:85`), with a1a1a81bb keeping the source of stored extra attacks. They still spend the other seals' stacks, report assumption pal_unsealed_wrath (the post only says "generates").
 
 ### mechanics-20261112-3: Judgement is a ranged attack since the Nov 11 hotfixes; the sim's Judgements of Command and Righteousness are melee specials that roll melee procs
 - severity: low (measured -0.4% to -0.9% DPS on the 10 paladin DPS presets)

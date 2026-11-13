@@ -1,9 +1,8 @@
-# Consumables pass 82, master 71562a8b0
+# Consumables pass 83, master 97da1cca5
 
 No new findings.
 
-- Moved since 8306f1d52 (DPS specs): hunter/presets.ts (comment only), rogue/presets.ts (default gear and talents switched from Combat Daggers to Combat Swords, rotation preset order swapped; Consumes untouched), warrior/presets.ts (comment only), enhancement bis level60_phase0 (out of scope), hunter sv.apl and warrior fury APL (rotation, not this audit). No change in mksettings, sim/core consumes/buffs/debuffs, sim/common, forever_enchants.go, assumptions or the mage imbue. Moved level60 gear sets are all tank specs (out of scope).
-- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty. Totem counts match the baseline rulings.
-- Scan note: "minor-armor exclusive effects" prints 3 against the expected 2. The third is ForeverDustCloudAura (since dbafa638b, 2026-11-11), not a preset issue. The scan's expected count is stale.
-- wago latest: 1.60.1.70888, same as last pass; no new build.
+- Moved since 71562a8b0 (watched files): item_effects.go (Ebon Hilt of Marduk Forever tick 28 per 3 sec, no preset use), buffs.go (Windfury Totem no longer rolls on extra attacks, standards 17), assumptions_def.py (paladin hotfix assumptions), standards.md (item 17), ui/retribution_paladin/presets.ts (talent strings and comments only; no consumes change), ui/rogue/presets.ts (comment only).
+- New client build 1.60.1.70938 (was 70888). builddiff.py: one new drink, Morning Glory Dew (item 287964, no preset uses it); Bracer and Boots Lesser Spirit enchant 8203 now carries effect arg 6 where it carried 124, matching forever_enchants.go's +4 Spirit note (hotfix 113844); no preset uses either enchant. No other consumable or enchant changed.
+- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty. Totem counts match the rulings. Minor-armor count 3 against expected 2 is ForeverDustCloudAura (known, scan expectation stale).
 - Open items: the two low findings in findings/consumables.md are unchanged.
