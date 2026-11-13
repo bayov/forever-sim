@@ -5294,6 +5294,10 @@
     {
      "commit": "4ed0613",
      "why": "Enhancement tests and goldens only"
+    },
+    {
+     "commit": "760d4c1",
+     "why": "the report data for the lines above, with the presets' published numbers and caveat wording"
     }
    ],
    "source": {
