@@ -84,6 +84,10 @@ var (
 	}
 )
 
+// Rugged kits need an item of level 35 or above. Only the BiS enchant ranking
+// (bis_enchants.go) offers them.
+var ruggedKits = []int32{1843, 1254965, 1254966}
+
 // The next kit down in the same line, for an item or a character too low for a kit.
 var smallerKit = map[int32]int32{
 	1255073: 1255095, 1255095: 1255123,
@@ -134,6 +138,8 @@ func kitFits(item *proto.UIItem, enchant int32, level int32) bool {
 	case slices.Contains(heavyKits, enchant) && item.Ilvl < 15:
 		return false
 	case slices.Contains(thickKits, enchant) && item.Ilvl < 25:
+		return false
+	case slices.Contains(ruggedKits, enchant) && item.Ilvl < 35:
 		return false
 	}
 	return enchantLevels[enchant] <= level

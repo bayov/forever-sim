@@ -48,6 +48,12 @@
 # The pick is a two hander, so the main hand list has only two handers and the off hand list
 # is empty (-gear-rank-two-hand-only). We don't list a one hand setup next to it.
 #
+# Then every enchant goes on the set, slot by slot, and the best one stays (bis_enchants.go). The
+# items are ranked on the set with those enchants, so the list's DPS has them. The enchants are a
+# few DPS apart, so they're ranked at 10000 iterations. tools/rotopt/phase0_enchants.json is the
+# hand check of what's open, by spell ID: "out" leaves an enchant out (raid formulas, Alliance
+# quests), and its avail and note go on the list's entries. Each slot keeps its 10 best enchants.
+#
 # Each slot keeps its 25 best items. After the search we copy `avail` and `note` from
 # phase0_content.json onto every entry of the list, so a rerun keeps them.
 #
@@ -85,7 +91,8 @@ go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/en
 	-gear-exclude "$exclude" -gear-include "$include" \
 	-gear-screen-iters 300 -gear-screen-keep 40 \
 	-gear-rank-out "$out" -gear-rank-name "Phase 0" -gear-rank-keep 25 -gear-rank-two-hand-only \
-	-gear-rank-spec enh -gear-rank-sim "$sim"
+	-gear-rank-spec enh -gear-rank-sim "$sim" \
+	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters 10000
 
 # The content check's status on every entry.
 jq --slurpfile content "$content" '.slots |= map_values(map(

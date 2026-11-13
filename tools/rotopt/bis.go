@@ -61,6 +61,8 @@ type bisEntry struct {
 	// with, or the main hand an off hand was scored with.
 	With int32 `json:"with,omitempty"`
 	BiS  bool  `json:"bis,omitempty"`
+	// Enchant is a pick's enchant, by its effect ID in the sim (the enchants list's id).
+	Enchant int32 `json:"enchant,omitempty"`
 }
 
 type bisSlot struct {
@@ -289,6 +291,16 @@ func sameGear(spec *proto.ItemSpec, o gearOption) bool {
 // names and unsourced are the set's own, as the search printed them.
 func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemSpec, names []string, unsourced []bool, knobs Knobs) error {
 	keep := *gearRankKeep
+	// With -gear-rank-enchants the set gets its best enchants first, so the items are
+	// ranked on them (bis_enchants.go).
+	var enchants []bisEnchantSlot
+	if *gearRankEnchants != "" {
+		fmt.Println("ranking every enchant of the set:")
+		var err error
+		if enchants, err = s.rankEnchants(best, knobs); err != nil {
+			return err
+		}
+	}
 	s.setGear(best)
 	base := s.score(knobs)
 	fmt.Printf("ranking every slot against the set: %s\n", base)
@@ -318,7 +330,7 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 				name = it.Name
 			}
 		}
-		e := bisEntry{ID: item.Id, Suffix: item.RandomSuffix, Name: name, DPS: round2(base.dps), Unsourced: unsourced[slot], BiS: true}
+		e := bisEntry{ID: item.Id, Suffix: item.RandomSuffix, Name: name, DPS: round2(base.dps), Unsourced: unsourced[slot], BiS: true, Enchant: item.Enchant}
 		if with != nil {
 			e.With = with.Id
 		}
@@ -406,7 +418,7 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 			fmt.Println()
 		}
 	}
-	return s.writeBis(path, base, slots)
+	return s.writeBis(path, base, slots, enchants)
 }
 
 // rankWeapons is the main hand and off hand lists. See the top of the file for how a one
@@ -552,7 +564,7 @@ func noOtherHand(rankedGear) *proto.ItemSpec { return nil }
 // writeBis writes the list file. The format is the contract BayovCore's bis.py reads, see
 // docs/bis_lists.md. Each entry goes on a line of its own, so a diff of two runs reads
 // item by item.
-func (s *searcher) writeBis(path string, base result, slots []bisSlot) error {
+func (s *searcher) writeBis(path string, base result, slots []bisSlot, enchants []bisEnchantSlot) error {
 	player := s.setup.player()
 	talents := player.TalentsString
 	if s.setup.talents != "" {
@@ -609,7 +621,33 @@ func (s *searcher) writeBis(path string, base result, slots []bisSlot) error {
 		}
 		b.WriteString("\n")
 	}
-	b.WriteString("  }\n}\n")
+	b.WriteString("  }")
+	if len(enchants) > 0 {
+		b.WriteString(",\n  \"enchants\": {\n")
+		for i, slot := range enchants {
+			fmt.Fprintf(&b, "    %q: [", slot.name)
+			for j, e := range slot.entries {
+				data, err := json.Marshal(e)
+				if err != nil {
+					return err
+				}
+				if j > 0 {
+					b.WriteString(",")
+				}
+				fmt.Fprintf(&b, "\n      %s", data)
+			}
+			if len(slot.entries) > 0 {
+				b.WriteString("\n    ")
+			}
+			b.WriteString("]")
+			if i < len(enchants)-1 {
+				b.WriteString(",")
+			}
+			b.WriteString("\n")
+		}
+		b.WriteString("  }")
+	}
+	b.WriteString("\n}\n")
 	if err := os.WriteFile(path, []byte(b.String()), 0o644); err != nil {
 		return err
 	}

@@ -248,6 +248,7 @@ func loadGearPool(dbPath, levelsPath, foreverPath string, player *proto.Player, 
 		}
 	}
 
+	allEnchants, enchantMaxPhase = db.Enchants, maxPhase
 	for _, enchant := range db.Enchants {
 		// Classic shares an effect between enchants with the same stats on different
 		// slots (852 is Stamina +5 on bracers, boots and shields). Those print without
