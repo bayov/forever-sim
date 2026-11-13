@@ -1313,6 +1313,13 @@ func init() {
 	// Chance on hit: Deals 8 Shadow damage every 2 sec for 30 sec and lowers their Strength for the duration of the disease.
 	// TODO: Proc rate assumed and needs testing
 	itemhelpers.CreateWeaponProcSpell(FrightskullShaft, "Frightskull Shaft", 0.5, func(character *core.Character) *core.Spell {
+		// Under Forever the client's disease deals 15 every 2 sec for 14 sec (wago 1.60.1.70425:
+		// SpellEffect base 15, SpellDuration 305). Our Nov 13 log fits it: ticks of 15 (14 on
+		// dungeon mobs), and the next tick comes 2 sec after each refresh.
+		tickDamage, numTicks := 8.0, int32(15)
+		if character.Env.IsForever() {
+			tickDamage, numTicks = 15, 7
+		}
 		return character.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 18633},
 			SpellSchool: core.SpellSchoolShadow,
@@ -1321,7 +1328,7 @@ func init() {
 			Flags:       core.SpellFlagPureDot | core.SpellFlagDisease,
 
 			Dot: core.DotConfig{
-				NumberOfTicks: 15,
+				NumberOfTicks: numTicks,
 				TickLength:    time.Second * 2,
 				Aura: core.Aura{
 					Label: "Weakening Disease",
@@ -1333,7 +1340,7 @@ func init() {
 					},
 				},
 				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-					dot.Snapshot(target, 8, isRollover)
+					dot.Snapshot(target, tickDamage, isRollover)
 				},
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 					dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
