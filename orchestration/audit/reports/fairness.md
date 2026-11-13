@@ -1,40 +1,43 @@
-# Fairness pass 37 (2026-11-12, master 8306f1d)
+# Fairness pass 38 (2026-11-13, master 71562a8)
 
-Result: quiet (no new finding, none resolved). Watched files changed since a0b4d3b (6): hunter pet melee speed and
-autocast (368b2e181, with sim/core/pet.go, unit.go), Rake's hit takes 6.5% AP (c380bbaef), report hashes. Full pass:
-`audit1b.py` and a full 5k race sweep on the loop's 8306f1d CLI and tree. New baseline: 8306f1d.
+Result: quiet (no new finding; fairness-20261112-1 resolved). Watched files changed since 8306f1d (52), most of them
+tank and healer presets and rotations (tankheal merge a6aabc896). Partial pass: the machine was shared with healer passes,
+so instead of the full 20 min race sweep I compared the loop's 20k master run against the 8306f1d sweep and re-swept by
+race only the builds that moved.
 
 ## What changed
 
 | Change | Commit | Effect on fairness |
 |---|---|---|
-| Hunter pet swings at its owner's melee/attack speed (Pet.FollowsOwnerMeleeSpeed, hunter only); autocast passes an ability short of focus | 368b2e181 | Survival +26.1 (16th -> 14th, passes Ret and Destruction Fire), BM +7.3, MM +2.0 (variants +4 to +27). Lone Wolf (no pet) identical |
-| Rake's direct hit adds 0.065 AP (user ruling 2026-11-12, 70862 log) | c380bbaef | Feral +29.4 (+2.6%), stays 4th |
-| Core pet.go / unit.go | 368b2e181 | The old DK hook became the hunter-only flag. Warlock demons unchanged (all warlock rows identical), standards 14 intact |
+| Judgement is a ranged attack (Nov 11 hotfix) | f1c07e13a | Ret -4.3, Shock Ret -7.5, Sub-Holy Ret -5.6 (5k, report race). Ret stays 15th; Undead still best (Human -4.2, Dwarf -9.6) |
+| Windfury re-tunes: Survival Wing Clip without mana floor, Fury Battle Shout duty HS 60 in Reckless Swings / fillerGap 1 | 8f5de1c87 | Survival +1.2 (noise at 180 s), Fury BS duty +5. Base builds held, per the commit's two-seed check |
+| Combat Swords back as rogue default | 8f5de1c87 | Resolves fairness-20261112-1 |
+| Windfury rule by client flag (standards 17) merged into tankheal; master's rule kept | 2a0208136, c1502631c | Already in the 8306f1d baseline: no DPS build moved apart from Ret |
+| Healer health values, tank/healer presets, enchants, consumables | 65b5d49cf and others | No DPS build moved |
 
 ## What I checked
 
+- Movement: loop's 20k run (`$AUDIT_WORK/runs/master/summary.tsv`) against `ref/fairness/sweep_baseline.log` (5k): only
+  the three Ret builds moved more than 1.5. All attributed to f1c07e13a (paladin only). No shared leak.
+- Report data: `ui/dps_report/data/builds.json` (e9a8857e7) matches the 20k run within 1.5 on all 68 builds.
+- meta.published.dps still lags on 45 metas (Fury 2H -119, Sub-Holy -97, Ret -88, Fury -85, Arms -45, Affliction +37,
+  Survival -26, hunters -9 to -22, rogues -1 to -19, Feral +14). Same bookkeeping as before; results-20261104-2 covers it.
 - Gear: `audit1b.py` 19 of 19 "5a PASS | 1b PASS".
-- Movement against the a0b4d3b baseline: only hunters (pet) and Feral moved, both attributed. No leak.
-- Report data: ui/dps_report/data/builds.json matches the loop's 20k master run within 1.5 DPS on all 68 builds
-  (re-sim bff0169e4 and 2b62e304a), so the dashboard ranking is current.
-- meta.published.dps still lags on 45 metas (Fury 2H -119, Fury -85, Ret -82, Sub-Holy -92, Arms -45, Affliction +37,
-  Survival -27, hunters -9 to -22, rogues -1 to -19, Feral +14.5). Bookkeeping in the req metas, not the published report;
-  the results auditor's open results-20261104-2 covers it. Not refiled.
-- Best race: report race is best within noise (MM Night Elf +0.3, Combat Daggers Gnome +0.6, Fire Gnome +0.4). The MM pet
-  variants run Orc, Night Elf +1.0 (wolf) and +1.5 (tallstrider) at 5k; builds.json at 20k agrees (+1.0, +1.2). Note for the
-  hunter owner, below finding level (variants keep the base build's race).
-- fairness-20261112-1: confirmed at 20k after the re-sim, Combat Swords 946.4 over default Combat Daggers 936.2.
+- Best race: paladin rows re-swept (Undead best everywhere). Others unchanged since pass 37.
 
-## Ranking now (report race, 5k)
+## Ranking now (report race, 5k; Ret rows from this pass, the rest from pass 37)
 
 Lone Wolf 1291.8, MM 1234.7, BM 1182.0, Feral 1153.8, Affliction 1071.1, Frostfire 1065.7, Destruction 1063.2,
 Demonology 1055.3, Fire 1053.8, Fury DW 1050.2, Arms 1041.7, Fury 2H 1032.0, Enhancement 1030.7, Survival 1013.9,
-Ret 1008.9, Destruction Fire 997.9, Elemental 977.4, Arcane 963.6, Balance 952.1, Shadow 948.6, Combat Swords 946.1,
+Ret 1004.6, Destruction Fire 997.9, Elemental 977.4, Arcane 963.6, Balance 952.1, Shadow 948.6, Combat Swords 946.1,
 Frost 943.6, SF Swords 938.7, Combat Daggers 936.0, SF Daggers 904.4, Mutilate 865.7, Subtlety 863.6, Smite 781.0.
-Top over bottom 1.65x. Full table: `orchestration/audit/ref/fairness/table_baseline.md`.
+Top over bottom 1.65x.
+
+## Baseline
+
+`ref/fairness/sweep_baseline.log` and `table_baseline.md`: the 8306f1d full sweep with the three paladin lines replaced
+by this pass's 71562a8 re-sweep. Baseline sha 71562a8. Next full sweep: when sim/core or a shared rule moves many builds.
 
 ## Open for the next pass
 
-- fairness-20261112-1: check that the Combat default follows Swords once the orchestrator applies it.
 - Metas' published.dps: re-check when results-20261104-2 is fixed.

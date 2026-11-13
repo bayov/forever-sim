@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
+  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
  },
- "last_pass_at": "2026-11-12T18:51:03Z",
- "pass": 77,
+ "last_pass_at": "2026-11-13T00:50:00Z",
+ "pass": 78,
  "result": "quiet",
- "note": "Pass 77: a0b4d3be98..8306f1d52. 368b2e181 hunter pet follows owner melee/attack speed (user go, core pet.go hook, only hunter pet uses it; checked enable/disable symmetry). c380bbaef Rake hit 0.065 AP (user ruling; 70888 apcoef 0 both effects, server-side). f878f6079 leveling target only. No new Blizzard posts (2360696 still post 10; 2403040 still post 8). Client 70888.",
+ "note": "Pass 78: 8306f1d52..71562a8b0. f1c07e13a ranged Judgement (resolves mechanics-20261112-3, matches Nov 11 hotfix). 2a0208136 / 67ad7c6a4 core WF changes dropped in merge for a0b4d3be9 (no net core diff). 65b5d49cf healer APL seen-health, e05135ad3 NS comment: no mechanic issue. Hotfix thread post 9 (go-live note for Nov 10 shaman changes, already in sim). Unsealed Wrath (-2) still not on master (PR #128). Client 70888.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T19:08:25Z",
+ "checked_at": "2026-11-13T01:18:32Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -25,10 +25,10 @@
   "newest_push": 113605,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-11T03:27:33Z",
+ "blue_tracker_seen": "2026-11-12T19:10:52Z",
  "hotfix_post_seen": {
-  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/8",
-  "date": "2026-11-12T00:48:47Z",
+  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/9",
+  "date": "2026-11-12T19:10:52Z",
   "post1_edited": "2026-11-12T00:47:36Z",
   "post6_edited": "2026-11-12T00:46:56Z"
  }

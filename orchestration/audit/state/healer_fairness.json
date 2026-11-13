@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
+  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
  },
- "last_pass_at": "2026-11-12T18:51:56Z",
- "pass": 10,
+ "last_pass_at": "2026-11-13T01:12:56Z",
+ "pass": 11,
  "result": "quiet",
  "baseline": "9ba00c2dc",
- "note": "Pass 10: c380bbaef (Rake direct hit +6.5% AP, cat form only) reaches no healer; spot cells druid tank Broodlord 0.875, druid raid Onyxia 0.943, shaman tank Broodlord 0.974 identical to baselines. Open: -20261111-1, -5, -4.",
+ "note": "Pass 11 on 71562a8b0 (tankheal merged: seen-health APL values, druid NS lines, Twilight Focus raid priest, Flash of Light raid paladin, new consumables). Full 63-cell bench (ref/healer_fairness/bench_71562a8.tsv): the 49 cells of the 7 unchanged presets identical to ref/healer_bench/summary.tsv; the paladin and Holy raid presets (14 cells) moved exactly as pass 9's re-tune predicted (1.430, 1.461). Same terms hold. Open: -20261104-4.",
  "client_build": "1.60.1.70790",
- "checked_at": "2026-11-12T19:08:25Z"
+ "checked_at": "2026-11-13T01:18:32Z"
 }

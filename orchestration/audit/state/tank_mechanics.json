@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
+  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
  },
- "last_pass_at": "2026-11-12T18:49:53Z",
- "pass": 12,
+ "last_pass_at": "2026-11-13T00:49:26Z",
+ "pass": 13,
  "result": "quiet",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T19:08:25Z",
+ "checked_at": "2026-11-13T01:18:32Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 12 (8306f1d52): only sim/druid/rake.go (c380bbaef, Rake direct hit +6.5% AP, Forever only). Rake is cat-only: no bear preset, APL or tank test casts it; Savage Fury list shares the spell slice but Rake is nil-safe and untouched for bears. Client 1.60.1.70888 unchanged. Quiet; 20261111-1, 20261108-1, 20261107-1 still open."
+ "note": "Pass 13 (71562a8b03): Judgement ranged (f1c07e13a, Fury/Righteousness/Command; client 70888 still DefenseType 2, so notes-only tier 1), Windfury main-hand rule, bear Tauren + Feral Instinct 3/Brutal Impact 1 + Swipe/FR APL, Warden/paladin consumables, healer seen-health values (no tank APL reads health). Client unchanged. Quiet; 20261112-1/-2 and 20261111-1 verified resolved; 20261108-1, 20261107-1 still open."
 }

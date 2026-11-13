@@ -29,6 +29,7 @@
   `autocastOtherCooldowns`/the Greater Heal line). `rots.py` has the `fhlow` / `fhlowgate` knobs for the Flash
   Heal variant. The OOM looks like the Discipline kit's cost on a mana-starved fight, not a rotation line:
   Distilled Wisdom wins Chromaggus by 0.075 (`docs/healing_sim.md`, Consumables) but loses the mean.
+- update 2026-11-13, master 71562a8b0: unchanged (Chromaggus 0.871, 341 mana left, OOM at 101 s, 1,000 it; byte-identical row).
 - needs: worker fix
 
 ## Resolved
@@ -103,4 +104,3 @@
 - proposed fix: drop Power Infusion from the two Holy APLs (or keep it and say it is for a Discipline build), drop or annotate the raid healer's unreachable lines 7-11, and correct `docs/healing_priest.md`'s rotation text (via `orchestration/tools/healers/priest_tuning/rots.py`, which writes them). No carry change expected.
 - needs: worker fix
 - resolved: 2026-11-04, dda14db65 (Power Infusion dropped from both Holy APLs; the raid healer is down to 6 lines; doc text updated)
-

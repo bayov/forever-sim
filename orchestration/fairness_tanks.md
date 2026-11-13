@@ -1,43 +1,29 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-12, pass 11, master 4fb90c298, after the main-hand Windfury Totem rule (standards 17) and
-the presets re-tuned on it (bear Frenzied Regeneration 80 Rage, Swipe filler, Barkskin 20 s; warrior Dense stone; Warden
-Greater Mageblood Elixir). The report has the details (orchestration/audit/reports/tank_fairness.md); the table is in
+preset weight, its reasons, and the open questions. Last pass: 2026-11-13, pass 12, master 71562a8b0, after every tank
+preset re-picked its enchants by its own objective and the bear's Max survival went Tauren (a6a8305da). The report has
+the details (orchestration/audit/reports/tank_fairness.md); the table is in
 orchestration/audit/ref/tank_fairness/summary.tsv.
 
 ## Ranking (tankbench 3000 iterations, seed 1, six-boss mean, each spec's matching preset)
 
 | weight | order (best first) | scores |
 |---|---|---|
-| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4202 / 3187 / 2789 / 2536 |
-| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3426 / 2774 / 1865 / 1189 |
-| Max survival (w 3) | Warrior, Paladin, Bear, Warden | 1762 / 1711 / 191 / -2385 |
+| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4223 / 3263 / 2789 / 2557 |
+| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3428 / 2832 / 1865 / 1219 |
+| Max survival (w 3) | Paladin, Warrior, Bear, Warden | 1803 / 1776 / 230 / -2312 |
 
-The main-hand Windfury rule gave the warrior +392 / +320 / +189 (Sunder Armor and Revenge roll the totem) and the bear
-+126 / +148 / +177 (Maul, plus its re-tune); the paladin and Warden are unchanged. The warrior now leads Max survival by
-51, but the paladin's potion action (finding -20261105-1, +402) and its agility enchants (-20261112-2, +78) would each
-put the paladin back ahead.
+Seed 2 gives the same order (Max survival paladin 1816 against the warrior's 1774). The enchants gave the paladin
++76 / +58 / +92 (Holy Power gloves, Voracity Agility, a spell power or agility neck), the Warden +21 / +30 / +74, the
+warrior +21 / +3 / +14 and the bear +39 at Max survival (gloves and Tauren). So the paladin retakes Max survival by 27.
+Its potion action (finding -20261105-1, +368 at Max survival) is still open.
 
-Enchants and the bear's race (findings -20261112-2, -3, fixed 2026-11-12): every tank preset re-picked its head, legs,
-neck, wrist, gloves, chest, back and boots enchants by its own objective. New scores (tankbench 10,000 iterations, seed 1,
-six-boss mean, own weight):
+TPS (Balanced): warrior 2057, paladin 1527, bear 1482, Warden 1351. Healing needed (Balanced): paladin 239, warrior 344,
+bear 464, Warden 660.
 
-| weight | order (best first) | scores |
-|---|---|---|
-| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4220 / 3257 / 2788 / 2549 |
-| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3429 / 2821 / 1863 / 1211 |
-| Max survival (w 3) | Paladin, Warrior, Bear, Warden | 1798 / 1764 / 224 / -2314 |
-
-The paladin retakes Max survival by 34 (Gloves Holy Power, Voracity Agility, Necklace Agility: +75 / +77); its potion
-action (finding -20261105-1) is still open.
-
-TPS (Balanced): warrior 2052, paladin 1506, bear 1483, Warden 1345. Healing needed (Balanced): paladin 241, warrior 340,
-bear 464, Warden 665.
-
-Each preset wins its own weight (seed 1). The paladin's Max threat and Balanced share one build since round 5 and tie
-at Max threat (its call 14). Every flask still wins at its preset after the Windfury rule (Titans stays behind Natural
-Precision at the warrior's and bear's Balanced, by 125 and 82).
+Each preset wins its own weight on both seeds, and the three builds are distinct for every spec. Every flask still wins
+at its preset (pass 11).
 
 ## Why
 
@@ -61,10 +47,10 @@ at its three weights (most of it the Titans at Max survival).
 
 - The paladin never drinks its potion. `autocastOtherCooldowns` drinks no defensive potion in a tank score, and the
   paladin's requests have no explicit potion action as the other three tanks' do. Greater Stoneshield with the action
-  gains +58 / +172 / +402 at the paladin's three weights (pass 10, two seeds; finding -20261105-1).
+  gains +61 / +168 / +368 at the paladin's three weights (pass 12, on the new enchants; finding -20261105-1).
 - The Warden plays races a Forever shaman can't be: Night Elf at Max threat and Balanced, Undead at Max survival
-  (client CharBaseInfo: shaman is Dwarf, Orc, Tauren, Troll or Skyborne Windshaper). Going legal costs about -60 (Troll
-  or Orc) / -80 (Troll) / -158 (Tauren) (finding -20261105-2). The Warden is last at every weight either way.
+  (client CharBaseInfo: shaman is Dwarf, Orc, Tauren, Troll or Skyborne Windshaper). Going legal costs about -50 (Orc)
+  / -77 (Troll) / -124 (Tauren) (pass 12; finding -20261105-2). The Warden is last at every weight either way.
 - Raid-only consumables: settled 2026-11-12 (user ruling, option a): no tank uses a raid-only stone, oil or elixir.
 - Enchants and the bear's Max survival race: settled 2026-11-12 (findings -20261112-2, -3). Every preset carries the
   best legal Phase 1 enchant per slot for its own weight (10,000 iterations, seeds 1 and 2, paired): paladin +75 / +53 /

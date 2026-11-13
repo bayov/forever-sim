@@ -4,7 +4,7 @@ From the fairness auditor. The question this answers: is every DPS spec simmed u
 
 Method: each class's shipped Level 60 build (gear, talents, APL), built with mksettings and run with wowsimcli. I read code and logs and did not use rotopt. Measurements change one input at a time against the same seed. Two switches existed only in my local worktrees and were never pushed: one turns weapon racials off, one skips set-bonus tiers.
 
-## 1. Cross-spec table (master 8306f1d: hunter pet swings at its owner's melee speed and autocast passes an ability short of focus (368b2e181, wowsims/forever logs, user go 2026-11-12); Rake's direct hit adds 6.5% of attack power (c380bbaef, user ruling 2026-11-12); full re-sweep 2026-11-12)
+## 1. Cross-spec table (master 8306f1d: hunter pet swings at its owner's melee speed and autocast passes an ability short of focus (368b2e181, wowsims/forever logs, user go 2026-11-12); Rake's direct hit adds 6.5% of attack power (c380bbaef, user ruling 2026-11-12); full re-sweep 2026-11-12; pass 38 at 71562a8: Ret rows re-swept after ranged Judgement (f1c07e13a), every other build within 1.5 of this table in the loop's 20k run)
 
 5000 iterations, seed 1, preset rotation and gear at every race, on the 8306f1d requests and the loop's 8306f1d CLI. "Before" is the a0b4d3b table. "Report's published" is the req meta's published.dps; ui/dps_report/data/builds.json matches current within 1.5 on all 68 builds.
 
@@ -24,7 +24,7 @@ Method: each class's shipped Level 60 build (gear, talents, APL), built with mks
 | 12 | Fury (two-hand) | Orc | 1032.0 | Orc / Night Elf 1025.1 | Orc (1032.0) | 1151.0 | -119.0 | 1032.0 (+0.0%) |
 | 13 | Enhancement | Orc | 1030.7 | Orc / Dwarf 1024.2 | Orc (1030.7) | 1030.6 | +0.1 | 1030.7 (+0.0%) |
 | 14 | Survival | Orc | 1013.9 | Orc / High Order 1006.5 | Orc (1013.9) | 1041.2 | -27.3 | 987.8 (+2.6%) |
-| 15 | Retribution | Undead | 1008.9 | Undead / Human 1005.5 | Undead (1008.9) | 1092.1 | -83.2 | 1008.9 (+0.0%) |
+| 15 | Retribution | Undead | 1004.6 | Undead / Human 1000.4 | Undead (1004.6) | 1092.1 | -87.5 | 1008.9 (-0.4%) |
 | 16 | Destruction Fire | Undead | 997.9 | Undead / Human 993.3 | Undead (997.9) | 996.7 | +1.2 | 997.9 (+0.0%) |
 | 17 | Elemental | Windshaper | 977.4 | Windshaper / Dwarf 963.1 | Windshaper (977.4) | 976.9 | +0.5 | 977.4 (+0.0%) |
 | 18 | Arcane | Gnome | 963.6 | Undead 959.5 / Gnome | Gnome (963.6) | 962.3 | +1.3 | 963.6 (+0.0%) |
@@ -60,6 +60,10 @@ Method: each class's shipped Level 60 build (gear, talents, APL), built with mks
 
 Top over bottom: 1.65x
 
+- Pass 38 (71562a8, 2026-11-13, partial: only the Ret rows re-swept; the machine was shared with healer passes). Against this table, the loop's 20k master run moved only the three Ret builds:
+  - Judgement is a ranged attack (f1c07e13a, Nov 11 hotfix): Ret -4.3, Shock Ret -7.5, Sub-Holy Ret -5.6 at 5k. Ret stays 15th, Undead stays best (Human -4.2).
+  - Windfury re-tunes (8f5de1c87): Survival no Wing Clip mana floor (+1.2, noise), Fury Battle Shout duty +5; Combat Swords is the rogue default again, which resolves fairness-20261112-1.
+  - builds.json (e9a8857e7) matches the 20k run within 1.5 on all 68 builds. audit1b.py 19/19 PASS. Tank and healer changes moved no DPS build.
 - Pass 37 (8306f1d, 2026-11-12, full re-sweep). Only hunters with a pet and Feral moved, all attributed:
   - Hunter pet on the owner's melee speed plus autocast (368b2e181): Survival +26.1 (16th -> 14th, past Ret and Destruction Fire), BM +7.3, MM +2.0; variants +3.9 to +29.0. Lone Wolf identical. The core change is a hunter-only flag; warlock demons unchanged.
   - Rake's hit at 0.065 AP (c380bbaef): Feral +29.4 (+2.6%), still 4th.

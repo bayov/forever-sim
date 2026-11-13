@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
+  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
  },
- "last_pass_at": "2026-11-12T12:51:10Z",
- "pass": 62,
+ "last_pass_at": "2026-11-13T00:46:01Z",
+ "pass": 63,
  "result": "quiet",
- "note": "Pass 62: no synthetic item, set, trinket or enchant file changed. Standards 17 amended (Windfury Totem rolls on main hand abilities; not a gear rule).",
+ "note": "Pass 63: only tank gear_sets changed (tank_gear pass scope); no DPS synthetic item, set, trinket or enchant file changed; no gear ruling.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T19:08:25Z"
+ "checked_at": "2026-11-13T01:18:32Z"
 }

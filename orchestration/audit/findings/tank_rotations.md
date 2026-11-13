@@ -17,6 +17,7 @@
 - pass 8: still open (user call); 707ae92cc unchanged; not re-tested. Finding 20261111-1 (Titans over Natural Precision at Max survival, +39.5 ± 16.2) is a separate lever.
 - pass 9: still open (user call); cb0d928fd unchanged; not re-tested.
 - pass 10: still open (user call); 4da607cbc keeps 990617 held 35 s; not re-tested. New finding 20261112-3 (Shield Wall 13 s) is the same preset, a separate lever.
+- pass 11: still open (user call); 71562a8b0 keeps 990617 held 35 s; not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -34,6 +35,7 @@
 - pass 8: still open (user ruling); 707ae92cc unchanged; not re-tested.
 - pass 9: still open (user ruling); cb0d928fd unchanged; not re-tested.
 - pass 10: still open (user ruling); the knob searches at all three paladin presets (bulwarkAt frozen) kept every knob on 4da607cbc; not re-tested.
+- pass 11: still open (user ruling); 71562a8b0 keeps 10 s at all three presets; not re-tested.
 
 ## Resolved
 

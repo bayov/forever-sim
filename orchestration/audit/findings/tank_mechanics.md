@@ -28,6 +28,7 @@
 - proposed fix: none for tanks until the user rules on mechanics-20261112-1; if (b), re-score the tank presets and re-check their rotations (Heroic Strike and Maul gain the most). A warrior or bear log with the totem up would settle on-next-swing attacks.
 - needs: user ruling
 - fixed: 2026-11-12 (user ruling from the log audit, standards 17 rewritten; branch worktree-agent-ae7f460fe1b8d87f1): neither option. The user's log audit of Nov 6-11 (tools/logcheck/findings.md, 4,737 procs on 93 players) answers it: under Forever the totem rolls on white main hand swings and on every melee ability whose client spell requires a main hand weapon (Attributes_3 0x400) or is on next swing (Attributes_0 0x4), so Heroic Strike, Cleave, Sunder Armor, Revenge, Execute and Maul do, and Stormstrike, Holy Strike, Shield Slam, Bloodthirst, Whirlwind, Claw and Swipe don't. The sim reads the flags from the client (`Spell.ClientMainHand`, `RollsForeverWindfuryTotem` in sim/core/buffs.go; test sim/windfury_totem_rule_test.go). Paired 3,000 iterations, seed 1, mean over the 7 encounters (orchestration/round_notes_2026-11-11/windfury_rule.md): warrior SafeDPS Max threat 2101 -> 2310 (+9.9%), Balanced 2020 -> 2187 (+8.3%), Max survival 1682 -> 1788 (+6.3%); bear Max threat 1605 -> 1662 (+3.6%), Balanced 1508 -> 1558 (+3.4%), Max survival 1212 -> 1247 (+2.9%); Warden (Stormstrike) and paladin unchanged. Smaller than option (b) above because Stormstrike, Shield Slam and the Warden stay out. The tank rotations may want re-checking for Heroic Strike and Maul under the new rule (tank_rotations pass).
+- resolved: 2026-11-13, verified pass 13 on master 71562a8b03 (windfuryTotemAbilityIds has Heroic Strike, Sunder, Cleave, Maul; not Shield Slam or any judgement; core and tank_warrior Windfury tests pass)
 
 ### tank_mechanics-20261112-1: Judgement of Fury, every Protection paladin preset's judgement, is still a melee special after the Nov 11 "Judgement is a Ranged Attack" hotfix
 - severity: low (measured -1 to -12 objective, about 0.3%)
@@ -37,6 +38,7 @@
 - proposed fix: fold Judgement of Fury into mechanics-20261112-3's fix (ProcMaskRangedSpecial and a ranged outcome for the judgement damage spell), and re-score the paladin presets.
 - needs: worker fix
 - fixed: 2026-11-12, branch worktree-agent-aa37e74856d3a4fa3, with mechanics-20261112-3 (see there): Judgement of Fury (20414 and lower ranks) is a ranged special on the ranged attack table, still never dodged, parried or blocked (the hotfix names no such change), threat unchanged (TestJudgementOfFuryRanged pins 1.9 x 1.33 a point). docs/tank_paladin.md's Seal of Fury row says so. tankbench, 3,000 iterations, seed 1, paired, objective at each preset's own weight: Max threat 2602 -> 2594 (TPS 1304 -> 1301, SafeDPS 1401 -> 1398), Balanced 2134 -> 2125 (TPS 1275 -> 1273), Max survival 1019 -> 1018 (TPS 1221 -> 1218). The same as the proc mask alone: the ranged roll moves nothing for these builds (no melee weapon skill bonus, no weapon-only crit).
+- resolved: 2026-11-13, verified pass 13 on master 71562a8b03 (f1c07e13a: rangedJudgement in sim/paladin/judgement.go covers Fury, Righteousness, Command; TestJudgementOfFuryRanged and TestJudgementsAreRanged pass with -tags=with_db)
 
 ### tank_mechanics-20261111-1: docs/tank_shaman.md still gives the Warden Stormstrike 150% / 6 s and Mental Dexterity 50 / 100 / 150%
 - severity: low (labels only; the sim and its tests already use the Nov 10 values)
@@ -46,6 +48,7 @@
 - proposed fix: update those rows to "100%, 8 s (Nov 10 tuning, notes-only; client 70888 still 150% / 6 s)" and "33 / 66 / 100% (Nov 10 tuning, notes-only)", and the Maelstrom line to 5 + rank PPM; the tests line to 33 / 66 / 100% and 8 s.
 - needs: worker fix
 - fixed: 2026-11-12, branch worktree-agent-abff4050d09a62836. docs/tank_shaman.md: the realignment line, the tests line, the Abilities Stormstrike row and the Talents rows (Mental Dexterity, Stormstrike, Flurry / Maelstrom Weapon) now give 100% and 8 s, 33 / 66 / 100% and (5 + rank) PPM, labelled the Nov 10 tuning, notes-only, client 70888 still 150% / 6 s; the presets table carries the re-tuned builds. tools/rotopt/shaman_tank.go's shock-over-Stormstrike comment notes the cut.
+- resolved: 2026-11-13, verified pass 13 on master 71562a8b03 (docs/tank_shaman.md gives 100% / 8 s, the old values only as history)
 
 ### tank_mechanics-20261104-15: Goblin Sapper Charge and Goblin Land Mine are blocked in a form; the client allows them
 - severity: high (bear Max threat score +158 / +189, about +6-7%; Balanced +134 / +169; Max survival +63 / +110; SafeDPS +85 / +99)

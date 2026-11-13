@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
+  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
  },
- "last_pass_at": "2026-11-12T19:00:08Z",
- "pass": 61,
+ "last_pass_at": "2026-11-13T01:03:47Z",
+ "pass": 62,
  "result": "quiet",
- "note": "Pass 61: hunter pet follows owner melee speed (368b2e181; SV +25..28, BM +8..10, MM +1..5) and Rake hit 6.5% AP (c380bbaef; feral +29). No APL change. No new findings; 20261105-1 (feral FB gate 65) re-measured larger: +2.74 at 180 pooled. Rake 3s end gate optional (+0.3).",
+ "note": "Pass 62: Judgement ranged (f1c07e13a) Ret -3..-6; worker re-tunes 8f5de1c87 (SV Wing Clip, Fury BS duty) as measured. No new findings; 3 open findings still unapplied.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T19:08:25Z",
- "baseline": "baseline_8306f1d_3000it_seed424242.tsv"
+ "checked_at": "2026-11-13T01:18:32Z",
+ "baseline": "baseline_71562a8_3000it_seed424242.tsv"
 }

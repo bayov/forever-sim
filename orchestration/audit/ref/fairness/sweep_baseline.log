@@ -15,9 +15,9 @@ mage__arcane                           Gnome 963.6  Undead 959.5  Human 958.4  O
 mage__fire                             Gnome 1054.2  Human 1053.8  Undead 1051.1  Orc 1048.3  Troll 1040.8  SkyborneHighOrder 1029.8
 mage__frost                            SkyborneHighOrder 943.6  Undead 939.1  Gnome 937.3  Troll 937.3  Orc 936.8  Human 934.9
 mage__frostfire                        Human 1065.7  Gnome 1062.5  Undead 1058.3  Orc 1057.9  Troll 1052.5  SkyborneHighOrder 1045.0
-paladin__level_60                      Undead 1008.9  Human 1005.5  Dwarf 999.2
-paladin__level_60_shock_ret            Undead 971.4  Human 966.7  Dwarf 959.2
-paladin__level_60_sub_holy             Undead 999.1  Human 995.2  Dwarf 987.1
+paladin__level_60                      Undead 1004.6  Human 1000.4  Dwarf 995.0
+paladin__level_60_shock_ret            Undead 963.9  Human 961.1  Dwarf 954.4
+paladin__level_60_sub_holy             Undead 993.5  Human 990.2  Dwarf 982.5
 priest__shadow-holy                    Undead 906.8  Troll 903.3  Human 902.6  NightElf 902.4  Gnome 899.7  Dwarf 895.2
 priest__shadow                         Undead 948.6  Human 945.4  Troll 945.4  NightElf 944.9  Gnome 941.9  Dwarf 937.2
 priest__smite                          Undead 781.0  Gnome 756.6  Human 753.9  Troll 745.6  NightElf 744.7  Dwarf 741.8

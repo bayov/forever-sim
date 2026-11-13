@@ -344,3 +344,17 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-12 19:08 | tank_mechanics | pass 12 | master 8306f1d52 | quiet | Rake not used by bears
 2026-11-12 19:08 | tank_rotations | pass 10 | master 8306f1d52 | quiet | Windfury finding resolved; baseline refreshed
 2026-11-12 19:08 | tank_fairness | pass 11 | master 8306f1d52 | quiet | no tank change
+2026-11-13 01:18 | results | pass 86 | master 71562a8b0 | 0 new findings | 14 moves explained by Judgement ranged and Windfury rule; metas lag (existing)
+2026-11-13 01:18 | rotations | pass 62 | master 71562a8b0 | quiet | baseline refreshed
+2026-11-13 01:18 | gear | pass 63 | master 71562a8b0 | quiet | no DPS gear change
+2026-11-13 01:18 | consumables | pass 82 | master 71562a8b0 | quiet | scan.sh minor-armor count stale (nit)
+2026-11-13 01:18 | mechanics | pass 78 | master 71562a8b0 | quiet | ranged Judgement matches hotfix
+2026-11-13 01:18 | fairness | pass 38 | master 71562a8b0 | quiet | partial pass; rogue swords finding resolved
+2026-11-13 01:18 | healer_mechanics | pass 12 | master 71562a8b0 | quiet | no new healer mechanic
+2026-11-13 01:18 | healer_rotations | pass 10 | master 71562a8b0 | quiet | baseline refreshed; fixed findings moved to Resolved
+2026-11-13 01:18 | healer_gear | pass 7 | master 71562a8b0 | quiet | no gear change
+2026-11-13 01:18 | healer_fairness | pass 11 | master 71562a8b0 | quiet | no healer past 15% line
+2026-11-13 01:18 | tank_mechanics | pass 13 | master 71562a8b0 | quiet | ranged Judgement ok for tanks
+2026-11-13 01:18 | tank_rotations | pass 11 | master 71562a8b0 | quiet | baseline refreshed
+2026-11-13 01:18 | tank_gear | pass 8 | master 71562a8b0 | quiet | sets within tolerance
+2026-11-13 01:18 | tank_fairness | pass 12 | master 71562a8b0 | quiet | rankings stable on two seeds

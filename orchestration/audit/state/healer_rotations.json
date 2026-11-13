@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "8306f1d528759a857f5eb1f6f8469b2a98556f34"
+  "master": "71562a8b03587d8f10ec2e05e07b2cadaf0f9b55"
  },
- "last_pass_at": "2026-11-12T19:05:27Z",
- "pass": 9,
+ "last_pass_at": "2026-11-13T01:18:13Z",
+ "pass": 10,
  "result": "quiet",
- "note": "Pass 9 on 8306f1d52. Gate: sim/druid/rake.go (Rake hit AP, never cast by healers); also core pet melee-speed inheritance (hunter pets). All 63 baseline rows byte-identical to ref. -1,-2,-3 still open. baseline.sh restored from origin/tankheal 8f3f74f3f, which carries an unmerged by-hand pass 9.",
+ "note": "Pass 10 on 71562a8b0. Tankheal merged: seen-health values, consumables, druid/shaman fixes (-20261111-1, -20261112-1/-2, -20261104-3 moved to Resolved), 7b8a41fcc paladin/priest raid re-tunes (only rows that moved; match commit). Paladin raid Divine Favor held under 50%/35%: -0.007/-0.009, keeps on cooldown. -20261104-2 (Disc OOM) still open. New helper ab.sh.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-12T19:08:25Z"
+ "checked_at": "2026-11-13T01:18:32Z"
 }

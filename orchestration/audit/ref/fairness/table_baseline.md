@@ -14,7 +14,7 @@
 | 12 | Fury (two-hand) | Orc | 1032.0 | Orc / Night Elf 1025.1 | Orc (1032.0) | 1151.0 | -119.0 | 1032.0 (+0.0%) |
 | 13 | Enhancement | Orc | 1030.7 | Orc / Dwarf 1024.2 | Orc (1030.7) | 1030.6 | +0.1 | 1030.7 (+0.0%) |
 | 14 | Survival | Orc | 1013.9 | Orc / High Order 1006.5 | Orc (1013.9) | 1041.2 | -27.3 | 987.8 (+2.6%) |
-| 15 | Retribution | Undead | 1008.9 | Undead / Human 1005.5 | Undead (1008.9) | 1092.1 | -83.2 | 1008.9 (+0.0%) |
+| 15 | Retribution | Undead | 1004.6 | Undead / Human 1000.4 | Undead (1004.6) | 1092.1 | -87.5 | 1008.9 (-0.4%) |
 | 16 | Destruction Fire | Undead | 997.9 | Undead / Human 993.3 | Undead (997.9) | 996.7 | +1.2 | 997.9 (+0.0%) |
 | 17 | Elemental | Windshaper | 977.4 | Windshaper / Dwarf 963.1 | Windshaper (977.4) | 976.9 | +0.5 | 977.4 (+0.0%) |
 | 18 | Arcane | Gnome | 963.6 | Undead 959.5 / Gnome | Gnome (963.6) | 962.3 | +1.3 | 963.6 (+0.0%) |

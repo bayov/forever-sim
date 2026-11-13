@@ -15,6 +15,7 @@
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 - pass 10 (2026-11-12, master 67ad7c6a4): not fixed; requests still Night Elf / Night Elf / Undead. Re-measured after the Warden re-tune, paired 3,000 iterations, seed 1 / 2, against the preset race: Max threat Troll -56.7 / -62.0, Orc -59.7 / -63.2; Balanced Troll -84.3 / -71.3, Orc -87.2 / -91.2; Max survival Tauren -153.2 / -163.8 (the Undead edge grew from about 43). Legal scores: 2,475 / 1,100 / -2,550; the Warden stays last at every weight.
 - pass 11 (2026-11-12, master 4fb90c298): not fixed; still Night Elf / Night Elf / Undead. Paired 3,000 iterations, seed 1 / 2, against the preset race: Max threat Troll -58.8 / -67.3, Orc -59.3 / -69.2, Skyborne Windshaper -112.8 / -108.5; Balanced Troll -84.2 / -72.8, Orc -89.2 / -86.0, Tauren -90.8 / -92.5; Max survival Tauren -153.2 / -163.8, Troll -205 / -236. Best legal: Troll / Troll / Tauren. The Warden stays last at every weight.
+- pass 12 (2026-11-13, master 71562a8b0): not fixed; still Night Elf / Night Elf / Undead after the enchant re-pick (a6a8305da). Paired 3,000 iterations, seed 1, against the preset race: Max threat Orc -49.8, Troll -54.0; Balanced Troll -76.8, Orc -82.7; Max survival Tauren -123.5, Troll -189.3. Legal scores about 2,507 / 1,142 / -2,435; the Warden stays last at every weight.
 
 ### tank_fairness-20261105-1: The paladin never drinks its potion; Greater Stoneshield with a potion action gains 58 / 172 / 309
 - severity: high (Max survival +16%, which puts the paladin back ahead of the warrior at w=3; Balanced +6%)
@@ -29,6 +30,7 @@
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 - pass 10 (2026-11-12, master 67ad7c6a4): not fixed; all three paladin requests still Major Mana Potion with no potion action. Re-measured on the new flask and Wizard Oil, Greater Stoneshield plus the potion action, 3,000 iterations, six-boss mean, seed 1 / 2: Max threat +60.7 / +57.5, Balanced +174.7 / +168.3, Max survival +408.8 / +394.7 (+24%, DTPS -30 at each weight). Max survival would go 1,711 to about 2,120 against the warrior's 1,573.
 - pass 11 (2026-11-12, master 4fb90c298): not fixed; all three requests still Major Mana Potion, no potion action. Re-measured, 3,000 iterations seed 1 / 2: Max threat +60.7 / +57.5, Balanced +174.7 / +168.3, Max survival +408.8 / +394.7. With the Windfury rule the warrior now leads Max survival (1,762 against 1,711, seed 1); the potion would put the paladin at about 2,120. TASKS.md and the round ledger (orchestration/round_notes_2026-11-11/ledger.md) have no entry for it; the paladin's docs still record the old 0.0 (docs/tank_paladin.md:312).
+- pass 12 (2026-11-13, master 71562a8b0): not fixed; all three requests still Major Mana Potion, no potion action, after the enchant re-pick. Re-measured on the new enchants, Greater Stoneshield plus the potion action, 3,000 iterations seed 1, paired: Max threat +60.5, Balanced +168.3, Max survival +367.8 (DTPS -29 to -32, TPS unchanged). The paladin now leads Max survival without it (1,803 against the warrior's 1,776), so the potion no longer flips the ranking, but it is still the largest unequal term (+20% at Max survival). Severity stays high by size.
 
 ### tank_fairness-20261104-2: Paladin takes about half the warrior's damage at the same armor, avoidance and block share
 - severity: medium (sure of the numbers, not of the cause; the paladin leads Max survival on Onyxia and Ragnaros)
@@ -64,6 +66,7 @@
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 - pass 10 (2026-11-12, master 67ad7c6a4): unchanged in kind (Balanced healing needed paladin 241 against warrior 344, bear 474, Warden 665); still waits on the user's calls.
 - pass 11 (2026-11-12, master 4fb90c298): unchanged in kind (Balanced healing needed paladin 241 against warrior 340, bear 464, Warden 665); still waits on the user's calls (a), (b), (c).
+- pass 12 (2026-11-13, master 71562a8b0): unchanged in kind (Balanced healing needed paladin 239 against warrior 344, bear 464, Warden 660); still waits on the user's calls (a), (b), (c).
 
 ### tank_fairness-20261104-5: Legacy warrior_protection.json (Orc, Warbringer gear) is still read by tests and tools
 - severity: low
@@ -82,6 +85,7 @@
 - pass 9 (2026-11-12, master cb0d928): unchanged; not fixed on master (re-sim identical to pass 8).
 - pass 10 (2026-11-12, master 67ad7c6a4): unchanged; tools/tankbench/req/warrior_protection.json still present.
 - pass 11 (2026-11-12, master 4fb90c298): unchanged; tools/tankbench/req/warrior_protection.json still present.
+- pass 12 (2026-11-13, master 71562a8b0): unchanged; tools/tankbench/req/warrior_protection.json still present.
 
 ## Resolved
 

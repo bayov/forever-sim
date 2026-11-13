@@ -1,24 +1,30 @@
-# Mechanics pass 77 (2026-11-12, master 8306f1d52)
+# Mechanics pass 78 (2026-11-13, master 71562a8b0)
 
-Quiet: no new findings. Open findings mechanics-20261112-1/-2/-3 and 20261104-1 stay open (PR #128, the
-Judgement / Unsealed Wrath / Holy Strike work, is not on master yet).
+Quiet: no new findings. mechanics-20261112-3 (Judgement ranged) was resolved on master by f1c07e13a (the
+commit moved it to Resolved itself). mechanics-20261112-1 (Holy Strike and Windfury Totem), -2 (Unsealed Wrath
+echoes from Windfury Totem attacks) and 20261104-1 stay open: no Unsealed Wrath change on master
+(`git grep IsWindfuryTotemAttack sim/paladin` is empty; the daily update's PR #128 still carries it, brief
+`round_notes_2026-11-11/briefs/update_1112.md`).
 
-## Range
-a0b4d3be98..8306f1d52: three sim commits, one TASKS.md note (8306f1d52). No forever-update merges.
+## Commits 8306f1d52..71562a8b0 (sim code, net)
 
-| commit | what | verdict |
+| Commit | What | Verdict |
 |---|---|---|
-| 368b2e181 | Hunter pet swings at owner's melee and attack speed (not ranged); autocast passes an ability short of focus | User's go 2026-11-12, from wowsims/forever d729b13992 / 8223020463 log reads. Core change checked: `Pet.FollowsOwnerMeleeSpeed` multiplies the pet by the owner's MeleeSpeedMultiplier at Enable and by each later `MultiplyMeleeSpeed` / `MultiplyAttackSpeed`; Disable removes the pet from `DynamicMeleeSpeedPets` and divides back `inheritedMeleeSpeed`. `MultiplyRangedSpeed` does not reach it (Quick Shots excluded, as the log says). Only `sim/hunter/pet.go:225` sets the flag, so no other pet moves. Owner haste rating is not inherited (no Level 60 hunter gear has it). Correct. |
-| c380bbaef | Rake's direct hit adds 0.065 AP under Forever, outside the Nov 2 scale | User ruling 2026-11-12. Client 70888 `sp.py 1822`: eff 2 bp 27 apcoef 0, eff 6 bp 20 per 3000 apcoef 0, so the AP share is server-side like the tick's 0.055; the value rests on the 70862 log fit (0.0648, 26/26 hits). Not a finding. |
-| f878f6079 | mksettings: leveling target is a generic boss two levels up (1.12 warrior elite armor) except at 20 and 30 | Leveling only; `lowLevelTarget` is used only below 60. No Level 60 or shared raid effect. |
+| f1c07e13a | Paladin: judgement damage spells (Command, Righteousness, Fury) DefenseTypeRanged, ProcMaskRangedSpecial, CastTypeRanged under Forever (`rangedJudgement`, sim/paladin/judgement.go) | Matches the Nov 11 hotfix (t/2403040 post 8, tier 1): no melee procs, ranged hit. Keeps No Active Defense; hit chance still reads the shared MeleeHit stat, which is the paladin's ranged hit too. OK |
+| 2a0208136 | Windfury Totem by client flag (ClientMainHand) | Dropped in the merge (c1502631c / b92a6040f) in favour of master's a0b4d3be9, audited in pass 76: `git diff 8306f1d52 origin/master -- sim/core/buffs.go attack.go spell.go` is empty. No net change |
+| 67ad7c6a4 | Tank rotations; buffs.go hunk | Also superseded by the merge (no net core diff); only APLs, tests and goldens remain |
+| 65b5d49cf | Healer APL health values read the healer's seen health (`seenCurrentHealth`, heal_targets.go) | APL information model, not a game mechanic. No finding |
+| e05135ad3 | Resto druid APLs; healing.go comment now names Wild Growth for Nature's Swiftness | Comment matches the code (`SpellCode_DruidWildGrowth` in the NS switch, hotfix push 113885). OK |
 
 ## Getting current
-- Client: 1.60.1.70888 is still the newest (gate `client_build`).
-- Blizzard: dev notes t/2360696 last post 10 (2026-11-04T19:35Z, already seen); hotfix thread t/2403040 last
-  post 8 (2026-11-12T00:48Z, already seen). Blue tracker not re-scanned beyond these threads.
-- TASKS.md 8306f1d52 adds Nov 11 follow-ups: Judgement as ranged (already mechanics-20261112-3), Hunter Volley
-  no longer activating procs and Rend and Tear on Pounce (class work, owned by the class workers), and items
-  revealed Nov 11-12 (data work). Nothing new on a shared mechanic.
 
-## Verdicts
-Added rows for the hunter pet melee speed, the Rake hit AP share and the leveling target to `ref/mechanics/verdicts.md`.
+- Client: newest 1.60 build 70888 (`wago.py latest --probe 300`), unchanged.
+- Dev notes t/2360696: still post 10 (2026-11-04).
+- Hotfix thread t/2403040: new post 9 (Kaivax, 2026-11-12 19:10 UTC) says the Nov 10 shaman changes went live at
+  10:45 PST ("Weapon imbues and Weapon totems can now be used at the same time", Stormstrike 100% / 8 s, Mental
+  Dexterity 33/66/100%, Maelstrom Weapon 20% per stack and 6-10 PPM). All already in the sim: cb651085c (shaman
+  values, tank_mechanics / tank_rotations findings) and `sim/core/totem_weapon_buffs.go:19`, `buffs.go:2146`
+  (imbue plus totem). Posts 1 and 6 unedited since pass 77.
+- Blue tracker: newest posts are the above, a podcast (2412856) and nothing else mechanical.
+- Daily update: 49ea90d64 (brief to land PR #128: ranged Judgement, Unsealed Wrath WF echoes, hotfix wands);
+  the ranged Judgement part landed through f1c07e13a, the rest is not on master.

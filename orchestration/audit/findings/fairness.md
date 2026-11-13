@@ -4,6 +4,8 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+## Resolved
+
 ### fairness-20261112-1: Combat Daggers is now the rogue Combat default, but Combat Swords sims 10 DPS higher at master
 - severity: medium (the default build shown for Combat; no change to the cross-class ranking of the best rogue)
 - affects: rogue__combat-daggers / rogue__combat-swords metas (isDefault), ui/rogue presets and sim.ts default, forever-wiki rogue page
@@ -12,8 +14,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: apply the ruling again on the current numbers: isDefault back to rogue__combat-swords, with its UI preset defaults and the wiki line, once results-20261112-1's re-sim confirms the order at 20k. Fury DW over 2H (1050.2 vs 1032.0), Affliction over Destruction (1071.1 vs 1063.2) and Lone Wolf over BM still hold.
 - needs: orchestrator fix
 - 2026-11-12, master 8306f1d52: still open after the re-sim (bff0169e4). builds.json at 20k: Combat Swords 946.4, Combat Daggers 936.2 (isDefault); 5k sweep 946.1 / 936.0. Order confirmed.
-
-## Resolved
+- resolved: 2026-11-13, 8f5de1c87 (Combat Swords isDefault in the metas, UI default gear/talents/rotation; builds.json e9a8857e7 Swords 946.4 default over Daggers 936.2)
 
 ### fairness-20261109-1: Windfury Totem's white-swing-only rule lets Heroic Strike and Cleave proc it but not Raptor Strike
 - severity: high (Survival +24.9 DPS, +2.6%, if Raptor Strike gets the same treatment as Heroic Strike; it passes Arms in the ranking)
