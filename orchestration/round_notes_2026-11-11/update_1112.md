@@ -96,8 +96,10 @@ in the repo.
 1. The open parts of the Judgement hotfix are kept as the four assumptions above, until a post-Nov-12 Ret log with the
    totem up settles them.
 2. Holy Strike first on the two Wisdom duties (+0.4 to +2.5 DPS) and 3. the Undead talent change (+1.1 to +1.6 DPS):
-   both taken, user's ruling of 2026-11-13. They were already in deploy 90ffa8ac, so no build moved; the Changes-tab
-   line now cites the ruling (redeployed, see below).
+   both taken, user's ruling of 2026-11-13. They were already in deploy 90ffa8ac, so no build moved. The Changes tab names
+   no rulings (changes.py: the page ships none), so the ruling is recorded here. Redeployed 134ebfa1 from 6bcfe14ff
+   (identical site; the Changes data carries no ruling text). The parent's message named two state.json files; the
+   repo has one, `.agents/skills/dps-report/state.json`.
 4. The `primarySeal` option still says Seal of Command, although the rotations now keep Righteousness up. It has no
    effect in the sim.
 5. Prot paladin's drop comes from the extra-swing rule, which is the log audit's finding; it was not isolated per
