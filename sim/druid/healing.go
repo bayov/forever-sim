@@ -160,7 +160,8 @@ const (
 
 // Wild Growth (the 31 point talent, rank 1; ranks 2 and 3 from the trainer): a 3 sec cast with a 6
 // sec cooldown that puts a HoT on the target and its party, 5 players at most (its second effect),
-// 7 ticks a second apart at 0.033 a tick.
+// 7 ticks a second apart at 0.066 a tick (client 1.60.1.70938 SpellEffect 1072065, 1235327 and 1235329;
+// 0.033 through 70888).
 var WildGrowthRanks = []healRank{
 	{},
 	{spellID: 408120, perLevel: 1.0, learnLevel: 40, maxLevel: 48, manaCost: 550, tick: 40},
@@ -171,7 +172,7 @@ var WildGrowthRanks = []healRank{
 const (
 	WildGrowthCastTime        = 3 * time.Second
 	WildGrowthCooldown        = 6 * time.Second
-	WildGrowthTickCoefficient = 0.033
+	WildGrowthTickCoefficient = 0.066
 	WildGrowthTicks           = 7
 	WildGrowthTargets         = 5
 )

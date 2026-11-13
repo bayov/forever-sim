@@ -84,7 +84,7 @@ func TestDruidHealRanksMatchClient(t *testing.T) {
 	// The client's cast times, coefficients and HoT lengths, the same for every rank.
 	if RegrowthCastTime != 2*time.Second || WildGrowthCastTime != 3*time.Second || RegrowthCoefficient != 0.286 ||
 		RegrowthTickCoefficient != 0.071 || RejuvenationTickCoefficient != 0.2 || TranquilityTickCoefficient != 0.067 ||
-		WildGrowthTickCoefficient != 0.033 || RegrowthTicks != 7 || RejuvenationTicks != 4 || TranquilityTicks != 5 || WildGrowthTicks != 7 {
+		WildGrowthTickCoefficient != 0.066 || RegrowthTicks != 7 || RejuvenationTicks != 4 || TranquilityTicks != 5 || WildGrowthTicks != 7 {
 		t.Error("a cast time, coefficient or tick count differs from the client's")
 	}
 	for i, want := range []float64{0.429, 0.571, 0.714, 0.857, 1, 1, 1, 1, 1, 1, 1} {

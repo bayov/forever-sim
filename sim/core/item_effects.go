@@ -155,8 +155,15 @@ func NewSimpleStatDefensiveTrinketEffect(itemID int32, bonus stats.Stats, durati
 // Apply Aura: Mod Melee Attack Power vs Creature (Mob Type)
 // Apply Aura: Mod Ranged Attack Power vs Creature (Mob Type)
 func NewMobTypeAttackPowerEffect(itemID int32, mobTypes []proto.MobType, bonus float64) {
+	NewMobTypeAttackPowerEffectForever(itemID, mobTypes, bonus, bonus)
+}
+
+// NewMobTypeAttackPowerEffectForever is NewMobTypeAttackPowerEffect with its own value under
+// Forever, for an item whose client effect differs from Classic's.
+func NewMobTypeAttackPowerEffectForever(itemID int32, mobTypes []proto.MobType, classicBonus float64, foreverBonus float64) {
 	NewItemEffect(itemID, func(agent Agent) {
 		character := agent.GetCharacter()
+		bonus := TernaryFloat64(character.Env.IsForever(), foreverBonus, classicBonus)
 
 		matchingTargets := FilterSlice(
 			character.Env.Encounter.TargetUnits,
@@ -185,8 +192,15 @@ func NewMobTypeAttackPowerEffect(itemID int32, mobTypes []proto.MobType, bonus f
 
 // Apply a +X Spell Damage when fighting Mob Type effect
 func NewMobTypeSpellPowerEffect(itemID int32, mobTypes []proto.MobType, bonus float64) {
+	NewMobTypeSpellPowerEffectForever(itemID, mobTypes, bonus, bonus)
+}
+
+// NewMobTypeSpellPowerEffectForever is NewMobTypeSpellPowerEffect with its own value under
+// Forever, for an item whose client effect differs from Classic's.
+func NewMobTypeSpellPowerEffectForever(itemID int32, mobTypes []proto.MobType, classicBonus float64, foreverBonus float64) {
 	NewItemEffect(itemID, func(agent Agent) {
 		character := agent.GetCharacter()
+		bonus := TernaryFloat64(character.Env.IsForever(), foreverBonus, classicBonus)
 
 		matchingTargets := FilterSlice(
 			character.Env.Encounter.TargetUnits,

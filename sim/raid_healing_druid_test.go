@@ -402,7 +402,7 @@ func TestDruidSwiftmend(t *testing.T) {
 }
 
 // Wild Growth rank 3: a 3 sec cast (2.5 with Naturalist 5/5), 6 sec cooldown, 1050 mana, a HoT on the
-// target's party of 7 ticks of 97 plus 3.3% of healing power, the first 6% over and the last 6% under.
+// target's party of 7 ticks of 97 plus 6.6% of healing power (client 70938), the first 6% over and the last 6% under.
 func TestDruidWildGrowth(t *testing.T) {
 	for _, naturalist := range []int{0, 5} {
 		l := runDruidLog(t, druidRaid(t, map[string]int{"wildGrowth": 1, "naturalist": naturalist}, 3, castAt(wgTop, "Tank", "")))
@@ -417,7 +417,7 @@ func TestDruidWildGrowth(t *testing.T) {
 		first := c[0].at + c[0].castTime
 		perTarget := map[string][]healEvent{}
 		for _, h := range l.ticks(wgTop) {
-			if !druidNear(h.base, 97+0.033*h.healingPower, 0.2) {
+			if !druidNear(h.base, 97+0.066*h.healingPower, 0.2) {
 				t.Fatalf("a Wild Growth tick of %.1f with %.0f healing power", h.base, h.healingPower)
 			}
 			if h.at <= first+7.01 {
