@@ -66,6 +66,7 @@ import OptimizedAPLJSON from './apls/optimized.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticBurningTotemGearJSON from './gear_sets/level60_phase1_synthetic_burning_totem.gear.json';
 import Level60Phase1SyntheticBurningTotemHitMinus4GearJSON from './gear_sets/level60_phase1_synthetic_burning_totem_hit-4.gear.json';
+import Level60Phase1SyntheticHitMinus1GearJSON from './gear_sets/level60_phase1_synthetic_hit-1.gear.json';
 import Level60Phase1SyntheticHitMinus3GearJSON from './gear_sets/level60_phase1_synthetic_hit-3.gear.json';
 import Level60Phase1SyntheticHitMinus4GearJSON from './gear_sets/level60_phase1_synthetic_hit-4.gear.json';
 
@@ -151,7 +152,13 @@ export const GearLevel60Phase1SyntheticBurningTotem = PresetUtils.makePresetGear
 
 // The hit-3, hit-4 steps (round 70753 phase 5, hit trade, orchestration/round_70753/hit_trade/shaman.md): gear hit traded
 // away for other stats, with the build's new talents. Paired sims picked hit-3 for Level 60, hit-4 for Water Shield and
-// hit-4 on the Burning Totem set for Mana Tide. Imp GW stays on the base set.
+// hit-4 on the Burning Totem set for Mana Tide. Imp GW wears hit-1 since the re-search after the Nov 13 log audit
+// (Windfury Weapon's attacks roll Windfury Totem): +1.2 to +2.6 at 120 / 180 / 300 sec on seeds 1 and 1000003, paired at
+// 20000 iterations. It had stayed on the base set.
+export const GearLevel60Phase1SyntheticHitMinus1 = PresetUtils.makePresetGear('Enh Imp GW (hit-1)', Level60Phase1SyntheticHitMinus1GearJSON, {
+	tooltip: 'The synthetic Phase 1 set with 1% hit traded away, for the Imp GW build.',
+	group: 'Synthetic',
+});
 export const GearLevel60Phase1SyntheticHitMinus3 = PresetUtils.makePresetGear('Enhancement (hit-3)', Level60Phase1SyntheticHitMinus3GearJSON, {
 	tooltip: 'The synthetic Phase 1 set with 3% hit traded away, for the Level 60 build.',
 	group: 'Synthetic',
@@ -167,6 +174,7 @@ export const GearLevel60Phase1SyntheticBurningTotemHitMinus4 = PresetUtils.makeP
 
 export const GearPresets = [
 	GearLevel60Phase1Synthetic,
+	GearLevel60Phase1SyntheticHitMinus1,
 	GearLevel60Phase1SyntheticHitMinus3,
 	GearLevel60Phase1SyntheticHitMinus4,
 	GearLevel60Phase1SyntheticBurningTotem,
@@ -265,6 +273,10 @@ export const APLOptimized = PresetUtils.makePresetAPLRotation('Enhancement', Opt
 // Round 70753 (the November 2 notes): Flame Shock no longer goes ahead of Stormstrike
 // (flameShockFirst=0) and Magma Totem goes down 1.5 sec before the pull: +0.5 to +0.8 / 0 to +1.3 / +0.5
 // to +1.1 at 120 / 180 / 300 sec on the Water Shield build, paired at 20000 iterations on two seed sets.
+//
+// Re-search after the Nov 13 log audit (Windfury Weapon's attacks roll Windfury Totem): Flame Shock goes ahead of
+// Stormstrike again (flameShockFirst=2): +3.0 / +1.4 / +1.2 and +2.0 / +1.4 / +0.4 at 120 / 180 / 300 sec on seeds 1 and
+// 1000003, paired at 20000 iterations.
 export const APLMagma = PresetUtils.makePresetAPLRotation('Enh Water Shield', MagmaAPLJSON, {
 	tooltip: 'The rotation for the Water Shield talents, with Magma Totem and no Clearcasting line.',
 	group: 'Synthetic',
@@ -848,7 +860,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Enhancement', {
 export const PresetBuildLevel60ImpGW = PresetUtils.makePresetBuild('Enh Imp GW', {
 	group: 'Synthetic',
 	tooltip: 'The Enhancement build with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticHitMinus1,
 	talents: TalentsLevel60ImpGW,
 	rotation: APLOptimized,
 	encounter: EncounterLevel60,

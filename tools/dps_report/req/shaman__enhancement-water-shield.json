@@ -563,16 +563,6 @@
                   }
                 },
                 {
-                  "notes": "Stormstrike on cooldown. Without the talent ignore the warning on this line.",
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 17364
-                      }
-                    }
-                  }
-                },
-                {
                   "notes": "Flame Shock when its DoT is down.",
                   "action": {
                     "condition": {
@@ -595,6 +585,16 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 29228
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Stormstrike on cooldown. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 17364
                       }
                     }
                   }

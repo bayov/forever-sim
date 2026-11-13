@@ -1,5 +1,5 @@
 {
- "gearSet": "level60_phase1_synthetic_hit-1",
+ "gearSet": "level60_phase1_synthetic_hit-2",
  "equipment": {
   "items": [
    {
@@ -41,7 +41,7 @@
     "enchant": 1887
    },
    {
-    "id": 990011
+    "id": 990041
    },
    {
     "id": 990013
@@ -62,13 +62,13 @@
    }
   ]
  },
- "note": "1% hit over the cap traded through the set's hit -1 step",
+ "note": "1% hit over the cap traded through the set's hit -2 step",
  "gain": {
-  "dps": 1.56,
+  "dps": 1.59,
   "se": 0.15,
   "iterations": 20000,
   "seed": 1,
   "duration": 180
  },
- "how": "race_gear.py: Dwarf hit 10% against the 8% yellow cap. The preset wears level60_phase1_synthetic (hit step +0); Dwarf wears the set's step -1, level60_phase1_synthetic_hit-1 (10 less gear hit rating, traded at the budget prices by orchestration/tools/hit_steps.py). Dwarf 1008.5 with the preset's gear, 1010.0 with the swap; gain.se is the paired error (the same seeded fights), 0.63 unpaired."
+ "how": "race_gear.py: Dwarf hit 9% against the 8% yellow cap. The preset wears level60_phase1_synthetic_hit-1 (hit step -1); Dwarf wears the set's step -2, level60_phase1_synthetic_hit-2 (10 less gear hit rating, traded at the budget prices by orchestration/tools/hit_steps.py). Dwarf 1032.4 with the preset's gear, 1034.0 with the swap; gain.se is the paired error (the same seeded fights), 0.67 unpaired."
 }
