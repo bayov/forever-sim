@@ -928,4 +928,23 @@ var ForeverItems = []*proto.UIItem{
 		Ilvl:  61, RequiredLevel: 56, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
 		Unique: true, BindOnPickup: true,
 	},
+	// Revealed November 12 to 13 (https://foreverchanges.pro/hidden-items), with the stats from the
+	// item pages (client 1.60.1.70938, confirmed in game). No source is known yet. Crit is typed as
+	// rating, as the tooltip prints it (14 is 1%, as wowhead shows it). Silithid Queen's Husk's
+	// +29 Attack Power against Humanoids is its item effect in sim/common/item_effects.go.
+	{
+		Id: 282027, Name: "Scales of the Devourer", Icon: "inv_chest_chain_06",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats: stats.Stats{stats.Armor: 365, stats.Strength: 15, stats.Agility: 14, stats.Stamina: 18, stats.SpellPower: 16}.ToFloatArray(),
+		Ilvl:  62, RequiredLevel: 57, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		BindOnPickup: true,
+	},
+	{
+		Id: 286590, Name: "Silithid Queen's Husk", Icon: "inv_chest_plate08",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:      stats.Stats{stats.Armor: 637, stats.Stamina: 23, stats.AttackPower: 24, stats.RangedAttackPower: 24}.ToFloatArray(),
+		CritRating: 14,
+		Ilvl:       61, RequiredLevel: 56, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		BindOnPickup: true,
+	},
 }
