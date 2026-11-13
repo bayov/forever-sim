@@ -8,6 +8,22 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Re-search after the Nov 13 log audit (2026-11-13)
+
+The log audit let Windfury Weapon's extra attacks roll Windfury Totem (in the log they proced it on 47 of 162 imbue
+procs), so the two chain, and cut Flametongue Weapon rank 6 by 5.5 a hit. Re-searched with rotopt on the four
+Enhancement builds (talents, rotation knobs, imbue and totems, hit steps), paired at 20000 iterations on seeds 1 and
+1000003 at 120 / 180 / 300 sec; a change is kept only where it wins at all six.
+
+- Talents: no change on any build. Reverberation 5 with Tidal Focus 1 on the hit-1 step is again ahead at 120 and
+  180 sec (+1.6 to +2.6) but behind at 300 on Level 60.
+- Imbue and totems: Windfury Weapon with its own Windfury Totem and Magma Totem stays. Flametongue Weapon is now 119 to
+  134 behind at 180 sec, Rockbiter about the same, Flametongue Totem in Windfury Totem's place 130 to 143, Searing Totem
+  in Magma's 18 to 30.
+- Water Shield: Flame Shock goes ahead of Stormstrike again (+0.4 to +3.0).
+- Imp GW wears the hit-1 step (+1.2 to +2.6); it had stayed on the base set. Its Dwarf now wears hit-2 (+1.6).
+- The other hit steps stay (hit-3 Level 60, hit-4 Water Shield and Mana Tide): the next step up is within 1 DPS.
+
 ## Blizzard's November 10 hotfixes (2026-11-11)
 
 [Blizzard's hotfixes of November 10](https://news.blizzard.com/en-us/article/24315281/wow-forever-hotfixes-november-10-2026)
