@@ -73,9 +73,9 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "master e805f787",
+  "publishedFrom": "master 29f8b8b7",
   "date": "2026-11-13",
-  "deployId": "134ebfa1",
+  "deployId": "8b4d14a2",
   "analytics": "Cloudflare Web Analytics enabled by the user 2026-10-28 (dashboard: Analytics & Logs > Web Analytics, site forever-dps.pages.dev); Pages injects the beacon, deploy_pages.py's live check strips it. The session token has no analytics read permission."
  },
  "changesTab": "Changes tab live 2026-10-28 (standards 30): tools/dps_report/changes/, live update 2026-11-10-hotfixes (game: Blizzard's November 10 hotfixes, Enhancement shaman tuning); 2026-11-02-build-70753 finished at c61845d with about 19 other sessions' commits uncovered"
