@@ -122,15 +122,18 @@ says how long), because the level 30 pools are big. A new spec is a few more lin
 
 `tools/rotopt/bis_phase0.sh` writes the level 60 Phase 0 Enhancement list
 (`ui/enhancement_shaman/bis/level60_phase0.bis.json`). It runs the DPS Report's default
-Enhancement build from a real pre-raid set, with `-gear-no-raids` and `-gear-phase 2`, so only
-what Forever has before its raids open can come up (`tools/rotopt/phase0.go`). It also leaves
-out the items `tools/rotopt/phase0_content.json` marks `out`, and keeps 25 items a slot. Our
-item data puts Classic patch 1.10's Dungeon Set 2 chain in phase 1 or 2, so its summoned bosses'
-drops (Sothos and Jarien, Lord Valthalak, Kormok, Isalien, Mor Grayhoof, Theldren) and its quest
-rewards (Beads of Ogre Might) are `out` there by hand. The other way round, the items marked
-`include` there join whatever their phase (`-gear-include`): the four Darkmoon cards, which our
-data puts in phase 3, but Forever has the Darkmoon Faire open. The list keeps the off hand empty
-next to its two hander (`-gear-rank-two-hand-only`).
+Enhancement fight (Orc, Engineering and Leatherworking, level 63 boss, 180s) with the talents
+the user plays, from a real pre-raid set. `TALENTS` sets the talents, and the default is
+`053303102-054030110051212141-03` (2026-11-14). The search uses `-gear-no-raids` and
+`-gear-phase 2`, so only what Forever has before its raids open can come up
+(`tools/rotopt/phase0.go`). It also leaves out the items `tools/rotopt/phase0_content.json`
+marks `out`, and keeps 25 items a slot. Our item data puts Classic patch 1.10's Dungeon Set 2
+chain in phase 1 or 2, so its summoned bosses' drops (Sothos and Jarien, Lord Valthalak, Kormok,
+Isalien, Mor Grayhoof, Theldren) and its quest rewards (Beads of Ogre Might) are `out` there by
+hand. The other way round, the items marked `include` there join whatever their phase
+(`-gear-include`): the four Darkmoon cards, which our data puts in phase 3, but Forever has the
+Darkmoon Faire open. The list keeps the off hand empty next to its two hander
+(`-gear-rank-two-hand-only`).
 
 ## Before release
 
