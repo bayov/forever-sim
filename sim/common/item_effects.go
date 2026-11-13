@@ -1311,8 +1311,10 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=14531/frightskull-shaft
 	// Chance on hit: Deals 8 Shadow damage every 2 sec for 30 sec and lowers their Strength for the duration of the disease.
-	// TODO: Proc rate assumed and needs testing
-	itemhelpers.CreateWeaponProcSpell(FrightskullShaft, "Frightskull Shaft", 0.5, func(character *core.Character) *core.Spell {
+	// The Classic rate is a guess. Under Forever it is 3.9 PPM: our Nov 13 log has the disease
+	// on 21.8% of landed white swings (190/873) and 22.8% of Stormstrikes (61/268), with the
+	// 3.4 sec shaft. The client has no rate (ProcChance 101, no PPM row).
+	itemhelpers.CreateWeaponProcSpellByRuleset(FrightskullShaft, "Frightskull Shaft", 0.5, 3.9, func(character *core.Character) *core.Spell {
 		// Under Forever the client's disease deals 15 every 2 sec for 14 sec (wago 1.60.1.70425:
 		// SpellEffect base 15, SpellDuration 305). Our Nov 13 log fits it: ticks of 15 (14 on
 		// dungeon mobs), and the next tick comes 2 sec after each refresh.
