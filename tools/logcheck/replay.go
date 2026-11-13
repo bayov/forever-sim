@@ -305,3 +305,17 @@ func imbueFromName(name string) (proto.WeaponImbue, bool) {
 	value, ok := proto.WeaponImbue_value[strings.ReplaceAll(name, " ", "")]
 	return proto.WeaponImbue(value), ok && value != 0
 }
+
+// shamanImbueFromName is imbueFromName for a shaman's own imbues only.
+//
+// Under Forever a shaman's imbue is a buff on the character, so an oil or a stone on the same
+// weapon doesn't replace it. When we took any imbue, a Shadow Oil cast over Windfury Weapon
+// (Nov 13) left the sim with no Windfury Weapon and cut the window at the oil.
+func shamanImbueFromName(name string) (proto.WeaponImbue, bool) {
+	switch value, _ := imbueFromName(name); value {
+	case proto.WeaponImbue_RockbiterWeapon, proto.WeaponImbue_FlametongueWeapon,
+		proto.WeaponImbue_FrostbrandWeapon, proto.WeaponImbue_WindfuryWeapon:
+		return value, true
+	}
+	return 0, false
+}

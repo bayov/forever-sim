@@ -254,15 +254,16 @@ func setImbue(char *character, all []*event, cl *combatLog, ex *export, tables *
 		if e.kind != "SPELL_CAST_SUCCESS" || e.srcGUID != cl.me || e.t.After(cl.to) {
 			continue
 		}
-		if value, ok := imbueFromName(e.spell); ok {
+		if value, ok := shamanImbueFromName(e.spell); ok {
 			imbue, name = value, e.spell
 			if !e.t.Before(cl.from) && !slices.Contains(during, e.spell) {
 				during = append(during, e.spell)
 			}
 		}
 	}
-	// The imbue lasts 30 minutes and survives a relog, so its cast can be in an earlier log
-	// file. Then its procs in the window tell which one it is.
+	// The imbue lasts an hour or more (Windfury Weapon held 58 minutes on Nov 13) and survives a
+	// relog, so its cast can be in an earlier log file. Then its procs in the window tell which
+	// one it is.
 	if imbue == 0 {
 		for _, e := range cl.events {
 			if e.srcGUID != cl.me || !isAttack(e.kind) {

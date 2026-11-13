@@ -470,7 +470,7 @@ func imbueCuts(cl *combatLog) []cut {
 		if e.kind != "SPELL_CAST_SUCCESS" || e.srcGUID != cl.me {
 			continue
 		}
-		imbue, ok := imbueFromName(e.spell)
+		imbue, ok := shamanImbueFromName(e.spell)
 		if !ok {
 			continue
 		}
