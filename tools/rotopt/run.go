@@ -111,6 +111,10 @@ type result struct {
 	// iteration by iteration (gainNoise).
 	tank      *tankscore.Score
 	tankParts []tankPart
+
+	// Each iteration's DPS, in the order of the run's seeds, when the searcher asks for them
+	// (saveValues). Two results of one fight length pair iteration by iteration (gainNoise).
+	values []float64
 }
 
 type tankPart struct {
@@ -145,6 +149,20 @@ func gainNoise(a, b result) float64 {
 		if ok {
 			return math.Sqrt(variance) / float64(n)
 		}
+	}
+	// With each iteration's DPS (saveValues), the error of the mean of the differences. The
+	// runs share their seed, so for a small change (a few points of Agility) that is far below
+	// the two errors added up. A change that moves every roll after it (2% crit) pairs less well,
+	// and its paired error comes out close to the two added up.
+	if n := len(a.values); n > 1 && n == len(b.values) {
+		var sum, sumSq float64
+		for i := range n {
+			d := b.values[i] - a.values[i]
+			sum += d
+			sumSq += d * d
+		}
+		mean := sum / float64(n)
+		return math.Sqrt(max(sumSq/float64(n)-mean*mean, 0) / float64(n))
 	}
 	// Over several tank encounters each stderr already carries tankscore.SharedSeedSD (combine).
 	return math.Hypot(a.stderr, b.stderr)
@@ -244,7 +262,8 @@ func simulate(request *proto.RaidSimRequest, objective *tankscore.Objective) (re
 	return result{
 		dps: player.Dps.Avg, stderr: player.Dps.Stdev / n,
 		mana: player.ManaEnd.GetAvg(), manaStderr: player.ManaEnd.GetStdev() / n,
-		tto: player.Tto.GetAvg(),
+		tto:    player.Tto.GetAvg(),
+		values: player.Dps.AllValues,
 	}, nil
 }
 

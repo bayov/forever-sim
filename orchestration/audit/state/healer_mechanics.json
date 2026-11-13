@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "cad23ae1a904481efff8d10b581c393ecf1d7f94"
+  "master": "3a86d4a6bf60814bb28d3624c92072d9200337a7"
  },
- "last_pass_at": "2026-11-13T06:59:53Z",
- "pass": 13,
- "result": "findings",
- "note": "Pass 13: client 70938 doubles Wild Growth coef 0.033->0.066 (finding 15, high, +1.9% druid raid carry); NS 17116 mask now carries Wild Growth (sim matches). unsealed_wrath.go Ret-only. Blizzard forum rate-limited, dev_notes_seen unchanged. Findings 10, 11, 15 open.",
+ "last_pass_at": "2026-11-13T18:49:13Z",
+ "pass": 14,
+ "result": "quiet",
+ "note": "Pass 14: only flametongue_weapon.go (rank 6 cut), Windfury totem roll and oil IDs changed; none reach a healer preset. Client still 70938. Findings 10, 11, 14, 15 open.",
  "client_build": "1.60.1.70938",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-11"
  },
- "checked_at": "2026-11-13T12:45:39Z"
+ "checked_at": "2026-11-13T19:29:54Z"
 }

@@ -1,14 +1,16 @@
-# Healer fairness pass 12 (2026-11-13, master 97da1cca5)
+# Healer fairness pass 13 (2026-11-13, master 3a86d4a6b)
 
 Result: quiet. No new finding. Still open: -20261104-4 (low; the boss files' `raidHealing` holds healer counts by
-class but no HPS by class, checked on all 7 files). Due because master changed `sim/paladin/unsealed_wrath.go`
-(Windfury Totem swings store no Unsealed Wrath echoes) and `orchestration/standards.md` item 17 (no extra attack
-rolls Windfury Totem; `sim/core/attack.go`, `buffs.go`). Both are melee rules; no healer preset melees.
+class but no HPS by class, checked on all 7 files). Due because master changed `sim/shaman/flametongue_weapon.go`
+(rank 6 Flametongue Weapon cut by 5.5, from the Nov 12-13 logs). The same range (cad23ae1a..3a86d4a6b) also changed
+Frightskull Shaft (3.9 PPM, Forever disease), Windfury Weapon attacks proccing Windfury Totem (`sim/core/buffs.go`)
+and the Shadow/Frost Oil spell IDs (`sim/core/consumes.go`). All are melee or weapon-proc rules; no healer preset
+melees, and both shaman presets imbue Wizard Oil, not Flametongue.
 
-Check: healbench built from 97da1cca5 (`-tags with_db`, build_cli worktree), all 9 requests in their own role on
+Check: healbench built from 3a86d4a6b (`-tags with_db`, build_cli worktree), all 9 requests in their own role on
 the 7 boss files, seed 101, 1,000 iterations (`tools/audit/healer_fairness/screen.sh`): all 63 carry cells identical
-to `ref/healer_fairness/bench_71562a8.tsv`. `tools/healbench/req/` unchanged since 71562a8b0, so sections 1 and 3
-below still hold. The tables below are pass 11's, re-confirmed.
+to `ref/healer_fairness/bench_71562a8.tsv`. `tools/healbench/req/` and `ui/healing_*` unchanged in the range, so
+sections 1 and 3 below still hold. The tables below are pass 11's, re-confirmed.
 
 ## 1. Same terms (the 9 requests)
 

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "cad23ae1a904481efff8d10b581c393ecf1d7f94"
+  "master": "3a86d4a6bf60814bb28d3624c92072d9200337a7"
  },
- "last_pass_at": "2026-11-13T07:18:43Z",
- "pass": 12,
+ "last_pass_at": "2026-11-13T19:13:17Z",
+ "pass": 13,
  "result": "quiet",
  "baseline": "9ba00c2dc",
- "note": "Pass 12 on 97da1cca5 (Unsealed Wrath stores no echoes from Windfury Totem swings; standards 17: no extra attack rolls Windfury). Neither reaches a healer: no healer preset melees. Full 63-cell bench (seed 101, 1,000 iterations) identical to ref/healer_fairness/bench_71562a8.tsv; healbench requests unchanged. Open: -20261104-4.",
+ "note": "Pass 13 on 3a86d4a6b (Flametongue rank 6 cut 5.5; also Frightskull Shaft PPM, Windfury Weapon->Totem procs, oil spell IDs). None reaches a healer: no healer preset melees, shaman presets use Wizard Oil. Full 63-cell bench (seed 101, 1,000 iterations) identical to ref/healer_fairness/bench_71562a8.tsv; healbench requests unchanged. Open: -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-13T12:45:39Z"
+ "checked_at": "2026-11-13T19:29:54Z"
 }

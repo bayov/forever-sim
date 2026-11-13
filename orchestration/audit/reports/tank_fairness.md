@@ -1,6 +1,19 @@
-# tank_fairness pass 13: 2026-11-13, master 97da1cca5
+# tank_fairness pass 14: 2026-11-13, master 3a86d4a6b
 
-Due: 3 watched files changed since 71562a8b0: `sim/core/attack.go`, `sim/paladin/unsealed_wrath.go`,
+Due: 1 watched file changed since cad23ae1a: `sim/shaman/flametongue_weapon.go` (4c4790e3e, Flametongue Weapon rank 6
+cut of 5.5 per hit from the Nov 12-13 logs). No tank request, encounter or tankbench file changed. Quiet: no new finding.
+
+## Method
+
+All three Warden presets (`tools/tankbench/req/shaman_warden_*.json`) imbue Rockbiter Weapon and none swaps imbues;
+`FlametongueWeaponCut` is read only by Flametongue itself (`flametongueRank` also feeds `imbue_swap.go`, which the
+Warden presets don't use). To confirm, `tools/audit/tank_fairness/bench.sh` on the three Warden presets × six scoring
+bosses, 3,000 iterations, seed 1, tankbench built at 3a86d4a6b with `--tags=with_db`: byte-identical to the
+`ref/tank_fairness/summary.tsv` baseline rows. The warrior, paladin and bear presets have no shaman code path and were
+not re-run. Baseline unchanged.
+
+## Pass 13's findings (unchanged, carried below)
+
 `orchestration/standards.md`. They are the Nov 11 paladin hotfixes (33b13e310: Judgement rolls as a ranged attack,
 Unsealed Wrath stores no echo from Windfury Totem swings, seal changes) and a1a1a81bb (no extra attack rolls Windfury
 Totem; standards 17 now says so). No tank request, encounter or tankbench file changed. Quiet: no new finding.

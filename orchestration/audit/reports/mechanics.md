@@ -1,37 +1,33 @@
-# Mechanics pass 79 (2026-11-13, master 97da1cca5)
+# Mechanics pass 80 (2026-11-13, master 3a86d4a6b)
 
-One new finding (low): mechanics-20261113-1, Imp Firebolt ranks 2-4 changed in client 70938 and the sim keeps
-the 70888 values (leveling only). mechanics-20261112-2 (Unsealed Wrath echoes from Windfury Totem swings) is
-resolved by 33b13e310 / a1a1a81bb. mechanics-20261112-1 (Holy Strike and the totem) and 20261104-1 stay open.
+One new finding (low): mechanics-20261113-2, Weakening Disease (Frightskull Shaft) lowers the target's Strength by 50
+in the sim, where the Forever client lowers its attack power by 92 (no player DPS effect). Open findings
+mechanics-20261113-1, 20261112-1 (Holy Strike and the totem) and 20261104-1 stay open; nothing on master touched them.
 
-## Commits 71562a8b0..97da1cca5 (sim code, net)
+## Get current
+
+- Client: newest 1.60 build is still 1.60.1.70938 (`wago.py latest --probe 300`). No new spell data.
+- Blizzard: dev notes t/2360696 newest post 10 (2026-11-04), hotfix thread t/2403040 newest post 9 (2026-11-12
+  19:10 UTC). Nothing newer than the last pass.
+- Daily update / log audit: eac5f72d1 (log audit 2026-11-13) is the source of the commits below.
+
+## Commits cad23ae1a..3a86d4a6b (sim code)
 
 | Commit | What | Verdict |
 |---|---|---|
-| 33b13e310 (PR #128 via e8089abc3) | Unsealed Wrath: a Windfury Totem swing stores no echo, still spends other seals' stacks (`unsealed_wrath.go:85`) | Matches t/2403040 post 8 ("no longer generates echoes from Windfury Totem attacks"). Spending is a report assumption. Resolves -2 |
-| a1a1a81bb | Under Forever no extra attack rolls Windfury Totem (`buffs.go` rollsOn uses `AutoAttacks.IsExtraAttack`); stored extra attacks keep their source (`attack.go` extraSourcesStored) | Standards 17 (user log audit). Verdict row updated. Stored-source fallback 21919 only when stacks are set directly. OK |
-| 2fcb6fe2a | Volley: SpellFlagNoProcs | Tier 1 twice: Nov 11 hotfix, and 70938 gives Volley and its ticks SpellMisc Attributes_4 0x800000 (suppress weapon procs). OK |
-| 02cf6c40e | Item reveals Nov 11-12 (item_effects.go, db) | Item data, the gear auditor's. No shared mechanic |
+| 041bb0a90 | Weakening Disease 18633 under Forever: 15 every 2 sec, 7 ticks (14 sec) | Matches 70938 (effect #0 aura 3 bp 15 per 2000, duration 14000). Effect #1 is aura 99 bp -92 (attack power), sim still applies -50 Strength: new finding -2 (low) |
+| d22fe3e23 | Frightskull Shaft 3.9 PPM under Forever (Classic 0.5 kept) | Client has ProcChance 101 and no PPM row, so the log is the best source: 3.9 PPM at 3.4 speed = 22.1%, log 21.8% (190/873) white, 22.8% Stormstrike. OK |
+| c7a99fa49 | Windfury Weapon's main hand attacks (8232/8235/10486/16362) roll Windfury Totem under Forever | Matches t/2403040 post 6 ("granting their attacks a chance to activate both") and the log (47/162). Still excluded as extra attacks? No: the imbue attacks are not `IsExtraAttack`, OH attacks are OHSpecial and don't roll. OK |
+| 4c4790e3e | Flametongue Weapon rank 6 cut 5.5 below client points | Class-side, log-backed (about 15 windows, levels 55-60, two weapon speeds). Same method as rank 5. OK |
+| 1743980e6 | Shadow Oil / Frost Oil procs keyed as 350026 / 350025 under Forever | 70938 has both (Shadow Bolt bp 52 rpl 0.9, Frostbolt bp 33 rpl 0.7); ID only, damage ranges unchanged. OK |
 
-## Getting current
+## Knock-on
 
-- Client: 70938 is new (gate). `wago.py diff 1.60.1.70888 1.60.1.70938 --by-spell`: 76 spell rows. Shared rows:
-  none changed (no racial, raid buff, debuff, totem, consumable or trinket). SpellItemEnchantment 8203 stat
-  124 -> 6 (Spirit, already in the sim). TraitDefinitionEffectPoints no change, CurvePoint +4.
-- Baked hotfixes that the sim already has: Wrack (25.2, 1.75/level, 0.2002), Imp Firebolt rank 1, Nature's Swiftness
-  covers Wild Growth, Idol of Ferocity mask, Volley's no-procs flag.
-- Lightning Overload / Chain Lightning overload rows now equal half of their parent ranks (176.5 + 1.05/level vs
-  15208's 353 + 2.1; coefficient 0.357 vs 0.714). The sim's 0.5 times the parent gives the same result. Verified.
-- Class deltas: Imp Firebolt ranks 2-4 (new finding); Wild Growth coefficient 0.033 -> 0.066 (healer auditors);
-  Poised reworked into a proc trigger, same 10 Energy (no sim change); hunter pet Great Stamina becomes flat Health
-  (not simmed); Frost Nova, Flare, Bane of Havoc GCD category, Reagent Economy and Quick and the Dead masks (not
-  DPS mechanics the presets use).
-- ItemSparse: about 1040 rows changed (DmgVariance 0.2 -> 0 on some items, Bonding fixes). These are item data
-  for the gear and client update auditors.
-- Hotfixes: `hotfixes.py fetch 1.60.1.70938 --set mechanics` found rows, but none apply to SpellEffect,
-  SpellMisc or SpellAuraOptions (`check` reports nothing to compare).
-- Dev notes t/2360696: still post 10 (2026-11-04), post 1 not edited since 2026-11-03.
-- Hotfix thread t/2403040: still post 9 (2026-11-12 19:10 UTC); post 1 not edited since 2026-11-12 00:47.
-- Blue tracker: nothing newer than post 9 apart from a podcast (2412856, 2026-11-12 17:46).
-- Daily update: TASKS.md commits only (Judgement readings join the verify list, weapon specialization wording,
-  spell icons). These have no new mechanic for this auditor.
+- `windfuryTotemRollsOnForever` is only used by the Windfury Totem rollsOn; Holy Strike (open -1) is still not in
+  `windfuryTotemAbilityIds`.
+- Frightskull Shaft goes through `CreateWeaponProcSpellByRuleset`, so Classic keeps 0.5 PPM and 8 x 15 ticks.
+
+## Verdicts
+
+`ref/mechanics/verdicts.md`: as-of line moved to 3a86d4a6b; Windfury imbue + totem row notes c7a99fa49; class-side line
+adds Flametongue rank 6, Frightskull Shaft rate and disease, and the oil spell IDs.

@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261113-2: Weakening Disease (Frightskull Shaft) lowers the target's Strength by 50 in the sim; the Forever client lowers its attack power by 92
+- severity: low (no player DPS effect: the debuff only weakens the target, and raid damage taken is a fixed 1500 per hit; not measured)
+- affects: shared item effects (Frightskull Shaft; Enhancement leveling and any build wielding it)
+- found: 2026-11-13, master 3a86d4a6b
+- evidence: client 1.60.1.70938 spell 18633 effect #1 is aura 99 (mod attack power) base -92 (`AUDIT_DB=<70938> python3 tools/audit/mechanics/sp.py 18633`); effect #0 (15 every 2 sec, 14 sec) matches the sim since 041bb0a90. `sim/common/item_effects.go` ~1336 still applies `stats.Strength, -50` on gain under both rulesets. Tier 1 (client data).
+- proposed fix: under `IsForever()` apply `stats.AttackPower, -92` instead of Strength -50 in the aura's OnGain / OnExpire; keep -50 Strength for Classic. Also fix the item comment's "8 every 2 sec for 30 sec" to say it is Classic's.
+- needs: orchestrator fix
+
 ### mechanics-20261113-1: Client 70938 changes Imp Firebolt ranks 2-4; the sim keeps the 70888 values
 - severity: low (leveling only: the Level 60 presets cast rank 7, 11763, which is unchanged; not measured)
 - affects: warlock (Imp, leveling builds at levels 8-37)

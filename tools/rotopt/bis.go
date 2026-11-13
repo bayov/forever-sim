@@ -74,59 +74,210 @@ type rankedGear struct {
 	result result
 }
 
-// rankGear scores each option and returns the best keep of them, best first.
+// rankGear scores each option and returns the best of them, best first. It keeps keep
+// items by name, the way trimBis counts them: the rolls of one item and suffix name count
+// once.
 //
 // placements gives the gear sets an option can be scored in, and the option counts with
 // the best of them. A ring is placed in either ring slot, say. An option with no
-// placement is left out. We screen the options the same way screenGear does: everything
-// at screenIterations first when the slot has more options than we keep, and only the
-// best of those at full iterations.
-func (s *searcher) rankGear(options []gearOption, placements func(gearOption) [][]*proto.ItemSpec, keep int, knobs Knobs) []rankedGear {
+// placement is left out.
+//
+// empty gives the gear sets with the slot left empty, or nil when we don't compare with an
+// empty slot. An option that scores no better than the best of them does nothing in the
+// sim (a Hook of the Master Angler in a trinket slot), so it isn't worth listing.
+//
+// A slot can have hundreds of options, so we don't score them all at full iterations. We
+// race them instead (rankStages): everything at screenIterations first, then what is left
+// at more iterations, and the last few at full iterations. Between two steps we drop an
+// option only when it is clearly out: behind the keep-th best, or behind the empty slot,
+// by more than confidence standard errors of the gap (raceCut). The runs share their seed,
+// and we keep each iteration's DPS, so that error is the paired one (gainNoise).
+//
+// We used to keep a plain top 50 of the 100 iteration screen. It lost real items, because a
+// screen that short is several DPS off, and the trinkets that matter are within a few DPS
+// of each other and of an empty slot. That cut lost Blackhand's Breadth from the Phase 0
+// list of 2026-11-13, which is 7.7 DPS better than an empty slot at 2000 iterations.
+func (s *searcher) rankGear(label string, options []gearOption, placements func(gearOption) [][]*proto.ItemSpec, empty [][]*proto.ItemSpec, keep int, knobs Knobs) []rankedGear {
 	if keep <= 0 {
 		return nil
 	}
-	scoreAt := func(o gearOption, iterations int32) (result, bool) {
-		full := s.iterations
-		s.iterations = iterations
-		defer func() { s.iterations = full }()
-		var best result
-		found := false
-		for _, gear := range placements(o) {
-			if gear == nil {
-				continue
-			}
-			s.setGear(gear)
-			if r := s.score(knobs); !found || r.dps > best.dps {
-				best, found = r, true
-			}
-		}
-		return best, found
+	counts := []string{fmt.Sprint(len(options))}
+	options = bestRolls(options)
+	counts = append(counts, fmt.Sprintf("%d best rolls", len(options)))
+	stages := rankStages(s.screenIterations, s.iterations)
+	if empty == nil && len(options) <= keep {
+		stages = stages[len(stages)-1:]
 	}
-	screenKeep := max(s.screenKeep, keep)
-	if s.screenIterations > 0 && len(options) > screenKeep {
-		var screened []rankedGear
-		for _, o := range options {
-			if r, ok := scoreAt(o, s.screenIterations); ok {
-				screened = append(screened, rankedGear{o, r})
+	var ranked []rankedGear
+	for i, iterations := range stages {
+		var floor *result
+		ranked, floor = s.scoreOptions(options, placements, empty, iterations, knobs)
+		if i == len(stages)-1 {
+			if floor != nil {
+				ranked = slices.DeleteFunc(ranked, func(r rankedGear) bool { return r.result.dps <= floor.dps })
+			}
+			ranked = topByName(ranked, keep)
+			break
+		}
+		options = raceCut(ranked, floor, keep, s.confidence)
+		counts = append(counts, fmt.Sprintf("%d after %d iterations", len(options), iterations))
+	}
+	if label != "" {
+		fmt.Printf("  %s: %s, %d listed\n", label, strings.Join(counts, ", "), len(ranked))
+	}
+	return ranked
+}
+
+// rankStages is the iterations of each step of rankGear's race: screen, about the geometric
+// mean of screen and full, and full. 100 and 2000 give 100, 447 and 2000.
+func rankStages(screen, full int32) []int32 {
+	if screen <= 0 || screen >= full {
+		return []int32{full}
+	}
+	mid := int32(math.Sqrt(float64(screen) * float64(full)))
+	if mid < 2*screen || 2*mid > full {
+		return []int32{screen, full}
+	}
+	return []int32{screen, mid, full}
+}
+
+// scoreOptions scores every option in the best of its placements at the iterations, best
+// first, and the empty slot (nil without empty sets). The sims run side by side (scoreAll).
+func (s *searcher) scoreOptions(options []gearOption, placements func(gearOption) [][]*proto.ItemSpec, empty [][]*proto.ItemSpec,
+	iterations int32, knobs Knobs) ([]rankedGear, *result) {
+	full := s.iterations
+	s.iterations, s.saveValues = iterations, true
+	defer func() { s.iterations, s.saveValues = full, false }()
+	var pending []*pendingScore
+	// owner[i] is the option pending[i] belongs to, and -1 for an empty slot.
+	var owner []int
+	for i, o := range options {
+		for _, gear := range placements(o) {
+			if gear != nil {
+				s.setGear(gear)
+				pending = append(pending, s.prepare(knobs))
+				owner = append(owner, i)
 			}
 		}
-		sort.SliceStable(screened, func(i, j int) bool { return screened[i].result.dps > screened[j].result.dps })
-		options = nil
-		for i := 0; i < len(screened) && i < screenKeep; i++ {
-			options = append(options, screened[i].option)
+	}
+	for _, gear := range empty {
+		s.setGear(gear)
+		pending = append(pending, s.prepare(knobs))
+		owner = append(owner, -1)
+	}
+	best := make([]*result, len(options))
+	var floor *result
+	for i, r := range s.scoreAll(pending) {
+		at := &floor
+		if owner[i] >= 0 {
+			at = &best[owner[i]]
+		}
+		if *at == nil || r.dps > (*at).dps {
+			*at = &r
 		}
 	}
 	var ranked []rankedGear
-	for _, o := range options {
-		if r, ok := scoreAt(o, s.iterations); ok {
-			ranked = append(ranked, rankedGear{o, r})
+	for i, r := range best {
+		if r != nil {
+			ranked = append(ranked, rankedGear{options[i], *r})
 		}
 	}
 	sort.SliceStable(ranked, func(i, j int) bool { return ranked[i].result.dps > ranked[j].result.dps })
-	if len(ranked) > keep {
-		ranked = ranked[:keep]
+	return ranked, floor
+}
+
+// raceCut is the options of ranked (best first) worth scoring at more iterations. It drops
+// an option that is behind the keep-th best by name, or behind the empty slot floor, by
+// more than confidence standard errors of the gap. It also drops an option that scores
+// exactly what the empty slot scores. The runs share their random seed, so that item
+// changes nothing the sim sees (Stamina and Spirit trinkets, say).
+func raceCut(ranked []rankedGear, floor *result, keep int, confidence float64) []gearOption {
+	var kth *result
+	if i := keepthByName(ranked, keep); i >= 0 {
+		kth = &ranked[i].result
+	}
+	behind := func(r, ahead result) bool { return r.dps+confidence*gainNoise(r, ahead) < ahead.dps }
+	var out []gearOption
+	for _, r := range ranked {
+		if floor != nil && (r.result.dps == floor.dps || behind(r.result, *floor)) {
+			continue
+		}
+		if kth != nil && behind(r.result, *kth) {
+			continue
+		}
+		out = append(out, r.option)
+	}
+	return out
+}
+
+// topByName is the first keep options of ranked (best first) by name: a weaker roll of an
+// item and suffix name already listed comes along but doesn't count, since trimBis drops it.
+func topByName(ranked []rankedGear, keep int) []rankedGear {
+	if i := keepthByName(ranked, keep+1); i >= 0 {
+		return ranked[:i]
 	}
 	return ranked
+}
+
+// keepthByName is the index in ranked (best first) of the keep-th option by name, or -1
+// when ranked has fewer names.
+func keepthByName(ranked []rankedGear, keep int) int {
+	type named struct {
+		id   int32
+		name string
+	}
+	seen := map[named]bool{}
+	for i, r := range ranked {
+		key := named{r.option.spec.Id, r.option.name}
+		if !seen[key] {
+			seen[key] = true
+			if len(seen) == keep {
+				return i
+			}
+		}
+	}
+	return -1
+}
+
+// bestRolls drops the weaker rolls of each random suffix. Two rolls of an item with the same
+// suffix name ("of the Tiger") only differ in how much of each stat they give, so a roll with
+// no more of any stat than another one can't do better, and we don't sim it. A slot of
+// greens has hundreds of rolls, and most of them go this way.
+func bestRolls(options []gearOption) []gearOption {
+	// dominates is whether a gives at least as much of every stat as b. Of two equal rolls
+	// the first one stays.
+	dominates := func(a, b gearOption) bool {
+		for i := range max(len(a.suffixStats), len(b.suffixStats)) {
+			var x, y float64
+			if i < len(a.suffixStats) {
+				x = a.suffixStats[i]
+			}
+			if i < len(b.suffixStats) {
+				y = b.suffixStats[i]
+			}
+			if x < y {
+				return false
+			}
+		}
+		return true
+	}
+	var out []gearOption
+	for i, o := range options {
+		weaker := o.suffixStats != nil && slices.ContainsFunc(options, func(other gearOption) bool {
+			if other.suffixStats == nil || other.spec.Id != o.spec.Id || other.name != o.name || other.spec.RandomSuffix == o.spec.RandomSuffix {
+				return false
+			}
+			if !dominates(other, o) {
+				return false
+			}
+			// Equal rolls: the first one stays.
+			return !dominates(o, other) || slices.IndexFunc(options, func(x gearOption) bool { return sameGear(x.spec, other) }) < i
+		})
+		if !weaker {
+			out = append(out, o)
+		}
+	}
+	return out
 }
 
 // Whether the option is the item and suffix of spec.
@@ -192,37 +343,32 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 		})
 	}
 
-	// We score more than we keep, because trimBis drops the weaker rolls of an item.
-	wide := max(s.screenKeep, 2*keep)
-	// An item that scores no better than leaving the slot empty does nothing in the sim
-	// (a Hook of the Master Angler in a trinket slot), so it isn't worth listing. For the
-	// rings and trinkets we empty whichever slot loses less.
-	emptied := func(slots ...int) float64 {
-		nothing := math.Inf(-1)
+	// We rank more names than we keep, so an item near the end of the list is never the one
+	// rankGear's race cuts at.
+	wide := keep + keep/2
+	// The set with the slots emptied one at a time, for rankGear's empty slot. For the rings
+	// and trinkets we empty whichever slot loses less.
+	emptied := func(slots ...int) [][]*proto.ItemSpec {
+		var out [][]*proto.ItemSpec
 		for _, slot := range slots {
 			candidate := append([]*proto.ItemSpec(nil), best...)
 			candidate[slot] = nil
-			s.setGear(candidate)
-			nothing = max(nothing, s.score(knobs).dps)
+			out = append(out, candidate)
 		}
-		return nothing
-	}
-	useful := func(ranked []rankedGear, nothing float64) []rankedGear {
-		return slices.DeleteFunc(ranked, func(r rankedGear) bool { return r.result.dps <= nothing })
+		return out
 	}
 	var slots []bisSlot
 	single := func(slot int) {
 		picks := pickOf(slot, nil)
-		ranked := s.rankGear(others(slot, best[slot]), func(o gearOption) [][]*proto.ItemSpec {
+		ranked := s.rankGear(gearSlotNames[slot], others(slot, best[slot]), func(o gearOption) [][]*proto.ItemSpec {
 			return [][]*proto.ItemSpec{swapped(slot, o.spec)}
-		}, wide, knobs)
-		ranked = useful(ranked, emptied(slot))
+		}, emptied(slot), wide, knobs)
 		slots = append(slots, bisSlot{gearSlotNames[slot], trimBis(append(picks, entriesOf(ranked, noOtherHand)...), keep)})
 	}
 	pair := func(name string, a, b int) {
 		picks := append(pickOf(a, nil), pickOf(b, nil)...)
 		// Each slot takes any item but the one the other slot holds.
-		ranked := s.rankGear(others(a, best[a], best[b]), func(o gearOption) [][]*proto.ItemSpec {
+		ranked := s.rankGear(name, others(a, best[a], best[b]), func(o gearOption) [][]*proto.ItemSpec {
 			var out [][]*proto.ItemSpec
 			if best[b] == nil || best[b].Id != o.spec.Id {
 				out = append(out, swapped(a, o.spec))
@@ -231,8 +377,7 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 				out = append(out, swapped(b, o.spec))
 			}
 			return out
-		}, wide, knobs)
-		ranked = useful(ranked, emptied(a, b))
+		}, emptied(a, b), wide, knobs)
 		slots = append(slots, bisSlot{name, trimBis(append(picks, entriesOf(ranked, noOtherHand)...), keep)})
 	}
 
@@ -321,46 +466,46 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 		// A one hand pick: every other main hand next to the off hand the set holds, and
 		// every other off hand next to the set's main hand.
 		picks := pickOf(mh, best[oh])
-		ranked := s.rankGear(append(oneHanders, twoHanders...), func(o gearOption) [][]*proto.ItemSpec {
+		ranked := s.rankGear("mainhand", append(oneHanders, twoHanders...), func(o gearOption) [][]*proto.ItemSpec {
 			return [][]*proto.ItemSpec{withMainHand(o, best[oh])}
-		}, keep-len(picks), knobs)
+		}, nil, keep-len(picks), knobs)
 		mainList := append(picks, byDPS(entriesOf(ranked, mainHandWith(best[oh])))...)
 		offPicks := pickOf(oh, best[mh])
 		offOptions := slices.DeleteFunc(slices.Clone(pool[oh]), func(o gearOption) bool { return sameGear(best[oh], o) })
-		offRanked := s.rankGear(offOptions, func(o gearOption) [][]*proto.ItemSpec {
+		offRanked := s.rankGear("offhand", offOptions, func(o gearOption) [][]*proto.ItemSpec {
 			return [][]*proto.ItemSpec{withOffHand(o, best[mh])}
-		}, keep-len(offPicks), knobs)
+		}, nil, keep-len(offPicks), knobs)
 		return mainList, append(offPicks, entriesOf(offRanked, func(rankedGear) *proto.ItemSpec { return best[mh] })...)
 	}
 
 	// A two hand pick. The best one hander with nothing in the off hand, then the best off
 	// hand next to it, then every one hander next to that off hand.
 	picks := pickOf(mh, nil)
-	twoRanked := s.rankGear(twoHanders, func(o gearOption) [][]*proto.ItemSpec {
+	twoRanked := s.rankGear("mainhand two handers", twoHanders, func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withMainHand(o, nil)}
-	}, keep-len(picks), knobs)
+	}, nil, keep-len(picks), knobs)
 	mainList := append(picks, entriesOf(twoRanked, noOtherHand)...)
 	if *gearRankTwoHandOnly {
 		return mainList, nil
 	}
-	bare := s.rankGear(oneHanders, func(o gearOption) [][]*proto.ItemSpec {
+	bare := s.rankGear("", oneHanders, func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withMainHand(o, nil)}
-	}, 1, knobs)
+	}, nil, 1, knobs)
 	if len(bare) == 0 {
 		return mainList, nil
 	}
 	oneHand := s.withEnchantOf(mh, bare[0].option.spec, best[mh])
-	offRanked := s.rankGear(pool[oh], func(o gearOption) [][]*proto.ItemSpec {
+	offRanked := s.rankGear("offhand", pool[oh], func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withOffHand(o, oneHand)}
-	}, keep, knobs)
+	}, nil, keep, knobs)
 	offList := entriesOf(offRanked, func(rankedGear) *proto.ItemSpec { return oneHand })
 	if len(offRanked) == 0 {
 		return mainList, offList
 	}
 	offHand := s.withEnchantOf(oh, offRanked[0].option.spec, best[oh])
-	oneRanked := s.rankGear(oneHanders, func(o gearOption) [][]*proto.ItemSpec {
+	oneRanked := s.rankGear("mainhand one handers", oneHanders, func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withMainHand(o, offHand)}
-	}, keep-len(picks), knobs)
+	}, nil, keep-len(picks), knobs)
 	if len(oneRanked) > 0 {
 		r := oneRanked[0].result
 		if gain := r.dps - base.dps; gain > s.confidence*gainNoise(base, r) {

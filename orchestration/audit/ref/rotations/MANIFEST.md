@@ -1,19 +1,9 @@
 # Rotation audit: reference files
 
-- `baseline_97da1cc_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  97da1cca5 (pass 63). Against the previous 71562a8 baseline: Retribution -12 to -22 (Unsealed Wrath stores
-  no echo from Windfury Totem swings, a1a1a81bb; partly offset by the Ret re-tune ec8ab9b3d), Ret Shock
-  +2.4 / +3.5, Combat Swords -3.0 (extra attacks no longer roll Windfury Totem); the rest under 1.
-  (The shared CLI was `/tmp/audit-cache/cli/97da1cca5c34/wowsimcli`; the notes below on how it was made
-  still hold.)
-  - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
-    encounter.
-  - The CLI was the audit loop's shared build at a0b4d3be9 (`/tmp/audit-cache/cli/a0b4d3be9859/wowsimcli`).
-  - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
-    output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
-    change.
-  - When the req files change too, use `regress.py` (old CLI vs new CLI on the new req files) to tell sim
-    changes apart from setting changes.
+- `baseline_3a86d4a_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  3a86d4a6b (pass 64). Against the previous 97da1cc baseline: Enhancement +20.0 to +24.6 (c7a99fa49: Windfury
+  Weapon's attacks roll the shaman's own Windfury Totem under Forever); every other preset unchanged.
+  (The shared CLI was `/tmp/audit-cache/cli/3a86d4a6bf60/wowsimcli`; made the same way as before.)
 
 ## Not committed (kept locally, re-create as needed)
 
