@@ -928,4 +928,22 @@ var ForeverItems = []*proto.UIItem{
 		Ilvl:  61, RequiredLevel: 56, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
 		Unique: true, BindOnPickup: true,
 	},
+
+	// Onyxia Scale Breastplate is in the Forever client and on wowhead's Forever item page, but
+	// no listing we read has it. The Classic gearplanner dump has no row for it and wowhead's
+	// Forever listings (which gave us Onyxia Scale Cloak) never carried it, so the item was
+	// dropped without a trace. Stats are as the wowhead Forever tooltip prints them: 398
+	// armor, 150 bonus armor, and the 1% crit effect, which we keep as flat crit like the
+	// listing does. AtlasLoot knows the recipe (spell 19106), but gen_db only attaches its
+	// sources to items it already has, so we type the source.
+	{
+		Id: 15141, Name: "Onyxia Scale Breastplate", Icon: "inv_chest_plate06",
+		Type: proto.ItemType_ItemTypeChest, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats: stats.Stats{
+			stats.Strength: 15, stats.Agility: 15, stats.Stamina: 15, stats.Intellect: 14, stats.Spirit: 14,
+			stats.Armor: 398, stats.BonusArmor: 150, stats.MeleeCrit: 1, stats.FireResistance: 9,
+		}.ToFloatArray(),
+		Ilvl: 62, RequiredLevel: 57, Quality: proto.ItemQuality_ItemQualityEpic, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+		Sources: []*proto.UIItemSource{{Source: &proto.UIItemSource_Crafted{Crafted: &proto.CraftedSource{Profession: proto.Profession_Leatherworking, SpellId: 19106}}}},
+	},
 }
