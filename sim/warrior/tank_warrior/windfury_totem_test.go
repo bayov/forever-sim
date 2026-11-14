@@ -51,13 +51,14 @@ func windfuryProcs(sim *core.Simulation, war *warrior.Warrior, spell *core.Spell
 	return procs
 }
 
-// TestForeverWindfuryTotemMainHandAbilities checks standards 17 (user ruling 2026-11-12, the
-// log audit in tools/logcheck/findings.md): under Forever the warrior abilities whose client spell
-// requires a main hand weapon or is on next swing (Heroic Strike, Cleave, Sunder Armor, Revenge,
-// Execute, Rend) roll Windfury Totem at 20%, and Whirlwind, whose spell isn't flagged, never does.
-// Classic keeps every main hand hit. White swings still proc it
-// (sim/shaman/enhancement/proc_matrix_test.go); sim/core/windfury_totem_procs_forever_test.go
-// pins the log list.
+// TestForeverWindfuryTotemMainHandAbilities checks Blizzard's hotfixes of November 13, 2026
+// (t/2403040): "Windfury Totem is now correctly activated by all melee abilities ... Strikes from
+// abilities that involve your offhand weapon like Whirlwind or Mutilate do not have a chance to
+// activate Windfury. The main-hand strike from those abilities still does." Under Forever every
+// main hand warrior ability (Heroic Strike, Cleave, Sunder Armor, Revenge, Execute, Rend and
+// Whirlwind's main hand strike; this tank holds a shield) rolls Windfury Totem at 20%; off-hand
+// strikes never do (sim/core/windfury_totem_procs_forever_test.go). Classic keeps every main hand
+// hit. White swings still proc it (sim/shaman/enhancement/proc_matrix_test.go).
 func TestForeverWindfuryTotemMainHandAbilities(t *testing.T) {
 	const n = 400
 	sim, war := newWindfuryTank(t, proto.Ruleset_RulesetForever)
@@ -72,8 +73,8 @@ func TestForeverWindfuryTotemMainHandAbilities(t *testing.T) {
 			t.Errorf("Forever %s procs Windfury Totem %d times in %d, want about a fifth", s.ActionID, got, n)
 		}
 	}
-	if got := windfuryProcs(sim, war, war.Whirlwind.Spell, n); got != 0 {
-		t.Errorf("Forever Whirlwind procs Windfury Totem %d times in %d, want never", got, n)
+	if got := windfuryProcs(sim, war, war.Whirlwind.Spell, n); got < n/10 || got > n/3 {
+		t.Errorf("Forever Whirlwind's main hand strike procs Windfury Totem %d times in %d, want about a fifth", got, n)
 	}
 
 	era, eraWar := newWindfuryTank(t, proto.Ruleset_RulesetClassic)

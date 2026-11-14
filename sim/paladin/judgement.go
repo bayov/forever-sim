@@ -75,7 +75,8 @@ func (paladin *Paladin) sanctifiedJudgementBase(sim *core.Simulation) float64 {
 	return baseCost * (2 - percent)
 }
 
-// rangedJudgement makes a judgement's damage spell a ranged attack under Forever. Blizzard's
+// rangedJudgement makes a judgement's damage spell a ranged attack under Forever (Righteousness
+// and Fury; Command is melee again since the November 13 hotfixes, t/2403040). Blizzard's
 // hotfixes of November 11 (t/2403040 post 8): "Judgement changed to now be considered a Ranged
 // Attack. This means it no longer counts as a Melee attack for the purposes of item and effect
 // procs and uses the Paladin's Ranged Hit chance." So the hit is a ranged special: listeners keyed

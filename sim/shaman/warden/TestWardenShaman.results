@@ -99,8 +99,8 @@ stat_weights_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 382.31917
-  tps: 677.1584
+  dps: 384.01667
+  tps: 679.49512
  }
 }
 dps_results: {
@@ -113,15 +113,15 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Champion'sThunderfist"
  value: {
-  dps: 374.45333
-  tps: 676.36366
+  dps: 373.94267
+  tps: 675.70697
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Champion'sWartide"
  value: {
-  dps: 365.582
-  tps: 659.2521
+  dps: 365.27167
+  tps: 658.601
  }
 }
 dps_results: {
@@ -162,15 +162,15 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 398.47117
-  tps: 701.19772
+  dps: 399.44317
+  tps: 702.66131
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 388.3545
-  tps: 699.16973
+  dps: 388.19967
+  tps: 698.83788
  }
 }
 dps_results: {
@@ -183,29 +183,29 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 624.88767
-  tps: 1160.01009
+  dps: 632.77167
+  tps: 1172.61176
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 382.31917
-  tps: 677.1584
+  dps: 384.01667
+  tps: 679.49512
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 374.45333
-  tps: 676.36366
+  dps: 373.94267
+  tps: 675.70697
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 365.582
-  tps: 659.2521
+  dps: 365.27167
+  tps: 658.601
  }
 }
 dps_results: {
@@ -267,15 +267,15 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 398.47117
-  tps: 701.19772
+  dps: 399.44317
+  tps: 702.66131
  }
 }
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 388.3545
-  tps: 699.16973
+  dps: 388.19967
+  tps: 698.83788
  }
 }
 dps_results: {

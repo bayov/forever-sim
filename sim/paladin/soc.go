@@ -96,8 +96,11 @@ func (paladin *Paladin) registerSealOfCommand() {
 
 				// Forever's judgement dummy (client 20968) and the damage spell it casts (20966) have
 				// No Active Defense: one roll for hit and crit, never dodged, parried or blocked
-				// (wowsims/forever e10ca32c3d, 447d83b595). Since the November 11 hotfixes it is a
-				// ranged attack, so the roll is on the ranged table (rangedJudgement).
+				// (wowsims/forever e10ca32c3d, 447d83b595). The November 11 hotfixes made it a ranged
+				// attack; the November 13 hotfixes (t/2403040, "November 13, 2026") made it melee again: "Judgement
+				// of Command now activates on-hit effects and counts as a melee attack. All other
+				// judgements will continue to be considered Ranged attacks." So the roll is on the
+				// main hand's melee table and melee-keyed procs see it (unlike rangedJudgement's).
 				if sim.IsForever() {
 					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 					return
@@ -114,7 +117,6 @@ func (paladin *Paladin) registerSealOfCommand() {
 				spell.CalcAndDealDamage(sim, target, baseDamage, outcomeApplier)
 			},
 		}
-		paladin.rangedJudgement(&judgeConfig)
 		judgeSpell := paladin.RegisterSpell(judgeConfig)
 
 		procSpell := paladin.RegisterSpell(core.SpellConfig{
@@ -122,7 +124,7 @@ func (paladin *Paladin) registerSealOfCommand() {
 			SpellSchool: core.SpellSchoolHoly,
 			DefenseType: core.DefenseTypeMelee,
 			ProcMask:    core.ProcMaskMeleeMHSpecial | core.ProcMaskMeleeProc | core.ProcMaskMeleeDamageProc,
-			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNotAProc,
+			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNotAProc | core.SpellFlagNoWindfuryTotem,
 
 			BonusCritRating:  paladin.holyPowerCrit(),
 			DamageMultiplier: 0.7 * paladin.getWeaponSpecializationModifier() * improvedSeals,

@@ -124,7 +124,7 @@ func (paladin *Paladin) registerSealOfFury() {
 			SpellSchool: core.SpellSchoolHoly,
 			DefenseType: core.DefenseTypeMelee,
 			ProcMask:    core.ProcMaskMeleeMHSpecial,
-			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagSuppressEquipProcs,
+			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagSuppressEquipProcs | core.SpellFlagNoWindfuryTotem,
 
 			DamageMultiplier: paladin.improvedSeals() * paladin.getWeaponSpecializationModifier(),
 			ThreatMultiplier: 1,

@@ -99,8 +99,8 @@ stat_weights_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 948.09817
-  tps: 831.69957
+  dps: 950.345
+  tps: 833.54487
   dtps: 1.84033
  }
 }
@@ -115,16 +115,16 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Champion'sThunderfist"
  value: {
-  dps: 1014.3065
-  tps: 888.47088
+  dps: 1013.7875
+  tps: 888.28469
   dtps: 1.84033
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Champion'sWartide"
  value: {
-  dps: 977.545
-  tps: 856.59439
+  dps: 975.94683
+  tps: 855.20863
   dtps: 1.84033
  }
 }
@@ -163,16 +163,16 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-FieldMarshal'sEarthshaker"
  value: {
-  dps: 972.694
-  tps: 852.20476
+  dps: 973.78667
+  tps: 853.06477
   dtps: 1.84033
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-FieldMarshal'sThunderfist"
  value: {
-  dps: 1050.57083
-  tps: 919.9945
+  dps: 1049.76317
+  tps: 919.28584
   dtps: 1.84033
  }
 }
@@ -195,24 +195,24 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-LieutenantCommander'sEarthshaker"
  value: {
-  dps: 948.09817
-  tps: 831.69957
+  dps: 950.345
+  tps: 833.54487
   dtps: 1.84033
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-LieutenantCommander'sThunderfist"
  value: {
-  dps: 1014.3065
-  tps: 888.47088
+  dps: 1013.7875
+  tps: 888.28469
   dtps: 1.84033
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-LieutenantCommander'sWartide"
  value: {
-  dps: 977.545
-  tps: 856.59439
+  dps: 975.94683
+  tps: 855.20863
   dtps: 1.84033
  }
 }
@@ -283,16 +283,16 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 972.694
-  tps: 852.20476
+  dps: 973.78667
+  tps: 853.06477
   dtps: 1.84033
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Warlord'sThunderfist"
  value: {
-  dps: 1050.57083
-  tps: 919.9945
+  dps: 1049.76317
+  tps: 919.28584
   dtps: 1.84033
  }
 }
