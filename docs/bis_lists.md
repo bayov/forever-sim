@@ -56,9 +56,41 @@ Tiger" with more or less of each stat), so only the best roll of each name is li
 item that scores no better than an empty slot does nothing in the sim (a Hook of the Master
 Angler in a trinket slot), so it isn't listed at all.
 
-Enchants aren't part of the list. A loss is the DPS difference at `-iters` with the same random
+A loss is the DPS difference at `-iters` with the same random
 seed, so two entries closer than a few tenths are a tie. An entry can even show a small
 negative loss when it is within the search's noise of the pick.
+
+## Enchants
+
+With `-gear-rank-enchants` the list also ranks the enchants (`tools/rotopt/bis_enchants.go`).
+Before the items are ranked, each slot of the set tries every enchant the database has for its
+item: the enchant's item type, a two hand enchant only on a two hander, the kits' item and
+character level, and the class or profession an enchant may need. `-gear-phase` holds for them
+too, so the Zul'Gurub and Naxxramas shoulder and head enchants never come up. The best one
+stays when it beats the slot's enchant by more than the noise, and then the next slot goes on
+the set as it now is. We go round until a round changes nothing, so that round's lists are all
+scored on the final set. Then the items are ranked on the set with those enchants, so the
+list's `dps` has them.
+
+Anything that goes in the enchant slot is an option of it, not only the enchanter's: the
+Dire Maul arcanums on the head and legs, the leatherworking kits, and Iron Counterweight on a
+two hander. One slot holds one of them, so Iron Counterweight and Crusader never stack (user).
+
+The enchants are a few DPS apart, and haste and crit pair badly from one run to the next, so
+`-gear-rank-enchant-iters` (10000 in `bis_phase0.sh`) is the iterations of their ranking. A
+first try at 1000 iterations had Arcanum of Rapidity 4 DPS behind on the head and 6 ahead on
+the legs, where it is level on both. An enchant that scores exactly what no enchant scores
+does nothing in the sim (Stamina, resistances, Minor Speed), so it isn't listed. Each slot
+keeps `-gear-rank-enchant-keep` (10) enchants, the pick included.
+
+The value of `-gear-rank-enchants` is the hand check of what the game has open, keyed by the
+enchant's spell ID (`tools/rotopt/phase0_enchants.json`, 2026-11-14). `avail` is `now`,
+`grind`, `doubtful` or `out`, as for items, `note` says why for the player, and `source` is
+where the formula comes from, for us. `out` leaves the enchant out of the search (Molten Core's
+Weapon Spell Power, the Alliance quest's Fiery Blaze). A formula with no known source or a drop
+under about 0.5% is `doubtful`, and Honored reputation or a 0.5% to 5% drop is `grind`. An
+enchant the search lists with no line in the file gets a warning in the output, so the check
+can be filled in.
 
 ## The file
 
@@ -77,7 +109,7 @@ negative loss when it is within the search's noise of the pick.
   "sim": "abd7cd344ed1+",
   "slots": {
     "head": [
-      {"id":10502,"name":"Spellpower Goggles Xtreme","dps":89.12,"loss":0,"bis":true},
+      {"id":10502,"name":"Spellpower Goggles Xtreme","dps":89.12,"loss":0,"bis":true,"enchant":1506},
       {"id":15339,"suffix":2002,"name":"Pathfinder Hat of Nature's Wrath","dps":87.97,"loss":1.15}
     ],
     "chest": [
@@ -91,6 +123,15 @@ negative loss when it is within the search's noise of the pick.
     "offhand": [
       {"id":7749,"name":"Omega Orb","dps":89.12,"loss":0,"with":271804,"bis":true},
       {"id":273027,"name":"Raptor's Gaze","dps":88.56,"loss":0.56,"with":271804}
+    ]
+  },
+  "enchants": {
+    "head": [
+      {"id":1506,"spell":15397,"item":11645,"name":"Lesser Arcanum of Voracity","effect":"+8 Strength","dps":89.12,"loss":0,"bis":true},
+      {"id":2543,"spell":22840,"item":18329,"name":"Arcanum of Rapidity","effect":"+1% attack speed","dps":89.01,"loss":0.11,"avail":"doubtful","note":"Needs Pristine Black Diamond, source unknown"}
+    ],
+    "hands": [
+      {"id":1248640,"game":2563,"spell":1248640,"name":"Enchant Gloves - Superior Strength","effect":"+15 Strength","dps":89.12,"loss":0,"bis":true,"avail":"grind","note":"Merchant's Favor Honored"}
     ]
   }
 }
@@ -108,6 +149,18 @@ negative loss when it is within the search's noise of the pick.
   suffix), `dps` and `loss`. `bis` marks the picks. `unsourced` marks an item wowhead knows no
   way of getting yet, worth a look by hand. `with` is the item in the other hand: on a one hand
   main hand the off hand it was scored with, on an off hand the main hand.
+- `enchant` on a pick is the enchant the set has on it, by its `id` in the slot's enchant list.
+- `enchants` (only with `-gear-rank-enchants`) has a list for each slot that takes an enchant,
+  keyed like `slots` (`head`, `neck`, `back`, `chest`, `wrist`, `hands`, `legs`, `feet`,
+  `mainhand`, ...), the pick first (`bis`) and then best first. `id` is the enchant's effect ID
+  in the sim, what a set's `enchant` holds. `game` is the enchant ID the game puts on an item
+  link, when it isn't `id`: Forever's own enchants have their spell ID as effect ID in the sim
+  (`tools/database/forever_enchants.go`), and the client's (`assets/db_inputs/forever_enchants.json`)
+  says what the game uses. `spell` is the spell its formula teaches, and `item` the item that
+  applies it, for an arcanum, a kit or Iron Counterweight. `effect` says what it gives
+  ("+8 Strength", "+4 all stats"), empty for a proc or weapon damage enchant (Crusader, Fiery
+  Weapon). `dps` and `loss` are at `-gear-rank-enchant-iters`, so the pick's `dps` can differ
+  a little from the list's. `avail` and `note` are from `phase0_enchants.json` (see Enchants).
 - `avail` and `note` come from checking by hand what the game has open
   (`tools/rotopt/phase0_content.json`, 2026-11-12). `avail` is `grind` (open but slow) or
   `doubtful` (we don't know of a way yet), and an entry we can get now has none. `note` says
@@ -133,7 +186,8 @@ Isalien, Mor Grayhoof, Theldren) and its quest rewards (Beads of Ogre Might) are
 hand. The other way round, the items marked `include` there join whatever their phase
 (`-gear-include`): the four Darkmoon cards, which our data puts in phase 3, but Forever has the
 Darkmoon Faire open. The list keeps the off hand empty next to its two hander
-(`-gear-rank-two-hand-only`).
+(`-gear-rank-two-hand-only`). Then it ranks the enchants on the set (see Enchants), with
+`phase0_enchants.json` as the hand check, and the items on the set with its best enchants.
 
 ## Before release
 

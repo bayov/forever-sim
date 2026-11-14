@@ -80,5 +80,11 @@
   "1255095": {"name": "Forceful Heavy Armor Kit", "avail": "now", "source": "Vendor: Mahu, Jangdor Swiftstrider (~20s)"},
   "1255096": {"name": "Mystic Heavy Armor Kit", "avail": "now", "source": "Vendor: Mahu, Jangdor Swiftstrider (~20s)"},
   "1255123": {"name": "Forceful Medium Armor Kit", "avail": "now", "source": "Vendor: Mahu/Tamar (Horde LW supplies), ~4.5s"},
-  "1255124": {"name": "Mystic Medium Armor Kit", "avail": "now", "source": "Vendor: Mahu/Tamar (Horde LW supplies), ~4.5s"}
+  "1255124": {"name": "Mystic Medium Armor Kit", "avail": "now", "source": "Vendor: Mahu/Tamar (Horde LW supplies), ~4.5s"},
+  "7782": {"name": "Enchant Bracer - Minor Strength", "avail": "now", "source": "Trainer, skill 80 (Classic)"},
+  "13536": {"name": "Enchant Bracer - Lesser Strength", "avail": "now", "source": "Trainer, skill 140 (Classic)"},
+  "13622": {"name": "Enchant Bracer - Lesser Intellect", "avail": "now", "source": "Trainer, skill 150 (Classic)"},
+  "13663": {"name": "Enchant Chest - Greater Mana", "avail": "now", "source": "Trainer, skill 185 (Classic)"},
+  "1248458": {"name": "Enchant Bracer - Minor Intellect", "avail": "doubtful", "note": "Forever formula, source unchecked", "source": "Forever-only spell, no source found yet"},
+  "1248460": {"name": "Enchant Bracer - Lesser Agility", "avail": "doubtful", "note": "Forever formula, source unchecked", "source": "Forever-only spell, no source found yet"}
 }
