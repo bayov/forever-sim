@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "95289e879ccd2d032b021c23c7367ccd40bfa847"
+  "master": "edec897a08ce4010a52ff9b79f8bb5bb01281d0b"
  },
  "last_pass_at": "2026-11-14T06:49:34Z",
  "pass": 82,
  "result": "findings",
  "note": "Pass 82: 1bf5feb4b..95289e879. 87c030418 (three Forever trinkets) verified on 70938. Nov 13 hotfixes (t/2403040 post 1 edit / post 10): mechanics-20261114-1 (Judgement of Command melee), update on -20261112-1 (WF all MH melee abilities). Hotfix SpellMisc pushes after 113605 still unread.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-14T06:49:43Z",
+ "checked_at": "2026-11-14T12:44:49Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
