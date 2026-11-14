@@ -389,3 +389,6 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-14 00:54 | consumables | pass 85 | master 1bf5feb4b | quiet | Imp GW hit-1 preset only
 2026-11-14 00:54 | mechanics | pass 81 | master 1bf5feb4b | quiet | statweight step-by-10 only affects stat weights
 2026-11-14 00:54 | fairness | pass 41 | master 1bf5feb4b | quiet | only Enh imp-gw moved (+2.6); ranking unchanged
+2026-11-14 06:49 | gear | pass 65 | master 95289e879 | quiet | ids 15141 and 19106 added, neither in a level60 set
+2026-11-14 06:49 | consumables | pass 86 | master 95289e879 | quiet | three new trinket effects match client 70938, unused by presets
+2026-11-14 06:49 | mechanics | pass 82 | master 95289e879 | 1 new finding | Judgement of Command now melee (medium); Windfury Totem finding raised to medium

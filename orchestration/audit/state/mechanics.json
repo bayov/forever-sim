@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "1bf5feb4b789ec35244822fbe172bd7c67673d89"
+  "master": "95289e879ccd2d032b021c23c7367ccd40bfa847"
  },
- "last_pass_at": "2026-11-14T00:48:48Z",
- "pass": 81,
- "result": "quiet",
- "note": "Pass 81: 3a86d4a6b..1bf5feb4b. Only 2745da6ce (stat weight attribute step 10, method only). Client 70938 still newest; no new Blizzard posts. Daily update 4ffc171e1 read. Hotfix SpellMisc pushes after 113605 still unread.",
+ "last_pass_at": "2026-11-14T06:49:34Z",
+ "pass": 82,
+ "result": "findings",
+ "note": "Pass 82: 1bf5feb4b..95289e879. 87c030418 (three Forever trinkets) verified on 70938. Nov 13 hotfixes (t/2403040 post 1 edit / post 10): mechanics-20261114-1 (Judgement of Command melee), update on -20261112-1 (WF all MH melee abilities). Hotfix SpellMisc pushes after 113605 still unread.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-14T00:54:56Z",
+ "checked_at": "2026-11-14T06:49:43Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -26,11 +26,11 @@
   "newest_push": 113605,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-12T19:10:52Z",
+ "blue_tracker_seen": "2026-11-14T01:54:07Z",
  "hotfix_post_seen": {
-  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/9",
-  "date": "2026-11-12T19:10:52Z",
-  "post1_edited": "2026-11-12T00:47:36Z",
+  "url": "https://us.forums.blizzard.com/en/wow/t/2403040/10",
+  "date": "2026-11-14T01:54:07Z",
+  "post1_edited": "2026-11-14T01:54:25Z",
   "post6_edited": "2026-11-12T00:46:56Z"
  }
 }

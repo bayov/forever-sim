@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "1bf5feb4b789ec35244822fbe172bd7c67673d89"
+  "master": "95289e879ccd2d032b021c23c7367ccd40bfa847"
  },
  "last_pass_at": "2026-11-13T06:56:20Z",
  "client_build": "1.60.1.70938",
  "result": "quiet",
  "note": "70938 = client copy of the 11-10/11-11 hotfixes (Wrack rework, Soul Siphon, Lightning Overload rows now x0.5, Volley no procs, Idol of Ferocity off Mangle, Poised trigger). All landed; 11-12 Enhancement hotfix landed too. 20261110-1 resolved (ad6884211); 20261110-2 partly fixed.",
  "pass": 13,
- "checked_at": "2026-11-14T00:54:56Z"
+ "checked_at": "2026-11-14T06:49:43Z"
 }

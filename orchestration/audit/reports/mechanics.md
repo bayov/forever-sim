@@ -1,27 +1,32 @@
-# Mechanics pass 81 (2026-11-14, master 1bf5feb4b)
+# Mechanics pass 82 (2026-11-14, master 95289e879)
 
-Quiet. No new findings. Open findings mechanics-20261113-2, 20261113-1, 20261112-1 and 20261104-1 stay open; nothing on
-master touched them.
+One new finding (mechanics-20261114-1, medium) and new tier 1 evidence on mechanics-20261112-1, both from the
+November 13 hotfix notes.
 
 ## Get current
 
-- Client: newest 1.60 build is still 1.60.1.70938 (`wago.py latest --probe 300`). No new spell data.
-- Blizzard: dev notes t/2360696 newest post 10 (2026-11-04, unedited since); hotfix thread t/2403040 newest post 9
-  (2026-11-12 19:10 UTC). Blue posts by Kaivax, Aggrend, Gnedi, Linxy, Brenoch: nothing newer than 2026-11-12 19:10
-  (a podcast link, 2026-11-12 17:46, no mechanics).
-- Daily update 4ffc171e1 (TASKS.md, 2026-11-13): 70938 table pull (already read on pass 80), item reveals Nov 11-13
-  (Quel'Serrar, Lion Horn, Alcor's Sunrazor, Felstriker, Runeblade, Windreaper, Gloves of Holy Might; tracked there as a
-  needs-your-call list, not duplicated here), Bane of Havoc 1225228 now on the GCD (not modelled in the sim, so no
-  effect), speed trinkets now share cooldown category 2609 (movement trinkets, no DPS effect). It also lists server
-  hotfix SpellMisc rows after push 113814 as unread; this pass did not read them either (open item, below).
+- Client: 1.60.1.70938 still the newest (the gate reported no newer build).
+- Blizzard: dev notes t/2360696 unchanged (post 10, 2026-11-04). Hotfix thread t/2403040 has post 10
+  (2026-11-14 01:54 UTC) and post 1 edited 01:54 with the "November 13, 2026" section. Mechanics lines:
+  - Windfury Totem activated by all main hand melee abilities, not off hand strikes -> update on mechanics-20261112-1.
+  - Judgement of Command counts as a melee attack and activates on-hit effects -> mechanics-20261114-1.
+  - Gloves of Holy Might only activated by harmful damaging spells and abilities (item not in the sim; the daily
+    update's needs-your-call list covers it).
+  - Creature stun DR, Wild Growth coefficient 6.6%, Frost Nova breaking, Divine Spirit cost, Siphon Life silence,
+    Berserker Rage vs Sap: no DPS-sim effect (Wild Growth is the healer auditors').
+  - Item stat fixes (Darkspear signets, Bad Hat, Channeler's Ring, Blessed Band of Light, Taran Icebreaker 2H):
+    item data, for the gear / update-sources pipeline.
+- Daily update: no TASKS.md or update_ledger.md commit since 1bf5feb4b, so the Nov 13 hotfixes are not in the repo yet.
 
-## Commits 3a86d4a6b..1bf5feb4b (sim code)
+## Commits 1bf5feb4b..95289e879 (sim code)
 
 | Commit | What | Verdict |
 |---|---|---|
-| 2745da6ce | Stat weights: attribute step 10 (was 1) so Blessing of Kings' 10% survives the floor after multipliers | Measurement method only; no combat formula, buff value or proc changes. The floor it works around is existing engine behaviour. Golden results (`sim/testdata/report_hashes.txt`, *.results) move only in stat weights. Not a finding. |
+| 87c030418 | Bolt's Charged Eyeball, Everlook Pathcarver, Chained Essence of Eranikus under Forever (`sim/common/item_effects.go`) | All values match client 70938: proc 15% / 3 s ICD / ProcTypeMask 332116 / 60 Nature; 140 every 2 s for 20 s, 600 s CD, 20 s category 1141; 607 Physical, 300 s CD, 15 s on 1141, DefenseType 1 on 1295270 and 1315996. Eyeball's 50/50 self/target split is a stated assumption (notes.md), not a finding. Verdict row added. |
 
-## Open items for the next pass
+Other commits (BiS lists, phase 0 content, db row for 15141, rotopt ranking) are not mechanics.
 
-- Read wago.tools hotfix SpellMisc rows for pushes after 113605 (our `hotfixes_seen.newest_push`) and diff against
-  70938 SpellMisc for spells the sim models.
+## Open
+
+- Server hotfix SpellMisc rows after push 113605 still unread (carried from pass 81).
+- mechanics-20261114-1 and the -20261112-1 update are unmeasured estimates; a worker should measure with paired seeds.
