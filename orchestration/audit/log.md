@@ -384,3 +384,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-13 19:29 | tank_mechanics | pass 15 | master 3a86d4a6b | quiet | Flametongue cut misses Warden (Rockbiter)
 2026-11-13 19:29 | tank_rotations | pass 13 | master 3a86d4a6b | quiet | 104 rows match
 2026-11-13 19:29 | tank_fairness | pass 14 | master 3a86d4a6b | quiet | Warden presets match baseline
+2026-11-14 00:54 | results | pass 89 | master 1bf5feb4b | quiet | builds.json matches shared run; Enhancement lag fixed
+2026-11-14 00:54 | rotations | pass 65 | master 1bf5feb4b | quiet | Flame Shock before Stormstrike holds in A/B
+2026-11-14 00:54 | consumables | pass 85 | master 1bf5feb4b | quiet | Imp GW hit-1 preset only
+2026-11-14 00:54 | mechanics | pass 81 | master 1bf5feb4b | quiet | statweight step-by-10 only affects stat weights
+2026-11-14 00:54 | fairness | pass 41 | master 1bf5feb4b | quiet | only Enh imp-gw moved (+2.6); ranking unchanged

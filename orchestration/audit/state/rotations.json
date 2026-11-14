@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "3a86d4a6bf60814bb28d3624c92072d9200337a7"
+  "master": "1bf5feb4b789ec35244822fbe172bd7c67673d89"
  },
- "last_pass_at": "2026-11-13T18:55:08Z",
- "pass": 64,
+ "last_pass_at": "2026-11-14T00:49:49Z",
+ "pass": 65,
  "result": "quiet",
- "note": "Pass 64: Windfury Weapon attacks roll WF Totem (Enhancement +20 to +25), FT rank 6 cut, Frightskull 3.9 PPM, oil IDs: no preset other than Enhancement moved. FT imbue still loses ~132 at 180 s. No new findings; 3 open findings still unapplied.",
+ "note": "Pass 65: only statweight.go (not reached by presets) and the Enhancement re-search (Water Shield: Flame Shock above Stormstrike, verified: old order -2.1 at 180 s pooled; Imp GW gear). No new findings; 3 open findings still unapplied.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-13T19:29:54Z",
+ "checked_at": "2026-11-14T00:54:56Z",
  "baseline": "baseline_3a86d4a_3000it_seed424242.tsv"
 }

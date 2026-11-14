@@ -29,10 +29,10 @@ rogue__seal-fate-swords                Undead 938.7  Orc 938.0  NightElf 937.6  
 rogue__subtlety                        NightElf 863.4  Undead 860.8  Gnome 858.1  Orc 857.5  SkyborneHighOrder 853.9  SkyborneWindshaper 853.9  Human 852.5  Troll 851.4  Dwarf 849.6
 shaman__elemental-level60-mana-tide    SkyborneWindshaper 960.0  Orc 954.9  Troll 946.4  Dwarf 946.0  Tauren 945.5
 shaman__elemental-level60              SkyborneWindshaper 977.4  Orc 972.3  Troll 963.2  Dwarf 963.1  Tauren 962.6
-shaman__enhancement-imp-gw             Orc 1038.3  SkyborneWindshaper 1037.5  Troll 1032.6  Dwarf 1030.9  Tauren 1024.4
+shaman__enhancement-imp-gw             Orc 1040.9  SkyborneWindshaper 1040.1  Troll 1035.6  Dwarf 1032.0  Tauren 1027.6
 shaman__enhancement-level60            Orc 1054.1  SkyborneWindshaper 1054.1  Troll 1049.9  Dwarf 1046.6  Tauren 1040.6
 shaman__enhancement-mana-tide          SkyborneWindshaper 951.5  Orc 951.4  Troll 946.4  Dwarf 943.3  Tauren 938.3
-shaman__enhancement-water-shield       Orc 1000.1  SkyborneWindshaper 998.5  Troll 993.0  Dwarf 990.4  Tauren 986.8
+shaman__enhancement-water-shield       SkyborneWindshaper 1000.1  Orc 999.7  Troll 994.8  Dwarf 991.9  Tauren 986.3
 warlock__affliction                    Undead 1071.1  Orc 1069.6  Human 1067.5  Gnome 1062.2  Troll 1058.7
 warlock__affliction_shadow_bolt        Orc 1015.8  Human 1013.9  Undead 1012.8  Gnome 1008.3  Troll 1006.4
 warlock__demonology                    Orc 1055.3  Human 1051.7  Undead 1051.1  Gnome 1047.5  Troll 1045.7

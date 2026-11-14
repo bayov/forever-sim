@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "3a86d4a6bf60814bb28d3624c92072d9200337a7"
+  "master": "1bf5feb4b789ec35244822fbe172bd7c67673d89"
  },
  "last_pass_at": "2026-11-13T06:52:09Z",
  "pass": 64,
  "result": "quiet",
  "note": "Pass 64: standards.md change (56ebf3a52) is Windfury/extra attacks, not a gear rule; the one changed forever_items.go id is in no level60 gear set; no synthetic item, set, trinket or enchant file changed.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-13T19:29:54Z"
+ "checked_at": "2026-11-14T00:54:56Z"
 }

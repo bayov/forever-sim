@@ -1,45 +1,37 @@
-# Rotations pass 64 (2026-11-13, master 3a86d4a6b)
+# Rotations pass 65 (2026-11-14, master 1bf5feb4b)
 
-Last audited master cad23ae1a. What reaches the DPS raid presets:
+Last audited master: 3a86d4a6b. Client 1.60.1.70888 data (unchanged). Result: quiet.
 
-| commit | change | reaches DPS presets |
+## What changed (3a86d4a6b..1bf5feb4b)
+
+| path | change | reaches presets? |
 |---|---|---|
-| c7a99fa49 | Windfury Weapon's attacks (8232/8235/10486/16362) roll Windfury Totem under Forever | yes: every Enhancement build casts its own Windfury Totem with Windfury Weapon, +20 to +25 |
-| 4c4790e3e | Flametongue Weapon rank 6 cut by 5.5 under Forever | no preset uses the imbue (Enhancement is on Windfury Weapon) |
-| d22fe3e23 | Frightskull Shaft 3.9 PPM under Forever | no preset moved |
-| 1743980e6 | Shadow Oil / Frost Oil procs keyed 350026 / 350025 under Forever | ID only; no preset moved |
-| 041bb0a90 | Weakening Disease 15 over 14 s | no preset moved |
-| tools/rotopt, enhancement bis.json | Phase 0 BiS reruns | not in the req files yet |
+| `sim/core/statweight.go` (2745da6ce) | stat-weight attribute step 1 -> 10 (Kings rounding) | no: stat weights only; the `.results` diffs are weight lines |
+| `ui/enhancement_shaman/apls/magma.apl.json` (7858b83e5) | Flame Shock moved above Stormstrike | yes: shaman__enhancement-water-shield req rotation |
+| `tools/dps_report/req/shaman__enhancement-imp-gw.json` | gear piece 990007 -> 990040 (hit-1 step) | gear only, no rotation change |
+| `tools/rotopt/*`, BiS list, report data | optimizer and report output | no rotation logic |
 
-`apl_logic_diff.py cad23ae1a 3a86d4a6b`: 0 APL files touched.
+`apl_logic_diff.py 3a86d4a6bf60 1bf5feb4b789`: 1 APL file touched (magma, the reorder above). No baseline refresh: no
+sim change that the presets reach.
 
-## Baseline move (3000 it, seed 424242)
+## Verified merged change: Water Shield Flame Shock above Stormstrike
 
-New baseline `ref/rotations/baseline_3a86d4a_3000it_seed424242.tsv` against 97da1cc (which was also cad23ae1a's state):
+The worker's re-search (seeds 1 / 1000003) reported +0.4 to +3.0. Spot-check with `ab.py` (20k it, 8 blocks,
+shared CLI 1bf5feb4b789), A = master req, B = the old rotation (Stormstrike first), B-A at 120 / 180 / 300 s:
 
-| build | old | new | diff |
+| set | 120 | 180 | 300 |
 |---|---|---|---|
-| shaman__enhancement-level60 | 1030.8 | 1050.8 | +20.0 |
-| shaman__enhancement-imp-gw | 1017.3 | 1037.6 | +20.3 |
-| shaman__enhancement-mana-tide | 928.9 | 950.2 | +21.3 |
-| shaman__enhancement-water-shield | 975.0 | 999.6 | +24.6 |
+| S0 1e6 | -2.63 ± 1.08 | -1.95 ± 0.76 | -1.27 ± 0.45 |
+| S0 2e8 | -2.15 ± 0.69 | -2.30 ± 0.51 | -0.88 ± 0.35 |
+| pooled | -2.39 | -2.13 | -1.08 |
 
-The other 64 presets are unchanged to 0.05 DPS. No `regress.py` run was needed: only the Enhancement
-change reaches the presets, and it's attributed by the commit.
+A at 180 s: 1000.9. The new order wins at every length; the merge holds.
 
-## Open item: Flametongue Weapon imbue with Windfury Totem
+## Open findings (all still unapplied on 1bf5feb4b)
 
-Checked on shaman__enhancement-level60, req `shamanImbue` WindfuryWeapon -> FlametongueWeapon, 20k it, 8 blocks,
-S0 1e6, same seeds (two unpaired `ab.py` runs, one per req): 1064.9 / 1053.8 / 1037.2 vs 935.6 / 921.6 / 903.1
-at 120 / 180 / 300 s, so FT loses about 132 at 180 s. Both commits in this range favour Windfury Weapon further.
-Not a finding; the item can close for the level 60 builds. The Enhancement re-search in ada1d1e71's brief
-covers the APL itself after the change.
-
-## Open findings
-
-All three still unapplied on master: rotations-20261112-1 (rogue poisons; presets.ts still Deadly MH),
-rotations-20261109-1 (Fury 2H 90-rage Heroic Strike still at level60_fury_2h.apl.json), rotations-20261105-1
-(feral Ferocious Bite gate still 45).
+- rotations-20261112-1: rogue poisons swap (Mutilate, Seal Fate, Subtlety still `mainHandPoison: DeadlyPoison`).
+- rotations-20261109-1: Fury 2H 90-rage Heroic Strike line still present.
+- rotations-20261105-1: Feral Ferocious Bite gate still 45.
 
 ## Optional
 

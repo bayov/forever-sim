@@ -1,7 +1,8 @@
-# Results pass 88, master 3a86d4a6b (2026-11-13)
-Watched changes since cad23ae1a: item_effects.go (Frightskull 3.9 PPM, 15x7 disease), buffs.go (Windfury Weapon attacks roll the totem), consumes.go (oil spell IDs), flametongue_weapon.go (rank 6 cut 5.5). Shared run vs builds.json: 64 of 68 within 1.5; the four Enhancement builds +22.3..+23.8 (+2.3%), all from c7a99fa49 (paired 20k seed 1: 1030.6 before, 1054.4 after; same on 3a86d4a6b). Awaiting the Enhancement re-sim. Metas off by more than 0.5: 43 of 68. Drift and unread fields not re-run (mksettings and requests unchanged).
-Shared run (68 builds, 20k, seed 1) vs builds.json: 68 of 68 within 1.5 (builds.json last touched by f6b04b9e7, the Ret re-tune and Windfury Totem re-sim).
-vs metas: 39 of 68 off by more than 0.5 (was 45); largest: fury_2h families -117..-119, fury -75..-85, Ret Shock crusader duty -63, arms -41..-47, Affliction +32..+37, Survival -23..-26. Known finding results-20261104-2 (metas lag the re-sims); the paladin metas were refreshed by f6b04b9e7.
-Since the last pass (71562a8b0): Windfury Totem rules, Ret Judgement re-tunes with report hashes, Volley procs (hunter hotfix 2026-11-11), Unsealed Wrath, item DB regen (8 items seen in game, 38 reveals). No sim error found; the moves are the already-explained ones (f1c07e13a, 2a0208136, hotfix 113766). Not paired-simmed this pass.
-Drift (regen.py with a master mksettings): one difference against the reference, the feral Goblin Sapper line on feral-cat and feral-cat-duty-ff (results-20261105-1, still open). Unread fields: none printed besides the expected.
-The reference req_summary.txt and drift_report.txt were not replaced (baseline stays 0facd9428).
+# Results pass 89 (master 1bf5feb4b)
+
+Shared run (68 builds, 20k, seed 1) vs published:
+- builds.json: 68 of 68 within 1.5 of the run, including the four Enhancement builds (760d4c1e5 re-sim; last pass they lagged by +22 to +24).
+- Metas: 41 of 68 off by more than 0.5, all in families already under results-20261104-1/-2 (warrior, Affliction, hunters, feral, rogues, Ret Shock crusader). Enhancement metas match.
+- Drift (mksettings regen vs committed): equals the reference except the known feral sapper line (results-20261105-1). No Enhancement drift after the Phase 0 / presets.ts / magma.apl changes.
+- Not run: unread_fields.py (needs generated pb.go; no build in this container).
+- Watched changes since 3a86d4a6b are the Enhancement re-sim (req files, builds.json, presets, magma APL), the statweight step change (tooling, no sim effect), db.bin/db.json reveals and report_hashes; no unexplained move.

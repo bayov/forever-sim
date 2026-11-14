@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "3a86d4a6bf60814bb28d3624c92072d9200337a7"
+  "master": "1bf5feb4b789ec35244822fbe172bd7c67673d89"
  },
- "last_pass_at": "2026-11-13T18:50:48Z",
- "pass": 80,
- "result": "findings",
- "note": "Pass 80: cad23ae1a..3a86d4a6b. 041bb0a90 Weakening Disease 15x7 (client OK), d22fe3e23 Frightskull 3.9 PPM (log), c7a99fa49 WF Weapon attacks roll WF Totem (hotfix post 6), 4c4790e3e FTW r6 -5.5 (log), 1743980e6 oil IDs 350026/350025. New: mechanics-20261113-2 Weakening Disease AP -92 vs sim Str -50 (low). Client 70938 still newest; no new Blizzard posts.",
+ "last_pass_at": "2026-11-14T00:48:48Z",
+ "pass": 81,
+ "result": "quiet",
+ "note": "Pass 81: 3a86d4a6b..1bf5feb4b. Only 2745da6ce (stat weight attribute step 10, method only). Client 70938 still newest; no new Blizzard posts. Daily update 4ffc171e1 read. Hotfix SpellMisc pushes after 113605 still unread.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-13T19:29:54Z",
+ "checked_at": "2026-11-14T00:54:56Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

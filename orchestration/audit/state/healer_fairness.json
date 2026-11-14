@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "3a86d4a6bf60814bb28d3624c92072d9200337a7"
+  "master": "1bf5feb4b789ec35244822fbe172bd7c67673d89"
  },
  "last_pass_at": "2026-11-13T19:13:17Z",
  "pass": 13,
@@ -8,5 +8,5 @@
  "baseline": "9ba00c2dc",
  "note": "Pass 13 on 3a86d4a6b (Flametongue rank 6 cut 5.5; also Frightskull Shaft PPM, Windfury Weapon->Totem procs, oil spell IDs). None reaches a healer: no healer preset melees, shaman presets use Wizard Oil. Full 63-cell bench (seed 101, 1,000 iterations) identical to ref/healer_fairness/bench_71562a8.tsv; healbench requests unchanged. Open: -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-13T19:29:54Z"
+ "checked_at": "2026-11-14T00:54:56Z"
 }

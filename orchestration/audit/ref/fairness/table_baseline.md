@@ -1,4 +1,4 @@
-| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (97da1cc) |
+| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (3a86d4a) |
 |---|---|---|---|---|---|---|---|---|
 | 1 | Lone Wolf (hunter) | Night Elf | 1291.8 | Windshaper 1286.7 / Night Elf | Night Elf (1291.8) | 1313.7 | -21.9 | 1291.8 (+0.0%) |
 | 2 | Marksmanship | Night Elf | 1235.0 | Orc 1234.7 / Night Elf | Orc (1234.7) | 1254.3 | -19.6 | 1235.0 (+0.0%) |
@@ -9,7 +9,7 @@
 | 7 | Destruction | Orc | 1063.2 | Orc / Human 1060.8 | Orc (1063.2) | 1063.4 | -0.2 | 1063.2 (+0.0%) |
 | 8 | Demonology | Orc | 1055.3 | Orc / Human 1051.7 | Orc (1055.3) | 1053.9 | +1.4 | 1055.3 (+0.0%) |
 | 9 | Fire | Gnome | 1054.2 | Undead 1051.1 / Gnome | Human (1053.8) | 1057.9 | -4.1 | 1054.2 (+0.0%) |
-| 10 | Enhancement | Orc | 1054.1 | Orc / Dwarf 1046.6 | Orc (1054.1) | 1030.6 | +23.5 | 1030.7 (+2.3%) |
+| 10 | Enhancement | Orc | 1054.1 | Orc / Dwarf 1046.6 | Orc (1054.1) | 1053.8 | +0.3 | 1054.1 (+0.0%) |
 | 11 | Fury (dual wield) | Orc | 1050.2 | Orc / High Order 1044.7 | Orc (1050.2) | 1136.0 | -85.8 | 1050.2 (+0.0%) |
 | 12 | Arms | Orc | 1041.7 | Orc / Night Elf 1039.4 | Orc (1041.7) | 1088.0 | -46.3 | 1041.7 (+0.0%) |
 | 13 | Fury (two-hand) | Orc | 1032.0 | Orc / Night Elf 1025.1 | Orc (1032.0) | 1151.0 | -119.0 | 1032.0 (+0.0%) |
@@ -42,9 +42,9 @@
 | paladin__level_60_sub_holy | Undead | 974.3 | 973.9 (at Undead 974.3) | 974.3 |
 | priest__shadow-holy | Undead | 906.8 | 906.6 (at Undead 906.8) | 906.8 |
 | shaman__elemental-level60-mana-tide | Windshaper | 960.0 | 959.6 (at Windshaper 960.0) | 960.0 |
-| shaman__enhancement-imp-gw | Orc | 1038.3 | 1016.2 (at Orc 1038.3) | 1017.3 |
-| shaman__enhancement-mana-tide | Windshaper | 951.5 | 930.0 (at Orc 951.4) | 931.1 |
-| shaman__enhancement-water-shield | Orc | 1000.1 | 976.3 (at Orc 1000.1) | 977.0 |
+| shaman__enhancement-imp-gw | Orc | 1040.9 | 1040.4 (at Orc 1040.9) | 1038.3 |
+| shaman__enhancement-mana-tide | Windshaper | 951.5 | 951.9 (at Orc 951.4) | 951.5 |
+| shaman__enhancement-water-shield | Windshaper | 1000.1 | 1000.0 (at Orc 999.7) | 1000.1 |
 | warlock__affliction_shadow_bolt | Orc | 1015.8 | 1015.6 (at Orc 1015.8) | 1015.8 |
 
 Top over bottom: 1.65x
