@@ -41,6 +41,7 @@ const (
 	BloodletterScalpel        = 9511
 	TheHandOfAntusul          = 9639
 	GryphonRidersStormhammer  = 9651
+	ChainedEssenceOfEranikus  = 10455
 	Ragehammer                = 10626
 	EnchantedAzshariteSword   = 10696
 	ColdrageDagger            = 10761
@@ -182,7 +183,9 @@ const (
 	MoltenHeartOfTheMountain = 249470
 	GoldenBanana             = 270226
 	GraverobbersShovel       = 273817
+	EverlookPathcarver       = 274759
 	EverlookDeliveryBot      = 274760
+	BoltsChargedEyeball      = 280032
 	DullSawblade             = 285292
 	BladewhispersNamesake    = 287072
 )
@@ -2969,6 +2972,60 @@ func init() {
 	//                                 Trinkets
 	///////////////////////////////////////////////////////////////////////////
 
+	// https://www.wowhead.com/forever/item=280032/bolts-charged-eyeball
+	// Forever: Equip: Grounded Electroshocks (1311505). Dealing damage has a 15% chance, at most
+	// once every 3 sec, to deal 60 Nature damage (Grounded Electroshock, 1315996) to you or your
+	// current target (client 1.60.1.70938 SpellAuraOptions and SpellEffect).
+	//
+	// The aura's proc flags count melee and ranged attacks, harmful spells and periodic damage, so
+	// we let every damaging hit and tick of ours roll, but not the item procs that suppress equip
+	// procs. The shock is a magic attack with no spell power coefficient, so it can miss and crit
+	// like a spell.
+	//
+	// Neither the client data nor the tooltip says how often the shock hits us instead of the
+	// target, so we take the tooltip's "you or your current target" as an even coin flip. A shock
+	// that hits us only costs the 60 damage it would have dealt, because the DPS sim does not
+	// track our health against it, so we skip it. We also leave out the tripled damage to
+	// Dinosaurs, since our targets have no such type.
+	core.NewItemEffect(BoltsChargedEyeball, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		shock := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 1315996},
+			SpellSchool: core.SpellSchoolNature,
+			DefenseType: core.DefenseTypeMagic,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamage(sim, target, 60, spell.OutcomeMagicHitAndCrit)
+			},
+		})
+
+		core.MakePermanent(core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:              "Grounded Electroshocks",
+			ActionID:          core.ActionID{SpellID: 1311505},
+			Callback:          core.CallbackOnSpellHitDealt | core.CallbackOnPeriodicDamageDealt,
+			Outcome:           core.OutcomeLanded,
+			ProcMask:          core.ProcMaskDirect | core.ProcMaskDamageProc,
+			SpellFlagsExclude: core.SpellFlagSuppressEquipProcs,
+			ProcChance:        0.15,
+			ICD:               time.Second * 3,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				if sim.Proc(0.5, "Grounded Electroshock hits the wielder") {
+					return
+				}
+				shock.Cast(sim, character.CurrentTarget)
+			},
+		}))
+	})
+
 	// https://www.wowhead.com/classic/item=11832/burst-of-knowledge
 	// Use: Reduces mana cost of all spells by 100 for 10 sec. (5 Min Cooldown)
 	core.NewItemEffect(BurstOfKnowledge, func(agent core.Agent) {
@@ -3013,6 +3070,88 @@ func init() {
 
 		character.AddMajorCooldown(core.MajorCooldown{
 			Type:  core.CooldownTypeMana,
+			Spell: spell,
+		})
+	})
+
+	// https://www.wowhead.com/forever/item=10455/chained-essence-of-eranikus
+	// Forever: Use: Cloud of Chained Essence (12766) puts a poison cloud around us for 20 sec, and
+	// every enemy inside takes 140 Nature damage every 2 sec (1300240). 10 min cooldown, and 20 sec
+	// on category 1141 ("Item - Burst Trinket"), which the other Forever on-use trinkets share
+	// (client 1.60.1.70938 ItemEffect 99093, SpellEffect and SpellDuration).
+	//
+	// The cloud ends at 20 sec, just before a 10th tick would land. In our logs of Nov 12 and
+	// 13 the cloud put its debuff on each enemy about 0.1 sec after the use, and each enemy took 9
+	// ticks of 140 before the debuff went with the cloud. 6 of the about 300 ticks were crits for
+	// 210, so the ticks crit like other Forever dots. The ticks have no spell power coefficient.
+	//
+	// The cloud's debuff never misses. Its spell has no defense type in the client (no
+	// SpellCategories row), and in the Nov 13 log it landed on all 85 enemies it was cast on.
+	//
+	// The cloud has no target cap, so it hits every enemy. We take it that the boss stays in it
+	// for the whole 20 sec, and we leave out the doubled damage to Trolls, since our targets have
+	// no race.
+	//
+	// Classic's version (Poison Cloud, 50 Nature every 5 sec for 45 sec, a 1 sec cast and a 15 min
+	// cooldown) is not modeled.
+	core.NewItemEffect(ChainedEssenceOfEranikus, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		cloud := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 1300240},
+			SpellSchool: core.SpellSchoolNature,
+			DefenseType: core.DefenseTypeMagic,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagPureDot,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			Dot: core.DotConfig{
+				Aura: core.Aura{
+					Label: "Cloud of Chained Essence",
+				},
+				NumberOfTicks: 9,
+				TickLength:    time.Second * 2,
+				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+					dot.Spell.CalcAndDealPeriodicDamage(sim, target, 140, dot.OutcomeTick)
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+				spell.Dot(target).Apply(sim)
+			},
+		})
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID: core.ActionID{ItemID: ChainedEssenceOfEranikus},
+			ProcMask: core.ProcMaskEmpty,
+			Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 10,
+				},
+				SharedCD: core.Cooldown{
+					Timer:    character.GetOffensiveTrinketCD(),
+					Duration: time.Second * 20,
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+				for _, target := range sim.Encounter.ActiveTargetUnits {
+					cloud.Cast(sim, target)
+				}
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
 			Spell: spell,
 		})
 	})
@@ -3225,6 +3364,64 @@ func init() {
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				marks.Get(target).Activate(sim)
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
+			Spell: spell,
+		})
+	})
+
+	// https://www.wowhead.com/forever/item=274759/everlook-pathcarver
+	// Forever: Use: Prototype Pathcarver (1295270) deals 607 Physical damage split between up to 4
+	// enemies within 4 yards of the target, from up to 8 yards away. 5 min cooldown, and 15 sec on
+	// category 1141 ("Item - Burst Trinket"), which the other Forever on-use trinkets share (client
+	// 1.60.1.70938 ItemEffect 234057, SpellEffect, SpellRange 484 and SpellRadius 26).
+	//
+	// The spell is Physical but has the magic defense type (SpellCategories DefenseType 1), so it
+	// rolls spell hit and spell crit and deals 150% on a crit, and armor still reduces it. It has
+	// no attack power or spell power coefficient. We leave out the doubled damage to Plants, since
+	// our targets have no such type.
+	core.NewItemEffect(EverlookPathcarver, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		results := make([]*core.SpellResult, 4)
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{ItemID: EverlookPathcarver},
+			SpellSchool: core.SpellSchoolPhysical,
+			DefenseType: core.DefenseTypeMagic,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 5,
+				},
+				SharedCD: core.Cooldown{
+					Timer:    character.GetOffensiveTrinketCD(),
+					Duration: time.Second * 15,
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
+				damage := 607 / float64(len(hits))
+				for idx := range hits {
+					hits[idx] = spell.CalcDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)
+					target = character.Env.NextTargetUnit(target)
+				}
+				for _, result := range hits {
+					spell.DealDamage(sim, result)
+				}
 			},
 		})
 
