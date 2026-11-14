@@ -58,7 +58,19 @@ Angler in a trinket slot), so it isn't listed at all.
 
 A loss is the DPS difference at `-iters` with the same random
 seed, so two entries closer than a few tenths are a tie. An entry can even show a small
-negative loss when it is within the search's noise of the pick.
+negative loss when it is within the noise of the pick.
+
+The picks follow the ranking. When a slot's best item beats the set at all at `-iters`, we
+score it again next to the set at `-gear-rank-confirm-iters` (10 times `-iters` by default). If
+it beats the set by more than `-confidence` paired standard errors there, it takes the pick's place and we rank everything again on the new set, at most three
+rankings in all. Confirmed items in different slots go in together, the biggest gain first,
+unless together they score below the biggest one alone. Every slot works this way, a one hand
+setup in place of a two hander pick too. The gear search can keep an item the ranking then puts
+behind, because the ranking runs on the set's best enchants and races every item of the pool,
+where the search screened them at a few hundred iterations. On 2026-11-14 the Phase 0 list
+kept Wildheart Bracers while its own wrist ranking had Windtalker's Wristguards 2.5 DPS ahead.
+We used to ask for the `-confidence` margin at `-iters` too, but then Don Julio's Band stayed
+2.3 DPS ahead of the rings on the next run, and it was 2.4 ahead at 20000 iterations.
 
 ## Enchants
 
@@ -184,8 +196,11 @@ marks `out`, and keeps 25 items a slot. Our item data puts Classic patch 1.10's 
 chain in phase 1 or 2, so its summoned bosses' drops (Sothos and Jarien, Lord Valthalak, Kormok,
 Isalien, Mor Grayhoof, Theldren) and its quest rewards (Beads of Ogre Might) are `out` there by
 hand. The other way round, the items marked `include` there join whatever their phase
-(`-gear-include`): the four Darkmoon cards, which our data puts in phase 3, but Forever has the
-Darkmoon Faire open. The list keeps the off hand empty next to its two hander
+(`-gear-include`). Our data takes its phases from Classic, where these came later, but Forever has
+them now: the Darkmoon cards and ticket rewards (the Faire is open), Totem of Rage (Magmus) and
+Totem of Sustaining (Scholomance), the Defilers' Arathi Basin rewards (doubtful until we know
+Arathi Basin is open), and every other item the hand check keeps that our data puts after phase
+2, so a doubtful item is marked on the list rather than left out. The list keeps the off hand empty next to its two hander
 (`-gear-rank-two-hand-only`). Then it ranks the enchants on the set (see Enchants), with
 `phase0_enchants.json` as the hand check, and the items on the set with its best enchants.
 

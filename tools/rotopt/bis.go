@@ -46,6 +46,8 @@ var (
 	gearRankSpec = flag.String("gear-rank-spec", "", "the -gear-rank-out list's spec, by its mksettings name (enh, ele, ...)")
 	gearRankSim  = flag.String("gear-rank-sim", "", "the forever-sim commit the -gear-rank-out list was simmed on, for the list's sim field")
 
+	gearRankConfirmIters = flag.Int("gear-rank-confirm-iters", 0, "gear search: the iterations that confirm an item the -gear-rank-out ranking puts ahead of the set's pick before it takes the pick's place (0 is 10 times -iters)")
+
 	gearRankTwoHandOnly = flag.Bool("gear-rank-two-hand-only", false, "gear search: when the -gear-rank-out main hand pick is a two hander, list only two handers in the main hand and leave the off hand list empty")
 )
 
@@ -70,10 +72,11 @@ type bisSlot struct {
 	entries []bisEntry
 }
 
-// An option and its score in the best place we found for it.
+// An option and its score in the best place we found for it, and the gear set of that place.
 type rankedGear struct {
 	option gearOption
 	result result
+	gear   []*proto.ItemSpec
 }
 
 // rankGear scores each option and returns the best of them, best first. It keeps keep
@@ -151,14 +154,17 @@ func (s *searcher) scoreOptions(options []gearOption, placements func(gearOption
 	s.iterations, s.saveValues = iterations, true
 	defer func() { s.iterations, s.saveValues = full, false }()
 	var pending []*pendingScore
-	// owner[i] is the option pending[i] belongs to, and -1 for an empty slot.
+	// owner[i] is the option pending[i] belongs to, and -1 for an empty slot. gears[i] is the
+	// gear set it was scored in.
 	var owner []int
+	var gears [][]*proto.ItemSpec
 	for i, o := range options {
 		for _, gear := range placements(o) {
 			if gear != nil {
 				s.setGear(gear)
 				pending = append(pending, s.prepare(knobs))
 				owner = append(owner, i)
+				gears = append(gears, gear)
 			}
 		}
 	}
@@ -166,8 +172,10 @@ func (s *searcher) scoreOptions(options []gearOption, placements func(gearOption
 		s.setGear(gear)
 		pending = append(pending, s.prepare(knobs))
 		owner = append(owner, -1)
+		gears = append(gears, gear)
 	}
 	best := make([]*result, len(options))
+	bestGear := make([][]*proto.ItemSpec, len(options))
 	var floor *result
 	for i, r := range s.scoreAll(pending) {
 		at := &floor
@@ -176,12 +184,15 @@ func (s *searcher) scoreOptions(options []gearOption, placements func(gearOption
 		}
 		if *at == nil || r.dps > (*at).dps {
 			*at = &r
+			if owner[i] >= 0 {
+				bestGear[owner[i]] = gears[i]
+			}
 		}
 	}
 	var ranked []rankedGear
 	for i, r := range best {
 		if r != nil {
-			ranked = append(ranked, rankedGear{options[i], *r})
+			ranked = append(ranked, rankedGear{options[i], *r, bestGear[i]})
 		}
 	}
 	sort.SliceStable(ranked, func(i, j int) bool { return ranked[i].result.dps > ranked[j].result.dps })
@@ -289,21 +300,96 @@ func sameGear(spec *proto.ItemSpec, o gearOption) bool {
 
 // rankBis ranks every slot's options against the set best and writes the list to path.
 // names and unsourced are the set's own, as the search printed them.
+//
+// The list's picks follow its own ranking. When a slot's ranking shows an item ahead of the
+// pick and a confirm at more iterations holds it up (followRanking), we put it in the set and
+// rank everything again on the new set.
+// The gear search can keep an item the ranking then puts behind, because the ranking runs on
+// the set's best enchants and races every item of the pool, where the search screened them
+// at a few hundred iterations. On 2026-11-14 the Phase 0 list kept Wildheart Bracers while
+// its own wrist ranking had Windtalker's Wristguards 2.5 DPS ahead.
 func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemSpec, names []string, unsourced []bool, knobs Knobs) error {
+	for pass := 1; ; pass++ {
+		enchants, base, slots, challengers, err := s.rankBisPass(pool, best, names, unsourced, knobs)
+		if err != nil {
+			return err
+		}
+		if pass < maxRankPasses && s.followRanking(pool, best, names, unsourced, base, challengers, knobs) {
+			fmt.Println("ranking again on the new set:")
+			continue
+		}
+		if pass == maxRankPasses && len(challengers) > 0 {
+			fmt.Printf("  stopped after %d rankings, the picks may still be behind:\n", pass)
+			for _, c := range challengers {
+				fmt.Printf("    %s: %s %s\n", c.slot, c.ranked.option.name, c.ranked.result)
+			}
+		}
+		s.setGear(best)
+		for _, slot := range slots {
+			fmt.Printf("  %s:\n", slot.name)
+			for _, e := range slot.entries {
+				fmt.Printf("    %6.1f %6.1f  %s", e.DPS, 0-e.Loss, e.Name)
+				if e.With != 0 {
+					if it := itemsByID[e.With]; it != nil {
+						fmt.Printf(" (with %s)", it.Name)
+					}
+				}
+				if e.Unsourced {
+					fmt.Print("  no source")
+				}
+				fmt.Println()
+			}
+		}
+		return s.writeBis(path, base, slots, enchants)
+	}
+}
+
+// How many times rankBis ranks the slots at most: the first ranking and two more after picks
+// changed. The confirmed gains are real, so a third change of picks is rare, and each
+// ranking takes several minutes.
+const maxRankPasses = 3
+
+// An item a slot's ranking puts ahead of the set's pick, in the gear set it was scored in.
+type rankChallenger struct {
+	slot   string
+	ranked rankedGear
+}
+
+// rankBisPass ranks every slot's options against the set best, with the best enchants first
+// when -gear-rank-enchants asks for them. challengers are the slots' best items that beat
+// the set at the ranking's iterations, by any margin.
+func (s *searcher) rankBisPass(pool [][]gearOption, best []*proto.ItemSpec, names []string, unsourced []bool, knobs Knobs) (
+	enchants []bisEnchantSlot, base result, slots []bisSlot, challengers []rankChallenger, err error) {
 	keep := *gearRankKeep
 	// With -gear-rank-enchants the set gets its best enchants first, so the items are
 	// ranked on them (bis_enchants.go).
-	var enchants []bisEnchantSlot
 	if *gearRankEnchants != "" {
 		fmt.Println("ranking every enchant of the set:")
-		var err error
 		if enchants, err = s.rankEnchants(best, knobs); err != nil {
-			return err
+			return
 		}
 	}
+	// The base keeps each iteration's DPS, so a challenger's gain has its paired error. The
+	// last step of rankGear's race runs at the same iterations.
 	s.setGear(best)
-	base := s.score(knobs)
+	s.saveValues = true
+	base = s.score(knobs)
+	s.saveValues = false
 	fmt.Printf("ranking every slot against the set: %s\n", base)
+	// ahead notes a slot's best item when it beats the set at all. ranked is best first.
+	//
+	// We don't ask for a clear margin here, because the confirm step does that at many more
+	// iterations. On 2026-11-14 a margin of two standard errors at the ranking's iterations
+	// let Don Julio's Band stay 2.3 DPS ahead of the Phase 0 ring picks, and it was 2.4 ahead
+	// at 20000 iterations.
+	ahead := func(slot string, ranked []rankedGear) {
+		if len(ranked) == 0 || ranked[0].gear == nil {
+			return
+		}
+		if ranked[0].result.dps > base.dps {
+			challengers = append(challengers, rankChallenger{slot, ranked[0]})
+		}
+	}
 
 	round2 := func(x float64) float64 {
 		if r := math.Round(x*100) / 100; r != 0 {
@@ -369,12 +455,12 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 		}
 		return out
 	}
-	var slots []bisSlot
 	single := func(slot int) {
 		picks := pickOf(slot, nil)
 		ranked := s.rankGear(gearSlotNames[slot], others(slot, best[slot]), func(o gearOption) [][]*proto.ItemSpec {
 			return [][]*proto.ItemSpec{swapped(slot, o.spec)}
 		}, emptied(slot), wide, knobs)
+		ahead(gearSlotNames[slot], ranked)
 		slots = append(slots, bisSlot{gearSlotNames[slot], trimBis(append(picks, entriesOf(ranked, noOtherHand)...), keep)})
 	}
 	pair := func(name string, a, b int) {
@@ -390,6 +476,7 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 			}
 			return out
 		}, emptied(a, b), wide, knobs)
+		ahead(name, ranked)
 		slots = append(slots, bisSlot{name, trimBis(append(picks, entriesOf(ranked, noOtherHand)...), keep)})
 	}
 
@@ -398,33 +485,155 @@ func (s *searcher) rankBis(path string, pool [][]gearOption, best []*proto.ItemS
 	}
 	pair("finger", int(proto.ItemSlot_ItemSlotFinger1), int(proto.ItemSlot_ItemSlotFinger2))
 	pair("trinket", int(proto.ItemSlot_ItemSlotTrinket1), int(proto.ItemSlot_ItemSlotTrinket2))
-	main, off := s.rankWeapons(pool, best, wide, knobs, pickOf, entriesOf, base)
+	main, off := s.rankWeapons(pool, best, wide, knobs, pickOf, entriesOf, base, ahead)
 	slots = append(slots, bisSlot{"mainhand", trimBis(main, keep)}, bisSlot{"offhand", trimBis(off, keep)})
 	single(int(proto.ItemSlot_ItemSlotRanged))
+	return
+}
 
-	s.setGear(best)
-	for _, slot := range slots {
-		fmt.Printf("  %s:\n", slot.name)
-		for _, e := range slot.entries {
-			fmt.Printf("    %6.1f %6.1f  %s", e.DPS, 0-e.Loss, e.Name)
-			if e.With != 0 {
-				if it := itemsByID[e.With]; it != nil {
-					fmt.Printf(" (with %s)", it.Name)
-				}
+// followRanking puts the challengers that hold up in the set, and says whether the set
+// changed. Each challenger beat the set at the ranking's iterations, so we score it again at
+// -gear-rank-confirm-iters next to the set, and it counts only when it still beats the set by
+// more than confidence paired standard errors there. Then the confirmed ones go in, the
+// biggest gain first, each on slots no other one changed. When two changes together score
+// worse than the biggest one alone (two rings that each needed the hit the other one gives),
+// only the biggest goes in, and the next ranking finds the rest again.
+func (s *searcher) followRanking(pool [][]gearOption, best []*proto.ItemSpec, names []string, unsourced []bool,
+	base result, challengers []rankChallenger, knobs Knobs) bool {
+	if len(challengers) == 0 {
+		return false
+	}
+	iterations := int32(*gearRankConfirmIters)
+	if iterations <= 0 {
+		iterations = 10 * s.iterations
+	}
+	full := s.iterations
+	s.iterations, s.saveValues = iterations, true
+	defer func() { s.iterations, s.saveValues = full, false }()
+	scoreSets := func(sets ...[]*proto.ItemSpec) []result {
+		var pending []*pendingScore
+		for _, gear := range sets {
+			s.setGear(gear)
+			pending = append(pending, s.prepare(knobs))
+		}
+		return s.scoreAll(pending)
+	}
+	sets := [][]*proto.ItemSpec{best}
+	for _, c := range challengers {
+		sets = append(sets, c.ranked.gear)
+	}
+	results := scoreSets(sets...)
+	type confirmed struct {
+		rankChallenger
+		gain float64
+	}
+	var good []confirmed
+	for i, c := range challengers {
+		r := results[i+1]
+		gain, noise := r.dps-results[0].dps, gainNoise(results[0], r)
+		verdict := "not confirmed"
+		if gain > s.confidence*noise {
+			verdict = "confirmed"
+			good = append(good, confirmed{c, gain})
+		}
+		fmt.Printf("  %s: %s is %+.1f (%.1f) over the pick at %d iterations, %s\n", c.slot, c.ranked.option.name, gain, noise, iterations, verdict)
+	}
+	if len(good) == 0 {
+		return false
+	}
+	sort.SliceStable(good, func(i, j int) bool { return good[i].gain > good[j].gain })
+	changes := func(gear []*proto.ItemSpec) []int { return gearChanges(best, gear) }
+	apply := func(gear []*proto.ItemSpec, picks []confirmed) []*proto.ItemSpec {
+		out := slices.Clone(gear)
+		for _, c := range picks {
+			for _, slot := range changes(c.ranked.gear) {
+				out[slot] = c.ranked.gear[slot]
 			}
-			if e.Unsourced {
-				fmt.Print("  no source")
-			}
-			fmt.Println()
+		}
+		return out
+	}
+	var gears [][]*proto.ItemSpec
+	for _, c := range good {
+		gears = append(gears, c.ranked.gear)
+	}
+	var picks []confirmed
+	for _, i := range disjointChanges(best, gears) {
+		picks = append(picks, good[i])
+	}
+	if len(picks) > 1 {
+		both := scoreSets(apply(best, picks), apply(best, picks[:1]))
+		if both[0].dps <= both[1].dps {
+			fmt.Printf("  the changes together score %.1f, below the biggest alone at %.1f, so only that one goes in\n", both[0].dps, both[1].dps)
+			picks = picks[:1]
 		}
 	}
-	return s.writeBis(path, base, slots, enchants)
+	// The names of the new items: a challenger's own item, or the item its gear set holds in
+	// another slot (the off hand of a one hand setup).
+	nameOf := func(slot int, spec *proto.ItemSpec) (string, bool) {
+		for _, o := range pool[slot] {
+			if sameGear(spec, o) {
+				return o.name, o.unsourced
+			}
+		}
+		if it := itemsByID[spec.Id]; it != nil {
+			return it.Name, false
+		}
+		return "", false
+	}
+	next := apply(best, picks)
+	for _, c := range picks {
+		for _, slot := range changes(c.ranked.gear) {
+			if next[slot] == nil {
+				names[slot], unsourced[slot] = "", false
+			} else {
+				names[slot], unsourced[slot] = nameOf(slot, next[slot])
+			}
+			old := "nothing"
+			if best[slot] != nil {
+				old, _ = nameOf(slot, best[slot])
+			}
+			fmt.Printf("  %s: %s takes the place of %s (%+.1f)\n", gearSlotNames[slot], names[slot], old, c.gain)
+		}
+	}
+	copy(best, next)
+	return true
+}
+
+// gearChanges is the slots where gear differs from best: another item, roll or enchant.
+func gearChanges(best, gear []*proto.ItemSpec) []int {
+	var out []int
+	for slot := range best {
+		a, b := best[slot], gear[slot]
+		if (a == nil) != (b == nil) || a != nil && (a.Id != b.Id || a.RandomSuffix != b.RandomSuffix || a.Enchant != b.Enchant) {
+			out = append(out, slot)
+		}
+	}
+	return out
+}
+
+// disjointChanges is the indexes of the gear sets (best first) whose changes from best can go
+// in together: each one in turn, unless it changes a slot an earlier one already changed.
+func disjointChanges(best []*proto.ItemSpec, gears [][]*proto.ItemSpec) []int {
+	taken := map[int]bool{}
+	var out []int
+	for i, gear := range gears {
+		slots := gearChanges(best, gear)
+		if slices.ContainsFunc(slots, func(slot int) bool { return taken[slot] }) {
+			continue
+		}
+		for _, slot := range slots {
+			taken[slot] = true
+		}
+		out = append(out, i)
+	}
+	return out
 }
 
 // rankWeapons is the main hand and off hand lists. See the top of the file for how a one
 // hander is scored next to a two hander pick.
 func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep int, knobs Knobs,
-	pickOf func(int, *proto.ItemSpec) []bisEntry, entriesOf func([]rankedGear, func(rankedGear) *proto.ItemSpec) []bisEntry, base result) ([]bisEntry, []bisEntry) {
+	pickOf func(int, *proto.ItemSpec) []bisEntry, entriesOf func([]rankedGear, func(rankedGear) *proto.ItemSpec) []bisEntry, base result,
+	ahead func(string, []rankedGear)) ([]bisEntry, []bisEntry) {
 	mh, oh := int(proto.ItemSlot_ItemSlotMainHand), int(proto.ItemSlot_ItemSlotOffHand)
 	// The set with o in the main hand and offHand in the off hand. A two hander leaves the
 	// off hand empty.
@@ -481,12 +690,14 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 		ranked := s.rankGear("mainhand", append(oneHanders, twoHanders...), func(o gearOption) [][]*proto.ItemSpec {
 			return [][]*proto.ItemSpec{withMainHand(o, best[oh])}
 		}, nil, keep-len(picks), knobs)
+		ahead("mainhand", ranked)
 		mainList := append(picks, byDPS(entriesOf(ranked, mainHandWith(best[oh])))...)
 		offPicks := pickOf(oh, best[mh])
 		offOptions := slices.DeleteFunc(slices.Clone(pool[oh]), func(o gearOption) bool { return sameGear(best[oh], o) })
 		offRanked := s.rankGear("offhand", offOptions, func(o gearOption) [][]*proto.ItemSpec {
 			return [][]*proto.ItemSpec{withOffHand(o, best[mh])}
 		}, nil, keep-len(offPicks), knobs)
+		ahead("offhand", offRanked)
 		return mainList, append(offPicks, entriesOf(offRanked, func(rankedGear) *proto.ItemSpec { return best[mh] })...)
 	}
 
@@ -496,6 +707,7 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 	twoRanked := s.rankGear("mainhand two handers", twoHanders, func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withMainHand(o, nil)}
 	}, nil, keep-len(picks), knobs)
+	ahead("mainhand", twoRanked)
 	mainList := append(picks, entriesOf(twoRanked, noOtherHand)...)
 	if *gearRankTwoHandOnly {
 		return mainList, nil
@@ -518,13 +730,10 @@ func (s *searcher) rankWeapons(pool [][]gearOption, best []*proto.ItemSpec, keep
 	oneRanked := s.rankGear("mainhand one handers", oneHanders, func(o gearOption) [][]*proto.ItemSpec {
 		return [][]*proto.ItemSpec{withMainHand(o, offHand)}
 	}, nil, keep-len(picks), knobs)
-	if len(oneRanked) > 0 {
-		r := oneRanked[0].result
-		if gain := r.dps - base.dps; gain > s.confidence*gainNoise(base, r) {
-			fmt.Printf("  %s with %s beats the two hander pick by %.1f, the search never tried a one hand setup from here\n",
-				oneRanked[0].option.name, offRanked[0].option.name, gain)
-		}
-	}
+	// A one hand setup that beats the two hander pick goes in the set like any other item
+	// that beats its pick. The search tries one handers next to the off hand it holds, and a
+	// two hander leaves none, so it may never have tried this setup.
+	ahead("mainhand", oneRanked)
 	others := byDPS(append(mainList[len(picks):], entriesOf(oneRanked, mainHandWith(offHand))...))
 	mainList = append(picks, others...)
 	if len(mainList) > keep {

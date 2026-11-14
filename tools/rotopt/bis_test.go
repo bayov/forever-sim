@@ -8,7 +8,7 @@ import (
 )
 
 func rankedOf(name string, id int32, dps, stderr float64) rankedGear {
-	return rankedGear{gearOption{spec: &proto.ItemSpec{Id: id}, name: name}, result{dps: dps, stderr: stderr}}
+	return rankedGear{option: gearOption{spec: &proto.ItemSpec{Id: id}, name: name}, result: result{dps: dps, stderr: stderr}}
 }
 
 func namesOf(options []gearOption) []string {
@@ -130,5 +130,33 @@ func TestGainNoisePaired(t *testing.T) {
 	b.values = nil
 	if noise := gainNoise(a, b); noise < 28 {
 		t.Errorf("unpaired noise = %g, want the two errors added up (28.3)", noise)
+	}
+}
+
+// Two challengers that change the same slot can't both go in: the one with the bigger gain
+// (first) stays. A one hand setup changes both hands, so a later off hand change clashes too.
+func TestDisjointChanges(t *testing.T) {
+	item := func(id int32) *proto.ItemSpec { return &proto.ItemSpec{Id: id} }
+	best := []*proto.ItemSpec{item(1), item(2), item(3), nil}
+	with := func(slot int, spec *proto.ItemSpec) []*proto.ItemSpec {
+		out := slices.Clone(best)
+		out[slot] = spec
+		return out
+	}
+	wrist := with(1, item(20))
+	wristAgain := with(1, item(21))
+	ring := with(2, item(30))
+	enchanted := with(0, &proto.ItemSpec{Id: 1, Enchant: 5})
+	hands := with(3, item(40))
+	hands[2] = item(31)
+	got := disjointChanges(best, [][]*proto.ItemSpec{wrist, wristAgain, ring, enchanted, hands})
+	if want := []int{0, 2, 3}; !slices.Equal(got, want) {
+		t.Errorf("disjointChanges = %v, want %v", got, want)
+	}
+	if got := gearChanges(best, best); len(got) != 0 {
+		t.Errorf("gearChanges of the set itself = %v, want none", got)
+	}
+	if got := gearChanges(best, hands); !slices.Equal(got, []int{2, 3}) {
+		t.Errorf("gearChanges = %v, want [2 3]", got)
 	}
 }

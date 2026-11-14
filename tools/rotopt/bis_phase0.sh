@@ -34,16 +34,29 @@
 #   - -gear-min-ilvl 50: nothing under item level 50 competes at 60, and the random suffix rolls
 #     of those greens make the pool three times as big.
 #   - Forever items with no source at item level 66 and up, likely Forever's raid loot:
-#     Tracker's Signets of Ferocity, Brilliance, Resolve and Vigilance (275972 to 275975),
 #     Leafre's Ring of Precise Spell Power (276765) and Band of the Better Half (284716).
+#     The Tracker's Signets (275972 to 275975) used to be on this list too, but their tooltips
+#     say "Requires The Watchers - Honored", the same reputation as the Warden's Signets
+#     (Exalted). So they're candidates now, doubtful the way the Warden's Signets are.
 #   - Every item tools/rotopt/phase0_content.json marks "out". That file is the hand check of
 #     what the game has open (2026-11-12): "out" means not before the raids, "doubtful" means
 #     we don't know of a way yet, and "grind" means open but slow. Items not in it are open now.
 #
 # What it lets in anyway: the items phase0_content.json marks "include", whatever -gear-phase
-# and -gear-no-raids say (-gear-include). Those are the four Darkmoon cards (Heroism, Blue
-# Dragon, Maelstrom and Twisting Nether). Our item data puts them in phase 3, but Forever has
-# the Darkmoon Faire open, and the cards are the rewards of its decks.
+# and -gear-no-raids say (-gear-include). Our item data takes its phases from Classic, where
+# these came out later, but Forever has them from the start:
+#   - The four Darkmoon cards (Heroism, Blue Dragon, Maelstrom and Twisting Nether) and the
+#     Faire's ticket rewards (Amulet and Orb of the Darkmoon). Forever has the Darkmoon Faire
+#     open, and the cards are the rewards of its decks.
+#   - Totem of Rage (Magmus in Blackrock Depths) and Totem of Sustaining (Scholomance). Classic
+#     added them in patch 1.10, but Wowhead's Forever data has them on those drops, and the game
+#     knows both items (forever_revealed_in_game.json).
+#   - The Arathi Basin rewards of the Defilers (Rutherford Twing in Hammerfall). Wowhead's
+#     Forever data sells them there, but we don't know yet that Arathi Basin is open, so they're
+#     doubtful.
+#   - Every other item the content check keeps (not "out") that our data puts after phase 2,
+#     such as the Silithus Cenarion Circle rewards. Their status shows on the list, so a
+#     doubtful one is marked rather than left out without a word.
 #
 # The pick is a two hander, so the main hand list has only two handers and the off hand list
 # is empty (-gear-rank-two-hand-only). We don't list a one hand setup next to it.
@@ -73,7 +86,7 @@ talents="${TALENTS:-053303102-054030110051212141-03}"
 req=tools/dps_report/req/shaman__enhancement-level60.json
 content=tools/rotopt/phase0_content.json
 out=ui/enhancement_shaman/bis/level60_phase0.bis.json
-exclude="275972,275973,275974,275975,276765,284716,$(jq -r '[to_entries[] | select(.value.avail == "out") | .key] | join(",")' "$content")"
+exclude="276765,284716,$(jq -r '[to_entries[] | select(.value.avail == "out") | .key] | join(",")' "$content")"
 include="$(jq -r '[to_entries[] | select(.value.include) | .key] | join(",")' "$content")"
 jq '.raid.parties[0].players[0].rotation' "$req" >"$tmp/enh.apl.json"
 # Head, neck, shoulder, back, chest, wrist, hands, waist, legs, feet, two rings, two trinkets,
@@ -92,7 +105,8 @@ go run --tags=with_db ./tools/rotopt -apl "$tmp/enh.apl.json" -settings "$tmp/en
 	-gear-screen-iters 300 -gear-screen-keep 40 \
 	-gear-rank-out "$out" -gear-rank-name "Phase 0" -gear-rank-keep 25 -gear-rank-two-hand-only \
 	-gear-rank-spec enh -gear-rank-sim "$sim" \
-	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters 10000
+	-gear-rank-enchants tools/rotopt/phase0_enchants.json -gear-rank-enchant-iters 10000 \
+	-gear-rank-confirm-iters 20000
 
 # The content check's status on every entry.
 jq --slurpfile content "$content" '.slots |= map_values(map(
