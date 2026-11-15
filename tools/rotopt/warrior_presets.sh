@@ -92,6 +92,18 @@
 # Shout duty's shout (30313113032-350500150122100231). Arms and Dragonkin keep theirs, Reckless
 # Swings included (no move of its point gains once it waits for the strikes).
 #
+# 2026-11-15 (Windfury Totem rolls on every landed main hand hit, Bloodthirst, Mortal Strike and
+# Whirlwind's main hand strike included; standards 17): the knob search over 120, 180 and 300 sec
+# together (-combined -iters 4000, the cooldown timing knobs held) on Fury, two-hand Fury and Arms moved
+# nothing. New knob wfGate (warrior_common.go): 1 keeps the instant main hand strikes out of the 0.1 sec
+# after a main hand swing, whose Windfury proc's 100 ms cooldown would take their roll; 2 also out of the
+# 0.1 sec before the next swing. Kept only where it won at 120, 180 and 300 sec on seeds 1 and 1000003
+# (20,000 iterations): Arms wfGate=1 +0.8 / +0.8 / +0.4 (seed 1000003 +0.7 / +2.0 / +1.9), its Sunder
+# duty +1.4 / +0.5 / +1.2 (+1.2 / +1.8 / +2.0), its Battle Shout duty +0.2 / +1.3 / +0.2 (+0.3 / +1.2 /
+# +0.7). Not kept: Dragonkin (-0.6 / -0.1 / +0.1, -1.5 / +0.4 / +0.3), dual wield Fury (-1.5 / -0.4 /
+# -0.7, -0.7 / +0.1 / -0.1), two-hand Fury (+1.5 / -0.8 / +0.4, +1.7 / +0.9 / +1.3); wfGate=2 loses or
+# ties everywhere (Fury -1.4 to -4.2).
+#
 # The searches: tools/rotopt -talent-search and the knob search, one after the other until
 # neither moved, from these talents and knobs.
 set -e
@@ -129,17 +141,17 @@ gen warrior_fury level60_fury_2h_sunder 30313113032-350500150122100231 \
 gen warrior_fury level60_fury_2h_battle_shout 30313113032-350500150122100231 \
 	battleShout=1,berserkerRageRage=10,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessSwingsRage=20,recklessness=2,rsLate=1,slamAfterSwing=1,slamRage=60,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
 gen warrior_arms level60_arms 30303213032215201-05050005012-2 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=20,recklessness=2,rsLate=1,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=20,recklessness=2,rsLate=1,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wfGate=1,wwRage=25
 # level60_arms on Sunder Armor duty (docs/raid_sim.md, Sunder upkeep): 5 stacks from the pull,
 # refreshed in their last 3 sec, for a raid with no warrior tank (its request has no raid Sunder Armor).
 # Its own search (2026-11-02) puts Slam ahead of Mortal Strike (msFirst=0): with the duty's Sunders
 # taking GCDs, Slam's 15 sec cooldown loses more to a wait than Mortal Strike's 6 sec. +2.1 / +2.3 / +1.6
 # at 120 / 180 / 300 sec (seed 1000003 +3.0 / +2.7 / +1.5); on the base build it is not 2 standard errors.
 gen warrior_arms level60_arms_sunder 30303213032215201-05050005012-2 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rsLate=1,rend=1,slamAfterSwing=1,slamRage=20,spearingRage=0,stance=1,sunderDuty=1,trinketAt=0,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=100,recklessness=2,rsLate=1,rend=1,slamAfterSwing=1,slamRage=20,spearingRage=0,stance=1,sunderDuty=1,trinketAt=0,wfGate=1,wwRage=25
 # level60_arms on Battle Shout duty (standards 23): shouts before the pull and refreshes it.
 gen warrior_arms level60_arms_battle_shout 30303213032215201-05050005012-2 \
-	battleShout=1,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=20,recklessness=2,rsLate=1,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wwRage=25
+	battleShout=1,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,hamstringRage=10,hsExecute=0,hsRage=90,mineSync=0,msFirst=0,overpowerRage=5,potionAt=15,potionHoldForDw=2,potionPull=0,racialAt=25,racialHoldForDw=0,reckSwap=2,recklessAt=25,recklessSwingsRage=20,recklessness=2,rsLate=1,rend=1,slamAfterSwing=0,slamRage=20,spearingRage=0,stance=1,trinketAt=0,wfGate=1,wwRage=25
 # Arms against a Giant or Dragonkin boss (Onyxia), where Spearing Strike does 80% more weapon damage:
 # the talent and knob searches on a Dragonkin boss take Spearing Strike and Improved Bloodrage for two
 # points of Booming Voice and one of Improved Execute.

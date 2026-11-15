@@ -647,10 +647,42 @@
                   }
                 },
                 {
+                  "notes": "Not in the 0.1 sec after a main hand swing (Windfury Totem's 100 ms cooldown).",
                   "action": {
                     "condition": {
                       "and": {
                         "vals": [
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpLe",
+                                    "lhs": {
+                                      "autoTimeToNext": {
+                                        "autoType": "MainHand"
+                                      }
+                                    },
+                                    "rhs": {
+                                      "math": {
+                                        "op": "OpSub",
+                                        "lhs": {
+                                          "autoSwingTime": {
+                                            "autoType": "MainHand"
+                                          }
+                                        },
+                                        "rhs": {
+                                          "const": {
+                                            "val": "0.1s"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
                           {
                             "sequenceIsComplete": {
                               "sequenceName": "sunder"
@@ -668,22 +700,53 @@
                   }
                 },
                 {
-                  "notes": "After a dodge or a Bloodthrill proc.",
+                  "notes": "After a dodge or a Bloodthrill proc. Not in the 0.1 sec after a main hand swing (Windfury Totem's 100 ms cooldown).",
                   "action": {
                     "condition": {
                       "and": {
                         "vals": [
                           {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "currentRage": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "5"
+                            "and": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpGe",
+                                    "lhs": {
+                                      "currentRage": {}
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "5"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpLe",
+                                    "lhs": {
+                                      "autoTimeToNext": {
+                                        "autoType": "MainHand"
+                                      }
+                                    },
+                                    "rhs": {
+                                      "math": {
+                                        "op": "OpSub",
+                                        "lhs": {
+                                          "autoSwingTime": {
+                                            "autoType": "MainHand"
+                                          }
+                                        },
+                                        "rhs": {
+                                          "const": {
+                                            "val": "0.1s"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
                                 }
-                              }
+                              ]
                             }
                           },
                           {
@@ -703,7 +766,7 @@
                   }
                 },
                 {
-                  "notes": "Kept up for Bloodthrill.",
+                  "notes": "Kept up for Bloodthrill. Not in the 0.1 sec after a main hand swing (Windfury Totem's 100 ms cooldown).",
                   "action": {
                     "condition": {
                       "and": {
@@ -731,6 +794,31 @@
                                       }
                                     }
                                   }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpLe",
+                                    "lhs": {
+                                      "autoTimeToNext": {
+                                        "autoType": "MainHand"
+                                      }
+                                    },
+                                    "rhs": {
+                                      "math": {
+                                        "op": "OpSub",
+                                        "lhs": {
+                                          "autoSwingTime": {
+                                            "autoType": "MainHand"
+                                          }
+                                        },
+                                        "rhs": {
+                                          "const": {
+                                            "val": "0.1s"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
                                 }
                               ]
                             }
@@ -752,10 +840,42 @@
                   }
                 },
                 {
+                  "notes": "Not in the 0.1 sec after a main hand swing (Windfury Totem's 100 ms cooldown).",
                   "action": {
                     "condition": {
                       "and": {
                         "vals": [
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpLe",
+                                    "lhs": {
+                                      "autoTimeToNext": {
+                                        "autoType": "MainHand"
+                                      }
+                                    },
+                                    "rhs": {
+                                      "math": {
+                                        "op": "OpSub",
+                                        "lhs": {
+                                          "autoSwingTime": {
+                                            "autoType": "MainHand"
+                                          }
+                                        },
+                                        "rhs": {
+                                          "const": {
+                                            "val": "0.1s"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
                           {
                             "sequenceIsComplete": {
                               "sequenceName": "sunder"
@@ -833,7 +953,7 @@
                   }
                 },
                 {
-                  "notes": "For the procs.",
+                  "notes": "For the procs. Not in the 0.1 sec after a main hand swing (Windfury Totem's 100 ms cooldown).",
                   "action": {
                     "condition": {
                       "and": {
@@ -859,6 +979,31 @@
                                     "val": {
                                       "isExecutePhase": {
                                         "threshold": "E20"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpLe",
+                                    "lhs": {
+                                      "autoTimeToNext": {
+                                        "autoType": "MainHand"
+                                      }
+                                    },
+                                    "rhs": {
+                                      "math": {
+                                        "op": "OpSub",
+                                        "lhs": {
+                                          "autoSwingTime": {
+                                            "autoType": "MainHand"
+                                          }
+                                        },
+                                        "rhs": {
+                                          "const": {
+                                            "val": "0.1s"
+                                          }
+                                        }
                                       }
                                     }
                                   }

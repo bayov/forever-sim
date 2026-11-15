@@ -108,6 +108,7 @@ func (warriorArms) Build(k Knobs) *proto.APLRotation {
 		back = and(back, gt(remainingTime(), seconds(k["recklessAt"])))
 	}
 	items = append(items, cast(stance, back, ""))
+	items = warriorWfGate(k, items)
 	rot := warriorOpener(k, rotation(items...))
 	rot.PrepullActions = append(rot.PrepullActions, warriorShoutPrepull(k)...)
 	rot.PrepullActions = append(rot.PrepullActions, warriorChargePrepull(stance)...)

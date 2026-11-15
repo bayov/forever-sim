@@ -47,6 +47,7 @@
     "Mortal Strike on cooldown",
     "Overpower at 5+ Rage after a dodge or Bloodthrill",
     "Keep Rend up outside execute. Then Execute",
+    "Mortal Strike, Overpower, Rend, Execute and Hamstring wait out the 0.1s after a main hand swing, so a Windfury Totem proc from the swing (100 ms cooldown) doesn't take their roll",
     "Reckless Swings on cooldown, but only when no strike is ready, since it takes a 1s GCD. The next 4 swings give 5 more Rage each",
     "Heroic Strike at 90+ Rage and Hamstring filler at 10+, both outside execute"
   ],
@@ -74,7 +75,7 @@
     "Arms in Berserker Stance with Whirlwind is 10% behind.",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings with the same arguments as warrior__arms except -apl level60_arms_sunder, then the raid's sunderArmor removed (the duty warrior's Sunder is the only one, as for a raid with no warrior tank). Made as a hand edit of the base request, which is the same. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30.",
+  "notes": "Request from mksettings with the same arguments as warrior__arms except -apl level60_arms_sunder, then the raid's sunderArmor removed (the duty warrior's Sunder is the only one, as for a raid with no warrior tank). Made as a hand edit of the base request, which is the same. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. 2026-11-15 (Windfury Totem rolls on every main-hand hit, standards 17): the strikes wait out the 0.1 s after a main hand swing (wfGate=1), ++1.4 / +0.5 / +1.2 and +1.2 / +1.8 / +2.0 at 120 / 180 / 300 s (seeds 1 / 1000003, 20,000 iterations). Waiting out the 0.1 s before the next swing too (wfGate=2) loses on Arms.",
   "duty": "Sunder Armor",
   "baseBuild": "warrior__arms"
 }
