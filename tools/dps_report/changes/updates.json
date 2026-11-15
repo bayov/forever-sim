@@ -5667,6 +5667,18 @@
     {
      "commit": "655e300",
      "why": "notes only"
+    },
+    {
+     "commit": "2694dc2",
+     "why": "the report data for the lines above, with the presets' published numbers"
+    },
+    {
+     "commit": "6d27e15",
+     "why": "test hashes for the same change"
+    },
+    {
+     "commit": "a0f414a",
+     "why": "code comments and tooltip wording for the rotation lines above"
     }
    ],
    "source": {
