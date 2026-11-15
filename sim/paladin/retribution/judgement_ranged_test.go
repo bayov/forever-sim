@@ -14,7 +14,9 @@ import (
 // and crit on the ranged attack table, not the main hand's. The November 13 hotfixes (t/2403040,
 // "November 13, 2026") made Command melee again: "Judgement of Command now activates on-hit
 // effects and counts as a melee attack. All other judgements will continue to be considered
-// Ranged attacks." So Command is a main hand melee special on the main hand's table.
+// Ranged attacks." So Command is a main hand melee special on the main hand's table (also client
+// SpellCategories Melee, and a log after the hotfix shows it taking the melee-only Two-Handed Weapon
+// Specialization bonus; user ruling 2026-11-15).
 func TestJudgementsAreRanged(t *testing.T) {
 	for _, c := range []struct {
 		name   string

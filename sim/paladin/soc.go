@@ -87,9 +87,8 @@ func (paladin *Paladin) registerSealOfCommand() {
 
 			BonusCritRating: paladin.holyPowerCrit(),
 			// Two-Handed Weapon Specialization reaches it in game after the November 11 hotfix (1.062,
-			// n = 109, 2026-11-13; wowsims/forever EV-0064; user ruling 2026-11-15). Their client data
-			// has it melee in SpellCategories, while this sim rolls it on the ranged table
-			// (rangedJudgement below); the bonus is kept either way.
+			// n = 109, 2026-11-13; wowsims/forever EV-0064; user ruling 2026-11-15), as a melee-defense
+			// Holy hit.
 			DamageMultiplier: paladin.getWeaponSpecializationModifier() * improvedSeals,
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,
@@ -100,11 +99,14 @@ func (paladin *Paladin) registerSealOfCommand() {
 
 				// Forever's judgement dummy (client 20968) and the damage spell it casts (20966) have
 				// No Active Defense: one roll for hit and crit, never dodged, parried or blocked
-				// (wowsims/forever e10ca32c3d, 447d83b595). The November 11 hotfixes made it a ranged
-				// attack; the November 13 hotfixes (t/2403040, "November 13, 2026") made it melee again: "Judgement
-				// of Command now activates on-hit effects and counts as a melee attack. All other
-				// judgements will continue to be considered Ranged attacks." So the roll is on the
-				// main hand's melee table and melee-keyed procs see it (unlike rangedJudgement's).
+				// (wowsims/forever e10ca32c3d, 447d83b595). It stays a melee special on the main hand's
+				// table, unlike Righteousness and Fury: the client has it Melee in SpellCategories
+				// (wowsims/forever seal_of_command.go), a log after the November 11 "Judgement is a Ranged
+				// Attack" hotfix shows it taking the melee-only Two-Handed Weapon Specialization bonus
+				// (1.062, n = 109; EV-0064), and the November 13 hotfixes (t/2403040) say "Judgement of
+				// Command now activates on-hit effects and counts as a melee attack". User ruling
+				// 2026-11-15. So melee-keyed procs hear it (weapon and equip procs, Windfury Totem, the
+				// Judgements of Wisdom, Light and the Crusader on the target).
 				if sim.IsForever() {
 					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 					return
