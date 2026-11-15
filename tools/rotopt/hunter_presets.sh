@@ -123,6 +123,16 @@ gen hunter_ranged bm_turret "$bm"
 # Since Wing Clip rolls Windfury Totem (standards 17, 2026-11-11) the Wing Clip floor binds late in
 # long fights: wingClipMana 50 -> 0 is +0.9 / +1.0 at 180 sec and +3.6 / +3.7 at 300 sec on seeds 1 and
 # 1000003 (20000 iterations), about +0.1 at 120 sec, on all three Survival requests (2026-11-12).
+# Windfury Totem timing (2026-11-15, after every landed main hand hit rolls it, standards 17; the
+# hunter_sv knobs swingGate, swingGap, preSwing, swingAlign; 20000 iterations, seeds 1 / 1000003, at
+# 120 / 180 / 300 sec, the Orc request): nothing wins, the rotation stays. Holding Wing Clip 0.1 sec
+# past a main hand swing +0.0 / +0.1 / +0.0 (-0.4 / -0.8 / -0.3); every instant main hand attack
+# -0.2 / -0.2 / +0.0 (-1.0 / -0.3 / -0.2); also 0.1 sec before the swing -1.2 / -0.9 / -1.0 (-1.0 /
+# -0.9 / -0.8). Holding attacks until the next swing is 1 sec or 0.5 sec away (so a special's proc
+# leaves its second charge for the swing) gives up global cooldowns: -50 and -60 for every attack,
+# -19 for Wing Clip alone. Only about 3 of 39 Wing Clips land within 0.2 sec of a swing anyway.
+# Raptor Strike takes a swing's place, so it has no window to keep. The combined knob search
+# (3000 iterations, 126 runs) moves nothing either.
 sv="lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=0,wingClipHold=2,trapFirst=1"
 gen hunter_sv sv "$sv"
 # No Scorpid Sting duty (standards 23, user ruling 2026-10-25): Scorpid Sting shares Insect Swarm's
