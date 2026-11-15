@@ -90,6 +90,11 @@ func ReadForeverSeenInGame(path string, have map[int32]*proto.UIItem) []*proto.U
 		// is Horde only).
 		if known {
 			item.FactionRestriction = old.FactionRestriction
+			// An entry has all the item's stats, so no hit or crit in it means the item has
+			// none. MergeItem can't clear a field with a zero, so we clear them here first.
+			// Blessed Band of Light lost its hit in the 2026-11-13 hotfixes and kept it
+			// in the database until we did this.
+			old.HitRating, old.CritRating = 0, 0
 		}
 		if !known || e.InventoryType != 0 {
 			wi := ForeverWowheadItem{ID: int32(id), Slot: e.InventoryType, Class: e.ClassID, Subclass: e.SubclassID}
