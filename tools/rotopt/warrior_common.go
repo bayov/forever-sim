@@ -127,7 +127,43 @@ func warriorKnobs() []Knob {
 		// itself from the pull and refreshes them in their last 3 sec, for a raid with no warrior tank.
 		// Its request switches the raid's Sunder Armor off.
 		{Name: "sunderDuty", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Windfury Totem's 100 ms internal cooldown (standards 17): a white main hand swing that
+		// procs it leaves a strike in the next 100 ms with no roll. 1 keeps the instant main hand
+		// strikes (warriorWfGated) out of the 0.1 sec after a main hand swing, read off the swing
+		// timer as a player's swing bar shows it; 2 also out of the 0.1 sec before the next swing,
+		// whose roll a strike's proc would take. 0 any time.
+		{Name: "wfGate", Default: 0, Min: 0, Max: 2, Step: 1},
 	}
+}
+
+// warriorWfGated are the instant main hand strikes the wfGate knob holds. Slam is not one: its
+// cast puts the hit well after the moment it starts.
+var warriorWfGated = []*proto.ActionID{bloodthirst, mortalStrike, whirlwind, execute, overpower, hamstring, spearingStrike, rend}
+
+// warriorWfGate adds the wfGate condition to every line of items that casts one of the gated
+// strikes (or one of extra), and returns items.
+func warriorWfGate(k Knobs, items []*proto.APLListItem, extra ...*proto.ActionID) []*proto.APLListItem {
+	if k["wfGate"] == 0 {
+		return items
+	}
+	gate := le(mainHandTimeToNext(), sub(mainHandSwingTime(), seconds(0.1)))
+	if k["wfGate"] == 2 {
+		gate = and(gate, gt(mainHandTimeToNext(), seconds(0.1)))
+	}
+	gated := append(append([]*proto.ActionID{}, warriorWfGated...), extra...)
+	for _, item := range items {
+		cs := item.GetAction().GetCastSpell()
+		if cs == nil {
+			continue
+		}
+		for _, id := range gated {
+			if cs.GetSpellId().GetSpellId() == id.GetSpellId() {
+				item.Action.Condition = and(item.Action.Condition, gate)
+				break
+			}
+		}
+	}
+	return items
 }
 
 // warriorCooldowns are the lines that go at the top of either rotation: the burst cooldowns, the

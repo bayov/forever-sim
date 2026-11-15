@@ -70,6 +70,10 @@ func (warriorTank) Knobs() []Knob {
 		// the last 17 s beat 12 at Balanced and Max survival, tank_rotations-20261104-2).
 		{Name: "shieldWall", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "wallAt", Default: 12, Min: 6, Max: 60, Step: 1},
+		// Windfury Totem timing (warriorWfGate): 1 keeps Shield Slam, Revenge, Sunder Armor and the
+		// other instant main hand strikes out of the 0.1 sec after a main hand swing, 2 also out of the
+		// 0.1 sec before the next one. 0 any time.
+		{Name: "wfGate", Default: 0, Min: 0, Max: 2, Step: 1},
 		// The on-use trinket (the synthetic set's armor one or the DPS set's attack power one): 0 on
 		// cooldown, else held for the last trinketAt seconds when the wait costs no use.
 		{Name: "trinketAt", Default: 0, Min: 0, Max: 60, Step: 5},
@@ -193,6 +197,7 @@ func (warriorTank) Build(k Knobs) *proto.APLRotation {
 	}
 	items = append(items, cast(defensiveStance, not(auraIsActive(defensiveStance)), "Defensive Stance kept up: the tank's stance."))
 
+	items = warriorWfGate(k, items, shieldSlam, revenge, sunderArmor)
 	rot := rotation(items...)
 	opener := int(k["opener"])
 	if opener&1 != 0 {
