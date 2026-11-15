@@ -4753,6 +4753,22 @@
      ]
     },
     {
+     "title": "Two-hand Fury is the warrior's default build again: it is now the highest at 3 minutes",
+     "kind": "method",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__fury_2h",
+      "warrior__fury"
+     ],
+     "moves": false,
+     "note": "Two-hand Fury does 1103.0 against dual wield Fury's 1092.8, so it takes back the build the Warrior page opens on. No number changes.",
+     "commits": [
+      "aec7d79"
+     ]
+    },
+    {
      "title": "Venom's extra 20% chance to apply poisons now reaches Instant Poison as well as Deadly and Wound Poison",
      "kind": "game",
      "classes": [
