@@ -96,6 +96,17 @@ func AuraRemainingTime(aura *proto.ActionID) Value {
 	return &proto.APLValue{Value: &proto.APLValue_AuraRemainingTime{AuraRemainingTime: &proto.APLValueAuraRemainingTime{AuraId: aura}}}
 }
 
+// AuraInternalCooldown is the time until the internal cooldown of the proc aura is back, 0 when
+// it is ready.
+func AuraInternalCooldown(aura *proto.ActionID) Value {
+	return &proto.APLValue{Value: &proto.APLValue_AuraInternalCooldown{AuraInternalCooldown: &proto.APLValueAuraInternalCooldown{AuraId: aura}}}
+}
+
+// Wait idles the rotation for duration while condition holds, so nothing below takes the GCD.
+func Wait(duration Value, condition Value, notes string) *proto.APLListItem {
+	return Action(condition, notes, &proto.APLAction{Action: &proto.APLAction_Wait{Wait: &proto.APLActionWait{Duration: duration}}})
+}
+
 func SpellIsReady(spell *proto.ActionID) Value {
 	return &proto.APLValue{Value: &proto.APLValue_SpellIsReady{SpellIsReady: &proto.APLValueSpellIsReady{SpellId: spell}}}
 }

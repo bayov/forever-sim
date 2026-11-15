@@ -102,6 +102,11 @@ func (shaman *Shaman) RegisterWindfuryImbue(procMask core.ProcMask) {
 	aura := shaman.RegisterAura(core.Aura{
 		Label:    "Windfury Imbue",
 		Duration: core.NeverExpires,
+		// The rotation reads the 1.5 sec cooldown through the weapon's spell ID (Aura Remaining
+		// ICD), to hold Stormstrike until a Windfury Weapon proc is possible again. Keyed for the
+		// proc only, so the aura gets no metrics row.
+		ActionIDForProc: core.ActionID{SpellID: WindfuryWeaponSpellId[rank]},
+		Icd:             &icd,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
 		},
