@@ -230,8 +230,13 @@ def read(client):
             state[rid] = status
     for table, rows_ in (('ItemSparse', sparse), ('Item', item)):
         compared, bad = check(rows_, table, version)
-        broken = [b for b in bad if len(b[1]) >= LAYOUT_BROKEN_FIELDS]
-        by_field = collections.Counter(f for _, fields in bad for f in fields)
+        # A row that came in a real hotfix push can differ in many fields and still decode
+        # right: push 113722 rebalanced the stats of 18 Premier PvP pieces at 70938, which
+        # changed up to four StatPercentEditor columns each. So only the other rows say
+        # whether the layout broke.
+        plain = [b for b in bad if table != 'ItemSparse' or push.get(b[0]) is None]
+        broken = [b for b in plain if len(b[1]) >= LAYOUT_BROKEN_FIELDS]
+        by_field = collections.Counter(f for _, fields in plain for f in fields)
         if broken or (compared and by_field and by_field.most_common(1)[0][1] > compared * LAYOUT_BROKEN_SHARE):
             raise SystemExit('%s rows decode differently from wago.tools for build %s, so the '
                              'layout changed (%d of %d compared, first: %s). Update ITEM_SPARSE '
