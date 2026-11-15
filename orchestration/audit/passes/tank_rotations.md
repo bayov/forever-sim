@@ -41,3 +41,15 @@ for b in tools/encounters/*.json; do $T -iters 1000 -encounter $b tools/tankbenc
    the next GCD)? Does the opener make the pull's threat (Charge with Vanguard, Bloodrage, the first GCDs)? Try the
    one-line changes that test these and report the ones that win.
 4. Report: the baseline table, the changes tried with their numbers, new findings.
+
+## Open items
+
+- **Main-hand ability timing for Windfury (user request 2026-11-15):** since Blizzard's Nov 13 hotfix (PR #130,
+  landing through `orchestration/round_notes_2026-11-11/briefs/update_1115.md`) Windfury Totem rolls on every landed
+  main-hand melee hit, white or ability, behind a 100 ms cooldown. Windfury Weapon already rolled on every main-hand
+  hit behind its own cooldown (1.5 s in `sim/shaman/windfury_weapon.go`), Stormstrike included. Test whether timing
+  main-hand abilities now pays: Stormstrike, Sinister Strike, Backstab, Bloodthirst, Mortal Strike, Heroic Strike,
+  Holy Strike, Crusader Strike, Judgement of Command, Raptor Strike, Claw and Shred. Tries: keep them out of the
+  totem's 100 ms after a swing; for Enhancement, hold Stormstrike until Windfury Weapon's cooldown is back; and
+  spread abilities between swings. Measure every tank request that takes the totem (Prot warrior, Prot paladin, the feral and Warden tanks) with `ab.py` on both seed sets,
+  and file a finding for each one that gains past the bar. Remove this item once a pass has done it.

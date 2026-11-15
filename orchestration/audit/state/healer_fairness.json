@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "d630df2cb0d485ea2d7646bc58f3aff87569a89c"
+  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
  },
- "last_pass_at": "2026-11-13T19:13:17Z",
- "pass": 13,
+ "last_pass_at": "2026-11-15T13:12:42Z",
+ "pass": 14,
  "result": "quiet",
  "baseline": "9ba00c2dc",
- "note": "Pass 13 on 3a86d4a6b (Flametongue rank 6 cut 5.5; also Frightskull Shaft PPM, Windfury Weapon->Totem procs, oil spell IDs). None reaches a healer: no healer preset melees, shaman presets use Wizard Oil. Full 63-cell bench (seed 101, 1,000 iterations) identical to ref/healer_fairness/bench_71562a8.tsv; healbench requests unchanged. Open: -20261104-4.",
+ "note": "Pass 14 on 70ea588bb (Ferocious Bite 80% refund on avoid; Sharpened Claws adds spell crit in feral forms). Neither reaches a healer: GetFormShiftStats applies only in Cat/Bear form, which the Restoration druid presets never take. Full 63-cell bench (seed 101, 1,000 iterations) identical to ref/healer_fairness/bench_71562a8.tsv; healbench requests, encounters and healer UI unchanged. Open: -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-15T06:44:36Z"
+ "checked_at": "2026-11-15T13:12:56Z"
 }

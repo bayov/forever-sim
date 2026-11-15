@@ -107,6 +107,15 @@ Give each the brief in `tools/audit/rotations/brief.txt`, with its "What changed
 
 ## Open items and pending rulings
 
+- **Main-hand ability timing for Windfury (user request 2026-11-15):** since Blizzard's Nov 13 hotfix (PR #130,
+  landing through `orchestration/round_notes_2026-11-11/briefs/update_1115.md`) Windfury Totem rolls on every landed
+  main-hand melee hit, white or ability, behind a 100 ms cooldown. Windfury Weapon already rolled on every main-hand
+  hit behind its own cooldown (1.5 s in `sim/shaman/windfury_weapon.go`), Stormstrike included. Test whether timing
+  main-hand abilities now pays: Stormstrike, Sinister Strike, Backstab, Bloodthirst, Mortal Strike, Heroic Strike,
+  Holy Strike, Crusader Strike, Judgement of Command, Raptor Strike, Claw and Shred. Tries: keep them out of the
+  totem's 100 ms after a swing; for Enhancement, hold Stormstrike until Windfury Weapon's cooldown is back; and
+  spread abilities between swings. Measure every melee build that takes the totem with `ab.py` on both seed sets,
+  and file a finding for each one that gains past the bar. Remove this item once a pass has done it.
 - **Balance:** Night Elf with Elune's Light vs Tauren was never run. Settings were drafted in the old
   container; rebuild from the req by setting race Night Elf and re-adding the Elune's Light lines from git
   history before e64360398.

@@ -299,16 +299,17 @@ func TestCatRendAndTearBleeds(t *testing.T) {
 	}
 }
 
-// TestCatFinisherMissRefunds checks that a dodged Rip gives back 80% of its cost
-// (ATTR_EX_1_DISCOUNT_POWER_ON_MISS), that a dodged Ferocious Bite spends its cost and keeps the
-// extra Energy (wowsims/forever c91498c01), and that both keep the combo points.
+// TestCatFinisherMissRefunds checks that a dodged Rip or Ferocious Bite gives back 80% of its cost
+// (ATTR_EX_1_DISCOUNT_POWER_ON_MISS; for Bite, wowsims/forever's 0384d8f98c measured it on a
+// 1.60.1.70862 log: five avoided Bites cost 6.1 to 6.7 Energy), that Bite keeps the extra Energy,
+// and that both keep the combo points.
 func TestCatFinisherMissRefunds(t *testing.T) {
 	for _, tc := range []struct {
 		spell      func(*FeralDruid) *druid.DruidSpell
 		energyLeft func(cost float64) float64
 	}{
 		{func(cat *FeralDruid) *druid.DruidSpell { return cat.Rip }, func(cost float64) float64 { return 100 - 0.2*cost }},
-		{func(cat *FeralDruid) *druid.DruidSpell { return cat.FerociousBite }, func(cost float64) float64 { return 100 - cost }},
+		{func(cat *FeralDruid) *druid.DruidSpell { return cat.FerociousBite }, func(cost float64) float64 { return 100 - 0.2*cost }},
 	} {
 		sim, cat := newCatSim(t, "")
 		target := cat.CurrentTarget
@@ -486,5 +487,23 @@ func TestCatClawDamage(t *testing.T) {
 	result := cat.Claw.CalcDamage(sim, target, 115+weapon.CalculateAverageWeaponDamage(ap), cat.Claw.OutcomeAlwaysHit)
 	if math.Abs(result.Damage-want) > 1e-6 {
 		t.Errorf("Claw hits for %.2f, want %.2f", result.Damage, want)
+	}
+}
+
+// TestCatSharpenedClawsSpellCrit checks that Sharpened Claws (16942, aura 290 A_MOD_CRIT_PCT) gives
+// its 3% a point to spell crit as well as melee crit in Cat Form.
+func TestCatSharpenedClawsSpellCrit(t *testing.T) {
+	_, plain := newCatSim(t, "")
+	_, claws := newCatSim(t, "-0000000002")
+	if claws.Talents.SharpenedClaws != 2 {
+		t.Fatalf("Sharpened Claws %d, want 2", claws.Talents.SharpenedClaws)
+	}
+	if !plain.InForm(druid.Cat) || !claws.InForm(druid.Cat) {
+		t.Fatal("not in Cat Form")
+	}
+	for _, s := range []stats.Stat{stats.MeleeCrit, stats.SpellCrit} {
+		if got := claws.GetStat(s) - plain.GetStat(s); math.Abs(got-6) > 1e-6 {
+			t.Errorf("Sharpened Claws 2/2 adds %.2f %s in Cat Form, want 6", got, s.StatName())
+		}
 	}
 }

@@ -1,9 +1,10 @@
 # Rotation audit: reference files
 
-- `baseline_3a86d4a_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  3a86d4a6b (pass 64). Against the previous 97da1cc baseline: Enhancement +20.0 to +24.6 (c7a99fa49: Windfury
-  Weapon's attacks roll the shaman's own Windfury Totem under Forever); every other preset unchanged.
-  (The shared CLI was `/tmp/audit-cache/cli/3a86d4a6bf60/wowsimcli`; made the same way as before.)
+- `baseline_70ea588_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  70ea588bb (pass 66). Only the six druid rows were re-simmed (shared CLI `/tmp/audit-cache/cli/70ea588bb116/wowsimcli`):
+  0cc2c3c8b (an avoided Ferocious Bite refunds 80%; Sharpened Claws adds spell crit) moved Feral +2.35 (1152.74 ->
+  1155.09) and the FF duty +2.36; Balance unchanged. Every other row is carried from the 3a86d4a baseline, since no
+  other sim code changed between 3a86d4a6b and 70ea588bb.
 
 ## Not committed (kept locally, re-create as needed)
 

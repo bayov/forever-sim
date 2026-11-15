@@ -54,8 +54,13 @@ gives a wrong result. A new class or rotation may need more of the same kind.
   rewritten from `remainingTime` with cooldowns in `CD`; `moveTime` and `inMeleeRange` from
   `unitDistance` and `unitMovementSpeed`. `autoTimeToNext` and `autoTimeSinceLast` take
   `MainHandAuto`, `OffHandAuto`, `RangedAuto` (`autoSwingTime` keeps `MainHand`).
-- **A talent spell the build lacks** (`NOSPELLS=<id>,...`): ours reads a value naming it as
-  false, theirs drops it from its `and`, making the `and` true.
+- **A talent spell the build lacks:** ours reads a value naming it as false, theirs drops it
+  from its `and`, making the `and` true. The converter turns such a value false (never ready) on
+  their side for every rank of each talent our talent string leaves at 0
+  (`ui/core/talents/trees/<class>.json`); `NOSPELLS=<id>,...` adds more. Before 2026-11-15 only
+  `NOSPELLS` did, and `spellUsesRemaining(13750)>0` (Adrenaline Rush, 13877 Blade Flurry) on a
+  build without it became `remainingTime>=15s`, true: Seal Fate Daggers ran theirs' 5-point
+  Slice and Dice 3.2 times to ours' 1.2 and Cold Blood 0.3 to 1.0 (-30.4 DPS, now -13.7).
 - **Vanish and Sweeping Strikes** are DPS cooldowns in theirs, so `autocastOtherCooldowns` would
   Vanish at the pull and Sweeping Strikes every 30 s (32 DPS on Arms). A never-true line names
   each.

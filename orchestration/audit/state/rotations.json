@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "d630df2cb0d485ea2d7646bc58f3aff87569a89c"
+  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
  },
- "last_pass_at": "2026-11-14T00:49:49Z",
- "pass": 65,
- "result": "quiet",
- "note": "Pass 65: only statweight.go (not reached by presets) and the Enhancement re-search (Water Shield: Flame Shock above Stormstrike, verified: old order -2.1 at 180 s pooled; Imp GW gear). No new findings; 3 open findings still unapplied.",
+ "last_pass_at": "2026-11-15T13:15:00Z",
+ "pass": 66,
+ "result": "findings",
+ "note": "Pass 66: Feral Bite refund (0cc2c3c8b): gate 65 still +2.5 at 180 s. Windfury timing request done except Enhancement Stormstrike/WF Weapon ICD (no APL value). New: rotations-20261115-1 Arms WF ICD gate +2.5. 4 open findings unapplied.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-15T06:44:36Z",
- "baseline": "baseline_3a86d4a_3000it_seed424242.tsv"
+ "checked_at": "2026-11-15T13:12:56Z",
+ "baseline": "baseline_70ea588_3000it_seed424242.tsv"
 }

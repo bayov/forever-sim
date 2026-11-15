@@ -21,7 +21,7 @@
   filler and both use only the Sapper.
 
 Env ALIGN="<their stat index>=<value>,..." adds bonus stats to theirs (align.py finds them).
-Env NOSPELLS="<id>,..." names talent spells the build doesn't have, see nospell() below.
+Env NOSPELLS="<id>,..." names more spells the build doesn't have, beside the talents its string leaves at 0 (see nospell()).
 
 Rogues, hunters, warriors, shamans, mages, warlocks, priests, druids and paladins are mapped. Adding one means its options, its consumables and its spell ids
 (SKILL.md, "Adding a class").
@@ -380,6 +380,16 @@ else:
 # ---- rotation ---------------------------------------------------------------------------------------------------
 # APL_TRANSLATION: values theirs lacks, rewritten from ones it has.
 NOSPELLS = {int(x) for x in os.environ.get('NOSPELLS', '').split(',') if x}
+def untaken_talent_spells():
+    # Every rank of each talent our talent string takes no point in (ui/core/talents/trees/<class>.json, whose order
+    # the string follows): spells the build can't cast, so a value naming one is false on both sides.
+    trees = json.load(open(os.path.join(ROOT, 'ui/core/talents/trees', klass[len('Class'):].lower() + '.json')))
+    out = set()
+    for tree, s in zip(trees, p['talentsString'].split('-') + [''] * len(trees)):
+        for i, t in enumerate(tree['talents']):
+            if i >= len(s) or s[i] == '0': out |= set(t.get('spellIds', []))
+    return out
+NOSPELLS |= untaken_talent_spells()
 def add(a, b_): return {'math': {'op': 'OpAdd', 'lhs': a, 'rhs': b_}}
 def sid_key(s): return ('item', s['itemId']) if 'itemId' in s else ('other', s['otherId']) if 'otherId' in s else s.get('spellId')
 DIST = {'unitDistance': {}}
