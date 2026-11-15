@@ -402,3 +402,17 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-15 13:12 | tank_mechanics | pass 16 | master 70ea588bb | quiet | changes don't affect bear tank
 2026-11-15 13:12 | tank_rotations | pass 14 | master 70ea588bb | quiet | only bear rows moved within error; Windfury gate tests lose
 2026-11-15 13:12 | tank_fairness | pass 15 | master 70ea588bb | quiet | bear +1 to +6 at most; tank order unchanged
+2026-11-15 19:42 | gear | pass 66 | master 25ce81de7 | quiet | only standard 17 and two unused items changed
+2026-11-15 19:42 | tank_gear | pass 10 | master 25ce81de7 | quiet | nothing touches tank gear
+2026-11-15 19:42 | healer_gear | pass 9 | master 25ce81de7 | quiet | nothing touches healer gear
+2026-11-15 19:42 | consumables | pass 87 | master 25ce81de7 | quiet | comments, APL tooltips and totem rule only
+2026-11-15 19:42 | tank_mechanics | pass 17 | master 25ce81de7 | quiet | Windfury/Judgement changes don't change tank presets
+2026-11-15 19:42 | mechanics | pass 84 | master 25ce81de7 | quiet | 3 findings fixed on master and resolved
+2026-11-15 19:42 | healer_mechanics | pass 16 | master 25ce81de7 | quiet | Wild Growth 0.066 landed, finding resolved
+2026-11-15 19:42 | results | pass 91 | master 25ce81de7 | quiet | 30 builds moved, all explained by Nov 15 round
+2026-11-15 19:42 | rotations | pass 67 | master 25ce81de7 | quiet | 2 findings landed, 1 withdrawn, new baseline
+2026-11-15 19:42 | fairness | pass 43 | master 25ce81de7 | quiet | only melee builds moved; Windfury rule explains all
+2026-11-15 19:42 | tank_rotations | pass 15 | master 25ce81de7 | quiet | baseline moved by Windfury rule; gates lose
+2026-11-15 19:42 | tank_fairness | pass 16 | master 25ce81de7 | quiet | order unchanged; bear +12% at max threat
+2026-11-15 19:42 | healer_rotations | pass 14 | master 25ce81de7 | 1 new findings | resto druid Wild Growth threshold needs re-tune
+2026-11-15 19:42 | healer_fairness | pass 15 | master 25ce81de7 | 1 new findings | raid druid carry fell to last after Wild Growth doubled

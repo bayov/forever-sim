@@ -1,10 +1,9 @@
 # Rotation audit: reference files
 
-- `baseline_70ea588_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  70ea588bb (pass 66). Only the six druid rows were re-simmed (shared CLI `/tmp/audit-cache/cli/70ea588bb116/wowsimcli`):
-  0cc2c3c8b (an avoided Ferocious Bite refunds 80%; Sharpened Claws adds spell crit) moved Feral +2.35 (1152.74 ->
-  1155.09) and the FF duty +2.36; Balance unchanged. Every other row is carried from the 3a86d4a baseline, since no
-  other sim code changed between 3a86d4a6b and 70ea588bb.
+- `baseline_25ce81d_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  25ce81de7 (pass 67), all 68 rows re-simmed (shared CLI `/tmp/audit-cache/cli/25ce81de7755/wowsimcli`). Moves since
+  70ea588 come from the client 70938 / Nov 13 hotfix round (Windfury Totem on every main-hand melee hit, melee
+  Judgement of Command, Two-Handed Weapon Specialization's Holy reach) and that round's re-tuned rotations.
 
 ## Not committed (kept locally, re-create as needed)
 

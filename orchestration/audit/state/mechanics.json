@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
+  "master": "cfc7f9382c8f784ee22128aa6f8122e72c71b142"
  },
- "last_pass_at": "2026-11-15T12:50:11Z",
- "pass": 83,
+ "last_pass_at": "2026-11-15T18:49:05Z",
+ "pass": 84,
  "result": "quiet",
- "note": "Pass 83: d630df2cb..70ea588bb. 0cc2c3c8b (Bite 80% miss refund, Sharpened Claws spell crit) verified on 70938. Blue tracker: Nov 14 dungeon XP post only. Hotfix SpellMisc pushes after 113605 still unread.",
+ "note": "Pass 84: 70ea588bb..25ce81de7. Resolved mechanics-20261114-1 (JoC melee), -20261112-1 (WF Totem all MH melee), -20261113-1 (Imp Firebolt), all 9ec69044f/78c395984. Dawn items verified on 70938. No new build or Blizzard posts.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-15T13:12:56Z",
+ "checked_at": "2026-11-15T19:42:01Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",

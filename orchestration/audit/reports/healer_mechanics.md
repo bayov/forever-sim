@@ -1,26 +1,25 @@
-# Healer mechanics, pass 15 (2026-11-15)
+# healer_mechanics pass 16 (2026-11-15, master 25ce81de77)
 
-Master 70ea588bb1 against last pass d630df2cb0. Client 1.60.1.70938 (unchanged). Result: quiet. Findings 10, 11, 14, 15 still open.
+Range 70ea588bb1..25ce81de77, 8 watched files. Client still 1.60.1.70938 (wago.tools latest); update ledger unchanged in range.
 
-## Get current
-
-| Source | Seen | Result |
-|---|---|---|
-| Newest client (`wago.py latest`) | 1.60.1.70938, same as pass 14 | no new rows to check |
-| Blizzard notes | thread t/2403040 | not re-read (no new build) |
-
-## What changed (d630df2cb0..70ea588bb1, watched paths)
+## What changed
 
 | File | Change | Healer reach | Verdict |
 |---|---|---|---|
-| `sim/druid/ferocious_bite.go` | avoided Bite refunds 80% of its 35 Energy under Forever | none: cat-form Energy finisher | no healer effect |
-| `sim/druid/forms.go` | Sharpened Claws now adds 3%/pt spell crit too, via `GetFormShiftStats` | only in cat/bear form (`forms.go:144`, `bear.go:98`); no heals are cast in form, Resto presets don't shift | no healer effect |
-| `sim/druid/feral/*` | Feral tests and results | none | n/a |
+| sim/druid/healing.go | Wild Growth tick coefficient 0.033 -> 0.066 (78c395984); comment cites SpellCategory 1237 shared CD | Restoration druid raid preset | match client 70938 SpellEffect 1072065/1235327/1235329 (tier 1); finding 15 resolved |
+| sim/paladin/talents.go | 2H Weapon Spec Holy part moved from the school to melee-defense spells + Consecration (user ruling 2026-11-15) | none: damage multiplier only, Holy paladin heals untouched | n/a |
+| sim/paladin/judgement.go, soc.go, sor.go, seal_of_fury.go, consecration.go | Judgement of Command on melee defense; seals take the spec via their own multiplier | Ret only | n/a |
+| sim/shaman/windfury_weapon.go | Windfury imbue aura keyed for its ICD (Stormstrike gating) | Enhancement only | n/a |
 
-No heal, healing talent or engine file changed. sim/core, shaman, paladin, priest and tools/healbench untouched.
+## Tests
 
-## Open findings re-checked
+`go test -tags=with_db ./sim/druid/... ./sim/paladin/holy/...`: all ok. `healing_ranks_test.go:87` now pins 0.066, so
+the Wild Growth coefficient has a failing test if it regresses. (Without `-tags=with_db` the balance/feral/tank suites panic
+on synthetic item ids; that is the build tag, not a defect.)
 
-- 15 (Wild Growth coefficient): `sim/druid/healing.go:174` still 0.033. Open.
-- 11 (Riptide mana): `sim/shaman/healing.go:117` still scales by `RiptideNotesManaScale` 0.6. Open.
-- 10, 14: no change on the watched paths. Open.
+## Open items
+
+- `docs/healing_druid.md:115-117` still list Wild Growth at 0.033 (doc only; noted under finding 15).
+- Findings 10 (test coverage) and 11 (Riptide mana) stay open.
+
+No new findings.

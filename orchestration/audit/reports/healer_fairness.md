@@ -1,32 +1,26 @@
-# Healer fairness pass 14 (2026-11-15, master 70ea588bb)
+# Healer fairness pass 15 (2026-11-15, master 25ce81de7)
 
-Result: quiet. No new finding. Still open: -20261104-4 (low; the boss files' `raidHealing` holds healer counts by
-class but no HPS by class). Due because master changed `sim/druid/ferocious_bite.go` (an avoided Bite refunds 80% of
-its 35 Energy under Forever, 0cc2c3c8b) and `sim/druid/forms.go` (Sharpened Claws adds spell crit as well as melee
-crit). Both are feral-only: `GetFormShiftStats` is applied only on entering Cat (forms.go:144) or Bear (bear.go:98),
-and neither Restoration druid preset shifts or bites.
+Result: findings. New: -20261115-1 (high; Wild Growth's doubled tick lowers the raid druid's carry 1.414 -> 1.392,
+from third to last in the raid role). Still open: -20261104-4 (low).
 
-Check: healbench built from 70ea588bb (`-tags with_db`, build_cli worktree), all 9 requests in their own role on
-the 7 boss files, seed 101, 1,000 iterations (`tools/audit/healer_rotations/baseline.sh`): all 63 rows identical
-to `ref/healer_fairness/bench_71562a8.tsv`. `tools/healbench/`, `tools/encounters/`, `ui/healing_*`, the healer
-class UIs and `proto/` unchanged in d630df2cb..70ea588bb, so sections 1 and 3 below still hold. The tables below
-are pass 11's, re-confirmed.
+Due because master changed 9 watched files since 70ea588bb. What reaches a healer:
+- `sim/druid/healing.go`: Wild Growth tick coefficient 0.033 -> 0.066 (client 1.60.1.70938). The raid druid preset
+  casts Wild Growth; the tank preset doesn't.
+- `sim/paladin/talents.go`, `judgement.go`, `soc.go`, `sor.go`, `seal_of_fury.go`, `consecration.go`: Two-Handed Weapon
+  Specialization's Holy part and Judgement of Command's defense type. Damage only; the Holy paladin presets heal.
+- `sim/shaman/windfury_weapon.go`, standards 17: Windfury Totem and Weapon melee rules. No healer melees.
 
-## 1. Same terms (the 9 requests)
+## 1. Same terms
 
-Everything but the healer row is byte-identical in all 9 (md5 of the request with the player row nulled): encounter,
-raid, buffs, debuffs, sim options. Player rows: level 60, Engineering + Alchemy, Blessing of Kings and Improved Wisdom,
-reaction 200 ms (healbench overrides), 20 yd, channel clip 50 ms (null for the paladin, who channels nothing).
-Consumables: Supreme Power, Greater Mageblood, Greater Cleric's Elixir, Greater Intellect, Sages, Cerebral Cortex,
-Major Mana Potion, Demonic Rune in all 9; food and oil each preset's own pick by objective (Wicked Smoothie for the
-druid, Runn Tum Tuber Surprise for the rest; Lesser Mana Oil for paladin raid and Holy tank, Wizard Oil elsewhere;
-`docs/healing_sim.md`, Consumables). Race: Human priest/paladin, Skyborne Windshaper shaman/druid. Talent strings
-match the shipped presets in `ui/*/presets.ts`. No unexplained difference.
+`tools/healbench/req/`, `tools/encounters/`, `ui/healing_*` and `proto/` unchanged in 70ea588bb..25ce81de7, so pass
+11's check holds: everything but the healer row is identical in all 9 requests; level 60, the same consumable
+tier, Blessing of Kings and Improved Wisdom, 200 ms reaction, each class's best race. No unexplained difference.
 
 ## 2. The numbers (healbench -carry, 1,000 iterations, seed 101, each file at its own length)
 
-Healbench built from 71562a8b0 (`-tags with_db`, in the build_cli worktree); rows in
-`ref/healer_fairness/bench_71562a8.tsv` (summary.tsv format, tools/audit/healer_rotations/baseline.sh).
+Healbench built from 25ce81de7 (`--tags=with_db`); rows in `ref/healer_fairness/bench_25ce81d.tsv` (summary.tsv
+format, `tools/audit/healer_rotations/baseline.sh`). 56 of 63 cells identical to `bench_71562a8.tsv`; only the raid
+druid's 7 moved.
 
 | Request | Onyxia | Brood | Chrom | Golem | Magma | Rag | Vael | Mean | Rank |
 |---|---|---|---|---|---|---|---|---|---|
@@ -37,29 +31,41 @@ Healbench built from 71562a8b0 (`-tags with_db`, in the build_cli worktree); row
 | paladin_holy (tank) | 1.241 | .883 | .908 | 1.806 | 1.867 | .568 | .789 | 1.152 | 5 |
 | priest_holy_raid | .988 | .906 | 1.065 | 2.607 | 2.062 | 1.340 | 1.262 | 1.461 | 1 |
 | paladin_holy_raid | 1.018 | .912 | 1.146 | 2.702 | 1.914 | 1.283 | 1.035 | 1.430 | 2 |
-| druid_restoration_raid | .991 | .924 | 1.094 | 2.630 | 1.829 | 1.278 | 1.152 | 1.414 | 3 |
-| shaman_restoration_raid | .946 | .885 | 1.115 | 2.674 | 1.887 | 1.236 | 1.138 | 1.412 | 4 |
+| shaman_restoration_raid | .946 | .885 | 1.115 | 2.674 | 1.887 | 1.236 | 1.138 | 1.412 | 3 |
+| druid_restoration_raid | .944 | .911 | 1.107 | 2.634 | 1.839 | 1.264 | 1.048 | 1.392 | 4 (was 3, 1.414) |
 
-Against `ref/healer_bench/summary.tsv` (8f3f74f3f): the 49 cells of the 7 unchanged presets are identical, so the
-seen-health values, the Windfury rule and the rest of the merge move no healer. The two re-tuned raid presets land on
-pass 9's predictions exactly (`retune_25f65da_s101.tsv`): Holy raid 1.440 -> 1.461 (Twilight Focus, +0.137 on
-Vaelastrasz), paladin raid 1.400 -> 1.430 (Flash of Light, gains on Onyxia, Chromaggus, Vaelastrasz).
+Spread: tank 1.152-1.278 (unchanged), raid 1.392-1.461 (4.7%, was 3.5%). Nothing past the 15% line.
 
-Spread: tank 1.152-1.278 (paladin 10% behind the leader, cast-time bound with mana to spare, as before; the other
-four within 2%), raid 1.412-1.461 (3.5%). Nothing past the 15% line. Only the Disc tank preset runs out of mana
-(Chromaggus).
+### The raid druid and Wild Growth (-20261115-1)
+
+Paired against a 0.033 build of the same master (scratch worktree, only the constant changed), carry:
+
+| File | seed | 0.033 | 0.066 |
+|---|---|---|---|
+| Vaelastrasz | 101 / 202 / 303 | 1.152 / 1.158 / 1.145 | 1.048 / 1.039 / 1.031 |
+| Onyxia | 101 / 202 / 303 | .991 / .985 / .984 | .944 / .947 / .987 |
+
+A heal worth twice as much costing carry means the preset doesn't use it well. Its Wild Growth line waits until the
+most hurt misses `spellExpectedHealing(Wild Growth)`, which doubled. Gate screen (seed 101, 1,000 it):
+
+| Wild Growth gate | Onyx | Brood | Chrom | Golem | Magma | Rag | Vael | Mean |
+|---|---|---|---|---|---|---|---|---|
+| 1.0x (preset) | .944 | .911 | 1.107 | 2.634 | 1.839 | 1.264 | 1.048 | 1.392 |
+| 0.5x (old threshold) | .972 | .921 | 1.132 | 2.458 | 1.793 | 1.271 | 1.210 | 1.394 |
+| 0.25x | .930 | .910 | 1.103 | 2.344 | 1.671 | 1.256 | 1.174 | 1.341 |
+
+More Wild Growth wins Vaelastrasz (raid-wide fire) and loses Golemagg and Magmadar, so it needs a proper rotation
+re-tune (healer_rotations / rotopt), not one constant. Sent as a worker fix.
 
 ## 3. What a role rewards
 
-Each preset benched only in its own role (`_raid` in raid, the rest in tank), each file at its own length. Unchanged.
+Each preset benched only in its own role, each file at its own length. Unchanged.
 
 ## Against the logs
 
-Still can't be checked: the boss files keep no healing by class (-20261104-4). The logs' composition (about 5
-priests, 3 shamans, 2 paladins, 1 druid per 11 healers) is not a ranking.
+Still can't be checked: the boss files keep no healing by class (-20261104-4).
 
 ## Open items
 
+- -20261115-1 (high): re-tune the raid druid for the 0.066 Wild Growth; try Wild Growth in the tank preset.
 - -20261104-4 (low): HPS by healer class in the boss files.
-- `ref/healer_bench/summary.tsv` (healer_rotations' baseline) predates the two raid re-tunes; its next pass should
-  regenerate it (this pass's rows are the same format).

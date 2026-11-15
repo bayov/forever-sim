@@ -2,3 +2,6 @@
 
 Only orchestration/standards.md changed since 71562a8b03 (standard 17, Windfury Totem extra attacks; not a tank-gear rule). No ui/*/gear_sets, forever_synthetic_items_*_tank.go or gear_targets.md change.
 Re-ran tools/audit/tank_gear/{warrior,paladin,druid,shaman}.py: all exit 0, no new anomalies in the tails. Per-piece and per-row tables from pass 8 stand (inputs unchanged). No open findings.
+
+## Pass 10 (master 25ce81de7)
+Only watched change since 70ea588bb: orchestration/standards.md, standard 17 (Windfury Totem proc rules, AP kept). No tank synthetic items, gear sets, recipes or gear_targets.md changed, so the pass-9 tables stand. Quiet.

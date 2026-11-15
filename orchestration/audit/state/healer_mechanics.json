@@ -1,15 +1,15 @@
 {
  "last": {
-  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
+  "master": "cfc7f9382c8f784ee22128aa6f8122e72c71b142"
  },
- "last_pass_at": "2026-11-15T12:49:12Z",
- "pass": 15,
+ "last_pass_at": "2026-11-15T18:47:40Z",
+ "pass": 16,
  "result": "quiet",
- "note": "Pass 15: only ferocious_bite.go (miss refund) and forms.go (Sharpened Claws spell crit in form) changed; neither reaches a healer. Client still 70938. Findings 10, 11, 14, 15 open.",
+ "note": "Pass 16: Wild Growth coef 0.066 on master (78c395984), finding 15 resolved; paladin 2H Spec/judgement/seal and Windfury imbue changes reach no healer. Client still 70938. Findings 10, 11 open.",
  "client_build": "1.60.1.70938",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040",
   "date": "2026-11-11"
  },
- "checked_at": "2026-11-15T13:12:56Z"
+ "checked_at": "2026-11-15T19:42:01Z"
 }

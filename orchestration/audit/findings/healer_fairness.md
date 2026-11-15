@@ -2,6 +2,25 @@
 
 ## Open
 
+### healer_fairness-20261115-1: Wild Growth's doubled tick (0.033 -> 0.066) lowers the raid druid's carry, 1.414 -> 1.392, from third to last; the preset isn't re-tuned for it
+- severity: high (the raid druid drops from third to last in the raid role, 0.020 behind the shaman's 1.412)
+- affects: Restoration druid raid preset (`tools/healbench/req/druid_restoration_raid.json`, and its `ui/` twin); the tank preset casts no Wild Growth
+- found: 2026-11-15, master 25ce81de7
+- evidence: `sim/druid/healing.go:175` `WildGrowthTickCoefficient` 0.033 -> 0.066 (client 70938, update_1115). Full bench
+  (seed 101, 1,000 it, `ref/healer_fairness/bench_25ce81d.tsv`): the 56 other cells identical to `bench_71562a8.tsv`; the raid druid's
+  7 move to Onyxia .991 -> .944, Brood .924 -> .911, Chrom 1.094 -> 1.107, Golemagg 2.630 -> 2.634, Magmadar 1.829 -> 1.839,
+  Ragnaros 1.278 -> 1.264, Vaelastrasz 1.152 -> 1.048. Paired against a 0.033 build of the same master (scratch worktree),
+  Vaelastrasz -0.104 / -0.119 / -0.114 on seeds 101 / 202 / 303 (overheal 46% -> 48%); Onyxia -0.047 / -0.038 / +0.003.
+  A stronger heal costing carry points at the preset: its Wild Growth line is gated on the most hurt missing at least
+  `spellExpectedHealing(Wild Growth)`, which doubled with the coefficient. Screen (seed 101, 1,000 it, `screen.sh`): that
+  gate at 0.5x (the old threshold) gives mean 1.394 (Vael 1.210, best yet, but Golemagg 2.458, Magmadar 1.793); at 0.25x 1.341.
+  So the gate alone doesn't recover it: the file decides, and the rotation needs a real re-tune (also Nature's Swiftness,
+  Swiftmend and the Regrowth lines' order around a Wild Growth worth twice as much).
+- proposed fix: re-tune the raid druid preset for the 0.066 Wild Growth (healer_rotations / rotopt), at least the Wild Growth
+  gate per role-length and its place against Regrowth and Healing Touch; also try a Wild Growth line in the tank preset
+  (the tank's party takes it). Re-bench both druid presets after.
+- needs: worker fix
+
 ### healer_fairness-20261104-4: the boss files' raidHealing has no healing by class, so the sim's healer ranking can't be checked against the logs
 - severity: low (blocks a check; moves no number)
 - affects: the pass's step 2 for every healer

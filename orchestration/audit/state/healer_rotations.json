@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
+  "master": "cfc7f9382c8f784ee22128aa6f8122e72c71b142"
  },
- "last_pass_at": "2026-11-15T13:12:29Z",
- "pass": 13,
- "result": "quiet",
- "note": "Pass 13 on 70ea588bb. Gate files sim/druid/ferocious_bite.go and forms.go (FB refund, Sharpened Claws spell crit), feral forms only. Baseline 63 rows bit-identical to ref. -20261104-2 still open.",
+ "last_pass_at": "2026-11-15T19:30:55Z",
+ "pass": 14,
+ "result": "findings",
+ "note": "Pass 14 on 25ce81de7. Wild Growth 0.033->0.066 moved the 7 druid_restoration_raid rows (mean -0.022 carry; gate doubled); filed -20261115-1 (gate x0.75 +0.018). Paladin/shaman changes damage-only, rows identical. -20261104-2 still open.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-15T13:12:56Z"
+ "checked_at": "2026-11-15T19:42:01Z"
 }

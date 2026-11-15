@@ -20,6 +20,7 @@
 - pass 11: still open (user call); 71562a8b0 keeps 990617 held 35 s; not re-tested.
 - pass 12: still open (user call); 97da1cca5 unchanged; not re-tested.
 - pass 13: still open (user call); 3a86d4a6b unchanged, baseline bit-identical; not re-tested.
+- pass 15: still open (user call); 25ce81de7 re-tuned Max survival (Heroic Strike 40, Revenge first, Thunder Clap under 8 s) but keeps 990617 held 35 s; not re-tested.
 
 ### tank_rotations-20261104-3: Paladin's Templar's Bulwark timer was searched on a 10 s grid and misses an optimum at 13 s, which mostly fits Broodlord's script
 - severity: high (by the numbers; see the caveat)
@@ -40,6 +41,7 @@
 - pass 11: still open (user ruling); 71562a8b0 keeps 10 s at all three presets; not re-tested.
 - pass 12: still open (user ruling); 97da1cca5 unchanged; not re-tested.
 - pass 13: still open (user ruling); 3a86d4a6b unchanged, baseline bit-identical; not re-tested.
+- pass 15: still open (user ruling); 25ce81de7 keeps 10 s at all three presets (docs/tank_paladin.md, Nov 13 re-search with bulwarkAt frozen); not re-tested.
 
 ## Resolved
 

@@ -4,6 +4,31 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### rotations-20261112-1: Dagger and Seal Fate rogues: Instant Poison on the main hand, Deadly Poison on the off hand
+- severity: high (Seal Fate Daggers +16.3 at 180 s, 1.8%; Mutilate +14.3, 1.65%; Seal Fate Swords +9.8, 1.05%; Subtlety +2.4, 0.28%)
+- affects: rogue__mutilate, rogue__seal-fate-daggers, rogue__seal-fate-swords, rogue__subtlety. Not the two Combat builds (swap loses 2.3-3.2).
+- found: 2026-11-12, master a0b4d3be9
+- evidence: every rogue req carries `"rogue":{"options":{"mainHandPoison":"DeadlyPoison","offHandPoison":"InstantPoison"}}`
+  (e.g. `tools/dps_report/req/rogue__mutilate.json:1101`), from the shared `ui/rogue/presets.ts:345-346`. B swaps the two.
+  Paired `ab.py --req-b` (20k it, 8 blocks, CLI a0b4d3be9859), B-A at 120 / 180 / 300 s:
+  | preset | S0 1e6 | S0 2e8 | pooled | A at 180 |
+  |---|---|---|---|---|
+  | mutilate | +14.91 / +14.47 / +14.13 | +15.02 / +14.18 / +13.77 | **+14.97 / +14.33 / +13.95** | 865.0 |
+  | seal-fate-daggers | +16.41 / +16.26 / +15.70 | +16.63 / +16.28 / +15.78 | **+16.52 / +16.27 / +15.74** | 903.6 |
+  | seal-fate-swords | +10.34 / +9.60 / +9.23 | +9.98 / +10.04 / +9.68 | **+10.16 / +9.82 / +9.46** | 939.0 |
+  | subtlety | +2.08 / +2.27 / +2.04 | +2.44 / +2.61 / +2.65 | **+2.26 / +2.44 / +2.35** | 862.6 |
+  | combat-daggers | -1.96 / -2.72 / -3.28 | -2.57 / -2.73 / -3.19 | -2.27 / -2.73 / -3.24 | 936.2 |
+  | combat-swords | -2.63 / -2.81 / -3.17 | - | - | - |
+  SE 0.2-0.7 a set. Instant Poison on both hands loses on every build (-13 to -20; Seal Fate Daggers -1.5).
+  Part of this predates the change: the old CLI (71994fca6) gives the swap +7.4 (Mutilate) and +6.3 (Seal Fate
+  Daggers) at 180 s, set 1. This master's Windfury Totem rolls on main hand abilities (a0b4d3be9) and Venom's
+  +20% reaching Instant Poison (e2322baa1) roughly double it. High confidence on the sign; numbers as measured.
+- proposed fix: give Mutilate, both Seal Fate builds and Subtlety their own options with `mainHandPoison: InstantPoison`,
+  `offHandPoison: DeadlyPoison` (presets.ts and the four req files); Combat keeps the current pairing.
+- needs: orchestrator fix
+
+## Resolved
+
 ### rotations-20261115-1: Arms: hold the main-hand abilities while Windfury Totem's 100 ms cooldown runs
 - severity: low (+2.5 DPS at 180 s, 0.24%; Dragonkin +1.6)
 - affects: warrior__arms, warrior__arms_dragonkin (+ the two Arms duty builds, same lines, not run). Not Fury DW (0.0) or Fury 2H (+0.4, under the bar).
@@ -28,29 +53,40 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: add the gate above to those lines in the four `level60_arms*.apl.json` files and to the two Arms req rotations
   (warrior__arms, warrior__arms_dragonkin; the duty reqs too if they embed them).
 - needs: orchestrator fix
+- resolved: 2026-11-15, a8ea43990 (variant): the landed gate is the swing form, `autoTimeToNext(MH) <= autoSwingTime(MH) - 0.1s`,
+  on Mortal Strike, Overpower, Rend, Execute and Hamstring in the three `level60_arms*.apl.json` and the three Arms reqs (pass 66
+  measured that form at +2.27 on Arms). Dragonkin was left out; pass 67 re-measured the same gate there under the Nov 13 rule
+  (every main-hand melee hit rolls the totem): -0.15 / -0.38 / -0.84 at 120 / 180 / 300 s (set 1, A 1126.1), so leaving it out is right.
 
-### rotations-20261112-1: Dagger and Seal Fate rogues: Instant Poison on the main hand, Deadly Poison on the off hand
-- severity: high (Seal Fate Daggers +16.3 at 180 s, 1.8%; Mutilate +14.3, 1.65%; Seal Fate Swords +9.8, 1.05%; Subtlety +2.4, 0.28%)
-- affects: rogue__mutilate, rogue__seal-fate-daggers, rogue__seal-fate-swords, rogue__subtlety. Not the two Combat builds (swap loses 2.3-3.2).
-- found: 2026-11-12, master a0b4d3be9
-- evidence: every rogue req carries `"rogue":{"options":{"mainHandPoison":"DeadlyPoison","offHandPoison":"InstantPoison"}}`
-  (e.g. `tools/dps_report/req/rogue__mutilate.json:1101`), from the shared `ui/rogue/presets.ts:345-346`. B swaps the two.
-  Paired `ab.py --req-b` (20k it, 8 blocks, CLI a0b4d3be9859), B-A at 120 / 180 / 300 s:
-  | preset | S0 1e6 | S0 2e8 | pooled | A at 180 |
-  |---|---|---|---|---|
-  | mutilate | +14.91 / +14.47 / +14.13 | +15.02 / +14.18 / +13.77 | **+14.97 / +14.33 / +13.95** | 865.0 |
-  | seal-fate-daggers | +16.41 / +16.26 / +15.70 | +16.63 / +16.28 / +15.78 | **+16.52 / +16.27 / +15.74** | 903.6 |
-  | seal-fate-swords | +10.34 / +9.60 / +9.23 | +9.98 / +10.04 / +9.68 | **+10.16 / +9.82 / +9.46** | 939.0 |
-  | subtlety | +2.08 / +2.27 / +2.04 | +2.44 / +2.61 / +2.65 | **+2.26 / +2.44 / +2.35** | 862.6 |
-  | combat-daggers | -1.96 / -2.72 / -3.28 | -2.57 / -2.73 / -3.19 | -2.27 / -2.73 / -3.24 | 936.2 |
-  | combat-swords | -2.63 / -2.81 / -3.17 | - | - | - |
-  SE 0.2-0.7 a set. Instant Poison on both hands loses on every build (-13 to -20; Seal Fate Daggers -1.5).
-  Part of this predates the change: the old CLI (71994fca6) gives the swap +7.4 (Mutilate) and +6.3 (Seal Fate
-  Daggers) at 180 s, set 1. This master's Windfury Totem rolls on main hand abilities (a0b4d3be9) and Venom's
-  +20% reaching Instant Poison (e2322baa1) roughly double it. High confidence on the sign; numbers as measured.
-- proposed fix: give Mutilate, both Seal Fate builds and Subtlety their own options with `mainHandPoison: InstantPoison`,
-  `offHandPoison: DeadlyPoison` (presets.ts and the four req files); Combat keeps the current pairing.
+### rotations-20261105-1: Feral cat: Ferocious Bite energy gate 45 -> 65, now that extra Energy hits harder (hotfix 113403)
+- severity: low (+1.9 DPS at 180 s, 0.16%; +1.1 on the FF duty)
+- affects: druid__feral-cat, druid__feral-cat-duty-ff (ui/feral_druid/apls/level60.apl.json:10, level60_ff.apl.json:11)
+- found: 2026-11-05, master a07941531
+- evidence: ff56f8ddc (`sim/druid/ferocious_bite.go`, hotfix push 113403) raised rank 6's damage per extra
+  Energy 2.7 -> 3.3. The 5-CP Ferocious Bite line still fires at `{"cmp":{"lhs":{"currentEnergy":{}},"op":"OpGe","rhs":{"const":{"val":"45"}}}}`.
+  Paired `ab.py` (20k it, 8 blocks, shared CLI a0794153163a), B-A at 120/180/300 s:
+  | gate | S0 1e6 | S0 2e8 | pooled |
+  |---|---|---|---|
+  | 35 | -2.61 / -2.92 / -3.41 | - | - |
+  | 55 | +1.25 / +1.18 / +2.10 | +1.40 / +1.22 / +1.92 | +1.33 / +1.20 / +2.01 |
+  | 65 | +1.63 / +1.86 / +3.28 | +1.80 / +1.96 / +3.12 | +1.72 / +1.91 / +3.20 |
+  | 75 | -0.42 / +0.19 / +1.85 | - | - |
+  | 65, FF duty | +0.70 / +0.89 / +2.06 | +1.18 / +1.33 / +2.06 | +0.94 / +1.11 / +2.06 |
+  Baseline at 180 s: 1169.1 (feral-cat), 1164.5 (duty-ff). Gains at every length on both sets; 65 is the peak of
+  the measured grid (SE about 0.2-0.4 a set).
+- update 2026-11-12 (pass 61, master 8306f1d52): c380bbaef gives Rake's direct hit 6.5% of attack power (feral +29.3
+  at 180 s in the baseline). The gate is still 45 on master and 65 now gains more. Same variant, 20k it, 8 blocks,
+  CLI 8306f1d52875, B-A at 120 / 180 / 300 s:
+  feral-cat: set 1 +2.07 / +2.97 / +4.81, set 2 +2.17 / +2.50 / +4.36, **pooled +2.12 / +2.74 / +4.59** (A 1153.1 at 180).
+  duty-ff: set 1 +1.83 / +2.19 / +3.99, set 2 +1.77 / +1.79 / +3.76, **pooled +1.80 / +1.99 / +3.88** (A 1148.3).
+  Gate 75 (set 1): +0.28 / +1.28 / +4.16, so 65 stays the pick. Severity stays low (0.24%).
+- update 2026-11-15 (pass 66, master 70ea588bb): 0cc2c3c8b refunds 80% of an avoided Bite's 35 Energy. Gate 65 still gains,
+  same variant, 20k it, CLI 70ea588bb116, B-A at 120 / 180 / 300 s: feral-cat set 1 +1.80 / +2.51 / +4.17, set 2 +2.05 / +2.47 / +4.53,
+  **pooled +1.93 / +2.49 / +4.35** (A 1155.8); duty-ff set 1 +1.29 / +1.71 / +3.54, set 2 +1.50 / +1.63 / +3.74, **pooled +1.40 /
+  +1.67 / +3.64** (A 1150.7). Gate 75 (set 1): -0.05 / +0.44 / +3.28, so 65 stays the pick.
+- proposed fix: in both APLs (and the two req rotations), the 5-CP Ferocious Bite line's `"val":"45"` -> `"val":"65"`.
 - needs: orchestrator fix
+- resolved: 2026-11-15, f9990ec4e (Bite at 65 Energy in both Feral APLs, plus a totem cooldown gate).
 
 ### rotations-20261109-1: Fury 2H: drop the 90-rage Heroic Strike line (Arms no longer: Windfury Totem now rolls on Heroic Strike)
 - severity: low (now +2.0 DPS at 180 s on Fury 2H, 0.19%; was +3.5 on Arms and Fury 2H)
@@ -82,37 +118,9 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - original proposed fix: delete the 90-rage Heroic Strike line from the seven Arms and Fury 2H APLs and their req rotations.
   If 0ce9dbf40's ruling is reversed (the commit says Heroic Strike wasn't checked in the logs), restore it.
 - needs: orchestrator fix
-
-### rotations-20261105-1: Feral cat: Ferocious Bite energy gate 45 -> 65, now that extra Energy hits harder (hotfix 113403)
-- severity: low (+1.9 DPS at 180 s, 0.16%; +1.1 on the FF duty)
-- affects: druid__feral-cat, druid__feral-cat-duty-ff (ui/feral_druid/apls/level60.apl.json:10, level60_ff.apl.json:11)
-- found: 2026-11-05, master a07941531
-- evidence: ff56f8ddc (`sim/druid/ferocious_bite.go`, hotfix push 113403) raised rank 6's damage per extra
-  Energy 2.7 -> 3.3. The 5-CP Ferocious Bite line still fires at `{"cmp":{"lhs":{"currentEnergy":{}},"op":"OpGe","rhs":{"const":{"val":"45"}}}}`.
-  Paired `ab.py` (20k it, 8 blocks, shared CLI a0794153163a), B-A at 120/180/300 s:
-  | gate | S0 1e6 | S0 2e8 | pooled |
-  |---|---|---|---|
-  | 35 | -2.61 / -2.92 / -3.41 | - | - |
-  | 55 | +1.25 / +1.18 / +2.10 | +1.40 / +1.22 / +1.92 | +1.33 / +1.20 / +2.01 |
-  | 65 | +1.63 / +1.86 / +3.28 | +1.80 / +1.96 / +3.12 | +1.72 / +1.91 / +3.20 |
-  | 75 | -0.42 / +0.19 / +1.85 | - | - |
-  | 65, FF duty | +0.70 / +0.89 / +2.06 | +1.18 / +1.33 / +2.06 | +0.94 / +1.11 / +2.06 |
-  Baseline at 180 s: 1169.1 (feral-cat), 1164.5 (duty-ff). Gains at every length on both sets; 65 is the peak of
-  the measured grid (SE about 0.2-0.4 a set).
-- update 2026-11-12 (pass 61, master 8306f1d52): c380bbaef gives Rake's direct hit 6.5% of attack power (feral +29.3
-  at 180 s in the baseline). The gate is still 45 on master and 65 now gains more. Same variant, 20k it, 8 blocks,
-  CLI 8306f1d52875, B-A at 120 / 180 / 300 s:
-  feral-cat: set 1 +2.07 / +2.97 / +4.81, set 2 +2.17 / +2.50 / +4.36, **pooled +2.12 / +2.74 / +4.59** (A 1153.1 at 180).
-  duty-ff: set 1 +1.83 / +2.19 / +3.99, set 2 +1.77 / +1.79 / +3.76, **pooled +1.80 / +1.99 / +3.88** (A 1148.3).
-  Gate 75 (set 1): +0.28 / +1.28 / +4.16, so 65 stays the pick. Severity stays low (0.24%).
-- update 2026-11-15 (pass 66, master 70ea588bb): 0cc2c3c8b refunds 80% of an avoided Bite's 35 Energy. Gate 65 still gains,
-  same variant, 20k it, CLI 70ea588bb116, B-A at 120 / 180 / 300 s: feral-cat set 1 +1.80 / +2.51 / +4.17, set 2 +2.05 / +2.47 / +4.53,
-  **pooled +1.93 / +2.49 / +4.35** (A 1155.8); duty-ff set 1 +1.29 / +1.71 / +3.54, set 2 +1.50 / +1.63 / +3.74, **pooled +1.40 /
-  +1.67 / +3.64** (A 1150.7). Gate 75 (set 1): -0.05 / +0.44 / +3.28, so 65 stays the pick.
-- proposed fix: in both APLs (and the two req rotations), the 5-CP Ferocious Bite line's `"val":"45"` -> `"val":"65"`.
-- needs: orchestrator fix
-
-## Resolved
+- resolved (withdrawn): 2026-11-15, pass 67, master 25ce81de7: under the Nov 13 rule (Windfury Totem on every main-hand
+  melee hit) deleting the line now loses on Fury 2H: -2.23 / -2.99 / -4.09 at 120 / 180 / 300 s (set 1, SE 0.3-0.6, A 1104.5).
+  Keep it on every build.
 
 ### rotations-20261108-1: Enhancement Mana Tide and Water Shield: Flametongue Weapon beats Windfury Weapon now that our own Windfury Totem is the group's weapon totem
 - severity: medium (+5.6 DPS at 180 s on Mana Tide, 0.54%; +3.4 on Water Shield, 0.31%)

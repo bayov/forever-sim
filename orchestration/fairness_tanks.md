@@ -1,26 +1,28 @@
 # Fairness between tanks
 
 The tank_fairness auditor keeps this current (orchestration/audit/passes/tank_fairness.md): the tank ranking at each
-preset weight, its reasons, and the open questions. Last pass: 2026-11-15, pass 15, master 70ea588bb (bear +5 from
-Sharpened Claws' spell crit, order unchanged); last full run pass 13, master 97da1cca5, after the
-Nov 11 hotfixes for the paladin (Judgement rolls as a ranged attack, Unsealed Wrath stores no echo from Windfury Totem
-swings; 33b13e310) and the Windfury rule that no extra attack rolls Windfury (a1a1a81bb). The report has the details
+preset weight, its reasons, and the open questions. Last pass and full run: 2026-11-15, pass 16, master
+25ce81de7, after the Nov 13 hotfixes (PR #130: Windfury Totem rolls on every landed main hand melee hit, standards 17;
+Judgement of Command melee again) and the warrior's Balanced and Max survival re-tune (f2a5dfe25). The report has the details
 (orchestration/audit/reports/tank_fairness.md); the table is in orchestration/audit/ref/tank_fairness/summary.tsv.
 
 ## Ranking (tankbench 3000 iterations, seed 1, six-boss mean, each spec's matching preset)
 
 | weight | order (best first) | scores |
 |---|---|---|
-| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4223 / 3246 / 2794 / 2557 |
-| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3428 / 2804 / 1870 / 1219 |
-| Max survival (w 3) | Paladin = Warrior (tie), Bear, Warden | 1776 / 1776 / 231 / -2312 |
+| Max threat (w 1/3) | Warrior, Paladin, Bear, Warden | 4223 / 3275 / 3123 / 2644 |
+| Balanced (w 1) | Warrior, Paladin, Bear, Warden | 3452 / 2843 / 2131 / 1280 |
+| Max survival (w 3) | Paladin = Warrior (tie), Bear, Warden | 1798 / 1794 / 364 / -2242 |
 
-The hotfixes cost the paladin 17 / 27 / 28 (seed 1); the other three tanks are unchanged to the point. Max survival is
-now a tie within the error (seed 1: paladin 1775.8 ± 13.6, warrior 1775.5 ± 12.8; seed 2: 1785.7 against 1773.8). The
-paladin's potion action (finding -20261105-1, about +368 at Max survival in pass 12) is still open and would decide it.
+The Nov 13 Windfury rule (every landed main hand hit rolls the totem) gave the bear +328 / +260 / +129 (12% at Max
+threat, TPS +163) and the Warden +88 / +61 at Max threat / Balanced; the paladin +38 at Balanced; the warrior nothing
+(its rolling strikes already rolled; Shield Slam is a shield hit). Measured by building tankbench at b02b98c72 and
+d4325b775 (PR #130's merge), same requests. The bear is now 5% behind the paladin at Max threat (was 14%). Max survival
+stays a tie within the error (paladin 1797.7 ± 13.1, warrior 1793.8 ± 12.6); the paladin's potion action (finding
+-20261105-1) is still open and would decide it.
 
-TPS (Balanced): warrior 2057, paladin 1519, bear 1482, Warden 1351. Healing needed (Balanced): paladin 245, warrior 344,
-bear 464, Warden 660.
+TPS (Balanced): warrior 2063, bear 1628, paladin 1533, Warden 1387. Healing needed (Balanced): paladin 241, warrior 342,
+bear 473, Warden 666.
 
 Each preset wins its own weight on both seeds, and the three builds are distinct for every spec. Every flask still wins
 at its preset (pass 11).
@@ -37,7 +39,8 @@ at its preset (pass 11).
   - the Libram's +30 in game.
 - **Warden:** last everywhere, a mail class with little block. A real class gap by user ruling (standards 40); not
   compensated. The full raid set narrowed it (healing needed about twice the others' mean, from up to 3.4×).
-- **Bear:** most armor and health, no block. Third since the Natural flask cut, which took its Precision expertise and
+- **Bear:** most armor and health, no block. Since the Nov 13 Windfury rule its main hand specials roll the totem too,
+  which is most of its +12% at Max threat (whether each bear ability counts as a main hand hit is tank_mechanics'). Third since the Natural flask cut, which took its Precision expertise and
   Stamina; the paladin, on Supreme Power at Max threat and Balanced, lost little.
 - **Warden's drop:** besides the flask, Blizzard's Nov 10 tuning (Stormstrike 100% and 8 sec, Mental Dexterity 33/66/100%)
   cost it about 15% on Magmadar. That is real; the 2026-11-12 re-tune of its talents and APLs won back +20 / +13 / +342

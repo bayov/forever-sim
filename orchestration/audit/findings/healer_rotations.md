@@ -2,6 +2,22 @@
 
 ## Open
 
+### healer_rotations-20261115-1: Wild Growth at 0.066 a tick lowers the Restoration druid raid healer's carry (mean -0.022, Vaelastrasz -0.104, Onyxia -0.047), because its gate now waits for twice the missing health; the gate at 0.75x of expected healing wins back +0.018
+- severity: medium (raid healer carry, not DPS; Onyxia's other deaths 5.6% -> 7.1%, over the 5% floor)
+- affects: druid_restoration_raid (`ui/restoration_druid/apls/raid_healer.apl.json`, line "Wild Growth at the most hurt", and its copy in `tools/healbench/req/druid_restoration_raid.json`)
+- found: 2026-11-15, master 25ce81de7 (moved by the Wild Growth change in `sim/druid/healing.go`, 0.033 -> 0.066 a tick, client 1.60.1.70938)
+- evidence: healbench, `-role raid -encounter tools/encounters/<boss>.json -carry -iters 1000`, default seed, paired. The line's gate is `healthMissing(MostHurt) >= spellExpectedHealing(Wild Growth, MostHurt)`, which doubled with the coefficient, so a stronger heal fires less often. Carry (other deaths) per boss, ref (0.033) / now / gate x0.5 / gate x0.75 / no gate:
+  onyxia 0.991 (5.6%) / 0.944 (7.1%) / 0.972 / 0.964 (5.6%) / 0.917 (8.6%);
+  broodlord 0.924 / 0.911 / 0.921 / 0.924 / 0.899;
+  chromaggus 1.094 / 1.107 / 1.132 / 1.115 / 1.096;
+  golemagg 2.630 / 2.634 / 2.458 / 2.603 / 2.438;
+  magmadar 1.829 / 1.839 / 1.793 / 1.820 / 1.734;
+  ragnaros 1.278 / 1.264 / 1.271 / 1.266 / 1.247;
+  vaelastrasz 1.152 / 1.048 / 1.210 / 1.181 / 1.177.
+  Mean vs now: x0.5 +0.001 (loses Golemagg -0.176, Magmadar -0.046), x0.75 +0.018 (wins 5 of 7; Golemagg -0.031, Magmadar -0.019, both bosses far above 1.0), no gate -0.034. Mana is not binding (5,200 to 7,300 left at each boss's own length on every variant), so the 180/300 s side was not re-run. Fairly sure on the direction (Vaelastrasz and Onyxia move well past noise); the 0.75 value itself is one point of a coarse scan.
+- proposed fix: multiply the gate's right side by 0.75 (`math OpMul spellExpectedHealing ... const 0.75`), note "Wild Growth when the most hurt misses three quarters of what it heals: the rest lands on its party". A 0.6-0.7 scan at 4,000 iterations may do slightly better.
+- needs: worker fix
+
 ### healer_rotations-20261104-2: Discipline tank healer runs out of mana on Chromaggus at the fight's own length (107 of 115 s), and on Golemagg at 300 s
 - severity: medium (a mana failure at a judged length; the preset already trails the Holy tank healer there, 0.818 vs 1.002)
 - affects: Discipline priest tank healer (`ui/healing_priest/apls/discipline_tank_healer.apl.json`, `tools/healbench/req/priest_discipline.json`)

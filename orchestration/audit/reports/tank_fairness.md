@@ -1,79 +1,73 @@
-# tank_fairness pass 15: 2026-11-15, master 70ea588bb
+# tank_fairness pass 16: 2026-11-15, master 25ce81de7
 
-Due: 2 watched files changed since d630df2cb: `sim/druid/ferocious_bite.go` (a missed, dodged or parried Bite refunds
-80% of its 35 Energy under Forever) and `sim/druid/forms.go` (Sharpened Claws gives spell crit as well as melee crit in
-the feral forms). No tank request, encounter or tankbench file changed. Quiet: no new finding.
-
-## Method
-
-Only the bear presets have a druid code path. `tools/audit/tank_fairness/bench.sh` on the three bear presets x six
-scoring bosses, 3,000 iterations, seed 1, tankbench built at 70ea588bb with `--tags=with_db`. The bear APL casts no
-Ferocious Bite, so the bite change is a no-op for it; the Sharpened Claws spell crit is worth +5.5 / +5.8 / +1.0 on the
-six-boss mean at Max threat / Balanced / Max survival (2794.0 / 1870.3 / 230.8 against 2788.5 / 1864.5 / 229.8;
-TPS +1.5, DTPS unchanged; within the ± 4.7 / 7.8 / 17.8 errors except Max threat, which is a fair gain from Forever's
-own aura). Order and distinctness unchanged: the bear stays third at every weight. Warrior, paladin and Warden were not
-re-run (no druid code path). Baseline `ref/tank_fairness/summary.tsv`: bear rows replaced with this run.
-
-## Pass 13's tables (carried; bear rows updated to pass 15, seed 1)
-
-`orchestration/standards.md`. They are the Nov 11 paladin hotfixes (33b13e310: Judgement rolls as a ranged attack,
-Unsealed Wrath stores no echo from Windfury Totem swings, seal changes) and a1a1a81bb (no extra attack rolls Windfury
-Totem; standards 17 now says so). No tank request, encounter or tankbench file changed. Quiet: no new finding.
+Due: 16 watched files changed since 70ea588bb: PR #130 (Nov 13 hotfixes: Windfury Totem rolls on every landed main
+hand melee hit, standards 17; Judgement of Command melee again; paladin seal and talent changes), the warrior's Balanced
+and Max survival re-tune (f2a5dfe25: Revenge before Shield Slam, an 8 s refresh window, a 40 rage gate), rotopt's
+Windfury gate knobs, and a Wild Growth cooldown fix in `sim/druid/healing.go`. Quiet: no new finding.
 
 ## Method
 
-`tools/audit/tank_fairness/bench.sh` on the 12 presets × six scoring bosses, 3,000 iterations, seeds 1 and 2, tankbench
-built at 97da1cca5 with `--tags=with_db`. Paired variant (`variants.py`, `paired.py`, seed 1): paladin Greater
-Stoneshield plus the potion action. New baseline: `ref/tank_fairness/summary.tsv` (seed 1, 3,000).
+`tools/audit/tank_fairness/bench.sh` on the 12 presets x six scoring bosses, 3,000 iterations, seed 1, tankbench built
+at 25ce81de7 with `--tags=with_db`. Attribution: tankbench built at b02b98c72 (before PR #130) and d4325b775 (its
+merge), the bear's three presets, the Warden's Max threat and Balanced and the paladin's Balanced, same HEAD requests.
+New baseline `ref/tank_fairness/summary.tsv` (seed 1, 3,000, all 12 presets).
 
 ## Same terms
 
-The requests are byte-identical to pass 12, so the terms are as pass 12 found them: the two open unequal terms (paladin
-potion, Warden races) and the settled enchant and consumable rulings. The standards change (17) applies to every tank
-alike.
+Only the two warrior requests changed, and only in their APL (priority order and two thresholds); level, set,
+consumables, buffs, race, professions and reaction time are byte-identical to pass 13. The open unequal terms stand
+(paladin potion -20261105-1, Warden races -20261105-2). The standards change (17) applies to every tank alike.
 
-## Ranking (six-boss mean, own weight, 3,000 iterations; seed 1 / seed 2)
+## Ranking (six-boss mean, own weight, seed 1)
 
-| weight | order | scores seed 1 | seed 2 | pass 12 (seed 1) |
+| weight | order | pass 16 | pass 15 |
+|---|---|---|---|
+| Max threat | Warrior, Paladin, Bear, Warden | 4223 / 3275 / 3123 / 2644 | 4223 / 3246 / 2794 / 2557 |
+| Balanced | Warrior, Paladin, Bear, Warden | 3452 / 2843 / 2131 / 1280 | 3428 / 2804 / 1870 / 1219 |
+| Max survival | **Paladin = Warrior**, Bear, Warden | 1798 / 1794 / 364 / -2242 | 1776 / 1776 / 231 / -2312 |
+
+Errors: warrior ± 5.4 / 8.4 / 12.6, paladin ± 3.4 / 5.3 / 13.1, bear ± 5.3 / 7.9 / 20.4, Warden ± 4.3 / 7.4 / 16.8.
+
+### Where the moves come from (seed 1, before -> after PR #130)
+
+| preset | b02b98c72 | d4325b775 | delta | TPS delta |
 |---|---|---|---|---|
-| Max threat | Warrior, Paladin, Bear, Warden | 4223 / 3246 / 2794 / 2557 | 4220 / 3238 / 2769 / 2550 | 4223 / 3263 / 2789 / 2557 |
-| Balanced | Warrior, Paladin, Bear, Warden | 3428 / 2804 / 1870 / 1219 | 3419 / 2801 / 1850 / 1211 | 3428 / 2832 / 1865 / 1219 |
-| Max survival | **Paladin = Warrior**, Bear, Warden | 1776 / 1776 / 231 / -2312 | 1786 / 1774 / 199 / -2317 | 1803 / 1776 / 230 / -2312 |
+| bear Max threat | 2788.5 | 3116.8 | +328 (+11.8%) | +163 |
+| bear Balanced | 1864.5 | 2124.5 | +260 | +144 |
+| bear Max survival | 229.8 | 358.5 | +129 | +94 |
+| Warden Max threat | 2556.5 | 2644.2 | +88 | +42 |
+| Warden Balanced | 1218.8 | 1279.8 | +61 | +36 |
+| paladin Balanced | 2804.5 | 2842.5 | +38 | +14 |
 
-Only the paladin moved: -17.5 / -27.3 / -27.6 (seed 1), -21 / -26 / -30 (seed 2). Warrior, bear and Warden are
-unchanged to the point (none of their presets has an extra-attack source that rolled Windfury Totem in a scored way).
-The paladin's loss is the hotfixes, which are Forever's own (Blue post t/2403040; whether they are modelled right is
-tank_mechanics' and results' to check). Max survival is now a tie: seed 1 paladin 1775.8 ± 13.6 against the warrior's
-1775.5 ± 12.8, seed 2 1785.7 ± 14.0 against 1773.8 ± 10.9. The open potion finding (-20261105-1) decides that place.
+DTPS and healing needed barely move (bear +9 healing needed at Balanced; the rest within
+noise): the gain is threat from Windfury Totem now rolling on the bear's main hand specials, the Warden's
+Stormstrike and the paladin's Holy Strike / Judgement of Command. The later commits add only the bear +6 (rotopt, no
+request change; within error) and the warrior's re-tune, +24 at Balanced and +18 at Max survival (its own APL work).
+The warrior's Max threat is unchanged to the point: Sunder, Revenge and Heroic Strike already rolled, and Shield Slam is
+a shield hit. Whether every bear ability that now rolls is a main hand melee hit under Forever is tank_mechanics' to
+check; under standards 17 as written the gain is fair.
 
-TPS / DTPS / healing needed at Balanced: warrior 2057 / 374 / 344, paladin 1519 / 309 / 245, bear 1482 / 587 / 464,
-Warden 1351 / 660 / 660. The spreads are the ones explained in passes 4 to 12 (warrior Revenge and the Windfury rule;
-paladin block value multipliers, finding -20261104-2; Warden a class gap, standards 40).
+Spread: the bear closed from 14% to 5% behind the paladin at Max threat and from 33% to 25% at Balanced. Warden stays
+37% behind the warrior at Max threat (class gap, standards 40). TPS / healing needed at Balanced: warrior 2063 / 342,
+paladin 1533 / 241, bear 1628 / 473, Warden 1387 / 666. The bear now out-threats the paladin at Balanced (TPS) while
+scoring below it on healing needed.
 
-The logs disagree as before: no paladin main tank on any boss (warriors on all six, druids on four). The sim puts the
-paladin second at Max threat and Balanced and level first at Max survival.
+The logs disagree as before: no paladin main tank on any boss (warriors on all six, druids on four). The bear's rise
+moves the sim toward the logs; the paladin still sits second at Max threat and Balanced and level first at Max survival.
 
-## What each preset rewards (seed 1; seed 2 has the same winners)
+## What each preset rewards (seed 1, six-boss mean)
 
 | preset | at Max threat | at Balanced | at Max survival |
 |---|---|---|---|
-| warrior MT / Bal / MS | **4223** / 4081 / 3382 | 3298 / **3428** / 2980 | 524 / 1470 / **1776** |
-| paladin MT / Bal / MS | **3246** / 3214 / 3092 | 2788 / **2804** / 2763 | 1416 / 1576 / **1776** |
-| bear MT / Bal / MS (pass 13) | **2788** / 2718 / 2207 | 1633 / **1864** / 1712 | -1833 / -695 / **230** |
-| Warden MT / Bal / MS | **2556** / 2434 / 2347 | 990 / **1219** / 1182 | -3707 / -2426 / **-2312** |
+| warrior MT / Bal / MS | **4223** / 4100 / 3404 | 3299 / **3452** / 3001 | 524 / 1508 / **1794** |
+| paladin MT / Bal / MS | **3275** / 3246 / 3123 | 2818 / **2843** / 2791 | 1448 / 1632 / **1798** |
+| bear MT / Bal / MS | **3123** / 3002 / 2399 | 1961 / **2131** / 1890 | -1525 / -484 / **364** |
+| Warden MT / Bal / MS | **2644** / 2506 / 2414 | 1076 / **1280** / 1250 | -3629 / -2397 / **-2242** |
 
-Each preset wins its own weight, and the three builds are distinct for every spec. The paladin's Max threat leads its
-Balanced at Max threat by 32, and its Balanced leads Max threat at Balanced by 16 (seed 2: 31, 17): close but separate.
+Every preset wins its own weight and the three builds stay distinct for every spec. The paladin's spread is still the
+narrowest (Max threat 3275 against Balanced's 3246, Balanced 2843 against 2818).
 
-## Open findings re-checked
+## Findings
 
-| finding | status | this pass |
-|---|---|---|
-| -20261105-1 paladin never drinks its potion (high) | not fixed | Stoneshield + action, paired seed 1: +59.3 / +169.3 / +374.5; DTPS -29 to -32. Now decides Max survival (tie without it) |
-| -20261105-2 Warden plays illegal races (high) | not fixed | requests unchanged; pass 12's paired cost stands (Orc -50, Troll -77, Tauren -124) |
-| -20261104-2 paladin takes about half the warrior's damage (medium) | waits on user calls (a), (b), (c) | Balanced healing needed 245 against 344 / 464 / 660 |
-| -20261104-5 legacy warrior_protection.json (low) | not fixed | file still present |
-
-## Left for later
-
-Nothing beyond the open findings.
+No new finding. Open: -20261105-2 (Warden races), -20261105-1 (paladin potion; still decides Max survival),
+-20261104-2 (paladin damage taken), -20261104-5 (legacy warrior_protection.json, still present). None fixed on master.

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
+  "master": "cfc7f9382c8f784ee22128aa6f8122e72c71b142"
  },
- "last_pass_at": "2026-11-15T13:15:00Z",
- "pass": 66,
- "result": "findings",
- "note": "Pass 66: Feral Bite refund (0cc2c3c8b): gate 65 still +2.5 at 180 s. Windfury timing request done except Enhancement Stormstrike/WF Weapon ICD (no APL value). New: rotations-20261115-1 Arms WF ICD gate +2.5. 4 open findings unapplied.",
- "client_build": "1.60.1.70888",
- "checked_at": "2026-11-15T13:12:56Z",
- "baseline": "baseline_70ea588_3000it_seed424242.tsv"
+ "last_pass_at": "2026-11-15T19:40:00Z",
+ "pass": 67,
+ "result": "quiet",
+ "note": "Pass 67: Nov 13 hotfix round. Arms WF gate (swing variant) and Feral Bite 65 landed -> resolved; Fury 2H 90-rage HS drop now loses 3.0 -> withdrawn. Dragonkin/Fury 2H/Fury DW WF gates and MM Multi-Shot-first lose. Rogue poison swap still open.",
+ "client_build": "1.60.1.70938",
+ "checked_at": "2026-11-15T19:42:01Z",
+ "baseline": "baseline_25ce81d_3000it_seed424242.tsv"
 }

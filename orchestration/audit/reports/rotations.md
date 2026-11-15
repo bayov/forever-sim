@@ -1,63 +1,73 @@
-# Rotations pass 66 (2026-11-15, master 70ea588bb)
+# Rotations pass 67 (2026-11-15, master 25ce81de7)
 
-Last audited master: d630df2cb. Client 1.60.1.70888 data (unchanged). Result: findings (1 new, low).
+Last audited master: 70ea588bb. Client 1.60.1.70938 data plus the November 13 hotfixes (PR #129, #130). Result: quiet
+(no new finding; 3 open findings closed).
 
-## What changed (d630df2cb..70ea588bb)
+## What changed (70ea588bb..25ce81de7, 61 commits)
 
 | path | change | reaches presets? |
 |---|---|---|
-| `sim/druid/ferocious_bite.go` (0cc2c3c8b) | an avoided Ferocious Bite refunds 80% of its 35 Energy (Forever) | yes: both Feral presets |
-| `sim/druid/forms.go` (0cc2c3c8b) | Sharpened Claws adds spell crit in feral forms | Feral only; no Feral spell crit use seen in the baseline |
-| report data, known-differences notes | output only | no |
+| `sim/core/buffs.go`, `flags.go`, `windfury_totem_procs_forever.go` (deleted) | Windfury Totem rolls on every landed main-hand melee hit, white or ability, 100 ms ICD | yes: every melee build with the totem |
+| `sim/shaman/windfury_weapon.go` | imbue ICD exposed on the "Windfury Imbue" aura (APL can read it) | Enhancement (new Stormstrike gate) |
+| `sim/paladin/*` | Judgement of Command on melee defense; Two-Handed Weapon Specialization's Holy part follows defense type | Ret builds |
+| `sim/hunter/item_sets_pve.go` | Wildstalker 5pc also shortens Multi-Shot's cooldown | MM, LW (wear 5pc) |
+| `sim/warlock/spell_data.go` | Imp Firebolt ranks 2-4 | no (level 60 uses rank 7+) |
+| `sim/common/item_effects.go`, `sim/core/item_effects.go` | Silithid Queen's Husk, Dawn items vs Undead | gear only |
+| APLs (`apl_logic_diff.py`: 17 files) | Arms WF swing gate, Enh Stormstrike holds for the imbue ICD, Feral Bite 65 + totem gate, Ret twist/Shock re-tune, tank warrior re-tune | yes |
 
-`apl_logic_diff.py d630df2cb 70ea588bb`: 0 APL files touched. Baseline: druid rows re-simmed (3000 it, seed 424242):
-feral-cat 1152.74 -> 1155.09, feral-cat-duty-ff 1147.41 -> 1149.77, Balance unchanged. New file
-`ref/rotations/baseline_70ea588_3000it_seed424242.tsv` (other rows carried; no other sim change since 3a86d4a).
+## Baseline (3000 it, seed 424242, all 68 rows re-simmed)
 
-## Feral Ferocious Bite gate under the refund (finding rotations-20261105-1)
+New `ref/rotations/baseline_25ce81d_3000it_seed424242.tsv`. Moves of 0.5 DPS or more vs 70ea588:
 
-Still 45 on master; 65 still gains on both builds and both seed sets (pooled +2.49 / +1.67 at 180 s, +4.35 / +3.64 at 300 s).
-Gate 75 (set 1): -0.05 / +0.44 / +3.28, worse. Update added to the finding.
+| builds | move at the baseline |
+|---|---|
+| warrior Fury 2H (3) | +70.6 to +73.0 (~+7%) |
+| warrior Fury DW (3) | +35.2 to +45.2 |
+| paladin Ret (10) | +23.9 to +42.8 |
+| druid Feral (2) | +29.7, +31.9 |
+| warrior Arms (5) | +25.2 to +28.9 |
+| shaman Enhancement (4) | +26.1 to +28.8 |
+| hunter Survival (3) | +19.2 to +21.6 |
+| rogue Subtlety | +2.3 |
 
-## Windfury Totem timing (user request 2026-11-15, open item in passes/rotations.md)
+Everything else (casters, MM/BM/LW hunters, the other rogues) moved under 0.5. All moves trace to the round above.
 
-What can be timed: only abilities that roll the totem under Forever (`windfury_totem_procs_forever.go`, standards 17). Of the
-listed ones, Sinister Strike, Backstab, Mortal Strike, Heroic Strike and Raptor Strike roll it; Stormstrike, Holy Strike,
-Crusader Strike, Judgement of Command, Bloodthirst, Claw and Shred never do, so their timing can't matter to the totem.
-Heroic Strike, Raptor Strike, Cleave and Maul replace a swing (nothing to time). Also gated: Slam, Rend, Execute, Hamstring,
-Eviscerate, Hemorrhage, Mongoose Bite, Wing Clip, Spearing Strike, as they appear.
+## Open findings checked
 
-Tool: `tools/audit/rotations/wf_gate.py REQ OUT [--mode proc|swing] [--ms 100]` (new). `proc` holds those abilities while
-the totem's ICD runs after a proc; `swing` holds them 100 ms after every main-hand swing ("spread between swings").
-A first version gated on the buff alone and was nearly inert (the 1 s buff drops once its charges are used); the
-results below use the fixed gate. Paired `ab.py`, 20k it, CLI 70ea588bb116, B-A at 180 s, set 1 (S0 1e6):
+| finding | status on 25ce81de7 |
+|---|---|
+| rotations-20261115-1 Arms WF gate | landed as the swing variant (a8ea43990) on Arms and its duties: resolved. Dragonkin left out, and the gate now loses there (below) |
+| rotations-20261105-1 Feral Bite 65 | landed (f9990ec4e): resolved |
+| rotations-20261109-1 Fury 2H drop 90-rage HS | now loses 3.0 at 180 s: withdrawn, moved to Resolved |
+| rotations-20261112-1 rogue poison swap | still unapplied (reqs keep MH Deadly / OH Instant). Rogue rows barely moved, so not re-measured |
 
-| preset | proc gate | swing gate | A at 180 |
-|---|---|---|---|
-| warrior__arms | **+2.42 ± 0.25** (both sets, pooled +2.50) | +2.27 ± 0.55 | 1042.9 |
-| warrior__arms_dragonkin | +1.60 ± 0.14 | - | 1100.8 |
-| warrior__fury_2h | +0.30 (pooled +0.36) | - | 1033.0 |
-| warrior__fury (DW) | -0.01 ± 0.18 | -0.58 ± 0.47 | 1052.1 |
-| rogue__combat-swords | +0.62 ± 0.16 | -0.25 ± 0.25 | 943.7 |
-| rogue__seal-fate-daggers | +0.18 ± 0.14 | +0.27 ± 0.27 | 904.3 |
-| hunter__survival | +0.08 ± 0.10 | +0.26 ± 0.31 | 1014.9 |
+## Windfury timing under the Nov 13 rule (paired ab.py, 20k it, CLI 25ce81de7755, set 1, S0 1e6)
 
-The other rogue builds (combat-daggers, seal-fate-swords, mutilate, subtlety) were run only with the inert first gate
-(0.00); by the Combat Swords and Seal Fate Daggers results they'd sit under the bar. Ret paladin and Feral have nothing
-that rolls the totem. Arms is the only build past the bar: finding rotations-20261115-1.
+Variants made with `tools/audit/rotations/wf_gate.py` (rewritten this pass; last pass's copy wasn't in the repo). Gate =
+the landed Arms form, `autoTimeToNext(MH) <= autoSwingTime(MH) - 0.1s`, on the build's strike lines.
 
-Not done: **Enhancement, hold Stormstrike until Windfury Weapon's cooldown is back.** The imbue's 1.5 s ICD is a bare
-`core.Cooldown` in `sim/shaman/windfury_weapon.go:95`, not on an aura or spell, so no APL value can read it; testing it
-needs a sim change (e.g. attach the ICD to the "Windfury Imbue" aura so `auraIcdIsReadyWithReactionTime` sees it).
-Enhancement presets carry no Windfury Totem, so the totem gates don't apply to them. Apart from this, the open item in
+| preset / variant | B-A 120 / 180 / 300 s | A at 180 |
+|---|---|---|
+| arms_dragonkin, gate on 6 strike lines | -0.15 / -0.38 / -0.84 (SE 0.3-0.5) | 1126.1 |
+| fury_2h, gate on 4 lines | +1.42 / -0.52 / +0.96 (SE 0.5-0.8) | 1104.5 |
+| fury_2h, delete 90-rage Heroic Strike | -2.23 / -2.99 / -4.09 (SE 0.3-0.6) | 1104.5 |
+| fury (DW), gate on Bloodthirst/Whirlwind/etc. | -0.97 / -0.36 / -0.55 (SE 0.4-0.5) | 1092.3 |
+
+None passes the bar, so the second seed set was not run. The workers' round covered the rest of the user's request:
+Enhancement holds Stormstrike for Windfury Weapon's ICD (4d0c2ceac, now readable via the aura), Feral and Ret re-tuned,
+rogue timing knobs searched and off (057127ac3). The open item "Main-hand ability timing for Windfury" in
 `passes/rotations.md` is done and can be removed (this pass may not edit that doc).
+
+## Hunter: Multi-Shot first with Wildstalker 5pc
+
+The 5pc now shortens Multi-Shot's cooldown too. MM with Multi-Shot moved above Aimed Shot: -62.7 / -57.4 / -31.7
+(set 1, SE 0.4, A 1234.4). The settled ruling holds; MM/LW baselines didn't move, as Multi-Shot still never fires.
 
 ## Optional (under the bar)
 
-- Combat Swords, Windfury proc gate on Sinister Strike/Eviscerate: +0.62 at 180 s (set 1 only).
-- Fury 2H, same gate: +0.36 pooled at 180 s.
+- Fury 2H WF swing gate: noisy, +1.4 at 120 but -0.5 at 180 (set 1). Not worth a second set.
 
-## Open findings
+## Not done / left open
 
-- rotations-20261115-1 (new, Arms Windfury gate), rotations-20261112-1 (rogue poison swap), rotations-20261109-1
-  (Fury 2H 90-rage Heroic Strike), rotations-20261105-1 (Feral Bite gate 65): all unapplied on 70ea588bb.
+- Rogue poison swap not re-measured on this master (baseline unchanged for those builds).
+- Balance NE Elune's Light, Elemental Mastery hold, warlock duty-curse screens: still open items, unchanged.

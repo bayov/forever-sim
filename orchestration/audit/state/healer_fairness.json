@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
+  "master": "cfc7f9382c8f784ee22128aa6f8122e72c71b142"
  },
- "last_pass_at": "2026-11-15T13:12:42Z",
- "pass": 14,
- "result": "quiet",
+ "last_pass_at": "2026-11-15T19:45:00Z",
+ "pass": 15,
+ "result": "findings",
  "baseline": "9ba00c2dc",
- "note": "Pass 14 on 70ea588bb (Ferocious Bite 80% refund on avoid; Sharpened Claws adds spell crit in feral forms). Neither reaches a healer: GetFormShiftStats applies only in Cat/Bear form, which the Restoration druid presets never take. Full 63-cell bench (seed 101, 1,000 iterations) identical to ref/healer_fairness/bench_71562a8.tsv; healbench requests, encounters and healer UI unchanged. Open: -20261104-4.",
+ "note": "Pass 15 on 25ce81de7: Wild Growth tick 0.033 -> 0.066 drops the raid druid 1.414 -> 1.392 (third -> last in raid), -20261115-1; paladin 2H spec / JoC and Windfury changes reach no healer. Full bench in ref/healer_fairness/bench_25ce81d.tsv, 56 of 63 cells identical to bench_71562a8. Open: -20261115-1, -20261104-4.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-15T13:12:56Z"
+ "checked_at": "2026-11-15T19:42:01Z"
 }

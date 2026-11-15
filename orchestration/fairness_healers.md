@@ -1,7 +1,7 @@
 # Fairness between healers
 
 The healer_fairness auditor keeps this current (`orchestration/audit/passes/healer_fairness.md`). It holds the
-healer ranking in each role, its reasons and the open questions. Last pass: 12, 2026-11-13, master 97da1cca5: quiet; the Unsealed Wrath and Windfury extra-attack rules reach no healer, all 63 cells identical to pass 11. Pass 11, 2026-11-13, master 71562a8b0: quiet; the whole bench re-run after the tankheal merge (`orchestration/audit/ref/healer_fairness/bench_71562a8.tsv`), the 7 unchanged presets identical, the raid priest and paladin at their re-tuned 1.461 and 1.430, the table below now measured on master. Pass 9, 2026-11-12, master 4fb90c298: 1 new finding (the Holy priest raid preset keeps Inspiration, dead without a tank, instead of Twilight Focus: +0.021 raid carry, healer_fairness-20261112-1); the table below re-benched and confirmed, a talent screen of each class's likeliest swaps found no other gain. Pass 8, 2026-11-12, master cb0d928fd6: quiet (priest Shadow tree size and shaman Trial by Fire rename reach no healer preset; spot cells identical). Pass 7, 2026-11-11, master 707ae92cc5 (Nature's Swiftness on Wild Growth drops the raid druid to last, healer_fairness-20261111-1; other spot cells identical). Pass 6, master ca5e35c3f: shaman changes reach no healer. Pass 5, master 9ba00c2dc: whole-point rolls moved cells by at most 0.002; the raid shaman 1.395.
+healer ranking in each role, its reasons and the open questions. Last pass: 15, 2026-11-15, master 25ce81de7: findings; Wild Growth's tick doubled (0.033 -> 0.066, client 70938) and the raid druid fell 1.414 -> 1.392, third to last, because its preset isn't re-tuned for it (healer_fairness-20261115-1); the other 56 cells identical (`orchestration/audit/ref/healer_fairness/bench_25ce81d.tsv`). Pass 12, 2026-11-13, master 97da1cca5: quiet; the Unsealed Wrath and Windfury extra-attack rules reach no healer, all 63 cells identical to pass 11. Pass 11, 2026-11-13, master 71562a8b0: quiet; the whole bench re-run after the tankheal merge (`orchestration/audit/ref/healer_fairness/bench_71562a8.tsv`), the 7 unchanged presets identical, the raid priest and paladin at their re-tuned 1.461 and 1.430, the table below now measured on master. Pass 9, 2026-11-12, master 4fb90c298: 1 new finding (the Holy priest raid preset keeps Inspiration, dead without a tank, instead of Twilight Focus: +0.021 raid carry, healer_fairness-20261112-1); the table below re-benched and confirmed, a talent screen of each class's likeliest swaps found no other gain. Pass 8, 2026-11-12, master cb0d928fd6: quiet (priest Shadow tree size and shaman Trial by Fire rename reach no healer preset; spot cells identical). Pass 7, 2026-11-11, master 707ae92cc5 (Nature's Swiftness on Wild Growth drops the raid druid to last, healer_fairness-20261111-1; other spot cells identical). Pass 6, master ca5e35c3f: shaman changes reach no healer. Pass 5, master 9ba00c2dc: whole-point rolls moved cells by at most 0.002; the raid shaman 1.395.
 Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 `orchestration/audit/findings/healer_fairness.md`.
 
@@ -10,9 +10,9 @@ Details are in `orchestration/audit/reports/healer_fairness.md`; findings are in
 | Role | 1 | 2 | 3 | 4 | 5 |
 |---|---|---|---|---|---|
 | Tank healer | Holy priest 1.278 | Discipline priest 1.272 | Druid 1.269 (1.242 with NS at 60%) | Shaman 1.257 | Paladin 1.152 |
-| Raid healer | Holy priest 1.461 | Paladin 1.430 | Druid 1.414 | Shaman 1.412 (1.392 with NS autocast) | |
+| Raid healer | Holy priest 1.461 | Paladin 1.430 | Shaman 1.412 (1.392 with NS autocast) | Druid 1.392 (1.414 at the old 0.033 Wild Growth; awaiting re-tune) | |
 
-Confirmed on master 97da1cca5 (pass 12) and 71562a8b0 (pass 11), all 63 cells. Re-benched on 4fb90c298 (pass 9, `orchestration/audit/ref/healer_bench/summary.tsv`); the two raid fixes of
+Confirmed on master 25ce81de7 (pass 15; only the raid druid moved). Before: master 97da1cca5 (pass 12) and 71562a8b0 (pass 11), all 63 cells. Re-benched on 4fb90c298 (pass 9, `orchestration/audit/ref/healer_bench/summary.tsv`); the two raid fixes of
 2026-11-12 on top (seed 101, `orchestration/audit/ref/healer_fairness/retune_25f65da_s101.tsv`): the Holy raid
 priest takes Twilight Focus for Inspiration, 1.440 -> 1.461 (finding -20261112-1), and the raid paladin is a Flash
 of Light healer (6 and 4 at 0.7x, no Holy Light or Divine Favor), 1.400 -> 1.430 (finding -5); both on two seeds.
@@ -71,4 +71,5 @@ files keep no healing by class, so the sim's order can't be checked against the 
 2. (Closed 2026-11-12: the paladin raid preset is a Flash of Light healer, 1.400 -> 1.430, finding -5.)
 3. (Closed 2026-11-12: the Holy raid priest takes Twilight Focus 3 for Inspiration 3, 1.440 -> 1.461, finding -20261112-1.)
 4. HPS by healer class in the boss files (finding -4), to check the order against the logs.
+6. The raid druid preset for the doubled Wild Growth (finding -20261115-1): a gate at the old threshold wins Vaelastrasz (+0.16) and loses Golemagg (-0.18), mean 1.394; it needs a rotation re-tune, and the tank preset may want a Wild Growth line.
 5. The classes' "Calls for the user" lists (`docs/healing_{priest,paladin,druid,shaman}.md`) are open rulings.

@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
+  "master": "cfc7f9382c8f784ee22128aa6f8122e72c71b142"
  },
- "last_pass_at": "2026-11-15T12:50:00Z",
- "pass": 16,
+ "last_pass_at": "2026-11-15T18:46:27Z",
+ "pass": 17,
  "result": "quiet",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-15T13:12:56Z",
+ "checked_at": "2026-11-15T19:42:01Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -18,5 +18,5 @@
    "date": "2026-11-10"
   }
  },
- "note": "Pass 16 (70ea588bb): only change 0cc2c3c8b, Ferocious Bite 80% refund on avoidance (cat only, no bear preset casts it) and Sharpened Claws spell crit in feral forms (client aura 290, mask 145 verified; no bear ability rolls spell crit). Client still 70938. Forum notes not re-read. Quiet; 20261108-1, 20261107-1 still open."
+ "note": "Pass 17 (25ce81de7): Judgement of Command melee again, WF Totem on all MH melee except seal procs, 2H spec Holy by defense type (no tank effect), warrior Balanced/Max survival APL reorder (Revenge before Shield Slam). Client still 70938. Forum notes not re-read. Quiet; 20261108-1, 20261107-1 still open."
 }
