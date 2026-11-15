@@ -22,9 +22,9 @@ const (
 //
 // Windfury Weapon, Flametongue Weapon and Frostbrand all need a landed main hand melee hit,
 // white or yellow, and a blocked hit counts as landed. Flametongue Totem needs a landed white
-// swing. Windfury Totem also takes abilities that need a main hand weapon in the client, which
-// Stormstrike doesn't (see WindfuryTotemBuffAura). So Stormstrike never procs either totem, and
-// Windfury Weapon's attacks never proc Flametongue Totem. Misses,
+// swing. Windfury Totem also takes every main hand melee ability since Blizzard's hotfixes of
+// November 13, 2026 (see WindfuryTotemBuffAura), Stormstrike too. So Stormstrike procs Windfury
+// Totem but not Flametongue Totem, and Windfury Weapon's attacks never proc Flametongue Totem. Misses,
 // dodges, parries, spells, totem attacks, Lightning Shield orbs and the Flametongue and
 // Frostbrand damage never trigger them. A Windfury proc's two attacks can't proc Windfury
 // again, because of its 1.5 sec cooldown.
@@ -55,7 +55,7 @@ func TestOrcShamanImbueProcs(t *testing.T) {
 			"Frostbrand Imbue", []string{frostbrand}, []string{frostbrand}},
 		// Windfury Totem needs level 32.
 		{"Flametongue Weapon and Windfury Totem", 60, darkEdge, proto.WeaponImbue_FlametongueWeapon, proto.TotemWeaponBuff_TotemWeaponBuffWindfury,
-			"Flametongue Imbue", []string{flametongueWeapon, windfuryTotem}, []string{flametongueWeapon}},
+			"Flametongue Imbue", []string{flametongueWeapon, windfuryTotem}, []string{flametongueWeapon, windfuryTotem}},
 		{"Windfury Weapon and Windfury Totem", 60, darkEdge, proto.WeaponImbue_WindfuryWeapon, proto.TotemWeaponBuff_TotemWeaponBuffWindfury,
 			"Windfury Imbue", []string{windfuryWeapon, windfuryTotem}, []string{windfuryWeapon, windfuryTotem}},
 	}

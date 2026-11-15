@@ -2171,16 +2171,18 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 // hand only (2026-10-16; report assumption wf_totem_offhand, one value). The extra swing is a
 // main hand one.
 //
-// Under Forever it rolls on white main hand swings and on the main hand abilities whose client
-// spell needs a main hand weapon or comes on the next swing (windfuryTotemRollsOnForever). The
-// user's go for it was 2026-11-12. Our live logs of Nov 6-11 have 4,737 totem procs on 93
-// players, and the client's flags fit every ability with enough data. Heroic Strike (21 of 109
-// landed, with no other hit just before), Cleave, Maul, Raptor Strike, Sunder Armor, Revenge,
-// Execute and Sinister Strike roll it. Stormstrike (0 of 4,467), Holy Strike (0 of 1,175),
-// Bloodthirst, Whirlwind, Shield Slam, Claw, Swipe and Rake never do, and none of these have
-// the flags. Nor do seal procs, Judgements or off-hand swings. Nor does any extra attack (its own,
-// Hand of Justice, Sword Specialization, Thrash, Reckoning, or an ability that one of them
-// swings): the user's log audit (orchestration/standards.md item 17) found none roll it.
+// Under Forever it rolls on every landed main hand melee hit, white or special
+// (windfuryTotemRollsOnForever). Blizzard's hotfixes of November 13, 2026 (t/2403040): "Windfury
+// Totem is now correctly activated by all melee abilities even if it doesn't involve your main
+// hand weapon. Developers' notes: Strikes from abilities that involve your offhand weapon like
+// Whirlwind or Mutilate do not have a chance to activate Windfury. The main-hand strike from those
+// abilities still does." So Holy Strike, Stormstrike, Bloodthirst and a weaponless main hand
+// melee special (Judgement of Command, melee again since the same hotfixes) roll it, where the
+// client flag list of the November 12 rule (Attributes_3 0x400 / Attributes_0 0x4) left them out.
+// Off-hand swings and strikes don't. Nor do the paladin seals' on-hit procs, which are no melee
+// ability (SpellFlagNoWindfuryTotem). Nor does any extra attack (its own, Hand of Justice, Sword
+// Specialization, Thrash, Reckoning, or an ability that one of them swings): the user's log audit
+// (orchestration/standards.md item 17) found none roll it.
 func WindfuryTotemBuffAura(character *Character, rank int32, label string, actionID ActionID) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	buffLabel := strings.Replace(strings.TrimSuffix(label, " Raid"), "Windfury Totem", "Windfury Attack", 1)
@@ -2208,22 +2210,12 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string, actio
 	return aura
 }
 
-// windfuryTotemRollsOnForever says whether a landed hit rolls Windfury Totem under Forever: a
-// white main hand swing, or a main hand ability whose spell is in windfuryTotemAbilityIds.
+// windfuryTotemRollsOnForever says whether a landed hit rolls Windfury Totem under Forever: any
+// main hand melee hit, white or special (Windfury Weapon's main hand attacks too), but not an
+// off-hand one or a seal's on-hit proc.
 func windfuryTotemRollsOnForever(spell *Spell) bool {
-	if spell.ProcMask.Matches(ProcMaskMeleeMHAuto) {
-		return true
-	}
-	return spell.ProcMask.Matches(ProcMaskMeleeMHSpecial) &&
-		(windfuryTotemAbilityIds[spell.ActionID.SpellID] || windfuryWeaponAttackIds[spell.ActionID.SpellID])
+	return spell.ProcMask.Matches(ProcMaskMeleeMH) && !spell.Flags.Matches(SpellFlagNoWindfuryTotem)
 }
-
-// windfuryWeaponAttackIds are the sim's IDs for Windfury Weapon's attacks, one a rank.
-//
-// The client logs the attacks as 439440, which is in windfuryTotemAbilityIds, but the sim keys
-// them under the imbue's rank (8232 to 16362). In our Nov 13 log with both up, the imbue's
-// attacks proced the totem on 47 of 162 imbue procs, also when Stormstrike set off the imbue.
-var windfuryWeaponAttackIds = map[int32]bool{8232: true, 8235: true, 10486: true, 16362: true}
 
 ///////////////////////////////////////////////////////////////////////////
 //                            World Buffs

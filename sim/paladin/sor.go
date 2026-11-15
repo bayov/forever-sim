@@ -157,8 +157,8 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			ActionID:    core.ActionID{SpellID: rank.proc.spellID},
 			SpellSchool: core.SpellSchoolHoly,
 			DefenseType: core.DefenseTypeMelee,
-			ProcMask:    core.ProcMaskMeleeMHSpecial,                                   //changed to ProcMaskMeleeMHSpecial, to allow procs from weapons/oils which do proc from SoR,
-			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagSuppressEquipProcs, // but Wild Strikes does not proc, nor equip procs
+			ProcMask:    core.ProcMaskMeleeMHSpecial,                                                                   //changed to ProcMaskMeleeMHSpecial, to allow procs from weapons/oils which do proc from SoR,
+			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagSuppressEquipProcs | core.SpellFlagNoWindfuryTotem, // but Wild Strikes does not proc, nor equip procs
 
 			// Holy Power's list (client 5923) leaves the procs out under Forever.
 			BonusCritRating: core.TernaryFloat64(paladin.Env.IsForever(), 0, paladin.holyPowerCrit()),

@@ -329,12 +329,14 @@ var wildstalkerArmorBonuses = map[int32]core.ApplyEffect{
 			},
 		}))
 	},
-	// Aimed Shot cooldown 1 sec shorter. The tooltip names Multi-Shot too, but the effect's class mask
-	// (131072) is Aimed Shot's alone (Multi-Shot is 4096). Multi-Shot still shares the cooldown.
+	// Aimed Shot and Multi-Shot cooldowns 1 sec shorter. The effect's class mask (spell 1301252
+	// EffectSpellClassMask_0) was Aimed Shot's alone (131072) until server hotfix push 114065 (the
+	// November 13 hotfixes) made it 135168, Aimed Shot's and Multi-Shot's (4096), as the tooltip
+	// says. The two still share the cooldown timer, each with its own duration.
 	5: func(agent core.Agent) {
 		hunter := agent.(HunterAgent).GetHunter()
 		hunter.OnSpellRegistered(func(spell *core.Spell) {
-			if spell.SpellCode == SpellCode_HunterAimedShot {
+			if spell.SpellCode == SpellCode_HunterAimedShot || spell.SpellCode == SpellCode_HunterMultiShot {
 				spell.CD.Duration -= time.Second
 			}
 		})
