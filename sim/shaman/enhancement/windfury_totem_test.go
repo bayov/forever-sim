@@ -144,3 +144,44 @@ func TestOrcShamanImbueWithWeaponTotem(t *testing.T) {
 		}
 	})
 }
+
+// TestOrcShamanWindfuryTotemOnSpecials checks that our main hand specials roll another shaman's
+// Windfury Totem under Forever: Windfury Weapon's main hand attacks (our Nov 13 log with both up:
+// 47 totem procs on 162 imbue procs, also when Stormstrike set off the imbue) and Stormstrike
+// (Blizzard's hotfixes of November 13, 2026, t/2403040: "Windfury Totem is now correctly
+// activated by all melee abilities"). Each gets 400 landed hits 2 sec apart, past the totem's
+// 100 ms cooldown, so about 80 should proc it.
+func TestOrcShamanWindfuryTotemOnSpecials(t *testing.T) {
+	const n = 400
+	sim, enh := weaponSim{level: 60, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_WindfuryWeapon,
+		totem: proto.TotemWeaponBuff_TotemWeaponBuffWindfury, seconds: 600}.start()
+	totem, buff := enh.GetAura("Windfury Totem Raid"), enh.GetAura("Windfury Attack")
+	if totem == nil || buff == nil {
+		t.Fatal("no Windfury Totem on the shaman")
+	}
+	for _, c := range []struct {
+		name  string
+		spell *core.Spell
+	}{
+		{"Windfury Weapon's main hand attack", enh.WindfuryWeaponMH},
+		{"Stormstrike", enh.Stormstrike},
+	} {
+		if c.spell == nil || c.spell.ProcMask != core.ProcMaskMeleeMHSpecial {
+			t.Fatalf("%s isn't registered as a main hand special", c.name)
+		}
+		procs := 0
+		for range n {
+			sim.CurrentTime += 2 * time.Second
+			buff.Deactivate(sim)
+			result := c.spell.NewResult(enh.CurrentTarget)
+			result.Outcome = core.OutcomeHit
+			totem.OnSpellHitDealt(totem, sim, c.spell, result)
+			if buff.IsActive() {
+				procs++
+			}
+		}
+		if procs < n/10 || procs > n/3 {
+			t.Errorf("%s procced Windfury Totem %d times in %d landed hits, want about a fifth", c.name, procs, n)
+		}
+	}
+}

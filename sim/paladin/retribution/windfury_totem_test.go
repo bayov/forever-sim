@@ -56,15 +56,15 @@ func rollTotem(t *testing.T, sim *core.Simulation, ret *RetributionPaladin, tote
 
 // Unsealed Wrath stores no echo from a Windfury Totem swing (the November 11 hotfix), whichever
 // hit launched the swing: a white swing, or a main hand ability that rolls the totem under
-// Forever (standards 17; Heroic Strike stands in, the paladin having none).
+// Forever (standards 17): Judgement of Command, melee again since the November 13 hotfixes.
 func TestUnsealedWrathWindfuryTotemSwingFromAnyTrigger(t *testing.T) {
 	for _, c := range []struct {
 		name  string
 		spell func(ret *RetributionPaladin) *core.Spell
 	}{
 		{"white swing", func(ret *RetributionPaladin) *core.Spell { return ret.AutoAttacks.MHAuto() }},
-		{"main hand ability", func(ret *RetributionPaladin) *core.Spell {
-			return &core.Spell{ActionID: core.ActionID{SpellID: 11567}, ProcMask: core.ProcMaskMeleeMHSpecial, Unit: &ret.Unit}
+		{"Judgement of Command", func(ret *RetributionPaladin) *core.Spell {
+			return ret.GetSpell(core.ActionID{SpellID: 20966})
 		}},
 	} {
 		t.Run(c.name, func(t *testing.T) {
@@ -102,41 +102,64 @@ func TestUnsealedWrathWindfuryTotemSwingFromAnyTrigger(t *testing.T) {
 	}
 }
 
-// No Judgement rolls Windfury Totem: the damaging ones are ranged attacks since the November 11
-// hotfix, and the Crusader's and Wisdom's have no proc mask. A white swing still does.
-func TestJudgementsDontRollWindfuryTotem(t *testing.T) {
-	sim, ret, totem, attack := retSimWindfuryTotem(t, "")
-	judgements := 0
-	for _, spell := range ret.Spellbook {
-		switch spell.SpellCode {
-		case paladin.SpellCode_PaladinJudgementOfRighteousness, paladin.SpellCode_PaladinJudgementOfCommand, paladin.SpellCode_PaladinJudgementOfFury:
-		default:
-			continue
-		}
-		judgements++
-		if judgements > 15 {
-			t.Fatalf("more Judgement spells than the 60 sec fight has time for")
-		}
-		if spell.ProcMask.Matches(core.ProcMaskMelee) {
-			t.Errorf("Judgement %v has a melee proc mask %v", spell.ActionID, spell.ProcMask)
-		}
-		for range 10 {
-			if rollTotem(t, sim, ret, totem, attack, spell, nil) {
-				t.Errorf("Judgement %v rolled Windfury Totem", spell.ActionID)
-				break
+// Which of the paladin's hits roll Windfury Totem since Blizzard's hotfixes of November 13, 2026
+// (t/2403040): "Windfury Totem is now correctly activated by all melee abilities" and "Judgement
+// of Command now activates on-hit effects and counts as a melee attack. All other judgements will
+// continue to be considered Ranged attacks." So Judgement of Command (a main hand melee special
+// again) and Holy Strike roll it at 20%, as a white swing does, while Judgement of Righteousness
+// and of Fury (ranged attacks since the November 11 hotfixes) and the seals' on-hit procs
+// (Righteousness, Command, Fury: SpellFlagNoWindfuryTotem) never do. The paladin has Unsealed
+// Wrath and Seal of Command, so every damaging Judgement is registered.
+func TestJudgementsAndWindfuryTotem(t *testing.T) {
+	const n = 150
+	byID := func(id int32) func(ret *RetributionPaladin) *core.Spell {
+		return func(ret *RetributionPaladin) *core.Spell { return ret.GetSpell(core.ActionID{SpellID: id}) }
+	}
+	holyStrike := func(ret *RetributionPaladin) *core.Spell {
+		var top *core.Spell
+		for _, spell := range ret.Spellbook {
+			if spell.SpellCode == paladin.SpellCode_PaladinHolyStrike && (top == nil || spell.Rank > top.Rank) {
+				top = spell
 			}
 		}
+		return top
 	}
-	if judgements == 0 {
-		t.Fatalf("no damaging Judgement registered")
-	}
-	procced := false
-	for range 100 {
-		if procced = rollTotem(t, sim, ret, totem, attack, ret.AutoAttacks.MHAuto(), nil); procced {
-			break
+
+	for _, c := range []struct {
+		name     string
+		spell    func(ret *RetributionPaladin) *core.Spell
+		procMask core.ProcMask
+		rolls    bool
+	}{
+		{"white swing", func(ret *RetributionPaladin) *core.Spell { return ret.AutoAttacks.MHAuto() }, core.ProcMaskMeleeMHAuto, true},
+		{"Judgement of Command", byID(20966), core.ProcMaskMeleeMHSpecial, true},
+		{"Holy Strike", holyStrike, core.ProcMaskMeleeMHSpecial, true},
+		{"Judgement of Righteousness", byID(20286), core.ProcMaskRangedSpecial, false},
+		{"Judgement of Fury", byID(20414), core.ProcMaskRangedSpecial, false},
+		{"Seal of Righteousness proc", byID(25713), 0, false},
+		{"Seal of Command proc", byID(20947), 0, false},
+		{"Seal of Fury proc", byID(20418), 0, false},
+	} {
+		// A fresh sim for each, as the fight is 60 sec.
+		sim, ret, totem, attack := retSimWindfuryTotem(t, unsealedWrath)
+		spell := c.spell(ret)
+		if spell == nil {
+			t.Fatalf("%s is not registered", c.name)
 		}
-	}
-	if !procced {
-		t.Errorf("a white swing never rolled Windfury Totem in 100 hits")
+		if c.procMask != 0 && spell.ProcMask != c.procMask {
+			t.Errorf("%s proc mask %v, want %v", c.name, spell.ProcMask, c.procMask)
+		}
+		procs := 0
+		for range n {
+			if rollTotem(t, sim, ret, totem, attack, spell, nil) {
+				procs++
+			}
+		}
+		if c.rolls && (procs < n/10 || procs > n/3) {
+			t.Errorf("%s procced Windfury Totem %d times in %d landed hits, want about a fifth", c.name, procs, n)
+		}
+		if !c.rolls && procs != 0 {
+			t.Errorf("%s procced Windfury Totem %d times in %d landed hits, want none", c.name, procs, n)
+		}
 	}
 }

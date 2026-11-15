@@ -57,7 +57,7 @@ func windfuryProcs(sim *core.Simulation, war *warrior.Warrior, spell *core.Spell
 // activate Windfury. The main-hand strike from those abilities still does." Under Forever every
 // main hand warrior ability (Heroic Strike, Cleave, Sunder Armor, Revenge, Execute, Rend and
 // Whirlwind's main hand strike; this tank holds a shield) rolls Windfury Totem at 20%; off-hand
-// strikes never do (sim/core/windfury_totem_procs_forever_test.go). Classic keeps every main hand
+// strikes never do (sim/core/windfury_totem_rolls_forever_test.go). Classic keeps every main hand
 // hit. White swings still proc it (sim/shaman/enhancement/proc_matrix_test.go).
 func TestForeverWindfuryTotemMainHandAbilities(t *testing.T) {
 	const n = 400
