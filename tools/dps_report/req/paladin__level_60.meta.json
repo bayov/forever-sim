@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_hit-3",
   "apl": "level60",
   "published": {
-    "dps": 983.6,
-    "source": "the DPS report's main run of this request after the November 11 hotfixes (Judgement as a ranged attack, Unsealed Wrath without Windfury Totem copies, no extra attack rolling Windfury Totem) and the re-tuned seal rotation (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
+    "dps": 1023.0,
+    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
   },
   "verify": {
-    "dps": 983.6,
-    "stderr": 0.34,
+    "dps": 1023.0,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-13), 180 \u00b1 20 s, 20,000 iterations, seed 1"
+    "note": "the report main run of this request (2026-11-15), 180 \u00b1 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Retribution build that keeps Seal of Righteousness up and swaps to Seal of Command and back to spend its Unsealed Wrath copies.",
   "keyTalents": [

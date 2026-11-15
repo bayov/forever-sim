@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_hit-3",
   "apl": "optimized",
   "published": {
-    "dps": 1053.8,
-    "source": "DPS report 2026-11-13 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s)"
+    "dps": 1080.0,
+    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 1053.8,
-    "stderr": 0.49,
+    "dps": 1080.0,
+    "stderr": 0.5,
     "iters": 20000,
     "ok": true,
-    "note": "the DPS report's main run of this request (2026-11-13), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "the report main run of this request (2026-11-15), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Two-hand axe Enhancement built on Stormstrike and Maelstrom Weapon. It drops Windfury Totem for its group, plus Magma Totem.",
   "keyTalents": [

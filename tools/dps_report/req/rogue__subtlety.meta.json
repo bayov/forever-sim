@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_subtlety_hit+2",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 881.7,
-    "source": "verify.py on this request after round 70753 (the November 2 notes' rework: new tree, Shank, Poised, Death Mark; talents and rotation searched again), wowsimcli 20,000 iterations, seed 1, 180 ± 20 s; the report is not regenerated yet"
+    "dps": 866.8,
+    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 881.7,
-    "stderr": 0.23,
+    "dps": 866.8,
+    "stderr": 0.22,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py on this request (2026-11-03, round 70753), 180 ± 20 s, 20,000 iterations, seed 1"
+    "note": "the report main run of this request (2026-11-15), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Deep Subtlety with Death Mark and Boot Knife, Hemorrhage as the builder, on daggers.",
   "keyTalents": [

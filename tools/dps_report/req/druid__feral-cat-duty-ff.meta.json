@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_hit-4",
   "apl": "level60_ff",
   "published": {
-    "dps": 1134.1,
-    "source": "verify.py on this request after round 70753 (the November 2 notes, race base stats; 937.3 before) and the 2026-11-03 rotation exploration with EZ-Thro Dark Bomb (1127.8 before it), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1179.6,
+    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 1179.9,
-    "stderr": 0.26,
+    "dps": 1179.6,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-15, after the Windfury re-tune (every landed main hand melee hit rolls the totem; 1178.8 on update-1115 merged with master before it); not yet the DPS report's main run"
+    "note": "the report main run of this request (2026-11-15), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "The cat build, keeping Faerie Fire on the boss for the raid. Forever has no Faerie Fire (Feral): the cat casts the caster Faerie Fire, free in Cat Form. Its own attacks gain from the armor cut, so it costs only a few GCDs.",
   "keyTalents": [

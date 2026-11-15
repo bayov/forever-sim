@@ -5235,6 +5235,216 @@
      "commits": [
       "6ce77e5"
      ]
+    },
+    {
+     "title": "Windfury Totem rolls on every main hand melee hit, white or special",
+     "kind": "game",
+     "classes": [
+      "Warrior",
+      "Paladin",
+      "Shaman",
+      "Druid",
+      "Hunter",
+      "Rogue"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf",
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead",
+      "rogue__subtlety",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield",
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder"
+     ],
+     "note": "Any landed main hand melee hit can trigger it now, special attacks included: Bloodthirst, Mortal Strike, Whirlwind's main hand strike, Holy Strike, Judgement of Command, Stormstrike, Claw, Raptor Strike. Off-hand strikes, extra attacks and seal procs still don't, and it can trigger at most once every 0.1 sec. With the rotations below, Warriors rise 24 to 70 (two-hand Fury the most), Retribution 36 to 58, Feral about 30, Enhancement about 26, Survival about 20, Subtlety 4.",
+     "source": {
+      "label": "Blizzard: WoW Forever hotfixes, November 13, 2026",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2403040/10"
+     },
+     "commits": [
+      "9ec6904"
+     ]
+    },
+    {
+     "title": "Arms waits out Windfury Totem's 0.1 sec after a swing",
+     "kind": "rotation",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder"
+     ],
+     "note": "Mortal Strike, Overpower, Rend, Execute and Hamstring hold until the totem can trigger again after a main hand swing, about 1 DPS. Fury and two-hand Fury lose with the wait and don't take it.",
+     "commits": [
+      "a8ea439"
+     ]
+    },
+    {
+     "title": "Enhancement holds Stormstrike for Windfury Weapon's cooldown",
+     "kind": "rotation",
+     "classes": [
+      "Shaman"
+     ],
+     "builds": [
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield"
+     ],
+     "note": "All four builds wait to Stormstrike until Windfury Weapon can trigger from it.",
+     "commits": [
+      "4d0c2ce"
+     ]
+    },
+    {
+     "title": "Feral Ferocious Bites at 65 Energy and times its abilities for Windfury Totem",
+     "kind": "rotation",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "Bite at 65 Energy adds about 2; waiting out the totem's 0.1 sec cooldown adds about 1 more on the default build. The Faerie Fire duty takes the Bite only.",
+     "commits": [
+      "f9990ec",
+      "d60171c"
+     ]
+    },
+    {
+     "title": "Retribution twists on one Unsealed Wrath copy, and Holy Shock keeps Seal of Command up",
+     "kind": "rotation",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "note": "The twist swaps seals once one copy is stored (was 2) with no mana limit, about 4; the Holy Shock builds keep Seal of Command up without twisting, about 29; vs Undead swaps on 2 copies, about 1.",
+     "commits": [
+      "c26878d",
+      "3ea9ca4"
+     ]
+    },
+    {
+     "title": "Assumptions: Execute's second Windfury Totem roll and Blood Fury's weapon damage, both probably bugs",
+     "kind": "method",
+     "classes": [
+      "Warrior",
+      "Shaman",
+      "Hunter"
+     ],
+     "note": "Combat logs show Execute rolling Windfury Totem twice and Orc Blood Fury raising weapon damage by 10%, neither of which the tooltips say. The report keeps Execute to one roll and includes Blood Fury's weapon damage, and shows the other side of each as an alternate: Execute rolling twice adds 13 to 23 DPS, Blood Fury without weapon damage costs 2 to 7.",
+     "moves": false,
+     "commits": [
+      "808265c"
+     ]
+    },
+    {
+     "title": "Tanking: the Warrior's Balanced and Max survival rotations re-tuned for Windfury Totem",
+     "kind": "rotation",
+     "classes": [
+      "Warrior"
+     ],
+     "note": "Heroic Strike from 40 Rage, Revenge ahead of Shield Slam, and Thunder Clap refreshed under 8 sec. With the new Windfury Totem rule, which every tank gains from (the Bear the most), the Warrior's Balanced score rises 22 and Max survival 19; Max threat keeps its rotation.",
+     "moves": false,
+     "commits": [
+      "f2a5dfe"
+     ]
+    },
+    {
+     "title": "Healing: Wild Growth heals twice as much a tick, and its ranks share one cooldown",
+     "kind": "game",
+     "classes": [
+      "Druid"
+     ],
+     "note": "Its tick coefficient is 0.066 of spell healing (was 0.033), from the Forever client's data.",
+     "source": {
+      "label": "wago.tools: Wild Growth's spell effects",
+      "url": "https://wago.tools/db2/SpellEffect?build=1.60.1.70938&filter%5BID%5D=1072065"
+     },
+     "moves": false,
+     "commits": [
+      "78c3959",
+      "98291cf"
+     ]
+    },
+    {
+     "title": "Imp Firebolt ranks 2 to 4 take the Forever client's damage",
+     "kind": "game",
+     "classes": [
+      "Warlock"
+     ],
+     "note": "Only the leveling ranks change; the level 60 Imp is unchanged.",
+     "moves": false,
+     "commits": [
+      "78c3959"
+     ]
+    },
+    {
+     "title": "Item data: Dawn trinkets vs Undead, Diabolic Mantle, Legplates of Vigilance, new items and reveals",
+     "kind": "game",
+     "note": "Seal of the Dawn gives 78 attack power vs Undead (was 81) and Rune of the Dawn 46 spell damage (was 48). Diabolic Mantle gives 5 mana every 5 sec and 17 Fire spell power, Legplates of Vigilance 1% hit. Scales of the Devourer, Silithid Queen's Husk and Onyxia Scale Breastplate are added; Bolt's Charged Eyeball, Everlook Pathcarver and Chained Essence of Eranikus are modeled; more items seen in game are in. No preset wears them.",
+     "moves": false,
+     "commits": [
+      "78c3959",
+      "9ec6904",
+      "87c0304",
+      "2a42b02",
+      "668c7bc",
+      "87891d8"
+     ]
+    },
+    {
+     "title": "Wildstalker Armor's 5-piece bonus also takes 1 sec off Multi-Shot",
+     "kind": "game",
+     "classes": [
+      "Hunter"
+     ],
+     "note": "No preset wears the set.",
+     "moves": false,
+     "source": {
+      "label": "Blizzard: WoW Forever hotfixes, November 13, 2026",
+      "url": "https://us.forums.blizzard.com/en/wow/t/2403040/10"
+     },
+     "commits": [
+      "9ec6904"
+     ]
     }
    ],
    "internal": [
@@ -5373,6 +5583,90 @@
     {
      "commit": "a60de04",
      "why": "test hashes for the same change"
+    },
+    {
+     "commit": "057127a",
+     "why": "rotation optimizer search knobs, off; no preset changes"
+    },
+    {
+     "commit": "de1f6f2",
+     "why": "rotation optimizer cleanup and a leveling test fix"
+    },
+    {
+     "commit": "8fcb833",
+     "why": "test hashes for the Feral rotation change"
+    },
+    {
+     "commit": "557093f",
+     "why": "test golden for the Feral rotation change"
+    },
+    {
+     "commit": "0156994",
+     "why": "rotation optimizer search knobs; no preset changes"
+    },
+    {
+     "commit": "9f8a71d",
+     "why": "rotation optimizer search knobs for the Enhancement line above"
+    },
+    {
+     "commit": "8f06449",
+     "why": "rotation optimizer search knobs; no preset changes"
+    },
+    {
+     "commit": "dd82f98",
+     "why": "rotation optimizer search knob for the Arms line above"
+    },
+    {
+     "commit": "c4b4733",
+     "why": "rotation optimizer search knobs, off; no preset changes"
+    },
+    {
+     "commit": "c7e6fba",
+     "why": "rotation optimizer search knob for the Feral line above"
+    },
+    {
+     "commit": "d725f0d",
+     "why": "tests for the Windfury Totem line above"
+    },
+    {
+     "commit": "95289e8",
+     "why": "best-in-slot list tool, not the report's sets"
+    },
+    {
+     "commit": "18066d3",
+     "why": "best-in-slot list tool, not the report's sets"
+    },
+    {
+     "commit": "1bf5feb",
+     "why": "best-in-slot list tool, not the report's sets"
+    },
+    {
+     "commit": "4d6406a",
+     "why": "best-in-slot list tool, not the report's sets"
+    },
+    {
+     "commit": "4b74bdb",
+     "why": "best-in-slot list tool, not the report's sets"
+    },
+    {
+     "commit": "70c0fe8",
+     "why": "best-in-slot list tool, not the report's sets"
+    },
+    {
+     "commit": "3841fdb",
+     "why": "phase content list for the best-in-slot tool"
+    },
+    {
+     "commit": "3dbbd77",
+     "why": "best-in-slot list tool, not the report's sets"
+    },
+    {
+     "commit": "2745da6",
+     "why": "stat weight tool step; the report's weights use their own step"
+    },
+    {
+     "commit": "655e300",
+     "why": "notes only"
     }
    ],
    "source": {

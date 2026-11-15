@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms",
   "published": {
-    "dps": 1088.0,
-    "source": "the hotfix 113539 re-tune (round 70753, 2026-11-04): wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1069.3,
+    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 1088.0,
+    "dps": 1069.3,
     "stderr": 0.48,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (2026-11-04, after hotfix 113539)"
+    "note": "the report main run of this request (2026-11-15), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Two-hand Arms with Mortal Strike, Slam and Rend, plus Overpower after dodges and Bloodthrill procs.",
   "keyTalents": [

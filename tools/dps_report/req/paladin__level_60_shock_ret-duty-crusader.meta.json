@@ -14,8 +14,8 @@
   "gearSet": "level60_phase1_synthetic_crusader_duty",
   "apl": "level60_shock_ret_crusader_duty",
   "published": {
-    "dps": 1029.2,
-    "source": "forever-sim's paladin round 70753, 2026-11-03: the November 2 notes' Vengeance 5 stacks and Two-Handed Weapon Specialization on Holy, and A2's race base stats (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
+    "dps": 1008.8,
+    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
   },
   "summary": "Keeps Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
@@ -72,11 +72,11 @@
   ],
   "notes": "Request: paladin__level_60_shock_ret with raid debuff judgementOfTheCrusader removed and the level60_shock_ret_crusader_duty rotation, and Libram of Fervor (23203) in the relic slot, as level60_phase1_synthetic_crusader_duty. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_ret_crusader_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh).",
   "verify": {
-    "dps": 1029.2,
-    "stderr": 0.35,
+    "dps": 1008.8,
+    "stderr": 0.34,
     "iters": 20000,
     "ok": true,
-    "note": "simreq of this request, 180s, seed 1"
+    "note": "the report main run of this request (2026-11-15), 180 \u00b1 20 s, 20,000 iterations, seed 1"
   },
   "duty": "Judgement of the Crusader",
   "baseBuild": "paladin__level_60_shock_ret"

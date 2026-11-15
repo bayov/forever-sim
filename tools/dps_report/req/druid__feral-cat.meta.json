@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_hit-4",
   "apl": "level60",
   "published": {
-    "dps": 1139.0,
-    "source": "verify.py on this request after round 70753 (the November 2 notes, race base stats; 942.5 before) and the 2026-11-03 rotation exploration (1131.1 before it), 20,000 iterations, seed 1, 180 ± 20 s"
+    "dps": 1185.9,
+    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 ± 20 s)"
   },
   "verify": {
-    "dps": 1186.2,
+    "dps": 1185.9,
     "stderr": 0.26,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 ± 20 s, 20,000 iterations, seed 1 (the request's own seed), 2026-11-15, after the Windfury re-tune (every landed main hand melee hit rolls the totem; 1183.4 on update-1115 merged with master before it); not yet the DPS report's main run"
+    "note": "the report main run of this request (2026-11-15), 180 ± 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Cat with Shred, Rake and Rip, plus Shifting Power and Shadowmeld into Ravage. Predatory Discipline lets Ferocious Bite keep its extra Energy. In Forever, Cat Form swings every 1.0s with the weapon's DPS. Stones, potions, Thistle Tea and Windfury Totem all work in Cat Form.",
   "keyTalents": [

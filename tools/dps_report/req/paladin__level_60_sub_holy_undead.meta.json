@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_undead",
   "apl": "level60_undead",
   "published": {
-    "dps": 1113.8,
-    "source": "the DPS report's main run of this request after the November 11 hotfixes (Judgement as a ranged attack, Unsealed Wrath without Windfury Totem copies, no extra attack rolling Windfury Totem) and the re-tuned seal rotation (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
+    "dps": 1138.0,
+    "source": "the DPS report's main run of this request after the November 13 hotfixes (Windfury Totem on every main hand melee hit, Judgement of Command a melee attack again) and this round's rotations (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
   },
   "verify": {
-    "dps": 1113.8,
-    "stderr": 0.33,
+    "dps": 1138.0,
+    "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "the report main run of this request (2026-11-13), 180 \u00b1 20 s, 20,000 iterations, seed 1"
+    "note": "the report main run of this request (2026-11-15), 180 \u00b1 20 s, 20,000 iterations, seed 1"
   },
   "summary": "Ret sub-Holy with Exorcism, for an Undead or Demon boss.",
   "advantage": "Exorcism only works on Undead and Demons. Purifying Power 2 makes its cooldown a third shorter.",
