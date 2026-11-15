@@ -380,6 +380,26 @@ Nothing changes. Six-boss means at the own weight, 10,000, seed 1 (`rotopt -eval
 Dense stone between). Max survival now leads the paladin's (1,723.0) at w = 3; the warrior leads at every weight.
 Raw output: `orchestration/tank_handoff/windfury_retune/`.
 
+## Re-tuned on Windfury Totem rolling on every main-hand hit (2026-11-15)
+
+Since 2026-11-15 (standards 17) Windfury Totem rolls on every landed main-hand melee hit, Shield Slam's included. Each
+preset was re-searched as on 2026-11-12: `rotopt -template warrior_tank -tank <preset>` on the six scoring bosses at its
+own weight, the knob search from the shipped knobs (1,000 a candidate, 3,000 to confirm; Shield Wall, the trinket and
+the potion held), then the candidates that showed more than their error at 20,000 iterations on seeds 1 and 1000003
+against the shipped knobs (`rotopt -eval`).
+
+- **Balanced** and **Max survival** take Heroic Strike from 40 Rage (was 50), Revenge ahead of Shield Slam and Thunder
+  Clap refreshed under 8 s (was 2 s): Balanced 3,434.8 / 3,432.0 → **3,450.9 / 3,447.0** (+16.1 / +15.0), Max
+  survival 1,773.1 / 1,773.4 → **1,797.7 / 1,808.8** (+24.6 / +35.4). One knob at a time at Balanced: Heroic Strike at
+  40 +7.9 / +10.4, Revenge first +5.0 / +2.5, Thunder Clap under 8 s +1.5 / -1.7; at Max survival: Heroic Strike at
+  40 +12.8 / +10.8, Thunder Clap under 8 s +7.7 / +8.9. The two presets keep the same rotation but for Max survival's
+  Sunder Armor filler at 30 Rage and Shield Wall in the last 13 s.
+- **Max threat**: knobs hold (4,225.9 / 4,227.2). Shield Block from 30 Rage +1.4 / +0.8 (noise).
+- Windfury timing (the `wfGate` knob, `tools/rotopt/warrior_common.go`): keeping Shield Slam, Revenge, Sunder Armor and the
+  other instant main-hand strikes out of the 0.1 s after a main-hand swing (1), or out of the 0.1 s before the next one
+  too (2), loses at every weight: Max threat -2.0 / -1.7 and -5.7 / -6.5, Balanced -3.7 / -0.3 and -89.9 / -80.9, Max
+  survival -36.1 / -38.8 and -83.6 / -79.8. Rage and the GCD are worth more than the roll.
+
 ## Presets (2026-11-04, round 2; round 3 on top)
 
 **Round 3** (2026-11-04, after the second tank audit; master fd9538c: mana-gain threat unmultiplied, tank_mechanics
