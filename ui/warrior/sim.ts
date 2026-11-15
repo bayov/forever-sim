@@ -118,12 +118,12 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 		gear: [...Presets.GearPresets[Phase.Phase1]],
 		// Preset builds that the user can quickly select.
 		builds: [
-			Presets.PresetBuildLevel60Fury,
-			Presets.PresetBuildLevel60FuryShout,
-			Presets.PresetBuildLevel60FurySunder,
 			Presets.PresetBuildLevel60Fury2H,
 			Presets.PresetBuildLevel60Fury2HShout,
 			Presets.PresetBuildLevel60Fury2HSunder,
+			Presets.PresetBuildLevel60Fury,
+			Presets.PresetBuildLevel60FuryShout,
+			Presets.PresetBuildLevel60FurySunder,
 			Presets.PresetBuildLevel60Arms,
 			Presets.PresetBuildLevel60ArmsShout,
 			Presets.PresetBuildLevel60ArmsSunder,

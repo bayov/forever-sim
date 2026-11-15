@@ -101,11 +101,11 @@ export const GearPresets = {
 	[Phase.Phase1]: [GearLevel60Phase1SyntheticFury, GearLevel60Phase1SyntheticFuryHitPlus2, GearLevel60Phase1SyntheticArms],
 };
 
-// The class default is dual wield Fury on the Fury set's hit+2 step (user ruling 2026-11-12: each
-// class defaults to its best 180 sec build), 998.9 against two-hand Fury's 925.6 in the deployed
-// report. Two-hand Fury was the default from the November 2 notes (1169.9 against dual wield Fury's
-// 1152.6 then, Orc, 180 +- 20 sec, 20,000 iterations) until then.
-export const DefaultGear = GearLevel60Phase1SyntheticFuryHitPlus2;
+// The class default is two-hand Fury (user ruling 2026-11-15: each class defaults to its best 180 sec
+// build), 1103.0 against dual wield Fury's 1092.8 in the deployed report (deploy 53d112b1, 180 +- 20 sec,
+// 20,000 iterations, seed 1). Dual wield Fury (on the hit+2 set) was the default from 2026-11-12 until
+// then, and two-hand Fury from the November 2 notes until that.
+export const DefaultGear = GearLevel60Phase1SyntheticArms;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -226,7 +226,7 @@ export const APLPresets = {
 	],
 };
 
-export const DefaultAPLs = [APLLevel60Fury];
+export const DefaultAPLs = [APLLevel60Fury2H];
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -299,7 +299,7 @@ export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60Fury, TalentsLevel60Fury2H, TalentsLevel60Arms, TalentsLevel60ArmsDragonkin],
 };
 
-export const DefaultTalents = TalentsLevel60Fury;
+export const DefaultTalents = TalentsLevel60Fury2H;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options Presets
