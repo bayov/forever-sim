@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "d630df2cb0d485ea2d7646bc58f3aff87569a89c"
+  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
  },
- "last_pass_at": "2026-11-14T06:49:34Z",
- "pass": 82,
- "result": "findings",
- "note": "Pass 82: 1bf5feb4b..95289e879. 87c030418 (three Forever trinkets) verified on 70938. Nov 13 hotfixes (t/2403040 post 1 edit / post 10): mechanics-20261114-1 (Judgement of Command melee), update on -20261112-1 (WF all MH melee abilities). Hotfix SpellMisc pushes after 113605 still unread.",
+ "last_pass_at": "2026-11-15T12:50:11Z",
+ "pass": 83,
+ "result": "quiet",
+ "note": "Pass 83: d630df2cb..70ea588bb. 0cc2c3c8b (Bite 80% miss refund, Sharpened Claws spell crit) verified on 70938. Blue tracker: Nov 14 dungeon XP post only. Hotfix SpellMisc pushes after 113605 still unread.",
  "client_build": "1.60.1.70938",
- "checked_at": "2026-11-15T06:44:36Z",
+ "checked_at": "2026-11-15T13:12:56Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/10",
   "date": "2026-11-04T19:35:16Z",
@@ -26,7 +26,7 @@
   "newest_push": 113605,
   "tool": "tools/sources/hotfixes.py (fetch --refresh is slow; wago.tools/hotfixes?product=wowf&search=70707+spell pages, newest first, are quicker)"
  },
- "blue_tracker_seen": "2026-11-14T01:54:07Z",
+ "blue_tracker_seen": "2026-11-15T01:18:23Z",
  "hotfix_post_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2403040/10",
   "date": "2026-11-14T01:54:07Z",

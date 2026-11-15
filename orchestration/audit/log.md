@@ -392,3 +392,13 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-11-14 06:49 | gear | pass 65 | master 95289e879 | quiet | ids 15141 and 19106 added, neither in a level60 set
 2026-11-14 06:49 | consumables | pass 86 | master 95289e879 | quiet | three new trinket effects match client 70938, unused by presets
 2026-11-14 06:49 | mechanics | pass 82 | master 95289e879 | 1 new finding | Judgement of Command now melee (medium); Windfury Totem finding raised to medium
+2026-11-15 13:12 | results | pass 90 | master 70ea588bb | quiet | builds.json matches shared run 68/68; feral +0.4% from 0cc2c3c8b; stale metas unchanged
+2026-11-15 13:12 | rotations | pass 66 | master 70ea588bb | 1 new finding | Arms should hold main-hand abilities during Windfury Totem's 100 ms cooldown (low, +2.5 DPS)
+2026-11-15 13:12 | mechanics | pass 83 | master 70ea588bb | quiet | Bite miss refund and Sharpened Claws spell crit match client 70938
+2026-11-15 13:12 | fairness | pass 42 | master 70ea588bb | quiet | only druid rows moved; Feral +2.7, still 4th
+2026-11-15 13:12 | healer_mechanics | pass 15 | master 70ea588bb | quiet | druid form changes don't touch healers
+2026-11-15 13:12 | healer_rotations | pass 13 | master 70ea588bb | quiet | 63 healbench rows bit-identical
+2026-11-15 13:12 | healer_fairness | pass 14 | master 70ea588bb | quiet | 63 healbench rows match reference
+2026-11-15 13:12 | tank_mechanics | pass 16 | master 70ea588bb | quiet | changes don't affect bear tank
+2026-11-15 13:12 | tank_rotations | pass 14 | master 70ea588bb | quiet | only bear rows moved within error; Windfury gate tests lose
+2026-11-15 13:12 | tank_fairness | pass 15 | master 70ea588bb | quiet | bear +1 to +6 at most; tank order unchanged

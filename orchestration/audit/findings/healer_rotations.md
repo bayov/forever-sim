@@ -30,6 +30,7 @@
   Heal variant. The OOM looks like the Discipline kit's cost on a mana-starved fight, not a rotation line:
   Distilled Wisdom wins Chromaggus by 0.075 (`docs/healing_sim.md`, Consumables) but loses the mean.
 - update 2026-11-13, master 71562a8b0: unchanged (Chromaggus 0.871, 341 mana left, OOM at 101 s, 1,000 it; byte-identical row).
+- update 2026-11-15, master 70ea588bb: unchanged (same row, byte-identical).
 - needs: worker fix
 
 ## Resolved

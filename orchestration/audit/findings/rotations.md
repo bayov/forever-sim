@@ -4,6 +4,31 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### rotations-20261115-1: Arms: hold the main-hand abilities while Windfury Totem's 100 ms cooldown runs
+- severity: low (+2.5 DPS at 180 s, 0.24%; Dragonkin +1.6)
+- affects: warrior__arms, warrior__arms_dragonkin (+ the two Arms duty builds, same lines, not run). Not Fury DW (0.0) or Fury 2H (+0.4, under the bar).
+- found: 2026-11-15, master 70ea588bb (pass 66, the user's Windfury timing request)
+- evidence: Mortal Strike, Slam, Rend, Hamstring, Execute and Spearing Strike roll Windfury Totem under Forever
+  (`sim/core/windfury_totem_procs_forever.go`), and the totem's ICD is 100 ms (`sim/core/buffs.go`, standards 17), so an
+  ability that lands just after a procced swing loses its roll. Variant B appends to each of those castSpell lines
+  (21553, 11605, 11574, 7373, 20662, 1310222) the gate
+  `{"and":{"vals":[{"auraIcdIsReadyWithReactionTime":{"auraId":{"spellId":10610}}},{"or":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10610}}}}},{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"spellId":10610}}},"op":"OpLe","rhs":{"const":{"val":"900ms"}}}}]}}]}}`
+  (the ICD value alone reads "ready" while the buff is younger than the reaction time, hence the remaining-time clause; the
+  buff alone drops early once its charges are used). Made by `tools/audit/rotations/wf_gate.py REQ OUT`.
+  Lines: `ui/warrior/apls/level60_arms.apl.json:18,19,21,22,25`, `_battle_shout:21,22,24,25,28`, `_dragonkin:18,19,21,22,23,26`,
+  `_sunder:19,20,22,23,26`. Paired `ab.py` (20k it, 8 blocks, CLI 70ea588bb116), B-A at 120 / 180 / 300 s:
+  | preset | S0 1e6 | S0 2e8 | pooled | A at 180 |
+  |---|---|---|---|---|
+  | arms | +1.39 / +2.42 / +2.30 | +1.83 / +2.57 / +2.38 | **+1.61 / +2.50 / +2.34** | 1042.9 |
+  | arms_dragonkin | - / +1.60 / - | - | - | 1100.8 |
+  | fury_2h | +0.35 / +0.30 / +0.28 | +0.08 / +0.42 / +0.33 | +0.22 / +0.36 / +0.31 | 1033.0 |
+  SE 0.14-0.27 a set. Gating 100 ms after every main-hand swing (not only procs) gains about the same on Arms (+2.27 at 180,
+  set 1) and loses on Fury DW (-0.58). Which of the six lines carries the gain was not split out. Rests on the unverified
+  100 ms ICD (report assumption wf_totem_icd); with the Era 1.5 s it would be worth more.
+- proposed fix: add the gate above to those lines in the four `level60_arms*.apl.json` files and to the two Arms req rotations
+  (warrior__arms, warrior__arms_dragonkin; the duty reqs too if they embed them).
+- needs: orchestrator fix
+
 ### rotations-20261112-1: Dagger and Seal Fate rogues: Instant Poison on the main hand, Deadly Poison on the off hand
 - severity: high (Seal Fate Daggers +16.3 at 180 s, 1.8%; Mutilate +14.3, 1.65%; Seal Fate Swords +9.8, 1.05%; Subtlety +2.4, 0.28%)
 - affects: rogue__mutilate, rogue__seal-fate-daggers, rogue__seal-fate-swords, rogue__subtlety. Not the two Combat builds (swap loses 2.3-3.2).
@@ -80,6 +105,10 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
   feral-cat: set 1 +2.07 / +2.97 / +4.81, set 2 +2.17 / +2.50 / +4.36, **pooled +2.12 / +2.74 / +4.59** (A 1153.1 at 180).
   duty-ff: set 1 +1.83 / +2.19 / +3.99, set 2 +1.77 / +1.79 / +3.76, **pooled +1.80 / +1.99 / +3.88** (A 1148.3).
   Gate 75 (set 1): +0.28 / +1.28 / +4.16, so 65 stays the pick. Severity stays low (0.24%).
+- update 2026-11-15 (pass 66, master 70ea588bb): 0cc2c3c8b refunds 80% of an avoided Bite's 35 Energy. Gate 65 still gains,
+  same variant, 20k it, CLI 70ea588bb116, B-A at 120 / 180 / 300 s: feral-cat set 1 +1.80 / +2.51 / +4.17, set 2 +2.05 / +2.47 / +4.53,
+  **pooled +1.93 / +2.49 / +4.35** (A 1155.8); duty-ff set 1 +1.29 / +1.71 / +3.54, set 2 +1.50 / +1.63 / +3.74, **pooled +1.40 /
+  +1.67 / +3.64** (A 1150.7). Gate 75 (set 1): -0.05 / +0.44 / +3.28, so 65 stays the pick.
 - proposed fix: in both APLs (and the two req rotations), the 5-CP Ferocious Bite line's `"val":"45"` -> `"val":"65"`.
 - needs: orchestrator fix
 
