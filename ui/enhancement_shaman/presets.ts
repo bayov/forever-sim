@@ -193,6 +193,10 @@ export const DefaultGear = GearLevel60Phase1SyntheticHitMinus3;
 // is down, Lightning Bolt only at 5 Maelstrom Weapon stacks, and Earth Shock otherwise
 // (Earth Shock and the bolt spend the Stormstrike mark for +20%). Rage of the Farseer goes
 // on cooldown, with Blood Fury and Berserking waiting for it when that costs them no use.
+// Since Windfury Totem's Forever rule (every landed main hand hit rolls it, Stormstrike's strike
+// too), all three presets hold Stormstrike until Windfury Weapon's 1.5 sec cooldown is back, so
+// the strike can proc the weapon, and let the shocks go meanwhile: +0.9 to +2.4 DPS at 120 / 180 /
+// 300 sec. Keeping Stormstrike out of the totem's 100 ms after a swing doesn't gain.
 //
 // The air totem is Windfury Totem, because in a raid the shaman puts it down for the
 // melee in the group. Since Blizzard's 2026-11-10 hotfixes it also procs for the shaman next

@@ -8,6 +8,23 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Re-search after Windfury Totem's Forever rule (2026-11-15)
+
+Windfury Totem (100 ms cooldown) now rolls on every landed main hand hit, white or special, so Stormstrike's main hand
+strike rolls it too, next to Windfury Weapon (1.5 sec cooldown). Re-searched with rotopt on the four Enhancement builds,
+paired at 20000 iterations on seeds 1 and 1000003 at 120 / 180 / 300 sec; a change is kept only where it wins at all six.
+
+- Stormstrike waits for Windfury Weapon's cooldown to come back, and the shocks, Fire Nova and the bolt go meanwhile:
+  Level 60 +1.6 to +2.1, Imp GW +1.4 to +2.1, Water Shield +0.9 to +2.4, Mana Tide +1.3 to +1.8. Idling through the
+  wait instead gains less (+0.4 to +2.2).
+- Keeping Stormstrike out of the totem's 100 ms after a white swing, or after a totem proc, or also out of the 100 ms
+  before the next swing, is within -0.8 and +1.3 and doesn't win everywhere. The sim seldom puts a Stormstrike there
+  anyway (5 of 146 in a 20 min fight).
+- No other rotation knob moves, and the talents stay: Reverberation 5 with Tidal Focus 1 on the hit-1 step is again
+  ahead at 120 and 180 sec (+1.3 to +2.6) and behind at 300 (-0.3 / -0.4) on Level 60.
+- Windfury Weapon with its own Windfury Totem and Magma Totem stays; the new rule only adds to Windfury Totem. Totem
+  twisting (Windfury Totem and Grace of Air in turn) isn't modelled, and the raid's second shaman gives Grace of Air.
+
 ## Re-search after the Nov 13 log audit (2026-11-13)
 
 The log audit let Windfury Weapon's extra attacks roll Windfury Totem (in the log they proced it on 47 of 162 imbue

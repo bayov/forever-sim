@@ -136,6 +136,18 @@ func (shamanEnh) Knobs() []Knob {
 		// The earth, air and water totems are only recast with this many seconds left in the fight
 		// (0 always). The prepull totems run out a few seconds before a 5 min fight ends.
 		{Name: "totemMinTime", Default: 0, Min: 0, Max: 30, Step: 10},
+		// Stormstrike's main hand strike rolls Windfury Weapon and Windfury Totem. Hold it while
+		// Windfury Weapon's 1.5 sec cooldown has this many seconds or less left, so the strike can
+		// proc the weapon, 0 never.
+		{Name: "stormstrikeWfHold", Default: 0, Min: 0, Max: 1.5, Step: 0.5},
+		// With stormstrikeWfHold: 1 idles through the hold (nothing below takes the GCD), 0 lets the
+		// lines below Stormstrike go meanwhile.
+		{Name: "stormstrikeWfIdle", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Keep Stormstrike off Windfury Totem's 100 ms cooldown: 0 no, 1 wait out the totem's
+		// cooldown, 2 wait until 100 ms after the last main hand swing, 3 that and not within 100 ms
+		// before the next swing either, 4 the totem's cooldown and not within 100 ms before the next
+		// swing.
+		{Name: "stormstrikeTotemGate", Default: 0, Min: 0, Max: 4, Step: 1},
 	}
 }
 
@@ -261,7 +273,19 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(flameShock, and(not(dotIsActive(flameShock)), shockManaFloor(k["shockMana"])), "Flame Shock when its DoT is down."))
 	}
 	if maxTalentPoints >= 16 {
-		items = append(items, cast(stormstrike, nil, "Stormstrike on cooldown. Without the talent ignore the warning on this line."))
+		items = append(items, stormstrikeGates(k)...)
+		var when value
+		notes := "Stormstrike on cooldown. Without the talent ignore the warning on this line."
+		if hold := k["stormstrikeWfHold"]; hold > 0 && k["stormstrikeWfIdle"] == 0 {
+			icd := auraInternalCooldown(rankID(shaman.WindfuryWeaponLevel[:], shaman.WindfuryWeaponSpellId[:]))
+			when = eq(icd, seconds(0))
+			if hold < 1.5 {
+				when = or(when, gt(icd, seconds(hold)))
+			}
+			notes = "Stormstrike once Windfury Weapon's 1.5 sec cooldown is back, so its main hand strike can proc the weapon. " +
+				"The lines below go meanwhile. Without the talent, or without Windfury Weapon, ignore the warning on this line."
+		}
+		items = append(items, cast(stormstrike, when, notes))
 	}
 	if k["fireNova"] > 0 && k["fireNovaClearcast"] == 2 {
 		// The sim drops a condition on an aura the build does not have, which would leave
@@ -446,4 +470,38 @@ func shieldWhen(shield *proto.ActionID, pct float64) value {
 		when = and(when, lt(currentManaPercent(), num(pct/100)))
 	}
 	return when
+}
+
+// stormstrikeGates are the waits ahead of the Stormstrike line, for the strike's rolls of
+// Windfury Totem (100 ms cooldown, also rolled by every main hand white swing) and Windfury
+// Weapon (1.5 sec cooldown). Each idles only while Stormstrike is ready, for at most the
+// time left on the gate.
+func stormstrikeGates(k Knobs) []*proto.APLListItem {
+	var items []*proto.APLListItem
+	ready := spellIsReady(stormstrike)
+	tick := seconds(0.001)
+	sinceSwing := sub(mainHandSwingTime(), mainHandTimeToNext())
+	window := seconds(0.1)
+	totemICD := auraInternalCooldown(rankID(shaman.WindfuryTotemLevel[:], core.WindfuryBuffSpellId[:]))
+	gate := k["stormstrikeTotemGate"]
+	if gate == 1 || gate == 4 {
+		items = append(items, aplWait(add(totemICD, tick), and(ready, gt(totemICD, seconds(0))),
+			"Stormstrike waits out Windfury Totem's 100 ms cooldown, so its main hand strike can roll the totem."))
+	}
+	if gate == 2 || gate == 3 {
+		items = append(items, aplWait(add(sub(window, sinceSwing), tick), and(ready, lt(sinceSwing, window)),
+			"Stormstrike waits until 100 ms after the last main hand swing, past Windfury Totem's cooldown if the swing procced it."))
+	}
+	if gate == 3 || gate == 4 {
+		// Through the swing. After it, the line above holds the strike for its 100 ms (or the
+		// totem's cooldown, if the swing procced it).
+		items = append(items, aplWait(add(mainHandTimeToNext(), tick), and(ready, lt(mainHandTimeToNext(), window)),
+			"Stormstrike waits through a main hand swing due within 100 ms, so the swing keeps its Windfury Totem roll."))
+	}
+	if hold := k["stormstrikeWfHold"]; hold > 0 && k["stormstrikeWfIdle"] == 1 {
+		icd := auraInternalCooldown(rankID(shaman.WindfuryWeaponLevel[:], shaman.WindfuryWeaponSpellId[:]))
+		items = append(items, aplWait(add(icd, tick), and(ready, gt(icd, seconds(0)), le(icd, seconds(hold))),
+			"Stormstrike waits for Windfury Weapon's 1.5 sec cooldown to come back, so its main hand strike can proc the weapon."))
+	}
+	return items
 }

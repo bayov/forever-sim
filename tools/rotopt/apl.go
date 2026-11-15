@@ -30,6 +30,8 @@ var (
 	remainingTime          = aplkit.RemainingTime
 	auraIsActive           = aplkit.AuraIsActive
 	auraRemainingTime      = aplkit.AuraRemainingTime
+	auraInternalCooldown   = aplkit.AuraInternalCooldown
+	aplWait                = aplkit.Wait
 	spellIsReady           = aplkit.SpellIsReady
 	spellTimeToReady       = aplkit.SpellTimeToReady
 	spellUsesRemaining     = aplkit.SpellUsesRemaining
