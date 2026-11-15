@@ -87,9 +87,8 @@ func (paladin *Paladin) registerSealOfCommand() {
 
 			BonusCritRating: paladin.holyPowerCrit(),
 			// Two-Handed Weapon Specialization reaches it in game after the November 11 hotfix (1.062,
-			// n = 109, 2026-11-13; wowsims/forever EV-0064; user ruling 2026-11-15). Their client data
-			// has it melee in SpellCategories, while this sim rolls it on the ranged table
-			// (rangedJudgement below); the bonus is kept either way.
+			// n = 109, 2026-11-13; wowsims/forever EV-0064; user ruling 2026-11-15), as a melee-defense
+			// Holy hit.
 			DamageMultiplier: paladin.getWeaponSpecializationModifier() * improvedSeals,
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,
@@ -100,8 +99,13 @@ func (paladin *Paladin) registerSealOfCommand() {
 
 				// Forever's judgement dummy (client 20968) and the damage spell it casts (20966) have
 				// No Active Defense: one roll for hit and crit, never dodged, parried or blocked
-				// (wowsims/forever e10ca32c3d, 447d83b595). Since the November 11 hotfixes it is a
-				// ranged attack, so the roll is on the ranged table (rangedJudgement).
+				// (wowsims/forever e10ca32c3d, 447d83b595). Unlike Righteousness and Fury it stays a
+				// melee special on the main hand's table after the November 11 "Judgement is a Ranged
+				// Attack" hotfix: the client has it Melee in SpellCategories (wowsims/forever
+				// seal_of_command.go), and a log after the hotfix shows it taking the melee-only
+				// Two-Handed Weapon Specialization bonus (1.062, n = 109; EV-0064). User ruling
+				// 2026-11-15. So melee-keyed procs hear it (weapon and equip procs, the Judgements
+				// of Wisdom, Light and the Crusader on the target).
 				if sim.IsForever() {
 					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
 					return
@@ -118,7 +122,6 @@ func (paladin *Paladin) registerSealOfCommand() {
 				spell.CalcAndDealDamage(sim, target, baseDamage, outcomeApplier)
 			},
 		}
-		paladin.rangedJudgement(&judgeConfig)
 		judgeSpell := paladin.RegisterSpell(judgeConfig)
 
 		procSpell := paladin.RegisterSpell(core.SpellConfig{

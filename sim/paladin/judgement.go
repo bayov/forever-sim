@@ -84,7 +84,11 @@ func (paladin *Paladin) sanctifiedJudgementBase(sim *core.Simulation) float64 {
 // weapon skill is the base for the level (a libram is no ranged weapon, so a Human's sword and
 // mace skill doesn't reach it) and which a weapon-only crit (Elemental Sharpening Stone) doesn't
 // reach. The hotfix names no other change, so it still has No Active Defense (never dodged,
-// parried or blocked), keeps its damage, threat and the weapon specializations.
+// parried or blocked) and keeps its damage and threat. Two-Handed Weapon Specialization's Holy part
+// no longer reaches it (talents.go, applyWeaponSpecialization).
+//
+// Judgement of Righteousness and of Fury take it. Judgement of Command doesn't: the client has it
+// Melee in SpellCategories, and a log after the hotfix backs that (soc.go; user ruling 2026-11-15).
 func (paladin *Paladin) rangedJudgement(config *core.SpellConfig) {
 	if !paladin.Env.IsForever() {
 		return

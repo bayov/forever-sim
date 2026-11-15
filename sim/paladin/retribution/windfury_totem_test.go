@@ -102,8 +102,9 @@ func TestUnsealedWrathWindfuryTotemSwingFromAnyTrigger(t *testing.T) {
 	}
 }
 
-// No Judgement rolls Windfury Totem: the damaging ones are ranged attacks since the November 11
-// hotfix, and the Crusader's and Wisdom's have no proc mask. A white swing still does.
+// No Judgement rolls Windfury Totem: Righteousness and Fury are ranged attacks since the November 11
+// hotfix, Command is a melee special outside the totem's list of abilities, and the Crusader's and
+// Wisdom's have no proc mask. A white swing still does.
 func TestJudgementsDontRollWindfuryTotem(t *testing.T) {
 	sim, ret, totem, attack := retSimWindfuryTotem(t, "")
 	judgements := 0
@@ -117,7 +118,7 @@ func TestJudgementsDontRollWindfuryTotem(t *testing.T) {
 		if judgements > 15 {
 			t.Fatalf("more Judgement spells than the 60 sec fight has time for")
 		}
-		if spell.ProcMask.Matches(core.ProcMaskMelee) {
+		if spell.SpellCode != paladin.SpellCode_PaladinJudgementOfCommand && spell.ProcMask.Matches(core.ProcMaskMelee) {
 			t.Errorf("Judgement %v has a melee proc mask %v", spell.ActionID, spell.ProcMask)
 		}
 		for range 10 {
