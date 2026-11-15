@@ -8,6 +8,16 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents (now settled for every talent in the 70338 tree, see Trait curves below): the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ unverified] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Judgement of Command melee again (November 13 hotfixes, re-tuned 2026-11-15)
+
+Judgement of Command is a melee attack again, so it rolls Windfury Totem and on-hit procs (Judgements of Righteousness and Fury stay ranged), and Windfury Totem rolls on every landed main hand melee hit, Holy Strike included. Knob searches over 120, 180 and 300 sec (`tools/rotopt/paladin_presets.sh`), each pick confirmed at 20,000 iterations on two seed sets, Undead:
+
+- Twist builds keep Seal of Righteousness up but swap to Seal of Command on a single stored copy, and back once Command has stored all 3. Twist: 1 copy (was 2), both swaps within 2.5 sec of the next swing, no mana rule: +4.4 at 180 sec. Sub-Holy 1 copy (was 2): +3.1. Both duty rotations 1 copy (was 3): +7 to +8. Sub-Holy vs Undead 2 copies (was 3; 1 loses 4.4 at 300 sec): +1.0 to +1.6.
+- Ret Shock keeps Seal of Command up (was Righteousness): +29 to +30 on Ret Shock, +25 to +29 on its Wisdom duty (its Crusader duty already did).
+- Seal of Command kept up on the twist build loses 18; judging Righteousness only when the next swing is far off loses 1.7 to 2.8.
+- Windfury timing: holding Holy Strike and the Command judgement while the totem's 100 ms internal cooldown runs gains 0.0 to 0.1 (it almost never matters: Holy Strike's 10 sec cooldown rarely lands there), holding them when the next swing is under 100 ms away loses 0.1 to 1.1. Neither is used.
+- Talent searches at 180 sec kept every string. Protection paladin keeps its talents and rotation at all three weights.
+
 ## The November 2 development notes and client 1.60.1.70753 (2026-11-03)
 
 Blizzard's development notes of 2 November (post 9, `orchestration/audit/ref/client_update/sources/devnotes_post9_2026-11-02.txt`) go with client 1.60.1.70753, which writes the October 30 hotfix into the client tables. Every paladin line the client carries was already in the sim from that hotfix (the paladin trees are unchanged, so no talent string moved). Two Retribution lines are in the notes only; client 70753 and the server hotfixes (none for 70753 on wago.tools as of 2026-11-03) still have the old values. The sim takes the notes' numbers under Forever (standards 37, the user's ruling of 2026-11-03):

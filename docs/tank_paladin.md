@@ -229,6 +229,17 @@ loses heavily at all three weights. Max survival's knob search picked Consecrati
 (seed 1) and +3.3 ± 5.5 (seed 2), and -4.2 ± 4.4 / -6.1 ± 4.1 without Broodlord, so it stays at 60%. Its talent
 search drifted on noise to a lower score (1,751.2 against 1,775.7 at the start). Nothing changes for the tank.
 
+## Holy Strike rolls Windfury Totem (November 13 hotfixes, 2026-11-15)
+
+Re-searched as in the November 11 round (six bosses, 1,000 iterations a candidate, 3,000 to confirm, Templar's
+Bulwark frozen), with two new template knobs for Holy Strike's Windfury timing (`wfIcdGate`, hold it during the
+totem's 100 ms internal cooldown; `swingGap`, hold it when the next swing is that close). Knobs and talents at each
+weight: nothing changes. Balanced's search picked Consecration at any mana (from 60%), but `-eval` at 10,000 iterations
+gives +0.9 (seed 1) and +0.7 (seed 2), noise. `wfIcdGate` is -0.7 to +0.0 at the three weights (10,000 iterations,
+two seeds), `swingGap` at 1,000 iterations -6.3 to +0.9 against noise 1 to 14. Seal of Righteousness still loses (-43
+Max threat, -92 Balanced, -204 Max survival). Max survival's talent search moved Precision 1 to Divine Intellect on a
+mana tie-break, -36 at 10,000 iterations on both seeds; Max threat and Balanced kept their strings.
+
 ## Presets (step 6)
 
 The presets now (round 5: Balanced on Max threat's talents and boots, Greater Agility boots at every preset, Max
