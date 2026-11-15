@@ -421,18 +421,21 @@ wording instead.
 - [ ] 2026-11-14 — Rule on PR #130's Windfury Totem reading: seal procs (Righteousness, Fury, Command) don't roll the totem, every other main hand melee hit does (Blizzard Nov 13: "activated by all melee abilities") [source: blizzard]
   - PR #130 adds `SpellFlagNoWindfuryTotem` on the seal procs. A post-Nov-14 Ret log with the totem up settles it: any Windfury attack right after a seal proc with no swing or ability in between.
   - PR #130 drops `sim/core/windfury_totem_procs_forever.go`; its generator `tools/sources/wf_totem_procs.py` was removed on update-1115 (2026-11-15).
+  - 2026-11-15: PR #130's rule is on master (25ce81de7) and in the published report; this stays open for the Ret log.
 - [ ] 2026-11-14 — Take the Nov 13 item hotfixes once Wowhead Forever or the client shows them (Blizzard hotfixes Nov 13; Wowhead tooltips still had the old values on Nov 14, so PR #130 left them out) [source: blizzard]
   - Darkspear Signet 272068-272071 mp5 9/7/6/4 -> 4/3/3/2; Militant's Band 271913-271916 +1 mp5; Bad Hat 260212 loses +23 Shadow damage; Souvenir Sea Shell 274749 Sta 13 -> 10; Channeler's Ring 272406 +8 Spirit -> +9 spell power; Everstaring Abomination Eye 284097 Spirit "corrected" (no value given); Blessed Band of Light 272407 loses its hit.
   - Blessed Band of Light and Bad Hat can't go through forever_seen_in_game.json: the merge skips zero values, so it can't clear a stat. Regenerate through itemsparse.py from the next build, or teach the merge to clear.
   - https://us.forums.blizzard.com/en/wow/t/2403040/10
-- [ ] 2026-11-14 — Wild Growth: all three ranks now share one 6 s cooldown (category 1237) and it can't be cast while moving (Blizzard Nov 13; wago push 114075) [source: blizzard]
+- [x] 2026-11-14 — Wild Growth: all three ranks now share one 6 s cooldown (category 1237) and it can't be cast while moving (Blizzard Nov 13; wago push 114075) [source: blizzard]
   - Draft PR #129 takes the 0.066 coefficient only. Check `sim/druid/healing.go` `WildGrowthCooldown` uses one shared timer across 408120 / 1238214 / 1238215.
+  - 2026-11-15: done (update_1115). The ranks already shared one timer; TestDruidWildGrowthRanksShareCooldown (`sim/raid_healing_druid_test.go`) pins it, category 1237 cited. The Healing bench is re-simmed with it. The healing sim has no movement, so "can't be cast while moving" needs nothing.
 - [ ] 2026-11-15 — Finish the items revealed Nov 12–15 that draft PR #131 couldn't take (foreverchanges.pro, build 70938) [source: foreverchanges]
   - 22398 Idol of Rejuvenation: Forever is "Increases the initial healing of Regrowth by 5% when cast on a target affected by your Rejuvenation" (Classic: +50 Rejuvenation healing), no longer Unique. Needs druid code. https://foreverchanges.pro/item/22398
   - 22332 Blade of Necromancy: on-kill Skeleton for 2 min isn't modelled (no fight effect); PR #131 takes its stats. https://foreverchanges.pro/item/22332
   - Wowhead Forever tooltips disagree with foreverchanges' in-game values: 22333 Hammer of Divine Might 135 healing / 45 damage vs 132 / 44, 22332 Blade of Necromancy 72 SP vs 71. PR #131 uses foreverchanges; recheck with itemsparse.py 70938.
   - Rerun dbcache.py then hidden.py after PR #131 merges: hidden_items.json still marks 22335, 22339, 22329, 22333, 22319, 22326, 22332 "classic", so db.json keeps hiddenStats 1 on them.
   - PR #131 moves Elemental Shaman phase_3 (Scepter of Interminable Focus 22329 loses 9 SP and spell hit): Phase3 Average-Default 900.59 → 893.62 DPS. Re-run the Elemental gear search; the Scepter likely leaves the phase_3 set.
-- [ ] 2026-11-15 — Shaman goldens fail on master fe8793d: 120 subtests in Elemental, Elemental Level 60, Enhancement and Warden (found by the daily update while testing PR #131) [source: foreverchanges]
+- [x] 2026-11-15 — Shaman goldens fail on master fe8793d: 120 subtests in Elemental, Elemental Level 60, Enhancement and Warden (found by the daily update while testing PR #131) [source: foreverchanges]
   - Probably stale after the Nov 13–15 Windfury Totem, Flametongue and item commits; PR #130 also changes those files. Diff each moved *.results block against those commits, then `make update-tests`.
   - `sim/web` also fails at setup in cloud sessions because `binary_dist` isn't built.
+  - 2026-11-15: gone on update_1115 (on master 25ce81de7): the full suite (`./sim/...` without sim/web) passes every shaman package; only the report hashes needed rewriting, done at publish.
