@@ -3,7 +3,7 @@
   "title": "Damage by ability",
   "description": "Per preset and ability (pets included): DPS, share of damage, casts, hits, crits, ticks, average hit and crit, misses, dodges and glances per fight.",
   "updated": {
-   "at": "2026-11-15T16:19:54.869Z",
+   "at": "2026-11-15T20:55:50.091Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -52,7 +52,7 @@
   "title": "More icons",
   "description": "36 px spell, item and aura icons and the sim UI's empty gear-slot icons, as data URLs. They load after the Ranking tab is up.",
   "updated": {
-   "at": "2026-11-13T01:35:32.075Z",
+   "at": "2026-11-15T20:55:50.091Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "common"
@@ -85,7 +85,7 @@
   "title": "Spell and item names",
   "description": "Names, icons and an icon-derived colour for the spell, item and attack ids in the timelines, breakdowns and rotations.",
   "updated": {
-   "at": "2026-11-13T20:49:55.275Z",
+   "at": "2026-11-15T20:55:50.091Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "common"
@@ -142,7 +142,7 @@
   "title": "Rotation priority lists",
   "description": "Each preset's APL as simmed: pre-pull casts with their timing, then the priority list in order, each line's spell, a plain-English condition, the APL's own note, its exact condition and the spell's casts per fight.",
   "updated": {
-   "at": "2026-11-15T16:19:54.869Z",
+   "at": "2026-11-15T20:55:50.091Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -255,7 +255,7 @@
   "title": "Game tooltip text",
   "description": "Tooltip text for the spells, items, enchants, consumes, races and stat weights on the page: wowhead's WoW Forever database first (with a link to its page), the Forever client's talent text and the Forever wiki where it has nothing, Classic's text only as a marked last resort, the sim's own numbers where they differ, the item database for the synthetic gear, and the Forever racials.",
   "updated": {
-   "at": "2026-11-15T16:19:54.869Z",
+   "at": "2026-11-15T20:55:50.091Z",
    "by": "Claude (forever-sim)"
   },
   "mode": "common"
@@ -305,7 +305,7 @@
   "title": "Event view icons",
   "description": "36 px icons, as data URLs, that the sample fights show and icons and icons_more lack. Made by tools/dps_report/events.py.",
   "updated": {
-   "at": "2026-11-13T01:35:32.075Z",
+   "at": "2026-11-15T20:55:50.091Z",
    "by": "Claude (forever-sim)"
   }
  },

@@ -1,6 +1,8 @@
 """rotation.py: each preset's real APL (the rotation in its sim request) as plain-English priority rows."""
 import json, os, re
 
+# A proc whose aura is named after its effect: Windfury Totem's proc aura is "Windfury Attack".
+ICD_NAMES = {10610: 'Windfury Totem'}
 OPS = {'OpLt': 'under', 'OpLe': 'at most', 'OpGt': 'over', 'OpGe': 'at least', 'OpEq': 'exactly', 'OpNe': 'not'}
 SYM = {'OpLt': '<', 'OpLe': '≤', 'OpGt': '>', 'OpGe': '≥', 'OpEq': '=', 'OpNe': '≠'}
 MATH = {'OpAdd': 'plus', 'OpSub': 'minus', 'OpMul': 'times', 'OpDiv': 'divided by'}
@@ -246,6 +248,10 @@ class Humaniser:
         u = self.unit(a.get(key))
         return f'on {u}' if u and u != 'you' else 'on the boss'
 
+    def icd_name(self, a):
+        """The proc an internal cooldown belongs to, by the name a player knows it by."""
+        return ICD_NAMES.get((a.get('auraId') or {}).get('spellId')) or self.sp(a.get('auraId'))
+
     def noun(self, v):
         (t, a), = v.items()
         if t == 'healthMissing':
@@ -280,6 +286,8 @@ class Humaniser:
             return f"{self.sp(a.get('spellId'))}'s time left"
         if t == 'auraNumStacks':
             return f"{self.sp(a.get('auraId'))} stacks"
+        if t == 'auraInternalCooldown':
+            return f"{self.icd_name(a)}'s proc cooldown"
         if t == 'spellUsesRemaining':
             return f"{self.sp(a.get('spellId'))} uses left"
         if t == 'spellCurrentCost':
@@ -585,6 +593,13 @@ class Humaniser:
         if lt in ('currentMana',) and 'math' in R and R['math'].get('op') == 'OpMul' and 'remainingTime' in R['math'].get('lhs', {}) and 'const' in R['math'].get('rhs', {}):
             k = fmt_const(R['math']['rhs']['const']['val'])
             return f"at least {k} mana per second of fight left" if op in ('OpGe', 'OpGt') else f"under {k} mana per second of fight left"
+        if lt == 'auraInternalCooldown' and c is not None:  # the time until a proc's internal cooldown lets it fire again
+            s = self.icd_name(la)
+            if cv == 0 and op in ('OpEq', 'OpLe'):
+                return f"{s} can proc again"
+            if cv == 0 and op in ('OpGt', 'OpNe'):
+                return f"{s} can't proc yet"
+            return f"{s} can proc again within {c}" if op in ('OpLt', 'OpLe') else f"over {c} until {s} can proc again"
         if lt == 'auraRemainingTime' and c and cv == 0 and op in ('OpGt', 'OpNe'):
             return f"{self.sp(la.get('auraId'))} is up"
         if lt == 'auraRemainingTime' and c:
