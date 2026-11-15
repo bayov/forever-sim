@@ -155,13 +155,14 @@ var lifeTapRanks = []spellRank{
 
 // Imp Firebolt rank 1 takes server hotfix 113766 (build 1.60.1.70888, SpellEffect 681913: base 6,
 // variance 0.333, 0.3 a level; 6 to 8 at its top level 5, was 4 to 5). The 2026-11-10 notes raise
-// ranks 2 to 4 too, with no numbers and no server row yet: they keep the client's.
+// ranks 2 to 4 too, and client 1.60.1.70938 carries them (SpellEffect #0: 7799 base 7 -> 11, 7800
+// 12 -> 15, 7801 17 -> 18, each 0.4 a level, variance 0.1818, 0.2353 and 0.2222).
 var impFireboltRanks = []spellRank{
 	{},
 	{SpellID: 3110, Level: 1, MaxLevel: 5, Base: 6, PerLevel: 0.3, Variance: 0.333, Coef: 0.164, Cost: 10, CastMs: 2000},
-	{SpellID: 7799, Level: 8, MaxLevel: 13, Base: 7, PerLevel: 0.2, Variance: 0.1538, Coef: 0.314, Cost: 20, CastMs: 2000},
-	{SpellID: 7800, Level: 18, MaxLevel: 23, Base: 12, PerLevel: 0.3, Variance: 0.1667, Coef: 0.529, Cost: 35, CastMs: 2000},
-	{SpellID: 7801, Level: 28, MaxLevel: 33, Base: 17, PerLevel: 0.3, Variance: 0.1143, Coef: 0.571, Cost: 50, CastMs: 2000},
+	{SpellID: 7799, Level: 8, MaxLevel: 13, Base: 11, PerLevel: 0.4, Variance: 0.1818, Coef: 0.314, Cost: 20, CastMs: 2000},
+	{SpellID: 7800, Level: 18, MaxLevel: 23, Base: 15, PerLevel: 0.4, Variance: 0.2353, Coef: 0.529, Cost: 35, CastMs: 2000},
+	{SpellID: 7801, Level: 28, MaxLevel: 33, Base: 18, PerLevel: 0.4, Variance: 0.2222, Coef: 0.571, Cost: 50, CastMs: 2000},
 	{SpellID: 7802, Level: 38, MaxLevel: 43, Base: 25, PerLevel: 0.4, Variance: 0.1176, Coef: 0.571, Cost: 70, CastMs: 2000},
 	{SpellID: 11762, Level: 48, MaxLevel: 53, Base: 35, PerLevel: 0.5, Variance: 0.1127, Coef: 0.571, Cost: 95, CastMs: 2000},
 	{SpellID: 11763, Level: 58, MaxLevel: 63, Base: 44, PerLevel: 0.6, Variance: 0.1136, Coef: 0.571, Cost: 115, CastMs: 2000},

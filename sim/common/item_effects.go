@@ -187,6 +187,7 @@ const (
 	EverlookDeliveryBot      = 274760
 	BoltsChargedEyeball      = 280032
 	DullSawblade             = 285292
+	SilithidQueensHusk       = 286590
 	BladewhispersNamesake    = 287072
 )
 
@@ -948,6 +949,11 @@ func init() {
 	// https://foreverchanges.pro/item/287072
 	// Equip: +8 Attack Power Vs Humanoids. A Forever thrown weapon, revealed 2026-11-05.
 	core.NewMobTypeAttackPowerEffect(BladewhispersNamesake, []proto.MobType{proto.MobType_MobTypeHumanoid}, 8)
+
+	// https://foreverchanges.pro/item/286590
+	// Equip: +29 Attack Power Vs Humanoids. A Forever plate chest, revealed 2026-11-12 to 13 (client
+	// 1.60.1.70938 tooltip); its +24 Attack Power and +14 crit rating are on the item.
+	core.NewMobTypeAttackPowerEffect(SilithidQueensHusk, []proto.MobType{proto.MobType_MobTypeHumanoid}, 29)
 
 	// https://www.wowhead.com/classic/item=19353/drake-talon-cleaver
 	// Chance on hit: Delivers a fatal wound for 240 damage.
@@ -3630,7 +3636,9 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=19812/rune-of-the-dawn
 	// Equip: Increases damage done to Undead by magical spells and effects by up to 48.
-	core.NewMobTypeSpellPowerEffect(RuneOfTheDawn, []proto.MobType{proto.MobType_MobTypeUndead}, 48)
+	// Forever: client 1.60.1.70938 ItemXItemEffect links the item to 24198, 46 spell damage
+	// against Undead (SpellEffect #0, aura 180).
+	core.NewMobTypeSpellPowerEffectForever(RuneOfTheDawn, []proto.MobType{proto.MobType_MobTypeUndead}, 48, 46)
 
 	// https://www.wowhead.com/classic/item=21625/scarab-brooch
 	core.NewItemEffect(ScarabBrooch, func(agent core.Agent) {
@@ -3763,7 +3771,9 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=13209/seal-of-the-dawn
 	// Equip: +81 Attack Power when fighting Undead.
-	core.NewMobTypeAttackPowerEffect(SealOfTheDawn, []proto.MobType{proto.MobType_MobTypeUndead}, 81)
+	// Forever: client 1.60.1.70938 ItemXItemEffect links the item to 23930, 78 attack power and 78
+	// ranged attack power against Undead (SpellEffect #0 aura 102, #1 aura 131).
+	core.NewMobTypeAttackPowerEffectForever(SealOfTheDawn, []proto.MobType{proto.MobType_MobTypeUndead}, 81, 78)
 
 	// https://www.wowhead.com/classic/item=237283/talisman-of-ascendance
 	// Use: Your next 5 damage or healing spells cast within 20 seconds will grant a bonus of up to 40 damage and up to 75 healing, stacking up to 5 times.

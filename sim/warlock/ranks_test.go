@@ -52,3 +52,23 @@ func TestImpFireboltRankOne(t *testing.T) {
 		}
 	}
 }
+
+// TestImpFireboltRanksTwoToFour checks Imp Firebolt ranks 2 to 4 against client 1.60.1.70938
+// (SpellEffect #0: base 11 / 15 / 18, 0.4 a level, variance 0.1818 / 0.2353 / 0.2222) at their
+// learn and top levels.
+func TestImpFireboltRanksTwoToFour(t *testing.T) {
+	for _, c := range []struct {
+		rank      int
+		level     int32
+		low, high float64
+	}{
+		{2, 8, 10.00, 12.00}, {2, 13, 11.82, 14.18},
+		{3, 18, 13.24, 16.76}, {3, 23, 15.00, 19.00},
+		{4, 28, 16.00, 20.00}, {4, 33, 17.78, 22.22},
+	} {
+		low, high := impFireboltRanks[c.rank].rangeAt(c.level)
+		if math.Abs(low-c.low) > 0.01 || math.Abs(high-c.high) > 0.01 {
+			t.Errorf("Imp Firebolt rank %d at %d: got %.2f to %.2f, want %.2f to %.2f", c.rank, c.level, low, high, c.low, c.high)
+		}
+	}
+}
