@@ -5164,6 +5164,25 @@
       "d22fe3e",
       "041bb0a"
      ]
+    },
+    {
+     "title": "A missed, dodged or parried Ferocious Bite gives back 80% of its Energy",
+     "kind": "sim",
+     "classes": [
+      "Druid"
+     ],
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff"
+     ],
+     "note": "It keeps its combo points and the extra Energy, so an avoided Bite costs 7 Energy instead of 35, as a combat log shows. Sharpened Claws now raises spell crit too in the feral forms, which no preset feels. Feral rises about 2.5 at 3 minutes.",
+     "source": {
+      "label": "wago.tools: Ferocious Bite's spell attributes",
+      "url": "https://wago.tools/db2/SpellMisc?build=1.60.1.70938&filter%5BSpellID%5D=22829"
+     },
+     "commits": [
+      "0cc2c3c"
+     ]
     }
    ],
    "internal": [
