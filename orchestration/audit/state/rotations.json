@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "6dfc0092c9995cfa8872a040236f1c5fe23eaf7f"
+  "master": "d0be6cc3070a09691ab22e324a30ffd081cf6442"
  },
  "last_pass_at": "2026-11-14T00:49:49Z",
  "pass": 65,
  "result": "quiet",
  "note": "Pass 65: only statweight.go (not reached by presets) and the Enhancement re-search (Water Shield: Flame Shock above Stormstrike, verified: old order -2.1 at 180 s pooled; Imp GW gear). No new findings; 3 open findings still unapplied.",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-14T18:44:41Z",
+ "checked_at": "2026-11-15T00:44:22Z",
  "baseline": "baseline_3a86d4a_3000it_seed424242.tsv"
 }
