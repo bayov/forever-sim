@@ -38,7 +38,7 @@ func (rogueSS) Build(k Knobs) *proto.APLRotation {
 		items = append(items, c.shank)
 	}
 	items = append(items,
-		cast(sinisterStrike, builderWhen(k["ssAfterSwing"], k["ssEnergy"]), builderNotes("Sinister Strike", k["ssAfterSwing"], k["ssEnergy"])),
+		cast(sinisterStrike, and(builderWhen(k["ssAfterSwing"], k["ssEnergy"]), c.builderTiming), builderNotes("Sinister Strike", k["ssAfterSwing"], k["ssEnergy"])+c.builderTimingNotes),
 	)
 	rot := rotation(items...)
 	rot.PrepullActions = c.prepull
