@@ -332,6 +332,30 @@ the paladin (Max threat 4,199.7 / 3,181.6, Balanced 3,420.6 / 2,767.1, Max survi
 the Warden (2,527.5 / 1,179.4 / -2,396.1); the paladin and Warden presets roll no Windfury and don't move under the
 rule (`sim/windfury_totem_rule_test.go`). Raw output: `orchestration/tank_handoff/windfury_retune/`.
 
+## Re-checked on the all-abilities Windfury rule (2026-11-15)
+
+Blizzard's hotfixes of November 13 make Windfury Totem roll on every landed main hand melee hit, white or special
+(standards 17; `windfuryTotemRollsOnForever` in `sim/core/buffs.go`: a `ProcMaskMeleeMH` spell without
+`SpellFlagNoWindfuryTotem`, and never during an extra attack). For the bear that adds Lacerate's hit, Primal Bite,
+Swipe and Bash to Maul and the white swings; Lacerate's ticks and Demoralizing Roar don't roll. On the update-1115
+base the presets read (six-boss mean at their own weight, 10,000 iterations, seed 1, `rotopt -eval`): Max threat
+2,788.2 → **3,110.0**, Balanced 1,862.8 → **2,120.2**, Max survival 224 → **361.4**, all of it the rule.
+
+Each preset was searched again the 2026-11-12 way (`rotopt -template druid_tank -tank <preset>` from the shipped
+knobs, 1,000 a candidate, 3,000 to confirm, then `-talent-search -require feralSwiftness`; screens with paired
+`abtest`, taken only at 10,000 on seeds 1 and 2). Nothing moved:
+
+- Knob searches: Balanced and Max threat kept every knob. Max survival's search picked `maulReserve=1` and Roar
+  refreshed under 7 sec (+36.7 at 3,000), but paired at 10,000 it is +20.8 ± 9.6 on seed 1 and +3.6 ± 10.1 on seed 2
+  (`maulReserve=1` alone +5.4 ± 8.4): not taken.
+- The template's new `wfGate` knob (Lacerate, Primal Bite and Swipe wait 0.1 sec after a swing (1), while the totem's
+  100 ms cooldown runs (2), or 0.1 sec clear of both sides of the swing (3)) loses everywhere, since the bear's 1.5 sec
+  GCD has nothing to gain from waiting: in the searches at 1,000 Balanced -58.9 / -7.2 / -128.4, Max threat -20.8 /
+  +2.6 / -156.8, Max survival -124.9 / -26.2 / -177.4; `wfGate=2` paired at 3,000 (seed 1): Balanced -2.2 ± 4.0, Max
+  threat -0.4 ± 1.8.
+- Talent searches: every swap within the noise (the best, at Max survival, +22.5 with noise 43.6); all three keep
+  their talents.
+
 ## Flask after the Natural flask cut (2026-11-12)
 
 Client 70862 halved the Natural flasks (30 Stamina, a 2% zone bonus), so each preset's flask was re-picked by its own objective (tank_fairness-20261111-1): the request against copies with each other flask, 3,000 iterations at seed 1, the winners at 10,000 on seeds 1 and 2 (`abtest`, paired, six-boss mean at the preset's weight). Max survival takes the Flask of the Titans: +115.9 ± 7.8 / +111.6 ± 7.6, -594.3 → **-478.3** (seed 1).

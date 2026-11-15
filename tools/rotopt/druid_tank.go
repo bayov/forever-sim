@@ -76,10 +76,15 @@ func (druidTank) Knobs() []Knob {
 		// 1 drinks the potion slot's potion (the Greater Stoneshield) on cooldown from its own line, above the
 		// autocast one: autocast never drinks a defensive potion in a tank score (tank_fairness-20261104-10).
 		{Name: "potion", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Windfury Totem timing for Lacerate, Primal Bite and Swipe (druidWFGate in druid_feral.go):
+		// 0 none, 1 0.1 sec after a main hand swing, 2 while the totem's cooldown is ready, 3 as 1
+		// and 0.1 sec before the next swing too. Maul is the swing itself and isn't gated.
+		{Name: "wfGate", Default: 0, Min: 0, Max: 3, Step: 1},
 	}
 }
 
 func (druidTank) Build(k Knobs) *proto.APLRotation {
+	gate := druidWFGate(k["wfGate"])
 	var items []*proto.APLListItem
 	if k["potion"] == 1 {
 		items = append(items, cast(potion, nil, "Greater Stoneshield Potion on cooldown."))
@@ -119,13 +124,13 @@ func (druidTank) Build(k Knobs) *proto.APLRotation {
 		items = append(items, roar)
 	}
 
-	keepLacerate := cast(bearLacerate, or(lt(targetAuraNumStacks(bearLacerate), num(5)), lt(dotRemainingTime(bearLacerate), seconds(k["lacerateRefresh"]))),
+	keepLacerate := cast(bearLacerate, withGate(or(lt(targetAuraNumStacks(bearLacerate), num(5)), lt(dotRemainingTime(bearLacerate), seconds(k["lacerateRefresh"]))), gate),
 		fmt.Sprintf("Lacerate to 5 stacks, and again before they drop (under %.0f sec left).", k["lacerateRefresh"]))
 	if k["lacerate"] >= 1 && k["lacerateFirst"] == 1 {
 		items = append(items, keepLacerate)
 	}
 	if k["primalBite"] == 1 {
-		items = append(items, cast(bearPrimalBite, nil, "Primal Bite on cooldown."))
+		items = append(items, cast(bearPrimalBite, gate, "Primal Bite on cooldown."+wfGateNote(k)))
 	}
 	if k["lacerate"] >= 1 && k["lacerateFirst"] == 0 {
 		items = append(items, keepLacerate)
@@ -137,10 +142,10 @@ func (druidTank) Build(k Knobs) *proto.APLRotation {
 		items = append(items, barkskin)
 	}
 	if k["lacerate"] == 2 {
-		items = append(items, cast(bearLacerate, nil, "Lacerate as the filler: it refreshes the bleed and hits for 50% of weapon damage at 5 stacks."))
+		items = append(items, cast(bearLacerate, gate, "Lacerate as the filler: it refreshes the bleed and hits for 50% of weapon damage at 5 stacks."))
 	}
 	if k["swipeRage"] > 0 {
-		items = append(items, cast(bearSwipe, ge(currentRage(), num(k["swipeRage"])), fmt.Sprintf("Swipe as the filler at %.0f Rage or more.", k["swipeRage"])))
+		items = append(items, cast(bearSwipe, withGate(ge(currentRage(), num(k["swipeRage"])), gate), fmt.Sprintf("Swipe as the filler at %.0f Rage or more.", k["swipeRage"])))
 	}
 	maulCond := ge(currentRage(), num(k["maulRage"]))
 	maulNote := fmt.Sprintf("Maul queued at %.0f Rage or more.", k["maulRage"])

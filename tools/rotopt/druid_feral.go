@@ -106,7 +106,33 @@ func (druidFeral) Knobs() []Knob {
 		// The Shadowmeld Ravage line at 5 combo points too on Clearcasting, 0/1: a free Ravage is
 		// worth more than the wasted point.
 		{Name: "meldAt5", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Windfury Totem timing (druidWFGate): 0 none; 1 the main hand abilities wait until 0.1 sec
+		// after a main hand swing; 2 they wait while the totem's 100 ms internal cooldown runs; 3 as 1,
+		// and not in the last 0.1 sec before the next swing either (abilities spread between swings).
+		{Name: "wfGate", Default: 0, Min: 0, Max: 3, Step: 1},
 	}
+}
+
+// druidWindfuryBuff is the raid totem's Windfury Attack at 60 (rank 3, 10610); its aura carries the
+// totem's internal cooldown.
+var druidWindfuryBuff = spellID(10610)
+
+// druidWFGate is the condition a main hand ability waits on so that it rolls Windfury Totem. Under
+// Forever every landed main hand melee hit rolls the totem, behind a 100 ms internal cooldown
+// (sim/core/buffs.go WindfuryTotemBuffAura), so a hit in the 100 ms after a white swing that
+// procced it can't. Mode 1 keeps the abilities 0.1 sec after any main hand swing, mode 2 only
+// while the cooldown runs, mode 3 as 1 and 0.1 sec clear of the next swing too. nil for 0.
+func druidWFGate(mode float64) value {
+	sinceSwing := sub(mainHandSwingTime(), mainHandTimeToNext())
+	switch mode {
+	case 1:
+		return ge(sinceSwing, seconds(0.1))
+	case 2:
+		return le(&proto.APLValue{Value: &proto.APLValue_AuraInternalCooldown{AuraInternalCooldown: &proto.APLValueAuraInternalCooldown{AuraId: druidWindfuryBuff}}}, seconds(0))
+	case 3:
+		return and(ge(sinceSwing, seconds(0.1)), ge(mainHandTimeToNext(), seconds(0.1)))
+	}
+	return nil
 }
 
 func (druidFeral) Build(k Knobs) *proto.APLRotation {
@@ -121,6 +147,7 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		builder = claw
 	}
 
+	gate := druidWFGate(k["wfGate"])
 	var items []*proto.APLListItem
 	if k["bomb"] == 1 {
 		items = append(items, cast(druidBomb, and(le(energy(), num(k["bombEnergy"])), ge(mainHandTimeToNext(), sub(mainHandSwingTime(), seconds(0.4)))),
@@ -164,12 +191,12 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(druidShiftingPower, cond, note))
 	}
 	if k["endBite"] > 0 {
-		items = append(items, cast(bite, and(ge(comboPoints(), num(1)), lt(remainingTime(), seconds(k["endBite"]))),
+		items = append(items, cast(bite, withGate(and(ge(comboPoints(), num(1)), lt(remainingTime(), seconds(k["endBite"]))), gate),
 			"Ferocious Bite at any combo points in the last seconds of the fight."))
 	}
 	if k["ripCP"] > 0 {
-		items = append(items, cast(rip, and(ge(comboPoints(), num(k["ripCP"])), not(dotIsActive(rip)), gt(remainingTime(), seconds(k["ripMinTime"]))),
-			"Rip whenever it is down."))
+		items = append(items, cast(rip, withGate(and(ge(comboPoints(), num(k["ripCP"])), not(dotIsActive(rip)), gt(remainingTime(), seconds(k["ripMinTime"]))), gate),
+			"Rip whenever it is down."+wfGateNote(k)))
 	}
 	if k["faerieFire"] == 1 && k["ffPos"] == 1 {
 		items = append(items, ffItem)
@@ -187,9 +214,9 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		if k["biteAtCap"] == 1 {
 			note = "Ferocious Bite at 5 combo points while Rip has time left" + biteEnergyNote(k) + ", or at full Energy."
 		}
-		items = append(items, cast(bite, cond, note))
+		items = append(items, cast(bite, withGate(cond, gate), note))
 	case 2:
-		items = append(items, cast(bite, and(eq(comboPoints(), num(5)), ge(energy(), num(k["biteEnergy"]))),
+		items = append(items, cast(bite, withGate(and(eq(comboPoints(), num(5)), ge(energy(), num(k["biteEnergy"]))), gate),
 			"Ferocious Bite at 5 combo points"+biteEnergyNote(k)+"."))
 	}
 	var meld *proto.APLListItem
@@ -205,8 +232,8 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 		meld = &proto.APLListItem{
 			Notes: "Night Elf: Shadowmeld into Ravage on Clearcasting, or in the last seconds with the Energy for it. Other races can ignore the warning on this line.",
 			Action: &proto.APLAction{
-				Condition: and(spellIsReady(druidShadowmeld), not(&proto.APLValue{Value: &proto.APLValue_FrontOfTarget{FrontOfTarget: &proto.APLValueFrontOfTarget{}}}),
-					meldCP, trigger),
+				Condition: withGate(and(spellIsReady(druidShadowmeld), not(&proto.APLValue{Value: &proto.APLValue_FrontOfTarget{FrontOfTarget: &proto.APLValueFrontOfTarget{}}}),
+					meldCP, trigger), gate),
 				Action: &proto.APLAction_StrictSequence{StrictSequence: &proto.APLActionStrictSequence{Actions: []*proto.APLAction{
 					{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: druidShadowmeld}}},
 					{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: druidRavage}}},
@@ -227,12 +254,12 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 			cond = and(cond, gt(remainingTime(), seconds(k["rakeMinTime"])))
 			note = "Rake whenever it is down, but not at the very end of the fight."
 		}
-		items = append(items, cast(rake, cond, note))
+		items = append(items, cast(rake, withGate(cond, gate), note))
 	}
 	if meld != nil && k["meldBeforeRake"] == 0 {
 		items = append(items, meld)
 	}
-	items = append(items, cast(builder, lt(comboPoints(), num(5)), "The builder."))
+	items = append(items, cast(builder, withGate(lt(comboPoints(), num(5)), gate), "The builder."+wfGateNote(k)))
 
 	rot := rotation(items...)
 	if k["prepullTigersFury"] == 1 {
@@ -248,4 +275,28 @@ func biteEnergyNote(k Knobs) string {
 		return ""
 	}
 	return fmt.Sprintf(", once the Energy reaches %.0f (the extra Energy adds damage, and Predatory Discipline keeps it)", k["biteEnergy"])
+}
+
+// withGate adds the Windfury timing gate to a condition, leaving it as it was without one.
+func withGate(cond, gate value) value {
+	if gate == nil {
+		return cond
+	}
+	if a := cond.GetAnd(); a != nil {
+		return and(append(append([]value{}, a.Vals...), gate)...)
+	}
+	return and(cond, gate)
+}
+
+// wfGateNote says why a line waits on the swing timer or the totem's cooldown.
+func wfGateNote(k Knobs) string {
+	switch k["wfGate"] {
+	case 1:
+		return " Main hand abilities wait until 0.1 sec after a swing, so they can roll Windfury Totem."
+	case 2:
+		return " Main hand abilities wait while Windfury Totem's 100 ms cooldown runs, so they can roll it."
+	case 3:
+		return " Main hand abilities stay 0.1 sec clear of the swings, so they and the swings can roll Windfury Totem."
+	}
+	return ""
 }
