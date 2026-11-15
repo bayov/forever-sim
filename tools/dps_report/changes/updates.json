@@ -5183,6 +5183,33 @@
      "commits": [
       "0cc2c3c"
      ]
+    },
+    {
+     "title": "Two-Handed Weapon Specialization raises only the Holy hits that strike as melee, and Consecration",
+     "kind": "sim",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "note": "Combat logs show its Holy part on the seals, Holy Strike, Judgement of Command and Consecration, but not on Judgement of Righteousness since Judgement became a ranged attack, nor on Exorcism or Hammer of Wrath. Retribution falls 6 to 17, most on the Holy Shock and vs Undead presets.",
+     "source": {
+      "label": "wowsims/forever: Two-Handed Weapon Specialization's Holy reach, from combat logs",
+      "url": "https://github.com/wowsims/forever/blob/master/docs/evidence/EV-0064-two-handed-specialization-holy-reach.md"
+     },
+     "commits": [
+      "baa3636"
+     ]
     }
    ],
    "internal": [
@@ -5317,6 +5344,10 @@
     {
      "commit": "760d4c1",
      "why": "the report data for the lines above, with the presets' published numbers and caveat wording"
+    },
+    {
+     "commit": "a60de04",
+     "why": "test hashes for the same change"
     }
    ],
    "source": {
