@@ -282,6 +282,9 @@ func withGate(cond, gate value) value {
 	if gate == nil {
 		return cond
 	}
+	if a := cond.GetAnd(); a != nil {
+		return and(append(append([]value{}, a.Vals...), gate)...)
+	}
 	return and(cond, gate)
 }
 
