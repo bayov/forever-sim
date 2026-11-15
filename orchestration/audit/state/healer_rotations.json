@@ -1,6 +1,6 @@
 {
  "last": {
-  "master": "d0be6cc3070a09691ab22e324a30ffd081cf6442"
+  "master": "d630df2cb0d485ea2d7646bc58f3aff87569a89c"
  },
  "last_pass_at": "2026-11-13T19:29:27Z",
  "pass": 12,
@@ -8,5 +8,5 @@
  "note": "Pass 12 on 3a86d4a6b. Gate file sim/shaman/flametongue_weapon.go (rank 6 cut 5.5, melee imbue only); also Windfury/Frightskull/oil changes, all melee. Baseline 63 rows bit-identical to ref. -20261104-2 still open.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-15T00:44:22Z"
+ "checked_at": "2026-11-15T06:44:36Z"
 }
