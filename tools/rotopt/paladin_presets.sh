@@ -54,16 +54,32 @@ gen() {
 # +4.2. Seed 1000003 within 1 of these. The Shock Crusader duty keeps its knobs (seal=1 and holyShock=2
 # tie or lose). The talent searches keep the twist, sub Holy and Ret Shock strings (twist: Precision -1 for
 # Reverence +1 loses 5.2); vs Undead trades Reverence 1 for Divine Intellect 3 (+1.1 to +1.6 in every cell).
-gen level60 "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistThriftRate=30,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0,holyStrikeFirst=1" -level 60
+# November 13 hotfixes (Judgement of Command melee again, rolling Windfury Totem and on-hit procs; Windfury
+# Totem on every landed main hand melee hit, 2026-11-15): knob searches over 120, 180 and 300 sec (Judgement of
+# the Crusader or Wisdom frozen on the duties), each choice confirmed at 20,000 iterations on seeds 1 and
+# 1000003. Seal of Righteousness stays up on the twist builds, but the swap away now goes on a single copy:
+# twist twistStacks 2 -> 1, twistWindow 0 -> 2.5 sec, twistThriftRate 30 -> 0 (+4.1 / +4.4 / +5.2 at 120 /
+# 180 / 300 sec, seed 1000003 +3.7 / +4.0 / +5.0); sub Holy 2 -> 1 (+3.6 / +3.1 / +3.4, +2.6 / +3.1 / +3.3);
+# both duty rotations 3 -> 1 (twist Crusader +7.4 / +7.6 / +7.5, Wisdom +7.8 / +8.3 / +7.4; sub Holy Crusader
+# +7.5 / +8.3 / +7.4, Wisdom +6.3 / +7.0 / +6.2; seed 1000003 within 1.4); vs Undead 3 -> 2 (+1.6 / +1.0 /
+# +1.4, +1.2 / +1.2 / +1.3; 1 copy loses 4.4 at 300). Ret Shock keeps Seal of Command up (seal 1 -> 2): +29.2
+# / +29.8 / +29.9 and +28.7 / +29.8 / +29.9, its Wisdom duty +25.4 / +26.7 / +28.1 and +25.6 / +27.5 / +29.0
+# (its Crusader duty already had it). Seal of Command kept up on twist loses 18 at every length; judging
+# Righteousness only far from the swing (judgeRighteousnessWindow) -1.7 to -2.8. Windfury timing gates (new
+# knobs): holding Holy Strike and the Judgement of Command while the totem's 100 ms internal cooldown runs
+# (wfIcdGate) is +0.0 to +0.1, holding them for the next swing within 100 ms (swingGap) -0.1 to -1.1; not kept.
+# Talent searches at 180 sec kept every string (Undead's search moved to 1500520022-3-33233001201301351,
+# which lost -0.9/+0.0/-15.8 and -0.2/+0.3/-15.0 on mana).
+gen level60 "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=1,twistBack=3,twistMana=0,twistWindow=25,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0,holyStrikeFirst=1" -level 60
 # Sub Holy (level60_sub_holy): the knob search kept the twist knobs. It has the mana (Reverence,
 # Divine Intellect) to swap on 2 copies at any length: the mana rule loses 2.3 at 300 sec there.
-gen level60_sub_holy "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0,holyStrikeFirst=1" -level 60
+gen level60_sub_holy "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=1,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0,holyStrikeFirst=1" -level 60
 # Judgement duties (standards 23), shared by twist and sub Holy: the sub Holy knobs plus Seal of the
 # Crusader (jotc=1) or Seal of Wisdom (jotc=2) at -1.5 sec and its Judgement at the pull. Under Forever
 # the judgement lasts 40 sec and the paladin's own melee hits refresh it. The mana rule loses 2.8 at
 # 300 sec on the sub Holy Crusader duty.
-gen level60_crusader_duty "seal=1,jotc=1,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=3,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0" -level 60
-gen level60_wisdom_duty "seal=1,jotc=2,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=3,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0,holyStrikeFirst=1" -level 60
+gen level60_crusader_duty "seal=1,jotc=1,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=1,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0" -level 60
+gen level60_wisdom_duty "seal=1,jotc=2,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=1,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,swiftJudgement=0,holyStrikeFirst=1" -level 60
 # Sub Holy vs Undead (level60_undead, standards 19): Exorcism lands, so the copies wait for all 3 (it
 # needs the mana: -0.2 / -0.8 / +2.2 at 120 / 180 / 300 against the mana rule), no Holy Wrath (its 2
 # sec cast resets the swing). Round 70753 (Two-Handed Weapon Specialization on all Holy damage, Vengeance
@@ -71,13 +87,13 @@ gen level60_wisdom_duty "seal=1,jotc=2,consecration=1,consecrationFirst=1,consec
 # first and Hammer of Wrath in the execute phase at the top (consecrationFirst 0 -> 1, hammerOfWrathFirst
 # 3 -> 1), +8.4 / +7.0 / +4.0 at 120 / 180 / 300 sec (seed 1, 20000 iterations; +8.5 / +7.2 / +5.0 on
 # seed 1000003).
-gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=3,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,exorcism=1,holyWrathMana=100,swiftJudgement=0" -level 60
+gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistStacks=2,twistBack=3,twistMana=0,twistWindow=0,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,exorcism=1,holyWrathMana=100,swiftJudgement=0" -level 60
 # Ret Shock (level60_shock_ret, 20 Holy for Holy Shock, so no Unsealed Wrath): the knob search kept
 # its knobs. Seal of Command up, Consecration first at any mana, Judgement, Holy Strike and Holy Shock
 # on cooldown, Hammer of Wrath above Holy Strike. Its duties put the seal back up ahead of
 # Consecration, since the opener's judgement leaves it down (sealFirst: +0.7 / +1.8 / +2.1).
-gen level60_shock_ret "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=2,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
+gen level60_shock_ret "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=2,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
 gen level60_shock_ret_crusader_duty "seal=2,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
-gen level60_shock_ret_wisdom_duty "seal=1,jotc=2,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
+gen level60_shock_ret_wisdom_duty "seal=2,jotc=2,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3,swiftJudgement=0" -level 60
 # Ret Shock (deep Holy), the 31 point Holy Shock build (level60_shock, its duties and level60_shock_undead),
 # was dropped by the user's ruling (2026-11-02, "drop deep holy shock"); its rotations went with it.

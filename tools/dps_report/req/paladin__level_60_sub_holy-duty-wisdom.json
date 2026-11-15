@@ -438,7 +438,7 @@
                               "op": "OpGe",
                               "rhs": {
                                 "const": {
-                                  "val": "3"
+                                  "val": "1"
                                 }
                               }
                             }
@@ -447,7 +447,7 @@
                       }
                     }
                   },
-                  "notes": "Unsealed Wrath: once the seal has stored 3 copies, the other damage seal, so the next swing spends them all."
+                  "notes": "Unsealed Wrath: once the seal has stored a copy, the other damage seal, so the next swing spends them all."
                 },
                 {
                   "action": {

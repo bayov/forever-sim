@@ -17,7 +17,7 @@
     "dps": 969.3,
     "source": "the DPS report's main run of this request after the November 11 hotfixes (Judgement as a ranged attack, Unsealed Wrath without Windfury Totem copies, no extra attack rolling Windfury Totem) and the re-tuned seal rotation (wowsimcli, 20,000 iterations, seed 1, 180 \u00b1 20 s)"
   },
-  "summary": "Holy Shock with most points in Retribution, Seal of Righteousness up with no twisting.",
+  "summary": "Holy Shock with most points in Retribution, Seal of Command up with no twisting.",
   "keyTalents": [
     "Holy Shock",
     "Consecrated Ground",
@@ -30,10 +30,10 @@
   ],
   "rotation": [
     "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use; Goblin Sapper Charge on cooldown",
-    "Pre-pull: Seal of Righteousness at -1.5s",
+    "Pre-pull: Seal of Command at -1.5s",
     "Consecration on cooldown at any mana",
     "Judgement on cooldown",
-    "Seal of Righteousness whenever it's down (no twisting)",
+    "Seal of Command whenever it's down (no twisting)",
     "Hammer of Wrath under 20% boss health, before Holy Strike",
     "Holy Shock on cooldown, ahead of Holy Strike",
     "Holy Strike on cooldown",
@@ -67,7 +67,7 @@
     "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
     "No filler explosive, because each 1s cast resets the swing."
   ],
-  "notes": "mksettings -spec ret -gear level60_phase1_synthetic -apl level60_shock_ret -talents 550030032011012--052150312012303 -race Undead; primarySeal set to Command to match the shipped preset's options. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh).",
+  "notes": "mksettings -spec ret -gear level60_phase1_synthetic -apl level60_shock_ret -talents 550030032011012--052150312012303 -race Undead; primarySeal set to Command to match the shipped preset's options. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh). 2026-11-15 (Judgement of Command melee again, rolling Windfury Totem and on-hit procs): rotation re-searched with tools/rotopt over 120 / 180 / 300 sec, kept only where it won all six cells (seeds 1 and 1000003, 20,000 iterations); see tools/rotopt/paladin_presets.sh. Seal of Command kept up instead of Seal of Righteousness: +29.2 / +29.8 / +29.9 (seed 1), +28.7 / +29.8 / +29.9 (seed 1000003). The published and verify numbers predate it.",
   "verify": {
     "dps": 969.3,
     "stderr": 0.26,

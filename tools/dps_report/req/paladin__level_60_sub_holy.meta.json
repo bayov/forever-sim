@@ -44,7 +44,7 @@
     "Holy Strike on cooldown, ahead of Judgement and the seal lines",
     "Judgement on cooldown on whichever damage seal is up",
     "Seal of Righteousness whenever no damage seal is up",
-    "Unsealed Wrath: with Seal of Righteousness up, once it has stored 2 copies, Seal of Command, so the next swing spends them all (one Righteousness hit each) and stores a Command copy. Back to Seal of Righteousness once Command has stored all 3, so that swing spends three Seal of Command rolls",
+    "Unsealed Wrath: with Seal of Righteousness up, once it has stored a copy, Seal of Command, so the next swing spends it (one Righteousness hit) and stores a Command copy. Back to Seal of Righteousness once Command has stored all 3, so that swing spends three Seal of Command rolls",
     "Exorcism on cooldown (only against Undead and Demons)",
     "Racials on free GCDs"
   ],
@@ -76,5 +76,5 @@
     "Seal of Righteousness adds 12% of spell power per hit with a two-hander, counted once, as its tooltip says (spell 70425). Counted twice, DPS would be 46-51 higher. At the proc spell's 0%, it would be 53-59 lower.",
     "No filler explosive, because each 1s cast resets the swing."
   ],
-  "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh)."
+  "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh). 2026-11-15 (Judgement of Command melee again, rolling Windfury Totem and on-hit procs): rotation re-searched with tools/rotopt over 120 / 180 / 300 sec, kept only where it won all six cells (seeds 1 and 1000003, 20,000 iterations); see tools/rotopt/paladin_presets.sh. Swap to Seal of Command on 1 Righteousness copy (was 2): +3.6 / +3.1 / +3.4 (seed 1), +2.6 / +3.1 / +3.3 (seed 1000003). The published and verify numbers predate it."
 }

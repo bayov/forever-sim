@@ -107,6 +107,13 @@ func (paladinRet) Knobs() []Knob {
 		// seal that drops (after the Judgement of the Crusader opener, or after 30 sec) is
 		// recast first.
 		{Name: "sealFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Windfury Totem timing for the main hand melee abilities that roll it (Holy Strike, and
+		// Judgement and Swift Judgement while Seal of Command is up): wfIcdGate=1 holds them while
+		// the totem's 100 ms internal cooldown runs, so they don't land where they can't proc it;
+		// swingGap holds them while the next main hand swing is less than this many ms away, so a
+		// proc of theirs doesn't take the swing's roll. 0 off.
+		{Name: "wfIcdGate", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "swingGap", Default: 0, Min: 0, Max: 200, Step: 50},
 	}
 }
 
@@ -120,6 +127,20 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	holyShock := rankID(paladin.HolyShockLevel[:], paladin.HolyShockSpellId[:])
 	hammerOfWrath := rankID(paladin.HammerOfWrathLevel[:], paladin.HammerOfWrathSpellId[:])
 	holyWrath := rankID(paladin.HolyWrathLevel[:], paladin.HolyWrathSpellId[:])
+
+	// mhGate holds a main hand melee ability for Windfury Totem's timing (wfIcdGate, swingGap).
+	var mhGate value
+	if k["wfIcdGate"] == 1 {
+		mhGate = le(auraInternalCooldown(windfuryAttack), seconds(0))
+	}
+	if k["swingGap"] > 0 {
+		mhGate = and(mhGate, ge(mainHandTimeToNext(), seconds(k["swingGap"]/1000)))
+	}
+	// commandGate applies it to a Judgement, which is melee only on Seal of Command.
+	var commandGate value
+	if mhGate != nil {
+		commandGate = or(not(auraIsActive(sealOfCommand)), mhGate)
+	}
 
 	seal, otherSeal := sealOfRighteousness, sealOfCommand
 	sealNotes := "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
@@ -190,19 +211,22 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 			floor = ge(currentManaPercent(), num(k["holyStrikeMana"]/100))
 			notes = "Holy Strike on cooldown with the mana to spare."
 		}
-		items = append(items, cast(holyStrike, floor, notes))
+		if mhGate != nil {
+			notes += " Held while Windfury Totem can't proc from it or would take the next swing's roll."
+		}
+		items = append(items, cast(holyStrike, and(floor, mhGate), notes))
 	}
 	if k["holyStrikeFirst"] == 1 {
 		holyStrikeLine()
 	}
 	swiftLine := func(when value, notes string) {
 		if k["swiftJudgement"] == 1 {
-			items = append(items, cast(swiftJudgement, when, notes+" Without the talent ignore the warning on this line."))
+			items = append(items, cast(swiftJudgement, and(when, commandGate), notes+" Without the talent ignore the warning on this line."))
 		}
 	}
 	if !twist {
 		swiftLine(and(auraIsActive(seal), jotcUp), "Swift Judgement on cooldown, off the global cooldown.")
-		items = append(items, cast(judgement, and(auraIsActive(seal), jotcUp), "Judgement on cooldown."))
+		items = append(items, cast(judgement, and(auraIsActive(seal), jotcUp, commandGate), "Judgement on cooldown."))
 		if k["sealFirst"] == 0 {
 			items = append(items, sealLine)
 		}
@@ -241,7 +265,7 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 			awayNotes = fmt.Sprintf("Unsealed Wrath: once the seal has stored %s while the mana lasts the fight (%d mana a second left), and all 3 when it won't, the other damage seal, so the next swing spends them all.", copies(stacks), int(rate))
 		}
 		items = append(items,
-			cast(judgement, and(judgeWhen, jotcUp), "Judgement on cooldown, "+judgeNotes),
+			cast(judgement, and(judgeWhen, jotcUp, commandGate), "Judgement on cooldown, "+judgeNotes),
 			cast(seal, and(not(sealUp), jotcUp), sealNotes),
 			cast(otherSeal, and(auraIsActive(seal), away, floor), awayNotes),
 			cast(seal, and(auraIsActive(otherSeal), ready(otherSeal, back), floor),
@@ -312,6 +336,15 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	}
 	rot.PrepullActions = append(rot.PrepullActions, prepull(opener, 1.5))
 	return rot
+}
+
+// windfuryAttack is the rank 3 Windfury Totem's proc buff (core.WindfuryBuffSpellId), which carries
+// the totem's internal cooldown.
+var windfuryAttack = spellID(10610)
+
+// auraInternalCooldown is the time left on the internal cooldown of the player's aura id.
+func auraInternalCooldown(id *proto.ActionID) value {
+	return &proto.APLValue{Value: &proto.APLValue_AuraInternalCooldown{AuraInternalCooldown: &proto.APLValueAuraInternalCooldown{AuraId: id}}}
 }
 
 // unsealedWrathCopies is the most copies Unsealed Wrath stores (sim/paladin/unsealed_wrath.go).

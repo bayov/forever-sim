@@ -349,52 +349,8 @@
                             }
                           },
                           {
-                            "or": {
+                            "and": {
                               "vals": [
-                                {
-                                  "and": {
-                                    "vals": [
-                                      {
-                                        "cmp": {
-                                          "lhs": {
-                                            "currentMana": {}
-                                          },
-                                          "op": "OpGe",
-                                          "rhs": {
-                                            "math": {
-                                              "lhs": {
-                                                "remainingTime": {}
-                                              },
-                                              "op": "OpMul",
-                                              "rhs": {
-                                                "const": {
-                                                  "val": "30"
-                                                }
-                                              }
-                                            }
-                                          }
-                                        }
-                                      },
-                                      {
-                                        "cmp": {
-                                          "lhs": {
-                                            "auraNumStacks": {
-                                              "auraId": {
-                                                "spellId": 1311704
-                                              }
-                                            }
-                                          },
-                                          "op": "OpGe",
-                                          "rhs": {
-                                            "const": {
-                                              "val": "2"
-                                            }
-                                          }
-                                        }
-                                      }
-                                    ]
-                                  }
-                                },
                                 {
                                   "cmp": {
                                     "lhs": {
@@ -407,7 +363,22 @@
                                     "op": "OpGe",
                                     "rhs": {
                                       "const": {
-                                        "val": "3"
+                                        "val": "1"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "lhs": {
+                                      "autoTimeToNext": {
+                                        "autoType": "MainHand"
+                                      }
+                                    },
+                                    "op": "OpLt",
+                                    "rhs": {
+                                      "const": {
+                                        "val": "2.5s"
                                       }
                                     }
                                   }
@@ -419,7 +390,7 @@
                       }
                     }
                   },
-                  "notes": "Unsealed Wrath: once the seal has stored 2 copies while the mana lasts the fight (30 mana a second left), and all 3 when it won't, the other damage seal, so the next swing spends them all."
+                  "notes": "Unsealed Wrath: once the seal has stored a copy, the other damage seal, so the next swing spends them all."
                 },
                 {
                   "action": {
@@ -439,20 +410,41 @@
                             }
                           },
                           {
-                            "cmp": {
-                              "lhs": {
-                                "auraNumStacks": {
-                                  "auraId": {
-                                    "spellId": 1311703
+                            "and": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "lhs": {
+                                      "auraNumStacks": {
+                                        "auraId": {
+                                          "spellId": 1311703
+                                        }
+                                      }
+                                    },
+                                    "op": "OpGe",
+                                    "rhs": {
+                                      "const": {
+                                        "val": "3"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "lhs": {
+                                      "autoTimeToNext": {
+                                        "autoType": "MainHand"
+                                      }
+                                    },
+                                    "op": "OpLt",
+                                    "rhs": {
+                                      "const": {
+                                        "val": "2.5s"
+                                      }
+                                    }
                                   }
                                 }
-                              },
-                              "op": "OpGe",
-                              "rhs": {
-                                "const": {
-                                  "val": "3"
-                                }
-                              }
+                              ]
                             }
                           }
                         ]
