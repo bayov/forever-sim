@@ -11880,7 +11880,7 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 21544,Festive Blue Pant Suit,1,2121728,0,0,0
 21545,Smokywood Supplies,1,24580,0,0,0
 21546,Elixir of Holy Power,50,24580,0,0,0
-21547,Recipe: Elixir of Greater Firepower,50,24580,0,0,0
+21547,Recipe: Elixir of Holy Power,50,24580,0,0,0
 21548,Pattern: Stormshroud Gloves,62,24580,0,0,0
 21549,"Monster - Shield, Shieldguard",1,24580,0,0,0
 21550,"Monster - Bow, Kaldorei",1,24580,0,0,0
@@ -16792,18 +16792,18 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 250485,Sterling Silver Gauntlet,26,8192,0,0,0
 250486,Sterling Silver Shoulders,27,24576,0,0,0
 250487,Sterling Silver Breastplate,30,24576,0,0,0
-250488,Veteran's Chain Shirt,20,8192,0,0,0
-250489,Guard's Chain Shirt,20,8192,0,0,0
+250488,Veteran's Chain Shirt,20,24576,0,0,0
+250489,Guard's Chain Shirt,20,24576,0,0,0
 250490,Protector's Chain Shirt,20,24576,0,0,0
 250491,Acolyte's Chain Shirt,20,24576,0,0,0
 250492,Crusader's Chain Shirt,20,24576,0,0,0
-250493,Veteran's Chain Leggings,25,8192,0,0,0
-250494,Guard's Chain Leggings,25,8192,0,0,0
+250493,Veteran's Chain Leggings,25,24576,0,0,0
+250494,Guard's Chain Leggings,25,24576,0,0,0
 250495,Protector's Chain Leggings,25,24576,0,0,0
 250496,Acolyte's Chain Leggings,25,24576,0,0,0
 250497,Crusader's Chain Leggings,25,24576,0,0,0
-250498,Veteran's Chain Helm,30,8192,0,0,0
-250499,Guard's Chain Helm,30,8192,0,0,0
+250498,Veteran's Chain Helm,30,24576,0,0,0
+250499,Guard's Chain Helm,30,24576,0,0,0
 250500,Protector's Chain Helm,30,24576,0,0,0
 250501,Acolyte's Chain Helm,30,24576,0,0,0
 250502,Crusader's Chain Helm,30,24576,0,0,0
@@ -16853,18 +16853,18 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 250546,Officer's Boots,45,24576,0,0,0
 250547,Sentinel's Boots,45,24576,0,0,0
 250548,Warder's Boots,45,24576,0,0,0
-250549,Prefect's Boots,45,8192,0,0,0
+250549,Prefect's Boots,45,24576,0,0,0
 250550,Justicar's Boots,45,24576,0,0,0
-250551,Officer's Gloves,55,8192,0,0,0
-250552,Sentinel's Gloves,55,8192,0,0,0
-250553,Warder's Gloves,55,8192,0,0,0
-250554,Prefect's Gloves,55,8192,0,0,0
-250555,Justicar's Gloves,55,8192,0,0,0
-250556,Officer's Belt,35,8192,0,0,0
-250557,Sentinel's Belt,35,8192,0,0,0
-250558,Warder's Belt,35,8192,0,0,0
-250559,Prefect's Belt,35,8192,0,0,0
-250560,Justicar's Belt,35,8192,0,0,0
+250551,Officer's Gloves,55,24576,0,0,0
+250552,Sentinel's Gloves,55,24576,0,0,0
+250553,Warder's Gloves,55,24576,0,0,0
+250554,Prefect's Gloves,55,24576,0,0,0
+250555,Justicar's Gloves,55,24576,0,0,0
+250556,Officer's Belt,35,24576,0,0,0
+250557,Sentinel's Belt,35,24576,0,0,0
+250558,Warder's Belt,35,24576,0,0,0
+250559,Prefect's Belt,35,24576,0,0,0
+250560,Justicar's Belt,35,24576,0,0,0
 250561,Officer's Sabatons,52,8192,0,0,0
 250562,Sentinel's Sabatons,52,8192,0,0,0
 250563,Warder's Sabatons,52,8192,0,0,0
@@ -16924,7 +16924,7 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 250617,Stormcarver,63,8192,0,0,0
 250618,Bagh Nakh,63,8192,0,0,0
 250619,Legionite Glaive,63,8192,0,0,0
-250620,Gemmed Copper Boots,15,8192,0,0,0
+250620,Gemmed Copper Boots,15,24576,0,0,0
 250621,Strange Copper Boots,15,24576,0,0,0
 250725,Crate of Exotic Parts,60,24580,0,0,0
 250744,Firestarter Fir,60,24580,0,0,0
@@ -17189,18 +17189,18 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252031,Crisp Spring Water,5,24580,0,0,0
 252032,Red Delicious Stormapple,15,24580,0,0,0
 252264,"""Gold""",1,8192,0,0,0
-252424,Black Whelp Slippers,15,8192,0,0,0
-252425,Dark Leather Boots,15,8192,0,0,0
-252426,Murloc Scale Shoes,15,8192,0,0,0
-252427,Moonglow Boots,15,8192,0,0,0
+252424,Black Whelp Slippers,15,24576,0,0,0
+252425,Dark Leather Boots,15,24576,0,0,0
+252426,Murloc Scale Shoes,15,24576,0,0,0
+252427,Moonglow Boots,15,24576,0,0,0
 252428,Brawler's Leather Belt,17,8192,0,0,0
 252429,Trapper's Leather Belt,17,8192,0,0,0
 252430,Defender's Leather Belt,17,8192,0,0,0
 252431,Totemic Leather Belt,17,8192,0,0,0
 252432,Stormrider's Leather Belt,17,8192,0,0,0
 252433,Wisdom's Leather Belt,17,8192,0,0,0
-252434,Defender's Leather Armor,20,8192,0,0,0
-252435,Totemic Leather Armor,20,8192,0,0,0
+252434,Defender's Leather Armor,20,24576,0,0,0
+252435,Totemic Leather Armor,20,24576,0,0,0
 252436,Mystic Medium Armor Kit,15,8192,0,0,0
 252437,Forceful Medium Armor Kit,15,8192,0,0,0
 252439,Brawler's Leather Boots,22,8192,0,0,0
@@ -17209,8 +17209,8 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252442,Totemic Leather Boots,22,8192,0,0,0
 252443,Stormrider's Leather Boots,22,8192,0,0,0
 252444,Wisdom's Leather Boots,22,8192,0,0,0
-252445,Defender's Leather Pants,25,8192,0,0,0
-252446,Totemic Leather Pants,25,8192,0,0,0
+252445,Defender's Leather Pants,25,24576,0,0,0
+252446,Totemic Leather Pants,25,24576,0,0,0
 252447,Defender's Leather Hood,25,8192,0,0,0
 252448,Totemic Leather Hood,25,8192,0,0,0
 252449,Hillman's Leather Boots,27,8192,0,0,0
@@ -17218,17 +17218,17 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252451,Totemic Leather Tunic,27,8192,0,0,0
 252452,Mystic Heavy Armor Kit,30,8192,0,0,0
 252453,Forceful Heavy Armor Kit,30,8192,0,0,0
-252455,Defender's Leather Helm,30,8192,0,0,0
-252456,Totemic Leather Helm,30,8192,0,0,0
+252455,Defender's Leather Helm,30,24576,0,0,0
+252456,Totemic Leather Helm,30,24576,0,0,0
 252457,Defender's Leather Kilt,30,8192,0,0,0
 252458,Totemic Leather Leggings,30,8192,0,0,0
-252459,Prowler's Leather Belt,35,8192,0,0,0
-252460,Warden's Leather Belt,35,8192,0,0,0
-252461,Skirmisher's Leather Belt,35,8192,0,0,0
+252459,Prowler's Leather Belt,35,24576,0,0,0
+252460,Warden's Leather Belt,35,24576,0,0,0
+252461,Skirmisher's Leather Belt,35,24576,0,0,0
 252462,Mystic Thick Armor Kit,40,8192,0,0,0
 252463,Forceful Thick Armor Kit,40,8192,0,0,0
-252465,Prowler's Leather Shoes,45,8192,0,0,0
-252466,Warden's Leather Shoes,45,8192,0,0,0
+252465,Prowler's Leather Shoes,45,24576,0,0,0
+252466,Warden's Leather Shoes,45,24576,0,0,0
 252467,Blue Suede Shoes,52,8192,0,0,0
 252468,Prowler's Leather Boots,52,8192,0,0,0
 252469,Skulker's Leather Boots,52,8192,0,0,0
@@ -17251,20 +17251,20 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252486,Ironfeather Leggings,61,8192,0,0,0
 252487,Mystic Rugged Armor Kit,50,8192,0,0,0
 252488,Forceful Rugged Armor Kit,50,8192,0,0,0
-252490,Brawler's Leather Armor,20,8192,0,0,0
-252491,Trapper's Leather Armor,20,8192,0,0,0
-252492,Stormrider's Leather Armor,20,8192,0,0,0
-252493,Wisdom's Leather Armor,20,8192,0,0,0
+252490,Brawler's Leather Armor,20,24576,0,0,0
+252491,Trapper's Leather Armor,20,24576,0,0,0
+252492,Stormrider's Leather Armor,20,24576,0,0,0
+252493,Wisdom's Leather Armor,20,24576,0,0,0
 252494,Brawler's Leather Gloves,20,8192,0,0,0
 252495,Trapper's Leather Gloves,20,8192,0,0,0
 252496,Defender's Leather Gloves,20,8192,0,0,0
 252497,Totemic Leather Gloves,20,8192,0,0,0
 252498,Stormrider's Leather Gloves,20,8192,0,0,0
 252499,Wisdom's Leather Gloves,20,8192,0,0,0
-252500,Brawler's Leather Pants,25,8192,0,0,0
-252501,Trapper's Leather Pants,25,8192,0,0,0
-252502,Stormrider's Leather Pants,25,8192,0,0,0
-252503,Wisdom's Leather Pants,25,8192,0,0,0
+252500,Brawler's Leather Pants,25,24576,0,0,0
+252501,Trapper's Leather Pants,25,24576,0,0,0
+252502,Stormrider's Leather Pants,25,24576,0,0,0
+252503,Wisdom's Leather Pants,25,24576,0,0,0
 252504,Brawler's Leather Hood,25,8192,0,0,0
 252505,Trapper's Leather Hood,25,8192,0,0,0
 252506,Stormrider's Leather Hood,25,8192,0,0,0
@@ -17273,18 +17273,18 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252509,Trapper's Leather Tunic,27,8192,0,0,0
 252510,Stormrider's Leather Tunic,27,8192,0,0,0
 252511,Wisdom's Leather Tunic,27,8192,0,0,0
-252512,Brawler's Leather Helm,30,8192,0,0,0
-252513,Trapper's Leather Helm,30,8192,0,0,0
-252514,Stormrider's Leather Helm,30,8192,0,0,0
-252515,Wisdom's Leather Helm,30,8192,0,0,0
+252512,Brawler's Leather Helm,30,24576,0,0,0
+252513,Trapper's Leather Helm,30,24576,0,0,0
+252514,Stormrider's Leather Helm,30,24576,0,0,0
+252515,Wisdom's Leather Helm,30,24576,0,0,0
 252516,Brawler's Leather Legguards,30,8192,0,0,0
 252517,Trapper's Leather Legguards,30,8192,0,0,0
 252518,Stormrider's Leather Kilt,30,8192,0,0,0
 252519,Wisdom's Leather Leggings,30,8192,0,0,0
-252520,Skulker's Leather Belt,35,8192,0,0,0
-252521,Stalker's Leather Belt,35,8192,0,0,0
-252522,Skycaller's Leather Belt,35,8192,0,0,0
-252523,Mender's Leather Belt,35,8192,0,0,0
+252520,Skulker's Leather Belt,35,24576,0,0,0
+252521,Stalker's Leather Belt,35,24576,0,0,0
+252522,Skycaller's Leather Belt,35,24576,0,0,0
+252523,Mender's Leather Belt,35,24576,0,0,0
 252524,Prowler's Leather Gloves,40,8192,0,0,0
 252525,Skulker's Leather Gloves,40,8192,0,0,0
 252526,Stalker's Leather Gloves,40,8192,0,0,0
@@ -17292,9 +17292,9 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252528,Skirmisher's Leather Gloves,40,8192,0,0,0
 252529,Skycaller's Leather Gloves,40,8192,0,0,0
 252530,Mender's Leather Gloves,40,8192,0,0,0
-252531,Skulker's Leather Shoes,45,8192,0,0,0
-252532,Skycaller's Leather Shoes,45,8192,0,0,0
-252533,Mender's Leather Shoes,45,8192,0,0,0
+252531,Skulker's Leather Shoes,45,24576,0,0,0
+252532,Skycaller's Leather Shoes,45,24576,0,0,0
+252533,Mender's Leather Shoes,45,24576,0,0,0
 252534,Prowler's Leather Shoulders,47,8192,0,0,0
 252535,Skulker's Leather Shoulder,47,8192,0,0,0
 252536,Warden's Leather Shoulders,47,8192,0,0,0
@@ -17308,11 +17308,11 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252544,Tooled Leather Belt,52,8192,0,0,0
 252545,Tooled Leather Boots,53,8192,0,0,0
 252546,Blue Suede Gloves,53,8192,0,0,0
-252547,Prowler's Leather Gauntlets,55,8192,0,0,0
-252548,Skulker's Leather Gauntlets,55,8192,0,0,0
-252549,Warden's Leather Gauntlets,55,8192,0,0,0
-252550,Skycaller's Leather Gauntlets,55,8192,0,0,0
-252551,Mender's Leather Gauntlets,55,8192,0,0,0
+252547,Prowler's Leather Gauntlets,55,24576,0,0,0
+252548,Skulker's Leather Gauntlets,55,24576,0,0,0
+252549,Warden's Leather Gauntlets,55,24576,0,0,0
+252550,Skycaller's Leather Gauntlets,55,24576,0,0,0
+252551,Mender's Leather Gauntlets,55,24576,0,0,0
 252552,Tooled Leather Armor,56,8192,0,0,0
 252553,Tooled Leather Gauntlets,57,8192,0,0,0
 252554,Blue Suede Shoulders,57,8192,0,0,0
@@ -17323,10 +17323,10 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252559,Blue Suede Bracers,60,8192,0,0,0
 252560,Tooled Leather Pants,61,8192,0,0,0
 252561,Living Crown,61,8192,0,0,0
-252562,Stalker's Mail Boots,45,8192,0,0,0
-252563,Skycaller's Mail Boots,45,8192,0,0,0
-252564,Skirmisher's Mail Boots,45,8192,0,0,0
-252565,Mender's Mail Boots,45,8192,0,0,0
+252562,Stalker's Mail Boots,45,24576,0,0,0
+252563,Skycaller's Mail Boots,45,24576,0,0,0
+252564,Skirmisher's Mail Boots,45,24576,0,0,0
+252565,Mender's Mail Boots,45,24576,0,0,0
 252566,Stalker's Mail Shoulders,47,8192,0,0,0
 252567,Skycaller's Mail Shoulders,47,8192,0,0,0
 252568,Skirmisher's Mail Shoulders,47,8192,0,0,0
@@ -17345,10 +17345,10 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 252581,Charged Scorpid Helm,53,8192,0,0,0
 252582,Supple Scorpid Bracers,55,8192,0,0,0
 252583,Charged Scorpid Shoulders,55,8192,0,0,0
-252584,Stalker's Mail Gauntlets,55,8192,0,0,0
-252585,Skycaller's Mail Gauntlets,55,8192,0,0,0
-252586,Skirmisher's Mail Gauntlets,55,8192,0,0,0
-252587,Mender's Mail Gauntlets,55,8192,0,0,0
+252584,Stalker's Mail Gauntlets,55,24576,0,0,0
+252585,Skycaller's Mail Gauntlets,55,24576,0,0,0
+252586,Skirmisher's Mail Gauntlets,55,24576,0,0,0
+252587,Mender's Mail Gauntlets,55,24576,0,0,0
 252588,Stalker's Mail Belt,55,8192,0,0,0
 252589,Skycaller's Mail Belt,55,8192,0,0,0
 252590,Skirmisher's Mail Belt,55,8192,0,0,0
@@ -17575,7 +17575,7 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 253667,Woolen Reagent Bag,15,24580,0,0,0
 253668,Pattern: Woolen Reagent Bag,10,24576,0,0,0
 253710,Bruuz's Dorsal Fin,1,24580,0,0,0
-253711,Goliath's Wristguards,1,24580,0,0,0
+253711,Goliath's Wristguards,1,24576,0,0,0
 253884,Template Item,55,8196,0,0,0
 253885,Novice Arcanist's Sash,15,8196,0,0,0
 253886,Pattern: Novice Arcanist's Sash,15,24576,0,0,0
@@ -17593,17 +17593,17 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 253898,Pattern: Pearly Boots,17,24576,0,0,0
 253899,Shining Boots,17,8196,0,0,0
 253900,Pattern: Shining Boots,17,24576,0,0,0
-253901,Filigreed Pristine Gown,20,8196,0,0,0
+253901,Filigreed Pristine Gown,20,24580,0,0,0
 253902,Pattern: Filigreed Pristine Gown,20,24576,0,0,0
-253903,Filigreed Silky Gown,20,8196,0,0,0
+253903,Filigreed Silky Gown,20,24580,0,0,0
 253904,Pattern: Filigreed Silky Gown,20,24576,0,0,0
-253905,Filigreed Flame Gown,20,8196,0,0,0
+253905,Filigreed Flame Gown,20,24580,0,0,0
 253906,Pattern: Filigreed Flame Gown,20,24576,0,0,0
-253907,Filigreed Shadow Gown,20,8196,0,0,0
+253907,Filigreed Shadow Gown,20,24580,0,0,0
 253908,Pattern: Filigreed Shadow Gown,20,24576,0,0,0
-253909,Filigreed Pearly Gown,20,8196,0,0,0
+253909,Filigreed Pearly Gown,20,24580,0,0,0
 253910,Pattern: Filigreed Pearly Gown,20,24576,0,0,0
-253911,Filigreed Shining Gown,20,8196,0,0,0
+253911,Filigreed Shining Gown,20,24580,0,0,0
 253912,Pattern: Filigreed Shining Gown,20,24576,0,0,0
 253913,Pristine Gloves,20,8196,0,0,0
 253914,Pattern: Pristine Gloves,20,24576,0,0,0
@@ -17629,17 +17629,17 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 253934,Pattern: Pearly Sash,22,24576,0,0,0
 253935,Shining Sash,22,8196,0,0,0
 253936,Pattern: Shining Sash,22,24576,0,0,0
-253937,Filigreed Pristine Leggings,25,8196,0,0,0
+253937,Filigreed Pristine Leggings,25,24580,0,0,0
 253938,Pattern: Filigreed Pristine Leggings,25,24576,0,0,0
-253939,Filigreed Silky Leggings,25,8196,0,0,0
+253939,Filigreed Silky Leggings,25,24580,0,0,0
 253940,Pattern: Filigreed Silky Leggings,25,24576,0,0,0
-253941,Filigreed Flame Leggings,25,8196,0,0,0
+253941,Filigreed Flame Leggings,25,24580,0,0,0
 253942,Pattern: Filigreed Flame Leggings,25,24576,0,0,0
-253943,Filigreed Shadow Leggings,25,8196,0,0,0
+253943,Filigreed Shadow Leggings,25,24580,0,0,0
 253944,Pattern: Filigreed Shadow Leggings,25,24576,0,0,0
-253945,Filigreed Pearly Leggings,25,8196,0,0,0
+253945,Filigreed Pearly Leggings,25,24580,0,0,0
 253946,Pattern: Filigreed Pearly Leggings,25,24576,0,0,0
-253947,Filigreed Shining Leggings,25,8196,0,0,0
+253947,Filigreed Shining Leggings,25,24580,0,0,0
 253948,Pattern: Filigreed Shining Leggings,25,24576,0,0,0
 253949,Pristine Circlet,25,8196,0,0,0
 253950,Pattern: Pristine Circlet,25,24576,0,0,0
@@ -17667,17 +17667,17 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 253972,Pattern: Shining Gown,27,24576,0,0,0
 253973,Silk Reagent Bag,25,24580,0,0,0
 253974,Pattern: Silk Reagent Bag,25,24576,0,0,0
-253975,Filigreed Pristine Circlet,30,8196,0,0,0
+253975,Filigreed Pristine Circlet,30,24580,0,0,0
 253976,Pattern: Filigreed Pristine Circlet,30,24576,0,0,0
-253977,Filigreed Silky Circlet,30,8196,0,0,0
+253977,Filigreed Silky Circlet,30,24580,0,0,0
 253978,Pattern: Filigreed Silky Circlet,30,24576,0,0,0
-253979,Filigreed Flame Circlet,30,8196,0,0,0
+253979,Filigreed Flame Circlet,30,24580,0,0,0
 253980,Pattern: Filigreed Flame Circlet,30,24576,0,0,0
-253981,Filigreed Shadow Circlet,30,8196,0,0,0
+253981,Filigreed Shadow Circlet,30,24580,0,0,0
 253982,Pattern: Filigreed Shadow Circlet,30,24576,0,0,0
-253983,Filigreed Pearly Circlet,30,8196,0,0,0
+253983,Filigreed Pearly Circlet,30,24580,0,0,0
 253984,Pattern: Filigreed Pearly Circlet,30,24576,0,0,0
-253985,Filigreed Shining Circlet,30,8196,0,0,0
+253985,Filigreed Shining Circlet,30,24580,0,0,0
 253986,Pattern: Filigreed Shining Circlet,30,24576,0,0,0
 253987,Pristine Leggings,30,8196,0,0,0
 253988,Pattern: Pristine Leggings,30,24576,0,0,0
@@ -17693,17 +17693,17 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 253998,Pattern: Shining Leggings,30,24576,0,0,0
 253999,Earthen Leggings,35,8196,0,0,0
 254000,Pattern: Earthen Leggings,35,24576,0,0,0
-254001,Gilded Slippers,35,8196,0,0,0
+254001,Gilded Slippers,35,24580,0,0,0
 254002,Pattern: Gilded Slippers,35,24576,0,0,0
-254003,Frothing Slippers,35,8196,0,0,0
+254003,Frothing Slippers,35,24580,0,0,0
 254004,Pattern: Frothing Slippers,35,24576,0,0,0
-254005,Fiery Slippers,35,8196,0,0,0
+254005,Fiery Slippers,35,24580,0,0,0
 254006,Pattern: Fiery Slippers,35,24576,0,0,0
-254007,Black Slippers,35,8196,0,0,0
+254007,Black Slippers,35,24580,0,0,0
 254008,Pattern: Black Slippers,35,24576,0,0,0
-254009,Golden Slippers,35,8196,0,0,0
+254009,Golden Slippers,35,24580,0,0,0
 254010,Pattern: Golden Slippers,35,24576,0,0,0
-254011,Radiant Slippers,35,8196,0,0,0
+254011,Radiant Slippers,35,24580,0,0,0
 254012,Pattern: Radiant Slippers,35,24576,0,0,0
 254013,Earthen Silk Slippers,36,8196,0,0,0
 254014,Pattern: Earthen Silk Slippers,36,24576,0,0,0
@@ -17729,17 +17729,17 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 254034,Pattern: Earthen Silk Shoulders,41,24576,0,0,0
 254035,Mageweave Reagent Bag,35,24580,0,0,0
 254036,Pattern: Mageweave Reagent Bag,40,24576,0,0,0
-254037,Gilded Cord,45,8196,0,0,0
+254037,Gilded Cord,45,24580,0,0,0
 254038,Pattern: Gilded Cord,45,24576,0,0,0
-254039,Frothing Cord,45,8196,0,0,0
+254039,Frothing Cord,45,24580,0,0,0
 254040,Pattern: Frothing Cord,45,24576,0,0,0
-254041,Fiery Cord,45,8196,0,0,0
+254041,Fiery Cord,45,24580,0,0,0
 254042,Pattern: Fiery Cord,45,24576,0,0,0
-254043,Black Cord,45,8196,0,0,0
+254043,Black Cord,45,24580,0,0,0
 254044,Pattern: Black Cord,45,24576,0,0,0
-254045,Golden Cord,45,8196,0,0,0
+254045,Golden Cord,45,24580,0,0,0
 254046,Pattern: Golden Cord,45,24576,0,0,0
-254047,Radiant Cord,45,8196,0,0,0
+254047,Radiant Cord,45,24580,0,0,0
 254048,Pattern: Radiant Cord,45,24576,0,0,0
 254049,Nethergeld Shoulders,47,8196,0,0,0
 254050,Pattern: Nethergeld Shoulders,47,24576,0,0,0
@@ -17787,17 +17787,17 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 254092,Pattern: Radiant Waistcord,52,24576,0,0,0
 254093,Earthenweave Boots,54,8196,0,0,0
 254094,Pattern: Earthenweave Boots,54,24576,0,0,0
-254095,Gilded Gloves,55,8196,0,0,0
+254095,Gilded Gloves,55,24580,0,0,0
 254096,Pattern: Gilded Gloves,55,24576,0,0,0
-254097,Frothing Gloves,55,8196,0,0,0
+254097,Frothing Gloves,55,24580,0,0,0
 254098,Pattern: Frothing Gloves,55,24576,0,0,0
-254099,Fiery Gloves,55,8196,0,0,0
+254099,Fiery Gloves,55,24580,0,0,0
 254100,Pattern: Fiery Gloves,55,24576,0,0,0
-254101,Black Gloves,55,8196,0,0,0
+254101,Black Gloves,55,24580,0,0,0
 254102,Pattern: Black Gloves,55,24576,0,0,0
-254103,Golden Gloves,55,8196,0,0,0
+254103,Golden Gloves,55,24580,0,0,0
 254104,Pattern: Golden Gloves,55,24576,0,0,0
-254105,Radiant Gloves,55,8196,0,0,0
+254105,Radiant Gloves,55,24580,0,0,0
 254106,Pattern: Radiant Gloves,55,24576,0,0,0
 254107,Gilded Sandals,55,8196,0,0,0
 254108,Pattern: Gilded Sandals,55,24576,0,0,0
@@ -19932,7 +19932,7 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 274413,Bag of Ashen Warlock Bones,1,24580,0,0,0
 274414,Pristine Fel-Slime Crystal,1,24580,0,0,0
 274415,Recipe: Sweetpaw Jam,1,8192,0,0,0
-274417,Barkskin Baubles,58,24576,0,0,0
+274417,Barkskin Baubles,58,8192,0,0,0
 274418,Burrow Barricade,58,8192,0,0,0
 274419,Bear Poking Stick,58,8192,0,0,0
 274420,Wisepaw Totem,58,8192,0,0,0
