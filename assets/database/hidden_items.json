@@ -1,6 +1,6 @@
 {
-"meta": {"build": "1.60.1.70938", "fetched": "2026-11-15T21:42Z", "source": "client beta 1.60.1.70938 Item and ItemSparse tables, and our client cache of 2026-11-15T21:36Z, and the reveals BayovCore saw in game", "tool": "tools/sources/hidden.py"},
-"counts": {"hidden": 7379, "hiddenGear": 2209, "inSimWithClassicStats": 1474, "inSimPartly": 93, "inSimFromWowhead": 11, "foreverNotInSim": 629, "revealedNotInSim": 17, "revealedGear": 5203},
+"meta": {"build": "1.60.1.70938", "fetched": "2026-11-15T23:22Z", "source": "client beta 1.60.1.70938 Item and ItemSparse tables, and our client cache of 2026-11-15T21:36Z, and the reveals BayovCore saw in game", "tool": "tools/sources/hidden.py"},
+"counts": {"hidden": 7379, "hiddenGear": 2209, "inSimWithClassicStats": 1474, "inSimPartly": 93, "inSimFromWowhead": 11, "foreverNotInSim": 629, "revealedNotInSim": 16, "revealedGear": 5203},
 "items": {
 "913": {"name": "Huge Ogre Sword", "simStats": "classic", "slot": "two-hand", "sources": [], "state": "hidden"},
 "1216": {"name": "Frost Bracers", "simStats": "classic", "slot": "wrist", "sources": [], "state": "hidden"},
@@ -228,7 +228,6 @@
 "18208": {"name": "Drape of Benediction", "simStats": "classic", "slot": "back", "sources": ["AtlasLoot: Azuregos"], "state": "hidden"},
 "18303": {"ilvl": 58, "name": "Nimble Buckler", "quality": 2, "slot": "shield", "sources": [], "state": "revealed"},
 "18304": {"ilvl": 58, "name": "Greenroot Mail", "quality": 2, "slot": "chest", "sources": [], "state": "revealed"},
-"18320": {"ilvl": 58, "name": "Demondash Spaulders", "quality": 3, "slot": "shoulder", "sources": [], "state": "revealed"},
 "18438": {"name": "Sergeant's Mark", "simStats": "classic", "slot": "trinket", "sources": [], "state": "hidden"},
 "18541": {"name": "Puissant Cape", "simStats": "classic", "slot": "back", "sources": ["AtlasLoot: Azuregos"], "state": "hidden"},
 "18542": {"name": "Typhoon", "simStats": "classic", "slot": "two-hand", "sources": ["AtlasLoot: Azuregos"], "state": "hidden"},
