@@ -295,8 +295,10 @@ func TestHolyShieldAndShieldsworn(t *testing.T) {
 // 2026-11-03 18:29Z, with the rogue push 113483; orchestration/round_70753/hotfix_113483_paladin.md),
 // the November 2 development notes' values that client 1.60.1.70755 still lacks: Vengeance stacks
 // up to 5 times (SpellAuraOptions 247421 CumulativeAura 5), and Two-Handed Weapon Specialization
-// raises Holy damage too by 2% a rank with a two-hander (SpellEffect 697263 school mask 3), counted
-// once on the seals and Holy Strike (the Holy school carries it, not their own multipliers).
+// raises Holy damage too by 2% a rank with a two-hander (SpellEffect 697263 school mask 3). In game
+// that Holy part follows the defense type, not the school (user ruling 2026-11-15,
+// TestTwoHandedSpecializationHolyReach), so it sits on the seal hits' own multipliers, 6% at 3/3
+// with a two-hander and none with a one-hander, and the Holy school is untouched.
 func TestHotfix113542(t *testing.T) {
 	_, veng := retSim(t, "--000000000000003", arcaniteReaper)
 	if got := veng.GetAura("Vengeance Proc").MaxStacks; got != 5 {
@@ -306,22 +308,26 @@ func TestHotfix113542(t *testing.T) {
 	_, base := retSim(t, "--00000001", arcaniteReaper)
 	_, twoHand := retSim(t, "--000000010003", arcaniteReaper)
 	_, oneHand := retSim(t, "--000000010003", thunderfury)
+	_, oneHandBase := retSim(t, "--00000001", thunderfury)
 	holy := func(ret *RetributionPaladin) float64 {
 		return ret.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly]
 	}
-	if got := holy(twoHand) / holy(base); got < 1.0599 || got > 1.0601 {
-		t.Errorf("Holy damage with 3/3 and a two-hander = %.4f, want 1.06", got)
-	}
-	if got := holy(oneHand) / holy(base); got != 1 {
-		t.Errorf("Holy damage with 3/3 and a one-hander = %.4f, want 1", got)
+	if got := holy(twoHand) / holy(base); got != 1 {
+		t.Errorf("Holy school with 3/3 and a two-hander = %.4f, want 1 (the spells carry it)", got)
 	}
 	for _, id := range []int32{20424, 25742} { // Seal of Command's proc, Seal of Righteousness rank 9's
-		b, s := base.GetSpell(core.ActionID{SpellID: id}), twoHand.GetSpell(core.ActionID{SpellID: id})
-		if b == nil || s == nil {
-			continue
-		}
-		if s.DamageMultiplier != b.DamageMultiplier {
-			t.Errorf("spell %d's own multiplier %.4f with 3/3, want %.4f (the school carries it)", id, s.DamageMultiplier, b.DamageMultiplier)
+		for _, c := range []struct {
+			name      string
+			ret, base *RetributionPaladin
+			want      float64
+		}{{"two-hander", twoHand, base, 1.06}, {"one-hander", oneHand, oneHandBase, 1}} {
+			b, s := c.base.GetSpell(core.ActionID{SpellID: id}), c.ret.GetSpell(core.ActionID{SpellID: id})
+			if b == nil || s == nil {
+				continue
+			}
+			if got := s.DamageMultiplier / b.DamageMultiplier; got < c.want-0.0001 || got > c.want+0.0001 {
+				t.Errorf("spell %d's own multiplier with 3/3 and a %s = %.4f, want %.2f", id, c.name, got, c.want)
+			}
 		}
 	}
 }

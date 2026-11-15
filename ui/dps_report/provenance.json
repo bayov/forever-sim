@@ -2,10 +2,10 @@
 	"note": "2026-10-25 regeneration: all 64 builds re-simmed locally on claude/keen-brown-o2g32n at e8a8b50d55 (the wowsims/forever alignment round and the class workers' regenerated presets), in a scratch tree with tools/dps_report/patches 0001 to 0004 applied and the binaries built with -tags=with_db; 20,000 iterations for the main runs. Then the Mark duty ruling (2026-10-25): the 7 hunter builds were re-simmed at 5429f41856 (every hunter keeps up its own Hunter's Mark, the four -duty-mark builds are gone); the other 53 are re-recorded there unchanged, since that commit's tools/rotopt changes touch only the hunter templates and specs (mksettings writes their requests byte for byte as before) and their data came out identical.",
 	"builds": {
 		"rogue__combat-daggers": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.386Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.254Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "5f26d48b5cecdbd2ddc858ef20c719247b214ac9",
 			"format": 2,
 			"inputs": {
@@ -25,7 +25,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
@@ -35,10 +35,10 @@
 			}
 		},
 		"rogue__combat-swords": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.399Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.266Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "ec8ab9b3d3ceb6b15e309472ccaead23fc6026ec",
 			"format": 2,
 			"inputs": {
@@ -58,7 +58,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
@@ -68,10 +68,10 @@
 			}
 		},
 		"rogue__seal-fate-daggers": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.419Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.286Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "ec8ab9b3d3ceb6b15e309472ccaead23fc6026ec",
 			"format": 2,
 			"inputs": {
@@ -91,7 +91,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
@@ -102,10 +102,10 @@
 			}
 		},
 		"rogue__mutilate": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.409Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.275Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "ec8ab9b3d3ceb6b15e309472ccaead23fc6026ec",
 			"format": 2,
 			"inputs": {
@@ -125,7 +125,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
@@ -136,10 +136,10 @@
 			}
 		},
 		"rogue__seal-fate-swords": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.429Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.298Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "e416f956f42f1f5fe56641a8f52742b492e14d4f",
 			"format": 2,
 			"inputs": {
@@ -159,7 +159,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
@@ -171,10 +171,10 @@
 			}
 		},
 		"rogue__subtlety": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.440Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.308Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "ec8ab9b3d3ceb6b15e309472ccaead23fc6026ec",
 			"format": 2,
 			"inputs": {
@@ -194,7 +194,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/rogue": "667899147d24e68481e0808567d55ad0fff5f846c9679a1cd5696605ee1ac07c",
@@ -204,10 +204,10 @@
 			}
 		},
 		"hunter__lone-wolf": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.099Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.089Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "5f26d48b5cecdbd2ddc858ef20c719247b214ac9",
 			"format": 2,
 			"inputs": {
@@ -227,7 +227,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "76da6487fc9de5a031fb7329956abbf5580ad66bb68bb98ca13069b8e8507789",
@@ -238,10 +238,10 @@
 			}
 		},
 		"hunter__marksmanship": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.111Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.122Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -261,7 +261,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "76da6487fc9de5a031fb7329956abbf5580ad66bb68bb98ca13069b8e8507789",
@@ -272,10 +272,10 @@
 			}
 		},
 		"hunter__beast-mastery": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.057Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.081Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "e416f956f42f1f5fe56641a8f52742b492e14d4f",
 			"format": 2,
 			"inputs": {
@@ -295,7 +295,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "76da6487fc9de5a031fb7329956abbf5580ad66bb68bb98ca13069b8e8507789",
@@ -306,10 +306,10 @@
 			}
 		},
 		"hunter__survival": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.149Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.157Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "e416f956f42f1f5fe56641a8f52742b492e14d4f",
 			"format": 2,
 			"inputs": {
@@ -329,7 +329,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "76da6487fc9de5a031fb7329956abbf5580ad66bb68bb98ca13069b8e8507789",
@@ -340,11 +340,11 @@
 			}
 		},
 		"paladin__level_60_sub_holy_undead": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.335Z",
+			"commit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
+			"recordedAt": "2026-11-15T14:04:28.205Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
+			"by": "sim",
+			"simCommit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
 			"format": 2,
 			"inputs": {
 				"sim/core": "b5381bde1d498dbfc92495e64d1e01eb7b2859a79176e32655893224a7f966c4",
@@ -363,10 +363,10 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/paladin": "682c1234dd10bd2cc0df08c3ab2b39997b3f3e3d2d43504b23df05a903cabebd",
+				"sim/paladin": "f223a78aaf987d7f26460cf60e7aded6623307b642bd7c6d2bd8abe4ff0beac6",
 				"tools/dps_report/req/paladin__level_60_sub_holy_undead.json": "0c2470c051082689f48a8b65761ee34f6e3748be0ac9392838fc2d01af4c3a2a",
 				"tools/dps_report/req/paladin__level_60_sub_holy_undead.meta.json (sim fields)": "e38db9c986130ba04915b6369bbd14f46304185d9b95dbb78dbcae910d3da27a",
 				"tools/dps_report/req/paladin__level_60_sub_holy.json": "1d317ab603f343e01940956efee7099db85fcb81226dc19564bfb58ff98f8933",
@@ -375,11 +375,11 @@
 			}
 		},
 		"paladin__level_60": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.237Z",
+			"commit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
+			"recordedAt": "2026-11-15T14:04:28.449Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
+			"by": "sim",
+			"simCommit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
 			"format": 2,
 			"inputs": {
 				"sim/core": "b5381bde1d498dbfc92495e64d1e01eb7b2859a79176e32655893224a7f966c4",
@@ -398,10 +398,10 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/paladin": "682c1234dd10bd2cc0df08c3ab2b39997b3f3e3d2d43504b23df05a903cabebd",
+				"sim/paladin": "f223a78aaf987d7f26460cf60e7aded6623307b642bd7c6d2bd8abe4ff0beac6",
 				"tools/dps_report/req/paladin__level_60.json": "46a29e7a7fd2604265e89aa49999b25b03dcd23a71d2f9a34e93beab084c0db8",
 				"tools/dps_report/req/paladin__level_60.meta.json (sim fields)": "5a1980de550f69b88062013aa2c357abf5bf566b81a4080f88d1a1edf6b9363e",
 				"tools/dps_report/req/races/paladin__level_60.Dwarf.json": "7880c57b1d02f1c3aad9d7e60728df02d1c6ba96",
@@ -409,11 +409,11 @@
 			}
 		},
 		"paladin__level_60_sub_holy": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.305Z",
+			"commit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
+			"recordedAt": "2026-11-15T14:04:28.479Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
+			"by": "sim",
+			"simCommit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
 			"format": 2,
 			"inputs": {
 				"sim/core": "b5381bde1d498dbfc92495e64d1e01eb7b2859a79176e32655893224a7f966c4",
@@ -432,10 +432,10 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/paladin": "682c1234dd10bd2cc0df08c3ab2b39997b3f3e3d2d43504b23df05a903cabebd",
+				"sim/paladin": "f223a78aaf987d7f26460cf60e7aded6623307b642bd7c6d2bd8abe4ff0beac6",
 				"tools/dps_report/req/paladin__level_60_sub_holy.json": "1d317ab603f343e01940956efee7099db85fcb81226dc19564bfb58ff98f8933",
 				"tools/dps_report/req/paladin__level_60_sub_holy.meta.json (sim fields)": "5a1980de550f69b88062013aa2c357abf5bf566b81a4080f88d1a1edf6b9363e",
 				"tools/dps_report/req/races/paladin__level_60_sub_holy.Dwarf.json": "89050d211adc53e7db2d0c8352274ad368da107f",
@@ -443,10 +443,10 @@
 			}
 		},
 		"shaman__enhancement-level60": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.487Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.353Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -466,7 +466,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/shaman": "2eb6f3b7ae2997be886cb06cb650d97d9f459bf40e582d707fef2bd34c6216c7",
@@ -476,10 +476,10 @@
 			}
 		},
 		"shaman__enhancement-imp-gw": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.477Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.343Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -499,7 +499,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/shaman": "2eb6f3b7ae2997be886cb06cb650d97d9f459bf40e582d707fef2bd34c6216c7",
@@ -510,10 +510,10 @@
 			}
 		},
 		"shaman__enhancement-water-shield": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.508Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.372Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -533,7 +533,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/shaman": "2eb6f3b7ae2997be886cb06cb650d97d9f459bf40e582d707fef2bd34c6216c7",
@@ -543,10 +543,10 @@
 			}
 		},
 		"shaman__enhancement-mana-tide": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.498Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.362Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -566,7 +566,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/shaman": "2eb6f3b7ae2997be886cb06cb650d97d9f459bf40e582d707fef2bd34c6216c7",
@@ -576,10 +576,10 @@
 			}
 		},
 		"shaman__elemental-level60": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.452Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.333Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -599,7 +599,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/shaman": "2eb6f3b7ae2997be886cb06cb650d97d9f459bf40e582d707fef2bd34c6216c7",
@@ -611,10 +611,10 @@
 			}
 		},
 		"shaman__elemental-level60-mana-tide": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.466Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.318Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -634,7 +634,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/shaman": "2eb6f3b7ae2997be886cb06cb650d97d9f459bf40e582d707fef2bd34c6216c7",
@@ -646,10 +646,10 @@
 			}
 		},
 		"druid__balance": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:29.842Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.020Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "c380bbaef06a7f9ff11356903bf772b012355acb",
 			"format": 2,
 			"inputs": {
@@ -669,7 +669,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/druid": "af49c2f78ff09086a2fe29225750385c464f71b315635629e4252636ed9fb31e",
@@ -681,10 +681,10 @@
 			}
 		},
 		"druid__balance-wrath": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.029Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.013Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "c380bbaef06a7f9ff11356903bf772b012355acb",
 			"format": 2,
 			"inputs": {
@@ -704,7 +704,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/druid": "af49c2f78ff09086a2fe29225750385c464f71b315635629e4252636ed9fb31e",
@@ -714,10 +714,10 @@
 			}
 		},
 		"druid__feral-cat": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:29.366Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.043Z",
 			"iterations": 20000,
-			"by": "sim",
+			"by": "hand",
 			"simCommit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
 			"format": 2,
 			"inputs": {
@@ -737,7 +737,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/druid": "af49c2f78ff09086a2fe29225750385c464f71b315635629e4252636ed9fb31e",
@@ -747,10 +747,10 @@
 			}
 		},
 		"mage__frostfire": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.226Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.208Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -770,7 +770,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/mage": "8c587279a09eef97d1878058ff775abd4cd81b5ee0c0ed3bc2b6604939827138",
@@ -783,10 +783,10 @@
 			}
 		},
 		"mage__fire": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.202Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.179Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -806,7 +806,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/mage": "8c587279a09eef97d1878058ff775abd4cd81b5ee0c0ed3bc2b6604939827138",
@@ -817,10 +817,10 @@
 			}
 		},
 		"mage__arcane": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.186Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.165Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -840,7 +840,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/mage": "8c587279a09eef97d1878058ff775abd4cd81b5ee0c0ed3bc2b6604939827138",
@@ -851,10 +851,10 @@
 			}
 		},
 		"mage__frost": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.215Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.190Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "5f26d48b5cecdbd2ddc858ef20c719247b214ac9",
 			"format": 2,
 			"inputs": {
@@ -874,7 +874,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/mage": "8c587279a09eef97d1878058ff775abd4cd81b5ee0c0ed3bc2b6604939827138",
@@ -886,10 +886,10 @@
 			}
 		},
 		"warlock__demonology": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.568Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.454Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -909,7 +909,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -920,10 +920,10 @@
 			}
 		},
 		"warlock__destruction": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.598Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.495Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "ec8ab9b3d3ceb6b15e309472ccaead23fc6026ec",
 			"format": 2,
 			"inputs": {
@@ -943,7 +943,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -954,10 +954,10 @@
 			}
 		},
 		"warlock__affliction": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.520Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.408Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -977,7 +977,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -987,10 +987,10 @@
 			}
 		},
 		"warlock__destruction_fire": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.631Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.536Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -1010,7 +1010,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -1021,10 +1021,10 @@
 			}
 		},
 		"priest__shadow": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.348Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.235Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -1044,7 +1044,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/priest": "46a5ee286b5a927302f5076ea3629a2ece97893f3112fa5a4b123a41a58104a1",
@@ -1055,10 +1055,10 @@
 			}
 		},
 		"priest__shadow-holy": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.364Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.221Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -1078,7 +1078,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/priest": "46a5ee286b5a927302f5076ea3629a2ece97893f3112fa5a4b123a41a58104a1",
@@ -1089,10 +1089,10 @@
 			}
 		},
 		"priest__smite": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.374Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.244Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -1112,7 +1112,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/priest": "46a5ee286b5a927302f5076ea3629a2ece97893f3112fa5a4b123a41a58104a1",
@@ -1127,10 +1127,10 @@
 			}
 		},
 		"warrior__fury": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.676Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.625Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -1150,7 +1150,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warrior": "f23a674d452b1c5c7d4f1ed95ca70a03b3ef36a8570f0d0445f1ba72bb901ac7",
@@ -1160,10 +1160,10 @@
 			}
 		},
 		"warrior__fury_2h": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.706Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.673Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "5f26d48b5cecdbd2ddc858ef20c719247b214ac9",
 			"format": 2,
 			"inputs": {
@@ -1183,7 +1183,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warrior": "f23a674d452b1c5c7d4f1ed95ca70a03b3ef36a8570f0d0445f1ba72bb901ac7",
@@ -1194,10 +1194,10 @@
 			}
 		},
 		"warrior__arms": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.651Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.578Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "5f26d48b5cecdbd2ddc858ef20c719247b214ac9",
 			"format": 2,
 			"inputs": {
@@ -1217,7 +1217,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warrior": "f23a674d452b1c5c7d4f1ed95ca70a03b3ef36a8570f0d0445f1ba72bb901ac7",
@@ -1228,10 +1228,10 @@
 			}
 		},
 		"warrior__arms_dragonkin": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:29.628Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.586Z",
 			"iterations": 20000,
-			"by": "sim",
+			"by": "hand",
 			"simCommit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
 			"format": 2,
 			"inputs": {
@@ -1251,7 +1251,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warrior": "f23a674d452b1c5c7d4f1ed95ca70a03b3ef36a8570f0d0445f1ba72bb901ac7",
@@ -1263,10 +1263,10 @@
 			}
 		},
 		"warrior__fury-duty-battle-shout": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.686Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.597Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -1286,7 +1286,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warrior": "f23a674d452b1c5c7d4f1ed95ca70a03b3ef36a8570f0d0445f1ba72bb901ac7",
@@ -1297,10 +1297,10 @@
 			}
 		},
 		"warrior__arms-duty-battle-shout": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.666Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.545Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "5f26d48b5cecdbd2ddc858ef20c719247b214ac9",
 			"format": 2,
 			"inputs": {
@@ -1320,7 +1320,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warrior": "f23a674d452b1c5c7d4f1ed95ca70a03b3ef36a8570f0d0445f1ba72bb901ac7",
@@ -1332,10 +1332,10 @@
 			}
 		},
 		"warrior__fury_2h-duty-battle-shout": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.717Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.634Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "5f26d48b5cecdbd2ddc858ef20c719247b214ac9",
 			"format": 2,
 			"inputs": {
@@ -1355,7 +1355,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warrior": "f23a674d452b1c5c7d4f1ed95ca70a03b3ef36a8570f0d0445f1ba72bb901ac7",
@@ -1367,11 +1367,11 @@
 			}
 		},
 		"paladin__level_60_sub_holy-duty-crusader": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.314Z",
+			"commit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
+			"recordedAt": "2026-11-15T14:04:28.511Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
+			"by": "sim",
+			"simCommit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
 			"format": 2,
 			"inputs": {
 				"sim/core": "b5381bde1d498dbfc92495e64d1e01eb7b2859a79176e32655893224a7f966c4",
@@ -1390,10 +1390,10 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/paladin": "682c1234dd10bd2cc0df08c3ab2b39997b3f3e3d2d43504b23df05a903cabebd",
+				"sim/paladin": "f223a78aaf987d7f26460cf60e7aded6623307b642bd7c6d2bd8abe4ff0beac6",
 				"tools/dps_report/req/paladin__level_60_sub_holy-duty-crusader.json": "28b47e3fe0a16aaecc8db9392151cff9a93ef60fb44c63c16a7ed0a281835016",
 				"tools/dps_report/req/paladin__level_60_sub_holy-duty-crusader.meta.json (sim fields)": "438da733241259d3e97917bab1266226444dd56116b946cefdf87344f8385f07",
 				"tools/dps_report/req/paladin__level_60_sub_holy.json": "1d317ab603f343e01940956efee7099db85fcb81226dc19564bfb58ff98f8933",
@@ -1402,10 +1402,10 @@
 			}
 		},
 		"druid__balance-duty-ff": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.012Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:55.768Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "c380bbaef06a7f9ff11356903bf772b012355acb",
 			"format": 2,
 			"inputs": {
@@ -1425,7 +1425,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/druid": "af49c2f78ff09086a2fe29225750385c464f71b315635629e4252636ed9fb31e",
@@ -1440,10 +1440,10 @@
 			}
 		},
 		"druid__balance-wrath-duty-ff": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.045Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:55.983Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "c380bbaef06a7f9ff11356903bf772b012355acb",
 			"format": 2,
 			"inputs": {
@@ -1463,7 +1463,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/druid": "af49c2f78ff09086a2fe29225750385c464f71b315635629e4252636ed9fb31e",
@@ -1474,10 +1474,10 @@
 			}
 		},
 		"druid__feral-cat-duty-ff": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:29.567Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.027Z",
 			"iterations": 20000,
-			"by": "sim",
+			"by": "hand",
 			"simCommit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
 			"format": 2,
 			"inputs": {
@@ -1497,7 +1497,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/druid": "af49c2f78ff09086a2fe29225750385c464f71b315635629e4252636ed9fb31e",
@@ -1508,10 +1508,10 @@
 			}
 		},
 		"warlock__demonology-duty-curse": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.577Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.428Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -1531,7 +1531,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -1544,10 +1544,10 @@
 			}
 		},
 		"warlock__destruction-duty-curse": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.608Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.463Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "ec8ab9b3d3ceb6b15e309472ccaead23fc6026ec",
 			"format": 2,
 			"inputs": {
@@ -1567,7 +1567,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -1580,10 +1580,10 @@
 			}
 		},
 		"warlock__affliction-duty-curse": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.535Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.382Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -1603,7 +1603,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -1614,10 +1614,10 @@
 			}
 		},
 		"warlock__destruction_fire-duty-curse": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:29.582Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.505Z",
 			"iterations": 20000,
-			"by": "sim",
+			"by": "hand",
 			"simCommit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
 			"format": 2,
 			"inputs": {
@@ -1637,7 +1637,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -1650,11 +1650,11 @@
 			}
 		},
 		"paladin__level_60_shock_ret": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.272Z",
+			"commit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
+			"recordedAt": "2026-11-15T14:04:28.499Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
+			"by": "sim",
+			"simCommit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
 			"format": 2,
 			"inputs": {
 				"sim/core": "b5381bde1d498dbfc92495e64d1e01eb7b2859a79176e32655893224a7f966c4",
@@ -1673,10 +1673,10 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/paladin": "682c1234dd10bd2cc0df08c3ab2b39997b3f3e3d2d43504b23df05a903cabebd",
+				"sim/paladin": "f223a78aaf987d7f26460cf60e7aded6623307b642bd7c6d2bd8abe4ff0beac6",
 				"tools/dps_report/req/paladin__level_60_shock_ret.json": "07593922e96101ac06f3ecb4ebdf1dc500bed3b1bcc24494704305e1d452042e",
 				"tools/dps_report/req/paladin__level_60_shock_ret.meta.json (sim fields)": "5a1980de550f69b88062013aa2c357abf5bf566b81a4080f88d1a1edf6b9363e",
 				"tools/dps_report/req/races/paladin__level_60_shock_ret.Dwarf.json": "7957b388c75744786cbe3de9d4f165409beed7d2",
@@ -1684,11 +1684,11 @@
 			}
 		},
 		"paladin__level_60-duty-crusader": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.250Z",
+			"commit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
+			"recordedAt": "2026-11-15T14:04:28.463Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
+			"by": "sim",
+			"simCommit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
 			"format": 2,
 			"inputs": {
 				"sim/core": "b5381bde1d498dbfc92495e64d1e01eb7b2859a79176e32655893224a7f966c4",
@@ -1707,10 +1707,10 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/paladin": "682c1234dd10bd2cc0df08c3ab2b39997b3f3e3d2d43504b23df05a903cabebd",
+				"sim/paladin": "f223a78aaf987d7f26460cf60e7aded6623307b642bd7c6d2bd8abe4ff0beac6",
 				"tools/dps_report/req/paladin__level_60-duty-crusader.json": "8f0091e91007bfea80235185f0aaeae225743860b6c8893501f4cda004ffb69a",
 				"tools/dps_report/req/paladin__level_60-duty-crusader.meta.json (sim fields)": "3a4871930146a5fea9e5093c10858ee28ee7644def7350fa739ad5f3827f87ae",
 				"tools/dps_report/req/paladin__level_60.json": "46a29e7a7fd2604265e89aa49999b25b03dcd23a71d2f9a34e93beab084c0db8",
@@ -1719,11 +1719,11 @@
 			}
 		},
 		"paladin__level_60_shock_ret-duty-crusader": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.282Z",
+			"commit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
+			"recordedAt": "2026-11-15T14:04:28.523Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
+			"by": "sim",
+			"simCommit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
 			"format": 2,
 			"inputs": {
 				"sim/core": "b5381bde1d498dbfc92495e64d1e01eb7b2859a79176e32655893224a7f966c4",
@@ -1742,10 +1742,10 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/paladin": "682c1234dd10bd2cc0df08c3ab2b39997b3f3e3d2d43504b23df05a903cabebd",
+				"sim/paladin": "f223a78aaf987d7f26460cf60e7aded6623307b642bd7c6d2bd8abe4ff0beac6",
 				"tools/dps_report/req/paladin__level_60_shock_ret-duty-crusader.json": "8197fa4310c47f01a4e13d424d011d2b61919b114a3a60c096abe9dd8eec41ac",
 				"tools/dps_report/req/paladin__level_60_shock_ret-duty-crusader.meta.json (sim fields)": "4e5656e83235ca5fbb31143c14ae8c7e0be4a241eda88b3679dcf0190b22a76f",
 				"tools/dps_report/req/paladin__level_60_shock_ret.json": "07593922e96101ac06f3ecb4ebdf1dc500bed3b1bcc24494704305e1d452042e",
@@ -1754,11 +1754,11 @@
 			}
 		},
 		"paladin__level_60-duty-wisdom": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.261Z",
+			"commit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
+			"recordedAt": "2026-11-15T14:04:28.487Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
+			"by": "sim",
+			"simCommit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
 			"format": 2,
 			"inputs": {
 				"sim/core": "b5381bde1d498dbfc92495e64d1e01eb7b2859a79176e32655893224a7f966c4",
@@ -1777,10 +1777,10 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/paladin": "682c1234dd10bd2cc0df08c3ab2b39997b3f3e3d2d43504b23df05a903cabebd",
+				"sim/paladin": "f223a78aaf987d7f26460cf60e7aded6623307b642bd7c6d2bd8abe4ff0beac6",
 				"tools/dps_report/req/paladin__level_60-duty-wisdom.json": "d122277bf1758c53f3bc59a5f8fd6169f737bd642c61bf8201c89597d6de7137",
 				"tools/dps_report/req/paladin__level_60-duty-wisdom.meta.json (sim fields)": "c359bd385b4a6d9829a9babe2cc78d99dd4913d2097e0e07c5e13335205fd5ef",
 				"tools/dps_report/req/paladin__level_60.json": "46a29e7a7fd2604265e89aa49999b25b03dcd23a71d2f9a34e93beab084c0db8",
@@ -1789,11 +1789,11 @@
 			}
 		},
 		"paladin__level_60_sub_holy-duty-wisdom": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.325Z",
+			"commit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
+			"recordedAt": "2026-11-15T14:04:28.534Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
+			"by": "sim",
+			"simCommit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
 			"format": 2,
 			"inputs": {
 				"sim/core": "b5381bde1d498dbfc92495e64d1e01eb7b2859a79176e32655893224a7f966c4",
@@ -1812,10 +1812,10 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/paladin": "682c1234dd10bd2cc0df08c3ab2b39997b3f3e3d2d43504b23df05a903cabebd",
+				"sim/paladin": "f223a78aaf987d7f26460cf60e7aded6623307b642bd7c6d2bd8abe4ff0beac6",
 				"tools/dps_report/req/paladin__level_60_sub_holy-duty-wisdom.json": "aa5adbfbde3b6b5f99aa53be949fe878fe2829c8514149fc9d675916a6f05e2a",
 				"tools/dps_report/req/paladin__level_60_sub_holy-duty-wisdom.meta.json (sim fields)": "ca198062b745f4c543e940af66b04676b4ae3a2bae990533c1034e286979c3da",
 				"tools/dps_report/req/paladin__level_60_sub_holy.json": "1d317ab603f343e01940956efee7099db85fcb81226dc19564bfb58ff98f8933",
@@ -1824,11 +1824,11 @@
 			}
 		},
 		"paladin__level_60_shock_ret-duty-wisdom": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.293Z",
+			"commit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
+			"recordedAt": "2026-11-15T14:04:28.546Z",
 			"iterations": 20000,
-			"by": "probe",
-			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
+			"by": "sim",
+			"simCommit": "6881840e2edeab689bbf2ceec2cda35254b6cf26",
 			"format": 2,
 			"inputs": {
 				"sim/core": "b5381bde1d498dbfc92495e64d1e01eb7b2859a79176e32655893224a7f966c4",
@@ -1847,10 +1847,10 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
-				"sim/paladin": "682c1234dd10bd2cc0df08c3ab2b39997b3f3e3d2d43504b23df05a903cabebd",
+				"sim/paladin": "f223a78aaf987d7f26460cf60e7aded6623307b642bd7c6d2bd8abe4ff0beac6",
 				"tools/dps_report/req/paladin__level_60_shock_ret-duty-wisdom.json": "90be83e25264d26cac20cb7547c1d546dede763952c5f70cd63a1268780d3973",
 				"tools/dps_report/req/paladin__level_60_shock_ret-duty-wisdom.meta.json (sim fields)": "3047f58f1f5411c0d53e11ebbfa0a5a378d032a6da1039d4ac968434f1f76bc8",
 				"tools/dps_report/req/paladin__level_60_shock_ret.json": "07593922e96101ac06f3ecb4ebdf1dc500bed3b1bcc24494704305e1d452042e",
@@ -1859,10 +1859,10 @@
 			}
 		},
 		"warrior__arms-duty-sunder": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:29.608Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.565Z",
 			"iterations": 20000,
-			"by": "sim",
+			"by": "hand",
 			"simCommit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
 			"format": 2,
 			"inputs": {
@@ -1882,7 +1882,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warrior": "f23a674d452b1c5c7d4f1ed95ca70a03b3ef36a8570f0d0445f1ba72bb901ac7",
@@ -1894,10 +1894,10 @@
 			}
 		},
 		"warrior__fury-duty-sunder": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.696Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.612Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -1917,7 +1917,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warrior": "f23a674d452b1c5c7d4f1ed95ca70a03b3ef36a8570f0d0445f1ba72bb901ac7",
@@ -1928,10 +1928,10 @@
 			}
 		},
 		"warrior__fury_2h-duty-sunder": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.726Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.654Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "5f26d48b5cecdbd2ddc858ef20c719247b214ac9",
 			"format": 2,
 			"inputs": {
@@ -1951,7 +1951,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warrior": "f23a674d452b1c5c7d4f1ed95ca70a03b3ef36a8570f0d0445f1ba72bb901ac7",
@@ -1963,10 +1963,10 @@
 			}
 		},
 		"warlock__affliction-duty-recklessness": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.545Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.398Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -1986,7 +1986,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -1997,10 +1997,10 @@
 			}
 		},
 		"warlock__demonology-duty-recklessness": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.587Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.442Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -2020,7 +2020,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -2032,10 +2032,10 @@
 			}
 		},
 		"warlock__destruction-duty-recklessness": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.620Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.482Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "ec8ab9b3d3ceb6b15e309472ccaead23fc6026ec",
 			"format": 2,
 			"inputs": {
@@ -2055,7 +2055,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -2067,10 +2067,10 @@
 			}
 		},
 		"warlock__destruction_fire-duty-recklessness": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.641Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.523Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -2090,7 +2090,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",
@@ -2102,10 +2102,10 @@
 			}
 		},
 		"hunter__beast-mastery-tallstrider": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.074Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.051Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "e416f956f42f1f5fe56641a8f52742b492e14d4f",
 			"format": 2,
 			"inputs": {
@@ -2125,7 +2125,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "76da6487fc9de5a031fb7329956abbf5580ad66bb68bb98ca13069b8e8507789",
@@ -2137,10 +2137,10 @@
 			}
 		},
 		"hunter__beast-mastery-wolf": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.086Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.070Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "e416f956f42f1f5fe56641a8f52742b492e14d4f",
 			"format": 2,
 			"inputs": {
@@ -2160,7 +2160,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "76da6487fc9de5a031fb7329956abbf5580ad66bb68bb98ca13069b8e8507789",
@@ -2172,10 +2172,10 @@
 			}
 		},
 		"hunter__marksmanship-tallstrider": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.122Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.099Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -2195,7 +2195,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "76da6487fc9de5a031fb7329956abbf5580ad66bb68bb98ca13069b8e8507789",
@@ -2207,10 +2207,10 @@
 			}
 		},
 		"hunter__marksmanship-wolf": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.135Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.112Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "4fd99e4042d5f96b1dc8c67fd8bb11ae0a84519a",
 			"format": 2,
 			"inputs": {
@@ -2230,7 +2230,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "76da6487fc9de5a031fb7329956abbf5580ad66bb68bb98ca13069b8e8507789",
@@ -2242,10 +2242,10 @@
 			}
 		},
 		"hunter__survival-tallstrider": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.162Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.130Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "e416f956f42f1f5fe56641a8f52742b492e14d4f",
 			"format": 2,
 			"inputs": {
@@ -2265,7 +2265,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "76da6487fc9de5a031fb7329956abbf5580ad66bb68bb98ca13069b8e8507789",
@@ -2277,10 +2277,10 @@
 			}
 		},
 		"hunter__survival-wolf": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.174Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.146Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "e416f956f42f1f5fe56641a8f52742b492e14d4f",
 			"format": 2,
 			"inputs": {
@@ -2300,7 +2300,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/hunter": "76da6487fc9de5a031fb7329956abbf5580ad66bb68bb98ca13069b8e8507789",
@@ -2312,10 +2312,10 @@
 			}
 		},
 		"warlock__affliction_shadow_bolt": {
-			"commit": "2afd970a3e38168f7d212013f84b29e9acd8b2a7",
-			"recordedAt": "2026-11-15T12:31:30.557Z",
+			"commit": "a60de046c9776ad30b6cd0081143870715cc1528",
+			"recordedAt": "2026-11-15T14:04:56.415Z",
 			"iterations": 20000,
-			"by": "probe",
+			"by": "hand",
 			"simCommit": "dee45cd96f977a27bdb391b522c2162224f02d0f",
 			"format": 2,
 			"inputs": {
@@ -2335,7 +2335,7 @@
 				"tools/dps_report/mana_curves.py": "21980a5e933cfdc4d9c9a7db99babe4b8dff7f78bf9bb6e16641288adb48cace",
 				"tools/dps_report/ablate.py": "f8d9586172b936cab7de108bb9fe9306d00c91d9149bd9a1b5a8443feb059a88",
 				"tools/dps_report/run_assumptions.py": "aeb1a692ce3b7b9c4b576106d50ce5e380cd46b0366dba72d9b487886667f52d",
-				"tools/dps_report/assumptions_def.py": "d9be6a22f520b56cbb6108f29a09d82b107f4f2dad93b8f2cfdf156385df0cd7",
+				"tools/dps_report/assumptions_def.py": "82bb5db84eb9c2d51d7b47574a5c24c1c3579ddb2ce51663b5dab78b2c5d81f5",
 				"tools/dps_report/race_override.py": "504b71c7f26c2bd3e21b97f2c1b59b376d1d609778ca6e2b288368de844e0f03",
 				"tools/dps_report/dashpaths.py": "94b4936b7d7ac775a1fcb84a2d21bbd9cb399d62fcf4c01802c7fb3106e4a37f",
 				"sim/warlock": "6ba864dcce81365bbe258142d115a2de51b8b41b2779d4a3e5da937c90ac04d7",

@@ -103,8 +103,10 @@ func (paladin *Paladin) registerSealOfFury() {
 			ProcMask:    core.ProcMaskMeleeMHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagBinary,
 
-			// Libram of Law's 4% names Judgement of Fury too (items.go).
-			DamageMultiplier: paladin.improvedSeals() * paladin.getWeaponSpecializationModifier() * core.TernaryFloat64(paladin.Ranged().ID == LibramOfLaw, 1.04, 1),
+			// Libram of Law's 4% names Judgement of Fury too (items.go). Two-Handed Weapon
+			// Specialization doesn't reach it: a ranged judgement, as Judgement of Righteousness
+			// (talents.go, applyWeaponSpecialization; user ruling 2026-11-15).
+			DamageMultiplier: paladin.improvedSeals() * core.TernaryFloat64(paladin.Ranged().ID == LibramOfLaw, 1.04, 1),
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,
 			// Forever's downranking penalty reads the seal rank's learn level (core/downrank.go).
