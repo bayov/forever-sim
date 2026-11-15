@@ -5210,6 +5210,31 @@
      "commits": [
       "baa3636"
      ]
+    },
+    {
+     "title": "Judgement of Command strikes as a melee attack again",
+     "kind": "sim",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy_undead"
+     ],
+     "note": "The game's data keeps it a melee attack, unlike Judgement of Righteousness and of Fury, and a combat log since the Judgement change backs that. It rolls on the melee table again and procs what melee hits proc. Retribution rises 2 to 6.",
+     "source": {
+      "label": "wago.tools: Judgement of Command's spell categories",
+      "url": "https://wago.tools/db2/SpellCategories?build=1.60.1.70938&filter%5BSpellID%5D=20966"
+     },
+     "commits": [
+      "6ce77e5"
+     ]
     }
    ],
    "internal": [
