@@ -1,32 +1,25 @@
-# Mechanics pass 82 (2026-11-14, master 95289e879)
+# Mechanics pass 83 (2026-11-15, master 70ea588bb)
 
-One new finding (mechanics-20261114-1, medium) and new tier 1 evidence on mechanics-20261112-1, both from the
-November 13 hotfix notes.
+Quiet: no new finding.
 
 ## Get current
 
-- Client: 1.60.1.70938 still the newest (the gate reported no newer build).
-- Blizzard: dev notes t/2360696 unchanged (post 10, 2026-11-04). Hotfix thread t/2403040 has post 10
-  (2026-11-14 01:54 UTC) and post 1 edited 01:54 with the "November 13, 2026" section. Mechanics lines:
-  - Windfury Totem activated by all main hand melee abilities, not off hand strikes -> update on mechanics-20261112-1.
-  - Judgement of Command counts as a melee attack and activates on-hit effects -> mechanics-20261114-1.
-  - Gloves of Holy Might only activated by harmful damaging spells and abilities (item not in the sim; the daily
-    update's needs-your-call list covers it).
-  - Creature stun DR, Wild Growth coefficient 6.6%, Frost Nova breaking, Divine Spirit cost, Siphon Life silence,
-    Berserker Rage vs Sap: no DPS-sim effect (Wild Growth is the healer auditors').
-  - Item stat fixes (Darkspear signets, Bad Hat, Channeler's Ring, Blessed Band of Light, Taran Icebreaker 2H):
-    item data, for the gear / update-sources pipeline.
-- Daily update: no TASKS.md or update_ledger.md commit since 1bf5feb4b, so the Nov 13 hotfixes are not in the repo yet.
+- Client: 1.60.1.70938 still the newest (`wago.py latest --probe 300`).
+- Blizzard: dev notes t/2360696 unchanged (post 10, 2026-11-04; post 1 edited 2026-11-03). Hotfix thread
+  t/2403040 unchanged since pass 82 (post 10 and post 1 edit, 2026-11-14 01:54 UTC). Blue tracker: one newer post,
+  "Player-Level Dungeon XP Adjustment - November 14" (2026-11-15 01:18 UTC), XP only, no DPS mechanic.
+- Daily update: ad64ef0f8 (TASKS) records the user ruling of 2026-11-15 to keep Windfury Totem's AP after hotfix push
+  114091 (the in-game tooltip still shows 246 AP) until a log settles it. A ruling, not a finding; the sim keeps the AP.
 
-## Commits 1bf5feb4b..95289e879 (sim code)
+## Commits d630df2cb..70ea588bb
 
-| Commit | What | Verdict |
+| Commit | Change | Verdict |
 |---|---|---|
-| 87c030418 | Bolt's Charged Eyeball, Everlook Pathcarver, Chained Essence of Eranikus under Forever (`sim/common/item_effects.go`) | All values match client 70938: proc 15% / 3 s ICD / ProcTypeMask 332116 / 60 Nature; 140 every 2 s for 20 s, 600 s CD, 20 s category 1141; 607 Physical, 300 s CD, 15 s on 1141, DefenseType 1 on 1295270 and 1315996. Eyeball's 50/50 self/target split is a stated assumption (notes.md), not a finding. Verdict row added. |
+| 0cc2c3c8b | Ferocious Bite: a missed / dodged / parried Bite refunds 80% of its 35 Energy under Forever, keeps extra Energy and combo points | Verified tier 1: Attributes_1 0x8000000 (DISCOUNT_POWER_ON_MISS) on every player rank (22568, 22827-22829, 31018, 1328618) in 70938, same as the builders and rogue finishers the sim already refunds. `EnergyCost.IssueRefund` refunds 0.8 x CurCast.Cost (0 under Omen of Clarity); extra Energy is spent only on a landed Bite. Net 7 Energy a miss fits the 6.1-6.7 measured on a 70862 log (regen in between). |
+| 0cc2c3c8b | Sharpened Claws adds spell crit in feral forms | Verified tier 1: 16942 effect 6 aura 290 (all crit). About 0 DPS. |
 
-Other commits (BiS lists, phase 0 content, db row for 15141, rotopt ranking) are not mechanics.
+Pounce (9005/9823/9827, 1229228/1258520) carries the same flag but has no refund in the sim; no Level 60 build uses it.
 
-## Open
+## Open findings
 
-- Server hotfix SpellMisc rows after push 113605 still unread (carried from pass 81).
-- mechanics-20261114-1 and the -20261112-1 update are unmeasured estimates; a worker should measure with paired seeds.
+Unchanged: mechanics-20261114-1, -20261113-2, -20261113-1, -20261112-1, -20261104-1.

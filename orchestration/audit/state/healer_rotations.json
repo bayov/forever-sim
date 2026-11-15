@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "d630df2cb0d485ea2d7646bc58f3aff87569a89c"
+  "master": "70ea588bb1166ce4fc989379bf73601af7408091"
  },
- "last_pass_at": "2026-11-13T19:29:27Z",
- "pass": 12,
+ "last_pass_at": "2026-11-15T13:12:29Z",
+ "pass": 13,
  "result": "quiet",
- "note": "Pass 12 on 3a86d4a6b. Gate file sim/shaman/flametongue_weapon.go (rank 6 cut 5.5, melee imbue only); also Windfury/Frightskull/oil changes, all melee. Baseline 63 rows bit-identical to ref. -20261104-2 still open.",
+ "note": "Pass 13 on 70ea588bb. Gate files sim/druid/ferocious_bite.go and forms.go (FB refund, Sharpened Claws spell crit), feral forms only. Baseline 63 rows bit-identical to ref. -20261104-2 still open.",
  "baseline": "ref/healer_bench/summary.tsv",
  "client_build": "1.60.1.70888",
- "checked_at": "2026-11-15T06:44:36Z"
+ "checked_at": "2026-11-15T13:12:56Z"
 }
