@@ -427,3 +427,12 @@ wording instead.
   - https://us.forums.blizzard.com/en/wow/t/2403040/10
 - [ ] 2026-11-14 — Wild Growth: all three ranks now share one 6 s cooldown (category 1237) and it can't be cast while moving (Blizzard Nov 13; wago push 114075) [source: blizzard]
   - Draft PR #129 takes the 0.066 coefficient only. Check `sim/druid/healing.go` `WildGrowthCooldown` uses one shared timer across 408120 / 1238214 / 1238215.
+- [ ] 2026-11-15 — Finish the items revealed Nov 12–15 that draft PR #131 couldn't take (foreverchanges.pro, build 70938) [source: foreverchanges]
+  - 22398 Idol of Rejuvenation: Forever is "Increases the initial healing of Regrowth by 5% when cast on a target affected by your Rejuvenation" (Classic: +50 Rejuvenation healing), no longer Unique. Needs druid code. https://foreverchanges.pro/item/22398
+  - 22332 Blade of Necromancy: on-kill Skeleton for 2 min isn't modelled (no fight effect); PR #131 takes its stats. https://foreverchanges.pro/item/22332
+  - Wowhead Forever tooltips disagree with foreverchanges' in-game values: 22333 Hammer of Divine Might 135 healing / 45 damage vs 132 / 44, 22332 Blade of Necromancy 72 SP vs 71. PR #131 uses foreverchanges; recheck with itemsparse.py 70938.
+  - Rerun dbcache.py then hidden.py after PR #131 merges: hidden_items.json still marks 22335, 22339, 22329, 22333, 22319, 22326, 22332 "classic", so db.json keeps hiddenStats 1 on them.
+  - PR #131 moves Elemental Shaman phase_3 (Scepter of Interminable Focus 22329 loses 9 SP and spell hit): Phase3 Average-Default 900.59 → 893.62 DPS. Re-run the Elemental gear search; the Scepter likely leaves the phase_3 set.
+- [ ] 2026-11-15 — Shaman goldens fail on master fe8793d: 120 subtests in Elemental, Elemental Level 60, Enhancement and Warden (found by the daily update while testing PR #131) [source: foreverchanges]
+  - Probably stale after the Nov 13–15 Windfury Totem, Flametongue and item commits; PR #130 also changes those files. Diff each moved *.results block against those commits, then `make update-tests`.
+  - `sim/web` also fails at setup in cloud sessions because `binary_dist` isn't built.
