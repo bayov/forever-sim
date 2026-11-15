@@ -80,6 +80,18 @@ func rogueCooldownKnobs() []Knob {
 		// Venom's 6 sec buff with the talent) at this much energy or less, so the Energy it gives back
 		// isn't capped. 0 for never.
 		{Name: "shankEnergy", Default: 75, Min: 0, Max: 100, Step: 5},
+		// Windfury Totem timing (standards 17: under Forever every landed main hand hit rolls the
+		// totem, behind a 100 ms internal cooldown that a white swing's proc starts). mhGap keeps the
+		// main hand builders and Eviscerate this many sec clear of a main hand swing, so a swing's
+		// proc can't eat their roll; 0 for no gap.
+		{Name: "mhGap", Default: 0, Min: 0, Max: 0.2, Step: 0.1},
+		// The builders wait for the last preSwing sec before a main hand swing, unless energy is at
+		// preSwingEnergy or the fight is in its last 6 sec: a totem proc off a builder brings its
+		// 1 sec attack power buff to the white swing that follows. 0 for no wait.
+		{Name: "preSwing", Default: 0, Min: 0, Max: 1, Step: 0.25},
+		{Name: "preSwingEnergy", Default: 80, Min: 40, Max: 100, Step: 10},
+		// The same wait for Eviscerate, which goes out anyway at 90 energy or in the last 6 sec.
+		{Name: "evisPreSwing", Default: 0, Min: 0, Max: 1, Step: 0.25},
 	}
 }
 
@@ -106,6 +118,44 @@ type rogueCooldowns struct {
 	prepull []*proto.APLPrepullAction
 	// shank is the Shank line a template puts before its builder, nil when the knob turns it off.
 	shank *proto.APLListItem
+	// builderTiming is the swing timing (mhGap, preSwing) a template adds to its builder's
+	// condition, nil when both knobs are off; builderTimingNotes says it in words.
+	builderTiming      value
+	builderTimingNotes string
+}
+
+// sinceMainHandSwing is the time since the last main hand swing began its timer. An extra
+// attack leaves the swing timer alone under Forever (standards 28), so it does not count.
+func sinceMainHandSwing() value {
+	return sub(mainHandSwingTime(), mainHandTimeToNext())
+}
+
+// swingTiming is the condition the mhGap and preSwing style knobs put on a main hand ability:
+// clear of the swing by gap sec, and within before sec of the next swing unless energy is at
+// override or the fight is ending. Nil when both are 0.
+func swingTiming(gap, before, override float64) value {
+	var gapCond, beforeCond value
+	if gap > 0 {
+		gapCond = ge(sinceMainHandSwing(), seconds(gap))
+	}
+	if before > 0 {
+		beforeCond = or(le(mainHandTimeToNext(), seconds(before)), ge(energy(), num(override)), lt(remainingTime(), seconds(6)))
+	}
+	if gapCond == nil && beforeCond == nil {
+		return nil
+	}
+	return and(gapCond, beforeCond)
+}
+
+func swingTimingNotes(gap, before, override float64) string {
+	s := ""
+	if gap > 0 {
+		s += fmt.Sprintf(" Not within %g sec after a main hand swing, so a Windfury Totem proc from the swing can't take its roll.", gap)
+	}
+	if before > 0 {
+		s += fmt.Sprintf(" Within %g sec before the next main hand swing (or at %g energy, or in the last 6 sec), so a Windfury Totem proc's attack power reaches that swing.", before, override)
+	}
+	return s
 }
 
 func buildRogueCooldowns(k Knobs) rogueCooldowns {
@@ -266,6 +316,13 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		),
 		and(ge(comboPoints(), num(1)), lt(remainingTime(), seconds(3))),
 	)
+
+	evisTiming := swingTiming(k["mhGap"], k["evisPreSwing"], 90)
+	if evisTiming != nil {
+		c.evisWhen = or(and(c.evisWhen, evisTiming), and(ge(comboPoints(), num(1)), lt(remainingTime(), seconds(3))))
+	}
+	c.builderTiming = swingTiming(k["mhGap"], k["preSwing"], k["preSwingEnergy"])
+	c.builderTimingNotes = swingTimingNotes(k["mhGap"], k["preSwing"], k["preSwingEnergy"])
 
 	if k["shankEnergy"] > 0 {
 		c.shank = cast(shank, le(energy(), num(k["shankEnergy"])), fmt.Sprintf(

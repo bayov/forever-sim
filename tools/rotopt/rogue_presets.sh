@@ -76,6 +76,16 @@ gen60() {
 # 3000 iterations, the best checked at 10000 and kept for 2 standard errors), alternated with the knob
 # search over 120, 180 and 300 sec together (-combined) until neither moved. The knobs below are the whole
 # set the search left, so the file regenerates exactly what the presets carry. Numbers in ui/rogue/presets.ts.
+# Searched again on 2026-11-15 for the Windfury Totem rule (standards 17: Sinister Strike, Backstab, Mutilate's
+# main hand strike, Hemorrhage and Eviscerate roll the totem; Hack and Slash's extra attacks and off-hand strikes
+# don't). Knob search over 120, 180 and 300 sec together (-combined, 2000 iterations) on the Slice and Dice,
+# combo point, energy pooling, Shank and swing timing knobs, then the best near miss of each build at 20000
+# iterations on seeds 1 and 1000003: nothing won all six cells by 1 DPS, so the knobs below stay. The new swing
+# timing knobs stay off: mhGap=0.1 (main hand abilities 0.1 sec clear of a white swing) is +0.1 to +1.1 on seed 1
+# and -0.1 to +0.3 on seed 1000003; preSwing (builders in the last 0.25 or 0.5 sec before a swing) loses up to
+# 10.2 (Combat Swords) and evisPreSwing=0.5 up to 12.5. Combat Swords keeps Hack and Slash 5/5: each point moved
+# to Improved or Vile Poisons costs about 6 DPS (945.0 against 938.9 at 4/5 and 911 at 0/5, combined, seed 1).
+# Seal Fate Swords loses 22 to 70 taking Hack and Slash from Dual Wield Specialization or Venom.
 gen60 rogue_combat level60_phase1_synthetic_swords rogue_ss level60_combat_swords 00530320201-3200330112012321551 "arEnergy=39,arSnd=1,berserkingHoldForBf=0,bfHoldForAr=0,bfPrepull=1,bfSnd=1,bloodFuryHoldForAr=1,bloodFurySnd=0,cbPool=0,cbSnd=6,eluneHoldForAr=1,eurekaCp=5,eurekaSnd=8,evisCp=5,evisEnergy=79,ruptureCp=0,ruptureSnd=6,shankEnergy=75,sndCp=1,sndRefresh=3,sndRefreshCp=5,ssAfterSwing=0,ssEnergy=0,teaEnergy=10,trinketHoldForAr=0,trinketSnd=0"
 gen60 rogue_combat level60_phase1_synthetic_combat_daggers rogue_bs level60_combat_daggers 005203002-3203230002012221551-005 "arEnergy=49,arSnd=1,berserkingHoldForBf=0,bfHoldForAr=0,bfPrepull=1,bfSnd=0,bloodFuryHoldForAr=1,bloodFurySnd=0,bsAfterSwing=0,bsEnergy=0,cbPool=0,cbSnd=6,deathMarkCp=0,eluneHoldForAr=1,eurekaCp=0,eurekaSnd=8,evisCp=4,evisEnergy=79,ghostly=0,ghostlyAmbush=0,ghostlyGarrote=0,hemoFiller=0,hemoForRupture=1,meldCp=3,mutilate=0,premedCp=9,ruptureCp=0,ruptureSnd=6,shankEnergy=75,sndCp=1,sndRefresh=1,sndRefreshCp=5,teaEnergy=10,trinketHoldForAr=0,trinketSnd=0,vanishCp=9,vanishPool=0"
 gen60 rogue_combat level60_phase1_synthetic_daggers rogue_bs level60_seal_fate_daggers 0053032024105103-321303010201132 "arEnergy=59,arSnd=1,berserkingHoldForBf=0,bfHoldForAr=0,bfPrepull=0,bfSnd=0,bloodFuryHoldForAr=1,bloodFurySnd=0,bsAfterSwing=0,bsEnergy=0,cbPool=0,cbSnd=6,deathMarkCp=0,eluneHoldForAr=1,eurekaCp=0,eurekaSnd=8,evisCp=4,evisEnergy=79,ghostly=0,ghostlyAmbush=0,ghostlyGarrote=0,hemoFiller=0,hemoForRupture=1,meldCp=3,mutilate=0,premedCp=9,ruptureCp=0,ruptureSnd=6,shankEnergy=75,sndCp=1,sndRefresh=3,sndRefreshCp=5,teaEnergy=0,trinketHoldForAr=0,trinketSnd=0,vanishCp=3,vanishPool=0"

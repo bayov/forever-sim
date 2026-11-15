@@ -185,10 +185,10 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 
 	// The builder. Backstab waits for Thousand Cuts stacks when asked, with the energy
 	// pool as the fallback so the wait never caps energy.
-	when := and(builderWhen(k["bsAfterSwing"], k["bsEnergy"]), pool)
-	poolNotes := ""
+	when := and(builderWhen(k["bsAfterSwing"], k["bsEnergy"]), pool, c.builderTiming)
+	poolNotes := c.builderTimingNotes
 	if pool != nil {
-		poolNotes = " While Vanish is ready for an Ambush it leaves the Ambush's energy alone."
+		poolNotes = " While Vanish is ready for an Ambush it leaves the Ambush's energy alone." + poolNotes
 	}
 	if k["hemoFiller"] == 1 {
 		items = append(items, cast(hemorrhage, when, builderNotes("Hemorrhage as the builder,", k["bsAfterSwing"], k["bsEnergy"])+poolNotes))
