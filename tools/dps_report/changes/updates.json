@@ -5393,7 +5393,7 @@
      "classes": [
       "Druid"
      ],
-     "note": "Its tick coefficient is 0.066 of spell healing (was 0.033), from the Forever client's data.",
+     "note": "Its tick coefficient is 0.066 of spell healing (was 0.033), from the Forever client's data. The raid Restoration Druid heals for less mana (2.44 effective healing per mana, was 2.19), but its score falls slightly, 1.41 to 1.39, and it drops from 3rd to 4th behind the raid Restoration Shaman.",
      "source": {
       "label": "wago.tools: Wild Growth's spell effects",
       "url": "https://wago.tools/db2/SpellEffect?build=1.60.1.70938&filter%5BID%5D=1072065"
