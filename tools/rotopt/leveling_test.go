@@ -15,6 +15,8 @@ func TestLevelingSession(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	prevLevel := playerLevel
+	t.Cleanup(func() { playerLevel = prevLevel })
 	playerLevel = setup.player().Level
 	template := shamanEnhLeveling{}
 	rot := template.Build(defaultKnobs(template))

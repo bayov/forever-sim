@@ -342,11 +342,6 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 // the totem's internal cooldown.
 var windfuryAttack = spellID(10610)
 
-// auraInternalCooldown is the time left on the internal cooldown of the player's aura id.
-func auraInternalCooldown(id *proto.ActionID) value {
-	return &proto.APLValue{Value: &proto.APLValue_AuraInternalCooldown{AuraInternalCooldown: &proto.APLValueAuraInternalCooldown{AuraId: id}}}
-}
-
 // unsealedWrathCopies is the most copies Unsealed Wrath stores (sim/paladin/unsealed_wrath.go).
 const unsealedWrathCopies = 3
 
