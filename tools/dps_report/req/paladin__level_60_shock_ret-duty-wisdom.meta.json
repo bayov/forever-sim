@@ -32,10 +32,10 @@
     "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use; Goblin Sapper Charge on cooldown",
     "Pre-pull: Seal of Wisdom at -1.5s",
     "Judgement of Wisdom at the pull, for the duty. It lasts 40s and the paladin's melee hits refresh it, so one cast lasts the fight. Judge it again only if it drops",
-    "Seal of Righteousness whenever it's down, before Consecration, so it goes right after the opening Judgement",
+    "Seal of Command whenever it's down, before Consecration, so it goes right after the opening Judgement",
     "Consecration on cooldown at any mana",
     "Judgement on cooldown",
-    "Seal of Righteousness whenever it's down (no twisting)",
+    "Seal of Command whenever it's down (no twisting)",
     "Hammer of Wrath under 20% boss health, before Holy Strike",
     "Holy Strike on cooldown",
     "Exorcism on cooldown (only against Undead and Demons)",
@@ -71,7 +71,7 @@
     "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
     "No filler explosive, because each 1s cast resets the swing."
   ],
-  "notes": "Request: paladin__level_60_shock_ret with raid debuff judgementOfWisdom removed and the level60_shock_ret_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_ret_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh).",
+  "notes": "Request: paladin__level_60_shock_ret with raid debuff judgementOfWisdom removed and the level60_shock_ret_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_ret_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh). 2026-11-15 (Judgement of Command melee again, rolling Windfury Totem and on-hit procs): rotation re-searched with tools/rotopt over 120 / 180 / 300 sec, kept only where it won all six cells (seeds 1 and 1000003, 20,000 iterations); see tools/rotopt/paladin_presets.sh. Seal of Command kept up instead of Seal of Righteousness: +25.4 / +26.7 / +28.1 (seed 1), +25.6 / +27.5 / +29.0 (seed 1000003). The published and verify numbers predate it.",
   "verify": {
     "dps": 961.2,
     "stderr": 0.25,
