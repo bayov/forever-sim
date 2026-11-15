@@ -103,8 +103,14 @@ export const DefaultGear = GearLevel60Phase1SyntheticHitMinus4;
 // at 60 Energy or less whether a Bite is due or not, and Elune's Light held for the Strength trinket:
 // +9.2 / +9.4 / +8.9 at 120 / 180 / 300 sec over the old knobs on the new talents (20,000 iterations,
 // seeds 1 and 1000003).
+//
+// Re-tuned for Windfury Totem's Forever rule (every landed main hand melee hit rolls it, with a
+// 100 ms cooldown): Ferocious Bite waits for 65 Energy (was 45), +1.9 / +2.2 / +3.7 at 120 / 180 /
+// 300 sec, and Shred, Rake, Rip, Ferocious Bite and Ravage wait while the totem's 100 ms cooldown
+// runs, +1.1 / +0.6 / +0.8 on top (20,000 iterations, seeds 1 and 1000003). The Faerie Fire duty
+// takes the Bite at 65 (+1.6 / +1.7 / +2.5) but not the wait, which is noise there.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Feral', Level60APLJSON, {
-	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Rake kept up, Shred, Shadowmeld into Ravage, Shifting Power, and Ferocious Bite at 45 Energy.",
+	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Rake kept up, Shred, Shadowmeld into Ravage, Shifting Power, and Ferocious Bite at 65 Energy. Its abilities wait out Windfury Totem's 100 ms cooldown.",
 	group: 'Synthetic',
 });
 

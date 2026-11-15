@@ -168,6 +168,11 @@ export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Fury 2H', Lev
 // numbers, on the earlier gear). Berserker Stance with Whirlwind in place of Overpower and
 // Rend for the whole fight was 790.0 with its own talents on the earlier gear, 90 behind. Spearing Strike is worth
 // nothing at 15 Rage for 40% weapon damage, except against Giants and Dragonkin (the preset below).
+// Under Windfury Totem's Forever rule (every landed main hand melee hit rolls it, with a 100 ms
+// cooldown) Mortal Strike, Overpower, Rend, Execute and Hamstring wait out the 0.1 sec
+// after a main hand swing, so a totem proc from the swing doesn't take their roll: +0.8 / +0.8 / +0.4
+// at 120 / 180 / 300 sec (+0.7 / +2.0 / +1.9 on seed 1000003), and on both duty presets. Fury, two-hand
+// Fury and the Dragonkin preset lose with it and don't wait.
 export const APLLevel60Arms = PresetUtils.makePresetAPLRotation('Arms', Level60ArmsAPLJSON, { group: 'Synthetic' });
 // Arms against a Giant or Dragonkin boss (Onyxia is Dragonkin in Phase 1), where Spearing Strike does
 // 120% of normalized weapon damage instead of 40%: the Arms rotation with Spearing Strike on cooldown

@@ -172,20 +172,27 @@ export const DefaultGear = GearLevel60Phase1SyntheticHitMinus3;
 // costs a seal. Consecration first down to 20% mana, then
 // Holy Strike on cooldown ahead of Judgement and the seal lines (since round 70753: +1.2 / +1.2 / +0.4
 // at 120 / 180 / 300 sec, +2.4 / +1.3 / +1.9 on seed 1000003).
+// Since Judgement of Command is a melee attack again and Windfury Totem rolls on every landed main
+// hand melee hit (the November 13 hotfixes), the swap to Seal of Command comes once Righteousness has
+// stored one copy (was 2), with the mana limit off: +4.1 / +4.4 / +5.2 at 120 / 180 / 300 sec (+3.7 /
+// +4.0 / +5.0 on seed 1000003); sub Holy and the twist duties take the same (+3 to +8). Keeping Seal
+// of Command up with no twist loses 18. Holding Holy Strike and Judgement out of the totem's 100 ms
+// cooldown is noise (+0.1).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Ret twist', Level60APLJSON, {
 	tooltip:
-		'Level 60 rotation: Seal of Righteousness, swapped to Seal of Command for the swing that spends its Unsealed Wrath copies, Consecration, Judgement and Holy Strike on cooldown.',
+		'Level 60 rotation: Seal of Righteousness, swapped to Seal of Command once it has stored an Unsealed Wrath copy, Consecration, Judgement and Holy Strike on cooldown.',
 	group: 'Synthetic',
 });
 // Ret Shock: no Unsealed Wrath (Holy Shock takes 20 Holy points). Seal of Righteousness up since the
 // November 11 hotfix, with Holy Shock ahead of Holy Strike (+6.5 / +5.1 / +4.8 at 120 / 180 / 300
 // sec, +6.1 / +4.5 / +4.5 on seed 1000003), Consecration first at any mana, Judgement and Holy
-// Strike on cooldown, Hammer of Wrath above Holy Strike. Its Wisdom duty also takes Seal of
-// Righteousness (+5.8 / +5.0 / +4.2); its Crusader duty keeps Seal of Command (Righteousness ties or
-// loses there).
+// Strike on cooldown, Hammer of Wrath above Holy Strike. Since Judgement of Command is a melee attack
+// again (the November 13 hotfixes) Seal of Command stays up with no twist: +29.2 / +29.8 / +29.9 at 120
+// / 180 / 300 sec over Seal of Righteousness (+28.7 / +29.8 / +29.9 on seed 1000003), and +25 to +29 on
+// its Wisdom duty. Its Crusader duty already kept Seal of Command.
 export const APLLevel60ShockRet = PresetUtils.makePresetAPLRotation('Ret Shock', Level60ShockRetAPLJSON, {
 	tooltip:
-		'Level 60 Holy Shock rotation for the Retribution side talents: Seal of Righteousness, Consecration, then Judgement, Holy Shock and Holy Strike on cooldown.',
+		'Level 60 Holy Shock rotation for the Retribution side talents: Seal of Command, Consecration, then Judgement, Holy Shock and Holy Strike on cooldown.',
 	group: 'Synthetic',
 });
 // Ret sub-Holy: the twist rotation, swapping on 2 copies at any mana (its Reverence and Divine
@@ -194,9 +201,11 @@ export const APLLevel60ShockRet = PresetUtils.makePresetAPLRotation('Ret Shock',
 // 1000003). The Crusader duties keep it after them (it loses 2 to 6 after the November 11 hotfix);
 // the Wisdom duties take it since then (+0.4 to +2.5 in every cell on both seeds). Since the hotfix
 // the sub Holy rotations keep Seal of Righteousness up and swap back once Command has stored all 3
-// copies (sub Holy +2.7 / +2.1 / +3.1; the duties swap on 3 copies, +2.0 to +10.6).
+// copies (sub Holy +2.7 / +2.1 / +3.1; the duties swap on 3 copies, +2.0 to +10.6). Since Judgement of
+// Command is a melee attack again (the November 13 hotfixes) sub Holy and both duties swap on one
+// copy: +3.6 / +3.1 / +3.4 at 120 / 180 / 300 sec on sub Holy, +6 to +8 on the duties.
 export const APLLevel60SubHoly = PresetUtils.makePresetAPLRotation('Ret sub-Holy', Level60SubHolyAPLJSON, {
-	tooltip: 'Level 60 sub Holy rotation: the twist rotation, swapping seals once Seal of Righteousness has stored 2 Unsealed Wrath copies.',
+	tooltip: 'Level 60 sub Holy rotation: the twist rotation, swapping seals once Seal of Righteousness has stored an Unsealed Wrath copy.',
 	group: 'Synthetic',
 });
 // Ret sub-Holy vs Undead (standards 19): Exorcism lands, so the swap waits for all 3 copies to keep
@@ -205,8 +214,9 @@ export const APLLevel60SubHoly = PresetUtils.makePresetAPLRotation('Ret sub-Holy
 // the execute phase: +8.4 / +7.0 / +4.0 at 120 / 180 / 300 sec (was Consecration last, Hammer of
 // Wrath above Holy Strike). Since the November 11 hotfix Seal of Righteousness stays up and Seal of
 // Command goes up on 3 copies, back once it has stored 3: +6.3 / +4.6 / +5.3 at 120 / 180 / 300 sec.
+// Since Judgement of Command is a melee attack again it goes up on 2 copies: +1.6 / +1.0 / +1.4.
 export const APLLevel60Undead = PresetUtils.makePresetAPLRotation('Ret sub-Holy · vs Undead', Level60UndeadAPLJSON, {
-	tooltip: 'Level 60 rotation against an Undead or Demon boss: the twist rotation on 3 copies, with Exorcism.',
+	tooltip: 'Level 60 rotation against an Undead or Demon boss: the twist rotation on 2 copies, with Exorcism.',
 	group: 'Synthetic',
 });
 // Judgement of the Crusader duty (standards 23): one paladin in the raid keeps Judgement of the
