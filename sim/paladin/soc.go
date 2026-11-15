@@ -85,7 +85,11 @@ func (paladin *Paladin) registerSealOfCommand() {
 			ProcMask:    core.ProcMaskMeleeMHSpecial,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
-			BonusCritRating:  paladin.holyPowerCrit(),
+			BonusCritRating: paladin.holyPowerCrit(),
+			// Two-Handed Weapon Specialization reaches it in game after the November 11 hotfix (1.062,
+			// n = 109, 2026-11-13; wowsims/forever EV-0064; user ruling 2026-11-15). Their client data
+			// has it melee in SpellCategories, while this sim rolls it on the ranged table
+			// (rangedJudgement below); the bonus is kept either way.
 			DamageMultiplier: paladin.getWeaponSpecializationModifier() * improvedSeals,
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,

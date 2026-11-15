@@ -158,7 +158,7 @@ Shoot and the miss floor are in the Mage table.
 | Difference | Ours | Theirs | Status, DPS |
 |---|---|---|---|
 | Nov 2 bleed scale | Rake, Rip, Ferocious Bite, Pounce base and AP x1.25 (`nov2BleedScale`, `sim/druid/tuning_70753.go:20`) | Client values; the same log fits Rake's tick at 0.0652 AP against our 0.06875 | Ruling (Nov 2 notes, "about 25%"). Worth 98 on our Feral; near-equal ticks either way |
-| Rip and Rake ticks' attack power share | Under `nov2BleedScale`: Rip 0.0125 a combo point a tick, Rake 0.06875 | Measured on their logs: Rip 0.0114, Rake 0.065 | Ruling (`nov2BleedScale`), though their logs argue against the x1.25 on the attack power part. For ours: Rip 8.9, Rake tick 5.6 |
+| Rip and Rake ticks' attack power share | Under `nov2BleedScale`: Rip 0.0125 a combo point a tick, Rake 0.06875 | Measured on their logs: Rip 0.0114, Rake 0.065 | Ruling (`nov2BleedScale`), though their logs argue against the x1.25 on the attack power part. For ours: Rip 8.9, Rake tick 5.6. User ruling 2026-11-15: hold the x1.25 until a level 60 log |
 | Eclipse charges | Granted when Wrath lands; a Starfire begun before keeps them (`sim/druid/talents.go:278-315`, notes.md:276, proc flag is a magic damage hit) | Granted at Wrath's cast; every Starfire spends one (`talents_balance.go:~165`, 7c70ac16e3) | Open: a log with a Wrath in flight. Balance 3.2 for theirs (Wrath 26.0 casts to 24.2) |
 | Raid damage taken | Pushes back Starfire and Wrath | None | Choice. Balance 4.9, Balance Wrath 4.1; Feral, Retribution 0 |
 | Shadowmeld into Ravage | Night Elf Shadowmeld in combat opens Ravage | Ravage and Pounce need Prowl (no source) | Open, notes.md To Verify (with the rogue's Ambush). Feral 11.1 |
@@ -166,7 +166,7 @@ Shoot and the miss floor are in the Mage table.
 | Innervate | Autocast at low mana | Only a rotation line | Choice. Balance 3.2 for ours |
 | Judgement of the Crusader on weapon strikes | 161 Holy taken through the coefficient (Holy Strike via weapon percent 0.429 x 50%, Seal of Righteousness inside its base) | Full coefficient, added before the done multipliers (unit tests only) | Open, notes.md To Verify. For theirs (2026-11-15): paladins 10.1 to 10.9, Smite 5.3 |
 | Dragonbreath Chili from Seal of Righteousness | Any landed melee hit rolls it | Seal hits are procs; 15852 lacks Can Proc From Procs | Open, notes.md To Verify. For ours: Retribution and Sub Holy 7.2, Holy Shock Ret 0.8 |
-| Two-Handed Weapon Specialization on Holy | Every Holy hit (`pal_2h_spec_holy`) | Only Holy hits on melee defense, plus Consecration, from their logs (Judgement of Righteousness 1.003 n=93, Hammer of Wrath 0.991 n=77, Exorcism none) | Open (ruling `pal_2h_spec_holy` on ours). 6.4 to 17.4 for ours |
+| Judgement of Command's defense | Ranged since the Nov 11 hotfix, as every damaging judgement (`rangedJudgement`, `sim/paladin/soc.go`) | Melee in SpellCategories, melee table and melee procs (their `seal_of_command.go:36`); Righteousness and Fury ranged in both | Open, found 2026-11-15, not changed. Two-Handed Weapon Specialization reaches it in both (Settled) |
 | Hammer of Wrath's 0.4 s cast | A swing due during the cast waits | The cast resets the swing | Engine. About 2 for ours on Holy Shock Ret |
 
 Sheets before alignment (`layers.py`, explained 2026-11-15): theirs' +21 AP at the gear layer was
@@ -209,3 +209,7 @@ A gap on one of these is a regression.
 - Arcane Concentration split across an Arcane Missiles channel; Wrack and Soul Siphon (hotfix
   113766).
 - Searing Totem's damage per hit and rate within 3%.
+- Two-Handed Weapon Specialization's Holy part follows the defense type: the melee-defense Holy hits
+  (seal hits, Holy Strike, Judgement of Command) and Consecration take it; the ranged judgements,
+  Exorcism, Hammer of Wrath, Holy Wrath and Holy Shock don't. Ours since 2026-11-15 (their fca3d825d9,
+  EV-0064/EV-0022 logs).
