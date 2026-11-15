@@ -47,6 +47,11 @@ func (paladinTank) Knobs() []Knob {
 		// read): below 0 never. Searched to the second (tank_rotations-20261104-3: a 10 sec grid
 		// missed 13).
 		{Name: "bulwarkAt", Default: 10, Min: -1, Max: 30, Step: 1},
+		// Windfury Totem timing for Holy Strike, as in paladin_ret: hold it while the totem's 100 ms
+		// internal cooldown runs (wfIcdGate), or while the next main hand swing is less than swingGap
+		// ms away. 0 off.
+		{Name: "wfIcdGate", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "swingGap", Default: 0, Min: 0, Max: 200, Step: 50},
 	}
 }
 
@@ -99,7 +104,18 @@ func (paladinTank) Build(k Knobs) *proto.APLRotation {
 		"Judgement on cooldown, off the global cooldown."))
 
 	holyShieldLine := cast(holyShield, manaFloor(k["holyShieldMana"]), "Holy Shield on cooldown: 30% block for 10 sec or 4 blocks, its damage at 1.2 times the threat.")
-	holyStrikeLine := cast(holyStrike, manaFloor(k["holyStrikeMana"]), "Holy Strike on cooldown: Iron Creed's threat and damage cut, and with Shieldsworn Holy Shield's damage.")
+	var mhGate value
+	if k["wfIcdGate"] == 1 {
+		mhGate = le(auraInternalCooldown(windfuryAttack), seconds(0))
+	}
+	if k["swingGap"] > 0 {
+		mhGate = and(mhGate, ge(mainHandTimeToNext(), seconds(k["swingGap"]/1000)))
+	}
+	holyStrikeNotes := "Holy Strike on cooldown: Iron Creed's threat and damage cut, and with Shieldsworn Holy Shield's damage."
+	if mhGate != nil {
+		holyStrikeNotes += " Held while Windfury Totem can't proc from it or would take the next swing's roll."
+	}
+	holyStrikeLine := cast(holyStrike, and(manaFloor(k["holyStrikeMana"]), mhGate), holyStrikeNotes)
 	var consecrationLine *proto.APLListItem
 	if k["consecrationMana"] < 100 {
 		consecrationLine = cast(consecration, manaFloor(k["consecrationMana"]), "Consecration with the mana to spare.")
